@@ -72,6 +72,8 @@ CHAR16 *gFirmwareRevision = NULL;
 BOOLEAN                 gGuiIsReady = FALSE;
 BOOLEAN                 gThemeNeedInit = TRUE;
 BOOLEAN                 DoHibernateWake = FALSE;
+BOOLEAN                 APFSSupport = TRUE;
+
 //extern EFI_HANDLE              gImageHandle;
 //extern EFI_SYSTEM_TABLE*       gST;
 //extern EFI_BOOT_SERVICES*      gBS;
@@ -1232,6 +1234,7 @@ VOID DisconnectSomeDevices(VOID)
     DBG("HFS+ driver loaded\n");
     }
     if (gDriversFlags.APFSLoaded) {
+	  APFSSupport = TRUE;
       DBG("APFS driver loaded\n");
     }
 
@@ -1578,6 +1581,56 @@ VOID SetOEMPath(CHAR16 *ConfName)
       OEMPath = L"EFI\\CLOVER";
     }
   }
+
+/*  S. Mitrofanov 08.06.2016
+ *  GUID 4391AA92-6644-4D8A-9A84-DDD405C312F3 - Apple Firmware. 
+ *  APFS Container introduced new rules for path's to boot.efi
+ *  Now we have, for example:
+ * /dev/disk0 (internal, physical):
+ *   #:                       TYPE NAME                    SIZE       IDENTIFIER
+ *   0:      GUID_partition_scheme                        *240.1 GB   disk0
+ *   1:                        EFI EFI                     209.7 MB   disk0s1
+ *   2:                 Apple_APFS Container disk1         239.2 GB   disk0s2
+ *   3:       Apple_KernelCoreDump                         655.4 MB   disk0s3
+ *
+ * /dev/disk1 (synthesized):
+ *   #:                       TYPE NAME                    SIZE       IDENTIFIER
+ *   0:      APFS Container Scheme -                      +239.2 GB   disk1
+ *                                 Physical Store disk0s2
+ *   1:                APFS Volume Macintosh SSD           170.8 GB   disk1s1
+ *   2:                APFS Volume Preboot                 17.9 MB    disk1s2
+ *   3:                APFS Volume Recovery                521.1 MB   disk1s3
+ *   4:                APFS Volume VM                      1.1 GB     disk1s4
+ */
+UINTN  APFSUUIDBankCounter = 0;
+UINT8 *APFSUUIDBank = NULL;
+UINT8 *APFSContainer_Support(VOID){
+        /* 
+         * S. Mtr 2017
+         * APFS Container partition support
+         * Gather System PartitionUniqueGUID
+         */
+        UINTN         VolumeIndex;
+        REFIT_VOLUME  *Volume;
+        //Fill APFSUUIDBank
+        APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
+        for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+          Volume = Volumes[VolumeIndex];
+          EFI_DEVICE_PATH_PROTOCOL *Current_DevicePath = Volume->DevicePath;
+          UINTN                     DPSize             = 0;
+          UINT8                    *Data               = NULL;
+          Data = (UINT8 *)Current_DevicePath;
+          DPSize = NodeParser(Data,256,0x7F);
+          //Looking for double 0x04 node inside DevPath
+          //So DPsize returned by NodeParser should be greater than 0x2A
+          if (DPSize>0x2A){
+            //Add to bank
+            CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,Data + DPSize - 0x10,0x10);
+            APFSUUIDBankCounter++;
+          }
+        }
+        return APFSUUIDBank;
+}
 
 //
 // main entry point
@@ -2047,10 +2100,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
     GetSmcKeys(TRUE);
-
+    
     // Add custom entries
     AddCustomEntries();
-
+	/* APFS container support */
+    //Fill APFSUUIDBank
+    APFSUUIDBank = APFSContainer_Support();
     if (gSettings.DisableEntryScan) {
       DBG("Entry scan disabled\n");
     } else {

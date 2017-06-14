@@ -84,6 +84,48 @@ static EFI_STATUS FinishInitRefitLib(VOID);
 
 static VOID UninitVolumes(VOID);
 
+// S. Mtr
+/* Function for parsing nodes from device path
+ * IN : DevicePath, sizeof(DevicePath)
+ * OUT: Size of cutted device path
+ * Description:
+ * Device path contains device nodes.
+ * From UEFI specification device node struct looks like:
+ *typedef struct {
+ *  UINT8 Type;   ///< 0x01 Hardware Device Path.
+ *                ///< 0x02 ACPI Device Path.
+ *                ///< 0x03 Messaging Device Path.
+ *                ///< 0x04 Media Device Path.
+ *                ///< 0x05 BIOS Boot Specification Device Path.
+ *                ///< 0x7F End of Hardware Device Path.
+ *
+ *  UINT8 SubType;///< Varies by Type
+ *                ///< 0xFF End Entire Device Path, or
+ *                ///< 0x01 End This Instance of a Device Path and start a new
+ *                ///< Device Path.
+ *
+ *  UINT8 Length[2];  ///< Specific Device Path data. Type and Sub-Type define
+ *                    ///< type of data. Size of data is included in Length.
+ *
+ * } EFI_DEVICE_PATH_PROTOCOL;
+ */
+UINTN
+NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type)
+{
+  UINTN i;
+  for (i=0; i<PathSize+1;){
+    if (DevPath[i] == Type)
+    {
+      //This type corresponds to Type
+      //So.. save position and exit from loop
+      PathSize = i;
+      break;
+    }
+    //Jump to the next device node type
+    i += (((UINT16)DevPath[i+3]<<8) | DevPath[i+2]);
+  }
+  return PathSize;
+}
 
 BOOLEAN MetaiMatch (
                     IN CHAR16   *String,

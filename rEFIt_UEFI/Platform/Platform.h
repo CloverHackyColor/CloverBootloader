@@ -1585,6 +1585,12 @@ extern UINTN                          NGFX;
 extern UINTN                          NHDA;
 extern BOOLEAN                        gMobile;
 extern BOOLEAN                        DoHibernateWake;
+/* Switch for APFS support */
+extern BOOLEAN                        APFSSupport;
+extern UINTN 						  APFSUUIDBankCounter;
+extern UINT8 						 *APFSUUIDBank;
+extern CHAR16						 **SystemPlists;
+extern CHAR16						 **RecoveryPlists;
 //extern UINT32                         gCpuSpeed;  //kHz
 //extern UINT16                         gCPUtype;
 extern UINT64                         TurboMsr;
@@ -2409,7 +2415,10 @@ ParseSMBIOSSettings (
   TagPtr dictPointer
   );
 
+UINT8 *APFSContainer_Support(VOID);
 
+UINTN
+NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type);
 
 //
 // Hibernate.c

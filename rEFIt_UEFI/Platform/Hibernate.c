@@ -631,49 +631,6 @@ REFIT_VOLUME *FoundParentVolume(REFIT_VOLUME *Volume)
   return NULL;
 }
 
-//Savvas
-/* Function for parsing nodes from device path
- * IN : DevicePath, sizeof(DevicePath)
- * OUT: Size of cutted device path
- * Description:
- * Device path contains device nodes.
- * From UEFI specification device node struct looks like:
- *typedef struct {
- *  UINT8 Type;   ///< 0x01 Hardware Device Path.
- *                ///< 0x02 ACPI Device Path.
- *                ///< 0x03 Messaging Device Path.
- *                ///< 0x04 Media Device Path.
- *                ///< 0x05 BIOS Boot Specification Device Path.
- *                ///< 0x7F End of Hardware Device Path.
- *
- *  UINT8 SubType;///< Varies by Type
- *                ///< 0xFF End Entire Device Path, or
- *                ///< 0x01 End This Instance of a Device Path and start a new
- *                ///< Device Path.
- *
- *  UINT8 Length[2];  ///< Specific Device Path data. Type and Sub-Type define
- *                    ///< type of data. Size of data is included in Length.
- *
- * } EFI_DEVICE_PATH_PROTOCOL;
- */
-UINTN
-NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type)
-{
-  UINTN i;
-  for (i=0; i<PathSize+1;){
-    if (DevPath[i] == Type)
-    {
-      //This type corresponds to media device path
-      //So.. save position and exit from loop
-      //Cut size
-      PathSize = i;
-      break;
-    }
-    //Jump to the next device node type
-    i += (((UINT16)DevPath[i+3]<<8) | DevPath[i+2]);
-  }
-  return PathSize;
-}
 
 STATIC CHAR16 OffsetHexStr[100];
 
@@ -687,6 +644,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
 //  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
   REFIT_VOLUME    *Volume         = Entry->Volume;
   EFI_GUID        *BootGUID       = NULL;
+  EFI_GUID        *APFSBootUUID       = NULL;
   BOOLEAN         ret             = FALSE;
   UINT8           *Value          = NULL;
 
@@ -819,11 +777,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       
         BootGUID = (EFI_GUID*)(Data + Size - 0x16);
         //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
+        /* This method of UUID obtaining is deprecated for APFS container */
         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+        /* APFS Hibernation support*/
+        UINTN DPSize = 0;
+        DPSize = NodeParser((UINT8 *)Volume->DevicePath,256,0x7F);
+        CopyMem(APFSBootUUID,((UINT8 *)Volume->DevicePath) + DPSize - 0x10,0x10);
         //DBG("    Volume has PartUUID=%g\n", VolumeUUID);
         if (!CompareGuid(BootGUID, VolumeUUID)) {
           ret = FALSE;
-        } else {
+          if (CompareGuid(APFSBootUUID,BootGUID)){
+            ret = TRUE;
+          }
+        } 
+		if (ret==TRUE) {
           DBG("    Boot0082 points to Volume with UUID:%g\n", BootGUID);
 
         //3. Checks for boot-image exists

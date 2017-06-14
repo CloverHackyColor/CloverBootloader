@@ -67,6 +67,8 @@ UINT16                          dropDSM;
 BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;
 BOOLEAN                         gRemapSmBiosIsRequire;
+CHAR16                        **SystemPlists                = NULL;
+CHAR16                        **RecoveryPlists              = NULL;
 
 
 GUI_ANIME                       *GuiAnime                   = NULL;
@@ -5562,10 +5564,6 @@ GetUserSettings(
   return EFI_SUCCESS;
 }
 
-CHAR16* SystemPlists[] = { L"\\System\\Library\\CoreServices\\SystemVersion.plist", // OS X Regular
-  L"\\System\\Library\\CoreServices\\ServerVersion.plist", // OS X Server
-  NULL };
-
 CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 {
   CHAR8      *OSVersion  = NULL;
@@ -5653,10 +5651,14 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   }
 
   if (OSTYPE_IS_OSX_RECOVERY (Entry->LoaderType)) {
+    UINTN j = 0;
+    while (RecoveryPlists[j] != NULL && !FileExists(Entry->Volume->RootDir, RecoveryPlists[j])) {
+      j++;
+    }
     // Detect exact version for OS X Recovery
-    CHAR16 *RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-    if (FileExists (Entry->Volume->RootDir, RecoveryPlist)) {
-      Status = egLoadFile (Entry->Volume->RootDir, RecoveryPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+    
+   if (RecoveryPlists[j] != NULL) {
+      Status = egLoadFile (Entry->Volume->RootDir, RecoveryPlists[j], (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop       = GetProperty (Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {

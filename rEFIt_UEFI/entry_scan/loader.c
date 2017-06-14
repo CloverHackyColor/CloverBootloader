@@ -1122,9 +1122,23 @@ VOID ScanLoader(VOID)
   UINTN         VolumeIndex, Index;
   REFIT_VOLUME *Volume;
   EFI_GUID     *PartGUID;
+  //Plists iterators
+  UINTN      SysIter            = 2;
+  UINTN      RecIter            = 1;
 
   //DBG("Scanning loaders...\n");
   DbgHeader("ScanLoader");
+  /************************************************************************/
+  /*Allocate Memory for systemplists and recoveryplists********************/
+  SystemPlists = AllocateZeroPool(VolumesCount*sizeof(CHAR16));
+  RecoveryPlists = AllocateZeroPool(VolumesCount*0x59*sizeof(CHAR16));
+  /* Fill it with standard paths*******************************************/
+  SystemPlists[0] = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+  SystemPlists[1] = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
+  SystemPlists[2] = NULL;
+  RecoveryPlists[0] = L"\\com.apple.recovery.boot\\SystemVersion.plist";
+  RecoveryPlists[1] = NULL;
+  /************************************************************************/
 
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
@@ -1167,6 +1181,55 @@ VOID ScanLoader(VOID)
         AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0);
       }
     }
+/* APFS Container support. 
+ * s.mtr 2017
+ */
+if (StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 ){
+    for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++){
+      EFI_GUID  *BootUUID           = NULL;
+      UINT8     *Tmp                = AllocateZeroPool(0x10);
+      CHAR16 *TmpStr = AllocateZeroPool(sizeof(CHAR16)*(0x4D));
+      CHAR16 *TmpStr2 = AllocateZeroPool(sizeof(CHAR16)*(0x31));
+      CHAR16 *TmpSysPlistPath = AllocateZeroPool(sizeof(CHAR16)*(0x58));
+      CHAR16 *TmpServerPlistPath = AllocateZeroPool(sizeof(CHAR16)*(0x58));
+      CHAR16 *TmpRecPlistPath = AllocateZeroPool(sizeof(CHAR16)*(0x3C));
+      //
+      CopyMem(Tmp, APFSUUIDBank+i*0x10,0x10);
+      BootUUID = (EFI_GUID*)(Tmp);
+      StrnCpy(TmpStr, L"\\", 0x02);
+      StrCat(TmpStr,GuidLEToStr(BootUUID));
+      //Fill temporary plist paths variables
+      StrnCpy(TmpSysPlistPath,TmpStr,0x26);
+      StrnCpy(TmpRecPlistPath,TmpStr,0x26);
+      StrnCpy(TmpServerPlistPath,TmpStr,0x26);
+      //Complete boot.efi path
+      StrnCpy(TmpStr2,TmpStr,0x26);
+      StrCat(TmpStr,L"\\System\\Library\\CoreServices\\boot.efi");
+      StrCat(TmpStr2,L"\\boot.efi");
+      //Fill SystemPlists/RecoveryPlists arrays
+      StrCat(TmpSysPlistPath,L"\\System\\Library\\CoreServices\\SystemVersion.plist");
+      StrCat(TmpServerPlistPath,L"\\System\\Library\\CoreServices\\ServerVersion.plist");
+      StrCat(TmpRecPlistPath,L"\\SystemVersion.plist");
+      SystemPlists[SysIter] = TmpSysPlistPath;
+      SystemPlists[SysIter+1] = TmpServerPlistPath;
+      SystemPlists[SysIter+2] = NULL;
+      SysIter+=2;
+      RecoveryPlists[RecIter] = TmpRecPlistPath;
+      RecoveryPlists[RecIter+1] = NULL;
+      RecIter++;
+      ///Try to add FileVault entry
+      if (AddLoaderEntry(TmpStr, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0) == FALSE)  {
+        //Free mem
+        FreePool(TmpStr);
+        //Try to add Recovery APFS entry
+        if (AddLoaderEntry(TmpStr2, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0) == FALSE){
+          //Free mem
+          FreePool(TmpStr2);
+        } 
+      } 
+      FreePool(Tmp);
+    }
+  }
 
     // check for Mac OS X Recovery Boot
     AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
