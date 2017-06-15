@@ -5572,7 +5572,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   UINTN      PlistLen;
   TagPtr     Dict        = NULL;
   TagPtr     Prop        = NULL;
-  UINTN      i;
+  UINTN      i           = 0;
+  UINTN      j           = 0;
 
   if (!Entry || !Entry->Volume) {
     return OSVersion;
@@ -5651,7 +5652,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   }
 
   if (OSTYPE_IS_OSX_RECOVERY (Entry->LoaderType)) {
-    UINTN j = 0;
+    j = 0;
     while (RecoveryPlists[j] != NULL && !FileExists(Entry->Volume->RootDir, RecoveryPlists[j])) {
       j++;
     }

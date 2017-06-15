@@ -1125,13 +1125,52 @@ VOID ScanLoader(VOID)
   //Plists iterators
   UINTN      SysIter            = 2;
   UINTN      RecIter            = 1;
+  UINTN      k                  = 0;
 
   //DBG("Scanning loaders...\n");
   DbgHeader("ScanLoader");
+  // If scanloader starts multiple times, then we need to free systemplits,recoveryplists variables, also
+  // refresh APFSUUIDBank
+  if ((SystemPlists != NULL)||(RecoveryPlists != NULL)) {
+    if (APFSUUIDBank != NULL&&gDriversFlags.APFSLoaded==TRUE){
+      FreePool(APFSUUIDBank);
+      //Reset APFSUUIDBank counter, we will re-enumerate it
+      APFSUUIDBankCounter = 0;
+      APFSUUIDBank = APFSContainer_Support();
+    }
+    if (SystemPlists != NULL){
+      //Don't touch default system version path's, so start from index #2
+      k = 2;
+      while (SystemPlists[k]!=NULL){
+        FreePool(SystemPlists[k]);
+        SystemPlists[k]=NULL;
+        k++;
+      }
+      FreePool(SystemPlists);
+      SystemPlists=NULL;
+    }
+    if (RecoveryPlists != NULL){
+      k = 1;//set k for rec plists, start from index #1
+      while (RecoveryPlists[k] != NULL){
+        FreePool(RecoveryPlists[k]);
+        RecoveryPlists[k]=NULL;
+        k++;
+      }
+      FreePool(RecoveryPlists);
+      RecoveryPlists=NULL;
+    }
+  }
+    
   /************************************************************************/
   /*Allocate Memory for systemplists and recoveryplists********************/
-  SystemPlists = AllocateZeroPool((2*VolumesCount+3)*sizeof(CHAR16 *));//array of pointers
-  RecoveryPlists = AllocateZeroPool((VolumesCount+2)*sizeof(CHAR16 *));//array of pointers
+  //Check apfs support
+  if (gDriversFlags.APFSLoaded==TRUE) {
+    SystemPlists = AllocateZeroPool((2*VolumesCount+4)*sizeof(CHAR16 *));//array of pointers
+    RecoveryPlists = AllocateZeroPool((VolumesCount+3)*sizeof(CHAR16 *));//array of pointers
+  } else {
+    SystemPlists = AllocateZeroPool(sizeof(CHAR16 *)*3);
+    RecoveryPlists = AllocateZeroPool(sizeof(CHAR16 *)*2);
+  }
   /* Fill it with standard paths*******************************************/
   SystemPlists[0] = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
   SystemPlists[1] = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
@@ -1184,50 +1223,31 @@ VOID ScanLoader(VOID)
 /* APFS Container support. 
  * s.mtr 2017
  */
-if (StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 ){
+if ((StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 )&&gDriversFlags.APFSLoaded==TRUE) {
     for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++){
-      EFI_GUID  *BootUUID           = NULL;
-      UINT8     *Tmp                = AllocateZeroPool(0x10);
       CHAR16 *TmpStr = AllocateZeroPool(sizeof(CHAR16)*(0x4D));
       CHAR16 *TmpStr2 = AllocateZeroPool(sizeof(CHAR16)*(0x31));
       CHAR16 *TmpSysPlistPath = AllocateZeroPool(sizeof(CHAR16)*(0x58));
       CHAR16 *TmpServerPlistPath = AllocateZeroPool(sizeof(CHAR16)*(0x58));
       CHAR16 *TmpRecPlistPath = AllocateZeroPool(sizeof(CHAR16)*(0x3C));
-      //
-      CopyMem(Tmp, APFSUUIDBank+i*0x10,0x10);
-      BootUUID = (EFI_GUID*)(Tmp);
-      StrnCpy(TmpStr, L"\\", 0x02);
-      StrCat(TmpStr,GuidLEToStr(BootUUID));
-      //Fill temporary plist paths variables
-      StrnCpy(TmpSysPlistPath,TmpStr,0x26);
-      StrnCpy(TmpRecPlistPath,TmpStr,0x26);
-      StrnCpy(TmpServerPlistPath,TmpStr,0x26);
-      //Complete boot.efi path
+
+      StrCat(StrnCpy(TmpStr, L"\\", 0x02),GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10)));
       StrnCpy(TmpStr2,TmpStr,0x26);
-      StrCat(TmpStr,L"\\System\\Library\\CoreServices\\boot.efi");
-      StrCat(TmpStr2,L"\\boot.efi");
       //Fill SystemPlists/RecoveryPlists arrays
-      StrCat(TmpSysPlistPath,L"\\System\\Library\\CoreServices\\SystemVersion.plist");
-      StrCat(TmpServerPlistPath,L"\\System\\Library\\CoreServices\\ServerVersion.plist");
-      StrCat(TmpRecPlistPath,L"\\SystemVersion.plist");
-      SystemPlists[SysIter] = TmpSysPlistPath;
-      SystemPlists[SysIter+1] = TmpServerPlistPath;
+      SystemPlists[SysIter] = StrCat(StrnCpy(TmpSysPlistPath,TmpStr,0x26),L"\\System\\Library\\CoreServices\\SystemVersion.plist");
+      SystemPlists[SysIter+1] = StrCat(StrnCpy(TmpServerPlistPath,TmpStr,0x26),L"\\System\\Library\\CoreServices\\ServerVersion.plist");
       SystemPlists[SysIter+2] = NULL;
-      SysIter+=2;
-      RecoveryPlists[RecIter] = TmpRecPlistPath;
+      RecoveryPlists[RecIter] = StrCat(StrnCpy(TmpRecPlistPath,TmpStr,0x26),L"\\SystemVersion.plist");
       RecoveryPlists[RecIter+1] = NULL;
+      SysIter+=2;
       RecIter++;
       ///Try to add FileVault entry
-      if (AddLoaderEntry(TmpStr, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0) == FALSE)  {
-        //Free mem
-        FreePool(TmpStr);
-        //Try to add Recovery APFS entry
-        if (AddLoaderEntry(TmpStr2, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0) == FALSE){
-          //Free mem
-          FreePool(TmpStr2);
-        } 
-      } 
-      FreePool(Tmp);
+      AddLoaderEntry(StrCat(TmpStr,L"\\System\\Library\\CoreServices\\boot.efi"), NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0);
+      //Try to add Recovery APFS entry
+      AddLoaderEntry(StrCat(TmpStr2,L"\\boot.efi"), NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
+      //Free mem
+      FreePool(TmpStr);
+      FreePool(TmpStr2);
     }
   }
 
@@ -1523,6 +1543,7 @@ if (StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Prebo
 //      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI external", Volume, NULL, OSTYPE_OTHER, 0);
 //    }
   }
+
 }
 
 STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
@@ -2041,7 +2062,9 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     if (FindCustomPath) {
       DirIterClose(Iter);
     }
+
   }
+      
 }
 
 // Add custom entries

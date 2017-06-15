@@ -1586,7 +1586,6 @@ extern UINTN                          NHDA;
 extern BOOLEAN                        gMobile;
 extern BOOLEAN                        DoHibernateWake;
 /* Switch for APFS support */
-extern BOOLEAN                        APFSSupport;
 extern UINTN 						  APFSUUIDBankCounter;
 extern UINT8 						 *APFSUUIDBank;
 extern CHAR16						 **SystemPlists;

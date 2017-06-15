@@ -72,7 +72,6 @@ CHAR16 *gFirmwareRevision = NULL;
 BOOLEAN                 gGuiIsReady = FALSE;
 BOOLEAN                 gThemeNeedInit = TRUE;
 BOOLEAN                 DoHibernateWake = FALSE;
-BOOLEAN                 APFSSupport = TRUE;
 
 //extern EFI_HANDLE              gImageHandle;
 //extern EFI_SYSTEM_TABLE*       gST;
@@ -1234,7 +1233,6 @@ VOID DisconnectSomeDevices(VOID)
     DBG("HFS+ driver loaded\n");
     }
     if (gDriversFlags.APFSLoaded) {
-	  APFSSupport = TRUE;
       DBG("APFS driver loaded\n");
     }
 
@@ -1611,21 +1609,18 @@ UINT8 *APFSContainer_Support(VOID){
          * Gather System PartitionUniqueGUID
          */
         UINTN         VolumeIndex;
+        UINTN         DPSize      =0;   
         REFIT_VOLUME  *Volume;
         //Fill APFSUUIDBank
         APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
         for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
           Volume = Volumes[VolumeIndex];
-          EFI_DEVICE_PATH_PROTOCOL *Current_DevicePath = Volume->DevicePath;
-          UINTN                     DPSize             = 0;
-          UINT8                    *Data               = NULL;
-          Data = (UINT8 *)Current_DevicePath;
-          DPSize = NodeParser(Data,256,0x7F);
           //Looking for double 0x04 node inside DevPath
-          //So DPsize returned by NodeParser should be greater than 0x2A
-          if (DPSize>0x2A){
+          //So DPSize returned by NodeParser should be greater than 0x2A
+          if ((DPSize = NodeParser((UINT8 *)Volume->DevicePath,256,0x7F))>0x2A){
             //Add to bank
-            CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,Data + DPSize - 0x10,0x10);
+            CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,
+              (UINT8 *)Volume->DevicePath + DPSize - 0x10,0x10);
             APFSUUIDBankCounter++;
           }
         }
@@ -2103,9 +2098,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // Add custom entries
     AddCustomEntries();
-	/* APFS container support */
-    //Fill APFSUUIDBank
-    APFSUUIDBank = APFSContainer_Support();
+    //Check apfs driver loaded state
+    if (gDriversFlags.APFSLoaded==TRUE) {
+      //Free APFSUUIDBank
+      if (APFSUUIDBank != NULL){
+        //Free mem
+        FreePool(APFSUUIDBank);
+        //Reset counter
+        APFSUUIDBankCounter=0;
+      }
+      /* APFS container support */
+      //Fill APFSUUIDBank
+      APFSUUIDBank = APFSContainer_Support();
+    } else {
+      APFSUUIDBank = APFSContainer_Support();
+    }
     if (gSettings.DisableEntryScan) {
       DBG("Entry scan disabled\n");
     } else {
