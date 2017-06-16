@@ -1131,33 +1131,32 @@ VOID ScanLoader(VOID)
   DbgHeader("ScanLoader");
   // If scanloader starts multiple times, then we need to free systemplits,recoveryplists variables, also
   // refresh APFSUUIDBank
-  if ((SystemPlists != NULL)||(RecoveryPlists != NULL)) {
-    if (APFSUUIDBank != NULL&&gDriversFlags.APFSLoaded==TRUE){
+  if ((SystemPlists != NULL) || (RecoveryPlists != NULL)) {
+    if (APFSUUIDBank != NULL && gDriversFlags.APFSLoaded == TRUE){
       FreePool(APFSUUIDBank);
       //Reset APFSUUIDBank counter, we will re-enumerate it
       APFSUUIDBankCounter = 0;
       APFSUUIDBank = APFSContainer_Support();
     }
     if (SystemPlists != NULL){
-      //Don't touch default system version path's, so start from index #2
-      k = 2;
-      while (SystemPlists[k]!=NULL){
+      k = 0;
+      while (SystemPlists[k] != NULL){
         FreePool(SystemPlists[k]);
-        SystemPlists[k]=NULL;
+        SystemPlists[k] = NULL;
         k++;
       }
       FreePool(SystemPlists);
-      SystemPlists=NULL;
+      SystemPlists = NULL;
     }
     if (RecoveryPlists != NULL){
-      k = 1;//set k for rec plists, start from index #1
+      k = 0;
       while (RecoveryPlists[k] != NULL){
         FreePool(RecoveryPlists[k]);
-        RecoveryPlists[k]=NULL;
+        RecoveryPlists[k] = NULL;
         k++;
       }
       FreePool(RecoveryPlists);
-      RecoveryPlists=NULL;
+      RecoveryPlists = NULL;
     }
   }
     
