@@ -1875,21 +1875,21 @@ VOID PatchTableType132()
 
 VOID PatchTableType133()
 {
-  if (gSettings.PlatformFeature == 0xFFFF) {
+  if (gPlatformFeature == 0xFFFF) {
     return;
   }
   // Get Table Type133
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 133, 0);
   if (SmbiosTable.Raw != NULL) {
     MsgLog("Table 133 is present, PlatformFeature=%x\n", SmbiosTable.Type133->PlatformFeature);
-    MsgLog("Change to: %x\n", gSettings.PlatformFeature);
+    MsgLog("Change to: %x\n", gPlatformFeature);
   }
   ZeroMem((VOID*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
   newSmbiosTable.Type133->Hdr.Type = 133;
   newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+8;
   newSmbiosTable.Type133->Hdr.Handle = 0x8500; //ugly
-//  newSmbiosTable.Type133->PlatformFeature = gSettings.PlatformFeature;
-  CopyMem((VOID*)&newSmbiosTable.Type133->PlatformFeature, (VOID*)&gSettings.PlatformFeature, 8);
+//  newSmbiosTable.Type133->PlatformFeature = gPlatformFeature;
+  CopyMem((VOID*)&newSmbiosTable.Type133->PlatformFeature, (VOID*)&gPlatformFeature, 8);
   Handle = LogSmbiosTable(newSmbiosTable);
   return;  
 }

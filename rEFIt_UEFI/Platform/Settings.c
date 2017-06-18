@@ -4005,6 +4005,12 @@ ParseSMBIOSSettings(
     gFwFeaturesMask = (UINT32)GetPropertyInteger (Prop, gFwFeaturesMask);
     DBG ("FirmwareFeaturesMask: 0x%08x\n", gFwFeaturesMask);
   }
+    
+  Prop = GetProperty (DictPointer, "PlatformFeature");
+  if (Prop != NULL) {
+    gPlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
+    DBG ("PlatformFeature: 0x%04x\n", gPlatformFeature);
+  }
 }
 
 EFI_STATUS
@@ -5301,9 +5307,6 @@ GetUserSettings(
           }
         }
       }
-
-      Prop = GetProperty (DictPointer, "PlatformFeature");
-      gSettings.PlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
     }
 
     //CPU

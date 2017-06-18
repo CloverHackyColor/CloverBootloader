@@ -292,7 +292,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08d", gSettings.PlatformFeature);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
@@ -773,8 +773,8 @@ VOID ApplyInputs(VOID)
   }
   i++; //17
   if (InputItems[i].Valid) {
-    gSettings.PlatformFeature = (UINT64)StrDecimalToUintn(InputItems[i].SValue);
-    DBG("Apply PlatformFeature=%d\n", gSettings.PlatformFeature);
+    gPlatformFeature = (UINT64)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied PlatformFeature=%d\n", gPlatformFeature);
   }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
@@ -784,7 +784,7 @@ VOID ApplyInputs(VOID)
   i++; //19
   if (InputItems[i].Valid) {
     gSettings.BusSpeed = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
-    DBG("Apply BusSpeed=%d\n", gSettings.BusSpeed);
+    DBG("applied BusSpeed=%d\n", gSettings.BusSpeed);
   }
 
   i = 19;
@@ -935,11 +935,13 @@ VOID ApplyInputs(VOID)
   i++; //62
   if (InputItems[i].Valid) {
     gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied FirmwareFeatures=0x%x\n", gFwFeatures);
   }
 
   i++; //63
   if (InputItems[i].Valid) {
     gFwFeaturesMask = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied FirmwareFeaturesMask=0x%x\n", gFwFeaturesMask);
   }
 
   // CSR
@@ -4180,7 +4182,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuItem(SubScreen, 85, "Chassis Type:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 86, "ROM Version:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 87, "ROM Release Date:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 62, "FirmwareFeature:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 62, "FirmwareFeatures:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 63, "FirmwareFeaturesMask:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 17, "PlatformFeature:", TAG_INPUT, TRUE);
 
