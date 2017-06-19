@@ -1590,6 +1590,8 @@ extern UINTN 						  APFSUUIDBankCounter;
 extern UINT8 						 *APFSUUIDBank;
 extern CHAR16						 **SystemPlists;
 extern CHAR16						 **RecoveryPlists;
+extern EFI_GUID                        APFSSignature;
+extern BOOLEAN                         APFSSupport;
 //extern UINT32                         gCpuSpeed;  //kHz
 //extern UINT16                         gCPUtype;
 extern UINT64                         TurboMsr;
@@ -2415,6 +2417,12 @@ ParseSMBIOSSettings (
   );
 
 UINT8 *APFSContainer_Support(VOID);
+
+VOID SystemVersionInit(VOID);
+
+EFI_GUID *APFSPartitionUUIDExtract(
+  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  );
 
 UINTN
 NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type);

@@ -69,9 +69,10 @@ CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
 CHAR16 *gFirmwareRevision = NULL;
 #endif
 
-BOOLEAN                 gGuiIsReady = FALSE;
-BOOLEAN                 gThemeNeedInit = TRUE;
+BOOLEAN                 gGuiIsReady     = FALSE;
+BOOLEAN                 gThemeNeedInit  = TRUE;
 BOOLEAN                 DoHibernateWake = FALSE;
+BOOLEAN                 APFSSupport     = FALSE;
 
 //extern EFI_HANDLE              gImageHandle;
 //extern EFI_SYSTEM_TABLE*       gST;
@@ -1023,7 +1024,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
       gDriversFlags.PartitionLoaded = TRUE;
     } else if (StrStr(FileName, L"HFS") != NULL) {
       gDriversFlags.HFSLoaded = TRUE;
-    } else if (StrStr(FileName, L"apfs") != NULL) {
+    } else if (StriStr(FileName, L"apfs") != NULL) {
       gDriversFlags.APFSLoaded = TRUE;
     }
     if (DriverHandle != NULL && DriversToConnectNum != NULL && DriversToConnect != NULL) {
@@ -1581,8 +1582,7 @@ VOID SetOEMPath(CHAR16 *ConfName)
   }
 
 /*  S. Mitrofanov 08.06.2016
- *  GUID 4391AA92-6644-4D8A-9A84-DDD405C312F3 - Apple Firmware. 
- *  APFS Container introduced new rules for path's to boot.efi
+ *  APFS Container introduced new partitions structure
  *  Now we have, for example:
  * /dev/disk0 (internal, physical):
  *   #:                       TYPE NAME                    SIZE       IDENTIFIER
@@ -1600,31 +1600,142 @@ VOID SetOEMPath(CHAR16 *ConfName)
  *   3:                APFS Volume Recovery                521.1 MB   disk1s3
  *   4:                APFS Volume VM                      1.1 GB     disk1s4
  */
-UINTN  APFSUUIDBankCounter = 0;
-UINT8 *APFSUUIDBank = NULL;
-UINT8 *APFSContainer_Support(VOID){
+UINTN    APFSUUIDBankCounter = 0;
+UINT8   *APFSUUIDBank        = NULL;
+//Vednor APFS device path signature
+//BE74FCF7-0B7C-49F3-9147-01F4042E6842
+EFI_GUID APFSSignature       = {0xBE74FCF7, 0x0B7C, 0x49F3, { 0x91, 0x47, 0x01, 0xf4, 0x04, 0x2E, 0x68, 0x42 }};
+
+//Function for obtaining unique part id from APFS partition
+//IN DevicePath
+//Out: EFI_GUID 
+//null if it is not APFS part
+EFI_GUID *APFSPartitionUUIDExtract(
+  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  )
+{
+  while (!IsDevicePathEndType(DevicePath) &&
+         !(DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP)) {
+    DevicePath = NextDevicePathNode(DevicePath);
+  }
+  if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
+    //Check that vendor-assigned GUID defines APFS Container Partition
+    if (StriCmp(GuidLEToStr((EFI_GUID *)((UINT8 *)DevicePath+0x04)),GuidLEToStr(&APFSSignature)) == 0 ) {
+      return (EFI_GUID *)((UINT8 *)DevicePath+0x14);
+    }
+  }         
+  return NULL;
+}
+
+UINT8 *APFSContainer_Support(VOID) {
         /* 
          * S. Mtr 2017
          * APFS Container partition support
          * Gather System PartitionUniqueGUID
+         * edit: 17.06.2017
+         * Fiil UUIDBank only with APFS container UUIDs
          */
-        UINTN         VolumeIndex;
-        UINTN         DPSize      =0;   
-        REFIT_VOLUME  *Volume;
+        UINTN                     VolumeIndex;
+        REFIT_VOLUME             *Volume;
+        EFI_GUID                 *TmpUUID    = NULL;
         //Fill APFSUUIDBank
         APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
         for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-          Volume = Volumes[VolumeIndex];
-          //Looking for double 0x04 node inside DevPath
-          //So DPSize returned by NodeParser should be greater than 0x2A
-          if ((DPSize = NodeParser((UINT8 *)Volume->DevicePath,256,0x7F))>0x2A){
-            //Add to bank
-            CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,
-              (UINT8 *)Volume->DevicePath + DPSize - 0x10,0x10);
-            APFSUUIDBankCounter++;
-          }
+            Volume = Volumes[VolumeIndex];
+            //Check that current volume – apfs partition
+            if ((TmpUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL){
+              CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,(UINT8 *)TmpUUID,0x10);
+              APFSUUIDBankCounter++;
+            }                     
         }
-        return APFSUUIDBank;
+    return APFSUUIDBank;
+}
+
+//System / Recovery version filler
+CHAR16 *SystemVersionPlist      = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+CHAR16 *ServerVersionPlist      = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
+CHAR16 *RecoveryVersionPlist    = L"\\com.apple.recovery.boot\\SystemVersion.plist";
+CHAR16  APFSSysPlistPath[86]    = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
+CHAR16  APFSServerPlistPath[86] = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
+CHAR16  APFSRecPlistPath[58]    = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
+  
+
+VOID SystemVersionInit(VOID){ 
+  //Plists iterators
+  UINTN      SysIter            = 2;
+  UINTN      RecIter            = 1;
+  UINTN      k                  = 0;
+  // If scanloader starts multiple times, then we need to free systemplits,recoveryplists variables, also
+  // refresh APFSUUIDBank
+  if ((SystemPlists != NULL) || (RecoveryPlists != NULL)) {
+    if ((APFSUUIDBank != NULL) && (APFSSupport==TRUE)) {
+      FreePool(APFSUUIDBank);
+      //Reset APFSUUIDBank counter, we will re-enumerate it
+      APFSUUIDBankCounter = 0;
+      APFSUUIDBank = APFSContainer_Support();
+      if (APFSUUIDBankCounter == 0){
+        APFSSupport = FALSE;
+      }
+    }
+    if (SystemPlists != NULL) {
+      k = 0;
+      while (SystemPlists[k] != NULL) {
+        SystemPlists[k] = NULL;
+        k++;
+      }
+      FreePool(SystemPlists);
+      SystemPlists = NULL;
+    }
+    if (RecoveryPlists != NULL) {
+      k = 0;
+      while (RecoveryPlists[k] != NULL) {
+        RecoveryPlists[k] = NULL;
+        k++;
+      }
+      FreePool(RecoveryPlists);
+      RecoveryPlists = NULL;
+    }
+  }
+    /************************************************************************/
+  /*Allocate Memory for systemplists and recoveryplists********************/
+  //Check apfs support
+  if (APFSSupport==TRUE) {
+    SystemPlists = AllocateZeroPool((2*APFSUUIDBankCounter+3)*sizeof(CHAR16 *));//array of pointers
+    RecoveryPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
+  } else {
+    SystemPlists = AllocateZeroPool(sizeof(CHAR16 *)*3);
+    RecoveryPlists = AllocateZeroPool(sizeof(CHAR16 *)*2);
+  }
+  /* Fill it with standard paths*******************************************/
+  SystemPlists[0] = SystemVersionPlist;
+  SystemPlists[1] = ServerVersionPlist;
+  SystemPlists[2] = NULL;
+  RecoveryPlists[0] = RecoveryVersionPlist;
+  RecoveryPlists[1] = NULL;
+  /************************************************************************/
+  //Fill Plists 
+  for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
+      //Store UUID from bank
+      CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
+      //Init temp string with system/recovery APFS path
+      CHAR16 *TmpSysPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
+      CHAR16 *TmpServerPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
+      CHAR16 *TmpRecPlistPath = AllocateZeroPool(58*sizeof(CHAR16));
+      StrnCpy(TmpSysPlistPath,APFSSysPlistPath,85);
+      StrnCpy(TmpServerPlistPath,APFSServerPlistPath,85);
+      StrnCpy(TmpRecPlistPath,APFSRecPlistPath,57);
+      StrnCpy(TmpSysPlistPath+1,CurrentUUID,36);
+      StrnCpy(TmpServerPlistPath+1,CurrentUUID,36);
+      StrnCpy(TmpRecPlistPath+1,CurrentUUID,36);
+      //Fill SystemPlists/RecoveryPlists arrays
+      SystemPlists[SysIter] = TmpSysPlistPath;
+      SystemPlists[SysIter+1] = TmpServerPlistPath;
+      SystemPlists[SysIter+2] = NULL;
+      RecoveryPlists[RecIter] = TmpRecPlistPath;
+      RecoveryPlists[RecIter+1] = NULL;
+      SysIter+=2;
+      RecIter++;
+  }
 }
 
 //
@@ -2050,6 +2161,25 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainMenu.EntryCount = 0;
     OptionMenu.EntryCount = 0;
     ScanVolumes();
+    
+    //Check apfs driver loaded state
+    //Free APFSUUIDBank
+    if (APFSUUIDBank != NULL) {
+     //Free mem
+     FreePool(APFSUUIDBank);
+     //Reset counter
+     APFSUUIDBankCounter=0;
+    }
+    /* APFS container support */
+    //Fill APFSUUIDBank
+    APFSUUIDBank = APFSContainer_Support();
+    if (APFSUUIDBankCounter != 0) {
+      APFSSupport = TRUE;
+    } else {
+      APFSSupport = FALSE;
+    }
+    //Fill systemversion plists path
+    SystemVersionInit();
 
     // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
     if (!AfterTool) {
@@ -2096,23 +2226,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     GetSmcKeys(TRUE);
     
+
     // Add custom entries
     AddCustomEntries();
-    //Check apfs driver loaded state
-    if (gDriversFlags.APFSLoaded==TRUE) {
-      //Free APFSUUIDBank
-      if (APFSUUIDBank != NULL){
-        //Free mem
-        FreePool(APFSUUIDBank);
-        //Reset counter
-        APFSUUIDBankCounter=0;
-      }
-      /* APFS container support */
-      //Fill APFSUUIDBank
-      APFSUUIDBank = APFSContainer_Support();
-    } else {
-      APFSUUIDBank = APFSContainer_Support();
-    }
     if (gSettings.DisableEntryScan) {
       DBG("Entry scan disabled\n");
     } else {
