@@ -644,7 +644,6 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
 //  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
   REFIT_VOLUME    *Volume         = Entry->Volume;
   EFI_GUID        *BootGUID       = NULL;
-  EFI_GUID        *APFSBootUUID       = NULL;
   BOOLEAN         ret             = FALSE;
   UINT8           *Value          = NULL;
 
@@ -774,23 +773,21 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
        // Size -= 0x08;
        //We get starting offset of media device path, and then jumping 24 bytes to GUID start
        // BootGUID = (EFI_GUID*)(Data + NodeParser(Data, Size, 0x04) + 0x18);
-      
-        BootGUID = (EFI_GUID*)(Data + Size - 0x16);
-        //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
-        /* This method of UUID obtaining is deprecated for APFS container */
-        VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-        /* APFS Hibernation support*/
-        UINTN DPSize = 0;
-        DPSize = NodeParser((UINT8 *)Volume->DevicePath,256,0x7F);
-        CopyMem(APFSBootUUID,((UINT8 *)Volume->DevicePath) + DPSize - 0x10,0x10);
+       
+       /* APFS Hibernation support*/
+       //Check that current volume is APFS
+       if ((VolumeUUID=APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL) {
+         BootGUID = (EFI_GUID*)(Data + Size - 0x14);
+         //DBG("    APFS Boot0082 points to UUID:%g\n", BootGUID);
+       } else {
+         BootGUID = (EFI_GUID*)(Data + Size - 0x16);  
+         //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
+         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+       }        
         //DBG("    Volume has PartUUID=%g\n", VolumeUUID);
         if (!CompareGuid(BootGUID, VolumeUUID)) {
           ret = FALSE;
-          if (CompareGuid(APFSBootUUID,BootGUID)){
-            ret = TRUE;
-          }
-        } 
-		if (ret==TRUE) {
+        } else  {
           DBG("    Boot0082 points to Volume with UUID:%g\n", BootGUID);
 
         //3. Checks for boot-image exists
