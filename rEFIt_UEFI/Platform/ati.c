@@ -98,7 +98,7 @@ card_config_t card_configs[] = {
   {"Gari", 5},
   {"Futomaki", 5},
   {"Hamachi", 4},
-  {"OPM",         5},
+  {"OPM", 6},
   {"Ikura", 1},
   {"IkuraS", 6},
   {"Junsai", 6},
@@ -108,9 +108,9 @@ card_config_t card_configs[] = {
   {"Maguro", 1},
   {"MaguroS", 6},
   /* AMD8000Controller */
+  {"Exmoor", 6},
   {"Baladi",      6},
   /* AMD9000Controller */
-  {"Exmoor", 6},
   {"MalteseS", 1},
   {"Lagotto", 4},
   {"GreyhoundS", 1},
@@ -118,14 +118,23 @@ card_config_t card_configs[] = {
   {"Basset", 4},
   {"Greyhound", 6},
   {"Labrador",      6},
+  /* AMD9300Controller */
+  {"FlueveSWIP", 4},
   /* AMD9500Controller */
-  {"Elqui", 5},
   {"Acre", 3},
-  {"Berbice", 5},
-  {"Caroni", 5},
-  {"Florin", 6},
   {"Dayman", 6},
-  {"Guariba", 6}
+  {"Guariba", 6},
+  {"Huallaga", 3},
+  {"Orinoco", 5},
+  /* AMD9510Controller */
+  {"Berbice", 5},
+  /* AMD9515Controller */
+  {"Mazaruni", 5},
+  {"Longavi", 5},
+  /* AMD9520Controller */
+  {"Elqui", 5},
+  {"Caroni", 5},
+  {"Florin", 6}
 };
 
 radeon_card_info_t radeon_cards[] = {
@@ -313,12 +322,24 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67FF, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   
   /* Polaris12 */
-  {0x6980, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  {0x6981, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  {0x6985, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  {0x6986, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  {0x6987, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  {0x699F, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6980, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6981, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6985, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6986, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6987, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6995, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x699F, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",        kNull },
+
+  /* Vega 10 */
+  { 0x6860, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6861, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6862, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6863, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6864, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6867, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6868, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x686C, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x687F, 0x00000000, CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
 
   // PITCAIRN
   { 0x6800, 0x00000000, CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7970M",        kBuri }, // Mobile
@@ -1061,6 +1082,9 @@ const CHAR8 *chip_family_name[] = {
   "Ellesmere",
   "Baffin",
   "Greenland",
+  "Vega10",
+  // Vega11
+  // Navi
   ""
 };
 
