@@ -4,8 +4,9 @@
  *
  *  Created by Slice
  *  Fully reworked by Sherlocks, 2017
+ *
  *  Original patch by Nawcom
- *	http://forum.voodooprojects.org/index.php/topic,1029.0.html
+ *  http://forum.voodooprojects.org/index.php/topic,1029.0.html
  */
 
 
@@ -266,7 +267,7 @@ UINT8 broadwell_hd_vals[2][4] = {
 
 
 UINT8 skylake_ig_vals[14][4] = {
-  { 0x00, 0x00, 0x12, 0x19 },	  //0 Intel HD Graphics 530 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: DP3
+  { 0x00, 0x00, 0x12, 0x19 },	  //0 *iMac17,1 - Intel HD Graphics 530 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: DP3
   { 0x00, 0x00, 0x16, 0x19 },	  //1 Intel HD Graphics 520 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
   { 0x00, 0x00, 0x26, 0x19 },	  //2 Intel Iris Graphics 540 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
   { 0x00, 0x00, 0x27, 0x19 },	  //3 Intel Iris Graphics 550 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 21MB, Connector: LVDS1, DP2
@@ -295,11 +296,11 @@ UINT8 skylake_hd_vals[8][4] = {
 
 
 UINT8 kabylake_ig_vals[12][4] = {
-  { 0x00, 0x00, 0x12, 0x59 },	  //0 Intel HD Graphics 630 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: DP3
+  { 0x00, 0x00, 0x12, 0x59 },	  //0 *iMac18,2, iMac18,3 - Intel HD Graphics 630 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: DP3
   { 0x00, 0x00, 0x16, 0x59 },	  //1 Intel HD Graphics 620 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP1, HDMI1
   { 0x00, 0x00, 0x26, 0x59 },	  //2 Intel Iris Plus Graphics 640 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
   { 0x00, 0x00, 0x27, 0x59 },	  //3 Intel Iris Plus Graphics 650 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
-  { 0x00, 0x00, 0x1b, 0x59 },	  //4 *MacBookPro14,3, iMac18,2, iMac18,3 - Intel HD Graphics 630 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 21MB, Connector: LVDS1, DP1, HDMI1
+  { 0x00, 0x00, 0x1b, 0x59 },	  //4 *MacBookPro14,3 - Intel HD Graphics 630 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 21MB, Connector: LVDS1, DP1, HDMI1
   { 0x00, 0x00, 0x1e, 0x59 },	  //5 Intel HD Graphics 615 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 34MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
   { 0x00, 0x00, 0x23, 0x59 },	  //6 Intel HD Graphics 635 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
   { 0x01, 0x00, 0x1e, 0x59 },	  //7 *MacBook10,1 - Intel HD Graphics 615 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 38MB, FBM(cursor): 0MB, Connector: LVDS1, DP2
@@ -625,7 +626,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x190B, "Intel HD Graphics 510"          }, //
   { 0x190E, "Intel Skylake GT1"              }, //
   //GT2
-  { 0x1912, "Intel HD Graphics 530"          }, // Desktop
+  { 0x1912, "Intel HD Graphics 530"          }, // Desktop - iMac17,1
   { 0x1913, "Intel Skylake GT2f"             }, //
   { 0x1915, "Intel Skylake GT2f"             }, //
   { 0x1916, "Intel HD Graphics 520"          }, // Mobile
@@ -664,18 +665,18 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5915, "Intel Kabylake GT1.5"           }, //
   { 0x5917, "Intel Kabylake GT1.5"           }, //
   //GT2
-  { 0x5912, "Intel HD Graphics 630"          }, // Desktop
+  { 0x5912, "Intel HD Graphics 630"          }, // Desktop - iMac18,2, iMac18,3
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
   { 0x591A, "Intel Kabylake GT2"             }, //
-  { 0x591B, "Intel HD Graphics 630"          }, // Mobile
+  { 0x591B, "Intel HD Graphics 630"          }, // Mobile - MacBookPro14,3
   { 0x591D, "Intel HD Graphics P630"         }, // Workstation, Mobile Workstation
-  { 0x591E, "Intel HD Graphics 615"          }, // Ultramobile
+  { 0x591E, "Intel HD Graphics 615"          }, // Ultramobile - MacBook10,1
   //GTF2
   { 0x5921, "Intel Kabylake GT2F"            }, //
   //GT3
   { 0x5923, "Intel HD Graphics 635"          }, //
-  { 0x5926, "Intel Iris Plus Graphics 640"   }, // Mobile
-  { 0x5927, "Intel Iris Plus Graphics 650"   }, //
+  { 0x5926, "Intel Iris Plus Graphics 640"   }, // Mobile - MacBookPro14,1, iMac18,1
+  { 0x5927, "Intel Iris Plus Graphics 650"   }, // Mobile - MacBookPro14,2
   //GT4
   { 0x593B, "Intel Kabylake GT4"             }, //
 
@@ -738,9 +739,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found quarter quarter VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 240:
       SetUGAWidth = TRUE;
@@ -748,9 +749,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Half quarter VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 320:
       SetUGAWidth = TRUE;
@@ -758,9 +759,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found quarter VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 400:
       SetUGAWidth = TRUE;
@@ -768,9 +769,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Wide quarter VGA Display - 5:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 480:
       SetUGAWidth = TRUE;
@@ -778,9 +779,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Half-size VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 640:
       SetUGAWidth = TRUE;
@@ -820,9 +821,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Full Wide VGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 960:
       SetUGAWidth = TRUE;
@@ -866,9 +867,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found XGA Plus Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 1280:
       SetUGAWidth = TRUE;
@@ -900,15 +901,18 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Full Wide XGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 1400:
       SetUGAWidth = TRUE;
       if(UGAHeight == 1050) {
         SetUGAHeight = TRUE;
         DBG ("  Found Super XGA Plus Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+      }
+      else {
+        DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
     case 1440:
@@ -917,9 +921,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Wide XGA Plus Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 1600:
       SetUGAWidth = TRUE;
@@ -999,9 +1003,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Wide Quad XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 3200:
       SetUGAWidth = TRUE;
@@ -1046,9 +1050,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         SetUGAHeight = TRUE;
         DBG ("  Found Hex XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
-	  else {
+      else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-	  }
+      }
       break;
     case 5120:
       SetUGAWidth = TRUE;
@@ -1192,25 +1196,25 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if (SetUGAWidth && SetUGAHeight) {
         if (gSettings.DualLink != 0) {
           if (UGAWidth < 1400) {
-			DBG("  Default AAPL01,DualLink = 1\n");
-			DBG("  Low Resolution Display\n");
-			DBG("  AAPL01,DualLink: changed from 1 to not used\n");
+            DBG("  Default AAPL01,DualLink = 1\n");
+            DBG("  Low Resolution Display\n");
+            DBG("  AAPL01,DualLink: changed from 1 to not used\n");
           }
           else {
-			devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
-			DBG("  AAPL01,DualLink = 1\n");
+            devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
+            DBG("  AAPL01,DualLink = 1\n");
           }
         }
         else {
           if (UGAWidth >= 1400) {
-			DBG("  Default AAPL01,DualLink = 0\n");
-			DBG("  High Resolution Display\n");
-			DualLink = 1;
-			devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
-			DBG("  AAPL01,DualLink: changed from 0 to 1\n");
+            DBG("  Default AAPL01,DualLink = 0\n");
+            DBG("  High Resolution Display\n");
+            DualLink = 1;
+            devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
+            DBG("  AAPL01,DualLink: changed from 0 to 1\n");
           }
           else {
-			DBG("  AAPL01,DualLink: not used\n");
+            DBG("  AAPL01,DualLink: not used\n");
           }
         }
       }
@@ -1222,31 +1226,31 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         else {
           DBG("  AAPL01,DualLink: not used\n");
         }
-	  }
+      }
       break;
     default:
       if (SetUGAWidth && SetUGAHeight) {
         if (gSettings.DualLink != 0) {
           if (UGAWidth < 1400) {
-			DBG("  Default AAPL00,DualLink = 1\n");
-			DBG("  Low Resolution Display\n");
-			DBG("  AAPL00,DualLink: changed from 1 to not used\n");
+            DBG("  Default AAPL00,DualLink = 1\n");
+            DBG("  Low Resolution Display\n");
+            DBG("  AAPL00,DualLink: changed from 1 to not used\n");
           }
           else {
-			devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
-			DBG("  AAPL00,DualLink = 1\n");
+            devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
+            DBG("  AAPL00,DualLink = 1\n");
           }
         }
         else {
           if (UGAWidth >= 1400) {
-			DBG("  Default AAPL00,DualLink = 0\n");
-			DBG("  High Resolution Display\n");
-			DualLink = 1;
-			devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
-			DBG("  AAPL00,DualLink: changed from 0 to 1\n");
+            DBG("  Default AAPL00,DualLink = 0\n");
+            DBG("  High Resolution Display\n");
+            DualLink = 1;
+            devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
+            DBG("  AAPL00,DualLink: changed from 0 to 1\n");
           }
           else {
-			DBG("  AAPL00,DualLink: not used\n");
+            DBG("  AAPL00,DualLink: not used\n");
           }
         }
       }
@@ -2076,7 +2080,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x190B: // "Intel HD Graphics 510"           //
     case 0x190E: // "Intel Skylake GT1"               //
       //GT2
-    case 0x1912: // "Intel HD Graphics 530"           // Desktop
+    case 0x1912: // "Intel HD Graphics 530"           // Desktop - iMac17,1
     case 0x1913: // "Intel Skylake GT2f"              //
     case 0x1915: // "Intel Skylake GT2f"              //
     case 0x1916: // "Intel HD Graphics 520"           // Mobile
@@ -2247,18 +2251,18 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x5915: // "Intel Kabylake GT1.5"            //
     case 0x5917: // "Intel Kabylake GT1.5"            //
       //GT2
-    case 0x5912: // "Intel HD Graphics 630"           // Desktop
+    case 0x5912: // "Intel HD Graphics 630"           // Desktop - iMac18,2, iMac18,3
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
     case 0x591A: // "Intel Kabylake GT2"              //
-    case 0x591B: // "Intel HD Graphics 630"           // Mobile
+    case 0x591B: // "Intel HD Graphics 630"           // Mobile - MacBookPro14,3
     case 0x591D: // "Intel HD Graphics P630"          // Workstation, Mobile Workstation
-    case 0x591E: // "Intel HD Graphics 615"           // Ultramobile
+    case 0x591E: // "Intel HD Graphics 615"           // Ultramobile - MacBook10,1
       //GTF2
     case 0x5921: // "Intel Kabylake GT2F"             //
       //GT3
     case 0x5923: // "Intel HD Graphics 635"           //
-    case 0x5926: // "Intel Iris Plus Graphics 640"     // Mobile
-    case 0x5927: // "Intel Iris Plus Graphics 650"     //
+    case 0x5926: // "Intel Iris Plus Graphics 640"    // Mobile - MacBookPro14,1, iMac18,1
+    case 0x5927: // "Intel Iris Plus Graphics 650"    // Mobile - MacBookPro14,2
       //GT4
     case 0x593B: // "Intel Kabylake GT4"              //
       switch (gma_dev->device_id) {

@@ -4009,7 +4009,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "PlatformFeature");
   if (Prop != NULL) {
     gPlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
-    DBG ("PlatformFeature: 0x%04x\n", gPlatformFeature);
+    DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
   }
 }
 

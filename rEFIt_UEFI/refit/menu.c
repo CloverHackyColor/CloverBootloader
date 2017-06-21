@@ -292,7 +292,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gPlatformFeature);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%x", gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
@@ -774,7 +774,7 @@ VOID ApplyInputs(VOID)
   i++; //17
   if (InputItems[i].Valid) {
     gPlatformFeature = (UINT64)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied PlatformFeature=%d\n", gPlatformFeature);
+    DBG("applied PlatformFeature=0x%x\n", gPlatformFeature);
   }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
