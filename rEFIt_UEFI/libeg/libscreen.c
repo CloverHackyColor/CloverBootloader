@@ -186,7 +186,6 @@ VOID egDumpSetConsoleVideoModes(VOID)
   } else if (BestMode != 0) {
     MsgLog("  Selected mode (%d) is not valid\n",BestMode);
   }
-  
 }
 
 EFI_STATUS egSetMaxResolution()
@@ -480,11 +479,12 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
 
         ConsoleControl->GetMode(ConsoleControl, &CurrentMode, NULL, NULL);
         
-        NewMode = Enable ? EfiConsoleControlScreenGraphics
-                         : EfiConsoleControlScreenText;
-        if (CurrentMode != NewMode)
+		NewMode = Enable ? EfiConsoleControlScreenGraphics : EfiConsoleControlScreenText;
+		
+		if (CurrentMode != NewMode) {
             ConsoleControl->SetMode(ConsoleControl, NewMode);
     }
+	}
 }
 
 //

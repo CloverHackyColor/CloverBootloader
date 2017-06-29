@@ -319,7 +319,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67E9, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EB, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EF, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon RX460",             kAcre },
-  { 0x67FF, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
+  { 0x67FF, 0x00000000, CHIP_FAMILY_BAFFIN, "AMD Radeon RX560",        kNull },
   
   /* Polaris12 */
   { 0x6980, 0x00000000, CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },

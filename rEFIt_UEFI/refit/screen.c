@@ -96,7 +96,7 @@ static BOOLEAN haveError = FALSE;
 
 VOID InitScreen(IN BOOLEAN SetMaxResolution)
 {
-//    DbgHeader("InitScreen");
+	//DbgHeader("InitScreen");
     // initialize libeg
     egInitScreen(SetMaxResolution);
     
@@ -105,17 +105,18 @@ VOID InitScreen(IN BOOLEAN SetMaxResolution)
         AllowGraphicsMode = TRUE;
     } else {
         AllowGraphicsMode = FALSE;
-        egSetGraphicsModeEnabled(FALSE);   // just to be sure we are in text mode
+		//egSetGraphicsModeEnabled(FALSE);   // just to be sure we are in text mode
     }
+	
     GraphicsScreenDirty = TRUE;
     
     // disable cursor
-    gST->ConOut->EnableCursor (gST->ConOut, FALSE);
+	gST->ConOut->EnableCursor(gST->ConOut, FALSE);
     
     UpdateConsoleVars();
 
     // show the banner (even when in graphics mode)
-//    DrawScreenHeader(L"Initializing...");
+	//DrawScreenHeader(L"Initializing...");
 }
 
 VOID SetupScreen(VOID)
@@ -124,19 +125,18 @@ VOID SetupScreen(VOID)
         // switch to text mode if requested
         AllowGraphicsMode = FALSE;
         SwitchToText(FALSE);
-        
     } else if (AllowGraphicsMode) {
         // clear screen and show banner
         // (now we know we'll stay in graphics mode)
         SwitchToGraphics();
-//        BltClearScreen(TRUE);
+		//BltClearScreen(TRUE);
     }
 }
 
 static VOID SwitchToText(IN BOOLEAN CursorEnabled)
 {
     egSetGraphicsModeEnabled(FALSE);
-    gST->ConOut->EnableCursor (gST->ConOut, CursorEnabled);
+	gST->ConOut->EnableCursor(gST->ConOut, CursorEnabled);
 }
 
 static VOID SwitchToGraphics(VOID)
@@ -151,7 +151,6 @@ static VOID SwitchToGraphics(VOID)
 //
 // Screen control for running tools
 //
-
 VOID BeginTextScreen(IN CHAR16 *Title)
 {
     DrawScreenHeader(Title);
@@ -174,19 +173,21 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways)
 
 VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode, IN CHAR16 *Title)
 {
-    if (!AllowGraphicsMode)
+	if (!AllowGraphicsMode) {
         UseGraphicsMode = FALSE;
+	}
     
     if (UseGraphicsMode) {
         SwitchToGraphics();
-//        BltClearScreen(FALSE);
+		//BltClearScreen(FALSE);
     }
     
     // show the header
-//    DrawScreenHeader(Title);
+	//DrawScreenHeader(Title);
     
-    if (!UseGraphicsMode)
+	if (!UseGraphicsMode) {
         SwitchToText(TRUE);
+	}
     
     // reset error flag
     haveError = FALSE;
@@ -211,11 +212,11 @@ VOID FinishExternalScreen(VOID)
 VOID TerminateScreen(VOID)
 {
     // clear text screen
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    gST->ConOut->ClearScreen (gST->ConOut);
+	gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
+	gST->ConOut->ClearScreen(gST->ConOut);
     
     // enable cursor
-    gST->ConOut->EnableCursor (gST->ConOut, TRUE);
+	gST->ConOut->EnableCursor(gST->ConOut, TRUE);
 }
 
 static VOID DrawScreenHeader(IN CHAR16 *Title)
@@ -224,15 +225,17 @@ static VOID DrawScreenHeader(IN CHAR16 *Title)
 	CHAR16* BannerLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
   BannerLine[ConWidth] = 0;
 
-
   // clear to black background
-  gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-  //    gST->ConOut->ClearScreen (gST->ConOut);
+	//gST->ConOut->SetAttribute(gST->ConOut, ATTR_BASIC);
+  //gST->ConOut->ClearScreen (gST->ConOut);
 
   // paint header background
-  gST->ConOut->SetAttribute (gST->ConOut, ATTR_BANNER);
-  for (i = 1; i < ConWidth-1; i++)
+  gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
+	
+	for (i = 1; i < ConWidth-1; i++) {
     BannerLine[i] = BOXDRAW_HORIZONTAL;
+	}
+	
 	BannerLine[0] = BOXDRAW_DOWN_RIGHT;
 	BannerLine[ConWidth-1] = BOXDRAW_DOWN_LEFT;
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
@@ -383,9 +386,11 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CHAR16 *where)
 VOID SwitchToGraphicsAndClear(VOID)
 {
     SwitchToGraphics();
-    if (GraphicsScreenDirty)
+	if (GraphicsScreenDirty) {
         BltClearScreen(TRUE);
+	}
 }
+
 /*
 typedef struct {
   INTN     XPos;
@@ -753,80 +758,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   egFreeImage(NewTopImage);
   GraphicsScreenDirty = TRUE;
 }
-/*
-VOID BltImageCompositeIndicator(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos, INTN Scale)
-{
-    INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
-    BOOLEAN Selected = TRUE;
-    EG_IMAGE *CompImage;
-    EG_IMAGE *NewBaseImage;
-    EG_IMAGE *NewTopImage;
     
-    if (!BaseImage || !TopImage) {
-        return;
-    }
-    if (Scale < 0) {
-        Scale = -Scale;
-        Selected = FALSE;
-    }
-    
-    NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
-    TotalWidth = NewBaseImage->Width;
-    TotalHeight = NewBaseImage->Height;
-    //DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, NewBaseImage->HasAlpha);
-    
-    NewTopImage = egCopyScaledImage(TopImage, Scale); //will be Scale/16
-    CompWidth = NewTopImage->Width;
-    CompHeight = NewTopImage->Height;
-    //DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, NewTopImage->HasAlpha);
-    
-    if (!IsEmbeddedTheme()) { // regular theme
-        CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
-                                        (CompHeight > TotalHeight)?CompHeight:TotalHeight,
-                                        TRUE,
-                                        &MenuBackgroundPixel);
-    } else { // embedded theme - draw box around icons
-        CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
-                                        (CompHeight > TotalHeight)?CompHeight:TotalHeight,
-                                        TRUE,
-                                        &EmbeddedBackgroundPixel);
-    }
-    if (!CompImage) {
-        DBG("Can't create CompImage\n");
-        return;
-    }
-    //to simplify suppose square images
-    if (CompWidth < TotalWidth) {
-        OffsetX = (TotalWidth - CompWidth) >> 1;
-        OffsetY = (TotalHeight - CompHeight) >> 1;
-        egComposeImage(CompImage, NewBaseImage, 0, 0);
-        CompWidth = TotalWidth;
-        CompHeight = TotalHeight;
-    } else {
-        OffsetX = (CompWidth - TotalWidth) >> 1;
-        OffsetY = (CompHeight - TotalHeight) >> 1;
-        egComposeImage(CompImage, NewBaseImage, OffsetX, OffsetY);
-    }
-    
-    // blit to screen and clean up
- //   if (IsEmbeddedTheme()) {
-        // regular theme
-      if (GlobalConfig.NonSelectedGrey && !Selected) {
-        BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
-      } else {
-        BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
-      }
-//    } else {
-      // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
-//      egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-//    }
-//
-    egFreeImage(CompImage);
-    egFreeImage(NewBaseImage);
-    egFreeImage(NewTopImage);
-    GraphicsScreenDirty = TRUE;
-}
-*/
 #define MAX_SIZE_ANIME 256
 
 VOID FreeAnime(GUI_ANIME *Anime)
@@ -1152,7 +1084,7 @@ static VOID UpdateConsoleVars()
     UINTN i;
 
     // get size of text console
-    if  (gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &ConWidth, &ConHeight) != EFI_SUCCESS) {
+	if  (gST->ConOut->QueryMode(gST->ConOut, gST->ConOut->Mode->Mode, &ConWidth, &ConHeight) != EFI_SUCCESS) {
         // use default values on error
         ConWidth = 80;
         ConHeight = 25;
@@ -1165,7 +1097,10 @@ static VOID UpdateConsoleVars()
 
     // make a buffer for a whole text line
     BlankLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
-    for (i = 0; i < ConWidth; i++)
+	
+	for (i = 0; i < ConWidth; i++) {
         BlankLine[i] = ' ';
+	}
+	
     BlankLine[i] = 0;
 }

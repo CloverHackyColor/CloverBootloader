@@ -91,6 +91,8 @@ BOOLEAN SavePreBootLog = FALSE;
 #define TEXT_CORNER_REVISION  (1)
 #define TEXT_CORNER_HELP      (2)
 
+#define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
+
 // other menu definitions
 
 #define MENU_FUNCTION_INIT            (0)
@@ -2424,7 +2426,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
         }
         break;
-/* just a sample code
+			/* just a sample code
       case SCAN_F7:
         Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
         DBG("create folder %r\n", Status);
@@ -2497,18 +2499,21 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
     }
   }
+	
   StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
-  if (ChosenEntry)
+	
+	if (ChosenEntry) {
     *ChosenEntry = Screen->Entries[State.CurrentSelection];
+	}
+	
   *DefaultEntryIndex = State.CurrentSelection;
+	
   return MenuExit;
 }
 
-//
-// text-mode generic style
-//
-#define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
-
+/**
+ * Text Mode menu.
+ */
 static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i = 0, j = 0;
@@ -2517,33 +2522,52 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
   //static CHAR16 **DisplayStrings;
   CHAR16 *TimeoutMessage;
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
+	UINTN OldChosenItem = ~(UINTN)0;
 
   switch (Function) {
 
     case MENU_FUNCTION_INIT:
       // vertical layout
       MenuPosY = 4;
-      if (Screen->InfoLineCount > 0)
+			
+			if (Screen->InfoLineCount > 0) {
         MenuPosY += Screen->InfoLineCount + 1;
+			}
+			
       MenuHeight = ConHeight - MenuPosY;
-      if (Screen->TimeoutSeconds > 0)
+			
+			if (Screen->TimeoutSeconds > 0) {
         MenuHeight -= 2;
+			}
+			
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight, 0);
 
       // determine width of the menu
       TextMenuWidth = 50;  // minimum
       for (i = 0; i <= State->MaxIndex; i++) {
         ItemWidth = StrLen(Screen->Entries[i]->Title);
-        if (TextMenuWidth < ItemWidth)
+				
+				if (TextMenuWidth < ItemWidth) {
           TextMenuWidth = ItemWidth;
       }
-      if (TextMenuWidth > ConWidth - 6)
+      }
+			
+			if (TextMenuWidth > ConWidth - 6) {
         TextMenuWidth = ConWidth - 6;
+			}
+			
+			if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 90) {
+					j = OldChosenConfig;
+			}
 
       break;
 
     case MENU_FUNCTION_CLEANUP:
       // release temporary memory
+			
+			// reset default output colours
+			gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
+			
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
@@ -2555,8 +2579,10 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 			}
 
 			BeginTextScreen(Screen->Title);
+			
       if (Screen->InfoLineCount > 0) {
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+				
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
           gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
           gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
@@ -2565,42 +2591,67 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
       for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
 				gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
-				if (i == State->CurrentSelection)
+				
+				if (i == State->CurrentSelection) {
 					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-				else
+				} else {
 					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+				}
 
 				StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[i]->Title);
+				
         if (Screen->Entries[i]->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->BValue? L":[+]":L":[ ]");
+            StrCatS(ResultString, TITLE_MAX_LEN,
+										((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->BValue? L": [+]" : L": [ ]");
           } else {
             StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
           }
         } else if (Screen->Entries[i]->Tag == TAG_CHECKBIT) {
+					// check boxes
           StrCatS(ResultString, TITLE_MAX_LEN, (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue &
-                                (Screen->Entries[i]->Row)) ? L":[+]":L":[ ]");
+                                (Screen->Entries[i]->Row)) ? L": [+]" : L": [ ]");
+				} else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
+					// radio buttons
+					
+					// update chosen config
+					if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 90) {
+						OldChosenItem = OldChosenConfig;
+					}
+					
+					StrCatS(ResultString, TITLE_MAX_LEN, (Screen->Entries[i]->Row == OldChosenItem) ? L": (*)" : L": ( )");
         }
-				for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++)
+				
+				for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
 					ResultString[j] = L' ';
+				}
+				
 				ResultString[j] = 0;
 				gST->ConOut->OutputString (gST->ConOut, ResultString);
       }
+			
       // scrolling indicators
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
       gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY);
-      if (State->FirstVisible > 0)
+			
+			if (State->FirstVisible > 0) {
         gST->ConOut->OutputString (gST->ConOut, ArrowUp);
-      else
+			} else {
         gST->ConOut->OutputString (gST->ConOut, L" ");
+			}
+			
       gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + State->MaxVisible);
-      if (State->LastVisible < State->MaxIndex)
+			
+			if (State->LastVisible < State->MaxIndex) {
         gST->ConOut->OutputString (gST->ConOut, ArrowDown);
-      else
+			} else {
         gST->ConOut->OutputString (gST->ConOut, L" ");
+			}
+			
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
+			// last selection
       // redraw selection cursor
       gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->LastSelection - State->FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
@@ -2608,39 +2659,67 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 			StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[State->LastSelection]->Title);
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->ItemType == BoolValue) {
-          StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->BValue? L":[+]":L":[ ]");
+          StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->BValue? L": [+]" : L": [ ]");
         } else {
           StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
         }
       } else if (Screen->Entries[State->LastSelection]->Tag == TAG_CHECKBIT) {
-        StrCatS(ResultString, TITLE_MAX_LEN, (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue &
-                              (Screen->Entries[State->LastSelection]->Row)) ? L":[+]":L":[ ]");
+				// check boxes
+        StrCatS(ResultString, TITLE_MAX_LEN,
+								(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue &
+								 (Screen->Entries[State->LastSelection]->Row)) ? L": [+]" : L": [ ]");
+			} else if (Screen->Entries[State->LastSelection]->Tag == TAG_SWITCH) {
+				// radio buttons
+				
+				if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 90) {
+					OldChosenItem = OldChosenConfig;
+				}
+				
+				StrCatS(ResultString, TITLE_MAX_LEN,
+								(Screen->Entries[State->LastSelection]->Row == OldChosenItem) ? L": (*)" : L": ( )");
       }
+			
 			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
 				ResultString[j] = L' ';
       }
+			
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
 
+			// current selection
 			gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
 			StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[State->CurrentSelection]->Title);
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->ItemType == BoolValue) {
-			    StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue? L":[+]":L":[ ]");
+			    StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue? L": [+]" : L": [ ]");
         } else {
           StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
         }
       } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_CHECKBIT) {
-        StrCatS(ResultString, TITLE_MAX_LEN, (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue &
-                              (Screen->Entries[State->CurrentSelection]->Row)) ? L":[+]":L":[ ]");
+				// check boxes
+        StrCatS(ResultString, TITLE_MAX_LEN,
+								(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue &
+								 (Screen->Entries[State->CurrentSelection]->Row)) ? L": [+]" : L": [ ]");
+			} else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_SWITCH) {
+				// radio buttons
+				
+				if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 90) {
+					OldChosenItem = OldChosenConfig;
       }
+				
+				StrCatS(ResultString, TITLE_MAX_LEN,
+								 (Screen->Entries[State->CurrentSelection]->Row == OldChosenItem) ? L": (*)" : L": ( )");
+			}
+			
 			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
 				ResultString[j] = L' ';
       }
+			
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
       //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
+			
       break;
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
@@ -2657,14 +2736,14 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         gST->ConOut->OutputString (gST->ConOut, TimeoutMessage);
         FreePool(TimeoutMessage);
       }
+			
       break;
   }
 }
 
 /**
- * graphical generic style
+ * Draw text with specific coordinates.
  */
-
 INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
@@ -2702,8 +2781,8 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 }
 
 /**
- * Draw Boot Camp Style text.
- * author: Needy
+ * Helper function to draw text for Boot Camp Style.
+ * @author: Needy
  */
 VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
@@ -2713,11 +2792,13 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   }
   
   // init
-  UINTN  ChrsNum = 12;
-  UINTN  EllipsisLen = 3;
-  UINTN  TextLen = StrLen(Text);
+  INTN ChrsNum = 12;
+  INTN TextLen = StrLen(Text);
+	INTN EllipsisLen = 3;
   CHAR16 *BCSText = NULL;
   CHAR16 *EllipsisText = L"...";
+  
+	EllipsisText[EllipsisLen] = '\0';
   
   // more space, more characters
   if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
@@ -2736,19 +2817,16 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   
   // if the text exceeds the given limit
   if (TextLen > ChrsNum) {
-    // allocate memory
     BCSText = AllocatePool((sizeof(CHAR16) * ChrsNum) + 1);
   
     // copy the permited amound of chars minus the ellipsis
-    StrnCpy(BCSText, Text, ChrsNum - EllipsisLen);
+    StrnCpyS(BCSText, (ChrsNum - EllipsisLen) + 1, Text, ChrsNum - EllipsisLen);
 
-    // end of string before ellipsis
     BCSText[ChrsNum - EllipsisLen] = '\0';
 
-    // add ellipsis at the end
-    StrCat(BCSText, EllipsisText);
+    // add ellipsis
+    StrnCatS(BCSText, ChrsNum + 1, EllipsisText, EllipsisLen);
     
-    // end of string
     BCSText[ChrsNum] = '\0';
     
     // error check
@@ -2756,17 +2834,18 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
       return;
     }
     
-    // draw text
     DrawTextXY(BCSText, XPos, YPos, XAlign);
     
-    // free the allocated memory
     FreePool(BCSText);
   } else {
-    // draw text
+		// draw full text
     DrawTextXY(Text, XPos, YPos, XAlign);
   }
 }
 
+/**
+ * Draw menu text.
+ */
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   //use Text=null to reinit the buffer
@@ -2979,7 +3058,9 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
   }
 }
 
-
+/**
+ * Graphical menu.
+ */
 VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
@@ -2990,6 +3071,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
   INTN PlaceCentre = (TextHeight / 2) - 7;
   UINTN OldChosenItem = ~(UINTN)0;
+	INTN TitleLen = 0;
   
   HidePointer();
 
@@ -2998,7 +3080,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
-      SwitchToGraphicsAndClear();
+			//SwitchToGraphicsAndClear();
+			BltClearScreen(FALSE);
 
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
@@ -3014,7 +3097,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         }        
       }
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, j);
-      // determine width of the menu -- not working
+      // determine width of the menu - not working
       //MenuWidth = 80;  // minimum
       MenuWidth = LAYOUT_TEXT_WIDTH; //500
       DrawMenuText(NULL, 0, 0, 0, 0);
@@ -3043,7 +3126,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         INTN FilmYPos = (INTN)EntriesPosY;
         BltImageAlpha(Screen->TitleImage, FilmXPos, FilmYPos, &MenuBackgroundPixel, 16);
 
-        // Update FilmPlace only if not set by InitAnime
+        // update FilmPlace only if not set by InitAnime
         if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
           Screen->FilmPlace.XPos = FilmXPos;
           Screen->FilmPlace.YPos = FilmYPos;
@@ -3070,26 +3153,26 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
     case MENU_FUNCTION_PAINT_ALL:
       DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
-//      DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
-//      DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
+			//DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
+			//DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
       t2 = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
       t1 = EntriesPosX + TextHeight + TEXT_XMARGIN + MenuWidth + 16;
-//      DBG("PAINT_ALL: %d %d\n", t1, t2);
+			//DBG("PAINT_ALL: %d %d\n", t1, t2);
       SetBar(t1, EntriesPosY, t2, State);
 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
 
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
-        INTN  TitleLen;
         REFIT_MENU_ENTRY *Entry = Screen->Entries[i];
-
         TitleLen = StrLen(Entry->Title);
+				
         Entry->Place.XPos = EntriesPosX;
         Entry->Place.YPos = EntriesPosY + j * TextHeight;
         Entry->Place.Width = TitleLen * GlobalConfig.CharWidth;
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
         
+				/*
         if (Entry->Tag == TAG_SWITCH) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 3) {
             OldChosenItem = OldChosenTheme;
@@ -3097,6 +3180,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
             OldChosenItem = OldChosenConfig;
           }
         }
+				*/
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
@@ -3107,7 +3191,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
             BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
                   EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
                   &MenuBackgroundPixel, 16);
-          } else { //text input
+          } else {
+						// text input
             StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue);
             StrCatS(ResultString, TITLE_MAX_LEN, L" ");
             Entry->Place.Width = StrLen(ResultString) * GlobalConfig.CharWidth;
@@ -3123,6 +3208,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                         EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
         } else if (Entry->Tag == TAG_SWITCH) {
+					
+					if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 3) {
+						OldChosenItem = OldChosenTheme;
+					} else if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 90) {
+						OldChosenItem = OldChosenConfig;
+					}
+					
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
@@ -3130,7 +3222,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                         EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
         } else {
-//          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
+					//DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX, Entry->Place.YPos, 0xFFFF);
@@ -3143,10 +3235,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
     case MENU_FUNCTION_PAINT_SELECTION:
     {
+			// last selection
       REFIT_MENU_ENTRY *EntryL = Screen->Entries[State->LastSelection];
       REFIT_MENU_ENTRY *EntryC = Screen->Entries[State->CurrentSelection];
-      UINTN  TitleLen = StrLen(EntryL->Title);
+      TitleLen = StrLen(EntryL->Title);
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryL->Title);
+			
+			/*
       if (EntryL->Tag == TAG_SWITCH) {
         if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 3) {
           OldChosenItem = OldChosenTheme;
@@ -3154,10 +3249,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           OldChosenItem = OldChosenConfig;
         }
       }
+			*/
 
       // redraw selection cursor
-      // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
-      //usr-sse2
+      // 1. blackosx swapped this around so drawing of selection comes before drawing scrollbar.
+      // 2. usr-sse2
       if (EntryL->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryL)->Item->ItemType == BoolValue) {
           DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
@@ -3174,14 +3270,21 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                        TitleLen + EntryL->Row);
         }
       } else if (EntryL->Tag == TAG_SWITCH) {
+				
+				if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 3) {
+					OldChosenItem = OldChosenTheme;
+				} else if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 90) {
+					OldChosenItem = OldChosenConfig;
+				}
+				
         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
-        BltImageAlpha((EntryL->Row == OldChosenItem) ? Buttons[1]:Buttons[0],
+        BltImageAlpha((EntryL->Row == OldChosenItem) ? Buttons[1] : Buttons[0],
           EntriesPosX + TEXT_XMARGIN, EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
       } else if (EntryL->Tag == TAG_CHECKBIT) {
         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryL->Place.YPos, 0xFFFF);
-        BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row) ? Buttons[3] :Buttons[2],
+        BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row) ? Buttons[3] : Buttons[2],
                       EntriesPosX + TEXT_XMARGIN, EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);        
       } else {
@@ -3189,7 +3292,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
       
-      // Current selection
+      // current selection
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
       TitleLen = StrLen(EntryC->Title);
       if (EntryC->Tag == TAG_SWITCH) {
@@ -3251,10 +3354,9 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   MouseBirth();
 }
 
-//
-// graphical main menu style
-//
-
+/**
+ * Draw entries for GUI.
+ */
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
 //  EG_IMAGE *TmpBuffer = NULL;
@@ -3446,7 +3548,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
-      SwitchToGraphicsAndClear();
+			//SwitchToGraphicsAndClear();
+			BltClearScreen(FALSE);
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
       EntriesGap = GlobalConfig.TileYSpace;
@@ -3570,6 +3673,9 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
   }
 }
 
+/**
+ * Main screen text.
+ */
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
@@ -3579,7 +3685,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
-      SwitchToGraphicsAndClear();
+			//SwitchToGraphicsAndClear();
+			BltClearScreen(FALSE);
 
       EntriesGap = GlobalConfig.TileXSpace;
       EntriesWidth = GlobalConfig.MainEntriesSize + (16 * row0TileSize) / 144;

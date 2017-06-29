@@ -732,6 +732,7 @@ CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
+
 //
 // screen module
 //

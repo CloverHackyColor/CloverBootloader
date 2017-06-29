@@ -946,13 +946,14 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
 static VOID StartTool(IN LOADER_ENTRY *Entry)
 {
-  DBG("StartTool: %s\n", Entry->LoaderPath);
+  DBG("Start Tool: %s\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);
-    BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
+	// assumes "Start <title>" as assigned below
+	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
                   Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
-//  ReinitSelfLib();
+	//ReinitSelfLib();
 }
 
 //
@@ -1756,8 +1757,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
-//  UINT64            TscDiv;
-//  UINT64            TscRemainder = 0;
+	//UINT64            TscDiv;
+	//UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
   CHAR16            *ConfName = NULL;
   TagPtr            smbiosTags = NULL;
@@ -1843,7 +1844,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG(" AddProperties:  %x\n",    OFFSET_OF(SETTINGS_DATA, AddProperties));
   DBG(" BlockKexts:     %x\n",    OFFSET_OF(SETTINGS_DATA, BlockKexts));
    */
-
 
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
@@ -2009,6 +2009,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   DbgHeader("InitScreen");
+	
   if (!GlobalConfig.FastBoot) {
     // init screen and dump video modes to log
     if (gDriversFlags.VideoLoaded) {
@@ -2016,11 +2017,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
     }
-    //    DBG("DBG: setup screen\n");
+    //DBG("DBG: setup screen\n");
     SetupScreen();
   } else {
     InitScreen(FALSE);
   }
+	
   //  DBG("DBG: ReinitSelfLib\n");
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -2032,6 +2034,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
     return Status;
   }
+	
   //  DBG("DBG: messages\n");
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", gFirmwareRevision);
@@ -2127,8 +2130,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
   
-  if (gFirmwareClover ||
-      gDriversFlags.EmuVariableLoaded) {
+  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
     if (GlobalConfig.StrictHibernate) {
       DBG(" Don't use StrictHibernate with emulated NVRAM!\n");
     }
@@ -2226,7 +2228,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     GetSmcKeys(TRUE);
     
-
     // Add custom entries
     AddCustomEntries();
     if (gSettings.DisableEntryScan) {
