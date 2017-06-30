@@ -2192,22 +2192,23 @@ FillinCustomTool (
 VOID
 GetEDIDSettings(TagPtr DictPointer)
 {
-    TagPtr Prop, Dict;
-  UINTN j = 128;
+  TagPtr Prop, Dict;
+  UINTN  j = 128;
   
-    Dict = GetProperty (DictPointer, "EDID");
-    if (Dict != NULL) {
-        Prop = GetProperty (Dict, "Inject");
+  Dict = GetProperty (DictPointer, "EDID");
+  if (Dict != NULL) {
+    Prop = GetProperty (Dict, "Inject");
     gSettings.InjectEDID = IsPropertyTrue(Prop); // default = false!
     
     if (gSettings.InjectEDID){
       //DBG ("Inject EDID\n");
-            Prop = GetProperty (Dict, "Custom");
+      Prop = GetProperty (Dict, "Custom");
       if (Prop != NULL) {
-                gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
+        gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
         if ((j % 128) != 0) {
           DBG (" Custom EDID has wrong length=%d\n", j);
-        } else {
+        }
+        else {
           DBG (" Custom EDID is ok\n");
           InitializeEdidOverride();
         }
@@ -2216,13 +2217,13 @@ GetEDIDSettings(TagPtr DictPointer)
         //DBG (" No Custom EDID\n");
       }
       
-            Prop = GetProperty (Dict, "VendorID");
+      Prop = GetProperty (Dict, "VendorID");
       if (Prop) {
         gSettings.VendorEDID = (UINT16)GetPropertyInteger(Prop, gSettings.VendorEDID);
         //DBG("  VendorID = 0x%04lx\n", gSettings.VendorEDID);
       }
       
-            Prop = GetProperty (Dict, "ProductID");
+      Prop = GetProperty (Dict, "ProductID");
       if (Prop) {
         gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
         //DBG("  ProductID = 0x%04lx\n", gSettings.ProductEDID);

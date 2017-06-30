@@ -80,21 +80,23 @@ UINT8* getCurrentEdid (VOID)
 // EDID code was rewritten by Sherlocks
 EFI_STATUS GetEdidDiscovered(VOID)
 {
-	EFI_STATUS						Status;
-	UINTN i, j;
-  UINTN N;
+  EFI_STATUS  Status;
+  UINTN       i, j;
+  UINTN       N;
   gEDID       = NULL;
   
-	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
+  Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
   
-	if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR (Status)) {
     N = EdidDiscovered->SizeOfEdid;
     if (!GlobalConfig.DebugLog) {
       MsgLog("EdidDiscovered size=%d\n", N);
     }
+
     if (N == 0) {
-			return EFI_NOT_FOUND;
-		}
+      return EFI_NOT_FOUND;
+    }
+
     //gEDID is a place to store Custom of Discovered EDID
     gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
     

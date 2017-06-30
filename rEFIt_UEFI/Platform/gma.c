@@ -1041,7 +1041,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         default:
           DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
-
       }
       break;
     case 4096:
