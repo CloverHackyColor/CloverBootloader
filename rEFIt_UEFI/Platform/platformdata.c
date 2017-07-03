@@ -546,9 +546,9 @@ CHAR8* AppleFamilies[] =
   "iMac",          // iMac16,1,
   "iMac",          // iMac16,2,
   "iMac17,1",      // iMac17,1,
-  "iMac18,1",      // iMac18,1,
-  "iMac18,2",      // iMac18,2,
-  "iMac18,3",      // iMac18,3,
+  "iMac",          // iMac18,1,
+  "iMac",          // iMac18,2,
+  "iMac",          // iMac18,3,
   "MacPro",        // MacPro1,1,
   "MacPro",        // MacPro2,1,
   "MacPro",        // MacPro3,1,
@@ -680,7 +680,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "451211MEF5X",  // MacBook7,1,
   "C02RCE58GCN3", // MacBook8,1,
   "C02RM408HDNK", // MacBook9,1,
-  "C02TKHACJ64G", // MacBook10,1,
+  "C02TQHACHH27", // MacBook10,1,
   "W884857JVJ1",  // MacBookPro1,1,
   "W8629HACTHY",  // MacBookPro1,2,
   "W88130WUW0H",  // MacBookPro2,1,
@@ -711,9 +711,9 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02SLHACGVC1", // MacBookPro13,1,
   "C02SLHACGYFH", // MacBookPro13,2,
   "C02SLHACGTFN", // MacBookPro13,3,
-  "C02TLHACHV22", // MacBookPro14,1,
-  "C02TLHACHV2L", // MacBookPro14,2,
-  "C02TLHACHTD5", // MacBookPro14,3,
+  "C02TNHACHV29", // MacBookPro14,1,
+  "C02TQHACHV2N", // MacBookPro14,2,
+  "C02TQHACHTD5", // MacBookPro14,3,
   "W864947A18X",  // MacBookAir1,1,
   "W86494769A7",  // MacBookAir2,1,
   "C02FLHACD0QX", // MacBookAir3,1,
@@ -761,9 +761,9 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02QQHACGF1J", // iMac16,1,
   "C02PNHACGG7G", // iMac16,2,
   "C02QFHACGG7L", // iMac17,1,
-  "C02TJHACH7JY", // iMac18,1,
-  "C02TJHACJ1G5", // iMac18,2,
-  "C02TJHACJ1GG", // iMac18,3,
+  "C02TDHACH7JY", // iMac18,1,
+  "C02TDHACJ1G5", // iMac18,2,
+  "C02TDHACJ1GJ", // iMac18,3,
   "W88A77AXUPZ",  // MacPro1,1,
   "W8930518UPZ",  // MacPro2,1,
   "W88A77AA5J4",  // MacPro3,1,
@@ -896,7 +896,7 @@ UINT8 SmcRevision[][6] =
   { 0x01, 0x60, 0x0F, 0, 0, 0x06 },   // MacBook7,1,
   { 0x02, 0x25, 0x0F, 0, 0, 0x87 },   // MacBook8,1,
   { 0x02, 0x35, 0x0F, 0, 1, 0x05 },   // MacBook9,1,
-  { 0x02, 0x35, 0x0F, 0, 1, 0x05 },   // MacBook10,1,       // need to find SmcRevision
+  { 0x02, 0x24, 0x0F, 0, 0, 0x10 },   // MacBook10,1,
   { 0x01, 0x02, 0x0F, 0, 0, 0x10 },   // MacBookPro1,1,
   { 0x01, 0x05, 0x0F, 0, 0, 0x10 },   // MacBookPro1,2,
   { 0x01, 0x14, 0x0F, 0, 0, 0x05 },   // MacBookPro2,1,
@@ -927,9 +927,9 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x36, 0x0F, 0, 0, 0x97 },   // MacBookPro13,1,
   { 0x02, 0x37, 0x0F, 0, 0, 0x20 },   // MacBookPro13,2,
   { 0x02, 0x38, 0x0F, 0, 0, 0x07 },   // MacBookPro13,3,
-  { 0x02, 0x36, 0x0F, 0, 0, 0x97 },   // MacBookPro14,1,    // need to find SmcRevision
-  { 0x02, 0x37, 0x0F, 0, 0, 0x20 },   // MacBookPro14,2,    // need to find SmcRevision
-  { 0x02, 0x38, 0x0F, 0, 0, 0x07 },   // MacBookPro14,3,    // need to find SmcRevision
+  { 0x02, 0x43, 0x0F, 0, 0, 0x06 },   // MacBookPro14,1,
+  { 0x02, 0x44, 0x0F, 0, 0, 0x01 },   // MacBookPro14,2,
+  { 0x02, 0x45, 0x0F, 0, 0, 0x00 },   // MacBookPro14,3,
   { 0x01, 0x23, 0x0F, 0, 0, 0x20 },   // MacBookAir1,1,
   { 0x01, 0x34, 0x0F, 0, 0, 0x08 },   // MacBookAir2,1,
   { 0x01, 0x67, 0x0F, 0, 0, 0x10 },   // MacBookAir3,1,
@@ -977,9 +977,9 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x31, 0x0F, 0, 0, 0x36 },   // iMac16,1,
   { 0x02, 0x32, 0x0F, 0, 0, 0x20 },   // iMac16,2,
   { 0x02, 0x33, 0x0F, 0, 0, 0x10 },   // iMac17,1,  //i5 or { 0x02, 0x34, 0x0F, 0, 0, 0x02 }, for i7
-  { 0x02, 0x34, 0x0F, 0, 0, 0x02 },   // iMac18,1,          // need to find SmcRevision
-  { 0x02, 0x34, 0x0F, 0, 0, 0x02 },   // iMac18,2,          // need to find SmcRevision
-  { 0x02, 0x34, 0x0F, 0, 0, 0x02 },   // iMac18,3,          // need to find SmcRevision
+  { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,1,          // need to find SmcRevision
+  { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,2,          // need to find SmcRevision
+  { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,3,
   { 0x01, 0x07, 0x0F, 0, 0, 0x10 },   // MacPro1,1,
   { 0x01, 0x15, 0x0F, 0, 0, 0x03 },   // MacPro2,1,
   { 0x01, 0x30, 0x0F, 0, 0, 0x03 },   // MacPro3,1,
@@ -1004,7 +1004,7 @@ CHAR8* SmcBranch[] =
   "k87",       // MacBook7,1,
   "j92",       // MacBook8,1,
   "j93",       // MacBook9,1,
-  "NA",        // MacBook10,1,     // need to find RBr key
+  "j122",      // MacBook10,1,
   "m1",        // MacBookPro1,1,
   "NA",        // MacBookPro1,2,   // need to find RBr key
   "NA",        // MacBookPro2,1,   // need to find RBr key
@@ -1035,9 +1035,9 @@ CHAR8* SmcBranch[] =
   "2016mb",    // MacBookPro13,1,
   "2016mb",    // MacBookPro13,2,
   "2016mb",    // MacBookPro13,3,
-  "NA",        // MacBookPro14,1,  // need to find RBr key
-  "NA",        // MacBookPro14,2,  // need to find RBr key
-  "NA",        // MacBookPro14,3,  // need to find RBr key
+  "2017mbp",   // MacBookPro14,1,
+  "2017mbp",   // MacBookPro14,2,
+  "2017mbp",   // MacBookPro14,3,
   "NA",        // MacBookAir1,1,   // need to find RBr key
   "NA",        // MacBookAir2,1,   // need to find RBr key
   "k16k99",    // MacBookAir3,1,
@@ -1087,7 +1087,7 @@ CHAR8* SmcBranch[] =
   "j95j95am",  // iMac17,1,
   "j95j95am",  // iMac18,1,        // need to find RBr key
   "j95j95am",  // iMac18,2,        // need to find RBr key
-  "j95j95am",  // iMac18,3,        // need to find RBr key
+  "j133_4_5",  // iMac18,3,
   "m43",       // MacPro1,1,
   "m43a",      // MacPro2,1,
   "m86",       // MacPro3,1,
@@ -1113,7 +1113,7 @@ CHAR8* SmcPlatform[] =
   "k87",  // MacBook7,1,
   "j92",  // MacBook8,1,
   "j93",  // MacBook9,1,
-  "NA",   // MacBook10,1,     // need to find RPlt key
+  "j122", // MacBook10,1,
   "m1",   // MacBookPro1,1,
   "NA",   // MacBookPro1,2,   // need to find RPlt key
   "NA",   // MacBookPro2,1,   // need to find RPlt key
@@ -1144,9 +1144,9 @@ CHAR8* SmcPlatform[] =
   "j130", // MacBookPro13,1,
   "j79",  // MacBookPro13,2,
   "j80g", // MacBookPro13,3,
-  "NA",   // MacBookPro14,1,  // need to find RPlt key
-  "NA",   // MacBookPro14,2,  // need to find RPlt key
-  "NA",   // MacBookPro14,3,  // need to find RPlt key
+  "j130a",// MacBookPro14,1,
+  "j79a", // MacBookPro14,2,
+  "j80ga",// MacBookPro14,3,
   "NA",   // MacBookAir1,1,   // need to find RPlt key
   "NA",   // MacBookAir2,1,   // need to find RPlt key
   "k99",  // MacBookAir3,1,
@@ -1196,7 +1196,7 @@ CHAR8* SmcPlatform[] =
   "j95",  // iMac17,1,
   "NA",   // iMac18,1,        // need to find RPlt key
   "NA",   // iMac18,2,        // need to find RPlt key
-  "NA",   // iMac18,3,        // need to find RPlt key
+  "j135", // iMac18,3,
   "m43",  // MacPro1,1,
   "m43a", // MacPro2,1,
   "m86",  // MacPro3,1,
@@ -1221,7 +1221,7 @@ UINT32 SmcConfig[] =
   0x7a002,  //"MacBook7,1",      // need to find EPCI key
   0xf0e007, //"MacBook8,1",
   0xf0e007, //"MacBook9,1",      // need to find EPCI key
-  0xf0e007, //"MacBook10,1",     // need to find EPCI key
+  0xf08009, //"MacBook10,1",
   0x7b002,  //"MacBookPro1,1",   // need to find EPCI key
   0x7b002,  //"MacBookPro1,2",   // need to find EPCI key
   0x7b002,  //"MacBookPro2,1",   // need to find EPCI key
@@ -1252,9 +1252,9 @@ UINT32 SmcConfig[] =
   0xf02009, //"MacBookPro13,1",  // need to find EPCI key
   0xf02009, //"MacBookPro13,2",
   0xf02009, //"MacBookPro13,3",  // need to find EPCI key
-  0xf02009, //"MacBookPro14,1",  // need to find EPCI key
-  0xf02009, //"MacBookPro14,2",  // need to find EPCI key
-  0xf02009, //"MacBookPro14,3",  // need to find EPCI key
+  0xf0b009, //"MacBookPro14,1",
+  0xf09009, //"MacBookPro14,2",
+  0xf0a009, //"MacBookPro14,3",
   0x76005,  //"MacBookAir1,1",   // need to find EPCI key
   0x76005,  //"MacBookAir2,1",   // need to find EPCI key
   0x76005,  //"MacBookAir3,1",
@@ -1304,7 +1304,7 @@ UINT32 SmcConfig[] =
   0xf0c008, //"iMac17,1",
   0xf0c008, //"iMac18,1",        // need to find EPCI key
   0xf0c008, //"iMac18,2",        // need to find EPCI key
-  0xf0c008, //"iMac18,3",        // need to find EPCI key
+  0xf07009, //"iMac18,3",
   0x79001,  //"MacPro1,1",       // need to find EPCI key
   0x79001,  //"MacPro2,1",       // need to find EPCI key
   0x79001,  //"MacPro3,1",
@@ -1345,8 +1345,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   // FirmwareFeatures
   switch (Model) {
     case MacBook91:
-    case MacBook101:
       gFwFeatures             = 0xFC07E13E;
+      break;
+    case MacBook101:
+      gFwFeatures             = 0xFD07F53E;
       break;
     case MacBookPro91:
     case MacBookPro92:
@@ -1363,13 +1365,17 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
     case MacBookPro131:
     case MacBookPro132:
-    case MacBookPro141:
-    case MacBookPro142:
       gFwFeatures             = 0xFC07E136;
       break;
     case MacBookPro133:
-    case MacBookPro143:
       gFwFeatures             = 0xFC07E13E;
+      break;
+    case MacBookPro141:
+    case MacBookPro142:
+      gFwFeatures             = 0xFD07F536;
+      break;
+    case MacBookPro143:
+      gFwFeatures             = 0xFD07F53E;
       break;
     case MacBookAir41:
     case MacBookAir42:
@@ -1409,8 +1415,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac171:
     case iMac181:
     case iMac182:
-    case iMac183:
       gFwFeatures             = 0xFC07E136;
+      break;
+    case iMac183:
+      gFwFeatures             = 0xFD07F536;
       break;
     case MacPro61:
       gFwFeatures             = 0xE807E136;
@@ -1699,6 +1707,14 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         AsciiStrCpyS (gSettings.RPlt, 8, "j79");
         break;
 
+      case CPU_MODEL_KABYLAKE1: //Mobile
+        AsciiStrCpyS (gSettings.RPlt, 8, "j130a");
+        break;
+
+      case CPU_MODEL_KABYLAKE2: //Desktop
+        AsciiStrCpyS (gSettings.RPlt, 8, "j135");
+        break;
+
       default:
         AsciiStrCpyS (gSettings.RPlt, 8, "t9");
         break;
@@ -1752,11 +1768,19 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         break;
                 
       case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpyS (gSettings.RBr, 8, "j95");
+        AsciiStrCpyS (gSettings.RBr, 8, "j95j95am");
         break;
                 
       case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpyS (gSettings.RBr, 8, "j79");
+        AsciiStrCpyS (gSettings.RBr, 8, "2016mb");
+        break;
+                
+      case CPU_MODEL_KABYLAKE1: //Mobile
+        AsciiStrCpyS (gSettings.RPlt, 8, "2017mbp");
+        break;
+                
+      case CPU_MODEL_KABYLAKE2: //Desktop
+        AsciiStrCpyS (gSettings.RPlt, 8, "j133_4_5");
         break;
                 
       default:
