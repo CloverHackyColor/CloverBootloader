@@ -3080,8 +3080,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
-			//SwitchToGraphicsAndClear();
-			BltClearScreen(FALSE);
+			SwitchToGraphicsAndClear();
+			//BltClearScreen(FALSE);
 
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
@@ -3548,8 +3548,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
-			//SwitchToGraphicsAndClear();
-			BltClearScreen(FALSE);
+			SwitchToGraphicsAndClear();
+			//BltClearScreen(FALSE);
       //adjustable by theme.plist?
       EntriesPosY = LAYOUT_Y_EDGE;
       EntriesGap = GlobalConfig.TileYSpace;
@@ -3685,8 +3685,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
-			//SwitchToGraphicsAndClear();
-			BltClearScreen(FALSE);
+			SwitchToGraphicsAndClear();
+			//BltClearScreen(FALSE);
 
       EntriesGap = GlobalConfig.TileXSpace;
       EntriesWidth = GlobalConfig.MainEntriesSize + (16 * row0TileSize) / 144;
