@@ -162,7 +162,7 @@ pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
   xargs -I @@ rm -rf '@@'
 
 # Remove files of old revision.
-pkgs=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkgs | /usr/bin/grep -iE '@CLOVER_PACKAGE_IDENTITY@.')
+pkgs=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkgs | /usr/bin/grep -iE '@CLOVER_PACKAGE_IDENTITY@.' | /usr/bin/grep -Ev 'ntfs|apfs|hfsplus')
 for pkg in $pkgs; do
     # Get where the files where installed from volume destination
     location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null | sed -n 's/^location: *//p')
