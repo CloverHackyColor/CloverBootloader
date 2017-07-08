@@ -70,6 +70,8 @@ BOOLEAN                         gRemapSmBiosIsRequire;
 CHAR16                        **SystemPlists                = NULL;
 CHAR16                        **RecoveryPlists              = NULL;
 
+// QPI
+BOOLEAN                         SetTable132                 = FALSE;
 
 GUI_ANIME                       *GuiAnime                   = NULL;
 EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
@@ -5315,13 +5317,8 @@ GetUserSettings(
     if (DictPointer != NULL) {
       Prop = GetProperty (DictPointer, "QPI");
       if (Prop != NULL) {
-        gSettings.QPI = (UINT16)GetPropertyInteger (Prop, (INTN)gCPUStructure.ProcessorInterconnectSpeed);
-        if (gSettings.QPI == 0) { //this is not default, this is zero!
-          gSettings.QPI = 0xFFFF;
-          DBG ("QPI: 0 disable table132\n");
-        } else {
-          DBG ("QPI: %dMHz\n", gSettings.QPI);
-        }
+        gSettings.QPI = (UINT16)GetPropertyInteger (Prop, gSettings.QPI);
+        DBG ("QPI: %dMHz\n", gSettings.QPI);
       }
 
       Prop = GetProperty (DictPointer, "FrequencyMHz");
@@ -6519,13 +6516,61 @@ SaveSettings ()
   gMobile                       = gSettings.Mobile;
 
   if ((gSettings.BusSpeed != 0) && (gSettings.BusSpeed > 10 * kilo) && (gSettings.BusSpeed < 500 * kilo)) {
-    gCPUStructure.ExternalClock = gSettings.BusSpeed;
+    switch (gCPUStructure.Model) {
+      case CPU_MODEL_PENTIUM_M:
+      case CPU_MODEL_ATOM://  Atom
+      case CPU_MODEL_DOTHAN:// Pentium M, Dothan, 90nm
+      case CPU_MODEL_YONAH:// Core Duo/Solo, Pentium M DC
+      case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Mobile
+      //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop like Merom but not mobile
+      case CPU_MODEL_CELERON:
+      case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
+      case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
+      case CPU_MODEL_FIELDS:// Core i7, i5 LGA1156, "Clarksfield", "Lynnfield", "Jasper", 45nm
+      case CPU_MODEL_DALES:// Core i7, i5, Nehalem
+      case CPU_MODEL_CLARKDALE:// Core i7, i5, i3 LGA1156, "Westmere", "Clarkdale", , 32nm
+      case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
+      case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
+      case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
+        gCPUStructure.ExternalClock = gSettings.BusSpeed;
+        //DBG("Read ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+        break;
+      default:
+        //DBG("Read ExternalClock: %d MHz\n", (INT32)(DivU64x32(gSettings.BusSpeed, kilo)));
+		
+        // for sandy bridge or newer
+        // to match ExternalClock 25 MHz like real mac, divide BusSpeed by 4
+        gCPUStructure.ExternalClock = gSettings.BusSpeed / 4;
+        //DBG(" Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+        break;
+    }
+
     gCPUStructure.FSBFrequency  = MultU64x64 (gSettings.BusSpeed, kilo); //kHz -> Hz
     gCPUStructure.MaxSpeed      = (UINT32)(DivU64x32 ((UINT64)gSettings.BusSpeed * gCPUStructure.MaxRatio, 10000)); //kHz->MHz
   }
 
   if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
     gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
+  }
+
+  // to determine the use of Table 132
+  if (gSettings.QPI) {
+    gSettings.SetTable132 = TRUE;
+    DBG ("QPI: use Table 132\n");
+  }
+  else {
+    switch (gCPUStructure.Model) {
+      case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
+      case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
+      case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
+      case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
+        gSettings.SetTable132 = TRUE;
+        DBG ("QPI: use Table 132\n");
+        break;
+      default:
+        DBG ("QPI: disable Table 132\n");
+        break;
+    }
   }
 
   gCPUStructure.CPUFrequency    = MultU64x64 (gCPUStructure.MaxSpeed, Mega);

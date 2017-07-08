@@ -236,7 +236,7 @@ VOID GetCPUProperties (VOID)
     // Determine turbo boost support
     DoCpuid(6, gCPUStructure.CPUID[CPUID_6]);
     gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & (1 << 1)) != 0);
-    DBG("The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not");
+    DBG(" The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not");
     //get cores and threads
     switch (gCPUStructure.Model)
     {
@@ -660,13 +660,37 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.MaxRatio *= 5;
   }
 
-  // Check if QPI is used
-  if (gSettings.QPI == 0) {
-    // Not used, quad-pumped FSB; multiply ExternalClock by 4
-    ExternalClock = gCPUStructure.ExternalClock * 4;
-  } else {
-    // Used; keep the same value for ExternalClock
-    ExternalClock = gCPUStructure.ExternalClock;
+  // ExternalClock and QPI were fixed by Sherlocks
+  // Read original ExternalClock
+  switch (gCPUStructure.Model)
+  {
+    case CPU_MODEL_PENTIUM_M:
+    case CPU_MODEL_ATOM://  Atom
+    case CPU_MODEL_DOTHAN:// Pentium M, Dothan, 90nm
+    case CPU_MODEL_YONAH:// Core Duo/Solo, Pentium M DC
+    case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Mobile
+    //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop like Merom but not mobile
+    case CPU_MODEL_CELERON:
+    case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
+    case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
+    case CPU_MODEL_FIELDS:// Core i7, i5 LGA1156, "Clarksfield", "Lynnfield", "Jasper", 45nm
+    case CPU_MODEL_DALES:// Core i7, i5, Nehalem
+    case CPU_MODEL_CLARKDALE:// Core i7, i5, i3 LGA1156, "Westmere", "Clarkdale", , 32nm
+    case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
+    case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
+    case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
+      ExternalClock = gCPUStructure.ExternalClock;
+      //DBG("Read original ExternalClock: %d MHz\n", (INT32)(DivU64x32(ExternalClock, kilo)));
+      break;
+    default:
+      ExternalClock = gCPUStructure.ExternalClock;
+      //DBG("Read original ExternalClock: %d MHz\n", (INT32)(DivU64x32(ExternalClock, kilo)));
+
+      // for sandy bridge or newer
+      // to match ExternalClock 25 MHz like real mac, divide ExternalClock by 4
+      gCPUStructure.ExternalClock = ExternalClock / 4;
+      //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+      break;
   }
 
   // DBG("take FSB\n");
@@ -690,6 +714,8 @@ VOID GetCPUProperties (VOID)
     // but this algo almost always wrong
     //
     // thanks to dgobe for i3/i5/i7 bus speed detection
+	// TODO: consider more Nehalem based CPU(?) ex. CPU_MODEL_NEHALEM_EX, CPU_MODEL_WESTMERE, CPU_MODEL_WESTMERE_EX
+	// info: https://en.wikipedia.org/wiki/List_of_Intel_Xeon_microprocessors#Nehalem-based_Xeons
     qpimult = 2; //init
     /* Scan PCI BUS For QPI Frequency */
     // get all PciIo handles
@@ -738,6 +764,8 @@ VOID GetCPUProperties (VOID)
     qpibusspeed = MultU64x32(gCPUStructure.ExternalClock, qpimult * 2); //kHz
     DBG("qpibusspeed %dkHz\n", qpibusspeed);
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
+	// set QPI for Nehalem
+	gSettings.QPI = gCPUStructure.ProcessorInterconnectSpeed;
     
   } else {
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), kilo); //kHz->MHz
@@ -751,10 +779,11 @@ VOID GetCPUProperties (VOID)
   DBG("Features: 0x%08x\n",gCPUStructure.Features);
   DBG("Threads: %d\n",gCPUStructure.Threads);
   DBG("Cores: %d\n",gCPUStructure.Cores);
-  DBG("FSB: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+  DBG("FSB: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.FSBFrequency, Mega)));
   DBG("CPU: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)));
   DBG("TSC: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.TSCFrequency, Mega)));
   DBG("PIS: %d MHz\n", (INT32)gCPUStructure.ProcessorInterconnectSpeed);
+  DBG("ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));  
   //#if DEBUG_PCI
   
   //  WaitForKeyPress("waiting for key press...\n");

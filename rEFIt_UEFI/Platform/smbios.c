@@ -693,38 +693,37 @@ VOID GetTableType4()
 {
   // Processor Information
   //
-  INTN res = 0;
-  
+	INTN res = 0;
+
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
 		DBG("SmbiosTable: Type 4 (Processor Information) not found!\n");
 		return;
 	}
-  res = (SmbiosTable.Type4->ExternalClock * 3 + 2) % 100;
-  if (res > 2) {
-    res = 0;
-  } else {
-    res = SmbiosTable.Type4->ExternalClock % 10;
-  }
+
+	res = (SmbiosTable.Type4->ExternalClock * 3 + 2) % 100;
+	if (res > 2) {
+		res = 0;
+	} else {
+		res = SmbiosTable.Type4->ExternalClock % 10;
+	}
 
 	gCPUStructure.ExternalClock = (UINT32)((SmbiosTable.Type4->ExternalClock * 1000) + (res * 110));//MHz->kHz  
-    // Check if QPI is used
-    if (gSettings.QPI == 0) {
-      // Not used, quad-pumped FSB; divide ExternalClock by 4
-      gCPUStructure.ExternalClock = gCPUStructure.ExternalClock / 4;
-    }
-//	UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
-//  gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
+
+	//UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
+	//gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
-  gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
+	gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
+
 	if (Size > 0x23) {  //Smbios <=2.3
 		gSettings.EnabledCores = SmbiosTable.Type4->EnabledCoreCount;
 	} else {
 		gSettings.EnabledCores = 0; //to change later
 	}
-	
-//	UnicodeSPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
-//	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed; 
+
+	//UnicodeSPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
+	//gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed; 
+
 	return;
 }
 
@@ -778,6 +777,8 @@ VOID PatchTableType4()
 //		if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
 //			newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
 //		}
+
+        //DBG("insert ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
         newSmbiosTable.Type4->ExternalClock = (UINT16)DivU64x32 (gCPUStructure.ExternalClock, kilo);
 		newSmbiosTable.Type4->EnabledCoreCount = gSettings.EnabledCores;
     //some verifications
@@ -1849,28 +1850,32 @@ VOID PatchTableType131()
 
 VOID PatchTableType132()
 {
-  if (gSettings.QPI == 0) {
-    return;
-  }
+	if (!gSettings.SetTable132) {
+		//DBG("disabled Table 132\n");
+		return;
+	}
+
 	// Get Table Type132
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 132, 0);
 	if (SmbiosTable.Raw != NULL) {
 		MsgLog("Table 132 is present, QPI=%x\n", SmbiosTable.Type132->ProcessorBusSpeed);
-    MsgLog("Change to: %x\n", gSettings.QPI);
-  }
+		MsgLog("Change to: %x\n", gSettings.QPI);
+	}
 	
-		ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
-		newSmbiosTable.Type132->Hdr.Type = 132;
-		newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
-		newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
+	ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
+	newSmbiosTable.Type132->Hdr.Type = 132;
+	newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+	newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
+		
 	// Patch ProcessorBusSpeed
-		if(gSettings.QPI){
-			newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.QPI;
-		} else {
-			newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(gSettings.BusSpeed, kilo), 2));
-		}
-		Handle = LogSmbiosTable(newSmbiosTable);
-		return;
+	if(gSettings.QPI){
+		newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.QPI;
+	} else {
+		newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(gCPUStructure.ExternalClock, kilo), 2));
+	}
+
+	Handle = LogSmbiosTable(newSmbiosTable);
+	return;
 }
 
 VOID PatchTableType133()

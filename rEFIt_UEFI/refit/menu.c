@@ -763,7 +763,7 @@ VOID ApplyInputs(VOID)
   i++; //14
   if (InputItems[i].Valid) {
     gSettings.QPI = (UINT16)StrDecimalToUintn(InputItems[i].SValue);
-    //DBG("Apply ProcessorInterconnectSpeed=%d\n", gSettings.QPI);
+    DBG("applied QPI=%d\n", gSettings.QPI);
   }
   i++; //15
   if (InputItems[i].Valid) {

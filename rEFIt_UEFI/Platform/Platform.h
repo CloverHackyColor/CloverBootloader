@@ -879,6 +879,7 @@ typedef struct {
   UINT16                  CpuType;
   // SMBIOS TYPE132
   UINT16                  QPI;
+  BOOLEAN                 SetTable132;
   BOOLEAN                 TrustSMBIOS;
   BOOLEAN                 InjectMemoryTables;
   INT8                    XMPDetection;

@@ -518,7 +518,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
   }
 
-  DBG("Finally: Bus=%ldkHz CPU=%ldMHz\n",
+  DBG("Finally: ExternalClock=%ldMHz Bus=%ldkHz CPU=%ldMHz\n",
+         DivU64x32(gCPUStructure.ExternalClock, kilo),
          DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
 
@@ -2061,7 +2062,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   SetPrivateVarProto();
 //  GetDefaultSettings();
   GetAcpiTablesList();
-  DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
+
+  DBG("Calibrated TSC Frequency = %ld = %ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
@@ -2069,13 +2071,35 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
-  gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency + (Mega >> 1), Mega);
 
-  // Check if QPI is used
-  if (gSettings.QPI == 0) {
-    // Not used, quad-pumped FSB; divide ExternalClock by 4
-    gCPUStructure.ExternalClock = gCPUStructure.ExternalClock / 4;
+  switch (gCPUStructure.Model) {
+    case CPU_MODEL_PENTIUM_M:
+    case CPU_MODEL_ATOM://  Atom
+    case CPU_MODEL_DOTHAN:// Pentium M, Dothan, 90nm
+    case CPU_MODEL_YONAH:// Core Duo/Solo, Pentium M DC
+    case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Mobile
+    //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop like Merom but not mobile
+    case CPU_MODEL_CELERON:
+    case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
+    case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
+    case CPU_MODEL_FIELDS:// Core i7, i5 LGA1156, "Clarksfield", "Lynnfield", "Jasper", 45nm
+    case CPU_MODEL_DALES:// Core i7, i5, Nehalem
+    case CPU_MODEL_CLARKDALE:// Core i7, i5, i3 LGA1156, "Westmere", "Clarkdale", , 32nm
+    case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
+    case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
+    case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
+      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
+	  //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+      break;
+    default:
+	  //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.FSBFrequency, Mega)));
+	  
+      // for sandy bridge or newer
+      // to match ExternalClock 25 MHz like real mac, divide FSBFrequency by 4
+      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo) / 4;
+	  //DBG("  Corrected TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+      break;
   }
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
