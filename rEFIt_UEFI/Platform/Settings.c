@@ -2927,6 +2927,9 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "NvidiaGeneric");
       gSettings.NvidiaGeneric = IsPropertyTrue (Prop);
 
+      Prop = GetProperty (DictPointer, "NvidiaNoEFI");
+      gSettings.NvidiaNoEFI = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "NvidiaSingle");
       gSettings.NvidiaSingle = IsPropertyTrue (Prop);
 
@@ -6568,7 +6571,7 @@ SaveSettings ()
         DBG ("QPI: use Table 132\n");
         break;
       default:
-        DBG ("QPI: disable Table 132\n");
+        //DBG ("QPI: disable Table 132\n");
         break;
     }
   }

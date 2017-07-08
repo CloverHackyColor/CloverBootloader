@@ -543,6 +543,7 @@ void PrintConfig(CFTypeRef data)
   addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
   addBoolean(graphicsDict, CFSTR("NvidiaGeneric"), s->NvidiaGeneric);
+  addBoolean(graphicsDict, CFSTR("NvidiaNoEFI"), s->NvidiaNoEFI);
   addBoolean(graphicsDict, CFSTR("NvidiaSingle"), s->NvidiaSingle);
   // INTEL specific
   addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);

@@ -518,10 +518,16 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
   }
 
-  DBG("Finally: ExternalClock=%ldMHz Bus=%ldkHz CPU=%ldMHz\n",
-         DivU64x32(gCPUStructure.ExternalClock, kilo),
-         DivU64x32(gCPUStructure.FSBFrequency, kilo),
-         gCPUStructure.MaxSpeed);
+  DBG("Finally: ExternalClock=%ldMHz BusSpeed=%ldkHz CPU=%ldMHz", 
+  				DivU64x32(gCPUStructure.ExternalClock, kilo), 
+  				DivU64x32(gCPUStructure.FSBFrequency, kilo), 
+				gCPUStructure.MaxSpeed);
+				if (gSettings.QPI) {			
+				  DBG(" QPI: hw.busfrequency=%ldHz\n", MultU64x32(gSettings.QPI, Mega));
+				} else {
+				  // to match the value of hw.busfrequency in the terminal
+				  DBG(" PIS: hw.busfrequency=%ldHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock, kilo), 2), Mega));
+				}
 
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 

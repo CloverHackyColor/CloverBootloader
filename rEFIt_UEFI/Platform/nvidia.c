@@ -2391,6 +2391,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     DBG(" undefined, default to: %d\n", n_ports);
   }
   
+  if (gSettings.NvidiaNoEFI) {
+    devprop_add_value(device, "NVDA,noEFI", (UINT8*)"true", 5);
+  }
+  
   //There are custom properties, injected if set by user
   if (gSettings.NvidiaSingle && (devices_number >=1)) {
     DBG("NVidia: NvidiaSingle :: skip injecting other then first card\n");

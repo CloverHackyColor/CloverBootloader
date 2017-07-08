@@ -511,6 +511,8 @@
 		<false/>
 		<key>#NvidiaGeneric</key>
 		<true/>
+		<key>#NvidiaNoEFI</key>
+		<false/>
 		<key>#NvidiaSingle</key>
 		<false/>
 		<key>#PatchVBiosBytes</key>
