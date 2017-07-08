@@ -1085,8 +1085,8 @@ CHAR8* SmcBranch[] =
   "j117",      // iMac16,1,
   "j94",       // iMac16,2,
   "j95j95am",  // iMac17,1,
-  "j95j95am",  // iMac18,1,        // need to find RBr key
-  "j95j95am",  // iMac18,2,        // need to find RBr key
+  "j133_4_5",  // iMac18,1,        // need to find RBr key
+  "j133_4_5",  // iMac18,2,        // need to find RBr key
   "j133_4_5",  // iMac18,3,
   "m43",       // MacPro1,1,
   "m43a",      // MacPro2,1,
@@ -1302,8 +1302,8 @@ UINT32 SmcConfig[] =
   0xf00008, //"iMac16,1",        // need to find EPCI key
   0xf00008, //"iMac16,2",        // need to find EPCI key
   0xf0c008, //"iMac17,1",
-  0xf0c008, //"iMac18,1",        // need to find EPCI key
-  0xf0c008, //"iMac18,2",        // need to find EPCI key
+  0xf07009, //"iMac18,1",        // need to find EPCI key
+  0xf07009, //"iMac18,2",        // need to find EPCI key
   0xf07009, //"iMac18,3",
   0x79001,  //"MacPro1,1",       // need to find EPCI key
   0x79001,  //"MacPro2,1",       // need to find EPCI key
@@ -1341,7 +1341,8 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
-  /*TODO - find more correct information about OSInstall.pkg error
+  /*
+  // TODO - find more correct information about OSInstall.mpkg error
   // FirmwareFeatures
   switch (Model) {
     case MacBook91:
@@ -1444,9 +1445,9 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro115:
     case MacBookPro131:
     case MacBookPro132:
+    case MacBookPro133:
     case MacBookPro141:
     case MacBookPro142:
-    case MacBookPro133:
     case MacBookPro143:
     case MacBookAir41:
     case MacBookAir42:
@@ -1477,6 +1478,56 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 
     default:
       gFwFeaturesMask         = 0xFFFFFFFF; //unknown - use oem SMBIOS value to be default
+      break;
+  }
+
+  // PlatformFeature
+  switch (Model) {
+    case MacBookPro111:
+    case MacBookPro112:
+    case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
+    case MacBookPro121:
+      gPlatformFeature        = 0x02;
+      break;
+    case MacBook81:
+    case MacBook101:
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro133:
+    case MacBookPro141:
+    case MacBookPro142:
+    case MacBookPro143:
+      gPlatformFeature        = 0x1A;
+      break;
+    case MacMini71:
+      gPlatformFeature        = 0x03;
+      break;
+    case MacMini61:
+    case MacMini62:
+    case iMac131:
+    case iMac132:
+    case iMac133:
+    case iMac141:
+    case iMac142:
+    case iMac143:
+    case iMac144:
+    case iMac151:
+      gPlatformFeature        = 0x01;
+      break;
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+      gPlatformFeature        = 0x00;
+      break;
+    case MacPro61:
+      gPlatformFeature        = 0x04;
+      break;
+   
+    default:
+      gPlatformFeature        = 0xFFFF; //unknown - use oem SMBIOS value to be default
       break;
   }
   */
