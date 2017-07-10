@@ -49,7 +49,11 @@
  ============== 9th generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/009_skl_-_2015-2016/intel-gfx-prm-osrc-skl-vol04-configurations.pdf
  ============== 9.5th generation ==========
- https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/010_kbk_-_2016-2017/intel-gfx-prm-osrc-kbl-vol04-configurations.pdf
+ https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/010_kbl_-_2016-2017/intel-gfx-prm-osrc-kbl-vol04-configurations.pdf
+ ============== 10th generation ===========
+ https://github.com/Igalia/release-mesa/blob/ecd8f8580288361f6c4d532ba964a744dd62a9dd/include/pci_ids/i965_pci_ids.h
+ ============== 10.5th generation =========
+ https://github.com/Igalia/release-mesa/blob/ecd8f8580288361f6c4d532ba964a744dd62a9dd/include/pci_ids/i965_pci_ids.h
  */
 
 
@@ -199,9 +203,9 @@ UINT8 ivy_bridge_ig_vals[12][4] = {
   { 0x02, 0x00, 0x66, 0x01 },	  //2 *MacBookPro10,1 - Intel HD Graphics 4000 - Port Count: 1, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 24MB, Connector: LVDS1
   { 0x03, 0x00, 0x66, 0x01 },	  //3 *MacBookPro9,2 - Intel HD Graphics 4000 - Port Count: 4, Pipes: 2, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, DP3
   { 0x04, 0x00, 0x66, 0x01 },	  //4 *MacBookPro9,1 - Intel HD Graphics 4000 - Port Count: 1, Pipes: 1, BIOS-allocated memory: 32MB, FBM(cursor): 16MB, Connector: LVDS1
-  { 0x05, 0x00, 0x62, 0x01 },	  //5 *iMac13,1, iMac13,2 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 2, BIOS-allocated memory: 32MB, FBM(cursor): 16MB, Connector: DP3
-  { 0x06, 0x00, 0x62, 0x01 },	  //6 Intel HD Graphics 4000 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 0MB, FBM(cursor): 0MB, Connector:
-  { 0x07, 0x00, 0x62, 0x01 },	  //7 Intel HD Graphics 4000 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 0MB, FBM(cursor): 0MB, Connector:
+  { 0x05, 0x00, 0x62, 0x01 },	  //5 Intel HD Graphics 4000 - Port Count: 3, Pipes: 2, BIOS-allocated memory: 32MB, FBM(cursor): 16MB, Connector: DP3
+  { 0x06, 0x00, 0x62, 0x01 },	  //6 *iMac13,1 - Intel HD Graphics 4000 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 0MB, FBM(cursor): 0MB, Connector:
+  { 0x07, 0x00, 0x62, 0x01 },	  //7 *iMac13,2 - Intel HD Graphics 4000 - Port Count: 0, Pipes: 0, BIOS-allocated memory: 0MB, FBM(cursor): 0MB, Connector:
   { 0x08, 0x00, 0x66, 0x01 },	  //8 *MacBookAir5,1 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 34MB, Connector: LVDS1, DP2
   { 0x09, 0x00, 0x66, 0x01 },	  //9 *MacBookAir5,2 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 34MB, Connector: LVDS1, DP2
   { 0x0a, 0x00, 0x66, 0x01 },	  //10 *Macmini6,1 - Intel HD Graphics 4000 - Port Count: 3, Pipes: 2, BIOS-allocated memory: 32MB, FBM(cursor): 32MB, Connector: DP2, HDMI1
@@ -480,7 +484,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 
 
   //============== 6th generation ============
-  //----------------Sandy bridge--------------
+  //----------------Sandy Bridge--------------
   //GT1
   { 0x0102, "Intel HD Graphics 2000"         }, // Desktop - iMac12,1, iMac12,2
   { 0x0106, "Intel HD Graphics 2000"         }, // Mobile
@@ -493,21 +497,16 @@ static struct gma_gpu_t KnownGPUS[] = {
 
 
   //============== 7th generation ============
-  //----------------Ivy bridge----------------
+  //----------------Ivy Bridge----------------
   //GT1
-  { 0x0152, "Intel HD Graphics 2500"         }, // Desktop, Mobile - iMac13,1, iMac13,2
-  { 0x0156, "Intel HD Graphics 2500"         }, // Desktop, Mobile
-  { 0x015A, "Intel HD Graphics 4000"         }, // Desktop, Mobile
+  { 0x0152, "Intel HD Graphics 2500"         }, // Desktop - iMac13,1(FB:0x01620006), iMac13,2(FB:0x01620007)
+  { 0x0156, "Intel HD Graphics 2500"         }, // Mobile
+  { 0x015A, "Intel HD Graphics 4000"         }, // Server
+  { 0x015E, "Intel Ivy Bridge GT1"           }, // Reserved
   //GT2
-  { 0x0162, "Intel HD Graphics 4000"         }, // Desktop, Mobile
-  { 0x0166, "Intel HD Graphics 4000"         }, // Desktop, Mobile - MacBookPro9,1, MacBookPro9,2, MacBookPro10,1, MacBookPro10,2, MacBookAir5,1, MacBookAir5,2
-  { 0x016A, "Intel HD Graphics P4000"        }, // Workstation
-  //GT3
-  { 0x015E, "Intel Ivy bridge GT3"           }, //
-  //GT4
-  { 0x0172, "Intel HD Graphics 2500"         }, //
-  //GT5
-  { 0x0176, "Intel HD Graphics 2500"         }, //
+  { 0x0162, "Intel HD Graphics 4000"         }, // Desktop
+  { 0x0166, "Intel HD Graphics 4000"         }, // Mobile - MacBookPro9,1, MacBookPro9,2, MacBookPro10,1, MacBookPro10,2, MacBookAir5,1, MacBookAir5,2
+  { 0x016A, "Intel HD Graphics P4000"        }, // Server
 
 
   //============== 7.5th generation ==========
@@ -603,9 +602,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x161D, "Intel Broadwell GT2"            }, //
   { 0x161E, "Intel HD Graphics 5300"         }, // Ultramobile - MacBook8,1
   //GT3
-  { 0x1622, "Intel Iris Pro Graphics 6200"   }, // Desktop, Mobile - iMac16,2
   { 0x1626, "Intel HD Graphics 6000"         }, // Mobile - iMac16,1, MacBookAir7,1, MacBookAir7,2
-  { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
   { 0x162B, "Intel Iris Graphics 6100"       }, // Mobile - MacBookPro12,1
   { 0x162D, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
   { 0x162E, "Intel Broadwell GT3"            }, //
@@ -615,6 +612,9 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x163B, "Intel Broadwell GT3"            }, //
   { 0x163D, "Intel Broadwell GT3"            }, //
   { 0x163E, "Intel Broadwell GT3"            }, //
+  //GT3e
+  { 0x1622, "Intel Iris Pro Graphics 6200"   }, // Desktop, Mobile - iMac16,2
+  { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
 
 
   //============== 9th generation ============
@@ -627,23 +627,25 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x190E, "Intel Skylake GT1"              }, //
   //GT2
   { 0x1912, "Intel HD Graphics 530"          }, // Desktop - iMac17,1
-  { 0x1913, "Intel Skylake GT2f"             }, //
-  { 0x1915, "Intel Skylake GT2f"             }, //
   { 0x1916, "Intel HD Graphics 520"          }, // Mobile
-  { 0x1917, "Intel Skylake GT2f"             }, //
   { 0x191A, "Intel Skylake GT2"              }, //
   { 0x191B, "Intel HD Graphics 530"          }, // Mobile - MacBookPro13,3
   { 0x191D, "Intel HD Graphics P530"         }, // Workstation, Mobile Workstation
   { 0x191E, "Intel HD Graphics 515"          }, // Ultramobile - MacBook9,1
-  { 0x1921, "Intel Skylake GT2"              }, //
+  { 0x1921, "Intel HD Graphics 520"          }, // 
+  //GT2f
+  { 0x1913, "Intel Skylake GT2f"             }, //
+  { 0x1915, "Intel Skylake GT2f"             }, //
+  { 0x1917, "Intel Skylake GT2f"             }, //
   //GT3
   { 0x1923, "Intel HD Graphics 535"          }, //
   //GT3e
   { 0x1926, "Intel Iris Graphics 540"        }, // Mobile - MacBookPro13,1
   { 0x1927, "Intel Iris Graphics 550"        }, // Mobile - MacBookPro13,2
-  { 0x192A, "Intel Skylake GT4"              }, //
   { 0x192B, "Intel Iris Graphics 555"        }, //
   { 0x192D, "Intel Iris Graphics P555"       }, // Workstation, Mobile Workstation
+  //GT4
+  { 0x192A, "Intel Skylake GT4"              }, //
   //GT4e
   { 0x1932, "Intel Iris Pro Graphics 580"    }, //
   { 0x193A, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
@@ -658,7 +660,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5906, "Intel HD Graphics 610"          }, // Mobile
   { 0x590A, "Intel Kabylake GT1"             }, //
   { 0x5908, "Intel Kabylake GT1"             }, //
-  { 0x590B, "Intel HD Graphics 610"          }, //
+  { 0x590B, "Intel Kabylake GT1"             }, //
   { 0x590E, "Intel Kabylake GT1"             }, //
   //GT1.5
   { 0x5913, "Intel Kabylake GT1.5"           }, //
@@ -667,11 +669,11 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT2
   { 0x5912, "Intel HD Graphics 630"          }, // Desktop - iMac18,2, iMac18,3
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
-  { 0x591A, "Intel Kabylake GT2"             }, //
+  { 0x591A, "Intel HD Graphics P630"         }, //
   { 0x591B, "Intel HD Graphics 630"          }, // Mobile - MacBookPro14,3
   { 0x591D, "Intel HD Graphics P630"         }, // Workstation, Mobile Workstation
   { 0x591E, "Intel HD Graphics 615"          }, // Ultramobile - MacBook10,1
-  //GTF2
+  //GT2F
   { 0x5921, "Intel Kabylake GT2F"            }, //
   //GT3
   { 0x5923, "Intel HD Graphics 635"          }, //
@@ -679,6 +681,44 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5927, "Intel Iris Plus Graphics 650"   }, // Mobile - MacBookPro14,2
   //GT4
   { 0x593B, "Intel Kabylake GT4"             }, //
+
+
+  //============== 10th generation ===========
+  //----------------Coffeelake----------------
+  //GT1
+  { 0x3E90, "Intel Coffeelake GT1"           }, //
+  { 0x3E93, "Intel Coffeelake GT1"           }, //
+  //GT2
+  { 0x3E91, "Intel Coffeelake GT2"           }, //
+  { 0x3E92, "Intel Coffeelake GT2"           }, //
+  { 0x3E96, "Intel Coffeelake GT2"           }, //
+  { 0x3E9B, "Intel Coffeelake GT2"           }, //
+  { 0x3E94, "Intel Coffeelake GT2"           }, //
+  //GT3
+  { 0x3EA6, "Intel Coffeelake GT3"           }, //
+  { 0x3EA7, "Intel Coffeelake GT3"           }, //
+  { 0x3EA8, "Intel Coffeelake GT3"           }, //
+  { 0x3EA5, "Intel Coffeelake GT3"           }, //
+
+
+  //============== 10.5th generation =========
+  //----------------Cannonlake----------------
+  //GT0.5
+  { 0x5A49, "Intel Cannonlake GT0.5"         }, //
+  { 0x5A4A, "Intel Cannonlake GT0.5"         }, //
+  //GT1
+  { 0x5A41, "Intel Cannonlake GT1"           }, //
+  { 0x5A42, "Intel Cannonlake GT1"           }, //
+  { 0x5A44, "Intel Cannonlake GT1"           }, //
+  //GT1.5
+  { 0x5A59, "Intel Cannonlake GT1.5"         }, //
+  { 0x5A5A, "Intel Cannonlake GT1.5"         }, //
+  { 0x5A5C, "Intel Cannonlake GT1.5"         }, //
+  //GT2
+  { 0x5A50, "Intel Cannonlake GT2"           }, //
+  { 0x5A51, "Intel Cannonlake GT2"           }, //
+  { 0x5A52, "Intel Cannonlake GT2"           }, //
+  { 0x5A54, "Intel Cannonlake GT2"           }, //
 
 };
 
@@ -1614,7 +1654,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
 
       //============== 6th generation ============
-      //----------------Sandy bridge--------------
+      //----------------Sandy Bridge--------------
       //GT1
     case 0x0102: // "Intel HD Graphics 2000"          // Desktop - iMac12,1, iMac12,2
     case 0x0106: // "Intel HD Graphics 2000"          // Mobile
@@ -1706,25 +1746,20 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
 
       //============== 7th generation ============
-      //----------------Ivy bridge----------------
+      //----------------Ivy Bridge----------------
       //GT1
-    case 0x0152: // "Intel HD Graphics 2500"          // Desktop, Mobile - iMac13,1, iMac13,2
-    case 0x0156: // "Intel HD Graphics 2500"          // Desktop, Mobile
-    case 0x015A: // "Intel HD Graphics 4000"          // Desktop, Mobile
+    case 0x0152: // "Intel HD Graphics 2500"          // Desktop - iMac13,1(FB:0x01620006), iMac13,2(FB:0x01620007)
+    case 0x0156: // "Intel HD Graphics 2500"          // Mobile
+    case 0x015A: // "Intel HD Graphics 4000"          // Server
+    case 0x015E: // "Intel Ivy Bridge GT1"            // Reserved
       //GT2
-    case 0x0162: // "Intel HD Graphics 4000"          // Desktop, Mobile
-    case 0x0166: // "Intel HD Graphics 4000"          // Desktop, Mobile - MacBookPro9,1, MacBookPro9,2, MacBookPro10,1, MacBookPro10,2, MacBookAir5,1, MacBookAir5,2
-    case 0x016A: // "Intel HD Graphics P4000"         // Workstation
-      //GT3
-    case 0x015E: // "Intel Ivy bridge GT3"            //
-      //GT4
-    case 0x0172: // "Intel HD Graphics 2500"          //
-      //GT5
-    case 0x0176: // "Intel HD Graphics 2500"          //
+    case 0x0162: // "Intel HD Graphics 4000"          // Desktop
+    case 0x0166: // "Intel HD Graphics 4000"          // Mobile - MacBookPro9,1, MacBookPro9,2, MacBookPro10,1, MacBookPro10,2, MacBookAir5,1, MacBookAir5,2
+    case 0x016A: // "Intel HD Graphics P4000"         // Server
       if (!SetFake) {
         switch (gma_dev->device_id) {
           case 0x0152:
-          case 0x0172:
+          case 0x015A:
             FakeID = 0x01528086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1732,7 +1767,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0156:
-          case 0x0176:
             FakeID = 0x01568086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1740,15 +1774,14 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0162:
+          case 0x016A:
             FakeID = 0x01628086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01628086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
-          case 0x015A:
           case 0x0166:
-          case 0x016A:
             FakeID = 0x01668086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1958,9 +1991,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x161D: // "Intel Broadwell GT2"             //
     case 0x161E: // "Intel HD Graphics 5300"          // Ultramobile - MacBook8,1
       //GT3
-    case 0x1622: // "Intel Iris Pro Graphics 6200"    // Desktop, Mobile - iMac16,2
     case 0x1626: // "Intel HD Graphics 6000"          // Mobile - iMac16,1, MacBookAir7,1, MacBookAir7,2
-    case 0x162A: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
     case 0x162B: // "Intel Iris Graphics 6100"        // Mobile - MacBookPro12,1
     case 0x162D: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
     case 0x162E: // "Intel Broadwell GT3"             //
@@ -1970,6 +2001,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x163B: // "Intel Broadwell GT3"             //
     case 0x163D: // "Intel Broadwell GT3"             //
     case 0x163E: // "Intel Broadwell GT3"             //
+      //GT3e
+    case 0x1622: // "Intel Iris Pro Graphics 6200"    // Desktop, Mobile - iMac16,2
+    case 0x162A: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
       if (!SetFake) {
         switch (gma_dev->device_id) {
           case 0x1612:
@@ -1993,15 +2027,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             FakeID = 0x161E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
-          case 0x1622:
-          case 0x162A:
-          case 0x162D:
-            FakeID = 0x16228086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x16228086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-            break;
           case 0x1626:
             FakeID = 0x16268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2014,6 +2039,15 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x162B8086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            break;
+          case 0x1622:
+          case 0x162A:
+          case 0x162D:
+            FakeID = 0x16228086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x16228086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           default:
@@ -2080,23 +2114,25 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x190E: // "Intel Skylake GT1"               //
       //GT2
     case 0x1912: // "Intel HD Graphics 530"           // Desktop - iMac17,1
-    case 0x1913: // "Intel Skylake GT2f"              //
-    case 0x1915: // "Intel Skylake GT2f"              //
     case 0x1916: // "Intel HD Graphics 520"           // Mobile
-    case 0x1917: // "Intel Skylake GT2f"              //
     case 0x191A: // "Intel Skylake GT2"               //
     case 0x191B: // "Intel HD Graphics 530"           // Mobile - MacBookPro13,3
     case 0x191D: // "Intel HD Graphics P530"          // Workstation, Mobile Workstation
     case 0x191E: // "Intel HD Graphics 515"           // Ultramobile - MacBook9,1
-    case 0x1921: // "Intel Skylake GT2"               //
+    case 0x1921: // "Intel HD Graphics 520"           //
+      //GT2f
+    case 0x1913: // "Intel Skylake GT2f"              //
+    case 0x1915: // "Intel Skylake GT2f"              //
+    case 0x1917: // "Intel Skylake GT2f"              //
       //GT3
     case 0x1923: // "Intel HD Graphics 535"           //
       //GT3e
     case 0x1926: // "Intel Iris Graphics 540"         // Mobile - MacBookPro13,1
     case 0x1927: // "Intel Iris Graphics 550"         // Mobile - MacBookPro13,2
-    case 0x192A: // "Intel Skylake GT4"               //
     case 0x192B: // "Intel Iris Graphics 555"         //
     case 0x192D: // "Intel Iris Graphics P555"        // Workstation, Mobile Workstation
+      //GT4
+    case 0x192A: // "Intel Skylake GT4"               //
       //GT4e
     case 0x1932: // "Intel Iris Pro Graphics 580"     //
     case 0x193A: // "Intel Iris Pro Graphics P580"    // Workstation, Mobile Workstation
@@ -2117,6 +2153,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           }
           break;
         case 0x1916:
+        case 0x1921:
           if (!SetFake) {
             FakeID = 0x19168086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2243,7 +2280,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x5906: // "Intel HD Graphics 610"           // Mobile
     case 0x590A: // "Intel Kabylake GT1"              //
     case 0x5908: // "Intel Kabylake GT1"              //
-    case 0x590B: // "Intel HD Graphics 610"           //
+    case 0x590B: // "Intel Kabylake GT1"              //
     case 0x590E: // "Intel Kabylake GT1"              //
       //GT1.5
     case 0x5913: // "Intel Kabylake GT1.5"            //
@@ -2252,11 +2289,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT2
     case 0x5912: // "Intel HD Graphics 630"           // Desktop - iMac18,2, iMac18,3
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
-    case 0x591A: // "Intel Kabylake GT2"              //
+    case 0x591A: // "Intel HD Graphics P630"          //
     case 0x591B: // "Intel HD Graphics 630"           // Mobile - MacBookPro14,3
     case 0x591D: // "Intel HD Graphics P630"          // Workstation, Mobile Workstation
     case 0x591E: // "Intel HD Graphics 615"           // Ultramobile - MacBook10,1
-      //GTF2
+      //GT2F
     case 0x5921: // "Intel Kabylake GT2F"             //
       //GT3
     case 0x5923: // "Intel HD Graphics 635"           //
@@ -2291,6 +2328,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             DBG("  Found ig-platform-id = 0x59160000\n");
           }
           break;
+        case 0x591A:
         case 0x591B:
         case 0x591D:
           if (!SetFake) {
