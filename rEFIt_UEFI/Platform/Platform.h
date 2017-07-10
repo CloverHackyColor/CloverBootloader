@@ -450,6 +450,7 @@ MSR C001006B  0000-0000-0000-0000
 #define CPUID_81   8
 #define CPUID_87   9
 #define CPUID_88   10
+#define CPUID_81E  11
 #define CPUID_15   15
 #define CPUID_MAX  16
 

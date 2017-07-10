@@ -184,7 +184,6 @@
 		2CC880061A0ABC52006E36E4 /* menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
 		2CC880071A0ABC52006E36E4 /* screen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		2CC880081A0ABC52006E36E4 /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit.inf; path = ../../rEFIt_UEFI/refit.inf; sourceTree = "<group>"; };
-		2CC880091A0ABC52006E36E4 /* vers.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = vers.txt; path = ../../rEFIt_UEFI/vers.txt; sourceTree = "<group>"; };
 		2CC8800A1A0ABC52006E36E4 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../rEFIt_UEFI/Version.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -208,7 +207,6 @@
 				2CC87FBF1A0ABC52006E36E4 /* Platform */,
 				2CC87FFD1A0ABC52006E36E4 /* refit */,
 				2CC880081A0ABC52006E36E4 /* refit.inf */,
-				2CC880091A0ABC52006E36E4 /* vers.txt */,
 				2CC8800A1A0ABC52006E36E4 /* Version.h */,
 				2CC87F991A0ABC29006E36E4 /* Products */,
 			);
@@ -672,6 +670,7 @@
 				2C2A11321A0AE2ED00E9E558 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2CC87F931A0ABC29006E36E4 /* Build configuration list for PBXProject "rEFIt_UEFI" */ = {
 			isa = XCConfigurationList;
