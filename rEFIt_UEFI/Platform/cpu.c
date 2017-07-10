@@ -1130,8 +1130,8 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacMini21;
         break;
       case CPU_MODEL_CONROE:   //Conroe
-        DefaultType = iMac81;
-        break;
+//        DefaultType = iMac81; 
+//        break;
       case CPU_MODEL_WOLFDALE:  //Wolfdale, Hapertown
         DefaultType = iMac101;  //MacPro31 - speedstep without patching; but it is Hackintosh
         break;

@@ -864,8 +864,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     UINTN len = 0, i=0;
 
     // ATIConnectors patch
-    Patches->KPATIConnectorsController = AllocateZeroPool (AsciiStrnLenS(Prop->string, 255) * sizeof(CHAR16) + 2);
-    AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrnLenS(Prop->string, 255));
+    Patches->KPATIConnectorsController = AllocateZeroPool (AsciiStrSize(Prop->string) * sizeof(CHAR16));
+    AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrSize(Prop->string));
 
     Patches->KPATIConnectorsData = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
     Patches->KPATIConnectorsDataLen = len;
@@ -945,8 +945,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
             ++Prop2->string;
           }
 
-          if (AsciiStrnLenS(Prop2->string, 255) > 0) {
-            Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool (AsciiStrnLenS(Prop2->string, 255) * sizeof(CHAR16) + 2);
+          if (AsciiStrSize(Prop2->string) > 1) {
+            Patches->ForceKexts[Patches->NrForceKexts] = AllocateZeroPool (AsciiStrSize(Prop2->string) * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
             DBG (" - [%d]: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
@@ -1037,8 +1037,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].Patch        = AllocateCopyPool (FindLen, TmpPatch);
         Patches->KextPatches[Patches->NrKexts].MatchOS      = NULL;
         Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;        
-        Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrnLenS(KextPatchesName, 255) + 1, KextPatchesName);
-        Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrnLenS(KextPatchesLabel, 255) + 1, KextPatchesLabel);
+        Patches->KextPatches[Patches->NrKexts].Name         = AllocateCopyPool (AsciiStrSize(KextPatchesName), KextPatchesName);
+        Patches->KextPatches[Patches->NrKexts].Label        = AllocateCopyPool (AsciiStrSize(KextPatchesLabel), KextPatchesLabel);
 
         FreePool(TmpData);
         FreePool(TmpPatch);
@@ -1048,13 +1048,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrnLenS(Dict->string, 255) + 1, Dict->string);
+          Patches->KextPatches[Patches->NrKexts].MatchOS = AllocateCopyPool (AsciiStrSize(Dict->string), Dict->string);
           DBG(" :: MatchOS: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
 
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KextPatches[Patches->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrnLenS(Dict->string, 255) + 1, Dict->string);
+          Patches->KextPatches[Patches->NrKexts].MatchBuild = AllocateCopyPool (AsciiStrSize(Dict->string), Dict->string);
           DBG(" :: MatchBuild: %a", Patches->KextPatches[Patches->NrKexts].MatchBuild);
         }
 
@@ -4831,7 +4831,6 @@ GetUserSettings(
               } else {
                 AsciiSPrint(DSDTPatchesLabel, 255, " (NoLabel)");
               }
-        //      gSettings.PatchDsdtLabel[i] = AllocateCopyPool(AsciiStrnLenS(DSDTPatchesLabel, 255) + 1, DSDTPatchesLabel);
               gSettings.PatchDsdtLabel[i] = AllocateZeroPool(256);
               AsciiSPrint(gSettings.PatchDsdtLabel[i], 255, "%a", DSDTPatchesLabel);
               DBG(" (%a)", gSettings.PatchDsdtLabel[i]);
