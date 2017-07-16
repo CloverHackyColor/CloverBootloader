@@ -683,23 +683,23 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
       DBG("Kernel power management patch 10.10(data3) found and patched\n");
       return TRUE;
     }
-    // rehabman: change for 10.11.1 beta 15B38b
+    //rehabman: change for 10.11.1 beta 15B38b
     else if (0x00001390000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.11.1(beta 15B38b)(data3) found and patched\n");
       return TRUE;
     }
-    // Sherlocks: change for 10.12 DP1
+    //Sherlocks: change for 10.12 DP1
     else if (0x00003390000000E2ULL == (*((UINT64 *)Ptr))) {
-        (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
-        DBG("Kernel power management patch 10.12 DP1 found and patched\n");
-	    return TRUE;
+      (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
+      DBG("Kernel power management patch 10.12 DP1 found and patched\n");
+      return TRUE;
     }
-    // PMheart: change for 10.13 DP1 17A264c
+    //PMheart: change for 10.13 DP1 17A264c
     else if (0x00004000000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.13 DP1 found and patched\n");
-        return TRUE;
+      return TRUE;
     }
     Ptr += 16;
   }
@@ -760,9 +760,9 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+1409] == 0x65 && bytes[i+1410] == 0x8B && bytes[i+1411] == 0x0C && bytes[i+1412] == 0x25 &&
                bytes[i+1413] == 0x1C && bytes[i+1414] == 0x00 && bytes[i+1415] == 0x00 && bytes[i+1416] == 0x00) {
-        patchLocation = i+1398;
-        DBG("Found Sierra Lapic panic at 0x%08x\n", patchLocation);
-        break;
+      patchLocation = i+1398;
+      DBG("Found Sierra Lapic panic at 0x%08x\n", patchLocation);
+      break;
       //PMheart: 10.13 DP1
     } else if(bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&

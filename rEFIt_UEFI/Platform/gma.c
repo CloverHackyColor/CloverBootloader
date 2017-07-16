@@ -501,7 +501,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT1
   { 0x0152, "Intel HD Graphics 2500"         }, // Desktop - iMac13,1(FB:0x01620006), iMac13,2(FB:0x01620007)
   { 0x0156, "Intel HD Graphics 2500"         }, // Mobile
-  { 0x015A, "Intel HD Graphics 4000"         }, // Server
+  { 0x015A, "Intel HD Graphics 2500"         }, // Server
   { 0x015E, "Intel Ivy Bridge GT1"           }, // Reserved
   //GT2
   { 0x0162, "Intel HD Graphics 4000"         }, // Desktop
@@ -1666,10 +1666,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1 Macmini5,1, Macmini5,2, Macmini5,3
       if (!SetFake) {
         switch (gma_dev->device_id) {
-          case 0x0102:
-          case 0x0106:
-          case 0x010A:
-          case 0x0112:
           case 0x0116:
             FakeID = 0x01168086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -1677,6 +1673,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             FakeID = 0x01168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
+          case 0x0102:
+          case 0x0106:
+          case 0x010A:
+          case 0x0112:
           case 0x0122:
           case 0x0126:
             FakeID = 0x01268086 >> 16;
@@ -1750,7 +1750,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT1
     case 0x0152: // "Intel HD Graphics 2500"          // Desktop - iMac13,1(FB:0x01620006), iMac13,2(FB:0x01620007)
     case 0x0156: // "Intel HD Graphics 2500"          // Mobile
-    case 0x015A: // "Intel HD Graphics 4000"          // Server
+    case 0x015A: // "Intel HD Graphics 2500"          // Server
     case 0x015E: // "Intel Ivy Bridge GT1"            // Reserved
       //GT2
     case 0x0162: // "Intel HD Graphics 4000"          // Desktop
