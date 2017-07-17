@@ -4452,6 +4452,11 @@ GetUserSettings(
         gSettings.DisableFunctions  = (UINT32)AsciiStrHexToUint64(Prop->string);
       }
 
+      Prop                = GetProperty (DictPointer, "AirportBridgeDeviceName");
+      if (Prop && (Prop->type == kTagTypeString)) {
+          AsciiStrCpyS (gSettings.AirportBridgeDeviceName, sizeof(gSettings.AirportBridgeDeviceName), Prop->string);
+      }
+
       Prop2 = GetProperty (DictPointer, "Audio");
       if (Prop2 != NULL) {
         // HDA

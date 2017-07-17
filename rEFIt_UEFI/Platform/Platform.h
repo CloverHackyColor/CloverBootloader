@@ -424,14 +424,14 @@ static void SavePState(unsigned int index, unsigned int lowMsr, unsigned int cor
   WrmsrTx(msrIndex, lower, higher, affinityMask);
 }
 
-MSR C0010064  8000-0185-0000-1418 [20.00x] [1.4250 V] [13.30 A] [PState Pb0]
-MSR C0010065  8000-0185-0000-1615 [18.50x] [1.4125 V] [13.30 A] [PState Pb1]
-MSR C0010066  8000-0173-0000-1A1A [21.00x] [1.3875 V] [11.50 A] [PState P0]
-MSR C0010067  0000-0173-0000-1A1A
-MSR C0010068  0000-0173-0000-181A
-MSR C0010069  0000-0173-0000-1A1A
-MSR C001006A  8000-0125-0000-604C [ 7.00x] [0.9500 V] [ 3.70 A] [PState P1]
-MSR C001006B  0000-0000-0000-0000
+MSR C0010064  8000-0185-0000-1418 [20.00x] [1.4250 V] [13.30 A] [PState Pb0]
+MSR C0010065  8000-0185-0000-1615 [18.50x] [1.4125 V] [13.30 A] [PState Pb1]
+MSR C0010066  8000-0173-0000-1A1A [21.00x] [1.3875 V] [11.50 A] [PState P0]
+MSR C0010067  0000-0173-0000-1A1A
+MSR C0010068  0000-0173-0000-181A
+MSR C0010069  0000-0173-0000-1A1A
+MSR C001006A  8000-0125-0000-604C [ 7.00x] [0.9500 V] [ 3.70 A] [PState P1]
+MSR C001006B  0000-0000-0000-0000
 */
 
 
@@ -1162,7 +1162,9 @@ typedef struct {
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
+  CHAR8                   AirportBridgeDeviceName[5];
   UINT8                   pad83[4];
+
 
   // Table dropping
   ACPI_DROP_TABLE         *ACPIDropTables;

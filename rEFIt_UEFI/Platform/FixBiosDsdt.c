@@ -1082,7 +1082,7 @@ UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
       buffer[i] = buffer[i-offset];
     }
   }
-  else  if (offset>0) { // data move to back
+  else  if (offset>0 && len >=1) { // data move to back
     for (i=len-1; i>=start; i--) {
       buffer[i+offset] = buffer[i];
     }
@@ -1178,7 +1178,7 @@ INT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, INT32 sizeoffset)
 INT32 FindName(UINT8 *dsdt, INT32 len, CHAR8* name)
 {
   INT32 i;
-  for (i = 0; i < len - 5; i++) {
+  for (i = 0; len >= 5 && i < len-5; i++) {
     if ((dsdt[i] == 0x08) && (dsdt[i+1] == name[0]) &&
         (dsdt[i+2] == name[1]) && (dsdt[i+3] == name[2]) &&
         (dsdt[i+4] == name[3])) {
@@ -1300,7 +1300,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINT32 N)
   UINT32 i, j;
   BOOLEAN eq;
 
-  for (i=0; i<len-N; i++) {
+  for (i=0; len >= N && i < len - N; i++) {
     eq = TRUE;
     for (j=0; j<N; j++) {
       if (dsdt[i+j] != bin[j]) {
@@ -1321,12 +1321,12 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINT32 N)
 UINT32 FindMethod (UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8* Name)
 {
   UINT32 i;
-  for (i = 0; i<len-7; i++) {
-    if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14) || (dsdt[i-1] == 0x14)) &&
+  for (i = 0; len >= 7 && i < len - 7; i++) {
+    if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14) || (i>0 && dsdt[i-1] == 0x14)) &&
         (dsdt[i+3] == Name[0]) && (dsdt[i+4] == Name[1]) &&
         (dsdt[i+5] == Name[2]) && (dsdt[i+6] == Name[3])
         ){
-      if (dsdt[i-1] == 0x14) return i;
+      if (i>0 && dsdt[i-1] == 0x14) return i;
       return (dsdt[i+1] == 0x14)?(i+2):(i+1); //pointer to size field
     }
   }
@@ -1442,7 +1442,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
 {
   UINTN i;
   INTN  j = 0;
-  for (i = 0; i < len-4; i++) {
+  for (i = 0; len >= 4 && i < len - 4; i++) {
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       if (OldName) {
@@ -1457,7 +1457,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
     return 0;
   }
 
-  for (i = 0; i < len - 4; i++) {
+  for (i = 0; len >= 4 && i < len - 4; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
       DBG("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
@@ -1746,7 +1746,7 @@ VOID FixS3D (UINT8* dsdt, UINT32 len)
 {
   UINT32 i;
   DBG("Start _S3D Fix\n");
-  for (i=20; i<len-5; i++) {
+  for (i=20; len >= 5 && i < len - 5; i++) {
     if ((dsdt[i + 0] == 0x08) &&
         (dsdt[i + 1] == '_') &&
         (dsdt[i + 2] == 'S') &&
@@ -1769,7 +1769,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
     return len; //the device already exists
   }
   //search  PWRB PNP0C0C
-  for (i=0x20; i<len-6; i++) {
+  for (i=0x20; len >= 6 && i < len - 6; i++) {
     if (CmpPNP(dsdt, i, 0x0C0C)) {
       DBG("found PWRB at %x\n", i);
       adr = devFind(dsdt, i);
@@ -1779,7 +1779,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   if (!adr) {
     //search battery
     DBG("not found PWRB, look BAT0\n");
-    for (i=0x20; i<len-6; i++) {
+    for (i=0x20; len >= 6 && i < len - 6; i++) {
       if (CmpPNP(dsdt, i, 0x0C0A)) {
         adr = devFind(dsdt, i);
         DBG("found BAT0 at %x\n", i);
@@ -2060,7 +2060,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
 
 	DBG("Start HPET Fix\n");
   //have to find LPC
-  for (j=0x20; j<len-10; j++) {
+  for (j=0x20; len >= 10 && j < len - 10; j++) {
     if (CmpAdr(dsdt, j, 0x001F0000)) {
       LPCBADR = devFind(dsdt, j);
       if (!LPCBADR) {
@@ -2127,7 +2127,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   DBG("Start LPCB Fix\n");
 	//DBG("len = 0x%08x\n", len);
   //have to find LPC
-  for (j=0x20; j<len-10; j++) {
+  for (j=0x20; len >= 10 && j < len - 10; j++) {
     if (CmpAdr(dsdt, j, 0x001F0000))
     {
       LPCBADR = devFind(dsdt, j);
@@ -2240,7 +2240,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   root = aml_create_node(NULL);
 
   //search DisplayADR1[0]
-  for (j=0x20; j<len-10; j++) {
+  for (j=0x20; len >= 10 && j < len - 10; j++) {
     if (CmpAdr(dsdt, j, DisplayADR1[VCard])) { //for example 0x00020000=2,0
       devadr = devFind(dsdt, j);  //PEG0@2,0
       if (!devadr) {
@@ -2535,7 +2535,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
 
   DBG("Start HDMI%d Fix\n");
   // Device Address
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, HDMIADR1)) {
       devadr = devFind(dsdt, i);
       if (!devadr) {
@@ -2723,7 +2723,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   if (!PCISIZE) return len; //what is the bad DSDT ?!
   NetworkName = FALSE;
   // Network Address
-  for (i = 0x24; i < len - 10; i++) {
+  for (i = 0x24; len >=10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, NetworkADR1)) { //0x001C0004
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
@@ -2925,9 +2925,9 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
 
   DBG("Start Airport Fix\n");
   ArptName = FALSE;
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     // AirPort Address
-    if (CmpAdr(dsdt, i, ArptADR1)) {
+    if (CmpAdr(dsdt, i, ArptADR1) || CmpDev(dsdt, i, (UINT8*)gSettings.AirportBridgeDeviceName)) {
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
         continue;
@@ -3026,10 +3026,10 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, "Apple WiFi card");
-    aml_add_string(pack, "subsystem-id");
-    aml_add_byte_buffer(pack, data2ATH, 4);
-    aml_add_string(pack, "subsystem-vendor-id");
-    aml_add_byte_buffer(pack, data3ATH, 4);
+    //aml_add_string(pack, "subsystem-id");
+    //aml_add_byte_buffer(pack, data2ATH, 4);
+    //aml_add_string(pack, "subsystem-vendor-id");
+    //aml_add_byte_buffer(pack, data3ATH, 4);
 /*    if (ArptBCM) {
       if (!gSettings.FakeWIFI) {
         aml_add_string(pack, "model");
@@ -3057,10 +3057,10 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   }
 
   if (gSettings.FakeWIFI) {
-    aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
-    aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
+    //aml_add_string(pack, "device-id");
+    //aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
+    //aml_add_string(pack, "vendor-id");
+    //aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
     aml_add_string(pack, "name");
     aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
     aml_add_string(pack, "compatible");
@@ -3123,7 +3123,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 
   // Find Device SBUS
   if (SBUSADR1) {
-    for (i=0x20; i<len-10; i++) {
+    for (i=0x20; len >= 10 && i < len - 10; i++) {
       if (CmpAdr(dsdt, i, SBUSADR1))
       {
         SBUSADR = devFind(dsdt, i);
@@ -3217,7 +3217,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     return len;
   }
   //Find Device MCHC by name
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     k = CmpDev(dsdt, i, (UINT8*)"MCHC");
     if (k != 0) {
       DBG("device name (MCHC) found at %x, don't add!\n", k);
@@ -3310,7 +3310,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   }
   // Find Device IMEI
   if (IMEIADR1) {
-    for (i=0x20; i<len-10; i++) {
+    for (i=0x20; len >= 10 && i < len - 10; i++) {
       if (CmpAdr(dsdt, i, IMEIADR1)) {
         k = devFind(dsdt, i);
         if (k) {
@@ -3322,7 +3322,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
     }
   }
   //Find Device IMEI by name
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     k = CmpDev(dsdt, i, (UINT8*)"IMEI");
     if (k != 0) {
       DBG("device name (IMEI) found at %x, don't add!\n", k);
@@ -3393,7 +3393,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   }
 
   // Firewire Address
-  for (i = 0x20; i < len - 10; i++) {
+  for (i = 0x20; len >=10 && i < len - 10; i++) {
     if (FirewireADR1 != 0x00000000 &&
         CmpAdr(dsdt, i, FirewireADR1)) {
       BrdADR = devFind(dsdt, i);
@@ -3544,7 +3544,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
 //  len = DeleteDevice("AZAL", dsdt, len);
 
   // HDA Address
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (HDAADR1 != 0x00000000 && HDAFIX &&
         CmpAdr(dsdt, i, HDAADR1)) {
       HDAADR = devFind(dsdt, i);
@@ -3827,7 +3827,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       INTN XhciCount = 1;
       INTN EhciCount = 0;
       // find USB adr
-      for (j = 0x20; j < len - 4; j++) {
+      for (j = 0x20; len >= 4 && j < len - 4; j++) {
         if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
           XhciName = FALSE;
           UsbName[i] = AllocateZeroPool(5);
@@ -4060,7 +4060,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 
   if (!IDEADR1) return len;
 
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, IDEADR1)) {
               DBG("Found IDEADR1=%x at %x\n", IDEADR1, i);
       IDEADR = devFind(dsdt, i);
@@ -4226,7 +4226,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 
   if (!SATAAHCIADR1) return len;
 
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, SATAAHCIADR1)) {
            DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, i);
       SATAAHCIADR = devFind(dsdt, i);
@@ -4325,7 +4325,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 
   if (!SATAADR1) return len;
 
-  for (i=0x20; i<len-10; i++) {
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, SATAADR1)) {
       //        DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, j);
       SATAADR = devFind(dsdt, i);
@@ -4478,7 +4478,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
 
   DBG("Start _WAK Return Fix\n");
 
-	for (i = 0x24; i < len - 5; i++) {
+    for (i = 0x24; len >= 5 && i < len - 5; i++) {
 		if(dsdt[i] == '_' && dsdt[i+1] == 'W' && dsdt[i+2] == 'A' && dsdt[i+3] == 'K') {
       for (j=0; j<10; j++) {
         if(dsdt[i-j] == 0x14) {  //Method _WAK found
@@ -4859,7 +4859,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
   if (!gRegions) {
     return;
   }
-  for (i = 0x20; i < len - 15; i++) {
+  for (i = 0x20; len >= 15 && i < len - 15; i++) {
     if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x80) && GetName(dsdt, (INT32)(i+2), &Name[0], &shift)) {
       //this is region. Compare to bios tables
       p = gRegions;
@@ -4967,7 +4967,7 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
   bufferLen = TableHeader->Length;
 
-  for (i=0x24; i<bufferLen-15; i++) {
+  for (i=0x24; bufferLen >= 15 && i < bufferLen - 15; i++) {
     if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
         GetName(buffer, (INT32)(i+2), &Name[0], &shift)) {
       if (buffer[i+6+shift] == 0) {
