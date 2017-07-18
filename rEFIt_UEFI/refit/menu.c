@@ -4588,7 +4588,8 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   AddMenuCheck(SubScreen, "Allow Unrestricted DTrace", CSR_ALLOW_UNRESTRICTED_DTRACE, 66);
   AddMenuCheck(SubScreen, "Allow Unrestricted NVRAM", CSR_ALLOW_UNRESTRICTED_NVRAM, 66);
   AddMenuCheck(SubScreen, "Allow Device Configuration", CSR_ALLOW_DEVICE_CONFIGURATION, 66);
-  AddMenuCheck(SubScreen, "Disable BaseSystem Verification", CSR_DISABLE_BASESYSTEM_VERIFICATION, 66);
+  AddMenuCheck(SubScreen, "Allow Any Recovery OS", CSR_ALLOW_ANY_RECOVERY_OS, 66);
+  AddMenuCheck(SubScreen, "Disable Kext Consent", CSR_DISABLE_KEXT_CONSENT, 66);
   
   // return
   AddMenuEntry(SubScreen, &MenuEntryReturn);
