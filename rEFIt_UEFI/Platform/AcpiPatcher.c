@@ -453,6 +453,88 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
 //  DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
 }
 
+// by cecekpawon
+VOID FixAsciiTableHeader(UINT8  *Str, UINTN Len)
+{
+  UINTN   i = 0;
+
+  while ((*Str != 0) && (i++ < Len)) {
+    if ((*Str < 0x20) || (*Str > 0x7E)) {
+      *Str = 0x5F;  //underscore
+    }
+    Str++;
+  }
+}
+
+BOOLEAN CheckNonAscii(UINT8 *Str, UINTN Len)
+{
+  UINTN i = 0;
+  while ((*Str != 0) && (i++ < Len))  {
+    if ((*Str < 0x20) || (*Str > 0x7F)) {
+      return TRUE;
+    }
+    Str++;
+  }
+  return FALSE;
+}
+
+BOOLEAN CheckTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
+{
+  return (CheckNonAscii((UINT8*)&Header->CreatorId, 4) ||
+          CheckNonAscii((UINT8*)&Header->OemTableId, 8) ||
+          CheckNonAscii((UINT8*)&Header->OemId, 6));
+}
+
+VOID PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
+{
+  FixAsciiTableHeader((UINT8*)&Header->CreatorId, 4);
+  FixAsciiTableHeader((UINT8*)&Header->OemTableId, 8);
+  FixAsciiTableHeader((UINT8*)&Header->OemId, 6);
+}
+
+VOID PatchAllTablesHeaders()
+{
+  EFI_STATUS                      Status = EFI_SUCCESS;
+  EFI_ACPI_DESCRIPTION_HEADER     *TableEntry, *Ptr;
+  EFI_PHYSICAL_ADDRESS            TableAddr;
+  UINTN                           Index;
+  UINT32                          EntryCount;
+  CHAR8                           *BasePtr;
+  UINT64                          Entry64;
+  UINTN                           Len;
+
+  EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+  BasePtr = (CHAR8*)(UINTN)(&(Xsdt->Entry));
+  for (Index = 0; Index < EntryCount; Index++, BasePtr += sizeof(UINT64)) {
+    CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
+    TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
+    if (TableEntry->Signature == EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
+      // may be also EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE?
+      continue; //will be patched elsewhere
+    }
+    if (CheckTableHeader(TableEntry)) {  //will also prevent double reallocate memory. TRUE if the patch needed
+      //do new table with patched header
+      Len = TableEntry->Length;
+      TableAddr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+      Status = gBS->AllocatePages(AllocateMaxAddress,
+                                  EfiACPIReclaimMemory,
+                                  EFI_SIZE_TO_PAGES(Len),
+                                  &TableAddr);
+      if(EFI_ERROR(Status)) {
+ //       DBG(" ... not patched\n");
+        continue;
+      }
+      Ptr = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)TableAddr;
+      CopyMem((VOID*)Ptr, (VOID*)TableEntry, Len);
+      PatchTableHeader(Ptr);
+      CopyMem((VOID*)BasePtr, &TableAddr, sizeof(UINT64));
+      Ptr->Checksum = 0;
+      Ptr->Checksum = (UINT8)(256-Checksum8(Ptr, Len));
+
+    }
+  }
+}
+
 VOID PatchAllSSDT()
 {
   EFI_STATUS                      Status = EFI_SUCCESS;
@@ -509,6 +591,9 @@ VOID PatchAllSSDT()
         }
       }
       CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
+      if ((gSettings.FixDsdt & FIX_HEADERS)) {
+        PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)&ssdt);
+      }
       // Finish SSDT patch and resize SSDT Length
       CopyMem (&Ptr[4], &SsdtLen, 4);
       ((EFI_ACPI_DESCRIPTION_HEADER*)Ptr)->Checksum = 0;
@@ -675,14 +760,14 @@ STATIC UINT8 NameCSDT2[] = {0x80, 0x43, 0x53, 0x44, 0x54};
 VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
 {
   EFI_STATUS    Status = EFI_SUCCESS;
-  INTN    j, k, pacLen, pacCount;
-  CHAR16  *FileName;
-  CHAR8    Signature[5];
-  CHAR8    OemTableId[9];
-  UINTN   adr, len;
-  UINT8   *Entry;
-  UINT8   *End;
-  UINT8   *pacBody;
+  INTN          j, k, pacLen, pacCount;
+  CHAR16        *FileName;
+  CHAR8         Signature[5];
+  CHAR8         OemTableId[9];
+  UINTN         adr, len;
+  UINT8         *Entry;
+  UINT8         *End;
+  UINT8         *pacBody;
 
   Entry = (UINT8*)TableEntry;
   End = Entry + TableEntry->Length;
@@ -1617,6 +1702,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
     newFadt->Reserved0 = 0; //ACPIspec said it should be 0, while 1 is possible, but no more
 
+    //should correct headers if needed and if asked
+    if ((gSettings.FixDsdt & FIX_HEADERS)) {
+      PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)newFadt);
+    }
+
+
     if (gSettings.smartUPS==TRUE) {
       newFadt->PreferredPmProfile = 3;
     } else {
@@ -1920,70 +2011,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 //    DBG("End: Processing Patched AML(s)\n");
   }
 
-/*
-  // find other ACPI tables except DSDT
-  if (gSettings.SortedACPICount == 0) {
-    DirIterOpen(SelfRootDir, AcpiOemPath, &DirIter);
-    while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
-      CHAR16            FullName[256];
-      if (DirEntry->FileName[0] == L'.') {
-        continue;
-      }
-      if (StrStr(DirEntry->FileName, L"DSDT")) {
-        continue;
-      }
-
-      UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiOemPath, DirEntry->FileName);
-      Status = EFI_NOT_FOUND;
-      // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
-      if (FileExists(SelfRootDir, FullName)) {
-        DBG("Inserting %s from %s ... ", DirEntry->FileName, AcpiOemPath);
-        Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
-        if (!EFI_ERROR(Status)) {
-          //before insert we should checksum it
-          if (buffer) {
-            TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-            if (TableHeader->Length > 500 * kilo) {
-              DBG("wrong table\n");
-              continue;
-            }
-            TableHeader->Checksum = 0;
-            TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
-          }
-          Status = InsertTable((VOID*)buffer, bufferLen);
-        }
-        DBG("%r\n", Status);
-      }
-    }
-    Status = DirIterClose(&DirIter);
-
-  } else {
-    for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
-      CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, gSettings.SortedACPI[Index]);
-      Status = EFI_NOT_FOUND;
-      // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
-      if (FileExists(SelfRootDir, FullName)) {
-        DBG("Inserting table[%d]:%s from %s ... ", Index, gSettings.SortedACPI[Index], AcpiOemPath);
-        Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
-        if (!EFI_ERROR(Status)) {
-          //before insert we should checksum it
-          if (buffer) {
-            TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-            if (TableHeader->Length > 500 * kilo) {
-              DBG("wrong table\n");
-              continue;
-            }
-            TableHeader->Checksum = 0;
-            TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
-          }
-          Status = InsertTable((VOID*)buffer, bufferLen);
-        }
-        DBG("%r\n", Status);
-      }
-    }
-  }
-*/
-
   //Slice - this is a time to patch MADT table.
 //  DBG("Fool proof: size of APIC NMI  = %d\n", sizeof(EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE));
 //  DBG("----------- size of APIC DESC = %d\n", sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
@@ -1998,118 +2025,125 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   ApicCPUNum = 0;
   // 2. For absent NMI subtable
-    xf = ScanXSDT(APIC_SIGN, 0);
-    if (xf) {
-      ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*xf);
-//      ApicLen = ApicTable->Length;
-      ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)(UINTN)(*xf + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
-      //determine first ID of CPU. This must be 0 for Mac and for good Hack
-      // but = 1 for stupid ASUS
-      //
-      if (ProcLocalApic->Type == 0) {
-        ApicCPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
-      }
+  xf = ScanXSDT(APIC_SIGN, 0);
+  if (xf) {
+    ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*xf);
+    //      ApicLen = ApicTable->Length;
+    ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)(UINTN)(*xf + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
+    //determine first ID of CPU. This must be 0 for Mac and for good Hack
+    // but = 1 for stupid ASUS
+    //
+    if (ProcLocalApic->Type == 0) {
+      ApicCPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
+    }
 
-      while ((ProcLocalApic->Type == 0) && (ProcLocalApic->Length == 8)) {
-        ProcLocalApic++;
-        ApicCPUNum++;
-        if (ApicCPUNum > 16) {
-          DBG("Out of control with CPU numbers\n");
-          break;
+    while ((ProcLocalApic->Type == 0) && (ProcLocalApic->Length == 8)) {
+      ProcLocalApic++;
+      ApicCPUNum++;
+      if (ApicCPUNum > 16) {
+        DBG("Out of control with CPU numbers\n");
+        break;
+      }
+    }
+    //fool proof
+    if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
+      ApicCPUNum = gCPUStructure.Threads;
+    }
+
+    DBG("CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
+    //reallocate table
+    if (gSettings.PatchNMI) {
+
+      BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+      Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+      if(!EFI_ERROR(Status))
+      {
+        //save old table and drop it from XSDT
+        CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
+        DropTableFromXSDT(APIC_SIGN, 0, 0);
+        ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+        ApicTable->Revision = EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION;
+        CopyMem(&ApicTable->OemId, oemID, 6);
+        CopyMem(&ApicTable->OemTableId, oemTableID, 8);
+        ApicTable->OemRevision = 0x00000001;
+        CopyMem(&ApicTable->CreatorId, creatorID, 4);
+
+        SubTable = (UINT8*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
+        Index = CPUBase;
+        while (*SubTable != EFI_ACPI_4_0_LOCAL_APIC_NMI) {
+          DBG("Found subtable in MADT: type=%d\n", *SubTable);
+          //xxx - OSX paniced
+          /*
+           if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
+           ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
+           ProcLocalApic->AcpiProcessorId = Index;
+           Index++;
+           }
+           */
+          bufferLen = (UINTN)SubTable[1];
+          SubTable += bufferLen;
+          if (((UINTN)SubTable - (UINTN)BufferPtr) >= ApicTable->Length) {
+            break;
+          }
+        }
+
+        if (*SubTable == EFI_ACPI_4_0_LOCAL_APIC_NMI) {
+          DBG("LocalApicNMI is already present, no patch needed\n");
+        } else {
+          LocalApicNMI = (EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE*)((UINTN)ApicTable + ApicTable->Length);
+          for (Index = 0; Index < ApicCPUNum; Index++) {
+            LocalApicNMI->Type = EFI_ACPI_4_0_LOCAL_APIC_NMI;
+            LocalApicNMI->Length = sizeof(EFI_ACPI_4_0_LOCAL_APIC_NMI_STRUCTURE);
+            LocalApicNMI->AcpiProcessorId = (UINT8)(ApicCPUBase + Index);
+            LocalApicNMI->Flags = 5;
+            LocalApicNMI->LocalApicLint = 1;
+            LocalApicNMI++;
+            ApicTable->Length += LocalApicNMI->Length;
+          }
+          DBG("ApicTable new Length=%d\n", ApicTable->Length);
+          // insert corrected MADT
+        }
+
+        ApicTable->Checksum = 0;
+        ApicTable->Checksum = (UINT8)(256-Checksum8((CHAR8*)ApicTable, ApicTable->Length));
+        Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
+        if (!EFI_ERROR(Status)) {
+          DBG("New APIC table successfully inserted\n");
+        }
+        Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
+        if (EFI_ERROR(Status)) {
+          Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
+        }
+        if (!EFI_ERROR(Status)) {
+          DBG("Patched APIC table saved into efi/clover/acpi/origin/APIC-p.aml \n");
         }
       }
-      //fool proof
-      if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
-        ApicCPUNum = gCPUStructure.Threads;
-      }
+    }
+  }
+  else {
+    DBG("No APIC table Found !!!\n");
+  }
 
-      DBG("CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
- //reallocate table
-      if (gSettings.PatchNMI) {
+  //It's time to fix headers of all remaining ACPI tables.
+  // The bug reported by TheRacerMaster and https://alextjam.es/debugging-appleacpiplatform/
+  // Workaround proposed by cecekpawon, revised by Slice
+  if ((gSettings.FixDsdt & FIX_HEADERS)) {
+    PatchAllTablesHeaders();
+  }
 
-        BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-        Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
-        if(!EFI_ERROR(Status))
-        {
-          //save old table and drop it from XSDT
-          CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
-          DropTableFromXSDT(APIC_SIGN, 0, 0);
-          ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
-          ApicTable->Revision = EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION;
-          CopyMem(&ApicTable->OemId, oemID, 6);
-          CopyMem(&ApicTable->OemTableId, oemTableID, 8);
-          ApicTable->OemRevision = 0x00000001;
-          CopyMem(&ApicTable->CreatorId, creatorID, 4);
-
-          SubTable = (UINT8*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
-          Index = CPUBase;
-          while (*SubTable != EFI_ACPI_4_0_LOCAL_APIC_NMI) {
-            DBG("Found subtable in MADT: type=%d\n", *SubTable);
-            //xxx - OSX paniced
+  if (gCPUStructure.Threads >= gCPUStructure.Cores) {
+    ApicCPUNum = gCPUStructure.Threads;
+  } else {
+    ApicCPUNum = gCPUStructure.Cores;
+  }
+  //  }
   /*
-            if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
-              ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
-              ProcLocalApic->AcpiProcessorId = Index;
-              Index++;
-            }
-  */
-            bufferLen = (UINTN)SubTable[1];
-            SubTable += bufferLen;
-            if (((UINTN)SubTable - (UINTN)BufferPtr) >= ApicTable->Length) {
-              break;
-            }
-          }
-
-          if (*SubTable == EFI_ACPI_4_0_LOCAL_APIC_NMI) {
-            DBG("LocalApicNMI is already present, no patch needed\n");
-          } else {
-            LocalApicNMI = (EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE*)((UINTN)ApicTable + ApicTable->Length);
-            for (Index = 0; Index < ApicCPUNum; Index++) {
-              LocalApicNMI->Type = EFI_ACPI_4_0_LOCAL_APIC_NMI;
-              LocalApicNMI->Length = sizeof(EFI_ACPI_4_0_LOCAL_APIC_NMI_STRUCTURE);
-              LocalApicNMI->AcpiProcessorId = (UINT8)(ApicCPUBase + Index);
-              LocalApicNMI->Flags = 5;
-              LocalApicNMI->LocalApicLint = 1;
-              LocalApicNMI++;
-              ApicTable->Length += LocalApicNMI->Length;
-            }
-            DBG("ApicTable new Length=%d\n", ApicTable->Length);
-            // insert corrected MADT
-          }
-          ApicTable->Checksum = 0;
-          ApicTable->Checksum = (UINT8)(256-Checksum8((CHAR8*)ApicTable, ApicTable->Length));
-          Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
-          if (!EFI_ERROR(Status)) {
-            DBG("New APIC table successfully inserted\n");
-          }
-          Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
-          if (EFI_ERROR(Status)) {
-            Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
-          }
-          if (!EFI_ERROR(Status)) {
-            DBG("Patched APIC table saved into efi/clover/acpi/origin/APIC-p.aml \n");
-          }
-       }
-      }
-    }
-      else DBG("No APIC table Found !!!\n");
-  //fool proof
-  //It's appeared that APIC CPU number is wrong
-  //so return to CPU structure
-//  if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
-    if (gCPUStructure.Threads >= gCPUStructure.Cores) {
-      ApicCPUNum = gCPUStructure.Threads;
-    } else {
-      ApicCPUNum = gCPUStructure.Cores;
-    }
-//  }
-    /*
-     At this moment we have CPU numbers from DSDT - acpi_cpu_num
-     and from CPU characteristics gCPUStructure
-     Also we had the number from APIC table ApicCPUNum
-     What to choose?
-     Since rev745 I will return to acpi_cpu_count global variable
-    */
+   At this moment we have CPU numbers from DSDT - acpi_cpu_num
+   and from CPU characteristics gCPUStructure
+   Also we had the number from APIC table ApicCPUNum
+   What to choose?
+   Since rev745 I will return to acpi_cpu_count global variable
+   */
   if (acpi_cpu_count) {
     ApicCPUNum = acpi_cpu_count;
   }

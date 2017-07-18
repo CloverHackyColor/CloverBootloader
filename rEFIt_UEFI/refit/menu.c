@@ -4369,6 +4369,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuCheck(SubScreen, "Rename ACST",  FIX_ACST, 67);
   AddMenuCheck(SubScreen, "Add HDMI",     FIX_HDMI, 67);
   AddMenuCheck(SubScreen, "Fix Regions",  FIX_REGIONS, 67);
+  AddMenuCheck(SubScreen, "Fix Headers",  FIX_HEADERS, 67);
+
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   ModifyTitles(Entry);
