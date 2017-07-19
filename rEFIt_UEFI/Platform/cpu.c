@@ -475,11 +475,15 @@ VOID GetCPUProperties (VOID)
            case CPU_MODEL_CRYSTALWELL:
            case CPU_MODEL_BROADWELL_HQ:
            case CPU_MODEL_BROADWELL_E5:
+           case CPU_MODEL_BROADWELL_DE:
+           case CPU_MODEL_AIRMONT:
            case CPU_MODEL_SKYLAKE_U:
            case CPU_MODEL_SKYLAKE_D:
            case CPU_MODEL_SKYLAKE_S:
+           case CPU_MODEL_GOLDMONT:
            case CPU_MODEL_KABYLAKE1:
            case CPU_MODEL_KABYLAKE2:
+           case CPU_MODEL_CANNONLAKE:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
@@ -1049,8 +1053,8 @@ VOID GetCPUProperties (VOID)
     // but this algo almost always wrong
     //
     // thanks to dgobe for i3/i5/i7 bus speed detection
-	// TODO: consider more Nehalem based CPU(?) ex. CPU_MODEL_NEHALEM_EX, CPU_MODEL_WESTMERE, CPU_MODEL_WESTMERE_EX
-	// info: https://en.wikipedia.org/wiki/List_of_Intel_Xeon_microprocessors#Nehalem-based_Xeons
+    // TODO: consider more Nehalem based CPU(?) ex. CPU_MODEL_NEHALEM_EX, CPU_MODEL_WESTMERE, CPU_MODEL_WESTMERE_EX
+    // info: https://en.wikipedia.org/wiki/List_of_Intel_Xeon_microprocessors#Nehalem-based_Xeons
     qpimult = 2; //init
     /* Scan PCI BUS For QPI Frequency */
     // get all PciIo handles
@@ -1099,8 +1103,8 @@ VOID GetCPUProperties (VOID)
     qpibusspeed = MultU64x32(gCPUStructure.ExternalClock, qpimult * 2); //kHz
     DBG("qpibusspeed %dkHz\n", qpibusspeed);
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
-	// set QPI for Nehalem
-	gSettings.QPI = gCPUStructure.ProcessorInterconnectSpeed;
+    // set QPI for Nehalem
+    gSettings.QPI = gCPUStructure.ProcessorInterconnectSpeed;
     
   } else {
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), kilo); //kHz->MHz
@@ -1330,6 +1334,8 @@ UINT16 GetAdvancedCpuType ()
             return 0x507;
           case CPU_MODEL_IVY_BRIDGE_E5:
             return 0xA01;
+          case CPU_MODEL_BROADWELL_E5:
+            return 0xA02; //0xA02 or 0xA03
           case CPU_MODEL_ATOM_3700:
           case CPU_MODEL_HASWELL:
           case CPU_MODEL_HASWELL_ULT:
@@ -1542,6 +1548,9 @@ MACHINE_TYPES GetDefaultModel()
           DefaultType = iMac141;
           break;
         }
+        break;
+      case CPU_MODEL_BROADWELL_E5:
+        DefaultType = MacPro61;
         break;
       default:
         DefaultType = iMac132;

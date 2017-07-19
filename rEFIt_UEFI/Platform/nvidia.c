@@ -1395,6 +1395,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	// 1B00 - 1CFFF
 	{ 0x10DE1B00,   "Titan X Pascal"}, // GP102
   //	{ 0x10DE1B01,	"Graphics Device" }, // GP102
+	{ 0x10DE1B06,   "GeForce GTX 1080 Ti"}, // GP102
 	{ 0x10DE1B30,	"Quadro P6000" }, // GP102GL
   //	{ 0x10DE1B70,	"Graphics Device" }, // GP102GL
   //	{ 0x10DE1B78,	"Graphics Device" }, // GP102GL

@@ -6554,7 +6554,7 @@ SaveSettings ()
         // for sandy bridge or newer
         // to match ExternalClock 25 MHz like real mac, divide BusSpeed by 4
         gCPUStructure.ExternalClock = gSettings.BusSpeed / 4;
-        //DBG(" Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+        //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
         break;
     }
 
