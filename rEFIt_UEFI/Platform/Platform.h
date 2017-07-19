@@ -1067,9 +1067,10 @@ typedef struct {
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
+  CHAR8                   AirportBridgeDeviceName[5];
+
   //Pointer
   BOOLEAN                 PointerEnabled;
-  UINT8                   pad82[5];
   INTN                    PointerSpeed;
 #if defined(MDE_CPU_IA32)
   UINT32                  align5;
@@ -1163,7 +1164,6 @@ typedef struct {
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
-  CHAR8                   AirportBridgeDeviceName[5];
   UINT8                   pad83[4];
 
 
