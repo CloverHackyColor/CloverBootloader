@@ -453,13 +453,16 @@ VOID DropTableFromXSDT (UINT32 Signature, UINT64 TableId, UINT32 Length)
 //  DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
 }
 
-// by cecekpawon
+// by cecekpawon, edited by Slice
 VOID FixAsciiTableHeader(UINT8  *Str, UINTN Len)
 {
   UINTN   i = 0;
 
-  while ((*Str != 0) && (i++ < Len)) {
-    if ((*Str < 0x20) || (*Str > 0x7E)) {
+  while (i++ < Len) {
+    if (*Str < 0x20) {
+      *Str = 0x20;  //space
+    }
+    if (*Str > 0x7E) {
       *Str = 0x5F;  //underscore
     }
     Str++;
@@ -469,7 +472,7 @@ VOID FixAsciiTableHeader(UINT8  *Str, UINTN Len)
 BOOLEAN CheckNonAscii(UINT8 *Str, UINTN Len)
 {
   UINTN i = 0;
-  while ((*Str != 0) && (i++ < Len))  {
+  while (i++ < Len)  {
     if ((*Str < 0x20) || (*Str > 0x7F)) {
       return TRUE;
     }
