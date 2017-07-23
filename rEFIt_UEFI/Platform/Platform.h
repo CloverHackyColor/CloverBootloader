@@ -184,7 +184,7 @@ Headers collection for procedures
 #define CPU_MODEL_BROADWELL_DE  0x56
 #define CPU_MODEL_KNIGHT        0x57  /* Knights Landing */
 #define CPU_MODEL_MOOREFIELD    0x5A  /* Annidale */
-#define CPU_MODEL_GOLDMONT      0x5C  /* ApolloLake */
+#define CPU_MODEL_GOLDMONT      0x5C  /* Apollo Lake */
 #define CPU_MODEL_ATOM_X3       0x5D
 #define CPU_MODEL_SKYLAKE_D     0x5E  /* Skylake Desktop */
 #define CPU_MODEL_DENVERTON     0x5F  /* Goldmont Microserver */

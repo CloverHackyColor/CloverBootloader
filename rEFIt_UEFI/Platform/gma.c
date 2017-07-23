@@ -2383,6 +2383,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1A85: // "Intel HD Graphics"               // Broxton(cancelled)
     case 0x5A84: // "Intel HD Graphics 505"           // Apollo Lake
     case 0x5A85: // "Intel HD Graphics 500"           // Apollo Lake
+      break;
 
 
       //============== 9.5th generation ==========
