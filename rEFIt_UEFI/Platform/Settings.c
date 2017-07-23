@@ -2327,6 +2327,7 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "Fast");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.FastBoot       = TRUE;
+        DBG ("Fast option enabled\n");
       }
 
       Prop = GetProperty (DictPointer, "NoEarlyProgress");
@@ -2336,6 +2337,7 @@ GetEarlyUserSettings (
 
       if (SpecialBootMode) {
         GlobalConfig.FastBoot       = TRUE;
+        DBG ("Fast option enabled\n");
       }
 
       Prop = GetProperty (DictPointer, "NeverHibernate");
@@ -2585,6 +2587,7 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "TextOnly");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.TextOnly = TRUE;
+        DBG ("TextOnly option enabled\n");
       }
 
       Prop = GetProperty (DictPointer, "ScreenResolution");
