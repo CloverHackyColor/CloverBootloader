@@ -18,7 +18,7 @@
  https://github.com/Igalia/intel-osrc-gfx-prm
  https://github.com/RehabMan/OS-X-Clover-Laptop-Config/blob/master/hotpatch/SSDT-IGPU.dsl
  https://en.wikipedia.org/wiki/List_of_Intel_chipsets
- https://en.wikipedia.org/wiki/Intel_HD_and_Iris_Graphics
+ https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units
  https://lists.freedesktop.org/archives/intel-gfx/2011-June/010815.html
  https://fossies.org/linux/mesa/include/pci_ids/i965_pci_ids.h
  https://github.com/anholt/mesa/blob/master/include/pci_ids/i965_pci_ids.h
@@ -43,9 +43,11 @@
  https://applelife.ru/threads/intel-hd-2500-ivybridge-zavod-tolko-hdmi.40629/
  ============== 7.5th generation ==========
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/005_hsw_-_2013/vol04_intel-gfx-prm-osrc-hsw-configurations.pdf
+ https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/006_vvw_-_2014
  http://www.insanelymac.com/forum/topic/290783-intel-hd-graphics-4600-haswell-working-displayport/
  ============== 8th generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/007_bdw_-_2014-2015/intel-gfx-prm-osrc-bdw-vol04-configurations_1.pdf
+ https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/008_chv-bsw_-_2014-2015
  ============== 9th generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/009_skl_-_2015-2016/intel-gfx-prm-osrc-skl-vol04-configurations.pdf
  ============== 9.5th generation ==========
@@ -371,6 +373,35 @@ UINT8 mn_HD3000_os_info[20] = {
 
 static struct gma_gpu_t KnownGPUS[] = {
 
+  //============== PowerVR ===================
+  //--------Canmore/Sodaville/Groveland-------
+  { 0x2E5B, "Intel 500"                      }, //
+
+  //----------------Poulsbo-------------------
+  { 0x8108, "Intel 500"                      }, // Menlow
+  { 0x8109, "Intel 500"                      }, // Menlow
+
+  //----------------Lincroft------------------
+  { 0x4102, "Intel 600"                      }, // Moorestown
+
+  //----------------Cedarview-----------------
+  { 0x0BE0, "Intel GMA 3600"                 }, // Cedar Trail
+  { 0x0BE1, "Intel GMA 3600"                 }, // Cedar Trail
+  { 0x0BE2, "Intel GMA 3650"                 }, // Cedar Trail
+  { 0x0BE3, "Intel GMA 3650"                 }, // Cedar Trail
+
+  //----------------Cloverview----------------
+  { 0x08C7, "Intel GMA"                      }, // Clover Trail
+  { 0x08C8, "Intel GMA"                      }, // Clover Trail
+  { 0x08C9, "Intel GMA"                      }, // Clover Trail
+  { 0x08CA, "Intel GMA"                      }, // Clover Trail
+  { 0x08CB, "Intel GMA"                      }, // Clover Trail
+  { 0x08CC, "Intel GMA"                      }, // Clover Trail
+  { 0x08CD, "Intel GMA"                      }, // Clover Trail
+  { 0x08CE, "Intel GMA"                      }, // Clover Trail
+  { 0x08CF, "Intel GMA"                      }, // Clover Trail
+
+
   //============== 1st generation ============
   //----------------Auburn--------------------
   { 0x7800, "Intel 740"                      }, // Desktop - Intel 740 GMCH Express Chipset Family
@@ -584,6 +615,14 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0D2B, "Intel Haswell GT3"              }, // CRW
   { 0x0D2E, "Intel Haswell GT3"              }, // CRW
 
+  //----------------ValleyView----------------
+  { 0x0F30, "Intel HD Graphics"              }, // Bay Trail
+  { 0x0F31, "Intel HD Graphics"              }, // Bay Trail
+  { 0x0F32, "Intel HD Graphics"              }, // Bay Trail
+  { 0x0F33, "Intel HD Graphics"              }, // Bay Trail
+  { 0x0155, "Intel HD Graphics"              }, // Bay Trail
+  { 0x0157, "Intel HD Graphics"              }, // Bay Trail
+
 
   //============== 8th generation ============
   //----------------Broadwell-----------------
@@ -605,16 +644,23 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x1626, "Intel HD Graphics 6000"         }, // Mobile - iMac16,1, MacBookAir7,1, MacBookAir7,2
   { 0x162B, "Intel Iris Graphics 6100"       }, // Mobile - MacBookPro12,1
   { 0x162D, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
-  { 0x162E, "Intel Broadwell GT3"            }, //
-  { 0x1632, "Intel Broadwell GT3"            }, //
-  { 0x1636, "Intel Broadwell GT3"            }, //
-  { 0x163A, "Intel Broadwell GT3"            }, //
-  { 0x163B, "Intel Broadwell GT3"            }, //
-  { 0x163D, "Intel Broadwell GT3"            }, //
-  { 0x163E, "Intel Broadwell GT3"            }, //
   //GT3e
   { 0x1622, "Intel Iris Pro Graphics 6200"   }, // Desktop, Mobile - iMac16,2
   { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
+  //RSVD
+  { 0x162E, "Intel Broadwell RSVD"           }, // Reserved
+  { 0x1632, "Intel Broadwell RSVD"           }, // Reserved
+  { 0x1636, "Intel Broadwell RSVD"           }, // Reserved
+  { 0x163A, "Intel Broadwell RSVD"           }, // Reserved
+  { 0x163B, "Intel Broadwell RSVD"           }, // Reserved
+  { 0x163D, "Intel Broadwell RSVD"           }, // Reserved
+  { 0x163E, "Intel Broadwell RSVD"           }, // Reserved
+
+  //------------Cherryview/Braswell-----------
+  { 0x22B0, "Intel HD Graphics 400"          }, // Cherry Trail - Atom x5 series - Z83X0/Z8550(HD Graphics 400)
+  { 0x22B1, "Intel HD Graphics 405"          }, // Cherry Trail - Atom x7 series - Z8750(HD Graphics 405)
+  { 0x22B2, "Intel HD Graphics 400"          }, // Braswell - Cerelon QC/DC series - X3X60(HD Graphics 400)
+  { 0x22B3, "Intel HD Graphics 405"          }, // Braswell - Pentium QC series - X3710(HD Graphics 405)
 
 
   //============== 9th generation ============
@@ -652,20 +698,27 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x193B, "Intel Iris Pro Graphics 580"    }, // Desktop, Mobile
   { 0x193D, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
 
+  //----------------Goldmont------------------
+  { 0x0A84, "Intel HD Graphics"              }, // Broxton(cancelled)
+  { 0x1A84, "Intel HD Graphics"              }, // Broxton(cancelled)
+  { 0x1A85, "Intel HD Graphics"              }, // Broxton(cancelled)
+  { 0x5A84, "Intel HD Graphics 505"          }, // Apollo Lake
+  { 0x5A85, "Intel HD Graphics 500"          }, // Apollo Lake
+
 
   //============== 9.5th generation ==========
-  //----------------Kabylake------------------
+  //----------------Kaby Lake-----------------
   //GT1
   { 0x5902, "Intel HD Graphics 610"          }, // Desktop
   { 0x5906, "Intel HD Graphics 610"          }, // Mobile
-  { 0x590A, "Intel Kabylake GT1"             }, //
-  { 0x5908, "Intel Kabylake GT1"             }, //
-  { 0x590B, "Intel Kabylake GT1"             }, //
-  { 0x590E, "Intel Kabylake GT1"             }, //
+  { 0x590A, "Intel Kaby Lake GT1"            }, //
+  { 0x5908, "Intel Kaby Lake GT1"            }, //
+  { 0x590B, "Intel Kaby Lake GT1"            }, //
+  { 0x590E, "Intel Kaby Lake GT1"            }, //
   //GT1.5
-  { 0x5913, "Intel Kabylake GT1.5"           }, //
-  { 0x5915, "Intel Kabylake GT1.5"           }, //
-  { 0x5917, "Intel Kabylake GT1.5"           }, //
+  { 0x5913, "Intel Kaby Lake GT1.5"          }, //
+  { 0x5915, "Intel Kaby Lake GT1.5"          }, //
+  { 0x5917, "Intel Kaby Lake GT1.5"          }, //
   //GT2
   { 0x5912, "Intel HD Graphics 630"          }, // Desktop - iMac18,2, iMac18,3
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
@@ -674,31 +727,31 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x591D, "Intel HD Graphics P630"         }, // Workstation, Mobile Workstation
   { 0x591E, "Intel HD Graphics 615"          }, // Ultramobile - MacBook10,1
   //GT2F
-  { 0x5921, "Intel Kabylake GT2F"            }, //
+  { 0x5921, "Intel Kaby Lake GT2F"           }, //
   //GT3
   { 0x5923, "Intel HD Graphics 635"          }, //
   { 0x5926, "Intel Iris Plus Graphics 640"   }, // Mobile - MacBookPro14,1, iMac18,1
   { 0x5927, "Intel Iris Plus Graphics 650"   }, // Mobile - MacBookPro14,2
   //GT4
-  { 0x593B, "Intel Kabylake GT4"             }, //
+  { 0x593B, "Intel Kaby Lake GT4"            }, //
 
 
   //============== 10th generation ===========
-  //----------------Coffeelake----------------
+  //----------------Coffee Lake---------------
   //GT1
-  { 0x3E90, "Intel Coffeelake GT1"           }, //
-  { 0x3E93, "Intel Coffeelake GT1"           }, //
+  { 0x3E90, "Intel Coffee Lake GT1"          }, //
+  { 0x3E93, "Intel Coffee Lake GT1"          }, //
   //GT2
-  { 0x3E91, "Intel Coffeelake GT2"           }, //
-  { 0x3E92, "Intel Coffeelake GT2"           }, //
-  { 0x3E96, "Intel Coffeelake GT2"           }, //
-  { 0x3E9B, "Intel Coffeelake GT2"           }, //
-  { 0x3E94, "Intel Coffeelake GT2"           }, //
+  { 0x3E91, "Intel Coffee Lake GT2"          }, //
+  { 0x3E92, "Intel Coffee Lake GT2"          }, //
+  { 0x3E96, "Intel Coffee Lake GT2"          }, //
+  { 0x3E9B, "Intel Coffee Lake GT2"          }, //
+  { 0x3E94, "Intel Coffee Lake GT2"          }, //
   //GT3
-  { 0x3EA6, "Intel Coffeelake GT3"           }, //
-  { 0x3EA7, "Intel Coffeelake GT3"           }, //
-  { 0x3EA8, "Intel Coffeelake GT3"           }, //
-  { 0x3EA5, "Intel Coffeelake GT3"           }, //
+  { 0x3EA6, "Intel Coffee Lake GT3"          }, //
+  { 0x3EA7, "Intel Coffee Lake GT3"          }, //
+  { 0x3EA8, "Intel Coffee Lake GT3"          }, //
+  { 0x3EA5, "Intel Coffee Lake GT3"          }, //
 
 
   //============== 10.5th generation =========
@@ -1365,6 +1418,40 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
   switch (gma_dev->device_id) {
 
+      //============== PowerVR ===================
+      //--------Canmore/Sodaville/Groveland-------
+    case 0x2E5B: // "Intel 500"                       //
+      break;
+
+      //----------------Poulsbo-------------------
+    case 0x8108: // "Intel 500"                       // Menlow
+    case 0x8109: // "Intel 500"                       // Menlow
+      break;
+
+      //----------------Lincroft------------------
+    case 0x4102: // "Intel 600"                       // Moorestown
+      break;
+
+      //----------------Cedarview-----------------
+    case 0x0BE0: // "Intel GMA 3600"                  // Cedar Trail
+    case 0x0BE1: // "Intel GMA 3600"                  // Cedar Trail
+    case 0x0BE2: // "Intel GMA 3650"                  // Cedar Trail
+    case 0x0BE3: // "Intel GMA 3650"                  // Cedar Trail
+      break;
+
+      //----------------Cloverview----------------
+    case 0x08C7: // "Intel GMA"                       // Clover Trail
+    case 0x08C8: // "Intel GMA"                       // Clover Trail
+    case 0x08C9: // "Intel GMA"                       // Clover Trail
+    case 0x08CA: // "Intel GMA"                       // Clover Trail
+    case 0x08CB: // "Intel GMA"                       // Clover Trail
+    case 0x08CC: // "Intel GMA"                       // Clover Trail
+    case 0x08CD: // "Intel GMA"                       // Clover Trail
+    case 0x08CE: // "Intel GMA"                       // Clover Trail
+    case 0x08CF: // "Intel GMA"                       // Clover Trail
+      break;
+
+
       //============== 1st generation ============
       //----------------Auburn--------------------
     case 0x7800: // "Intel 740"                       // Desktop - Intel 740 GMCH Express Chipset Family
@@ -1972,6 +2059,15 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       devprop_add_value(device, "graphic-options", haswell_hd_vals[0], 4);
       break;
+	  
+      //----------------ValleyView----------------
+    case 0x0F30: // "Intel HD Graphics"               // Bay Trail
+    case 0x0F31: // "Intel HD Graphics"               // Bay Trail
+    case 0x0F32: // "Intel HD Graphics"               // Bay Trail
+    case 0x0F33: // "Intel HD Graphics"               // Bay Trail
+    case 0x0155: // "Intel HD Graphics"               // Bay Trail
+    case 0x0157: // "Intel HD Graphics"               // Bay Trail
+      break;
 
 
       //============== 8th generation ============
@@ -1994,16 +2090,17 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1626: // "Intel HD Graphics 6000"          // Mobile - iMac16,1, MacBookAir7,1, MacBookAir7,2
     case 0x162B: // "Intel Iris Graphics 6100"        // Mobile - MacBookPro12,1
     case 0x162D: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
-    case 0x162E: // "Intel Broadwell GT3"             //
-    case 0x1632: // "Intel Broadwell GT3"             //
-    case 0x1636: // "Intel Broadwell GT3"             //
-    case 0x163A: // "Intel Broadwell GT3"             //
-    case 0x163B: // "Intel Broadwell GT3"             //
-    case 0x163D: // "Intel Broadwell GT3"             //
-    case 0x163E: // "Intel Broadwell GT3"             //
       //GT3e
     case 0x1622: // "Intel Iris Pro Graphics 6200"    // Desktop, Mobile - iMac16,2
     case 0x162A: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
+      //RSVD
+    case 0x162E: // "Intel Broadwell RSVD"            // Reserved
+    case 0x1632: // "Intel Broadwell RSVD"            // Reserved
+    case 0x1636: // "Intel Broadwell RSVD"            // Reserved
+    case 0x163A: // "Intel Broadwell RSVD"            // Reserved
+    case 0x163B: // "Intel Broadwell RSVD"            // Reserved
+    case 0x163D: // "Intel Broadwell RSVD"            // Reserved
+    case 0x163E: // "Intel Broadwell RSVD"            // Reserved
       if (!SetFake) {
         switch (gma_dev->device_id) {
           case 0x1612:
@@ -2101,6 +2198,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           devprop_add_value(device, "graphic-options", broadwell_hd_vals[0], 4);
           break;
       }
+      break;
+
+      //------------Cherryview/Braswell-----------
+    case 0x22B0: // "Intel HD Graphics 400"           // Cherry Trail - Atom x5 series - Z83X0/Z8550(HD Graphics 400)
+    case 0x22B1: // "Intel HD Graphics 405"           // Cherry Trail - Atom x7 series - Z8750(HD Graphics 405)
+    case 0x22B2: // "Intel HD Graphics 400"           // Braswell - Cerelon QC/DC series - X3X60(HD Graphics 400)
+    case 0x22B3: // "Intel HD Graphics 405"           // Braswell - Pentium QC series - X3710(HD Graphics 405)
       break;
 
 
@@ -2273,19 +2377,27 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       break;
 
 
+      //----------------Goldmont------------------
+    case 0x0A84: // "Intel HD Graphics"               // Broxton(cancelled)
+    case 0x1A84: // "Intel HD Graphics"               // Broxton(cancelled)
+    case 0x1A85: // "Intel HD Graphics"               // Broxton(cancelled)
+    case 0x5A84: // "Intel HD Graphics 505"           // Apollo Lake
+    case 0x5A85: // "Intel HD Graphics 500"           // Apollo Lake
+
+
       //============== 9.5th generation ==========
-      //----------------Kabylake------------------
+      //----------------Kaby Lake-----------------
       //GT1
     case 0x5902: // "Intel HD Graphics 610"           // Desktop
     case 0x5906: // "Intel HD Graphics 610"           // Mobile
-    case 0x590A: // "Intel Kabylake GT1"              //
-    case 0x5908: // "Intel Kabylake GT1"              //
-    case 0x590B: // "Intel Kabylake GT1"              //
-    case 0x590E: // "Intel Kabylake GT1"              //
+    case 0x590A: // "Intel Kaby Lake GT1"             //
+    case 0x5908: // "Intel Kaby Lake GT1"             //
+    case 0x590B: // "Intel Kaby Lake GT1"             //
+    case 0x590E: // "Intel Kaby Lake GT1"             //
       //GT1.5
-    case 0x5913: // "Intel Kabylake GT1.5"            //
-    case 0x5915: // "Intel Kabylake GT1.5"            //
-    case 0x5917: // "Intel Kabylake GT1.5"            //
+    case 0x5913: // "Intel Kaby Lake GT1.5"           //
+    case 0x5915: // "Intel Kaby Lake GT1.5"           //
+    case 0x5917: // "Intel Kaby Lake GT1.5"           //
       //GT2
     case 0x5912: // "Intel HD Graphics 630"           // Desktop - iMac18,2, iMac18,3
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
@@ -2294,13 +2406,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x591D: // "Intel HD Graphics P630"          // Workstation, Mobile Workstation
     case 0x591E: // "Intel HD Graphics 615"           // Ultramobile - MacBook10,1
       //GT2F
-    case 0x5921: // "Intel Kabylake GT2F"             //
+    case 0x5921: // "Intel Kaby Lake GT2F"            //
       //GT3
     case 0x5923: // "Intel HD Graphics 635"           //
     case 0x5926: // "Intel Iris Plus Graphics 640"    // Mobile - MacBookPro14,1, iMac18,1
     case 0x5927: // "Intel Iris Plus Graphics 650"    // Mobile - MacBookPro14,2
       //GT4
-    case 0x593B: // "Intel Kabylake GT4"              //
+    case 0x593B: // "Intel Kaby Lake GT4"             //
       switch (gma_dev->device_id) {
         case 0x5912:
           if (!SetFake) {
@@ -2432,6 +2544,48 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       break;
+
+
+      //============== 10th generation ===========
+      //----------------Coffee Lake---------------
+      //GT1
+    case 0x3E90: // "Intel Coffee Lake GT1"           //
+    case 0x3E93: // "Intel Coffee Lake GT1"           //
+      //GT2
+    case 0x3E91: // "Intel Coffee Lake GT2"           //
+    case 0x3E92: // "Intel Coffee Lake GT2"           //
+    case 0x3E96: // "Intel Coffee Lake GT2"           //
+    case 0x3E9B: // "Intel Coffee Lake GT2"           //
+    case 0x3E94: // "Intel Coffee Lake GT2"           //
+      //GT3
+    case 0x3EA6: // "Intel Coffee Lake GT3"           //
+    case 0x3EA7: // "Intel Coffee Lake GT3"           //
+    case 0x3EA8: // "Intel Coffee Lake GT3"           //
+    case 0x3EA5: // "Intel Coffee Lake GT3"           //
+      break;
+
+
+      //============== 10.5th generation =========
+      //----------------Cannonlake----------------
+      //GT0.5
+    case 0x5A49: // "Intel Cannonlake GT0.5"          //
+    case 0x5A4A: // "Intel Cannonlake GT0.5"          //
+      //GT1
+    case 0x5A41: // "Intel Cannonlake GT1"            //
+    case 0x5A42: // "Intel Cannonlake GT1"            //
+    case 0x5A44: // "Intel Cannonlake GT1"            //
+      //GT1.5
+    case 0x5A59: // "Intel Cannonlake GT1.5"          //
+    case 0x5A5A: // "Intel Cannonlake GT1.5"          //
+    case 0x5A5C: // "Intel Cannonlake GT1.5"          //
+      //GT2
+    case 0x5A50: // "Intel Cannonlake GT2"            //
+    case 0x5A51: // "Intel Cannonlake GT2"            //
+    case 0x5A52: // "Intel Cannonlake GT2"            //
+    case 0x5A54: // "Intel Cannonlake GT2"            //
+      break;
+
+
     default:
       DBG("  Intel card id=%x unsupported, please report to the clover thread\n", gma_dev->device_id);
       return FALSE;
