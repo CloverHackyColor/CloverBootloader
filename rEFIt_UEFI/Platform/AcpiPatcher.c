@@ -595,7 +595,7 @@ VOID PatchAllSSDT()
       }
       CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
       if ((gSettings.FixDsdt & FIX_HEADERS)) {
-        PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)&ssdt);
+        PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)ssdt);
       }
       // Finish SSDT patch and resize SSDT Length
       CopyMem (&Ptr[4], &SsdtLen, 4);
