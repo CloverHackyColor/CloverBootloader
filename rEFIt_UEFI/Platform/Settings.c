@@ -2209,13 +2209,11 @@ GetEDIDSettings(TagPtr DictPointer)
         gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
         if ((j % 128) != 0) {
           DBG (" Custom EDID has wrong length=%d\n", j);
-        }
-        else {
+        } else {
           DBG (" Custom EDID is ok\n");
           InitializeEdidOverride();
         }
-      }
-      else{
+      } else {
         //DBG (" No Custom EDID\n");
       }
       
@@ -2230,8 +2228,7 @@ GetEDIDSettings(TagPtr DictPointer)
         gSettings.ProductEDID = (UINT16)GetPropertyInteger(Prop, gSettings.ProductEDID);
         //DBG("  ProductID = 0x%04lx\n", gSettings.ProductEDID);
       }
-    }
-    else {
+    } else {
       //DBG ("Not Inject EDID\n");
     }
   }

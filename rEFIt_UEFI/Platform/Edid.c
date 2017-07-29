@@ -92,95 +92,12 @@ EFI_STATUS GetEdidDiscovered(VOID)
     if (!GlobalConfig.DebugLog) {
       MsgLog("EdidDiscovered size=%d\n", N);
     }
-
-    if (N == 0) {
-      return EFI_NOT_FOUND;
-    }
-
-    //gEDID is a place to store Custom of Discovered EDID
-    gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
-    
-    if (gSettings.InjectEDID){
+	
+    if ((N == 0) && gSettings.InjectEDID && gSettings.CustomEDID) {
+      N = 128;
       MsgLog ("Inject EDID\n");
-      if (!gSettings.CustomEDID) {
-        //MsgLog("  No Custom EDID\n");
-        CopyMem(gEDID, EdidDiscovered->Edid, N);
-        ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
-        gSettings.CustomEDID = gEDID;
-        
-        if (!GlobalConfig.DebugLog) {
-          MsgLog("------- EDID Table\n");
-          for (i=0; i<N; i+=10) {
-            MsgLog("%03d  |", i);
-            for (j=0; j<10; j++) {
-              if (i+j > N-1) break;
-              MsgLog("  %02x", gEDID[i+j]);
-            }
-            MsgLog("\n");
-          }
-        }
-        if ((gSettings.VendorEDID) && (gSettings.ProductEDID)){
-          ((UINT16*)gEDID)[4] = gSettings.VendorEDID;
-          MsgLog("    VendorID = 0x%04lx\n", gSettings.VendorEDID);
-          
-          ((UINT16*)gEDID)[5] = gSettings.ProductEDID;
-          MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
-          
-          ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
-          gSettings.CustomEDID = gEDID;
-          
-          if (!GlobalConfig.DebugLog) {
-            MsgLog("------- New EDID Table\n");
-            for (i=0; i<N; i+=10) {
-              MsgLog("%03d  |", i);
-              for (j=0; j<10; j++) {
-                if (i+j > N-1) break;
-                MsgLog("  %02x", gEDID[i+j]);
-              }
-              MsgLog("\n");
-            }
-          }
-        }
-        else if (gSettings.VendorEDID) {
-          ((UINT16*)gEDID)[4] = gSettings.VendorEDID;
-          MsgLog("    VendorID = 0x%04lx\n", gSettings.VendorEDID);
-          
-          ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
-          gSettings.CustomEDID = gEDID;
-          
-          if (!GlobalConfig.DebugLog) {
-            MsgLog("------- New EDID Table\n");
-            for (i=0; i<N; i+=10) {
-              MsgLog("%03d  |", i);
-              for (j=0; j<10; j++) {
-                if (i+j > N-1) break;
-                MsgLog("  %02x", gEDID[i+j]);
-              }
-              MsgLog("\n");
-            }
-          }
-        }
-        else if (gSettings.ProductEDID) {
-          ((UINT16*)gEDID)[5] = gSettings.ProductEDID;
-          MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
-          
-          ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
-          gSettings.CustomEDID = gEDID;
-          
-          if (!GlobalConfig.DebugLog) {
-            MsgLog("------- New EDID Table\n");
-            for (i=0; i<N; i+=10) {
-              MsgLog("%03d  |", i);
-              for (j=0; j<10; j++) {
-                if (i+j > N-1) break;
-                MsgLog("  %02x", gEDID[i+j]);
-              }
-              MsgLog("\n");
-            }
-          }
-        }
-      }
-      else if (gSettings.CustomEDID) {
+	  
+      if (gSettings.CustomEDID) {
         MsgLog("  Use Custom EDID\n");
         
         if ((UINT8)gSettings.CustomEDID[127] == (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127))){
@@ -197,8 +114,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
               MsgLog("\n");
             }
           }
-        }
-        else {
+        } else {
           MsgLog("    Custom EDID Checksum = %02x\n", (UINT8)gSettings.CustomEDID[127]);
           MsgLog("    Custom EDID Checksum is wrong\n");
           
@@ -218,9 +134,10 @@ EFI_STATUS GetEdidDiscovered(VOID)
             }
           }
         }
+		
         if ((gSettings.VendorEDID) && (gSettings.ProductEDID)) {
           ((UINT16*)gSettings.CustomEDID)[4] = gSettings.VendorEDID;
-          MsgLog("    VendorID = 0x%04lx\n", gSettings.VendorEDID);
+          MsgLog("    VendorID  = 0x%04lx\n", gSettings.VendorEDID);
           
           ((UINT16*)gSettings.CustomEDID)[5] = gSettings.ProductEDID;
           MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
@@ -238,8 +155,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
               MsgLog("\n");
             }
           }
-        }
-        else if (gSettings.VendorEDID) {
+        } else if (gSettings.VendorEDID) {
           ((UINT16*)gSettings.CustomEDID)[4] = gSettings.VendorEDID;
           MsgLog("    VendorID = 0x%04lx\n", gSettings.VendorEDID);
           
@@ -256,8 +172,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
               MsgLog("\n");
             }
           }
-        }
-        else if (gSettings.ProductEDID) {
+        } else if (gSettings.ProductEDID) {
           ((UINT16*)gSettings.CustomEDID)[5] = gSettings.ProductEDID;
           MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
           
@@ -276,8 +191,187 @@ EFI_STATUS GetEdidDiscovered(VOID)
           }
         }
       }
+      return Status;
+    } else if (N == 0) {
+      return EFI_NOT_FOUND;
     }
-    else{
+	
+    //gEDID is a place to store Custom of Discovered EDID
+    gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
+    
+    if (gSettings.InjectEDID) {
+      MsgLog ("Inject EDID\n");
+      if (!gSettings.CustomEDID) {
+        //MsgLog("  No Custom EDID\n");
+        CopyMem(gEDID, EdidDiscovered->Edid, N);
+        ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
+        gSettings.CustomEDID = gEDID;
+        
+        if (!GlobalConfig.DebugLog) {
+          MsgLog("------- EDID Table\n");
+          for (i=0; i<N; i+=10) {
+            MsgLog("%03d  |", i);
+            for (j=0; j<10; j++) {
+              if (i+j > N-1) break;
+              MsgLog("  %02x", gEDID[i+j]);
+            }
+            MsgLog("\n");
+          }
+        }
+		
+        if ((gSettings.VendorEDID) && (gSettings.ProductEDID)){
+          ((UINT16*)gEDID)[4] = gSettings.VendorEDID;
+          MsgLog("    VendorID  = 0x%04lx\n", gSettings.VendorEDID);
+          
+          ((UINT16*)gEDID)[5] = gSettings.ProductEDID;
+          MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
+          
+          ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
+          gSettings.CustomEDID = gEDID;
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- New EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        } else if (gSettings.VendorEDID) {
+          ((UINT16*)gEDID)[4] = gSettings.VendorEDID;
+          MsgLog("    VendorID = 0x%04lx\n", gSettings.VendorEDID);
+          
+          ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
+          gSettings.CustomEDID = gEDID;
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- New EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        } else if (gSettings.ProductEDID) {
+          ((UINT16*)gEDID)[5] = gSettings.ProductEDID;
+          MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
+          
+          ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
+          gSettings.CustomEDID = gEDID;
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- New EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        }
+      } else if (gSettings.CustomEDID) {
+        MsgLog("  Use Custom EDID\n");
+        
+        if ((UINT8)gSettings.CustomEDID[127] == (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127))){
+          //MsgLog("    Custom EDID Checksum is ok\n");
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- Custom EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gSettings.CustomEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        } else {
+          MsgLog("    Custom EDID Checksum = %02x\n", (UINT8)gSettings.CustomEDID[127]);
+          MsgLog("    Custom EDID Checksum is wrong\n");
+          
+          ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+          MsgLog("    Fixed Custom EDID Checksum = %02x\n", (UINT8)gSettings.CustomEDID[127]);
+          //MsgLog("    Custom EDID Checksum is ok\n");
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- Custom EDID Table with fixed Checksum\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gSettings.CustomEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        }
+		
+        if ((gSettings.VendorEDID) && (gSettings.ProductEDID)) {
+          ((UINT16*)gSettings.CustomEDID)[4] = gSettings.VendorEDID;
+          MsgLog("    VendorID  = 0x%04lx\n", gSettings.VendorEDID);
+          
+          ((UINT16*)gSettings.CustomEDID)[5] = gSettings.ProductEDID;
+          MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
+          
+          ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- New Custom EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gSettings.CustomEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        } else if (gSettings.VendorEDID) {
+          ((UINT16*)gSettings.CustomEDID)[4] = gSettings.VendorEDID;
+          MsgLog("    VendorID = 0x%04lx\n", gSettings.VendorEDID);
+          
+          ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- New Custom EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gSettings.CustomEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        } else if (gSettings.ProductEDID) {
+          ((UINT16*)gSettings.CustomEDID)[5] = gSettings.ProductEDID;
+          MsgLog("    ProductID = 0x%04lx\n", gSettings.ProductEDID);
+          
+          ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+          
+          if (!GlobalConfig.DebugLog) {
+            MsgLog("------- New Custom EDID Table\n");
+            for (i=0; i<N; i+=10) {
+              MsgLog("%03d  |", i);
+              for (j=0; j<10; j++) {
+                if (i+j > N-1) break;
+                MsgLog("  %02x", gSettings.CustomEDID[i+j]);
+              }
+              MsgLog("\n");
+            }
+          }
+        }
+      }
+    } else {
       //MsgLog ("Not Inject EDID\n");
       CopyMem(gEDID, EdidDiscovered->Edid, N);
       ((UINT8*)gEDID)[127] = (UINT8)(256 - Checksum8(gEDID, 127));
