@@ -1,6 +1,6 @@
 /* CSS file for Clover Theme Manager */
-/* Blackosx 2014-2015                */
-/* v0.76.5                           */
+/* Blackosx 2014-2017                */
+/* v0.76.7                           */
 
 html, body {
     padding: 0;
@@ -132,9 +132,10 @@ p {
     height: 33px;
     opacity: 0.95;
     cursor: pointer;
+    outline: none;
 }
 
-#BootLogTitleBar:hover {
+#BootLogTitleBar:hover, #BootLogTitleBar:focus {
     background-image: -webkit-linear-gradient(top, #535353 0%,#2c2c2c 70%,#353535 75%,#505050 98%, #727272 99%, #949494 100%); 
 }
 
@@ -301,7 +302,7 @@ p {
 }
 
 #PathSelector {
-    width: 45%;
+    width: 41%;
     float: left;
     margin: 5px 0px 5px 24px;
     outline: none;
@@ -315,7 +316,7 @@ p {
 select.custom-dropdown {
     -webkit-appearance: none;
     border: 0 !important;
-    outline: none;                                        
+    outline: none;
     color: #fff;
     -webkit-border-radius: 4px;
     border-radius: 4px;
@@ -326,10 +327,40 @@ select.custom-dropdown {
     background-size: 19px 19px;
 }
 
-select.custom-dropdown:hover {
+select.custom-dropdown:hover, select.custom-dropdown:focus {
     background: #b6b6b6 url(../assets/dropdown_arrow.png) no-repeat right center;
     background-size: 19px 19px;
     color: #333;
+}
+
+#RefreshButton {
+    margin: 6px 0px 0px 0px;
+    float: left;
+    outline: none;
+}
+
+.reloadButton {
+    background: #555;
+    border: none;
+    border-radius: 4px;
+    color: #FFF;
+    font-family: Lucida Sans Unicode; 
+    font-size: 11px;
+    font-weight: bold;
+    height: 19px;
+    text-align: center;
+    line-height: 15px;
+    cursor: pointer;
+}
+
+.reloadButton:hover {
+    background-image: -webkit-linear-gradient(top, #e5e5e5, #b6b6b6);
+    color:#333;
+}
+
+#RefreshButton:focus > .reloadButton {
+    background-image: -webkit-linear-gradient(top, #e5e5e5, #b6b6b6);
+    color:#333;
 }
 
 #OpenPathButton {
@@ -338,8 +369,9 @@ select.custom-dropdown:hover {
 
 #OpenButton {
     width: 50px;
-    margin: 7px 0px 0px 0px;
+    margin: 7px 0px 0px 4px;
     float: left;
+    outline: none;
 }
 
 .openButton {
@@ -361,10 +393,16 @@ select.custom-dropdown:hover {
     color:#333;
 }
 
+#OpenButton:focus > .openButton {
+    background-image: -webkit-linear-gradient(top, #e5e5e5, #b6b6b6);
+    color:#333;
+}
+
 #EspButton {
-    width: 10px;
-    margin: 6px 0px 0px 0px;
+    width: 80px;
+    margin: 7px 0px 0px 0px;
     float: left;
+    outline: none;
 }
 
 .espButton {
@@ -383,6 +421,11 @@ select.custom-dropdown:hover {
 }
 
 .espButton:hover {
+    background-image: -webkit-linear-gradient(top, #e5e5e5, #b6b6b6);
+    color:#333;
+}
+
+#EspButton:focus > .espButton {
     background-image: -webkit-linear-gradient(top, #e5e5e5, #b6b6b6);
     color:#333;
 }
@@ -418,10 +461,24 @@ select.custom-dropdown:hover {
     font-weight: bold;
     height: 20px;
     margin: 1px 40px 0px 0px;
-    width: 64px;
+    width: 34px;
     text-align: center;
     line-height: 20px;
     -webkit-user-select: none;
+}
+
+.spacerButtonUpdateAll {
+    color: #FFF;
+    float: right;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    margin: 1px 40px 0px 0px;
+    width: 94px;
+    text-align: center;
+    line-height: 20px;
+    -webkit-user-select: none;
+    display: none;
 }
 
 .toggleButton {
@@ -439,9 +496,10 @@ select.custom-dropdown:hover {
     line-height: 20px;
     cursor: pointer;
     -webkit-user-select: none;
+    outline: none;
 }
 
-.toggleButton:hover {
+.toggleButton:hover, .toggleButton:focus {
     border: 1px solid #AAA !important;
 }
 
@@ -477,9 +535,10 @@ select.custom-dropdown:hover {
     line-height: 20px;
     cursor: pointer;
     -webkit-user-select: none;
+    outline: none;
 }
 
-.toggleButtonSml:hover {
+.toggleButtonSml:hover, .toggleButtonSml:focus {
     border: 1px solid #AAA !important;
 }
 
@@ -658,15 +717,16 @@ select.custom-dropdown:hover {
     color: #fff;
     float: right;
     font-family: 'Roboto', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
-    height: 20px;
+    height: 15px;
     margin: 24px 8px 0 0;
     padding: 2px;
-    text-shadow: -1px 1px 0 rgba(0, 0, 0, 0.3);
+    text-shadow: 0px 2px 0 rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
     width: 72px;
     text-align: center;
-    line-height: 20px;
+    line-height: 16px;
     cursor: pointer;
     -webkit-user-select: none;
 }
@@ -676,7 +736,7 @@ select.custom-dropdown:hover {
     /* background-image: -webkit-linear-gradient(top, #5ea55c, #3d6c3c); */
     background-image: -webkit-linear-gradient(top, #2bbcff, #00a5fd);
     /* border: 1px solid #3b4e2f; */
-    border: 1px solid #00a7fb;
+    border: 1px solid #00a7fb;674
 }
 
 .buttonInstall:active {
@@ -695,15 +755,16 @@ select.custom-dropdown:hover {
     color: #fff;
     float: right;
     font-family: 'Roboto', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
-    height: 20px;
+    height: 15px;
     margin: 24px 8px 0 0;
     padding: 2px;
-    text-shadow: -1px 1px 0 rgba(0, 0, 0, 0.3);
+    text-shadow: 0px 2px 0 rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
     width: 72px;
     text-align: center;
-    line-height: 20px;
+    line-height: 16px;
     cursor: pointer;
     -webkit-user-select: none;
 }
@@ -730,15 +791,16 @@ select.custom-dropdown:hover {
     color: #fff;
     float: right;
     font-family: 'Roboto', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
-    height: 20px;
+    height: 15px;
     margin: 24px 8px 0 0;
     padding: 2px;
-    text-shadow: -1px 1px 0 rgba(0, 0, 0, 0.3);
+    text-shadow: 0px 2px 0 rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
     width: 72px;
     text-align: center;
-    line-height: 20px;
+    line-height: 16px;
     cursor: pointer;
     -webkit-user-select: none;
 }
@@ -809,6 +871,12 @@ a:hover {
     opacity: 0.95;
 }
 
+#changeThemeBandTitle {
+    width: 100%;
+    height: 21px;
+    opacity: 0.95;
+}
+
 #changeThemeBand {
     width: 100%;
     height: 24px;
@@ -831,16 +899,16 @@ a:hover {
 }
 
 #themePredictionTitle {
-    width: 52%;
+    width: 40%;
     float: left;
     margin: 2px 0px 0px 24px;
     /*-webkit-user-select: none;*/
 }
 
 #themePredictionTheme {
-    width: 25%;
+    width: 20%;
     float: left;
-    margin: 2px 0px 0px 0px;
+    margin: 0px 0px 0px 4px;
     /*-webkit-user-select: none;*/
 }
 
@@ -848,19 +916,54 @@ a:hover {
 /* Change theme control options */
 /* ============================ */
 
-.ctOptionTitle {
-    width: 47%;
+.ctOptionDescription {
+    width: 80%;
     float: left;
     margin: 4px 0px 0px 24px;
     font-family: 'Roboto', sans-serif;
     font-size: 11px;
     font-weight: bold;
-    color: #FFF;    
+    color: #9bc762;    
+}
+
+.ctOptionTitleHeader {
+    float: left;
+    margin: 4px 0px 0px 24px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #ababab;    
+}
+
+.ctOptionTitleResult {
+    width: 430px;
+    float: left;
+    margin: 4px 0px 0px 2px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  
+}
+
+.ctOptionTitleResultNotAvailable {
+    width: 430px;
+    float: left;
+    margin: 4px 0px 0px 2px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FF0000;   
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .ctOptionEntryHeader {
     float: left;
-    margin: 5px 2px 0px 2px;
+    margin: 5px 2px 0px 24px;
     font-family: 'Roboto', sans-serif;
     font-size: 10px;
     font-weight: bold;
@@ -868,22 +971,52 @@ a:hover {
 }
 
 .ctOptionEntryResult {
-    width: 22%;
+    width: 230px;
+    float: left;
+    margin: 5px 0px 0px 2px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;    
+}
+
+.ctPredictionTitleHeader {
+    float: left;
+    margin: 4px 0px 0px 24px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #ababab;    
+}
+
+.ctPredictionTitleResult {
+    width: 447px;
+    float: left;
+    margin: 4px 0px 0px 2px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;    
+}
+
+/*
+.ctOptionEntryResultNotAvailable {
+    width: 38%;
     float: left;
     margin: 4px 0px 0px 2px;
     font-family: 'Roboto', sans-serif;
     font-size: 11px;
     font-weight: bold;
-    color: #FFF;    
+    color: #FF0000;    
 }
-
+*/
 .ctOptionSetHeader {
     font-family: 'Roboto', sans-serif;
     font-size: 10px;
     font-weight: bold;
     color: #ababab;    
     position:absolute;
-    margin: 6px 0px 0px 73%;
+    margin: 6px 0px 0px 67%;
 }
 
 #changeThemeSelector {
@@ -901,7 +1034,7 @@ a:hover {
 select.changeThemeDropdown {
     -webkit-appearance: none;
     border: 0 !important;
-    outline: none;
+    /*outline: none;*/
     color: #000;
     -webkit-border-radius: 4px;
     font-size: 12px;
@@ -920,6 +1053,12 @@ select.changeThemeDropdown:disabled {
 }
 
 select.changeThemeDropdown:hover:enabled {
+    background: #EEE url(../assets/dropdown_arrow_k.png) no-repeat right center;
+    background-size: 19px 19px;
+    opacity: 1;
+}
+
+select.changeThemeDropdown:focus {
     background: #EEE url(../assets/dropdown_arrow_k.png) no-repeat right center;
     background-size: 19px 19px;
     opacity: 1;
@@ -1030,6 +1169,7 @@ select.changeThemeDropdown:hover:enabled {
     -webkit-user-select: none;
 }
 
+
 /* ===================================================================== */
 /*                       COLOUR FILL CLASSES                             */
 /* ===================================================================== */
@@ -1064,6 +1204,10 @@ select.changeThemeDropdown:hover:enabled {
 
 .fillDarkerGrey {
    background-image: -webkit-linear-gradient(top, #303234, #212121);
+}
+
+.fillVeryDarkGrey {
+   background-image: -webkit-linear-gradient(top, #181818, #121212);
 }
 
 /* ===================================================================== */
@@ -1193,6 +1337,7 @@ a.boxclose:hover {
 .meterTwo { 
     height: 32px; /* Same height as .overlayTwo */
     position: relative;
+    z-index: 3;
 }
 
 .meterTwo > span {
@@ -1212,7 +1357,7 @@ a.boxclose:hover {
     font-size: 12px;
     color: #FFF;
     padding: 8px 0px 0px 20px;
-    content: "";
+    content: "Refreshing Interface....";
     
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
@@ -1224,7 +1369,7 @@ a.boxclose:hover {
             color-stop(.75, rgba(255, 255, 255, .4)), 
             color-stop(.75, transparent), to(transparent)
         );
-    z-index: 1;
+    /*z-index: 1;*/
     -webkit-background-size: 50px 50px;
     -webkit-animation: move 2s linear infinite;
     overflow: hidden;
@@ -1233,6 +1378,7 @@ a.boxclose:hover {
 .meterThree { 
     height: 32px; /* Same height as .overlayThree */
     position: relative;
+    z-index: 3;
 }
 
 .meterThree > span {
@@ -1264,7 +1410,7 @@ a.boxclose:hover {
             color-stop(.75, rgba(255, 255, 255, .4)), 
             color-stop(.75, transparent), to(transparent)
         );
-    z-index: 1;
+    z-index: 2;
     -webkit-background-size: 50px 50px;
     -webkit-animation: move 2s linear infinite;
     overflow: hidden;
@@ -1304,4 +1450,39 @@ a.boxclose:hover {
     background-image: -moz-linear-gradient(center top , #c7c1ee, #bfb8e6);
     background-image: -webkit-linear-gradient(top, #c7c1ee, #bfb8e6);
     border: 1px solid #c0b6eb;
+}
+
+
+/* ===================================================================== */
+/*                              TOOLTIP                                  */
+/* ===================================================================== */
+
+/* Hover tooltips */
+.field-tip {
+    position:relative;
+    z-index: 1;
+}
+
+.field-tip .tip-content {
+	position:absolute;
+	top:21px; /* - top padding */
+	right:9999px;
+	width:200px;
+	height: auto;
+	margin-right:-220px; /* width + left/right padding */
+	border-radius: 4px;
+	padding:10px;
+	font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+	color:#333;
+	background:#DDD;
+	opacity:0;
+	-webkit-transition:opacity 250ms ease-out;
+    z-index: 2;
+}
+
+.field-tip:hover .tip-content {
+	right: 100px; /* half the width */
+	opacity:1;
 }

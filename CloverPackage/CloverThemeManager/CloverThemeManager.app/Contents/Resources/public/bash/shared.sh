@@ -43,7 +43,7 @@ gESPMountPrefix="ctmTempMp"
 debugIndent="    "
 debugIndentTwo="${debugIndent}${debugIndent}"
 COMMANDLINE=0
-DEBUG=0
+DEBUG=1
 
 # Common Functions
 # ---------------------------------------------------------------------------------------

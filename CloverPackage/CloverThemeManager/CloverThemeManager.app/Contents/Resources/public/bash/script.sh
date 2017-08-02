@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # A script for Clover Theme Manager
-# Copyright (C) 2014-2015 Blackosx
+# Copyright (C) 2014-2017 Blackosx
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 # Thanks to apianti, dmazar & JrCs for their git know-how. 
 # Thanks to alexq, asusfreak, chris1111, droplets, eMatoS, kyndder & oswaldini for testing.
 
-VERS="0.77.4"
+VERS="0.77.6"
 
 # =======================================================================================
 # Helper Functions/Routines
@@ -629,15 +629,16 @@ RunThemeAction()
                             ;;
     esac
 
-    # Was install operation a success?
+    # Was operation a success?
     if [ $successFlag -eq 0 ]; then
         if [ $COMMANDLINE -eq 0 ]; then
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$themeTitleToActOn : ${passedAction} : Success"
-            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: Success@${passedAction}@$themeTitleToActOn"
-            SendToUI "Success@${passedAction}@$themeTitleToActOn"
+            #[[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: Success@${passedAction}@$themeTitleToActOn"
+            #SendToUI "Success@${passedAction}@$themeTitleToActOn"
             
             if [ "$passedAction" == "Install" ] && [ "$TARGET_THEME_PARTITIONGUID" != "$zeroUUID" ]; then
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Saving settings for newly installed theme."
+                SendToUI "Success@${passedAction}@$themeTitleToActOn"
                 # Save new theme details for adding to prefs file
                 gNewInstalledThemeName="$themeTitleToActOn"
                 gNewInstalledThemePath="$TARGET_THEME_DIR"
@@ -647,6 +648,7 @@ RunThemeAction()
 
             if [ "$passedAction" == "UnInstall" ] && [ "$TARGET_THEME_PARTITIONGUID" != "$zeroUUID" ]; then
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Saving settings for UnInstalled theme."
+                SendToUI "Success@${passedAction}@$themeTitleToActOn"
                 # Save new theme details for adding to prefs file
                 gUnInstalledThemeName="$themeTitleToActOn"
                 gUnInstalledThemePath="$TARGET_THEME_DIR"
@@ -756,61 +758,67 @@ InsertThemeListHtmlInToManageThemes()
 # ---------------------------------------------------------------------------------------
 SetControlOptionHtmlSections()
 {
-    local disabledNvramPlist=""
     local disabledConfigPlist=""
-    
-    if [ "$gNvramPlistFullPath" != "Native NVRAM" ]; then
-        if [ -f "$gNvramPlistFullPath" ]; then
-            local nvramPlistText="$gNvramPlistFullPath"
-        else
-            local nvramPlistText="$gNvramPlistFullPath (not available)"
-            disabledNvramPlist="disabled"
+    local nvramText=""
+    local configPlistText=""
+
+    if [ "$gNvramPlistFullPath" == "Native NVRAM" ]; then
+        nvramText="Native"
+    else
+        if [ ! "$gNvramPlistFullPath" == "" ]; then
+            # nvram.plist found in bootlog
+            nvramText="using file nvram.plist"
         fi
     fi
 
     if [ -f "$gConfigPlistFullPath" ]; then
-        local configPlistText="$gConfigPlistFullPath"
-        configPlistText=$( RenameInternalESPMountPointToEFI "$configPlistText" )
+        configPlistText=$( RenameInternalESPMountPointToEFI "$gConfigPlistFullPath" )
     else
-        local configPlistText="$gConfigPlistFullPath (mountpoint not available)"
+        configPlistText="$gConfigPlistFullPath"
         disabledConfigPlist="disabled"
     fi
 
     # Escape paths
-    nvramPlistText=$( echo "$nvramPlistText" | sed 's/\//\\\//g' )
+    nvramText=$( echo "$nvramText" | sed 's/\//\\\//g' )
     configPlistText=$( echo "$configPlistText" | sed 's/\//\\\//g' )
 
     # Set html sections
     ctOuterOpen=$(printf "    <div id=\"changeThemeContainer\">\r")
     ctOpen=$(printf "        <div id=\"changeThemeBand\" class=\"fillDarkerGrey\">\r")
-    
-    ctBandNvram=$(printf "            <div class=\"ctOptionTitle\" id=\"ctTitleNvram\">NVRAM<\/div>\r")
-    ctBandNvram="$ctBandNvram"$(printf "            <div class=\"ctOptionEntryHeader\">Entry:<\/div>\r")
-    ctBandNvram="$ctBandNvram"$(printf "            <div class=\"ctOptionEntryResult\" id=\"ctEntryNvram\"><\/div>\r")
-    ctBandNvram="$ctBandNvram"$(printf "            <div class=\"ctOptionSetHeader\">Action:<\/div>\r")
-    ctBandNvram="$ctBandNvram"$(printf "            <select id=\"installedThemeDropDownNvram\" class=\"changeThemeDropdown\">\r")
-    ctBandNvram="$ctBandNvram"$(printf "                <!--Menu entries will be appended here by cloverthememanager.js -->\r")
-    ctBandNvram="$ctBandNvram"$(printf "            <\/select>\r")
-  
-    ctBandNvramP=$(printf "            <div class=\"ctOptionTitle\" id=\"ctTitleNvramP\"><span>${nvramPlistText}<\/span><\/div>\r")
-    ctBandNvramP="$ctBandNvramP"$(printf "            <div class=\"ctOptionEntryHeader\">Entry:<\/div>\r")
-    ctBandNvramP="$ctBandNvramP"$(printf "            <div class=\"ctOptionEntryResult\" id=\"ctEntryNvramP\"><\/div>\r")
-    ctBandNvramP="$ctBandNvramP"$(printf "            <div class=\"ctOptionSetHeader\">Action:<\/div>\r")
-    ctBandNvramP="$ctBandNvramP"$(printf "            <select id=\"installedThemeDropDownNvramP\" class=\"changeThemeDropdown\" ${disabledConfigPlist}>\r")
-    ctBandNvramP="$ctBandNvramP"$(printf "                <!--Menu entries will be appended here by cloverthememanager.js -->\r")
-    ctBandNvramP="$ctBandNvramP"$(printf "            <\/select>\r")
-  
-    ctBandConfig=$(printf "            <div class=\"ctOptionTitle\" id=\"ctTitleConfig\"><span>${configPlistText}<\/span><\/div>\r")
-    ctBandConfig="$ctBandConfig"$(printf "            <div class=\"ctOptionEntryHeader\">Entry:<\/div>\r")
-    ctBandConfig="$ctBandConfig"$(printf "            <div class=\"ctOptionEntryResult\" id=\"ctEntryConfig\"><\/div>\r")
-    ctBandConfig="$ctBandConfig"$(printf "            <div class=\"ctOptionSetHeader\">Action:<\/div>\r")
-    ctBandConfig="$ctBandConfig"$(printf "            <select id=\"installedThemeDropDownConfigP\" class=\"changeThemeDropdown\" ${disabledConfigPlist}>\r")
+    ctOpenTitle=$(printf "        <div id=\"changeThemeBandTitle\" class=\"fillVeryDarkGrey\">\r")
+
+    ctBandTitle=$(printf "            <div class=\"ctOptionDescription\" id=\"ctTitleDescription\">Set which theme to use next boot. (Note: Any NVRAM entry will take precedence over config.plist)<\/div>\r")
+
+    # Build NVRAM band
+    ctBandNvram=$(printf "            <div class=\"ctOptionTitleHeader\">NVRAM:<\/div>\r")
+    ctBandNvram="$ctBandNvram"$(printf "            <div class=\"ctOptionTitleResult\" id=\"ctTitleNvram\">${nvramText}<\/div>\r")
+
+    # UEFI boot with Native NVRAM   or   Legacy boot AND Launch Daemon & rc scripts working
+    if [[ "$gNvramPlistFullPath" == "Native NVRAM" ]] || [[ "$gBootType" == "Legacy" && $gNvramSave -eq 0 ]]; then
+        ctBandNvram="$ctBandNvram"$(printf "            <div class=\"ctOptionSetHeader\">Selected Theme:<\/div>\r")
+        ctBandNvram="$ctBandNvram"$(printf "            <select id=\"installedThemeDropDownNvram\" class=\"changeThemeDropdown\" tabindex=\"14\">\r")
+        ctBandNvram="$ctBandNvram"$(printf "                <!--Menu entries will be appended here by cloverthememanager.js -->\r")
+        ctBandNvram="$ctBandNvram"$(printf "            <\/select>\r")
+    else
+        ctBandNvram="$ctBandNvram"$(printf "            <div class=\"ctOptionSetHeader\">Action: Install Clover rc scripts to change<\/div>\r")
+    fi
+
+    # Build Config.plist band
+    ctBandConfig=$(printf "            <div class=\"ctOptionTitleHeader\">CONFIG:<\/div>\r")
+    if [ -z "$disabledConfigPlist" ]; then
+        ctBandConfig="$ctBandConfig"$(printf "            <div class=\"ctOptionTitleResult\" id=\"ctTitleConfig\">${configPlistText}<\/div>\r")
+    else
+        ctBandConfig="$ctBandConfig"$(printf "            <div class=\"ctOptionTitleResultNotAvailable\" id=\"ctTitleConfig\">${configPlistText}<\/div>\r")
+    fi
+    ctBandConfig="$ctBandConfig"$(printf "            <div class=\"ctOptionSetHeader\">Selected Theme:<\/div>\r")
+    ctBandConfig="$ctBandConfig"$(printf "            <select id=\"installedThemeDropDownConfigP\" class=\"changeThemeDropdown\" tabindex=\"15\" ${disabledConfigPlist}>\r")
     ctBandConfig="$ctBandConfig"$(printf "                <!--Menu entries will be appended here by cloverthememanager.js -->\r")
     ctBandConfig="$ctBandConfig"$(printf "            <\/select>\r")
     
-    ctNextBootTheme=$(printf "            <div id=\"themePredictionTitle\">\r")
-    ctNextBootTheme="$ctNextBootTheme"$(printf "                    <span class=\"predictionText\">Theme determined for next boot from device $TARGET_THEME_DIR_DEVICE<\/span>\r")
-    ctNextBootTheme="$ctNextBootTheme"$(printf "            <\/div> <!-- End themePredictionTitle -->\r")
+    # Build next boot band
+    ctNextBootTheme=$(printf "            <div class=\"ctPredictionTitleHeader\">PREDICTION:<\/div>\r")
+    ctNextBootTheme="$ctNextBootTheme"$(printf "            <div class=\"ctPredictionTitleResult\" id=\"ctTitleNvram\">Theme to be used for next boot from device $TARGET_THEME_DIR_DEVICE<\/div>\r")
+    ctNextBootTheme="$ctNextBootTheme"$(printf "            <div class=\"ctOptionEntryHeader\">Entry:<\/div>\r")
     ctNextBootTheme="$ctNextBootTheme"$(printf "            <div id=\"themePredictionTheme\">\r")
     ctNextBootTheme="$ctNextBootTheme"$(printf "                    <span class=\"predictionText\" id=\"predictionTheme\"><\/span>\r")
     ctNextBootTheme="$ctNextBootTheme"$(printf "            <\/div> <!-- End themePredictionTheme -->\r")
@@ -829,17 +837,21 @@ CreateControlOptionsHtmlAndInsert()
     SetControlOptionHtmlSections
     
     local controlOptionsHtml="${ctOuterOpen}"
-    
+
+    # Add section title band
+    controlOptionsHtml="${controlOptionsHtml}${ctOpenTitle}${ctBandTitle}${ctClose}"
+
     # Add nvram control band if UEFI boot with Native NVRAM   or   Legacy boot AND Launch Daemon & rc scripts working
-    if [[ "$gNvramPlistFullPath" == "Native NVRAM" ]] || [[ "$gBootType" == "Legacy" && $gNvramSave -eq 0 ]]; then
-        controlOptionsHtml="${controlOptionsHtml}${ctOpen}${ctBandNvram}${ctClose}"
-    fi
+    #if [[ "$gNvramPlistFullPath" == "Native NVRAM" ]] || [[ "$gBootType" == "Legacy" && $gNvramSave -eq 0 ]]; then
+    #    controlOptionsHtml="${controlOptionsHtml}${ctOpen}${ctBandNvram}${ctClose}"
+    #fi
 
     # Add nvram.plist control band if not using Native NVRAM AND Launch Daemon & rc scripts are not working
-    # This way user can manually change theme entry in nvram.plist
-    if [ "$gNvramPlistFullPath" != "" ] && [ "$gNvramPlistFullPath" != "Native NVRAM" ] && [ $gNvramSave -eq 1 ]; then
-        controlOptionsHtml="${controlOptionsHtml}${ctOpen}${ctBandNvramP}${ctClose}"
-    fi
+    #if [ "$gNvramPlistFullPath" != "" ] && [ "$gNvramPlistFullPath" != "Native NVRAM" ] && [ $gNvramSave -eq 1 ]; then
+    #    controlOptionsHtml="${controlOptionsHtml}${ctOpen}${ctBandNvramP}${ctClose}"
+    #fi
+    
+    controlOptionsHtml="${controlOptionsHtml}${ctOpen}${ctBandNvram}${ctClose}"
 
     # Add config.plist control band
     if [ "$gConfigPlistFullPath" != "" ]; then
@@ -1073,7 +1085,7 @@ IsRepositoryLive()
         fi
     fi
 
-    # Add a final check, based on OS version.
+    # If no success, add another check, based on OS version.
     if [ "$defaultGateway" == "" ]; then
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Default gateway not found. Checking directly for Router in SPNetworkDataType"
         if [ $(CheckOsVersion) -ge 15 ]; then
@@ -1083,6 +1095,15 @@ IsRepositoryLive()
                 defaultGateway="${defaultGateway##*:}"
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}defaultGateway=$defaultGateway"
             fi
+        fi
+    fi
+    
+    # If still no success, ping
+    if [ "$defaultGateway" == "" ]; then
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Default gateway not found. Pinging SF"
+        if ping -c 1 "$remoteRepositoryUrl" >> /dev/null 2>&1; then
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Ping successful"
+            defaultGateway="-"
         fi
     fi
 
@@ -1267,7 +1288,7 @@ GetLatestIndexAndEnsureThemeHtml()
         # To be safe I am using 15th December 2104 as date to check.
         # epoch for that is calculated with: date -j -f "%d-%B-%y" 15-DEC-14 +%s
         # Giving epoch of: 1418667240
-        repoRebuildEpoch=1418667240
+        repoRebuildEpoch=1500708860
 
         # Get epoch of existing index.git
         indexFileEpoch=$( stat -f "%m" "${WORKING_PATH}/${APP_DIR_NAME}"/index.git )
@@ -1286,17 +1307,21 @@ GetLatestIndexAndEnsureThemeHtml()
             else
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}No updates to index.git"
                 WriteToLog "CTM_IndexOK"
-            
+
+                # Commented out the below condition for now to force rebuild of file.
+                # This is because we now check themeList array in CheckForThemeUpdates()
+                # to see if a theme still exists on the Repo.
+
                 # Use previously saved theme.html
-                if [ -f "${WORKING_PATH}/${APP_DIR_NAME}"/theme.html ]; then
-                    WriteToLog "CTM_ThemeListOK"
-                    InsertThemeListHtmlInToManageThemes "file"
-                else
+                #if [ -f "${WORKING_PATH}/${APP_DIR_NAME}"/theme.html ]; then
+                #    WriteToLog "CTM_ThemeListOK"
+                #    InsertThemeListHtmlInToManageThemes "file"
+                #else
                     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Error!. ${WORKING_PATH}/${APP_DIR_NAME}/theme.html not found"
                     BuildThemeTextInformation
                     CreateThemeListHtml
                     InsertThemeListHtmlInToManageThemes
-                fi 
+                #fi 
             fi
         fi
         
@@ -1468,6 +1493,7 @@ ReadBootLogAndSetPaths()
     # The bootlog script writes some paths (or text 'Native NVRAM') to file. Read them in.
     if [ -f "$bootlogScriptOutfile" ]; then
         gNvramPlistFullPath=$( grep "nvram@" "$bootlogScriptOutfile" ) && gNvramPlistFullPath="${gNvramPlistFullPath##*@}"
+        gNvramPlistThemeEntry=$( grep "nvramThemeEntry@" "$bootlogScriptOutfile" ) && gNvramPlistThemeEntry="${gNvramPlistThemeEntry##*@}"
         gConfigPlistFullPath=$( grep "config@" "$bootlogScriptOutfile" ) && gConfigPlistFullPath="${gConfigPlistFullPath##*@}"
         gBootType=$( grep "bootType@" "$bootlogScriptOutfile" ) && gBootType="${gBootType##*@}"
         gNvramSave=$( grep "nvramSave@" "$bootlogScriptOutfile" ) && gNvramSave="${gNvramSave##*@}"
@@ -1756,7 +1782,7 @@ ReadPrefsFile()
         done
 
         # Add message in to log for initialise.js to detect.
-        [[ $gInitialising -eq 0 ]] && WriteToLog "CTM_ReadPrefsOK"
+        #[[ $gInitialising -eq 0 ]] && WriteToLog "CTM_ReadPrefsOK"
     else
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Preferences file not found."
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Creating initial prefs file: $gUserPrefsFile"
@@ -2088,12 +2114,18 @@ RespondToUserThemeAction()
     
     if [ ! "$chosenTheme" == "" ] && [ ! "$desiredAction" == "" ]; then
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}User chose to $desiredAction theme $chosenTheme"
-        
+
         CheckThemePathIsStillValid
         retVal=$? # returns 1 if invalid / 0 if valid
         if [ $retVal -eq 0 ]; then
             RunThemeAction "$desiredAction" "$chosenTheme"
-            return $?
+            # Add 'Update success' notification to UI here so to not conflict with the 'Update All' functionality
+            local checkSuccess=$?
+            if [ "$desiredAction" == "Update" ] && [ $checkSuccess -eq 0 ]; then
+                [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: Success@${desiredAction}@$chosenTheme"
+                SendToUI "Success@${desiredAction}@$chosenTheme"
+            fi
+            return $checkSuccess
         else
             return 1
         fi
@@ -2354,6 +2386,31 @@ IsThemeInstalled()
 }
 
 # ---------------------------------------------------------------------------------------
+ReadConfigPList()
+{
+    [[ DEBUG -eq 1 ]] && WriteLinesToLog
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}ReadConfigPList()"
+
+    # Set default vars
+    gConfigTextOnly=1                # Set to 0 if config plist file has TextOnly set to true
+    gConfigFastBoot=1                    # Set to 0 if config plist file has Fast Boot set to true
+
+    # check for TextOnly and Fast boot options set by user
+    if [ "$gConfigPlistFullPath" != "" ] && [ -f "$gConfigPlistFullPath" ]; then
+        local checkTextOnly=$( grep -A1 "<key>TextOnly</key>" "$gConfigPlistFullPath" )
+        if [[ "$checkTextOnly" == *true* ]]; then
+            gConfigTextOnly=0
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}Text Only boot option is enabled"
+        fi
+        local checkFast=$( grep -A1 "<key>Fast</key>" "$gConfigPlistFullPath" )
+        if [[ "$checkFast" == *true* ]]; then
+            gConfigFastBoot=0
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}Fast boot option is enabled"
+        fi
+    fi
+}
+
+# ---------------------------------------------------------------------------------------
 PredictNextTheme()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
@@ -2410,7 +2467,17 @@ PredictNextTheme()
         local checkTheme=$( IsThemeInstalled "newyear" )
         [[ checkTheme -eq 0 ]] && themeToSend="newyear"
     fi
-
+    
+    # Check for Fast boot or Text Only boot options enabled in config.plist
+    ReadConfigPList
+    if [ $gConfigTextOnly -eq 0 ]; then
+        themeToSend="None (Text Only is enabled)"
+    fi
+    
+    if [ $gConfigFastBoot -eq 0 ]; then
+        themeToSend="None (Fast boot is enabled)"
+    fi
+    
     WriteToLog "Prediction: Next boot from this device will load theme: $themeToSend"
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: SetPrediction@${themeToSend}@"
     SendToUI "SetPrediction@${themeToSend}@"
@@ -2455,6 +2522,49 @@ RespondToDropDownMenuChange()
 }
 
 # ---------------------------------------------------------------------------------------
+RespondToUpdateAll()
+{
+    [[ DEBUG -eq 1 ]] && WriteLinesToLog
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}RespondToUpdateAll()"
+
+    local messageFromUi="$1"
+    local updateThemeList="${messageFromUi#*@}"
+    local updateFail=0
+
+    WriteToLog "User chose to update all themes"
+
+    oIFS="$IFS"; IFS=$','
+    read -a arr <<< "$updateThemeList"
+    IFS="$oIFS"
+
+    for (( u=0; u<${#arr[@]}; u++ ));
+    do
+        CheckThemePathIsStillValid
+        retVal=$? # returns 1 if invalid / 0 if valid
+        if [ $retVal -eq 0 ]; then
+            WriteToLog "Calling update for theme: ${arr[$u]}"
+            RunThemeAction "Update" "${arr[$u]}"
+            updateFail=$? # returns 1 if process failed / 0 if success
+            if [ $updateFail -eq 0 ]; then
+                SendToUI "UpdateAll@Theme@${arr[$u]}"
+            fi
+        else
+            updateFail=1
+        fi
+    done
+
+    if [ $updateFail -eq 0 ]; then
+        # Operation was successful
+        SendToUI "UpdateAll@Complete@-"
+        GetListOfInstalledThemesAndSendToUI
+        GetFreeSpaceOfTargetDeviceAndSendToUI
+        CheckAndRecordUnManagedThemesAndSendToUI
+        ReadThemeEntriesAndSendToUI
+    fi 
+
+}
+
+# ---------------------------------------------------------------------------------------
 ReadAndSendCurrentNvramTheme()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
@@ -2475,7 +2585,7 @@ ReadAndSendCurrentNvramTheme()
         PredictNextTheme
     else
         # Sending '-' to the UI here causes the drop down menu to be populated to the value '-'
-        # which currently defaults to menu option 'Select Action'
+        # which currently defaults to menu option ' '
         WriteToLog "Clover.Theme NVRAM variable is not set"
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: Nvram@-@"
         SendToUI "Nvram@-@"
@@ -2499,21 +2609,32 @@ ReadAndSendCurrentNvramPlistTheme()
         if [ "$themeName" != "" ]; then
             WriteToLog "$gNvramPlistFullPath contains theme entry $themeName"
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: NvramP@${themeName}@"
-            SendToUI "NvramP@${themeName}@"
+            #SendToUI "NvramP@${themeName}@"
+            SendToUI "Nvram@${themeName}@"
             CURRENT_THEME_ENTRY_NVRAM_PLIST="$themeName"
             PredictNextTheme
         else
             # Sending '-' to the UI here causes the drop down menu to be populated to the value '-'
-            # which currently defaults to menu option 'Select Action'
+            # which currently defaults to menu option ' '
             WriteToLog "$gNvramPlistFullPath does not contain a theme entry"
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: NvramP@-@"
-            SendToUI "NvramP@-@"
+            #SendToUI "NvramP@-@"
+            SendToUI "Nvram@-@"
             PredictNextTheme
         fi
     else
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$gNvramPlistFullPath does not exist."
-    fi
 
+        # Is there a theme entry from nvram.plist from bootlog?
+        if [ "$gNvramPlistThemeEntry" != "" ]; then
+            WriteToLog "$gNvramPlistFullPath contained the following theme at boot time: $gNvramPlistThemeEntry"
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: NvramP@${gNvramPlistThemeEntry}@"
+            #SendToUI "NvramP@${gNvramPlistThemeEntry}@"
+            SendToUI "Nvram@${gNvramPlistThemeEntry}@"
+            CURRENT_THEME_ENTRY_NVRAM_PLIST="$gNvramPlistThemeEntry"
+            PredictNextTheme
+        fi
+    fi
 }
 
 # ---------------------------------------------------------------------------------------
@@ -2535,7 +2656,7 @@ ReadAndSendCurrentConfigPlistTheme()
             PredictNextTheme
         else
             # Sending '-' to the UI here causes the drop down menu to be populated to the value '-'
-            # which currently defaults to menu option 'Select Action'
+            # which currently defaults to menu option ' '
             WriteToLog "$gConfigPlistFullPath does not contain a theme entry"
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: ConfigP@-@"
             SendToUI "ConfigP@-@"
@@ -2544,8 +2665,8 @@ ReadAndSendCurrentConfigPlistTheme()
     else
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$gConfigPlistFullPath does not exist."
     fi
-
 }
+
 # ---------------------------------------------------------------------------------------
 SetNvramTheme()
 {
@@ -2760,11 +2881,13 @@ CheckForThemeUpdates()
 
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}CheckForThemeUpdates()"
+    [[ DEBUG -eq 1 ]] && WriteToLog "Num Themes in themeList=${#themeList[@]}"
     
     local updateAvailThemeStr=""
     local gitRepositoryUrl=$( echo ${remoteRepositoryUrl}/ | sed 's/http:/git:/' )
     local themeHashLocal=""
     local themeHashRepo=""
+    local themeStillExistsInRepo=0
 
     if [ "$TARGET_THEME_DIR" != "-" ]; then
     
@@ -2772,11 +2895,27 @@ CheckForThemeUpdates()
         
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Sending UI: CheckingThemeUpdates@@"
         SendToUI "CheckingThemeUpdates@@"
-    
+
         for ((t=0; t<${#installedThemesOnCurrentVolume[@]}; t++))
         do
+
+            themeStillExistsInRepo=0
+
+            # Check theme still exists in the repo
+            for ((e=0; e<${#themeList[@]}; e++))
+            do
+
+                if [ "${installedThemesOnCurrentVolume[$t]}" == "${themeList[$e]##*/}" ]; then
+
+                    themeStillExistsInRepo=1
+                    break
+
+                fi
+
+            done
+
             # read hash from currently installed theme
-            if [ -f "$TARGET_THEME_DIR"/"${installedThemesOnCurrentVolume[$t]}"/.hash ]; then
+            if [ -f "$TARGET_THEME_DIR"/"${installedThemesOnCurrentVolume[$t]}"/.hash ] && [ $themeStillExistsInRepo -eq 1 ]; then
                 themeHashLocal=$( cat "$TARGET_THEME_DIR"/"${installedThemesOnCurrentVolume[$t]}"/.hash )
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}themeHashLocal=$themeHashLocal"
 
@@ -2798,6 +2937,9 @@ CheckForThemeUpdates()
                 else
                     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Failed to read hash for ${installedThemesOnCurrentVolume[$t]} from repository."
                 fi
+                
+            else
+                [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Theme ${installedThemesOnCurrentVolume[$t]} either has no hash, or theme no longer exists in the repository."
             fi
         done
                 
@@ -3107,15 +3249,18 @@ gThumbSizeY=0
 gUISettingViewUnInstalled="Show"
 gUISettingViewThumbnails="Show"
 gUISettingViewPreviews="Hide"
-gInitialising=0                                                        # Send init messages to log file for to initialise.js to read.
+gInitialising=0                                                    # Send init messages to log file for initialise.js to read.
 gitCmd=""                                                          # Will be set to path to installed git binary to use
 gBootlogState="Open"                                               # Default state for bootlog in UI. This is overridden by user prefs
 gNvramPlistFullPath=""                                             # Will become full path if theme entry exists in nvram.plist
+gNvramPlistThemeEntry=""                                           # Will become theme entry in nvram.plist
 gConfigPlistFullPath=""                                            # Will become full path if theme entry exists in config.plist
 gBootType=""                                                       # Will become either UEFI or Legacy
 gNvramSave=1                                                       # Set to 0 if writing to NVRAM is saved for next boot
 gBootDeviceIdentifier=""                                           # Will become identifier of boot device
 gBootDeviceMountPoint=""                                           # Will become mountpoint of boot device
+gConfigTextOnly=1                                                  # Set to 0 if config plist contains textOnly
+gConfigFastBoot=1                                                  # Set to 0 if config plist contains textOnly
 
 CURRENT_THEME_ENTRY_NVRAM=""
 CURRENT_THEME_ENTRY_NVRAM_PLIST=""
@@ -3261,6 +3406,11 @@ if [ "$gitCmd" != "" ]; then
         GetLatestIndexAndEnsureThemeHtml
         WriteToLog "CTM_ThemeDirsScan"
         wait
+
+        # Check for preferences file and add message in to log for initialise.js to detect.
+        if [ -f "$gUserPrefsFile".plist ]; then
+            [[ $gInitialising -eq 0 ]] && WriteToLog "CTM_ReadPrefsOK"
+        fi
 
         ReadPrefsFile
         CleanInstalledThemesPrefEntries
@@ -3425,6 +3575,11 @@ if [ "$gitCmd" != "" ]; then
                     CheckAndRecordUnManagedThemesAndSendToUI
                     ReadThemeEntriesAndSendToUI
                 fi 
+
+            # Has the user pressed the Update All button?
+            elif [[ "$logLine" == *CTM_UpdateAll* ]]; then
+                ClearTopOfMessageLog "$logJsToBash"
+                RespondToUpdateAll "$logLine"
 
             # Has user selected a theme control option?
             elif [[ "$logLine" == *CTM_changeTheme* ]]; then
