@@ -798,7 +798,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   DevPropDevice   *device;
   UINT8           BuiltIn = 0x00;
   UINT32          FakeID;
-  UINT32          DualLink = 0;
+  UINT32          DualLink = 1;
   BOOLEAN         SetUGAWidth = FALSE;
   BOOLEAN         SetUGAHeight = FALSE;
   BOOLEAN         Injected = FALSE;
@@ -1029,9 +1029,17 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           SetUGAHeight = TRUE;
           DBG ("  Found Ultra XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
+        default:
+          DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+          break;
+      }
+      break;
+    case 1680:
+      SetUGAWidth = TRUE;
+      switch (UGAHeight) {
         case 1050:
           SetUGAHeight = TRUE;
-          DBG ("  Found Widescreen Super XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+          DBG ("  Found Widescreen Super XGA Plus Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
           break;
         default:
           DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
@@ -1232,11 +1240,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     DBG("  Custom Intel GFX properties injected, continue\n");
   }
 
-  if (gSettings.NoDefaultProperties) {
-    DBG("  Intel: no default properties\n");
-    return TRUE;
-  }
-
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
     DBG("  IntelHDMI: used\n");
@@ -1270,7 +1273,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   // DualLink
   // Low resolution(1366x768-) - DualLink = 0, but no need it
   // High resolution(1400x1050+) - DualLink = 1
-  // Default DualLink is 1 in platformdata.c.
+  // Default DualLink is auto-detection
   switch (gma_dev->device_id) {
     case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
     case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
@@ -1285,74 +1288,66 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
     case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
     case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-      if (SetUGAWidth && SetUGAHeight) {
-        if (gSettings.DualLink != 0) {
-          if (UGAWidth < 1400) {
-            DBG("  Default AAPL01,DualLink = 1\n");
-            DBG("  Low Resolution Display\n");
-            DBG("  AAPL01,DualLink: changed from 1 to not used\n");
-          }
-          else {
-            devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
-            DBG("  AAPL01,DualLink = 1\n");
-          }
-        }
-        else {
-          if (UGAWidth >= 1400) {
-            DBG("  Default AAPL01,DualLink = 0\n");
-            DBG("  High Resolution Display\n");
-            DualLink = 1;
-            devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
-            DBG("  AAPL01,DualLink: changed from 0 to 1\n");
-          }
-          else {
-            DBG("  AAPL01,DualLink: not used\n");
-          }
-        }
-      }
-      else {
-        if (gSettings.DualLink != 0) {
+      if ((gSettings.DualLink == 0) || (gSettings.DualLink == 1)) {
+        if (gSettings.DualLink == 1) {
+          //DBG("  DualLink: 1\n");
           devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
           DBG("  AAPL01,DualLink = 1\n");
         }
         else {
+          //DBG("  DualLink: 0\n");
           DBG("  AAPL01,DualLink: not used\n");
+        }
+      }
+      else {
+        DBG("  Beginning DualLink auto-detection\n");
+        if (SetUGAWidth && SetUGAHeight) {
+          if (UGAWidth < 1400) {
+            DBG("  Low Resolution Display\n");
+            DBG("  AAPL01,DualLink: not used\n");
+          }
+          else {
+            DBG("  High Resolution Display\n");
+            devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
+            DBG("  AAPL01,DualLink = 1\n");
+          }
+        }
+        else {
+          DBG("  Unknown Resolution Display\n");
+          devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
+          DBG("  AAPL01,DualLink = 1\n");
         }
       }
       break;
     default:
-      if (SetUGAWidth && SetUGAHeight) {
-        if (gSettings.DualLink != 0) {
-          if (UGAWidth < 1400) {
-            DBG("  Default AAPL00,DualLink = 1\n");
-            DBG("  Low Resolution Display\n");
-            DBG("  AAPL00,DualLink: changed from 1 to not used\n");
-          }
-          else {
-            devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
-            DBG("  AAPL00,DualLink = 1\n");
-          }
-        }
-        else {
-          if (UGAWidth >= 1400) {
-            DBG("  Default AAPL00,DualLink = 0\n");
-            DBG("  High Resolution Display\n");
-            DualLink = 1;
-            devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
-            DBG("  AAPL00,DualLink: changed from 0 to 1\n");
-          }
-          else {
-            DBG("  AAPL00,DualLink: not used\n");
-          }
-        }
-      }
-      else {
-        if (gSettings.DualLink != 0) {
+      if ((gSettings.DualLink == 0) || (gSettings.DualLink == 1)) {
+        if (gSettings.DualLink == 1) {
+          //DBG("  DualLink: 1\n");
           devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
           DBG("  AAPL00,DualLink = 1\n");
         }
         else {
+          //DBG("  DualLink: 0\n");
           DBG("  AAPL00,DualLink: not used\n");
+        }
+      }
+      else {
+        DBG("  Beginning DualLink auto-detection\n");
+        if (SetUGAWidth && SetUGAHeight) {
+          if (UGAWidth < 1400) {
+            DBG("  Low Resolution Display\n");
+            DBG("  AAPL00,DualLink: not used\n");
+          }
+          else {
+            DBG("  High Resolution Display\n");
+            devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
+            DBG("  AAPL00,DualLink = 1\n");
+          }
+        }
+        else {
+          DBG("  Unknown Resolution Display\n");
+          devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
+          DBG("  AAPL00,DualLink = 1\n");
         }
       }
       break;
@@ -1398,6 +1393,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         DBG("  ig-platform-id: not set\n");
       }
       break;
+  }
+
+  if (gSettings.NoDefaultProperties) {
+    DBG("  Intel: no default properties\n");
+    return TRUE;
   }
 
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));

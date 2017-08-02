@@ -1893,7 +1893,7 @@ GetDefaultSettings ()
 
   gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
   //gSettings.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
-  gSettings.DualLink             = 1;
+  gSettings.DualLink             = 0xA; // A(auto): DualLink auto-detection
   gSettings.HDAInjection         = TRUE;
   //gSettings.HDALayoutId          = 0;
   gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before

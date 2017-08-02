@@ -1160,12 +1160,19 @@ BOOLEAN get_bootdisplay_val(value_t *val, INTN index, BOOLEAN Sier)
 
 BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier)
 {
+  UINT32 DualLink = 1;
   static UINT32 v = 0;
   
   if (v) {
     return FALSE;
   }
-  v = gSettings.DualLink;
+
+  if ((gSettings.DualLink == 0) || (gSettings.DualLink == 1)) {
+    v = gSettings.DualLink;
+  } else {
+    v = DualLink;
+  }
+
   val->type = kCst;
   val->size = 4;
   val->data = (UINT8 *)&v;
