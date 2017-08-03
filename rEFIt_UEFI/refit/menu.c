@@ -461,6 +461,10 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeaturesMask);
 
+  // Debug for KernelAndKextPatches
+  InputItems[InputItemsCount].ItemType = BoolValue; //64
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPDebug;
+
 
   // CSR - aka System Integrity Protection configuration
   InputItemsCount = 65;
@@ -939,17 +943,20 @@ VOID ApplyInputs(VOID)
     gRemapSmBiosIsRequire = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-
   i++; //62
   if (InputItems[i].Valid) {
     gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FirmwareFeatures=0x%x\n", gFwFeatures);
   }
-
   i++; //63
   if (InputItems[i].Valid) {
     gFwFeaturesMask = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied FirmwareFeaturesMask=0x%x\n", gFwFeaturesMask);
+  }
+  i++; //64
+  if (InputItems[i].Valid) {
+    gSettings.KernelAndKextPatches.KPDebug = InputItems[i].BValue;
+    gBootChanged = TRUE;
   }
 
   // CSR
@@ -4207,6 +4214,8 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
 
+  AddMenuItem(SubScreen, 64,  "Debug", TAG_INPUT, FALSE);
+  AddMenuInfo(SubScreen, L"----------------------");
   AddMenuItem(SubScreen, 104, "Fake CPUID:", TAG_INPUT, TRUE);
 //  AddMenuItem(SubScreen, 108, "Kernel patching allowed", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
