@@ -4140,7 +4140,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "DualLink");
       if (Prop != NULL) {
         gSettings.DualLink = (UINT32)GetPropertyInteger (Prop, gSettings.DualLink);
-        DBG ("DualLink: %d\n", gSettings.DualLink);
+        //DBG ("DualLink: %d\n", gSettings.DualLink);
       }
 
       //InjectEDID - already done in earlysettings

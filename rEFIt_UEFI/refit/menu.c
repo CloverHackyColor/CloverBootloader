@@ -383,12 +383,6 @@ VOID FillInputs(BOOLEAN New)
 
     InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
     InputItems[InputItemsCount++].BValue = gGraphics[i].LoadVBios;
-	
-    InputItems[InputItemsCount].ItemType = Hex; //26+6i
-    if (New) {
-      InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
-    }
-    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%01x", gSettings.DualLink);
   }
   //and so on
 
@@ -657,7 +651,13 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //108
   InputItems[InputItemsCount++].BValue = gSettings.KernelPatchesAllowed;
 
-  
+  InputItems[InputItemsCount].ItemType = Hex; //109
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%01x", gSettings.DualLink);
+
+
   //menu for drop table
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -851,11 +851,6 @@ VOID ApplyInputs(VOID)
     i++; //25
     if (InputItems[i].Valid) {
       gGraphics[j].LoadVBios = InputItems[i].BValue;
-    }
-    i++; //26
-    if (InputItems[i].Valid) {
-      gSettings.DualLink = (UINT32)StrHexToUint64(InputItems[i].SValue);
-      DBG("applied DualLink=%x\n", gSettings.DualLink);
     }
   }  //end of Graphics Cards
   // next number == 42
@@ -1220,6 +1215,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.KernelPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
+  }
+
+  i++; //109
+  if (InputItems[i].Valid) {
+    gSettings.DualLink = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    DBG("applied DualLink=%x\n", gSettings.DualLink);
   }
 
   if (NeedSave) {
@@ -3997,7 +3998,11 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     } else /*if (gGraphics[i].Vendor == Intel)*/ {
       Ven = 96;
     }
-    AddMenuItem(SubScreen, 26, "DualLink:", TAG_INPUT, TRUE);
+	
+    if ((gGraphics[i].Vendor == Ati) || (gGraphics[i].Vendor == Intel)) {
+      AddMenuItem(SubScreen, 109, "DualLink:", TAG_INPUT, TRUE);
+    }
+
     AddMenuItem(SubScreen, Ven, "FakeID:", TAG_INPUT, TRUE);
 
     if (gGraphics[i].Vendor == Nvidia) {
