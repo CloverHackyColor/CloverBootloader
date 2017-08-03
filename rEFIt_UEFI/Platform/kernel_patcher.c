@@ -887,6 +887,157 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
   return PatchApplied;
 }
 
+//
+// syscl - this patch provides XCPM support for Haswell low-end(HSWLowEnd) and platforms later than Haswell
+// implemented by syscl
+// credit also Pike R.Alpha, stinga11, Sherlocks, vit9696
+//
+BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+{
+    DBG("KernelHSWLowEndPatch() ===>\n");
+    UINT8       *bytes = (UINT8*)kernelData;
+    UINT32      patchLocation  = 0;
+    UINT32      patchLocation1 = 0;
+    UINT32      i;
+    UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+    
+    if (os_version < AsciiOSVersionToUint64("10.8.5")) {
+        DBG("Haswell+ CPU requires macOS version at least 10.8.5, aborted\n");
+        DBG("KernelHSWLowEndPatch() <===FALSE\n");
+        return FALSE;
+    }
+    
+    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
+    KernelCPUIDPatch((UINT8*)KernelData, Entry);
+    
+    /**
+     * One more check if process is Skylake or newer platform
+     * Applied full HWP speedshift for it (c) Pike R.Aplha, syscl
+     */
+    if (use_xcpm_idle) {
+        /**
+         * MSR 0xE2 _xcpm_idle instant reboot (c) Pike R.Alpha
+         * find: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30
+         * repl: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90
+         */
+        for (i = 0; i < 0x1000000; i++) {
+            if (bytes[i+0] == 0xB9 && bytes[i+1] == 0xE2 && bytes[i+2] == 0x00 && bytes[i+3] == 0x00 &&
+                bytes[i+4] == 0x00 && bytes[i+5] == 0x0F && bytes[i+6] == 0x30) {
+                // syscl - we found MSR 0xE2 _xcpm_idle
+                DBG("Found MSR 0xE2 _xcpm_idle\n");
+                patchLocation  = i + 5;
+                patchLocation1 = i + 6;
+                break;
+            }
+        }
+        bytes[patchLocation]  = 0x90;
+        bytes[patchLocation1] = 0x90;
+        DBG("Enabled full HWP(speedshift for Pentium/Celeron)\n");
+    }
+    
+    /**
+     * _xcpm_bootstrap - IvyBridge (c) Pike R.Alpha
+     */
+    DBG("Searching _xcpm_bootstrap...\n");
+    if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+        /**
+         * _xcpm_bootstrap - IvyBridge on 10.12 - 10.12.5 (c) Pike R.Alpha
+         * find: 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22
+         * repl: 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22
+         */
+        for (i = 0; i < 0x1000000; i++) {
+            if (bytes[i+0] == 0x83 && bytes[i+1] == 0xC3 && bytes[i+2] == 0xC4 &&
+                bytes[i+3] == 0x83 && bytes[i+4] == 0xFB && bytes[i+5] == 0x22) {
+                // syscl - we found _xcpm_bootstrap
+                DBG("Found _xcpm_bootstrap\n");
+                patchLocation = i + 2;
+                break;
+            }
+        }
+    }
+    else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
+        /**
+         * _xcpm_bootstrap - IvyBridge on 10.12.6 (c) Pike R.Alpha
+         * find: 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22
+         * repl: 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22
+         */
+        for (i = 0; i < 0x1000000; i++) {
+            if (bytes[i+0] == 0x8D && bytes[i+1] == 0x43 && bytes[i+2] == 0xC4 &&
+                bytes[i+3] == 0x83 && bytes[i+4] == 0xF8 && bytes[i+5] == 0x22) {
+                // syscl - we found _xcpm_bootstrap
+                DBG("Found _xcpm_bootstrap\n");
+                patchLocation = i + 2;
+                break;
+            }
+        }
+    }
+    else if (os_version >= AsciiOSVersionToUint64("10.13") && os_version < AsciiOSVersionToUint64("10.14")){
+        /**
+         * _xcpm_bootstrap - IvyBridge on 10.13 (c) Pike R.Alpha, Sherlocks
+         * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22
+         * repl: 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22
+         */
+        for (i = 0; i < 0x1000000; i++) {
+            if (bytes[i+0] == 0x89 && bytes[i+1] == 0xD8 && bytes[i+2] == 0x04 &&
+                bytes[i+3] == 0xC4 && bytes[i+4] == 0x3C && bytes[i+5] == 0x22) {
+                // syscl - we found _xcpm_bootstrap
+                DBG("Found _xcpm_bootstrap\n");
+                patchLocation = i + 3;
+                break;
+            }
+        }
+    }
+    else {
+        /**
+         * place holder for futher changes
+         * change following code for 10.14 and later if needed
+         */
+        DBG("Unsupported macOS, aborted\n");
+        DBG("KernelHSWLowEndPatch() <===FALSE\n");
+        return FALSE;
+    }
+    // now substitule it to fix _xcpm_bootstrap
+    bytes[patchLocation] = 0xC6;
+    DBG("Applied _xcpm_bootstrap patch\n");
+
+    /**
+     * _cpuid_set_info_rdmsr (c) vit9696, Sherlocks
+     * syscl - don't require 10.12 os_version checking, since the condition now must be os_version >= 10.12
+     */
+    DBG("Searching _cpuid_set_info_rdmsr...\n");
+    if (os_version < AsciiOSVersionToUint64("10.14")) {
+        /**
+         * _cpuid_set_info_rdmsr on 10.12.x - 10.13.x (c) vit9696, Sherlocks
+         * find: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32
+         * repl: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0
+         */
+        for (i = 0; i < 0x1000000; i++) {
+            if (bytes[i+0] == 0xB9 && bytes[i+1] == 0xA0 && bytes[i+2] == 0x01 && bytes[i+3] == 0x00 &&
+                bytes[i+4] == 0x00 && bytes[i+5] == 0x0F && bytes[i+6] == 0x32) {
+                // syscl - we found _cpuid_set_info_rdmsr
+                DBG("Found _cpuid_set_info_rdmsr\n");
+                patchLocation  = i + 5;
+                patchLocation1 = i + 6;
+                break;
+            }
+        }
+    }
+    else {
+        /**
+         * place holder for futher changes
+         * change following code for 10.14.x and later if needed
+         */
+        DBG("Unsupported macOS, aborted\n");
+        DBG("KernelHSWLowEndPatch() <===FALSE\n");
+        return FALSE;
+    }
+    bytes[patchLocation]  = 0x31;
+    bytes[patchLocation1] = 0xC0;
+
+    DBG("KernelHSWLowEndPatch() <===\n");
+    return TRUE;
+}
+
 
 VOID Patcher_SSE3_6(VOID* kernelData)
 {
@@ -1477,6 +1628,18 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
   } else {
     DBG_RT(Entry, "Disabled\n");
+  }
+
+    
+  //
+  // syscl - Intel Haswell+ low-end process(Celeron/Pentium) patch
+  //
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+     (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+      BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U ? TRUE : FALSE;
+      KernelAndKextPatcherInit(Entry);
+      if (KernelData == NULL) goto NoKernelData;
+      KernelHSWLowEndPatch(KernelData, Entry, apply_idle_patch);
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
