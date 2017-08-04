@@ -910,11 +910,18 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
     Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
     KernelCPUIDPatch((UINT8*)KernelData, Entry);
     
+    // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
+    if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12") &&
+       (!use_xcpm_idle)) {
+        DBG("KernelHSWLowEndPatch() <===\n");
+        return TRUE;
+    }
+    
     /**
      * One more check if process is Skylake or newer platform
-     * Applied full HWP speedshift for it (c) Pike R.Aplha, syscl
+     * Applied full HWP speedshift for Skylake+ Celeron/Pentium conditionally (c) Pike R.Aplha, syscl
      */
-    if (use_xcpm_idle) {
+    if (use_xcpm_idle && gSettings.HWP) {
         /**
          * MSR 0xE2 _xcpm_idle instant reboot (c) Pike R.Alpha
          * find: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30
@@ -932,7 +939,7 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
         }
         bytes[patchLocation]  = 0x90;
         bytes[patchLocation1] = 0x90;
-        DBG("Enabled full HWP(speedshift for Pentium/Celeron)\n");
+        DBG("Enabled full HWP(speedshift) for Pentium/Celeron\n");
     }
     
     /**
@@ -971,7 +978,7 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
             }
         }
     }
-    else if (os_version >= AsciiOSVersionToUint64("10.13") && os_version < AsciiOSVersionToUint64("10.14")){
+    else if (os_version >= AsciiOSVersionToUint64("10.13") && os_version < AsciiOSVersionToUint64("10.14")) {
         /**
          * _xcpm_bootstrap - IvyBridge on 10.13 (c) Pike R.Alpha, Sherlocks
          * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22
