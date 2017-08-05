@@ -921,12 +921,13 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
      * One more check if process is Skylake or newer platform
      * Applied full HWP speedshift for Skylake+ Celeron/Pentium conditionally (c) Pike R.Aplha, syscl
      */
-    if (use_xcpm_idle && gSettings.HWP) {
+    if (use_xcpm_idle) {
         /**
          * MSR 0xE2 _xcpm_idle instant reboot (c) Pike R.Alpha
          * find: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30
          * repl: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90
          */
+        DBG("Found HWPEnable setting, searching MSR 0xE2 _xcpm_idle...\n");
         for (i = 0; i < 0x1000000; i++) {
             if (bytes[i+0] == 0xB9 && bytes[i+1] == 0xE2 && bytes[i+2] == 0x00 && bytes[i+3] == 0x00 &&
                 bytes[i+4] == 0x00 && bytes[i+5] == 0x0F && bytes[i+6] == 0x30) {
@@ -934,12 +935,13 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
                 DBG("Found MSR 0xE2 _xcpm_idle\n");
                 patchLocation  = i + 5;
                 patchLocation1 = i + 6;
+                // patch _xcpm_idle
+                bytes[patchLocation]  = 0x90;
+                bytes[patchLocation1] = 0x90;
+                DBG("Applied MSR 0xE2 _xcpm_idle patch\n");
                 break;
             }
         }
-        bytes[patchLocation]  = 0x90;
-        bytes[patchLocation1] = 0x90;
-        DBG("Enabled full HWP(speedshift) for Pentium/Celeron\n");
     }
     
     /**
@@ -958,6 +960,9 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
                 // syscl - we found _xcpm_bootstrap
                 DBG("Found _xcpm_bootstrap\n");
                 patchLocation = i + 2;
+                // patch _xcpm_bootstrap
+                bytes[patchLocation] = 0xC6;
+                DBG("Applied _xcpm_bootstrap patch\n");
                 break;
             }
         }
@@ -974,6 +979,9 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
                 // syscl - we found _xcpm_bootstrap
                 DBG("Found _xcpm_bootstrap\n");
                 patchLocation = i + 2;
+                // patch _xcpm_bootstrap
+                bytes[patchLocation] = 0xC6;
+                DBG("Applied _xcpm_bootstrap patch\n");
                 break;
             }
         }
@@ -990,6 +998,9 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
                 // syscl - we found _xcpm_bootstrap
                 DBG("Found _xcpm_bootstrap\n");
                 patchLocation = i + 3;
+                // patch _xcpm_bootstrap
+                bytes[patchLocation] = 0xC6;
+                DBG("Applied _xcpm_bootstrap patch\n");
                 break;
             }
         }
@@ -1003,16 +1014,12 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
         DBG("KernelHSWLowEndPatch() <===FALSE\n");
         return FALSE;
     }
-    // now substitule it to fix _xcpm_bootstrap
-    bytes[patchLocation] = 0xC6;
-    DBG("Applied _xcpm_bootstrap patch\n");
 
     /**
-     * _cpuid_set_info_rdmsr (c) vit9696, Sherlocks
-     * syscl - don't require 10.12 os_version checking, since the condition now must be os_version >= 10.12
+     * _cpuid_set_info_rdmsr since 10.12.x - 10.13.x (c) vit9696, Sherlocks
      */
     DBG("Searching _cpuid_set_info_rdmsr...\n");
-    if (os_version < AsciiOSVersionToUint64("10.14")) {
+    if (os_version >= AsciiOSVersionToUint64("10.12") && os_version < AsciiOSVersionToUint64("10.14")) {
         /**
          * _cpuid_set_info_rdmsr on 10.12.x - 10.13.x (c) vit9696, Sherlocks
          * find: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32
@@ -1025,6 +1032,10 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
                 DBG("Found _cpuid_set_info_rdmsr\n");
                 patchLocation  = i + 5;
                 patchLocation1 = i + 6;
+                // patch _cpuid_set_info_rdmsr
+                bytes[patchLocation]  = 0x31;
+                bytes[patchLocation1] = 0xC0;
+                DBG("Applied _cpuid_set_info_rdmsr patch\n");
                 break;
             }
         }
@@ -1038,8 +1049,6 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
         DBG("KernelHSWLowEndPatch() <===FALSE\n");
         return FALSE;
     }
-    bytes[patchLocation]  = 0x31;
-    bytes[patchLocation1] = 0xC0;
 
     DBG("KernelHSWLowEndPatch() <===\n");
     return TRUE;
@@ -1643,7 +1652,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
      (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
-      BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U ? TRUE : FALSE;
+      BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
       KernelAndKextPatcherInit(Entry);
       if (KernelData == NULL) goto NoKernelData;
       KernelHSWLowEndPatch(KernelData, Entry, apply_idle_patch);
