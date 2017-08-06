@@ -556,6 +556,275 @@ VOID DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
 
 ////////////////////////////////////
 //
+// SNBE_AICPUPatch implemented by syscl
+// Fix AppleIntelCPUPowerManagement on SandyBridge-E (c) omni, stinga11
+//
+VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
+{
+    UINT32 i;
+    UINT64 os_ver = AsciiOSVersionToUint64(Entry->OSVersion);
+    
+    DBG_RT(Entry, "\nSNBE_AICPUPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+    if (Entry->KernelAndKextPatches->KPDebug) {
+        ExtractKextBundleIdentifier(InfoPlist);
+    }
+    
+    DBG_RT(Entry, "Kext: %a\n", gKextBundleIdentifier);
+    
+    // now let's patch it
+    if (os_ver < AsciiOSVersionToUint64("10.9")) {
+        DBG("SandyBridge-E unsupported on macOS older than 10.10(Yosemite), aborted\n");
+        return;
+    }
+    
+    if (os_ver < AsciiOSVersionToUint64("10.10")) {
+        // 10.9.x
+        UINT8 find[][3] = {
+            { 0x84, 0x2F, 0x01 },
+            { 0x3E, 0x75, 0x3A },
+            { 0x84, 0x5F, 0x01 },
+            { 0x74, 0x10, 0xB9 },
+            { 0x75, 0x07, 0xB9 },
+            { 0xFC, 0x02, 0x74 },
+            { 0x01, 0x74, 0x58 }
+        };
+        UINT8 repl[][3] = {
+            { 0x85, 0x2F, 0x01 },
+            { 0x3E, 0x90, 0x90 },
+            { 0x85, 0x5F, 0x01 },
+            { 0xEB, 0x10, 0xB9 },
+            { 0xEB, 0x07, 0xB9 },
+            { 0xFC, 0x02, 0xEB },
+            { 0x01, 0xEB, 0x58 }
+        };
+        
+        for (i = 0; i < 7; i++) {
+            if (SearchAndReplace(Driver, DriverSize, find[i], sizeof(find[i]), repl[i], 0)) {
+                DBG("SNBE_AICPUPatch (%d/7) applied\n", i);
+            } else {
+                DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
+            }
+        }
+    } else if (os_ver < AsciiOSVersionToUint64("10.11")) {
+        // 10.10.x
+        UINT8 find[][3] = {
+            { 0x3E, 0x75, 0x39 },
+            { 0x74, 0x11, 0xB9 },
+            { 0x01, 0x74, 0x56 }
+        };
+        UINT8 repl[][3] = {
+            { 0x3E, 0x90, 0x90 },
+            { 0xEB, 0x11, 0xB9 },
+            { 0x01, 0xEB, 0x56 }
+        };
+        for (i = 0; i < 3; i++) {
+            if (SearchAndReplace(Driver, DriverSize, find[i], sizeof(find[i]), repl[i], 0)) {
+                DBG("SNBE_AICPUPatch (%d/7) applied\n", i);
+            } else {
+                DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
+            }
+        }
+        
+        UINT8 find_1[] = { 0xFF, 0x0F, 0x84, 0x2D };
+        UINT8 repl_1[] = { 0xFF, 0x0F, 0x85, 0x2D };
+        if (SearchAndReplace(Driver, DriverSize, find_1, sizeof(find_1), repl_1, 0)) {
+            DBG("SNBE_AICPUPatch (4/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (4/7) not apply\n");
+        }
+        
+        
+        UINT8 find_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x84 };
+        UINT8 repl_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x85 };
+        if (SearchAndReplace(Driver, DriverSize, find_2, sizeof(find_2), repl_2, 0)) {
+            DBG("SNBE_AICPUPatch (5/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (5/7) not apply\n");
+        }
+        
+        UINT8 find_3[] = { 0x02, 0x74, 0x0B, 0x41, 0x83, 0xFC, 0x03, 0x75, 0x22, 0xB9, 0x02, 0x06 };
+        UINT8 repl_3[] = { 0x02, 0xEB, 0x0B, 0x41, 0x83, 0xFC, 0x03, 0x75, 0x22, 0xB9, 0x02, 0x06 };
+        if (SearchAndReplace(Driver, DriverSize, find_3, sizeof(find_3), repl_3, 0)) {
+            DBG("SNBE_AICPUPatch (6/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (6/7) not apply\n");
+        }
+        
+        UINT8 find_4[] = { 0x74, 0x0B, 0x41, 0x83, 0xFC, 0x03, 0x75, 0x11, 0xB9, 0x42, 0x06, 0x00 };
+        UINT8 repl_4[] = { 0xEB, 0x0B, 0x41, 0x83, 0xFC, 0x03, 0x75, 0x11, 0xB9, 0x42, 0x06, 0x00 };
+        if (SearchAndReplace(Driver, DriverSize, find_4, sizeof(find_4), repl_4, 0)) {
+            DBG("SNBE_AICPUPatch (7/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (7/7) not apply\n");
+        }
+    } else if (os_ver < AsciiOSVersionToUint64("10.12")) {
+        // 10.11
+        UINT8 find[][3] = {
+            { 0x3E, 0x75, 0x39 },
+            { 0x75, 0x11, 0xB9 },
+            { 0x01, 0x74, 0x5F }
+        };
+        UINT8 repl[][3] ={
+            { 0x3E, 0x90, 0x90 },
+            { 0xEB, 0x11, 0xB9 },
+            { 0x01, 0xEB, 0x5F }
+        };
+        for (i = 0; i < 3; i++) {
+            if (SearchAndReplace(Driver, DriverSize, find[i], sizeof(find[i]), repl[i], 0)) {
+                DBG("SNBE_AICPUPatch (%d/7) applied\n", i);
+            } else {
+                DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
+            }
+        }
+        
+        UINT8 find_1[] = { 0xFF, 0x0F, 0x84, 0x2D };
+        UINT8 repl_1[] = { 0xFF, 0x0F, 0x85, 0x2D };
+        if (SearchAndReplace(Driver, DriverSize, find_1, sizeof(find_1), repl_1, 0)) {
+            DBG("SNBE_AICPUPatch (4/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (4/7) not apply\n");
+        }
+        
+        UINT8 find_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x84 };
+        UINT8 repl_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x85 };
+        if (SearchAndReplace(Driver, DriverSize, find_2, sizeof(find_2), repl_2, 0)) {
+            DBG("SNBE_AICPUPatch (5/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (5/7) not apply\n");
+        }
+        
+        UINT8 find_3[] = { 0xC9, 0x74, 0x16, 0x0F, 0x32, 0x48, 0x25, 0xFF, 0x0F, 0x00, 0x00, 0x48 };
+        UINT8 repl_3[] = { 0xC9, 0xEB, 0x16, 0x0F, 0x32, 0x48, 0x25, 0xFF, 0x0F, 0x00, 0x00, 0x48 };
+        if (SearchAndReplace(Driver, DriverSize, find_3, sizeof(find_3), repl_3, 0)) {
+            DBG("SNBE_AICPUPatch (6/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (6/7) not apply\n");
+        }
+        
+        UINT8 find_4[] = { 0xC9, 0x74, 0x0C, 0x0F, 0x32, 0x83, 0xE0, 0x1F, 0x42, 0x89, 0x44, 0x3B };
+        UINT8 repl_4[] = { 0xC9, 0xEB, 0x0C, 0x0F, 0x32, 0x83, 0xE0, 0x1F, 0x42, 0x89, 0x44, 0x3B };
+        if (SearchAndReplace(Driver, DriverSize, find_4, sizeof(find_4), repl_4, 0)) {
+            DBG("SNBE_AICPUPatch (7/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (7/7) not apply\n");
+        }
+    } else if (os_ver < AsciiOSVersionToUint64("10.13")) {
+        // 10.12
+        UINT8 find[][3] = {
+            { 0x01, 0x74, 0x61 },
+            { 0x3E, 0x75, 0x38 },
+            { 0x75, 0x11, 0xB9 }
+        };
+        UINT8 repl[][3] ={
+            { 0x01, 0xEB, 0x61 },
+            { 0x3E, 0x90, 0x90 },
+            { 0xEB, 0x11, 0xB9 }
+        };
+        for (i = 0; i < 3; i++) {
+            if (SearchAndReplace(Driver, DriverSize, find[i], sizeof(find[i]), repl[i], 0)) {
+                DBG("SNBE_AICPUPatch (%d/7) applied\n", i);
+            } else {
+                DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
+            }
+        }
+        
+        UINT8 find_1[] = { 0xFF, 0x0F, 0x84, 0x2D };
+        UINT8 repl_1[] = { 0xFF, 0x0F, 0x85, 0x2D };
+        if (SearchAndReplace(Driver, DriverSize, find_1, sizeof(find_1), repl_1, 0)) {
+            DBG("SNBE_AICPUPatch (4/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (4/7) not apply\n");
+        }
+
+        UINT8 find_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x84 };
+        UINT8 repl_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x85 };
+        if (SearchAndReplace(Driver, DriverSize, find_2, sizeof(find_2), repl_2, 0)) {
+            DBG("SNBE_AICPUPatch (5/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (5/7) not apply\n");
+        }
+        
+        UINT8 find_3[] = { 0xC9, 0x74, 0x15, 0x0F, 0x32, 0x25, 0xFF, 0x0F, 0x00, 0x00, 0x48 };
+        UINT8 repl_3[] = { 0xC9, 0xEB, 0x15, 0x0F, 0x32, 0x25, 0xFF, 0x0F, 0x00, 0x00, 0x48 };
+        if (SearchAndReplace(Driver, DriverSize, find_3, sizeof(find_3), repl_3, 0)) {
+            DBG("SNBE_AICPUPatch (6/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (6/7) not apply\n");
+        }
+
+        UINT8 find_4[] = { 0xC9, 0x74, 0x0C, 0x0F, 0x32, 0x83, 0xE0, 0x1F, 0x42, 0x89, 0x44, 0x3B };
+        UINT8 repl_4[] = { 0xC9, 0xEB, 0x0C, 0x0F, 0x32, 0x83, 0xE0, 0x1F, 0x42, 0x89, 0x44, 0x3B };
+        if (SearchAndReplace(Driver, DriverSize, find_4, sizeof(find_4), repl_4, 0)) {
+            DBG("SNBE_AICPUPatch (7/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (7/7) not apply\n");
+        }
+    } else if (os_ver < AsciiOSVersionToUint64("10.14")) {
+        // 10.13
+        UINT8 find[][3] = {
+            { 0x01, 0x74, 0x61 },
+            { 0x3E, 0x75, 0x38 },
+            { 0x75, 0x11, 0xB9 }
+        };
+        UINT8 repl[][3] ={
+            { 0x01, 0xEB, 0x61 },
+            { 0x3E, 0x90, 0x90 },
+            { 0xEB, 0x11, 0xB9 }
+        };
+        for (i = 0; i < 3; i++) {
+            if (SearchAndReplace(Driver, DriverSize, find[i], sizeof(find[i]), repl[i], 0)) {
+                DBG("SNBE_AICPUPatch (%d/7) applied\n", i);
+            } else {
+                DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
+            }
+        }
+        
+        UINT8 find_1[] = { 0xFF, 0x0F, 0x84, 0xD3 };
+        UINT8 repl_1[] = { 0xFF, 0x0F, 0x85, 0xD3 };
+        if (SearchAndReplace(Driver, DriverSize, find_1, sizeof(find_1), repl_1, 0)) {
+            DBG("SNBE_AICPUPatch (4/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (4/7) not apply\n");
+        }
+        
+        UINT8 find_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x84 };
+        UINT8 repl_2[] = { 0x01, 0x00, 0x01, 0x0F, 0x85 };
+        if (SearchAndReplace(Driver, DriverSize, find_2, sizeof(find_2), repl_2, 0)) {
+            DBG("SNBE_AICPUPatch (5/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (5/7) not apply\n");
+        }
+        
+        UINT8 find_3[] = { 0xC9, 0x74, 0x14, 0x0F, 0x32, 0x25, 0xFF, 0x0F, 0x00, 0x00, 0x6B };
+        UINT8 repl_3[] = { 0xC9, 0xEB, 0x14, 0x0F, 0x32, 0x25, 0xFF, 0x0F, 0x00, 0x00, 0x6B};
+        if (SearchAndReplace(Driver, DriverSize, find_3, sizeof(find_3), repl_3, 0)) {
+            DBG("SNBE_AICPUPatch (6/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (6/7) not apply\n");
+        }
+        
+        UINT8 find_4[] = { 0xC9, 0x74, 0x0C, 0x0F, 0x32, 0x83, 0xE0, 0x1F, 0x42, 0x89, 0x44, 0x3B };
+        UINT8 repl_4[] = { 0xC9, 0xEB, 0x0C, 0x0F, 0x32, 0x83, 0xE0, 0x1F, 0x42, 0x89, 0x44, 0x3B };
+        if (SearchAndReplace(Driver, DriverSize, find_4, sizeof(find_4), repl_4, 0)) {
+            DBG("SNBE_AICPUPatch (7/7) applied\n");
+        } else {
+            DBG("SNBE_AICPUPatch (7/7) not apply\n");
+        }
+    } else {
+        // place holder for futher version of macOS
+        // change it if needed
+        DBG("Unsupport macOS version, aborted\n");
+        return;
+    }
+    
+    if (Entry->KernelAndKextPatches->KPDebug){
+        gBS->Stall(5000000);
+    }
+}
+
+
+////////////////////////////////////
+//
 // BDWE_IOPCIPatch implemented by syscl
 // Fix Broadwell-E IOPCIFamily issue
 //
@@ -569,7 +838,7 @@ VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
 {
     UINTN count = 0;
     
-    DBG_RT(Entry, "\nDellSMBIOSPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+    DBG_RT(Entry, "\nBDWE_IOPCIPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
     if (Entry->KernelAndKextPatches->KPDebug) {
         ExtractKextBundleIdentifier(InfoPlist);
     }
@@ -747,6 +1016,11 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     // Braodwell-E IOPCIFamily Patch
     //
     BDWE_IOPCIPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
+  } else if (gSNBEAICPUFixRequire && (AsciiStrStr(InfoPlist, "com.apple.driver.AppleIntelCPUPowerManagement") != NULL)) {
+    //
+    // SandyBridge-E AppleIntelCPUPowerManagement Patch implemented by syscl
+    //
+    SNBE_AICPUPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
   } else {
     //
     //others

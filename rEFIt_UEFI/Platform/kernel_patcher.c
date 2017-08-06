@@ -37,6 +37,7 @@ BOOLEAN     is64BitKernel = FALSE;
 BOOLEAN     SSSE3;
 
 BOOLEAN     PatcherInited = FALSE;
+BOOLEAN     gSNBEAICPUFixRequire = FALSE; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
 BOOLEAN     gBDWEIOPCIFixRequire = FALSE; // Broadwell-E IOPCIFamily fix require or not
 
 // notes:
@@ -895,6 +896,15 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 // credit Pike R.Alpha, stinga11, SammlerG, okrasit
 //
 BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
+
+//
+// syscl - SandyBridgeEPM(): enable PowerManagement on SandyBridge-E
+//
+BOOLEAN SandyBridgeEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+{
+    // note: a dummy function that made patches consistency
+    return TRUE;
+}
 
 //
 // Enable Haswell-E on 10.10 - 10.10.1(10.10.2+ support natively)
@@ -1922,15 +1932,21 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // syscl - EnableExtCpuXCPM
   //
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
-     (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_HASWELL_E ||
+     (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_HASWELL_E || gCPUStructure.Model == CPU_MODEL_JAKETOWN ||
       AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
          BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
          KernelAndKextPatcherInit(Entry);
          if (KernelData == NULL) goto NoKernelData;
          
+         if (gCPUStructure.Model == CPU_MODEL_JAKETOWN) {
+             // SandyBridge-E LGA2011
+             EnableExtCpuXCPM = SandyBridgeEPM;
+             gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
+         }
+         
          if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
              (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
-             // haswell low end, patches require
+             // Haswell+ low-end CPU
              EnableExtCpuXCPM = HaswellLowEndXCPM;
          }
          
@@ -1942,10 +1958,10 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
              gBDWEIOPCIFixRequire = TRUE;       // turn on Broadwell-E/EP IOPCIFamily Fix
          }
     
-         // now enable extra Cpu's XCPM
+         // syscl - now enable extra Cpu's PowerManagement
          patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
-         DBG("EnableExtCpuXCPM %a!\n", patchedOk? "OK" : "FAILED");
-     }
+         DBG("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
+  }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);

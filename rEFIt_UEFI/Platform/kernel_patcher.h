@@ -80,6 +80,7 @@ extern VOID         *KernelData;
 extern UINT32       KernelSlide;
 extern BOOLEAN      isKernelcache;
 extern BOOLEAN      is64BitKernel;
+extern BOOLEAN      gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
 extern BOOLEAN      gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
 
 // notes:
