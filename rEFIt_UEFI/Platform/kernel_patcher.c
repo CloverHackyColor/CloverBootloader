@@ -891,9 +891,9 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 
 //
 // syscl - EnableExtCpuXCPM(): enable extra(unsupport) Cpu XCPM function
-// XCPM that will be enabled on:
-// Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
-// credit Pike R.Alpha, stinga11, SammlerG, okrasit
+// PowerManagement that will be enabled on:
+// SandyBridge-E, Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
+// credit Pike R.Alpha, stinga11, syscl
 //
 BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
 
@@ -1034,49 +1034,23 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         return FALSE;
     }
     
-    /**
-     * EIST performance patch: fix performance issue on XCPM when EIST enable (c) okrasit
-     */
+    // reboot fix #2
     if (os_version < AsciiOSVersionToUint64("10.13")) {
-        /**
-         * MatchOS: 10.12.x
-         * find: 89 D8 C1 E0 08 B9 99 01
-         * repl: B8 00 32 00 00 B9 99 01
-         */
-        UINT8 find[] = { 0x89, 0xD8, 0xC1, 0xE0, 0x08, 0xB9, 0x99, 0x01 };
-        UINT8 repl[] = { 0xB8, 0x00, 0x32, 0x00, 0x00, 0xB9, 0x99, 0x01 };
+        // 10.12.x reboot fix #2
+        UINT8 find[] = {
+            0x00, 0x5D, 0xE9, 0x08, 0x00, 0x00, 0x00, 0x0F,
+            0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55,
+            0x48, 0x89, 0xE5, 0x41
+        };
+        UINT8 repl[] = {
+            0x00, 0x5D, 0xE9, 0x08, 0x00, 0x00, 0x00, 0x0F,
+            0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC3,
+            0x90, 0x89, 0xE5, 0x41
+        };
         if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found EIST performance(0xC1)\n");
-            DBG("Applied EIST performance patch\n");
+            DBG("Found instant reboot(0x55) - 2\n");
+            DBG("Applied instant reboot(0x55 to 0xC3(ret)) patch - 2\n");
         }
-        else {
-            DBG("EIST issue location(0xC1) no found, already patched?\n");
-        }
-    }
-    else if (os_version < AsciiOSVersionToUint64("10.14")){
-        /**
-         * MatchOS: 10.13.x
-         * find: 0x89, 0xD8, 0xC1, 0xE0, 0x08, 0x48, 0x63, 0xD0
-         * repl: 0xB8, 0x00, 0x30, 0x00, 0x00, 0x48, 0x63, 0xD0
-         */
-        UINT8 find[] = { 0x89, 0xD8, 0xC1, 0xE0, 0x08, 0x48, 0x63, 0xD0 };
-        UINT8 repl[] = { 0xB8, 0x00, 0x30, 0x00, 0x00, 0x48, 0x63, 0xD0 };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found EIST performance(0xC1)\n");
-            DBG("Applied EIST performance patch\n");
-        }
-        else {
-            DBG("EIST issue location(0xC1) no found, already patched?\n");
-        }
-    }
-    else {
-        /**
-         * place holder for futher changes
-         * change following code for 10.13+ and newer OS if needed
-         */
-        DBG("Unsupported macOS, aborted\n");
-        DBG("BroadwellEPM() <===FALSE\n");
-        return FALSE;
     }
     
     /**
