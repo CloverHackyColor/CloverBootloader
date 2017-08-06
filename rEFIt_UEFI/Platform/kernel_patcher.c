@@ -37,6 +37,7 @@ BOOLEAN     is64BitKernel = FALSE;
 BOOLEAN     SSSE3;
 
 BOOLEAN     PatcherInited = FALSE;
+BOOLEAN     gBDWEIOPCIFixRequire = FALSE; // Broadwell-E IOPCIFamily fix require or not
 
 // notes:
 // - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
@@ -895,16 +896,52 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 //
 BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
 
-BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+//
+// Enable Haswell-E on 10.10 - 10.10.1(10.10.2+ support natively)
+//
+BOOLEAN HaswellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
-    DBG("BroadwellECpuPM() ===>\n");
+    DBG("HaswellEPM() ===>\n");
+    UINT8       *kern = (UINT8*)kernelData;
+    UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+    UINTN       maxReplace = 0; // enable MaxReplaces
+    
+    if (os_version < AsciiOSVersionToUint64("10.10")) {
+        DBG("Haswell-E requires macOS version at least 10.10, aborted\n");
+        DBG("HaswellEPM() <===FALSE\n");
+        return FALSE;
+    }
+    
+    if (os_version <= AsciiOSVersionToUint64("10.10.1")) {
+        /**
+         * find: 0x74, 0x11, 0x83, 0xF8, 0x3C
+         * repl: 0x74, 0x11, 0x83, 0xF8, 0x3F
+         */
+        UINT8 find[] = { 0x74, 0x11, 0x83, 0xF8, 0x3C };
+        UINT8 repl[] = { 0x74, 0x11, 0x83, 0xF8, 0x3F };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found 0x3C\n");
+            DBG("Applied 0x3C -> 0x3F patch\n");
+        }
+    }
+    
+    DBG("HaswellEPM() <===\n");
+    return TRUE;
+}
+
+//
+// Enable Broadwell-E/EP PowerManagement on 10.12+
+//
+BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+{
+    DBG("BroadwellEPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
     UINTN       maxReplace = 0; // enable MaxReplaces
     
     if (os_version < AsciiOSVersionToUint64("10.12")) {
         DBG("Broadwell-E/EP requires macOS version at least 10.12, aborted\n");
-        DBG("BroadwellECpuPM() <===FALSE\n");
+        DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
@@ -983,7 +1020,7 @@ BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
          * change following code for 10.13+ and newer OS if needed
          */
         DBG("Unsupported macOS, aborted\n");
-        DBG("BroadwellECpuPM() <===FALSE\n");
+        DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
@@ -1028,7 +1065,7 @@ BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
          * change following code for 10.13+ and newer OS if needed
          */
         DBG("Unsupported macOS, aborted\n");
-        DBG("BroadwellECpuPM() <===FALSE\n");
+        DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
@@ -1073,7 +1110,7 @@ BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
          * change following code for 10.13+ and newer OS if needed
          */
         DBG("Unsupported macOS, aborted\n");
-        DBG("BroadwellECpuPM() <===FALSE\n");
+        DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
@@ -1113,7 +1150,7 @@ BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
             DBG("_xcpm_bootstrap no found, already patched?\n");
         }
     }
-    else if (os_version <AsciiOSVersionToUint64("10.13")) {
+    else if (os_version < AsciiOSVersionToUint64("10.13")) {
         /**
          * MatchOS: 10.13.x
          * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22, 0x77, 0x22
@@ -1135,11 +1172,11 @@ BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
          * change following code for 10.13+ and newer OS if needed
          */
         DBG("Unsupported macOS, aborted\n");
-        DBG("BroadwellECpuPM() <===FALSE\n");
+        DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
-    DBG("BroadwellECpuPM() <===\n");
+    DBG("BroadwellEPM() <===\n");
     return TRUE;
 }
 //
@@ -1147,16 +1184,16 @@ BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
 // implemented by syscl
 // credit also Pike R.Alpha, stinga11, Sherlocks, vit9696
 //
-BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
-    DBG("KernelHSWLowEndPatch() ===>\n");
+    DBG("HaswellLowEndXCPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
     UINTN       maxReplace = 0; // enable MaxReplaces
     
     if (os_version < AsciiOSVersionToUint64("10.8.5")) {
         DBG("Haswell+ CPU requires macOS version at least 10.8.5, aborted\n");
-        DBG("KernelHSWLowEndPatch() <===FALSE\n");
+        DBG("HaswellLowEndXCPM() <===FALSE\n");
         return FALSE;
     }
     
@@ -1166,7 +1203,7 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
     // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
     if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12") &&
        (!use_xcpm_idle)) {
-        DBG("KernelHSWLowEndPatch() <===\n");
+        DBG("HaswellLowEndXCPM() <===\n");
         return TRUE;
     }
     
@@ -1250,7 +1287,7 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * change following code for 10.14 and later if needed
          */
         DBG("Unsupported macOS, aborted\n");
-        DBG("KernelHSWLowEndPatch() <===FALSE\n");
+        DBG("HaswellLowEndXCPM() <===FALSE\n");
         return FALSE;
     }
 
@@ -1280,11 +1317,11 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * change following code for 10.14.x and later if needed
          */
         DBG("Unsupported macOS, aborted\n");
-        DBG("KernelHSWLowEndPatch() <===FALSE\n");
+        DBG("HaswellLowEndXCPM() <===FALSE\n");
         return FALSE;
     }
 
-    DBG("KernelHSWLowEndPatch() <===\n");
+    DBG("HaswellLowEndXCPM() <===\n");
     return TRUE;
 }
 
@@ -1894,12 +1931,17 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
          if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
              (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
              // haswell low end, patches require
-             EnableExtCpuXCPM = KernelHSWLowEndPatch;
+             EnableExtCpuXCPM = HaswellLowEndXCPM;
          }
          
-         if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5)
-             EnableExtCpuXCPM = BroadwellECpuPM;
+         if (gCPUStructure.Model == CPU_MODEL_HASWELL_E)
+             EnableExtCpuXCPM = HaswellEPM;
          
+         if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5) {
+             EnableExtCpuXCPM = BroadwellEPM;
+             gBDWEIOPCIFixRequire = TRUE;       // turn on Broadwell-E/EP IOPCIFamily Fix
+         }
+    
          // now enable extra Cpu's XCPM
          patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
          DBG("EnableExtCpuXCPM %a!\n", patchedOk? "OK" : "FAILED");

@@ -556,6 +556,46 @@ VOID DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
 
 ////////////////////////////////////
 //
+// BDWE_IOPCIPatch implemented by syscl
+// Fix Broadwell-E IOPCIFamily issue
+//
+// find: 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x40
+// repl: 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80
+//
+UINT8 BroadwellE_IOPCI_Find[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x40 };
+UINT8 BroadwellE_IOPCI_Repl[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80 };
+
+VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
+{
+    UINTN count = 0;
+    
+    DBG_RT(Entry, "\nDellSMBIOSPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+    if (Entry->KernelAndKextPatches->KPDebug) {
+        ExtractKextBundleIdentifier(InfoPlist);
+    }
+    
+    DBG_RT(Entry, "Kext: %a\n", gKextBundleIdentifier);
+    //
+    // now, let's patch it!
+    //
+    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find, sizeof(BroadwellE_IOPCI_Find), BroadwellE_IOPCI_Repl, 0);
+    
+    if (count) {
+        DBG_RT(Entry, "==> IOPCIFamily: %d replaces done.\n", count);
+    }
+    else {
+        DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
+    }
+    
+    if (Entry->KernelAndKextPatches->KPDebug){
+        gBS->Stall(5000000);
+    }
+}
+
+
+
+////////////////////////////////////
+//
 // Place other kext patches here
 //
 
@@ -702,6 +742,11 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     // AppleACPIPlatform
     //
     DellSMBIOSPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
+  } else if (gBDWEIOPCIFixRequire && (AsciiStrStr(InfoPlist, "com.apple.iokit.IOPCIFamily") != NULL)) {
+    //
+    // Braodwell-E IOPCIFamily Patch
+    //
+    BDWE_IOPCIPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
   } else {
     //
     //others

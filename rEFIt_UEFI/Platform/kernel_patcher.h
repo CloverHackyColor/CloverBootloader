@@ -80,6 +80,7 @@ extern VOID         *KernelData;
 extern UINT32       KernelSlide;
 extern BOOLEAN      isKernelcache;
 extern BOOLEAN      is64BitKernel;
+extern BOOLEAN      gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
 
 // notes:
 // - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
