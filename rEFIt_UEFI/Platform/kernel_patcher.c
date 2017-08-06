@@ -895,11 +895,9 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
     DBG("KernelHSWLowEndPatch() ===>\n");
-    UINT8       *bytes = (UINT8*)kernelData;
-    UINT32      patchLocation  = 0;
-    UINT32      patchLocation1 = 0;
-    UINT32      i;
+    UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+    UINTN       maxReplace = 0; // enable MaxReplaces
     
     if (os_version < AsciiOSVersionToUint64("10.8.5")) {
         DBG("Haswell+ CPU requires macOS version at least 10.8.5, aborted\n");
@@ -908,7 +906,7 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
     }
     
     Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
-    KernelCPUIDPatch((UINT8*)KernelData, Entry);
+    KernelCPUIDPatch(kern, Entry);
     
     // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
     if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12") &&
@@ -928,19 +926,14 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * repl: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90
          */
         DBG("Found HWPEnable setting, searching MSR 0xE2 _xcpm_idle...\n");
-        for (i = 0; i < 0x1000000; i++) {
-            if (bytes[i+0] == 0xB9 && bytes[i+1] == 0xE2 && bytes[i+2] == 0x00 && bytes[i+3] == 0x00 &&
-                bytes[i+4] == 0x00 && bytes[i+5] == 0x0F && bytes[i+6] == 0x30) {
-                // syscl - we found MSR 0xE2 _xcpm_idle
-                DBG("Found MSR 0xE2 _xcpm_idle\n");
-                patchLocation  = i + 5;
-                patchLocation1 = i + 6;
-                // patch _xcpm_idle
-                bytes[patchLocation]  = 0x90;
-                bytes[patchLocation1] = 0x90;
-                DBG("Applied MSR 0xE2 _xcpm_idle patch\n");
-                break;
-            }
+        UINT8 find[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30 };
+        UINT8 repl[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found MSR 0xE2 _xcpm_idle\n");
+            DBG("Applied MSR 0xE2 _xcpm_idle patch\n");
+        }
+        else {
+            DBG("MSR 0xE2 _xcpm_idle no found, already patched?\n");
         }
     }
     
@@ -954,17 +947,14 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * find: 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22
          * repl: 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22
          */
-        for (i = 0; i < 0x1000000; i++) {
-            if (bytes[i+0] == 0x83 && bytes[i+1] == 0xC3 && bytes[i+2] == 0xC4 &&
-                bytes[i+3] == 0x83 && bytes[i+4] == 0xFB && bytes[i+5] == 0x22) {
-                // syscl - we found _xcpm_bootstrap
-                DBG("Found _xcpm_bootstrap\n");
-                patchLocation = i + 2;
-                // patch _xcpm_bootstrap
-                bytes[patchLocation] = 0xC6;
-                DBG("Applied _xcpm_bootstrap patch\n");
-                break;
-            }
+        UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+        UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _xcpm_bootstrap\n");
+            DBG("Applied _xcpm_bootstrap patch\n");
+        }
+        else {
+            DBG("_xcpm_bootstrap no found, already patched?\n");
         }
     }
     else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
@@ -973,17 +963,14 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * find: 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22
          * repl: 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22
          */
-        for (i = 0; i < 0x1000000; i++) {
-            if (bytes[i+0] == 0x8D && bytes[i+1] == 0x43 && bytes[i+2] == 0xC4 &&
-                bytes[i+3] == 0x83 && bytes[i+4] == 0xF8 && bytes[i+5] == 0x22) {
-                // syscl - we found _xcpm_bootstrap
-                DBG("Found _xcpm_bootstrap\n");
-                patchLocation = i + 2;
-                // patch _xcpm_bootstrap
-                bytes[patchLocation] = 0xC6;
-                DBG("Applied _xcpm_bootstrap patch\n");
-                break;
-            }
+        UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+        UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _xcpm_bootstrap\n");
+            DBG("Applied _xcpm_bootstrap patch\n");
+        }
+        else {
+            DBG("_xcpm_bootstrap no found, already patched?\n");
         }
     }
     else if (os_version >= AsciiOSVersionToUint64("10.13") && os_version < AsciiOSVersionToUint64("10.14")) {
@@ -992,17 +979,14 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22
          * repl: 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22
          */
-        for (i = 0; i < 0x1000000; i++) {
-            if (bytes[i+0] == 0x89 && bytes[i+1] == 0xD8 && bytes[i+2] == 0x04 &&
-                bytes[i+3] == 0xC4 && bytes[i+4] == 0x3C && bytes[i+5] == 0x22) {
-                // syscl - we found _xcpm_bootstrap
-                DBG("Found _xcpm_bootstrap\n");
-                patchLocation = i + 3;
-                // patch _xcpm_bootstrap
-                bytes[patchLocation] = 0xC6;
-                DBG("Applied _xcpm_bootstrap patch\n");
-                break;
-            }
+        UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
+        UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _xcpm_bootstrap\n");
+            DBG("Applied _xcpm_bootstrap patch\n");
+        }
+        else {
+            DBG("_xcpm_bootstrap no found, already patched?\n");
         }
     }
     else {
@@ -1025,19 +1009,14 @@ BOOLEAN KernelHSWLowEndPatch(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_
          * find: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32
          * repl: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0
          */
-        for (i = 0; i < 0x1000000; i++) {
-            if (bytes[i+0] == 0xB9 && bytes[i+1] == 0xA0 && bytes[i+2] == 0x01 && bytes[i+3] == 0x00 &&
-                bytes[i+4] == 0x00 && bytes[i+5] == 0x0F && bytes[i+6] == 0x32) {
-                // syscl - we found _cpuid_set_info_rdmsr
-                DBG("Found _cpuid_set_info_rdmsr\n");
-                patchLocation  = i + 5;
-                patchLocation1 = i + 6;
-                // patch _cpuid_set_info_rdmsr
-                bytes[patchLocation]  = 0x31;
-                bytes[patchLocation1] = 0xC0;
-                DBG("Applied _cpuid_set_info_rdmsr patch\n");
-                break;
-            }
+        UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
+        UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _cpuid_set_info_rdmsr\n");
+            DBG("Applied _cpuid_set_info_rdmsr patch\n");
+        }
+        else {
+            DBG("_cpuid_set_info_rdmsr no found, already patched?\n");
         }
     }
     else {
