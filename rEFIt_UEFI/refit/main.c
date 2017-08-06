@@ -685,7 +685,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
      */
     if (gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
-       ((UINT64)AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
+       (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
+       (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
        (!StrStr(Entry->LoadOptions, L"-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
         CHAR16 *tmpArgv = AddLoadOption(Entry->LoadOptions, L"-xcpm");

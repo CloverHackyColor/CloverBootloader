@@ -888,6 +888,261 @@ BOOLEAN KernelHaswellEPatch(VOID *kernelData)
 }
 
 //
+// syscl - EnableExtCpuXCPM(): enable extra(unsupport) Cpu XCPM function
+// XCPM that will be enabled on:
+// Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
+// credit Pike R.Alpha, stinga11, SammlerG, okrasit
+//
+BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
+
+BOOLEAN BroadwellECpuPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+{
+    DBG("BroadwellECpuPM() ===>\n");
+    UINT8       *kern = (UINT8*)kernelData;
+    UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+    UINTN       maxReplace = 0; // enable MaxReplaces
+    
+    if (os_version < AsciiOSVersionToUint64("10.12")) {
+        DBG("Broadwell-E/EP requires macOS version at least 10.12, aborted\n");
+        DBG("BroadwellECpuPM() <===FALSE\n");
+        return FALSE;
+    }
+    
+    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x040674);    // correct FakeCPUID
+    KernelCPUIDPatch(kern, Entry);
+    
+    /**
+     * One more check if Broadwell-E/EP require _xcpm_idle patch
+     * Applied full HWP speedshift for Skylake+ Celeron/Pentium conditionally (c) Pike R.Aplha, syscl
+     */
+    if (use_xcpm_idle) {
+        /**
+         * MSR 0xE2 _xcpm_idle instant reboot (c) Pike R.Alpha
+         * find: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30
+         * repl: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90
+         */
+        DBG("Found HWPEnable setting, searching MSR 0xE2 _xcpm_idle...\n");
+        UINT8 find[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30 };
+        UINT8 repl[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found MSR 0xE2 _xcpm_idle\n");
+            DBG("Applied MSR 0xE2 _xcpm_idle patch\n");
+        }
+        else {
+            DBG("MSR 0xE2 _xcpm_idle no found, already patched?\n");
+        }
+    }
+    
+    if (os_version <= AsciiOSVersionToUint64("10.12.2")) {
+        // fix on 10.12.x (c) Pike. R Alpha, stinga11
+        DBG("Searching instant reboot(0x55)...")
+        UINT8 find[] = {
+            0x55, 0x48, 0x89, 0xE5, 0x41, 0x57, 0x41, 0x56,
+            0x41, 0x55, 0x41, 0x54, 0x53, 0x50, 0x41, 0x89,
+            0xD6, 0x41, 0x89, 0xF7, 0x48, 0x89, 0xFB, 0x45,
+            0x85, 0xFF, 0x0F, 0x84
+        };
+        UINT8 repl[] = {
+            0xC3, 0x90, 0x89, 0xE5, 0x41, 0x57, 0x41, 0x56,
+            0x41, 0x55, 0x41, 0x54, 0x53, 0x50, 0x41, 0x89,
+            0x0D, 0x64, 0x18, 0x9F, 0x74, 0x88, 0x9F, 0xB4,
+            0x58, 0x5F, 0xF0, 0xF8
+        };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found instant reboot(0x55)\n");
+            DBG("Applied Found instant reboot(0x55 to 0xC3(ret)) patch\n");
+        }
+        else {
+            DBG("Instant reboot(0x55) no found, already patched?\n");
+        }
+    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+        // fix on rest of 10.12.x
+        UINT8 find[] = {
+            0xBE, 0x0B, 0x00, 0x00, 0x00, 0x5D, 0xE9, 0x08,
+            0x00, 0x00, 0x00, 0x0F, 0x1F, 0x84, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x55, 0x48, 0x89, 0xE5, 0x41,
+            0x57
+        };
+        UINT8 repl[] = {
+            0xBE, 0x0B, 0x00, 0x00, 0x00, 0x5D, 0xE9, 0x08,
+            0x00, 0x00, 0x00, 0x0F, 0x1F, 0x84, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0xC3, 0x48, 0x89, 0xE5, 0x41,
+            0x57
+        };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found instant reboot(0x55)\n");
+            DBG("Applied instant reboot(0x55 to 0xC3(ret)) patch\n");
+        }
+        else {
+            DBG("Instant reboot no found, already patched?\n");
+        }
+    }
+    else {
+        /**
+         * place holder for futher changes
+         * change following code for 10.13+ and newer OS if needed
+         */
+        DBG("Unsupported macOS, aborted\n");
+        DBG("BroadwellECpuPM() <===FALSE\n");
+        return FALSE;
+    }
+    
+    /**
+     * EIST performance patch: fix performance issue on XCPM when EIST enable (c) okrasit
+     */
+    if (os_version < AsciiOSVersionToUint64("10.13")) {
+        /**
+         * MatchOS: 10.12.x
+         * find: 89 D8 C1 E0 08 B9 99 01
+         * repl: B8 00 32 00 00 B9 99 01
+         */
+        UINT8 find[] = { 0x89, 0xD8, 0xC1, 0xE0, 0x08, 0xB9, 0x99, 0x01 };
+        UINT8 repl[] = { 0xB8, 0x00, 0x32, 0x00, 0x00, 0xB9, 0x99, 0x01 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found EIST performance(0xC1)\n");
+            DBG("Applied EIST performance patch\n");
+        }
+        else {
+            DBG("EIST issue location(0xC1) no found, already patched?\n");
+        }
+    }
+    else if (os_version < AsciiOSVersionToUint64("10.14")){
+        /**
+         * MatchOS: 10.13.x
+         * find: 0x89, 0xD8, 0xC1, 0xE0, 0x08, 0x48, 0x63, 0xD0
+         * repl: 0xB8, 0x00, 0x30, 0x00, 0x00, 0x48, 0x63, 0xD0
+         */
+        UINT8 find[] = { 0x89, 0xD8, 0xC1, 0xE0, 0x08, 0x48, 0x63, 0xD0 };
+        UINT8 repl[] = { 0xB8, 0x00, 0x30, 0x00, 0x00, 0x48, 0x63, 0xD0 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found EIST performance(0xC1)\n");
+            DBG("Applied EIST performance patch\n");
+        }
+        else {
+            DBG("EIST issue location(0xC1) no found, already patched?\n");
+        }
+    }
+    else {
+        /**
+         * place holder for futher changes
+         * change following code for 10.13+ and newer OS if needed
+         */
+        DBG("Unsupported macOS, aborted\n");
+        DBG("BroadwellECpuPM() <===FALSE\n");
+        return FALSE;
+    }
+    
+    /**
+     * _cpuid_set_info (c) Pike R.Alpha
+     */
+    if (os_version < AsciiOSVersionToUint64("10.13")) {
+        /**
+         * MatchOS: 10.12.x
+         * find: 0x83, 0xC0, 0xE9
+         * repl: 0x83, 0xC0, 0xE1
+         */
+        UINT8 find[] = { 0x83, 0xC0, 0xE9 };
+        UINT8 repl[] = { 0x83, 0xC0, 0xE1 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _cpuid_set_info\n");
+            DBG("Applied _cpuid_set_info\n");
+        }
+        else {
+            DBG("_cpuid_set_info no found, already patched?\n");
+        }
+    }
+    else if (os_version < AsciiOSVersionToUint64("10.14")) {
+        /**
+         * MatchOS: 10.13.x
+         * find: 0x72, 0x3C, 0xD0, 0x77, 0x50, 0x0F, 0xB6, 0xC0
+         * repl: 0x6A, 0x3C, 0xD0, 0x77, 0x50, 0x0F, 0xB6, 0xC0
+         */
+        UINT8 find[] = { 0x72, 0x3C, 0xD0, 0x77, 0x50, 0x0F, 0xB6, 0xC0 };
+        UINT8 repl[] = { 0x6A, 0x3C, 0xD0, 0x77, 0x50, 0x0F, 0xB6, 0xC0 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _cpuid_set_info\n");
+            DBG("Applied _cpuid_set_info\n");
+        }
+        else {
+            DBG("_cpuid_set_info no found, already patched?\n");
+        }
+    }
+    else {
+        /**
+         * place holder for futher changes
+         * change following code for 10.13+ and newer OS if needed
+         */
+        DBG("Unsupported macOS, aborted\n");
+        DBG("BroadwellECpuPM() <===FALSE\n");
+        return FALSE;
+    }
+    
+    /**
+     * _xcpm_bootstrap - Broadwell-E/EP (c) Pike R.Alpha
+     */
+    DBG("Searching _xcpm_bootstrap...\n");
+    if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+        /**
+         * MatchOS: 10.12 - 10.12.5
+         * find: 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22
+         * repl: 0x83, 0xC3, 0xBC, 0x83, 0xFB, 0x22
+         */
+        UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+        UINT8 repl[] = { 0x83, 0xC3, 0xBC, 0x83, 0xFB, 0x22 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _xcpm_bootstrap\n");
+            DBG("Applied _xcpm_bootstrap patch\n");
+        }
+        else {
+            DBG("_xcpm_bootstrap no found, already patched?\n");
+        }
+    }
+    else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
+        /**
+         * MatchOS: 10.12.6 - 10.12.x
+         * find: 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22
+         * repl: 0x83, 0xC3, 0xBC, 0x83, 0xFB, 0x22
+         */
+        UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+        UINT8 repl[] = { 0x8D, 0x43, 0xBC, 0x83, 0xF8, 0x22 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _xcpm_bootstrap\n");
+            DBG("Applied _xcpm_bootstrap patch\n");
+        }
+        else {
+            DBG("_xcpm_bootstrap no found, already patched?\n");
+        }
+    }
+    else if (os_version <AsciiOSVersionToUint64("10.13")) {
+        /**
+         * MatchOS: 10.13.x
+         * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22, 0x77, 0x22
+         * repl: 0x89, 0xD8, 0x04, 0xC3, 0x3C, 0x22, 0x77, 0x22
+         */
+        UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22, 0x77, 0x22 };
+        UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC3, 0x3C, 0x22, 0x77, 0x22 };
+        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
+            DBG("Found _xcpm_bootstrap\n");
+            DBG("Applied _xcpm_bootstrap patch\n");
+        }
+        else {
+            DBG("_xcpm_bootstrap no found, already patched?\n");
+        }
+    }
+    else {
+        /**
+         * place holder for futher changes
+         * change following code for 10.13+ and newer OS if needed
+         */
+        DBG("Unsupported macOS, aborted\n");
+        DBG("BroadwellECpuPM() <===FALSE\n");
+        return FALSE;
+    }
+    
+    DBG("BroadwellECpuPM() <===\n");
+    return TRUE;
+}
+//
 // syscl - this patch provides XCPM support for Haswell low-end(HSWLowEnd) and platforms later than Haswell
 // implemented by syscl
 // credit also Pike R.Alpha, stinga11, Sherlocks, vit9696
@@ -1627,15 +1882,28 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 
     
   //
-  // syscl - Intel Haswell+ low-end process(Celeron/Pentium) patch
+  // syscl - EnableExtCpuXCPM
   //
-  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
-     (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
-      BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
-      KernelAndKextPatcherInit(Entry);
-      if (KernelData == NULL) goto NoKernelData;
-      KernelHSWLowEndPatch(KernelData, Entry, apply_idle_patch);
-  }
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
+     (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_HASWELL_E ||
+      AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+         BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
+         KernelAndKextPatcherInit(Entry);
+         if (KernelData == NULL) goto NoKernelData;
+         
+         if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+             (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+             // haswell low end, patches require
+             EnableExtCpuXCPM = KernelHSWLowEndPatch;
+         }
+         
+         if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5)
+             EnableExtCpuXCPM = BroadwellECpuPM;
+         
+         // now enable extra Cpu's XCPM
+         patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
+         DBG("EnableExtCpuXCPM %a!\n", patchedOk? "OK" : "FAILED");
+     }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
