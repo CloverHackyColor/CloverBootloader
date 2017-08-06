@@ -664,7 +664,7 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
             { 0x75, 0x11, 0xB9 },
             { 0x01, 0x74, 0x5F }
         };
-        UINT8 repl[][3] ={
+        UINT8 repl[][3] = {
             { 0x3E, 0x90, 0x90 },
             { 0xEB, 0x11, 0xB9 },
             { 0x01, 0xEB, 0x5F }
@@ -715,7 +715,7 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
             { 0x3E, 0x75, 0x38 },
             { 0x75, 0x11, 0xB9 }
         };
-        UINT8 repl[][3] ={
+        UINT8 repl[][3] = {
             { 0x01, 0xEB, 0x61 },
             { 0x3E, 0x90, 0x90 },
             { 0xEB, 0x11, 0xB9 }
@@ -766,7 +766,7 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
             { 0x3E, 0x75, 0x38 },
             { 0x75, 0x11, 0xB9 }
         };
-        UINT8 repl[][3] ={
+        UINT8 repl[][3] = {
             { 0x01, 0xEB, 0x61 },
             { 0x3E, 0x90, 0x90 },
             { 0xEB, 0x11, 0xB9 }
@@ -817,7 +817,7 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
         return;
     }
     
-    if (Entry->KernelAndKextPatches->KPDebug){
+    if (Entry->KernelAndKextPatches->KPDebug) {
         gBS->Stall(5000000);
     }
 }
@@ -856,7 +856,7 @@ VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
         DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
     }
     
-    if (Entry->KernelAndKextPatches->KPDebug){
+    if (Entry->KernelAndKextPatches->KPDebug) {
         gBS->Stall(5000000);
     }
 }

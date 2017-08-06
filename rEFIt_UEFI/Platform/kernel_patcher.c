@@ -955,9 +955,6 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         return FALSE;
     }
     
-    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x040674);    // correct FakeCPUID
-    KernelCPUIDPatch(kern, Entry);
-    
     /**
      * One more check if Broadwell-E/EP require _xcpm_idle patch
      * Applied full HWP speedshift for Skylake+ Celeron/Pentium conditionally (c) Pike R.Aplha, syscl
@@ -980,7 +977,7 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         }
     }
     
-    if (os_version <= AsciiOSVersionToUint64("10.12.2")) {
+    if (os_version <= AsciiOSVersionToUint64("10.13")) {
         // fix on 10.12.x (c) Pike. R Alpha, stinga11
         DBG("Searching instant reboot(0x55)...")
         UINT8 find[] = {
@@ -1003,7 +1000,7 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
             DBG("Instant reboot(0x55) no found, already patched?\n");
         }
     } else if (os_version < AsciiOSVersionToUint64("10.14")) {
-        // fix on rest of 10.12.x
+        // fix instant reboot on 10.13
         UINT8 find[] = {
             0xBE, 0x0B, 0x00, 0x00, 0x00, 0x5D, 0xE9, 0x08,
             0x00, 0x00, 0x00, 0x0F, 0x1F, 0x84, 0x00, 0x00,
@@ -1034,24 +1031,6 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         return FALSE;
     }
     
-    // reboot fix #2
-    if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.x reboot fix #2
-        UINT8 find[] = {
-            0x00, 0x5D, 0xE9, 0x08, 0x00, 0x00, 0x00, 0x0F,
-            0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55,
-            0x48, 0x89, 0xE5, 0x41
-        };
-        UINT8 repl[] = {
-            0x00, 0x5D, 0xE9, 0x08, 0x00, 0x00, 0x00, 0x0F,
-            0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC3,
-            0x90, 0x89, 0xE5, 0x41
-        };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found instant reboot(0x55) - 2\n");
-            DBG("Applied instant reboot(0x55 to 0xC3(ret)) patch - 2\n");
-        }
-    }
     
     /**
      * _cpuid_set_info (c) Pike R.Alpha
@@ -1118,11 +1097,11 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
             DBG("_xcpm_bootstrap no found, already patched?\n");
         }
     }
-    else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
+    else if (os_version < AsciiOSVersionToUint64("10.13")) {
         /**
          * MatchOS: 10.12.6 - 10.12.x
-         * find: 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22
-         * repl: 0x83, 0xC3, 0xBC, 0x83, 0xFB, 0x22
+         * find: 0x83, 0x43, 0xC4, 0x83, 0xFB, 0x22
+         * repl: 0x83, 0x43, 0xBC, 0x83, 0xFB, 0x22
          */
         UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
         UINT8 repl[] = { 0x8D, 0x43, 0xBC, 0x83, 0xF8, 0x22 };
@@ -1134,7 +1113,7 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
             DBG("_xcpm_bootstrap no found, already patched?\n");
         }
     }
-    else if (os_version < AsciiOSVersionToUint64("10.13")) {
+    else if (os_version < AsciiOSVersionToUint64("10.14")) {
         /**
          * MatchOS: 10.13.x
          * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22, 0x77, 0x22
