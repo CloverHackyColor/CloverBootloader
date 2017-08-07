@@ -854,10 +854,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPLapicPanic = IsPropertyTrue (Prop);
   }
 
+    /*
   Prop = GetProperty(DictPointer, "KernelHaswellE");
   if (Prop != NULL || gBootChanged) {
     Patches->KPHaswellE = IsPropertyTrue(Prop);
-  }
+  }*/
 
   Prop = GetProperty (DictPointer, "ATIConnectorsController");
   if (Prop != NULL) {

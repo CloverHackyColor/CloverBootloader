@@ -841,54 +841,6 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
   return TRUE;
 }
 
-
-BOOLEAN KernelHaswellEPatch(VOID *kernelData)
-{
-  // Credit to stinga11 for the patches used below
-  // Based on Pike R. Alpha's Haswell patch for Mavericks
-
-  UINT8   *Bytes;
-  UINT32  Index;
-  BOOLEAN PatchApplied;
-
-  DBG("Searching for Haswell-E patch pattern\n");
-
-  Bytes = (UINT8*)kernelData;
-  PatchApplied = FALSE;
-
-  for (Index = 0; Index < 0x1000000; ++Index) {
-    if (Bytes[Index] == 0x74 && Bytes[Index + 1] == 0x11 && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3C) {
-      Bytes[Index + 4] = 0x3F;
-
-/*      DBG("Found Haswell-E pattern #1; patched.\n");
-
-      if (PatchApplied) {
-        break;
-      }
-
-      PatchApplied = TRUE;
-    }
-
-    if (Bytes[Index] == 0xEB && Bytes[Index + 1] == 0x0A && Bytes[Index + 2] == 0x83 && Bytes[Index + 3] == 0xF8 && Bytes[Index + 4] == 0x3A) {
-      Bytes[Index + 4] = 0x3F;
-*/
-      DBG("Found Haswell-E pattern; patched.\n");
-
-      if (PatchApplied) {
-        break;
-      }
-
-      PatchApplied = TRUE;
-    }
-  }
-
-  if (!PatchApplied) {
-    DBG("Can't find Haswell-E patch pattern, kernel patch aborted.\n");
-  }
-
-  return PatchApplied;
-}
-
 //
 // syscl - EnableExtCpuXCPM(): enable extra(unsupport) Cpu XCPM function
 // PowerManagement that will be enabled on:
@@ -1867,22 +1819,9 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
-
-  // Haswell-E: Outdated patterns?
-  DBG_RT(Entry, "\nHaswell-E patch: ");
-  if (Entry->KernelAndKextPatches->KPHaswellE) {
-    DBG_RT(Entry, "Enabled: ");
-    KernelAndKextPatcherInit(Entry);
-    if (KernelData == NULL) goto NoKernelData;
-    patchedOk = KernelHaswellEPatch(KernelData);
-    DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
-  } else {
-    DBG_RT(Entry, "Disabled\n");
-  }
-
     
   //
-  // syscl - EnableExtCpuXCPM
+  // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
   //
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
      (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_HASWELL_E || gCPUStructure.Model == CPU_MODEL_JAKETOWN ||
