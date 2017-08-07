@@ -694,7 +694,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
     //rehabman: change for 10.11.6 security update 2017-003 15G1611
     else if (0x00001b90000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
-      DBG("Kernel power management patch 10.11.1(beta 15B38b)(data3) found and patched\n");
+      DBG("Kernel power management patch 10.11.6(2017-003 15G1611)(data3) found and patched\n");
       return TRUE;
     }
     //Sherlocks: change for 10.12 DP1
