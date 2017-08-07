@@ -519,7 +519,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
   }
 
-  DBG("Finally: ExternalClock=%ldMHz BusSpeed=%ldkHz CPU=%ldMHz", 
+  DBG("Finally: ExternalClock=%ldMHz BusSpeed=%ldkHz CPUFreq=%ldMHz", 
   				DivU64x32(gCPUStructure.ExternalClock, kilo), 
   				DivU64x32(gCPUStructure.FSBFrequency, kilo), 
 				gCPUStructure.MaxSpeed);
