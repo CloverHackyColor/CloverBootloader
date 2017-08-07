@@ -848,7 +848,20 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
 // credit Pike R.Alpha, stinga11, syscl
 //
 BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
-
+//
+// syscl - applyKernPatch a wrapper for SearchAndReplace() to make the CpuPM patch tidy and clean
+//
+static inline VOID applyKernPatch(UINT8 *kern, UINT8 *find, UINTN size, UINT8 *repl, const CHAR8 *comment)
+{
+    DBG("Searching %a", comment);
+    if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, size, repl, 0)) {
+        DBG("Found %a\nApplied %a patch\n", comment, comment);
+    } else {
+        DBG("%a no found, patched already?\n", comment);
+    }
+}
+//
+// Unsupported CPU
 //
 // syscl - SandyBridgeEPM(): enable PowerManagement on SandyBridge-E
 //
@@ -859,35 +872,150 @@ BOOLEAN SandyBridgeEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_i
 }
 
 //
-// Enable Haswell-E on 10.10 - 10.10.1(10.10.2+ support natively)
+// syscl - Enable Haswell-E XCPM
+// Hex data provided and polished (c) PMheart, idea (c) Pike R.Alpha
 //
-BOOLEAN HaswellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
-    DBG("HaswellEPM() ===>\n");
+    DBG("HaswellEXCPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    UINTN       maxReplace = 0; // enable MaxReplaces
+    CHAR8       *comment;       // info about the patch
     
-    if (os_version < AsciiOSVersionToUint64("10.10")) {
-        DBG("Haswell-E requires macOS version at least 10.10, aborted\n");
-        DBG("HaswellEPM() <===FALSE\n");
+    if (os_version < AsciiOSVersionToUint64("10.8.5")) {
+        DBG("Haswell-E requires macOS version at least 10.8.5, aborted\n");
+        DBG("HaswellEXCPM() <===FALSE\n");
         return FALSE;
     }
     
-    if (os_version <= AsciiOSVersionToUint64("10.10.1")) {
-        /**
-         * find: 0x74, 0x11, 0x83, 0xF8, 0x3C
-         * repl: 0x74, 0x11, 0x83, 0xF8, 0x3F
-         */
+    // _cpuid_set_info
+    comment = "_cpuid_set_info";
+    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+        // 10.8.5
+        UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x74, 0x2D };
+        UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x74, 0x2D };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+        // 10.9.x
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.10.1")) {
+        // 10.10 - 10.10.1
         UINT8 find[] = { 0x74, 0x11, 0x83, 0xF8, 0x3C };
         UINT8 repl[] = { 0x74, 0x11, 0x83, 0xF8, 0x3F };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found 0x3C\n");
-            DBG("Applied 0x3C -> 0x3F patch\n");
-        }
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
     }
     
-    DBG("HaswellEPM() <===\n");
+    // _xcpm_bootstrap
+    comment = "_xcpm_bootstrap";
+    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+        // 10.8.5
+        UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x54 };
+        UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x54 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+        // 10.9.x
+        UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x68 };
+        UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x68 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.10.2")) {
+        // 10.10 - 10.10.2
+        UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x63 };
+        UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x63 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.10.5")) {
+        // 10.10.3 - 10.10.5
+        UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
+        UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.11")) {
+        // 10.11 DB/PB - 10.11.0
+        UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
+        UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.11.6")) {
+        // 10.11.1 - 10.11.6
+        UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
+        UINT8 repl[] = { 0x83, 0xC3, 0xB8, 0x83, 0xFB, 0x09 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+        // 10.12 - 10.12.5
+        UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+        UINT8 repl[] = { 0x83, 0xC3, 0xC1, 0x83, 0xFB, 0x22 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+        // 10.12.6 - 10.12.x
+        UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+        UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x83, 0xF8, 0x22 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+        // 10.13
+        UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
+        UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    }
+    
+    // _xcpm_pkg_scope_msrs
+    comment = "_xcpm_pkg_scope_msrs";
+    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+        // 10.8,5
+        UINT8 find[] = {
+            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+            0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
+            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+            0x00, 0x00, 0x31, 0xD2, 0xE8, 0x28, 0x02, 0x00, 0x00
+        };
+        UINT8 repl[] = {
+            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+            0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x8D,
+            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+            0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
+        };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+        // 10.9
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.10.2")) {
+        // 10.10 - 10.10.2
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x21, 0x06, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.10.5")) {
+        // 10.10.3 - 10.10.5
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x4C, 0x06, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.11.1")) {
+        // 10.11 DB/PB - 10.11.0
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x7C, 0x06, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.11.2")) {
+        // 10.11.1
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x9C, 0x06, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version <= AsciiOSVersionToUint64("10.11.6")) {
+        // 10.11.2 - 10.11.6
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0xCC, 0x06, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+        // 10.12.x
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x94, 0xFC, 0xFF, 0xFF };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+        // 10.13.x
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x8F, 0xFC, 0xFF, 0xFF };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    }
+    
+    DBG("HaswellEXCPM() <===\n");
     return TRUE;
 }
 
@@ -1104,7 +1232,7 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
     DBG("HaswellLowEndXCPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    UINTN       maxReplace = 0; // enable MaxReplaces
+    CHAR8       *comment;
     
     if (os_version < AsciiOSVersionToUint64("10.8.5")) {
         DBG("Haswell+ CPU requires macOS version at least 10.8.5, aborted\n");
@@ -1127,76 +1255,30 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
      * Applied full HWP speedshift for Skylake+ Celeron/Pentium conditionally (c) Pike R.Aplha, syscl
      */
     if (use_xcpm_idle) {
-        /**
-         * MSR 0xE2 _xcpm_idle instant reboot (c) Pike R.Alpha
-         * find: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30
-         * repl: 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90
-         */
-        DBG("Found HWPEnable setting, searching MSR 0xE2 _xcpm_idle...\n");
+        DBG("HWPEnable - ON.\n");
+        comment = "_xcpm_idle";
         UINT8 find[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30 };
         UINT8 repl[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90 };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found MSR 0xE2 _xcpm_idle\n");
-            DBG("Applied MSR 0xE2 _xcpm_idle patch\n");
-        }
-        else {
-            DBG("MSR 0xE2 _xcpm_idle no found, already patched?\n");
-        }
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
     }
     
-    /**
-     * _xcpm_bootstrap - IvyBridge (c) Pike R.Alpha
-     */
-    DBG("Searching _xcpm_bootstrap...\n");
+    comment = "_xcpm_bootstrap";
     if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
-        /**
-         * _xcpm_bootstrap - IvyBridge on 10.12 - 10.12.5 (c) Pike R.Alpha
-         * find: 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22
-         * repl: 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22
-         */
+        // 10.12 - 10.12.5
         UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
         UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found _xcpm_bootstrap\n");
-            DBG("Applied _xcpm_bootstrap patch\n");
-        }
-        else {
-            DBG("_xcpm_bootstrap no found, already patched?\n");
-        }
-    }
-    else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
-        /**
-         * _xcpm_bootstrap - IvyBridge on 10.12.6 (c) Pike R.Alpha
-         * find: 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22
-         * repl: 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22
-         */
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
+        // 10.12.6 - 10.12.x
         UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
         UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found _xcpm_bootstrap\n");
-            DBG("Applied _xcpm_bootstrap patch\n");
-        }
-        else {
-            DBG("_xcpm_bootstrap no found, already patched?\n");
-        }
-    }
-    else if (os_version >= AsciiOSVersionToUint64("10.13") && os_version < AsciiOSVersionToUint64("10.14")) {
-        /**
-         * _xcpm_bootstrap - IvyBridge on 10.13 (c) Pike R.Alpha, Sherlocks
-         * find: 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22
-         * repl: 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22
-         */
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+        // 10.13.x
         UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
         UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found _xcpm_bootstrap\n");
-            DBG("Applied _xcpm_bootstrap patch\n");
-        }
-        else {
-            DBG("_xcpm_bootstrap no found, already patched?\n");
-        }
-    }
-    else {
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else {
         /**
          * place holder for futher changes
          * change following code for 10.14 and later if needed
@@ -1206,25 +1288,12 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
         return FALSE;
     }
 
-    /**
-     * _cpuid_set_info_rdmsr since 10.12.x - 10.13.x (c) vit9696, Sherlocks
-     */
-    DBG("Searching _cpuid_set_info_rdmsr...\n");
+    comment = "_cpuid_set_info_rdmsr";
     if (os_version >= AsciiOSVersionToUint64("10.12") && os_version < AsciiOSVersionToUint64("10.14")) {
-        /**
-         * _cpuid_set_info_rdmsr on 10.12.x - 10.13.x (c) vit9696, Sherlocks
-         * find: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32
-         * repl: 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0
-         */
+        // 10.12 - 10.13
         UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
         UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
-        if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, sizeof(find), repl, maxReplace)) {
-            DBG("Found _cpuid_set_info_rdmsr\n");
-            DBG("Applied _cpuid_set_info_rdmsr patch\n");
-        }
-        else {
-            DBG("_cpuid_set_info_rdmsr no found, already patched?\n");
-        }
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
     }
     else {
         /**
@@ -1843,7 +1912,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
          }
          
          if (gCPUStructure.Model == CPU_MODEL_HASWELL_E)
-             EnableExtCpuXCPM = HaswellEPM;
+             EnableExtCpuXCPM = HaswellEXCPM;
          
          if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5) {
              EnableExtCpuXCPM = BroadwellEPM;
