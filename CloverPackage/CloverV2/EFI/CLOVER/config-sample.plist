@@ -551,6 +551,8 @@
 		<false/>
 		<key>AsusAICPUPM</key>
 		<false/>
+		<key>AppleIntelCPUPM</key>
+		<false/>
 		<key>Debug</key>
 		<false/>
 		<key>KernelCpu</key>

@@ -844,6 +844,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPAsusAICPUPM = IsPropertyTrue (Prop);
   }
 
+  Prop = GetProperty (DictPointer, "AppleIntelCPUPM");
+  if (Prop != NULL || gBootChanged) {
+    Patches->KPAsusAICPUPM = IsPropertyTrue (Prop);
+  }
+
   Prop = GetProperty (DictPointer, "KernelPm");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelPm = IsPropertyTrue (Prop);
