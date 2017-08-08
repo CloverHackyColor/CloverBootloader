@@ -1838,7 +1838,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
         if (dsdt[i+4] != 0x00 || dsdt[i+5] != 0x02) { //dsdt[j+4] => Alignment  dsdt[j+5] => Length
           dsdt[i+4] = 0x00;  //Alignment
           dsdt[i+5] = 0x02;  //Length
-          DBG("found RTC Length not match, Maybe will case CMOS reset will patch it.\n");
+          DBG("found RTC Length not match, Maybe will cause CMOS reset will patch it.\n");
         }
       }
       for (l = adr + 4; l < i; l++) {
