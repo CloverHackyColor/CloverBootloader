@@ -1166,6 +1166,68 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
     return TRUE;
 }
 
+// boolean to enable XCPM on Ivy Bridge (named KernelIvyXCPM in config.plist)
+BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
+{
+  UINT8       *kern = (UINT8*)kernelData;
+  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  CHAR8       *comment;
+  
+  // check whether Ivy Bridge
+  if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
+    DBG("Unsupported platform.\nRequires Ivy Bridge, aborted\n");
+    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+    return FALSE;
+  }
+  
+  // check OS version suit for patches
+  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
+    DBG("Unsupported macOS.\nIvy Bridge XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
+    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+    return FALSE;
+  }
+  
+  // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
+  if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
+    DBG("KernelIvyBridgeXCPM() <===\n");
+    return TRUE;
+  }
+  
+  comment = "_xcpm_bootstrap";
+  if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+    // 10.12 - 10.12.5
+    UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+    UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
+    // 10.12.6 - 10.12.x
+    UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+    UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+    // 10.13.x
+    UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
+    UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+  
+  comment = "_xcpm_pkg_scope_msrs";
+  if (os_version < AsciiOSVersionToUint64("10.13")) {
+    // 10.12.x
+    UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x94, 0xFC, 0xFF, 0xFF };
+    UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+    // 10.13.x
+    UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x8F, 0xFC, 0xFF, 0xFF };
+    UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+  
+  DBG("KernelIvyBridgeXCPM() <===\n");
+  
+  return TRUE;
+}
 
 VOID Patcher_SSE3_6(VOID* kernelData)
 {

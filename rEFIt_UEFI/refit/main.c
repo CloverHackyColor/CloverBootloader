@@ -319,6 +319,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
   DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
   DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
+  DBG("\tIvy Bridge XCPM: %c\n", Patches->KPIvyXCPM ? 'y' : 'n');
   DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
   DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
   // Dell smbios truncate fix
@@ -692,7 +693,19 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         FreePool(Entry->LoadOptions);
         Entry->LoadOptions = tmpArgv;
     }
-      
+    
+    // add -xcpm on Ivy Bridge if set KPIvyXCPM and system version is 10.8.5 - 10.11.x
+    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPIvyXCPM &&
+        gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
+        (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
+        (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
+        (!StrStr(Entry->LoadOptions, L"-xcpm"))) {
+      // add "-xcpm" argv if not present on Ivy Bridge
+      CHAR16 *tmpArgv = AddLoadOption(Entry->LoadOptions, L"-xcpm");
+      FreePool(Entry->LoadOptions);
+      Entry->LoadOptions = tmpArgv;
+    }
+    
 
 //    DBG("Set FakeCPUID: 0x%x\n", gSettings.FakeCPUID);
 //    DBG("LoadKexts\n");

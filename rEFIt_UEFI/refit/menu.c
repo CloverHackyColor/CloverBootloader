@@ -646,15 +646,15 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
 
-    /*
+  
   InputItems[InputItemsCount].ItemType = BoolValue; //105
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPHaswellE;
-     */
-  InputItems[InputItemsCount].ItemType = BoolValue; //105
-  InputItems[InputItemsCount++].BValue = gSettings.StringInjector;
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPIvyXCPM;
+  
   InputItems[InputItemsCount].ItemType = BoolValue; //106
-  InputItems[InputItemsCount++].BValue = gSettings.NoDefaultProperties;
+  InputItems[InputItemsCount++].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount].ItemType = BoolValue; //107
+  InputItems[InputItemsCount++].BValue = gSettings.NoDefaultProperties;
+  InputItems[InputItemsCount].ItemType = BoolValue; //108
   InputItems[InputItemsCount++].BValue = gSettings.KernelPatchesAllowed;
 
   InputItems[InputItemsCount].ItemType = Hex; //109
@@ -1204,14 +1204,14 @@ VOID ApplyInputs(VOID)
     DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
     gBootChanged = TRUE;
   }
-    /*
+  
   i++; //105
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPHaswellE = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPIvyXCPM = InputItems[i].BValue;
     gBootChanged = TRUE;
-  }*/
+  }
 
-  i = 106; //106
+  i++; //106
   if (InputItems[i].Valid) {
     gSettings.StringInjector = InputItems[i].BValue;
   }
@@ -4223,7 +4223,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 //  AddMenuItem(SubScreen, 108, "Kernel patching allowed", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 91,  "Kernel Lapic Patch", TAG_INPUT, FALSE);
-  //AddMenuItem(SubScreen, 105, "Kernel Haswell-E Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 105, "Kernel Ivy Bridge XCPM", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 48,  "Kernel PM Patch", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKernelPatches());
   AddMenuInfo(SubScreen, L"----------------------");

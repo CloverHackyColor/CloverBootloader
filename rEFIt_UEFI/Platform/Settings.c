@@ -858,6 +858,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   if (Prop != NULL || gBootChanged) {
     Patches->KPLapicPanic = IsPropertyTrue (Prop);
   }
+  
+  Prop = GetProperty (DictPointer, "KernelIvyXCPM");
+  if (Prop != NULL || gBootChanged) {
+    Patches->KPIvyXCPM = IsPropertyTrue (Prop);
+  }
 
     /*
   Prop = GetProperty(DictPointer, "KernelHaswellE");
