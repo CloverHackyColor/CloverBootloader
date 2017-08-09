@@ -673,12 +673,12 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
     else if (0x00000002000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.10(data1) found and patched\n");
-//      return TRUE;
+      //return TRUE;
     }
     else if (0x0000004C000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.10(data2) found and patched\n");
-//      return TRUE;
+      //return TRUE;
     }
     else if (0x00000190000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
@@ -692,7 +692,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
       return TRUE;
     }
     //rehabman: change for 10.11.6 security update 2017-003 15G1611
-    else if (0x00001b90000000E2ULL == (*((UINT64 *)Ptr))) {
+    else if (0x00001B90000000E2ULL == (*((UINT64 *)Ptr))) {
       (*((UINT64 *)Ptr)) = 0x0000000000000000ULL;
       DBG("Kernel power management patch 10.11.6(2017-003 15G1611)(data3) found and patched\n");
       return TRUE;
