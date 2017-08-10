@@ -81,8 +81,8 @@ CHAR8   *AppleFirmwareVersion[] =
   "MBA51.88Z.00F3.B00.1707270721",  // MacBookAir5,2,
   "MBA61.88Z.0102.B00.1707271002",  // MacBookAir6,1,
   "MBA61.88Z.0102.B00.1707271002",  // MacBookAir6,2,
-  "MBA71.88Z.0167.B01.1706261032",  // MacBookAir7,1,
-  "MBA71.88Z.0167.B01.1706261032",  // MacBookAir7,2,
+  "MBA71.88Z.0170.B00.1707271503",  // MacBookAir7,1,
+  "MBA71.88Z.0170.B00.1707271503",  // MacBookAir7,2,
   "MM11.88Z.0055.B08.0610121326",   // Macmini1,1,
   "MM21.88Z.009A.B00.0706281359",   // Macmini2,1,
   "MM31.88Z.0081.B06.0904271717",   // Macmini3,1,
@@ -1322,62 +1322,50 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   // FirmwareFeatures
   switch (Model) {
     case MacBook91:
-      gFwFeatures             = 0xFC07E13E;
-      break;
     case MacBook101:
-      gFwFeatures             = 0xFD07F53E;
+      gFwFeatures             = 0xFC07E13E;
       break;
     case MacBookPro91:
     case MacBookPro92:
+      gFwFeatures             = 0xC005E137;
+      break;
     case MacBookPro101:
     case MacBookPro102:
-      gFwFeatures             = 0xC005E137;
+      gFwFeatures             = 0xE005E137;
       break;
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
-    case MacBookPro114:
-    case MacBookPro115:
       gFwFeatures             = 0xE807E137;
       break;
     case MacBookPro131:
     case MacBookPro132:
+    case MacBookPro141:
+    case MacBookPro142:
       gFwFeatures             = 0xFC07E136;
       break;
     case MacBookPro133:
-      gFwFeatures             = 0xFC07E13E;
-      break;
-    case MacBookPro141:
-    case MacBookPro142:
-      gFwFeatures             = 0xFD07F536;
-      break;
     case MacBookPro143:
-      gFwFeatures             = 0xFD07F53E;
+      gFwFeatures             = 0xFC07E13E;
       break;
     case MacBookAir41:
     case MacBookAir42:
+    case MacMini51:
+    case MacMini52:
+    case MacMini53:
       gFwFeatures             = 0xD005E137;
       break;
     case MacBookAir51:
     case MacBookAir52:
+    case MacMini61:
+    case MacMini62:
+    case iMac131:
+    case iMac132:
+    case iMac133:
       gFwFeatures             = 0xE005E137;
       break;
     case MacBookAir61:
     case MacBookAir62:
-      gFwFeatures             = 0xE007E137;
-      break;
-    case MacMini51:
-    case MacMini52:
-    case MacMini53:
-    case MacMini61:
-    case MacMini62:
-      gFwFeatures             = 0xD005E137;
-      break;
-    case iMac131:
-      gFwFeatures             = 0xE005E137;
-      break;
-    case iMac132:
-    case iMac133:
     case iMac141:
     case iMac142:
     case iMac143:
@@ -1392,10 +1380,8 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac171:
     case iMac181:
     case iMac182:
-      gFwFeatures             = 0xFC07E136;
-      break;
     case iMac183:
-      gFwFeatures             = 0xFD07F536;
+      gFwFeatures             = 0xFC07E136;
       break;
     case MacPro61:
       gFwFeatures             = 0xE807E136;
@@ -1417,8 +1403,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
-    case MacBookPro114:
-    case MacBookPro115:
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro133:
