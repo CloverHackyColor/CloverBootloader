@@ -1842,6 +1842,21 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
          patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
          DBG("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
   }
+  
+  // KernelIvyXCPM
+  DBG_RT(Entry, "\nKernelIvyXCPM patch: ");
+  if (Entry->KernelAndKextPatches->KPIvyXCPM) {
+    DBG_RT(Entry, "Enabled: ");
+    KernelAndKextPatcherInit(Entry);
+    if (KernelData == NULL) goto NoKernelData;
+    patchedOk = FALSE;
+    if (is64BitKernel) {
+      patchedOk = KernelIvyBridgeXCPM(KernelData, Entry);
+    }
+    DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
+  } else {
+    DBG_RT(Entry, "Disabled\n");
+  }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
