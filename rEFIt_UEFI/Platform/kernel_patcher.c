@@ -733,46 +733,46 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
 #else // new way needs testing
 BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
 {
-    UINT8       *kern = (UINT8*)kernelData;
-    CHAR8       *comment;
-    
-    DBG("Patching kernel power management...\n");
-    
-    // here are verious patches, we don't know how many of them will be replaced,
-    // so we just use a brute-force way here, don't even consider relying on system version!
-    
-    UINT8 KernelXCPMReplUni[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; // we just need to zero out the call to MSR 0xE2, let's make it universal
-    
-    comment = "KernelPm #1"; // might be used on 10.8.5 and 10.9.x
-    UINT8 KernelXCPMFind1[] =   { 0xE2, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind1, sizeof(KernelXCPMFind1), KernelXCPMReplUni, comment);
-    
-    // 10.10+ patches credit to RehabMan, Sherlocks and PMheart
-    comment = "KernelPm #2";
-    UINT8 KernelXCPMFind2[] =   { 0xE2, 0x00, 0x00, 0x00, 0x4C, 0x00, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind2, sizeof(KernelXCPMFind2), KernelXCPMReplUni, comment);
-    
-    comment = "KernelPm #3";
-    UINT8 KernelXCPMFind3[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x01, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind3, sizeof(KernelXCPMFind3), KernelXCPMReplUni, comment);
-    
-    comment = "KernelPm #4";
-    UINT8 KernelXCPMFind4[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x13, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind4, sizeof(KernelXCPMFind4), KernelXCPMReplUni, comment);
-    
-    comment = "KernelPm #5";
-    UINT8 KernelXCPMFind5[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x1B, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind5, sizeof(KernelXCPMFind5), KernelXCPMReplUni, comment);
-    
-    comment = "KernelPm #6";
-    UINT8 KernelXCPMFind6[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x33, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind6, sizeof(KernelXCPMFind6), KernelXCPMReplUni, comment);
-    
-    comment = "KernelPm #7";
-    UINT8 KernelXCPMFind7[] =   { 0xE2, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00 };
-    applyKernPatch(kern, KernelXCPMFind7, sizeof(KernelXCPMFind7), KernelXCPMReplUni, comment);
-    
-    return TRUE;
+  UINT8       *kern = (UINT8*)kernelData;
+  CHAR8       *comment;
+  
+  DBG("Patching kernel power management...\n");
+  
+  // here are verious patches, we don't know how many of them will be replaced,
+  // so we just use a brute-force way here, don't even consider relying on system version!
+  
+  UINT8 KernelXCPMReplUni[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; // we just need to zero out the call to MSR 0xE2, let's make it universal
+  
+  comment = "KernelPm #1"; // might be used on 10.8.5 and 10.9.x
+  UINT8 KernelXCPMFind1[] =   { 0xE2, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind1, sizeof(KernelXCPMFind1), KernelXCPMReplUni, comment);
+  
+  // 10.10+ patches credit to RehabMan, Sherlocks and PMheart
+  comment = "KernelPm #2";
+  UINT8 KernelXCPMFind2[] =   { 0xE2, 0x00, 0x00, 0x00, 0x4C, 0x00, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind2, sizeof(KernelXCPMFind2), KernelXCPMReplUni, comment);
+  
+  comment = "KernelPm #3";
+  UINT8 KernelXCPMFind3[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x01, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind3, sizeof(KernelXCPMFind3), KernelXCPMReplUni, comment);
+  
+  comment = "KernelPm #4";
+  UINT8 KernelXCPMFind4[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x13, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind4, sizeof(KernelXCPMFind4), KernelXCPMReplUni, comment);
+  
+  comment = "KernelPm #5";
+  UINT8 KernelXCPMFind5[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x1B, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind5, sizeof(KernelXCPMFind5), KernelXCPMReplUni, comment);
+  
+  comment = "KernelPm #6";
+  UINT8 KernelXCPMFind6[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x33, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind6, sizeof(KernelXCPMFind6), KernelXCPMReplUni, comment);
+  
+  comment = "KernelPm #7";
+  UINT8 KernelXCPMFind7[] =   { 0xE2, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00 };
+  applyKernPatch(kern, KernelXCPMFind7, sizeof(KernelXCPMFind7), KernelXCPMReplUni, comment);
+  
+  return TRUE;
 }
 #endif
 
@@ -937,7 +937,9 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
     CHAR8       *comment;       // info about the patch
-    
+    UINT32      patchLocation=0;
+    UINT32      i;
+  
     // check OS version suit for patches
     if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
         DBG("Unsupported macOS.\nHaswell-E requires macOS 10.8.5 - 10.13.x, aborted\n");
@@ -1016,7 +1018,7 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
     // _xcpm_pkg_scope_msrs
     comment = "_xcpm_pkg_scope_msrs";
     if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
-        // 10.8,5
+        // 10.8.5
         UINT8 find[] = {
             0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
             0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
@@ -1031,45 +1033,41 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
     } else if (os_version < AsciiOSVersionToUint64("10.10")) {
-        // 10.9
+        // 10.9.x
         UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.10.2")) {
-        // 10.10 - 10.10.2
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x21, 0x06, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.10.5")) {
-        // 10.10.3 - 10.10.5
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x4C, 0x06, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.11.1")) {
-        // 10.11 DB/PB - 10.11.0
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x7C, 0x06, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.11.2")) {
-        // 10.11.1
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x9C, 0x06, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.11.6")) {
-        // 10.11.2 - 10.11.6
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0xCC, 0x06, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.x
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x94, 0xFC, 0xFF, 0xFF };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
-        // 10.13.x
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x8F, 0xFC, 0xFF, 0xFF };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version >= AsciiOSVersionToUint64("10.10.2")) {
+        // 10.10.2+
+        for (i = 0; i < 0x1000000; i++) {
+            if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 && kern[i+4] == 0x00 &&
+                kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+              patchLocation = i+7;
+              DBG("Found _xcpm_pkg_scope_msrs call\n");
+              break;
+            }
+        }
+        if (!patchLocation) {
+            DBG("_xcpm_pkg_scope_msrs call not found, patch aborted\n");
+            DBG("HaswellEXCPM() <===FALSE\n");
+            return FALSE;
+        }
+        
+        // Already patched?  May be running a non-vanilla kernel already?
+        
+        if (kern[patchLocation + 0] == 0x90 && kern[patchLocation + 1] == 0x90 &&
+            kern[patchLocation + 2] == 0x90 && kern[patchLocation + 3] == 0x90 &&
+            kern[patchLocation + 4] == 0x90) {
+            DBG("_xcpm_pkg_scope_msrs already patched, kernel file manually patched?\n");
+            DBG("HaswellEXCPM() <===FALSE\n");
+            return FALSE;
+        } else {
+            kern[patchLocation + 0] = 0x90;
+            kern[patchLocation + 1] = 0x90;
+            kern[patchLocation + 2] = 0x90;
+            kern[patchLocation + 3] = 0x90;
+            kern[patchLocation + 4] = 0x90;
+        }
     }
     
     DBG("HaswellEXCPM() <===\n");
@@ -1222,6 +1220,8 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
   UINT8       *kern = (UINT8*)kernelData;
   UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8       *comment;
+  UINT32      patchLocation=0;
+  UINT32      i;
   
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
@@ -1261,18 +1261,40 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
   
-  comment = "_xcpm_pkg_scope_msrs";
-  if (os_version < AsciiOSVersionToUint64("10.13")) {
-    // 10.12.x
-    UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x94, 0xFC, 0xFF, 0xFF };
-    UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-    applyKernPatch(kern, find, sizeof(find), repl, comment);
-  } else if (os_version < AsciiOSVersionToUint64("10.14")) {
-    // 10.13.x
-    UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xE8, 0x8F, 0xFC, 0xFF, 0xFF };
-    UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  DBG("Searching _xcpm_pkg_scope_msrs ...\n");
+  if (os_version >= AsciiOSVersionToUint64("10.12")) {
+    for (i = 0; i < 0x1000000; i++) {
+      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 && kern[i+4] == 0x00 &&
+          kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+        patchLocation = i+7;
+        DBG("Found _xcpm_pkg_scope_msrs call\n");
+        break;
+      }
+    }
+    
+    if (!patchLocation) {
+     DBG("_xcpm_pkg_scope_msrs call not found, patch aborted\n");
+     DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+     return FALSE;
+    }
+    
+    // Already patched?  May be running a non-vanilla kernel already?
+    
+    if (kern[patchLocation + 0] == 0x90 && kern[patchLocation + 1] == 0x90 &&
+        kern[patchLocation + 2] == 0x90 && kern[patchLocation + 3] == 0x90 &&
+        kern[patchLocation + 4] == 0x90) {
+      DBG("_xcpm_pkg_scope_msrs already patched, kernel file manually patched?\n");
+      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+      return FALSE;
+    } else {
+      kern[patchLocation + 0] = 0x90;
+      kern[patchLocation + 1] = 0x90;
+      kern[patchLocation + 2] = 0x90;
+      kern[patchLocation + 3] = 0x90;
+      kern[patchLocation + 4] = 0x90;
+    }
   }
+
   
   DBG("KernelIvyBridgeXCPM() <===\n");
   
