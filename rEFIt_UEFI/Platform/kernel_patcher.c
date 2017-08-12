@@ -1037,8 +1037,8 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
         UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version >= AsciiOSVersionToUint64("10.10.2")) {
-        // 10.10.2+
+    } else {
+        // 10.10+
         for (i = 0; i < 0x1000000; i++) {
             if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 && kern[i+4] == 0x00 &&
                 kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
