@@ -1446,7 +1446,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       if (OldName) {
-        DBG("NewName %a already present, renaming impossibble\n", NewName);
+        DBG("NewName %a already present, renaming impossible\n", NewName);
       } else {
         DBG("name %a present at %x\n", NewName, i);
       }
