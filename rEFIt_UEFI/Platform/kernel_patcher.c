@@ -562,7 +562,22 @@ VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
   }
 }
 
+//
+// syscl - applyKernPatch a wrapper for SearchAndReplace() to make the CpuPM patch tidy and clean
+//
+static inline VOID applyKernPatch(UINT8 *kern, UINT8 *find, UINTN size, UINT8 *repl, const CHAR8 *comment)
+{
+    DBG("Searching %a...\n", comment);
+    if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, size, repl, 0)) {
+        DBG("Found %a\nApplied %a patch\n", comment, comment);
+    } else {
+        DBG("%a no found, patched already?\n", comment);
+    }
+}
 
+// maybe better to just patch __DATA segment?
+// old way of KernelPm patch
+#if 0
 // Power management patch for kernel 13.0
 STATIC UINT8 KernelPatchPmSrc[] = {
   0x55, 0x48, 0x89, 0xe5, 0x41, 0x89, 0xd0, 0x85,
@@ -640,6 +655,7 @@ STATIC UINT8 KernelPatchPmRepl2[] = {
 };
 
 
+
 #define KERNEL_PATCH_SIGNATURE     0x85d08941e5894855ULL
 //#define KERNEL_YOS_PATCH_SIGNATURE 0x56415741e5894855ULL
 
@@ -714,6 +730,51 @@ BOOLEAN KernelPatchPm(VOID *kernelData)
   DBG("Kernel power management patch region not found!\n");
   return FALSE;
 }
+#else // new way needs testing
+BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
+{
+    UINT8       *kern = (UINT8*)kernelData;
+    CHAR8       *comment;
+    
+    DBG("Patching kernel power management...\n");
+    
+    // here are verious patches, we don't know how many of them will be replaced,
+    // so we just use a brute-force way here, don't even consider relying on system version!
+    
+    UINT8 KernelXCPMReplUni[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; // we just need to zero out the call to MSR 0xE2, let's make it universal
+    
+    comment = "KernelPm #1"; // might be used on 10.8.5 and 10.9.x
+    UINT8 KernelXCPMFind1[] =   { 0xE2, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind1, sizeof(KernelXCPMFind1), KernelXCPMReplUni, comment);
+    
+    // 10.10+ patches credit to RehabMan, Sherlocks and PMheart
+    comment = "KernelPm #2";
+    UINT8 KernelXCPMFind2[] =   { 0xE2, 0x00, 0x00, 0x00, 0x4C, 0x00, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind2, sizeof(KernelXCPMFind2), KernelXCPMReplUni, comment);
+    
+    comment = "KernelPm #3";
+    UINT8 KernelXCPMFind3[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x01, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind3, sizeof(KernelXCPMFind3), KernelXCPMReplUni, comment);
+    
+    comment = "KernelPm #4";
+    UINT8 KernelXCPMFind4[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x13, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind4, sizeof(KernelXCPMFind4), KernelXCPMReplUni, comment);
+    
+    comment = "KernelPm #5";
+    UINT8 KernelXCPMFind5[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x1B, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind5, sizeof(KernelXCPMFind5), KernelXCPMReplUni, comment);
+    
+    comment = "KernelPm #6";
+    UINT8 KernelXCPMFind6[] =   { 0xE2, 0x00, 0x00, 0x00, 0x90, 0x33, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind6, sizeof(KernelXCPMFind6), KernelXCPMReplUni, comment);
+    
+    comment = "KernelPm #7";
+    UINT8 KernelXCPMFind7[] =   { 0xE2, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00 };
+    applyKernPatch(kern, KernelXCPMFind7, sizeof(KernelXCPMFind7), KernelXCPMReplUni, comment);
+    
+    return TRUE;
+}
+#endif
 
 BOOLEAN KernelLapicPatch_64(VOID *kernelData)
 {
@@ -854,18 +915,7 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
 // credit Pike R.Alpha, stinga11, syscl
 //
 BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
-//
-// syscl - applyKernPatch a wrapper for SearchAndReplace() to make the CpuPM patch tidy and clean
-//
-static inline VOID applyKernPatch(UINT8 *kern, UINT8 *find, UINTN size, UINT8 *repl, const CHAR8 *comment)
-{
-    DBG("Searching %a...\n", comment);
-    if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, size, repl, 0)) {
-        DBG("Found %a\nApplied %a patch\n", comment, comment);
-    } else {
-        DBG("%a no found, patched already?\n", comment);
-    }
-}
+
 //
 // Enable Unsupported CPU PowerManagement
 //
@@ -912,7 +962,7 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         UINT8 find[] = { 0x74, 0x11, 0x83, 0xF8, 0x3C };
         UINT8 repl[] = { 0x74, 0x11, 0x83, 0xF8, 0x3F };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
+    } // 10.10.2+: native support reached, no need to patch
     
     // _xcpm_bootstrap
     comment = "_xcpm_bootstrap";
@@ -1784,7 +1834,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     if (KernelData == NULL) goto NoKernelData;
     patchedOk = FALSE;
     if (is64BitKernel) {
-      patchedOk = KernelPatchPm(KernelData);
+      patchedOk = KernelPatchPm(KernelData, Entry);
     }
     DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
   } else {
