@@ -2115,8 +2115,6 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		vram_size &= 0xffffffff00ll;
 	} else { // >= NV_ARCH_C0
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
-    //		vram_size *= REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT);
-    vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT));
 	}
   
 	// Then, Workaround for 9600M GT, GT 210/420/430/440/525M/540M & GTX 560M
