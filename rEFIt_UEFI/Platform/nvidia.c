@@ -2113,8 +2113,15 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		vram_size = (UINT64)(REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA));
 		vram_size |= LShiftU64(vram_size & 0xff, 32);
 		vram_size &= 0xffffffff00ll;
-	} else { // >= NV_ARCH_C0
+	} else if ((nvCardType == 0x106) || (nvCardType == 0x137) || (nvCardType == 0x134)) {
+		// For GT 710(0x106), GTX 1050 Ti(0x137) and GTX 1080(0x134) families
+		// TODO: need to gather vram size calculation of latest NVIDIA graphics
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
+	} else { // >= NV_ARCH_C0
+		// The nvCardType of GTX 570 is 0xC8. should use this calculation
+		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
+		//vram_size *= REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT);
+		vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT));
 	}
   
 	// Then, Workaround for 9600M GT, GT 210/420/430/440/525M/540M & GTX 560M
