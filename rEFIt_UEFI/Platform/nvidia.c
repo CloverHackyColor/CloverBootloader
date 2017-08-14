@@ -2113,12 +2113,13 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		vram_size = (UINT64)(REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA));
 		vram_size |= LShiftU64(vram_size & 0xff, 32);
 		vram_size &= 0xffffffff00ll;
-	} else if ((nvCardType < NV_ARCH_100) || ((nvCardType >= NV_ARCH_110) && (nvCardType < NV_ARCH_120))) {
+	} else if (nvCardType < NV_ARCH_E0) {
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
 		//vram_size *= REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT);
 		vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT));
-	} else { // NV_ARCH_100, NV_ARCH_120, NV_ARCH_130
-		// For Kepler GT GT 710/720/730, GTX 9XX/9XX Ti/TITAN X, GTX 10XX/10XX Ti/TITAN X/Xp
+	} else if (nvCardType < NV_ARCH_100) {
+		vram_size = LShiftU64(2 * REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
+	} else { // >= NV_ARCH_100
 		// TODO: need to gather vram size calculation of latest NVIDIA graphics
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
 	}
