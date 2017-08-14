@@ -4082,7 +4082,7 @@ ParseSMBIOSSettings(
           }
         }
       } else {
-        DBG ("Found unknown date format from config\n");
+        //DBG ("Found unknown date format from config\n");
         if (Prop != NULL) {
           i = gSettings.ReleaseDate;
           j = gSettings.RomVersion;
