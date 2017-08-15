@@ -2115,12 +2115,15 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		vram_size &= 0xffffffff00ll;
 	} else if (nvCardType < NV_ARCH_E0) {
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
-		//vram_size *= REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT);
 		vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT));
-	} else if (nvCardType < NV_ARCH_100) {
+	} else if ((nvCardType < NV_ARCH_100) || ((nvCardType >= NV_ARCH_120) && (nvCardType < NV_ARCH_130))) {
+		// Kepler - GT 6XX/GTX 6XX/GTX 6XX Ti/Tesla K20X/GTX 780/GTX TITAN/TITAN LE
+		// Maxwell - GTX 9XX/9XX Ti/TITAN X
 		vram_size = LShiftU64(2 * REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
-	} else { // >= NV_ARCH_100
-		// TODO: need to gather vram size calculation of latest NVIDIA graphics
+	} else {
+		// Kepler - GT 630.Rev2/635/640.Rev2/710/720/730/740
+		// Maxwell - GTX 745/750/750 Ti
+		// TODO: need to find Pascal Vram size calculation. by Sherlocks
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
 	}
   
