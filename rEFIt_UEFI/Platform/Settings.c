@@ -3933,12 +3933,30 @@ ParseSMBIOSSettings(
       j--;
     }
 
-    if (((i[1] >= j[1]) && (i[2] >= j[2])) &&
-      ((i[3] >= j[3]) && (i[4] >= j[4])) &&
-      ((i[5] >= j[5]) && (i[6] >= j[6]))) {
-      //DBG ("Found old BiosVersion from config\n");
+    if (((i[1] > '0') && (j[1] == '0')) || ((i[1] >= j[1]) && (i[2] > j[2]))) {
       DBG ("Use latest BiosVersion from clover\n");
       DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+    } else if ((i[1] == j[1]) && (i[2] == j[2])) {
+      if (((i[3] > '0') && (j[3] == '0')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
+        DBG ("Use latest BiosVersion from clover\n");
+        DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+      } else if ((i[3] == j[3]) && (i[4] == j[4])) {
+        if (((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') || (j[3] == '1')) || 
+          ((i[3] > '2') || (j[3] == '2')) || ((i[5] >= j[5]) || (i[6] > j[6]))) {
+          DBG ("Use latest BiosVersion from clover\n");
+          DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+        } else if ((i[5] == j[5]) && (i[6] == j[6])) {
+          DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+        } else {
+          AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
+          DBG ("Use latest BiosVersion from config\n");
+          DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+        }
+      } else {
+        AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
+        DBG ("Use latest BiosVersion from config\n");
+        DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+      }
     } else {
       AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
       DBG ("Use latest BiosVersion from config\n");
