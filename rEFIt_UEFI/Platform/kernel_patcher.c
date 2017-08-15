@@ -574,7 +574,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
   }
   // Credits to RehabMan for the kernel patch information
   DBG("Patching kernel power management...\n");
-  for (; Ptr < End; Ptr++) {
+  for (; Ptr < End; Ptr += 2) {
     // check for xcpm_scope_msr common 0xe2 prologue
     //    e2000000 xxxx0000 00000000 00000000 xx040000 00000000
     if (CompareWithMask(Ptr[0], 0xFFFF0000FFFFFFFF, 0x00000000000000e2) && 0 == Ptr[1] &&
@@ -584,7 +584,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
       //   e2000000 10000000 00000000 00000000 00040000 00000000 0800007e 00000000 00000000 00000000 00000000 00000000
       // or
       //   e2000000 90330000 00000000 00000000 0f040000 00000000 0800007e 00000000 00000000 00000000 00000000 00000000
-      if (Ptr[3] == 0x000000007e000008 && 0== Ptr[4] && 0 == Ptr[5]) {
+      if (Ptr[3] == 0x000000007e000008 && 0 == Ptr[4] && 0 == Ptr[5]) {
         // zero out 0xE2 MSR and CPU mask
         Ptr[0] = 0;
         DBG("Kernel power management: LAST entry found and patched\n");
