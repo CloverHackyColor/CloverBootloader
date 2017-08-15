@@ -15,9 +15,9 @@ CHAR8   *BiosVendor             = "Apple Inc.";
 
 CHAR8   *AppleManufacturer      = "Apple Computer, Inc."; //Old name, before 2007
 
-UINT32  gFwFeatures             = 0xE907F537;             //default values for iMac13,1
+UINT32  gFwFeatures;
 
-UINT32  gFwFeaturesMask         = 0xFFFFFFFF;             //default values
+UINT32  gFwFeaturesMask;
 
 UINT64  gPlatformFeature        = 0xFFFF;                 //default values
 
@@ -1317,7 +1317,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
-  /*
   // TODO - find more correct information about OSInstall.mpkg error
   // FirmwareFeatures
   switch (Model) {
@@ -1366,6 +1365,8 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
       gFwFeatures             = 0xE80FE137;
       break;
     case iMac144:
@@ -1382,7 +1383,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     default:
-      gFwFeatures             = 0xE907F537; //unknown - use oem SMBIOS value to be default
+      gFwFeatures             = 0xE907F537;  //default values for iMac13,1
       break;
   }
 
@@ -1397,6 +1398,8 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro133:
@@ -1431,10 +1434,11 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     default:
-      gFwFeaturesMask         = 0xFFFFFFFF; //unknown - use oem SMBIOS value to be default
+      gFwFeaturesMask         = 0xFFFFFFFF;
       break;
   }
-
+  
+  /*
   // PlatformFeature
   switch (Model) {
     case MacBookPro111:
@@ -1481,7 +1485,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
    
     default:
-      gPlatformFeature        = 0xFFFF; //unknown - use oem SMBIOS value to be default
+      gPlatformFeature        = 0xFFFF;
       break;
   }
   */
