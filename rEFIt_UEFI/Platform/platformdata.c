@@ -33,11 +33,11 @@ CHAR8   *AppleFirmwareVersion[] =
   "MB41.88Z.00C1.B00.0802091535",   // MacBook4,1,
   "MB51.88Z.007D.B03.0904271443",   // MacBook5,1,
   "MB52.88Z.0088.B05.0904162222",   // MacBook5,2,
-  "MB61.88Z.00CA.B00.1707241827",   // MacBook6,1,
-  "MB71.88Z.003C.B00.1707241556",   // MacBook7,1,
-  "MB81.88Z.0167.B00.1707271503",   // MacBook8,1,
-  "MB91.88Z.0158.B00.1707271443",   // MacBook9,1,
-  "MB101.88Z.0153.B00.1707270637",  // MacBook10,1,
+  "MB61.88Z.00CB.B00.1708080203",   // MacBook6,1,
+  "MB71.88Z.003D.B00.1708080317",   // MacBook7,1,
+  "MB81.88Z.0168.B00.1708080033",   // MacBook8,1,
+  "MB91.88Z.0159.B00.1708080011",   // MacBook9,1,
+  "MB101.88Z.0154.B00.1708080122",  // MacBook10,1,
   "MBP11.88Z.0055.B08.0610121325",  // MacBookPro1,1,
   "MBP12.88Z.0061.B03.0610121334",  // MacBookPro1,2,
   "MBP21.88Z.00A5.B08.0708131242",  // MacBookPro2,1,
@@ -49,50 +49,50 @@ CHAR8   *AppleFirmwareVersion[] =
   "MBP53.88Z.00AC.B03.0906151647",  // MacBookPro5,3,
   "MBP53.88Z.00AC.B03.0906151647",  // MacBookPro5,4,
   "MBP55.88Z.00AC.B03.0906151708",  // MacBookPro5,5,
-  "MBP61.88Z.0059.B00.1707241355",  // MacBookPro6,1,
-  "MBP61.88Z.0059.B00.1707241355",  // MacBookPro6,2,
-  "MBP71.88Z.003C.B00.1707241634",  // MacBookPro7,1,
-  "MBP81.88Z.004B.B00.1707271216",  // MacBookPro8,1,
-  "MBP81.88Z.004B.B00.1707271216",  // MacBookPro8,2,
-  "MBP81.88Z.004B.B00.1707271216",  // MacBookPro8,3,
-  "MBP91.88Z.00D6.B00.1707270908",  // MacBookPro9,1,
-  "MBP91.88Z.00D6.B00.1707270908",  // MacBookPro9,2,
-  "MBP101.88Z.00F1.B00.1707270653", // MacBookPro10,1,
-  "MBP102.88Z.010A.B00.1707270836", // MacBookPro10,2,
-  "MBP111.88Z.0141.B00.1707271005", // MacBookPro11,1,
-  "MBP112.88Z.0141.B00.1707271004", // MacBookPro11,2,
-  "MBP112.88Z.0141.B00.1707271004", // MacBookPro11,3,
-  "MBP114.88Z.0175.B00.1707271503", // MacBookPro11,4,
-  "MBP114.88Z.0175.B00.1707271503", // MacBookPro11,5,
-  "MBP121.88Z.0170.B00.1707271503", // MacBookPro12,1,
-  "MBP131.88Z.0211.B00.1707270636", // MacBookPro13,1,
-  "MBP132.88Z.0232.B00.1707271505", // MacBookPro13,2,
-  "MBP133.88Z.0232.B00.1707271505", // MacBookPro13,3,
-  "MBP141.88Z.0166.B00.1707271505", // MacBookPro14,1,
-  "MBP142.88Z.0166.B00.1707271505", // MacBookPro14,2,
-  "MBP143.88Z.0166.B00.1707271549", // MacBookPro14,3,
+  "MBP61.88Z.005A.B00.1708072217",  // MacBookPro6,1,
+  "MBP61.88Z.005A.B00.1708072217",  // MacBookPro6,2,
+  "MBP71.88Z.003D.B00.1708080058",  // MacBookPro7,1,
+  "MBP81.88Z.004D.B00.1708080655",  // MacBookPro8,1,
+  "MBP81.88Z.004D.B00.1708080655",  // MacBookPro8,2,
+  "MBP81.88Z.004D.B00.1708080655",  // MacBookPro8,3,
+  "MBP91.88Z.00D7.B00.1708080744",  // MacBookPro9,1,
+  "MBP91.88Z.00D7.B00.1708080744",  // MacBookPro9,2,
+  "MBP101.88Z.00F2.B00.1708080809", // MacBookPro10,1,
+  "MBP102.88Z.010B.B00.1708080805", // MacBookPro10,2,
+  "MBP111.88Z.0142.B00.1708080655", // MacBookPro11,1,
+  "MBP112.88Z.0142.B00.1708080655", // MacBookPro11,2,
+  "MBP112.88Z.0142.B00.1708080655", // MacBookPro11,3,
+  "MBP114.88Z.0177.B00.1708080033", // MacBookPro11,4,
+  "MBP114.88Z.0177.B00.1708080033", // MacBookPro11,5,
+  "MBP121.88Z.0171.B00.1708080033", // MacBookPro12,1,
+  "MBP131.88Z.0212.B00.1708080127", // MacBookPro13,1,
+  "MBP132.88Z.0233.B00.1708080034", // MacBookPro13,2,
+  "MBP133.88Z.0233.B00.1708080034", // MacBookPro13,3,
+  "MBP141.88Z.0167.B00.1708080034", // MacBookPro14,1,
+  "MBP142.88Z.0167.B00.1708080034", // MacBookPro14,2,
+  "MBP143.88Z.0167.B00.1708080129", // MacBookPro14,3,
   "MBA11.88Z.00BB.B03.0803171226",  // MacBookAir1,1,
   "MBA21.88Z.0075.B05.1003051506",  // MacBookAir2,1,
-  "MBA31.88Z.0066.B00.1707271350",  // MacBookAir3,1,
-  "MBA31.88Z.0066.B00.1707271350",  // MacBookAir3,2,
-  "MBA41.88Z.007A.B00.1707271102",  // MacBookAir4,1,
-  "MBA41.88Z.007A.B00.1707271102",  // MacBookAir4,2,
-  "MBA51.88Z.00F3.B00.1707270721",  // MacBookAir5,1,
-  "MBA51.88Z.00F3.B00.1707270721",  // MacBookAir5,2,
-  "MBA61.88Z.0102.B00.1707271002",  // MacBookAir6,1,
-  "MBA61.88Z.0102.B00.1707271002",  // MacBookAir6,2,
-  "MBA71.88Z.0170.B00.1707271503",  // MacBookAir7,1,
-  "MBA71.88Z.0170.B00.1707271503",  // MacBookAir7,2,
+  "MBA31.88Z.0067.B00.1708080355",  // MacBookAir3,1,
+  "MBA31.88Z.0067.B00.1708080355",  // MacBookAir3,2,
+  "MBA41.88Z.007B.B00.1708072159",  // MacBookAir4,1,
+  "MBA41.88Z.007B.B00.1708072159",  // MacBookAir4,2,
+  "MBA51.88Z.00F4.B00.1708080803",  // MacBookAir5,1,
+  "MBA51.88Z.00F4.B00.1708080803",  // MacBookAir5,2,
+  "MBA61.88Z.0103.B00.1708080653",  // MacBookAir6,1,
+  "MBA61.88Z.0103.B00.1708080653",  // MacBookAir6,2,
+  "MBA71.88Z.0171.B00.1708072210",  // MacBookAir7,1,
+  "MBA71.88Z.0171.B00.1708072210",  // MacBookAir7,2,
   "MM11.88Z.0055.B08.0610121326",   // Macmini1,1,
   "MM21.88Z.009A.B00.0706281359",   // Macmini2,1,
   "MM31.88Z.0081.B06.0904271717",   // Macmini3,1,
-  "MM41.88Z.0044.B00.1707241712",   // Macmini4,1,
-  "MM51.88Z.007A.B00.1707270909",   // Macmini5,1,
-  "MM51.88Z.007A.B00.1707270909",   // Macmini5,2,
-  "MM51.88Z.007A.B00.1707270909",   // Macmini5,3,
-  "MM61.88Z.010A.B00.1707271000",   // Macmini6,1,
-  "MM61.88Z.010A.B00.1707271000",   // Macmini6,2,
-  "MM71.88Z.0223.B00.1707271503",   // Macmini7,1,
+  "MM41.88Z.0045.B00.1708072325",   // Macmini4,1,
+  "MM51.88Z.007B.B00.1708080744",   // Macmini5,1,
+  "MM51.88Z.007B.B00.1708080744",   // Macmini5,2,
+  "MM51.88Z.007B.B00.1708080744",   // Macmini5,3,
+  "MM61.88Z.010B.B00.1708080649",   // Macmini6,1,
+  "MM61.88Z.010B.B00.1708080649",   // Macmini6,2,
+  "MM71.88Z.0224.B00.1708080033",   // Macmini7,1,
   "IM41.88Z.0055.B08.0609061538",   // iMac4,1,
   "IM42.88Z.0071.B03.0610121320",   // iMac4,2,
   "IM51.88Z.0090.B09.0706270921",   // iMac5,1,
@@ -101,32 +101,32 @@ CHAR8   *AppleFirmwareVersion[] =
   "IM71.88Z.007A.B03.0803051705",   // iMac7,1,
   "IM81.88Z.00C1.B00.0802091538",   // iMac8,1,
   "IM91.88Z.008D.B08.0904271717",   // iMac9,1,
-  "IM101.88Z.00CE.B00.1707231605",  // iMac10,1,
-  "IM111.88Z.0035.B00.1707231531",  // iMac11,1,
-  "IM112.88Z.005A.B00.1707271304",  // iMac11,2,
-  "IM112.88Z.005A.B00.1707271304",  // iMac11,3,
-  "IM121.88Z.004C.B00.1707271122",  // iMac12,1,
-  "IM121.88Z.004C.B00.1707271122",  // iMac12,2,
-  "IM131.88Z.010E.B00.1707270721",  // iMac13,1,
-  "IM131.88Z.010E.B00.1707270721",  // iMac13,2,
-  "IM131.88Z.010E.B00.1707270721",  // iMac13,3,
-  "IM141.88Z.0121.B00.1707270835",  // iMac14,1,
-  "IM142.88Z.0121.B00.1707270909",  // iMac14,2,
-  "IM143.88Z.0121.B00.1707270909",  // iMac14,3,
-  "IM144.88Z.0182.B00.1707271006",  // iMac14,4,
-  "IM151.88Z.0210.B00.1707271006",  // iMac15,1,
-  "IM161.88Z.0211.B00.1707270828",  // iMac16,1,
-  "IM162.88Z.0211.B00.1707271503",  // iMac16,2,
-  "IM171.88Z.0109.B00.1707271443",  // iMac17,1,
-  "IM181.88Z.0150.B00.1707271505",  // iMac18,1,
-  "IM181.88Z.0150.B00.1707271505",  // iMac18,2,
-  "IM183.88Z.0150.B00.1707271505",  // iMac18,3,
+  "IM101.88Z.00CF.B00.1708080133",  // iMac10,1,
+  "IM111.88Z.0037.B00.1708080241",  // iMac11,1,
+  "IM112.88Z.005B.B00.1708080439",  // iMac11,2,
+  "IM112.88Z.005B.B00.1708080439",  // iMac11,3,
+  "IM121.88Z.004D.B00.1708080012",  // iMac12,1,
+  "IM121.88Z.004D.B00.1708080012",  // iMac12,2,
+  "IM131.88Z.010F.B00.1708080805",  // iMac13,1,
+  "IM131.88Z.010F.B00.1708080805",  // iMac13,2,
+  "IM131.88Z.010F.B00.1708080805",  // iMac13,3,
+  "IM141.88Z.0122.B00.1708080806",  // iMac14,1,
+  "IM142.88Z.0122.B00.1708080739",  // iMac14,2,
+  "IM143.88Z.0122.B00.1708080732",  // iMac14,3,
+  "IM144.88Z.0183.B00.1708080656",  // iMac14,4,
+  "IM151.88Z.0211.B00.1708080656",  // iMac15,1,
+  "IM161.88Z.0212.B00.1708080033",  // iMac16,1,
+  "IM162.88Z.0212.B00.1708080033",  // iMac16,2,
+  "IM171.88Z.0110.B00.1708080012",  // iMac17,1,
+  "IM181.88Z.0151.B00.1708080034",  // iMac18,1,
+  "IM181.88Z.0151.B00.1708080034",  // iMac18,2,
+  "IM183.88Z.0151.B00.1708080034",  // iMac18,3,
   "MP11.88Z.005C.B08.0707021221",   // MacPro1,1,
   "MP21.88Z.007F.B06.0707021348",   // MacPro2,1,
   "MP31.88Z.006C.B05.0802291410",   // MacPro3,1,
   "MP41.88Z.0081.B07.0910130729",   // MacPro4,1,
   "MP51.88Z.007F.B03.1010071432",   // MacPro5,1,
-  "MP61.88Z.0119.B00.1707271003",   // MacPro6,1,
+  "MP61.88Z.0120.B00.1708080652",   // MacPro6,1,
   "XS11.88Z.0080.B01.0706271533",   // Xserve1,1,
   "XS21.88Z.006C.B06.0804011317",   // Xserve2,1,
   "XS31.88Z.0081.B06.0908061300",   // Xserve3,1,
@@ -1321,40 +1321,32 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   // TODO - find more correct information about OSInstall.mpkg error
   // FirmwareFeatures
   switch (Model) {
-    case MacBook91:
-    case MacBook101:
-      gFwFeatures             = 0xFC07E13E;
-      break;
-    case MacBookPro91:
-    case MacBookPro92:
-      gFwFeatures             = 0xC005E137;
-      break;
-    case MacBookPro101:
-    case MacBookPro102:
-      gFwFeatures             = 0xE005E137;
-      break;
-    case MacBookPro111:
-    case MacBookPro112:
-    case MacBookPro113:
-      gFwFeatures             = 0xE807E137;
-      break;
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro141:
     case MacBookPro142:
-      gFwFeatures             = 0xFC07E136;
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+      gFwFeatures             = 0xFC0FE136;
       break;
-    case MacBookPro133:
-    case MacBookPro143:
-      gFwFeatures             = 0xFC07E13E;
+    case MacPro61:
+      gFwFeatures             = 0xE80FE136;
+      break;
+    case MacBookPro91:
+    case MacBookPro92:
+      gFwFeatures             = 0xC00DE137;
       break;
     case MacBookAir41:
     case MacBookAir42:
     case MacMini51:
     case MacMini52:
     case MacMini53:
-      gFwFeatures             = 0xD005E137;
+      gFwFeatures             = 0xD00DE137;
       break;
+    case MacBookPro101:
+    case MacBookPro102:
     case MacBookAir51:
     case MacBookAir52:
     case MacMini61:
@@ -1362,29 +1354,31 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac131:
     case iMac132:
     case iMac133:
-      gFwFeatures             = 0xE005E137;
+      gFwFeatures             = 0xE00DE137;
       break;
     case MacBookAir61:
     case MacBookAir62:
     case iMac141:
     case iMac142:
     case iMac143:
-      gFwFeatures             = 0xE007E137;
+      gFwFeatures             = 0xE00FE137;
+      break;
+    case MacBookPro111:
+    case MacBookPro112:
+    case MacBookPro113:
+      gFwFeatures             = 0xE80FE137;
       break;
     case iMac144:
-      gFwFeatures             = 0xF007E137;
+      gFwFeatures             = 0xF00FE137;
       break;
     case iMac151:
-      gFwFeatures             = 0xF807E137;
+      gFwFeatures             = 0xF80FE137;
       break;
-    case iMac171:
-    case iMac181:
-    case iMac182:
-    case iMac183:
-      gFwFeatures             = 0xFC07E136;
-      break;
-    case MacPro61:
-      gFwFeatures             = 0xE807E136;
+    case MacBook91:
+    case MacBook101:
+    case MacBookPro133:
+    case MacBookPro143:
+      gFwFeatures             = 0xFC0FE13E;
       break;
 
     default:
