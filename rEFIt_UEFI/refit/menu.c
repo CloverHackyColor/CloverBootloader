@@ -232,7 +232,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItemsCount = 0;
   if (New) {
-    InputItems = AllocateZeroPool(110 * sizeof(INPUT_ITEM)); //XXX
+    InputItems = AllocateZeroPool(130 * sizeof(INPUT_ITEM)); //XXX
   }
 
   InputItems[InputItemsCount].ItemType = ASString;  //0

@@ -2933,17 +2933,6 @@ GetEarlyUserSettings (
       }
       
       GetEDIDSettings(DictPointer);
-
-      // ErmaC: NvidiaGeneric
-      Prop = GetProperty (DictPointer, "NvidiaGeneric");
-      gSettings.NvidiaGeneric = IsPropertyTrue (Prop);
-
-      Prop = GetProperty (DictPointer, "NvidiaNoEFI");
-      gSettings.NvidiaNoEFI = IsPropertyTrue (Prop);
-
-      Prop = GetProperty (DictPointer, "NvidiaSingle");
-      gSettings.NvidiaSingle = IsPropertyTrue (Prop);
-
     }
 
     DictPointer = GetProperty (Dict, "DisableDrivers");
@@ -4396,6 +4385,9 @@ GetUserSettings(
       // ErmaC: NvidiaGeneric
       Prop = GetProperty (DictPointer, "NvidiaGeneric");
       gSettings.NvidiaGeneric = IsPropertyTrue (Prop);
+
+      Prop = GetProperty (DictPointer, "NvidiaNoEFI");
+      gSettings.NvidiaNoEFI = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "NvidiaSingle");
       gSettings.NvidiaSingle = IsPropertyTrue (Prop);
