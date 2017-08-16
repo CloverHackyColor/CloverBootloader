@@ -3901,8 +3901,7 @@ ParseSMBIOSSettings(
     }
     DBG ("Using ProductName from config\n");
     DBG ("ProductName: %a\n", gSettings.ProductName);
-  }
-  else {
+  } else {
     DBG ("Using ProductName from clover\n");
     DBG ("ProductName: %a\n", gSettings.ProductName);
   }
@@ -3936,11 +3935,12 @@ ParseSMBIOSSettings(
         DBG ("Using latest BiosVersion from clover\n");
         DBG ("BiosVersion: %a\n", gSettings.RomVersion);
       } else if ((i[3] == j[3]) && (i[4] == j[4])) {
-        if (((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') || (j[3] == '1')) || 
-          ((i[3] > '2') || (j[3] == '2')) || ((i[5] >= j[5]) || (i[6] > j[6]))) {
+        if (((i[5] > '0') && (j[5] == '0')) || ((i[5] > '1') || (j[5] == '1')) ||
+          ((i[5] > '2') || (j[5] == '2')) || ((i[5] >= j[5]) && (i[6] > j[6]))) {
           DBG ("Using latest BiosVersion from clover\n");
           DBG ("BiosVersion: %a\n", gSettings.RomVersion);
         } else if ((i[5] == j[5]) && (i[6] == j[6])) {
+          DBG ("Found same BiosVersion in clover and config\n");
           DBG ("BiosVersion: %a\n", gSettings.RomVersion);
         } else {
           AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
