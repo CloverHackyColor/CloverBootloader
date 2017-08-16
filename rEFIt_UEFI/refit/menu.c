@@ -664,9 +664,9 @@ VOID FillInputs(BOOLEAN New)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%01x", gSettings.DualLink);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //110
-  InputItems[InputItemsCount++].BValue = gSettings.NvidiaSingle;
-  InputItems[InputItemsCount].ItemType = BoolValue; //111
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaNoEFI;
+  InputItems[InputItemsCount].ItemType = BoolValue; //111
+  InputItems[InputItemsCount++].BValue = gSettings.NvidiaSingle;
 
   //menu for drop table
   if (gSettings.ACPIDropTables) {
@@ -1236,15 +1236,15 @@ VOID ApplyInputs(VOID)
     gSettings.DualLink = (UINT32)StrHexToUint64(InputItems[i].SValue);
     DBG("applied DualLink=%x\n", gSettings.DualLink);
   }
-
+    
   i++; //110
   if (InputItems[i].Valid) {
-    gSettings.NvidiaSingle = InputItems[i].BValue;
+    gSettings.NvidiaNoEFI = InputItems[i].BValue;
   }
 
   i++; //111
   if (InputItems[i].Valid) {
-    gSettings.NvidiaNoEFI = InputItems[i].BValue;
+    gSettings.NvidiaSingle = InputItems[i].BValue;
   }
 
   if (NeedSave) {
@@ -4040,8 +4040,8 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     // ErmaC: NvidiaGeneric entry
     if (gGraphics[i].Vendor == Nvidia) {
       AddMenuItem(SubScreen, 55, "Generic NVIDIA name", TAG_INPUT, FALSE);
-      AddMenuItem(SubScreen, 110, "NVIDIA single", TAG_INPUT, FALSE);
-      AddMenuItem(SubScreen, 111, "NVIDIA no EFI", TAG_INPUT, FALSE);
+      AddMenuItem(SubScreen, 110, "NVIDIA No EFI", TAG_INPUT, FALSE);
+      AddMenuItem(SubScreen, 111, "NVIDIA Single", TAG_INPUT, FALSE);
       AddMenuItem(SubScreen, 56, "Use NVIDIA WEB drivers", TAG_INPUT, FALSE);
     }
 

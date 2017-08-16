@@ -19,7 +19,7 @@ UINT32  gFwFeatures;
 
 UINT32  gFwFeaturesMask;
 
-UINT64  gPlatformFeature        = 0xFFFF;                 //default values
+UINT64  gPlatformFeature;
 
 
 // All SMBIOS data were updated by Sherlocks, PMheart.
@@ -871,7 +871,7 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x32, 0x0F, 0, 0, 0x20 },   // iMac16,2,
   { 0x02, 0x33, 0x0F, 0, 0, 0x10 },   // iMac17,1,  //i5 or { 0x02, 0x34, 0x0F, 0, 0, 0x02 }, for i7
   { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,1,          // need to find SmcRevision
-  { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,2,          // need to find SmcRevision
+  { 0x02, 0x40, 0x0F, 0, 0, 0x00 },   // iMac18,2,
   { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,3,
   { 0x01, 0x07, 0x0F, 0, 0, 0x10 },   // MacPro1,1,
   { 0x01, 0x15, 0x0F, 0, 0, 0x03 },   // MacPro2,1,
@@ -1383,7 +1383,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     default:
-      gFwFeatures             = 0xE907F537;  //default values for iMac13,1
+      gFwFeatures             = 0xE907F537; //unknown - use oem SMBIOS value to be default
       break;
   }
 
@@ -1434,33 +1434,17 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     default:
-      gFwFeaturesMask         = 0xFFFFFFFF;
+      gFwFeaturesMask         = 0xFFFFFFFF; //unknown - use oem SMBIOS value to be default
       break;
   }
   
-  /*
   // PlatformFeature
   switch (Model) {
-    case MacBookPro111:
-    case MacBookPro112:
-    case MacBookPro113:
-    case MacBookPro114:
-    case MacBookPro115:
-    case MacBookPro121:
-      gPlatformFeature        = 0x02;
-      break;
-    case MacBook81:
-    case MacBook101:
-    case MacBookPro131:
-    case MacBookPro132:
-    case MacBookPro133:
-    case MacBookPro141:
-    case MacBookPro142:
-    case MacBookPro143:
-      gPlatformFeature        = 0x1A;
-      break;
-    case MacMini71:
-      gPlatformFeature        = 0x03;
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+      gPlatformFeature        = 0x00;
       break;
     case MacMini61:
     case MacMini62:
@@ -1474,21 +1458,36 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac151:
       gPlatformFeature        = 0x01;
       break;
-    case iMac171:
-    case iMac181:
-    case iMac182:
-    case iMac183:
-      gPlatformFeature        = 0x00;
+    case MacBookPro111:
+    case MacBookPro112:
+    case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
+    case MacBookPro121:
+      gPlatformFeature        = 0x02;
+      break;
+    case MacMini71:
+      gPlatformFeature        = 0x03;
       break;
     case MacPro61:
       gPlatformFeature        = 0x04;
       break;
-   
+    case MacBook81:
+    case MacBook91:
+    case MacBook101:
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro133:
+    case MacBookPro141:
+    case MacBookPro142:
+    case MacBookPro143:
+      gPlatformFeature        = 0x1A;
+      break;
+
     default:
-      gPlatformFeature        = 0xFFFF;
+      gPlatformFeature        = 0xFFFF; //disabled to be default
       break;
   }
-  */
 
   if (Model >= MacPro31) {
     gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;

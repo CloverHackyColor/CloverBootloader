@@ -2123,7 +2123,7 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 	} else {
 		// Kepler - GT 630.Rev2/635/640.Rev2/710/720/730/740
 		// Maxwell - GTX 745/750/750 Ti
-		// TODO: need to find Pascal Vram size calculation. by Sherlocks
+		// TODO: need to find vram size calculation for Pascal. by Sherlocks
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
 	}
   
