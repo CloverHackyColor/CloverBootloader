@@ -870,7 +870,7 @@ UINT8 SmcRevision[][6] =
   { 0x02, 0x31, 0x0F, 0, 0, 0x36 },   // iMac16,1,
   { 0x02, 0x32, 0x0F, 0, 0, 0x20 },   // iMac16,2,
   { 0x02, 0x33, 0x0F, 0, 0, 0x10 },   // iMac17,1,  //i5 or { 0x02, 0x34, 0x0F, 0, 0, 0x02 }, for i7
-  { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,1,          // need to find SmcRevision
+  { 0x02, 0x39, 0x0F, 0, 0, 0x06 },   // iMac18,1,
   { 0x02, 0x40, 0x0F, 0, 0, 0x00 },   // iMac18,2,
   { 0x02, 0x41, 0x0F, 0, 0, 0x01 },   // iMac18,3,
   { 0x01, 0x07, 0x0F, 0, 0, 0x10 },   // MacPro1,1,
@@ -1452,7 +1452,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac113:
     case iMac121:
     case iMac122:
-      gFwFeatures             = 0xFF1FFF3F;
+      gFwFeaturesMask         = 0xFF1FFF3F;
       break;
 
     default:
