@@ -1317,9 +1317,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
-  // TODO - find more correct information about OSInstall.mpkg error
+  // TODO - find more correct information about OSInstall.mpkg error for High Sierra DP6
   // FirmwareFeatures
   switch (Model) {
+    // Verified list from Firmware
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro141:
@@ -1382,6 +1383,16 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       gFwFeatures             = 0xFC0FE13E;
       break;
 
+    // Verified list from Users
+    case iMac101:
+    case iMac111:
+    case iMac112:
+    case iMac113:
+    case iMac121:
+    case iMac122:
+      gFwFeatures             = 0xE00DE137;
+      break;
+
     default:
       gFwFeatures             = 0xE907F537; //unknown - use oem SMBIOS value to be default
       break;
@@ -1389,6 +1400,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 
   // FirmwareFeaturesMask
   switch (Model) {
+    // Verified list from Firmware
     case MacBook91:
     case MacBook101:
     case MacBookPro91:
@@ -1431,6 +1443,16 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac183:
     case MacPro61:
       gFwFeaturesMask         = 0xFF1FFF3F;
+      break;
+
+    // Verified list from Users
+    case iMac101:
+    case iMac111:
+    case iMac112:
+    case iMac113:
+    case iMac121:
+    case iMac122:
+      gFwFeatures             = 0xFF1FFF3F;
       break;
 
     default:
