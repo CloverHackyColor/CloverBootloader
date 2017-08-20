@@ -119,7 +119,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "IM162.88Z.0212.B00.1708080033",  // iMac16,2,
   "IM171.88Z.0110.B00.1708080012",  // iMac17,1,
   "IM181.88Z.0151.B00.1708080034",  // iMac18,1,
-  "IM181.88Z.0151.B00.1708080034",  // iMac18,2,
+  "IM183.88Z.0151.B00.1708080034",  // iMac18,2,
   "IM183.88Z.0151.B00.1708080034",  // iMac18,3,
   "MP11.88Z.005C.B08.0707021221",   // MacPro1,1,
   "MP21.88Z.007F.B06.0707021348",   // MacPro2,1,
@@ -1318,22 +1318,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
   // TODO - find more correct information about OSInstall.mpkg error for High Sierra DP6
+  // by Sherlocks
   // FirmwareFeatures
   switch (Model) {
     // Verified list from Firmware
-    case MacBookPro131:
-    case MacBookPro132:
-    case MacBookPro141:
-    case MacBookPro142:
-    case iMac171:
-    case iMac181:
-    case iMac182:
-    case iMac183:
-      gFwFeatures             = 0xFC0FE136;
-      break;
-    case MacPro61:
-      gFwFeatures             = 0xE80FE136;
-      break;
     case MacBookPro91:
     case MacBookPro92:
       gFwFeatures             = 0xC00DE137;
@@ -1363,6 +1351,9 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
       gFwFeatures             = 0xE00FE137;
       break;
+    case MacPro61:
+      gFwFeatures             = 0xE80FE136;
+      break;
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
@@ -1376,6 +1367,16 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac151:
       gFwFeatures             = 0xF80FE137;
       break;
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro141:
+    case MacBookPro142:
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+      gFwFeatures             = 0xFC0FE136;
+      break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
@@ -1384,13 +1385,44 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     // Verified list from Users
+    case MacBookPro61:
+    case MacBookPro62:
+    case MacBookPro71:
+    case MacBookPro81:
+    case MacBookPro82:
+    case MacBookPro83:
+      gFwFeatures             = 0xC00DE137;
+      break;
+    case MacBookAir31:
+    case MacBookAir32:
+    case MacMini41:
+      gFwFeatures             = 0xD00DE137;
+      break;
     case iMac101:
     case iMac111:
     case iMac112:
     case iMac113:
     case iMac121:
     case iMac122:
+    case MacMini71:
       gFwFeatures             = 0xE00DE137;
+      break;
+    case MacBookAir71:
+    case MacBookAir72:
+      gFwFeatures             = 0xE00FE137;
+      break;
+    case MacPro51:
+      gFwFeatures             = 0xE80FE136;
+      break;
+    case iMac161:
+    case iMac162:
+    case MacBookPro121:
+      gFwFeatures             = 0xFC0FE136;
+      break;
+    case MacBook61:
+    case MacBook71:
+    case MacBook81:
+      gFwFeatures             = 0xFC0FE13E;
       break;
 
     default:
@@ -1446,12 +1478,31 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
 
     // Verified list from Users
+    case MacBook61:
+    case MacBook71:
+    case MacBook81:
+    case MacBookPro61:
+    case MacBookPro62:
+    case MacBookPro71:
+    case MacBookPro81:
+    case MacBookPro82:
+    case MacBookPro83:
+    case MacBookPro121:
+    case MacBookAir31:
+    case MacBookAir32:
+    case MacBookAir71:
+    case MacBookAir72:
     case iMac101:
     case iMac111:
     case iMac112:
     case iMac113:
     case iMac121:
     case iMac122:
+    case iMac161:
+    case iMac162:
+    case MacMini41:
+    case MacMini71:
+    case MacPro51:
       gFwFeaturesMask         = 0xFF1FFF3F;
       break;
 
@@ -1822,12 +1873,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   CopyMem (gSettings.REV,  SmcRevision[Model], 6);
   CopyMem (gSettings.EPCI, &SmcConfig[Model],  4);
 }
-
-//Other info
-/*
- MacBookPro7,1 - penryn P8800 RPlt=k6 REV=1.62f5
- MacBookPro6,2 - i5 M520 arrandale
- */
 
 MACHINE_TYPES
 GetModelFromString (
