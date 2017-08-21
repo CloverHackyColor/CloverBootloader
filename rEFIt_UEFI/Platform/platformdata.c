@@ -884,6 +884,7 @@ UINT8 SmcRevision[][6] =
   { 0x01, 0x43, 0x0F, 0, 0, 0x04 },   // Xserve3,1,
 };
 
+//TODO - find more information and correct all SMC arrays
 //RBr
 CHAR8* SmcBranch[] =
 {
@@ -992,7 +993,6 @@ CHAR8* SmcBranch[] =
   "NA",        // Xserve3,1,       // need to find RBr key
 };
 
-//TODO - find more information and correct all SMC arrays
 //RPlt
 CHAR8* SmcPlatform[] =
 {
@@ -1701,7 +1701,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
       gSettings.Mobile      = FALSE;
       break;
 
-
     case MacPro41:
     case MacPro51:
       gSettings.ChassisType = MiscChassisTypeTower; //0x07;
@@ -1732,6 +1731,78 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
        gSettings.ChassisType = MiscChassisTypeDeskTop; //0x03;
        } */
       break;
+  }
+
+  //RBr helper
+  if (SmcBranch[Model][0] != 'N') {
+    AsciiStrCpyS (gSettings.RBr, 8, SmcBranch[Model]);
+  } else {
+    switch (gCPUStructure.Model) {
+      case CPU_MODEL_PENTIUM_M:
+      case CPU_MODEL_CELERON:
+        AsciiStrCpyS (gSettings.RBr, 8, "m70");
+        break;
+                
+      case CPU_MODEL_YONAH:
+        AsciiStrCpyS (gSettings.RBr, 8, "k22");
+        break;
+                
+      case CPU_MODEL_MEROM: //TODO check for mobile
+        AsciiStrCpyS (gSettings.RBr, 8, "m75");
+        break;
+                
+      case CPU_MODEL_PENRYN:
+        if (gSettings.Mobile) {
+          AsciiStrCpyS (gSettings.RBr, 8, "m82");
+        } else {
+          AsciiStrCpyS (gSettings.RBr, 8, "k36");
+        }
+        break;
+                
+      case CPU_MODEL_SANDY_BRIDGE:
+        if (gSettings.Mobile) {
+          AsciiStrCpyS (gSettings.RBr, 8, "k90i");
+        } else {
+          AsciiStrCpyS (gSettings.RBr, 8, "k60");
+        }
+        break;
+                
+      case CPU_MODEL_IVY_BRIDGE:
+        AsciiStrCpyS (gSettings.RBr, 8, "j30");
+        break;
+                
+      case CPU_MODEL_IVY_BRIDGE_E5:
+        AsciiStrCpyS (gSettings.RBr, 8, "j90");
+        break;
+                
+      case CPU_MODEL_HASWELL_ULT:
+        AsciiStrCpyS (gSettings.RBr, 8, "j44");
+        break;
+                
+      case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
+        AsciiStrCpyS (gSettings.RBr, 8, "j52");
+        break;
+                
+      case CPU_MODEL_SKYLAKE_D:
+        AsciiStrCpyS (gSettings.RBr, 8, "j95j95am");
+        break;
+                
+      case CPU_MODEL_SKYLAKE_U:
+        AsciiStrCpyS (gSettings.RBr, 8, "2016mb");
+        break;
+                
+      case CPU_MODEL_KABYLAKE1: //Mobile
+        AsciiStrCpyS (gSettings.RPlt, 8, "2017mbp");
+        break;
+                
+      case CPU_MODEL_KABYLAKE2: //Desktop
+        AsciiStrCpyS (gSettings.RPlt, 8, "j133_4_5");
+        break;
+                
+      default:
+        AsciiStrCpyS (gSettings.RBr, 8, "t9");
+        break;
+    }
   }
 
   //RPlt helper
@@ -1780,6 +1851,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         AsciiStrCpyS (gSettings.RPlt, 8, "j44");
         break;
 
+      case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
+        AsciiStrCpyS (gSettings.RPlt, 8, "j52");
+        break;
+
       case CPU_MODEL_SKYLAKE_D:
         AsciiStrCpyS (gSettings.RPlt, 8, "j95");
         break;
@@ -1801,75 +1876,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         break;
     }
   }
-    
-  //RBr helper
-  if (SmcBranch[Model][0] != 'N') {
-    AsciiStrCpyS (gSettings.RBr, 8, SmcBranch[Model]);
-  } else {
-    switch (gCPUStructure.Model) {
-      case CPU_MODEL_PENTIUM_M:
-      case CPU_MODEL_CELERON:
-        AsciiStrCpyS (gSettings.RBr, 8, "m70");
-        break;
-                
-      case CPU_MODEL_YONAH:
-        AsciiStrCpyS (gSettings.RBr, 8, "k22");
-        break;
-                
-      case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpyS (gSettings.RBr, 8, "m75");
-        break;
-                
-      case CPU_MODEL_PENRYN:
-        if (gSettings.Mobile) {
-          AsciiStrCpyS (gSettings.RBr, 8, "m82");
-        } else {
-          AsciiStrCpyS (gSettings.RBr, 8, "k36");
-        }
-        break;
-                
-      case CPU_MODEL_SANDY_BRIDGE:
-        if (gSettings.Mobile) {
-          AsciiStrCpyS (gSettings.RBr, 8, "k90i");
-        } else {
-          AsciiStrCpyS (gSettings.RBr, 8, "k60");
-        }
-        break;
-                
-      case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpyS (gSettings.RBr, 8, "j30");
-        break;
-                
-      case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpyS (gSettings.RBr, 8, "j90");
-        break;
-                
-      case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpyS (gSettings.RBr, 8, "j44");
-        break;
-                
-      case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpyS (gSettings.RBr, 8, "j95j95am");
-        break;
-                
-      case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpyS (gSettings.RBr, 8, "2016mb");
-        break;
-                
-      case CPU_MODEL_KABYLAKE1: //Mobile
-        AsciiStrCpyS (gSettings.RPlt, 8, "2017mbp");
-        break;
-                
-      case CPU_MODEL_KABYLAKE2: //Desktop
-        AsciiStrCpyS (gSettings.RPlt, 8, "j133_4_5");
-        break;
-                
-      default:
-        AsciiStrCpyS (gSettings.RBr, 8, "t9");
-        break;
-    }
-  }
-
   CopyMem (gSettings.REV,  SmcRevision[Model], 6);
   CopyMem (gSettings.EPCI, &SmcConfig[Model],  4);
 }

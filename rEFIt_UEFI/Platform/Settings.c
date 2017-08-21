@@ -3955,7 +3955,7 @@ ParseSMBIOSSettings(
       DBG ("BiosVersion: %a\n", gSettings.RomVersion);
     }
   } else {
-    //DBG ("BiosVersion: not set, Using BiosVersion from clover\n");
+    DBG ("BiosVersion: not set, Using BiosVersion from clover\n");
     DBG ("BiosVersion: %a\n", gSettings.RomVersion);
   }
 
@@ -4162,29 +4162,17 @@ ParseSMBIOSSettings(
       switch (FF) {
         // unknown - use oem SMBIOS value to be default
         case (UINT32)0xE907F537:
-        // High Sierra DP3
+        // High Sierra DP1 - DP5
         case (UINT32)0xC005E137:
         case (UINT32)0xD005E137:
         case (UINT32)0xE005E137:
+        case (UINT32)0xE007E137:
+        case (UINT32)0xE807E136:
         case (UINT32)0xE807E137:
+        case (UINT32)0xF007E137:
+        case (UINT32)0xF807E137:
         case (UINT32)0xFC07E136:
         case (UINT32)0xFC07E13E:
-        case (UINT32)0xF007E137:
-        case (UINT32)0xE807E136:
-        case (UINT32)0xF807E137:
-        // High Sierra DP4
-        case (UINT32)0xE007E137:
-        case (UINT32)0xFD07F536:
-        case (UINT32)0xFD07F53E:
-        // High Sierra DP5
-        case (UINT32)0xC00DE137:
-        case (UINT32)0xD00DE137:
-        case (UINT32)0xE00DE137:
-        case (UINT32)0xE00FE137:
-        case (UINT32)0xE80FE136:
-        case (UINT32)0xE80FE137:
-        case (UINT32)0xF80FE137:
-        case (UINT32)0xFC0FE136:
           //DBG ("Found old FirmwareFeatures from config\n");
           //DBG ("FirmwareFeatures: 0x%08x\n", FF);
           DBG ("Using latest FirmwareFeatures from clover\n");
