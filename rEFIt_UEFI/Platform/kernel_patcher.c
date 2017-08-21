@@ -920,14 +920,16 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
 }
 
 //
-// Enable Broadwell-E/EP PowerManagement on 10.12+
+// Enable Broadwell-E/EP PowerManagement on 10.12+ by syscl
 //
 BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
     DBG("BroadwellEPM() ===>\n");
+    CHAR8       *comment;
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    CHAR8       *comment;
+    UINT64      *kptr = (UINT64 *)kern;
+    UINT64      *end  = (UINT64 *) kptr + 0x1000000/sizeof(UINT64);
     
     // check OS version suit for patches
     if (os_version < AsciiOSVersionToUint64("10.12") || os_version >= AsciiOSVersionToUint64("10.14")) {
@@ -935,6 +937,9 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
+    
+    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x040674);
+    KernelCPUIDPatch(kern, Entry);
     
     // instant reboot
     comment = "instant reboot(0x55)";
@@ -986,6 +991,28 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22, 0x77, 0x22 };
         UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC3, 0x3C, 0x22, 0x77, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
+    }
+    
+    // _xcpm_pkg_scope_msr
+    comment = "_xcpm_pkg_scope_msrs";
+    DBG("Searching %a...\n", comment);
+    for (; kptr < end; kptr += 2) {
+        if (0x481feb00000007be == kptr[0]) {
+            kptr[0] = 0x48909000000007be;
+            DBG("Found %a\nApplied %a patch\n", comment, comment);
+        }
+        
+        if (0xe8d23100000007be == kptr[0]) {
+            kptr[0] = 0x90d23100000007be;
+            kptr[1] = kptr[1] & 0xFFFFFFFF90909090;
+            DBG("Found %a\nApplied %a patch\n", comment, comment);
+        }
+        
+        if (0x31137400000007be == kptr[0]) {
+            kptr[1] = kptr[1] & 0xFFFF9090909090FF;
+            DBG("Found %a\nApplied %a patch\n", comment, comment);
+            break;
+        }
     }
     
     DBG("BroadwellEPM() <===\n");
@@ -1729,7 +1756,8 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
   //
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
-     (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_HASWELL_E || gCPUStructure.Model == CPU_MODEL_JAKETOWN ||
+     (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_BROADWELL_DE ||
+      gCPUStructure.Model == CPU_MODEL_HASWELL_E || gCPUStructure.Model == CPU_MODEL_JAKETOWN ||
       AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
          BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
          KernelAndKextPatcherInit(Entry);
@@ -1750,7 +1778,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
          if (gCPUStructure.Model == CPU_MODEL_HASWELL_E)
              EnableExtCpuXCPM = HaswellEXCPM;
          
-         if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5) {
+         if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_BROADWELL_DE) {
              EnableExtCpuXCPM = BroadwellEPM;
              gBDWEIOPCIFixRequire = TRUE;       // turn on Broadwell-E/EP IOPCIFamily Fix
          }

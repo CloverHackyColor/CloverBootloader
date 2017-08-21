@@ -572,8 +572,9 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
     DBG_RT(Entry, "Kext: %a\n", gKextBundleIdentifier);
     
     // now let's patch it
-    if (os_ver < AsciiOSVersionToUint64("10.9")) {
-        DBG("SandyBridge-E unsupported on macOS older than 10.10(Yosemite), aborted\n");
+    if (os_ver < AsciiOSVersionToUint64("10.9") || os_ver >= AsciiOSVersionToUint64("10.14")) {
+        DBG("Unsupported macOS.\nSandyBridge-E requires macOS 10.9 - 10.13.x, aborted\n");
+        DBG("SNBE_AICPUPatch() <===FALSE\n");
         return;
     }
     
@@ -810,11 +811,6 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else {
-        // place holder for futher version of macOS
-        // change it if needed
-        DBG("Unsupport macOS version, aborted\n");
-        return;
     }
     
     if (Entry->KernelAndKextPatches->KPDebug) {
