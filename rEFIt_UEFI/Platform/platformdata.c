@@ -1792,11 +1792,11 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         break;
                 
       case CPU_MODEL_KABYLAKE1: //Mobile
-        AsciiStrCpyS (gSettings.RPlt, 8, "2017mbp");
+        AsciiStrCpyS (gSettings.RBr, 8, "2017mbp");
         break;
                 
       case CPU_MODEL_KABYLAKE2: //Desktop
-        AsciiStrCpyS (gSettings.RPlt, 8, "j133_4_5");
+        AsciiStrCpyS (gSettings.RBr, 8, "j133_4_5");
         break;
                 
       default:
