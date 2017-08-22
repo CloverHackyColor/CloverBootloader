@@ -1758,7 +1758,8 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
      (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_BROADWELL_DE ||
       gCPUStructure.Model == CPU_MODEL_HASWELL_E || gCPUStructure.Model == CPU_MODEL_JAKETOWN ||
-      AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+     (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+     (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))))) {
          BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
          KernelAndKextPatcherInit(Entry);
          if (KernelData == NULL) goto NoKernelData;
