@@ -718,7 +718,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT1.5
   { 0x5913, "Intel Kaby Lake GT1.5"          }, //
   { 0x5915, "Intel Kaby Lake GT1.5"          }, //
-  { 0x5917, "Intel Kaby Lake GT1.5"          }, //
+  { 0x5917, "Intel UHD Graphics 620"         }, // Mobile - Kaby Lake Refresh(iX-8X50U)
   //GT2
   { 0x5912, "Intel HD Graphics 630"          }, // Desktop - iMac18,2, iMac18,3
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
@@ -2398,7 +2398,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT1.5
     case 0x5913: // "Intel Kaby Lake GT1.5"           //
     case 0x5915: // "Intel Kaby Lake GT1.5"           //
-    case 0x5917: // "Intel Kaby Lake GT1.5"           //
+    case 0x5917: // "Intel UHD Graphics 620"          // Mobile - Kaby Lake Refresh(iX-8X50U)
       //GT2
     case 0x5912: // "Intel HD Graphics 630"           // Desktop - iMac18,2, iMac18,3
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
@@ -2429,6 +2429,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           }
           break;
         case 0x5916:
+        case 0x5917:
           if (!SetFake) {
             FakeID = 0x59168086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
