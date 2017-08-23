@@ -96,7 +96,7 @@ VenIdName vendorMap[] = {
 		{ 0, 0x2a, "Ricoh"},
 		{ 0, 0xab, "VLSI"},
 		{ 0, 0x2c, "Micron Technology"},
-		{ 0, 0xad, "Hynix Semiconductor"},
+		{ 0, 0xad, "SK Hynix"},
 		{ 0, 0xae, "OKI Semiconductor"},
 		{ 0, 0x2f, "ACTEL"},
 		{ 0, 0xb0, "Sharp"},
@@ -924,6 +924,7 @@ VenIdName vendorMap[] = {
 		{ 6, 0xf2, "Muscle Power"},
 		{ 6, 0x73, "Energy Micro"},
 		{ 6, 0xf4, "Innofidei"},
+		{ 0x80, 0xAD, "SK Hynix"},
 		{ 0x85, 0x9B, "Crucial Technology"},
 		{ 9, 0xff, ""}
 };
