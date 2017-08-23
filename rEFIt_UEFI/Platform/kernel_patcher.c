@@ -780,10 +780,10 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
 {
     DBG("HaswellEXCPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
+    CHAR8       *comment;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    CHAR8       *comment;       // info about the patch
-    UINT32      patchLocation=0;
-    UINT32      i;
+    UINT64      *kptr = (UINT64 *)kern;
+    UINT64      *end  = (UINT64 *) kptr + 0x1000000/sizeof(UINT64);
   
     // check OS version suit for patches
     if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
@@ -862,56 +862,23 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
     
     // _xcpm_pkg_scope_msrs
     comment = "_xcpm_pkg_scope_msrs";
-    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
-        // 10.8.5
-        UINT8 find[] = {
-            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
-            0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
-            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
-            0x00, 0x00, 0x31, 0xD2, 0xE8, 0x28, 0x02, 0x00, 0x00
-        };
-        UINT8 repl[] = {
-            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
-            0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x8D,
-            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
-            0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
-        };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
-        // 10.9.x
-        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
-        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else {
-        // 10.10+
-        for (i = 0; i < 0x1000000; i++) {
-            if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 && kern[i+4] == 0x00 &&
-                kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
-              patchLocation = i+7;
-              DBG("Found _xcpm_pkg_scope_msrs call\n");
-              break;
-            }
-        }
-        if (!patchLocation) {
-            DBG("_xcpm_pkg_scope_msrs call not found, patch aborted\n");
-            DBG("HaswellEXCPM() <===FALSE\n");
-            return FALSE;
+    DBG("Searching %a...\n", comment);
+    for (; kptr < end; kptr += 2) {
+        if (0x481feb00000007be == kptr[0]) {
+            kptr[0] = 0x48909000000007be;
+            DBG("Found %a\nApplied %a patch\n", comment, comment);
         }
         
-        // Already patched?  May be running a non-vanilla kernel already?
+        if (0xe8d23100000007be == kptr[0]) {
+            kptr[0] = 0x90d23100000007be;
+            kptr[1] = kptr[1] & 0xFFFFFFFF90909090;
+            DBG("Found %a\nApplied %a patch\n", comment, comment);
+        }
         
-        if (kern[patchLocation + 0] == 0x90 && kern[patchLocation + 1] == 0x90 &&
-            kern[patchLocation + 2] == 0x90 && kern[patchLocation + 3] == 0x90 &&
-            kern[patchLocation + 4] == 0x90) {
-            DBG("_xcpm_pkg_scope_msrs already patched, kernel file manually patched?\n");
-            DBG("HaswellEXCPM() <===FALSE\n");
-            return FALSE;
-        } else {
-            kern[patchLocation + 0] = 0x90;
-            kern[patchLocation + 1] = 0x90;
-            kern[patchLocation + 2] = 0x90;
-            kern[patchLocation + 3] = 0x90;
-            kern[patchLocation + 4] = 0x90;
+        if (0x31137400000007be == kptr[0]) {
+            kptr[1] = kptr[1] & 0xFFFF9090909090FF;
+            DBG("Found %a\nApplied %a patch\n", comment, comment);
+            break;
         }
     }
     
@@ -1090,10 +1057,10 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
 BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
 {
   UINT8       *kern = (UINT8*)kernelData;
-  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8       *comment;
-  UINT32      patchLocation=0;
-  UINT32      i;
+  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  UINT64      *kptr = (UINT64 *)kern;
+  UINT64      *end  = (UINT64 *) kptr + 0x1000000/sizeof(UINT64);
   
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
@@ -1134,40 +1101,15 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
   }
   
   DBG("Searching _xcpm_pkg_scope_msrs ...\n");
-  if (os_version >= AsciiOSVersionToUint64("10.12")) {
-    for (i = 0; i < 0x1000000; i++) {
-      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 && kern[i+4] == 0x00 &&
-          kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
-        patchLocation = i+7;
-        DBG("Found _xcpm_pkg_scope_msrs call\n");
-        break;
+  for (; kptr < end; kptr += 2) {
+      if (0xe8d23100000007be == kptr[0]) {
+          kptr[0] = 0x90d23100000007be;
+          kptr[1] = kptr[1] & 0xFFFFFFFF90909090;
+          DBG("Found %a\nApplied %a patch\n", comment, comment);
+          break;
       }
-    }
-    
-    if (!patchLocation) {
-     DBG("_xcpm_pkg_scope_msrs call not found, patch aborted\n");
-     DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-     return FALSE;
-    }
-    
-    // Already patched?  May be running a non-vanilla kernel already?
-    
-    if (kern[patchLocation + 0] == 0x90 && kern[patchLocation + 1] == 0x90 &&
-        kern[patchLocation + 2] == 0x90 && kern[patchLocation + 3] == 0x90 &&
-        kern[patchLocation + 4] == 0x90) {
-      DBG("_xcpm_pkg_scope_msrs already patched, kernel file manually patched?\n");
-      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-      return FALSE;
-    } else {
-      kern[patchLocation + 0] = 0x90;
-      kern[patchLocation + 1] = 0x90;
-      kern[patchLocation + 2] = 0x90;
-      kern[patchLocation + 3] = 0x90;
-      kern[patchLocation + 4] = 0x90;
-    }
   }
 
-  
   DBG("KernelIvyBridgeXCPM() <===\n");
   
   return TRUE;
