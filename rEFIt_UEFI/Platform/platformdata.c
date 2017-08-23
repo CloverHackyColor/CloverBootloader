@@ -1317,7 +1317,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
-  // TODO - find more correct information about OSInstall.mpkg error for High Sierra DP6
+  // Firmware info for High Sierra DP6/DP7
   // by Sherlocks
   // FirmwareFeatures
   switch (Model) {
@@ -1512,12 +1512,14 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   }
   
   // PlatformFeature
+  // the memory tab in About This Mac
+  // by TheRacerMaster
   switch (Model) {
     case iMac171:
     case iMac181:
     case iMac182:
     case iMac183:
-      gPlatformFeature        = 0x00;
+      gPlatformFeature        = 0x00;   //not soldered RAM - memory tab appearing
       break;
     case MacMini61:
     case MacMini62:
@@ -1529,7 +1531,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
     case iMac144:
     case iMac151:
-      gPlatformFeature        = 0x01;
+      gPlatformFeature        = 0x01;   //not soldered RAM - memory tab appearing
       break;
     case MacBookPro111:
     case MacBookPro112:
@@ -1537,13 +1539,13 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacBookPro121:
-      gPlatformFeature        = 0x02;
+      gPlatformFeature        = 0x02;   //soldered RAM - memory tab disappearing
       break;
     case MacMini71:
-      gPlatformFeature        = 0x03;
+      gPlatformFeature        = 0x03;   //soldered RAM - memory tab disappearing
       break;
     case MacPro61:
-      gPlatformFeature        = 0x04;
+      gPlatformFeature        = 0x04;   //not soldered RAM - memory tab appearing
       break;
     case MacBook81:
     case MacBook91:
@@ -1554,11 +1556,11 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
-      gPlatformFeature        = 0x1A;
+      gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
       break;
 
     default:
-      gPlatformFeature        = 0xFFFF; //disabled to be default
+      gPlatformFeature        = 0xFFFF; //disabled - memory tab appearing
       break;
   }
 

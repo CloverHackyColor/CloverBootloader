@@ -4216,9 +4216,8 @@ ParseSMBIOSSettings(
       DBG ("Found same PlatformFeature in clover and config\n");
       DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
     } else {
-      //DBG ("Found wrong PlatformFeature from config\n");
-      //DBG ("PlatformFeature: 0x%x\n", PF);
-      DBG ("Using latest PlatformFeature from clover\n");
+      gPlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
+      DBG ("Using PlatformFeature from config\n");
       DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
     }
   } else {
