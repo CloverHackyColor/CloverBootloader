@@ -646,7 +646,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x162D, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
   //GT3e
   { 0x1622, "Intel Iris Pro Graphics 6200"   }, // Desktop, Mobile - iMac16,2
-  { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Workstation, Mobile Workstation
+  { 0x162A, "Intel Iris Pro Graphics P6300"  }, // Workstation
   //RSVD
   { 0x162E, "Intel Broadwell RSVD"           }, // Reserved
   { 0x1632, "Intel Broadwell RSVD"           }, // Reserved
@@ -677,7 +677,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x191A, "Intel Skylake GT2"              }, //
   { 0x191B, "Intel HD Graphics 530"          }, // Mobile - MacBookPro13,3
   { 0x191D, "Intel HD Graphics P530"         }, // Workstation, Mobile Workstation
-  { 0x191E, "Intel HD Graphics 515"          }, // Ultramobile - MacBook9,1
+  { 0x191E, "Intel HD Graphics 515"          }, // Mobile - MacBook9,1
   { 0x1921, "Intel HD Graphics 520"          }, // 
   //GT2f
   { 0x1913, "Intel Skylake GT2f"             }, //
@@ -689,12 +689,12 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x1926, "Intel Iris Graphics 540"        }, // Mobile - MacBookPro13,1
   { 0x1927, "Intel Iris Graphics 550"        }, // Mobile - MacBookPro13,2
   { 0x192B, "Intel Iris Graphics 555"        }, //
-  { 0x192D, "Intel Iris Graphics P555"       }, // Workstation, Mobile Workstation
+  { 0x192D, "Intel Iris Graphics P555"       }, // Workstation
   //GT4
   { 0x192A, "Intel Skylake GT4"              }, //
   //GT4e
   { 0x1932, "Intel Iris Pro Graphics 580"    }, //
-  { 0x193A, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
+  { 0x193A, "Intel Iris Pro Graphics P580"   }, // Server
   { 0x193B, "Intel Iris Pro Graphics 580"    }, // Desktop, Mobile
   { 0x193D, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
 
@@ -718,14 +718,13 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT1.5
   { 0x5913, "Intel Kaby Lake GT1.5"          }, //
   { 0x5915, "Intel Kaby Lake GT1.5"          }, //
-  { 0x5917, "Intel UHD Graphics 620"         }, // Mobile - Kaby Lake Refresh(iX-8X50U)
   //GT2
   { 0x5912, "Intel HD Graphics 630"          }, // Desktop - iMac18,2, iMac18,3
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
   { 0x591A, "Intel HD Graphics P630"         }, //
   { 0x591B, "Intel HD Graphics 630"          }, // Mobile - MacBookPro14,3
   { 0x591D, "Intel HD Graphics P630"         }, // Workstation, Mobile Workstation
-  { 0x591E, "Intel HD Graphics 615"          }, // Ultramobile - MacBook10,1
+  { 0x591E, "Intel HD Graphics 615"          }, // Mobile - MacBook10,1
   //GT2F
   { 0x5921, "Intel Kaby Lake GT2F"           }, //
   //GT3
@@ -735,15 +734,17 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT4
   { 0x593B, "Intel Kaby Lake GT4"            }, //
 
+  //-------------Kaby Lake Refresh------------
+  //GT1.5
+  { 0x5917, "Intel UHD Graphics 620"         }, // Mobile
 
-  //============== 10th generation ===========
   //----------------Coffee Lake---------------
   //GT1
-  { 0x3E90, "Intel Coffee Lake GT1"          }, //
-  { 0x3E93, "Intel Coffee Lake GT1"          }, //
+  { 0x3E90, "Intel UHD Graphics 610"         }, // Desktop
+  { 0x3E93, "Intel UHD Graphics 610"         }, // Desktop
   //GT2
-  { 0x3E91, "Intel Coffee Lake GT2"          }, //
-  { 0x3E92, "Intel Coffee Lake GT2"          }, //
+  { 0x3E91, "Intel UHD Graphics 630"         }, // Desktop
+  { 0x3E92, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
   { 0x3E9B, "Intel Coffee Lake GT2"          }, //
   { 0x3E94, "Intel Coffee Lake GT2"          }, //
@@ -754,7 +755,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3EA5, "Intel Coffee Lake GT3"          }, //
 
 
-  //============== 10.5th generation =========
+  //============== 10th generation ===========
   //----------------Cannonlake----------------
   //GT0.5
   { 0x5A49, "Intel Cannonlake GT0.5"         }, //
@@ -831,8 +832,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 120) {
         SetUGAHeight = TRUE;
         DBG ("  Found quarter quarter VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -841,8 +841,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 160) {
         SetUGAHeight = TRUE;
         DBG ("  Found Half quarter VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -851,8 +850,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 240) {
         SetUGAHeight = TRUE;
         DBG ("  Found quarter VGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -861,8 +859,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 240) {
         SetUGAHeight = TRUE;
         DBG ("  Found Wide quarter VGA Display - 5:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -871,8 +868,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 320) {
         SetUGAHeight = TRUE;
         DBG ("  Found Half-size VGA Display - 3:2 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -913,8 +909,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 480) {
         SetUGAHeight = TRUE;
         DBG ("  Found Full Wide VGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -959,8 +954,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 864) {
         SetUGAHeight = TRUE;
         DBG ("  Found XGA Plus Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -993,8 +987,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 768) {
         SetUGAHeight = TRUE;
         DBG ("  Found Full Wide XGA Display - 16:9 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -1003,8 +996,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 1050) {
         SetUGAHeight = TRUE;
         DBG ("  Found Super XGA Plus Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -1013,8 +1005,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 900) {
         SetUGAHeight = TRUE;
         DBG ("  Found Wide XGA Plus Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -1103,8 +1094,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 1800) {
         SetUGAHeight = TRUE;
         DBG ("  Found Wide Quad XGA Display - 16:10 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -1149,8 +1139,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       if(UGAHeight == 3072) {
         SetUGAHeight = TRUE;
         DBG ("  Found Hex XGA Display - 4:3 :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
-      }
-      else {
+      } else {
         DBG ("  Found Unknown Resolution Display - ?:? :: Width=%d Height=%d\n", UGAWidth, UGAHeight);
       }
       break;
@@ -1293,26 +1282,22 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           DBG("  DualLink: set to 1\n");
           devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.DualLink, 1);
           DBG("  AAPL01,DualLink = 1\n");
-        }
-        else {
+        } else {
           DBG("  DualLink: set to 0\n");
           DBG("  AAPL01,DualLink: not used\n");
         }
-      }
-      else {
+      } else {
         DBG("  Beginning DualLink auto-detection\n");
         if (SetUGAWidth && SetUGAHeight) {
           if (UGAWidth < 1400) {
             DBG("  Low Resolution Display\n");
             DBG("  AAPL01,DualLink: not used\n");
-          }
-          else {
+          } else {
             DBG("  High Resolution Display\n");
             devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
             DBG("  AAPL01,DualLink = 1\n");
           }
-        }
-        else {
+        } else {
           DBG("  Unknown Resolution Display\n");
           devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&DualLink, 1);
           DBG("  AAPL01,DualLink = 1\n");
@@ -1325,26 +1310,22 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           DBG("  DualLink: set to 1\n");
           devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&gSettings.DualLink, 1);
           DBG("  AAPL00,DualLink = 1\n");
-        }
-        else {
+        } else {
           DBG("  DualLink: set to 0\n");
           DBG("  AAPL00,DualLink: not used\n");
         }
-      }
-      else {
+      } else {
         DBG("  Beginning DualLink auto-detection\n");
         if (SetUGAWidth && SetUGAHeight) {
           if (UGAWidth < 1400) {
             DBG("  Low Resolution Display\n");
             DBG("  AAPL00,DualLink: not used\n");
-          }
-          else {
+          } else {
             DBG("  High Resolution Display\n");
             devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
             DBG("  AAPL00,DualLink = 1\n");
           }
-        }
-        else {
+        } else {
           DBG("  Unknown Resolution Display\n");
           devprop_add_value(device, "AAPL00,DualLink", (UINT8*)&DualLink, 1);
           DBG("  AAPL00,DualLink = 1\n");
@@ -1360,8 +1341,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
     SetFake = TRUE;
     DBG("  FakeID Intel GFX = 0x%08lx\n", gSettings.FakeIntel);
-  }
-  else {
+  } else {
     DBG("  FakeID Intel GFX: not set\n");
   }
 
@@ -1378,8 +1358,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&gSettings.IgPlatform, 4);
         DBG("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetSnb = TRUE;
-      }
-      else {
+      } else {
         DBG("  snb-platform-id: not set\n");
       }
       break;
@@ -1388,8 +1367,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
         DBG("  ig-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetIg = TRUE;
-      }
-      else {
+      } else {
         DBG("  ig-platform-id: not set\n");
       }
       break;
@@ -1411,8 +1389,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
   if ((SetSnb && SetFake) || (SetIg && SetFake)) {
     //DBG("  Beginning ACPI injection\n");
-  }
-  else {
+  } else {
     DBG("  Beginning Intel GFX auto-detection with ACPI injection\n");
   }
 
@@ -1890,8 +1867,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             if (UGAWidth < 1600) {
               devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[3], 4);
               DBG("  Found ig-platform-id = 0x01660003\n");
-            }
-            else {
+            } else {
               // HD+(1600x900+)
               devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[4], 4);
               DBG("  Found ig-platform-id = 0x01660004\n");
@@ -2043,8 +2019,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             if (UGAWidth < 2560) {
               devprop_add_value(device, "AAPL,ig-platform-id", haswell_ig_vals[12], 4);
               DBG("  Found ig-platform-id = 0x0A260006\n");
-            }
-            else {
+            } else {
               // QHD+(2560x1440+)
               devprop_add_value(device, "AAPL,ig-platform-id", haswell_ig_vals[14], 4);
               DBG("  Found ig-platform-id = 0x0A2E0008\n");
@@ -2092,7 +2067,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x162D: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
       //GT3e
     case 0x1622: // "Intel Iris Pro Graphics 6200"    // Desktop, Mobile - iMac16,2
-    case 0x162A: // "Intel Iris Pro Graphics P6300"   // Workstation, Mobile Workstation
+    case 0x162A: // "Intel Iris Pro Graphics P6300"   // Workstation
       //RSVD
     case 0x162E: // "Intel Broadwell RSVD"            // Reserved
     case 0x1632: // "Intel Broadwell RSVD"            // Reserved
@@ -2222,7 +2197,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x191A: // "Intel Skylake GT2"               //
     case 0x191B: // "Intel HD Graphics 530"           // Mobile - MacBookPro13,3
     case 0x191D: // "Intel HD Graphics P530"          // Workstation, Mobile Workstation
-    case 0x191E: // "Intel HD Graphics 515"           // Ultramobile - MacBook9,1
+    case 0x191E: // "Intel HD Graphics 515"           // Mobile - MacBook9,1
     case 0x1921: // "Intel HD Graphics 520"           //
       //GT2f
     case 0x1913: // "Intel Skylake GT2f"              //
@@ -2234,12 +2209,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x1926: // "Intel Iris Graphics 540"         // Mobile - MacBookPro13,1
     case 0x1927: // "Intel Iris Graphics 550"         // Mobile - MacBookPro13,2
     case 0x192B: // "Intel Iris Graphics 555"         //
-    case 0x192D: // "Intel Iris Graphics P555"        // Workstation, Mobile Workstation
+    case 0x192D: // "Intel Iris Graphics P555"        // Workstation
       //GT4
     case 0x192A: // "Intel Skylake GT4"               //
       //GT4e
     case 0x1932: // "Intel Iris Pro Graphics 580"     //
-    case 0x193A: // "Intel Iris Pro Graphics P580"    // Workstation, Mobile Workstation
+    case 0x193A: // "Intel Iris Pro Graphics P580"    // Server
     case 0x193B: // "Intel Iris Pro Graphics 580"     // Desktop, Mobile
     case 0x193D: // "Intel Iris Pro Graphics P580"    // Workstation, Mobile Workstation
       switch (gma_dev->device_id) {
@@ -2398,14 +2373,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT1.5
     case 0x5913: // "Intel Kaby Lake GT1.5"           //
     case 0x5915: // "Intel Kaby Lake GT1.5"           //
-    case 0x5917: // "Intel UHD Graphics 620"          // Mobile - Kaby Lake Refresh(iX-8X50U)
       //GT2
     case 0x5912: // "Intel HD Graphics 630"           // Desktop - iMac18,2, iMac18,3
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
     case 0x591A: // "Intel HD Graphics P630"          //
     case 0x591B: // "Intel HD Graphics 630"           // Mobile - MacBookPro14,3
     case 0x591D: // "Intel HD Graphics P630"          // Workstation, Mobile Workstation
-    case 0x591E: // "Intel HD Graphics 615"           // Ultramobile - MacBook10,1
+    case 0x591E: // "Intel HD Graphics 615"           // Mobile - MacBook10,1
       //GT2F
     case 0x5921: // "Intel Kaby Lake GT2F"            //
       //GT3
@@ -2414,8 +2388,30 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x5927: // "Intel Iris Plus Graphics 650"    // Mobile - MacBookPro14,2
       //GT4
     case 0x593B: // "Intel Kaby Lake GT4"             //
+
+      //-------------Kaby Lake Refresh------------
+      //GT1.5
+    case 0x5917: // "Intel UHD Graphics 620"          // Mobile
+
+      //----------------Coffee Lake---------------
+      //GT1
+    case 0x3E90: // "Intel UHD Graphics 610"          // Desktop
+    case 0x3E93: // "Intel UHD Graphics 610"          // Desktop
+      //GT2
+    case 0x3E91: // "Intel UHD Graphics 630"          // Desktop
+    case 0x3E92: // "Intel UHD Graphics 630"          // Desktop
+    case 0x3E96: // "Intel Coffee Lake GT2"           //
+    case 0x3E9B: // "Intel Coffee Lake GT2"           //
+    case 0x3E94: // "Intel Coffee Lake GT2"           //
+      //GT3
+    case 0x3EA6: // "Intel Coffee Lake GT3"           //
+    case 0x3EA7: // "Intel Coffee Lake GT3"           //
+    case 0x3EA8: // "Intel Coffee Lake GT3"           //
+    case 0x3EA5: // "Intel Coffee Lake GT3"           //
       switch (gma_dev->device_id) {
         case 0x5912:
+        case 0x3E91:
+        case 0x3E92:
           if (!SetFake) {
             FakeID = 0x59128086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2549,25 +2545,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
 
       //============== 10th generation ===========
-      //----------------Coffee Lake---------------
-      //GT1
-    case 0x3E90: // "Intel Coffee Lake GT1"           //
-    case 0x3E93: // "Intel Coffee Lake GT1"           //
-      //GT2
-    case 0x3E91: // "Intel Coffee Lake GT2"           //
-    case 0x3E92: // "Intel Coffee Lake GT2"           //
-    case 0x3E96: // "Intel Coffee Lake GT2"           //
-    case 0x3E9B: // "Intel Coffee Lake GT2"           //
-    case 0x3E94: // "Intel Coffee Lake GT2"           //
-      //GT3
-    case 0x3EA6: // "Intel Coffee Lake GT3"           //
-    case 0x3EA7: // "Intel Coffee Lake GT3"           //
-    case 0x3EA8: // "Intel Coffee Lake GT3"           //
-    case 0x3EA5: // "Intel Coffee Lake GT3"           //
-      break;
-
-
-      //============== 10.5th generation =========
       //----------------Cannonlake----------------
       //GT0.5
     case 0x5A49: // "Intel Cannonlake GT0.5"          //

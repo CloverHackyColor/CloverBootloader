@@ -3876,9 +3876,7 @@ ParseSMBIOSSettings(
                     TagPtr DictPointer
                     )
 {
-  CHAR8  *i, *j;
-  CHAR8  *Res1 = AllocateZeroPool (9);
-  CHAR8  *Res2 = AllocateZeroPool (11);
+  CHAR8  *i, *j, *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
   CHAR16 UStr[64];
   UINT32 FF, FFM;
   UINT64 PF;
