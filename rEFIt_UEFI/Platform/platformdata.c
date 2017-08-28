@@ -125,7 +125,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "MP21.88Z.007F.B06.0707021348",   // MacPro2,1,
   "MP31.88Z.006C.B05.0802291410",   // MacPro3,1,
   "MP41.88Z.0081.B07.0910130729",   // MacPro4,1,
-  "MP51.88Z.007F.B03.1010071432",   // MacPro5,1,
+  "MP51.88Z.0084.B00.1708080528",   // MacPro5,1,
   "MP61.88Z.0120.B00.1708080652",   // MacPro6,1,
   "XS11.88Z.0080.B01.0706271533",   // Xserve1,1,
   "XS21.88Z.006C.B06.0804011317",   // Xserve2,1,
@@ -1138,13 +1138,13 @@ UINT32 SmcConfig[] =
   0x73007,  //"MacBookPro10,2",
   0xf0b007, //"MacBookPro11,1",
   0xf0b007, //"MacBookPro11,2",  // need to find EPCI key
-  0xf0b007, //"MacBookPro11,3",  // need to find EPCI key
+  0xf0d007, //"MacBookPro11,3",
   0xf0b007, //"MacBookPro11,4",  // need to find EPCI key
   0xf0b007, //"MacBookPro11,5",  // need to find EPCI key
   0xf01008, //"MacBookPro12,1",
   0xf02009, //"MacBookPro13,1",  // need to find EPCI key
   0xf02009, //"MacBookPro13,2",
-  0xf02009, //"MacBookPro13,3",  // need to find EPCI key
+  0xf04009, //"MacBookPro13,3",
   0xf0b009, //"MacBookPro14,1",
   0xf09009, //"MacBookPro14,2",
   0xf0a009, //"MacBookPro14,3",
@@ -1216,9 +1216,7 @@ CHAR8 *AppleBoardLocation = "Part Component";
 VOID
 SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
 {
-  CHAR8  *FirmwareVersion;
-  CHAR8  *Res1 = AllocateZeroPool (9);
-  CHAR8  *Res2 = AllocateZeroPool (11);
+  CHAR8  *i, *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
 
   AsciiStrCpyS (gSettings.VendorName, 64,      BiosVendor);
   AsciiStrCpyS (gSettings.RomVersion, 64,      AppleFirmwareVersion[Model]);
@@ -1280,24 +1278,24 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case Xserve11:
     case Xserve21:
     case Xserve31:
-      FirmwareVersion = AppleFirmwareVersion[Model];
-      FirmwareVersion += AsciiStrLen (FirmwareVersion);
+      i = AppleFirmwareVersion[Model];
+      i += AsciiStrLen (i);
 
-      while (*FirmwareVersion != '.') {
-        FirmwareVersion--;
+      while (*i != '.') {
+        i--;
       }
-      AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", FirmwareVersion[3], FirmwareVersion[4], FirmwareVersion[5], FirmwareVersion[6], FirmwareVersion[1], FirmwareVersion[2]);
+      AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
       AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
       break;
 
     default:
-      FirmwareVersion = AppleFirmwareVersion[Model];
-      FirmwareVersion += AsciiStrLen (FirmwareVersion);
+      i = AppleFirmwareVersion[Model];
+      i += AsciiStrLen (i);
 
-      while (*FirmwareVersion != '.') {
-        FirmwareVersion--;
+      while (*i != '.') {
+        i--;
       }
-      AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", FirmwareVersion[3], FirmwareVersion[4], FirmwareVersion[5], FirmwareVersion[6], FirmwareVersion[1], FirmwareVersion[2]);
+      AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
       AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
       break;
   }
@@ -1570,6 +1568,8 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     gSettings.BoardType = BaseBoardTypeMotherBoard; //0xA;
   }
 
+  // MiscChassisType
+  // Mobile: the battery tab in Energy Saver
   switch (Model) {
     case MacBook11:
     case MacBook21:
@@ -1603,7 +1603,14 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro115:
     case MacMini71:
       gSettings.ChassisType = MiscChassisTypeNotebook; //0x0A;
-      gSettings.Mobile      = TRUE;
+      switch (Model) {
+        case MacMini71:
+          gSettings.Mobile      = FALSE;
+          break;
+        default:
+          gSettings.Mobile      = TRUE;
+          break;
+      }
       break;
 
     case MacBook81:
@@ -1626,8 +1633,10 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac183:
       gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
+        case iMac161:
         case iMac162:
         case iMac171:
+        case iMac181:
         case iMac182:
         case iMac183:
           gSettings.Mobile      = FALSE;
@@ -1679,10 +1688,6 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac144:
     case iMac151:
       gSettings.ChassisType = MiscChassisTypeAllInOne; //0x0D;
-      if(Model == iMac144) {
-          gSettings.Mobile      = TRUE;
-          break;
-      }
       gSettings.Mobile      = FALSE;
       break;
 
@@ -1713,7 +1718,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacPro21:
     case MacPro31:
     case MacPro61:
-      gSettings.ChassisType = MiscChassisTypeUnknown;  //0x02; this is a joke but think different!
+      gSettings.ChassisType = MiscChassisTypeUnknown; //0x02; this is a joke but think different!
       gSettings.Mobile      = FALSE;
       break;
           
@@ -1727,11 +1732,11 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
     default: //unknown - use oem SMBIOS value to be default
       gSettings.Mobile      = gMobile;
       gSettings.ChassisType = 0; //let SMBIOS value to be
-      /*      if (gMobile) {
-       gSettings.ChassisType = 10; //notebook
-       } else {
-       gSettings.ChassisType = MiscChassisTypeDeskTop; //0x03;
-       } */
+      /*if (gMobile) {
+        gSettings.ChassisType = 10; //notebook
+      } else {
+        gSettings.ChassisType = MiscChassisTypeDeskTop; //0x03;
+      }*/
       break;
   }
 

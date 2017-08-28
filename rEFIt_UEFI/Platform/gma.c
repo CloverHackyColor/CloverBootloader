@@ -745,14 +745,14 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT2
   { 0x3E91, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E92, "Intel UHD Graphics 630"         }, // Desktop
+  { 0x3E94, "Intel Coffee Lake GT2"          }, //
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
   { 0x3E9B, "Intel Coffee Lake GT2"          }, //
-  { 0x3E94, "Intel Coffee Lake GT2"          }, //
   //GT3
+  { 0x3EA5, "Intel Coffee Lake GT3"          }, //
   { 0x3EA6, "Intel Coffee Lake GT3"          }, //
   { 0x3EA7, "Intel Coffee Lake GT3"          }, //
   { 0x3EA8, "Intel Coffee Lake GT3"          }, //
-  { 0x3EA5, "Intel Coffee Lake GT3"          }, //
 
 
   //============== 10th generation ===========
@@ -2400,14 +2400,14 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT2
     case 0x3E91: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E92: // "Intel UHD Graphics 630"          // Desktop
+    case 0x3E94: // "Intel Coffee Lake GT2"           //
     case 0x3E96: // "Intel Coffee Lake GT2"           //
     case 0x3E9B: // "Intel Coffee Lake GT2"           //
-    case 0x3E94: // "Intel Coffee Lake GT2"           //
       //GT3
+    case 0x3EA5: // "Intel Coffee Lake GT3"           //
     case 0x3EA6: // "Intel Coffee Lake GT3"           //
     case 0x3EA7: // "Intel Coffee Lake GT3"           //
     case 0x3EA8: // "Intel Coffee Lake GT3"           //
-    case 0x3EA5: // "Intel Coffee Lake GT3"           //
       switch (gma_dev->device_id) {
         case 0x5912:
         case 0x3E91:
