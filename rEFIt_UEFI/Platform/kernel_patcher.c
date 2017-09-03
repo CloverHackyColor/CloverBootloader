@@ -1058,28 +1058,50 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
 {
   UINT8       *kern = (UINT8*)kernelData;
   CHAR8       *comment;
+  UINT32      i;
+  UINT32      patchLocation;
   UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-  UINT64      *kptr = (UINT64 *)kern;
-  UINT64      *end  = (UINT64 *) kptr + 0x1000000/sizeof(UINT64);
   
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
-    DBG("Unsupported platform.\nRequires Ivy Bridge, aborted\n");
-    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-    return FALSE;
+      DBG("Unsupported platform.\nRequires Ivy Bridge, aborted\n");
+      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+      return FALSE;
   }
   
   // check OS version suit for patches
   if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
-    DBG("Unsupported macOS.\nIvy Bridge XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
-    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-    return FALSE;
+      DBG("Unsupported macOS.\nIvy Bridge XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
+      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+      return FALSE;
+  } else if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
+      // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
+      DBG("KernelIvyBridgeXCPM() <===\n");
+      return TRUE;
   }
-  
-  // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
-  if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
-    DBG("KernelIvyBridgeXCPM() <===\n");
-    return TRUE;
+    
+  DBG("Searching _xcpm_pkg_scope_msr ...\n");
+  if (os_version >= AsciiOSVersionToUint64("10.12")) {
+      patchLocation = 0; // clean out the value just in case
+      for (i = 0; i < 0x1000000; i++) {
+          if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+              kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+              patchLocation = i+7;
+              DBG("Found _xcpm_pkg_scope_msr\n");
+              break;
+          }
+      }
+      
+      if (patchLocation) {
+          for (i = 0; i < 5; i++) {
+              kern[patchLocation+i] = 0x90;
+          }
+          DBG("Applied _xcpm_pkg_scope_msr patch\n");
+      } else {
+          DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+          DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+          return FALSE;
+      }
   }
   
   comment = "_xcpm_bootstrap";
@@ -1100,18 +1122,7 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
   
-  DBG("Searching _xcpm_pkg_scope_msrs ...\n");
-  for (; kptr < end; kptr += 2) {
-      if (0xe8d23100000007be == kptr[0]) {
-          kptr[0] = 0x90d23100000007be;
-          kptr[1] = kptr[1] & 0xFFFFFFFF90909090;
-          DBG("Found %a\nApplied %a patch\n", comment, comment);
-          break;
-      }
-  }
-
   DBG("KernelIvyBridgeXCPM() <===\n");
-  
   return TRUE;
 }
 
