@@ -781,9 +781,9 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
     DBG("HaswellEXCPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
     CHAR8       *comment;
+    UINT32      i;
+    UINT32      patchLocation;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    UINT64      *kptr = (UINT64 *)kern;
-    UINT64      *end  = (UINT64 *) kptr + 0x1000000/sizeof(UINT64);
   
     // check OS version suit for patches
     if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
@@ -860,25 +860,49 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         applyKernPatch(kern, find, sizeof(find), repl, comment);
     }
     
-    // _xcpm_pkg_scope_msrs
+    DBG("Searching _xcpm_pkg_scope_msr ...\n");
     comment = "_xcpm_pkg_scope_msrs";
-    DBG("Searching %a...\n", comment);
-    for (; kptr < end; kptr += 2) {
-        if (0x481feb00000007be == kptr[0]) {
-            kptr[0] = 0x48909000000007be;
-            DBG("Found %a\nApplied %a patch\n", comment, comment);
+    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+        // 10.8.5
+        UINT8 find[] = {
+            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+            0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
+            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+            0x00, 0x00, 0x31, 0xD2, 0xE8, 0x28, 0x02, 0x00, 0x00
+        };
+        UINT8 repl[] = {
+            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+            0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x8D,
+            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+            0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
+        };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+        // 10.9.x
+        UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
+        UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
+    } else {
+        // 10.10+
+        patchLocation = 0; // clean out the value just in case
+        for (i = 0; i < 0x1000000; i++) {
+            if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+                kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+                patchLocation = i+7;
+                DBG("Found _xcpm_pkg_scope_msr\n");
+                break;
+            }
         }
         
-        if (0xe8d23100000007be == kptr[0]) {
-            kptr[0] = 0x90d23100000007be;
-            kptr[1] = kptr[1] & 0xFFFFFFFF90909090;
-            DBG("Found %a\nApplied %a patch\n", comment, comment);
-        }
-        
-        if (0x31137400000007be == kptr[0]) {
-            kptr[1] = kptr[1] & 0xFFFF9090909090FF;
-            DBG("Found %a\nApplied %a patch\n", comment, comment);
-            break;
+        if (patchLocation) {
+            for (i = 0; i < 5; i++) {
+                kern[patchLocation+i] = 0x90;
+            }
+            DBG("Applied _xcpm_pkg_scope_msr patch\n");
+        } else {
+            DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+            DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+            return FALSE;
         }
     }
     
@@ -892,95 +916,18 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
 BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
     DBG("BroadwellEPM() ===>\n");
-    CHAR8       *comment;
     UINT8       *kern = (UINT8*)kernelData;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    UINT64      *kptr = (UINT64 *)kern;
-    UINT64      *end  = (UINT64 *) kptr + 0x1000000/sizeof(UINT64);
     
     // check OS version suit for patches
-    if (os_version < AsciiOSVersionToUint64("10.12") || os_version >= AsciiOSVersionToUint64("10.14")) {
-        DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS 10.12 - 10.13.x, aborted\n");
+    if (os_version < AsciiOSVersionToUint64("10.8.5")) {
+        DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS at least 10.10.3, aborted\n");
         DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
-    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x040674);
+    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(os_version < AsciiOSVersionToUint64("10.10.3") ? 0x0306C0 : 0x040674);
     KernelCPUIDPatch(kern, Entry);
-    
-    // instant reboot
-    comment = "instant reboot(0x55)";
-    if (os_version < AsciiOSVersionToUint64("10.14")) {
-        // 10.12.x - 10.13
-        UINT8 find[] = {
-            0xBE, 0x0B, 0x00, 0x00, 0x00, 0x5D, 0xE9, 0x08,
-            0x00, 0x00, 0x00, 0x0F, 0x1F, 0x84, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x55, 0x48, 0x89, 0xE5, 0x41,
-            0x57
-        };
-        UINT8 repl[] = {
-            0xBE, 0x0B, 0x00, 0x00, 0x00, 0x5D, 0xE9, 0x08,
-            0x00, 0x00, 0x00, 0x0F, 0x1F, 0x84, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0xC3, 0x48, 0x89, 0xE5, 0x41,
-            0x57
-        };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
-    
-    // _cpuid_set_info
-    comment = "_cpuid_set_info";
-    if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.x
-        UINT8 find[] = { 0x83, 0xC0, 0xE9 };
-        UINT8 repl[] = { 0x83, 0xC0, 0xE1 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
-        // 10.13.x
-        UINT8 find[] = { 0x72, 0x3C, 0xD0, 0x77, 0x50, 0x0F, 0xB6, 0xC0 };
-        UINT8 repl[] = { 0x6A, 0x3C, 0xD0, 0x77, 0x50, 0x0F, 0xB6, 0xC0 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
-    
-    // _xcpm_bootstrap
-    comment = "_xcpm_bootstrap";
-    if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
-        // 10.12.5
-        UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
-        UINT8 repl[] = { 0x83, 0xC3, 0xBC, 0x83, 0xFB, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.6 - 10.12.x
-        UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
-        UINT8 repl[] = { 0x8D, 0x43, 0xBC, 0x83, 0xF8, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
-        // 10.13.x
-        UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22, 0x77, 0x22 };
-        UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC3, 0x3C, 0x22, 0x77, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
-    
-    // _xcpm_pkg_scope_msr
-    comment = "_xcpm_pkg_scope_msrs";
-    DBG("Searching %a...\n", comment);
-    for (; kptr < end; kptr += 2) {
-        if (0x481feb00000007be == kptr[0]) {
-            kptr[0] = 0x48909000000007be;
-            DBG("Found %a\nApplied %a patch\n", comment, comment);
-        }
-        
-        if (0xe8d23100000007be == kptr[0]) {
-            kptr[0] = 0x90d23100000007be;
-            kptr[1] = kptr[1] & 0xFFFFFFFF90909090;
-            DBG("Found %a\nApplied %a patch\n", comment, comment);
-        }
-        
-        if (0x31137400000007be == kptr[0]) {
-            kptr[1] = kptr[1] & 0xFFFF9090909090FF;
-            DBG("Found %a\nApplied %a patch\n", comment, comment);
-            break;
-        }
-    }
     
     DBG("BroadwellEPM() <===\n");
     return TRUE;
