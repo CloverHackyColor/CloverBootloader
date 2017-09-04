@@ -110,9 +110,9 @@ CHAR8   *AppleFirmwareVersion[] =
   "IM131.88Z.010F.B00.1708080805",  // iMac13,1,
   "IM131.88Z.010F.B00.1708080805",  // iMac13,2,
   "IM131.88Z.010F.B00.1708080805",  // iMac13,3,
-  "IM141.88Z.0122.B00.1708080806",  // iMac14,1,
-  "IM142.88Z.0122.B00.1708080739",  // iMac14,2,
-  "IM143.88Z.0122.B00.1708080732",  // iMac14,3,
+  "IM141.88Z.0123.B00.1708211404",  // iMac14,1,
+  "IM142.88Z.0123.B00.1708211454",  // iMac14,2,
+  "IM143.88Z.0123.B00.1708211454",  // iMac14,3,
   "IM144.88Z.0183.B00.1708080656",  // iMac14,4,
   "IM151.88Z.0211.B00.1708080656",  // iMac15,1,
   "IM161.88Z.0212.B00.1708080033",  // iMac16,1,
@@ -1315,7 +1315,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
-  // Firmware info for High Sierra DP6/DP7
+  // Firmware info for High Sierra DP6 - DP9
   // by Sherlocks
   // FirmwareFeatures
   switch (Model) {

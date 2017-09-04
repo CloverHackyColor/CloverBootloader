@@ -2351,7 +2351,6 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       }
       break;
 
-
       //----------------Goldmont------------------
     case 0x0A84: // "Intel HD Graphics"               // Broxton(cancelled)
     case 0x1A84: // "Intel HD Graphics"               // Broxton(cancelled)
