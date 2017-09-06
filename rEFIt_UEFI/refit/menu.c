@@ -2482,10 +2482,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         } while (0);
  //this way screen is dirty
         break;
- */
+
       case SCAN_F8:
         gSettings.DeInit = TRUE;
-        break; 
+        break;
+  */
       case SCAN_F9:
         SetNextScreenMode(1);
         break;

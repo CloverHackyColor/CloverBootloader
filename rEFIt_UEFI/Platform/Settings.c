@@ -4475,6 +4475,9 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "SetIntelBacklight");
       gSettings.IntelBacklight = IsPropertyTrue (Prop);
 
+      Prop = GetProperty (DictPointer, "SetIntelMaxBacklight");
+      gSettings.IntelMaxBacklight = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "Properties");
       if (Prop != NULL) {
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
@@ -6600,6 +6603,7 @@ SetDevices (
              (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
 
               UINT32 LevelW = 0xC0000000;
+              UINT32 LevelMaxW = 0x07100000;
               UINT32 IntelDisable = 0x03;
 
               //        gGraphics.DeviceID = Pci.Hdr.DeviceId;
@@ -6621,7 +6625,7 @@ SetDevices (
                       break;
                     }
                   }
-                  if (gSettings.DeInit) {
+      /*            if (gSettings.DeInit) {
                     for (j = 0; j < 4; j++) {
                       if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
                  //       *(UINT32*)(gGraphics[j].Mmio + 0x48) = 0;
@@ -6631,7 +6635,7 @@ SetDevices (
                       }
                     }
                   }
-
+*/
                   break;
 
                 case 0x8086:
@@ -6650,6 +6654,17 @@ SetDevices (
                                                   0xC8250,
                                                   1,
                                                   &LevelW
+                                                  );
+
+                  }
+                  if (gSettings.IntelMaxBacklight) {
+                    /*Status = */PciIo->Mem.Write(
+                                                  PciIo,
+                                                  EfiPciIoWidthUint32,
+                                                  0,
+                                                  0xC8254,
+                                                  1,
+                                                  &LevelMaxW
                                                   );
 
                   }

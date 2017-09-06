@@ -905,8 +905,9 @@ typedef struct {
 //Boot
   BOOLEAN                 LastBootedVolume;
   BOOLEAN                 SkipHibernateTimeout;
-  UINT8                   Pad21[2];
 //Monitor
+  BOOLEAN                 IntelMaxBacklight;
+  UINT8                   Pad21[1];
   UINT16                  VendorEDID;
   UINT16                  ProductEDID;  
   UINT16                  BacklightLevel;
@@ -1134,7 +1135,7 @@ typedef struct {
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
-  BOOLEAN                 DeInit;
+  BOOLEAN                 DeInit;  //for tests
   UINT8                   pad8[2];
   UINT32                  DisableFunctions;
 
