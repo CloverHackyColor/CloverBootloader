@@ -100,6 +100,14 @@ UINT8 default_NVPM[]= {
 
 #define NVPM_LEN ( sizeof(default_NVPM) / sizeof(UINT8) )
 
+UINT8  pwm_info[] = {
+  /* 0000 */  0x01, 0x14, 0x00, 0x64, 0xA8, 0x61, 0x00, 0x00,
+  /* 0008 */  0x08, 0x52, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+  /* 0010 */  0x00, 0x04, 0x00, 0x00
+
+};
+#define PWM_LEN ( sizeof(pwm_info) / sizeof(UINT8) )
+
 static nvidia_pci_info_t nvidia_card_vendors[] = {
 	{ 0x10190000,	"Elitegroup" },
 	{ 0x10250000,	"Acer" },
@@ -2502,7 +2510,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
   devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
-  
+  if (gMobile) {
+    DBG("Nvidia Mobile backlight\n");
+    devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&boot_display, 4);
+    devprop_add_value(device, "@0,backlight-control", (UINT8*)&boot_display, 4);
+    devprop_add_value(device, "@0,pwm-info", pwm_info, PWM_LEN);
+  }
+
+
   if (gSettings.NVCAP[0] == 0) {
     devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
     DBG("default NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",

@@ -6589,7 +6589,7 @@ SetDevices (
           if (!Once) {
             DBG("custom properties for device %02x:%02x.%02x injected, continue\n",
                 Bus, Device, Function);
-            continue;
+//            continue;
           }
         }
         // GFX
