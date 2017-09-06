@@ -328,11 +328,20 @@ CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 slot_nu
 {
   UINT8 bank = 0;
   UINT8 code = 0;
+  UINT8 parity;
+  UINT8 testbit;
   INTN  i = 0;
   //UINT8 * spd = (UINT8 *) slot->spd;
   if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR4) { // DDR4
     bank = spd[SPD_DDR4_MANUFACTURER_ID_BANK];
     code = spd[SPD_DDR4_MANUFACTURER_ID_CODE];
+    parity = bank;
+    testbit = bank;
+    for (i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
+    if ( (parity & 0x80) == 0 ) {
+      DBG("Bad parity bank=0x%2X code=0x%2X\n", bank, code);
+    }
+    bank &= 0x7f;
     for (i=0; i < VEN_MAP_SIZE; i++) {
       if (bank==vendorMap[i].bank && code==vendorMap[i].code) {
         return vendorMap[i].name;
@@ -340,8 +349,16 @@ CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 slot_nu
     }
     DBG("Unknown vendor bank=0x%2X code=0x%2X\n", bank, code);
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
-    bank = (spd[SPD_DDR3_MEMORY_BANK] & 0x07f); // constructors like Patriot use b7=1
+    bank = spd[SPD_DDR3_MEMORY_BANK]; // constructors like Patriot use b7=1
     code = spd[SPD_DDR3_MEMORY_CODE];
+    parity = bank;
+    testbit = bank;
+    for (i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
+    if ( (parity & 0x80) == 0 ) {
+      DBG("Bad parity bank=0x%2X code=0x%2X\n", bank, code);
+    }
+    bank &= 0x7f;
+
     for (i=0; i < VEN_MAP_SIZE; i++) {
       if (bank==vendorMap[i].bank && code==vendorMap[i].code) {
         return vendorMap[i].name;
