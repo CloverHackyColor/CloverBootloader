@@ -5040,9 +5040,9 @@ GetUserSettings(
               gSettings.FixDsdt |= FIX_HDA;
             }
 
-            Prop2 = GetProperty (Prop, "FIX_DARWIN_10000");
+            Prop2 = GetProperty (Prop, "FixDarwin7_10000");
             if (Prop2 != NULL && IsPropertyTrue (Prop2)) {
-              gSettings.FixDsdt |= FIX_WARNING;
+              gSettings.FixDsdt |= FIX_DARWIN;
             }
 
             Prop2 = GetProperty (Prop, "FIX_RTC_20000");

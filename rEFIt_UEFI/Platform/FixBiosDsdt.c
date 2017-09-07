@@ -1737,6 +1737,9 @@ UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
   CONST UINT32  adr  = 0x24;
   DBG("Start Darwin Fix\n");
   ReplaceName(dsdt, len, "_OSI", "OOSI");
+  if (gSettings.FixDsdt & FIX_DARWIN) {
+    darwin[42] = '9';  //windows 2009
+  }
   len = move_data(adr, dsdt, len, sizeof(darwin));
   CopyMem(dsdt+adr, darwin, sizeof(darwin));
   return len;
@@ -5229,7 +5232,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
   
-  if (gSettings.FixDsdt & FIX_WARNING) {
+  if ((gSettings.FixDsdt & FIX_WARNING) || (gSettings.FixDsdt & FIX_DARWIN)) {
     if (!FindMethod(temp, DsdtLen, "GET9") &&
         !FindMethod(temp, DsdtLen, "STR9") &&
         !FindMethod(temp, DsdtLen, "OOSI")) {

@@ -4399,7 +4399,8 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   //  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
   
   AddMenuCheck(SubScreen, "Add DTGP",     FIX_DTGP, 67);
-  AddMenuCheck(SubScreen, "Fix Darwin",   FIX_WARNING, 67);
+  AddMenuCheck(SubScreen, "Fix Darwin as WinXP",   FIX_WARNING, 67);
+  AddMenuCheck(SubScreen, "Fix Darwin as Win7",   FIX_DARWIN, 67);
   AddMenuCheck(SubScreen, "Fix shutdown", FIX_SHUTDOWN, 67);
   AddMenuCheck(SubScreen, "Add MCHC",     FIX_MCHC, 67);
   AddMenuCheck(SubScreen, "Fix HPET",     FIX_HPET, 67);

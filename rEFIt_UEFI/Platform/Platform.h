@@ -543,7 +543,7 @@ MSR C001006B  0000-0000-0000-0000
 #define FIX_HDA       bit(15)
 //new bits 16-31 0xFFFF0000
 //#define FIX_NEW_WAY   bit(31) will be reused
-//#define FIX_DARWIN   bit(16)
+#define FIX_DARWIN    bit(16)
 #define FIX_RTC       bit(17)
 #define FIX_TMR       bit(18)
 #define FIX_IMEI      bit(19)
