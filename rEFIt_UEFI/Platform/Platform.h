@@ -1224,7 +1224,9 @@ typedef struct {
   CHAR8                   **PatchDsdtLabel; //yyyy
   INPUT_ITEM              *PatchDsdtMenuItem;
   
-  
+  //other
+  UINT32                  IntelMaxValue;
+
   // boot.efi 
   UINT32 OptionsBits;
   UINT32 FlagsBits;

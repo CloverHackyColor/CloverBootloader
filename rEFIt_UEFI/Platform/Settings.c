@@ -4478,6 +4478,9 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "SetIntelMaxBacklight");
       gSettings.IntelMaxBacklight = IsPropertyTrue (Prop);
 
+      Prop = GetProperty (DictPointer, "IntelMaxValue");
+      gSettings.IntelMaxValue = (UINT32)GetPropertyInteger (Prop, gSettings.IntelMaxValue);
+
       Prop = GetProperty (DictPointer, "Properties");
       if (Prop != NULL) {
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
@@ -6658,6 +6661,9 @@ SetDevices (
 
                   }
                   if (gSettings.IntelMaxBacklight) {
+                    if (gSettings.IntelMaxValue) {
+                      LevelMaxW = gSettings.IntelMaxValue << 16;
+                    }
                     /*Status = */PciIo->Mem.Write(
                                                   PciIo,
                                                   EfiPciIoWidthUint32,

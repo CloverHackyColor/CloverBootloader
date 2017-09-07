@@ -299,7 +299,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel); // Download-Fritz: There is no GUI element for BacklightLevel; please revise
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
@@ -467,7 +467,6 @@ VOID FillInputs(BOOLEAN New)
 
 
   // CSR - aka System Integrity Protection configuration
-  InputItemsCount = 65;
   InputItems[InputItemsCount].ItemType = CheckBit; //65
   InputItems[InputItemsCount++].IValue = gSettings.BooterConfig;
   InputItems[InputItemsCount].ItemType = CheckBit; //66
@@ -667,6 +666,13 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaNoEFI;
   InputItems[InputItemsCount].ItemType = BoolValue; //111
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaSingle;
+
+  InputItems[InputItemsCount].ItemType = Decimal;  //112
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", gSettings.IntelMaxValue);
+
 
   //menu for drop table
   if (gSettings.ACPIDropTables) {
@@ -1246,6 +1252,11 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.NvidiaSingle = InputItems[i].BValue;
   }
+  i++; //112
+  if (InputItems[i].Valid) {
+    gSettings.IntelMaxValue = InputItems[i].BValue;
+  }
+
 
   if (NeedSave) {
     SaveSettings();
@@ -3998,6 +4009,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuItem(SubScreen, 53, "Fake Vendor EDID:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 54, "Fake Product EDID:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 18, "Backlight Level:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 18, "Intel Max Backlight:", TAG_INPUT, TRUE); //gSettings.IntelMaxValue
 
 
   for (i = 0; i < NGFX; i++) {
