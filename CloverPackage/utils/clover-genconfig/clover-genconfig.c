@@ -514,7 +514,8 @@ void PrintConfig(CFTypeRef data)
   addBoolean(pciDict, CFSTR("UseIntelHDMI"), s->UseIntelHDMI);
   addBoolean(pciDict, CFSTR("ForceHPET"), s->ForceHPET);
   addBoolean(pciDict, CFSTR("#SetIntelBacklight"), s->IntelBacklight);
-  
+  addBoolean(pciDict, CFSTR("#SetIntelMaxBacklight"), s->IntelMaxBacklight);
+  addInteger(pciDict, CFSTR("#IntelMaxValue"), s->IntelMaxValue);
   
 
   CFMutableDictionaryRef usbDict = addDict(pciDict, CFSTR("USB"));

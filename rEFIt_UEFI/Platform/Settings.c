@@ -6615,8 +6615,8 @@ SetDevices (
                 
               switch (gCPUStructure.Model) {
                   case CPU_MODEL_SANDY_BRIDGE:
+                  case CPU_MODEL_IVY_BRIDGE:
                       LevelMaxW = 0x07100000;
-                      case CPU_MODEL_IVY_BRIDGE:
                       break;
                       
                   case CPU_MODEL_HASWELL:
@@ -6624,7 +6624,7 @@ SetDevices (
                   case CPU_MODEL_HASWELL_U5:
                   case CPU_MODEL_CRYSTALWELL:
                   case CPU_MODEL_BROADWELL_HQ:
-                      LevelMaxW = gSettings.IgPlatform != (UINT32)0x0a2e0008 ? 0xad900000 : 0x56c00000;
+                      LevelMaxW = (gSettings.IgPlatform != (UINT32)0x0a2e0008) ? 0xad900000 : 0x56c00000;
                       break;
                       
                   case CPU_MODEL_SKYLAKE_U:

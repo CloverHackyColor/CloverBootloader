@@ -4009,7 +4009,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuItem(SubScreen, 53, "Fake Vendor EDID:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 54, "Fake Product EDID:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 18, "Backlight Level:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 18, "Intel Max Backlight:", TAG_INPUT, TRUE); //gSettings.IntelMaxValue
+  AddMenuItem(SubScreen, 112, "Intel Max Backlight:", TAG_INPUT, TRUE); //gSettings.IntelMaxValue
 
 
   for (i = 0; i < NGFX; i++) {
