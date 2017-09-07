@@ -6606,7 +6606,36 @@ SetDevices (
              (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
 
               UINT32 LevelW = 0xC0000000;
-              UINT32 LevelMaxW = 0x07100000;
+              // syscl: set PWMMax base on platform
+              // 10: Sandy/Ivy 0x710
+              // 11: Haswell/Broadwell 0xad9
+              // 12: Skylake/KabyLake 0x56c (and some Haswell, example 0xa2e0008)
+              // 99: Other
+              UINT32 LevelMaxW = 0;
+                
+              switch (gCPUStructure.Model) {
+                  case CPU_MODEL_SANDY_BRIDGE:
+                      LevelMaxW = 0x07100000;
+                      case CPU_MODEL_IVY_BRIDGE:
+                      break;
+                      
+                  case CPU_MODEL_HASWELL:
+                  case CPU_MODEL_HASWELL_ULT:
+                  case CPU_MODEL_HASWELL_U5:
+                  case CPU_MODEL_CRYSTALWELL:
+                  case CPU_MODEL_BROADWELL_HQ:
+                      LevelMaxW = gSettings.IgPlatform != (UINT32)0x0a2e0008 ? 0xad900000 : 0x56c00000;
+                      break;
+                      
+                  case CPU_MODEL_SKYLAKE_U:
+                  case CPU_MODEL_KABYLAKE1:
+                  case CPU_MODEL_KABYLAKE2:
+                      LevelMaxW = 0x56c00000;
+                      break;
+                      
+                  default:
+                      break;
+              }
               UINT32 IntelDisable = 0x03;
 
               //        gGraphics.DeviceID = Pci.Hdr.DeviceId;

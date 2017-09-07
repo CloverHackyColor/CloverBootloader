@@ -950,7 +950,7 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
             DBG("Applied _xcpm_pkg_scope_msr patch\n");
         } else {
             DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-            DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+            DBG("BroadwellEPM() <===FALSE\n");
             return FALSE;
         }
     }
