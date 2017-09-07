@@ -917,17 +917,43 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
 {
     DBG("BroadwellEPM() ===>\n");
     UINT8       *kern = (UINT8*)kernelData;
+    UINT32      i;
+    UINT32      patchLocation;
     UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
     
     // check OS version suit for patches
     if (os_version < AsciiOSVersionToUint64("10.8.5")) {
-        DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS at least 10.10.3, aborted\n");
+        DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS at least 10.8.5, aborted\n");
         DBG("BroadwellEPM() <===FALSE\n");
         return FALSE;
     }
     
     Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(os_version < AsciiOSVersionToUint64("10.10.3") ? 0x0306C0 : 0x040674);
     KernelCPUIDPatch(kern, Entry);
+    
+    DBG("Searching _xcpm_pkg_scope_msr ...\n");
+    if (os_version >= AsciiOSVersionToUint64("10.12")) {
+        patchLocation = 0; // clean out the value just in case
+        for (i = 0; i < 0x1000000; i++) {
+            if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+                kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+                patchLocation = i+7;
+                DBG("Found _xcpm_pkg_scope_msr\n");
+                break;
+            }
+        }
+        
+        if (patchLocation) {
+            for (i = 0; i < 5; i++) {
+                kern[patchLocation+i] = 0x90;
+            }
+            DBG("Applied _xcpm_pkg_scope_msr patch\n");
+        } else {
+            DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+            DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+            return FALSE;
+        }
+    }
     
     DBG("BroadwellEPM() <===\n");
     return TRUE;
