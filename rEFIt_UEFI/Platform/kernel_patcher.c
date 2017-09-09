@@ -901,7 +901,7 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
             DBG("Applied _xcpm_pkg_scope_msr patch\n");
         } else {
             DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-            DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+            DBG("HaswellEXCPM() <===FALSE\n");
             return FALSE;
         }
     }

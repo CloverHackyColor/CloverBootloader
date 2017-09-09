@@ -54,8 +54,6 @@
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/010_kbl_-_2016-2017/intel-gfx-prm-osrc-kbl-vol04-configurations.pdf
  ============== 10th generation ===========
  https://github.com/Igalia/release-mesa/blob/ecd8f8580288361f6c4d532ba964a744dd62a9dd/include/pci_ids/i965_pci_ids.h
- ============== 10.5th generation =========
- https://github.com/Igalia/release-mesa/blob/ecd8f8580288361f6c4d532ba964a744dd62a9dd/include/pci_ids/i965_pci_ids.h
  */
 
 
