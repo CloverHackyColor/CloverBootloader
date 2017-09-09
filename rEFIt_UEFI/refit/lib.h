@@ -369,6 +369,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_DSDT_PATCHES 25
 #define SCREEN_DEVICES    26
 #define SCREEN_BOOTER     27
+#define SCREEN_KEXT_INJECT   28
 
 #define MAX_ANIME  41
 
@@ -705,6 +706,9 @@ VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID 
 VOID GetListOfThemes(VOID);
 VOID GetListOfConfigs(VOID);
 VOID GetListOfACPI(VOID);
+
+// syscl
+VOID GetListOfInjectKext(CHAR16 *);
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
 

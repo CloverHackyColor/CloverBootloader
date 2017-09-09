@@ -28,6 +28,7 @@
 
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
+SIDELOAD_KEXT                   *InjectKextList;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
@@ -3055,6 +3056,56 @@ GetListOfACPI ()
 
   DirIterClose(&DirIter);
   FreePool(AcpiPath);
+}
+
+VOID GetListOfInjectKext(CHAR16 *sysVer)
+{
+    REFIT_DIR_ITER  DirIter;
+    EFI_FILE_INFO*  DirEntry;
+    SIDELOAD_KEXT*  mKext;
+    gSettings.DisableInjectKextCount = 0;
+    //UINT64    os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+    INTN i, Count = gSettings.DisableInjectKextCount;
+    CHAR16*         KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, sysVer);
+    //CHAR16* KextPath = PoolPrint(L"%s\\KEXTS\\10.12", OEMPath);
+    //CHAR16* KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, L"10.12");
+    
+    /*
+    if (InjectKextList && StrStr(InjectKextList->MatchOS, sysVer) == NULL) {
+        FreePool(InjectKextList);
+        InjectKextList = NULL;
+    }*/
+    
+    DirIterOpen(SelfRootDir, KextPath, &DirIter);
+    
+    while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
+        CHAR16  FullName[256];
+        if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
+            continue;
+        }
+        
+        UnicodeSPrint(FullName, 512, L"%s\\%s", KextPath, DirEntry->FileName);
+        if (FileExists(SelfRootDir, FullName)) {
+            BOOLEAN KextDisable = FALSE;
+            mKext = AllocateZeroPool (sizeof(SIDELOAD_KEXT));
+            mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
+            
+            for (i = 0; i < Count; i++) {
+                if ((gSettings.DisabledInjectKext[i] != NULL) &&
+                    (StriCmp(mKext->FileName, gSettings.DisabledInjectKext[i]) == 0)) {
+                    KextDisable = TRUE;
+                    break;
+                }
+            }
+            mKext->MenuItem.BValue = KextDisable;
+            mKext->MatchOS = sysVer;
+            mKext->Next = InjectKextList;
+            InjectKextList = mKext;
+        }
+    }
+    
+    DirIterClose(&DirIter);
+    FreePool(KextPath);
 }
 
 #define CONFIG_THEME_FILENAME L"theme.plist"

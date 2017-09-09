@@ -4184,6 +4184,45 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   return Entry;  
 }
 
+REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* sysVer)
+{
+    REFIT_MENU_ENTRY     *Entry;
+    REFIT_MENU_SCREEN    *SubScreen;
+    REFIT_INPUT_DIALOG   *InputBootArgs;
+    GetListOfInjectKext(sysVer);
+    SIDELOAD_KEXT        *Kext = InjectKextList;
+    CHAR8                uni_sysVer[8];
+    UnicodeStrToAsciiStrS(sysVer, uni_sysVer, 6);
+    for (UINTN i = 0; i < 8; i++) {
+        if (uni_sysVer[i] == '\0') {
+            uni_sysVer[i+0] = '-';
+            uni_sysVer[i+1] = '>';
+            break;
+        }
+    }
+    
+    NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, uni_sysVer);
+    
+    AddMenuInfoLine(SubScreen, PoolPrint(L"Choose kext to disable:"));
+    
+    while (Kext) {
+        if (StrStr(Kext->MatchOS, sysVer) != NULL) {
+            InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+            InputBootArgs->Entry.Title = PoolPrint(L"Disable %s", Kext->FileName);
+            InputBootArgs->Entry.Tag = TAG_INPUT;
+            InputBootArgs->Entry.Row = 0xFFFF; //cursor
+            InputBootArgs->Item = &(Kext->MenuItem);
+            InputBootArgs->Entry.AtClick = ActionEnter;
+            InputBootArgs->Entry.AtRightClick = ActionDetails;
+            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+        }
+        Kext = Kext->Next;
+    }
+
+    AddMenuEntry(SubScreen, &MenuEntryReturn);
+    return Entry;  
+}
+
 REFIT_MENU_ENTRY  *SubMenuKernelPatches()
 {
   REFIT_MENU_ENTRY     *Entry;
@@ -4706,6 +4745,35 @@ REFIT_MENU_ENTRY *SubMenuSystem()
   return Entry;
 }
 
+REFIT_MENU_ENTRY *SubMenuKextInjectMgmt()
+{
+    REFIT_MENU_ENTRY   *Entry;
+    REFIT_MENU_SCREEN  *SubScreen;
+    CHAR16             *kextDir = NULL;
+
+    NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
+    
+    CHAR8  *uni_sysVer[] = {  "10.15",  "10.14",  "10.13",  "10.12",  "10.11",  "10.10",  "10.9",  "10.8",  "10.7",  "10.6" };
+    CHAR16 *asc_sysVer[] = { L"10.15", L"10.14", L"10.13", L"10.12", L"10.11", L"10.10", L"10.9", L"10.8", L"10.7", L"10.6" };
+    UINTN  sysCount = 10;
+    
+    // submenu description
+    AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for target version of macOS:"));
+    
+    if ((kextDir = GetOtherKextsDir())) {
+        AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+    }
+    
+    for (UINTN i = 0; i < sysCount; i++) {
+        if ((kextDir = GetOSVersionKextsDir(uni_sysVer[i]))) {
+            AddMenuEntry(SubScreen, SubMenuKextBlockInjection(asc_sysVer[i]));
+        }
+    }
+    
+    AddMenuEntry(SubScreen, &MenuEntryReturn);
+    return Entry;
+}
+
 REFIT_MENU_ENTRY  *SubMenuConfigs()
 {
   REFIT_MENU_ENTRY   *Entry;
@@ -4787,6 +4855,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuAudio());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
+    AddMenuEntry(&OptionMenu, SubMenuKextInjectMgmt());
     AddMenuEntry(&OptionMenu, SubMenuSystem());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
