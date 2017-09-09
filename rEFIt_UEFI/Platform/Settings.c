@@ -3064,17 +3064,10 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
     EFI_FILE_INFO*  DirEntry;
     SIDELOAD_KEXT*  mKext;
     gSettings.DisableInjectKextCount = 0;
-    //UINT64    os_version = AsciiOSVersionToUint64(Entry->OSVersion);
     INTN i, Count = gSettings.DisableInjectKextCount;
     CHAR16*         KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, sysVer);
     //CHAR16* KextPath = PoolPrint(L"%s\\KEXTS\\10.12", OEMPath);
     //CHAR16* KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, L"10.12");
-    
-    /*
-    if (InjectKextList && StrStr(InjectKextList->MatchOS, sysVer) == NULL) {
-        FreePool(InjectKextList);
-        InjectKextList = NULL;
-    }*/
     
     DirIterOpen(SelfRootDir, KextPath, &DirIter);
     
