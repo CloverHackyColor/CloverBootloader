@@ -4203,18 +4203,31 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* sysVer)
     
     NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, uni_sysVer);
     
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Choose kext to disable:"));
+    AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
     
     while (Kext) {
         if (StrStr(Kext->MatchOS, sysVer) != NULL) {
             InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-            InputBootArgs->Entry.Title = PoolPrint(L"Disable %s", Kext->FileName);
+            InputBootArgs->Entry.Title = PoolPrint(L"  %s", Kext->FileName);
             InputBootArgs->Entry.Tag = TAG_INPUT;
             InputBootArgs->Entry.Row = 0xFFFF; //cursor
             InputBootArgs->Item = &(Kext->MenuItem);
             InputBootArgs->Entry.AtClick = ActionEnter;
             InputBootArgs->Entry.AtRightClick = ActionDetails;
             AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+            
+            SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
+            while (plugInKext) {
+                InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+                InputBootArgs->Entry.Title = PoolPrint(L"    |-- %s", plugInKext->FileName);
+                InputBootArgs->Entry.Tag = TAG_INPUT;
+                InputBootArgs->Entry.Row = 0xFFFF; //cursor
+                InputBootArgs->Item = &(plugInKext->MenuItem);
+                InputBootArgs->Entry.AtClick = ActionEnter;
+                InputBootArgs->Entry.AtRightClick = ActionDetails;
+                AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+                plugInKext = plugInKext->Next;
+            }
         }
         Kext = Kext->Next;
     }

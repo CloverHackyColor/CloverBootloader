@@ -3063,6 +3063,7 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
     REFIT_DIR_ITER  DirIter;
     EFI_FILE_INFO*  DirEntry;
     SIDELOAD_KEXT*  mKext;
+    SIDELOAD_KEXT*  mPlugInKext;
     gSettings.DisableInjectKextCount = 0;
     INTN i, Count = gSettings.DisableInjectKextCount;
     CHAR16*         KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, sysVer);
@@ -3094,6 +3095,32 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
             mKext->MatchOS = sysVer;
             mKext->Next = InjectKextList;
             InjectKextList = mKext;
+            
+            // Obtain PlugInList
+            // Iterate over PlugIns directory
+            REFIT_DIR_ITER  PlugInsIter;
+            EFI_FILE_INFO   *PlugInEntry;
+            CHAR16          PlugInsPath[256];
+            
+            UnicodeSPrint(PlugInsPath, 512, L"%s\\%s", FullName, L"Contents\\PlugIns");
+
+            DirIterOpen(SelfVolume->RootDir, PlugInsPath, &PlugInsIter);
+            while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
+                CHAR16 CurrentPlugInPath[256];
+                if (PlugInEntry->FileName[0] == L'.' || StrStr(PlugInEntry->FileName, L".kext") == NULL) {
+                    continue;
+                }
+                
+                UnicodeSPrint(CurrentPlugInPath, 512, L"%s\\%s", PlugInsPath, PlugInEntry->FileName);
+                BOOLEAN plugInKextDisable = FALSE;
+                mPlugInKext = AllocateZeroPool(sizeof(SIDELOAD_KEXT));
+                mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
+                mPlugInKext->MenuItem.BValue = plugInKextDisable;
+                mPlugInKext->MatchOS = sysVer;
+                mPlugInKext->Next    = mKext->PlugInList;
+                mKext->PlugInList    = mPlugInKext;
+            }
+            DirIterClose(&PlugInsIter);
         }
     }
     

@@ -821,6 +821,7 @@ struct ACPI_PATCHED_AML
 typedef struct SIDELOAD_KEXT SIDELOAD_KEXT;
 struct SIDELOAD_KEXT {
     SIDELOAD_KEXT  *Next;
+    SIDELOAD_KEXT  *PlugInList;
     CHAR16         *FileName;
     CHAR16         *MatchOS;
     INPUT_ITEM     MenuItem;

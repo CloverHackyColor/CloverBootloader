@@ -236,6 +236,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	EFI_FILE_INFO           *PlugInFile;
 	CHAR16                  FileName[256];
 	CHAR16                  PlugIns[256];
+    CHAR16                  PlugInName[256];
 	CHAR16			*Arch = NULL;
 	CHAR16			*Ptr = NULL;
 #if defined(MDE_CPU_X64)
@@ -325,19 +326,35 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     // syscl - allow custom load inject kext 
     if ((SrcDir = GetOtherKextsDir())) {
         MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+        if (!InjectKextList) {
+            // init InjectKextList
+            GetListOfInjectKext(L"Other");
+        }
         SIDELOAD_KEXT *CurrentKext = InjectKextList;
         while (CurrentKext) {
             if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
                 // match current inject folder
                 BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
+                UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
                 if (kextNeedInject) {
                     // inject require
-                    UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
                     MsgLog("  Extra kext: %s\n", FileName);
                     AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
                     
-                    UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-                    LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType, FALSE);
+                    // decide which plugins to inject
+                    SIDELOAD_KEXT *CurrentPlugInKext = CurrentKext->PlugInList;
+                    while (CurrentPlugInKext) {
+                        BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
+                        UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
+                        if (plugInNeedInject) {
+                            // inject PlugIn require
+                            MsgLog("  PlugIn kext: %s\n", PlugInName);
+                            AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
+                        } else {
+                            MsgLog("  Disabled plug-in kext: %s\n", PlugInName);
+                        }
+                        CurrentPlugInKext = CurrentPlugInKext->Next;
+                    } // end of plug-in kext injection
                 } else {
                     // disable current kext injection
                     MsgLog("  Disabled kext: %s\n", FileName);
@@ -351,27 +368,42 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
         MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
         CHAR16 asc_sysVer[6];
         AsciiStrToUnicodeStrS(Entry->OSVersion, asc_sysVer, 6);
+        if (!InjectKextList) {
+            // init InjectKextList
+            GetListOfInjectKext(asc_sysVer);
+        }
         SIDELOAD_KEXT *CurrentKext = InjectKextList;
         while (CurrentKext) {
             if (StrStr(CurrentKext->MatchOS, asc_sysVer) != NULL) {
                 // match current version of macOS
                 BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
+                UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
                 if (kextNeedInject) {
                     // inject require
-                    UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
                     MsgLog("  Extra kext: %s\n", FileName);
                     AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
                     
-                    UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-                    LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType, FALSE);
+                    // decide which plugins to inject
+                    SIDELOAD_KEXT *CurrentPlugInKext = CurrentKext->PlugInList;
+                    while (CurrentPlugInKext) {
+                        BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
+                        UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
+                        if (plugInNeedInject) {
+                            // inject PlugIn require
+                            MsgLog("  PlugIn kext: %s\n", PlugInName);
+                            AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
+                        } else {
+                            MsgLog("  Disabled plug-in kext: %s\n", PlugInName);
+                        }
+                        CurrentPlugInKext = CurrentPlugInKext->Next;
+                    } // end of plug-in kext injection
                 } else {
                     // disable current kext injection
                     MsgLog("  Disabled kext: %s\n", FileName);
                 }
-                
             }
             CurrentKext = CurrentKext->Next;
-        }
+        } // end of kext injection
     }
     /*
      SrcDir = GetOSVersionKextsDir(Entry->OSVersion);

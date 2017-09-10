@@ -707,7 +707,7 @@ VOID GetListOfThemes(VOID);
 VOID GetListOfConfigs(VOID);
 VOID GetListOfACPI(VOID);
 
-// syscl
+// syscl - get list of inject kext(s)
 VOID GetListOfInjectKext(CHAR16 *);
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
