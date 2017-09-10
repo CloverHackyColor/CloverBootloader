@@ -610,7 +610,7 @@ EFI_STATUS egScreenShot(VOID)
     UINT8           *FileData;
     UINTN           FileDataLength;
     UINTN           Index;
-    CHAR16					ScreenshotName[128];
+    CHAR16          ScreenshotName[128];
       
     if (!egHasGraphics)
         return EFI_NOT_READY;

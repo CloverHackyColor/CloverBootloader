@@ -383,12 +383,33 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   EFI_FILE_HANDLE     FileHandle;
   UINTN               BufferSize;
   BOOLEAN             CreateNew = TRUE;
+  CHAR16              *p = FileName + StrLen(FileName);
+  CHAR16              DirName[256];
+  UINTN               dirNameLen;
 
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
     if (EFI_ERROR(Status))
       return Status;
   }
+    
+  // syscl - make directory if not exist
+  while (*p != L'\\' && p >= FileName) {
+    // find the first '\\' traverse from the end to head of FileName
+    p -= 1;
+  }
+  dirNameLen = p - FileName;
+  StrnCpy(DirName, FileName, dirNameLen);
+  Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
+                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, EFI_FILE_DIRECTORY);
+    
+  if (EFI_ERROR(Status)) {
+      // make dir
+      Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
+                               EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
+  }
+  FreePool(DirName);
+  // end of folder checking
 
   // Delete existing file if it exists
   Status = BaseDir->Open(BaseDir, &FileHandle, FileName,

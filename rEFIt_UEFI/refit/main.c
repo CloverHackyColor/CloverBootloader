@@ -1809,7 +1809,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //  EFI_INPUT_KEY Key;
 
   // Init assets dir: misc
-  /*Status = */egMkDir(SelfRootDir,  L"EFI\\CLOVER\\misc");
+  /*Status = */ //egMkDir(SelfRootDir,  L"EFI\\CLOVER\\misc");
   //Should apply to: "ACPI/origin/" too
 
   // get TSC freq and init MemLog if needed
