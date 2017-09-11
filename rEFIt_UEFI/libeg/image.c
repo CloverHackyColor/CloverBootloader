@@ -408,7 +408,6 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
       Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                                EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
   }
-  FreePool(DirName);
   // end of folder checking
 
   // Delete existing file if it exists
@@ -431,8 +430,11 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   } else {
     //to write into existing file we must sure it size larger then our data
     EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
-    if (Info && Info->FileSize < FileDataLength) {
-      return EFI_NOT_FOUND;
+    if (Info) {
+      if (Info->FileSize < FileDataLength) {
+        return EFI_NOT_FOUND;
+      }
+      FreePool(Info);
     }
   }
 
