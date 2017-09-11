@@ -2859,7 +2859,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     ChrsNum = 16;
   } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
     ChrsNum = 17;
-  } else if (GlobalConfig.TileXSpace >= 50 && GlobalConfig.TileXSpace < 55) {
+  } else if (GlobalConfig.TileXSpace >= 50) {
     ChrsNum = 18;
   }
   
