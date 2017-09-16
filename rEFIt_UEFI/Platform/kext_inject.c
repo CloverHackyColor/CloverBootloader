@@ -323,13 +323,19 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 		}
 		DirIterClose(&KextIter);
 	}*/
-    // syscl - allow custom load inject kext 
+    
+    // syscl - allow specific load inject kext
+    // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
+    CHAR16 asc_sysVer[6];
+    AsciiStrToUnicodeStrS(Entry->OSVersion, asc_sysVer, 6);
+    if (!InjectKextList) {
+        // init InjectKextList
+        GetListOfInjectKext(L"Other");
+        GetListOfInjectKext(asc_sysVer);
+    }
+    
     if ((SrcDir = GetOtherKextsDir())) {
         MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
-        if (!InjectKextList) {
-            // init InjectKextList
-            GetListOfInjectKext(L"Other");
-        }
         SIDELOAD_KEXT *CurrentKext = InjectKextList;
         while (CurrentKext) {
             if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
@@ -366,12 +372,6 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
     if ((SrcDir = GetOSVersionKextsDir(Entry->OSVersion))) {
         MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
-        CHAR16 asc_sysVer[6];
-        AsciiStrToUnicodeStrS(Entry->OSVersion, asc_sysVer, 6);
-        if (!InjectKextList) {
-            // init InjectKextList
-            GetListOfInjectKext(asc_sysVer);
-        }
         SIDELOAD_KEXT *CurrentKext = InjectKextList;
         while (CurrentKext) {
             if (StrStr(CurrentKext->MatchOS, asc_sysVer) != NULL) {
