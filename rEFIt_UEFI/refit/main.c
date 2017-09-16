@@ -2252,9 +2252,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     if (!GlobalConfig.FastBoot) {
       
-#ifdef CHECK_FLAGS
+
       CHAR16 *TmpArgs;
-#endif
+
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
@@ -2269,13 +2269,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-#ifdef CHECK_FLAGS
+
       TmpArgs = PoolPrint(L"%a ", gSettings.BootArgs);
       DBG("after NVRAM boot-args=%a\n", gSettings.BootArgs);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %x\n", gSettings.OptionsBits);
       FreePool(TmpArgs);
-#endif
       FillInputs(TRUE);
 
       // scan for loaders and tools, add then to the menu

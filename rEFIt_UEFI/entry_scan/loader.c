@@ -713,30 +713,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     FreePool(GuidStr);
   }
   AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
-/*
-  // default entry
-  SubEntry = DuplicateLoaderEntry(Entry);
-  if (SubEntry) {
-    SubEntry->me.Title = (Entry->LoaderType == OSTYPE_OSX ||
-                          Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
-                          Entry->LoaderType == OSTYPE_RECOVERY) ?
-      L"Boot macOS" : PoolPrint(L"Run %s", FileName);
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-  }
- */
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     AddMenuInfoLine(SubScreen, PoolPrint(L"macOS %a", Entry->OSVersion));
-#ifdef CHECK_FLAGS
-    //AddMenuCheck(SubScreen, "Hibernate wake",       OSFLAG_HIBERNATED, 69);
-    //    AddMenuCheck(SubScreen, "Cancel hibernate wake", OSFLAG_NOHIBERNATED, 69);
-/*    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Force hibernate wake";
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_HIBERNATED);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
- */
+
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = L"Cancel hibernate wake";
@@ -774,204 +754,20 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     AddMenuCheck(SubScreen, "Use Nvidia WEB drivers (nvda_drv=1)",        OPT_NVWEBON, 68);
     AddMenuCheck(SubScreen, "Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
     AddMenuCheck(SubScreen, "Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
-    AddMenuCheck(SubScreen, "Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
-    AddMenuCheck(SubScreen, "Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
-    AddMenuCheck(SubScreen, "Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
-    AddMenuCheck(SubScreen, "EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
+//    AddMenuCheck(SubScreen, "Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
+//    AddMenuCheck(SubScreen, "Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
+//    AddMenuCheck(SubScreen, "Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
+//    AddMenuCheck(SubScreen, "EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
     AddMenuCheck(SubScreen, "Keep symbols on panic (keepsyms=1)",         OPT_KEEPSYMS, 68);
     AddMenuCheck(SubScreen, "Don't reboot on panic (debug=0x100)",        OPT_DEBUG, 68);
     AddMenuCheck(SubScreen, "Debug kexts (kextlog=0xffff)",               OPT_KEXTLOG, 68);
-    AddMenuCheck(SubScreen, "Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
-    AddMenuCheck(SubScreen, "Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
+//    AddMenuCheck(SubScreen, "Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
+//    AddMenuCheck(SubScreen, "Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
 
     if (gSettings.CsrActiveConfig == 0) {
       AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
     }
     
-#else
-#if defined(MDE_CPU_X64)
-    if (!KernelIs64BitOnly) {
-      SubEntry = DuplicateLoaderEntry(Entry);
-      if (SubEntry) {
-        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=x86_64");
-        SubEntry->me.Title        = L"Boot macOS  (64-bit)";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      }
-    }
-#endif
-    if (!KernelIs64BitOnly) {
-      SubEntry = DuplicateLoaderEntry(Entry);
-      if (SubEntry) {
-        SubEntry->me.Title        = L"Boot macOS  (32-bit)";
-        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"arch=i386");
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      }
-    }
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Force hibernate wake";
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_HIBERNATED);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Cancel hibernate wake";
-      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-
-    if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SINGLEUSER)) {
-
-#if defined(MDE_CPU_X64)
-      if (KernelIs64BitOnly) {
-        SubEntry = DuplicateLoaderEntry(Entry);
-        if (SubEntry) {
-          SubEntry->me.Title        = L"Boot macOS  in verbose mode";
-          SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-          SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-
-        if (SubEntry->OSVersion && (AsciiOSVersionToUint64(SubEntry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
-          SubEntry = DuplicateLoaderEntry(Entry);
-          if (SubEntry) {
-            SubEntry->me.Title        = L"Boot macOS  with No SIP";
-            SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_NOSIP);
-            //SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-          }
-        }
-      } else {
-        SubEntry = DuplicateLoaderEntry(Entry);
-        if (SubEntry) {
-          SubEntry->me.Title        = L"Boot macOS  in verbose mode (64bit)";
-          SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-          TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
-          SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
-          FreePool(TempOptions);
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-      }
-
-#endif
-
-      if (!KernelIs64BitOnly) {
-        SubEntry = DuplicateLoaderEntry(Entry);
-        if (SubEntry) {
-          SubEntry->me.Title        = L"Boot macOS in verbose mode (32-bit)";
-          SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-          TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
-          SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
-          FreePool(TempOptions);
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-      }
-
-      SubEntry = DuplicateLoaderEntry(Entry);
-      if (SubEntry) {
-        SubEntry->me.Title        = L"Boot macOS in safe mode";
-        SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-        TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
-        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
-        FreePool(TempOptions);
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      }
-
-      SubEntry = DuplicateLoaderEntry(Entry);
-      if (SubEntry) {
-        SubEntry->me.Title        = L"Boot macOS in single user verbose mode";
-        SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-        TempOptions = AddLoadOption(SubEntry->LoadOptions, L"-v");
-        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
-        FreePool(TempOptions);
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      }
-
-      SubEntry = DuplicateLoaderEntry(Entry);
-      if (SubEntry) {
-        SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_NOCACHES) ?
-        L"Boot macOS with caches" :
-        L"Boot macOS without caches";
-        SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_NOCACHES);
-        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      }
-
-      SubEntry = DuplicateLoaderEntry(Entry);
-      if (SubEntry) {
-        SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
-        L"Boot macOS without injected kexts" :
-        L"Boot macOS with injected kexts";
-        SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
-        SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-      }
-
-      if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS))
-      {
-        if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES))
-        {
-          SubEntry = DuplicateLoaderEntry(Entry);
-          if (SubEntry) {
-            SubEntry->me.Title        = L"Boot macOS with caches and without injected kexts";
-            SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-            SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-          }
-        }
-        else
-        {
-          SubEntry = DuplicateLoaderEntry(Entry);
-          if (SubEntry) {
-            SubEntry->me.Title        = L"Boot macOS without caches and without injected kexts";
-            SubEntry->Flags           = OSFLAG_UNSET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-            SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-          }
-        }
-      }
-      else if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES))
-      {
-        SubEntry = DuplicateLoaderEntry(Entry);
-        if (SubEntry) {
-          SubEntry->me.Title        = L"Boot macOS with caches and with injected kexts";
-          SubEntry->Flags           = OSFLAG_SET(OSFLAG_UNSET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-      }
-      else
-      {
-        SubEntry = DuplicateLoaderEntry(Entry);
-        if (SubEntry) {
-          SubEntry->me.Title        = L"Boot macOS without caches and with injected kexts";
-          SubEntry->Flags           = OSFLAG_SET(OSFLAG_SET(SubEntry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-      }
-    }
-/*
-    // check for Apple hardware diagnostics
-    StrCpy(DiagsFileName, L"\\System\\Library\\CoreServices\\.diagnostics\\diags.efi");
-    if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & HIDEUI_FLAG_HWTEST)) {
-      DBG("  - Apple Hardware Test found\n");
-
-      // NOTE: Sothor - I'm not sure if to duplicate parent entry here.
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = PoolPrint(L"Run Apple Hardware Test");
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = EfiStrDuplicate(DiagsFileName);
-      SubEntry->Volume          = Volume;
-      SubEntry->VolName         = EfiStrDuplicate(Entry->VolName);
-      SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
-      SubEntry->DevicePathString = EfiStrDuplicate(Entry->DevicePathString);
-      SubEntry->Flags           = OSFLAG_SET(Entry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
- */
-#endif
   } else if (Entry->LoaderType == OSTYPE_LINEFI) {
     BOOLEAN Quiet = (StrStr(Entry->LoadOptions, L"quiet") != NULL);
     BOOLEAN WithSplash = (StrStr(Entry->LoadOptions, L"splash") != NULL);
