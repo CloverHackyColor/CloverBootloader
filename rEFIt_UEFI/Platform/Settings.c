@@ -28,7 +28,7 @@
 
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
-SIDELOAD_KEXT                   *InjectKextList;
+SIDELOAD_KEXT                   *InjectKextList = NULL;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
@@ -3066,12 +3066,30 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
     SIDELOAD_KEXT*  mPlugInKext;
     gSettings.DisableInjectKextCount = 0;
     INTN i, Count = gSettings.DisableInjectKextCount;
-    CHAR16*         KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, sysVer);
-    //CHAR16* KextPath = PoolPrint(L"%s\\KEXTS\\10.12", OEMPath);
-    //CHAR16* KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, L"10.12");
+    CHAR16*   KextPath = NULL;
+    CHAR8     ascii_sysVer[6];
     
-    DirIterOpen(SelfRootDir, KextPath, &DirIter);
+    // check if KextPath exist or not in
+    // both OEM path and Clover/kexts.
+    // if OEM path not exist then go check
+    // the existence of Clover/kexts
+    if (StrStr(sysVer, L"Other") != NULL) {
+        KextPath = GetOtherKextsDir();
+    } else {
+        UnicodeStrToAsciiStrS(sysVer, ascii_sysVer, 6);
+        KextPath = GetOSVersionKextsDir(ascii_sysVer);
+    }
     
+    if (KextPath == NULL) {
+        // Extra kext folder not found
+        DBG("Extra kext folder of %a does not found - skip\n", ascii_sysVer);
+        return;
+    }
+    //CHAR16*         KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, sysVer);
+    
+    //DirIterOpen(SelfRootDir, KextPath, &DirIter);
+    
+    DirIterOpen(SelfVolume->RootDir, KextPath, &DirIter);
     while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
         CHAR16  FullName[256];
         if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
@@ -3079,51 +3097,48 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
         }
         
         UnicodeSPrint(FullName, 512, L"%s\\%s", KextPath, DirEntry->FileName);
-        if (FileExists(SelfRootDir, FullName)) {
-            BOOLEAN KextDisable = FALSE;
-            mKext = AllocateZeroPool (sizeof(SIDELOAD_KEXT));
-            mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
-            
-            for (i = 0; i < Count; i++) {
-                if ((gSettings.DisabledInjectKext[i] != NULL) &&
-                    (StriCmp(mKext->FileName, gSettings.DisabledInjectKext[i]) == 0)) {
-                    KextDisable = TRUE;
-                    break;
-                }
+        BOOLEAN KextDisable = FALSE;
+        mKext = AllocateZeroPool (sizeof(SIDELOAD_KEXT));
+        mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
+        
+        for (i = 0; i < Count; i++) {
+            if ((gSettings.DisabledInjectKext[i] != NULL) &&
+                (StriCmp(mKext->FileName, gSettings.DisabledInjectKext[i]) == 0)) {
+                KextDisable = TRUE;
+                break;
             }
-            mKext->MenuItem.BValue = KextDisable;
-            mKext->MatchOS = sysVer;
-            mKext->Next = InjectKextList;
-            InjectKextList = mKext;
-            
-            // Obtain PlugInList
-            // Iterate over PlugIns directory
-            REFIT_DIR_ITER  PlugInsIter;
-            EFI_FILE_INFO   *PlugInEntry;
-            CHAR16          PlugInsPath[256];
-            
-            UnicodeSPrint(PlugInsPath, 512, L"%s\\%s", FullName, L"Contents\\PlugIns");
-
-            DirIterOpen(SelfVolume->RootDir, PlugInsPath, &PlugInsIter);
-            while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
-                CHAR16 CurrentPlugInPath[256];
-                if (PlugInEntry->FileName[0] == L'.' || StrStr(PlugInEntry->FileName, L".kext") == NULL) {
-                    continue;
-                }
-                
-                UnicodeSPrint(CurrentPlugInPath, 512, L"%s\\%s", PlugInsPath, PlugInEntry->FileName);
-                BOOLEAN plugInKextDisable = FALSE;
-                mPlugInKext = AllocateZeroPool(sizeof(SIDELOAD_KEXT));
-                mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
-                mPlugInKext->MenuItem.BValue = plugInKextDisable;
-                mPlugInKext->MatchOS = sysVer;
-                mPlugInKext->Next    = mKext->PlugInList;
-                mKext->PlugInList    = mPlugInKext;
-            }
-            DirIterClose(&PlugInsIter);
         }
+        mKext->MenuItem.BValue = KextDisable;
+        mKext->MatchOS = sysVer;
+        mKext->Next = InjectKextList;
+        InjectKextList = mKext;
+        
+        // Obtain PlugInList
+        // Iterate over PlugIns directory
+        REFIT_DIR_ITER  PlugInsIter;
+        EFI_FILE_INFO   *PlugInEntry;
+        CHAR16          PlugInsPath[256];
+        
+        UnicodeSPrint(PlugInsPath, 512, L"%s\\%s", FullName, L"Contents\\PlugIns");
+        
+        DirIterOpen(SelfVolume->RootDir, PlugInsPath, &PlugInsIter);
+        while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
+            CHAR16 CurrentPlugInPath[256];
+            if (PlugInEntry->FileName[0] == L'.' || StrStr(PlugInEntry->FileName, L".kext") == NULL) {
+                continue;
+            }
+            
+            UnicodeSPrint(CurrentPlugInPath, 512, L"%s\\%s", PlugInsPath, PlugInEntry->FileName);
+            BOOLEAN plugInKextDisable = FALSE;
+            mPlugInKext = AllocateZeroPool(sizeof(SIDELOAD_KEXT));
+            mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
+            mPlugInKext->MenuItem.BValue = plugInKextDisable;
+            mPlugInKext->MatchOS = sysVer;
+            mPlugInKext->Next    = mKext->PlugInList;
+            mKext->PlugInList    = mPlugInKext;
+        }
+        DirIterClose(&PlugInsIter);
     }
-    
     DirIterClose(&DirIter);
     FreePool(KextPath);
 }

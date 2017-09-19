@@ -2072,22 +2072,9 @@ VOID FinalizeSmbios() //continue
     //
     // to fix Dell's SMBIOS truncate credit David Passmore
     //
-    if (gRemapSmBiosIsRequire)
-    {
-      //
-      // syscl: remap smbios table 1 guid
-      //
-      DBG("Remap smbios table type 1 guid.\n");
-      gBS->InstallConfigurationTable (&gRemapEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
-    }
-    else
-    {
-      //
-      // use origin smbios guid table
-      //
-      DBG("Use origin smbios table type 1 guid.\n");
-	  gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
-    }
+    DBG ("%a SMBIOS Table Type1 GUID: %g\n", gRemapSmBiosIsRequire?"Remap":"Use original",
+         gRemapSmBiosIsRequire?gRemapEfiSmbiosTableGuid:gEfiSmbiosTableGuid);
+    gBS->InstallConfigurationTable((gRemapSmBiosIsRequire?&gRemapEfiSmbiosTableGuid:&gEfiSmbiosTableGuid), (VOID*)SmbiosEpsNew);
     
 	gST->Hdr.CRC32 = 0;
 	gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, gST->Hdr.HeaderSize, &gST->Hdr.CRC32);

@@ -4208,7 +4208,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* sysVer)
     while (Kext) {
         if (StrStr(Kext->MatchOS, sysVer) != NULL) {
             InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-            InputBootArgs->Entry.Title = PoolPrint(L"  %s", Kext->FileName);
+            InputBootArgs->Entry.Title = PoolPrint(L"%s", Kext->FileName);
             InputBootArgs->Entry.Tag = TAG_INPUT;
             InputBootArgs->Entry.Row = 0xFFFF; //cursor
             InputBootArgs->Item = &(Kext->MenuItem);
@@ -4219,7 +4219,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* sysVer)
             SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
             while (plugInKext) {
                 InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-                InputBootArgs->Entry.Title = PoolPrint(L"    |-- %s", plugInKext->FileName);
+                InputBootArgs->Entry.Title = PoolPrint(L"  |-- %s", plugInKext->FileName);
                 InputBootArgs->Entry.Tag = TAG_INPUT;
                 InputBootArgs->Entry.Row = 0xFFFF; //cursor
                 InputBootArgs->Item = &(plugInKext->MenuItem);
