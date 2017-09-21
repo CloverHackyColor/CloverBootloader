@@ -3964,8 +3964,8 @@ ParseSMBIOSSettings(
 {
   CHAR8  *i, *j, *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
   CHAR16 UStr[64];
-  UINT32 FF, FFM;
-  UINT64 PF;
+  //  UINT32 FF, FFM;
+  //  UINT64 PF;
   TagPtr Prop, Prop1;
   BOOLEAN Default = FALSE;
 
@@ -3986,11 +3986,10 @@ ParseSMBIOSSettings(
       SetDMISettingsForModel (iMac132, FALSE);
     }
     DBG ("Using ProductName from config\n");
-    DBG ("ProductName: %a\n", gSettings.ProductName);
   } else {
     DBG ("Using ProductName from clover\n");
-    DBG ("ProductName: %a\n", gSettings.ProductName);
   }
+  DBG ("ProductName: %a\n", gSettings.ProductName);
 
   // Check for BiosVersion and BiosReleaseDate by Sherlocks
   Prop = GetProperty (DictPointer, "BiosVersion");
@@ -4237,8 +4236,9 @@ ParseSMBIOSSettings(
   // Check for FirmwareFeatures and FirmwareFeaturesMask by Sherlocks
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
   if (Prop != NULL) {
-    FF = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
-
+    gFwFeatures = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
+    DBG ("Using FirmwareFeatures from config\n");
+/*
     if (FF == gFwFeatures) {
       DBG ("Found same FirmwareFeatures in clover and config\n");
       DBG ("FirmwareFeatures: 0x%08x\n", gFwFeatures);
@@ -4269,15 +4269,17 @@ ParseSMBIOSSettings(
           break;
       }
     }
+ */
   } else {
     DBG ("Using FirmwareFeatures from clover\n");
-    DBG ("FirmwareFeatures: 0x%08x\n", gFwFeatures);
   }
+  DBG ("FirmwareFeatures: 0x%08x\n", gFwFeatures);
 
   Prop = GetProperty (DictPointer, "FirmwareFeaturesMask");
   if (Prop != NULL) {
-    FFM = (UINT32)GetPropertyInteger (Prop, gFwFeaturesMask);
-	
+    gFwFeaturesMask = (UINT32)GetPropertyInteger (Prop, gFwFeaturesMask);
+    DBG ("Using FirmwareFeaturesMask from config\n");
+ /*   
     if (FFM == gFwFeaturesMask) {
       DBG ("Found same FirmwareFeaturesMask in clover and config\n");
       DBG ("FirmwareFeaturesMask: 0x%08x\n", gFwFeaturesMask);
@@ -4287,27 +4289,32 @@ ParseSMBIOSSettings(
       DBG ("Using latest FirmwareFeaturesMask from clover\n");
       DBG ("FirmwareFeaturesMask: 0x%08x\n", gFwFeaturesMask);
     }
+  */
   } else {
     DBG ("Using FirmwareFeaturesMask from clover\n");
-    DBG ("FirmwareFeaturesMask: 0x%08x\n", gFwFeaturesMask);
   }
+  DBG ("FirmwareFeaturesMask: 0x%08x\n", gFwFeaturesMask);
 
   Prop = GetProperty (DictPointer, "PlatformFeature");
   if (Prop != NULL) {
-    PF = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
-
+    gPlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
+/*
     if (PF == gPlatformFeature) {
       DBG ("Found same PlatformFeature in clover and config\n");
       DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
     } else {
       gPlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
       DBG ("Using PlatformFeature from config\n");
-      DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
-    }
+    } */
   } else {
-    DBG ("Using PlatformFeature from clover\n");
-    DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
+    if (gPlatformFeature == 0xFFFF) {
+      DBG ("PlatformFeature will not set in SMBIOS\n");
+    } else {
+      DBG ("Using PlatformFeature from clover\n");
+    }
   }
+  DBG ("PlatformFeature: 0x%x\n", gPlatformFeature);
+  
 
   Prop = GetProperty (DictPointer, "BiosVendor");
   if (Prop != NULL) {
@@ -4359,6 +4366,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "Board-ID");
   if (Prop != NULL) {
     AsciiStrCpyS (gSettings.BoardNumber, 64, Prop->string);
+    DBG ("Board-ID set from config as %a\n", gSettings.BoardNumber);
   }
 
   Prop = GetProperty (DictPointer, "BoardVersion");
