@@ -2948,7 +2948,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[9], dsdt+k, 4);
             DBG("found Airport device [%08x:%x] at %x And Name is %a\n",
                 ArptADR1, ArptADR2, ArptADR, device_name[9]);
-            ReplaceName(dsdt + BrdADR, BridgeSize, device_name[9], "ARPT");
+            //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[9], "ARPT"); //sometimes dangeous
             ArptName = TRUE;
             break;
           }
