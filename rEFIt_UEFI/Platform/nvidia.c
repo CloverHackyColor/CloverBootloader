@@ -2513,6 +2513,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   if (gMobile) {
     DBG("Nvidia Mobile backlight\n");
     devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&boot_display, 4);
+    devprop_add_value(device, "AAPL,HasLid", (UINT8*)&boot_display, 4);
+    devprop_add_value(device, "AAPL,HasPanel", (UINT8*)&boot_display, 4);
     devprop_add_value(device, "@0,backlight-control", (UINT8*)&boot_display, 4);
     devprop_add_value(device, "@0,pwm-info", pwm_info, PWM_LEN);
   }
