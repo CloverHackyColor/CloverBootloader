@@ -2349,6 +2349,7 @@ DriverHealthSelectBestLanguage (
   BestLanguage = GetBestLanguage(
                    SupportedLanguages,
                    Iso639Language,
+                   "", /* skipped by GetBestLanguage() */
                    (LanguageVariable != NULL) ? LanguageVariable : "",
                    Iso639Language ? "eng" : "en-US",
                    NULL

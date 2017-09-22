@@ -84,6 +84,7 @@ InitializeUnicodeCollationSupportWorker (
     BestLanguage = GetBestLanguage (
                      Uci->SupportedLanguages,
                      Iso639Language,
+                     "", /* skipped by GetBestLanguage() */               
                      (Language == NULL) ? "" : Language,
                      DefaultLanguage,
                      NULL

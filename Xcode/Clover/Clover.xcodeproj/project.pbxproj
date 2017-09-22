@@ -891,6 +891,7 @@
 		2C794D1B1A0AA85900D845B0 /* NVRAMDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
 		2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
+		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2674,6 +2675,7 @@
 				12C874CF1DE42A4200BF4974 /* CloverPkg.dec */,
 				1283F7EB1DF1D3900005BFF2 /* config-sample.plist */,
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
+				A511943C1F74B380005B0121 /* Patches_for_EDK2 */,
 			);
 			sourceTree = "<group>";
 		};
