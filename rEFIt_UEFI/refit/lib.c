@@ -599,6 +599,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->IconName = L"grub,linux";
         Volume->LegacyOS->Name = L"Linux";
         Volume->BootType = BOOTING_BY_PBR;
+        /*
       } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
                   *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                  FindMem(SectorBuffer, 2048, "BOOT      ", 10) >= 0) { //reboot Clover
@@ -608,7 +609,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         //        DBG("Detected Clover FAT32 bootcode\n");
-        
+     */   
         
       } else if ((*((UINT32 *)(SectorBuffer + 502)) == 0 &&
                   *((UINT32 *)(SectorBuffer + 506)) == 50000 &&

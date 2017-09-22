@@ -4152,8 +4152,6 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
       //aml_add_byte(device4, 0x01);
       aml_add_string(met, "empty");
       aml_add_byte(met, 0);
-    }    else {
-      DBG(" IDE properties injected\n");
     }
   } else {
     met = aml_add_method(root, "_DSM", 4);
@@ -4172,8 +4170,6 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
       aml_add_byte(met, 0);
       aml_add_local0(met2);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-    }    else {
-      DBG(" IDE properties injected\n");
     }
   }
   // finish Method(_DSM,4,NotSerialized)
@@ -4195,7 +4191,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 
     //add patafix
   sizeoffset = sizeof(patafix);
-  DBG("add patafix size=%x\n", sizeoffset);
+//  DBG("add patafix size=%x\n", sizeoffset);
   i = get_size(dsdt, IDEADR);
   j = IDEADR + i;
   len = move_data(j, dsdt, len, sizeoffset);
@@ -4231,7 +4227,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, SATAAHCIADR1)) {
-           DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, i);
+ //          DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, i);
       SATAAHCIADR = devFind(dsdt, i);
       if (!SATAAHCIADR) {
         continue;

@@ -728,6 +728,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->me.Title        = L"Boot macOS with selected options";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
+/*
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
@@ -737,7 +738,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
-
+*/
     
 //    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
 //    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
