@@ -1007,7 +1007,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       FreePool(tmpName);
       // NOTE: this is normal for Apple's VenMedia device paths
     } else {
-      Volume->VolName = L"Unknown HD";
+      Volume->VolName = EfiStrDuplicate(L"Unknown HD"); //To be able to free it
     }
   }
   

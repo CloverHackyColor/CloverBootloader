@@ -179,7 +179,7 @@ Headers collection for procedures
 #define CPU_MODEL_AIRMONT       0x4C  /* CherryTrail / Braswell */
 #define CPU_MODEL_AVOTON        0x4D  /* Avaton/Rangely */
 #define CPU_MODEL_SKYLAKE_U     0x4E  /* Skylake Mobile */
-#define CPU_MODEL_BROADWELL_E5  0x4F
+#define CPU_MODEL_BROADWELL_E5  0x4F  /* Xeon E5-2695 */
 #define CPU_MODEL_SKYLAKE_S     0x55  /* Skylake Server */
 #define CPU_MODEL_BROADWELL_DE  0x56
 #define CPU_MODEL_KNIGHT        0x57  /* Knights Landing */
