@@ -491,6 +491,8 @@
 		<false/>
 		<key>ScreenResolution</key>
 		<string>1280x1024</string>
+		<key>ShowOptimus</key>
+		<false/>
 		<key>Theme</key>
 		<string>metal</string>
 	</dict>

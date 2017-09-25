@@ -90,6 +90,7 @@ BOOLEAN SavePreBootLog = FALSE;
 
 #define TEXT_CORNER_REVISION  (1)
 #define TEXT_CORNER_HELP      (2)
+#define TEXT_CORNER_OPTIMUS   (3)
 
 #define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
 
@@ -3550,19 +3551,23 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
   CHAR16  *Text = NULL;
 
   if (
-    // HIDEUI_ALL - included
-    ((TextC == TEXT_CORNER_REVISION) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
-    ((TextC == TEXT_CORNER_HELP) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP) != 0))
-  ) {
+      // HIDEUI_ALL - included
+      ((TextC == TEXT_CORNER_REVISION) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
+      ((TextC == TEXT_CORNER_HELP) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
+      ((TextC == TEXT_CORNER_OPTIMUS) && (GlobalConfig.ShowOptimus == FALSE))
+      ) {
     return;
   }
-
+  
   switch (TextC) {
     case TEXT_CORNER_REVISION:
       Text = gFirmwareRevision;
       break;
     case TEXT_CORNER_HELP:
       Text = L"F1:Help";
+      break;
+    case TEXT_CORNER_OPTIMUS:
+      Text = (NGFX == 2)?L"Optimus":L"Discrete";
       break;
     default:
       return;
@@ -3575,13 +3580,13 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
     case X_IS_RIGHT:
       Xpos = UGAWidth - 5;//2
       break;
-    case X_IS_CENTER: //not used
+    case X_IS_CENTER:
       Xpos = UGAWidth >> 1;
       break;
     default:
       return;
   }
-
+  //  DBG("draw text %s at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
   DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
 }
 
@@ -3853,6 +3858,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       MouseBirth();
       break;
@@ -3889,6 +3895,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       MouseBirth();
       break;
@@ -3903,6 +3910,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       MouseBirth();
       break;
@@ -5030,9 +5038,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       gSettings.OptionsBits |= EncodeOptions(((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
 //      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
-      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+      //      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
       gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
-      DBG(" and with FlagsBits = 0x%x\n", gSettings.FlagsBits);
+      //      DBG(" and with FlagsBits = 0x%x\n", gSettings.FlagsBits);
 
       if (TmpArgs) {
         FreePool(TmpArgs);
@@ -5049,11 +5057,11 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         if (MainChosenEntry->Tag == TAG_CLOVER) {
           ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions = EfiStrDuplicate(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
         }
-        DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+        //       DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
         if ((SubMenuExit == MENU_EXIT_ENTER) &&
             (TempChosenEntry->Tag != TAG_RETURN)) {
           ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
-          DBG(" get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+          //       DBG(" get FlagsBits = 0x%x\n", gSettings.FlagsBits);
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->Tag == TAG_LOADER) {
           if (((LOADER_ENTRY*)MainChosenEntry)->LoadOptions) {
