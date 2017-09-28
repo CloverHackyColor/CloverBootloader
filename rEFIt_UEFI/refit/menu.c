@@ -3567,7 +3567,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       Text = L"F1:Help";
       break;
     case TEXT_CORNER_OPTIMUS:
-      Text = (NGFX == 2)?L"Optimus":L"Discrete";
+      Text = (NGFX == 2)?L"Intel":L"Discrete";
       break;
     default:
       return;

@@ -189,6 +189,33 @@ VOID GetCPUProperties (VOID)
   }
   gCPUStructure.Model += (gCPUStructure.Extmodel << 4);
   
+  /* get BrandString (if supported) */
+  if (gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004) {
+    CHAR8         *s;
+    ZeroMem(str, 128);
+    /*
+     * The BrandString 48 bytes (max), guaranteed to
+     * be NULL terminated.
+     */
+    DoCpuid(0x80000002, reg);
+    CopyMem(&str[0], (CHAR8 *)reg,  16);
+    DoCpuid(0x80000003, reg);
+    CopyMem(&str[16], (CHAR8 *)reg,  16);
+    DoCpuid(0x80000004, reg);
+    CopyMem(&str[32], (CHAR8 *)reg,  16);
+    for (s = str; *s != '\0'; s++){
+      if (*s != ' ') break; //remove leading spaces
+    }
+    AsciiStrnCpyS(gCPUStructure.BrandString, 48, s, 48);
+    
+    if (!AsciiStrnCmp((const CHAR8*)gCPUStructure.BrandString, (const CHAR8*)CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48)))
+    {
+      gCPUStructure.BrandString[0] = '\0';
+    }
+    gCPUStructure.BrandString[47] = '\0';
+    DBG("BrandString = %a\n", gCPUStructure.BrandString);
+  }
+  
   //Calculate Nr of Cores
   if (gCPUStructure.Features & CPUID_FEATURE_HTT) {
     gCPUStructure.LogicalPerPackage  = (UINT32)bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16); //Atom330 = 4
@@ -287,6 +314,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_KABYLAKE1:
       case CPU_MODEL_KABYLAKE2:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
+        DBG("MSR 0x35    %16x\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
@@ -342,33 +370,6 @@ VOID GetCPUProperties (VOID)
     if (gCPUStructure.Cores > gCPUStructure.Threads) {
       gCPUStructure.Threads = gCPUStructure.Cores;
     }
-  }
-  
-  /* get BrandString (if supported) */
-  if (gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004) {
-    CHAR8         *s;
-    ZeroMem(str, 128);
-    /*
-     * The BrandString 48 bytes (max), guaranteed to
-     * be NULL terminated.
-     */
-    DoCpuid(0x80000002, reg);
-    CopyMem(&str[0], (CHAR8 *)reg,  16);
-    DoCpuid(0x80000003, reg);
-    CopyMem(&str[16], (CHAR8 *)reg,  16);
-    DoCpuid(0x80000004, reg);
-    CopyMem(&str[32], (CHAR8 *)reg,  16);
-    for (s = str; *s != '\0'; s++){
-      if (*s != ' ') break; //remove leading spaces
-    }
-    AsciiStrnCpyS(gCPUStructure.BrandString, 48, s, 48);
-    
-    if (!AsciiStrnCmp((const CHAR8*)gCPUStructure.BrandString, (const CHAR8*)CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48)))
-    {
-      gCPUStructure.BrandString[0] = '\0';
-    }
-    gCPUStructure.BrandString[47] = '\0';
-    DBG("BrandString = %a\n", gCPUStructure.BrandString);
   }
   
   //workaround for N270. I don't know why it detected wrong

@@ -2189,14 +2189,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("Invalid smbios.plist, not overriding config.plist!\n");
     }
   }
-  
+/*
   if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
     if (GlobalConfig.StrictHibernate) {
       DBG(" Don't use StrictHibernate with emulated NVRAM!\n");
     }
     GlobalConfig.StrictHibernate = FALSE;    
   }
-
+*/
   HaveDefaultVolume = gSettings.DefaultVolume != NULL;
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&

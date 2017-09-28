@@ -758,11 +758,11 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   }
   
   if (!gFirmwareClover &&
-      !gDriversFlags.EmuVariableLoaded) {
-    DBG("    UEFI with NVRAM: ");
+      (!gDriversFlags.EmuVariableLoaded || GlobalConfig.HibernationFixup)) {
+    DBG("    UEFI with NVRAM? ");
     Status = GetVariable2 (L"Boot0082", &gEfiGlobalVariableGuid, (VOID**)&Data, &Size);
     if (EFI_ERROR(Status))  {
-      DBG(" Boot0082 not exists\n");
+      DBG(" no, Boot0082 not exists\n");
       ret = FALSE;
     } else {
        DBG("yes\n");

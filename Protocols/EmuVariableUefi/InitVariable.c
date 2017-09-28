@@ -1,6 +1,6 @@
 /** @file
 
-  Implment all four UEFI runtime variable services and 
+  Implement all four UEFI runtime variable services and 
   install variable architeture protocol.
   
 Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
@@ -31,6 +31,7 @@ EFI_RUNTIME_SERVICES *gRT;
 /** Apple Boot Guid - cars with this GUID are visible in OSX with nvram */
 extern EFI_GUID gEfiAppleBootGuid;
 
+EFI_GUID DellEventGuid = {0xFF2E9FC7, 0xD16F, 0x434A, {0xA2, 0x4E, 0xC9, 0x95, 0x19, 0xB7, 0xEB, 0x93}};
 
 
 
@@ -129,6 +130,9 @@ RuntimeServiceSetVariable (
   IN VOID          *Data
   )
 {
+  if (CompareGuid(VendorGuid, &DellEventGuid)) {
+    return EFI_SUCCESS;
+  }
   return EmuSetVariable (
           VariableName,
           VendorGuid,

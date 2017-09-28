@@ -516,7 +516,7 @@ typedef struct {
   BOOLEAN     Proportional;
   BOOLEAN     NoEarlyProgress;
   BOOLEAN     ShowOptimus;
-//  INTN        PruneScrollRows;
+  BOOLEAN     HibernationFixup;
 } REFIT_CONFIG;
 
 // types
