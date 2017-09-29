@@ -916,6 +916,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
 //constants
 CHAR16  APFSFVBootPath[75]      = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\boot.efi"; 
 CHAR16  APFSRecBootPath[47]     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi";
+CHAR16  APFSInstallBootPath[67] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi";
 
 VOID ScanLoader(VOID)
 {
@@ -973,14 +974,17 @@ VOID ScanLoader(VOID)
 if ((StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 )&&APFSSupport==TRUE) {
     for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
       //Store current UUID
-      CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
+      CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
       //Fill with current UUID
-      StrnCpy(APFSFVBootPath+1,CurrentUUID,36);
-      StrnCpy(APFSRecBootPath+1,CurrentUUID,36);
+      StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
+      StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
+      StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
       ///Try to add FileVault entry
       AddLoaderEntry(APFSFVBootPath, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0);
       //Try to add Recovery APFS entry
       AddLoaderEntry(APFSRecBootPath, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
+      //Try to add macOS install entry
+      AddLoaderEntry(APFSInstallBootPath, NULL, L"macOS Install Prebooter", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
       FreePool(CurrentUUID);
     }
   }
@@ -998,8 +1002,8 @@ if ((StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preb
     // since on some systems this will actually be CloverX64.efi
     // renamed to bootmgfw.efi
     AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI Boot", Volume, NULL, OSTYPE_WINEFI, 0);
-    // check for Microsoft boot loader/menu. This entry is redundant
-    AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
+    // check for Microsoft boot loader/menu. This entry is redundant so excluded
+    // AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
     if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot", Volume, NULL, OSTYPE_WINEFI, 0)) {
       AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT", Volume, NULL, OSTYPE_WINEFI, 0);
