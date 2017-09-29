@@ -853,7 +853,9 @@ PutNvramPlistToRtVars ()
     }
 
     if (AsciiStrCmp (Tag->string, "Boot0082") == 0 || AsciiStrCmp (Tag->string, "BootNext") == 0) {
-        VendorGuid = &gEfiGlobalVariableGuid;
+      VendorGuid = &gEfiGlobalVariableGuid;
+      // it may happen only in this case
+      GlobalConfig.HibernationFixup = TRUE;
     }
 
     AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);

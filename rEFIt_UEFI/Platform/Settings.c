@@ -2361,8 +2361,10 @@ GetEarlyUserSettings (
         GlobalConfig.StrictHibernate = TRUE;
       }
       Prop = GetProperty (DictPointer, "HibernationFixup");
-      GlobalConfig.HibernationFixup = IsPropertyTrue (Prop);
-
+      if (Prop) {
+        GlobalConfig.HibernationFixup = IsPropertyTrue (Prop); //t will be set automatically
+      } 
+      
       //      Prop = GetProperty (DictPointer, "GetLegacyLanAddress");
       //      GetLegacyLanAddress = IsPropertyTrue (Prop);
 
