@@ -1964,12 +1964,14 @@ GetDefaultSettings ()
       gSettings.MinMultiplier    = 7;
     }
     //  gSettings.DoubleFirstState   = FALSE;
-    gSettings.DropSSDT           = TRUE;
+    //gSettings.DropSSDT           = TRUE;    //why drop all???
     gSettings.C3Latency          = 0x00FA;
   }
-
+  
+//CPU
   //gSettings.EnableISS            = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo                = gCPUStructure.Turbo;
+  gSettings.SavingMode           = 0xFF;  //means not set
   //MsgLog ("Turbo default value: %a\n", gCPUStructure.Turbo ? "Yes" : "No");
   //msr                            = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
   //force enable EIST
