@@ -221,7 +221,7 @@ typedef enum {
 
 typedef struct {
  UINT16   device_id;
- UINT32   subsys_id;
+// UINT32   subsys_id;
  ati_chip_family_t chip_family;
  const CHAR8  *model_name;
  config_name_t  cfg_name;

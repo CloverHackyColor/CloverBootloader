@@ -6339,7 +6339,7 @@ GetDevices ()
                 gfx->Mmio = (UINT8 *)(UINTN)(Pci.Device.Bar[5] & ~0x0f);
               }
               gfx->Connectors = *(UINT32*)(gfx->Mmio + RADEON_BIOS_0_SCRATCH);
-              DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08x\n", gfx->Connectors);
+   //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08x\n", gfx->Connectors);
               gfx->ConnChanged = FALSE;
               
               SlotDevice                  = &SlotDevices[0];
