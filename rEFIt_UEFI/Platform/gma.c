@@ -13,23 +13,20 @@
 /*
  Information
  ============== Lists =====================
- https://software.intel.com/en-us/articles/intel-graphics-developers-guides
- http://www.intel.com/content/www/us/en/support/graphics-drivers/000005526.html#core
- https://github.com/Igalia/intel-osrc-gfx-prm
- https://github.com/RehabMan/OS-X-Clover-Laptop-Config/blob/master/hotpatch/SSDT-IGPU.dsl
  https://en.wikipedia.org/wiki/List_of_Intel_chipsets
  https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units
- https://lists.freedesktop.org/archives/intel-gfx/2011-June/010815.html
- https://fossies.org/linux/mesa/include/pci_ids/i965_pci_ids.h
+ https://github.com/Igalia/intel-osrc-gfx-prm
  https://github.com/anholt/mesa/blob/master/include/pci_ids/i965_pci_ids.h
- https://sourceforge.net/p/android-x86/external_libdrm/ci/2f19fe44983647328a97cb4ce513d773459ca853/tree/shared-core/drm_pciids.txt#l325
- http://stskeeps.subnetmask.net/joggler/linux-2.6.33.2-iegd.patch
+ https://github.com/RehabMan/OS-X-Clover-Laptop-Config/blob/master/hotpatch/SSDT-IGPU.dsl
+ https://github.com/StefanG3D/gpudetect/blob/master/IntelGfx.cfg
+ https://fossies.org/linux/mesa/include/pci_ids/i965_pci_ids.h
+ https://software.intel.com/en-us/articles/intel-graphics-developers-guides
+ https://www.intel.com/content/www/us/en/support/graphics-drivers/000005526.html#core
  http://forge.voodooprojects.org/p/chameleon/source/tree/HEAD/trunk/i386/libsaio/gma.c
  ============== 1st generation ============
  ============== 2nd generation ============
  ============== 3rd generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/000_g35
- http://forge.voodooprojects.org/p/chameleon/source/commit/629/
  ============== 4th generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/001_g45
  ============== 5th generation ============
@@ -223,7 +220,7 @@ UINT8 haswell_ig_vals[15][4] = {
   { 0x00, 0x00, 0x16, 0x04 },	  //2 Intel HD Graphics 4600 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
   { 0x00, 0x00, 0x16, 0x0a },	  //3 Intel HD Graphics 4400 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
   { 0x00, 0x00, 0x16, 0x0c },	  //4 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
-  { 0x00, 0x00, 0x26, 0x04 },	  //5 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
+  { 0x00, 0x00, 0x26, 0x04 },	  //5 Intel HD Graphics 5000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
   { 0x00, 0x00, 0x26, 0x0a },	  //6 Intel HD Graphics 5000 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
   { 0x00, 0x00, 0x26, 0x0c },	  //7 Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
   { 0x00, 0x00, 0x26, 0x0d },	  //8 Intel Iris Pro Graphics 5200 - Port Count: 3, Pipes: 3, BIOS-allocated memory: 64MB, FBM(cursor): 16MB, Connector: LVDS1, eDP1, HDMI1
@@ -553,9 +550,9 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x041B, "Intel Haswell GT2"              }, //
   { 0x041E, "Intel HD Graphics 4400"         }, //
   //GT3
-  { 0x0422, "Intel Haswell GT3"              }, // Desktop
-  { 0x0426, "Intel Haswell GT3"              }, // Mobile
-  { 0x042A, "Intel Haswell GT3"              }, // Server
+  { 0x0422, "Intel HD Graphics 5000"         }, // Desktop
+  { 0x0426, "Intel HD Graphics 5000"         }, // Mobile
+  { 0x042A, "Intel HD Graphics 5000"         }, // Server
   { 0x042B, "Intel Haswell GT3"              }, //
   { 0x042E, "Intel Haswell GT3"              }, //
   //GT1
@@ -571,10 +568,10 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0A1B, "Intel Haswell GT2"              }, // ULT
   { 0x0A1E, "Intel HD Graphics 4200"         }, // ULT
   //GT3
-  { 0x0A22, "Intel Haswell GT3"              }, // Desktop ULT
+  { 0x0A22, "Intel Iris Graphics 5100"       }, // Desktop ULT
   { 0x0A26, "Intel HD Graphics 5000"         }, // Mobile ULT - MacBookAir6,1, MacBookAir6,2, Macmini7,1
-  { 0x0A2A, "Intel Haswell GT3"              }, // Server ULT
-  { 0x0A2B, "Intel Haswell GT3"              }, // ULT
+  { 0x0A2A, "Intel Iris Graphics 5100"       }, // Server ULT
+  { 0x0A2B, "Intel Iris Graphics 5100"       }, // ULT
   { 0x0A2E, "Intel Iris Graphics 5100"       }, // ULT - MacBookPro11,1
   //GT1
   { 0x0C02, "Intel Haswell GT1"              }, // Desktop SDV
@@ -596,22 +593,22 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0C2E, "Intel Haswell GT3"              }, // SDV
   //GT1
   { 0x0D02, "Intel Haswell GT1"              }, // Desktop CRW
-  { 0x0D06, "Intel HD Graphics 5200"         }, // Mobile CRW
+  { 0x0D06, "Intel Haswell GT1"              }, // Mobile CRW
   { 0x0D0A, "Intel Haswell GT1"              }, // Server CRW
   { 0x0D0B, "Intel Haswell GT1"              }, // CRW
   { 0x0D0E, "Intel Haswell GT1"              }, // CRW
   //GT2
-  { 0x0D12, "Intel HD Graphics 5200"         }, // Desktop CRW
-  { 0x0D16, "Intel HD Graphics 5200"         }, // Mobile CRW
+  { 0x0D12, "Intel HD Graphics 4600"         }, // Desktop CRW
+  { 0x0D16, "Intel HD Graphics 4600"         }, // Mobile CRW
   { 0x0D1A, "Intel Haswell GT2"              }, // Server CRW
   { 0x0D1B, "Intel Haswell GT2"              }, // CRW
   { 0x0D1E, "Intel Haswell GT2"              }, // CRW
   //GT3
   { 0x0D22, "Intel Iris Pro Graphics 5200"   }, // Desktop CRW - iMac14,1, iMac14,4
   { 0x0D26, "Intel Iris Pro Graphics 5200"   }, // Mobile CRW - MacBookPro11,2, MacBookPro11,3
-  { 0x0D2A, "Intel Haswell GT3"              }, // Server CRW
-  { 0x0D2B, "Intel Haswell GT3"              }, // CRW
-  { 0x0D2E, "Intel Haswell GT3"              }, // CRW
+  { 0x0D2A, "Intel Iris Pro Graphics 5200"   }, // Server CRW
+  { 0x0D2B, "Intel Iris Pro Graphics 5200"   }, // CRW
+  { 0x0D2E, "Intel Iris Pro Graphics 5200"   }, // CRW
 
   //----------------ValleyView----------------
   { 0x0F30, "Intel HD Graphics"              }, // Bay Trail
@@ -655,10 +652,10 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x163E, "Intel Broadwell RSVD"           }, // Reserved
 
   //------------Cherryview/Braswell-----------
-  { 0x22B0, "Intel HD Graphics 400"          }, // Cherry Trail - Atom x5 series - Z83X0/Z8550(HD Graphics 400)
-  { 0x22B1, "Intel HD Graphics 405"          }, // Cherry Trail - Atom x7 series - Z8750(HD Graphics 405)
-  { 0x22B2, "Intel HD Graphics 400"          }, // Braswell - Cerelon QC/DC series - X3X60(HD Graphics 400)
-  { 0x22B3, "Intel HD Graphics 405"          }, // Braswell - Pentium QC series - X3710(HD Graphics 405)
+  { 0x22B0, "Intel HD Graphics 400"          }, // Cherry Trail - Atom x5 series - Z83X0/Z8550
+  { 0x22B1, "Intel HD Graphics 405"          }, // Cherry Trail - Atom x7 series - Z8750
+  { 0x22B2, "Intel HD Graphics 400"          }, // Braswell - Cerelon QC/DC series - X3X60
+  { 0x22B3, "Intel HD Graphics 405"          }, // Braswell - Pentium QC series - X3710
 
 
   //============== 9th generation ============
@@ -1353,7 +1350,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0122: // "Intel HD Graphics 3000"          // Desktop
     case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1, Macmini5,1
       if (gSettings.IgPlatform != 0) {
-        devprop_add_value(device, "AAPL,snb-platform-id",	(UINT8*)&gSettings.IgPlatform, 4);
+        devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
         DBG("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetSnb = TRUE;
       } else {
@@ -1897,9 +1894,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x041B: // "Intel Haswell GT2"               //
     case 0x041E: // "Intel HD Graphics 4400"          //
       //GT3
-    case 0x0422: // "Intel Haswell GT3"               // Desktop
-    case 0x0426: // "Intel Haswell GT3"               // Mobile
-    case 0x042A: // "Intel Haswell GT3"               // Server
+    case 0x0422: // "Intel HD Graphics 5000"          // Desktop
+    case 0x0426: // "Intel HD Graphics 5000"          // Mobile
+    case 0x042A: // "Intel HD Graphics 5000"          // Server
     case 0x042B: // "Intel Haswell GT3"               //
     case 0x042E: // "Intel Haswell GT3"               //
       //GT1
@@ -1915,10 +1912,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0A1B: // "Intel Haswell GT2"               // ULT
     case 0x0A1E: // "Intel HD Graphics 4200"          // ULT
       //GT3
-    case 0x0A22: // "Intel Haswell GT3"               // Desktop ULT
+    case 0x0A22: // "Intel Iris Graphics 5100"        // Desktop ULT
     case 0x0A26: // "Intel HD Graphics 5000"          // Mobile ULT - MacBookAir6,1, MacBookAir6,2, Macmini7,1
-    case 0x0A2A: // "Intel Haswell GT3"               // Server ULT
-    case 0x0A2B: // "Intel Haswell GT3"               // ULT
+    case 0x0A2A: // "Intel Iris Graphics 5100"        // Server ULT
+    case 0x0A2B: // "Intel Iris Graphics 5100"        // ULT
     case 0x0A2E: // "Intel Iris Graphics 5100"        // ULT - MacBookPro11,1
       //GT1
     case 0x0C02: // "Intel Haswell GT1"               // Desktop SDV
@@ -1940,22 +1937,22 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0C2E: // "Intel Haswell GT3"               // SDV
       //GT1
     case 0x0D02: // "Intel Haswell GT1"               // Desktop CRW
-    case 0x0D06: // "Intel HD Graphics 5200"          // Mobile CRW
+    case 0x0D06: // "Intel Haswell GT1"               // Mobile CRW
     case 0x0D0A: // "Intel Haswell GT1"               // Server CRW
     case 0x0D0B: // "Intel Haswell GT1"               // CRW
     case 0x0D0E: // "Intel Haswell GT1"               // CRW
       //GT2
-    case 0x0D12: // "Intel HD Graphics 5200"          // Desktop CRW
-    case 0x0D16: // "Intel HD Graphics 5200"          // Mobile CRW
+    case 0x0D12: // "Intel HD Graphics 4600"          // Desktop CRW
+    case 0x0D16: // "Intel HD Graphics 4600"          // Mobile CRW
     case 0x0D1A: // "Intel Haswell GT2"               // Server CRW
     case 0x0D1B: // "Intel Haswell GT2"               // CRW
     case 0x0D1E: // "Intel Haswell GT2"               // CRW
       //GT3
     case 0x0D22: // "Intel Iris Pro Graphics 5200"    // Desktop CRW - iMac14,1, iMac14,4
     case 0x0D26: // "Intel Iris Pro Graphics 5200"    // Mobile CRW - MacBookPro11,2, MacBookPro11,3
-    case 0x0D2A: // "Intel Haswell GT3"               // Server CRW
-    case 0x0D2B: // "Intel Haswell GT3"               // CRW
-    case 0x0D2E: // "Intel Haswell GT3"               // CRW
+    case 0x0D2A: // "Intel Iris Pro Graphics 5200"    // Server CRW
+    case 0x0D2B: // "Intel Iris Pro Graphics 5200"    // CRW
+    case 0x0D2E: // "Intel Iris Pro Graphics 5200"    // CRW
       if (!SetFake) {
         switch (gma_dev->device_id) {
           case 0x0412:
@@ -1964,6 +1961,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           case 0x041E:
           case 0x0A16:
           case 0x0A1E:
+          case 0x0D12:
+          case 0x0D16:
             FakeID = 0x04128086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1971,15 +1970,15 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0A26:
-          case 0x0D06:
-          case 0x0D12:
-          case 0x0D16:
             FakeID = 0x0A268086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0A268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
+          case 0x0A22:
+          case 0x0A2A:
+          case 0x0A2B:
           case 0x0A2E:
             FakeID = 0x0A2E8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -1988,6 +1987,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0D22:
+          case 0x0D2A:
+          case 0x0D2B:
+          case 0x0D2E:
             FakeID = 0x0D228086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -2174,10 +2176,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       break;
 
       //------------Cherryview/Braswell-----------
-    case 0x22B0: // "Intel HD Graphics 400"           // Cherry Trail - Atom x5 series - Z83X0/Z8550(HD Graphics 400)
-    case 0x22B1: // "Intel HD Graphics 405"           // Cherry Trail - Atom x7 series - Z8750(HD Graphics 405)
-    case 0x22B2: // "Intel HD Graphics 400"           // Braswell - Cerelon QC/DC series - X3X60(HD Graphics 400)
-    case 0x22B3: // "Intel HD Graphics 405"           // Braswell - Pentium QC series - X3710(HD Graphics 405)
+    case 0x22B0: // "Intel HD Graphics 400"           // Cherry Trail - Atom x5 series - Z83X0/Z8550
+    case 0x22B1: // "Intel HD Graphics 405"           // Cherry Trail - Atom x7 series - Z8750
+    case 0x22B2: // "Intel HD Graphics 400"           // Braswell - Cerelon QC/DC series - X3X60
+    case 0x22B3: // "Intel HD Graphics 405"           // Braswell - Pentium QC series - X3710
       break;
 
 
@@ -2216,6 +2218,20 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x193B: // "Intel Iris Pro Graphics 580"     // Desktop, Mobile
     case 0x193D: // "Intel Iris Pro Graphics P580"    // Workstation, Mobile Workstation
       switch (gma_dev->device_id) {
+        case 0x1902:
+        case 0x1906:
+          if (!SetFake) {
+            FakeID = 0x19028086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x19028086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[1], 4);
+            DBG("  Found ig-platform-id = 0x19160000\n");
+          }
+          break;
         case 0x1912:
           if (!SetFake) {
             FakeID = 0x19128086 >> 16;
@@ -2406,6 +2422,22 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x3EA7: // "Intel Coffee Lake GT3"           //
     case 0x3EA8: // "Intel Coffee Lake GT3"           //
       switch (gma_dev->device_id) {
+        case 0x5902:
+        case 0x5906:
+        case 0x3E90:
+        case 0x3E93:
+          if (!SetFake) {
+            FakeID = 0x59028086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x59028086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[1], 4);
+            DBG("  Found ig-platform-id = 0x59160000\n");
+          }
+          break;
         case 0x5912:
         case 0x3E91:
         case 0x3E92:
