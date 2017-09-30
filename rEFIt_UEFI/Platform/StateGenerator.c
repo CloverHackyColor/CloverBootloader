@@ -55,6 +55,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   CHAR8 name[31];
   CHAR8 name1[31];
   CHAR8 name2[31];
+  CHAR8 name3[31];
   P_STATE initial, maximum, minimum, p_states[64];
   UINT8 p_states_count = 0;
   UINT8 cpu_dynamic_fsb = 0;
@@ -327,6 +328,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       AsciiSPrint(name, 31, "%a%4a", acpi_cpu_score, acpi_cpu_name[0]);
       AsciiSPrint(name1, 31, "%a%4aPSS_", acpi_cpu_score, acpi_cpu_name[0]);
       AsciiSPrint(name2, 31, "%a%4aPCT_", acpi_cpu_score, acpi_cpu_name[0]);
+      AsciiSPrint(name3, 31, "%a%4a_PPC", acpi_cpu_score, acpi_cpu_name[0]);
       
       scop = aml_add_scope(root, name);
       
@@ -359,8 +361,10 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         aml_add_return_name(metPSS, "PSS_");
         //    metPSS = aml_add_method(scop, "APSS", 0);
         //    aml_add_return_name(metPSS, "PSS_");
-        metPPC = aml_add_method(scop, "_PPC", 0);
-        aml_add_return_byte(metPPC, gSettings.PLimitDict);
+ //       metPPC = aml_add_method(scop, "_PPC", 0);
+        aml_add_name(scop, "_PPC");
+        aml_add_byte(scop, (UINT8)gSettings.PLimitDict);
+//        aml_add_return_byte(metPPC, gSettings.PLimitDict);
         namePCT = aml_add_name(scop, "PCT_");
         packPCT = aml_add_package(namePCT);
         resource_template_register_fixedhw[8] = 0x00;
@@ -391,7 +395,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           //      metPSS = aml_add_method(scop, "APSS", 0);
           //      aml_add_return_name(metPSS, name1);
           metPPC = aml_add_method(scop, "_PPC", 0);
-          aml_add_return_byte(metPPC, gSettings.PLimitDict);
+          aml_add_return_name(metPPC, name3);
+//          aml_add_return_byte(metPPC, gSettings.PLimitDict);
           metPCT = aml_add_method(scop, "_PCT", 0);
           aml_add_return_name(metPCT, name2);        
         }

@@ -772,7 +772,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
   UINT8         *End;
   UINT8         *pacBody;
 
-  Entry = (UINT8*)TableEntry;
+  Entry = (UINT8*)TableEntry;  //first entry is parent SSDT
   End = Entry + TableEntry->Length;
   while (Entry < End) {
 
@@ -817,7 +817,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
           }
 
           if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
-            FileName = PoolPrint(L"%sSSDT-%dx.aml", FileNamePrefix, *SsdtCount);
+            FileName = PoolPrint(L"%sSSDT-%dx-%a.aml", FileNamePrefix, *SsdtCount, OemTableId);
             len = ((UINT16*)adr)[2];
             DBG("Internal length = %d", len);
             Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
@@ -956,7 +956,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR8 *CheckSignat
     // take the name from the signature
     if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
       // Ssdt counter
-      FileName = PoolPrint(L"%sSSDT-%d.aml", FileNamePrefix, *SsdtCount);
+      FileName = PoolPrint(L"%sSSDT-%d-%a.aml", FileNamePrefix, *SsdtCount, OemTableId);
       *SsdtCount = *SsdtCount + 1;
       DumpChildSsdt(TableEntry, DirName, FileNamePrefix, SsdtCount);
     } else {
