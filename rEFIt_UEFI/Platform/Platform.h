@@ -1249,6 +1249,8 @@ typedef struct {
   UINT32 EFILoginHiDPI;
   UINT8  flagstate[32];
 
+  DEV_PROPERTY            *ArbProperties;
+
 } SETTINGS_DATA;
 
 typedef struct {

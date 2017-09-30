@@ -2395,7 +2395,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     string = devprop_create_string();
   }
   
-  device = devprop_add_device_pci(string, nvda_dev);
+  if (nvda_dev && !nvda_dev->used) {
+    device = devprop_add_device_pci(string, nvda_dev);
+    nvda_dev->used = TRUE;
+  }
   
   DBG("Nvidia: VideoPorts:");
   if (n_ports > 0) {

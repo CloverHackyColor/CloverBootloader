@@ -4608,7 +4608,7 @@ GetUserSettings(
         //---------
       }
 
-      Prop                          = GetProperty (DictPointer, "NoDefaultProperties");
+      Prop  = GetProperty (DictPointer, "NoDefaultProperties");
       gSettings.NoDefaultProperties = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "Arbitrary"); //yyyy
@@ -4662,69 +4662,62 @@ GetUserSettings(
                 UINTN Size = 0;
                 if (!EFI_ERROR(GetElement(Dict2, PropIndex, &Dict3))) {
 
-                  DevProp = gSettings.AddProperties;
-                  gSettings.AddProperties = AllocateZeroPool(sizeof(DEV_PROPERTY));
-                  gSettings.AddProperties->Next = DevProp;
+                  DevProp = gSettings.ArbProperties;
+                  gSettings.ArbProperties = AllocateZeroPool(sizeof(DEV_PROPERTY));
+                  gSettings.ArbProperties->Next = DevProp;
 
-                  gSettings.AddProperties->Device = (UINT32)DeviceAddr;
-                  gSettings.AddProperties->Label = AllocateCopyPool(AsciiStrSize(Label), Label);;
+                  gSettings.ArbProperties->Device = (UINT32)DeviceAddr;
+                  gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Label), Label);;
                   
                   Prop3 = GetProperty (Dict3, "Disabled");
-                  gSettings.AddProperties->MenuItem.BValue = !IsPropertyTrue(Prop3);
+                  gSettings.ArbProperties->MenuItem.BValue = !IsPropertyTrue(Prop3);
 
                   Prop3 = GetProperty (Dict3, "Key");
                   if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
-                    gSettings.AddProperties->Key = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+                    gSettings.ArbProperties->Key = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
                   }
 
                   Prop3 = GetProperty (Dict3, "Value");
                   if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
                     //first suppose it is Ascii string
-                    gSettings.AddProperties->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
-                    gSettings.AddProperties->ValueLen = AsciiStrLen(Prop3->string) + 1;
-                    gSettings.AddProperties->ValueType = kTagTypeString;
+                    gSettings.ArbProperties->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+                    gSettings.ArbProperties->ValueLen = AsciiStrLen(Prop3->string) + 1;
+                    gSettings.ArbProperties->ValueType = kTagTypeString;
                   } else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
-                    gSettings.AddProperties->Value = AllocatePool(4);
-                    CopyMem (gSettings.AddProperties->Value, &(Prop3->string), 4);
-                    gSettings.AddProperties->ValueLen = 4;
-                    gSettings.AddProperties->ValueType = kTagTypeInteger;
+                    gSettings.ArbProperties->Value = AllocatePool(4);
+                    CopyMem (gSettings.ArbProperties->Value, &(Prop3->string), 4);
+                    gSettings.ArbProperties->ValueLen = 4;
+                    gSettings.ArbProperties->ValueType = kTagTypeInteger;
                   } else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
-                    gSettings.AddProperties->Value = AllocateZeroPool(4);
-                    gSettings.AddProperties->Value[0] = TRUE;
-                    gSettings.AddProperties->ValueLen = 1;
-                    gSettings.AddProperties->ValueType = kTagTypeTrue;
+                    gSettings.ArbProperties->Value = AllocateZeroPool(4);
+                    gSettings.ArbProperties->Value[0] = TRUE;
+                    gSettings.ArbProperties->ValueLen = 1;
+                    gSettings.ArbProperties->ValueType = kTagTypeTrue;
                   } else if (Prop3 && (Prop3->type == kTagTypeFalse)) {
-                    gSettings.AddProperties->Value = AllocateZeroPool(4);
-                    //gSettings.AddProperties->Value[0] = FALSE;
-                    gSettings.AddProperties->ValueLen = 1;
-                    gSettings.AddProperties->ValueType = kTagTypeFalse;
+                    gSettings.ArbProperties->Value = AllocateZeroPool(4);
+                    //gSettings.ArbProperties->Value[0] = FALSE;
+                    gSettings.ArbProperties->ValueLen = 1;
+                    gSettings.ArbProperties->ValueType = kTagTypeFalse;
                  } else {
                     //else  data
-                    gSettings.AddProperties->Value = GetDataSetting (Dict3, "Value", &Size);
-                    gSettings.AddProperties->ValueLen = Size;
-                    gSettings.AddProperties->ValueType = kTagTypeData;
+                    gSettings.ArbProperties->Value = GetDataSetting (Dict3, "Value", &Size);
+                    gSettings.ArbProperties->ValueLen = Size;
+                    gSettings.ArbProperties->ValueType = kTagTypeData;
                   }
                   
                   //Special case. In future there must be more such cases
-                  if ((AsciiStrStr(gSettings.AddProperties->Key, "-platform-id") != NULL)/* &&
-                      (gSettings.IgPlatform != 0)*/) {
-                    CopyMem ((CHAR8*)&gSettings.IgPlatform, gSettings.AddProperties->Value, 4);
-                  /*  gSettings.AddProperties->Value = AllocatePool(4);
-                    CopyMem (gSettings.AddProperties->Value, (CHAR8*)&gSettings.IgPlatform, 4);                        
-                    gSettings.AddProperties->ValueLen = 4;
-                    gSettings.AddProperties->ValueType = kTagTypeInteger; */
+                  if ((AsciiStrStr(gSettings.ArbProperties->Key, "-platform-id") != NULL)) {
+                    CopyMem ((CHAR8*)&gSettings.IgPlatform, gSettings.ArbProperties->Value, 4);
                   }
                 }
-                // gSettings.NrAddProperties++;
               }   //for() device properties
             }
-            
             FreePool(Label);
           } //for() devices
         }
-        gSettings.NrAddProperties = 0xFFFE;
+//        gSettings.NrAddProperties = 0xFFFE;
       }
-      else { //can't use AddProperties with CustomProperties
+      //can use AddProperties with ArbProperties
         Prop = GetProperty (DictPointer, "AddProperties");
         if (Prop != NULL) {
           INTN i, Count = GetTagCount (Prop);
@@ -4813,7 +4806,7 @@ GetUserSettings(
             gSettings.NrAddProperties = Index;
           }
         }
-      }
+      //end AddProperties
 
       Prop = GetProperty (DictPointer, "FakeID");
       if (Prop != NULL) {
@@ -6520,65 +6513,15 @@ GetDevices ()
             hda->controller_vendor_id       = Pci.Hdr.VendorId;
             hda->controller_device_id       = Pci.Hdr.DeviceId;
 
-// TODO remove the above switch
-/*
-          switch (Pci.Hdr.VendorId) {
-              case 0x8086:
-                  hda->Vendor = Intel;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              case 0x10de:
-                  hda->Vendor = Nvidia;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              case 0x1002:
-                  hda->Vendor = Ati;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              case 0x17f3:
-                  hda->Vendor = RDC;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              case 0x1106:
-                  hda->Vendor = VIA;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              case 0x1039:
-                  hda->Vendor = SiS;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              case 0x10b9:
-                  hda->Vendor = ULI;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-
-              default:
-                  hda->Vendor = Unknown;
-                  AsciiSPrint (hda->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-                  break;
-          }
-*/
 
             // HDA Controller Info
             AsciiSPrint ( hda->controller_name,64, "%a",
                          get_hda_controller_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId )
                          );
 
-            // HDA Codec Info
-/*            AsciiSPrint ( hda->codec_name, 64, "%a",
-                         get_hda_codec_name ( hda->codec_vendor_id, hda->codec_device_id, hda->codec_revision_id, hda->codec_stepping_id )
-                         );
-*/
-
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");
-   //if ((Pci.Hdr.VendorId == 0x1002) || (Pci.Hdr.VendorId == 0x10DE)){
+
             SlotDevice = &SlotDevices[4];
             SlotDevice->SegmentGroupNum = (UINT16)Segment;
             SlotDevice->BusNum          = (UINT8)Bus;
@@ -6663,11 +6606,11 @@ SetDevices (
         PCIdevice.class_id                   = *((UINT16*)(Pci.Hdr.ClassCode+1));
         PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
         PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+        PCIdevice.used                       = FALSE;
 
-        if (gSettings.NrAddProperties == 0xFFFE) {  //yyyy it means Arbitrary
-          DEV_PROPERTY *Prop = gSettings.AddProperties;
+  //      if (gSettings.NrAddProperties == 0xFFFE) {  //yyyy it means Arbitrary
+          DEV_PROPERTY *Prop = gSettings.ArbProperties;
           DevPropDevice *device = NULL;
-          BOOLEAN Once = TRUE;
           if (!string) {
             string = devprop_create_string();
           }
@@ -6676,9 +6619,9 @@ SetDevices (
               Prop = Prop->Next;
               continue;
             }
-            if (Once) {
+            if (!PCIdevice.used) {
               device = devprop_add_device_pci(string, &PCIdevice);
-              Once = FALSE;
+              PCIdevice.used = TRUE;
             }
             //special corrections
             if (Prop->MenuItem.BValue) {
@@ -6693,12 +6636,12 @@ SetDevices (
             Prop = Prop->Next;
           }
             
-          if (!Once) {
-            DBG("custom properties for device %02x:%02x.%02x injected, continue\n",
+          if (PCIdevice.used) {
+            DBG("custom properties for device %02x:%02x.%02x injected\n",
                 Bus, Device, Function);
 //            continue;
           }
-        }
+//        }
         // GFX
         //if (/* gSettings.GraphicsInjector && */
         //    (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&

@@ -116,7 +116,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 {
   EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
   DevPropDevice               *device;
-  UINT32                        NumPaths;
+  UINT32                      NumPaths;
   
   if (StringBuf == NULL || PciDt == NULL) {
     return NULL;
@@ -340,23 +340,26 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 #if DEBUG_INJECT
   CHAR8           *devicepath;
 #endif
-  DevPropDevice   *device;
+  DevPropDevice   *device = NULL;
   UINT8           builtin = 0x0;
   BOOLEAN         Injected = FALSE;
   UINTN           i;
   CHAR8           compatible[64];
-  
-  
+
   if (!string) {
     string = devprop_create_string();
   }
 #if DEBUG_INJECT
   devicepath = get_pci_dev_path(eth_dev);
 #endif
-  //device = devprop_add_device(string, devicepath);
-  device = devprop_add_device_pci(string, eth_dev);
-  if (!device)
+  if (eth_dev && !eth_dev->used) {
+    device = devprop_add_device_pci(string, eth_dev);
+    eth_dev->used = TRUE;
+  }
+
+  if (!device) {
     return FALSE;
+  }
   // -------------------------------------------------
 //  DBG("LAN Controller [%04x:%04x] :: %a\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
   if (eth_dev->vendor_id != 0x168c && builtin_set == 0) {
@@ -412,7 +415,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 #if DEBUG_INJECT
   CHAR8           *devicepath;
 #endif
-  DevPropDevice   *device;
+  DevPropDevice   *device = NULL;
   UINT32          fake_devid;
   BOOLEAN         Injected = FALSE;
   UINTN           i;
@@ -422,10 +425,15 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 #if DEBUG_INJECT
   devicepath = get_pci_dev_path(usb_dev);
 #endif
-  //device = devprop_add_device(string, devicepath);
-  device = devprop_add_device_pci(string, usb_dev);
-  if (!device)
+
+  if (usb_dev && !usb_dev->used) {
+    device = devprop_add_device_pci(string, usb_dev);
+    usb_dev->used = TRUE;
+  }
+
+  if (!device) {
     return FALSE;
+  }
   // -------------------------------------------------
  // DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);

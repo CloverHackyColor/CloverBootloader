@@ -851,7 +851,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
 #if DEBUG_INJECT
     CHAR8           *devicepath;
 #endif
-	DevPropDevice           *device;
+	DevPropDevice           *device = NULL;
 	UINT32                  layoutId = 0;
 	UINT32                  codecId = 0;
 	BOOLEAN                 Injected = FALSE;
@@ -866,8 +866,11 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
 #if DEBUG_INJECT
     devicepath = get_pci_dev_path(hda_dev);
 #endif
-    //device = devprop_add_device(string, devicepath);
+  if (hda_dev && !hda_dev->used) {
     device = devprop_add_device_pci(string, hda_dev);
+    hda_dev->used = TRUE;
+  }
+
     if (!device) {
         return FALSE;
     }
@@ -890,7 +893,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
             }
         }
         if (Injected) {
-            DBG("custom HDMI properties injected, continue\n");
+            DBG("Additional HDMI properties injected, continue\n");
             //    return TRUE;
         } else if (gSettings.UseIntelHDMI) {
             DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");

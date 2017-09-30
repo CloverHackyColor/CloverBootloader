@@ -35,7 +35,7 @@ typedef struct {
 
 typedef union {
 	pci_addr_t	bits;
-	UINT32	addr;
+	UINT32	    addr;
 } pci_dev_t;
 
 typedef struct pci_dt_t {
@@ -50,18 +50,19 @@ typedef struct pci_dt_t {
 	
 	union {
 		struct {
-			UINT16	vendor_id;
-			UINT16	device_id;
+			UINT16	  vendor_id;
+			UINT16	  device_id;
 		} subsys;
-		UINT32	subsys_id;
-	}subsys_id;
-	UINT8		revision;
-	UINT8		subclass;
+		UINT32	    subsys_id;
+	} subsys_id;
+	UINT8		      revision;
+	UINT8		      subclass;
 	UINT16				class_id;	
 	
 	struct pci_dt_t			*parent;
 	struct pci_dt_t			*children;
 	struct pci_dt_t			*next;
+  BOOLEAN             used;
 } pci_dt_t;
 
 #pragma pack(1)

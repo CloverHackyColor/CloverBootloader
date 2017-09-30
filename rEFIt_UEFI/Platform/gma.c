@@ -791,7 +791,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   UINTN           i;
   CHAR8           *devicepath;
   CHAR8           *model;
-  DevPropDevice   *device;
+  DevPropDevice   *device = NULL;
   UINT8           BuiltIn = 0x00;
   UINT32          FakeID;
   UINT32          DualLink = 1;
@@ -1199,12 +1199,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     string = devprop_create_string();
   }
 
-  //device = devprop_add_device(string, devicepath); // AllocatePool inside
-  device = devprop_add_device_pci(string, gma_dev);
+  if (gma_dev && !gma_dev->used) {
+    device = devprop_add_device_pci(string, gma_dev);
+    gma_dev->used = TRUE;
+  }
 
   if (!device) {
-    DBG("  Failed initializing dev-prop string dev-entry\n");
-    //pause();
     return FALSE;
   }
 
@@ -1221,7 +1221,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   }
 
   if (Injected) {
-    DBG("  Custom Intel GFX properties injected, continue\n");
+    DBG("  Additional Intel GFX properties injected, continue\n");
   }
 
   if (gSettings.UseIntelHDMI) {

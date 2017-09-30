@@ -4558,8 +4558,8 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
     
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properies->");
   
-  if (gSettings.AddProperties) {
-    DEV_PROPERTY *Prop = gSettings.AddProperties;
+  if (gSettings.ArbProperties) {
+    DEV_PROPERTY *Prop = gSettings.ArbProperties;
     while (Prop) {
       DevAddr = Prop->Device;
       if (DevAddr != OldDevAddr) {

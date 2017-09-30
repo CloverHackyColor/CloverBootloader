@@ -2006,7 +2006,11 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   
   devicepath = get_pci_dev_path(ati_dev);
   //card->device = devprop_add_device(string, devicepath);
-  card->device = devprop_add_device_pci(string, ati_dev);
+  if (ati_dev && !ati_dev->used) {
+    card->device = devprop_add_device_pci(string, ati_dev);
+    ati_dev->used = TRUE;
+  }
+
   if (!card->device) {
     return FALSE;
   }

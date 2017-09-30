@@ -1495,7 +1495,7 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
 }
 
 
-BOOLEAN AddProperties(AML_CHUNK* pack, UINT32 Dev)
+BOOLEAN CustProperties(AML_CHUNK* pack, UINT32 Dev)
 {
   UINTN i;
   BOOLEAN Injected = FALSE;
@@ -2186,7 +2186,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   aml_add_string(pack, "compatible");
   aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
 
-  AddProperties(pack, DEV_LPC);
+  CustProperties(pack, DEV_LPC);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
@@ -2650,7 +2650,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
       aml_add_string_buffer(pack, "onboard-1");
     }
   }
-  if (!AddProperties(pack, DEV_HDMI)) {
+  if (!CustProperties(pack, DEV_HDMI)) {
     DBG("  with default properties\n");
     aml_add_string(pack, "layout-id");
     aml_add_byte_buffer(pack, (CHAR8*)&GfxlayoutId[0], 4);
@@ -2850,7 +2850,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     }
 
     // Could we just comment this part? (Until remember what was the purposes?)
-  if (!AddProperties(pack, DEV_LAN) &&
+  if (!CustProperties(pack, DEV_LAN) &&
         !gSettings.FakeLAN &&
       !gSettings.NoDefaultProperties) {
     aml_add_string(pack, "empty");
@@ -3069,7 +3069,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "compatible");
     aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
   }
-  if (!AddProperties(pack, DEV_WIFI) &&
+  if (!CustProperties(pack, DEV_WIFI) &&
       !gSettings.NoDefaultProperties &&
       !gSettings.FakeWIFI) {
     aml_add_string(pack, "empty");
@@ -3494,7 +3494,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 
   stro = aml_add_store(met);
   pack = aml_add_package(stro);
-  if (!AddProperties(pack, DEV_FIREWIRE)) {
+  if (!CustProperties(pack, DEV_FIREWIRE)) {
     aml_add_string(pack, "fwhub");
     aml_add_byte_buffer(pack, dataFW, sizeof(dataFW));
   }
@@ -3603,7 +3603,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
     aml_add_string(pack, "hda-gfx");
     aml_add_string_buffer(pack, "onboard-1");
   }
-  if (!AddProperties(pack, DEV_HDA)) {
+  if (!CustProperties(pack, DEV_HDA)) {
     if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.8")) || (gSettings.HDALayoutId > 0)) {
       aml_add_string(pack, "layout-id");
       aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
@@ -3674,7 +3674,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met = aml_add_method(root, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (!AddProperties(pack, DEV_USB)) {
+  if (!CustProperties(pack, DEV_USB)) {
     aml_add_string(pack, "device-id");
     aml_add_byte_buffer(pack, (/* CONST*/ CHAR8*)&USBID[0], 4);
     aml_add_string(pack, "built-in");
@@ -3706,7 +3706,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met1 = aml_add_method(root1, "_DSM", 4);
   met2 = aml_add_store(met1);
   pack1 = aml_add_package(met2);
-  if (!AddProperties(pack, DEV_USB)) {
+  if (!CustProperties(pack, DEV_USB)) {
     aml_add_string(pack1, "device-id");
     aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
     aml_add_string(pack1, "built-in");
@@ -3789,7 +3789,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   met1 = aml_add_method(root1, "_DSM", 4);
   met2 = aml_add_store(met1);
   pack1 = aml_add_package(met2);
-  if (!AddProperties(pack, DEV_USB)) {
+  if (!CustProperties(pack, DEV_USB)) {
     aml_add_string(pack1, "device-id");
     aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
     aml_add_string(pack1, "built-in");
@@ -4120,7 +4120,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(device, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-    if (!AddProperties(pack, DEV_IDE)) {
+    if (!CustProperties(pack, DEV_IDE)) {
       aml_add_string(pack, "device-id");
       aml_add_byte_buffer(pack, DevIDE, sizeof(DevIDE));
       aml_add_string(pack, "vendor-id");
@@ -4157,7 +4157,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(root, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-    if (!AddProperties(pack, DEV_IDE)) {
+    if (!CustProperties(pack, DEV_IDE)) {
       aml_add_string(pack, "device-id");
       aml_add_byte_buffer(pack, DevIDE, sizeof(DevIDE));
       aml_add_string(pack, "vendor-id");
@@ -4273,7 +4273,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
-  if (!AddProperties(pack, DEV_SATA) &&
+  if (!CustProperties(pack, DEV_SATA) &&
         !gSettings.NoDefaultProperties &&
         !gSettings.FakeSATA) {
     aml_add_string(pack, "empty");
@@ -4369,7 +4369,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
   }
-  if (!AddProperties(pack, DEV_SATA) &&
+  if (!CustProperties(pack, DEV_SATA) &&
         !gSettings.NoDefaultProperties &&
         !gSettings.FakeSATA) {
     aml_add_string(pack, "empty");
