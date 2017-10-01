@@ -4192,57 +4192,108 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   return Entry;  
 }
 
-REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* sysVer)
-{
-    REFIT_MENU_ENTRY     *Entry;
-    REFIT_MENU_SCREEN    *SubScreen;
-    REFIT_INPUT_DIALOG   *InputBootArgs;
-    GetListOfInjectKext(sysVer);
-    SIDELOAD_KEXT        *Kext = InjectKextList;
-    CHAR8                uni_sysVer[8];
-    UnicodeStrToAsciiStrS(sysVer, uni_sysVer, 6);
-    for (UINTN i = 0; i < 8; i++) {
-        if (uni_sysVer[i] == '\0') {
-            uni_sysVer[i+0] = '-';
-            uni_sysVer[i+1] = '>';
-            break;
-        }
-    }
-    
-    NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, uni_sysVer);
-    
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
-    
-    while (Kext) {
-        if (StrStr(Kext->MatchOS, sysVer) != NULL) {
-            InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-            InputBootArgs->Entry.Title = PoolPrint(L"%s", Kext->FileName);
-            InputBootArgs->Entry.Tag = TAG_INPUT;
-            InputBootArgs->Entry.Row = 0xFFFF; //cursor
-            InputBootArgs->Item = &(Kext->MenuItem);
-            InputBootArgs->Entry.AtClick = ActionEnter;
-            InputBootArgs->Entry.AtRightClick = ActionDetails;
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-            
-            SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
-            while (plugInKext) {
-                InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-                InputBootArgs->Entry.Title = PoolPrint(L"  |-- %s", plugInKext->FileName);
-                InputBootArgs->Entry.Tag = TAG_INPUT;
-                InputBootArgs->Entry.Row = 0xFFFF; //cursor
-                InputBootArgs->Item = &(plugInKext->MenuItem);
-                InputBootArgs->Entry.AtClick = ActionEnter;
-                InputBootArgs->Entry.AtRightClick = ActionDetails;
-                AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-                plugInKext = plugInKext->Next;
-            }
-        }
-        Kext = Kext->Next;
-    }
+CHAR8  *asc_sysVer[] = {  "10.15",  "10.14",  "10.13",  "10.12",  "10.11",  "10.10",  "10.9",  "10.8",  "10.7",  "10.6" };
+//CHAR16 *uni_sysVer[] = { L"10.15", L"10.14", L"10.13", L"10.12", L"10.11", L"10.10", L"10.9", L"10.8", L"10.7", L"10.6" };
 
-    AddMenuEntry(SubScreen, &MenuEntryReturn);
-    return Entry;  
+REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
+{
+  REFIT_MENU_ENTRY     *Entry;
+  REFIT_MENU_SCREEN    *SubScreen;
+  REFIT_INPUT_DIALOG   *InputBootArgs;
+  UINTN i = 0;
+  SIDELOAD_KEXT        *Kext = NULL;
+  CHAR8                sysVer[16];
+
+  UnicodeStrToAsciiStrS(uni_sysVer, sysVer, 16);
+  for (i = 0; i < 16; i++) {
+    if (sysVer[i] == '\0') {
+      sysVer[i+0] = '-';
+      sysVer[i+1] = '>';
+      break;
+    }
+  }
+
+  GetListOfInjectKext(uni_sysVer);
+  Kext = InjectKextList;
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
+  while (Kext) {
+    if (StrStr(Kext->MatchOS, uni_sysVer) != NULL) {
+      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs->Entry.Title = PoolPrint(L"%s", Kext->FileName);
+      InputBootArgs->Entry.Tag = TAG_INPUT;
+      InputBootArgs->Entry.Row = 0xFFFF; //cursor
+      InputBootArgs->Item = &(Kext->MenuItem);
+      InputBootArgs->Entry.AtClick = ActionEnter;
+      InputBootArgs->Entry.AtRightClick = ActionDetails;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+      SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
+      while (plugInKext) {
+        InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+        InputBootArgs->Entry.Title = PoolPrint(L"  |-- %s", plugInKext->FileName);
+        InputBootArgs->Entry.Tag = TAG_INPUT;
+        InputBootArgs->Entry.Row = 0xFFFF; //cursor
+        InputBootArgs->Item = &(plugInKext->MenuItem);
+        InputBootArgs->Entry.AtClick = ActionEnter;
+        InputBootArgs->Entry.AtRightClick = ActionDetails;
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+        plugInKext = plugInKext->Next;
+      }
+    }
+    Kext = Kext->Next;
+  }
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
 }
+
+REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
+{
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  CHAR16             *kextDir = NULL;
+  UINTN              i;
+  UINTN              sysCount = 10;
+  CHAR8              ShortOSVersion[8];
+
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
+  if (ChosenOS) {
+    DBG("chosen os %a\n", ChosenOS);
+    //shorten os version 10.11.6 -> 10.11
+    for (i=0; i < 8; i++) {
+      ShortOSVersion[i] = ChosenOS[i];
+      if (ShortOSVersion[i] == '\0') {
+        break;
+      }
+      if ((i > 2) && (ShortOSVersion[i] == '.')) {
+        ShortOSVersion[i] = '\0';
+        break;
+      }
+    }
+    AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for target version of macOS: %a", ShortOSVersion));
+    if ((kextDir = GetOSVersionKextsDir(ShortOSVersion))) {
+      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(PoolPrint(L"%a", ShortOSVersion)));
+    }
+  } else {
+    DBG("OS is not chosen\n");
+    AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for any macOS"));
+    for (i = 0; i < sysCount; i++) {
+      if ((kextDir = GetOSVersionKextsDir(asc_sysVer[i]))) {
+        AddMenuEntry(SubScreen, SubMenuKextBlockInjection(PoolPrint(L"%a", asc_sysVer[i])));
+      }
+    }
+  }
+
+  if ((kextDir = GetOtherKextsDir())) {
+    AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+  }
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
+
+
 
 REFIT_MENU_ENTRY  *SubMenuKernelPatches()
 {
@@ -4766,35 +4817,6 @@ REFIT_MENU_ENTRY *SubMenuSystem()
   return Entry;
 }
 
-REFIT_MENU_ENTRY *SubMenuKextInjectMgmt()
-{
-    REFIT_MENU_ENTRY   *Entry;
-    REFIT_MENU_SCREEN  *SubScreen;
-    CHAR16             *kextDir = NULL;
-
-    NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
-    
-    CHAR8  *uni_sysVer[] = {  "10.15",  "10.14",  "10.13",  "10.12",  "10.11",  "10.10",  "10.9",  "10.8",  "10.7",  "10.6" };
-    CHAR16 *asc_sysVer[] = { L"10.15", L"10.14", L"10.13", L"10.12", L"10.11", L"10.10", L"10.9", L"10.8", L"10.7", L"10.6" };
-    UINTN  sysCount = 10;
-    
-    // submenu description
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for target version of macOS:"));
-    
-    if ((kextDir = GetOtherKextsDir())) {
-        AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
-    }
-    
-    for (UINTN i = 0; i < sysCount; i++) {
-        if ((kextDir = GetOSVersionKextsDir(uni_sysVer[i]))) {
-            AddMenuEntry(SubScreen, SubMenuKextBlockInjection(asc_sysVer[i]));
-        }
-    }
-    
-    AddMenuEntry(SubScreen, &MenuEntryReturn);
-    return Entry;
-}
-
 REFIT_MENU_ENTRY  *SubMenuConfigs()
 {
   REFIT_MENU_ENTRY   *Entry;
@@ -4820,8 +4842,21 @@ REFIT_MENU_ENTRY  *SubMenuConfigs()
   return Entry;
 }
 
+REFIT_MENU_ENTRY *SubMenuOptions(CHAR8* OSVersion)
+{
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+//  REFIT_INPUT_DIALOG *InputBootArgs;
 
-VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS_MAN, "Kexts disable->");
+
+  AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(OSVersion));
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
+
+VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
 {
   REFIT_MENU_ENTRY    *TmpChosenEntry = NULL;
   REFIT_MENU_ENTRY    *NextChosenEntry = NULL;
@@ -4865,7 +4900,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 //   InputBootArgs->Entry.ShortcutDigit = 0xF1;
     AddMenuEntry(&OptionMenu, SubMenuConfigs());
 
-
     if (AllowGraphicsMode) {
       AddMenuEntry(&OptionMenu, SubMenuGUI());
     }
@@ -4876,7 +4910,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuAudio());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
-    AddMenuEntry(&OptionMenu, SubMenuKextInjectMgmt());
+    AddMenuEntry(&OptionMenu, SubMenuKextInjectMgmt(LastChosenOS));
     AddMenuEntry(&OptionMenu, SubMenuSystem());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
@@ -5004,13 +5038,14 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
 
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
-  MENU_STYLE_FUNC Style = TextMenuStyle;
-  MENU_STYLE_FUNC MainStyle = TextMenuStyle;
-  REFIT_MENU_ENTRY *TempChosenEntry = 0;
-  REFIT_MENU_ENTRY *MainChosenEntry = 0;
-  UINTN MenuExit = 0, SubMenuExit = 0;
-  INTN DefaultEntryIndex = DefaultSelection;
-  INTN SubMenuIndex;
+  MENU_STYLE_FUNC     Style             = TextMenuStyle;
+  MENU_STYLE_FUNC     MainStyle         = TextMenuStyle;
+  REFIT_MENU_ENTRY    *TempChosenEntry  = 0;
+  REFIT_MENU_ENTRY    *MainChosenEntry  = 0;
+  REFIT_MENU_ENTRY    *NextChosenEntry  = NULL;
+  UINTN               MenuExit = 0, SubMenuExit = 0;
+  INTN                DefaultEntryIndex = DefaultSelection;
+  INTN                SubMenuIndex;
 
   if (AllowGraphicsMode) {
     Style = GraphicsMenuStyle;
@@ -5047,6 +5082,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       }      
       SubMenuExit = 0;
       while (!SubMenuExit) {
+        //running details menu
         SubMenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
         DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
@@ -5075,6 +5111,40 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
           SubMenuExit = MENU_EXIT_ENTER;
           MenuExit = 0;
         }
+        //---- Details submenu (kexts disabling etc)
+        if (SubMenuExit == MENU_EXIT_ENTER) {
+          if (TempChosenEntry->SubScreen != NULL) {
+            UINTN NextMenuExit = 0;
+            INTN NextEntryIndex = -1;
+            while (!NextMenuExit) {
+              NextMenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &NextEntryIndex, &NextChosenEntry);
+              if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->Tag == TAG_RETURN){
+                SubMenuExit = 0;
+                break;
+              }
+              //---- Details submenu (kexts disabling etc) second level
+              if (NextMenuExit == MENU_EXIT_ENTER) {
+                if (NextChosenEntry->SubScreen != NULL) {
+                  UINTN DeepMenuExit = 0;
+                  INTN DeepEntryIndex = -1;
+                  REFIT_MENU_ENTRY    *DeepChosenEntry  = NULL;
+                  while (!DeepMenuExit) {
+                    DeepMenuExit = RunGenericMenu(NextChosenEntry->SubScreen, Style, &DeepEntryIndex, &DeepChosenEntry);
+                    if (DeepMenuExit == MENU_EXIT_ESCAPE || DeepChosenEntry->Tag == TAG_RETURN){
+                      NextMenuExit = 0;
+                      break;
+                    }
+                    if (DeepMenuExit == MENU_EXIT_ENTER) {
+                      DeepMenuExit = 0;
+                    }
+                  } //while(!DeepMenuExit)
+                }
+              }
+
+            } //while(!NextMenuExit)
+          }
+        }
+        //---------
       }
     }
   }

@@ -65,6 +65,8 @@
 #define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTIA32.efi"
 #endif
 
+extern REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8* OSVersion);
+
 // Linux loader path data
 typedef struct LINUX_PATH_DATA
 {
@@ -697,7 +699,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", Entry->me.Title, Entry->VolName);
+  SubScreen->Title = PoolPrint(L"Options for %s", Entry->me.Title, Entry->VolName);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->ID = Entry->LoaderType + 20;
   //  DBG("get anime for os=%d\n", SubScreen->ID);
@@ -714,7 +716,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   }
   AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
   // loader-specific submenu entries
-  if (Entry->LoaderType == OSTYPE_OSX || Entry->LoaderType == OSTYPE_OSX_INSTALLER || Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
+  if (Entry->LoaderType == OSTYPE_OSX ||
+      Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
+      Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     AddMenuInfoLine(SubScreen, PoolPrint(L"macOS %a", Entry->OSVersion));
 
     SubEntry = DuplicateLoaderEntry(Entry);
@@ -728,6 +732,19 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->me.Title        = L"Boot macOS with selected options";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
+
+    //OptionsMenu - it is not working
+    // should be separate RunMenu with this entry
+/*
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Manage kexts injection";
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+*/
+
+    AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(Entry->OSVersion));
 /*
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {

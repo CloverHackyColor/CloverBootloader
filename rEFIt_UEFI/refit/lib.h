@@ -370,6 +370,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_DEVICES    26
 #define SCREEN_BOOTER     27
 #define SCREEN_KEXT_INJECT   28
+#define SCREEN_KEXTS_MAN     29
 
 #define MAX_ANIME  41
 
@@ -895,7 +896,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
 VOID ReinitVolumes(VOID);
 BOOLEAN ReadAllKeyStrokes(VOID);
-VOID OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry);
+VOID OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS);
 VOID FreeScrollBar(VOID);
 INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);

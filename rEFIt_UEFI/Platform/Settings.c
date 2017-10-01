@@ -5848,23 +5848,6 @@ GetUserSettings(
       if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
         gSettings.RtMLB         = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
       }
-/*
-      // Setting Clover Variables for RC Scripts in config.plist is now deprecated (r2889+)
-      Prop = GetProperty (DictPointer, "MountEFI");
-      if (Prop != NULL) {
-        DBG ("** Warning: ignoring RtVariable MountEFI set in config.plist: deprecated !\n");
-      }
-
-      Prop = GetProperty (DictPointer, "LogLineCount");
-      if (Prop != NULL) {
-        DBG ("** Warning: ignoring RtVariable LogLineCount set in config.plist: deprecated !\n");
-      }
-
-      Prop = GetProperty (DictPointer, "LogEveryBoot");
-      if (Prop != NULL) {
-        DBG ("** Warning: ignoring RtVariable LogEveryBoot set in config.plist: deprecated !\n");
-      }
-*/
       // CsrActiveConfig
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
@@ -5948,7 +5931,29 @@ GetUserSettings(
       *(UINT32*)&gSettings.flagstate[0] = (UINT32)GetPropertyInteger (Prop, 0x80000000);
 
     }
-    
+/*
+ //Example
+ <key>RMde</key>
+ <array>
+   <string>char</string>
+   <data>
+     QQ==
+   </data>
+ </array>
+
+    DictPointer = GetProperty (Dict, "SMCKeys");
+    if (DictPointer != NULL) {   //sss
+      TagPtr     Key, ValArray;
+      for (Key = DictPointer->tag; Key != NULL; Key = Key->tagNext) {
+        ValArray = Prop->tag;
+        if (Key->type != kTagTypeKey || ValArray == NULL) {
+          DBG (" ERROR: Tag is not <key>, type = %d\n", Key->type);
+          continue;
+        }
+       //....
+      }
+    }
+*/
     /*
      {
      EFI_GUID AppleGuid;
