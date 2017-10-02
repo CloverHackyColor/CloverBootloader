@@ -194,7 +194,7 @@ UINT32 GetKextsSize()
 {
 	LIST_ENTRY		*Link;
 	KEXT_ENTRY		*KextEntry;
-	UINT32			kextsSize=0;
+	UINT32			  kextsSize=0;
   
 	if(!IsListEmpty(&gKextList)) {
 		for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
@@ -227,7 +227,7 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
 
 EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 {
-//	EFI_STATUS              Status;
+  //	EFI_STATUS              Status;
   //	REFIT_VOLUME            *Volume;
 	CHAR16                  *SrcDir = NULL;
 	//REFIT_DIR_ITER          KextIter;
@@ -236,7 +236,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	EFI_FILE_INFO           *PlugInFile;
 	CHAR16                  FileName[256];
 	CHAR16                  PlugIns[256];
-    CHAR16                  PlugInName[256];
+  CHAR16                  PlugInName[256];
 	CHAR16			*Arch = NULL;
 	CHAR16			*Ptr = NULL;
 #if defined(MDE_CPU_X64)
@@ -248,6 +248,10 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	VOID					*mm_extra;
 	UINTN					extra_size;
 	VOID					*extra;
+
+  SIDELOAD_KEXT *CurrentKext = NULL;
+  SIDELOAD_KEXT *CurrentPlugInKext = NULL;
+  SIDELOAD_KEXT *Next = NULL;
   
 	if ((Entry == 0) || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
 		return EFI_NOT_STARTED;
@@ -271,37 +275,37 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	  }
 	}
 
-   // Force kexts to load
-   if ((Entry->KernelAndKextPatches != NULL) &&
+  // Force kexts to load
+  if ((Entry->KernelAndKextPatches != NULL) &&
       (Entry->KernelAndKextPatches->NrForceKexts > 0) &&
       (Entry->KernelAndKextPatches->ForceKexts != NULL)) {
-      INT32 i = 0;
-      for (; i < Entry->KernelAndKextPatches->NrForceKexts; ++i) {
-         MsgLog("  Force kext: %s\n", Entry->KernelAndKextPatches->ForceKexts[i]);
-         if (Entry->Volume && Entry->Volume->RootDir) {
-            // Check if the entry is a directory
-            if (StrStr(Entry->KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
-               DirIterOpen(Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], &PlugInIter);
-               while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
-                  if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
-                     continue;   // skip this
+    INT32 i = 0;
+    for (; i < Entry->KernelAndKextPatches->NrForceKexts; ++i) {
+      MsgLog("  Force kext: %s\n", Entry->KernelAndKextPatches->ForceKexts[i]);
+      if (Entry->Volume && Entry->Volume->RootDir) {
+        // Check if the entry is a directory
+        if (StrStr(Entry->KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
+          DirIterOpen(Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], &PlugInIter);
+          while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
+            if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
+              continue;   // skip this
 
-                  UnicodeSPrint(FileName, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
-                  MsgLog("  Force kext: %s\n", FileName);
-                  AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
-                  UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-                  LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
-               }
-               DirIterClose(&PlugInIter);
-            } else {
-               AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
+            UnicodeSPrint(FileName, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+            MsgLog("  Force kext: %s\n", FileName);
+            AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
+            UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
+            LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
+          }
+          DirIterClose(&PlugInIter);
+        } else {
+          AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
 
-               UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
-               LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
-            }
-         }
+          UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
+          LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
+        }
       }
-   }
+    }
+  }
 
   //	Volume = Entry->Volume;
     /*
@@ -334,77 +338,77 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
         GetListOfInjectKext(uni_sysver);
     }
     
-    if ((SrcDir = GetOtherKextsDir())) {
-        MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
-        SIDELOAD_KEXT *CurrentKext = InjectKextList;
-        while (CurrentKext) {
-            if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
-                // match current inject folder
-                BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
-                UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
-                if (kextNeedInject) {
-                    // inject require
-                    MsgLog("Extra kext: %s\n", FileName);
-                    AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
-                    
-                    // decide which plugins to inject
-                    SIDELOAD_KEXT *CurrentPlugInKext = CurrentKext->PlugInList;
-                    while (CurrentPlugInKext) {
-                        BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
-                        UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
-                        if (plugInNeedInject) {
-                            // inject PlugIn require
-                            MsgLog("  |-- PlugIn kext: %s\n", PlugInName);
-                            AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
-                        } else {
-                            MsgLog("  |-- Disabled plug-in kext: %s\n", PlugInName);
-                        }
-                        CurrentPlugInKext = CurrentPlugInKext->Next;
-                    } // end of plug-in kext injection
-                } else {
-                    // disable current kext injection
-                    MsgLog("Disabled kext: %s\n", FileName);
-                }
+  if ((SrcDir = GetOtherKextsDir())) {
+    MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+    CurrentKext = InjectKextList;
+    while (CurrentKext) {
+      if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
+        // match current inject folder
+        BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
+        UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
+        if (kextNeedInject) {
+          // inject require
+          MsgLog("Extra kext: %s\n", FileName);
+          AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
+
+          // decide which plugins to inject
+          CurrentPlugInKext = CurrentKext->PlugInList;
+          while (CurrentPlugInKext) {
+            BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
+            UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
+            if (plugInNeedInject) {
+              // inject PlugIn require
+              MsgLog("  |-- PlugIn kext: %s\n", PlugInName);
+              AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
+            } else {
+              MsgLog("  |-- Disabled plug-in kext: %s\n", PlugInName);
             }
-            CurrentKext = CurrentKext->Next;
+            CurrentPlugInKext = CurrentPlugInKext->Next;
+          } // end of plug-in kext injection
+        } else {
+          // disable current kext injection
+          MsgLog("Disabled kext: %s\n", FileName);
         }
+      }
+      CurrentKext = CurrentKext->Next;
     }
-    
-    if ((SrcDir = GetOSVersionKextsDir(Entry->OSVersion))) {
-        MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
-        SIDELOAD_KEXT *CurrentKext = InjectKextList;
-        while (CurrentKext) {
-            if (StrStr(CurrentKext->MatchOS, uni_sysver) != NULL) {
-                // match current version of macOS
-                BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
-                UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
-                if (kextNeedInject) {
-                    // inject require
-                    MsgLog("Extra kext: %s\n", FileName);
-                    AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
-                    
-                    // decide which plugins to inject
-                    SIDELOAD_KEXT *CurrentPlugInKext = CurrentKext->PlugInList;
-                    while (CurrentPlugInKext) {
-                        BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
-                        UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
-                        if (plugInNeedInject) {
-                            // inject PlugIn require
-                            MsgLog("  |-- PlugIn kext: %s\n", PlugInName);
-                            AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
-                        } else {
-                            MsgLog("  |-- Disabled plug-in kext: %s\n", PlugInName);
-                        }
-                        CurrentPlugInKext = CurrentPlugInKext->Next;
-                    } // end of plug-in kext injection
-                } else {
-                    // disable current kext injection
-                    MsgLog("Disabled kext: %s\n", FileName);
-                }
+  }
+
+  if ((SrcDir = GetOSVersionKextsDir(Entry->OSVersion))) {
+    MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+    CurrentKext = InjectKextList;
+    while (CurrentKext) {
+      if (StrStr(CurrentKext->MatchOS, uni_sysver) != NULL) {
+        // match current version of macOS
+        BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
+        UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
+        if (kextNeedInject) {
+          // inject require
+          MsgLog("Extra kext: %s\n", FileName);
+          AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
+
+          // decide which plugins to inject
+          CurrentPlugInKext = CurrentKext->PlugInList;
+          while (CurrentPlugInKext) {
+            BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
+            UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
+            if (plugInNeedInject) {
+              // inject PlugIn require
+              MsgLog("  |-- PlugIn kext: %s\n", PlugInName);
+              AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
+            } else {
+              MsgLog("  |-- Disabled plug-in kext: %s\n", PlugInName);
             }
-            CurrentKext = CurrentKext->Next;
-        } // end of kext injection
-    }
+            CurrentPlugInKext = CurrentPlugInKext->Next;
+          } // end of plug-in kext injection
+        } else {
+          // disable current kext injection
+          MsgLog("Disabled kext: %s\n", FileName);
+        }
+      }
+      CurrentKext = CurrentKext->Next;
+    } // end of kext injection
+  }
     /*
      SrcDir = GetOSVersionKextsDir(Entry->OSVersion);
 	if (SrcDir != NULL) {
@@ -453,8 +457,23 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 		// MsgLog("mm_extra_size: %d		\n", mm_extra_size);
 		// MsgLog("extra_size: %d		 \n", extra_size);
 		// MsgLog("offset: %d			 \n", extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+    //no more needed
+    FreePool(mm_extra);
+    FreePool(extra);
 	}
-  
+
+  //No more InjectKextList needed. Will free the list
+  while (InjectKextList) {
+    CurrentKext = InjectKextList->Next;
+    CurrentPlugInKext = InjectKextList->PlugInList;
+    while (CurrentPlugInKext) {
+      Next = CurrentPlugInKext->Next;
+      FreePool(CurrentPlugInKext);
+      CurrentPlugInKext = Next;
+    }
+    FreePool(InjectKextList);
+    InjectKextList = CurrentKext;
+  }
 	return EFI_SUCCESS;
 }
 
