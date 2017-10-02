@@ -61,6 +61,8 @@
 				<dict>
 					<key>Comment</key>
 					<string>Remove battery device from desktop</string>
+					<key>Disabled</key>
+					<true/>
 					<key>Find</key>
 					<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
 					<key>Replace</key>
@@ -69,6 +71,8 @@
 				<dict>
 					<key>Comment</key>
 					<string>Add _SUN property for GIGE</string>
+					<key>Disabled</key>
+					<true/>
 					<key>Find</key>
 					<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
 					<key>Replace</key>
@@ -77,6 +81,8 @@
 				<dict>
 					<key>Comment</key>
 					<string>Rename GFX0 to IGPU</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
 					<data>R0ZYMA==</data>
 					<key>Replace</key>
@@ -85,6 +91,8 @@
 				<dict>
 					<key>Comment</key>
 					<string>Rename HDEF to AZAL</string>
+					<key>Disabled</key>
+					<false/>
 					<key>Find</key>
 					<data>SERFRg==</data>
 					<key>Replace</key>

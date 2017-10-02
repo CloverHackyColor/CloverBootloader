@@ -326,12 +326,12 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     
     // syscl - allow specific load inject kext
     // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
-    CHAR16 asc_sysVer[6];
-    AsciiStrToUnicodeStrS(Entry->OSVersion, asc_sysVer, 6);
+    CHAR16 uni_sysver[6];
+    AsciiStrToUnicodeStrS(Entry->OSVersion, uni_sysver, 6);
     if (!InjectKextList) {
         // Initialize InjectKextList
         GetListOfInjectKext(L"Other");
-        GetListOfInjectKext(asc_sysVer);
+        GetListOfInjectKext(uni_sysver);
     }
     
     if ((SrcDir = GetOtherKextsDir())) {
@@ -374,7 +374,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
         MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
         SIDELOAD_KEXT *CurrentKext = InjectKextList;
         while (CurrentKext) {
-            if (StrStr(CurrentKext->MatchOS, asc_sysVer) != NULL) {
+            if (StrStr(CurrentKext->MatchOS, uni_sysver) != NULL) {
                 // match current version of macOS
                 BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
                 UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);

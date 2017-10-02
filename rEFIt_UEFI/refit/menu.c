@@ -4213,7 +4213,9 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
     }
   }
 
-  GetListOfInjectKext(uni_sysVer);
+  if (!InjectKextList) {
+    GetListOfInjectKext(uni_sysVer);
+  }
   Kext = InjectKextList;
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
@@ -4838,20 +4840,6 @@ REFIT_MENU_ENTRY  *SubMenuConfigs()
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   }
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  return Entry;
-}
-
-REFIT_MENU_ENTRY *SubMenuOptions(CHAR8* OSVersion)
-{
-  REFIT_MENU_ENTRY   *Entry;
-  REFIT_MENU_SCREEN  *SubScreen;
-//  REFIT_INPUT_DIALOG *InputBootArgs;
-
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS_MAN, "Kexts disable->");
-
-  AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(OSVersion));
-
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;
 }
