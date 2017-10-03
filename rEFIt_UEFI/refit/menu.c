@@ -4213,9 +4213,6 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
     }
   }
 
-  if (!InjectKextList) {
-    GetListOfInjectKext(uni_sysVer);
-  }
   Kext = InjectKextList;
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
@@ -4258,6 +4255,7 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
   UINTN              i;
   UINTN              sysCount = 10;
   CHAR8              ShortOSVersion[8];
+  CHAR16            *uni_sysVer = NULL;
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
   if (ChosenOS) {
@@ -4273,22 +4271,40 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
         break;
       }
     }
+    uni_sysVer = PoolPrint(L"%a", ShortOSVersion);
+    if (!InjectKextList) {
+      GetListOfInjectKext(uni_sysVer);
+      GetListOfInjectKext(L"Other");
+    }
+
     AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for target version of macOS: %a", ShortOSVersion));
     if ((kextDir = GetOSVersionKextsDir(ShortOSVersion))) {
-      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(PoolPrint(L"%a", ShortOSVersion)));
+      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
     }
+    if ((kextDir = GetOtherKextsDir())) {
+      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+    }
+    FreePool(uni_sysVer);
   } else {
+    BOOLEAN NotInjected = (InjectKextList == NULL);
     DBG("OS is not chosen\n");
     AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for any macOS"));
     for (i = 0; i < sysCount; i++) {
       if ((kextDir = GetOSVersionKextsDir(asc_sysVer[i]))) {
-        AddMenuEntry(SubScreen, SubMenuKextBlockInjection(PoolPrint(L"%a", asc_sysVer[i])));
+        uni_sysVer = PoolPrint(L"%a", asc_sysVer[i]);
+        if (NotInjected) {
+          GetListOfInjectKext(uni_sysVer);
+        }
+        AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
+        FreePool(uni_sysVer);
       }
     }
-  }
-
-  if ((kextDir = GetOtherKextsDir())) {
-    AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+    if (NotInjected) {
+      GetListOfInjectKext(L"Other");
+    }
+    if ((kextDir = GetOtherKextsDir())) {
+      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+    }
   }
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
