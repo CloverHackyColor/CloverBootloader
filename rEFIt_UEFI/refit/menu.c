@@ -4259,7 +4259,7 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
   if (ChosenOS) {
-    DBG("chosen os %a\n", ChosenOS);
+//    DBG("chosen os %a\n", ChosenOS);
     //shorten os version 10.11.6 -> 10.11
     for (i=0; i < 8; i++) {
       ShortOSVersion[i] = ChosenOS[i];
@@ -4280,14 +4280,16 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
     AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for target version of macOS: %a", ShortOSVersion));
     if ((kextDir = GetOSVersionKextsDir(ShortOSVersion))) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
+      FreePool(kextDir);
     }
     if ((kextDir = GetOtherKextsDir())) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+      FreePool(kextDir);
     }
     FreePool(uni_sysVer);
   } else {
     BOOLEAN NotInjected = (InjectKextList == NULL);
-    DBG("OS is not chosen\n");
+//    DBG("OS is not chosen\n");
     AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for any macOS"));
     for (i = 0; i < sysCount; i++) {
       if ((kextDir = GetOSVersionKextsDir(asc_sysVer[i]))) {
@@ -4297,6 +4299,7 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
         }
         AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
         FreePool(uni_sysVer);
+        FreePool(kextDir);
       }
     }
     if (NotInjected) {
@@ -4304,6 +4307,7 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
     }
     if ((kextDir = GetOtherKextsDir())) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+      FreePool(kextDir);
     }
   }
 
@@ -4914,7 +4918,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuAudio());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
-    AddMenuEntry(&OptionMenu, SubMenuKextInjectMgmt(LastChosenOS));
+//    AddMenuEntry(&OptionMenu, SubMenuKextInjectMgmt(LastChosenOS));
     AddMenuEntry(&OptionMenu, SubMenuSystem());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);

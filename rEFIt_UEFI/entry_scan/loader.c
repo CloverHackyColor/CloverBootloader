@@ -733,32 +733,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 
-    //OptionsMenu - it is not working
-    // should be separate RunMenu with this entry
-/*
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Manage kexts injection";
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-*/
-
     AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(Entry->OSVersion));
-/*
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = OSFLAG_ISSET(SubEntry->Flags, OSFLAG_WITHKEXTS) ?
-      L"Boot macOS without injected kexts" :
-      L"Boot macOS with injected kexts";
-      SubEntry->Flags           = OSFLAG_TOGGLE(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      SubEntry->LoadOptions     = AddLoadOption(SubEntry->LoadOptions, L"-v");
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-*/
-    
-//    AddMenuCheck(SubScreen, "Without caches",       OSFLAG_NOCACHES, 69);
-//    AddMenuCheck(SubScreen, "With injected kexts",  OSFLAG_WITHKEXTS, 69);
     AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
       AddMenuCheck(SubScreen, "macOS 32bit",          OPT_I386, 68);

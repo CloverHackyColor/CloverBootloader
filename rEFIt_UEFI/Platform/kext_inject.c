@@ -2,8 +2,10 @@
 
 #define KEXT_INJECT_DEBUG 0
 
-#if KEXT_INJECT_DEBUG
+#if KEXT_INJECT_DEBUG == 1
 #define DBG(...)	AsciiPrint(__VA_ARGS__);
+#elsif KEXT_INJECT_DEBUG == 2
+#define DBG(...) MsgLog( __VA_ARGS__)
 #else
 #define DBG(...)
 #endif
@@ -110,7 +112,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     MsgLog("Failed to load extra kext (failed to parse Info.plist): %s\n", FileName);
     return EFI_NOT_FOUND;
   }
-  prop=GetProperty(dict,"CFBundleExecutable");
+  prop = GetProperty(dict,"CFBundleExecutable");
   if(prop!=0) {
     AsciiStrToUnicodeStrS(prop->string, Executable, 256);
     if (NoContents) {
@@ -307,41 +309,35 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     }
   }
 
-  //	Volume = Entry->Volume;
-    /*
-	SrcDir = GetOtherKextsDir();
-	if (SrcDir != NULL) {
-		MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
-		// look through contents of the directory
-		DirIterOpen(SelfVolume->RootDir, SrcDir, &KextIter);
-		while (DirIterNext(&KextIter, 1, L"*.kext", &KextFile)) {
-			if (KextFile->FileName[0] == '.' || StrStr(KextFile->FileName, L".kext") == NULL)
-				continue;   // skip this
-			
-			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
-			MsgLog("  Extra kext: %s\n", FileName);
-			AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
-      
-			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-         LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType, FALSE);
-		}
-		DirIterClose(&KextIter);
-	}*/
-    
-    // syscl - allow specific load inject kext
-    // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
-    CHAR16 uni_sysver[6];
-    AsciiStrToUnicodeStrS(Entry->OSVersion, uni_sysver, 6);
-    if (!InjectKextList) {
-        // Initialize InjectKextList
-        GetListOfInjectKext(L"Other");
-        GetListOfInjectKext(uni_sysver);
+  // syscl - allow specific load inject kext
+  // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
+  CHAR16            uni_sysver[8];
+  CHAR8             ShortOSVersion[8];
+  INTN              i;
+  for (i = 0; i < 8; i++) {
+    ShortOSVersion[i] = Entry->OSVersion[i];
+    if (ShortOSVersion[i] == '\0') {
+      break;
     }
-    
+    if ((i > 2) && (ShortOSVersion[i] == '.')) {
+      ShortOSVersion[i] = '\0';
+      break;
+    }
+  }
+  AsciiStrToUnicodeStrS(ShortOSVersion, uni_sysver, 8);
+  DBG("OSVesion: %a, ShortOSVersion=%a, uni-vers=%s,\n", Entry->OSVersion, ShortOSVersion, uni_sysver);
+
+  if (!InjectKextList) {
+    // Initialize InjectKextList
+    GetListOfInjectKext(L"Other");
+    GetListOfInjectKext(uni_sysver);
+  }
+
   if ((SrcDir = GetOtherKextsDir())) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
     while (CurrentKext) {
+      DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, uni_sysver);
       if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
         // match current inject folder
         BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
@@ -372,12 +368,14 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
       }
       CurrentKext = CurrentKext->Next;
     }
+    FreePool(SrcDir);
   }
 
-  if ((SrcDir = GetOSVersionKextsDir(Entry->OSVersion))) {
+  if ((SrcDir = GetOSVersionKextsDir(ShortOSVersion))) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
     while (CurrentKext) {
+      DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, uni_sysver);
       if (StrStr(CurrentKext->MatchOS, uni_sysver) != NULL) {
         // match current version of macOS
         BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
@@ -408,42 +406,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
       }
       CurrentKext = CurrentKext->Next;
     } // end of kext injection
+    FreePool(SrcDir);
   }
-    /*
-     SrcDir = GetOSVersionKextsDir(Entry->OSVersion);
-	if (SrcDir != NULL) {
-		MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
-		// look through contents of the directory
-		DirIterOpen(SelfVolume->RootDir, SrcDir, &KextIter);
-		while (DirIterNext(&KextIter, 1, L"*.kext", &KextFile)) {
-			if (KextFile->FileName[0] == '.' || StrStr(KextFile->FileName, L".kext") == NULL)
-				continue;   // skip this
-			
-            BOOLEAN kextNeedInject = TRUE;
-            SIDELOAD_KEXT *CurrentKext = InjectKextList;
-            
-            while (CurrentKext) {
-                if ((StrStr(KextFile->FileName, Current->FileName) != NULL) &&
-                    (CurrentKext->MenuItem.BValue == TRUE)) {
-                    // disable this kext
-                    kextNeedInject = FALSE;
-                    break;
-                }
-                CurrentKext = CurrentKext->Next;
-            }
-            
-            if (kextNeedInject == FALSE) {
-                continue;
-            }
-			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
-			MsgLog("  Extra kext: %s\n", FileName);
-			AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
-      
-			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
-            LoadPlugInKexts(Entry, SelfVolume->RootDir, PlugIns, archCpuType, FALSE);
-		}
-		DirIterClose(&KextIter);
-	}*/
 
 	// reserve space in the device tree
 	if (GetKextCount() > 0) {
@@ -468,9 +432,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     CurrentPlugInKext = InjectKextList->PlugInList;
     while (CurrentPlugInKext) {
       Next = CurrentPlugInKext->Next;
+      FreePool(CurrentPlugInKext->FileName);
+      FreePool(CurrentPlugInKext->MatchOS);
       FreePool(CurrentPlugInKext);
       CurrentPlugInKext = Next;
     }
+    FreePool(InjectKextList->FileName);
+    FreePool(InjectKextList->MatchOS);
     FreePool(InjectKextList);
     InjectKextList = CurrentKext;
   }
