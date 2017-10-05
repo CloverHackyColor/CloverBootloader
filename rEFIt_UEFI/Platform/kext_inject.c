@@ -1,11 +1,11 @@
 #include "Platform.h"
 
-#define KEXT_INJECT_DEBUG 0
+#define KEXT_INJECT_DEBUG 2
 
-#if KEXT_INJECT_DEBUG == 1
-#define DBG(...)	AsciiPrint(__VA_ARGS__);
-#elsif KEXT_INJECT_DEBUG == 2
-#define DBG(...) MsgLog( __VA_ARGS__)
+#if KEXT_INJECT_DEBUG == 2
+#define DBG(...) MsgLog(__VA_ARGS__)
+#elif KEXT_INJECT_DEBUG == 1
+#define DBG(...)  AsciiPrint(__VA_ARGS__);
 #else
 #define DBG(...)
 #endif
@@ -311,33 +311,34 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
-  CHAR16            uni_sysver[8];
-  CHAR8             ShortOSVersion[8];
+  CHAR16            UniSysVers[6];
+  CHAR8             ShortOSVersion[6];
   INTN              i;
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < 6; i++) {
     ShortOSVersion[i] = Entry->OSVersion[i];
     if (ShortOSVersion[i] == '\0') {
       break;
     }
-    if ((i > 2) && (ShortOSVersion[i] == '.')) {
+    if (((i > 2) && (ShortOSVersion[i] == '.')) || i == 5) {
       ShortOSVersion[i] = '\0';
+      ShortOSVersion[i + 1] = '\0';
       break;
     }
   }
-  AsciiStrToUnicodeStrS(ShortOSVersion, uni_sysver, 8);
-  DBG("OSVesion: %a, ShortOSVersion=%a, uni-vers=%s,\n", Entry->OSVersion, ShortOSVersion, uni_sysver);
+  AsciiStrToUnicodeStrS(ShortOSVersion, UniSysVers, 6);
+  DBG("OSVesion: %a, ShortOSVersion=%a, uni-vers=%s,\n", Entry->OSVersion, ShortOSVersion, UniSysVers);
 
   if (!InjectKextList) {
     // Initialize InjectKextList
     GetListOfInjectKext(L"Other");
-    GetListOfInjectKext(uni_sysver);
+    GetListOfInjectKext(UniSysVers);
   }
 
   if ((SrcDir = GetOtherKextsDir())) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
     while (CurrentKext) {
-      DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, uni_sysver);
+      DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
       if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
         // match current inject folder
         BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
@@ -375,8 +376,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
     while (CurrentKext) {
-      DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, uni_sysver);
-      if (StrStr(CurrentKext->MatchOS, uni_sysver) != NULL) {
+      DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
+      if (StrStr(CurrentKext->MatchOS, UniSysVers) != NULL) {
         // match current version of macOS
         BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
         UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);

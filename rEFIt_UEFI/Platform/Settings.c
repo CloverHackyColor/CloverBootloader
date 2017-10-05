@@ -3074,11 +3074,11 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
   EFI_FILE_INFO*  DirEntry;
   SIDELOAD_KEXT*  mKext;
   SIDELOAD_KEXT*  mPlugInKext;
-  gSettings.DisableInjectKextCount = 0;
-  INTN i, Count = gSettings.DisableInjectKextCount;
+  INTN            i, Count = 0; //gSettings.DisableInjectKextCount;
   CHAR16*   KextPath = NULL;
   CHAR8     ShortOSVersion[6];
 
+ //gSettings.DisableInjectKextCount = 0;
 
   // check if KextPath exist or not in
   // both OEM path and Clover/kexts.
@@ -3086,23 +3086,15 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
   // the existence of Clover/kexts
   if (StrStr(sysVer, L"Other") != NULL) {
     KextPath = GetOtherKextsDir();
+    ShortOSVersion[0] = '\0';
   } else {
-    UnicodeStrToAsciiStrS(sysVer, ShortOSVersion, 6);
-    for (i = 0; i < 6; i++) {
-      if (ShortOSVersion[i] == '\0') {
-        break;
-      }
-      if ((i > 2) && (ShortOSVersion[i] == '.')) {
-        ShortOSVersion[i] = '\0';
-        break;
-      }
-    }
+    AsciiSPrint(ShortOSVersion, 6, "%s", sysVer);
     KextPath = GetOSVersionKextsDir(ShortOSVersion);
   }
-//  DBG("getList: sysver=%s, Short=%a\n", sysVer, ShortOSVersion);
+  DBG("getList: sysver=%s, Short=%a\n", sysVer, ShortOSVersion);
   if (KextPath == NULL) {
     // Extra kext folder not found
-    MsgLog("Extra kext folder of %a does not found - skip\n", ShortOSVersion);
+    MsgLog("Extra kext folder of %s does not found - skip\n", sysVer);
     return;
   }
   //CHAR16*         KextPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, sysVer);
@@ -3131,7 +3123,7 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
     mKext->MatchOS = PoolPrint(L"%s", sysVer);
     mKext->Next = InjectKextList;
     InjectKextList = mKext;
-//    DBG("Added mKext=%s, MatchOS=%s\n", mKext->FileName, mKext->MatchOS);
+    DBG("Added mKext=%s, MatchOS=%s\n", mKext->FileName, mKext->MatchOS);
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
@@ -3156,12 +3148,37 @@ VOID GetListOfInjectKext(CHAR16 *sysVer)
       mPlugInKext->MatchOS = PoolPrint(L"%s", sysVer);
       mPlugInKext->Next    = mKext->PlugInList;
       mKext->PlugInList    = mPlugInKext;
- //     DBG("---| added plugin=%s, MatchOS=%s\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
+      DBG("---| added plugin=%s, MatchOS=%s\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
     }
     DirIterClose(&PlugInsIter);
   }
   DirIterClose(&DirIter);
   FreePool(KextPath);
+}
+
+VOID
+InitKextList()
+{
+  INTN      i;
+  CHAR8             SysVer[6];
+  CHAR16            *kextDir = NULL;
+  CHAR16            *UniSysVer = NULL;
+  BOOLEAN NotInjected = (InjectKextList == NULL);
+  //    DBG("OS is not chosen\n");
+  for (i = 0; i < 15; i++) {
+    AsciiSPrint(SysVer, 6, "10.%d", i+6);
+    if ((kextDir = GetOSVersionKextsDir(SysVer))) {
+      UniSysVer = PoolPrint(L"%a", SysVer);
+      if (NotInjected) {
+        GetListOfInjectKext(UniSysVer);
+      }
+      FreePool(UniSysVer);
+      FreePool(kextDir);
+    }
+  }
+  if (NotInjected) {
+    GetListOfInjectKext(L"Other");
+  }
 }
 
 #define CONFIG_THEME_FILENAME L"theme.plist"

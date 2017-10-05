@@ -33,6 +33,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+CONST INTN SecureVarsDef = 0;
+
 #ifdef ENABLE_SECURE_BOOT
 
 #include "entry_scan.h"

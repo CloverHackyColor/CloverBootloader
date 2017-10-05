@@ -2421,6 +2421,9 @@ VOID GetBootFromOption(VOID);
 VOID
 SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry);
 
+VOID
+InitKextList();
+
 //
 // PlatformDriverOverride.c
 //

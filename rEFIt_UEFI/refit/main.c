@@ -1698,7 +1698,8 @@ CHAR16  APFSServerPlistPath[86] = L"\\00000000-0000-0000-0000-000000000000\\Syst
 CHAR16  APFSRecPlistPath[58]    = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
   
 
-VOID SystemVersionInit(VOID){ 
+VOID SystemVersionInit(VOID)
+{
   //Plists iterators
   UINTN      SysIter            = 2;
   UINTN      RecIter            = 1;
@@ -2216,6 +2217,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   GetListOfACPI();//###
+
+//  InitKextList();
 
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
