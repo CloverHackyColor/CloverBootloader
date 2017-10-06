@@ -3119,19 +3119,21 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
   FreePool(KextPath);
 }
 
-VOID
-InitKextList()
+VOID InitKextList()
 {
   REFIT_DIR_ITER  KextsIter;
   EFI_FILE_INFO   *FolderEntry = NULL;
-  CHAR16          *KextsPath = PoolPrint(L"%s\\kexts", OEMPath);
+  CHAR16          *KextsPath;
 
-  InjectKextList = NULL;
+  if (InjectKextList) {
+    return;  //don't scan again
+  }
+  KextsPath = PoolPrint(L"%s\\kexts", OEMPath);
 
   // Iterate over kexts directory
 
   DirIterOpen(SelfRootDir, KextsPath, &KextsIter);
-  while (DirIterNext(&KextsIter, 1, L"10.*", &FolderEntry)) {
+  while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
     if (FolderEntry->FileName[0] == L'.') {
       continue;
     }
@@ -3158,7 +3160,7 @@ GetListOfThemes ()
 
   ThemesNum = 0;
   DirIterOpen (SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
-  while (DirIterNext(&DirIter, 1, L"*.EFI", &DirEntry)) {
+  while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
     if (DirEntry->FileName[0] == '.') {
       //DBG("Skip theme: %s\n", DirEntry->FileName);
       continue;
