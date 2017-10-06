@@ -1,6 +1,6 @@
 #include "Platform.h"
 
-#define KEXT_INJECT_DEBUG 2
+#define KEXT_INJECT_DEBUG 0
 
 #if KEXT_INJECT_DEBUG == 2
 #define DBG(...) MsgLog(__VA_ARGS__)
@@ -327,12 +327,6 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   }
   AsciiStrToUnicodeStrS(ShortOSVersion, UniSysVers, 6);
   DBG("OSVesion: %a, ShortOSVersion=%a, uni-vers=%s,\n", Entry->OSVersion, ShortOSVersion, UniSysVers);
-
-  if (!InjectKextList) {
-    // Initialize InjectKextList
-    GetListOfInjectKext(L"Other");
-    GetListOfInjectKext(UniSysVers);
-  }
 
   if ((SrcDir = GetOtherKextsDir())) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);

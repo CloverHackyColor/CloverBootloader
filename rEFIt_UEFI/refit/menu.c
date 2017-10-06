@@ -4192,9 +4192,6 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   return Entry;  
 }
 
-//CHAR8  *asc_sysVer[] = {  "10.15",  "10.14",  "10.13",  "10.12",  "10.11",  "10.10",  "10.9",  "10.8",  "10.7",  "10.6" };
-//CHAR16 *uni_sysVer[] = { L"10.15", L"10.14", L"10.13", L"10.12", L"10.11", L"10.10", L"10.9", L"10.8", L"10.7", L"10.6" };
-
 REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
 {
   REFIT_MENU_ENTRY     *Entry;
@@ -4253,7 +4250,6 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
   REFIT_MENU_SCREEN  *SubScreen;
   CHAR16             *kextDir = NULL;
   UINTN              i;
-//  UINTN              sysCount = 10;
   CHAR8              ShortOSVersion[8];
   CHAR16            *uni_sysVer = NULL;
 
@@ -4273,11 +4269,6 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
     }
     uni_sysVer = PoolPrint(L"%a", ShortOSVersion);
 
-    if (!InjectKextList) {
-      GetListOfInjectKext(uni_sysVer);
-      GetListOfInjectKext(L"Other");
-    }
-
     AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for target version of macOS: %a", ShortOSVersion));
     if ((kextDir = GetOSVersionKextsDir(ShortOSVersion))) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
@@ -4289,31 +4280,6 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
     }
     FreePool(uni_sysVer);
   }
-  /*
-  else {
-    BOOLEAN NotInjected = (InjectKextList == NULL);
-//    DBG("OS is not chosen\n");
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Manage kext inject for any macOS"));
-    for (i = 0; i < sysCount; i++) {
-      if ((kextDir = GetOSVersionKextsDir(asc_sysVer[i]))) {
-        uni_sysVer = PoolPrint(L"%a", asc_sysVer[i]);
-        if (NotInjected) {
-          GetListOfInjectKext(uni_sysVer);
-        }
-        AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
-        FreePool(uni_sysVer);
-        FreePool(kextDir);
-      }
-    }
-    if (NotInjected) {
-      GetListOfInjectKext(L"Other");
-    }
-    if ((kextDir = GetOtherKextsDir())) {
-      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
-      FreePool(kextDir);
-    }
-  }
-*/
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;
 }

@@ -2217,16 +2217,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   GetListOfACPI();//###
-
-//  InitKextList();
-
+  InitKextList();
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
   do {
     MainMenu.EntryCount = 0;
     OptionMenu.EntryCount = 0;
     ScanVolumes();
-    
+
     //Check apfs driver loaded state
     //Free APFSUUIDBank
     if (APFSUUIDBank != NULL) {

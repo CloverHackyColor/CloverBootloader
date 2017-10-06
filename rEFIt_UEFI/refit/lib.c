@@ -1344,11 +1344,13 @@ REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
 BOOLEAN FileExists(IN EFI_FILE *Root, IN CHAR16 *RelativePath)
 {
   EFI_STATUS  Status;
-  EFI_FILE    *TestFile;
+  EFI_FILE    *TestFile = NULL;
   
   Status = Root->Open(Root, &TestFile, RelativePath, EFI_FILE_MODE_READ, 0);
   if (Status == EFI_SUCCESS) {
-    TestFile->Close(TestFile);
+    if (TestFile && TestFile->Close) {
+      TestFile->Close(TestFile);
+    }
     return TRUE;
   }
   return FALSE;

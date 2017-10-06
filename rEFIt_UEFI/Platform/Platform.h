@@ -1219,9 +1219,9 @@ typedef struct {
   CHAR16                  BlockKexts[64];
     
   // Disable inject kexts
-  UINT32                  DisableInjectKextCount;
-  CHAR16                  **DisabledInjectKext;
-  INPUT_ITEM              *InjectKextMenuItem;
+//  UINT32                  DisableInjectKextCount;
+//  CHAR16                  **DisabledInjectKext;
+//  INPUT_ITEM              *InjectKextMenuItem;
 
   //ACPI tables
   UINTN                   SortedACPICount;
