@@ -1017,7 +1017,8 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     // SandyBridge-E AppleIntelCPUPowerManagement Patch implemented by syscl
     //
     SNBE_AICPUPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
-  } else {
+  }
+  //else {
     //
     //others
     //
@@ -1031,7 +1032,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i, Entry);
       }
     }
-  }
+//  }
   
   //
   // Check for FakeSMC (InjectKexts if no FakeSMC)
