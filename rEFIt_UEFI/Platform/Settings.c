@@ -1813,7 +1813,7 @@ FillinCustomEntry (
 
     // InjectKexts default values
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
+  //  Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
 
     Prop = GetProperty (DictPointer, "InjectKexts");
     if (Prop != NULL) {

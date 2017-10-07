@@ -255,7 +255,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   SIDELOAD_KEXT *CurrentPlugInKext = NULL;
   SIDELOAD_KEXT *Next = NULL;
   
-	if ((Entry == 0)/* || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS) */) {
+	if (Entry == 0)/* || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS) */ {
 		return EFI_NOT_STARTED;
 	}
   
