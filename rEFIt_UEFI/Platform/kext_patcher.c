@@ -480,7 +480,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
 // InjectKexts if no FakeSMC: Detect FakeSMC and if present then
 // disable kext injection InjectKexts()
 //
-
+// not used since 4242
 VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
 {
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
@@ -1221,7 +1221,11 @@ VOID PatchPrelinkedKexts(LOADER_ENTRY *Entry)
   // But searching through the whole prelink info
   // works and that's the reason why it is here.
   //
-  CheckForFakeSMC(WholePlist, Entry);
+  
+  //Slice
+  // I see no reason to disable kext injection if FakeSMC found in cache
+  //since rev4240 we have manual kext inject disable
+ // CheckForFakeSMC(WholePlist, Entry);
   
   DictPtr = WholePlist;
   while ((DictPtr = AsciiStrStr(DictPtr, "dict>")) != NULL) {

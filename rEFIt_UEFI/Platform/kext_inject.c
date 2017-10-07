@@ -255,13 +255,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   SIDELOAD_KEXT *CurrentPlugInKext = NULL;
   SIDELOAD_KEXT *Next = NULL;
   
-	if ((Entry == 0) || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+	if ((Entry == 0)/* || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS) */) {
 		return EFI_NOT_STARTED;
 	}
   
 	// Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
 	if (Entry->LoadOptions != NULL) {
-		for (Ptr = StrStr(Entry->LoadOptions, L"arch="); Ptr!=NULL; Arch=Ptr+StrLen(L"arch="), Ptr=StrStr(Arch, L"arch="));
+		for (Ptr = StrStr(Entry->LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
 	}
   
 	if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
