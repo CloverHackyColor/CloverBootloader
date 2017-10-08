@@ -295,14 +295,14 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
             UnicodeSPrint(FileName, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
             MsgLog("  Force kext: %s\n", FileName);
             AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
-            UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
+            UnicodeSPrint(PlugIns, 512, L"%s\\Contents\\PlugIns", FileName);
             LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
           }
           DirIterClose(&PlugInIter);
         } else {
           AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
 
-          UnicodeSPrint(PlugIns, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], L"Contents\\PlugIns");
+          UnicodeSPrint(PlugIns, 512, L"%s\\Contents\\PlugIns", Entry->KernelAndKextPatches->ForceKexts[i]);
           LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
         }
       }

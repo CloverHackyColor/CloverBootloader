@@ -500,6 +500,8 @@
 			<string>0x0887</string>
 			<key>ResetHDA</key>
 			<true/>
+			<key>AFGLowPowerState</key>
+			<true/>
 		</dict>
 		<key>NoDefaultProperties</key>
 		<false/>
@@ -516,6 +518,10 @@
 		</dict>
 		<key>UseIntelHDMI</key>
 		<false/>
+		<key>#DisableFunctions</key>
+		<string>0x18F6</string>		
+		<key>#AirportBridgeDeviceName</key>
+		<string>RP02</string>
 	</dict>
 	<key>GUI</key>
 	<dict>
@@ -729,6 +735,11 @@
 		</array>
 		<key>#FakeCPUID</key>
 		<string>0x010676</string>
+		<key>#ForceKextsToLoad</key>		
+		<array>
+			<string>\System\Library\Extensions\AMD6000Controller.kext</string>
+			<string>\System\Library\Extensions\AMDFramebuffer.kext</string>
+		</array>
 		<key>#KextsToPatch</key>
 		<array>
 			<dict>
@@ -792,8 +803,6 @@
 		<false/>
 		<key>AppleRTC</key>
 		<true/>
-		<key>AsusAICPUPM</key>
-		<false/>
 		<key>Debug</key>
 		<false/>
 		<key>DellSMBIOSPatch</key>
