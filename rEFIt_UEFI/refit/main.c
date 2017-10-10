@@ -462,8 +462,8 @@ VOID ReadSIPCfg()
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
   if (csrCfg & CSR_ALLOW_ANY_RECOVERY_OS)
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_ANY_RECOVERY_OS"));
-  if (csrCfg & CSR_DISABLE_KEXT_CONSENT)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_DISABLE_KEXT_CONSENT"));
+  if (csrCfg & CSR_ALLOW_UNAPPROVED_KEXTS)
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNAPPROVED_KEXTS"));
     
   if (StrLen(csrLog)) {
     DBG("CSR_CFG: %s\n", csrLog);

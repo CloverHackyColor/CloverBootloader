@@ -131,12 +131,11 @@ typedef struct Boot_Video Boot_Video;
 #define CSR_ALLOW_TASK_FOR_PID               (1 << 2)
 #define CSR_ALLOW_KERNEL_DEBUGGER            (1 << 3)
 #define CSR_ALLOW_APPLE_INTERNAL             (1 << 4)
-#define CSR_ALLOW_DESTRUCTIVE_DTRACE         (1 << 5) /* name deprecated */
 #define CSR_ALLOW_UNRESTRICTED_DTRACE        (1 << 5)
 #define CSR_ALLOW_UNRESTRICTED_NVRAM         (1 << 6)
 #define CSR_ALLOW_DEVICE_CONFIGURATION       (1 << 7)
-#define CSR_ALLOW_ANY_RECOVERY_OS            (1 << 8) // renamed, see https://opensource.apple.com/source/xnu/xnu-3789.51.2/bsd/sys/csr.h.auto.html
-#define CSR_DISABLE_KEXT_CONSENT             (1 << 9) //added in 10.13, name unknown yet
+#define CSR_ALLOW_ANY_RECOVERY_OS            (1 << 8)
+#define CSR_ALLOW_UNAPPROVED_KEXTS           (1 << 9)
 
 
 #define CSR_VALID_FLAGS (CSR_ALLOW_UNTRUSTED_KEXTS | \
@@ -148,7 +147,7 @@ typedef struct Boot_Video Boot_Video;
                          CSR_ALLOW_UNRESTRICTED_NVRAM | \
                          CSR_ALLOW_DEVICE_CONFIGURATION | \
                          CSR_ALLOW_ANY_RECOVERY_OS | \
-                         CSR_DISABLE_KEXT_CONSENT)
+                         CSR_ALLOW_UNAPPROVED_KEXTS)
 
 
 
