@@ -161,7 +161,7 @@ EFI_RUNTIME_SERVICES mEfiRuntimeServicesTableTemplate = {
   (EFI_SET_WAKEUP_TIME)             CoreEfiNotAvailableYetArg2,   // SetWakeupTime
   (EFI_SET_VIRTUAL_ADDRESS_MAP)     CoreEfiNotAvailableYetArg4,   // SetVirtualAddressMap
   (EFI_CONVERT_POINTER)             CoreEfiNotAvailableYetArg2,   // ConvertPointer
-  (EFI_GET_VARIABLE)                CoreEfiNotAvailableYetArg5,   // GetVariable
+  (EFI_GET_VARIABLE)                CoreEfiNotAvailableYetArg5,   // GetVariable  //0x48
   (EFI_GET_NEXT_VARIABLE_NAME)      CoreEfiNotAvailableYetArg3,   // GetNextVariableName
   (EFI_SET_VARIABLE)                CoreEfiNotAvailableYetArg5,   // SetVariable
   (EFI_GET_NEXT_HIGH_MONO_COUNT)    CoreEfiNotAvailableYetArg1,   // GetNextHighMonotonicCount

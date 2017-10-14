@@ -3567,7 +3567,12 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       Text = L"F1:Help";
       break;
     case TEXT_CORNER_OPTIMUS:
-      Text = (NGFX == 2)?L"Intel":L"Discrete";
+      if ((NGFX == 1) && (gGraphics[0].Vendor != Intel)) {
+        Text = L"Discrete";
+      } else {
+        Text = L"Intel";
+      }
+//      Text = (NGFX == 2)?L"Intel":L"Discrete";
       break;
     default:
       return;
