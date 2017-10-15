@@ -876,10 +876,12 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
 
   DBG("        AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
   //don't add hided entries
-  for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-    if (StriStr(LoaderPath, gSettings.HVHideStrings[HVi])) {
-      DBG("        hiding entry: %s\n", LoaderPath);
-      return FALSE;
+  if (!gSettings.ShowHiddenEntries) {
+    for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
+      if (StriStr(LoaderPath, gSettings.HVHideStrings[HVi])) {
+        DBG("        hiding entry: %s\n", LoaderPath);
+        return FALSE;
+      }
     }
   }
 

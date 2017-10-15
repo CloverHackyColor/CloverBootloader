@@ -1119,12 +1119,14 @@ VOID ScanVolumes(VOID)
     if (!EFI_ERROR(Status)) {
       
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-      for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-        if (StriStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
-            (Volume->VolName != NULL && StriStr(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
-          Volume->Hidden = TRUE;
-          DBG("        hiding this volume\n");
-          break;
+      if (!gSettings.ShowHiddenEntries) {
+        for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
+          if (StriStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
+              (Volume->VolName != NULL && StriStr(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
+            Volume->Hidden = TRUE;
+            DBG("        hiding this volume\n");
+            break;
+          }
         }
       }
       
