@@ -887,7 +887,9 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
 
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
   if (Entry != NULL) {
-    if ((Entry->LoaderType == OSTYPE_OSX) || (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) || (Entry->LoaderType == OSTYPE_RECOVERY)) {
+    if ((Entry->LoaderType == OSTYPE_OSX) ||
+        (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) ||
+        (Entry->LoaderType == OSTYPE_RECOVERY)) {
       if (gSettings.WithKexts) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
