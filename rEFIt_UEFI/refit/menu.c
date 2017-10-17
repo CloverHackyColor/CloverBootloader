@@ -4362,7 +4362,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 //  AddMenuItem(SubScreen, 108, "Kernel patching allowed", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 91,  "Kernel Lapic Patch", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 105, "Kernel Ivy Bridge XCPM", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 105, "Kernel XCPM", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 48,  "Kernel PM Patch", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKernelPatches());
   AddMenuInfo(SubScreen, L"----------------------");

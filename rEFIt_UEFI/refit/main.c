@@ -681,9 +681,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
      
       
     /**
-     * syscl - append "-xcpm" argument unconditionally on Intel Haswell+ low-end CPUs
+     * syscl - append "-xcpm" argument conditionally if set KernelXCPM on Intel Haswell+ low-end CPUs
      */
-    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPIvyXCPM &&
+        gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&

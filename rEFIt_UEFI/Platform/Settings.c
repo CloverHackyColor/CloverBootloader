@@ -867,7 +867,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPIvyXCPM = IsPropertyTrue (Prop);
   }
 
-    /*
+  Prop = GetProperty (DictPointer, "KernelXCPM");
+  if (Prop != NULL || gBootChanged) {
+    Patches->KPIvyXCPM = IsPropertyTrue (Prop);
+  }
+
+  /*
   Prop = GetProperty(DictPointer, "KernelHaswellE");
   if (Prop != NULL || gBootChanged) {
     Patches->KPHaswellE = IsPropertyTrue(Prop);
