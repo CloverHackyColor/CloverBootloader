@@ -584,7 +584,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
   // decode it
   NewImage = egDecodePNG(FileData, FileDataLength, TRUE);
   if (!NewImage) {
-    DBG("not png, try icns\n");
+//    DBG("not png, try icns\n");
     NewImage = egDecodeICNS(FileData, FileDataLength, IconSize, TRUE);
   }
   

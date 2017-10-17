@@ -1272,6 +1272,7 @@ VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CHAR16 *Line)
   InputBootArgs->Entry.Title = PoolPrint(L"%s", Line);
   InputBootArgs->Entry.Tag = TAG_INFO;
   InputBootArgs->Item = NULL;
+  (InputBootArgs->Entry).AtClick = ActionLight;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
 }
 
@@ -2350,7 +2351,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           MenuExit = InputDialog(Screen, StyleFunc, &State);
           State.PaintAll = TRUE;
           HidePointer();
-        } else {
+        } else if ((Screen->Entries[gItemID])->Tag != TAG_INFO) {
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
@@ -2373,7 +2374,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           MenuExit = InputDialog(Screen, StyleFunc, &State);
           State.PaintAll = TRUE;
           HidePointer();
-        } else {
+        } else if ((Screen->Entries[gItemID])->Tag != TAG_INFO) {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
@@ -2522,7 +2523,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           State.PaintAll = TRUE;
         } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_CLOVER){
           MenuExit = MENU_EXIT_DETAILS;
-        } else {
+        } else if ((Screen->Entries[State.CurrentSelection])->Tag != TAG_INFO) {
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
@@ -2534,7 +2535,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           MenuExit = InputDialog(Screen, StyleFunc, &State);
           State.PaintAll = TRUE;
           HidePointer();
-        } else {
+        } else if ((Screen->Entries[State.CurrentSelection])->Tag != TAG_INFO) {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
@@ -3941,7 +3942,7 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-  *Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  *Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (Title) {
     (*Entry)->Title = PoolPrint(L"%a", Title);
   } else {
@@ -4249,20 +4250,22 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
   return Entry;
 }
 
-REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
+LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 {
-  REFIT_MENU_ENTRY   *Entry;
+  LOADER_ENTRY       *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
   CHAR16             *kextDir = NULL;
   UINTN              i;
   CHAR8              ShortOSVersion[8];
   CHAR16            *uni_sysVer = NULL;
+  CHAR8             *ChosenOS =Entry->OSVersion;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
+  NewEntry((REFIT_MENU_ENTRY**)&SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Kext Inject Management->");
+  SubEntry->Flags = Entry->Flags;
   if (ChosenOS) {
 //    DBG("chosen os %a\n", ChosenOS);
     //shorten os version 10.11.6 -> 10.11
-    for (i=0; i < 8; i++) {
+    for (i = 0; i < 8; i++) {
       ShortOSVersion[i] = ChosenOS[i];
       if (ShortOSVersion[i] == '\0') {
         break;
@@ -4286,7 +4289,7 @@ REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8 *ChosenOS)
     FreePool(uni_sysVer);
   }
   AddMenuEntry(SubScreen, &MenuEntryReturn);
-  return Entry;
+  return SubEntry;
 }
 
 
@@ -4892,7 +4895,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuAudio());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
-//    AddMenuEntry(&OptionMenu, SubMenuKextInjectMgmt(LastChosenOS));
     AddMenuEntry(&OptionMenu, SubMenuSystem());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     //DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
@@ -5057,7 +5059,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
       //      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
       gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
-      //      DBG(" and with FlagsBits = 0x%x\n", gSettings.FlagsBits);
+ //          DBG(" MainChosenEntry with FlagsBits = 0x%x\n", gSettings.FlagsBits);
 
       if (TmpArgs) {
         FreePool(TmpArgs);
@@ -5068,7 +5070,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         SubMenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
         DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-//        DBG(" get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+//        DBG(" TempChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
         if (SubMenuExit == MENU_EXIT_ESCAPE) {
           SubMenuExit = 0;
         }
@@ -5079,7 +5081,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         if ((SubMenuExit == MENU_EXIT_ENTER) &&
             (TempChosenEntry->Tag != TAG_RETURN)) {
           ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
-          //       DBG(" get FlagsBits = 0x%x\n", gSettings.FlagsBits);
+//           DBG(" get MainChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->Tag == TAG_LOADER) {
           if (((LOADER_ENTRY*)MainChosenEntry)->LoadOptions) {
@@ -5104,6 +5106,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
                 SubMenuExit = 0;
                 break;
               }
+ //             DBG(" get NextChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
               //---- Details submenu (kexts disabling etc) second level
               if (NextMenuExit == MENU_EXIT_ENTER) {
                 if (NextChosenEntry->SubScreen != NULL) {
@@ -5116,6 +5119,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
                       NextMenuExit = 0;
                       break;
                     }
+ //                   DBG(" get DeepChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
                     if (DeepMenuExit == MENU_EXIT_ENTER) {
                       DeepMenuExit = 0;
                     }

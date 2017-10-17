@@ -65,7 +65,7 @@
 #define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTIA32.efi"
 #endif
 
-extern REFIT_MENU_ENTRY *SubMenuKextInjectMgmt(CHAR8* OSVersion);
+extern LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry);
 
 // Linux loader path data
 typedef struct LINUX_PATH_DATA
@@ -733,7 +733,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 
-    AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(Entry->OSVersion));
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubMenuKextInjectMgmt(Entry));
     AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
       AddMenuCheck(SubScreen, "macOS 32bit",          OPT_I386, 68);
