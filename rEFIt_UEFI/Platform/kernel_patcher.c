@@ -1027,7 +1027,7 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
 }
 
 // boolean to enable XCPM on Ivy Bridge (named KernelIvyXCPM in config.plist)
-BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry)
+BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
   UINT8       *kern = (UINT8*)kernelData;
   CHAR8       *comment;
@@ -1682,54 +1682,48 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     //
     // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
     //
-    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
-        (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_BROADWELL_DE ||
-         gCPUStructure.Model == CPU_MODEL_HASWELL_E || gCPUStructure.Model == CPU_MODEL_JAKETOWN ||
-         (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
-          (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))))) {
-           BOOLEAN    apply_idle_patch = gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U && gSettings.HWP;
-           KernelAndKextPatcherInit(Entry);
-           if (KernelData == NULL) goto NoKernelData;
+    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+      switch (gCPUStructure.Model) {
+          case CPU_MODEL_JAKETOWN:
+            // SandyBridge-E LGA2011
+            EnableExtCpuXCPM = SandyBridgeEPM;
+            gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
+            break;
 
-           if (gCPUStructure.Model == CPU_MODEL_JAKETOWN) {
-             // SandyBridge-E LGA2011
-             EnableExtCpuXCPM = SandyBridgeEPM;
-             gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
-           }
+          case CPU_MODEL_HASWELL_E:
+            EnableExtCpuXCPM = HaswellEXCPM;
+            break;
+              
+          case CPU_MODEL_BROADWELL_E5:
+          case CPU_MODEL_BROADWELL_DE:
+            EnableExtCpuXCPM = BroadwellEPM;
+            gBDWEIOPCIFixRequire = TRUE;
+            break;
 
-           if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
-               (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
-             // Haswell+ low-end CPU
-             EnableExtCpuXCPM = HaswellLowEndXCPM;
-           }
+          default:
+            if (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) {
+              if (gCPUStructure.Model >= CPU_MODEL_HASWELL) {
+                // Haswell+ low-end CPU
+                EnableExtCpuXCPM = HaswellLowEndXCPM;
+              } else if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE || gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) {
+                // IvyBridge/IvyBridge-E XCPM
+                EnableExtCpuXCPM = KernelIvyBridgeXCPM;
+              }
+            }
+            break;
+      }
+    }
 
-           if (gCPUStructure.Model == CPU_MODEL_HASWELL_E)
-             EnableExtCpuXCPM = HaswellEXCPM;
-
-           if (gCPUStructure.Model == CPU_MODEL_BROADWELL_E5 || gCPUStructure.Model == CPU_MODEL_BROADWELL_DE) {
-             EnableExtCpuXCPM = BroadwellEPM;
-             gBDWEIOPCIFixRequire = TRUE;       // turn on Broadwell-E/EP IOPCIFamily Fix
-           }
-
-           // syscl - now enable extra Cpu's PowerManagement
-           patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
-           DBG("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
-         }
-
-    // KernelIvyXCPM
-    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
-        ((gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
-         (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5))) {
-          DBG_RT(Entry, "\nKernelIvyXCPM patch: ");
-
-          KernelAndKextPatcherInit(Entry);
-          if (KernelData == NULL) goto NoKernelData;
-          patchedOk = FALSE;
-          if (is64BitKernel) {
-            patchedOk = KernelIvyBridgeXCPM(KernelData, Entry);
-          }
-          DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
-        }
+    // syscl - now enable extra Cpu's PowerManagement
+    if (!EnableExtCpuXCPM) {
+      patchedOk = FALSE;
+    } else {
+      BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
+      KernelAndKextPatcherInit(Entry);
+      if (KernelData == NULL) goto NoKernelData;
+      patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
+    }
+    DBG("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
