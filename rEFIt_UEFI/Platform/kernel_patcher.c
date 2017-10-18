@@ -743,7 +743,7 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
 //
 // syscl - EnableExtCpuXCPM(): enable extra(unsupport) Cpu XCPM function
 // PowerManagement that will be enabled on:
-// SandyBridge-E, Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
+// SandyBridge-E, Ivy Bridge, Ivy Bridge-E, Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
 // credit Pike R.Alpha, stinga11, syscl
 //
 BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle);
@@ -1026,7 +1026,9 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
     return TRUE;
 }
 
-// boolean to enable XCPM on Ivy Bridge (named KernelIvyXCPM in config.plist)
+//
+// this patch provides XCPM support for Ivy Bridge. by PMheart
+//
 BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
   UINT8       *kern = (UINT8*)kernelData;
@@ -1096,6 +1098,147 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
   }
   
   DBG("KernelIvyBridgeXCPM() <===\n");
+  return TRUE;
+}
+
+//
+// this patch provides XCPM support for Ivy Bridge-E. by PMheart
+// attempt to enable XCPM for Ivy-E, still need to test further
+//
+BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
+{
+  UINT8       *kern = (UINT8*)kernelData;
+  CHAR8       *comment;
+  UINT32      i;
+  UINT32      patchLocation;
+  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  
+  // check whether Ivy Bridge-E5
+  if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE_E5) {
+    DBG("Unsupported platform.\nRequires Ivy Bridge-E, aborted\n");
+    DBG("KernelIvyE5XCPM() <===FALSE\n");
+    return FALSE;
+  }
+  
+  // check OS version suit for patches
+  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
+    DBG("Unsupported macOS.\nIvy Bridge-E XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
+    DBG("KernelIvyE5XCPM() <===FALSE\n");
+    return FALSE;
+  }
+  
+  // _cpuid_set_info
+  // TO-DO: should we use FakeCPUID instead?
+  comment = "_cpuid_set_info";
+  if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+    // 10.8.5
+    UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x74, 0x2D };
+    UINT8 repl[] = { 0x83, 0xF8, 0x3E, 0x74, 0x2D };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version == AsciiOSVersionToUint64("10.9") || os_version == AsciiOSVersionToUint64("10.9.1")) {
+    // 10.9.0 - 10.9.1
+    UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x75, 0x07 };
+    UINT8 repl[] = { 0x83, 0xF8, 0x3E, 0x75, 0x07 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } // 10.9.2+: native support reached, no need to patch
+  
+  // _xcpm_pkg_scope_msrs
+  DBG("Searching _xcpm_pkg_scope_msrs ...\n");
+  comment = "_xcpm_pkg_scope_msrs";
+  if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+    // 10.8.5
+    UINT8 find[] = {
+      0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+      0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
+      0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+      0x00, 0x00, 0x31, 0xD2, 0xE8, 0x28, 0x02, 0x00, 0x00
+    };
+    UINT8 repl[] = {
+      0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+      0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x8D,
+      0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+      0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
+    };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+    // 10.9.x
+    UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
+    UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else {
+    // 10.10+
+    patchLocation = 0; // clean out the value just in case
+    for (i = 0; i < 0x1000000; i++) {
+      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+          kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+        patchLocation = i+7;
+        DBG("Found _xcpm_pkg_scope_msr\n");
+        break;
+      }
+    }
+    
+    if (patchLocation) {
+      for (i = 0; i < 5; i++) {
+        kern[patchLocation+i] = 0x90;
+      }
+      DBG("Applied _xcpm_pkg_scope_msr patch\n");
+    } else {
+      DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+      DBG("KernelIvyE5XCPM() <===FALSE\n");
+      return FALSE;
+    }
+  }
+  
+  // _xcpm_bootstrap
+  comment = "_xcpm_bootstrap";
+  if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+    // 10.8.5
+    UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x54 };
+    UINT8 repl[] = { 0x83, 0xFB, 0x3E, 0x75, 0x54 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+    // 10.9.x
+    UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x68 };
+    UINT8 repl[] = { 0x83, 0xFB, 0x3E, 0x75, 0x68 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.10.2")) {
+    // 10.10 - 10.10.2
+    UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x63 };
+    UINT8 repl[] = { 0x83, 0xFB, 0x3E, 0x75, 0x63 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.10.5")) {
+    // 10.10.3 - 10.10.5
+    UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
+    UINT8 repl[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x0D };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.11")) {
+    // 10.11 DB/PB - 10.11.0
+    UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
+    UINT8 repl[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x0D };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.11.6")) {
+    // 10.11.1 - 10.11.6
+    UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
+    UINT8 repl[] = { 0x83, 0xC3, 0xB9, 0x83, 0xFB, 0x09 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+    // 10.12 - 10.12.5
+    UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+    UINT8 repl[] = { 0x83, 0xC3, 0xC2, 0x83, 0xFB, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+    // 10.12.6 - 10.12.x
+    UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+    UINT8 repl[] = { 0x8D, 0x43, 0xC2, 0x83, 0xF8, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+    // 10.13
+    UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
+    UINT8 repl[] = { 0x89, 0xD8, 0xC2, 0xC1, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+  
+  DBG("KernelIvyE5XCPM() <===\n");
   return TRUE;
 }
 
@@ -1701,14 +1844,16 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
             break;
 
           default:
-            if (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) {
-              if (gCPUStructure.Model >= CPU_MODEL_HASWELL) {
-                // Haswell+ low-end CPU
-                EnableExtCpuXCPM = HaswellLowEndXCPM;
-              } else if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE || gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) {
-                // IvyBridge/IvyBridge-E XCPM
-                EnableExtCpuXCPM = KernelIvyBridgeXCPM;
-              }
+            if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+                (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+              // Haswell+ low-end CPU
+              EnableExtCpuXCPM = HaswellLowEndXCPM;
+            } else if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
+              // IvyBridge XCPM
+              EnableExtCpuXCPM = KernelIvyBridgeXCPM;
+            } else if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) {
+              // IvyBridge-E XCPM
+              EnableExtCpuXCPM = KernelIvyE5XCPM;
             }
             break;
       }

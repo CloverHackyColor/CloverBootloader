@@ -1315,7 +1315,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      AppleChassisAsset[Model]);
 
-  // Firmware info for High Sierra DP6 - DP9, GM
+  // Firmware info for High Sierra 10.13
   // by Sherlocks
   // FirmwareFeatures
   switch (Model) {
