@@ -311,23 +311,6 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
-  CHAR16            UniSysVers[6];
-  CHAR8             ShortOSVersion[6];
-  INTN              i;
-  for (i = 0; i < 6; i++) {
-    ShortOSVersion[i] = Entry->OSVersion[i];
-    if (ShortOSVersion[i] == '\0') {
-      break;
-    }
-    if (((i > 2) && (ShortOSVersion[i] == '.')) || i == 5) {
-      ShortOSVersion[i] = '\0';
-      ShortOSVersion[i + 1] = '\0';
-      break;
-    }
-  }
-  AsciiStrToUnicodeStrS(ShortOSVersion, UniSysVers, 6);
-  DBG("OSVesion: %a, ShortOSVersion=%a, uni-vers=%s,\n", Entry->OSVersion, ShortOSVersion, UniSysVers);
-
   if ((SrcDir = GetOtherKextsDir())) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
@@ -366,6 +349,17 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     FreePool(SrcDir);
   }
 
+  CHAR16 UniSysVers[6];
+  CHAR8  ShortOSVersion[6];
+  if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
+    // OSVersion that are earlier than 10.10(form: 10.x.y)
+    AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 4);
+    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 4);
+  } else {
+    AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 5);
+    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 5);
+  }
+    
   if ((SrcDir = GetOSVersionKextsDir(ShortOSVersion))) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
