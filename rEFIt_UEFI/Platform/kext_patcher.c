@@ -405,10 +405,11 @@ UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
 
 UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
 UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
+
 //SunKi
-//752e0fb6 -> eb2e0fb6
 UINT8   MavSearch[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
-UINT8   MavReplace[] = { 0xeb, 0x2e, 0x0f, 0xb6};
+UINT8   MavReplace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
+
 //
 // We can not rely on OSVersion global variable for OS version detection,
 // since in some cases it is not correct (install of ML from Lion, for example).
