@@ -354,10 +354,10 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
     // OSVersion that are earlier than 10.10(form: 10.x.y)
     AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 4);
-    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 4);
+    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 5);
   } else {
     AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 5);
-    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 5);
+    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 6);
   }
     
   if ((SrcDir = GetOSVersionKextsDir(ShortOSVersion))) {
