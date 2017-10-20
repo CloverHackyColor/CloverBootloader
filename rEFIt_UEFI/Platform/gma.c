@@ -688,9 +688,9 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT4
   { 0x192A, "Intel Skylake GT4"              }, //
   //GT4e
-  { 0x1932, "Intel Iris Pro Graphics 580"    }, //
+  { 0x1932, "Intel Iris Pro Graphics 580"    }, // Desktop
   { 0x193A, "Intel Iris Pro Graphics P580"   }, // Server
-  { 0x193B, "Intel Iris Pro Graphics 580"    }, // Desktop, Mobile
+  { 0x193B, "Intel Iris Pro Graphics 580"    }, // Mobile
   { 0x193D, "Intel Iris Pro Graphics P580"   }, // Workstation, Mobile Workstation
 
   //----------------Goldmont------------------
@@ -1866,8 +1866,14 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[3], 4);
-            DBG("  Found ig-platform-id = 0x01660003\n");
+            if (UGAWidth < 1600) {
+              devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[3], 4);
+              DBG("  Found ig-platform-id = 0x01660003\n");
+            } else {
+              // HD+(1600x900+)
+              devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[4], 4);
+              DBG("  Found ig-platform-id = 0x01660004\n");
+            }
           }
           break;
         default:
@@ -2212,9 +2218,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT4
     case 0x192A: // "Intel Skylake GT4"               //
       //GT4e
-    case 0x1932: // "Intel Iris Pro Graphics 580"     //
+    case 0x1932: // "Intel Iris Pro Graphics 580"     // Desktop
     case 0x193A: // "Intel Iris Pro Graphics P580"    // Server
-    case 0x193B: // "Intel Iris Pro Graphics 580"     // Desktop, Mobile
+    case 0x193B: // "Intel Iris Pro Graphics 580"     // Mobile
     case 0x193D: // "Intel Iris Pro Graphics P580"    // Workstation, Mobile Workstation
       switch (gma_dev->device_id) {
         case 0x1902:
