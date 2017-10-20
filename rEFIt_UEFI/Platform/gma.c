@@ -1813,7 +1813,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x015E: // "Intel Ivy Bridge GT1"            // Reserved
       //GT2
     case 0x0162: // "Intel HD Graphics 4000"          // Desktop
-    case 0x0166: // "Intel HD Graphics 4000"          // Mobile - MacBookPro9,x, MacBookPro10,x,, MacBookAir5,x, Macmini6,x
+    case 0x0166: // "Intel HD Graphics 4000"          // Mobile - MacBookPro9,x, MacBookPro10,x, MacBookAir5,x, Macmini6,x
     case 0x016A: // "Intel HD Graphics P4000"         // Server
       switch (gma_dev->device_id) {
         case 0x0152:

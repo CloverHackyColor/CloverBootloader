@@ -1876,7 +1876,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
         patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
       }
     }
-    DBG_RT("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
+    DBG_RT(Entry, "EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
