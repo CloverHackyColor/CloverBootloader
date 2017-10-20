@@ -1820,7 +1820,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
-
+  EnableExtCpuXCPM = NULL;
   if (Entry->KernelAndKextPatches->KPIvyXCPM) {
     //
     // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
@@ -1876,7 +1876,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
         patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
       }
     }
-    DBG("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
+    DBG_RT("EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
