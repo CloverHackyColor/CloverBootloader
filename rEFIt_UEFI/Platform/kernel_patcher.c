@@ -1740,7 +1740,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   if ((Entry == NULL) || (Entry->KernelAndKextPatches == NULL)) return;
 
   KextPatchesNeeded = (
-    Entry->KernelAndKextPatches->KPAsusAICPUPM ||
+    Entry->KernelAndKextPatches->KPAppleIntelCPUPM ||
     Entry->KernelAndKextPatches->KPAppleRTC ||
     Entry->KernelAndKextPatches->KPDELLSMBIOS ||
     (Entry->KernelAndKextPatches->KPATIConnectorsPatch != NULL) ||
@@ -1806,7 +1806,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 
   // Lapic Panic Kernel Patch
   DBG_RT(Entry, "\nKernelLapic patch: ");
-  if (Entry->KernelAndKextPatches->KPLapicPanic) {
+  if (Entry->KernelAndKextPatches->KPKernelLapic) {
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     if(is64BitKernel) {
@@ -1820,11 +1820,12 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
-  EnableExtCpuXCPM = NULL;
-  if (Entry->KernelAndKextPatches->KPIvyXCPM) {
+
+  if (Entry->KernelAndKextPatches->KPKernelXCPM) {
     //
     // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
     //
+    EnableExtCpuXCPM = NULL;
     patchedOk = FALSE;
     if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
       switch (gCPUStructure.Model) {

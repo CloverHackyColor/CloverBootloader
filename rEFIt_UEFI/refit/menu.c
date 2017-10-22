@@ -393,7 +393,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
   InputItems[InputItemsCount].ItemType = BoolValue; //46
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAsusAICPUPM;
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
   InputItems[InputItemsCount].ItemType = BoolValue; //47
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleRTC;
   InputItems[InputItemsCount].ItemType = BoolValue; //48
@@ -582,7 +582,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = 90;
   
   InputItems[InputItemsCount].ItemType = BoolValue; //91
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPLapicPanic;
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelLapic;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //92
   InputItems[InputItemsCount++].BValue = gSettings.USBInjection;
@@ -648,7 +648,7 @@ VOID FillInputs(BOOLEAN New)
 
   
   InputItems[InputItemsCount].ItemType = BoolValue; //105
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPIvyXCPM;
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelXCPM;
   
   InputItems[InputItemsCount].ItemType = BoolValue; //106
   InputItems[InputItemsCount++].BValue = gSettings.StringInjector;
@@ -884,7 +884,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //46
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPAsusAICPUPM = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPAppleIntelCPUPM = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
   i++; //47
@@ -1152,7 +1152,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //91
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPLapicPanic = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPKernelLapic = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
   i++; //92
@@ -1208,7 +1208,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.FakeIMEI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
-//FakeCPUID
+
   i++; //104
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
@@ -1218,7 +1218,8 @@ VOID ApplyInputs(VOID)
   
   i++; //105
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPIvyXCPM = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPKernelXCPM = InputItems[i].BValue;
+    DBG("applied KernelXCPM\n");
     gBootChanged = TRUE;
   }
 
@@ -4361,9 +4362,9 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItem(SubScreen, 104, "Fake CPUID:", TAG_INPUT, TRUE);
 //  AddMenuItem(SubScreen, 108, "Kernel patching allowed", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 91,  "Kernel Lapic Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 91,  "Kernel Lapic", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 105, "Kernel XCPM", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 48,  "Kernel PM Patch", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 48,  "Kernel PM", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKernelPatches());
   AddMenuInfo(SubScreen, L"----------------------");
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);

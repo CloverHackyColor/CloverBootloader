@@ -318,13 +318,13 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
   DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
-  DBG("\tLapic: %c\n", Patches->KPLapicPanic ? 'y' : 'n');
-  DBG("\tIvy Bridge XCPM: %c\n", Patches->KPIvyXCPM ? 'y' : 'n');
-  DBG("\tAICPUPM: %c\n", Patches->KPAsusAICPUPM ? 'y' : 'n');
+  DBG("\tKernelLapic: %c\n", Patches->KPKernelLapic ? 'y' : 'n');
+  DBG("\tKernelXCPM: %c\n", Patches->KPKernelXCPM ? 'y' : 'n');
+  DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
+  DBG("\tAppleIntelCPUPM: %c\n", Patches->KPAppleIntelCPUPM ? 'y' : 'n');
   DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
   // Dell smbios truncate fix
   DBG("\tDellSMBIOSPatch: %c\n", Patches->KPDELLSMBIOS ? 'y' : 'n');
-  DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');
   DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
   DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
   DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
@@ -683,7 +683,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     /**
      * syscl - append "-xcpm" argument conditionally if set KernelXCPM on Intel Haswell+ low-end CPUs
      */
-    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPIvyXCPM &&
+    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
@@ -695,8 +695,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         Entry->LoadOptions = tmpArgv;
     }
     
-    // add -xcpm on Ivy Bridge if set KPIvyXCPM and system version is 10.8.5 - 10.11.x
-    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPIvyXCPM &&
+    // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
+    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPKernelXCPM &&
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
         (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
         (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&

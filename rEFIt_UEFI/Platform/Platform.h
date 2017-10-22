@@ -1089,7 +1089,6 @@ typedef struct {
   UINT64                  DoubleClickTime;
   BOOLEAN                 PointerMirror;
 
-  BOOLEAN                 KernelXCPMAllowed;
   UINT8                   pad7[1];
   UINT8                   CustomBoot;
   EG_IMAGE                *CustomLogo;

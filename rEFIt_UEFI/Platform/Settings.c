@@ -655,14 +655,15 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
 {
   if (Dst == NULL || Src == NULL) return FALSE;
 
-  Dst->KPDebug       = Src->KPDebug;
-  Dst->KPKernelCpu   = Src->KPKernelCpu;
-  Dst->KPLapicPanic  = Src->KPLapicPanic;
-  Dst->KPAsusAICPUPM = Src->KPAsusAICPUPM;
-  Dst->KPAppleRTC    = Src->KPAppleRTC;
-  Dst->KPDELLSMBIOS  = Src->KPDELLSMBIOS;
-  Dst->KPKernelPm    = Src->KPKernelPm;
-  Dst->FakeCPUID     = Src->FakeCPUID;
+  Dst->KPDebug           = Src->KPDebug;
+  Dst->KPKernelCpu       = Src->KPKernelCpu;
+  Dst->KPKernelLapic     = Src->KPKernelLapic;
+  Dst->KPKernelXCPM      = Src->KPKernelXCPM;
+  Dst->KPKernelPm        = Src->KPKernelPm;
+  Dst->KPAppleIntelCPUPM = Src->KPAppleIntelCPUPM;
+  Dst->KPAppleRTC        = Src->KPAppleRTC;
+  Dst->KPDELLSMBIOS      = Src->KPDELLSMBIOS;
+  Dst->FakeCPUID         = Src->FakeCPUID;
 
   if (Src->KPATIConnectorsController != NULL) {
     Dst->KPATIConnectorsController = EfiStrDuplicate (Src->KPATIConnectorsController);
@@ -823,7 +824,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
   if (NeedPMfix) {
     Patches->KPKernelPm = TRUE;
-    Patches->KPAsusAICPUPM = TRUE;
+    Patches->KPAppleIntelCPUPM = TRUE;
   }
 
   Prop = GetProperty (DictPointer, "Debug");
@@ -836,20 +837,22 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPKernelCpu = IsPropertyTrue (Prop);
   }
 
-  Prop = GetProperty (DictPointer, "FakeCPUID");
+  Prop = GetProperty (DictPointer, "KernelLapic");
   if (Prop != NULL || gBootChanged) {
-    Patches->FakeCPUID = (UINT32)GetPropertyInteger (Prop, 0);
-    DBG ("FakeCPUID: %x\n", Patches->FakeCPUID);
+    Patches->KPKernelLapic = IsPropertyTrue (Prop);
   }
 
-  Prop = GetProperty (DictPointer, "AsusAICPUPM");
+  // this is an old key. after a long time, we consider removing this key for cleanup
+  Prop = GetProperty (DictPointer, "KernelIvyXCPM");
   if (Prop != NULL || gBootChanged) {
-    Patches->KPAsusAICPUPM = IsPropertyTrue (Prop);
+    Patches->KPKernelXCPM = IsPropertyTrue (Prop);
+    DBG("KernelXCPM: enabled\n");
   }
 
-  Prop = GetProperty (DictPointer, "AppleIntelCPUPM");
+  Prop = GetProperty (DictPointer, "KernelXCPM");
   if (Prop != NULL || gBootChanged) {
-    Patches->KPAsusAICPUPM = IsPropertyTrue (Prop);
+    Patches->KPKernelXCPM = IsPropertyTrue (Prop);
+    DBG("KernelXCPM: enabled\n");
   }
 
   Prop = GetProperty (DictPointer, "KernelPm");
@@ -857,26 +860,37 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPKernelPm = IsPropertyTrue (Prop);
   }
 
-  Prop = GetProperty (DictPointer, "KernelLapic");
+  // this is an old key. after a long time, we consider removing this key for cleanup
+  Prop = GetProperty (DictPointer, "AsusAICPUPM");
   if (Prop != NULL || gBootChanged) {
-    Patches->KPLapicPanic = IsPropertyTrue (Prop);
-  }
-  
-  Prop = GetProperty (DictPointer, "KernelIvyXCPM");
-  if (Prop != NULL || gBootChanged) {
-    Patches->KPIvyXCPM = IsPropertyTrue (Prop);
+    Patches->KPAppleIntelCPUPM = IsPropertyTrue (Prop);
   }
 
-  Prop = GetProperty (DictPointer, "KernelXCPM");
+  Prop = GetProperty (DictPointer, "AppleIntelCPUPM");
   if (Prop != NULL || gBootChanged) {
-    Patches->KPIvyXCPM = IsPropertyTrue (Prop);
+    Patches->KPAppleIntelCPUPM = IsPropertyTrue (Prop);
   }
 
-  /*
-  Prop = GetProperty(DictPointer, "KernelHaswellE");
+  Prop = GetProperty (DictPointer, "AppleRTC");
   if (Prop != NULL || gBootChanged) {
-    Patches->KPHaswellE = IsPropertyTrue(Prop);
-  }*/
+    Patches->KPAppleRTC = !IsPropertyFalse (Prop);  //default = TRUE
+  }
+
+  //
+  // Dell SMBIOS Patch
+  //
+  // syscl: we do not need gBootChanged and Prop is empty condition
+  // this change will boost Dell SMBIOS Patch a bit
+  // but the major target is to make code clean
+  Prop = GetProperty(DictPointer, "DellSMBIOSPatch");
+  Patches->KPDELLSMBIOS = IsPropertyTrue(Prop); // default == FALSE
+  gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
+
+  Prop = GetProperty (DictPointer, "FakeCPUID");
+  if (Prop != NULL || gBootChanged) {
+    Patches->FakeCPUID = (UINT32)GetPropertyInteger (Prop, 0);
+    DBG ("FakeCPUID: %x\n", Patches->FakeCPUID);
+  }
 
   Prop = GetProperty (DictPointer, "ATIConnectorsController");
   if (Prop != NULL) {
@@ -915,23 +929,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       Patches->KPATIConnectorsDataLen    = 0;
     }
   }
-
-  Prop = GetProperty (DictPointer, "AppleRTC");
-  if (Prop != NULL || gBootChanged) {
-    Patches->KPAppleRTC = !IsPropertyFalse (Prop);  //default = TRUE
-  }
-
-  //
-  // Dell SMBIOS Patch
-  //
-  // syscl: we do not need gBootChanged and Prop is empty condition
-  // this change will boost Dell SMBIOS Patch a bit
-  // but the major target is to make code clean
-  Prop = GetProperty(DictPointer, "DellSMBIOSPatch");
-  Patches->KPDELLSMBIOS = IsPropertyTrue(Prop); // default == FALSE
-  gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
-
-
 
   Prop = GetProperty (DictPointer, "ForceKextsToLoad");
   if (Prop != NULL) {

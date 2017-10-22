@@ -662,11 +662,11 @@ void PrintConfig(CFTypeRef data)
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
   addBoolean(KernelAndKextPatchesDict, CFSTR("#Debug"), s->KernelAndKextPatches.KPDebug);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KernelAndKextPatches.KPKernelCpu);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KernelAndKextPatches.KPKernelLapic);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelXCPM"), s->KernelAndKextPatches.KPKernelXCPM);
   addBoolean(KernelAndKextPatchesDict, CFSTR("KernelPm"), s->KernelAndKextPatches.KPKernelPm);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KernelAndKextPatches.KPLapicPanic);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("KernelIvyXCPM"), s->KernelAndKextPatches.KPIvyXCPM);
+  addBoolean(KernelAndKextPatchesDict, CFSTR("AppleIntelCPUPM"), s->KernelAndKextPatches.KPAppleIntelCPUPM);
   addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KernelAndKextPatches.KPAppleRTC);
-  addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KernelAndKextPatches.KPAsusAICPUPM);
   addBoolean(KernelAndKextPatchesDict, CFSTR("DellSMBIOSPatch"), s->KernelAndKextPatches.KPDELLSMBIOS);
   //addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
   addInteger(KernelAndKextPatchesDict, CFSTR("#Number of KextsToPatch"), s->KernelAndKextPatches.NrKexts);

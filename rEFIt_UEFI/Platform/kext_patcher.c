@@ -312,7 +312,7 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
 
 ////////////////////////////////////
 //
-// AsusAICPUPM patch
+// AppleIntelCPUPM patch
 //
 // fLaked's SpeedStepper patch for Asus (and some other) boards:
 // http://www.insanelymac.com/forum/index.php?showtopic=258611
@@ -326,13 +326,13 @@ UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
 UINT8   MovE2ToCx[]   = { 0x66, 0xB9, 0xE2, 0x00 };
 UINT8   Wrmsr[]       = { 0x0F, 0x30 };
 
-VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
+VOID AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
 {
   UINTN   Index1;
   UINTN   Index2;
   UINTN   Count = 0;
 
-  DBG_RT(Entry, "\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  DBG_RT(Entry, "\nAppleIntelCPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   if (Entry->KernelAndKextPatches->KPDebug) {
     ExtractKextBundleIdentifier(InfoPlist);
   }
@@ -980,13 +980,13 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
   
   ExtractKextBundleIdentifier(InfoPlist);
   
-  if (Entry->KernelAndKextPatches->KPAsusAICPUPM &&
+  if (Entry->KernelAndKextPatches->KPAppleIntelCPUPM &&
       (AsciiStrStr(InfoPlist,
                    "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)) {
     //
-    // AsusAICPUPM
+    // AppleIntelCPUPM
     //
-    AsusAICPUPMPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
+    AppleIntelCPUPMPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, Entry);
   } else if (Entry->KernelAndKextPatches->KPAppleRTC &&
              (AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC") != NULL)) {
     //
