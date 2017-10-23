@@ -550,11 +550,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     DBG("GetOSVersion:");
 
+    //needed for boot.efi patcher
+    Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
     // For these cases, take OSVersion from loaded boot.efi image in memory
     if (/*Entry->LoaderType == OSTYPE_OSX_INSTALLER ||*/ !Entry->OSVersion) {
-      Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
         /*
