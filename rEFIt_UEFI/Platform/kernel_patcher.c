@@ -631,7 +631,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
         bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
         patchLocation = i+30;
-        DBG("Found Lion, Mountain Lion Lapic panic at 0x%08x\n", patchLocation);
+        DBG("Found Lion/Mountain Lion Lapic panic at 0x%08x\n", patchLocation);
         break;
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
         bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&

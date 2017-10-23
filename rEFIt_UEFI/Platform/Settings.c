@@ -846,13 +846,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty (DictPointer, "KernelIvyXCPM");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelXCPM = IsPropertyTrue (Prop);
-    DBG("KernelXCPM: enabled\n");
+    if (IsPropertyTrue(Prop)) {
+      DBG("KernelXCPM: enabled\n");
+    }
   }
 
   Prop = GetProperty (DictPointer, "KernelXCPM");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelXCPM = IsPropertyTrue (Prop);
-    DBG("KernelXCPM: enabled\n");
+    if (IsPropertyTrue(Prop)) {
+      DBG("KernelXCPM: enabled\n");
+    }
   }
 
   Prop = GetProperty (DictPointer, "KernelPm");
@@ -883,7 +887,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   // this change will boost Dell SMBIOS Patch a bit
   // but the major target is to make code clean
   Prop = GetProperty(DictPointer, "DellSMBIOSPatch");
-  Patches->KPDELLSMBIOS = IsPropertyTrue(Prop); // default == FALSE
+  Patches->KPDELLSMBIOS = IsPropertyTrue (Prop); // default == FALSE
   gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
 
   Prop = GetProperty (DictPointer, "FakeCPUID");
