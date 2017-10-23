@@ -1226,7 +1226,7 @@ VOID PatchPrelinkedKexts(LOADER_ENTRY *Entry)
   //Slice
   // I see no reason to disable kext injection if FakeSMC found in cache
   //since rev4240 we have manual kext inject disable
- // CheckForFakeSMC(WholePlist, Entry);
+  CheckForFakeSMC(WholePlist, Entry);
   
   DictPtr = WholePlist;
   while ((DictPtr = AsciiStrStr(DictPtr, "dict>")) != NULL) {
