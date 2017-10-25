@@ -258,6 +258,7 @@
 [Pcd]
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-common
+#  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-common
+  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2
   GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
   MSFT:*_*_*_CC_FLAGS = /Os
