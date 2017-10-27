@@ -4,7 +4,7 @@
 
   (C) Copyright 2014 Hewlett-Packard Development Company, L.P.<BR>
   (C) Copyright 2016 Hewlett Packard Enterprise Development LP<BR>
-  Copyright (c) 2009 - 2016, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2017, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -492,7 +492,7 @@ EfiShellGetFilePathFromDevicePath(
           //  UEFI Shell spec section 3.7)
           if ((PathSize != 0)                        &&
               (PathForReturn != NULL)                &&
-              (PathForReturn[PathSize - 1] != L'\\') &&
+            (PathForReturn[PathSize / sizeof (CHAR16) - 1] != L'\\') &&
               (AlignedNode->PathName[0]    != L'\\')) {
             PathForReturn = StrnCatGrow (&PathForReturn, &PathSize, L"\\", 1);
           }
@@ -616,7 +616,8 @@ EfiShellGetDevicePathFromFilePath(
   //
   // build the full device path
   //
-  if (*(Path+StrLen(MapName)+1) == CHAR_NULL) {
+  if ((*(Path+StrLen(MapName)) != CHAR_NULL) &&
+      (*(Path+StrLen(MapName)+1) == CHAR_NULL)) {
     DevicePathForReturn = FileDevicePath(Handle, L"\\");
   } else {
     DevicePathForReturn = FileDevicePath(Handle, Path+StrLen(MapName));
@@ -1814,7 +1815,7 @@ EfiShellExecute(
   Temp = NULL;
   Size = 0;
 //    ASSERT((Temp == NULL && Size == 0) || (Temp != NULL));
-  StrnCatGrow(&Temp, &Size, L"Shell.efi -_exit ", 0);
+    StrnCatGrow(&Temp, &Size, L"Shell.efi -exit ", 0);
   StrnCatGrow(&Temp, &Size, CommandLine, 0);
 
     Status = InternalShellExecuteDevicePath(
@@ -3123,10 +3124,10 @@ EfiShellSetCurDir(
       // make that the current file system mapping
       //
       if (MapListItem != NULL) {
-        gShellCurDir = MapListItem;
+        gShellCurMapping = MapListItem;
       }
     } else {
-      MapListItem = gShellCurDir;
+      MapListItem = gShellCurMapping;
     }
 
     if (MapListItem == NULL) {
@@ -3175,7 +3176,7 @@ EfiShellSetCurDir(
       FreePool (DirectoryName);
       return (EFI_INVALID_PARAMETER);
     }
-//    gShellCurDir = MapListItem;
+//    gShellCurMapping = MapListItem;
     if (DirectoryName != NULL) {
       //
       // change current dir on that file system
@@ -3201,7 +3202,7 @@ EfiShellSetCurDir(
   //
   // if updated the current directory then update the environment variable
   //
-  if (MapListItem == gShellCurDir) {
+  if (MapListItem == gShellCurMapping) {
     Size = 0;
 //    ASSERT((TempString == NULL && Size == 0) || (TempString != NULL));
     StrnCatGrow(&TempString, &Size, MapListItem->MapName, 0);
@@ -3255,6 +3256,7 @@ EfiShellGetHelpText(
   if (!HelpText) {
     return EFI_INVALID_PARAMETER;
   }
+  FixCommand = NULL;
 
   ManFileName = ShellCommandGetManFileNameHandler(Command);
 
@@ -3509,40 +3511,43 @@ InternalSetAlias(
 {
   EFI_STATUS  Status;
   CHAR16      *AliasLower;
+  BOOLEAN     DeleteAlias;
 
+  DeleteAlias = FALSE;
+  if (Alias == NULL) {
+    //
+    // We must be trying to remove one if Alias is NULL
+    // remove an alias (but passed in COMMAND parameter)
+    //
+    Alias       = Command;
+    DeleteAlias = TRUE;
+  }
+ // ASSERT (Alias != NULL);
+ if (!Alias) {
+   return EFI_NOT_FOUND;
+ }
+
+  //
   // Convert to lowercase to make aliases case-insensitive
-  if (Alias != NULL) {
+  //
     AliasLower = AllocateCopyPool (StrSize (Alias), Alias);
     if (AliasLower == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
     ToLower (AliasLower);
+
+  if (DeleteAlias) {
+    Status = gRT->SetVariable (AliasLower, &gShellAliasGuid, 0, 0, NULL);
   } else {
-    AliasLower = NULL;
+    Status = gRT->SetVariable (
+                    AliasLower, &gShellAliasGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | (Volatile ? 0 : EFI_VARIABLE_NON_VOLATILE),
+                    StrSize (Command), (VOID *) Command
+                    );
   }
 
-  //
-  // We must be trying to remove one if Alias is NULL
-  //
-  if (Alias == NULL) {
-    //
-    // remove an alias (but passed in COMMAND parameter)
-    //
-    Status = (gRT->SetVariable((CHAR16*)Command, &gShellAliasGuid, 0, 0, NULL));
-  } else {
-    //
-    // Add and replace are the same
-    //
-
-    // We dont check the error return on purpose since the variable may not exist.
-    gRT->SetVariable((CHAR16*)Command, &gShellAliasGuid, 0, 0, NULL);
-
-    Status = (gRT->SetVariable((CHAR16*)Alias, &gShellAliasGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS|(Volatile?0:EFI_VARIABLE_NON_VOLATILE), StrSize(Command), (VOID*)Command));
-  }
-
-  if (Alias != NULL) {
     FreePool (AliasLower);
-  }
+
   return Status;
 }
 

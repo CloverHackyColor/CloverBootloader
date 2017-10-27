@@ -3,6 +3,7 @@
 
   (C) Copyright 2014-2015 Hewlett-Packard Development Company, L.P.<BR>
   Copyright (c) 2010 - 2017, Intel Corporation. All rights reserved.<BR>
+  (C) Copyright 2017 Hewlett Packard Enterprise Development LP<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -261,7 +262,7 @@ IsDriverProt (
 
   @param[in] TheHandle        The handles to show info on.
   @param[in] Language         Language string per UEFI specification.
-  @param[in] Seperator        Separator string between information blocks.
+  @param[in] Separator        Separator string between information blocks.
   @param[in] Verbose          TRUE for extra info, FALSE otherwise.
   @param[in] ExtraInfo        TRUE for extra info, FALSE otherwise.
 
@@ -272,7 +273,7 @@ CHAR16*
 GetProtocolInfoString(
   IN CONST EFI_HANDLE TheHandle,
   IN CONST CHAR8      *Language,
-  IN CONST CHAR16     *Seperator,
+  IN CONST CHAR16     *Separator,
   IN CONST BOOLEAN    Verbose,
   IN CONST BOOLEAN    ExtraInfo
   )
@@ -285,6 +286,8 @@ GetProtocolInfoString(
   UINTN                     Size;
   CHAR16                    *Temp;
   CHAR16                    GuidStr[40];
+  VOID                      *Instance;
+  CHAR16                    InstanceStr[17];
 
   ProtocolGuidArray = NULL;
   RetVal            = NULL;
@@ -298,16 +301,30 @@ GetProtocolInfoString(
   if (!EFI_ERROR (Status)) {
     for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
       Temp = GetStringNameFromGuid(ProtocolGuidArray[ProtocolIndex], Language);
-      if (Temp != NULL) {
 //        ASSERT((RetVal == NULL && Size == 0) || (RetVal != NULL));
-        if (Size != 0) {
-          StrnCatGrow(&RetVal, &Size, Seperator, 0);
-        }
-        StrnCatGrow(&RetVal, &Size, L"%H", 0);
+      if (Size != 0) {
+        StrnCatGrow(&RetVal, &Size, Separator, 0);
+      }
+      StrnCatGrow(&RetVal, &Size, L"%H", 0);
+      if (Temp == NULL) {
+        UnicodeSPrint (GuidStr, sizeof (GuidStr), L"%g", ProtocolGuidArray[ProtocolIndex]);
+        StrnCatGrow (&RetVal, &Size, GuidStr, 0);
+      } else {
         StrnCatGrow(&RetVal, &Size, Temp, 0);
         FreePool(Temp);
       }
       StrnCatGrow(&RetVal, &Size, L"%N", 0);
+
+      if(Verbose) {
+        Status = gBS->HandleProtocol (TheHandle, ProtocolGuidArray[ProtocolIndex], &Instance);
+        if (!EFI_ERROR (Status)) {
+          StrnCatGrow (&RetVal, &Size, L"(%H", 0);
+          UnicodeSPrint (InstanceStr, sizeof (InstanceStr), L"%x", Instance);
+          StrnCatGrow (&RetVal, &Size, InstanceStr, 0);
+          StrnCatGrow (&RetVal, &Size, L"%N)", 0);
+        }
+      }
+
       if (ExtraInfo) {
         Temp = GetProtocolInformationDump(TheHandle, ProtocolGuidArray[ProtocolIndex], Verbose);
         if (Temp != NULL) {
@@ -315,9 +332,9 @@ GetProtocolInfoString(
           if (!Verbose) {
             StrnCatGrow(&RetVal, &Size, L"(", 0);
             StrnCatGrow(&RetVal, &Size, Temp, 0);
-            StrnCatGrow(&RetVal, &Size, L")\r\n", 0);
+            StrnCatGrow(&RetVal, &Size, L")", 0);
           } else {
-            StrnCatGrow(&RetVal, &Size, Seperator, 0);
+            StrnCatGrow(&RetVal, &Size, Separator, 0);
             StrnCatGrow(&RetVal, &Size, Temp, 0);
           }
           FreePool(Temp);
@@ -333,7 +350,7 @@ GetProtocolInfoString(
   }
 
 //  ASSERT((RetVal == NULL && Size == 0) || (RetVal != NULL));
-  StrnCatGrow(&RetVal, &Size, Seperator, 0);
+  StrnCatGrow(&RetVal, &Size, Separator, 0);
   return (RetVal);
 }
 
@@ -661,7 +678,7 @@ DisplayDriverModelHandle (
     -1, 
     -1, 
     NULL, 
-    STRING_TOKEN (STR_DH_OUTPUT_DRIVER6B),
+    STRING_TOKEN (STR_DH_OUTPUT_DRIVER7),
     gShellDriver1HiiHandle,
     ConvertHandleToHandleIndex(Handle),
     DriverName!=NULL?DriverName:L"<Unknown>"
@@ -701,7 +718,7 @@ DisplayDriverModelHandle (
         -1, 
         -1, 
         NULL, 
-        STRING_TOKEN (STR_DH_OUTPUT_DRIVER6), 
+        STRING_TOKEN (STR_DH_OUTPUT_DRIVER9),
         gShellDriver1HiiHandle, 
         L"None"
         );
@@ -710,7 +727,7 @@ DisplayDriverModelHandle (
       -1, 
       -1, 
       NULL, 
-      STRING_TOKEN (STR_DH_OUTPUT_DRIVER6), 
+      STRING_TOKEN (STR_DH_OUTPUT_DRIVER9),
       gShellDriver1HiiHandle, 
       L""
       );
@@ -743,7 +760,7 @@ DisplayDriverModelHandle (
             -1, 
             -1, 
             NULL, 
-            STRING_TOKEN (STR_DH_OUTPUT_DRIVER6B),
+            STRING_TOKEN (STR_DH_OUTPUT_DRIVER6C),
             gShellDriver1HiiHandle,
             ConvertHandleToHandleIndex(ChildControllerHandleBuffer[ChildIndex]),
             TempStringPointer!=NULL?TempStringPointer:L"<Unknown>"
@@ -799,7 +816,8 @@ DoDhByHandle(
         ProtocolInfoString==NULL?L"":ProtocolInfoString
       );
     } else {
-      ProtocolInfoString = GetProtocolInfoString(TheHandle, Language, L"\r\n", Verbose, TRUE);
+      ProtocolInfoString = GetProtocolInfoString(TheHandle, Language, Verbose ? L"\r\n" : L" ", Verbose, TRUE);
+      if (Verbose) {
       ShellPrintHiiEx(
         -1,
         -1,
@@ -810,6 +828,17 @@ DoDhByHandle(
         TheHandle,
         ProtocolInfoString==NULL?L"":ProtocolInfoString
       );
+      } else {
+        ShellPrintHiiEx(
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_DH_OUTPUT_SINGLE_D),
+          gShellDriver1HiiHandle,
+          ConvertHandleToHandleIndex(TheHandle),
+          ProtocolInfoString==NULL?L"":ProtocolInfoString
+        );
+      }
     }
 
     if (DriverInfo) {
@@ -1115,11 +1144,6 @@ ShellCommandRunDh (
     } else {
       Language = AllocateZeroPool(10);
       AsciiSPrint(Language, 10, "en-us");
-    } else {
-//      ASSERT(Language == NULL);
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_VALUE), gShellDriver1HiiHandle, L"dh",  L"-l");  
-      ShellCommandLineFreeVarList (Package);
-      return (SHELL_INVALID_PARAMETER);
     }
 
     SfoFlag     = ShellCommandLineGetFlag (Package, L"-sfo");

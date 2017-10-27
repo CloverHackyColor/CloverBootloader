@@ -2,7 +2,7 @@
   Main file for DmpStore shell Debug1 function.
    
   (C) Copyright 2013-2015 Hewlett-Packard Development Company, L.P.<BR>
-  Copyright (c) 2005 - 2015, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2005 - 2017, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -79,6 +79,45 @@ GetAttrType (
   }
 
   return RetString;
+}
+
+/**
+  Convert binary to hex format string.
+
+  @param[in]  Buffer            The binary data.
+  @param[in]  BufferSize        The size in bytes of the binary data.
+  @param[in, out] HexString     Hex format string.
+  @param[in]      HexStringSize The size in bytes of the string.
+
+  @return The hex format string.
+**/
+CHAR16*
+BinaryToHexString (
+  IN     VOID    *Buffer,
+  IN     UINTN   BufferSize,
+  IN OUT CHAR16  *HexString,
+  IN     UINTN   HexStringSize
+  )
+{
+  UINTN Index;
+  UINTN StringIndex;
+
+//  ASSERT (Buffer != NULL);
+  if ((!Buffer) || ((BufferSize * 2 + 1) * sizeof (CHAR16) > HexStringSize)) {
+    return NULL;
+  }
+//  ASSERT ((BufferSize * 2 + 1) * sizeof (CHAR16) <= HexStringSize);
+
+  for (Index = 0, StringIndex = 0; Index < BufferSize; Index += 1) {
+    StringIndex +=
+      UnicodeSPrint (
+        &HexString[StringIndex],
+        HexStringSize - StringIndex * sizeof (CHAR16),
+        L"%02x",
+        ((UINT8 *) Buffer)[Index]
+        );
+  }
+  return HexString;
 }
 
 /**
@@ -358,6 +397,7 @@ AppendSingleVariableToFile (
   @param[in] FoundVarGuid   The previous GUID from GetNextVariableName. ignored at start.
   @param[in] FoundOne       If a VariableName or Guid was specified and one was printed or
                             deleted, then set this to TRUE, otherwise ignored.
+  @param[in] StandardFormatOutput TRUE indicates Standard-Format Output.
 
   @retval SHELL_SUCCESS           The operation was successful.
   @retval SHELL_OUT_OF_RESOURCES  A memorty allocation failed.
@@ -371,12 +411,12 @@ CascadeProcessVariables (
   IN CONST EFI_GUID    *Guid        OPTIONAL,
   IN DMP_STORE_TYPE    Type,
   IN EFI_FILE_PROTOCOL *FileHandle  OPTIONAL,
-  IN CONST CHAR16      *PrevName,
-  IN EFI_GUID          *PreviosVarGuid,
-  IN BOOLEAN           *FoundOne
+  IN CONST CHAR16      * CONST PrevName,
+  IN EFI_GUID          FoundVarGuid,
+  IN BOOLEAN           *FoundOne,
+  IN BOOLEAN           StandardFormatOutput
   )
 {
-  EFI_GUID          FoundVarGuid;
   EFI_STATUS                Status;
   CHAR16                    *FoundVarName;
   UINT8                     *DataBuffer;
@@ -384,15 +424,15 @@ CascadeProcessVariables (
   UINT32                    Atts;
   SHELL_STATUS              ShellStatus;
   UINTN                     NameSize;
-  CHAR16                    *RetString;
+  CHAR16                    *AttrString;
+  CHAR16                    *HexString;
   EFI_STATUS                SetStatus;
+  CONST CHAR16              *GuidName;
 
   if (ShellGetExecutionBreakFlag()) {
     return (SHELL_ABORTED);
   }
   
-  CopyMem(&FoundVarGuid, PreviosVarGuid, sizeof(EFI_GUID));
-
   NameSize      = 0;
   FoundVarName  = NULL;
 
@@ -400,6 +440,7 @@ CascadeProcessVariables (
     StrnCatGrow(&FoundVarName, &NameSize, PrevName, 0);
   } else {
     FoundVarName = AllocateZeroPool(sizeof(CHAR16));
+    NameSize = sizeof(CHAR16);
   }
 
   Status = gRT->GetNextVariableName (&NameSize, FoundVarName, &FoundVarGuid);
@@ -431,7 +472,7 @@ CascadeProcessVariables (
   //
   // Recurse to the next iteration.  We know "our" variable's name.
   //
-  ShellStatus = CascadeProcessVariables(Name, Guid, Type, FileHandle, FoundVarName, &FoundVarGuid, FoundOne);
+  ShellStatus = CascadeProcessVariables (Name, Guid, Type, FileHandle, FoundVarName, FoundVarGuid, FoundOne, StandardFormatOutput);
 
   if (ShellGetExecutionBreakFlag() || (ShellStatus == SHELL_ABORTED)) {
     SHELL_FREE_NON_NULL(FoundVarName);
@@ -463,25 +504,50 @@ CascadeProcessVariables (
         Status = gRT->GetVariable (FoundVarName, &FoundVarGuid, &Atts, &DataSize, DataBuffer);
       }
     }
-    if ((Type == DmpStoreDisplay) || (Type == DmpStoreSave)) {
       //
       // Last error check then print this variable out.
       //
+    if (Type == DmpStoreDisplay) {
       if (!EFI_ERROR(Status) && (DataBuffer != NULL) && (FoundVarName != NULL)) {
-        RetString = GetAttrType(Atts);
-        ShellPrintHiiEx(
-          -1,
-          -1,
-          NULL,
-          STRING_TOKEN(STR_DMPSTORE_HEADER_LINE),
-          gShellDebug1HiiHandle,
-          RetString,
-          &FoundVarGuid,
-          FoundVarName,
-          DataSize);
-        if (Type == DmpStoreDisplay) {
-          DumpHex(2, 0, DataSize, DataBuffer);
+        AttrString = GetAttrType(Atts);
+        if (StandardFormatOutput) {
+          HexString = AllocatePool ((DataSize * 2 + 1) * sizeof (CHAR16));
+          if (HexString != NULL) {
+            ShellPrintHiiEx (
+              -1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_VAR_SFO), gShellDebug1HiiHandle,
+              FoundVarName, &FoundVarGuid, Atts, DataSize,
+              BinaryToHexString (
+                DataBuffer, DataSize, HexString, (DataSize * 2 + 1) * sizeof (CHAR16)
+                )
+              );
+            FreePool (HexString);
+          } else {
+            Status = EFI_OUT_OF_RESOURCES;
+          }
         } else {
+          Status = gEfiShellProtocol->GetGuidName(&FoundVarGuid, &GuidName);
+          if (EFI_ERROR (Status)) {
+            ShellPrintHiiEx (
+              -1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_HEADER_LINE), gShellDebug1HiiHandle,
+              AttrString, &FoundVarGuid, FoundVarName, DataSize
+              );
+        } else {
+            ShellPrintHiiEx (
+              -1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_HEADER_LINE2), gShellDebug1HiiHandle,
+              AttrString, GuidName, FoundVarName, DataSize
+              );
+          }
+          DumpHex (2, 0, DataSize, DataBuffer);
+        }
+        SHELL_FREE_NON_NULL (AttrString);
+      }
+    } else if (Type == DmpStoreSave) {
+      if (!EFI_ERROR(Status) && (DataBuffer != NULL) && (FoundVarName != NULL)) {
+        AttrString = GetAttrType (Atts);
+        ShellPrintHiiEx (
+          -1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_HEADER_LINE), gShellDebug1HiiHandle,
+          AttrString, &FoundVarGuid, FoundVarName, DataSize
+          );
           Status = AppendSingleVariableToFile (
                      FileHandle,
                      FoundVarName,
@@ -490,23 +556,26 @@ CascadeProcessVariables (
                      (UINT32) DataSize,
                      DataBuffer
                      );
-        }
-        SHELL_FREE_NON_NULL(RetString);
+        SHELL_FREE_NON_NULL (AttrString);
       }
     } else if (Type == DmpStoreDelete) {
       //
       // We only need name to delete it...
       //
+      SetStatus = gRT->SetVariable (FoundVarName, &FoundVarGuid, Atts, 0, NULL);
+      if (StandardFormatOutput) {
+        if (SetStatus == EFI_SUCCESS) {
       ShellPrintHiiEx (
-        -1,
-        -1,
-        NULL,
-        STRING_TOKEN(STR_DMPSTORE_DELETE_LINE),
-        gShellDebug1HiiHandle,
-        &FoundVarGuid,
-        FoundVarName,
-        gRT->SetVariable (FoundVarName, &FoundVarGuid, Atts, 0, NULL)
+            -1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_NG_SFO), gShellDebug1HiiHandle,
+            FoundVarName, &FoundVarGuid
+            );
+        }
+      } else {
+        ShellPrintHiiEx (
+          -1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_DELETE_LINE), gShellDebug1HiiHandle,
+          &FoundVarGuid, FoundVarName, SetStatus
         );
+    }
     }
     SHELL_FREE_NON_NULL(DataBuffer);
   }
@@ -531,6 +600,7 @@ CascadeProcessVariables (
   @param[in] Guid        The GUID of the variable set (or NULL).
   @param[in] Type        The operation type.
   @param[in] FileHandle  The file to save or load variables.
+  @param[in] StandardFormatOutput TRUE indicates Standard-Format Output.
 
   @retval SHELL_SUCCESS           The operation was successful.
   @retval SHELL_OUT_OF_RESOURCES  A memorty allocation failed.
@@ -543,7 +613,8 @@ ProcessVariables (
   IN CONST CHAR16      *Name      OPTIONAL,
   IN CONST EFI_GUID    *Guid      OPTIONAL,
   IN DMP_STORE_TYPE    Type,
-  IN SHELL_FILE_HANDLE FileHandle OPTIONAL
+  IN SHELL_FILE_HANDLE FileHandle OPTIONAL,
+  IN BOOLEAN           StandardFormatOutput
   )
 {
   SHELL_STATUS              ShellStatus;
@@ -554,10 +625,14 @@ ProcessVariables (
   ShellStatus   = SHELL_SUCCESS;
   ZeroMem (&FoundVarGuid, sizeof(EFI_GUID));
 
+  if (StandardFormatOutput) {
+    ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN(STR_GEN_SFO_HEADER), gShellDebug1HiiHandle, L"dmpstore");
+  }
+
   if (Type == DmpStoreLoad) {
     ShellStatus = LoadVariablesFromFile (FileHandle, Name, Guid, &Found);
   } else {
-    ShellStatus = CascadeProcessVariables(Name, Guid, Type, FileHandle, NULL, &FoundVarGuid, &Found);
+    ShellStatus = CascadeProcessVariables (Name, Guid, Type, FileHandle, NULL, FoundVarGuid, &Found, StandardFormatOutput);
   }
 
   if (!Found) {
@@ -565,13 +640,25 @@ ProcessVariables (
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_OUT_MEM), gShellDebug1HiiHandle, L"dmpstore");  
       return (ShellStatus);
     } else if (Name != NULL && Guid == NULL) {
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_N), gShellDebug1HiiHandle, L"dmpstore", Name);  
+      if (StandardFormatOutput) {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_N_SFO), gShellDebug1HiiHandle, Name);
+      } else {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_N), gShellDebug1HiiHandle, L"dmpstore", Name);  
+      }
     } else if (Name != NULL && Guid != NULL) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_GN), gShellDebug1HiiHandle, L"dmpstore", Guid, Name);  
     } else if (Name == NULL && Guid == NULL) {
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND), gShellDebug1HiiHandle, L"dmpstore");  
+      if (StandardFormatOutput) {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_SFO), gShellDebug1HiiHandle);
+      } else {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND), gShellDebug1HiiHandle, L"dmpstore");
+      }
     } else if (Name == NULL && Guid != NULL) {
-      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_G), gShellDebug1HiiHandle, L"dmpstore", Guid);  
+      if (StandardFormatOutput) {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_G_SFO), gShellDebug1HiiHandle, Guid);
+      } else {
+        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_NO_VAR_FOUND_G), gShellDebug1HiiHandle, L"dmpstore", Guid);
+      }
     } 
     return (SHELL_NOT_FOUND);
   }
@@ -584,6 +671,7 @@ STATIC CONST SHELL_PARAM_ITEM ParamList[] = {
   {L"-s", TypeValue},
   {L"-all", TypeFlag},
   {L"-guid", TypeValue},
+  {L"-sfo", TypeFlag},
   {NULL, TypeMax}
   };
 
@@ -601,6 +689,7 @@ ShellCommandRunDmpStore (
   )
 {
   EFI_STATUS        Status;
+  RETURN_STATUS     RStatus;
   LIST_ENTRY        *Package;
   CHAR16            *ProblemParam;
   SHELL_STATUS      ShellStatus;
@@ -612,12 +701,14 @@ ShellCommandRunDmpStore (
   DMP_STORE_TYPE    Type;
   SHELL_FILE_HANDLE FileHandle;
   EFI_FILE_INFO     *FileInfo;
+  BOOLEAN           StandardFormatOutput;
 
   ShellStatus   = SHELL_SUCCESS;
   Package       = NULL;
   FileHandle    = NULL;
   File          = NULL;
   Type          = DmpStoreDisplay;
+  StandardFormatOutput = FALSE;
 
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR(Status)) {
@@ -641,6 +732,9 @@ ShellCommandRunDmpStore (
     } else if ((ShellCommandLineGetFlag(Package, L"-s") || ShellCommandLineGetFlag(Package, L"-l")) && ShellCommandLineGetFlag(Package, L"-d")) {
       ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_CONFLICT), gShellDebug1HiiHandle, L"dmpstore", L"-l or -s", L"-d");  
       ShellStatus = SHELL_INVALID_PARAMETER;
+    } else if ((ShellCommandLineGetFlag(Package, L"-s") || ShellCommandLineGetFlag(Package, L"-l")) && ShellCommandLineGetFlag(Package, L"-sfo")) {
+      ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_CONFLICT), gShellDebug1HiiHandle, L"dmpstore", L"-l or -s", L"-sfo");  
+      ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
       // Determine the GUID to search for based on -all and -guid parameters
@@ -648,8 +742,8 @@ ShellCommandRunDmpStore (
       if (!ShellCommandLineGetFlag(Package, L"-all")) {
         GuidStr = ShellCommandLineGetValue(Package, L"-guid");
         if (GuidStr != NULL) {
-          Status = ConvertStringToGuid(GuidStr, &GuidData);
-          if (EFI_ERROR(Status)) {
+          RStatus = StrToGuid (GuidStr, &GuidData);
+          if (RETURN_ERROR (RStatus) || (GuidStr[GUID_STRING_LENGTH] != L'\0')) {
             ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellDebug1HiiHandle, L"dmpstore", GuidStr);  
             ShellStatus = SHELL_INVALID_PARAMETER;
           }
@@ -746,6 +840,10 @@ ShellCommandRunDmpStore (
         } else if (ShellCommandLineGetFlag(Package, L"-d")) {
           Type = DmpStoreDelete;
         }
+
+        if (ShellCommandLineGetFlag (Package,L"-sfo")) {
+          StandardFormatOutput = TRUE;
+        }
       }
 
       if (ShellStatus == SHELL_SUCCESS) {
@@ -754,7 +852,7 @@ ShellCommandRunDmpStore (
         } else if (Type == DmpStoreLoad) {
           ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMPSTORE_LOAD), gShellDebug1HiiHandle, File);
         }
-        ShellStatus = ProcessVariables (Name, Guid, Type, FileHandle);
+        ShellStatus = ProcessVariables (Name, Guid, Type, FileHandle, StandardFormatOutput);
         if ((Type == DmpStoreLoad) || (Type == DmpStoreSave)) {
           ShellCloseFile (&FileHandle);
         }
