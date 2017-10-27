@@ -4,7 +4,7 @@
 # dump NVRAM for UEFI Clover with EmuVariable or Legacy Clover
 #
 # Script version info
-gScriptVersion=1.16.5
+gScriptVersion=1.16.6
 #================================= GLOBAL VARS ==================================
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -98,16 +98,29 @@ function _findESP()
     #
     # default gNVRAMf save path should be EFI as Clover now supports FileVault
     #
-    local gEfiIDENTIFIER=""
-    local gEfiUID="C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
-    local gPartIndex=""
     for ((i=0; i<${#gDisk[@]}; ++i))
     do
-      gPartIndex=$(gpt -r show "/dev/${gDisk[i]}" 2> /dev/null |grep -i "${gEfiUID}" |awk '{print $3}')
+      local gESP=""
+      local plist=$( diskutil list -plist "/dev/${gDisk[i]}" 2> /dev/null )
+
+      for ((part=0; 1; part++)); 
+      do
+            content=$( /usr/libexec/PlistBuddy -c "Print :AllDisksAndPartitions:0:Partitions:$part:Content" /dev/stdin <<< $plist 2>&1 )
+            if [[ "$content" == *"Does Not Exist"* ]];
+            then
+                break
+            fi
+            if [[ "$content" == "EFI" ]]; 
+            then
+                gESP=$( /usr/libexec/PlistBuddy -c "Print :AllDisksAndPartitions:0:Partitions:$part:DeviceIdentifier" /dev/stdin <<< $plist 2>&1 )
+                break
+            fi
+      done
+
       gLogTimeStamp=$(date +%Y-%m-%d-%H:%M:%S)
-      case "${gPartIndex}" in
-      [[:digit:]]* ) printf "${gLogTimeStamp}  ${gDisk[i]}: ESP --"
-                     local gESP="${gDisk[i]}s${gPartIndex}"
+      if [[ $gESP != "" ]];
+      then 
+            printf "${gLogTimeStamp}  ${gDisk[i]}: ESP --"
                      local gMountPoint=$(_mountESP ${gESP})
                      if [[ "$gMountPoint" != *"fail"* ]];
                      then
@@ -133,10 +146,9 @@ function _findESP()
                      else
                          printf "**** ${gESP} ${gMountPoint}\n"
                      fi
-                     ;;
-      *            ) printf "${gLogTimeStamp}  ${gDisk[i]}: ------ Ignored -- No ESP on disk\n"
-                     ;;
-      esac
+      else
+            printf "${gLogTimeStamp}  ${gDisk[i]}: ------ Ignored -- No ESP on disk\n"
+      fi
     done
 }
 
