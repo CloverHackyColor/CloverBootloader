@@ -320,26 +320,6 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67EB,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX460",             kAcre },
   { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX560",        kNull },
-  
-  /* Polaris12 */
-  { 0x6980,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6981,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6985,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6986,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6987,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6995,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x699F,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",        kNull },
-
-  /* Vega 10 */
-  { 0x6860,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6861,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6862,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6863,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6864,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6867,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6868,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x686C,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x687F,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
 
   // PITCAIRN
   { 0x6800,  CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7970M",        kBuri }, // Mobile
@@ -395,7 +375,21 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6850,  CHIP_FAMILY_TURKS, "AMD Radeon HD 7600M Series",   kPondweed   },
   { 0x6858,  CHIP_FAMILY_TURKS, "AMD Radeon HD 7400 Series",    kPondweed   },
   { 0x6859,  CHIP_FAMILY_TURKS, "AMD Radeon HD 7600M Series",   kPondweed   },
-  
+
+  //HighSierra
+  // 0x687F1002 0x68671002 0x68601002 0x68611002 0x68621002 0x68631002 0x68641002 0x686C1002
+
+  /* Vega 10 */
+  { 0x6860,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6861,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6862,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6863,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega Frontier",  kNull },
+  { 0x6864,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6867,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6868,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x686C,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x687F,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 64",        kNull },
+
   //X3000 -
   //0x68881002 0x68891002 0x68981002 0x68991002 0x689C1002 0x689D1002 0x68801002 0x68901002 0x68A81002
   //0x68A91002 0x68B81002 0x68B91002 0x68BE1002 0x68A01002 0x68A11002 0x68B01002 0x68B11002 0x68C81002
@@ -485,7 +479,16 @@ radeon_card_info_t radeon_cards[] = {
   { 0x692b,  CHIP_FAMILY_TONGA,    "ATI Firepro W7100",          kBaladi },
   { 0x6938,  CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M295X",        kExmoor },
   { 0x6939,  CHIP_FAMILY_TONGA,    "ATI Radeon R9 285",          kBaladi },
-  
+
+  /* Polaris12 */
+  { 0x6980,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6981,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6985,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6986,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6987,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x6995,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
+  { 0x699F,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",        kNull },
+
   /*
    6900 Topaz XT [Radeon R7 M260/M265]
    6901 Topaz PRO [Radeon R5 M255]
