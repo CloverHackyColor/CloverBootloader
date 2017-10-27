@@ -51,6 +51,8 @@ UINT8       acpi_cpu_count;
 CHAR8*      acpi_cpu_name[128];
 CHAR8*      acpi_cpu_score;
 
+UINT32      machineSignature;
+
 extern OPER_REGION *gRegions;
 //-----------------------------------
 
@@ -1762,6 +1764,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     }
     //patch for FACS included here
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
+    Facs->HardwareSignature = machineSignature;
     //
     if ((gSettings.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
       newFadt->ResetReg.Address   = 0x64;

@@ -1661,6 +1661,7 @@ extern INPUT_ITEM                     *InputItems;
 extern BOOLEAN                        SavePreBootLog;
 extern CHAR8                          *BootOSName;
 //extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
+extern UINT32                    machineSignature;
 
 extern EFI_GUID                        gEfiAppleBootGuid;
 extern EFI_GUID                        gEfiAppleNvramGuid;

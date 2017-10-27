@@ -551,7 +551,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   //fsw_efi_decode_time(&HFSVolumeModifyTime, mac_to_posix(HFSVolumeModifyDate));
   //TimePtr = &HFSVolumeModifyTime;
   //DBG(" in EFI: %d-%d-%d %d:%d:%d\n", TimePtr->Year, TimePtr->Month, TimePtr->Day, TimePtr->Hour, TimePtr->Minute, TimePtr->Second);
-  FreePages(Buffer, Pages);
+
 
   //
   // Check that sleepimage is not more then 5 secs older then volume modification date
@@ -562,9 +562,13 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   if (TimeDiff > 5 /*|| TimeDiff < -5 */) {
     //Slice - if image newer then volume it should be OK
     DBG("     image too old\n");
+    FreePages(Buffer, Pages);
     return FALSE;
   }
-
+  DBG("     machineSignature from FACS =0x%x\n", machineSignature);
+  machineSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
+  DBG("     image has machineSignature =0x%x\n", machineSignature);
+  FreePages(Buffer, Pages);
   return TRUE;
 }
 

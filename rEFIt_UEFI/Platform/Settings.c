@@ -47,6 +47,7 @@ UINT8                           *gEDID = NULL;
 UINTN                           NGFX                        = 0; // number of GFX
 UINTN                           NHDA                        = 0; // number of HDA Devices
 
+
 UINTN                           nLanCards;        // number of LAN cards
 UINT16                          gLanVendor[4];    // their vendors
 UINT8                           *gLanMmio[4];     // their MMIO regions

@@ -1977,7 +1977,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #if HIBERNATE_DUMP_DATA
   {
-    UINT32                    machineSignature    = 0;
+//    UINT32                    machineSignature    = 0;
     EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
     EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs = NULL;
 
@@ -1992,13 +1992,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("  Flags                =%08lx\n", Facs->Flags);
       machineSignature = Facs->HardwareSignature;
     }
-//------------------------------------------------------
+/*------------------------------------------------------
     //DoHibernateWake = DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
     DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-signature",   &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-image",       &gEfiAppleBootGuid, 0);
 //-----------------------------------------------------------
+ */
   }
 #endif //
 #if 0
