@@ -265,6 +265,8 @@
 		<false/>
 		<key>StrictHibernate</key>
 		<false/>
+		<key>SignatureFixup</key>
+		<false/>
 		<key>Timeout</key>
 		<integer>5</integer>
 	</dict>
@@ -519,7 +521,7 @@
 		<key>UseIntelHDMI</key>
 		<false/>
 		<key>#DisableFunctions</key>
-		<string>0x18F6</string>		
+		<string>0x18F6</string>
 		<key>#AirportBridgeDeviceName</key>
 		<string>RP02</string>
 	</dict>
@@ -735,7 +737,7 @@
 		</array>
 		<key>#FakeCPUID</key>
 		<string>0x010676</string>
-		<key>#ForceKextsToLoad</key>		
+		<key>#ForceKextsToLoad</key>
 		<array>
 			<string>\System\Library\Extensions\AMD6000Controller.kext</string>
 			<string>\System\Library\Extensions\AMDFramebuffer.kext</string>

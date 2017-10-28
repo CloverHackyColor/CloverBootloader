@@ -280,7 +280,7 @@ MOExitBootServices (
   
   // we need hibernate image address for wake
   if (gHibernateWake && gHibernateImageAddress == 0) {
-    Print(L"OsxAptioFix error: Doing hibernate wake, but did not find hibernate image address.");
+    Print(L"OsxAptioFix2 error: Doing hibernate wake, but did not find hibernate image address.");
     Print(L"... waiting 5 secs ...\n");
     gBS->Stall(5000000);
     return EFI_INVALID_PARAMETER;
@@ -292,7 +292,7 @@ MOExitBootServices (
   Status = gStoredExitBootServices(ImageHandle, MapKey);
   DBGnvr("ExitBootServices:  = %r\n", Status);
   if (EFI_ERROR (Status)) {
-    // just report error as var in nvram to be visible from OSX with "nvrap -p"
+    // just report error as var in nvram to be visible from OSX with "nvram -p"
     gRT->SetVariable(L"OsxAptioFixDrv-ErrorExitingBootServices",
                      &gEfiAppleBootGuid,
                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

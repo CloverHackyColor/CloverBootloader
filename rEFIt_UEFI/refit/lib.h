@@ -518,6 +518,7 @@ typedef struct {
   BOOLEAN     NoEarlyProgress;
   BOOLEAN     ShowOptimus;
   BOOLEAN     HibernationFixup;
+  BOOLEAN     SignatureFixup;
 } REFIT_CONFIG;
 
 // types

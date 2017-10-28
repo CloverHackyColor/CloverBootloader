@@ -146,7 +146,8 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     NoEarlyProgress;
   FALSE,          // BOOLEAN     ShowOptimus;
-  FALSE,          // BOOLEAN     HibernationFixup
+  FALSE,          // BOOLEAN     HibernationFixup;
+  FALSE,          // BOOLEAN     SignatureFixup;
 //  0,              // INTN        PruneScrollRows;
 };
 
@@ -2370,7 +2371,10 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "HibernationFixup");
       if (Prop) {
         GlobalConfig.HibernationFixup = IsPropertyTrue (Prop); //t will be set automatically
-      } 
+      }
+      
+      Prop = GetProperty (DictPointer, "SignatureFixup");
+      GlobalConfig.SignatureFixup = IsPropertyTrue (Prop);
       
       //      Prop = GetProperty (DictPointer, "GetLegacyLanAddress");
       //      GetLegacyLanAddress = IsPropertyTrue (Prop);

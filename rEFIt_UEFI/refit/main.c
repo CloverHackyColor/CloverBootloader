@@ -1975,7 +1975,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeSecureBoot();
 #endif // ENABLE_SECURE_BOOT
 
-#if HIBERNATE_DUMP_DATA
+#if 1 //HIBERNATE_DUMP_DATA
   {
 //    UINT32                    machineSignature    = 0;
     EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
