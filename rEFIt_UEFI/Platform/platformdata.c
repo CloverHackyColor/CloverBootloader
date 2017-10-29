@@ -92,7 +92,7 @@ CHAR8   *AppleFirmwareVersion[] =
   "MM51.88Z.007B.B00.1708080744",   // Macmini5,3,
   "MM61.88Z.010B.B00.1708080649",   // Macmini6,1,
   "MM61.88Z.010B.B00.1708080649",   // Macmini6,2,
-  "MM71.88Z.0224.B00.1708080033",   // Macmini7,1,
+  "MM71.88Z.0226.B00.1709290808",   // Macmini7,1,
   "IM41.88Z.0055.B08.0609061538",   // iMac4,1,
   "IM42.88Z.0071.B03.0610121320",   // iMac4,2,
   "IM51.88Z.0090.B09.0706270921",   // iMac5,1,
@@ -1285,7 +1285,7 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         i--;
       }
       AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-      AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
+      AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
       break;
 
     default:
@@ -1296,17 +1296,17 @@ SetDMISettingsForModel (MACHINE_TYPES Model, BOOLEAN Redefine)
         i--;
       }
       AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-      AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
+      AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
       break;
   }
 
   AsciiStrCpyS (gSettings.ManufactureName, 64, BiosVendor);
   if (Redefine) {
-    AsciiStrCpyS (gSettings.ProductName, 64,   AppleProductName[Model]);
+    AsciiStrCpyS (gSettings.ProductName, 64,        AppleProductName[Model]);
   }
-  AsciiStrCpyS (gSettings.VersionNr, 64,       AppleSystemVersion[Model]);
-  AsciiStrCpyS (gSettings.SerialNr, 64,        AppleSerialNumber[Model]);
-  AsciiStrCpyS (gSettings.FamilyName, 64,      AppleFamilies[Model]);
+  AsciiStrCpyS (gSettings.VersionNr, 64,            AppleSystemVersion[Model]);
+  AsciiStrCpyS (gSettings.SerialNr, 64,             AppleSerialNumber[Model]);
+  AsciiStrCpyS (gSettings.FamilyName, 64,           AppleFamilies[Model]);
   AsciiStrCpyS (gSettings.BoardManufactureName, 64, BiosVendor);
   AsciiStrCpyS (gSettings.BoardSerialNumber, 64,    AppleBoardSN);
   AsciiStrCpyS (gSettings.BoardNumber, 64,          AppleBoardID[Model]);
