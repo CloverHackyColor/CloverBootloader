@@ -5450,10 +5450,13 @@ GetUserSettings(
           gSettings.PluginType = (UINT8)GetPropertyInteger (Prop, gSettings.PluginType);
           DBG ("PluginType: %d\n", gSettings.PluginType);
         }
+
+        Prop = GetProperty (Dict2, "DisableAPSNAPLF");
+        gSettings.DisableAPSNAPLF = IsPropertyTrue (Prop);
       }
 
-      Prop               = GetProperty (DictPointer, "DropMCFG");
-      gSettings.DropMCFG = IsPropertyTrue (Prop);
+ //     Prop               = GetProperty (DictPointer, "DropMCFG");
+ //     gSettings.DropMCFG = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "ResetAddress");
       if (Prop) {

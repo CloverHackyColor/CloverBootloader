@@ -398,8 +398,8 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleRTC;
   InputItems[InputItemsCount].ItemType = BoolValue; //48
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelPm;
-  InputItems[InputItemsCount].ItemType = BoolValue; //49
-  InputItems[InputItemsCount++].BValue = gSettings.DropMCFG;
+  InputItems[InputItemsCount].ItemType = BoolValue; //49 //not used
+  InputItems[InputItemsCount++].BValue = TRUE; //gSettings.DropMCFG;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //50
   if (New) {
@@ -899,7 +899,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //49
   if (InputItems[i].Valid) {
-    gSettings.DropMCFG = InputItems[i].BValue;
+//    gSettings.DropMCFG = InputItems[i].BValue;
   }
 
   i++; //50

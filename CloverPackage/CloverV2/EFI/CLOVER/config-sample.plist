@@ -9,8 +9,6 @@
 	</array>
 	<key>ACPI</key>
 	<dict>
-		<key>#DropMCFG</key>
-		<false/>
 		<key>#PatchAPIC</key>
 		<false/>
 		<key>#ResetAddress</key>
