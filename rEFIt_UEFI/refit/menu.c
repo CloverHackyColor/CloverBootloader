@@ -4622,7 +4622,8 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
       InputBootArgs->Entry.Title = PoolPrint(L"  key: %a", Prop->Key);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
-      InputBootArgs->Item = ADDRESS_OF(DEV_PROPERTY, Prop, INPUT_ITEM, MenuItem);
+ //     InputBootArgs->Item = ADDRESS_OF(DEV_PROPERTY, Prop, INPUT_ITEM, MenuItem);
+      InputBootArgs->Item = &Prop->MenuItem;
       InputBootArgs->Entry.AtClick = ActionEnter;
       InputBootArgs->Entry.AtRightClick = ActionDetails;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
