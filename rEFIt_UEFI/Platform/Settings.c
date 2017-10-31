@@ -5417,6 +5417,9 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "DropOem");
         gSettings.DropSSDT  = IsPropertyTrue (Prop);
 
+        Prop = GetProperty (Dict2, "NoOemTableId"); // to disable OEM table ID on ACPI/orgin/SSDT file names
+        gSettings.NoOemTableId = IsPropertyTrue (Prop);
+
         Prop = GetProperty (Dict2, "UseSystemIO");
         gSettings.EnableISS = IsPropertyTrue (Prop);
 

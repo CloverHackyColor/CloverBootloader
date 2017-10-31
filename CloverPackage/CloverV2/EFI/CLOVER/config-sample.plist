@@ -204,6 +204,8 @@
 			<true/>
 			<key>#DropOem</key>
 			<true/>
+			<key>#NoOemTableId</key>
+			<false/>
 			<key>#EnableC2</key>
 			<false/>
 			<key>#EnableC4</key>
