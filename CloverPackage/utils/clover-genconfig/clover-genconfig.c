@@ -273,7 +273,7 @@ void PrintConfig(CFTypeRef data)
   const Byte *dataPtr = NULL;
   CFIndex    length = 0;
   CFTypeID   typeID;
-  int i;
+//  int i;
   
   // Get the OF variable's type.
   typeID = CFGetTypeID(data);
@@ -635,6 +635,9 @@ void PrintConfig(CFTypeRef data)
     CFMutableDictionaryRef genDict = addDict(ssdtDict, CFSTR("Generate"));
     addBoolean(genDict, CFSTR("PStates"), s->GeneratePStates);
     addBoolean(genDict, CFSTR("CStates"), s->GenerateCStates);
+    addBoolean(genDict, CFSTR("APSN"), s->GenerateAPSN);
+    addBoolean(genDict, CFSTR("APLF"), s->GenerateAPLF);
+    addBoolean(genDict, CFSTR("PluginType"), s->GeneratePluginType);
   addBoolean(ssdtDict, CFSTR("DropOem"), s->DropSSDT);
   addBoolean(ssdtDict, CFSTR("#DoubleFirstState"), s->DoubleFirstState);
   addInteger(ssdtDict, CFSTR("#MinMultiplier"), s->MinMultiplier);

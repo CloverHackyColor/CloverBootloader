@@ -914,7 +914,7 @@ typedef struct {
   BOOLEAN                 SkipHibernateTimeout;
 //Monitor
   BOOLEAN                 IntelMaxBacklight;
-  UINT8                   Pad21[1];
+//  UINT8                   Pad21[1];
   UINT16                  VendorEDID;
   UINT16                  ProductEDID;  
   UINT16                  BacklightLevel;
@@ -930,7 +930,7 @@ typedef struct {
   // GUI parameters
   BOOLEAN                 Debug;
   BOOLEAN                 Proportional;
-  UINT8                   Pad22[1];
+//  UINT8                   Pad22[1];
   UINT32                  DefaultBackgroundColor;
 
   //ACPI
@@ -940,6 +940,9 @@ typedef struct {
   BOOLEAN                 DropSSDT;
   BOOLEAN                 GeneratePStates;
   BOOLEAN                 GenerateCStates;
+  BOOLEAN                 GenerateAPSN;
+  BOOLEAN                 GenerateAPLF;
+  BOOLEAN                 GeneratePluginType;
   UINT8                   PLimitDict;
   UINT8                   UnderVoltStep;
   BOOLEAN                 DoubleFirstState;
@@ -960,7 +963,7 @@ typedef struct {
   UINT8                   MinMultiplier;
   UINT8                   MaxMultiplier;
   UINT8                   PluginType;
-  BOOLEAN                 DisableAPSNAPLF;
+//  BOOLEAN                 DisableAPSNAPLF;
 //  BOOLEAN                 DropMCFG;
 
   //Injections

@@ -5372,19 +5372,45 @@ GetUserSettings(
       Dict2 = GetProperty (DictPointer, "SSDT");
       if (Dict2) {
         Prop2 = GetProperty (Dict2, "Generate");
+        // backward compatibility, APFS, APLF, PluginType follow PStates
+        gSettings.GenerateAPSN = gSettings.GeneratePStates;
+        gSettings.GenerateAPLF = gSettings.GeneratePStates;
+        gSettings.GeneratePluginType = gSettings.GeneratePStates;
         if (Prop2 != NULL) {
           if (IsPropertyTrue (Prop2)) {
             gSettings.GeneratePStates = TRUE;
             gSettings.GenerateCStates = TRUE;
+            gSettings.GenerateAPSN = TRUE;
+            gSettings.GenerateAPLF = TRUE;
+            gSettings.GeneratePluginType = TRUE;
+
           } else if (IsPropertyFalse (Prop2)) {
             gSettings.GeneratePStates = FALSE;
             gSettings.GenerateCStates = FALSE;
-          } else if (Prop2->type == kTagTypeDict) {
-            Prop                      = GetProperty (Prop2, "PStates");
-            gSettings.GeneratePStates = IsPropertyTrue (Prop);
+            gSettings.GenerateAPSN = FALSE;
+            gSettings.GenerateAPLF = FALSE;
+            gSettings.GeneratePluginType = FALSE;
 
-            Prop                      = GetProperty (Prop2, "CStates");
+          } else if (Prop2->type == kTagTypeDict) {
+            Prop = GetProperty (Prop2, "PStates");
+            gSettings.GeneratePStates = IsPropertyTrue (Prop);
+            gSettings.GenerateAPSN = gSettings.GeneratePStates;
+            gSettings.GenerateAPLF = gSettings.GeneratePStates;
+            gSettings.GeneratePluginType = gSettings.GeneratePStates;
+            Prop = GetProperty (Prop2, "CStates");
             gSettings.GenerateCStates = IsPropertyTrue (Prop);
+            Prop = GetProperty (Prop2, "APSN");
+            if (Prop) {
+              gSettings.GenerateAPSN = IsPropertyTrue (Prop);
+            }
+            Prop = GetProperty (Prop2, "APLF");
+            if (Prop) {
+                gSettings.GenerateAPLF = IsPropertyTrue (Prop);
+            }
+            Prop = GetProperty (Prop2, "PluginType");
+            if (Prop) {
+                gSettings.GeneratePluginType = IsPropertyTrue (Prop);
+            }
           }
         }
 
@@ -5450,9 +5476,6 @@ GetUserSettings(
           gSettings.PluginType = (UINT8)GetPropertyInteger (Prop, gSettings.PluginType);
           DBG ("PluginType: %d\n", gSettings.PluginType);
         }
-
-        Prop = GetProperty (Dict2, "DisableAPSNAPLF");
-        gSettings.DisableAPSNAPLF = IsPropertyTrue (Prop);
       }
 
  //     Prop               = GetProperty (DictPointer, "DropMCFG");
@@ -5803,6 +5826,7 @@ GetUserSettings(
       Prop                 = GetProperty (DictPointer, "HWPEnable");
       if (Prop && IsPropertyTrue (Prop)) {
         gSettings.HWP = TRUE;
+        gSettings.GeneratePluginType = TRUE;
         AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
       }
       Prop                 = GetProperty (DictPointer, "HWPValue");

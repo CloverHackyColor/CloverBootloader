@@ -2159,7 +2159,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     ApicCPUNum = acpi_cpu_count;
   }
 
-  if (gSettings.GeneratePStates) {
+  if (gSettings.GeneratePStates || gSettings.GeneratePluginType) {
     Status = EFI_NOT_FOUND;
     Ssdt = generate_pss_ssdt(CPUBase, ApicCPUNum);
     if (Ssdt) {

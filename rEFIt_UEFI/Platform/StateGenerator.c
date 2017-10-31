@@ -332,7 +332,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       
       scop = aml_add_scope(root, name);
       
-      if (!gSettings.HWP) {
+      if (gSettings.GeneratePStates && !gSettings.HWP) {
         method = aml_add_name(scop, "PSS_");
         pack = aml_add_package(method);
         
@@ -374,17 +374,21 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
         metPCT = aml_add_method(scop, "_PCT", 0);
         aml_add_return_name(metPCT, "PCT_");
-        if (gSettings.PluginType) {
+        if (gSettings.GeneratePluginType && gSettings.PluginType) {
           aml_add_buffer(scop, plugin_type, sizeof(plugin_type));
           aml_add_byte(scop, gSettings.PluginType);
         }
-        if (!gSettings.DisableAPSNAPLF && gCPUStructure.Family >= 2) {
-          aml_add_name(scop, "APSN");
-          aml_add_byte(scop, (UINT8)Apsn);
-          aml_add_name(scop, "APLF");
-          aml_add_byte(scop, (UINT8)Aplf);
+        if (gCPUStructure.Family >= 2) {
+          if (gSettings.GenerateAPSN) {
+            aml_add_name(scop, "APSN");
+            aml_add_byte(scop, (UINT8)Apsn);
+          }
+          if (gSettings.GenerateAPLF) {
+            aml_add_name(scop, "APLF");
+            aml_add_byte(scop, (UINT8)Aplf);
+          }
         }
-        
+
         // Add CPUs
         for (i = 1; i < Number; i++) {
           
@@ -400,10 +404,10 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           metPCT = aml_add_method(scop, "_PCT", 0);
           aml_add_return_name(metPCT, name2);        
         }
-      } else if (gSettings.PluginType) {
+      } else if (gSettings.PluginType && gSettings.GeneratePluginType) {
         aml_add_buffer(scop, plugin_type, sizeof(plugin_type));
         aml_add_byte(scop, gSettings.PluginType);
-      }      
+      }
 			
 			aml_calculate_size(root);
 			
@@ -415,9 +419,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 			
 			aml_destroy_node(root);
 			
-      if (!gSettings.HWP) {
+      if (gSettings.GeneratePStates && !gSettings.HWP) {
         MsgLog ("SSDT with CPU P-States generated successfully\n");
-      } else {
+      } else if (gSettings.PluginType && gSettings.GeneratePluginType) {
         MsgLog ("SSDT with plugin-type without P-States is generated\n");
       }
 			return ssdt;

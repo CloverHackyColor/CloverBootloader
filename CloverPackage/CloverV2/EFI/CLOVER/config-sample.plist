@@ -230,6 +230,12 @@
 				<true/>
 				<key>PStates</key>
 				<true/>
+				<key>#APLF</key>
+				<false/>
+				<key>#APSN</key>
+				<false/>
+				<key>#PluginType</key>
+				<false/>
 			</dict>
 		</dict>
 	</dict>
