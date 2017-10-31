@@ -71,6 +71,20 @@ UINT8 pmBlock[] = {
 
 };
 
+// RehabMan: for stripping trailing spaces
+static void stripTrailingSpaces(CHAR8* sgn)
+{
+  CHAR8* lastNonSpace = sgn-1;
+  for (; *sgn; sgn++) {
+    if (*sgn != ' ') {
+      lastNonSpace = sgn;
+    }
+  }
+  lastNonSpace[1] = 0;
+}
+
+
+
 // Slice: Signature compare function
 BOOLEAN tableSign(CHAR8 *table, CONST CHAR8 *sgn)
 {
@@ -811,6 +825,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
           Signature[4] = 0;
           CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
           OemTableId[8] = 0;
+          stripTrailingSpaces(OemTableId);
           DBG("      * %p: '%a', '%a', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
               ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
 
@@ -858,6 +873,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
         Signature[4] = 0;
         CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
         OemTableId[8] = 0;
+        stripTrailingSpaces(OemTableId);
         DBG("      * %p: '%a', '%a', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
             ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
         for(k=0; k<16; k++){
@@ -899,6 +915,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR8 *CheckSignat
   Signature[4] = 0;
   CopyMem((CHAR8*)&OemTableId, (CHAR8*)&TableEntry->OemTableId, 8);
   OemTableId[8] = 0;
+  stripTrailingSpaces(OemTableId);
 
   DBG(" %p: '%a', '%a', Rev: %d, Len: %d", TableEntry, Signature, OemTableId, TableEntry->Revision, TableEntry->Length);
 
