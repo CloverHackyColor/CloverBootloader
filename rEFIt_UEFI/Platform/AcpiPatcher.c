@@ -743,7 +743,7 @@ EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, INTN MatchIndex)
     //insert/modify into RSDT
     if (Rsdt) {
       UINT32* entry = NULL;
-      if (hdr->Signature != SSDT_SIGN || MatchIndex != -1) {
+      if (hdr->Signature != EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE || MatchIndex != -1) {
         // SSDT with target index or non-SSDT, try to find matching entry
         entry = ScanRSDT2(hdr->Signature, hdr->OemTableId, MatchIndex);
       }
@@ -760,7 +760,7 @@ EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, INTN MatchIndex)
     //insert/modify into XSDT
     if (Xsdt) {
       UINT64* entry = NULL;
-      if (hdr->Signature != SSDT_SIGN || MatchIndex != -1) {
+      if (hdr->Signature != EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE || MatchIndex != -1) {
         // SSDT with target index or non-SSDT, try to find matching entry
         entry = ScanXSDT2(hdr->Signature, hdr->OemTableId, MatchIndex);
       }

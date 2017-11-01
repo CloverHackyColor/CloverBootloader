@@ -105,66 +105,68 @@
 			<false/>
 			<key>Fixes</key>
 			<dict>
-				<key>AddDTGP_0001</key>
+				<key>AddDTGP</key>
 				<true/>
-				<key>AddHDMI_8000000</key>
+				<key>AddHDMI</key>
 				<true/>
-				<key>AddIMEI_80000</key>
+				<key>AddIMEI</key>
 				<false/>
-				<key>AddMCHC_0008</key>
+				<key>AddMCHC</key>
 				<false/>
-				<key>AddPNLF_1000000</key>
+				<key>AddPNLF</key>
 				<true/>
-				<key>DeleteUnused_400000</key>
+				<key>DeleteUnused</key>
 				<true/>
-				<key>FIX_ACST_4000000</key>
+				<key>FIX_ACST</key>
 				<true/>
-				<key>FIX_ADP1_800000</key>
+				<key>FIX_ADP1</key>
 				<true/>
-				<key>FIX_INTELGFX_100000</key>
+				<key>FixIntelGfx</key>
 				<false/>
-				<key>FIX_RTC_20000</key>
+				<key>FixRTC</key>
 				<true/>
-				<key>FIX_S3D_2000000</key>
+				<key>FixS3D</key>
 				<true/>
-				<key>FIX_TMR_40000</key>
+				<key>FixTMR</key>
 				<true/>
-				<key>FIX_WAK_200000</key>
+				<key>FixWAK</key>
 				<true/>
-				<key>FakeLPC_0020</key>
+				<key>FakeLPC</key>
 				<false/>
-				<key>FixAirport_4000</key>
+				<key>FixAirport</key>
 				<false/>
-				<key>FixDarwin_0002</key>
+				<key>FixDarwin</key>
 				<false/>
-				<key>FixDarwin7_10000</key>
+				<key>FixDarwin7</key>
 				<true/>
-				<key>FixDisplay_0100</key>
+				<key>FixDisplay</key>
 				<true/>
-				<key>FixFirewire_0800</key>
+				<key>FixFirewire</key>
 				<false/>
-				<key>FixHDA_8000</key>
+				<key>FixHDA</key>
 				<true/>
-				<key>FixHPET_0010</key>
+				<key>FixHPET</key>
 				<true/>
-				<key>FixHeaders_20000000</key>
+				<key>FixHeaders</key>
 				<true/>
-				<key>FixIDE_0200</key>
+				<key>FixIDE</key>
 				<false/>
-				<key>FixIPIC_0040</key>
+				<key>FixIPIC</key>
 				<true/>
-				<key>FixLAN_2000</key>
+				<key>FixLAN</key>
 				<true/>
-				<key>FixRegions_10000000</key>
+				<key>FixRegions</key>
 				<true/>
-				<key>FixSATA_0400</key>
+				<key>FixSATA</key>
 				<false/>
-				<key>FixSBUS_0080</key>
+				<key>FixSBUS</key>
 				<true/>
-				<key>FixShutdown_0004</key>
+				<key>FixShutdown</key>
 				<true/>
-				<key>FixUSB_1000</key>
+				<key>FixUSB</key>
 				<true/>
+				<key>FixMutex</key>
+				<false/>
 			</dict>
 			<key>Name</key>
 			<string>DSDT.aml</string>
