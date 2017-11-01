@@ -43,7 +43,7 @@
 
 #include "Platform.h"
 
-/* embedded arrays */
+/* embedded arrays
 extern UINT8 emb_font_data[];
 extern UINT8 emb_pointer[];
 extern UINT8 emb_func_about[];
@@ -113,6 +113,50 @@ extern UINT8 emb_checkbox_checked[];
 #define SZ_emb_selection_indicator 1637
 #define SZ_emb_checkbox 173
 #define SZ_emb_checkbox_checked 367
+*/
+
+#define ALIGN_64 __attribute__((__aligned__(8)))
+#define DEFINE_EMB_DATA(ico) UINT8 ALIGN_64 const ico[] =
+#define DEFINE_EMB_SIZE(ico) UINTN const ico##_size = sizeof(ico);
+//REVIEW: const would be more useful if the cast was not needed, but that
+// would require correct use of const in the related functions.
+#define ACCESS_EMB_DATA(ico) ((UINT8*)ico)
+#define ACCESS_EMB_SIZE(ico) ico##_size
+#define DECLARE_EMB_EXTERN_WITH_SIZE(ico) extern UINT8 const ico[]; extern UINTN const ico##_size;
+
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_font_data)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_pointer)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_about)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_clover)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_options)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_reset)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_secureboot_config)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_secureboot)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_shell)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_exit)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_func_help)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_logo)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_selection_big)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_selection_small)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_vol_internal)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_vol_internal_booter)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_vol_internal_hfs)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_vol_internal_ntfs)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_vol_internal_ext)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_vol_internal_recovery)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_up_button)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_bar_start)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_scroll_start)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_scroll_fill)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_scroll_end)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_bar_fill)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_bar_end)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_scroll_down_button)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_radio_button_selected)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_radio_button)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_selection_indicator)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_checkbox)
+DECLARE_EMB_EXTERN_WITH_SIZE(emb_checkbox_checked)
 
 
 /* types */

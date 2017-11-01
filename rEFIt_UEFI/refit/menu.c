@@ -1690,7 +1690,7 @@ VOID InitSelection(VOID)
       SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, TRUE);
     }
     if (!SelectionImages[4]) {
-      SelectionImages[4] = egDecodePNG(&emb_selection_indicator[0],  SZ_emb_selection_indicator, TRUE);
+      SelectionImages[4] = egDecodePNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator), TRUE);
       
     }
     SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
@@ -1714,11 +1714,11 @@ VOID InitSelection(VOID)
   Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE);
   Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
   if (!Buttons[0]) {
-    Buttons[0] = egDecodePNG(&emb_radio_button[0],  SZ_emb_radio_button, TRUE);
+    Buttons[0] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button), TRUE);
   }
 //  Buttons[0] = egEnsureImageSize(Buttons[0], TextHeight, TextHeight, &MenuBackgroundPixel);
   if (!Buttons[1]) {
-    Buttons[1] = egDecodePNG(&emb_radio_button_selected[0],  SZ_emb_radio_button_selected, TRUE);
+    Buttons[1] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected), TRUE);
   }
 //  Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
     
@@ -1726,11 +1726,11 @@ VOID InitSelection(VOID)
   Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
   Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
   if (!Buttons[2]) {
-    Buttons[2] = egDecodePNG(&emb_checkbox[0],  SZ_emb_checkbox, TRUE);
+    Buttons[2] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox), TRUE);
   }
 //  Buttons[2] = egEnsureImageSize(Buttons[2], TextHeight, TextHeight, &MenuBackgroundPixel);
   if (!Buttons[3]) {
-    Buttons[3] = egDecodePNG(&emb_checkbox_checked[0],  SZ_emb_checkbox_checked, TRUE);
+    Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
   }
 //  Buttons[3] = egEnsureImageSize(Buttons[3], TextHeight, TextHeight, &MenuBackgroundPixel);
     
@@ -3009,28 +3009,28 @@ VOID InitBar(VOID)
   }
 
   if (!BarStartImage) {
-    BarStartImage = egDecodePNG(&emb_scroll_bar_start[0],  SZ_emb_scroll_bar_start, TRUE);
+    BarStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start), TRUE);
   }
   if (!BarEndImage) {
-    BarEndImage = egDecodePNG(&emb_scroll_bar_end[0],  SZ_emb_scroll_bar_end, TRUE);
+    BarEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end), TRUE);
   }
   if (!ScrollbarBackgroundImage) {
-    ScrollbarBackgroundImage = egDecodePNG(&emb_scroll_bar_fill[0],  SZ_emb_scroll_bar_fill, TRUE);
+    ScrollbarBackgroundImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill), TRUE);
   }
   if (!ScrollbarImage) {
-    ScrollbarImage = egDecodePNG(&emb_scroll_scroll_fill[0],  SZ_emb_scroll_scroll_fill, TRUE);
+    ScrollbarImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill), TRUE);
   }
   if (!ScrollStartImage) {
-    ScrollStartImage = egDecodePNG(&emb_scroll_scroll_start[0],  SZ_emb_scroll_scroll_start, TRUE);
+    ScrollStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start), TRUE);
   }
   if (!ScrollEndImage) {
-    ScrollEndImage = egDecodePNG(&emb_scroll_scroll_end[0],  SZ_emb_scroll_scroll_end, TRUE);
+    ScrollEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end), TRUE);
   }
   if (!UpButtonImage) {
-    UpButtonImage = egDecodePNG(&emb_scroll_up_button[0],  SZ_emb_scroll_up_button, TRUE);
+    UpButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button), TRUE);
   }
   if (!DownButtonImage) {
-    DownButtonImage = egDecodePNG(&emb_scroll_down_button[0],  SZ_emb_scroll_down_button, TRUE);
+    DownButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button), TRUE);
   }
   UpButton.Width      = ScrollWidth; // 16
   UpButton.Height     = ScrollButtonsHeight; // 20

@@ -84,7 +84,8 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
 };
 
 //#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE)
-#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(&ico[0], SZ_##ico, TRUE)
+//#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(&ico[0], SZ_##ico, TRUE)
+#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico), TRUE)
 
 CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def)
 {
