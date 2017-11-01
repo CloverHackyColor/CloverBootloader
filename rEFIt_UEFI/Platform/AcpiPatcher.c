@@ -2477,7 +2477,8 @@ EFI_STATUS LoadAndInjectDSDT(CHAR16 *PathPatched,
     }
 
     // Buffer allocated with AllocatePages() and we do not know how many pages is allocated
-    gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, EFI_SIZE_TO_PAGES(BufferLen));
+    //gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, EFI_SIZE_TO_PAGES(BufferLen));
+    FreePool(Buffer);
   }
 
   return Status;
@@ -2540,7 +2541,8 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *PathPatched,
     }
 
     // buffer allocated with AllocatePages() and we do not know how many pages is allocated
-    gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, EFI_SIZE_TO_PAGES(BufferLen));
+    //gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, EFI_SIZE_TO_PAGES(BufferLen));
+    FreePool(Buffer);
   } // if table loaded
 
   return Status;
