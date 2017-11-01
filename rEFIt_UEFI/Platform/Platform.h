@@ -939,6 +939,7 @@ typedef struct {
   BOOLEAN                 NoASPM;
   BOOLEAN                 DropSSDT;
   BOOLEAN                 NoOemTableId;
+  BOOLEAN                 AutoMerge;
   BOOLEAN                 GeneratePStates;
   BOOLEAN                 GenerateCStates;
   BOOLEAN                 GenerateAPSN;

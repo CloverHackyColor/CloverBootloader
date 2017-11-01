@@ -44,6 +44,9 @@ CONST CHAR8  creatorID[4]   = APPLE_CREATOR_ID;
 //Global pointers
 RSDT_TABLE    *Rsdt = NULL;
 XSDT_TABLE    *Xsdt = NULL;
+UINT32        XsdtOriginalEntryCount;
+UINTN         *XsdtReplaceSizes;
+
 
 UINT64      BiosDsdt;
 UINT32      BiosDsdtLen;
@@ -197,12 +200,15 @@ UINT8 Checksum8(VOID * startPtr, UINT32 len)
   return Value;
 }
 
-UINT32* ScanRSDT (UINT32 Signature, UINT64 TableId)
+//UINT32* ScanRSDT (UINT32 Signature, UINT64 TableId)
+UINT32* ScanRSDT2(UINT32 Signature, UINT64 TableId, INTN MatchIndex)
 {
   EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
   UINTN                           Index;
   UINT32                          EntryCount;
   UINT32                          *EntryPtr;
+  INTN                Count = 0;
+  
   if (!Rsdt) {
     return NULL;
   }
@@ -218,19 +224,30 @@ UINT32* ScanRSDT (UINT32 Signature, UINT64 TableId)
     TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
     if (((Signature == 0) || (TableEntry->Signature == Signature)) &&
       ((TableId == 0) || (TableEntry->OemTableId == TableId))) {
-      return EntryPtr; //point to TableEntry entry
+      if (-1 == MatchIndex || Count == MatchIndex) {
+        return EntryPtr; //point to TableEntry entry
+      }
+      ++Count;
     }
   }
   return NULL;
 }
 
-UINT64* ScanXSDT (UINT32 Signature, UINT64 TableId)
+
+UINT32* ScanRSDT(UINT32 Signature, UINT64 TableId)
+{
+  return ScanRSDT2(Signature, TableId, -1);
+}
+
+//UINT64* ScanXSDT (UINT32 Signature, UINT64 TableId)
+UINT64* ScanXSDT2(UINT32 Signature, UINT64 TableId, INTN MatchIndex)
 {
   EFI_ACPI_DESCRIPTION_HEADER    *TableEntry;
-  UINTN              Index;
+  UINTN               Index;
   UINT32              EntryCount;
   CHAR8              *BasePtr;
   UINT64              Entry64;
+  INTN                Count = 0;
 
   if ((Signature == 0) && (TableId == 0)) {
     return NULL;
@@ -243,15 +260,25 @@ UINT64* ScanXSDT (UINT32 Signature, UINT64 TableId)
     TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
     if (((Signature == 0) || (TableEntry->Signature == Signature)) &&
       ((TableId == 0) || (TableEntry->OemTableId == TableId))) {
-      return (UINT64 *)BasePtr; //pointer to the TableEntry entry
+//      return (UINT64 *)BasePtr; //pointer to the TableEntry entry
+      if (-1 == MatchIndex || Count == MatchIndex) {
+        return (UINT64 *)BasePtr; //pointer to the TableEntry entry
+      }
+      ++Count;
     }
   }
   return NULL;
 }
 
+UINT64* ScanXSDT(UINT32 Signature, UINT64 TableId)
+{
+  return ScanXSDT2(Signature, TableId, -1);
+}
+
+
 VOID GetAcpiTablesList()
 {
-  EFI_ACPI_DESCRIPTION_HEADER    *TableEntry;
+  EFI_ACPI_DESCRIPTION_HEADER   *TableEntry;
   UINTN                         Index;
   UINT32                        EntryCount;
   CHAR8                         *BasePtr;
@@ -270,7 +297,10 @@ VOID GetAcpiTablesList()
   OTID[8] = 0;
   DBG("Get Acpi Tables List ");
   if (Xsdt) {
-    EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+    // RehabMan: we want to patch only the SSDTs that were original or were loaded and merged
+    EntryCount = XsdtOriginalEntryCount;
+    //EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+    
     BasePtr = (CHAR8*)(&(Xsdt->Entry));
     DBG("from XSDT:\n");
     for (Index = 0; Index < EntryCount; Index ++, BasePtr += sizeof(UINT64)) {
@@ -609,6 +639,13 @@ VOID PatchAllSSDT()
           }
         }
       }
+      // Note: Index is always less than XsdtOriginalEntryCount (size of XsdtReplaceSizes array)
+      if (XsdtReplaceSizes && XsdtReplaceSizes[Index]) {
+        // came from patched table in ACPI/patched, so free original pages
+        gBS->FreePages(Entry64, EFI_SIZE_TO_PAGES(XsdtReplaceSizes[Index]));
+        XsdtReplaceSizes[Index] = 0;
+      }
+
       CopyMem ((VOID*)BasePtr, &ssdt, sizeof(UINT64));
       if ((gSettings.FixDsdt & FIX_HEADERS)) {
         PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)ssdt);
@@ -658,6 +695,90 @@ EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
     }
   }
 
+  return Status;
+}
+
+INTN IndexFromFileName(CHAR16* FileName)
+{
+  // FileName must start as "XXXX-number...", such as "SSDT-9.aml", or "SSDT-11-SaSsdt.aml"
+  
+  // search for '-'
+  INTN Result = -1;
+  CHAR16* temp = FileName;
+  for (; *temp != 0 && *temp != '-'; temp++);
+  if ('-' == *temp && 4 == temp-FileName) {
+    ++temp;
+    if (*temp >= '0' && *temp <= '9') {
+      Result = 0;
+      for (; *temp >= '0' && *temp <= '9'; temp++) {
+        Result *= 10;
+        Result += *temp - '0';
+      }
+    }
+  }
+  return Result;
+}
+
+EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, INTN MatchIndex)
+{
+  EFI_STATUS          Status; // = EFI_SUCCESS;
+  EFI_PHYSICAL_ADDRESS    BufferPtr  = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+  EFI_ACPI_DESCRIPTION_HEADER* hdr = (EFI_ACPI_DESCRIPTION_HEADER*)TableEntry;
+  
+  if (!TableEntry) {
+    return EFI_NOT_FOUND;
+  }
+  
+  Status = gBS->AllocatePages (
+                               AllocateMaxAddress,
+                               EfiACPIReclaimMemory,
+                               EFI_SIZE_TO_PAGES(Length),
+                               &BufferPtr
+                               );
+  //if success insert or replace table pointer into ACPI tables
+  if(!EFI_ERROR(Status)) {
+    //      DBG("page is allocated, write SSDT into\n");
+    CopyMem((VOID*)(UINTN)BufferPtr, (VOID*)TableEntry, Length);
+#if 0 //REVIEW: seems as if Rsdt is always NULL for ReplaceOrInsertTable scenarios (macOS/OS X)
+    //insert/modify into RSDT
+    if (Rsdt) {
+      UINT32* entry = NULL;
+      if (hdr->Signature != SSDT_SIGN || MatchIndex != -1) {
+        // SSDT with target index or non-SSDT, try to find matching entry
+        entry = ScanRSDT2(hdr->Signature, hdr->OemTableId, MatchIndex);
+      }
+      if (entry) {
+        *entry = (UINT32)(UINTN)BufferPtr;
+      } else {
+        UINT32*  Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
+        *Ptr = (UINT32)(UINTN)BufferPtr;
+        Rsdt->Header.Length += sizeof(UINT32);
+        //       DBG("Rsdt->Length = %d\n", Rsdt->Header.Length);
+      }
+    }
+#endif
+    //insert/modify into XSDT
+    if (Xsdt) {
+      UINT64* entry = NULL;
+      if (hdr->Signature != SSDT_SIGN || MatchIndex != -1) {
+        // SSDT with target index or non-SSDT, try to find matching entry
+        entry = ScanXSDT2(hdr->Signature, hdr->OemTableId, MatchIndex);
+      }
+      if (entry) {
+        WriteUnaligned64(entry, (UINT64)BufferPtr);
+        UINTN Index = entry - &Xsdt->Entry;
+        if (XsdtReplaceSizes && Index < XsdtOriginalEntryCount) {
+          XsdtReplaceSizes[Index] = Length;  // mark as replaced, as it should be freed if patched later
+        }
+      } else {
+        UINT64* XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
+        // *XPtr = (UINT64)(UINTN)BufferPtr;
+        WriteUnaligned64(XPtr, (UINT64)BufferPtr);
+        Xsdt->Header.Length += sizeof(UINT64);
+        //        DBG("Xsdt->Length = %d\n", Xsdt->Header.Length);
+      }
+    }
+  }
   return Status;
 }
 
@@ -1796,12 +1917,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     if (BiosDsdt) {
       newFadt->XDsdt = BiosDsdt;
       newFadt->Dsdt = (UINT32)BiosDsdt;
-    } else
-      if (newFadt->Dsdt) {
+    } else if (newFadt->Dsdt) {
         newFadt->XDsdt = (UINT64)(newFadt->Dsdt);
-      } else if (XDsdt) {
+    } else if (XDsdt) {
         newFadt->Dsdt = (UINT32)XDsdt;
-      }
+    }
 //    if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
 //    else DBG("No FACS table ?!\n");
     if (newFadt->FirmwareCtrl) {
@@ -1989,12 +2109,20 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       DropTable = DropTable->Next;
     }
   }
+  // RehabMan: Save current Xsdt entry count, as PatchAllSSDT operates on only
+  //  original SSDTs or SSDTs that were loaded/merged.
+  // XsdtReplaceSizes array is used to keep track of allocations for the merged tables,
+  //  as those tables may need to be freed if patched later.
+  XsdtOriginalEntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+  XsdtReplaceSizes = AllocateZeroPool(XsdtOriginalEntryCount * sizeof(*XsdtReplaceSizes));
+
 
   if (gSettings.DropSSDT) {
     DbgHeader("DropSSDT");
     //special case if we set into menu drop all SSDT
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
+/*
   } else {
     DbgHeader("PatchAllSSDT");
     //all remaining SSDT tables will be patched
@@ -2002,6 +2130,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     //do the empty drop to clean xsdt
     DropTableFromXSDT(XXXX_SIGN, 0, 0);
     DropTableFromRSDT(XXXX_SIGN, 0, 0);
+ */
   }
 
   if (ACPIPatchedAML) {
@@ -2035,7 +2164,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
               TableHeader->Checksum = 0;
               TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
             }
-            Status = InsertTable((VOID*)buffer, bufferLen);
+    //        Status = InsertTable((VOID*)buffer, bufferLen);
+            if (!gSettings.AutoMerge)
+              Status = InsertTable(buffer, bufferLen);
+            else
+              Status = ReplaceOrInsertTable(buffer, bufferLen, IndexFromFileName(gSettings.SortedACPI[Index]));
+
           }
           DBG("%r\n", Status);
         }
@@ -2059,7 +2193,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
               TableHeader->Checksum = 0;
               TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
             }
-            Status = InsertTable((VOID*)buffer, bufferLen);
+//            Status = InsertTable((VOID*)buffer, bufferLen);
+            if (!gSettings.AutoMerge)
+              Status = InsertTable(buffer, bufferLen);
+            else
+              Status = ReplaceOrInsertTable(buffer, bufferLen, IndexFromFileName(ACPIPatchedAMLTmp->FileName));
+
           }
           DBG("%r\n", Status);
         } else {
@@ -2070,6 +2209,19 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     }
 //    DBG("End: Processing Patched AML(s)\n");
   }
+  
+  if (!gSettings.DropSSDT) {
+    DbgHeader("PatchAllSSDT");
+    PatchAllSSDT();
+    //do the empty drop to clean xsdt
+    DropTableFromXSDT(XXXX_SIGN, 0, 0);
+    DropTableFromRSDT(XXXX_SIGN, 0, 0);
+  }
+  if (XsdtReplaceSizes) {
+    FreePool(XsdtReplaceSizes);
+    XsdtReplaceSizes = NULL;
+  }
+
 
   //Slice - this is a time to patch MADT table.
 //  DBG("Fool proof: size of APIC NMI  = %d\n", sizeof(EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE));

@@ -70,6 +70,7 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 // 1FEDE521-031C-4BC5-8050-F3D6161E2E92
 // 56 10 8C BD 36 9F EC 44 92 A8 A6 33 7F 81 79 86 ==
 // BD8C1056-9F36-44EC-92A8-A6337F817986 gEfiEdidActiveProtocolGuid
+// 26baccba-6f42-11d4-bce7-008081883cc7
 
 /*
  * Copyright (c) 2007 Apple Inc. All rights reserved.
