@@ -557,6 +557,7 @@ MSR C001006B  0000-0000-0000-0000
 #define FIX_HDMI      bit(27)
 #define FIX_REGIONS   bit(28)
 #define FIX_HEADERS   bit(29)
+#define FIX_MUTEX     bit(30)
 
 //devices
 #define DEV_ATI       bit(0)

@@ -5004,6 +5004,29 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   }
 }
 
+// RehabMan: Fix Mutex with non-zero SyncLevel (change to zero)
+// For example: Mutex(ECMX, 3) -> Mutex(ECMX, 0)
+// representation example:
+//   Mutex(M2, 1) -> 5B 01 4D 32 5F 5F 01
+// Although Mutex with non-zero SyncLevel is perfectly legal macOS/OS X doesn't like
+// One of the common fixes for ACPI battery status on laptops
+#define IsNameChar(ch) (((ch)>='A' && (ch)<='Z') || ((ch)>='0' && (ch)<='9') || (ch)=='_')
+VOID FixMutex(UINT8 *dsdt, UINT32 len)
+{
+  UINT8* p = dsdt + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+  UINT8* end = dsdt + len - 7; // pattern is 7-bytes
+  DBG("Start Mutex Fix\n");
+  for (; p <= end; p++) {
+    if (p[0] == 0x5b && p[1] == 0x01 &&
+        IsNameChar(p[2]) && IsNameChar(p[3]) && IsNameChar(p[4]) && IsNameChar(p[5])) {
+      if (p[6] != 0) {
+        DBG("Fixing Mutex(%c%c%c%c, %d)\n", p[2], p[3], p[4], p[5], p[6]);
+      }
+      p[6] = 0;
+    }
+  }
+}
+
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {
@@ -5220,6 +5243,12 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   if ((gSettings.FixDsdt & FIX_REGIONS)) {
     FixRegions(temp, DsdtLen);
   }
+  
+  //RehabMan: Fix Mutex objects
+  if ((gSettings.FixDsdt & FIX_MUTEX)) {
+    FixMutex(temp, DsdtLen);
+  }
+
 
      // pwrb add _CID sleep button fix
   if ((gSettings.FixDsdt & FIX_ADP1)) {
