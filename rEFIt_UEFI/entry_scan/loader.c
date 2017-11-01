@@ -721,15 +721,33 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     AddMenuInfoLine(SubScreen, PoolPrint(L"macOS %a", Entry->OSVersion));
 
+    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
+      SubEntry = DuplicateLoaderEntry(Entry);
+      if (SubEntry) {
+        SubEntry->me.Title        = L"Cancel hibernate wake";
+        SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
+    }
+
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Cancel hibernate wake";
-      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
+      SubEntry->me.Title        = L"Boot macOS with selected options";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+    
+    SubEntry = DuplicateLoaderEntry(Entry);
+    if (SubEntry) {
+      SubEntry->me.Title        = L"Boot macOS with injected kexts";
+      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
+      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot macOS with selected options";
+      SubEntry->me.Title        = L"Boot macOS without injected kexts";
+      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
+      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS );
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 
