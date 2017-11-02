@@ -297,10 +297,8 @@ VOID GetAcpiTablesList()
   OTID[8] = 0;
   DBG("Get Acpi Tables List ");
   if (Xsdt) {
-    // RehabMan: we want to patch only the SSDTs that were original or were loaded and merged
-    EntryCount = XsdtOriginalEntryCount;
-    //EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-    
+    EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+
     BasePtr = (CHAR8*)(&(Xsdt->Entry));
     DBG("from XSDT:\n");
     for (Index = 0; Index < EntryCount; Index ++, BasePtr += sizeof(UINT64)) {
@@ -599,7 +597,10 @@ VOID PatchAllSSDT()
 
   sign[4] = 0;
   OTID[8] = 0;
-  EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+  // RehabMan: we want to patch only the SSDTs that were original or were loaded and merged
+  EntryCount = XsdtOriginalEntryCount;
+
+//  EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   BasePtr = (CHAR8*)(UINTN)(&(Xsdt->Entry));
   for (Index = 0; Index < EntryCount; Index++, BasePtr += sizeof(UINT64)) {
     CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
@@ -936,6 +937,10 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
   UINT8         *End;
   UINT8         *pacBody;
   UINTN         ChildCount = 0;
+
+  if (gSettings.NoDynamicExtract) {
+    return;
+  }
 
   Entry = (UINT8*)TableEntry;  //first entry is parent SSDT
   End = Entry + TableEntry->Length;

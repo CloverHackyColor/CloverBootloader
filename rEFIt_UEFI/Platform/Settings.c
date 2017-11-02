@@ -5090,19 +5090,17 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "Fixes");
         if (Prop != NULL) {
           UINTN Index;
- //         DBG ("Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
-
+          //         DBG ("Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
           if (Prop->type == kTagTypeDict) {
             gSettings.FixDsdt = 0;
-          }
-          
-          for (Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
-            Prop2 = GetProperty(Prop, FixesConfig[Index].newName);
-            if (!Prop2 && FixesConfig[Index].oldName) {
-              Prop2 = GetProperty(Prop, FixesConfig[Index].oldName);
-            }
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.FixDsdt |= FixesConfig[Index].bitData;
+            for (Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
+              Prop2 = GetProperty(Prop, FixesConfig[Index].newName);
+              if (!Prop2 && FixesConfig[Index].oldName) {
+                Prop2 = GetProperty(Prop, FixesConfig[Index].oldName);
+              }
+              if (IsPropertyTrue(Prop2)) {
+                gSettings.FixDsdt |= FixesConfig[Index].bitData;
+              }
             }
           }
         }
@@ -5309,6 +5307,9 @@ GetUserSettings(
 
         Prop = GetProperty (Dict2, "NoOemTableId"); // to disable OEM table ID on ACPI/orgin/SSDT file names
         gSettings.NoOemTableId = IsPropertyTrue (Prop);
+
+        Prop = GetProperty (Dict2, "NoDynamicExtract"); // to disable extracting child SSDTs
+        gSettings.NoDynamicExtract = IsPropertyTrue (Prop);
 
         Prop = GetProperty (Dict2, "UseSystemIO");
         gSettings.EnableISS = IsPropertyTrue (Prop);

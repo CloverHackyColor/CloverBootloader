@@ -228,6 +228,8 @@
 			<integer>1</integer>
 			<key>#UseSystemIO</key>
 			<false/>
+			<key>#NoDynamicExtract</key>
+			<false/>
 			<key>Generate</key>
 			<dict>
 				<key>CStates</key>
