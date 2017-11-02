@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-23 20:42+0300\n"
+"POT-Creation-Date: 2017-11-02 07:19+0300\n"
 "PO-Revision-Date: 2016-01-12 00:38+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -98,7 +98,7 @@ msgstr "Fitur-fitur:"
 #: Resources/templates/Description.html:21
 #, fuzzy
 #| msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.12 macOS, Windows EFI and Linux EFI"
+msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
 msgstr "- Untuk boot 10.4 - 10.9 OSX, Windows EFI dan Linux EFI"
 
 #

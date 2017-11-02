@@ -94,8 +94,8 @@ msgstr "Main features:"
 #: Resources/templates/Description.html:21
 #, fuzzy
 #| msgid "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.12 macOS, Windows EFI and Linux EFI"
-msgstr "- boot into 10.4 - 10.11 OSX, Windows EFI and Linux EFI"
+msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
+msgstr "- boot into 10.xx OSX, Windows EFI and Linux EFI"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22

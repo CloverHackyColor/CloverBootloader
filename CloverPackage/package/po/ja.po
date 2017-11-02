@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-23 20:42+0300\n"
+"POT-Creation-Date: 2017-11-02 07:19+0300\n"
 "PO-Revision-Date: 2014-07-20 16:27+0000\n"
 "Last-Translator: kantok <somech_08013@yahoo.co.jp>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,7 +95,7 @@ msgstr "おもな特徴:"
 #: Resources/templates/Description.html:21
 #, fuzzy
 #| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.4 - 10.12 macOS, Windows EFI and Linux EFI"
+msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
 msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート"
 
 #. type: Content of: <html><body><p>
