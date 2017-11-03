@@ -778,16 +778,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
        
        /* APFS Hibernation support*/
        //Check that current volume is APFS
-       if ((VolumeUUID=APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL) {
-         BootGUID = (EFI_GUID*)(Data + Size - 0x14);
+       if ((VolumeUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL) {
+         //BootGUID = (EFI_GUID*)(Data + Size - 0x14);
+         BootGUID = (EFI_GUID*)ScanGuid(Data, Size, VolumeUUID);
          //DBG("    APFS Boot0082 points to UUID:%g\n", BootGUID);
        } else {
-         BootGUID = (EFI_GUID*)(Data + Size - 0x16);  
-         //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
+         //BootGUID = (EFI_GUID*)(Data + Size - 0x16);
          VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+         if (VolumeUUID != NULL) {
+            BootGUID = (EFI_GUID*)ScanGuid(Data, Size, VolumeUUID);
+            //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
+         }
        }        
         //DBG("    Volume has PartUUID=%g\n", VolumeUUID);
-        if (!CompareGuid(BootGUID, VolumeUUID)) {
+        if (BootGUID != NULL && VolumeUUID != NULL && !CompareGuid(BootGUID, VolumeUUID)) {
           ret = FALSE;
         } else  {
           DBG("    Boot0082 points to Volume with UUID:%g\n", BootGUID);
