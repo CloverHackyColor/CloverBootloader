@@ -1942,6 +1942,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     if (GlobalConfig.SignatureFixup) {
       DBG(" SignatureFixup: 0x%x -> 0x%x\n", Facs->HardwareSignature, machineSignature);
       Facs->HardwareSignature = machineSignature;
+    } else {
+      DBG(" SignatureFixup: 0x%x -> 0\n", Facs->HardwareSignature);
+      Facs->HardwareSignature = 0;
     }
     //
     
