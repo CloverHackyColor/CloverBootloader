@@ -2257,7 +2257,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
-      
 
       CHAR16 *TmpArgs;
 
@@ -2275,7 +2274,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-
       TmpArgs = PoolPrint(L"%a ", gSettings.BootArgs);
       DBG("after NVRAM boot-args=%a\n", gSettings.BootArgs);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);

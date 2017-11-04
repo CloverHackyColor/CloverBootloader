@@ -6001,6 +6001,17 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             }
           }
         }
+      } else {
+        InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
+        if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+          Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+          if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+            Prop = GetProperty (Dict, "ProductVersion");
+            if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+              OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+            }
+          }
+        }
       }
     }
   }
