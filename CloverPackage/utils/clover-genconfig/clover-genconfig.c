@@ -567,6 +567,8 @@ void PrintConfig(CFTypeRef data)
   addBoolean(acpiDict, CFSTR("HaltEnabler"), s->SlpSmiEnable);
   addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
   addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
+  addBoolean(acpiDict, CFSTR("AutoMerge"), s->AutoMerge);
+  addBoolean(acpiDict, CFSTR("DisableASPM"), s->NoASPM);
 
   CFMutableDictionaryRef dsdtDict = addDict(acpiDict, CFSTR("DSDT"));
   addUString(dsdtDict, CFSTR("Name"), (const UniChar *)&s->DsdtName);
@@ -578,43 +580,43 @@ void PrintConfig(CFTypeRef data)
   addInteger(dsdtDict, CFSTR("#Patches count"), s->PatchDsdtNum);
 
   CFMutableDictionaryRef fixDict = addDict(dsdtDict, CFSTR("Fixes"));
-  addBoolean(fixDict, CFSTR("AddDTGP_0001"),        !!(s->FixDsdt & FIX_DTGP));
-  addBoolean(fixDict, CFSTR("FixDarwin_0002"),      !!(s->FixDsdt & FIX_WARNING));
-  addBoolean(fixDict, CFSTR("FixShutdown_0004"),    !!(s->FixDsdt & FIX_SHUTDOWN));
-  addBoolean(fixDict, CFSTR("AddMCHC_0008"),        !!(s->FixDsdt & FIX_MCHC));
-  addBoolean(fixDict, CFSTR("FixHPET_0010"),        !!(s->FixDsdt & FIX_HPET));
-  addBoolean(fixDict, CFSTR("FakeLPC_0020"),        !!(s->FixDsdt & FIX_LPC));
-  addBoolean(fixDict, CFSTR("FixIPIC_0040"),        !!(s->FixDsdt & FIX_IPIC));
-  addBoolean(fixDict, CFSTR("FixSBUS_0080"),        !!(s->FixDsdt & FIX_SBUS));
-  addBoolean(fixDict, CFSTR("FixDisplay_0100"),     !!(s->FixDsdt & FIX_DISPLAY));
-  addBoolean(fixDict, CFSTR("FixIDE_0200"),         !!(s->FixDsdt & FIX_IDE));
-  addBoolean(fixDict, CFSTR("FixSATA_0400"),        !!(s->FixDsdt & FIX_SATA));
-  addBoolean(fixDict, CFSTR("FixFirewire_0800"),    !!(s->FixDsdt & FIX_FIREWIRE));
-  addBoolean(fixDict, CFSTR("FixUSB_1000"),         !!(s->FixDsdt & FIX_USB));
-  addBoolean(fixDict, CFSTR("FixLAN_2000"),         !!(s->FixDsdt & FIX_LAN));
-  addBoolean(fixDict, CFSTR("FixAirport_4000"),     !!(s->FixDsdt & FIX_WIFI));
-  addBoolean(fixDict, CFSTR("FixHDA_8000"),         !!(s->FixDsdt & FIX_HDA));
-  addBoolean(fixDict, CFSTR("FixDarwin7_10000"),    !!(s->FixDsdt & FIX_DARWIN));
-  addBoolean(fixDict, CFSTR("FIX_RTC_20000"),       !!(s->FixDsdt & FIX_RTC));
-  addBoolean(fixDict, CFSTR("FIX_TMR_40000"),       !!(s->FixDsdt & FIX_TMR));
-  addBoolean(fixDict, CFSTR("AddIMEI_80000"),       !!(s->FixDsdt & FIX_IMEI));
-  addBoolean(fixDict, CFSTR("FIX_INTELGFX_100000"), !!(s->FixDsdt & FIX_INTELGFX));
-  addBoolean(fixDict, CFSTR("FIX_WAK_200000"),      !!(s->FixDsdt & FIX_WAK));
-  addBoolean(fixDict, CFSTR("DeleteUnused_400000"), !!(s->FixDsdt & FIX_UNUSED));
-  addBoolean(fixDict, CFSTR("FIX_ADP1_800000"),     !!(s->FixDsdt & FIX_ADP1));
-  addBoolean(fixDict, CFSTR("AddPNLF_1000000"),     !!(s->FixDsdt & FIX_PNLF));
-  addBoolean(fixDict, CFSTR("FIX_S3D_2000000"),     !!(s->FixDsdt & FIX_S3D));
-  addBoolean(fixDict, CFSTR("FIX_ACST_4000000"),    !!(s->FixDsdt & FIX_ACST));
-  addBoolean(fixDict, CFSTR("AddHDMI_8000000"),     !!(s->FixDsdt & FIX_HDMI));
-  addBoolean(fixDict, CFSTR("FixRegions_10000000"), !!(s->FixDsdt & FIX_REGIONS));
-  addBoolean(fixDict, CFSTR("FixHeaders_20000000"), !!(s->FixDsdt & FIX_HEADERS));
-//  addBoolean(fixDict, CFSTR("NewWay_80000000"),    !!(s->FixDsdt & FIX_NEW_WAY));
+  addBoolean(fixDict, CFSTR("AddDTGP"),        !!(s->FixDsdt & FIX_DTGP));
+  addBoolean(fixDict, CFSTR("FixDarwin"),      !!(s->FixDsdt & FIX_WARNING));
+  addBoolean(fixDict, CFSTR("FixShutdown"),    !!(s->FixDsdt & FIX_SHUTDOWN));
+  addBoolean(fixDict, CFSTR("AddMCHC"),        !!(s->FixDsdt & FIX_MCHC));
+  addBoolean(fixDict, CFSTR("FixHPET"),        !!(s->FixDsdt & FIX_HPET));
+  addBoolean(fixDict, CFSTR("FakeLPC"),        !!(s->FixDsdt & FIX_LPC));
+  addBoolean(fixDict, CFSTR("FixIPIC"),        !!(s->FixDsdt & FIX_IPIC));
+  addBoolean(fixDict, CFSTR("FixSBUS"),        !!(s->FixDsdt & FIX_SBUS));
+  addBoolean(fixDict, CFSTR("FixDisplay"),     !!(s->FixDsdt & FIX_DISPLAY));
+  addBoolean(fixDict, CFSTR("FixIDE"),         !!(s->FixDsdt & FIX_IDE));
+  addBoolean(fixDict, CFSTR("FixSATA"),        !!(s->FixDsdt & FIX_SATA));
+  addBoolean(fixDict, CFSTR("FixFirewire"),    !!(s->FixDsdt & FIX_FIREWIRE));
+  addBoolean(fixDict, CFSTR("FixUSB"),         !!(s->FixDsdt & FIX_USB));
+  addBoolean(fixDict, CFSTR("FixLAN"),         !!(s->FixDsdt & FIX_LAN));
+  addBoolean(fixDict, CFSTR("FixAirport"),     !!(s->FixDsdt & FIX_WIFI));
+  addBoolean(fixDict, CFSTR("FixHDA"),         !!(s->FixDsdt & FIX_HDA));
+  addBoolean(fixDict, CFSTR("FixDarwin7"),     !!(s->FixDsdt & FIX_DARWIN));
+  addBoolean(fixDict, CFSTR("FixRTC"),         !!(s->FixDsdt & FIX_RTC));
+  addBoolean(fixDict, CFSTR("FixTMR"),         !!(s->FixDsdt & FIX_TMR));
+  addBoolean(fixDict, CFSTR("AddIMEI"),        !!(s->FixDsdt & FIX_IMEI));
+  addBoolean(fixDict, CFSTR("FixIntelGfx"),    !!(s->FixDsdt & FIX_INTELGFX));
+  addBoolean(fixDict, CFSTR("FixWAK"),         !!(s->FixDsdt & FIX_WAK));
+  addBoolean(fixDict, CFSTR("DeleteUnused"),   !!(s->FixDsdt & FIX_UNUSED));
+  addBoolean(fixDict, CFSTR("FixADP1"),        !!(s->FixDsdt & FIX_ADP1));
+  addBoolean(fixDict, CFSTR("AddPNLF"),        !!(s->FixDsdt & FIX_PNLF));
+  addBoolean(fixDict, CFSTR("FixS3D"),         !!(s->FixDsdt & FIX_S3D));
+  addBoolean(fixDict, CFSTR("FixACST"),        !!(s->FixDsdt & FIX_ACST));
+  addBoolean(fixDict, CFSTR("AddHDMI"),        !!(s->FixDsdt & FIX_HDMI));
+  addBoolean(fixDict, CFSTR("FixRegions"),     !!(s->FixDsdt & FIX_REGIONS));
+  addBoolean(fixDict, CFSTR("FixHeaders"),     !!(s->FixDsdt & FIX_HEADERS));
 
   CFMutableArrayRef dsdtPatchArray = addArray(dsdtDict, CFSTR("Patches"));
     CFMutableDictionaryRef dsdtPatchDict = addDictToArray(dsdtPatchArray);
     addString(dsdtPatchDict, CFSTR("Comment"), "This is for sample");
-    addString(dsdtPatchDict, CFSTR("#Find"), "_NOT_SHOWN_");
-    addString(dsdtPatchDict, CFSTR("#Replace"), "_NOT_SHOWN_");
+    addBoolean(dsdtPatchDict, CFSTR("Disabled"), TRUE);
+    addString(dsdtPatchDict, CFSTR("Find"), "_NOT_SHOWN_");
+    addString(dsdtPatchDict, CFSTR("Replace"), "_NOT_SHOWN_");
 
   CFMutableDictionaryRef dsmDict = addDict(dsdtDict, CFSTR("DropOEM_DSM"));
   addBoolean(dsmDict, CFSTR("ATI"),       !!(s->DropOEM_DSM & DEV_ATI));
@@ -651,6 +653,7 @@ void PrintConfig(CFTypeRef data)
   addBoolean(ssdtDict, CFSTR("#EnableC6"), s->EnableC6);
   addBoolean(ssdtDict, CFSTR("#EnableC7"), s->EnableC7);
   addInteger(ssdtDict, CFSTR("#C3Latency"), s->C3Latency);
+  addBoolean(ssdtDict, CFSTR("NoDynamicExtract"), s->NoDynamicExtract);
 
   CFMutableArrayRef dropArray = addArray(acpiDict, CFSTR("DropTables"));
   CFMutableDictionaryRef drop1Dict = addDictToArray(dropArray);
@@ -659,8 +662,9 @@ void PrintConfig(CFTypeRef data)
   addInteger(drop1Dict, CFSTR("#Length"), 0);
   
   CFMutableArrayRef sortedArray = addArray(acpiDict, CFSTR("#SortedOrder"));
+  addStringToArray(sortedArray, "SSDT-1.aml");
   addInteger(acpiDict, CFSTR("#Sorted ACPI tables Count"), s->SortedACPICount);
-  
+
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
   addBoolean(KernelAndKextPatchesDict, CFSTR("#Debug"), s->KernelAndKextPatches.KPDebug);
