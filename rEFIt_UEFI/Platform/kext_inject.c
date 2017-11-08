@@ -423,11 +423,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
       Next = CurrentPlugInKext->Next;
       FreePool(CurrentPlugInKext->FileName);
       FreePool(CurrentPlugInKext->MatchOS);
+      FreePool(CurrentPlugInKext->Version);
       FreePool(CurrentPlugInKext);
       CurrentPlugInKext = Next;
     }
     FreePool(InjectKextList->FileName);
     FreePool(InjectKextList->MatchOS);
+    FreePool(InjectKextList->Version);
     FreePool(InjectKextList);
     InjectKextList = CurrentKext;
   }
@@ -440,38 +442,38 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 ////////////////////
 EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength, LOADER_ENTRY *Entry)
 {
-	UINT8					*dtEntry = (UINT8*)(UINTN) deviceTreeP;
-	UINTN					dtLength = (UINTN) *deviceTreeLength;
+	UINT8					                    *dtEntry = (UINT8*)(UINTN) deviceTreeP;
+	UINTN					                    dtLength = (UINTN) *deviceTreeLength;
   
-	DTEntry					platformEntry;
-	DTEntry					memmapEntry;
-	CHAR8 					*ptr;
-	struct OpaqueDTPropertyIterator OPropIter;
-	DTPropertyIterator		iter = &OPropIter;
-	DeviceTreeNodeProperty	*prop = NULL;
+	DTEntry					                  platformEntry;
+	DTEntry					                  memmapEntry;
+	CHAR8 					                  *ptr;
+	struct OpaqueDTPropertyIterator   OPropIter;
+	DTPropertyIterator		            iter = &OPropIter;
+	DeviceTreeNodeProperty	          *prop = NULL;
   
-	UINT8					*infoPtr = 0;
-	UINT8					*extraPtr = 0;
-	UINT8					*drvPtr = 0;
-	UINTN					offset = 0;
+	UINT8					                    *infoPtr = 0;
+	UINT8					                    *extraPtr = 0;
+	UINT8					                    *drvPtr = 0;
+	UINTN					                    offset = 0;
   
-	LIST_ENTRY				*Link;
-	KEXT_ENTRY				*KextEntry;
-	UINTN					KextBase = 0;
-	_DeviceTreeBuffer		*mm;
-	_BooterKextFileInfo		*drvinfo;
+	LIST_ENTRY				                *Link;
+	KEXT_ENTRY				                *KextEntry;
+	UINTN					                    KextBase = 0;
+	_DeviceTreeBuffer		              *mm;
+	_BooterKextFileInfo		            *drvinfo;
 	
-	UINT32					KextCount;
-	UINTN					Index;
+	UINT32					                  KextCount;
+	UINTN					                    Index;
 	
   
 	DBG_RT(Entry, "\nInjectKexts: ");
 	KextCount = GetKextCount();
 	if (KextCount == 0) {
 		DBG_RT(Entry, "no kexts to inject.\nPausing 5 secs ...\n");
-      if (Entry->KernelAndKextPatches->KPDebug) {
-			gBS->Stall(5000000);
-		}
+    if (Entry->KernelAndKextPatches->KPDebug) {
+      gBS->Stall(5000000);
+    }
 		return EFI_NOT_FOUND;
 	}
 	DBG_RT(Entry, "%d kexts ...\n", KextCount);
@@ -532,54 +534,54 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	*deviceTreeLength -= (UINT32)offset;
   
 	KextBase = RoundPage(dtEntry + *deviceTreeLength);
-	if(!IsListEmpty(&gKextList)) {
-		Index = 1;
-		for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
-			KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
-      
-			CopyMem((VOID*) KextBase, (VOID*)(UINTN) KextEntry->kext.paddr, KextEntry->kext.length);
-			drvinfo = (_BooterKextFileInfo*) KextBase;
-			drvinfo->infoDictPhysAddr += (UINT32) KextBase;
-			drvinfo->executablePhysAddr += (UINT32) KextBase;
-			drvinfo->bundlePathPhysAddr += (UINT32) KextBase;
-      
-			memmapEntry->nProperties++;
-			prop = ((DeviceTreeNodeProperty*) drvPtr);
-			prop->length = sizeof(_DeviceTreeBuffer);
-			mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DeviceTreeNodeProperty));
-			mm->paddr = (UINT32)KextBase;
-			mm->length = KextEntry->kext.length;
-			AsciiSPrint(prop->name, 31, "Driver-%x", KextBase);
-      
-			drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
-			KextBase = RoundPage(KextBase + KextEntry->kext.length);
-			DBG_RT(Entry, " %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
-         if (gSettings.KextPatchesAllowed) {
-            INT32  i;
-            CHAR8  SavedValue;
-            CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
-            SavedValue = InfoPlist[drvinfo->infoDictLength];
-            InfoPlist[drvinfo->infoDictLength] = '\0';
-            KernelAndKextPatcherInit(Entry);
-            for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
-               if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
-                  (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
-                  AnyKextPatch(
-                     (UINT8*)(UINTN)drvinfo->executablePhysAddr,
-                     drvinfo->executableLength,
-                     InfoPlist,
-                     drvinfo->infoDictLength,
-                     i,
-                     Entry
-                     );
-               }
-            }
-            InfoPlist[drvinfo->infoDictLength] = SavedValue;
-         }
-			Index++;
-		}
-	}
-  
+  if(!IsListEmpty(&gKextList)) {
+    Index = 1;
+    for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
+      KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
+
+      CopyMem((VOID*) KextBase, (VOID*)(UINTN) KextEntry->kext.paddr, KextEntry->kext.length);
+      drvinfo = (_BooterKextFileInfo*) KextBase;
+      drvinfo->infoDictPhysAddr += (UINT32) KextBase;
+      drvinfo->executablePhysAddr += (UINT32) KextBase;
+      drvinfo->bundlePathPhysAddr += (UINT32) KextBase;
+
+      memmapEntry->nProperties++;
+      prop = ((DeviceTreeNodeProperty*) drvPtr);
+      prop->length = sizeof(_DeviceTreeBuffer);
+      mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DeviceTreeNodeProperty));
+      mm->paddr = (UINT32)KextBase;
+      mm->length = KextEntry->kext.length;
+      AsciiSPrint(prop->name, 31, "Driver-%x", KextBase);
+
+      drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
+      KextBase = RoundPage(KextBase + KextEntry->kext.length);
+      DBG_RT(Entry, " %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+      if (gSettings.KextPatchesAllowed) {
+        INT32  i;
+        CHAR8  SavedValue;
+        CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
+        SavedValue = InfoPlist[drvinfo->infoDictLength];
+        InfoPlist[drvinfo->infoDictLength] = '\0';
+        KernelAndKextPatcherInit(Entry);
+        for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
+          if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
+              (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
+            AnyKextPatch(
+                         (UINT8*)(UINTN)drvinfo->executablePhysAddr,
+                         drvinfo->executableLength,
+                         InfoPlist,
+                         drvinfo->infoDictLength,
+                         i,
+                         Entry
+                         );
+          }
+        }
+        InfoPlist[drvinfo->infoDictLength] = SavedValue;
+      }
+      Index++;
+    }
+  }
+
    if (Entry->KernelAndKextPatches->KPDebug) {
 		DBG_RT(Entry, "Done.\n");
 		gBS->Stall(5000000);

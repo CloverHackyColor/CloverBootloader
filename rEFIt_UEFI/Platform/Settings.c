@@ -3115,55 +3115,94 @@ GetListOfACPI ()
   FreePool(AcpiPath);
 }
 
+CHAR16* GetBundleVersion(CHAR16 *FullName)
+{
+  EFI_STATUS      Status;
+  CHAR16*         CFBundleVersion = NULL;
+  CHAR16*         InfoPlistPath;
+  CHAR8*          InfoPlistPtr = NULL;
+  TagPtr          InfoPlistDict = NULL;
+  TagPtr          Prop = NULL;
+  UINTN           Size;
+
+  InfoPlistPath = PoolPrint(L"%s\\%s", FullName, L"Contents\\Info.plist");
+  Status = egLoadFile (SelfRootDir, InfoPlistPath, (UINT8**)&InfoPlistPtr, &Size);
+  if(!EFI_ERROR(Status)) {
+    Status = ParseXML ((const CHAR8*)InfoPlistPtr, &InfoPlistDict, (UINT32)Size);
+    if(!EFI_ERROR(Status)) {
+      Prop = GetProperty(InfoPlistDict, "CFBundleVersion");
+      if (Prop != NULL && Prop->string != NULL) {
+        CFBundleVersion = PoolPrint (L"%a", Prop->string);
+      }
+    }
+  }
+  if (InfoPlistPtr) {
+    FreePool(InfoPlistPtr);
+  }
+  FreePool(InfoPlistPath);
+  return CFBundleVersion;
+}
+
 VOID GetListOfInjectKext(CHAR16 *KextPath)
 {
+
   REFIT_DIR_ITER  DirIter;
   EFI_FILE_INFO*  DirEntry;
   SIDELOAD_KEXT*  mKext;
   SIDELOAD_KEXT*  mPlugInKext;
+  CHAR16*         FullName;
   CHAR16*         FullPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, KextPath);
+  REFIT_DIR_ITER  PlugInsIter;
+  EFI_FILE_INFO   *PlugInEntry;
+  CHAR16*         PlugInsPath;
+  CHAR16*         PlugInsName;
 
   DirIterOpen(SelfRootDir, FullPath, &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
-    CHAR16  FullName[256];
     if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
       continue;
     }
-   UnicodeSPrint(FullName, 512, L"%s\\%s", FullPath, DirEntry->FileName);
+/*
+    <key>CFBundleVersion</key>
+    <string>8.8.8</string>
+*/
+    FullName = PoolPrint(L"%s\\%s", FullPath, DirEntry->FileName);
+
     mKext = AllocateZeroPool (sizeof(SIDELOAD_KEXT));
     mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
     mKext->MenuItem.BValue = FALSE;
     mKext->MatchOS = PoolPrint(L"%s", KextPath);
     mKext->Next = InjectKextList;
+    mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
- //   DBG("Added mKext=%s, MatchOS=%s\n", mKext->FileName, mKext->MatchOS);
+    //   DBG("Added mKext=%s, MatchOS=%s\n", mKext->FileName, mKext->MatchOS);
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
-    REFIT_DIR_ITER  PlugInsIter;
-    EFI_FILE_INFO   *PlugInEntry;
-    CHAR16          PlugInsPath[256];
-
-    UnicodeSPrint(PlugInsPath, 512, L"%s\\%s", FullName, L"Contents\\PlugIns");
+    PlugInsPath = PoolPrint(L"%s\\%s", FullName, L"Contents\\PlugIns");
 
     DirIterOpen(SelfRootDir, PlugInsPath, &PlugInsIter);
     while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
       if (PlugInEntry->FileName[0] == L'.' || StrStr(PlugInEntry->FileName, L".kext") == NULL) {
         continue;
       }
-
+      PlugInsName = PoolPrint(L"%s\\%s", PlugInsPath, PlugInEntry->FileName);
       mPlugInKext = AllocateZeroPool(sizeof(SIDELOAD_KEXT));
       mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
       mPlugInKext->MenuItem.BValue = FALSE;
       mPlugInKext->MatchOS = PoolPrint(L"%s", KextPath);
       mPlugInKext->Next    = mKext->PlugInList;
+      mPlugInKext->Version = GetBundleVersion(PlugInsName);
       mKext->PlugInList    = mPlugInKext;
-//      DBG("---| added plugin=%s, MatchOS=%s\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
+      //      DBG("---| added plugin=%s, MatchOS=%s\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
+      FreePool(PlugInsName);
     }
+    FreePool(PlugInsPath);
+    FreePool(FullName);
     DirIterClose(&PlugInsIter);
   }
   DirIterClose(&DirIter);
-  FreePool(KextPath);
+  FreePool(FullPath);
 }
 
 VOID InitKextList()
@@ -3212,7 +3251,6 @@ GetListOfThemes ()
       //DBG("Skip theme: %s\n", DirEntry->FileName);
       continue;
     }
-
     //DBG ("Found theme directory: %s", DirEntry->FileName);
     DBG ("- [%02d]: %s", ThemesNum, DirEntry->FileName);
     ThemeTestPath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
@@ -3236,8 +3274,10 @@ GetListOfThemes ()
       FreePool (ThemeTestPath);
     }
     DBG ("\n");
+    if (ThemePtr) {
+      FreePool(ThemePtr);
+    }
   }
-
   DirIterClose (&DirIter);
 }
 

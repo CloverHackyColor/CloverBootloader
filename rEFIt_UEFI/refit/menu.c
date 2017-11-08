@@ -4205,7 +4205,7 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   return Entry;  
 }
 
-REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
+REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
 {
   REFIT_MENU_ENTRY     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
@@ -4214,7 +4214,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
   SIDELOAD_KEXT        *Kext = NULL;
   CHAR8                sysVer[17]; //RehabMan: logic below uses max index of 16, so buffer must be 17
 
-  UnicodeStrToAsciiStrS(uni_sysVer, sysVer, 16);
+  UnicodeStrToAsciiStrS(UniSysVer, sysVer, 16);
   for (i = 0; i < 16; i++) {
     if (sysVer[i] == '\0') {
       sysVer[i+0] = '-';
@@ -4227,9 +4227,9 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
   while (Kext) {
-    if (StrStr(Kext->MatchOS, uni_sysVer) != NULL) {
+    if (StrStr(Kext->MatchOS, UniSysVer) != NULL) {
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"%s", Kext->FileName);
+      InputBootArgs->Entry.Title = PoolPrint(L"%s, v.%s", Kext->FileName, Kext->Version);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(Kext->MenuItem);
@@ -4240,7 +4240,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* uni_sysVer)
       SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
       while (plugInKext) {
         InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-        InputBootArgs->Entry.Title = PoolPrint(L"  |-- %s", plugInKext->FileName);
+        InputBootArgs->Entry.Title = PoolPrint(L"  |-- %s, v.%s", plugInKext->FileName, plugInKext->Version);
         InputBootArgs->Entry.Tag = TAG_INPUT;
         InputBootArgs->Entry.Row = 0xFFFF; //cursor
         InputBootArgs->Item = &(plugInKext->MenuItem);
@@ -4264,7 +4264,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
   CHAR16             *kextDir = NULL;
   UINTN              i;
   CHAR8              ShortOSVersion[8];
-  CHAR16            *uni_sysVer = NULL;
+  CHAR16            *UniSysVer = NULL;
   CHAR8             *ChosenOS =Entry->OSVersion;
 
   NewEntry((REFIT_MENU_ENTRY**)&SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
@@ -4282,18 +4282,18 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
         break;
       }
     }
-    uni_sysVer = PoolPrint(L"%a", ShortOSVersion);
+    UniSysVer = PoolPrint(L"%a", ShortOSVersion);
 
     AddMenuInfoLine(SubScreen, PoolPrint(L"Block injected kexts for target version of macOS: %a", ShortOSVersion));
     if ((kextDir = GetOSVersionKextsDir(ShortOSVersion))) {
-      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(uni_sysVer));
+      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(UniSysVer));
       FreePool(kextDir);
     }
     if ((kextDir = GetOtherKextsDir())) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
       FreePool(kextDir);
     }
-    FreePool(uni_sysVer);
+    FreePool(UniSysVer);
   }
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return SubEntry;
