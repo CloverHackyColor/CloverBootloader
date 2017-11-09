@@ -676,6 +676,8 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = BoolValue; //113
   InputItems[InputItemsCount++].BValue = gSettings.AutoMerge;
+  InputItems[InputItemsCount].ItemType = BoolValue; //114
+  InputItems[InputItemsCount++].BValue = gSettings.DeInit;
 
 
   //menu for drop table
@@ -1264,6 +1266,10 @@ VOID ApplyInputs(VOID)
   i++; //113
   if (InputItems[i].Valid) {
     gSettings.AutoMerge = InputItems[i].BValue;
+  }
+  i++; //114
+  if (InputItems[i].Valid) {
+    gSettings.DeInit = InputItems[i].BValue;
   }
 
   if (NeedSave) {
@@ -2482,7 +2488,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
         }
         break;
-			/* just a sample code
+/* just a sample code
       case SCAN_F7:
         Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
         DBG("create folder %r\n", Status);
@@ -2503,9 +2509,6 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
  //this way screen is dirty
         break;
 
-      case SCAN_F8:
-        gSettings.DeInit = TRUE;
-        break;
   */
       case SCAN_F9:
         SetNextScreenMode(1);
@@ -4059,6 +4062,9 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
 	
     if ((gGraphics[i].Vendor == Ati) || (gGraphics[i].Vendor == Intel)) {
       AddMenuItem(SubScreen, 109, "DualLink:", TAG_INPUT, TRUE);
+    }
+    if (gGraphics[i].Vendor == Ati) {
+      AddMenuItem(SubScreen, 114, "DeInit:", TAG_INPUT, TRUE);
     }
 
     AddMenuItem(SubScreen, Ven, "FakeID:", TAG_INPUT, TRUE);

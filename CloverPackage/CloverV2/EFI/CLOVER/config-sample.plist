@@ -712,6 +712,8 @@
 				<data>gAeoAjgE</data>
 			</dict>
 		</array>
+		<key>#RadeonDeInit</key>
+		<true/>
 		<key>#VRAM</key>
 		<integer>1024</integer>
 		<key>#VideoPorts</key>

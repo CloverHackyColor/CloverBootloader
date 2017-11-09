@@ -4577,6 +4577,9 @@ GetUserSettings(
         }
       }
 
+      Prop = GetProperty (DictPointer, "RadeonDeInit");
+      gSettings.DeInit = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "VRAM");
       gSettings.VRAM = (UINTN)GetPropertyInteger(Prop, (INTN)gSettings.VRAM); //Mb 
       //
@@ -6685,17 +6688,21 @@ SetDevices (
                       break;
                     }
                   }
-      /*            if (gSettings.DeInit) {
+                  if (gSettings.DeInit) {
                     for (j = 0; j < 4; j++) {
                       if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
-                 //       *(UINT32*)(gGraphics[j].Mmio + 0x48) = 0;
-                 //       *(UINT32*)(gGraphics[j].Mmio + 0x4C) = 0;
-                        *(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6848) = 0; //FCTL
+                        *(UINT32*)(gGraphics[j].Mmio + 0x681C) = 0; //PSBH
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6820) = 0; //SSBH
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6808) = 0; //LTBC
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //GENA
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //MUMD
+     //                   *(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
                         DBG("Device %d deinited\n", j);
                       }
                     }
                   }
-*/
+
                   break;
 
                 case 0x8086:

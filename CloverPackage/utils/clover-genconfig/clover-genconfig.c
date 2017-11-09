@@ -540,6 +540,8 @@ void PrintConfig(CFTypeRef data)
   addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
   // ATI specific"
   addUString(graphicsDict, CFSTR("FBName"), (const UniChar *)&s->FBName);
+  addBoolean(graphicsDict, CFSTR("RadeonDeInit"), s->DeInit);
+
   // NVIDIA specific
   addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
   addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);

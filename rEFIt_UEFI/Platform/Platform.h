@@ -994,6 +994,7 @@ typedef struct {
   BOOLEAN                 InjectIntel;
   BOOLEAN                 InjectATI;
   BOOLEAN                 InjectNVidia;
+  BOOLEAN                 DeInit;
   BOOLEAN                 LoadVBios;
   BOOLEAN                 PatchVBios;
   VBIOS_PATCH_BYTES       *PatchVBiosBytes;
@@ -1105,8 +1106,6 @@ typedef struct {
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
-  BOOLEAN                 DeInit;  //for tests
-  UINT8                   pad8[2];
   UINT32                  DisableFunctions;
 
   //Patch DSDT arbitrary
