@@ -1156,8 +1156,8 @@ BOOLEAN get_bootdisplay_val(value_t *val, INTN index, BOOLEAN Sier)
   v = 1;
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8 *)&v;
-  
+  val->data = AllocatePool(4);
+  *(val->data) = v;
   return TRUE;
 }
 
@@ -1178,8 +1178,8 @@ BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier)
 
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8 *)&v;
-  
+  val->data = AllocatePool(4);
+  *(val->data) = v;
   return TRUE;
 }
 
@@ -1221,9 +1221,8 @@ BOOLEAN get_display_type(value_t *val, INTN index, BOOLEAN Sier)
     dti = 0;
   }
   val->type = kStr;
-  val->size = 4;
-  val->data = (UINT8 *)dtyp[dti];
-  
+  val->size = AsciiStrSize(dtyp[dti]);
+  val->data = AllocateCopyPool(val->size, (UINT8 *)dtyp[dti]);
   return TRUE;
 }
 
@@ -1232,8 +1231,7 @@ BOOLEAN get_name_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = aty_name.type;
   val->size = aty_name.size;
-  val->data = aty_name.data;
-  
+  val->data = AllocateCopyPool(aty_name.size, (UINT8 *)aty_name.data);
   return TRUE;
 }
 
@@ -1241,23 +1239,24 @@ BOOLEAN get_nameparent_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = aty_nameparent.type;
   val->size = aty_nameparent.size;
-  val->data = aty_nameparent.data;
-  
+  val->data = AllocateCopyPool(aty_nameparent.size, (UINT8 *)aty_nameparent.data);
   return TRUE;
 }
 
-static CHAR8 pciName[15];
+//static CHAR8 pciName[15];
 BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
 {
+  CHAR8* pciName = AllocatePool(15);
+
   if (!card->info->model_name || !gSettings.FakeATI) {
     return FALSE;
   }
+
   AsciiSPrint(pciName, 15, "pci1002,%x", gSettings.FakeATI >> 16);
   LowCase(pciName);
   val->type = kStr;
   val->size = 13;
-  val->data = (UINT8 *)&pciName[0];
-  
+  val->data = (UINT8 *)pciName;
   return TRUE;
 }
 
@@ -1269,8 +1268,7 @@ BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier)
   }
   val->type = kStr;
   val->size = (UINT32)AsciiStrLen(card->info->model_name);
-  val->data = (UINT8 *)card->info->model_name;
-  
+  val->data = AllocateCopyPool(val->size, (UINT8 *)card->info->model_name);
   return TRUE;
 }
 
@@ -1305,8 +1303,8 @@ BOOLEAN get_conntype_val(value_t *val, INTN index, BOOLEAN Sier)
   
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8*)&ct[index * Len];
-  
+  val->data = AllocateCopyPool(val->size, (UINT8 *)&ct[index * Len]);
+
   //  cti++;
   //  if(cti > 3) cti = 0;
   
@@ -1316,7 +1314,7 @@ BOOLEAN get_conntype_val(value_t *val, INTN index, BOOLEAN Sier)
 BOOLEAN get_vrammemsize_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   static INTN idx = -1;
-  static UINT64 memsize;
+  UINT64 memsize;
   
   idx++;
   memsize = LShiftU64((UINT64)card->vram_size, 32);
@@ -1325,7 +1323,7 @@ BOOLEAN get_vrammemsize_val(value_t *val, INTN index, BOOLEAN Sier)
   }  
   val->type = kCst;
   val->size = 8;
-  val->data = (UINT8 *)&memsize;  
+  val->data = AllocateCopyPool(val->size, (UINT8 *)&memsize);
   return TRUE;
 }
 
@@ -1336,25 +1334,21 @@ BOOLEAN get_binimage_val(value_t *val, INTN index, BOOLEAN Sier)
   }
   val->type = kPtr;
   val->size = card->rom_size;
-  val->data = card->rom;   
+  val->data = AllocateCopyPool(val->size, (UINT8 *)card->rom);
   return TRUE;
 }
 
 BOOLEAN get_binimage_owr(value_t *val, INTN index, BOOLEAN Sier)
 {
-  static UINT32 v = 0;
-  
   if (!gSettings.LoadVBios) {
     return FALSE;
   }
-  v = 1;
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8 *)&v;
+  val->data = AllocatePool(4);
+  *(val->data) = 1;
   return TRUE;
 }
-
-
 
 BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier)
 {
@@ -1363,11 +1357,7 @@ BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier)
   if (!card->rom){
     val->type = kPtr;
     val->size = 13;
-    val->data = AllocateZeroPool(val->size);
-    if (!val->data) {
-      return FALSE;
-    }
-    CopyMem(val->data, cRev, val->size);
+    val->data = AllocateCopyPool(val->size, cRev);
     return TRUE;
   }
   
@@ -1379,13 +1369,7 @@ BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier)
     rev = (UINT8 *)cRev;
     val->size = 13;
   }
-  val->data = AllocateZeroPool(val->size);
-  
-  if (!val->data)
-    return FALSE;
-  
-  CopyMem(val->data, rev, val->size);
-  
+  val->data = AllocateCopyPool(val->size, rev);
   return TRUE;
 }
 
@@ -1393,8 +1377,7 @@ BOOLEAN get_deviceid_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = kCst;
   val->size = 2;
-  val->data = (UINT8 *)&card->pci_dev->device_id;
-  
+  val->data = AllocateCopyPool(val->size, (UINT8 *)&card->pci_dev->device_id);
   return TRUE;
 }
 
@@ -1416,10 +1399,8 @@ BOOLEAN get_refclk_val(value_t *val, INTN index, BOOLEAN Sier)
   //
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8 *)&gSettings.RefCLK;
-  
+  val->data = AllocateCopyPool(val->size, (UINT8 *)&gSettings.RefCLK);
   return TRUE;
-  
 }
 
 BOOLEAN get_platforminfo_val(value_t *val, INTN index, BOOLEAN Sier)
@@ -1433,7 +1414,6 @@ BOOLEAN get_platforminfo_val(value_t *val, INTN index, BOOLEAN Sier)
   val->type  = kPtr;
   val->size  = 0x80;
   val->data[0] = 1;
-  
   return TRUE;
 }
 
@@ -1442,16 +1422,15 @@ BOOLEAN get_vramtotalsize_val(value_t *val, INTN index, BOOLEAN Sier)
   
   val->type = kCst;
   val->size = 4;
-  val->data = (UINT8 *)&card->vram_size;
-  
+  val->data = AllocateCopyPool(val->size, (UINT8 *)&card->vram_size);
   return TRUE;
 }
 
 VOID free_val(value_t *val )
 {
-  if (val->type == kPtr) {
+//  if (val->type == kPtr) {
     FreePool(val->data);
-  }
+//  }
   ZeroMem(val, sizeof(value_t));
 }
 
@@ -1578,7 +1557,9 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   if (!validate_rom((option_rom_header_t *)card->rom, card->pci_dev)) {
     DBG("validate_rom fails\n");
     card->rom_size = 0;
+    FreePool(card->rom);
     card->rom = 0;
+    FreePool(buffer);
     return FALSE;
   }
   bufferLen = ((option_rom_header_t *)card->rom)->rom_size;
@@ -1849,10 +1830,11 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   card->pci_dev = pci_dev;
   
   for (i = 0; radeon_cards[i].device_id ; i++) {
-    card->info = &radeon_cards[i];
-    if (radeon_cards[i].device_id == pci_dev->device_id) {
-      break;
+    if (radeon_cards[i].device_id != pci_dev->device_id) {
+      continue;
     }
+    card->info = AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
+    break;
   }
   
   for (j = 0; j < NGFX; j++) {
@@ -1871,7 +1853,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     DBG("search for brothers family\n");
     for (i = 0; radeon_cards[i].device_id ; i++) {
       if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf)) {
-        card->info = &radeon_cards[i];
+        card->info = AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
         break;
       }
     }
@@ -2065,8 +2047,10 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
       ati_dev->subsys_id.subsys.vendor_id, ati_dev->subsys_id.subsys.device_id,
       devicepath);
   
-  //  FreePool(card->info); //TODO we can't free constant so this info should be copy of constants
+  FreePool(card->info);
   FreePool(card);
+  FreePool(aty_name.data);
+  FreePool(aty_nameparent.data);
   
   return TRUE;
 }
