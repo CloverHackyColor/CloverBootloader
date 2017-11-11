@@ -1122,7 +1122,7 @@ FindVariable (
 
     while ((Variable[Index] < GetEndPointer (VariableStoreHeader[Index])) && (Variable[Index] != NULL)) {
       if (Variable[Index]->StartId == VARIABLE_DATA && Variable[Index]->State == VAR_ADDED) {
-        if (!(VariableClassAtRuntime () && ((Variable[Index]->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0))) {
+        if (!VariableClassAtRuntime() || ((Variable[Index]->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) != 0)) {
           if (VariableName[0] == 0) {
             PtrTrack->CurrPtr   = Variable[Index];
             PtrTrack->Volatile  = (BOOLEAN) Index;
