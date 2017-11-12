@@ -1362,6 +1362,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Извлечь указанный DVD");
         AddMenuInfo(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
         AddMenuInfo(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
@@ -1379,6 +1380,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Відкрити обраний диск (DVD)");
         AddMenuInfo(&HelpMenu, L"Пробіл - докладніше про обраний пункт меню");
         AddMenuInfo(&HelpMenu, L"Клавіші 1-9 -  клавіші пунктів меню");
@@ -1396,6 +1398,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
         AddMenuInfo(&HelpMenu, L"Espacio - Detalles acerca selected menu entry");
         AddMenuInfo(&HelpMenu, L"Digitos 1-9 - Atajo a la entrada del menu");
@@ -1414,6 +1417,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
         AddMenuInfo(&HelpMenu, L"Espaco - Detalhes sobre a opcao do menu selecionada");
         AddMenuInfo(&HelpMenu, L"Tecle 1-9 - Atalho para as entradas do menu");
@@ -1431,6 +1435,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
         AddMenuInfo(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
         AddMenuInfo(&HelpMenu, L"Digita 1-9 - Abbreviazioni per il menu");
@@ -1448,6 +1453,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
         AddMenuInfo(&HelpMenu, L"Leertaste - Details über den gewählten Menue Eintrag");
         AddMenuInfo(&HelpMenu, L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
@@ -1465,6 +1471,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
         AddMenuInfo(&HelpMenu, L"Spatie - Details over geselecteerd menuoptie");
         AddMenuInfo(&HelpMenu, L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
@@ -1482,6 +1489,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
         AddMenuInfo(&HelpMenu, L"Space - Détails a propos du menu selectionné");
         AddMenuInfo(&HelpMenu, L"Digits 1-9 - Raccourci vers entrée menu");
@@ -1499,6 +1507,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Eject volume (DVD)");
         AddMenuInfo(&HelpMenu, L"Spasi - Detail dari menu yang dipilih");
         AddMenuInfo(&HelpMenu, L"Tombol 1-9 - Shortcut pilihan menu");
@@ -1516,6 +1525,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
         AddMenuInfo(&HelpMenu, L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
         AddMenuInfo(&HelpMenu, L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
@@ -1533,6 +1543,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
         AddMenuInfo(&HelpMenu, L"Space - Detalji o odabranom sistemu");
         AddMenuInfo(&HelpMenu, L"Brojevi 1 do 9 su prečac do izbora");
@@ -1550,6 +1561,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
         AddMenuInfo(&HelpMenu, L"Mezerník - Podrobnosti o vybraném disku");
         AddMenuInfo(&HelpMenu, L"čísla 1-9 - Klávesové zkratky pro disky");
@@ -1567,6 +1579,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - NVRAM 초기화");
         AddMenuInfo(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
         AddMenuInfo(&HelpMenu, L"Space - 선택한 메뉴의 상세 설명");
         AddMenuInfo(&HelpMenu, L"Digits 1-9 - 메뉴 단축 번호");
@@ -1583,6 +1596,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
         AddMenuInfo(&HelpMenu, L"Space - Detalii despre item-ul selectat");
         AddMenuInfo(&HelpMenu, L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
@@ -1601,6 +1615,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Eject selected volume (DVD)");
         AddMenuInfo(&HelpMenu, L"Space - Details about selected menu entry");
         AddMenuInfo(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
@@ -2515,6 +2530,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_F10:
         egScreenShot();
+        break;
+      case SCAN_F11:
+        ResetNvram ();
         break;
       case SCAN_F12:
         MenuExit = MENU_EXIT_EJECT;

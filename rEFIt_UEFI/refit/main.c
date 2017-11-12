@@ -1605,6 +1605,23 @@ VOID SetVariablesFromNvram()
 
 }
 
+// Reset Native NVRAM, by cecekpawon
+// Reset EmuVariable NVRAM, implemented by Sherlocks
+VOID ResetNvram () 
+  {
+    if (gDriversFlags.EmuVariableLoaded) {
+      ResetEmulNvram ();
+      // Attempt warm reboot
+      gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+      // Warm reboot may not be supported attempt cold reboot
+      gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+      // Terminate the screen and just exit
+      TerminateScreen();
+    } else {
+      ResetNativeNvram ();
+    } 
+}
+
 VOID SetOEMPath(CHAR16 *ConfName)
   {
     if (ConfName == NULL) {

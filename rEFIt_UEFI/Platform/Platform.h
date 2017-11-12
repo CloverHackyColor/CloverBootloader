@@ -615,6 +615,37 @@ MSR C001006B  0000-0000-0000-0000
 //#define ADDRESS_OF(INSTANCETYPE, Instance, FIELDTYPE, Field) (FIELDTYPE *)(((UINT8 *)(Instance)) + OFFSET_OF(INSTANCETYPE, Field))
 
 
+// NVRAM
+// it will be useful to cleanup DataHubCpu.c in future
+#define NVRAM_ATTR_BS        EFI_VARIABLE_BOOTSERVICE_ACCESS
+#define NVRAM_ATTR_RT_BS     (NVRAM_ATTR_BS | EFI_VARIABLE_RUNTIME_ACCESS)
+#define NVRAM_ATTR_RT_BS_NV  (NVRAM_ATTR_RT_BS | EFI_VARIABLE_NON_VOLATILE)
+
+typedef enum {
+  //kSystemID,
+  //kMLB,
+  //kROM,
+  //kFirmwareFeatures,
+  //kFirmwareFeaturesMask,
+  //kHWBID,
+
+  kPrevLangkbd,
+  kSecurityMode,
+  //kPlatformUUID,
+  kBacklightLevel,
+  //kCsrActiveConfig,
+  kBootercfg,
+  kNvdaDrv,
+} NVRAM_KEY;
+
+typedef struct NVRAM_DATA
+{
+  NVRAM_KEY   Key;
+  CHAR16      *VariableName;
+  EFI_GUID    *Guid;
+  UINT32      Attribute;
+} NVRAM_DATA;
+
 struct aml_chunk
 {
   UINT8              Type;
@@ -1870,6 +1901,16 @@ DeleteNvramVariable (
   IN  CHAR16   *VariableName,
   IN  EFI_GUID *VendorGuid
   );
+
+VOID
+ResetNvram ();
+
+EFI_STATUS
+ResetEmulNvram ();
+
+EFI_STATUS
+ResetNativeNvram ();
+;
 
 EFI_STATUS
 GetEfiBootDeviceFromNvram ();
