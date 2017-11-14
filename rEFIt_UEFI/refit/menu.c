@@ -4309,18 +4309,18 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
     UniSysVer = PoolPrint(L"%a", ShortOSVersion);
 
     AddMenuInfoLine(SubScreen, PoolPrint(L"Block injected kexts for target version of macOS: %a", ShortOSVersion));
-    if ((kextDir = GetOSVersionKextsDir(ShortOSVersion))) {
+    if ((kextDir = GetOSVersionKextsDir(ShortOSVersion)) != NULL) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(UniSysVer));
       FreePool(kextDir);
     }
-    if ((kextDir = GetOtherKextsDir())) {
+    if ((kextDir = GetOtherKextsDir()) != NULL) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
       FreePool(kextDir);
     }
     FreePool(UniSysVer);
   } else {
     AddMenuInfoLine(SubScreen, PoolPrint(L"Block injected kexts for target version of macOS: %a", ChosenOS));
-    if ((kextDir = GetOtherKextsDir())) {
+    if ((kextDir = GetOtherKextsDir()) != NULL) {
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
       FreePool(kextDir);
     }

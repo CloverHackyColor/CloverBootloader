@@ -916,7 +916,8 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
     }
   }
 
-  for(i = 0; i != numcodes; ++i) lengths[i] = 0;
+  //for(i = 0; i != numcodes; ++i) lengths[i] = 0;
+  ZeroMem(lengths, sizeof(unsigned) * numcodes);
 
   /*ensure at least two present symbols. There should be at least one symbol
   according to RFC 1951 section 3.2.7. Some decoders incorrectly require two. To

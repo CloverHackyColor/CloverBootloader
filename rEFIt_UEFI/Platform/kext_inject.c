@@ -311,7 +311,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
-  if ((SrcDir = GetOtherKextsDir())) {
+  if ((SrcDir = GetOtherKextsDir()) != NULL) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
     while (CurrentKext) {
@@ -360,7 +360,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 6);
   }
     
-  if ((SrcDir = GetOSVersionKextsDir(ShortOSVersion))) {
+  if ((SrcDir = GetOSVersionKextsDir(ShortOSVersion)) != NULL) {
     MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
     CurrentKext = InjectKextList;
     while (CurrentKext) {

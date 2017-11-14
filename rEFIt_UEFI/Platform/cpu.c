@@ -56,6 +56,8 @@
 #define AsmWriteMsr64(m, x)
 #endif
 
+#define DivU64(x, y) DivU64x64Remainder((x), (y), NULL)
+
 UINT8              gDefaultType; 
 CPU_STRUCTURE      gCPUStructure;
 UINT64            TurboMsr;
@@ -250,12 +252,12 @@ VOID GetCPUProperties (VOID)
       INTN Logical = 1;
       if(gCPUStructure.CPUID[CPUID_80][EAX] >= 0x8000001E) {
         DoCpuid(0x8000001E, gCPUStructure.CPUID[CPUID_81E]);
-        Logical = bitfield(gCPUStructure.CPUID[CPUID_81E][EBX], 15, 8) + 1;
+        Logical = (INTN)bitfield(gCPUStructure.CPUID[CPUID_81E][EBX], 15, 8) + 1;
       }
-      gCPUStructure.CoresPerPackage =  ((gCPUStructure.CPUID[CPUID_88][ECX] & 0xFF) + 1) / Logical;
+      gCPUStructure.CoresPerPackage =  (UINT32)(((gCPUStructure.CPUID[CPUID_88][ECX] & 0xFF) + 1) / Logical);
     }
-    gCPUStructure.Cores = gCPUStructure.CoresPerPackage;
-    gCPUStructure.Threads = gCPUStructure.LogicalPerPackage;
+    gCPUStructure.Cores = (UINT8)gCPUStructure.CoresPerPackage;
+    gCPUStructure.Threads = (UINT8)gCPUStructure.LogicalPerPackage;
     if (gCPUStructure.Cores == 0) {
       gCPUStructure.Cores = 1;
     }
@@ -661,7 +663,7 @@ VOID GetCPUProperties (VOID)
 
     
     gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
-    DBG("CurrentSpeed: %d\n", gCPUStructure.TSCFrequency/Mega);
+    DBG("CurrentSpeed: %d\n", DivU64x32(gCPUStructure.TSCFrequency, Mega));
     
     switch (gCPUStructure.Family)
     {
@@ -688,7 +690,8 @@ VOID GetCPUProperties (VOID)
         cpuMult = (fid + 8);// / 2;
         
         gCPUStructure.MinRatio = (UINT32)(RShiftU64((RShiftU64(fidvid, 8) & 0x3f), 2) + 4);
-        gCPUStructure.MaxRatio = currcoef = cpuMult;
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
         
         cpuMultN2 = (fidvid & (UINT64)bit(0));
         currdiv = cpuMultN2;
@@ -709,8 +712,8 @@ VOID GetCPUProperties (VOID)
         
         
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
-        msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (bitfield(msr_min, 6 , 4)));
-        gCPUStructure.MinRatio = 5*(((msr_min & 0x3f) + 0x08) / (1 << ((RShiftU64(msr_min, 6) & 0x7))));
+        msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (UINT32)(bitfield(msr_min, 6 , 4)));
+        gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 6) & 0x7))));
         
         msr_max = AsmReadMsr64(K10_PSTATE_STATUS);
         
@@ -724,8 +727,9 @@ VOID GetCPUProperties (VOID)
          else if (CpuDid == 4) divisor = 32;
          gCPUStructure.CpuDid = divisor;
          */
-        cpuMult = ((CpuFid + 0x10) / (1ull << CpuDid));
-        gCPUStructure.MaxRatio = currcoef = cpuMult;
+        cpuMult = DivU64((CpuFid + 0x10), LShiftU64(1ULL, (UINTN)CpuDid));
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
         
         cpuMultN2 = (msr_max & (UINT64)bit(0));
         currdiv = cpuMultN2;
@@ -747,7 +751,7 @@ VOID GetCPUProperties (VOID)
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
         msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (RShiftU64(msr_min, 4) & 0x07));
         
-        gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr_min & 0x3f) + 0x08), (1 << ((RShiftU64(msr_min, 6) & 0x7))));
+        gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 6) & 0x7))));
         
         cofvid  = AsmReadMsr64(K10_PSTATE_STATUS);
         CpuDid = bitfield(cofvid, 8, 6);
@@ -758,9 +762,10 @@ VOID GetCPUProperties (VOID)
         //else if (CpuDid == 3) divisor = 16;
         //else if (did == 4) divisor = 32;
         
-        cpuMult = ((CpuFid + 0x8) / (1ull << CpuDid));
+        cpuMult = DivU64((CpuFid + 0x8), LShiftU64(1ULL, (UINTN)CpuDid));
         
-        gCPUStructure.MaxRatio = currcoef = cpuMult;
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
         
         cpuMultN2 = (cofvid & (UINT64)bit(0));
         currdiv = cpuMultN2;
@@ -779,7 +784,7 @@ VOID GetCPUProperties (VOID)
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
         msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (RShiftU64(msr_min, 4) & 0x07));
         
-        gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr_min & 0x3f) + 0x08), (1 << ((RShiftU64(msr_min, 0) & 0x7))));
+        gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 0) & 0x7))));
         
         prfsts = AsmReadMsr64(K10_PSTATE_STATUS);
         
@@ -800,7 +805,8 @@ VOID GetCPUProperties (VOID)
          default: divisor = 1; break;
          }*/
         
-        gCPUStructure.MaxRatio = currcoef =  ((CpuFid + 0x10) / (1ull << CpuDid));
+        currcoef = (INTN)DivU64((CpuFid + 0x10), LShiftU64(1ULL, (UINTN)CpuDid));
+        gCPUStructure.MaxRatio = (UINT32)currcoef;
         
         cpuMultN2 = (prfsts & (UINT64)bit(0));
         currdiv = cpuMultN2;
@@ -819,7 +825,7 @@ VOID GetCPUProperties (VOID)
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
         msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (RShiftU64(msr_min, 4) & 0x07));
         
-        gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr_min & 0x3f) + 0x08), (1 << ((RShiftU64(msr_min, 0) & 0x7))));
+        gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 0) & 0x7))));
         
         prfsts = AsmReadMsr64(K10_PSTATE_STATUS);
         
@@ -827,13 +833,14 @@ VOID GetCPUProperties (VOID)
         CpuDidMSD = bitfield(prfsts, 8, 4) ;
         CpuDidLSD  = bitfield(prfsts, 3, 0) ;
         
-        UINT64 frequencyId = gCPUStructure.CPUFrequency / Mega;
+        UINT64 frequencyId = DivU64x32(gCPUStructure.CPUFrequency, Mega);
         
         //Bronya :  i think that this fixed, need test this ...
-        gCPUStructure.MaxRatio = currcoef = (((frequencyId + 5)/100 + 0x10) / (CpuDidMSD + (CpuDidLSD  * 0.25) + 1));
+        currcoef = (INTN)DivU64((DivU64x32((frequencyId + 5), 100) + 0x10), (UINT64)(CpuDidMSD + DivU64x32(CpuDidLSD, 4) + 1));
+        gCPUStructure.MaxRatio = (UINT32)currcoef;
         
-        currdiv = ((CpuDidMSD) + 1) << 2;
-        currdiv += bitfield(prfsts, 3, 0);
+        currdiv = (INTN)(((CpuDidMSD) + 1) << 2);
+        currdiv += (INTN)bitfield(prfsts, 3, 0);
         
         cpuMultN2 = currdiv;//(prfsts & (UINT64)bit(0));
         //currdiv = cpuMultN2;
@@ -856,7 +863,7 @@ VOID GetCPUProperties (VOID)
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
         msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (RShiftU64(msr_min, 4) & 0x07));
         
-        gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr_min & 0x3f) + 0x08), (1 << ((RShiftU64(msr_min, 6) & 0x7))));
+        gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 6) & 0x7))));
         
         cofvid  = AsmReadMsr64(K10_PSTATE_STATUS);
         CpuDid = bitfield(cofvid, 8, 6);
@@ -868,9 +875,10 @@ VOID GetCPUProperties (VOID)
          else if (CpuDid == 3) divisor = 16;
          else if (CpuDid == 4) divisor = 32;
          */
-        cpuMult = ((CpuFid + 0x10) / (1ull << CpuDid));
+        cpuMult = DivU64((CpuFid + 0x10), LShiftU64(1ULL, (UINTN)CpuDid));
         
-        gCPUStructure.MaxRatio = currcoef = cpuMult;
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
         //printf("cpuMult %d\n",currcoef);
         
         cpuMultN2 = (cofvid & (UINT64)bit(0));
@@ -890,7 +898,7 @@ VOID GetCPUProperties (VOID)
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
         msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (RShiftU64(msr_min, 4) & 0x07));
         
-        gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr_min & 0x3f) + 0x08), (1 << ((RShiftU64(msr_min, 6) & 0x7))));
+        gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 6) & 0x7))));
         
         
         cofvid  = AsmReadMsr64(K10_PSTATE_STATUS);
@@ -902,9 +910,10 @@ VOID GetCPUProperties (VOID)
          else if (CpuDid == 3) divisor = 16;
          else if (CpuDid == 4) divisor = 32;
          */
-        cpuMult = ((CpuFid + 0x10) / (1ull << CpuDid));
+        cpuMult = DivU64((CpuFid + 0x10), LShiftU64(1ULL, (UINTN)CpuDid));
         
-        gCPUStructure.MaxRatio = currcoef = cpuMult;
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
         
         cpuMultN2 = (cofvid & (UINT64)bit(0));
         currdiv = cpuMultN2;
@@ -931,9 +940,10 @@ VOID GetCPUProperties (VOID)
         CpuDfsId =  bitfield(cofvid, 13, 8);
         CpuFid = bitfield(cofvid, 7, 0);
         
-        cpuMult = (CpuFid / CpuDfsId) * 2 * 2 ; //Bronya: This add * 2 <- Interested ))
+        cpuMult = DivU64(CpuFid, CpuDfsId) * 2 * 2 ; //Bronya: This add * 2 <- Interested ))
         //cpuMult = (UINT32)DivU64x32(((cofvid & 0xFF)), (RShiftU64(cofvid, 8) & 0x3f))*2;
-        gCPUStructure.MaxRatio = currcoef = cpuMult;
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
         
         cpuMultN2 = (cofvid & (UINT64)bit(0));
         currdiv = cpuMultN2;
@@ -945,7 +955,7 @@ VOID GetCPUProperties (VOID)
         
       default:
       {
-        gCPUStructure.MaxRatio = gCPUStructure.TSCFrequency / (200 * Mega);//hz / (200 * Mega);
+        gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, (200 * Mega));//hz / (200 * Mega);
         currcoef = gCPUStructure.MaxRatio;
       }
     }
@@ -953,11 +963,11 @@ VOID GetCPUProperties (VOID)
     if (currcoef) {
       if (currdiv) {
         
-        busFrequency = ((gCPUStructure.TSCFrequency * 2) / ((currcoef * 2) + 1));
-        busFCvtt2n = ((1 * Giga) << 32) / busFrequency;
-        busFCvtn2t = 0xFFFFFFFFFFFFFFFFULL / busFCvtt2n;
-        tscFCvtt2n = busFCvtt2n * 2 / (1 + (2 * currcoef));
-        cpuFrequency = ((1 * Giga)  << 32) / tscFCvtt2n;
+        busFrequency = DivU64((gCPUStructure.TSCFrequency * 2), ((currcoef * 2) + 1));
+        busFCvtt2n = DivU64(((1 * Giga) << 32), busFrequency);
+        busFCvtn2t = DivU64(0xFFFFFFFFFFFFFFFFULL, busFCvtt2n);
+        tscFCvtt2n = DivU64(busFCvtt2n * 2, (1 + (2 * currcoef)));
+        cpuFrequency = DivU64(((1 * Giga)  << 32), tscFCvtt2n);
         
         gCPUStructure.FSBFrequency = busFrequency ;
         gCPUStructure.CPUFrequency = cpuFrequency ;
@@ -973,11 +983,11 @@ VOID GetCPUProperties (VOID)
         
         //currcoef = tscFreq / (200 * Mega);//hz / (200 * Mega);
         
-        busFrequency = (gCPUStructure.TSCFrequency / currcoef);
-        busFCvtt2n = ((1 * Giga) << 32) / busFrequency;
-        busFCvtn2t = 0xFFFFFFFFFFFFFFFFULL / busFCvtt2n;
-        tscFCvtt2n = busFCvtt2n / currcoef;
-        cpuFrequency = ((1 * Giga)  << 32) / tscFCvtt2n;
+        busFrequency = DivU64(gCPUStructure.TSCFrequency, currcoef);
+        busFCvtt2n = DivU64(((1 * Giga) << 32), busFrequency);
+        busFCvtn2t = DivU64(0xFFFFFFFFFFFFFFFFULL, busFCvtt2n);
+        tscFCvtt2n = DivU64(busFCvtt2n, currcoef);
+        cpuFrequency = DivU64(((1 * Giga)  << 32), tscFCvtt2n);
         
         gCPUStructure.FSBFrequency = busFrequency;
         gCPUStructure.CPUFrequency = cpuFrequency;
@@ -1105,7 +1115,7 @@ VOID GetCPUProperties (VOID)
     DBG("qpibusspeed %dkHz\n", qpibusspeed);
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
     // set QPI for Nehalem
-    gSettings.QPI = gCPUStructure.ProcessorInterconnectSpeed;
+    gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed;
     
   } else {
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), kilo); //kHz->MHz

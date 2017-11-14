@@ -183,7 +183,7 @@ static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bi
     { "AddHDMI_8000000", "AddHDMI", FIX_HDMI },
     { "FixRegions_10000000", "FixRegions", FIX_REGIONS },
     { "FixHeaders_20000000", "FixHeaders", FIX_HEADERS },
-    { NULL, "FixMutex", FIX_MUTEX },
+    { NULL, "FixMutex", FIX_MUTEX }
 };
 
 
@@ -4388,7 +4388,7 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty (DictPointer, "PlatformFeature");
   if (Prop != NULL) {
-    gPlatformFeature = (UINT64)GetPropertyInteger(Prop, gPlatformFeature);
+    gPlatformFeature = (UINT64)GetPropertyInteger(Prop, (INTN)gPlatformFeature);
 /*
     if (PF == gPlatformFeature) {
       DBG ("Found same PlatformFeature in clover and config\n");
@@ -4829,31 +4829,31 @@ GetUserSettings(
                 DEV_PROPERTY *Property = &gSettings.AddProperties[Index];
 
                 if (AsciiStriCmp (Prop2->string,        "ATI") == 0) {
-                  Property->Device = DEV_ATI;
+                  Property->Device = (UINT32)DEV_ATI;
                 } else if (AsciiStriCmp (Prop2->string, "NVidia") == 0) {
-                  Property->Device = DEV_NVIDIA;
+                  Property->Device = (UINT32)DEV_NVIDIA;
                 } else if (AsciiStriCmp (Prop2->string, "IntelGFX") == 0) {
-                  Property->Device = DEV_INTEL;
+                  Property->Device = (UINT32)DEV_INTEL;
                 } else if (AsciiStriCmp (Prop2->string, "LAN") == 0) {
-                  Property->Device = DEV_LAN;
+                  Property->Device = (UINT32)DEV_LAN;
                 } else if (AsciiStriCmp (Prop2->string, "WIFI") == 0) {
-                  Property->Device = DEV_WIFI;
+                  Property->Device = (UINT32)DEV_WIFI;
                 } else if (AsciiStriCmp (Prop2->string, "Firewire") == 0) {
-                  Property->Device = DEV_FIREWIRE;
+                  Property->Device = (UINT32)DEV_FIREWIRE;
                 } else if (AsciiStriCmp (Prop2->string, "SATA") == 0) {
-                  Property->Device = DEV_SATA;
+                  Property->Device = (UINT32)DEV_SATA;
                 } else if (AsciiStriCmp (Prop2->string, "IDE") == 0) {
-                  Property->Device = DEV_IDE;
+                  Property->Device = (UINT32)DEV_IDE;
                 } else if (AsciiStriCmp (Prop2->string, "HDA") == 0) {
-                  Property->Device = DEV_HDA;
+                  Property->Device = (UINT32)DEV_HDA;
                 } else if (AsciiStriCmp (Prop2->string, "HDMI") == 0) {
-                  Property->Device = DEV_HDMI;
+                  Property->Device = (UINT32)DEV_HDMI;
                 } else if (AsciiStriCmp (Prop2->string, "LPC") == 0) {
-                  Property->Device = DEV_LPC;
+                  Property->Device = (UINT32)DEV_LPC;
                 } else if (AsciiStriCmp (Prop2->string, "SmBUS") == 0) {
-                  Property->Device = DEV_SMBUS;
+                  Property->Device = (UINT32)DEV_SMBUS;
                 } else if (AsciiStriCmp (Prop2->string, "USB") == 0) {
-                  Property->Device = DEV_USB;
+                  Property->Device = (UINT32)DEV_USB;
                 } else {
                   DBG (" unknown device, ignored\n", i);
                   continue;

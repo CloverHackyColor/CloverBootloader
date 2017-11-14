@@ -1157,7 +1157,7 @@ BOOLEAN get_bootdisplay_val(value_t *val, INTN index, BOOLEAN Sier)
   val->type = kCst;
   val->size = 4;
   val->data = AllocatePool(4);
-  *(val->data) = v;
+  *(val->data) = (UINT8)v;
   return TRUE;
 }
 
@@ -1179,7 +1179,7 @@ BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier)
   val->type = kCst;
   val->size = 4;
   val->data = AllocatePool(4);
-  *(val->data) = v;
+  *(val->data) = (UINT8)v;
   return TRUE;
 }
 
@@ -1221,7 +1221,7 @@ BOOLEAN get_display_type(value_t *val, INTN index, BOOLEAN Sier)
     dti = 0;
   }
   val->type = kStr;
-  val->size = AsciiStrSize(dtyp[dti]);
+  val->size = (UINT32)AsciiStrSize(dtyp[dti]);
   val->data = AllocateCopyPool(val->size, (UINT8 *)dtyp[dti]);
   return TRUE;
 }

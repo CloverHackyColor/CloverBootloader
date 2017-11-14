@@ -576,7 +576,7 @@ VOID PatchAllTablesHeaders()
       PatchTableHeader(Ptr);
       CopyMem((VOID*)BasePtr, &TableAddr, sizeof(UINT64));
       Ptr->Checksum = 0;
-      Ptr->Checksum = (UINT8)(256-Checksum8(Ptr, Len));
+      Ptr->Checksum = (UINT8)(256-Checksum8(Ptr, (UINT32)Len));
 
     }
   }
@@ -767,7 +767,7 @@ EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, INTN MatchIndex)
       }
       if (entry) {
         WriteUnaligned64(entry, (UINT64)BufferPtr);
-        UINTN Index = entry - &Xsdt->Entry;
+        UINTN Index = entry - (UINT64 *)(((UINT8 *)Xsdt) + OFFSET_OF(XSDT_TABLE, Entry));
         if (XsdtReplaceSizes && Index < XsdtOriginalEntryCount) {
           XsdtReplaceSizes[Index] = Length;  // mark as replaced, as it should be freed if patched later
         }
@@ -1132,7 +1132,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR8 *CheckSignat
     if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
       // Ssdt counter
 //      FileName = PoolPrint(L"%sSSDT-%d-%a.aml", FileNamePrefix, *SsdtCount, OemTableId);
-      FileName = GenerateFileName(FileNamePrefix, *SsdtCount, -1, OemTableId);
+      FileName = GenerateFileName(FileNamePrefix, *SsdtCount, ~(UINTN)0, OemTableId);
       DumpChildSsdt(TableEntry, DirName, FileNamePrefix, *SsdtCount);
       *SsdtCount += 1;
 
@@ -1205,7 +1205,7 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
       return Status;
     }
     DBG("\n");
-    DumpChildSsdt(TableEntry, DirName, FileNamePrefix, -1);
+    DumpChildSsdt(TableEntry, DirName, FileNamePrefix, ~(UINTN)0);
   }
   //
   // Save Facs
@@ -1941,7 +1941,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
     if (GlobalConfig.SignatureFixup) {
       DBG(" SignatureFixup: 0x%x -> 0x%x\n", Facs->HardwareSignature, machineSignature);
-      Facs->HardwareSignature = machineSignature;
+      Facs->HardwareSignature = (UINT32)machineSignature;
     } else {
       DBG(" SignatureFixup: 0x%x -> 0\n", Facs->HardwareSignature);
       Facs->HardwareSignature = 0;

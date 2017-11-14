@@ -115,7 +115,11 @@ extern UINT8 emb_checkbox_checked[];
 #define SZ_emb_checkbox_checked 367
 */
 
-#define ALIGN_64 __attribute__((__aligned__(8)))
+#if defined(_MSC_VER)
+# define ALIGN_64 __declspec(align(8))
+#else
+# define ALIGN_64 __attribute__((__aligned__(8)))
+#endif
 #define DEFINE_EMB_DATA(ico) UINT8 ALIGN_64 const ico[] =
 #define DEFINE_EMB_SIZE(ico) UINTN const ico##_size = sizeof(ico);
 //REVIEW: const would be more useful if the cast was not needed, but that
