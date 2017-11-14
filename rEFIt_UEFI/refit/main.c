@@ -426,15 +426,16 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
         DBG(" ==> disabled by user\n");
         continue;
       }
-      
+
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
         Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchBuild, Entry->BuildVersion);
         DBG(" ==> %a by build\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
-      
+ 
       Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchOS, Entry->OSVersion);
       DBG(" ==> %a by OS\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+  
     }
   }
 }
@@ -1998,15 +1999,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
     EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs = NULL;
 
-    DBG("---dump hibernations data---\n");
+//    DBG("---dump hibernations data---\n");
     FadtPointer = GetFadt();
     if (FadtPointer != NULL) {
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+      /*
       DBG("  Firmware wake address=%08lx\n", Facs->FirmwareWakingVector);
       DBG("  Firmware wake 64 addr=%16llx\n",  Facs->XFirmwareWakingVector);
       DBG("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
       DBG("  GlobalLock           =%08lx\n", Facs->GlobalLock);
       DBG("  Flags                =%08lx\n", Facs->Flags);
+       */
       machineSignature = Facs->HardwareSignature;
     }
 /*------------------------------------------------------

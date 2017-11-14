@@ -137,13 +137,9 @@
 					<key>Disabled</key>
 					<true/>
 					<key>Find</key>
-					<data>
-					UFhTWAhfQURSAAhfUFJXEgYC
-					</data>
+					<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
 					<key>Replace</key>
-					<data>
-					UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==
-					</data>
+					<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
@@ -151,13 +147,9 @@
 					<key>Disabled</key>
 					<false/>
 					<key>Find</key>
-					<data>
-					R0ZYMA==
-					</data>
+					<data>R0ZYMA==</data>
 					<key>Replace</key>
-					<data>
-					SUdQVQ==
-					</data>
+					<data>SUdQVQ==</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
@@ -165,13 +157,9 @@
 					<key>Disabled</key>
 					<true/>
 					<key>Find</key>
-					<data>
-					SERFRg==
-					</data>
+					<data>SERFRg==</data>
 					<key>Replace</key>
-					<data>
-					QVpBTA==
-					</data>
+					<data>QVpBTA==</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
@@ -179,13 +167,9 @@
 					<key>Disabled</key>
 					<false/>
 					<key>Find</key>
-					<data>
-					X0RTTQ==
-					</data>
+					<data>X0RTTQ==</data>
 					<key>Replace</key>
-					<data>
-					WkRTTQ==
-					</data>
+					<data>WkRTTQ==</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
@@ -193,13 +177,9 @@
 					<key>Disabled</key>
 					<false/>
 					<key>Find</key>
-					<data>
-					SEVDSQ==
-					</data>
+					<data>SEVDSQ==</data>
 					<key>Replace</key>
-					<data>
-					SU1FSQ==
-					</data>
+					<data>SU1FSQ==</data>
 				</dict>
 			</array>
 			<key>ReuseFFFF</key>
@@ -352,9 +332,7 @@
 				<key>Key</key>
 				<string>AAPL,HasPanel</string>
 				<key>Value</key>
-				<data>
-				AQAAAA==
-				</data>
+				<data>AQAAAA==</data>
 			</dict>
 			<dict>
 				<key>Device</key>
@@ -362,9 +340,7 @@
 				<key>Key</key>
 				<string>AAPL,Haslid</string>
 				<key>Value</key>
-				<data>
-				AQAAAA==
-				</data>
+				<data>AQAAAA==</data>
 			</dict>
 		</array>
 		<key>#AirportBridgeDeviceName</key>
@@ -399,9 +375,7 @@
 						<key>Key</key>
 						<string>TBTDPLowToHigh</string>
 						<key>Value</key>
-						<data>
-						AQAAAA==
-						</data>
+						<data>AQAAAA==</data>
 					</dict>
 					<dict>
 						<key>Disabled</key>
@@ -409,9 +383,7 @@
 						<key>Key</key>
 						<string>ThunderboltUUID</string>
 						<key>Value</key>
-						<data>
-						CO8yvYVBslCHyHKPjwfU/A==
-						</data>
+						<data>CO8yvYVBslCHyHKPjwfU/A==</data>
 					</dict>
 				</array>
 				<key>PciAddr</key>
@@ -426,9 +398,7 @@
 						<key>Key</key>
 						<string>graphic-options</string>
 						<key>Value</key>
-						<data>
-						DAAAAA==
-						</data>
+						<data>DAAAAA==</data>
 					</dict>
 					<dict>
 						<key>Key</key>
@@ -440,9 +410,7 @@
 						<key>Key</key>
 						<string>AAPL,ig-platform-id</string>
 						<key>Value</key>
-						<data>
-						AAASGQ==
-						</data>
+						<data>AAASGQ==</data>
 					</dict>
 					<dict>
 						<key>Key</key>
@@ -454,17 +422,13 @@
 						<key>Key</key>
 						<string>subsystem-vendor-id</string>
 						<key>Value</key>
-						<data>
-						axAAAA==
-						</data>
+						<data>axAAAA==</data>
 					</dict>
 					<dict>
 						<key>Key</key>
 						<string>subsystem-id</string>
 						<key>Value</key>
-						<data>
-						hoAAAA==
-						</data>
+						<data>hoAAAA==</data>
 					</dict>
 					<dict>
 						<key>Disabled</key>
@@ -743,13 +707,9 @@
 		<array>
 			<dict>
 				<key>Find</key>
-				<data>
-				gAeoAqAF
-				</data>
+				<data>gAeoAqAF</data>
 				<key>Replace</key>
-				<data>
-				gAeoAjgE
-				</data>
+				<data>gAeoAjgE</data>
 			</dict>
 		</array>
 		<key>#RadeonDeInit</key>
@@ -765,12 +725,7 @@
 		<key>EDID</key>
 		<dict>
 			<key>#Custom</key>
-			<data>
-			AP///////wAGECGSAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAAB
-			AQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCE
-			HzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1I
-			ZYSq/wIBCiAgAJo=
-			</data>
+			<data>AP///////wAGECGSAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
 			<key>#Inject</key>
 			<true/>
 			<key>#ProductID</key>
@@ -795,15 +750,11 @@
 				<key>Disabled</key>
 				<true/>
 				<key>Find</key>
-				<data>
-				RXh0ZXJuYWw=
-				</data>
+				<data>RXh0ZXJuYWw=</data>
 				<key>MatchOS</key>
 				<string>All</string>
 				<key>Replace</key>
-				<data>
-				SW50ZXJuYWw=
-				</data>
+				<data>SW50ZXJuYWw=</data>
 			</dict>
 		</array>
 		<key>#FakeCPUID</key>
@@ -819,15 +770,11 @@
 				<key>Disabled</key>
 				<true/>
 				<key>Find</key>
-				<data>
-				SGVhZHBob25lcwA=
-				</data>
+				<data>SGVhZHBob25lcwA=</data>
 				<key>Name</key>
 				<string>VoodooHDA</string>
 				<key>Replace</key>
-				<data>
-				VGVsZXBob25lcwA=
-				</data>
+				<data>VGVsZXBob25lcwA=</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -845,29 +792,21 @@
 				<key>Comment</key>
 				<string>Make all drives to be internal</string>
 				<key>Find</key>
-				<data>
-				RXh0ZXJuYWw=
-				</data>
+				<data>RXh0ZXJuYWw=</data>
 				<key>Name</key>
 				<string>AppleAHCIPort</string>
 				<key>Replace</key>
-				<data>
-				SW50ZXJuYWw=
-				</data>
+				<data>SW50ZXJuYWw=</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
 				<string>TRIM function for non-Apple SSDs</string>
 				<key>Find</key>
-				<data>
-				QVBQTEUgU1NEAA==
-				</data>
+				<data>QVBQTEUgU1NEAA==</data>
 				<key>Name</key>
 				<string>IOAHCIBlockStorage</string>
 				<key>Replace</key>
-				<data>
-				AAAAAAAAAAAAAA==
-				</data>
+				<data>AAAAAAAAAAAAAA==</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -875,19 +814,13 @@
 				<key>Disabled</key>
 				<false/>
 				<key>Find</key>
-				<data>
-				AAQAAAQDAAAAAQAAIQMCBAQAAAAUAgAAAAEAAAAABAMQ
-				AAAAEAAAAAABAAAAAAAB
-				</data>
+				<data>AAQAAAQDAAAAAQAAIQMCBAQAAAAUAgAAAAEAAAAABAMQAAAAEAAAAAABAAAAAAAB</data>
 				<key>MatchOS</key>
 				<string>10.9,10.10,10.11</string>
 				<key>Name</key>
 				<string>AMD6000Controller</string>
 				<key>Replace</key>
-				<data>
-				BAAAABQCAAAAAQAAAAAEBAAEAAAEAwAAAAEAABECAQUA
-				AAAAAAAAAAAAAAAAAAAA
-				</data>
+				<data>BAAAABQCAAAAAQAAAAAEBAAEAAAEAwAAAAEAABECAQUAAAAAAAAAAAAAAAAAAAAA</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -895,17 +828,13 @@
 				<key>Disabled</key>
 				<false/>
 				<key>Find</key>
-				<data>
-				SEQgNnh4eA==
-				</data>
+				<data>SEQgNnh4eA==</data>
 				<key>MatchOS</key>
 				<string>10.12,10.13</string>
 				<key>Name</key>
 				<string>AMD6000Controller</string>
 				<key>Replace</key>
-				<data>
-				SEQgNjQ1MA==
-				</data>
+				<data>SEQgNjQ1MA==</data>
 			</dict>
 		</array>
 		<key>AppleIntelCPUPM</key>
@@ -924,6 +853,21 @@
 		<false/>
 		<key>KernelXCPM</key>
 		<false/>
+		<key>#KernelToPatch</key>
+		<array>
+			<dict>
+				<key>Comment</key>
+				<string>Infinite loop at wake</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>TIn/6PXb/v8=</data>
+				<key>MatchOS</key>
+				<string>10.11</string>
+				<key>Replace</key>
+				<data>6/7/6PXb/v8=</data>
+			</dict>
+		</array>
 	</dict>
 	<key>RtVariables</key>
 	<dict>

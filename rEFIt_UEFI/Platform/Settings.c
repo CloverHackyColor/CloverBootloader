@@ -1271,6 +1271,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         
         Dict = GetProperty (Prop2, "Disabled");
         Patches->BootPatches[Patches->NrBoots].MenuItem.BValue   = !IsPropertyTrue (Dict);
+        Patches->BootPatches[Patches->NrBoots].MenuItem.ItemType = BoolValue;
         
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
         TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
@@ -1333,6 +1334,9 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
   mos = GetStrArraySeparatedByChar(MatchOSEntry, ',');
   if (!mos) {
     return TRUE; //memory fails -> anyway the patch enabled
+  }
+  if (AsciiStrStr(mos->array[0], "All") != NULL) {
+    return TRUE;
   }
   
   for (i = 0; i < mos->count; ++i) {
@@ -5937,6 +5941,7 @@ GetUserSettings(
     if (gBootChanged) {
       DictPointer = GetProperty (Dict, "KernelAndKextPatches");
       if (DictPointer != NULL) {
+        DBG("refill kernel patches bcoz gBootChanged\n");
         FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), DictPointer);
       }
     } else {

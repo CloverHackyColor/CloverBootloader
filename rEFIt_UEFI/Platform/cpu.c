@@ -1028,7 +1028,7 @@ VOID GetCPUProperties (VOID)
 
       // for sandy bridge or newer
       // to match ExternalClock 25 MHz like real mac, divide ExternalClock by 4
-      gCPUStructure.ExternalClock = ExternalClock / 4;
+      gCPUStructure.ExternalClock = (ExternalClock + 3) / 4;
       //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
       break;
   }

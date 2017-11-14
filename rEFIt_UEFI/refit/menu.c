@@ -974,7 +974,7 @@ VOID ApplyInputs(VOID)
   i++; //64
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPDebug = InputItems[i].BValue;
-    gBootChanged = TRUE;
+ //   gBootChanged = TRUE;
   }
 
   // CSR

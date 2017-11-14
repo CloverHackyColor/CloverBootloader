@@ -1648,6 +1648,9 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 
     DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
   }
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    gBS->Stall(2000000);
+  }
 
   return (y != 0);
 }
@@ -1677,6 +1680,9 @@ BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry)
     }
     
     DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
+  }
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    gBS->Stall(2000000);
   }
   
   return (y != 0);
