@@ -630,12 +630,13 @@ typedef enum {
   //kHWBID,
 
   kPrevLangkbd,
-  kSecurityMode,
+  //kSecurityMode,
   //kPlatformUUID,
   kBacklightLevel,
   //kCsrActiveConfig,
-  kBootercfg,
+  //kBootercfg,
   kNvdaDrv,
+  kBootArgs,
 } NVRAM_KEY;
 
 typedef struct NVRAM_DATA
@@ -1906,7 +1907,7 @@ VOID
 ResetNvram ();
 
 EFI_STATUS
-ResetEmulNvram ();
+ResetEmuNvram ();
 
 EFI_STATUS
 ResetNativeNvram ();

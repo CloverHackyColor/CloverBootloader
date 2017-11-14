@@ -46,21 +46,22 @@ CONST NVRAM_DATA   ResetNvramData[] = {
     //EFI_VARIABLE_BOOTSERVICE_ACCESS
     //{ kSystemID,             L"system-id",               &gEfiAppleNvramGuid, NVRAM_ATTR_BS },
 
-	//NVRAM_ATTR_BS | EFI_VARIABLE_RUNTIME_ACCESS
+    //NVRAM_ATTR_BS | EFI_VARIABLE_RUNTIME_ACCESS
     //{ kMLB,                  L"MLB",                     &gEfiAppleNvramGuid, NVRAM_ATTR_RT_BS },
     //{ kROM,                  L"ROM",                     &gEfiAppleNvramGuid, NVRAM_ATTR_RT_BS },
     //{ kFirmwareFeatures,     L"FirmwareFeatures",        &gEfiAppleNvramGuid, NVRAM_ATTR_RT_BS },
     //{ kFirmwareFeaturesMask, L"FirmwareFeaturesMask",    &gEfiAppleNvramGuid, NVRAM_ATTR_RT_BS },
     //{ kHWBID,                L"HW_BID",                  &gEfiAppleNvramGuid, NVRAM_ATTR_RT_BS },
 
-	//NVRAM_ATTR_RT_BS | EFI_VARIABLE_NON_VOLATILE
+    //NVRAM_ATTR_RT_BS | EFI_VARIABLE_NON_VOLATILE
     { kPrevLangkbd,          L"prev-lang:kbd",           &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
-    { kSecurityMode,         L"security-mode",           &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
+    //{ kSecurityMode,         L"security-mode",           &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
     //{ kPlatformUUID,         L"platform-uuid",           &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
     { kBacklightLevel,       L"backlight-level",         &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
     //{ kCsrActiveConfig,      L"csr-active-config",       &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
-    { kBootercfg,            L"bootercfg",               &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
-    { kNvdaDrv,              L"nvda_drv",                &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV }
+    //{ kBootercfg,            L"bootercfg",               &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
+    { kNvdaDrv,              L"nvda_drv",                &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV },
+    { kBootArgs,             L"boot-args",               &gEfiAppleBootGuid,  NVRAM_ATTR_RT_BS_NV }
 };
 
 APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
@@ -220,14 +221,14 @@ DeleteNvramVariable (
 }
 
 EFI_STATUS
-ResetEmulNvram ()
+ResetEmuNvram ()
 {
   EFI_STATUS      Status;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
   EFI_FILE_HANDLE FileHandle;
 
-  //DBG("ResetEmulNvram: searching volumes for nvram.plist\n");
+  //DBG("ResetEmuNvram: searching volumes for nvram.plist\n");
 
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
      Volume = Volumes[VolumeIndex];
@@ -257,7 +258,7 @@ ResetNativeNvram ()
   EFI_STATUS    Status;
   UINTN         Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
 
-  DBG("ResetNativeNvram: cleanup NVRAM variables\n");
+  //DBG("ResetNativeNvram: cleanup NVRAM variables\n");
 
   for (Index = 0; Index < ResetNvramDataCount; Index++) {
      Status = DeleteNvramVariable (ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);

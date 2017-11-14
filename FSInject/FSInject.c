@@ -1193,9 +1193,11 @@ FSInjectEntrypoint (
 	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
 	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
 	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-  FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+	FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
 	FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
 	FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
+	FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
 	
 	Status = InstallTestFSinjection(L"\\Users\\dmazar", L"\\efi\\kext\\10_7", Blacklist, NULL);
 	if (EFI_ERROR(Status)) {

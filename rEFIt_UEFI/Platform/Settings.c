@@ -6059,6 +6059,17 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
             }
           }
+        } else {
+          InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist";
+          if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+            Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+            if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+              Prop = GetProperty (Dict, "ProductVersion");
+              if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+                OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+              }
+            }
+          }
         }
       }
     }
@@ -6166,13 +6177,18 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
   }
 
   SystemPlistR = L"\\com.apple.boot.R\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
-  HasRock      = FileExists (Volume->RootDir,     SystemPlistR);
+  if (FileExists (Volume->RootDir, SystemPlistR)) {
+    HasRock      = FileExists (Volume->RootDir,     SystemPlistR);
+  } else {
+    SystemPlistR = L"\\com.apple.boot.R\\com.apple.Boot.plist";
+    HasRock      = FileExists (Volume->RootDir,     SystemPlistR);
+  }
 
   SystemPlistP = L"\\com.apple.boot.P\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
   HasPaper     = FileExists (Volume->RootDir,    SystemPlistP);
 
   SystemPlistS = L"\\com.apple.boot.S\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
-  HasScissors  = FileExists (Volume->RootDir, SystemPlistS);
+  HasScissors  = FileExists (Volume->RootDir,    SystemPlistS);
 
   PlistBuffer = NULL;
   // Playing Rock, Paper, Scissors to chose which settings to load.
@@ -7113,7 +7129,8 @@ SetFSInjection (
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-  //  FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
     FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
     FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");

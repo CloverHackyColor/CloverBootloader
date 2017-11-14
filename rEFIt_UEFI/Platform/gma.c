@@ -42,6 +42,7 @@
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/005_hsw_-_2013/vol04_intel-gfx-prm-osrc-hsw-configurations.pdf
  https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/006_vvw_-_2014
  http://www.insanelymac.com/forum/topic/290783-intel-hd-graphics-4600-haswell-working-displayport/
+ http://www.insanelymac.com/forum/topic/328567-intel-hd-graphics-haswell-gt1-qeci-patch/
  ============== 8th generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/007_bdw_-_2014-2015/intel-gfx-prm-osrc-bdw-vol04-configurations_1.pdf
  https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/008_chv-bsw_-_2014-2015
@@ -557,7 +558,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x042E, "Intel Haswell GT3"              }, //
   //GT1
   { 0x0A02, "Intel Haswell GT1"              }, // Desktop ULT
-  { 0x0A06, "Intel Haswell GT1"              }, // Mobile ULT
+  { 0x0A06, "Intel HD Graphics"              }, // Mobile ULT
   { 0x0A0A, "Intel Haswell GT1"              }, // Server ULT
   { 0x0A0B, "Intel Haswell GT1"              }, // ULT
   { 0x0A0E, "Intel Haswell GT1"              }, // ULT
@@ -1755,12 +1756,12 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           case MacBookPro81:
           case MacBookPro82:
           case MacBookPro83:
-            // Normally, use the snb-platform-id of the MacBookPro8,1 with a lot of ports. because of the HDMI and VGA patches.
+            // the snb-platform-id of the MacBookPro8,1 with a lot of ports. because of the HDMI and VGA patches.
             devprop_add_value(device, "AAPL,snb-platform-id", sandy_bridge_snb_vals[0], 4);
             DBG("  Found snb-platform-id = 0x00010000\n");
             break;
           default:
-            // Normally, use the snb-platform-id of the Macmini5,1 with HDMI and a lot of ports.
+            // the snb-platform-id of the Macmini5,1 with HDMI and a lot of ports.
             devprop_add_value(device, "AAPL,snb-platform-id", sandy_bridge_snb_vals[2], 4);
             DBG("  Found snb-platform-id = 0x00030010\n");
             break;
@@ -1906,7 +1907,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x042E: // "Intel Haswell GT3"               //
       //GT1
     case 0x0A02: // "Intel Haswell GT1"               // Desktop ULT
-    case 0x0A06: // "Intel Haswell GT1"               // Mobile ULT
+    case 0x0A06: // "Intel HD Graphics"               // Mobile ULT
     case 0x0A0A: // "Intel Haswell GT1"               // Server ULT
     case 0x0A0B: // "Intel Haswell GT1"               // ULT
     case 0x0A0E: // "Intel Haswell GT1"               // ULT
@@ -2340,18 +2341,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       switch (MacModel) {
-        case MacBook81:
         case MacBook91:
-        case MacBookAir61:
-        case MacBookAir62:
-        case MacBookAir71:
-        case MacBookAir72:
-        case MacBookPro111:
-        case MacBookPro112:
-        case MacBookPro113:
-        case MacBookPro114:
-        case MacBookPro115:
-        case MacBookPro121:
         case MacBookPro131:
         case MacBookPro132:
         case MacBookPro133:
@@ -2543,22 +2533,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       switch (MacModel) {
-        case MacBook81:
-        case MacBook91:
         case MacBook101:
-        case MacBookAir61:
-        case MacBookAir62:
-        case MacBookAir71:
-        case MacBookAir72:
-        case MacBookPro111:
-        case MacBookPro112:
-        case MacBookPro113:
-        case MacBookPro114:
-        case MacBookPro115:
-        case MacBookPro121:
-        case MacBookPro131:
-        case MacBookPro132:
-        case MacBookPro133:
         case MacBookPro141:
         case MacBookPro142:
         case MacBookPro143:
