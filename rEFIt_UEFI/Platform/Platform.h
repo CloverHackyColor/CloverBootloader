@@ -968,7 +968,6 @@ typedef struct {
   UINT8                   MinMultiplier;
   UINT8                   MaxMultiplier;
   UINT8                   PluginType;
-//  BOOLEAN                 DisableAPSNAPLF;
 //  BOOLEAN                 DropMCFG;
 
   //Injections

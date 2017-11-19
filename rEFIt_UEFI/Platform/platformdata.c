@@ -1192,6 +1192,10 @@ VOID GetDefaultSettings()
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;
     gSettings.GenerateCStates    = TRUE;
+    // backward compatibility, APFS, APLF, PluginType follow PStates
+    gSettings.GenerateAPSN = gSettings.GeneratePStates;
+    gSettings.GenerateAPLF = gSettings.GeneratePStates;
+    gSettings.GeneratePluginType = gSettings.GeneratePStates;
     //  gSettings.EnableISS          = FALSE;
     //  gSettings.EnableC2           = TRUE;
     gSettings.EnableC6           = TRUE;
