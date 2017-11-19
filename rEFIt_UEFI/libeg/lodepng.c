@@ -6344,8 +6344,10 @@ unsigned eglodepng_decode(unsigned char** out, size_t* w, size_t* h, const unsig
 {
   unsigned _w, _h, _r;
   _r = lodepng_decode32(out, &_w, &_h, in, insize);
-  if (w) *w = (size_t) _w;
-  if (h) *h = (size_t) _h;
+  if (!_r) {
+    if (w) *w = (size_t) _w;
+    if (h) *h = (size_t) _h;
+  }
   return _r;
 }
 // EXPORT FOR CLOVER <==
