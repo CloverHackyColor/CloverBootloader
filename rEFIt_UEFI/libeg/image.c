@@ -993,12 +993,17 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   Error = eglodepng_decode((UINT8**) &PixelData, &Width, &Height, (CONST UINT8*) FileData, (UINTN) FileDataLength);
 
   if (Error) {
-    DBG("egDecodePNG(%p, %lu, %c): eglodepng_decode failed with error %lu\n",
-        FileData, FileDataLength, WantAlpha?'Y':'N', Error);
+    /*
+     * Error 28 incorrect PNG signature ok, because also called on ICNS files
+     */
+    if (Error != 28U) {
+      DBG("egDecodePNG(%p, %lu, %c): eglodepng_decode failed with error %lu\n",
+          FileData, FileDataLength, WantAlpha?'Y':'N', Error);
+    }
     return NULL;
   }
-  if (!PixelData || Width > 1024U || Height > 1024U) {
-    DBG("gDecodePNG(%p, %lu, %c): eglodepng_decode returned suspect values, PixelData %p, Width %lu, Height %lu\n",
+  if (!PixelData || Width > 4096U || Height > 4096U) {
+    DBG("egDecodePNG(%p, %lu, %c): eglodepng_decode returned suspect values, PixelData %p, Width %lu, Height %lu\n",
         FileData, FileDataLength, WantAlpha?'Y':'N', PixelData, Width, Height);
   }
 
