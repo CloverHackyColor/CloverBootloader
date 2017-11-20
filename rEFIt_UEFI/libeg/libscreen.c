@@ -607,8 +607,8 @@ EFI_STATUS egScreenShot(VOID)
 {
     EFI_STATUS      Status = EFI_NOT_READY;
     EG_IMAGE        *Image;
-    UINT8           *FileData;
-    UINTN           FileDataLength;
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0U;
     UINTN           Index;
     CHAR16          ScreenshotName[128];
       
@@ -637,6 +637,7 @@ EFI_STATUS egScreenShot(VOID)
       EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)Image->PixelData;
       UINTN   ImageSize = Image->Width * Image->Height;
       UINTN   i;
+      unsigned lode_return;
 
       // Convert BGR to RGBA with Alpha set to 0xFF
       for (i = 0; i < ImageSize; i++) {
@@ -647,7 +648,11 @@ EFI_STATUS egScreenShot(VOID)
       }
 
       // Encode raw RGB image to PNG format
-      eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)Image->Width, (UINTN)Image->Height);
+      lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)Image->Width, (UINTN)Image->Height);
+      if (lode_return) {
+        DebugLog(1, "egScreenShot(): eglodepng_encode failed on ImagePNG %p, Width %ld, Height %ld with error %u\n",
+                 ImagePNG, Image->Width, Image->Height, lode_return);
+      }
     }
 #else //LODEPNG
     // encode as BMP
@@ -690,7 +695,11 @@ EFI_STATUS egScreenShot(VOID)
     }
     CheckError(Status, L"Error egSaveFile\n");
   }
-  FreePool(FileData);    
+#if defined(LODEPNG)
+  lodepng_free(FileData);
+#else //LODEPNG
+  FreePool(FileData);
+#endif //LODEPNG
   return Status;
 }
 
