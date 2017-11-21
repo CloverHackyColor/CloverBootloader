@@ -61,7 +61,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   UINT8 cpu_dynamic_fsb = 0;
   UINT8 cpu_noninteger_bus_ratio = 0;
   UINT32 i, j;
-  UINT16 realMax, realMin = 6, realTurbo = 0, Apsn = 0, Aplf = 8;
+  UINT16 realMax, realMin = 6, realTurbo = 0, Apsn = 0, Aplf = 0;
   
   if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
     MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -73,45 +73,38 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
     return NULL;
   }
 
-  if (gMobile) Aplf = 4;
-  for (i = 0; i < 47; i++) {
-    //ultra-mobile
-    if ((gCPUStructure.BrandString[i] != 'P') &&
-        (gCPUStructure.BrandString[i+1] == 'U')) {
-        Aplf = 0;
-        break;
+  // APLF: Low Frequency Mode. followed Apple's standards.
+  // Ironlake-: there are no APLF and APSN. Sandy Bridge: only APSN
+  // Ivy Bridge: Mobile(U:APLF=0, M:APLF=4), Desktop(APLF=8) and APSN. Haswell+: APLF=0, APSN
+  // Skylake+: there are no APLF and APSN. maybe because of frequency vectors. but used it as APLF=0 in generator
+  // Xeon(Westmere EP-): There are no APLF and APSN. Xeon(Sandy Bridge EP): only APSN. Xeon(Ivy Bridge EP+): APLF=0, APSN
+  // by Sherlocks
+  if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
+    if (gMobile) {
+      switch (gCPUStructure.Model) {
+        case CPU_MODEL_IVY_BRIDGE:
+          if (AsciiStrStr(gCPUStructure.BrandString, "U")) {
+            Aplf = 0;
+          } else if (AsciiStrStr(gCPUStructure.BrandString, "M")) {
+            Aplf = 4;
+          }
+          break;
+        default:
+          Aplf = 0;
+          break;
+      }
+    } else {
+      switch (gCPUStructure.Model) {
+        case CPU_MODEL_IVY_BRIDGE:
+          Aplf = 8;
+          break;
+        default:
+          Aplf = 0;
+          break;
+      }
     }
-  }
-
-  if (gSettings.MinMultiplier == 7) {
-    Aplf++;
-  }
-
-  switch (gCPUStructure.Model) {
-    case CPU_MODEL_IVY_BRIDGE:
-    case CPU_MODEL_IVY_BRIDGE_E5:
-    case CPU_MODEL_JAKETOWN:
-    case CPU_MODEL_ATOM_3700:
-    case CPU_MODEL_HASWELL:
-    case CPU_MODEL_HASWELL_E:
-    case CPU_MODEL_HASWELL_ULT:
-    case CPU_MODEL_CRYSTALWELL:
-    case CPU_MODEL_HASWELL_U5:     // Broadwell Mobile
-    case CPU_MODEL_BROADWELL_HQ:
-    case CPU_MODEL_BROADWELL_E5:
-    case CPU_MODEL_BROADWELL_DE:
-    case CPU_MODEL_AIRMONT:
-    case CPU_MODEL_SKYLAKE_U:
-    case CPU_MODEL_SKYLAKE_D:
-    case CPU_MODEL_SKYLAKE_S:
-    case CPU_MODEL_GOLDMONT:
-    case CPU_MODEL_KABYLAKE1:
-    case CPU_MODEL_KABYLAKE2:
-    case CPU_MODEL_CANNONLAKE:
-    {
-      Aplf = 0;
-      break;
-    }
+  } else {
+    gSettings.GenerateAPLF = FALSE;
   }
 
   if (Number > 0) {
@@ -198,12 +191,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                   }
                   // Add scope so these don't have to be moved - apianti
                   {
-                    UINT32 multiplier = p_states[i].Control.VID_FID.FID & 0x1f;		// = 0x08
-                    UINT8 half = (p_states[i].Control.VID_FID.FID & 0x40)?1:0;					// = 0x00
-                    UINT8 dfsb = (p_states[i].Control.VID_FID.FID & 0x80)?1:0;					// = 0x01
+                    UINT32 multiplier = p_states[i].Control.VID_FID.FID & 0x1f;       // = 0x08
+                    UINT8 half = (p_states[i].Control.VID_FID.FID & 0x40)?1:0;        // = 0x00
+                    UINT8 dfsb = (p_states[i].Control.VID_FID.FID & 0x80)?1:0;        // = 0x01
                     UINT32 fsb = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, Mega); // = 200
-                    UINT32 halffsb = (fsb + 1) >> 1;					// = 100
-                    UINT32 frequency = (multiplier * fsb);			// = 1600
+                    UINT32 halffsb = (fsb + 1) >> 1;                                  // = 100
+                    UINT32 frequency = (multiplier * fsb);                            // = 1600
                   
                     p_states[i].Frequency = (UINT32)(frequency + (half * halffsb)) >> dfsb;	// = 1600/2=800
                   }
@@ -215,12 +208,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_FIELDS:        // Intel Core i5, i7, Xeon X34xx LGA1156 (45nm)
           case CPU_MODEL_DALES:
           case CPU_MODEL_CLARKDALE:	    // Intel Core i3, i5 LGA1156 (32nm)
-          case CPU_MODEL_NEHALEM:		// Intel Core i7, Xeon W35xx, Xeon X55xx, Xeon E55xx LGA1366 (45nm)
-          case CPU_MODEL_NEHALEM_EX:	// Intel Xeon X75xx, Xeon X65xx, Xeon E75xx, Xeon E65x
-          case CPU_MODEL_WESTMERE:	    // Intel Core i7, Xeon X56xx, Xeon E56xx, Xeon W36xx LGA1366 (32nm) 6 Core
-          case CPU_MODEL_WESTMERE_EX:	// Intel Xeon E7
+          case CPU_MODEL_NEHALEM:       // Intel Core i7, Xeon W35xx, Xeon X55xx, Xeon E55xx LGA1366 (45nm)
+          case CPU_MODEL_NEHALEM_EX:    // Intel Xeon X75xx, Xeon X65xx, Xeon E75xx, Xeon E65x
+          case CPU_MODEL_WESTMERE:      // Intel Core i7, Xeon X56xx, Xeon E56xx, Xeon W36xx LGA1366 (32nm) 6 Core
+          case CPU_MODEL_WESTMERE_EX:   // Intel Xeon E7
           case CPU_MODEL_SANDY_BRIDGE:  // Intel Core i3, i5, i7 LGA1155 (32nm)
-          case CPU_MODEL_JAKETOWN:	    // Intel Xeon E3
+          case CPU_MODEL_JAKETOWN:      // Intel Xeon E3
           case CPU_MODEL_ATOM_3700:
           case CPU_MODEL_IVY_BRIDGE:
           case CPU_MODEL_IVY_BRIDGE_E5:
@@ -228,7 +221,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_HASWELL_E:
           case CPU_MODEL_HASWELL_ULT:
           case CPU_MODEL_CRYSTALWELL:
-          case CPU_MODEL_HASWELL_U5:	// Broadwell Mobile
+          case CPU_MODEL_HASWELL_U5:    // Broadwell Mobile
           case CPU_MODEL_BROADWELL_HQ:
           case CPU_MODEL_BROADWELL_E5:
           case CPU_MODEL_BROADWELL_DE:
@@ -392,10 +385,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         }
         if (gCPUStructure.Family >= 2) {
           if (gSettings.GenerateAPSN) {
+            //APSN: High Frequency Modes (turbo)
             aml_add_name(scop, "APSN");
             aml_add_byte(scop, (UINT8)Apsn);
           }
           if (gSettings.GenerateAPLF) {
+            //APLF: Low Frequency Mode
             aml_add_name(scop, "APLF");
             aml_add_byte(scop, (UINT8)Aplf);
           }
