@@ -7112,7 +7112,7 @@ SetFSInjection (
   }
 
   // check if blocking of caches is needed
-  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)) {
+  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) || ((StrStr(Entry->LoadOptions, L"-f") != NULL))) {
     MsgLog ("Blocking kext caches\n");
     //  BlockCaches = TRUE;
     // add caches to blacklist

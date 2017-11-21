@@ -202,22 +202,23 @@ CHAR16* ArgOptional[NUM_OPT] = {
   L"arch=i386",       //0
   L"arch=x86_64",     //1
   L"-v ",             //2
-  L"-s ",             //3
-  L"-x ",             //4
-  L"nv_disable=1",    //5
-  L"slide=0",         //6
-  L"darkwake=0",      //7
-  L"-xcpm",           //8
-  L"-gux_no_idle",    //9
-  L"-gux_nosleep",    //10
-  L"-gux_nomsi",      //11
-  L"-gux_defer_usb2", //12
-  L"keepsyms=1",      //13
-  L"debug=0x100",     //14
-  L"kextlog=0xffff",  //15
-  L"-alcoff",         //16
-  L"-shikioff",       //17
-  L"nvda_drv=1"       //18
+  L"-f ",             //3
+  L"-s ",             //4
+  L"-x ",             //5
+  L"nv_disable=1",    //6
+  L"slide=0",         //7
+  L"darkwake=0",      //8
+  L"-xcpm",           //9
+  L"-gux_no_idle",    //10
+  L"-gux_nosleep",    //11
+  L"-gux_nomsi",      //12
+  L"-gux_defer_usb2", //13
+  L"keepsyms=1",      //14
+  L"debug=0x100",     //15
+  L"kextlog=0xffff",  //16
+  L"-alcoff",         //17
+  L"-shikioff",       //18
+  L"nvda_drv=1"       //19
 };
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
@@ -445,10 +446,10 @@ VOID FillInputs(BOOLEAN New)
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.HDALayoutId);
   
-      // syscl change here
+  // syscl change here
   InputItems[InputItemsCount].ItemType = BoolValue; //61
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
-    // end of change
+  // end of change
 
   InputItems[InputItemsCount].ItemType = Hex;  //62
   if (New) {
@@ -678,6 +679,8 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.AutoMerge;
   InputItems[InputItemsCount].ItemType = BoolValue; //114
   InputItems[InputItemsCount++].BValue = gSettings.DeInit;
+  InputItems[InputItemsCount].ItemType = BoolValue; //115
+  InputItems[InputItemsCount++].BValue = gSettings.NoCaches;
 
 
   //menu for drop table
@@ -1270,6 +1273,10 @@ VOID ApplyInputs(VOID)
   i++; //114
   if (InputItems[i].Valid) {
     gSettings.DeInit = InputItems[i].BValue;
+  }
+  i++; //115
+  if (InputItems[i].Valid) {
+    gSettings.NoCaches = InputItems[i].BValue;
   }
 
   if (NeedSave) {
@@ -4404,9 +4411,10 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuEntry(SubScreen, SubMenuKernelPatches());
   AddMenuInfo(SubScreen, L"----------------------");
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);  
+  AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 61,  "Dell SMBIOS Patch", TAG_INPUT, FALSE);
 //  AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 115, "No Caches", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKextPatches());
   AddMenuInfo(SubScreen, L"----------------------");
   AddMenuEntry(SubScreen, SubMenuBootPatches());

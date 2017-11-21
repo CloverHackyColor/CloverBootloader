@@ -207,7 +207,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           }
           case CPU_MODEL_FIELDS:        // Intel Core i5, i7, Xeon X34xx LGA1156 (45nm)
           case CPU_MODEL_DALES:
-          case CPU_MODEL_CLARKDALE:	    // Intel Core i3, i5 LGA1156 (32nm)
+          case CPU_MODEL_CLARKDALE:     // Intel Core i3, i5 LGA1156 (32nm)
           case CPU_MODEL_NEHALEM:       // Intel Core i7, Xeon W35xx, Xeon X55xx, Xeon E55xx LGA1366 (45nm)
           case CPU_MODEL_NEHALEM_EX:    // Intel Xeon X75xx, Xeon X65xx, Xeon E75xx, Xeon E65x
           case CPU_MODEL_WESTMERE:      // Intel Core i7, Xeon X56xx, Xeon E56xx, Xeon W36xx LGA1366 (32nm) 6 Core
