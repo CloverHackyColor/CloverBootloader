@@ -683,6 +683,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
   BOOLEAN           KernelIs64BitOnly;
+  UINT64            os_version = AsciiOSVersionToUint64(Entry->OSVersion);
 
   if (Entry == NULL) {
     return;
@@ -759,7 +760,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuCheck(SubScreen, "macOS 64bit",          OPT_X64,  68);
     }
     AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
-    AddMenuCheck(SubScreen, "Without caches (-f)",                        OPT_NOCACHES, 68);
+    // No Caches option works on 10.6/10.7/10.8/10.9
+    if (os_version < AsciiOSVersionToUint64("10.10")) {
+      AddMenuCheck(SubScreen, "Without caches (-f)",                        OPT_NOCACHES, 68);
+    }
     AddMenuCheck(SubScreen, "Single User (-s)",                           OPT_SINGLE_USER, 68);
     AddMenuCheck(SubScreen, "Safe Mode (-x)",                             OPT_SAFE, 68);
     AddMenuCheck(SubScreen, "Disable KASLR (slide=0)",                    OPT_SLIDE, 68);

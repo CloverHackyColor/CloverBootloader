@@ -4413,8 +4413,8 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 47,  "AppleRTC Patch", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 61,  "Dell SMBIOS Patch", TAG_INPUT, FALSE);
+//  AddMenuItem(SubScreen, 115, "No Caches", TAG_INPUT, FALSE);
 //  AddMenuItem(SubScreen, 44,  "Kext patching allowed", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 115, "No Caches", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKextPatches());
   AddMenuInfo(SubScreen, L"----------------------");
   AddMenuEntry(SubScreen, SubMenuBootPatches());

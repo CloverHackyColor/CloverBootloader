@@ -7122,14 +7122,41 @@ SetFSInjection (
       return EFI_NOT_STARTED;
     }
 
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
+
+    // From 10.7 to 10.9, status of directly restoring ESD files or update from Appstore cannot block kernel cache. because there are boot.efi and kernelcache file without kernel file.
+    // After macOS installed, can block kernelcache file. because boot.efi can call kernel file from S/L/Kernels.
+    // For this reason, long time ago, chameleon's user restored ESD/Base System to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
+    // From 10.10+, boot.efi call only prelinkedkernel file without kernel file. we can never block only kernelcache.
+    // The use of these block caches is meaningless in modern macOS. Unlike the old days, we do not have to do the tedious task of putting the files needed for booting into the S/L/E.
+    // So, clover could use "No Caches" option from 10.6 to 10.9.
+    // by Sherlocks, 2017.11
+
+    // Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
+    // 10.7(ESD)
+    //FSInject->AddStringToList(Blacklist, L"\\kernelcache");
+    //FSInject->AddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache");
+    // 10.7+(Recovery)
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
+    // 10.8/10.9(ESD)
+    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache");
+    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
+    // 10.10+(ESD/Installed)
+    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    // 10.11(Fusion Drive)
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\prelinkedkernel");
+    // 10.12+(Appstore/createinstallmedia/startosinstall)
+    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel");
+    // 10.12+(Fusion Drive)
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
+
+
+    // Block Caches list
+    // 10.6
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
-    FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
-    FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
-    FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
+      
+    // 10.6/10.7/10.8/10.9
+    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
 
     if (gSettings.BlockKexts[0] != L'\0') {
       FSInject->AddStringToList(Blacklist, PoolPrint (L"\\System\\Library\\Extensions\\%s", gSettings.BlockKexts));

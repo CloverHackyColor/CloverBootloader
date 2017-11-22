@@ -1190,14 +1190,35 @@ FSInjectEntrypoint (
 	
 #if TEST
 	Blacklist = FSInjectionCreateStringList();
-	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
+
+    // Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
+    // by Sherlocks, 2017.11
+
+    // 10.7(ESD)
+    //FSInjectionAddStringToList(Blacklist, L"\\kernelcache");
+    //FSInjectionAddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache");
+    // 10.7+(Recovery)
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
+    // 10.8/10.9(ESD)
+    //FSInjectionAddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache");
+    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
+    // 10.10+(ESD/Installed)
+    //FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    // 10.11(Fusion Drive)
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\prelinkedkernel");
+    // 10.12+(Appstore/createinstallmedia/startosinstall)
+    //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel");
+    // 10.12+(Fusion Drive)
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
+
+
+    // Block Caches list
+    // 10.6
 	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
 	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
-	FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
-	FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
-	FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
-	FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
+    
+    // 10.6/10.7/10.8/10.9
+    FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
 	
 	Status = InstallTestFSinjection(L"\\Users\\dmazar", L"\\efi\\kext\\10_7", Blacklist, NULL);
 	if (EFI_ERROR(Status)) {
