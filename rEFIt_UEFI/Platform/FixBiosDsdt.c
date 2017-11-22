@@ -1730,7 +1730,121 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
   DBG(" ]\n"); //should not be here
   return len;
 }
+/* old method
+UINT32 FixRenameByBridge (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* TgtDevName, UINT8* TgtReplName)
+{
+  UINT32 i, k;
+  UINT32 BrdADR = 0, BridgeSize, DevADR;
+  CHAR8*  DevName;
+  UINT32 PCIADR, PCISIZE = 0;
 
+  PCIADR = GetPciDevice(dsdt, len);
+  if (PCIADR) {
+    PCISIZE = get_size(dsdt, PCIADR);
+  }
+  if (!PCISIZE) return len; //what is the bad DSDT ?!
+
+  DBG("Start ByBridge Rename Fix\n");
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
+    if (CmpDev(dsdt, i, (UINT8*)TgtBrgName)) {
+      BrdADR = devFind(dsdt, i);
+      if (!BrdADR) {
+        continue;
+      }
+      BridgeSize = get_size(dsdt, BrdADR);
+      if(!BridgeSize) continue;
+      for (k = BrdADR + 9; k < BrdADR + BridgeSize; k++) {
+        if (CmpDev(dsdt, k, (UINT8*)TgtDevName)) {
+          DevADR = devFind(dsdt, k);
+          if (!DevADR) {
+            continue;
+          }
+          DevName = AllocateZeroPool(5);
+          CHAR8* NewDevName = (CHAR8*)TgtReplName;
+          CopyMem(DevName, dsdt+k, 4);
+          DBG("found device %a at bridge %a, renaming to %a\n",
+              DevName, TgtBrgName, NewDevName);
+          ReplaceName(dsdt + BrdADR, BridgeSize, DevName, NewDevName);
+          ArptName = TRUE;
+          break;
+        }
+      }
+    }
+  }
+  return len;
+}
+*/
+//new method. by goodwin_c
+UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR)
+{
+  INT32 adr;
+  BOOLEAN found = FALSE;
+  UINT32 i, k;
+  UINT32 BrdADR = 0, BridgeSize;
+  UINT32 PCIADR, PCISIZE = 0;
+
+  if (!ToFind || !LenTF || !LenTR) {
+    DBG(" invalid patches!\n");
+    return len;
+  }
+
+  if (LenTF != LenTR) {
+    DBG(" find/replace different size!\n");
+    return len;
+  }
+
+  DBG(" pattern %02x%02x%02x%02x,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
+    DBG(" the patch is too large!\n");
+    return len;
+  }
+
+  PCIADR = GetPciDevice(dsdt, len);
+  if (PCIADR) {
+    PCISIZE = get_size(dsdt, PCIADR);
+  }
+  if (!PCISIZE) return len; //what is the bad DSDT ?!
+
+  DBG("Start ByBridge Rename Fix\n");
+  for (i=0x20; len >= 10 && i < len - 10; i++) {
+    if (CmpDev(dsdt, i, (UINT8*)TgtBrgName)) {
+      BrdADR = devFind(dsdt, i);
+      if (!BrdADR) {
+        continue;
+      }
+      BridgeSize = get_size(dsdt, BrdADR);
+      if(!BridgeSize) continue;
+      if(BridgeSize <= LenTF) continue;
+
+      k = 0;
+      found = FALSE;
+      while (k <= 100) {
+        adr = FindBin(dsdt + BrdADR, BridgeSize, ToFind, LenTF);
+        if (adr < 0) {
+          if (found) {
+            DBG(" ]\n");
+          } else {
+            DBG(" bin not found / already patched!\n");
+          }
+          return len;
+        }
+
+        if (!found) {
+          DBG(" patched at: [");
+        }
+
+        DBG(" (%x)", adr);
+        found = TRUE;
+        if ((LenTR > 0) && (ToReplace != NULL)) {
+          CopyMem(dsdt + BrdADR + adr, ToReplace, LenTR);
+        }
+        k++;
+      }
+    }
+  }
+  DBG(" ]\n");
+  return len;
+}
 
 UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
 {
@@ -5060,13 +5174,24 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
       if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
         continue;
       }
-      
+
       DBG(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
       if (gSettings.PatchDsdtMenuItem[i].BValue) {
-        DsdtLen = FixAny(temp, DsdtLen,
-                         gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                         gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-  /*      DBG(" OK\n"); */
+        if (!gSettings.PatchDsdtTgt[i]) {
+              DsdtLen = FixAny(temp, DsdtLen,
+                           gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                           gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+
+        }else{
+    //      DBG("Patching: renaming in bridge\n");
+          DsdtLen = FixRenameByBridge2(temp, DsdtLen,
+                           gSettings.PatchDsdtTgt[i],
+                           gSettings.PatchDsdtFind[i],
+                           gSettings.LenToFind[i],
+                           gSettings.PatchDsdtReplace[i],
+                           gSettings.LenToReplace[i]);
+
+        }
       } else {
         DBG(" disabled\n"); 
       }

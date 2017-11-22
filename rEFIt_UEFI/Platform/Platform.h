@@ -1155,6 +1155,7 @@ typedef struct {
   UINT32                  DisabledAMLCount;
   CHAR16                  **DisabledAML;
   CHAR8                   **PatchDsdtLabel; //yyyy
+  CHAR8                   **PatchDsdtTgt;
   INPUT_ITEM              *PatchDsdtMenuItem;
   
   //other

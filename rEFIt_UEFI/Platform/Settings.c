@@ -5160,6 +5160,7 @@ GetUserSettings(
             gSettings.PatchDsdtNum      = (UINT32)Count;
             gSettings.PatchDsdtFind     = AllocateZeroPool (Count * sizeof(UINT8*));
             gSettings.PatchDsdtReplace  = AllocateZeroPool (Count * sizeof(UINT8*));
+            gSettings.PatchDsdtTgt      = AllocateZeroPool (Count * sizeof(UINT8*));
             gSettings.LenToFind         = AllocateZeroPool (Count * sizeof(UINT32));
             gSettings.LenToReplace      = AllocateZeroPool (Count * sizeof(UINT32));
             gSettings.PatchDsdtLabel    = AllocateZeroPool (Count * sizeof(UINT8*));
@@ -5194,19 +5195,18 @@ GetUserSettings(
               
               FreePool(DSDTPatchesLabel);
 
-              gSettings.PatchDsdtMenuItem[i].BValue = TRUE;
               Prop3 = GetProperty (Prop2, "Disabled");
-              if ((Prop3 != NULL) && IsPropertyTrue (Prop3)) {
-                gSettings.PatchDsdtMenuItem[i].BValue = FALSE;
-              }
+              gSettings.PatchDsdtMenuItem[i].BValue = !IsPropertyTrue (Prop3);
 
               //DBG (" DSDT bin patch #%d ", i);
-              gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",    &Size);
+              gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",     &Size);
               DBG (" lenToFind: %d", Size);
               gSettings.LenToFind[i]        = (UINT32)Size;
-              gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace", &Size);
+              gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
               DBG (", lenToReplace: %d\n", Size);
               gSettings.LenToReplace[i]     = (UINT32)Size;
+              gSettings.PatchDsdtTgt[i]     = GetDataSetting (Prop2, "TgtBridge", &Size);
+              DBG (", Target Bridge: %a\n", gSettings.PatchDsdtTgt[i]);
               if (!gSettings.PatchDsdtMenuItem[i].BValue) {
                 DBG("  patch disabled at config\n");
               }

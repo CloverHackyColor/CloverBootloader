@@ -1322,7 +1322,7 @@ VOID AboutRefit(VOID)
     AddMenuInfo(&AboutMenu, L"  cparm, rehabman, nms42, Sherlocks, Zenith432");
     AddMenuInfo(&AboutMenu, L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
     AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
-    AddMenuInfo(&AboutMenu, L"  ath, savvas, syscl");
+    AddMenuInfo(&AboutMenu, L"  ath, savvas, syscl, goodwin_c");
     AddMenuInfo(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
     AddMenuInfo(&AboutMenu, L"");
     AddMenuInfo(&AboutMenu, L"Running on:");
