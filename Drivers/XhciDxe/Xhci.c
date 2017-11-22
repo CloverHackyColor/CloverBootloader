@@ -1,7 +1,7 @@
 /** @file
   The XHCI controller driver.
 
-Copyright (c) 2011 - 2016, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2017, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PrintLib.h>
 
 #ifndef DEBUG_ALL
-#define DEBUG_XHCI 1
+#define DEBUG_XHCI 0
 #else
 #define DEBUG_XHCI DEBUG_ALL
 #endif
@@ -758,6 +758,103 @@ ON_EXIT:
   return Status;
 }
 
+/**
+  Submits a new transaction to a target USB device.
+
+  @param  Xhc                   The XHCI Instance.
+  @param  DeviceAddress         The target device address.
+  @param  EndPointAddress       Endpoint number and its direction encoded in bit 7
+  @param  DeviceSpeed           Target device speed.
+  @param  MaximumPacketLength   Maximum packet size the default control transfer
+                                endpoint is capable of sending or receiving.
+  @param  Type                  The transaction type.
+  @param  Request               USB device request to send.
+  @param  Data                  Data buffer to be transmitted or received from USB
+                                device.
+  @param  DataLength            The size (in bytes) of the data buffer.
+  @param  Timeout               Indicates the maximum timeout, in millisecond.
+  @param  TransferResult        Return the result of this control transfer.
+
+  @retval EFI_SUCCESS           Transfer was completed successfully.
+  @retval EFI_OUT_OF_RESOURCES  The transfer failed due to lack of resources.
+  @retval EFI_INVALID_PARAMETER Some parameters are invalid.
+  @retval EFI_TIMEOUT           Transfer failed due to timeout.
+  @retval EFI_DEVICE_ERROR      Transfer failed due to host controller or device error.
+**/
+EFI_STATUS
+XhcTransfer (
+  IN     USB_XHCI_INSTANCE                   *Xhc,
+  IN     UINT8                               DeviceAddress,
+  IN     UINT8                               EndPointAddress,
+  IN     UINT8                               DeviceSpeed,
+  IN     UINTN                               MaximumPacketLength,
+  IN     UINTN                               Type,
+  IN     EFI_USB_DEVICE_REQUEST              *Request,
+  IN OUT VOID                                *Data,
+  IN OUT UINTN                               *DataLength,
+  IN     UINTN                               Timeout,
+  OUT    UINT32                              *TransferResult
+  )
+{
+  EFI_STATUS              Status;
+  EFI_STATUS              RecoveryStatus;
+  URB                     *Urb;
+
+  ASSERT ((Type == XHC_CTRL_TRANSFER) || (Type == XHC_BULK_TRANSFER) || (Type == XHC_INT_TRANSFER_SYNC));
+  Urb = XhcCreateUrb (
+          Xhc,
+          DeviceAddress,
+          EndPointAddress,
+          DeviceSpeed,
+          MaximumPacketLength,
+          Type,
+          Request,
+          Data,
+          *DataLength,
+          NULL,
+          NULL
+          );
+
+  if (Urb == NULL) {
+    DEBUG ((DEBUG_ERROR, "XhcTransfer[Type=%d]: failed to create URB!\n", Type));
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  Status = XhcExecTransfer (Xhc, FALSE, Urb, Timeout);
+
+  if (Status == EFI_TIMEOUT) {
+    //
+    // The transfer timed out. Abort the transfer by dequeueing of the TD.
+    //
+    RecoveryStatus = XhcDequeueTrbFromEndpoint(Xhc, Urb);
+    if (RecoveryStatus == EFI_ALREADY_STARTED) {
+      //
+      // The URB is finished just before stopping endpoint.
+      // Change returning status from EFI_TIMEOUT to EFI_SUCCESS.
+      //
+      ASSERT (Urb->Result == EFI_USB_NOERROR);
+      Status = EFI_SUCCESS;
+      DEBUG ((DEBUG_ERROR, "XhcTransfer[Type=%d]: pending URB is finished, Length = %d.\n", Type, Urb->Completed));
+    } else if (EFI_ERROR(RecoveryStatus)) {
+      DEBUG((DEBUG_ERROR, "XhcTransfer[Type=%d]: XhcDequeueTrbFromEndpoint failed!\n", Type));
+    }
+  }
+
+  *TransferResult = Urb->Result;
+  *DataLength     = Urb->Completed;
+
+  if ((*TransferResult == EFI_USB_ERR_STALL) || (*TransferResult == EFI_USB_ERR_BABBLE)) {
+    ASSERT (Status == EFI_DEVICE_ERROR);
+    RecoveryStatus = XhcRecoverHaltedEndpoint(Xhc, Urb);
+    if (EFI_ERROR (RecoveryStatus)) {
+      DEBUG ((DEBUG_ERROR, "XhcTransfer[Type=%d]: XhcRecoverHaltedEndpoint failed!\n", Type));
+    }
+  }
+
+  Xhc->PciIo->Flush (Xhc->PciIo);
+  XhcFreeUrb (Xhc, Urb);
+  return Status;
+}
 
 /**
   Submits control transfer to a target USB device.
@@ -800,7 +897,6 @@ XhcControlTransfer (
   )
 {
   USB_XHCI_INSTANCE       *Xhc;
-  URB                     *Urb;
   UINT8                   Endpoint;
   UINT8                   Index;
   UINT8                   DescriptorType;
@@ -811,7 +907,6 @@ XhcControlTransfer (
   EFI_USB_HUB_DESCRIPTOR  *HubDesc;
   EFI_TPL                 OldTpl;
   EFI_STATUS              Status;
-  EFI_STATUS              RecoveryStatus;
   UINTN                   MapSize;
   EFI_USB_PORT_STATUS     PortStatus;
   UINT32                  State;
@@ -919,7 +1014,7 @@ XhcControlTransfer (
   // combination of Ep addr and its direction.
   //
   Endpoint = (UINT8) (0 | ((TransferDirection == EfiUsbDataIn) ? 0x80 : 0));
-  Urb = XhcCreateUrb (
+  Status = XhcTransfer (
           Xhc,
           DeviceAddress,
           Endpoint,
@@ -928,62 +1023,14 @@ XhcControlTransfer (
           XHC_CTRL_TRANSFER,
           Request,
           Data,
-          *DataLength,
-          NULL,
-          NULL
+             DataLength,
+             Timeout,
+             TransferResult
           );
 
-  if (Urb == NULL) {
-//    DEBUG ((EFI_D_ERROR, "XhcControlTransfer: failed to create URB"));
-    DBG("XhcControlTransfer: failed to create URB");
-    Status = EFI_OUT_OF_RESOURCES;
+  if (EFI_ERROR (Status)) {
+    DBG("XHC transfer failed\n");
     goto ON_EXIT;
-  }
-
-  Status = XhcExecTransfer (Xhc, FALSE, Urb, Timeout);
-
-  //
-  // Get the status from URB. The result is updated in XhcCheckUrbResult
-  // which is called by XhcExecTransfer
-  //
-  *TransferResult = Urb->Result;
-  *DataLength     = Urb->Completed;
-
-  if (Status == EFI_TIMEOUT) {
-    //
-    // The transfer timed out. Abort the transfer by dequeueing of the TD.
-    //
-    RecoveryStatus = XhcDequeueTrbFromEndpoint(Xhc, Urb);
-    if (EFI_ERROR(RecoveryStatus)) {
-//      DEBUG((EFI_D_ERROR, "XhcControlTransfer: XhcDequeueTrbFromEndpoint failed\n"));
-		DBG("XhcControlTransfer: XhcDequeueTrbFromEndpoint failed\n");
-    }
-    goto FREE_URB;
-  } else {
-    if (*TransferResult == EFI_USB_NOERROR) {
-      Status = EFI_SUCCESS;
-    } else if (*TransferResult == EFI_USB_ERR_STALL) {
-      RecoveryStatus = XhcRecoverHaltedEndpoint(Xhc, Urb);
-      if (EFI_ERROR (RecoveryStatus)) {
-//      DEBUG ((EFI_D_ERROR, "XhcControlTransfer: XhcRecoverHaltedEndpoint failed\n"));
-        DBG("XhcControlTransfer: XhcRecoverHaltedEndpoint failed\n");
-      }
-      Status = EFI_DEVICE_ERROR;
-      goto FREE_URB;
-    } else {
-      goto FREE_URB;
-    }
-  }
-
-  Xhc->PciIo->Flush (Xhc->PciIo);
-  
-  if (Urb->DataMap != NULL) {
-    Status = Xhc->PciIo->Unmap (Xhc->PciIo, Urb->DataMap);
- //   ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
-      Status = EFI_DEVICE_ERROR;
-      goto FREE_URB;
-    }  
   }
 
   //
@@ -999,7 +1046,7 @@ XhcControlTransfer (
       //      ASSERT (Data != NULL);
       if (!Data) {
         DBG("Data absent\n");
-        goto FREE_URB;
+        goto ON_EXIT;
       }
         //
         // Store a copy of device scriptor as hub device need this info to configure endpoint.
@@ -1023,7 +1070,7 @@ XhcControlTransfer (
 //      ASSERT (Data != NULL);
       if (!Data) {
         DBG("Data absent\n");
-         goto FREE_URB;
+         goto ON_EXIT;
       }
       if (*DataLength == ((UINT16 *)Data)[1]) {
         //
@@ -1047,14 +1094,14 @@ XhcControlTransfer (
       //      ASSERT (Data != NULL);
       if (!Data) {
         DBG("Data absent\n");
-        goto FREE_URB;
+        goto ON_EXIT;
       }
       HubDesc = (EFI_USB_HUB_DESCRIPTOR *)Data;
 //      ASSERT (HubDesc->NumPorts <= 15);
       //      ASSERT (Data != NULL);
       if (HubDesc->NumPorts > 15) {
         DBG("BUG! HubDesc->NumPorts=%d > 15\n", HubDesc->NumPorts);
-        goto FREE_URB;
+        goto ON_EXIT;
       }
       //
       // The bit 5,6 of HubCharacter field of Hub Descriptor is TTT.
@@ -1111,7 +1158,7 @@ XhcControlTransfer (
     //      ASSERT (Data != NULL);
     if (!Data) {
       DBG("Data absent\n");
-      goto FREE_URB;
+      goto ON_EXIT;
     }
     //
     // Hook Get_Status request from UsbBus to keep track of the port status change.
@@ -1187,11 +1234,7 @@ XhcControlTransfer (
     *(UINT32 *)Data = *(UINT32*)&PortStatus;
   }
 
-FREE_URB:
-  FreePool (Urb);
-
 ON_EXIT:
-
   if (EFI_ERROR (Status)) {
 //    DEBUG ((EFI_D_ERROR, "XhcControlTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
     DBG("XhcControlTransfer: error - %r, transfer - %x\n", Status, *TransferResult);
@@ -1251,10 +1294,8 @@ XhcBulkTransfer (
   )
 {
   USB_XHCI_INSTANCE       *Xhc;
-  URB                     *Urb;
   UINT8                   SlotId;
   EFI_STATUS              Status;
-  EFI_STATUS              RecoveryStatus;
   EFI_TPL                 OldTpl;
 
   //
@@ -1301,7 +1342,7 @@ XhcBulkTransfer (
   // Create a new URB, insert it into the asynchronous
   // schedule list, then poll the execution status.
   //
-  Urb = XhcCreateUrb (
+  Status = XhcTransfer (
           Xhc,
           DeviceAddress,
           EndPointAddress,
@@ -1310,50 +1351,12 @@ XhcBulkTransfer (
           XHC_BULK_TRANSFER,
           NULL,
           Data[0],
-          *DataLength,
-          NULL,
-          NULL
+             DataLength,
+             Timeout,
+             TransferResult
           );
 
-  if (Urb == NULL) {
-//    DEBUG ((EFI_D_ERROR, "XhcBulkTransfer: failed to create URB\n"));
-    DBG("XhcBulkTransfer: failed to create URB\n");
-    Status = EFI_OUT_OF_RESOURCES;
-    goto ON_EXIT;
-  }
-
-  Status = XhcExecTransfer (Xhc, FALSE, Urb, Timeout);
-
-  *TransferResult = Urb->Result;
-  *DataLength     = Urb->Completed;
-
-  if (Status == EFI_TIMEOUT) {
-    //
-    // The transfer timed out. Abort the transfer by dequeueing of the TD.
-    //
-    RecoveryStatus = XhcDequeueTrbFromEndpoint(Xhc, Urb);
-    if (EFI_ERROR(RecoveryStatus)) {
-//      DEBUG((EFI_D_ERROR, "XhcBulkTransfer: XhcDequeueTrbFromEndpoint failed\n"));
-		DBG("XhcBulkTransfer: XhcDequeueTrbFromEndpoint failed\n");
-    }
-  } else {
-    if (*TransferResult == EFI_USB_NOERROR) {
-      Status = EFI_SUCCESS;
-    } else if (*TransferResult == EFI_USB_ERR_STALL) {
-      RecoveryStatus = XhcRecoverHaltedEndpoint(Xhc, Urb);
-      if (EFI_ERROR (RecoveryStatus)) {
-//      DEBUG ((EFI_D_ERROR, "XhcBulkTransfer: XhcRecoverHaltedEndpoint failed\n"));
-        DBG("XhcBulkTransfer: XhcRecoverHaltedEndpoint failed\n");
-      }
-      Status = EFI_DEVICE_ERROR;
-    }
-  }
-
-  Xhc->PciIo->Flush (Xhc->PciIo);
-  XhcFreeUrb (Xhc, Urb);
-
 ON_EXIT:
-
   if (EFI_ERROR (Status)) {
 //    DEBUG ((EFI_D_ERROR, "XhcBulkTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
     DBG("XhcBulkTransfer: error - %r, transfer - %x\n", Status, *TransferResult);
@@ -1572,10 +1575,8 @@ XhcSyncInterruptTransfer (
   )
 {
   USB_XHCI_INSTANCE       *Xhc;
-  URB                     *Urb;
   UINT8                   SlotId;
   EFI_STATUS              Status;
-  EFI_STATUS              RecoveryStatus;
   EFI_TPL                 OldTpl;
 
   //
@@ -1583,10 +1584,6 @@ XhcSyncInterruptTransfer (
   //
   if ((DataLength == NULL) || (*DataLength == 0) ||
       (Data == NULL) || (TransferResult == NULL)) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if (!XHCI_IS_DATAIN (EndPointAddress)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1621,7 +1618,7 @@ XhcSyncInterruptTransfer (
     goto ON_EXIT;
   }
 
-  Urb = XhcCreateUrb (
+  Status = XhcTransfer (
           Xhc,
           DeviceAddress,
           EndPointAddress,
@@ -1630,47 +1627,10 @@ XhcSyncInterruptTransfer (
           XHC_INT_TRANSFER_SYNC,
           NULL,
           Data,
-          *DataLength,
-          NULL,
-          NULL
+             DataLength,
+             Timeout,
+             TransferResult
           );
-
-  if (Urb == NULL) {
-//    DEBUG ((EFI_D_ERROR, "XhcSyncInterruptTransfer: failed to create URB\n"));
-    DBG("XhcSyncInterruptTransfer: failed to create URB\n");
-    Status = EFI_OUT_OF_RESOURCES;
-    goto ON_EXIT;
-  }
-
-  Status = XhcExecTransfer (Xhc, FALSE, Urb, Timeout);
-
-  *TransferResult = Urb->Result;
-  *DataLength     = Urb->Completed;
-
-  if (Status == EFI_TIMEOUT) {
-    //
-    // The transfer timed out. Abort the transfer by dequeueing of the TD.
-    //
-    RecoveryStatus = XhcDequeueTrbFromEndpoint(Xhc, Urb);
-    if (EFI_ERROR(RecoveryStatus)) {
-//      DEBUG((EFI_D_ERROR, "XhcSyncInterruptTransfer: XhcDequeueTrbFromEndpoint failed\n"));
-		DBG("XhcSyncInterruptTransfer: XhcDequeueTrbFromEndpoint failed\n");
-    }
-  } else {
-    if (*TransferResult == EFI_USB_NOERROR) {
-      Status = EFI_SUCCESS;
-    } else if (*TransferResult == EFI_USB_ERR_STALL) {
-      RecoveryStatus = XhcRecoverHaltedEndpoint(Xhc, Urb);
-      if (EFI_ERROR (RecoveryStatus)) {
-//      DEBUG ((EFI_D_ERROR, "XhcSyncInterruptTransfer: XhcRecoverHaltedEndpoint failed\n"));
-        DBG("XhcSyncInterruptTransfer: XhcRecoverHaltedEndpoint failed\n");
-      }
-      Status = EFI_DEVICE_ERROR;
-    }
-  }
-
-  Xhc->PciIo->Flush (Xhc->PciIo);
-  XhcFreeUrb (Xhc, Urb);
 
 ON_EXIT:
   if (EFI_ERROR (Status)) {
@@ -1782,6 +1742,7 @@ XhcDriverEntryPoint (
   IN EFI_SYSTEM_TABLE     *SystemTable
   )
 {
+  DBG("XHCI entry\n");
   return EfiLibInstallDriverBindingComponentName2 (
            ImageHandle,
            SystemTable,
@@ -1817,7 +1778,9 @@ XhcDriverBindingSupported (
   EFI_STATUS              Status;
   EFI_PCI_IO_PROTOCOL     *PciIo;
   USB_CLASSC              UsbClassCReg;
-
+  
+  
+// DBG("XHCI test if supported\n");
   //
   // Test whether there is PCI IO Protocol attached on the controller handle.
   //
@@ -1853,9 +1816,11 @@ XhcDriverBindingSupported (
   if ((UsbClassCReg.BaseCode != PCI_CLASS_SERIAL) ||
       (UsbClassCReg.SubClassCode != PCI_CLASS_SERIAL_USB) ||
       (UsbClassCReg.ProgInterface != PCI_IF_XHCI)) {
+ //   DBG("XHC not supported %02x%02x%02x\n", UsbClassCReg.BaseCode, UsbClassCReg.SubClassCode, UsbClassCReg.ProgInterface);
     Status = EFI_UNSUPPORTED;
+  } else {
+    DBG("XHC supported %02x%02x%02x\n", UsbClassCReg.BaseCode, UsbClassCReg.SubClassCode, UsbClassCReg.ProgInterface);
   }
-
 ON_EXIT:
   gBS->CloseProtocol (
          Controller,

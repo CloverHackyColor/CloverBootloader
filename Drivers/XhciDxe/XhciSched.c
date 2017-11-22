@@ -2,7 +2,7 @@
 
   XHCI transfer scheduling routines.
 
-Copyright (c) 2011 - 2015, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2011 - 2017, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -263,7 +263,10 @@ XhcCreateTransferTrb (
     EPType  = (UINT8) ((DEVICE_CONTEXT_64 *)OutputContext)->EP[Dci-1].EPType;
   }
   
-  if (Urb->Data != NULL) {
+  //
+  // No need to remap.
+  //
+  if ((Urb->Data != NULL) && (Urb->DataMap == NULL)) {
     if (((UINT8) (Urb->Ep.Direction)) == EfiUsbDataIn) {
       MapOp = EfiPciIoOperationBusMasterWrite;
     } else {
@@ -637,7 +640,7 @@ XhcInitSched (
   XhcWriteOpReg (Xhc, XHC_CRCR_OFFSET, XHC_LOW_32BIT(CmdRingPhy));
   XhcWriteOpReg (Xhc, XHC_CRCR_OFFSET + 4, XHC_HIGH_32BIT (CmdRingPhy));
 
-  DEBUG ((EFI_D_INFO, "XhcInitSched:XHC_CRCR=0x%x\n", Xhc->CmdRing.RingSeg0));
+//  DEBUG ((EFI_D_INFO, "XhcInitSched:XHC_CRCR=0x%x\n", Xhc->CmdRing.RingSeg0));
 
   //
   // Disable the 'interrupter enable' bit in USB_CMD
@@ -653,7 +656,10 @@ XhcInitSched (
   // Allocate EventRing for Cmd, Ctrl, Bulk, Interrupt, AsynInterrupt transfer
   //
   CreateEventRing (Xhc, &Xhc->EventRing);
-  DEBUG ((EFI_D_INFO, "XhcInitSched:XHC_EVENTRING=0x%x\n", Xhc->EventRing.EventRingSeg0));
+  DEBUG ((DEBUG_INFO, "XhcInitSched: Created CMD ring [%p~%p) EVENT ring [%p~%p)\n",
+    Xhc->CmdRing.RingSeg0,        (UINTN)Xhc->CmdRing.RingSeg0 + sizeof (TRB_TEMPLATE) * CMD_RING_TRB_NUMBER,
+    Xhc->EventRing.EventRingSeg0, (UINTN)Xhc->EventRing.EventRingSeg0 + sizeof (TRB_TEMPLATE) * EVENT_RING_TRB_NUMBER
+    ));
 }
 
 /**
@@ -734,6 +740,7 @@ Done:
   @param  Urb                   The urb which doesn't get completed in a specified timeout range.
 
   @retval EFI_SUCCESS           The dequeuing of the TDs is successful.
+  @retval EFI_ALREADY_STARTED   The Urb is finished so no deque is needed.
   @retval Others                Failed to stop the endpoint and dequeue the TDs.
 
 **/
@@ -761,7 +768,7 @@ XhcDequeueTrbFromEndpoint (
   //
   // 1) Send Stop endpoint command to stop xHC from executing of the TDs on the endpoint
   //
-  Status = XhcStopEndpoint(Xhc, SlotId, Dci);
+  Status = XhcStopEndpoint(Xhc, SlotId, Dci, Urb);
   if (EFI_ERROR(Status)) {
 //    DEBUG ((EFI_D_ERROR, "XhcDequeueTrbFromEndpoint: Stop Endpoint Failed, Status = %r\n", Status));
     goto Done;
@@ -770,10 +777,20 @@ XhcDequeueTrbFromEndpoint (
   //
   // 2)Set dequeue pointer
   //
+  if (Urb->Finished && Urb->Result == EFI_USB_NOERROR) {
+    //
+    // Return Already Started to indicate the pending URB is finished.
+    // This fixes BULK data loss when transfer is detected as timeout
+    // but finished just before stopping endpoint.
+    //
+    Status = EFI_ALREADY_STARTED;
+    DEBUG ((DEBUG_INFO, "XhcDequeueTrbFromEndpoint: Pending URB is finished: Length Actual/Expect = %d/%d!\n", Urb->Completed, Urb->DataLen));
+  } else {
   Status = XhcSetTrDequeuePointer(Xhc, SlotId, Dci, Urb);
   if (EFI_ERROR(Status)) {
 //    DEBUG ((EFI_D_ERROR, "XhcDequeueTrbFromEndpoint: Set Transfer Ring Dequeue Pointer Failed, Status = %r\n", Status));
     goto Done;
+  }
   }
 
   //
@@ -784,7 +801,6 @@ XhcDequeueTrbFromEndpoint (
 Done:
   return Status;
 }
-
 
 /**
   Create XHCI event ring.
@@ -1030,6 +1046,50 @@ XhcFreeSched (
 }
 
 /**
+  Check if the Trb is a transaction of the URB.
+
+  @param Xhc    The XHCI Instance.
+  @param Trb    The TRB to be checked
+  @param Urb    The URB to be checked.
+
+  @retval TRUE  It is a transaction of the URB.
+  @retval FALSE It is not any transaction of the URB.
+
+**/
+BOOLEAN
+IsTransferRingTrb (
+  IN  USB_XHCI_INSTANCE   *Xhc,
+  IN  TRB_TEMPLATE        *Trb,
+  IN  URB                 *Urb
+  )
+{
+  LINK_TRB      *LinkTrb;
+  TRB_TEMPLATE            *CheckedTrb;
+  UINTN                   Index;
+  EFI_PHYSICAL_ADDRESS PhyAddr;
+
+  CheckedTrb = Urb->TrbStart;
+  for (Index = 0; Index < Urb->TrbNum; Index++) {
+      if (Trb == CheckedTrb) {
+        return TRUE;
+      }
+      CheckedTrb++;
+      //
+      // If the checked TRB is the link TRB at the end of the transfer ring,
+      // recircle it to the head of the ring.
+      //
+      if (CheckedTrb->Type == TRB_TYPE_LINK) {
+      LinkTrb = (LINK_TRB *) CheckedTrb;
+      PhyAddr = (EFI_PHYSICAL_ADDRESS)(LinkTrb->PtrLo | LShiftU64 ((UINT64) LinkTrb->PtrHi, 32));
+      CheckedTrb = (TRB_TEMPLATE *)(UINTN) UsbHcGetHostAddrForPciAddr (Xhc->MemPool, (VOID *)(UINTN) PhyAddr, sizeof (TRB_TEMPLATE));
+      ASSERT (CheckedTrb == Urb->Ring->RingSeg0);
+    }
+  }
+
+  return FALSE;
+}
+
+/**
   Check if the Trb is a transaction of the URBs in XHCI's asynchronous transfer list.
 
   @param Xhc    The XHCI Instance.
@@ -1049,67 +1109,19 @@ IsAsyncIntTrb (
 {
   LIST_ENTRY              *Entry;
   LIST_ENTRY              *Next;
-  TRB_TEMPLATE            *CheckedTrb;
   URB                     *CheckedUrb;
-  UINTN                   Index;
 
   EFI_LIST_FOR_EACH_SAFE (Entry, Next, &Xhc->AsyncIntTransfers) {
     CheckedUrb = EFI_LIST_CONTAINER (Entry, URB, UrbList);
-    CheckedTrb = CheckedUrb->TrbStart;
-    for (Index = 0; Index < CheckedUrb->TrbNum; Index++) {
-      if (Trb == CheckedTrb) {
-        *Urb = CheckedUrb;
-        return TRUE;
-      }
-      CheckedTrb++;
-      //
-      // If the checked TRB is the link TRB at the end of the transfer ring,
-      // recircle it to the head of the ring.
-      //
-      if (CheckedTrb->Type == TRB_TYPE_LINK) {
-        CheckedTrb = (TRB_TEMPLATE*) CheckedUrb->Ring->RingSeg0;
-      }
-    }
-  }
-
-  return FALSE;
-}
-
-/**
-  Check if the Trb is a transaction of the URB.
-
-  @param Trb    The TRB to be checked
-  @param Urb    The transfer ring to be checked.
-
-  @retval TRUE  It is a transaction of the URB.
-  @retval FALSE It is not any transaction of the URB.
-
-**/
-BOOLEAN
-IsTransferRingTrb (
-  IN  TRB_TEMPLATE        *Trb,
-  IN  URB                 *Urb
-  )
-{
-  TRB_TEMPLATE  *CheckedTrb;
-  UINTN         Index;
-
-  CheckedTrb = Urb->Ring->RingSeg0;
-
-//  ASSERT (Urb->Ring->TrbNumber == CMD_RING_TRB_NUMBER || Urb->Ring->TrbNumber == TR_RING_TRB_NUMBER);
-  if ((Urb->Ring->TrbNumber != CMD_RING_TRB_NUMBER) && (Urb->Ring->TrbNumber != TR_RING_TRB_NUMBER)) {
-    return FALSE;
-  }
-
-  for (Index = 0; Index < Urb->Ring->TrbNumber; Index++) {
-    if (Trb == CheckedTrb) {
+    if (IsTransferRingTrb (Xhc, Trb, CheckedUrb)) {
+      *Urb = CheckedUrb;
       return TRUE;
     }
-    CheckedTrb++;
   }
 
   return FALSE;
 }
+
 
 /**
   Check the URB's execution result and update the URB's
@@ -1185,12 +1197,14 @@ XhcCheckUrbResult (
     TRBPtr = (TRB_TEMPLATE *)(UINTN) UsbHcGetHostAddrForPciAddr (Xhc->MemPool, (VOID *)(UINTN) PhyAddr, sizeof (TRB_TEMPLATE));
 
     //
-    // Update the status of Urb according to the finished event regardless of whether
-    // the urb is current checked one or in the XHCI's async transfer list.
+    // Update the status of URB including the pending URB, the URB that is currently checked,
+    // and URBs in the XHCI's async interrupt transfer list.
     // This way is used to avoid that those completed async transfer events don't get
     // handled in time and are flushed by newer coming events.
     //
-    if (IsTransferRingTrb (TRBPtr, Urb)) {
+    if (Xhc->PendingUrb != NULL && IsTransferRingTrb (Xhc, TRBPtr, Xhc->PendingUrb)) {
+      CheckedUrb = Xhc->PendingUrb;
+    } else if (IsTransferRingTrb (Xhc, TRBPtr, Urb)) {
       CheckedUrb = Urb;
     } else if (IsAsyncIntTrb (Xhc, TRBPtr, &AsyncUrb)) {    
       CheckedUrb = AsyncUrb;
@@ -1223,10 +1237,20 @@ XhcCheckUrbResult (
         DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: TRANSACTION_ERROR! Completecode = %x\n",EvtTrb->Completecode));
         goto EXIT;
 
+      case TRB_COMPLETION_STOPPED:
+      case TRB_COMPLETION_STOPPED_LENGTH_INVALID:
+        CheckedUrb->Result  |= EFI_USB_ERR_TIMEOUT;
+        CheckedUrb->Finished = TRUE;
+        //
+        // The pending URB is timeout and force stopped when stopping endpoint.
+        // Continue the loop to receive the Command Complete Event for stopping endpoint.
+        //
+        continue;
+
       case TRB_COMPLETION_SHORT_PACKET:
       case TRB_COMPLETION_SUCCESS:
         if (EvtTrb->Completecode == TRB_COMPLETION_SHORT_PACKET) {
-          DEBUG ((EFI_D_ERROR, "XhcCheckUrbResult: short packet happens!\n"));
+          DEBUG ((EFI_D_VERBOSE, "XhcCheckUrbResult: short packet happens!\n"));
         }
 
         TRBType = (UINT8) (TRBPtr->Type);
@@ -1382,6 +1406,7 @@ XhciDelAsyncIntTransfer (
   LIST_ENTRY              *Next;
   URB                     *Urb;
   EFI_USB_DATA_DIRECTION  Direction;
+  EFI_STATUS              Status;
 
   Direction = ((EpNum & 0x80) != 0) ? EfiUsbDataIn : EfiUsbDataOut;
   EpNum    &= 0x0F;
@@ -1393,6 +1418,15 @@ XhciDelAsyncIntTransfer (
     if ((Urb->Ep.BusAddr == BusAddr) &&
         (Urb->Ep.EpAddr == EpNum) &&
         (Urb->Ep.Direction == Direction)) {
+      //
+      // Device doesn't finish the IntTransfer until real data comes
+      // So the TRB should be removed as well.
+      //
+      Status = XhcDequeueTrbFromEndpoint (Xhc, Urb);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((EFI_D_ERROR, "XhciDelAsyncIntTransfer: XhcDequeueTrbFromEndpoint failed\n"));
+      }
+
       RemoveEntryList (&Urb->UrbList);
       FreePool (Urb->Data);
       XhcFreeUrb (Xhc, Urb);
@@ -1417,9 +1451,20 @@ XhciDelAllAsyncIntTransfers (
   LIST_ENTRY              *Entry;
   LIST_ENTRY              *Next;
   URB                     *Urb;
+  EFI_STATUS              Status;
 
   EFI_LIST_FOR_EACH_SAFE (Entry, Next, &Xhc->AsyncIntTransfers) {
     Urb = EFI_LIST_CONTAINER (Entry, URB, UrbList);
+
+    //
+    // Device doesn't finish the IntTransfer until real data comes
+    // So the TRB should be removed as well.
+    //
+    Status = XhcDequeueTrbFromEndpoint (Xhc, Urb);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((EFI_D_ERROR, "XhciDelAllAsyncIntTransfers: XhcDequeueTrbFromEndpoint failed\n"));
+    }
+
     RemoveEntryList (&Urb->UrbList);
     FreePool (Urb->Data);
     XhcFreeUrb (Xhc, Urb);
@@ -2215,6 +2260,10 @@ XhcInitializeDeviceSlot (
   // 8) Issue an Address Device Command for the Device Slot, where the command points to the Input
   //    Context data structure described above.
   //
+  // Delay 10ms to meet TRSTRCY delay requirement in usb 2.0 spec chapter 7.1.7.5 before sending SetAddress() request
+  // to device.
+  //
+  gBS->Stall (XHC_RESET_RECOVERY_DELAY);
   ZeroMem (&CmdTrbAddr, sizeof (CmdTrbAddr));
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Xhc->UsbDevContext[SlotId].InputContext, sizeof (INPUT_CONTEXT));
   CmdTrbAddr.PtrLo    = XHC_LOW_32BIT (PhyAddr);
@@ -2436,6 +2485,10 @@ XhcInitializeDeviceSlot64 (
   // 8) Issue an Address Device Command for the Device Slot, where the command points to the Input
   //    Context data structure described above.
   //
+  // Delay 10ms to meet TRSTRCY delay requirement in usb 2.0 spec chapter 7.1.7.5 before sending SetAddress() request
+  // to device.
+  //
+  gBS->Stall (XHC_RESET_RECOVERY_DELAY);
   ZeroMem (&CmdTrbAddr, sizeof (CmdTrbAddr));
   PhyAddr = UsbHcGetPciAddrForHostAddr (Xhc->MemPool, Xhc->UsbDevContext[SlotId].InputContext, sizeof (INPUT_CONTEXT_64));
   CmdTrbAddr.PtrLo    = XHC_LOW_32BIT (PhyAddr);
@@ -2756,6 +2809,11 @@ XhcInitializeEndpointContext (
           EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
           Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
           CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
+          DEBUG ((DEBUG_INFO, "Endpoint[%x]: Created BULK ring [%p~%p)\n",
+                  EpDesc->EndpointAddress,
+                  EndpointTransferRing->RingSeg0,
+                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+                  ));
         }
 
         break;
@@ -2767,6 +2825,20 @@ XhcInitializeEndpointContext (
           InputContext->EP[Dci-1].CErr   = 0;
           InputContext->EP[Dci-1].EPType = ED_ISOCH_OUT;
         }
+        //
+        // Get the bInterval from descriptor and init the the interval field of endpoint context.
+        // Refer to XHCI 1.1 spec section 6.2.3.6.
+        //
+        if (DeviceSpeed == EFI_USB_SPEED_FULL) {
+          Interval = EpDesc->Interval;
+          ASSERT (Interval >= 1 && Interval <= 16);
+          InputContext->EP[Dci-1].Interval = Interval + 2;
+        } else if ((DeviceSpeed == EFI_USB_SPEED_HIGH) || (DeviceSpeed == EFI_USB_SPEED_SUPER)) {
+          Interval = EpDesc->Interval;
+          ASSERT (Interval >= 1 && Interval <= 16);
+          InputContext->EP[Dci-1].Interval = Interval - 1;
+        }
+
         //
         // Do not support isochronous transfer now.
         //
@@ -2810,6 +2882,11 @@ XhcInitializeEndpointContext (
           EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
           Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
           CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
+          DEBUG ((DEBUG_INFO, "Endpoint[%x]: Created INT ring [%p~%p)\n",
+                  EpDesc->EndpointAddress,
+                  EndpointTransferRing->RingSeg0,
+                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+                  ));
         }
         break;
 
@@ -2924,6 +3001,11 @@ XhcInitializeEndpointContext64 (
           EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
           Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
           CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
+          DEBUG ((DEBUG_INFO, "Endpoint64[%x]: Created BULK ring [%p~%p)\n",
+                  EpDesc->EndpointAddress,
+                  EndpointTransferRing->RingSeg0,
+                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+                  ));
         }
 
         break;
@@ -2935,6 +3017,20 @@ XhcInitializeEndpointContext64 (
           InputContext->EP[Dci-1].CErr   = 0;
           InputContext->EP[Dci-1].EPType = ED_ISOCH_OUT;
         }
+        //
+        // Get the bInterval from descriptor and init the the interval field of endpoint context.
+        // Refer to XHCI 1.1 spec section 6.2.3.6.
+        //
+        if (DeviceSpeed == EFI_USB_SPEED_FULL) {
+          Interval = EpDesc->Interval;
+          ASSERT (Interval >= 1 && Interval <= 16);
+          InputContext->EP[Dci-1].Interval = Interval + 2;
+        } else if ((DeviceSpeed == EFI_USB_SPEED_HIGH) || (DeviceSpeed == EFI_USB_SPEED_SUPER)) {
+          Interval = EpDesc->Interval;
+          ASSERT (Interval >= 1 && Interval <= 16);
+          InputContext->EP[Dci-1].Interval = Interval - 1;
+        }
+
         //
         // Do not support isochronous transfer now.
         //
@@ -2978,6 +3074,11 @@ XhcInitializeEndpointContext64 (
           EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
           Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
           CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
+          DEBUG ((DEBUG_INFO, "Endpoint64[%x]: Created INT ring [%p~%p)\n",
+                  EpDesc->EndpointAddress,
+                  EndpointTransferRing->RingSeg0,
+                  (UINTN) EndpointTransferRing->RingSeg0 + TR_RING_TRB_NUMBER * sizeof (TRB_TEMPLATE)
+                  ));
         }
         break;
 
@@ -3200,6 +3301,7 @@ XhcSetConfigCmd64 (
   @param  Xhc                   The XHCI Instance.
   @param  SlotId                The slot id to be configured.
   @param  Dci                   The device context index of endpoint.
+  @param  PendingUrb            The pending URB to check completion status when stopping the end point.
 
   @retval EFI_SUCCESS           Stop endpoint successfully.
   @retval Others                Failed to stop endpoint.
@@ -3210,7 +3312,8 @@ EFIAPI
 XhcStopEndpoint (
   IN USB_XHCI_INSTANCE      *Xhc,
   IN UINT8                  SlotId,
-  IN UINT8                  Dci
+  IN UINT8                  Dci,
+  IN URB                    *PendingUrb  OPTIONAL
   )
 {
   EFI_STATUS                    Status;
@@ -3218,6 +3321,29 @@ XhcStopEndpoint (
   CMD_TRB_STOP_ENDPOINT         CmdTrbStopED;
 
   DEBUG ((EFI_D_INFO, "XhcStopEndpoint: Slot = 0x%x, Dci = 0x%x\n", SlotId, Dci));
+
+  //
+  // When XhcCheckUrbResult waits for the Stop_Endpoint completion, it also checks
+  // the PendingUrb completion status, because it's possible that the PendingUrb is
+  // finished just before stopping the end point, but after the looping check.
+  //
+  // The PendingUrb could be passed to XhcCmdTransfer to XhcExecTransfer to XhcCheckUrbResult
+  // through function parameter, but That will cause every consumer of XhcCmdTransfer,
+  // XhcExecTransfer and XhcCheckUrbResult pass a NULL PendingUrb.
+  // But actually only XhcCheckUrbResult is aware of the PendingUrb.
+  // So we choose to save the PendingUrb into the USB_XHCI_INSTANCE and use it in XhcCheckUrbResult.
+  //
+  ASSERT (Xhc->PendingUrb == NULL);
+  Xhc->PendingUrb = PendingUrb;
+  //
+  // Reset the URB result from Timeout to NoError.
+  // The USB result will be:
+  //   changed to Timeout when Stop/StopInvalidLength Transfer Event is received, or
+  //   remain NoError when Success/ShortPacket Transfer Event is received.
+  //
+  if (PendingUrb != NULL) {
+    PendingUrb->Result = EFI_USB_NOERROR;
+  }
 
   //
   // Send stop endpoint command to transit Endpoint from running to stop state
@@ -3236,6 +3362,8 @@ XhcStopEndpoint (
   if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcStopEndpoint: Stop Endpoint Failed, Status = %r\n", Status));
   }
+
+  Xhc->PendingUrb = NULL;
 
   return Status;
 }
@@ -3463,7 +3591,7 @@ XhcSetInterface (
       // XHCI 4.3.6 - Setting Alternate Interfaces
       // 1) Stop any Running Transfer Rings affected by the Alternate Interface setting.
       //
-      Status = XhcStopEndpoint (Xhc, SlotId, Dci);
+      Status = XhcStopEndpoint (Xhc, SlotId, Dci, NULL);
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -3665,7 +3793,7 @@ XhcSetInterface64 (
       // XHCI 4.3.6 - Setting Alternate Interfaces
       // 1) Stop any Running Transfer Rings affected by the Alternate Interface setting.
       //
-      Status = XhcStopEndpoint (Xhc, SlotId, Dci);
+      Status = XhcStopEndpoint (Xhc, SlotId, Dci, NULL);
       if (EFI_ERROR (Status)) {
         return Status;
       }
