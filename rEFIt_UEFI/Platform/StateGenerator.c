@@ -73,12 +73,14 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
     return NULL;
   }
 
-  // APLF: Low Frequency Mode. followed Apple's standards.
-  // Ironlake-: there are no APLF and APSN. Sandy Bridge: only APSN
-  // Ivy Bridge: Mobile(U:APLF=0, M:APLF=4), Desktop(APLF=8) and APSN. Haswell+: APLF=0, APSN
-  // Skylake+: there are no APLF and APSN. maybe because of frequency vectors. but used it as APLF=0 in generator
-  // Xeon(Westmere EP-): There are no APLF and APSN. Xeon(Sandy Bridge EP): only APSN. Xeon(Ivy Bridge EP+): APLF=0, APSN
-  // by Sherlocks
+  /*
+   APLF: Low Frequency Mode. followed Apple's standards.
+   Ironlake-: there are no APLF and APSN. Sandy Bridge: only APSN
+   Ivy Bridge: Mobile(U:APLF=0, M:APLF=4), Desktop(APLF=8) and APSN. Haswell+: APLF=0, APSN
+   Skylake+: there are no APLF and APSN. maybe because of frequency vectors. but used it as APLF=0 in generator
+   Xeon(Westmere EP-): There are no APLF and APSN. Xeon(Sandy Bridge EP): only APSN. Xeon(Ivy Bridge EP+): APLF=0, APSN
+   by Sherlocks
+   */
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     if (gMobile) {
       switch (gCPUStructure.Model) {
