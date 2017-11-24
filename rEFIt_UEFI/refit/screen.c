@@ -478,9 +478,9 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   }
   
   if (BackgroundImage == NULL) {
-    DBG("BltClearScreen(%c): calling egCreateFilledImage UGAWidth %ld, UGAHeight %ld, BlueBackgroundPixel %02x%02x%02x%02x\n",
+/*    DBG("BltClearScreen(%c): calling egCreateFilledImage UGAWidth %ld, UGAHeight %ld, BlueBackgroundPixel %02x%02x%02x%02x\n",
         ShowBanner?'Y':'N', UGAWidth, UGAHeight,
-        BlueBackgroundPixel.r, BlueBackgroundPixel.g, BlueBackgroundPixel.b, BlueBackgroundPixel.a);
+        BlueBackgroundPixel.r, BlueBackgroundPixel.g, BlueBackgroundPixel.b, BlueBackgroundPixel.a); */
     BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
   }
   
@@ -534,12 +534,12 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   
   // Draw background
   if (BackgroundImage) {
-    DBG("BltClearScreen(%c): calling BltImage BackgroundImage %p\n",
-        ShowBanner?'Y':'N', BackgroundImage);
+/*    DBG("BltClearScreen(%c): calling BltImage BackgroundImage %p\n",
+        ShowBanner?'Y':'N', BackgroundImage); */
     BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
   } else {
-    DBG("BltClearScreen(%c): calling egClearScreen StdBackgroundPixel %02x%02x%02x%02x\n",
-        ShowBanner?'Y':'N', StdBackgroundPixel.r, StdBackgroundPixel.g, StdBackgroundPixel.b, StdBackgroundPixel.a);
+/*    DBG("BltClearScreen(%c): calling egClearScreen StdBackgroundPixel %02x%02x%02x%02x\n",
+        ShowBanner?'Y':'N', StdBackgroundPixel.r, StdBackgroundPixel.g, StdBackgroundPixel.b, StdBackgroundPixel.a); */
     egClearScreen(&StdBackgroundPixel);
   }
   

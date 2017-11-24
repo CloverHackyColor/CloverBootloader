@@ -178,7 +178,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     case BUILTIN_SELECTION_BIG:
       DEC_BUILTIN_ICON(Id, emb_selection_big); break;
   }
-  DBG("Icon %d decoded, pointer %x\n", Id, (UINTN)(BuiltinIconTable[Id].Image));
+//  DBG("Icon %d decoded, pointer %x\n", Id, (UINTN)(BuiltinIconTable[Id].Image));
   
   if (!BuiltinIconTable[Id].Image) {
     TextBuffer = egCreateImage(Size, Size, TRUE);  //new pointer

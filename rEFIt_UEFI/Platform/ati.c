@@ -477,7 +477,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6920,  CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M395",         kLabrador },
   { 0x6921,  CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M295X",        kExmoor },
   { 0x692b,  CHIP_FAMILY_TONGA,    "ATI Firepro W7100",          kBaladi },
-  { 0x6938,  CHIP_FAMILY_AMETHYST, "ATI Radeon R9 M295X",        kExmoor },
+  { 0x6938,  CHIP_FAMILY_AMETHYST, "ATI Radeon R9 380X",         kExmoor },
   { 0x6939,  CHIP_FAMILY_TONGA,    "ATI Radeon R9 285",          kBaladi },
 
   /* Polaris12 */
