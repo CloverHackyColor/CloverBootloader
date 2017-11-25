@@ -5937,6 +5937,25 @@ GetUserSettings(
   return EFI_SUCCESS;
 }
 
+static CHAR8 *SearchString (
+  IN  CHAR8       *Source,
+  IN  UINT64      SourceSize,
+  IN  CHAR8       *Search,
+  IN  UINTN       SearchSize
+  )
+{
+  CHAR8 *End = Source + SourceSize;
+
+  while (Source < End) {
+    if (CompareMem(Source, Search, SearchSize) == 0) {
+      return Source;
+    } else {
+      Source++;
+    }
+  }
+  return NULL;
+}
+
 CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 {
   CHAR8      *OSVersion  = NULL;
@@ -6031,6 +6050,36 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             Prop = GetProperty (Dict, "ProductVersion");
             if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
               OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+            }
+          }
+        } else {
+          // read ProductVersion/BuildVersion from ia.log
+          // implemented by Sherlocks
+          CHAR8  *i, *fileBuffer, *targetString, *Res1 = AllocateZeroPool(7), *Res2 = AllocateZeroPool(6), *Res3 = AllocateZeroPool(7);
+          UINTN  fileLen = 0;
+          CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log";
+          if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
+            InstallerLog = L"\\OS X Install Data\\ia.log";
+          }
+          if (FileExists (Entry->Volume->RootDir, InstallerLog)) {
+            Status = egLoadFile(Entry->Volume->RootDir, InstallerLog, (UINT8 **)&fileBuffer, &fileLen);
+            if (!EFI_ERROR (Status)) {
+              targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
+              CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+              i = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
+              if (i[31] == '.') {
+                AsciiSPrint(Res1, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
+                OSVersion = AllocateCopyPool (AsciiStrSize (Res1), Res1);
+              }
+              if (i[40] == ')') {
+                AsciiSPrint (Res2, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
+                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res2), Res2);
+              } else if (i[41] == ')') {
+                AsciiSPrint (Res3, 7, "%c%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39], i[40]);
+                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res3), Res3);
+              }
+              FreePool(fileBuffer);
+              FreePool(targetString);
             }
           }
         }
@@ -7123,7 +7172,7 @@ SetFSInjection (
     //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");
     // === Fusion Drive ===
     // 10.11
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\prelinkedkernel");
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     // 10.12+
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
 
