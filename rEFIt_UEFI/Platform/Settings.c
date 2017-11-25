@@ -6055,7 +6055,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         } else {
           // read ProductVersion/BuildVersion from ia.log
           // implemented by Sherlocks
-          CHAR8  *i, *fileBuffer, *targetString, *Res1 = AllocateZeroPool(7), *Res2 = AllocateZeroPool(6), *Res3 = AllocateZeroPool(7);
+          CHAR8  *i, *fileBuffer, *targetString;
+          CHAR8  *Res1 = AllocateZeroPool(5), *Res2 = AllocateZeroPool(7), *Res3 = AllocateZeroPool(6), *Res4 = AllocateZeroPool(7);
           UINTN  fileLen = 0;
           CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log";
           if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
@@ -6067,16 +6068,26 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
               CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
               i = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
-              if (i[31] == '.') {
-                AsciiSPrint(Res1, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
+              if (i[31] == ' ') {
+                AsciiSPrint(Res1, 5, "%c%c.%c\n", i[27], i[28], i[30]);
                 OSVersion = AllocateCopyPool (AsciiStrSize (Res1), Res1);
-              }
-              if (i[40] == ')') {
-                AsciiSPrint (Res2, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res2), Res2);
-              } else if (i[41] == ')') {
-                AsciiSPrint (Res3, 7, "%c%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39], i[40]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res3), Res3);
+                if (i[38] == ')') {
+                  AsciiSPrint (Res3, 6, "%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37]);
+                  Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res3), Res3);
+                } else if (i[39] == ')') {
+                  AsciiSPrint (Res4, 7, "%c%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37], i[38]);
+                  Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res4), Res4);
+                }
+              } else if (i[31] == '.') {
+                AsciiSPrint(Res2, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
+                OSVersion = AllocateCopyPool (AsciiStrSize (Res2), Res2);
+                if (i[40] == ')') {
+                  AsciiSPrint (Res3, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
+                  Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res3), Res3);
+                } else if (i[41] == ')') {
+                  AsciiSPrint (Res4, 7, "%c%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39], i[40]);
+                  Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res4), Res4);
+                }
               }
               FreePool(fileBuffer);
               FreePool(targetString);
