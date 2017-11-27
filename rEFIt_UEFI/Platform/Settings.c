@@ -6735,12 +6735,12 @@ SetDevices (
                   if (gSettings.DeInit) {
                     for (j = 0; j < 4; j++) {
                       if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6848) = 0; //FCTL
-                        *(UINT32*)(gGraphics[j].Mmio + 0x681C) = 0; //PSBH
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6820) = 0; //SSBH
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6808) = 0; //LTBC
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //GENA
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //MUMD
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6848) = 0; //EVERGREEN_GRPH_FLIP_CONTROL, 1<<0 SURFACE_UPDATE_H_RETRACE_EN
+                        *(UINT32*)(gGraphics[j].Mmio + 0x681C) = 0; //EVERGREEN_GRPH_PRIMARY_SURFACE_ADDRESS_HIGH
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6820) = 0; //EVERGREEN_GRPH_SECONDARY_SURFACE_ADDRESS_HIGH
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6808) = 0; //EVERGREEN_GRPH_LUT_10BIT_BYPASS_CONTROL, EVERGREEN_LUT_10BIT_BYPASS_EN            (1 << 8)
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //EVERGREEN_GRPH_ENABLE
+                        *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //EVERGREEN_MASTER_UPDATE_MODE
      //                   *(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
                         DBG("Device %d deinited\n", j);
                       }
