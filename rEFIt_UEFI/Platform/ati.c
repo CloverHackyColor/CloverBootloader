@@ -1641,8 +1641,9 @@ BOOLEAN read_disabled_vbios(VOID)
 {
   BOOLEAN ret = FALSE;
   ati_chip_family_t chip_family = card->info->chip_family;
-  
-  if (chip_family >= CHIP_FAMILY_RV770) {
+  if (chip_family > CHIP_FAMILY_TURKS) {
+    return FALSE;
+  } else if (chip_family >= CHIP_FAMILY_RV770) {
     UINT32 viph_control       = REG32(card->mmio, RADEON_VIPH_CONTROL);
     UINT32 bus_cntl           = REG32(card->mmio, RADEON_BUS_CNTL);
     UINT32 d1vga_control      = REG32(card->mmio, AVIVO_D1VGA_CONTROL);
