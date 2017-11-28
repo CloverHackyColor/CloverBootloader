@@ -207,7 +207,7 @@ ResetEmuNvram ()
   REFIT_VOLUME    *Volume;
   EFI_FILE_HANDLE FileHandle;
 
-  DBG("ResetEmuNvram: searching volumes for nvram.plist\n");
+  //DBG("ResetEmuNvram: searching volumes for nvram.plist\n");
 
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
      Volume = Volumes[VolumeIndex];
@@ -218,36 +218,36 @@ ResetEmuNvram ()
 
      Status = Volume->RootDir->Open (Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
      if (EFI_ERROR(Status)) {
-       DBG("- [%02d]: '%s' - no nvram.plist - skipping!\n", VolumeIndex, Volume->VolName);
+       //DBG("- [%02d]: '%s' - no nvram.plist - skipping!\n", VolumeIndex, Volume->VolName);
        continue;
      }
      
      // find the partition where nvram.plist can be deleted and delete it
      if (Volume != NULL) {
        if (StriStr(Volume->VolName, L"EFI") != NULL) {
-         DBG("- [%02d]: '%s' - found nvram.plist and deleted it\n", VolumeIndex, Volume->VolName);
+         //DBG("- [%02d]: '%s' - found nvram.plist and deleted it\n", VolumeIndex, Volume->VolName);
          Status = DeleteFile (Volume->RootDir, L"nvram.plist");
        } else {
-         DBG("- [%02d]: '%s' - found nvram.plist but can't delete it\n", VolumeIndex, Volume->VolName);
+         //DBG("- [%02d]: '%s' - found nvram.plist but can't delete it\n", VolumeIndex, Volume->VolName);
        }
      }
   }
 
-  DBG("ResetEmuNvram: cleanup NVRAM variables\n");
+  //DBG("ResetEmuNvram: cleanup NVRAM variables\n");
 
   // TODO: if want to delete more nvram variables like realmac's reset NVRAM, consider it
-  DeleteNvramVariable(L"boot-args",               &gEfiAppleBootGuid);
-  DeleteNvramVariable(L"nvda_drv",                &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"boot-args",               &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"nvda_drv",                &gEfiAppleBootGuid);
 
   // hibernate keys for hibernationfixup
   // delete these keys so that instant reboot does not occur on systems where hibernate is not functioning properly.
-  DeleteNvramVariable(L"Boot0082",                &gEfiGlobalVariableGuid);
-  DeleteNvramVariable(L"BootNext",                &gEfiGlobalVariableGuid);
-  DeleteNvramVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid);
-  DeleteNvramVariable(L"boot-image",              &gEfiAppleBootGuid);
-  DeleteNvramVariable(L"boot-image-key",          &gEfiAppleBootGuid);
-  DeleteNvramVariable(L"boot-signature",          &gEfiAppleBootGuid);
-  DeleteNvramVariable(L"boot-switch-vars",        &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"Boot0082",                &gEfiGlobalVariableGuid);
+  //DeleteNvramVariable(L"BootNext",                &gEfiGlobalVariableGuid);
+  //DeleteNvramVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"boot-image",              &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"boot-image-key",          &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"boot-signature",          &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"boot-switch-vars",        &gEfiAppleBootGuid);
 
   return Status;
 }
@@ -257,7 +257,7 @@ ResetNativeNvram ()
 {
   EFI_STATUS    Status;
 
-  DBG("ResetNativeNvram: cleanup NVRAM variables\n");
+  //DBG("ResetNativeNvram: cleanup NVRAM variables\n");
 
   // TODO: if want to delete more nvram variables like realmac's reset NVRAM, consider it
   //Status = DeleteNvramVariable(L"prev-lang:kbd",          &gEfiAppleBootGuid);

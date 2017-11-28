@@ -6066,10 +6066,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             Status = egLoadFile(Entry->Volume->RootDir, InstallerLog, (UINT8 **)&fileBuffer, &fileLen);
             if (!EFI_ERROR (Status)) {
               targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
-              CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+              CopyMem((VOID*)targetString, (VOID*)fileBuffer, fileLen);
               i = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
               if (i[31] == ' ') {
-                AsciiSPrint(Res1, 5, "%c%c.%c\n", i[27], i[28], i[30]);
+                AsciiSPrint (Res1, 5, "%c%c.%c\n", i[27], i[28], i[30]);
                 OSVersion = AllocateCopyPool (AsciiStrSize (Res1), Res1);
                 if (i[38] == ')') {
                   AsciiSPrint (Res3, 6, "%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37]);
@@ -6079,7 +6079,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
                   Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res4), Res4);
                 }
               } else if (i[31] == '.') {
-                AsciiSPrint(Res2, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
+                AsciiSPrint (Res2, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
                 OSVersion = AllocateCopyPool (AsciiStrSize (Res2), Res2);
                 if (i[40] == ')') {
                   AsciiSPrint (Res3, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
@@ -6139,7 +6139,7 @@ CHAR16
   if (OSVersion == NULL) {
     OSIconName = L"mac";
   } else if (AsciiStrStr (OSVersion, "10.13") != 0) {
-      // High Sierra
+    // High Sierra
     OSIconName = L"hsierra,mac";
   } else if (AsciiStrStr (OSVersion, "10.12") != 0) {
     // Sierra
