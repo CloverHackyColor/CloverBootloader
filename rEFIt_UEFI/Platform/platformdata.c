@@ -1186,6 +1186,7 @@ VOID GetDefaultSettings()
   gSettings.CsrActiveConfig      = 0xFFFF;
   gSettings.BooterConfig         = 0;
   gSettings.DisableCloverHotkeys = FALSE;
+  gSettings.UIScale              = 1;
   
   ResumeFromCoreStorage          = FALSE;
 
