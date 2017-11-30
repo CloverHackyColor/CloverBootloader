@@ -41,7 +41,7 @@
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 EFI_HANDLE              mHandle = NULL;
-EFI_BOOT_SERVICES*			gBS;
+//EFI_BOOT_SERVICES*			gBS;
 
 extern EFI_GUID gEfiAppleBootGuid;
 
@@ -514,7 +514,7 @@ SMCHelperEntrypoint (
 {
   EFI_STATUS					Status; // = EFI_SUCCESS; 
   
-  gBS				= SystemTable->BootServices;
+ // gBS				= SystemTable->BootServices;
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                 &mHandle,

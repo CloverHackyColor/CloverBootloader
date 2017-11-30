@@ -202,7 +202,7 @@ DeleteNvramVariable (
 EFI_STATUS
 ResetEmuNvram ()
 {
-  EFI_STATUS      Status;
+  EFI_STATUS      Status = EFI_NOT_FOUND;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
   EFI_FILE_HANDLE FileHandle;

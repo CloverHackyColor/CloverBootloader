@@ -26,7 +26,7 @@ BOOLEAN     mAtRuntime = FALSE;
 EFI_RUNTIME_SERVICES gOrgRT;
 
 /** Pointer to runtime services. */
-EFI_RUNTIME_SERVICES *gRT;
+//EFI_RUNTIME_SERVICES *gRT;
 
 /** Apple Boot Guid - cars with this GUID are visible in OSX with nvram */
 extern EFI_GUID gEfiAppleBootGuid;
