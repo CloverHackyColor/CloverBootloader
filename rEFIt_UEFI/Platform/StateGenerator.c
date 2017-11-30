@@ -433,8 +433,6 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         } else {
           MsgLog ("SSDT with CPU P-States generated successfully\n");
         }
-      } else if (gSettings.PluginType && gSettings.GeneratePluginType && gSettings.HWP) {
-        MsgLog ("SSDT with plugin-type and HWP without P-States is generated\n");
       } else {
         MsgLog ("SSDT with plugin-type without P-States is generated\n");
       }

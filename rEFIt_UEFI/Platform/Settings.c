@@ -5741,7 +5741,6 @@ GetUserSettings(
       Prop                 = GetProperty (DictPointer, "HWPEnable");
       if (Prop && IsPropertyTrue (Prop)) {
         gSettings.HWP = TRUE;
-        gSettings.GeneratePluginType = TRUE;
         AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
       }
       Prop                 = GetProperty (DictPointer, "HWPValue");
@@ -7152,7 +7151,7 @@ SetFSInjection (
     /*
      From 10.7 to 10.9, status of directly restoring ESD files or update from Appstore cannot block kernel cache. because there are boot.efi and kernelcache file without kernel file.
      After macOS installed, boot.efi can call kernel file from S/L/Kernels.
-     For this reason, long time ago, chameleon's user restored ESD/Base System to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
+     For this reason, long time ago, chameleon's user restored Base System.dmg to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
      From 10.10+, boot.efi call only prelinkedkernel file without kernel file. we can never block only kernelcache.
      The use of these block caches is meaningless in modern macOS. Unlike the old days, we do not have to do the tedious task of putting the files needed for booting into the S/L/E.
      by Sherlocks, 2017.11
