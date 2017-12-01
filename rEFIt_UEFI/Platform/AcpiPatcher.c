@@ -251,7 +251,7 @@ UINT32* ScanRSDT2(UINT32 Signature, UINT64 TableId, INTN MatchIndex)
       continue;
     }
     if (0 == Signature || Table->Signature == Signature) {
-      if ((0 == TableId | Table->OemTableId == TableId) && (IGNORE_INDEX == MatchIndex || MatchingCount == MatchIndex)) {
+      if ((0 == TableId || Table->OemTableId == TableId) && (IGNORE_INDEX == MatchIndex || MatchingCount == MatchIndex)) {
         return Ptr; // pointer to the matching entry
       }
       ++MatchingCount;
@@ -283,7 +283,7 @@ UINT64* ScanXSDT2(UINT32 Signature, UINT64 TableId, INTN MatchIndex)
       continue;
     }
     if (0 == Signature || Table->Signature == Signature) {
-      if ((0 == TableId | Table->OemTableId == TableId) && (IGNORE_INDEX == MatchIndex || MatchingCount == MatchIndex)) {
+      if ((0 == TableId || Table->OemTableId == TableId) && (IGNORE_INDEX == MatchIndex || MatchingCount == MatchIndex)) {
         return Ptr; // pointer to the matching entry
       }
       ++MatchingCount;
@@ -438,7 +438,7 @@ VOID FixAsciiTableHeader(UINT8 *Str, UINTN Len)
   for (; Str < StrEnd; Str++) {
     if (*Str < ' ')
       *Str = ' ';
-    else if (*Str > '0x7E')
+    else if (*Str > '\x7E')
       *Str = '_';
   }
 }
