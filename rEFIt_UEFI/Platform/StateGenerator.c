@@ -422,8 +422,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       ssdt = (SSDT_TABLE *)AllocateZeroPool(root->Size);
       aml_write_node(root, (VOID*)ssdt, 0);
       ssdt->Length = root->Size;
-      ssdt->Checksum = 0;
-      ssdt->Checksum = (UINT8)(256 - Checksum8(ssdt, ssdt->Length));
+      FixChecksum(ssdt);
+      //ssdt->Checksum = 0;
+      //ssdt->Checksum = (UINT8)(256 - Checksum8(ssdt, ssdt->Length));
 
       aml_destroy_node(root);
 
@@ -642,8 +643,9 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   aml_write_node(root, (VOID*)ssdt, 0);
   
   ssdt->Length = root->Size;
-  ssdt->Checksum = 0;
-  ssdt->Checksum = (UINT8)(256 - Checksum8((VOID*)ssdt, ssdt->Length));
+  FixChecksum(ssdt);
+//  ssdt->Checksum = 0;
+//  ssdt->Checksum = (UINT8)(256 - Checksum8((VOID*)ssdt, ssdt->Length));
   
   aml_destroy_node(root);
   

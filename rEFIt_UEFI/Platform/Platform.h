@@ -2036,10 +2036,14 @@ Checksum8 (
   UINT32 len
   );
 
+void FixChecksum(EFI_ACPI_DESCRIPTION_HEADER* Table);
+
+/*
 BOOLEAN
 tableSign (
   CHAR8       *table,
   CONST CHAR8 *sgn);
+ */
 
 VOID
 SaveOemDsdt (
