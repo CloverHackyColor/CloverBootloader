@@ -28,13 +28,13 @@ set -u # exit with error if unbound variables
 # here we can change source versions of tools
 #
 export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.27}
-export GCC_VERSION=${GCC_VERSION:-6.3.0}
+export GCC_VERSION=${GCC_VERSION:-7.2.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.1.2}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.5}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.6}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.0.3}
-export ISL_VERSION=${ISL_VERSION:-isl-0.16.1}
+export ISL_VERSION=${ISL_VERSION:-isl-0.18}
 
 # Change PREFIX if you want gcc and binutils
 # installed on different place
@@ -136,16 +136,16 @@ function mountRamDisk() {
 # Download #
 DownloadSource () {
     cd $DIR_DOWNLOADS
-    if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.bz2 ]]; then
+    if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.bz2 || exit 1
-        mv download.tmp ${GMP_VERSION}.tar.bz2
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.xz || exit 1
+        mv download.tmp ${GMP_VERSION}.tar.xz
     fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.bz2 ]]; then
+    if [[ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.xz ]]; then
         echo "Status: ${MPFR_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.bz2 || exit 1
-        mv download.tmp ${MPFR_VERSION}.tar.bz2
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.xz || exit 1
+        mv download.tmp ${MPFR_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ]]; then
@@ -154,10 +154,10 @@ DownloadSource () {
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.bz2 ]]; then
+    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
         echo "Status: ${ISL_VERSION} not found."
-        curl -o download.tmp --remote-name ftp://gcc.gnu.org/pub/gcc/infrastructure/${ISL_VERSION}.tar.bz2 || exit 1
-        mv download.tmp ${ISL_VERSION}.tar.bz2
+        curl -o download.tmp --remote-name http://isl.gforge.inria.fr/${ISL_VERSION}.tar.xz || exit 1
+        mv download.tmp ${ISL_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
@@ -166,10 +166,10 @@ DownloadSource () {
         mv download.tmp ${BINUTILS_VERSION}.tar.bz2
     fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.bz2 ]]; then
+    if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2 || exit 1
-        mv download.tmp gcc-${GCC_VERSION}.tar.bz2
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        mv download.tmp gcc-${GCC_VERSION}.tar.xz
     fi
 }
 
@@ -234,7 +234,7 @@ CompileLibs () {
         mountRamDisk
 
         # Compile GMP
-        local GMP_DIR=$(ExtractTarball "${GMP_VERSION}.tar.bz2")
+        local GMP_DIR=$(ExtractTarball "${GMP_VERSION}.tar.xz")
 
         rm -rf "${DIR_BUILD}/$ARCH-gmp"
         mkdir -p "${DIR_BUILD}/$ARCH-gmp" && cd "${DIR_BUILD}/$ARCH-gmp"
@@ -253,11 +253,11 @@ CompileLibs () {
         mountRamDisk
 
         # Compile MPFR
-        local MPFR_DIR=$(ExtractTarball "${MPFR_VERSION}.tar.bz2")
+        local MPFR_DIR=$(ExtractTarball "${MPFR_VERSION}.tar.xz")
 
         rm -rf "${DIR_BUILD}/$ARCH-mpfr"
         mkdir -p "${DIR_BUILD}/$ARCH-mpfr" && cd "${DIR_BUILD}/$ARCH-mpfr"
-        curl -L http://www.mpfr.org/mpfr-current/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
+        curl -L http://www.mpfr.org/${MPFR_VERSION}/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
         echo "- ${MPFR_VERSION} configure..."
         "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2>&1
         echo "- ${MPFR_VERSION} make..."
@@ -290,7 +290,7 @@ CompileLibs () {
         mountRamDisk
 
         # Compile ISL
-        local ISL_DIR=$(ExtractTarball "${ISL_VERSION}.tar.bz2")
+        local ISL_DIR=$(ExtractTarball "${ISL_VERSION}.tar.xz")
 
         rm -rf "${DIR_BUILD}/$ARCH-isl"
         mkdir -p "${DIR_BUILD}/$ARCH-isl" && cd "${DIR_BUILD}/$ARCH-isl"
@@ -366,7 +366,7 @@ GCC_native () {
         # Mount RamDisk
         mountRamDisk
 
-        local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.bz2") || exit 1
+        local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.xz") || exit 1
 
         local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-native"
         rm -rf "$BUILD_DIR"
@@ -449,7 +449,7 @@ CompileCrossGCC () {
     # pathmunge $PREFIX/bin
 
     # Extract the tarball
-    local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.bz2")
+    local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.xz")
 
     local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-cross"
     rm -rf "$BUILD_DIR"
@@ -490,8 +490,8 @@ CompileCrossGCC () {
 export TARGET="x86_64-clover-linux-gnu"
 export ARCH="x64"
 export ABI_VER="64"
-echo "- Building GCC toolchain for $ARCH"
-
+echo "- Building GCC $GCC_VERSION toolchain for $ARCH"
+echo "- to $PREFIX/cross/bin/${TARGET}"
 CheckXCode      || exit 1
 
 DownloadSource  || exit 1
