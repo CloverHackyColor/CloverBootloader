@@ -236,8 +236,12 @@ ResetEmuNvram ()
   //DBG("ResetEmuNvram: cleanup NVRAM variables\n");
 
   // TODO: if want to delete more nvram variables like realmac's reset NVRAM, consider it
+  //DeleteNvramVariable(L"prev-lang:kbd",           &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"backlight-level",         &gEfiAppleBootGuid);
   //DeleteNvramVariable(L"boot-args",               &gEfiAppleBootGuid);
   //DeleteNvramVariable(L"nvda_drv",                &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"install-product-url",     &gEfiAppleBootGuid);
+  //DeleteNvramVariable(L"previous-system-uuid",    &gEfiAppleBootGuid);
 
   // hibernate keys for hibernationfixup
   // delete these keys so that instant reboot does not occur on systems where hibernate is not functioning properly.
@@ -264,6 +268,8 @@ ResetNativeNvram ()
   //Status = DeleteNvramVariable(L"backlight-level",        &gEfiAppleBootGuid);
   Status = DeleteNvramVariable(L"boot-args",              &gEfiAppleBootGuid);
   Status = DeleteNvramVariable(L"nvda_drv",               &gEfiAppleBootGuid);
+  Status = DeleteNvramVariable(L"install-product-url",    &gEfiAppleBootGuid);
+  Status = DeleteNvramVariable(L"previous-system-uuid",   &gEfiAppleBootGuid);
 
   return Status;
 }

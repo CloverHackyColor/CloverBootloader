@@ -142,7 +142,6 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   // The variable names used should be made global constants to prevent them being allocated multiple times
 
   UINT32  Attributes;
-//  UINT32  gFwFeaturesMask;
   UINT32  Color;
   CHAR8   *None;
   CHAR8   *NvidiaWebValue;
@@ -151,6 +150,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   UINTN   LangLen;
   CHAR8   *VariablePtr;
   VOID    *OldData;
+  UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
 
   //
   // firmware Variables
@@ -192,7 +192,6 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                    &gFwFeatures);
 
   // Download-Fritz: Should be added to SMBIOS or at least to some other config section
-//  FwFeaturesMask = 0xFFFFFFFF;
   AddNvramVariable(L"FirmwareFeaturesMask",
                    &gEfiAppleNvramGuid,
                    Attributes,
@@ -200,7 +199,6 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                    &gFwFeaturesMask);
 
   // HW_MLB and HW_ROM are also around on some Macs with the same values as MLB and ROM
-
   AddNvramVariable(L"HW_BID", &gEfiAppleNvramGuid, Attributes, AsciiStrLen(gSettings.BoardNumber), gSettings.BoardNumber);
 
 
@@ -234,12 +232,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   None           = "none";
   AddNvramVariable(L"security-mode", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
 
- // AddNvramVariable(L"test_boot_guid", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
- // AddNvramVariable(L"test_nvram_guid", &gEfiAppleNvramGuid, Attributes, 5, (VOID*)None);
+  //AddNvramVariable(L"test_boot_guid", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
+  //AddNvramVariable(L"test_nvram_guid", &gEfiAppleNvramGuid, Attributes, 5, (VOID*)None);
 
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
-
   if (!gSettings.InjectSystemID) {
     if (gSettings.SmUUIDConfig) {
       SetNvramVariable(L"platform-uuid", &gEfiAppleBootGuid, Attributes, 16, &gUuid);
@@ -265,7 +262,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     UINT64 ConfigStatus = 0;
     Color = gSettings.DefaultBackgroundColor;
     AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
-    //add some UI variables
+    // add some UI variables
     AddNvramVariable(L"ActualDensity", &gEfiAppleBootGuid, Attributes, 2, &ActualDensity);
     AddNvramVariable(L"DensityThreshold", &gEfiAppleBootGuid, Attributes, 2, &DensityThreshold);
     AddNvramVariable(L"gfx-saved-config-restore-status", &gEfiAppleNvramGuid, Attributes, 8, &ConfigStatus);
@@ -276,19 +273,21 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   } else {
     SetNvramVariable(L"UIScale", &gEfiAppleNvramGuid, Attributes, 1, &gSettings.UIScale);
   }
+
   if (gSettings.EFILoginHiDPI == 0x80000000) {
     DeleteNvramVariable(L"EFILoginHiDPI", &gEfiAppleBootGuid);
   } else {
     SetNvramVariable(L"EFILoginHiDPI", &gEfiAppleBootGuid, Attributes, 4, &gSettings.EFILoginHiDPI);
   }
-  //->GetVariable(flagstate, gEfiAppleBootGuid, 0/0, 20, 10FE110) = Not Found
+
+  // ->GetVariable(flagstate, gEfiAppleBootGuid, 0/0, 20, 10FE110) = Not Found
   if (gSettings.flagstate[3] == 0x80) {
     DeleteNvramVariable(L"flagstate", &gEfiAppleBootGuid);
   } else {
     SetNvramVariable(L"flagstate", &gEfiAppleBootGuid, Attributes, 32, &gSettings.flagstate);
   }
 
-  //Hack for recovery by Asgorath
+  // Hack for recovery by Asgorath
   if (gSettings.CsrActiveConfig != 0xFFFF) {
     SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.CsrActiveConfig), &gSettings.CsrActiveConfig);
   }
@@ -304,15 +303,15 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
   
-//  if (gSettings.NeverDoRecovery) {
+  //if (gSettings.NeverDoRecovery) {
     DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
-//  } else {
-    //Check for AptioFix2Drv loaded to store efi-boot-device for special boot
+  //} else {
+    // Check for AptioFix2Drv loaded to store efi-boot-device for special boot
     if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded)  {
       EFI_STATUS          Status;
       REFIT_VOLUME *Volume = Entry->Volume;
       EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
-      //We need to remember from which device we boot, to make silence boot while special recovery boot
+      // We need to remember from which device we boot, to make silence boot while special recovery boot
       Status = gRT->SetVariable(L"specialbootdevice", &gEfiAppleBootGuid,
                                 EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 GetDevicePathSize(DevicePath), (UINT8 *)DevicePath);
@@ -320,21 +319,30 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
         DBG("can't set  specialbootdevice!\n");
       }
     }
-    //reboot-boot-mode uses only for special boot, we shouldn't set this variable for statndard recovery boot
+    // reboot-boot-mode uses only for special boot, we shouldn't set this variable for statndard recovery boot
     /*if (Entry->LoaderType == OSTYPE_RECOVERY) {
       CHAR8 *FdeRecovery = "none";
-      //will not change the variable if it is already exists
+      // will not change the variable if it is already exists
       AddNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
     }*/
-//  }
-/*
-  if (0 && Entry->LoaderType == OSTYPE_RECOVERY) { //fixme: Remove "0 &&" when OsxAptioFix can launch nested boot.efi ©vit9696
+  //}
+
+  // fixme: Remove "0 &&" when OsxAptioFix can launch nested boot.efi ©vit9696
+  /*if (0 && Entry->LoaderType == OSTYPE_RECOVERY) {
     CHAR8 *FdeRecovery = "fde-recovery";
     SetNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
   } else {
     DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
+  }*/
+
+  // Sherlocks: to fix "OSInstall.mpkg appears to be missing or damaged" in 10.13, we should remove this variables.
+  if (Entry->LoaderType == OSTYPE_OSX_INSTALLER) {
+    if (os_version > AsciiOSVersionToUint64("10.12")) {
+      DeleteNvramVariable(L"install-product-url",  &gEfiAppleBootGuid);
+      DeleteNvramVariable(L"previous-system-uuid", &gEfiAppleBootGuid);
+    }
   }
-*/  
+
   return EFI_SUCCESS;
 }
 
