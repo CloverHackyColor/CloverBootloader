@@ -74,8 +74,8 @@ typedef struct _pstate {
   UINTN   AttrBlueColor;
   UINTN   AttrGreenColor;
 
-  INTN (*Output) (VOID *context, CHAR16 *str);
-  INTN (*SetAttr) (VOID *context, UINTN attr);
+  EFI_STATUS (EFIAPI *Output) (VOID *context, CHAR16 *str);
+  EFI_STATUS (EFIAPI *SetAttr) (VOID *context, UINTN attr);
   VOID          *Context;
 
   //
@@ -106,7 +106,8 @@ _PPrint (
   IN PRINT_STATE     *ps
   );
 
-INTN
+EFI_STATUS
+EFIAPI
 _SPrint (
   IN VOID     *Context,
   IN CHAR16   *Buffer
@@ -127,8 +128,8 @@ _PoolCatPrint (
   IN CHAR16               *fmt,
   IN VA_LIST              args,
   IN OUT POOL_PRINT       *spc,
-  IN INTN
-    (
+  IN EFI_STATUS
+    (EFIAPI
   *Output)
     (
       VOID *context,
@@ -136,7 +137,8 @@ _PoolCatPrint (
     )
   );
 
-INTN
+EFI_STATUS
+EFIAPI
 _PoolPrint (
   IN VOID     *Context,
   IN CHAR16   *Buffer
@@ -191,13 +193,15 @@ SetCursorPosition (
   IN  UINTN                           Len
   );
 
-INTN
+EFI_STATUS
+EFIAPI
 _DbgOut (
   IN VOID     *Context,
   IN CHAR16   *Buffer
   );
 
-INTN
+EFI_STATUS
+EFIAPI
 _SPrint (
   IN VOID     *Context,
   IN CHAR16   *Buffer
@@ -222,7 +226,7 @@ Returns:
 //  ASSERT (Context != NULL);
 //  ASSERT (Buffer != NULL);
   if (!Context || !Buffer) {
-    return 0;
+    return EFI_SUCCESS;
   }
 
   spc = Context;
@@ -249,7 +253,7 @@ Returns:
     spc->Str[spc->Maxlen] = 0;
   }
 
-  return 0;
+  return EFI_SUCCESS;
 }
 
 VOID
@@ -257,8 +261,8 @@ _PoolCatPrint (
   IN CHAR16               *fmt,
   IN VA_LIST              args,
   IN OUT POOL_PRINT       *spc,
-  IN INTN
-    (
+  IN EFI_STATUS
+    (EFIAPI
   *Output)
     (
       VOID *context,
@@ -401,8 +405,8 @@ Returns:
 
   SetMem (&ps, sizeof (ps), 0);
   ps.Context  = Out;
-  ps.Output   = (INTN (*) (VOID *, CHAR16 *)) Out->OutputString;
-  ps.SetAttr  = (INTN (*) (VOID *, UINTN)) Out->SetAttribute;
+  ps.Output   = (EFI_STATUS (EFIAPI *) (VOID *, CHAR16 *)) Out->OutputString;
+  ps.SetAttr  = (EFI_STATUS (EFIAPI *) (VOID *, UINTN)) Out->SetAttribute;
 //  ASSERT (NULL != Out->Mode);
   if (!Out->Mode) {
     return 0;
@@ -1255,7 +1259,8 @@ SetOutputPause (
   gBS->RestoreTPL (Tpl);
 }
 
-INTN
+EFI_STATUS
+EFIAPI
 _PoolPrint (
   IN VOID     *Context,
   IN CHAR16   *Buffer
@@ -1279,7 +1284,7 @@ Returns:
 
 //  ASSERT (Context != NULL);
   if (!Context) {
-    return 0;
+    return EFI_SUCCESS;
   }
 
   spc     = Context;
