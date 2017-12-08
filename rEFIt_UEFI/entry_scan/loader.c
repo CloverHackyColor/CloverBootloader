@@ -136,6 +136,10 @@ STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
 STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(ANDX86_PATH_DATA));
 #endif
 
+CHAR16  *PaperBoot   = L"\\com.apple.boot.P\\boot.efi";
+CHAR16  *RockBoot    = L"\\com.apple.boot.R\\boot.efi";
+CHAR16  *ScissorBoot = L"\\com.apple.boot.S\\boot.efi";
+
 // OS X installer paths
 STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\Mac OS X Install Data\\boot.efi",
@@ -144,6 +148,7 @@ STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\OS X Install Data\\boot.efi",
   L"\\.IABootFiles\\boot.efi"
 };
+
 STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
 
 STATIC INTN TimeCmp(IN EFI_TIME *Time1,
@@ -188,12 +193,13 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
   }
   if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
     return OSTYPE_OSX;
-  } else if ((StriCmp(Path, L"\\OS X Install Data\\boot.efi") == 0) ||
-             (StriCmp(Path, L"\\Mac OS X Install Data\\boot.efi") == 0) ||
-             (StriCmp(Path, L"\\macOS Install Data\\boot.efi") == 0) ||
-             (StriCmp(Path, L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi") == 0) ||
-             (StriCmp(Path, L"\\com.apple.boot.R\\boot.efi") == 0) ||
-             (StriCmp(Path, L"\\.IABootFiles\\boot.efi") == 0)) {
+  } else if ((StriCmp(Path, OSXInstallerPaths[0]) == 0) ||
+             (StriCmp(Path, OSXInstallerPaths[1]) == 0) ||
+             (StriCmp(Path, OSXInstallerPaths[2]) == 0) ||
+             (StriCmp(Path, OSXInstallerPaths[3]) == 0) ||
+             (StriCmp(Path, OSXInstallerPaths[4]) == 0) ||
+             (StriCmp(Path, RockBoot) == 0) || (StriCmp(Path, PaperBoot) == 0) || (StriCmp(Path, ScissorBoot) == 0)
+             ) {
     return OSTYPE_OSX_INSTALLER;
   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
     return OSTYPE_RECOVERY;
@@ -938,6 +944,36 @@ CHAR16  APFSFVBootPath[75]      = L"\\00000000-0000-0000-0000-000000000000\\Syst
 CHAR16  APFSRecBootPath[47]     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi";
 CHAR16  APFSInstallBootPath[67] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi";
 
+VOID AddPRSEntry(REFIT_VOLUME *Volume)
+{
+  INTN WhatBoot = 0;
+  CONST INTN Paper = 1;
+  CONST INTN Rock = 2;
+  CONST INTN Scissor = 4;
+
+  WhatBoot |= FileExists(Volume->RootDir, RockBoot)?Rock:0;
+  WhatBoot |= FileExists(Volume->RootDir, PaperBoot)?Paper:0;
+  WhatBoot |= FileExists(Volume->RootDir, ScissorBoot)?Scissor:0;
+  switch (WhatBoot) {
+    case Paper:
+    case (Paper | Rock):
+      AddLoaderEntry(PaperBoot, NULL, L"macOS InstallP", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+      break;
+    case Scissor:
+    case (Paper | Scissor):
+      AddLoaderEntry(ScissorBoot, NULL, L"macOS InstallS", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+      break;
+    case Rock:
+    case (Rock | Scissor):
+    case (Rock | Scissor | Paper):
+      AddLoaderEntry(RockBoot, NULL, L"macOS InstallR", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+      break;
+
+    default:
+      break;
+  }
+}
+
 VOID ScanLoader(VOID)
 {
   UINTN         VolumeIndex, Index;
@@ -979,7 +1015,8 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    AddLoaderEntry(L"\\com.apple.boot.R\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+//    AddLoaderEntry(L"\\com.apple.boot.R\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddPRSEntry(Volume);
     AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
 
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
