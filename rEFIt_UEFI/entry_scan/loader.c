@@ -944,12 +944,16 @@ CHAR16  APFSFVBootPath[75]      = L"\\00000000-0000-0000-0000-000000000000\\Syst
 CHAR16  APFSRecBootPath[47]     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi";
 CHAR16  APFSInstallBootPath[67] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi";
 
+#define Paper 1
+#define Rock  2
+#define Scissor 4
+
 VOID AddPRSEntry(REFIT_VOLUME *Volume)
 {
   INTN WhatBoot = 0;
-  CONST INTN Paper = 1;
-  CONST INTN Rock = 2;
-  CONST INTN Scissor = 4;
+//  CONST INTN Paper = 1;
+//  CONST INTN Rock = 2;
+//  CONST INTN Scissor = 4;
 
   WhatBoot |= FileExists(Volume->RootDir, RockBoot)?Rock:0;
   WhatBoot |= FileExists(Volume->RootDir, PaperBoot)?Paper:0;
@@ -973,6 +977,9 @@ VOID AddPRSEntry(REFIT_VOLUME *Volume)
       break;
   }
 }
+#undef Paper
+#undef Rock
+#undef Scissor
 
 VOID ScanLoader(VOID)
 {
