@@ -287,7 +287,7 @@ char *getenv (const char *varname)
 //
 
 /* Write formatted output using a pointer to a list of arguments */
-int vfprintf (FILE *stream, const char *format, VA_LIST arg)
+int vfprintf (FILE *stream, const char *format, va_list arg)
 {
   return 0;
 }

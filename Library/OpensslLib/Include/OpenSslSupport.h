@@ -198,7 +198,7 @@ size_t         fwrite      (const void *, size_t, size_t, FILE *);
 char           *fgets      (char *, int, FILE *);
 int            fputs       (const char *, FILE *);
 int            fprintf     (FILE *, const char *, ...);
-int            vfprintf    (FILE *, const char *, VA_LIST);
+int            vfprintf    (FILE *, const char *, va_list);
 int            fflush      (FILE *);
 int            fclose      (FILE *);
 DIR            *opendir    (const char *);
