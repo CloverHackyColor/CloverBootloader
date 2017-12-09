@@ -1217,9 +1217,13 @@ FSInjectEntrypoint (
     //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");
     // === Fusion Drive ===
     // 10.11
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     // 10.12+
     //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel");
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel");
 
 
     // Block Caches list

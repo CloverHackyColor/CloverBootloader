@@ -6042,6 +6042,12 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
         if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
           InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist";
+          if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+            InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist";
+            if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+              InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist";
+            }
+          }
         }
         if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
           Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
@@ -6049,6 +6055,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             Prop = GetProperty (Dict, "ProductVersion");
             if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
               OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+            }
+            Prop = GetProperty (Dict, "ProductBuildVersion");
+            if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
             }
           }
         } else {
@@ -6207,10 +6217,20 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
   }
 
   SystemPlistP = L"\\com.apple.boot.P\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
-  HasPaper     = FileExists (Volume->RootDir,    SystemPlistP);
+  if (FileExists (Volume->RootDir, SystemPlistP)) {
+    HasPaper     = FileExists (Volume->RootDir,     SystemPlistP);
+  } else {
+    SystemPlistP = L"\\com.apple.boot.P\\com.apple.Boot.plist";
+    HasPaper     = FileExists (Volume->RootDir,     SystemPlistP);
+  }
 
   SystemPlistS = L"\\com.apple.boot.S\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
-  HasScissors  = FileExists (Volume->RootDir,    SystemPlistS);
+  if (FileExists (Volume->RootDir, SystemPlistS)) {
+    HasScissors  = FileExists (Volume->RootDir,     SystemPlistS);
+  } else {
+    SystemPlistS = L"\\com.apple.boot.S\\com.apple.Boot.plist";
+    HasScissors  = FileExists (Volume->RootDir,     SystemPlistS);
+  }
 
   PlistBuffer = NULL;
   // Playing Rock, Paper, Scissors to chose which settings to load.
@@ -7182,9 +7202,13 @@ SetFSInjection (
     //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");
     // === Fusion Drive ===
     // 10.11
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     // 10.12+
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel");
+    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel");
 
 
     // Block Caches list
