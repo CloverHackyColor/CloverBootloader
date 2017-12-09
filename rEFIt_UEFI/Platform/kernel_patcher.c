@@ -1574,6 +1574,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       DBG_RT(Entry, "bootArgs2->flags = 0x%x\n", bootArgs2->flags);
       DBG_RT(Entry, "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
       DBG_RT(Entry, "bootArgs2->bootMemStart = 0x%x\n", bootArgs2->bootMemStart);
+      if (Entry && Entry->KernelAndKextPatches && Entry->KernelAndKextPatches->KPDebug)
       gBS->Stall(2000000);
 
       // disable other pointer
