@@ -549,6 +549,19 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
       OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
 
+    // To display progress bar properly (especially in FV2 mode) boot.efi needs to be in graphics mode.
+    // Unfortunately many UEFI implementations change the resolution when SetMode happens.
+    // This is not what boot.efi expects, and it freely calls SetMode at its will.
+    // As a result we see progress bar at improper resolution and the background is also missing (10.12.x+).
+    //
+    // libeg already has a workaround for SetMode behaviour, so we extend it for boot.efi support.
+    // The approach tries to be  follows:
+    // 1. Ensure we have graphics mode set (since it is a must in the future).
+    // 2. Request text mode for boot.efi, which it expects by default (here a SetMode libeg hack will trigger
+    //    on problematic UEFI implementations like AMI).
+    egSetGraphicsModeEnabled(TRUE);
+    egSetGraphicsModeEnabled(FALSE);
+
     DBG("GetOSVersion:");
 
     //needed for boot.efi patcher

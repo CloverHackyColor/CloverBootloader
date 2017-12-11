@@ -59,21 +59,41 @@ static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 0; //1024;
 static UINTN egScreenHeight = 0; //768;
 
+static BOOLEAN IgnoreConsoleSetMode = FALSE;
+static EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentForcedConsoleMode = EfiConsoleControlScreenText;
 static EFI_CONSOLE_CONTROL_PROTOCOL_GET_MODE ConsoleControlGetMode = NULL;
+static EFI_CONSOLE_CONTROL_PROTOCOL_SET_MODE ConsoleControlSetMode = NULL;
 
 static EFI_STATUS GopSetModeAndReconnectTextOut();
 
 //
-// Null ConsoleControl GetMode() implementation - for blocking resolution switch when using text mode
+// Wrapped ConsoleControl GetMode() implementation - for blocking resolution switch when changing modes
 //
 EFI_STATUS EFIAPI
-NullConsoleControlGetModeText(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, OUT EFI_CONSOLE_CONTROL_SCREEN_MODE *Mode, OUT BOOLEAN *GopUgaExists, OPTIONAL OUT BOOLEAN *StdInLocked OPTIONAL) {
-        *Mode = EfiConsoleControlScreenText;
+egConsoleControlGetMode(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, OUT EFI_CONSOLE_CONTROL_SCREEN_MODE *Mode, OUT BOOLEAN *GopUgaExists, OPTIONAL OUT BOOLEAN *StdInLocked OPTIONAL) {
+    if (IgnoreConsoleSetMode) {
+        *Mode = CurrentForcedConsoleMode;
         if (GopUgaExists)
-                *GopUgaExists = TRUE;
+            *GopUgaExists = TRUE;
         if (StdInLocked)
-                *StdInLocked = FALSE;
+            *StdInLocked = FALSE;
         return EFI_SUCCESS;
+    }
+
+    return ConsoleControlGetMode(This, Mode, GopUgaExists, StdInLocked);
+}
+
+EFI_STATUS EFIAPI
+egConsoleControlSetMode(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, IN EFI_CONSOLE_CONTROL_SCREEN_MODE Mode) {
+    // Pretend that we updated our console mode but do not call SetMode itself to avoid breaking the resolution.
+    // Please note, that it is also relevant for proper boot.efi progress bar rendering with FileVault 2.
+    // See more details in refit/main.c
+    if (IgnoreConsoleSetMode) {
+        CurrentForcedConsoleMode = Mode;
+        return EFI_SUCCESS;
+    }
+
+    return ConsoleControlSetMode(This, Mode);
 }
 
 //
@@ -357,9 +377,12 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     if (EFI_ERROR(Status))
         GraphicsOutput = NULL;
 
-    // store original GetMode
-    if (ConsoleControl != NULL && ConsoleControlGetMode == NULL) {
+    // Wrap GetMode and SetMode
+    if (ConsoleControl != NULL && (ConsoleControlGetMode == NULL || ConsoleControlSetMode == NULL)) {
         ConsoleControlGetMode = ConsoleControl->GetMode;
+        ConsoleControlSetMode = ConsoleControl->SetMode;
+        ConsoleControl->GetMode = egConsoleControlGetMode;
+        ConsoleControl->SetMode = egConsoleControlSetMode;
     }
  
     // if it not the first run, just restore resolution   
@@ -456,8 +479,7 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
     EFI_CONSOLE_CONTROL_SCREEN_MODE NewMode;
 
-    if (ConsoleControl != NULL) {
-    
+    if (ConsoleControl != NULL) {   
         // Some UEFI bioses may cause resolution switch when switching to Text Mode via the ConsoleControl->SetMode command
         // EFI applications wishing to use text, call the ConsoleControl->GetMode() command, and depending on its result may call ConsoleControl->SetMode().
         // To avoid the resolution switch, when we set text mode, we can make ConsoleControl->GetMode report that text mode is enabled.
@@ -469,22 +491,23 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
         if (GraphicsOutput != NULL && StrCmp(gST->FirmwareVendor, L"HPQ") != 0 && StrCmp(gST->FirmwareVendor, L"VMware, Inc.") != 0) {
             if (!Enable) {
                 // Don't allow switching to text mode, but report that we are in text mode when queried
-                ConsoleControl->GetMode = NullConsoleControlGetModeText;
+                CurrentForcedConsoleMode = EfiConsoleControlScreenText;
+                IgnoreConsoleSetMode = TRUE;
                 return;
-            } else if (ConsoleControl->GetMode != ConsoleControlGetMode) {
-                // Allow switching to graphics mode, and use original GetMode function
-                ConsoleControl->GetMode = ConsoleControlGetMode;
             }
+            // Allow mode switching to work normally again
+            IgnoreConsoleSetMode = FALSE;
         }
 
         ConsoleControl->GetMode(ConsoleControl, &CurrentMode, NULL, NULL);
+
         
-		NewMode = Enable ? EfiConsoleControlScreenGraphics : EfiConsoleControlScreenText;
-		
-		if (CurrentMode != NewMode) {
+        NewMode = Enable ? EfiConsoleControlScreenGraphics : EfiConsoleControlScreenText;
+
+        if (CurrentMode != NewMode) {
             ConsoleControl->SetMode(ConsoleControl, NewMode);
+        }
     }
-	}
 }
 
 //
