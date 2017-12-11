@@ -26,6 +26,9 @@ Revision History:
 //#include "TianoDecompress.h"
 #include "../Version.h"
 
+EFILDR_LOADED_IMAGE    DxeCoreImage;
+EFILDR_LOADED_IMAGE    DxeIplImage;
+
 VOID
 SystemHang (
   CHAR8        *Message

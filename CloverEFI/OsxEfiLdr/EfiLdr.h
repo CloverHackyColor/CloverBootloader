@@ -81,8 +81,8 @@ typedef struct {
   BIOS_MEMORY_MAP_ENTRY MemoryMapEntry[1];
 } BIOS_MEMORY_MAP;
 
-EFILDR_LOADED_IMAGE    DxeCoreImage;
-EFILDR_LOADED_IMAGE    DxeIplImage;
+extern EFILDR_LOADED_IMAGE    DxeCoreImage;
+extern EFILDR_LOADED_IMAGE    DxeIplImage;
 
 typedef
 VOID
