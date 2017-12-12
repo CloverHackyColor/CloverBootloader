@@ -732,6 +732,10 @@
 			<string>0x9221</string>
 			<key>#VendorID</key>
 			<string>0x1006</string>
+			<key>#HorizontalSyncPulseWidth</key>
+			<string>0x11</string>
+			<key>#VideoInputSignal</key>
+			<string>0xA1</string>
 		</dict>
 	</dict>
 	<key>KernelAndKextPatches</key>

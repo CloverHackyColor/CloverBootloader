@@ -997,13 +997,14 @@ typedef struct {
   BOOLEAN                 LoadVBios;
   BOOLEAN                 PatchVBios;
   VBIOS_PATCH_BYTES       *PatchVBiosBytes;
-
   UINTN                   PatchVBiosBytesCount;
   BOOLEAN                 InjectEDID;
   BOOLEAN                 LpcTune;
   UINT16                  DropOEM_DSM;
   UINT8                   *CustomEDID;
   UINT16                  CustomEDIDsize;
+  UINT8                   EdidFixHorizontalSyncPulseWidth;
+  UINT8                   EdidFixVideoInputSignal;
 
   CHAR16                  FBName[16];
   UINT16                  VideoPorts;

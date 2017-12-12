@@ -95,9 +95,6 @@ VOID DebugDumpEDID(CONST CHAR8 *Message, INTN N)
   }
 }
 
-// HorizontalSyncPulseWidth: 64 - "HorizontalSyncPulseWidth"
-// VideoInputSignal: 20 - "VideoInputSignal"
-
 //Used at OS start
 // if EFI_SUCCESS then result in gSettings.CustomEDID != NULL
 // first priority is CustomEDID
@@ -139,6 +136,15 @@ EFI_STATUS GetEdidDiscovered(VOID)
       DBG("    ProductID = 0x%04lx changed to 0x%04lx\n", ((UINT16*)gSettings.CustomEDID)[5], gSettings.ProductEDID);
       ((UINT16*)gSettings.CustomEDID)[5] = gSettings.ProductEDID;
     }
+
+    if (gSettings.EdidFixHorizontalSyncPulseWidth) {
+      ((UINT8*)gSettings.CustomEDID)[64] = gSettings.EdidFixHorizontalSyncPulseWidth;
+    }
+
+    if (gSettings.EdidFixVideoInputSignal) {
+      ((UINT8*)gSettings.CustomEDID)[20] = gSettings.EdidFixVideoInputSignal;
+    }
+
 
     ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
     DebugDumpEDID("--- Patched EDID", N);
