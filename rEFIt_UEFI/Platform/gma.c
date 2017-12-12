@@ -38,6 +38,7 @@
  ============== 7th generation ============
  https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/004_ivb_-_2012
  https://applelife.ru/threads/intel-hd-2500-ivybridge-zavod-tolko-hdmi.40629/
+ http://blog.stuffedcow.net/2012/07/intel-hd4000-qeci-acceleration/
  ============== 7.5th generation ==========
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/005_hsw_-_2013/vol04_intel-gfx-prm-osrc-hsw-configurations.pdf
  https://github.com/Igalia/intel-osrc-gfx-prm/tree/master/006_vvw_-_2014
@@ -541,7 +542,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //============== 7th generation ============
   //----------------Ivy Bridge----------------
   //GT1
-  { 0x0152, "Intel HD Graphics 2500"         }, // Desktop - iMac13,1(FB:0x01620006)/iMac13,2(FB:0x01620007)
+  { 0x0152, "Intel HD Graphics 2500"         }, // Desktop - iMac13,x
   { 0x0156, "Intel HD Graphics 2500"         }, // Mobile
   { 0x015A, "Intel HD Graphics 2500"         }, // Server
   { 0x015E, "Intel Ivy Bridge GT1"           }, // Reserved
@@ -1826,7 +1827,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //============== 7th generation ============
       //----------------Ivy Bridge----------------
       //GT1
-    case 0x0152: // "Intel HD Graphics 2500"          // Desktop - iMac13,1(FB:0x01620006)/iMac13,2(FB:0x01620007)
+    case 0x0152: // "Intel HD Graphics 2500"          // Desktop - iMac13,x
     case 0x0156: // "Intel HD Graphics 2500"          // Mobile
     case 0x015A: // "Intel HD Graphics 2500"          // Server
     case 0x015E: // "Intel Ivy Bridge GT1"            // Reserved

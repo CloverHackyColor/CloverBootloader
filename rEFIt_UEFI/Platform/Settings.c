@@ -6701,34 +6701,137 @@ SetDevices (
 
               UINT32 LevelW = 0xC0000000;
               // syscl: set PWMMax base on platform
-              // 10: Sandy/Ivy 0x710
-              // 11: Haswell/Broadwell 0xad9
-              // 12: Skylake/KabyLake 0x56c (and some Haswell, example 0xa2e0008)
+              // Sherlocks: the Xeon CPU of some laptop has built-in graphics. ex. Xeon E3-1505M v5/Xeon E3-1535M
+              // 10: Sandy/Ivy 0x0710
+              // 11: Haswell/Broadwell 0x056c/0x07a1/0x0ad9/0x1499
+              // 12: Skylake/KabyLake 0x056c
               // 99: Other
               UINT32 LevelMaxW = 0;
-                
+
               switch (gCPUStructure.Model) {
-                  case CPU_MODEL_SANDY_BRIDGE:
-                  case CPU_MODEL_IVY_BRIDGE:
-                      LevelMaxW = 0x07100000;
-                      break;
-                      
-                  case CPU_MODEL_HASWELL:
-                  case CPU_MODEL_HASWELL_ULT:
-                  case CPU_MODEL_HASWELL_U5:
-                  case CPU_MODEL_CRYSTALWELL:
-                  case CPU_MODEL_BROADWELL_HQ:
-                      LevelMaxW = (gSettings.IgPlatform != (UINT32)0x0a2e0008) ? 0xad900000 : 0x56c00000;
-                      break;
-                      
-                  case CPU_MODEL_SKYLAKE_U:
-                  case CPU_MODEL_KABYLAKE1:
-                  case CPU_MODEL_KABYLAKE2:
-                      LevelMaxW = 0x56c00000;
-                      break;
-                      
-                  default:
-                      break;
+                case CPU_MODEL_SANDY_BRIDGE:
+                  if (gSettings.IgPlatform) {
+                    switch (gSettings.IgPlatform) {
+                      case (UINT32)0x00030010:
+                      case (UINT32)0x00050000:
+                        break;
+                      default:
+                        LevelMaxW = 0x07100000;
+                        break;
+                    }
+                  } else {
+                    LevelMaxW = 0x07100000;
+                  }
+                  break;
+
+                case CPU_MODEL_IVY_BRIDGE:
+                  LevelMaxW = 0x07100000;
+                  break;
+
+                case CPU_MODEL_HASWELL:
+                case CPU_MODEL_HASWELL_ULT:
+                case CPU_MODEL_CRYSTALWELL:
+                  if (gSettings.IgPlatform) {
+                    switch (gSettings.IgPlatform) {
+                      case (UINT32)0x04060000:
+                      case (UINT32)0x0c060000:
+                      case (UINT32)0x04160000:
+                      case (UINT32)0x0c160000:
+                      case (UINT32)0x04260000:
+                      case (UINT32)0x0c260000:
+                      case (UINT32)0x0d260000:
+                      case (UINT32)0x0d220003:
+                        LevelMaxW = 0x14990000;
+                        break;
+                      case (UINT32)0x0a160000:
+                      case (UINT32)0x0a260000:
+                      case (UINT32)0x0a260005:
+                      case (UINT32)0x0a260006:
+                        LevelMaxW = 0x0ad90000;
+                        break;
+                      case (UINT32)0x0d260007:
+                        LevelMaxW = 0x07a10000;
+                        break;
+                      case (UINT32)0x0a2e0008:
+                        LevelMaxW = 0x056c0000;
+                        break;
+                      case (UINT32)0x04120004:
+                      case (UINT32)0x0412000b:
+                        break;
+                      default:
+                        LevelMaxW = 0x056c0000;
+                        break;
+                    }
+                  } else {
+                    LevelMaxW = 0x056c0000;
+                  }
+                  break;
+
+                case CPU_MODEL_HASWELL_U5:    // Broadwell Mobile
+                case CPU_MODEL_BROADWELL_HQ:
+                  if (gSettings.IgPlatform) {
+                    switch (gSettings.IgPlatform) {
+                      case (UINT32)0x16060000:
+                      case (UINT32)0x160e0000:
+                      case (UINT32)0x16160000:
+                      case (UINT32)0x161e0000:
+                      case (UINT32)0x16220000:
+                      case (UINT32)0x16260000:
+                      case (UINT32)0x162b0000:
+                      case (UINT32)0x16260004:
+                      case (UINT32)0x162b0004:
+                      case (UINT32)0x16220007:
+                      case (UINT32)0x16260008:
+                      case (UINT32)0x162b0008:
+                        LevelMaxW = 0x14990000;
+                        break;
+                      case (UINT32)0x16260005:
+                      case (UINT32)0x16260006:
+                        LevelMaxW = 0x0ad90000;
+                        break;
+                      case (UINT32)0x16120003:
+                        LevelMaxW = 0x07a10000;
+                        break;
+                      case (UINT32)0x160e0001:
+                      case (UINT32)0x161e0001:
+                      case (UINT32)0x16060002:
+                      case (UINT32)0x16160002:
+                      case (UINT32)0x16220002:
+                      case (UINT32)0x16260002:
+                      case (UINT32)0x162b0002:
+                        LevelMaxW = 0x056c0000;
+                        break;
+                      default:
+                        LevelMaxW = 0x056c0000;
+                        break;
+                    }
+                  } else {
+                    LevelMaxW = 0x056c0000;
+                  }
+                  break;
+
+                case CPU_MODEL_SKYLAKE_U:
+                case CPU_MODEL_SKYLAKE_D:
+                  if (gSettings.IgPlatform) {
+                    switch (gSettings.IgPlatform) {
+                      case (UINT32)0x19120001:
+                        break;
+                      default:
+                        LevelMaxW = 0x056c0000;
+                        break;
+                    }
+                  } else {
+                    LevelMaxW = 0x056c0000;
+                  }
+                  break;
+
+                case CPU_MODEL_KABYLAKE1:    // Mobile
+                case CPU_MODEL_KABYLAKE2:    // Desktop
+                  LevelMaxW = 0x056c0000;
+                  break;
+
+                default:
+                  break;
               }
               UINT32 IntelDisable = 0x03;
 
