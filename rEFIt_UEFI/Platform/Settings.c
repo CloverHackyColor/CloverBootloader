@@ -41,7 +41,7 @@ HDA_PROPERTIES                  gAudios[4]; //no more then 4 Audio Controllers
 //SLOT_DEVICE                     Arpt;
 SLOT_DEVICE                     SlotDevices[16]; //assume DEV_XXX, Arpt=6
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
-UINT8                           *gEDID = NULL;
+//UINT8                           *gEDID = NULL;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 //UINT16                          gCPUtype;
 UINTN                           NGFX                        = 0; // number of GFX
@@ -2273,11 +2273,10 @@ GetEDIDSettings(TagPtr DictPointer)
           DBG (" Custom EDID has wrong length=%d\n", j);
         } else {
           DBG (" Custom EDID is ok\n");
+          gSettings.CustomEDIDsize = j;
           InitializeEdidOverride();
         }
-      } else {
-        //DBG (" No Custom EDID\n");
-      }
+      } 
       
       Prop = GetProperty (Dict, "VendorID");
       if (Prop) {
@@ -2379,20 +2378,13 @@ GetEarlyUserSettings (
       }
 
       Prop = GetProperty (DictPointer, "Debug");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.DebugLog       = TRUE;
-      }
+      GlobalConfig.DebugLog       = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "Fast");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.FastBoot       = TRUE;
-        DBG ("Fast option enabled\n");
-      }
+      GlobalConfig.FastBoot       = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "NoEarlyProgress");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.NoEarlyProgress = TRUE;
-      }
+      GlobalConfig.NoEarlyProgress = IsPropertyTrue (Prop);
 
       if (SpecialBootMode) {
         GlobalConfig.FastBoot       = TRUE;
@@ -2400,17 +2392,14 @@ GetEarlyUserSettings (
       }
 
       Prop = GetProperty (DictPointer, "NeverHibernate");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.NeverHibernate = TRUE;
-      }
-      
+      GlobalConfig.NeverHibernate = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "StrictHibernate");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.StrictHibernate = TRUE;
-      }
+      GlobalConfig.StrictHibernate = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "HibernationFixup");
       if (Prop) {
-        GlobalConfig.HibernationFixup = IsPropertyTrue (Prop); //t will be set automatically
+        GlobalConfig.HibernationFixup = IsPropertyTrue (Prop); //it will be set automatically
       }
       
       Prop = GetProperty (DictPointer, "SignatureFixup");
@@ -6600,9 +6589,7 @@ GetDevices ()
 
 
 VOID
-SetDevices (
-            LOADER_ENTRY *Entry
-            )
+SetDevices (LOADER_ENTRY *Entry)
 {
   //  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
   EFI_STATUS          Status;
