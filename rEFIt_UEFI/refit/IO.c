@@ -114,6 +114,7 @@ _SPrint (
   );
 
 UINTN
+EFIAPI
 _IPrint (
   IN UINTN                            Column,
   IN UINTN                            Row,
@@ -124,6 +125,7 @@ _IPrint (
   );
 
 VOID
+EFIAPI
 _PoolCatPrint (
   IN CHAR16               *fmt,
   IN VA_LIST              args,
@@ -257,6 +259,7 @@ Returns:
 }
 
 VOID
+EFIAPI
 _PoolCatPrint (
   IN CHAR16               *fmt,
   IN VA_LIST              args,
@@ -368,6 +371,7 @@ Returns:
 }
 
 UINTN
+EFIAPI
 _IPrint (
   IN UINTN                            Column,
   IN UINTN                            Row,
