@@ -1003,7 +1003,7 @@ typedef struct {
   UINT16                  DropOEM_DSM;
   UINT8                   *CustomEDID;
   UINT16                  CustomEDIDsize;
-  UINT8                   EdidFixHorizontalSyncPulseWidth;
+  UINT16                  EdidFixHorizontalSyncPulseWidth;
   UINT8                   EdidFixVideoInputSignal;
 
   CHAR16                  FBName[16];

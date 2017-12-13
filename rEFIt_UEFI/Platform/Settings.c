@@ -2292,7 +2292,7 @@ GetEDIDSettings(TagPtr DictPointer)
 
       Prop = GetProperty (Dict, "HorizontalSyncPulseWidth");
       if (Prop) {
-        gSettings.EdidFixHorizontalSyncPulseWidth = (UINT8)GetPropertyInteger(Prop, gSettings.EdidFixHorizontalSyncPulseWidth);
+        gSettings.EdidFixHorizontalSyncPulseWidth = (UINT16)GetPropertyInteger(Prop, gSettings.EdidFixHorizontalSyncPulseWidth);
         DBG("  EdidFixHorizontalSyncPulseWidth = 0x%04lx\n", gSettings.EdidFixHorizontalSyncPulseWidth);
       }
 

@@ -138,7 +138,12 @@ EFI_STATUS GetEdidDiscovered(VOID)
     }
 
     if (gSettings.EdidFixHorizontalSyncPulseWidth) {
-      ((UINT8*)gSettings.CustomEDID)[64] = gSettings.EdidFixHorizontalSyncPulseWidth;
+      UINT8 LsBits, MsBits;
+      LsBits = gSettings.EdidFixHorizontalSyncPulseWidth & 0xff;
+      MsBits = (gSettings.EdidFixHorizontalSyncPulseWidth >> 8) & 0x03;
+      ((UINT8*)gSettings.CustomEDID)[63] = LsBits;
+      LsBits = ((UINT8*)gSettings.CustomEDID)[65] & ~0x30;
+      ((UINT8*)gSettings.CustomEDID)[65] = LsBits | (MsBits << 4);
     }
 
     if (gSettings.EdidFixVideoInputSignal) {
