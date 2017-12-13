@@ -6893,15 +6893,17 @@ SetDevices (LOADER_ENTRY *Entry)
                     if (gSettings.IntelMaxValue) {
                       LevelMaxW = gSettings.IntelMaxValue << 16;
                     }
-                    /*Status = */PciIo->Mem.Write(
-                                                  PciIo,
-                                                  EfiPciIoWidthUint32,
-                                                  0,
-                                                  0xC8254,
-                                                  1,
-                                                  &LevelMaxW
-                                                  );
+                    if (LevelMaxW) {
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8254,
+                                                    1,
+                                                    &LevelMaxW
+                                                    );
 
+                    }
                   }
                   if (gSettings.FakeIntel == 0x00008086) {
                     PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x50, 1, &IntelDisable);
