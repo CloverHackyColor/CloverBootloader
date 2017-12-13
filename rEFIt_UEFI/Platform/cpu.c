@@ -510,8 +510,8 @@ VOID GetCPUProperties (VOID)
              gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
              //--- Check if EIST locked
              msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE); //0x1A0
-             MsgLog("MSR 0x1A0             %08x\n", msr);
              if (msr & _Bit(20)) {
+               MsgLog("MSR 0x1A0             %08x\n", msr);
                MsgLog("   EIST is locked and %a\n", (msr & _Bit(16))?"enabled":"disabled");
              }
              msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
@@ -1048,7 +1048,7 @@ VOID GetCPUProperties (VOID)
   tmpU = gCPUStructure.FSBFrequency;
   //  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
-  DBG ("FSBFrequency = %d MHz, DMI FSBFrequency = %d MHz, ", DivU64x32 (tmpU, Mega), DivU64x32 (ExternalClock, kilo));
+  DBG ("FSBFrequency = %d MHz, DMI FSBFrequency = %d MHz, ", DivU64x32 (tmpU + Mega - 1, Mega), DivU64x32 (ExternalClock + 499, kilo));
   //now check if SMBIOS has ExternalClock = 4xBusSpeed
   if ((BusSpeed > 50*kilo) &&
       ((ExternalClock > BusSpeed * 3) || (ExternalClock < 50*kilo))) { //khz
@@ -1134,7 +1134,7 @@ VOID GetCPUProperties (VOID)
   DBG("CPU: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)));
   DBG("TSC: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.TSCFrequency, Mega)));
   DBG("PIS: %d MHz\n", (INT32)gCPUStructure.ProcessorInterconnectSpeed);
-  DBG("ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));  
+  DBG("ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock + 499, kilo)));
   //#if DEBUG_PCI
   
   //  WaitForKeyPress("waiting for key press...\n");

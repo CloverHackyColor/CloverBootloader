@@ -383,6 +383,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
     CHAR8 Mode = SMC_MODE_APPCODE;
     NKey[3] = NumKey & 0xFF;
     NKey[2] = (NumKey >> 8) & 0xFF; //key, size, type, attr
+    DBG("Registered %d SMC keys\n", NumKey);
     Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("#KEY"), 4, SmcKeyTypeUint32, 0xC0);
     if (!EFI_ERROR(Status)) {
       Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("#KEY"), 4, (SMC_DATA *)&NKey);

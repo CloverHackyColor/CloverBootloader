@@ -1863,26 +1863,26 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     return EFI_UNSUPPORTED;
   }
   Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
-  DBG("RSDT 0x%p\n", Rsdt);
+ // DBG("RSDT 0x%p\n", Rsdt);
   rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, 0);
   if(rf) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
-    DBG("FADT from RSDT: 0x%p\n", FadtPointer);
+ //   DBG("FADT from RSDT: 0x%p\n", FadtPointer);
   }
 
   Xsdt = NULL;
   if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1)) {
     Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
-    DBG("XSDT 0x%p\n", Xsdt);
+ //   DBG("XSDT 0x%p\n", Xsdt);
     xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, 0);
     if(xf) {
       //Slice - change priority. First Xsdt, second Rsdt
       if (*xf) {
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
-        DBG("FADT from XSDT: 0x%p\n", FadtPointer);
+ //       DBG("FADT from XSDT: 0x%p\n", FadtPointer);
       } else {
         *xf =  (UINT64)(UINTN)FadtPointer;
-        DBG("reuse FADT\n");
+ //       DBG("reuse FADT\n");  //never happens
       }
     }
   }
