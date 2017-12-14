@@ -8,7 +8,7 @@
 #define DEBUG_EDID DEBUG_ALL
 #endif
 
-#if DEBUG_SET == 0
+#if DEBUG_EDID == 0
 #define DBG(...)
 #else
 #define DBG(...) DebugLog(DEBUG_EDID, __VA_ARGS__)
@@ -122,7 +122,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
       gSettings.CustomEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
       CopyMem(gSettings.CustomEDID, EdidDiscovered->Edid, N);
       DebugDumpEDID("---Discovered EDID Table", N);
-    }
+    } 
   }
 
   if (gSettings.CustomEDID) {
@@ -149,7 +149,6 @@ EFI_STATUS GetEdidDiscovered(VOID)
     if (gSettings.EdidFixVideoInputSignal) {
       ((UINT8*)gSettings.CustomEDID)[20] = gSettings.EdidFixVideoInputSignal;
     }
-
 
     ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
     DebugDumpEDID("--- Patched EDID", N);
