@@ -428,21 +428,26 @@ void DropTableFromXSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
           (!Length || Table->Length == Length))) {
       continue;
     }
+    if (IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
+      DBG(" attempt to drop already merged table[%d]: %a  %a  %d ignored\n", IndexFromXsdtEntryPtr(Ptr), sign, OTID, (INT32)Table->Length);
+      continue;
+    }
     // drop matching table by simply replacing entry with NULL
     WriteUnaligned64(Ptr, 0);
-    DBG(" Table: %a  %a  %d dropped\n", sign, OTID, (INT32)Table->Length);
+    DBG(" Table[%d]: %a  %a  %d dropped\n", IndexFromXsdtEntryPtr(Ptr), sign, OTID, (INT32)Table->Length);
   }
 }
 
 
-// by cecekpawon, edited by Slice
+// by cecekpawon, edited by Slice, further edits by RehabMan
 VOID FixAsciiTableHeader(UINT8 *Str, UINTN Len)
 {
   UINT8* StrEnd = Str + Len;
   for (; Str < StrEnd; Str++) {
+    if (!*Str) continue; // NUL is allowed
     if (*Str < ' ')
       *Str = ' ';
-    else if (*Str > '\x7E')
+    else if (*Str > 0x7e)
       *Str = '_';
   }
 }
@@ -451,7 +456,7 @@ BOOLEAN CheckNonAscii(UINT8 *Str, UINTN Len)
 {
   UINT8* StrEnd = Str + Len;
   for (; Str < StrEnd; Str++) {
-    if (*Str < ' ' || *Str > 0x7F)
+    if (*Str && (*Str < ' ' || *Str > 0x7e))
       return TRUE;
   }
   return FALSE;
@@ -607,7 +612,11 @@ EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
   //if success insert table pointer into ACPI tables
   if(!EFI_ERROR(Status)) {
     //      DBG("page is allocated, write SSDT into\n");
-    CopyMem((VOID*)(UINTN)BufferPtr, TableEntry, Length);
+    EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+    CopyMem(TableHeader, TableEntry, Length);
+    // Now is a good time to fix the table header and checksum
+    PatchTableHeader(TableHeader);
+    FixChecksum(TableHeader);
 
     //insert into RSDT
     if (Rsdt) {
@@ -671,7 +680,11 @@ EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, INTN MatchIndex,
   if(!EFI_ERROR(Status)) {
     Status = EFI_ABORTED;
     //DBG("page is allocated, write SSDT into\n");
-    CopyMem((VOID*)(UINTN)BufferPtr, TableEntry, Length);
+    EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+    CopyMem(TableHeader, TableEntry, Length);
+    // Now is a good time to fix the table header and checksum
+    PatchTableHeader(TableHeader);
+    FixChecksum(TableHeader);
 #if 0 //REVIEW: seems as if Rsdt is always NULL for ReplaceOrInsertTable scenarios (macOS/OS X)
     //insert/modify into RSDT
     if (Rsdt) {
@@ -1703,8 +1716,9 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
 BOOLEAN LoadPatchedAML(CHAR16* AcpiOemPath, CHAR16* PartName, UINTN Pass)
 {
   // pass1 prefilter based on file names (optimization that avoids loading same files twice)
-  UINTN Index = IndexFromFileName(PartName);
+  UINTN Index = IGNORE_INDEX;
   if (AUTOMERGE_PASS1 == Pass) {
+    Index = IndexFromFileName(PartName);
     // gSettings.AutoMerge always true in this case
     // file names such as: ECDT.aml, SSDT-0.aml, SSDT-1-CpuPm.aml, attempt merge on pass1
     // others: no attempt for merge
@@ -1721,15 +1735,12 @@ BOOLEAN LoadPatchedAML(CHAR16* AcpiOemPath, CHAR16* PartName, UINTN Pass)
   UINTN bufferLen = 0;
   EFI_STATUS Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
   if (!EFI_ERROR(Status)) {
-    //before insert we should checksum it
     if (buffer) {
       EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
       if (TableHeader->Length > 500 * kilo) {
         DBG("wrong table\n");
         return FALSE;
       }
-      PatchTableHeader(TableHeader);
-      FixChecksum(TableHeader);
     }
     DBG("size=%lld ", (UINT64)bufferLen);
     if (!gSettings.AutoMerge) {
@@ -1776,7 +1787,12 @@ void LoadAllPatchedAML(CHAR16* AcpiOemPath, UINTN Pass)
           DBG("Inserting table[%d]:%s from %s: ", Index, gSettings.SortedACPI[Index], AcpiOemPath);
           if (LoadPatchedAML(AcpiOemPath, gSettings.SortedACPI[Index], Pass)) {
             // avoid inserting table again on second pass
-            ACPIPatchedAMLTmp->MenuItem.BValue = BVALUE_ATTEMPTED;
+            for (ACPI_PATCHED_AML* temp2 = ACPIPatchedAML; temp2; temp2 = temp2->Next) {
+              if (0 == StriCmp(temp2->FileName, gSettings.SortedACPI[Index])) {
+                temp2->MenuItem.BValue = BVALUE_ATTEMPTED;
+                break;
+              }
+            }
           }
         }
       }
@@ -2344,7 +2360,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
           // insert corrected MADT
         }
 
-        FixChecksum(ApicTable);
         Status = InsertTable(ApicTable, ApicTable->Length);
         if (!EFI_ERROR(Status)) {
           DBG("New APIC table successfully inserted\n");
@@ -2510,12 +2525,9 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *PathPatched,
   Status = LoadAcpiTable(PathPatched, TableName, &Buffer, &BufferLen);
 
   if(!EFI_ERROR(Status)) {
-    //before insert we should checksum it
     if (Buffer) {
-      TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)Buffer;
-      FixChecksum(TableHeader);
-
       // if this is SLIC, then remove previous SLIC if it is there
+      TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)Buffer;
       if (TableHeader->Signature == SLIC_SIGN) {
         DropTableFromXSDT(SLIC_SIGN, 0, 0);
         DropTableFromRSDT(SLIC_SIGN, 0, 0);
