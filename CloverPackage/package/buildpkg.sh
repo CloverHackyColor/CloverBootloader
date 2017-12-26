@@ -839,6 +839,9 @@ if [[ -d "${SRCROOT}"/CloverThemeManager && ${NOEXTRAS} != *"Clover Themes"* ]];
 
     ditto --noextattr --noqtn "$CTM_Dir"  \
      "${PKG_BUILD_DIR}/${choiceId}/Root/${CTM_Dest}"/
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       CloverThemeManager
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     # CloverThemeManager.app can update it-self,
     # so there's no need to record the choice as 'previously selected'.
