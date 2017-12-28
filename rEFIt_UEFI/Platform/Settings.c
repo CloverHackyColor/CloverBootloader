@@ -7112,7 +7112,7 @@ SaveSettings ()
 		
         // for sandy bridge or newer
         // to match ExternalClock 25 MHz like real mac, divide BusSpeed by 4
-        gCPUStructure.ExternalClock = gSettings.BusSpeed / 4;
+        gCPUStructure.ExternalClock = (gSettings.BusSpeed + 3) / 4;
         //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
         break;
     }
@@ -7128,7 +7128,7 @@ SaveSettings ()
   // to determine the use of Table 132
   if (gSettings.QPI) {
     gSettings.SetTable132 = TRUE;
-    DBG ("QPI: use Table 132\n");
+//    DBG ("QPI: use Table 132\n");
   }
   else {
     switch (gCPUStructure.Model) {
