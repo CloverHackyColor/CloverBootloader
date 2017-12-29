@@ -322,7 +322,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
         UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
         if (kextNeedInject) {
           // inject require
-          MsgLog("Extra kext: %s\n", FileName);
+          MsgLog("Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
           AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
 
           // decide which plugins to inject
@@ -332,16 +332,16 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
             UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
             if (plugInNeedInject) {
               // inject PlugIn require
-              MsgLog("  |-- PlugIn kext: %s\n", PlugInName);
+              MsgLog("  |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
               AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
             } else {
-              MsgLog("  |-- Disabled plug-in kext: %s\n", PlugInName);
+              MsgLog("  |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
             }
             CurrentPlugInKext = CurrentPlugInKext->Next;
           } // end of plug-in kext injection
         } else {
           // disable current kext injection
-          MsgLog("Disabled kext: %s\n", FileName);
+          MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
         }
       }
       CurrentKext = CurrentKext->Next;
@@ -371,7 +371,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
         UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
         if (kextNeedInject) {
           // inject require
-          MsgLog("Extra kext: %s\n", FileName);
+          MsgLog("Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
           AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
 
           // decide which plugins to inject
@@ -381,16 +381,16 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
             UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
             if (plugInNeedInject) {
               // inject PlugIn require
-              MsgLog("  |-- PlugIn kext: %s\n", PlugInName);
+              MsgLog("  |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
               AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
             } else {
-              MsgLog("  |-- Disabled plug-in kext: %s\n", PlugInName);
+              MsgLog("  |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
             }
             CurrentPlugInKext = CurrentPlugInKext->Next;
           } // end of plug-in kext injection
         } else {
           // disable current kext injection
-          MsgLog("Disabled kext: %s\n", FileName);
+          MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
         }
       }
       CurrentKext = CurrentKext->Next;
