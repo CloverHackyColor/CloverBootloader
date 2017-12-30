@@ -1370,6 +1370,8 @@ UINT16 GetAdvancedCpuType ()
               return 0xD05;
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m7"))
               return 0xE05;
+            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+              return 0xF01;
             if (gCPUStructure.Cores <= 2) {
               return 0x605;
             }
@@ -1441,7 +1443,7 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_KABYLAKE1:
         DefaultType = MacBookPro111;
         break;
-/*      case CPU_MODEL_HASWELL_U5:               // 5th generation Broadwell
+/*      case CPU_MODEL_HASWELL_U5:  // Broadwell Mobile
         if(AsciiStrStr(gCPUStructure.BrandString, "M")) {
            DefaultType = MacBook81;
            break;

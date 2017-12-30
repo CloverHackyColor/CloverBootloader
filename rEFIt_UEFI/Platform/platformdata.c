@@ -416,6 +416,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "iMac18,3", "IM183.88Z.0151.B00.1708080034", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
+  //iMacPro1,1
+  { "iMacPro1,1", "IMP11.88Z.0064.B30.1712081714", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20GHz
+    "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
+    { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j137", "j137", 0xf07009 }, // need REV rBR ECPI
   //MacPro1,1
   { "MacPro1,1", "MP11.88Z.005C.B08.0707021221", "Mac-F4208DC8", // Intel Xeon X5355 @ 2.66 GHz x2
     "MacPro", "1.0", "W88A77AXUPZ", "Pro-Enclosure",
@@ -622,6 +626,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro143:
       gFwFeatures             = 0xFC0FE13E;
       break;
+    case iMacPro11:
+      gFwFeatures             = 0xFD8FF53E;
+      break;
 
     // Verified list from Users
     case MacBookPro61:
@@ -714,6 +721,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac183:
     case MacPro61:
       gFwFeaturesMask         = 0xFF1FFF3F;
+      break;
+    case iMacPro11:
+      gFwFeaturesMask         = 0xFF9FFF3F;
       break;
 
     // Verified list from Users
@@ -872,6 +882,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
+    case iMacPro11:
       gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
         case iMac161:
@@ -880,6 +891,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
         case iMac181:
         case iMac182:
         case iMac183:
+        case iMacPro11:
           gSettings.Mobile      = FALSE;
           break;
         default:
