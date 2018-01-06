@@ -58,6 +58,7 @@
   X64/AsmFuncsX64.asm | MSFT
 #  X64/AsmFuncsX64.S | GCC
   X64/AsmFuncsX64.nasm | GCC
+  X64/RTShims.nasm
 
 [Guids]
   gEfiFileInfoGuid								## CONSUMES

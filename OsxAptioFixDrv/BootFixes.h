@@ -38,6 +38,16 @@ struct DTMemMapEntry {
 };
 typedef struct DTMemMapEntry DTMemMapEntry;
 
+typedef struct {
+  EFI_PHYSICAL_ADDRESS  PhysicalStart;
+  EFI_MEMORY_TYPE       Type;
+} RT_RELOC_PROTECT_INFO;
+
+typedef struct {
+  UINTN                 NumEntries;
+  RT_RELOC_PROTECT_INFO RelocInfo[50]; // You probably want to adapt this.
+} RT_RELOC_PROTECT_DATA;
+
 
 
 extern EFI_PHYSICAL_ADDRESS gRelocBase;
