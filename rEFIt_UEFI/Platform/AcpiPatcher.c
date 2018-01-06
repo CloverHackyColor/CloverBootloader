@@ -31,7 +31,7 @@ Re-Work by Slice 2011.
 #define APPLE_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
 #define APPLE_CREATOR_ID    { 'L', 'o', 'k', 'i' }
 
-#define IGNORE_INDEX    (-1) // index ignored for matching (not ignored for >= 0)
+#define IGNORE_INDEX    (~((UINTN)0)) // index ignored for matching (not ignored for >= 0)
 #define AUTOMERGE_PASS1 1 // load just those that match existing entries
 #define AUTOMERGE_PASS2 2 // load the rest
 
@@ -234,14 +234,14 @@ BOOLEAN IsXsdtEntryMerged(UINT32 Index)
   return 0 != XsdtReplaceSizes[Index];
 }
 
-UINT32* ScanRSDT2(UINT32 Signature, UINT64 TableId, INTN MatchIndex)
+UINT32* ScanRSDT2(UINT32 Signature, UINT64 TableId, UINTN MatchIndex)
 {
   if (!Rsdt || (0 == Signature && 0 == TableId)) {
     return NULL;
   }
 
   UINT32 Count = RsdtTableCount();
-  INTN MatchingCount = 0;
+  UINTN MatchingCount = 0;
   UINT32* Ptr = RsdtEntryPtrFromIndex(0);
   UINT32* EndPtr = RsdtEntryPtrFromIndex(Count);
   for (; Ptr < EndPtr; Ptr++) {
@@ -266,14 +266,14 @@ UINT32* ScanRSDT(UINT32 Signature, UINT64 TableId)
   return ScanRSDT2(Signature, TableId, IGNORE_INDEX);
 }
 
-UINT64* ScanXSDT2(UINT32 Signature, UINT64 TableId, INTN MatchIndex)
+UINT64* ScanXSDT2(UINT32 Signature, UINT64 TableId, UINTN MatchIndex)
 {
   if (!Xsdt || (0 == Signature && 0 == TableId)) {
     return NULL;
   }
 
   UINT32 Count = XsdtTableCount();
-  INTN MatchingCount = 0;
+  UINTN MatchingCount = 0;
   UINT64* Ptr = XsdtEntryPtrFromIndex(0);
   UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
   for (; Ptr < EndPtr; Ptr++) {
@@ -636,13 +636,13 @@ EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
   return Status;
 }
 
-INTN IndexFromFileName(CHAR16* FileName)
+UINTN IndexFromFileName(CHAR16* FileName)
 {
   // FileName must be as "XXXX-number-..." or "XXXX-number.aml", such as "SSDT-9.aml", or "SSDT-11-SaSsdt.aml"
   // But just checking for '-' or '.' following the number.
 
   // search for '-'
-  INTN Result = IGNORE_INDEX;
+  UINTN Result = IGNORE_INDEX;
   CHAR16* temp = FileName;
   for (; *temp != 0 && *temp != '-'; temp++);
   if ('-' == *temp && 4 == temp-FileName) {
@@ -661,7 +661,7 @@ INTN IndexFromFileName(CHAR16* FileName)
   return Result;
 }
 
-EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, INTN MatchIndex, INTN Pass)
+EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, UINTN MatchIndex, INTN Pass)
 {
   if (!TableEntry) {
     return EFI_NOT_FOUND;
@@ -760,7 +760,7 @@ void PreCleanupRSDT()
     if (0 == Ptr[0] && 0 == Ptr[1]) {
       // double zero found, terminate RSDT entry table here
       DBG("DoubleZero in RSDT table\n");
-      Rsdt->Header.Length = (CHAR8*)Ptr - (CHAR8*)Rsdt;
+      Rsdt->Header.Length = (UINT32)((CHAR8*)Ptr - (CHAR8*)Rsdt);
       break;
     }
   }
@@ -788,7 +788,7 @@ void PostCleanupRSDT()
     *Dest++ = *Source++;
   }
   // fix header length
-  Rsdt->Header.Length = (CHAR8*)Dest - (CHAR8*)Rsdt;
+  Rsdt->Header.Length = (UINT32)((CHAR8*)Dest - (CHAR8*)Rsdt);
   Count = RsdtTableCount();
   DBG("corrected RSDT: count=%d, length=%d\n", Count, (UINT32)Rsdt->Header.Length);
   FixChecksum(&Rsdt->Header);
@@ -813,7 +813,7 @@ void PreCleanupXSDT()
     if (0 == ReadUnaligned64(Ptr+0) && 0 == ReadUnaligned64(Ptr+1)) {
       // double zero found, terminate XSDT entry table here
       DBG("DoubleZero in XSDT table\n");
-      Xsdt->Header.Length = (CHAR8*)Ptr - (CHAR8*)Xsdt;
+      Xsdt->Header.Length = (UINT32)((CHAR8*)Ptr - (CHAR8*)Xsdt);
       break;
     }
   }
@@ -841,7 +841,7 @@ void PostCleanupXSDT()
     WriteUnaligned64(Dest++, ReadUnaligned64(Source++));
   }
   // fix header length
-  Xsdt->Header.Length = (CHAR8*)Dest - (CHAR8*)Xsdt;
+  Xsdt->Header.Length = (UINT32)((CHAR8*)Dest - (CHAR8*)Xsdt);
   Count = XsdtTableCount();
   DBG("corrected XSDT count=%d, length=%d\n", Count, (UINT32)Xsdt->Header.Length);
   FixChecksum(&Xsdt->Header);
@@ -957,7 +957,7 @@ STATIC UINT8 NameCSDT2[] = {0x80, 0x43, 0x53, 0x44, 0x54};
 
 //UINT32 get_size(UINT8 * An, UINT32 ); // Let borrow from FixBiosDsdt.
 
-static CHAR16* GenerateFileName(CHAR16* FileNamePrefix, INTN SsdtCount, INTN ChildCount, CHAR8 OemTableId[9])
+static CHAR16* GenerateFileName(CHAR16* FileNamePrefix, UINTN SsdtCount, UINTN ChildCount, CHAR8 OemTableId[9])
 // ChildCount == IGNORE_INDEX indicates normal SSDT
 // SsdtCount == IGNORE_INDEX indicates dynamic SSDT in DSDT
 // otherwise is child SSDT from normal SSDT

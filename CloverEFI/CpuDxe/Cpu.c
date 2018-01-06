@@ -1100,8 +1100,10 @@ TimerHandler (
   }
 }
 
-#pragma GCC push_options
-#pragma GCC optimize("O2")
+#if defined(__GNUC__)
+# pragma GCC push_options
+# pragma GCC optimize("O2")
+#endif
 
 EFI_STATUS
 EFIAPI
@@ -1213,7 +1215,9 @@ Returns:
   return Status;
 }
 
-#pragma GCC pop_options
+#if defined(__GNUC__)
+# pragma GCC pop_options
+#endif
 
 VOID
 InitializeBiosIntCaller (

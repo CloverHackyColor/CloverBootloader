@@ -2273,7 +2273,7 @@ GetEDIDSettings(TagPtr DictPointer)
           DBG (" Custom EDID has wrong length=%d\n", j);
         } else {
           DBG (" Custom EDID is ok\n");
-          gSettings.CustomEDIDsize = j;
+          gSettings.CustomEDIDsize = (UINT16)j;
           InitializeEdidOverride();
         }
       } 

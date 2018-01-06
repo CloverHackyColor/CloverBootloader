@@ -650,7 +650,7 @@ VOID GetCPUProperties (VOID)
   
   else if(gCPUStructure.Vendor == CPU_VENDOR_AMD ) {
     
-    UINT64 cpudid_zen = 0x17;
+    UINT32 cpudid_zen = 0x17;
     INTN  currcoef = 0;
     INTN  cpuMultN2 = 0;
     INTN  currdiv = 0;
@@ -712,7 +712,7 @@ VOID GetCPUProperties (VOID)
         
         
         msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
-        cpudid_zen = bitfield(msr_min, 6 , 4);
+        cpudid_zen = (UINT32)bitfield(msr_min, 6 , 4);
         msr_min = AsmReadMsr64(K10_PSTATE_STATUS + cpudid_zen);
         gCPUStructure.MinRatio = 5 * (UINT32)DivU64(((msr_min & 0x3f) + 0x08), LShiftU64(1ULL, ((RShiftU64(msr_min, 6) & 0x7))));
         
@@ -948,7 +948,7 @@ VOID GetCPUProperties (VOID)
         
         cpuMultN2 = (cofvid & (UINT64)bit(0));
         currdiv = cpuMultN2;
-        cpudid_zen = RShiftU64(cofvid, 8) & 0xff; //for mult
+        cpudid_zen = (UINT32)(RShiftU64(cofvid, 8) & 0xff); //for mult
         
         /////// Addon END ///////
       }
