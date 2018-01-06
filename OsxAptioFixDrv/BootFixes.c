@@ -43,6 +43,7 @@
 #endif
 
 VOID *RTShims;
+BOOLEAN gRTShimsAddrUpdated = FALSE;
 
 // buffer and size for original kernel entry code
 UINT8 gOrigKernelCode[32];
@@ -370,72 +371,90 @@ CopyEfiSysTableToSeparateRtDataArea(
 	
 	*EfiSystemTable = (UINT32)(UINTN)Dest;
 }
-extern VOID *RTShims;
+
+VOID
+VirtualizeRTShimPointers (UINTN MemoryMapSize, UINTN DescriptorSize, EFI_MEMORY_DESCRIPTOR	*MemoryMap)
+{
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	UINTN Index;
+
+	BOOLEAN SetVarFixed;
+	BOOLEAN GetVarFixed;
+	BOOLEAN GetNextVarFixed;
+
+	UINTN *GetVar;
+	UINTN *SetVar;
+	UINTN *GetNextVarName;
+
+	// Are we already done?
+	if (gRTShimsAddrUpdated)
+		return;
+
+	Desc = MemoryMap;
+
+	SetVarFixed = FALSE;
+	GetVarFixed = FALSE;
+	GetNextVarFixed = FALSE;
+
+	//
+	// Somehow the virtual address change event did not fire...
+	//
+	GetVar         = (UINTN *)((UINTN)RTShims + ((UINTN)&gGetVariable         - (UINTN)&gRTShimsDataStart));
+	SetVar         = (UINTN *)((UINTN)RTShims + ((UINTN)&gSetVariable         - (UINTN)&gRTShimsDataStart));
+	GetNextVarName = (UINTN *)((UINTN)RTShims + ((UINTN)&gGetNextVariableName - (UINTN)&gRTShimsDataStart));
+
+	for (Index = 0; Index < (MemoryMapSize / DescriptorSize); ++Index) {
+		if (gGetVariable >= Desc->PhysicalStart && gGetVariable < Desc->PhysicalStart + EFI_PAGES_TO_SIZE (Desc->NumberOfPages)) {
+			*GetVar += (Desc->VirtualStart - Desc->PhysicalStart);
+			GetVarFixed = TRUE;
+		}
+
+		if (gSetVariable >= Desc->PhysicalStart && gSetVariable < Desc->PhysicalStart + EFI_PAGES_TO_SIZE (Desc->NumberOfPages)) {
+			*SetVar += (Desc->VirtualStart - Desc->PhysicalStart);
+			SetVarFixed = TRUE;
+		}
+
+		if (gGetNextVariableName >= Desc->PhysicalStart && gGetNextVariableName < Desc->PhysicalStart + EFI_PAGES_TO_SIZE (Desc->NumberOfPages)) {
+			*GetNextVarName += (Desc->VirtualStart - Desc->PhysicalStart);
+			GetNextVarFixed = TRUE;
+		}
+
+		if (SetVarFixed && GetVarFixed && GetNextVarFixed)
+			break;
+
+		Desc = NEXT_MEMORY_DESCRIPTOR (Desc, DescriptorSize);
+	}
+
+
+	gRTShimsAddrUpdated = TRUE;
+}
 
 VOID
 RestoreRtDataProtectMemTypes (UINTN MemoryMapSize, UINTN DescriptorSize, EFI_MEMORY_DESCRIPTOR	*MemoryMap)
 {
-  EFI_MEMORY_DESCRIPTOR	*Desc;
-  UINTN Index;
-  UINTN Index2;
-  UINTN NumEntriesLeft;
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	UINTN Index;
+	UINTN Index2;
+	UINTN NumEntriesLeft;
 
-  BOOLEAN SetVarFixed;
-  BOOLEAN GetVarFixed;
-  BOOLEAN GetNextVarFixed;
+	NumEntriesLeft = gRelocInfoData.NumEntries;
+	Desc = MemoryMap;
 
-  UINTN *GetVar;
-  UINTN *SetVar;
-  UINTN *GetNextVarName;
+	if (NumEntriesLeft > 0) {
+		for (Index = 0; Index < (MemoryMapSize / DescriptorSize); ++Index) {
+			if (NumEntriesLeft > 0) {
+				for (Index2 = 0; Index2 < gRelocInfoData.NumEntries; ++Index2) {
+					if (Desc->PhysicalStart == gRelocInfoData.RelocInfo[Index2].PhysicalStart) {
+						Desc->Type = gRelocInfoData.RelocInfo[Index2].Type;
+						--NumEntriesLeft;
+					}
+				}
+			}
 
-  SetVarFixed     = FALSE;
-  GetVarFixed     = FALSE;
-  GetNextVarFixed = FALSE;
-
-  NumEntriesLeft = gRelocInfoData.NumEntries;
-  Desc = MemoryMap;
-
-  //
-  // Somehow the virtual address change event did not fire...
-  //
-  GetVar         = (UINTN *)((UINTN)RTShims + ((UINTN)&gGetVariable         - (UINTN)&gRTShimsDataStart));
-  SetVar         = (UINTN *)((UINTN)RTShims + ((UINTN)&gSetVariable         - (UINTN)&gRTShimsDataStart));
-  GetNextVarName = (UINTN *)((UINTN)RTShims + ((UINTN)&gGetNextVariableName - (UINTN)&gRTShimsDataStart));
-
-  if (NumEntriesLeft > 0) {
-    for (Index = 0; Index < (MemoryMapSize / DescriptorSize); ++Index) {
-      if (gGetVariable >= Desc->PhysicalStart && gGetVariable < Desc->PhysicalStart + EFI_PAGES_TO_SIZE (Desc->NumberOfPages)) {
-        *GetVar += (Desc->VirtualStart - Desc->PhysicalStart);
-        GetVarFixed = TRUE;
-      }
-      
-      if (gSetVariable >= Desc->PhysicalStart && gSetVariable < Desc->PhysicalStart + EFI_PAGES_TO_SIZE (Desc->NumberOfPages)) {
-        *SetVar += (Desc->VirtualStart - Desc->PhysicalStart);
-        SetVarFixed = TRUE;
-      }
-
-      if (gGetNextVariableName >= Desc->PhysicalStart && gGetNextVariableName < Desc->PhysicalStart + EFI_PAGES_TO_SIZE (Desc->NumberOfPages)) {
-        *GetNextVarName += (Desc->VirtualStart - Desc->PhysicalStart);
-        GetNextVarFixed = TRUE;
-      }
-
-      if (NumEntriesLeft > 0) {
-        for (Index2 = 0; Index2 < gRelocInfoData.NumEntries; ++Index2) {
-          if (Desc->PhysicalStart == gRelocInfoData.RelocInfo[Index2].PhysicalStart) {
-            Desc->Type = gRelocInfoData.RelocInfo[Index2].Type;
-            --NumEntriesLeft;
-          }
-        }
-      } else if (SetVarFixed && GetVarFixed && GetNextVarFixed) {
-        break;
-      }
-
-      Desc = NEXT_MEMORY_DESCRIPTOR (Desc, DescriptorSize);
-    }
-  }
+			Desc = NEXT_MEMORY_DESCRIPTOR (Desc, DescriptorSize);
+		}
+	}
 }
-
-extern VOID *RTShims;
 
 /** Protect RT data from relocation by marking them MemMapIO. Except area with EFI system table.
  *  This one must be relocated into kernel boot image or kernel will crash (kernel accesses it
@@ -641,7 +660,7 @@ RuntimeServicesFix(BootArgs *BA)
 	*BA->efiRuntimeServicesVirtualPageStart = 0x000ffffff8000000 + *BA->efiRuntimeServicesPageStart;
 	DBG("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
 		*BA->efiRuntimeServicesPageStart, *BA->efiRuntimeServicesPageCount, *BA->efiRuntimeServicesVirtualPageStart);
-	
+
 	// Protect RT data areas from relocation by marking then MemMapIO
 	ProtectRtDataFromRelocation(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
 	
@@ -666,8 +685,10 @@ RuntimeServicesFix(BootArgs *BA)
 	// and defragment
 	DefragmentRuntimeServices(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap, BA->efiSystemTable, FALSE);
 
-  // Uncomment to add support to AptioFix non-2. Remember you need to set up the RTShims too.
- // RestoreRtDataProtectMemTypes (MemoryMapSize, DescriptorSize, MemoryMap);
+	// For AptioFix V1 we correct the pointers right before kernel start.
+	VirtualizeRTShimPointers (MemoryMapSize, DescriptorSize, MemoryMap);
+
+	RestoreRtDataProtectMemTypes (MemoryMapSize, DescriptorSize, MemoryMap);
 }
 
 /** DevTree contains /chosen/memory-map with properties with 8 byte values
@@ -942,7 +963,9 @@ FixBootingWithoutRelocBlock(UINTN bootArgs, BOOLEAN ModeX64)
 	MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)(*BA->MemoryMap);
 	DescriptorSize = *BA->MemoryMapDescriptorSize;
 
-  RestoreRtDataProtectMemTypes (MemoryMapSize, DescriptorSize, MemoryMap);
+	// It is particularly important to restore EfiRuntimeServicesCode memory areas,
+	// because otherwise RuntimeServices won't be executable.
+	RestoreRtDataProtectMemTypes (MemoryMapSize, DescriptorSize, MemoryMap);
 	
 	// Restore original kernel entry code
 	CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)gOrigKernelCode, gOrigKernelCodeSize);
@@ -961,7 +984,7 @@ FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64)
 {
 	IOHibernateImageHeader		*ImageHeader;
 	IOHibernateHandoff			*Handoff;
-	
+
 	ImageHeader = (IOHibernateImageHeader *)(UINTN)(imageHeaderPage << EFI_PAGE_SHIFT);
 	
 	// Pass our relocated copy of system table
@@ -983,7 +1006,13 @@ FixHibernateWakeWithoutRelocBlock(UINTN imageHeaderPage, BOOLEAN ModeX64)
 	// boot.efi zeroed original RT areas, but we need to return them back
 	// to fix sleep on some UEFIs
 	//ReturnPreviousRTAreasContent(0, NULL);
-	
+
+	// Normally we should be required to restore MemoryMap types here by calling RestoreRtDataProtectMemTypes.
+	// This makes sense, because EfiRuntimeServicesCode must be executable and not MMIO.
+	// Yet because the code above disables MemoryMap handoff, XNU will not be able to change the memory mapping.
+	// This theoretically results in random memory corruptions (because memory mapping may change across the boots),
+	// but in practice it appears to work for most people.
+
 	// Restore original kernel entry code
 	CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)gOrigKernelCode, gOrigKernelCodeSize);
 	

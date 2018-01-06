@@ -73,6 +73,7 @@ ExecSetVirtualAddressesToMemMap(
                                 );
 VOID
 CopyEfiSysTableToSeparateRtDataArea(IN OUT UINT32	*EfiSystemTable);
+
 VOID
 ProtectRtDataFromRelocation(
                             IN UINTN		MemoryMapSize,
@@ -80,6 +81,10 @@ ProtectRtDataFromRelocation(
                             IN UINT32		DescriptorVersion,
                             IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
                             );
+
+VOID
+VirtualizeRTShimPointers (UINTN MemoryMapSize, UINTN DescriptorSize, EFI_MEMORY_DESCRIPTOR  *MemoryMap);
+
 VOID
 DefragmentRuntimeServices(
 						  IN UINTN			MemoryMapSize,

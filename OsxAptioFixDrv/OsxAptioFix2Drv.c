@@ -388,6 +388,9 @@ OvrSetVirtualAddressMap(
                             NULL,
                             gHibernateWake ? FALSE : TRUE
                             );
+
+  // For AptioFix V2 we can correct the pointers earlier
+  VirtualizeRTShimPointers(MemoryMapSize, DescriptorSize, VirtualMap);
   
   return Status;
 }
