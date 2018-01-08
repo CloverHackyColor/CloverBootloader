@@ -411,7 +411,7 @@ rem # drop compiled files to EFI folder
   set SIGNTOOL=%CURRENTDIR%\SignTool\SignTool
   set BUILD_DIR=%WORKSPACE%\Build\Clover\%BUILDTARGET%_%TOOLCHAIN%
   set DEST_DIR=%CURRENTDIR%\CloverPackage\CloverV2
-  set BOOTSECTOR_BIN_DIR=%CURRENTDIR%\BootSector\bin
+  set BOOTSECTOR_BIN_DIR=%CURRENTDIR%\CloverEFI\BootSector\bin
   set BUILD_DIR_ARCH=%BUILD_DIR%\%TARGETARCH%
 
   set TARGETARCH_INT=%TARGETARCH%
@@ -541,8 +541,7 @@ rem # drop compiled files to EFI folder
     copy /B /Y "%BOOTSECTOR_BIN_DIR%\%startBlock%"+"%BOOTSECTOR_BIN_DIR%\efi%TARGETARCH_INT%.com3"+"%BUILD_DIR%\FV\Efildr%TARGETARCH_INT%" "%GENLDR%">nul
     set GEN64=-o "%BUILD_DIR%\FV\Efildr20"
     if not ["%USE_LOW_EBDA%"] == ["0"] set GEN64= -b 0x88000 -f 0x68000 %GEN64%
-    set GEN64=GenPage "%GENLDR%" %GEN64%
-    %GEN64%
+    GenPage "%GENLDR%" %GEN64%
   Endlocal
 
   Split -f "%BUILD_DIR%\FV\Efildr20" -p %BUILD_DIR%\FV\ -o Efildr20.1 -t boot%TARGETARCH_INT% -s 512

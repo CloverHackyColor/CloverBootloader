@@ -83,52 +83,8 @@ void* lodepng_realloc(void* ptr, size_t new_size)
   return new_p+1;
 }
 
-#if defined(_MSC_VER)
-// Internal memset and memcpy implementations
-void *memcpy(void* dst, void* src, size_t size) {
-    gBS->CopyMem(dst, src, size);
-    return dst;
-}
-
-void * memset(void *str, unsigned char c, size_t n) {
-    gBS->SetMem(str, n, c);
-    return str;
-}
-
-#if defined(MDE_CPU_IA32)
-// Copied from microsoft research
-void _allshl(void)
-{
-    __asm {
-// Handle shifts of 64 or more bits (all get 0)
-        cmp     cl, 64
-        jae     short RETZERO
-// Handle shifts of between 0 and 31 bits
-        cmp     cl, 32
-        jae     short MORE32
-        shld    edx,eax,cl
-        shl     eax,cl
-        ret
-// Handle shifts of between 32 and 63 bits
-MORE32:
-        mov     edx,eax
-        xor     eax,eax
-        and     cl,31
-        shl     edx,cl
-        ret
-// return 0 in edx:eax
-RETZERO:
-        xor     eax,eax
-        xor     edx,edx
-        ret
-    }
-}
-#endif
-#else
 #define memcpy(dest,source,count) gBS->CopyMem(dest,source,(UINTN)(count))
 #define memset(dest,ch,count)     gBS->SetMem(dest,(UINTN)(count),(UINT8)(ch))
-#endif
-
 
 
 //MODSNI ^
