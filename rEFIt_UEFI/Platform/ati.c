@@ -385,7 +385,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6862,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
   { 0x6863,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega Frontier",  kNull },
   { 0x6864,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
-  { 0x6867,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
+  { 0x6867,  CHIP_FAMILY_VEGA10, "AMD Radeon Pro Vega 56",    kNull },
   { 0x6868,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
   { 0x686C,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 10",        kNull },
   { 0x687F,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 64",        kNull },
@@ -488,6 +488,8 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6987,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
   { 0x6995,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
   { 0x699F,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",        kNull },
+
+  { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",        kNull },
 
   /*
    6900 Topaz XT [Radeon R7 M260/M265]
