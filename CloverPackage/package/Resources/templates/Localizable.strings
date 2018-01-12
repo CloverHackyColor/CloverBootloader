@@ -111,7 +111,6 @@ Use it only if you have a problem without it";
 "HashServiceFix-64_description" = "Fix Hash support if absent in native UEFI BIOS";
 "UsbKbDxe-64_description" = "Keyboard driver for boot UI support";
 "AppleGraphicsConfig-64_description" = "Create optional AppleGraphicsConfig protocol";
-"OSInfo-64_description" = "Inform user about version of macOS (optional)";
        
 
 // ============================================================================

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-02 07:19+0300\n"
+"POT-Creation-Date: 2018-01-12 22:43+0300\n"
 "PO-Revision-Date: 2014-07-20 16:27+0000\n"
 "Last-Translator: kantok <somech_08013@yahoo.co.jp>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -636,32 +636,26 @@ msgstr ""
 msgid "Create optional AppleGraphicsConfig protocol"
 msgstr ""
 
-#. type: "OSInfo-64_description"
-#: Resources/templates/Localizable.strings:114
-#, no-wrap
-msgid "Inform user about version of macOS (optional)"
-msgstr ""
-
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:121
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "Themes"
 msgstr "テーマ"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Select to install themes."
 msgstr "テーマを選択。"
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -671,13 +665,13 @@ msgstr ""
 "/EFI/CLOVER/themes/BGMにインストール"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "embedded"
 msgstr ""
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:128
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
@@ -690,13 +684,13 @@ msgstr ""
 "/EFI/CLOVER/themes/black_greenにインストール"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -706,13 +700,13 @@ msgstr ""
 "/EFI/CLOVER/themes/metalにインストール"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "random"
 msgstr ""
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:136
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Orange theme from dwm,\n"
@@ -725,13 +719,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orangeにインストール"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "steampunkblack"
 msgstr ""
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:140
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Bootcamp theme from Bijo,\n"
@@ -744,14 +738,14 @@ msgstr ""
 "/EFI/CLOVER/themes/bootcampにインストール"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:143
 #, fuzzy, no-wrap
 #| msgid "Clover Theme"
 msgid "CloverThemeManager.app"
 msgstr "Clover テーマ"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:145
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -760,13 +754,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RCスクリプトをターゲットボリュームにインストール"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -776,37 +770,37 @@ msgstr ""
 "ターゲットボリュームは起動可能なOSXシステムボリュームであることが必要。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RCスクリプトを他のすべてのOSXボリュームにインストール"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "オプションのRCスクリプト"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:157
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover環境設定をインストール"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
