@@ -4653,7 +4653,7 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
   REFIT_INPUT_DIALOG  *InputBootArgs;
   UINT32              DevAddr, OldDevAddr = 0;
     
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properies->");
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->");
   
   if (gSettings.ArbProperties) {
     DEV_PROPERTY *Prop = gSettings.ArbProperties;
