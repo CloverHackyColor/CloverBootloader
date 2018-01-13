@@ -201,7 +201,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x665D,  CHIP_FAMILY_BONAIRE, "AMD Radeon R9 260",        kFutomaki   },
   { 0x665F,  CHIP_FAMILY_BONAIRE, "AMD Radeon R9 360",        kFutomaki   },
   // HAINAN - Southand Island
-  { 0x6660,  CHIP_FAMILY_HAINAN,  "AMD Radeon HD 8670M",      kNull       }, // Mobile
+  { 0x6660,  CHIP_FAMILY_HAINAN,  "AMD Radeon HD 8670M",      kNull       }, // Mobile R5 M330 in Lenovo
   { 0x6663,  CHIP_FAMILY_HAINAN,  "AMD Radeon HD 8570M",      kNull       }, // Mobile
   { 0x6664,  CHIP_FAMILY_HAINAN,  "AMD Radeon R5 M240",       kNull       }, // Mobile
   { 0x6665,  CHIP_FAMILY_HAINAN,  "AMD Radeon R5 M230",       kNull       }, // Mobile
@@ -318,7 +318,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67E8,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E9,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EB,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
-  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 460",             kAcre },
+  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",             kAcre },
   { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        kNull },
 
   // PITCAIRN
