@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		123B399B200E76DD00DC2ED9 /* BootFixes3.c in Sources */ = {isa = PBXBuildFile; fileRef = 123B3999200E76DD00DC2ED9 /* BootFixes3.c */; };
+		123B399E200E76EA00DC2ED9 /* OsxAptioFix3Drv.c in Sources */ = {isa = PBXBuildFile; fileRef = 123B399C200E76EA00DC2ED9 /* OsxAptioFix3Drv.c */; };
+		123B39A1200E770100DC2ED9 /* RTShims.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 123B39A0200E770100DC2ED9 /* RTShims.nasm */; };
 		1288B5211A30CEFB007CBCEF /* Net.c in Sources */ = {isa = PBXBuildFile; fileRef = 1288B5201A30CEFB007CBCEF /* Net.c */; };
 		12A60F5A1DB610500068BF8B /* AppleImageCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F4E1DB610500068BF8B /* AppleImageCodec.c */; };
 		12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F501DB610500068BF8B /* load_bmp.c */; };
@@ -55,6 +58,12 @@
 		12098EC21DC76858008B4AC3 /* hda.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hda.c; sourceTree = "<group>"; };
 		12098EC31DC76858008B4AC3 /* hda.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hda.h; sourceTree = "<group>"; };
 		12344F581CAB9A5700318A6E /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
+		123B3999200E76DD00DC2ED9 /* BootFixes3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootFixes3.c; sourceTree = "<group>"; };
+		123B399A200E76DD00DC2ED9 /* BootFixes3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BootFixes3.h; sourceTree = "<group>"; };
+		123B399C200E76EA00DC2ED9 /* OsxAptioFix3Drv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxAptioFix3Drv.c; sourceTree = "<group>"; };
+		123B399D200E76EA00DC2ED9 /* OsxAptioFix3Drv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxAptioFix3Drv.inf; sourceTree = "<group>"; };
+		123B399F200E76F600DC2ED9 /* RTShims.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTShims.h; sourceTree = "<group>"; };
+		123B39A0200E770100DC2ED9 /* RTShims.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; path = RTShims.nasm; sourceTree = "<group>"; };
 		1261513A1A15BBB000903E7B /* bootscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bootscreen.c; sourceTree = "<group>"; };
 		1261513B1A15BBB000903E7B /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		1261513C1A15BBB000903E7B /* entry_scan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = entry_scan.h; sourceTree = "<group>"; };
@@ -2831,6 +2840,7 @@
 				2C794D0E1A0AA85900D845B0 /* AsmFuncsX64.asm */,
 				2C794D0F1A0AA85900D845B0 /* AsmFuncsX64.nasm */,
 				2C794D101A0AA85900D845B0 /* AsmFuncsX64.S */,
+				123B39A0200E770100DC2ED9 /* RTShims.nasm */,
 				2C794D111A0AA85900D845B0 /* TestAsm32.asm */,
 			);
 			path = X64;
@@ -2844,6 +2854,8 @@
 				2C794CF61A0AA85900D845B0 /* BootArgs.h */,
 				2C794CF71A0AA85900D845B0 /* BootFixes.c */,
 				2C794CF81A0AA85900D845B0 /* BootFixes.h */,
+				123B3999200E76DD00DC2ED9 /* BootFixes3.c */,
+				123B399A200E76DD00DC2ED9 /* BootFixes3.h */,
 				2C794CF91A0AA85900D845B0 /* DecodedKernelCheck.c */,
 				2C794CFA1A0AA85900D845B0 /* DecodedKernelCheck.h */,
 				2C794CFD1A0AA85900D845B0 /* FlatDevTree */,
@@ -2855,8 +2867,11 @@
 				2C794D071A0AA85900D845B0 /* NVRAMDebug.h */,
 				2C794D081A0AA85900D845B0 /* OsxAptioFix2Drv.c */,
 				2C794D091A0AA85900D845B0 /* OsxAptioFix2Drv.inf */,
+				123B399C200E76EA00DC2ED9 /* OsxAptioFix3Drv.c */,
+				123B399D200E76EA00DC2ED9 /* OsxAptioFix3Drv.inf */,
 				2C794D0A1A0AA85900D845B0 /* OsxAptioFixDrv.c */,
 				2C794D0B1A0AA85900D845B0 /* OsxAptioFixDrv.inf */,
+				123B399F200E76F600DC2ED9 /* RTShims.h */,
 				2C794D0C1A0AA85900D845B0 /* VMem.c */,
 				2C794D0D1A0AA85900D845B0 /* VMem.h */,
 				2C794D121A0AA85900D845B0 /* X64 */,
@@ -2970,6 +2985,7 @@
 			files = (
 				2C794E401A0AA85900D845B0 /* Test.c in Sources */,
 				2C794E411A0AA85900D845B0 /* BootArgs.c in Sources */,
+				123B399B200E76DD00DC2ED9 /* BootFixes3.c in Sources */,
 				12B8EBBE1DDCE91200AC0A2C /* egemb_font.c in Sources */,
 				12B8EBC21DDCEA2A00AC0A2C /* scroll_images.c in Sources */,
 				2C794E431A0AA85900D845B0 /* DecodedKernelCheck.c in Sources */,
@@ -2998,6 +3014,8 @@
 				12A60F5D1DB610500068BF8B /* picopng.c in Sources */,
 				12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */,
 				12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */,
+				123B399E200E76EA00DC2ED9 /* OsxAptioFix3Drv.c in Sources */,
+				123B39A1200E770100DC2ED9 /* RTShims.nasm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
