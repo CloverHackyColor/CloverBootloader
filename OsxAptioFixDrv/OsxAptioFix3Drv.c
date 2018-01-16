@@ -611,7 +611,7 @@ MOStartImage (
     Status = gRT->GetVariable(L"boot-switch-vars", &gEfiAppleBootGuid, NULL, &Size, NULL);
     gHibernateWake = (Status == EFI_BUFFER_TOO_SMALL);
     
-    Print(L"OsxAptioFix2Drv: Starting overrides for %s\nUsing reloc block: no, hibernate wake: %s \n",
+    Print(L"OsxAptioFix3Drv: Starting overrides for %s\nUsing reloc block: no, hibernate wake: %s \n",
           FilePathText, gHibernateWake ? L"yes" : L"no");
     //gBS->Stall(2000000);
     

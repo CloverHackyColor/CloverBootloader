@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-12 22:43+0300\n"
+"POT-Creation-Date: 2018-01-16 21:38+0300\n"
 "PO-Revision-Date: 2015-12-30 23:27+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -573,98 +573,99 @@ msgstr ""
 "대체로 UEFI 부트는 하드웨어 HVRAM을 이용하지만 간혹 이 드라이버가 필요할 수 있습니다. \n"
 "본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오."
 
-#. type: "OsxAptioFixDrv-64_description"
+#. type: "AptioMemoryFix_description"
 #: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "AMI Aptio와 같은 UEFI 펌웨어 문제를 해결하기 위한 64비트 드라이버"
 
 #. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:103
+#: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "OsxAptioFixDrv의 간소화 형태(간소화되지 않는 버전과 함께 사용하지 마십시오)"
 
 #. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:104
+#: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "GPT/MBR 또는 Apple Partition Map과 같은 희귀 파티션맵을 지원하기 위한 64비트 드라이버."
 
 #. type: "SMCHelper-64_description"
-#: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr ""
 
 #. type: "AppleEvent-64_description"
-#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "Create AppleEvent protocol for FileVault2"
 msgstr ""
 
 #. type: "AppleKeyAggregator-64_description"
-#: Resources/templates/Localizable.strings:107
+#: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr ""
 
 #. type: "FirmwareVolume-64_description"
-#: Resources/templates/Localizable.strings:108
+#: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr ""
 
 #. type: "AppleImageCodec-64_description"
-#: Resources/templates/Localizable.strings:109
+#: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr ""
 
 #. type: "AppleUITheme-64_description"
-#: Resources/templates/Localizable.strings:110
+#: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr ""
 
 #. type: "HashServiceFix-64_description"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Fix Hash support if absent in native UEFI BIOS"
 msgstr ""
 
 #. type: "UsbKbDxe-64_description"
-#: Resources/templates/Localizable.strings:112
+#: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
 msgstr ""
 
 #. type: "AppleGraphicsConfig-64_description"
-#: Resources/templates/Localizable.strings:113
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "Create optional AppleGraphicsConfig protocol"
 msgstr ""
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Themes"
 msgstr "테마"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:121
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "Select to install themes."
 msgstr "사용자가 원하는 테마를 설치합니다."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "흑녹색조"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -674,13 +675,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid "embedded"
 msgstr "임베디드"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
@@ -690,13 +691,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "metal"
 msgstr "금속 테마"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -706,13 +707,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
 msgid "random"
 msgstr "랜덤"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid ""
 "random theme from Slice,\n"
@@ -722,13 +723,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "steampunkblack"
 msgstr "스팀펑크 블랙"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -738,14 +739,14 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:144
 #, fuzzy, no-wrap
 #| msgid "Clover Theme"
 msgid "CloverThemeManager.app"
 msgstr "Clover 테마"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -754,13 +755,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "타겟 볼륨에 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -770,37 +771,37 @@ msgstr ""
 "타겟 볼륨은 반드시 OSX 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "모든 부팅 가능한 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "타겟 볼륨을 제외한 모든 내장 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "선택적 RC Scripts"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:161
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "클로버 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
