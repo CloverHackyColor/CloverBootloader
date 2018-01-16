@@ -27,7 +27,6 @@
 #include "Hibernate.h"
 #include "NVRAMDebug.h"
 
-#include "RTShims.h"
 
 // DBG_TO: 0=no debug, 1=serial, 2=console
 // serial requires
@@ -472,33 +471,6 @@ RunImageWithOverrides(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitDataSize, OUT CH
 	Status = AllocateRelocBlock();
 	if (EFI_ERROR(Status)) {
 		return Status;
-	}
-
-	Status = gBS->AllocatePool (
-									EfiRuntimeServicesCode,
-									((UINTN)&gRTShimsDataEnd - (UINTN)&gRTShimsDataStart),
-									&RTShims
-									);
-
-	if (!EFI_ERROR (Status)) {
-		gGetVariable         = (UINTN)gRT->GetVariable;
-		gGetNextVariableName = (UINTN)gRT->GetNextVariableName;
-		gSetVariable         = (UINTN)gRT->SetVariable;
-
-		CopyMem (
- 			RTShims,
- 			(VOID *)&gRTShimsDataStart,
- 			((UINTN)&gRTShimsDataEnd - (UINTN)&gRTShimsDataStart)
- 			);
-
-		gRT->GetVariable         = (EFI_GET_VARIABLE)((UINTN)RTShims           + ((UINTN)&RTShimGetVariable         - (UINTN)&gRTShimsDataStart));
-		gRT->GetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)((UINTN)RTShims + ((UINTN)&RTShimGetNextVariableName - (UINTN)&gRTShimsDataStart));
-		gRT->SetVariable         = (EFI_SET_VARIABLE)((UINTN)RTShims           + ((UINTN)&RTShimSetVariable         - (UINTN)&gRTShimsDataStart));
-
-		gRT->Hdr.CRC32 = 0;
-		gBS->CalculateCrc32 (gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
-	} else {
-		RTShims = NULL;
 	}
 	
 	// clear monitoring vars

@@ -18,7 +18,7 @@
 
 #include <Protocol/LoadedImage.h>
 
-#include "BootFixes.h"
+#include "BootFixes3.h"
 #include "DecodedKernelCheck.h"
 #include "BootArgs.h"
 #include "AsmFuncs.h"
@@ -27,6 +27,7 @@
 #include "Hibernate.h"
 #include "NVRAMDebug.h"
 
+#include "RTShims.h"
 
 // DBG_TO: 0=no debug, 1=serial, 2=console
 // serial requires
@@ -274,8 +275,8 @@ MOExitBootServices (
 {
   EFI_STATUS          Status;
   UINTN             NewMapKey;
-  //UINTN            SlideAddr = 0;
-  //VOID            *MachOImage = NULL;
+  UINTN            SlideAddr = 0;
+  VOID            *MachOImage = NULL;
   IOHibernateImageHeader      *ImageHeader = NULL;
   
   // we need hibernate image address for wake
@@ -328,9 +329,9 @@ MOExitBootServices (
     // normal boot
     DBG("ExitBootServices: gMinAllocatedAddr: %lx, gMaxAllocatedAddr: %lx\n", gMinAllocatedAddr, gMaxAllocatedAddr);
     
-    //SlideAddr = gMinAllocatedAddr - 0x100000;
-    //MachOImage = (VOID*)(UINTN)(SlideAddr + 0x200000);
-    //KernelEntryFromMachOPatchJump(MachOImage, SlideAddr);
+    SlideAddr = gMinAllocatedAddr - 0x100000;
+    MachOImage = (VOID*)(UINTN)(SlideAddr + 0x200000);
+    KernelEntryFromMachOPatchJump(MachOImage, SlideAddr);
     
   } else {
     // hibernate wake
@@ -374,7 +375,7 @@ OvrSetVirtualAddressMap(
   
   // virtualize RT services with all needed fixes
   Status = ExecSetVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
-  
+
   CopyEfiSysTableToSeparateRtDataArea(&EfiSystemTable);
   
   // we will defragment RT data and code that is left unprotected.
@@ -387,6 +388,9 @@ OvrSetVirtualAddressMap(
                             NULL,
                             gHibernateWake ? FALSE : TRUE
                             );
+
+  // For AptioFix V2 we can correct the pointers earlier
+  VirtualizeRTShimPointers(MemoryMapSize, DescriptorSize, VirtualMap);
   
   return Status;
 }
@@ -413,7 +417,6 @@ KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
 }
 
 
-
 /** SWITCH_STACK_ENTRY_POINT implementation:
  * Allocates kernel image reloc block, installs UEFI overrides and starts given image.
  * If image returns, then deinstalls overrides and releases kernel image reloc block.
@@ -429,7 +432,7 @@ RunImageWithOverrides(
                       )
 {
   EFI_STATUS          Status;
-  
+
   // save current 64bit state - will be restored later in callback from kernel jump
   // and relocate MyAsmCopyAndJumpToKernel32 code to higher mem (for copying kernel back to
   // proper place and jumping back to it)
@@ -442,6 +445,33 @@ RunImageWithOverrides(
   Status = VmAllocateMemoryPool();
   if (EFI_ERROR(Status)) {
     return Status;
+  }
+
+  Status = gBS->AllocatePool (
+                  EfiRuntimeServicesCode,
+                  ((UINTN)&gRTShimsDataEnd - (UINTN)&gRTShimsDataStart),
+                  &RTShims
+                  );
+
+  if (!EFI_ERROR (Status)) {
+    gGetVariable         = (UINTN)gRT->GetVariable;
+    gGetNextVariableName = (UINTN)gRT->GetNextVariableName;
+    gSetVariable         = (UINTN)gRT->SetVariable;
+
+    CopyMem (
+      RTShims,
+      (VOID *)&gRTShimsDataStart,
+      ((UINTN)&gRTShimsDataEnd - (UINTN)&gRTShimsDataStart)
+      );
+
+    gRT->GetVariable         = (EFI_GET_VARIABLE)((UINTN)RTShims           + ((UINTN)&RTShimGetVariable         - (UINTN)&gRTShimsDataStart));
+    gRT->GetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)((UINTN)RTShims + ((UINTN)&RTShimGetNextVariableName - (UINTN)&gRTShimsDataStart));
+    gRT->SetVariable         = (EFI_SET_VARIABLE)((UINTN)RTShims           + ((UINTN)&RTShimSetVariable         - (UINTN)&gRTShimsDataStart));
+
+    gRT->Hdr.CRC32 = 0;
+    gBS->CalculateCrc32 (gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
+  } else {
+    RTShims = NULL;
   }
   
   // clear monitoring vars

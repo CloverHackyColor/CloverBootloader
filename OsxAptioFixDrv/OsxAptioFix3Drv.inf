@@ -1,6 +1,6 @@
 ##
 #
-# UEFI driver for enabling loading of OSX by using memory relocation.
+# UEFI driver for enabling loading of OSX without memory relocation.
 #
 # by dmazar
 # 
@@ -9,8 +9,8 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = OsxAptioFixDrv
-  FILE_GUID                      = 43C8CFCA-03C0-4AA8-8BEB-5AF6AB3570A1
+  BASE_NAME                      = OsxAptioFix3Drv
+  FILE_GUID                      = 43C8CFCA-03C0-4AA8-8BEB-5AF6AB3570A3
   MODULE_TYPE                    = UEFI_DRIVER
   VERSION_STRING                 = 1.0
   ENTRY_POINT                    = OsxAptioFixDrvEntrypoint
@@ -31,10 +31,10 @@
   DevicePathLib
   
 [Sources]
-  OsxAptioFixDrv.c
+  OsxAptioFix3Drv.c
   AsmFuncs.h
-  BootFixes.c
-  BootFixes.h
+  BootFixes3.c
+  BootFixes3.h
   DecodedKernelCheck.c
   DecodedKernelCheck.h
   BootArgs.c
@@ -58,6 +58,7 @@
   X64/AsmFuncsX64.asm | MSFT
 #  X64/AsmFuncsX64.S | GCC
   X64/AsmFuncsX64.nasm | GCC
+  X64/RTShims.nasm
 
 [Guids]
   gEfiFileInfoGuid								## CONSUMES
