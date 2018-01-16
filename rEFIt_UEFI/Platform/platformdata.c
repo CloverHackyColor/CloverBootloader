@@ -595,7 +595,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       gFwFeatures             = 0xE00FE137;
       break;
     case MacPro61:
-      gFwFeatures             = 0xE80FE136;
+      gFwFeatures             = 0xE80FE137;
       break;
     case MacBookPro111:
     case MacBookPro112:
@@ -618,16 +618,16 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
-      gFwFeatures             = 0xFC0FE136;
+      gFwFeatures             = 0xFC0FE137;
       break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
     case MacBookPro143:
-      gFwFeatures             = 0xFC0FE13E;
+      gFwFeatures             = 0xFC0FE13F;
       break;
     case iMacPro11:
-      gFwFeatures             = 0xFD8FF53E;
+      gFwFeatures             = 0xFD8FF53F;
       break;
 
     // Verified list from Users
@@ -658,17 +658,17 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       gFwFeatures             = 0xE00FE137;
       break;
     case MacPro51:
-      gFwFeatures             = 0xE80FE136;
+      gFwFeatures             = 0xE80FE137;
       break;
     case iMac161:
     case iMac162:
     case MacBookPro121:
-      gFwFeatures             = 0xFC0FE136;
+      gFwFeatures             = 0xFC0FE137;
       break;
     case MacBook61:
     case MacBook71:
     case MacBook81:
-      gFwFeatures             = 0xFC0FE13E;
+      gFwFeatures             = 0xFC0FE13F;
       break;
 
     default:
