@@ -281,7 +281,7 @@ MOExitBootServices (
   
   // we need hibernate image address for wake
   if (gHibernateWake && gHibernateImageAddress == 0) {
-    Print(L"OsxAptioFix2 error: Doing hibernate wake, but did not find hibernate image address.");
+    Print(L"OsxAptioFix3 error: Doing hibernate wake, but did not find hibernate image address.");
     Print(L"... waiting 5 secs ...\n");
     gBS->Stall(5000000);
     return EFI_INVALID_PARAMETER;
