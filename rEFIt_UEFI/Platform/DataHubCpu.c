@@ -232,9 +232,6 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   None           = "none";
   AddNvramVariable(L"security-mode", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
 
-  //AddNvramVariable(L"test_boot_guid", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
-  //AddNvramVariable(L"test_nvram_guid", &gEfiAppleNvramGuid, Attributes, 5, (VOID*)None);
-
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
   if (!gSettings.InjectSystemID) {
@@ -303,11 +300,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
   
-  //if (gSettings.NeverDoRecovery) {
-    DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
-  //} else {
-    // Check for AptioFix2Drv loaded to store efi-boot-device for special boot
-    if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded)  {
+   DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
+
+  // Check for AptioFix2Drv loaded to store efi-boot-device for special boot
+    if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded ||
+        gDriversFlags.AptioFix3Loaded || gDriversFlags.AptioMemFixLoaded)  {
       EFI_STATUS          Status;
       REFIT_VOLUME *Volume = Entry->Volume;
       EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
@@ -319,21 +316,6 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
         DBG("can't set  specialbootdevice!\n");
       }
     }
-    // reboot-boot-mode uses only for special boot, we shouldn't set this variable for statndard recovery boot
-    /*if (Entry->LoaderType == OSTYPE_RECOVERY) {
-      CHAR8 *FdeRecovery = "none";
-      // will not change the variable if it is already exists
-      AddNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
-    }*/
-  //}
-
-  // fixme: Remove "0 &&" when OsxAptioFix can launch nested boot.efi ©vit9696
-  /*if (0 && Entry->LoaderType == OSTYPE_RECOVERY) {
-    CHAR8 *FdeRecovery = "fde-recovery";
-    SetNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid, Attributes, 12, (VOID*)FdeRecovery);
-  } else {
-    DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
-  }*/
 
   // Sherlocks: to fix "OSInstall.mpkg appears to be missing or damaged" in 10.13, we should remove this variables.
   if (Entry->LoaderType == OSTYPE_OSX_INSTALLER) {

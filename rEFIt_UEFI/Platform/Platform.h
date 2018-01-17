@@ -681,6 +681,8 @@ typedef struct _DRIVERS_FLAGS {
   BOOLEAN MemFixLoaded;
   BOOLEAN AptioFixLoaded;
   BOOLEAN AptioFix2Loaded;
+  BOOLEAN AptioFix3Loaded;
+  BOOLEAN AptioMemFixLoaded;
   BOOLEAN HFSLoaded;
   BOOLEAN APFSLoaded;
 } DRIVERS_FLAGS;

@@ -80,7 +80,7 @@ BOOLEAN                 APFSSupport     = FALSE;
 //extern EFI_DXE_SERVICES*       gDS;
 EFI_RUNTIME_SERVICES*   gRS;
 
-DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};  //the initializer is not needed for global variables
+DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variables
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -615,7 +615,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     if (Entry->OSVersion && (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
       if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOSIP)) {
-        gSettings.CsrActiveConfig = (UINT32)0x7F;
+        gSettings.CsrActiveConfig = (UINT32)0x37F;
         gSettings.BooterConfig = 0x28;
       }
       ReadSIPCfg();
@@ -1034,12 +1034,33 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
   DriversArrNum = 0;
   DriversArr = NULL;
 
+//only one driver with highest priority will obtain status "Loaded"
+  do {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "AptioMemoryFix.efi"))) {
+      gDriversFlags.AptioMemFixLoaded = TRUE;
+      break;
+    }
+    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxAptioFix3Drv-64.efi"))) {
+      gDriversFlags.AptioFix3Loaded = TRUE;
+      break;
+    }
+    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxAptioFix2Drv-64.efi"))) {
+      gDriversFlags.AptioFix2Loaded = TRUE;
+      break;
+    }
+    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxAptioFixDrv-64.efi"))) {
+      gDriversFlags.AptioFixLoaded = TRUE;
+      break;
+    }
+    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxLowMemFixDrv-64.efi"))) {
+      gDriversFlags.MemFixLoaded = TRUE;
+    }
+  } while (FALSE);
+
   // look through contents of the directory
   DirIterOpen(SelfRootDir, Path, &DirIter);
-  while (DirIterNext(&DirIter, 2, L"*.EFI", &DirEntry)) {
+  while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
     Skip = (DirEntry->FileName[0] == L'.');
-//    if (DirEntry->FileName[0] == '.')
-//      continue;   // skip this
     for (i=0; i<gSettings.BlackListCount; i++) {
       if (StrStr(DirEntry->FileName, gSettings.BlackList[i]) != NULL) {
         Skip = TRUE;   // skip this
@@ -1049,23 +1070,25 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     if (Skip) {
       continue;
     }
-    // either AptioFix, AptioFix2 or LowMemFix
-    if (StrStr(DirEntry->FileName, L"AptioFixDrv") != NULL) {
-      if (gDriversFlags.MemFixLoaded || gDriversFlags.AptioFix2Loaded) {
-        continue; //if other driver loaded then skip new one
+
+    // either AptioMem, AptioFix* or LowMemFix exclusively
+    if (StrStr(DirEntry->FileName, L"AptioFix3Drv") != NULL) {
+      if (!gDriversFlags.AptioFix3Loaded) { //for example the driver exists but have low priority
+        continue; //if other driver loaded then skip this
       }
-      gDriversFlags.AptioFixLoaded = TRUE;
     } else if (StrStr(DirEntry->FileName, L"AptioFix2Drv") != NULL) {
-      if (gDriversFlags.MemFixLoaded || gDriversFlags.AptioFixLoaded) {
-        continue; //if other driver loaded then skip new one
+      if (!gDriversFlags.AptioFix2Loaded) {
+        continue; //if other driver loaded then skip this
       }
-      gDriversFlags.AptioFix2Loaded = TRUE;
+    } else if (StrStr(DirEntry->FileName, L"AptioFixDrv") != NULL) {
+      if (!gDriversFlags.AptioFixLoaded) {
+        continue; //if other driver loaded then skip this
+      }
     } else if (StrStr(DirEntry->FileName, L"LowMemFix") != NULL) {
-      if (gDriversFlags.AptioFixLoaded || gDriversFlags.AptioFix2Loaded) {
-        continue; //if other driver loaded then skip new one
+      if (!gDriversFlags.MemFixLoaded) {
+        continue; //if other driver loaded then skip this
       }
-      gDriversFlags.MemFixLoaded = TRUE;
-    }
+    } //didn't check AptioMemoryFix, if present then it loaded
 
     UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
