@@ -1554,9 +1554,15 @@ MACHINE_TYPES GetDefaultModel()
         break;
       case CPU_MODEL_SKYLAKE_D:  
       case CPU_MODEL_SKYLAKE_S:
+        DefaultType = iMac171;
+        break;
       case CPU_MODEL_KABYLAKE1:
       case CPU_MODEL_KABYLAKE2:
-        DefaultType = iMac171;
+        if (AsciiStrStr(gCPUStructure.BrandString, "i5")) {
+          DefaultType = iMac182;
+          break;
+        }
+        DefaultType = iMac183;
         break;
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_E:
