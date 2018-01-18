@@ -1036,23 +1036,23 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
 
 //only one driver with highest priority will obtain status "Loaded"
   do {
-    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "AptioMemoryFix.efi"))) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%a", Path, "AptioMemoryFix.efi"))) {
       gDriversFlags.AptioMemFixLoaded = TRUE;
       break;
     }
-    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxAptioFix3Drv-64.efi"))) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%a", Path, "OsxAptioFix3Drv-64.efi"))) {
       gDriversFlags.AptioFix3Loaded = TRUE;
       break;
     }
-    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxAptioFix2Drv-64.efi"))) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%a", Path, "OsxAptioFix2Drv-64.efi"))) {
       gDriversFlags.AptioFix2Loaded = TRUE;
       break;
     }
-    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxAptioFixDrv-64.efi"))) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%a", Path, "OsxAptioFixDrv-64.efi"))) {
       gDriversFlags.AptioFixLoaded = TRUE;
       break;
     }
-    if (FileExists(SelfRootDir, PoolPrint(L"%s%a", Path, "OsxLowMemFixDrv-64.efi"))) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%a", Path, "OsxLowMemFixDrv-64.efi"))) {
       gDriversFlags.MemFixLoaded = TRUE;
     }
   } while (FALSE);
