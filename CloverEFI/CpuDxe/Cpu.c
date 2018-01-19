@@ -1100,13 +1100,11 @@ TimerHandler (
   }
 }
 
-#if defined(__GNUC__)
-# pragma GCC push_options
-# pragma GCC optimize("O2")
-#endif
-
 EFI_STATUS
 EFIAPI
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((optimize("O2")))
+#endif
 InitializeCpu (
   IN EFI_HANDLE         ImageHandle,
   IN EFI_SYSTEM_TABLE   *SystemTable
@@ -1214,10 +1212,6 @@ Returns:
 //  ASSERT_EFI_ERROR (Status);
   return Status;
 }
-
-#if defined(__GNUC__)
-# pragma GCC pop_options
-#endif
 
 VOID
 InitializeBiosIntCaller (
