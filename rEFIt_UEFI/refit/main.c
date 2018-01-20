@@ -1029,7 +1029,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
   EFI_HANDLE              *DriversArr;
   INTN                    i;
   BOOLEAN                 Skip;
-  BOOLEAN                 AptioDone;
+  UINT8                   AptioBlessed;
   STATIC CHAR16 CONST * CONST AptioNames[] = {
     L"AptioMemoryFix",
     L"AptioFix3Drv",
@@ -1037,7 +1037,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     L"AptioFixDrv",
     L"LowMemFix"
   };
-  STATIC INT8 CONST AptioIndexes[] = {
+  STATIC UINT8 CONST AptioIndices[] = {
     OFFSET_OF(DRIVERS_FLAGS, AptioMemFixLoaded),
     OFFSET_OF(DRIVERS_FLAGS, AptioFix3Loaded),
     OFFSET_OF(DRIVERS_FLAGS, AptioFix2Loaded),
@@ -1051,27 +1051,24 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
 
 //only one driver with highest priority will obtain status "Loaded"
   DirIterOpen(SelfRootDir, Path, &DirIter);
-#define BOOLEAN_AT_INDEX(k) (*(BOOLEAN*)((UINTN)&gDriversFlags + AptioIndexes[(k)]))
+#define BOOLEAN_AT_INDEX(k) (*(BOOLEAN*)((UINTN)&gDriversFlags + AptioIndices[(k)]))
+  for (i = 0; i != ARRAY_SIZE(AptioIndices); ++i)
+    BOOLEAN_AT_INDEX(i) = FALSE;
+  AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
   while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
-    INTN j;
     for (i = 0; i != ARRAY_SIZE(AptioNames); ++i)
       if (StrStr(DirEntry->FileName, AptioNames[i]) != NULL)
         break;
-    if (i == ARRAY_SIZE(AptioNames))
+    if (((UINT8) i) >= AptioBlessed)
       continue;
-    for (j = i; j >= 0; --j)
-      if (BOOLEAN_AT_INDEX(j))
-        break;
-    if (j >= 0)
-      continue;
-    for (j = i + 1; j < (INTN) ARRAY_SIZE(AptioIndexes); ++j)
-      BOOLEAN_AT_INDEX(j) = FALSE;
-    BOOLEAN_AT_INDEX(i) = TRUE;
+    AptioBlessed = (UINT8) i;
     if (!i)
       break;
   }
+  if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
+    BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
+#undef BOOLEAN_AT_INDEX
   DirIterClose(&DirIter);
-  AptioDone = FALSE;
 
   // look through contents of the directory
   DirIterOpen(SelfRootDir, Path, &DirIter);
@@ -1092,13 +1089,10 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
       if (StrStr(DirEntry->FileName, AptioNames[i]) != NULL)
         break;
     if (i != ARRAY_SIZE(AptioNames)) {
-      if (!BOOLEAN_AT_INDEX(i))
+      if (((UINT8) i) != AptioBlessed)
         continue;
-      if (AptioDone)
-        continue;
-      AptioDone = TRUE;
+      AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
     }
-#undef BOOLEAN_AT_INDEX
 
     UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
