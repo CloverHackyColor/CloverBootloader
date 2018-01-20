@@ -1065,9 +1065,6 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     if (!i)
       break;
   }
-  if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
-    BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
-#undef BOOLEAN_AT_INDEX
   DirIterClose(&DirIter);
 
   // look through contents of the directory
@@ -1091,8 +1088,11 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     if (i != ARRAY_SIZE(AptioNames)) {
       if (((UINT8) i) != AptioBlessed)
         continue;
+      if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
+        BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
       AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
     }
+#undef BOOLEAN_AT_INDEX
 
     UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
