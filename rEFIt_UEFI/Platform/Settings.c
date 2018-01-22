@@ -3092,7 +3092,7 @@ GetListOfACPI ()
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
-    if (StrStr(DirEntry->FileName, L"DSDT")) {
+    if (StriStr(DirEntry->FileName, L"DSDT")) {
       continue;
     }
 
