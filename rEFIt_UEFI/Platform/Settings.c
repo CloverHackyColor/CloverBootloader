@@ -2293,13 +2293,13 @@ GetEDIDSettings(TagPtr DictPointer)
       Prop = GetProperty (Dict, "HorizontalSyncPulseWidth");
       if (Prop) {
         gSettings.EdidFixHorizontalSyncPulseWidth = (UINT16)GetPropertyInteger(Prop, gSettings.EdidFixHorizontalSyncPulseWidth);
-        DBG("  EdidFixHorizontalSyncPulseWidth = 0x%04lx\n", gSettings.EdidFixHorizontalSyncPulseWidth);
+        //DBG("  EdidFixHorizontalSyncPulseWidth = 0x%02lx\n", gSettings.EdidFixHorizontalSyncPulseWidth);
       }
 
       Prop = GetProperty (Dict, "VideoInputSignal");
       if (Prop) {
         gSettings.EdidFixVideoInputSignal = (UINT8)GetPropertyInteger(Prop, gSettings.EdidFixVideoInputSignal);
-        DBG("  EdidFixVideoInputSignal = 0x%04lx\n", gSettings.EdidFixVideoInputSignal);
+        //DBG("  EdidFixVideoInputSignal = 0x%02lx\n", gSettings.EdidFixVideoInputSignal);
       }
     } else {
       //DBG ("Not Inject EDID\n");

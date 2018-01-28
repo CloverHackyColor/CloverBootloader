@@ -107,9 +107,8 @@ EFI_STATUS GetEdidDiscovered(VOID)
 
   if (gSettings.CustomEDID) {
     N = gSettings.CustomEDIDsize;
-    DebugDumpEDID("------- Custom EDID Table", N);
+    DebugDumpEDID("--- Custom EDID Table", N);
   } else {
-
     Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
     if (!EFI_ERROR (Status)) { //discovered
       N = EdidDiscovered->SizeOfEdid;
@@ -121,12 +120,12 @@ EFI_STATUS GetEdidDiscovered(VOID)
       }
       gSettings.CustomEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
       CopyMem(gSettings.CustomEDID, EdidDiscovered->Edid, N);
-      DebugDumpEDID("---Discovered EDID Table", N);
-    } 
+      DebugDumpEDID("--- Discovered EDID Table", N);
+    }
   }
 
   if (gSettings.CustomEDID) {
-    //begin patching result
+    // begin patching result
     if (gSettings.VendorEDID) {
       DBG("    VendorID = 0x%04lx changed to 0x%04lx\n", ((UINT16*)gSettings.CustomEDID)[4], gSettings.VendorEDID);
       ((UINT16*)gSettings.CustomEDID)[4] = gSettings.VendorEDID;
@@ -138,6 +137,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
     }
 
     if (gSettings.EdidFixHorizontalSyncPulseWidth) {
+      DBG("    HorizontalSyncPulseWidth = 0x%02lx changed to 0x%02lx\n", ((UINT8*)gSettings.CustomEDID)[63], gSettings.EdidFixHorizontalSyncPulseWidth);
       UINT8 LsBits, MsBits;
       LsBits = gSettings.EdidFixHorizontalSyncPulseWidth & 0xff;
       MsBits = (gSettings.EdidFixHorizontalSyncPulseWidth >> 8) & 0x03;
@@ -147,14 +147,19 @@ EFI_STATUS GetEdidDiscovered(VOID)
     }
 
     if (gSettings.EdidFixVideoInputSignal) {
+      DBG("    VideoInputSignal = 0x%02lx changed to 0x%02lx\n", ((UINT8*)gSettings.CustomEDID)[20], gSettings.EdidFixVideoInputSignal);
       ((UINT8*)gSettings.CustomEDID)[20] = gSettings.EdidFixVideoInputSignal;
     }
 
-    ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
-    DebugDumpEDID("--- Patched EDID", N);
-
+    if ((gSettings.VendorEDID) || (gSettings.ProductEDID) || (gSettings.EdidFixHorizontalSyncPulseWidth) || (gSettings.EdidFixVideoInputSignal)) {
+      ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+      DebugDumpEDID("--- Patched EDID Table", N);
+    } else if ((UINT8)gSettings.CustomEDID[127] != (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127))){
+      DBG("    Fix wrong checksum = %02x to ", (UINT8)gSettings.CustomEDID[127]);
+      ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+      DBG("%02x\n", (UINT8)gSettings.CustomEDID[127]);
+      DebugDumpEDID("--- Patched EDID Table", N);
+    }
   }
   return Status;
 }
-
-

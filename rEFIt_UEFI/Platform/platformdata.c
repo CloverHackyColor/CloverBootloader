@@ -361,15 +361,15 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.9", "W88GG136DHJQ", "iMac-Aluminum",
     { 0x01, 0x72, 0x0f, 0, 0, 0x02 },  "k62", "k62", 0x75005 },
   //iMac13,1
-  { "iMac13,1", "IM131.88Z.010F.B00.1708080805", "Mac-00BE6ED71E35EB86", // Intel Core i7-3770S @ 3.10 GHz
+  { "iMac13,1", "IM131.88Z.0111.B00.1801081337", "Mac-00BE6ED71E35EB86", // Intel Core i7-3770S @ 3.10 GHz
     "iMac", "1.0", "C02JA041DNCT", "iMac-Aluminum",
     { 0x02, 0x09, 0x0f, 0, 0, 0x05 },  "d8", "d8", 0x78006 },
   //iMac13,2
-  { "iMac13,2", "IM131.88Z.010F.B00.1708080805", "Mac-FC02E91DDD3FA6A4", // Intel Core i5-3470 @ 3.20 GHz
+  { "iMac13,2", "IM131.88Z.0111.B00.1801081337", "Mac-FC02E91DDD3FA6A4", // Intel Core i5-3470 @ 3.20 GHz
     "iMac", "1.0", "C02JB041DNCW", "iMac-Aluminum",
     { 0x02, 0x11, 0x0f, 0, 0, 0x16 },  "d8", "d8", 0x79006 },
   //iMac13,3
-  { "iMac13,3", "IM131.88Z.010F.B00.1708080805", "Mac-7DF2A3B5E5D671ED", // Intel Core i3-3225 @ 3.30 GHz
+  { "iMac13,3", "IM131.88Z.0111.B00.1801081337", "Mac-7DF2A3B5E5D671ED", // Intel Core i3-3225 @ 3.30 GHz
     "iMac", "1.0", "C02KVHACFFYW", "iMac-Aluminum",
     { 0x02, 0x13, 0x0f, 0, 0, 0x15 },  "d8", "d8", 0x79006 }, // need ECPI
   //iMac14,1
@@ -377,43 +377,43 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "D25LHACKF8J2", "iMac-Aluminum",
     { 0x02, 0x14, 0x0f, 0, 0, 0x24 },  "j16j17", "j16", 0x79007 },
   //iMac14,2
-  { "iMac14,2", "IM142.88Z.0123.B00.1708211454", "Mac-27ADBB7B4CEE8E61", // Intel Core i5-4570 @ 3.20 GHz
+  { "iMac14,2", "IM142.88Z.0125.B00.1801081338", "Mac-27ADBB7B4CEE8E61", // Intel Core i5-4570 @ 3.20 GHz
     "iMac", "1.0", "D25LHACKF8JC", "iMac-Aluminum",
     { 0x02, 0x15, 0x0f, 0, 0, 0x07 },  "j16j17", "j17", 0x7a007 },
   //iMac14,3
-  { "iMac14,3", "IM143.88Z.0123.B00.1708211454", "Mac-77EB7D7DAF985301", // Intel Core i5-4570S @ 2.90 GHz
+  { "iMac14,3", "IM143.88Z.0125.B00.1801091243", "Mac-77EB7D7DAF985301", // Intel Core i5-4570S @ 2.90 GHz
     "iMac", "1.0", "D25LHACKF8J3", "iMac-Aluminum",
     { 0x02, 0x17, 0x0f, 0, 0, 0x07 },  "j16g", "j16g", 0x7a007 }, // need ECPI
   //iMac14,4
-  { "iMac14,4", "IM144.88Z.0183.B00.1708080656", "Mac-81E3E92DD6088272", // Intel Core i5-4260U @ 1.40 GHz
+  { "iMac14,4", "IM144.88Z.0185.B00.1801081344", "Mac-81E3E92DD6088272", // Intel Core i5-4260U @ 1.40 GHz
     "iMac", "1.0", "D25LHACKFY0T", "iMac-Aluminum",
     { 0x02, 0x21, 0x0f, 0, 0, 0x92 },  "j70", "j70", 0x7a007 }, // need ECPI
   //iMac15,1
-  { "iMac15,1", "IM151.88Z.0211.B00.1708080656", "Mac-42FD25EABCABB274", // Intel Core i5-4690 @ 3.50 GHz
+  { "iMac15,1", "IM151.88Z.0213.B00.1801081343", "Mac-42FD25EABCABB274", // Intel Core i5-4690 @ 3.50 GHz
     "iMac", "1.0", "C02Q6HACFY10", "iMac-Aluminum",
     { 0x02, 0x22, 0x0f, 0, 0, 0x16 },  "j78j78am", "j78", 0xf00008 },
   //iMac16,1
-  { "iMac16,1", "IM161.88Z.0212.B00.1708080033", "Mac-A369DDC4E67F1C45", // Intel Core i5-5250U @ 1.60 GHz
+  { "iMac16,1", "IM161.88Z.0214.B00.1801051743", "Mac-A369DDC4E67F1C45", // Intel Core i5-5250U @ 1.60 GHz
     "iMac", "1.0", "C02QQHACGF1J", "iMac-Aluminum",
     { 0x02, 0x31, 0x0f, 0, 0, 0x36 },  "j117", "j117", 0xf00008 }, // need ECPI
   //iMac16,2
-  { "iMac16,2", "IM162.88Z.0212.B00.1708080033", "Mac-FFE5EF870D7BA81A", // Intel Core i5-5575R @ 2.80 GHz
+  { "iMac16,2", "IM162.88Z.0214.B00.1801051742", "Mac-FFE5EF870D7BA81A", // Intel Core i5-5575R @ 2.80 GHz
     "iMac", "1.0", "C02PNHACGG7G", "iMac-Aluminum",
     { 0x02, 0x32, 0x0f, 0, 0, 0x20 },  "j94", "j94", 0xf00008 }, // need ECPI
   //iMac17,1
-  { "iMac17,1", "IM171.88Z.0147.B00.1712190155", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
+  { "iMac17,1", "IM171.88Z.0148.B00.1712211710", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
     "iMac17,1", "1.0", "C02QFHACGG7L", "iMac-Aluminum",
     { 0x02, 0x33, 0x0f, 0, 0, 0x10 },  "j95j95am", "j95", 0xf0c008 }, //Note: i5 but for i7 { 0x02, 0x34, 0x0F, 0, 0, 0x02 }
   //iMac18,1
-  { "iMac18,1", "IM181.88Z.0153.B00.1712141501", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
+  { "iMac18,1", "IM181.88Z.0154.B00.1712211718", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",
     { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "NA", 0xf07009 }, // need RPlt ECPI
   //iMac18,2
-  { "iMac18,2", "IM183.88Z.0153.B00.1712141501", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
+  { "iMac18,2", "IM183.88Z.0154.B00.1712220135", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
     "iMac", "1.0", "C02TDHACJ1G5", "iMac-Aluminum",
     { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "NA", 0xf07009 }, // need RPlt ECPI
   //iMac18,3
-  { "iMac18,3", "IM183.88Z.0153.B00.1712141501", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
+  { "iMac18,3", "IM183.88Z.0154.B00.1712220135", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
   //iMacPro1,1
