@@ -5051,18 +5051,21 @@ VOID DecodeOptions(LOADER_ENTRY *Entry)
     }
   }
   
-  if (gSettings.OptionsBits & OPT_NVWEBON) {
-    if (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
-      gSettings.NvidiaWeb = TRUE;
-    } else {
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[INX_NVWEBON]);
-    }
-  }  
-  if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
-    if (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
-      gSettings.NvidiaWeb = FALSE;
-    } else {
-      Entry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, ArgOptional[INX_NVWEBON]);
+  if (Entry->me.Tag != TAG_LEGACY) {
+    // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
+    if (gSettings.OptionsBits & OPT_NVWEBON) {
+      if (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+        gSettings.NvidiaWeb = TRUE;
+      } else {
+        Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[INX_NVWEBON]);
+      }
+    }  
+    if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
+      if (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+        gSettings.NvidiaWeb = FALSE;
+      } else {
+        Entry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, ArgOptional[INX_NVWEBON]);
+      }
     }
   }
 }
@@ -5106,7 +5109,10 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 //      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
       DecodeOptions((LOADER_ENTRY*)MainChosenEntry);
       //      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-      gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
+      if (MainChosenEntry->Tag != TAG_LEGACY) {
+        // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
+        gSettings.FlagsBits = ((LOADER_ENTRY*)MainChosenEntry)->Flags;
+      }
  //          DBG(" MainChosenEntry with FlagsBits = 0x%x\n", gSettings.FlagsBits);
 
       if (TmpArgs) {
@@ -5129,7 +5135,8 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
           ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions = EfiStrDuplicate(((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
         }
         //       DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-        if (SubMenuExit == MENU_EXIT_ENTER) {
+        if (SubMenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag != TAG_LEGACY) {
+          // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
           ((LOADER_ENTRY*)MainChosenEntry)->Flags = ((LOADER_ENTRY*)TempChosenEntry)->Flags;
 //           DBG(" get MainChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
         }
