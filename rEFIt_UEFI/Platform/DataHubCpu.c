@@ -288,11 +288,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   if (gSettings.CsrActiveConfig != 0xFFFF) {
     SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.CsrActiveConfig), &gSettings.CsrActiveConfig);
   }
-
+/*
   if (gSettings.BooterConfig != 0) {
     SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
   }
-  
+*/
   if (gSettings.NvidiaWeb) {
     NvidiaWebValue = "1";
     SetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, Attributes, 2, (VOID*)NvidiaWebValue);
@@ -400,9 +400,14 @@ SetupDataForOSX(BOOLEAN Hibernate)
       LogDataHub(&gEfiProcessorSubClassGuid, L"ARTFrequency",   &ARTFrequency,        sizeof(UINT64));
     }
 
-    TscFrequency        = gCPUStructure.TSCFrequency;
-    LogDataHub(&gEfiProcessorSubClassGuid, L"InitialTSC",         &TscFrequency,        sizeof(UINT64));
-    LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency",         &CpuSpeed,            sizeof(UINT64));
+    TscFrequency        = 0; //gCPUStructure.TSCFrequency;
+    LogDataHub(&gEfiProcessorSubClassGuid, L"InitialTSC",       &TscFrequency,        sizeof(UINT64));
+    LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency",     &CpuSpeed,            sizeof(UINT64));
+
+    //gSettings.BoardNumber
+    LogDataHub(&gEfiMiscSubClassGuid,      L"board-id",         &gSettings.BoardNumber,   (UINT32)iStrLen(gSettings.BoardNumber, 64) + 1);
+    TscFrequency++;
+    LogDataHub(&gEfiProcessorSubClassGuid, L"board-rev",       &TscFrequency,        1);
     
     DevPathSupportedVal = 1;
     LogDataHub(&gEfiMiscSubClassGuid,      L"DevicePathsSupported", &DevPathSupportedVal, sizeof(UINT32));

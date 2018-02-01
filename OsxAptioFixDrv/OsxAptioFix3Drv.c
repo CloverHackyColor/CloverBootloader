@@ -310,10 +310,10 @@ MOExitBootServices (
       DBGnvr("ExitBootServices: 2nd try = %r\n", Status);
       if (EFI_ERROR (Status)) {
         // Error!
-        Print(L"OsxAptioFixDrv: Error ExitBootServices() 2nd try = Status: %r\n", Status);
+        Print(L"OsxAptioFix3Drv: Error ExitBootServices() 2nd try = Status: %r\n", Status);
       }
     } else {
-      Print(L"OsxAptioFixDrv: Error ExitBootServices(), GetMemoryMapKey() = Status: %r\n", Status);
+      Print(L"OsxAptioFix3Drv: Error ExitBootServices(), GetMemoryMapKey() = Status: %r\n", Status);
       Status = EFI_INVALID_PARAMETER;
     }
     

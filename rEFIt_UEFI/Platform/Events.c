@@ -61,7 +61,7 @@ VOID WaitForCR()
   }
 }
 */
-
+#if 0
 //this procedure was developed for 10.5. Seems no more needed
 VOID CorrectMemoryMap(IN UINT32 memMap, 
                       IN UINT32 memDescriptorSize,
@@ -198,25 +198,26 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
 	}
 	
 }
+#endif
 
 VOID
 EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
-//  EFI_STATUS Status;
-/*  if (DoHibernateWake) {
-    gST->ConOut->OutputString (gST->ConOut, L"wake!!!");
-    gBS->Stall(5000000);     // 5 seconds delay
-    return;
-  } */
+  UINT64 msr = 0;
 
-//	Print(L"OnExitBootServices.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+  msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+//  AsciiPrint("MSR 0xE2 on Exit BS %08x\n", msr);
+
+//  EFI_STATUS Status;
+
   gST->ConOut->OutputString (gST->ConOut, L"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 	//
 	// Patch kernel and kexts if needed
 	//
 	KernelAndKextsPatcherStart((LOADER_ENTRY *)Context);
 	
+#if 0
 //    gBS->Stall(2000000);
 	//PauseForKey(L"press any key to MemoryFix");
 	if (gSettings.MemoryFix) {
@@ -285,6 +286,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 //      bootArgs1v->efiSystemTable = (UINT32)(UINTN)gST;
     }
 	}
+#endif
 	if (gSettings.USBFixOwnership) {
 		// Note: blocks on Aptio
 //		DisableUsbLegacySupport();
@@ -309,6 +311,11 @@ OnReadyToBoot (
                )
 {
 //
+  UINT64 msr = 0;
+
+  msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+//  AsciiPrint("MSR 0xE2 on ReadyToBoot %08x\n", msr);
+
 }
 
 VOID
