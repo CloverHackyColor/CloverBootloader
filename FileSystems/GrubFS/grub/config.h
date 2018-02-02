@@ -7,6 +7,7 @@
 #endif
 
 #define GCRYPT_NO_DEPRECATED 1
+#define _GCRYPT_IN_LIBGCRYPT 0
 
 /* Define to 1 to enable disk cache statistics.  */
 #define DISK_CACHE_STATS 0

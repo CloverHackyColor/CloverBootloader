@@ -85,3 +85,13 @@ grub_unregister_command (grub_command_t cmd)
   grub_list_remove (GRUB_AS_LIST (cmd));
   grub_free (cmd);
 }
+
+void
+grub_unregister_extcmd (grub_command_t cmd)
+{
+  if ((cmd->prio & GRUB_COMMAND_FLAG_ACTIVE) && (cmd->next))
+  cmd->next->prio |= GRUB_COMMAND_FLAG_ACTIVE;
+  grub_list_remove (GRUB_AS_LIST (cmd));
+  grub_free (cmd);
+}
+

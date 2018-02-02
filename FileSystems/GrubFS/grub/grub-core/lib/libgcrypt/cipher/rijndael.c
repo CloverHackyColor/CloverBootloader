@@ -42,13 +42,16 @@
 #include <stdlib.h>
 #include <string.h> /* for memcmp() */
 
-#include "types.h"  /* for byte and u32 typedefs */
-#include "g10lib.h"
+#include "../src/types.h"  /* for byte and u32 typedefs */
+#include "../src/g10lib.h"
 #include "cipher.h"
 
 #define MAXKC			(256/32)
 #define MAXROUNDS		14
 #define BLOCKSIZE               (128/8)
+
+//typedef unsigned char byte;
+//typedef unsigned long u32;
 
 
 /* Helper macro to force alignment to 16 bytes.  */

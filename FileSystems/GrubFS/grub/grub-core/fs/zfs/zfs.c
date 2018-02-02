@@ -60,6 +60,11 @@ GRUB_MOD_LICENSE ("GPLv3+");
 
 #define	ZPOOL_PROP_BOOTFS		"bootfs"
 
+#define memeq(a, b, size) (CompareMem(a, b, size) == 0)
+#define memzero(buf, size) CopyMem(buf, 0, size)
+#define memcpy(tbuf, buf, size) CopyMem(tbuf, buf, size)
+
+
 /*
  * For nvlist manipulation. (from nvpair.h)
  */

@@ -25,10 +25,15 @@
 	path.c
 	utf8.c
 	../grub/grub-core/io/gzio.c
+  ../grub/grub-core/kern/command.c
 	../grub/grub-core/kern/device.c
 	../grub/grub-core/kern/err.c
+  ../grub/grub-core/kern/env.c
+  ../grub/grub-core/kern/file.c
 	../grub/grub-core/kern/misc.c
 	../grub/grub-core/kern/list.c
+  ../grub/grub-core/lib/crypto.c
+  ../grub/grub-core/lib/libgcrypt/cipher/rijndael.c
 	../grub/grub-core/fs/fshelp.c
 	../grub/grub-core/fs/zfs/zfs.c
 	../grub/grub-core/fs/zfs/zfs_fletcher.c
@@ -39,11 +44,12 @@
 	../grub/grub-core/fs/zfs/zfsinfo.c
 
 [Packages]
-        MdePkg/MdePkg.dec
-        ShellPkg/ShellPkg.dec
-        IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-        Clover/CloverPkg.dec
-	Clover/FileSystems/GrubFS/efifs.dec
+      MdePkg/MdePkg.dec
+      ShellPkg/ShellPkg.dec
+      IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+      Clover/CloverPkg.dec
+      Clover/FileSystems/GrubFS/efifs.dec
+
 
 [LibraryClasses]
    UefiRuntimeServicesTableLib

@@ -19,6 +19,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12646C7C2024B89E0046A52B /* gcrypt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gcrypt.h; sourceTree = "<group>"; };
 		12C870D81DE4298700BF4974 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		12C870D91DE4298700BF4974 /* efifs.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = efifs.dec; sourceTree = "<group>"; };
 		12C870DB1DE4298700BF4974 /* config-util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "config-util.h"; sourceTree = "<group>"; };
@@ -1775,6 +1776,7 @@
 				12C872991DE4298700BF4974 /* fips.c */,
 				12C8729A1DE4298700BF4974 /* g10lib.h */,
 				12C8729B1DE4298700BF4974 /* gcrypt-module.h */,
+				12646C7C2024B89E0046A52B /* gcrypt.h */,
 				12C8729C1DE4298700BF4974 /* gcrypt.h.in */,
 				12C8729D1DE4298700BF4974 /* gcryptrnd.c */,
 				12C8729E1DE4298700BF4974 /* getrandom.c */,

@@ -17,6 +17,7 @@
  */
 
 #include <grub/err.h>
+#include <grub/crypto.h>
 #include <grub/file.h>
 #include <grub/mm.h>
 #include <grub/misc.h>

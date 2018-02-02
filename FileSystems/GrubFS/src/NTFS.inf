@@ -25,13 +25,13 @@
 	path.c
 	utf8.c
 
-        ../grub/grub-core/kern/device.c
+  ../grub/grub-core/kern/device.c
 	../grub/grub-core/kern/err.c
 	../grub/grub-core/kern/misc.c
 	../grub/grub-core/kern/list.c
 	../grub/grub-core/fs/fshelp.c
 	../grub/grub-core/fs/ntfscomp.c
-		../grub/grub-core/fs/ntfs.c
+  ../grub/grub-core/fs/ntfs.c
 
 [Packages]
         MdePkg/MdePkg.dec
