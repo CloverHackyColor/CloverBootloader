@@ -314,21 +314,20 @@ checkXcode () {
     local LOCALBIN="/usr/local/bin"
     local CLOVERBIN="${CLOVERROOT}/BuildTools/usr/local/bin"
     if [[ ! -x "${XCODE_BUILD}" ]]; then
-        echo "ERROR: Install Xcode Tools from Apple before using this script." >&2
-        exit 1
-    elif [[ -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
-        unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
-        [[ ! -d "${LOCALBIN}" ]] && sudo mkdir -p "${LOCALBIN}"
-        if [[ ! -x "${LOCALBIN}/mtoc" ]]; then
-            echo "Installing mtoc"
-            sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/mtoc"
-        fi
-        if [[ ! -x "${LOCALBIN}/mtoc.NEW" ]]; then
-            echo "Installing mtoc.NEW"
-            sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/mtoc.NEW"
-        fi
-        sudo -k
+       echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
     fi
+    if [[ ! -x "${CLOVERBIN}/mtoc.NEW" && -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
+       unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
+    fi
+    if [[ ! -d "${LOCALBIN}" ]]; then sudo mkdir -p "${LOCALBIN}"; fi
+    for mt in "mtoc" "mtoc.NEW"
+    do
+       if [[ ! -h "${LOCALBIN}/$mt" ]]; then
+          echo "Installing $mt"
+          sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/$mt"
+       fi
+    done
+    sudo -k
 }
 
 # Print the usage.
