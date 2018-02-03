@@ -322,7 +322,7 @@ checkXcode () {
     if [[ ! -d "${LOCALBIN}" ]]; then sudo mkdir -p "${LOCALBIN}"; fi
     for mt in "mtoc" "mtoc.NEW"
     do
-       if [[ ! -h "${LOCALBIN}/$mt" ]]; then
+       if [[ ! -x "${LOCALBIN}/$mt" ]]; then
           echo "Installing $mt"
           sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/$mt"
        fi
