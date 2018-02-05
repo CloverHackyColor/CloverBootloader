@@ -276,8 +276,8 @@ EFIAPI OurBlockIoRead (
         Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = MultU64x32(Lba, BlockSize);
       DBG("    got sleep image offset\n");
-      UINT64 CheckSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
-      DBG("     image has machineSignature =0x%x\n", CheckSignature);
+      machineSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
+      DBG("     image has machineSignature =0x%x\n", machineSignature);
 
       //save sleep time as lvs1974 suggested
       if (Header->signature == kIOHibernateHeaderSignature) {
@@ -569,8 +569,8 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
     return FALSE;
   }
   DBG("     machineSignature from FACS =0x%x\n", machineSignature);
-  machineSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
-  DBG("     image has machineSignature =0x%x\n", machineSignature);
+//  machineSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
+//  DBG("     image has machineSignature =0x%x\n", machineSignature);
   FreePages(Buffer, Pages);
   return TRUE;
 }
