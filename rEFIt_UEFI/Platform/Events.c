@@ -208,8 +208,29 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 
   msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
 //  AsciiPrint("MSR 0xE2 on Exit BS %08x\n", msr);
-
+/*
 //  EFI_STATUS Status;
+  {
+    //    UINT32                    machineSignature    = 0;
+    EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
+    EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs = NULL;
+
+    //    DBG("---dump hibernations data---\n");
+    FadtPointer = GetFadt();
+    if (FadtPointer != NULL) {
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+
+      AsciiPrint("  Firmware wake address=%08lx\n", Facs->FirmwareWakingVector);
+      AsciiPrint("  Firmware wake 64 addr=%16llx\n",  Facs->XFirmwareWakingVector);
+      AsciiPrint("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
+      AsciiPrint("  GlobalLock           =%08lx\n", Facs->GlobalLock);
+      AsciiPrint("  Flags                =%08lx\n", Facs->Flags);
+      AsciiPrint(" HS at offset 0x%08x\n", OFFSET_OF(EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE, HardwareSignature));
+ //     machineSignature = Facs->HardwareSignature;
+    }
+  }
+*/  
+
 
   gST->ConOut->OutputString (gST->ConOut, L"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 	//

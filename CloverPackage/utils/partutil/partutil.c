@@ -6,31 +6,6 @@
  *  Copyright (c) 2014-2015 JrCs. All rights reserved.
  */
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <paths.h>
-#include <sys/param.h>
-
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <getopt.h>
-
-#include <IOKit/IOKitLib.h>
-#include <IOKit/IOBSD.h>
-#include <IOKit/usb/IOUSBLib.h>
-#include <IOKit/storage/IOCDMedia.h>
-#include <IOKit/storage/IOMedia.h>
-#include <IOKit/storage/IOCDTypes.h>
-#include <IOKit/storage/IOMediaBSDClient.h>
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <DiskArbitration/DiskArbitration.h>
 
 #include "partutil.h"
 
@@ -54,6 +29,7 @@ typedef enum {
     query_pbrtype,
     query_wholedisk,
     query_contenttype,
+    query_findesp,
     query_dump,
     query_undefined
 } queryType;
@@ -289,6 +265,8 @@ bool queryDevice(char const* deviceName, queryType query, char *answer, size_t a
         case query_pbrtype: // never used here
         case query_undefined:
             break;
+      default:
+        break;
     }
     if (!key) {
         CFRelease(descDict);
@@ -430,7 +408,7 @@ void print_version(void) {
 //
 // display usage
 //
-static void
+void
 usage (int status)
 {
     if (status)
@@ -452,6 +430,7 @@ Query options:\n\
 \t--show-contenttype      display the content type of the device\n\
 \t--show-pbrtype          display the filesystem type from the PBR of the device\n\
 \t--show-wholedisk        display the whole disk of the device\n\
+\t--find-esp              display the associated EFI System Partition (if any)\n\
 \t--dump                  dump properties of the partition\n\
 \n\
 Search options: \n\
@@ -465,6 +444,7 @@ Other options:\n\
 example: " PROGNAME_S " --show-fstype disk0s4\n\
          " PROGNAME_S " --show-bsdname 6A9017D9-2B9E-4786-B0A5-A75BD2264239\n\
          " PROGNAME_S " --show-blocksize disk0s4\n\
+         " PROGNAME_S " --find-esp disk0s4\n\
          " PROGNAME_S " --search-uuid 2C97F84A-F488-4917-A312-5D64BAE5BCFC\n");
     }
     exit (status);
@@ -489,6 +469,7 @@ static struct option options[] =
     {"show-contenttype", no_argument, 0, query_contenttype},
     {"show-pbrtype", no_argument, 0, query_pbrtype},
     {"show-wholedisk", no_argument, 0, query_wholedisk},
+    {"find-esp", no_argument, 0, query_findesp},
     {"dump", no_argument, 0, query_dump},
     {"help",    no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
@@ -545,7 +526,14 @@ int main(int argc, char* const argv[])
                     }
                     query = c;
                     break;
-
+                case query_findesp: {
+                  char const* esp = getESPFor(argv[optind]);
+                  if (strlen(esp)) {
+                    printf("%s\n", esp);
+                  }
+                  exit(0);
+                  break;
+                }
                 case 'h':
                     usage (0);
                     break;

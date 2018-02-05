@@ -786,6 +786,27 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // to reboot into another volume
     RemoveStartupDiskVolume();
   }
+/*
+  {
+    //    UINT32                    machineSignature    = 0;
+    EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
+    EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs = NULL;
+
+    //    DBG("---dump hibernations data---\n");
+    FadtPointer = GetFadt();
+    if (FadtPointer != NULL) {
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+
+      DBG("  Firmware wake address=%08lx\n", Facs->FirmwareWakingVector);
+      DBG("  Firmware wake 64 addr=%16llx\n",  Facs->XFirmwareWakingVector);
+      DBG("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
+      DBG("  GlobalLock           =%08lx\n", Facs->GlobalLock);
+      DBG("  Flags                =%08lx\n", Facs->Flags);
+      DBG(" HS at offset 0x%08x\n", OFFSET_OF(EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE, HardwareSignature));
+      //   machineSignature = Facs->HardwareSignature;
+    }
+  }
+*/
 
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
@@ -830,6 +851,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
     SetupBooterLog(!DoHibernateWake);
   }
+
+
   
   DBG("Closing log\n");
   if (SavePreBootLog) {
