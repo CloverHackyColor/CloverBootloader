@@ -46,5 +46,6 @@ void print_version(void);
 void usage (int status);
 CFDictionaryRef getDescriptionsFrom(char const* diskOrMountPoint);
 CFArrayRef findEFIDisks();
-char const* getESPFor(char const* diskOrMountPoint);
+char* getESPFor(char const* diskOrMountPoint);
+void releaseESPArray(CFArrayRef esps);
 #endif

@@ -9,51 +9,50 @@
 #include "partutil.h"
 
 CFDictionaryRef getDescriptionsFrom(char const* diskOrMountPoint) {
-  int                 err = 0;
   DADiskRef           disk = NULL;
   DASessionRef        session;
   CFDictionaryRef     descDict = NULL;
   CFURLRef            volURL = NULL;
   struct stat sb;
-  
+
   session = DASessionCreate(NULL);
-  if (session == NULL) err = EINVAL;
-    
-    if (err == 0) {
-      if (strncmp("disk", diskOrMountPoint, strlen("disk")) == 0) {
-        disk = DADiskCreateFromBSDName(NULL,
-                                       session,
-                                       diskOrMountPoint);
-      } else if (stat(diskOrMountPoint, &sb) == 0 && S_ISDIR(sb.st_mode)) {
-        volURL = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault,
-                                                         (const UInt8 *)diskOrMountPoint,
-                                                         strlen(diskOrMountPoint),
-                                                         true);
-        disk = DADiskCreateFromVolumePath(NULL,
-                                          session,
-                                          volURL);
-        if (volURL) {
-          CFRelease(volURL);
-        }
-      } else {
-        usage (1);
-      }
-      
-      if (session) {
-        CFRelease(session);
-      }
-      
-      if (disk != NULL) {
-        descDict = DADiskCopyDescription(disk);
-        CFRelease(disk);
-        if (descDict != NULL) {
-          return descDict;
-        }
+
+  if (session != NULL) {
+    if (strncmp("disk", diskOrMountPoint, strlen("disk")) == 0) {
+      disk = DADiskCreateFromBSDName(NULL,
+                                     session,
+                                     diskOrMountPoint);
+    } else if (stat(diskOrMountPoint, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+      volURL = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault,
+                                                       (const UInt8 *)diskOrMountPoint,
+                                                       strlen(diskOrMountPoint),
+                                                       true);
+      disk = DADiskCreateFromVolumePath(NULL,
+                                        session,
+                                        volURL);
+      if (volURL) {
+        CFRelease(volURL);
       }
     } else {
-      fprintf(stderr, "DADiskCreateXXX(%s) returned NULL\n", diskOrMountPoint);
-      exit(EXIT_FAILURE);
+      CFRelease(session);
+      usage (1);
     }
+
+    if (session) {
+      CFRelease(session);
+    }
+
+    if (disk != NULL) {
+      descDict = DADiskCopyDescription(disk);
+      CFRelease(disk);
+      if (descDict != NULL) {
+        return descDict;
+      }
+    }
+  } else {
+    fprintf(stderr, "DADiskCreateXXX(%s) returned NULL\n", diskOrMountPoint);
+    exit(EXIT_FAILURE);
+  }
   return NULL;
 }
 
@@ -70,28 +69,35 @@ CFArrayRef findEFIDisks() {
       if (IORegistryEntryCreateCFProperties(serviceObject,
                                             &serviceDictionary,
                                             kCFAllocatorDefault,
-                                            kNilOptions) != kIOReturnSuccess) {
+                                            0) != kIOReturnSuccess) {
         continue;
       }
 
       if (serviceDictionary != NULL) {
-        const char *bsd = CFStringGetCStringPtr(CFDictionaryGetValue(serviceDictionary,
-                                                                     CFSTR(kIOBSDNameKey)),
-                                                kCFStringEncodingUTF8);
-        if (bsd) {
+        CFStringRef v = CFDictionaryGetValue(serviceDictionary,
+                                             CFSTR(kIOBSDNameKey));
+
+        CFIndex length = CFStringGetLength(v);
+        CFIndex size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+        char *bsd = (char *)malloc(size);
+
+        if (CFStringGetCString(v, bsd, size, kCFStringEncodingUTF8)) {
           CFDictionaryRef desc = getDescriptionsFrom(bsd);
           if (desc) {
             const void *mediaName = CFStringGetCStringPtr(CFDictionaryGetValue(desc,
                                                                                kDADiskDescriptionMediaNameKey),
                                                           kCFStringEncodingUTF8);
-            if(strcmp(mediaName, "EFI System Partition") == 0) {
-              CFArrayAppendValue(esps, CFStringCreateWithCString(NULL, bsd, kCFStringEncodingUTF8));
+
+            if(mediaName && strcmp(mediaName, "EFI System Partition") == 0) {
+              CFStringRef esp = CFStringCreateWithCString(kCFAllocatorDefault, bsd, kCFStringEncodingUTF8);
+              if (esp) {
+                CFArrayAppendValue(esps, esp);
+              }
             }
             CFRelease(desc);
           }
+          free(bsd);
         }
-      }
-      if (serviceDictionary) {
         CFRelease(serviceDictionary);
       }
     }
@@ -99,34 +105,63 @@ CFArrayRef findEFIDisks() {
   return esps;
 }
 
-char const* getESPFor(char const* diskOrMountPoint) {
+char * getESPFor(char const* diskOrMountPoint) {
   CFDictionaryRef desc = getDescriptionsFrom(diskOrMountPoint);
-  if (desc != NULL) {
+  if (desc) {
     const void *busPath = CFStringGetCStringPtr(CFDictionaryGetValue(desc,
                                                                      kDADiskDescriptionBusPathKey),
                                                 kCFStringEncodingUTF8);
-    CFArrayRef esps = findEFIDisks();
-    if (esps) {
-      CFIndex count = CFArrayGetCount(esps);
-      for (CFIndex i = 0; i < count; i++) {
-        const void *bsd = CFStringGetCStringPtr(CFArrayGetValueAtIndex(esps, i), kCFStringEncodingUTF8);
-        
-        CFDictionaryRef espDesc = getDescriptionsFrom(bsd);
-        if (espDesc) {
-          const void *espBusPath = CFStringGetCStringPtr(CFDictionaryGetValue(espDesc,
-                                                                              kDADiskDescriptionBusPathKey),
-                                                         kCFStringEncodingUTF8);
-          if(strcmp((const char*)busPath, (const char*)espBusPath) == 0) {
-            CFRelease(esps);
-            CFRelease(espDesc);
-            return bsd;
-          } else {
+
+    if (busPath) {
+      CFArrayRef esps = findEFIDisks();
+      if (esps) {
+        CFIndex count = CFArrayGetCount(esps);
+        for (CFIndex i = 0; i < count; i++) {
+          CFStringRef c = CFArrayGetValueAtIndex(esps, i);
+          CFIndex length = CFStringGetLength(c);
+          CFIndex size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+          char *bsd = (char *)malloc(size);
+
+          if (CFStringGetCString(c, bsd, size, kCFStringEncodingUTF8)) {
+            CFDictionaryRef espDesc = getDescriptionsFrom(bsd);
+            if (espDesc) {
+              const void *espBusPath = CFStringGetCStringPtr(CFDictionaryGetValue(espDesc,
+                                                                                  kDADiskDescriptionBusPathKey),
+                                                             kCFStringEncodingUTF8);
+              if (espBusPath) {
+                if(strcmp(busPath, espBusPath) == 0) {
+                  releaseESPArray(esps);
+                  CFRelease(espDesc);
+                  CFRelease(desc);
+                  return bsd;
+                }
+              }
+            }
             CFRelease(espDesc);
           }
+          if (bsd) {
+            free(bsd);
+          }
         }
+        releaseESPArray(esps);
       }
-      CFRelease(esps);
+    }
+    CFRelease(desc);
+  }
+  return NULL;
+}
+
+void releaseESPArray(CFArrayRef esps)
+{
+  CFIndex count = CFArrayGetCount(esps);
+  for (CFIndex i = 0; i < count; i++) {
+    CFStringRef s = CFArrayGetValueAtIndex(esps, i);
+    if (s) {
+      CFRelease(s);
     }
   }
-  return "";
+
+  if (esps) {
+    CFRelease(esps);
+  }
 }
