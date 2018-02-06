@@ -28,12 +28,12 @@ set -u # exit with error if unbound variables
 # here we can change source versions of tools
 #
 export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.27}
-export GCC_VERSION=${GCC_VERSION:-7.2.0}
+export GCC_VERSION=${GCC_VERSION:-7.3.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.1.2}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.6}
-export MPC_VERSION=${MPC_VERSION:-mpc-1.0.3}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-4.0.0}
+export MPC_VERSION=${MPC_VERSION:-mpc-1.1.0}
 export ISL_VERSION=${ISL_VERSION:-isl-0.18}
 
 # Change PREFIX if you want gcc and binutils
@@ -162,7 +162,7 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
         mv download.tmp ${BINUTILS_VERSION}.tar.bz2
     fi
 
