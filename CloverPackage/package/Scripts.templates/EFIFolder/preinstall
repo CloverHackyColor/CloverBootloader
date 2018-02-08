@@ -171,6 +171,7 @@ for pkg in $pkgs; do
      /usr/bin/grep -iE 'EFI/CLOVER/(drivers\w+)/'   | \
      xargs -I @@ rm -rf '@@'
     rm -f "$DEST_VOL"/Library/Receipts/"$pkg".{plist,bom}
+    rm -f "$DEST_VOL"/var/db/receipts/"$pkg".{plist,bom}
 done
 
 # Remove old CloverEFI files
