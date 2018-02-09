@@ -155,9 +155,9 @@ EFI_STATUS GetEdidDiscovered(VOID)
       ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
       DebugDumpEDID("--- Patched EDID Table", N);
     } else if ((UINT8)gSettings.CustomEDID[127] != (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127))){
-      DBG("    Fix wrong checksum = %02x to ", (UINT8)gSettings.CustomEDID[127]);
+      DBG("    Fix wrong checksum = 0x%02lx changed to ", ((UINT8*)gSettings.CustomEDID)[127]);
       ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
-      DBG("%02x\n", (UINT8)gSettings.CustomEDID[127]);
+      DBG("0x%02lx\n", ((UINT8*)gSettings.CustomEDID)[127]);
       DebugDumpEDID("--- Patched EDID Table", N);
     }
   }

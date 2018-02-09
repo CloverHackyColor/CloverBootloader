@@ -4077,11 +4077,10 @@ ParseSMBIOSSettings(
       // something else?
       SetDMISettingsForModel (iMac132, FALSE);
     }
-    DBG ("Using ProductName from config\n");
+    DBG ("Using ProductName from config: %a\n", gSettings.ProductName);
   } else {
-    DBG ("Using ProductName from clover\n");
+    DBG ("Using ProductName from clover: %a\n", gSettings.ProductName);
   }
-  DBG ("ProductName: %a\n", gSettings.ProductName);
 
   // Check for BiosVersion and BiosReleaseDate by Sherlocks
   Prop = GetProperty (DictPointer, "BiosVersion");

@@ -769,8 +769,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3EA8, "Intel Coffee Lake GT3"          }, //
 
   //----------------Gemini Lake---------------
-  { 0x3184, "Intel HD Graphics 605"          }, //
-  { 0x3185, "Intel HD Graphics 600"          }, //
+  { 0x3184, "Intel UHD Graphics 605"         }, //
+  { 0x3185, "Intel UHD Graphics 600"         }, //
 
 
   //============== 10th generation ===========
@@ -2583,8 +2583,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       break;
 
       //----------------Gemini Lake---------------
-    case 0x3184: // "Intel HD Graphics 605"           //
-    case 0x3185: // "Intel HD Graphics 600"           //
+    case 0x3184: // "Intel UHD Graphics 605"          //
+    case 0x3185: // "Intel UHD Graphics 600"          //
       break;
 
 
