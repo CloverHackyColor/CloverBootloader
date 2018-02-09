@@ -92,6 +92,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\arch\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
   { L"\\EFI\\arch_grub\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
   { L"\\EFI\\ORACLE\\grubx64.efi", L"Oracle Solaris EFI boot menu", L"solaris,linux", "Solaris" },
+  { L"\\EFI\\Endless\\grubx64.efi", L"EndlessOS EFI boot menu", L"endless,linux", "EndlessOS" },
 #else
   { L"\\EFI\\grub\\grub.efi", L"Grub EFI boot menu", L"grub,linux" },
   { L"\\EFI\\Gentoo\\grub.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
@@ -107,6 +108,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\arch\\grub.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
   { L"\\EFI\\arch_grub\\grub.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
   { L"\\EFI\\ORACLE\\grub.efi", L"Oracle Solaris EFI boot menu", L"solaris,linux", "Solaris" },
+  { L"\\EFI\\Endless\\grub.efi", L"EndlessOS EFI boot menu", L"endless,linux", "EndlessOS" },
 #endif
   { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
 };
@@ -127,10 +129,10 @@ STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
 #if defined(MDE_CPU_X64)
   //{ L"\\EFI\\boot\\grubx64.efi", L"Grub", L"grub,linux" },
   //{ L"\\EFI\\boot\\bootx64.efi", L"Grub", L"grub,linux" },
-  { L"\\EFI\\remixos\\grubx64.efi",         L"Remix",   L"remix,grub,linux",   { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
-  { L"\\EFI\\PhoenixOS\\boot\\grubx64.efi", L"Phoenix", L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
-  { L"\\EFI\\boot\\grubx64.efi",            L"Phoenix", L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
-  { L"\\EFI\\boot\\bootx64.efi",            L"Chrome",  L"chrome,grub,linux",  { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
+  { L"\\EFI\\remixos\\grubx64.efi",         L"Remix",     L"remix,grub,linux",   { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
+  { L"\\EFI\\PhoenixOS\\boot\\grubx64.efi", L"PhoenixOS", L"phoenix,grub,linux", { L"\\EFI\\PhoenixOS\\boot\\efi.img", L"\\EFI\\PhoenixOS\\initrd.img", L"\\EFI\\PhoenixOS\\kernel" } },
+  { L"\\EFI\\boot\\grubx64.efi",            L"Phoenix",   L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
+  { L"\\EFI\\boot\\bootx64.efi",            L"Chrome",    L"chrome,grub,linux",  { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
 /*
 #else
 */
