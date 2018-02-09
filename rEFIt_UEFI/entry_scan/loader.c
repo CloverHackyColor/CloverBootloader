@@ -127,9 +127,10 @@ STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
 #if defined(MDE_CPU_X64)
   //{ L"\\EFI\\boot\\grubx64.efi", L"Grub", L"grub,linux" },
   //{ L"\\EFI\\boot\\bootx64.efi", L"Grub", L"grub,linux" },
-  { L"\\EFI\\remixos\\grubx64.efi", L"Remix",   L"remix,grub,linux",    { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
-  { L"\\EFI\\boot\\grubx64.efi",    L"Phoenix", L"phoenix,grub,linux",  { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
-  { L"\\EFI\\boot\\bootx64.efi",    L"Chrome",  L"chrome,grub,linux",   { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
+  { L"\\EFI\\remixos\\grubx64.efi",         L"Remix",   L"remix,grub,linux",   { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
+  { L"\\EFI\\PhoenixOS\\boot\\grubx64.efi", L"Phoenix", L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
+  { L"\\EFI\\boot\\grubx64.efi",            L"Phoenix", L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
+  { L"\\EFI\\boot\\bootx64.efi",            L"Chrome",  L"chrome,grub,linux",  { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
 /*
 #else
 */
