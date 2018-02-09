@@ -12,17 +12,68 @@ if [[ -z "$DiskDevice" ]]; then
     exit 1
 fi
 
+# check if target volume is a logical Volume instead of physical
+if [[ "$(echo $(LC_ALL=C diskutil list | grep -i 'Logical Volume' | \
+          awk '{print tolower($0)}'))" == *"logical volume"* ]]; then
+    # ok, we have a logical volume somewhere.. so that can assume that we can use "diskutil cs"
+    LC_ALL=C diskutil cs info $DiskDevice > /dev/null 2>&1
+    if [[ $? -eq 0 ]] ; then
+        # logical volumes does not have an EFI partition (or not suitable for us?)
+        echo "$DiskDevice is a logical volume"
+        # find the partition uuid
+        UUID=$(LC_ALL=C diskutil info "${DiskDevice}" 2>/dev/null | \
+                                      sed -n 's/.*artition UUID: *//p')
+        # with the partition uuid we can find the real disk in in diskutil list output
+        if [[ -n "$UUID" ]]; then
+            realDisk=$(LC_ALL=C diskutil list | \
+                grep -B 1 "$UUID" | \
+                grep -i 'logical volume' | awk '{print $4}' | \
+                sed -e 's/,//g' | sed -e 's/ //g')
+            if [[ -n "$realDisk" ]]; then
+                DiskDevice=$(LC_ALL=C diskutil info "${realDisk}" 2>/dev/null | \
+                                             sed -n 's/.*Part [oO]f Whole: *//p')
+            fi
+        fi
+    fi
+fi
+
+# check if target volume is APFS, and therefore part of an APFS container
+if [[ "$(echo $(LC_ALL=C diskutil list "$DiskDevice" | grep -i 'APFS Container Scheme' | \
+          awk '{print tolower($0)}'))" == *"apfs container scheme"* ]]; then
+    # ok, this disk is an APFS partition, extract physical store device
+    realDisk=$(LC_ALL=C diskutil list "$DiskDevice" 2>/dev/null | \
+        sed -n 's/.*Physical Store *//p')
+    echo Target volume "$1" on "$DiskDevice" is APFS on physical store "$realDisk"
+    DiskDevice=$(LC_ALL=C diskutil info "$realDisk" 2>/dev/null | \
+        sed -n 's/.*Part [oO]f Whole: *//p')
+fi
+
+# echo "realDisk = $realDisk"
+# echo "UUID = $UUID"
 # echo "DiskDevice = $DiskDevice"
 
-    ESPDevice=$("$partutil" --find-esp "$DiskDevice")
+# Check if the disk is a GPT disk
+disk_partition_scheme=$("$partutil" --show-partitionscheme "$DiskDevice")
 
-    if [[ -n $ESPDevice ]] && [[ $ESPDevice == disk* ]] ; then
-      ESPMountPoint=$("$partutil" --show-mountpoint "$ESPDevice")
+if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
 
-      if [[ -n "$ESPMountPoint" ]]; then
+    plistbuddy='/usr/libexec/PlistBuddy'
+
+    # Get the index of the ESP device
+    index=$(LC_ALL=C /usr/sbin/gpt -r show "/dev/$DiskDevice" 2>/dev/null | \
+     awk 'toupper($7) == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" {print $3; exit}')
+    [[ -z "$index" ]] && index=1 # if not found use the index 1
+
+    # Define the ESPDevice
+    ESPDevice="${DiskDevice}s${index}"
+
+    # Get the ESP mount point if the partition is currently mounted
+    ESPMountPoint=$("$partutil" --show-mountpoint "$ESPDevice")
+
+    if [[ -n "$ESPMountPoint" ]]; then
         # If already mounted it's okay
         exitcode=0
-      else
+    else
         # Else try to mount the ESP partition
         ESPMountPoint="/Volumes/ESP"
         exitcode=1
@@ -32,7 +83,7 @@ fi
             mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
             exitcode=$?
         fi
-      fi
+    fi
 
     if [[ $exitcode -ne 0 ]]; then
         echo
@@ -48,7 +99,7 @@ fi
         ln -sf "$ESPMountPoint" "$EFI_ROOT_DIR"
     fi
 else
-  # Disk is not GPT (or the ESP is damaged) use the DEST_VOL as EFI_ROOT_DIR
+    # Disk is not GPT use the DEST_VOL as EFI_ROOT_DIR
     ln -sf "${DEST_VOL}" "$EFI_ROOT_DIR"
     exitcode=0
 fi

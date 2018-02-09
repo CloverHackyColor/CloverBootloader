@@ -11,7 +11,6 @@
 		A3A609241A5053EE00A95E01 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263B21A31CD34005F1426 /* IOKit.framework */; };
 		A3A609251A5053FA00A95E01 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263AD1A31CD23005F1426 /* DiskArbitration.framework */; };
 		A3A609261A50540000A95E01 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 129263B01A31CD2B005F1426 /* CoreFoundation.framework */; };
-		CE2FA660202705AB00F79F01 /* findesp.c in Sources */ = {isa = PBXBuildFile; fileRef = CE2FA65F202705AB00F79F01 /* findesp.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,7 +33,6 @@
 		A3145F471A50053F00596E9A /* Makefile */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = Makefile; sourceTree = SOURCE_ROOT; usesTabs = 1; };
 		A37483F81A5058B100E34D2F /* partutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = partutil.h; sourceTree = SOURCE_ROOT; };
 		A3A6091C1A50539800A95E01 /* partutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = partutil; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE2FA65F202705AB00F79F01 /* findesp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = findesp.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,7 +73,6 @@
 			children = (
 				A3145F471A50053F00596E9A /* Makefile */,
 				A37483F81A5058B100E34D2F /* partutil.h */,
-				CE2FA65F202705AB00F79F01 /* findesp.c */,
 				12F2E5531A3102E80058A333 /* partutil.c */,
 			);
 			path = partutil;
@@ -138,7 +135,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3A609231A5053AE00A95E01 /* partutil.c in Sources */,
-				CE2FA660202705AB00F79F01 /* findesp.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,7 +145,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -183,7 +179,6 @@
 				INSTALL_PATH = /.;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -191,7 +186,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -219,7 +214,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};

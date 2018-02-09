@@ -77,8 +77,6 @@
 extern CHAR8*    gDeviceProperties;
 extern CHAR8     ClassFix[];
 
-UINT32	IntelDisplay = 1;
-
 
 UINT8 common_vals[3][4] = {
   { 0x00, 0x00, 0x00, 0x00 },   //0 reg_FALSE
@@ -1397,14 +1395,17 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   }
 
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
-  devprop_add_value(device, "device_type", (UINT8*)"display", 7);
+  //devprop_add_value(device, "device_type", (UINT8*)"display", 7);  // this key displays two intel graphics cards in system report on 10.13.4
   devprop_add_value(device, "subsystem-vendor-id", common_vals[2], 4);
   devprop_add_value(device, "class-code", (UINT8*)ClassFix, 4);
-  devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&IntelDisplay, 4);
-  devprop_add_value(device, "AAPL,HasLid", (UINT8*)&IntelDisplay, 4);
-  devprop_add_value(device, "AAPL,HasPanel", (UINT8*)&IntelDisplay, 4);
-  devprop_add_value(device, "@0,backlight-control", (UINT8*)&IntelDisplay, 4);
-
+  if (gSettings.Mobile) {
+    UINT32    IntelDisplay = 1;
+    // these are not reference keys for all. why add these keys?
+    devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&IntelDisplay, 4);
+    devprop_add_value(device, "AAPL,HasLid", (UINT8*)&IntelDisplay, 4);
+    devprop_add_value(device, "AAPL,HasPanel", (UINT8*)&IntelDisplay, 4);
+    devprop_add_value(device, "@0,backlight-control", (UINT8*)&IntelDisplay, 4);
+  }
 
   // Clover will automatically detect these values if there is no ig-platform-id or FakeID Intel GFX value.
   // If there are Intel GFX values in ACPI injection, their values will be overwritten on the values of Intel GFX auto-detection.
