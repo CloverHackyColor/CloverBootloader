@@ -955,7 +955,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //60
   if (InputItems[i].Valid) {
-    gSettings.HDALayoutId = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
+    gSettings.HDALayoutId = (UINT32)(StrDecimalToUintn(InputItems[i].SValue));
   }
   i++; //61
   if (InputItems[i].Valid) {
