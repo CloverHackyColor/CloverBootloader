@@ -6631,7 +6631,7 @@ NOOPT_MYTOOLS_IPF_DLINK_FLAGS            = /NOLOGO /NODEFAULTLIB /LTCG /DLL /OPT
 *_XCODE32_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
 
 # This tool needs to be installed separately from Xcode 3.2
-*_XCODE32_*_MTOC_PATH        = /usr/local/bin/mtoc
+*_XCODE32_*_MTOC_PATH        = ENV(MTOC_PREFIX)mtoc
 *_XCODE32_*_STRIP_PATH       = strip
 
   DEBUG_XCODE32_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
@@ -6741,7 +6741,7 @@ RELEASE_XCODE32_ARM_CC_FLAGS   = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mthumb-inter
 *_XCLANG_*_MAKE_PATH        = make
 *_XCLANG_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
 #*_XCLANG_*_DSYMUTIL_PATH   = DEF(CLANG_BIN)llvm-dsymutil
-      *_*_*_MTOC_PATH  = /usr/local/bin/mtoc.NEW
+      *_*_*_MTOC_PATH  = ENV(MTOC_PREFIX)mtoc.NEW
       *_*_*_STRIP_PATH = strip
 
   DEBUG_XCLANG_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
@@ -6827,6 +6827,7 @@ RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Wall -Werror -
 *_XCODE5_*_*_BUILDRULEORDER    = S s nasm
 
 *_XCODE5_*_ASL_PATH          = /usr/local/bin/iasl
+*_XCODE5_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW
 
 *_XCODE5_*_MAKE_PATH        = make
 *_XCODE5_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
@@ -6927,6 +6928,7 @@ RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os -Wall -W
 *_XCODE8_*_*_BUILDRULEORDER    = nasm S s
 
 *_XCODE8_*_ASL_PATH          = /usr/bin/iasl
+*_XCODE8_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW
 
 *_XCODE8_*_MAKE_PATH        = make
 *_XCODE8_*_DSYMUTIL_PATH    = /usr/bin/dsymutil

@@ -319,15 +319,11 @@ checkXcode () {
     if [[ ! -x "${CLOVERBIN}/mtoc.NEW" && -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
        unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
     fi
-    if [[ ! -d "${LOCALBIN}" ]]; then sudo mkdir -p "${LOCALBIN}"; fi
-    for mt in "mtoc" "mtoc.NEW"
-    do
-       if [[ ! -x "${LOCALBIN}/$mt" ]]; then
-          echo "Installing $mt"
-          sudo ln -s "${CLOVERBIN}/mtoc.NEW" "${LOCALBIN}/$mt"
-       fi
-    done
-    sudo -k
+    if [[ ! -h "${CLOVERBIN}/mtoc" ]]; then
+       ln -sf "${CLOVERBIN}/mtoc.NEW" "${CLOVERBIN}/mtoc"
+    fi
+    export MTOC_PREFIX=${MTOC_PREFIX:-"$CLOVERBIN/"}
+    echo "MTOC_PREFIX: $MTOC_PREFIX"
 }
 
 # Print the usage.
