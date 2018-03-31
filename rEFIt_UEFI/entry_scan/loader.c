@@ -151,7 +151,8 @@ STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\macOS Install Data\\boot.efi",
   L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi",
   L"\\OS X Install Data\\boot.efi",
-  L"\\.IABootFiles\\boot.efi"
+  L"\\.IABootFiles\\boot.efi",
+  L"\\System\\Library\\CoreServices\\boot.efi"
 };
 
 STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
@@ -196,13 +197,14 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
   if (Path == NULL) {
     return OSTYPE_OTHER;
   }
-  if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
-    return OSTYPE_OSX;
+  if (StriCmp(Path, MACOSX_LOADER_PATH) == 0 && !StriCmp(Path, L"\\.IAPhysicalMedia")) {
+      return OSTYPE_OSX;
   } else if ((StriCmp(Path, OSXInstallerPaths[0]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[1]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[2]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[3]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[4]) == 0) ||
+             (StriCmp(Path, OSXInstallerPaths[5]) == 0) ||
              (StriCmp(Path, RockBoot) == 0) || (StriCmp(Path, PaperBoot) == 0) || (StriCmp(Path, ScissorBoot) == 0)
              ) {
     return OSTYPE_OSX_INSTALLER;
@@ -998,7 +1000,7 @@ VOID ScanLoader(VOID)
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
     if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
-//      DBG(", no file system\n", VolumeIndex);
+      //DBG(", no file system\n", VolumeIndex);
       continue;
     }
     DBG("- [%02d]: '%s'", VolumeIndex, Volume->VolName);
@@ -1027,9 +1029,12 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-//    AddLoaderEntry(L"\\com.apple.boot.R\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    //AddLoaderEntry(L"\\com.apple.boot.R\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddPRSEntry(Volume);
     AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
+      AddLoaderEntry(L"\\System\\Library\\CoreServices\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    }
 
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
     // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
@@ -1038,26 +1043,27 @@ VOID ScanLoader(VOID)
         AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0);
       }
     }
-/* APFS Container support. 
- * s.mtr 2017
- */
-if ((StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 )&&APFSSupport==TRUE) {
-    for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
-      //Store current UUID
-      CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
-      //Fill with current UUID
-      StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
-      StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
-      StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
-      ///Try to add FileVault entry
-      AddLoaderEntry(APFSFVBootPath, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0);
-      //Try to add Recovery APFS entry
-      AddLoaderEntry(APFSRecBootPath, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
-      //Try to add macOS install entry
-      AddLoaderEntry(APFSInstallBootPath, NULL, L"macOS Install Prebooter", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-      FreePool(CurrentUUID);
+
+    /* APFS Container support. 
+     * s.mtr 2017
+     */
+    if ((StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 )&&APFSSupport==TRUE) {
+      for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
+        //Store current UUID
+        CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
+        //Fill with current UUID
+        StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
+        StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
+        StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
+        ///Try to add FileVault entry
+        AddLoaderEntry(APFSFVBootPath, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0);
+        //Try to add Recovery APFS entry
+        AddLoaderEntry(APFSRecBootPath, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
+        //Try to add macOS install entry
+        AddLoaderEntry(APFSInstallBootPath, NULL, L"macOS Install Prebooter", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+        FreePool(CurrentUUID);
+      }
     }
-  }
 
     // check for Mac OS X Recovery Boot
     AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
