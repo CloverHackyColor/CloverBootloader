@@ -437,7 +437,7 @@ PLATFORMDATA ApplePlatformData[] =
     "MacPro", "1.4", "CT93051DK9Y", "Pro-Enclosure",
     { 0x01, 0x39, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x7c002 }, // need rBR RPlt
   //MacPro5,1
-  { "MacPro5,1", "MP51.88Z.0084.B00.1708080528", "Mac-F221BEC8", // Intel Xeon X5675 @ 3.06 GHz x2
+  { "MacPro5,1", "MP51.88Z.0085.B00.1802021746", "Mac-F221BEC8", // Intel Xeon X5675 @ 3.06 GHz x2
     "MacPro", "1.2", "C07J77F7F4MC", "Pro-Enclosure", //Note: C07J50F7F4MC CK04000AHFC CG154TB9WU3
     { 0x01, 0x39, 0x0f, 0, 0, 0x11 },  "k5", "k5", 0x7c002 },
   //MacPro6,1

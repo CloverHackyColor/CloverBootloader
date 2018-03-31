@@ -1025,16 +1025,15 @@ VOID ScanLoader(VOID)
     DBG("\n");
 
     // check for Mac OS X Install Data
-    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    //AddLoaderEntry(L"\\com.apple.boot.R\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    AddPRSEntry(Volume);
-    AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
-      AddLoaderEntry(L"\\System\\Library\\CoreServices\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+      AddLoaderEntry(L"\\System\\Library\\CoreServices\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     }
+    AddPRSEntry(Volume);
 
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
     // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
