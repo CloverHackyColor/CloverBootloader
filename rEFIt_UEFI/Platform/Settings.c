@@ -5984,7 +5984,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             }
           } else if (i[32] == ' ') {
             AsciiSPrint (Res6, 6, "%c%c.%c%c\n", i[27], i[28], i[30], i[31]);
-            OSVersion = AllocateCopyPool (AsciiStrSize (Res5), Res5);
+            OSVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
             if (i[39] == ')') {
               AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
@@ -5993,11 +5993,11 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
             } else if (i[41] == ')') {
               AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39], i[40]);
-              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           } else if (i[32] == '.') {
             AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", i[27], i[28], i[30], i[31], i[33]);
-            OSVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+            OSVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
             if (i[41] == ')') {
               AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
@@ -6006,7 +6006,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
             } else if (i[43] == ')') {
               AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41], i[42]);
-              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           }
           FreePool(fileBuffer);
