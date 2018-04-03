@@ -19,9 +19,11 @@
  https://github.com/anholt/mesa/blob/master/include/pci_ids/i965_pci_ids.h
  https://github.com/RehabMan/OS-X-Clover-Laptop-Config/blob/master/hotpatch/SSDT-IGPU.dsl
  https://github.com/StefanG3D/gpudetect/blob/master/IntelGfx.cfg
+ https://github.com/lvs1974/IntelGraphicsFixup/blob/master/IntelFramebuffer.bt
  https://fossies.org/linux/mesa/include/pci_ids/i965_pci_ids.h
  https://software.intel.com/en-us/articles/intel-graphics-developers-guides
  https://www.intel.com/content/www/us/en/support/graphics-drivers/000005526.html#core
+ https://01.org/linuxgraphics/documentation/hardware-specification-prms
  http://forge.voodooprojects.org/p/chameleon/source/tree/HEAD/trunk/i386/libsaio/gma.c
  ============== 1st generation ============
  ============== 2nd generation ============
@@ -53,6 +55,8 @@
  https://github.com/Igalia/intel-osrc-gfx-prm/blob/master/010_kbl_-_2016-2017/intel-gfx-prm-osrc-kbl-vol04-configurations.pdf
  ============== 10th generation ===========
  https://github.com/Igalia/release-mesa/blob/ecd8f8580288361f6c4d532ba964a744dd62a9dd/include/pci_ids/i965_pci_ids.h
+ ============== 11th generation ===========
+ https://github.com/Igalia/release-mesa/blob/ad7ed86bf7831d03c1c6115c37e11a47745e5a5a/include/pci_ids/i965_pci_ids.h
  */
 
 
@@ -794,6 +798,22 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5A51, "Intel Cannonlake GT2"           }, //
   { 0x5A52, "Intel Cannonlake GT2"           }, //
   { 0x5A54, "Intel Cannonlake GT2"           }, //
+
+    
+  //============== 11th generation ===========
+  //----------------Ice Lake------------------
+  //GT0.5
+  { 0x8A71, "Intel Ice Lake GT0.5"           }, //
+  //GT1
+  { 0x8A5B, "Intel Ice Lake GT1"             }, //
+  { 0x8A5D, "Intel Ice Lake GT1"             }, //
+  //GT1.5
+  { 0x8A5A, "Intel Ice Lake GT1.5"           }, //
+  { 0x8A5C, "Intel Ice Lake GT1.5"           }, //
+  //GT2
+  { 0x8A50, "Intel Ice Lake GT2"             }, //
+  { 0x8A51, "Intel Ice Lake GT2"             }, //
+  { 0x8A52, "Intel Ice Lake GT2"             }, //
 
 };
 
@@ -2651,6 +2671,23 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x5A51: // "Intel Cannonlake GT2"            //
     case 0x5A52: // "Intel Cannonlake GT2"            //
     case 0x5A54: // "Intel Cannonlake GT2"            //
+      break;
+
+
+      //============== 11th generation ===========
+      //----------------Ice Lake------------------
+      //GT0.5
+    case 0x8A71: // "Intel Ice Lake GT0.5"            //
+      //GT1
+    case 0x8A5B: // "Intel Ice Lake GT1"              //
+    case 0x8A5D: // "Intel Ice Lake GT1"              //
+      //GT1.5
+    case 0x8A5A: // "Intel Ice Lake GT1.5"            //
+    case 0x8A5C: // "Intel Ice Lake GT1.5"            //
+      //GT2
+    case 0x8A50: // "Intel Ice Lake GT2"              //
+    case 0x8A51: // "Intel Ice Lake GT2"              //
+    case 0x8A52: // "Intel Ice Lake GT2"              //
       break;
 
 
