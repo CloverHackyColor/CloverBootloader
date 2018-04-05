@@ -210,6 +210,8 @@
 		</array>
 		<key>HaltEnabler</key>
 		<true/>
+		<key>FixHeaders</key>
+		<true/>
 		<key>SSDT</key>
 		<dict>
 			<key>#C3Latency</key>

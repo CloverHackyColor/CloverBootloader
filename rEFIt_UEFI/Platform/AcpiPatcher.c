@@ -2255,7 +2255,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   //It's time to fix headers of all remaining ACPI tables.
   // The bug reported by TheRacerMaster and https://alextjam.es/debugging-appleacpiplatform/
   // Workaround proposed by cecekpawon, revised by Slice
-  if ((gSettings.FixDsdt & FIX_HEADERS)) {
+  if ((gSettings.FixDsdt & FIX_HEADERS) || gSettings.FixHeaders) {
     PatchAllTablesHeaders();
   }
 

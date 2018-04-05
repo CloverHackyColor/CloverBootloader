@@ -5362,6 +5362,10 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "HaltEnabler");
       gSettings.SlpSmiEnable = IsPropertyTrue (Prop);
 
+      //
+      Prop = GetProperty (DictPointer, "FixHeaders");
+      gSettings.FixHeaders = IsPropertyTrue (Prop);
+
       Prop = GetProperty (DictPointer, "DisableASPM");
       gSettings.NoASPM = IsPropertyTrue (Prop);
 
