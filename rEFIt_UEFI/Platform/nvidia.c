@@ -1257,7 +1257,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	{ 0x10DE1240,	"GeForce GT 620M" },
 	{ 0x10DE1241,	"GeForce GT 545" },
 	{ 0x10DE1243,	"GeForce GT 545" },
-	{ 0x10DE1244,	"GeForce GTX 550 Ti" },
+	{ 0x10DE1244,	"GeForce GTX 550 Ti" }, //GF116 chip=0xCF
 	{ 0x10DE1245,	"GeForce GTS 450" },
 	{ 0x10DE1246,	"GeForce GT 550M" },
 	{ 0x10DE1247,	"GeForce GT 555M" },

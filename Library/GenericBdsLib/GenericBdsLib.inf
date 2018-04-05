@@ -33,7 +33,7 @@
 
 [Sources]
   DevicePath.c
-  Performance.c
+#Performance.c
   BdsConnect.c
   BdsMisc.c
   BdsConsole.c

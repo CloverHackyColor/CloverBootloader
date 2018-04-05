@@ -24,6 +24,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //#include "CpuDxe.h"
 #include "../Version.h"
 
+#define PERF_DATA_MAX_LENGTH    0x4000
+
 ///
 /// BDS arch protocol instance initial value.
 ///
@@ -474,6 +476,7 @@ BdsAllocateMemoryForPerformanceData (
   EDKII_VARIABLE_LOCK_PROTOCOL  *VariableLock;
 
   AcpiLowMemoryBase = 0x0FFFFFFFFULL;
+
 
   //
   // Allocate a block of memory that will contain performance data to OS.

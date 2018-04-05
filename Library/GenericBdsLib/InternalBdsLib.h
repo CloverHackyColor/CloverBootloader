@@ -121,13 +121,14 @@ AllocateMemoryForPerformanceData (
   @param  Context               Context for this event.
 
 **/
+/*
 VOID
 EFIAPI
 WriteBootToOsPerformanceData (
   IN EFI_EVENT  Event,
   IN VOID       *Context
   );
-
+*/
 /**
   Get the headers (dos, image, optional header) from an image
 

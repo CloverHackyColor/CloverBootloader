@@ -1,7 +1,7 @@
 /** @file
   Provides interface to shell MAN file parser.
 
-  Copyright (c) 2009 - 2016, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2018, Intel Corporation. All rights reserved.<BR>
   Copyright 2015 Dell Inc.
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -460,111 +460,6 @@ ManFileFindSections(
 }
 
 /**
-  parses through the MAN file formatted Buffer and returns the
-  "Brief Description" for the .TH section as specified by Command.  If the
-  command section is not found return EFI_NOT_FOUND.
-
-  Upon a sucessful return the caller is responsible to free the memory in *BriefDesc
-
-  @param[in] Buffer             Buffer to read from
-  @param[in] Command            name of command's section to find
-  @param[in] BriefDesc          pointer to pointer to string where description goes.
-  @param[in] BriefSize          pointer to size of allocated BriefDesc
-
-  @retval EFI_OUT_OF_RESOURCES  a memory allocation failed.
-  @retval EFI_SUCCESS           the section was found and its description sotred in
-                                an alloceted buffer.
-**/
-EFI_STATUS
-ManBufferFindTitleSection(
-  IN CHAR16         **Buffer,
-  IN CONST CHAR16   *Command,
-  IN CHAR16         **BriefDesc,
-  IN UINTN          *BriefSize
-  )
-{
-  EFI_STATUS    Status;
-  CHAR16        *TitleString;
-  CHAR16        *TitleEnd;
-  CHAR16        *CurrentLocation;
-  UINTN         TitleLength;
-  UINTN         Start;
-  CONST CHAR16  StartString[] = L".TH ";
-  CONST CHAR16  EndString[]   = L" 0 ";
-
-  if ( Buffer     == NULL
-    || Command    == NULL
-    || (BriefDesc != NULL && BriefSize == NULL)
-   ){
-    return (EFI_INVALID_PARAMETER);
-  }
-
-  Status    = EFI_SUCCESS;
-
-  //
-  // Do not pass any leading path information that may be present to IsTitleHeader().
-  //
-  Start = StrLen(Command);
-  while ((Start != 0)
-         && (*(Command + Start - 1) != L'\\')
-         && (*(Command + Start - 1) != L'/')
-         && (*(Command + Start - 1) != L':')) {
-    --Start;
-  }
-
-  //
-  // more characters for StartString and EndString
-  //
-  TitleLength = StrSize(Command + Start) + (StrLen(StartString) + StrLen(EndString)) * sizeof(CHAR16);
-  TitleString = AllocateZeroPool(TitleLength);
-  if (TitleString == NULL) {
-    return (EFI_OUT_OF_RESOURCES);
-  }
-  StrCpyS(TitleString, TitleLength/sizeof(CHAR16), StartString);
-  StrCatS(TitleString, TitleLength/sizeof(CHAR16), Command + Start);
-  StrCatS(TitleString, TitleLength/sizeof(CHAR16), EndString);
-
-  CurrentLocation = StrStr(*Buffer, TitleString);
-  if (CurrentLocation == NULL){
-    Status = EFI_NOT_FOUND;
-  } else {
-    //
-    // we found it so copy out the rest of the line into BriefDesc
-    // After skipping any spaces or zeroes
-    //
-    for (CurrentLocation += StrLen(TitleString)
-      ;  *CurrentLocation == L' ' || *CurrentLocation == L'0' || *CurrentLocation == L'1' || *CurrentLocation == L'\"'
-      ;  CurrentLocation++);
-
-    TitleEnd = StrStr(CurrentLocation, L"\"");
-    if (TitleEnd == NULL) {
-      Status = EFI_DEVICE_ERROR;
-    } else {
-      if (BriefDesc != NULL) {
-        *BriefSize = StrSize(TitleEnd);
-        *BriefDesc = AllocateZeroPool(*BriefSize);
-        if (*BriefDesc == NULL) {
-          Status = EFI_OUT_OF_RESOURCES;
-        } else {
-          StrnCpyS(*BriefDesc, (*BriefSize)/sizeof(CHAR16), CurrentLocation, TitleEnd-CurrentLocation);
-        }
-      }
-
-      for (CurrentLocation = TitleEnd
-        ;  *CurrentLocation != L'\n'
-        ;  CurrentLocation++);
-      for (
-        ;  *CurrentLocation == L' ' || *CurrentLocation == L'\n' || *CurrentLocation == L'\r'
-        ;  CurrentLocation++);
-      *Buffer = CurrentLocation;
-    }
-  }
-
-  FreePool(TitleString);
-  return (Status);
-}
-
-/**
   Parses a line from a MAN file to see if it is the Title Header. If it is, then
   if the "Brief Description" is desired, allocate a buffer for it and return a
   copy. Upon a sucessful return the caller is responsible to free the memory in
@@ -820,10 +715,8 @@ ProcessManFile(
   UINTN             BriefSize;
   UINTN             StringIdWalker;
   BOOLEAN           Ascii;
-  CHAR16            *TempString2;
   CHAR16            *CmdFileName;
   CHAR16            *CmdFilePathName;
-  CHAR16            *StringBuff;
   EFI_DEVICE_PATH_PROTOCOL  *FileDevPath;
   EFI_DEVICE_PATH_PROTOCOL  *DevPath;
   EFI_HII_PACKAGE_LIST_HEADER   *PackageListHeader;
@@ -843,7 +736,6 @@ ProcessManFile(
   CmdFileName       = NULL;
   CmdFilePathName   = NULL;
   CmdFileImgHandle  = NULL;
-  StringBuff        = NULL;
   PackageListHeader = NULL;
   FileDevPath       = NULL;
   DevPath           = NULL;
@@ -853,11 +745,17 @@ ProcessManFile(
   //
   TempString = ShellCommandGetCommandHelp(Command);
   if (TempString != NULL) {
-    TempString2 = TempString;
-    Status = ManBufferFindTitleSection(&TempString2, Command, BriefDesc, &BriefSize);
+    FileHandle = ConvertEfiFileProtocolToShellHandle (CreateFileInterfaceMem (TRUE), NULL);
+    HelpSize = StrLen (TempString) * sizeof (CHAR16);
+    ShellWriteFile (FileHandle, &HelpSize, TempString);
+    ShellSetFilePosition (FileHandle, 0);
+    HelpSize  = 0;
+    BriefSize = 0;
+    Status = ManFileFindTitleSection(FileHandle, Command, BriefDesc, &BriefSize, &Ascii);
     if (!EFI_ERROR(Status) && HelpText != NULL){
-      Status = ManBufferFindSections(TempString2, Sections, HelpText, &HelpSize);
+      Status = ManFileFindSections(FileHandle, Sections, HelpText, &HelpSize, Ascii);
     }
+    ShellCloseFile (&FileHandle);
   } else {
     //
     // If the image is a external app, check .MAN file first.
@@ -954,20 +852,26 @@ ProcessManFile(
 
     StringIdWalker = 1;
     do {
-        SHELL_FREE_NON_NULL(StringBuff);
+        SHELL_FREE_NON_NULL(TempString);
         if (BriefDesc != NULL) {
           SHELL_FREE_NON_NULL(*BriefDesc);
         }
-        StringBuff = HiiGetString (mShellManHiiHandle, (EFI_STRING_ID)StringIdWalker, NULL);
-        if (StringBuff == NULL) {
+        TempString = HiiGetString (mShellManHiiHandle, (EFI_STRING_ID)StringIdWalker, NULL);
+        if (TempString == NULL) {
           Status = EFI_NOT_FOUND;
           goto Done;
     }
-        TempString2 = StringBuff;
-        Status = ManBufferFindTitleSection(&TempString2, Command, BriefDesc, &BriefSize);
+        FileHandle = ConvertEfiFileProtocolToShellHandle (CreateFileInterfaceMem (TRUE), NULL);
+        HelpSize = StrLen (TempString) * sizeof (CHAR16);
+        ShellWriteFile (FileHandle, &HelpSize, TempString);
+        ShellSetFilePosition (FileHandle, 0);
+        HelpSize  = 0;
+        BriefSize = 0;
+        Status = ManFileFindTitleSection(FileHandle, Command, BriefDesc, &BriefSize, &Ascii);
         if (!EFI_ERROR(Status) && HelpText != NULL){
-          Status = ManBufferFindSections(TempString2, Sections, HelpText, &HelpSize);
+          Status = ManFileFindSections(FileHandle, Sections, HelpText, &HelpSize, Ascii);
   }
+        ShellCloseFile (&FileHandle);
         if (!EFI_ERROR(Status)){
           //
           // Found what we need and return
@@ -976,7 +880,7 @@ ProcessManFile(
         }
 
         StringIdWalker += 1;
-    } while (StringIdWalker < 0xFFFF && StringBuff != NULL);
+    } while (StringIdWalker < 0xFFFF && TempString != NULL);
 
   }
 
@@ -999,7 +903,6 @@ Done:
     Status = gBS->UnloadImage (CmdFileImgHandle);
   }
 
-  SHELL_FREE_NON_NULL(StringBuff);
   SHELL_FREE_NON_NULL(TempString);
   SHELL_FREE_NON_NULL(CmdFileName);
   SHELL_FREE_NON_NULL(CmdFilePathName);
