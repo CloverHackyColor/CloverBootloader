@@ -770,7 +770,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3E9A, "Intel Coffee Lake GT2"          }, //
   { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile
   //GT3
-  { 0x3EA5, "Intel Coffee Lake GT3"          }, //
+  { 0x3EA5, "Intel Iris Plus Graphics 655"   }, // Mobile
   { 0x3EA6, "Intel Coffee Lake GT3"          }, //
   { 0x3EA7, "Intel Coffee Lake GT3"          }, //
   { 0x3EA8, "Intel Coffee Lake GT3"          }, //
@@ -2493,7 +2493,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
     case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile
       //GT3
-    case 0x3EA5: // "Intel Coffee Lake GT3"           //
+    case 0x3EA5: // "Intel Iris Plus Graphics 655"    // Mobile
     case 0x3EA6: // "Intel Coffee Lake GT3"           //
     case 0x3EA7: // "Intel Coffee Lake GT3"           //
     case 0x3EA8: // "Intel Coffee Lake GT3"           //
@@ -2599,6 +2599,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           }
           break;
         case 0x5927:
+        case 0x3EA5:
           if (!SetFake) {
             FakeID = 0x59278086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);

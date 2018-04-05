@@ -147,12 +147,11 @@ CHAR16  *ScissorBoot = L"\\com.apple.boot.S\\boot.efi";
 
 // OS X installer paths
 STATIC CHAR16 *OSXInstallerPaths[] = {
-  L"\\Mac OS X Install Data\\boot.efi",
-  L"\\macOS Install Data\\boot.efi",
-  L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi",
-  L"\\OS X Install Data\\boot.efi",
-  L"\\.IABootFiles\\boot.efi",
-  L"\\System\\Library\\CoreServices\\boot.efi"
+  L"\\Mac OS X Install Data\\boot.efi", // 10.7
+  L"\\OS X Install Data\\boot.efi", // 10.8/10.9
+  L"\\macOS Install Data\\boot.efi", // 10.12
+  L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", // 10.13
+  L"\\.IABootFiles\\boot.efi" // 10.9-10.13.3
 };
 
 STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
@@ -197,15 +196,15 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
   if (Path == NULL) {
     return OSTYPE_OTHER;
   }
-  if (StriCmp(Path, MACOSX_LOADER_PATH) == 0 && !StriCmp(Path, L"\\.IAPhysicalMedia")) {
-      return OSTYPE_OSX;
+  if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
+    return OSTYPE_OSX;
   } else if ((StriCmp(Path, OSXInstallerPaths[0]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[1]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[2]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[3]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[4]) == 0) ||
-             (StriCmp(Path, OSXInstallerPaths[5]) == 0) ||
-             (StriCmp(Path, RockBoot) == 0) || (StriCmp(Path, PaperBoot) == 0) || (StriCmp(Path, ScissorBoot) == 0)
+             (StriCmp(Path, RockBoot) == 0) || (StriCmp(Path, PaperBoot) == 0) || (StriCmp(Path, ScissorBoot) == 0) ||
+             (!StriCmp(Path, L"\\.IABootFiles\\boot.efi") && StriCmp(Path, L"\\.IAPhysicalMedia") && StriCmp(Path, L"\\System\\Library\\CoreServices\\boot.efi"))
              ) {
     return OSTYPE_OSX_INSTALLER;
   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
@@ -1025,14 +1024,24 @@ VOID ScanLoader(VOID)
     DBG("\n");
 
     // check for Mac OS X Install Data
+    // = Appstore/startosinstall =
+    // 10.7
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    // 10.8/10.9
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    // 10.12
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    // 10.13
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
+    // = createinstallmedia =
+    if (FileExists(Volume->RootDir, L"\\.IABootFiles\\boot.efi")) {
+      // 10.9-10.13.3
+      AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+	} else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
+      // 10.13.4
       AddLoaderEntry(L"\\System\\Library\\CoreServices\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     }
+    // = Fusion Drive =
     AddPRSEntry(Volume);
 
     // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present

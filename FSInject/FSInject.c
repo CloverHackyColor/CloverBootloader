@@ -1201,20 +1201,21 @@ FSInjectEntrypoint (
     //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
     // 10.10+
     //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel");
-    // === ESD/Appstore/createinstallmedia/startosinstall ===
+    // === ESD/Appstore/startosinstall ===
     // 10.7
     //FSInjectionAddStringToList(Blacklist, L"\\kernelcache");
     //FSInjectionAddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache");
-    // 10.8/10.9
+    // 10.8+
     //FSInjectionAddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache");
-    // 10.10
-    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
-    // 10.11+
-    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel");
     // 10.12
     //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel");
     // 10.13+
     //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");
+    // === createinstallmedia ===
+    // 10.9+
+    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
+    // 10.11+
+    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel");
     // === Fusion Drive ===
     // 10.11
     //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
