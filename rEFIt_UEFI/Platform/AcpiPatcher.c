@@ -464,7 +464,7 @@ BOOLEAN CheckNonAscii(UINT8 *Str, UINTN Len)
 
 BOOLEAN CheckTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
 {
-  if (!(gSettings.FixDsdt & FIX_HEADERS)) {
+  if (!(gSettings.FixDsdt & FIX_HEADERS) && !gSettings.FixHeaders) {
     return FALSE;
   }
   return (CheckNonAscii((UINT8*)&Header->CreatorId, 4) ||
@@ -474,7 +474,7 @@ BOOLEAN CheckTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
 
 VOID PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
 {
-  if (!(gSettings.FixDsdt & FIX_HEADERS)) {
+  if (!(gSettings.FixDsdt & FIX_HEADERS) && !gSettings.FixHeaders) {
     return;
   }
   FixAsciiTableHeader((UINT8*)&Header->CreatorId, 4);
