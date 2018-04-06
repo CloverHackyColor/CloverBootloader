@@ -204,10 +204,15 @@ VOID
 EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
-  UINT64 msr = 0;
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
+      (gCPUStructure.Family == 0x06 && gCPUStructure.Model >= CPU_MODEL_SANDY_BRIDGE)
+       ) {
+    UINT64 msr = 0;
 
-  msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
-//  AsciiPrint("MSR 0xE2 on Exit BS %08x\n", msr);
+    msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+    //  AsciiPrint("MSR 0xE2 on Exit BS %08x\n", msr);
+
+  }
 /*
 //  EFI_STATUS Status;
   {
@@ -332,9 +337,14 @@ OnReadyToBoot (
                )
 {
 //
-  UINT64 msr = 0;
+  if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
+       (gCPUStructure.Family == 0x06 && gCPUStructure.Model >= CPU_MODEL_SANDY_BRIDGE)
+       )) {
+    UINT64 msr = 0;
 
-  msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+    msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+
+  }
 //  AsciiPrint("MSR 0xE2 on ReadyToBoot %08x\n", msr);
 
 }
