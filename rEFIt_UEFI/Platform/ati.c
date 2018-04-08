@@ -1248,7 +1248,7 @@ BOOLEAN get_nameparent_val(value_t *val, INTN index, BOOLEAN Sier)
 //static CHAR8 pciName[15];
 BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
 {
-  CHAR8* pciName = AllocatePool(15);
+  CHAR8* pciName = AllocateZeroPool(15);
 
   if (!card->info->model_name || !gSettings.FakeATI) {
     return FALSE;
@@ -1262,15 +1262,45 @@ BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
   return TRUE;
 }
 
-
+CONST CHAR8* NamePolaris = "AMD Radeon %a";
 BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier)
 {
+  CHAR8 *ModelName = AllocateZeroPool(35);
   if (!card->info->model_name) {
     return FALSE;
   }
   val->type = kStr;
-  val->size = (UINT32)AsciiStrLen(card->info->model_name);
-  val->data = AllocateCopyPool(val->size, (UINT8 *)card->info->model_name);
+  if (card->pci_dev->device_id != 0x67DF) {
+    val->size = (UINT32)AsciiStrLen(card->info->model_name);
+    val->data = AllocateCopyPool(val->size, (UINT8 *)card->info->model_name);
+  } else {
+    switch (card->pci_dev->revision) {
+      case 0xC4:
+        AsciiSPrint(ModelName, 35, NamePolaris, "Pro 550");
+        break;
+      case 0xC7:
+        AsciiSPrint(ModelName, 35, NamePolaris, "RX 480");
+        break;
+      case 0xC5:
+      case 0xCF:
+      case 0xD7:
+      case 0xE0:
+        AsciiSPrint(ModelName, 35, NamePolaris, "RX 470");
+        break;
+      case 0xC2:
+      case 0xC6:
+      case 0xEF:
+        AsciiSPrint(ModelName, 35, NamePolaris, "RX 570");
+        break;
+        
+      default:
+        AsciiSPrint(ModelName, 35, NamePolaris, "RX 580");
+        break;
+    }
+    val->size = (UINT32)AsciiStrLen(ModelName);
+    val->data = AllocateCopyPool(val->size, ModelName);
+  }
+  FreePool(ModelName);
   return TRUE;
 }
 
