@@ -148,7 +148,7 @@ CHAR16  *ScissorBoot = L"\\com.apple.boot.S\\boot.efi";
 // OS X installer paths
 STATIC CHAR16 *OSXInstallerPaths[] = {
   L"\\Mac OS X Install Data\\boot.efi", // 10.7
-  L"\\OS X Install Data\\boot.efi", // 10.8/10.9
+  L"\\OS X Install Data\\boot.efi", // 10.8 - 10.11
   L"\\macOS Install Data\\boot.efi", // 10.12
   L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", // 10.13
   L"\\.IABootFiles\\boot.efi" // 10.9-10.13.3
@@ -772,7 +772,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       AddMenuCheck(SubScreen, "macOS 64bit",          OPT_X64,  68);
     }
     AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
-    // No Caches option works on 10.6/10.7/10.8/10.9
+    // No Caches option works on 10.6 - 10.9
     if (os_version < AsciiOSVersionToUint64("10.10")) {
       AddMenuCheck(SubScreen, "Without caches (-f)",                        OPT_NOCACHES, 68);
     }
@@ -1024,10 +1024,10 @@ VOID ScanLoader(VOID)
     DBG("\n");
 
     // check for Mac OS X Install Data
-    // = Appstore/startosinstall =
+    // = ESD/Appstore/startosinstall =
     // 10.7
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-    // 10.8/10.9
+    // 10.8 - 10.11
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // 10.12
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
@@ -1035,9 +1035,9 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // = createinstallmedia =
     if (FileExists(Volume->RootDir, L"\\.IABootFiles\\boot.efi")) {
-      // 10.9-10.13.3
+      // 10.9 - 10.13.3
       AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-	} else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
+    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
       // 10.13.4
       AddLoaderEntry(L"\\System\\Library\\CoreServices\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     }
@@ -1055,15 +1055,15 @@ VOID ScanLoader(VOID)
     /* APFS Container support. 
      * s.mtr 2017
      */
-    if ((StriCmp(Volume->VolName,L"Recovery") == 0 || StriCmp(Volume->VolName,L"Preboot") == 0 )&&APFSSupport==TRUE) {
-      for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
+    if ((StriCmp(Volume->VolName, L"Recovery") == 0 || StriCmp(Volume->VolName, L"Preboot") == 0 ) && APFSSupport == TRUE) {
+      for (UINTN i = 0; i < APFSUUIDBankCounter + 1; i++) {
         //Store current UUID
-        CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
+        CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
         //Fill with current UUID
         StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
         StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
         StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
-        ///Try to add FileVault entry
+        //Try to add FileVault entry
         AddLoaderEntry(APFSFVBootPath, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0);
         //Try to add Recovery APFS entry
         AddLoaderEntry(APFSRecBootPath, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);

@@ -272,7 +272,7 @@ UINT8 broadwell_ig_vals[22][4] = {
 };
 
 UINT8 broadwell_hd_vals[2][4] = {
-  { 0x0c, 0x00, 0x00, 0x00 },   //0 "AAPL,ig-tcon-scaler"
+  { 0x01, 0x00, 0x00, 0x00 },   //0 "AAPL,ig-tcon-scaler"
   { 0x0c, 0x00, 0x00, 0x00 },   //1 "graphics-options"
 };
 

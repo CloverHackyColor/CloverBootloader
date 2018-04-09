@@ -7261,22 +7261,26 @@ SetFSInjection (
     // 10.10+
     //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
     // === Recovery ===
-    // 10.7+
+    // 10.7 - 10.10
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
-    // 10.10+
+    // 10.11+
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel");
+    // === BaseSytem ===
+    // 10.7 - 10.9
+    //FSInject->AddStringToList(Blacklist, L"\\kernelcache");
     // === ESD/Appstore/startosinstall ===
     // 10.7
-    //FSInject->AddStringToList(Blacklist, L"\\kernelcache");
     //FSInject->AddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache");
-    // 10.8+
+    // 10.8 - 10.10
     //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache");
+    // 10.11
+    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel");
     // 10.12
     //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel");
     // 10.13+
     //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");
     // === createinstallmedia ===
-    // 10.9+
+    // 10.9/10.10
     //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
     // 10.11+
     //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel");
@@ -7295,7 +7299,7 @@ SetFSInjection (
     // 10.6
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-    // 10.6/10.7/10.8/10.9
+    // 10.6 - 10.9
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
 
     if (gSettings.BlockKexts[0] != L'\0') {
