@@ -96,6 +96,8 @@ Headers collection for procedures
 
 #define MAX_NUM_DEVICES  64
 
+#define HEIGHT_2K 1100
+
 /* Decimal powers: */
 #define kilo (1000ULL)
 #define Mega (kilo * kilo)

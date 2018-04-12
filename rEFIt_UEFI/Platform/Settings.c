@@ -3795,9 +3795,7 @@ GetThemeTagSettings (
 }
 
 TagPtr
-LoadTheme (
-           CHAR16 *TestTheme
-           )
+LoadTheme (CHAR16 *TestTheme)
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
   TagPtr     ThemeDict = NULL;
@@ -3809,7 +3807,11 @@ LoadTheme (
       FreePool (ThemePath);
     }
 
-    ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", TestTheme);
+    if (UGAHeight > HEIGHT_2K) {
+      ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
+    } else {
+      ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", TestTheme);
+    }
     if (ThemePath != NULL) {
       if (ThemeDir != NULL) {
         ThemeDir->Close (ThemeDir);
@@ -3817,6 +3819,11 @@ LoadTheme (
       }
 
       Status = SelfRootDir->Open (SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+      if (EFI_ERROR (Status)) {
+        FreePool (ThemePath);
+        ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", TestTheme);
+        Status = SelfRootDir->Open (SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+      }
       if (!EFI_ERROR (Status)) {
         Status = egLoadFile (ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR (Status) && (ThemePtr != NULL) && (Size != 0)) {
@@ -3864,7 +3871,6 @@ InitTheme(
   // Free selection images which are not builtin icons
   for (i = 0; i < 6; i++) {
     if (SelectionImages[i] != NULL) {
-//      if ((SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_SMALL)) && (SelectionImages[i] != BuiltinIcon(BUILTIN_SELECTION_BIG))) {
       if ((SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_SMALL].Image) &&
         (SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_BIG].Image)) {
         egFreeImage (SelectionImages[i]);
@@ -3875,7 +3881,6 @@ InitTheme(
 
   // Free banner which is not builtin icon
   if (Banner != NULL) {
-//    if (Banner != BuiltinIcon(BUILTIN_ICON_BANNER)) {
     if (Banner != BuiltinIconTable[BUILTIN_ICON_BANNER].Image) {
       egFreeImage (Banner);
     }
