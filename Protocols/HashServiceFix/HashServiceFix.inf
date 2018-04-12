@@ -28,6 +28,8 @@
 [Protocols]
   gEfiHashServiceBindingProtocolGuid ## PRODUCES
   gEfiHashProtocolGuid               ## PRODUCES
+
+[Guids]
   gEfiHashAlgorithmSha1Guid
 
 [LibraryClasses]
