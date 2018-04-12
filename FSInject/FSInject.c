@@ -1193,42 +1193,29 @@ FSInjectEntrypoint (
 
     // Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
     // by Sherlocks, 2017.11
-    // === Installed ===
-    // 10.10+
-    //FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
+    // === Installed/createinstallmedia ===
+    //FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4
     // === Recovery ===
-    // 10.7 - 10.10
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
-    // 10.11+
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel");
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel"); // 10.11+
     // === BaseSytem ===
-    // 10.7 - 10.9
-    //FSInjectionAddStringToList(Blacklist, L"\\kernelcache");
-    // === ESD/Appstore/startosinstall ===
-    // 10.7
-    //FSInjectionAddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache");
-    // 10.8 - 10.10
-    //FSInjectionAddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache");
-    // 10.11
-    //FSInjectionAddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel");
-    // 10.12
-    //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel");
-    // 10.13+
-    //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");
-    // === createinstallmedia ===
-    // 10.9/10.10
-    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache");
-    // 10.11+
-    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel");
-    // === Fusion Drive ===
-    // 10.11
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel");
-    // 10.12+
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel");
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel");
-    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel");
+    //FSInjectionAddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9
+    // === createinstallmedia - 1st stage ===
+    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache"); // 10.9/10.10
+    //FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel"); // 10.11 - 10.13.3
+    // === InstallESD/Appstore/startosinstall - 2nd stage ===
+    //FSInjectionAddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache"); // 10.7
+    //FSInjectionAddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache"); // 10.8 - 10.10
+    //FSInjectionAddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel"); // 10.11
+    //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel"); // 10.12 - 10.12.3
+    //FSInjectionAddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel"); // 10.12.4+
+    // === Fusion Drive - 2nd stage ===
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel"); // 10.12+
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
+    //FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
 
 
     // Block Caches list
