@@ -17,10 +17,6 @@
 /* [Hash Protocol]                                                            */
 /* ===================================================================== */
 
-#ifndef gEfiHashAlgorithmSha1Guid
-EFI_GUID gEfiHashAlgorithmSha1Guid = EFI_HASH_ALGORITHM_SHA1_GUID;
-#endif
-
 typedef struct _HS_PRIVATE_DATA
 {
   SHA1_CTX Sha1Ctx;

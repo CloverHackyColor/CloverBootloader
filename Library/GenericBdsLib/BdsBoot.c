@@ -1709,7 +1709,7 @@ BdsLibDoLegacyBoot (
   //
   // Write boot to OS performance data for legacy boot.
   //
-  PERF_CODE (
+  //PERF_CODE (
     //
     // Create an event to be signalled when Legacy Boot occurs to write performance data.
     //
@@ -1721,7 +1721,7 @@ BdsLibDoLegacyBoot (
                );
 //    ASSERT_EFI_ERROR (Status);
              */
-  );
+  //);
 
 //  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Legacy Boot: %S\n", Option->Description));
   return LegacyBios->LegacyBoot (
