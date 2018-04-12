@@ -17,7 +17,7 @@
 /* [Hash Protocol]                                                            */
 /* ===================================================================== */
 
-#if 0
+#ifndef gEfiHashAlgorithmSha1Guid
 EFI_GUID gEfiHashAlgorithmSha1Guid = EFI_HASH_ALGORITHM_SHA1_GUID;
 #endif
 

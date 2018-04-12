@@ -28,6 +28,7 @@
 [Protocols]
   gEfiHashServiceBindingProtocolGuid ## PRODUCES
   gEfiHashProtocolGuid               ## PRODUCES
+#  gEfiHashAlgorithmSha1Guid
 
 [LibraryClasses]
   UefiLib
