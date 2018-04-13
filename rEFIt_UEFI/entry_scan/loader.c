@@ -1024,26 +1024,43 @@ VOID ScanLoader(VOID)
     DBG("\n");
 
     // check for Mac OS X Install Data
-    // = createinstallmedia - 1st stage =
+    // 1st stage - createinstallmedia
     if (FileExists(Volume->RootDir, L"\\.IABootFiles\\boot.efi")) {
       AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.13.3
     } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
-      AddLoaderEntry(L"\\System\\Library\\CoreServices\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4
+      AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4
     }
-    // = InstallESD/Appstore/startosinstall - 2nd stage =
+    // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
-    // = Fusion Drive - 2nd stage =
-    AddPRSEntry(Volume);
+    AddPRSEntry(Volume); // 10.11+
 
-    // Use standard location for boot.efi, unless the file /.IAPhysicalMedia is present
-    // That file indentifies a 2nd-stage Install Media, so when present, skip standard path to avoid entry duplication
-	// Includes InstallDVD: 10.6/InstallESD: 10.7 - 10.9
-    if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
-      if(EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
-        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0);
+    // Use standard location for boot.efi, according to the install files is present
+    // That file indentifies a DVD/ESD/BaseSystem Install Media, so when present, check standard path to avoid entry duplication
+    if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
+      if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app")) {
+        // InstallDVD/BaseSystem
+        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.6/10.7
+      } else if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app")) {
+        // BaseSystem
+        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
+      } else if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app")) {
+        // BaseSystem
+        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12+
+      } else if (FileExists(Volume->RootDir, L"\\BaseSystem.dmg") && FileExists(Volume->RootDir, L"\\mach_kernel")) {
+        // InstallESD
+        if (FileExists(Volume->RootDir, L"\\MacOSX_Media_Background.png")) {
+          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
+        } else {
+          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8
+        }
+      } else if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
+        // Installed
+        if (EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
+          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0);
+        }
       }
     }
 

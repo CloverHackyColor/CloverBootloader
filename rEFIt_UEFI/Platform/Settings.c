@@ -5956,10 +5956,15 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
     if (!OSINSTALLER_VER) {
       // 1st stage
-	  // Check plist - createinstallmedia
+      // Check plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD
       CHAR16 *InstallerPlist = L"\\.IABootFilesSystemVersion.plist"; // 10.9 - 10.13.3
-      if (!FileExists (Entry->Volume->RootDir, InstallerPlist) && FileExists(Entry->Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
-        InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.13.4
+      if (!FileExists(Entry->Volume->RootDir, InstallerPlist) && FileExists(Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
+          ((FileExists(Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists(Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
+           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
+           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
+           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
+           FileExists(Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4
+        InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
       }
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
@@ -5973,7 +5978,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
           }
         }
-      } else if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+      } else {
         InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - 10.13.3
         if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
           Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
@@ -6001,7 +6006,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       }
 
       // 2nd stage
-	  // Check plist - Fusion Drive/Appstore/createinstallmedia/startosinstall
+      // Check plist - Fusion Drive/AppStore/createinstallmedia/startosinstall
       InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.11+
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.11+
@@ -7278,28 +7283,32 @@ SetFSInjection (
      For this reason, long time ago, chameleon's user restored Base System.dmg to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
      From 10.10+, boot.efi call only prelinkedkernel file without kernel file. we can never block only kernelcache.
      The use of these block caches is meaningless in modern macOS. Unlike the old days, we do not have to do the tedious task of putting the files needed for booting into the S/L/E.
+     Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
      by Sherlocks, 2017.11
      */
 
-    // Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
-    // === Installed/createinstallmedia ===
+    // Installed/createinstallmedia
     //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4
-    // === Recovery ===
+
+    // Recovery
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel"); // 10.11+
-    // === BaseSytem ===
-    //FSInject->AddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9
-    // === createinstallmedia - 1st stage ===
+
+    // BaseSytem/InstallESD
+    //FSInject->AddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9/(10.7/10.8)
+
+    // 1st stage - createinstallmedia
     //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache"); // 10.9/10.10
     //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel"); // 10.11 - 10.13.3
-    // === InstallESD/Appstore/startosinstall - 2nd stage ===
+
+    // 2nd stage - InstallESD/AppStore/startosinstall
     //FSInject->AddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache"); // 10.7
     //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache"); // 10.8 - 10.10
     //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel"); // 10.11
     //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel"); // 10.12 - 10.12.3
     //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");// 10.12.4+
 
-    // === Fusion Drive - 2nd stage ===
+    // 2nd stage - Fusion Drive
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
@@ -7309,11 +7318,10 @@ SetFSInjection (
 
 
     // Block Caches list
-    // 10.6
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
-    // 10.6 - 10.9
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
+    // InstallDVD/Installed
+    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext"); // 10.6
+    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext"); // 10.6
+    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache"); // 10.6/10.6 - 10.9
 
     if (gSettings.BlockKexts[0] != L'\0') {
       FSInject->AddStringToList(Blacklist, PoolPrint (L"\\System\\Library\\Extensions\\%s", gSettings.BlockKexts));
