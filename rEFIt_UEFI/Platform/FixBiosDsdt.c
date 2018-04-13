@@ -26,7 +26,7 @@
 #define DBG(...) DebugLog(DEBUG_FIX, __VA_ARGS__)
 #endif
 
-OPER_REGION *gRegions;
+OPER_REGION *gRegions = NULL;
 
 CHAR8*  device_name[12];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI 11=>HDMI
 CHAR8*  UsbName[10];
@@ -1576,11 +1576,11 @@ UINT32 GetPciDevice(UINT8 *dsdt, UINT32 len)
   return 0;
 }
 
+
 // Find PCIRootUID and all need Fix Device
-UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
+VOID  findPciRoot (UINT8 *dsdt, UINT32 len)
 {
 	UINTN    j;
-	UINTN    root = 0;
   UINT32 PCIADR, PCISIZE = 0;
 
   //initialising
@@ -1615,14 +1615,12 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           dsdt[j+5] = 0;  //AML_BYTE_PREFIX followed by a number
         else
           dsdt[j+4] = 0;  //any other will be considered as ONE or WRONG, replace to ZERO
-        DBG("Found PCIROOTUID = %d\n", root);
         break;
       }
     }
   } else {
     DBG("Warning! PCI root is not found!");
   }
-	return root;
 }
 
 
@@ -5065,18 +5063,22 @@ VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 }
 */
 
-VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
+VOID GetBiosRegions(UINT8  *buffer)
 {
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
-  UINT8       *buffer = NULL;
+//  UINT8       *buffer = NULL;
   UINT32      bufferLen = 0;
   UINTN       i, j;
   INTN        shift, shift2;
   CHAR8       Name[8];
   CHAR8       NameAdr[8];
 
-  gRegions = NULL;
-  buffer = (UINT8*)(UINTN)fadt->Dsdt;
+  if (!buffer) {
+    return;
+  }
+
+//  gRegions = NULL;
+//  buffer = (UINT8*)(UINTN)fadt->Dsdt;
   TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
   bufferLen = TableHeader->Length;
 
@@ -5210,7 +5212,8 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
     }
   }
 
-  gSettings.PCIRootUID = (UINT16)findPciRoot(temp, DsdtLen);
+//  gSettings.PCIRootUID = 0;
+  findPciRoot(temp, DsdtLen);
 
   // Fix RTC
   if ((gSettings.FixDsdt & FIX_RTC)) {

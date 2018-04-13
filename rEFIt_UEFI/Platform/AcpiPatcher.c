@@ -2104,7 +2104,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   //Get regions from BIOS DSDT
   if ((gSettings.FixDsdt & FIX_REGIONS) != 0) {
-    GetBiosRegions(FadtPointer);
+    GetBiosRegions((UINT8*)(UINTN)(newFadt->Dsdt));
   }
 
 
@@ -2117,7 +2117,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
 
-  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
+  if (FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
     DBG("DSDT found in Clover volume OEM folder: %s%s\n", AcpiOemPath, PathDsdt);
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &bufferLen);
     //REVIEW: memory leak... buffer
