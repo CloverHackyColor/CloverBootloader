@@ -6006,16 +6006,24 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       }
 
       // 2nd stage
-      // Check plist - Fusion Drive/AppStore/createinstallmedia/startosinstall
-      InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.11+
+      // Check plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.11+
+        InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
         if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-          InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.11+
+          InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
           if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-            InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
+            InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
             if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-              InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
+              InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
+              if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+                InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
+                if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
+                    (FileExists(Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                     FileExists(Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                     FileExists(Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
+                  InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
+                }
+              }
             }
           }
         }

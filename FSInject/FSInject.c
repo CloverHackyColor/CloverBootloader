@@ -1202,7 +1202,7 @@ FSInjectEntrypoint (
 	//FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel"); // 10.11+
 
 	// BaseSytem/InstallESD
-	//FSInjectionAddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9
+	//FSInjectionAddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9/(10.7/10.8)
 
 	// 1st stage - createinstallmedia
 	//FSInjectionAddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache"); // 10.9/10.10

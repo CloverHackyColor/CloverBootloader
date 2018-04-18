@@ -204,7 +204,7 @@ UINT8 GetOSTypeFromPath(IN CHAR16 *Path)
              (StriCmp(Path, OSXInstallerPaths[3]) == 0) ||
              (StriCmp(Path, OSXInstallerPaths[4]) == 0) ||
              (StriCmp(Path, RockBoot) == 0) || (StriCmp(Path, PaperBoot) == 0) || (StriCmp(Path, ScissorBoot) == 0) ||
-             (!StriCmp(Path, L"\\.IABootFiles\\boot.efi") && StriCmp(Path, L"\\.IAPhysicalMedia") && StriCmp(Path, L"\\System\\Library\\CoreServices\\boot.efi"))
+             (!StriCmp(Path, L"\\.IABootFiles\\boot.efi") && StriCmp(Path, L"\\.IAPhysicalMedia") && StriCmp(Path, MACOSX_LOADER_PATH))
              ) {
     return OSTYPE_OSX_INSTALLER;
   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
@@ -733,7 +733,13 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   if (Entry->LoaderType == OSTYPE_OSX ||
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
       Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
-    AddMenuInfoLine(SubScreen, PoolPrint(L"macOS %a", Entry->OSVersion));
+    if (os_version < AsciiOSVersionToUint64("10.8")) {
+      AddMenuInfoLine(SubScreen, PoolPrint(L"Mac OS X: %a", Entry->OSVersion));
+    } else if (os_version < AsciiOSVersionToUint64("10.12")) {
+      AddMenuInfoLine(SubScreen, PoolPrint(L"OS X: %a", Entry->OSVersion));
+    } else {
+      AddMenuInfoLine(SubScreen, PoolPrint(L"macOS: %a", Entry->OSVersion));
+    }
 
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       SubEntry = DuplicateLoaderEntry(Entry);
@@ -1026,8 +1032,14 @@ VOID ScanLoader(VOID)
     // check for Mac OS X Install Data
     // 1st stage - createinstallmedia
     if (FileExists(Volume->RootDir, L"\\.IABootFiles\\boot.efi")) {
-      AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.13.3
-    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi")) {
+      if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") || // 10.9
+          FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") || // 10.10
+          FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) { // 10.11
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+      } else {
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
+      }
+    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
       AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4
     }
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
@@ -1035,10 +1047,10 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
-    AddPRSEntry(Volume); // 10.11+
+    AddPRSEntry(Volume); // 10.12+
 
     // Use standard location for boot.efi, according to the install files is present
-    // That file indentifies a DVD/ESD/BaseSystem Install Media, so when present, check standard path to avoid entry duplication
+    // That file indentifies a DVD/ESD/BaseSystem/Fusion Drive Install Media, so when present, check standard path to avoid entry duplication
     if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
       if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app")) {
         // InstallDVD/BaseSystem
@@ -1056,10 +1068,21 @@ VOID ScanLoader(VOID)
         } else {
           AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8
         }
+      } else if (FileExists(Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+	             FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+	             FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
+        // Fusion Drive
+        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
       } else if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
         // Installed
         if (EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
-          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0);
+          if (!FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
+            AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X", Volume, NULL, OSTYPE_OSX, 0); // 10.6 - 10.7
+          } else if (FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
+            AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X", Volume, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
+          } else {
+            AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
+		  }
         }
       }
     }
@@ -1067,7 +1090,7 @@ VOID ScanLoader(VOID)
     /* APFS Container support. 
      * s.mtr 2017
      */
-    if ((StriCmp(Volume->VolName, L"Recovery") == 0 || StriCmp(Volume->VolName, L"Preboot") == 0 ) && APFSSupport == TRUE) {
+    if ((StriCmp(Volume->VolName, L"Recovery") == 0 || StriCmp(Volume->VolName, L"Preboot") == 0) && APFSSupport == TRUE) {
       for (UINTN i = 0; i < APFSUUIDBankCounter + 1; i++) {
         //Store current UUID
         CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));

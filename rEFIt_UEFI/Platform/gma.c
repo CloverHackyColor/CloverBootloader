@@ -731,8 +731,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT1
   { 0x5902, "Intel HD Graphics 610"          }, // Desktop
   { 0x5906, "Intel HD Graphics 610"          }, // Mobile
-  { 0x590A, "Intel Kaby Lake GT1"            }, //
   { 0x5908, "Intel Kaby Lake GT1"            }, //
+  { 0x590A, "Intel Kaby Lake GT1"            }, //
   { 0x590B, "Intel Kaby Lake GT1"            }, //
   { 0x590E, "Intel Kaby Lake GT1"            }, //
   //GT1.5
@@ -2454,8 +2454,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       //GT1
     case 0x5902: // "Intel HD Graphics 610"           // Desktop
     case 0x5906: // "Intel HD Graphics 610"           // Mobile
-    case 0x590A: // "Intel Kaby Lake GT1"             //
     case 0x5908: // "Intel Kaby Lake GT1"             //
+    case 0x590A: // "Intel Kaby Lake GT1"             //
     case 0x590B: // "Intel Kaby Lake GT1"             //
     case 0x590E: // "Intel Kaby Lake GT1"             //
       //GT1.5
