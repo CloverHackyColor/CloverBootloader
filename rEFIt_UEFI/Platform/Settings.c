@@ -5958,12 +5958,12 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       // 1st stage
       // Check plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD
       CHAR16 *InstallerPlist = L"\\.IABootFilesSystemVersion.plist"; // 10.9 - 10.13.3
-      if (!FileExists(Entry->Volume->RootDir, InstallerPlist) && FileExists(Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
-          ((FileExists(Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists(Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
-           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
-           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
-           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
-           FileExists(Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4
+      if (!FileExists (Entry->Volume->RootDir, InstallerPlist) && FileExists (Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
+          ((FileExists (Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
+            FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
+            FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
+            FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
+            FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4
         InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
       }
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
@@ -6007,22 +6007,20 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
       // 2nd stage
       // Check plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
+      InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
+        InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
         if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-          InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
+          InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
           if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-            InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
+            InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
             if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-              InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
-              if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-                InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
-                if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
-                    (FileExists(Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                     FileExists(Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                     FileExists(Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
-                  InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
-                }
+              InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
+              if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
+                  (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                   FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                   FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
+                InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
               }
             }
           }

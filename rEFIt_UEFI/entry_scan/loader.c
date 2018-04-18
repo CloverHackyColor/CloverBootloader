@@ -1032,10 +1032,10 @@ VOID ScanLoader(VOID)
     // check for Mac OS X Install Data
     // 1st stage - createinstallmedia
     if (FileExists(Volume->RootDir, L"\\.IABootFiles\\boot.efi")) {
-      if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") || // 10.9
-          FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") || // 10.10
-          FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) { // 10.11
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+      if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") ||
+          FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") ||
+          FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) {
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
       } else {
         AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
@@ -1069,8 +1069,8 @@ VOID ScanLoader(VOID)
           AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8
         }
       } else if (FileExists(Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-	             FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-	             FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
+                 FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                 FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
         // Fusion Drive
         AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
       } else if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
@@ -1082,7 +1082,7 @@ VOID ScanLoader(VOID)
             AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X", Volume, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
           } else {
             AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
-		  }
+          }
         }
       }
     }
