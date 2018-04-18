@@ -198,6 +198,7 @@
 		A3DA39BD178324D7008B64B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				HEADER_SEARCH_PATHS = (
 					../../../../MdePkg/Include/X64,
 					"../../../../MdePkg/**",
