@@ -1120,6 +1120,8 @@ VOID GetTableType16()
   if (!TotalCount) {
     TotalCount = MAX_RAM_SLOTS;
   }
+  //Jief_Machak: VMWare report 64 memory slots !!! MAX_RAM_SLOTS is currently 24. Crash is PatchTable17.
+  if ( TotalCount > MAX_RAM_SLOTS ) TotalCount = MAX_RAM_SLOTS;
   DBG("Total Memory Slots Count = %d\n", TotalCount);
 }
 
