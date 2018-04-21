@@ -44,6 +44,44 @@ EFI_GUID                 *gEfiBootDeviceGuid;
 
 APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
 
+typedef struct NVRAM_DATA
+{
+  CHAR16      *VariableName;
+  EFI_GUID    *Guid;
+} NVRAM_DATA;
+
+CONST NVRAM_DATA ResetNvramData[] = {
+  // Hibernationfixup Variables
+  //{ L"Boot0082",                  &gEfiGlobalVariableGuid },
+  //{ L"BootNext",                  &gEfiGlobalVariableGuid },
+  //{ L"IOHibernateRTCVariables",   &gEfiAppleBootGuid },
+  //{ L"boot-image",                &gEfiAppleBootGuid },
+  //{ L"boot-image-key",            &gEfiAppleBootGuid },
+  //{ L"boot-signature",            &gEfiAppleBootGuid },
+  //{ L"boot-switch-vars",          &gEfiAppleBootGuid },
+
+  // Clover Variables
+  { L"Clover.BackupDirOnDestVol", &gEfiAppleBootGuid },
+  { L"Clover.KeepBackupLimit",    &gEfiAppleBootGuid },
+  { L"Clover.LogEveryBoot",       &gEfiAppleBootGuid },
+  { L"Clover.LogLineCount",       &gEfiAppleBootGuid },
+  { L"Clover.MountEFI",           &gEfiAppleBootGuid },
+  { L"Clover.NVRamDisk",          &gEfiAppleBootGuid },
+  { L"Clover.Theme",              &gEfiAppleBootGuid },
+
+  // Non-volatile Variables
+  //{ L"backlight-level",           &gEfiAppleBootGuid },
+  //{ L"bootercfg",                 &gEfiAppleBootGuid },
+  { L"boot-args",                 &gEfiAppleBootGuid },
+  //{ L"csr-active-config",         &gEfiAppleBootGuid },
+  { L"install-product-url",       &gEfiAppleBootGuid },
+  //{ L"platform-uuid",             &gEfiAppleBootGuid },
+  { L"previous-system-uuid",      &gEfiAppleBootGuid },
+  //{ L"prev-lang:kbd",             &gEfiAppleBootGuid },
+  //{ L"security-mode",             &gEfiAppleBootGuid },
+  { L"nvda_drv",                  &gEfiAppleBootGuid },
+};
+
 /** returns given time as miliseconds.
  *  assumes 31 days per month, so it's not correct,
  *  but is enough for basic checks.
@@ -66,7 +104,6 @@ GetEfiTimeInMs (
     
     return TimeMs;
 }
-
 
 /** Reads and returns value of NVRAM variable. */
 VOID *GetNvramVariable (
@@ -204,6 +241,7 @@ ResetEmuNvram ()
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINTN           VolumeIndex;
+  //UINTN           Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
   REFIT_VOLUME    *Volume;
   EFI_FILE_HANDLE FileHandle;
 
@@ -234,24 +272,15 @@ ResetEmuNvram ()
   }
 
   //DBG("ResetEmuNvram: cleanup NVRAM variables\n");
-
-  // TODO: if want to delete more nvram variables like realmac's reset NVRAM, consider it
-  //DeleteNvramVariable(L"prev-lang:kbd",           &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"backlight-level",         &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"boot-args",               &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"nvda_drv",                &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"install-product-url",     &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"previous-system-uuid",    &gEfiAppleBootGuid);
-
-  // hibernate keys for hibernationfixup
-  // delete these keys so that instant reboot does not occur on systems where hibernate is not functioning properly.
-  //DeleteNvramVariable(L"Boot0082",                &gEfiGlobalVariableGuid);
-  //DeleteNvramVariable(L"BootNext",                &gEfiGlobalVariableGuid);
-  //DeleteNvramVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"boot-image",              &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"boot-image-key",          &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"boot-signature",          &gEfiAppleBootGuid);
-  //DeleteNvramVariable(L"boot-switch-vars",        &gEfiAppleBootGuid);
+    
+  /*for (Index = 0; Index < ResetNvramDataCount; Index++) {
+    Status = DeleteNvramVariable(ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);
+    if (EFI_ERROR(Status)) {
+      DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
+    } else {
+      DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
+    }
+  }*/
 
   return Status;
 }
@@ -259,17 +288,19 @@ ResetEmuNvram ()
 EFI_STATUS
 ResetNativeNvram ()
 {
-  EFI_STATUS    Status;
+  EFI_STATUS    Status = EFI_NOT_FOUND;
+  UINTN         Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
 
   //DBG("ResetNativeNvram: cleanup NVRAM variables\n");
 
-  // TODO: if want to delete more nvram variables like realmac's reset NVRAM, consider it
-  //Status = DeleteNvramVariable(L"prev-lang:kbd",          &gEfiAppleBootGuid);
-  //Status = DeleteNvramVariable(L"backlight-level",        &gEfiAppleBootGuid);
-  Status = DeleteNvramVariable(L"boot-args",              &gEfiAppleBootGuid);
-  Status = DeleteNvramVariable(L"nvda_drv",               &gEfiAppleBootGuid);
-  Status = DeleteNvramVariable(L"install-product-url",    &gEfiAppleBootGuid);
-  Status = DeleteNvramVariable(L"previous-system-uuid",   &gEfiAppleBootGuid);
+  for (Index = 0; Index < ResetNvramDataCount; Index++) {
+    Status = DeleteNvramVariable(ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);
+    if (EFI_ERROR(Status)) {
+      //DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
+    } else {
+      //DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
+    }
+  }
 
   return Status;
 }

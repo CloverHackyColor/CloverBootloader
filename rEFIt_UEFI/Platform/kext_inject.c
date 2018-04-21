@@ -595,7 +595,6 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 // KernelBooterExtensionsPatch to load extra kexts besides kernelcache
 //
 //
-// Code cleaned up by Sherlocks
 // KBE*EXT - load extra kexts besides kernelcache.
 // KBE*SIP - bypass kext check by System Integrity Protection.
 
@@ -709,84 +708,70 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     }
     if (NumSnow_i386 == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
-            DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
-    }
-    else if (NumLion_i386 == 1) {
+      DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
+    } else if (NumLion_i386 == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-            DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
     }
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.6")) && (os_version < AsciiOSVersionToUint64("10.7"))) {
+  } else if ((os_version >= AsciiOSVersionToUint64("10.6")) && (os_version < AsciiOSVersionToUint64("10.7"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
-          DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.7")) && (os_version < AsciiOSVersionToUint64("10.8"))) {
+    DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
+  } else if ((os_version >= AsciiOSVersionToUint64("10.7")) && (os_version < AsciiOSVersionToUint64("10.8"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
-          DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.8")) && (os_version < AsciiOSVersionToUint64("10.10"))) {
+    DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
+  } else if ((os_version >= AsciiOSVersionToUint64("10.8")) && (os_version < AsciiOSVersionToUint64("10.10"))) {
     NumMLMav        = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT));
     NumMLDebug      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLDebugSearchEXT, sizeof(KBEMLDebugSearchEXT));
     NumMavYosDebug  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugSearchEXT));
     if (NumMLMav == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
-            DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
-    }
-    else if (NumMLDebug == 1) {
+      DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
+    } else if (NumMLDebug == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLDebugSearchEXT, sizeof(KBEMLDebugSearchEXT), KBEMLDebugReplaceEXT, 1);
-            DBG_RT(Entry, "==> kernel Mountain Lion Debug: %d replaces done.\n", Num)
-    }
-    else if (NumMavYosDebug == 1) {
+      DBG_RT(Entry, "==> kernel Mountain Lion Debug: %d replaces done.\n", Num)
+    } else if (NumMavYosDebug == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugReplaceEXT), KBEMavYosDebugReplaceEXT, 1);
-            DBG_RT(Entry, "==> kernel Mavericks Debug: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel Mavericks Debug: %d replaces done.\n", Num);
     }
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.10")) && (os_version < AsciiOSVersionToUint64("10.11"))) {
+  } else if ((os_version >= AsciiOSVersionToUint64("10.10")) && (os_version < AsciiOSVersionToUint64("10.11"))) {
     NumYos          = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT));
     NumMavYosDebug  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugSearchEXT));
     if (NumYos == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1);
-            DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
-    }
-    else if (NumMavYosDebug == 1) {
+      DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
+    } else if (NumMavYosDebug == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugReplaceEXT), KBEMavYosDebugReplaceEXT, 1);
-            DBG_RT(Entry, "==> kernel Yosemite Debug: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel Yosemite Debug: %d replaces done.\n", Num);
     }
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.11")) && (os_version < AsciiOSVersionToUint64("10.12"))) {
+  } else if ((os_version >= AsciiOSVersionToUint64("10.11")) && (os_version < AsciiOSVersionToUint64("10.12"))) {
     NumEC       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP));
     NumECDebug  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchSIP, sizeof(KBEECDebugSearchSIP));
     if (NumEC == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP), KBEECReplaceSIP, 1);
-            DBG_RT(Entry, "==> kernel  El Capitan: %d replaces done.\n", Num);
-    }
-    else if (NumECDebug == 1) {
+      DBG_RT(Entry, "==> kernel  El Capitan: %d replaces done.\n", Num);
+    } else if (NumECDebug == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchEXT, sizeof(KBEECDebugSearchEXT), KBEECDebugReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchSIP, sizeof(KBEECDebugSearchSIP), KBEECDebugReplaceSIP, 1);
-            DBG_RT(Entry, "==> kernel El Capitan Debug: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel El Capitan Debug: %d replaces done.\n", Num);
     }
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.12")) && (os_version < AsciiOSVersionToUint64("10.13"))) {
+  } else if ((os_version >= AsciiOSVersionToUint64("10.12")) && (os_version < AsciiOSVersionToUint64("10.13"))) {
     NumSie       = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP));
     NumSieDebug  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP));
     if (NumSie == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-            DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
-    }
-    else if (NumSieDebug == 1) {
+      DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
+    } else if (NumSieDebug == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchEXT, sizeof(KBESieDebugSearchEXT), KBESieDebugReplaceEXT, 1) +
             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP), KBESieDebugReplaceSIP, 1);
-            DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
+      DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
     }
-  }
-  else if ((os_version >= AsciiOSVersionToUint64("10.13")) && (os_version < AsciiOSVersionToUint64("10.14"))) {
+  } else if ((os_version >= AsciiOSVersionToUint64("10.13")) && (os_version < AsciiOSVersionToUint64("10.14"))) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEHighSieSearchSIP, sizeof(KBEHighSieSearchSIP), KBEHighSieReplaceSIP, 1);
-          DBG_RT(Entry, "==> kernel High Sierra: %d replaces done.\n", Num);
-  }
-  else {
+    DBG_RT(Entry, "==> kernel High Sierra: %d replaces done.\n", Num);
+  } else {
     DBG_RT(Entry, "==> ERROR(OSVersion): NOT patched - unknown kernel.\n");
   }
 
@@ -846,63 +831,49 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   if (NumHighSie == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEHighSieSearchSIP, sizeof(KBEHighSieSearchSIP), KBEHighSieReplaceSIP, 1);
-          DBG_RT(Entry, "==> kernel High Sierra: %d replaces done.\n", Num);
-  }
-  else if (NumSieDebug == 1) {
+    DBG_RT(Entry, "==> kernel High Sierra: %d replaces done.\n", Num);
+  } else if (NumSieDebug == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchEXT, sizeof(KBESieDebugSearchEXT), KBESieDebugReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP), KBESieDebugReplaceSIP, 1);
-          DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
-  }
-  else if (NumSie == 1) {
+    DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
+  } else if (NumSie == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-          DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
-  }
-  else if (NumECDebug == 1) {
+    DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
+  } else if (NumECDebug == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchEXT, sizeof(KBEECDebugSearchEXT), KBEECDebugReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchSIP, sizeof(KBEECDebugSearchSIP), KBEECDebugReplaceSIP, 1);
-          DBG_RT(Entry, "==> kernel El Capitan Debug: %d replaces done.\n", Num);
-  }
-  else if (NumEC == 1) {
+    DBG_RT(Entry, "==> kernel El Capitan Debug: %d replaces done.\n", Num);
+  } else if (NumEC == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
           SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP), KBEECReplaceSIP, 1);
-          DBG_RT(Entry, "==> kernel El Capitan: %d replaces done.\n", Num);
-  }
-  else if (NumMavYosDebug == 1) {
+    DBG_RT(Entry, "==> kernel El Capitan: %d replaces done.\n", Num);
+  } else if (NumMavYosDebug == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugReplaceEXT), KBEMavYosDebugReplaceEXT, 1);
-          DBG_RT(Entry, "==> kernel Yosemite Debug: %d replaces done.\n", Num);
-  }
-  else if (NumYos == 1) {
+    DBG_RT(Entry, "==> kernel Yosemite Debug: %d replaces done.\n", Num);
+  } else if (NumYos == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1);
-          DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
-  }
-  else if (NumMLDebug == 1) {
+    DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
+  } else if (NumMLDebug == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLDebugSearchEXT, sizeof(KBEMLDebugSearchEXT), KBEMLDebugReplaceEXT, 1);
-          DBG_RT(Entry, "==> kernel Mountain Lion Debug: %d replaces done.\n", Num)
-  }
-  else if (NumMLMav == 1) {
+    DBG_RT(Entry, "==> kernel Mountain Lion Debug: %d replaces done.\n", Num)
+  } else if (NumMLMav == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
-          DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
-  }
-  else if (NumLion_X64 == 1) {
+    DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
+  } else if (NumLion_X64 == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
-          DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
-  }
-  else if (NumSnow_X64 == 1) {
+    DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
+  } else if (NumSnow_X64 == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
-          DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
-  }
-
+    DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
   // i386
-  else if (NumLion_i386 == 1) {
+  } else if (NumLion_i386 == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-          DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
-  }
-  else if (NumSnow_i386 == 1) {
+    DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
+  } else if (NumSnow_i386 == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
-          DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
-  }
-  else {
+    DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
+  } else {
     DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
   }
 
