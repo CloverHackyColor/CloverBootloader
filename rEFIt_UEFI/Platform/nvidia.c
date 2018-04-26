@@ -1425,8 +1425,9 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
   //	{ 0x10DE1C01,	"Graphics Device" }, // GP106
 	{ 0x10DE1C02,   "GeForce GTX 1060"}, // GP106
 	{ 0x10DE1C03,   "GeForce GTX 1060"}, // GP106
+    { 0x10DE1C06,   "GeForce GTX 1060"}, // GP106
 //	{ 0x10DE1C07,   "NVIDIA CMP6-1"}, //
-	{ 0x10DE1c20,	"GeForce GTX 1060" }, //GP106M
+	{ 0x10DE1C20,	"GeForce GTX 1060" }, //GP106M
   //	{ 0x10DE1C30,	"Graphics Device" }, // GP106GL
 	{ 0x10DE1C60,	"GeForce GTX 1060" }, // GP106M
   //	{ 0x10DE1C70,	"Graphics Device" }, // GP106GL
