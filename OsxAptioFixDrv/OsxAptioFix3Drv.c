@@ -565,7 +565,7 @@ MOStartImage (
     DBG("CloseProtocol error: %r\n", Status);
   }
   
-  if (StrStriBasic(FilePathText,L"boot.efi")){
+  if (StrStriBasic(FilePathText,L"boot.efi") /*|| StrStriBasic(FilePathText,L"booter")*/) {
     Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
     if (!EFI_ERROR(Status)) {
       Status = gRT->SetVariable(L"recovery-boot-mode", &gEfiAppleBootGuid,
@@ -596,6 +596,9 @@ MOStartImage (
       }
     } else {
       StartFlag = StrStriBasic(FilePathText,L"boot.efi");
+      /*if (!StartFlag) {
+        StartFlag = StrStriBasic(FilePathText,L"booter") ;
+      }*/
     }
     FreePool(Value);
   }

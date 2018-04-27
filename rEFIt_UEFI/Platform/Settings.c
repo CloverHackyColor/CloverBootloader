@@ -5952,168 +5952,167 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // This should work for most installer cases. Rest cases will be read from boot.efi before booting.
     // Reworked by Sherlocks. 2018.04.12
 
-    BOOLEAN OSINSTALLER_VER = FALSE;
-
-    if (!OSINSTALLER_VER) {
-      // 1st stage
-      // Check plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD
-      CHAR16 *InstallerPlist = L"\\.IABootFilesSystemVersion.plist"; // 10.9 - 10.13.3
-      if (!FileExists (Entry->Volume->RootDir, InstallerPlist) && FileExists (Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
-          ((FileExists (Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
-            FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
-            FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
-            FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
-            FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4
-        InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+    // 1st stage
+    // Check plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD/NetInstall
+    CHAR16 *InstallerPlist = L"\\.IABootFilesSystemVersion.plist"; // 10.9 - 10.13.3
+    if (!FileExists (Entry->Volume->RootDir, InstallerPlist) && FileExists (Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
+        ((FileExists (Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
+          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
+          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
+          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
+          FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4
+      InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+    }
+    if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+      Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+      if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+        Prop = GetProperty (Dict, "ProductVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+        Prop = GetProperty (Dict, "ProductBuildVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+      }
+    } else {
+      InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - 10.13.3
+      if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+        InstallerPlist = L"\\NetInstall macOS High Sierra.nbi\\i386\\com.apple.Boot.plist";
       }
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-          Prop = GetProperty (Dict, "ProductVersion");
+          Prop = GetProperty (Dict, "Kernel Flags");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-          }
-          Prop = GetProperty (Dict, "ProductBuildVersion");
-          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-          }
-        }
-      } else {
-        InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - 10.13.3
-        if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-          Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
-          if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-            Prop = GetProperty (Dict, "Kernel Flags");
-            if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-              if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
-                OSVersion = AllocateCopyPool (5, "10.9");
-              } else if (AsciiStrStr (Prop->string, "Install%20macOS%20High%20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
-                OSVersion = AllocateCopyPool (6, "10.13");
-              } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
-                OSVersion = AllocateCopyPool (6, "10.12");
-              } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
-                OSVersion = AllocateCopyPool (6, "10.11");
-              } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
-                OSVersion = AllocateCopyPool (6, "10.10");
-              } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
-                OSVersion = AllocateCopyPool (5, "10.8");
-              } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
-                OSVersion = AllocateCopyPool (5, "10.7");
-              }
+            if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
+              OSVersion = AllocateCopyPool (5, "10.9");
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20High%20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
+              OSVersion = AllocateCopyPool (6, "10.13");
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
+              OSVersion = AllocateCopyPool (6, "10.12");
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
+              OSVersion = AllocateCopyPool (6, "10.11");
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
+              OSVersion = AllocateCopyPool (6, "10.10");
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
+              OSVersion = AllocateCopyPool (5, "10.8");
+            } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
+              OSVersion = AllocateCopyPool (5, "10.7");
             }
           }
         }
       }
+    }
 
-      // 2nd stage
-      // Check plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
+    // 2nd stage
+    // Check plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
+    InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
+    if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
       InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
+        InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
         if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-          InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
+          InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
           if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-            InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
-            if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-              InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
-              if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
-                  (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                   FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                   FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
-                InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
-              }
+            InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
+            if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
+                (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                 FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                 FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
+              InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
             }
           }
         }
       }
-      if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
-        if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-          Prop = GetProperty (Dict, "ProductVersion");
+    }
+    if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+      Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+      if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+        Prop = GetProperty (Dict, "ProductVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+        Prop = GetProperty (Dict, "ProductBuildVersion");
+        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+          Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+        }
+        DictPointer = GetProperty (Dict, "System Image Info"); // 10.12+
+        if (DictPointer != NULL) {
+          Prop = GetProperty (DictPointer, "version");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
           }
-          Prop = GetProperty (Dict, "ProductBuildVersion");
-          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-          }
-          DictPointer = GetProperty (Dict, "System Image Info"); // 10.12+
-          if (DictPointer != NULL) {
-            Prop = GetProperty (DictPointer, "version");
-            if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-              OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-            }
-          }
         }
-      } else {
-        // Check ia.log - InstallESD/createinstallmedia/startosinstall
-        // Implemented by Sherlocks
-        CHAR8  *i, *fileBuffer, *targetString;
-        CHAR8  *Res5 = AllocateZeroPool(5), *Res6 = AllocateZeroPool(6), *Res7 = AllocateZeroPool(7), *Res8 = AllocateZeroPool(8);
-        UINTN  fileLen = 0;
-        CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log"; // 10.7
+      }
+    } else {
+      // Check ia.log - InstallESD/createinstallmedia/startosinstall
+      // Implemented by Sherlocks
+      CHAR8  *i, *fileBuffer, *targetString;
+      CHAR8  *Res5 = AllocateZeroPool(5), *Res6 = AllocateZeroPool(6), *Res7 = AllocateZeroPool(7), *Res8 = AllocateZeroPool(8);
+      UINTN  fileLen = 0;
+      CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log"; // 10.7
+      if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
+        InstallerLog = L"\\OS X Install Data\\ia.log"; // 10.8 - 10.11
         if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
-          InstallerLog = L"\\OS X Install Data\\ia.log"; // 10.8 - 10.11
-          if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
-            InstallerLog = L"\\macOS Install Data\\ia.log"; // 10.12+
-          }
+          InstallerLog = L"\\macOS Install Data\\ia.log"; // 10.12+
         }
-        if (FileExists (Entry->Volume->RootDir, InstallerLog)) {
-          Status = egLoadFile(Entry->Volume->RootDir, InstallerLog, (UINT8 **)&fileBuffer, &fileLen);
-          if (!EFI_ERROR (Status)) {
-            targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
-            CopyMem((VOID*)targetString, (VOID*)fileBuffer, fileLen);
-            i = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
-            if (i[31] == ' ') {
-              AsciiSPrint (Res5, 5, "%c%c.%c\n", i[27], i[28], i[30]);
-              OSVersion = AllocateCopyPool (AsciiStrSize (Res5), Res5);
-              if (i[38] == ')') {
-                AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-              } else if (i[39] == ')') {
-                AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37], i[38]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-              }
-            } else if (i[31] == '.') {
-              AsciiSPrint (Res7, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
-              OSVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-              if (i[40] == ')') {
-                AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-              } else if (i[41] == ')') {
-                AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39], i[40]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-              }
-            } else if (i[32] == ' ') {
-              AsciiSPrint (Res6, 6, "%c%c.%c%c\n", i[27], i[28], i[30], i[31]);
-              OSVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-              if (i[39] == ')') {
-                AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-              } else if (i[40] == ')') {
-                AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-              } else if (i[41] == ')') {
-                AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39], i[40]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
-              }
-            } else if (i[32] == '.') {
-              AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", i[27], i[28], i[30], i[31], i[33]);
-              OSVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
-              if (i[41] == ')') {
-                AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-              } else if (i[42] == ')') {
-                AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-              } else if (i[43] == ')') {
-                AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41], i[42]);
-                Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
-              }
+      }
+      if (FileExists (Entry->Volume->RootDir, InstallerLog)) {
+        Status = egLoadFile(Entry->Volume->RootDir, InstallerLog, (UINT8 **)&fileBuffer, &fileLen);
+        if (!EFI_ERROR (Status)) {
+          targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
+          CopyMem((VOID*)targetString, (VOID*)fileBuffer, fileLen);
+          i = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
+          if (i[31] == ' ') {
+            AsciiSPrint (Res5, 5, "%c%c.%c\n", i[27], i[28], i[30]);
+            OSVersion = AllocateCopyPool (AsciiStrSize (Res5), Res5);
+            if (i[38] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
+            } else if (i[39] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37], i[38]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
-            FreePool(fileBuffer);
-            FreePool(targetString);
+          } else if (i[31] == '.') {
+            AsciiSPrint (Res7, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
+            OSVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+            if (i[40] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
+            } else if (i[41] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39], i[40]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+            }
+          } else if (i[32] == ' ') {
+            AsciiSPrint (Res6, 6, "%c%c.%c%c\n", i[27], i[28], i[30], i[31]);
+            OSVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
+            if (i[39] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
+            } else if (i[40] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+            } else if (i[41] == ')') {
+              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39], i[40]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
+            }
+          } else if (i[32] == '.') {
+            AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", i[27], i[28], i[30], i[31], i[33]);
+            OSVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
+            if (i[41] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
+            } else if (i[42] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
+            } else if (i[43] == ')') {
+              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41], i[42]);
+              Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
+            }
           }
+          FreePool(fileBuffer);
+          FreePool(targetString);
         }
       }
     }
@@ -6129,18 +6128,18 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
    if (RecoveryPlists[j] != NULL) {
       Status = egLoadFile (Entry->Volume->RootDir, RecoveryPlists[j], (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-        Prop       = GetProperty (Dict, "ProductVersion");
+        Prop = GetProperty (Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
-        Prop       = GetProperty (Dict, "ProductBuildVersion");
+        Prop = GetProperty (Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
           Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
       }
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
-      OSVersion    = AllocateCopyPool (5, "10.9");
+      OSVersion = AllocateCopyPool (5, "10.9");
     }
   }
 
@@ -7321,6 +7320,9 @@ SetFSInjection (
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel"); // 10.12+
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
+
+    // NetInstall
+    //FSInject->AddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
 
 
     // Block Caches list

@@ -744,38 +744,64 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
-        SubEntry->me.Title        = L"Cancel hibernate wake";
-        SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
+        SubEntry->me.Title  = L"Cancel hibernate wake";
+        SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot macOS with selected options";
+      if (os_version < AsciiOSVersionToUint64("10.8")) {
+        SubEntry->me.Title  = L"Boot Mac OS X with selected options";
+      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
+        SubEntry->me.Title  = L"Boot OS X with selected options";
+      } else {
+        SubEntry->me.Title  = L"Boot macOS with selected options";
+      }
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot macOS with injected kexts";
-      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
-      SubEntry->Flags           = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
+      if (os_version < AsciiOSVersionToUint64("10.8")) {
+        SubEntry->me.Title  = L"Boot Mac OS X with injected kexts";
+      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
+        SubEntry->me.Title  = L"Boot OS X with injected kexts";
+      } else {
+        SubEntry->me.Title  = L"Boot macOS with injected kexts";
+      }
+      SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
+      SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = L"Boot macOS without injected kexts";
-      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
-      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS );
+      if (os_version < AsciiOSVersionToUint64("10.8")) {
+        SubEntry->me.Title  = L"Boot Mac OS X without injected kexts";
+      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
+        SubEntry->me.Title  = L"Boot OS X without injected kexts";
+      } else {
+        SubEntry->me.Title  = L"Boot macOS without injected kexts";
+      }
+      SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
+      SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
 
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubMenuKextInjectMgmt(Entry));
     AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
-      AddMenuCheck(SubScreen, "macOS 32bit",          OPT_I386, 68);
-      AddMenuCheck(SubScreen, "macOS 64bit",          OPT_X64,  68);
+      if (os_version < AsciiOSVersionToUint64("10.8")) {
+        AddMenuCheck(SubScreen, "Mac OS X 32bit",   OPT_I386, 68);
+        AddMenuCheck(SubScreen, "Mac OS X 64bit",   OPT_X64,  68);
+      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
+        AddMenuCheck(SubScreen, "OS X 32bit",       OPT_I386, 68);
+        AddMenuCheck(SubScreen, "OS X 64bit",       OPT_X64,  68);
+      } else {
+        AddMenuCheck(SubScreen, "macOS 32bit",      OPT_I386, 68);
+        AddMenuCheck(SubScreen, "macOS 64bit",      OPT_X64,  68);
+      }
     }
     AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
     // No Caches option works on 10.6 - 10.9
@@ -1049,6 +1075,9 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
     AddPRSEntry(Volume); // 10.12+
 
+    // Netinstall
+    AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+
     // Use standard location for boot.efi, according to the install files is present
     // That file indentifies a DVD/ESD/BaseSystem/Fusion Drive Install Media, so when present, check standard path to avoid entry duplication
     if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
@@ -1071,8 +1100,14 @@ VOID ScanLoader(VOID)
       } else if (FileExists(Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                  FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                  FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
-        // Fusion Drive
-        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
+        if (StriCmp(Volume->VolName, L"Recovery") == 0) {
+          // FileVault
+          // TODO: need info for 10.11 and lower
+          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS FileVault", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
+        } else {
+          // Fusion Drive
+          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
+        }
       } else if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
         // Installed
         if (EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {

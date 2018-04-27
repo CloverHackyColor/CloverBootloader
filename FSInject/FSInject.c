@@ -1223,6 +1223,9 @@ FSInjectEntrypoint (
 	//FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
 	//FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
 
+    // NetInstall
+    //FSInjectionAddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
+
 
 	// Block Caches list
 	// InstallDVD/Installed

@@ -557,40 +557,43 @@ MOStartImage (
 	Status = gRT->GetVariable(L"boot-switch-vars", &gEfiAppleBootGuid, NULL, &Size, NULL);
 	gHibernateWake = (Status == EFI_BUFFER_TOO_SMALL);
 	
-	if (StrStriBasic(FilePathText,L"boot.efi")){
-    Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
-    if (!EFI_ERROR(Status)) {
-      Status = gRT->SetVariable(L"recovery-boot-mode", &gEfiAppleBootGuid,
-                                EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                Size2, Value);
-      if (EFI_ERROR(Status)) {
-        DBG(" Something goes wrong while setting recovery-boot-mode\n");
-      }
-      Status = gRT->SetVariable (L"aptiofixflag", &gEfiAppleBootGuid, 0, 0, NULL);
-      FreePool(Value);
-    }
-    
-    Size2 =0;
-    //Check recovery-boot-mode present for nested boot.efi
-    Status = GetVariable2 (L"recovery-boot-mode", &gEfiAppleBootGuid, &Value, &Size2);
-    if (!EFI_ERROR(Status)) {
-      //If it presents, then wait for \com.apple.recovery.boot\boot.efi boot
-      DBG(" recovery-boot-mode present\n");
-      StartFlag = StrStriBasic(FilePathText,L"\\com.apple.recovery.boot\\boot.efi");
-      if (Counter > 0x00){
-        Status = gRT->SetVariable(L"aptiofixflag", &gEfiAppleBootGuid,
+    if (StrStriBasic(FilePathText,L"boot.efi") /*|| StrStriBasic(FilePathText,L"booter")*/) {
+      Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
+      if (!EFI_ERROR(Status)) {
+        Status = gRT->SetVariable(L"recovery-boot-mode", &gEfiAppleBootGuid,
                                   EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                   Size2, Value);
         if (EFI_ERROR(Status)) {
-          DBG("Something goes wrong! \n");
-      	}
-          gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+          DBG(" Something goes wrong while setting recovery-boot-mode\n");
+        }
+        Status = gRT->SetVariable (L"aptiofixflag", &gEfiAppleBootGuid, 0, 0, NULL);
+        FreePool(Value);
       }
-    } else {
-      StartFlag = StrStriBasic(FilePathText,L"boot.efi");
+    
+      Size2 =0;
+      //Check recovery-boot-mode present for nested boot.efi
+      Status = GetVariable2 (L"recovery-boot-mode", &gEfiAppleBootGuid, &Value, &Size2);
+      if (!EFI_ERROR(Status)) {
+        //If it presents, then wait for \com.apple.recovery.boot\boot.efi boot
+        DBG(" recovery-boot-mode present\n");
+        StartFlag = StrStriBasic(FilePathText,L"\\com.apple.recovery.boot\\boot.efi");
+        if (Counter > 0x00){
+          Status = gRT->SetVariable(L"aptiofixflag", &gEfiAppleBootGuid,
+                                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                    Size2, Value);
+          if (EFI_ERROR(Status)) {
+            DBG("Something goes wrong! \n");
+          }
+            gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+        }
+      } else {
+        StartFlag = StrStriBasic(FilePathText,L"boot.efi");
+        /*if (!StartFlag) {
+          StartFlag = StrStriBasic(FilePathText,L"booter") ;
+        }*/
+      }
+      FreePool(Value);
     }
-    	FreePool(Value);
-  	}
 
 	// check if this is boot.efi
 	if (StartFlag && !gHibernateWake) {
