@@ -1100,7 +1100,7 @@ VOID ScanLoader(VOID)
       } else if (FileExists(Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                  FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                  FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
-        if (StriCmp(Volume->VolName, L"Recovery") == 0) {
+        if (StriStr(Volume->VolName, L"Recovery") != NULL) {
           // FileVault
           // TODO: need info for 10.11 and lower
           AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS FileVault", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
