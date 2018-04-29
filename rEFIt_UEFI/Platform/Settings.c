@@ -107,6 +107,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     FastBoot;
   FALSE,          // BOOLEAN     NeverHibernate;
   FALSE,          // BOOLEAN     StrictHibernate;
+  FALSE,          // BOOLEAN     RtcHibernateAware;
   FONT_GRAY,      // FONT_TYPE   Font; //Welcome should be white
   9,              // INTN        CharWidth;
   0xFFFFFF80,     // UINTN       SelectionColor;
@@ -2408,6 +2409,9 @@ GetEarlyUserSettings (
 
       Prop = GetProperty (DictPointer, "StrictHibernate");
       GlobalConfig.StrictHibernate = IsPropertyTrue (Prop);
+
+      Prop = GetProperty (DictPointer, "RtcHibernateAware");
+      GlobalConfig.RtcHibernateAware = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "HibernationFixup");
       if (Prop) {

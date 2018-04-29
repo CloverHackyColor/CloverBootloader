@@ -257,6 +257,8 @@
 		<false/>
 		<key>StrictHibernate</key>
 		<false/>
+		<key>RtcHibernateAware</key>
+		<false/>
 		<key>Timeout</key>
 		<integer>5</integer>
 	</dict>

@@ -235,6 +235,60 @@ EFI_BLOCK_READ OrigBlockIoRead = NULL;
 UINT64  gSleepImageOffset = 0;
 UINT32  gSleepTime = 0;
 
+#define R_PCH_RTC_INDEX           0x70
+#define R_PCH_RTC_TARGET          0x71
+#define R_PCH_RTC_EXT_INDEX       0x72
+#define R_PCH_RTC_EXT_TARGET      0x73
+
+#define R_PCH_RTC_INDEX_ALT       0x74
+#define R_PCH_RTC_TARGET_ALT      0x75
+#define R_PCH_RTC_EXT_INDEX_ALT   0x76
+#define R_PCH_RTC_EXT_TARGET_ALT  0x77
+
+STATIC
+UINT8
+SimpleRtcRead (
+  IN  UINT8  Offset
+  )
+{
+  UINT8 RtcIndexPort;
+  UINT8 RtcDataPort;
+
+  // CMOS access registers (using alternative access not to handle NMI bit)
+  if (Offset < 128) {
+    RtcIndexPort  = R_PCH_RTC_INDEX_ALT;
+    RtcDataPort   = R_PCH_RTC_TARGET_ALT;
+  } else {
+    RtcIndexPort  = R_PCH_RTC_EXT_INDEX_ALT;
+    RtcDataPort   = R_PCH_RTC_EXT_TARGET_ALT;
+  }
+
+  IoWrite8 (RtcIndexPort, Offset & 0x7F);
+  return IoRead8 (RtcDataPort);
+}
+
+STATIC
+VOID
+SimpleRtcWrite (
+  IN UINT8 Offset,
+  IN UINT8 Value
+  )
+{
+  UINT8  RtcIndexPort;
+  UINT8  RtcDataPort;
+
+  // CMOS access registers (using alternative access not to handle NMI bit)
+  if (Offset < 128) {
+    RtcIndexPort  = R_PCH_RTC_INDEX_ALT;
+    RtcDataPort   = R_PCH_RTC_TARGET_ALT;
+  } else {
+    RtcIndexPort  = R_PCH_RTC_EXT_INDEX_ALT;
+    RtcDataPort   = R_PCH_RTC_EXT_TARGET_ALT;
+  }
+
+  IoWrite8 (RtcIndexPort, Offset & 0x7F);
+  IoWrite8 (RtcDataPort, Value);
+}
 
 /** BlockIo->Read() override. */
 EFI_STATUS
@@ -889,8 +943,6 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   return ret;
 }
 
-
-
 /** Prepares nvram vars needed for boot.efi to wake from hibernation:
  *  boot-switch-vars and boot-image.
  *
@@ -919,6 +971,8 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   AppleRTCHibernateVars       RtcVars;
   UINT8                       *VarData = NULL;
   REFIT_VOLUME                *SleepImageVolume;
+  UINT32                      Attributes;
+  BOOLEAN                     HasIORTCVariables = FALSE;
   
   DBG("PrepareHibernation:\n");
   
@@ -967,6 +1021,35 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     DBG(" boot-switch-vars present\n");
     return TRUE;
   }
+
+  if (GlobalConfig.RtcHibernateAware) {
+    UINTN  Index;
+    UINT8  *RtcRawVars = (UINT8 *)&RtcVars;
+    for (Index = 0; Index < sizeof(AppleRTCHibernateVars); Index++) {
+      RtcRawVars[Index] = SimpleRtcRead (Index + 128);
+    }
+
+    // RTC data has priority over IOHibernateRTCVariables
+    if (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
+      RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L') {
+
+      // Set a volatile variable that will not be present in NVRAM flash!
+      Status = gRT->SetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
+                          EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                          sizeof(AppleRTCHibernateVars), RtcRawVars);
+
+      // Erase RTC memory similarly to AppleBds
+      ZeroMem (RtcRawVars, sizeof(AppleRTCHibernateVars));
+      RtcVars.signature[0] = 'D';
+      RtcVars.signature[1] = 'E';
+      RtcVars.signature[2] = 'A';
+      RtcVars.signature[3] = 'D';
+
+      for (Index = 0; Index < sizeof(AppleRTCHibernateVars); Index++) {
+        SimpleRtcWrite (Index + 128, RtcRawVars[Index]);
+      }
+    }
+  }
   
   // if IOHibernateRTCVariables exists (NVRAM working), then copy it to boot-switch-vars
   // else (no NVRAM) set boot-switch-vars to dummy one
@@ -977,6 +1060,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     Status = gRT->SetVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               0, NULL);
+    HasIORTCVariables = TRUE;
   } else {
     // no NVRAM
     DBG(" setting dummy boot-switch-vars\n");
@@ -989,10 +1073,24 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     RtcVars.signature[3] = 'L';
     RtcVars.revision     = 1;
   }
+
+  // boot-switch-vars should not be non volatile for security reasons
+  // For now let's preserve old behaviour without RtcHibernateAware for compatibility reasons.
+  Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
+  if (!GlobalConfig.RtcHibernateAware) {
+    Attributes |= EFI_VARIABLE_NON_VOLATILE;
+  }
   
   Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            Attributes,
                             Size, Value);
+
+  // Erase the key
+  ZeroMem (Value, Size);
+  if (HasIORTCVariables) {
+    gBS->FreePool (Value);
+  }
+
   if (EFI_ERROR(Status)) {
     DBG(" can not write boot-switch-vars -> %r\n", Status);
     return FALSE;

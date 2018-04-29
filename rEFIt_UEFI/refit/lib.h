@@ -479,6 +479,7 @@ typedef struct {
   BOOLEAN     FastBoot;
   BOOLEAN     NeverHibernate;
   BOOLEAN     StrictHibernate;
+  BOOLEAN     RtcHibernateAware;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;

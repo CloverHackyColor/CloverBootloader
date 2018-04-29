@@ -322,7 +322,8 @@ void PrintConfig(CFTypeRef data)
   addBoolean(bootDict, CFSTR("Fast"), 0);
   addString(bootDict, CFSTR("#CustomLogo"), "_NOT_SHOWN_");
   addBoolean(bootDict, CFSTR("#NeverHibernate"), 0);
-  addBoolean(bootDict, CFSTR("#StrictHibernate"), 0);  
+  addBoolean(bootDict, CFSTR("#StrictHibernate"), 0);
+  addBoolean(bootDict, CFSTR("RtcHibernateAware"), 0);
   addBoolean(bootDict, CFSTR("NeverDoRecovery"), s->NeverDoRecovery);
   addBoolean(bootDict, CFSTR("SkipHibernateTimeout"), s->SkipHibernateTimeout);  
   addBoolean(bootDict, CFSTR("DisableCloverHotkeys"), s->DisableCloverHotkeys);  
