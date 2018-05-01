@@ -1542,6 +1542,7 @@ extern BOOLEAN                        DoHibernateWake;
 extern UINTN 						  APFSUUIDBankCounter;
 extern UINT8 						 *APFSUUIDBank;
 extern CHAR16						 **SystemPlists;
+extern CHAR16                        **InstallPlists;
 extern CHAR16						 **RecoveryPlists;
 extern EFI_GUID                        APFSSignature;
 extern BOOLEAN                         APFSSupport;

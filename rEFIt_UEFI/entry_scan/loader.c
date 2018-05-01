@@ -1101,7 +1101,7 @@ VOID ScanLoader(VOID)
                  FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                  FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
         if (StriStr(Volume->VolName, L"Recovery") != NULL) {
-          // FileVault
+          // FileVault of HFS+
           // TODO: need info for 10.11 and lower
           AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS FileVault", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
         } else {

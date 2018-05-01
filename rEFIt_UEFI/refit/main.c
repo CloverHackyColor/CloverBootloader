@@ -1782,29 +1782,32 @@ UINT8 *APFSContainer_Support(VOID) {
 }
 
 //System / Recovery version filler
-CHAR16 *SystemVersionPlist      = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
-CHAR16 *ServerVersionPlist      = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
-CHAR16 *RecoveryVersionPlist    = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-CHAR16  APFSSysPlistPath[86]    = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
-CHAR16  APFSServerPlistPath[86] = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
-CHAR16  APFSRecPlistPath[58]    = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
+CHAR16 *SystemVersionPlist       = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+CHAR16 *ServerVersionPlist       = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
+CHAR16 *InstallVersionPlist      = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
+CHAR16 *RecoveryVersionPlist     = L"\\com.apple.recovery.boot\\SystemVersion.plist";
+CHAR16  APFSSysPlistPath[86]     = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
+CHAR16  APFSServerPlistPath[86]  = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
+CHAR16  APFSInstallPlistPath[79] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\SystemVersion.plist";
+CHAR16  APFSRecPlistPath[58]     = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
   
 
 VOID SystemVersionInit(VOID)
 {
   //Plists iterators
   UINTN      SysIter            = 2;
+  UINTN      InsIter            = 1;
   UINTN      RecIter            = 1;
   UINTN      k                  = 0;
-  // If scanloader starts multiple times, then we need to free systemplits,recoveryplists variables, also
+  // If scanloader starts multiple times, then we need to free systemplists, installplists, recoveryplists variables, also
   // refresh APFSUUIDBank
-  if ((SystemPlists != NULL) || (RecoveryPlists != NULL)) {
-    if ((APFSUUIDBank != NULL) && (APFSSupport==TRUE)) {
+  if ((SystemPlists != NULL) || (InstallPlists != NULL) || (RecoveryPlists != NULL)) {
+    if ((APFSUUIDBank != NULL) && (APFSSupport == TRUE)) {
       FreePool(APFSUUIDBank);
       //Reset APFSUUIDBank counter, we will re-enumerate it
       APFSUUIDBankCounter = 0;
       APFSUUIDBank = APFSContainer_Support();
-      if (APFSUUIDBankCounter == 0){
+      if (APFSUUIDBankCounter == 0) {
         APFSSupport = FALSE;
       }
     }
@@ -1817,6 +1820,15 @@ VOID SystemVersionInit(VOID)
       FreePool(SystemPlists);
       SystemPlists = NULL;
     }
+    if (InstallPlists != NULL) {
+      k = 0;
+      while (InstallPlists[k] != NULL) {
+        InstallPlists[k] = NULL;
+        k++;
+      }
+      FreePool(InstallPlists);
+      InstallPlists = NULL;
+    }
     if (RecoveryPlists != NULL) {
       k = 0;
       while (RecoveryPlists[k] != NULL) {
@@ -1828,19 +1840,23 @@ VOID SystemVersionInit(VOID)
     }
   }
     /************************************************************************/
-  /*Allocate Memory for systemplists and recoveryplists********************/
+  /*Allocate Memory for systemplists, installplists and recoveryplists********************/
   //Check apfs support
   if (APFSSupport==TRUE) {
     SystemPlists = AllocateZeroPool((2*APFSUUIDBankCounter+3)*sizeof(CHAR16 *));//array of pointers
+    InstallPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
     RecoveryPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
   } else {
     SystemPlists = AllocateZeroPool(sizeof(CHAR16 *)*3);
+    InstallPlists = AllocateZeroPool(sizeof(CHAR16 *)*2);
     RecoveryPlists = AllocateZeroPool(sizeof(CHAR16 *)*2);
   }
   /* Fill it with standard paths*******************************************/
   SystemPlists[0] = SystemVersionPlist;
   SystemPlists[1] = ServerVersionPlist;
   SystemPlists[2] = NULL;
+  InstallPlists[0] = InstallVersionPlist;
+  InstallPlists[1] = NULL;
   RecoveryPlists[0] = RecoveryVersionPlist;
   RecoveryPlists[1] = NULL;
   /************************************************************************/
@@ -1848,23 +1864,29 @@ VOID SystemVersionInit(VOID)
   for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
       //Store UUID from bank
       CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
-      //Init temp string with system/recovery APFS path
+      //Init temp string with system/install/recovery APFS path
       CHAR16 *TmpSysPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
       CHAR16 *TmpServerPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
+      CHAR16 *TmpInsPlistPath = AllocateZeroPool(79*sizeof(CHAR16));
       CHAR16 *TmpRecPlistPath = AllocateZeroPool(58*sizeof(CHAR16));
       StrnCpy(TmpSysPlistPath,APFSSysPlistPath,85);
       StrnCpy(TmpServerPlistPath,APFSServerPlistPath,85);
+      StrnCpy(TmpInsPlistPath,APFSInstallPlistPath,78);
       StrnCpy(TmpRecPlistPath,APFSRecPlistPath,57);
       StrnCpy(TmpSysPlistPath+1,CurrentUUID,36);
       StrnCpy(TmpServerPlistPath+1,CurrentUUID,36);
+      StrnCpy(TmpInsPlistPath+1,CurrentUUID,36);
       StrnCpy(TmpRecPlistPath+1,CurrentUUID,36);
-      //Fill SystemPlists/RecoveryPlists arrays
+      //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
       SystemPlists[SysIter] = TmpSysPlistPath;
       SystemPlists[SysIter+1] = TmpServerPlistPath;
       SystemPlists[SysIter+2] = NULL;
+      InstallPlists[InsIter] = TmpInsPlistPath;
+      InstallPlists[InsIter+1] = NULL;
       RecoveryPlists[RecIter] = TmpRecPlistPath;
       RecoveryPlists[RecIter+1] = NULL;
       SysIter+=2;
+      InsIter++;
       RecIter++;
   }
 }

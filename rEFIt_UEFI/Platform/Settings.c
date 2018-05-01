@@ -70,6 +70,7 @@ BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;
 BOOLEAN                         gRemapSmBiosIsRequire;
 CHAR16                        **SystemPlists                = NULL;
+CHAR16                        **InstallPlists               = NULL;
 CHAR16                        **RecoveryPlists              = NULL;
 
 // QPI
@@ -5956,8 +5957,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // This should work for most installer cases. Rest cases will be read from boot.efi before booting.
     // Reworked by Sherlocks. 2018.04.12
 
-    // 1st stage
-    // Check plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD/NetInstall
+    // 1st stage - 1
+    // Check for plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD
     CHAR16 *InstallerPlist = L"\\.IABootFilesSystemVersion.plist"; // 10.9 - 10.13.3
     if (!FileExists (Entry->Volume->RootDir, InstallerPlist) && FileExists (Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
         ((FileExists (Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
@@ -5979,7 +5980,11 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
         }
       }
-    } else {
+    }
+
+    // 1st stage - 2
+    // Check for plist - createinstallmedia/NetInstall
+    if (OSVersion == NULL) {
       InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - 10.13.3
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         InstallerPlist = L"\\NetInstall macOS High Sierra.nbi\\i386\\com.apple.Boot.plist";
@@ -6009,49 +6014,56 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       }
     }
 
-    // 2nd stage
-    // Check plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
-    InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
-    if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-      InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
+    // 2nd stage - 1
+    // Check for plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
+    if (OSVersion == NULL) {
+      InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
+        InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
         if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-          InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
+          InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
           if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-            InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
-            if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
-                (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                 FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                 FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
-              InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
+            InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
+            if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+              InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
+              if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
+                  (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                   FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                   FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
+                InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
+              }
+            }
+          }
+        }
+      }
+      if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
+        Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+        if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+          Prop = GetProperty (Dict, "ProductVersion");
+          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+            OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+          }
+          Prop = GetProperty (Dict, "ProductBuildVersion");
+          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+            Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+          }
+		  // In InstallInfo.plist, there is no a version key only when updating from AppStore in 10.13+
+		  // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
+          DictPointer = GetProperty (Dict, "System Image Info"); // 10.12+
+          if (DictPointer != NULL) {
+            Prop = GetProperty (DictPointer, "version");
+            if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+              OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
             }
           }
         }
       }
     }
-    if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-      Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
-      if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-        Prop = GetProperty (Dict, "ProductVersion");
-        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-        }
-        Prop = GetProperty (Dict, "ProductBuildVersion");
-        if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-        }
-        DictPointer = GetProperty (Dict, "System Image Info"); // 10.12+
-        if (DictPointer != NULL) {
-          Prop = GetProperty (DictPointer, "version");
-          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
-          }
-        }
-      }
-    } else {
-      // Check ia.log - InstallESD/createinstallmedia/startosinstall
-      // Implemented by Sherlocks
+
+    // 2nd stage - 2
+    // Check for ia.log - InstallESD/createinstallmedia/startosinstall
+    // Implemented by Sherlocks
+    if (OSVersion == NULL) {
       CHAR8  *i, *fileBuffer, *targetString;
       CHAR8  *Res5 = AllocateZeroPool(5), *Res6 = AllocateZeroPool(6), *Res7 = AllocateZeroPool(7), *Res8 = AllocateZeroPool(8);
       UINTN  fileLen = 0;
@@ -6117,6 +6129,29 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           }
           FreePool(fileBuffer);
           FreePool(targetString);
+        }
+      }
+    }
+
+    // 2nd stage - 3
+    // Check for plist - Preboot of APFS
+    if (OSVersion == NULL && APFSSupport == TRUE) {
+      i = 0;
+      while (InstallPlists[i] != NULL && !FileExists(Entry->Volume->RootDir, InstallPlists[i])) {
+        i++;
+      }
+
+      if (InstallPlists[i] != NULL) {
+        Status = egLoadFile (Entry->Volume->RootDir, InstallPlists[i], (UINT8 **)&PlistBuffer, &PlistLen);
+        if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+          Prop = GetProperty (Dict, "ProductVersion");
+          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+            OSVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+          }
+          Prop = GetProperty (Dict, "ProductBuildVersion");
+          if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
+            Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
+          }
         }
       }
     }
