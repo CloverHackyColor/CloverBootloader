@@ -1427,13 +1427,13 @@ VOID ScanLoader(VOID)
       AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI optical", Volume, NULL, OSTYPE_OTHER, 0);
     }
     //     DBG("search for internal UEFI\n");
-//    if (Volume->DiskKind == DISK_KIND_INTERNAL) {
-//      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI internal", Volume, NULL, OSTYPE_OTHER, 0);
-//    }
+    if (Volume->DiskKind == DISK_KIND_INTERNAL) {
+      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI internal", Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
+    }
     //    DBG("search for external UEFI\n");
-//    if (Volume->DiskKind == DISK_KIND_EXTERNAL) {
-//      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI external", Volume, NULL, OSTYPE_OTHER, 0);
-//    }
+    if (Volume->DiskKind == DISK_KIND_EXTERNAL) {
+      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI external", Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
+    }
   }
 
 }
