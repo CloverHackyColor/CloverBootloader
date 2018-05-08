@@ -1023,8 +1023,8 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   }
 
   if (GlobalConfig.RtcHibernateAware) {
-    UINTN  Index;
-    UINT8  *RtcRawVars = (UINT8 *)&RtcVars;
+    UINT8  Index;
+    UINT8 *RtcRawVars = (UINT8 *)&RtcVars;
     for (Index = 0; Index < sizeof(AppleRTCHibernateVars); Index++) {
       RtcRawVars[Index] = SimpleRtcRead (Index + 128);
     }
