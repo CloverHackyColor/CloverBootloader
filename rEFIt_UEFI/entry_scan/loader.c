@@ -943,6 +943,14 @@ STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
   }
 
   DBG("        AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
+  if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
+    DBG("        skipped because entry is disabled\n");
+    return FALSE;
+  }
+  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+    DBG("        skipped because entry is hidden\n");
+    return FALSE;
+  }
   //don't add hided entries
   if (!gSettings.ShowHiddenEntries) {
     for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
