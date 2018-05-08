@@ -488,7 +488,9 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
         // We know it blocks text out on HPQ UEFI (HP ProBook for example - reported by dmazar), Apple firmwares with UGA, and some VMs.
         // So, it may be better considering to do this only with firmware vendors where the bug was observed (currently it is known to exist on some AMI firmwares).
         //if (GraphicsOutput != NULL && StrCmp(gST->FirmwareVendor, L"American Megatrends") == 0) {
-        if (GraphicsOutput != NULL && StrCmp(gST->FirmwareVendor, L"HPQ") != 0 && StrCmp(gST->FirmwareVendor, L"VMware, Inc.") != 0) {
+        if (GraphicsOutput != NULL && StrCmp(gST->FirmwareVendor, L"HPQ") != 0 &&
+          StrCmp(gST->FirmwareVendor, L"VMware, Inc.") != 0 &&
+          StrCmp(gST->FirmwareVendor, L"INSYDE Corp.") != 0) {
             if (!Enable) {
                 // Don't allow switching to text mode, but report that we are in text mode when queried
                 CurrentForcedConsoleMode = EfiConsoleControlScreenText;
