@@ -67,6 +67,8 @@ struct hfs_dirrec {
     fsw_u8      _dummy;
 };
 
+#pragma pack(2)
+
 struct fsw_hfs_key
 {
   union
