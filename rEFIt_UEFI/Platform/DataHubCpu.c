@@ -33,7 +33,7 @@
 #if DEBUG_DH == 0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_DH, __VA_ARGS__)	
+#define DBG(...) DebugLog(DEBUG_DH, __VA_ARGS__)
 #endif
 
 
@@ -116,20 +116,20 @@ LogDataHub(IN  EFI_GUID *TypeGuid,
   UINT32        RecordSize;
   EFI_STATUS    Status;
   PLATFORM_DATA *PlatformData;
-  
+
   PlatformData = (PLATFORM_DATA*)AllocatePool(sizeof(PLATFORM_DATA) + DataSize + EFI_CPU_DATA_MAXIMUM_LENGTH);
   if (PlatformData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  
+
   RecordSize = CopyRecord(PlatformData, Name, Data, DataSize);
   Status     = gDataHub->LogData(gDataHub,
-                                 TypeGuid,                   // DataRecordGuid				
+                                 TypeGuid,                   // DataRecordGuid
                                  &gDataHubPlatformGuid,      // ProducerName (always)
                                  EFI_DATA_RECORD_CLASS_DATA,
                                  PlatformData,
                                  RecordSize);
-  
+
   FreePool(PlatformData);
   return Status;
 }
@@ -164,7 +164,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                    &gUuid);
 
   Attributes     = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
-  
+
   if (gSettings.RtMLB != NULL) {
     if (AsciiStrLen(gSettings.RtMLB) != 17) {
       DBG("** Warning: Your MLB is not suitable for iMessage(must be 17 chars long) !\n");
@@ -264,7 +264,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     AddNvramVariable(L"DensityThreshold", &gEfiAppleBootGuid, Attributes, 2, &DensityThreshold);
     AddNvramVariable(L"gfx-saved-config-restore-status", &gEfiAppleNvramGuid, Attributes, 8, &ConfigStatus);
   }
-  
+
   if (gSettings.UIScale == 0x80000000) {
     DeleteNvramVariable(L"UIScale", &gEfiAppleNvramGuid);
   } else {
@@ -299,8 +299,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   } else {
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
-  
-   DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
+
+  if (!gDriversFlags.AptioMemFixLoaded) {
+    DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
+  }
 
   // Check for AptioFix2Drv loaded to store efi-boot-device for special boot
     if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded ||
@@ -342,7 +344,7 @@ AddSMCkey(SMC_KEY Key, SMC_DATA_SIZE Size, SMC_KEY_TYPE Type, SMC_DATA *Data)
 VOID EFIAPI
 SetupDataForOSX(BOOLEAN Hibernate)
 {
-  EFI_STATUS Status;	
+  EFI_STATUS Status;
 
   UINT32     DevPathSupportedVal;
   UINT64     FrontSideBus;
@@ -362,7 +364,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
     DBG("Wrong FrontSideBus=%d, set to 100MHz\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
-  
+
   if (gSettings.QEMU) {
     FrontSideBus = gCPUStructure.TSCFrequency;
     switch (gCPUStructure.Model) {
@@ -383,7 +385,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
   CpuSpeed = gCPUStructure.CPUFrequency;
   gSettings.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);
-  
+
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
   if (!EFI_ERROR(Status)) {
@@ -392,9 +394,9 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
     SerialNumber        = AllocateZeroPool(128);
     AsciiStrToUnicodeStrS(gSettings.SerialNr,    SerialNumber, 64);
-    
+
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));
-    
+
     if (gCPUStructure.ARTFrequency && gSettings.UseARTFreq) {
       ARTFrequency = gCPUStructure.ARTFrequency;
       LogDataHub(&gEfiProcessorSubClassGuid, L"ARTFrequency",   &ARTFrequency,        sizeof(UINT64));
@@ -408,7 +410,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHub(&gEfiMiscSubClassGuid,      L"board-id",         &gSettings.BoardNumber,   (UINT32)iStrLen(gSettings.BoardNumber, 64) + 1);
     TscFrequency++;
     LogDataHub(&gEfiProcessorSubClassGuid, L"board-rev",       &TscFrequency,        1);
-    
+
     DevPathSupportedVal = 1;
     LogDataHub(&gEfiMiscSubClassGuid,      L"DevicePathsSupported", &DevPathSupportedVal, sizeof(UINT32));
     LogDataHub(&gEfiMiscSubClassGuid,      L"Model",                ProductName,         (UINT32)StrSize(ProductName));
@@ -416,7 +418,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
     if (gSettings.InjectSystemID) {
       LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
-    }		
+    }
 
     LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &Revision, sizeof(UINT32));
 
@@ -449,12 +451,12 @@ SetupDataForOSX(BOOLEAN Hibernate)
   AddSMCkey(SMC_MAKE_KEY('B','N','u','m'), 1, SmcKeyTypeUint8, (SMC_DATA *)&gSettings.Mobile); // Num Batteries
   if (gSettings.Mobile) {
     AddSMCkey(SMC_MAKE_KEY('B','B','I','N'), 1, SmcKeyTypeUint8, (SMC_DATA *)&gSettings.Mobile); //Battery inserted
-  }  
+  }
   AddSMCkey(SMC_MAKE_KEY('M','S','T','c'), 1, SmcKeyTypeUint8, (SMC_DATA *)&Zero); // CPU Plimit
   AddSMCkey(SMC_MAKE_KEY('M','S','A','c'), 2, SmcKeyTypeUint16, (SMC_DATA *)&Zero);// GPU Plimit
 //  AddSMCkey(SMC_MAKE_KEY('M','S','L','D'), 1, SmcKeyTypeUint8, (SMC_DATA *)&Zero);   //isLidClosed
   Zero = Hibernate?((ResumeFromCoreStorage||GlobalConfig.HibernationFixup)?25:29):0;
-  
+
   AddSMCkey(SMC_MAKE_KEY('M','S','W','r'), 1, SmcKeyTypeUint8, (SMC_DATA *)&Zero);
   Zero = 1;
   AddSMCkey(SMC_MAKE_KEY('M','S','F','W'), 2, SmcKeyTypeUint8, (SMC_DATA *)&Zero);
