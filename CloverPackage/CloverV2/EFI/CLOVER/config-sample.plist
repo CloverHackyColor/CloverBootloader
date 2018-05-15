@@ -212,6 +212,8 @@
 		<true/>
 		<key>FixHeaders</key>
 		<true/>
+        <key>FixMCFG</key>
+        <true/>
 		<key>SSDT</key>
 		<dict>
 			<key>#C3Latency</key>

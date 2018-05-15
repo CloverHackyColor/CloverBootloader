@@ -525,6 +525,41 @@ VOID PatchAllTablesHeaders()
   }
 }
 
+VOID PatchTableLen(UINT32 Signature, UINT32 Align)
+{
+	UINT32 Count = XsdtTableCount();
+	UINT64* Ptr = XsdtEntryPtrFromIndex(0);
+	UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
+	for (; Ptr < EndPtr; Ptr++) {
+		EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)ReadUnaligned64(Ptr);
+		if (!Table) {
+			// skip NULL entry
+			continue;
+		}
+		if (Signature != Table->Signature) {
+			continue; // will be patched elsewhere
+		}
+
+		//do new table with patched length
+		UINT32 Len = Table->Length;
+		Len = ((Len + Align - 1) / 16 + 1) * 16 - Align;
+		EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+		EFI_STATUS Status = gBS->AllocatePages(AllocateMaxAddress,
+			EfiACPIReclaimMemory,
+			EFI_SIZE_TO_PAGES(Len),
+			&BufferPtr);
+		if (EFI_ERROR(Status)) {
+			//DBG(" ... not patched\n");
+			continue;
+		}
+		EFI_ACPI_DESCRIPTION_HEADER* NewTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+		CopyMem(NewTable, Table, Len);
+		NewTable->Length = Len;
+		WriteUnaligned64(Ptr, BufferPtr);
+		FixChecksum(NewTable);
+	}
+}
+
 
 VOID PatchAllSSDT()
 {
@@ -2056,7 +2091,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       newFadt->FirmwareCtrl = (UINT32)XFirmwareCtrl;
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)XFirmwareCtrl;
     }
-    
+
     //patch for FACS included here
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
     if (GlobalConfig.SignatureFixup) {
@@ -2067,7 +2102,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       Facs->HardwareSignature = 0x0;
     }
     //
-    
+
     if ((gSettings.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
       newFadt->ResetReg.Address   = 0x64;
       newFadt->ResetValue         = 0xFE;
@@ -2257,6 +2292,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   // Workaround proposed by cecekpawon, revised by Slice
   if ((gSettings.FixDsdt & FIX_HEADERS) || gSettings.FixHeaders) {
     PatchAllTablesHeaders();
+  }
+
+  if (gSettings.FixMCFG) {
+	  PatchTableLen(MCFG_SIGN, 4);
   }
 
   // Load add-on ACPI files from ACPI/patched
