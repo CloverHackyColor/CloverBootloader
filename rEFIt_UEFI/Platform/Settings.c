@@ -4601,10 +4601,12 @@ GetUserSettings(
 
       Prop = GetProperty (DictPointer, "Properties");
       if (Prop != NULL) {
+		  if (Prop->type == kTagTypeString) {
+
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-        UINTN strlength   = AsciiStrLen (Prop->string);
-        cDeviceProperties = AllocateZeroPool (strlength + 1);
-        AsciiStrCpyS (cDeviceProperties, strlength + 1, Prop->string);
+        UINTN strlength  = AsciiStrLen(Prop->string);
+        cDeviceProperties = AllocateZeroPool(strlength + 1);
+        AsciiStrCpyS(cDeviceProperties, strlength + 1, Prop->string);
         //-------
         Status = gBS->AllocatePages (
                                      AllocateMaxAddress,
@@ -4613,13 +4615,94 @@ GetUserSettings(
                                      &BufferPtr
                                      );
 
-        if (!EFI_ERROR (Status)) {
+			  if (!EFI_ERROR(Status)) {
           cProperties = (UINT8*)(UINTN)BufferPtr;
           cPropSize   = (UINT32)(strlength >> 1);
-          cPropSize   = hex2bin (cDeviceProperties, cProperties, cPropSize);
-          DBG ("Injected EFIString of length %d\n", cPropSize);
+				  cPropSize = hex2bin(cDeviceProperties, cProperties, cPropSize);
+				  DBG("Injected EFIString of length %d\n", cPropSize);
         }
         //---------
+      }
+		  else if (Prop->type == kTagTypeDict) {
+			  //analyze dict-array
+			  INTN   i, Count = GetTagCount(Prop);
+			  gSettings.AddProperties = AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
+			  DEV_PROPERTY *DevProp;
+
+			  if (Count > 0) {
+				  DBG("Add %d devices:\n", Count);
+
+				  for (i = 0; i < Count; i++) {
+					  Prop2 = NULL;
+			//		  EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
+					  if (!EFI_ERROR(GetElement(Prop, i, &Prop2))) {  //take a <key> with DevicePath
+						 if ((Prop2 != NULL) && (Prop2->type == kTagTypeKey)) {
+			//				 DevicePath = DevicePathFromString(Prop2->string); //TODO
+						 }
+						 else continue;
+						 Prop2 = Prop2->tagNext; //take a <dict> for this device
+						 if ((Prop2 != NULL) && (Prop2->type == kTagTypeDict)) {
+							 INTN j, PropCount = 0;
+							 PropCount = GetTagCount(Prop2);  //properties count for this device
+							 DBG("Add %d properties:\n", PropCount);
+							 for (j = 0; j < PropCount; j++) {
+								 TagPtr Prop3 = NULL;
+								 DevProp = gSettings.ArbProperties;
+								 gSettings.ArbProperties = AllocateZeroPool(sizeof(DEV_PROPERTY));
+								 gSettings.ArbProperties->Next = DevProp;
+								 gSettings.ArbProperties->Device = 0; //to differ from Arbitrary
+            //	 gSettings.ArbProperties->DevicePath = DevicePath; //this is pointer
+								 gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Prop2->string), Prop2->string);
+
+								 if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>
+									 continue;
+								 }
+								 if ((Prop3 != NULL) && (Prop3->type == kTagTypeKey) &&
+									 (Prop3->string != NULL) &&
+									 (Prop3->string[0] != '#')
+									 ) {
+									 gSettings.ArbProperties->Key = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+
+
+									 Prop3 = Prop3->tagNext; //expected value
+									 if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
+										 //first suppose it is Ascii string
+										 gSettings.ArbProperties->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+										 gSettings.ArbProperties->ValueLen = AsciiStrLen(Prop3->string) + 1;
+										 gSettings.ArbProperties->ValueType = kTagTypeString;
+									 }
+									 else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
+										 gSettings.ArbProperties->Value = AllocatePool(4);
+										 CopyMem(gSettings.ArbProperties->Value, &(Prop3->string), 4);
+										 gSettings.ArbProperties->ValueLen = 4;
+										 gSettings.ArbProperties->ValueType = kTagTypeInteger;
+									 }
+									 else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
+										 gSettings.ArbProperties->Value = AllocateZeroPool(4);
+										 gSettings.ArbProperties->Value[0] = TRUE;
+										 gSettings.ArbProperties->ValueLen = 1;
+										 gSettings.ArbProperties->ValueType = kTagTypeTrue;
+									 }
+									 else if (Prop3 && (Prop3->type == kTagTypeFalse)) {
+										 gSettings.ArbProperties->Value = AllocateZeroPool(4);
+										 //gSettings.ArbProperties->Value[0] = FALSE;
+										 gSettings.ArbProperties->ValueLen = 1;
+										 gSettings.ArbProperties->ValueType = kTagTypeFalse;
+									 }
+									 else {
+										 //else  data
+                     UINTN Size = 0;
+										 gSettings.ArbProperties->Value = GetDataSetting(Prop3, "Value", &Size);  //TODO
+										 gSettings.ArbProperties->ValueLen = Size;
+										 gSettings.ArbProperties->ValueType = kTagTypeData;
+									 }
+								 }
+							 }
+						 }
+					  }
+				  }
+			  }
+		  }
       }
 
       Prop  = GetProperty (DictPointer, "NoDefaultProperties");
@@ -4681,7 +4764,7 @@ GetUserSettings(
                   gSettings.ArbProperties->Next = DevProp;
 
                   gSettings.ArbProperties->Device = (UINT32)DeviceAddr;
-                  gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Label), Label);;
+                  gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Label), Label);
 
                   Prop3 = GetProperty (Dict3, "Disabled");
                   gSettings.ArbProperties->MenuItem.BValue = !IsPropertyTrue(Prop3);
