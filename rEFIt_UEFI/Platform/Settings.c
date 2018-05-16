@@ -4627,19 +4627,34 @@ GetUserSettings(
 			  //analyze dict-array
 			  INTN   i, Count = GetTagCount(Prop);
 			  gSettings.AddProperties = AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
-			  DEV_PROPERTY *DevProp;
+			  DEV_PROPERTY *DevPropDevice;
+			  DEV_PROPERTY *DevProps;
+			  DEV_PROPERTY **Child;
 
 			  if (Count > 0) {
 				  DBG("Add %d devices:\n", Count);
 
 				  for (i = 0; i < Count; i++) {
 					  Prop2 = NULL;
-			//		  EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
+					  EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
 					  if (!EFI_ERROR(GetElement(Prop, i, &Prop2))) {  //take a <key> with DevicePath
 						 if ((Prop2 != NULL) && (Prop2->type == kTagTypeKey)) {
-			//				 DevicePath = DevicePathFromString(Prop2->string); //TODO
+							 CHAR16* DevicePathStr = PoolPrint(L"%a", Prop2->string);
+							 DBG("Device: %s\n", DevicePathStr);
+							 DevicePath = ConvertTextToDevicePath(DevicePathStr); //TODO
+							 FreePool(DevicePathStr);
 						 }
 						 else continue;
+						 //Create Device node
+						 DevPropDevice = gSettings.ArbProperties;
+						 gSettings.ArbProperties = AllocateZeroPool(sizeof(DEV_PROPERTY));
+						 gSettings.ArbProperties->Next = DevPropDevice; //next device
+						 gSettings.ArbProperties->Child = NULL;
+						 gSettings.ArbProperties->Device = 0; //to differ from arbitrary
+						 gSettings.ArbProperties->DevicePath = DevicePath; //this is pointer
+						 gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Prop2->string), Prop2->string);
+						 Child = &(gSettings.ArbProperties->Child);
+
 						 Prop2 = Prop2->tagNext; //take a <dict> for this device
 						 if ((Prop2 != NULL) && (Prop2->type == kTagTypeDict)) {
 							 INTN j, PropCount = 0;
@@ -4647,54 +4662,58 @@ GetUserSettings(
 							 DBG("Add %d properties:\n", PropCount);
 							 for (j = 0; j < PropCount; j++) {
 								 TagPtr Prop3 = NULL;
-								 DevProp = gSettings.ArbProperties;
-								 gSettings.ArbProperties = AllocateZeroPool(sizeof(DEV_PROPERTY));
-								 gSettings.ArbProperties->Next = DevProp;
-								 gSettings.ArbProperties->Device = 0; //to differ from Arbitrary
-            //	 gSettings.ArbProperties->DevicePath = DevicePath; //this is pointer
-								 gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Prop2->string), Prop2->string);
+								 DevProps = *Child;
+								 *Child = AllocateZeroPool(sizeof(DEV_PROPERTY));
+								 (*Child)->Next = DevProps;
 
 								 if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>
 									 continue;
 								 }
 								 if ((Prop3 != NULL) && (Prop3->type == kTagTypeKey) &&
-									 (Prop3->string != NULL) &&
-									 (Prop3->string[0] != '#')
+									 (Prop3->string != NULL)
 									 ) {
-									 gSettings.ArbProperties->Key = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
-
+									 if (Prop3->string[0] != '#') {
+										 (*Child)->MenuItem.BValue = TRUE;
+										 (*Child)->Key = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+									 }
+									 else {
+										 (*Child)->MenuItem.BValue = FALSE;
+										 (*Child)->Key = AllocateCopyPool(AsciiStrSize(Prop3->string) - 1, Prop3->string + 1);
+									 }
 
 									 Prop3 = Prop3->tagNext; //expected value
 									 if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
 										 //first suppose it is Ascii string
-										 gSettings.ArbProperties->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
-										 gSettings.ArbProperties->ValueLen = AsciiStrLen(Prop3->string) + 1;
-										 gSettings.ArbProperties->ValueType = kTagTypeString;
+										 (*Child)->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
+										 (*Child)->ValueLen = AsciiStrLen(Prop3->string) + 1;
+										 (*Child)->ValueType = kTagTypeString;
 									 }
 									 else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
-										 gSettings.ArbProperties->Value = AllocatePool(4);
-										 CopyMem(gSettings.ArbProperties->Value, &(Prop3->string), 4);
-										 gSettings.ArbProperties->ValueLen = 4;
-										 gSettings.ArbProperties->ValueType = kTagTypeInteger;
+										 (*Child)->Value = AllocatePool(4);
+										 CopyMem((*Child)->Value, &(Prop3->string), 4);
+										 (*Child)->ValueLen = 4;
+										 (*Child)->ValueType = kTagTypeInteger;
 									 }
 									 else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
-										 gSettings.ArbProperties->Value = AllocateZeroPool(4);
-										 gSettings.ArbProperties->Value[0] = TRUE;
-										 gSettings.ArbProperties->ValueLen = 1;
-										 gSettings.ArbProperties->ValueType = kTagTypeTrue;
+										 (*Child)->Value = AllocateZeroPool(4);
+										 (*Child)->Value[0] = TRUE;
+										 (*Child)->ValueLen = 1;
+										 (*Child)->ValueType = kTagTypeTrue;
 									 }
 									 else if (Prop3 && (Prop3->type == kTagTypeFalse)) {
-										 gSettings.ArbProperties->Value = AllocateZeroPool(4);
-										 //gSettings.ArbProperties->Value[0] = FALSE;
-										 gSettings.ArbProperties->ValueLen = 1;
-										 gSettings.ArbProperties->ValueType = kTagTypeFalse;
+										 (*Child)->Value = AllocateZeroPool(4);
+										 //(*Child)->Value[0] = FALSE;
+										 (*Child)->ValueLen = 1;
+										 (*Child)->ValueType = kTagTypeFalse;
 									 }
-									 else {
-										 //else  data
-                     UINTN Size = 0;
-										 gSettings.ArbProperties->Value = GetDataSetting(Prop3, "Value", &Size);  //TODO
-										 gSettings.ArbProperties->ValueLen = Size;
-										 gSettings.ArbProperties->ValueType = kTagTypeData;
+									 else if (Prop3 && (Prop3->type == kTagTypeData)) {
+										 UINTN Size = Prop3->dataLen;
+								//		 (*Child)->Value = GetDataSetting(Prop3, "Value", &Size);  //TODO
+										 CHAR8* Data = AllocateZeroPool(Size);
+										 CopyMem(Data, Prop3->data, Size);
+										 (*Child)->Value = Data;
+										 (*Child)->ValueLen = Size;
+										 (*Child)->ValueType = kTagTypeData;
 									 }
 								 }
 							 }
@@ -6756,8 +6775,42 @@ SetDevices (LOADER_ENTRY *Entry)
   UINT16              PmCon;
   UINT32              Rcba;
   UINT32              Hptc;
+  DEV_PROPERTY *Prop = NULL;
+  DEV_PROPERTY *Prop2 = NULL;
+  DevPropDevice *device = NULL;
 
   GetEdidDiscovered ();
+
+  //First make string from Device->Properties
+  Prop = gSettings.ArbProperties;
+  device = NULL;
+  if (!string) {
+	  string = devprop_create_string();
+  }
+  while (Prop) {
+	  if (Prop->Device != 0) {
+		  Prop = Prop->Next;
+		  continue;
+	  }
+	  device = devprop_add_device_pci(string, NULL, Prop->DevicePath);
+	  Prop2 = Prop->Child;
+	  while (Prop2) {
+		  if (Prop2->MenuItem.BValue) {
+			  if (AsciiStrStr(Prop2->Key, "-platform-id") != NULL) {
+				  devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.IgPlatform, 4);
+			  }
+			  else {
+				  devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
+			  }
+		  }
+
+		  StringDirty = TRUE;
+		  Prop2 = Prop2->Next;
+
+	  }
+	  Prop = Prop->Next;
+  }
+
   devices_number = 1; //should initialize for reentering GUI
   // Scan PCI handles
   Status = gBS->LocateHandleBuffer (
@@ -6791,18 +6844,18 @@ SetDevices (LOADER_ENTRY *Entry)
         PCIdevice.used                       = FALSE;
 
   //      if (gSettings.NrAddProperties == 0xFFFE) {  //yyyy it means Arbitrary
-          DEV_PROPERTY *Prop = gSettings.ArbProperties;
-          DevPropDevice *device = NULL;
-          if (!string) {
+          Prop = gSettings.ArbProperties;  //check for additional properties
+          device = NULL;
+   /*       if (!string) {
             string = devprop_create_string();
-          }
+          } */
           while (Prop) {
             if (Prop->Device != PCIdevice.dev.addr) {
               Prop = Prop->Next;
               continue;
             }
             if (!PCIdevice.used) {
-              device = devprop_add_device_pci(string, &PCIdevice);
+  			      device = devprop_add_device_pci(string, &PCIdevice, NULL);
               PCIdevice.used = TRUE;
             }
             //special corrections
@@ -7210,6 +7263,50 @@ SetDevices (LOADER_ENTRY *Entry)
       //     DBG ("Final size of mProperties=%d\n", mPropSize);
       //---------
 //      Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\misc\\devprop.bin", (UINT8*)mProperties, mPropSize);
+	  //and now we can free memory?
+	  if (gSettings.AddProperties) {
+		  FreePool(gSettings.AddProperties);
+	  }
+	  if (gSettings.ArbProperties) {
+		  DEV_PROPERTY *Prop = gSettings.ArbProperties;
+		  DEV_PROPERTY *Props;
+		  DEV_PROPERTY *Next;
+		  while (Prop) {
+			  Props = Prop->Child;
+			  if (Prop->Label) {
+				  FreePool(Prop->Label);
+			  }
+			  if (Prop->Key) {
+				  FreePool(Prop->Key);
+			  }
+			  if (Prop->Value) {
+				  FreePool(Prop->Value);
+			  }
+			  if (Prop->DevicePath) {
+				  FreePool(Prop->DevicePath);
+			  }
+			  while (Props) {
+				  if (Props->Label) {
+					  FreePool(Props->Label);
+				  }
+				  if (Props->Key) {
+					  FreePool(Props->Key);
+				  }
+				  if (Props->Value) {
+					  FreePool(Props->Value);
+				  }
+				  if (Props->DevicePath) {
+					  FreePool(Props->DevicePath);
+				  }
+				  Next = Props->Next;
+				  FreePool(Props);
+				  Props = Next;
+			  }
+			  Next = Prop->Next;
+			  FreePool(Prop);
+			  Prop = Next;
+		  }
+	  }
     }
   }
 

@@ -698,7 +698,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x191B, "Intel HD Graphics 530"          }, // Mobile - MacBookPro13,3
   { 0x191D, "Intel HD Graphics P530"         }, // Workstation, Mobile Workstation
   { 0x191E, "Intel HD Graphics 515"          }, // Mobile - MacBook9,1
-  { 0x1921, "Intel HD Graphics 520"          }, // 
+  { 0x1921, "Intel HD Graphics 520"          }, //
   //GT2f
   { 0x1913, "Intel Skylake GT2f"             }, //
   { 0x1915, "Intel Skylake GT2f"             }, //
@@ -799,7 +799,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5A52, "Intel Cannonlake GT2"           }, //
   { 0x5A54, "Intel Cannonlake GT2"           }, //
 
-    
+
   //============== 11th generation ===========
   //----------------Ice Lake------------------
   //GT0.5
@@ -1246,7 +1246,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   }
 
   if (gma_dev && !gma_dev->used) {
-    device = devprop_add_device_pci(string, gma_dev);
+    device = devprop_add_device_pci(string, gma_dev, NULL);
     gma_dev->used = TRUE;
   }
 
@@ -2110,7 +2110,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           break;
       }
       break;
-	  
+
       //----------------ValleyView----------------
     case 0x0F30: // "Intel HD Graphics"               // Bay Trail
     case 0x0F31: // "Intel HD Graphics"               // Bay Trail
@@ -2696,10 +2696,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       DBG("  Intel card id=%x unsupported, please report to the clover thread\n", gma_dev->device_id);
       return FALSE;
   }
-  
+
 #if DEBUG_GMA == 2
   gBS->Stall(5000000);
 #endif
-  
+
   return TRUE;
 }

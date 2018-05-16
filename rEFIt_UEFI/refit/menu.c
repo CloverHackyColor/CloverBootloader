@@ -4647,54 +4647,74 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   return Entry;
 }
 
+VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
+{
+	REFIT_INPUT_DIALOG  *InputBootArgs;
+
+	InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+	InputBootArgs->Entry.Title = PoolPrint(L"  key: %a", Prop->Key);
+	InputBootArgs->Entry.Tag = TAG_INPUT;
+	InputBootArgs->Entry.Row = 0xFFFF; //cursor
+									   //     InputBootArgs->Item = ADDRESS_OF(DEV_PROPERTY, Prop, INPUT_ITEM, MenuItem);
+	InputBootArgs->Item = &Prop->MenuItem;
+	InputBootArgs->Entry.AtClick = ActionEnter;
+	InputBootArgs->Entry.AtRightClick = ActionDetails;
+	AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+	switch (Prop->ValueType) {
+	case kTagTypeInteger:
+		AddMenuInfo(SubScreen, PoolPrint(L"     value: 0x%08x", *(UINT64*)Prop->Value));
+		break;
+	case kTagTypeString:
+		AddMenuInfo(SubScreen, PoolPrint(L"     value: %30a", Prop->Value));
+		break;
+	case   kTagTypeFalse:
+		AddMenuInfo(SubScreen, PoolPrint(L"     value: false"));
+		break;
+	case   kTagTypeTrue:
+		AddMenuInfo(SubScreen, PoolPrint(L"     value: true"));
+		break;
+
+	default: //type data, print first 24 bytes
+			 //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
+		AddMenuInfo(SubScreen, PoolPrint(L"     value[%d]: %24a", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen))));
+		break;
+	}
+
+}
+
 REFIT_MENU_ENTRY  *SubMenuCustomDevices() //yyyy
 {
   REFIT_MENU_ENTRY    *Entry;
   REFIT_MENU_SCREEN   *SubScreen;
-  REFIT_INPUT_DIALOG  *InputBootArgs;
+
   UINT32              DevAddr, OldDevAddr = 0;
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->");
 
   if (gSettings.ArbProperties) {
     DEV_PROPERTY *Prop = gSettings.ArbProperties;
+	if (Prop && (Prop->Device == 0))
+	{
+		DEV_PROPERTY *Props = NULL;
+		while (Prop) {
+			AddMenuInfo(SubScreen, L"------------");
+			AddMenuInfo(SubScreen, PoolPrint(L"%a", Prop->Label));
+			Props = Prop->Child;
+			while (Props) {
+				CreateMenuProps(SubScreen, Props);
+				Props = Props->Next;
+			}
+			Prop = Prop->Next;
+		}
+	}
     while (Prop) {
       DevAddr = Prop->Device;
-      if (DevAddr != OldDevAddr) {
+      if (DevAddr != 0 && DevAddr != OldDevAddr) {
         OldDevAddr = DevAddr;
         AddMenuInfo(SubScreen, L"------------");
         AddMenuInfo(SubScreen, PoolPrint(L"%a", Prop->Label));
+        CreateMenuProps(SubScreen, Prop);
       }
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-      InputBootArgs->Entry.Title = PoolPrint(L"  key: %a", Prop->Key);
-      InputBootArgs->Entry.Tag = TAG_INPUT;
-      InputBootArgs->Entry.Row = 0xFFFF; //cursor
- //     InputBootArgs->Item = ADDRESS_OF(DEV_PROPERTY, Prop, INPUT_ITEM, MenuItem);
-      InputBootArgs->Item = &Prop->MenuItem;
-      InputBootArgs->Entry.AtClick = ActionEnter;
-      InputBootArgs->Entry.AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-      switch (Prop->ValueType) {
-        case kTagTypeInteger:
-          AddMenuInfo(SubScreen, PoolPrint(L"     value: 0x%08x", *(UINT64*)Prop->Value));
-          break;
-        case kTagTypeString:
-          AddMenuInfo(SubScreen, PoolPrint(L"     value: %30a", Prop->Value));
-          break;
-        case   kTagTypeFalse:
-          AddMenuInfo(SubScreen, PoolPrint(L"     value: false"));
-          break;
-        case   kTagTypeTrue:
-          AddMenuInfo(SubScreen, PoolPrint(L"     value: true"));
-          break;
-
-        default: //type data, print first 24 bytes
-          //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
-          AddMenuInfo(SubScreen, PoolPrint(L"     value[%d]: %24a", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen))));
-          break;
-      }
-
-
       Prop = Prop->Next;
     }
   }

@@ -1453,17 +1453,17 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE01D7,	0x102801C2,	"Dell Quadro NVS 110M" },
 	{ 0x10DE01D7,	0x102801CC,	"Dell Quadro NVS 110M" },
 	{ 0x10DE01D7,	0x10DE014B,	"nVidia Quadro NVS 110M" },
-  
+
 	{ 0x10DE01D8,	0x102801CC,	"Dell Quadro NVS 120M" },
 	{ 0x10DE01D8,	0x10282003,	"Dell Quadro NVS 120M" },
-  
+
 	{ 0x10DE01DA,	0x10280407,	"Dell GeForce 7300 LE" },
 	// 0200 - 02FF
 	{ 0x10DE025B,	0x10480D23,	"ELSA Gloria4 700XGL" },
 	// 0300 - 03FF
 	{ 0x10DE0391,	0x10DE047A,	"Galaxy GeForce 7600 GT" },
 	{ 0x10DE0391,	0x19F120DE,	"Galaxy GeForce 7600 GT" },
-  
+
 	{ 0x10DE0393,	0x00000400,	"Apple GeForce 7300GT" },
 	// 0400 - 04FF
 	{ 0x10DE0402,	0x10DE0439,	"Galaxy 8600GT" },
@@ -1472,9 +1472,9 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE05E2,	0x104382EB,	"ASUS ENGTX260" },
 	{ 0x10DE05E2,	0x16822390,	"HFX GeForce GTX 260" },
 	{ 0x10DE05E2,	0x17870000,	"HIS GeForce GTX 260" },
-  
+
 	{ 0x10DE05E6,	0x10B00401,	"Gainward GeForce GTX 285" },
-  
+
 	{ 0x10DE05E7,	0x10DE0595,	"nVidia Tesla T10 Processor" },
 	{ 0x10DE05E7,	0x10DE066A,	"nVidia Tesla C1060" },
 	{ 0x10DE05E7,	0x10DE068F,	"nVidia Tesla T10 Processor" },
@@ -1483,19 +1483,19 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE05E7,	0x10DE0743,	"nVidia Tesla M1060" },
 	// 0600 - 06FF
 	{ 0x10DE0600,	0x10DE0000,	"Abit GeForce 8800 GTS" },
-  
+
 	{ 0x10DE0605,	0x145834A2,	"Gigabyte GV-N98TOC-512H" },
-  
+
 	{ 0x10DE0608,	0x15880577,	"Solidum GeForce 9800M GTX" },
-  
+
 	{ 0x10DE0609,	0x11700121,	"Inventec GeForce 8800M GTS" },
-  
+
 	{ 0x10DE0612,	0x104382A6,	"Asus GeForce 9800 GTX+" },
 	{ 0x10DE0612,	0x10DE0571,	"nVidia GeForce 9800 GTX+" },
 	{ 0x10DE0612,	0x10DE0592,	"nVidia GeForce 9800 GTX+" },
 	{ 0x10DE0612,	0x3842C842,	"EVGA GeForce 9800 GTX+" },
 	{ 0x10DE0612,	0x3842C875,	"EVGA GeForce 9800 GTX+" },
-  
+
 	{ 0x10DE0615,	0x10480F67,	"ELSA GeForce GTS 250" },
 	{ 0x10DE0615,	0x10DE0592,	"Palit GeForce GTS 250" },
 	{ 0x10DE0615,	0x10DE0593,	"Palit GeForce GTS 250" },
@@ -1506,37 +1506,37 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE0615,	0x11513842,	"JAE GeForce GTS 250" },
 	{ 0x10DE0615,	0x11553842,	"Pine GeForce GTS 250" },
 	{ 0x10DE0615,	0x11563842,	"Periscope GeForce GTS 250" },
-  
+
 	{ 0x10DE0618,	0x10432028,	"Asus GeForce GTX 170M" },
 	{ 0x10DE0618,	0x1043202B,	"Asus GeForce GTX 680" },
-  
+
 	{ 0x10DE0622,	0x104382AC,	"Asus EN9600GT Magic" },
-  
+
 	{ 0x10DE0640,	0x10DE077F,	"Inno3D GeForce 9500GT HDMI" },
-  
+
 	{ 0x10DE0649,	0x1043202D,	"Asus GeForce GT 220M" },
-  
+
 	{ 0x10DE06CD,	0x10DE079F,	"Point of View GeForce GTX 470" },
 	{ 0x10DE06CD,	0x14622220,	"MSI GeForce GTX 470 Twin Frozr II" },
-  
+
 	{ 0x10DE06D1,	0x10DE0771,	"nVidia Tesla C2050" },
 	{ 0x10DE06D1,	0x10DE0772,	"nVidia Tesla C2070" },
-  
+
 	{ 0x10DE06D2,	0x10DE0774,	"nVidia Tesla M2070" },
 	{ 0x10DE06D2,	0x10DE0830,	"nVidia Tesla M2070" },
 	{ 0x10DE06D2,	0x10DE0842,	"nVidia Tesla M2070" },
 	{ 0x10DE06D2,	0x10DE088F,	"nVidia Tesla X2070" },
 	{ 0x10DE06D2,	0x10DE0908,	"nVidia Tesla M2070" },
-  
+
 	{ 0x10DE06DE,	0x10DE0773,	"nVidia Tesla S2050" },
 	{ 0x10DE06DE,	0x10DE0830,	"nVidia Tesla M2070" },
 	{ 0x10DE06DE,	0x10DE0831,	"nVidia Tesla M2070" },
 	{ 0x10DE06DE,	0x10DE0832,	"nVidia Tesla M2070" },
 	{ 0x10DE06DE,	0x10DE0840,	"nVidia Tesla X2070" },
-  
+
 	{ 0x10DE06E4,	0x10438322,	"Asus EN8400GS" },
 	{ 0x10DE06E4,	0x14583475,	"GV-NX84S256HE [GeForce 8400 GS]" },
-  
+
 	{ 0x10DE06E8,	0x10280262,	"Dell GeForce 9200M GS" },
 	{ 0x10DE06E8,	0x10280271,	"Dell GeForce 9200M GS" },
 	{ 0x10DE06E8,	0x10280272,	"Dell GeForce 9200M GS" },
@@ -1549,12 +1549,12 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	// 0900 - 09FF
 	// 0A00 - 0AFF
 	{ 0x10DE0A6F,	0x12974003,	"Shuttle XS 3510MA" },
-  
+
 	{ 0x10DE0A70,	0x17AA3605,	"Lenovo ION" },
-  
+
 	{ 0x10DE0A73,	0x17AA3607,	"Lenovo ION" },
 	{ 0x10DE0A73,	0x17AA3610,	"Lenovo ION" },
-  
+
 	{ 0x10DE0A75,	0x17AA3605,	"Lenovo ION" },
 	// 0B00 - 0BFF
 	// 0C00 - 0CFF
@@ -1562,16 +1562,16 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE0CA3,	0x16423926,	"Bitland GeForce GT 230" },
 	// 0D00 - 0DFF
 	{ 0x10DE0DD8,	0x10DE0914,	"nVidia Quadro 2000D" },
-  
+
 	{ 0x10DE0DEF,	0x17AA21F3,	"Lenovo NVS 5400M" },
 	{ 0x10DE0DEF,	0x17AA21F4,	"Lenovo NVS 5400M" },
 	{ 0x10DE0DEF,	0x17AA21F5,	"Lenovo NVS 5400M" },
 	{ 0x10DE0DEF,	0x17AA21F6,	"Lenovo NVS 5400M" },
 	{ 0x10DE0DEF,	0x17AA5005,	"Lenovo NVS 5400M" },
-  
+
 	// 0E00 - 0EFF
 	{ 0x10DE0E22,	0x1043835D,	"Asus ENGTX460" },
-  
+
 	{ 0x10DE0E23,	0x10B00401,	"Gainward GeForce GTX 460" },
 	// 0F00 - 0FFF
   { 0x10DE0FBB,	0x38422974,	"EVGA GTX 970 OC" },
@@ -1580,19 +1580,19 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	// 1000 - 10FF
 	{ 0x10DE1080,	0x14622561,	"MSI N580GTX Lightning" },
 	{ 0x10DE1080,	0x14622563,	"MSI N580GTX Lightning" },
-  
+
 	{ 0x10DE1086,	0x10DE0871,	"Inno3D GeForce GTX 570" },
-  
+
 	{ 0x10DE1087,	0x104383D6,	"Asus ENGTX560Ti448 DCII" },
-  
+
 	{ 0x10DE1091,	0x10DE088E,	"nVidia Tesla X2090" },
 	{ 0x10DE1091,	0x10DE0891,	"nVidia Tesla X2090" },
-  
+
 	{ 0x10DE1094,	0x10DE0888,	"nVidia Tesla M2075" },
-  
+
 	{ 0x10DE1096,	0x10DE0910,	"nVidia Tesla C2075" },
 	{ 0x10DE1096,	0x10DE0911,	"nVidia Tesla C2050" },
-  
+
 	// 1100 - 11FF
 	{ 0x10DE1140,	0x1025064A,	"Acer GeForce GT 620M" },
 	{ 0x10DE1140,	0x1025064C,	"Acer GeForce GT 620M" },
@@ -1614,7 +1614,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE1140,	0x17AA500D,	"Lenovo GeForce GT 620M" },
 	{ 0x10DE1140,	0x1B0A20DD,	"Pegatron GeForce GT 620M" },
 	{ 0x10DE1140,	0x1B0A20FD,	"Pegatron GeForce GT 620M" },
-  
+
 	{ 0x10DE1180,	0x00001255,	"Afox GTX 680" },
 	{ 0x10DE1180,	0x104383F0,	"Asus GTX680-2GD5" },
 	{ 0x10DE1180,	0x104383F6,	"Asus GTX 680 Direct CU II" },
@@ -1628,20 +1628,20 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE1180,	0x15691189,	"Palit GTX 680 JetStream" },
 	{ 0x10DE1180,	0x38422682,	"EVGA GTX 680 SC" },
 	{ 0x10DE1180,	0x38422683,	"EVGA GTX 680 SC" },
-  
+
 	{ 0x10DE1185,	0x10DE106F,	"nVidia GeForce GTX 760 OEM" }, // GK104
-  
+
 	{ 0x10DE1187,	0x14583614,	"GV-N760OC-4GD" },
-  
+
 	{ 0x10DE1189,	0x10438405,	"Asus GTX 670 Direct CU II TOP" },
 	{ 0x10DE1189,	0x15691189,	"Palit GTX 670 JetStream" },
 	{ 0x10DE1189,	0x19DA1255,	"Zotac GTX 670 AMP! Edition" },
-  
+
 	{ 0x10DE11A1,	0x15587102,	"Clevo N13E-GR" },
-  
+
 	{ 0x10DE11C0,	0x10DE0995,	"Inno3D GeForce GTX660" },
 	{ 0x10DE11C0,	0x1458354E,	"GV-N660OC-2GD" },
-  
+
 	{ 0x10DE11C6,	0x1043842A,	"GTX650TI-1GD5" },
 	// 1200 - 12FF
 	{ 0x10DE1247,	0x10432119,	"Asus GeForce GT 670M" },
@@ -1650,9 +1650,9 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 	{ 0x10DE1247,	0x1043212B,	"Asus GeForce GT 635M" },
 	{ 0x10DE1247,	0x1043212C,	"Asus GeForce GT 635M" },
 	{ 0x10DE1247,	0x152D0930,	"Quanta GeForce GT 635M" },
-  
+
 	{ 0x10DE1248,	0x152D0930,	"Quanta GeForce GT 635M" },
-  
+
 	{ 0x10DE124D,	0x146210CC,	"MSi GeForce GT 635M" }
 };
 
@@ -1661,21 +1661,21 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00			Pci;
-  
+
   UINT32 vbios_vram = 0;
   UINT32 old_bar0_pramin = 0;
-  
+
   DBG("read_nVidia_ROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
-  
+
   Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
   if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
-  
+
   if (arch >= 0x50) {
     DBG("Using PRAMIN fixups\n");
     /*Status = */PciIo->Mem.Read(
@@ -1687,7 +1687,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                                  &vbios_vram
                                  );
     vbios_vram = (vbios_vram & ~0xff) << 8;
-    
+
     /*Status = */PciIo->Mem.Read(
                                  PciIo,
                                  EfiPciIoWidthUint32,
@@ -1696,12 +1696,12 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                                  1,
                                  &old_bar0_pramin
                                  );
-    
+
     if (vbios_vram == 0)
       vbios_vram = (old_bar0_pramin << 16) + 0xf0000;
-    
+
     vbios_vram >>= 16;
-    
+
     /*Status = */PciIo->Mem.Write(
                                   PciIo,
                                   EfiPciIoWidthUint32,
@@ -1711,7 +1711,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                                   &vbios_vram
                                   );
   }
-  
+
   Status = PciIo->Mem.Read(
                            PciIo,
                            EfiPciIoWidthUint8,
@@ -1720,7 +1720,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                            NVIDIA_ROM_SIZE,
                            rom
                            );
-  
+
   if (arch >= 0x50) {
     /*Status = */PciIo->Mem.Write(
                                   PciIo,
@@ -1731,7 +1731,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                                   &old_bar0_pramin
                                   );
   }
-  
+
   if (EFI_ERROR(Status)) {
     DBG("read_nVidia_ROM failed\n");
     return Status;
@@ -1746,7 +1746,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00            Pci;
   UINT32                value;
-  
+
   DBG("PROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle,
                              &gEfiPciIoProtocolGuid,
@@ -1757,7 +1757,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
   if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
-  
+
   Status = PciIo->Pci.Read(PciIo,
                            EfiPciIoWidthUint32,
                            0,
@@ -1766,7 +1766,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
   if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
-  
+
   value = NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED;
   /*Status = */PciIo->Mem.Write(
                                 PciIo,
@@ -1776,7 +1776,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
                                 1,
                                 &value
                                 );
-  
+
   Status = PciIo->Mem.Read(
                            PciIo,
                            EfiPciIoWidthUint8,
@@ -1785,7 +1785,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
                            NVIDIA_ROM_SIZE,
                            rom
                            );
-  
+
   value = NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED;
   /*Status = */PciIo->Mem.Write(
                                 PciIo,
@@ -1795,7 +1795,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
                                 1,
                                 &value
                                 );
-  
+
   if (EFI_ERROR(Status)) {
     DBG("read_nVidia_ROM failed\n");
     return Status;
@@ -1820,13 +1820,13 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
     UINT8 index;
     UINT8 *heads;
   } entries[MAX_NUM_DCB_ENTRIES];
-  
+
 //	DBG("patch_nvidia_rom\n");
 	if (!rom || (rom[0] != 0x55 && rom[1] != 0xaa)) {
 		DBG("FALSE ROM signature: 0x%02x%02x\n", rom[0], rom[1]);
 		return PATCH_ROM_FAILED;
 	}
-  
+
   //	dcbptr = SwapBytes16(read16(rom, 0x36)); //double swap !!!
   dcbptr = *(UINT16*)&rom[0x36];
 	if(!dcbptr) {
@@ -1835,13 +1835,13 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 	}
   //	else
   //		DBG("dcb table at offset 0x%04x\n", dcbptr);
-  
+
 	dcbtable		= &rom[dcbptr];
 	dcbtable_version	= dcbtable[0];
-	
+
 	if (dcbtable_version >= 0x20) {
 		UINT32 sig;
-		
+
 		if (dcbtable_version >= 0x30) {
 			headerlength = dcbtable[1];
 			numentries	 = dcbtable[2];
@@ -1851,18 +1851,18 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 			sig = *(UINT32 *)&dcbtable[4];
 			headerlength = 8;
 		}
-    
+
 		if (sig != 0x4edcbdcb) {
 			DBG("Bad display config block signature (0x%8x)\n", sig); //Azi: issue #48
 			return PATCH_ROM_FAILED;
 		}
 	} else if (dcbtable_version >= 0x14) { /* some NV15/16, and NV11+ */
 		CHAR8 sig[8]; // = { 0 };
-		
+
 		AsciiStrnCpyS(sig, 8, (CHAR8 *)&dcbtable[-7], 7);
     sig[7] = 0;
 		recordlength = 10;
-    
+
 		if (AsciiStrCmp(sig, "DEV_REC")) {
 			DBG("Bad Display Configuration Block signature (%a)\n", sig);
 			return PATCH_ROM_FAILED;
@@ -1871,15 +1871,15 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		DBG("ERROR: dcbtable_version is 0x%X\n", dcbtable_version);
 		return PATCH_ROM_FAILED;
 	}
-	
+
 	if (numentries >= MAX_NUM_DCB_ENTRIES) {
 		numentries = MAX_NUM_DCB_ENTRIES;
 	}
-  
+
 	for (i = 0; i < numentries; i++) {
 		UINT32 connection;
 		connection = *(UINT32 *)&dcbtable[headerlength + recordlength * i];
-    
+
 		/* Should we allow discontinuous DCBs? Certainly DCB I2C tables can be discontinuous */
 		if ((connection & 0x0000000f) == 0x0000000f) { /* end of records */
 			continue;
@@ -1890,12 +1890,12 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		if ((connection & 0xf) == 0x6) { /* we skip type 6 as it doesnt appear on macbook nvcaps */
 			continue;
 		}
-    
+
 		entries[num_outputs].type = connection & 0xf;
 		entries[num_outputs].index = num_outputs;
 		entries[num_outputs++].heads = (UINT8*)&(dcbtable[(headerlength + recordlength * i) + 1]);
 	}
-	
+
 	for (i = 0; i < num_outputs; i++) {
 		if (entries[i].type == 3) {
 			has_lvds =TRUE;
@@ -1904,7 +1904,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 			entries[i].type = TYPE_GROUPED;
 		}
 	}
-  
+
 	// if we have a LVDS output, we group the rest to the second channel
 	if (has_lvds) {
 		for (i = 0; i < num_outputs; i++) {
@@ -1931,7 +1931,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 							//DBG("group channel 1\n");
 							channel1 |= (0x1 << entries[i].index);
 							entries[i].type = TYPE_GROUPED;
-              
+
 							if (entries[i-1].type == 0x0) {
 								channel1 |= (0x1 << entries[i-1].index);
 								entries[i-1].type = TYPE_GROUPED;
@@ -1943,12 +1943,12 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 								entries[i+1].type = TYPE_GROUPED;
 							}
 							break;
-              
+
 						case 1:
 							//DBG("group channel 2 : %d\n", i);
 							channel2 |= ( 0x1 << entries[i].index);
 							entries[i].type = TYPE_GROUPED;
-              
+
 							if (entries[i - 1].type == 0x0) {
 								channel2 |= (0x1 << entries[i-1].index);
 								entries[i-1].type = TYPE_GROUPED;
@@ -1962,17 +1962,17 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 							break;
 						default:
 							break;
-              
+
 					}
 					break;
 				}
 			}
 		}
 	}
-	
+
 	// if we have left ungrouped outputs merge them to the empty channel
 	togroup = &channel2; // = (channel1 ? (channel2 ? NULL : &channel2) : &channel1);
-  
+
 	for (i = 0; i < num_outputs; i++) {
 		if (entries[i].type != TYPE_GROUPED) {
 			//DBG("%d not grouped\n", i);
@@ -1982,16 +1982,16 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 			entries[i].type = TYPE_GROUPED;
 		}
 	}
-	
+
 	if (channel1 > channel2) {
 		UINT8 buff = channel1;
 		channel1 = channel2;
 		channel2 = buff;
 	}
-	
+
 	default_NVCAP[6] = channel1;
 	default_NVCAP[8] = channel2;
-	
+
 	// patching HEADS
 	for (i = 0; i < num_outputs; i++) {
 		if (channel1 & (1 << i)) {
@@ -2007,7 +2007,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, CARDLIST * nvcard)
 {
 	INT32 i, j;
   //DBG("get_nvidia_model for (%08x, %08x)\n", device_id, subsys_id);
-  
+
 	//ErmaC added selector for nVidia "old" style in System Profiler
   //DBG("NvidiaGeneric = %s\n", gSettings.NvidiaGeneric?L"YES":L"NO");
 	if (gSettings.NvidiaGeneric == FALSE) {
@@ -2016,7 +2016,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, CARDLIST * nvcard)
     if (nvcard && (nvcard->Id == device_id) && (nvcard->SubId == subsys_id)) {
       return nvcard->Model;
     }
-    
+
     // Then check the exceptions table
     if (subsys_id) {
       for (i = 0; i < (sizeof(nvidia_card_exceptions) / sizeof(nvidia_card_exceptions[0])); i++) {
@@ -2027,7 +2027,7 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, CARDLIST * nvcard)
       }
     }
 	}
-  
+
 	// At last try the generic names
 	for (i = 1; i < (sizeof(nvidia_card_generic) / sizeof(nvidia_card_generic[0])); i++) {
     if (nvidia_card_generic[i].device == device_id) {
@@ -2064,25 +2064,25 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
   INTN    pnum;
   CHAR8 nkey[24];
   CHAR8 nval[24];
-  
+
 //	DBG("devprop_add_nvidia_template\n");
-  
+
 	if (!device) {
 		return 0;
 	}
-  
+
   for (pnum = 0; pnum < n_ports; pnum++) {
     AsciiSPrint(nkey, 24, "@%d,name", pnum);
     AsciiSPrint(nval, 24, "NVDA,Display-%c", (65+pnum));
     //DBG("Nvidia: insert [%a : %a]\n", nkey, nval);
     devprop_add_value(device, nkey, (UINT8*)nval, 14);
-    
+
     AsciiSPrint(nkey, 24, "@%d,compatible", pnum);
     devprop_add_value(device, nkey, (UINT8*)"NVDA,NVMac", 10);
-    
+
     AsciiSPrint(nkey, 24, "@%d,device_type", pnum);
     devprop_add_value(device, nkey, (UINT8*)"display", 7);
-    
+
     AsciiSPrint(nkey, 24, "@%d,display-cfg", pnum);
     if (pnum == 0) {
       devprop_add_value(device, nkey, (gSettings.Dcfg[0] != 0) ? &gSettings.Dcfg[0] : default_dcfg_0, DCFG0_LEN);
@@ -2090,13 +2090,13 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
       devprop_add_value(device, nkey, (gSettings.Dcfg[1] != 0) ? &gSettings.Dcfg[4] : default_dcfg_1, DCFG1_LEN);
     }
   }
-  
+
   if (devices_number == 1) {
     devprop_add_value(device, "device_type", (UINT8*)"NVDA,Parent", 11);
   } else {
     devprop_add_value(device, "device_type", (UINT8*)"NVDA,Child", 10);
   }
-  
+
 	return 1;
 }
 
@@ -2135,7 +2135,7 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 		// TODO: need to find vram size calculation for Pascal. by Sherlocks
 		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
 	}
-  
+
 	// Then, Workaround for 9600M GT, GT 210/420/430/440/525M/540M & GTX 560M
 	switch (nvda_dev->device_id) {
 		case 0x0647: // 9600M GT 0647
@@ -2195,7 +2195,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   BOOLEAN       RomAssigned = FALSE;
   UINT32        device_id, subsys_id;
   CARDLIST      *nvcard;
-  
+
 	devicepath = get_pci_dev_path(nvda_dev);
 	bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
 	nvda_dev->regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
@@ -2203,10 +2203,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   //  nvda_dev->subsys_id.subsys.device_id;
   device_id = ((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
   subsys_id = ((nvda_dev->subsys_id.subsys.vendor_id << 16) | nvda_dev->subsys_id.subsys.device_id);
-  
+
 	// get card type
 	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
-  
+
   // First check if any value exist in the plist
   nvcard = FindCardWithIds(device_id, subsys_id);
   if (nvcard) {
@@ -2220,7 +2220,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       //DBG("mem assigned %ld\n", vram_size);
     }
   } else {
-    
+
     // Amount of VRAM in Mb
     if (gSettings.VRAM != 0) {
       videoRam = gSettings.VRAM << 20;
@@ -2228,7 +2228,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       videoRam = mem_detect(nvCardType, nvda_dev);
     }
 	}
-  
+
   if (gSettings.NvidiaGeneric) {
     // Get Model from the PCI
     //    model = get_nvidia_model(((nvda_dev->vendor_id << 16) | nvda_dev->device_id), subsystem);
@@ -2236,7 +2236,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       model = get_nvidia_model(device_id, subsys_id, NULL);
     }
   } else {
-    
+
     for (j = 0; j < NGFX; j++) {
       if ((gGraphics[j].Vendor == Nvidia) && (gGraphics[j].DeviceID == nvda_dev->device_id)) {
         model = gGraphics[j].Model; //menu setting
@@ -2250,50 +2250,50 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       }
     }
   }
-  
-  
+
+
   if (load_vbios) {
     UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x_%04x_%04x.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-    
+
     if (FileExists(OEMDir, FileName)) {
       DBG("Found specific VBIOS ROM file (10de_%04x_%04x_%04x.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-      
+
       Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
     } else {
       UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
       if (FileExists(OEMDir, FileName)) {
         DBG("Found generic VBIOS ROM file (10de_%04x.rom)\n", nvda_dev->device_id);
-        
+
         Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
       }
     }
-    
+
     UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x_%04x_%04x.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
     if (EFI_ERROR(Status)) {
       if (FileExists(SelfRootDir, FileName)) {
         DBG("Found specific VBIOS ROM file (10de_%04x_%04x_%04x.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-        
+
         Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
       } else {
         UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
-        
+
         if (FileExists(SelfRootDir, FileName)) {
           DBG("Found generic VBIOS ROM file (10de_%04x.rom)\n", nvda_dev->device_id);
-          
+
           Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
         }
       }
     }
   }
-  
+
   if (EFI_ERROR(Status)) {
     rom = AllocateZeroPool(NVIDIA_ROM_SIZE+1);
     // PRAMIN first
     read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
-    
+
     //DBG("%x%x\n", rom[0], rom[1]);
     rom_pci_header = NULL;
-    
+
     if (rom[0] != 0x55 || rom[1] != 0xaa) {
       read_nVidia_PROM(nvda_dev, rom);
       if (rom[0] != 0x55 || rom[1] != 0xaa) {
@@ -2303,7 +2303,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       }
     }
   }
-  
+
   if (!rom){
     if (buffer) {
       if (buffer[0] != 0x55 && buffer[1] != 0xaa) {
@@ -2331,14 +2331,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       //      return FALSE;
     }
   }
-  
+
   if(rom) {
-    
+
     if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
       DBG("ERROR: nVidia ROM Patching Failed!\n");
     }
     rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
-    
+
     // check for 'PCIR' sig
     if (rom_pci_header->signature == 0x52494350) {
       if (rom_pci_header->device_id != nvda_dev->device_id) {
@@ -2349,9 +2349,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     } else {
       DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
     }
-    
+
     // get bios version
-    
+
     // only search the first 384 bytes
     for (i = 0; i < 0x180; i++) {
       if (rom[i] == 0x0D && rom[i+1] == 0x0A) {
@@ -2359,12 +2359,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         // second 0x0D0A was found, extract bios version
         if (crlf_count == 2) {
           if (rom[i-1] == 0x20) i--; // strip last " "
-          
+
           for (version_start = i; version_start > (i-MAX_BIOS_VERSION_LENGTH); version_start--) {
             // find start
             if (rom[version_start] == 0x00) {
               version_start++;
-              
+
               // strip "Version "
               if (AsciiStrnCmp((const CHAR8*)rom + version_start, "Version ", 8) == 0) {
                 version_start += 8;
@@ -2386,21 +2386,21 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
     AsciiSPrint(version_str, sizeof(version_str), "1.0");
   }
-  
+
   DBG("nVidia %a ", model);
   DBG(" %dMB NV%02x [%04x:%04x] :: %a => device #%d\n", (UINT32)(RShiftU64(videoRam, 20)),
       nvCardType, nvda_dev->vendor_id, nvda_dev->device_id,
       devicepath, devices_number);
-  
+
   if (!string) {
     string = devprop_create_string();
   }
-  
+
   if (nvda_dev && !nvda_dev->used) {
-    device = devprop_add_device_pci(string, nvda_dev);
+    device = devprop_add_device_pci(string, nvda_dev, NULL);
     nvda_dev->used = TRUE;
   }
-  
+
   DBG("Nvidia: VideoPorts:");
   if (n_ports > 0) {
     DBG(" user defined (GUI-menu): %d\n", n_ports);
@@ -2411,17 +2411,17 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     n_ports = 2; //default
     DBG(" undefined, default to: %d\n", n_ports);
   }
-  
+
   if (gSettings.NvidiaNoEFI) {
     devprop_add_value(device, "NVDA,noEFI", (UINT8*)"true", 5);
   }
-  
+
   //There are custom properties, injected if set by user
   if (gSettings.NvidiaSingle && (devices_number >=1)) {
     DBG("NVidia: NvidiaSingle :: skip injecting other then first card\n");
     goto done;
   }
-  
+
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
       if (gSettings.AddProperties[i].Device != DEV_NVIDIA) {
@@ -2438,7 +2438,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       //    return TRUE;
     }
   }
-  
+
   if (gSettings.FakeNVidia) {
     UINT32 FakeID = gSettings.FakeNVidia >> 16;
     DBG("NVidia: FakeID %x:%x\n",gSettings.FakeNVidia & 0xFFFF, FakeID);
@@ -2446,7 +2446,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     FakeID = gSettings.FakeNVidia & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
-  
+
   if (gSettings.NVCAP[0] != 0) {
     devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
     DBG("set NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
@@ -2456,11 +2456,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         gSettings.NVCAP[12], gSettings.NVCAP[13], gSettings.NVCAP[14], gSettings.NVCAP[15],
         gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);
   }
-  
+
   if (gSettings.InjectEDID && gSettings.CustomEDID) {
     devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
   }
-  
+
   if ((devices_number == 1) &&
       ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < (INT8)n_ports))) {
     CHAR8 nkey[24];
@@ -2468,40 +2468,40 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
     DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
   }
-  
+
   //there are default or calculated properties, can be skipped
   if (gSettings.NoDefaultProperties) {
     DBG("Nvidia: no default properties injected\n");
     goto done;
   }
-  
+
   if (gSettings.BootDisplay < 0) {
     // if not set this is default property
     devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
   }/* else {
     DBG("Nvidia: BootDisplay: %x\n", gSettings.BootDisplay);
     }*/
-  
+
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
   } else {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
-  
+
   if (videoRam != 0) {
     devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 8);
   } else {
     DBG("Warning! VideoRAM is not detected and not set\n");
   }
-  
+
   devprop_add_nvidia_template(device, n_ports);
-  
+
   //add HDMI Audio back to nvidia
   //http://forge.voodooprojects.org/p/chameleon/issues/67/
   //AsciiSPrint(nkey, 24, "@%d,connector-type", pnum);
   //devprop_add_value(device, nkey, connector_type_1, 4);
   //end Nvidia HDMI Audio
-  
+
   if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
     UINT8 built_in = 0x01;
     devprop_add_value(device, "@0,built-in", &built_in, 1);
@@ -2510,7 +2510,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
     devprop_add_value(device, "@0,connector-type", connector_type_1, 4);
   }
-  
+
   devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
   devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
@@ -2533,7 +2533,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
         default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
   }
-  
+
 done:
   devices_number++;
   FreePool(version_str);

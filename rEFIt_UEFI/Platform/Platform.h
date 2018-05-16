@@ -739,10 +739,12 @@ typedef struct {
 typedef struct DEV_PROPERTY DEV_PROPERTY; //yyyy
 struct DEV_PROPERTY {
   UINT32        Device;
+  EFI_DEVICE_PATH_PROTOCOL* DevicePath;
   CHAR8         *Key;
   CHAR8         *Value;
   UINTN         ValueLen;
-  DEV_PROPERTY  *Next;
+  DEV_PROPERTY  *Next;   //next device or next property
+  DEV_PROPERTY  *Child;  // property list of the device
   CHAR8         *Label;
   INPUT_ITEM    MenuItem;
   TAG_TYPE      ValueType;
@@ -2004,6 +2006,8 @@ CHAR8
   UINT32 subsys_id,
   CARDLIST * nvcard
   );
+
+UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
 
 VOID
 FillCardList(

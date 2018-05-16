@@ -37,7 +37,7 @@ UINT32 stringlength   = 0;
  {
  return (((toswap & 0x00FF) << 8) | ((toswap & 0xFF00) >> 8));
  }
- 
+
  static UINT32 dp_swap32(UINT32 toswap)
  {
  return  ((toswap & 0x000000FF) << 24) |
@@ -51,10 +51,10 @@ DevPropString *devprop_create_string(VOID)
 {
   //	DBG("Begin creating strings for devices:\n");
   string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
-  
+
   if(string == NULL)
     return NULL;
-  
+
   string->length = 12;
   string->WHAT2 = 0x01000000;
   return string;
@@ -67,7 +67,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
   CHAR8*		tmp;
   CHAR16*		devpathstr = NULL;
   EFI_DEVICE_PATH_PROTOCOL*	DevicePath = NULL;
-  
+
   DevicePath = DevicePathFromHandle (PciDt->DeviceHandle);
   if (!DevicePath)
     return NULL;
@@ -75,7 +75,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
   tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR16));
   UnicodeStrToAsciiStrS(devpathstr, tmp, (StrLen(devpathstr)+1));
   return tmp;
-  
+
 }
 
 UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
@@ -85,7 +85,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   EFI_PCI_IO_PROTOCOL		*PciIo;
   PCI_TYPE00				Pci;
   UINT32					res;
-  
+
   Status = gBS->OpenProtocol(PciDt->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)){
     DBG("pci_config_read cant open protocol\n");
@@ -110,30 +110,38 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   return res;
 }
 
+UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath)
+{
+	return 0;
+}
+//Size = GetDevicePathSize (DevicePath);
+
 //dmazar: replaced by devprop_add_device_pci
 
-DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
+DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt, EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 {
-  EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
+//  EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
   DevPropDevice               *device;
   UINT32                      NumPaths;
-  
+
   if (StringBuf == NULL || PciDt == NULL) {
     return NULL;
   }
-  
+
+  if (!DevicePath && (PciDt != 0)) {
   DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
+  }
   // 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
   if (!DevicePath)
     return NULL;
-  
+
   device = AllocateZeroPool(sizeof(DevPropDevice));
   if (!device) {
     return NULL;
   }
-  
+
   device->numentries = 0x00;
-  
+
   //
   // check and copy ACPI_DEVICE_PATH
   //
@@ -144,14 +152,14 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
     device->acpi_dev_path.subtype = 0x01;
     device->acpi_dev_path._HID = 0x0a0341d0;
     device->acpi_dev_path._UID = (((ACPI_HID_DEVICE_PATH*)DevicePath)->UID)?0x80:0;
-    
+
     //		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
   } else {
     //		DBG("not ACPI\n");
     FreePool(device);
     return NULL;
   }
-  
+
   //
   // copy PCI paths
   //
@@ -166,25 +174,25 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
       break;
     }
   }
-  
+
   if (NumPaths == 0) {
     DBG("NumPaths == 0 \n");
     FreePool(device);
     return NULL;
   }
-  
+
   //	DBG("-> NumPaths=%d\n", NumPaths);
   device->num_pci_devpaths = (UINT8)NumPaths;
   device->length = (UINT32)(24U + (6U * NumPaths));
-  
+
   device->path_end.length = 0x04;
   device->path_end.type = 0x7f;
   device->path_end.subtype = 0xff;
-  
+
   device->string = StringBuf;
   device->data = NULL;
   StringBuf->length += device->length;
-  
+
   if(!StringBuf->entries) {
     StringBuf->entries = (DevPropDevice**)AllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
     if(!StringBuf->entries) {
@@ -192,9 +200,9 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
       return NULL;
     }
   }
-  
+
   StringBuf->entries[StringBuf->numentries++] = device;
-  
+
   return device;
 }
 
@@ -209,7 +217,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
   UINTN i, l;
   UINT32 *datalength;
   UINT8 *newdata;
-  
+
   if(!device || !nm || !vl /*|| !len*/) //rehabman: allow zero length data
     return FALSE;
   /*	DBG("devprop_add_value %a=", nm);
@@ -222,18 +230,18 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
   data = (UINT8*)AllocateZeroPool(length);
   if(!data)
     return FALSE;
-  
+
   off= 0;
-  
+
   data[off+1] = (UINT8)(((l * 2) + 6) >> 8);
   data[off] =   ((l * 2) + 6) & 0x00FF;
-  
+
   off += 4;
-  
+
   for(i = 0 ; i < l ; i++, off += 2) {
     data[off] = *nm++;
   }
-  
+
   off += 2;
   l = len;
   datalength = (UINT32*)&data[off];
@@ -242,23 +250,23 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len
   for(i = 0 ; i < l ; i++, off++) {
     data[off] = *vl++;
   }
-  
+
   offset = device->length - (24 + (6 * device->num_pci_devpaths));
-  
+
   newdata = (UINT8*)AllocateZeroPool((length + offset));
   if(!newdata)
     return FALSE;
   if((device->data) && (offset > 1)) {
  		CopyMem((VOID*)newdata, (VOID*)device->data, offset);
   }
-  
+
   CopyMem((VOID*)(newdata + offset), (VOID*)data, length);
-  
+
   device->length += length;
   device->string->length += length;
   device->numentries++;
   device->data = newdata;
-  
+
   FreePool(data);
   return TRUE;
 }
@@ -270,27 +278,27 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
   UINT32 x = 0;
   CHAR8 *buffer = (CHAR8*)AllocatePool(len + 1);
   CHAR8 *ptr = buffer;
-  
+
   //   DBG("devprop_generate_string\n");
   if(!buffer)
     return NULL;
-  
+
   AsciiSPrint(buffer, len, "%08x%08x%04x%04x", SwapBytes32(StringBuf->length), StringBuf->WHAT2,
               SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
   buffer += 24;
-  
+
   while(i < StringBuf->numentries) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
     AsciiSPrint(buffer, len, "%08x%04x%04x", SwapBytes32(StringBuf->entries[i]->length),
                 SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
-    
+
     buffer += 16;
     AsciiSPrint(buffer, len, "%02x%02x%04x%08x%08x", StringBuf->entries[i]->acpi_dev_path.type,
                 StringBuf->entries[i]->acpi_dev_path.subtype,
                 SwapBytes16(StringBuf->entries[i]->acpi_dev_path.length),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._UID));
-    
+
     buffer += 24;
     for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
       AsciiSPrint(buffer, len, "%02x%02x%04x%02x%02x", StringBuf->entries[i]->pci_dev_path[x].type,
@@ -300,11 +308,11 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
                   StringBuf->entries[i]->pci_dev_path[x].device);
       buffer += 12;
     }
-    
+
     AsciiSPrint(buffer, len, "%02x%02x%04x", StringBuf->entries[i]->path_end.type,
                 StringBuf->entries[i]->path_end.subtype,
                 SwapBytes16(StringBuf->entries[i]->path_end.length));
-    
+
     buffer += 8;
     for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
       AsciiSPrint(buffer, len, "%02x", *dataptr++);
@@ -320,7 +328,7 @@ VOID devprop_free_string(DevPropString *StringBuf)
   INT32 i;
   if(!StringBuf)
     return;
-  
+
   for(i = 0; i < StringBuf->numentries; i++) {
     if(StringBuf->entries[i]) {
       if(StringBuf->entries[i]->data) {
@@ -352,7 +360,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   devicepath = get_pci_dev_path(eth_dev);
 #endif
   if (eth_dev && !eth_dev->used) {
-    device = devprop_add_device_pci(string, eth_dev);
+    device = devprop_add_device_pci(string, eth_dev, NULL);
     eth_dev->used = TRUE;
   }
 
@@ -365,7 +373,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
  		builtin_set = 1;
  		builtin = 0x01;
  	}
-  
+
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
       if (gSettings.AddProperties[i].Device != DEV_LAN) {
@@ -382,7 +390,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     DBG("custom LAN properties injected, continue\n");
     //    return TRUE;
   }
-  
+
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
 //  devprop_add_value(device, "device_type", (UINT8*)"Ethernet", 9);
   if (gSettings.FakeLAN) {
@@ -394,7 +402,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     FakeID = gSettings.FakeLAN & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
-  
+
   return devprop_add_value(device, "built-in", (UINT8*)&builtin, 1);
 }
 
@@ -418,7 +426,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   UINT32          fake_devid;
   BOOLEAN         Injected = FALSE;
   UINTN           i;
-  
+
   if (!string)
     string = devprop_create_string();
 #if DEBUG_INJECT
@@ -426,7 +434,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 #endif
 
   if (usb_dev && !usb_dev->used) {
-    device = devprop_add_device_pci(string, usb_dev);
+    device = devprop_add_device_pci(string, usb_dev, NULL);
     usb_dev->used = TRUE;
   }
 
@@ -436,7 +444,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   // -------------------------------------------------
  // DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
- 
+
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
       if (gSettings.AddProperties[i].Device != DEV_USB) {
@@ -453,12 +461,12 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
     DBG("custom USB properties injected, continue\n");
     //    return TRUE;
   }
-  
+
   if (gSettings.InjectClockID) {
     devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
     clock_id++;
   }
-  
+
   fake_devid = usb_dev->device_id & 0xFFFF;
   if ((fake_devid & 0xFF00) == 0x2900) {
     fake_devid &= 0xFEFF;
@@ -492,7 +500,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
         devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
       }
       devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
-      
+
       break;
     default:
       break;
