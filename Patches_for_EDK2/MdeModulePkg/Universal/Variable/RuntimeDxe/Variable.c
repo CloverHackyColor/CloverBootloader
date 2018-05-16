@@ -17,7 +17,7 @@
   integer overflow. It should also check attribute to avoid authentication bypass.
 
 Copyright (c) 2006 - 2017, Intel Corporation. All rights reserved.<BR>
-(C) Copyright 2015 Hewlett Packard Enterprise Development LP<BR>
+(C) Copyright 2015-2018 Hewlett Packard Enterprise Development LP<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -238,6 +238,8 @@ IsValidVariableHeader (
   @param Buffer                  Pointer to the buffer from which data is written.
 
   @retval EFI_INVALID_PARAMETER  Parameters not valid.
+  @retval EFI_UNSUPPORTED        Fvb is a NULL for Non-Volatile variable update.
+  @retval EFI_OUT_OF_RESOURCES   The remaining size is not enough.
   @retval EFI_SUCCESS            Variable store successfully updated.
 
 **/
@@ -274,7 +276,7 @@ UpdateVariableStore (
   //
   if (!Volatile) {
     if (Fvb == NULL) {
-      return EFI_INVALID_PARAMETER;
+      return EFI_UNSUPPORTED;
     }
     Status = Fvb->GetPhysicalAddress(Fvb, &FvVolHdr);
     ASSERT_EFI_ERROR (Status);
@@ -288,8 +290,8 @@ UpdateVariableStore (
       DataPtr += mVariableModuleGlobal->VariableGlobal.NonVolatileVariableBase;
     }
 
-    if ((DataPtr + DataSize) >= ((EFI_PHYSICAL_ADDRESS) (UINTN) ((UINT8 *) FwVolHeader + FwVolHeader->FvLength))) {
-      return EFI_INVALID_PARAMETER;
+    if ((DataPtr + DataSize) > ((EFI_PHYSICAL_ADDRESS) (UINTN) ((UINT8 *) FwVolHeader + FwVolHeader->FvLength))) {
+      return EFI_OUT_OF_RESOURCES;
     }
   } else {
     //
@@ -301,8 +303,8 @@ UpdateVariableStore (
       DataPtr += mVariableModuleGlobal->VariableGlobal.VolatileVariableBase;
     }
 
-    if ((DataPtr + DataSize) >= ((UINTN) ((UINT8 *) VolatileBase + VolatileBase->Size))) {
-      return EFI_INVALID_PARAMETER;
+    if ((DataPtr + DataSize) > ((UINTN) ((UINT8 *) VolatileBase + VolatileBase->Size))) {
+      return EFI_OUT_OF_RESOURCES;
     }
 
     //
