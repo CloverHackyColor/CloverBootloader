@@ -79,11 +79,11 @@ CommandInit(
   UINTN                           Index;
   EFI_STATUS                      Status;
   CHAR8                           *PlatformLang = NULL;
-  BOOLEAN OldUC = FALSE;
+//  BOOLEAN OldUC = FALSE;
 
   GetEfiGlobalVariable2 (EFI_PLATFORM_LANG_VARIABLE_NAME, (VOID**)&PlatformLang, NULL);
   if (PlatformLang == NULL) {
-    PlatformLang = "en";
+    PlatformLang = "en-US";
 //    return EFI_UNSUPPORTED;
   }
 
@@ -95,32 +95,26 @@ CommandInit(
                     &NumHandles,
                     &Handles
                     );
+    //Print(L"Locate UC %r\n", Status);
     if (EFI_ERROR (Status)) {
-      Status = gBS->LocateHandleBuffer (
-                                        ByProtocol,
-                                        &gEfiUnicodeCollationProtocolGuid,
-                                        NULL,
-                                        &NumHandles,
-                                        &Handles
-                                        );
-      if (EFI_ERROR (Status)) {
-        NumHandles = 0;
-        Handles    = NULL;
-      }
-      OldUC =TRUE;
+      NumHandles = 0;
+      Handles    = NULL;
     }
+    //
+    Print(L"NumHandles UC %d\n", NumHandles);
     for (Index = 0; Index < NumHandles; Index++) {
       //
       // Open Unicode Collation Protocol
       //
       Status = gBS->OpenProtocol (
                       Handles[Index],
-                      OldUC ? &gEfiUnicodeCollationProtocolGuid : &gEfiUnicodeCollation2ProtocolGuid,
+                      &gEfiUnicodeCollation2ProtocolGuid,
                       (VOID **) &Uc,
                       gImageHandle,
                       NULL,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
+      //Print(L"Open UC %r\n", Status);
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -135,22 +129,19 @@ CommandInit(
                        PlatformLang,
                        NULL
                        );
+      //Print(L"BestLanguage %s\n", BestLanguage);
       if (BestLanguage != NULL) {
         FreePool (BestLanguage);
-        gUnicodeCollation = Uc;
-        break;
       }
+      gUnicodeCollation = Uc;
+      break;
     }
     if (Handles != NULL) {
       FreePool (Handles);
     }
     FreePool (PlatformLang);
   }
-  if (Uc != NULL) {
-    gUnicodeCollation = Uc;
-  } else {
-    ASSERT( Uc != 0);
-  }
+  ASSERT(gUnicodeCollation != 0);
   return (gUnicodeCollation == NULL) ? EFI_UNSUPPORTED : EFI_SUCCESS;
 }
 
