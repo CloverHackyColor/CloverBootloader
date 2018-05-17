@@ -1188,7 +1188,7 @@ INT32 FindName(UINT8 *dsdt, INT32 len, CHAR8* name)
   return 0;
 }
 
-BOOLEAN GetName(UINT8 *dsdt, INT32 adr, CHAR8* name, OUT INTN *shift)
+BOOLEAN GetName(UINT8 *dsdt, INT32 adr, OUT CHAR8* name, OUT INTN *shift)
 {
   INT32 i;
   INT32 j = (dsdt[adr] == 0x5C)?1:0; //now we accept \NAME
@@ -3874,7 +3874,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
     Return (Local0)
   }
 */
-  
+
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_local0(met2);
   aml_add_buffer(met1, dtgp_1, sizeof(dtgp_1));
@@ -5143,10 +5143,114 @@ VOID FixMutex(UINT8 *dsdt, UINT32 len)
   }
 }
 
+/*
+_SB.PCI0.RP02.PSXS
+We have to take into account fields like
+Scope(\_SB)
+{
+  Device (PCI0)
+  {
+    Device(RP02)
+    {
+      Device(PSXS)  <- to patch
+      {
+		Method(_ON)
+		{
+		}
+		Method(_OFF)
+		{
+		}
+
+	  }
+	  PSXS._ON() <- to patch
+	}
+	Scope(RP02)
+	{
+	  PSXS._OFF() <- to patch
+	}
+	Device(RP03)
+	{
+	  Device(PSXS) <- to not patch
+	  {
+	  }
+	  PSXS._ON() <- to not patch
+	}
+*/
+
+VOID RenameDevices(UINT8* table)
+{
+	ACPI_NAME_LIST *Renames;
+	ACPI_NAME_LIST *Outer;
+	CHAR8 *Replace;
+	CHAR8 *Find;
+	INTN i, k;
+	UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
+	UINTN adr, size;
+	BOOLEAN found;
+	for (i = 0; i < gSettings.DeviceRenameCount; i++) {
+		Renames = gSettings.DeviceRename[i].Next;
+		Replace = gSettings.DeviceRename[i].Name;
+		Find = Renames->Name;
+		Outer = Renames->Next;
+		adr = 0;
+		do
+		{
+			adr = FindBin(table + adr, len, (UINT8*)Find, 4); //next occurence
+			if (adr < 0) {
+				break;
+			}
+			if (!Outer) {
+				CopyMem(table + adr, Replace, 4);
+				continue;
+			}
+			//find outer device or scope
+			i = adr; //usually adr = @5B - 1 = sizefield - 3
+			while (i > 0x20) {  //find devices that previous to adr
+				found = FALSE;
+				//check device
+				if ((table[i] == 0x5B) && (table[i + 1] == 0x82) && !CmpNum(table, i, TRUE)) { //device candidate
+					k = i + 2;
+					found = TRUE;
+				}
+				//check scope
+				if ((table[i] == 0x10) && !CmpNum(table, i, TRUE)) {
+
+					k = i + 1;
+
+					found = TRUE;
+
+				}
+				if (found) {  // i points to Device or Scope
+					size = get_size(table, k); //k points to size
+					if (size) {
+						if ((k + size) > (adr + 4)) {  //Yes - it is outer
+													 // DBG("found outer device begin=%x end=%x\n", k, k+size);
+							if (table[k] < 0x40) {
+								k += 1;
+							}
+							else if ((table[k] & 0x40) != 0) {
+								k += 2;
+							}
+							else if ((table[k] & 0x80) != 0) {
+								k += 3;
+							} //now k points to the outer name
+							if (FindBin(table + k, 5, (UINT8*)(Outer->Name), 4) == 0) {
+								CopyMem(table + adr, Replace, 4);
+							}
+						}  //else not an outer device
+					} //else wrong size field - not a device
+				} //else not a device or scope
+				i--;
+			}
+		} while (1);
+	}
+}
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {
   UINT32 DsdtLen;
+  INTN i;
+
   if (!temp) {
     return;
   }
@@ -5170,7 +5274,6 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
   //arbitrary fixes
   if (gSettings.PatchDsdtNum > 0) {
-    UINTN i;
     DBG("Patching DSDT:\n");
     for (i = 0; i < gSettings.PatchDsdtNum; i++) {
       if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
@@ -5195,10 +5298,15 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
         }
       } else {
-        DBG(" disabled\n"); 
+        DBG(" disabled\n");
       }
     }
   }
+
+  //renaming Devices
+
+  RenameDevices(temp);
+
 
   // find ACPI CPU name and hardware address
   findCPU(temp, DsdtLen);
@@ -5371,7 +5479,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   if ((gSettings.FixDsdt & FIX_REGIONS)) {
     FixRegions(temp, DsdtLen);
   }
-  
+
   //RehabMan: Fix Mutex objects
   if ((gSettings.FixDsdt & FIX_MUTEX)) {
     FixMutex(temp, DsdtLen);
@@ -5384,7 +5492,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   }
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
-  
+
   if ((gSettings.FixDsdt & FIX_WARNING) || (gSettings.FixDsdt & FIX_DARWIN)) {
     if (!FindMethod(temp, DsdtLen, "GET9") &&
         !FindMethod(temp, DsdtLen, "STR9") &&

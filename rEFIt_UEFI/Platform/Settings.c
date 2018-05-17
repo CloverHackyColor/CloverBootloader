@@ -277,6 +277,36 @@ GetPropertyInteger (
   return Default;
 }
 
+ACPI_NAME_LIST *
+ParseACPIName(CHAR8 *String)
+{
+	ACPI_NAME_LIST* List = NULL;
+	ACPI_NAME_LIST* Next = NULL;
+	INTN i, j, Len, pos0, pos1;
+	Len = AsciiStrLen(String);
+
+	if (Len > 0) 	{
+		//Parse forward but put in stack "_SB.PCI0.RP02.PXSX"
+		pos0 = -1;
+		while (pos0 < Len) {
+			List = AllocateZeroPool(sizeof(ACPI_NAME_LIST));
+			List->Next = Next;
+			pos1 = pos0 + 1;
+			while ((pos1 < Len) && String[pos1] != ',') pos1++; // -1,3,8,13,18
+      if ((pos1 == Len) || (String[pos1] == ',')) { //new position
+				for (i = pos0 + 1, j = 0; i < pos1; i++, j++) {
+					List->Name[j] = String[i];
+				}
+				while (j < 4) List->Name[j++] = '_';  //extend by '_' up to 4 symbols
+				List->Name[4] = '\0';
+			}
+			pos0 = pos1;
+			Next = List;
+		}
+	}
+	return List;
+}
+
 VOID
 ParseLoadOptions (
                   OUT  CHAR16** Conf,
@@ -5535,6 +5565,34 @@ GetUserSettings(
           }
         }
       }
+
+	  Prop = GetProperty(DictPointer, "RenameDevices");
+	  if (Prop && Prop->type == kTagTypeDict) {
+		  INTN   i, Count = GetTagCount(Prop);
+		  if (Count > 0) {
+			  gSettings.DeviceRenameCount = 0;
+			  gSettings.DeviceRename = AllocateZeroPool(Count * sizeof(ACPI_NAME_LIST));
+			  DBG("Devices to rename %d\n", Count);
+			  for (i = 0; i < Count; i++) {
+				  Prop2 = NULL;
+				  if (!EFI_ERROR(GetElement(Prop, i, &Prop2)) &&
+					  (Prop2 != NULL) &&
+					  (Prop2->type == kTagTypeKey)) {
+					  ACPI_NAME_LIST *List = ParseACPIName(Prop2->string);
+					  gSettings.DeviceRename[gSettings.DeviceRenameCount].Next = List;
+					  while (List) {
+						  DBG("%a:", List->Name);
+						  List = List->Next;
+					  }
+					  Prop2 = Prop2->tag;
+					  if (Prop2->type == kTagTypeString) {
+						  gSettings.DeviceRename[gSettings.DeviceRenameCount++].Name = AllocateCopyPool(5, Prop2->string);
+						  DBG("->will be renamed to %a\n", Prop2->string);
+					  }
+				  }
+			  }
+		  }
+	   }
     }
 
     //*** SMBIOS ***//

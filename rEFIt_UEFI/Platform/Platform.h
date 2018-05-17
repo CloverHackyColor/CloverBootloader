@@ -750,6 +750,12 @@ struct DEV_PROPERTY {
   TAG_TYPE      ValueType;
 };
 
+typedef struct ACPI_NAME_LIST ACPI_NAME_LIST;
+struct ACPI_NAME_LIST {
+	ACPI_NAME_LIST *Next;
+	CHAR8          *Name;
+};
+
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
@@ -978,6 +984,8 @@ typedef struct {
 //  BOOLEAN                 DropMCFG;
   BOOLEAN                 FixMCFG;
 
+  UINT32				DeviceRenameCount;
+  ACPI_NAME_LIST		*DeviceRename;
   //Injections
   BOOLEAN                 StringInjector;
   BOOLEAN                 InjectSystemID;
@@ -1654,6 +1662,9 @@ FixBiosDsdt (
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *fadt,
   CHAR8                                     *OSVersion
   );
+
+VOID
+RenameDevices(UINT8* table);
 
 VOID
 GetBiosRegions (
