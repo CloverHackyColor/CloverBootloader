@@ -4655,8 +4655,8 @@ GetUserSettings(
 						 gSettings.ArbProperties->Label = AllocateCopyPool(AsciiStrSize(Prop2->string), Prop2->string);
 						 Child = &(gSettings.ArbProperties->Child);
 
-						 Prop2 = Prop2->tagNext; //take a <dict> for this device
-						 if ((Prop2 != NULL) && (Prop2->type == kTagTypeDict)) {
+						 Prop2 = Prop2->tag; //take a <dict> for this device
+ 						 if ((Prop2 != NULL) && (Prop2->type == kTagTypeDict)) {
 							 INTN j, PropCount = 0;
 							 PropCount = GetTagCount(Prop2);  //properties count for this device
 							 DBG("Add %d properties:\n", PropCount);
@@ -4681,7 +4681,8 @@ GetUserSettings(
 										 (*Child)->Key = AllocateCopyPool(AsciiStrSize(Prop3->string) - 1, Prop3->string + 1);
 									 }
 
-									 Prop3 = Prop3->tagNext; //expected value
+									 Prop3 = Prop3->tag; //expected value
+               //    DBG("<key>%a\n  <value> type %d\n", (*Child)->Key, Prop3->type);
 									 if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
 										 //first suppose it is Ascii string
 										 (*Child)->Value = AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);

@@ -82,10 +82,6 @@ CommandInit(
 //  BOOLEAN OldUC = FALSE;
 
   GetEfiGlobalVariable2 (EFI_PLATFORM_LANG_VARIABLE_NAME, (VOID**)&PlatformLang, NULL);
-  if (PlatformLang == NULL) {
-    PlatformLang = "en-US";
-//    return EFI_UNSUPPORTED;
-  }
 
   if (gUnicodeCollation == NULL) {
     Status = gBS->LocateHandleBuffer (
@@ -101,7 +97,7 @@ CommandInit(
       Handles    = NULL;
     }
     //
-    Print(L"NumHandles UC %d\n", NumHandles);
+    //Print(L"NumHandles UC %d\n", NumHandles);
     for (Index = 0; Index < NumHandles; Index++) {
       //
       // Open Unicode Collation Protocol
@@ -118,7 +114,7 @@ CommandInit(
       if (EFI_ERROR (Status)) {
         continue;
       }
-
+      gUnicodeCollation = Uc; //last success
       //
       // Find the best matching matching language from the supported languages
       // of Unicode Collation2 protocol.
@@ -126,20 +122,21 @@ CommandInit(
       BestLanguage = GetBestLanguage (
                        Uc->SupportedLanguages,
                        FALSE,
-                       PlatformLang,
+                       ((PlatformLang != NULL) ? PlatformLang : "en-US"),
                        NULL
                        );
-      //Print(L"BestLanguage %s\n", BestLanguage);
+      Print(L"BestLanguage %s\n", BestLanguage);
       if (BestLanguage != NULL) {
         FreePool (BestLanguage);
-      }
-      gUnicodeCollation = Uc;
-      break;
+        break;
+      }      
     }
     if (Handles != NULL) {
       FreePool (Handles);
     }
-    FreePool (PlatformLang);
+    if (PlatformLang != NULL) {
+      FreePool (PlatformLang);
+    }
   }
   ASSERT(gUnicodeCollation != 0);
   return (gUnicodeCollation == NULL) ? EFI_UNSUPPORTED : EFI_SUCCESS;

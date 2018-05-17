@@ -151,6 +151,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   CHAR8   *VariablePtr;
   VOID    *OldData;
   UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  CHAR8   *PlatformLang;
 
   //
   // firmware Variables
@@ -227,6 +228,21 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     } else {
       FreePool(OldData);
     }
+  }
+//#define EFI_PLATFORM_LANG_VARIABLE_NAME             L"PlatformLang"
+  PlatformLang = GetNvramVariable(EFI_PLATFORM_LANG_VARIABLE_NAME, &gEfiGlobalVariableGuid, NULL, NULL);
+  //
+  // On some platforms with missing gEfiUnicodeCollation2ProtocolGuid EFI_PLATFORM_LANG_VARIABLE_NAME is set
+  // to the value different from "en-...". This is not going to work with our driver UEFI Shell load failures.
+  // We did not overwrite EFI_PLATFORM_LANG_VARIABLE_NAME, but it uses some other language.
+  //
+  if (!PlatformLang || AsciiStrnCmp (PlatformLang, "en-", 3)) {
+    SetNvramVariable(EFI_PLATFORM_LANG_VARIABLE_NAME, &gEfiGlobalVariableGuid,
+                     Attributes,
+                     6, "en-US");
+  }
+  if (PlatformLang) {
+    FreePool(PlatformLang);
   }
 
   None           = "none";
