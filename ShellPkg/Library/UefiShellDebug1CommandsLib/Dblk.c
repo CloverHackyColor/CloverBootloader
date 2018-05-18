@@ -125,6 +125,7 @@ ShellCommandRunDblk (
   //
   Status = ShellInitialize();
   if (EFI_ERROR(Status)) {
+
     return SHELL_UNSUPPORTED;
   }
 

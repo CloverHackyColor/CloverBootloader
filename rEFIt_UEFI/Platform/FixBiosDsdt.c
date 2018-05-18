@@ -5199,7 +5199,7 @@ VOID RenameDevices(UINT8* table)
 			if (adr < 0) {
 				break;
 			}
-			if (!Outer) {
+			if (!Outer || (FindBin(table + adr - 4, 5, (UINT8*)(Outer->Name), 4) == 0)) { // long name like "RP02.PXSX"
 				CopyMem(table + adr, Replace, 4);
 				continue;
 			}
@@ -5214,11 +5214,8 @@ VOID RenameDevices(UINT8* table)
 				}
 				//check scope
 				if ((table[i] == 0x10) && !CmpNum(table, i, TRUE)) {
-
 					k = i + 1;
-
 					found = TRUE;
-
 				}
 				if (found) {  // i points to Device or Scope
 					size = get_size(table, k); //k points to size
@@ -5234,7 +5231,7 @@ VOID RenameDevices(UINT8* table)
 							else if ((table[k] & 0x80) != 0) {
 								k += 3;
 							} //now k points to the outer name
-							if (FindBin(table + k, 5, (UINT8*)(Outer->Name), 4) == 0) {
+							if (FindBin(table + k, 5, (UINT8*)(Outer->Name), 4) == 0) { //what about Scope ("_SB.PCI0.RP02")?
 								CopyMem(table + adr, Replace, 4);
 							}
 						}  //else not an outer device

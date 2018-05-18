@@ -315,11 +315,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   } else {
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
-
+  
   if (!gDriversFlags.AptioMemFixLoaded) {
     DeleteNvramVariable(L"recovery-boot-mode", &gEfiAppleBootGuid);
   }
-
+  
   // Check for AptioFix2Drv loaded to store efi-boot-device for special boot
     if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded ||
         gDriversFlags.AptioFix3Loaded || gDriversFlags.AptioMemFixLoaded)  {

@@ -2481,6 +2481,7 @@ ShellCommandRunPci (
   Status = CommandInit();
 //  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
+ 
     return SHELL_UNSUPPORTED;
   }
 

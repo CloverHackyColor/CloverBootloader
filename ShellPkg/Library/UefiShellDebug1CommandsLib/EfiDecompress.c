@@ -69,10 +69,11 @@ ShellCommandRunEfiDecompress (
 //  ASSERT_EFI_ERROR(Status);
 
   Status = CommandInit();
-//  ASSERT_EFI_ERROR(Status);
+  //  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return SHELL_UNSUPPORTED;
   }
+
 
   //
   // parse the command line

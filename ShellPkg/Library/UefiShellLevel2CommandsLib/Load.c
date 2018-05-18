@@ -81,7 +81,7 @@ LoadDriver(
   EFI_HANDLE                    LoadedDriverHandle;
   EFI_STATUS                    Status;
   EFI_DEVICE_PATH_PROTOCOL      *FilePath;
-  EFI_LOADED_IMAGE_PROTOCOL     *LoadedDriverImage;
+  EFI_LOADED_IMAGE_PROTOCOL     *LoadedDriverImage = NULL;
 
   LoadedDriverImage   = NULL;
   FilePath            = NULL;
@@ -90,7 +90,9 @@ LoadDriver(
 
  // ASSERT (FileName != NULL);
   if (!FileName) {
+ 
     return EFI_NOT_FOUND;
+
   }
   //
   // Fix local copies of the protocol pointers
@@ -98,6 +100,7 @@ LoadDriver(
   Status = CommandInit();
 //  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
+ 
     return SHELL_UNSUPPORTED;
   }
 

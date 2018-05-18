@@ -235,7 +235,7 @@ ShellCommandRunCd (
   // check for "-?"
   //
   if (ShellCommandLineGetFlag(Package, L"-?")) {
-    ASSERT(FALSE);
+//    ASSERT(FALSE);
   } else if (ShellCommandLineGetRawValue(Package, 2) != NULL) {
     ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"cd");  
     ShellStatus = SHELL_INVALID_PARAMETER;

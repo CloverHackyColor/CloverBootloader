@@ -286,21 +286,22 @@ ParseACPIName(CHAR8 *String)
 	Len = AsciiStrLen(String);
 
 	if (Len > 0) 	{
-		//Parse forward but put in stack "_SB.PCI0.RP02.PXSX"
+		//Parse forward but put in stack LIFO "_SB.PCI0.RP02.PXSX"  -1,3,8,13,18
 		pos0 = -1;
 		while (pos0 < Len) {
 			List = AllocateZeroPool(sizeof(ACPI_NAME_LIST));
 			List->Next = Next;
+			List->Name = AllocateZeroPool(5);
 			pos1 = pos0 + 1;
-			while ((pos1 < Len) && String[pos1] != ',') pos1++; // -1,3,8,13,18
-      if ((pos1 == Len) || (String[pos1] == ',')) { //new position
-				for (i = pos0 + 1, j = 0; i < pos1; i++, j++) {
-					List->Name[j] = String[i];
+			while ((pos1 < Len) && String[pos1] != ',') pos1++; // 3,8,13,18
+  //    if ((pos1 == Len) || (String[pos1] == ',')) { //always
+			for (i = pos0 + 1, j = 0; i < pos1; i++) {
+			  List->Name[j++] = String[i];
 				}
 				while (j < 4) List->Name[j++] = '_';  //extend by '_' up to 4 symbols
 				List->Name[4] = '\0';
-			}
-			pos0 = pos1;
+//			}
+			pos0 = pos1; //comma or zero@end
 			Next = List;
 		}
 	}

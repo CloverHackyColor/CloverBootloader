@@ -672,7 +672,7 @@ SmbiosPrintStructure (
               gShellDebug1HiiHandle,
               Struct->Type15->AccessMethod
              );
-            return SHELL_UNSUPPORTED;
+            return EFI_UNSUPPORTED;
           }
           //
           // Display Event Log Header

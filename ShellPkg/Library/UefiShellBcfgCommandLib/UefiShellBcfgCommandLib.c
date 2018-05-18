@@ -1204,12 +1204,16 @@ ShellCommandRunBcfg (
   //
   Status = ShellInitialize();
   if (EFI_ERROR(Status)) {
+
     return SHELL_UNSUPPORTED;
+
   }
 
   Status = CommandInit();
   if (EFI_ERROR(Status)) {
+ 
     return SHELL_UNSUPPORTED;
+
   }
 
   //
