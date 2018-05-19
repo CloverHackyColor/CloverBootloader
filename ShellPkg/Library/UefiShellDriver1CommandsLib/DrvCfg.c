@@ -670,6 +670,7 @@ PreHiiDrvCfg (
     BestLanguage = GetBestLanguage (
                           DriverConfiguration->SupportedLanguages,
                           Iso639Language,
+                          "",
                           Language!=NULL?Language:"",
                           DriverConfiguration->SupportedLanguages,
                           NULL

@@ -252,6 +252,7 @@ DpGetNameFromHandle (
     BestLanguage = GetBestLanguage(
                      ComponentName2->SupportedLanguages,
                      FALSE,
+                     "",
                      (PlatformLanguage != NULL) ? PlatformLanguage : "",
                      ComponentName2->SupportedLanguages,
                      NULL

@@ -2714,6 +2714,7 @@ GetBestLanguageForDriver (
   BestLanguage = GetBestLanguage(
                    SupportedLanguages,
                    Iso639Language,
+                   "",
                    (InputLanguage != NULL) ? InputLanguage : "",
                    (LanguageVariable != NULL) ? LanguageVariable : "",
                    SupportedLanguages,

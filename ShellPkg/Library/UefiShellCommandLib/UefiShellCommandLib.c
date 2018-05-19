@@ -122,6 +122,7 @@ CommandInit(
       BestLanguage = GetBestLanguage (
                        Uc->SupportedLanguages,
                        FALSE,
+                       "",
                        ((PlatformLang != NULL) ? PlatformLang : "en-US"),
                        NULL
                        );
