@@ -128,7 +128,9 @@
   S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
- # ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
+!ifdef NO_CLOVER_SHELL
+  ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
+!endif
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
@@ -155,12 +157,14 @@
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
   VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
     
+!ifndef NO_CLOVER_SHELL
   #Shell
   ShellLib|Clover/ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   ShellCommandLib|Clover/ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib.inf
   ShellCEntryLib|Clover/ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
   HandleParsingLib|Clover/ShellPkg/Library/UefiHandleParsingLib/UefiHandleParsingLib.inf
   BcfgCommandLib|Clover/ShellPkg/Library/UefiShellBcfgCommandLib/UefiShellBcfgCommandLib.inf
+!endif
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -492,6 +496,7 @@
   #Clover/gptsync/gptsync.inf
   Clover/bdmesg_efi/bdmesg.inf
   
+!ifndef NO_CLOVER_SHELL
   Clover/ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
   Clover/ShellPkg/Library/UefiShellNetwork2CommandsLib/UefiShellNetwork2CommandsLib.inf
 
@@ -515,6 +520,7 @@
 !endif #$(INCLUDE_TFTP_COMMAND)
 !endif #$(NO_SHELL_PROFILES)
   }
+!endif
 
 
 !ifdef DEBUG_ON_SERIAL_PORT
