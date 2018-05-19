@@ -424,13 +424,10 @@ EfiBootManagerFreeDriverHealthInfo (
 
 /**
   Repair all the controllers according to the Driver Health status queried.
-
-  @param ReconnectRepairCount     To record the number of recursive call of
-                                  this function itself.
 **/
 VOID
 BmRepairAllControllers (
-  UINTN       ReconnectRepairCount
+  VOID
   )
 {
   EFI_STATUS                          Status;
@@ -552,6 +549,10 @@ BmRepairAllControllers (
   EfiBootManagerFreeDriverHealthInfo (DriverHealthInfo, Count);
 
 
+  if (ReconnectRequired) {
+    BmRepairAllControllers ();
+  }
+
   DEBUG_CODE (
     CHAR16 *ControllerName;
 
@@ -575,15 +576,6 @@ BmRepairAllControllers (
     }
     EfiBootManagerFreeDriverHealthInfo (DriverHealthInfo, Count);
     );
-
-  if (ReconnectRequired) {
-    if (ReconnectRepairCount < MAX_RECONNECT_REPAIR) {
-      BmRepairAllControllers (ReconnectRepairCount + 1);
-    } else {
-      DEBUG ((DEBUG_ERROR, "[%a:%d] Repair failed after %d retries.\n",
-        __FUNCTION__, __LINE__, ReconnectRepairCount));
-    }
-  }
 
   if (RebootRequired) {
     DEBUG ((EFI_D_INFO, "[BDS] One of the Driver Health instances requires rebooting.\n"));
