@@ -400,7 +400,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //48
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelPm;
   InputItems[InputItemsCount].ItemType = BoolValue; //49
-  InputItems[InputItemsCount++].BValue = TRUE; //gSettings.FixMCFG;
+  InputItems[InputItemsCount++].BValue = gSettings.FixMCFG;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //50
   if (New) {
