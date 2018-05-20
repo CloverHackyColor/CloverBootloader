@@ -878,7 +878,7 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag, UINT32* lenPtr)
 
 //==========================================================================
 // NewTag
-
+#define TAGCACHESIZE 0x1000
 
 TagPtr NewTag( void )
 {
@@ -886,30 +886,32 @@ TagPtr NewTag( void )
   TagPtr  tag;
 
   if (gTagsFree == NULL) {
-    tag = (TagPtr)AllocateZeroPool(0x1000 * sizeof(TagStruct));
+    tag = (TagPtr)AllocateZeroPool(TAGCACHESIZE * sizeof(TagStruct));
     if (tag == NULL) {
       return NULL;
     }
 
     // Initalize the new tags.
-    for (cnt = 0; cnt < 0x1000; cnt++) {
+    for (cnt = 0; cnt < TAGCACHESIZE - 1; cnt++) {
       tag[cnt].type = kTagTypeNone;
-      tag[cnt].string = 0;
-      tag[cnt].data = 0;
-      tag[cnt].dataLen = 0;
-      tag[cnt].tag = 0;
       tag[cnt].tagNext = tag + cnt + 1;
     }
-    tag[0x1000 - 1].tagNext = 0;
+    tag[TAGCACHESIZE - 1].tagNext = 0;
 
     gTagsFree = tag;
   }
 
   tag = gTagsFree;
   gTagsFree = tag->tagNext;
+  if (gTagsFree == NULL) {  //end of cache
+    tag = tag - (TAGCACHESIZE - 1); //jmp to cache[0]
+    FreePool(tag);
+    tag = NewTag();
+  }
 
   return tag;
 }
+#undef TAGCACHESIZE
 
 //==========================================================================
 // XMLFreeTag
