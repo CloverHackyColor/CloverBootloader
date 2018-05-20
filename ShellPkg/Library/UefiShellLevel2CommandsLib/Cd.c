@@ -247,13 +247,13 @@ ShellCommandRunCd (
     // else If there is  1 value paramerer , then change the directory
     //
     Cwd = ShellGetCurrentDir (NULL);
-    Print(L"Cwd=%s\n", Cwd);
+ //   Print(L"Cwd=%s\n", Cwd);
     if (Cwd == NULL) {
       ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN(STR_GEN_NO_CWD), gShellLevel2HiiHandle, L"cd");
       ShellStatus = SHELL_NOT_FOUND;
     } else {
       Param1 = ShellCommandLineGetRawValue (Package, 1);
-      Print(L"Param1=%s\n", Param1);
+  //   Print(L"Param1=%s\n", Param1);
       if (Param1 == NULL) {
         //
         // display the current directory
@@ -266,7 +266,7 @@ ShellCommandRunCd (
             CopyMem (Walker, Walker + 1, StrSize(Walker) - sizeof(Walker[0]));
           }
         }
-        Print(L"Param1Copy=%s\n", Param1Copy);
+  //      Print(L"Param1Copy=%s\n", Param1Copy);
         if (Param1Copy != NULL && IsCurrentFileSystem (Param1Copy, Cwd)) {
           Status = ReplaceDriveWithCwd (&Param1Copy,Cwd);
           if (!EFI_ERROR (Status)) {
