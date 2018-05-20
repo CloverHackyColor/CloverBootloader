@@ -800,7 +800,7 @@ AutoUpdateLangVariable(
       //
       // When setting PlatformLang, firstly get most matched language string from supported language codes.
       //
-      BestPlatformLang = VariableGetBestLanguage (mVariableModuleGlobal->PlatformLangCodes, FALSE, "" /* skipped by GetBestLanguage() */, Data, NULL);
+      BestPlatformLang = VariableGetBestLanguage (mVariableModuleGlobal->PlatformLangCodes, FALSE, "" /* skipped by VariableGetBestLanguage() */, Data, NULL);
       if (BestPlatformLang != NULL) {
         //
         // Get the corresponding index in language codes.
@@ -833,7 +833,7 @@ AutoUpdateLangVariable(
       //
       // When setting Lang, firstly get most matched language string from supported language codes.
       //
-      BestLang = VariableGetBestLanguage (mVariableModuleGlobal->LangCodes, TRUE, "" /* skipped by GetBestLanguage() */, Data, NULL);
+      BestLang = VariableGetBestLanguage (mVariableModuleGlobal->LangCodes, TRUE, "" /* skipped by VariableGetBestLanguage() */, Data, NULL);
       if (BestLang != NULL) {
         //
         // Get the corresponding index in language codes.
