@@ -1,7 +1,7 @@
 /** @file
   Graphics Output Protocol functions for the QEMU video controller.
 
-  Copyright (c) 2007 - 2016, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2007 - 2018, Intel Corporation. All rights reserved.<BR>
 
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
@@ -13,6 +13,7 @@
 
 **/
 
+#include <IndustryStandard/VmwareSvga.h>
 #include "Qemu.h"
 
 STATIC
@@ -75,6 +76,42 @@ QemuVideoCompleteModeData (
   return EFI_SUCCESS;
 }
 
+STATIC
+EFI_STATUS
+QemuVideoVmwareSvgaCompleteModeData (
+  IN  QEMU_VIDEO_PRIVATE_DATA           *Private,
+  OUT EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *Mode
+  )
+{
+  EFI_STATUS                            Status;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *Info;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR     *FrameBufDesc;
+  UINT32                                BytesPerLine, FbOffset, BytesPerPixel;
+
+  Info = Mode->Info;
+  CopyMem (Info, &Private->VmwareSvgaModeInfo[Mode->Mode], sizeof (*Info));
+  BytesPerPixel = Private->ModeData[Mode->Mode].ColorDepth / 8;
+  BytesPerLine = Info->PixelsPerScanLine * BytesPerPixel;
+
+  FbOffset = VmwareSvgaRead (Private, VmwareSvgaRegFbOffset);
+
+  Status = Private->PciIo->GetBarAttributes (
+                             Private->PciIo,
+                             PCI_BAR_IDX1,
+                             NULL,
+                             (VOID**) &FrameBufDesc
+                             );
+  if (EFI_ERROR (Status)) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  Mode->FrameBufferBase = FrameBufDesc->AddrRangeMin + FbOffset;
+  Mode->FrameBufferSize = BytesPerLine * Info->VerticalResolution;
+
+  FreePool (FrameBufDesc);
+  return Status;
+}
+
 
 //
 // Graphics Output Protocol Member Functions
@@ -124,10 +161,14 @@ Routine Description:
 
   *SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
+  if (Private->Variant == QEMU_VIDEO_VMWARE_SVGA) {
+    CopyMem (*Info, &Private->VmwareSvgaModeInfo[ModeNumber], sizeof (**Info));
+  } else {
   ModeData = &Private->ModeData[ModeNumber];
   (*Info)->HorizontalResolution = ModeData->HorizontalResolution;
   (*Info)->VerticalResolution   = ModeData->VerticalResolution;
   QemuVideoCompleteModeInfo (ModeData, *Info);
+  }
 
   return EFI_SUCCESS;
 }
@@ -187,6 +228,12 @@ Routine Description:
   case QEMU_VIDEO_BOCHS:
     InitializeBochsGraphicsMode (Private, &QemuVideoBochsModes[ModeData->InternalModeIndex]);
     break;
+  case QEMU_VIDEO_VMWARE_SVGA:
+    InitializeVmwareSvgaGraphicsMode (
+      Private,
+      &QemuVideoBochsModes[ModeData->InternalModeIndex]
+      );
+    break;
   default:
     ASSERT (FALSE);
     gBS->FreePool (Private->LineBuffer);
@@ -202,59 +249,43 @@ Routine Description:
   This->Mode->Info->VerticalResolution = ModeData->VerticalResolution;
   This->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
+  if (Private->Variant == QEMU_VIDEO_VMWARE_SVGA) {
+    QemuVideoVmwareSvgaCompleteModeData (Private, This->Mode);
+  } else {
   QemuVideoCompleteModeData (Private, This->Mode);
+  }
 
   //
-  // Allocate when using first time.
+  // Re-initialize the frame buffer configure when mode changes.
   //
-  if (Private->FrameBufferBltConfigure == NULL) {
     Status = FrameBufferBltConfigure (
                (VOID*) (UINTN) This->Mode->FrameBufferBase,
                This->Mode->Info,
                Private->FrameBufferBltConfigure,
                &Private->FrameBufferBltConfigureSize
     );
-    ASSERT (Status == RETURN_BUFFER_TOO_SMALL);
+  if (Status == RETURN_BUFFER_TOO_SMALL) {
+    //
+    // Frame buffer configure may be larger in new mode.
+    //
+    if (Private->FrameBufferBltConfigure != NULL) {
+      FreePool (Private->FrameBufferBltConfigure);
+    }
     Private->FrameBufferBltConfigure =
       AllocatePool (Private->FrameBufferBltConfigureSize);
-  }
-
-  if (VideoModeChanged) {
-    UINTN                    Index;
-    UINTN                    HandleCount;
-    EFI_HANDLE               *HandleBuffer;
-    EFI_STATUS               Status;
+    ASSERT (Private->FrameBufferBltConfigure != NULL);
 
     //
-    // Set PCDs to Inform GraphicsConsole of video resolution.
-    //    
- //   PcdSet32 (PcdVideoHorizontalResolution, This->Mode->Info->HorizontalResolution);
-//    PcdSet32 (PcdVideoVerticalResolution, This->Mode->Info->VerticalResolution);
-
+    // Create the configuration for FrameBufferBltLib
     //
-    // Video mode is changed, so restart graphics console driver and higher level driver.
-    // Reconnect graphics console driver and higher level driver.
-    // Locate all the handles with GOP protocol and reconnect it.
-    //
-    Status = gBS->LocateHandleBuffer (
-                     ByProtocol,
-                     &gEfiSimpleTextOutProtocolGuid,
-                     NULL,
-                     &HandleCount,
-                     &HandleBuffer
+    Status = FrameBufferBltConfigure (
+                (VOID*) (UINTN) This->Mode->FrameBufferBase,
+                This->Mode->Info,
+                Private->FrameBufferBltConfigure,
+                &Private->FrameBufferBltConfigureSize
                      );
-    if (!EFI_ERROR (Status)) {
-      for (Index = 0; Index < HandleCount; Index++) {
-        gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
-      }
-      for (Index = 0; Index < HandleCount; Index++) {
-        gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
-      }
-      if (HandleBuffer != NULL) {
-        FreePool (HandleBuffer);
-      }
-    }
   }
+  ASSERT (Status == RETURN_SUCCESS);
 
   //
   // Per UEFI Spec, need to clear the visible portions of the output display to black.

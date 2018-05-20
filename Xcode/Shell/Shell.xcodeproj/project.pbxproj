@@ -21,6 +21,8 @@
 /* Begin PBXFileReference section */
 		125E170720B02572005657CD /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		125E171120B025A5005657CD /* ShellPkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ShellPkg; path = ../../ShellPkg; sourceTree = "<group>"; };
+		A512208C20B14ADE005FC3D2 /* MdeModulePkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MdeModulePkg; path = ../../../MdeModulePkg; sourceTree = "<group>"; };
+		A512208D20B14AE5005FC3D2 /* MdePkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MdePkg; path = ../../../MdePkg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +40,8 @@
 			isa = PBXGroup;
 			children = (
 				125E170820B02572005657CD /* Products */,
+				A512208C20B14ADE005FC3D2 /* MdeModulePkg */,
+				A512208D20B14AE5005FC3D2 /* MdePkg */,
 				125E171120B025A5005657CD /* ShellPkg */,
 			);
 			sourceTree = "<group>";

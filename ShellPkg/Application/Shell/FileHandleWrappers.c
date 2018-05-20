@@ -166,7 +166,7 @@ FileInterfaceStdOutWrite(
   if (*((CHAR16 *)Buffer) == gUnicodeFileTag) {
     return (gST->ConOut->OutputString(gST->ConOut, (CHAR16 *)Buffer + 1));
   }
-    return (gST->ConOut->OutputString(gST->ConOut, Buffer));
+  return (gST->ConOut->OutputString(gST->ConOut, Buffer));
 }
 
 /**
@@ -573,8 +573,8 @@ FileInterfaceStdInRead(
       if (TabCompleteList != NULL) {
         ShellInfoObject.NewEfiShellProtocol->FreeFileList (&TabCompleteList);
         DEBUG_CODE(TabCompleteList = NULL;);
-        }
-        InTabScrolling = FALSE;
+      }
+      InTabScrolling = FALSE;
     }
 
     switch (Key.UnicodeChar) {
@@ -617,106 +617,28 @@ FileInterfaceStdInRead(
           InTabScrolling = TRUE;
         }
 
-      //
+        //
         // We do not set up the replacement.
         // The next section will do that.
-      //
+        //
       }
 
       if (InTabScrolling) {
-//        ASSERT(FoundFileList != NULL);
-//        ASSERT(TabLinePos != NULL);
- /*       if (!FoundFileList || !TabLinePos) {
-          return EFI_NO_MEDIA;
-        }
-        TabLinePos = (EFI_SHELL_FILE_INFO*)GetNextNode(&(FoundFileList->Link), &TabLinePos->Link);
-        if (IsNull(&(FoundFileList->Link), &TabLinePos->Link)) {
-          TabLinePos = (EFI_SHELL_FILE_INFO*)GetNextNode(&(FoundFileList->Link), &TabLinePos->Link);
-        }
-      } else {
-        TabPos          = 0;
-        TabUpdatePos    = 0;
-        InQuotationMode = FALSE;
-        for (Index = 0; Index < StringLen; Index++) {
-          if (CurrentString[Index] == L'\"') {
-            InQuotationMode = (BOOLEAN)(!InQuotationMode);
-          }
-          if (CurrentString[Index] == L' ' && !InQuotationMode) {
-            TabPos = Index + 1;
-            TabUpdatePos = Index + 1;
-          }
-          if (CurrentString[Index] == L'\\') {
-            TabUpdatePos = Index + 1;
-          }
-        }
-        if (StrStr(CurrentString + TabPos, L":") == NULL) {
-          Cwd = ShellInfoObject.NewEfiShellProtocol->GetCurDir(NULL);
-          if (Cwd != NULL) {
-            StrnCpyS(TabStr, (*BufferSize)/sizeof(CHAR16), Cwd, (*BufferSize)/sizeof(CHAR16) - 1);
-            StrCatS(TabStr, (*BufferSize)/sizeof(CHAR16), L"\\");
-            if (TabStr[StrLen(TabStr)-1] == L'\\' && *(CurrentString + TabPos) == L'\\' ) {
-              TabStr[StrLen(TabStr)-1] = CHAR_NULL;
-            }
-            StrnCatS( TabStr, 
-                      (*BufferSize)/sizeof(CHAR16), 
-                      CurrentString + TabPos, 
-                      StringLen - TabPos
-                      );
-          } else {
-            *TabStr = CHAR_NULL;
-            StrnCatS(TabStr, (*BufferSize)/sizeof(CHAR16), CurrentString + TabPos, StringLen - TabPos);
-          } */
-        if (!TabCompleteList) {
-          return EFI_NO_MEDIA;
-        }
+        //
+        // We are in a tab complete operation.
+        // set up the next replacement.
+        //
+        ASSERT(TabCompleteList != NULL);
         if (TabCurrent == NULL) {
           TabCurrent = (EFI_SHELL_FILE_INFO*) GetFirstNode (&TabCompleteList->Link);
         } else {
           TabCurrent = (EFI_SHELL_FILE_INFO*) GetNextNode (&TabCompleteList->Link, &TabCurrent->Link);
         }
-
         //
         // Skip over the empty list beginning node
         //
- /*       if (EFI_ERROR (Status) || FoundFileList == NULL) {
-          InTabScrolling = FALSE;
-          TabLinePos = NULL;
-          continue;
-        } else {
-          //
-          // enumerate through the list of files
-          //
-          for ( TempPos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&(FoundFileList->Link))
-              ; !IsNull(&FoundFileList->Link, &TempPos->Link)
-              ; TempPos = (EFI_SHELL_FILE_INFO*)GetNextNode(&(FoundFileList->Link), &(TempPos->Link))
-             ) {
-            //
-            // If "cd" is typed, only directory name will be auto-complete filled
-            // in either case . and .. will be removed.
-            //
-            if ((((TempStr[0] == L'c' || TempStr[0] == L'C') &&
-                (TempStr[1] == L'd' || TempStr[1] == L'D')
-               ) && ((ShellIsDirectory(TempPos->FullName) != EFI_SUCCESS)
-                ||(StrCmp(TempPos->FileName, L".") == 0)
-                ||(StrCmp(TempPos->FileName, L"..") == 0)
-               )) || ((StrCmp(TempPos->FileName, L".") == 0)
-                ||(StrCmp(TempPos->FileName, L"..") == 0))) {
-                TabLinePos = TempPos;
-                TempPos = (EFI_SHELL_FILE_INFO*)(RemoveEntryList(&(TempPos->Link))->BackLink);
-                InternalFreeShellFileInfoNode(TabLinePos);
-            }
-          }
-          if (FoundFileList != NULL) {
-            if (!IsListEmpty(&FoundFileList->Link)) {
-              TabLinePos = (EFI_SHELL_FILE_INFO*)GetFirstNode(&FoundFileList->Link);
-              InTabScrolling = TRUE;
-            } else {
-              ShellInfoObject.NewEfiShellProtocol->FreeFileList (&FoundFileList);
-            }
-          } */
         if (IsNull(&TabCompleteList->Link, &TabCurrent->Link)) {
           TabCurrent = (EFI_SHELL_FILE_INFO*) GetNextNode (&TabCompleteList->Link, &TabCurrent->Link);
-
         }
       }
       break;
@@ -1009,6 +931,7 @@ FileInterfaceStdInRead(
   if (TabCompleteList != NULL) {
     ShellInfoObject.NewEfiShellProtocol->FreeFileList (&TabCompleteList);
   }
+  ASSERT(TabCompleteList == NULL);
 
   return Status;
 }
@@ -1155,7 +1078,7 @@ FileInterfaceEnvClose(
         //
         TotalSize -= sizeof(CHAR16) * 2;
       }
-    
+
       if (Volatile) {
         Status = SHELL_SET_ENVIRONMENT_VARIABLE_V (
                    ((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name,
@@ -1296,7 +1219,7 @@ FileInterfaceEnvVolWrite(
   if (EFI_ERROR(Status)) {
     FreePool (NewBuffer);
     return Status;
-    }
+  }
 
   Status = SHELL_SET_ENVIRONMENT_VARIABLE_V (
              ((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name,
@@ -1365,7 +1288,7 @@ FileInterfaceEnvNonVolWrite(
 
   CopyMem ((UINT8*) NewBuffer + NewSize, Buffer, *BufferSize);
   Status = ShellAddEnvVarToList (
-    ((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name,
+             ((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name,
              NewBuffer,
              TotalSize,
              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS
@@ -1376,7 +1299,7 @@ FileInterfaceEnvNonVolWrite(
   }
 
   Status = SHELL_SET_ENVIRONMENT_VARIABLE_NV (
-    ((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name,
+             ((EFI_FILE_PROTOCOL_ENVIRONMENT*)This)->Name,
              TotalSize - sizeof (CHAR16),
              NewBuffer
              );
@@ -1438,7 +1361,7 @@ CreateFileInterfaceEnv(
   EnvFileInterface->Flush       = FileInterfaceNopGeneric;
   EnvFileInterface->Delete      = FileInterfaceEnvDelete;
   EnvFileInterface->Read        = FileInterfaceEnvRead;
-
+  
   CopyMem(EnvFileInterface->Name, EnvName, EnvNameSize);
 
   //
@@ -1696,7 +1619,7 @@ FileInterfaceMemWrite(
   IN VOID *Buffer
   )
 {
-  CHAR8 *AsciiBuffer;
+  CHAR8                  *AsciiBuffer;
   EFI_FILE_PROTOCOL_MEM  *MemFile;
 
   MemFile = (EFI_FILE_PROTOCOL_MEM *) This;
@@ -1821,15 +1744,9 @@ CreateFileInterfaceMem(
   FileInterface->Write       = FileInterfaceMemWrite;
   FileInterface->Unicode     = Unicode;
 
-//  ASSERT(FileInterface->Buffer      == NULL);
-  if (FileInterface->Buffer) {
-    FreePool(FileInterface->Buffer);
-    FileInterface->Buffer  = NULL;
-  }
-//  ASSERT(FileInterface->BufferSize  == 0);
-  FileInterface->BufferSize  = 0;
-//  ASSERT(FileInterface->Position    == 0);
-  FileInterface->Position    = 0;
+  ASSERT(FileInterface->Buffer      == NULL);
+  ASSERT(FileInterface->BufferSize  == 0);
+  ASSERT(FileInterface->Position    == 0);
 
   if (Unicode) {
     FileInterface->Buffer = AllocateZeroPool(sizeof(gUnicodeFileTag));

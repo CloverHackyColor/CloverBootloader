@@ -41,6 +41,12 @@
 
 [Sources.Ia32, Sources.X64]
   VbeShim.c
+  UnalignedIoGcc.c    | GCC
+  UnalignedIoMsc.c    | MSFT
+  UnalignedIoIcc.c    | INTEL
+
+[Sources.IPF, Sources.EBC]
+  UnalignedIoUnsupported.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -54,6 +60,7 @@
   DebugLib
   DevicePathLib
   MemoryAllocationLib
+  PcdLib
   PciLib
   PrintLib
   TimerLib
@@ -69,4 +76,5 @@
 
 [Pcd]
   gOptionRomPkgTokenSpaceGuid.PcdDriverSupportedEfiVersion
-
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfHostBridgePciDevId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdNullPointerDetectionPropertyMask

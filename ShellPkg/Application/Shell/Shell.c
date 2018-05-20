@@ -350,10 +350,12 @@ UefiMain (
   //
   // Clear the screen
   //
+  
   Status = gST->ConOut->ClearScreen(gST->ConOut);
   if (EFI_ERROR(Status)) {
     return (Status);
   }
+  
 //  Print(L"Hello, World!\n");
   //
   // Populate the global structure from PCDs
@@ -415,8 +417,9 @@ UefiMain (
     //
     ShellInfoObject.HiiHandle = HiiAddPackages (&gEfiCallerIdGuid, gImageHandle, ShellStrings, NULL);
     if (ShellInfoObject.HiiHandle == NULL) {
-      if (PcdGetBool(PcdShellSupportFrameworkHii)) {
+      if (PcdGetBool(PcdShellSupportFrameworkHii)) { //set FALSE
         ///@todo Add our package into Framework HII
+        
       }
       if (ShellInfoObject.HiiHandle == NULL) {
         Status = EFI_NOT_STARTED;
@@ -521,7 +524,7 @@ UefiMain (
         NULL,
         STRING_TOKEN (STR_VER_OUTPUT_MAIN_SHELL),
         ShellInfoObject.HiiHandle,
-        SupportLevel[PcdGet8(PcdShellSupportLevel)],
+        SupportLevel[PcdGet8(PcdShellSupportLevel)],  // ==3
         gEfiShellProtocol->MajorVersion,
         gEfiShellProtocol->MinorVersion
        );
@@ -712,7 +715,7 @@ FreeResources:
   }
 
   if (!IsListEmpty(&ShellInfoObject.SplitList.Link)){
-    ASSERT(FALSE); ///@todo finish this de-allocation (free SplitStdIn/Out when needed).
+//    ASSERT(FALSE); ///@todo finish this de-allocation (free SplitStdIn/Out when needed).
 
     for ( Split = (SPLIT_LIST*)GetFirstNode (&ShellInfoObject.SplitList.Link)
         ; !IsNull (&ShellInfoObject.SplitList.Link, &Split->Link)
