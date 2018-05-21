@@ -904,9 +904,8 @@ TagPtr NewTag( void )
   tag = gTagsFree;
   gTagsFree = tag->tagNext;
   if (gTagsFree == NULL) {  //end of cache
-    tag = tag - (TAGCACHESIZE - 1); //jmp to cache[0]
-    FreePool(tag);
-    tag = NewTag();
+    gTagsFree = NewTag();
+    tag->tagNext = gTagsFree; //add new cache to old one
   }
 
   return tag;
