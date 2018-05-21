@@ -1,0 +1,29 @@
+Compilation
+./ebuild.sh -t XCLANG
+or
+./ebuild.sh -t GCC49
+
+qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -hda QEMU-Clover.img
+
+qemu -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -bios OVMF.fd -m 2048 -hda ~/Desktop/NewFolder/QEMU-Clover-2586/QEMU-Clover.img --hdb ~/Desktop/NewFolder/QEMU-Clover-2586/freedos.img
+
+qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -m 2048 -bios OVMF.fd -hda ~/Desktop/test/QEMU-Clover.img
+
+The folder QEMU must contains
+kvmvapic.bin
+vgabios-cirrus.bin
+pxe-e1000.rom
+
+qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/DEBUG_XCLANG/QEMU -m 2048 -bios OVMF.fd -hda ~/Desktop/test/QEMU-Clover.img
+
+qemu-system-x86_64 -L . -bios OVMF.fd -hda ./QEMU-Clover-OVMF.img -m 2048 -cpu core2duo
+
+Legacy Qemu
+qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios bios-256k.bin  -machine q35 -device ahci,id=ahc -device ide-drive,bus=ahc.0,drive=hda -drive id=hda,file=/Users/slice/Desktop/QemuTest/QEMU-test2.img
+
+qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios bios-256k.bin -vga std  -machine q35 -device nec-usb-xhci -device usb-kbd -device usb-mouse -hda /Users/slice/Desktop/QemuTest/QEMU-test2.img -serial stdio
+
+
+qemu-system-x86_64 -L ~/Desktop/QemuTest/QEMU -m 2048 -cpu core2duo -bios OVMF.fd  -machine q35 -usb -device usb-mouse,bus=usb-bus.0,port=2 -device usb-kbd,bus=usb-bus.0,port=1 -device ahci,id=ahc -device ide-drive,bus=ahc.0,drive=hda -drive id=hda,file=/Users/slice/Desktop/QemuTest/QEMU-test2.img
+
+qemu -L ~/Desktop/QEMU-Clover/QEMU -m 2048 -cpu core2duo -bios OVMF.fd  -machine q35 -usb -device usb-mouse,bus=usb-bus.0,port=2 -device usb-kbd,bus=usb-bus.0,port=1 -drive id=hda,file=/Users/slice/Desktop/QEMU-Clover/QEMU-Clover.img

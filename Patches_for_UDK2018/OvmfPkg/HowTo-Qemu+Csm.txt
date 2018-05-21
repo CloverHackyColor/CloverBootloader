@@ -1,0 +1,64 @@
+- Copy Clover/Patches_for_EDK2/OvmfPkg/* to OvmfPkg/
+
+- Build OvmfPkg using: ./ebuild.sh -D CSM_ENABLE (for Qemu+Csm)
+                   or: ./ebuild.sh               (for Qemu without Csm)
+
+- An updated QEMU VBE SVGA Bios is needed for Qemu. Instructions how to build it appear below.
+  A precompiled binary is also included at Patches_for_EDK2/OvmfPkg/SeaBios/vgabios-stdvga.bin
+  The updated file "vgabios-stdvga.bin" needs to be in Qemu directory.
+
+- With the Csm Build you can legacy boot with LegacyBiosDefault.
+
+Note:
+- A prebuilt Csm16.bin is provided in Csm/Csm16
+- If you want to build Seabios from source (for Csm16.bin or bios.bin/vgabios-cirrus.bin):
+  * Enter your edk2 directory
+  * Copy OvmfPkg patches:     # cp -a Clover/Patches_for_EDK2/OvmfPkg/* OvmfPkg/
+  * Enter SeaBios directory:  # cd OvmfPkg/SeaBios
+  * Get Seabios from source:  # git clone git://git.seabios.org/seabios.git seabios
+  * Edit 'seabiosmake' and specify at the beginning location of TOOLCHAIN and PREFIX (same ToolChain which we use for building Clover).
+  
+  * To build Csm16.bin:
+    - Run config utility:       # ./seabiosmake.sh menuconfig
+                           (or: # ./seabiosmake.sh config     - if you don't have ncurses)
+      ! Under General Features, set 'Build Target' to 'Compatibility Support Module for EFI BIOS'
+      ! Under General Fetaures, enable 'Support hardware found on emulators'
+    - Build seabios:            # ./seabiosmake.sh
+    - Copy Csm16.bin to OvmfPkg: # cp seabios/out/Csm16.bin ../Csm/Csm16/Csm16.bin
+      (resulting seabios/out/Csm16.bin should be placed at OvmfPkg/Csm/Csm16/Csm16.bin)
+  
+  * To build bios.bin or vgabios-stdvga.bin (for QEMU):
+    - Run config utility:       # ./seabiosmake.sh menuconfig
+                           (or: # ./seabiosmake.sh config     - if you don't have ncurses)
+      ! Under General Features, set 'Build Target' = 'Build for QEMU/Xen/KVM/Bochs'
+      ! Under VGA ROM, set 'VGA Hardware Type' = 'QEMU/Bochs VBE SVGA'
+      ! Under VGA ROM, disable 'Allocate an internal stack for 16bit interrupt entry point'
+    - To use the compiled VGA bios, copy seabios/out/vgabios.bin to QEMU directory as vgabios-stdvga.bin (it needs to be renamed).
+    - If you wish to use also the compiled SeaBios BIOS, copy seabios/out/bios.bin to QEMU directory.
+
+Patches are partially based on work by dwmw2, lersek & somlo:
+- Csm patches for OvmfPkg (Csm/LegacyBiosDxe): http://git.infradead.org/users/dwmw2/edk2.git/
+- Csm patches for Seabios: http://git.infradead.org/users/dwmw2/seabios.git/ (these patches are now integrated in seabios git)
+- Smbios patches for Seabios: https://github.com/lersek/edk2/commits/smbios_v1 (these are disabled in dsc, and should be used only with Qemu <= v2.0)
+- Osx related information: http://www.contrib.andrew.cmu.edu/~somlo/OSXKVM/
+
+Command example for running Qemu:
+$ /usr/local/bin/qemu-system-x86_64 \
+        -bios Ovmf.fd \
+        -cpu core2duo -m 2048 -smbios type=2 -vga std \
+        -usb -device usb-ehci,id=usb-ehc \
+        -device ahci,id=ahc \
+        -chardev stdio,id=qemudbg -device isa-debugcon,iobase=0x402,chardev=qemudbg \
+        -serial file:serial.log \
+        -device usb-kbd,bus=usb-bus.0,port=1 \
+        -device usb-mouse,bus=usb-bus.0,port=2 \
+        -device ide-drive,bus=ide.0,unit=0,drive=hda -drive id=hda,if=none,file=QEMU-Clover.img \
+        -device ide-drive,bus=ide.0,unit=1,drive=hdb -drive id=hdb,if=none,file=freedos.img
+
+To specify additional drives:
+IDE:  -device ide-drive,bus=ide.1,unit=0,drive=hdc       (up to 4 drives: bus=ide.0/ide.1  , unit=0/1 )
+USB:  -device usb-storage,bus=usb-ehc.0,port=1,drive=hdc (up to 4 drives: bus=usb-ehc.0    , port=1..4)
+AHCI: -device ide-drive,bus=ahc.0,unit=0,drive=hdc       (up to 6 drives: bus=ahc.0...ahc.5, unit=0   )
+
+To specify optical media (for example for AHCI):
+AHCI/CD: -device ide-drive,bus=ahc.0,unit=0,drive=hdc -drive id=hdc,if=none,media=cdrom,file=some.iso

@@ -1,0 +1,43 @@
+## @file
+#  An application reproducing local variable corruption in recursive calls with
+#  gcc-4.8 on the X64 target.
+#
+#  Copyright (C) 2014, Red Hat, Inc.
+#  Copyright (c) 2010, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials are licensed and made available
+#  under the terms and conditions of the BSD License which accompanies this
+#  distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR
+#  IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = GccBugReproducer-Os
+  FILE_GUID                      = 76bda6c5-c09b-498c-a1c5-699ab23e5c03
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 0.1
+  ENTRY_POINT                    = ShellCEntryLib
+
+#
+#  VALID_ARCHITECTURES           = X64
+#
+
+[Sources]
+  GccBugReproducer.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  UefiLib
+  ShellCEntryLib
+
+[BuildOptions]
+  GCC:*_GCC49_X64_CC_FLAGS = -Os

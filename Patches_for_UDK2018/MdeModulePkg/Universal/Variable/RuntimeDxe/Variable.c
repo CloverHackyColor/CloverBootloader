@@ -17,7 +17,7 @@
   integer overflow. It should also check attribute to avoid authentication bypass.
 
 Copyright (c) 2006 - 2017, Intel Corporation. All rights reserved.<BR>
-(C) Copyright 2015-2018 Hewlett Packard Enterprise Development LP<BR>
+(C) Copyright 2015 Hewlett Packard Enterprise Development LP<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -238,8 +238,6 @@ IsValidVariableHeader (
   @param Buffer                  Pointer to the buffer from which data is written.
 
   @retval EFI_INVALID_PARAMETER  Parameters not valid.
-  @retval EFI_UNSUPPORTED        Fvb is a NULL for Non-Volatile variable update.
-  @retval EFI_OUT_OF_RESOURCES   The remaining size is not enough.
   @retval EFI_SUCCESS            Variable store successfully updated.
 
 **/
@@ -276,7 +274,7 @@ UpdateVariableStore (
   //
   if (!Volatile) {
     if (Fvb == NULL) {
-      return EFI_UNSUPPORTED;
+      return EFI_INVALID_PARAMETER;
     }
     Status = Fvb->GetPhysicalAddress(Fvb, &FvVolHdr);
     ASSERT_EFI_ERROR (Status);
@@ -291,7 +289,7 @@ UpdateVariableStore (
     }
 
     if ((DataPtr + DataSize) > ((EFI_PHYSICAL_ADDRESS) (UINTN) ((UINT8 *) FwVolHeader + FwVolHeader->FvLength))) {
-      return EFI_OUT_OF_RESOURCES;
+      return EFI_INVALID_PARAMETER;
     }
   } else {
     //
@@ -304,7 +302,7 @@ UpdateVariableStore (
     }
 
     if ((DataPtr + DataSize) > ((UINTN) ((UINT8 *) VolatileBase + VolatileBase->Size))) {
-      return EFI_OUT_OF_RESOURCES;
+      return EFI_INVALID_PARAMETER;
     }
 
     //
@@ -2348,14 +2346,12 @@ UpdateVariable (
         CopyMem (BufferForMerge, (UINT8 *) ((UINTN) CacheVariable->CurrPtr + DataOffset), DataSizeOfVariable (CacheVariable->CurrPtr));
 
         //
-        // Set Max Auth/Non-Volatile/Volatile Variable Data Size as default MaxDataSize.
+        // Set Max Common/Auth Variable Data Size as default MaxDataSize.
         //
         if ((Attributes & VARIABLE_ATTRIBUTE_AT_AW) != 0) {
           MaxDataSize = mVariableModuleGlobal->MaxAuthVariableSize - DataOffset;
-        } else if ((Attributes & EFI_VARIABLE_NON_VOLATILE) != 0) {
-          MaxDataSize = mVariableModuleGlobal->MaxVariableSize - DataOffset;
         } else {
-          MaxDataSize = mVariableModuleGlobal->MaxVolatileVariableSize - DataOffset;
+          MaxDataSize = mVariableModuleGlobal->MaxVariableSize - DataOffset;
         }
 
         //
@@ -3223,18 +3219,14 @@ VariableServiceSetVariable (
   } else {
     //
     //  The size of the VariableName, including the Unicode Null in bytes plus
-    //  the DataSize is limited to maximum size of Max(Auth|Volatile)VariableSize bytes.
+    //  the DataSize is limited to maximum size of Max(Auth)VariableSize bytes.
     //
     if ((Attributes & VARIABLE_ATTRIBUTE_AT_AW) != 0) {
       if (StrSize (VariableName) + PayloadSize > mVariableModuleGlobal->MaxAuthVariableSize - GetVariableHeaderSize ()) {
         return EFI_INVALID_PARAMETER;
       }
-    } else if ((Attributes & EFI_VARIABLE_NON_VOLATILE) != 0) {
-      if (StrSize (VariableName) + PayloadSize > mVariableModuleGlobal->MaxVariableSize - GetVariableHeaderSize ()) {
-        return EFI_INVALID_PARAMETER;
-      }
     } else {
-      if (StrSize (VariableName) + PayloadSize > mVariableModuleGlobal->MaxVolatileVariableSize - GetVariableHeaderSize ()) {
+      if (StrSize (VariableName) + PayloadSize > mVariableModuleGlobal->MaxVariableSize - GetVariableHeaderSize ()) {
         return EFI_INVALID_PARAMETER;
       }
     }
@@ -3408,14 +3400,12 @@ VariableServiceQueryVariableInfoInternal (
     }
 
     //
-    // Let *MaximumVariableSize be Max(Auth|Volatile)VariableSize with the exception of the variable header size.
+    // Let *MaximumVariableSize be Max(Auth)VariableSize with the exception of the variable header size.
     //
     if ((Attributes & VARIABLE_ATTRIBUTE_AT_AW) != 0) {
       *MaximumVariableSize = mVariableModuleGlobal->MaxAuthVariableSize - GetVariableHeaderSize ();
-    } else if ((Attributes & EFI_VARIABLE_NON_VOLATILE) != 0) {
-      *MaximumVariableSize = mVariableModuleGlobal->MaxVariableSize - GetVariableHeaderSize ();
     } else {
-      *MaximumVariableSize = mVariableModuleGlobal->MaxVolatileVariableSize - GetVariableHeaderSize ();
+      *MaximumVariableSize = mVariableModuleGlobal->MaxVariableSize - GetVariableHeaderSize ();
     }
   }
 
@@ -3666,30 +3656,6 @@ GetNonVolatileMaxVariableSize (
   } else {
     return MAX (PcdGet32 (PcdMaxVariableSize), PcdGet32 (PcdMaxAuthVariableSize));
   }
-}
-
-/**
-  Get maximum variable size, covering both non-volatile and volatile variables.
-
-  @return Maximum variable size.
-
-**/
-UINTN
-GetMaxVariableSize (
-  VOID
-  )
-{
-  UINTN MaxVariableSize;
-
-  MaxVariableSize = GetNonVolatileMaxVariableSize();
-  //
-  // The condition below fails implicitly if PcdMaxVolatileVariableSize equals
-  // the default zero value.
-  //
-  if (MaxVariableSize < PcdGet32 (PcdMaxVolatileVariableSize)) {
-    MaxVariableSize = PcdGet32 (PcdMaxVolatileVariableSize);
-  }
-  return MaxVariableSize;
 }
 
 /**
@@ -4260,14 +4226,10 @@ VariableCommonInitialize (
     }
   }
 
-  mVariableModuleGlobal->MaxVolatileVariableSize = ((PcdGet32 (PcdMaxVolatileVariableSize) != 0) ?
-                                                    PcdGet32 (PcdMaxVolatileVariableSize) :
-                                                    mVariableModuleGlobal->MaxVariableSize
-                                                    );
   //
   // Allocate memory for volatile variable store, note that there is a scratch space to store scratch data.
   //
-  ScratchSize = GetMaxVariableSize ();
+  ScratchSize = GetNonVolatileMaxVariableSize ();
   mVariableModuleGlobal->ScratchBufferSize = ScratchSize;
   VolatileVariableStore = AllocateRuntimePool (PcdGet32 (PcdVariableStoreSize) + ScratchSize);
   if (VolatileVariableStore == NULL) {
