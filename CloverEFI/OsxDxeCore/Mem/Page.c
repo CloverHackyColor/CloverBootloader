@@ -470,8 +470,8 @@ CoreLoadingFixedAddressHook (
    if (!gLoadFixedAddressCodeMemoryReady) {   
      RuntimeCodePageNumber = PcdGet32(PcdLoadFixAddressRuntimeCodePageNumber);
      BootTimeCodePageNumber= PcdGet32(PcdLoadFixAddressBootTimeCodePageNumber);
-     RuntimeCodeBase       = (EFI_PHYSICAL_ADDRESS)(gLoadModuleAtFixAddressConfigurationTable.DxeCodeTopAddress - EFI_PAGES_TO_SIZE ((UINTN)RuntimeCodePageNumber));
-     BootTimeCodeBase      = (EFI_PHYSICAL_ADDRESS)(RuntimeCodeBase - EFI_PAGES_TO_SIZE ((UINTN)BootTimeCodePageNumber));
+     RuntimeCodeBase       = (EFI_PHYSICAL_ADDRESS)(UINTN)(gLoadModuleAtFixAddressConfigurationTable.DxeCodeTopAddress - EFI_PAGES_TO_SIZE ((UINTN)RuntimeCodePageNumber));
+     BootTimeCodeBase      = (EFI_PHYSICAL_ADDRESS)(UINTN)(RuntimeCodeBase - EFI_PAGES_TO_SIZE ((UINTN)BootTimeCodePageNumber));
      //
      // Try to allocate runtime memory.
      //

@@ -219,7 +219,7 @@ void SaveMergedXsdtEntrySize(UINT32 Index, UINTN Size)
   if (XsdtReplaceSizes) {
     if (XsdtReplaceSizes[Index]) {
       // came from patched table in ACPI/patched, so free original pages
-      gBS->FreePages((EFI_PHYSICAL_ADDRESS)XsdtEntryFromIndex(Index), XsdtReplaceSizes[Index]);
+      gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)XsdtEntryFromIndex(Index), XsdtReplaceSizes[Index]);
       XsdtReplaceSizes[Index] = 0;
     }
     XsdtReplaceSizes[Index] = EFI_SIZE_TO_PAGES(Size);

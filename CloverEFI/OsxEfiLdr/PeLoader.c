@@ -228,7 +228,7 @@ EfiLdrPeCoffLoadPeImage (
   // allocate it.  Memory starts off as data
   //
 
-  Image->ImageBasePage = (EFI_PHYSICAL_ADDRESS)FindSpace (Image->NoPages, NumberOfMemoryMapEntries, EfiMemoryDescriptor, EfiRuntimeServicesCode, EFI_MEMORY_WB);
+  Image->ImageBasePage = (EFI_PHYSICAL_ADDRESS)(UINTN)FindSpace (Image->NoPages, NumberOfMemoryMapEntries, EfiMemoryDescriptor, EfiRuntimeServicesCode, EFI_MEMORY_WB);
   if (Image->ImageBasePage == 0) {
     return EFI_OUT_OF_RESOURCES;
   }

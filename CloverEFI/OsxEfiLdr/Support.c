@@ -250,7 +250,7 @@ GenMemoryMap (
                               NumberOfMemoryMapEntries,
                               EfiMemoryDescriptor,
                               Type,
-                              (EFI_PHYSICAL_ADDRESS)BaseAddress,
+                              (EFI_PHYSICAL_ADDRESS)(UINTN)BaseAddress,
                               RShiftU64 (Length, EFI_PAGE_SHIFT),
                               Attr
                               );

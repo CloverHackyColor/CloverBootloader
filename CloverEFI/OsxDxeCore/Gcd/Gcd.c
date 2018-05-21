@@ -2173,14 +2173,14 @@ CoreInitializeMemoryServices (
     if ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) != TESTED_MEMORY_ATTRIBUTES) {
       continue;
     }
-    if ((ResourceHob->PhysicalStart + ResourceHob->ResourceLength) > (EFI_PHYSICAL_ADDRESS)MAX_ADDRESS) {
+    if ((ResourceHob->PhysicalStart + ResourceHob->ResourceLength) > (EFI_PHYSICAL_ADDRESS)(UINTN)MAX_ADDRESS) {
       continue;
     }
     
     //
     // Skip Resource Descriptor HOBs that are below a previously found Resource Descriptor HOB
     //
-    if (HighAddress != (EFI_PHYSICAL_ADDRESS)MAX_ADDRESS && ResourceHob->PhysicalStart <= HighAddress) {
+    if (HighAddress != (EFI_PHYSICAL_ADDRESS)(UINTN)MAX_ADDRESS && ResourceHob->PhysicalStart <= HighAddress) {
       continue;
     }
 
