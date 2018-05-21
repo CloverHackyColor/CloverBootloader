@@ -124,7 +124,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   DevPropDevice               *device;
   UINT32                      NumPaths;
 
-  if (StringBuf == NULL || PciDt == NULL) {
+  if (StringBuf == NULL /* || PciDt == NULL */) {
     return NULL;
   }
 
@@ -153,9 +153,9 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     device->acpi_dev_path._HID = 0x0a0341d0;
     device->acpi_dev_path._UID = (((ACPI_HID_DEVICE_PATH*)DevicePath)->UID)?0x80:0;
 
-    //		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
+//    		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
   } else {
-    //		DBG("not ACPI\n");
+//    		DBG("not ACPI\n");
     FreePool(device);
     return NULL;
   }
@@ -167,7 +167,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     DevicePath = NextDevicePathNode(DevicePath);
     if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
       CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-      //			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+//     			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
     } else {
       // not PCI path - break the loop
       //			DBG("not PCI ");
@@ -176,12 +176,12 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   }
 
   if (NumPaths == 0) {
-    DBG("NumPaths == 0 \n");
+//    DBG("NumPaths == 0 \n");
     FreePool(device);
     return NULL;
   }
 
-  //	DBG("-> NumPaths=%d\n", NumPaths);
+//  DBG("-> NumPaths=%d\n", NumPaths);
   device->num_pci_devpaths = (UINT8)NumPaths;
   device->length = (UINT32)(24U + (6U * NumPaths));
 
