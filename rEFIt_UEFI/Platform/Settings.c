@@ -284,7 +284,7 @@ ParseACPIName(CHAR8 *String)
 	ACPI_NAME_LIST* Next = NULL;
 	INTN i, j, Len, pos0, pos1;
 	Len = AsciiStrLen(String);
-
+//  DBG("parse ACPI name: %a\n", String);
 	if (Len > 0) 	{
 		//Parse forward but put in stack LIFO "_SB.PCI0.RP02.PXSX"  -1,3,8,13,18
 		pos0 = -1;
@@ -293,14 +293,15 @@ ParseACPIName(CHAR8 *String)
 			List->Next = Next;
 			List->Name = AllocateZeroPool(5);
 			pos1 = pos0 + 1;
-			while ((pos1 < Len) && String[pos1] != ',') pos1++; // 3,8,13,18
+			while ((pos1 < Len) && String[pos1] != '.') pos1++; // 3,8,13,18
   //    if ((pos1 == Len) || (String[pos1] == ',')) { //always
 			for (i = pos0 + 1, j = 0; i < pos1; i++) {
 			  List->Name[j++] = String[i];
-				}
-				while (j < 4) List->Name[j++] = '_';  //extend by '_' up to 4 symbols
-				List->Name[4] = '\0';
-//			}
+      }
+			while (j < 4) List->Name[j++] = '_';  //extend by '_' up to 4 symbols
+			List->Name[4] = '\0';
+//		}
+//      DBG("string between [%d,%d]: %a\n", pos0, pos1, List->Name);
 			pos0 = pos1; //comma or zero@end
 			Next = List;
 		}
