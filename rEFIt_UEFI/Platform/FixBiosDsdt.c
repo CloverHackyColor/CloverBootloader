@@ -5176,35 +5176,71 @@ Scope(\_SB)
 	  PSXS._ON() <- to not patch
 	}
 */
+BOOLEAN isACPI_Char(CHAR8 C)
+{
+	return (((C >= 'A') && (C <= 'Z')) ||
+		((C >= '0') && (C <= '9')) ||
+		(C == '_'));
+}
+
+BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
+{
+	// "RP02" NameLen=4
+	// "_SB_PCI0RP02" NameLen=12
+	INTN NameLen = 0;
+	INTN i = 0;
+	CHAR8 *Name;
+	while ((NameLen < Len) && isACPI_Char((CHAR8)Table[NameLen])) NameLen++;
+	NameLen &= ~3;
+	Name = AllocateCopyPool(NameLen + 1, Table);
+	Name[NameLen] = '\0';
+	i = NameLen - 4;
+	while (Bridge && (i >= 0)) {
+		if (AsciiStrStr(Name + i, Bridge->Name) == NULL) { //compare Bridge->Name with RP02, Next->Name with PCI0 then _SB_
+			FreePool(Name);
+			return FALSE;
+		}
+		i -= 4;
+		Bridge = Bridge->Next;
+	}
+	FreePool(Name);
+	return TRUE;
+}
 
 VOID RenameDevices(UINT8* table)
 {
-	ACPI_NAME_LIST *Renames;
-	ACPI_NAME_LIST *Outer;
+	ACPI_NAME_LIST *List;
+	ACPI_NAME_LIST *Bridge;
 	CHAR8 *Replace;
 	CHAR8 *Find;
-	INTN i, k;
+	INTN i, k, index;
+  UINTN size;
 	UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
-	UINTN adr, size;
+	INTN adr;
 	BOOLEAN found;
-	for (i = 0; i < gSettings.DeviceRenameCount; i++) {
-		Renames = gSettings.DeviceRename[i].Next;
-		Replace = gSettings.DeviceRename[i].Name;
-		Find = Renames->Name;
-		Outer = Renames->Next;
+	for (index = 0; index < gSettings.DeviceRenameCount; index++) {
+		List = gSettings.DeviceRename[index].Next;
+		Replace = gSettings.DeviceRename[index].Name;
+		Find = List->Name;
+		Bridge = List->Next;
+    DBG("Find: %a Bridge: %a Replace %a\n", Find, Bridge->Name, Replace);
 		adr = 0;
 		do
 		{
-			adr = FindBin(table + adr, len, (UINT8*)Find, 4); //next occurence
-			if (adr < 0) {
+			adr = FindBin(table + adr, len - adr, (UINT8*)Find, 4); //next occurence
+			if (adr < 10) {
 				break;
 			}
-			if (!Outer || (FindBin(table + adr - 4, 5, (UINT8*)(Outer->Name), 4) == 0)) { // long name like "RP02.PXSX"
+//      DBG("found name\n");
+			if (!Bridge || (FindBin(table + adr - 4, 5, (UINT8*)(Bridge->Name), 4) == 0)) { // long name like "RP02.PXSX"
 				CopyMem(table + adr, Replace, 4);
+				adr += 5; //at least, it is impossible to see  PXSXPXSX
+//        DBG("replaced\n");
 				continue;
 			}
 			//find outer device or scope
 			i = adr; //usually adr = @5B - 1 = sizefield - 3
+//      DBG("search for bridge since %d\n", adr);
 			while (i > 0x20) {  //find devices that previous to adr
 				found = FALSE;
 				//check device
@@ -5219,9 +5255,10 @@ VOID RenameDevices(UINT8* table)
 				}
 				if (found) {  // i points to Device or Scope
 					size = get_size(table, k); //k points to size
-					if (size) {
+//          DBG("found bridge candidate 0x%x size %d\n", table[i], size);
+          if (size) {
 						if ((k + size) > (adr + 4)) {  //Yes - it is outer
-													 // DBG("found outer device begin=%x end=%x\n", k, k+size);
+//                  DBG("found Bridge device begin=%x end=%x\n", k, k+size);
 							if (table[k] < 0x40) {
 								k += 1;
 							}
@@ -5231,16 +5268,20 @@ VOID RenameDevices(UINT8* table)
 							else if ((table[k] & 0x80) != 0) {
 								k += 3;
 							} //now k points to the outer name
-							if (FindBin(table + k, 5, (UINT8*)(Outer->Name), 4) == 0) { //what about Scope ("_SB.PCI0.RP02")?
+              if (CmpFullName(table + k, len - k, Bridge)) {
 								CopyMem(table + adr, Replace, 4);
+								adr += 5;
+  //              DBG("   name copied\n");
+								break; //cancel search outer bridge, we found it.
 							}
 						}  //else not an outer device
 					} //else wrong size field - not a device
 				} //else not a device or scope
 				i--;
-			}
-		} while (1);
-	}
+			}  //while find outer bridge
+		} while (1); //next occurence
+	}   //DeviceRenameCount
+//  DBG("finish rename\n");
 }
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
