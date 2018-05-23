@@ -5214,33 +5214,37 @@ VOID RenameDevices(UINT8* table)
 	CHAR8 *Replace;
 	CHAR8 *Find;
 	INTN i, k, index;
-  UINTN size;
+  INTN size;
 	UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
-	INTN adr;
+	INTN adr, shift, Num = 0;
 	BOOLEAN found;
 	for (index = 0; index < gSettings.DeviceRenameCount; index++) {
 		List = gSettings.DeviceRename[index].Next;
 		Replace = gSettings.DeviceRename[index].Name;
 		Find = List->Name;
 		Bridge = List->Next;
-    DBG("Find: %a Bridge: %a Replace %a\n", Find, Bridge->Name, Replace);
+    DBG("Name: %a, Bridge: %a, Replace: %a\n", Find, Bridge->Name, Replace);
 		adr = 0;
 		do
 		{
-			adr = FindBin(table + adr, len - adr, (UINT8*)Find, 4); //next occurence
-			if (adr < 10) {
-				break;
+			shift = FindBin(table + adr, len - adr, (UINT8*)Find, 4); //next occurence
+			if (shift < 0) {
+				break; //not found
 			}
-//      DBG("found name\n");
+      adr += shift;
+      DBG("found Name @ 0x%x\n", adr);
 			if (!Bridge || (FindBin(table + adr - 4, 5, (UINT8*)(Bridge->Name), 4) == 0)) { // long name like "RP02.PXSX"
 				CopyMem(table + adr, Replace, 4);
 				adr += 5; //at least, it is impossible to see  PXSXPXSX
 //        DBG("replaced\n");
+        Num++;
 				continue;
 			}
 			//find outer device or scope
-			i = adr; //usually adr = @5B - 1 = sizefield - 3
-//      DBG("search for bridge since %d\n", adr);
+			i = adr;
+      while ((i > 0) && isACPI_Char(table[i])) i--; //skip attached name
+      i -= 6;  //skip size and device field
+ //     DBG("search for bridge since %d\n", adr);
 			while (i > 0x20) {  //find devices that previous to adr
 				found = FALSE;
 				//check device
@@ -5255,10 +5259,10 @@ VOID RenameDevices(UINT8* table)
 				}
 				if (found) {  // i points to Device or Scope
 					size = get_size(table, k); //k points to size
-//          DBG("found bridge candidate 0x%x size %d\n", table[i], size);
+  //        DBG("found bridge candidate 0x%x size %d\n", table[i], size);
           if (size) {
 						if ((k + size) > (adr + 4)) {  //Yes - it is outer
-//                  DBG("found Bridge device begin=%x end=%x\n", k, k+size);
+     //            DBG("found Bridge device begin=%x end=%x\n", k, k+size);
 							if (table[k] < 0x40) {
 								k += 1;
 							}
@@ -5271,7 +5275,9 @@ VOID RenameDevices(UINT8* table)
               if (CmpFullName(table + k, len - k, Bridge)) {
 								CopyMem(table + adr, Replace, 4);
 								adr += 5;
-  //              DBG("   name copied\n");
+                DBG("found Bridge device begin=%x end=%x\n", k, k+size);
+    //            DBG("   name copied\n");
+                Num++;
 								break; //cancel search outer bridge, we found it.
 							}
 						}  //else not an outer device
@@ -5279,9 +5285,10 @@ VOID RenameDevices(UINT8* table)
 				} //else not a device or scope
 				i--;
 			}  //while find outer bridge
+			adr += 5;
 		} while (1); //next occurence
 	}   //DeviceRenameCount
-//  DBG("finish rename\n");
+ DBG("  %d replacements\n", Num);
 }
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
