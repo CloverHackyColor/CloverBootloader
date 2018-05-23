@@ -4,20 +4,8 @@
 *.lock
 *~
 
-# /BootHFS/
-/BootHFS/boot0af
-/BootHFS/boot0ss
-/BootHFS/boot0ab
-/BootHFS/boot1h
-/BootHFS/boot1h2
-/BootHFS/boot1altV3
-/BootHFS/boot1f32
-/BootHFS/boot1f32alt
-
 # /CloverPackage/
-/CloverPackage/Version.h
 /CloverPackage/sym/
-/CloverPackage/CloverV2/BootSectors/boot0ab
 /CloverPackage/CloverV2/BootSectors/boot0af
 /CloverPackage/CloverV2/BootSectors/boot0ss
 /CloverPackage/CloverV2/BootSectors/boot0md
@@ -25,13 +13,14 @@
 /CloverPackage/CloverV2/BootSectors/boot1h2
 /CloverPackage/CloverV2/BootSectors/boot1f32alt
 /CloverPackage/CloverV2/BootSectors/boot1f32
-/CloverPackage/CloverV2/BootSectors/boot1altV3
 /CloverPackage/CloverV2/BootSectors/boot1x
 /CloverPackage/CloverV2/BootSectors/boot1xalt
 /CloverPackage/CloverV2/BootSectors/Description.txt
 /CloverPackage/CloverV2/BootSectors/Installation.txt
-/CloverPackage/CloverV2/Bootloaders/
-/CloverPackage/CloverV2/EFI/BOOT/
+/CloverPackage/CloverV2/Bootloaders/ia32/
+/CloverPackage/CloverV2/Bootloaders/x64/
+/CloverPackage/CloverV2/EFI/BOOT/BOOTIA32.efi
+/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
 /CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi
 /CloverPackage/CloverV2/EFI/CLOVER/CLOVERIA32.efi
 /CloverPackage/CloverV2/EFI/CLOVER/drivers32/
@@ -40,20 +29,21 @@
 /CloverPackage/CloverV2/EFI/CLOVER/drivers64UEFI/
 /CloverPackage/CloverV2/EFI/CLOVER/tools/bdmesg.efi
 /CloverPackage/CloverV2/EFI/CLOVER/tools/bdmesg-32.efi
-/CloverPackage/CloverV2/drivers-Off/
+/CloverPackage/CloverV2/drivers-Off/drivers32/
+/CloverPackage/CloverV2/drivers-Off/drivers32UEFI/
+/CloverPackage/CloverV2/drivers-Off/drivers64/
+/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/
 
-/HFSPlus/Ia32/
-/HFSPlus/X64/
+# /FileSystems/HFSPlus/
+/FileSystems/HFSPlus/Ia32/
+/FileSystems/HFSPlus/X64/
 
+# /
 /Version.h
 /vers.txt
 
+# /rEFIt_UEFI/
 /rEFIt_UEFI/Version.h
-/rEFIt_UEFI/vers.txt
-rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/project.xcworkspace/
-rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/xcuserdata/
-CloverX/CloverX.xcodeproj/project.xcworkspace/
-CloverX/CloverX.xcodeproj/xcuserdata/
 
 # XCode files/directories
 *~.nib

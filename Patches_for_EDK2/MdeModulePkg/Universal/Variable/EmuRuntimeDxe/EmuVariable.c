@@ -575,8 +575,7 @@ CHAR8 *
 EFIAPI
 VariableGetBestLanguage (
   IN CONST CHAR8  *SupportedLanguages, 
-  IN BOOLEAN      Iso639Language,
-  IN CONST CHAR8  *Lang,
+  IN UINTN        Iso639Language,
   ...
   )
 {
@@ -589,7 +588,7 @@ VariableGetBestLanguage (
 
   ASSERT (SupportedLanguages != NULL);
 
-  VA_START (Args, Lang);
+  VA_START (Args, Iso639Language);
   while ((Language = VA_ARG (Args, CHAR8 *)) != NULL) {
     //
     // Default to ISO 639-2 mode
@@ -800,7 +799,7 @@ AutoUpdateLangVariable(
       //
       // When setting PlatformLang, firstly get most matched language string from supported language codes.
       //
-      BestPlatformLang = VariableGetBestLanguage (mVariableModuleGlobal->PlatformLangCodes, FALSE, "" /* skipped by VariableGetBestLanguage() */, Data, NULL);
+      BestPlatformLang = VariableGetBestLanguage (mVariableModuleGlobal->PlatformLangCodes, FALSE, Data, NULL);
       if (BestPlatformLang != NULL) {
         //
         // Get the corresponding index in language codes.
@@ -833,7 +832,7 @@ AutoUpdateLangVariable(
       //
       // When setting Lang, firstly get most matched language string from supported language codes.
       //
-      BestLang = VariableGetBestLanguage (mVariableModuleGlobal->LangCodes, TRUE, "" /* skipped by VariableGetBestLanguage() */, Data, NULL);
+      BestLang = VariableGetBestLanguage (mVariableModuleGlobal->LangCodes, TRUE, Data, NULL);
       if (BestLang != NULL) {
         //
         // Get the corresponding index in language codes.

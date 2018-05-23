@@ -129,7 +129,7 @@ checkPatch() {
     export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
     if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
       echo "No clover toolchain found !" >&2
-      echo "Build it with the buid_gcc6.sh script or define the TOOLCHAIN_DIR variable." >&2
+      echo "Build it with the build_gcc8.sh script or define the TOOLCHAIN_DIR variable." >&2
       exit 1
     fi
   fi
@@ -139,7 +139,7 @@ checkPatch() {
 #  if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
 #      echo "No nasm binary found in toolchain directory !" >&2
 #      if [[ "$SYSNAME" != Linux ]]; then
-#        echo "Build it with the buidnasm.sh script." >&2
+#        echo "Build it with the buildnasm.sh script." >&2
 #      fi
 #      exit 1
 #  fi

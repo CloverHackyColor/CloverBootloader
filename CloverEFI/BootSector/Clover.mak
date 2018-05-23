@@ -27,7 +27,6 @@ $(BINDIR)/start32H.com2: start32H.S
 	$(CC) -c -o $(basename $@).o $<
 	$(LD) --oformat binary -Ttext=0 -o $(basename $@).tmp $(basename $@).o
 	$(DD) if=$(basename $@).tmp of=$@ bs=512 skip=1
-	$(CHMOD) 0755 $@
 	$(RM) -f $(basename $@).o $(basename $@).tmp
 
 $(BINDIR)/efi32.com3: efi32.S
@@ -39,31 +38,37 @@ $(BINDIR)/efi32.com3: efi32.S
 $(BINDIR)/Start64H.com: st32_64.S
 	$(CC) -c -Wa,--defsym,CHARACTER_TO_SHOW=0x36 -o $(basename $@).o $<
 	$(LD) --oformat=binary -Ttext=0 -o $@ $(basename $@).o
+	$(CHMOD) -x $@
 	$(RM) -f $(basename $@).o
 
 $(BINDIR)/Start64H2.com: st32_64.S
 	$(CC) -c -Wa,--defsym,CHARACTER_TO_SHOW=0x42 -o $(basename $@).o $<
 	$(LD) --oformat=binary -Ttext=0 -o $@ $(basename $@).o
+	$(CHMOD) -x $@
 	$(RM) -f $(basename $@).o
 
 $(BINDIR)/Start64H3.com: st32_64.S
 	$(CC) -c -Wa,--defsym,CHARACTER_TO_SHOW=0x35,--defsym,USE_LOW_EBDA=1 -o $(basename $@).o $<
 	$(LD) --oformat=binary -Ttext=0 -o $@ $(basename $@).o
+	$(CHMOD) -x $@
 	$(RM) -f $(basename $@).o
 
 $(BINDIR)/Start64H4.com: st32_64.S
 	$(CC) -c -Wa,--defsym,CHARACTER_TO_SHOW=0x4C,--defsym,USE_LOW_EBDA=1 -o $(basename $@).o $<
 	$(LD) --oformat=binary -Ttext=0 -o $@ $(basename $@).o
+	$(CHMOD) -x $@
 	$(RM) -f $(basename $@).o
 
 $(BINDIR)/Start64H5.com: st32_64H.S
 	$(CC) -c -o $(basename $@).o $<
 	$(LD) --oformat=binary -Ttext=0x200 -o $@ $(basename $@).o
+	$(CHMOD) -x $@
 	$(RM) -f $(basename $@).o
 
 $(BINDIR)/Start64H6.com: st32_64H.S
 	$(CC) -c -Wa,--defsym,CHARACTER_TO_SHOW=0x58 -o $(basename $@).o $<
 	$(LD) --oformat=binary -Ttext=0x200 -o $@ $(basename $@).o
+	$(CHMOD) -x $@
 	$(RM) -f $(basename $@).o
 
 $(BINDIR)/efi64.com3: efi64.S

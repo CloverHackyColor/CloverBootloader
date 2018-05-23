@@ -7,7 +7,6 @@ endif
 NASM=$(TOOLCHAIN_DIR)/bin/nasm
 endif
 RM=/bin/rm
-CHMOD=/bin/chmod
 
 BINDIR=bin
 PRODUCTS32=$(BINDIR)/start32H.com2 $(BINDIR)/efi32.com3
@@ -22,34 +21,27 @@ clean:
 
 $(BINDIR)/start32H.com2: start.nasm
 	$(NASM) -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/efi32.com3: efi32.nasm
 	$(NASM) -f bin -o $@ $<
 
 $(BINDIR)/Start64H.com: start.nasm
 	$(NASM) -DX64 -DCHARACTER_TO_SHOW=0x36 -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/Start64H2.com: start.nasm
 	$(NASM) -DX64 -DCHARACTER_TO_SHOW=0x42 -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/Start64H3.com: start.nasm
 	$(NASM) -DX64 -DCHARACTER_TO_SHOW=0x35 -DUSE_LOW_EBDA -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/Start64H4.com: start.nasm
 	$(NASM) -DX64 -DCHARACTER_TO_SHOW=0x4C -DUSE_LOW_EBDA -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/Start64H5.com: start.nasm
 	$(NASM) -DX64 -DCHARACTER_TO_SHOW=0x54 -DGENPAGE -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/Start64H6.com: start.nasm
 	$(NASM) -DX64 -DCHARACTER_TO_SHOW=0x58 -DGENPAGE -f bin -o $@ $<
-	$(CHMOD) 0755 $@
 
 $(BINDIR)/efi64.com3: efi64.nasm
 	$(NASM) -f bin -o $@ $<
