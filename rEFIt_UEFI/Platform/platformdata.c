@@ -1183,7 +1183,7 @@ VOID GetDefaultSettings()
   CopyMem (&gSettings.Dcfg[4], default_dcfg_1, 4);
   //gSettings.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.DualLink             = 0xA; // A(auto): DualLink auto-detection
-  gSettings.HDAInjection         = TRUE;
+  gSettings.HDAInjection         = FALSE;
   //gSettings.HDALayoutId          = 0;
   gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before
   StrCpyS (gSettings.DsdtName, 28, L"DSDT.aml");

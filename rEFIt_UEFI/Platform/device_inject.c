@@ -352,6 +352,10 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   BOOLEAN         Injected = FALSE;
   UINTN           i;
   CHAR8           compatible[64];
+  
+  if (!gSettings.LANInjection) {
+    return FALSE;
+  }
 
   if (!string) {
     string = devprop_create_string();

@@ -236,7 +236,8 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   // to the value different from "en-...". This is not going to work with our driver UEFI Shell load failures.
   // We did not overwrite EFI_PLATFORM_LANG_VARIABLE_NAME, but it uses some other language.
   //
-  if (!PlatformLang || AsciiStrnCmp (PlatformLang, "en-", 3)) {
+//  if (!PlatformLang || AsciiStrnCmp (PlatformLang, "en-", 3)) {
+  if (!PlatformLang) {
     SetNvramVariable(EFI_PLATFORM_LANG_VARIABLE_NAME, &gEfiGlobalVariableGuid,
                      Attributes,
                      6, "en-US");
