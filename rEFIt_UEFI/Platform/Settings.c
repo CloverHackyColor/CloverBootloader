@@ -6217,8 +6217,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Prop->string), Prop->string);
           }
-		  // In InstallInfo.plist, there is no a version key only when updating from AppStore in 10.13+
-		  // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
+          // In InstallInfo.plist, there is no a version key only when updating from AppStore in 10.13+
+          // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
           DictPointer = GetProperty (Dict, "System Image Info"); // 10.12+
           if (DictPointer != NULL) {
             Prop = GetProperty (DictPointer, "version");

@@ -743,6 +743,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
   { 0x591A, "Intel HD Graphics P630"         }, // Server
   { 0x591B, "Intel HD Graphics 630"          }, // Mobile - MacBookPro14,3
+  { 0x591C, "Intel Kaby Lake GT2"            }, //
   { 0x591D, "Intel HD Graphics P630"         }, // Workstation, Mobile Workstation
   { 0x591E, "Intel HD Graphics 615"          }, // Mobile - MacBook10,1
   //GT2F
@@ -2466,6 +2467,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
     case 0x591A: // "Intel HD Graphics P630"          // Server
     case 0x591B: // "Intel HD Graphics 630"           // Mobile - MacBookPro14,3
+    case 0x591C: // "Intel Kaby Lake GT2"             //
     case 0x591D: // "Intel HD Graphics P630"          // Workstation, Mobile Workstation
     case 0x591E: // "Intel HD Graphics 615"           // Mobile - MacBook10,1
       //GT2F

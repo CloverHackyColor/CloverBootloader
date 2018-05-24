@@ -1781,7 +1781,7 @@ UINT8 *APFSContainer_Support(VOID) {
     return APFSUUIDBank;
 }
 
-//System / Recovery version filler
+//System / Install / Recovery version filler
 CHAR16 *SystemVersionPlist       = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
 CHAR16 *ServerVersionPlist       = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
 CHAR16 *InstallVersionPlist      = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
