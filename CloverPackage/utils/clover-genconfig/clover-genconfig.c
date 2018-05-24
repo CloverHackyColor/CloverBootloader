@@ -59,7 +59,9 @@ static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 static io_registry_entry_t gPlatform;
 static mach_port_t         masterPort;
 
+#if 0
 static CFMutableDictionaryRef patchDict[100];
+#endif
 
 CFMutableDictionaryRef addDict(CFMutableDictionaryRef dest, CFStringRef key)
 {
