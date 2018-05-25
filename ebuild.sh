@@ -609,7 +609,7 @@ MainBuildScript() {
         exit $?
 
     elif [[ "$TARGETRULE" == clean || "$TARGETRULE" == cleanall ]]; then
-        build -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET \
+        build --quiet -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET \
          -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE
         [[ "$TARGETRULE" == cleanall ]] && make -C $WORKSPACE/BaseTools clean
         exit $?

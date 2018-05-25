@@ -16,6 +16,27 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 //#include "BiosKeyboard.h"
 #include "AppleKey.h"
+
+// DBG_TO: 0=no debug, 1=serial, 2=console 3=log
+// serial requires
+// [PcdsFixedAtBuild]
+//  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+//  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+// in package DSC file
+
+#define DBG_BIOSKEYBOARD 0
+
+#if DBG_BIOSKEYBOARD == 3
+#define DBG(...) MemLog(FALSE, 0, __VA_ARGS__)
+#elif DBG_BIOSKEYBOARD == 2
+#define DBG(...) AsciiPrint(__VA_ARGS__)
+#elif DBG_BIOSKEYBOARD == 1
+#define DBG(...) DebugPrint(1, __VA_ARGS__)
+#else
+#define DBG(...)
+#endif
+
+
 //
 // EFI Driver Binding Protocol Instance
 //
@@ -130,6 +151,7 @@ BiosKeyboardDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
+DBG("BiosKeyboardDriverBindingSupported\n");
   EFI_STATUS                                Status;
   EFI_LEGACY_8259_PROTOCOL                  *Legacy8259;
   EFI_ISA_IO_PROTOCOL                       *IsaIo;
@@ -151,6 +173,7 @@ BiosKeyboardDriverBindingSupported (
 	//
 	Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &Legacy8259);
 	if (EFI_ERROR (Status)) {
+DBG(" Legacy 8259 Protocol NOT available\n");
 		return Status;
 	}
 	
@@ -167,12 +190,14 @@ BiosKeyboardDriverBindingSupported (
                   );
 
   if (EFI_ERROR (Status)) {
+//DBG("OpenProtocol gEfiIsaIoProtocolGuid failed, status=%x\n", Status);
     return Status;
   }
   //
   // Use the ISA I/O Protocol to see if Controller is the Keyboard controller
   //
   if (IsaIo->ResourceList->Device.HID != EISA_PNP_ID (0x303) || IsaIo->ResourceList->Device.UID != 0) {
+//DBG("EFI_UNSUPPORTED\n");
     Status = EFI_UNSUPPORTED;
   }
 
@@ -183,6 +208,7 @@ BiosKeyboardDriverBindingSupported (
          Controller
          );
 
+//if ( Status == 0 ) DBG("BiosKeyboardDriverBindingSupported return %x\n", Status);
   return Status;
 }
 
@@ -336,10 +362,10 @@ BiosKeyboardDriverBindingStart (
   //
   // Report that the keyboard is being enabled
   //
-  REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_ENABLE
-    );
+//  REPORT_STATUS_CODE (
+//    EFI_PROGRESS_CODE,
+//    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_ENABLE
+//    );
 
   //
   // Setup the WaitForKey event
@@ -397,17 +423,18 @@ BiosKeyboardDriverBindingStart (
   //
   // Report a Progress Code for an attempt to detect the presence of the keyboard device in the system
   //
-  REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_PRESENCE_DETECT
-    );
+//  REPORT_STATUS_CODE (
+//    EFI_PROGRESS_CODE,
+//    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_PRESENCE_DETECT
+//    );
 
   //
   // Reset the keyboard device
   //
+  BOOLEAN extVerif = FeaturePcdGet (PcdPs2KbdExtendedVerification);
   Status = BiosKeyboardPrivate->SimpleTextInputEx.Reset (
                   &BiosKeyboardPrivate->SimpleTextInputEx,
-                  FeaturePcdGet (PcdPs2KbdExtendedVerification)
+                  extVerif
                   );
   if (EFI_ERROR (Status)) {
 //    DEBUG ((EFI_D_ERROR, "[KBD]Reset Failed. Status - %r\n", Status));  
@@ -1078,372 +1105,372 @@ BiosKeyboardReset (
   IN  BOOLEAN                         ExtendedVerification
   )
 {
-  BIOS_KEYBOARD_DEV *BiosKeyboardPrivate;
-  EFI_STATUS        Status;
-  EFI_TPL           OldTpl;
-  UINT8             CommandByte;
-  BOOLEAN           MouseEnable;
-  EFI_INPUT_KEY     Key;
-
-  MouseEnable         = FALSE;
-  BiosKeyboardPrivate = BIOS_KEYBOARD_DEV_FROM_THIS (This);
-
-  //
-  // 1
-  // Report reset progress code
-  //
-  REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_RESET
-    );
-
-  //
-  // Report a Progress Code for clearing the keyboard buffer
-  //
-  REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    EFI_PERIPHERAL_KEYBOARD | EFI_P_KEYBOARD_PC_CLEAR_BUFFER
-    );
-
-  //
-  // 2
-  // Raise TPL to avoid mouse operation impact
-  //
-  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-
-  //
-  //
-  // Exhaust output buffer data
-  //
-  do {
-    Status = BiosKeyboardReadKeyStroke (
-               This,
-               &Key
-               );
-  } while (!EFI_ERROR (Status));
-  //
-  // 3
-  // check for KBC itself firstly for setted-up already or not by reading SYSF (bit2) of status register via 64H
-  // if not skip step 4&5 and jump to step 6 to selftest KBC and report this
-  // else   go step 4
-  //
-  if ((KeyReadStatusRegister (BiosKeyboardPrivate) & KBC_STSREG_VIA64_SYSF) != 0) {
+//  BIOS_KEYBOARD_DEV *BiosKeyboardPrivate;
+  EFI_STATUS        Status = 0;
+//  EFI_TPL           OldTpl;
+//  UINT8             CommandByte;
+//  BOOLEAN           MouseEnable;
+//  EFI_INPUT_KEY     Key;
+//
+//  MouseEnable         = FALSE;
+//  BiosKeyboardPrivate = BIOS_KEYBOARD_DEV_FROM_THIS (This);
+//
+//  //
+//  // 1
+//  // Report reset progress code
+//  //
+////  REPORT_STATUS_CODE (
+////    EFI_PROGRESS_CODE,
+////    EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_RESET
+////    );
+//
+//  //
+//  // Report a Progress Code for clearing the keyboard buffer
+//  //
+////  REPORT_STATUS_CODE (
+////    EFI_PROGRESS_CODE,
+////    EFI_PERIPHERAL_KEYBOARD | EFI_P_KEYBOARD_PC_CLEAR_BUFFER
+////    );
+//
+//  //
+//  // 2
+//  // Raise TPL to avoid mouse operation impact
+//  //
+//  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
+//
+//  //
+//  //
+//  // Exhaust output buffer data
+//  //
+//  do {
+//    Status = BiosKeyboardReadKeyStroke (
+//               This,
+//               &Key
+//               );
+//  } while (!EFI_ERROR (Status));
+//  //
+//  // 3
+//  // check for KBC itself firstly for setted-up already or not by reading SYSF (bit2) of status register via 64H
+//  // if not skip step 4&5 and jump to step 6 to selftest KBC and report this
+//  // else   go step 4
+//  //
+//  if ((KeyReadStatusRegister (BiosKeyboardPrivate) & KBC_STSREG_VIA64_SYSF) != 0) {
+//    //
+//    // 4
+//    // CheckMouseStatus to decide enable it later or not
+//    //
+//    //
+//    // Read the command byte of KBC
+//    //
+//    Status = KeyboardCommand (
+//               BiosKeyboardPrivate,
+//               KBC_CMDREG_VIA64_CMDBYTE_R
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardRead (
+//               BiosKeyboardPrivate,
+//               &CommandByte
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//    //
+//    // Check mouse enabled or not before
+//    //
+//    if ((CommandByte & KB_CMMBYTE_DISABLE_AUX) != 0) {
+//      MouseEnable = FALSE;
+//    } else {
+//      MouseEnable = TRUE;
+//    }
+//    //
+//    // 5
+//    // disable mouse (via KBC) and Keyboard device
+//    //
+//    Status = KeyboardCommand (
+//               BiosKeyboardPrivate,
+//               KBC_CMDREG_VIA64_AUX_DISABLE
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardCommand (
+//               BiosKeyboardPrivate,
+//               KBC_CMDREG_VIA64_KB_DISABLE
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//  } else {
+//    //
+//    // 6
+//    // KBC Self Test
+//    //
+//    //
+//    // Report a Progress Code for performing a self test on the keyboard controller
+//    //
+//    REPORT_STATUS_CODE (
+//      EFI_PROGRESS_CODE,
+//      EFI_PERIPHERAL_KEYBOARD | EFI_P_KEYBOARD_PC_SELF_TEST
+//      );
+//
+//    Status = KeyboardCommand (
+//               BiosKeyboardPrivate,
+//               KBC_CMDREG_VIA64_KBC_SLFTEST
+//               );
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_KBCSLFTEST_OK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//  }
+//  //
+//  // 7
+//  // Disable  Mouse interface, enable  Keyboard interface and declare selftest success
+//  //
+//  // Mouse device will block keyboard interface before it be configured, so we should disable mouse first.
+//  //
+//  Status = KeyboardCommand (
+//             BiosKeyboardPrivate,
+//             KBC_CMDREG_VIA64_CMDBYTE_W
+//             );
+//
+//  if (EFI_ERROR (Status)) {
+//    Status    = EFI_DEVICE_ERROR;
+//    goto Exit;
+//  }
+//
+//  //
+//  // Write 8042 Command Byte, set System Flag
+//  // While at the same time:
+//  //  1. disable mouse interface,
+//  //  2. enable kbd interface,
+//  //  3. enable PC/XT kbd translation mode
+//  //  4. enable mouse and kbd interrupts
+//  //
+//  //Command Byte bits:
+//  //  7: Reserved
+//  //  6: PC/XT translation mode
+//  //  5: Disable Auxiliary device interface
+//  //  4: Disable keyboard interface
+//  //  3: Reserved
+//  //  2: System Flag
+//  //  1: Enable Auxiliary device interrupt
+//  //  0: Enable Keyboard interrupt
+//  //
+//  CommandByte = 0;
+//  Status = KeyboardWrite (
+//             BiosKeyboardPrivate,
+//             (UINT8) ((CommandByte &
+//              (~KB_CMMBYTE_DISABLE_KB)) |
+//              KB_CMMBYTE_KSCAN2UNI_COV |
+//              KB_CMMBYTE_ENABLE_AUXINT |
+//              KB_CMMBYTE_ENABLE_KBINT  |
+//              KB_CMMBYTE_SLFTEST_SUCC  |
+//              KB_CMMBYTE_DISABLE_AUX)
+//             );
+//
+//  //
+//  // For reseting keyboard is not mandatory before booting OS and sometimes keyboard responses very slow,
+//  // so we only do the real reseting for keyboard when user asks, and normally during booting an OS, it's skipped.
+//  // Call CheckKeyboardConnect() to check whether keyboard is connected, if it is not connected,
+//  // Real reset will not do.
+//  //
+//  if (ExtendedVerification && CheckKeyboardConnect (BiosKeyboardPrivate)) {
+//    //
+//    // 8
+//    // Send keyboard reset command then read ACK
+//    //
+//    Status = KeyboardWrite (
+//               BiosKeyboardPrivate,
+//               KBC_INPBUF_VIA60_KBRESET
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_ACK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//    //
+//    // 9
+//    // Wait for keyboard return test OK.
+//    //
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_BATTEST_OK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//    //
+//    // 10
+//    // set keyboard scan code set = 02 (standard configuration)
+//    //
+//    Status = KeyboardWrite (
+//               BiosKeyboardPrivate,
+//               KBC_INPBUF_VIA60_KBSCODE
+//               );
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_ACK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWrite (
+//               BiosKeyboardPrivate,
+//               KBC_INPBUF_VIA60_SCODESET2
+//               );
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_ACK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//    //
+//    // 11
+//    // enable keyboard itself (not via KBC) by writing CMD F4 via 60H
+//    //
+//    Status = KeyboardWrite (
+//               BiosKeyboardPrivate,
+//               KBC_INPBUF_VIA60_KBEN
+//               );
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_ACK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//    //
+//    // 12
+//    // Additional validation, do it as follow:
+//    // 1). check for status register of PARE && TIM via 64H
+//    // 2). perform KB checking by writing ABh via 64H
+//    //
+//    if ((KeyReadStatusRegister (BiosKeyboardPrivate) & (KBC_STSREG_VIA64_PARE | KBC_STSREG_VIA64_TIM)) != 0) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardCommand (
+//               BiosKeyboardPrivate,
+//               KBC_CMDREG_VIA64_KB_CKECK
+//               );
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//
+//    Status = KeyboardWaitForValue (
+//               BiosKeyboardPrivate,
+//               KBC_CMDECHO_KBCHECK_OK,
+//               KEYBOARD_WAITFORVALUE_TIMEOUT
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//      goto Exit;
+//    }
+//  }
+//  //
+//  // 13
+//  // Done for validating keyboard. Enable keyboard (via KBC)
+//  // and recover the command byte to proper value
+//  //
+//  Status = KeyboardCommand (
+//             BiosKeyboardPrivate,
+//             KBC_CMDREG_VIA64_KB_ENABLE
+//             );
+//
+//  if (EFI_ERROR (Status)) {
+//    Status    = EFI_DEVICE_ERROR;
+//    goto Exit;
+//  }
+//
+//  //
+//  // 14
+//  // conditionally enable mouse (via KBC)
+//  //
+//  if (MouseEnable) {
+//    Status = KeyboardCommand (
+//               BiosKeyboardPrivate,
+//               KBC_CMDREG_VIA64_AUX_ENABLE
+//               );
+//
+//    if (EFI_ERROR (Status)) {
+//      Status    = EFI_DEVICE_ERROR;
+//
+//    }
+//  }
+//
+//Exit:
+//  //
+//  // 15
+//  // resume priority of task level
+//  //
+//  gBS->RestoreTPL (OldTpl);
     //
-    // 4
-    // CheckMouseStatus to decide enable it later or not
-    //
-    //
-    // Read the command byte of KBC
-    //
-    Status = KeyboardCommand (
-               BiosKeyboardPrivate,
-               KBC_CMDREG_VIA64_CMDBYTE_R
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardRead (
-               BiosKeyboardPrivate,
-               &CommandByte
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-    //
-    // Check mouse enabled or not before
-    //
-    if ((CommandByte & KB_CMMBYTE_DISABLE_AUX) != 0) {
-      MouseEnable = FALSE;
-    } else {
-      MouseEnable = TRUE;
-    }
-    //
-    // 5
-    // disable mouse (via KBC) and Keyboard device
-    //
-    Status = KeyboardCommand (
-               BiosKeyboardPrivate,
-               KBC_CMDREG_VIA64_AUX_DISABLE
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardCommand (
-               BiosKeyboardPrivate,
-               KBC_CMDREG_VIA64_KB_DISABLE
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-  } else {
-    //
-    // 6
-    // KBC Self Test
-    //
-    //
-    // Report a Progress Code for performing a self test on the keyboard controller
-    //
-    REPORT_STATUS_CODE (
-      EFI_PROGRESS_CODE,
-      EFI_PERIPHERAL_KEYBOARD | EFI_P_KEYBOARD_PC_SELF_TEST
-      );
-
-    Status = KeyboardCommand (
-               BiosKeyboardPrivate,
-               KBC_CMDREG_VIA64_KBC_SLFTEST
-               );
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_KBCSLFTEST_OK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-  }
-  //
-  // 7
-  // Disable  Mouse interface, enable  Keyboard interface and declare selftest success
-  //
-  // Mouse device will block keyboard interface before it be configured, so we should disable mouse first.
-  //
-  Status = KeyboardCommand (
-             BiosKeyboardPrivate,
-             KBC_CMDREG_VIA64_CMDBYTE_W
-             );
-
-  if (EFI_ERROR (Status)) {
-    Status    = EFI_DEVICE_ERROR;
-    goto Exit;
-  }
-
-  //
-  // Write 8042 Command Byte, set System Flag
-  // While at the same time:
-  //  1. disable mouse interface,
-  //  2. enable kbd interface,
-  //  3. enable PC/XT kbd translation mode
-  //  4. enable mouse and kbd interrupts
-  //
-  //Command Byte bits:
-  //  7: Reserved
-  //  6: PC/XT translation mode
-  //  5: Disable Auxiliary device interface
-  //  4: Disable keyboard interface
-  //  3: Reserved
-  //  2: System Flag
-  //  1: Enable Auxiliary device interrupt
-  //  0: Enable Keyboard interrupt
-  //
-  CommandByte = 0;
-  Status = KeyboardWrite (
-             BiosKeyboardPrivate,
-             (UINT8) ((CommandByte &
-              (~KB_CMMBYTE_DISABLE_KB)) |
-              KB_CMMBYTE_KSCAN2UNI_COV |
-              KB_CMMBYTE_ENABLE_AUXINT |
-              KB_CMMBYTE_ENABLE_KBINT  |
-              KB_CMMBYTE_SLFTEST_SUCC  |
-              KB_CMMBYTE_DISABLE_AUX)
-             );
-
-  //
-  // For reseting keyboard is not mandatory before booting OS and sometimes keyboard responses very slow,
-  // so we only do the real reseting for keyboard when user asks, and normally during booting an OS, it's skipped.
-  // Call CheckKeyboardConnect() to check whether keyboard is connected, if it is not connected,
-  // Real reset will not do.
-  //
-  if (ExtendedVerification && CheckKeyboardConnect (BiosKeyboardPrivate)) {
-    //
-    // 8
-    // Send keyboard reset command then read ACK
-    //
-    Status = KeyboardWrite (
-               BiosKeyboardPrivate,
-               KBC_INPBUF_VIA60_KBRESET
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_ACK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-    //
-    // 9
-    // Wait for keyboard return test OK.
-    //
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_BATTEST_OK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-    //
-    // 10
-    // set keyboard scan code set = 02 (standard configuration)
-    //
-    Status = KeyboardWrite (
-               BiosKeyboardPrivate,
-               KBC_INPBUF_VIA60_KBSCODE
-               );
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_ACK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWrite (
-               BiosKeyboardPrivate,
-               KBC_INPBUF_VIA60_SCODESET2
-               );
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_ACK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-    //
-    // 11
-    // enable keyboard itself (not via KBC) by writing CMD F4 via 60H
-    //
-    Status = KeyboardWrite (
-               BiosKeyboardPrivate,
-               KBC_INPBUF_VIA60_KBEN
-               );
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_ACK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-    //
-    // 12
-    // Additional validation, do it as follow:
-    // 1). check for status register of PARE && TIM via 64H
-    // 2). perform KB checking by writing ABh via 64H
-    //
-    if ((KeyReadStatusRegister (BiosKeyboardPrivate) & (KBC_STSREG_VIA64_PARE | KBC_STSREG_VIA64_TIM)) != 0) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardCommand (
-               BiosKeyboardPrivate,
-               KBC_CMDREG_VIA64_KB_CKECK
-               );
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-
-    Status = KeyboardWaitForValue (
-               BiosKeyboardPrivate,
-               KBC_CMDECHO_KBCHECK_OK,
-               KEYBOARD_WAITFORVALUE_TIMEOUT
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-      goto Exit;
-    }
-  }
-  //
-  // 13
-  // Done for validating keyboard. Enable keyboard (via KBC)
-  // and recover the command byte to proper value
-  //
-  Status = KeyboardCommand (
-             BiosKeyboardPrivate,
-             KBC_CMDREG_VIA64_KB_ENABLE
-             );
-
-  if (EFI_ERROR (Status)) {
-    Status    = EFI_DEVICE_ERROR;
-    goto Exit;
-  }
-
-  //
-  // 14
-  // conditionally enable mouse (via KBC)
-  //
-  if (MouseEnable) {
-    Status = KeyboardCommand (
-               BiosKeyboardPrivate,
-               KBC_CMDREG_VIA64_AUX_ENABLE
-               );
-
-    if (EFI_ERROR (Status)) {
-      Status    = EFI_DEVICE_ERROR;
-
-    }
-  }
-
-Exit:
-  //
-  // 15
-  // resume priority of task level
-  //
-  gBS->RestoreTPL (OldTpl);
-
   return Status;
 
 }
@@ -1804,6 +1831,8 @@ CheckKeyboardConnect (
   @param  Context A BIOS_KEYBOARD_DEV pointer
 
 **/
+static int apple_need_zero = 0;
+
 VOID
 EFIAPI
 BiosKeyboardTimerHandler (
@@ -1820,8 +1849,6 @@ BiosKeyboardTimerHandler (
   LIST_ENTRY                         *Link;
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
   //for AppleDb
-  UINTN               NumberOfKeys;
-  APPLE_KEY           Keys[8];
 
   ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
 
@@ -1849,6 +1876,18 @@ BiosKeyboardTimerHandler (
 	LegacyBiosInt86 (BiosKeyboardPrivate, 0x16, &Regs);	
   if (Regs.E.EFLAGS.Bits.ZF != 0) {
     gBS->RestoreTPL (OldTpl);
+    if ( apple_need_zero ) {
+    	APPLE_KEY           Keys[8]; // APPLE_KEY is UINT16
+DBG("BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys 0\n");
+    	BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (
+                                                           BiosKeyboardPrivate->KeyMapDb,
+                                                           BiosKeyboardPrivate->KeyMapDbIndex,
+                                                           (APPLE_MODIFIER_MAP)0,
+                                                           0,
+                                                           &Keys[0]
+                                                           );
+            apple_need_zero = 0;
+        }
     return;
   }  
 
@@ -2074,25 +2113,241 @@ BiosKeyboardTimerHandler (
   }
   
 */  
-  NumberOfKeys = 3;
-  Keys[0] = (APPLE_KEY)KeyData.KeyState.KeyShiftState;
-  Keys[1] = (APPLE_KEY)KeyData.KeyState.KeyToggleState;  //or 0?
-  Keys[2] = (APPLE_KEY)KeyData.Key.ScanCode;
+//  NumberOfKeys = 3;
+//  Keys[0] = (APPLE_KEY)KeyData.KeyState.KeyShiftState;
+//  Keys[1] = (APPLE_KEY)KeyData.KeyState.KeyToggleState;  //or 0?
+//  Keys[2] = (APPLE_KEY)KeyData.Key.ScanCode;
+
+  // Parse the modifier key, which is the first byte of keyboard input report.
+  //
+extern int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap);
   
+DBG("2 Got bios key ScanCode=%x, Uchar=%x, ShiftState=%x, ToogleState=%x\n", KeyData.Key.ScanCode, KeyData.Key.UnicodeChar, KeyData.KeyState.KeyShiftState, KeyData.KeyState.KeyToggleState);
+
+  UINT8 CurModifierMap  = 0;
+  UINTN               NumberOfKeys;
+  APPLE_KEY           Keys[8]; // APPLE_KEY is UINT16
+  
+//  DBG("Key %d\n", KeyData.Key.ScanCode);
+//  if (BiosKeyboardPrivate->KeyMapDb == NULL) {
+//     EFI_STATUS Status = BiosKbLocateAppleKeyMapDb (BiosKeyboardPrivate);
+//#ifdef TRACE_KEYS
+//  DBG("BiosKeyboardTimerHandler: BiosKbLocateAppleKeyMapDb status=%x\n", Status);
+//#endif
+//  }
   if (BiosKeyboardPrivate->KeyMapDb != NULL) {
+//  DBG("BiosKeyboardTimerHandler: SetKeyStrokeBufferKeys\n");
+
+    if ( MapBiosKey(KeyData, &Keys[0], &CurModifierMap) )
+    {
+    	NumberOfKeys=1;
+  DBG("3BiosKeyboardPrivate->KeyMapDb(0x%x)->SetKeyStrokeBufferKeys CurModifierMap=%x, NumberOfKeys=%d ", BiosKeyboardPrivate->KeyMapDb, CurModifierMap, NumberOfKeys);
+  int zud; for (zud=0;zud<NumberOfKeys;zud++) DBG("Keys[%d]=%d(%d %d) 0x%x ", zud, Keys[zud], Keys[zud]>>8, Keys[zud]&0xFF, Keys[zud]);
+  DBG("\n");
     BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (
                                                            BiosKeyboardPrivate->KeyMapDb,
                                                            BiosKeyboardPrivate->KeyMapDbIndex,
-                                                           (APPLE_MODIFIER_MAP)(Keys[0]),
+															   (APPLE_MODIFIER_MAP)CurModifierMap,
                                                            NumberOfKeys,
                                                            &Keys[0]
                                                            );
+	    apple_need_zero = 1;
+	}
+  }else{
+//    DBG("BiosKeyboardPrivate->KeyMapDb == NULL\n");
   }
 
 
   return ;  
 }
 
+int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap)
+{
+	if ( KeyData.Key.UnicodeChar == 0 )
+	{
+		*pCurModifierMap = 0;
+		switch (KeyData.Key.ScanCode) {
+			case 0x01: // up arrow
+				*pKey = 0x7052;
+				return 1;
+			case 0x02: // down arrow
+				*pKey = 0x7051;
+				return 1;
+			case 0x03: // left arrow
+				*pKey = 0x7050;
+				return 1;
+			case 0x04: // right arrow
+				*pKey = 0x704F;
+				return 1;
+		}
+		return 0;
+	}
+	if ( KeyData.Key.UnicodeChar >= 'a'  &&  KeyData.Key.UnicodeChar <= 'z' ) {
+		*pKey = 0x7004 + ( KeyData.Key.UnicodeChar - 'a');
+		*pCurModifierMap = 0;
+		return 1;
+	}
+	if ( KeyData.Key.UnicodeChar >= 'A'  &&  KeyData.Key.UnicodeChar <= 'Z' ) {
+		*pKey = 0x7004 + ( KeyData.Key.UnicodeChar - 'A');
+		*pCurModifierMap = 2;
+		return 1;
+	}
+	if ( KeyData.Key.UnicodeChar == '0' ) { // Could have put that in the switch, but wanted to make very clear that the 0 wasn't forgotten and that this : "KeyData.Key.UnicodeChar >= '1'" (instead of '0') is not a mistake !!!
+		*pKey = 0x7027;
+		return 1;
+	}
+	if ( KeyData.Key.UnicodeChar >= '1'  &&  KeyData.Key.UnicodeChar <= '9' ) {
+		*pKey = 0x701E + ( KeyData.Key.UnicodeChar - '1');
+		return 1;
+	}
+
+	*pCurModifierMap = 0;
+	switch (KeyData.Key.UnicodeChar) {
+		case 0x01: // up arrow
+			*pKey = 0x7052;
+			return 1;
+		case 0x02: // down arrow
+			*pKey = 0x7051;
+			return 1;
+		case 0x03: // left arrow
+			*pKey = 0x7050;
+			return 1;
+		case 0x04: // right arrow
+			*pKey = 0x704F;
+			return 1;
+		case 0x08: // backspace
+			*pKey = 0x702A;
+			return 1;
+		case 0x0D: // return
+			*pKey = 0x7028;
+			return 1;
+		case ' ': // return
+			*pKey = 0x702C;
+			return 1;
+		case '!': // return
+			*pKey = 0x701E;
+			*pCurModifierMap = 2;
+			return 1;
+		case '"': // return
+			*pKey = 0x7034;
+			*pCurModifierMap = 2;
+			return 1;
+		case '#': // return
+			*pKey = 0x7020;
+			*pCurModifierMap = 2;
+			return 1;
+		case '$': // return
+			*pKey = 0x7021;
+			*pCurModifierMap = 2;
+			return 1;
+		case '%': // return
+			*pKey = 0x7022;
+			*pCurModifierMap = 2;
+			return 1;
+		case '&': // return
+			*pKey = 0x7024;
+			*pCurModifierMap = 2;
+			return 1;
+		case '\'': // return
+			*pKey = 0x7034;
+			return 1;
+		case '(': // return
+			*pKey = 0x7026;
+			*pCurModifierMap = 2;
+			return 1;
+		case ')': // return
+			*pKey = 0x7027;
+			*pCurModifierMap = 2;
+			return 1;
+		case '*': // return
+			*pKey = 0x7025;
+			*pCurModifierMap = 2;
+			return 1;
+		case '+': // return
+			*pKey = 0x702E;
+			*pCurModifierMap = 2;
+			return 1;
+		case ',': // return
+			*pKey = 0x7036;
+			return 1;
+		case '-': // return
+			*pKey = 0x702D;
+			return 1;
+		case '.': // return
+			*pKey = 0x7037;
+			return 1;
+		case '/': // return
+			*pKey = 0x7038;
+			return 1;
+
+		case ':': // return
+			*pKey = 0x7033;
+			*pCurModifierMap = 2;
+			return 1;
+		case ';': // return
+			*pKey = 0x7033;
+			return 1;
+		case '<': // return
+			*pKey = 0x7036;
+			*pCurModifierMap = 2;
+			return 1;
+		case '=': // return
+			*pKey = 0x702E;
+			return 1;
+		case '>': // return
+			*pKey = 0x7037;
+			*pCurModifierMap = 2;
+			return 1;
+		case '?': // return
+			*pKey = 0x7038;
+			*pCurModifierMap = 2;
+			return 1;
+		case '@': // return
+			*pKey = 0x701F;
+			*pCurModifierMap = 2;
+			return 1;
+
+
+		case '[': // return
+			*pKey = 0x702F;
+			return 1;
+		case '\\': // return
+			*pKey = 0x7031;
+			return 1;
+		case ']': // return
+			*pKey = 0x7030;
+			return 1;
+		case '^': // return
+			*pKey = 0x7023;
+			*pCurModifierMap = 2;
+			return 1;
+		case '_': // return
+			*pKey = 0x702D;
+			*pCurModifierMap = 2;
+			return 1;
+		case '`': // return
+			*pKey = 0x7035;
+			return 1;
+
+		case '{': // return
+			*pKey = 0x702F;
+			*pCurModifierMap = 2;
+			return 1;
+		case '|': // return
+			*pKey = 0x7031;
+			*pCurModifierMap = 2;
+			return 1;
+		case '}': // return
+			*pKey = 0x7030;
+			*pCurModifierMap = 2;
+			return 1;
+		case '~': // return
+			*pKey = 0x7035;
+			*pCurModifierMap = 2;
+			return 1;
+	}
+	return 0;
+}
 /**
   Free keyboard notify list.
 
@@ -2209,6 +2464,7 @@ BiosKeyboardResetEx (
   IN BOOLEAN                            ExtendedVerification
   )
 {
+DBG("BiosKeyboardResetEx -> Enter\n");
   BIOS_KEYBOARD_DEV                     *BiosKeyboardPrivate;
   EFI_STATUS                            Status;
   EFI_TPL                               OldTpl;
@@ -2220,6 +2476,7 @@ BiosKeyboardResetEx (
                                                ExtendedVerification
                                                );
   if (EFI_ERROR (Status)) {
+DBG("BiosKeyboardResetEx -> Leave EFI_DEVICE_ERROR\n");
     return EFI_DEVICE_ERROR;
   }
 
@@ -2227,8 +2484,8 @@ BiosKeyboardResetEx (
 
   gBS->RestoreTPL (OldTpl);
   
+DBG("BiosKeyboardResetEx -> Leave sucess\n");
   return EFI_SUCCESS;
-
 }
 
 /**

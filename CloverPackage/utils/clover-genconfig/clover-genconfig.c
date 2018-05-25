@@ -29,7 +29,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 /*
-cc -o genconfig clover-genconfig.c -framework CoreFoundation -framework IOKit -Wall -Wno-unused-function
+cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framework IOKit -Wall -Wno-unused-function
 */
 
 // EDK2 includes
@@ -46,6 +46,10 @@ cc -o genconfig clover-genconfig.c -framework CoreFoundation -framework IOKit -W
 
 #include <err.h>
 #include <mach/mach_error.h>
+#define GFX 0
+#if GFX
+  #include "gfxutil.h"
+#endif
 
 /*
 #define offsetof(st, m) \
@@ -56,6 +60,7 @@ cc -o genconfig clover-genconfig.c -framework CoreFoundation -framework IOKit -W
 static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 
 // Global Variables
+static io_registry_entry_t gEFI;
 static io_registry_entry_t gPlatform;
 static mach_port_t         masterPort;
 
@@ -732,24 +737,41 @@ void PrintConfig(CFTypeRef data)
 int main(int argc, char **argv)
 {
   kern_return_t       result;
+#if GFX
+  SETTINGS settings;
+  GFX_HEADER * gfx;
+
+  unsigned char * dp = NULL;
+#endif
 
   result = IOMasterPort(bootstrap_port, &masterPort);
   if (result != KERN_SUCCESS) {
     errx(1, "Error getting the IOMaster port: %s",
          mach_error_string(result));
   }
-
+  
+  gEFI = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi");
+  if (gEFI == 0) {
+    errx(1, "EFI is not supported on this system");
+  }
+  CFTypeRef devProp = NULL;
+  result = GetOFVariable("device-properties", &devProp);
+#if GFX
+  gfx =  parse_binary(devProp, settings);
+#endif
+  
   gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi/platform");
   if (gPlatform == 0) {
     errx(1, "EFI is not supported on this system");
   }
-
-  CFTypeRef data;
+  CFTypeRef data = NULL;
   result = GetOFVariable("Settings", &data);
   if (result != KERN_SUCCESS) {
     errx(1, "Clover absent or too old : %s",
          mach_error_string(result));
   }
+  
+  
 
   PrintConfig(data);
   CFRelease(data);
