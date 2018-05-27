@@ -1,7 +1,7 @@
 #ifndef _DEVPATH_H
 #define _DEVPATH_H
 
-//#include "utils.h"
+#include "utils.h"
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@
 #include <CoreFoundation/CoreFoundation.h>            // (CFDictionary, ...)
 #include <IOKit/IOCFSerialize.h>                      // (IOCFSerialize, ...)
 #include <IOKit/IOKitLib.h>                // (IOMasterPort, ...)
-#include "../../../rEFIt_UEFI/Platform/Platform.h"
+//#include "../../../rEFIt_UEFI/Platform/Platform.h"
 
 #define MAX_PATH_LEN 4096
 #define MAX_DEVICE_PATH_LEN 1000
@@ -27,6 +27,17 @@
 #define IS_RIGHT_PARENTH(a)  ((a) == ')')
 #define IS_SLASH(a)          ((a) == '/')
 #define IS_NULL(a)           ((a) == '\0')
+
+typedef signed char      INT8;
+typedef unsigned char    UINT8;
+typedef UINT8           BOOLEAN;
+typedef char            CHAR8;
+typedef short            INT16;
+typedef unsigned short  UINT16;
+typedef int              INT32;
+typedef unsigned int    UINT32;
+typedef long long        INT64;
+typedef unsigned long long  UINT64;
 
 
 typedef struct
@@ -54,9 +65,9 @@ typedef struct
 #define EFI_DP_TYPE_MASK                    0x7F
 #define EFI_DP_TYPE_UNPACKED                0x80
 #define END_DEVICE_PATH_TYPE                0x7f
-//#define END_ENTIRE_DEVICE_PATH_SUBTYPE      0xff
+#define END_ENTIRE_DEVICE_PATH_SUBTYPE      0xff
 #define END_INSTANCE_DEVICE_PATH_SUBTYPE    0x01
-//#define END_DEVICE_PATH_LENGTH              (sizeof(EFI_DEVICE_PATH))
+#define END_DEVICE_PATH_LENGTH              (sizeof(EFI_DEVICE_PATH_P))
 
 #define DP_IS_END_TYPE(a)
 #define DP_IS_END_SUBTYPE(a)        ( ((a)->SubType == END_ENTIRE_DEVICE_PATH_SUBTYPE )
@@ -64,7 +75,7 @@ typedef struct
 #define DevicePathType(a)           ( ((a)->Type) & EFI_DP_TYPE_MASK )
 #define DevicePathSubType(a)        ( (a)->SubType )
 #define DevicePathNodeLength(a)     ( ((a)->Length[0]) | ((a)->Length[1] << 8) )
-#define NextDevicePathNode(a)       ( (EFI_DEVICE_PATH *) ( ((unsigned char *) (a)) + DevicePathNodeLength(a)))
+#define NextDevicePathNode(a)       ( (EFI_DEVICE_PATH_P *) ( ((unsigned char *) (a)) + DevicePathNodeLength(a)))
 #define IsDevicePathEndType(a)      ( DevicePathType(a) == END_DEVICE_PATH_TYPE )
 #define IsDevicePathEndSubType(a)   ( (a)->SubType == END_ENTIRE_DEVICE_PATH_SUBTYPE )
 #define IsDevicePathEnd(a)          ( IsDevicePathEndType(a) && IsDevicePathEndSubType(a) )
@@ -79,7 +90,7 @@ typedef struct
 #define SetDevicePathEndNode(a)  {							\
             (a)->Type = END_DEVICE_PATH_TYPE;				\
             (a)->SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;  \
-            (a)->Length[0] = sizeof(EFI_DEVICE_PATH);		\
+            (a)->Length[0] = sizeof(EFI_DEVICE_PATH_P);		\
             (a)->Length[1] = 0;								\
             }
 
@@ -87,26 +98,26 @@ typedef struct
 #define HARDWARE_DEVICE_PATH 0x01
 
 #define HW_PCI_DP 0x01
-/*
+
 typedef struct _PCI_DEVICE_PATH
 {
-	EFI_DEVICE_PATH Header;
-	UINT8 Function;
-	UINT8 Device;
-} PCI_DEVICE_PATH;
-*/
+	EFI_DEVICE_PATH_P Header;
+	unsigned char Function;
+	unsigned char  Device;
+} PCI_DEVICE_PATH_P;
+
 // ****** ACPI ******* 
 #define ACPI_DEVICE_PATH 0x02
 
 #define ACPI_DP 0x01
-/*
+
 typedef struct _ACPI_HID_DEVICE_PATH 
 {
-	EFI_DEVICE_PATH	Header;
-	UINT32	HID;
-	UINT32	UID;
-} ACPI_HID_DEVICE_PATH;
-*/
+	EFI_DEVICE_PATH_P	Header;
+	UInt32	HID;
+	UInt32	UID;
+} ACPI_HID_DEVICE_PATH_P;
+
 // 
 //  EISA ID Macro
 //  EISA ID Definition 32-bits
@@ -125,26 +136,26 @@ typedef struct _ACPI_HID_DEVICE_PATH
 void EisaIdFromText (CHAR8 *Text, UINT32 *EisaId);
 
 // Convert a device node to its text representation.
-//CHAR8 *ConvertDeviceNodeToText (const EFI_DEVICE_PATH  *DeviceNode, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts);
+//CHAR8 *ConvertDeviceNodeToText (const EFI_DEVICE_PATH_P *DeviceNode, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts);
 
 // Convert a device path to its text representation.
-CHAR8 *ConvertDevicePathToText (const EFI_DEVICE_PATH_P  *DeviceNode, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts);
+CHAR8 *ConvertDevicePathToAscii (const EFI_DEVICE_PATH_P  *DeviceNode, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts);
 
 // Convert text to the binary representation of a device node.
-//EFI_DEVICE_PATH *ConvertTextToDeviceNode (const CHAR8 *TextDeviceNode);
+//EFI_DEVICE_PATH_P*ConvertTextToDeviceNode (const CHAR8 *TextDeviceNode);
 
 // Convert text to the binary representation of a device path.
-//EFI_DEVICE_PATH *ConvertTextToDevicePath (const CHAR8 *TextDevicePath);
+//EFI_DEVICE_PATH_P*ConvertTextToDevicePath (const CHAR8 *TextDevicePath);
 
 // Returns the size of the device path, in bytes.
-UINT32 DevicePathSize (const EFI_DEVICE_PATH *DevicePath);
+UINT32 DevicePathSize (const EFI_DEVICE_PATH_P *DevicePath);
 
 // Function is used to append a device path node to the end of another device path.
-//EFI_DEVICE_PATH *AppendDevicePathNode (EFI_DEVICE_PATH  *Src1, EFI_DEVICE_PATH  *Node);
+//EFI_DEVICE_PATH_P*AppendDevicePathNode (EFI_DEVICE_PATH_P *Src1, EFI_DEVICE_PATH_P *Node);
 
 // Function is used to insert a device path node to the start of another device path.
-//EFI_DEVICE_PATH *InsertDevicePathNode (EFI_DEVICE_PATH  *Src1, EFI_DEVICE_PATH  *Node);
+//EFI_DEVICE_PATH_P*InsertDevicePathNode (EFI_DEVICE_PATH_P *Src1, EFI_DEVICE_PATH_P *Node);
 
-//io_iterator_t RecursiveFindDevicePath(io_iterator_t iterator, const io_string_t search, const io_name_t plane, EFI_DEVICE_PATH **DevicePath, BOOLEAN *match);
+//io_iterator_t RecursiveFindDevicePath(io_iterator_t iterator, const io_string_t search, const io_name_t plane, EFI_DEVICE_PATH_P**DevicePath, BOOLEAN *match);
 
 #endif

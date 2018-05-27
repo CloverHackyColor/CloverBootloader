@@ -10,30 +10,7 @@
 #include <IOKit/IOKitLib.h>							  // (IOMasterPort, ...)
 
 #include "efidevp.h"
-
-
-void CatPrintf(char *target, const char *format, ...)
-{
-  va_list varargs;
-  
-  while(*target) target++;
-  
-  va_start(varargs, format);
-  vsprintf(target, format, varargs);
-  va_end(varargs);
-}
-
-void *MallocCopy(unsigned int size, void *buf)
-{
-  void *new = NULL;
-  
-  if( (new = (void *)malloc(size * sizeof(void) ) ) != NULL)
-  {
-    memcpy(new, buf, size);
-  }
-  
-  return new;
-}
+#include "utils.h"
 
 /*
  * Get parameter in a pair of parentheses follow the given node name.
@@ -215,11 +192,11 @@ CHAR8 *GetNextDeviceNodeStr (CHAR8 **DevicePath, BOOLEAN *IsInstanceEnd)
  * Function unpacks a device path data structure so that all the nodes of a device path 
  * are naturally aligned.
  */
-EFI_DEVICE_PATH *UnpackDevicePath (EFI_DEVICE_PATH  *DevPath)
+EFI_DEVICE_PATH_P *UnpackDevicePath (EFI_DEVICE_PATH_P  *DevPath)
 {
-  EFI_DEVICE_PATH  *Src;
-  EFI_DEVICE_PATH  *Dest;
-  EFI_DEVICE_PATH  *NewPath;
+  EFI_DEVICE_PATH_P  *Src;
+  EFI_DEVICE_PATH_P  *Dest;
+  EFI_DEVICE_PATH_P  *NewPath;
   UINT32			Size;
   UINT32			Count;
 
@@ -247,11 +224,11 @@ EFI_DEVICE_PATH *UnpackDevicePath (EFI_DEVICE_PATH  *DevPath)
       break;
     }
 
-    Src = (EFI_DEVICE_PATH *) NextDevicePathNode (Src);
+    Src = (EFI_DEVICE_PATH_P *) NextDevicePathNode (Src);
   }
 
   // Allocate space for the unpacked path
-  NewPath = (EFI_DEVICE_PATH *)calloc(Size, sizeof(UINT8));
+  NewPath = (EFI_DEVICE_PATH_P *)calloc(Size, sizeof(UINT8));
   
   if (NewPath != NULL) 
   {
@@ -268,14 +245,14 @@ EFI_DEVICE_PATH *UnpackDevicePath (EFI_DEVICE_PATH  *DevPath)
       Size += ALIGN_SIZE (Size);
       SetDevicePathNodeLength (Dest, Size);
       Dest->Type |= EFI_DP_TYPE_UNPACKED;
-      Dest = (EFI_DEVICE_PATH *) (((UINT8 *) Dest) + Size);
+      Dest = (EFI_DEVICE_PATH_P *) (((UINT8 *) Dest) + Size);
 
       if (IsDevicePathEnd (Src)) 
 	  {
         break;
       }
 
-      Src = (EFI_DEVICE_PATH *) NextDevicePathNode (Src);
+      Src = (EFI_DEVICE_PATH_P *) NextDevicePathNode (Src);
     }
   }
 
@@ -283,9 +260,9 @@ EFI_DEVICE_PATH *UnpackDevicePath (EFI_DEVICE_PATH  *DevPath)
 }
 
 // Returns the size of the device path, in bytes.
-UINT32 DevicePathSize (const EFI_DEVICE_PATH  *DevicePath)
+UINT32 DevicePathSize (const EFI_DEVICE_PATH_P  *DevicePath)
 {
-  const EFI_DEVICE_PATH *Start;
+  const EFI_DEVICE_PATH_P*Start;
   UINT32 Count = 0;
 
   if (DevicePath == NULL) 
@@ -294,7 +271,7 @@ UINT32 DevicePathSize (const EFI_DEVICE_PATH  *DevicePath)
   }
 
   // Search for the end of the device path structure
-  Start = (EFI_DEVICE_PATH *) DevicePath;
+  Start = (EFI_DEVICE_PATH_P*) DevicePath;
   for (Count = 0;!IsDevicePathEnd(DevicePath);Count++)
   {
  	if(Count > MAX_DEVICE_PATH_LEN)
@@ -307,20 +284,20 @@ UINT32 DevicePathSize (const EFI_DEVICE_PATH  *DevicePath)
   }
 
   // Compute the size and add back in the size of the end device path structure
-  return ((UINT32) DevicePath - (UINT32) Start) + sizeof (EFI_DEVICE_PATH);
+  return ((UINT32) DevicePath - (UINT32) Start) + sizeof (EFI_DEVICE_PATH_P);
 }
 
 // Creates a device node
-EFI_DEVICE_PATH *CreateDeviceNode (UINT8 NodeType, UINT8 NodeSubType, UINT16 NodeLength)
+EFI_DEVICE_PATH_P*CreateDeviceNode (UINT8 NodeType, UINT8 NodeSubType, UINT16 NodeLength)
 {
-  EFI_DEVICE_PATH *Node;
+  EFI_DEVICE_PATH_P*Node;
 
-  if (NodeLength < sizeof (EFI_DEVICE_PATH)) 
+  if (NodeLength < sizeof (EFI_DEVICE_PATH_P)) 
   {
     return NULL;
   }
 
-  Node = (EFI_DEVICE_PATH *) calloc ((UINT32) NodeLength, sizeof(UINT8));
+  Node = (EFI_DEVICE_PATH_P*) calloc ((UINT32) NodeLength, sizeof(UINT8));
   if (Node != NULL) 
   {
     Node->Type    = NodeType;
@@ -332,9 +309,9 @@ EFI_DEVICE_PATH *CreateDeviceNode (UINT8 NodeType, UINT8 NodeSubType, UINT16 Nod
 }
 
 // Duplicate a device path structure.
-EFI_DEVICE_PATH *DuplicateDevicePath (EFI_DEVICE_PATH *DevicePath)
+EFI_DEVICE_PATH_P*DuplicateDevicePathP (EFI_DEVICE_PATH_P *DevicePath)
 {
-  EFI_DEVICE_PATH *NewDevicePath;
+  EFI_DEVICE_PATH_P*NewDevicePath;
   UINT32 Size;
 
   if (DevicePath == NULL) 
@@ -366,7 +343,7 @@ void EisaIdToText (UINT32 EisaId, CHAR8 *Text)
 
 void DevPathToTextPci (CHAR8  *Str, void  *DevPath, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts)
 {
-  PCI_DEVICE_PATH *Pci;
+  PCI_DEVICE_PATH_P *Pci;
 
   Pci = DevPath;
   CatPrintf(Str, "Pci(0x%x,0x%x)", Pci->Device, Pci->Function);
@@ -374,7 +351,7 @@ void DevPathToTextPci (CHAR8  *Str, void  *DevPath, BOOLEAN DisplayOnly, BOOLEAN
 
 void DevPathToTextAcpi (CHAR8 *Str, void *DevPath, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts)
 {
-  ACPI_HID_DEVICE_PATH  *Acpi;
+  ACPI_HID_DEVICE_PATH_P  *Acpi;
 
   Acpi = DevPath;
   if ((Acpi->HID & PNP_EISA_ID_MASK) == PNP_EISA_ID_CONST) 
@@ -422,11 +399,11 @@ DEVICE_PATH_TO_TEXT_TABLE DevPathToTextTable[] =
 };
 
 // Convert a device path to its text representation.
-CHAR8 *ConvertDevicePathToText (const EFI_DEVICE_PATH *DevicePath, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts)
+CHAR8 *ConvertDevicePathToAscii (const EFI_DEVICE_PATH_P*DevicePath, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts)
 {
 	CHAR8				*Str;
-	EFI_DEVICE_PATH		*DevPathNode;
-	EFI_DEVICE_PATH		*UnpackDevPath;
+	EFI_DEVICE_PATH_P		*DevPathNode;
+	EFI_DEVICE_PATH_P		*UnpackDevPath;
 	UINT32				Index;
 	UINT32				NewSize;
 	void (*DumpNode) (CHAR8 *, void *, BOOLEAN, BOOLEAN);
@@ -439,7 +416,7 @@ CHAR8 *ConvertDevicePathToText (const EFI_DEVICE_PATH *DevicePath, BOOLEAN Displ
 	Str = (CHAR8 *)calloc(MAX_PATH_LEN, sizeof(CHAR8));
 
 	// Unpacked the device path
-	UnpackDevPath = UnpackDevicePath ((EFI_DEVICE_PATH *) DevicePath);
+	UnpackDevPath = UnpackDevicePath ((EFI_DEVICE_PATH_P*) DevicePath);
 	assert(UnpackDevPath != NULL);
 
 	// Process each device path node

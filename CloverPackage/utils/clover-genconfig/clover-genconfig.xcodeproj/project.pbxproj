@@ -10,6 +10,9 @@
 		A3DA39BF17832543008B64B2 /* clover-genconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = A3DA39BE17832543008B64B2 /* clover-genconfig.c */; };
 		A3DA39C117832591008B64B2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3DA39C017832591008B64B2 /* CoreFoundation.framework */; };
 		A3DA39C317832599008B64B2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3DA39C217832599008B64B2 /* IOKit.framework */; };
+		A5DF2D1520BB17F000353EB3 /* efidevp.c in Sources */ = {isa = PBXBuildFile; fileRef = 1262608E20B896790096178F /* efidevp.c */; };
+		A5DF2D1620BB17F400353EB3 /* gfxutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1262608B20B891C00096178F /* gfxutil.c */; };
+		A5DF2D1920BB20AD00353EB3 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A5DF2D1720BB20AC00353EB3 /* utils.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +38,8 @@
 		A3DA39BE17832543008B64B2 /* clover-genconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = "clover-genconfig.c"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		A3DA39C017832591008B64B2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		A3DA39C217832599008B64B2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		A5DF2D1720BB20AC00353EB3 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		A5DF2D1820BB20AD00353EB3 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +66,8 @@
 				1262608B20B891C00096178F /* gfxutil.c */,
 				1262608D20B891C80096178F /* gfxutil.h */,
 				1211013C1F61D6CE002C8330 /* Platform.h */,
+				A5DF2D1720BB20AC00353EB3 /* utils.c */,
+				A5DF2D1820BB20AD00353EB3 /* utils.h */,
 				1211013D1F61DD0D002C8330 /* config-sample.plist */,
 				A3DA39B3178324D7008B64B2 /* Products */,
 			);
@@ -126,6 +133,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3DA39BF17832543008B64B2 /* clover-genconfig.c in Sources */,
+				A5DF2D1920BB20AD00353EB3 /* utils.c in Sources */,
+				A5DF2D1620BB17F400353EB3 /* gfxutil.c in Sources */,
+				A5DF2D1520BB17F000353EB3 /* efidevp.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
