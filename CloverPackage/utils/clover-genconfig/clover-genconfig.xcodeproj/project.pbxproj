@@ -136,6 +136,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -144,6 +145,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -165,6 +167,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -173,6 +176,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -187,7 +191,16 @@
 		A3DA39BC178324D7008B64B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
+				"HEADER_SEARCH_PATHS[arch=i386]" = (
+					../../../../MdePkg/Include/Ia32,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../Include,
+				);
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
 					../../../../MdePkg/Include/X64,
 					"../../../../MdePkg/**",
 					../../../../MdeModulePkg/Include,
@@ -203,7 +216,16 @@
 		A3DA39BD178324D7008B64B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
+				"HEADER_SEARCH_PATHS[arch=i386]" = (
+					../../../../MdePkg/Include/Ia32,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../Include,
+				);
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
 					../../../../MdePkg/Include/X64,
 					"../../../../MdePkg/**",
 					../../../../MdeModulePkg/Include,

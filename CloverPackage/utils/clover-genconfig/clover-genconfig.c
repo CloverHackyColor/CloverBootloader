@@ -60,7 +60,7 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 
 // Global Variables
-static io_registry_entry_t gEFI;
+static io_registry_entry_t gEFI __attribute__((used));
 static io_registry_entry_t gPlatform;
 static mach_port_t         masterPort;
 
@@ -300,6 +300,14 @@ void PrintConfig(CFTypeRef data)
 //    errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
     printf("Error the version of clover-genconfig didn't match current booted clover version\n");
     printf("len=%d sizeof=%d\n", (int)length, (int)sizeof(SETTINGS_DATA));
+#if defined(MDE_CPU_IA32)
+    printf("32 bit generator\n");
+#elif defined(MDE_CPU_X64)
+    printf("64 bit generator\n");
+#else
+    printf("xxx bit generator\n");
+#endif
+    return;
   }
 
   SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
@@ -750,13 +758,14 @@ int main(int argc, char **argv)
          mach_error_string(result));
   }
   
+#if GFX
   gEFI = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi");
   if (gEFI == 0) {
     errx(1, "EFI is not supported on this system");
   }
   CFTypeRef devProp = NULL;
+  // FIXME: GetOFVariable uses gPlatform, not gEFI
   result = GetOFVariable("device-properties", &devProp);
-#if GFX
   gfx =  parse_binary(devProp, settings);
 #endif
   
