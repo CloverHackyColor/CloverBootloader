@@ -6,9 +6,53 @@
 	<dict>
 		<key>#smartUPS</key>
 		<false/>
+		<key>SSDT</key>
+		<dict>
+			<key>#EnableC4</key>
+			<false/>
+			<key>#UseSystemIO</key>
+			<false/>
+			<key>#PluginType</key>
+			<integer>0</integer>
+			<key>#DoubleFirstState</key>
+			<true/>
+			<key>#EnableC2</key>
+			<false/>
+			<key>#MaxMultiplier</key>
+			<integer>12</integer>
+			<key>#DropOem</key>
+			<true/>
+			<key>#UnderVoltStep</key>
+			<integer>1</integer>
+			<key>#MinMultiplier</key>
+			<integer>8</integer>
+			<key>#EnableC6</key>
+			<true/>
+			<key>#C3Latency</key>
+			<string>0x03E7</string>
+			<key>#PLimitDict</key>
+			<integer>1</integer>
+			<key>#NoOemTableId</key>
+			<false/>
+			<key>#NoDynamicExtract</key>
+			<false/>
+			<key>#EnableC7</key>
+			<false/>
+			<key>Generate</key>
+			<dict>
+				<key>CStates</key>
+				<true/>
+				<key>#PluginType</key>
+				<false/>
+				<key>#APLF</key>
+				<false/>
+				<key>#APSN</key>
+				<false/>
+				<key>PStates</key>
+				<true/>
+			</dict>
+		</dict>
 		<key>DisableASPM</key>
-		<false/>
-		<key>AutoMerge</key>
 		<false/>
 		<key>DropTables</key>
 		<array>
@@ -37,52 +81,8 @@
 		<string>0x64</string>
 		<key>#ResetValue</key>
 		<string>0xFE</string>
-		<key>SSDT</key>
-		<dict>
-			<key>#EnableC4</key>
-			<false/>
-			<key>Generate</key>
-			<dict>
-				<key>PStates</key>
-				<true/>
-				<key>#PluginType</key>
-				<false/>
-				<key>#APLF</key>
-				<false/>
-				<key>#APSN</key>
-				<false/>
-				<key>CStates</key>
-				<true/>
-			</dict>
-			<key>#DoubleFirstState</key>
-			<true/>
-			<key>#PluginType</key>
-			<integer>0</integer>
-			<key>#EnableC2</key>
-			<false/>
-			<key>#MaxMultiplier</key>
-			<integer>12</integer>
-			<key>#MinMultiplier</key>
-			<integer>8</integer>
-			<key>#EnableC6</key>
-			<true/>
-			<key>#C3Latency</key>
-			<string>0x03E7</string>
-			<key>#DropOem</key>
-			<true/>
-			<key>#UnderVoltStep</key>
-			<integer>1</integer>
-			<key>#PLimitDict</key>
-			<integer>1</integer>
-			<key>#NoOemTableId</key>
-			<false/>
-			<key>#NoDynamicExtract</key>
-			<false/>
-			<key>#EnableC7</key>
-			<false/>
-			<key>#UseSystemIO</key>
-			<false/>
-		</dict>
+		<key>AutoMerge</key>
+		<false/>
 		<key>#PatchAPIC</key>
 		<false/>
 		<key>DSDT</key>
@@ -144,12 +144,12 @@
 			<dict>
 				<key>USB</key>
 				<true/>
-				<key>HDMI</key>
-				<true/>
-				<key>ATI</key>
-				<true/>
 				<key>SmBUS</key>
 				<false/>
+				<key>ATI</key>
+				<true/>
+				<key>HDMI</key>
+				<true/>
 				<key>LAN</key>
 				<true/>
 				<key>IntelGFX</key>
@@ -177,7 +177,7 @@
 			<dict>
 				<key>FixIDE</key>
 				<false/>
-				<key>AddHDMI</key>
+				<key>FixIPIC</key>
 				<true/>
 				<key>FixIntelGfx</key>
 				<false/>
@@ -193,6 +193,8 @@
 				<true/>
 				<key>AddIMEI</key>
 				<false/>
+				<key>FixRegions</key>
+				<true/>
 				<key>AddMCHC</key>
 				<false/>
 				<key>FixAirport</key>
@@ -203,13 +205,11 @@
 				<true/>
 				<key>FixHeaders</key>
 				<true/>
-				<key>AddPNLF</key>
-				<true/>
 				<key>FixLAN</key>
 				<true/>
 				<key>FixRTC</key>
 				<true/>
-				<key>FixRegions</key>
+				<key>AddPNLF</key>
 				<true/>
 				<key>DeleteUnused</key>
 				<true/>
@@ -235,7 +235,7 @@
 				<true/>
 				<key>FixADP1</key>
 				<true/>
-				<key>FixIPIC</key>
+				<key>AddHDMI</key>
 				<true/>
 			</dict>
 			<key>#SuspendOverride</key>
@@ -311,6 +311,10 @@
 		<false/>
 		<key>#FBName</key>
 		<string>Makakakakala</string>
+		<key>#VRAM</key>
+		<integer>1024</integer>
+		<key>#RadeonDeInit</key>
+		<true/>
 		<key>#PatchVBiosBytes</key>
 		<array>
 			<dict>
@@ -320,14 +324,10 @@
 				<data>gAeoAjgE</data>
 			</dict>
 		</array>
-		<key>#RadeonDeInit</key>
-		<true/>
-		<key>#VRAM</key>
-		<integer>1024</integer>
-		<key>#LoadVBios</key>
-		<false/>
 		<key>#display-cfg</key>
 		<string>03010300FFFF0001</string>
+		<key>#LoadVBios</key>
+		<false/>
 		<key>EDID</key>
 		<dict>
 			<key>#HorizontalSyncPulseWidth</key>
@@ -366,10 +366,10 @@
 		<integer>5</integer>
 		<key>RtcHibernateAware</key>
 		<false/>
-		<key>#Arguments</key>
-		<string>slide=0 darkwake=0</string>
 		<key>DefaultVolume</key>
 		<string>LastBootedVolume</string>
+		<key>#Arguments</key>
+		<string>slide=0 darkwake=0</string>
 		<key>StrictHibernate</key>
 		<false/>
 		<key>#DefaultLoader</key>
@@ -415,10 +415,10 @@
 		</array>
 		<key>#ATIConnectorsPatch</key>
 		<string>040000001402000000010000000004040004000004030000000100001102010500000000000000000000000000000000</string>
-		<key>DellSMBIOSPatch</key>
+		<key>KernelPm</key>
 		<false/>
 		<key>AppleRTC</key>
-		<true/>
+		<false/>
 		<key>#KextsToPatch</key>
 		<array>
 			<dict>
@@ -492,9 +492,9 @@
 				<data>SEQgNjQ1MA==</data>
 			</dict>
 		</array>
-		<key>KernelPm</key>
-		<false/>
 		<key>KernelXCPM</key>
+		<false/>
+		<key>DellSMBIOSPatch</key>
 		<false/>
 		<key>#BootPatches</key>
 		<array>
@@ -526,8 +526,6 @@
 	</dict>
 	<key>Devices</key>
 	<dict>
-		<key>#SetIntelMaxBacklight</key>
-		<true/>
 		<key>#FakeID</key>
 		<dict>
 			<key>#WIFI</key>
@@ -667,14 +665,18 @@
 			<key>ResetHDA</key>
 			<true/>
 		</dict>
-		<key>#SetIntelBacklight</key>
-		<false/>
-		<key>#ForceHPET</key>
+		<key>LANInjection</key>
 		<false/>
 		<key>UseIntelHDMI</key>
 		<false/>
+		<key>#SetIntelBacklight</key>
+		<false/>
+		<key>#SetIntelMaxBacklight</key>
+		<true/>
 		<key>#IntelMaxValue</key>
 		<integer>1808</integer>
+		<key>#ForceHPET</key>
+		<false/>
 		<key>#DisableFunctions</key>
 		<string>0x18F6</string>
 		<key>USB</key>
@@ -795,8 +797,11 @@
 		</dict>
 		<key>ScreenResolution</key>
 		<string>1280x1024</string>
-		<key>Theme</key>
-		<string>metal</string>
+		<key>#Hide</key>
+		<array>
+			<string>Windows</string>
+			<string>BOOTX64.EFI</string>
+		</array>
 		<key>#CustomIcons</key>
 		<false/>
 		<key>#Language</key>
@@ -812,11 +817,8 @@
 		</dict>
 		<key>ShowOptimus</key>
 		<false/>
-		<key>#Hide</key>
-		<array>
-			<string>Windows</string>
-			<string>BOOTX64.EFI</string>
-		</array>
+		<key>Theme</key>
+		<string>metal</string>
 	</dict>
 	<key>BootGraphics</key>
 	<dict>
@@ -859,32 +861,32 @@
 		</array>
 		<key>#BiosVersion</key>
 		<string>MB11.88Z.0061.B03.0809221748</string>
-		<key>#FirmwareFeatures</key>
-		<string>0xC0001403</string>
+		<key>#SerialNumber</key>
+		<string>4H629LYAU9C</string>
 		<key>#Family</key>
 		<string>MacBook</string>
 		<key>#ChassisAssetTag</key>
 		<string>LatitudeD420</string>
 		<key>#BiosReleaseDate</key>
 		<string>05/03/10</string>
-		<key>#SerialNumber</key>
-		<string>4H629LYAU9C</string>
 		<key>Manufacturer</key>
 		<string>Apple Inc.</string>
-		<key>#BoardType</key>
-		<integer>10</integer>
-		<key>#BiosVendor</key>
-		<string>Apple Inc.</string>
+		<key>#FirmwareFeatures</key>
+		<string>0xC0001403</string>
+		<key>#PlatformFeature</key>
+		<string>0x03</string>
+		<key>#Trust</key>
+		<true/>
 		<key>#BoardSerialNumber</key>
 		<string>C02032101R5DC771H</string>
-		<key>#ChassisType</key>
-		<integer>16</integer>
+		<key>#BiosVendor</key>
+		<string>Apple Inc.</string>
 		<key>#FirmwareFeaturesMask</key>
 		<string>0xFFFFFFFF</string>
 		<key>#BoardManufacturer</key>
 		<string>Apple Inc.</string>
-		<key>#PlatformFeature</key>
-		<string>0x03</string>
+		<key>#BoardType</key>
+		<integer>10</integer>
 		<key>#ProductName</key>
 		<string>MacBook1,1</string>
 		<key>#LocationInChassis</key>
@@ -931,8 +933,8 @@
 			<key>Channels</key>
 			<integer>2</integer>
 		</dict>
-		<key>#Trust</key>
-		<true/>
+		<key>#ChassisType</key>
+		<integer>16</integer>
 		<key>#Version</key>
 		<string>1.0</string>
 		<key>#Board-ID</key>
@@ -948,18 +950,18 @@
 	</dict>
 	<key>SystemParameters</key>
 	<dict>
-		<key>InjectSystemID</key>
-		<true/>
+		<key>#BacklightLevel</key>
+		<string>0x0501</string>
 		<key>#CustomUUID</key>
 		<string>511CE201-1000-4000-9999-010203040506</string>
 		<key>#NoCaches</key>
 		<false/>
 		<key>#NvidiaWeb</key>
 		<false/>
+		<key>InjectSystemID</key>
+		<true/>
 		<key>InjectKexts</key>
 		<string>Detect</string>
-		<key>#BacklightLevel</key>
-		<string>0x0501</string>
 	</dict>
 </dict>
 </plist>
