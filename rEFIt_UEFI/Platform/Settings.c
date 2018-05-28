@@ -4754,10 +4754,10 @@ GetUserSettings(
         }
       }
       
-      Prop  = GetProperty (DictPointer, "InjectLAN");
+      Prop  = GetProperty (DictPointer, "LANInjection");
       gSettings.LANInjection = IsPropertyTrue (Prop);
       
-      Prop  = GetProperty (DictPointer, "InjectHDMI");
+      Prop  = GetProperty (DictPointer, "HDMIInjection");
       gSettings.HDMIInjection = IsPropertyTrue (Prop);
       
       Prop  = GetProperty (DictPointer, "NoDefaultProperties");

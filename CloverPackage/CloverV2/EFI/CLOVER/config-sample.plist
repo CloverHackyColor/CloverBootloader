@@ -550,13 +550,13 @@
 			<key>PciRoot(0x0)/Pci(0x1c,0x1)/Pci(0x0,0x0)</key>
 			<dict>
 				<key>model</key>
-				<string>Apple WiFi card </string>
+				<string>Apple WiFi card</string>
 				<key>subsystem-vendor-id</key>
 				<data>axAAAA==</data>
 				<key>device_type</key>
-				<string>Airport </string>
+				<string>Airport<</string>
 				<key>name</key>
-				<string>AirPort Extreme </string>
+				<string>AirPort Extreme</string>
 			</dict>
 			<key>PciRoot(0x0)/Pci(0x14,0x0)</key>
 			<dict>
@@ -598,20 +598,20 @@
 			<key>PciRoot(0x0)/Pci(0x1c,0x5)/Pci(0x0,0x0)</key>
 			<dict>
 				<key>compatible</key>
-				<string>pci14e4,16bc </string>
+				<string>pci14e4,16bc</string>
 				<key>model</key>
-				<string>O2 Micro SD card reader </string>
+				<string>O2 Micro SD card reader</string>
 				<key>subsystem-vendor-id</key>
 				<data>axAAAA==</data>
 				<key>device_type</key>
-				<string>Media controller </string>
+				<string>Media controller</string>
 				<key>name</key>
-				<string>AirPort Extreme </string>
+				<string>AirPort Extreme</string>
 			</dict>
 			<key>PciRoot(0x0)/Pci(0x1b,0x0)</key>
 			<dict>
 				<key>hda-gfx</key>
-				<string>onboard-1 </string>
+				<string>onboard-1</string>
 			</dict>
 			<key>PciRoot(0x0)/Pci(0x2,0x0)</key>
 			<dict>
