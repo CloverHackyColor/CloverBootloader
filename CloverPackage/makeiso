@@ -135,8 +135,8 @@ if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
     cp -f ${CLOVERROOT}/drivers-Off/drivers32/Ps2MouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/
 fi
 echo "[CP] drivers-off"
-cp -f ${CLOVERROOT}/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
-cp -f ${CLOVERROOT}/drivers-Off/drivers64/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
+cp -f ${CLOVERROOT}/drivers-Off/drivers64UEFI/UsbMouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
+cp -f ${CLOVERROOT}/drivers-Off/drivers64UEFI/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
 if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
     rsync -r ${CLOVERROOT}/drivers-Off ${IMGROOT}/EFI/CLOVER/
 else
