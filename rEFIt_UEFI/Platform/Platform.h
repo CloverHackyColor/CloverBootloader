@@ -1092,7 +1092,7 @@ typedef struct {
   UINT64                  DoubleClickTime;
   BOOLEAN                 PointerMirror;
 
-  UINT8                   pad7[6];
+//  UINT8                   pad7[6];
   UINT8                   CustomBoot;
   EG_IMAGE                *CustomLogo;
 
@@ -1139,7 +1139,7 @@ typedef struct {
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
-  UINT8                   pad83[4];
+//  UINT8                   pad83[4];
 
 
   // Table dropping
@@ -1151,7 +1151,7 @@ typedef struct {
   BOOLEAN                 ShowHiddenEntries;
   UINT8                   KernelScan;
   BOOLEAN                 LinuxScan;
-  UINT8                   pad84[3];
+//  UINT8                   pad84[3];
   CUSTOM_LOADER_ENTRY     *CustomEntries;
   CUSTOM_LEGACY_ENTRY     *CustomLegacy;
   CUSTOM_TOOL_ENTRY       *CustomTool;

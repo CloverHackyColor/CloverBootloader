@@ -398,8 +398,11 @@ void PrintConfig(CFTypeRef data, GFX_HEADER * gfx)
                                                            &kCFTypeDictionaryKeyCallBacks,
                                                            &kCFTypeDictionaryValueCallBacks
                                                            );
+  
   if (s->ConfigName != NULL) {
-    addUString(dict, CFSTR("ConfigName"), (const UniChar *)&s->ConfigName);
+    //ConfigName allocated in boot memory, impossible to show
+//    addUString(dict, CFSTR("ConfigName"), (const UniChar *)&s->ConfigName);
+    addString(dict, CFSTR("ConfigName"), "config1");
   } else {
     addString(dict, CFSTR("ConfigName"), "config");
   }
@@ -410,8 +413,9 @@ void PrintConfig(CFTypeRef data, GFX_HEADER * gfx)
   addUString(bootDict, CFSTR("Legacy"), (const UniChar *)&s->LegacyBoot);
  // addUString(bootDict, CFSTR("LegacyEntry"), s->LegacyBiosCustomEntry);
   addInteger(bootDict, CFSTR("XMPDetection"), s->XMPDetection);
-  addUString(bootDict, CFSTR("DefaultVolume"), (const UniChar *)&s->DefaultVolume);
-  addUString(bootDict, CFSTR("DefaultLoader"), (const UniChar *)&s->DefaultLoader);
+  //impossible
+//  addUString(bootDict, CFSTR("DefaultVolume"), (const UniChar *)&s->DefaultVolume);
+//  addUString(bootDict, CFSTR("DefaultLoader"), (const UniChar *)&s->DefaultLoader);
   addBoolean(bootDict, CFSTR("Debug"), s->Debug);
   addString(bootDict, CFSTR("#Timeout"), "_NOT_SHOWN_");
   addBoolean(bootDict, CFSTR("Fast"), 0);
