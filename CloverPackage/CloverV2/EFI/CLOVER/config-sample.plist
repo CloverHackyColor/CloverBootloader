@@ -554,7 +554,7 @@
 				<key>subsystem-vendor-id</key>
 				<data>axAAAA==</data>
 				<key>device_type</key>
-				<string>Airport<</string>
+				<string>Airport</string>
 				<key>name</key>
 				<string>AirPort Extreme</string>
 			</dict>
@@ -565,7 +565,7 @@
 				<key>AAPL,current-extra</key>
 				<data>vAI=</data>
 				<key>#Comment</key>
-				<string>Это у нас USB3.0</string>
+				<string>This is USB3.0</string>
 				<key>built-in</key>
 				<data>AA==</data>
 				<key>AAPL,clock-id</key>

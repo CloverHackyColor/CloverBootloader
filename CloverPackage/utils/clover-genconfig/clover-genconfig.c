@@ -290,7 +290,7 @@ void addGFXDictionary(CFMutableDictionaryRef dict, GFX_HEADER * gfx)
       switch(gfx_entry_tmp->val_type)
       {
         case DATA_STRING:
-          string = CFStringCreateWithBytes(kCFAllocatorDefault,gfx_entry_tmp->val, gfx_entry_tmp->val_len, kCFStringEncodingASCII, false);
+          string = CFStringCreateWithBytes(kCFAllocatorDefault,gfx_entry_tmp->val, gfx_entry_tmp->val_len-1, kCFStringEncodingASCII, false);
           CFDictionarySetValue(items, key, string);
           CFRelease(string);
           CFRelease(key);

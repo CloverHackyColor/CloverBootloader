@@ -201,6 +201,7 @@
 		A3DA39BC178324D7008B64B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				"HEADER_SEARCH_PATHS[arch=i386]" = (
 					../../../../MdePkg/Include/Ia32,
 					"../../../../MdePkg/**",
@@ -226,6 +227,7 @@
 		A3DA39BD178324D7008B64B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				"HEADER_SEARCH_PATHS[arch=i386]" = (
 					../../../../MdePkg/Include/Ia32,
 					"../../../../MdePkg/**",

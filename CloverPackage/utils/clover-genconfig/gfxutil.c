@@ -129,11 +129,12 @@ GFX_HEADER *parse_binary(const unsigned char *bp)
 	GFX_ENTRY *gfx_entry = (GFX_ENTRY *) NULL; 
 	GFX_ENTRY *gfx_entry_head = (GFX_ENTRY *) NULL;
 	GFX_ENTRY *gfx_entry_end  = (GFX_ENTRY *) NULL;
-	unsigned char *data, *bin, *tmp, *dpathtmp;
+	unsigned char *data, *bin, *tmp, *dpathtmp, *src;
 	char * str;
 	unsigned int str_len, data_len, size, length;	
 	int i,j;
-
+  src = (unsigned char *)bp;
+  
 	//read header data	
 	gfx_header = (GFX_HEADER *)calloc(1, sizeof(GFX_HEADER));	
 	if(!gfx_header)
@@ -142,14 +143,14 @@ GFX_HEADER *parse_binary(const unsigned char *bp)
 		return NULL;	
 	}
 
-	gfx_header->filesize = READ_UINT32(bp);
-	bp+=4;
+	gfx_header->filesize = READ_UINT32(src);
+	src+=4;
 	
-	gfx_header->var1 = READ_UINT32(bp);
-	bp+=4;
+	gfx_header->var1 = READ_UINT32(src);
+	src+=4;
 	
-	gfx_header->countofblocks = READ_UINT32(bp);		
-	bp+=4;
+	gfx_header->countofblocks = READ_UINT32(src);		
+	src+=4;
 
 	//read blocks
 	gfx_blockheader_head = NULL;
@@ -164,15 +165,15 @@ GFX_HEADER *parse_binary(const unsigned char *bp)
 			return NULL;	
 		}
 		//read block data
-		gfx_blockheader->blocksize = READ_UINT32(bp);
-		bp+=4;
+		gfx_blockheader->blocksize = READ_UINT32(src);
+		src+=4;
 	
-		gfx_blockheader->records = READ_UINT32(bp);
-		bp+=4;
+		gfx_blockheader->records = READ_UINT32(src);
+		src+=4;
 		
 		size = gfx_blockheader->blocksize;
 		
-		tmp = (unsigned char *)bp;
+		tmp = (unsigned char *)src;
 		
 		unsigned int Count;
 		// read device path data until devpath end node 0x0004FF7F
@@ -193,90 +194,90 @@ GFX_HEADER *parse_binary(const unsigned char *bp)
 		}
 		
 		// read device path data
-		gfx_blockheader->devpath_len = abs((int)tmp - (int)bp);
-		readbin(&bp, &size, &dpathtmp,gfx_blockheader->devpath_len);
+		gfx_blockheader->devpath_len = abs((int)tmp - (int)src);
+		readbin(&src, &size, &dpathtmp,gfx_blockheader->devpath_len);
 		gfx_blockheader->devpath = (EFI_DEVICE_PATH_P *)dpathtmp;		
 		
 		gfx_entry_head = NULL;
 		gfx_entry_end = NULL;
-		for(j=1;j <= gfx_blockheader->records;j++)
-		{
-			length = READ_UINT32(bp);
-			length -= 4; bp += 4; size -=4;	
-			if(readbin(&bp, &size, &bin, length))
-			{
-				if(!uni2str(bin, length, &str, &str_len))
-				{
-					return NULL;
-				}
-			}
-			else
-			{
-				return NULL;
-			}
-			
-			data_len = READ_UINT32(bp);
-			data_len -= 4; bp += 4; size -=4;
-			if(!readbin(&bp, &size, &data, data_len))
-			{				
-				return NULL;
-			}	
-			
-			gfx_entry = (GFX_ENTRY *)calloc(1, sizeof(GFX_ENTRY));			
-			if(!gfx_entry)
-			{
-				fprintf(stderr, "parse_binary: out of memory\n");
-				return NULL;	
-			}
-			//read entries
-			gfx_entry->bkey = bin;
-			gfx_entry->bkey_len = length;				
-			gfx_entry->key = str;
-			gfx_entry->key_len = str_len;
-			gfx_entry->val_type = DATA_BINARY; // set default data type
-			gfx_entry->val = data;
-			gfx_entry->val_len = data_len;
-
-				switch(data_len)
-				{
-					case sizeof(UINT8): // int8
-						gfx_entry->val_type = DATA_INT8;
-					  break;
-					case sizeof(UINT16): //int16
-						gfx_entry->val_type = DATA_INT16;
-					  break;
-					case sizeof(UINT32): //int32
-						gfx_entry->val_type = DATA_INT32;
-					break;
-					default:
-						gfx_entry->val_type = DATA_BINARY;
-					  break;
-				}
-	
-			// detect strings
-			if(gfx_entry->val_type == DATA_BINARY  && is_string(data, data_len))
-			{
-				gfx_entry->val_type = DATA_STRING;
-			}						
-			
-			if(!gfx_entry_head)							// if there are no nodes in list then
-				gfx_entry_head = gfx_entry;				// set head to this new node			
-			if(gfx_entry_end)
-				gfx_entry_end->next = gfx_entry;		// link in new node to the end of the list
-			gfx_entry->next = NULL;						// set next field to signify the end of list
-			gfx_entry_end = gfx_entry;					// adjust end to point to the last node
-		}
-				
-		gfx_blockheader->entries = gfx_entry_head;
-		
-		if(!gfx_blockheader_head)						// if there are no nodes in list then
-			gfx_blockheader_head = gfx_blockheader;		// set head to this new node		
-		if(gfx_blockheader_end)
-			gfx_blockheader_end->next = gfx_blockheader;// link in new node to the end of the list
-		gfx_blockheader->next = NULL;					// set next field to signify the end of list
-		gfx_blockheader_end = gfx_blockheader;			// adjust end to point to the last node
-	}
-	
+    for(j=1;j <= gfx_blockheader->records;j++)
+    {
+      length = READ_UINT32(src);
+      length -= 4; src += 4; size -=4;
+      if(readbin(&src, &size, &bin, length))
+      {
+        if(!uni2str(bin, length, &str, &str_len))
+        {
+          return NULL;
+        }
+      }
+      else
+      {
+        return NULL;
+      }
+      
+      data_len = READ_UINT32(src);
+      data_len -= 4; src += 4; size -=4;
+      if(!readbin(&src, &size, &data, data_len))
+      {
+        return NULL;
+      }
+      
+      gfx_entry = (GFX_ENTRY *)calloc(1, sizeof(GFX_ENTRY));
+      if(!gfx_entry)
+      {
+        fprintf(stderr, "parse_binary: out of memory\n");
+        return NULL;
+      }
+      //read entries
+      gfx_entry->bkey = bin;
+      gfx_entry->bkey_len = length;
+      gfx_entry->key = str;
+      gfx_entry->key_len = str_len;
+      gfx_entry->val_type = DATA_BINARY; // set default data type
+      gfx_entry->val = data;
+      gfx_entry->val_len = data_len;
+      
+      switch(data_len)
+      {
+        case sizeof(UINT8): // int8
+          gfx_entry->val_type = DATA_INT8;
+          break;
+        case sizeof(UINT16): //int16
+          gfx_entry->val_type = DATA_INT16;
+          break;
+        case sizeof(UINT32): //int32
+          gfx_entry->val_type = DATA_INT32;
+          break;
+        default:
+          gfx_entry->val_type = DATA_BINARY;
+          break;
+      }
+      
+      // detect strings
+      if(gfx_entry->val_type == DATA_BINARY  && is_string(data, data_len))
+      {
+        gfx_entry->val_type = DATA_STRING;
+      }
+      
+      if(!gfx_entry_head)              // if there are no nodes in list then
+        gfx_entry_head = gfx_entry;        // set head to this new node
+      if(gfx_entry_end)
+        gfx_entry_end->next = gfx_entry;    // link in new node to the end of the list
+      gfx_entry->next = NULL;            // set next field to signify the end of list
+      gfx_entry_end = gfx_entry;          // adjust end to point to the last node
+    }
+    
+    gfx_blockheader->entries = gfx_entry_head;
+    
+    if(!gfx_blockheader_head)            // if there are no nodes in list then
+      gfx_blockheader_head = gfx_blockheader;    // set head to this new node
+    if(gfx_blockheader_end)
+      gfx_blockheader_end->next = gfx_blockheader;// link in new node to the end of the list
+    gfx_blockheader->next = NULL;          // set next field to signify the end of list
+    gfx_blockheader_end = gfx_blockheader;      // adjust end to point to the last node
+  }
+  
 	gfx_header->blocks = gfx_blockheader_head;
 
 	return (gfx_header);
