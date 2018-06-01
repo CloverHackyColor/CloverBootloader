@@ -1112,7 +1112,7 @@ VOID ApplyInputs(VOID)
  /*     if (gSettings.ConfigName) {
         FreePool(gSettings.ConfigName);
       } */
-      UnicodeSPrint(InputItems[gSettings.ConfigName, 64, L"%s", ConfigsList[OldChosenConfig]);
+      UnicodeSPrint(gSettings.ConfigName, 64, L"%s", ConfigsList[OldChosenConfig]);
  //     gSettings.ConfigName = EfiStrDuplicate(ConfigsList[OldChosenConfig]);
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
