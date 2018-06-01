@@ -2072,7 +2072,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     Status = LoadUserSettings(SelfRootDir, L"config", &gConfigDict[0]);
       DBG("%s\\config.plist%s loaded: %r\n", OEMPath, EFI_ERROR(Status) ? L" not" : L"", Status);
   }
-  gSettings.ConfigName = PoolPrint(L"%s%s%s",
+  UnicodeSPrint(gSettings.ConfigName, 64, L"%s%s%s",
+/*  gSettings.ConfigName = PoolPrint(L"%s%s%s", */
                                    gConfigDict[0] ? L"config": L"",
                                    (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
                                    !gConfigDict[1] ? L"": (ConfName ? ConfName : L"Load Options"));

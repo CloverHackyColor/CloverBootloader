@@ -398,7 +398,7 @@ void PrintConfig(CFTypeRef data, GFX_HEADER * gfx)
                                                            &kCFTypeDictionaryKeyCallBacks,
                                                            &kCFTypeDictionaryValueCallBacks
                                                            );
-  
+/*
   if (s->ConfigName != NULL) {
     //ConfigName allocated in boot memory, impossible to show
 //    addUString(dict, CFSTR("ConfigName"), (const UniChar *)&s->ConfigName);
@@ -406,7 +406,9 @@ void PrintConfig(CFTypeRef data, GFX_HEADER * gfx)
   } else {
     addString(dict, CFSTR("ConfigName"), "config");
   }
-
+*/
+  //This is possible since Clover 4511
+  addUString(dict, CFSTR("ConfigName"), (const UniChar *)&s->ConfigName);
   //Boot
   CFMutableDictionaryRef bootDict = addDict(dict, CFSTR("Boot"));
   addString(bootDict, CFSTR("Arguments"), s->BootArgs);
@@ -770,6 +772,11 @@ void PrintConfig(CFTypeRef data, GFX_HEADER * gfx)
   CFMutableArrayRef sortedArray = addArray(acpiDict, CFSTR("#SortedOrder"));
   addStringToArray(sortedArray, "SSDT-1.aml");
   addInteger(acpiDict, CFSTR("#Sorted ACPI tables Count"), s->SortedACPICount);
+  
+  CFMutableDictionaryRef renameDict = addDict(acpiDict, CFSTR("#RenameDevices"));
+  addString(renameDict, CFSTR("#_SB.PCI0.RP01.PXSX"), "ARPT");
+  addString(renameDict, CFSTR("_SB.PCI0.RP02.PXSX"), "XHC2");
+  
 
   // KernelAndKextPatches
   CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));

@@ -1109,10 +1109,11 @@ VOID ApplyInputs(VOID)
       Status = GetUserSettings(SelfRootDir, dict);
       if (gConfigDict[2]) FreeTag(gConfigDict[2]);
       gConfigDict[2] = dict;
-      if (gSettings.ConfigName) {
+ /*     if (gSettings.ConfigName) {
         FreePool(gSettings.ConfigName);
-      }
-      gSettings.ConfigName = EfiStrDuplicate(ConfigsList[OldChosenConfig]);
+      } */
+      UnicodeSPrint(InputItems[gSettings.ConfigName, 64, L"%s", ConfigsList[OldChosenConfig]);
+ //     gSettings.ConfigName = EfiStrDuplicate(ConfigsList[OldChosenConfig]);
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
     }

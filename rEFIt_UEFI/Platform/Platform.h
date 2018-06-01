@@ -1109,7 +1109,7 @@ typedef struct {
   BOOLEAN                 NeverDoRecovery;
 
   // Multi-config
-  CHAR16  *ConfigName;
+  CHAR16  ConfigName[30];
   CHAR16  *MainConfigName;
 
   //Drivers

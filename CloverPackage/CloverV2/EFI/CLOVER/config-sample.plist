@@ -77,6 +77,11 @@
 		</array>
 		<key>FixHeaders</key>
 		<true/>
+		<key>RenameDevices</key>
+		<dict>
+			<key>#_SB.PCI0.RP01.PXSX</key>
+			<string>ARPT</string>
+		</dict>
 		<key>#ResetAddress</key>
 		<string>0x64</string>
 		<key>#ResetValue</key>
