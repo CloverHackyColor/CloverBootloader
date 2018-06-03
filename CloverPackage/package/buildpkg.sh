@@ -372,8 +372,9 @@ addChoice () {
 
     # Record new node
     choice_key[$idx]="$choiceId"
-    choice_title[$idx]="${title:-${choiceId}_title}"
-    choice_description[$idx]="${description:-${choiceId}_description}"
+    choice_title[$idx]="${title:-${choiceId}}"
+#    choice_description[$idx]="${description:-${choiceId}_description}"
+    choice_description[$idx]="${description:-${choiceId}}"
     choice_options[$idx]=$(trim "${choiceOptions}") # Removing leading and trailing whitespace(s)
     choice_selected[$idx]=$(trim "${choiceSelected}") # Removing leading and trailing whitespace(s)
     choice_force_selected[$idx]=$(trim "${choiceForceSelected}") # Removing leading and trailing whitespace(s)
@@ -933,7 +934,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"  \
                             "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
-        addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
+        addChoice --start-visible="true" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
     done
 # End mandatory drivers-ia32UEFI packages
@@ -942,6 +943,10 @@ fi
 # build mandatory drivers-x64 packages
 if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "================= drivers64 mandatory =================="
+    addGroupChoices --title="Drivers64" --description="Drivers64"  \
+      --enabled="!choices['UEFI.only'].selected"     \
+      "Drivers64"
+
     packagesidentity="${clover_package_identity}".drivers64.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" -type f -name '*.efi' -depth 1 ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64'
@@ -961,8 +966,9 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEF
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
                             "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
-        addChoice --start-visible="false" --selected="!choices['UEFI.only'].selected"  \
+        addChoice --group="Drivers64" --start-visible="true" --start-selected="true" --selected="true"  \
          --pkg-refs="$packageRefId"  "${driverChoice}"
+#selected="!choices['UEFI.only'].selected"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
     done
 fi
@@ -971,9 +977,6 @@ fi
 # build drivers-x64 packages
 if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "===================== drivers64 ========================"
-    addGroupChoices --title="Drivers64" --description="Drivers64"  \
-                    --enabled="!choices['UEFI.only'].selected"     \
-                    "Drivers64"
     packagesidentity="${clover_package_identity}".drivers64
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64'
@@ -991,7 +994,7 @@ if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" && ${NOEXTRAS} != *"CloverE
         addChoice --group="Drivers64" --title="$driverName"                                               \
                   --enabled="!choices['UEFI.only'].selected"                                              \
                   --start-selected="choicePreviouslySelected('$packageRefId')"                            \
-                  --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$driverName'].selected"  \
+                  --selected="choices['$driverName'].selected"  \
                   --pkg-refs="$packageRefId"                                                              \
                   "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
@@ -1002,6 +1005,7 @@ fi
 # build mandatory drivers-x64UEFI packages
 if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" ]]; then
     echo "=============== drivers64 UEFI mandatory ==============="
+    addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64UEFI'
@@ -1021,7 +1025,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" ]]; then
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
                             "VBoxHfs"
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
-        addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
+        addChoice --group="Drivers64UEFI" --start-visible="true" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
     done
 fi
@@ -1030,7 +1034,6 @@ fi
 # build drivers-x64UEFI packages 
 if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" ]]; then
     echo "=================== drivers64 UEFI ====================="
-    addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64UEFI'

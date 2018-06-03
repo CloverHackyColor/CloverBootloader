@@ -891,14 +891,14 @@ MainPostBuildScript() {
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
 #copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume )
+      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
       done
 
 
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume DataHubDxe )
+      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume DataHubDxe SMCHelper)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi
@@ -906,9 +906,9 @@ MainPostBuildScript() {
 
 
       if [[ $M_APPLEHFS -eq 0 ]]; then
-        copyBin "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/VBoxHfs-64.efi
+        copyBin "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/VBoxHfs-64.efi
       else
-        copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/HFSPlus.efi
+        copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/HFSPlus.efi
       fi
 
       # Optional drivers
@@ -922,15 +922,15 @@ MainPostBuildScript() {
 #done
 
       if [[ $M_NOGRUB -eq 0 ]]; then
-        binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
+        binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF XhciDxe)
         for efi in "${binArray[@]}"
         do
-          copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
+          copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
         done
       fi
 
       # drivers64UEFI      
-      binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix3Drv OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe UsbMouseDxe  UsbKbDxe Fat SMCHelper EnglishDxe NvmExpressDxe Ps2MouseDxe VBoxExt2 VBoxExt4 VBoxIso9600 XhciDxe HashServiceFix VBoxHFS)
+      binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix3Drv OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe UsbMouseDxe  UsbKbDxe Fat EnglishDxe NvmExpressDxe Ps2MouseDxe VBoxExt2 VBoxExt4 VBoxIso9600 HashServiceFix)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
