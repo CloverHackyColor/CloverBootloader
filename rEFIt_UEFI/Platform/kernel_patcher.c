@@ -664,14 +664,22 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         patchLocation = i+1398;
         DBG("Found Sierra Lapic panic at 0x%08x\n", patchLocation);
         break;
-      //PMheart: 10.13.DP1/10.14.DP1
+      //PMheart: 10.13.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
         bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
         bytes[i+1407] == 0x65 && bytes[i+1408] == 0x8B && bytes[i+1409] == 0x0C && bytes[i+1410] == 0x25 &&
         bytes[i+1411] == 0x1C && bytes[i+1412] == 0x00 && bytes[i+1413] == 0x00 && bytes[i+1414] == 0x00) {
         patchLocation = i+1396;
-        DBG("Found High Sierra/Mojave Lapic panic at 0x%08x\n", patchLocation);
+        DBG("Found High Sierra Lapic panic at 0x%08x\n", patchLocation);
         break;
+      //PMheart: 10.14.DP1
+    } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+1396] == 0x65 && bytes[i+1397] == 0x8B && bytes[i+1398] == 0x0C && bytes[i+1399] == 0x25 &&
+               bytes[i+1400] == 0x1C && bytes[i+1401] == 0x00 && bytes[i+1402] == 0x00 && bytes[i+1403] == 0x00) {
+      patchLocation = i+1385;
+      DBG("Found Mojave Lapic panic at 0x%08x\n", patchLocation);
+      break;
     }
   }
 

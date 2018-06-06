@@ -831,9 +831,17 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
 STATIC UINT8 BroadwellE_IOPCI_Find[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x40 };
 STATIC UINT8 BroadwellE_IOPCI_Repl[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80 };
 
+// changes as of 10.14
+
+STATIC UINT8 BroadwellE_IOPCI_Find_1014[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x40 };
+STATIC UINT8 BroadwellE_IOPCI_Repl_1014[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x80 };
+
+
+
 VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
 {
     UINTN count = 0;
+  UINT64 os_ver = AsciiOSVersionToUint64(Entry->OSVersion);
     
     DBG_RT(Entry, "\nBDWE_IOPCIPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
     if (Entry->KernelAndKextPatches->KPDebug) {
@@ -844,8 +852,13 @@ VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
     //
     // now, let's patch it!
     //
+//    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find, sizeof(BroadwellE_IOPCI_Find), BroadwellE_IOPCI_Repl, 0);
+  if (os_ver <= AsciiOSVersionToUint64("10.13.6")) {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find, sizeof(BroadwellE_IOPCI_Find), BroadwellE_IOPCI_Repl, 0);
-    
+  } else {
+    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_1014, sizeof(BroadwellE_IOPCI_Find_1014), BroadwellE_IOPCI_Repl_1014, 0);
+  }
+  
     if (count) {
         DBG_RT(Entry, "==> IOPCIFamily: %d replaces done.\n", count);
     }
