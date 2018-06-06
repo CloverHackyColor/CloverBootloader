@@ -102,7 +102,7 @@ VOID DebugDumpEDID(CONST CHAR8 *Message, INTN N)
 EFI_STATUS GetEdidDiscovered(VOID)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
-  UINTN       N;
+  UINTN       N = 0;
   //gEDID       = NULL;
 
   if (gSettings.CustomEDID) {

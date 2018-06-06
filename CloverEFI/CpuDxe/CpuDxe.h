@@ -133,6 +133,9 @@ InstallInterruptHandler (
   );
 
 VOID
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((visibility("hidden")))
+#endif
 SystemExceptionHandler (
   VOID
   );

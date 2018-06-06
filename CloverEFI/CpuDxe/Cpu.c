@@ -1102,9 +1102,6 @@ TimerHandler (
 
 EFI_STATUS
 EFIAPI
-#if defined(__GNUC__) && !defined(__clang__)
-__attribute__((optimize("O2")))
-#endif
 InitializeCpu (
   IN EFI_HANDLE         ImageHandle,
   IN EFI_SYSTEM_TABLE   *SystemTable
