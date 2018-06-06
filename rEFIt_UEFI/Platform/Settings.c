@@ -58,6 +58,9 @@ UINTN                           ThemesNum                   = 0;
 CHAR16                          *ThemesList[50]; //no more then 50 themes?
 UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
+UINTN                           DsdtsNum;
+CHAR16                          *DsdtsList[20];
+
 
 // firmware
 BOOLEAN                         gFirmwareClover             = FALSE;
@@ -3106,7 +3109,39 @@ GetListOfConfigs ()
       DBG("- %s\n", DirEntry->FileName);
     }
   }
+  DirIterClose(&DirIter);
+}
+
+VOID
+GetListOfDsdts ()
+{
+  REFIT_DIR_ITER    DirIter;
+  EFI_FILE_INFO     *DirEntry;
+  INTN              NameLen;
+  CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   
+  DsdtsNum = 0;
+  OldChosenDsdt = 0xFFFF;
+  
+  DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
+  DbgHeader("Found DSDT tables");
+  while (DirIterNext(&DirIter, 2, L"DSDT*.aml", &DirEntry)) {
+    CHAR16  FullName[256];
+    if (DirEntry->FileName[0] == L'.') {
+      continue;
+    }
+    
+    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
+    if (FileExists(SelfRootDir, FullName)) {
+      if (StriCmp(DirEntry->FileName, gSettings.DsdtName) == 0) {
+        OldChosenDsdt = DsdtsNum;
+      }
+      NameLen = StrLen(DirEntry->FileName); //with ".aml"
+      DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool (NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
+      DsdtsList[DsdtsNum++][NameLen] = L'\0';
+      DBG("- %s\n", DirEntry->FileName);
+    }
+  }
   DirIterClose(&DirIter);
 }
 

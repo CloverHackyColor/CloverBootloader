@@ -87,6 +87,13 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
 extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
+extern UINTN            ThemesNum;
+extern CHAR16           *ThemesList[];
+extern UINTN            ConfigsNum;
+extern CHAR16           *ConfigsList[];
+extern UINTN            DsdtsNum;
+extern CHAR16           *DsdtsList[];
+
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *ImageTitle,
@@ -495,6 +502,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   EFI_LOADED_IMAGE        *LoadedImage = NULL;
   CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
+  UINTN                   i;
 
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");
@@ -520,18 +528,39 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       DBG(" - [!] LoadUserSettings failed: %r\n", Status);
     }
   }
-
-  DBG("Finally: ExternalClock=%ldMHz BusSpeed=%ldkHz CPUFreq=%ldMHz", 
-  				DivU64x32(gCPUStructure.ExternalClock, kilo), 
-  				DivU64x32(gCPUStructure.FSBFrequency, kilo), 
-				gCPUStructure.MaxSpeed);
-				if (gSettings.QPI) {			
-				  DBG(" QPI: hw.busfrequency=%ldHz\n", MultU64x32(gSettings.QPI, Mega));
-				} else {
-				  // to match the value of hw.busfrequency in the terminal
-				  DBG(" PIS: hw.busfrequency=%ldHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock, kilo), 2), Mega));
-				}
-
+  
+  DBG("Finally: ExternalClock=%ldMHz BusSpeed=%ldkHz CPUFreq=%ldMHz",
+  				DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo),
+  				DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo),
+          gCPUStructure.MaxSpeed);
+  if (gSettings.QPI) {
+    DBG(" QPI: hw.busfrequency=%ldHz\n", MultU64x32(gSettings.QPI, Mega));
+  } else {
+    // to match the value of hw.busfrequency in the terminal
+    DBG(" PIS: hw.busfrequency=%ldHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
+  }
+  
+  //Free memory
+  for (i = 0; i < ThemesNum; i++) {
+    if (ThemesList[i]) {
+      FreePool(ThemesList[i]);
+      ThemesList[i] = NULL;
+    }
+  }
+  for (i = 0; i < ConfigsNum; i++) {
+    if (ConfigsList[i]) {
+      FreePool(ConfigsList[i]);
+      ConfigsList[i] = NULL;
+    }
+  }
+  for (i = 0; i < DsdtsNum; i++) {
+    if (DsdtsList[i]) {
+      FreePool(DsdtsList[i]);
+      DsdtsList[i] = NULL;
+    }
+  }
+  FreeMenu(&OptionMenu);
+  
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
   // Load image into memory (will be started later)
@@ -2127,6 +2156,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
     GetListOfConfigs();
+    GetListOfDsdts();
   }
 
   for (i=0; i<2; i++) {

@@ -2533,6 +2533,7 @@ EFI_STATUS LoadAndInjectDSDT(CHAR16 *PathPatched,
 
   if (!EFI_ERROR(Status)) {
     // loaded - allocate EfiACPIReclaim
+    DBG("Loaded DSDT at %s\\%s\n", PathPatched, gSettings.DsdtName);
     Dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,

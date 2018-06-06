@@ -1627,6 +1627,7 @@ extern ACTION                          gAction;
 extern UINTN                           gItemID;
 extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
+extern INTN                            OldChosenDsdt;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64                          BiosDsdt;

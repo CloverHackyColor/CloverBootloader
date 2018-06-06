@@ -711,6 +711,7 @@ VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID 
 VOID GetListOfThemes(VOID);
 VOID GetListOfConfigs(VOID);
 VOID GetListOfACPI(VOID);
+VOID GetListOfDsdts(VOID);
 
 // syscl - get list of inject kext(s)
 VOID GetListOfInjectKext(CHAR16 *);
