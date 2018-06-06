@@ -895,7 +895,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               DBG("    boot-image not found while we want StrictHibernate\n");
               ret = FALSE;
             } else {
-//              DeleteNvramVariable (L"boot-image", &gEfiAppleBootGuid);
+
               EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
               UINTN                       Size;
               CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];

@@ -2156,7 +2156,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.FastBoot) {
     GetListOfThemes();
     GetListOfConfigs();
-    GetListOfDsdts();
   }
 
   for (i=0; i<2; i++) {
@@ -2275,7 +2274,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
     case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
     case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
+      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo -1, kilo);
       //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
       break;
     default:
@@ -2283,7 +2282,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	  
       // for sandy bridge or newer
       // to match ExternalClock 25 MHz like real mac, divide FSBFrequency by 4
-      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo) / 4;
+      gCPUStructure.ExternalClock = ((UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo) + 3) / 4;
       //DBG(" Corrected TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
       break;
   }
@@ -2304,6 +2303,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
   }
+  
 
   if (gSettings.QEMU) {
 //    UINT64 Msrflex = 0ULL;
@@ -2323,7 +2323,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  */
     gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                            (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
-    gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
+    gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo);
   }
 
   dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
@@ -2365,7 +2365,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FreePool(FirstMessage);
   }
 
-  GetListOfACPI();//###
+  GetListOfDsdts(); //only after GetUserSettings
+  GetListOfACPI(); //ssdt and other tables
 
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
