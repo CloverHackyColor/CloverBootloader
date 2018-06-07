@@ -373,8 +373,8 @@ addChoice () {
     # Record new node
     choice_key[$idx]="$choiceId"
     choice_title[$idx]="${title:-${choiceId}}"
-#    choice_description[$idx]="${description:-${choiceId}_description}"
-    choice_description[$idx]="${description:-${choiceId}}"
+    choice_description[$idx]="${description:-${choiceId}_description}"
+#    choice_description[$idx]="${description:-${choiceId}}"
     choice_options[$idx]=$(trim "${choiceOptions}") # Removing leading and trailing whitespace(s)
     choice_selected[$idx]=$(trim "${choiceSelected}") # Removing leading and trailing whitespace(s)
     choice_force_selected[$idx]=$(trim "${choiceForceSelected}") # Removing leading and trailing whitespace(s)

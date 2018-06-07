@@ -925,7 +925,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                   CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
                   FreePool(TmpStr);
                 }
-              }
+           //   }
        //       DBG("finl str=%s\n", OffsetHexStr);
               FreePool(Value);
               BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
@@ -949,6 +949,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                 DBG(" can not write boot-image -> %r\n", Status);                
                 ret = FALSE;
               }
+              } //L":" not found then don't change "boot-image"
             }
           } //else boot-image will be created
         }

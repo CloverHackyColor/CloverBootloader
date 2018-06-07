@@ -21,10 +21,10 @@ typedef EFI_STATUS (EFIAPI* CONNECT_ALL)();
 
 typedef struct _APPLE_DEVICE_CONTROL_PROTOCOL
 {
-	UINT64																Signature;
-	CONNECT_DISPLAY												ConnectDisplay;
-	UINT64																Unknown2;
-	CONNECT_ALL														ConnectAll;
+	UINT64																Signature;   //0
+	CONNECT_DISPLAY												ConnectDisplay; //8
+	UINT64																Unknown2;  //0x10
+	CONNECT_ALL														ConnectAll; //0x18
 }APPLE_DEVICE_CONTROL_PROTOCOL;
 
 extern EFI_GUID gAppleDeviceControlProtocolGuid;
