@@ -897,7 +897,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             } else {
 
               EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
-              UINTN                       Size;
+//              UINTN                       Size;
               CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];
               
               DBG("    boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
@@ -927,20 +927,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                 }
            //   }
        //       DBG("finl str=%s\n", OffsetHexStr);
-              FreePool(Value);
-              BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
+                FreePool(Value);
+                BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
               //  DBG(" boot-image device path:\n");
-              Size = GetDevicePathSize(BootImageDevPath);
-              Value = (UINT8*)BootImageDevPath;
-              PrintBytes(Value, Size);
-              DBG("    boot-image after: %s\n", FileDevicePathToStr(BootImageDevPath));
+                Size = GetDevicePathSize(BootImageDevPath);
+                Value = (UINT8*)BootImageDevPath;
+                DBG("    boot-image after: %s\n", FileDevicePathToStr(BootImageDevPath));
+              } //L":" not found then don't change "boot-image"
               
-
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi
               //Value[6] = 8; //Acpi(PNP0A08,0)
-              //Value[24] = 0xFF;
-              //Value[25] = 0xFF;
-              //DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
+              Value[24] = 0xFF;
+              Value[25] = 0xFF;
+              DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
+              PrintBytes(Value, Size);
 
               Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
                                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -949,7 +949,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                 DBG(" can not write boot-image -> %r\n", Status);                
                 ret = FALSE;
               }
-              } //L":" not found then don't change "boot-image"
+              
             }
           } //else boot-image will be created
         }

@@ -236,6 +236,7 @@
 				OTHER_CFLAGS = "-Wl,-no_function_starts";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -249,6 +250,7 @@
 				OTHER_CFLAGS = "-Wl,-no_function_starts";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
 			};
 			name = Release;
 		};
