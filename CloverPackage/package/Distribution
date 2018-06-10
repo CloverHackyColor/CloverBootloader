@@ -59,6 +59,14 @@
 		}
 		return false;
 	}
+  
+  function cloverPackageFirstRun(){
+    var installer_plist = '/Library/Preferences/com.projectosx.clover.installer.plist';
+    if (checkFileExists(my.target.mountpoint + installer_plist)) {
+      return false;
+    }
+		return true;
+	}
 
 	function choicePreviouslySelected(option) {
 		var installer_plist = '/Library/Preferences/com.projectosx.clover.installer.plist';

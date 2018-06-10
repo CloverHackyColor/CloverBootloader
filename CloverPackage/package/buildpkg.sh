@@ -439,6 +439,8 @@ addGroupChoices() {
                        shift; choiceOptions+=("--enabled=${option#*=}") ;;
             --selected=*)
                        shift; choiceOptions+=("--selected=${option#*=}") ;;
+            --visible=*)
+                       shift; choiceOptions+=("--visible=${option#*=}") ;;
            -*)
                 echo "Unrecognized addGroupChoices option '$option'" >&2
                 exit 1
@@ -892,8 +894,11 @@ if [[ "$add_ia32" -eq 1 ]]; then
                                 --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
                                 "VBoxHfs"
             buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
-            addChoice --start-visible="false" --selected="!choices['UEFI.only'].selected"  \
-            --pkg-refs="$packageRefId"  "${driverChoice}"
+            addChoice --start-visible="true" \
+                      --enabled="!choices['UEFI.only'].selected" \
+                      --start-selected="!choices['UEFI.only'].selected &amp;&amp; (cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId'))"  \
+                      --visible="!choices['UEFI.only'].selected"     \
+                      --pkg-refs="$packageRefId"  "${driverChoice}"
             rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
         done
         # End mandatory drivers-ia32 packages
@@ -902,6 +907,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
         echo "===================== drivers32 ========================"
         addGroupChoices --title="Drivers32" --description="Drivers32"  \
                         --enabled="!choices['UEFI.only'].selected"     \
+                        --visible="!choices['UEFI.only'].selected"     \
                         "Drivers32"
         packagesidentity="${clover_package_identity}".drivers32
         local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
@@ -960,6 +966,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEF
     echo "================= drivers64 mandatory =================="
     addGroupChoices --title="Drivers64" --description="Drivers64"  \
       --enabled="!choices['UEFI.only'].selected"     \
+      --visible="!choices['UEFI.only'].selected"     \
       "Drivers64"
 
     packagesidentity="${clover_package_identity}".drivers64.mandatory
@@ -980,10 +987,16 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEF
                             --subst="DRIVER_NAME=$driver"                     \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
                             "VBoxHfs"
+        # mandatory drivers starts all selected only if /Library/Preferences/com.projectosx.clover.installer.plist does not exist
+        # (i.e. Clover package never run on that target partition).
+        # Otherwise each single choice start selected only for legacy Clover and only if you previously selected it
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
-        addChoice --group="Drivers64" --start-visible="true" --start-selected="true" --selected="true"  \
-         --pkg-refs="$packageRefId"  "${driverChoice}"
-#selected="!choices['UEFI.only'].selected"
+        addChoice --group="Drivers64" \
+                  --start-visible="true" \
+                  --enabled="!choices['UEFI.only'].selected" \
+                  --start-selected="!choices['UEFI.only'].selected &amp;&amp; (cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId'))"  \
+                  --visible="!choices['UEFI.only'].selected"     \
+                  --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
     done
 fi
@@ -1008,7 +1021,7 @@ if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" && ${NOEXTRAS} != *"CloverE
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="Drivers64" --title="$driverName"                                               \
                   --enabled="!choices['UEFI.only'].selected"                                              \
-                  --start-selected="choicePreviouslySelected('$packageRefId')"                            \
+                  --start-selected="!choices['UEFI.only'].selected &amp;&amp; choicePreviouslySelected('$packageRefId')"                            \
                   --selected="choices['$driverName'].selected"  \
                   --pkg-refs="$packageRefId"                                                              \
                   "${driverName}"
