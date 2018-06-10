@@ -1306,15 +1306,15 @@ VOID PatchPrelinkedKexts(LOADER_ENTRY *Entry)
 //
 VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
 {
-	DTEntry             MMEntry;
+  DTEntry             MMEntry;
   _BooterKextFileInfo *KextFileInfo;
   CHAR8               *PropName;
   _DeviceTreeBuffer   *PropEntry;
   CHAR8               SavedValue;
   CHAR8               *InfoPlist;
-	struct OpaqueDTPropertyIterator OPropIter;
-	DTPropertyIterator	PropIter = &OPropIter;
-	//UINTN               DbgCount = 0;
+  struct OpaqueDTPropertyIterator OPropIter;
+  DTPropertyIterator	PropIter = &OPropIter;
+  //UINTN               DbgCount = 0;
   
   
   DBG(L"\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
