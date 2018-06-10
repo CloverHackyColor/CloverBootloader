@@ -370,11 +370,26 @@ addChoice () {
         exit 1
     fi
 
+    # check if we have a localization ready in Localizable.strings
+    local ltitle=""
+    local ldescription=""
+    if grep -q "\"${choiceId}_title\"" "${PKGROOT}/Resources/templates/Localizable.strings"; then
+      ltitle="${choiceId}_title"
+    else
+      ltitle="${choiceId%.UEFI}"
+    fi
+
+    if grep -q "\"${choiceId}_description\"" "${PKGROOT}/Resources/templates/Localizable.strings"; then
+      ldescription="${choiceId}_description"
+    else
+      ldescription="${choiceId%.UEFI}"
+    fi
+
     # Record new node
     choice_key[$idx]="$choiceId"
-    choice_title[$idx]="${title:-${choiceId}}"
-    choice_description[$idx]="${description:-${choiceId}_description}"
-#    choice_description[$idx]="${description:-${choiceId}}"
+    choice_title[$idx]="$ltitle"
+    choice_description[$idx]="${ldescription}"
+
     choice_options[$idx]=$(trim "${choiceOptions}") # Removing leading and trailing whitespace(s)
     choice_selected[$idx]=$(trim "${choiceSelected}") # Removing leading and trailing whitespace(s)
     choice_force_selected[$idx]=$(trim "${choiceForceSelected}") # Removing leading and trailing whitespace(s)
