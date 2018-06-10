@@ -3877,9 +3877,9 @@ DEFINE GCC_AARCH64_RC_FLAGS        = -I binary -O elf64-littleaarch64 -B aarch64
 
 #DEFINE GCC44_ALL_CC_FLAGS            = -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -c -include AutoGen.h -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
 #-s
-DEFINE GCC44_ALL_CC_FLAGS            = -g -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -fno-asynchronous-unwind-tables
-DEFINE GCC44_IA32_CC_FLAGS           = DEF(GCC44_ALL_CC_FLAGS) -m32 -march=i586 -malign-double -fno-stack-protector -D EFI32
-DEFINE GCC44_X64_CC_FLAGS            = DEF(GCC44_ALL_CC_FLAGS) -m64 -fno-stack-protector "-DEFIAPI=__attribute__((ms_abi))" -maccumulate-outgoing-args -mno-red-zone -Wno-address -mcmodel=small -fpie
+DEFINE GCC44_ALL_CC_FLAGS            = -g -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -include AutoGen.h -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -fno-asynchronous-unwind-tables
+DEFINE GCC44_IA32_CC_FLAGS           = DEF(GCC44_ALL_CC_FLAGS) -m32 -malign-double -fno-stack-protector -D EFI32
+DEFINE GCC44_X64_CC_FLAGS            = DEF(GCC44_ALL_CC_FLAGS) -m64 -fno-stack-protector "-DEFIAPI=__attribute__((ms_abi))" -DNO_BUILTIN_VA_FUNCS -mno-red-zone -Wno-address -mcmodel=large
 #DEFINE GCC44_IA32_X64_DLINK_COMMON   = -nostdlib -n -q --gc-sections --script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 DEFINE GCC44_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 #DEFINE GCC44_IA32_X64_ASLDLINK_FLAGS = DEF(GCC44_IA32_X64_DLINK_COMMON) --entry ReferenceAcpiTable -u ReferenceAcpiTable
@@ -3954,8 +3954,8 @@ DEFINE GCC48_AARCH64_DLINK_FLAGS     = DEF(GCC47_AARCH64_DLINK_FLAGS)
 DEFINE GCC48_ARM_ASLDLINK_FLAGS      = DEF(GCC47_ARM_ASLDLINK_FLAGS)
 DEFINE GCC48_AARCH64_ASLDLINK_FLAGS  = DEF(GCC47_AARCH64_ASLDLINK_FLAGS)
 
-DEFINE GCC49_IA32_CC_FLAGS           = DEF(GCC48_IA32_CC_FLAGS) -Wno-unused-const-variable -Os -flto
-DEFINE GCC49_X64_CC_FLAGS            = DEF(GCC48_X64_CC_FLAGS) -Wno-unused-const-variable -Os -flto -DUSING_LTO
+DEFINE GCC49_IA32_CC_FLAGS           = DEF(GCC48_IA32_CC_FLAGS) -Os -flto
+DEFINE GCC49_X64_CC_FLAGS            = DEF(GCC48_X64_CC_FLAGS) -Os -flto
 #DEFINE GCC49_IA32_X64_DLINK_COMMON   = -nostdlib -n -q --gc-sections --script=$(EDK_TOOLS_PATH)/Scripts/gcc4.9-ld-script
 DEFINE GCC49_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,--script=$(EDK_TOOLS_PATH)/Scripts/gcc4.9-ld-script
 #DEFINE GCC49_IA32_X64_ASLDLINK_FLAGS = DEF(GCC49_IA32_X64_DLINK_COMMON) --entry ReferenceAcpiTable -u ReferenceAcpiTable
@@ -3964,7 +3964,7 @@ DEFINE GCC49_IA32_X64_ASLDLINK_FLAGS = DEF(GCC49_IA32_X64_DLINK_COMMON),--entry,
 DEFINE GCC49_IA32_X64_DLINK_FLAGS    = DEF(GCC49_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 #DEFINE GCC49_IA32_DLINK2_FLAGS       = DEF(GCC48_IA32_DLINK2_FLAGS)
 #DEFINE GCC49_X64_DLINK_FLAGS         = DEF(GCC49_IA32_X64_DLINK_FLAGS)  -melf_x86_64 --oformat=elf64-x86-64
-DEFINE GCC49_X64_DLINK_FLAGS         = DEF(GCC49_IA32_X64_DLINK_FLAGS),-melf_x86_64,--oformat=elf64-x86-64,-pie
+DEFINE GCC49_X64_DLINK_FLAGS         = DEF(GCC49_IA32_X64_DLINK_FLAGS),-melf_x86_64,--oformat=elf64-x86-64
 #DEFINE GCC49_X64_DLINK2_FLAGS        = DEF(GCC48_X64_DLINK2_FLAGS)
 DEFINE GCC49_ASM_FLAGS               = DEF(GCC48_ASM_FLAGS)
 DEFINE GCC49_ARM_ASM_FLAGS           = DEF(GCC48_ARM_ASM_FLAGS)
@@ -3991,13 +3991,13 @@ DEFINE GCC49_AARCH64_RELEASE_FLAGS   = -Wno-unused-but-set-variable
 
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
 DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS)
-DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x280,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
+DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40
 
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
 
 DEFINE GCC53_IA32_X64_DLINK_FLAGS    = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
-DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC53_IA32_X64_DLINK_FLAGS),-melf_x86_64,--oformat=elf64-x86-64,-pie
+DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC53_IA32_X64_DLINK_FLAGS),-melf_x86_64,--oformat=elf64-x86-64
 
 DEFINE GCC53_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
@@ -6807,10 +6807,11 @@ RELEASE_XCLANG_X64_ASM_FLAGS  = -arch x86_64
 *_XCLANG_*_VFRPP_FLAGS      = -x c -E -P -DVFRCOMPILE -include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h 
 
 
-  DEBUG_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -g -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable -Wno-deprecated-declarations -Wno-shift-negative-value -DNO_MSABI_VA_FUNCS
-RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Wall -Werror -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations -Wno-shift-negative-value -DNO_MSABI_VA_FUNCS
+  DEBUG_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -g -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable -Wno-deprecated-declarations -Wno-shift-negative-value
+RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Wall -Werror -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations -Wno-shift-negative-value
 
-#RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Os -flto -Wall -Werror -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations -Wno-shift-negative-value -DNO_MSABI_VA_FUNCS
+#RELEASE_XCLANG_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Os -flto -Wall -Werror -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations -Wno-shift-negative-value
+# -DNO_BUILTIN_VA_FUNCS
 #-mdynamic-no-pic -mno-implicit-float 
 *_XCLANG_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h -mdynamic-no-pic
 *_XCLANG_*_ASLDLINK_FLAGS   = -e _ReferenceAcpiTable -preload -segalign 0x20  -pie -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
@@ -6963,8 +6964,8 @@ RELEASE_XCODE8_X64_ASM_FLAGS  = -c -x assembler -arch x86_64
 *_XCODE8_*_PP_FLAGS         = -E -x assembler-with-cpp -include $(DEST_DIR_DEBUG)/AutoGen.h
 *_XCODE8_*_VFRPP_FLAGS      = -x c -E -P -DVFRCOMPILE -include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h
 
-  DEBUG_XCODE8_X64_CC_FLAGS   = -c -g -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-implicit-float -mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS) "-DEFIAPI=__attribute__((ms_abi))" -mno-red-zone
-RELEASE_XCODE8_X64_CC_FLAGS   = -c    -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-implicit-float -mms-bitfields -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS) "-DEFIAPI=__attribute__((ms_abi))" -mno-red-zone
+  DEBUG_XCODE8_X64_CC_FLAGS   = -c -g -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-implicit-float -mms-bitfields -mno-red-zone -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS) "-DEFIAPI=__attribute__((ms_abi))" -DUSE_CLANG_BUILTIN_MS_VA_LIST
+RELEASE_XCODE8_X64_CC_FLAGS   = -c    -Os       -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mno-implicit-float -mms-bitfields -mno-red-zone -Wno-unused-parameter -Wno-missing-braces -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare $(PLATFORM_FLAGS) "-DEFIAPI=__attribute__((ms_abi))" -DUSE_CLANG_BUILTIN_MS_VA_LIST
 
 *_XCODE8_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h
 *_XCODE8_*_ASLDLINK_FLAGS   = -nostdlib -O0 -Wl,-e,_ReferenceAcpiTable,-preload,-segalign,0x20,-pie,-seg1addr,0x240,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
