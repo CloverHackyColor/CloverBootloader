@@ -148,7 +148,7 @@
         ?.cpp
         ?.Cpp
         ?.CPP
- 
+
     <ExtraDependency>
         $(MAKE_FILE)
 
@@ -184,7 +184,6 @@
 
     <Command>
 
-
 [Assembly-Code-File.COMMON.COMMON]
     <InputFile.MSFT, InputFile.INTEL, InputFile.RVCT>
         ?.asm, ?.Asm, ?.ASM
@@ -203,14 +202,43 @@
         Trim --source-code --convert-hex --trim-long -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         "$(ASM)" /Fo${dst} $(ASM_FLAGS) /I${s_path} $(INC) ${d_path}(+)${s_base}.iii
 
-    <Command.GCC, Command.GCCLD, Command..RVCT>
+    <Command.GCC, Command.GCCLD, Command.RVCT>
         @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         #--trim-long
         # For RVCTCYGWIN ASM_FLAGS must be first to work around pathing issues
         @"$(ASM)" $(ASM_FLAGS) -o ${dst} $(INC) ${d_path}(+)${s_base}.iii
-
         @"echo" [ASM] ${s_base}
+
+[Assembly-Code-File.COMMON.ARM,Assembly-Code-File.COMMON.AARCH64]
+    # Remove --convert-hex for ARM as it breaks MSFT assemblers
+    <InputFile.MSFT, InputFile.INTEL, InputFile.RVCT>
+        ?.asm, ?.Asm, ?.ASM
+
+    <InputFile.GCC, InputFile.GCCLD>
+        ?.S, ?.s
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+
+    <Command.INTEL>
+        "$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
+        Trim --source-code --convert-hex --trim-long -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
+        "$(ASM)" /Fo${dst} $(ASM_FLAGS) /I${s_path} $(INC) ${d_path}(+)${s_base}.iii
+
+    <Command.MSFT>
+        "$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
+        Trim --source-code --trim-long -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
+        "$(ASM)" /Fo${dst} $(ASM_FLAGS) /I${s_path} $(INC) ${d_path}(+)${s_base}.iii
+
+    <Command.GCC, Command.GCCLD, Command.RVCT>
+        "$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
+        Trim --trim-long --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
+        # For RVCTCYGWIN ASM_FLAGS must be first to work around pathing issues
+        "$(ASM)" $(ASM_FLAGS) -o ${dst} $(INC) ${d_path}(+)${s_base}.iii
 
 [Nasm-Assembly-Code-File.COMMON.COMMON]
     <InputFile>
@@ -226,7 +254,7 @@
         @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --trim-long --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         @"$(NASM)" -I${s_path}(+) $(NASM_FLAGS) -o $dst ${d_path}(+)${s_base}.iii
-		@"echo" [NASM] ${s_base}
+        @"echo" [NASM] ${s_base}
 
 [Assembly-Code-File.COMMON.IPF]
     <InputFile>
@@ -244,6 +272,21 @@
         # For RVCTCYGWIN ASM_FLAGS must be first to work around pathing issues
         "$(ASM)" $(ASM_FLAGS) -o ${dst} ${d_path}(+)${s_base}.iii
 
+[Device-Tree-Source-File]
+    <InputFile>
+        ?.dts
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dtb
+
+    <Command.GCC>
+        @"$(DTCPP)" $(DTCPP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
+        @"$(DTC)" $(DTC_FLAGS) -I dts -O dtb -o ${dst} ${d_path}(+)${s_base}.i
+        @"echo" [DTC] ${s_base}
+
 [Visual-Form-Representation-File]
     <InputFile>
         ?.vfr
@@ -259,7 +302,8 @@
     <Command>
         @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_base}.i
         @"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory ${d_path} $(OUTPUT_DIR)(+)${s_base}.i
-		@"echo" [VFR] $(MODULE_NAME)
+        @"echo" [VFR] $(MODULE_NAME)
+
 [Object-File]
     <InputFile>
         *.obj
@@ -284,7 +328,6 @@
 
     <Command.XCODE>
         @"$(SLINK)" $(SLINK_FLAGS) ${dst} -filelist $(OBJECT_FILES_LIST)
-	
         @"echo" [SLINK] $(MODULE_NAME)
 
 [Static-Library-File]
@@ -318,8 +361,8 @@
 
     <Command.XCODE>
         @"$(DLINK)" $(DLINK_FLAGS) -o ${dst} $(DLINK_SPATH) -filelist $(STATIC_LIBRARY_FILES_LIST)  $(DLINK2_FLAGS)
-	
         @"echo" [DLINK1] $(MODULE_NAME)
+    
     
 [Static-Library-File.SEC.AARCH64, Static-Library-File.PEI_CORE.AARCH64, Static-Library-File.PEIM.AARCH64,Static-Library-File.SEC.ARM, Static-Library-File.PEI_CORE.ARM, Static-Library-File.PEIM.ARM]
     <InputFile>
@@ -335,7 +378,7 @@
         "$(DLINK)" -o ${dst} $(DLINK_FLAGS) $(DLINK_XIPFLAGS) -Wl,--start-group,@$(STATIC_LIBRARY_FILES_LIST),--end-group $(CC_FLAGS) $(CC_XIPFLAGS) $(DLINK2_FLAGS)
         "$(OBJCOPY)" $(OBJCOPY_FLAGS) ${dst}
 
-    
+
 [Static-Library-File.USER_DEFINED]
     <InputFile>
         *.lib
@@ -365,7 +408,6 @@
 
     <Command.XCODE>
         @"$(DLINK)" -o ${dst} $(DLINK_FLAGS)  $(DLINK_SPATH) -filelist $(STATIC_LIBRARY_FILES_LIST)  $(DLINK2_FLAGS)
-	
         @"echo" [DLINK2] $(MODULE_NAME)
       
       
@@ -384,7 +426,6 @@
         -$(CP) $(DEBUG_DIR)(+)*.pdb $(OUTPUT_DIR) 
     <Command.GCC, Command.GCCLD>
         #$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-
         @$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
         @$(OBJCOPY) --strip-unneeded  -R .eh_frame ${src}
 
@@ -399,14 +440,12 @@
         @$(CP) ${dst} $(OUTPUT_DIR)
         @$(CP) ${dst} $(BIN_DIR)
         @-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
-	
         @"echo" [GENFW] $(MODULE_NAME)
         
     <Command.XCODE>
         # tool to convert Mach-O to PE/COFF
         #@"$(STRIP)" ${src}
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS)  ${src}  $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff
-	
         @"echo" [MTOC] $(MODULE_NAME)
         # create symbol file for GDB debug
         #@-$(DSYMUTIL) ${src}
@@ -414,7 +453,6 @@
         @$(CP) ${dst} $(OUTPUT_DIR)
         @$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).efi
         @-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
-	
         @"echo" [GENFW] $(MODULE_NAME)
 
 [Dependency-Expression-File]
@@ -431,7 +469,6 @@
         @"$(PP)" $(APP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
         @Trim --source-code -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
         @GenDepex -t $(MODULE_TYPE) -o ${dst} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
-	
         @"echo" [DEPEX] $(MODULE_NAME)
 
 [Acpi-Source-Language-File]
@@ -453,12 +490,10 @@
     <Command.GCC, Command.GCCLD>>
         @Trim --asl-file -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i -i $(INC_LIST) ${src}
         @"$(ASLPP)" $(ASLPP_FLAGS) $(INC) -I${s_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
-	
         @"echo" [ASLPP] ${s_base}
-       # "$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)${dst} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
-       	@"$(ASL)" $(ASL_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
-	
-       	@"echo" [ASLBIN] ${s_base}
+        #"$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)${dst} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+        @"$(ASL)" $(ASL_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+        @"echo" [ASLBIN] ${s_base}
 
 [C-Code-File.AcpiTable]
     <InputFile>
@@ -478,10 +513,8 @@
     <Command.GCC, Command.GCCLD>
         @"$(ASLCC)" -c -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(CC_FLAGS) $(ASLCC_FLAGS) $(INC) ${src}
         @"$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-	
         @"echo" [ASLDLINK] ${s_base}
         @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(GENFW_FLAGS)
-	
         @"echo" [GENFW] ${s_base}
 
 [Acpi-Table-Code-File]
@@ -502,24 +535,19 @@
     <Command.GCC, Command.GCCLD>
         @"$(ASLCC)" -c -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(CC_FLAGS) $(ASLCC_FLAGS) $(INC) ${src}
         @"$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-	
         @"echo" [ASLDLINK-ACPI] ${s_base}
         @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(GENFW_FLAGS)
-	
         @"echo" [GENFW-ACPI] ${s_base}
         
     <Command.XCODE>        
-    	@"echo" [ASLCC-ACPI] $(MODULE_NAME)       
+        @"echo" [ASLCC-ACPI] $(MODULE_NAME)
         @"$(ASLCC)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj  $(ASLCC_FLAGS) $(INC) ${src}
-	
         @"echo" [ASLDLINK-ACPI] $(MODULE_NAME)
         @"$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-	
         @"echo" [MTOC-ACPI] $(MODULE_NAME)
         #@"$(STRIP)" ${src}
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi
         @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi $(GENFW_FLAGS)
-	
         @"echo" [GENFW-ACPI] $(MODULE_NAME)
       
       
@@ -535,7 +563,7 @@
 
     <Command.MSFT, Command.INTEL>
         "$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
-        Trim --source-code --convert-hex -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
+        Trim --source-code --convert-hex --trim-long -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         cd $(OUTPUT_DIR)(+)${s_dir}
         "$(ASM16)" /nologo /c /omf $(INC) /Fo$(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj ${d_path}(+)${s_base}.iii
         "$(ASMLINK)" $(ASMLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj,${dst},,,,
@@ -553,9 +581,9 @@
       @"$(ASM)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(ASM_FLAGS) $(INC) ${d_path}(+)${s_base}.iii
       @"$(SLINK)" $(SLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.slib $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
       @otool -t $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.slib | hex2bin.py ${dst}
-	
       @"echo" [OTOOL] ${s_base}
       
+
 [Nasm-to-Binary-Code-File]
     <InputFile>
         ?.nasmb, ?.NASMB
@@ -570,11 +598,9 @@
         @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --source-code --convert-hex -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         @"$(NASM)" -I${s_path}(+) -l ${d_path}(+)${s_base}.lst $(NASMB_FLAGS) -o $dst ${d_path}(+)${s_base}.iii
-		@"echo" [NASMB] ${s_base}
-	    # copy the output file with .com postfix that be same to the output file of .asm16
+        @"echo" [NASMB] ${s_base}
+        # copy the output file with .com postfix that be same to the output file of .asm16
         @$(CP) ${dst} $(OUTPUT_DIR)(+)${s_base}.com
-
-
 
 [Microcode-File.USER_DEFINED, Microcode-File.Microcode]
     <InputFile>
@@ -619,6 +645,17 @@
 
     <Command>
 
+[Image-Definition-File]
+    <InputFile>
+        *.idf, *.Idf, *.IDF
+
+    <OutputFile>
+        $(DEBUG_DIR)(+)AutoGen.c
+        $(DEBUG_DIR)(+)$(MODULE_NAME)ImgDefs.h
+        $(OUTPUT_DIR)(+)$(MODULE_NAME)Idf.hpk
+
+    <Command>
+
 [Efi-Image.UEFI_OPTIONROM]
     <InputFile>
         ?.efi, ?.EFI, ?.Efi
@@ -636,6 +673,16 @@
     <OutputFile>
         $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk
         $(DEBUG_DIR)(+)$(MODULE_NAME)StrDefs.h
+
+    <Command>
+
+[Image-Definition-File.UEFI_HII]
+    <InputFile>
+        *.idf, *.Idf, *.IDF
+
+    <OutputFile>
+        $(DEBUG_DIR)(+)$(MODULE_NAME)ImgDefs.h
+        $(OUTPUT_DIR)(+)$(MODULE_NAME)Idf.hpk
 
     <Command>
 
@@ -676,7 +723,6 @@
         
     <Command.XCODE, Command.RVCT> 
         @GenFw -o $(OUTPUT_DIR)(+)$(MODULE_NAME)hii.rc -g $(MODULE_GUID) --hiibinpackage $(HII_BINARY_PACKAGES)
-	
         @"echo" [GENFW-HII] $(MODULE_NAME)
         
         
