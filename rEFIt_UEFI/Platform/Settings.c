@@ -4060,7 +4060,7 @@ InitTheme(
         } else {
           ThemeDict = LoadTheme (GlobalConfig.Theme);
           if (ThemeDict == NULL) {
-            DBG ("GlobalConfig: %s not found, get random theme %s\n", CONFIG_THEME_FILENAME, ThemesList[Rnd]);
+            DBG ("GlobalConfig: %s not found, get embedded theme\n", GlobalConfig.Theme);
             FreePool (GlobalConfig.Theme);
             GlobalConfig.Theme = NULL;
           }
@@ -4068,12 +4068,12 @@ InitTheme(
       }
     }
     // Try to get a theme
-    if (ThemeDict == NULL) {
+/*  if (ThemeDict == NULL) { //use embedded
       ThemeDict = LoadTheme (ThemesList[Rnd]);
       if (ThemeDict != NULL) {
         GlobalConfig.Theme = AllocateCopyPool (StrSize (ThemesList[Rnd]), ThemesList[Rnd]);
       }
-    }
+    } */
   } // ThemesNum>0
   
   
@@ -4081,6 +4081,7 @@ finish:
   if (!ThemeDict) {  // No theme could be loaded, use embedded
     DBG (" using embedded theme\n");
     GlobalConfig.Theme = NULL;
+    OldChosenTheme = 0xFFFF;
     if (ThemePath != NULL) {
       FreePool (ThemePath);
       ThemePath = NULL;

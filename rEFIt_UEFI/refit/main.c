@@ -2415,7 +2415,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         FreeMenu(&OptionMenu);
       }
       gThemeChanged = FALSE;
-      DBG("Choosing theme %s\n", GlobalConfig.Theme);
+      if (GlobalConfig.Theme) {
+        DBG("Chosen theme %s\n", GlobalConfig.Theme);
+      } else {
+        DBG("Chosen embedded theme\n");
+      }
 //      DBG("initial boot-args=%a\n", gSettings.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
