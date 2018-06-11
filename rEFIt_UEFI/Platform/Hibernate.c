@@ -928,6 +928,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             }
             if (StrCmp(gST->FirmwareVendor, L"INSYDE Corp.") != 0) {
               // skip this on INSYDE UEFI
+              UINT8 SataNum = Value[22];
               FreePool(Value);
               BootImageDevPath = FileDevicePath(Volume->WholeDiskDeviceHandle, OffsetHexStr);
               //  DBG(" boot-image device path:\n");
@@ -936,6 +937,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               DBG("    boot-image after: %s\n", FileDevicePathToStr(BootImageDevPath));
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi
               //Value[6] = 8; //Acpi(PNP0A08,0)
+              Value[22] = SataNum;
               Value[24] = 0xFF;
               Value[25] = 0xFF;
               DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
