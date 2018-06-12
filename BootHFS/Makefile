@@ -10,11 +10,17 @@ ifeq ($(DESTDIR),)
 $(error Variable DESTDIR must be defined !)
 endif
 
+ifdef NASM_PREFIX
+NASM=$(NASM_PREFIX)nasm
+else
+NASM=nasm
+endif
+
 all: $(BOOTSECTOR_BINS) $(PBOOTSECTOR_BINS) $(TEXTFILES_TARGET)
 
 $(BOOTSECTOR_BINS): boot0.s $(BOOTSECTOR_SRCS)
 	@echo "[NASM] $(@F).s -> $@"
-	@nasm $(@F).s -o $@
+	@"$(NASM)" $(@F).s -o $@
 
 $(TEXTFILES_TARGET): $(TEXTFILES)
 	@cp -v $(@F) $@
