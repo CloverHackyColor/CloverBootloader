@@ -514,7 +514,8 @@ MainBuildScript() {
 
     local repoRev="0000"
     if [[ -d .svn ]]; then
-        repoRev=$(svnversion -n | tr -d [:alpha:])
+#        repoRev=$(svnversion -n | tr -d [:alpha:])
+		repoRev=$(svn info | grep "Revision" | tr -cd [:digit:])
     elif [[ -d .git ]]; then
         repoRev=$(git svn find-rev git-svn | tr -cd [:digit:])
     fi
