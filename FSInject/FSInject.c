@@ -1195,7 +1195,7 @@ FSInjectEntrypoint (
 	// by Sherlocks, 2017.11
 
 	// Installed/createinstallmedia
-	//FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4
+	//FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4+
 
 	// Recovery
 	//FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10
@@ -1223,8 +1223,8 @@ FSInjectEntrypoint (
 	//FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
 	//FSInjectionAddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
 
-    // NetInstall
-    //FSInjectionAddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
+	// NetInstall
+	//FSInjectionAddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
 
 
 	// Block Caches list

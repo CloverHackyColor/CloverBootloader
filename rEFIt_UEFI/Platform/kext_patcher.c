@@ -406,7 +406,7 @@ STATIC UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
 STATIC UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
 STATIC UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
 
-//SunKi
+// SunKi: 10.9 - 10.14
 STATIC UINT8   MavSearch[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
 STATIC UINT8   MavReplace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
 
@@ -464,7 +464,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   }
   else if (NumMav == 1) {
     Num = SearchAndReplace(Driver, DriverSize, MavSearch, sizeof(MavSearch), MavReplace, 1);
-    DBG_RT(Entry, "==> Mavericks X64: %d replaces done.\n", Num);
+    DBG_RT(Entry, "==> Mav/Yos/El/Sie/HS/Moj X64: %d replaces done.\n", Num);
   }
   else {
     DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
@@ -761,8 +761,8 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.14")) {
-        // 10.13
+    } else if (os_ver < AsciiOSVersionToUint64("10.15")) {
+        // 10.13/10.14
         STATIC UINT8 find[][3] = {
             { 0x01, 0x74, 0x61 },
             { 0x3E, 0x75, 0x38 },
@@ -825,50 +825,51 @@ VOID SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
 // BDWE_IOPCIPatch implemented by syscl
 // Fix Broadwell-E IOPCIFamily issue
 //
-// find: 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x40
-// repl: 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80
-//
-STATIC UINT8 BroadwellE_IOPCI_Find[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x40 };
-STATIC UINT8 BroadwellE_IOPCI_Repl[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80 };
 
-// changes as of 10.14
+// El Capitan
+STATIC UINT8   BroadwellE_IOPCI_Find_El[] = { 0x48, 0x81, 0xF9, 0x01, 0x00, 0x00, 0x40 };
+STATIC UINT8   BroadwellE_IOPCI_Repl_El[] = { 0x48, 0x81, 0xF9, 0x01, 0x00, 0x00, 0x80 };
 
-STATIC UINT8 BroadwellE_IOPCI_Find_1014[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x40 };
-STATIC UINT8 BroadwellE_IOPCI_Repl_1014[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x80 };
+// Sierra/High Sierra
+STATIC UINT8   BroadwellE_IOPCI_Find_SieHS[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x40 };
+STATIC UINT8   BroadwellE_IOPCI_Repl_SieHS[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80 };
 
-
+// Mojave
+STATIC UINT8   BroadwellE_IOPCI_Find_Moj[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x40 };
+STATIC UINT8   BroadwellE_IOPCI_Repl_Moj[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x80 };
 
 VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
 {
-    UINTN count = 0;
+  UINTN count = 0;
   UINT64 os_ver = AsciiOSVersionToUint64(Entry->OSVersion);
     
-    DBG_RT(Entry, "\nBDWE_IOPCIPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
-    if (Entry->KernelAndKextPatches->KPDebug) {
-        ExtractKextBundleIdentifier(InfoPlist);
-    }
+  DBG_RT(Entry, "\nBDWE_IOPCIPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    ExtractKextBundleIdentifier(InfoPlist);
+  }
     
-    DBG_RT(Entry, "Kext: %a\n", gKextBundleIdentifier);
-    //
-    // now, let's patch it!
-    //
-//    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find, sizeof(BroadwellE_IOPCI_Find), BroadwellE_IOPCI_Repl, 0);
-  if (os_ver <= AsciiOSVersionToUint64("10.13.6")) {
-    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find, sizeof(BroadwellE_IOPCI_Find), BroadwellE_IOPCI_Repl, 0);
+  DBG_RT(Entry, "Kext: %a\n", gKextBundleIdentifier);
+  //
+  // now, let's patch it!
+  //
+
+  if (os_ver < AsciiOSVersionToUint64("10.12")) {
+    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_El, sizeof(BroadwellE_IOPCI_Find_El), BroadwellE_IOPCI_Repl_El, 0);
+  } else if (os_ver < AsciiOSVersionToUint64("10.14")) {
+    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_SieHS, sizeof(BroadwellE_IOPCI_Find_SieHS), BroadwellE_IOPCI_Repl_SieHS, 0);
   } else {
-    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_1014, sizeof(BroadwellE_IOPCI_Find_1014), BroadwellE_IOPCI_Repl_1014, 0);
+    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_Moj, sizeof(BroadwellE_IOPCI_Find_Moj), BroadwellE_IOPCI_Repl_Moj, 0);
   }
   
-    if (count) {
-        DBG_RT(Entry, "==> IOPCIFamily: %d replaces done.\n", count);
-    }
-    else {
-        DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
-    }
+  if (count) {
+    DBG_RT(Entry, "==> IOPCIFamily: %d replaces done.\n", count);
+  } else {
+    DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
+  }
     
-    if (Entry->KernelAndKextPatches->KPDebug) {
-        gBS->Stall(5000000);
-    }
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    gBS->Stall(5000000);
+  }
 }
 
 

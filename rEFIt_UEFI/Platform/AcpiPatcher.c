@@ -558,7 +558,7 @@ VOID PatchAllTables()
       NewTable->Length = Len;
       RenameDevices((UINT8*)NewTable);
       GetBiosRegions((UINT8*)NewTable);  //take Regions from SSDT even if they will be dropped
-      Patched = TRUE;;
+      Patched = TRUE;
     }
     if (NewTable->Signature == MCFG_SIGN && gSettings.FixMCFG) {
       INTN Len1 = ((Len + 4 - 1) / 16 + 1) * 16 - 4;

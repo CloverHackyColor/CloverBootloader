@@ -1074,7 +1074,7 @@ VOID ScanLoader(VOID)
         AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
     } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
-      AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4
+      AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
     }
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
     AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7

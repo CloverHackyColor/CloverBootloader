@@ -6173,7 +6173,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
-         FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4
+         FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4+
           InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
         }
     if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
@@ -6408,6 +6408,7 @@ CHAR16
   if (OSVersion == NULL) {
     OSIconName = L"mac";
   } else if (AsciiStrStr (OSVersion, "10.14") != 0) {
+    // Mojave
     OSIconName = L"moja,mac";
   } else if (AsciiStrStr (OSVersion, "10.13") != 0) {
     // High Sierra
@@ -7472,7 +7473,7 @@ SaveSettings ()
   // to determine the use of Table 132
   if (gSettings.QPI) {
     gSettings.SetTable132 = TRUE;
-    //    DBG ("QPI: use Table 132\n");
+    //DBG ("QPI: use Table 132\n");
   }
   else {
     switch (gCPUStructure.Model) {
@@ -7627,7 +7628,7 @@ SetFSInjection (
      */
     
     // Installed/createinstallmedia
-    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4
+    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4+
     
     // Recovery
     //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10

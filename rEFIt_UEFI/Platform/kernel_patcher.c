@@ -472,7 +472,7 @@ STATIC UINT8 YosECSieSearchModel[]   = {0x88, 0xc1, 0xc0, 0xe9, 0x04};
 STATIC UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
 // Need to use LionReplaceModel
 
-// High Sierra
+// High Sierra/Mojave
 /*
  This patch searches
   mov ecx, ecx   ||   mov ecx, eax
@@ -480,7 +480,7 @@ STATIC UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
  and replaces to
   mov ecx, FakeModel || mov ecx, FakeExt
  */
-STATIC UINT8 HSieSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
+STATIC UINT8 HSieMojSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
 // Need to use YosECSieSearchExt, LionReplaceModel
 
 
@@ -551,12 +551,12 @@ VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
     DBG_RT(Entry, "...done!\n");
     return;
   }
-// High Sierra patterns
-// Sherlocks: 10.13.DP1
-  DBG_RT(Entry, "CPUID: try High Sierra patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieSearchModel[0],
+// High Sierra/Mojave patterns
+// Sherlocks: 10.13/10.14.DP1
+  DBG_RT(Entry, "CPUID: try High Sierra/Mojave patch...\n");
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieMojSearchModel[0],
                  &YosECSieSearchExt[0], &LionReplaceModel[0], &LionReplaceModel[0],
-                 sizeof(HSieSearchModel), Entry)) {
+                 sizeof(HSieMojSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
     return;
   }
@@ -624,55 +624,55 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         bytes[i+45] == 0x65 && bytes[i+46] == 0x8B && bytes[i+47] == 0x04 && bytes[i+48] == 0x25 &&
         bytes[i+49] == 0x3C && bytes[i+50] == 0x00 && bytes[i+51] == 0x00 && bytes[i+52] == 0x00) {
         patchLocation = i+40;
-        DBG("Found Snow Leopard Lapic panic at 0x%08x\n", patchLocation);
-        break;
+      DBG("Found Snow Leopard Lapic panic at 0x%08x\n", patchLocation);
+      break;
     } else if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0x8B && bytes[i+2]  == 0x04 && bytes[i+3]  == 0x25 &&
-        bytes[i+4]  == 0x14 && bytes[i+5]  == 0x00 && bytes[i+6]  == 0x00 && bytes[i+7]  == 0x00 &&
-        bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
-        bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
-        patchLocation = i+30;
-        DBG("Found Lion/Mountain Lion Lapic panic at 0x%08x\n", patchLocation);
-        break;
+               bytes[i+4]  == 0x14 && bytes[i+5]  == 0x00 && bytes[i+6]  == 0x00 && bytes[i+7]  == 0x00 &&
+               bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
+               bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
+               patchLocation = i+30;
+      DBG("Found Lion/Mountain Lion Lapic panic at 0x%08x\n", patchLocation);
+      break;
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
-        bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
-        bytes[i+36] == 0x65 && bytes[i+37] == 0x8B && bytes[i+38] == 0x04 && bytes[i+39] == 0x25 &&
-        bytes[i+40] == 0x1C && bytes[i+41] == 0x00 && bytes[i+42] == 0x00 && bytes[i+43] == 0x00) {
-        patchLocation = i+31;
-        DBG("Found Mavericks Lapic panic at 0x%08x\n", patchLocation);
-        break;
-      //rehabman: 10.10.DP1
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+36] == 0x65 && bytes[i+37] == 0x8B && bytes[i+38] == 0x04 && bytes[i+39] == 0x25 &&
+               bytes[i+40] == 0x1C && bytes[i+41] == 0x00 && bytes[i+42] == 0x00 && bytes[i+43] == 0x00) {
+      patchLocation = i+31;
+      DBG("Found Mavericks Lapic panic at 0x%08x\n", patchLocation);
+      break;
+    // rehabman: 10.10.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
-        bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
-        bytes[i+33] == 0x65 && bytes[i+34] == 0x8B && bytes[i+35] == 0x04 && bytes[i+36] == 0x25 &&
-        bytes[i+37] == 0x1C && bytes[i+38] == 0x00 && bytes[i+39] == 0x00 && bytes[i+40] == 0x00) {
-        patchLocation = i+28;
-        DBG("Found Yosemite Lapic panic at 0x%08x\n", patchLocation);
-        break;
-      //Sherlocks: 10.11.DP1
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+33] == 0x65 && bytes[i+34] == 0x8B && bytes[i+35] == 0x04 && bytes[i+36] == 0x25 &&
+               bytes[i+37] == 0x1C && bytes[i+38] == 0x00 && bytes[i+39] == 0x00 && bytes[i+40] == 0x00) {
+      patchLocation = i+28;
+      DBG("Found Yosemite Lapic panic at 0x%08x\n", patchLocation);
+      break;
+    // Sherlocks: 10.11.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
-        bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
-        bytes[i+1411] == 0x65 && bytes[i+1412] == 0x8B && bytes[i+1413] == 0x0C && bytes[i+1414] == 0x25 &&
-        bytes[i+1415] == 0x1C && bytes[i+1416] == 0x00 && bytes[i+1417] == 0x00 && bytes[i+1418] == 0x00) {
-        patchLocation = i+1400;
-        DBG("Found El Capitan Lapic panic at 0x%08x\n", patchLocation);
-        break;
-      //Sherlocks: 10.12.DP1
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+1411] == 0x65 && bytes[i+1412] == 0x8B && bytes[i+1413] == 0x0C && bytes[i+1414] == 0x25 &&
+               bytes[i+1415] == 0x1C && bytes[i+1416] == 0x00 && bytes[i+1417] == 0x00 && bytes[i+1418] == 0x00) {
+      patchLocation = i+1400;
+      DBG("Found El Capitan Lapic panic at 0x%08x\n", patchLocation);
+      break;
+    // Sherlocks: 10.12.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
-        bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
-        bytes[i+1409] == 0x65 && bytes[i+1410] == 0x8B && bytes[i+1411] == 0x0C && bytes[i+1412] == 0x25 &&
-        bytes[i+1413] == 0x1C && bytes[i+1414] == 0x00 && bytes[i+1415] == 0x00 && bytes[i+1416] == 0x00) {
-        patchLocation = i+1398;
-        DBG("Found Sierra Lapic panic at 0x%08x\n", patchLocation);
-        break;
-      //PMheart: 10.13.DP1
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+1409] == 0x65 && bytes[i+1410] == 0x8B && bytes[i+1411] == 0x0C && bytes[i+1412] == 0x25 &&
+               bytes[i+1413] == 0x1C && bytes[i+1414] == 0x00 && bytes[i+1415] == 0x00 && bytes[i+1416] == 0x00) {
+      patchLocation = i+1398;
+      DBG("Found Sierra Lapic panic at 0x%08x\n", patchLocation);
+      break;
+    // PMheart: 10.13.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
-        bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
-        bytes[i+1407] == 0x65 && bytes[i+1408] == 0x8B && bytes[i+1409] == 0x0C && bytes[i+1410] == 0x25 &&
-        bytes[i+1411] == 0x1C && bytes[i+1412] == 0x00 && bytes[i+1413] == 0x00 && bytes[i+1414] == 0x00) {
-        patchLocation = i+1396;
-        DBG("Found High Sierra Lapic panic at 0x%08x\n", patchLocation);
-        break;
-      //PMheart: 10.14.DP1
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+1407] == 0x65 && bytes[i+1408] == 0x8B && bytes[i+1409] == 0x0C && bytes[i+1410] == 0x25 &&
+               bytes[i+1411] == 0x1C && bytes[i+1412] == 0x00 && bytes[i+1413] == 0x00 && bytes[i+1414] == 0x00) {
+      patchLocation = i+1396;
+      DBG("Found High Sierra Lapic panic at 0x%08x\n", patchLocation);
+      break;
+    // PMheart: 10.14.DP1
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+1396] == 0x65 && bytes[i+1397] == 0x8B && bytes[i+1398] == 0x0C && bytes[i+1399] == 0x25 &&
@@ -857,13 +857,13 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC1, 0x83, 0xFB, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
     } else if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.6 - 10.12.x
+        // 10.12.6
         STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
         STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x83, 0xF8, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.14 compatibility
     } else if (os_version < AsciiOSVersionToUint64("10.15")) {
-        // 10.13
+        // 10.13/10.14
         STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
         STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
@@ -942,6 +942,7 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
     
     DBG("Searching _xcpm_pkg_scope_msr ...\n");
     if (os_version >= AsciiOSVersionToUint64("10.12")) {
+        // 10.12+
         patchLocation = 0; // clean out the value just in case
         for (i = 0; i < 0x1000000; i++) {
             if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
@@ -1011,13 +1012,13 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
         STATIC UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
         STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.6 - 10.12.x
+    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+        // 10.12.6
         STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
         STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.14")) {
-        // 10.13.x
+    } else if (os_version < AsciiOSVersionToUint64("10.15")) {
+        // 10.13/10.14
         STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
         STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
@@ -1026,7 +1027,7 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
     comment = "_cpuid_set_info_rdmsr";
     // PMheart: attempt to add 10.14 compatibility
     if (os_version >= AsciiOSVersionToUint64("10.12") && os_version < AsciiOSVersionToUint64("10.15")) {
-        // 10.12 - 10.13
+        // 10.12 - 10.14
         STATIC UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
         STATIC UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
@@ -1065,9 +1066,10 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
       DBG("KernelIvyBridgeXCPM() <===\n");
       return TRUE;
   }
-    
+  
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
   if (os_version >= AsciiOSVersionToUint64("10.12")) {
+      // 10.12+
       patchLocation = 0; // clean out the value just in case
       for (i = 0; i < 0x1000000; i++) {
           if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
@@ -1096,14 +1098,14 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
     STATIC UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
-  } else if (os_version >= AsciiOSVersionToUint64("10.12.6") && os_version < AsciiOSVersionToUint64("10.13")) {
-    // 10.12.6 - 10.12.x
+  } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+    // 10.12.6
     STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
+  // PMheart: attempt to add 10.14 compatibility
   } else if (os_version < AsciiOSVersionToUint64("10.15")) {
-    // PMheart: attempt to add 10.14 compatibility
-    // 10.13.x/10.14.x
+    // 10.13/10.14
     STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
@@ -1240,13 +1242,13 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
     STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC2, 0x83, 0xFB, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   } else if (os_version < AsciiOSVersionToUint64("10.13")) {
-    // 10.12.6 - 10.12.x
+    // 10.12.6
     STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC2, 0x83, 0xF8, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
-  } else if (os_version < AsciiOSVersionToUint64("10.14")) {
+  // PMheart: attempt to add 10.14 compatibility
+  } else if (os_version < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
-    // PMheart: attempt to add 10.14 compatibility
     STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     STATIC UINT8 repl[] = { 0x89, 0xD8, 0xC2, 0xC1, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
