@@ -6949,6 +6949,7 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
 *_XCODE8_*_ASLCC_PATH   = clang
 *_XCODE8_*_ASLPP_PATH   = clang
 *_XCODE8_*_ASLDLINK_PATH  = clang
+*_XCODE8_*_NASM_PATH     = ENV(NASM_PREFIX)nasm
 
 ##################
 # X64 definitions
