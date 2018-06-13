@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # A script for Clover Theme Manager
-# Copyright (C) 2014-2017 Blackosx
+# Copyright (C) 2014-2018 Blackosx
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 # Thanks to apianti, dmazar & JrCs for their git know-how. 
 # Thanks to alexq, asusfreak, chris1111, droplets, eMatoS, kyndder & oswaldini for testing.
 
-VERS="0.77.6"
+VERS="0.77.8"
 
 # =======================================================================================
 # Helper Functions/Routines
@@ -1058,75 +1058,27 @@ IsRepositoryLive()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}IsRepositoryLive()"
-    
+
     local noConnection=1
-    local checkService=""
-    local defaultGateway=""
-    
+    local gitRepositoryUrl=$( echo ${remoteRepositoryUrl}/ | sed 's/http:/git:/' )
+
     WriteToLog "CTM_RepositoryCheckNetwork"
+    WriteToLog "CTM_RepositoryChecking"
 
-    # Check if there is a network connection. Check IPv4
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Connecting to ${gitRepositoryUrl}themes"
 
-    # Check for discoveryd or mDNSResponder
-    checkService=$( ps -ax | grep discoveryd | grep ?? | head -n1 )
-    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}checkService discoveryd: $checkService"
-    if [ "$checkService" != "" ] && [[ "$checkService" != *"grep discoveryd"* ]] ; then
-        defaultGateway=$( netstat -r | grep default | head -n1 | awk '{print $2}' )
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}discoveryd: defaultGateway=$defaultGateway"
-    fi
+    local testConnection=$( "$gitCmd" ls-remote ${gitRepositoryUrl}themes )
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$testConnection"
 
-    checkService=$( ps -ax | grep mDNSResponder | grep ?? | head -n1 )
-    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}checkService mDNSResponder: $checkService"
-    if [ "$checkService" != "" ] && [[ "$checkService" != *"grep mDNSResponder"* ]]; then
-        defaultGateway=$( /usr/sbin/system_profiler SPNetworkDataType | grep Router: | head -n1 | tr -d ' ' )
-        if [ "$defaultGateway" != "" ]; then
-            defaultGateway="${defaultGateway##*:}"
-            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}mDNSResponder: defaultGateway=$defaultGateway"
-        fi
-    fi
-
-    # If no success, add another check, based on OS version.
-    if [ "$defaultGateway" == "" ]; then
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Default gateway not found. Checking directly for Router in SPNetworkDataType"
-        if [ $(CheckOsVersion) -ge 15 ]; then
-            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}OS version >= 15"
-            defaultGateway=$( /usr/sbin/system_profiler SPNetworkDataType | grep Router: | head -n1 | tr -d ' ' )
-            if [ "$defaultGateway" != "" ]; then
-                defaultGateway="${defaultGateway##*:}"
-                [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}defaultGateway=$defaultGateway"
-            fi
-        fi
-    fi
-    
-    # If still no success, ping
-    if [ "$defaultGateway" == "" ]; then
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Default gateway not found. Pinging SF"
-        if ping -c 1 "$remoteRepositoryUrl" >> /dev/null 2>&1; then
-            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Ping successful"
-            defaultGateway="-"
-        fi
-    fi
-
-    if [ "$defaultGateway" != "" ]; then
-
-        # Continue to check if repository is live
-        WriteToLog "CTM_RepositoryChecking"
-
-        local gitRepositoryUrl=$( echo ${remoteRepositoryUrl}/ | sed 's/http:/git:/' )
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Connecting to ${gitRepositoryUrl}themes"
-        local testConnection=$( "$gitCmd" ls-remote ${gitRepositoryUrl}themes )
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$testConnection"
-        if [ "$testConnection" ]; then
-            WriteToLog "CTM_RepositorySuccess"
-        else
-            noConnection=0
-        fi
+    if [ "$testConnection" ]; then
+        WriteToLog "CTM_RepositorySuccess"
     else
+        WriteToLog "${debugIndentTwo}git ls-remote failed: $testConnection"
         noConnection=0
     fi
 
     if [ $noConnection -eq 0 ]; then
-        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Cannot contact the Repository ${gitRepositoryUrl}/themes"
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Cannot contact the Repository ${gitRepositoryUrl}themes"
         WriteToLog "CTM_RepositoryError" # initialise.js should pick this up, notify the user, then quit.
         exit 1
     fi
@@ -3151,9 +3103,27 @@ IsGitInstalled()
         fi
         
         if [ "$gitCmd" != "" ]; then
-            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}using git at:$gitCmd"
+            [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}using git at :$gitCmd"
+
+            # Check version
+            local gitVersion=$( $gitCmd --version )
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}$( $gitCmd --version )"
-            WriteToLog "CTM_GitOK"
+            if [ "$gitVersion" != "" ]; then
+                [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}git version detection passed."
+                WriteToLog "CTM_GitOK"
+            else
+                # Basic check for Xcode licence agreement
+                local gitCheck=$( $gitCmd 2>&1 )
+                if [[ "$gitCheck" == *Xcode* ]]; then
+                    WriteToLog "Xcode licence has not yet been agreed to."
+                    WriteToLog "CTM_GitLicence"
+                else
+                    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}git version detection failed."
+                    WriteToLog "CTM_GitVersionFail"
+                fi
+                exit 1
+            fi
+
         fi
     fi
 }
