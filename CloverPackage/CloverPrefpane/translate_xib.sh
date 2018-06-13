@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Only extract source locale strings if XCode version > 4
-if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
+#if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
     # Extract source locale strings (use this to check if you added new strings to your xibs)
     echo -n "Updating '$src_locale' strings file for ${application}... "
     ibtool --generate-strings-file $strings_file.utf16 "$SOURCE_DIR/$src_locale.lproj/$xib_file"
@@ -54,9 +54,9 @@ if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
     else
         echo "Generation failed. Not extracting locale strings from source XIB file"
     fi
-else
-    echo "XCode version too old. Not extracting locale strings from source XIB file"
-fi
+#else
+#    echo "XCode version too old. Not extracting locale strings from source XIB file"
+#fi
 
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
 
@@ -68,11 +68,11 @@ for locale in "$PO_DIR"/*.po ; do
     echo -n "Generating "$locale" interface... "
     [[ ! -d "$SOURCE_DIR/$locale.lproj" ]] && mkdir -p "$SOURCE_DIR/$locale.lproj"
     if [ -f "$SOURCE_DIR/$locale.lproj/$strings_file" ] ; then
-        if [[ "$XCODE_MAJOR_VERSION" -lt 4 ]]; then
+#        if [[ "$XCODE_MAJOR_VERSION" -lt 4 ]]; then
             # XCode before version 4 doesn't recognize ibShadowedXXXXXX OID
             # try to change to the old OID: gXXXXX
             sed -i '' -E 's/\.ibShadowed([[:alnum:]]+)/\.g\1/g' "$SOURCE_DIR/$locale.lproj/$strings_file"
-        fi
+#        fi
         ibtool --strings-file "$SOURCE_DIR/$locale.lproj/$strings_file" \
             --write "$SOURCE_DIR/$locale.lproj/$xib_file" "$SOURCE_DIR/$src_locale.lproj/$xib_file"
     else

@@ -33,7 +33,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Only extract source locale strings if XCode version > 4
-if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
+#if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
 	tmp_dir="/tmp/$application"
     mkdir -p "$tmp_dir"
     # Extract source locale strings (use this to check if you added new strings to your xibs)
@@ -47,9 +47,9 @@ if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
     fi
     rm -rf "$tmp_dir"
     echo "done"
-else
-    echo "XCode version too old. Don't extracting locale strings from source files"
-fi
+#else
+#    echo "XCode version too old. Don't extracting locale strings from source files"
+#fi
 
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
 

@@ -559,15 +559,15 @@ MainBuildScript() {
     fi
 
     # Trying to patch edk2
-    if [[ -n "$PATCH_FILE" ]]; then
-        echo -n "Patching edk2..."
-        ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0" &>/dev/null )
-        if [[ $? -eq 0 ]]; then
-            echo " done"
-        else
-            echo " failed"
-        fi
-    fi
+#    if [[ -n "$PATCH_FILE" ]]; then
+#        echo -n "Patching edk2..."
+#        ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0" &>/dev/null )
+#        if [[ $? -eq 0 ]]; then
+#            echo " done"
+#        else
+#            echo " failed"
+#        fi
+#    fi
 
     export CLOVER_PKG_DIR="$CLOVERROOT"/CloverPackage/CloverV2
 
@@ -963,7 +963,7 @@ MainPostBuildScript() {
 }
 
 # BUILD START #
-trap 'exitTrap' EXIT
+#trap 'exitTrap' EXIT
 
 # Default locale
 export LC_ALL=POSIX
