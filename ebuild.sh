@@ -316,13 +316,13 @@ checkXcode () {
     if [[ ! -x "${XCODE_BUILD}" ]]; then
        echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
     fi
-    if [[ ! -x "${CLOVERBIN}/mtoc.NEW" && -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
-       unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
-    fi
-    if [[ ! -h "${CLOVERBIN}/mtoc" ]]; then
-       ln -sf "${CLOVERBIN}/mtoc.NEW" "${CLOVERBIN}/mtoc"
-    fi
-    export MTOC_PREFIX=${MTOC_PREFIX:-"$CLOVERBIN/"}
+#    if [[ ! -x "${CLOVERBIN}/mtoc.NEW" && -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
+#       unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
+#    fi
+#    if [[ ! -h "${LOCALBIN}/mtoc" ]]; then
+#       ln -sf "${LOCALBIN}/mtoc.NEW" "${LOCALBIN}/mtoc"
+#    fi
+    export MTOC_PREFIX=${MTOC_PREFIX:-"$LOCALBIN/"}
     echo "MTOC_PREFIX: $MTOC_PREFIX"
 }
 
