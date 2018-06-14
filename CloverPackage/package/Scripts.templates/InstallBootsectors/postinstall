@@ -9,7 +9,7 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/PlistBuddy'
 installer_choice="@INSTALLER_CHOICE@"
 installer_altboot_refid='@INSTALLER_ALTBOOT_REFID@'
-fdisk440="${DEST_VOL}"/usr/local/bin/fdisk440
+#fdisk440="${DEST_VOL}"/usr/local/bin/fdisk440
 boot1install="${DEST_VOL}"/usr/local/bin/boot1-install
 partutil="${DEST_VOL}"/usr/local/bin/partutil
 
@@ -125,7 +125,7 @@ else
     echo "${bootdev} is currently formatted as $boot_volume_format"
 fi
 
-partitionactive=$( "$fdisk440" -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
+partitionactive=$( fdisk -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
 if [[ -n "$partitionactive" ]]; then
     echo "Current Active Partition: ${partitionactive}" >> "$install_log"
 else
@@ -135,8 +135,13 @@ echo "" >> "$install_log"
 
 ### Stage 0 ###
 echo "Stage 0 - Writting ${diskloader} to ${bootdisk}" >> "$install_log"
-echo "$fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
-"$fdisk440" -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+#echo "$fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
+#"$fdisk440" -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+echo "dd: ${DEST_VOL}/usr/standalone/i386/${diskloader} -> ${bootdisk}" >> "$install_log"
+dd if=${bootdisk} count=1 bs=512 of=origMBR
+cp origMBR newMBR
+dd if="${DEST_VOL}/usr/standalone/i386/${diskloader}" of=newMBR bs=1 count=440 conv=notrunc
+dd if=newMBR of=${bootdisk} count=1 bs=512
 echo "" >> "$install_log"
 
 ### Stage 1 ###
@@ -223,7 +228,7 @@ echo "" >> "$install_log"
 
 if [[ "$bootdisk_partition_scheme" == mbr && "$diskloader" == boot0af ]]; then
     echo "Setup Active Partition to be: ${bootslice}" >> "$install_log"
-    "$fdisk440" -e ${bootrdisk} <<-MAKEACTIVE
+    fdisk -e ${bootrdisk} <<-MAKEACTIVE
 print
 flag ${bootslice}
 write
@@ -231,7 +236,7 @@ y
 quit
 MAKEACTIVE
 
-    partitionactive=$( "$fdisk440" -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
+    partitionactive=$( fdisk -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
     echo "New Active Partition: ${partitionactive}" >> "$install_log"
     echo "" >> "$install_log"
 fi

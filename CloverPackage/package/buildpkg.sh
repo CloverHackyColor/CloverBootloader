@@ -570,8 +570,8 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1x      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1xalt   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
 
-    ditto --noextattr --noqtn ${SRCROOT}/utils/fdisk440/fdisk440.8        ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/man/man8/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+#    ditto --noextattr --noqtn ${SRCROOT}/utils/fdisk440/fdisk440.8        ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/man/man8/
+#    ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install              ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
 
     # Add some documentation
@@ -580,7 +580,8 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/EFIROOTDIR/EFI/CLOVER/doc/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install}
+#    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/boot1-install
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageBiosBootRefId=$packageRefId

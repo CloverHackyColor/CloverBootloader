@@ -136,27 +136,6 @@
 		129261931A305A8F005F1426 /* text-index.idx */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "text-index.idx"; sourceTree = "<group>"; };
 		129261941A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		129261951A305A8F005F1426 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
-		129261971A305A8F005F1426 /* auto.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = auto.c; sourceTree = "<group>"; };
-		129261981A305A8F005F1426 /* auto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = auto.h; sourceTree = "<group>"; };
-		129261991A305A8F005F1426 /* cmd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cmd.c; sourceTree = "<group>"; };
-		1292619A1A305A8F005F1426 /* cmd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cmd.h; sourceTree = "<group>"; };
-		1292619B1A305A8F005F1426 /* disk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = disk.c; sourceTree = "<group>"; };
-		1292619C1A305A8F005F1426 /* disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = disk.h; sourceTree = "<group>"; };
-		1292619D1A305A8F005F1426 /* fdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fdisk.c; sourceTree = "<group>"; };
-		1292619E1A305A8F005F1426 /* fdisk440.8 */ = {isa = PBXFileReference; lastKnownFileType = text; path = fdisk440.8; sourceTree = "<group>"; };
-		1292619F1A305A8F005F1426 /* getrawpartition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = getrawpartition.c; sourceTree = "<group>"; };
-		129261A01A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		129261A11A305A8F005F1426 /* mbr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbr.c; sourceTree = "<group>"; };
-		129261A21A305A8F005F1426 /* mbr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbr.h; sourceTree = "<group>"; };
-		129261A31A305A8F005F1426 /* mbrcode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbrcode.h; sourceTree = "<group>"; };
-		129261A41A305A8F005F1426 /* misc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
-		129261A51A305A8F005F1426 /* misc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
-		129261A61A305A8F005F1426 /* opendev.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = opendev.c; sourceTree = "<group>"; };
-		129261A71A305A8F005F1426 /* part.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = part.c; sourceTree = "<group>"; };
-		129261A81A305A8F005F1426 /* part.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = part.h; sourceTree = "<group>"; };
-		129261A91A305A8F005F1426 /* user.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = user.c; sourceTree = "<group>"; };
-		129261AA1A305A8F005F1426 /* user.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = user.h; sourceTree = "<group>"; };
-		129261AB1A305A8F005F1426 /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		129261AC1A305A8F005F1426 /* Make.rules */ = {isa = PBXFileReference; lastKnownFileType = text; path = Make.rules; sourceTree = "<group>"; };
 		129261AE1A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		129261FB1A305AA6005F1426 /* CloverPrefpane.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = CloverPrefpane.strings; sourceTree = "<group>"; };
@@ -686,7 +665,6 @@
 				129261631A305A8F005F1426 /* bdmesg */,
 				1292616D1A305A8F005F1426 /* boot1-install */,
 				129261701A305A8F005F1426 /* clover-genconfig */,
-				129261961A305A8F005F1426 /* fdisk440 */,
 				1210F28D1A51EF0A00461427 /* partutil */,
 				129261AC1A305A8F005F1426 /* Make.rules */,
 				129261AE1A305A8F005F1426 /* Makefile */,
@@ -900,34 +878,6 @@
 				129261931A305A8F005F1426 /* text-index.idx */,
 			);
 			path = TextIndex;
-			sourceTree = "<group>";
-		};
-		129261961A305A8F005F1426 /* fdisk440 */ = {
-			isa = PBXGroup;
-			children = (
-				129261971A305A8F005F1426 /* auto.c */,
-				129261981A305A8F005F1426 /* auto.h */,
-				129261991A305A8F005F1426 /* cmd.c */,
-				1292619A1A305A8F005F1426 /* cmd.h */,
-				1292619B1A305A8F005F1426 /* disk.c */,
-				1292619C1A305A8F005F1426 /* disk.h */,
-				1292619D1A305A8F005F1426 /* fdisk.c */,
-				1292619E1A305A8F005F1426 /* fdisk440.8 */,
-				1292619F1A305A8F005F1426 /* getrawpartition.c */,
-				129261A01A305A8F005F1426 /* Makefile */,
-				129261A11A305A8F005F1426 /* mbr.c */,
-				129261A21A305A8F005F1426 /* mbr.h */,
-				129261A31A305A8F005F1426 /* mbrcode.h */,
-				129261A41A305A8F005F1426 /* misc.c */,
-				129261A51A305A8F005F1426 /* misc.h */,
-				129261A61A305A8F005F1426 /* opendev.c */,
-				129261A71A305A8F005F1426 /* part.c */,
-				129261A81A305A8F005F1426 /* part.h */,
-				129261A91A305A8F005F1426 /* user.c */,
-				129261AA1A305A8F005F1426 /* user.h */,
-				129261AB1A305A8F005F1426 /* util.h */,
-			);
-			path = fdisk440;
 			sourceTree = "<group>";
 		};
 		129261C41A305AA5005F1426 /* CloverPrefpane */ = {
