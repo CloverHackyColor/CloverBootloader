@@ -747,6 +747,7 @@ MainPostBuildScript() {
     export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
     export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
     export APTIO_BUILD_DIR="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+	export APFS_BUILD_DIR="${WORKSPACE}/Build/ApfsSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
 
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
@@ -936,8 +937,9 @@ MainPostBuildScript() {
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
       done
-    copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-	  copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+      copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+	    copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+	    copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
 
       # Applications
       echo "Copy Applications:"
