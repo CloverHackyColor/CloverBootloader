@@ -17,7 +17,7 @@ cd "$(dirname $0)"
 
 declare -r SOURCE_DIR="src"
 declare -r PO_DIR="../package/po"
-declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
+declare -r XCODE_MAJOR_VERSION=$(xcodebuild -version | grep ^Xcode | awk '{print $2}' | sed -e 's/\..*//')
 
 # ========== OPTIONS ===========
 EXTRACT_ONLY=0
@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Only extract source locale strings if XCode version > 4
-#if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
+if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
     # Extract source locale strings (use this to check if you added new strings to your xibs)
     echo -n "Updating '$src_locale' strings file for ${application}... "
     ibtool --generate-strings-file $strings_file.utf16 "$SOURCE_DIR/$src_locale.lproj/$xib_file"
@@ -54,9 +54,9 @@ done
     else
         echo "Generation failed. Not extracting locale strings from source XIB file"
     fi
-#else
-#    echo "XCode version too old. Not extracting locale strings from source XIB file"
-#fi
+else
+    echo "XCode version too old. Not extracting locale strings from source XIB file"
+fi
 
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
 

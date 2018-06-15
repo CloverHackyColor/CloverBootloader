@@ -9,9 +9,17 @@ UTILSDIR= $(SYMROOT)/$(INSTALL_DIR_NAME)
 
 include ${SRCROOT}/Make.rules
 
-XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p'` \>= 4)
+XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]+).*/\1/p'` \>= 4)
+XCODE_VERSION_GE_10 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]+).*/\1/p'` \>= 10)
+
+XCODE_VERSION_GE_4 := 1
+XCODE_VERSION_GE_10 := 1
 
 XCODEBUILD_OPTIONS = OBJROOT=$(OBJROOT) CONFIGURATION_BUILD_DIR=$(OBJROOT) DEPLOYMENT_LOCATION=YES DSTROOT=$(SYMROOT) INSTALL_PATH='/$(INSTALL_DIR_NAME)'
+
+ifeq "$(XCODE_VERSION_GE_10)" "1"
+	XCODEBUILD_OPTIONS += ARCHS=x86_64 VALID_ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES
+endif
 
 ifeq "$(XCODE_VERSION_GE_4)" "1"
 	XCODEBUILD_OPTIONS += -scheme 'boot1-install'
