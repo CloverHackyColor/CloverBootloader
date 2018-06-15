@@ -701,7 +701,7 @@ EFI_STATUS  ReinitRefitLib(VOID);
 EFI_STATUS  ReinitSelfLib(VOID);
 //extern EFI_STATUS FinishInitRefitLib(VOID); -- static
 VOID        PauseForKey(IN CHAR16 *Msg);
-BOOLEAN     IsEmbeddedTheme();
+BOOLEAN     IsEmbeddedTheme(VOID);
 UINT8       GetOSTypeFromPath (IN  CHAR16 *Path);
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);

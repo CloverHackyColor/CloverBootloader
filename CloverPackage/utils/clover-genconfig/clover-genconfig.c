@@ -859,7 +859,7 @@ int main(int argc, char **argv)
     errx(1, "EFI is not supported on this system");
   }
   
-  result = GetOFVariable(gEFI, "device-properties", &devProp);
+  /*result = */GetOFVariable(gEFI, "device-properties", &devProp);
   //  int i;
   
   // Get the OF variable's type.

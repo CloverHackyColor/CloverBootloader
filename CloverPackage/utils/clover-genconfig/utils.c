@@ -489,7 +489,7 @@ int StrToBuf (unsigned char *Buf, unsigned int BufferLength, char *Str)
 {
   unsigned int  Index;
   unsigned int  StrLength;
-  unsigned char Digit;
+  unsigned char Digit = 0;
   unsigned char Byte;
 
   // Two hex char make up one byte

@@ -228,7 +228,7 @@ EFI_DEVICE_PATH_P *UnpackDevicePath (EFI_DEVICE_PATH_P  *DevPath)
   }
 
   // Allocate space for the unpacked path
-  NewPath = (EFI_DEVICE_PATH_P *)calloc(Size, sizeof(UINT8));
+  NewPath = (EFI_DEVICE_PATH_P *)(UINT8*)calloc(Size, sizeof(UINT8));
   
   if (NewPath != NULL) 
   {
@@ -297,7 +297,7 @@ EFI_DEVICE_PATH_P*CreateDeviceNode (UINT8 NodeType, UINT8 NodeSubType, UINT16 No
     return NULL;
   }
 
-  Node = (EFI_DEVICE_PATH_P*) calloc ((UINT32) NodeLength, sizeof(UINT8));
+  Node = (EFI_DEVICE_PATH_P*) (UINT8*)calloc ((UINT32) NodeLength, sizeof(UINT8));
   if (Node != NULL) 
   {
     Node->Type    = NodeType;

@@ -250,7 +250,7 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN INTN AreaWidth, IN INTN AreaHeight,
                      IN EG_PIXEL *Color);
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
-VOID PrepareFont();
+VOID PrepareFont(VOID);
 VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
 INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor);
 

@@ -129,7 +129,7 @@ GFX_HEADER *parse_binary(const unsigned char *bp)
 	GFX_ENTRY *gfx_entry = (GFX_ENTRY *) NULL; 
 	GFX_ENTRY *gfx_entry_head = (GFX_ENTRY *) NULL;
 	GFX_ENTRY *gfx_entry_end  = (GFX_ENTRY *) NULL;
-	unsigned char *data, *bin, *tmp, *dpathtmp, *src;
+	unsigned char *data, *bin, *tmp = 0, *dpathtmp = 0, *src = 0;
 	char * str;
 	unsigned int str_len, data_len, size, length;	
 	int i,j;

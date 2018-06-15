@@ -53,9 +53,10 @@ typedef	double			  	DOUBLE;
  * hex = digit | "A" | "B" | "C" | "D" | "E" | "F" |
  *               "a" | "b" | "c" | "d" | "e" | "f"
  */
+#ifndef IS_HEX
 #define IS_HEX(x) ((IS_DIGIT(x)) || (((unsigned char)(x) >= 'a') && ((unsigned char)(x) <= 'f')) || \
 	    (((unsigned char)(x) >= 'A') && ((unsigned char)(x) <= 'F')))
-
+#endif
 /*
  * mark = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")" | ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | "," |
  * 	      "[" | "]"

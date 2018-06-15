@@ -20,6 +20,7 @@
 #define MIN_ALIGNMENT_SIZE  4
 #define ALIGN_SIZE(a) ((a % MIN_ALIGNMENT_SIZE) ? MIN_ALIGNMENT_SIZE - (a % MIN_ALIGNMENT_SIZE) : 0)
 
+#ifndef IS_COMMA
 #define IS_COMMA(a)          ((a) == ',')
 #define IS_HYPHEN(a)         ((a) == '-')
 #define IS_DOT(a)            ((a) == '.')
@@ -38,7 +39,7 @@ typedef int              INT32;
 typedef unsigned int    UINT32;
 typedef long long        INT64;
 typedef unsigned long long  UINT64;
-
+#endif
 
 typedef struct
 {
@@ -65,10 +66,13 @@ typedef struct
 #define EFI_DP_TYPE_MASK                    0x7F
 #define EFI_DP_TYPE_UNPACKED                0x80
 #define END_DEVICE_PATH_TYPE                0x7f
+#ifndef END_ENTIRE_DEVICE_PATH_SUBTYPE
 #define END_ENTIRE_DEVICE_PATH_SUBTYPE      0xff
+#endif
 #define END_INSTANCE_DEVICE_PATH_SUBTYPE    0x01
+#ifndef END_DEVICE_PATH_LENGTH
 #define END_DEVICE_PATH_LENGTH              (sizeof(EFI_DEVICE_PATH_P))
-
+#endif
 #define DP_IS_END_TYPE(a)
 #define DP_IS_END_SUBTYPE(a)        ( ((a)->SubType == END_ENTIRE_DEVICE_PATH_SUBTYPE )
 

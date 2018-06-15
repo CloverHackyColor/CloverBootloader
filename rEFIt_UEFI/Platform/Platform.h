@@ -1684,13 +1684,13 @@ FindBin (
   );
 
 EFI_STATUS
-MouseBirth ();
+MouseBirth (VOID);
 
 VOID
-KillMouse ();
+KillMouse (VOID);
 
 VOID
-HidePointer ();
+HidePointer (VOID);
 
 EFI_STATUS
 WaitForInputEventPoll (
@@ -1699,7 +1699,7 @@ WaitForInputEventPoll (
   );
 
 VOID
-InitBooterLog ();
+InitBooterLog (VOID);
 
 EFI_STATUS
 SetupBooterLog (
@@ -1736,7 +1736,7 @@ MACHINE_TYPES GetModelFromString (
   );
 
 VOID
-GetDefaultSettings();
+GetDefaultSettings(VOID);
 
 VOID
 FillInputs (
@@ -1744,7 +1744,7 @@ FillInputs (
   );
 
 VOID
-ApplyInputs ();
+ApplyInputs (VOID);
 
 
 BOOLEAN
@@ -1767,19 +1767,19 @@ InitBootScreen (
   );
 
 EFI_STATUS
-InitializeConsoleSim ();
+InitializeConsoleSim (VOID);
 
 EFI_STATUS
-GuiEventsInitialize ();
+GuiEventsInitialize (VOID);
 
 EFI_STATUS
-InitializeEdidOverride ();
+InitializeEdidOverride (VOID);
 
 UINT8*
-getCurrentEdid ();
+getCurrentEdid (VOID);
 
 EFI_STATUS
-GetEdidDiscovered ();
+GetEdidDiscovered (VOID);
 
 //Settings.c
 UINT32
@@ -1789,16 +1789,16 @@ GetCrc32 (
   );
 
 VOID
-GetCPUProperties ();
+GetCPUProperties (VOID);
 
 VOID
-GetDevices();
+GetDevices(VOID);
 
 MACHINE_TYPES
-GetDefaultModel ();
+GetDefaultModel (VOID);
 
 UINT16
-GetAdvancedCpuType ();
+GetAdvancedCpuType (VOID);
 
 CHAR8
 *GetOSVersion (
@@ -1839,7 +1839,7 @@ SetFSInjection (
   );
 
 CHAR16*
-GetOtherKextsDir ();
+GetOtherKextsDir (VOID);
 
 CHAR16*
 GetOSVersionKextsDir (
@@ -1899,17 +1899,17 @@ DeleteNvramVariable (
   );
 
 VOID
-ResetNvram ();
+ResetNvram (VOID);
 
 EFI_STATUS
-ResetEmuNvram ();
+ResetEmuNvram (VOID);
 
 EFI_STATUS
-ResetNativeNvram ();
+ResetNativeNvram (VOID);
 ;
 
 EFI_STATUS
-GetEfiBootDeviceFromNvram ();
+GetEfiBootDeviceFromNvram (VOID);
 
 EFI_GUID
 *FindGPTPartitionGuidInDevicePath (
@@ -1917,15 +1917,15 @@ EFI_GUID
   );
 
 VOID
-PutNvramPlistToRtVars ();
+PutNvramPlistToRtVars (VOID);
 
 VOID
 GetSmcKeys(BOOLEAN WriteToSMC);
 
-//VOID DumpSmcKeys();
+//VOID DumpSmcKeys(VOID);
 
 VOID
-GetMacAddress();
+GetMacAddress(VOID);
 
 INTN
 FindStartupDiskVolume (
@@ -1939,7 +1939,7 @@ SetStartupDiskVolume (
   );
 
 VOID
-RemoveStartupDiskVolume ();
+RemoveStartupDiskVolume (VOID);
 
 UINT64
 GetEfiTimeInMs (IN EFI_TIME *T);
@@ -1963,7 +1963,7 @@ EFIAPI
 SetupDataForOSX (BOOLEAN Hibernate);
 
 EFI_STATUS
-SetPrivateVarProto ();
+SetPrivateVarProto (VOID);
 
 VOID
 SetDevices (
@@ -1971,7 +1971,7 @@ SetDevices (
   );
 
 VOID
-ScanSPD ();
+ScanSPD (VOID);
 
 BOOLEAN
 setup_ati_devprop (
@@ -2080,10 +2080,10 @@ SaveOemDsdt (
   );
 
 VOID
-SaveOemTables ();
+SaveOemTables (VOID);
 
 EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE
-*GetFadt ();
+*GetFadt (VOID);
 
 UINT32
 FixAny (
@@ -2096,7 +2096,7 @@ FixAny (
   );
 
 VOID
-GetAcpiTablesList ();
+GetAcpiTablesList (VOID);
 
 EFI_STATUS
 EventsInitialize (
@@ -2134,7 +2134,7 @@ bootLegacyBiosDefault (
   );
 
 VOID
-DumpBiosMemoryMap ();
+DumpBiosMemoryMap (VOID);
 
 CHAR8*
 XMLDecode (
@@ -2203,7 +2203,7 @@ GetPropertyInteger (
   );
 
 EFI_STATUS
-SaveSettings ();
+SaveSettings (VOID);
 
 UINTN
 iStrLen(
@@ -2212,16 +2212,16 @@ iStrLen(
   );
 
 EFI_STATUS
-PrepatchSmbios ();
+PrepatchSmbios (VOID);
 
 VOID
-PatchSmbios ();
+PatchSmbios (VOID);
 
 VOID
-FinalizeSmbios ();
+FinalizeSmbios (VOID);
 
 EFI_STATUS
-FixOwnership ();
+FixOwnership (VOID);
 
 UINT8
 *Base64Decode (
@@ -2235,7 +2235,7 @@ TimeDiff(
   UINT64 t1);
 
 VOID
-SetCPUProperties ();
+SetCPUProperties (VOID);
 
 // Settings.c
 // Micky1979: Next five functions (+ needed struct) are to split a string like "10.10.5,10.7,10.11.6,10.8.x"
@@ -2379,7 +2379,7 @@ VOID
 SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry);
 
 VOID
-InitKextList();
+InitKextList(VOID);
 
 //
 // PlatformDriverOverride.c
