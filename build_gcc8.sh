@@ -257,7 +257,7 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-mpfr"
         mkdir -p "${DIR_BUILD}/$ARCH-mpfr" && cd "${DIR_BUILD}/$ARCH-mpfr"
-        curl -L http://www.mpfr.org/${MPFR_VERSION}/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
+        curl -L https://www.mpfr.org/${MPFR_VERSION}/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
         echo "- ${MPFR_VERSION} configure..."
         "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2>&1
         echo "- ${MPFR_VERSION} make..."

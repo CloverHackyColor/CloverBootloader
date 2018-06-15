@@ -92,10 +92,10 @@ fnDownloadGettext ()
 # Function: Download gettext source
 {
     cd "$DIR_DOWNLOADS"
-    local tarball="${GETTEXT_VERSION}.tar.gz"
+    local tarball="${GETTEXT_VERSION}.tar.xz"
     if [[ ! -f "$tarball" ]]; then
         echo "Status: $tarball not found."
-        curl -f -o download.tmp --remote-name http://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
         mv download.tmp $tarball
     fi
 }
@@ -160,7 +160,7 @@ fnCompileGettext ()
     export BUILD_GETTEXT_DIR=$DIR_BUILD/gettext
 
     # Extract the tarball
-    local GETTEXT_DIR=$(fnExtract "${GETTEXT_VERSION}.tar.gz")
+    local GETTEXT_DIR=$(fnExtract "${GETTEXT_VERSION}.tar.xz")
 
     # Gettext build
     local cmd logfile

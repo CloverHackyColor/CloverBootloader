@@ -182,7 +182,7 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.bz2 ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
-        curl -f -o download.tmp --remote-name http://mirrors.kernel.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2  || exit 1
+        curl -f -o download.tmp --remote-name https://mirrors.kernel.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2  || exit 1
         mv download.tmp gcc-${GCC_VERSION}.tar.bz2
     fi
 }

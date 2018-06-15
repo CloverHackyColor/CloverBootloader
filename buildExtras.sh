@@ -22,7 +22,7 @@ if [[ "$(uname)" == Darwin ]] && [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clove
       echo -n b
   	fi
    	echo "uilding it"
- 	./build_gcc6.sh
+ 	./build_gcc8.sh
    	echo "Continuing..."
 fi
 
@@ -31,9 +31,9 @@ fi
 # here we can change source versions of tools
 # Always use current Version when building, will auto compile newest STABLE version.
 #
-nasmcheck=$(curl -Is http://downuptime.net/nasm.us.html | grep HTTP | cut -d ' ' -f2)
+nasmcheck=$(curl -Is https://downuptime.net/nasm.us.html | grep HTTP | cut -d ' ' -f2)
 if [ "$nasmcheck" == 200 ]; then
-	nasmVersInfo=$(curl -s -f http://www.nasm.us | grep "/releasebuilds/")
+	nasmVersInfo=$(curl -s -f https://www.nasm.us | grep "/releasebuilds/")
 	if [ "${nasmVersInfo:158:1}" == "." ]; then
 		verLen=7
 	else
@@ -49,7 +49,7 @@ fi
 # here we can change source versions of tools
 # Always use current Version when building, will auto compile newest STABLE version.
 #
-acpicacheck=$(curl -Is http://downuptime.net/acpica.us.html | grep HTTP | cut -d ' ' -f2)
+acpicacheck=$(curl -Is https://downuptime.net/acpica.us.html | grep HTTP | cut -d ' ' -f2)
 if [ $acpicacheck == 200 ]; then
 	acpicaVersInfo=$(curl -s -f https://acpica.org/downloads/ | grep 'The current release of ACPICA is version <strong>')
 	export acpicaVers="${acpicaVersInfo:191:8}" 
@@ -191,10 +191,10 @@ if [ ! -f ${PREFIX}/bin/iasl ]; then
   echo
 fi
 cd ${DIR_DOWNLOADS}
-tarball="nasm-${NASM_VERSION}.tar.bz2"
+tarball="nasm-${NASM_VERSION}.tar.xz"
 if [[ ! -f "$tarball" ]]; then
 	echoc "Status: $tarball not found." red
-    curl -f -o download.tmp --remote-name http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VERSION}/$tarball || exit 1
+    curl -f -o download.tmp --remote-name https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VERSION}/$tarball || exit 1
     mv download.tmp $tarball
 fi
 
