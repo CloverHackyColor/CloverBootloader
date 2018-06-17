@@ -29,6 +29,8 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
+SCRIPT_VERS="2018-06-17"
+
 # Macro
 M_NOGRUB=0
 M_APPLEHFS=0
@@ -40,6 +42,7 @@ export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
+export EXT_DOWNLOAD=1
 #export NASM_PREFIX=
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
@@ -329,7 +332,7 @@ checkXcode () {
 # Print the usage.
 usage() {
     echo "Script for building CloverEFI sources on Darwin OS X"
-    echo
+    echo "Version from ${SCRIPT_VERS}"
     printf "Usage: %s [OPTIONS] [all|fds|genc|genmake|clean|cleanpkg|cleanall|cleanlib|modules|libraries]\n" "$SELF"
     echo
     echo "Configuration:"
@@ -343,7 +346,8 @@ usage() {
     print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
-    print_option_help "-xcode5"     "use XCode 5+ toolchain  [Default]"
+    print_option_help "-xcode5"     "use XCode 5-7 toolchain "
+    print_option_help "-xcode8"     "use XCode 8 toolchain  [Default]"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
@@ -363,6 +367,7 @@ usage() {
     print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
+    print_option_help "--no-ext" "disable external driver download"
     print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "build options:"
@@ -394,10 +399,7 @@ checkCmdlineArguments() {
             -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
             -llvm   | --llvm)    TOOLCHAIN=LLVM  ; CLANG=1 ;;
             -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
-            -GCC47  | --GCC47)   TOOLCHAIN=GCC47   ;;
-            -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
-            -GCC48  | --GCC48)   TOOLCHAIN=GCC48   ;;
-            -gcc48  | --gcc48)   TOOLCHAIN=GCC48   ;;
+            -xcode8  | --xcode8 )  TOOLCHAIN=XCODE8 ; CLANG=1 ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
@@ -465,13 +467,16 @@ checkCmdlineArguments() {
             --no-lto)
                 addEdk2BuildMacro DISABLE_LTO
                 ;;
+            --no-ext)
+                EXT_DOWNLOAD=0
+                ;;
             --edk2shell) EDK2SHELL=$(argument $option "$@"); shift
                 ;;
             -h | -\? | -help | --help)
                 usage && exit 0
                 ;;
             -v | --version)
-                echo "$SELF v1.0" && exit 0
+                echo "$SELF vers from $SCRIPT_VERS" && exit 0
                 ;;
             -*)
                 printf "Unrecognized option \`%s'\n" "$option" 1>&2
@@ -504,10 +509,89 @@ checkToolchain() {
     esac
 }
 
+checkExtTools() {
+    if [[ "$EXT_DOWNLOAD" -ne 0 ]]; then
+        CURL=`which curl`
+        WGET=`which wget`
+        if [ "$CURL" == "" ] && [ "$WGET" == "" ]; then
+            echo "Missing wget or curl, will not download external drivers!"
+            EXT_DOWNLOAD=0
+            return
+        fi
+
+        UNZIP=`which unzip`
+        if [ "$UNZIP" == "" ]; then
+            echo "Missing unzip, will not download external drivers!"
+            EXT_DOWNLOAD=0
+        fi
+    fi
+}
+
+downloadExtDriver() {
+    # Downloads latest zip release from GitHub.
+    # Usage: downloadExtDriver "org/project" "ProjectName" "ReleasePrefix" "ReleaseSuffix"
+    # Release filename is made of "${ReleasePrefix}${ReleaseTag}${ReleaseSuffix}.zip"
+    if [ -d tmp ]; then
+        echo "tmp dir already exists, aborting!"
+        return
+    fi
+
+    url="https://api.github.com/repos/${1}/releases/latest"
+    if [ "$(which curl)" != "" ]; then
+        vers=$(curl -Ls "${url}" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    else
+        vers=$(wget -qO - "${url}" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    fi
+
+    if [ "$vers" = "" ]; then
+        echo "Skipping ${2} due to unknown version!"
+        return
+    fi
+
+    echo "  -> Downloading ${2} version ${vers}..."
+
+    url="https://github.com/${1}/releases/download/${vers}/${3}${vers}${4}.zip"
+    ret=0
+    if [ "$(which curl)" != "" ]; then
+        curl -sOL "${url}" || ret=1
+    else
+        wget -qO "${url}" || ret=1
+    fi
+
+    if [[ "$ret" -ne 0 ]] || [ ! -f "${3}${vers}${4}.zip" ]; then
+        echo "Failed to download ${2}!"
+        return
+    fi
+
+    ret=0; mkdir tmp || ret=1
+    if [[ "$ret" -eq 0 ]]; then
+        ret=0; cd tmp || ret=1
+        if [[ "$ret" -eq 0 ]]; then
+            ret=0; unzip -q ../"${3}${vers}${4}.zip" || ret=1
+            if [[ "$ret" -eq 0 ]]; then
+                ret=0; cp Drivers/*.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ || ret=1
+                if [[ "$ret" -ne 0 ]]; then
+                    echo "Failed to copy ${2} drivers!"
+                fi
+            else
+                echo "Failed to unzip to ${3}${vers}${4}.zip!"
+            fi
+            cd - &>/dev/null
+        else
+            echo "Failed to cd to tmp dir!"
+        fi
+    else
+        echo "Failed to create tmp dir!"
+    fi
+
+    rm -rf "${3}${vers}${4}.zip" tmp
+}
+
 # Main build script
 MainBuildScript() {
     checkCmdlineArguments $@
     #checkToolchain
+    checkExtTools
     checkPatch
 
 #    echo "NASM_PREFIX: ${NASM_PREFIX}"
@@ -937,9 +1021,15 @@ MainPostBuildScript() {
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
       done
+
+      if [[ "$EXT_DOWNLOAD" -ne 0 ]]; then
+        downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
+        downloadExtDriver "acidanthera/ApfsSupportPkg" ApfsSupport "ApfsSupport-v" "-RELEASE"
+      fi
+
       copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-	    copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-	    copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+      copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+      copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
 
       # Applications
       echo "Copy Applications:"
