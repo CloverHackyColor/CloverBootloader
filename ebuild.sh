@@ -351,9 +351,10 @@ usage() {
     echo
     echo "Toolchain:"
     print_option_help "-clang"     "use XCode Clang toolchain"
-    print_option_help "-gcc47"     "use GCC 4.7 toolchain"
+    print_option_help "-llvm"      "use LLVM toolchain"
     print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain"
+    print_option_help "-unixgcc"   "use UNIXGCC toolchain"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5-7 toolchain "
     print_option_help "-xcode8"     "use XCode 8 toolchain  [Default]"
@@ -367,6 +368,8 @@ usage() {
     print_option_help "-p PLATFORMFILE, --platform=PLATFORMFILE" "Build the platform specified by the DSC filename argument"
     print_option_help "-m MODULEFILE, --module=MODULEFILE" "Build only the module specified by the INF filename argument"
     print_option_help "-b BUILDTARGET, --buildtarget=BUILDTARGET" "using the BUILDTARGET to build the platform"
+    print_option_help "-clean"     "same as clean"
+    print_option_help "-cleanall"  "same as cleanall"
     echo
     echo "Options:"
     print_option_help "-D MACRO, --define=MACRO" "Macro: \"Name[=Value]\"."
@@ -377,7 +380,7 @@ usage() {
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
     print_option_help "--no-ext" "disable external driver download"
-    print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
+    print_option_help "--edk2shell <MinimumShell|FullShell|Custom>" "copy edk2 or custom Shell to EFI tools dir"
     echo
     echo "build options:"
     print_option_help "-fr, --force-rebuild" "force rebuild all targets"
