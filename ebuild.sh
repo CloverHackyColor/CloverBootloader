@@ -1042,6 +1042,7 @@ MainPostBuildScript() {
       copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
       copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
       copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+#     copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/
 
       # Applications
       echo "Copy Applications:"
@@ -1051,8 +1052,8 @@ MainPostBuildScript() {
         copyBin "${WORKSPACE}"/ShellBinPkg/MinUefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
       elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then
         copyBin "${WORKSPACE}"/ShellBinPkg/UefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
-      elif [[ "${EDK2SHELL:-}" == "Custom" ]]; then
-        "$BUILD_DIR_ARCH"/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
+      else
+        copyBin "$BUILD_DIR_ARCH"/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
       fi
     fi
 
