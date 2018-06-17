@@ -316,17 +316,26 @@ checkXcode () {
     XCODE_BUILD="/usr/bin/xcodebuild"
     local LOCALBIN="/usr/local/bin"
     local CLOVERBIN="${CLOVERROOT}/BuildTools/usr/local/bin"
+
     if [[ ! -x "${XCODE_BUILD}" ]]; then
        echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
     fi
-#    if [[ ! -x "${CLOVERBIN}/mtoc.NEW" && -f "${CLOVERBIN}/mtoc.NEW.zip" ]]; then
-#       unzip -qo "${CLOVERBIN}/mtoc.NEW.zip" -d "${CLOVERBIN}"
-#    fi
-#    if [[ ! -h "${LOCALBIN}/mtoc" ]]; then
-#       ln -sf "${LOCALBIN}/mtoc.NEW" "${LOCALBIN}/mtoc"
-#    fi
-    export MTOC_PREFIX=${MTOC_PREFIX:-"$LOCALBIN/"}
-    echo "MTOC_PREFIX: $MTOC_PREFIX"
+
+  if [[ -f "/opt/local/bin/mtoc.NEW" ]]; then
+    export MTOC_PREFIX="/opt/local/bin/"
+  elif [[ -f "${LOCALBIN}/mtoc.NEW" ]]; then
+    export MTOC_PREFIX="${LOCALBIN}/"
+  elif [[ -f "${TOOLCHAIN_DIR}/bin/mtoc.NEW" ]]; then
+    export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
+  elif [[ -f "${CLOVERBIN}/mtoc.NEW" ]]; then
+    # using $TOOLCHAIN_DIR here should allow Clover source to be
+    # inside any sub folder instead of only in ~/
+    export MTOC_PREFIX="${CLOVERBIN}/"
+  else
+    ./buildmtoc.sh
+    export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
+  fi
+  echo "MTOC_PREFIX: $MTOC_PREFIX"
 }
 
 # Print the usage.
@@ -591,7 +600,7 @@ downloadExtDriver() {
 MainBuildScript() {
     checkCmdlineArguments $@
     #checkToolchain
-    checkExtTools
+#checkExtTools
     checkPatch
 
 #    echo "NASM_PREFIX: ${NASM_PREFIX}"
