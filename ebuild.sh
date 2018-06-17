@@ -754,7 +754,7 @@ MainBuildScript() {
       if [[ -n "$@" ]]; then
         clover_build_info="${clover_build_info} $@"
       fi
-      
+
       clover_build_info="${clover_build_info} | $(echo $cmd | xargs | sed -e "s, -p ${PLATFORMFILE} , ,")"
 
       if [[ -n "${OSVER:-}" ]]; then
@@ -786,9 +786,9 @@ copyBin() {
   [[ ! -f  "$cpSrc" || ! -d  "$cpDestDIR" ]] && return
   [[ -d  "$cpDest" ]] && cpFile=$(basename "$cpSrc")
   #[[ "$cpFile" == *"-64"* ]] && cpArch=64
-  
+
   echo "  -> $cpFile"
-  cp -f "$cpSrc" "$cpDest" 2>/dev/null 
+  cp -f "$cpSrc" "$cpDest" 2>/dev/null
 }
 
 setInitBootMsg(){
@@ -1027,7 +1027,7 @@ MainPostBuildScript() {
         done
       fi
 
-      # drivers64UEFI      
+      # drivers64UEFI
       binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix3Drv OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe UsbMouseDxe  UsbKbDxe Fat EnglishDxe NvmExpressDxe Ps2MouseDxe VBoxExt2 VBoxExt4 VBoxIso9600 HashServiceFix)
       for efi in "${binArray[@]}"
       do
@@ -1037,12 +1037,12 @@ MainPostBuildScript() {
       if [[ "$EXT_DOWNLOAD" -ne 0 ]]; then
         downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
         downloadExtDriver "acidanthera/ApfsSupportPkg" ApfsSupport "ApfsSupport-v" "-RELEASE"
+      else
+        copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+        copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+        copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+#       copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/
       fi
-
-      copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-      copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-      copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-#     copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/
 
       # Applications
       echo "Copy Applications:"
