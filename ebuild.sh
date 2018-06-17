@@ -380,7 +380,7 @@ usage() {
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
     print_option_help "--no-ext" "disable external driver download"
-    print_option_help "--edk2shell <MinimumShell|FullShell|Custom>" "copy edk2 or custom Shell to EFI tools dir"
+    print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "build options:"
     print_option_help "-fr, --force-rebuild" "force rebuild all targets"
