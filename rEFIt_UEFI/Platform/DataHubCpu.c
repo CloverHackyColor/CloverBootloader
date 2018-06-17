@@ -388,7 +388,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
       case CPU_MODEL_DOTHAN:
       case CPU_MODEL_YONAH:
       case CPU_MODEL_MEROM:
-//      case CPU_MODEL_PENRYN:
+      case CPU_MODEL_PENRYN:
         FrontSideBus = DivU64x32(FrontSideBus, 4);
         break;
       default:

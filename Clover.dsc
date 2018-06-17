@@ -363,7 +363,7 @@
   Clover/CloverEFI/BiosVideo/BiosVideo.inf
   #Clover/BiosVideoAuto/BiosVideo.inf
   Clover/LegacyBios/VideoDxe/VideoDxe.inf
-  Clover/LegacyBios/VideoDxe/VideoDxe2.inf
+  #Clover/LegacyBios/VideoDxe/VideoDxe2.inf
 
   # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO
@@ -502,7 +502,18 @@
 
   
   Clover/ShellPkg/Application/Shell/Shell.inf {
+    <PcdsFixedAtBuild>
+	  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xFF
+	  gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
+	  gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|16000
+	!ifdef $(NO_SHELL_PROFILES)
+	  gEfiShellPkgTokenSpaceGuid.PcdShellProfileMask|0x00
+	!endif #$(NO_SHELL_PROFILES)
+
     <LibraryClasses>
+      PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+      PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+      UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
       NULL|Clover/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.inf
       NULL|Clover/ShellPkg/Library/UefiShellLevel1CommandsLib/UefiShellLevel1CommandsLib.inf
       NULL|Clover/ShellPkg/Library/UefiShellLevel3CommandsLib/UefiShellLevel3CommandsLib.inf
