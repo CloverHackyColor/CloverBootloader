@@ -152,6 +152,9 @@ fnCompileMtoc ()
     # Extract the tarball
     local CCTOOLS_DIR=$(fnExtract "cctools-${CCTOOLS_VERSION}.tar.gz")
 
+    # Set SDKROOT for Makefiles
+    export SDKROOT=$(xcrun -n --show-sdk-path)
+
     # Mtoc build
     local cmd logfile
     cd "$CCTOOLS_DIR"
@@ -191,6 +194,6 @@ fnMtoc ()
 ### Main ###
 
 # Add XCode bin directory for the command line tools to the PATH
-pathmunge "$(xcode-select --print-path)"/usr/bin
+#pathmunge "$(xcode-select --print-path)"/usr/bin
 
 fnMtoc
