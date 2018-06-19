@@ -153,7 +153,7 @@ fnCompileMtoc ()
     local CCTOOLS_DIR=$(fnExtract "cctools-${CCTOOLS_VERSION}.tar.gz")
 
     # Set SDKROOT for Makefiles
-    export SDKROOT=$(xcrun -n --show-sdk-path)
+    export SDKROOT="$(xcrun -n --show-sdk-path)"
 
     # Mtoc build
     local cmd logfile
