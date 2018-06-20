@@ -40,6 +40,9 @@
 		2C794E501A0AA85900D845B0 /* Lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D181A0AA85900D845B0 /* Lib.c */; };
 		2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */; };
 		2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */; };
+		A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392620D9F17B004340E1 /* FloatLib.c */; };
+		A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392920D9F18C004340E1 /* nanosvgrast.c */; };
+		A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392A20D9F18C004340E1 /* nanosvg.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -826,7 +829,6 @@
 		12EA7C231E65FC3D00085A48 /* HashServiceFix.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HashServiceFix.inf; sourceTree = "<group>"; };
 		12EA7C241E65FC3D00085A48 /* sha1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
 		12EA7C251E65FC3D00085A48 /* sha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
-		2C7949E31A0AA7F700D845B0 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Clover; path = /Volumes/MacHD/Users/slice/src/UDK2018/Clover/Xcode/Clover/build/Debug/Clover; sourceTree = "<absolute>"; };
 		2C794AB71A0AA85900D845B0 /* EfiFlashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
 		2C794AB81A0AA85900D845B0 /* EfiLdrHandoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiLdrHandoff.h; sourceTree = "<group>"; };
 		2C794AB91A0AA85900D845B0 /* FlashLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashLayout.h; sourceTree = "<group>"; };
@@ -902,6 +904,12 @@
 		2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
+		A5BF392420D96FE3004340E1 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5BF392520D9F17A004340E1 /* FloatLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatLib.h; sourceTree = "<group>"; };
+		A5BF392620D9F17B004340E1 /* FloatLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FloatLib.c; sourceTree = "<group>"; };
+		A5BF392820D9F18C004340E1 /* nanosvg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nanosvg.h; sourceTree = "<group>"; };
+		A5BF392920D9F18C004340E1 /* nanosvgrast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nanosvgrast.c; sourceTree = "<group>"; };
+		A5BF392A20D9F18C004340E1 /* nanosvg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nanosvg.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -974,6 +982,8 @@
 				1261514D1A15BBB000903E7B /* EfiFileLib.h */,
 				12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */,
 				12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */,
+				A5BF392620D9F17B004340E1 /* FloatLib.c */,
+				A5BF392520D9F17A004340E1 /* FloatLib.h */,
 				1261514F1A15BBB000903E7B /* image.c */,
 				126151501A15BBB000903E7B /* libeg.h */,
 				126151511A15BBB000903E7B /* libegint.h */,
@@ -982,6 +992,9 @@
 				126151541A15BBB000903E7B /* load_icns.c */,
 				12E301581D5A413A00EED426 /* lodepng.c */,
 				12E301591D5A413A00EED426 /* lodepng.h */,
+				A5BF392A20D9F18C004340E1 /* nanosvg.c */,
+				A5BF392820D9F18C004340E1 /* nanosvg.h */,
+				A5BF392920D9F18C004340E1 /* nanosvgrast.c */,
 				12B8EBC11DDCEA2A00AC0A2C /* scroll_images.c */,
 				126151551A15BBB000903E7B /* text.c */,
 			);
@@ -2686,6 +2699,7 @@
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
 				1282C1EB20CE3149008C4D14 /* Patches_for_UDK2018 */,
 				A511943C1F74B380005B0121 /* Patches_for_EDK2 */,
+				A5BF392420D96FE3004340E1 /* Clover */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2933,7 +2947,7 @@
 			);
 			name = Clover;
 			productName = Clover;
-			productReference = 2C7949E31A0AA7F700D845B0 /* Clover */;
+			productReference = A5BF392420D96FE3004340E1 /* Clover */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -2976,6 +2990,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */,
 				2C794E401A0AA85900D845B0 /* Test.c in Sources */,
 				2C794E411A0AA85900D845B0 /* BootArgs.c in Sources */,
 				123B399B200E76DD00DC2ED9 /* BootFixes3.c in Sources */,
@@ -2993,10 +3008,12 @@
 				2C794E4C1A0AA85900D845B0 /* AsmFuncsX64.nasm in Sources */,
 				2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */,
 				2C794E4E1A0AA85900D845B0 /* TestAsm32.asm in Sources */,
+				A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */,
 				2C794E471A0AA85900D845B0 /* NVRAMDebug.c in Sources */,
 				2C794E4A1A0AA85900D845B0 /* VMem.c in Sources */,
 				2C794E3F1A0AA85900D845B0 /* FSInject.c in Sources */,
 				12B8EBBF1DDCE91200AC0A2C /* egemb_icons.c in Sources */,
+				A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */,
 				2C794E491A0AA85900D845B0 /* OsxAptioFixDrv.c in Sources */,
 				2C794E4B1A0AA85900D845B0 /* AsmFuncsX64.asm in Sources */,
 				2C794E441A0AA85900D845B0 /* device_tree.c in Sources */,
