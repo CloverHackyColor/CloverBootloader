@@ -29,7 +29,7 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
-SCRIPT_VERS="2018-06-17"
+SCRIPT_VERS="2018-06-18"
 
 # Macro
 M_NOGRUB=0
@@ -42,7 +42,7 @@ export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
-export EXT_DOWNLOAD=1
+export EXT_DOWNLOAD=0 # 0 = don't download, 1 = download precompiled, 2 = checkout & build, 3 = build
 #export NASM_PREFIX=
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
@@ -226,6 +226,19 @@ pathmunge () {
     fi
 }
 
+packagesPathmunge () {
+    if [[ -z "${PACKAGES_PATH:-}" ]]; then
+        export PACKAGES_PATH="$WORKSPACE" # must be always the first
+    fi
+    if [[ ! $PACKAGES_PATH =~ (^|:)$1(:|$) ]]; then
+        if [[ "${2:-}" = "after" ]]; then
+            export PACKAGES_PATH=$PACKAGES_PATH:$1
+        else
+            export PACKAGES_PATH=$1:$PACKAGES_PATH
+        fi
+    fi
+}
+
 # Add edk2 build option
 addEdk2BuildOption() {
     EDK2_BUILD_OPTIONS=("${EDK2_BUILD_OPTIONS[@]}" $@)
@@ -379,7 +392,9 @@ usage() {
     print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
-    print_option_help "--no-ext" "disable external driver download"
+    print_option_help "--ext-pre" "enable external driver download"
+    print_option_help "--ext-co" "checkout & build external drivers at ..src/EXT_PACKAGES"
+    print_option_help "--ext-build" "build existing external drivers located at ..src/EXT_PACKAGES"
     print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "build options:"
@@ -479,8 +494,14 @@ checkCmdlineArguments() {
             --no-lto)
                 addEdk2BuildMacro DISABLE_LTO
                 ;;
-            --no-ext)
-                EXT_DOWNLOAD=0
+            --ext-pre)
+                EXT_DOWNLOAD=1
+                ;;
+            --ext-co)
+                EXT_DOWNLOAD=2
+                ;;
+            --ext-build)
+                EXT_DOWNLOAD=3
                 ;;
             --edk2shell) EDK2SHELL=$(argument $option "$@"); shift
                 ;;
@@ -522,21 +543,18 @@ checkToolchain() {
 }
 
 checkExtTools() {
-    if [[ "$EXT_DOWNLOAD" -ne 0 ]]; then
-        CURL=`which curl`
-        WGET=`which wget`
-        if [ "$CURL" == "" ] && [ "$WGET" == "" ]; then
+    case "$EXT_DOWNLOAD" in
+        1)
+          if [[ ! -x $(which wget) || ! -x $(which curl) ]]; then
             echo "Missing wget or curl, will not download external drivers!"
             EXT_DOWNLOAD=0
-            return
-        fi
-
-        UNZIP=`which unzip`
-        if [ "$UNZIP" == "" ]; then
-            echo "Missing unzip, will not download external drivers!"
+          fi ;;
+        2 | 3)
+          if [[ ! -x $(which git) ]]; then
+            echo "Missing git, can't clone external drivers!"
             EXT_DOWNLOAD=0
-        fi
-    fi
+          fi ;;
+    esac
 }
 
 downloadExtDriver() {
@@ -603,7 +621,7 @@ downloadExtDriver() {
 MainBuildScript() {
     checkCmdlineArguments $@
     #checkToolchain
-#checkExtTools
+    checkExtTools
     checkPatch
 
 #    echo "NASM_PREFIX: ${NASM_PREFIX}"
@@ -774,6 +792,68 @@ MainBuildScript() {
     fi
 
     eval "$cmd"
+
+    # looks for external drivers to build
+    local EXT_PACKAGES="$EDK2DIR"/../EXT_PACKAGES
+
+    # add github links below to checkout packages
+    local extDriversDependecies=( 'https://github.com/acidanthera/AptioFixPkg'
+                                  'https://github.com/acidanthera/ApfsSupportPkg'
+                                  'https://github.com/CupertinoNet/CupertinoModulePkg'
+                                  'https://github.com/CupertinoNet/EfiMiscPkg'
+                                  'https://github.com/CupertinoNet/EfiPkg' )
+    # add below drivers you want to build
+    local externalDrivers=( AptioFixPkg ApfsSupportPkg )
+
+    if [[ "$EXT_DOWNLOAD" -eq 2 ]]; then
+      local pkg=""
+      for link in "${extDriversDependecies[@]}"
+      do
+        mkdir -p "$EXT_PACKAGES"
+        pkg=$(basename $link)
+        rm -rf "${EXT_PACKAGES}/${pkg}"
+        local branch=master
+
+        case $pkg in
+        CupertinoModulePkg | EfiMiscPkg | EfiPkg)
+          branch=development
+        ;;
+        esac
+
+        cmd="git clone $link -b $branch ${EXT_PACKAGES}/${pkg}"
+        eval "$cmd"
+        if [[ $? -eq 0 ]]; then
+          EXT_DOWNLOAD=3
+        else
+          echo "Error: $pkg cannot be cloned!"
+          exit 1
+        fi
+      done
+    fi
+
+    if [[ "$EXT_DOWNLOAD" -eq 3 ]]; then
+      for drv in "${externalDrivers[@]}"
+      do
+        if [[ -f "$EXT_PACKAGES"/"${drv}"/"${drv}".dsc ]]; then
+          packagesPathmunge "$EXT_PACKAGES" after
+          cmd="build"
+#          if (( $SkipAutoGen == 1 )) && (( $FORCEREBUILD == 0 )); then
+#            cmd+=" --skip-autogen"
+#          fi # SkipAutoGen is not adviced here
+          cmd+=" -a $TARGETARCH -b $BUILDTARGET -t $TOOLCHAIN -n $BUILDTHREADS"
+          cmd+=" -p ${EXT_PACKAGES}/${drv}/${drv}.dsc"
+          echo
+          echo "Running edk2 build for ${drv}${TARGETARCH} using the command:"
+          echo "$cmd"
+          eval "$cmd"
+          echo
+        else
+          echo "Error: can't find ${drv}/${drv}.dsc,"
+          echo "retry with --ext-co (require internet connection)"
+          exit 1
+        fi
+      done
+    fi
 }
 
 copyBin() {
@@ -842,8 +922,8 @@ MainPostBuildScript() {
     export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
     export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
     export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
-    export APTIO_BUILD_DIR="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
-	export APFS_BUILD_DIR="${WORKSPACE}/Build/ApfsSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+    export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+    export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/ApfsSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
 
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
@@ -989,12 +1069,11 @@ MainPostBuildScript() {
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
 #copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper)
+      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper XhciDxe)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
       done
-
 
       binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume DataHubDxe SMCHelper)
       for efi in "${binArray[@]}"
@@ -1020,29 +1099,31 @@ MainPostBuildScript() {
 #done
 
       if [[ $M_NOGRUB -eq 0 ]]; then
-        binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF XhciDxe)
+        binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
         for efi in "${binArray[@]}"
         do
           copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
         done
       fi
 
+      case "$EXT_DOWNLOAD" in
+        1)
+          downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
+          downloadExtDriver "acidanthera/ApfsSupportPkg" ApfsSupport "ApfsSupport-v" "-RELEASE"
+        ;;
+        0| 2 | 3)
+          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+          copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+          copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi ;;
+      esac
       # drivers64UEFI
-      binArray=( CsmVideoDxe EmuVariableUefi OsxAptioFix3Drv OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe UsbMouseDxe  UsbKbDxe Fat EnglishDxe NvmExpressDxe Ps2MouseDxe VBoxExt2 VBoxExt4 VBoxIso9600 HashServiceFix)
+      binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
+
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
       done
-
-      if [[ "$EXT_DOWNLOAD" -ne 0 ]]; then
-        downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
-        downloadExtDriver "acidanthera/ApfsSupportPkg" ApfsSupport "ApfsSupport-v" "-RELEASE"
-      else
-        copyBin "$APTIO_BUILD_DIR"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-        copyBin "$APTIO_BUILD_DIR"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-        copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-#       copyBin "$APFS_BUILD_DIR"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/
-      fi
 
       # Applications
       echo "Copy Applications:"
