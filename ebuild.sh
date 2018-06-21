@@ -652,9 +652,9 @@ MainBuildScript() {
     #
     # Setup workspace if it is not set
     #
+    local EDK2DIR=$(cd "$CLOVERROOT"/.. && echo "$PWD")
     if [[ -z "$WORKSPACE" ]]; then
         echo "Initializing workspace"
-        local EDK2DIR=$(cd "$CLOVERROOT"/.. && echo "$PWD")
         if [[ ! -x "${EDK2DIR}"/edksetup.sh ]]; then
             echo "Error: Can't find edksetup.sh script !" >&2
             exit 1
