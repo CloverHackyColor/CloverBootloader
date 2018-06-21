@@ -37,6 +37,19 @@
 #include "nanosvg.h"
 #include "FloatLib.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_SVG 1
+#else
+#define DEBUG_SVG DEBUG_ALL
+#endif
+
+#if DEBUG_SVG == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SVG, __VA_ARGS__)
+#endif
+
+
 #define pow(x,n) PowF(x,n)
 #define sqrtf(x) SqrtF(x)
 #define sinf(x) SinF(x)

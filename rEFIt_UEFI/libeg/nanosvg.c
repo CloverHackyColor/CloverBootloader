@@ -68,6 +68,17 @@
 #include "nanosvg.h"
 #include "FloatLib.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_SVG 1
+#else
+#define DEBUG_SVG DEBUG_ALL
+#endif
+
+#if DEBUG_SVG == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SVG, __VA_ARGS__)
+#endif
 
 //#include <string.h>
 //#include <stdlib.h>
@@ -212,7 +223,10 @@ static void nsvg__parseElement(char* s,
 		name = s;
 		// Find end of the attrib name.
 		while (*s && !nsvg__isspace(*s) && *s != '=') s++;
-		if (*s) { *s++ = '\0'; }
+		if (*s) {
+      *s++ = '\0';
+      DBG("attrib name %a\n", name);
+    }
 		// Skip until the beginning of the value.
 		while (*s && *s != '\"' && *s != '\'') s++;
 		if (!*s) break;
@@ -221,7 +235,10 @@ static void nsvg__parseElement(char* s,
 		// Store value and find the end of it.
 		value = s;
 		while (*s && *s != quote) s++;
-		if (*s) { *s++ = '\0'; }
+		if (*s) {
+      *s++ = '\0';
+      DBG("value:%a\n", value);
+    }
 
 		// Store only well formed attributes
 		if (name && value) {
@@ -229,16 +246,21 @@ static void nsvg__parseElement(char* s,
 			attr[nattr++] = value;
 		}
 	}
-
+  DBG("end attributes\n");
 	// List terminator
 	attr[nattr++] = 0;
 	attr[nattr++] = 0;
 
 	// Call callbacks.
-	if (start && startelCb)
+  if (start && startelCb) {
+    DBG("startelCb\n");
 		(*startelCb)(ud, name, attr);
-	if (end && endelCb)
+  }
+  if (end && endelCb) {
+    DBG("endelCb\n");
 		(*endelCb)(ud, name);
+  }
+  DBG("nsvg__parseElement finished\n");
 }
 
 int nsvg__parseXML(char* input,
@@ -253,21 +275,25 @@ int nsvg__parseXML(char* input,
 	while (*s) {
 		if (*s == '<' && state == NSVG_XML_CONTENT) {
 			// Start of a tag
+      DBG("Start of a tag\n");
 			*s++ = '\0';
 			nsvg__parseContent(mark, contentCb, ud);
+      DBG("nsvg__parseContent %a\n", mark);
 			mark = s;
 			state = NSVG_XML_TAG;
 		} else if (*s == '>' && state == NSVG_XML_TAG) {
 			// Start of a content or new tag.
 			*s++ = '\0';
+      DBG("Start of a content %a\n", mark);
 			nsvg__parseElement(mark, startelCb, endelCb, ud);
+      DBG("nsvg__parseElement\n");
 			mark = s;
 			state = NSVG_XML_CONTENT;
 		} else {
 			s++;
 		}
 	}
-
+  DBG("finish nsvg__parseXML\n");
 	return 1;
 }
 
@@ -2352,20 +2378,25 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 {
 	int i;
 	for (i = 0; attr[i]; i += 2) {
+    DBG("nsvg__parseAttr\n");
 		if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
 			if (strcmp(attr[i], "width") == 0) {
+        DBG("nsvg__parseCoordinate\n");
 				p->image->width = nsvg__parseCoordinate(p, attr[i + 1], 0.0f, 0.0f);
+        DBG("width=%d\n", p->image->width);
 			} else if (strcmp(attr[i], "height") == 0) {
 				p->image->height = nsvg__parseCoordinate(p, attr[i + 1], 0.0f, 0.0f);
+        DBG("height=%d\n", p->image->height);
 			} else if (strcmp(attr[i], "viewBox") == 0) {
 				//sscanf(attr[i + 1], "%f%*[%%, \t]%f%*[%%, \t]%f%*[%%, \t]%f", &p->viewMinx, &p->viewMiny, &p->viewWidth, &p->viewHeight);
         //Slice - TODO
+        DBG("viewBox\n");
         char* Next = 0;
         AsciiStrToFloat(attr[i + 1], &Next, &p->viewMinx);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewMiny);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewWidth);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewHeight);
-
+        DBG("viewBox WH\n");
 			} else if (strcmp(attr[i], "preserveAspectRatio") == 0) {
 				if (strstr(attr[i + 1], "none") != 0) {
 					// No uniform scaling
@@ -2390,6 +2421,7 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 					if (strstr(attr[i + 1], "slice") != 0)
 						p->alignType = NSVG_ALIGN_SLICE;
 				}
+        DBG("low end\n");
 			}
 		}
 	}
@@ -2510,7 +2542,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** attr)
 static void nsvg__startElement(void* ud, const char* el, const char** attr)
 {
 	NSVGparser* p = (NSVGparser*)ud;
-
+  DBG("nsvg__startElement %a\n", el);
 	if (p->defsFlag) {
 		// Skip everything but gradients in defs
 		if (strcmp(el, "linearGradient") == 0) {
@@ -2520,9 +2552,10 @@ static void nsvg__startElement(void* ud, const char* el, const char** attr)
 		} else if (strcmp(el, "stop") == 0) {
 			nsvg__parseGradientStop(p, attr);
 		}
+    DBG("skip defs\n");
 		return;
 	}
-
+  DBG("no defs\n");
 	if (strcmp(el, "g") == 0) {
 		nsvg__pushAttr(p);
 		nsvg__parseAttribs(p, attr);
@@ -2563,8 +2596,10 @@ static void nsvg__startElement(void* ud, const char* el, const char** attr)
 	} else if (strcmp(el, "stop") == 0) {
 		nsvg__parseGradientStop(p, attr);
 	} else if (strcmp(el, "defs") == 0) {
+    DBG("defs=1\n");
 		p->defsFlag = 1;
 	} else if (strcmp(el, "svg") == 0) {
+    DBG("nsvg__parseSVG\n");
 		nsvg__parseSVG(p, attr);
 	}
 }
@@ -2572,12 +2607,13 @@ static void nsvg__startElement(void* ud, const char* el, const char** attr)
 static void nsvg__endElement(void* ud, const char* el)
 {
 	NSVGparser* p = (NSVGparser*)ud;
-
+  DBG("nsvg__endElement\n");
 	if (strcmp(el, "g") == 0) {
 		nsvg__popAttr(p);
 	} else if (strcmp(el, "path") == 0) {
 		p->pathFlag = 0;
 	} else if (strcmp(el, "defs") == 0) {
+    DBG("defs=0\n");
 		p->defsFlag = 0;
 	}
 }
@@ -2586,6 +2622,7 @@ static void nsvg__content(void* ud, const char* s)
 {
 	NSVG_NOTUSED(ud);
 	NSVG_NOTUSED(s);
+  DBG("nsvg__content %a\n");
 	// empty
 }
 
@@ -2730,17 +2767,17 @@ NSVGimage* nsvgParse(char* input, const char* units, float dpi)
 		return NULL;
 	}
 	p->dpi = dpi;
-
+  DBG("parser created\n");
 	nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
-
+DBG("nsvg__parseXML\n");
 	// Scale to viewBox
 	nsvg__scaleToViewbox(p, units);
-
+DBG("nsvg__scaleToViewbox\n");
 	ret = p->image;
 	p->image = NULL;
 
 	nsvg__deleteParser(p);
-
+DBG("nsvg__deleteParser\n");
 	return ret;
 }
 #ifdef SVG_LOAD_FROM_FILE

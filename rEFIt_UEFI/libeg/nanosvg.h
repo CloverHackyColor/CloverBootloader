@@ -29,14 +29,17 @@
 
 #ifndef NANOSVG_H
 #define NANOSVG_H
-
+/*
 #include <Uefi.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseLib.h>
 #include <Library/MemoryAllocationLib.h>
+*/
+#include "Platform.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
+
 
 //There are defines for compilation as first step. Must be revised
 #define memcpy(dest,source,count) gBS->CopyMem(dest,(void*)source,(UINTN)(count))

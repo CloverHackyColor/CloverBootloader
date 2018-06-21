@@ -2557,11 +2557,18 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           if (EFI_ERROR(Status)) {
             DrawTextXY(L"No file!", 0, 0, X_IS_CENTER);
           }
+          DBG("Loaded file Sample.svg size=%d\n", FileDataLength);
+          DrawTextXY(L"Loaded file!", 10, 20, X_IS_CENTER);
           SVGimage = nsvgParse((CHAR8*)FileData, "px", 72);
+          DBG("Image parsed\n");
+           DrawTextXY(L"Image parsed!", 10, 40, X_IS_CENTER);
           NewImage = egCreateImage(Width, Height, TRUE);
-          
+          DBG("egImage created\n");
+          DrawTextXY(L"egImage created!", 10, 60, X_IS_CENTER);
           // Rasterize
           nsvgRasterize(rast, SVGimage, 0,0,1, (UINT8*)NewImage->PixelData, Width, Height, Width*4);
+          DBG("Image rasterized\n");
+          DrawTextXY(L"rasterized!", 10, 80, X_IS_CENTER);
           //now show it!
           BltImageAlpha(NewImage,
                         (UGAWidth - Width) / 2,
