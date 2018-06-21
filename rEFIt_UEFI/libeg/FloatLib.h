@@ -16,14 +16,6 @@
 
 #define PI (3.1415926536f)
 
-#define strtoll(a,b,c) (c)
-#define strtol(a,b,c) (c)
-
-
-
-#define acosf(x) ((1.0f-x)*PI / 2.0f)
-#define atan2f(x,y) (x-y)
-
 float SqrtF(float X);
 float PowF(float X, INTN N);
 float SinF(float X);
@@ -32,6 +24,8 @@ float TanF(float X);
 float CeilF(float X);
 float FloorF(float X);
 float ModF(float X, float Y);
+float AcosF(float X);
+float Atan2F(float X, float Y);
 
 RETURN_STATUS
 EFIAPI

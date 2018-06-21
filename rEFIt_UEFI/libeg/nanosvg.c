@@ -83,6 +83,8 @@ typedef UINTN size_t;
 #define tanf(x) TanF(x)
 #define ceilf(x) CeilF(x)
 #define floorf(x) FloorF(x)
+#define acosf(x) AcosF(x)
+#define atan2f(x,y) Atan2F(x,y)
 
 
 #define sscanf(s,f,x) AsciiStrToFloat(s, f, x)
@@ -915,7 +917,8 @@ static double nsvg__atof(const char* s)
 	// Parse integer part
 	if (nsvg__isdigit(*cur)) {
 		// Parse digit sequence
-		intPart = (double)strtoll(cur, &end, 10);
+	//	intPart = (double)strtoll(cur, &end, 10);
+    AsciiStrDecimalToUintnS(cur, &end, &intPart);
 		if (cur != end) {
 			res = (double)intPart;
 			hasIntPart = 1;
@@ -928,7 +931,8 @@ static double nsvg__atof(const char* s)
 		cur++; // Skip '.'
 		if (nsvg__isdigit(*cur)) {
 			// Parse digit sequence
-			fracPart = strtoll(cur, &end, 10);
+	//		fracPart = strtoll(cur, &end, 10);
+      AsciiStrDecimalToUintnS(cur, &end, &fracPart);
 			if (cur != end) {
 				res += (double)fracPart / pow(10.0, (double)(end - cur));
 				hasFracPart = 1;
@@ -1025,6 +1029,13 @@ static const char* nsvg__getNextPathItem(const char* s, char* it)
 }
 
 //Slice - this is incomplete
+//w3.org
+/*
+<circle cx="200" cy="135" r="20" fill="#3b3"/>  //Three digit hex — #rgb
+<circle cx="240" cy="135" r="20" fill="#33bb33"/> //Six digit hex — #rrggbb
+<circle cx="200" cy="175" r="20" fill="rgb(51,187,51)"/> //Integer functional — rgb(rrr, ggg, bbb)
+<circle cx="240" cy="175" r="20" fill="rgb(20%,73.333%,20%)"/> //Float functional — rgb(R%, G%, B%)
+*/
 static unsigned int nsvg__parseColorHex(const char* str)
 {
 	unsigned int r = 0, g = 0, b = 0;

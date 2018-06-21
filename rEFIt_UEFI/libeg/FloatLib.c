@@ -7,9 +7,7 @@
 
 #include "FloatLib.h"
 
-
-//we need math implementation
-//There defines are for compilation as first step. They are wrong initially
+#define memcpy(dest,source,count) gBS->CopyMem(dest,(void*)source,(UINTN)(count))
 
 float SqrtF(float X)
 {
@@ -172,7 +170,7 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
 {
   UINTN Temp = 0;
   INTN Sign = 1;
-  float Mantissa;
+  float Mantissa, Ftemp;
   CHAR8* TmpStr = NULL;
   RETURN_STATUS Status = RETURN_SUCCESS;
   if (EndPointer != NULL) {
@@ -193,6 +191,8 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
   if (*String == '-') {
     Sign = -1;
     String++;
+  } else if (*String == '+') {
+    String++;
   }
 
   Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
@@ -201,27 +201,32 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
     String++;
     Temp = 0;
     Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
-    *Data = Temp;
+    Ftemp = Temp;
     while (String != TmpStr) {
       if (*String == '\0') {
         break;
       }
-      *Data /= 10.0f;
+      Ftemp /= 10.0f;
       String++;
     }
-    Mantissa += *Data;
+    Mantissa += Ftemp;
   }
   *Data = Mantissa;
   if ((*String == 'E') || (*String == 'e')){
-    INTN ExpSign = 0;
+    INTN ExpSign = 1;
     String++;
     if (*String == '-') {
       ExpSign = -1;
       String++;
+    } else if (*String == '+') {
+      String++;
     }
     Temp = 0;
     Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
-    *Data = PowF(*Data, ExpSign * Temp);
+    if (Status == RETURN_SUCCESS) {
+      Ftemp = PowF(10.0f, ExpSign * Temp);
+      *Data *= Ftemp;
+    }
   }
   
   if (EndPointer != NULL) {
@@ -231,33 +236,36 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
 }
 
 /*
- //Slice - this is my replacement for standard qsort(void* Array, int Num, size_t Size,
- int (*compare)(void* a, void* b))
+ //Slice - this is my replacement for standard
+ qsort(void* Array, int Num, size_t Size,
+       int (*compare)(void* a, void* b))
  usage qsort(Array, Num, sizeof(*Array), compare);
  where for example
  int compare(void *a, void* b)
  {
- if (*(float*)a > *(float*)b) return 1;
- if (*(float*)a < *(float*)b) return -1;
- return -0;
+   if (*(float*)a > *(float*)b) return 1;
+   if (*(float*)a < *(float*)b) return -1;
+   return -0;
  }
  */
 
 void QuickSort(void* Array, int Low, int High, INTN Size, int (*compare)(const void* a, const void* b)) {
   int i = Low, j = High;
-  char *Med, *Temp;
+  void *Med, *Temp;
   Med = Array + ((Low + High) / 2) * Size; // Central element, just pointer
   Temp = AllocatePool(Size);
   // Sort around center
   while (i <= j)
   {
-    while (compare((const void*)&Array[i], (const void*)Med) == -1) i++;
-    while (compare((const void*)&Array[j], (const void*)Med) == 1) j--;
+    while (compare((const void*)(Array+i*Size), (const void*)Med) == -1) i++;
+    while (compare((const void*)(Array+j*Size), (const void*)Med) == 1) j--;
     // Change
     if (i <= j) {
-      memcpy(Temp, Array[i], Size);
-      memcpy(Array[i++], Array[j], Size);
-      memcpy(Array[j--], Temp, Size);
+      memcpy(Temp, Array+i*Size, Size);
+      memcpy(Array+i*Size, Array+j*Size, Size);
+      memcpy(Array+j*Size, Temp, Size);
+      i++;
+      j--;
     }
   }
   FreePool(Temp);

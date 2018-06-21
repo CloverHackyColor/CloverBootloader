@@ -45,6 +45,9 @@
 #define ceilf(x) CeilF(x)
 #define floorf(x) FloorF(x)
 #define fmodf(x,y) ModF(x,y)
+#define acosf(x) AcosF(x)
+#define atan2f(x,y) Atan2F(x,y)
+
 
 void qsort(void* Array, int Num, INTN Size,
            int (*compare)(const void* a, const void* b))

@@ -28,6 +28,8 @@ misrepresented as being the original software.
 #include <Library/BaseLib.h>
 #include <Library/MemoryAllocationLib.h>
 
+#define NANOSVG_ALL_COLOR_KEYWORDS 1
+
 //There are defines for compilation as first step. Must be revised
 #define memcpy(dest,source,count) gBS->CopyMem(dest,(void*)source,(UINTN)(count))
 #define memset(dest,ch,count)     gBS->SetMem(dest,(UINTN)(count),(UINT8)(ch))
@@ -245,7 +247,7 @@ typedef struct NSVGrasterizer NSVGrasterizer;
 
 
 // Allocated rasterizer context.
-extern NSVGrasterizer* nsvgCreateRasterizer();
+extern NSVGrasterizer* nsvgCreateRasterizer(VOID);
 
 // Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
 //   r - pointer to rasterizer context
