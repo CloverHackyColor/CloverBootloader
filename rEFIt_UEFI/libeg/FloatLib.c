@@ -37,11 +37,11 @@ float SinF(float X)
   if (X > PI) {
     X = PI - X;
   }
-  if (X > PI / 2.0f) {
+  if (X > PI * 0.5f) {
     X = PI - X;
   }
-  if (X > PI / 4.0f) {
-    return CosF(PI / 2.0f - X);
+  if (X > PI * 0.25f) {
+    return CosF(PI * 0.5f - X);
   }
   X2 = X * X;
   return (X - X2 * X / 6.0f + X2 * X2 * X / 120.0f);
@@ -57,22 +57,22 @@ float CosF(float X)
     X = PI - X;
     Sign = -1.0f;
   }
-  if (X > PI / 2.0f) {
+  if (X > PI * 0.5f) {
     X = PI - X;
     Sign *= -1.0f;
   }
-  if (X > PI / 4.0f) {
-    return SinF(PI / 2.0f - X);
+  if (X > PI * 0.25f) {
+    return SinF(PI * 0.5f - X);
   }
   X2 = X * X;
-  return (Sign * (1 - X2 / 2.0f + X2 * X2 / 24.0f));
+  return (Sign * (1.0f - X2 * 0.5f + X2 * X2 / 24.0f));
 }
 
 float TanF(float X)
 {
   float Y = CosF(X);
   if (Y == 0.0f) {
-    Y = 1.0e-38;
+    Y = 1.0e-37;
   }
   return SinF(X)/Y;
 }
@@ -114,10 +114,8 @@ float ModF(float X, float Y)
 
 float AcosF(float X)
 {
-  float Y = -1.0f;
   float X2 = X * X;
-  if (X < 0.0f) Y = 1.0f;
-  return (PI * 0.5f + Y * (X + X * X2 / 6.0f + X * X2 * X2 * (3.0f / 40.0f)));
+  return (PI * 0.5f - X * (1.0f + X2 / 6.0f + X2 * X2 * (3.0f / 40.0f)));
 }
 
 float AtanF(float X) //assume 0.0 < X < 1.0
@@ -197,6 +195,7 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
 
   Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
   Mantissa = Temp;
+  String = TmpStr;
   if (*String == '.') {
     String++;
     Temp = 0;
@@ -206,12 +205,12 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
       if (*String == '\0') {
         break;
       }
-      Ftemp /= 10.0f;
+      Ftemp *= 0.1f;
       String++;
     }
     Mantissa += Ftemp;
   }
-  *Data = Mantissa;
+  
   if ((*String == 'E') || (*String == 'e')){
     INTN ExpSign = 1;
     String++;
@@ -225,10 +224,10 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
     Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
     if (Status == RETURN_SUCCESS) {
       Ftemp = PowF(10.0f, ExpSign * Temp);
-      *Data *= Ftemp;
+      Mantissa *= Ftemp;
     }
   }
-  
+  *Data = Mantissa * Sign;
   if (EndPointer != NULL) {
     *EndPointer = (CHAR8 *) TmpStr;
   }

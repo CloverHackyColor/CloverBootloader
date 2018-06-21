@@ -49,6 +49,8 @@
 	// Load
 	NSVGImage* image;
 	image = nsvgParseFromFile("test.svg", "px", 96);
+  or
+   image = nsvgParse(data, units, dpi);
 	printf("size: %f x %f\n", image->width, image->height);
 	// Use...
 	for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
@@ -138,7 +140,7 @@ static int nsvg__isdigit(char c)
 
 static int nsvg__isnum(char c)
 {
-	return nsvg__strchr("0123456789+-.eE", c) != 0;
+	return nsvg__strchr("0123456789+-.eE", c) != 0;  //SIC!
 }
 
 static NSVG_INLINE float nsvg__minf(float a, float b) { return a < b ? a : b; }
@@ -432,14 +434,14 @@ static void nsvg__curveBounds(float* bounds, float* curve)
 static NSVGparser* nsvg__createParser()
 {
 	NSVGparser* p;
-	p = (NSVGparser*)AllocatePool(sizeof(NSVGparser));
-	if (p == NULL) goto error;
-	memset(p, 0, sizeof(NSVGparser));
+	p = (NSVGparser*)AllocateZeroPool(sizeof(NSVGparser));
+	if (p == NULL) return NULL;
 
-	p->image = (NSVGimage*)AllocatePool(sizeof(NSVGimage));
-	if (p->image == NULL) goto error;
-	memset(p->image, 0, sizeof(NSVGimage));
-
+	p->image = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
+	if (p->image == NULL) {
+    FreePool(p);
+    return NULL;
+  }
 	// Init style
 	nsvg__xformIdentity(p->attr[0].xform);
 	memset(p->attr[0].id, 0, sizeof p->attr[0].id);
@@ -458,13 +460,6 @@ static NSVGparser* nsvg__createParser()
 	p->attr[0].visible = 1;
 
 	return p;
-
-error:
-	if (p) {
-		if (p->image) FreePool(p->image);
-		FreePool(p);
-	}
-	return NULL;
 }
 
 static void nsvg__deletePaths(NSVGpath* path)
@@ -758,9 +753,8 @@ static void nsvg__addShape(NSVGparser* p)
 	if (p->plist == NULL)
 		return;
 
-	shape = (NSVGshape*)AllocatePool(sizeof(NSVGshape));
-	if (shape == NULL) goto error;
-	memset(shape, 0, sizeof(NSVGshape));
+	shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+	if (shape == NULL) return;
 
 	memcpy(shape->id, attr->id, sizeof shape->id);
 	scale = nsvg__getAverageScale(attr->xform);
@@ -834,9 +828,6 @@ static void nsvg__addShape(NSVGparser* p)
 	p->shapesTail = shape;
 
 	return;
-
-error:
-	if (shape) FreePool(shape);
 }
 
 static void nsvg__addPath(NSVGparser* p, char closed)
@@ -853,12 +844,14 @@ static void nsvg__addPath(NSVGparser* p, char closed)
 	if (closed)
 		nsvg__lineTo(p, p->pts[0], p->pts[1]);
 
-	path = (NSVGpath*)AllocatePool(sizeof(NSVGpath));
-	if (path == NULL) goto error;
-	memset(path, 0, sizeof(NSVGpath));
+	path = (NSVGpath*)AllocateZeroPool(sizeof(NSVGpath));
+	if (path == NULL) return;
 
-	path->pts = (float*)AllocatePool(p->npts*2*sizeof(float));
-	if (path->pts == NULL) goto error;
+	path->pts = (float*)AllocateZeroPool(p->npts*2*sizeof(float));
+	if (path->pts == NULL) {
+	  FreePool(path);
+	  return;
+  }
 	path->closed = closed;
 	path->npts = p->npts;
 
@@ -887,12 +880,6 @@ static void nsvg__addPath(NSVGparser* p, char closed)
 	p->plist = path;
 
 	return;
-
-error:
-	if (path != NULL) {
-		if (path->pts != NULL) FreePool(path->pts);
-		FreePool(path);
-	}
 }
 
 //Slice - replace by own implementation
@@ -1009,7 +996,6 @@ static const char* nsvg__parseNumber(const char* s, char* it, const int size)
 	return s;
 }
 
-
 static const char* nsvg__getNextPathItem(const char* s, char* it)
 {
 	it[0] = '\0';
@@ -1028,7 +1014,6 @@ static const char* nsvg__getNextPathItem(const char* s, char* it)
 	return s;
 }
 
-//Slice - this is incomplete
 //w3.org
 /*
 <circle cx="200" cy="135" r="20" fill="#3b3"/>  //Three digit hex — #rgb
@@ -1039,30 +1024,64 @@ static const char* nsvg__getNextPathItem(const char* s, char* it)
 static unsigned int nsvg__parseColorHex(const char* str)
 {
 	unsigned int r = 0, g = 0, b = 0;
-	//int n = 0;
+  UINTN  c = 0;
+	int n = 0;
 	str++; // skip #
-	// parse digits
-  if (nsvg__strchr(str, '%')) {
-		return NSVG_RGB((r*255)/100,(g*255)/100,(b*255)/100);
-	} else {
-		return NSVG_RGB(r,g,b);
+	// Calculate number of characters.
+	while(str[n] && !nsvg__isspace(str[n]))
+		n++;
+	if (n == 6) {
+//		sscanf(str, "%x", &c);
+		c = AsciiStrHexToUintn(str);
+	} else if (n == 3) {
+//		sscanf(str, "%x", &c);
+		c = AsciiStrHexToUintn(str);
+		c = (c&0xf) | ((c&0xf0) << 4) | ((c&0xf00) << 8);
+		c |= c<<4;
 	}
+	r = (c >> 16) & 0xff;
+	g = (c >> 8) & 0xff;
+	b = c & 0xff;
+	return NSVG_RGB(r,g,b);
 }
 
-//Slice - the procedure absent in original
 static unsigned int nsvg__parseColorRGB(const char* str)
 {
-  unsigned int r = 0, g = 0, b = 0;
-  //int n = 0;
-  str++; // skip #
-  // parse numbers
-  if (nsvg__strchr(str, '%')) {
-    return NSVG_RGB((r*255)/100,(g*255)/100,(b*255)/100);
-  } else {
-    return NSVG_RGB(r,g,b);
-  }
+	int r = -1, g = -1, b = -1;
+	float fr, fg, fb;
+//	char s1[32]="", s2[32]="";
+	char *s1 = NULL;
+//	sscanf(str + 4, "%d%[%%, \t]%d%[%%, \t]%d", &r, s1, &g, s2, &b);
+	AsciiStrToFloat(str+4, &s1, &fr);
+	if (*s1 == '%') {
+	  r = (int)(fr * 2.55f);
+	  str = s1 + 2;
+	} else if (*s1 == ',') {
+	  r = (int)fr;
+	  str = s1 + 1;
+	} else {
+	  //error
+	  return NSVG_RGB(0,0,0);
+	}
+	AsciiStrToFloat(str, &s1, &fg);
+	if (*s1 == '%') {
+	  g = (int)(fg * 2.55f);
+	  str = s1 + 2;
+	} else if (*s1 == ',') {
+	  g = (int)fg;
+	  str = s1 + 1;
+	} else {
+	  //error
+	  return NSVG_RGB(0,0,0);
+	}
+  AsciiStrToFloat(str, &s1, &fb);
+	if (*s1 == '%') {
+	  b = (int)(fb * 2.55f);
+	}	else {
+	  b = fb;
+	}
+  return NSVG_RGB(r,g,b);
 }
-//
 
 typedef struct NSVGNamedColor {
 	const char* name;
@@ -1297,7 +1316,7 @@ static NSVGcoordinate nsvg__parseCoordinateRaw(const char* str)
   char* UnitsStr = NULL;
 //	sscanf(str, "%f%31s", &coord.value, units);
   AsciiStrToFloat(str, &UnitsStr, &coord.value);
-  
+
 //	coord.units = nsvg__parseUnits(units);
   coord.units = nsvg__parseUnits((const char*)UnitsStr);
 	return coord;
@@ -2346,7 +2365,7 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
         AsciiStrToFloat((const char*)Next, &Next, &p->viewMiny);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewWidth);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewHeight);
-        
+
 			} else if (strcmp(attr[i], "preserveAspectRatio") == 0) {
 				if (strstr(attr[i + 1], "none") != 0) {
 					// No uniform scaling

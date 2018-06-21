@@ -40,6 +40,10 @@
 #include "Version.h"
 //#include "colors.h"
 
+#include "nanosvg.h"
+#include "FloatLib.h"
+
+
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
 #else
@@ -2536,19 +2540,42 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           DBG("create file %r\n", Status);
         }
         break;
-
+*/
       case SCAN_F8:
         do {
-          CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", L"ABC", L"123456", L"xy");
-          if (Str != NULL) {
-            AlertMessage(L"Sample message", Str);
-            FreePool(Str);
+          NSVGimage       *SVGimage;
+          EFI_STATUS      Status;
+          UINT8           *FileData = NULL;
+          UINTN           FileDataLength = 0;
+          EG_IMAGE        *NewImage;
+          INTN Width = 300, Height = 300;
+          
+          NSVGrasterizer* rast = nsvgCreateRasterizer();
+          
+          // load file
+          Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
+          if (EFI_ERROR(Status)) {
+            DrawTextXY(L"No file!", 0, 0, X_IS_CENTER);
           }
+          SVGimage = nsvgParse((CHAR8*)FileData, "px", 72);
+          NewImage = egCreateImage(Width, Height, TRUE);
+          
+          // Rasterize
+          nsvgRasterize(rast, SVGimage, 0,0,1, (UINT8*)NewImage->PixelData, Width, Height, Width*4);
+          //now show it!
+          BltImageAlpha(NewImage,
+                        (UGAWidth - Width) / 2,
+                        (UGAHeight - Height) / 2,
+                        &DarkBackgroundPixel,
+                        16);
+          egFreeImage(NewImage);
+          FreePool(rast);
+          nsvgDelete(SVGimage);
+          FreePool(FileData);
         } while (0);
- //this way screen is dirty
-        break;
+         break;
 
-  */
+  
       case SCAN_F9:
         SetNextScreenMode(1);
         break;
