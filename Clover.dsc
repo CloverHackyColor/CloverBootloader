@@ -585,24 +585,6 @@
 ###################################################################################################
 [BuildOptions]
 
-#
-# Workaround for EDK2 parser leaving undefined macros in the
-#   makefile instead of expanding them to empty strings.
-#
-DEFINE VBIOS_PATCH_CLOVEREFI_FLAG =
-DEFINE ONLY_SATA_0_FLAG =
-DEFINE BLOCKIO_FLAG =
-DEFINE NOUSB_FLAG =
-DEFINE NOUDMA_FLAG =
-DEFINE AMD_FLAG =
-DEFINE SECURE_BOOT_FLAG =
-DEFINE ANDX86_FLAG =
-DEFINE LODEPNG_FLAG =
-DEFINE PS2MOUSE_LEGACYBOOT_FLAG =
-DEFINE DEBUG_ON_SERIAL_PORT_FLAG =
-DEFINE DISABLE_LTO_FLAG =
-DEFINE EXIT_USBKB_FLAG =
-
 !ifdef ENABLE_VBIOS_PATCH_CLOVEREFI
   DEFINE VBIOS_PATCH_CLOVEREFI_FLAG = -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
 !endif
