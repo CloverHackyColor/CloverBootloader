@@ -4,6 +4,11 @@
  *
  */
  
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "utils.h"
+#include "efidevp.h"
 #include "gfxutil.h"
 
 #define MAX_DEVICE_PATH_LEN 1000
@@ -196,7 +201,7 @@ GFX_HEADER *parse_binary(const unsigned char *bp)
 		// read device path data
 		gfx_blockheader->devpath_len = abs((int)tmp - (int)src);
 		readbin(&src, &size, &dpathtmp,gfx_blockheader->devpath_len);
-		gfx_blockheader->devpath = (EFI_DEVICE_PATH_P *)dpathtmp;		
+		gfx_blockheader->devpath = (struct _EFI_DEVICE_PATH_P_TAG *)dpathtmp;
 		
 		gfx_entry_head = NULL;
 		gfx_entry_end = NULL;

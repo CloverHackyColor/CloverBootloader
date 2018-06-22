@@ -39,6 +39,7 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 #define  _STRUCT_X86_THREAD_STATE32
 #define  _STRUCT_X86_THREAD_STATE64
 #include "../../../rEFIt_UEFI/Platform/Platform.h"
+#pragma GCC visibility pop
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOKitKeys.h>
@@ -49,6 +50,7 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 #define GFX 1
 #if GFX
   #include "gfxutil.h"
+  #include "efidevp.h"
 #endif
 
 /*
@@ -60,7 +62,7 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 //static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 
 // Global Variables
-static io_registry_entry_t gEFI __attribute__((used));
+static io_registry_entry_t gEFI;
 static io_registry_entry_t gPlatform;
 static mach_port_t         masterPort;
 

@@ -4,10 +4,6 @@
  *
  */
  
-//#include <CoreFoundation/CoreFoundation.h>            // (CFDictionary, ...)
-#include "utils.h"
-#include "efidevp.h"
-
 // Constants
 #define MAX_FILENAME 255
 #define DETECT_NUMBERS 1
@@ -56,7 +52,7 @@ typedef struct GFX_BLOCKHEADER
 {
 	unsigned int blocksize;			// datablock size
 	unsigned int records;			// records count
-	EFI_DEVICE_PATH_P *devpath;		// device address binary
+	struct _EFI_DEVICE_PATH_P_TAG *devpath;	// device address binary
 	unsigned int devpath_len;		// device address binary len	
 	struct GFX_ENTRY * entries;		// pointer to block entries
 	struct GFX_BLOCKHEADER * next;	// pointer to next datablock	 

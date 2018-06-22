@@ -1,19 +1,6 @@
 #ifndef _DEVPATH_H
 #define _DEVPATH_H
 
-#include "utils.h"
-#include <assert.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <sys/types.h>
-#include <CoreFoundation/CoreFoundation.h>            // (CFDictionary, ...)
-#include <IOKit/IOCFSerialize.h>                      // (IOCFSerialize, ...)
-#include <IOKit/IOKitLib.h>                // (IOMasterPort, ...)
-//#include "../../../rEFIt_UEFI/Platform/Platform.h"
-
 #define MAX_PATH_LEN 4096
 #define MAX_DEVICE_PATH_LEN 1000
 
@@ -41,7 +28,7 @@ typedef long long        INT64;
 typedef unsigned long long  UINT64;
 #endif
 
-typedef struct
+typedef struct _EFI_DEVICE_PATH_P_TAG
 {
 	UINT8 Type;
 	UINT8 SubType;
@@ -118,8 +105,8 @@ typedef struct _PCI_DEVICE_PATH
 typedef struct _ACPI_HID_DEVICE_PATH 
 {
 	EFI_DEVICE_PATH_P	Header;
-	UInt32	HID;
-	UInt32	UID;
+	UINT32	HID;
+	UINT32	UID;
 } ACPI_HID_DEVICE_PATH_P;
 
 // 
