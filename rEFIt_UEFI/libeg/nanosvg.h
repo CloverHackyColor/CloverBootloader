@@ -116,17 +116,20 @@ typedef struct NSVGpath
   struct NSVGpath* next;    // Pointer to next path, or NULL if last element.
 } NSVGpath;
 
+#define kMaxIDLength 64
+#define kMaxTextLength 256
+
 typedef struct NSVGgroup
 {
-	char id[64];
+	char id[kMaxIDLength];
 	struct NSVGgroup* parent;			// Pointer to parent group or NULL
 	struct NSVGgroup* next;			// Pointer to next group or NULL
 } NSVGgroup;
 
 typedef struct NSVGshape
 {
-	char id[64];				// Optional 'id' attr of the shape
-  char title[64];        // Optional 'title' of the shape or its ancestor(s)
+	char id[kMaxIDLength];				// Optional 'id' attr of the shape
+  char title[kMaxIDLength];        // Optional 'title' of the shape or its ancestor(s)
   NSVGpaint fill;        // Fill paint
   NSVGpaint stroke;      // Stroke paint
   float opacity;        // Opacity of the shape.
@@ -143,6 +146,11 @@ typedef struct NSVGshape
   NSVGpath* paths;      // Linked list of paths in the image.
 	NSVGgroup* group;			// Pointer to parent group or NULL
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
+  char fontFamily[64];
+  char fontWeight[64];
+  float fontSize;
+  BOOLEAN isText;
+  char textData[kMaxTextLength];
 } NSVGshape;
 
 typedef struct NSVGimage
@@ -213,8 +221,8 @@ typedef struct NSVGgradientData
 
 typedef struct NSVGattrib
 {
-  char id[64];
-  char title[64];
+  char id[kMaxIDLength];
+  char title[kMaxIDLength];
   float xform[6];
   unsigned int fillColor;
   unsigned int strokeColor;
@@ -232,6 +240,8 @@ typedef struct NSVGattrib
   float miterLimit;
   char fillRule;
   float fontSize;
+  char fontFamily[64];
+  char fontWeight[64];
   unsigned int stopColor;
   float stopOpacity;
   float stopOffset;
@@ -269,6 +279,7 @@ typedef struct NSVGparser
   char titleFlag;
   char shapeFlag;
   char styleFlag;
+  BOOLEAN isText;
 } NSVGparser;
 
 // Duplicates a path.
