@@ -39,7 +39,6 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 #define  _STRUCT_X86_THREAD_STATE32
 #define  _STRUCT_X86_THREAD_STATE64
 #include "../../../rEFIt_UEFI/Platform/Platform.h"
-#pragma GCC visibility pop
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOKitKeys.h>
