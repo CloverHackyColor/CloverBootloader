@@ -15,6 +15,8 @@
 #include <Library/MemoryAllocationLib.h>
 
 #define PI (3.1415926536f)
+#define FLT_MAX (1.0e38f)
+#define FLT_MIN (1.0e-37f)
 
 float SqrtF(float X);
 float PowF(float X, INTN N);

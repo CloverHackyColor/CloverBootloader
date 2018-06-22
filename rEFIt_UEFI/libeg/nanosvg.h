@@ -116,9 +116,17 @@ typedef struct NSVGpath
   struct NSVGpath* next;    // Pointer to next path, or NULL if last element.
 } NSVGpath;
 
+typedef struct NSVGgroup
+{
+	char id[64];
+	struct NSVGgroup* parent;			// Pointer to parent group or NULL
+	struct NSVGgroup* next;			// Pointer to next group or NULL
+} NSVGgroup;
+
 typedef struct NSVGshape
 {
-  char id[64];        // Optional 'id' attr of the shape or its group
+	char id[64];				// Optional 'id' attr of the shape
+  char title[64];        // Optional 'title' of the shape or its ancestor(s)
   NSVGpaint fill;        // Fill paint
   NSVGpaint stroke;      // Stroke paint
   float opacity;        // Opacity of the shape.
@@ -133,6 +141,7 @@ typedef struct NSVGshape
   unsigned char flags;    // Logical or of NSVG_FLAGS_* flags
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   NSVGpath* paths;      // Linked list of paths in the image.
+	NSVGgroup* group;			// Pointer to parent group or NULL
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
 } NSVGshape;
 
@@ -140,7 +149,9 @@ typedef struct NSVGimage
 {
   float width;        // Width of the image.
   float height;        // Height of the image.
+  float realBounds[4];
   NSVGshape* shapes;      // Linked list of shapes in the image.
+	NSVGgroup* groups;			// Linked list of all groups in the image
 } NSVGimage;
 
 #define NSVG_MAX_ATTR 128
@@ -163,6 +174,11 @@ enum NSVGunits {
   NSVG_UNITS_PERCENT,
   NSVG_UNITS_EM,
   NSVG_UNITS_EX
+};
+
+enum NSVGvisibility {
+	NSVG_VIS_DISPLAY = 1,
+	NSVG_VIS_VISIBLE = 2,
 };
 
 typedef struct NSVGcoordinate {
@@ -198,6 +214,7 @@ typedef struct NSVGgradientData
 typedef struct NSVGattrib
 {
   char id[64];
+  char title[64];
   float xform[6];
   unsigned int fillColor;
   unsigned int strokeColor;
@@ -221,7 +238,16 @@ typedef struct NSVGattrib
   char hasFill;
   char hasStroke;
   char visible;
+  NSVGgroup* group;
 } NSVGattrib;
+
+ typedef struct NSVGstyles
+ {
+ 	char*	name;
+ 	char* description;
+ 	struct NSVGstyles* next;
+ } NSVGstyles;
+ 
 
 typedef struct NSVGparser
 {
@@ -232,6 +258,7 @@ typedef struct NSVGparser
   int cpts;
   NSVGpath* plist;
   NSVGimage* image;
+  NSVGstyles* styles;
   NSVGgradientData* gradients;
   NSVGshape* shapesTail;
   float viewMinx, viewMiny, viewWidth, viewHeight;
@@ -239,9 +266,13 @@ typedef struct NSVGparser
   float dpi;
   char pathFlag;
   char defsFlag;
+  char titleFlag;
+  char shapeFlag;
+  char styleFlag;
 } NSVGparser;
 
-
+// Duplicates a path.
+NSVGpath* nsvgDuplicatePath(NSVGpath* p);
 
 // Parses SVG file from a file, returns SVG image as paths.
 //NSVGimage* nsvgParseFromFile(const char* filename, const char* units, float dpi);
@@ -272,7 +303,11 @@ extern NSVGrasterizer* nsvgCreateRasterizer(VOID);
 extern void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scale,
                    unsigned char* dst, int w, int h, int stride);
-
+/*
+extern void nsvgRasterizeFull(NSVGrasterizer* r, NSVGimage* image,
+                                  float tx, float ty, float scalex, float scaley,
+                                  unsigned char* dst, int w, int h, int stride);
+*/
 // Deletes rasterizer context.
 extern void nsvgDeleteRasterizer(NSVGrasterizer*);
 
