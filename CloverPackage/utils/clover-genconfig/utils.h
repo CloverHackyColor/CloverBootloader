@@ -195,7 +195,7 @@ int StrToBuf (unsigned char *Buf, unsigned int BufferLength, char *Str);
 int HexStringToBuf (unsigned char *Buf, unsigned int *Len, char *Str, unsigned int *ConvertedStrLen);
 
 // Determines if a Unicode character is a hexadecimal digit.
-int IsHexDigit (unsigned char *Digit, char Char);
+int IsCharHexDigit (unsigned char *Digit, char Char);
 
 void CatPrintf(char *target, const char *format, ...);
 

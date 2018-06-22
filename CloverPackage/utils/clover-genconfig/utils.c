@@ -498,7 +498,7 @@ int StrToBuf (unsigned char *Buf, unsigned int BufferLength, char *Str)
   for(Index = 0; Index < StrLength; Index++, Str++) 
   {
 
-    IsHexDigit (&Digit, *Str);
+    IsCharHexDigit (&Digit, *Str);
 
     // For odd charaters, write the upper nibble for each buffer byte,
     // and for even characters, the lower nibble.
@@ -532,7 +532,7 @@ int HexStringToBuf (unsigned char *Buf, unsigned int *Len, char *Str, unsigned i
   unsigned char Byte;
 
   // Find out how many hex characters the string has.
-  for (Idx = 0, HexCnt = 0; IsHexDigit (&Digit, Str[Idx]); Idx++, HexCnt++);
+  for (Idx = 0, HexCnt = 0; IsCharHexDigit (&Digit, Str[Idx]); Idx++, HexCnt++);
 
   if (HexCnt == 0) 
   {
@@ -554,7 +554,7 @@ int HexStringToBuf (unsigned char *Buf, unsigned int *Len, char *Str, unsigned i
 
   for (Idx = 0; Idx < HexCnt; Idx++) 
   {
-    IsHexDigit (&Digit, Str[HexCnt - 1 - Idx]);
+    IsCharHexDigit (&Digit, Str[HexCnt - 1 - Idx]);
 
     // For odd charaters, write the lower nibble for each buffer byte,
     // and for even characters, the upper nibble.
@@ -577,7 +577,7 @@ int HexStringToBuf (unsigned char *Buf, unsigned int *Len, char *Str, unsigned i
 }
 
 // Determines if a Unicode character is a hexadecimal digit.
-int IsHexDigit (unsigned char *Digit, char Char)
+int IsCharHexDigit (unsigned char *Digit, char Char)
 {
   if ((Char >= '0') && (Char <= '9')) 
   {
