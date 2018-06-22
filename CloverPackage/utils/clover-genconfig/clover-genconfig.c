@@ -41,7 +41,6 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 #include "../../../rEFIt_UEFI/Platform/Platform.h"
 
 #include <IOKit/IOKitLib.h>
-#include <IOKit/IOKitKeys.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <err.h>
@@ -49,8 +48,10 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 #define GFX 1
 #if GFX
   #include "gfxutil.h"
-  #include "efidevp.h"
 #endif
+
+/* from efidevp.c */
+extern CHAR8 *ConvertDevicePathToAscii (const struct _EFI_DEVICE_PATH_P_TAG  *DeviceNode, BOOLEAN DisplayOnly, BOOLEAN AllowShortcuts);
 
 /*
 #define offsetof(st, m) \

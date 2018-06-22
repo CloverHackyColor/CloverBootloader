@@ -1,16 +1,12 @@
 #include <assert.h>
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
-#include <sys/types.h>
-#include <CoreFoundation/CoreFoundation.h>            // (CFDictionary, ...)
-#include <IOKit/IOCFSerialize.h>                      // (IOCFSerialize, ...)
-#include <IOKit/IOKitLib.h>							  // (IOMasterPort, ...)
-
 #include "efidevp.h"
-#include "utils.h"
+
+/* From utils.c */
+extern void CatPrintf(char *target, const char *format, ...);
+extern void *MallocCopy(unsigned int size, void *buf);
 
 /*
  * Get parameter in a pair of parentheses follow the given node name.
