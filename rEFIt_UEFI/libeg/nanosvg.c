@@ -237,30 +237,31 @@ static void nsvg__parseElement(char* s,
 		while (*s && *s != quote) s++;
 		if (*s) {
       *s++ = '\0';
-      DBG("value:%a\n", value);
+ //     DBG("value:%a\n", value);
     }
 
 		// Store only well formed attributes
 		if (name && value) {
 			attr[nattr++] = name;
 			attr[nattr++] = value;
+      DBG("attrib %d value %a\n", nattr, value);
 		}
 	}
-  DBG("end attributes\n");
+//  DBG("end attributes\n");
 	// List terminator
 	attr[nattr++] = 0;
 	attr[nattr++] = 0;
 
 	// Call callbacks.
   if (start && startelCb) {
-    DBG("startelCb\n");
+//    DBG("startelCb\n");
 		(*startelCb)(ud, name, attr);
   }
   if (end && endelCb) {
-    DBG("endelCb\n");
+//    DBG("endelCb\n");
 		(*endelCb)(ud, name);
   }
-  DBG("nsvg__parseElement finished\n");
+//  DBG("nsvg__parseElement finished\n");
 }
 
 int nsvg__parseXML(char* input,
@@ -275,25 +276,25 @@ int nsvg__parseXML(char* input,
 	while (*s) {
 		if (*s == '<' && state == NSVG_XML_CONTENT) {
 			// Start of a tag
-      DBG("Start of a tag\n");
+  //    DBG("Start of a tag\n");
 			*s++ = '\0';
 			nsvg__parseContent(mark, contentCb, ud);
-      DBG("nsvg__parseContent %a\n", mark);
+ //     DBG("nsvg__parseContent %a\n", mark);
 			mark = s;
 			state = NSVG_XML_TAG;
 		} else if (*s == '>' && state == NSVG_XML_TAG) {
 			// Start of a content or new tag.
 			*s++ = '\0';
-      DBG("Start of a content %a\n", mark);
+ //     DBG("Start of a content %a\n", mark);
 			nsvg__parseElement(mark, startelCb, endelCb, ud);
-      DBG("nsvg__parseElement\n");
+ //     DBG("nsvg__parseElement\n");
 			mark = s;
 			state = NSVG_XML_CONTENT;
 		} else {
 			s++;
 		}
 	}
-  DBG("finish nsvg__parseXML\n");
+//  DBG("finish nsvg__parseXML\n");
 	return 1;
 }
 
@@ -1054,13 +1055,15 @@ static unsigned int nsvg__parseColorHex(const char* str)
 	int n = 0;
 	str++; // skip #
 	// Calculate number of characters.
-	while(str[n] && !nsvg__isspace(str[n]))
+	while(str[n] && IsHexDigit(str[n]))
 		n++;
 	if (n == 6) {
 //		sscanf(str, "%x", &c);
-		c = AsciiStrHexToUintn(str);
+//		c = AsciiStrHexToUintn(str);
+    n = hex2bin((CHAR8*)str, (UINT8*)&c, 3);
 	} else if (n == 3) {
 //		sscanf(str, "%x", &c);
+//    hex2bin(str, &c, 3);
 		c = AsciiStrHexToUintn(str);
 		c = (c&0xf) | ((c&0xf0) << 4) | ((c&0xf00) << 8);
 		c |= c<<4;
@@ -1068,6 +1071,7 @@ static unsigned int nsvg__parseColorHex(const char* str)
 	r = (c >> 16) & 0xff;
 	g = (c >> 8) & 0xff;
 	b = c & 0xff;
+  DBG("color=(%d,%d,%d)\n",r,g,b);
 	return NSVG_RGB(r,g,b);
 }
 
@@ -1106,6 +1110,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
 	}	else {
 	  b = fb;
 	}
+  DBG("color=f(%d,%d,%d)\n",r,g,b);
   return NSVG_RGB(r,g,b);
 }
 
@@ -2378,7 +2383,7 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 {
 	int i;
 	for (i = 0; attr[i]; i += 2) {
-    DBG("nsvg__parseAttr\n");
+//    DBG("nsvg__parseAttr\n");
 		if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
 			if (strcmp(attr[i], "width") == 0) {
         DBG("nsvg__parseCoordinate\n");
@@ -2390,13 +2395,13 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 			} else if (strcmp(attr[i], "viewBox") == 0) {
 				//sscanf(attr[i + 1], "%f%*[%%, \t]%f%*[%%, \t]%f%*[%%, \t]%f", &p->viewMinx, &p->viewMiny, &p->viewWidth, &p->viewHeight);
         //Slice - TODO
-        DBG("viewBox\n");
+//        DBG("viewBox\n");
         char* Next = 0;
         AsciiStrToFloat(attr[i + 1], &Next, &p->viewMinx);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewMiny);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewWidth);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewHeight);
-        DBG("viewBox WH\n");
+//        DBG("viewBox WH\n");
 			} else if (strcmp(attr[i], "preserveAspectRatio") == 0) {
 				if (strstr(attr[i + 1], "none") != 0) {
 					// No uniform scaling
@@ -2421,7 +2426,7 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 					if (strstr(attr[i + 1], "slice") != 0)
 						p->alignType = NSVG_ALIGN_SLICE;
 				}
-        DBG("low end\n");
+//        DBG("low end\n");
 			}
 		}
 	}
@@ -2542,7 +2547,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** attr)
 static void nsvg__startElement(void* ud, const char* el, const char** attr)
 {
 	NSVGparser* p = (NSVGparser*)ud;
-  DBG("nsvg__startElement %a\n", el);
+//  DBG("nsvg__startElement %a\n", el);
 	if (p->defsFlag) {
 		// Skip everything but gradients in defs
 		if (strcmp(el, "linearGradient") == 0) {
@@ -2552,13 +2557,14 @@ static void nsvg__startElement(void* ud, const char* el, const char** attr)
 		} else if (strcmp(el, "stop") == 0) {
 			nsvg__parseGradientStop(p, attr);
 		}
-    DBG("skip defs\n");
+//    DBG("skip defs\n");
 		return;
 	}
-  DBG("no defs\n");
+//  DBG("no defs\n");
 	if (strcmp(el, "g") == 0) {
 		nsvg__pushAttr(p);
 		nsvg__parseAttribs(p, attr);
+    nsvg__popAttr(p);
 	} else if (strcmp(el, "path") == 0) {
 		if (p->pathFlag)	// Do not allow nested paths.
 			return;
@@ -2596,10 +2602,10 @@ static void nsvg__startElement(void* ud, const char* el, const char** attr)
 	} else if (strcmp(el, "stop") == 0) {
 		nsvg__parseGradientStop(p, attr);
 	} else if (strcmp(el, "defs") == 0) {
-    DBG("defs=1\n");
+//    DBG("defs=1\n");
 		p->defsFlag = 1;
 	} else if (strcmp(el, "svg") == 0) {
-    DBG("nsvg__parseSVG\n");
+//    DBG("nsvg__parseSVG\n");
 		nsvg__parseSVG(p, attr);
 	}
 }
@@ -2607,13 +2613,13 @@ static void nsvg__startElement(void* ud, const char* el, const char** attr)
 static void nsvg__endElement(void* ud, const char* el)
 {
 	NSVGparser* p = (NSVGparser*)ud;
-  DBG("nsvg__endElement\n");
+//  DBG("nsvg__endElement\n");
 	if (strcmp(el, "g") == 0) {
 		nsvg__popAttr(p);
 	} else if (strcmp(el, "path") == 0) {
 		p->pathFlag = 0;
 	} else if (strcmp(el, "defs") == 0) {
-    DBG("defs=0\n");
+//    DBG("defs=0\n");
 		p->defsFlag = 0;
 	}
 }
@@ -2767,17 +2773,17 @@ NSVGimage* nsvgParse(char* input, const char* units, float dpi)
 		return NULL;
 	}
 	p->dpi = dpi;
-  DBG("parser created\n");
+//  DBG("parser created\n");
 	nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
-DBG("nsvg__parseXML\n");
+//DBG("nsvg__parseXML\n");
 	// Scale to viewBox
 	nsvg__scaleToViewbox(p, units);
-DBG("nsvg__scaleToViewbox\n");
+//DBG("nsvg__scaleToViewbox\n");
 	ret = p->image;
 	p->image = NULL;
 
 	nsvg__deleteParser(p);
-DBG("nsvg__deleteParser\n");
+//DBG("nsvg__deleteParser\n");
 	return ret;
 }
 #ifdef SVG_LOAD_FROM_FILE
