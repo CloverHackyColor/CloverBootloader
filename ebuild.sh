@@ -545,7 +545,7 @@ checkToolchain() {
 checkExtTools() {
     case "$EXT_DOWNLOAD" in
         1)
-          if [[ ! -x $(which wget) || ! -x $(which curl) ]]; then
+          if [[ ! -x $(which wget) ]] && [[ ! -x $(which curl) ]]; then
             echo "Missing wget or curl, will not download external drivers!"
             EXT_DOWNLOAD=0
           fi ;;
