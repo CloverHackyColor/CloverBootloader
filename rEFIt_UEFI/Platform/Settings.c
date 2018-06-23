@@ -4791,7 +4791,7 @@ GetUserSettings(
       }
       
       Prop  = GetProperty (DictPointer, "LANInjection");
-      gSettings.LANInjection = IsPropertyTrue (Prop);
+      gSettings.LANInjection = !IsPropertyFalse (Prop);  //default = TRUE
       
       Prop  = GetProperty (DictPointer, "HDMIInjection");
       gSettings.HDMIInjection = IsPropertyTrue (Prop);
