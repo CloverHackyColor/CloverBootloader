@@ -1069,7 +1069,7 @@ if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" ]]; then
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
-        local driverName="${driver%.efi}"
+        local driverName="${driver%.efi}.UEFI"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"

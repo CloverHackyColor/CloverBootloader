@@ -1111,10 +1111,10 @@ MainPostBuildScript() {
           downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
           downloadExtDriver "acidanthera/ApfsSupportPkg" ApfsSupport "ApfsSupport-v" "-RELEASE"
         ;;
-        0| 2 | 3)
-          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
-          copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/
+        0 | 2 | 3)
+          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
+          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioInputFix-64.efi
+          copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ApfsDriverLoader-64.efi
           copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi ;;
       esac
       # drivers64UEFI
