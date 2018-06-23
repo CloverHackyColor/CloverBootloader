@@ -24,6 +24,13 @@
  *
  * Bounding box calculation based on http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html
  *
+ * aksdfauytv - support for recursive images
+ * porglezomb - handle visibility
+ * tesch1 - feature gruops
+ * boris-ulyanov - style processing
+ * jamislike - basic text parsing
+ * darealshinji - multiple improvements
+ *
 */
 // Adoptation to Clover project by Slice, 2018
 
@@ -151,6 +158,7 @@ typedef struct NSVGshape
   float fontSize;
   BOOLEAN isText;
   char textData[kMaxTextLength];
+  const char *image_href;
 } NSVGshape;
 
 typedef struct NSVGimage
@@ -297,6 +305,7 @@ extern void nsvgDelete(NSVGimage* image);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;
+typedef void (*recursive_image)(const void *obj, NSVGrasterizer *r, const char *href, const float area[4]);
 
 
 // Allocated rasterizer context.
@@ -312,13 +321,9 @@ extern NSVGrasterizer* nsvgCreateRasterizer(VOID);
 //   h - height of the image to render
 //   stride - number of bytes per scaleline in the destination buffer
 extern void nsvgRasterize(NSVGrasterizer* r,
-                   NSVGimage* image, float tx, float ty, float scale,
-                   unsigned char* dst, int w, int h, int stride);
-/*
-extern void nsvgRasterizeFull(NSVGrasterizer* r, NSVGimage* image,
-                                  float tx, float ty, float scalex, float scaley,
-                                  unsigned char* dst, int w, int h, int stride);
-*/
+                   NSVGimage* image, float tx, float ty, float scalex, float scaley,
+                   unsigned char* dst, int w, int h, int stride, recursive_image external_image, const void *obj);
+
 // Deletes rasterizer context.
 extern void nsvgDeleteRasterizer(NSVGrasterizer*);
 
