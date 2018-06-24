@@ -246,7 +246,7 @@ int tolower (int c)
 //
 
 /* Performs a quick sort */
-void qsort (void *base, size_t num, size_t width, int (*compare)(const void *, const void *))
+void qsort_ssl (void *base, size_t num, size_t width, int (*compare)(const void *, const void *))
 {
   VOID  *Buffer;
 

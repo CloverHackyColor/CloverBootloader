@@ -480,7 +480,7 @@ static int asn1_set_seq_out(STACK_OF(ASN1_VALUE) *sk, unsigned char **out,
 		}
 
 	/* Now sort them */
-	qsort(derlst, sk_ASN1_VALUE_num(sk), sizeof(*derlst), der_cmp);
+	qsort_ssl(derlst, sk_ASN1_VALUE_num(sk), sizeof(*derlst), der_cmp);
 	/* Output sorted DER encoding */	
 	p = *out;
 	for (i = 0, tder = derlst; i < sk_ASN1_VALUE_num(sk); i++, tder++)

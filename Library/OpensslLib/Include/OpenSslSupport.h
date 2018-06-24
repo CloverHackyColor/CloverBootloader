@@ -215,7 +215,7 @@ uid_t          getuid      (void);
 uid_t          geteuid     (void);
 gid_t          getgid      (void);
 gid_t          getegid     (void);
-void           qsort       (void *, size_t, size_t, int (*)(const void *, const void *));
+void           qsort_ssl   (void *, size_t, size_t, int (*)(const void *, const void *));
 char           *getenv     (const char *);
 void           exit        (int);
 void           abort       (void);
