@@ -2549,6 +2549,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           UINTN           FileDataLength = 0;
           EG_IMAGE        *NewImage;
           INTN Width = 400, Height = 400;
+          float ScaleX, ScaleY;
           
           NSVGrasterizer* rast = nsvgCreateRasterizer();
           
@@ -2560,6 +2561,10 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           SVGimage = nsvgParse((CHAR8*)FileData, "px", 72);
           NewImage = egCreateImage(Width, Height, TRUE);
           // Rasterize
+          if (SVGimage->width == 0) SVGimage->width = Width;
+          if (SVGimage->height == 0) SVGimage->height = Height;
+          ScaleX = Width / SVGimage->width;
+          ScaleY = Height / SVGimage->height;
           nsvgRasterize(rast, SVGimage, 0,0,1,1, (UINT8*)NewImage->PixelData, Width, Height, Width*4, NULL, NULL);
           //now show it!
           BltImageAlpha(NewImage,

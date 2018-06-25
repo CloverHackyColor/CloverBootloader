@@ -227,7 +227,7 @@ static void nsvg__parseElement(char* s,
 		while (*s && !nsvg__isspace(*s) && *s != '=') s++;
 		if (*s) {
       *s++ = '\0';
-      DBG("attrib name %a\n", name);
+//      DBG("attrib name %a\n", name);
     }
 		// Skip until the beginning of the value.
 		while (*s && *s != '\"' && *s != '\'') s++;
@@ -246,7 +246,7 @@ static void nsvg__parseElement(char* s,
 		if (name && value) {
 			attr[nattr++] = name;
 			attr[nattr++] = value;
-      DBG("attrib %d value %a\n", nattr, value);
+//      DBG("attrib %d value %a\n", nattr, value);
 		}
 	}
 
@@ -1124,7 +1124,7 @@ static unsigned int nsvg__parseColorHex(const char* str)
 	r = (c >> 16) & 0xff;
 	g = (c >> 8) & 0xff;
 	b = c & 0xff;
-  DBG("color=(%d,%d,%d)\n",r,g,b);
+//  DBG("color=(%d,%d,%d)\n",r,g,b);
 	return NSVG_RGB(r,g,b);
 }
 

@@ -32,7 +32,8 @@
 	// Allocate memory for image
 	unsigned char* img = malloc(w*h*4);
 	// Rasterize
-	nsvgRasterize(rast, image, 0,0,1,1, img, w, h, w*4, NULL, NULL);
+  scaleX = width_to_see / design_width
+	nsvgRasterize(rast, image, 0,0, scaleX, scaleY, img, w, h, w*4, NULL, NULL);
  //void nsvgRasterize(NSVGrasterizer* r,
  //                   NSVGimage* image, float tx, float ty, float scalex, float scaley,
  //                   unsigned char* dst, int w, int h, int stride, recursive_image external_image, const void *obj);
@@ -65,10 +66,50 @@
 #define acosf(x) AcosF(x)
 #define atan2f(x,y) Atan2F(x,y)
 
+/*
+ NSVGedge* edges;
+ int nedges;
+ int cedges;
+ */
+//qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
+/*
+if (a->y0 < b->y0) return -1;
+if (a->y0 > b->y0) return  1;
+return 0;
+*/
+
+void nsvg_qsort(NSVGedge* Array, int Low, int High)
+{
+  int i = Low, j = High;
+  NSVGedge *Temp;
+  UINTN Size = sizeof(NSVGedge);
+  int Imed;
+  Imed = (Low + High) / 2; // Central element, just pointer
+  Temp = AllocatePool(sizeof(NSVGedge));
+  // Sort around center
+  while (i <= j)
+  {
+    while (Array[i].y0 < Array[Imed].y0) i++;
+    while (Array[j].y0 > Array[Imed].y0) j--;
+    // Change
+    if (i <= j) {
+      memcpy(Temp, &Array[i], Size);
+      memcpy(&Array[i++], &Array[j], Size);
+      memcpy(&Array[j--], Temp, Size);
+    }
+  }
+  FreePool(Temp);
+  // Recursion
+  if (j > Low)    nsvg_qsort(Array, Low, j);
+  if (High > i)   nsvg_qsort(Array, i, High);
+}
+
+
 void qsort(void* Array, int Num, INTN Size,
            int (*compare)(const void* a, const void* b))
 {
-  QuickSort(Array, 0, Num - 1, Size, compare);
+//  QuickSort(Array, 0, Num - 1, Size, compare);
+  nsvg_qsort((NSVGedge*)Array, 0, Num - 1);
 }
 
 
