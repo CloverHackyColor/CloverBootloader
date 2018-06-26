@@ -85,12 +85,13 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
   UINTN Size = sizeof(NSVGedge);
   int Imed;
   Imed = (Low + High) / 2; // Central element, just pointer
+  float med = Array[Imed].y0;
   Temp = AllocatePool(sizeof(NSVGedge));
   // Sort around center
   while (i <= j)
   {
-    while (Array[i].y0 < Array[Imed].y0) i++;
-    while (Array[j].y0 > Array[Imed].y0) j--;
+    while (Array[i].y0 < med) i++;
+    while (Array[j].y0 > med) j--;
     // Change
     if (i <= j) {
       memcpy(Temp, &Array[i], Size);

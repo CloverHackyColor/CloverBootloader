@@ -49,14 +49,14 @@
 
 
 //There are defines for compilation as first step. Must be revised
-#define memcpy(dest,source,count) gBS->CopyMem(dest,(void*)source,(UINTN)(count))
-#define memset(dest,ch,count)     gBS->SetMem(dest,(UINTN)(count),(UINT8)(ch))
+#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
+#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define strcmp(a,b) AsciiStrCmp(a,b)
 #define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
 #define strstr(a,b) AsciiStrStr(a,b)
-#define strncpy(a,b,n) AsciiStrnCpy(a,b,n)
+//#define strncpy(a,b,n) AsciiStrnCpy(a,b,n)
 #define strlen(s) AsciiStrLen(s)
-
+#define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
 
 
 enum NSVGpaintType {
@@ -287,6 +287,7 @@ typedef struct NSVGparser
   char titleFlag;
   char shapeFlag;
   char styleFlag;
+  char groupFlag;
   BOOLEAN isText;
 } NSVGparser;
 
