@@ -100,7 +100,7 @@ typedef UINTN size_t;
 #define atan2f(x,y) Atan2F(x,y)
 
 
-#define sscanf(s,f,x) AsciiStrToFloat(s, f, x)
+//#define sscanf(s,f,x) AsciiStrToFloat(s, NULL, x)
 
 #define fabs(x) ((x > 0.0)?x:(-x))
 #define fabsf(x) ((x > 0.0f)?x:(-x))
@@ -113,7 +113,7 @@ typedef UINTN size_t;
 #define NSVG_ALIGN_SLICE 2
 
 #define NSVG_NOTUSED(v) do { (void)(1 ? (void)0 : ( (void)(v) ) ); } while(0)
-#define NSVG_RGB(r, g, b) (((unsigned int)r) | ((unsigned int)g << 8) | ((unsigned int)b << 16))
+#define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 
 #ifdef _MSC_VER
 	#pragma warning (disable: 4996) // Switch off security warnings
@@ -1139,6 +1139,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
 	float fr, fg, fb;
 //	char s1[32]="", s2[32]="";
 	char *s1 = NULL;
+  DBG("parse float:%a\n", str);
 //	sscanf(str + 4, "%d%[%%, \t]%d%[%%, \t]%d", &r, s1, &g, s2, &b);
 	AsciiStrToFloat(str+4, &s1, &fr);
 	if (*s1 == '%') {
@@ -1149,6 +1150,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
 	  str = s1 + 1;
 	} else {
 	  //error
+    DBG("StrFloat error:%a\n", str);
 	  return NSVG_RGB(0,0,0);
 	}
 	AsciiStrToFloat(str, &s1, &fg);
@@ -1160,6 +1162,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
 	  str = s1 + 1;
 	} else {
 	  //error
+    DBG("StrFloat error:%a\n", str);
 	  return NSVG_RGB(0,0,0);
 	}
   AsciiStrToFloat(str, &s1, &fb);
@@ -1168,7 +1171,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
 	}	else {
 	  b = fb;
 	}
-//  DBG("color=f(%d,%d,%d)\n",r,g,b);
+  DBG("color=f(%d,%d,%d)\n",r,g,b);
   return NSVG_RGB(r,g,b);
 }
 
@@ -1541,6 +1544,8 @@ static int nsvg__parseRotate(float* xform, const char* str)
 static void nsvg__parseTransform(float* xform, const char* str)
 {
 	float t[6];
+  INT64 i, j;
+  float v;
 	nsvg__xformIdentity(xform);
 	while (*str)
 	{
@@ -1560,6 +1565,12 @@ static void nsvg__parseTransform(float* xform, const char* str)
 			++str;
 			continue;
 		}
+    DBG("Print matrix:\n");
+    for (i=0; i<6; i++) {
+      v = t[i]; j = v;
+      v = (v - j) * 100000000.0f;
+      DBG("t[%d]:%d.%08d\n", i, j, (INT64)(fabsf(v)));
+    }
 
 		nsvg__xformPremultiply(xform, t);
 	}
@@ -2573,13 +2584,17 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 			} else if (strcmp(attr[i], "viewBox") == 0) {
 				//sscanf(attr[i + 1], "%f%*[%%, \t]%f%*[%%, \t]%f%*[%%, \t]%f", &p->viewMinx, &p->viewMiny, &p->viewWidth, &p->viewHeight);
         //Slice - TODO
-//        DBG("viewBox\n");
+        DBG("viewBox\n");
         char* Next = 0;
+        DBG("string:%a\n", attr[i + 1]);
         AsciiStrToFloat(attr[i + 1], &Next, &p->viewMinx);
+        DBG("Next:%a\n", Next);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewMiny);
+        DBG("Next:%a\n", Next);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewWidth);
+        DBG("Next:%a\n", Next);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewHeight);
-        DBG("viewBox [%d,%d]\n", (int)p->viewWidth, (int)p->viewHeight);
+        DBG("viewBox [%d,%d]\n", (int)(p->viewWidth), (int)(p->viewHeight));
 			} else if (strcmp(attr[i], "preserveAspectRatio") == 0) {
 				if (strstr(attr[i + 1], "none") != 0) {
 					// No uniform scaling

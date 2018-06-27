@@ -183,9 +183,9 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
   //
   // Ignore leading Zeros after the spaces
   //
-  while (*String == '0') {
+/*  while (*String == '0') {
     String++;
-  }
+  } */
   if (*String == '-') {
     Sign = -1;
     String++;
