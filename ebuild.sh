@@ -920,8 +920,6 @@ MainPostBuildScript() {
       export BASETOOLS_DIR="$EDK_TOOLS_PATH"/Source/C/bin
     fi
     export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
-    export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
-    export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
     export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
     export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/ApfsSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
 
@@ -1161,8 +1159,13 @@ if [[ "$SYSNAME" != Linux ]]; then
 fi
 
 MainBuildScript $@
+export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
+export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
+
 if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript
+else
+ copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
 fi
 
 # Local Variables:      #

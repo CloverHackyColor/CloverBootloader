@@ -2551,18 +2551,51 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           INTN Width = 400, Height = 400;
           float Scale,ScaleX, ScaleY;
           
+          //Test mathematique
+#define fabsf(x) ((x >= 0.0f)?x:(-x))
+#define pr(x) (int)x, (int)fabsf((x - (int)x) * 1000000.0f)
+          int i,k;
+          float x, y1, y2;
+//          CHAR8 Str[128];
+          DBG("Test float: %d.%d\n", pr(-1.7612f));
+          for (i=0; i<12; i++) {
+            x=(2.0f*PI)/12.0f*i;
+            y1=SinF(x);
+            y2=CosF(x);
+            k = (int)x;
+//            AsciiSPrintFloat(Str, 128, NULL, x);
+            DBG("x=%d:%d.%d ", i*30, (int)x, (int)fabsf((x - k) * 1000000.0f));
+ //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
+            DBG("sinx=%d.%d ", pr(y1));
+//            AsciiSPrintFloat(Str, 128, NULL, pr(y2));
+            DBG("cosx=%d.%d\n", pr(y2));
+            y1 = Atan2F(y1, y2);
+//            AsciiSPrintFloat(Str, 128, NULL, pr(y1));
+            DBG("tanx=%d.%d ", pr(y1));
+            y1 = AcosF(y2);
+ //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
+            DBG("acos=%d.%d ", pr(y1));
+            y1 = SqrtF(x);
+ //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
+            DBG("sqrt=%d.%d \n", pr(y1));
+          }
+#undef pr
           NSVGrasterizer* rast = nsvgCreateRasterizer();
           
           // load file
           Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
-          if (EFI_ERROR(Status)) {
-            DrawTextXY(L"No file!", 0, 0, X_IS_CENTER);
-          }
+//          if (EFI_ERROR(Status)) {
+//            DrawTextXY(L"No file!", 0, 0, X_IS_CENTER); //Not work here
+//          }
+          //Parse XML to vector data
           SVGimage = nsvgParse((CHAR8*)FileData, "px", 72);
-          NewImage = egCreateImage(Width, Height, TRUE);
+          DBG("Image width=%d heigth=%d\n", SVGimage->width, SVGimage->height);
+          
           // Rasterize
+          NewImage = egCreateImage(Width, Height, TRUE);
           if (SVGimage->width == 0) SVGimage->width = Width;
           if (SVGimage->height == 0) SVGimage->height = Height;
+         
           ScaleX = Width / SVGimage->width;
           ScaleY = Height / SVGimage->height;
           Scale = (ScaleX > ScaleY)?ScaleY:ScaleX;

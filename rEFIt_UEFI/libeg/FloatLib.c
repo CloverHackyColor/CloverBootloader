@@ -7,7 +7,8 @@
 
 #include "FloatLib.h"
 
-#define memcpy(dest,source,count) gBS->CopyMem(dest,(void*)source,(UINTN)(count))
+#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
+#define fabsf(x) ((x >= 0.0f)?x:(-x))
 
 float SqrtF(float X)
 {
@@ -17,9 +18,12 @@ float SqrtF(float X)
       float f;
     };
   };
+  if (X == 0.0f) {
+    return 0.0f;
+  }
   struct FloatInt Y;
-  Y.f = X;
-  Y.i = Y.i >> 1; // dirty hack - first iteration
+  Y.f = X * 0.3f;
+//  Y.i = Y.i >> 1; // dirty hack - first iteration
   //do four iterations
   Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
   Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
@@ -33,18 +37,20 @@ float SinF(float X)
 {
   INTN Period = X / (2.0f * PI);
   float X2;
+  float Sign = 1.0f;
   X = X - Period * (2.0f * PI);
   if (X > PI) {
-    X = PI - X;
+    X = X - PI;
+    Sign = -1.0f;
   }
   if (X > PI * 0.5f) {
     X = PI - X;
   }
   if (X > PI * 0.25f) {
-    return CosF(PI * 0.5f - X);
+    return (Sign*CosF(PI * 0.5f - X));
   }
   X2 = X * X;
-  return (X - X2 * X / 6.0f + X2 * X2 * X / 120.0f);
+  return (Sign*(X - X2 * X / 6.0f + X2 * X2 * X / 120.0f));
 }
 
 float CosF(float X)
@@ -62,7 +68,7 @@ float CosF(float X)
     Sign *= -1.0f;
   }
   if (X > PI * 0.25f) {
-    return SinF(PI * 0.5f - X);
+    return (Sign*SinF(PI * 0.5f - X));
   }
   X2 = X * X;
   return (Sign * (1.0f - X2 * 0.5f + X2 * X2 / 24.0f));
@@ -161,7 +167,6 @@ AsciiStrDecimalToUintnS (
                          );
 */
 RETURN_STATUS
-EFIAPI
 AsciiStrToFloat(IN  CONST CHAR8              *String,
                 OUT       CHAR8              **EndPointer,  OPTIONAL
                 OUT       float              *Data)
@@ -248,9 +253,9 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
  }
  */
 
-void QuickSort(void* Array, int Low, int High, INTN Size, int (*compare)(const void* a, const void* b)) {
-  int i = Low, j = High;
-  void *Med, *Temp;
+VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONST VOID* a, CONST VOID* b)) {
+  INTN i = Low, j = High;
+  VOID *Med, *Temp;
   Med = Array + ((Low + High) / 2) * Size; // Central element, just pointer
   Temp = AllocatePool(Size);
   // Sort around center
@@ -272,4 +277,21 @@ void QuickSort(void* Array, int Low, int High, INTN Size, int (*compare)(const v
   if (j > Low)    QuickSort(Array, Low, j, Size, compare);
   if (High > i)   QuickSort(Array, i, High, Size, compare);
 }
+
+//S must be allocated before use
+VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
+{
+  INTN I, Fract;
+  float D;
+  if (!S) {
+    return;
+  }
+  
+  I = (INTN)X;
+  D = I;
+  Fract = fabsf((X - D) * 1000000.0f);
+  AsciiSPrint(S, N, "%D.%D", I, (INTN)Fract);
+}
+
+
 
