@@ -2553,7 +2553,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           
           //Test mathematique
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
-#define pr(x) (int)x, (int)fabsf((x - (int)x) * 1000000.0f)
+#define pr(x) (int)fabsf(x), (int)fabsf((x - (int)x) * 1000000.0f)
           int i,k;
           float x, y1, y2;
 //          CHAR8 Str[128];
@@ -2566,15 +2566,15 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 //            AsciiSPrintFloat(Str, 128, NULL, x);
             DBG("x=%d:%d.%d ", i*30, (int)x, (int)fabsf((x - k) * 1000000.0f));
  //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("sinx=%d.%d ", pr(y1));
+            DBG("sinx=%c%d.%d ", (y1<0)?'-':' ', pr(y1));
 //            AsciiSPrintFloat(Str, 128, NULL, pr(y2));
-            DBG("cosx=%d.%d\n", pr(y2));
+            DBG("cosx=%c%d.%d\n", (y2<0)?'-':' ',pr(y2));
             y1 = Atan2F(y1, y2);
 //            AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("tanx=%d.%d ", pr(y1));
+            DBG("tanx=%c%d.%d ", (y1<0)?'-':' ',pr(y1));
             y1 = AcosF(y2);
  //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("acos=%d.%d ", pr(y1));
+            DBG("acos=%c%d.%d ", (y1<0)?'-':' ',pr(y1));
             y1 = SqrtF(x);
  //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
             DBG("sqrt=%d.%d \n", pr(y1));
