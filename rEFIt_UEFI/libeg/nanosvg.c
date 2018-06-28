@@ -2853,7 +2853,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
 //    DBG("begin nsvg__parseGroup\n");
 		nsvg__parseGroup(p, dict);
 //    DBG("end nsvg__parseGroup\n");
-    nsvg__popAttr(p);
+//    nsvg__popAttr(p);
   } else if (strcmp(el, "text") == 0) {
     nsvg__pushAttr(p);
     nsvg__parseText(p, dict);
@@ -2926,11 +2926,11 @@ static void nsvg__endElement(void* ud, const char* el)
 
 	if (strcmp(el, "g") == 0) {
     p->groupFlag = 0;
-//		nsvg__popAttr(p);
+		nsvg__popAttr(p);
 //    DBG("popAttr success\n");
 	} else if (strcmp(el, "path") == 0) {
 		p->pathFlag = 0;
-    p->shapeFlag = 0;
+//    p->shapeFlag = 0;
 	} else if (strcmp(el, "defs") == 0) {
 		p->defsFlag = 0;
 	} else if (strcmp(el, "title") == 0) {
