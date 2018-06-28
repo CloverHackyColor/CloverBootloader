@@ -69,7 +69,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -246,7 +246,7 @@ static void nsvg__parseElement(char* s,
 		if (name && value) {
 			attr[nattr++] = name;  //class
 			attr[nattr++] = value;  //Master_Slide
-      DBG("attrib %d: name %a value %a\n", nattr, name, value);
+ //     DBG("attrib %d: name %a value %a\n", nattr, name, value);
 		}
 	}
 
@@ -642,35 +642,35 @@ static float nsvg__actualLength(NSVGparser* p)
   return sqrtf(w*w + h*h) * 0.70710678118655f; // 1.0/sqrtf(2.0f);
 }
 
-static float nsvg__convertToPixels(NSVGparser* p, NSVGcoordinate c, float orig, float length)
+static float nsvg__convertToPixels(NSVGparser* p, NSVGcoordinate* c, float orig, float length)
 {
 	NSVGattrib* attr = nsvg__getAttr(p);
-  if ((p->dpi <= 0) || (p->dpi > 1200)) {
+  if ((p->dpi <= 0) || (p->dpi > 2400)) {
     DBG("wrong dpi=%d\n", (int)p->dpi);
     p->dpi = 72;
   }
-	switch (c.units) {
-		case NSVG_UNITS_USER:		return c.value;
-		case NSVG_UNITS_PX:			return c.value;
-		case NSVG_UNITS_PT:			return c.value / 72.0f * p->dpi;
-		case NSVG_UNITS_PC:			return c.value / 6.0f * p->dpi;
-		case NSVG_UNITS_MM:			return c.value / 25.4f * p->dpi;
-		case NSVG_UNITS_CM:			return c.value / 2.54f * p->dpi;
-		case NSVG_UNITS_IN:			return c.value * p->dpi;
-		case NSVG_UNITS_EM:			return c.value * attr->fontSize;
-		case NSVG_UNITS_EX:			return c.value * attr->fontSize * 0.52f; // x-height of Helvetica.
-		case NSVG_UNITS_PERCENT:	return orig + c.value / 100.0f * length;
-		default:					return c.value;
+	switch (c->units) {
+		case NSVG_UNITS_USER:		return c->value;
+		case NSVG_UNITS_PX:			return c->value;
+		case NSVG_UNITS_PT:			return c->value / 72.0f * p->dpi;
+		case NSVG_UNITS_PC:			return c->value / 6.0f * p->dpi;
+		case NSVG_UNITS_MM:			return c->value / 25.4f * p->dpi;
+		case NSVG_UNITS_CM:			return c->value / 2.54f * p->dpi;
+		case NSVG_UNITS_IN:			return c->value * p->dpi;
+		case NSVG_UNITS_EM:			return c->value * attr->fontSize;
+		case NSVG_UNITS_EX:			return c->value * attr->fontSize * 0.52f; // x-height of Helvetica.
+		case NSVG_UNITS_PERCENT:	return orig + c->value / 100.0f * length;
+		default:					return c->value;
 	}
 //	return c.value;
 }
 
-static float nsvg__convertToPixelsForGradient(NSVGparser* p, char units, NSVGcoordinate c, float orig, float length)
+static float nsvg__convertToPixelsForGradient(NSVGparser* p, char units, NSVGcoordinate* c, float orig, float length)
 {
-	if (units == NSVG_USER_SPACE || c.units == NSVG_UNITS_PERCENT)
+	if (units == NSVG_USER_SPACE || c->units == NSVG_UNITS_PERCENT)
 		return nsvg__convertToPixels(p, c, orig, length);
 
-	return orig + c.value * length;
+	return orig + c->value * length;
 }
 
 static NSVGgradientData* nsvg__findGradientData(NSVGparser* p, const char* id)
@@ -728,10 +728,10 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, const char* id, const f
 
 	if (data->type == NSVG_PAINT_LINEAR_GRADIENT) {
 		float x1, y1, x2, y2, dx, dy;
-		x1 = nsvg__convertToPixelsForGradient(p, data -> units, data->linear.x1, ox, sw);
-		y1 = nsvg__convertToPixelsForGradient(p, data -> units, data->linear.y1, oy, sh);
-		x2 = nsvg__convertToPixelsForGradient(p, data -> units, data->linear.x2, ox, sw);
-		y2 = nsvg__convertToPixelsForGradient(p, data -> units, data->linear.y2, oy, sh);
+		x1 = nsvg__convertToPixelsForGradient(p, data -> units, &data->linear.x1, ox, sw);
+		y1 = nsvg__convertToPixelsForGradient(p, data -> units, &data->linear.y1, oy, sh);
+		x2 = nsvg__convertToPixelsForGradient(p, data -> units, &data->linear.x2, ox, sw);
+		y2 = nsvg__convertToPixelsForGradient(p, data -> units, &data->linear.y2, oy, sh);
 		// Calculate transform aligned to the line
 		dx = x2 - x1;
 		dy = y2 - y1;
@@ -740,11 +740,11 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, const char* id, const f
 		grad->xform[4] = x1; grad->xform[5] = y1;
 	} else {
 		float cx, cy, fx, fy, r;
-		cx = nsvg__convertToPixelsForGradient(p, data -> units, data->radial.cx, ox, sw);
-		cy = nsvg__convertToPixelsForGradient(p, data -> units, data->radial.cy, oy, sh);
-		fx = nsvg__convertToPixelsForGradient(p, data -> units, data->radial.fx, ox, sw);
-		fy = nsvg__convertToPixelsForGradient(p, data -> units, data->radial.fy, oy, sh);
-		r = nsvg__convertToPixelsForGradient(p, data -> units, data->radial.r, 0, sl);
+		cx = nsvg__convertToPixelsForGradient(p, data -> units, &data->radial.cx, ox, sw);
+		cy = nsvg__convertToPixelsForGradient(p, data -> units, &data->radial.cy, oy, sh);
+		fx = nsvg__convertToPixelsForGradient(p, data -> units, &data->radial.fx, ox, sw);
+		fy = nsvg__convertToPixelsForGradient(p, data -> units, &data->radial.fy, oy, sh);
+		r = nsvg__convertToPixelsForGradient(p, data -> units, &data->radial.r, 0, sl);
 		// Calculate transform aligned to the circle
 		grad->xform[0] = r; grad->xform[1] = 0;
 		grad->xform[2] = 0; grad->xform[3] = r;
@@ -1389,6 +1389,9 @@ static float nsvg__parseMiterLimit(const char* str)
 
 static int nsvg__parseUnits(const char* units)
 {
+  if (!units || units[0] == '\0') {
+    return NSVG_UNITS_PX;
+  }
 	if (units[0] == 'p' && units[1] == 'x')
 		return NSVG_UNITS_PX;
 	else if (units[0] == 'p' && units[1] == 't')
@@ -1420,19 +1423,25 @@ static NSVGcoordinate nsvg__parseCoordinateRaw(const char* str)
 
 //	coord.units = nsvg__parseUnits(units);
   coord.units = nsvg__parseUnits((const char*)UnitsStr);
+  DBG("Parsed coordinate:%d.%06d unit:%d\n", (int)coord.value, (int)((coord.value - (int)coord.value)*1000000.0f), coord.units);
 	return coord;
 }
 
 static NSVGcoordinate nsvg__coord(float v, int units)
 {
-	NSVGcoordinate coord = {v, units};
+  NSVGcoordinate coord;
+  coord.value = v;
+  coord.units = units;
 	return coord;
 }
 
 static float nsvg__parseCoordinate(NSVGparser* p, const char* str, float orig, float length)
 {
 	NSVGcoordinate coord = nsvg__parseCoordinateRaw(str);
-	return nsvg__convertToPixels(p, coord, orig, length);
+//  DBG("nsvg__parseCoordinate %d\n", (int)coord.value);
+  float v = nsvg__convertToPixels(p, &coord, orig, length);
+//  DBG("nsvg__convertToPixels %d\n", (int)v);
+	return v;
 }
 
 static int nsvg__parseTransformArgs(const char* str, float* args, int maxNa, int* na)
@@ -1682,7 +1691,7 @@ static void nsvg__parseStyle(NSVGparser* p, const char* str);
 static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
 {
 	float xform[6];
-  DBG("parse Name:%a Value:%a\n", name, value);
+//  DBG("parse Name:%a Value:%a\n", name, value);
 	NSVGattrib* attr = nsvg__getAttr(p);
 	if (!attr) return 0;
   if (strcmp(name, "style") == 0) {
@@ -1706,7 +1715,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
 		} else {
 			attr->hasFill = 1;
 			attr->fillColor = nsvg__parseColor(value);
-      DBG("fillColor=%08x\n", attr->fillColor);
+//      DBG("fillColor=%08x\n", attr->fillColor);
 		}
 	} else if (strcmp(name, "opacity") == 0) {
 		attr->opacity = nsvg__parseOpacity(value);
@@ -2167,10 +2176,11 @@ static void nsvg__pathArcTo(NSVGparser* p, float* cpx, float* cpy, float* args, 
 	t[0] = cosrx; t[1] = sinrx;
 	t[2] = -sinrx; t[3] = cosrx;
 	t[4] = cx; t[5] = cy;
-//DBG("Split arc\n");
+
 	// Split arc into max 90 degree segments.
 	// The loop assumes an iteration per end point (including start and end), this +1.
 	ndivs = (int)(fabsf(da) / (NSVG_PI * 0.5f) + 1.0f);
+  DBG("Split arc on %d curves\n", ndivs);
   if (ndivs > 6) ndivs = 6;
 	hda = (da / (float)ndivs) * 0.5f;
   if ((hda < 1e-3f) && (hda > -1e-3f)) hda *= 0.5f;
@@ -2223,7 +2233,7 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
 			tmp[3] = 0;
 			nsvg__parseAttribs(p, tmp);
 		}
-    DBG("parsePath attr[%d] value:%a\n", i, attr[i + 1]);
+//    DBG("parsePath attr[%d] value:%a\n", i, attr[i + 1]);
 	}
 
 	if (s) {
@@ -2232,20 +2242,20 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
 		cpx2 = 0; cpy2 = 0;
 		closedFlag = 0;
 		nargs = 0;
-    DBG("parse spline\n");
+//    DBG("parse spline\n");
 		while (*s) {
 			s = nsvg__getNextPathItem(s, item);
-      DBG("next item=%a\n",s);
+ //     DBG("next item=%a\n",s);
 			if (!*item) break;
 			if (nsvg__isnum(item[0])) {
         if (nargs < 30) {
           float x = (float)nsvg__atof(item);
     //      int k = (int)x;
-          DBG("Item[%d]=%d.%06d\n", nargs, (int)x, (int)(fabsf(x-(int)x)*1000000.0f));
+ //         DBG("Item[%d]=%d.%06d\n", nargs, (int)x, (int)(fabsf(x-(int)x)*1000000.0f));
           args[nargs++] = x;
         }
 				if (nargs >= rargs) {
-          DBG("nargs=%d cmd=%c\n", nargs, cmd);
+//          DBG("nargs=%d cmd=%c\n", nargs, cmd);
 					switch (cmd) {
 						case 'm':
 						case 'M':
@@ -2301,15 +2311,15 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
 							break;
 					}
 					nargs = 0;
-          DBG("cmd parsed\n");
+ //         DBG("cmd parsed\n");
 				}
 			} else {
 				cmd = item[0];
-        DBG("nsvg__getArgsPerElement\n");
+//        DBG("nsvg__getArgsPerElement\n");
 				rargs = nsvg__getArgsPerElement(cmd);
 				if (cmd == 'M' || cmd == 'm') {
 					// Commit path.
-          DBG("Commit path M\n");
+//          DBG("Commit path M\n");
 					if (p->npts > 0)
 						nsvg__addPath(p, closedFlag);
 					// Start new subpath.
@@ -2319,7 +2329,7 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
 				} else if (cmd == 'Z' || cmd == 'z') {
 					closedFlag = 1;
 					// Commit path.
-          DBG("Commit path Z\n");
+ //         DBG("Commit path Z\n");
 					if (p->npts > 0) {
 						// Move current point to first point
 						cpx = p->pts[0];
@@ -2328,7 +2338,7 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
 						nsvg__addPath(p, closedFlag);
 					}
 					// Start new subpath.
-          DBG("Start new subpath\n");
+ //         DBG("Start new subpath\n");
 					nsvg__resetPath(p);
 					nsvg__moveTo(p, cpx, cpy);
 					closedFlag = 0;
@@ -2337,11 +2347,11 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
 			}
 		}
 		// Commit path.
-    DBG("Commit path close\n");
+//    DBG("Commit path close\n");
 		if (p->npts)
 			nsvg__addPath(p, closedFlag);
 	}
-  DBG("end parsePath\n");
+//  DBG("end parsePath\n");
 	nsvg__addShape(p);
 }
 
@@ -2371,7 +2381,7 @@ static void nsvg__parseRect(NSVGparser* p, const char** attr)
         ry = fabsf(nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualHeight(p)));
 		}
 	}
-  DBG("parseRect [%d,%d]\n", (int)w, (int)h);
+//  DBG("parseRect [%d,%d]\n", (int)w, (int)h);
 
 	if (rx < 0.0f && ry > 0.0f) rx = ry;
 	if (ry < 0.0f && rx > 0.0f) ry = rx;
@@ -2632,22 +2642,22 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 			if (strcmp(attr[i], "width") == 0) {
 //        DBG("nsvg__parseCoordinate\n");
 				p->image->width = nsvg__parseCoordinate(p, attr[i + 1], 0.0f, 0.0f);
-//        DBG("width=%d\n", p->image->width);
+        DBG("width=%d\n", (int)p->image->width);
 			} else if (strcmp(attr[i], "height") == 0) {
 				p->image->height = nsvg__parseCoordinate(p, attr[i + 1], 0.0f, 0.0f);
-//        DBG("height=%d\n", p->image->height);
+        DBG("height=%d\n", (int)p->image->height);
 			} else if (strcmp(attr[i], "viewBox") == 0) {
 				//sscanf(attr[i + 1], "%f%*[%%, \t]%f%*[%%, \t]%f%*[%%, \t]%f", &p->viewMinx, &p->viewMiny, &p->viewWidth, &p->viewHeight);
         //Slice - TODO
-        DBG("viewBox\n");
+//        DBG("viewBox\n");
         char* Next = 0;
-        DBG("string:%a\n", attr[i + 1]);
+ //       DBG("string:%a\n", attr[i + 1]);
         AsciiStrToFloat(attr[i + 1], &Next, &p->viewMinx);
-        DBG("Next:%a\n", Next);
+ //       DBG("Next:%a\n", Next);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewMiny);
-        DBG("Next:%a\n", Next);
+ //       DBG("Next:%a\n", Next);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewWidth);
-        DBG("Next:%a\n", Next);
+ //       DBG("Next:%a\n", Next);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewHeight);
         DBG("viewBox [%d,%d]\n", (int)(p->viewWidth), (int)(p->viewHeight));
 			} else if (strcmp(attr[i], "preserveAspectRatio") == 0) {
@@ -2850,7 +2860,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__popAttr(p);
 	} else if (strcmp(el, "path") == 0) {
     if (p->pathFlag)	{// Do not allow nested paths.
-      DBG("nested path\n");
+//      DBG("nested path\n");
 			return;
     }
 		nsvg__pushAttr(p);
@@ -2907,7 +2917,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__parseIMAGE(p, dict);
     nsvg__popAttr(p);
   }
-  DBG("finish startElement\n");
+//  DBG("finish startElement\n");
 }
 
 static void nsvg__endElement(void* ud, const char* el)
@@ -2935,7 +2945,7 @@ static void nsvg__endElement(void* ud, const char* el)
  			   strcmp(el, "polygon") == 0) {
  		p->shapeFlag = 0;
 	}
-  DBG("end element:%a\n", el);
+//  DBG("end element:%a\n", el);
 }
 
 static void nsvg__content(void* ud, char* s)
@@ -3138,7 +3148,8 @@ static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
 	sx = p->viewWidth > 0 ? p->image->width / p->viewWidth : 0;
 	sy = p->viewHeight > 0 ? p->image->height / p->viewHeight : 0;
 	// Unit scaling
-	us = 1.0f / nsvg__convertToPixels(p, nsvg__coord(1.0f, nsvg__parseUnits(units)), 0.0f, 1.0f);
+  NSVGcoordinate coord = nsvg__coord(1.0f, nsvg__parseUnits(units));
+	us = 1.0f / nsvg__convertToPixels(p, &coord, 0.0f, 1.0f);
 
 	// Fix aspect ratio
 	if (p->alignType == NSVG_ALIGN_MEET) {

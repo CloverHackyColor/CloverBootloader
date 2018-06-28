@@ -2550,36 +2550,33 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           EG_IMAGE        *NewImage;
           INTN Width = 400, Height = 400;
           float Scale,ScaleX, ScaleY;
-          
+#if TEST_MATH
           //Test mathematique
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define pr(x) (int)fabsf(x), (int)fabsf((x - (int)x) * 1000000.0f)
-          int i,k;
+          int i;
           float x, y1, y2;
 //          CHAR8 Str[128];
-          DBG("Test float: %d.%d\n", pr(-1.7612f));
+          DBG("Test float: -%d.%06d\n", pr(-0.7612f));
           for (i=0; i<12; i++) {
             x=(2.0f*PI)/12.0f*i;
             y1=SinF(x);
             y2=CosF(x);
-            k = (int)x;
-//            AsciiSPrintFloat(Str, 128, NULL, x);
-            DBG("x=%d:%d.%d ", i*30, (int)x, (int)fabsf((x - k) * 1000000.0f));
- //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("sinx=%c%d.%d ", (y1<0)?'-':' ', pr(y1));
-//            AsciiSPrintFloat(Str, 128, NULL, pr(y2));
-            DBG("cosx=%c%d.%d\n", (y2<0)?'-':' ',pr(y2));
+
+            DBG("x=%d:%d.%d ", i*30, pr(x));
+            DBG("  sinx=%c%d.%06d", (y1<0)?'-':' ', pr(y1));
+            DBG("  cosx=%c%d.%06d\n", (y2<0)?'-':' ',pr(y2));
             y1 = Atan2F(y1, y2);
-//            AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("tanx=%c%d.%d ", (y1<0)?'-':' ',pr(y1));
+            DBG("  atanx=%c%d.%06d", (y1<0)?'-':' ',pr(y1));
             y1 = AcosF(y2);
- //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("acos=%c%d.%d ", (y1<0)?'-':' ',pr(y1));
+            DBG("  acos=%c%d.%06d", (y1<0)?'-':' ',pr(y1));
             y1 = SqrtF(x);
- //           AsciiSPrintFloat(Str, 128, NULL, pr(y1));
-            DBG("sqrt=%d.%d \n", pr(y1));
+            DBG("  sqrt=%d.%06d", pr(y1));
+            y1 = CeilF(x);
+            DBG("  ceil=%c%d.%06d\n", (y1<0)?'-':' ',pr(y1));
           }
 #undef pr
+#endif
           NSVGrasterizer* rast = nsvgCreateRasterizer();
           
           // load file
@@ -2589,12 +2586,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 //          }
           //Parse XML to vector data
           SVGimage = nsvgParse((CHAR8*)FileData, "px", 72);
-          DBG("Image width=%d heigth=%d\n", SVGimage->width, SVGimage->height);
+          DBG("Image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
           
           // Rasterize
           NewImage = egCreateImage(Width, Height, TRUE);
-          if (SVGimage->width == 0) SVGimage->width = Width;
-          if (SVGimage->height == 0) SVGimage->height = Height;
+          if (SVGimage->width <= 0) SVGimage->width = Width;
+          if (SVGimage->height <= 0) SVGimage->height = Height;
          
           ScaleX = Width / SVGimage->width;
           ScaleY = Height / SVGimage->height;

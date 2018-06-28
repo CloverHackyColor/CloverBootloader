@@ -10,6 +10,7 @@
 #define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
 
+//we will assume sqrt(abs(x))
 float SqrtF(float X)
 {
   struct FloatInt {
@@ -20,6 +21,8 @@ float SqrtF(float X)
   };
   if (X == 0.0f) {
     return 0.0f;
+  } else if (X < 0.0f) {
+    X = -X;
   }
   struct FloatInt Y;
   Y.f = X * 0.3f;
@@ -33,42 +36,56 @@ float SqrtF(float X)
 }
 
 float CosF(float X);
+
+//we know sin is odd
 float SinF(float X)
 {
-  INTN Period = X / (2.0f * PI);
+  INTN Period;
   float X2;
   float Sign = 1.0f;
-  X = X - Period * (2.0f * PI);
-  if (X > PI) {
-    X = X - PI;
+  
+  if (X < 0.0f) {
+    X = -X;
     Sign = -1.0f;
   }
-  if (X > PI * 0.5f) {
+  Period = X / PI2;
+  X = X - Period * PI2;
+  if (X > PI) {
+    X = X - PI;
+    Sign *= -1.0f;
+  }
+  if (X > PI5) {
     X = PI - X;
   }
   if (X > PI * 0.25f) {
-    return (Sign*CosF(PI * 0.5f - X));
+    return (Sign*CosF(PI5 - X));
   }
   X2 = X * X;
   return (Sign*(X - X2 * X / 6.0f + X2 * X2 * X / 120.0f));
 }
 
+//we know cos is even
 float CosF(float X)
 {
-  INTN Period = X / (2.0f * PI);
+  INTN Period;
   float Sign = 1.0f;
   float X2;
-  X = X - Period * (2.0f * PI);
+  
+  if (X < 0.0f) {
+    X = -X;
+  }
+  Period = X / PI2;
+  X = X - Period * PI2;
   if (X > PI) {
     X = PI - X;
     Sign = -1.0f;
   }
-  if (X > PI * 0.5f) {
+  if (X > PI5) {
     X = PI - X;
     Sign *= -1.0f;
   }
   if (X > PI * 0.25f) {
-    return (Sign*SinF(PI * 0.5f - X));
+    return (Sign*SinF(PI5 - X));
   }
   X2 = X * X;
   return (Sign * (1.0f - X2 * 0.5f + X2 * X2 / 24.0f));
@@ -121,38 +138,68 @@ float ModF(float X, float Y)
 float AcosF(float X)
 {
   float X2 = X * X;
-  return (PI * 0.5f - X * (1.0f + X2 / 6.0f + X2 * X2 * (3.0f / 40.0f)));
+  float res = 0.f, Y = 0.f;
+  INTN Sign = 0;
+
+  if (X2 < 0.3f) {
+    Y = X * (1.0f + X2 / 6.0f + X2 * X2 * (3.0f / 40.0f));
+    return (PI5 - Y);
+  } else if (X2 >= 1.0f) {
+    return 0.0f;
+  } else {
+    if (X < 0) {
+      X = -X;
+      Sign = 1;
+    }
+    Y = 1.0f - X; //for X ~ 1
+    X2 = Y * (2.0 + Y * (1.0 / 3.0 + Y * (4.0f / 45.0 + Y  / 35.0f))); //Dwight, form.508
+    res = SqrtF(X2);
+    if (Sign) {
+      res = PI - res;
+    }
+  }
+  
+  return res;
 }
 
 float AtanF(float X) //assume 0.0 < X < 1.0
 {
-  float Eps = 1.0e-4;
+  float Eps = 1.0e-8;
   int i = 1;
   float X2 = X * X;
-  float D = - X;
+  float D = X;
   float Y = 0;
   float sign = 1.0f;
-  while (D > (Eps * i)) {
+/*  while (D > (Eps * i)) {
     Y += D * sign / i;  //x -x3/3+x5/5-x7/7...
     D *= X2;
     sign = - sign;
     i += 2;
+  } */
+//  Y = X * (1 - X2 * ( 1.0f / 3.0f - X2 * (1.0f / 5.0f - X2 * ( 1.0f / 7.0f))));
+  for (i = 1; i < 50; i += 2) {
+    Y += (D * sign / i);
+    D *= X2;
+    if (D < Eps) {
+      break;
+    }
+    sign = - sign;
   }
   return Y;
 }
 
 float Atan2F(float X, float Y)
 {
-  float sign = (((X > 0.0f) && (Y < 0.0f)) ||
-                ((X < 0.0f) && (Y > 0.0f)));
-  X = (X > 0.0f)?X:(-X);
-  Y = (Y > 0.0f)?Y:(-Y);
+  float sign = (((X >= 0.0f) && (Y < 0.0f)) ||
+                ((X < 0.0f) && (Y >= 0.0f)))?-1.0f:1.0f;
+  X = (X >= 0.0f)?X:(-X);
+  Y = (Y >= 0.0f)?Y:(-Y);
   if (X < Y) {
     return sign * AtanF(X / Y);
   } else if (Y == 0.0f) {
-    return sign * (PI * 0.5f);
+    return sign * PI5;
   } else {
-    return sign * (PI * 0.5f - AtanF(Y / X));
+    return sign * (PI5 - AtanF(Y / X));
   }
   return 0.0f;
 }
@@ -185,12 +232,6 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
   while ((*String == ' ') || (*String == '\t')) {
     String++;
   }
-  //
-  // Ignore leading Zeros after the spaces
-  //
-/*  while (*String == '0') {
-    String++;
-  } */
   if (*String == '-') {
     Sign = -1;
     String++;
