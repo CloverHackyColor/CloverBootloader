@@ -331,8 +331,7 @@ VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
   I = (INTN)X;
   D = I;
   Fract = fabsf((X - D) * 1000000.0f);
-  AsciiSPrint(S, N, "%D.%D", I, (INTN)Fract);
+  AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
 }
-
 
 

@@ -107,11 +107,11 @@ typedef struct NSVGgradient {
 } NSVGgradient;
 
 typedef struct NSVGpaint {
-  char type;
   union {
     unsigned int color;
     NSVGgradient* gradient;
   };
+  char type;
 } NSVGpaint;
 
 typedef struct NSVGpath
@@ -287,7 +287,7 @@ typedef struct NSVGparser
   char titleFlag;
   char shapeFlag;
   char styleFlag;
-  char groupFlag;
+//  char groupFlag;
   BOOLEAN isText;
 } NSVGparser;
 
