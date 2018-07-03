@@ -7173,7 +7173,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   
                 case 0x8086:
                   if (gSettings.InjectIntel) {
-                    TmpDirty    = setup_gma_devprop(&PCIdevice);
+                    TmpDirty    = setup_gma_devprop(Entry, &PCIdevice);
                     StringDirty |=  TmpDirty;
                     MsgLog ("Intel GFX revision  = 0x%x\n", PCIdevice.revision);
                   } else {

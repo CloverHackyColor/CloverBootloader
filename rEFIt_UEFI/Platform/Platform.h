@@ -1981,6 +1981,7 @@ setup_ati_devprop (
 
 BOOLEAN
 setup_gma_devprop (
+  LOADER_ENTRY *Entry,
   pci_dt_t *gma_dev
   );
 

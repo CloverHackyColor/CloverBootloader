@@ -832,7 +832,7 @@ CHAR8 *get_gma_model(UINT16 id)
 }
 
 
-BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
+BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 {
   UINTN           j;
   UINTN           i;
@@ -842,6 +842,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   UINT8           BuiltIn = 0x00;
   UINT32          FakeID;
   UINT32          DualLink = 1;
+  UINT64          os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   BOOLEAN         SetUGAWidth = FALSE;
   BOOLEAN         SetUGAHeight = FALSE;
   BOOLEAN         Injected = FALSE;
@@ -2645,7 +2646,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
             default:
               break;
           }
-          devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
+          // Rehabman: GfxYTile causes a hang on boot in 10.14 beta when using Kaby Lake-R UHD Graphics
+          if (os_version < AsciiOSVersionToUint64("10.14")) {
+            devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
+          }
           break;
       }
       break;
