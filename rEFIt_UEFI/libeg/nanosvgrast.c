@@ -1001,7 +1001,7 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 		// TODO: plenty of opportunities to optimize.
 		float fx, fy, dx, gy;
 		float* t = cache->xform;
-    DumpFloat(t, 6);
+//    DumpFloat(t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 //x,y - pixels
@@ -1044,7 +1044,7 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 		// TODO: focus (fx,fy)
 		float fx, fy, dx, gx, gy, gd;
 		float* t = cache->xform;
-    DumpFloat(t, 6);
+//    DumpFloat(t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 
@@ -1054,7 +1054,6 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 
 		for (i = 0; i < count; i++) {
 			int r,g,b,a,ia;
-      // old method
 			gx = fx*t[0] + fy*t[2] + t[4];
 			gy = fx*t[1] + fy*t[3] + t[5];
 			gd = sqrtf(gx*gx + gy*gy);
@@ -1290,9 +1289,11 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, float opac
 				u += du;
 			}
 		}
+    /*
     DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
         cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
         cache->colors[200], cache->colors[250]);
+     */
 		for (i = ib; i < 256; i++)  //tail
 			cache->colors[i] = cb;
 	}

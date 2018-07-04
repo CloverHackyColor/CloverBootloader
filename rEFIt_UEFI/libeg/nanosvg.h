@@ -112,6 +112,7 @@ typedef struct NSVGpaint {
     NSVGgradient* gradient;
   };
   char type;
+  void* pad; //alignment
 } NSVGpaint;
 
 typedef struct NSVGpath
@@ -290,6 +291,36 @@ typedef struct NSVGparser
 //  char groupFlag;
   BOOLEAN isText;
 } NSVGparser;
+
+//------------- Fonts ---------------------
+typedef struct NSGVglyph {
+  char name[16];
+  CHAR16 unicode;
+  int horizAdvX;
+  NSVGpath* d;
+} NSGVglyph;
+
+typedef struct NSVGfont {
+  char id[64];
+  int horizAdvX;
+  // --- font-face
+  char fontFamily[64];
+  int fontWeight;
+  int unitsPerEm;
+  char panose[64];
+  int ascent;
+  int descent;
+  int xHeight;
+  int capHeight;
+  float bbox[4];
+  int underlineThickness;
+  int underlinePosition;
+  int unicodeRange[2];
+  char fontStretch; //NORMAL, ...
+  // -- glyphs
+  NSGVglyph* missingGlyph;
+  NSGVglyph* glyphs; // a chain
+} NSVGfont;
 
 // Duplicates a path.
 NSVGpath* nsvgDuplicatePath(NSVGpath* p);
