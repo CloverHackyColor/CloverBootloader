@@ -83,8 +83,7 @@ void DumpFloat (float* t, int N)
 {
   int i;
   DBG("Dump xform: ");
-  for(i=0; i<N;i++)
-  {
+  for(i=0; i<N;i++) {
     DBG("%d.%06d ", (int)t[i], (int)(fabsf((t[i]-(int)t[i])*1e6f)));
   }
   DBG("\n");
@@ -130,10 +129,8 @@ NSVGrasterizer* nsvgCreateRasterizer()
 {
 	NSVGrasterizer* r = (NSVGrasterizer*)AllocateZeroPool(sizeof(NSVGrasterizer));
 	if (r == NULL) return NULL;
-
 	r->tessTol = 0.25f;
 	r->distTol = 0.01f;
-
 	return r;
 }
 
@@ -1373,15 +1370,15 @@ void nsvgRasterize(NSVGrasterizer* r,
     
     if( shape->image_href && external_image )// load external file
     {
-           // compute size
-            float rect[4];
-            rect[0] = shape->bounds[0] * scalex + tx;
-            rect[1] = shape->bounds[1] * scaley + ty;
-            rect[2] = shape->bounds[2] * scalex + tx;
-            rect[3] = shape->bounds[3] * scaley + ty;
-            external_image(obj, r, shape->image_href, rect);
+      // compute size
+      float rect[4];
+      rect[0] = shape->bounds[0] * scalex + tx;
+      rect[1] = shape->bounds[1] * scaley + ty;
+      rect[2] = shape->bounds[2] * scalex + tx;
+      rect[3] = shape->bounds[3] * scaley + ty;
+      external_image(obj, r, shape->image_href, rect);
     }
-
+    
 		if (shape->fill.type != NSVG_PAINT_NONE) {
 			nsvg__resetPool(r);
 			r->freelist = NULL;
@@ -1403,7 +1400,6 @@ void nsvgRasterize(NSVGrasterizer* r,
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shape->fill, shape->opacity);
-
 			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shape->fillRule);
 		}
 		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * min_scale) > 0.01f) {
@@ -1412,7 +1408,6 @@ void nsvgRasterize(NSVGrasterizer* r,
 			r->nedges = 0;
 
 			nsvg__flattenShapeStroke(r, shape, scalex, scaley);
-
 //			dumpEdges(r, "edge.svg");
 
 			// Scale and translate edges
@@ -1429,7 +1424,6 @@ void nsvgRasterize(NSVGrasterizer* r,
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shape->stroke, shape->opacity);
-
 			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, NSVG_FILLRULE_NONZERO);
 		}
 	}

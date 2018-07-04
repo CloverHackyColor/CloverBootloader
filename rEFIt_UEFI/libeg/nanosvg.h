@@ -429,8 +429,4 @@ struct NSVGrasterizer
   int width, height, stride;
 };
 
-
-
-
-
 #endif
