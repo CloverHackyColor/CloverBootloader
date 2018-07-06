@@ -151,12 +151,14 @@ typedef struct NSVGshape
   char fillRule;        // Fill rule, see NSVGfillRule.
   unsigned char flags;    // Logical or of NSVG_FLAGS_* flags
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
+  float xform[6];
   NSVGpath* paths;      // Linked list of paths in the image.
 	NSVGgroup* group;			// Pointer to parent group or NULL
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
-  char fontFamily[64];
-  char fontWeight[64];
-  float fontSize;
+  struct NSVGfont* fontFace;
+//  char fontFamily[64];
+//  char fontWeight[64];
+//  float fontSize;
   BOOLEAN isText;
   char textData[kMaxTextLength];
   const char *image_href;
@@ -248,9 +250,10 @@ typedef struct NSVGattrib
   char strokeLineCap;
   float miterLimit;
   char fillRule;
-  float fontSize;
-  char fontFamily[64];
-  char fontWeight[64];
+  struct NSVGfont* fontFace;
+//  float fontSize;
+//  char fontFamily[64];
+//  char fontWeight[64];
   unsigned int stopColor;
   float stopOpacity;
   float stopOffset;
@@ -298,6 +301,7 @@ typedef struct NSGVglyph {
   CHAR16 unicode;
   int horizAdvX;
   NSVGpath* d;
+  struct NSGVglyph *next;
 } NSGVglyph;
 
 typedef struct NSVGfont {
@@ -305,18 +309,21 @@ typedef struct NSVGfont {
   int horizAdvX;
   // --- font-face
   char fontFamily[64];
-  int fontWeight;
-  int unitsPerEm;
-  char panose[64];
+  int fontWeight; //usually 400 like stroke-width
+  float fontSize; // 8,9,12,14...
+  int unitsPerEm; //usually 1000
+  char panose[64]; //int[10] obsolete
   int ascent;
   int descent;
   int xHeight;
   int capHeight;
-  float bbox[4];
+  float bbox[4]; //maximum Bounding box for chars
   int underlineThickness;
   int underlinePosition;
+  int slope;
   int unicodeRange[2];
-  char fontStretch; //NORMAL, ...
+  char fontStretch; //normal, ...
+  char fontStyle; //light, italic, bold
   // -- glyphs
   NSGVglyph* missingGlyph;
   NSGVglyph* glyphs; // a chain
