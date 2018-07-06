@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1854,12 +1854,13 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   else if (strcmp(name, "class") == 0) {
     NSVGstyles* style = p->styles;
     while (style) {
-      if (strcmp(style->name + 1, value) == 0) {
+      if (strcmp(style->name, value) == 0) {
         break;
       }
       style = style->next;
     }
     if (style) {
+//      DBG("Found class=%a, style=%a\n", style->name, style->description);
       nsvg__parseStyle(p, style->description);
     }
   }
@@ -2984,7 +2985,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
   }
 
   if (p->defsFlag) {
-    // Skip everything but gradients in defs
+    // Skip everything but gradients, font and style in defs
     if (strcmp(el, "linearGradient") == 0) {
       nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
     } else if (strcmp(el, "radialGradient") == 0) {
@@ -2999,6 +3000,9 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
       nsvg__parseGlyph(p, dict, FALSE);
     } else if (strcmp(el, "glyph") == 0) {
       nsvg__parseGlyph(p, dict, TRUE);
+    } else if (strcmp(el, "style") == 0) {
+      p->styleFlag = 1;
+      DBG("start element style in def\n");
     }
     return;
   }
@@ -3065,6 +3069,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
   } */
   else if (strcmp(el, "style") == 0) {
     p->styleFlag = 1;
+    DBG("start element style\n");
   } else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
@@ -3135,6 +3140,7 @@ static void nsvg__content(void* ud, char* s)
         return;
       else *rv = '\0';
     }
+    
 //.cls-1{fill:url(#linear-gradient);}
     const char* start = s;
     int state = 0;
@@ -3145,9 +3151,8 @@ static void nsvg__content(void* ud, char* s)
           NSVGstyles* next = p->styles;
           p->styles = (NSVGstyles*)AllocatePool(sizeof(NSVGstyles));
           p->styles->next = next;
-          p->styles->name = nsvg__strndup(start, (size_t)(s - start));
+          p->styles->name = nsvg__strndup(start, (size_t)(s - start)); //style->name=cls-1
           p->styles->description = NULL;
-          DBG("found CSS style: %a\n", p->styles->name);
           if (c == '{') {
             start = s + 1;
             state = 3;
@@ -3163,16 +3168,9 @@ static void nsvg__content(void* ud, char* s)
         nsvg__parseStyle(p, p->styles->description);
         state = 0;
       }
-      else if (state == 0) {
-/*        if (!nsvg__isspace(c)) {
-          start = s;
-          state = 1;
-        }
- */
-        if (c == '.') {  //this is style name
-          start = s;
-          state = 1;
-        }
+      else if (state == 0 && c == '.') {
+        start = s + 1;
+        state = 1;
       }
       s++;
     }
@@ -3194,7 +3192,7 @@ static void nsvg__content(void* ud, char* s)
     //    s++;
     //  }
     //}
-  } else if (p->shapeFlag) {
+  } else if (p->shapeFlag) { //text support
     NSVGshape * lastShape = NULL;
     for (NSVGshape * shape = p->image->shapes; shape != NULL; shape = shape->next) {
       lastShape = shape;
@@ -3202,8 +3200,9 @@ static void nsvg__content(void* ud, char* s)
 
     size_t length = strlen(s);
 
-    if (length > 0 && p && lastShape /*&& lastShape->textData*/ && !strcmp(lastShape->textData, "") )
-    {
+    if (length > 0 && p &&
+        lastShape /*&& lastShape->textData*/ &&
+        !strcmp(lastShape->textData, "")) {
       memcpy(lastShape->textData, s, length * sizeof(char) );
     }
   }
