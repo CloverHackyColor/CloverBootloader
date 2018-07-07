@@ -533,13 +533,13 @@ static void nsvg__deleteFont(NSVGfont* font)
     return;
   }
   if (font->missingGlyph) {
-    nsvg__deletePaths(font->missingGlyph->d);
+    nsvg__deletePaths(font->missingGlyph->path);
     FreePool(font->missingGlyph);
   }
   glyphs = font->glyphs;
   while (glyphs) {
     next = glyphs->next;
-    nsvg__deletePaths(glyphs->d);
+    nsvg__deletePaths(glyphs->path);
     FreePool(glyphs);
     glyphs = next;
   }
@@ -2450,9 +2450,9 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
     if (p->npts)
       nsvg__addPath(p, closedFlag);
   }
-  if (type == NSVG_PATH_SHAPE) {
-    nsvg__addShape(p);
-  }
+//  if (type == NSVG_PATH_SHAPE) {
+//    nsvg__addShape(p);
+//  }
 }
 
 static void nsvg__parseRect(NSVGparser* p, const char** attr)
@@ -3063,7 +3063,7 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
 
 CHAR16 nsvg__parseUnicode(const char *s)
 {
-  CHAR16 A;
+  CHAR16 A = L'\0';
   UINT8 c[4];
   int n;
   if (*s != '&') {
@@ -3115,7 +3115,7 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
   }
  
   nsvg__parsePath(p, dict);
-  glyph->d = p->plist; //current path
+  glyph->path = p->plist; //current path
   p->plist = p->plist->next; //out of list
   
   if (missing) {
