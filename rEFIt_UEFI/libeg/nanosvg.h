@@ -160,7 +160,7 @@ typedef struct NSVGshape
 //  char fontWeight[64];
 //  float fontSize;
   BOOLEAN isText;
-  char textData[kMaxTextLength];
+  CHAR16 textData[kMaxTextLength];
   const char *image_href;
 } NSVGshape;
 
@@ -283,6 +283,7 @@ typedef struct NSVGparser
   NSVGstyles* styles;
   NSVGgradientData* gradients;
   NSVGshape* shapesTail;
+  struct NSVGfont* font;
   float viewMinx, viewMiny, viewWidth, viewHeight;
   int alignX, alignY, alignType;
   float dpi;
@@ -296,13 +297,13 @@ typedef struct NSVGparser
 } NSVGparser;
 
 //------------- Fonts ---------------------
-typedef struct NSGVglyph {
+typedef struct NSVGglyph {
   char name[16];
   CHAR16 unicode;
   int horizAdvX;
-  NSVGpath* d;
-  struct NSGVglyph *next;
-} NSGVglyph;
+  NSVGpath* path;
+  struct NSVGglyph *next;
+} NSVGglyph;
 
 typedef struct NSVGfont {
   char id[64];
@@ -325,8 +326,8 @@ typedef struct NSVGfont {
   char fontStretch; //normal, ...
   char fontStyle; //light, italic, bold
   // -- glyphs
-  NSGVglyph* missingGlyph;
-  NSGVglyph* glyphs; // a chain
+  NSVGglyph* missingGlyph;
+  NSVGglyph* glyphs; // a chain
 } NSVGfont;
 
 // Duplicates a path.

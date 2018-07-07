@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -528,11 +528,12 @@ static void nsvg__deletePaths(NSVGpath* path)
 
 static void nsvg__deleteFont(NSVGfont* font)
 {
-  NSGVglyph *glyphs, *next;
+  NSVGglyph *glyphs, *next;
   if (!font) {
     return;
   }
   if (font->missingGlyph) {
+    nsvg__deletePaths(font->missingGlyph->d);
     FreePool(font->missingGlyph);
   }
   glyphs = font->glyphs;
@@ -896,7 +897,8 @@ static void nsvg__addShape(NSVGparser* p)
   shape->miterLimit = attr->miterLimit;
   shape->fillRule = attr->fillRule;
   shape->opacity = attr->opacity;
-  nsvg__xformIdentity(shape->xform);
+//  nsvg__xformIdentity(shape->xform);
+  memcpy(shape->xform, attr->xform, sizeof(float)*6);
 
   // Text
   shape->isText = p->isText;
@@ -905,8 +907,34 @@ static void nsvg__addShape(NSVGparser* p)
 //  memcpy(shape->fontWeight, attr->fontFamily, sizeof shape->fontWeight);
   shape->fontFace = attr->fontFace; //just copy pointer
 
-  shape->paths = p->plist;
-  p->plist = NULL;
+  if(p->isText) {
+    //1. we have     shape->fontFace->glyphs->path;
+    //2. each letter is glyph
+    //3. shape may contain several letter -> chain
+    //4. linked list of shapes?
+    
+    for (i=0; i<64; i++) {
+      NSVGglyph* g = p->font->glyphs;
+      CHAR16 a = shape->textData[i]; //suppose it is already unicode
+      if (!a) {
+        break;
+      }
+      while (g) {
+        if (g->unicode == a) {
+          shape->paths = g->path;
+          break;
+        }
+      }
+      if (!g) {
+        //missing glyph
+        NSVGglyph* g = p->font->missingGlyph;
+        shape->paths = g->path;
+      }
+    }
+  } else {
+    shape->paths = p->plist;
+    p->plist = NULL;
+  }
 
   // Calculate shape bounds
   if(p->isText) {
@@ -2422,7 +2450,9 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
     if (p->npts)
       nsvg__addPath(p, closedFlag);
   }
-  nsvg__addShape(p);
+  if (type == NSVG_PATH_SHAPE) {
+    nsvg__addShape(p);
+  }
 }
 
 static void nsvg__parseRect(NSVGparser* p, const char** attr)
@@ -2557,8 +2587,7 @@ static void nsvg__parseText(NSVGparser* p, const char** attr)
     if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
       if (strcmp(attr[i], "x") == 0) x = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
       if (strcmp(attr[i], "y") == 0) y = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-      if (strcmp(attr[i], "transform") == 0)
-      {
+      if (strcmp(attr[i], "transform") == 0) {
         nsvg__parseTransform(xform, attr[i+1]);
         x = nsvg__parseCoordinate(p, attr[i+1], xform[4], 0);
         y = nsvg__parseCoordinate(p, attr[i+1], xform[5], 0);
@@ -2954,27 +2983,148 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 
 static void nsvg__parseFont(NSVGparser* p, const char** dict)
 {
+  int i;
   NSVGfont* font;
   NSVGattrib* curAttr = nsvg__getAttr(p);
   if (!curAttr) {
     return;
   }
-
   nsvg__parseAttribs(p, dict);
   font = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
-
   memcpy(font->id, curAttr->id, sizeof(font->id));
-//  font->horizAdvX = curAttr->horizAdvX;
+
+  for (i = 0; dict[i]; i += 2) {
+    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
+      if (strcmp(dict[i], "horiz-adv-x") == 0) {
+        font->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+    }
+  }
+  
+  p->font = font;
 }
 
 static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
 {
-
+  int i;
+  NSVGfont* font = p->font;
+  for (i = 0; dict[i]; i += 2) {
+    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
+      if (strcmp(dict[i], "font-family") == 0) {
+        memcpy(font->fontFamily, dict[i+1], 64);
+      }
+      else if (strcmp(dict[i], "font-weight") == 0) {
+        font->fontWeight = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "units-per-em") == 0) {
+        font->unitsPerEm = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "ascent") == 0) {
+        font->ascent = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "descent") == 0) {
+        font->descent = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "x-height") == 0) {
+        font->xHeight = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "x-height") == 0) {
+        font->xHeight = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "cap-height") == 0) {
+        font->capHeight = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "underline-thickness") == 0) {
+        font->underlineThickness = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "underline-position") == 0) {
+        font->underlinePosition = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "slope") == 0) {
+        font->slope = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "bbox") == 0) {
+        char* Next = 0;
+        AsciiStrToFloat(dict[i + 1], &Next, &font->bbox[0]);
+        AsciiStrToFloat((const char*)Next, &Next, &font->bbox[1]);
+        AsciiStrToFloat((const char*)Next, &Next, &font->bbox[2]);
+        AsciiStrToFloat((const char*)Next, &Next, &font->bbox[3]);
+      }
+      else if (strcmp(dict[i], "unicode-range") == 0) {
+        const char * a = dict[i + 1];
+        if (*a == 'U') {
+          font->unicodeRange[0] = (int)AsciiStrHexToUintn(a+2);
+          font->unicodeRange[1] = (int)AsciiStrHexToUintn(a+7);
+        }
+      }
+    }
+  }
 }
 
-static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN real)
+CHAR16 nsvg__parseUnicode(const char *s)
 {
-  //glyph-name="E_d" unicode="Ed" horiz-adv-x="1289" d="M679 "/>
+  CHAR16 A;
+  UINT8 c[4];
+  int n;
+  if (*s != '&') {
+    if (strlen(s) == 2) {
+      A = (*s << 8) + *(s+1);
+    } else {
+      A = *s;
+    }
+  } else if (strstr(s, "&#x") !=0 ) {
+    n = hex2bin((char*)s + 3, c, 4); //big endian
+    A = (n=1)?c[0]:(n=2)?((c[0] << 8) + c[1]):((c[0] << 16) + (c[1] << 8) + c[2]);
+  }
+  return A;
+}
+
+static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
+{
+  //glyph-name="E_d" unicode="Ed" horiz-adv-x="1289" d="M679 ..."/>
+  /*
+  typedef struct NSVGglyph {
+    char name[16];
+    CHAR16 unicode;
+    int horizAdvX;
+    NSVGpath* d;
+    struct NSVGglyph *next;
+  } NSVGglyph;
+*/
+  int i;
+  NSVGglyph *glyph, *nextGlyph;
+  
+  glyph = (NSVGglyph*)AllocateZeroPool(sizeof(NSVGglyph));
+  if (!glyph) {
+    return;
+  }
+
+  for (i = 0; dict[i]; i += 2) {
+    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
+      if (strcmp(dict[i], "unicode") == 0) {
+        glyph->unicode = nsvg__parseUnicode(dict[i+1]);
+      }
+      if (strcmp(dict[i], "horiz-adv-x") == 0) {
+        glyph->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]); // AsciiStrToFloat(dict[i+1], NULL, &X);
+      }
+      if (strcmp(dict[i], "glyph-name") == 0) {
+        strncpy(glyph->name, dict[i+1], 16);
+        glyph->name[15] = '\0';
+      }
+    }
+  }
+ 
+  nsvg__parsePath(p, dict);
+  glyph->d = p->plist; //current path
+  p->plist = p->plist->next; //out of list
+  
+  if (missing) {
+    p->font->missingGlyph = glyph;
+  } else {
+    nextGlyph = p->font->glyphs;
+    p->font->glyphs = glyph;
+    glyph->next = nextGlyph;
+  }
 }
 
 static void nsvg__startElement(void* ud, const char* el, const char** dict)
@@ -2997,12 +3147,12 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     } else if (strcmp(el, "font-face") == 0) {
       nsvg__parseFontFace(p, dict);
     } else if (strcmp(el, "missing-glyph") == 0) {
-      nsvg__parseGlyph(p, dict, FALSE);
-    } else if (strcmp(el, "glyph") == 0) {
       nsvg__parseGlyph(p, dict, TRUE);
+    } else if (strcmp(el, "glyph") == 0) {
+      nsvg__parseGlyph(p, dict, FALSE);
     } else if (strcmp(el, "style") == 0) {
       p->styleFlag = 1;
-      DBG("start element style in def\n");
+//      DBG("start element style in def\n");
     }
     return;
   }
@@ -3022,6 +3172,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     p->pathFlag = 1;
     p->shapeFlag = 1;
     nsvg__parsePath(p, dict);
+    nsvg__addShape(p);
     nsvg__popAttr(p);
   } else if (strcmp(el, "rect") == 0) {
     nsvg__pushAttr(p);
@@ -3066,11 +3217,12 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__parseGradient(p, dict, NSVG_PAINT_RADIAL_GRADIENT);
   } else if (strcmp(el, "stop") == 0) {
     nsvg__parseGradientStop(p, dict);
-  } */
-  else if (strcmp(el, "style") == 0) {
+  }
+  else if (strcmp(el, "style") == 0) { //impossible here
     p->styleFlag = 1;
     DBG("start element style\n");
-  } else if (strcmp(el, "defs") == 0) {
+  } */
+  else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
     nsvg__parseSVG(p, dict);
@@ -3194,17 +3346,21 @@ static void nsvg__content(void* ud, char* s)
     //}
   } else if (p->shapeFlag) { //text support
     NSVGshape * lastShape = NULL;
+    int i;
     for (NSVGshape * shape = p->image->shapes; shape != NULL; shape = shape->next) {
       lastShape = shape;
     }
 
     size_t length = strlen(s);
-
-    if (length > 0 && p &&
-        lastShape /*&& lastShape->textData*/ &&
-        !strcmp(lastShape->textData, "")) {
-      memcpy(lastShape->textData, s, length * sizeof(char) );
+    for (i=0; i < length; i++) {
+      lastShape->textData[i] = s[i]; //it must be Ascii to Unicode conversion
     }
+
+//    if (length > 0 && p &&
+//        lastShape /*&& lastShape->textData*/ &&
+//        !strcmp(lastShape->textData, "")) {
+//      memcpy(lastShape->textData, s, length * sizeof(char) );
+//    }
   }
 }
 
