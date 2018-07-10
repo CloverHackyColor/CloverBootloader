@@ -149,18 +149,18 @@ typedef struct NSVGshape
   char strokeLineCap;      // Stroke cap type.
   float miterLimit;      // Miter limit
   char fillRule;        // Fill rule, see NSVGfillRule.
-  unsigned char flags;    // Logical or of NSVG_FLAGS_* flags
+  unsigned char flags;    // Logical or of NSVG_FLAGS_* flags (NSVG_FLAGS_VISIBLE=1)
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
-  NSVGpath* paths;      // Linked list of paths in the image.
+  NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
 	NSVGgroup* group;			// Pointer to parent group or NULL
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
-  struct NSVGfont* fontFace;
+  struct NSVGfont* fontFace; //one letter - one shape
 //  char fontFamily[64];
 //  char fontWeight[64];
 //  float fontSize;
   BOOLEAN isText;
-  CHAR16 textData[kMaxTextLength];
+//  CHAR16 textData[kMaxTextLength];
   const char *image_href;
 } NSVGshape;
 
@@ -171,6 +171,7 @@ typedef struct NSVGimage
   float realBounds[4];
   NSVGshape* shapes;      // Linked list of shapes in the image.
 	NSVGgroup* groups;			// Linked list of all groups in the image
+  BOOLEAN isFont;
 } NSVGimage;
 
 #define NSVG_MAX_ATTR 128
@@ -215,8 +216,8 @@ typedef struct NSVGradialData {
 
 typedef struct NSVGgradientData
 {
-  char id[64];
-  char ref[64];
+  char id[kMaxIDLength];
+  char ref[kMaxIDLength];
   char type;
   union {
     NSVGlinearData linear;
@@ -338,10 +339,12 @@ NSVGpath* nsvgDuplicatePath(NSVGpath* p);
 
 // Parses SVG file from a null terminated string, returns SVG image as paths.
 // Important note: changes the string.
-extern NSVGimage* nsvgParse(char* input, const char* units, float dpi);
+extern NSVGparser* nsvgParse(char* input, const char* units, float dpi);
 
 // Deletes list of paths.
 extern void nsvgDelete(NSVGimage* image);
+extern void nsvg__xformIdentity(float* t);
+extern void nsvg__deleteParser(NSVGparser* p);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;
@@ -366,6 +369,8 @@ extern void nsvgRasterize(NSVGrasterizer* r,
 
 // Deletes rasterizer context.
 extern void nsvgDeleteRasterizer(NSVGrasterizer*);
+extern NSVGparser* nsvg__createParser();
+extern VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text);
 
 #define NSVG__SUBSAMPLES  5
 #define NSVG__FIXSHIFT    10

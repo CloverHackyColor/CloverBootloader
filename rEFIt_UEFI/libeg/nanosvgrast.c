@@ -43,7 +43,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -66,6 +66,8 @@
 #define acosf(x) AcosF(x)
 #define atan2f(x,y) Atan2F(x,y)
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
+
+#define MALCOLM 1
 
 /*
  NSVGedge* edges;
@@ -167,7 +169,7 @@ static NSVGmemPage* nsvg__nextPage(NSVGrasterizer* r, NSVGmemPage* cur)
 	// Alloc new page
 	newp = (NSVGmemPage*)AllocateZeroPool(sizeof(NSVGmemPage));
 	if (newp == NULL) return NULL;
-	
+
 
 	// Add to linked list
 	if (cur != NULL)
@@ -303,12 +305,92 @@ static float nsvg__normalize(float *x, float* y)
 }
 
 static float nsvg__absf(float x) { return x < 0 ? -x : x; }
+static float nsvg__sqr(float x) { return x*x; }
+
+static float nsvg__controlPathLength(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+{
+	float l1, l2, l3;
+
+	l1 = (float) sqrtf(nsvg__sqr(x2 - x1) + nsvg__sqr(y2 - y1));
+	l2 = (float) sqrtf(nsvg__sqr(x3 - x2) + nsvg__sqr(y3 - y2));
+	l3 = (float) sqrtf(nsvg__sqr(x4 - x3) + nsvg__sqr(y4 - y3));
+
+	return l1 + l2 + l3;
+}
+
 
 static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 								  float x1, float y1, float x2, float y2,
 								  float x3, float y3, float x4, float y4,
 								  int level, int type)
 {
+#if MALCOLM
+	float ax, ay, bx, by, cx, cy, dx, dy;
+	float pointX, pointY;
+	float firstFDX, firstFDY, secondFDX, secondFDY, thirdFDX, thirdFDY;
+	float h;
+	int i;
+	float control_path_len;
+	int N;
+
+	control_path_len = nsvg__controlPathLength(x1, y1, x2, y2, x3, y3, x4, y4);
+
+	/* This is going to need tweaking, gives approximate same number of divisons
+	  as old code on the test image */
+	N = (int)(control_path_len / ( 32 * r->tessTol)) + 2;
+
+	if (N > 1024)
+		N = 1024;
+
+	/* Compute polynomial coefficients from Bezier points */
+
+	ax = -x1 + 3 * x2 + -3 * x3 + x4;
+	ay = -y1 + 3 * y2 + -3 * y3 + y4;
+
+	bx = 3 * x1 + -6 * x2 + 3 * x3;
+	by = 3 * y1 + -6 * y2 + 3 * y3;
+
+	cx = -3 * x1 + 3 * x2;
+	cy = -3 * y1 + 3 * y2;
+
+	dx = x1;
+	dy = y1;
+
+	/* Set up  step size */
+
+	h = 1.0f / (N-1);
+
+	/* Compute forward differences from Bezier points and "h" */
+
+	pointX = dx;
+	pointY = dy;
+
+	firstFDX = ax * (h * h * h) + bx * (h * h) + cx * h;
+	firstFDY = ay * (h * h * h) + by * (h * h) + cy * h;
+	secondFDX = 6 * ax * (h * h * h) + 2 * bx * (h * h);
+	secondFDY = 6 * ay * (h * h * h) + 2 * by * (h * h);
+
+	thirdFDX = 6 * ax * (h * h * h);
+	thirdFDY = 6 * ay * (h * h * h);
+
+	/* Compute points at each step */
+	for (i = 0; i < N-1;i++)  {
+		nsvg__addPathPoint(r, pointX, pointY, 0);
+		pointX += firstFDX;
+		pointY += firstFDY;
+
+		firstFDX += secondFDX;
+		firstFDY += secondFDY;
+
+		secondFDX += thirdFDX;
+		secondFDY += thirdFDY;
+
+	}
+	nsvg__addPathPoint(r, pointX, pointY, type);
+
+	return;
+
+#else
 	float x12,y12,x23,y23,x34,y34,x123,y123,x234,y234,x1234,y1234;
 	float dx,dy,d2,d3;
 
@@ -328,7 +410,7 @@ static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 	d2 = nsvg__absf(((x2 - x4) * dy - (y2 - y4) * dx));
 	d3 = nsvg__absf(((x3 - x4) * dy - (y3 - y4) * dx));
 
-	if ((d2 + d3)*(d2 + d3) < r->tessTol * (dx*dx + dy*dy)) {
+	if (nsvg__sqr(d2 + d3) < r->tessTol * (dx*dx + dy*dy)) {
 		nsvg__addPathPoint(r, x4, y4, type);
 		return;
 	}
@@ -340,6 +422,7 @@ static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 
 	nsvg__flattenCubicBez(r, x1,y1, x12,y12, x123,y123, x1234,y1234, level+1, 0);
 	nsvg__flattenCubicBez(r, x1234,y1234, x234,y234, x34,y34, x4,y4, level+1, type);
+	#endif
 }
 
 static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float scalex, float scaley)
@@ -1367,7 +1450,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 	for (shape = image->shapes; shape != NULL; shape = shape->next) {
 		if (!(shape->flags & NSVG_FLAGS_VISIBLE))
 			continue;
-    
+
     if( shape->image_href && external_image )// load external file
     {
       // compute size
@@ -1378,7 +1461,7 @@ void nsvgRasterize(NSVGrasterizer* r,
       rect[3] = shape->bounds[3] * scaley + ty;
       external_image(obj, r, shape->image_href, rect);
     }
-    
+
 		if (shape->fill.type != NSVG_PAINT_NONE) {
 			nsvg__resetPool(r);
 			r->freelist = NULL;
@@ -1435,4 +1518,117 @@ void nsvgRasterize(NSVGrasterizer* r,
 	r->height = 0;
 	r->stride = 0;
 }
+/*
+void deleteRasterizer(NSVGrasterizer* r)
+{
+  if (!r) {
+    return;
+  }
+  if (r->scanline) {
+    FreePool(r->scanline);
+  }
+  if (r->points) {
+    FreePool(r->points);
+  }
+  FreePool(r);
+}
+*/
+VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text)
+{
+  INTN Width, Height;
+  int i;
+  UINTN len;
+  NSVGparser* p;
+  NSVGshape *shape, *cur, *prev;
+  NSVGrasterizer* rast;
+  float Scale;
+  INTN x, y;
+  if (!fontSVG) {
+    DBG("no font\n");
+    return;
+  }
+  if (!TextBufferXY) {
+    DBG("no buffer\n");
+    return;
+  }
+  /*
+  typedef struct NSVGimage
+  {
+    float width;        // Width of the image.
+    float height;        // Height of the image.
+    float realBounds[4];
+    NSVGshape* shapes;      // Linked list of shapes in the image.
+    NSVGgroup* groups;      // Linked list of all groups in the image
+  } NSVGimage;
+*/
+  DBG("create parser\n");
+  p = nsvg__createParser();
+  if (!p) {
+    DBG("no parser\n");
+    return;
+  }
+  len = StrLen(text);
+  Width = TextBufferXY->Width;
+  Height = TextBufferXY->Height;
+  DBG("textBuffer: [%d,%d], fontHight=%d\n", Width, Height, fontSVG->unitsPerEm);
+  if (!fontSVG->unitsPerEm) {
+    fontSVG->unitsPerEm = 1000;
+  }
+  Scale = Height / fontSVG->unitsPerEm; //realBounds[3] - realBounds[1];
+  x = 0;
+  y = 0;
+  for (i=0; i < len; i++) {
+    CHAR16 letter = text[i];
+    NSVGglyph* g;
+    if (!letter) {
+      break;
+    }
 
+    shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+    if (shape == NULL) return;
+    shape->strokeWidth = 0.2f;
+
+    g = fontSVG->glyphs;
+    while (g) {
+      if (g->unicode == letter) {
+        shape->paths = g->path;
+        break;
+      }
+      g = g->next;
+    }
+    if (!g) {
+      //missing glyph
+      NSVGglyph* g = fontSVG->missingGlyph;
+      shape->paths = g->path;
+    }
+    //fill shape
+    shape->fill.type = NSVG_PAINT_NONE;
+    shape->stroke.type = NSVG_PAINT_COLOR;
+    shape->stroke.color = 255 << 24; //black
+    shape->flags = NSVG_FLAGS_VISIBLE;
+    nsvg__xformIdentity(shape->xform);
+    shape->bounds[0] = x;
+    shape->bounds[1] = 0;
+    shape->bounds[2] = x + g->horizAdvX;
+    shape->bounds[3] = y + fontSVG->unitsPerEm;
+    x += g->horizAdvX;
+
+    // Add to tail
+    cur = p->image->shapes;
+    while (cur != NULL) {
+      prev = cur;
+      cur = cur->next;
+    }
+    if (prev == NULL)
+      p->image->shapes = shape;
+    else
+      prev->next = shape;
+  }
+
+  //We made an image, then rasterize it
+  rast = nsvgCreateRasterizer();
+  DBG("begin raster text\n");
+  nsvgRasterize(rast, p->image, 0,0,Scale,Scale, (UINT8*)TextBufferXY->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
+  DBG("end raster text\n");
+  nsvgDeleteRasterizer(rast);
+}

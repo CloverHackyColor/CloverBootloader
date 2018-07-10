@@ -2578,6 +2578,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 #undef pr
 #endif
           NSVGrasterizer* rast = nsvgCreateRasterizer();
+          NSVGparser* p;
           
           // load file
           Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
@@ -2585,8 +2586,10 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 //            DrawTextXY(L"No file!", 0, 0, X_IS_CENTER); //Not work here
 //          }
           //Parse XML to vector data
-          SVGimage = nsvgParse((CHAR8*)FileData, "px", 72);
+          p = nsvgParse((CHAR8*)FileData, "px", 72);
+          SVGimage = p->image;
           DBG("Image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
+          FreePool(FileData);
           
           // Rasterize
           NewImage = egCreateImage(Width, Height, TRUE);
@@ -2596,7 +2599,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           ScaleX = Width / SVGimage->width;
           ScaleY = Height / SVGimage->height;
           Scale = (ScaleX > ScaleY)?ScaleY:ScaleX;
+          DBG("timing rasterize start\n");
           nsvgRasterize(rast, SVGimage, 0,0,Scale,Scale, (UINT8*)NewImage->PixelData, Width, Height, Width*4, NULL, NULL);
+          DBG("timing rasterize end\n");
           //now show it!
           BltImageAlpha(NewImage,
                         (UGAWidth - Width) / 2,
@@ -2604,9 +2609,34 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
                         &MenuBackgroundPixel,
                         16);
           egFreeImage(NewImage);
-          FreePool(rast);
-          nsvgDelete(SVGimage);
+          nsvg__deleteParser(p);
+          nsvgDeleteRasterizer(rast);
+          
+          //Test text
+          Height = 60;
+          DBG("create textbuffer\n");
+          EG_IMAGE* TextBufferXY = egCreateFilledImage(UGAWidth-20, Height, TRUE, &MenuBackgroundPixel);
+          Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
+          DBG("font loaded status=%r\n", Status);
+          p = nsvgParse((CHAR8*)FileData, "px", 72);
+          if (!p) {
+            DBG("font not parsed\n");
+            break;
+          }
+          NSVGfont* fontSVG = p->font;
+          DBG("font parsed\n");
           FreePool(FileData);
+       //   Scale = Height / fontSVG->unitsPerEm;
+          drawSVGtext(TextBufferXY, fontSVG, L"Clover");
+          DBG("text ready to blit\n");
+          BltImageAlpha(TextBufferXY,
+                        10,
+                        (UGAHeight - Height) / 2,
+                        &MenuBackgroundPixel,
+                        16);
+          egFreeImage(TextBufferXY);
+          nsvg__deleteParser(p);
+          DBG("draw finished\n");
         } while (0);
          break;
 
