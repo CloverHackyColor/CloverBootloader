@@ -3132,6 +3132,8 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
 */
   int i;
   NSVGglyph *glyph;
+  NSVGpath* lastPath = p->plist; //cache path chain before glyph
+  p->plist = NULL;
   
   glyph = (NSVGglyph*)AllocateZeroPool(sizeof(NSVGglyph));
   if (!glyph) {
@@ -3154,10 +3156,12 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
   }
  
   nsvg__parsePath(p, dict);
-  if (p->plist) {
+  while (p->plist) { //propose we have new path list
     glyph->path = p->plist; //current path
-    p->plist = p->plist->next; //out of list
+    p->plist = p->plist->next; //next path for the glyph
+    glyph->path->next = p->plist;
   }
+  p->plist = lastPath;
   
   if (p->font) {
     if (missing) {
