@@ -1601,6 +1601,15 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text)
       NSVGglyph* g = fontSVG->missingGlyph;
       shape->paths = g->path;
     }
+    if (!shape->paths) {
+      if (g) {
+        x += g->horizAdvX;
+      }
+      if (shape) {
+        FreePool(shape);
+      }
+      continue;
+    }
     //fill shape
     shape->fill.type = NSVG_PAINT_NONE;
     shape->stroke.type = NSVG_PAINT_COLOR;

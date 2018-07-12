@@ -3144,13 +3144,19 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
     if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
       if (strcmp(dict[i], "unicode") == 0) {
         glyph->unicode = nsvg__parseUnicode(dict[i+1]);
-      }
+      } else
       if (strcmp(dict[i], "horiz-adv-x") == 0) {
         glyph->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]); // AsciiStrToFloat(dict[i+1], NULL, &X);
-      }
+      } else
       if (strcmp(dict[i], "glyph-name") == 0) {
         strncpy(glyph->name, dict[i+1], 16);
         glyph->name[15] = '\0';
+        if (strcmp(dict[i+1], "nonmarkingreturn") == 0) {
+          glyph->unicode = L'\n';
+        } else
+          if (strcmp(dict[i+1], ".notdef") == 0) {
+            missing = TRUE;
+          }
       }
     }
   }
