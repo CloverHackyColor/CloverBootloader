@@ -2543,13 +2543,13 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 */
       case SCAN_F8:
         do {
-          NSVGimage       *SVGimage;
+          
           EFI_STATUS      Status;
           UINT8           *FileData = NULL;
           UINTN           FileDataLength = 0;
-          EG_IMAGE        *NewImage;
+          
           INTN Width = 400, Height = 400;
-          float Scale,ScaleX, ScaleY;
+          
 #if TEST_MATH
           //Test mathematique
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
@@ -2577,15 +2577,20 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           }
 #undef pr
 #endif
-          NSVGrasterizer* rast = nsvgCreateRasterizer();
-          NSVGparser* p;
           
+          NSVGparser* p;
+#if TEST_SVG_IMAGE
+          NSVGrasterizer* rast = nsvgCreateRasterizer();
+          EG_IMAGE        *NewImage;
+          NSVGimage       *SVGimage;
+          float Scale, ScaleX, ScaleY;
           // load file
           Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
 //          if (EFI_ERROR(Status)) {
 //            DrawTextXY(L"No file!", 0, 0, X_IS_CENTER); //Not work here
 //          }
           //Parse XML to vector data
+
           p = nsvgParse((CHAR8*)FileData, "px", 72);
           SVGimage = p->image;
           DBG("Image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
@@ -2611,11 +2616,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           egFreeImage(NewImage);
           nsvg__deleteParser(p);
           nsvgDeleteRasterizer(rast);
-          
+#endif
           //Test text
-          Height = 60;
+          Height = 260;
+          Width = UGAWidth-200;
           DBG("create textbuffer\n");
-          EG_IMAGE* TextBufferXY = egCreateFilledImage(UGAWidth-20, Height, TRUE, &MenuBackgroundPixel);
+          EG_IMAGE* TextBufferXY = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
           Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
           DBG("font loaded status=%r\n", Status);
           p = nsvgParse((CHAR8*)FileData, "px", 72);
@@ -2630,7 +2636,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
           drawSVGtext(TextBufferXY, fontSVG, L"Clover");
           DBG("text ready to blit\n");
           BltImageAlpha(TextBufferXY,
-                        10,
+                        (UGAWidth - Width) / 2,
                         (UGAHeight - Height) / 2,
                         &MenuBackgroundPixel,
                         16);

@@ -602,8 +602,13 @@ static void nsvg__resetPath(NSVGparser* p)
 static void nsvg__addPoint(NSVGparser* p, float x, float y)
 {
   if (p->npts+1 > p->cpts) {
-    p->cpts = p->cpts ? p->cpts*2 : 8;
-    p->pts = (float*)ReallocatePool(p->cpts*sizeof(float), p->cpts*2*sizeof(float), p->pts);
+    if (p->cpts == 0) {
+      p->cpts = 8;
+      p->pts = (float*)AllocatePool(8 * sizeof(float));
+    } else {
+      p->pts = (float*)ReallocatePool(p->cpts*sizeof(float), p->cpts*2*sizeof(float), p->pts);
+      p->cpts *= 2;
+    }
     if (!p->pts) return;
   }
   p->pts[p->npts*2+0] = x;
@@ -2802,6 +2807,8 @@ static void nsvg__parseIMAGE(NSVGparser* p, const char** attr)
     shape->bounds[1] = y;
     shape->bounds[2] = x+w;
     shape->bounds[3] = y+h;
+    
+    nsvg__xformIdentity(shape->xform);
 
     // Set flags
     shape->flags = (attr->visible ? NSVG_FLAGS_VISIBLE : 0x00);
@@ -2966,9 +2973,13 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   grad = p->gradients;
   if (grad == NULL) return;
 
-  nsize = sizeof(NSVGgradientStop)*grad->nstops;
-  grad->nstops++;
-  grad->stops = (NSVGgradientStop*)ReallocatePool(nsize, sizeof(NSVGgradientStop)*grad->nstops, grad->stops);
+  nsize = sizeof(NSVGgradientStop) * grad->nstops;
+  if (nsize == 0) {
+    grad->stops = (NSVGgradientStop*)AllocatePool(sizeof(NSVGgradientStop));
+  } else {
+    grad->nstops++;
+    grad->stops = (NSVGgradientStop*)ReallocatePool(nsize, sizeof(NSVGgradientStop)*grad->nstops, grad->stops);
+  }
   if (grad->stops == NULL) return;
 
   // Insert
@@ -2985,8 +2996,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   }
 
   stop = &grad->stops[idx];
-  stop->color = curAttr->stopColor;
-  stop->color |= (unsigned int)(curAttr->stopOpacity*255) << 24;
+  stop->color = ((unsigned int)(curAttr->stopOpacity*255) << 24) | curAttr->stopColor;
   stop->offset = curAttr->stopOffset;
 }
 
@@ -3088,6 +3098,8 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
         AsciiStrToFloat((const char*)Next, &Next, &font->bbox[1]);
         AsciiStrToFloat((const char*)Next, &Next, &font->bbox[2]);
         AsciiStrToFloat((const char*)Next, &Next, &font->bbox[3]);
+        DBG("font bbox=[%d,%d,%d,%d]\n",
+            (int)font->bbox[0], (int)font->bbox[1], (int)font->bbox[2], (int)font->bbox[3]);
       }
       else if (strcmp(dict[i], "unicode-range") == 0) {
         const char * a = dict[i + 1];
@@ -3166,6 +3178,7 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
     glyph->path = p->plist; //current path
     p->plist = p->plist->next; //next path for the glyph
     glyph->path->next = p->plist;
+//    DBG("Glyph parsed to %d points\n", glyph->path->npts);
   }
   p->plist = lastPath;
   
