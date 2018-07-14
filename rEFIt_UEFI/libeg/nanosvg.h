@@ -63,7 +63,9 @@ enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,
   NSVG_PAINT_COLOR = 1,
   NSVG_PAINT_LINEAR_GRADIENT = 2,
-  NSVG_PAINT_RADIAL_GRADIENT = 3
+  NSVG_PAINT_RADIAL_GRADIENT = 3,
+  NSVG_PAINT_CONIC_GRADIENT = 4,
+  NSVG_PAINT_GRADIENT_LINK = 5
 };
 
 enum NSVGspreadType {
@@ -93,6 +95,12 @@ enum NSVGflags {
   NSVG_FLAGS_VISIBLE = 0x01
 };
 
+typedef struct NSVGgradientLink {
+  char id[64];
+  float xform[6];
+} NSVGgradientLink;
+
+
 typedef struct NSVGgradientStop {
   unsigned int color;
   float offset;
@@ -110,6 +118,7 @@ typedef struct NSVGpaint {
   union {
     unsigned int color;
     NSVGgradient* gradient;
+    NSVGgradientLink* gradientLink;
   };
   char type;
   void* pad; //alignment
