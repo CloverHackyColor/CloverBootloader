@@ -73,15 +73,15 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook", "1.0", "451211MEF5X", "MacBook-White",
     { 0x01, 0x60, 0x0f, 0, 0, 0x06 },  "k87", "k87", 0x7a002 }, // need ECPI
   //MacBook8,1
-  { "MacBook8,1", "MB81.88Z.0173.B00.1804091715", "Mac-BE0E8AC46FE800CC", // Intel Core M-5Y51 @ 1.20 GHz
+  { "MacBook8,1", "MB81.88Z.0174.B00.1806051659", "Mac-BE0E8AC46FE800CC", // Intel Core M-5Y51 @ 1.20 GHz
     "MacBook", "1.0", "C02RCE58GCN3", "MacBook-Aluminum",
     { 0x02, 0x25, 0x0f, 0, 0, 0x87 },  "j92", "j92", 0xf0e007 },
   //MacBook9,1
-  { "MacBook9,1", "MB91.88Z.0169.B00.1805021829", "Mac-9AE82516C7C6B903", // Intel Core m5-6Y54 @ 1.20 GHz
+  { "MacBook9,1", "MB91.88Z.0172.B00.1806261148", "Mac-9AE82516C7C6B903", // Intel Core m5-6Y54 @ 1.20 GHz
     "MacBook", "1.0", "C02RM408HDNK", "MacBook-Aluminum",
     { 0x02, 0x35, 0x0f, 0, 1, 0x05 },  "j93", "j93", 0xf0e007 }, // need ECPI
   //MacBook10,1
-  { "MacBook10,1", "MB101.88Z.0161.B00.1804091553", "Mac-EE2EBD4B90B839A8", // Intel Core i5-7Y54 @ 1.30 GHz
+  { "MacBook10,1", "MB101.88Z.0163.B00.1806260755", "Mac-EE2EBD4B90B839A8", // Intel Core i5-7Y54 @ 1.30 GHz
     "MacBook", "1.0", "C02TQHACHH27", "MacBook-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need ECPI
   //MacBookPro1,1
@@ -181,41 +181,49 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02LSHACFR1M", "MacBook-Aluminum",
     { 0x02, 0x19, 0x0f, 0, 0, 0x12 },  "j45g", "j45g", 0xf0d007 },
   //MacBookPro11,4
-  { "MacBookPro11,4", "MBP114.88Z.0183.B00.1804091616", "Mac-06F11FD93F0323C5", // Intel Core i7-4770HQ @ 2.20 GHz
+  { "MacBookPro11,4", "MBP114.88Z.0184.B00.1806051659", "Mac-06F11FD93F0323C5", // Intel Core i7-4770HQ @ 2.20 GHz
     "MacBook Pro", "1.0", "C02SNHACG8WN", "MacBook-Aluminum",
     { 0x02, 0x29, 0x0f, 0, 0, 0x23 },  "NA", "NA", 0xf0b007 }, // need rBR RPlt ECPI
   //MacBookPro11,5
-  { "MacBookPro11,5", "MBP114.88Z.0183.B00.1804091616", "Mac-06F11F11946D27C5", // Intel Core i7-4870HQ @ 2.50 GHz
+  { "MacBookPro11,5", "MBP114.88Z.0184.B00.1806051659", "Mac-06F11F11946D27C5", // Intel Core i7-4870HQ @ 2.50 GHz
     "MacBook Pro", "1.0", "C02LSHACG85Y", "MacBook-Aluminum",
     { 0x02, 0x30, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0xf0b007 }, // need rBR RPlt ECPI
   //MacBookPro12,1
-  { "MacBookPro12,1", "MBP121.88Z.0176.B00.1804091715", "Mac-E43C1C25D4880AD6", // Intel Core i5-5257U @ 2.70 GHz
+  { "MacBookPro12,1", "MBP121.88Z.0177.B00.1806051659", "Mac-E43C1C25D4880AD6", // Intel Core i5-5257U @ 2.70 GHz
     "MacBook Pro", "1.0", "C02Q51OSH1DP", "MacBook-Aluminum",
     { 0x02, 0x28, 0x0f, 0, 0, 0x07 },  "j52", "j52", 0xf01008 },
   //MacBookPro13,1
-  { "MacBookPro13,1", "MBP131.88Z.0220.B00.1804091552", "Mac-473D31EABEB93F9B", // Intel Core i5-6360U @ 2.00 GHz
+  { "MacBookPro13,1", "MBP131.88Z.0223.B00.1806260754", "Mac-473D31EABEB93F9B", // Intel Core i5-6360U @ 2.00 GHz
     "MacBook Pro", "1.0", "C02SLHACGVC1", "MacBook-Aluminum",
     { 0x02, 0x36, 0x0f, 0, 0, 0x97 },  "2016mb", "j130", 0xf02009 }, // need ECPI
   //MacBookPro13,2
-  { "MacBookPro13,2", "MBP132.88Z.0244.B00.1804091703", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
+  { "MacBookPro13,2", "MBP132.88Z.0247.B00.1806260901", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
     "MacBook Pro", "1.0", "C02SLHACGYFH", "MacBook-Aluminum",
     { 0x02, 0x37, 0x0f, 0, 0, 0x20 },  "2016mb", "j79", 0xf02009 },
   //MacBookPro13,3
-  { "MacBookPro13,3", "MBP133.88Z.0244.B00.1804091703", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
+  { "MacBookPro13,3", "MBP133.88Z.0247.B00.1806261159", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
     "MacBook Pro", "1.0", "C02SLHACGTFN", "MacBook-Aluminum",
     { 0x02, 0x38, 0x0f, 0, 0, 0x07 },  "2016mb", "j80g", 0xf04009 },
   //MacBookPro14,1
-  { "MacBookPro14,1", "MBP141.88Z.0175.B00.1804091553", "Mac-B4831CEBD52A0C4C", // Intel Core i5-7360U @ 2.30 GHz
+  { "MacBookPro14,1", "MBP141.88Z.0178.B00.1806260902", "Mac-B4831CEBD52A0C4C", // Intel Core i5-7360U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02TNHACHV29", "MacBook-Aluminum",
     { 0x02, 0x43, 0x0f, 0, 0, 0x06 },  "2017mbp", "j130a", 0xf0b009 },
   //MacBookPro14,2
-  { "MacBookPro14,2", "MBP142.88Z.0175.B00.1804091703", "Mac-CAD6701F7CEA0921", // Intel Core i5-7267U @ 3.09 GHz
+  { "MacBookPro14,2", "MBP142.88Z.0178.B00.1806260902", "Mac-CAD6701F7CEA0921", // Intel Core i5-7267U @ 3.09 GHz
     "MacBook Pro", "1.0", "C02TQHACHV2N", "MacBook-Aluminum",
     { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2017mbp", "j79a", 0xf09009 },
   //MacBookPro14,3
-  { "MacBookPro14,3", "MBP143.88Z.0175.B00.1804091703", "Mac-551B86E5744E2388", // Intel Core i7-7700HQ @ 2.80 GHz
+  { "MacBookPro14,3", "MBP143.88Z.0178.B00.1806261159", "Mac-551B86E5744E2388", // Intel Core i7-7700HQ @ 2.80 GHz
     "MacBook Pro", "1.0", "C02TQHACHTD5", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2017mbp", "j80ga", 0xf0a009 },
+  //MacBookPro15,1
+  { "MacBookPro15,1", "MBP151.88Z.0178.B00.1806260902", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
+    "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
+    { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2018mbp", "j130b", 0xf0a009 }, // need BIOS REV rBR RPlt ECPI
+  //MacBookPro15,2
+  { "MacBookPro15,2", "MBP152.88Z.0178.B00.1806260902", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
+    "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
+    { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j79b", 0xf09009 }, // need BIOS Serial REV rBR RPlt ECPI
   //MacBookAir1,1
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
@@ -257,11 +265,11 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Air", "1.0", "C02HACKUF5V7", "Air-Enclosure",
     { 0x02, 0x13, 0x0f, 0, 0, 0x15 },  "j41j43", "j43", 0x7b007 },
   //MacBookAir7,1
-  { "MacBookAir7,1", "MBA71.88Z.0177.B00.1804091616", "Mac-9F18E312C5C2BF0B", // Intel Core i5-5250U @ 1.60 GHz
+  { "MacBookAir7,1", "MBA71.88Z.0178.B00.1806051659", "Mac-9F18E312C5C2BF0B", // Intel Core i5-5250U @ 1.60 GHz
     "MacBook Air", "1.0", "C02PCLGFH569", "Air-Enclosure",
     { 0x02, 0x26, 0x0f, 0, 0, 0x02 },  "j110", "j110", 0x7b007 },
   //MacBookAir7,2
-  { "MacBookAir7,2", "MBA71.88Z.0177.B00.1804091616", "Mac-937CB26E2E02BB01", // Intel Core i7-5650U @ 2.20 GHz
+  { "MacBookAir7,2", "MBA71.88Z.0178.B00.1806051659", "Mac-937CB26E2E02BB01", // Intel Core i7-5650U @ 2.20 GHz
     "MacBook Air", "1.0", "C02Q1HACG940", "Air-Enclosure",
     { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0x7b007 }, // need ECPI
   //Macmini1,1
@@ -301,7 +309,7 @@ PLATFORMDATA ApplePlatformData[] =
     "Mac mini", "1.0", "C07JD041DWYN", "Mini-Aluminum",
     { 0x02, 0x08, 0x0f, 0, 0, 0x01 },  "j50s", "j50s", 0x7d006 },
   //Macmini7,1
-  { "Macmini7,1", "MM71.88Z.0231.B00.1804091715", "Mac-35C5E08120C7EEAF", // Intel Core i5-4278U @ 2.60 GHz
+  { "Macmini7,1", "MM71.88Z.0232.B00.1806051659", "Mac-35C5E08120C7EEAF", // Intel Core i5-4278U @ 2.60 GHz
     "Mac mini", "1.0", "C02NN7NHG1J0", "Mini-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 },
   //iMac4,1
@@ -393,7 +401,7 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02Q6HACFY10", "iMac-Aluminum",
     { 0x02, 0x22, 0x0f, 0, 0, 0x16 },  "j78j78am", "j78", 0xf00008 },
   //iMac16,1
-  { "iMac16,1", "IM161.88Z.0219.B00.1804091616", "Mac-A369DDC4E67F1C45", // Intel Core i5-5250U @ 1.60 GHz
+  { "iMac16,1", "IM161.88Z.0220.B00.1806051659", "Mac-A369DDC4E67F1C45", // Intel Core i5-5250U @ 1.60 GHz
     "iMac", "1.0", "C02QQHACGF1J", "iMac-Aluminum",
     { 0x02, 0x31, 0x0f, 0, 0, 0x36 },  "j117", "j117", 0xf00008 }, // need ECPI
   //iMac16,2
@@ -401,19 +409,19 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02PNHACGG7G", "iMac-Aluminum",
     { 0x02, 0x32, 0x0f, 0, 0, 0x20 },  "j94", "j94", 0xf00008 }, // need ECPI
   //iMac17,1
-  { "iMac17,1", "IM171.88Z.0154.B00.1805021829", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
+  { "iMac17,1", "IM171.88Z.0157.B00.1806261148", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
     "iMac17,1", "1.0", "C02QFHACGG7L", "iMac-Aluminum",
     { 0x02, 0x33, 0x0f, 0, 0, 0x10 },  "j95j95am", "j95", 0xf0c008 }, //Note: i5 but for i7 { 0x02, 0x34, 0x0F, 0, 0, 0x02 }
   //iMac18,1
-  { "iMac18,1", "IM181.88Z.0158.B00.1804091703", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
+  { "iMac18,1", "IM181.88Z.0161.B00.1806260901", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",
     { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "NA", 0xf07009 }, // need RPlt ECPI
   //iMac18,2
-  { "iMac18,2", "IM183.88Z.0158.B00.1804091704", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
+  { "iMac18,2", "IM183.88Z.0161.B00.1806260901", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
     "iMac", "1.0", "C02TDHACJ1G5", "iMac-Aluminum",
     { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "NA", 0xf07009 }, // need RPlt ECPI
   //iMac18,3
-  { "iMac18,3", "IM183.88Z.0158.B00.1804091704", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
+  { "iMac18,3", "IM183.88Z.0161.B00.1806260901", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
   //iMacPro1,1
@@ -560,7 +568,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      ApplePlatformData[Model].chassisAsset);
 
-  // Firmware info for High Sierra 10.13
+  // Firmware info for High Sierra 10.13+
   // by Sherlocks
   // FirmwareFeatures
   switch (Model) {
@@ -614,6 +622,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro132:
     case MacBookPro141:
     case MacBookPro142:
+    case MacBookPro151:
+    case MacBookPro152:
     case iMac171:
     case iMac181:
     case iMac182:
@@ -696,6 +706,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
+    case MacBookPro151:
+    case MacBookPro152:
     case MacBookAir41:
     case MacBookAir42:
     case MacBookAir51:
@@ -805,6 +817,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
+    case MacBookPro151:
+    case MacBookPro152:
       gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
       break;
 
@@ -876,6 +890,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
+    case MacBookPro151:
+    case MacBookPro152:
     case iMac161:
     case iMac162:
     case iMac171:

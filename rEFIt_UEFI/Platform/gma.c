@@ -776,6 +776,10 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3EA7, "Intel Coffee Lake GT3"          }, //
   { 0x3EA8, "Intel Coffee Lake GT3"          }, //
 
+  //----------------Amber Lake----------------
+  //GT2
+  { 0x87C0, "Intel UHD Graphics 615"         }, // Mobile
+
   //----------------Gemini Lake---------------
   { 0x3184, "Intel UHD Graphics 605"         }, //
   { 0x3185, "Intel UHD Graphics 600"         }, //
@@ -2500,6 +2504,10 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3EA6: // "Intel Coffee Lake GT3"           //
     case 0x3EA7: // "Intel Coffee Lake GT3"           //
     case 0x3EA8: // "Intel Coffee Lake GT3"           //
+
+      //----------------Amber Lake----------------
+      //GT2
+    case 0x87C0: // "Intel UHD Graphics 615"          // Mobile
       switch (gma_dev->device_id) {
         case 0x5902:
         case 0x5906:
@@ -2563,6 +2571,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x591E:
+        case 0x87C0:
           if (!SetFake) {
             FakeID = 0x591E8086 >> 16;
             DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2646,11 +2655,24 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
             default:
               break;
           }
-          // Rehabman: GfxYTile causes a hang on boot in 10.14 beta when using Kaby Lake-R UHD Graphics
-          if (os_version < AsciiOSVersionToUint64("10.14")) {
-            devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
+          switch (gma_dev->device_id) {
+            case 0x5917:
+            case 0x3E90:
+            case 0x3E93:
+            case 0x3E91:
+            case 0x3E92:
+            case 0x3E9B:
+            case 0x3EA5:
+            case 0x87C0:
+              // Rehabman: GfxYTile causes a hang on boot in 10.14 beta when using Kaby Lake-R UHD Graphics 620
+              if (os_version < AsciiOSVersionToUint64("10.14")) {
+                devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
+              }
+              break;
+            default:
+              devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
+              break;
           }
-          break;
       }
       break;
 
