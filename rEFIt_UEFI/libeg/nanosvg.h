@@ -30,6 +30,7 @@
  * boris-ulyanov - style processing
  * jamislike - basic text parsing
  * darealshinji - multiple improvements
+ * MalcolmMcLean - forwards differencing to flatten Bezier - improve speed
  *
 */
 // Adoptation to Clover project by Slice, 2018
@@ -121,7 +122,7 @@ typedef struct NSVGpaint {
     NSVGgradientLink* gradientLink;
   };
   char type;
-  void* pad; //alignment
+  char pad[7]; //alignment
 } NSVGpaint;
 
 typedef struct NSVGpath
@@ -129,6 +130,7 @@ typedef struct NSVGpath
   float* pts;          // Cubic bezier points: x0,y0, [cpx1,cpx1,cpx2,cpy2,x1,y1], ...
   int npts;          // Total number of bezier points.
   char closed;        // Flag indicating if shapes should be treated as closed.
+  char pad[3];
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   struct NSVGpath* next;    // Pointer to next path, or NULL if last element.
 } NSVGpath;
@@ -156,9 +158,11 @@ typedef struct NSVGshape
   char strokeDashCount;        // Number of dash values in dash array.
   char strokeLineJoin;    // Stroke join type.
   char strokeLineCap;      // Stroke cap type.
+  char pad0[5];
   float miterLimit;      // Miter limit
   char fillRule;        // Fill rule, see NSVGfillRule.
   unsigned char flags;    // Logical or of NSVG_FLAGS_* flags (NSVG_FLAGS_VISIBLE=1)
+  char pad1[2];
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
   NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
@@ -169,6 +173,7 @@ typedef struct NSVGshape
 //  char fontWeight[64];
 //  float fontSize;
   BOOLEAN isText;
+  char pad2[7];
 //  CHAR16 textData[kMaxTextLength];
   const char *image_href;
 } NSVGshape;
