@@ -2118,6 +2118,7 @@ DBG("XhcResetHC\n");
   XhcResetHC (Xhc, XHC_RESET_TIMEOUT);
 //  ASSERT (XhcIsHalt (Xhc));
   if (!XhcIsHalt (Xhc)) {
+    Status = EFI_DEVICE_ERROR;
     goto FREE_POOL;
   }
 
@@ -2128,6 +2129,7 @@ DBG("XhcResetHC\n");
 //  ASSERT (!(XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)));
   if (XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_CNR)) {
     DBG("Xhci USBSTS bit is set\n");
+    Status = EFI_DEVICE_ERROR;
     goto FREE_POOL;
   }
 

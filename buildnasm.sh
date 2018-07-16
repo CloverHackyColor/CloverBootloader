@@ -163,7 +163,7 @@ fnCompileNasm ()
     local cmd logfile
     cd "$NASM_DIR"
     echo "-  nasm-${NASM_VERSION} configure..."
-    cmd="${NASM_DIR}/configure $NASM_CONFIG"
+    cmd="LDFLAGS=\"-dead_strip\" ${NASM_DIR}/configure $NASM_CONFIG"
     logfile="$DIR_LOGS/nasm.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
@@ -181,7 +181,7 @@ fnCompileNasm ()
         exit 1
     fi
     echo "-  nasm-${NASM_VERSION} installing..."
-    cmd="make install"
+    cmd="strip nasm ndisasm && make install"
     logfile="$DIR_LOGS/nasm.install.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1

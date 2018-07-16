@@ -27,7 +27,7 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.27}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.31}
 export GCC_VERSION=${GCC_VERSION:-8.1.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
@@ -160,10 +160,10 @@ DownloadSource () {
         mv download.tmp ${ISL_VERSION}.tar.xz
     fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ]]; then
+    if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 || exit 1
-        mv download.tmp ${BINUTILS_VERSION}.tar.bz2
+        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.xz || exit 1
+        mv download.tmp ${BINUTILS_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
@@ -327,13 +327,13 @@ CompileBinutils () {
     export BUILD_BINUTILS_DIR=${DIR_BUILD}/$ARCH-binutils
 
     # Extract the tarball
-    local BINUTILS_DIR=$(ExtractTarball "${BINUTILS_VERSION}.tar.bz2")
+    local BINUTILS_DIR=$(ExtractTarball "${BINUTILS_VERSION}.tar.xz")
 
     # Binutils build
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "- ${BINUTILS_VERSION} configure..."
-    local cmd="${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check"
+    local cmd="LDFLAGS=\"-dead_strip\" ${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check --disable-nls --enable-deterministic-archives --with-mmap --with-system-zlib"
     local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
@@ -346,7 +346,7 @@ CompileBinutils () {
         echo "Error compiling ${BINUTILS_VERSION} ! Check the log $logfile"
         exit 1
     fi
-    cmd="make install"
+    cmd="make install-strip"
     logfile="$DIR_LOGS/binutils.$ARCH.install.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
@@ -382,7 +382,7 @@ GCC_native () {
 
         export CXXFLAGS="-O2 -I$PREFIX/include -I$PREFIX/sdk/include"
         export CFLAGS="-O2 -I$PREFIX/include -I$PREFIX/sdk/include"
-        export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib"
+        export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip"
 
 
         local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check"
@@ -459,7 +459,7 @@ CompileCrossGCC () {
     export CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
     export CXXFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
     export CXXCPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
-    export LDFLAGS="-Os -L$PREFIX/lib -L$PREFIX/sdk/lib"
+    export LDFLAGS="-Os -L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip"
     export BOOT_CFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
     export BOOT_CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
 
@@ -468,7 +468,7 @@ CompileCrossGCC () {
 
     echo "- gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
-    make install-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
+    make install-strip-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
 
     unset CFLAGS
     unset CPPFLAGS

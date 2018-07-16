@@ -203,9 +203,9 @@ if [[ "$nasmUpdate" == "Yes" ]]; then
   echoc "Building nasm V${NASM_VERSION}" green
   tar -zxf $tarball
   cd nasm-${NASM_VERSION}
-  ./configure --prefix=${PREFIX} 1> /dev/null 2> $DIR_LOGS/$tarball.config.log.txt
+  LDFLAGS="-dead_strip" ./configure --prefix=${PREFIX} 1> /dev/null 2> $DIR_LOGS/$tarball.config.log.txt
   make CC=clang 1> /dev/null 2> $DIR_LOGS/$tarball.make.log.txt
-  cp nasm ${PREFIX}/bin/
+  strip nasm && cp nasm ${PREFIX}/bin/
   rm -Rf ${DIR_DOWNLOADS}/nasm-${NASM_VERSION}
   echo
 fi
