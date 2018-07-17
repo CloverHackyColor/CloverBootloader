@@ -2578,6 +2578,27 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 #undef pr
 #endif
 #define TEST_SVG_IMAGE 1
+#define TEST_SIZEOF 0
+#if TEST_SIZEOF
+          DBG("sizeof(NSVGgradient)=%d\n", sizeof(NSVGgradient));
+          DBG("sizeof(NSVGpaint)=%d\n", sizeof(NSVGpaint));
+          DBG("sizeof(NSVGpath)=%d\n", sizeof(NSVGpath));
+          DBG("sizeof(NSVGgroup)=%d\n", sizeof(NSVGgroup));
+          DBG("sizeof(NSVGshape)=%d\n", sizeof(NSVGshape));
+          DBG("sizeof(NSVGimage)=%d\n", sizeof(NSVGimage));
+          DBG("sizeof(NSVGcoordinate)=%d\n", sizeof(NSVGcoordinate));
+          DBG("sizeof(NSVGgradientData)=%d\n", sizeof(NSVGgradientData));
+          DBG("sizeof(NSVGattrib)=%d\n", sizeof(NSVGattrib));
+          DBG("sizeof(NSVGparser)=%d\n", sizeof(NSVGparser));
+          DBG("sizeof(NSVGglyph)=%d\n", sizeof(NSVGglyph));
+          DBG("sizeof(NSVGfont)=%d\n", sizeof(NSVGfont));
+          DBG("sizeof(NSVGedge)=%d\n", sizeof(NSVGedge));
+          DBG("sizeof(NSVGpoint)=%d\n", sizeof(NSVGpoint));
+          DBG("sizeof(NSVGactiveEdge)=%d\n", sizeof(NSVGactiveEdge));
+          DBG("sizeof(NSVGmemPage)=%d\n", sizeof(NSVGmemPage));
+          DBG("sizeof(NSVGcachedPaint)=%d\n", sizeof(NSVGcachedPaint));
+          DBG("sizeof(int)=%d\n", sizeof(int));
+#endif
           NSVGparser* p;
 #if TEST_SVG_IMAGE
           NSVGrasterizer* rast = nsvgCreateRasterizer();

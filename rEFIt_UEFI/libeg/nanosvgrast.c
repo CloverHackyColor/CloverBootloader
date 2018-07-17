@@ -67,7 +67,7 @@
 #define atan2f(x,y) Atan2F(x,y)
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
 
-#define MALCOLM 1
+#define MALCOLM 0
 
 /*
  NSVGedge* edges;
@@ -269,7 +269,7 @@ static void nsvg__duplicatePoints(NSVGrasterizer* r)
   if (r->npoints) {
     memcpy(r->points2, r->points, sizeof(NSVGpoint) * r->npoints);
   }
-	
+
 	r->npoints2 = r->npoints;
 }
 
@@ -382,7 +382,7 @@ static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 
 	pointX = dx;
 	pointY = dy;
-  
+
   firstFDX = ((ax * h + bx) * h + cx) * h;
   firstFDY = ((ay * h + by) * h + cy) * h;
 
@@ -391,7 +391,7 @@ static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 
   thirdFDX = 6.0f * ax * h3;
   thirdFDY = 6.0f * ay * h3;
-  
+
 	/* Compute points at each step */
 	for (i = 0; i < N-1; i++)  {
 		nsvg__addPathPoint(r, pointX, pointY, 0);
@@ -453,17 +453,19 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float scalex
   scaley *= shape->xform[3];
   float dx = shape->xform[4];
   float dy = shape->xform[5];
-  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
-  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)dx, (int)dy);
+//  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
+  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)(dx*1000.0f), (int)(dy*1000.0f));
 	for (path = shape->paths; path != NULL; path = path->next) {
 		r->npoints = 0;
 		// Flatten path
 //    DBG("npts=%d\n", path->npts);
-		nsvg__addPathPoint(r, (path->pts[0] + dx)*scalex, (path->pts[1] + dy)*scaley, 0);
-		for (i = 0; i < path->npts-1; i += 3) {
-			float* p = &path->pts[i*2];
-			nsvg__flattenCubicBez(r, (p[0]+dx)*scalex, (p[1]+dy)*scaley, (p[2]+dx)*scalex, (p[3]+dy)*scaley, (p[4]+dx)*scalex, (p[5]+dy)*scaley, (p[6]+dx)*scalex, (p[7]+dy)*scaley, 0, 0);
-		}
+    DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
+    nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, 0);
+    for (i = 0; i < path->npts-1; i += 3) {
+      float* p = &path->pts[i*2];
+      nsvg__flattenCubicBez(r, (p[0]+dx)*scalex, (p[1]+dy)*scaley, (p[2]+dx)*scalex, (p[3]+dy)*scaley, (p[4]+dx)*scalex, (p[5]+dy)*scaley, (p[6]+dx)*scalex, (p[7]+dy)*scaley, 0, 0);
+    }
+
 		// Close path
 		nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, 0);
 //    DBG("npoints=%d\n", r->npoints);
@@ -831,7 +833,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float 
   float dy = shape->xform[5];
   DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
   //scalex*1000=115 scaley*1000=-115
-  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)dx, (int)dy);
+  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)(dx*1000.f), (int)(dy*1000.f));
   //shiftx*1000=0 shifty*1000=222
   path = shape->paths;
   DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
@@ -1406,11 +1408,11 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, float opac
 				u += du;
 			}
 		}
-    /*
+/*
     DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
         cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
         cache->colors[200], cache->colors[250]);
-     */
+*/
 		for (i = ib; i < 256; i++)  //tail
 			cache->colors[i] = cb;
 	}
@@ -1473,8 +1475,8 @@ void nsvgRasterize(NSVGrasterizer* r,
 	r->width = w;
 	r->height = h;
 	r->stride = stride;
-  DBG("scanline=%d, rwidth=%d\n", r->cscanline, r->width);
-  
+//  DBG("scanline=%d, rwidth=%d\n", r->cscanline, r->width);
+
 	if (w > r->cscanline) {
     int oldw = r->cscanline;
     r->cscanline = w;
@@ -1485,11 +1487,11 @@ void nsvgRasterize(NSVGrasterizer* r,
     }
 		if (r->scanline == NULL) return;
 	}
-  
+
 
 	for (i = 0; i < h; i++)
 		memset(&dst[i*stride], 0, w*4);
-  DBG("first shape=%x\n", image->shapes);
+//  DBG("first shape=%x\n", image->shapes);
 
 	for (shape = image->shapes; shape != NULL; shape = shape->next) {
 		if (!(shape->flags & NSVG_FLAGS_VISIBLE))
@@ -1510,9 +1512,9 @@ void nsvgRasterize(NSVGrasterizer* r,
 			nsvg__resetPool(r);
 			r->freelist = NULL;
 			r->nedges = 0;
-      
+
 			nsvg__flattenShape(r, shape, scalex, scaley);
-      DBG("shape %s, edges=%d\n", (CHAR16*)(shape->id), r->nedges);
+      DBG("shape %a, edges=%d\n", (CHAR8*)(shape->id), r->nedges);
 			// Scale and translate edges
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];
@@ -1668,7 +1670,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text)
     shape->bounds[1] = fontSVG->bbox[1];
     shape->bounds[2] = fontSVG->bbox[2];
     shape->bounds[3] = fontSVG->bbox[3];
-    
+
     x += g->horizAdvX;
     shape->strokeLineJoin = NSVG_JOIN_MITER;
     shape->strokeLineCap = NSVG_CAP_BUTT;

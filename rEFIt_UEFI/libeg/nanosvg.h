@@ -30,7 +30,7 @@
  * boris-ulyanov - style processing
  * jamislike - basic text parsing
  * darealshinji - multiple improvements
- * MalcolmMcLean - forwards differencing to flatten Bezier - improve speed
+ * MalcolmMcLean - forwards differencing to flatten Bezier, binary search color name - improve speed
  *
 */
 // Adoptation to Clover project by Slice, 2018
@@ -341,6 +341,7 @@ typedef struct NSVGfont {
   char fontStretch; //normal, ...
   char fontStyle; //light, italic, bold
   // -- glyphs
+  char pad[2];
   NSVGglyph* missingGlyph;
   NSVGglyph* glyphs; // a chain
 } NSVGfont;
@@ -404,6 +405,7 @@ typedef struct NSVGpoint {
   float len;
   float dmx, dmy;
   unsigned char flags;
+  char pad[3];
 } NSVGpoint;
 
 typedef struct NSVGactiveEdge {
@@ -422,6 +424,7 @@ typedef struct NSVGmemPage {
 typedef struct NSVGcachedPaint {
   char type;
   char spread;
+  char pad[6];
   float xform[6];
   unsigned int colors[256];
 } NSVGcachedPaint;

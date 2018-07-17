@@ -302,7 +302,7 @@ void nsvg__parseXML(char* input,
       nsvg__parseContent(mark, contentCb, ud);
 //      DBG("content element %a parsed\n", mark);
       nsvg__parseElement(mark, startelCb, endelCb, ud);
-      DBG("content element %a parsed\n", mark);
+//      DBG("content element %a parsed\n", mark);
       mark = s;
       state = NSVG_XML_CONTENT;
     } else {
@@ -568,7 +568,9 @@ static void nsvg__deleteGradientData(NSVGgradientData* grad)
   NSVGgradientData* next;
   while (grad != NULL) {
     next = grad->next;
-//    FreePool(grad->stops);
+    if (grad->nstops > 0) {
+      FreePool(grad->stops);
+    }
     FreePool(grad);
     grad = next;
   }
@@ -607,7 +609,7 @@ static void nsvg__resetPath(NSVGparser* p)
 static void nsvg__addPoint(NSVGparser* p, float x, float y)
 {
 //  DBG("enter addPoint\n");
-  if (p->npts+1 > p->cpts) {
+  if (p->npts*2+7 > p->cpts) {
 //    DBG("npts=%d, cpts=%d\n", p->npts, p->cpts);
     if ((p->cpts == 0) || !p->pts) {
       p->cpts = 8;
@@ -1047,8 +1049,25 @@ static void nsvg__addPath(NSVGparser* p, char closed)
 
   if (p->npts < 4)
     return;
+  /*
+  if (closed == -1) { //reversed order
+   INTN N;
+    N = p->npts - 1;
+    float x,y;
+    for (i = 0; i < p->npts/2; ++i) {
+      x = path->pts[i*2];
+      path->pts[i*2] = path->pts[(N-i)*2];
+      path->pts[(N-i)*2] = x;
+      y = path->pts[i*2+1];
+      path->pts[i*2+1] = path->pts[(N-i)*2+1];
+      path->pts[(N-i)*2+1] = y;
+    }
+    closed = 1;
+  }
+   */
   if (closed)
     nsvg__lineTo(p, p->pts[0], p->pts[1]);
+//  DBG("path=%d\n", sizeof(NSVGpath));
   path = (NSVGpath*)AllocateZeroPool(sizeof(NSVGpath));
   if (path == NULL) {
     return;
@@ -1463,7 +1482,8 @@ NSVGNamedColor nsvg__colors[] = {
 static unsigned int nsvg__parseColorName(const char* str)
 {
   int i, ncolors = sizeof(nsvg__colors) / sizeof(NSVGNamedColor);
-#if MALCOLM
+//  DBG("namedcolor=%d\n", sizeof(NSVGNamedColor));
+#if 0
   for (i = 0; i < ncolors; i++) {
     if (strcmp(nsvg__colors[i].name, str) == 0) {
       return nsvg__colors[i].color;
@@ -1876,6 +1896,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     attr->fillRule = nsvg__parseFillRule(value);
   } else if (strcmp(name, "font-size") == 0) {
     if (!attr->fontFace) {
+//      DBG("font face=%d\n", sizeof(NSVGfont));
       attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
     }
     attr->fontFace->fontSize = nsvg__parseCoordinate(p, value, 0.0f, nsvg__actualLength(p));
@@ -1890,6 +1911,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     attr->stopOffset = nsvg__parseCoordinate(p, value, 0.0f, 1.0f);
   } else if (strcmp(name, "font-family") == 0) {
     if (!attr->fontFace) {
+ //     DBG("font face=%d\n", sizeof(NSVGfont));
       attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
     }
     if (attr->fontFace) {
@@ -2436,8 +2458,11 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
           nsvg__resetPath(p);
           closedFlag = 0;
           nargs = 0;
-        } else if (cmd == 'Z' || cmd == 'z') {
-          closedFlag = 1;
+        } else if (cmd == 'Z' || cmd == 'z' /* || cmd == 'R' */) {
+    /*     if (cmd == 'R') {
+            closedFlag = -1;
+          } else */
+            closedFlag = 1;
           // Commit path.
           if (p->npts > 0) {
             // Move current point to first point
@@ -2976,7 +3001,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   NSVGattrib* curAttr = nsvg__getAttr(p);
   NSVGgradientData* grad;
   NSVGgradientStop* stop;
-  int i, idx, nsize;
+  int i, idx = 0, nsize;
 
   curAttr->stopOffset = 0;
   curAttr->stopColor = 0;
@@ -2993,6 +3018,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   nsize = sizeof(NSVGgradientStop) * grad->nstops;
   if (nsize == 0) {
     grad->stops = (NSVGgradientStop*)AllocatePool(sizeof(NSVGgradientStop));
+    grad->nstops = 1;
   } else {
     grad->nstops++;
     grad->stops = (NSVGgradientStop*)ReallocatePool(nsize, sizeof(NSVGgradientStop)*grad->nstops, grad->stops);
@@ -3015,6 +3041,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   stop = &grad->stops[idx];
   stop->color = ((unsigned int)(curAttr->stopOpacity*255) << 24) | curAttr->stopColor;
   stop->offset = curAttr->stopOffset;
+  DBG("stop %d, color=%x offset=%d\n", idx, stop->color, stop->offset);
 }
 
 static void nsvg__parseGroup(NSVGparser* p, const char** dict)
@@ -3194,7 +3221,6 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
   nsvg__parsePath(p, dict);
 //  DBG("parseGlyph pathes found %x\n", p->plist);
   while (p->plist) { //propose we have new path list
-//    DBG("path %x\n", p->plist);
     glyph->path = p->plist; //current path
     p->plist = p->plist->next; //next path for the glyph
     glyph->path->next = p->plist;
@@ -3205,7 +3231,17 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
   if (p->font) {
     if (missing) {
       p->font->missingGlyph = glyph;
+      if (!glyph->horizAdvX && p->font->horizAdvX) {
+        p->font->missingGlyph->horizAdvX = p->font->horizAdvX;
+      }
     } else {
+      if (!glyph->horizAdvX) {
+        if (p->font->missingGlyph) {
+          glyph->horizAdvX = p->font->missingGlyph->horizAdvX;
+        } else if (p->font->horizAdvX) {
+          glyph->horizAdvX = p->font->horizAdvX;
+        }
+      }
       glyph->next = p->font->glyphs;
       p->font->glyphs = glyph;
     }
