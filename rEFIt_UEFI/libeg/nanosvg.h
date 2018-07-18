@@ -148,7 +148,7 @@ typedef struct NSVGgroup
 typedef struct NSVGshape
 {
 	char id[kMaxIDLength];				// Optional 'id' attr of the shape
-  char title[kMaxIDLength];        // Optional 'title' of the shape or its ancestor(s)
+//  char title[kMaxIDLength];        // Optional 'title' of the shape or its ancestor(s)
   NSVGpaint fill;        // Fill paint
   NSVGpaint stroke;      // Stroke paint
   float opacity;        // Opacity of the shape.
@@ -168,6 +168,7 @@ typedef struct NSVGshape
   NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
 	NSVGgroup* group;			// Pointer to parent group or NULL
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
+  struct NSVGshape* link;
   struct NSVGfont* fontFace; //one letter - one shape
 //  char fontFamily[64];
 //  char fontWeight[64];
@@ -248,7 +249,7 @@ typedef struct NSVGgradientData
 typedef struct NSVGattrib
 {
   char id[kMaxIDLength];
-  char title[kMaxIDLength];
+//  char title[kMaxIDLength];
   float xform[6];
   unsigned int fillColor;
   unsigned int strokeColor;
@@ -304,7 +305,7 @@ typedef struct NSVGparser
   float dpi;
   char pathFlag;
   char defsFlag;
-  char titleFlag;
+//  char titleFlag;
   char shapeFlag;
   char styleFlag;
 //  char groupFlag;
@@ -347,7 +348,7 @@ typedef struct NSVGfont {
 } NSVGfont;
 
 // Duplicates a path.
-NSVGpath* nsvgDuplicatePath(NSVGpath* p);
+//NSVGpath* nsvgDuplicatePath(NSVGpath* p);
 
 // Parses SVG file from a file, returns SVG image as paths.
 //NSVGimage* nsvgParseFromFile(const char* filename, const char* units, float dpi);
