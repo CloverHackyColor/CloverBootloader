@@ -989,6 +989,20 @@ static void nsvg__addShape(NSVGparser* p)
     shape->paths = p->plist;
     p->plist = NULL;
 //  }
+  
+    shape->clip.count = attr->clipPathCount;
+    if (shape->clip.count > 0) {
+      shape->clip.index = (NSVGclipPathIndex*)AllocateCopyPool(
+                           attr->clipPathCount * sizeof(NSVGclipPathIndex), p->clipPathStack);
+      if (shape->clip.index == NULL) {
+        if (shape) {
+          FreePool(shape);
+        }
+        return;
+      }
+    }
+  
+
 /*
   // Calculate shape bounds
   if(p->isText) {
@@ -1036,6 +1050,9 @@ static void nsvg__addShape(NSVGparser* p)
 		shape->fill.type = NSVG_PAINT_GRADIENT_LINK;
 		shape->fill.gradientLink = nsvg__createGradientLink(attr->fillGradient, attr->xform);
     if (shape->fill.gradientLink == NULL) {
+      if (shape->clip.index) {
+        FreePool(shape->clip.index);
+      }
       FreePool(shape);
       return;
     }
@@ -1051,6 +1068,9 @@ static void nsvg__addShape(NSVGparser* p)
 		shape->stroke.type = NSVG_PAINT_GRADIENT_LINK;
 		shape->stroke.gradientLink = nsvg__createGradientLink(attr->strokeGradient, attr->xform);
     if (shape->stroke.gradientLink == NULL) {
+      if (shape->clip.index) {
+        FreePool(shape->clip.index);
+      }
       FreePool(shape);
       return;
     }
@@ -1058,14 +1078,26 @@ static void nsvg__addShape(NSVGparser* p)
 
   // Set flags
   shape->flags = ((attr->visible & NSVG_VIS_DISPLAY) && (attr->visible & NSVG_VIS_VISIBLE) ? NSVG_FLAGS_VISIBLE : 0x00);
-
+/*
   // Add to tail
   if (p->image->shapes == NULL)
     p->image->shapes = shape;
   else
     p->shapesTail->next = shape;
   p->shapesTail = shape;
-
+ */
+  // Add shape
+  if (p->clipPath != NULL) {
+    shape->next = p->clipPath->shapes;
+    p->clipPath->shapes = shape;
+  } else {
+      // Add to tail
+      if (p->image->shapes == NULL)
+        p->image->shapes = shape;
+      else
+        p->shapesTail->next = shape;
+      p->shapesTail = shape;
+  }
   return;
 }
 
@@ -1849,6 +1881,37 @@ static int nsvg__parseStrokeDashArray(NSVGparser* p, const char* str, float* str
   return count;
 }
 
+static NSVGclipPath* nsvg__createClipPath(const char* name, int index)
+{
+ NSVGclipPath* clipPath = (NSVGclipPath*)AllocateZeroPool(sizeof(NSVGclipPath));
+ if (clipPath == NULL) return NULL;
+ 
+ strncpy(clipPath->id, name, 63);
+ clipPath->id[63] = '\0';
+ clipPath->index = index;
+ return clipPath;
+}
+
+static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
+{
+  int i = 0;
+  NSVGclipPath** link;
+
+  link = &p->image->clipPaths;
+  while (*link != NULL) {
+    if (strcmp((*link)->id, name) == 0) {
+      break;
+    }
+    link = &(*link)->next;
+    i++;
+  }
+  if (*link == NULL) {
+    *link = nsvg__createClipPath(name, i);
+  }
+  return *link;
+}
+
+
 static void nsvg__parseStyle(NSVGparser* p, const char* str);
 
 static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
@@ -1918,6 +1981,13 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "transform") == 0) {
     nsvg__parseTransform(xform, value);
     nsvg__xformMultiply(attr->xform, xform);
+  } else if (strcmp(name, "clip-path") == 0) {
+    if (strncmp(value, "url(", 4) == 0 && attr->clipPathCount < NSVG_MAX_CLIP_PATHS) {
+        char clipName[64];
+        nsvg__parseUrl(clipName, value);
+        NSVGclipPath *clipPath = nsvg__findClipPath(p, clipName);
+        p->clipPathStack[attr->clipPathCount++] = clipPath->index;
+    }
   } else if (strcmp(name, "stop-color") == 0) {
     attr->stopColor = nsvg__parseColor(value);
   } else if (strcmp(name, "stop-opacity") == 0) {
@@ -3345,6 +3415,15 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
     nsvg__parseSVG(p, dict);
+  } else if (strcmp(el, "clipPath") == 0) {
+    int i;
+    nsvg__pushAttr(p);
+    for (i = 0; dict[i]; i += 2) {
+      if (strcmp(dict[i], "id") == 0) {
+        p->clipPath = nsvg__findClipPath(p, dict[i+1]);
+        break;
+      }
+    }
 //  } else if (strcmp(el, "title") == 0) {
 //    p->titleFlag = 1;
   } else if (strcmp(el, "image") == 0) {
@@ -3364,6 +3443,18 @@ static void nsvg__endElement(void* ud, const char* el)
     p->pathFlag = 0;
   } else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 0;
+  } else if (strcmp(el, "clipPath") == 0) {
+    if (p->clipPath != NULL) {
+      NSVGshape* shape = p->clipPath->shapes;
+      while (shape != NULL) {
+        shape->fill.type = NSVG_PAINT_COLOR;
+        shape->stroke.type = NSVG_PAINT_NONE;
+        shape = shape->next;
+      }
+      p->clipPath = NULL;
+    }
+    nsvg__popAttr(p);
+
 //  } else if (strcmp(el, "title") == 0) {
 //    p->titleFlag = 0;
   } else if (strcmp(el, "style") == 0) {
@@ -3594,13 +3685,21 @@ static void nsvg__scaleGradient(NSVGgradient* grad, float tx, float ty, float sx
   grad->xform[5] += ty*sx;
 }
 
+static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float sx, float sy);
+
 static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
 {
-  NSVGshape *shape, *shapeLink;
+  
+  /*
+  NSVGshape *shape;
   NSVGpath* path;
   float tx, ty, sx, sy, us, bounds[4], t[6], avgs;
-  int i;
+  
   float* pt;
+  */
+  int i;
+  NSVGclipPath *clipPath;
+  float tx, ty, sx, sy, us, bounds[4];
 
   // Guess image size if not set completely.
   nsvg__imageBounds(p, bounds);
@@ -3662,8 +3761,26 @@ static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
   // Transform
   sx *= us;
   sy *= us;
+  nsvg__transformShapes(p->image->shapes, tx, ty, sx, sy);
+  
+  clipPath = p->image->clipPaths;
+  while (clipPath != NULL) {
+    nsvg__transformShapes(clipPath->shapes, tx, ty, sx, sy);
+    clipPath = clipPath->next;
+  }
+}
+
+static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float sx, float sy)
+{
+  NSVGshape *shapeLink;
+  NSVGshape* shape;
+  NSVGpath* path;
+  float avgs, /*bounds[4],*/ t[6];
+  int i;
+  float* pt;
+  
   avgs = (sx+sy) / 2.0f;
-  for (shapeLink = p->image->shapes; shapeLink != NULL; shapeLink = shapeLink->next) {
+  for (shapeLink = shapes; shapeLink != NULL; shapeLink = shapeLink->next) {
     if (shapeLink->link) {
       shape = shapeLink->link;
     } else shape = shapeLink;
@@ -3759,12 +3876,15 @@ error:
 }
 #endif
 
-void nsvgDelete(NSVGimage* image)
+//void nsvgDelete(NSVGimage* image)
+void nsvg__deleteShapes(NSVGshape* shape)
 {
-  NSVGshape *snext, *shape;
+/*  NSVGshape *snext, *shape;
   NSVGgroup *group, *gnext;
   if (image == NULL) return;
   shape = image->shapes;
+ */
+  NSVGshape *snext;
   while (shape != NULL) {
     snext = shape->next;
     if (!shape->link) { //don't touch fake shape!
@@ -3773,9 +3893,32 @@ void nsvgDelete(NSVGimage* image)
       nsvg__deletePaint(&shape->fill);
       nsvg__deletePaint(&shape->stroke);
     }
+    if (shape->clip.index) {
+      FreePool(shape->clip.index);
+    }
     FreePool(shape);
     shape = snext;
   }
+}
+
+void nsvg__deleteClipPaths(NSVGclipPath* path)
+{
+  NSVGclipPath *pnext;
+  while (path != NULL) {
+    pnext = path->next;
+    nsvg__deleteShapes(path->shapes);
+    FreePool(path);
+    path = pnext;
+  }
+}
+
+void nsvgDelete(NSVGimage* image)
+{
+  NSVGgroup *group, *gnext;
+  if (image == NULL) return;
+  nsvg__deleteShapes(image->shapes);
+  nsvg__deleteClipPaths(image->clipPaths);
+
   group = image->groups;
   while (group != NULL) {
     gnext = group->next;

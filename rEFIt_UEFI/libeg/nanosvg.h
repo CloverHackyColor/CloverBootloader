@@ -101,7 +101,6 @@ typedef struct NSVGgradientLink {
   float xform[6];
 } NSVGgradientLink;
 
-
 typedef struct NSVGgradientStop {
   unsigned int color;
   float offset;
@@ -135,6 +134,15 @@ typedef struct NSVGpath
   struct NSVGpath* next;    // Pointer to next path, or NULL if last element.
 } NSVGpath;
 
+typedef unsigned char NSVGclipPathIndex;
+
+typedef struct NSVGclip
+{
+  NSVGclipPathIndex* index;  // Array of clip path indices (of related NSVGimage).
+  NSVGclipPathIndex count;  // Number of clip paths in this set.
+  char pad[7];
+} NSVGclip;
+
 #define kMaxIDLength 64
 #define kMaxTextLength 256
 
@@ -167,6 +175,7 @@ typedef struct NSVGshape
   float xform[6];
   NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
 	NSVGgroup* group;			// Pointer to parent group or NULL
+  NSVGclip clip;
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
   struct NSVGshape* link;
   struct NSVGfont* fontFace; //one letter - one shape
@@ -179,6 +188,14 @@ typedef struct NSVGshape
   const char *image_href;
 } NSVGshape;
 
+typedef struct NSVGclipPath
+{
+  char id[64];        // Unique id of this clip path (from SVG).
+  NSVGclipPathIndex index;  // Unique internal index of this clip path.
+  NSVGshape* shapes;      // Linked list of shapes in this clip path.
+  struct NSVGclipPath* next;  // Pointer to next clip path or NULL.
+} NSVGclipPath;
+
 typedef struct NSVGimage
 {
   float width;        // Width of the image.
@@ -187,9 +204,11 @@ typedef struct NSVGimage
   NSVGshape* shapes;      // Linked list of shapes in the image.
 	NSVGgroup* groups;			// Linked list of all groups in the image
   BOOLEAN isFont;
+  NSVGclipPath* clipPaths;
 } NSVGimage;
 
 #define NSVG_MAX_ATTR 128
+#define NSVG_MAX_CLIP_PATHS 255 // also note NSVGclipPathIndex
 
 enum NSVGgradientUnits {
   NSVG_USER_SPACE = 0,
@@ -276,6 +295,7 @@ typedef struct NSVGattrib
   char hasFill;
   char hasStroke;
   char visible;
+  NSVGclipPathIndex clipPathCount;
   NSVGgroup* group;
 } NSVGattrib;
 
@@ -310,6 +330,8 @@ typedef struct NSVGparser
   char styleFlag;
 //  char groupFlag;
   BOOLEAN isText;
+  NSVGclipPath* clipPath;
+  NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
 } NSVGparser;
 
 //------------- Fonts ---------------------
