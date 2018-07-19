@@ -77,7 +77,7 @@
 #define DBG(...) DebugLog(DEBUG_GMA, __VA_ARGS__)
 #endif
 
-CHAR16  *CFLFBPath  = L"/System/Library/Extensions/AppleIntelCFLFBPath.kext";
+CHAR16  *CFLFBPath  = L"/System/Library/Extensions/AppleIntelCFLGraphicsFramebuffer.kext";
 
 extern CHAR8*    gDeviceProperties;
 extern CHAR8     ClassFix[];
@@ -1467,7 +1467,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   }
 
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
-  //devprop_add_value(device, "device_type", (UINT8*)"display", 7);  // this key displays two intel graphics cards in system report on 10.13.4
+  //devprop_add_value(device, "device_type", (UINT8*)"display", 7);  // this key displays two intel graphics cards in system report on 10.13.4+
   devprop_add_value(device, "subsystem-vendor-id", common_vals[2], 4);
   devprop_add_value(device, "class-code", (UINT8*)ClassFix, 4);
   if (gSettings.Mobile) {
