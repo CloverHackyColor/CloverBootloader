@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 ProjectOSX. All rights reserved.
 //
 
+#import <Cocoa/Cocoa.h>
+
 #import <PreferencePanes/PreferencePanes.h>
 #import <ServiceManagement/ServiceManagement.h>
 #import <SecurityInterface/SFAuthorizationView.h>
@@ -25,6 +27,7 @@
     IBOutlet NSComboBox  *_cloverThemeComboBox;
     IBOutlet NSTextField *_themeWarning;
   //----------------------
+  
   IBOutlet NSMutableDictionary *themeInfo;
   IBOutlet NSMutableDictionary* nvram;
   IBOutlet NSNumber* cloverLogEveryBootEnabled;
@@ -34,12 +37,12 @@
   IBOutlet NSArray* nvRamPartitions;
 }
 
-@property (nonatomic,retain) IBOutlet NSMutableDictionary *themeInfo;
+@property IBOutlet NSMutableDictionary *themeInfo;
 
-@property (nonatomic,retain) IBOutlet NSMutableDictionary* nvram;
+@property IBOutlet NSMutableDictionary* nvram;
 
-@property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootEnabled;
-@property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootLimit;
+@property IBOutlet NSNumber* cloverLogEveryBootEnabled;
+@property IBOutlet NSNumber* cloverLogEveryBootLimit;
 
 @property (nonatomic,readonly,copy) IBOutlet NSDictionary* diskutilList;
 @property (nonatomic,readonly,copy) IBOutlet NSArray* efiPartitions;
