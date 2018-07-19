@@ -43,7 +43,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1523,7 +1523,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 			r->nedges = 0;
 
 			nsvg__flattenShape(r, shapeLink, xform);
-      DBG("shape %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+//      DBG("shape %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 			// Scale and translate edges
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];
@@ -1545,9 +1545,9 @@ void nsvgRasterize(NSVGrasterizer* r,
 			r->freelist = NULL;
 			r->nedges = 0;
       
-      DBG("x=%d y=%d\n", xform[4], xform[5]);
+//      DBG("x=%d y=%d\n", xform[4], xform[5]);
 			nsvg__flattenShapeStroke(r, shapeLink, xform);
-      DBG("shape %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+//      DBG("shape %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 //			dumpEdges(r, "edge.svg");
 
 			// Scale and translate edges
@@ -1676,7 +1676,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text)
     shape->xform[3] = -1.f;
     shape->xform[4] = (float)x - fontSVG->bbox[0];
     shape->xform[5] = (float)y - fontSVG->bbox[3];
-    DumpFloat(shape->xform, 6);
+//    DumpFloat(shape->xform, 6);
     //in glyph units
     shape->bounds[0] = fontSVG->bbox[0];
     shape->bounds[1] = fontSVG->bbox[1];
