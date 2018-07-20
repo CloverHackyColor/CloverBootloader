@@ -26,24 +26,22 @@
  *
  * aksdfauytv - support for recursive images
  * porglezomb - handle visibility
- * tesch1 - feature gruops
- * boris-ulyanov - style processing
+ * tpecholt, tesch1 - feature groups
+ * boris-ulyanov, rzaumseil - style processing
  * jamislike - basic text parsing
  * darealshinji - multiple improvements
+ * technosaurus - independent x-y scaling
+ * olivierchatry - added suppport for stylesheets and other small improvements
+ * JaimeIvanCervantes - idea for <use href>
  * MalcolmMcLean - forwards differencing to flatten Bezier, binary search color name - improve speed
+ * poke1024 - fix handling of <defs> after <g>, add basic support for clip paths
  *
 */
 // Adoptation to Clover project by Slice, 2018
 
 #ifndef NANOSVG_H
 #define NANOSVG_H
-/*
-#include <Uefi.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/BaseLib.h>
-#include <Library/MemoryAllocationLib.h>
-*/
+
 #include "Platform.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
@@ -55,7 +53,7 @@
 #define strcmp(a,b) AsciiStrCmp(a,b)
 #define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
 #define strstr(a,b) AsciiStrStr(a,b)
-//#define strncpy(a,b,n) AsciiStrnCpy(a,b,n)
+
 #define strlen(s) AsciiStrLen(s)
 #define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
 
@@ -452,6 +450,10 @@ typedef struct NSVGcachedPaint {
   unsigned int colors[256];
 } NSVGcachedPaint;
 
+typedef void (*NSVGscanlineFunction)(
+        unsigned char* dst, int count, unsigned char* cover, int x, int y,
+        float tx, float ty, float scalex, float scaley, NSVGcachedPaint* cache);
+
 struct NSVGrasterizer
 {
   float px, py;
@@ -477,6 +479,11 @@ struct NSVGrasterizer
 
   unsigned char* scanline;
   int cscanline;
+  NSVGscanlineFunction fscanline;
+  
+  unsigned char* stencil;
+  int stencilSize;
+  int stencilStride;
 
   unsigned char* bitmap;
   int width, height, stride;

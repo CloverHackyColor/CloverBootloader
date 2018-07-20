@@ -153,6 +153,7 @@ void nsvgDeleteRasterizer(NSVGrasterizer* r)
 	if (r->points) FreePool(r->points);
 	if (r->points2) FreePool(r->points2);
 	if (r->scanline) FreePool(r->scanline);
+  if (r->stencil) FreePool(r->stencil);
 
 	FreePool(r);
 }
@@ -1053,15 +1054,15 @@ static float nsvg__clampf(float a, float mn, float mx) { return a < mn ? mn : (a
 
 static unsigned int nsvg__RGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-	return (r) | (g << 8) | (b << 16) | (a << 24);
+	return (b) | (g << 8) | (r << 16) | (a << 24);
 }
 
 static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
 {
 	int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f); //0..256
-	int r = (((c0) & 0xff)*(256-iu) + (((c1) & 0xff)*iu)) >> 8;
+	int b = (((c0) & 0xff)*(256-iu) + (((c1) & 0xff)*iu)) >> 8;
 	int g = (((c0>>8) & 0xff)*(256-iu) + (((c1>>8) & 0xff)*iu)) >> 8;
-	int b = (((c0>>16) & 0xff)*(256-iu) + (((c1>>16) & 0xff)*iu)) >> 8;
+	int r = (((c0>>16) & 0xff)*(256-iu) + (((c1>>16) & 0xff)*iu)) >> 8;
 	int a = (((c0>>24) & 0xff)*(256-iu) + (((c1>>24) & 0xff)*iu)) >> 8;
 	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
@@ -1069,9 +1070,9 @@ static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
 static unsigned int nsvg__applyOpacity(unsigned int c, float u)
 {
 	int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f);
-	int r = (c) & 0xff;
+	int b = (c) & 0xff;
 	int g = (c>>8) & 0xff;
-	int b = (c>>16) & 0xff;
+	int r = (c>>16) & 0xff;
 	int a = (((c>>24) & 0xff)*iu) >> 8;
 	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
@@ -1081,10 +1082,21 @@ static inline int nsvg__div255(int x)
     return ((x+1) * 257) >> 16;
 }
 
-static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* cover, int x, int y,
+static void nsvg__scanlineBit(
+            unsigned char* row, int count, unsigned char* cover, int x, int y,
+            float tx, float ty, float scalex, float scaley, NSVGcachedPaint* cache)
+{
+  int x1 = x + count;
+  for (; x < x1; x++) {
+    row[x / 8] |= 1 << (x % 8);
+  }
+}
+
+static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* cover, int x, int y,
 								float tx, float ty, float scalex, float scaley, NSVGcachedPaint* cache)
 {
 //  static int once = 0;
+  unsigned char* dst = row + x*4;
 	if (cache->type == NSVG_PAINT_COLOR) {
 		int i, cr, cg, cb, ca;
 		cr = cache->colors[0] & 0xff;
@@ -1208,7 +1220,7 @@ static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* co
 	}
 }
 
-static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r, float tx, float ty, float scalex, float scaley, NSVGcachedPaint* cache, char fillRule)
+static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r, float tx, float ty, float scalex, float scaley, NSVGcachedPaint* cache, char fillRule, NSVGclip* clip)
 {
 	NSVGactiveEdge *active = NULL;
 	int y, s;
@@ -1290,7 +1302,18 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r, float tx, float ty, fl
 		if (xmin < 0) xmin = 0;
 		if (xmax > r->width-1) xmax = r->width-1;
 		if (xmin <= xmax) {
-			nsvg__scanlineSolid(&r->bitmap[y * r->stride] + xmin*4, xmax-xmin+1, &r->scanline[xmin], xmin, y, tx,ty, scalex, scaley, cache);
+	//		nsvg__scanlineSolid(&r->bitmap[y * r->stride] + xmin*4, xmax-xmin+1, &r->scanline[xmin], xmin, y, tx,ty, scalex, scaley, cache);
+      int i, j;
+      for (i = 0; i < clip->count; i++) {
+        unsigned char* stencil = &r->stencil[r->stencilSize * clip->index[i] + y * r->stencilStride];
+        for (j = xmin; j <= xmax; j++) {
+          if (((stencil[j / 8] >> (j % 8)) & 1) == 0) {
+            r->scanline[j] = 0;
+          }
+        }
+      }
+      r->fscanline(&r->bitmap[y * r->stride], xmax-xmin+1, &r->scanline[xmin], xmin, y, tx,ty, scalex, scaley, cache);
+
 		}
 	}
 }
@@ -1461,9 +1484,11 @@ static void dumpEdges(NSVGrasterizer* r, const char* name)
 }
 */
 
-void nsvgRasterize(NSVGrasterizer* r,
-				   NSVGimage* image, float tx, float ty, float scalex, float scaley,
-				   unsigned char* dst, int w, int h, int stride, recursive_image external_image, const void *obj)
+static void nsvg__rasterizeShapes(
+                                  NSVGrasterizer* r,
+                                  NSVGshape* shapes, float tx, float ty, float scalex, float scaley,
+                                  unsigned char* dst, int w, int h, int stride,
+                                  NSVGscanlineFunction fscanline)
 {
 	NSVGshape *shape = NULL, *shapeLink = NULL;
 	NSVGedge *e = NULL;
@@ -1476,6 +1501,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 	r->width = w;
 	r->height = h;
 	r->stride = stride;
+  r->fscanline = fscanline;
 //  DBG("scanline=%d, rwidth=%d\n", r->cscanline, r->width);
 
 	if (w > r->cscanline) {
@@ -1489,33 +1515,16 @@ void nsvgRasterize(NSVGrasterizer* r,
 		if (r->scanline == NULL) return;
 	}
 
-
-	for (i = 0; i < h; i++)
-		memset(&dst[i*stride], 0, w*4);
-//  DBG("first shape=%x\n", image->shapes);
-
-	for (shape = image->shapes; shape != NULL; shape = shape->next) {
+	for (shape = shapes; shape != NULL; shape = shape->next) {
 		if (!(shape->flags & NSVG_FLAGS_VISIBLE))
 			continue;
-/*
-    if( shape->image_href && external_image )// load external file
-    {
-      // compute size
-      float rect[4];
-      rect[0] = shape->bounds[0] * scalex + tx;
-      rect[1] = shape->bounds[1] * scaley + ty;
-      rect[2] = shape->bounds[2] * scalex + tx;
-      rect[3] = shape->bounds[3] * scaley + ty;
-      external_image(obj, r, shape->image_href, rect);
-    }
-*/
+
     memcpy(&xform, &shape->xform, sizeof(float)*6);
     xform[0] *= scalex;
     xform[3] *= scaley;
     if (shape->link) {
       shapeLink = shape->link;
     } else shapeLink = shape;
-    
     
 		if (shapeLink->fill.type != NSVG_PAINT_NONE) {
 			nsvg__resetPool(r);
@@ -1538,7 +1547,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shapeLink->fill, shapeLink->opacity);
-			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule);
+			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule, &shape->clip);
 		}
 		if (shapeLink->stroke.type != NSVG_PAINT_NONE && (shapeLink->strokeWidth * min_scale) > 0.01f) {
 			nsvg__resetPool(r);
@@ -1564,17 +1573,92 @@ void nsvgRasterize(NSVGrasterizer* r,
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shapeLink->stroke, shapeLink->opacity);
-			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, NSVG_FILLRULE_NONZERO);
+			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, NSVG_FILLRULE_NONZERO, &shapeLink->clip);
 		}
 	}
 
-	nsvg__unpremultiplyAlpha(dst, w, h, stride);
+//	nsvg__unpremultiplyAlpha(dst, w, h, stride);
 
 	r->bitmap = NULL;
 	r->width = 0;
 	r->height = 0;
 	r->stride = 0;
+  r->fscanline = NULL;
 }
+
+void nsvg__rasterizeClipPaths(
+                              NSVGrasterizer* r, NSVGimage* image, int w, int h,
+                              float tx, float ty, float scalex, float scaley)
+{
+  NSVGclipPath* clipPath;
+  int clipPathCount = 0;
+ 
+ clipPath = image->clipPaths;
+ if (clipPath == NULL) {
+     r->stencil = NULL;
+     return;
+   }
+ 
+ while (clipPath != NULL) {
+     clipPathCount++;
+     clipPath = clipPath->next;
+ }
+ UINTN oldSize = r->stencilSize;
+ r->stencilStride = w / 8 + (w % 8 != 0 ? 1 : 0);
+ r->stencilSize = h * r->stencilStride;
+// r->stencil = (unsigned char*)realloc(
+//                                      r->stencil, r->stencilSize * clipPathCount);
+  if (oldSize == 0) {
+    r->stencil = (unsigned char*)AllocateZeroPool(r->stencilSize * clipPathCount);
+  } else {
+    r->stencil = (unsigned char*)ReallocatePool(oldSize, r->stencilSize * clipPathCount, r->stencil);
+    memset(r->stencil, 0, r->stencilSize * clipPathCount);
+  }
+ if (r->stencil == NULL) return;
+ 
+ 
+ clipPath = image->clipPaths;
+ while (clipPath != NULL) {
+     nsvg__rasterizeShapes(r, clipPath->shapes, tx, ty, scalex, scaley,
+                           &r->stencil[r->stencilSize * clipPath->index],
+                           w, h, r->stencilStride, nsvg__scanlineBit);
+     clipPath = clipPath->next;
+   }
+}
+
+void nsvgRasterize(
+                   NSVGrasterizer* r,
+                   NSVGimage* image, float tx, float ty, float scalex, float scaley,
+                   unsigned char* dst, int w, int h, int stride, recursive_image external_image,
+                   const void *obj)
+{
+  int i;
+  
+  for (i = 0; i < h; i++)
+      memset(&dst[i*stride], 0, w*4);
+  
+  nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
+  
+  nsvg__rasterizeShapes(r, image->shapes, tx, ty, scalex, scaley,
+                        dst, w, h, stride, nsvg__scanlineSolid);
+  
+  nsvg__unpremultiplyAlpha(dst, w, h, stride);
+  
+  /*
+   if( shape->image_href && external_image )// load external file
+   {
+   // compute size
+   float rect[4];
+   rect[0] = shape->bounds[0] * scalex + tx;
+   rect[1] = shape->bounds[1] * scaley + ty;
+   rect[2] = shape->bounds[2] * scalex + tx;
+   rect[3] = shape->bounds[3] * scaley + ty;
+   external_image(obj, r, shape->image_href, rect);
+   }
+   */
+
+}
+
 
 VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text)
 {
