@@ -406,7 +406,6 @@ extern void nsvgRasterize(NSVGrasterizer* r,
 // Deletes rasterizer context.
 extern void nsvgDeleteRasterizer(NSVGrasterizer*);
 extern NSVGparser* nsvg__createParser();
-extern VOID drawSVGtext(EG_IMAGE* TextBufferXY, NSVGfont* fontSVG, const CHAR16* text);
 
 #define NSVG__SUBSAMPLES  5
 #define NSVG__FIXSHIFT    10

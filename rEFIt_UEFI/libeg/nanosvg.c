@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -3068,7 +3068,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   NSVGgradientStop* stop;
   int i, idx = 0, nsize;
 
-  curAttr->stopOffset = 0;
+  curAttr->stopOffset = 0.f;
   curAttr->stopColor = 0;
   curAttr->stopOpacity = 1.0f;
 
@@ -3100,13 +3100,13 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   }
   if (idx != grad->nstops-1) {
     for (i = grad->nstops-1; i > idx; i--)
-      grad->stops[i] = grad->stops[i-1];
+      memcpy(&grad->stops[i], &grad->stops[i-1], sizeof(NSVGgradientStop));
   }
 
   stop = &grad->stops[idx];
   stop->color = ((unsigned int)(curAttr->stopOpacity*255) << 24) | curAttr->stopColor;
   stop->offset = curAttr->stopOffset;
-  DBG("stop %d, color=%x offset=%d\n", idx, stop->color, stop->offset);
+  DBG("stop %d, color=%x offset*10=%d N=%d\n", idx, stop->color, (int)(stop->offset*10.f), grad->nstops);
 }
 
 static void nsvg__parseGroup(NSVGparser* p, const char** dict)
@@ -3142,7 +3142,6 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   }
 
   font = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
-
 
   for (i = 0; dict[i]; i += 2) {
     if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {

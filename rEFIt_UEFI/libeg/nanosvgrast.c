@@ -34,16 +34,14 @@
 	// Rasterize
   scaleX = width_to_see / design_width
 	nsvgRasterize(rast, image, 0,0, scaleX, scaleY, img, w, h, w*4, NULL, NULL);
- //void nsvgRasterize(NSVGrasterizer* r,
- //                   NSVGimage* image, float tx, float ty, float scalex, float scaley,
- //                   unsigned char* dst, int w, int h, int stride, recursive_image external_image, const void *obj);
+
 */
 
 #include "nanosvg.h"
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1132,7 +1130,8 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 		// TODO: plenty of opportunities to optimize.
 		float fx, fy, dx, gy;
 		float* t = cache->xform;
-//    DumpFloat(t, 6);
+    DBG("cache xform\n");
+    DumpFloat(t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 //x,y - pixels
@@ -1488,7 +1487,8 @@ static void nsvg__rasterizeShapes(
                                   NSVGrasterizer* r,
                                   NSVGshape* shapes, float tx, float ty, float scalex, float scaley,
                                   unsigned char* dst, int w, int h, int stride,
-                                  NSVGscanlineFunction fscanline)
+                                  NSVGscanlineFunction fscanline, recursive_image external_image,
+                                  const void *obj)
 {
 	NSVGshape *shape = NULL, *shapeLink = NULL;
 	NSVGedge *e = NULL;
@@ -1526,13 +1526,25 @@ static void nsvg__rasterizeShapes(
       shapeLink = shape->link;
     } else shapeLink = shape;
     
+    
+     if( shape->image_href && external_image )// load external file
+     {
+       // compute size
+       float rect[4];
+       rect[0] = shape->bounds[0] * scalex + tx;
+       rect[1] = shape->bounds[1] * scaley + ty;
+       rect[2] = shape->bounds[2] * scalex + tx;
+       rect[3] = shape->bounds[3] * scaley + ty;
+       external_image(obj, r, shape->image_href, rect);
+     }
+    
 		if (shapeLink->fill.type != NSVG_PAINT_NONE) {
 			nsvg__resetPool(r);
 			r->freelist = NULL;
 			r->nedges = 0;
 
 			nsvg__flattenShape(r, shapeLink, xform);
-//      DBG("shape %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+      DBG("shape fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 			// Scale and translate edges
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];
@@ -1556,7 +1568,7 @@ static void nsvg__rasterizeShapes(
       
 //      DBG("x=%d y=%d\n", xform[4], xform[5]);
 			nsvg__flattenShapeStroke(r, shapeLink, xform);
-//      DBG("shape %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+      DBG("shape stroke %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 //			dumpEdges(r, "edge.svg");
 
 			// Scale and translate edges
@@ -1592,38 +1604,38 @@ void nsvg__rasterizeClipPaths(
 {
   NSVGclipPath* clipPath;
   int clipPathCount = 0;
- 
- clipPath = image->clipPaths;
- if (clipPath == NULL) {
-     r->stencil = NULL;
-     return;
-   }
- 
- while (clipPath != NULL) {
-     clipPathCount++;
-     clipPath = clipPath->next;
- }
- UINTN oldSize = r->stencilSize;
- r->stencilStride = w / 8 + (w % 8 != 0 ? 1 : 0);
- r->stencilSize = h * r->stencilStride;
-// r->stencil = (unsigned char*)realloc(
-//                                      r->stencil, r->stencilSize * clipPathCount);
+  
+  clipPath = image->clipPaths;
+  if (clipPath == NULL) {
+    r->stencil = NULL;
+    return;
+  }
+  
+  while (clipPath != NULL) {
+    clipPathCount++;
+    clipPath = clipPath->next;
+  }
+  UINTN oldSize = r->stencilSize;
+  r->stencilStride = w / 8 + (w % 8 != 0 ? 1 : 0);
+  r->stencilSize = h * r->stencilStride;
+  // r->stencil = (unsigned char*)realloc(
+  //                                      r->stencil, r->stencilSize * clipPathCount);
   if (oldSize == 0) {
     r->stencil = (unsigned char*)AllocateZeroPool(r->stencilSize * clipPathCount);
   } else {
     r->stencil = (unsigned char*)ReallocatePool(oldSize, r->stencilSize * clipPathCount, r->stencil);
     memset(r->stencil, 0, r->stencilSize * clipPathCount);
   }
- if (r->stencil == NULL) return;
- 
- 
- clipPath = image->clipPaths;
- while (clipPath != NULL) {
-     nsvg__rasterizeShapes(r, clipPath->shapes, tx, ty, scalex, scaley,
-                           &r->stencil[r->stencilSize * clipPath->index],
-                           w, h, r->stencilStride, nsvg__scanlineBit);
-     clipPath = clipPath->next;
-   }
+  if (r->stencil == NULL) return;
+  
+  
+  clipPath = image->clipPaths;
+  while (clipPath != NULL) {
+    nsvg__rasterizeShapes(r, clipPath->shapes, tx, ty, scalex, scaley,
+                          &r->stencil[r->stencilSize * clipPath->index],
+                          w, h, r->stencilStride, nsvg__scanlineBit, NULL, NULL);
+    clipPath = clipPath->next;
+  }
 }
 
 void nsvgRasterize(
@@ -1637,24 +1649,11 @@ void nsvgRasterize(
   for (i = 0; i < h; i++)
       memset(&dst[i*stride], 0, w*4);
   
+
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
   
   nsvg__rasterizeShapes(r, image->shapes, tx, ty, scalex, scaley,
-                        dst, w, h, stride, nsvg__scanlineSolid);
+                        dst, w, h, stride, nsvg__scanlineSolid, external_image, obj);
   
   nsvg__unpremultiplyAlpha(dst, w, h, stride);
-  
-  /*
-   if( shape->image_href && external_image )// load external file
-   {
-   // compute size
-   float rect[4];
-   rect[0] = shape->bounds[0] * scalex + tx;
-   rect[1] = shape->bounds[1] * scaley + ty;
-   rect[2] = shape->bounds[2] * scalex + tx;
-   rect[3] = shape->bounds[3] * scaley + ty;
-   external_image(obj, r, shape->image_href, rect);
-   }
-   */
-
 }
