@@ -29,6 +29,6 @@ install:
 	@make -C "${SRCROOT}"/utils install
 
 clean:
-	rm -rf sym obj dst
+	rm -rf sym obj dst CloverPrefpane/build CloverUpdater/build
 
 .PHONY: clean image iso pkg installer updatepo utils
