@@ -1116,7 +1116,7 @@ MainPostBuildScript() {
           copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi ;;
       esac
       # drivers64UEFI
-      binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
+      binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix3Drv OsxAptioFix2Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
 
       for efi in "${binArray[@]}"
       do
