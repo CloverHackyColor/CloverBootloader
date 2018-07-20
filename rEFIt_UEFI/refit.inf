@@ -64,6 +64,7 @@
   libeg/FloatLib.c
   libeg/nanosvg.c
   libeg/nanosvgrast.c
+  libeg/VectorGraphics.c
   Platform/AcpiPatcher.c
 	Platform/ati_reg.h
 	Platform/AmlGenerator.c

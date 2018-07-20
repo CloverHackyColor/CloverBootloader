@@ -40,6 +40,7 @@
 		2C794E501A0AA85900D845B0 /* Lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D181A0AA85900D845B0 /* Lib.c */; };
 		2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */; };
 		2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */; };
+		A5582AFD21019EA6002CFB6E /* VectorGraphics.c in Sources */ = {isa = PBXBuildFile; fileRef = A5582AFC21019EA6002CFB6E /* VectorGraphics.c */; };
 		A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392620D9F17B004340E1 /* FloatLib.c */; };
 		A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392920D9F18C004340E1 /* nanosvgrast.c */; };
 		A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392A20D9F18C004340E1 /* nanosvg.c */; };
@@ -904,6 +905,7 @@
 		2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
+		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
 		A5BF392420D96FE3004340E1 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5BF392520D9F17A004340E1 /* FloatLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatLib.h; sourceTree = "<group>"; };
 		A5BF392620D9F17B004340E1 /* FloatLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FloatLib.c; sourceTree = "<group>"; };
@@ -997,6 +999,7 @@
 				A5BF392920D9F18C004340E1 /* nanosvgrast.c */,
 				12B8EBC11DDCEA2A00AC0A2C /* scroll_images.c */,
 				126151551A15BBB000903E7B /* text.c */,
+				A5582AFC21019EA6002CFB6E /* VectorGraphics.c */,
 			);
 			path = libeg;
 			sourceTree = "<group>";
@@ -3020,6 +3023,7 @@
 				1288B5211A30CEFB007CBCEF /* Net.c in Sources */,
 				12A60F5A1DB610500068BF8B /* AppleImageCodec.c in Sources */,
 				12A60F5B1DB610500068BF8B /* load_bmp.c in Sources */,
+				A5582AFD21019EA6002CFB6E /* VectorGraphics.c in Sources */,
 				12A60F5C1DB610500068BF8B /* load_icns.c in Sources */,
 				12A60F5D1DB610500068BF8B /* picopng.c in Sources */,
 				12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */,
