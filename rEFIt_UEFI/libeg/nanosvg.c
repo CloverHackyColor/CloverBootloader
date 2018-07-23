@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -854,7 +854,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
     grad->xform[0] = dy; grad->xform[1] = -dx;
     grad->xform[2] = dx; grad->xform[3] = dy;
     grad->xform[4] = x1; grad->xform[5] = y1;
-  } else { //NSVG_PAINT_RADIAL_GRADIENT
+  } else if (data->type == NSVG_PAINT_RADIAL_GRADIENT) { //
     float cx, cy, fx, fy, r;
     cx = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.cx, ox, sw);
     cy = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.cy, oy, sh);
@@ -863,6 +863,18 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
     r  = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.r, 0, sl);
     // Calculate transform aligned to the circle
 
+    grad->xform[0] = r; grad->xform[1] = 0;
+    grad->xform[2] = 0; grad->xform[3] = r;
+    grad->xform[4] = cx; grad->xform[5] = cy;
+    grad->fx = fx / r;
+    grad->fy = fy / r;
+  } else if (data->type == NSVG_PAINT_CONIC_GRADIENT) {
+    float cx, cy, fx, fy, r;
+    cx = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.cx, ox, sw);
+    cy = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.cy, oy, sh);
+    fx = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.fx, ox, sw);
+    fy = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.fy, oy, sh);
+    r  = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.r, 0, sl);
     grad->xform[0] = r; grad->xform[1] = 0;
     grad->xform[2] = 0; grad->xform[3] = r;
     grad->xform[4] = cx; grad->xform[5] = cy;
@@ -3036,6 +3048,10 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
     grad->radial.cx = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
     grad->radial.cy = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
     grad->radial.r = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+  } else if (grad->type == NSVG_PAINT_CONIC_GRADIENT) {
+    grad->radial.cx = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->radial.cy = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->radial.r = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
   }
 
   nsvg__xformIdentity(grad->xform);
@@ -3362,6 +3378,8 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
       nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
     } else if (strcmp(el, "radialGradient") == 0) {
       nsvg__parseGradient(p, dict, NSVG_PAINT_RADIAL_GRADIENT);
+    } else if (strcmp(el, "conicGradient") == 0) {
+      nsvg__parseGradient(p, dict, NSVG_PAINT_CONIC_GRADIENT);
     } else if (strcmp(el, "stop") == 0) {
       nsvg__parseGradientStop(p, dict);
     } else if (strcmp(el, "font") == 0) {
@@ -3439,13 +3457,15 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
   } else if (strcmp(el, "radialGradient") == 0) {
     nsvg__parseGradient(p, dict, NSVG_PAINT_RADIAL_GRADIENT);
+  } else if (strcmp(el, "conicGradient") == 0) {
+    nsvg__parseGradient(p, dict, NSVG_PAINT_CONIC_GRADIENT);
   } else if (strcmp(el, "stop") == 0) {
     nsvg__parseGradientStop(p, dict);
   }
   else if (strcmp(el, "style") == 0) { //impossible here
     p->styleFlag = 1;
     DBG("start element style\n");
-  } 
+  }
   else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
@@ -3843,13 +3863,15 @@ static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float s
     }
 
     if (shape->fill.type == NSVG_PAINT_LINEAR_GRADIENT ||
-        shape->fill.type == NSVG_PAINT_RADIAL_GRADIENT) {
+        shape->fill.type == NSVG_PAINT_RADIAL_GRADIENT ||
+        shape->fill.type == NSVG_PAINT_CONIC_GRADIENT) {
       nsvg__scaleGradient(shape->fill.gradient, tx,ty, sx,sy);
       memcpy(t, shape->fill.gradient->xform, sizeof(float) * 6);
       nsvg__xformInverse(shape->fill.gradient->xform, t);
     }
     if (shape->stroke.type == NSVG_PAINT_LINEAR_GRADIENT ||
-        shape->stroke.type == NSVG_PAINT_RADIAL_GRADIENT) {
+        shape->stroke.type == NSVG_PAINT_RADIAL_GRADIENT ||
+        shape->stroke.type == NSVG_PAINT_CONIC_GRADIENT) {
       nsvg__scaleGradient(shape->stroke.gradient, tx,ty, sx,sy);
       memcpy(t, shape->stroke.gradient->xform, sizeof(float) * 6);
       nsvg__xformInverse(shape->stroke.gradient->xform, t);

@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -452,15 +452,15 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
   float scaley = xform[3];
   float dx = 0; //xform[4];
   float dy = 0; //xform[5];
-  DBG("flattenShape with:\n");
-  DumpFloat(xform, 6);
+//  DBG("flattenShape with:\n");
+//  DumpFloat(xform, 6);
 //  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
 //  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)(dx*1000.0f), (int)(dy*1000.0f));
 	for (path = shape->paths; path != NULL; path = path->next) {
 		r->npoints = 0;
 		// Flatten path
 //    DBG("npts=%d\n", path->npts);
-    DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
+//    DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
     nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, 0);
     for (i = 0; i < path->npts-1; i += 3) {
       float* p = &path->pts[i*2];
@@ -469,7 +469,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
 
 		// Close path
 		nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, 0);
-    DBG("npoints=%d\n", r->npoints);
+//    DBG("npoints=%d\n", r->npoints);
 		// Build edges
 		for (i = 0, j = r->npoints-1; i < r->npoints; j = i++)
 			nsvg__addEdge(r, r->points[j].x, r->points[j].y, r->points[i].x, r->points[i].y);
@@ -1131,8 +1131,8 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 		// TODO: plenty of opportunities to optimize.
 		float fx, fy, dx, gy;
 		float* t = cache->xform;
-    DBG("cache xform\n");
-    DumpFloat(t, 6);
+//    DBG("cache xform\n");
+//    DumpFloat(t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 //x,y - pixels
@@ -1216,7 +1216,60 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 			cover++;
 			dst += 4;
 			fx += dx;
-		}
+    }
+  } else if (cache->type == NSVG_PAINT_CONIC_GRADIENT) {
+      // TODO: spread modes.
+      // TODO: plenty of opportunities to optimize.
+      // TODO: focus (fx,fy)
+      float fx, fy, dx, gx, gy, gd;
+      float* t = cache->xform;
+      //    DumpFloat(t, 6);
+      int i, cr, cg, cb, ca;
+      unsigned int c;
+      
+      fx = ((float)x - tx) / scalex;
+      fy = ((float)y - ty) / scaley;
+      dx = 1.0f / scalex;
+      
+      for (i = 0; i < count; i++) {
+        int r,g,b,a,ia;
+        gx = fx*t[0] + fy*t[2] + t[4];
+        gy = fx*t[1] + fy*t[3] + t[5];
+        gd = sqrtf(gx*gx + gy*gy);
+        if (gd == 0.f) {
+          c = 0;
+        } else {
+          gd = (Atan2F(gy, gx) + PI) / PI2;
+          c = cache->colors[(int)nsvg__clampf(gd*255.0f, 0, 255.0f)];
+        }
+        cr = (c) & 0xff;
+        cg = (c >> 8) & 0xff;
+        cb = (c >> 16) & 0xff;
+        ca = (c >> 24) & 0xff;
+        
+        a = nsvg__div255((int)cover[0] * ca);
+        ia = 255 - a;
+        
+        // Premultiply
+        r = nsvg__div255(cr * a);
+        g = nsvg__div255(cg * a);
+        b = nsvg__div255(cb * a);
+        
+        // Blend over
+        r += nsvg__div255(ia * (int)dst[0]);
+        g += nsvg__div255(ia * (int)dst[1]);
+        b += nsvg__div255(ia * (int)dst[2]);
+        a += nsvg__div255(ia * (int)dst[3]);
+        
+        dst[0] = (unsigned char)r;
+        dst[1] = (unsigned char)g;
+        dst[2] = (unsigned char)b;
+        dst[3] = (unsigned char)a;
+        
+        cover++;
+        dst += 4;
+        fx += dx;
+      }
 	}
 }
 
@@ -1545,7 +1598,7 @@ static void nsvg__rasterizeShapes(
 			r->nedges = 0;
 
 			nsvg__flattenShape(r, shapeLink, xform);
-      DBG("shape fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+ //     DBG("shape fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 			// Scale and translate edges
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];
@@ -1569,7 +1622,7 @@ static void nsvg__rasterizeShapes(
       
 //      DBG("x=%d y=%d\n", xform[4], xform[5]);
 			nsvg__flattenShapeStroke(r, shapeLink, xform);
-      DBG("shape stroke %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+//      DBG("shape stroke %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 //			dumpEdges(r, "edge.svg");
 
 			// Scale and translate edges
