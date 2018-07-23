@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -514,7 +514,7 @@ NSVGparser* nsvg__createParser()
   p->attr[0].fillRule = NSVG_FILLRULE_NONZERO;
   p->attr[0].hasFill = 1;
   p->attr[0].visible = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
-  p->isText = FALSE;
+//  p->isText = FALSE;
 
   return p;
 }
@@ -756,7 +756,7 @@ static float nsvg__convertToPixelsForGradient(NSVGparser* p, char units, NSVGcoo
 {
   //  float temp = 0.0;
   //units can be NSVG_USER_SPACE or NSVG_OBJECT_SPACE
-  if (units == NSVG_USER_SPACE)
+  if (units == NSVG_USER_SPACE || c->units == NSVG_UNITS_PERCENT)
     return nsvg__convertToPixels(p, c, orig, length);
 
   //for object space we have to use percent c->value = 86
@@ -765,7 +765,7 @@ static float nsvg__convertToPixelsForGradient(NSVGparser* p, char units, NSVGcoo
   //    ox = localBounds[0];  orig
   //    sw = localBounds[2] - localBounds[0]; length
   // else NSVG_OBJECT_SPACE
-  return orig + c->value * 0.01f * length; //orig=x1 length=x2-x1 c->value= 86%
+  return orig + c->value * length; //orig=x1 length=x2-x1 c->value= 86%
 }
 
 static NSVGgradientData* nsvg__findGradientData(NSVGparser* p, const char* id)
@@ -929,7 +929,7 @@ static void nsvg__addShape(NSVGparser* p)
   int i;
   float inv[6], localBounds[4];
 
-  if (p->plist == NULL && !p->isText)
+  if (p->plist == NULL /*&& !p->isText*/ )
     return;
 
   shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
@@ -1050,6 +1050,7 @@ static void nsvg__addShape(NSVGparser* p)
 		shape->fill.type = NSVG_PAINT_GRADIENT_LINK;
 		shape->fill.gradientLink = nsvg__createGradientLink(attr->fillGradient, attr->xform);
     if (shape->fill.gradientLink == NULL) {
+      shape->fill.type = NSVG_PAINT_NONE;
       if (shape->clip.index) {
         FreePool(shape->clip.index);
       }
@@ -1068,6 +1069,7 @@ static void nsvg__addShape(NSVGparser* p)
 		shape->stroke.type = NSVG_PAINT_GRADIENT_LINK;
 		shape->stroke.gradientLink = nsvg__createGradientLink(attr->strokeGradient, attr->xform);
     if (shape->stroke.gradientLink == NULL) {
+      shape->fill.type = NSVG_PAINT_NONE;
       if (shape->clip.index) {
         FreePool(shape->clip.index);
       }
@@ -2698,44 +2700,75 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   shape->link = ref;
   shape->next = NULL;
 
-/*
   // Add to tail
   p->shapesTail->next = shape;
   p->shapesTail = shape;
-*/
 //Add to head
-    shape->next = p->image->shapes;
-    p->image->shapes = shape;
-
-
+//    shape->next = p->image->shapes;
+//    p->image->shapes = shape;
 }
 
-static void nsvg__parseText(NSVGparser* p, const char** attr)
+
+static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
+{
+//  NSVGattrib* attr = nsvg__getAttr(p);
+  NSVGtext* text = p->text;
+  float x = 0.f, y = 0.f, r = 0.f;
+  int i;
+  
+  //there should be text->next with own attribs
+  for (i = 0; dict[i]; i += 2) {
+    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
+      if (strcmp(dict[i], "x") == 0) {
+        x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
+        text->x = x;
+      }
+      if (strcmp(dict[i], "y") == 0) {
+        y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
+        text->y = y;
+      }
+      if (strcmp(dict[i], "font-size") == 0)  {
+        r = fabsf(nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualLength(p)) );
+        text->fontSize = r;
+      }
+    }
+  }
+
+  
+}
+
+static void nsvg__parseText(NSVGparser* p, const char** dict)
 {
   float x = 0.0f;
   float y = 0.0f;
   float r = 0.0f;
 //  float xform[6];
+  
+  NSVGattrib* attr = nsvg__getAttr(p);
 
   int i;
 
-  for (i = 0; attr[i]; i += 2) {
-    if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
-      if (strcmp(attr[i], "x") == 0) x = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
-      if (strcmp(attr[i], "y") == 0) y = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-      //already done
- /*     if (strcmp(attr[i], "transform") == 0) {
-        nsvg__parseTransform(xform, attr[i+1]);
-        x = nsvg__parseCoordinate(p, attr[i+1], xform[4], 0);
-        y = nsvg__parseCoordinate(p, attr[i+1], xform[5], 0);
-      }
-  */
-      if (strcmp(attr[i], "font-size") == 0)  r = fabsf(nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualLength(p)) );
+  for (i = 0; dict[i]; i += 2) {
+    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
+      if (strcmp(dict[i], "x") == 0) x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
+      if (strcmp(dict[i], "y") == 0) y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
+      if (strcmp(dict[i], "font-size") == 0)  r = fabsf(nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualLength(p)) );
     }
   }
-  p->isText = TRUE;
+  
+  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  if (!text) {
+    return;
+  }
+  text->x = x;
+  text->y = y;
+  text->fontSize = r;
+  memcpy(&text->id, &attr->id, 64);
+  text->font = attr->fontFace;
+  
+  p->text = text;
 
-//  nsvg__addShape(p); //text is not shape. It is style for content
+//  nsvg__addShape(p); //text is not shape. It is a group for content
 }
 
 static void nsvg__parseCircle(NSVGparser* p, const char** attr)
@@ -3351,6 +3384,9 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
   } else if (strcmp(el, "text") == 0) {
     nsvg__pushAttr(p);
     nsvg__parseText(p, dict);
+  } else if (strcmp(el, "tspan") == 0) {
+    nsvg__pushAttr(p);
+    nsvg__parseTextSpan(p, dict);
     nsvg__popAttr(p);
   } else if (strcmp(el, "path") == 0) {
     if (p->pathFlag)  {// Do not allow nested paths.
@@ -3399,7 +3435,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__popAttr(p);
   }
 
-/*  else  if (strcmp(el, "linearGradient") == 0) {
+  else  if (strcmp(el, "linearGradient") == 0) {
     nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
   } else if (strcmp(el, "radialGradient") == 0) {
     nsvg__parseGradient(p, dict, NSVG_PAINT_RADIAL_GRADIENT);
@@ -3409,7 +3445,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
   else if (strcmp(el, "style") == 0) { //impossible here
     p->styleFlag = 1;
     DBG("start element style\n");
-  } */
+  } 
   else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
@@ -3452,6 +3488,8 @@ static void nsvg__endElement(void* ud, const char* el)
       }
       p->clipPath = NULL;
     }
+    nsvg__popAttr(p);
+  } else if (strcmp(el, "text") == 0) {
     nsvg__popAttr(p);
 
 //  } else if (strcmp(el, "title") == 0) {
@@ -3590,7 +3628,9 @@ static void nsvg__assignGradients(NSVGparser* p)
 			NSVGgradientLink* link = shape->fill.gradientLink;
 			shape->fill.gradient = nsvg__createGradient(
 				p, shape, link, &shape->fill.type);
-			FreePool(link);
+      if (link != NULL) {
+        FreePool(link);
+      }
 			if (shape->fill.gradient == NULL) {
 				shape->fill.type = NSVG_PAINT_NONE;
 			}
@@ -3599,7 +3639,9 @@ static void nsvg__assignGradients(NSVGparser* p)
 			NSVGgradientLink* link = shape->stroke.gradientLink;
 			shape->stroke.gradient = nsvg__createGradient(
 				p, shape, link, &shape->stroke.type);
-			FreePool(link);
+      if (link != NULL) {
+        FreePool(link);
+      }
 			if (shape->stroke.gradient == NULL) {
 				shape->stroke.type = NSVG_PAINT_NONE;
 			}

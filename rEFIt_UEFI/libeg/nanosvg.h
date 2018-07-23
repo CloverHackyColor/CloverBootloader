@@ -304,34 +304,6 @@ typedef struct NSVGattrib
  	struct NSVGstyles* next;
  } NSVGstyles;
  
-
-typedef struct NSVGparser
-{
-  NSVGattrib attr[NSVG_MAX_ATTR];
-  int attrHead;
-  float* pts;
-  int npts;
-  int cpts;
-  NSVGpath* plist;
-  NSVGimage* image;
-  NSVGstyles* styles;
-  NSVGgradientData* gradients;
-  NSVGshape* shapesTail;
-  struct NSVGfont* font;
-  float viewMinx, viewMiny, viewWidth, viewHeight;
-  int alignX, alignY, alignType;
-  float dpi;
-  char pathFlag;
-  char defsFlag;
-//  char titleFlag;
-  char shapeFlag;
-  char styleFlag;
-//  char groupFlag;
-  BOOLEAN isText;
-  NSVGclipPath* clipPath;
-  NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
-} NSVGparser;
-
 //------------- Fonts ---------------------
 typedef struct NSVGglyph {
   char name[16];
@@ -366,6 +338,49 @@ typedef struct NSVGfont {
   NSVGglyph* missingGlyph;
   NSVGglyph* glyphs; // a chain
 } NSVGfont;
+
+typedef struct NSVGtext {
+  char id[64];
+  char class[64];
+  float x,y;
+  //  char fontFamily[64];
+  NSVGfont* font;
+  float fontSize;
+  char fontStyle;
+  NSVGstyles* style;
+  NSVGshape* shapes;
+} NSVGtext;
+
+typedef struct NSVGparser
+{
+  NSVGattrib attr[NSVG_MAX_ATTR];
+  int attrHead;
+  float* pts;
+  int npts;
+  int cpts;
+  NSVGpath* plist;
+  NSVGimage* image;
+  NSVGstyles* styles;
+  NSVGgradientData* gradients;
+  NSVGshape* shapesTail;
+  struct NSVGfont* font;
+  float viewMinx, viewMiny, viewWidth, viewHeight;
+  int alignX, alignY, alignType;
+  float dpi;
+  char pathFlag;
+  char defsFlag;
+//  char titleFlag;
+  char shapeFlag;
+  char styleFlag;
+//  char groupFlag;
+//  BOOLEAN isText;
+  NSVGtext* text;
+  NSVGclipPath* clipPath;
+  NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
+} NSVGparser;
+
+
+//---
 
 // Duplicates a path.
 //NSVGpath* nsvgDuplicatePath(NSVGpath* p);

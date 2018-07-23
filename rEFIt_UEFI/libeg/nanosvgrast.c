@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -450,8 +450,9 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
   //apply shape->xform here
   float scalex = xform[0];
   float scaley = xform[3];
-  float dx = xform[4];
-  float dy = xform[5];
+  float dx = 0; //xform[4];
+  float dy = 0; //xform[5];
+  DBG("flattenShape with:\n");
   DumpFloat(xform, 6);
 //  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
 //  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)(dx*1000.0f), (int)(dy*1000.0f));
