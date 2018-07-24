@@ -6,6 +6,8 @@
 //
 
 #include "FloatLib.h"
+#include "IO.h"
+
 
 #define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
 #define fabsf(x) ((x >= 0.0f)?x:(-x))
@@ -188,20 +190,26 @@ float AtanF(float X) //assume 0.0 < X < 1.0
   return Y;
 }
 
-float Atan2F(float X, float Y)
+float Atan2F(float Y, float X)
 {
   float sign = (((X >= 0.0f) && (Y < 0.0f)) ||
                 ((X < 0.0f) && (Y >= 0.0f)))?-1.0f:1.0f;
+  float PP = 0.f;
+  float res = 0.f;
+  //1,1 = pi4  1,-1=pi34   -1,-1=-pi34   -1,1=-pi4
+  if (X < 0.f) {
+    PP = PI;
+  }
   X = (X >= 0.0f)?X:(-X);
   Y = (Y >= 0.0f)?Y:(-Y);
-  if (X < Y) {
-    return sign * AtanF(X / Y);
-  } else if (Y == 0.0f) {
-    return sign * PI5;
+  if (Y < X) {
+    res = AtanF(Y / X);
+  } else if (X == 0.0f) {
+    res = PI5;
   } else {
-    return sign * (PI5 - AtanF(Y / X));
+    res = (PI5 - AtanF(X / Y));
   }
-  return 0.0f;
+  return sign * (res - PI);
 }
 
 /*
@@ -332,6 +340,16 @@ VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
   D = I;
   Fract = fabsf((X - D) * 1000000.0f);
   AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
+}
+
+CHAR16* PoolPrintFloat(float X)
+{
+  INTN I, Fract;
+  float D;
+  I = (INTN)X;
+  D = I;
+  Fract = fabsf((X - D) * 1000000.0f);
+  return PoolPrint(L"%D.%06D", I, (INTN)Fract);
 }
 
 

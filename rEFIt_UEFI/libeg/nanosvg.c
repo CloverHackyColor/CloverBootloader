@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -514,7 +514,7 @@ NSVGparser* nsvg__createParser()
   p->attr[0].fillRule = NSVG_FILLRULE_NONZERO;
   p->attr[0].hasFill = 1;
   p->attr[0].visible = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
-//  p->isText = FALSE;
+  p->isText = FALSE;
 
   return p;
 }
@@ -3594,46 +3594,92 @@ static void nsvg__content(void* ud, char* s)
       }
       s++;
     }
-    //  if (*s == '{' && state == NSVG_XML_CONTENT) {
-    //    // Start of a tag
-    //    *s++ = '\0';
-    //    nsvg__parseContent(mark, contentCb, ud);
-    //    mark = s;
-    //    state = NSVG_XML_TAG;
-    //  }
-    //  else if (*s == '>' && state == NSVG_XML_TAG) {
-    //    // Start of a content or new tag.
-    //    *s++ = '\0';
-    //    nsvg__parseElement(mark, startelCb, endelCb, ud);
-    //    mark = s;
-    //    state = NSVG_XML_CONTENT;
-    //  }
-    //  else {
-    //    s++;
-    //  }
-    //}
   }
+  
   //text support should create shape for each letter
-  /*
-  else if (p->shapeFlag) { //text support
-    NSVGshape * lastShape = NULL;
-    int i;
-    for (NSVGshape * shape = p->image->shapes; shape != NULL; shape = shape->next) {
-      lastShape = shape;
+  else if (p->isText) { //text support
+    //const char* start = s;
+    // 123<tspan size="12">567</tspan>
+    //propose there are only letters
+    UINTN len = strlen(s);
+    UINTN i;
+    if (!p->font) {
+      return; //later we make external fonts
     }
-
-    size_t length = strlen(s);
-    for (i=0; i < length; i++) {
-      lastShape->textData[i] = s[i]; //it must be Ascii to Unicode conversion
+    NSVGshape *shape;
+    NSVGglyph* g;
+    INTN x = 0, y = 0;
+    for (i = 0; i < len; i++) {
+      CHAR16 letter = s[i];      
+      if (!letter) {
+        break;
+      }
+      
+      shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+      if (shape == NULL) return;
+      
+      g = p->font->glyphs;
+      while (g) {
+        if (g->unicode == letter) {
+          shape->paths = g->path;
+          DBG("Found letter %x, point[0]=(%d,%d)\n", letter,
+              (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
+          break;
+        }
+        g = g->next;
+      }
+      if (!g) {
+        //missing glyph
+        NSVGglyph* g = p->font->missingGlyph;
+        shape->paths = g->path;
+        DBG("Missing letter %x, path[0]=%d\n", letter, (int)shape->paths->pts[0]);
+      }
+      if (!shape->paths) {
+        if (g) {
+          x += g->horizAdvX;
+        }
+        if (shape) {
+          FreePool(shape);
+        }
+        continue;
+      }
+      //fill shape
+      shape->id[0] = (char)(letter & 0xff);
+      shape->id[1] = (char)((letter >> 8) & 0xff);
+      shape->fill.type = NSVG_PAINT_COLOR;
+      shape->fill.color = NSVG_RGBA(0, 0, 0, 255); //dark green
+      shape->stroke.type = NSVG_PAINT_COLOR;
+      shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
+      shape->strokeWidth = 2.0f;
+      shape->flags = NSVG_VIS_DISPLAY | NSVG_FLAGS_VISIBLE;
+      nsvg__xformIdentity(shape->xform);
+      shape->xform[0] = 1.f;
+      shape->xform[3] = -1.f; //glyphs are mirrored by Y
+      shape->xform[4] = (float)x - p->font->bbox[0];
+      shape->xform[5] = (float)y - p->font->bbox[3]; // Y2 is a floor for a letter
+      //    DumpFloat(shape->xform, 6);
+      //in glyph units
+      shape->bounds[0] = p->font->bbox[0];
+      shape->bounds[1] = p->font->bbox[1];
+      shape->bounds[2] = p->font->bbox[2];
+      shape->bounds[3] = p->font->bbox[3];
+      
+      x += g->horizAdvX; //position for next letter
+      shape->strokeLineJoin = NSVG_JOIN_MITER;
+      shape->strokeLineCap = NSVG_CAP_BUTT;
+      shape->miterLimit = 4;
+      shape->fillRule = NSVG_FILLRULE_NONZERO;
+      shape->opacity = 1;
+      
+      // Add to tail
+      if (p->image->shapes == NULL)
+        p->image->shapes = shape;
+      else
+        p->shapesTail->next = shape;
+      p->shapesTail = shape;
+    
     }
-
-//    if (length > 0 && p &&
-//        lastShape &&
-   //     lastShape->textData &&
-//        !strcmp(lastShape->textData, "")) {
-//      memcpy(lastShape->textData, s, length * sizeof(char) );
-//    }
-  } */
+  }
 }
 
 static void nsvg__assignGradients(NSVGparser* p)

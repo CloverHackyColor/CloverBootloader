@@ -45,6 +45,7 @@
 #include "Platform.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
+#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
 
 
 //There are defines for compilation as first step. Must be revised
@@ -373,7 +374,7 @@ typedef struct NSVGparser
   char shapeFlag;
   char styleFlag;
 //  char groupFlag;
-//  BOOLEAN isText;
+  BOOLEAN isText;
   NSVGtext* text;
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
