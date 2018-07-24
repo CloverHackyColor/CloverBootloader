@@ -18,8 +18,8 @@
  https://en.wikipedia.org/wiki/List_of_Intel_chipsets
  https://en.wikipedia.org/wiki/List_of_Intel_graphics_processing_units
  https://github.com/Igalia/intel-osrc-gfx-prm
- https://github.com/anholt/mesa/blob/master/include/pci_ids/i965_pci_ids.h
- https://github.com/StefanG3D/gpudetect/blob/master/IntelGfx.cfg
+ https://github.com/intel/external-mesa/blob/master/include/pci_ids/i965_pci_ids.h
+ https://github.com/intel/intel-graphics-compiler/blob/master/inc/common/igfxfmid.h
  https://fossies.org/linux/mesa/include/pci_ids/i965_pci_ids.h
  https://software.intel.com/en-us/articles/intel-graphics-developers-guides
  https://www.intel.com/content/www/us/en/support/graphics-drivers/000005526.html#core
@@ -389,6 +389,35 @@ UINT8 coffeelake_hd_vals[8][4] = {
 };
 
 
+UINT8 cannonlake_ig_vals[14][4] = {
+  { 0x00, 0x00, 0x01, 0x0A },   //0 Mobile: 1, PipeCount: 1, PortCount: 1, STOLEN: 34MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1, BL: 1388
+  { 0x00, 0x00, 0x40, 0x5A },   //1 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x09, 0x00, 0x40, 0x5A },   //2 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0x41, 0x5A },   //3 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x09, 0x00, 0x41, 0x5A },   //4 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0x49, 0x5A },   //5 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x09, 0x00, 0x49, 0x5A },   //6 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0x50, 0x5A },   //7 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x09, 0x00, 0x50, 0x5A },   //8 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0x51, 0x5A },   //9 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x09, 0x00, 0x51, 0x5A },   //10 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0x52, 0x5A },   //11 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP1/HDMI1, BL: 1388
+  { 0x00, 0x00, 0x59, 0x5A },   //12 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP1/HDMI1, BL: 1388
+  { 0x09, 0x00, 0x59, 0x5A },   //13 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+};
+
+UINT8 cannonlake_hd_vals[8][4] = {
+  { 0x01, 0x00, 0x00, 0x00 },   //0 "AAPL,Gfx324"            - MacBookPro
+  { 0x01, 0x00, 0x00, 0x00 },   //1 "AAPL,GfxYTile"
+  { 0xfa, 0x00, 0x00, 0x00 },   //2 "AAPL00,PanelCycleDelay"
+  { 0x3c, 0x00, 0x00, 0x08 },   //3 "AAPL00,PanelPowerDown"  - MacBookPro
+  { 0x11, 0x00, 0x00, 0x00 },   //4 "AAPL00,PanelPowerOff"   - MacBookPro
+  { 0x19, 0x01, 0x00, 0x08 },   //5 "AAPL00,PanelPowerOn"    - MacBookPro
+  { 0x30, 0x00, 0x00, 0x00 },   //6 "AAPL00,PanelPowerUp"    - MacBookPro
+  { 0x0c, 0x00, 0x00, 0x00 },   //7 "graphic-options"
+};
+
+
 // The following values came from MacBookPro6,1
 UINT8 mbp_HD_os_info[20]  = {
   0x30, 0x49, 0x01, 0x11, 0x01, 0x10, 0x08, 0x00, 0x00, 0x01,
@@ -600,8 +629,6 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0166, "Intel HD Graphics 4000"         }, // Mobile - MacBookPro9,x/MacBookPro10,x/MacBookAir5,x/Macmini6,x
   { 0x016A, "Intel HD Graphics P4000"        }, // Server
 
-
-  //============== 7.5th generation ==========
   //----------------Haswell-------------------
   //GT1
   { 0x0402, "Intel Haswell GT1"              }, // Desktop
@@ -766,8 +793,6 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5A84, "Intel HD Graphics 505"          }, // Apollo Lake
   { 0x5A85, "Intel HD Graphics 500"          }, // Apollo Lake
 
-
-  //============== 9.5th generation ==========
   //----------------Kaby Lake-----------------
   //GT1
   { 0x5902, "Intel HD Graphics 610"          }, // Desktop
@@ -814,9 +839,9 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3E94, "Intel Coffee Lake GT2"          }, //
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
   { 0x3E9A, "Intel Coffee Lake GT2"          }, //
-  { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile
+  { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile - MacBookPro15,1
   //GT3
-  { 0x3EA5, "Intel Iris Plus Graphics 655"   }, // Mobile
+  { 0x3EA5, "Intel Iris Plus Graphics 655"   }, // Mobile - MacBookPro15,2
   { 0x3EA6, "Intel Coffee Lake GT3"          }, //
   { 0x3EA7, "Intel Coffee Lake GT3"          }, //
   { 0x3EA8, "Intel Coffee Lake GT3"          }, //
@@ -828,10 +853,13 @@ static struct gma_gpu_t KnownGPUS[] = {
 
   //============== 10th generation ===========
   //----------------Cannonlake----------------
+  //GTx
+  { 0x5A40, "Intel Cannonlake GTx"           }, //
   //GT0.5
   { 0x5A49, "Intel Cannonlake GT0.5"         }, //
   { 0x5A4A, "Intel Cannonlake GT0.5"         }, //
   //GT1
+  { 0x0A01, "Intel Cannonlake GT1"           }, // Desktop
   { 0x5A41, "Intel Cannonlake GT1"           }, //
   { 0x5A42, "Intel Cannonlake GT1"           }, //
   { 0x5A44, "Intel Cannonlake GT1"           }, //
@@ -842,8 +870,8 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT2
   { 0x5A50, "Intel Cannonlake GT2"           }, //
   { 0x5A51, "Intel Cannonlake GT2"           }, //
-  { 0x5A52, "Intel Cannonlake GT2"           }, //
-  { 0x5A54, "Intel Cannonlake GT2"           }, //
+  { 0x5A52, "Intel Cannonlake GT2"           }, // Mobile
+  { 0x5A54, "Intel Cannonlake GT2"           }, // Mobile
 
 
   //============== 11th generation ===========
@@ -1995,8 +2023,6 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       }
       break;
 
-
-      //============== 7.5th generation ==========
       //----------------Haswell-------------------
       //GT1
     case 0x0402: // "Intel Haswell GT1"               // Desktop
@@ -2495,8 +2521,6 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x5A85: // "Intel HD Graphics 500"           // Apollo Lake
       break;
 
-
-      //============== 9.5th generation ==========
       //----------------Kaby Lake-----------------
       //GT1
     case 0x5902: // "Intel HD Graphics 610"           // Desktop
@@ -2724,18 +2748,17 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3E94: // "Intel Coffee Lake GT2"           //
     case 0x3E96: // "Intel Coffee Lake GT2"           //
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
-    case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile
+    case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1
       //GT3
-    case 0x3EA5: // "Intel Iris Plus Graphics 655"    // Mobile
+    case 0x3EA5: // "Intel Iris Plus Graphics 655"    // Mobile - MacBookPro15,2
     case 0x3EA6: // "Intel Coffee Lake GT3"           //
     case 0x3EA7: // "Intel Coffee Lake GT3"           //
     case 0x3EA8: // "Intel Coffee Lake GT3"           //
       switch (gma_dev->device_id) {
         case 0x3E90:
         case 0x3E93:
-          if ((os_version >= AsciiOSVersionToUint64("10.14")) ||
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && AsciiStrStr(Entry->BuildVersion, "17G2112")) || // Insaller
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && FileExists(Entry->Volume->RootDir, CFLFBPath))) { // Installed
+          if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
+              (AsciiStrStr(Entry->BuildVersion, "17G2112") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E908086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2762,9 +2785,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3E91:
-          if ((os_version >= AsciiOSVersionToUint64("10.14")) ||
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && AsciiStrStr(Entry->BuildVersion, "17G2112")) || // Insaller
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && FileExists(Entry->Volume->RootDir, CFLFBPath))) { // Installed
+          if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
+              (AsciiStrStr(Entry->BuildVersion, "17G2112") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E918086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2791,9 +2813,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3E92:
-          if ((os_version >= AsciiOSVersionToUint64("10.14")) ||
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && AsciiStrStr(Entry->BuildVersion, "17G2112")) || // Insaller
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && FileExists(Entry->Volume->RootDir, CFLFBPath))) { // Installed
+          if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
+              (AsciiStrStr(Entry->BuildVersion, "17G2112") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E928086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2820,9 +2841,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3E9B:
-          if ((os_version >= AsciiOSVersionToUint64("10.14")) ||
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && AsciiStrStr(Entry->BuildVersion, "17G2112")) || // Insaller
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && FileExists(Entry->Volume->RootDir, CFLFBPath))) { // Installed
+          if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
+              (AsciiStrStr(Entry->BuildVersion, "17G2112") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E9B8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2849,9 +2869,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3EA5:
-          if ((os_version >= AsciiOSVersionToUint64("10.14")) ||
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && AsciiStrStr(Entry->BuildVersion, "17G2112")) || // Insaller
-              ((os_version == AsciiOSVersionToUint64("10.13.6")) && FileExists(Entry->Volume->RootDir, CFLFBPath))) { // Installed
+          if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
+              (AsciiStrStr(Entry->BuildVersion, "17G2112") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3EA58086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2913,10 +2932,13 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
       //============== 10th generation ===========
       //----------------Cannonlake----------------
+      //GTx
+    case 0x5A40: // "Intel Cannonlake GTx"            //
       //GT0.5
     case 0x5A49: // "Intel Cannonlake GT0.5"          //
     case 0x5A4A: // "Intel Cannonlake GT0.5"          //
       //GT1
+    case 0x0A01: // "Intel Cannonlake GT1"            // Desktop
     case 0x5A41: // "Intel Cannonlake GT1"            //
     case 0x5A42: // "Intel Cannonlake GT1"            //
     case 0x5A44: // "Intel Cannonlake GT1"            //
@@ -2927,8 +2949,140 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       //GT2
     case 0x5A50: // "Intel Cannonlake GT2"            //
     case 0x5A51: // "Intel Cannonlake GT2"            //
-    case 0x5A52: // "Intel Cannonlake GT2"            //
-    case 0x5A54: // "Intel Cannonlake GT2"            //
+    case 0x5A52: // "Intel Cannonlake GT2"            // Mobile
+    case 0x5A54: // "Intel Cannonlake GT2"            // Mobile
+      switch (gma_dev->device_id) {
+        case 0x0A01:
+          if (!SetFake) {
+            FakeID = 0x0A018086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x0A018086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[0], 4);
+            DBG("  Found ig-platform-id = 0x0A010000\n");
+          }
+          break;
+        case 0x5A40:
+          if (!SetFake) {
+            FakeID = 0x5A408086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A408086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[1], 4);
+            DBG("  Found ig-platform-id = 0x5A400000\n");
+          }
+          break;
+        case 0x5A41:
+          if (!SetFake) {
+            FakeID = 0x5A418086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A418086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[3], 4);
+            DBG("  Found ig-platform-id = 0x5A410000\n");
+          }
+          break;
+        case 0x5A49:
+          if (!SetFake) {
+            FakeID = 0x5A498086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A498086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[5], 4);
+            DBG("  Found ig-platform-id = 0x5A490000\n");
+          }
+          break;
+        case 0x5A50:
+          if (!SetFake) {
+            FakeID = 0x5A508086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A508086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[7], 4);
+            DBG("  Found ig-platform-id = 0x5A500000\n");
+          }
+          break;
+        case 0x5A51:
+          if (!SetFake) {
+            FakeID = 0x5A518086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A518086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[9], 4);
+            DBG("  Found ig-platform-id = 0x5A510000\n");
+          }
+          break;
+        case 0x5A52:
+        case 0x5A54:
+          if (!SetFake) {
+            FakeID = 0x5A528086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A528086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[11], 4);
+            DBG("  Found ig-platform-id = 0x5A520000\n");
+          }
+          break;
+        case 0x5A59:
+          if (!SetFake) {
+            FakeID = 0x5A598086 >> 16;
+            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+            FakeID = 0x5A598086 & 0xFFFF;
+            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+          }
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", cannonlake_ig_vals[12], 4);
+            DBG("  Found ig-platform-id = 0x5A590000\n");
+          }
+          break;
+        default:
+          break;
+      }
+      /*switch (gSettings.IgPlatform) {
+        case (UINT32)0x5A510003:
+        case (UINT32)0x5A520003:
+          break;
+        default:
+          switch (MacModel) {
+            // TODO: need to check ioreg
+            case MacBookPro161:  // it has only the "graphic-options" value. However, we use built-in graphics.
+            case MacBookPro162:
+              //devprop_add_value(device, "AAPL,Gfx324", cannonlake_hd_vals[0], 4);
+              //devprop_add_value(device, "AAPL00,PanelCycleDelay", cannonlake_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerDown", cannonlake_hd_vals[3], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOff", cannonlake_hd_vals[4], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOn", cannonlake_hd_vals[5], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerUp", cannonlake_hd_vals[6], 4);
+              //devprop_add_value(device, "graphic-options", cannonlake_hd_vals[7], 4);
+              break;
+            default:
+              break;
+          }
+          //devprop_add_value(device, "AAPL,GfxYTile", cannonlake_hd_vals[1], 4);
+          break;
+      }*/
       break;
 
 
