@@ -178,7 +178,7 @@ VOID testSVG()
       DBG("  sinx=%c%d.%06d", (y1<0)?'-':' ', pr(y1));
       DBG("  cosx=%c%d.%06d\n", (y2<0)?'-':' ',pr(y2));
       y1 = Atan2F(y1, y2);
-      DBG("  atanx=%c%d.%06d", (y1<0)?'-':' ',pr(y1));
+      DBG("  atan2x=%c%d.%06d", (y1<0)?'-':' ',pr(y1));
       y1 = AcosF(y2);
       DBG("  acos=%c%d.%06d", (y1<0)?'-':' ',pr(y1));
       y1 = SqrtF(x);

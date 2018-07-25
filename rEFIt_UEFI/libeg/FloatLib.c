@@ -179,7 +179,7 @@ float AtanF(float X) //assume 0.0 < X < 1.0
     i += 2;
   } */
 //  Y = X * (1 - X2 * ( 1.0f / 3.0f - X2 * (1.0f / 5.0f - X2 * ( 1.0f / 7.0f))));
-  for (i = 1; i < 50; i += 2) {
+  for (i = 1; i < 60; i += 2) {
     Y += (D * sign / i);
     D *= X2;
     if (D < Eps) {
@@ -209,7 +209,7 @@ float Atan2F(float Y, float X)
   } else {
     res = (PI5 - AtanF(X / Y));
   }
-  return sign * (res - PI);
+  return sign * (res - PP);
 }
 
 /*
@@ -301,7 +301,7 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
    return -0;
  }
  */
-
+#if 0
 VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONST VOID* a, CONST VOID* b)) {
   INTN i = Low, j = High;
   VOID *Med, *Temp;
@@ -341,6 +341,7 @@ VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
   Fract = fabsf((X - D) * 1000000.0f);
   AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
 }
+#endif
 
 CHAR16* PoolPrintFloat(float X)
 {
