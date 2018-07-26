@@ -2065,10 +2065,16 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
       if (gSettings.AddProperties[i].Device != DEV_ATI) {
         continue;
       }
-      devprop_add_value(card->device,
-                        gSettings.AddProperties[i].Key,
-                        (UINT8*)gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen);
+
+      if (!gSettings.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      } else {
+        devprop_add_value(card->device,
+                          gSettings.AddProperties[i].Key,
+                          (UINT8*)gSettings.AddProperties[i].Value,
+                          gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      }
     }
   }
 

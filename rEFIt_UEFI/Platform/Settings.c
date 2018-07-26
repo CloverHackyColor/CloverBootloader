@@ -4964,8 +4964,11 @@ GetUserSettings(
               }
             }
             
-            DBG (" %a", Prop2->string);
+            DBG (" %a ", Prop2->string);
             
+            Prop2 = GetProperty (Dict2, "Disabled");
+            gSettings.AddProperties[Index].MenuItem.BValue = !IsPropertyTrue (Prop2);
+
             Prop2 = GetProperty (Dict2, "Key");
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
               gSettings.AddProperties[Index].Key = AllocateCopyPool (AsciiStrSize (Prop2->string), Prop2->string);
@@ -4986,7 +4989,11 @@ GetUserSettings(
               gSettings.AddProperties[Index].ValueLen = Size;
             }
             
-            DBG (", len: %d\n", gSettings.AddProperties[Index].ValueLen);
+            DBG ("Key: %a, len: %d\n", gSettings.AddProperties[Index].Key, gSettings.AddProperties[Index].ValueLen);
+            
+            if (!gSettings.AddProperties[Index].MenuItem.BValue) {
+              DBG ("  property disabled at config\n");
+            }
             
             ++Index;
           }

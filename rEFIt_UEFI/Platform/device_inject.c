@@ -384,10 +384,16 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
         continue;
       }
       Injected = TRUE;
-      devprop_add_value(device,
-                        gSettings.AddProperties[i].Key,
-                        (UINT8*)gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen);
+
+      if (!gSettings.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      } else {
+        devprop_add_value(device,
+                          gSettings.AddProperties[i].Key,
+                          (UINT8*)gSettings.AddProperties[i].Value,
+                          gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      }
     }
   }
   if (Injected) {
@@ -455,10 +461,16 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
         continue;
       }
       Injected = TRUE;
-      devprop_add_value(device,
-                        gSettings.AddProperties[i].Key,
-                        (UINT8*)gSettings.AddProperties[i].Value,
-                        gSettings.AddProperties[i].ValueLen);
+
+      if (!gSettings.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      } else {
+        devprop_add_value(device,
+                          gSettings.AddProperties[i].Key,
+                          (UINT8*)gSettings.AddProperties[i].Value,
+                          gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      }
     }
   }
   if (Injected) {

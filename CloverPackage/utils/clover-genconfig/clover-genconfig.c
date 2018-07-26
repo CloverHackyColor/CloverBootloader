@@ -592,6 +592,7 @@ void PrintConfig(CFTypeRef data, GFX_HEADER * gfx)
   CFMutableArrayRef appPropArray = addArray(pciDict, CFSTR("#AddProperties"));
   CFMutableDictionaryRef appPropDict = addDictToArray(appPropArray);
   addString(appPropDict, CFSTR("#Device"), "XXX");
+  addBoolean(appPropDict, CFSTR("#Disabled"), 1);
   addString(appPropDict, CFSTR("#Key"), "AAPL,XXX");
   addHex(appPropDict, CFSTR("#Value"), 0xFFFF);
   

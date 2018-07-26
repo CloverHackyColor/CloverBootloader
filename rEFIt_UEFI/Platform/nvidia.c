@@ -2428,14 +2428,20 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         continue;
       }
       Injected = TRUE;
-      devprop_add_value(device,
+
+      if (!gSettings.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      } else {
+        devprop_add_value(device,
                         gSettings.AddProperties[i].Key,
                         (UINT8*)gSettings.AddProperties[i].Value,
                         gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      }
     }
     if (Injected) {
       DBG("custom NVIDIA properties injected, continue\n");
-      //    return TRUE;
+      //return TRUE;
     }
   }
 

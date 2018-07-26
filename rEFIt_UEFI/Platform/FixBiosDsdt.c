@@ -1507,9 +1507,15 @@ BOOLEAN CustProperties(AML_CHUNK* pack, UINT32 Dev)
       continue;
     }
     Injected = TRUE;
-    aml_add_string(pack, gSettings.AddProperties[i].Key);
-    aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
-                        (UINT32)gSettings.AddProperties[i].ValueLen);
+
+    if (!gSettings.AddProperties[i].MenuItem.BValue) {
+      //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+    } else {
+      aml_add_string(pack, gSettings.AddProperties[i].Key);
+      aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
+                          (UINT32)gSettings.AddProperties[i].ValueLen);
+      //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+    }
   }
   return Injected;
 }

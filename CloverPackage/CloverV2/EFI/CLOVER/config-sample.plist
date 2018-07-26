@@ -531,6 +531,49 @@
 	</dict>
 	<key>Devices</key>
 	<dict>
+		<key>#AddProperties</key>
+		<array>
+			<dict>
+				<key>Device</key>
+				<string>IntelGFX</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Key</key>
+				<string>framebuffer-patch-enable</string>
+				<key>Value</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>Device</key>
+				<string>IntelGFX</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Key</key>
+				<string>framebuffer-stolenmem</string>
+				<key>Value</key>
+				<integer>19922944</integer>
+			</dict>
+			<dict>
+				<key>Device</key>
+				<string>IntelGFX</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Key</key>
+				<string>framebuffer-fbmem</string>
+				<key>Value</key>
+				<integer>9437184</integer>
+			</dict>
+			<dict>
+				<key>Device</key>
+				<string>IntelGFX</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Key</key>
+				<string>framebuffer-unifiedmem</string>
+				<key>Value</key>
+				<integer>2147483648</integer>
+			</dict>
+		</array>
 		<key>#FakeID</key>
 		<dict>
 			<key>#WIFI</key>

@@ -895,15 +895,21 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
           continue;
         }
         Injected = TRUE;
-        devprop_add_value(device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
+
+        if (!gSettings.AddProperties[i].MenuItem.BValue) {
+          //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        } else {
+          devprop_add_value(device,
+                            gSettings.AddProperties[i].Key,
+                            (UINT8*)gSettings.AddProperties[i].Value,
+                            gSettings.AddProperties[i].ValueLen);
+          //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        }
       }
     }
     if (Injected) {
       DBG("Additional HDMI properties injected, continue\n");
-      //    return TRUE;
+      //return TRUE;
     } else if (gSettings.UseIntelHDMI) {
       DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");
       devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
@@ -945,10 +951,16 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
           continue;
         }
         Injected = TRUE;
-        devprop_add_value(device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
+
+        if (!gSettings.AddProperties[i].MenuItem.BValue) {
+          //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        } else {
+          devprop_add_value(device,
+                            gSettings.AddProperties[i].Key,
+                            (UINT8*)gSettings.AddProperties[i].Value,
+                            gSettings.AddProperties[i].ValueLen);
+          //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        }
       }
     }
     if (!Injected) {
