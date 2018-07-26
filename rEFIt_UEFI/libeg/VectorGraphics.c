@@ -174,7 +174,7 @@ VOID testSVG()
       y1=SinF(x);
       y2=CosF(x);
       
-      DBG("x=%d:%d.%d ", i*30, pr(x));
+      DBG("x=%d: %d.%06d ", i*30, pr(x));
       DBG("  sinx=%c%d.%06d", (y1<0)?'-':' ', pr(y1));
       DBG("  cosx=%c%d.%06d\n", (y2<0)?'-':' ',pr(y2));
       y1 = Atan2F(y1, y2);

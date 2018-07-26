@@ -450,8 +450,8 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
   //apply shape->xform here
   float scalex = xform[0];
   float scaley = xform[3];
-  float dx = 0; //xform[4];
-  float dy = 0; //xform[5];
+  float dx = xform[4];
+  float dy = xform[5];
 //  DBG("flattenShape with:\n");
 //  DumpFloat(xform, 6);
 //  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
@@ -1578,7 +1578,12 @@ static void nsvg__rasterizeShapes(
     xform[3] *= scaley;
     if (shape->link) {
       shapeLink = shape->link;
-    } else shapeLink = shape;
+    } else {
+      xform[4] = 0.f;
+      xform[5] = 0.f;
+ //     nsvg__xformIdentity(xform);
+      shapeLink = shape;
+    }
     
     
      if( shape->image_href && external_image )// load external file

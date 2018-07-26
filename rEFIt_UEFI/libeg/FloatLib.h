@@ -18,6 +18,7 @@
 #define PI (3.1415926536f)
 #define PI2 (6.283185307179586f)
 #define PI5 (1.570796326794897f)
+#define PI4 (0.78539816339745f)
 #define FLT_MAX (1.0e38f)
 #define FLT_MIN (1.0e-37f)
 

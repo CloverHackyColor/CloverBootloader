@@ -172,20 +172,21 @@ float AtanF(float X) //assume 0.0 < X < 1.0
   float D = X;
   float Y = 0;
   float sign = 1.0f;
-/*  while (D > (Eps * i)) {
-    Y += D * sign / i;  //x -x3/3+x5/5-x7/7...
-    D *= X2;
-    sign = - sign;
-    i += 2;
-  } */
-//  Y = X * (1 - X2 * ( 1.0f / 3.0f - X2 * (1.0f / 5.0f - X2 * ( 1.0f / 7.0f))));
-  for (i = 1; i < 60; i += 2) {
-    Y += (D * sign / i);
-    D *= X2;
-    if (D < Eps) {
-      break;
+
+  if (X > 0.6f) {
+    //make here arctg(1-x)
+    X = 1.0f - D;
+    Y = PI4 - X * 0.5f - X2 * 0.25f - X * X2 * 0.25 * ( 1.f / 3.f - X2 * (0.1f + X / 12.f));
+  } else {
+    //  Y = X * (1 - X2 * ( 1.0f / 3.0f - X2 * (1.0f / 5.0f - X2 * ( 1.0f / 7.0f))));
+    for (i = 1; i < 40; i += 2) {
+      Y += (D * sign / i);
+      D *= X2;
+      if (D < Eps) {
+        break;
+      }
+      sign = - sign;
     }
-    sign = - sign;
   }
   return Y;
 }

@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -2698,13 +2698,23 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   }
   shape->xform[4] = x;
   shape->xform[5] = y;
-  nsvg__xformMultiply(shape->xform, attr->xform);
+  nsvg__xformMultiply(xform, attr->xform);
   //TODO
   // 1. transform  path: pts, bounds, next (?)
   nsvg__xformPoint(&shape->bounds[0], &shape->bounds[1],
                    ref->bounds[0], ref->bounds[1], xform);
   nsvg__xformPoint(&shape->bounds[2], &shape->bounds[3],
                    ref->bounds[2], ref->bounds[3], xform);
+  DBG("paint type=%d\n", shape->fill.type);
+  if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {
+    shape->fill.gradient = nsvg__createGradient(p, shape, ref->fill.gradientLink, &shape->fill.type);
+  }
+ 
+  if (shape->stroke.type == NSVG_PAINT_GRADIENT_LINK) {
+//    shape->stroke.gradientLink = nsvg__createGradientLink(ref->stroke.gradientLink->id, shape->xform);
+    shape->stroke.gradient = nsvg__createGradient(p, shape, ref->stroke.gradientLink, &shape->fill.type);
+  }
+
 
 //  nsvg__xformInverse(inv, xform);
 //  nsvg__getLocalBounds(localBounds, shape, inv);
@@ -3774,22 +3784,12 @@ static float nsvg__viewAlign(float content, float container, int type)
 
 static void nsvg__scaleGradient(NSVGgradient* grad, float tx, float ty, float sx, float sy)
 {
-  //original codes
-  /*
   float t[6];
   nsvg__xformSetTranslation(t, tx, ty);
   nsvg__xformMultiply (grad->xform, t);
 
   nsvg__xformSetScale(t, sx, sy);
   nsvg__xformMultiply (grad->xform, t);
-   */
-  //Olivier
-  grad->xform[0] *= sx;
-  grad->xform[1] *= sx;
-  grad->xform[2] *= sy;
-  grad->xform[3] *= sy;
-  grad->xform[4] += tx*sx;
-  grad->xform[5] += ty*sx;
 }
 
 static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float sx, float sy);
