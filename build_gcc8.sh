@@ -27,8 +27,8 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.31}
-export GCC_VERSION=${GCC_VERSION:-8.1.0}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.31.1}
+export GCC_VERSION=${GCC_VERSION:-8.2.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.1.2}
@@ -382,7 +382,7 @@ GCC_native () {
 
         export CXXFLAGS="-O2 -I$PREFIX/include -I$PREFIX/sdk/include"
         export CFLAGS="-O2 -I$PREFIX/include -I$PREFIX/sdk/include"
-        export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip"
+        export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip -Wl,-dead_strip_dylibs"
 
 
         local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check"
@@ -459,7 +459,7 @@ CompileCrossGCC () {
     export CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
     export CXXFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
     export CXXCPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
-    export LDFLAGS="-Os -L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip"
+    export LDFLAGS="-Os -L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip -Wl,-dead_strip_dylibs"
     export BOOT_CFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
     export BOOT_CPPFLAGS="-Os -I$PREFIX/include -I$PREFIX/sdk/include"
 
