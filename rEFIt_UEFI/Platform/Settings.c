@@ -6181,8 +6181,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
          FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
          FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4+
-          InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
-        }
+      InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+    }
     if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
       Status = egLoadFile (Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {

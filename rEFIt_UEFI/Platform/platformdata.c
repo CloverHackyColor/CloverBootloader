@@ -222,8 +222,8 @@ PLATFORMDATA ApplePlatformData[] =
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2018mbp", "j130b", 0xf0a009 }, // need BIOS REV rBR RPlt ECPI
   //MacBookPro15,2
   { "MacBookPro15,2", "MBP152.88Z.0178.B00.1806260902", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
-    "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
-    { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j79b", 0xf09009 }, // need BIOS Serial REV rBR RPlt ECPI
+    "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
+    { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j79b", 0xf09009 }, // need BIOS REV rBR RPlt ECPI
   //MacBookAir1,1
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
