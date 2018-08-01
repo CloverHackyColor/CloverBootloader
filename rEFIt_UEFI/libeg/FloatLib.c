@@ -351,7 +351,7 @@ CHAR16* PoolPrintFloat(float X)
   I = (INTN)X;
   D = I;
   Fract = fabsf((X - D) * 1000000.0f);
-  return PoolPrint(L"%D.%06D", I, (INTN)Fract);
+  return PoolPrint(L"%d.%06d", I, (INTN)Fract);
 }
 
 
