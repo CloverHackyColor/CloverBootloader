@@ -20,228 +20,174 @@ msgstr ""
 "X-POOTLE-MTIME: 1392363438.0\n"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
+#: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
+#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:25
+#: Resources/templates/Welcome.html:34
 msgid "Developers:"
 msgstr "Autori:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:26
+#: Resources/templates/Welcome.html:35
 msgid "%DEVELOP%"
 msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:28
+#: Resources/templates/Welcome.html:37
 msgid "Source code credits to:"
 msgstr "Zasluge za izvorni kod:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:29
+#: Resources/templates/Welcome.html:38
 msgid "%CREDITS%"
 msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:31
+#: Resources/templates/Welcome.html:40
 msgid "Package credits to:"
 msgstr "Zasluge za izradu paketa:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:32
+#: Resources/templates/Welcome.html:41
 msgid "%PKGDEV%"
 msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:34
+#: Resources/templates/Welcome.html:43
 msgid "Supports Fat32, HFS+, ESP."
 msgstr "Podržava Fat32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
+#: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
 msgstr "Sva prava pridržana © %CPRYEAR%"
 
-#
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:17
+#: Resources/templates/Description.html:18
 msgid "Clover v2"
 msgstr "Clover v2"
 
-#
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:17
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"je open source baziran na sljedećim projektima: Clover, rEFIt, XNU, "
-"VirtualBox."
+#: Resources/templates/Description.html:19
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "je open source baziran na sljedećim projektima: Clover, rEFIt, XNU, VirtualBox."
 
-#
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:18
+#: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "Glavni je EDK2 posljednje verzije."
 
-#
 #. type: Content of: <html><body><p><b>
-#: Resources/templates/Description.html:20
+#: Resources/templates/Description.html:25
 msgid "Main features:"
 msgstr "Glavne značajke:"
 
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
-msgstr "- radi sa 10.4 - 10.8 OSX, Windows EFI i Linux EFI"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:22
-msgid ""
-"- It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"- EFI baziran bootloader pruža RuntimeServices za OS što je nemoguće za "
-"Legacy Bootloadere"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:23
-msgid ""
-"- mostly Clover do automatic detection of hardware and set all properties by "
-"default."
-msgstr ""
-"- Uglavnom detektira sav hardware te ga automatski postavlja na zadane "
-"vrijednosti."
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:24
-msgid "But user can change them by config.plist"
-msgstr "Ali korisnik može i sam podešavati koristeći config.plist"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:25
-msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"- sa Cloverom se može restartati u drugi OS preko Startup Disk prefPane"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:26
-msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- UUID podešen u config.plist će biti isti kao i u OS-u"
-
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:27
-msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOS će biti podešen po standardu 2.6"
+msgid "boot into 10.xx macOS, Windows EFI and Linux EFI"
+msgstr "Radi sa 10.xx macOS, Windows EFI i Linux EFI"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- ACPI će biti podešen po standardu 4.0."
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "EFI baziran bootloader pruža RuntimeServices za OS što je nemoguće za Legacy Bootloadere"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "Uglavnom detektira sav hardware te ga automatski postavlja na zadane vrijednosti. Ali korisnik može i sam podešavati koristeći config.plist."
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:30
+msgid "with Clover you may restart into other OS from Startup Disk prefPane"
+msgstr "Sa Cloverom se može restartati u drugi OS preko Startup Disk prefPane"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:31
+msgid "UUID written into config.plist will be the same as in OS"
+msgstr "UUID podešen u config.plist će biti isti kao i u OS-u"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:32
+msgid "SMBIOS will be corrected to standard 2.6"
+msgstr "SMBIOS će biti podešen po standardu 2.6"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:33
+msgid "ACPI will be corrected to standard 4.0."
+msgstr "ACPI će biti podešen po standardu 4.0."
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr "Modificirani DSDT će biti učitan sa odabrane particije ako postoji"
 
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:30
-msgid "- DSDT patching on the fly by fixes and by patterns"
-msgstr ""
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
-msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- Podešavajući RestartFix i sleep/wake zakrpe i PCIRootUID vrijednosti"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
-msgid ""
-"- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards."
-msgstr ""
-"- Graphics Properties Injector za ATI, NVidia i Intel za skoro sve podržane "
-"modele."
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
-msgid "Also customizable."
-msgstr "Isto moguće dodatno ručno podešavanje."
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
-msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB zakrpe (LegacyOff, Ownership, Builtin, clock-id) te USB 3.0"
-
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
-msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- HDA injector i Ethernet builtin injector"
+msgid "DSDT patching on the fly by fixes and by patterns"
+msgstr "DSDT patching on the fly by fixes and by patterns;"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
-msgid "- CPU turbo and P- and C-states generator"
-msgstr "- CPU turbo and P- and C-states generator"
+msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr "Podešavajući RestartFix i sleep/wake zakrpe i PCIRootUID vrijednosti"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"- ACPI može koristiti modificirane (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, "
-"UEFI...)"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "Graphics Properties Injector za ATI, NVidia i Intel za skoro sve podržane modele. Isto moguće dodatno ručno podešavanje."
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
-msgid "- extra kexts loading"
-msgstr ""
+msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr "USB zakrpe (LegacyOff, Ownership, Builtin, clock-id) te USB 3.0"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
-msgid "- kernel and kext patching on the fly"
-msgstr ""
+msgid "HDA injector and Ethernet builtin injector"
+msgstr "HDA injector i Ethernet builtin injector"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
-msgid "- set NVRAM variables for different purpose"
-msgstr ""
+msgid "CPU turbo and P- and C-states generator"
+msgstr "CPU turbo and P- and C-states generator"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
-msgid ""
-"- default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"- Podesivo vrijeme zadržavanja u boot meni-u, podesivi GUI (Teme) , "
-"spremanje screenshota kroz GUI pritiskom na F10"
+msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "ACPI može koristiti modificirane (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
-msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- Moguće spremati boot.log u OS-u te preboot.log kroz GUI pritiskom F2"
+msgid "extra kexts loading"
+msgstr "Extra kernel extensions loading;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:43
+msgid "kernel and kext patching on the fly"
+msgstr "Kernel and kext patching on the fly;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:44
+msgid "set NVRAM variables for different purpose"
+msgstr "Set NVRAM variables for different purpose;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:45
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "Podesivo vrijeme zadržavanja u boot meni-u, podesivi GUI (Teme) , spremanje screenshota kroz GUI pritiskom na F10"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:46
+msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr "Moguće spremati boot.log u OS-u te preboot.log kroz GUI pritiskom F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -434,12 +380,12 @@ msgstr "CloverEFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "Odaberite željenu verziju."
 
-#. type: "cloverEFI.32_description"
+#. type: "cloverEFI.32_title, cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32 bitni"
+msgstr "CloverEFI 32-bits"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:71
@@ -467,41 +413,33 @@ msgstr "CloverEFI 64 bitni sa Bios Block I/O načinom pristupa diskovima"
 
 #. type: "cloverEFI.64.blockio2_title"
 #: Resources/templates/Localizable.strings:75
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits BiosBlockIO"
+#, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
 msgstr "CloverEFI 64 bitni BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:76
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+#, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
 msgstr "CloverEFI 64 bitni sa Bios Block I/O načinom pristupa diskovima"
 
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "PS/2 upravljački program za tastature, 32 bitna verzija"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "PS/2 upravljački program za tastature, 32 bitna verzija"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "PS/2 upravljački program za miša, 32 bitna verzija"
-
-#. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
-#, no-wrap
-msgid "PS/2 mouse driver, 64bit"
-msgstr "PS/2 upravljački program za miša, 64 bitna verzija"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:85
@@ -509,50 +447,152 @@ msgstr "PS/2 upravljački program za miša, 64 bitna verzija"
 msgid "USB mouse driver, 32bit"
 msgstr "USB upravljački program za miša, 32 bitna verzija"
 
-#. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:86
-#, no-wrap
-msgid "USB mouse driver, 64bit"
-msgstr "USB upravljački program za miša, 64 bitna verzija"
-
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "ext2/3 filesystem upravljački program iz virtualbox-a , 32 bitna verzija"
 
-#. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:88
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "ext2/3 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
-
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "ext4 filesystem upravljački program iz virtualbox-a , 32 bitna verzija"
 
-#. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:90
-#, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "ext4 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
-
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "USB upravljački program za miša, 32 bitna verzija"
 
+#. type: "Drivers64_title"
+#: Resources/templates/Localizable.strings:90
+#, no-wrap
+msgid "BIOS Drivers, 64 bit"
+msgstr "BIOS Drivers, 64 bit"
+
+#. type: "Drivers64_description"
+#: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Select drivers for BIOS-booting."
+msgstr "Select drivers for BIOS-booting."
+
+#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#: Resources/templates/Localizable.strings:93
+#: Resources/templates/Localizable.strings:111
+#, no-wrap
+msgid "For decode PNG and BMP images in boot UI"
+msgstr "Decode PNG and BMP for FileVault2."
+
+#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:112
+#, no-wrap
+msgid "Support for boot UI dialog for FileVault2"
+msgstr "Support for boot UI dialog for FileVault2."
+
+#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:113
+#, no-wrap
+msgid "Create boot UI Themes support"
+msgstr "Create boot UI Themes support for FileVault2."
+
+#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:125
+#, no-wrap
+msgid "Create FirmwareVolume with cursor images"
+msgstr "Create FirmwareVolume with cursor images for FileVault2."
+
+#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:126
+#, no-wrap
+msgid "Provide injection of kexts from Clover folder."
+msgstr "Provide injection of kernel extensions from Clover folder."
+
+#. type: "GrubEXFAT-64_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ExFAT filesystem driver from GRUB."
+msgstr "ExFAT filesystem driver."
+
+#. type: "GrubISO9660-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ISO 9600 filesystem driver from GRUB."
+msgstr "ISO9600 filesystem driver."
+
+#. type: "GrubNTFS-64_description"
+#: Resources/templates/Localizable.strings:100
+#, no-wrap
+msgid "NTFS filesystem driver from GRUB."
+msgstr "NTFS filesystem driver."
+
+#. type: "GrubUDF-64_description"
+#: Resources/templates/Localizable.strings:101
+#, no-wrap
+msgid "UDF filesystem driver from GRUB."
+msgstr "UDF filesystem driver."
+
+#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:137
+#, no-wrap
+msgid "Restore SMC keys left in nvram by FakeSMC"
+msgstr "Restore SMC keys left in NVRAM by FakeSMC."
+
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "USB upravljački program za miša, 64 bitna verzija"
+msgstr "USB 3.0 driver, 64bit"
 
-#. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:93
+#. type: "Drivers64UEFI_title"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "UEFI Drivers, 64 bit"
+msgstr "UEFI Drivers"
+
+#. type: "Drivers64UEFI_description"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "Select drivers for UEFI-booting."
+msgstr "Select drivers for UEFI-booting."
+
+#. type: "ApfsDriverLoader-64.UEFI_description"
+#: Resources/templates/Localizable.strings:108
+#, no-wrap
+msgid "64bit driver to load APFS filesystem driver from container"
+msgstr "Supports APFS filesystem driver from container for macOS 10.14."
+
+#. type: "AppleEvent-64.UEFI_description"
+#: Resources/templates/Localizable.strings:109
+#, no-wrap
+msgid "Create AppleEvent protocol for FileVault2"
+msgstr "Create AppleEvent protocol for FileVault2."
+
+#. type: "AppleGraphicsConfig-64.UEFI_description"
+#: Resources/templates/Localizable.strings:110
+#, no-wrap
+msgid "Create optional AppleGraphicsConfig protocol"
+msgstr "Create optional AppleGraphicsConfig protocol."
+
+#. type: "AptioInputFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:114
+#, no-wrap
+msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+
+#. type: "AptioMemoryFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "64 bitna verzija upravljačkog programa koji popravlja probleme alociranja mamorije na AMI Aptio pločama. "
+
+#. type: "CsmVideoDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -565,8 +605,8 @@ msgstr ""
 "U nekim slučajevima može prouzročiti probleme kao ne pokretanje Clover-a te problema sa buđenjem računala iz sleep moda. \n"
 "Koristiti sa oprezom."
 
-#. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:97
+#. type: "DataHubDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -575,116 +615,142 @@ msgstr ""
 "Podrška za DataHub protokol,obavezna za MacOSX. \n"
 "Uglavnom bi trebala biti prisutna,u slučaju da je nema pojavit će se poruka upozorenja. "
 
-#. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:99
+#. type: "EmuVariableUefi-64.UEFI_description"
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
-msgid ""
-"64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
-"Use it only if you have a problem without it"
+msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "64 bitna verzija upravljačkog programa pruža podršku NVRAM varijabli za OSX. Uglavnom većina UEFI boot načina koristi hardver za NVRAM ali u nekim rijetkim slučajevima potrebam je i oavj upravljački program. \n"
 "Koristiti samo ako imate problema bez njega."
 
-#. type: "AptioMemoryFix_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:103
+#. type: "EnglishDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
-msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "64 bitna verzija upravljačkog programa koji popravlja probleme alociranja mamorije na AMI Aptio pločama. "
+msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
+msgstr "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 
-#. type: "ApfsDriverLoader_description"
-#: Resources/templates/Localizable.strings:104
+#. type: "Fat-64.UEFI_description"
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "64bit driver to load APFS filesystem driver from container"
-msgstr ""
+msgid "FAT filesystem driver."
+msgstr "FAT filesystem driver."
 
-#. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:105
+#. type: "HashServiceFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:127
+#, no-wrap
+msgid "Fix Hash support if absent in native UEFI BIOS"
+msgstr "Fix Hash support if absent in native UEFI BIOS."
+
+#. type: "HFSPlus.UEFI_description"
+#: Resources/templates/Localizable.strings:128
+#, no-wrap
+msgid "Alternate HFS+ filesystem driver."
+msgstr "Alternate HFS+ filesystem driver."
+
+#. type: "NvmExpressDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:129
+#, no-wrap
+msgid "Driver for support NVM Express devices."
+msgstr "Driver for support NVM Express devices."
+
+#. type: "OsxAptioFix2Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:130
+#, no-wrap
+msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFix3Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:131
+#, no-wrap
+msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:132
+#, no-wrap
+msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together."
+
+#. type: "OsxFatBinaryDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:133
+#, no-wrap
+msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
+msgstr "Driver for support FAT Binary executables for OS X 10.9 and older."
+
+#. type: "OsxLowMemFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "Pojednostavljena verzija OsxAptioFixDrv,64 bitna. ( nemojte koristiti obe verzije u isto vrijeme)"
 
-#. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:106
+#. type: "PartitionDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "64 bitni upravljački program za podršku ne uobičajenih particija poput  hybrid GPT/MBR ili Apple Partition Map"
 
-#. type: "SMCHelper-64_description"
-#: Resources/templates/Localizable.strings:107
+#. type: "Ps2MouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
-msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr ""
+msgid "PS/2 mouse driver, 64bit"
+msgstr "PS/2 upravljački program za miša, 64 bitna verzija"
 
-#. type: "AppleEvent-64_description"
-#: Resources/templates/Localizable.strings:108
-#, no-wrap
-msgid "Create AppleEvent protocol for FileVault2"
-msgstr ""
-
-#. type: "AppleKeyAggregator-64_description"
-#: Resources/templates/Localizable.strings:109
-#, no-wrap
-msgid "Support for boot UI dialog for FileVault2"
-msgstr ""
-
-#. type: "FirmwareVolume-64_description"
-#: Resources/templates/Localizable.strings:110
-#, no-wrap
-msgid "Create FirmwareVolume with cursor images"
-msgstr ""
-
-#. type: "AppleImageCodec-64_description"
-#: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "For decode PNG and BMP images in boot UI"
-msgstr ""
-
-#. type: "AppleUITheme-64_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid "Create boot UI Themes support"
-msgstr ""
-
-#. type: "HashServiceFix-64_description"
-#: Resources/templates/Localizable.strings:113
-#, no-wrap
-msgid "Fix Hash support if absent in native UEFI BIOS"
-msgstr ""
-
-#. type: "UsbKbDxe-64_description"
-#: Resources/templates/Localizable.strings:114
+#. type: "UsbKbDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr ""
+msgstr "Keyboard driver for boot UI support."
 
-#. type: "AppleGraphicsConfig-64_description"
-#: Resources/templates/Localizable.strings:115
+#. type: "UsbMouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
-msgid "Create optional AppleGraphicsConfig protocol"
-msgstr ""
+msgid "USB mouse driver, 64bit"
+msgstr "USB upravljački program za miša, 64 bitna verzija"
+
+#. type: "VBoxExt2-64.UEFI_description"
+#: Resources/templates/Localizable.strings:140
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr "ext2/3 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
+
+#. type: "VBoxExt4-64.UEFI_description"
+#: Resources/templates/Localizable.strings:141
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr "ext4 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
+
+#. type: "VBoxHfs-64.UEFI_description"
+#: Resources/templates/Localizable.strings:142
+#, no-wrap
+msgid "HFS+ filesystem driver."
+msgstr "HFS+ filesystem driver."
+
+#. type: "VBoxIso9600-64.UEFI_description"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "ISO 9600 filesystem driver."
+msgstr "ISO 9600 filesystem driver."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Themes"
 msgstr "Teme"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Odaberi za instalaciju teme."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Crno_Zelena_Čudna"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -694,17 +760,14 @@ msgstr ""
 "Instaliraj u /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "embedded"
-msgstr ""
+msgstr "Embedded"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:130
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
+#: Resources/templates/Localizable.strings:158
+#, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
@@ -713,13 +776,13 @@ msgstr ""
 "Instaliraj u /EFI/CLOVER/themes/black_green."
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -729,17 +792,14 @@ msgstr ""
 "Instaliraj u  /EFI/CLOVER/themes/metal."
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "random"
-msgstr ""
+msgstr "Random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:138
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
+#: Resources/templates/Localizable.strings:166
+#, no-wrap
 msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -748,17 +808,14 @@ msgstr ""
 "Installiraj u  /EFI/CLOVER/themes/orange."
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "steampunkblack"
-msgstr ""
+msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:142
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Bootcamp theme from Bijo,\n"
-#| "Install to /EFI/CLOVER/themes/bootcamp"
+#: Resources/templates/Localizable.strings:170
+#, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
@@ -766,31 +823,31 @@ msgstr ""
 "Tema apple bootcamp-a od kreatora Bijo,\n"
 "Instaliraj u /EFI/CLOVER/themes/bootcamp."
 
-#
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:145
-#, fuzzy, no-wrap
-#| msgid "Clover Theme"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover Tema"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
 "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 msgstr ""
+"CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Instaliraj RC skripte na odabrani disk"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -800,37 +857,43 @@ msgstr ""
 "Mora biti odabran OSX bootabilni sistemski disk."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instaliraj sve RC skripte na sve OSX bootabilne diskove"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instalira sve RC skripte na sve interne OSX bootabilne diskove."
 
-#. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:157
+#. type: "OptionalRCScripts"
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Opcionalne RC skripte"
 
+#. type: "disable_sleep_proxy_client_title"
+#: Resources/templates/Localizable.strings:186
+#, no-wrap
+msgid "Disable sleep proxy client"
+msgstr "Disable sleep proxy client"
+
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava da se sistem budi iz sleepa svakih nekoliko sati"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Instaliraj Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -839,13 +902,13 @@ msgstr ""
 "Instaliraj Clover Preference Pane na odabrani disk.\n"
 "Sadrži CloverUpdater koji vas obavještava o novim verzijama."
 
-#. type: "371.title"
+#. type: "56.title, 371.title, 57.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:2
 #, no-wrap
 msgid "CloverUpdater"
-msgstr "Provjera nove verzije"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
@@ -907,12 +970,12 @@ msgstr "U redu"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "Never"
+#. type: "204.title, Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
-msgstr "Nikad"
+msgstr "Never"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
@@ -965,8 +1028,10 @@ msgstr "Provjeri sad"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Autorska prava (c) 2003 JrCs, kozlek\\nSva prava pridržana"
+msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+msgstr ""
+"Autorska prava (c) 2003 JrCs, kozlek\n"
+"Sva prava pridržana"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
@@ -1034,7 +1099,6 @@ msgstr "Spremi NVRAM sadržaj na disk:"
 msgid "Theme"
 msgstr "Tema"
 
-#
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
@@ -1125,19 +1189,19 @@ msgstr "Broj sigurnosnih kopija za čuvanje:"
 msgid "EFI Folder path"
 msgstr "EFI folder putanja"
 
-#. type: "Auto"
+#. type: "829.ibShadowedIsNilPlaceholder, Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr "Automatski"
+msgstr "Auto"
 
-#. type: "No"
+#. type: "833.ibShadowedIsNilPlaceholder, No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
-msgstr "Ne"
+msgstr "No"
 
 #. type: "Always"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1181,416 +1245,3 @@ msgstr "Odaberi EFI direktorij"
 msgid "Unknown"
 msgstr "Nepoznat"
 
-#~ msgid "AppleStyle"
-#~ msgstr "AppleStyle"
-
-#~ msgid ""
-#~ "AppleStyle theme from Eps,\n"
-#~ "Install to /EFI/CLOVER/themes/applestyle"
-#~ msgstr ""
-#~ "AppleStyle tema od kreatora Eps,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/applestyle"
-
-#~ msgid "Black_Green"
-#~ msgstr "crno_zelena"
-
-#~ msgid ""
-#~ "Default black_green theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/black_green"
-#~ msgstr ""
-#~ "Uobičajena tema od kreatora Blackosx,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/black_green."
-
-#~ msgid "Bluemac"
-#~ msgstr "Plavimek"
-
-#~ msgid ""
-#~ "Bluemac theme from FowZiey,\n"
-#~ "Install to /EFI/CLOVER/themes/bluemac"
-#~ msgstr ""
-#~ "Prekrasna tema  od kreatora FowZiey,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/bluemac."
-
-#~ msgid "BootCamp"
-#~ msgstr "BootKamp"
-
-#~ msgid ""
-#~ "Bootcamp theme from Bijo,\n"
-#~ "Install to /EFI/CLOVER/themes/bootcamp"
-#~ msgstr ""
-#~ "Tema apple bootcamp-a od kreatora Bijo,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/bootcamp."
-
-#, fuzzy
-#~| msgid ""
-#~| "BGM (Black Green and Moody) theme from Blackosx,\n"
-#~| "Install to /EFI/CLOVER/themes/BGM"
-#~ msgid ""
-#~ "BGM A version of BGM with 256px icons theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/BGM256"
-#~ msgstr ""
-#~ "BGM (Black Green and Moody) tema od kreatora Blackosx,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/BGM"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "chrome theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/chrome"
-#~ msgstr ""
-#~ "naranđasta tema od kreatora dwm,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/orange."
-
-#, fuzzy
-#~| msgid "Clover"
-#~ msgid "CloverX"
-#~ msgstr "Clover"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "CloverX theme from =)(=,\n"
-#~ "Install to /EFI/CLOVER/themes/CloverX"
-#~ msgstr ""
-#~ "naranđasta tema od kreatora dwm,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/orange."
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "dawn theme from Slice,\n"
-#~ "Install to /EFI/CLOVER/themes/dawn"
-#~ msgstr ""
-#~ "naranđasta tema od kreatora dwm,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/orange."
-
-#, fuzzy
-#~| msgid ""
-#~| "Wooden theme from iROOTa,\n"
-#~| "Install to /EFI/CLOVER/themes/wooden."
-#~ msgid ""
-#~ "gold_clover theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/gold_clover"
-#~ msgstr ""
-#~ "Tema drva od kreatora iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-
-#~ msgid "iClover"
-#~ msgstr "iClover"
-
-#~ msgid ""
-#~ "Grey style theme by winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/iclover"
-#~ msgstr ""
-#~ "Siva tema kreatora winlog,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/iclover."
-
-#, fuzzy
-#~| msgid ""
-#~| "Grey style theme by winlog,\n"
-#~| "Install to /EFI/CLOVER/themes/iclover"
-#~ msgid ""
-#~ "ios7 theme by Ukr55, Winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/ios7"
-#~ msgstr ""
-#~ "Siva tema kreatora winlog,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/iclover."
-
-#~ msgid "Magnifico"
-#~ msgstr "Magnifico"
-
-#~ msgid ""
-#~ "Magnifico theme from Magnifico,\n"
-#~ "Install to /EFI/CLOVER/themes/magnifico"
-#~ msgstr ""
-#~ "Tema  od kreatora Magnifico,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/magnifico."
-
-#~ msgid "mrengles"
-#~ msgstr "mrengles"
-
-#~ msgid ""
-#~ "mrengles theme from mrengles,\n"
-#~ "Install to /EFI/CLOVER/themes/mrengles"
-#~ msgstr ""
-#~ "mrengles tema od kreatora mrengles,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/mrengles."
-
-#~ msgid "Orange"
-#~ msgstr "Naranča"
-
-#~ msgid ""
-#~ "Orange theme from dwm,\n"
-#~ "Install to /EFI/CLOVER/themes/orange"
-#~ msgstr ""
-#~ "naranđasta tema od kreatora dwm,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/orange."
-
-#~ msgid "OS Box"
-#~ msgstr "OS kutija"
-
-#~ msgid ""
-#~ "OS Box theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_box"
-#~ msgstr ""
-#~ "OS kutija od kreatora Kyndder,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/os_box."
-
-#~ msgid "OS One"
-#~ msgstr "OS jedan"
-
-#~ msgid ""
-#~ "OS One theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_one"
-#~ msgstr ""
-#~ "OS jedan od kreatora Kyndder,\n"
-#~ "Instaliraj u  /EFI/CLOVER/themes/os_one."
-
-#~ msgid "ThinkPad"
-#~ msgstr "ThinkPad"
-
-#~ msgid ""
-#~ "ThinkPad theme from Kogen Mantis,\n"
-#~ "Install to /EFI/CLOVER/themes/thinkpad"
-#~ msgstr ""
-#~ "ThinkPad  tema od kreatora Kogen Mantis,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/thinkpad."
-
-#~ msgid "buttons"
-#~ msgstr "Gumbići"
-
-#~ msgid ""
-#~ "Buttons theme from Trauma,\n"
-#~ "Install to /EFI/CLOVER/themes/buttons."
-#~ msgstr ""
-#~ "Gumbići od kreatora Trauma,\n"
-#~ "Install to /EFI/CLOVER/themes/buttons."
-
-#~ msgid "hellfire"
-#~ msgstr "hellfire"
-
-#~ msgid ""
-#~ "Hellfire theme from lllevelll,\n"
-#~ "Install to /EFI/CLOVER/themes/hellfire."
-#~ msgstr ""
-#~ "Vatra iz pakla od kreatora lllevelll,\n"
-#~ "Install to /EFI/CLOVER/themes/hellfire."
-
-#~ msgid "simple_gray"
-#~ msgstr "simple_gray"
-
-#~ msgid ""
-#~ "Simple_gray theme from hijeane,\n"
-#~ "Install to /EFI/CLOVER/themes/simple_gray."
-#~ msgstr ""
-#~ "Jednostavna siva od kreatora hijeane,\n"
-#~ "Install to /EFI/CLOVER/themes/simple_gray."
-
-#~ msgid "Shield"
-#~ msgstr "Štit"
-
-#~ msgid ""
-#~ "An animated, harmonious theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/Shield."
-#~ msgstr ""
-#~ "Animirana, skladna  tema od kreatora Blackosx,\n"
-#~ "Instaliraj u /EFI/CLOVER/themes/BGM"
-
-#~ msgid "wooden"
-#~ msgstr "wooden"
-
-#~ msgid ""
-#~ "Wooden theme from iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-#~ msgstr ""
-#~ "Tema drva od kreatora iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-
-#, fuzzy
-#~| msgid ""
-#~| "OS One theme from Kyndder,\n"
-#~| "Install to /EFI/CLOVER/themes/os_one"
-#~ msgid ""
-#~ "sketched theme from kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/sketched."
-#~ msgstr ""
-#~ "OS jedan od kreatora Kyndder,\n"
-#~ "Instaliraj u  /EFI/CLOVER/themes/os_one."
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "Space theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/Space"
-#~ msgstr ""
-#~ "naranđasta tema od kreatora dwm,\n"
-#~ "Installiraj u  /EFI/CLOVER/themes/orange."
-
-#
-#~ msgid " "
-#~ msgstr " "
-
-#
-#~ msgid "- extra kexts loading and security mode for FireWire"
-#~ msgstr "- Korištenje extra kextova, te security mode za FireWire"
-
-#~ msgid "Nowhere"
-#~ msgstr "Nigdje"
-
-#, fuzzy
-#~| msgid "OS Box"
-#~ msgid "Box"
-#~ msgstr "OS kutija"
-
-#~ msgid "Default"
-#~ msgstr "Predpostavljeno"
-
-#~ msgid "Number of timestamp boot.log files to keep."
-#~ msgstr "Određen broj za spremanje boot.log datoteka prema datumu."
-
-#, fuzzy
-#~| msgid "Number of timestamp boot.log files to keep."
-#~ msgid "Number of timestamp log files to keep:"
-#~ msgstr "Određen broj za spremanje boot.log datoteka prema datumu."
-
-#~ msgid "Maximum timestamp log files allowed:"
-#~ msgstr "Maksimalni broj dopuštenih log datoteka: "
-
-#~ msgid "CLOVER"
-#~ msgstr "CLOVER"
-
-#~ msgid ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-#~ msgstr ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-
-#~ msgid "LogLineCount:"
-#~ msgstr "Broj spremljenih posljednih pokretačkih zapisa:"
-
-#~ msgid "LogEveryBoot:"
-#~ msgstr "Spremi svaki pokretački zapis:"
-
-#~ msgid "MountEFI:"
-#~ msgstr "MontirajEFI:"
-
-#~ msgid "NVRamDisk:"
-#~ msgstr "NVRamDisk:"
-
-#~ msgid ""
-#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
-#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
-#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
-#~ "mounting ESP partition on boot"
-#~ msgstr ""
-#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
-#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
-#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
-#~ "mounting ESP partition on boot"
-
-#~ msgid ""
-#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
-#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
-#~ "nvram.plist file in the root folder of the system partition."
-#~ msgstr ""
-#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
-#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
-#~ "nvram.plist file in the root folder of the system partition."
-
-#~ msgid ""
-#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
-#~ "in config.plist is use."
-#~ msgstr ""
-#~ "Tema koja se koristi u Clover grafičkom \\n ako ostavite prazno,tada se "
-#~ "koristi tema odabrana u config.plist."
-
-#~ msgid "GUI Appearance"
-#~ msgstr "Izgled grafičkog sučelja"
-
-#~ msgid "Install CloverUpdater"
-#~ msgstr "Instaliraj CloverUpdater"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then boot0 "
-#~ "will search first active HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will setup selected HFS + Fat32 partitions to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "Za koje koristi bios.\n"
-#~ "Koristi fdisk440 za instalaciju boot0 na prvih 440 bits od MBR što neće "
-#~ "uništiti  Windows instalaciju,ako ista postoji, potom će boot0 potražiti "
-#~ "prvu aktivnu HFS particiju za boot1h2, ili će tražiti prvu aktivnu Fat32 "
-#~ "particiju za boot1f32alt.\n"
-#~ "Postavit će se HFS + Fat32 particije kao aktivne.\n"
-#~ "Potrebno formatirati na windows ili mac računalu na ovaj način.\n"
-#~ "  1. Obriši MS-DOS (FAT) sa Disk Utility.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then "
-#~ "boot0hfs will search first HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will not setup selected HFS partition to be active, but will setup "
-#~ "selected Fat32 partition to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "Za bios boot na bios matičnim pločama.\n"
-#~ "Koristi fdisk440 za instalaciju boot0hfs na prvih 440 bits od MBR što "
-#~ "neće uništiti  Windows instalaciju,ako ista postoji, potom će boot0hfs "
-#~ "potražiti prvu aktivnu HFS particiju za boot1h2, ili će tražiti prvu "
-#~ "aktivnu Fat32 particiju za boot1f32alt.\n"
-#~ "Neće postaviti  HFS particiju kao aktivnu, ali će postaviti Fat32 "
-#~ "particiju kao aktivnu.\n"
-#~ "Potrebno formatirati na windows ili mac računalu na ovaj način.\n"
-#~ "  1. Obriši MS-DOS (FAT) sa Disk Utility.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "BIOS MBR boot0 (HFS+Fat32)"
-#~ msgstr "BIOS MBR boot0 (HFS+Fat32)"
-
-#~ msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-#~ msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
-
-#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
-#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
-
-#~ msgid "XhciDxe-64_description"
-#~ msgstr "XhciDxe-64_description"

@@ -19,197 +19,174 @@ msgstr ""
 "X-POOTLE-MTIME: 1392367286.0\n"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
+#: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
+#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:25
+#: Resources/templates/Welcome.html:34
 msgid "Developers:"
 msgstr "开发人员："
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:26
+#: Resources/templates/Welcome.html:35
 msgid "%DEVELOP%"
 msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:28
+#: Resources/templates/Welcome.html:37
 msgid "Source code credits to:"
 msgstr "源码归属于 :"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:29
+#: Resources/templates/Welcome.html:38
 msgid "%CREDITS%"
 msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:31
+#: Resources/templates/Welcome.html:40
 msgid "Package credits to:"
 msgstr "封装归功于 :"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:32
+#: Resources/templates/Welcome.html:41
 msgid "%PKGDEV%"
 msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:34
+#: Resources/templates/Welcome.html:43
 msgid "Supports Fat32, HFS+, ESP."
 msgstr "支持 Fat32 , HFS+ 及 GPT EFI 分区。"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
+#: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:17
+#: Resources/templates/Description.html:18
 msgid "Clover v2"
 msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:17
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+#: Resources/templates/Description.html:19
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr "是基于 Clover, rEFIt, XNU, VirtualBox 等不同专案的开放源码："
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:18
+#: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "主要基于 EDK2 最新修正版。"
 
 #. type: Content of: <html><body><p><b>
-#: Resources/templates/Description.html:20
+#: Resources/templates/Description.html:25
 msgid "Main features:"
 msgstr "主要功能："
 
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
-msgstr "- 支持 引导 10.4 - 10.8 OSX, Windows EFI 及 Linux EFI"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:22
-msgid ""
-"- It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr "- EFI bootloader 提供 OS 运行 RuntimeServices (传统引导器无法提供)"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:23
-msgid ""
-"- mostly Clover do automatic detection of hardware and set all properties by "
-"default."
-msgstr "- 默认 自动侦测大部份的硬件并设置所有属性"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:24
-msgid "But user can change them by config.plist"
-msgstr ". 但是用户也可以在 config.plist 中修改"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:25
-msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- 支持 启动磁盘 面板 设置其他 OS 重新开机"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:26
-msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- 写入与 OS 相同的 UUID 到 config.plist 设置文件"
-
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:27
-msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- 修正 SMBIOS 至 standard 2.6 版本"
+msgid "boot into 10.xx macOS, Windows EFI and Linux EFI"
+msgstr "支持 引导 10.xx macOS, Windows EFI 及 Linux EFI"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- 修正 ACPI 至 standard 4.0 版本"
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "EFI bootloader 提供 OS 运行 RuntimeServices (传统引导器无法提供)"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ". 支持从 开机分区 或 EFI文件夹 加载 DSDT"
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "默认 自动侦测大部份的硬件并设置所有属性 但是用户也可以在 config.plist 中修改"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
-msgid "- DSDT patching on the fly by fixes and by patterns"
-msgstr ""
+msgid "with Clover you may restart into other OS from Startup Disk prefPane"
+msgstr "支持 启动磁盘 面板 设置其他 OS 重新开机"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
-msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- 支持 睡眠/唤醒 修复 并 支持 PCIRootUID 设置"
+msgid "UUID written into config.plist will be the same as in OS"
+msgstr "写入与 OS 相同的 UUID 到 config.plist 设置文件"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
-msgid ""
-"- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards."
-msgstr "- 支持 ATI, NVidia 及 Intel 显卡启用功能,"
+msgid "SMBIOS will be corrected to standard 2.6"
+msgstr "修正 SMBIOS 至 standard 2.6 版本"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:33
-msgid "Also customizable."
-msgstr ". 并支持客制化参数设置"
+msgid "ACPI will be corrected to standard 4.0."
+msgstr "修正 ACPI 至 standard 4.0 版本"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
-msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
-"- 支持 USB 及 USB 3.0 的修复 (LegacyOff, Ownership, Builtin, clock-id) "
+msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
+msgstr "支持从 开机分区 或 EFI文件夹 加载 DSDT"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
-msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- 支持 HDA 及 以太网卡 属性内建功能"
+msgid "DSDT patching on the fly by fixes and by patterns"
+msgstr "DSDT patching on the fly by fixes and by patterns;"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
-msgid "- CPU turbo and P- and C-states generator"
-msgstr "- 支持 开启 CPU turbo 及 自动生成 P-State 及 C-State 的功能"
+msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr "支持 睡眠/唤醒 修复 并 支持 PCIRootUID 设置"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- 支持 ACPI 表单加载 (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "支持 ATI, NVidia 及 Intel 显卡启用功能, 并支持客制化参数设置"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
-msgid "- extra kexts loading"
-msgstr ""
+msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr "支持 USB 及 USB 3.0 的修复 (LegacyOff, Ownership, Builtin, clock-id) "
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
-msgid "- kernel and kext patching on the fly"
-msgstr ""
+msgid "HDA injector and Ethernet builtin injector"
+msgstr "支持 HDA 及 以太网卡 属性内建功能"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
-msgid "- set NVRAM variables for different purpose"
-msgstr ""
+msgid "CPU turbo and P- and C-states generator"
+msgstr "支持 开启 CPU turbo 及 自动生成 P-State 及 C-State 的功能"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
-msgid ""
-"- default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"- 可按 F10 储存 图形用户界面 GUI 的截图，可设定默认开机区及客制化 GUI 图形"
+msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "支持 ACPI 表单加载 (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
-msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- 可按 F2 储存 OS 的纪录 boot.log 及 GUI 的纪录 preboot.log"
+msgid "extra kexts loading"
+msgstr "Extra kernel extensions loading;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:43
+msgid "kernel and kext patching on the fly"
+msgstr "Kernel and kext patching on the fly;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:44
+msgid "set NVRAM variables for different purpose"
+msgstr "Set NVRAM variables for different purpose;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:45
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "可按 F10 储存 图形用户界面 GUI 的截图，可设定默认开机区及客制化 GUI 图形"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:46
+msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr "可按 F2 储存 OS 的纪录 boot.log 及 GUI 的纪录 preboot.log"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -413,12 +390,12 @@ msgstr "CloverEFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "选择要安装的 CloverEFI 版本。"
 
-#. type: "cloverEFI.32_description"
+#. type: "cloverEFI.32_title, cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32位版本"
+msgstr "CloverEFI 32-bits"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:71
@@ -446,41 +423,33 @@ msgstr "CloverEFI 64位版本，使用 Bios Block I/O 模式存取硬盘。"
 
 #. type: "cloverEFI.64.blockio2_title"
 #: Resources/templates/Localizable.strings:75
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits BiosBlockIO"
+#, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
 msgstr "CloverEFI 64位 BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:76
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+#, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
 msgstr "CloverEFI 64位版本，使用 Bios Block I/O 模式存取硬盘。"
 
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "32位，PS/2 键盘 驱动。"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "32位，PS/2 触控板 驱动。"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "32位，PS/2 鼠标 驱动。"
-
-#. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
-#, no-wrap
-msgid "PS/2 mouse driver, 64bit"
-msgstr "64位，PS/2 鼠标 驱动。"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:85
@@ -488,50 +457,152 @@ msgstr "64位，PS/2 鼠标 驱动。"
 msgid "USB mouse driver, 32bit"
 msgstr "32位，USB 鼠标 驱动。"
 
-#. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:86
-#, no-wrap
-msgid "USB mouse driver, 64bit"
-msgstr "64位，USB 鼠标 驱动。"
-
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "32位，来自 Virtualbox 的 ext2/3 文件系统驱动。"
 
-#. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:88
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "64位，来自 Virtualbox 的 ext2/3 文件系统驱动。"
-
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "32位，来自 Virtualbox 的 ext4 文件系统驱动。"
 
-#. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:90
-#, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "64位，来自 Virtualbox 的 ext4 文件系统驱动。"
-
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "32位，XHCI USB 3.0 驱动。"
 
+#. type: "Drivers64_title"
+#: Resources/templates/Localizable.strings:90
+#, no-wrap
+msgid "BIOS Drivers, 64 bit"
+msgstr "BIOS Drivers, 64 bit"
+
+#. type: "Drivers64_description"
+#: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Select drivers for BIOS-booting."
+msgstr "Select drivers for BIOS-booting."
+
+#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#: Resources/templates/Localizable.strings:93
+#: Resources/templates/Localizable.strings:111
+#, no-wrap
+msgid "For decode PNG and BMP images in boot UI"
+msgstr "Decode PNG and BMP for FileVault2."
+
+#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:112
+#, no-wrap
+msgid "Support for boot UI dialog for FileVault2"
+msgstr "Support for boot UI dialog for FileVault2."
+
+#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:113
+#, no-wrap
+msgid "Create boot UI Themes support"
+msgstr "Create boot UI Themes support for FileVault2."
+
+#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:125
+#, no-wrap
+msgid "Create FirmwareVolume with cursor images"
+msgstr "Create FirmwareVolume with cursor images for FileVault2."
+
+#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:126
+#, no-wrap
+msgid "Provide injection of kexts from Clover folder."
+msgstr "Provide injection of kernel extensions from Clover folder."
+
+#. type: "GrubEXFAT-64_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ExFAT filesystem driver from GRUB."
+msgstr "ExFAT filesystem driver."
+
+#. type: "GrubISO9660-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ISO 9600 filesystem driver from GRUB."
+msgstr "ISO9600 filesystem driver."
+
+#. type: "GrubNTFS-64_description"
+#: Resources/templates/Localizable.strings:100
+#, no-wrap
+msgid "NTFS filesystem driver from GRUB."
+msgstr "NTFS filesystem driver."
+
+#. type: "GrubUDF-64_description"
+#: Resources/templates/Localizable.strings:101
+#, no-wrap
+msgid "UDF filesystem driver from GRUB."
+msgstr "UDF filesystem driver."
+
+#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:137
+#, no-wrap
+msgid "Restore SMC keys left in nvram by FakeSMC"
+msgstr "Restore SMC keys left in NVRAM by FakeSMC."
+
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "64位，XHCI USB 3.0 驱动。"
+msgstr "USB 3.0 driver, 64bit"
 
-#. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:93
+#. type: "Drivers64UEFI_title"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "UEFI Drivers, 64 bit"
+msgstr "UEFI Drivers"
+
+#. type: "Drivers64UEFI_description"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "Select drivers for UEFI-booting."
+msgstr "Select drivers for UEFI-booting."
+
+#. type: "ApfsDriverLoader-64.UEFI_description"
+#: Resources/templates/Localizable.strings:108
+#, no-wrap
+msgid "64bit driver to load APFS filesystem driver from container"
+msgstr "Supports APFS filesystem driver from container for macOS 10.14."
+
+#. type: "AppleEvent-64.UEFI_description"
+#: Resources/templates/Localizable.strings:109
+#, no-wrap
+msgid "Create AppleEvent protocol for FileVault2"
+msgstr "Create AppleEvent protocol for FileVault2."
+
+#. type: "AppleGraphicsConfig-64.UEFI_description"
+#: Resources/templates/Localizable.strings:110
+#, no-wrap
+msgid "Create optional AppleGraphicsConfig protocol"
+msgstr "Create optional AppleGraphicsConfig protocol."
+
+#. type: "AptioInputFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:114
+#, no-wrap
+msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+
+#. type: "AptioMemoryFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "64位，提供 UEFI 固件的 内存问题修正，如 AMI Aptio 等。"
+
+#. type: "CsmVideoDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -543,8 +614,8 @@ msgstr ""
 "基于 UEFI BIOS 的 CSM module 模组，CSM 必须 Enabled 启动。\n"
 "Clover 可能无法启动，可能会发生 系统唤醒 的问题。使用时，请注意相关问题。"
 
-#. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:97
+#. type: "DataHubDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -553,119 +624,145 @@ msgstr ""
 "64位，此 DataHub 协定支持 Mac OS X 强制启用。\n"
 "通常已启用，但有时可能遗漏，可在屏幕 warning 中查看。"
 
-#. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:99
+#. type: "EmuVariableUefi-64.UEFI_description"
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
-msgid ""
-"64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
-"Use it only if you have a problem without it"
+msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "64位，支持 Mac OS X 需要的 NVRAM 变数。\n"
 "大多数的 UEFI boot 使用硬件NVRAM，但是部份少见案例需要 EmuVariableUefi。\n"
 "建议只在 有问题时，才启用 EmuVariableUefi。"
 
-#. type: "AptioMemoryFix_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:103
+#. type: "EnglishDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
-msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "64位，提供 UEFI 固件的 内存问题修正，如 AMI Aptio 等。"
+msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
+msgstr "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 
-#. type: "ApfsDriverLoader_description"
-#: Resources/templates/Localizable.strings:104
+#. type: "Fat-64.UEFI_description"
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "64bit driver to load APFS filesystem driver from container"
-msgstr ""
+msgid "FAT filesystem driver."
+msgstr "FAT filesystem driver."
 
-#. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:105
+#. type: "HashServiceFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:127
+#, no-wrap
+msgid "Fix Hash support if absent in native UEFI BIOS"
+msgstr "Fix Hash support if absent in native UEFI BIOS."
+
+#. type: "HFSPlus.UEFI_description"
+#: Resources/templates/Localizable.strings:128
+#, no-wrap
+msgid "Alternate HFS+ filesystem driver."
+msgstr "Alternate HFS+ filesystem driver."
+
+#. type: "NvmExpressDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:129
+#, no-wrap
+msgid "Driver for support NVM Express devices."
+msgstr "Driver for support NVM Express devices."
+
+#. type: "OsxAptioFix2Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:130
+#, no-wrap
+msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFix3Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:131
+#, no-wrap
+msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:132
+#, no-wrap
+msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together."
+
+#. type: "OsxFatBinaryDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:133
+#, no-wrap
+msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
+msgstr "Driver for support FAT Binary executables for OS X 10.9 and older."
+
+#. type: "OsxLowMemFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
 "64位，提供 UEFI 固件的 内存问题修正，如 AMI Aptio 等。\n"
 "为 OsxAptioFixDrv 的简化版本，请勿与 OsxAptioFixDrv 同时使用。"
 
-#. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:106
+#. type: "PartitionDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "64位，支持非常态的分区配置，如 hybrid GPT/MBR 或 Apple Partition Map。"
 
-#. type: "SMCHelper-64_description"
-#: Resources/templates/Localizable.strings:107
+#. type: "Ps2MouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
-msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr ""
+msgid "PS/2 mouse driver, 64bit"
+msgstr "64位，PS/2 鼠标 驱动。"
 
-#. type: "AppleEvent-64_description"
-#: Resources/templates/Localizable.strings:108
-#, no-wrap
-msgid "Create AppleEvent protocol for FileVault2"
-msgstr ""
-
-#. type: "AppleKeyAggregator-64_description"
-#: Resources/templates/Localizable.strings:109
-#, no-wrap
-msgid "Support for boot UI dialog for FileVault2"
-msgstr ""
-
-#. type: "FirmwareVolume-64_description"
-#: Resources/templates/Localizable.strings:110
-#, no-wrap
-msgid "Create FirmwareVolume with cursor images"
-msgstr ""
-
-#. type: "AppleImageCodec-64_description"
-#: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "For decode PNG and BMP images in boot UI"
-msgstr ""
-
-#. type: "AppleUITheme-64_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid "Create boot UI Themes support"
-msgstr ""
-
-#. type: "HashServiceFix-64_description"
-#: Resources/templates/Localizable.strings:113
-#, no-wrap
-msgid "Fix Hash support if absent in native UEFI BIOS"
-msgstr ""
-
-#. type: "UsbKbDxe-64_description"
-#: Resources/templates/Localizable.strings:114
+#. type: "UsbKbDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr ""
+msgstr "Keyboard driver for boot UI support."
 
-#. type: "AppleGraphicsConfig-64_description"
-#: Resources/templates/Localizable.strings:115
+#. type: "UsbMouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
-msgid "Create optional AppleGraphicsConfig protocol"
-msgstr ""
+msgid "USB mouse driver, 64bit"
+msgstr "64位，USB 鼠标 驱动。"
+
+#. type: "VBoxExt2-64.UEFI_description"
+#: Resources/templates/Localizable.strings:140
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr "64位，来自 Virtualbox 的 ext2/3 文件系统驱动。"
+
+#. type: "VBoxExt4-64.UEFI_description"
+#: Resources/templates/Localizable.strings:141
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr "64位，来自 Virtualbox 的 ext4 文件系统驱动。"
+
+#. type: "VBoxHfs-64.UEFI_description"
+#: Resources/templates/Localizable.strings:142
+#, no-wrap
+msgid "HFS+ filesystem driver."
+msgstr "HFS+ filesystem driver."
+
+#. type: "VBoxIso9600-64.UEFI_description"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "ISO 9600 filesystem driver."
+msgstr "ISO 9600 filesystem driver."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Themes"
 msgstr "开机主题"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Select to install themes."
 msgstr "选择安装，开机时，显示的背景主题。"
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "BlackGreenMoody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -675,17 +772,14 @@ msgstr ""
 "安装位置 /EFI/CLOVER/themes/BGM。"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "embedded"
-msgstr ""
+msgstr "Embedded"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:130
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
+#: Resources/templates/Localizable.strings:158
+#, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
@@ -694,13 +788,13 @@ msgstr ""
 "安装位置 /EFI/CLOVER/themes/black_green。"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "metal"
 msgstr "Metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -710,17 +804,14 @@ msgstr ""
 "安装位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "random"
-msgstr ""
+msgstr "Random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:138
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
+#: Resources/templates/Localizable.strings:166
+#, no-wrap
 msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -729,17 +820,14 @@ msgstr ""
 "安装位置 /EFI/CLOVER/themes/orange。"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "steampunkblack"
-msgstr ""
+msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:142
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Bootcamp theme from Bijo,\n"
-#| "Install to /EFI/CLOVER/themes/bootcamp"
+#: Resources/templates/Localizable.strings:170
+#, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
@@ -748,29 +836,30 @@ msgstr ""
 "安装位置 /EFI/CLOVER/themes/bootcamp。"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:145
-#, fuzzy, no-wrap
-#| msgid "Clover Theme"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover 主题"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
 "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 msgstr ""
+"CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "安装 RC scripts 到目标磁区"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -780,37 +869,43 @@ msgstr ""
 "目标磁区必须是 可开机的 OSX 磁区。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "安装全部 RC scripts 到全部可开机的 OSX 磁区"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "安装全部 RC scripts 到全部内置可开机的 OSX 磁区。"
 
-#. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:157
+#. type: "OptionalRCScripts"
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "选择安装 RC Scripts"
 
+#. type: "disable_sleep_proxy_client_title"
+#: Resources/templates/Localizable.strings:186
+#, no-wrap
+msgid "Disable sleep proxy client"
+msgstr "Disable sleep proxy client"
+
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "停用 mDNSResponder 休眠 proxy client 服务，可以避免系统休眠时，每小时自动唤醒。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "安装 Clover 系统偏好设置 面板"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -819,13 +914,13 @@ msgstr ""
 "安装 Clover 系统偏好设置 面板 到选择磁区。 \n"
 "包含可提醒 Clover 更新信息的 Clover 更新软体。"
 
-#. type: "371.title"
+#. type: "56.title, 371.title, 57.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:2
 #, no-wrap
 msgid "CloverUpdater"
-msgstr "Clover 更新软件"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
@@ -887,12 +982,12 @@ msgstr "确定"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "Never"
+#. type: "204.title, Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
-msgstr "永远不要"
+msgstr "Never"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
@@ -945,7 +1040,7 @@ msgstr "立刻检查"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
+msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
 msgstr ""
 "版权所有 (C) 2013 JrCs, kozlek\n"
 "保留所有权利"
@@ -1106,19 +1201,19 @@ msgstr "保存的备份数量:"
 msgid "EFI Folder path"
 msgstr "EFI 文件夹路径："
 
-#. type: "Auto"
+#. type: "829.ibShadowedIsNilPlaceholder, Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr "自动"
+msgstr "Auto"
 
-#. type: "No"
+#. type: "833.ibShadowedIsNilPlaceholder, No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
-msgstr "否"
+msgstr "No"
 
 #. type: "Always"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1162,372 +1257,3 @@ msgstr "设置 EFI 目录"
 msgid "Unknown"
 msgstr "未知"
 
-#~ msgid "AppleStyle"
-#~ msgstr "AppleStyle"
-
-#~ msgid ""
-#~ "AppleStyle theme from Eps,\n"
-#~ "Install to /EFI/CLOVER/themes/applestyle"
-#~ msgstr ""
-#~ "选择安装来自 Eps 的 AppleStyle 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/applestyle。"
-
-#~ msgid "Black_Green"
-#~ msgstr "BlackGreen"
-
-#~ msgid ""
-#~ "Default black_green theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/black_green"
-#~ msgstr ""
-#~ "选择安装来自 Blackosx 的 BlackGreen主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/black_green。"
-
-#~ msgid "Bluemac"
-#~ msgstr "Bluemac"
-
-#~ msgid ""
-#~ "Bluemac theme from FowZiey,\n"
-#~ "Install to /EFI/CLOVER/themes/bluemac"
-#~ msgstr ""
-#~ "选择安装来自 FowZiey 的 Bluemac 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/bluemac。"
-
-#~ msgid "BootCamp"
-#~ msgstr "BootCamp"
-
-#~ msgid ""
-#~ "Bootcamp theme from Bijo,\n"
-#~ "Install to /EFI/CLOVER/themes/bootcamp"
-#~ msgstr ""
-#~ "选择安装来自 Bijo 的 BootCamp 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/bootcamp。"
-
-#, fuzzy
-#~| msgid ""
-#~| "BGM (Black Green and Moody) theme from Blackosx,\n"
-#~| "Install to /EFI/CLOVER/themes/BGM"
-#~ msgid ""
-#~ "BGM A version of BGM with 256px icons theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/BGM256"
-#~ msgstr ""
-#~ "选择安装来自 Blackosx 的 BlackGreenMoody主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/BGM。"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "chrome theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/chrome"
-#~ msgstr ""
-#~ "选择安装来自 dwm 的 Orange 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/orange。"
-
-#, fuzzy
-#~| msgid "Clover"
-#~ msgid "CloverX"
-#~ msgstr "Clover"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "CloverX theme from =)(=,\n"
-#~ "Install to /EFI/CLOVER/themes/CloverX"
-#~ msgstr ""
-#~ "选择安装来自 dwm 的 Orange 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/orange。"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "dawn theme from Slice,\n"
-#~ "Install to /EFI/CLOVER/themes/dawn"
-#~ msgstr ""
-#~ "选择安装来自 dwm 的 Orange 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/orange。"
-
-#, fuzzy
-#~| msgid ""
-#~| "Wooden theme from iROOTa,\n"
-#~| "Install to /EFI/CLOVER/themes/wooden."
-#~ msgid ""
-#~ "gold_clover theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/gold_clover"
-#~ msgstr ""
-#~ "选择安装来自 iROOTa 的 Wooden 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/wooden。"
-
-#~ msgid "iClover"
-#~ msgstr "iClover"
-
-#~ msgid ""
-#~ "Grey style theme by winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/iclover"
-#~ msgstr ""
-#~ "选择安装来自 winlog 的 iClover 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/iclover。"
-
-#, fuzzy
-#~| msgid ""
-#~| "Grey style theme by winlog,\n"
-#~| "Install to /EFI/CLOVER/themes/iclover"
-#~ msgid ""
-#~ "ios7 theme by Ukr55, Winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/ios7"
-#~ msgstr ""
-#~ "选择安装来自 winlog 的 iClover 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/iclover。"
-
-#~ msgid "Magnifico"
-#~ msgstr "Magnifico"
-
-#~ msgid ""
-#~ "Magnifico theme from Magnifico,\n"
-#~ "Install to /EFI/CLOVER/themes/magnifico"
-#~ msgstr ""
-#~ "选择安装来自 Magnifico 的 Magnifico 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/magnifico。"
-
-#~ msgid "mrengles"
-#~ msgstr "Mrengles"
-
-#~ msgid ""
-#~ "mrengles theme from mrengles,\n"
-#~ "Install to /EFI/CLOVER/themes/mrengles"
-#~ msgstr ""
-#~ "选择安装来自 mrengles 的 Mrengles 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/mrengles。"
-
-#~ msgid "Orange"
-#~ msgstr "Orange"
-
-#~ msgid ""
-#~ "Orange theme from dwm,\n"
-#~ "Install to /EFI/CLOVER/themes/orange"
-#~ msgstr ""
-#~ "选择安装来自 dwm 的 Orange 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/orange。"
-
-#~ msgid "OS Box"
-#~ msgstr "OS Box"
-
-#~ msgid ""
-#~ "OS Box theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_box"
-#~ msgstr ""
-#~ "选择安装来自 Kyndder 的 OS Box 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/os_box。"
-
-#~ msgid "OS One"
-#~ msgstr "OS One"
-
-#~ msgid ""
-#~ "OS One theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_one"
-#~ msgstr ""
-#~ "选择安装来自 Kyndder 的 OS One 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/os_one。"
-
-#~ msgid "ThinkPad"
-#~ msgstr "ThinkPad"
-
-#~ msgid ""
-#~ "ThinkPad theme from Kogen Mantis,\n"
-#~ "Install to /EFI/CLOVER/themes/thinkpad"
-#~ msgstr ""
-#~ "选择安装来自 Kogen Mantis 的 ThinkPad 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/thinkpad。"
-
-#~ msgid "buttons"
-#~ msgstr "Buttons"
-
-#~ msgid ""
-#~ "Buttons theme from Trauma,\n"
-#~ "Install to /EFI/CLOVER/themes/buttons."
-#~ msgstr ""
-#~ "选择安装来自 Trauma 的 Buttons 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/buttons。"
-
-#~ msgid "hellfire"
-#~ msgstr "Hellfire"
-
-#~ msgid ""
-#~ "Hellfire theme from lllevelll,\n"
-#~ "Install to /EFI/CLOVER/themes/hellfire."
-#~ msgstr ""
-#~ "选择安装来自 illevelll 的 Hellfire 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/hellfire。"
-
-#~ msgid "simple_gray"
-#~ msgstr "SimpleGray"
-
-#~ msgid ""
-#~ "Simple_gray theme from hijeane,\n"
-#~ "Install to /EFI/CLOVER/themes/simple_gray."
-#~ msgstr ""
-#~ "选择安装来自 hijeane 的 SimpleGray 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/simple_gray。"
-
-#~ msgid "Shield"
-#~ msgstr "Shield"
-
-#~ msgid ""
-#~ "An animated, harmonious theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/Shield."
-#~ msgstr ""
-#~ "选择安装来自 Blackosx 的 Shield 动画主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/Shield。"
-
-#~ msgid "wooden"
-#~ msgstr "Wooden"
-
-#~ msgid ""
-#~ "Wooden theme from iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-#~ msgstr ""
-#~ "选择安装来自 iROOTa 的 Wooden 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/wooden。"
-
-#, fuzzy
-#~| msgid ""
-#~| "OS One theme from Kyndder,\n"
-#~| "Install to /EFI/CLOVER/themes/os_one"
-#~ msgid ""
-#~ "sketched theme from kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/sketched."
-#~ msgstr ""
-#~ "选择安装来自 Kyndder 的 OS One 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/os_one。"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "Space theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/Space"
-#~ msgstr ""
-#~ "选择安装来自 dwm 的 Orange 主题。\n"
-#~ "安装位置 /EFI/CLOVER/themes/orange。"
-
-# Don't change this ! It must be one space only !
-#~ msgid " "
-#~ msgstr " "
-
-#~ msgid "- extra kexts loading and security mode for FireWire"
-#~ msgstr "- 可加载额外 kexts 及 支持 FireWire 安全保密模式"
-
-#~ msgid "Nowhere"
-#~ msgstr "不显示"
-
-#, fuzzy
-#~| msgid "OS Box"
-#~ msgid "Box"
-#~ msgstr "OS Box"
-
-#~ msgid "Default"
-#~ msgstr "默认"
-
-#~ msgid "Number of timestamp boot.log files to keep."
-#~ msgstr "保存时间戳 boot.log 文件的数量:"
-
-#~ msgid "CLOVER"
-#~ msgstr "CLOVER"
-
-#~ msgid ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-#~ msgstr ""
-#~ "每次开机创建 CloverEFI/boot.log 文件\n"
-#~ "\n"
-#~ "Value:\n"
-#~ "* Yes: 创建新的 boot.log 文件\n"
-#~ "* Number: 保存 boot.log 文件的数量。\n"
-#~ "\n"
-#~ "空白表示不创建 boot.log 文件"
-
-#~ msgid "LogLineCount:"
-#~ msgstr "纪录行数："
-
-#~ msgid "LogEveryBoot:"
-#~ msgstr "纪录每次开机："
-
-#~ msgid "MountEFI:"
-#~ msgstr "MountEFI:"
-
-#~ msgid "NVRamDisk:"
-#~ msgstr "NVRamDisk:"
-
-#~ msgid "Install CloverUpdater"
-#~ msgstr "安装 Clover更新软件"
-
-#~ msgid "BIOS MBR boot0 (HFS+Fat32)"
-#~ msgstr "BIOS 安装 boot0 (HFS+Fat32)"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then boot0 "
-#~ "will search first active HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will setup selected HFS + Fat32 partitions to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "使用 fdisk440 将 boot0 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows "
-#~ "机码，boot0 会在第一个 HFS 激活 分区开始搜寻 boot1h2，或在第一个 Fat32 激"
-#~ "活 分区搜寻 boot1f32alt。\n"
-#~ "本安装将 会 设置 HFS 及 Fat32 安装分区为激活分区。\n"
-#~ "必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
-#~ " 1. 先用 磁碟工具 抹掉 为 MS-DOS (FAT) 格式\n"
-#~ " 2. diskutil list\n"
-#~ " 3. diskutil unmount /dev/rdisk9s1\n"
-#~ " 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ " 5. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-#~ msgstr "BIOS 安装 boot0hfs (HFS+Fat32)"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then "
-#~ "boot0hfs will search first HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will not setup selected HFS partition to be active, but will setup "
-#~ "selected Fat32 partition to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "使用 fdisk440 将 boot0hfs 写入 MBR 的前 440 位元，避免损坏已经存在的 "
-#~ "Windows 机码，boot0hfs 会在第一个 HFS 分区开始搜寻 boot1h2，或在第一个 "
-#~ "Fat32 激活 分区搜寻 boot1f32alt。\n"
-#~ "本安装将 不会 设置 HFS 安装分区为激活分区，\n"
-#~ "本安装将 会 设置 Fat32 安装分区为激活分区。\n"
-#~ "必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
-#~ " 1. 先用 磁碟工具 抹掉 为 MS-DOS (FAT) 格式\n"
-#~ " 2. diskutil list\n"
-#~ " 3. diskutil unmount /dev/rdisk9s1\n"
-#~ " 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ " 5. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
-#~ msgstr "32位，PS/2 鼠标 驱动。"
-
-#~ msgid "XhciDxe-64_description"
-#~ msgstr "64位，XHCI 高速USB 3.0 驱动。"

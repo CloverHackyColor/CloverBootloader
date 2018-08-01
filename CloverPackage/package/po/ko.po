@@ -18,213 +18,175 @@ msgstr ""
 "X-Generator: Pootle 2.5.0-rc1\n"
 "X-POOTLE-MTIME: 1451518021.0\n"
 
-# //Don't need change
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
+#: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
 msgstr "클로버 EFI"
 
-# //Don't need change also
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
+#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:25
+#: Resources/templates/Welcome.html:34
 msgid "Developers:"
 msgstr "개발자:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:26
+#: Resources/templates/Welcome.html:35
 msgid "%DEVELOP%"
 msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:28
+#: Resources/templates/Welcome.html:37
 msgid "Source code credits to:"
 msgstr "소스코드 크레딧:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:29
+#: Resources/templates/Welcome.html:38
 msgid "%CREDITS%"
 msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:31
+#: Resources/templates/Welcome.html:40
 msgid "Package credits to:"
 msgstr "패키지 크레딧:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:32
+#: Resources/templates/Welcome.html:41
 msgid "%PKGDEV%"
 msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:34
+#: Resources/templates/Welcome.html:43
 msgid "Supports Fat32, HFS+, ESP."
 msgstr "Fat32, HFS+, ESP를 지원합니다."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
+#: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:17
+#: Resources/templates/Description.html:18
 msgid "Clover v2"
 msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:17
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
+#: Resources/templates/Description.html:19
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:18
+#: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "메인은 EDK2의 최신판입니다."
 
 #. type: Content of: <html><body><p><b>
-#: Resources/templates/Description.html:20
+#: Resources/templates/Description.html:25
 msgid "Main features:"
 msgstr "주요 기능:"
 
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
-msgstr "- OSX 10.4 ~ 10.9, Windows EFI, 그리고 Linux EFI로 부팅"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:22
-msgid ""
-"- It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로"
-"더입니다"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:23
-msgid ""
-"- mostly Clover do automatic detection of hardware and set all properties by "
-"default."
-msgstr ""
-"- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:24
-msgid "But user can change them by config.plist"
-msgstr "물론 사용자가 직접 config.plist를 수정할 수도 있습니다"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:25
-msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"- Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습"
-"니다"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:26
-msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- config.plist에 기록된 UUID는 OS에서도 동일합니다"
-
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:27
-msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOS는 standard 2.6으로 정정될 것입니다"
+msgid "boot into 10.xx macOS, Windows EFI and Linux EFI"
+msgstr "macOS 10.xx, Windows EFI, 그리고 Linux EFI로 부팅"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- ACPI는 standard 4.0으로 정정될 것입니다"
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"- 이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로"
-"더입니다"
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다. 물론 사용자가 직접 config.plist를 수정할 수도 있습니다."
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
-msgid "- DSDT patching on the fly by fixes and by patterns"
-msgstr ""
+msgid "with Clover you may restart into other OS from Startup Disk prefPane"
+msgstr "Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니다"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
-msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
-"- 사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수"
-"정할 수 있습니다."
+msgid "UUID written into config.plist will be the same as in OS"
+msgstr "Config.plist에 기록된 UUID는 OS에서도 동일합니다"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
-msgid ""
-"- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards."
-msgstr ""
-"- ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 "
-"수 있습니다."
+msgid "SMBIOS will be corrected to standard 2.6"
+msgstr "SMBIOS는 standard 2.6으로 정정될 것입니다"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:33
-msgid "Also customizable."
-msgstr "이 역시 사용자 환경에 맞게 조절할 수 있습니다."
+msgid "ACPI will be corrected to standard 4.0."
+msgstr "ACPI는 standard 4.0으로 정정될 것입니다"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
-msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
-"- USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
+msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
+msgstr "이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
-msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- HDA와 내장 이더넷의 속성 부여"
+msgid "DSDT patching on the fly by fixes and by patterns"
+msgstr "DSDT patching on the fly by fixes and by patterns;"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
-msgid "- CPU turbo and P- and C-states generator"
-msgstr "- CPU 터보 기능 구현과 P-state, C-state 생성 가능"
+msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr "사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정할 수 있습니다."
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 있습니다. 이 역시 사용자 환경에 맞게 조절할 수 있습니다."
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
-msgid "- extra kexts loading"
-msgstr ""
+msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr "USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
-msgid "- kernel and kext patching on the fly"
-msgstr ""
+msgid "HDA injector and Ethernet builtin injector"
+msgstr "HDA와 내장 이더넷의 속성 부여"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
-msgid "- set NVRAM variables for different purpose"
-msgstr ""
+msgid "CPU turbo and P- and C-states generator"
+msgstr "CPU 터보 기능 구현과 P-state, C-state 생성 가능"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
-msgid ""
-"- default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"- 사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면"
-"의 스크린샷 기능(F10키)"
+msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
-msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- F12키로 boot.log(OS)와 preboot.log(GUI) 저장"
+msgid "extra kexts loading"
+msgstr "Extra kernel extensions loading;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:43
+msgid "kernel and kext patching on the fly"
+msgstr "Kernel and kext patching on the fly;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:44
+msgid "set NVRAM variables for different purpose"
+msgstr "Set NVRAM variables for different purpose;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:45
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 스크린샷 기능(F10키)"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:46
+msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr "F12키로 boot.log(OS)와 preboot.log(GUI) 저장"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -333,7 +295,6 @@ msgstr ""
 msgid "Don't update MBR and PBR sectors"
 msgstr "MBR 또는 PBR 섹터를 업데이트 하지 않습니다"
 
-# It's too vague following words in English : Usefull for UEFI motherboards that don't need bootloader files.
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:41
 #, no-wrap
@@ -420,12 +381,12 @@ msgstr "CloverEFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "설치할 CloverEFI를 선택하십시오."
 
-#. type: "cloverEFI.32_description"
+#. type: "cloverEFI.32_title, cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32비트"
+msgstr "CloverEFI 32-bits"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:71
@@ -453,41 +414,33 @@ msgstr "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)"
 
 #. type: "cloverEFI.64.blockio2_title"
 #: Resources/templates/Localizable.strings:75
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits BiosBlockIO"
+#, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
 msgstr "CloverEFI 64비트 BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:76
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+#, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
 msgstr "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)"
 
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "PS/2 키보드 드라이버, 32비트"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "PS/2 트랙패드 드라이버, 32비트"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "PS/2 마우스 드라이버, 32비트"
-
-#. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
-#, no-wrap
-msgid "PS/2 mouse driver, 64bit"
-msgstr "PS/2 마우스 드라이버, 64비트"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:85
@@ -495,50 +448,152 @@ msgstr "PS/2 마우스 드라이버, 64비트"
 msgid "USB mouse driver, 32bit"
 msgstr "USB 마우스 드라이버, 32비트"
 
-#. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:86
-#, no-wrap
-msgid "USB mouse driver, 64bit"
-msgstr "USB 마우스 드라이버, 64비트"
-
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "Virtualbox 용 Ext2/3 파일시스템 드라이버, 32비트"
 
-#. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:88
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "Virtualbox 용 Ext2/3 파일시스템 드라이버, 64비트"
-
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 32비트"
 
-#. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:90
-#, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 64비트"
-
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "USB 3.0 드라이버, 32비트"
 
+#. type: "Drivers64_title"
+#: Resources/templates/Localizable.strings:90
+#, no-wrap
+msgid "BIOS Drivers, 64 bit"
+msgstr "BIOS Drivers, 64 bit"
+
+#. type: "Drivers64_description"
+#: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Select drivers for BIOS-booting."
+msgstr "Select drivers for BIOS-booting."
+
+#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#: Resources/templates/Localizable.strings:93
+#: Resources/templates/Localizable.strings:111
+#, no-wrap
+msgid "For decode PNG and BMP images in boot UI"
+msgstr "Decode PNG and BMP for FileVault2."
+
+#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:112
+#, no-wrap
+msgid "Support for boot UI dialog for FileVault2"
+msgstr "Support for boot UI dialog for FileVault2."
+
+#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:113
+#, no-wrap
+msgid "Create boot UI Themes support"
+msgstr "Create boot UI Themes support for FileVault2."
+
+#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:125
+#, no-wrap
+msgid "Create FirmwareVolume with cursor images"
+msgstr "Create FirmwareVolume with cursor images for FileVault2."
+
+#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:126
+#, no-wrap
+msgid "Provide injection of kexts from Clover folder."
+msgstr "Provide injection of kernel extensions from Clover folder."
+
+#. type: "GrubEXFAT-64_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ExFAT filesystem driver from GRUB."
+msgstr "ExFAT filesystem driver."
+
+#. type: "GrubISO9660-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ISO 9600 filesystem driver from GRUB."
+msgstr "ISO9600 filesystem driver."
+
+#. type: "GrubNTFS-64_description"
+#: Resources/templates/Localizable.strings:100
+#, no-wrap
+msgid "NTFS filesystem driver from GRUB."
+msgstr "NTFS filesystem driver."
+
+#. type: "GrubUDF-64_description"
+#: Resources/templates/Localizable.strings:101
+#, no-wrap
+msgid "UDF filesystem driver from GRUB."
+msgstr "UDF filesystem driver."
+
+#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:137
+#, no-wrap
+msgid "Restore SMC keys left in nvram by FakeSMC"
+msgstr "Restore SMC keys left in NVRAM by FakeSMC."
+
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "USB 3.0 드라이버, 64비트"
+msgstr "USB 3.0 driver, 64bit"
 
-#. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:93
+#. type: "Drivers64UEFI_title"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "UEFI Drivers, 64 bit"
+msgstr "UEFI Drivers"
+
+#. type: "Drivers64UEFI_description"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "Select drivers for UEFI-booting."
+msgstr "Select drivers for UEFI-booting."
+
+#. type: "ApfsDriverLoader-64.UEFI_description"
+#: Resources/templates/Localizable.strings:108
+#, no-wrap
+msgid "64bit driver to load APFS filesystem driver from container"
+msgstr "Supports APFS filesystem driver from container for macOS 10.14."
+
+#. type: "AppleEvent-64.UEFI_description"
+#: Resources/templates/Localizable.strings:109
+#, no-wrap
+msgid "Create AppleEvent protocol for FileVault2"
+msgstr "Create AppleEvent protocol for FileVault2."
+
+#. type: "AppleGraphicsConfig-64.UEFI_description"
+#: Resources/templates/Localizable.strings:110
+#, no-wrap
+msgid "Create optional AppleGraphicsConfig protocol"
+msgstr "Create optional AppleGraphicsConfig protocol."
+
+#. type: "AptioInputFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:114
+#, no-wrap
+msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+
+#. type: "AptioMemoryFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "AMI Aptio와 같은 UEFI 펌웨어 문제를 해결하기 위한 64비트 드라이버"
+
+#. type: "CsmVideoDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -550,9 +605,10 @@ msgstr ""
 "UEFI BIOS의 CSM모듈에 기반해있으므로 CSM이 활성화 되어야 합니다.\n"
 "클로버는 깨어나기에 문제가 있는 시스템에서는 정상적으로 시작하지 않을 수 있습니다.\n"
 "주의해서 사용해주시기 바랍니다.\n"
+""
 
-#. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:97
+#. type: "DataHubDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -561,117 +617,143 @@ msgstr ""
 "MacOSX에 필수적인 DataHub 프로토콜 지원입니다.\n"
 "대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다."
 
-#. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:99
+#. type: "EmuVariableUefi-64.UEFI_description"
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
-msgid ""
-"64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
-"Use it only if you have a problem without it"
+msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "Mac OSX는 NVRAM 변수를 지원하는 64bit 드라이버를 필요로 합니다. \n"
 "대체로 UEFI 부트는 하드웨어 HVRAM을 이용하지만 간혹 이 드라이버가 필요할 수 있습니다. \n"
 "본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오."
 
-#. type: "AptioMemoryFix_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:103
+#. type: "EnglishDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
-msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "AMI Aptio와 같은 UEFI 펌웨어 문제를 해결하기 위한 64비트 드라이버"
+msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
+msgstr "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 
-#. type: "ApfsDriverLoader_description"
-#: Resources/templates/Localizable.strings:104
+#. type: "Fat-64.UEFI_description"
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "64bit driver to load APFS filesystem driver from container"
-msgstr ""
+msgid "FAT filesystem driver."
+msgstr "FAT filesystem driver."
 
-#. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:105
+#. type: "HashServiceFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:127
+#, no-wrap
+msgid "Fix Hash support if absent in native UEFI BIOS"
+msgstr "Fix Hash support if absent in native UEFI BIOS."
+
+#. type: "HFSPlus.UEFI_description"
+#: Resources/templates/Localizable.strings:128
+#, no-wrap
+msgid "Alternate HFS+ filesystem driver."
+msgstr "Alternate HFS+ filesystem driver."
+
+#. type: "NvmExpressDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:129
+#, no-wrap
+msgid "Driver for support NVM Express devices."
+msgstr "Driver for support NVM Express devices."
+
+#. type: "OsxAptioFix2Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:130
+#, no-wrap
+msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFix3Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:131
+#, no-wrap
+msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:132
+#, no-wrap
+msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together."
+
+#. type: "OsxFatBinaryDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:133
+#, no-wrap
+msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
+msgstr "Driver for support FAT Binary executables for OS X 10.9 and older."
+
+#. type: "OsxLowMemFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "OsxAptioFixDrv의 간소화 형태(간소화되지 않는 버전과 함께 사용하지 마십시오)"
 
-#. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:106
+#. type: "PartitionDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "GPT/MBR 또는 Apple Partition Map과 같은 희귀 파티션맵을 지원하기 위한 64비트 드라이버."
 
-#. type: "SMCHelper-64_description"
-#: Resources/templates/Localizable.strings:107
+#. type: "Ps2MouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
-msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr ""
+msgid "PS/2 mouse driver, 64bit"
+msgstr "PS/2 마우스 드라이버, 64비트"
 
-#. type: "AppleEvent-64_description"
-#: Resources/templates/Localizable.strings:108
-#, no-wrap
-msgid "Create AppleEvent protocol for FileVault2"
-msgstr ""
-
-#. type: "AppleKeyAggregator-64_description"
-#: Resources/templates/Localizable.strings:109
-#, no-wrap
-msgid "Support for boot UI dialog for FileVault2"
-msgstr ""
-
-#. type: "FirmwareVolume-64_description"
-#: Resources/templates/Localizable.strings:110
-#, no-wrap
-msgid "Create FirmwareVolume with cursor images"
-msgstr ""
-
-#. type: "AppleImageCodec-64_description"
-#: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "For decode PNG and BMP images in boot UI"
-msgstr ""
-
-#. type: "AppleUITheme-64_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid "Create boot UI Themes support"
-msgstr ""
-
-#. type: "HashServiceFix-64_description"
-#: Resources/templates/Localizable.strings:113
-#, no-wrap
-msgid "Fix Hash support if absent in native UEFI BIOS"
-msgstr ""
-
-#. type: "UsbKbDxe-64_description"
-#: Resources/templates/Localizable.strings:114
+#. type: "UsbKbDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr ""
+msgstr "Keyboard driver for boot UI support."
 
-#. type: "AppleGraphicsConfig-64_description"
-#: Resources/templates/Localizable.strings:115
+#. type: "UsbMouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
-msgid "Create optional AppleGraphicsConfig protocol"
-msgstr ""
+msgid "USB mouse driver, 64bit"
+msgstr "USB 마우스 드라이버, 64비트"
+
+#. type: "VBoxExt2-64.UEFI_description"
+#: Resources/templates/Localizable.strings:140
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr "Virtualbox 용 Ext2/3 파일시스템 드라이버, 64비트"
+
+#. type: "VBoxExt4-64.UEFI_description"
+#: Resources/templates/Localizable.strings:141
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 64비트"
+
+#. type: "VBoxHfs-64.UEFI_description"
+#: Resources/templates/Localizable.strings:142
+#, no-wrap
+msgid "HFS+ filesystem driver."
+msgstr "HFS+ filesystem driver."
+
+#. type: "VBoxIso9600-64.UEFI_description"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "ISO 9600 filesystem driver."
+msgstr "ISO 9600 filesystem driver."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Themes"
 msgstr "테마"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Select to install themes."
 msgstr "사용자가 원하는 테마를 설치합니다."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "흑녹색조"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -681,13 +763,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "embedded"
 msgstr "임베디드"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
@@ -697,13 +779,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "metal"
 msgstr "금속 테마"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -713,13 +795,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "random"
 msgstr "랜덤"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:138
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid ""
 "random theme from Slice,\n"
@@ -729,13 +811,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "steampunkblack"
 msgstr "스팀펑크 블랙"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:142
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -745,29 +827,30 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:145
-#, fuzzy, no-wrap
-#| msgid "Clover Theme"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover 테마"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
 "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 msgstr ""
+"CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "타겟 볼륨에 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -777,37 +860,43 @@ msgstr ""
 "타겟 볼륨은 반드시 OSX 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "모든 부팅 가능한 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "타겟 볼륨을 제외한 모든 내장 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
-#. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:157
+#. type: "OptionalRCScripts"
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "선택적 RC Scripts"
 
+#. type: "disable_sleep_proxy_client_title"
+#: Resources/templates/Localizable.strings:186
+#, no-wrap
+msgid "Disable sleep proxy client"
+msgstr "Disable sleep proxy client"
+
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "클로버 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -816,13 +905,13 @@ msgstr ""
 "타겟 볼륨에 클로버 환설설정 패널을 설치합니다.\n"
 "포함된 클로버 업데이터는 클로버의 업데이트를 알려드립니다."
 
-#. type: "371.title"
+#. type: "56.title, 371.title, 57.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:2
 #, no-wrap
 msgid "CloverUpdater"
-msgstr "클로버 업데이터"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
@@ -884,12 +973,12 @@ msgstr "확인"
 msgid "Clover"
 msgstr "클로버"
 
-#. type: "Never"
+#. type: "204.title, Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
-msgstr "사용 안 함"
+msgstr "Never"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
@@ -942,8 +1031,10 @@ msgstr "지금 확인"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Copyright (c) 2013 JrCs, kozlek\\n 모든 권리 보유"
+msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+msgstr ""
+"Copyright (c) 2013 JrCs, kozlek\n"
+" 모든 권리 보유"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
@@ -1101,19 +1192,19 @@ msgstr "유지할 백업 수:"
 msgid "EFI Folder path"
 msgstr "EFI 폴더 경로"
 
-#. type: "Auto"
+#. type: "829.ibShadowedIsNilPlaceholder, Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr "자동"
+msgstr "Auto"
 
-#. type: "No"
+#. type: "833.ibShadowedIsNilPlaceholder, No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
-msgstr "아니오"
+msgstr "No"
 
 #. type: "Always"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1157,402 +1248,3 @@ msgstr "EFI 디렉터리를 설정하세요"
 msgid "Unknown"
 msgstr "알 수 없음"
 
-#~ msgid "AppleStyle"
-#~ msgstr "애플스타일"
-
-#~ msgid ""
-#~ "AppleStyle theme from Eps,\n"
-#~ "Install to /EFI/CLOVER/themes/applestyle"
-#~ msgstr ""
-#~ "Eps의 애플 스타일 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/AppleStyle"
-
-#~ msgid "Black_Green"
-#~ msgstr "Black_Green"
-
-#~ msgid ""
-#~ "Default black_green theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/black_green"
-#~ msgstr ""
-#~ "Blackosx의 흑녹색조 기본 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/black_green"
-
-#~ msgid "Bluemac"
-#~ msgstr "Bluemac"
-
-#~ msgid ""
-#~ "Bluemac theme from FowZiey,\n"
-#~ "Install to /EFI/CLOVER/themes/bluemac"
-#~ msgstr ""
-#~ "FowZiey의 Bluemac 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/bluemac"
-
-#~ msgid "BootCamp"
-#~ msgstr "BootCamp"
-
-#~ msgid ""
-#~ "Bootcamp theme from Bijo,\n"
-#~ "Install to /EFI/CLOVER/themes/bootcamp"
-#~ msgstr ""
-#~ "Bijo의 부트캠프 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/bootcamp"
-
-#~ msgid "BGM256"
-#~ msgstr "BGM256"
-
-#~ msgid ""
-#~ "BGM A version of BGM with 256px icons theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/BGM256"
-#~ msgstr ""
-#~ "Blackosx의 256픽셀 아이콘이 있는 BGM A 버전 BGM(흑녹색조) 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/BGM256"
-
-#~ msgid "chrome"
-#~ msgstr "크롬"
-
-#~ msgid ""
-#~ "chrome theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/chrome"
-#~ msgstr ""
-#~ "chris111의 크롬테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/chrome"
-
-#~ msgid "CloverX"
-#~ msgstr "클로버X"
-
-#~ msgid ""
-#~ "CloverX theme from =)(=,\n"
-#~ "Install to /EFI/CLOVER/themes/CloverX"
-#~ msgstr ""
-#~ "=)(=의 클로버X 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/CloverX"
-
-#~ msgid "dawn"
-#~ msgstr "새벽"
-
-#~ msgid ""
-#~ "dawn theme from Slice,\n"
-#~ "Install to /EFI/CLOVER/themes/dawn"
-#~ msgstr ""
-#~ "Slice의 새벽테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/dawn"
-
-#~ msgid "gold_clover"
-#~ msgstr "골드 클로버"
-
-#~ msgid ""
-#~ "gold_clover theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/gold_clover"
-#~ msgstr ""
-#~ "chris1111의 골드 클로버 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/gold_clover"
-
-#~ msgid "iClover"
-#~ msgstr "iClover 테마"
-
-#~ msgid ""
-#~ "Grey style theme by winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/iclover"
-#~ msgstr ""
-#~ "winlog의 회색조 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/iclover"
-
-#~ msgid "ios7"
-#~ msgstr "iOS7"
-
-#~ msgid ""
-#~ "ios7 theme by Ukr55, Winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/ios7"
-#~ msgstr ""
-#~ "Ukr55, Winlog 의 iOS7 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/ios7"
-
-#~ msgid "Magnifico"
-#~ msgstr "Magnifico"
-
-#~ msgid ""
-#~ "Magnifico theme from Magnifico,\n"
-#~ "Install to /EFI/CLOVER/themes/magnifico"
-#~ msgstr ""
-#~ "Magnifico의 Magnifoco 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/magnifico"
-
-#~ msgid "mrengles"
-#~ msgstr "mrengles 테마"
-
-#~ msgid ""
-#~ "mrengles theme from mrengles,\n"
-#~ "Install to /EFI/CLOVER/themes/mrengles"
-#~ msgstr ""
-#~ "mrengles의 mrengles테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/mrengles"
-
-#~ msgid "Orange"
-#~ msgstr "Orange"
-
-#~ msgid ""
-#~ "Orange theme from dwm,\n"
-#~ "Install to /EFI/CLOVER/themes/orange"
-#~ msgstr ""
-#~ "dwm의 Orange테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/orange"
-
-#~ msgid "OS Box"
-#~ msgstr "OS Box"
-
-#~ msgid ""
-#~ "OS Box theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_box"
-#~ msgstr ""
-#~ "Kyndder의 OS Box 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/os_box"
-
-#~ msgid "OS One"
-#~ msgstr "OS One"
-
-#~ msgid ""
-#~ "OS One theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_one"
-#~ msgstr ""
-#~ "Kyndder의 OS One 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/os_one"
-
-#~ msgid "ThinkPad"
-#~ msgstr "ThinkPad"
-
-#~ msgid ""
-#~ "ThinkPad theme from Kogen Mantis,\n"
-#~ "Install to /EFI/CLOVER/themes/thinkpad"
-#~ msgstr ""
-#~ "Kogen Mantis의 TinkPad 테마.\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/thinkpad"
-
-#~ msgid "buttons"
-#~ msgstr "버튼"
-
-#~ msgid ""
-#~ "Buttons theme from Trauma,\n"
-#~ "Install to /EFI/CLOVER/themes/buttons."
-#~ msgstr ""
-#~ "Trauma의 Buttons 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/buttons."
-
-#~ msgid "hellfire"
-#~ msgstr "hellfire 테마"
-
-#~ msgid ""
-#~ "Hellfire theme from lllevelll,\n"
-#~ "Install to /EFI/CLOVER/themes/hellfire."
-#~ msgstr ""
-#~ "illevelll의 Hellfire 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/hellfire."
-
-#~ msgid "simple_gray"
-#~ msgstr "단순회색조 테마"
-
-#~ msgid ""
-#~ "Simple_gray theme from hijeane,\n"
-#~ "Install to /EFI/CLOVER/themes/simple_gray."
-#~ msgstr ""
-#~ "hijeane의 Simple_gray 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/simple_gray."
-
-#~ msgid "Shield"
-#~ msgstr "Shield"
-
-#~ msgid ""
-#~ "An animated, harmonious theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/Shield."
-#~ msgstr ""
-#~ "Blackosx의 활기차고 조화로운 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/Shield."
-
-#~ msgid "wooden"
-#~ msgstr "나무 테마"
-
-#~ msgid ""
-#~ "Wooden theme from iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-#~ msgstr ""
-#~ "iROOTa의 Wooden 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/wooden."
-
-#~ msgid "sketched"
-#~ msgstr "스케치화"
-
-#~ msgid ""
-#~ "sketched theme from kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/sketched."
-#~ msgstr ""
-#~ "kyndder의 스케치화 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/sketched"
-
-#~ msgid "Space"
-#~ msgstr "스페이스"
-
-#~ msgid ""
-#~ "Space theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/Space"
-#~ msgstr ""
-#~ "chris1111의 스페이스 테마,\n"
-#~ "다음에 설치합니다: /EFI/CLOVER/themes/Space"
-
-# It's good no need to change this
-#~ msgid " "
-#~ msgstr " "
-
-#~ msgid "- extra kexts loading and security mode for FireWire"
-#~ msgstr "- FireWire를 위한 추가 kext 로딩 및 보안 모드"
-
-#~ msgid "Nowhere"
-#~ msgstr "없음"
-
-#, fuzzy
-#~| msgid "OS Box"
-#~ msgid "Box"
-#~ msgstr "OS Box"
-
-#~ msgid "Default"
-#~ msgstr "기본값"
-
-#~ msgid "CLOVER"
-#~ msgstr "CLOVER"
-
-#~ msgid ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-#~ msgstr ""
-#~ "매 부트마다 CloverEFI/boot.log 파일에 타임스탬프를 생성합니다.\\n\\n값:"
-#~ "\\n* Yes: 새로운 타임스탬프 boot.log 파일 생성\\n* Number: boot.log 파일"
-#~ "에 유지할 타임스탬프의 개수.\\n\\n공백은 타임스탬프 boot.log 파일을 생성하"
-#~ "지 않게 합니다"
-
-#~ msgid "LogLineCount:"
-#~ msgstr "로그 라인 카운트:"
-
-#~ msgid "LogEveryBoot:"
-#~ msgstr "부트마다 로그작성:"
-
-#~ msgid "MountEFI:"
-#~ msgstr "EFI마운트:"
-
-#~ msgid "NVRamDisk:"
-#~ msgstr "NVRam디스크:"
-
-#~ msgid ""
-#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
-#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
-#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
-#~ "mounting ESP partition on boot"
-#~ msgstr ""
-#~ "부트시에 ESP 파티션을 마운트합니다.\\n\\n값:\\n* Yes: 시스템 파티션과 같"
-#~ "은 드라이브에 있는 ESP 마운트\\n* diskX: 디스크 장치\\n* GUID: ESP의 GUID"
-#~ "\\n* VolumeName: ESP 파티션과 같은 디스크 드라이브에 있는 볼륨의 이름\\n"
-#~ "\\n공백은 부트시에 파티션이 마운트 되지 않게 합니다"
-
-#~ msgid ""
-#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
-#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
-#~ "nvram.plist file in the root folder of the system partition."
-#~ msgstr ""
-#~ "nvram 내용을 디스크에 저장합니다\\n\\n값:\\n* No: nvram 내용을 디스크에 저"
-#~ "장하지 않습니다\\n* diskXsY: nvram내용이 저장될 디바이스 노드\\n\\n공백은 "
-#~ "시스템 파티션의 루트 디렉토리 내부 nvram.plist 에 nvram 내용을 저장하게 합"
-#~ "니다."
-
-#~ msgid ""
-#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
-#~ "in config.plist is use."
-#~ msgstr ""
-#~ "클로버 GUI를 이용하기 위한 테마\\n만약 값이 비어있다면 config.plist 에 정"
-#~ "의된 테마가 사용됩니다."
-
-#~ msgid "GUI Appearance"
-#~ msgstr "GUI 모양새"
-
-#~ msgid "Install CloverUpdater"
-#~ msgstr "클로버 업데이터(CloverUpdater) 설치"
-
-#~ msgid "BIOS MBR boot0 (HFS+Fat32)"
-#~ msgstr "BIOS방식 MBR boot0 (HFS+Fat32)"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then boot0 "
-#~ "will search first active HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will setup selected HFS + Fat32 partitions to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "BIOS방식 마더보드에서 BIOS 부팅을 할 경우 선택하십시오.\n"
-#~ "이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0을 "
-#~ "설치합니다. Windows가 먼저 설치되어 있어도 지우지 않습니다. boot0가 설치되"
-#~ "고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, Fat32 파"
-#~ "티션이면 boot1f32alt를 각각 검색합니다.\n"
-#~ "\n"
-#~ "이 패키지는 사용자가 선택한 HFS + Fat32 파티션을 활성 상태로 설정합니다.\n"
-#~ "\n"
-#~ "설치를 계속 진행하기 전에, 설치 대상 디스크를 윈도우PC에서는 Fat32로, Mac"
-#~ "에서는 다음처럼 포맷해야 합니다.\n"
-#~ "\n"
-#~ "  1. 먼저, 디스크유틸리티에서 MS-DOS (FAT) 포맷으로 지우기 하십시오.\n"
-#~ "  2. 터미널에서 다음 순서대로 입력합니다.(rdisk9s1은 예제입니다. 자신의 상"
-#~ "황에 맞는 IDENTIFIER를 입력하십시오.)\n"
-#~ "  3. diskutil list\n"
-#~ "  4. diskutil unmount /dev/rdisk9s1\n"
-#~ "  5. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  6. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-#~ msgstr "BIOS방식 MBR boot0hfs (HFS+Fat32)"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then "
-#~ "boot0hfs will search first HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will not setup selected HFS partition to be active, but will setup "
-#~ "selected Fat32 partition to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "BIOS방식 마더보드에서 BIOS 부팅을 할 경우 선택하십시오.\n"
-#~ "이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0hfs"
-#~ "를 설치합니다. Windows가 먼저 설치되어 있어도 지우지 않습니다. boot0가 설"
-#~ "치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, "
-#~ "Fat32 파티션이면 boot1f32alt를 각각 검색합니다.\n"
-#~ "\n"
-#~ "이 패키지는 사용자가 선택한 HFS 파티션은 활성 상태로 설정하지 않으며 "
-#~ "Fat32 파티션은 활성 상태로 설정합니다.\n"
-#~ "\n"
-#~ "설치를 계속 진행하기 전에, 설치 대상 디스크를 윈도우PC에서는 Fat32로, Mac"
-#~ "에서는 다음처럼 포맷해야 합니다.\n"
-#~ "\n"
-#~ "  1. 먼저, 디스크유틸리티에서 MS-DOS (FAT) 포맷으로 지우기 하십시오.\n"
-#~ "  2. 터미널에서 다음 순서대로 입력합니다.(rdisk9s1은 예제입니다. 자신의 상"
-#~ "황에 맞는 IDENTIFIER를 입력하십시오.)\n"
-#~ "  3. diskutil list\n"
-#~ "  4. diskutil unmount /dev/rdisk9s1\n"
-#~ "  5. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  6. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
-#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
-
-#~ msgid "XhciDxe-64_description"
-#~ msgstr "XhciDxe-64_description"

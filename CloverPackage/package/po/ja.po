@@ -20,205 +20,174 @@ msgstr ""
 "X-POOTLE-MTIME: 1405873655.0\n"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
+#: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
+#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:25
+#: Resources/templates/Welcome.html:34
 msgid "Developers:"
 msgstr "開発者:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:26
+#: Resources/templates/Welcome.html:35
 msgid "%DEVELOP%"
 msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:28
+#: Resources/templates/Welcome.html:37
 msgid "Source code credits to:"
 msgstr "ソースコードクレジット:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:29
+#: Resources/templates/Welcome.html:38
 msgid "%CREDITS%"
 msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:31
+#: Resources/templates/Welcome.html:40
 msgid "Package credits to:"
 msgstr "パッケージクレジット:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:32
+#: Resources/templates/Welcome.html:41
 msgid "%PKGDEV%"
 msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:34
+#: Resources/templates/Welcome.html:43
 msgid "Supports Fat32, HFS+, ESP."
 msgstr "Fat32、HFS+、ESPをサポート。"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
+#: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:17
+#: Resources/templates/Description.html:18
 msgid "Clover v2"
 msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:17
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"は、Clover、rEFIt、XNU、VirtualBoxベースのオープンソースプロジェクトです。"
+#: Resources/templates/Description.html:19
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "は、Clover、rEFIt、XNU、VirtualBoxベースのオープンソースプロジェクトです。"
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:18
+#: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "メインはEDK2の最新リビジョンです。"
 
 #. type: Content of: <html><body><p><b>
-#: Resources/templates/Description.html:20
+#: Resources/templates/Description.html:25
 msgid "Main features:"
 msgstr "おもな特徴:"
 
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
-msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:22
-msgid ""
-"- It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"- これまでのブートローダーでは非対応の、OSランタイムサービスをサポートしたEFI"
-"ブートローダーです"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:23
-msgid ""
-"- mostly Clover do automatic detection of hardware and set all properties by "
-"default."
-msgstr ""
-"- ハードウェア構成をほぼ自動で認識し、デフォルトで各プロパティを設定します。"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:24
-msgid "But user can change them by config.plist"
-msgstr "また、ユーザーがconfig.plistを介して設定を変更することも可能です"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:25
-msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- システム環境設定の起動ディスクから、リスタートするOSを選択可能"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:26
-msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- config.plistで設定したUUIDはOSにそのまま反映されます"
-
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:27
-msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOSはstandard 2.6に更新されます"
+msgid "boot into 10.xx macOS, Windows EFI and Linux EFI"
+msgstr "macOS 10.xx、Windows EFIとLinux EFIのブートをサポート"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- ACPIはstandard 4.0に更新されます"
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "これまでのブートローダーでは非対応の、OSランタイムサービスをサポートしたEFIブートローダーです"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "ハードウェア構成をほぼ自動で認識し、デフォルトで各プロパティを設定します。また、ユーザーがconfig.plistを介して設定を変更することも可能です。"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:30
+msgid "with Clover you may restart into other OS from Startup Disk prefPane"
+msgstr "システム環境設定の起動ディスクから、リスタートするOSを選択可能"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:31
+msgid "UUID written into config.plist will be the same as in OS"
+msgstr "Config.plistで設定したUUIDはOSにそのまま反映されます"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:32
+msgid "SMBIOS will be corrected to standard 2.6"
+msgstr "SMBIOSはstandard 2.6に更新されます"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:33
+msgid "ACPI will be corrected to standard 4.0."
+msgstr "ACPIはstandard 4.0に更新されます"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr "カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます"
 
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:30
-msgid "- DSDT patching on the fly by fixes and by patterns"
-msgstr ""
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
-msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
-msgid ""
-"- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards."
-msgstr ""
-"- ATI・Nvidia・Intelの、幅広いカードに対応するグラフィックス・インジェクター"
-"も"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
-msgid "Also customizable."
-msgstr "カスタマイズ可能です。"
-
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
-msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) はUSB 3.0対応"
-
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
-msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- HDAインジェクターとEthernetビルトインインジェクター"
+msgid "DSDT patching on the fly by fixes and by patterns"
+msgstr "DSDT patching on the fly by fixes and by patterns;"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
-msgid "- CPU turbo and P- and C-states generator"
-msgstr "- CPUターボブーストとP/Cステートジェネレーター"
+msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr "RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"- ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIな"
-"ど)"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "ATI・Nvidia・Intelの、幅広いカードに対応するグラフィックス・インジェクターも。 カスタマイズ可能です。"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
-msgid "- extra kexts loading"
-msgstr ""
+msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr "USB fix (LegacyOff, Ownership, Builtin, clock-id) はUSB 3.0対応"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
-msgid "- kernel and kext patching on the fly"
-msgstr ""
+msgid "HDA injector and Ethernet builtin injector"
+msgstr "HDAインジェクターとEthernetビルトインインジェクター"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
-msgid "- set NVRAM variables for different purpose"
-msgstr ""
+msgid "CPU turbo and P- and C-states generator"
+msgstr "CPUターボブーストとP/Cステートジェネレーター"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
-msgid ""
-"- default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上で"
-"F10の押下によりスクリーンショットを保存します"
+msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
-msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- OSのboot.logとGUIのpreboot.logの保存はF2キーを押下してください"
+msgid "extra kexts loading"
+msgstr "Extra kernel extensions loading;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:43
+msgid "kernel and kext patching on the fly"
+msgstr "Kernel and kext patching on the fly;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:44
+msgid "set NVRAM variables for different purpose"
+msgstr "Set NVRAM variables for different purpose;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:45
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上でF10の押下によりスクリーンショットを保存します"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:46
+msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr "OSのboot.logとGUIのpreboot.logの保存はF2キーを押下してください"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -411,12 +380,12 @@ msgstr "CloverEFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "CloverEFIのバージョンを選択。"
 
-#. type: "cloverEFI.32_description"
+#. type: "cloverEFI.32_title, cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32bit版"
+msgstr "CloverEFI 32-bits"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:71
@@ -444,41 +413,33 @@ msgstr "Bios Block I/O接続ドライブ用CloverEFI 64bit版"
 
 #. type: "cloverEFI.64.blockio2_title"
 #: Resources/templates/Localizable.strings:75
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits BiosBlockIO"
+#, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
 msgstr "CloverEFI 64bit版 BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:76
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+#, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
 msgstr "Bios Block I/O接続ドライブ用CloverEFI 64bit版"
 
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "PS/2キーボードドライバ -32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "PS/2トラックパッドドライバ -32bit"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "PS/2マウスドライバ -32bit"
-
-#. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
-#, no-wrap
-msgid "PS/2 mouse driver, 64bit"
-msgstr "PS/2マウスドライバ -64bit"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:85
@@ -486,50 +447,152 @@ msgstr "PS/2マウスドライバ -64bit"
 msgid "USB mouse driver, 32bit"
 msgstr "USBマウスドライバ -32bit"
 
-#. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:86
-#, no-wrap
-msgid "USB mouse driver, 64bit"
-msgstr "USBマウスドライバ -64bit"
-
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "virtual boxのext2/3ファイルシステムドライバ -32bit"
 
-#. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:88
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "virtual boxのext2/3ファイルシステムドライバ -64bit"
-
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "virtual boxのext4ファイルシステムドライバ -32bit"
 
-#. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:90
-#, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "virtual boxのext4ファイルシステムドライバ -64bit"
-
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "USB 3.0ドライバ -32bit"
 
+#. type: "Drivers64_title"
+#: Resources/templates/Localizable.strings:90
+#, no-wrap
+msgid "BIOS Drivers, 64 bit"
+msgstr "BIOS Drivers, 64 bit"
+
+#. type: "Drivers64_description"
+#: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Select drivers for BIOS-booting."
+msgstr "Select drivers for BIOS-booting."
+
+#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#: Resources/templates/Localizable.strings:93
+#: Resources/templates/Localizable.strings:111
+#, no-wrap
+msgid "For decode PNG and BMP images in boot UI"
+msgstr "Decode PNG and BMP for FileVault2."
+
+#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:112
+#, no-wrap
+msgid "Support for boot UI dialog for FileVault2"
+msgstr "Support for boot UI dialog for FileVault2."
+
+#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:113
+#, no-wrap
+msgid "Create boot UI Themes support"
+msgstr "Create boot UI Themes support for FileVault2."
+
+#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:125
+#, no-wrap
+msgid "Create FirmwareVolume with cursor images"
+msgstr "Create FirmwareVolume with cursor images for FileVault2."
+
+#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:126
+#, no-wrap
+msgid "Provide injection of kexts from Clover folder."
+msgstr "Provide injection of kernel extensions from Clover folder."
+
+#. type: "GrubEXFAT-64_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ExFAT filesystem driver from GRUB."
+msgstr "ExFAT filesystem driver."
+
+#. type: "GrubISO9660-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ISO 9600 filesystem driver from GRUB."
+msgstr "ISO9600 filesystem driver."
+
+#. type: "GrubNTFS-64_description"
+#: Resources/templates/Localizable.strings:100
+#, no-wrap
+msgid "NTFS filesystem driver from GRUB."
+msgstr "NTFS filesystem driver."
+
+#. type: "GrubUDF-64_description"
+#: Resources/templates/Localizable.strings:101
+#, no-wrap
+msgid "UDF filesystem driver from GRUB."
+msgstr "UDF filesystem driver."
+
+#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:137
+#, no-wrap
+msgid "Restore SMC keys left in nvram by FakeSMC"
+msgstr "Restore SMC keys left in NVRAM by FakeSMC."
+
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "USB 3.0ドライバ -64bit"
+msgstr "USB 3.0 driver, 64bit"
 
-#. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:93
+#. type: "Drivers64UEFI_title"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "UEFI Drivers, 64 bit"
+msgstr "UEFI Drivers"
+
+#. type: "Drivers64UEFI_description"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "Select drivers for UEFI-booting."
+msgstr "Select drivers for UEFI-booting."
+
+#. type: "ApfsDriverLoader-64.UEFI_description"
+#: Resources/templates/Localizable.strings:108
+#, no-wrap
+msgid "64bit driver to load APFS filesystem driver from container"
+msgstr "Supports APFS filesystem driver from container for macOS 10.14."
+
+#. type: "AppleEvent-64.UEFI_description"
+#: Resources/templates/Localizable.strings:109
+#, no-wrap
+msgid "Create AppleEvent protocol for FileVault2"
+msgstr "Create AppleEvent protocol for FileVault2."
+
+#. type: "AppleGraphicsConfig-64.UEFI_description"
+#: Resources/templates/Localizable.strings:110
+#, no-wrap
+msgid "Create optional AppleGraphicsConfig protocol"
+msgstr "Create optional AppleGraphicsConfig protocol."
+
+#. type: "AptioInputFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:114
+#, no-wrap
+msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+
+#. type: "AptioMemoryFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "AMI AptioなどのUEFIファームウェアでメモリーの問題を修正する64bitドライバ"
+
+#. type: "CsmVideoDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -542,8 +605,8 @@ msgstr ""
 "CloverのOS起動機能との関連はなく、またスリープ復帰時の動作に問題が出る可能性があります。\n"
 "あらかじめご注意の上、ご使用ください。"
 
-#. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:97
+#. type: "DataHubDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -552,117 +615,143 @@ msgstr ""
 "MacOSXで必要なデータハブプロトコルをサポート。\n"
 "通常これはすでにシステムに実装されていますが、場合によっては読み込みに失敗します。この際はアラートが表示されます。"
 
-#. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:99
+#. type: "EmuVariableUefi-64.UEFI_description"
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
-msgid ""
-"64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
-"Use it only if you have a problem without it"
+msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "MacOSXのNVRAM変数をサポートするための64bitドライバ。\n"
 "UEFI起動では、通常はハードウェアNVRAMを使用しますが、まれにこのドライバが必要になることがあります。\n"
 "システムの動作に問題がある場合にのみ使用してください"
 
-#. type: "AptioMemoryFix_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:103
+#. type: "EnglishDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
-msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "AMI AptioなどのUEFIファームウェアでメモリーの問題を修正する64bitドライバ"
+msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
+msgstr "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 
-#. type: "ApfsDriverLoader_description"
-#: Resources/templates/Localizable.strings:104
+#. type: "Fat-64.UEFI_description"
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "64bit driver to load APFS filesystem driver from container"
-msgstr ""
+msgid "FAT filesystem driver."
+msgstr "FAT filesystem driver."
 
-#. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:105
+#. type: "HashServiceFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:127
+#, no-wrap
+msgid "Fix Hash support if absent in native UEFI BIOS"
+msgstr "Fix Hash support if absent in native UEFI BIOS."
+
+#. type: "HFSPlus.UEFI_description"
+#: Resources/templates/Localizable.strings:128
+#, no-wrap
+msgid "Alternate HFS+ filesystem driver."
+msgstr "Alternate HFS+ filesystem driver."
+
+#. type: "NvmExpressDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:129
+#, no-wrap
+msgid "Driver for support NVM Express devices."
+msgstr "Driver for support NVM Express devices."
+
+#. type: "OsxAptioFix2Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:130
+#, no-wrap
+msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFix3Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:131
+#, no-wrap
+msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:132
+#, no-wrap
+msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together."
+
+#. type: "OsxFatBinaryDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:133
+#, no-wrap
+msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
+msgstr "Driver for support FAT Binary executables for OS X 10.9 and older."
+
+#. type: "OsxLowMemFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "OsxAptioFixDrvの簡易版 -64bit (OsxAptioFixDrvと併用不可)"
 
-#. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:106
+#. type: "PartitionDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "ハイブリッドGPT/MBRやアップルパーティションマップなど、特殊なパーティションマップをサポートする64bitドライバ。"
 
-#. type: "SMCHelper-64_description"
-#: Resources/templates/Localizable.strings:107
+#. type: "Ps2MouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
-msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr ""
+msgid "PS/2 mouse driver, 64bit"
+msgstr "PS/2マウスドライバ -64bit"
 
-#. type: "AppleEvent-64_description"
-#: Resources/templates/Localizable.strings:108
-#, no-wrap
-msgid "Create AppleEvent protocol for FileVault2"
-msgstr ""
-
-#. type: "AppleKeyAggregator-64_description"
-#: Resources/templates/Localizable.strings:109
-#, no-wrap
-msgid "Support for boot UI dialog for FileVault2"
-msgstr ""
-
-#. type: "FirmwareVolume-64_description"
-#: Resources/templates/Localizable.strings:110
-#, no-wrap
-msgid "Create FirmwareVolume with cursor images"
-msgstr ""
-
-#. type: "AppleImageCodec-64_description"
-#: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "For decode PNG and BMP images in boot UI"
-msgstr ""
-
-#. type: "AppleUITheme-64_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid "Create boot UI Themes support"
-msgstr ""
-
-#. type: "HashServiceFix-64_description"
-#: Resources/templates/Localizable.strings:113
-#, no-wrap
-msgid "Fix Hash support if absent in native UEFI BIOS"
-msgstr ""
-
-#. type: "UsbKbDxe-64_description"
-#: Resources/templates/Localizable.strings:114
+#. type: "UsbKbDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr ""
+msgstr "Keyboard driver for boot UI support."
 
-#. type: "AppleGraphicsConfig-64_description"
-#: Resources/templates/Localizable.strings:115
+#. type: "UsbMouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
-msgid "Create optional AppleGraphicsConfig protocol"
-msgstr ""
+msgid "USB mouse driver, 64bit"
+msgstr "USBマウスドライバ -64bit"
+
+#. type: "VBoxExt2-64.UEFI_description"
+#: Resources/templates/Localizable.strings:140
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr "virtual boxのext2/3ファイルシステムドライバ -64bit"
+
+#. type: "VBoxExt4-64.UEFI_description"
+#: Resources/templates/Localizable.strings:141
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr "virtual boxのext4ファイルシステムドライバ -64bit"
+
+#. type: "VBoxHfs-64.UEFI_description"
+#: Resources/templates/Localizable.strings:142
+#, no-wrap
+msgid "HFS+ filesystem driver."
+msgstr "HFS+ filesystem driver."
+
+#. type: "VBoxIso9600-64.UEFI_description"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "ISO 9600 filesystem driver."
+msgstr "ISO 9600 filesystem driver."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Themes"
 msgstr "テーマ"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Select to install themes."
 msgstr "テーマを選択。"
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Black_Green_Moody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -672,17 +761,14 @@ msgstr ""
 "/EFI/CLOVER/themes/BGMにインストール"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "embedded"
-msgstr ""
+msgstr "Embedded"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:130
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green"
+#: Resources/templates/Localizable.strings:158
+#, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
@@ -691,13 +777,13 @@ msgstr ""
 "/EFI/CLOVER/themes/black_greenにインストール"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -707,17 +793,14 @@ msgstr ""
 "/EFI/CLOVER/themes/metalにインストール"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "random"
-msgstr ""
+msgstr "Random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:138
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Orange theme from dwm,\n"
-#| "Install to /EFI/CLOVER/themes/orange"
+#: Resources/templates/Localizable.strings:166
+#, no-wrap
 msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -726,17 +809,14 @@ msgstr ""
 "/EFI/CLOVER/themes/orangeにインストール"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "steampunkblack"
-msgstr ""
+msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:142
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Bootcamp theme from Bijo,\n"
-#| "Install to /EFI/CLOVER/themes/bootcamp"
+#: Resources/templates/Localizable.strings:170
+#, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
@@ -745,29 +825,30 @@ msgstr ""
 "/EFI/CLOVER/themes/bootcampにインストール"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:145
-#, fuzzy, no-wrap
-#| msgid "Clover Theme"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover テーマ"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
 "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 msgstr ""
+"CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RCスクリプトをターゲットボリュームにインストール"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -777,37 +858,43 @@ msgstr ""
 "ターゲットボリュームは起動可能なOSXシステムボリュームであることが必要。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RCスクリプトを他のすべてのOSXボリュームにインストール"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
-#. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:157
+#. type: "OptionalRCScripts"
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "オプションのRCスクリプト"
 
+#. type: "disable_sleep_proxy_client_title"
+#: Resources/templates/Localizable.strings:186
+#, no-wrap
+msgid "Disable sleep proxy client"
+msgstr "Disable sleep proxy client"
+
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover環境設定をインストール"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -816,10 +903,10 @@ msgstr ""
 "ターゲットボリュームにClover環境設定をインストール。\n"
 "環境設定内のCloverUpdaterは、Cloverのアップデートをお知らせします。"
 
-#. type: "371.title"
+#. type: "56.title, 371.title, 57.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:2
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -884,12 +971,12 @@ msgstr "OK"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "Never"
+#. type: "204.title, Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
-msgstr "しない"
+msgstr "Never"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
@@ -942,8 +1029,10 @@ msgstr "いまチェックする"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
+msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+msgstr ""
+"Copyright (c) 2013 JrCs, kozlek\n"
+"All Rights Reserved"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
@@ -1101,19 +1190,19 @@ msgstr "保持するバックアップの数:"
 msgid "EFI Folder path"
 msgstr "EFIフォルダのパス"
 
-#. type: "Auto"
+#. type: "829.ibShadowedIsNilPlaceholder, Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr "オート"
+msgstr "Auto"
 
-#. type: "No"
+#. type: "833.ibShadowedIsNilPlaceholder, No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
-msgstr "マウントしない"
+msgstr "No"
 
 #. type: "Always"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1157,335 +1246,3 @@ msgstr "EFIディレクトリを設定"
 msgid "Unknown"
 msgstr "不明"
 
-#~ msgid "AppleStyle"
-#~ msgstr "AppleStyle"
-
-#~ msgid ""
-#~ "AppleStyle theme from Eps,\n"
-#~ "Install to /EFI/CLOVER/themes/applestyle"
-#~ msgstr ""
-#~ "Eps制作『AppleStyle』を、\n"
-#~ "/EFI/CLOVER/themes/applestyleにインストール"
-
-#~ msgid "Black_Green"
-#~ msgstr "Black_Green"
-
-#~ msgid ""
-#~ "Default black_green theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/black_green"
-#~ msgstr ""
-#~ "Blackosx制作『black_green』＜デフォルト＞を、\n"
-#~ "/EFI/CLOVER/themes/black_greenにインストール"
-
-#~ msgid "Bluemac"
-#~ msgstr "Bluemac"
-
-#~ msgid ""
-#~ "Bluemac theme from FowZiey,\n"
-#~ "Install to /EFI/CLOVER/themes/bluemac"
-#~ msgstr ""
-#~ "FowZiey制作『Bluemac』を、\n"
-#~ "/EFI/CLOVER/themes/bluemacにインストール"
-
-#~ msgid "BootCamp"
-#~ msgstr "BootCamp"
-
-#~ msgid ""
-#~ "Bootcamp theme from Bijo,\n"
-#~ "Install to /EFI/CLOVER/themes/bootcamp"
-#~ msgstr ""
-#~ "Bijo制作『Bootcamp』を、\n"
-#~ "/EFI/CLOVER/themes/bootcampにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "BGM (Black Green and Moody) theme from Blackosx,\n"
-#~| "Install to /EFI/CLOVER/themes/BGM"
-#~ msgid ""
-#~ "BGM A version of BGM with 256px icons theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/BGM256"
-#~ msgstr ""
-#~ "Blackosx制作『BGM（Black Green and Moody）』を、\n"
-#~ "/EFI/CLOVER/themes/BGMにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "chrome theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/chrome"
-#~ msgstr ""
-#~ "dwm制作『Orange』を、\n"
-#~ "/EFI/CLOVER/themes/orangeにインストール"
-
-#, fuzzy
-#~| msgid "Clover"
-#~ msgid "CloverX"
-#~ msgstr "Clover"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "CloverX theme from =)(=,\n"
-#~ "Install to /EFI/CLOVER/themes/CloverX"
-#~ msgstr ""
-#~ "dwm制作『Orange』を、\n"
-#~ "/EFI/CLOVER/themes/orangeにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "dawn theme from Slice,\n"
-#~ "Install to /EFI/CLOVER/themes/dawn"
-#~ msgstr ""
-#~ "dwm制作『Orange』を、\n"
-#~ "/EFI/CLOVER/themes/orangeにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "Wooden theme from iROOTa,\n"
-#~| "Install to /EFI/CLOVER/themes/wooden."
-#~ msgid ""
-#~ "gold_clover theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/gold_clover"
-#~ msgstr ""
-#~ "iROOTa制作『Wooden』を、\n"
-#~ "/EFI/CLOVER/themes/woodenにインストール"
-
-#~ msgid "iClover"
-#~ msgstr "iClover"
-
-#~ msgid ""
-#~ "Grey style theme by winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/iclover"
-#~ msgstr ""
-#~ "winlog制作『Grey style』を、\n"
-#~ "/EFI/CLOVER/themes/icloverにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "Grey style theme by winlog,\n"
-#~| "Install to /EFI/CLOVER/themes/iclover"
-#~ msgid ""
-#~ "ios7 theme by Ukr55, Winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/ios7"
-#~ msgstr ""
-#~ "winlog制作『Grey style』を、\n"
-#~ "/EFI/CLOVER/themes/icloverにインストール"
-
-#~ msgid "Magnifico"
-#~ msgstr "Magnifico"
-
-#~ msgid ""
-#~ "Magnifico theme from Magnifico,\n"
-#~ "Install to /EFI/CLOVER/themes/magnifico"
-#~ msgstr ""
-#~ "Magnifico制作『Magnifico』を、\n"
-#~ "/EFI/CLOVER/themes/magnificoにインストール"
-
-#~ msgid "mrengles"
-#~ msgstr "mrengles"
-
-#~ msgid ""
-#~ "mrengles theme from mrengles,\n"
-#~ "Install to /EFI/CLOVER/themes/mrengles"
-#~ msgstr ""
-#~ "mrengles制作『mrengles』を、\n"
-#~ "/EFI/CLOVER/themes/mrenglesにインストール"
-
-#~ msgid "Orange"
-#~ msgstr "Orange"
-
-#~ msgid ""
-#~ "Orange theme from dwm,\n"
-#~ "Install to /EFI/CLOVER/themes/orange"
-#~ msgstr ""
-#~ "dwm制作『Orange』を、\n"
-#~ "/EFI/CLOVER/themes/orangeにインストール"
-
-#~ msgid "OS Box"
-#~ msgstr "OS Box"
-
-#~ msgid ""
-#~ "OS Box theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_box"
-#~ msgstr ""
-#~ "Kyndder制作『OS Box』を、\n"
-#~ "/EFI/CLOVER/themes/os_boxにインストール"
-
-#~ msgid "OS One"
-#~ msgstr "OS One"
-
-#~ msgid ""
-#~ "OS One theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_one"
-#~ msgstr ""
-#~ "Kyndder制作『OS One』を、\n"
-#~ "/EFI/CLOVER/themes/os_oneにインストール"
-
-#~ msgid "ThinkPad"
-#~ msgstr "ThinkPad"
-
-#~ msgid ""
-#~ "ThinkPad theme from Kogen Mantis,\n"
-#~ "Install to /EFI/CLOVER/themes/thinkpad"
-#~ msgstr ""
-#~ "Kogen Mantis制作『ThinkPad』を、\n"
-#~ "/EFI/CLOVER/themes/thinkpadにインストール"
-
-#~ msgid "buttons"
-#~ msgstr "ボタン"
-
-#~ msgid ""
-#~ "Buttons theme from Trauma,\n"
-#~ "Install to /EFI/CLOVER/themes/buttons."
-#~ msgstr ""
-#~ "Trauma制作のボタンテーマを、\n"
-#~ "/EFI/CLOVER/themes/buttonsにインストール"
-
-#~ msgid "hellfire"
-#~ msgstr "hellfire"
-
-#~ msgid ""
-#~ "Hellfire theme from lllevelll,\n"
-#~ "Install to /EFI/CLOVER/themes/hellfire."
-#~ msgstr ""
-#~ "lllevelll制作『Hellfire』を、\n"
-#~ "/EFI/CLOVER/themes/hellfireにインストール"
-
-#~ msgid "simple_gray"
-#~ msgstr "simple_gray"
-
-#~ msgid ""
-#~ "Simple_gray theme from hijeane,\n"
-#~ "Install to /EFI/CLOVER/themes/simple_gray."
-#~ msgstr ""
-#~ "hijeane制作『Simple_gray』を、\n"
-#~ "/EFI/CLOVER/themes/simple_grayにインストール"
-
-#~ msgid "Shield"
-#~ msgstr "Shield"
-
-#~ msgid ""
-#~ "An animated, harmonious theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/Shield."
-#~ msgstr ""
-#~ "Blackosx制作の美しいアニメーションテーマを、\n"
-#~ "/EFI/CLOVER/themes/Shieldにインストール"
-
-#~ msgid "wooden"
-#~ msgstr "wooden"
-
-#~ msgid ""
-#~ "Wooden theme from iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-#~ msgstr ""
-#~ "iROOTa制作『Wooden』を、\n"
-#~ "/EFI/CLOVER/themes/woodenにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "OS One theme from Kyndder,\n"
-#~| "Install to /EFI/CLOVER/themes/os_one"
-#~ msgid ""
-#~ "sketched theme from kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/sketched."
-#~ msgstr ""
-#~ "Kyndder制作『OS One』を、\n"
-#~ "/EFI/CLOVER/themes/os_oneにインストール"
-
-#, fuzzy
-#~| msgid ""
-#~| "Orange theme from dwm,\n"
-#~| "Install to /EFI/CLOVER/themes/orange"
-#~ msgid ""
-#~ "Space theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/Space"
-#~ msgstr ""
-#~ "dwm制作『Orange』を、\n"
-#~ "/EFI/CLOVER/themes/orangeにインストール"
-
-#~ msgid " "
-#~ msgstr " "
-
-#~ msgid "- extra kexts loading and security mode for FireWire"
-#~ msgstr "- 追加kextのロードとFireWireセキュリティモード"
-
-#~ msgid "Nowhere"
-#~ msgstr "保存しない"
-
-#, fuzzy
-#~| msgid "OS Box"
-#~ msgid "Box"
-#~ msgstr "OS Box"
-
-#~ msgid "Default"
-#~ msgstr "デフォルト"
-
-#~ msgid "Number of timestamp boot.log files to keep."
-#~ msgstr "boot.logが保持するタイムスタンプの数。"
-
-#~ msgid "CLOVER"
-#~ msgstr "CLOVER"
-
-#~ msgid ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-#~ msgstr ""
-#~ "ブートするごとにCloverEFI/boot.logファイルにタイムスタンプを記録しま"
-#~ "す。\\n\\n設定値:\\n・Yes: タイムスタンプをboot.logファイルに新たに記録し"
-#~ "ます。\\n・数値: boot.logファイルで保持する記録数。\\n\\n空欄にした場合は"
-#~ "boot.logにタイムスタンプは記録されません。"
-
-#~ msgid "LogLineCount:"
-#~ msgstr "ログの行数:"
-
-#~ msgid "LogEveryBoot:"
-#~ msgstr "ブートごとにログ保存:"
-
-#~ msgid "MountEFI:"
-#~ msgstr "EFIマウント:"
-
-#~ msgid "NVRamDisk:"
-#~ msgstr "NVRamディスク:"
-
-#~ msgid ""
-#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
-#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
-#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
-#~ "mounting ESP partition on boot"
-#~ msgstr ""
-#~ "ESPパーティションをマウントします。\\n\\n設定値：\\n・Yes：システムパー"
-#~ "ティションと同じドライブのESPをマウントします。\\n・diskX：ディスクXのESP"
-#~ "をマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・"
-#~ "VolumeName (ボリューム名)：設定したボリューム名と同じボリュームのESPをマウ"
-#~ "ントします。\\n\\n空欄の場合はESPはマウントされません。"
-
-#~ msgid ""
-#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
-#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
-#~ "nvram.plist file in the root folder of the system partition."
-#~ msgstr ""
-#~ "nvramの内容をディスクに保存します。\\n\\n設定値：\\n・No：nvramの内容は保"
-#~ "存されません。\\n・diskXsY：diskXsYにnvramの内容を保存します。\\n\\n空欄の"
-#~ "場合、nvramの内容はシステムパーティションのrootフォルダにあるnvram.plistに"
-#~ "保存されます。"
-
-#~ msgid ""
-#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
-#~ "in config.plist is use."
-#~ msgstr ""
-#~ "テーマはCloverのGUIで使用されます。\\n空欄の場合はconfig.plistの設定が反映"
-#~ "されます。"
-
-#~ msgid "GUI Appearance"
-#~ msgstr "GUIの外観"

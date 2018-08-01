@@ -19,229 +19,174 @@ msgstr ""
 "X-POOTLE-MTIME: 1451819174.0\n"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
+#: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
+#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:25
+#: Resources/templates/Welcome.html:34
 msgid "Developers:"
 msgstr "Sviluppatori"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:26
+#: Resources/templates/Welcome.html:35
 msgid "%DEVELOP%"
 msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:28
+#: Resources/templates/Welcome.html:37
 msgid "Source code credits to:"
 msgstr "Ringraziamenti per i sorgenti:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:29
+#: Resources/templates/Welcome.html:38
 msgid "%CREDITS%"
 msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:31
+#: Resources/templates/Welcome.html:40
 msgid "Package credits to:"
 msgstr "Ringraziamenti per l'installer:"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:32
+#: Resources/templates/Welcome.html:41
 msgid "%PKGDEV%"
 msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:34
+#: Resources/templates/Welcome.html:43
 msgid "Supports Fat32, HFS+, ESP."
 msgstr "Supporta Fat32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
-#: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
+#: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
-#
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:17
+#: Resources/templates/Description.html:18
 msgid "Clover v2"
 msgstr "Clover v2"
 
-#
 #. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:17
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"Appartiene al codice libero basato su diversi progetti: Clover, rEFIt, XNU, "
-"VirtualBox."
+#: Resources/templates/Description.html:19
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "Appartiene al codice libero basato su diversi progetti: Clover, rEFIt, XNU, VirtualBox."
 
-#
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:18
+#: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "La principale è edk2 l'ultima revisione."
 
-#
 #. type: Content of: <html><body><p><b>
-#: Resources/templates/Description.html:20
+#: Resources/templates/Description.html:25
 msgid "Main features:"
 msgstr "Caratteristiche Principali:"
 
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:21
-#, fuzzy
-#| msgid "- boot into 10.4 - 10.9 OSX, Windows EFI and Linux EFI"
-msgid "- boot into 10.xx macOS, Windows EFI and Linux EFI"
-msgstr "- Avvia da Mac OS X 10.4 a OS X 10.11, Windows EFI e Linux EFI"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:22
-msgid ""
-"- It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"- Il bootloader EFI proporziona Servizi Runtime per il sistema operativo che "
-"sono impossibili con i bootloader di vecchia generazione"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:23
-msgid ""
-"- mostly Clover do automatic detection of hardware and set all properties by "
-"default."
-msgstr ""
-"- Principalmente Clover effettua il rilevamento automatico dell'hardware e "
-"configura tutte le caratteristiche di base."
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:24
-msgid "But user can change them by config.plist"
-msgstr "Però l'utente può cambiarlo dal config.plist"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:25
-msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"- Con Clover puoi riavviare in un altro sistema operativo dal \"Disco di "
-"avvio\" in Preferenze del Sistema"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:26
-msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- UUID scritto nel config.plist sarà il medesimo di OS"
-
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:27
-msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOS sarà corretto allo standard 2.6"
+msgid "boot into 10.xx macOS, Windows EFI and Linux EFI"
+msgstr "Avvia da macOS 10.xx, Windows EFI e Linux EFI"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- L'ACPI sarà corretto allo standard 4.0."
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "Il bootloader EFI proporziona Servizi Runtime per il sistema operativo che sono impossibili con i bootloader di vecchia generazione"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "Principalmente Clover effettua il rilevamento automatico dell'hardware e configura tutte le caratteristiche di base. Però l'utente può cambiarlo dal config.plist."
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:30
+msgid "with Clover you may restart into other OS from Startup Disk prefPane"
+msgstr "Con Clover puoi riavviare in un altro sistema operativo dal avvio "
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:31
+msgid "UUID written into config.plist will be the same as in OS"
+msgstr "UUID scritto nel config.plist sarà il medesimo di OS"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:32
+msgid "SMBIOS will be corrected to standard 2.6"
+msgstr "SMBIOS sarà corretto allo standard 2.6"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:33
+msgid "ACPI will be corrected to standard 4.0."
+msgstr "L'ACPI sarà corretto allo standard 4.0."
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr "Il DSDT personalizzato sarà caricato dalla partizione di avvio"
 
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:30
-msgid "- DSDT patching on the fly by fixes and by patterns"
-msgstr ""
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:31
-msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- RestartFix, sleep/wake e PCIRootUID personalizzabile"
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:32
-msgid ""
-"- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards."
-msgstr ""
-"- Proprietà di iniezione grafica per ATI, Nvidia e Intel per una amplia "
-"gamma di schede supportate."
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:33
-msgid "Also customizable."
-msgstr "anch'esse personalizzabile."
-
-#
-#. type: Content of: <html><body><p>
-#: Resources/templates/Description.html:34
-msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) fino alla USB 3.0"
-
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
-msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- Iniezione dell'HDA e iniezione Ethernet incorporato"
+msgid "DSDT patching on the fly by fixes and by patterns"
+msgstr "DSDT patching on the fly by fixes and by patterns;"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
-msgid "- CPU turbo and P- and C-states generator"
-msgstr "- Generatore CPU turbo, P e C state"
+msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr "RestartFix, sleep/wake e PCIRootUID personalizzabile"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"- Caricamento delle tabelle ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, "
-"UEFI…)"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "Proprietà di iniezione grafica per ATI, Nvidia e Intel per una amplia gamma di schede supportate. Anch'esse personalizzabile."
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
-msgid "- extra kexts loading"
-msgstr ""
+msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr "USB fix (LegacyOff, Ownership, Builtin, clock-id) fino alla USB 3.0"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
-msgid "- kernel and kext patching on the fly"
-msgstr ""
+msgid "HDA injector and Ethernet builtin injector"
+msgstr "Iniezione dell'HDA e iniezione Ethernet incorporato"
 
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
-msgid "- set NVRAM variables for different purpose"
-msgstr ""
+msgid "CPU turbo and P- and C-states generator"
+msgstr "Generatore CPU turbo, P e C state"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
-msgid ""
-"- default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"- Avvio automatico dopo il conto alla rovescia, interfaccia "
-"personalizzabile , e salvataggio screenshot da GUI premendo F10"
+msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "Caricamento delle tabelle ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI…)"
 
-#
-#. type: Content of: <html><body><p>
+#. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
-msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- Salva il boot.log in OS e preboot.log dalla GUI premendo F2"
+msgid "extra kexts loading"
+msgstr "Extra kernel extensions loading;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:43
+msgid "kernel and kext patching on the fly"
+msgstr "Kernel and kext patching on the fly;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:44
+msgid "set NVRAM variables for different purpose"
+msgstr "Set NVRAM variables for different purpose;"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:45
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "Avvio automatico dopo il conto alla rovescia, interfaccia personalizzabile , e salvataggio screenshot da GUI premendo F10"
+
+#. type: Content of: <html><body><ul><li>
+#: Resources/templates/Description.html:46
+msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr "Salva il boot.log in OS e preboot.log dalla GUI premendo F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -434,12 +379,12 @@ msgstr "CloverEFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "Selezionare la versione di CloverEFI da installare."
 
-#. type: "cloverEFI.32_description"
+#. type: "cloverEFI.32_title, cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32-bit"
+msgstr "CloverEFI 32-bits"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:71
@@ -469,43 +414,35 @@ msgstr ""
 
 #. type: "cloverEFI.64.blockio2_title"
 #: Resources/templates/Localizable.strings:75
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits BiosBlockIO"
+#, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
 msgstr "CloverEFI 64-bit BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:76
-#, fuzzy, no-wrap
-#| msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+#, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
 msgstr ""
 "CloverEFI 64-bit che utilizza Bios Block I/O per accedere alle unità.\n"
 "Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti."
 
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr "Driver a 32 bit per tastiere PS/2"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "Driver a 32 bit per trackpad PS/2"
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr "Driver a 32 bit per mouse PS/2"
-
-#. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:84
-#, no-wrap
-msgid "PS/2 mouse driver, 64bit"
-msgstr "Driver a 64 bit per mouse PS/2"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:85
@@ -513,50 +450,152 @@ msgstr "Driver a 64 bit per mouse PS/2"
 msgid "USB mouse driver, 32bit"
 msgstr "Driver a 32 bit per mouse USB"
 
-#. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:86
-#, no-wrap
-msgid "USB mouse driver, 64bit"
-msgstr "Driver a 64 bit per mouse USB"
-
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr "Driver a 32 bit per accedere a partizioni formattate in ext2/3"
 
-#. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:88
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "Driver a 64 bit per accedere a partizioni formattate in ext2/3"
-
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr "Driver a 32 bit per accedere a partizioni formattate in ext4"
 
-#. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:90
-#, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "Driver a 64 bit per accedere a partizioni formattate in ext4"
-
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "Driver a 32 bit che aggiunge supporto USB 3.0"
 
+#. type: "Drivers64_title"
+#: Resources/templates/Localizable.strings:90
+#, no-wrap
+msgid "BIOS Drivers, 64 bit"
+msgstr "BIOS Drivers, 64 bit"
+
+#. type: "Drivers64_description"
+#: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Select drivers for BIOS-booting."
+msgstr "Select drivers for BIOS-booting."
+
+#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#: Resources/templates/Localizable.strings:93
+#: Resources/templates/Localizable.strings:111
+#, no-wrap
+msgid "For decode PNG and BMP images in boot UI"
+msgstr "Decode PNG and BMP for FileVault2."
+
+#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:112
+#, no-wrap
+msgid "Support for boot UI dialog for FileVault2"
+msgstr "Support for boot UI dialog for FileVault2."
+
+#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:113
+#, no-wrap
+msgid "Create boot UI Themes support"
+msgstr "Create boot UI Themes support for FileVault2."
+
+#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:125
+#, no-wrap
+msgid "Create FirmwareVolume with cursor images"
+msgstr "Create FirmwareVolume with cursor images for FileVault2."
+
+#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:126
+#, no-wrap
+msgid "Provide injection of kexts from Clover folder."
+msgstr "Provide injection of kernel extensions from Clover folder."
+
+#. type: "GrubEXFAT-64_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ExFAT filesystem driver from GRUB."
+msgstr "ExFAT filesystem driver."
+
+#. type: "GrubISO9660-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ISO 9600 filesystem driver from GRUB."
+msgstr "ISO9600 filesystem driver."
+
+#. type: "GrubNTFS-64_description"
+#: Resources/templates/Localizable.strings:100
+#, no-wrap
+msgid "NTFS filesystem driver from GRUB."
+msgstr "NTFS filesystem driver."
+
+#. type: "GrubUDF-64_description"
+#: Resources/templates/Localizable.strings:101
+#, no-wrap
+msgid "UDF filesystem driver from GRUB."
+msgstr "UDF filesystem driver."
+
+#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:137
+#, no-wrap
+msgid "Restore SMC keys left in nvram by FakeSMC"
+msgstr "Restore SMC keys left in NVRAM by FakeSMC."
+
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "Driver a 64 bit che aggiunge supporto USB 3.0"
+msgstr "USB 3.0 driver, 64bit"
 
-#. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:93
+#. type: "Drivers64UEFI_title"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "UEFI Drivers, 64 bit"
+msgstr "UEFI Drivers"
+
+#. type: "Drivers64UEFI_description"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "Select drivers for UEFI-booting."
+msgstr "Select drivers for UEFI-booting."
+
+#. type: "ApfsDriverLoader-64.UEFI_description"
+#: Resources/templates/Localizable.strings:108
+#, no-wrap
+msgid "64bit driver to load APFS filesystem driver from container"
+msgstr "Supports APFS filesystem driver from container for macOS 10.14."
+
+#. type: "AppleEvent-64.UEFI_description"
+#: Resources/templates/Localizable.strings:109
+#, no-wrap
+msgid "Create AppleEvent protocol for FileVault2"
+msgstr "Create AppleEvent protocol for FileVault2."
+
+#. type: "AppleGraphicsConfig-64.UEFI_description"
+#: Resources/templates/Localizable.strings:110
+#, no-wrap
+msgid "Create optional AppleGraphicsConfig protocol"
+msgstr "Create optional AppleGraphicsConfig protocol."
+
+#. type: "AptioInputFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:114
+#, no-wrap
+msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
+
+#. type: "AptioMemoryFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Driver a 64 bit che risolve i problemi di memoria sul firmware UEFI come AMI Aptio bios."
+
+#. type: "CsmVideoDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -569,8 +608,8 @@ msgstr ""
 "Clover potrebbe non avviarsi correttamente con questo driver o potrebbe causare problemi durante la fase di sonno/risveglio!\n"
 "Usare con cautela!"
 
-#. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:97
+#. type: "DataHubDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -579,117 +618,143 @@ msgstr ""
 "Driver a 64 bit aggiunge supporto al protocollo DataHub necessario per MacOSX.\n"
 "Questo protocollo è già presente nella maggior parte dei casi, ma può mancare in determinate configurazioni. In questo caso si dovrebbe ricevere un avviso sullo schermo."
 
-#. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:99
+#. type: "EmuVariableUefi-64.UEFI_description"
+#: Resources/templates/Localizable.strings:122
 #, no-wrap
-msgid ""
-"64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
-"Use it only if you have a problem without it"
+msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "Driver a 64bit per il supporto delle variabili NVRAM necessarie per MacOSX.\n"
 "La maggior parte dei firmware UEFI utilizzano hardware NVRAM, ma in rari casi è necessario il driver.\n"
 "Usare solo se si ha un problema senza di questo driver."
 
-#. type: "AptioMemoryFix_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:103
+#. type: "EnglishDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
-msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "Driver a 64 bit che risolve i problemi di memoria sul firmware UEFI come AMI Aptio bios."
+msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
+msgstr "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 
-#. type: "ApfsDriverLoader_description"
-#: Resources/templates/Localizable.strings:104
+#. type: "Fat-64.UEFI_description"
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "64bit driver to load APFS filesystem driver from container"
-msgstr ""
+msgid "FAT filesystem driver."
+msgstr "FAT filesystem driver."
 
-#. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:105
+#. type: "HashServiceFix-64.UEFI_description"
+#: Resources/templates/Localizable.strings:127
+#, no-wrap
+msgid "Fix Hash support if absent in native UEFI BIOS"
+msgstr "Fix Hash support if absent in native UEFI BIOS."
+
+#. type: "HFSPlus.UEFI_description"
+#: Resources/templates/Localizable.strings:128
+#, no-wrap
+msgid "Alternate HFS+ filesystem driver."
+msgstr "Alternate HFS+ filesystem driver."
+
+#. type: "NvmExpressDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:129
+#, no-wrap
+msgid "Driver for support NVM Express devices."
+msgstr "Driver for support NVM Express devices."
+
+#. type: "OsxAptioFix2Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:130
+#, no-wrap
+msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFix3Drv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:131
+#, no-wrap
+msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
+msgstr "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+
+#. type: "OsxAptioFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:132
+#, no-wrap
+msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together."
+
+#. type: "OsxFatBinaryDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:133
+#, no-wrap
+msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
+msgstr "Driver for support FAT Binary executables for OS X 10.9 and older."
+
+#. type: "OsxLowMemFixDrv-64.UEFI_description"
+#: Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli indirizzi per boot.efi e quindi di avviare correttamente OS X Mountain Lion (10.8). E' una variante semplificata di OsxAptioFixDrv (non utilizzare entrambi insieme)."
 
-#. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:106
+#. type: "PartitionDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "Driver a 64 bit che aggiunge supporto a tabelle di partizione non comuni come: GPT/MBR ibrido o Mappa Partizione Apple."
 
-#. type: "SMCHelper-64_description"
-#: Resources/templates/Localizable.strings:107
+#. type: "Ps2MouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
-msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr ""
+msgid "PS/2 mouse driver, 64bit"
+msgstr "Driver a 64 bit per mouse PS/2"
 
-#. type: "AppleEvent-64_description"
-#: Resources/templates/Localizable.strings:108
-#, no-wrap
-msgid "Create AppleEvent protocol for FileVault2"
-msgstr ""
-
-#. type: "AppleKeyAggregator-64_description"
-#: Resources/templates/Localizable.strings:109
-#, no-wrap
-msgid "Support for boot UI dialog for FileVault2"
-msgstr ""
-
-#. type: "FirmwareVolume-64_description"
-#: Resources/templates/Localizable.strings:110
-#, no-wrap
-msgid "Create FirmwareVolume with cursor images"
-msgstr ""
-
-#. type: "AppleImageCodec-64_description"
-#: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "For decode PNG and BMP images in boot UI"
-msgstr ""
-
-#. type: "AppleUITheme-64_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid "Create boot UI Themes support"
-msgstr ""
-
-#. type: "HashServiceFix-64_description"
-#: Resources/templates/Localizable.strings:113
-#, no-wrap
-msgid "Fix Hash support if absent in native UEFI BIOS"
-msgstr ""
-
-#. type: "UsbKbDxe-64_description"
-#: Resources/templates/Localizable.strings:114
+#. type: "UsbKbDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr ""
+msgstr "Keyboard driver for boot UI support."
 
-#. type: "AppleGraphicsConfig-64_description"
-#: Resources/templates/Localizable.strings:115
+#. type: "UsbMouseDxe-64.UEFI_description"
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
-msgid "Create optional AppleGraphicsConfig protocol"
-msgstr ""
+msgid "USB mouse driver, 64bit"
+msgstr "Driver a 64 bit per mouse USB"
+
+#. type: "VBoxExt2-64.UEFI_description"
+#: Resources/templates/Localizable.strings:140
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr "Driver a 64 bit per accedere a partizioni formattate in ext2/3"
+
+#. type: "VBoxExt4-64.UEFI_description"
+#: Resources/templates/Localizable.strings:141
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr "Driver a 64 bit per accedere a partizioni formattate in ext4"
+
+#. type: "VBoxHfs-64.UEFI_description"
+#: Resources/templates/Localizable.strings:142
+#, no-wrap
+msgid "HFS+ filesystem driver."
+msgstr "HFS+ filesystem driver."
+
+#. type: "VBoxIso9600-64.UEFI_description"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "ISO 9600 filesystem driver."
+msgstr "ISO 9600 filesystem driver."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Themes"
 msgstr "Temi"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Seleziona per installare i temi."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Black Green Moody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -699,13 +764,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "embedded"
 msgstr "Embedded"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
@@ -715,13 +780,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -731,13 +796,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/metal"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "random"
 msgstr "Random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:138
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid ""
 "random theme from Slice,\n"
@@ -747,13 +812,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "steampunkblack"
 msgstr "Steampunkblack"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:142
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -762,10 +827,9 @@ msgstr ""
 "Tema Steampunkblack di Bijo,\n"
 "Installa in /EFI/CLOVER/themes/steampunkblack"
 
-#
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:145
-#, fuzzy, no-wrap
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid "CloverThemeManager.app"
 msgstr ""
 "CloverThemeManager.app by blackosx,\n"
@@ -773,22 +837,24 @@ msgstr ""
 "App installata in  /Applications."
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
 "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 msgstr ""
+"CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Script RC sul volume di destinazione"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -798,37 +864,43 @@ msgstr ""
 "Il volume di destinazione deve essere un volume OSX avviabile."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Script RC su tutti gli altri volumi OSX avviabili"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Installa tutti gli script RC su tutti i volumi interni OSX avviabili oltre al volume di destinazione."
 
-#. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:157
+#. type: "OptionalRCScripts"
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Script RC Opzionali"
 
+#. type: "disable_sleep_proxy_client_title"
+#: Resources/templates/Localizable.strings:186
+#, no-wrap
+msgid "Disable sleep proxy client"
+msgstr "Disable sleep proxy client"
+
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Script che disabilita il servizio BONJOUR (sleep proxy client). Eviterà che il sistema, in caso di standby, si risvegli a tutte le  ore."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Installare Pannello Preferenze"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -837,10 +909,10 @@ msgstr ""
 "Installa pannello delle preferenze sul volume di destinazione.\n"
 "Include CloverUpdater che notifica la presenza di nuovi aggiornamenti."
 
-#. type: "371.title"
+#. type: "56.title, 371.title, 57.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:2
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -905,12 +977,12 @@ msgstr "Ok"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "Never"
+#. type: "204.title, Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
-msgstr "Mai"
+msgstr "Never"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
@@ -963,8 +1035,10 @@ msgstr "Controlla ora"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Copyright (c) 2013 JrCs, kozlek\\nTutti i diritti riservati"
+msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+msgstr ""
+"Copyright (c) 2013 JrCs, kozlek\n"
+"Tutti i diritti riservati"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
@@ -1032,7 +1106,6 @@ msgstr "Salva il contenuto della NVRAM nel disco:"
 msgid "Theme"
 msgstr "Tema"
 
-#
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
@@ -1123,14 +1196,14 @@ msgstr "Numero di backup da mantenere:"
 msgid "EFI Folder path"
 msgstr "Percorso cartella EFI:"
 
-#. type: "Auto"
+#. type: "829.ibShadowedIsNilPlaceholder, Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "Auto"
 
-#. type: "No"
+#. type: "833.ibShadowedIsNilPlaceholder, No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
@@ -1179,422 +1252,3 @@ msgstr "Imposta la directory EFI"
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#~ msgid "AppleStyle"
-#~ msgstr "AppleStyle"
-
-#~ msgid ""
-#~ "AppleStyle theme from Eps,\n"
-#~ "Install to /EFI/CLOVER/themes/applestyle"
-#~ msgstr ""
-#~ "Tema AppleStyle di Eps,\n"
-#~ "Installa in /EFI/CLOVER/themes/applestyle"
-
-#~ msgid "Black_Green"
-#~ msgstr "Black Green"
-
-#~ msgid ""
-#~ "Default black_green theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/black_green"
-#~ msgstr ""
-#~ "Tema di default black green di Blackosx,\n"
-#~ "Installa in /EFI/CLOVER/themes/black_green."
-
-#~ msgid "Bluemac"
-#~ msgstr "Bluemac"
-
-#~ msgid ""
-#~ "Bluemac theme from FowZiey,\n"
-#~ "Install to /EFI/CLOVER/themes/bluemac"
-#~ msgstr ""
-#~ "Tema Bluemac di FowZiey,\n"
-#~ "Installa in /EFI/CLOVER/themes/bluemac"
-
-#~ msgid "BootCamp"
-#~ msgstr "BootCamp"
-
-#~ msgid ""
-#~ "Bootcamp theme from Bijo,\n"
-#~ "Install to /EFI/CLOVER/themes/bootcamp"
-#~ msgstr ""
-#~ "Tema Bootcamp di Bijo,\n"
-#~ "Installa in /EFI/CLOVER/themes/bootcamp"
-
-#~ msgid "BGM256"
-#~ msgstr "BGM256"
-
-#~ msgid ""
-#~ "BGM A version of BGM with 256px icons theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/BGM256"
-#~ msgstr ""
-#~ "Una versione del tema BGM (Black Green and Moody) di Blackosx,\n"
-#~ "Installa in /EFI/CLOVER/themes/BGM256"
-
-#~ msgid "chrome"
-#~ msgstr "Chrome"
-
-#~ msgid ""
-#~ "chrome theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/chrome"
-#~ msgstr ""
-#~ "Tema Chrome di chris1111,\n"
-#~ "Installa in /EFI/CLOVER/themes/chrome"
-
-#~ msgid "CloverX"
-#~ msgstr "CloverX"
-
-#~ msgid ""
-#~ "CloverX theme from =)(=,\n"
-#~ "Install to /EFI/CLOVER/themes/CloverX"
-#~ msgstr ""
-#~ "Tema CloverX di  =)(=,\n"
-#~ "Installa in /EFI/CLOVER/themes/CloverX"
-
-#~ msgid "dawn"
-#~ msgstr "Dawn"
-
-#~ msgid ""
-#~ "dawn theme from Slice,\n"
-#~ "Install to /EFI/CLOVER/themes/dawn"
-#~ msgstr ""
-#~ "Tema Dawn di Slice,\n"
-#~ "Installa in /EFI/CLOVER/themes/dawn"
-
-#~ msgid "gold_clover"
-#~ msgstr "Gold Clover"
-
-#~ msgid ""
-#~ "gold_clover theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/gold_clover"
-#~ msgstr ""
-#~ "Tema Gold Clover di chris1111,\n"
-#~ "Installa in /EFI/CLOVER/themes/gold_clover"
-
-#~ msgid "iClover"
-#~ msgstr "iClover"
-
-#~ msgid ""
-#~ "Grey style theme by winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/iclover"
-#~ msgstr ""
-#~ "Tema Grey style di winlog,\n"
-#~ "Installa in /EFI/CLOVER/themes/iclover."
-
-#~ msgid "ios7"
-#~ msgstr "iOS7"
-
-#~ msgid ""
-#~ "ios7 theme by Ukr55, Winlog,\n"
-#~ "Install to /EFI/CLOVER/themes/ios7"
-#~ msgstr ""
-#~ "Tema iOS7 di Ukr55, Winlog,\n"
-#~ "Installa in /EFI/CLOVER/themes/ios7"
-
-#~ msgid "Magnifico"
-#~ msgstr "Magnifico"
-
-#~ msgid ""
-#~ "Magnifico theme from Magnifico,\n"
-#~ "Install to /EFI/CLOVER/themes/magnifico"
-#~ msgstr ""
-#~ "Tema Magnifico di Magnifico,\n"
-#~ "Installa in /EFI/CLOVER/themes/magnifico"
-
-#~ msgid "mrengles"
-#~ msgstr "mrengles"
-
-#~ msgid ""
-#~ "mrengles theme from mrengles,\n"
-#~ "Install to /EFI/CLOVER/themes/mrengles"
-#~ msgstr ""
-#~ "Tema mrengles di mrengles,\n"
-#~ "Installa in /EFI/CLOVER/themes/mrengles"
-
-#~ msgid "Orange"
-#~ msgstr "Orange"
-
-#~ msgid ""
-#~ "Orange theme from dwm,\n"
-#~ "Install to /EFI/CLOVER/themes/orange"
-#~ msgstr ""
-#~ "Tema Orange di dwm,\n"
-#~ "Installa in /EFI/CLOVER/themes/orange"
-
-#~ msgid "OS Box"
-#~ msgstr "OS Box"
-
-#~ msgid ""
-#~ "OS Box theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_box"
-#~ msgstr ""
-#~ "Tema OS Box di Kyndder,\n"
-#~ "Installa in /EFI/CLOVER/themes/os_box"
-
-#~ msgid "OS One"
-#~ msgstr "OS One"
-
-#~ msgid ""
-#~ "OS One theme from Kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/os_one"
-#~ msgstr ""
-#~ "Tema OS One di Kyndder,\n"
-#~ "Installa in /EFI/CLOVER/themes/os_one"
-
-#~ msgid "ThinkPad"
-#~ msgstr "ThinkPad"
-
-#~ msgid ""
-#~ "ThinkPad theme from Kogen Mantis,\n"
-#~ "Install to /EFI/CLOVER/themes/thinkpad"
-#~ msgstr ""
-#~ "Tema ThinkPad di Kogen Mantis,\n"
-#~ "Installa in /EFI/CLOVER/themes/thinkpad"
-
-#~ msgid "buttons"
-#~ msgstr "buttons"
-
-#~ msgid ""
-#~ "Buttons theme from Trauma,\n"
-#~ "Install to /EFI/CLOVER/themes/buttons."
-#~ msgstr ""
-#~ "Tema Buttons di Trauma,\n"
-#~ "Installa in /EFI/CLOVER/themes/buttons."
-
-#~ msgid "hellfire"
-#~ msgstr "hellfire"
-
-#~ msgid ""
-#~ "Hellfire theme from lllevelll,\n"
-#~ "Install to /EFI/CLOVER/themes/hellfire."
-#~ msgstr ""
-#~ "Tema Hellfire di illevelll,\n"
-#~ "Installa in /EFI/CLOVER/themes/hellfire."
-
-#~ msgid "simple_gray"
-#~ msgstr "Simple gray"
-
-#~ msgid ""
-#~ "Simple_gray theme from hijeane,\n"
-#~ "Install to /EFI/CLOVER/themes/simple_gray."
-#~ msgstr ""
-#~ "Tema Simple_gray di hijeane,\n"
-#~ "Installa in /EFI/CLOVER/themes/simple_gray."
-
-#~ msgid "Shield"
-#~ msgstr "Shield"
-
-#~ msgid ""
-#~ "An animated, harmonious theme from Blackosx,\n"
-#~ "Install to /EFI/CLOVER/themes/Shield."
-#~ msgstr ""
-#~ "Un animato, armonioso tema di Blackosx,\n"
-#~ "Installa in /EFI/CLOVER/themes/Shield"
-
-#~ msgid "wooden"
-#~ msgstr "wooden"
-
-#~ msgid ""
-#~ "Wooden theme from iROOTa,\n"
-#~ "Install to /EFI/CLOVER/themes/wooden."
-#~ msgstr ""
-#~ "Tema Wooden di iROOTa,\n"
-#~ "Installa in /EFI/CLOVER/themes/wooden."
-
-#~ msgid "sketched"
-#~ msgstr "Sketched"
-
-#~ msgid ""
-#~ "sketched theme from kyndder,\n"
-#~ "Install to /EFI/CLOVER/themes/sketched."
-#~ msgstr ""
-#~ "Tema Sketched di kyndder,\n"
-#~ "Installa in /EFI/CLOVER/themes/sketched."
-
-#~ msgid "Space"
-#~ msgstr "Space"
-
-#~ msgid ""
-#~ "Space theme from chris1111,\n"
-#~ "Install to /EFI/CLOVER/themes/Space"
-#~ msgstr ""
-#~ "Tema Space di chris1111,\n"
-#~ "Installa in /EFI/CLOVER/themes/Space"
-
-#
-#~ msgid " "
-#~ msgstr " "
-
-#
-#~ msgid "- extra kexts loading and security mode for FireWire"
-#~ msgstr ""
-#~ "- Caricamento aggiuntivo degli kext e modo sicurezza per il FireWire"
-
-#~ msgid "Nowhere"
-#~ msgstr "Da nessuna parte"
-
-#, fuzzy
-#~| msgid "OS Box"
-#~ msgid "Box"
-#~ msgstr "OS Box"
-
-#~ msgid "Default"
-#~ msgstr "Predefinito"
-
-#~ msgid "CLOVER"
-#~ msgstr "CLOVER"
-
-#~ msgid ""
-#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
-#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
-#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
-#~ "NO creation of timestamp boot.log file"
-#~ msgstr ""
-#~ "Creare ad ogni boot il registro CloverEFI/boot.log con data/ora\\n"
-#~ "\\nValore:\\n* Si: crea un nuovo file boot.log\\n* Numero: dove numero è "
-#~ "il numero di file boot.log da mantenere.\\n\\nImpostando nessun valore "
-#~ "non creerà nessun file di boot.log"
-
-#~ msgid "LogLineCount:"
-#~ msgstr "LogLineCount:"
-
-#~ msgid "LogEveryBoot:"
-#~ msgstr "LogEveryBoot:"
-
-#~ msgid "MountEFI:"
-#~ msgstr "MountEFI:"
-
-#~ msgid "NVRamDisk:"
-#~ msgstr "NVRamDisk:"
-
-#~ msgid ""
-#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
-#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
-#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
-#~ "mounting ESP partition on boot"
-#~ msgstr ""
-#~ "Montare la partizione ESP all'avvio.\\n\\nValore:\\n* Si: monta l'ESP "
-#~ "sulla stessa unità disco della partizione di sistema\\n* diskX: unità "
-#~ "disco\\n* GUID: GUID dell'ESP\\n* NomeVolume: nome di un volume che si "
-#~ "trova sulla stessa unità disco della partizione ESP\\n\\nImpostando "
-#~ "nessun valore non monterà la partizione ESP all'avvio"
-
-#~ msgid ""
-#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
-#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
-#~ "nvram.plist file in the root folder of the system partition."
-#~ msgstr ""
-#~ "Salvare il contenuto della NVRAM su disco\\n\\nValore:\\n* No: non salva "
-#~ "i contenuti della NVRAM su disco\\n* diskXsY: nodo dispositivo del volume "
-#~ "in cui verranno salvati i contenuti della NVRAM\\n\\nImpostando nessun "
-#~ "valore salverà i contenuti della NVRAM nel file nvram.plist nella "
-#~ "cartella principale della partizione di sistema"
-
-#~ msgid ""
-#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
-#~ "in config.plist is use."
-#~ msgstr ""
-#~ "Tema utilizzato per l'interfaccia grafica di Clover\\nSe il valore è "
-#~ "vuoto, verrà utilizzato il tema definito sul file config.plist"
-
-#~ msgid "GUI Appearance"
-#~ msgstr "Interfaccia Grafica"
-
-#~ msgid "Install CloverUpdater"
-#~ msgstr "Installare CloverUpdater"
-
-#~ msgid "BIOS MBR boot0 (HFS+Fat32)"
-#~ msgstr "BIOS MBR boot0 (HFS+Fat32)"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then boot0 "
-#~ "will search first active HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will setup selected HFS + Fat32 partitions to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "Usato per l'avvio da BIOS nelle schede madri con BIOS.\n"
-#~ "Usa fdisk440 per installare il boot0 nei primi 440 bits del MBR senza "
-#~ "alterare l'installazione Windows se possedute, quindi boot0 cercherà la "
-#~ "prima partizione HFS attiva per boot1h2, o cercherà nella prima "
-#~ "partizione attiva Fat32 per il boot1f32alt.\n"
-#~ "Se questo è selezionato la partizione HFS e Fat32 saranno attivate.\n"
-#~ "Bisogna formattare come Fat32 in Win o Mac nel seguente modo.\n"
-#~ "  1. Prima cancellare come MS-DOS (FAT) da Utilità Disco.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-#~ msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
-
-#~ msgid ""
-#~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-#~ "destroying any existing Windows installation if you have one, then "
-#~ "boot0hfs will search first HFS partition for boot1h2, or search first "
-#~ "active Fat32 partition for boot1f32alt.\n"
-#~ "It will not setup selected HFS partition to be active, but will setup "
-#~ "selected Fat32 partition to be active.\n"
-#~ "Need to format as Fat32 on Win or on Mac as below.\n"
-#~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-#~ msgstr ""
-#~ "Usato per l'avvio da BIOS nelle schede madri con BIOS.\n"
-#~ "Usa fdisk440 per installare il boot0 nei primi 440 bits del MBR senza "
-#~ "inibire precedenti installazioni di Windows se possedute, quindi boot0 "
-#~ "cercherà la prima partizione HFS attiva per boot1h2, o cercherà nella "
-#~ "prima partizione attiva Fat32 per il boot1f32alt.\n"
-#~ "Se non si seleziona questo,la partizione HFS sarà attivata, però se è "
-#~ "selezionata la partizione Fat32 sarà questa ad essere attivata.\n"
-#~ "Bisogna formattare come Fat32 in Win o Mac nel seguente modo.\n"
-#~ "  1. Prima cancellare come MS-DOS (FAT) da Utilità Disco.\n"
-#~ "  2. diskutil list\n"
-#~ "  3. diskutil unmount /dev/rdisk9s1\n"
-#~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-#~ "  5. diskutil mount /dev/rdisk9s1"
-
-#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
-#~ msgstr "Driver a 32 bit per Ps2MouseAbsolutePointer"
-
-#~ msgid "XhciDxe-64_description"
-#~ msgstr ""
-#~ "Driver a 64 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
-
-#~ msgid "Video driver - provides a wide range of resolutions, 64bit"
-#~ msgstr ""
-#~ "Driver video a 64 bit che permette di sbloccare VBIOS e rende disponibili "
-#~ "le risoluzioni \"nascoste\" per l'avvio UEFI."
-
-#~ msgid "DataHubDxe-64_description"
-#~ msgstr ""
-#~ "Driver a 64 bit che permette di caricare i DataHub con informazioni di "
-#~ "stato copiati dal PEI HOBs, necessario per alcuni BIOS."
-
-#~ msgid "EmuVariableUefi-64_description"
-#~ msgstr "Driver a 64 bit necessario durante l'avvio UEFI per BIOS Phoenix."
-
-#~ msgid "Fix for Aptio AMI, 64bit"
-#~ msgstr ""
-#~ "Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli "
-#~ "indirizzi per boot.efi e quindi di avviare correttamente OS X Mountain "
-#~ "Lion (10.8). Necessario per i proprietari AMI BIOS Aptio."
-
-#~ msgid "PartitionDxe-64_description"
-#~ msgstr ""
-#~ "Driver a 64 bit che permette di produrre da un dispositivo BlockIO fisico "
-#~ "un dispositivo BlockIO logico. I dispositivi BlockIO logici sono basati "
-#~ "sul formato dei dispositivi con supporti a blocco \"grezzo\" Raw. "
-#~ "Attualmente \"CD-ROM El Torito\" e le partizioni MBR e GPT sono "
-#~ "supportati. Necessario per alcuni BIOS. "
