@@ -564,7 +564,7 @@ msgstr "Select drivers for UEFI-booting."
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
-msgstr "Supports APFS filesystem driver from container for macOS 10.14."
+msgstr "Supports APFS filesystem driver from container for macOS 10.13."
 
 #. type: "AppleEvent-64.UEFI_description"
 #: Resources/templates/Localizable.strings:109
@@ -1216,7 +1216,7 @@ msgstr "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr "ESP на [%1$@] %2$@"
+msgstr "ESP on [%1$@] %2$@"
 
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:7

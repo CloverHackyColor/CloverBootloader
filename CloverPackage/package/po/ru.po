@@ -560,7 +560,7 @@ msgstr "Выберите драйверы для загрузки посредс
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
-msgstr "Поддержка загрузки оригинального драйвера файловой системы APFS из контейнера. Необходим для macOS 10.14 и старше."
+msgstr "Поддержка загрузки оригинального драйвера файловой системы APFS из контейнера. Необходим для macOS 10.13 и выше."
 
 #. type: "AppleEvent-64.UEFI_description"
 #: Resources/templates/Localizable.strings:109
