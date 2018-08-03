@@ -917,15 +917,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPKernelLapic = IsPropertyTrue (Prop);
   }
   
-  // this is an old key. after a long time, we consider removing this key for cleanup
-  Prop = GetProperty (DictPointer, "KernelIvyXCPM");
-  if (Prop != NULL || gBootChanged) {
-    Patches->KPKernelXCPM = IsPropertyTrue (Prop);
-    if (IsPropertyTrue(Prop)) {
-      DBG("KernelXCPM: enabled\n");
-    }
-  }
-  
   Prop = GetProperty (DictPointer, "KernelXCPM");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelXCPM = IsPropertyTrue (Prop);
@@ -937,12 +928,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty (DictPointer, "KernelPm");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelPm = IsPropertyTrue (Prop);
-  }
-  
-  // this is an old key. after a long time, we consider removing this key for cleanup
-  Prop = GetProperty (DictPointer, "AsusAICPUPM");
-  if (Prop != NULL || gBootChanged) {
-    Patches->KPAppleIntelCPUPM = IsPropertyTrue (Prop);
   }
   
   Prop = GetProperty (DictPointer, "AppleIntelCPUPM");
