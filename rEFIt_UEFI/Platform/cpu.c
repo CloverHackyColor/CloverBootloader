@@ -514,21 +514,21 @@ VOID GetCPUProperties (VOID)
                MsgLog("MSR 0x1A0             %08x\n", msr);
                MsgLog("   EIST is locked and %a\n", (msr & _Bit(16))?"enabled":"disabled");
              }
-             msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
-             if ((RShiftU64(msr, 16) & 0x01) != 0) {
-               // bcc9 patch
-               UINT8 flex_ratio = RShiftU64(msr, 8) & 0xff;
-               // MsgLog("non-usable FLEX_RATIO = %x\n", msr);
-               if (flex_ratio == 0) {
-                 AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL));
-                 gBS->Stall(10);
-                 msr = AsmReadMsr64(MSR_FLEX_RATIO);
-                 MsgLog("corrected FLEX_RATIO = %x\n", msr);
+             
+             if (gCPUStructure.Model != CPU_MODEL_GOLDMONT && gCPUStructure.Model != CPU_MODEL_AIRMONT &&
+                 gCPUStructure.Model != CPU_MODEL_AVOTON) {
+               msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
+               if ((RShiftU64(msr, 16) & 0x01) != 0) {
+                 // bcc9 patch
+                 UINT8 flex_ratio = RShiftU64(msr, 8) & 0xff;
+                 // MsgLog("non-usable FLEX_RATIO = %x\n", msr);
+                 if (flex_ratio == 0) {
+                   AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL));
+                   gBS->Stall(10);
+                   msr = AsmReadMsr64(MSR_FLEX_RATIO);
+                   MsgLog("corrected FLEX_RATIO = %x\n", msr);
+                 }
                }
-               /*else {
-                if(gCPUStructure.BusRatioMax > flex_ratio)
-                gCPUStructure.BusRatioMax = (UINT8)flex_ratio;
-                }*/
              }
              if ((gCPUStructure.CPUID[CPUID_6][ECX] & (1 << 3)) != 0) {
                msr = AsmReadMsr64(IA32_ENERGY_PERF_BIAS); //0x1B0
