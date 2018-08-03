@@ -6247,8 +6247,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
                   (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                    FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                    FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
-                    InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
-                  }
+                InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
+              }
             }
           }
         }
