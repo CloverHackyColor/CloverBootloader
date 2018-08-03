@@ -69,8 +69,11 @@ echo "========= Translating Resources ========"
 xcode_path=$(/usr/bin/xcode-select --print-path 2>/dev/null)
 if [[ -n "$xcode_path" ]]; then
   # Make CloverUpdater
+  "${SRCROOT}"/CloverUpdater/translate_xib.sh # workaround for a bug in Xcode 10 Beta
   make -C "${SRCROOT}"/CloverUpdater || exit $?
   # Make CloverPrefpane
+  "${SRCROOT}"/CloverPrefpane/translate_xib.sh # workaround for a bug in Xcode 10 Beta
+  "${SRCROOT}"/CloverPrefpane/translate_source.sh # workaround for a bug in Xcode 10 Beta
   make -C "${SRCROOT}"/CloverPrefpane || exit $?
   # Make utils
   make -C "${SRCROOT}"/utils || exit $?
