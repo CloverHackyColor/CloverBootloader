@@ -938,7 +938,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
     # build mandatory drivers-ia32UEFI packages
     echo "=============== drivers32 UEFI mandatory ==============="
     packagesidentity="${clover_package_identity}".drivers32UEFI.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32UEFI" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers32UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
@@ -971,7 +971,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEF
       "Drivers64"
 
     packagesidentity="${clover_package_identity}".drivers64.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" -type f -name '*.efi' -depth 1 | sort -f ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
@@ -1007,7 +1007,7 @@ fi
 if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "===================== drivers64 ========================"
     packagesidentity="${clover_package_identity}".drivers64
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 | sort -f ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
@@ -1036,7 +1036,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" ]]; then
     echo "=============== drivers64 UEFI mandatory ==============="
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
@@ -1064,7 +1064,7 @@ fi
 if [[ -d "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" ]]; then
     echo "=================== drivers64 UEFI ====================="
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
     local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
