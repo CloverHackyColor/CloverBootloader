@@ -138,6 +138,7 @@ typedef UINTN size_t;
 
 void DumpFloat2 (char* s, float* t, int N)
 {
+#if DEBUG_SVG
   int i;
   DBG("%a: ", s);
   for(i=0; i<N;i++)
@@ -148,6 +149,7 @@ void DumpFloat2 (char* s, float* t, int N)
     DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-b)*1e6f)));
   }
   DBG("\n");
+#endif
 }
 
 static char *nsvg__strndup(const char *s, size_t n);

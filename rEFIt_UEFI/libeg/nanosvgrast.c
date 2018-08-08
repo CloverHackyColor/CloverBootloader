@@ -69,6 +69,7 @@
 
 void DumpFloat (char* s, float* t, int N)
 {
+#if DEBUG_SVG
   int i;
   DBG("%a: ", s);
   for(i=0; i<N;i++) {
@@ -78,6 +79,7 @@ void DumpFloat (char* s, float* t, int N)
     DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-b)*1e6f)));
   }
   DBG("\n");
+#endif
 }
 
 void nsvg_qsort(NSVGedge* Array, int Low, int High)
