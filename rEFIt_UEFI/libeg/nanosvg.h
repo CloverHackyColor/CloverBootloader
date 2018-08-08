@@ -397,6 +397,7 @@ extern NSVGparser* nsvgParse(char* input, const char* units, float dpi);
 extern void nsvgDelete(NSVGimage* image);
 extern void nsvg__xformIdentity(float* t);
 extern void nsvg__deleteParser(NSVGparser* p);
+extern void nsvg__xformInverse(float* inv, float* t);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;

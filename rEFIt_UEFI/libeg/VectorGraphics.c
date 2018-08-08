@@ -21,6 +21,10 @@
 #define DBG(...) DebugLog(DEBUG_VEC, __VA_ARGS__)
 #endif
 
+#define TEST_MATH 0
+#define TEST_SVG_IMAGE 1
+#define TEST_SIZEOF 0
+
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
@@ -150,7 +154,6 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
   nsvgDeleteRasterizer(rast);
 }
 
-#define TEST_MATH 0
 VOID testSVG()
 {
   do {
@@ -188,8 +191,6 @@ VOID testSVG()
     }
 #undef pr
 #endif
-#define TEST_SVG_IMAGE 1
-#define TEST_SIZEOF 0
 #if TEST_SIZEOF
     DBG("sizeof(NSVGgradient)=%d\n", sizeof(NSVGgradient));
     DBG("sizeof(NSVGpaint)=%d\n", sizeof(NSVGpaint));
@@ -234,8 +235,10 @@ VOID testSVG()
       ScaleX = Width / SVGimage->width;
       ScaleY = Height / SVGimage->height;
       Scale = (ScaleX > ScaleY)?ScaleY:ScaleX;
-      DBG("timing rasterize start\n");
-      nsvgRasterize(rast, SVGimage, 0,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+      float tx = -SVGimage->realBounds[0] * Scale;
+      float ty = -SVGimage->realBounds[1] * Scale;
+      DBG("timing rasterize start tx=%s ty=%s\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
+      nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
       DBG("timing rasterize end\n");
       //now show it!
       BltImageAlpha(NewImage,

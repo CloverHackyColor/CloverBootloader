@@ -861,7 +861,7 @@ msgstr "Устанавливает системные скрипты на цел
 #: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "Системные RC-скрипты других разделаов"
+msgstr "Системные RC-скрипты других разделов"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:184

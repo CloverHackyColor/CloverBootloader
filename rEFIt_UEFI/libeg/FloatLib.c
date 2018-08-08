@@ -347,11 +347,15 @@ VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
 CHAR16* PoolPrintFloat(float X)
 {
   INTN I, Fract;
+  CHAR8 S = ' ';
   float D;
   I = (INTN)X;
   D = I;
+  if (I == 0 && X < 0) {
+    S = '-';
+  }
   Fract = fabsf((X - D) * 1000000.0f);
-  return PoolPrint(L"%d.%06d", I, (INTN)Fract);
+  return PoolPrint(L"%c%d.%06d", S, I, (INTN)Fract);
 }
 
 

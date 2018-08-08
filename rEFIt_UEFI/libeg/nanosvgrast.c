@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -67,24 +67,15 @@
 
 #define MALCOLM 1
 
-/*
- NSVGedge* edges;
- int nedges;
- int cedges;
- */
-//qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
-/*
-if (a->y0 < b->y0) return -1;
-if (a->y0 > b->y0) return  1;
-return 0;
-*/
-
-void DumpFloat (float* t, int N)
+void DumpFloat (char* s, float* t, int N)
 {
   int i;
-  DBG("Dump xform: ");
+  DBG("%a: ", s);
   for(i=0; i<N;i++) {
-    DBG("%d.%06d ", (int)t[i], (int)(fabsf((t[i]-(int)t[i])*1e6f)));
+    float a = t[i];
+    int b = (int)a;
+    int sign = (a < 0.f);
+    DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-b)*1e6f)));
   }
   DBG("\n");
 }
@@ -452,10 +443,8 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
   float scaley = xform[3];
   float dx = xform[4];
   float dy = xform[5];
-  DBG("flattenShape with:\n");
-  DumpFloat(xform, 6);
-//  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
-//  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)(dx*1000.0f), (int)(dy*1000.0f));
+  
+  DumpFloat("flattenShape with", xform, 6);
 	for (path = shape->paths; path != NULL; path = path->next) {
 		r->npoints = 0;
 		// Flatten path
@@ -464,11 +453,11 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
     nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, 0);
     for (i = 0; i < path->npts-1; i += 3) {
       float* p = &path->pts[i*2];
-      nsvg__flattenCubicBez(r, (p[0]+dx)*scalex, (p[1]+dy)*scaley, (p[2]+dx)*scalex, (p[3]+dy)*scaley, (p[4]+dx)*scalex, (p[5]+dy)*scaley, (p[6]+dx)*scalex, (p[7]+dy)*scaley, 0, 0);
+      nsvg__flattenCubicBez(r, (p[0]*scalex+dx), (p[1]*scaley+dy), (p[2]*scalex+dx), (p[3]*scaley+dy), (p[4]*scalex+dx), (p[5]*scaley+dy), (p[6]*scalex+dx), (p[7]*scaley+dy), 0, 0);
     }
 
 		// Close path
-		nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, 0);
+		nsvg__addPathPoint(r, (path->pts[0]*scalex+dx), (path->pts[1]*scaley+dy), 0);
 //    DBG("npoints=%d\n", r->npoints);
 		// Build edges
 		for (i = 0, j = r->npoints-1; i < r->npoints; j = i++)
@@ -832,20 +821,14 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
   float dx = xform[4];
   float dy = xform[5];
   float lineWidth = shape->strokeWidth * (scalex + scaley) * 0.5f;
-DumpFloat(xform, 6);
-//  DBG("scalex*1000=%d scaley*1000=%d\n", (int)(scalex*1000), (int)(scaley*1000));
-  //scalex*1000=115 scaley*1000=-115
-  DBG("shiftx*1000=%d shifty*1000=%d\n", (int)(dx*1000.f), (int)(dy*1000.f));
-  //shiftx*1000=0 shifty*1000=222
-
+//DumpFloat("shapeStroke", xform, 6);
 	for (path = shape->paths; path != NULL; path = path->next) {
 		// Flatten path
-    DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
 		r->npoints = 0;
-		nsvg__addPathPoint(r, (path->pts[0]+dx)*scalex, (path->pts[1]+dy)*scaley, NSVG_PT_CORNER);
+		nsvg__addPathPoint(r, (path->pts[0]*scalex+dx), (path->pts[1]*scaley+dy), NSVG_PT_CORNER);
 		for (i = 0; i < path->npts-1; i += 3) {
 			float* p = &path->pts[i*2];
-			nsvg__flattenCubicBez(r, (p[0]+dx)*scalex, (p[1]+dy)*scaley, (p[2]+dx)*scalex, (p[3]+dy)*scaley, (p[4]+dx)*scalex, (p[5]+dy)*scaley, (p[6]+dx)*scalex, (p[7]+dy)*scaley, 0, NSVG_PT_CORNER);
+			nsvg__flattenCubicBez(r, (p[0]*scalex+dx), (p[1]*scaley+dy), (p[2]*scalex+dx), (p[3]*scaley+dy), (p[4]*scalex+dx), (p[5]*scaley+dy), (p[6]*scalex+dx), (p[7]*scaley+dy), 0, NSVG_PT_CORNER);
 		}
 		if (r->npoints < 2)
 			continue;
@@ -1131,8 +1114,8 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 		// TODO: plenty of opportunities to optimize.
 		float fx, fy, dx, gy;
 		float* t = cache->xform;
-//    DBG("cache xform\n");
-//    DumpFloat(t, 6);
+
+//    DumpFloat("cache grad xform", t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 //x,y - pixels
@@ -1142,7 +1125,9 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 		for (i = 0; i < count; i++) {
 			int r,g,b,a,ia;
 			gy = fx*t[1] + fy*t[3] + t[5]; //gradient direction. Point at cut
-//        DumpFloat(t, 6);
+//      if (i==1) {
+//        DBG("grad dir gy=%s\n", PoolPrintFloat(gy));
+//      }
 			c = cache->colors[(int)nsvg__clampf(gy*255.0f, 0, 255.0f)]; //assumed gy = 0.0 ... 1.0f
 			cr = (c) & 0xff;
 			cg = (c >> 8) & 0xff;
@@ -1175,7 +1160,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 		// TODO: focus (fx,fy)
 		float fx, fy, dx, gx, gy, gd;
 		float* t = cache->xform;
-//    DumpFloat(t, 6);
+//    DumpFloat("cache grad xform", t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 
@@ -1223,7 +1208,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
       // TODO: focus (fx,fy)
       float fx, fy, dx, gx, gy, gd;
       float* t = cache->xform;
-      //    DumpFloat(t, 6);
+      //    DumpFloat("cache grad xform", t, 6);
       int i, cr, cg, cb, ca;
       unsigned int c;
       
@@ -1444,10 +1429,12 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, float opac
 	}
 
 	grad = paint->gradient;
-//DumpFloat(grad->xform, 6);
+  DumpFloat("initGrad xform", grad->xform, 6);
 	cache->spread = grad->spread;
-	memcpy(cache->xform, grad->xform, sizeof(float)*6);
-//DumpFloat(cache->xform, 6);
+//	memcpy(cache->xform, grad->xform, sizeof(float)*6);
+  //inverse
+  nsvg__xformInverse(cache->xform, grad->xform);
+
 	if (grad->nstops == 0) {
 		for (i = 0; i < 256; i++)
 			cache->colors[i] = 0;
@@ -1576,6 +1563,8 @@ static void nsvg__rasterizeShapes(
     memcpy(&xform, &shape->xform, sizeof(float)*6);
     xform[0] *= scalex;
     xform[3] *= scaley;
+    xform[4] *= scalex;
+    xform[5] *= scaley;
     if (shape->link) {
       shapeLink = shape->link;
     } else {
@@ -1584,7 +1573,9 @@ static void nsvg__rasterizeShapes(
  //     nsvg__xformIdentity(xform);
       shapeLink = shape;
     }
-    
+    DBG("ShapeID=%a\n", shape->id);
+    DumpFloat("shape xform", xform, 6);
+    DumpFloat("shape bounds", shape->bounds, 4);
     
      if( shape->image_href && external_image )// load external file
      {
