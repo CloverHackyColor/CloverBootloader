@@ -134,14 +134,15 @@ fi
 echo "" >> "$install_log"
 
 ### Stage 0 ###
-echo "Stage 0 - Writting ${diskloader} to ${bootdisk}" >> "$install_log"
-#echo "$fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
-#"$fdisk440" -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
-echo "dd: ${DEST_VOL}/usr/standalone/i386/${diskloader} -> ${bootdisk}" >> "$install_log"
-dd if=${bootdisk} count=1 bs=512 of=origMBR
-cp origMBR newMBR
-dd if="${DEST_VOL}/usr/standalone/i386/${diskloader}" of=newMBR bs=1 count=440 conv=notrunc
-dd if=newMBR of=${bootdisk} count=1 bs=512
+echo "Stage 0 - Writing ${diskloader} to ${bootrdisk}" >> "$install_log"
+echo dd if=${bootrdisk} count=1 bs=512 of=/tmp/origMBR >> "$install_log"
+dd if=${bootrdisk} count=1 bs=512 of=/tmp/origMBR
+echo cp /tmp/origMBR /tmp/newMBR >> "$install_log"
+cp /tmp/origMBR /tmp/newMBR
+echo dd if="${DEST_VOL}/usr/standalone/i386/${diskloader}" of=/tmp/newMBR bs=440 count=1 conv=notrunc >> "$install_log"
+dd if="${DEST_VOL}/usr/standalone/i386/${diskloader}" of=/tmp/newMBR bs=440 count=1 conv=notrunc
+echo fdisk -f /tmp/newMBR -u -y ${bootrdisk} >> "$install_log"
+fdisk -f /tmp/newMBR -u -y ${bootrdisk}
 echo "" >> "$install_log"
 
 ### Stage 1 ###
