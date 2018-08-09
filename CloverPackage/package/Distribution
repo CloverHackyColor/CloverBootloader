@@ -2,7 +2,7 @@
 
 <installer-gui-script minSpecVersion='1'>
 
-	<options hostArchitectures='i386' allow-external-scripts='no'/>
+	<options hostArchitectures='i386' allow-external-scripts='true'/>
 	<domains enable_anywhere="true"/>
 
 	<welcome file='Welcome.html'/>

@@ -181,7 +181,7 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
     echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$tmp_log"
     dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
 
-    if [[cat /tmp/origbs | grep FAT16]]; then
+    if [[ -n $(cat /tmp/origbs | grep FAT16) ]]; then
       echo "boot volume format is FAT16" >> "$tmp_log"
       echo "No Stage1 was written" >> "$tmp_log"
     else
