@@ -1036,6 +1036,9 @@ static void nsvg__addShape(NSVGparser* p)
 
   // Set flags
   shape->flags = ((attr->visible & NSVG_VIS_DISPLAY) && (attr->visible & NSVG_VIS_VISIBLE) ? NSVG_FLAGS_VISIBLE : 0x00);
+  if (p->defsFlag) {
+    shape->flags = 0;
+  }
 
   // Add shape
   if (p->clipPath != NULL) {
@@ -2593,10 +2596,10 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
 //  float scale = 1.0f;
-  NSVGshape* shape;
+  NSVGshape* shape = NULL;
 //  NSVGpath* path = NULL;
 //  NSVGpath* refPath;
-  NSVGshape* ref;
+  NSVGshape* ref = NULL;
   int i;
 
   float x = 0.0f;
@@ -2665,6 +2668,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 
   shape->link = ref;
   shape->next = NULL;
+  shape->flags = NSVG_FLAGS_VISIBLE; //use always visible
 
   // Add to tail
   p->shapesTail->next = shape;
@@ -3346,7 +3350,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     return;
   }
 
-  if (p->defsFlag) {
+//  if (p->defsFlag) {
     // Skip everything but gradients, font and style in defs
     if (strcmp(el, "linearGradient") == 0) {
       nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
@@ -3366,9 +3370,11 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
       nsvg__parseGlyph(p, dict, FALSE);
     } else if (strcmp(el, "style") == 0) {
       p->styleFlag = 1;
+/*    } else {
+      strncpy(p->unknown, el, 63);
     }
-    return;
-  }
+    return; */
+  } else
 
   if (strcmp(el, "g") == 0) {
     nsvg__pushAttr(p);
@@ -3427,7 +3433,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__parseUse(p, dict);
     nsvg__popAttr(p);
   }
-
+/*
   else  if (strcmp(el, "linearGradient") == 0) {
     nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
   } else if (strcmp(el, "radialGradient") == 0) {
@@ -3441,6 +3447,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     p->styleFlag = 1;
 //    DBG("start element style\n");
   }
+ */
   else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
@@ -3505,6 +3512,8 @@ static void nsvg__endElement(void* ud, const char* el)
              strcmp(el, "use") == 0
              ) {
     p->shapeFlag = 0;
+  } else if (strcmp(el, p->unknown) == 0) {
+//    p->defsFlag = 0;
   }
 }
 
@@ -3574,8 +3583,8 @@ static void addLetters(NSVGparser* p, char* s)
     shape->fill.color = NSVG_RGBA(0, 0, 0, 255); //black
     shape->stroke.type = NSVG_PAINT_NONE;
     shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
-    shape->strokeWidth = 2.0f;
-    shape->flags = NSVG_VIS_DISPLAY | NSVG_FLAGS_VISIBLE;
+    shape->strokeWidth = 1.0f;
+    shape->flags = NSVG_FLAGS_VISIBLE;
     nsvg__xformIdentity(shape->xform);
     //scale convert shape from glyph size to user's font-size
     shape->xform[0] = scale; //1.f;

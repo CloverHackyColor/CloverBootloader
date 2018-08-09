@@ -113,7 +113,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     shape->stroke.type = NSVG_PAINT_COLOR;
     shape->stroke.color = NSVG_RGBA(0,0,0, 255); //black?
     shape->strokeWidth = 2.0f;
-    shape->flags = NSVG_VIS_DISPLAY | NSVG_FLAGS_VISIBLE;
+    shape->flags = NSVG_FLAGS_VISIBLE;
     nsvg__xformIdentity(shape->xform);
     shape->xform[0] = 1.f;
     shape->xform[3] = -1.f; //glyphs are mirrored by Y

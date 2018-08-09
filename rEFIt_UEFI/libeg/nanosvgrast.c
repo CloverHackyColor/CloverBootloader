@@ -1559,7 +1559,7 @@ static void nsvg__rasterizeShapes(
 	}
 
 	for (shape = shapes; shape != NULL; shape = shape->next) {
-		if (!(shape->flags & NSVG_FLAGS_VISIBLE))
+		if (!(shape->flags & NSVG_FLAGS_VISIBLE)) 
 			continue;
 
     memcpy(&xform, &shape->xform, sizeof(float)*6);

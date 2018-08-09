@@ -375,6 +375,7 @@ typedef struct NSVGparser
   char styleFlag;
 //  char groupFlag;
   BOOLEAN isText;
+  char unknown[64];
   NSVGtext* text;
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
