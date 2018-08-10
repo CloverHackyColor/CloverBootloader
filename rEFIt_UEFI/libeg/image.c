@@ -479,60 +479,6 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
   return Status;
 }
 
-/* always use egDecodePNG
-//
-// Loading images from files and embedded data
-//
-static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
-                              IN CHAR16 *Format, IN UINTN IconSize, IN BOOLEAN WantAlpha)
-{
-  EG_DECODE_FUNC  DecodeFunc;
-  EG_IMAGE        *NewImage;
-
-  if (Format) {
-    // dispatch by extension
-    DecodeFunc = NULL;
-
-    if (StriCmp(Format, L"PNG") == 0){
-      //DBG("decode format PNG\n");
-      DecodeFunc = egDecodePNG;
-    }
-    else if (StriCmp(Format, L"ICNS") == 0){
-      //DBG("decode format ICNS\n");
-      DecodeFunc = egDecodeICNS;
-    } else  if (StriCmp(Format, L"BMP") == 0) {
-      //DBG("decode format BMP\n");
-      DecodeFunc = egDecodeBMP;
-    } 
-    //  else if (StriCmp(Format, L"TGA") == 0)
-    //    DecodeFunc = egDecodeTGA;
-
-    if (DecodeFunc == NULL)
-      return NULL;
-    //  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N');
-    // decode it
-    NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);
-  } else {
-
-    //automatic choose format
-    NewImage = egDecodePNG(FileData, FileDataLength, IconSize, WantAlpha);
-    if (!NewImage) {
-      DBG(" ..png is wrong try to decode icns\n");
-      NewImage = egDecodeICNS(FileData, FileDataLength, IconSize, WantAlpha);
-    }  else {
- //     DBG(" ..decoded as png\n");
-    } 
-
-    if (!NewImage) {
-      DBG(" ..png and icns is wrong try to decode bmp\n");
-      NewImage = egDecodeBMP(FileData, FileDataLength, IconSize, WantAlpha);/    }
-  }
-#if DEBUG_IMG == 2
-   PauseForKey(L"After egDecodeAny\n");
-#endif
-  return NewImage;
-}
-*/
 //caller is responsible for free image
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha)
 {
@@ -546,21 +492,19 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
 
   // load file
   Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
-  //  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
   if (EFI_ERROR(Status))
     return NULL;
-  //  DBG("   extension = %s\n", egFindExtension(FileName));
+
   // decode it
   NewImage = egDecodePNG(FileData, FileDataLength, WantAlpha);
 
-  //  DBG("decoded\n");
   if (!NewImage) {
     DBG("%s not decoded\n", FileName);
   }
   FreePool(FileData);
-  //   DBG("FreePool OK\n");
   return NewImage;
 }
+
 //caller is responsible for free image
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN IconSize)
 {
@@ -569,117 +513,25 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
   UINTN           FileDataLength;
   EG_IMAGE        *NewImage;
 
-  if (BaseDir == NULL || FileName == NULL)
+  if (!BaseDir || !FileName) {
     return NULL;
-
-  //   DBG("egLoadIcon filename: %s\n", FileName);
-
+  }
   // load file
   Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
   if (EFI_ERROR(Status)) {
-//    DBG("egLoadIcon status=%r\n", Status);
     return NULL;
   }
 
   // decode it
   NewImage = egDecodePNG(FileData, FileDataLength, TRUE);
   if (!NewImage) {
-//    DBG("not png, try icns\n");
     NewImage = egDecodeICNS(FileData, FileDataLength, IconSize, TRUE);
   }
   
   FreePool(FileData);
-
   return NewImage;
 }
-/*
-EG_IMAGE * egDecodeImage(IN UINT8 *FileData, IN UINTN FileDataLength, IN CHAR16 *Format, IN BOOLEAN WantAlpha)
-{
-  return egDecodeAny(FileData, FileDataLength, Format, 128, WantAlpha);
-}
- */
-/*
-EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEAN WantAlpha)
-{
-  EG_IMAGE            *NewImage;
-  UINT8               *CompData;
-  UINTN               CompLen;
-  UINTN               PixelCount;
 
-  // sanity check
-  if (EmbeddedImage->PixelMode > EG_MAX_EIPIXELMODE ||
-      (EmbeddedImage->CompressMode != EG_EICOMPMODE_NONE && EmbeddedImage->CompressMode != EG_EICOMPMODE_RLE))
-    return NULL;
-
-  // allocate image structure and pixel buffer
-  NewImage = egCreateImage(EmbeddedImage->Width, EmbeddedImage->Height, WantAlpha);
-  if (NewImage == NULL)
-    return NULL;
-
-  CompData = (UINT8 *)EmbeddedImage->Data;   // drop const
-  CompLen  = EmbeddedImage->DataLength;
-  PixelCount = EmbeddedImage->Width * EmbeddedImage->Height;
-
-  // FUTURE: for EG_EICOMPMODE_EFICOMPRESS, decompress whole data block here
-
-  if (EmbeddedImage->PixelMode == EG_EIPIXELMODE_GRAY ||
-      EmbeddedImage->PixelMode == EG_EIPIXELMODE_GRAY_ALPHA) {
-
-    // copy grayscale plane and expand
-    if (EmbeddedImage->CompressMode == EG_EICOMPMODE_RLE) {
-      egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, r), PixelCount);
-    } else {
-      egInsertPlane(CompData, PLPTR(NewImage, r), PixelCount);
-      CompData += PixelCount;
-    }
-    egCopyPlane(PLPTR(NewImage, r), PLPTR(NewImage, g), PixelCount);
-    egCopyPlane(PLPTR(NewImage, r), PLPTR(NewImage, b), PixelCount);
-
-  } else if (EmbeddedImage->PixelMode == EG_EIPIXELMODE_COLOR ||
-             EmbeddedImage->PixelMode == EG_EIPIXELMODE_COLOR_ALPHA) {
-
-    // copy color planes
-    if (EmbeddedImage->CompressMode == EG_EICOMPMODE_RLE) {
-      egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, r), PixelCount);
-      egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, g), PixelCount);
-      egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, b), PixelCount);
-    } else {
-      egInsertPlane(CompData, PLPTR(NewImage, r), PixelCount);
-      CompData += PixelCount;
-      egInsertPlane(CompData, PLPTR(NewImage, g), PixelCount);
-      CompData += PixelCount;
-      egInsertPlane(CompData, PLPTR(NewImage, b), PixelCount);
-      CompData += PixelCount;
-    }
-
-  } else {
-
-    // set color planes to black
-    egSetPlane(PLPTR(NewImage, r), 0, PixelCount);
-    egSetPlane(PLPTR(NewImage, g), 0, PixelCount);
-    egSetPlane(PLPTR(NewImage, b), 0, PixelCount);
-
-  }
-
-  if (WantAlpha && (EmbeddedImage->PixelMode == EG_EIPIXELMODE_GRAY_ALPHA ||
-                    EmbeddedImage->PixelMode == EG_EIPIXELMODE_COLOR_ALPHA ||
-                    EmbeddedImage->PixelMode == EG_EIPIXELMODE_ALPHA)) {
-
-    // copy alpha plane
-    if (EmbeddedImage->CompressMode == EG_EICOMPMODE_RLE) {
-      egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, a), PixelCount);
-    } else {
-      egInsertPlane(CompData, PLPTR(NewImage, a), PixelCount);
-      //            CompData += PixelCount;
-    }
-
-  } else {
-    egSetPlane(PLPTR(NewImage, a), WantAlpha ? 255 : 0, PixelCount);
-  }
-
-  return NewImage;
-}
-*/
 //
 // Compositing
 //

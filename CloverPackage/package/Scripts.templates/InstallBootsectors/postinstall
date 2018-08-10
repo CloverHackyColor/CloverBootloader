@@ -169,13 +169,13 @@ if [[ -n "$mnt_pt" ]]; then
 fi
 
 if [[ ${boot_volume_format} = "hfs" ]]; then
-    echo "Stage 1 - Writting ${partitionloaderhfs} to ${bootrdev}" >> "$tmp_log"
+    echo "Stage 1 - Writing ${partitionloaderhfs} to ${bootrdev}" >> "$tmp_log"
     echo "File system is HFS." >> "$tmp_log"
     echo "dd if=${partitionloaderhfs_copy} of=${bootrdev}" >> "$tmp_log"
     dd if="${partitionloaderhfs_copy}" of=${bootrdev}
 
 elif [[ ${boot_volume_format} = "msdos" ]]; then
-    echo "Stage 1 - Writting ${partitionloaderfat} to ${bootrdev}" >> "$tmp_log"
+    echo "Stage 1 - Writing ${partitionloaderfat} to ${bootrdev}" >> "$tmp_log"
 
     # copy partition boot sector to origbs
     echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$tmp_log"
@@ -199,7 +199,7 @@ elif [[ ${boot_volume_format} = "msdos" ]]; then
       dd if=/tmp/newbs count=1 bs=512 of=${bootrdev}
     fi
 elif [[ ${boot_volume_format} = "exfat" ]]; then
-    echo "Stage 1 - Writting ${partitionloaderexfat} to ${bootrdev}" >> "$tmp_log"
+    echo "Stage 1 - Writing ${partitionloaderexfat} to ${bootrdev}" >> "$tmp_log"
     echo "File system is ExFat." >> "$tmp_log"
     echo "$boot1install -y -f ${partitionloaderexfat_copy} ${bootrdev}" >> "$tmp_log"
     "$boot1install" -y -f "${partitionloaderexfat_copy}" ${bootrdev}

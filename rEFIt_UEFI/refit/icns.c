@@ -137,46 +137,93 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     return BuiltinIconTable[Id].Image;
   }
   
-  switch (Id) {
-    case BUILTIN_ICON_POINTER:
-      DEC_BUILTIN_ICON(Id, emb_pointer); break;
-    case BUILTIN_ICON_FUNC_ABOUT:
-      DEC_BUILTIN_ICON(Id, emb_func_about); break;
-    case BUILTIN_ICON_FUNC_OPTIONS:
-      DEC_BUILTIN_ICON(Id, emb_func_options); break;
-    case BUILTIN_ICON_FUNC_CLOVER:
-      DEC_BUILTIN_ICON(Id, emb_func_clover); break;
-    case BUILTIN_ICON_FUNC_SECURE_BOOT:
-      DEC_BUILTIN_ICON(Id, emb_func_secureboot); break;
-    case BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG:
-      DEC_BUILTIN_ICON(Id, emb_func_secureboot_config); break;
-    case BUILTIN_ICON_FUNC_RESET:
-      DEC_BUILTIN_ICON(Id, emb_func_reset); break;
-    case BUILTIN_ICON_FUNC_EXIT:
-      DEC_BUILTIN_ICON(Id, emb_func_exit); break;
-    case BUILTIN_ICON_FUNC_HELP:
-      DEC_BUILTIN_ICON(Id, emb_func_help); break;
-    case BUILTIN_ICON_TOOL_SHELL:
-      DEC_BUILTIN_ICON(Id, emb_func_shell); break;
-    case BUILTIN_ICON_VOL_INTERNAL:
-    case BUILTIN_ICON_VOL_EXTERNAL:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
-    case BUILTIN_ICON_VOL_BOOTER:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
-    case BUILTIN_ICON_VOL_INTERNAL_HFS:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal_hfs); break;
-    case BUILTIN_ICON_VOL_INTERNAL_NTFS:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal_ntfs); break;
-    case BUILTIN_ICON_VOL_INTERNAL_EXT3:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal_ext); break;
-    case BUILTIN_ICON_VOL_INTERNAL_REC:
-      DEC_BUILTIN_ICON(Id, emb_vol_internal_recovery); break;
-    case BUILTIN_ICON_BANNER:
-      DEC_BUILTIN_ICON(Id, emb_logo); break;
-    case BUILTIN_SELECTION_SMALL:
-      DEC_BUILTIN_ICON(Id, emb_selection_small); break;
-    case BUILTIN_SELECTION_BIG:
-      DEC_BUILTIN_ICON(Id, emb_selection_big); break;
+  if (GlobalConfig.DarkEmbedded) {
+    switch (Id) {
+      case BUILTIN_ICON_POINTER:
+        DEC_BUILTIN_ICON(Id, emb_pointer); break;
+      case BUILTIN_ICON_FUNC_ABOUT:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_about); break;
+      case BUILTIN_ICON_FUNC_OPTIONS:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_options); break;
+      case BUILTIN_ICON_FUNC_CLOVER:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_clover); break;
+      case BUILTIN_ICON_FUNC_SECURE_BOOT:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_secureboot); break;
+      case BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_secureboot_config); break;
+      case BUILTIN_ICON_FUNC_RESET:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_reset); break;
+      case BUILTIN_ICON_FUNC_EXIT:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_exit); break;
+      case BUILTIN_ICON_FUNC_HELP:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_help); break;
+      case BUILTIN_ICON_TOOL_SHELL:
+        DEC_BUILTIN_ICON(Id, emb_dark_func_shell); break;
+      case BUILTIN_ICON_VOL_INTERNAL:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal); break;
+      case BUILTIN_ICON_VOL_EXTERNAL:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_external); break;
+      case BUILTIN_ICON_VOL_BOOTER:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_booter); break;
+      case BUILTIN_ICON_VOL_INTERNAL_HFS:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_hfs); break;
+      case BUILTIN_ICON_VOL_INTERNAL_NTFS:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_ntfs); break;
+      case BUILTIN_ICON_VOL_INTERNAL_EXT3:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_ext); break;
+      case BUILTIN_ICON_VOL_INTERNAL_REC:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_recovery); break;
+      case BUILTIN_ICON_BANNER:
+        DEC_BUILTIN_ICON(Id, emb_dark_logo); break;
+      case BUILTIN_SELECTION_SMALL:
+        DEC_BUILTIN_ICON(Id, emb_dark_selection_small); break;
+      case BUILTIN_SELECTION_BIG:
+        DEC_BUILTIN_ICON(Id, emb_dark_selection_big); break;
+    }
+
+  } else {
+    switch (Id) {
+      case BUILTIN_ICON_POINTER:
+        DEC_BUILTIN_ICON(Id, emb_pointer); break;
+      case BUILTIN_ICON_FUNC_ABOUT:
+        DEC_BUILTIN_ICON(Id, emb_func_about); break;
+      case BUILTIN_ICON_FUNC_OPTIONS:
+        DEC_BUILTIN_ICON(Id, emb_func_options); break;
+      case BUILTIN_ICON_FUNC_CLOVER:
+        DEC_BUILTIN_ICON(Id, emb_func_clover); break;
+      case BUILTIN_ICON_FUNC_SECURE_BOOT:
+        DEC_BUILTIN_ICON(Id, emb_func_secureboot); break;
+      case BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG:
+        DEC_BUILTIN_ICON(Id, emb_func_secureboot_config); break;
+      case BUILTIN_ICON_FUNC_RESET:
+        DEC_BUILTIN_ICON(Id, emb_func_reset); break;
+      case BUILTIN_ICON_FUNC_EXIT:
+        DEC_BUILTIN_ICON(Id, emb_func_exit); break;
+      case BUILTIN_ICON_FUNC_HELP:
+        DEC_BUILTIN_ICON(Id, emb_func_help); break;
+      case BUILTIN_ICON_TOOL_SHELL:
+        DEC_BUILTIN_ICON(Id, emb_func_shell); break;
+      case BUILTIN_ICON_VOL_INTERNAL:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
+      case BUILTIN_ICON_VOL_EXTERNAL:
+        DEC_BUILTIN_ICON(Id, emb_vol_external); break;
+      case BUILTIN_ICON_VOL_BOOTER:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
+      case BUILTIN_ICON_VOL_INTERNAL_HFS:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal_hfs); break;
+      case BUILTIN_ICON_VOL_INTERNAL_NTFS:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal_ntfs); break;
+      case BUILTIN_ICON_VOL_INTERNAL_EXT3:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal_ext); break;
+      case BUILTIN_ICON_VOL_INTERNAL_REC:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal_recovery); break;
+      case BUILTIN_ICON_BANNER:
+        DEC_BUILTIN_ICON(Id, emb_logo); break;
+      case BUILTIN_SELECTION_SMALL:
+        DEC_BUILTIN_ICON(Id, emb_selection_small); break;
+      case BUILTIN_SELECTION_BIG:
+        DEC_BUILTIN_ICON(Id, emb_selection_big); break;
+    }
   }
 //  DBG("Icon %d decoded, pointer %x\n", Id, (UINTN)(BuiltinIconTable[Id].Image));
   

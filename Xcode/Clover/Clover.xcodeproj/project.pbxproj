@@ -17,6 +17,7 @@
 		12A60F5D1DB610500068BF8B /* picopng.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F521DB610500068BF8B /* picopng.c */; };
 		12A60F5F1DB610500068BF8B /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 12A60F581DB610500068BF8B /* SMCHelper.c */; };
 		12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */; };
+		12B2F75C211E169E009BF236 /* egemb_icons_dark.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B2F75B211E169E009BF236 /* egemb_icons_dark.c */; };
 		12B8EBBE1DDCE91200AC0A2C /* egemb_font.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */; };
 		12B8EBBF1DDCE91200AC0A2C /* egemb_icons.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */; };
 		12B8EBC21DDCEA2A00AC0A2C /* scroll_images.c in Sources */ = {isa = PBXBuildFile; fileRef = 12B8EBC11DDCEA2A00AC0A2C /* scroll_images.c */; };
@@ -229,6 +230,7 @@
 		12AAF5F21DC0F03B00A52B12 /* AppleKeyAggregator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKeyAggregator.c; sourceTree = "<group>"; };
 		12AAF5F31DC0F03B00A52B12 /* AppleKeyAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyAggregator.h; sourceTree = "<group>"; };
 		12AAF5F41DC0F03B00A52B12 /* AppleKeyAggregator.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleKeyAggregator.inf; sourceTree = "<group>"; };
+		12B2F75B211E169E009BF236 /* egemb_icons_dark.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = egemb_icons_dark.c; sourceTree = "<group>"; };
 		12B804401DD3295400F955DF /* SimpleAudioOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleAudioOut.h; sourceTree = "<group>"; };
 		12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = egemb_font.c; sourceTree = "<group>"; };
 		12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = egemb_icons.c; sourceTree = "<group>"; };
@@ -983,6 +985,7 @@
 				1261514C1A15BBB000903E7B /* BmLib.c */,
 				1261514D1A15BBB000903E7B /* EfiFileLib.h */,
 				12B8EBBC1DDCE91200AC0A2C /* egemb_font.c */,
+				12B2F75B211E169E009BF236 /* egemb_icons_dark.c */,
 				12B8EBBD1DDCE91200AC0A2C /* egemb_icons.c */,
 				A5BF392620D9F17B004340E1 /* FloatLib.c */,
 				A5BF392520D9F17A004340E1 /* FloatLib.h */,
@@ -3014,6 +3017,7 @@
 				A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */,
 				2C794E471A0AA85900D845B0 /* NVRAMDebug.c in Sources */,
 				2C794E4A1A0AA85900D845B0 /* VMem.c in Sources */,
+				12B2F75C211E169E009BF236 /* egemb_icons_dark.c in Sources */,
 				2C794E3F1A0AA85900D845B0 /* FSInject.c in Sources */,
 				12B8EBBF1DDCE91200AC0A2C /* egemb_icons.c in Sources */,
 				A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */,

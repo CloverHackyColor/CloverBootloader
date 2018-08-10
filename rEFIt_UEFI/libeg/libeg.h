@@ -187,15 +187,6 @@ typedef struct {
 #define EG_EICOMPMODE_RLE           (1)
 #define EG_EICOMPMODE_EFICOMPRESS   (2)
 
-typedef struct {
-    INTN       Width;
-    INTN       Height;
-    UINTN       PixelMode;
-    UINTN       CompressMode;
-    const UINT8 *Data;
-    UINTN       DataLength;
-} EG_EMBEDDED_IMAGE;
-
 
 typedef struct {
   EG_IMAGE    *Image;
@@ -232,8 +223,6 @@ VOID      ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN IconSize);
-//EG_IMAGE * egDecodeImage(IN UINT8 *FileData, IN UINTN FileDataLength, IN CHAR16 *Format, IN BOOLEAN WantAlpha);
-//EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEAN WantAlpha);
 
 EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
 

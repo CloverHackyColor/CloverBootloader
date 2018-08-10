@@ -59,6 +59,8 @@ INTN FontWidth = 9;
 INTN FontHeight = 18;
 INTN TextHeight = 19;
 
+CONST EG_PIXEL WhitePixel = {255, 255, 255, 255};
+
 //
 // Text rendering
 //
@@ -134,6 +136,8 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
             (PixelPtr->r == FirstPixel.r)
             ) {
           PixelPtr->a = 0;
+        } else if (GlobalConfig.DarkEmbedded) {
+          *PixelPtr = WhitePixel;
         }
         NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
       }

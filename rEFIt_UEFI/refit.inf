@@ -52,6 +52,7 @@
   entry_scan/bootscreen.c
   entry_scan/lockedgraphics.c
   libeg/egemb_icons.c
+  libeg/egemb_icons_dark.c
   libeg/egemb_font.c
   libeg/scroll_images.c
   libeg/BmLib.c

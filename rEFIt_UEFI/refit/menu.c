@@ -1685,46 +1685,38 @@ VOID InitSelection(VOID)
   SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
 
   if (SelectionImages[0] != NULL) {
-//    DBG("selections ready\n");
     return;
   }
   // load small selection image
   if (GlobalConfig.SelectionSmallFileName != NULL){
-//    DBG("SelectionSmallFileName != NULL\n");
     SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
   }
   if (SelectionImages[2] == NULL){
-//    DBG("SelectionImages[2] == NULL\n");
     SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
   }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
                                          row1TileSize, row1TileSize, &MenuBackgroundPixel);
   if (SelectionImages[2] == NULL) {
-//    DBG("SelectionImages[2] == NULL second\n");
     return;
   }
   // load big selection image
   if (GlobalConfig.SelectionBigFileName != NULL) {
-//    DBG("SelectionBigFileName != NULL\n");
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            row0TileSize, row0TileSize,
                                            &MenuBackgroundPixel);
   }
   if (SelectionImages[0] == NULL) {
-//    DBG("SelectionImages[0] == NULL\n");
     // calculate big selection image from small one
     SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
     if (SelectionImages[0] == NULL) {
-//      DBG("SelectionImages[0] == NULL second\n");
       egFreeImage(SelectionImages[2]);
       SelectionImages[2] = NULL;
       return;
     }
     if (GlobalConfig.SelectionOnTop) {
-//      DBG("SelectionOnTop true\n");
       SelectionImages[0]->HasAlpha = TRUE;
       SelectionImages[2]->HasAlpha = TRUE;
     }
@@ -1751,7 +1743,7 @@ VOID InitSelection(VOID)
   }
 
   /*
-  Button & radio, or any other next icons with builtin icon as fallback shoud synced to:
+  Button & radio, or any other next icons with builtin icon as fallback should synced to:
    - BUILTIN_ICON_* in lib.h
    - BuiltinIconTable in icns.c
    - Data in egemb_icons.h / scroll_images.h
@@ -1763,11 +1755,10 @@ VOID InitSelection(VOID)
   if (!Buttons[0]) {
     Buttons[0] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button), TRUE);
   }
-//  Buttons[0] = egEnsureImageSize(Buttons[0], TextHeight, TextHeight, &MenuBackgroundPixel);
+
   if (!Buttons[1]) {
     Buttons[1] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected), TRUE);
   }
-//  Buttons[1] = egEnsureImageSize(Buttons[1], TextHeight, TextHeight, &MenuBackgroundPixel);
 
   // Checkbox
   Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
@@ -1775,11 +1766,10 @@ VOID InitSelection(VOID)
   if (!Buttons[2]) {
     Buttons[2] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox), TRUE);
   }
-//  Buttons[2] = egEnsureImageSize(Buttons[2], TextHeight, TextHeight, &MenuBackgroundPixel);
+
   if (!Buttons[3]) {
     Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
   }
-//  Buttons[3] = egEnsureImageSize(Buttons[3], TextHeight, TextHeight, &MenuBackgroundPixel);
 
   // non-selected background images
   //TODO FALSE -> TRUE
@@ -1789,10 +1779,20 @@ VOID InitSelection(VOID)
     SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
                                              TRUE, &MenuBackgroundPixel);
   } else { // using embedded theme (this is an assumption but a better check is required)
-    SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                             TRUE, &StdBackgroundPixel);
-    SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                             TRUE, &StdBackgroundPixel);
+    EG_PIXEL BackgroundPixel = DarkEmbeddedBackgroundPixel;
+    BackgroundPixel.a = 0xff;
+    if (GlobalConfig.DarkEmbedded) {
+      SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
+                                               TRUE, &BackgroundPixel);
+      SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
+                                               TRUE, &BackgroundPixel);
+
+    } else {
+      SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
+                                               TRUE, &StdBackgroundPixel);
+      SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
+                                               TRUE, &StdBackgroundPixel);
+    }
   }
 //  DBG("selections inited\n");
 }
@@ -1809,9 +1809,7 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
   //ItemCount - a number to scroll (Row0)
   //MaxCount - total number (Row0 + Row1)
   //VisibleSpace - a number to fit
-// DBG("InitScroll <= %d %d %d\n", ItemCount, MaxCount, VisibleSpace);
-  // main menu  <= 2 8 5
-  // about menu <= 21 21 14
+
   State->LastSelection = State->CurrentSelection = Selected;
   //MaxIndex, MaxScroll, MaxVisible are indexes, 0..N-1
   State->MaxIndex = (INTN)MaxCount - 1;
@@ -1830,19 +1828,13 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
   State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
   CONSTRAIN_MIN(State->MaxFirstVisible, 0);
   State->FirstVisible = MIN(Selected, State->MaxFirstVisible);
-//  State->FirstVisible = (Selected > State->MaxFirstVisible)?State->MaxFirstVisible:Selected;
+
 
   State->IsScrolling = (State->MaxFirstVisible > 0);
   State->PaintAll = TRUE;
   State->PaintSelection = FALSE;
 
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-//  DBG("InitScroll => MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
-//      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
-  // main menu
-  // => MaxIndex=7, FirstVisible=0, MaxVisible=1, MaxFirstVisible=0
-  //  about
-  // => MaxIndex=20, FirstVisible=0, MaxVisible=13, MaxFirstVisible=7
 }
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
@@ -1851,7 +1843,7 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
   INTN i;
   State->LastSelection = State->CurrentSelection;
-//  DBG("UpdateScroll on %d\n", Movement);
+
   switch (Movement) {
     case SCROLL_SCROLLBAR_MOVE:
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
@@ -1898,7 +1890,6 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
         if (State->CurrentSelection == State->MaxScroll + 1) {
           State->PaintAll = TRUE;
         }
-//        DBG("SCROLL_LINE_DOWN\n");
       }
       break;
 
@@ -1909,7 +1900,6 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
         State->FirstVisible++;
         State->LastVisible++;
         State->PaintAll = TRUE;
-//        DBG("SCROLL_SCROLL_DOWN\n");
       }
       break;
 
@@ -2010,7 +2000,6 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
     State->PaintSelection = TRUE;
   State->LastVisible = State->FirstVisible + State->MaxVisible;
 
-//  DBG("UpdateScroll first=%d last=%d\n", State->FirstVisible, State->LastVisible);
   //ycr.ru
   if ((State->PaintAll) && (Movement != SCROLL_NONE))
     HidePointer();
@@ -2044,7 +2033,6 @@ VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
           Tentry->SubScreen->Title = NULL;
         }
         // don't free image because of reusing them
-   //     egFreeImage(Tentry->SubScreen->Image);
         FreeMenu(Tentry->SubScreen);
         Tentry->SubScreen = NULL;
       }
@@ -2102,7 +2090,6 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   UINTN         MenuExit = 0;
   //UINTN         LogSize;
   UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
-//  UINTN         Tag = (Screen->Entries[State->CurrentSelection])->Tag;
   INPUT_ITEM    *Item = ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
   UINTN         BackupPos, BackupShift;
@@ -2162,16 +2149,6 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
 
-#if DBG_INPUTDIALOG
-      // For debugging the InputDialog
-      PrintAt(0, 0, L"%5d: Buffer:%x MaxSize:%d Line:%3d", Iteration, Buffer, SVALUE_MAX_SIZE, LineSize);
-      PrintAt(0, 1, L"%5d: Size:%3d Len:%3d", Iteration, StrSize(Buffer), StrLen(Buffer));
-      PrintAt(0, 2, L"%5d: Pos:%3d Shift:%3d AbsPos:%3d", Iteration, Pos, Item->LineShift, Pos+Item->LineShift);
-      PrintAt(0, 3, L"%5d: KeyCode:%4d KeyChar:%4d", Iteration, key.ScanCode, (UINTN)key.UnicodeChar);
-      PrintAt(0, 4, L"%5d: Title:\"%s\"", Iteration, Screen->Entries[State->CurrentSelection]->Title);
-      Iteration++;
-#endif
-
       if (Status == EFI_NOT_READY) {
         gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
         continue;
@@ -2210,18 +2187,6 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           break;
         case SCAN_F2:
           SavePreBootLog = TRUE;
-          /*
-          Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
-          if (EFI_ERROR(Status)) {
-            Status = SaveBooterLog(NULL, PREBOOT_LOG);
-          } */
-          /*
-          LogSize = msgCursor - msgbuf;
-          Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
-          if (EFI_ERROR(Status)) {
-            Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
-          }
-          */
           break;
         case SCAN_F6:
           Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);

@@ -521,6 +521,8 @@ typedef struct {
   BOOLEAN     ShowOptimus;
   BOOLEAN     HibernationFixup;
   BOOLEAN     SignatureFixup;
+  BOOLEAN     DarkEmbedded;
+  BOOLEAN     EmbeddedSVG;
 } REFIT_CONFIG;
 
 // types
@@ -791,6 +793,8 @@ extern EG_PIXEL InputBackgroundPixel;
 extern EG_PIXEL BlueBackgroundPixel;
 extern EG_PIXEL DarkBackgroundPixel;
 extern EG_PIXEL SelectionBackgroundPixel;
+extern EG_PIXEL DarkEmbeddedBackgroundPixel;
+extern EG_PIXEL DarkSelectionPixel;
 
 extern EG_RECT  BannerPlace;
 extern EG_IMAGE *BackgroundImage;

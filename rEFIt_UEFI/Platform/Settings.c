@@ -153,7 +153,8 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     ShowOptimus;
   FALSE,          // BOOLEAN     HibernationFixup;
   FALSE,          // BOOLEAN     SignatureFixup;
-  //  0,              // INTN        PruneScrollRows;
+  FALSE,          // BOOLEAN     DarkEmbedded;
+  FALSE,          // BOOLEAN     EmbeddedSVG;
 };
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =
@@ -2670,6 +2671,21 @@ GetEarlyUserSettings (
           }
         }
       }
+      
+      Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+      if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+        if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+          GlobalConfig.DarkEmbedded = TRUE;
+          GlobalConfig.Font = FONT_GRAY;
+        } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+          GlobalConfig.DarkEmbedded = FALSE;
+          GlobalConfig.Font = FONT_ALFA;
+        } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
+          GlobalConfig.EmbeddedSVG = TRUE;
+        }
+      }
+      
+      
       //CustomIcons
       Prop = GetProperty (DictPointer, "CustomIcons");
       if (IsPropertyTrue (Prop)) {

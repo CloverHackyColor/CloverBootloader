@@ -78,7 +78,9 @@ EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 EG_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
-EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0x80};
+EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
+EG_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
+EG_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
 
 EG_IMAGE *BackgroundImage = NULL;
 EG_IMAGE *Banner = NULL;
@@ -419,7 +421,11 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
    //     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
    //     DebugLog(1, "Text <%s> rendered\n", L"Clover");
         Banner = BuiltinIcon(BUILTIN_ICON_BANNER);
-        CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+        if (GlobalConfig.DarkEmbedded) {
+          CopyMem(&BlueBackgroundPixel, &DarkEmbeddedBackgroundPixel, sizeof(EG_PIXEL));
+        } else {
+          CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+        }
       } else  {
         Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
         if (Banner) {
@@ -651,6 +657,13 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   EG_IMAGE *CompImage;
   EG_IMAGE *NewBaseImage;
   EG_IMAGE *NewTopImage;
+  EG_PIXEL *BackgroundPixel = &EmbeddedBackgroundPixel;
+  
+  if (!IsEmbeddedTheme()) {
+    BackgroundPixel = &MenuBackgroundPixel;
+  } else if (GlobalConfig.DarkEmbedded) {
+    BackgroundPixel = &DarkEmbeddedBackgroundPixel;
+  }
 
   if (!BaseImage || !TopImage) {
     return;
@@ -663,24 +676,15 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
   TotalWidth = NewBaseImage->Width;
   TotalHeight = NewBaseImage->Height;
-//  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, NewBaseImage->HasAlpha);
 
   NewTopImage = egCopyScaledImage(TopImage, Scale); //will be Scale/16
   CompWidth = NewTopImage->Width;
   CompHeight = NewTopImage->Height;
-// DBG("TopImage: Width=%d Height=%d Alfa=%d\n", CompWidth, CompHeight, NewTopImage->HasAlpha);
-
-  if (!IsEmbeddedTheme()) { // regular theme
-    CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
+  CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                     (CompHeight > TotalHeight)?CompHeight:TotalHeight,
                                     TRUE,
-                                    &MenuBackgroundPixel);
-  } else { // embedded theme - draw box around icons
-    CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
-                                    (CompHeight > TotalHeight)?CompHeight:TotalHeight,
-                                    TRUE,
-                                    &EmbeddedBackgroundPixel);
-  }
+                                    BackgroundPixel);
+  
   if (!CompImage) {
     DBG("Can't create CompImage\n");
     return;
