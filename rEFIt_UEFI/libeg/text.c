@@ -59,7 +59,7 @@ INTN FontWidth = 9;
 INTN FontHeight = 18;
 INTN TextHeight = 19;
 
-CONST EG_PIXEL WhitePixel = {255, 255, 255, 255};
+CONST EG_PIXEL WhitePixel = {255, 255, 255, 210};
 
 //
 // Text rendering
