@@ -798,12 +798,12 @@ MainBuildScript() {
 
     # add github links below to checkout packages
     local extDriversDependecies=( 'https://github.com/acidanthera/AptioFixPkg'
-                                  'https://github.com/acidanthera/ApfsSupportPkg'
+                                  'https://github.com/acidanthera/AppleSupportPkg'
                                   'https://github.com/CupertinoNet/CupertinoModulePkg'
                                   'https://github.com/CupertinoNet/EfiMiscPkg'
                                   'https://github.com/CupertinoNet/EfiPkg' )
     # add below drivers you want to build
-    local externalDrivers=( AptioFixPkg ApfsSupportPkg )
+    local externalDrivers=( AptioFixPkg AppleSupportPkg )
 
     if [[ "$EXT_DOWNLOAD" -eq 2 ]]; then
       local pkg=""
@@ -921,7 +921,7 @@ MainPostBuildScript() {
     fi
     export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
     export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
-    export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/ApfsSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+    export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
 
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
@@ -1107,7 +1107,7 @@ MainPostBuildScript() {
       case "$EXT_DOWNLOAD" in
         1)
           downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
-          downloadExtDriver "acidanthera/ApfsSupportPkg" ApfsSupport "ApfsSupport-v" "-RELEASE"
+          downloadExtDriver "acidanthera/AppleSupportPkg" AppleSupport "AppleSupport-v" "-RELEASE"
         ;;
         0 | 2 | 3)
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
