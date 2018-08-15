@@ -145,17 +145,21 @@ typedef struct NSVGclip
 #define kMaxIDLength 64
 #define kMaxTextLength 256
 
+typedef struct NSVGshape NSVGshape;
+
 typedef struct NSVGgroup
 {
 	char id[kMaxIDLength];
 	struct NSVGgroup* parent;			// Pointer to parent group or NULL
 	struct NSVGgroup* next;			// Pointer to next group or NULL
+  struct NSVGshape* shapeList; // list of shapes inside the group
+  
 } NSVGgroup;
 
 typedef struct NSVGshape
 {
 	char id[kMaxIDLength];				// Optional 'id' attr of the shape
-//  char title[kMaxIDLength];        // Optional 'title' of the shape or its ancestor(s)
+  char title[kMaxIDLength];        // Optional 'title' of the shape or its ancestor(s)
   NSVGpaint fill;        // Fill paint
   NSVGpaint stroke;      // Stroke paint
   float opacity;        // Opacity of the shape.
@@ -267,7 +271,7 @@ typedef struct NSVGgradientData
 typedef struct NSVGattrib
 {
   char id[kMaxIDLength];
-//  char title[kMaxIDLength];
+  char title[kMaxIDLength];
   float xform[6];
   unsigned int fillColor;
   unsigned int strokeColor;
@@ -370,7 +374,7 @@ typedef struct NSVGparser
   float dpi;
   char pathFlag;
   char defsFlag;
-//  char titleFlag;
+  char titleFlag;
   char shapeFlag;
   char styleFlag;
 //  char groupFlag;

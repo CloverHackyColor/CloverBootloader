@@ -29,6 +29,36 @@
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
 
+EFI_STATUS ParseSVG(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
+{
+  NSVGparser  *p;
+  NSVGfont    *fontSVG;
+  NSVGimage   *SVGimage;
+  NSVGtext    *text;
+  float Scale = 1.0f;
+
+  p = nsvgParse((CHAR8*)buffer, "px", 72);
+  SVGimage = p->image;
+  DBG("Image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
+  DBG("Image viewBox: w=%d h=%d units=%a\n", 1, 1, "px");
+  if (SVGimage->height == 0) {
+    SVGimage->height = 768.f;  //default height
+  }
+  Scale = UGAHeight / SVGimage->height;
+  DBG("using scale %s\n", PoolPrintFloat(Scale));
+  fontSVG = p->font;
+  if (fontSVG) {
+    DBG("found embedded font-name=%a\n", fontSVG->fontFamily);
+  }
+  text = p->text;
+  if (text) {
+    DBG("text uses font-name=%a\n", text->font->fontFamily);
+    DBG("text uses font size=%d\n", (int)text->font->fontSize);
+  }
+  
+  return EFI_NOT_AVAILABLE_YET;
+}
+
 VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
 {
   INTN Width, Height;

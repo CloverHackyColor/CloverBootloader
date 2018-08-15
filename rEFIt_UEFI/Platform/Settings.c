@@ -3308,6 +3308,7 @@ VOID InitKextList()
 }
 
 #define CONFIG_THEME_FILENAME L"theme.plist"
+#define CONFIG_THEME_SVG L"theme.svg"
 
 VOID
 GetListOfThemes ()
@@ -3881,9 +3882,9 @@ LoadTheme (CHAR16 *TestTheme)
     }
     
     if (UGAHeight > HEIGHT_2K) {
-      ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
+      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
     } else {
-      ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", TestTheme);
+      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
     }
     if (ThemePath != NULL) {
       if (ThemeDir != NULL) {
@@ -3891,35 +3892,50 @@ LoadTheme (CHAR16 *TestTheme)
         ThemeDir = NULL;
       }
       
-      Status = SelfRootDir->Open (SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+      Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
       if (EFI_ERROR (Status)) {
         FreePool (ThemePath);
-        ThemePath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", TestTheme);
-        Status = SelfRootDir->Open (SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+        ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
+        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
       }
       if (!EFI_ERROR (Status)) {
-        Status = egLoadFile (ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-        if (!EFI_ERROR (Status) && (ThemePtr != NULL) && (Size != 0)) {
-          Status = ParseXML ((const CHAR8*)ThemePtr, &ThemeDict, 0);
+        Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+        if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
+          Status = ParseSVG((const CHAR8*)ThemePtr, &ThemeDict, 0);
           
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             ThemeDict = NULL;
           }
           
           if (ThemeDict == NULL) {
-            DBG ("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
+            DBG("svg file %s not parsed\n", CONFIG_THEME_SVG);
           } else {
-            DBG ("Using theme '%s' (%s)\n", TestTheme, ThemePath);
+            DBG("Using vector theme '%s' (%s)\n", TestTheme, ThemePath);
           }
-        }
-        
-        if (ThemePtr != NULL) {
-          FreePool (ThemePtr);
+         
+        } else {
+          Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+          if (!EFI_ERROR (Status) && (ThemePtr != NULL) && (Size != 0)) {
+            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
+            
+            if (EFI_ERROR (Status)) {
+              ThemeDict = NULL;
+            }
+            
+            if (ThemeDict == NULL) {
+              DBG ("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
+            } else {
+              DBG ("Using theme '%s' (%s)\n", TestTheme, ThemePath);
+            }
+          }
+          
         }
       }
     }
   }
-  
+  if (ThemePtr != NULL) {
+    FreePool (ThemePtr);
+  }
   return ThemeDict;
 }
 

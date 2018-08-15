@@ -945,7 +945,7 @@ static void nsvg__addShape(NSVGparser* p)
   if (shape == NULL) return;
 
   memcpy(shape->id, attr->id, sizeof shape->id);
-//  memcpy(shape->title, attr->title, sizeof shape->title);
+  memcpy(shape->title, attr->title, sizeof shape->title);
   DBG("shapeID=%a\n", shape->id);
   shape->group = attr->group;
   scale = nsvg__getAverageScale(attr->xform);
@@ -1932,9 +1932,6 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
       attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
     }
     attr->fontFace->fontSize = nsvg__parseCoordinate(p, value, 0.0f, nsvg__actualLength(p));
-  } else if (strcmp(name, "transform") == 0) {
-    nsvg__parseTransform(xform, value);
-    nsvg__xformMultiply(attr->xform, xform);
   } else if (strcmp(name, "clip-path") == 0) {
     if (strncmp(value, "url(", 4) == 0 && attr->clipPathCount < NSVG_MAX_CLIP_PATHS) {
         char clipName[64];
@@ -1970,6 +1967,15 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "id") == 0) {
     strncpy(attr->id, value, 63);
     attr->id[63] = '\0';
+  } else if (strcmp(name, "dx") == 0) {
+    nsvg__xformSetTranslation(xform, (float)nsvg__atof(value), 0);
+    nsvg__xformMultiply(attr->xform, xform);
+ 	} else if (strcmp(name, "dy") == 0) {
+    nsvg__xformSetTranslation(xform, 0, (float)nsvg__atof(value));
+    nsvg__xformMultiply(attr->xform, xform);
+  } else if (strcmp(name, "transform") == 0) {
+    nsvg__parseTransform(xform, value);
+    nsvg__xformMultiply(attr->xform, xform);
   }
   else if (strcmp(name, "class") == 0) {
     NSVGstyles* style = p->styles;
@@ -2926,6 +2932,10 @@ static void nsvg__parseIMAGE(NSVGparser* p, const char** attr)
     if (shape == NULL) return;
 
     memcpy(shape->id, attr->id, sizeof shape->id);
+    memcpy(shape->title, attr->title, sizeof shape->title);
+//    DBG("shapeID=%a\n", shape->id);
+    shape->group = attr->group;
+
     scale = nsvg__getAverageScale(attr->xform);
     shape->opacity = attr->opacity;
 
@@ -3141,8 +3151,8 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
   }
 
   nsvg__parseAttribs(p, dict);
- // if (curAttr->id[0] == '\0') //skip anonymous groups
-//    return;
+  if (curAttr->id[0] == '\0') //skip anonymous groups
+    return;
 
   group = (NSVGgroup*)AllocateZeroPool(sizeof(NSVGgroup));
 
@@ -3451,6 +3461,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
   else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
   } else if (strcmp(el, "svg") == 0) {
+    nsvg__pushAttr(p);
     nsvg__parseSVG(p, dict);
   } else if (strcmp(el, "clipPath") == 0) {
     int i;
@@ -3461,8 +3472,8 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
         break;
       }
     }
-//  } else if (strcmp(el, "title") == 0) {
-//    p->titleFlag = 1;
+  } else if (strcmp(el, "title") == 0) {
+    p->titleFlag = 1;
   } else if (strcmp(el, "image") == 0) {
     nsvg__pushAttr(p);
     nsvg__parseIMAGE(p, dict);
@@ -3482,6 +3493,8 @@ static void nsvg__endElement(void* ud, const char* el)
     p->pathFlag = 0;
   } else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 0;
+  } else if (strcmp(el, "svg") == 0) {
+    nsvg__popAttr(p);
   } else if (strcmp(el, "clipPath") == 0) {
     if (p->clipPath != NULL) {
       NSVGshape* shape = p->clipPath->shapes;
@@ -3499,8 +3512,8 @@ static void nsvg__endElement(void* ud, const char* el)
 //  } else if (strcmp(el, "tspan") == 0) {
 //    nsvg__popAttr(p);
 
-//  } else if (strcmp(el, "title") == 0) {
-//    p->titleFlag = 0;
+  } else if (strcmp(el, "title") == 0) {
+    p->titleFlag = 0;
   } else if (strcmp(el, "style") == 0) {
     p->styleFlag = 0;
   } else if (strcmp(el, "rect") == 0 ||
@@ -3619,7 +3632,7 @@ static void addLetters(NSVGparser* p, char* s)
 static void nsvg__content(void* ud, char* s)
 {
   NSVGparser* p = (NSVGparser*)ud;
-/*  if (p->titleFlag) {
+  if (p->titleFlag) {
     int len = (int)strlen(s);
     NSVGshape *shape = p->image->shapes;
     const int lim = sizeof(shape->title);
@@ -3637,7 +3650,7 @@ static void nsvg__content(void* ud, char* s)
       memcpy(attr->title, s, len);
       memset(attr->title + len, 0, lim-len);
     }
-  } else */
+  } else
   if (p->styleFlag) {
     // decrease string to cdata content (if present)
     char* rv = strstr(s, "<![CDATA[");

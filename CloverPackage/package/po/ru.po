@@ -477,28 +477,28 @@ msgstr "Выберите драйверы для режима загрузки �
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
-msgstr "Декодер изображений в форматах PNG и BMP. Необходим для работы FileVault2."
+msgstr "Декодер изображений в форматах PNG и BMP. Необходим для работы FileVault 2."
 
 #. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
 #: Resources/templates/Localizable.strings:94
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
-msgstr "Поддержка протокола авторизации пользователя для FileVault2."
+msgstr "Поддержка протокола авторизации пользователя для FileVault 2."
 
 #. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
 #: Resources/templates/Localizable.strings:95
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Create boot UI Themes support"
-msgstr "Поддержка протокола для отображения фонового изображения при использовании FileVault2."
+msgstr "Поддержка протокола для отображения фонового изображения при использовании FileVault 2."
 
 #. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
-msgstr "Поддержка протокола FirmwareVolume для FileVault2."
+msgstr "Поддержка протокола FirmwareVolume для FileVault 2."
 
 #. type: "FSInject-64_description, FSInject-64.UEFI_description"
 #: Resources/templates/Localizable.strings:97
@@ -566,7 +566,7 @@ msgstr "Поддержка загрузки оригинального драй�
 #: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "Create AppleEvent protocol for FileVault2"
-msgstr "Поддержка протокола AppleEvent для FileVault2."
+msgstr "Поддержка протокола AppleEvent для FileVault 2."
 
 #. type: "AppleGraphicsConfig-64.UEFI_description"
 #: Resources/templates/Localizable.strings:110
@@ -598,7 +598,7 @@ msgid ""
 "Use with precautions."
 msgstr ""
 "Позволяет использовать большие разрешения экрана в графическом интерфейсе Clover-а.\n"
-"Драйвер основан на модуле CSM в BIOS и требует, чтобы CSM был включен. На некоторых Clover может не запуститься с этим драйвером или система не будет пробуждаться после сна, поэтому используйте с осторожностью."
+"Драйвер основан на модуле CSM в BIOS и требует, чтобы CSM был включен. На некоторых конфигурациях Clover может не запуститься с этим драйвером или система не будет пробуждаться после сна, поэтому используйте с осторожностью."
 
 #. type: "DataHubDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:120
