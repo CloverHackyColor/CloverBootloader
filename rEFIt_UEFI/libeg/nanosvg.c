@@ -1967,10 +1967,10 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "id") == 0) {
     strncpy(attr->id, value, 63);
     attr->id[63] = '\0';
-  } else if (strcmp(name, "dx") == 0) {
+  } else if (strcmp(name, "x") == 0) {
     nsvg__xformSetTranslation(xform, (float)nsvg__atof(value), 0);
     nsvg__xformPremultiply(attr->xform, xform);
- 	} else if (strcmp(name, "dy") == 0) {
+ 	} else if (strcmp(name, "y") == 0) {
     nsvg__xformSetTranslation(xform, 0, (float)nsvg__atof(value));
     nsvg__xformPremultiply(attr->xform, xform);
   } else if (strcmp(name, "transform") == 0) {
@@ -2600,10 +2600,9 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   float xform[6];
 //  float inv[6], localBounds[4];
 
-  nsvg__xformIdentity(xform); //initial
+//  nsvg__xformIdentity(xform); //initial
 
   for (i = 0; dict[i]; i += 2) {
-    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
       if (strcmp(dict[i], "x") == 0) {
         x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
       } else
@@ -2623,24 +2622,19 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
         }
         //copy ref to shape
         shape = (NSVGshape*)AllocateCopyPool(sizeof(NSVGshape), ref);
+      } else {
+        nsvg__parseAttr(p, dict[i], dict[i + 1]);
       }
-    }
   }
   if (!shape) {
     return;
   }
-//  memcpy(xform, ref->xform, 6*sizeof(float));
-  xform[4] = x;
-  xform[5] = y;
+
+  nsvg__xformSetTranslation(xform, x, y);
   nsvg__xformMultiply(xform, attr->xform);
   nsvg__xformMultiply(shape->xform, xform);
-  //TODO
-  // 1. transform  path: pts, bounds, next (?)
-//  nsvg__xformPoint(&shape->bounds[0], &shape->bounds[1],
-//                   ref->bounds[0], ref->bounds[1], xform);
-//  nsvg__xformPoint(&shape->bounds[2], &shape->bounds[3],
-//                   ref->bounds[2], ref->bounds[3], xform);
-//  DBG("paint type=%d\n", shape->fill.type);
+
+  //  DBG("paint type=%d\n", shape->fill.type);
   if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {
     shape->fill.gradientLink = nsvg__createGradientLink(ref->fill.gradientLink->id, shape->xform);
 //    shape->fill.gradient = nsvg__createGradient(p, shape, ref->fill.gradientLink, &shape->fill.type);

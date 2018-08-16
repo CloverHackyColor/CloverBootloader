@@ -202,12 +202,12 @@ VOID testSVG()
     float x, y1, y2;
     //          CHAR8 Str[128];
     DBG("Test float: -%d.%06d\n", pr(-0.7612f));
-    for (i=0; i<12; i++) {
-      x=(2.0f*PI)/12.0f*i;
+    for (i=0; i<15; i++) {
+      x=(PI)/30.0f*i;
       y1=SinF(x);
       y2=CosF(x);
       
-      DBG("x=%d: %d.%06d ", i*30, pr(x));
+      DBG("x=%d: %d.%06d ", i*6, pr(x));
       DBG("  sinx=%c%d.%06d", (y1<0)?'-':' ', pr(y1));
       DBG("  cosx=%c%d.%06d\n", (y2<0)?'-':' ',pr(y2));
       y1 = Atan2F(y1, y2);

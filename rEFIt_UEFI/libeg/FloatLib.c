@@ -29,7 +29,9 @@ float SqrtF(float X)
   struct FloatInt Y;
   Y.f = X * 0.3f;
 //  Y.i = Y.i >> 1; // dirty hack - first iteration
-  //do four iterations
+  //do six iterations
+  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
+  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
   Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
   Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
   Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
@@ -173,13 +175,14 @@ float AtanF(float X) //assume 0.0 < X < 1.0
   float Y = 0;
   float sign = 1.0f;
 
-  if (X > 0.6f) {
+  if (X > 0.5f) {
     //make here arctg(1-x)
     X = 1.0f - D;
-    Y = PI4 - X * 0.5f - X2 * 0.25f - X * X2 * 0.25 * ( 1.f / 3.f - X2 * (0.1f + X / 12.f));
+    X2 = X * X;
+    Y = PI4 - X * 0.5f - X2 * 0.25f - X * X2 * 0.25f * ( 1.f / 3.f - X2 * (0.1f + X / 12.f + X2 / 28.f));
   } else {
     //  Y = X * (1 - X2 * ( 1.0f / 3.0f - X2 * (1.0f / 5.0f - X2 * ( 1.0f / 7.0f))));
-    for (i = 1; i < 40; i += 2) {
+    for (i = 1; i < 50; i += 2) {
       Y += (D * sign / i);
       D *= X2;
       if (D < Eps) {
