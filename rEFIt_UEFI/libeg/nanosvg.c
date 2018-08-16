@@ -404,7 +404,7 @@ void nsvg__xformInverse(float* inv, float* t)
   inv[3] = (float)(t[0] * invdet);
   inv[5] = (float)(((double)t[1] * t[4] - (double)t[0] * t[5]) * invdet);
 }
-/*
+
 static void nsvg__xformPremultiply(float* t, float* s)
 {
   float s2[6];
@@ -414,7 +414,7 @@ static void nsvg__xformPremultiply(float* t, float* s)
   nsvg__xformMultiply(s2, t);
   memcpy(t, s2, sizeof(float)*6);
 }
-*/
+
 static void nsvg__xformPoint(float* dx, float* dy, float x, float y, float* t)
 {
   *dx = x*t[0] + y*t[2] + t[4];
@@ -1742,7 +1742,7 @@ static void nsvg__parseTransform(float* xform, const char* str)
       ++str;
       continue;
     }
-    nsvg__xformMultiply(xform, t);
+    nsvg__xformPremultiply(xform, t);
   }
 }
 
@@ -1969,13 +1969,13 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     attr->id[63] = '\0';
   } else if (strcmp(name, "dx") == 0) {
     nsvg__xformSetTranslation(xform, (float)nsvg__atof(value), 0);
-    nsvg__xformMultiply(attr->xform, xform);
+    nsvg__xformPremultiply(attr->xform, xform);
  	} else if (strcmp(name, "dy") == 0) {
     nsvg__xformSetTranslation(xform, 0, (float)nsvg__atof(value));
-    nsvg__xformMultiply(attr->xform, xform);
+    nsvg__xformPremultiply(attr->xform, xform);
   } else if (strcmp(name, "transform") == 0) {
     nsvg__parseTransform(xform, value);
-    nsvg__xformMultiply(attr->xform, xform);
+    nsvg__xformPremultiply(attr->xform, xform);
   }
   else if (strcmp(name, "class") == 0) {
     NSVGstyles* style = p->styles;
@@ -2542,26 +2542,13 @@ static void nsvg__parseRect(NSVGparser* p, const char** attr)
   int i;
 
   for (i = 0; attr[i]; i += 2) {
-    if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
-      if (strcmp(attr[i], "x") == 0) {
-        x = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
-      } else
-      if (strcmp(attr[i], "y") == 0) {
-        y = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-      } else
-      if (strcmp(attr[i], "width") == 0) {
-        w = nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualWidth(p));
-      } else
-      if (strcmp(attr[i], "height") == 0) {
-        h = nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualHeight(p));
-      } else
-      if (strcmp(attr[i], "rx") == 0) {
-        rx = fabsf(nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualWidth(p)));
-      } else
-      if (strcmp(attr[i], "ry") == 0) {
-        ry = fabsf(nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualHeight(p)));
-      }
-    }
+    if (strcmp(attr[i], "x") == 0) x = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
+    else if (strcmp(attr[i], "y") == 0) y = nsvg__parseCoordinate(p, attr[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
+    else if (strcmp(attr[i], "width") == 0) w = nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualWidth(p));
+    else if (strcmp(attr[i], "height") == 0) h = nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualHeight(p));
+    else if (strcmp(attr[i], "rx") == 0) rx = fabsf(nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualWidth(p)));
+    else if (strcmp(attr[i], "ry") == 0) ry = fabsf(nsvg__parseCoordinate(p, attr[i+1], 0.0f, nsvg__actualHeight(p)));
+    else nsvg__parseAttr(p, attr[i], attr[i + 1]);
   }
 
   if (rx < 0.0f && ry > 0.0f) rx = ry;
