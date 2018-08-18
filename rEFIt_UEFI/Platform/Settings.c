@@ -2669,24 +2669,37 @@ GetEarlyUserSettings (
               break;
             }
           }
+          if ((AsciiStriCmp (Prop->string, "embedded") == 0) || (AsciiStriCmp (Prop->string, "") == 0)) {
+            Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+            if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+              if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+                GlobalConfig.DarkEmbedded = TRUE;
+                GlobalConfig.Font = FONT_GRAY;
+              } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+                GlobalConfig.DarkEmbedded = FALSE;
+                GlobalConfig.Font = FONT_ALFA;
+              } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
+                GlobalConfig.EmbeddedSVG = TRUE;
+              }
+            }
+          }
+        }
+      } else if (Prop == NULL) {
+        Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+        if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+          if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+            GlobalConfig.DarkEmbedded = TRUE;
+            GlobalConfig.Font = FONT_GRAY;
+          } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+            GlobalConfig.DarkEmbedded = FALSE;
+            GlobalConfig.Font = FONT_ALFA;
+          } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
+            GlobalConfig.EmbeddedSVG = TRUE;
+          }
         }
       }
       
-      Prop = GetProperty (DictPointer, "EmbeddedThemeType");
-      if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
-        if (AsciiStriCmp (Prop->string, "Dark") == 0) {
-          GlobalConfig.DarkEmbedded = TRUE;
-          GlobalConfig.Font = FONT_GRAY;
-        } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
-          GlobalConfig.DarkEmbedded = FALSE;
-          GlobalConfig.Font = FONT_ALFA;
-        } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
-          GlobalConfig.EmbeddedSVG = TRUE;
-        }
-      }
-      
-      
-      //CustomIcons
+      // CustomIcons
       Prop = GetProperty (DictPointer, "CustomIcons");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.CustomIcons = TRUE;
@@ -2694,12 +2707,12 @@ GetEarlyUserSettings (
       
       Prop = GetProperty (DictPointer, "ShowOptimus");
       GlobalConfig.ShowOptimus = IsPropertyTrue (Prop);
-      //      DBG("ShowOptimus set to %d\n", GlobalConfig.ShowOptimus);
+      //DBG("ShowOptimus set to %d\n", GlobalConfig.ShowOptimus);
       
       Prop = GetProperty (DictPointer, "TextOnly");
       if (IsPropertyTrue (Prop)) {
         GlobalConfig.TextOnly = TRUE;
-        //        DBG ("TextOnly option enabled\n");
+        //DBG ("TextOnly option enabled\n");
       }
       
       Prop = GetProperty (DictPointer, "ScreenResolution");
@@ -4394,7 +4407,6 @@ ParseSMBIOSSettings(
   }
   DBG ("BiosReleaseDate: %a\n", gSettings.ReleaseDate);
   
-  // Check for FirmwareFeatures and FirmwareFeaturesMask by Sherlocks
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
   if (Prop != NULL) {
     gFwFeatures = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
