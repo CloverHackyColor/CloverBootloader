@@ -405,7 +405,7 @@ void nsvg__xformInverse(float* inv, float* t)
   inv[5] = (float)(((double)t[1] * t[4] - (double)t[0] * t[5]) * invdet);
 }
 
-static void nsvg__xformPremultiply(float* t, float* s)
+void nsvg__xformPremultiply(float* t, float* s)
 {
   float s2[6];
   //  int i,j;
@@ -817,11 +817,11 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   nstops = data->nstops;
   ref = nsvg__findGradientData(p, data->ref);
   while (ref != NULL) {
-    if (stops == NULL && ref->stops != NULL) {
+    if (stops == NULL && ref->stops != NULL) { //take stops only once at first occuerence
       stops = ref->stops;
       nstops = ref->nstops;
     }
-    nsvg__xformMultiply(data->xform, ref->xform);
+    nsvg__xformPremultiply(data->xform, ref->xform);
     ref = nsvg__findGradientData(p, ref->ref); //recursive refs?
   }
   if (stops == NULL) return NULL;
@@ -875,8 +875,8 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
     grad->fx = fx / r;
     grad->fy = fy / r;
   }
-  nsvg__xformMultiply(grad->xform, data->xform);
-	nsvg__xformMultiply(grad->xform, link->xform);
+  nsvg__xformMultiply(grad->xform, data->xform); //from GradientData "gradientTransform"
+	nsvg__xformMultiply(grad->xform, link->xform); //from shape. I also have shape->xform?
 
   grad->spread = data->spread;
   memcpy(grad->stops, stops, nstops*sizeof(NSVGgradientStop));
@@ -2603,10 +2603,10 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 //  nsvg__xformIdentity(xform); //initial
 
   for (i = 0; dict[i]; i += 2) {
-      if (strcmp(dict[i], "x") == 0) {
+      if (strcmp(dict[i], "x1") == 0) {
         x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
       } else
-      if (strcmp(dict[i], "y") == 0) {
+      if (strcmp(dict[i], "y1") == 0) {
         y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
       } else
       if (strcmp(dict[i], "xlink:href") == 0) {
@@ -3026,11 +3026,10 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
       //      DBG("xml:id ?\n");
       strncpy(grad->id, attr[i+1], 63);
       grad->id[63] = '\0';
-    } else
-      if (strcmp(attr[i], "id") == 0) {
+    } else if (strcmp(attr[i], "id") == 0) {
         strncpy(grad->id, attr[i+1], 63);
         grad->id[63] = '\0';
-      } else if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
+    } else if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
         if (strcmp(attr[i], "gradientUnits") == 0) {
           if (strcmp(attr[i+1], "objectBoundingBox") == 0)
             grad->units = NSVG_OBJECT_SPACE;
@@ -3734,21 +3733,24 @@ static void nsvg__imageBounds(NSVGparser* p, float* bounds)
   int count = 0;
   
   float newBounds[4];
+  float xform[6];
 
   bounds[0] = FLT_MAX;
   bounds[1] = FLT_MAX;
   bounds[2] = -FLT_MAX;
   bounds[3] = -FLT_MAX;
-
+  
   for (; shapeLink != NULL; shapeLink = shapeLink->next) {
+    memcpy(&xform, &shapeLink->xform, sizeof(float)*6);
     if (shapeLink->link) {
       shape = shapeLink->link;
+      nsvg__xformPremultiply(xform, shape->xform);
     } else shape = shapeLink;
     
-    float sx = shapeLink->xform[0];
-    float sy = shapeLink->xform[3];
-    float tx = shapeLink->xform[4];
-    float ty = shapeLink->xform[5];
+    float sx = xform[0];
+    float sy = xform[3];
+    float tx = xform[4];
+    float ty = xform[5];
 
     newBounds[0] = (shape->bounds[0] * sx + tx);
     newBounds[1] = (shape->bounds[1] * sy + ty);

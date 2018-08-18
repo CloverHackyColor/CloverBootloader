@@ -1569,6 +1569,7 @@ static void nsvg__rasterizeShapes(
     xform[5] *= scaley;
     if (shape->link) {
       shapeLink = shape->link;
+      nsvg__xformPremultiply(xform, shapeLink->xform);
     } else {
   //    xform[4] = 0.f;
   //    xform[5] = 0.f;

@@ -403,6 +403,7 @@ extern void nsvgDelete(NSVGimage* image);
 extern void nsvg__xformIdentity(float* t);
 extern void nsvg__deleteParser(NSVGparser* p);
 extern void nsvg__xformInverse(float* inv, float* t);
+extern void nsvg__xformPremultiply(float* t, float* s);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;
