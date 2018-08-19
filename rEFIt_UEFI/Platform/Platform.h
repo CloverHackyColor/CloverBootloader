@@ -2028,7 +2028,7 @@ CHAR8
 UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
 
 VOID
-FillCardList(
+FillCardList (
   TagPtr CfgDict
   );
 

@@ -753,6 +753,8 @@ VOID ApplyInputs(VOID)
       GlobalConfig.Theme = PoolPrint(L"embedded");
     } else {
       GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
+      GlobalConfig.DarkEmbedded = FALSE;
+      GlobalConfig.Font = FONT_ALFA;
     }
 
     //will change theme after ESC
