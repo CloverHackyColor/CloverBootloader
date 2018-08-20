@@ -74,6 +74,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\vol_firewire"           , L"icns", 128 },
   { NULL, L"icons\\vol_clover"             , L"icns", 128 },
   { NULL, L"icons\\vol_internal_hfs"       , L"icns", 128 },
+  { NULL, L"icons\\vol_internal_apfs"      , L"icns", 128 },
   { NULL, L"icons\\vol_internal_ntfs"      , L"icns", 128 },
   { NULL, L"icons\\vol_internal_ext3"      , L"icns", 128 },
   { NULL, L"icons\\vol_recovery"           , L"icns", 128 },//20
@@ -167,6 +168,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
         DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_booter); break;
       case BUILTIN_ICON_VOL_INTERNAL_HFS:
         DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_hfs); break;
+      case BUILTIN_ICON_VOL_INTERNAL_APFS:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_apfs); break;
       case BUILTIN_ICON_VOL_INTERNAL_NTFS:
         DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_ntfs); break;
       case BUILTIN_ICON_VOL_INTERNAL_EXT3:
@@ -211,6 +214,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
         DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
       case BUILTIN_ICON_VOL_INTERNAL_HFS:
         DEC_BUILTIN_ICON(Id, emb_vol_internal_hfs); break;
+      case BUILTIN_ICON_VOL_INTERNAL_APFS:
+        DEC_BUILTIN_ICON(Id, emb_vol_internal_apfs); break;
       case BUILTIN_ICON_VOL_INTERNAL_NTFS:
         DEC_BUILTIN_ICON(Id, emb_vol_internal_ntfs); break;
       case BUILTIN_ICON_VOL_INTERNAL_EXT3:

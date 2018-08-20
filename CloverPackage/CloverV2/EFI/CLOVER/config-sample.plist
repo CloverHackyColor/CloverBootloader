@@ -867,6 +867,8 @@
 		<false/>
 		<key>Theme</key>
 		<string>metal</string>
+		<key>#EmbeddedThemeType﻿</key>
+		<string>Dark</string>
 	</dict>
 	<key>BootGraphics</key>
 	<dict>

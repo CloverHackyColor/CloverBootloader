@@ -66,6 +66,7 @@ static CHAR16 *BuiltinIconNames[] = {
   L"FireWire",
   L"Boot",
   L"HFS",
+  L"APFS",
   L"NTFS",
   L"EXT",
   L"Recovery",
@@ -87,16 +88,26 @@ EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName)
   return NULL;
 }
 
-EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType) //IN UINT8 DiskKind)
+EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath) //IN UINT8 DiskKind)
 {
-  UINTN IconNum;
+  UINTN IconNum = 0;
   // default volume icon based on disk kind
   switch (Volume->DiskKind) {
     case DISK_KIND_INTERNAL:
       switch (OSType) {
         case OSTYPE_OSX:
         case OSTYPE_OSX_INSTALLER:
-          IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
+          while (!IsDevicePathEndType(DevicePath) &&
+            !(DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP)) {
+            DevicePath = NextDevicePathNode(DevicePath);
+          }
+          if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
+            if (StriCmp(GuidLEToStr((EFI_GUID *)((UINT8 *)DevicePath+0x04)),GuidLEToStr(&APFSSignature)) == 0 ) {
+              IconNum = BUILTIN_ICON_VOL_INTERNAL_APFS;
+            }
+          } else {
+            IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
+          }
           break;
         case OSTYPE_RECOVERY:
           IconNum = BUILTIN_ICON_VOL_INTERNAL_REC;

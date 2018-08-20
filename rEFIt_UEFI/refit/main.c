@@ -1788,27 +1788,28 @@ EFI_GUID *APFSPartitionUUIDExtract(
 }
 
 UINT8 *APFSContainer_Support(VOID) {
-        /* 
-         * S. Mtr 2017
-         * APFS Container partition support
-         * Gather System PartitionUniqueGUID
-         * edit: 17.06.2017
-         * Fiil UUIDBank only with APFS container UUIDs
-         */
-        UINTN                     VolumeIndex;
-        REFIT_VOLUME             *Volume;
-        EFI_GUID                 *TmpUUID    = NULL;
-        //Fill APFSUUIDBank
-        APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
-        for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-            Volume = Volumes[VolumeIndex];
-            //Check that current volume – apfs partition
-            if ((TmpUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL){
-              CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,(UINT8 *)TmpUUID,0x10);
-              APFSUUIDBankCounter++;
-            }                     
-        }
-    return APFSUUIDBank;
+  /* 
+   * S. Mtr 2017
+   * APFS Container partition support
+   * Gather System PartitionUniqueGUID
+   * edit: 17.06.2017
+   * Fiil UUIDBank only with APFS container UUIDs
+   */
+  UINTN                     VolumeIndex;
+  REFIT_VOLUME             *Volume;
+  EFI_GUID                 *TmpUUID    = NULL;
+
+  //Fill APFSUUIDBank
+  APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
+    //Check that current volume – apfs partition
+    if ((TmpUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL){
+      CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,(UINT8 *)TmpUUID,0x10);
+      APFSUUIDBankCounter++;
+    }                     
+  }
+  return APFSUUIDBank;
 }
 
 //System / Install / Recovery version filler
@@ -1829,6 +1830,7 @@ VOID SystemVersionInit(VOID)
   UINTN      InsIter            = 1;
   UINTN      RecIter            = 1;
   UINTN      k                  = 0;
+
   // If scanloader starts multiple times, then we need to free systemplists, installplists, recoveryplists variables, also
   // refresh APFSUUIDBank
   if ((SystemPlists != NULL) || (InstallPlists != NULL) || (RecoveryPlists != NULL)) {
@@ -1869,10 +1871,10 @@ VOID SystemVersionInit(VOID)
       RecoveryPlists = NULL;
     }
   }
-    /************************************************************************/
+  /************************************************************************/
   /*Allocate Memory for systemplists, installplists and recoveryplists********************/
   //Check apfs support
-  if (APFSSupport==TRUE) {
+  if (APFSSupport == TRUE) {
     SystemPlists = AllocateZeroPool((2*APFSUUIDBankCounter+3)*sizeof(CHAR16 *));//array of pointers
     InstallPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
     RecoveryPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
@@ -1892,32 +1894,32 @@ VOID SystemVersionInit(VOID)
   /************************************************************************/
   //Fill Plists 
   for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
-      //Store UUID from bank
-      CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
-      //Init temp string with system/install/recovery APFS path
-      CHAR16 *TmpSysPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
-      CHAR16 *TmpServerPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
-      CHAR16 *TmpInsPlistPath = AllocateZeroPool(79*sizeof(CHAR16));
-      CHAR16 *TmpRecPlistPath = AllocateZeroPool(58*sizeof(CHAR16));
-      StrnCpy(TmpSysPlistPath,APFSSysPlistPath,85);
-      StrnCpy(TmpServerPlistPath,APFSServerPlistPath,85);
-      StrnCpy(TmpInsPlistPath,APFSInstallPlistPath,78);
-      StrnCpy(TmpRecPlistPath,APFSRecPlistPath,57);
-      StrnCpy(TmpSysPlistPath+1,CurrentUUID,36);
-      StrnCpy(TmpServerPlistPath+1,CurrentUUID,36);
-      StrnCpy(TmpInsPlistPath+1,CurrentUUID,36);
-      StrnCpy(TmpRecPlistPath+1,CurrentUUID,36);
-      //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
-      SystemPlists[SysIter] = TmpSysPlistPath;
-      SystemPlists[SysIter+1] = TmpServerPlistPath;
-      SystemPlists[SysIter+2] = NULL;
-      InstallPlists[InsIter] = TmpInsPlistPath;
-      InstallPlists[InsIter+1] = NULL;
-      RecoveryPlists[RecIter] = TmpRecPlistPath;
-      RecoveryPlists[RecIter+1] = NULL;
-      SysIter+=2;
-      InsIter++;
-      RecIter++;
+    //Store UUID from bank
+    CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
+    //Init temp string with system/install/recovery APFS path
+    CHAR16 *TmpSysPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
+    CHAR16 *TmpServerPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
+    CHAR16 *TmpInsPlistPath = AllocateZeroPool(79*sizeof(CHAR16));
+    CHAR16 *TmpRecPlistPath = AllocateZeroPool(58*sizeof(CHAR16));
+    StrnCpy(TmpSysPlistPath, APFSSysPlistPath, 85);
+    StrnCpy(TmpServerPlistPath, APFSServerPlistPath, 85);
+    StrnCpy(TmpInsPlistPath, APFSInstallPlistPath, 78);
+    StrnCpy(TmpRecPlistPath, APFSRecPlistPath, 57);
+    StrnCpy(TmpSysPlistPath+1, CurrentUUID, 36);
+    StrnCpy(TmpServerPlistPath+1, CurrentUUID, 36);
+    StrnCpy(TmpInsPlistPath+1, CurrentUUID, 36);
+    StrnCpy(TmpRecPlistPath+1, CurrentUUID, 36);
+    //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
+    SystemPlists[SysIter] = TmpSysPlistPath;
+    SystemPlists[SysIter+1] = TmpServerPlistPath;
+    SystemPlists[SysIter+2] = NULL;
+    InstallPlists[InsIter] = TmpInsPlistPath;
+    InstallPlists[InsIter+1] = NULL;
+    RecoveryPlists[RecIter] = TmpRecPlistPath;
+    RecoveryPlists[RecIter+1] = NULL;
+    SysIter+=2;
+    InsIter++;
+    RecIter++;
   }
 }
 
