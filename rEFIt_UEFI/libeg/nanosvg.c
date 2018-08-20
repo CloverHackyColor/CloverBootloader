@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -319,7 +319,7 @@ void nsvg__parseXML(char* input,
   //    nsvg__parseContent(mark, contentCb, ud);
   //    DBG("content  %a parsed\n", mark);
       nsvg__parseElement(mark, startelCb, endelCb, ud);
-      DBG(" element %a parsed\n", mark);
+  //    DBG(" element %a parsed\n", mark);
       mark = s;
       state = NSVG_XML_CONTENT;
     } else {

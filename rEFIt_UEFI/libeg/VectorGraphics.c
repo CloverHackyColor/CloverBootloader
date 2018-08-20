@@ -29,12 +29,15 @@
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
 
-EFI_STATUS ParseSVG(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
+EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
-  NSVGparser  *p;
+  EFI_STATUS      Status;
+  NSVGparser  *p, *p1;
   NSVGfont    *fontSVG;
   NSVGimage   *SVGimage;
   NSVGtext    *text;
+  NSVGshape   *shape;
+  NSVGgroup   *group;
   float Scale = 1.0f;
 
   p = nsvgParse((CHAR8*)buffer, "px", 72);
@@ -52,8 +55,43 @@ EFI_STATUS ParseSVG(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
   text = p->text;
   if (text) {
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0;
+    
     DBG("text uses font-name=%a\n", text->font->fontFamily);
     DBG("text uses font size=%d\n", (int)text->font->fontSize);
+    if (!fontSVG || strcmp(fontSVG->fontFamily, text->font->fontFamily) != 0) {
+      Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->fontFamily), &FileData, &FileDataLength);
+      DBG("font loaded status=%r\n", Status);
+      if (!EFI_ERROR(Status)) {
+        p1 = nsvgParse((CHAR8*)FileData, "px", 72);
+        if (!p1) {
+          DBG("font not parsed\n");
+        } else {
+          fontSVG = p1->font;
+          DBG("font parsed\n");
+          
+        }
+        FreePool(FileData);
+      }
+    }
+  }
+  shape = SVGimage->shapes;
+  while (shape) {    
+    group = shape->group;
+    while (group)
+    {
+      if (strcmp(group->id, "Banner") == 0) {
+        break;
+      }
+      group = group->parent;
+    }
+    
+    if (group) {
+      DBG("found shape %a", shape->id);
+      DBG(" from group %a\n", group->id);
+    }
+    shape = shape->next;
   }
   
   return EFI_NOT_AVAILABLE_YET;

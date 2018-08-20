@@ -2151,7 +2151,7 @@ ParseXML (
         UINT32 bufSize
   );
 
-EFI_STATUS ParseSVG(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize);
+EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize);
 
 TagPtr
 GetProperty (
