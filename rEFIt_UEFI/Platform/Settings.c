@@ -3351,9 +3351,13 @@ GetListOfThemes ()
       if (!EFI_ERROR (Status)) {
         Status = egLoadFile (ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
         if (EFI_ERROR (Status) || (ThemePtr == NULL) || (Size == 0)) {
-          Status = EFI_NOT_FOUND;
-          DBG (" - bad theme because %s can't be load", CONFIG_THEME_FILENAME);
-        } else {
+          Status = egLoadFile (ThemeTestDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+          if (EFI_ERROR (Status)) {
+            Status = EFI_NOT_FOUND;
+            DBG (" - bad theme because %s nor %s can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);
+          }
+        }
+        if (!EFI_ERROR (Status)) {
           //we found a theme
           if ((StriCmp(DirEntry->FileName, L"embedded") == 0) ||
               (StriCmp(DirEntry->FileName, L"random") == 0)) {

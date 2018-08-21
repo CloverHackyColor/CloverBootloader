@@ -76,7 +76,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -548,7 +548,7 @@ static void nsvg__deletePaths(NSVGpath* path)
   }
 }
 
-static void nsvg__deleteFont(NSVGfont* font)
+void nsvg__deleteFont(NSVGfont* font)
 {
   NSVGglyph *glyphs, *next;
   if (!font) {
@@ -3289,7 +3289,7 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
       } else
       if (strcmp(dict[i], "glyph-name") == 0) {
         strncpy(glyph->name, dict[i+1], 16);
-        DBG("parse glyph-name=%a\n", glyph->name);
+ //       DBG("parse glyph-name=%a\n", glyph->name);
         glyph->name[15] = '\0';
         if (strcmp(dict[i+1], "nonmarkingreturn") == 0) {
           glyph->unicode = L'\n';
@@ -3802,11 +3802,9 @@ static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
 
   // Guess image size if not set completely.
   nsvg__imageBounds(p, bounds);
-  DumpFloat2("image bounds", bounds, 4);
+//  DumpFloat2("image bounds", bounds, 4);
   // Patch: save real bounds.
-  for (i = 0; i < 4; ++i) {
-    p->image->realBounds[i] = bounds[i];
-  }
+  memcpy(p->image->realBounds, bounds, 4*sizeof(float));
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 

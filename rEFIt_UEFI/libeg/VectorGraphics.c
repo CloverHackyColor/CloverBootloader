@@ -32,7 +32,7 @@
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
   EFI_STATUS      Status;
-  NSVGparser  *p, *p1;
+  NSVGparser  *p, *p1 = NULL;
   NSVGfont    *fontSVG;
   NSVGimage   *SVGimage;
   NSVGtext    *text;
@@ -76,9 +76,26 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
       }
     }
   }
+  /*
+  typedef struct NSVGimage
+  {
+    float width;        // Width of the image.
+    float height;        // Height of the image.
+    float realBounds[4];
+    NSVGshape* shapes;      // Linked list of shapes in the image.
+    NSVGgroup* groups;			// Linked list of all groups in the image
+    BOOLEAN isFont;
+    NSVGclipPath* clipPaths;
+  } NSVGimage;
+*/
+  NSVGimage *Banner = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
+  NSVGshape *shapeNext, *shapePrev = NULL;
+  
   shape = SVGimage->shapes;
   while (shape) {    
     group = shape->group;
+
+    shapeNext = shape->next;
     while (group)
     {
       if (strcmp(group->id, "Banner") == 0) {
@@ -90,9 +107,57 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     if (group) {
       DBG("found shape %a", shape->id);
       DBG(" from group %a\n", group->id);
+      if (strstr(shape->id, "BoundingRect") != NULL) {
+        Banner->width = shape->bounds[2] - shape->bounds[0];
+        Banner->height = shape->bounds[3] - shape->bounds[1];
+        memcpy(Banner->realBounds, shape->bounds, 4*sizeof(float));
+        if (!Banner->height) {
+          Banner->height = 200;
+        }
+        DBG("Banner size [%d,%d]\n", (int)Banner->width, (int)Banner->height);
+        shape->flags = 0;  //invisible
+      }
+      shape->next = Banner->shapes; //add to head
+      Banner->shapes = shape;
+      if (shapePrev) {
+        shapePrev->next = shapeNext;
+      }
+    } else {
+      shapePrev = shape;
     }
-    shape = shape->next;
+    shape = shapeNext;
   }
+  
+  //suppose Banner will be 2-30% of Height
+  float Height = UGAHeight * 0.28f;
+  float scale = Height / Banner->height;
+  float Width = Banner->height * scale;
+  EG_IMAGE        *NewImage;
+  NewImage = egCreateImage((int)Width, (int)Height, TRUE);
+  DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
+  NSVGrasterizer* rast = nsvgCreateRasterizer();
+  float tx = -Banner->realBounds[0] * Scale;
+  float ty = -Banner->realBounds[1] * Scale;
+  
+  nsvgRasterize(rast, Banner, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+  //now show it!
+  
+  BltImageAlpha(NewImage,
+                (int)(UGAWidth - Width) / 4,
+                (int)(UGAHeight * 0.05f),
+                &MenuBackgroundPixel,
+                16);
+  
+  egFreeImage(NewImage);
+  nsvg__deleteParser(p);
+  if (p1) {
+    nsvg__deleteParser(p1);
+  }
+  if (fontSVG) {
+    nsvg__deleteFont(fontSVG);
+  }
+  nsvgDelete(Banner);
+  nsvgDeleteRasterizer(rast);
   
   return EFI_NOT_AVAILABLE_YET;
 }
@@ -258,26 +323,6 @@ VOID testSVG()
       DBG("  ceil=%c%d.%06d\n", (y1<0)?'-':' ',pr(y1));
     }
 #undef pr
-#endif
-#if TEST_SIZEOF
-    DBG("sizeof(NSVGgradient)=%d\n", sizeof(NSVGgradient));
-    DBG("sizeof(NSVGpaint)=%d\n", sizeof(NSVGpaint));
-    DBG("sizeof(NSVGpath)=%d\n", sizeof(NSVGpath));
-    DBG("sizeof(NSVGgroup)=%d\n", sizeof(NSVGgroup));
-    DBG("sizeof(NSVGshape)=%d\n", sizeof(NSVGshape));
-    DBG("sizeof(NSVGimage)=%d\n", sizeof(NSVGimage));
-    DBG("sizeof(NSVGcoordinate)=%d\n", sizeof(NSVGcoordinate));
-    DBG("sizeof(NSVGgradientData)=%d\n", sizeof(NSVGgradientData));
-    DBG("sizeof(NSVGattrib)=%d\n", sizeof(NSVGattrib));
-    DBG("sizeof(NSVGparser)=%d\n", sizeof(NSVGparser));
-    DBG("sizeof(NSVGglyph)=%d\n", sizeof(NSVGglyph));
-    DBG("sizeof(NSVGfont)=%d\n", sizeof(NSVGfont));
-    DBG("sizeof(NSVGedge)=%d\n", sizeof(NSVGedge));
-    DBG("sizeof(NSVGpoint)=%d\n", sizeof(NSVGpoint));
-    DBG("sizeof(NSVGactiveEdge)=%d\n", sizeof(NSVGactiveEdge));
-    DBG("sizeof(NSVGmemPage)=%d\n", sizeof(NSVGmemPage));
-    DBG("sizeof(NSVGcachedPaint)=%d\n", sizeof(NSVGcachedPaint));
-    DBG("sizeof(int)=%d\n", sizeof(int));
 #endif
     NSVGparser* p;
 #if TEST_SVG_IMAGE

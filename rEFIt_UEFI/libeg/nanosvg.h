@@ -404,6 +404,7 @@ extern void nsvg__xformIdentity(float* t);
 extern void nsvg__deleteParser(NSVGparser* p);
 extern void nsvg__xformInverse(float* inv, float* t);
 extern void nsvg__xformPremultiply(float* t, float* s);
+void nsvg__deleteFont(NSVGfont* font);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;
