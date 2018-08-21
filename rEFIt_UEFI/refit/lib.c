@@ -799,6 +799,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       
       if ((DevicePathType (DevicePath) == MESSAGING_DEVICE_PATH) &&
           ((DevicePathSubType (DevicePath) == MSG_SATA_DP) ||
+           (DevicePathSubType (DevicePath) == MSG_NVME_NAMESPACE_DP) ||
            (DevicePathSubType (DevicePath) == MSG_ATAPI_DP))) {
             //        DBG("        HDD volume\n");
             Volume->DiskKind = DISK_KIND_INTERNAL;
@@ -845,6 +846,11 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         Volume->DiskKind = DISK_KIND_INTERNAL;
         break;
       }
+      //one more we must take into account
+      // subtype = MSG_NVME_NAMESPACE_DP
+      // diskKind = NVME
+      //#define MSG_NVME_NAMESPACE_DP     0x17
+      
       DevicePath = NextDevicePath;
     }
     

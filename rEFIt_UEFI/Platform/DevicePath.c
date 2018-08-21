@@ -702,7 +702,44 @@ DevPathSata (
 }
 
 /**
-  Convert Device Path to a Unicode string for printing.
+ Converts a NVM Express Namespace device path structure to its string representative.
+ 
+ @param Str             The string representative of input device.
+ @param DevPath         The input device path structure.
+ @param DisplayOnly     If DisplayOnly is TRUE, then the shorter text representation
+ of the display node is used, where applicable. If DisplayOnly
+ is FALSE, then the longer text representation of the display node
+ is used.
+ @param AllowShortcuts  If AllowShortcuts is TRUE, then the shortcut forms of text
+ representation for a device node can be used, where applicable.
+ 
+ **/
+VOID
+DevPathToTextNVMe (
+                   IN OUT POOL_PRINT  *Str,
+                   IN VOID            *DevPath /*,
+                   IN BOOLEAN         DisplayOnly,
+                   IN BOOLEAN         AllowShortcuts */
+                   )
+{
+  NVME_NAMESPACE_DEVICE_PATH *Nvme;
+  UINT8                      *Uuid;
+  
+  Nvme = DevPath;
+  Uuid = (UINT8 *) &Nvme->NamespaceUuid;
+  CatPrint (
+            Str,
+            L"NVMe(0x%x,%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x)",
+            Nvme->NamespaceId,
+            Uuid[7], Uuid[6], Uuid[5], Uuid[4],
+            Uuid[3], Uuid[2], Uuid[1], Uuid[0]
+            );
+}
+
+
+
+/**
+ Convert Device Path to a Unicode string for printing.
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
@@ -1375,6 +1412,11 @@ DEVICE_PATH_STRING_TABLE  DevPathTable[] = {
     MESSAGING_DEVICE_PATH,
     MSG_SATA_DP,
     DevPathSata
+  },
+  {
+    MESSAGING_DEVICE_PATH,
+    MSG_NVME_NAMESPACE_DP,
+    DevPathToTextNVMe
   },
   {
     MESSAGING_DEVICE_PATH,

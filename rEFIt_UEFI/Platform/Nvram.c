@@ -524,15 +524,16 @@ BootVolumeDevicePathEqual (
     // while macOS can set it as
     //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/Sata(0x0,0x0,0x0)
     // we'll assume VenHw and Sata nodes to be equal to cover that
+    // as well add NVME to this comparison
     //
     if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
       if ((Type2 == HARDWARE_DEVICE_PATH && SubType2 == HW_VENDOR_DP)
-          || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_VENDOR_DP)) { //no it is UART?               
+          || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_NVME_NAMESPACE_DP)) {
         ForceEqualNodes = TRUE;
       }
     } else if (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_SATA_DP &&
               ((Type1 == HARDWARE_DEVICE_PATH && SubType1 == HW_VENDOR_DP)
-                || (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_VENDOR_DP))) {
+                || (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_NVME_NAMESPACE_DP))) {
       ForceEqualNodes = TRUE;
     }
     
