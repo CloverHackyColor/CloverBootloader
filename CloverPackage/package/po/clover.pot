@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.4k-r4612\n"
-"POT-Creation-Date: 2018-07-20 00:27+0200\n"
+"Project-Id-Version: Clover v2.4k-r4644\n"
+"POT-Creation-Date: 2018-08-11 00:08+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,6 +81,11 @@ msgstr ""
 msgid "The main is EDK2 latest revision."
 msgstr ""
 
+#. type: Content of: <html><body><p><a>
+#: Resources/templates/Description.html:23
+msgid "http://sourceforge.net/projects/cloverefiboot/"
+msgstr ""
+
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
 msgid "Main features:"
@@ -93,12 +98,16 @@ msgstr ""
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
 msgstr ""
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
 msgstr ""
 
 #. type: Content of: <html><body><ul><li>
@@ -138,7 +147,9 @@ msgstr ""
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
 msgstr ""
 
 #. type: Content of: <html><body><ul><li>
@@ -178,7 +189,9 @@ msgstr ""
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
 msgstr ""
 
 #. type: Content of: <html><body><ul><li>
@@ -235,7 +248,8 @@ msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading "
+"/EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 
 #. type: "boot0af_title"
@@ -249,7 +263,10 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
+"boot0af (boot0 Active First) bootloader try to boot the active partition "
+"defined in MBR. If there is no active partition, it will try to boot the "
+"first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a "
+"valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 
@@ -264,8 +281,12 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
-"This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
+"boot0ss (boot0 Signature Scanning) bootloader try to boot the first "
+"EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid "
+"PBR signature. If no partition is found it will try to boot the active "
+"partition defined in MBR.\n"
+"This bootloader is a good choice when you have Windows installed on the same "
+"disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
 
@@ -344,9 +365,8 @@ msgstr ""
 msgid "Select the version of CloverEFI to install."
 msgstr ""
 
-#. type: "cloverEFI.32_title, cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:69
-#: Resources/templates/Localizable.strings:70
+#. type: "cloverEFI.32_description"
+#: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr ""
@@ -384,7 +404,9 @@ msgstr ""
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:76
 #, no-wrap
-msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
+msgid ""
+"CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA "
+"NForce MCP79"
 msgstr ""
 
 #. type: "Ps2KeyboardDxe-32_description"
@@ -441,37 +463,32 @@ msgstr ""
 msgid "Select drivers for BIOS-booting."
 msgstr ""
 
-#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
-#: Resources/templates/Localizable.strings:93
-#: Resources/templates/Localizable.strings:111
+#. type: "AppleImageCodec-64.UEFI_description"
+#: Resources/templates/Localizable.strings:93 Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr ""
 
-#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
-#: Resources/templates/Localizable.strings:94
-#: Resources/templates/Localizable.strings:112
+#. type: "AppleKeyAggregator-64.UEFI_description"
+#: Resources/templates/Localizable.strings:94 Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr ""
 
-#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
-#: Resources/templates/Localizable.strings:95
-#: Resources/templates/Localizable.strings:113
+#. type: "AppleUITheme-64.UEFI_description"
+#: Resources/templates/Localizable.strings:95 Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr ""
 
-#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
-#: Resources/templates/Localizable.strings:96
-#: Resources/templates/Localizable.strings:125
+#. type: "FirmwareVolume-64.UEFI_description"
+#: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr ""
 
-#. type: "FSInject-64_description, FSInject-64.UEFI_description"
-#: Resources/templates/Localizable.strings:97
-#: Resources/templates/Localizable.strings:126
+#. type: "FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr ""
@@ -500,9 +517,8 @@ msgstr ""
 msgid "UDF filesystem driver from GRUB."
 msgstr ""
 
-#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:137
+#. type: "SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr ""
@@ -552,7 +568,9 @@ msgstr ""
 #. type: "AptioMemoryFix-64.UEFI_description"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgid ""
+"Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI "
+"Aptio"
 msgstr ""
 
 #. type: "CsmVideoDxe-64.UEFI_description"
@@ -570,7 +588,8 @@ msgstr ""
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
-"Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
+"Usually it is already present but sometime it may be missed. In this case "
+"you should see warning on screen."
 msgstr ""
 
 #. type: "EmuVariableUefi-64.UEFI_description"
@@ -582,7 +601,9 @@ msgstr ""
 #. type: "EnglishDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:123
 #, no-wrap
-msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
+msgid ""
+"Support for UnicodeCollation protocol used by EFI Shell if it missed in "
+"UEFI."
 msgstr ""
 
 #. type: "Fat-64.UEFI_description"
@@ -642,7 +663,9 @@ msgstr ""
 #. type: "PartitionDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
-msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
+msgid ""
+"64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or "
+"Apple Partition Map."
 msgstr ""
 
 #. type: "Ps2MouseDxe-64.UEFI_description"
@@ -780,7 +803,8 @@ msgstr ""
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
-"keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"keeps your Themes up to date, remove or install them by choosing from a wide "
+"selection.\n"
 "Install to /Applications"
 msgstr ""
 
@@ -807,7 +831,9 @@ msgstr ""
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:184
 #, no-wrap
-msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
+msgid ""
+"Install all RC scripts on all internal bootable OSX volumes other than the "
+"target volume."
 msgstr ""
 
 #. type: "OptionalRCScripts"
@@ -825,7 +851,9 @@ msgstr ""
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:187
 #, no-wrap
-msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgid ""
+"Disable the mDNSResponder sleep proxy client service. This will prevent the "
+"system waking from sleep every hours"
 msgstr ""
 
 #. type: "CloverPrefpane_title"
@@ -842,10 +870,8 @@ msgid ""
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
 
-#. type: "56.title, 371.title, 57.title"
-#: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:5
-#: ../CloverUpdater/CloverUpdater.strings:2
+#. type: "371.title"
+#: ../CloverUpdater/CloverUpdater.strings:1 ../CloverUpdater/CloverUpdater.strings:2 ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr ""
@@ -910,9 +936,8 @@ msgstr ""
 msgid "Clover"
 msgstr ""
 
-#. type: "204.title, Never"
-#: ../CloverPrefpane/CloverPrefpane.strings:2
-#: ../CloverPrefpane/Localizable.strings:5
+#. type: "Never"
+#: ../CloverPrefpane/CloverPrefpane.strings:2 ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr ""
@@ -968,7 +993,7 @@ msgstr ""
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr ""
 
 #. type: "294.label"
@@ -1010,7 +1035,9 @@ msgstr ""
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
-msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
+msgid ""
+"Number of lines of history to keep in CloverEFI/system.log file in addition "
+"to the current CloverEFI/boot.log contents"
 msgstr ""
 
 #. type: "327.title"
@@ -1127,16 +1154,14 @@ msgstr ""
 msgid "EFI Folder path"
 msgstr ""
 
-#. type: "829.ibShadowedIsNilPlaceholder, Auto"
-#: ../CloverPrefpane/CloverPrefpane.strings:38
-#: ../CloverPrefpane/Localizable.strings:2
+#. type: "Auto"
+#: ../CloverPrefpane/CloverPrefpane.strings:38 ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr ""
 
-#. type: "833.ibShadowedIsNilPlaceholder, No"
-#: ../CloverPrefpane/CloverPrefpane.strings:39
-#: ../CloverPrefpane/Localizable.strings:6
+#. type: "No"
+#: ../CloverPrefpane/CloverPrefpane.strings:39 ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr ""
@@ -1182,4 +1207,3 @@ msgstr ""
 #, no-wrap
 msgid "Unknown"
 msgstr ""
-

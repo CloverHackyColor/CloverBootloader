@@ -131,13 +131,14 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   //suppose Banner will be 2-30% of Height
   float Height = UGAHeight * 0.28f;
   float scale = Height / Banner->height;
-  float Width = Banner->height * scale;
+  float Width = Banner->width * scale;
   EG_IMAGE        *NewImage;
   NewImage = egCreateImage((int)Width, (int)Height, TRUE);
   DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   float tx = -Banner->realBounds[0] * Scale;
   float ty = -Banner->realBounds[1] * Scale;
+  DBG("Banner shift by %d, %d\n", (int)tx, (int)ty);
   
   nsvgRasterize(rast, Banner, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
   //now show it!

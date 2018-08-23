@@ -1112,8 +1112,16 @@ MainPostBuildScript() {
         0 | 2 | 3)
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioInputFix-64.efi
-          copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ApfsDriverLoader-64.efi
-          copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi ;;
+ #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ApfsDriverLoader-64.efi
+ #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi 
+        binArray=( ApfsDriverLoader AppleImageLoader AppleUISupport )
+            for efi in "${binArray[@]}"
+            do
+                copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
+                copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi 
+            done
+
+          ;;
       esac
       # drivers64UEFI
       binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)

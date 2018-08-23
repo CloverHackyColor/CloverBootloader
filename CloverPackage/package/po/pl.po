@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-14 22:50+0300\n"
+"POT-Creation-Date: 2018-08-11 00:08+0300\n"
 "PO-Revision-Date: 2014-02-13 18:34+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -76,13 +76,21 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "to bootloader typu open source bazujący na różnych projektach: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"to bootloader typu open source bazujący na różnych projektach: Clover, "
+"rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "Podstawą Clover v2 jest ostatnie wydanie EDK2."
+
+#. type: Content of: <html><body><p><a>
+#: Resources/templates/Description.html:23
+msgid "http://sourceforge.net/projects/cloverefiboot/"
+msgstr ""
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -96,18 +104,28 @@ msgstr "Uruchamianie macOS 10.xx, Windows EFI oraz Linux EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Obsługa RuntimeServices dla systemów operacyjnych, nie dostępna w innych bootloaderach"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Obsługa RuntimeServices dla systemów operacyjnych, nie dostępna w innych "
+"bootloaderach"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Automatyczna detekcja sprzętu z możliwością ręcznej edycji ustawień w pliku. Konfiguracyjnym config.plist"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Automatyczna detekcja sprzętu z możliwością ręcznej edycji ustawień w pliku. "
+"Konfiguracyjnym config.plist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Dzięki Clover można przełączać się między systemami za pośrednictwem panelu preferencji "
+msgstr ""
+"Dzięki Clover można przełączać się między systemami za pośrednictwem panelu "
+"preferencji "
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -127,7 +145,8 @@ msgstr "Tabele ACPI poprawiane do standardu 4.0."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Niestandardowe tabele DSDT ładowane z bootowanej partycji lub z katalogu EFI"
+msgstr ""
+"Niestandardowe tabele DSDT ładowane z bootowanej partycji lub z katalogu EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -137,12 +156,17 @@ msgstr "DSDT patching on the fly by fixes and by patterns;"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "Konfigurowalny RestartFix, poprawka sleep/wake oraz wstrzykiwanie PCIRootUID"
+msgstr ""
+"Konfigurowalny RestartFix, poprawka sleep/wake oraz wstrzykiwanie PCIRootUID"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Obsługa szerokiego zakresu kart graficznych ATI, Nvidia oraz Intel z możliwością ręcznej. Konfiguracji w pliku config.plist."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Obsługa szerokiego zakresu kart graficznych ATI, Nvidia oraz Intel z "
+"możliwością ręcznej. Konfiguracji w pliku config.plist."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -157,7 +181,9 @@ msgstr "Wstrzykiwanie ID dla karty dźwiękowej oraz informacji karty sieciowej"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
 msgid "CPU turbo and P- and C-states generator"
-msgstr "Generowanie stanów turbo, P-State oraz C-State w celu uzyskania natywnego zarządzania"
+msgstr ""
+"Generowanie stanów turbo, P-State oraz C-State w celu uzyskania natywnego "
+"zarządzania"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
@@ -181,8 +207,12 @@ msgstr "Set NVRAM variables for different purpose;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Domyślny rozruch systemu po upływie ustalonego czasu, konfigurowalne GUI oraz zapisywanie screenów z GUI za pomocą klawisza F10"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Domyślny rozruch systemu po upływie ustalonego czasu, konfigurowalne GUI "
+"oraz zapisywanie screenów z GUI za pomocą klawisza F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -384,7 +414,7 @@ msgstr "CloverEFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "Wybierz wersję CloverEFI do zainstalowania."
 
-#. type: "cloverEFI.32_title, cloverEFI.32_description"
+#. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
@@ -481,35 +511,35 @@ msgstr "BIOS Drivers, 64 bit"
 msgid "Select drivers for BIOS-booting."
 msgstr "Select drivers for BIOS-booting."
 
-#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#. type: "AppleImageCodec-64.UEFI_description"
 #: Resources/templates/Localizable.strings:93
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "Decode PNG and BMP for FileVault2."
 
-#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#. type: "AppleKeyAggregator-64.UEFI_description"
 #: Resources/templates/Localizable.strings:94
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "Support for boot UI dialog for FileVault2."
 
-#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#. type: "AppleUITheme-64.UEFI_description"
 #: Resources/templates/Localizable.strings:95
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "Create boot UI Themes support for FileVault2."
 
-#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#. type: "FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Create FirmwareVolume with cursor images for FileVault2."
 
-#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#. type: "FSInject-64.UEFI_description"
 #: Resources/templates/Localizable.strings:97
 #: Resources/templates/Localizable.strings:126
 #, no-wrap
@@ -540,7 +570,7 @@ msgstr "NTFS filesystem driver."
 msgid "UDF filesystem driver from GRUB."
 msgstr "UDF filesystem driver."
 
-#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#. type: "SMCHelper-64.UEFI_description"
 #: Resources/templates/Localizable.strings:102
 #: Resources/templates/Localizable.strings:137
 #, no-wrap
@@ -908,10 +938,10 @@ msgstr ""
 "Instaluje panel preferencji Clover na dysku docelowym.\n"
 "Zawiera CloverUpdater, który poinformuje Cię o dostępnych aktualizacjach."
 
-#. type: "56.title, 371.title, 57.title"
+#. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:5
 #: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -976,7 +1006,7 @@ msgstr "Ok"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "204.title, Never"
+#. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
@@ -1033,8 +1063,11 @@ msgstr "Sprawdź teraz"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
-#, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Copyright (c) 2013 JrCs, kozlek\n"
+#| "All Rights Reserved"
+msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr ""
 "Prawa autorskie 2013 JrCs, kozlek\n"
 "Wszelkie prawa zastrzeżone"
@@ -1195,14 +1228,14 @@ msgstr "Liczba zachowywanych kopii zapasowych:"
 msgid "EFI Folder path"
 msgstr "Ścieżka katalogu EFI:"
 
-#. type: "829.ibShadowedIsNilPlaceholder, Auto"
+#. type: "Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "Auto"
 
-#. type: "833.ibShadowedIsNilPlaceholder, No"
+#. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
@@ -1250,4 +1283,3 @@ msgstr "Ustaw lokalizację EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Nieznany"
-

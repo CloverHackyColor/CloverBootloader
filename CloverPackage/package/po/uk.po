@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-14 22:50+0300\n"
+"POT-Creation-Date: 2018-08-11 00:08+0300\n"
 "PO-Revision-Date: 2014-02-13 21:26+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -76,13 +76,22 @@ msgstr "Кловер версія 2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "Це УЕФІ завантажувач з відкритими вихідними кодами, заснований на зразках від Tianocore EDK2, і використовує технології проектів: Chameleon, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"Це УЕФІ завантажувач з відкритими вихідними кодами, заснований на зразках "
+"від Tianocore EDK2, і використовує технології проектів: Chameleon, rEFIt, "
+"XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
 msgid "The main is EDK2 latest revision."
 msgstr "В основі EDK2, з урахуванням останніх оновлень."
+
+#. type: Content of: <html><body><p><a>
+#: Resources/templates/Description.html:23
+msgid "http://sourceforge.net/projects/cloverefiboot/"
+msgstr ""
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -96,23 +105,35 @@ msgstr "Завантаження систем macOS 10.xx, Windows EFI та Linu
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Clover EFI надає системі RuntimeServices, що неможливо було колись для завантажувачів на основі БІОС."
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Clover EFI надає системі RuntimeServices, що неможливо було колись для "
+"завантажувачів на основі БІОС."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Переважно Clover автоматично визначає склад комп'ютера і вказує потрібні властивості за замовчуванням. Але при бажанні користувач в змозі встановити свої властивості в config.plist"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Переважно Clover автоматично визначає склад комп'ютера і вказує потрібні "
+"властивості за замовчуванням. Але при бажанні користувач в змозі встановити "
+"свої властивості в config.plist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Ви маєте можливість використовувати перезавантаження в інші ОС, завдяки Системі Налаштування ->Завантажувальний Диск"
+msgstr ""
+"Ви маєте можливість використовувати перезавантаження в інші ОС, завдяки "
+"Системі Налаштування ->Завантажувальний Диск"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
 msgid "UUID written into config.plist will be the same as in OS"
-msgstr "Вкажіть UUID комп'ютера в config.plist, і ОС буде його використовувати "
+msgstr ""
+"Вкажіть UUID комп'ютера в config.plist, і ОС буде його використовувати "
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
@@ -127,7 +148,8 @@ msgstr "Виконується виправлення таблиць ACPI до �
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "DSDT вашого ПК використовується з завантажувального розділу або з папки EFI"
+msgstr ""
+"DSDT вашого ПК використовується з завантажувального розділу або з папки EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -141,8 +163,12 @@ msgstr "Коригування проблем рестарту і сну/про�
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel. Також з можливостями налаштування."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel. Також з "
+"можливостями налаштування."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -162,7 +188,9 @@ msgstr "Керування живленням частотами ЦП (CPU: Turb
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "Довантаження додаткових таблиць ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr ""
+"Довантаження додаткових таблиць ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, "
+"UEFI...)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -181,13 +209,19 @@ msgstr "Set NVRAM variables for different purpose;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Автозавантаження після затримки, GUI - налагоджування зовнішнього вигляду (якщо потрібно зберегти в файл, натиснути F10),"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Автозавантаження після затримки, GUI - налагоджування зовнішнього вигляду "
+"(якщо потрібно зберегти в файл, натиснути F10),"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "Збереження звітів: в ОС - boot.log, в GUI - preboot.log натиснути F2 для діагностики проблем."
+msgstr ""
+"Збереження звітів: в ОС - boot.log, в GUI - preboot.log натиснути F2 для "
+"діагностики проблем."
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -381,7 +415,7 @@ msgstr "Кловер EFI"
 msgid "Select the version of CloverEFI to install."
 msgstr "Вибрати варіант встановлення CloverEFI."
 
-#. type: "cloverEFI.32_title, cloverEFI.32_description"
+#. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
@@ -482,35 +516,35 @@ msgstr "BIOS Drivers, 64 bit"
 msgid "Select drivers for BIOS-booting."
 msgstr "Select drivers for BIOS-booting."
 
-#. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
+#. type: "AppleImageCodec-64.UEFI_description"
 #: Resources/templates/Localizable.strings:93
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "Decode PNG and BMP for FileVault2."
 
-#. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
+#. type: "AppleKeyAggregator-64.UEFI_description"
 #: Resources/templates/Localizable.strings:94
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "Support for boot UI dialog for FileVault2."
 
-#. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
+#. type: "AppleUITheme-64.UEFI_description"
 #: Resources/templates/Localizable.strings:95
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "Create boot UI Themes support for FileVault2."
 
-#. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
+#. type: "FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Create FirmwareVolume with cursor images for FileVault2."
 
-#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#. type: "FSInject-64.UEFI_description"
 #: Resources/templates/Localizable.strings:97
 #: Resources/templates/Localizable.strings:126
 #, no-wrap
@@ -541,7 +575,7 @@ msgstr "NTFS filesystem driver."
 msgid "UDF filesystem driver from GRUB."
 msgstr "UDF filesystem driver."
 
-#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#. type: "SMCHelper-64.UEFI_description"
 #: Resources/templates/Localizable.strings:102
 #: Resources/templates/Localizable.strings:137
 #, no-wrap
@@ -908,10 +942,10 @@ msgstr ""
 "Встановити контрольну панель на цільовий розділ.\n"
 "Встановити також CloverUpdater, він повідомляє про оновлення."
 
-#. type: "56.title, 371.title, 57.title"
+#. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:5
 #: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -976,7 +1010,7 @@ msgstr "Добре"
 msgid "Clover"
 msgstr "iClover"
 
-#. type: "204.title, Never"
+#. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
@@ -1033,8 +1067,11 @@ msgstr "Перевірити зараз:"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
-#, no-wrap
-msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Copyright (c) 2013 JrCs, kozlek\n"
+#| "All Rights Reserved"
+msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr ""
 "Copyright (c) 2013 JrCs, kozlek\n"
 "All Rights Reserved"
@@ -1195,14 +1232,14 @@ msgstr "Зберегти кількість резервних копій: "
 msgid "EFI Folder path"
 msgstr "Шлях до папки EFI:"
 
-#. type: "829.ibShadowedIsNilPlaceholder, Auto"
+#. type: "Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "Auto"
 
-#. type: "833.ibShadowedIsNilPlaceholder, No"
+#. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
@@ -1250,4 +1287,3 @@ msgstr "Встановити EFI каталог"
 #, no-wrap
 msgid "Unknown"
 msgstr "Невідомо"
-
