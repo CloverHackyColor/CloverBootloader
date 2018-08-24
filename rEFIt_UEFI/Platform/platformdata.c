@@ -217,11 +217,11 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02TQHACHTD5", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2017mbp", "j80ga", 0xf0a009 },
   //MacBookPro15,1
-  { "MacBookPro15,1", "MBP151.88Z.0178.B00.1806260902", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
+  { "MacBookPro15,1", "15.16.6703.0.0,0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2018mbp", "j130b", 0xf0a009 }, // need BIOS REV rBR RPlt ECPI
   //MacBookPro15,2
-  { "MacBookPro15,2", "MBP152.88Z.0178.B00.1806260902", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
+  { "MacBookPro15,2", "15.16.6703.0.0,0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
     { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j79b", 0xf09009 }, // need BIOS REV rBR RPlt ECPI
   //MacBookAir1,1
@@ -425,7 +425,7 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
   //iMacPro1,1
-  { "iMacPro1,1", "IMP11.88Z.0064.B30.1712081714", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
+  { "iMacPro1,1", "15.16.6059.0.0,0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j137", "j137", 0xf07009 }, // need REV rBR ECPI
   //MacPro1,1
@@ -475,82 +475,88 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.RomVersion, 64,      ApplePlatformData[Model].firmwareVersion);
 
   // AppleReleaseDate
-  switch (Model) {
-    case MacBook11:
-    case MacBook21:
-    case MacBook31:
-    case MacBook41:
-    case MacBook51:
-    case MacBook52:
-    case MacBook61:
-    case MacBook71:
-    case MacBookPro11:
-    case MacBookPro12:
-    case MacBookPro21:
-    case MacBookPro22:
-    case MacBookPro31:
-    case MacBookPro41:
-    case MacBookPro51:
-    case MacBookPro52:
-    case MacBookPro53:
-    case MacBookPro54:
-    case MacBookPro55:
-    case MacBookPro61:
-    case MacBookPro62:
-    case MacBookPro71:
-    case MacBookPro81:
-    case MacBookPro82:
-    case MacBookPro83:
-    case MacBookAir11:
-    case MacBookAir21:
-    case MacBookAir31:
-    case MacBookAir32:
-    case MacMini11:
-    case MacMini21:
-    case MacMini31:
-    case MacMini41:
-    case iMac41:
-    case iMac42:
-    case iMac51:
-    case iMac52:
-    case iMac61:
-    case iMac71:
-    case iMac81:
-    case iMac91:
-    case iMac101:
-    case iMac111:
-    case iMac112:
-    case iMac113:
-    case iMac121:
-    case iMac122:
-    case MacPro11:
-    case MacPro21:
-    case MacPro31:
-    case MacPro41:
-    case MacPro51:
-    case Xserve11:
-    case Xserve21:
-    case Xserve31:
-      i = ApplePlatformData[Model].firmwareVersion;
-      i += AsciiStrLen (i);
+  if (AsciiStrLen(ApplePlatformData[Model].firmwareVersion) == 16) {
+    // TODO: need to find a new date format based on the new format of BiosVersion
+    // temporary date
+    AsciiStrCpyS (gSettings.ReleaseDate, 64,     "06/26/2018");
+  } else {
+    switch (Model) {
+      case MacBook11:
+      case MacBook21:
+      case MacBook31:
+      case MacBook41:
+      case MacBook51:
+      case MacBook52:
+      case MacBook61:
+      case MacBook71:
+      case MacBookPro11:
+      case MacBookPro12:
+      case MacBookPro21:
+      case MacBookPro22:
+      case MacBookPro31:
+      case MacBookPro41:
+      case MacBookPro51:
+      case MacBookPro52:
+      case MacBookPro53:
+      case MacBookPro54:
+      case MacBookPro55:
+      case MacBookPro61:
+      case MacBookPro62:
+      case MacBookPro71:
+      case MacBookPro81:
+      case MacBookPro82:
+      case MacBookPro83:
+      case MacBookAir11:
+      case MacBookAir21:
+      case MacBookAir31:
+      case MacBookAir32:
+      case MacMini11:
+      case MacMini21:
+      case MacMini31:
+      case MacMini41:
+      case iMac41:
+      case iMac42:
+      case iMac51:
+      case iMac52:
+      case iMac61:
+      case iMac71:
+      case iMac81:
+      case iMac91:
+      case iMac101:
+      case iMac111:
+      case iMac112:
+      case iMac113:
+      case iMac121:
+      case iMac122:
+      case MacPro11:
+      case MacPro21:
+      case MacPro31:
+      case MacPro41:
+      case MacPro51:
+      case Xserve11:
+      case Xserve21:
+      case Xserve31:
+        i = ApplePlatformData[Model].firmwareVersion;
+        i += AsciiStrLen (i);
 
-      while (*i != '.') {
-        i--;
-      }
-      AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-      AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
-      break;
+        while (*i != '.') {
+          i--;
+        }
+        AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
+        AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
+        break;
 
-    default:
-      i = ApplePlatformData[Model].firmwareVersion;
-      i += AsciiStrLen (i);
+      default:
+        i = ApplePlatformData[Model].firmwareVersion;
+        i += AsciiStrLen (i);
 
-      while (*i != '.') {
-        i--;
-      }
-      AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-      AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
-      break;
+        while (*i != '.') {
+          i--;
+        }
+        AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
+        AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
+        break;
+    }
   }
 
   AsciiStrCpyS (gSettings.ManufactureName, 64,      BiosVendor);
@@ -568,7 +574,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
   AsciiStrCpyS (gSettings.ChassisManufacturer, 64,  BiosVendor);
   AsciiStrCpyS (gSettings.ChassisAssetTag, 64,      ApplePlatformData[Model].chassisAsset);
 
-  // Firmware info for High Sierra 10.13+
+  // Firmware info for 10.13+
   // by Sherlocks
   // FirmwareFeatures
   switch (Model) {

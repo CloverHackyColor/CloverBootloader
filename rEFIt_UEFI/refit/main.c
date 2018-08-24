@@ -1803,7 +1803,7 @@ UINT8 *APFSContainer_Support(VOID) {
   APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-    //Check that current volume – apfs partition
+    //Check that current volume - apfs partition
     if ((TmpUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL){
       CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,(UINT8 *)TmpUUID,0x10);
       APFSUUIDBankCounter++;
@@ -1895,7 +1895,7 @@ VOID SystemVersionInit(VOID)
   //Fill Plists 
   for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
     //Store UUID from bank
-    CHAR16 *CurrentUUID=GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
+    CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
     //Init temp string with system/install/recovery APFS path
     CHAR16 *TmpSysPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
     CHAR16 *TmpServerPlistPath = AllocateZeroPool(86*sizeof(CHAR16));

@@ -838,6 +838,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3E92, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E94, "Intel Coffee Lake GT2"          }, //
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
+  { 0x3E98, "Intel Coffee Lake GT2"          }, //
   { 0x3E9A, "Intel Coffee Lake GT2"          }, //
   { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile - MacBookPro15,1
   //GT3
@@ -888,6 +889,13 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x8A50, "Intel Ice Lake GT2"             }, //
   { 0x8A51, "Intel Ice Lake GT2"             }, //
   { 0x8A52, "Intel Ice Lake GT2"             }, //
+
+  //----------------Lakefield-----------------
+  { 0x9840, "Intel Lakefield"                }, //
+  { 0x9850, "Intel Lakefield"                }, //
+
+  //----------------Jasper Lake---------------
+  { 0x4500, "Intel Jasper Lake"              }, //
 
 };
 
@@ -2754,6 +2762,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3E92: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E94: // "Intel Coffee Lake GT2"           //
     case 0x3E96: // "Intel Coffee Lake GT2"           //
+    case 0x3E98: // "Intel Coffee Lake GT2"           //
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
     case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1
       //GT3
@@ -3107,6 +3116,15 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x8A50: // "Intel Ice Lake GT2"              //
     case 0x8A51: // "Intel Ice Lake GT2"              //
     case 0x8A52: // "Intel Ice Lake GT2"              //
+      break;
+
+      //----------------Lakefield-----------------
+    case 0x9840: // "Intel Lakefield"                 //
+    case 0x9850: // "Intel Lakefield"                 //
+      break;
+
+      //----------------Jasper Lake---------------
+    case 0x4500: // "Intel Jasper Lake"               //
       break;
 
 
