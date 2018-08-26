@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1602,7 +1602,7 @@ static void nsvg__rasterizeShapes(
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];
 				e->x0 = tx + e->x0;
-				e->y0 = (ty + e->y0) * NSVG__SUBSAMPLES;
+				e->y0 = (ty + e->y0) * NSVG__SUBSAMPLES;  //NSVG__SUBSAMPLES = 5
 				e->x1 = tx + e->x1;
 				e->y1 = (ty + e->y1) * NSVG__SUBSAMPLES;
 			}

@@ -90,9 +90,14 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "Drivers64_title" = "BIOS Drivers, 64 bit";
 "Drivers64_description" = "Select drivers for BIOS-booting.";
 
+"ApfsDriverLoader-64_description" = "64bit driver to load APFS filesystem driver from container";
 "AppleImageCodec-64_description" = "For decode PNG and BMP images in boot UI";
+"AppleImageLoader-64_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
 "AppleKeyAggregator-64_description" = "Support for boot UI dialog for FileVault2";
+"AppleUISupport-64_description" = "Set of protocols for support EfiLoginUi for FileVault.";
 "AppleUITheme-64_description" = "Create boot UI Themes support";
+"AptioInputFix-64_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioMemoryFix-64_description" = "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
 "FirmwareVolume-64_description" = "Create FirmwareVolume with cursor images";
 "FSInject-64_description" = "Provide injection of kexts from Clover folder.";
 "GrubEXFAT-64_description" = "ExFAT filesystem driver from GRUB.";
@@ -109,7 +114,9 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "AppleEvent-64.UEFI_description" = "Create AppleEvent protocol for FileVault2";
 "AppleGraphicsConfig-64.UEFI_description" = "Create optional AppleGraphicsConfig protocol";
 "AppleImageCodec-64.UEFI_description" = "For decode PNG and BMP images in boot UI";
+"AppleImageLoader-64.UEFI_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
 "AppleKeyAggregator-64.UEFI_description" = "Support for boot UI dialog for FileVault2";
+"AppleUISupport-64.UEFI_description" = "Set of protocols for support EfiLoginUi for FileVault.";
 "AppleUITheme-64.UEFI_description" = "Create boot UI Themes support";
 "AptioInputFix-64.UEFI_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
 "AptioMemoryFix-64.UEFI_description" = "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
@@ -142,11 +149,9 @@ Usually it is already present but sometime it may be missed. In this case you sh
 "VBoxHfs-64.UEFI_description" = "HFS+ filesystem driver.";
 "VBoxIso9600-64.UEFI_description" = "ISO 9600 filesystem driver.";
 
-
 // ============================================================================
 // Themes
 // ----------------------------------------------------------------------------
-
 "Themes_title" = "Themes";
 "Themes_description" = "Select to install themes.";
 

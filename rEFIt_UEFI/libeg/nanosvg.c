@@ -64,19 +64,13 @@
 	// Delete
 	nsvgDelete(image);
 */
-//TODO
-/*
-<svg viewBox="0 0 400 100">
- <rect id="original-rect" x="100" y="20" width="50" height="50" fill="#29e" />
- <use xlink:href="#original-rect" x="150" y="10" />
-</svg>
- */
+
 
 #include "nanosvg.h"
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
