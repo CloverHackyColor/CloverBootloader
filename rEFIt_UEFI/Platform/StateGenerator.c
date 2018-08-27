@@ -123,7 +123,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_PENRYN:       // Intel Core 2 Solo, Duo, Quad, Extreme, Xeon X54xx, Xeon X33xx
           case CPU_MODEL_ATOM:         // Intel Atom (45nm)
           {
-            if (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 27)) {
+            if ((gCPUStructure.Model >= CPU_MODEL_MEROM) && (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 27))) {
               AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28)));
               gBS->Stall(10);
               cpu_dynamic_fsb = (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 28))?1:0;
