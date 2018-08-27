@@ -158,11 +158,11 @@ VOID PrepareFont()
     egFreeImage(FontImage);
     FontImage = NULL;
   }
-/*
-  if (ThemeType == SVG) {
-    FontImage = LoadSVGfont(codepage);
+
+  if (GlobalConfig.TypeSVG) {
+    FontImage = LoadSVGfont();
   }
-*/  
+  
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {

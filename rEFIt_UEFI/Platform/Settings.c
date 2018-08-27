@@ -147,14 +147,17 @@ REFIT_CONFIG   GlobalConfig = {
   128,            // INTN        MainEntriesSize;
   8,              // INTN        TileXSpace;
   24,             // INTN        TileYSpace;
-  ICON_FORMAT_DEF, // INTN        IconFormat;
+  ICON_FORMAT_DEF, // INTN       IconFormat;
   FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     NoEarlyProgress;
   FALSE,          // BOOLEAN     ShowOptimus;
   FALSE,          // BOOLEAN     HibernationFixup;
   FALSE,          // BOOLEAN     SignatureFixup;
   FALSE,          // BOOLEAN     DarkEmbedded;
-  FALSE,          // BOOLEAN     EmbeddedSVG;
+  FALSE,          // BOOLEAN     TypeSVG;
+  0,              // INTN        Codepage;
+  0,              // INTN        CodepageSize;
+
 };
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =
@@ -2679,7 +2682,7 @@ GetEarlyUserSettings (
                 GlobalConfig.DarkEmbedded = FALSE;
                 GlobalConfig.Font = FONT_ALFA;
               } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
-                GlobalConfig.EmbeddedSVG = TRUE;
+                GlobalConfig.TypeSVG = TRUE;
               }
             }
           }
@@ -2694,7 +2697,7 @@ GetEarlyUserSettings (
             GlobalConfig.DarkEmbedded = FALSE;
             GlobalConfig.Font = FONT_ALFA;
           } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
-            GlobalConfig.EmbeddedSVG = TRUE;
+            GlobalConfig.TypeSVG = TRUE;
           }
         }
       }
@@ -2747,8 +2750,11 @@ GetEarlyUserSettings (
         AsciiStrCpyS (gSettings.Language, 16, Prop->string);
         if (AsciiStrStr (Prop->string, "en")) {
           gLanguage = english;
+          GlobalConfig.Codepage = 0;
         } else if (AsciiStrStr (Prop->string, "ru")) {
           gLanguage = russian;
+          GlobalConfig.Codepage = 0x410;
+          GlobalConfig.CodepageSize = 0x40;
         } else if (AsciiStrStr (Prop->string, "fr")) {
           gLanguage = french;
         } else if (AsciiStrStr (Prop->string, "it")) {

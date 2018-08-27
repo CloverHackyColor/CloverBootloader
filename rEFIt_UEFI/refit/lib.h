@@ -522,7 +522,9 @@ typedef struct {
   BOOLEAN     HibernationFixup;
   BOOLEAN     SignatureFixup;
   BOOLEAN     DarkEmbedded;
-  BOOLEAN     EmbeddedSVG;
+  BOOLEAN     TypeSVG;
+  INTN        Codepage;
+  INTN        CodepageSize;
 } REFIT_CONFIG;
 
 // types

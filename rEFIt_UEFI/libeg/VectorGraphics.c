@@ -136,8 +136,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   NewImage = egCreateImage((int)Width, (int)Height, TRUE);
   DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
   NSVGrasterizer* rast = nsvgCreateRasterizer();
-  float tx = -Banner->realBounds[0] * Scale;
-  float ty = -Banner->realBounds[1] * Scale;
+  float tx = 0; //-Banner->realBounds[0] * Scale;
+  float ty = 0; //-Banner->realBounds[1] * Scale;
   DBG("Banner shift by %d, %d\n", (int)tx, (int)ty);
   
   nsvgRasterize(rast, Banner, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
@@ -161,6 +161,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   nsvgDeleteRasterizer(rast);
   
   return EFI_NOT_AVAILABLE_YET;
+}
+
+EG_IMAGE* LoadSVGfont(VOID)
+{
+ // EFI_STATUS      Status;
+  return NULL;
 }
 
 VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
