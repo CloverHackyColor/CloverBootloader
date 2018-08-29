@@ -38,7 +38,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   NSVGtext    *text;
   NSVGshape   *shape;
   NSVGgroup   *group;
-  float Scale = 1.0f;
+
+  float Scale;
 
   p = nsvgParse((CHAR8*)buffer, "px", 72);
   SVGimage = p->image;
@@ -76,6 +77,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
       }
     }
   }
+  if (fontSVG) {
+    FontHeight = (int)(text->font->fontSize * Scale);
+    LoadSVGfont(fontSVG);
+  }
+  
   /*
   typedef struct NSVGimage
   {
@@ -130,8 +136,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   
   //suppose Banner will be 2-30% of Height
   float Height = UGAHeight * 0.28f;
-  float scale = Height / Banner->height;
-  float Width = Banner->width * scale;
+  
+  float Width = Banner->width * Scale;
   EG_IMAGE        *NewImage;
   NewImage = egCreateImage((int)Width, (int)Height, TRUE);
   DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
@@ -163,10 +169,67 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   return EFI_NOT_AVAILABLE_YET;
 }
 
-EG_IMAGE* LoadSVGfont(VOID)
+VOID LoadSVGfont(NSVGfont  *fontSVG)
 {
  // EFI_STATUS      Status;
-  return NULL;
+  float FontScale;
+  NSVGparser* p;
+  NSVGrasterizer* rast;
+  INTN i;
+  if (!fontSVG) {
+    return;
+  }
+  //free old font
+  if (FontImage != NULL) {
+    egFreeImage (FontImage);
+    FontImage = NULL;
+  }
+  INTN Height = FontHeight + 2;
+  INTN Width = Height * (0xC0 + GlobalConfig.CodepageSize);
+  FontImage = egCreateImage(Width, Height, TRUE);
+  
+  if (!fontSVG->unitsPerEm) {
+    fontSVG->unitsPerEm = 1000;
+  }
+  float fH = fontSVG->bbox[3] - fontSVG->bbox[1];
+  if (fH == 0.f) {
+    fH = (float)fontSVG->unitsPerEm;
+  }
+  FontScale = (float)Height / fH;
+  
+  p = nsvg__createParser();
+  if (!p) {
+    DBG("no parser\n");
+    return;
+  }
+  
+  //for each letter rasterize glyph into FontImage
+  //0..0xC0
+  // cyrillic 0x410..0x450 на место 0xC0
+  INTN x = 0;
+  INTN y = 0;
+  for (i = 0; i < AsciiPageSize; i++) {
+    addLetter(p, i, x, y, FontScale);
+    x += Height;
+  }
+  x = AsciiPageSize * Height;
+  for (i = GlobalConfig.Codepage; i < GlobalConfig.Codepage+GlobalConfig.CodepageSize; i++) {
+    addLetter(p, i, x, y, FontScale);
+    x += Height;
+  }
+  p->image->realBounds[0] = fontSVG->bbox[0];
+  p->image->realBounds[1] = fontSVG->bbox[1];
+  p->image->realBounds[2] = fontSVG->bbox[2] + x; //last bound
+  p->image->realBounds[3] = fontSVG->bbox[3];
+  
+  //We made an image, then rasterize it
+  rast = nsvgCreateRasterizer();
+  DBG("begin raster text\n");
+  nsvgRasterize(rast, p->image, 0, 0, Scale, Scale, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
+  DBG("end raster text\n");
+  nsvgDeleteRasterizer(rast);
+
+  return;
 }
 
 VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)

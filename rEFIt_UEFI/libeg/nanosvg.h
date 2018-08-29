@@ -399,12 +399,14 @@ typedef struct NSVGparser
 extern NSVGparser* nsvgParse(char* input, const char* units, float dpi);
 
 // Deletes list of paths.
-extern void nsvgDelete(NSVGimage* image);
-extern void nsvg__xformIdentity(float* t);
-extern void nsvg__deleteParser(NSVGparser* p);
-extern void nsvg__xformInverse(float* inv, float* t);
-extern void nsvg__xformPremultiply(float* t, float* s);
+void nsvgDelete(NSVGimage* image);
+void nsvg__xformIdentity(float* t);
+void nsvg__deleteParser(NSVGparser* p);
+void nsvg__xformInverse(float* inv, float* t);
+void nsvg__xformPremultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
+INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale);
+VOID LoadSVGfont(NSVGfont  *fontSVG);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;

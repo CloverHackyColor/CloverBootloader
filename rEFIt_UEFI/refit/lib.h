@@ -206,7 +206,9 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define INX_NVWEBON         19
 #define OPT_NVWEBON         (1 << INX_NVWEBON)
 #define NUM_OPT             20
-extern CHAR16* ArgOptional[];
+//extern CHAR16* ArgOptional[];
+
+#define AsciiPageSize 0xC0
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 

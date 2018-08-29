@@ -3504,7 +3504,81 @@ static void nsvg__endElement(void* ud, const char* el)
   }
 }
 
-static void addLetters(NSVGparser* p, char* s)
+INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale)
+{
+  INTN x1 = x;
+//  INTN y = 0;
+  NSVGshape *shape;
+  NSVGglyph* g;
+
+  shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+  if (shape == NULL) return x;
+  
+  g = p->font->glyphs;
+  while (g) {
+    if (g->unicode == letter) {
+      shape->paths = g->path;
+      //        DBG("Found glyph %x, point[0]=(%d,%d)\n", letter,
+      //            (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
+      break;
+    }
+    g = g->next;
+  }
+  if (!g) {
+    //missing glyph
+    NSVGglyph* g = p->font->missingGlyph;
+    shape->paths = g->path;
+    DBG("Missing glyph %x, path[0]=%d\n", letter, (int)shape->paths->pts[0]);
+  }
+  if (!shape->paths) {
+    if (g) {
+      x1 += g->horizAdvX * scale;
+    }
+    if (shape) {
+      FreePool(shape);
+    }
+    return x1;
+  }
+  //fill shape
+  shape->id[0] = (char)(letter & 0xff);
+  shape->id[1] = (char)((letter >> 8) & 0xff);
+  shape->fill.type = NSVG_PAINT_COLOR;
+  shape->fill.color = NSVG_RGBA(0, 0, 0, 255); //black
+  shape->stroke.type = NSVG_PAINT_NONE;
+  shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
+  shape->strokeWidth = 1.0f;
+  shape->flags = NSVG_FLAGS_VISIBLE;
+  nsvg__xformIdentity(shape->xform);
+  //scale convert shape from glyph size to user's font-size
+  shape->xform[0] = scale; //1.f;
+  shape->xform[3] = -scale; //-1.f; //glyphs are mirrored by Y
+  shape->xform[4] = x - p->font->bbox[0] * scale;
+  shape->xform[5] = y + p->font->bbox[3] * scale; // Y3 is a floor for a letter, so Y+x[5]=realY
+  //    DumpFloat2("glyph xform:", shape->xform, 6);
+  //in glyph units
+  shape->bounds[0] = p->font->bbox[0]; //x + p->font->bbox[0] * scale;
+  shape->bounds[1] = p->font->bbox[1]; //y + p->font->bbox[1] * scale;
+  shape->bounds[2] = p->font->bbox[2]; //x + p->font->bbox[2] * scale;
+  shape->bounds[3] = p->font->bbox[3]; //y + p->font->bbox[3] * scale;
+  //    DumpFloat2("glyph bounds in text", shape->bounds, 4);
+  
+  x1 += g->horizAdvX * scale; //position for next letter in user's units
+  shape->strokeLineJoin = NSVG_JOIN_MITER;
+  shape->strokeLineCap = NSVG_CAP_BUTT;
+  shape->miterLimit = 4;
+  shape->fillRule = NSVG_FILLRULE_NONZERO;
+  shape->opacity = 1;
+  
+  // Add to tail
+  if (p->image->shapes == NULL)
+    p->image->shapes = shape;
+  else
+    p->shapesTail->next = shape;
+  p->shapesTail = shape;
+  return x1;
+}
+
+static void addString(NSVGparser* p, char* s)
 {
 //text support should create shape for each letter
   UINTN len = strlen(s);
@@ -3514,8 +3588,8 @@ static void addLetters(NSVGparser* p, char* s)
     return; //later we make external fonts
   }
 //  DBG("use font-family=%a\n", p->font->fontFamily);
-  NSVGshape *shape;
-  NSVGglyph* g;
+//  NSVGshape *shape;
+//  NSVGglyph* g;
   //calculate letter size
   //float sx = p->font->bbox[2] - p->font->bbox[0];
 //  DumpFloat2("font bbox", p->font->bbox, 4);
@@ -3534,72 +3608,7 @@ static void addLetters(NSVGparser* p, char* s)
     if (!letter) {
       break;
     }
-    
-    shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
-    if (shape == NULL) return;
-    
-    g = p->font->glyphs;
-    while (g) {
-      if (g->unicode == letter) {
-        shape->paths = g->path;
-//        DBG("Found glyph %x, point[0]=(%d,%d)\n", letter,
-//            (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
-        break;
-      }
-      g = g->next;
-    }
-    if (!g) {
-      //missing glyph
-      NSVGglyph* g = p->font->missingGlyph;
-      shape->paths = g->path;
-      DBG("Missing glyph %x, path[0]=%d\n", letter, (int)shape->paths->pts[0]);
-    }
-    if (!shape->paths) {
-      if (g) {
-        x += g->horizAdvX * scale;
-      }
-      if (shape) {
-        FreePool(shape);
-      }
-      continue;
-    }
-    //fill shape
-    shape->id[0] = (char)(letter & 0xff);
-    shape->id[1] = (char)((letter >> 8) & 0xff);
-    shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = NSVG_RGBA(0, 0, 0, 255); //black
-    shape->stroke.type = NSVG_PAINT_NONE;
-    shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
-    shape->strokeWidth = 1.0f;
-    shape->flags = NSVG_FLAGS_VISIBLE;
-    nsvg__xformIdentity(shape->xform);
-    //scale convert shape from glyph size to user's font-size
-    shape->xform[0] = scale; //1.f;
-    shape->xform[3] = -scale; //-1.f; //glyphs are mirrored by Y
-    shape->xform[4] = x - p->font->bbox[0] * scale;
-    shape->xform[5] = y + p->font->bbox[3] * scale; // Y3 is a floor for a letter, so Y+x[5]=realY
-//    DumpFloat2("glyph xform:", shape->xform, 6);
-    //in glyph units
-    shape->bounds[0] = p->font->bbox[0]; //x + p->font->bbox[0] * scale;
-    shape->bounds[1] = p->font->bbox[1]; //y + p->font->bbox[1] * scale;
-    shape->bounds[2] = p->font->bbox[2]; //x + p->font->bbox[2] * scale;
-    shape->bounds[3] = p->font->bbox[3]; //y + p->font->bbox[3] * scale;
-//    DumpFloat2("glyph bounds in text", shape->bounds, 4);
-    
-    x += g->horizAdvX * scale; //position for next letter in user's units
-    shape->strokeLineJoin = NSVG_JOIN_MITER;
-    shape->strokeLineCap = NSVG_CAP_BUTT;
-    shape->miterLimit = 4;
-    shape->fillRule = NSVG_FILLRULE_NONZERO;
-    shape->opacity = 1;
-    
-    // Add to tail
-    if (p->image->shapes == NULL)
-      p->image->shapes = shape;
-    else
-      p->shapesTail->next = shape;
-    p->shapesTail = shape;
-    
+    x = addLetter(p, letter, x, y, scale);
   }
 }
 
@@ -3671,7 +3680,7 @@ static void nsvg__content(void* ud, char* s)
     }
   }
   else if (p->isText) { //text support
-    addLetters(p, s);
+    addString(p, s);
   }
 }
 
