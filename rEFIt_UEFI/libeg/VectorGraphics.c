@@ -187,7 +187,7 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   INTN Height = FontHeight + 2;
   INTN Width = Height * (0xC0 + GlobalConfig.CodepageSize);
   FontImage = egCreateImage(Width, Height, TRUE);
-  
+  DBG("load font %a\n", fontSVG->fontFamily);
   if (!fontSVG->unitsPerEm) {
     fontSVG->unitsPerEm = 1000;
   }
@@ -196,19 +196,26 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
     fH = (float)fontSVG->unitsPerEm;
   }
   FontScale = (float)Height / fH;
+  DBG("font scale %s\n", PoolPrintFloat(FontScale));
   
   p = nsvg__createParser();
   if (!p) {
     DBG("no parser\n");
     return;
   }
-  
+  p->font = fontSVG;
+  p->image = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
+  p->image->height = Height;
+  p->image->width = Width;
   //for each letter rasterize glyph into FontImage
   //0..0xC0
   // cyrillic 0x410..0x450 на место 0xC0
   INTN x = 0;
   INTN y = 0;
   for (i = 0; i < AsciiPageSize; i++) {
+    if (i > 0x20) {
+      DBG("addLetter %x\n", i);
+    }
     addLetter(p, i, x, y, FontScale);
     x += Height;
   }

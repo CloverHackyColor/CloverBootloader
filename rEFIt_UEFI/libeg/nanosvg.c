@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -3518,8 +3518,8 @@ INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale)
   while (g) {
     if (g->unicode == letter) {
       shape->paths = g->path;
-      //        DBG("Found glyph %x, point[0]=(%d,%d)\n", letter,
-      //            (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
+              DBG("Found glyph %x, point[0]=(%d,%d)\n", letter,
+                  (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
       break;
     }
     g = g->next;
@@ -3540,6 +3540,7 @@ INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale)
     return x1;
   }
   //fill shape
+  DBG("fill shape\n");
   shape->id[0] = (char)(letter & 0xff);
   shape->id[1] = (char)((letter >> 8) & 0xff);
   shape->fill.type = NSVG_PAINT_COLOR;
