@@ -1073,7 +1073,7 @@ MainPostBuildScript() {
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
       done
 
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume DataHubDxe SMCHelper)
+      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator AppleKeyFeeder FirmwareVolume DataHubDxe SMCHelper)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi

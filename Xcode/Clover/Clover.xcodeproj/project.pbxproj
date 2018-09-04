@@ -827,6 +827,8 @@
 		12C874D01DE42A4900BF4974 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
+		12E94D31213EEA4100D1F644 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
+		12E94D32213EF04A00D1F644 /* AppleKeyFeeder */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppleKeyFeeder; sourceTree = "<group>"; };
 		12EA7C221E65FC3D00085A48 /* HashServiceFix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HashServiceFix.c; sourceTree = "<group>"; };
 		12EA7C231E65FC3D00085A48 /* HashServiceFix.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HashServiceFix.inf; sourceTree = "<group>"; };
 		12EA7C241E65FC3D00085A48 /* sha1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
@@ -908,7 +910,6 @@
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
-		A5BF392420D96FE3004340E1 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Clover; path = /Volumes/MacHD/Users/slice/src/UDK2018/Clover/Xcode/Clover/build/Debug/Clover; sourceTree = "<absolute>"; };
 		A5BF392520D9F17A004340E1 /* FloatLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatLib.h; sourceTree = "<group>"; };
 		A5BF392620D9F17B004340E1 /* FloatLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FloatLib.c; sourceTree = "<group>"; };
 		A5BF392820D9F18C004340E1 /* nanosvg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nanosvg.h; sourceTree = "<group>"; };
@@ -1100,6 +1101,7 @@
 			children = (
 				12A60F4D1DB610500068BF8B /* AppleImageCodec */,
 				12AAF5F11DC0F03B00A52B12 /* AppleKeyAggregator */,
+				12E94D32213EF04A00D1F644 /* AppleKeyFeeder */,
 				12AAF5051DBE167600A52B12 /* AppleUITheme */,
 				12AAF3C41DB7743E00A52B12 /* DriverOverride */,
 				12AAF3C71DB7744B00A52B12 /* DumpUefiCalls */,
@@ -2705,6 +2707,7 @@
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
 				12FEB9EE212F3278002B6CE2 /* Patches_for_UDK2018 */,
 				A511943C1F74B380005B0121 /* Patches_for_EDK2 */,
+				12E94D31213EEA4100D1F644 /* Clover */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2952,7 +2955,7 @@
 			);
 			name = Clover;
 			productName = Clover;
-			productReference = A5BF392420D96FE3004340E1 /* Clover */;
+			productReference = 12E94D31213EEA4100D1F644 /* Clover */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

@@ -1,0 +1,61 @@
+## @file
+#
+#  Module Name:
+#
+#    AppleKeyFeeder.inf
+#
+#  Abstract:
+#
+#	feed the apple key system with keystroke
+#   needed to enter password at preboot time.
+#
+#	Jief 2018
+#
+#   have no idea about licenses. Keep copyright and use with any modifications.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AppleKeyFeeder
+  FILE_GUID                      = 4b67e98e-996b-40ba-a718-ae33193ec5be
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = AppleKeyFeederEntrypoint
+  
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+  MemLogLib
+  
+[Sources]
+  AppleKeyFeeder.c
+  AppleKeyMapUtils.c
+  SimpleTextProxy.c
+  SimpleTextExProxy.c
+
+[Guids]
+
+[Protocols]
+    gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
+    gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
+  
+[BuildOptions]
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+#  XCODE:*_*_*_CC_FLAGS = -Os
+#  GCC:*_*_*_CC_FLAGS = -O0
+#  GCC:DEBUG_*_*_CC_FLAGS = -O0 -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
+#  GCC:RELEASE_*_*_CC_FLAGS = -Os -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
+  
