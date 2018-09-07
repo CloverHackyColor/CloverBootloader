@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "entry_scan.h"
 #include "device_tree.h"
 #include "kernel_patcher.h"
-#include <Protocol/AppleEvent.h>
 
 #define PATCH_DEBUG 0
 #define MEM_DEB 0
@@ -30,17 +29,6 @@ EFI_EVENT   ExitBootServiceEvent = NULL;
 EFI_EVENT   mSimpleFileSystemChangeEvent = NULL;
 EFI_HANDLE  mHandle = NULL;
 
-
-extern EFI_GUID gAppleEventProtocolGuid;
-
-STATIC APPLE_EVENT_PROTOCOL mAppleEventProtocol = {
-  1,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
 
 /*
 VOID WaitForCR()
@@ -456,7 +444,6 @@ EventsInitialize (IN LOADER_ENTRY *Entry)
 	 &mVirtualAddressChangeEvent
 	 );
      */
-  Status = gBS->InstallProtocolInterface(&mHandle, &gAppleEventProtocolGuid, EFI_NATIVE_INTERFACE, &mAppleEventProtocol);
 	// and what if EFI_ERROR?
 	return Status;
 }

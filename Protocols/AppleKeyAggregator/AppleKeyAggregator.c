@@ -19,7 +19,19 @@
 
 #include <Protocol/AppleKeyState.h>
 #include <Protocol/AppleKeyMapDatabase.h>
+#include <Protocol/AppleEvent.h>
 #include "AppleKeyAggregator.h"
+
+extern EFI_GUID gAppleEventProtocolGuid;
+
+STATIC APPLE_EVENT_PROTOCOL mAppleEventProtocol = {
+  1,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
 
 // KeyMapGetKeyStrokesByIndex
 APPLE_KEY_STROKES_INFO *
@@ -419,6 +431,10 @@ AggregatorEntryPoint (
                     (VOID *)&Aggregator->AggregatorProtocol,
                     NULL
                     );
+
+    if (!EFI_ERROR (Status)) {
+      Status = gBS->InstallProtocolInterface(ImageHandle, &gAppleEventProtocolGuid, EFI_NATIVE_INTERFACE, &mAppleEventProtocol);
+    }
   }
 
   return Status;

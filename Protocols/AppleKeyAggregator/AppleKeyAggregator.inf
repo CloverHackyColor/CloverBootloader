@@ -27,8 +27,9 @@
   MdeModulePkg/MdeModulePkg.dec
 
 [Protocols]
-  gAppleKeyStateProtocolGuid  ## PRODUCES
+  gAppleKeyStateProtocolGuid          ## PRODUCES
   gAppleKeyMapDatabaseProtocolGuid    ## PRODUCES
+  gAppleEventProtocolGuid             ## PRODUCES
 
 [LibraryClasses]
   BaseLib
