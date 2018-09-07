@@ -922,7 +922,7 @@ MainPostBuildScript() {
     export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
     export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
     export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
-
+	if (( $NOBOOTFILES == 0 )); then
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
 
@@ -933,7 +933,7 @@ MainPostBuildScript() {
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DxeIpl${TARGETARCH}.z" "$BUILD_DIR_ARCH/DxeIpl.efi"
 
     echo "Generate Loader Image ..."
-
+	fi
     if [[ "${TARGETARCH}" = IA32 ]]; then
       cloverEFIFile=boot3
       if (( $NOBOOTFILES == 0 )); then
@@ -1113,12 +1113,12 @@ MainPostBuildScript() {
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioInputFix-64.efi
  #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ApfsDriverLoader-64.efi
- #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi 
+ #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi
         binArray=( ApfsDriverLoader AppleImageLoader AppleUISupport )
             for efi in "${binArray[@]}"
             do
                 copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
-                copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi 
+                copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
             done
 
           ;;

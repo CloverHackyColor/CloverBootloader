@@ -396,7 +396,7 @@ typedef struct NSVGparser
 
 // Parses SVG file from a null terminated string, returns SVG image as paths.
 // Important note: changes the string.
-extern NSVGparser* nsvgParse(char* input, const char* units, float dpi);
+NSVGparser* nsvgParse(char* input, const char* units, float dpi);
 
 // Deletes list of paths.
 void nsvgDelete(NSVGimage* image);
@@ -414,7 +414,7 @@ typedef void (*recursive_image)(const void *obj, NSVGrasterizer *r, const char *
 
 
 // Allocated rasterizer context.
-extern NSVGrasterizer* nsvgCreateRasterizer(VOID);
+NSVGrasterizer* nsvgCreateRasterizer(VOID);
 
 // Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
 //   r - pointer to rasterizer context
@@ -425,13 +425,13 @@ extern NSVGrasterizer* nsvgCreateRasterizer(VOID);
 //   w - width of the image to render
 //   h - height of the image to render
 //   stride - number of bytes per scaleline in the destination buffer
-extern void nsvgRasterize(NSVGrasterizer* r,
+void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
                    unsigned char* dst, int w, int h, int stride, recursive_image external_image, const void *obj);
 
 // Deletes rasterizer context.
-extern void nsvgDeleteRasterizer(NSVGrasterizer*);
-extern NSVGparser* nsvg__createParser();
+void nsvgDeleteRasterizer(NSVGrasterizer*);
+NSVGparser* nsvg__createParser();
 
 #define NSVG__SUBSAMPLES  5
 #define NSVG__FIXSHIFT    10

@@ -121,6 +121,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
           Banner->height = 200;
         }
         DBG("Banner size [%d,%d]\n", (int)Banner->width, (int)Banner->height);
+        DBG("Banner shift dx=%s dy=%s\n", PoolPrintFloat(Banner->realBounds[0]), PoolPrintFloat(Banner->realBounds[1]));
         shape->flags = 0;  //invisible
       }
       shape->next = Banner->shapes; //add to head
@@ -160,6 +161,24 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (p1) {
     nsvg__deleteParser(p1);
   }
+  
+  //Test text
+  if (0 && fontSVG) {
+    INTN iHeight = 260;
+    INTN iWidth = UGAWidth-200;
+    DBG("create textbuffer\n");
+    EG_IMAGE* TextBufferXY = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
+    drawSVGtext(TextBufferXY, fontSVG, L"Clover");
+    DBG("text ready to blit\n");
+    BltImageAlpha(TextBufferXY,
+                  (UGAWidth - iWidth) / 2,
+                  (UGAHeight - iHeight) / 2,
+                  &MenuBackgroundPixel,
+                  16);
+    egFreeImage(TextBufferXY);
+    DBG("draw finished\n");
+  }
+  
   if (fontSVG) {
     nsvg__deleteFont(fontSVG);
   }
@@ -204,17 +223,16 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
     return;
   }
   p->font = fontSVG;
-  p->image = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
   p->image->height = Height;
   p->image->width = Width;
   //for each letter rasterize glyph into FontImage
   //0..0xC0
-  // cyrillic 0x410..0x450 на место 0xC0
+  // cyrillic 0x410..0x450 at 0xC0
   INTN x = 0;
   INTN y = 0;
   for (i = 0; i < AsciiPageSize; i++) {
     if (i > 0x20) {
-      DBG("addLetter %x\n", i);
+//      DBG("addLetter %x\n", i);
     }
     addLetter(p, i, x, y, FontScale);
     x += Height;
@@ -345,11 +363,19 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     shape->opacity = 1;
 
     // Add to tail
+    
     if (p->image->shapes == NULL)
       p->image->shapes = shape;
-    else
-      p->shapesTail->next = shape;
+    else {
+      if (!p->shapesTail) {
+        p->shapesTail = shape;
+        p->shapesTail->next = NULL;
+      } else {
+        p->shapesTail->next = shape;
+      }
+    }
     p->shapesTail = shape;
+    
   }
   p->image->realBounds[0] = fontSVG->bbox[0];
   p->image->realBounds[1] = fontSVG->bbox[1];
@@ -425,8 +451,8 @@ VOID testSVG()
       ScaleX = Width / SVGimage->width;
       ScaleY = Height / SVGimage->height;
       Scale = (ScaleX > ScaleY)?ScaleY:ScaleX;
-      float tx = -SVGimage->realBounds[0] * Scale;
-      float ty = -SVGimage->realBounds[1] * Scale;
+      float tx = 0; //-SVGimage->realBounds[0] * Scale;
+      float ty = 0; //-SVGimage->realBounds[1] * Scale;
       DBG("timing rasterize start tx=%s ty=%s\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
       DBG("timing rasterize end\n");
