@@ -429,12 +429,15 @@ AggregatorEntryPoint (
                     (VOID *)&Aggregator->DatabaseProtocol,
                     &gAppleKeyStateProtocolGuid,
                     (VOID *)&Aggregator->AggregatorProtocol,
+                    &gAppleEventProtocolGuid,
+                    &mAppleEventProtocol,
                     NULL
                     );
-
+/*
     if (!EFI_ERROR (Status)) {
       Status = gBS->InstallProtocolInterface(ImageHandle, &gAppleEventProtocolGuid, EFI_NATIVE_INTERFACE, &mAppleEventProtocol);
     }
+ */
   }
 
   return Status;

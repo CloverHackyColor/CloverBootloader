@@ -36,8 +36,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   NSVGfont    *fontSVG;
   NSVGimage   *SVGimage;
   NSVGtext    *text;
-  NSVGshape   *shape;
-  NSVGgroup   *group;
+  NSVGrasterizer* rast = nsvgCreateRasterizer();
 
   float Scale;
 
@@ -94,6 +93,10 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     NSVGclipPath* clipPaths;
   } NSVGimage;
 */
+  
+#if 0 //test banner
+  NSVGshape   *shape;
+  NSVGgroup   *group;
   NSVGimage *Banner = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
   NSVGshape *shapeNext, *shapePrev = NULL;
   
@@ -142,7 +145,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   EG_IMAGE        *NewImage;
   NewImage = egCreateImage((int)Width, (int)Height, TRUE);
   DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
-  NSVGrasterizer* rast = nsvgCreateRasterizer();
+  
   float tx = 0; //-Banner->realBounds[0] * Scale;
   float ty = 0; //-Banner->realBounds[1] * Scale;
   DBG("Banner shift by %d, %d\n", (int)tx, (int)ty);
@@ -161,7 +164,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (p1) {
     nsvg__deleteParser(p1);
   }
-  
+#endif
   //Test text
   if (0 && fontSVG) {
     INTN iHeight = 260;
@@ -182,7 +185,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (fontSVG) {
     nsvg__deleteFont(fontSVG);
   }
-  nsvgDelete(Banner);
+//  nsvgDelete(Banner);
   nsvgDeleteRasterizer(rast);
   
   return EFI_NOT_AVAILABLE_YET;

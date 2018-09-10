@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -871,6 +871,9 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   }
   nsvg__xformMultiply(grad->xform, data->xform); //from GradientData "gradientTransform"
 	nsvg__xformMultiply(grad->xform, link->xform); //from shape. I also have shape->xform?
+  if (shape->link) {
+    nsvg__xformMultiply(grad->xform, shape->xform);
+  }
 
   grad->spread = data->spread;
   memcpy(grad->stops, stops, nstops*sizeof(NSVGgradientStop));
@@ -2594,6 +2597,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   float x = 0.0f;
   float y = 0.0f;
   float xform[6];
+
 //  float inv[6], localBounds[4];
 
 //  nsvg__xformIdentity(xform); //initial
@@ -2625,10 +2629,15 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   if (!shape) {
     return;
   }
+  
+  AsciiStrCatS(shape->id, 64, "_lnk");
+  x -= shape->bounds[0];
+  y -= shape->bounds[1];
 
   nsvg__xformSetTranslation(xform, x, y);
-  nsvg__xformMultiply(xform, attr->xform);
-  nsvg__xformMultiply(shape->xform, xform);
+  nsvg__xformPremultiply(xform, attr->xform); //translate after rotate
+  memcpy(shape->xform, xform, sizeof(float)*6);
+//  nsvg__xformMultiply(shape->xform, xform); //no keep both if present
 
   //  DBG("paint type=%d\n", shape->fill.type);
   if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {
@@ -3744,21 +3753,27 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
   float newBounds[8]; //(x1, y1), (x2, y2), (x2, y1), (x1, y2)
   shapeLink = shapes;
   int count = 0;
+  int visibility;
+  
+  
   
   for (; shapeLink != NULL; shapeLink = shapeLink->next) {
     memcpy(&xform, &shapeLink->xform, sizeof(float)*6);
+    visibility = (shapeLink->flags & NSVG_FLAGS_VISIBLE); //check origin visibility, not link
     if (shapeLink->link) {
       shape = shapeLink->link;
       nsvg__xformPremultiply(xform, shape->xform);
     } else shape = shapeLink;
-    
+    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+    DumpFloat2("  transform", xform, 6);
+    DumpFloat2("  shape bounds", shape->bounds, 4);
     nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[2], &newBounds[3], shape->bounds[2], shape->bounds[3], xform);
     nsvg__xformPoint(&newBounds[4], &newBounds[5], shape->bounds[2], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[6], &newBounds[7], shape->bounds[0], shape->bounds[3], xform);
     
     
-    if ( (shape->flags & NSVG_FLAGS_VISIBLE) == NSVG_FLAGS_VISIBLE) {
+    if (visibility == NSVG_FLAGS_VISIBLE) {
       bounds[0] = nsvg__minf(bounds[0], newBounds[0]);
       bounds[0] = nsvg__minf(bounds[0], newBounds[6]);
       bounds[1] = nsvg__minf(bounds[1], newBounds[1]);
@@ -3767,6 +3782,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[2] = nsvg__maxf(bounds[2], newBounds[4]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
+      DumpFloat2("  new bounds", bounds, 4);
       count++; //count visible
     }
   }

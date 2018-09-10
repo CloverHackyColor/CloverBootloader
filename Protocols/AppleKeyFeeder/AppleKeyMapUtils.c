@@ -356,9 +356,6 @@ DBG("SendDataToAppleMap: key not mapped, sorry\n");
  * Entry point
  ***************************************************************/
 
-/**
- * SMCHelper entry point. Installs AppleSMCProtocol.
- */
 EFI_STATUS
 EFIAPI
 AppleKeyMapUtilsInit (

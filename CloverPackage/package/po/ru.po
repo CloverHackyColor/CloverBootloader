@@ -77,11 +77,8 @@ msgstr "Clover v2.4k"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-" - загрузчик с открытым исходным кодом, использующий технологии проектов "
-"Chameleon, rEFIt, XNU, VirtualBox."
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr " - загрузчик с открытым исходным кодом, использующий технологии проектов Chameleon, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -105,60 +102,43 @@ msgstr "Загрузка систем macOS 10.xx, Windows EFI и Linux EFI;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid ""
-"It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"Clover EFI предоставляет операционным системам сервисы рантайма (Runtime "
-"Services), что невозможно с загрузчиками на основе BIOS;"
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "Clover EFI предоставляет операционным системам сервисы рантайма (Runtime Services), что невозможно с загрузчиками на основе BIOS;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid ""
-"mostly Clover do automatic detection of hardware and set all properties by "
-"default. But user can change them by config.plist"
-msgstr ""
-"В основном Clover автоматически определяет установленное оборудование и "
-"выставляет нужные свойства по умолчанию, но пользователь может изменять "
-"настройки в файле config.plist;"
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "В основном Clover автоматически определяет установленное оборудование и выставляет нужные свойства по умолчанию, но пользователь может изменять настройки в файле config.plist;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"Clover позволяет использовать панель Загрузочный том в Системных настройках;"
+msgstr "Clover позволяет использовать панель Загрузочный том в Системных настройках;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
 msgid "UUID written into config.plist will be the same as in OS"
-msgstr ""
-"Загрузочный том может быть указан посредством UUID в файле config.plist;"
+msgstr "Загрузочный том может быть указан посредством UUID в файле config.plist;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
 msgid "SMBIOS will be corrected to standard 2.6"
-msgstr ""
-"Автоматическая правка таблиц SMBIOS для соответствия стандарту версии 2.6;"
+msgstr "Автоматическая правка таблиц SMBIOS для соответствия стандарту версии 2.6;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:33
 msgid "ACPI will be corrected to standard 4.0."
-msgstr ""
-"Автоматическая правка таблиц ACPI для соответствия стандарту версии 4.0;"
+msgstr "Автоматическая правка таблиц ACPI для соответствия стандарту версии 4.0;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"Изменённая таблица DSDT может загружаться из корневого раздела ОС или из "
-"каталога EFI;"
+msgstr "Изменённая таблица DSDT может загружаться из корневого раздела ОС или из каталога EFI;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
 msgid "DSDT patching on the fly by fixes and by patterns"
-msgstr ""
-"Коррекция DSDT «на лету» - посредством встроенных исправлений и "
-"пользовательских шаблонов;"
+msgstr "Коррекция DSDT «на лету» - посредством встроенных исправлений и пользовательских шаблонов;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
@@ -167,12 +147,8 @@ msgstr "Восстановление функционала перезагруз
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid ""
-"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards. Also customizable."
-msgstr ""
-"Автоматическое подключение видеокарт ATI, NVidia и Intel с возможностями "
-"настройки;"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "Автоматическое подключение видеокарт ATI, NVidia и Intel с возможностями настройки;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -182,8 +158,7 @@ msgstr "Восстановление функционала USB вплоть д�
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
 msgid "HDA injector and Ethernet builtin injector"
-msgstr ""
-"Инжекция свойств для устройств на PCI-шине, в т.ч. звуковой и сетевой карт;"
+msgstr "Инжекция свойств для устройств на PCI-шине, в т.ч. звуковой и сетевой карт;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:40
@@ -193,9 +168,7 @@ msgstr "Возможность настройки управления пита�
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"Подгрузка или сброс дополнительных таблиц ACPI (SSDT-xx, APIC, BOOT, SLIC, "
-"SLIT, SRAT, UEFI и др.);"
+msgstr "Подгрузка или сброс дополнительных таблиц ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI и др.);"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -214,19 +187,13 @@ msgstr "Полноценная поддержка функционала NVRAM;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid ""
-"default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"Установка паузы перед загрузкой ОС, настраиваемый внешний вид, возможность "
-"делать снимки экрана нажатием F10;"
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "Установка паузы перед загрузкой ОС, настраиваемый внешний вид, возможность делать снимки экрана нажатием F10;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr ""
-"Сохранение пред- (клавишей F2) и постзагрузочных отчётов для диагностики и "
-"отладки."
+msgstr "Сохранение пред- (клавишей F2) и постзагрузочных отчётов для диагностики и отладки."
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -398,7 +365,7 @@ msgstr "Clover для BIOS-загрузки"
 msgid "Select the version of CloverEFI to install."
 msgstr "Варианты установки Clover-а для BIOS-загрузки (для систем без UEFI) с драйверами доступа к дискам."
 
-#. type: "cloverEFI.32_description"
+#. type: "cloverEFI.32_title, cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
@@ -495,128 +462,134 @@ msgid "Select drivers for BIOS-booting."
 msgstr "Выберите драйверы для режима загрузки из BIOS."
 
 #. type: "ApfsDriverLoader-64_description, ApfsDriverLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:93 Resources/templates/Localizable.strings:113
+#: Resources/templates/Localizable.strings:93 Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
 msgstr "Поддержка загрузки оригинального драйвера файловой системы APFS из контейнера. Необходим для macOS 10.13 и выше."
 
 #. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
-#: Resources/templates/Localizable.strings:94 Resources/templates/Localizable.strings:116
+#: Resources/templates/Localizable.strings:94 Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "Декодер изображений в форматах PNG и BMP. Необходим для работы FileVault 2."
 
 #. type: "AppleImageLoader-64_description, AppleImageLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:95 Resources/templates/Localizable.strings:117
+#: Resources/templates/Localizable.strings:95 Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
 msgstr "Драйвер, реализующий поддержку протокола AppleLoadImage с верификацией исполняемых бинарных модулей Apple."
 
 #. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
-#: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:118
+#: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "Поддержка протокола авторизации пользователя для FileVault 2."
 
+#. type: "AppleKeyFeeder-64_description, AppleKeyFeeder-64.UEFI_description"
+#: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:120
+#, no-wrap
+msgid "Support for PS/2 keyboard to use with FileVault2"
+msgstr "Поддержка клавиатур PS/2 для использования с FileVault 2."
+
 #. type: "AppleUISupport-64_description, AppleUISupport-64.UEFI_description"
-#: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
 msgstr "Поддержка EFI Login UI для FileVault. Функционально заменяет собой драйверы AppleKeyMapAggregator, AppleEvent, AppleUITheme, FirmwareVolume и AppleImageCodec."
 
 #. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
-#: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "Поддержка протокола для отображения фонового изображения при использовании FileVault 2."
 
 #. type: "AptioInputFix-64_description, AptioInputFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:121
+#: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 msgstr "Исправляет ошибки UEFI при работе с устройствами ввода."
 
 #. type: "AptioMemoryFix-64_description, AptioMemoryFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторымх других UEFI.\n"
 "Не использовать совместно с другими AptioFix."
 
 #. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
-#: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:132
+#: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:134
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Поддержка протокола FirmwareVolume для FileVault 2."
 
-#. type: "FSInject-64.UEFI_description"
-#: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:133
+#. type: "FSInject-64_description, FSInject-64.UEFI_description"
+#: Resources/templates/Localizable.strings:103 Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr "Поддержка загрузки расширений ядра из папок, расположенных внутри папки EFI."
 
 #. type: "GrubEXFAT-64_description"
-#: Resources/templates/Localizable.strings:103
+#: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "ExFAT filesystem driver from GRUB."
 msgstr "Поддержка файловой системы ExFAT."
 
 #. type: "GrubISO9660-64_description"
-#: Resources/templates/Localizable.strings:104
+#: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "ISO 9600 filesystem driver from GRUB."
 msgstr "Поддержка файловой системы ISO 9600."
 
 #. type: "GrubNTFS-64_description"
-#: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "NTFS filesystem driver from GRUB."
 msgstr "Поддержка файловой системы NTFS."
 
 #. type: "GrubUDF-64_description"
-#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "UDF filesystem driver from GRUB."
 msgstr "Поддержка файловой системы UDF."
 
-#. type: "SMCHelper-64.UEFI_description"
-#: Resources/templates/Localizable.strings:107 Resources/templates/Localizable.strings:144
+#. type: "SMCHelper-64_description, SMCHelper-64.UEFI_description"
+#: Resources/templates/Localizable.strings:108 Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "Восстанавливает значения переменных NVRAM для расширения FakeSMC при загрузке системы."
 
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:108
+#: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "Поддержка USB 3.0, 64 бита."
 
 #. type: "Drivers64UEFI_title"
-#: Resources/templates/Localizable.strings:110
+#: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "UEFI Drivers, 64 bit"
 msgstr "Драйверы для UEFI-загрузки"
 
 #. type: "Drivers64UEFI_description"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Select drivers for UEFI-booting."
 msgstr "Выберите драйверы для загрузки посредством UEFI."
 
 #. type: "AppleEvent-64.UEFI_description"
-#: Resources/templates/Localizable.strings:114
+#: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Create AppleEvent protocol for FileVault2"
 msgstr "Поддержка протокола AppleEvent для FileVault 2."
 
 #. type: "AppleGraphicsConfig-64.UEFI_description"
-#: Resources/templates/Localizable.strings:115
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "Create optional AppleGraphicsConfig protocol"
 msgstr "Поддержка протокола AppleGraphicsConfig."
 
 #. type: "CsmVideoDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
 "It is based on CSM module in UEFI BIOS and required CSM will be enabled.\n"
@@ -626,151 +599,151 @@ msgstr "Позволяет использовать большие разреш�
 "Драйвер основан на модуле CSM в BIOS и требует, чтобы CSM был включен. На некоторых конфигурациях Clover может не запуститься с этим драйвером или система не будет пробуждаться после сна, поэтому используйте с осторожностью."
 
 #. type: "DataHubDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr "Продержка протокола DataHub, который строго необходим для запуска macOS. Обычно он присутствует (если нет, на экран будет выведено сообщение)."
 
 #. type: "EmuVariableUefi-64.UEFI_description"
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Workaround for store UEFI variables without UEFI."
 msgstr "Драйвер для поддержки переменных NVRAM, необходимых macOS.\n"
 "Современные системы обычно имеют встроенный NVRAM. Используйте драйвер только если вы уверены, что встроенный NVRAM отсутствует или не работает."
 
 #. type: "EnglishDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 msgstr "Поддержка протокола UnicodeCollation для EFI Shell, если он отсутствует в UEFI."
 
 #. type: "Fat-64.UEFI_description"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "FAT filesystem driver."
 msgstr "Поддержка файловой системы FAT."
 
 #. type: "HashServiceFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
 msgid "Fix Hash support if absent in native UEFI BIOS"
 msgstr "Функционал хеширования для тех UEFI-систем, где он отсутствует."
 
 #. type: "HFSPlus.UEFI_description"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "Alternate HFS+ filesystem driver."
 msgstr "Поддержка файловой системы HFS+ (альтернативный драйвер)."
 
 #. type: "NvmExpressDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Driver for support NVM Express devices."
 msgstr "Поддержка протоколов NVM Express для твердотельных накопителей."
 
 #. type: "OsxAptioFix2Drv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
 msgstr "Альтернативный драйвер (2) коррекции ошибок памяти UEFI.\n"
 "Не использовать совместно с другими AptioFix."
 
 #. type: "OsxAptioFix3Drv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:138
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
 msgstr "Альтернативный драйвер (3) коррекции ошибок памяти UEFI.\n"
 "Не использовать совместно с другими AptioFix."
 
 #. type: "OsxAptioFixDrv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Старый вариант коррекции ошибок памяти для AMI Aptio и некоторымх других UEFI.\n"
 "Не использовать совместно с другими AptioFix."
 
 #. type: "OsxFatBinaryDrv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:142
 #, no-wrap
 msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
 msgstr "Поддержка формата FAT Binary для систем 10.9 и более ранних."
 
 #. type: "OsxLowMemFixDrv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "Упрощенный вариант драйвера OsxAptioFix.\n"
 "Не использовать совместно с другими AptioFix."
 
 #. type: "PartitionDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:142
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "Поддержка необычных схем разделов: гибрид GPT/MBR, Apple Partition Map и др."
 
 #. type: "Ps2MouseDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr "Драйвер для мыши PS/2."
 
 #. type: "UsbKbDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:145
+#: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
 msgstr "Драйвер клавиатуры USB."
 
 #. type: "UsbMouseDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:148
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr "Драйвер для мыши USB."
 
 #. type: "VBoxExt2-64.UEFI_description"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:149
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Поддержка файловых систем EXT2 и EXT3 (Linux)."
 
 #. type: "VBoxExt4-64.UEFI_description"
-#: Resources/templates/Localizable.strings:148
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr "Поддержка файловой системы EXT4 (Linux)."
 
 #. type: "VBoxHfs-64.UEFI_description"
-#: Resources/templates/Localizable.strings:149
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "HFS+ filesystem driver."
 msgstr "Поддержка файловой системы HFS+."
 
 #. type: "VBoxIso9600-64.UEFI_description"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "ISO 9600 filesystem driver."
 msgstr "Поддержка файловой системы ISO 9600."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "Themes"
 msgstr "Темы интерфейса"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Выберите темы для установки."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:160
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Black Green Moody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
@@ -778,13 +751,13 @@ msgstr "BGM (Тоскливо-зеленая) тема от Blackosx.\n"
 "Установка будет выполнена в /EFI/CLOVER/themes/BGM."
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:164
 #, no-wrap
 msgid "embedded"
 msgstr "Встроенная"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
@@ -792,13 +765,13 @@ msgstr "Черно-зеленая тема от Blackosx.\n"
 "Установка будет выполнена в /EFI/CLOVER/themes/black_green."
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:166
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
@@ -806,13 +779,13 @@ msgstr "Нержавейка от Slice.\n"
 "Установка будет выполнена в /EFI/CLOVER/themes/metal."
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:170
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "random"
 msgstr "Случайная"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:173
 #, no-wrap
 msgid "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -820,13 +793,13 @@ msgstr "Апельсиновая тема от dwm.\n"
 "Установка будет выполнена в /EFI/CLOVER/themes/orange."
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:174
+#: Resources/templates/Localizable.strings:176
 #, no-wrap
 msgid "steampunkblack"
 msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:175
+#: Resources/templates/Localizable.strings:177
 #, no-wrap
 msgid "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
@@ -834,13 +807,13 @@ msgstr "Тема по мотивам BootCamp от Bijo.\n"
 "Установка будет выполнена в /EFI/CLOVER/themes/bootcamp."
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:178
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "CloverThemeManager"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:179
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "CloverThemeManager.app by blackosx,\n"
 "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
@@ -849,62 +822,62 @@ msgstr "Приложение CloverThemeManager от blackosx для управ�
 "Установка будет выполнена в папку Программы."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:185
+#: Resources/templates/Localizable.strings:187
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Системные RC-скрипты целевого раздела"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:186
+#: Resources/templates/Localizable.strings:188
 #, no-wrap
 msgid "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr "Устанавливает системные скрипты на целевой раздел. Этот раздел должен быть загрузочным для macOS."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Системные RC-скрипты других разделов"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:189
+#: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Устанавливает RC-скрипты на все внутренние загрузочные разделы macOS, кроме целевого."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:190
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Дополнительные RC-скрипты"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:191
+#: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Отключение Sleep Proxy Client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:194
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Отключает сервис Sleep Proxy Client для предотвращаения периодического пробуждения системы во время сна."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:197
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Панель Настроек Clover"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:198
+#: Resources/templates/Localizable.strings:200
 #, no-wrap
 msgid "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr "Устанавливает панель Clover в Системные настройки и программу оповещения об обновлениях CloverUpdater - в папку Программы целевого раздела."
 
-#. type: "371.title"
+#. type: "56.title, 371.title, 57.title"
 #: ../CloverUpdater/CloverUpdater.strings:1 ../CloverUpdater/CloverUpdater.strings:5 ../CloverUpdater/CloverUpdater.strings:2
 #, no-wrap
 msgid "CloverUpdater"
@@ -970,7 +943,7 @@ msgstr "Ок"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "Never"
+#. type: "204.title, Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2 ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
@@ -1026,11 +999,8 @@ msgstr "Проверить сейчас"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Copyright (c) 2013 JrCs, kozlek\n"
-#| "All Rights Reserved"
-msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
+#, no-wrap
+msgid "Copyright (c) 2013 JrCs, kozlek\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\n"
 "Все права зарезервированы"
 
@@ -1190,13 +1160,13 @@ msgstr "Максимальное количество резервных коп�
 msgid "EFI Folder path"
 msgstr "Размещение папки EFI:"
 
-#. type: "Auto"
+#. type: "829.ibShadowedIsNilPlaceholder, Auto"
 #: ../CloverPrefpane/CloverPrefpane.strings:38 ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "Автоматически"
 
-#. type: "No"
+#. type: "833.ibShadowedIsNilPlaceholder, No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39 ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
@@ -1243,3 +1213,4 @@ msgstr "Установить папку EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Неизвестно"
+

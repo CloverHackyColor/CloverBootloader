@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -543,7 +543,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
   float dy = xform[5];
    */
 
-  DumpFloat("flattenShape with", xform, 6);
+//  DumpFloat("flattenShape with", xform, 6);
 	for (path = shape->paths; path != NULL; path = path->next) {
 		r->npoints = 0;
 		// Flatten path
@@ -1682,9 +1682,9 @@ static void nsvg__rasterizeShapes(
  //     nsvg__xformIdentity(xform);
       shapeLink = shape;
     }
-    DBG("ShapeID=%a\n", shape->id);
-    DumpFloat("shape xform", xform, 6);
-    DumpFloat("shape bounds", shape->bounds, 4);
+//    DBG("ShapeID=%a\n", shape->id);
+//    DumpFloat("shape xform", xform, 6);
+//    DumpFloat("shape bounds", shape->bounds, 4);
 /*
      if( shape->image_href && external_image )// load external file
      {
@@ -1705,16 +1705,16 @@ static void nsvg__rasterizeShapes(
 			nsvg__flattenShape(r, shapeLink, xform);
  //     DBG("shape fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
 			// Scale and translate edges
-      DBG("edge translate [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
+ //     DBG("edge translate [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];
 				e->x0 = tx + e->x0;
 				e->y0 = (ty + e->y0) * NSVG__SUBSAMPLES;  //NSVG__SUBSAMPLES = 5
 				e->x1 = tx + e->x1;
 				e->y1 = (ty + e->y1) * NSVG__SUBSAMPLES;
-        if (i == 0 || i == 50) {
-          DBG(" edge[%d]=%s\n", i, PoolPrintFloat(e->x0));
-        }
+//        if (i == 0 || i == 50) {
+//          DBG(" edge[%d]=%s\n", i, PoolPrintFloat(e->x0));
+//        }
 			}
 
 			// Rasterize edges
