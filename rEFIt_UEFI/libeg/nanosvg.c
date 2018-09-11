@@ -898,6 +898,10 @@ static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, float* atXform
   float xform[6];
   int i, first = 1;
   memcpy(xform, shape->xform, 6*sizeof(float));
+  if (shape->link) {
+    nsvg__xformPremultiply(xform, shape->link->xform);
+  }
+  
   nsvg__xformMultiply(xform, atXform);
   for (path = shape->paths; path != NULL; path = path->next) {
     nsvg__xformPoint(&curve[0], &curve[1], path->pts[0], path->pts[1], xform);
@@ -943,7 +947,7 @@ static void nsvg__addShape(NSVGparser* p)
 
   memcpy(shape->id, attr->id, sizeof shape->id);
   memcpy(shape->title, attr->title, sizeof shape->title);
-  DBG("shapeID=%a\n", shape->id);
+//  DBG("shapeID=%a\n", shape->id);
   shape->group = attr->group;
   scale = nsvg__getAverageScale(attr->xform);
   shape->strokeWidth = attr->strokeWidth * scale;
@@ -2680,31 +2684,27 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
   DBG("parse textSpan\n");
   //there should be text->next with own attribs
   for (i = 0; dict[i]; i += 2) {
-    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
-      if (strcmp(dict[i], "x") == 0) {
-        x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
-        text->x = x;
-        DBG("span posX=%s\n", PoolPrintFloat(x));
-      }
-      if (strcmp(dict[i], "y") == 0) {
-        y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-        text->y = y;
-        DBG("span posY=%s\n", PoolPrintFloat(y));
-      }
-      if (strcmp(dict[i], "font-size") == 0)  {
-        r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
-        text->fontSize = r;
-        DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
-      }
-      if (strcmp(dict[i], "class") == 0) {
-        DBG("span class=%a\n", dict[i+1]);
-      }
+    if (strcmp(dict[i], "x") == 0) {
+      x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
+      text->x = x;
+      DBG("span posX=%s\n", PoolPrintFloat(x));
+    } else if (strcmp(dict[i], "y") == 0) {
+      y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
+      text->y = y;
+      DBG("span posY=%s\n", PoolPrintFloat(y));
+    } else if (strcmp(dict[i], "font-size") == 0)  {
+      r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
+      text->fontSize = r;
+      DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
+    } else if (strcmp(dict[i], "class") == 0) {
+      DBG("span class=%a\n", dict[i+1]);      
+    } else {
+      nsvg__parseAttr(p, dict[i], dict[i + 1]);
     }
   }
   if (attr->fontFace) {
     text->font = attr->fontFace;
   }
-
 }
 
 static void nsvg__parseText(NSVGparser* p, const char** dict)

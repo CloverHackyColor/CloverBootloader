@@ -1697,7 +1697,7 @@ static void nsvg__rasterizeShapes(
        external_image(obj, r, shape->image_href, rect);
      }
 */
-		if (shapeLink->fill.type != NSVG_PAINT_NONE) {
+		if (shape->fill.type != NSVG_PAINT_NONE) {
 			nsvg__resetPool(r);
 			r->freelist = NULL;
 			r->nedges = 0;
@@ -1721,10 +1721,10 @@ static void nsvg__rasterizeShapes(
 			qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
-			nsvg__initPaint(&cache, &shapeLink->fill, shapeLink->opacity);
-			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule, &shape->clip);
+			nsvg__initPaint(&cache, &shape->fill, shape->opacity);
+			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shape->fillRule, &shapeLink->clip);
 		}
-		if (shapeLink->stroke.type != NSVG_PAINT_NONE && (shapeLink->strokeWidth * min_scale) > 0.01f) {
+		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * min_scale) > 0.01f) {
 			nsvg__resetPool(r);
 			r->freelist = NULL;
 			r->nedges = 0;
@@ -1747,7 +1747,7 @@ static void nsvg__rasterizeShapes(
 			qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
-			nsvg__initPaint(&cache, &shapeLink->stroke, shapeLink->opacity);
+			nsvg__initPaint(&cache, &shape->stroke, shape->opacity);
 			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, NSVG_FILLRULE_NONZERO, &shapeLink->clip);
 		}
 	}
