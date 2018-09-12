@@ -1410,7 +1410,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	{ 0x10DE1B80,   "GeForce GTX 1080"}, // GP104
 	{ 0x10DE1B81,   "GeForce GTX 1070"}, // GP104
   //	{ 0x10DE1B82,	"Graphics Device" }, // GP104
-  //	{ 0x10DE1B83,	"Graphics Device" }, // GP104
+  { 0x10DE1B83,	"GeForce GTX 1060" }, // GP104
 	{ 0x10DE1BA0,	"GeForce GTX 1080" }, // GP104M
 	{ 0x10DE1BA1,	"GeForce GTX 1070" }, // GP104M
 	{ 0x10DE1BB0,	"Quadro P5000" }, // GP104GL

@@ -3141,7 +3141,7 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 
   group = (NSVGgroup*)AllocateZeroPool(sizeof(NSVGgroup));
 
-  memcpy(group->id, curAttr->id, sizeof(group->id));
+  AsciiStrCpyS(group->id, 64, curAttr->id);
   group->parent = curAttr->group;
   curAttr->group = group;
 
@@ -3167,12 +3167,12 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
         font->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]);
       }
       if (strcmp(dict[i], "font-family") == 0) {
-        memcpy(font->fontFamily, dict[i+1], 64);
+        AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
       }
     }
   }
-  DBG("found font=%a\n", curAttr->id);
-  memcpy(font->id, curAttr->id, sizeof(font->id));
+  DBG("found fontID=%a\n", curAttr->id);
+  AsciiStrCpyS(font->id, 64, curAttr->id);
 
   p->font = font;
 }
@@ -3182,13 +3182,14 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
   int i;
   if (!p) {
     DBG("no parser\n");
+    return;
   }
   NSVGfont* font = p->font;
   DBG("begin parse font face, font->id=%a\n", font->id);
   for (i = 0; dict[i]; i += 2) {
     if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
       if (strcmp(dict[i], "font-family") == 0) {
-        memcpy(font->fontFamily, dict[i+1], 64);
+        AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
         DBG("font-family %a\n", font->fontFamily);
       }
       else if (strcmp(dict[i], "font-weight") == 0) {
@@ -3463,8 +3464,6 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__pushAttr(p);
     nsvg__parseIMAGE(p, dict);
     nsvg__popAttr(p);
-  } else if (strcmp(el, "font-face") == 0) {
-    nsvg__parseFontFace(p, dict);
   }
 }
 

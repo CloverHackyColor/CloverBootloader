@@ -656,7 +656,7 @@ EFI_STATUS egScreenShot(VOID)
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaVideoToBltBuffer,
                      0, 0, 0, 0, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     }
-
+// yyyyy
 #if defined(LODEPNG)
     {
       EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)Image->PixelData;

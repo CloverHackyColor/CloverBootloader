@@ -9,6 +9,8 @@
 #include "nanosvg.h"
 #include "FloatLib.h"
 
+#include "lodepng.h"
+
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1
 #else
@@ -28,6 +30,11 @@
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
+
+extern VOID
+WaitForKeyPress(CHAR16 *Message);
+
+extern void DumpFloat2 (char* s, float* t, int N);
 
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
@@ -69,7 +76,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
           DBG("font not parsed\n");
         } else {
           fontSVG = p1->font;
-          DBG("font parsed\n");
+          DBG("font %a parsed\n", fontSVG->fontFamily);
           
         }
         FreePool(FileData);
@@ -158,6 +165,17 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
                 (int)(UGAHeight * 0.05f),
                 &MenuBackgroundPixel,
                 16);
+  WaitForKeyPress(L"waiting for key press...\n");
+  //save banner as png yyyyy
+  UINT8           *FileData = NULL;
+  UINTN           FileDataLength = 0U;
+
+  EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)NewImage->PixelData;
+  unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)NewImage->Width, (UINTN)NewImage->Height);
+  if (!lode_return) {
+    Status = egSaveFile(SelfRootDir, L"Banner.png", FileData, FileDataLength);
+  }
+  
   
   egFreeImage(NewImage);
   nsvg__deleteParser(p);
@@ -166,12 +184,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 #endif
   //Test text
-  if (0 && fontSVG) {
+  if (1 && fontSVG) {
     INTN iHeight = 260;
     INTN iWidth = UGAWidth-200;
     DBG("create textbuffer\n");
     EG_IMAGE* TextBufferXY = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
-    drawSVGtext(TextBufferXY, fontSVG, L"Clover");
+    drawSVGtext(TextBufferXY, fontSVG, L"Clover ready");
     DBG("text ready to blit\n");
     BltImageAlpha(TextBufferXY,
                   (UGAWidth - iWidth) / 2,
@@ -179,7 +197,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
                   &MenuBackgroundPixel,
                   16);
     egFreeImage(TextBufferXY);
-    DBG("draw finished\n");
+//    DBG("draw finished\n");
+    WaitForKeyPress(L"waiting for key press...\n");
   }
   
   if (fontSVG) {
@@ -193,7 +212,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
 VOID LoadSVGfont(NSVGfont  *fontSVG)
 {
- // EFI_STATUS      Status;
+  EFI_STATUS      Status;
   float FontScale;
   NSVGparser* p;
   NSVGrasterizer* rast;
@@ -255,6 +274,18 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   DBG("begin raster text\n");
   nsvgRasterize(rast, p->image, 0, 0, Scale, Scale, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
   DBG("end raster text\n");
+  
+  //save banner as png yyyyy
+  UINT8           *FileData = NULL;
+  UINTN           FileDataLength = 0U;
+  
+  EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)FontImage->PixelData;
+  unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)FontImage->Width, (UINTN)FontImage->Height);
+  if (!lode_return) {
+    Status = egSaveFile(SelfRootDir, L"FontSVG.png", FileData, FileDataLength);
+  }
+
+  
   nsvgDeleteRasterizer(rast);
 
   return;
@@ -315,8 +346,13 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     while (g) {
       if (g->unicode == letter) {
         shape->paths = g->path;
-        DBG("Found letter %x, point[0]=(%d,%d)\n", letter,
-            (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
+        if (shape->paths) {
+          DBG("Found letter %x, point[0]=(%d,%d)\n", letter,
+              (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
+
+        } else {
+          DBG("Found letter %x, no path\n", letter);
+        }
         break;
       }
       g = g->next;
@@ -325,7 +361,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
       //missing glyph
       NSVGglyph* g = fontSVG->missingGlyph;
       shape->paths = g->path;
-      DBG("Missing letter %x, path[0]=%d\n", letter, (int)shape->paths->pts[0]);
+      DBG("Missing letter %x\n", letter);
     }
     if (!shape->paths) {
       if (g) {
@@ -340,8 +376,8 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     shape->id[0] = (char)(letter & 0xff);
     shape->id[1] = (char)((letter >> 8) & 0xff);
     shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = NSVG_RGBA(5, 100, 0, 255); //dark green
-    shape->stroke.type = NSVG_PAINT_COLOR;
+    shape->fill.color = NSVG_RGBA(50, 50, 50, 255); //dark grey 20%
+    shape->stroke.type = NSVG_PAINT_NONE;
     shape->stroke.color = NSVG_RGBA(0,0,0, 255); //black?
     shape->strokeWidth = 2.0f;
     shape->flags = NSVG_FLAGS_VISIBLE;
@@ -350,12 +386,13 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     shape->xform[3] = -1.f; //glyphs are mirrored by Y
     shape->xform[4] = (float)x - fontSVG->bbox[0];
     shape->xform[5] = (float)y - fontSVG->bbox[3]; // Y2 is a floor for a letter
-//    DumpFloat(shape->xform, 6);
+//    DumpFloat2(shape->xform, 6);
     //in glyph units
     shape->bounds[0] = fontSVG->bbox[0];
     shape->bounds[1] = fontSVG->bbox[1];
     shape->bounds[2] = fontSVG->bbox[2];
     shape->bounds[3] = fontSVG->bbox[3];
+    DumpFloat2("letter bounds", shape->bounds, 4);
 
     x += g->horizAdvX; //position for next letter
     shape->strokeLineJoin = NSVG_JOIN_MITER;
@@ -378,8 +415,8 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
       }
     }
     p->shapesTail = shape;
-    
-  }
+  } //end of text
+  
   p->image->realBounds[0] = fontSVG->bbox[0];
   p->image->realBounds[1] = fontSVG->bbox[1];
   p->image->realBounds[2] = fontSVG->bbox[2] + x; //last bound
