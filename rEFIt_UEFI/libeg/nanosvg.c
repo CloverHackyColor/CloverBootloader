@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -996,7 +996,7 @@ static void nsvg__addShape(NSVGparser* p)
   }
   
 //  nsvg__getLocalBounds(shape->bounds, shape, attr->xform);
-  DumpFloat2("shape->bounds:", shape->bounds, 4);
+//  DumpFloat2("shape->bounds:", shape->bounds, 4);
 
   // Set fill
   shape->fill.type = NSVG_PAINT_NONE;
@@ -2696,14 +2696,15 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
       r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
       text->fontSize = r;
       DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
-    } else if (strcmp(dict[i], "class") == 0) {
-      DBG("span class=%a\n", dict[i+1]);      
     } else {
       nsvg__parseAttr(p, dict[i], dict[i + 1]);
     }
   }
   if (attr->fontFace) {
     text->font = attr->fontFace;
+  }
+  if (attr->hasFill == 1) {
+    text->fontColor = attr->fillColor;
   }
 }
 
@@ -2719,17 +2720,21 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   int i;
 
   for (i = 0; dict[i]; i += 2) {
-    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
-      if (strcmp(dict[i], "x") == 0) x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
-      if (strcmp(dict[i], "y") == 0) y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-      if (strcmp(dict[i], "font-size") == 0)  r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
-    }
+      if (strcmp(dict[i], "x") == 0) {
+        x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
+      } else if (strcmp(dict[i], "y") == 0) {
+        y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
+      } else if (strcmp(dict[i], "font-size") == 0)  {
+        r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
+      } else {
+        nsvg__parseAttr(p, dict[i], dict[i + 1]);
+      }
   }
-  DBG("text posX=%s\n", PoolPrintFloat(x));
-  DBG("text posY=%s\n", PoolPrintFloat(y));
-  DBG("text fontSize=%s\n", PoolPrintFloat(r));
+//  DBG("text posX=%s\n", PoolPrintFloat(x));
+//  DBG("text posY=%s\n", PoolPrintFloat(y));
+//  DBG("text fontSize=%s\n", PoolPrintFloat(r));
   if (r <= 0.f) r=attr->fontFace->fontSize;
-  DBG("if zero then fontSize=%s\n", PoolPrintFloat(r));
+  DBG(" fontSize=%s\n", PoolPrintFloat(r));
 
   NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
   if (!text) {
@@ -2740,6 +2745,10 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   text->fontSize = r;
   memcpy(&text->id, &attr->id, 64);
   text->font = attr->fontFace;
+  if (attr->hasFill == 1) {
+    text->fontColor = attr->fillColor;
+  }
+
   DBG("fontID=%a\n", text->font->id);
   DBG("  family=%a\n", text->font->fontFamily);
 
@@ -3763,9 +3772,9 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       shape = shapeLink->link;
       nsvg__xformPremultiply(xform, shape->xform);
     } else shape = shapeLink;
-    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
-    DumpFloat2("  transform", xform, 6);
-    DumpFloat2("  shape bounds", shape->bounds, 4);
+//    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+//    DumpFloat2("  transform", xform, 6);
+//    DumpFloat2("  shape bounds", shape->bounds, 4);
     nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[2], &newBounds[3], shape->bounds[2], shape->bounds[3], xform);
     nsvg__xformPoint(&newBounds[4], &newBounds[5], shape->bounds[2], shape->bounds[1], xform);
@@ -3781,7 +3790,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[2] = nsvg__maxf(bounds[2], newBounds[4]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
-      DumpFloat2("  new bounds", bounds, 4);
+//      DumpFloat2("  new bounds", bounds, 4);
       count++; //count visible
     }
   }

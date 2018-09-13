@@ -326,7 +326,7 @@ typedef struct NSVGfont {
   int fontWeight; //usually 400 like stroke-width
   float fontSize; // 8,9,12,14...
   int unitsPerEm; //usually 1000
-  char panose[64]; //int[10] obsolete
+//  char panose[64]; //int[10] obsolete
   int ascent;
   int descent;
   int xHeight;
@@ -338,8 +338,8 @@ typedef struct NSVGfont {
   int unicodeRange[2];
   char fontStretch; //normal, ...
   char fontStyle; //light, italic, bold
+//  int fillColor; -- font is colorless while text has color
   // -- glyphs
-  char pad[2];
   NSVGglyph* missingGlyph;
   NSVGglyph* glyphs; // a chain
 } NSVGfont;
@@ -352,6 +352,7 @@ typedef struct NSVGtext {
   NSVGfont* font;
   float fontSize;
   char fontStyle;
+  unsigned int fontColor;
   NSVGstyles* style;
   NSVGshape* shapes;
 } NSVGtext;

@@ -65,18 +65,18 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     UINT8           *FileData = NULL;
     UINTN           FileDataLength = 0;
     
-    DBG("text uses font-name=%a\n", text->font->fontFamily);
-    DBG("text uses font size=%d\n", (int)text->font->fontSize);
+//    DBG("text uses font-name=%a\n", text->font->fontFamily);
+//    DBG("text uses font size=%d\n", (int)text->font->fontSize);
     if (!fontSVG || strcmp(fontSVG->fontFamily, text->font->fontFamily) != 0) {
       Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->fontFamily), &FileData, &FileDataLength);
-      DBG("font loaded status=%r\n", Status);
+//      DBG("font loaded status=%r\n", Status);
       if (!EFI_ERROR(Status)) {
         p1 = nsvgParse((CHAR8*)FileData, "px", 72);
         if (!p1) {
           DBG("font not parsed\n");
         } else {
           fontSVG = p1->font;
-          DBG("font %a parsed\n", fontSVG->fontFamily);
+ //         DBG("font %a parsed\n", fontSVG->fontFamily);
           
         }
         FreePool(FileData);
@@ -228,7 +228,7 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   INTN Height = FontHeight + 2;
   INTN Width = Height * (0xC0 + GlobalConfig.CodepageSize);
   FontImage = egCreateImage(Width, Height, TRUE);
-  DBG("load font %a\n", fontSVG->fontFamily);
+//  DBG("load font %a\n", fontSVG->fontFamily);
   if (!fontSVG->unitsPerEm) {
     fontSVG->unitsPerEm = 1000;
   }
@@ -236,8 +236,8 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   if (fH == 0.f) {
     fH = (float)fontSVG->unitsPerEm;
   }
-  FontScale = (float)Height / fH;
-  DBG("font scale %s\n", PoolPrintFloat(FontScale));
+  FontScale = (float)FontHeight / fH;
+//  DBG("font scale %s\n", PoolPrintFloat(FontScale));
   
   p = nsvg__createParser();
   if (!p) {
@@ -248,7 +248,7 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   p->image->height = Height;
   p->image->width = Width;
   //for each letter rasterize glyph into FontImage
-  //0..0xC0
+  //0..0xC0 == AsciiPageSize
   // cyrillic 0x410..0x450 at 0xC0
   INTN x = 0;
   INTN y = 0;
@@ -264,10 +264,10 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
     addLetter(p, i, x, y, FontScale);
     x += Height;
   }
-  p->image->realBounds[0] = fontSVG->bbox[0];
-  p->image->realBounds[1] = fontSVG->bbox[1];
-  p->image->realBounds[2] = fontSVG->bbox[2] + x; //last bound
-  p->image->realBounds[3] = fontSVG->bbox[3];
+  p->image->realBounds[0] = fontSVG->bbox[0] * FontScale;
+  p->image->realBounds[1] = fontSVG->bbox[1] * FontScale;
+  p->image->realBounds[2] = fontSVG->bbox[2] * FontScale + x; //last bound
+  p->image->realBounds[3] = fontSVG->bbox[3] * FontScale;
   
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
@@ -275,7 +275,7 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   nsvgRasterize(rast, p->image, 0, 0, Scale, Scale, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
   DBG("end raster text\n");
   
-  //save banner as png yyyyy
+  //save font as png yyyyy
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
   
@@ -285,9 +285,8 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
     Status = egSaveFile(SelfRootDir, L"FontSVG.png", FileData, FileDataLength);
   }
 
-  
   nsvgDeleteRasterizer(rast);
-
+  nsvg__deleteParser(p);
   return;
 }
 
@@ -376,7 +375,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     shape->id[0] = (char)(letter & 0xff);
     shape->id[1] = (char)((letter >> 8) & 0xff);
     shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = NSVG_RGBA(50, 50, 50, 255); //dark grey 20%
+    shape->fill.color = NSVG_RGBA(150, 150, 150, 255); //dark grey 20%
     shape->stroke.type = NSVG_PAINT_NONE;
     shape->stroke.color = NSVG_RGBA(0,0,0, 255); //black?
     shape->strokeWidth = 2.0f;
