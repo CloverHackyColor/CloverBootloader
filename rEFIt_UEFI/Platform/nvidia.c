@@ -1432,7 +1432,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
 	{ 0x10DE1C60,	"GeForce GTX 1060" }, // GP106M
   //	{ 0x10DE1C70,	"Graphics Device" }, // GP106GL
   //	{ 0x10DE1C80,	"Graphics Device" }, // GP107
-  //	{ 0x10DE1C81,	"Graphics Device" }, // GP107
+  	{ 0x10DE1C81,	"GeForce GTX 1050" }, // GP107
   	{ 0x10DE1C82,	"GeForce GTX 1050 Ti"}, // GP107
 	// 1D00 - 1EFFF
   	{ 0x10DE1D10,	"GeForce MX150"},
