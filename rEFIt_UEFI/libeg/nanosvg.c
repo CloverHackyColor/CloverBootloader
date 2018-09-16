@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -522,7 +522,7 @@ static void nsvg__deleteStyles(NSVGstyles* style)
 {
   while (style) {
     NSVGstyles *next = style->next;
-    if (style->name!= NULL)
+    if (style->name != NULL)
       FreePool(style->name);
     if (style->description != NULL)
       FreePool(style->description);
@@ -596,12 +596,12 @@ void nsvg__deleteParser(NSVGparser* p)
     nsvg__deleteGradientData(p->gradients);
     nsvg__deleteFont(p->font);
     nsvgDelete(p->image);
-    if (p->cpts > 0) {
+    if (p->cpts > 0 && p->pts) {
       FreePool(p->pts);
     }
     for (i=0; i<NSVG_MAX_ATTR; i++) {
       NSVGattrib* attr = &(p->attr[i]);
-      if (attr->fontFace) {
+      if (attr && attr->fontFace) {
         FreePool(attr->fontFace);
       }
       while (attr->group) {
@@ -617,7 +617,7 @@ void nsvg__deleteParser(NSVGparser* p)
 static void nsvg__resetPath(NSVGparser* p)
 {
   p->npts = 0;
-  if (p->cpts > 0) {
+  if (p->cpts > 0 && p->pts) {
     FreePool(p->pts);
     p->cpts = 0;
   }

@@ -50,9 +50,15 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   p = nsvgParse((CHAR8*)buffer, "px", 72);
   SVGimage = p->image;
   DBG("Image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
-  DBG("Image viewBox: w=%d h=%d units=%a\n", 1, 1, "px");
+  float vbx = SVGimage->realBounds[2] - SVGimage->realBounds[0];
+  float vby = SVGimage->realBounds[3] - SVGimage->realBounds[1];
+  DBG("Image real-bounds: w=%d h=%d units=%a\n", vbx, vby, "px");
   if (SVGimage->height == 0) {
-    SVGimage->height = 768.f;  //default height
+    if (vby > 1.0f) {
+      SVGimage->height = vby;
+    } else {
+      SVGimage->height = 768.f;  //default height
+    }
   }
   Scale = UGAHeight / SVGimage->height;
   DBG("using scale %s\n", PoolPrintFloat(Scale));
@@ -65,11 +71,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     UINT8           *FileData = NULL;
     UINTN           FileDataLength = 0;
     
-//    DBG("text uses font-name=%a\n", text->font->fontFamily);
+    DBG("text uses font-name=%a\n", text->font->fontFamily);
 //    DBG("text uses font size=%d\n", (int)text->font->fontSize);
     if (!fontSVG || strcmp(fontSVG->fontFamily, text->font->fontFamily) != 0) {
       Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->fontFamily), &FileData, &FileDataLength);
-//      DBG("font loaded status=%r\n", Status);
+      DBG("font loaded status=%r\n", Status);
       if (!EFI_ERROR(Status)) {
         p1 = nsvgParse((CHAR8*)FileData, "px", 72);
         if (!p1) {
@@ -79,7 +85,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
  //         DBG("font %a parsed\n", fontSVG->fontFamily);
           
         }
-        FreePool(FileData);
+//        FreePool(FileData);
       }
     }
   }
@@ -88,20 +94,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     LoadSVGfont(fontSVG);
   }
   
-  /*
-  typedef struct NSVGimage
-  {
-    float width;        // Width of the image.
-    float height;        // Height of the image.
-    float realBounds[4];
-    NSVGshape* shapes;      // Linked list of shapes in the image.
-    NSVGgroup* groups;			// Linked list of all groups in the image
-    BOOLEAN isFont;
-    NSVGclipPath* clipPaths;
-  } NSVGimage;
-*/
-  
-#if 0 //test banner
+#if 1 //test banner
   NSVGshape   *shape;
   NSVGgroup   *group;
   NSVGimage *Banner = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
@@ -150,41 +143,46 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   
   float Width = Banner->width * Scale;
   EG_IMAGE        *NewImage;
-  NewImage = egCreateImage((int)Width, (int)Height, TRUE);
-  DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
-  
-  float tx = 0; //-Banner->realBounds[0] * Scale;
-  float ty = 0; //-Banner->realBounds[1] * Scale;
-  DBG("Banner shift by %d, %d\n", (int)tx, (int)ty);
-  
-  nsvgRasterize(rast, Banner, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
-  //now show it!
-  
-  BltImageAlpha(NewImage,
-                (int)(UGAWidth - Width) / 4,
-                (int)(UGAHeight * 0.05f),
-                &MenuBackgroundPixel,
-                16);
-  WaitForKeyPress(L"waiting for key press...\n");
-  //save banner as png yyyyy
-  UINT8           *FileData = NULL;
-  UINTN           FileDataLength = 0U;
-
-  EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)NewImage->PixelData;
-  unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)NewImage->Width, (UINTN)NewImage->Height);
-  if (!lode_return) {
-    Status = egSaveFile(SelfRootDir, L"Banner.png", FileData, FileDataLength);
+  if (Width > 1.0f) {
+    NewImage = egCreateImage((int)Width, (int)Height, TRUE);
+    DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
+    
+    float tx = 0; //-Banner->realBounds[0] * Scale;
+    float ty = 0; //-Banner->realBounds[1] * Scale;
+    //  DBG("Banner shift by %d, %d\n", (int)tx, (int)ty);
+    
+    nsvgRasterize(rast, Banner, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+    //now show it!
+    
+    BltImageAlpha(NewImage,
+                  (int)(UGAWidth - Width) / 4,
+                  (int)(UGAHeight * 0.05f),
+                  &MenuBackgroundPixel,
+                  16);
+    WaitForKeyPress(L"waiting for key press...\n");
+    //save banner as png yyyyy
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0U;
+    
+    EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)NewImage->PixelData;
+    unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)NewImage->Width, (UINTN)NewImage->Height);
+    if (!lode_return) {
+      Status = egSaveFile(NULL, L"\\Banner.png", FileData, FileDataLength);
+    }
+    egFreeImage(NewImage);
+    FreePool(FileData);
   }
-  
-  
-  egFreeImage(NewImage);
   nsvg__deleteParser(p);
   if (p1) {
+    DBG("1\n");
     nsvg__deleteParser(p1);
+    DBG("2\n");
   }
+  
 #endif
   //Test text
-  if (1 && fontSVG) {
+  
+  if (0 && fontSVG) {
     INTN iHeight = 260;
     INTN iWidth = UGAWidth-200;
     DBG("create textbuffer\n");
@@ -200,13 +198,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //    DBG("draw finished\n");
     WaitForKeyPress(L"waiting for key press...\n");
   }
-  
-  if (fontSVG) {
-    nsvg__deleteFont(fontSVG);
-  }
-//  nsvgDelete(Banner);
+  DBG("3\n");
   nsvgDeleteRasterizer(rast);
-  
+  DBG("4\n");
   return EFI_NOT_AVAILABLE_YET;
 }
 
@@ -282,7 +276,7 @@ VOID LoadSVGfont(NSVGfont  *fontSVG)
   EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)FontImage->PixelData;
   unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)FontImage->Width, (UINTN)FontImage->Height);
   if (!lode_return) {
-    Status = egSaveFile(SelfRootDir, L"FontSVG.png", FileData, FileDataLength);
+    Status = egSaveFile(NULL, L"\\FontSVG.png", FileData, FileDataLength);
   }
 
   nsvgDeleteRasterizer(rast);
