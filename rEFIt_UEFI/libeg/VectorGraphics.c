@@ -39,11 +39,13 @@ extern void DumpFloat2 (char* s, float* t, int N);
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
   EFI_STATUS      Status;
-  NSVGparser  *p, *p1 = NULL;
+  NSVGparser  *p = NULL, *p1 = NULL;
   NSVGfont    *fontSVG;
   NSVGimage   *SVGimage;
   NSVGtext    *text;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
+  UINT8           *FileData = NULL;
+  UINTN           FileDataLength = 0;
 
   float Scale;
 
@@ -68,9 +70,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
   text = p->text;
   if (text) {
-    UINT8           *FileData = NULL;
-    UINTN           FileDataLength = 0;
-    
+
     DBG("text uses font-name=%a\n", text->font->fontFamily);
 //    DBG("text uses font size=%d\n", (int)text->font->fontSize);
     if (!fontSVG || strcmp(fontSVG->fontFamily, text->font->fontFamily) != 0) {
@@ -143,6 +143,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   
   float Width = Banner->width * Scale;
   EG_IMAGE        *NewImage;
+  FreePool(FileData);
+  FileData = NULL;
   if (Width > 1.0f) {
     NewImage = egCreateImage((int)Width, (int)Height, TRUE);
     DBG("new banner size=[%d,%d]\n", (int)Width, (int)Height);
@@ -161,28 +163,23 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
                   16);
     WaitForKeyPress(L"waiting for key press...\n");
     //save banner as png yyyyy
-    UINT8           *FileData = NULL;
-    UINTN           FileDataLength = 0U;
-    
+
     EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)NewImage->PixelData;
     unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)NewImage->Width, (UINTN)NewImage->Height);
     if (!lode_return) {
       Status = egSaveFile(NULL, L"\\Banner.png", FileData, FileDataLength);
+      FreePool(FileData);
     }
     egFreeImage(NewImage);
-    FreePool(FileData);
+
   }
-  nsvg__deleteParser(p);
-  if (p1) {
-    DBG("1\n");
-    nsvg__deleteParser(p1);
-    DBG("2\n");
-  }
-  
+  DBG("0\n");
+//  nsvg__deleteParser(p);
+
 #endif
   //Test text
-  
-  if (0 && fontSVG) {
+  DBG("1\n");
+  if (1 && fontSVG) {
     INTN iHeight = 260;
     INTN iWidth = UGAWidth-200;
     DBG("create textbuffer\n");
@@ -198,6 +195,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //    DBG("draw finished\n");
     WaitForKeyPress(L"waiting for key press...\n");
   }
+  if (p1) {
+
+//    nsvg__deleteParser(p1);
+    DBG("2\n");
+  }
+
   DBG("3\n");
   nsvgDeleteRasterizer(rast);
   DBG("4\n");

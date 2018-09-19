@@ -605,7 +605,7 @@ void nsvg__deleteParser(NSVGparser* p)
         FreePool(attr->fontFace);
       }
       while (attr->group) {
-        NSVGgroup* group = attr->group;
+        NSVGgroup* group = attr->group;        
         attr->group = group->next;
         FreePool(group);
       }
@@ -901,7 +901,7 @@ static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, float* atXform
   if (shape->link) {
     nsvg__xformPremultiply(xform, shape->link->xform);
   }
-  
+
   nsvg__xformMultiply(xform, atXform);
   for (path = shape->paths; path != NULL; path = path->next) {
     nsvg__xformPoint(&curve[0], &curve[1], path->pts[0], path->pts[1], xform);
@@ -994,7 +994,7 @@ static void nsvg__addShape(NSVGparser* p)
       shape->bounds[3] = nsvg__maxf(shape->bounds[3], path->bounds[3]);
     }
   }
-  
+
 //  nsvg__getLocalBounds(shape->bounds, shape, attr->xform);
 //  DumpFloat2("shape->bounds:", shape->bounds, 4);
 
@@ -1048,7 +1048,7 @@ static void nsvg__addShape(NSVGparser* p)
     p->clipPath->shapes = shape;
   } else {
       // Add to tail
-    
+
       if (p->image->shapes == NULL)
         p->image->shapes = shape;
       else
@@ -2633,7 +2633,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   if (!shape) {
     return;
   }
-  
+
   AsciiStrCatS(shape->id, 64, "_lnk");
   x -= shape->bounds[0];
   y -= shape->bounds[1];
@@ -3455,6 +3455,10 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
  */
   else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 1;
+  } else if (strcmp(el, "symbol") == 0) {
+    nsvg__pushAttr(p);
+    p->defsFlag = 1;
+    nsvg__parseGroup(p, dict);
   } else if (strcmp(el, "svg") == 0) {
     nsvg__pushAttr(p);
     nsvg__parseSVG(p, dict);
@@ -3485,6 +3489,9 @@ static void nsvg__endElement(void* ud, const char* el)
   } else if (strcmp(el, "path") == 0) {
     p->pathFlag = 0;
   } else if (strcmp(el, "defs") == 0) {
+    p->defsFlag = 0;
+  } else if (strcmp(el, "symbol") == 0) {
+    nsvg__popAttr(p);
     p->defsFlag = 0;
   } else if (strcmp(el, "svg") == 0) {
     nsvg__popAttr(p);
@@ -3762,9 +3769,9 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
   shapeLink = shapes;
   int count = 0;
   int visibility;
-  
-  
-  
+
+
+
   for (; shapeLink != NULL; shapeLink = shapeLink->next) {
     memcpy(&xform, &shapeLink->xform, sizeof(float)*6);
     visibility = (shapeLink->flags & NSVG_FLAGS_VISIBLE); //check origin visibility, not link
@@ -3779,8 +3786,8 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
     nsvg__xformPoint(&newBounds[2], &newBounds[3], shape->bounds[2], shape->bounds[3], xform);
     nsvg__xformPoint(&newBounds[4], &newBounds[5], shape->bounds[2], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[6], &newBounds[7], shape->bounds[0], shape->bounds[3], xform);
-    
-    
+
+
     if (visibility == NSVG_FLAGS_VISIBLE) {
       bounds[0] = nsvg__minf(bounds[0], newBounds[0]);
       bounds[0] = nsvg__minf(bounds[0], newBounds[6]);
@@ -3802,7 +3809,7 @@ static void nsvg__imageBounds(NSVGparser* p, float* bounds)
   NSVGimage* image = p->image;
   NSVGclipPath* clipPath;
   int count = 0;
-  
+
   clipPath = image->clipPaths;
   while (clipPath != NULL) {
     if (clipPath->index == 0) { // this is bottom image
@@ -3811,9 +3818,9 @@ static void nsvg__imageBounds(NSVGparser* p, float* bounds)
     }
     clipPath = clipPath->next;
   }
-  
+
   count += nsvg__shapesBound(image, image->shapes, bounds);
-  
+
   if (count == 0) {
     bounds[0] = bounds[1] = bounds[2] = bounds[3] = 0.0;
   }
