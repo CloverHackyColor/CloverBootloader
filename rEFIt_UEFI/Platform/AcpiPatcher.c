@@ -495,8 +495,8 @@ VOID PatchAllTables()
   UINT32 Count = XsdtTableCount();
   UINT64* Ptr = XsdtEntryPtrFromIndex(0);
   UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
-  BOOLEAN Patched = FALSE;
   for (; Ptr < EndPtr; Ptr++) {
+    BOOLEAN Patched = FALSE;
     EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)ReadUnaligned64(Ptr);
     if (!Table) {
       // skip NULL entry
@@ -506,22 +506,18 @@ VOID PatchAllTables()
       // may be also EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE?
       continue; // will be patched elsewhere
     }
-	/*
-    if (!CheckTableHeader(Table)) {
-      // header does not need patching
-      continue;
-    }
-    if (IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
-      // table header already patched
-      continue;
-    }    
-	*/
+    //BUGFIX_REHABMAN: This is wrong! *MUST* apply DSDT/Patches to merged tables!
+    //if (IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
+    //  // table header already patched
+    //  continue;
+    //}
+
     //do new table with patched header
     UINT32 Len = Table->Length;
     EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     EFI_STATUS Status = gBS->AllocatePages(AllocateMaxAddress,
                                            EfiACPIReclaimMemory,
-                                           EFI_SIZE_TO_PAGES(Len + 19),
+                                           EFI_SIZE_TO_PAGES(Len + 4096),
                                            &BufferPtr);
     if(EFI_ERROR(Status)) {
       //DBG(" ... not patched\n");
@@ -530,12 +526,13 @@ VOID PatchAllTables()
     EFI_ACPI_DESCRIPTION_HEADER* NewTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
     CopyMem(NewTable, Table, Len);
     if ((gSettings.FixDsdt & FIX_HEADERS) || gSettings.FixHeaders) {
-			
-//      CopyMem(NewTable, Table, Len);
-      Patched = PatchTableHeader(NewTable);
+      // Merged tables already have the header patched, so no need to do it again
+      if (!IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
+        // table header NOT already patched
+        Patched = PatchTableHeader(NewTable);
+      }
     }
     if (NewTable->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-//      CopyMem(NewTable, Table, Len);
       if (gSettings.PatchDsdtNum > 0) {
         //DBG("Patching SSDT:\n");
         UINT32 i;
@@ -562,16 +559,20 @@ VOID PatchAllTables()
     }
     if (NewTable->Signature == MCFG_SIGN && gSettings.FixMCFG) {
       INTN Len1 = ((Len + 4 - 1) / 16 + 1) * 16 - 4;
-      CopyMem(NewTable, Table, Len1); //Len increased but less then EFI_PAGE
+      CopyMem(NewTable, Table, Len1); //Len increased but less than EFI_PAGE
       NewTable->Length = Len1;
       Patched = TRUE;
     }
     if (Patched) {
+      // in case we need to free it, keep track of table size
+      SaveMergedXsdtEntrySize(IndexFromXsdtEntryPtr(Ptr), Len + 4096);
+
+      // write patched table pointer into the XSDT
       WriteUnaligned64(Ptr, BufferPtr);
       FixChecksum(NewTable);
     }
     else {
-      gBS->FreePages(BufferPtr, EFI_SIZE_TO_PAGES(Len + 19));
+      gBS->FreePages(BufferPtr, EFI_SIZE_TO_PAGES(Len + 4096));
     }
   }
 }
@@ -734,9 +735,6 @@ EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, UINTN MatchIndex
     //DBG("page is allocated, write SSDT into\n");
     EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
     CopyMem(TableHeader, TableEntry, Length);
-    // Now is a good time to fix the table header and checksum
-    PatchTableHeader(TableHeader);
-    FixChecksum(TableHeader);
 #if 0 //REVIEW: seems as if Rsdt is always NULL for ReplaceOrInsertTable scenarios (macOS/OS X)
     //insert/modify into RSDT
     if (Rsdt) {
@@ -764,6 +762,9 @@ EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, UINTN MatchIndex
         // SSDT with target index or non-SSDT, try to find matching entry
         Ptr = ScanXSDT2(hdr->Signature, hdr->OemTableId, MatchIndex);
       }
+      // Now is a good time to fix the table header and checksum (*MUST* be done after matching)
+      PatchTableHeader(TableHeader);
+      FixChecksum(TableHeader);
       if (Ptr) {
         UINT32 Index = IndexFromXsdtEntryPtr(Ptr);
         DBG("@%d ", (UINT64)Index);
