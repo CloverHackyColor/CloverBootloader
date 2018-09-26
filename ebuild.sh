@@ -1073,7 +1073,7 @@ MainPostBuildScript() {
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
       done
 
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator AppleKeyFeeder FirmwareVolume DataHubDxe SMCHelper)
+      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume DataHubDxe SMCHelper)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi
@@ -1124,7 +1124,7 @@ MainPostBuildScript() {
           ;;
       esac
       # drivers64UEFI
-      binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
+      binArray=( AppleKeyFeeder CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
 
       for efi in "${binArray[@]}"
       do
