@@ -1412,7 +1412,7 @@ AsciiStriCmp (
 
   UpperFirstString  = InternalBaseLibAsciiToUpper (*FirstString);
   UpperSecondString = InternalBaseLibAsciiToUpper (*SecondString);
-  while ((*FirstString != '\0') && (UpperFirstString == UpperSecondString)) {
+  while ((*FirstString != '\0') && (*SecondString != '\0') && (UpperFirstString == UpperSecondString)) {
     FirstString++;
     SecondString++;
     UpperFirstString  = InternalBaseLibAsciiToUpper (*FirstString);
