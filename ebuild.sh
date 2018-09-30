@@ -946,8 +946,8 @@ MainPostBuildScript() {
         cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
         "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
       fi
-      rm -Rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers3* 2> /dev/null
-      rm -Rf "$CLOVER_PKG_DIR"/drivers-Off/drivers3* 2> /dev/null
+      rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers3* 2> /dev/null
+      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers3* 2> /dev/null
 
       mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/ia32
       mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
@@ -1043,16 +1043,16 @@ MainPostBuildScript() {
         fi
       fi
 
-      rm -Rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
-      rm -Rf "$CLOVER_PKG_DIR"/drivers-Off/drivers6* 2> /dev/null
+      rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
+      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers6* 2> /dev/null
 
       # Be sure that all needed directories exists
       mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
       mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
       mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64
       mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI
-      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64
-      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI
+      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64/FileVault2
+      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2
 
       # Install CloverEFI file
       echo "Copy CloverEFI:"
@@ -1066,17 +1066,29 @@ MainPostBuildScript() {
 
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
-#copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper XhciDxe)
+# copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
+      binArray=( FSInject XhciDxe)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
       done
 
-      binArray=( FSInject AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume DataHubDxe SMCHelper)
+      binArray=( AppleImageCodec AppleKeyAggregator AppleUITheme FirmwareVolume SMCHelper )
+      for efi in "${binArray[@]}"
+      do
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/FileVault2/$efi-64.efi
+      done
+
+      binArray=( FSInject DataHubDxe)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi
+      done
+
+      binArray=( AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper )
+      for efi in "${binArray[@]}"
+      do
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/$efi-64.efi
       done
 
 
@@ -1111,24 +1123,31 @@ MainPostBuildScript() {
         ;;
         0 | 2 | 3)
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
-          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioInputFix-64.efi
- #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ApfsDriverLoader-64.efi
- #         copyBin "$APFS_BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/ApfsDriverLoader-64.efi
-        binArray=( ApfsDriverLoader AppleImageLoader AppleUISupport )
-            for efi in "${binArray[@]}"
-            do
-                copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
-                copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
-            done
+          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/AptioInputFix-64.efi
 
-          ;;
+          copyBin "$APFS_BUILD_DIR_ARCH"/AppleUISupport.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/AppleUISupport-64.efi
+          binArray=( ApfsDriverLoader AppleImageLoader )
+          for efi in "${binArray[@]}"
+          do
+            copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
+            copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
+          done
+        ;;
       esac
       # drivers64UEFI
-      binArray=( AppleKeyFeeder CsmVideoDxe EnglishDxe EmuVariableUefi Fat HashServiceFix NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
+      binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
 
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
+      done
+
+      # drivers64UEFI/FileVault2
+      binArray=( AppleKeyFeeder HashServiceFix )
+
+      for efi in "${binArray[@]}"
+      do
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/$efi-64.efi
       done
 
       # Applications

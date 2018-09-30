@@ -90,6 +90,9 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "Drivers64_title" = "BIOS Drivers, 64 bit";
 "Drivers64_description" = "Select drivers for BIOS-booting.";
 
+"Drivers64FV2_title" = "FileVault 2 BIOS Drivers, 64 bit";
+"Drivers64FV2_description" = "Select drivers for BIOS-booting with FileVault 2.";
+
 "ApfsDriverLoader-64_description" = "64bit driver to load APFS filesystem driver from container";
 "AppleImageCodec-64_description" = "For decode PNG and BMP images in boot UI";
 "AppleImageLoader-64_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
@@ -110,6 +113,9 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 
 "Drivers64UEFI_title" = "UEFI Drivers, 64 bit";
 "Drivers64UEFI_description" = "Select drivers for UEFI-booting.";
+
+"Drivers64UEFIFV2_title" = "FileVault 2 UEFI Drivers, 64 bit";
+"Drivers64UEFIFV2_description" = "Select drivers for UEFI-booting with FileVault 2.";
 
 "ApfsDriverLoader-64.UEFI_description" = "64bit driver to load APFS filesystem driver from container";
 "AppleEvent-64.UEFI_description" = "Create AppleEvent protocol for FileVault2";
