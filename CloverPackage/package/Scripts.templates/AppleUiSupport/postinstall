@@ -21,6 +21,6 @@ driver_name="@DRIVER_NAME@"
 if [[ -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/AppleUiSupport.efi || \
       -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/AppleUiSupport-64.efi ]]; then
     echo >> "$install_log"
-    echo "Removing $driver_dir/$driver_name driver because HFSPlus driver present" >> "$install_log"
+    echo "Removing $driver_dir/$driver_name driver because AppleUiSupport driver present" >> "$install_log"
     rm -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir/$driver_name"
 fi
