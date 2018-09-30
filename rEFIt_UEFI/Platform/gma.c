@@ -809,7 +809,6 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x5916, "Intel HD Graphics 620"          }, // Mobile
   { 0x591A, "Intel HD Graphics P630"         }, // Server
   { 0x591B, "Intel HD Graphics 630"          }, // Mobile - MacBookPro14,3
-  { 0x591C, "Intel Kaby Lake GT2"            }, //
   { 0x591D, "Intel HD Graphics P630"         }, // Workstation, Mobile Workstation
   { 0x591E, "Intel HD Graphics 615"          }, // Mobile - MacBook10,1
   //GT2F
@@ -827,6 +826,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 
   //----------------Amber Lake----------------
   //GT2
+  { 0x591C, "Intel Amber Lake GT2"           }, //
   { 0x87C0, "Intel UHD Graphics 615"         }, // Mobile
 
   //----------------Coffee Lake---------------
@@ -2552,7 +2552,6 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x5916: // "Intel HD Graphics 620"           // Mobile
     case 0x591A: // "Intel HD Graphics P630"          // Server
     case 0x591B: // "Intel HD Graphics 630"           // Mobile - MacBookPro14,3
-    case 0x591C: // "Intel Kaby Lake GT2"             //
     case 0x591D: // "Intel HD Graphics P630"          // Workstation, Mobile Workstation
     case 0x591E: // "Intel HD Graphics 615"           // Mobile - MacBook10,1
       //GT2F
@@ -2570,6 +2569,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
       //----------------Amber Lake----------------
       //GT2
+    case 0x591C: // "Intel Amber Lake GT2"            //
     case 0x87C0: // "Intel UHD Graphics 615"          // Mobile
       switch (gma_dev->device_id) {
         case 0x5902:

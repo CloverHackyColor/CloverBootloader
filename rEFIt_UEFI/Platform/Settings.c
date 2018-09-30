@@ -4210,7 +4210,7 @@ ParseSMBIOSSettings(
       if ((AsciiStrLen(i) == 16) && (AsciiStrLen(j) != 16)) {
         DBG ("Found wrong BiosVersion in config, Using latest BiosVersion from clover\n");
       } else if ((AsciiStrLen(i) == 16) && (AsciiStrLen(j) == 16)) {
-        if ((i[6] == j[6]) && (i[7] == j[7]) && (i[8] == j[8]) && (i[9] == j[9])) {
+        if (i == j) {
           DBG ("Found same BiosVersion in clover and config\n");
         } else {
           AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
