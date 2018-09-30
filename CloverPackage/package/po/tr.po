@@ -515,7 +515,7 @@ msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 #. type: "AptioMemoryFix-64_description, AptioMemoryFix-64.UEFI_description"
 #: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "AMI Aptio gibi UEFI Firmware'lerdeki bellek sorunlarını çözen 64bit sürücü"
 
 #. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"

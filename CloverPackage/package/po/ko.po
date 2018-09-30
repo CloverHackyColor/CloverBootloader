@@ -471,19 +471,19 @@ msgstr "BIOS 부팅을 위한 드라이버를 선택하십시오"
 #: Resources/templates/Localizable.strings:93 Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
-msgstr "10.13 이상의 macOS에서 컨테이너으로부터 APFS 파일 시스템 드라이버 지원"
+msgstr "10.13 이상의 macOS에서 컨테이너으로부터 APFS 파일 시스템을 로드하기 위한 드라이버"
 
 #. type: "AppleImageCodec-64_description, AppleImageCodec-64.UEFI_description"
 #: Resources/templates/Localizable.strings:94 Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
-msgstr "FileVault2 용 PNG 및 BMP 디코딩"
+msgstr "FileVault2 용 PNG 및 BMP 디코딩 지원"
 
 #. type: "AppleImageLoader-64_description, AppleImageLoader-64.UEFI_description"
 #: Resources/templates/Localizable.strings:95 Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
-msgstr "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
+msgstr "EfiBinary 서명 확인을 사용하여 AppleLoadImage 프로토콜을 구현한 보안 AppleEfiFat 바이너리 드라이버"
 
 #. type: "AppleKeyAggregator-64_description, AppleKeyAggregator-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:119
@@ -495,19 +495,19 @@ msgstr "FileVault2 용 부팅 UI 대화 상자 지원"
 #: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "Support for PS/2 keyboard to use with FileVault2"
-msgstr "Support for PS/2 keyboard to use with FileVault2"
+msgstr "FileVault2 용 PS/2 키보드 사용을 지원"
 
 #. type: "AppleUISupport-64_description, AppleUISupport-64.UEFI_description"
 #: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
-msgstr "Set of protocols for support EfiLoginUi for FileVault."
+msgstr "FileVault 용 EfiLoginUi 지원을 위한 프로토콜 설정"
 
 #. type: "AppleUITheme-64_description, AppleUITheme-64.UEFI_description"
 #: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "Create boot UI Themes support"
-msgstr "FileVault2 용 부팅 UI 테마를 지원하도록 만듭니다"
+msgstr "FileVault2 용 부팅 UI 테마를 지원"
 
 #. type: "AptioInputFix-64_description, AptioInputFix-64.UEFI_description"
 #: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:123
@@ -518,8 +518,8 @@ msgstr "AMI Aptio와 같은 UEFI 펌웨어의 입력 문제를 해결하는 드�
 #. type: "AptioMemoryFix-64_description, AptioMemoryFix-64.UEFI_description"
 #: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "AMI Aptio와 같은 UEFI 펌웨어 문제를 해결하기 위한 64비트 드라이버"
+msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "AMI Apt와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버"
 
 #. type: "FirmwareVolume-64_description, FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:134
@@ -531,7 +531,7 @@ msgstr "FileVault2 용 커서 이미지와 함께 FirmwareVolume을 만듭니다
 #: Resources/templates/Localizable.strings:103 Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
-msgstr "Clover 폴더로부터 kexts의 인젝션을 제공합니다"
+msgstr "Clover 폴더로부터 kexts의 인젝션을 제공"
 
 #. type: "GrubEXFAT-64_description"
 #: Resources/templates/Localizable.strings:104
@@ -561,7 +561,7 @@ msgstr "GRUB의 UDF 파일 시스템 드라이버"
 #: Resources/templates/Localizable.strings:108 Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr "FakeSMC가 NVRAM에 남긴 SMC 키를 복원합니다"
+msgstr "FakeSMC가 NVRAM에 남긴 SMC 키를 복원"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:109
@@ -610,7 +610,7 @@ msgstr "Clover GUI를 위한 64비트 비디오 드라이버는 더 다양한 �
 #, no-wrap
 msgid "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
-msgstr "macOS에 필수적인 DataHub 프로토콜 지원입니다.\n"
+msgstr "macOS에 필수적인 DataHub 프로토콜 지원합니다.\n"
 "대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다"
 
 #. type: "EmuVariableUefi-64.UEFI_description"
@@ -625,7 +625,7 @@ msgstr "Mac OSX는 NVRAM 변수를 지원하는 64bit 드라이버를 필요로 
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
-msgstr "EFI 셸이 UEFI에서 누락 된 경우 사용되는 유니 코드 조합 프로토콜 지원"
+msgstr "EFI 셸이 UEFI에서 누락 된 경우 사용되는 유니코드 조합 프로토콜 지원"
 
 #. type: "Fat-64.UEFI_description"
 #: Resources/templates/Localizable.strings:133
@@ -862,7 +862,7 @@ msgstr "선택적 RC 스크립트"
 #: Resources/templates/Localizable.strings:193
 #, no-wrap
 msgid "Disable sleep proxy client"
-msgstr "잠자기 프록시 클라이언트 서비스를 비활성화"
+msgstr "잠자기 프록시 클라이언트 서비스 비활성화"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:194

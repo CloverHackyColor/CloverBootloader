@@ -512,7 +512,7 @@ msgstr "Исправляет ошибки UEFI при работе с устро
 #. type: "AptioMemoryFix-64_description, AptioMemoryFix-64.UEFI_description"
 #: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:124
 #, no-wrap
-msgid "Preffered 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторымх других UEFI.\n"
 "Не использовать совместно с другими AptioFix."
 
