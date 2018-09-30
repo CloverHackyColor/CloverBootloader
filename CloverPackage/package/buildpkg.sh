@@ -983,17 +983,19 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64" && ${NOEXTRAS} != *"CloverEF
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
         # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VBoxHfs* ]] && \
+        if [[ "$driver" == VBoxHfs* ]]; then
          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
                             --subst="DRIVER_NAME=$driver"                     \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
                             "VBoxHfs"
-        ## Add postinstall script for old FileVault2 drivers to remove it if AppleUiSupport driver exists
-        #(([[ "$driver" == AppleImageCodec* ]] || [[ "$driver" == AppleKeyAggregator* ]] || [[ "$driver" == AppleUITheme* ]] || [[ "$driver" == FirmwareVolume* ]] || [[ "$driver" == HashServiceFix* ]]) && \
-        # addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
-        #                    --subst="DRIVER_NAME=$driver"                     \
-        #                    --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-        #                    "AppleUiSupport" )
+        # Add postinstall script for old FileVault2 drivers to remove it if AppleUiSupport driver exists
+        elif [[ "$driver" == AppleImageCodec* || "$driver" == AppleKeyAggregator* || 
+                "$driver" == AppleUITheme* || "$driver" == FirmwareVolume* || "$driver" == HashServiceFix* ]]; then
+         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
+                            --subst="DRIVER_NAME=$driver"                     \
+                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+                            "AppleUiSupport"
+        fi
         # mandatory drivers starts all selected only if /Library/Preferences/com.projectosx.clover.installer.plist does not exist
         # (i.e. Clover package never run on that target partition).
         # Otherwise each single choice start selected only for legacy Clover and only if you previously selected it
@@ -1054,17 +1056,19 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers64UEFI" ]]; then
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverChoice}")
         # Add postinstall script for VBoxHfs driver to remove it if HFSPlus driver exists
-        [[ "$driver" == VBoxHfs* ]] && \
+        if [[ "$driver" == VBoxHfs* ]]; then
          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
                             --subst="DRIVER_NAME=$driver"                     \
                             --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
                             "VBoxHfs"
         # Add postinstall script for old FileVault2 drivers to remove it if AppleUiSupport driver exists
-        #(([[ "$driver" == AppleImageCodec* ]] || [[ "$driver" == AppleKeyAggregator* ]] || [[ "$driver" == AppleUITheme* ]] || [[ "$driver" == FirmwareVolume* ]] || [[ "$driver" == HashServiceFix* ]]) && \
-        # addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
-        #                    --subst="DRIVER_NAME=$driver"                     \
-        #                    --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-        #                    "AppleUiSupport")
+        elif [[ "$driver" == AppleImageCodec* || "$driver" == AppleKeyAggregator* || 
+                "$driver" == AppleUITheme* || "$driver" == FirmwareVolume* || "$driver" == HashServiceFix* ]]; then
+         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
+                            --subst="DRIVER_NAME=$driver"                     \
+                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+                            "AppleUiSupport"
+        fi
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
         addChoice --group="Drivers64UEFI" --start-visible="true" --start-selected="true" --pkg-refs="$packageRefId"  "${driverChoice}"
         rm -R -f "${PKG_BUILD_DIR}/${driverChoice}"
