@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-30 18:15+0200\n"
+"POT-Creation-Date: 2018-10-01 23:23+0200\n"
 "Last-Translator: Sherlocks <xaviolas@gmail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -1110,10 +1110,7 @@ msgstr "지금 확인"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Copyright (c) 2013 JrCs, kozlek\n"
-#| "All Rights Reserved"
+#, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr ""
 "Copyright (c) 2013 JrCs, kozlek\n"

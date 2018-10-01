@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-30 18:15+0200\n"
+"POT-Creation-Date: 2018-10-01 23:23+0200\n"
 "PO-Revision-Date: 2014-02-14 01:56+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -508,15 +508,13 @@ msgstr "Select drivers for BIOS-booting."
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:93
-#, fuzzy, no-wrap
-#| msgid "BIOS Drivers, 64 bit"
+#, no-wrap
 msgid "FileVault 2 BIOS Drivers, 64 bit"
 msgstr "BIOS Drivers, 64 bit"
 
 #. type: "Drivers64FV2_description"
 #: Resources/templates/Localizable.strings:94
-#, fuzzy, no-wrap
-#| msgid "Select drivers for BIOS-booting."
+#, no-wrap
 msgid "Select drivers for BIOS-booting with FileVault 2."
 msgstr "Select drivers for BIOS-booting."
 
@@ -648,15 +646,13 @@ msgstr "Select drivers for UEFI-booting."
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:117
-#, fuzzy, no-wrap
-#| msgid "UEFI Drivers, 64 bit"
+#, no-wrap
 msgid "FileVault 2 UEFI Drivers, 64 bit"
 msgstr "UEFI Drivers"
 
 #. type: "Drivers64UEFIFV2_description"
 #: Resources/templates/Localizable.strings:118
-#, fuzzy, no-wrap
-#| msgid "Select drivers for UEFI-booting."
+#, no-wrap
 msgid "Select drivers for UEFI-booting with FileVault 2."
 msgstr "Select drivers for UEFI-booting."
 
@@ -1109,10 +1105,7 @@ msgstr "Comprobar ahora..."
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Copyright (c) 2013 JrCs, kozlek\n"
-#| "All Rights Reserved"
+#, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr ""
 "Copyright (c) 2013 JrCs, kozlek\n"

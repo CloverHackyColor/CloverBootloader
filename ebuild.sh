@@ -801,9 +801,16 @@ MainBuildScript() {
                                   'https://github.com/acidanthera/AppleSupportPkg'
                                   'https://github.com/CupertinoNet/CupertinoModulePkg'
                                   'https://github.com/CupertinoNet/EfiMiscPkg'
-                                  'https://github.com/CupertinoNet/EfiPkg' )
+                                  'https://github.com/CupertinoNet/EfiPkg')
     # add below drivers you want to build
     local externalDrivers=( AptioFixPkg AppleSupportPkg )
+
+  # if [[ $TOOLCHAIN == XCODE* ]]; then # this can be also for XCODE8... waiting the mantainer to do a little fix
+  # described here: https://www.insanelymac.com/forum/topic/306156-clover-problems-and-solutions/?do=findComment&comment=2638177
+    if [[ $TOOLCHAIN == XCODE5 ]]; then
+      extDriversDependecies+=( 'https://github.com/acidanthera/VirtualSMC' )
+      externalDrivers+=( VirtualSmcPkg )
+    fi
 
     if [[ "$EXT_DOWNLOAD" -eq 2 ]]; then
       local pkg=""
@@ -811,7 +818,9 @@ MainBuildScript() {
       do
         mkdir -p "$EXT_PACKAGES"
         pkg=$(basename $link)
+
         rm -rf "${EXT_PACKAGES}/${pkg}"
+
         local branch=master
 
         case $pkg in
@@ -828,6 +837,12 @@ MainBuildScript() {
           echo "Error: $pkg cannot be cloned!"
           exit 1
         fi
+        case $pkg in
+        VirtualSMC)
+          cp -R "${EXT_PACKAGES}/${pkg}"/VirtualSmcPkg "${EXT_PACKAGES}"/
+          rm -rf "${EXT_PACKAGES}/${pkg}"
+        ;;
+        esac
       done
     fi
 
@@ -922,6 +937,7 @@ MainPostBuildScript() {
     export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
     export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
     export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+    export VIRTUALSMC_BUILD_DIR_ARCH="${WORKSPACE}/Build/VirtualSmcPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
 	if (( $NOBOOTFILES == 0 )); then
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
@@ -1091,6 +1107,9 @@ MainPostBuildScript() {
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/$efi-64.efi
       done
 
+      # Optional VirtualSMC
+      copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VirtualSMC-64.efi
+      copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/VirtualSMC-64.efi
 
       if [[ $M_APPLEHFS -eq 0 ]]; then
         copyBin "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/VBoxHfs-64.efi
