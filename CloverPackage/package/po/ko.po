@@ -513,17 +513,15 @@ msgstr "BIOS 부팅을 위한 드라이버를 선택하십시오"
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:93
-#, fuzzy, no-wrap
-#| msgid "BIOS Drivers, 64 bit"
+#, no-wrap
 msgid "FileVault 2 BIOS Drivers, 64 bit"
-msgstr "BIOS 드라이버, 64비트"
+msgstr "FileVault 2 BIOS 드라이버, 64비트"
 
 #. type: "Drivers64FV2_description"
 #: Resources/templates/Localizable.strings:94
-#, fuzzy, no-wrap
-#| msgid "Select drivers for BIOS-booting."
+#, no-wrap
 msgid "Select drivers for BIOS-booting with FileVault 2."
-msgstr "BIOS 부팅을 위한 드라이버를 선택하십시오"
+msgstr "FileVault 2 BIOS 부팅을 위한 드라이버를 선택하십시오"
 
 #. type: "ApfsDriverLoader-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96
@@ -586,7 +584,7 @@ msgstr "AMI Aptio와 같은 UEFI 펌웨어의 입력 문제를 해결하는 드�
 #: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "AMI Apt와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버"
+msgstr "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버"
 
 #. type: "FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:105
@@ -653,17 +651,15 @@ msgstr "UEFI 부팅을 위한 드라이버를 선택하십시오"
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:117
-#, fuzzy, no-wrap
-#| msgid "UEFI Drivers, 64 bit"
+#, no-wrap
 msgid "FileVault 2 UEFI Drivers, 64 bit"
-msgstr "UEFI 드라이버"
+msgstr "FileVault 2 UEFI 드라이버"
 
 #. type: "Drivers64UEFIFV2_description"
 #: Resources/templates/Localizable.strings:118
-#, fuzzy, no-wrap
-#| msgid "Select drivers for UEFI-booting."
+#, no-wrap
 msgid "Select drivers for UEFI-booting with FileVault 2."
-msgstr "UEFI 부팅을 위한 드라이버를 선택하십시오"
+msgstr "FileVault 2 UEFI 부팅을 위한 드라이버를 선택하십시오"
 
 #. type: "AppleEvent-64.UEFI_description"
 #: Resources/templates/Localizable.strings:121

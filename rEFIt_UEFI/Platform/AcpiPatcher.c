@@ -495,8 +495,8 @@ VOID PatchAllTables()
   UINT32 Count = XsdtTableCount();
   UINT64* Ptr = XsdtEntryPtrFromIndex(0);
   UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
-  BOOLEAN Patched = FALSE;
   for (; Ptr < EndPtr; Ptr++) {
+    BOOLEAN Patched = FALSE;
     EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)ReadUnaligned64(Ptr);
     if (!Table) {
       // skip NULL entry
@@ -522,7 +522,7 @@ VOID PatchAllTables()
     EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     EFI_STATUS Status = gBS->AllocatePages(AllocateMaxAddress,
                                            EfiACPIReclaimMemory,
-                                           EFI_SIZE_TO_PAGES(Len + 19),
+                                           EFI_SIZE_TO_PAGES(Len + 4096),
                                            &BufferPtr);
     if(EFI_ERROR(Status)) {
       //DBG(" ... not patched\n");
@@ -576,7 +576,7 @@ VOID PatchAllTables()
       FixChecksum(NewTable);
     }
     else {
-      gBS->FreePages(BufferPtr, EFI_SIZE_TO_PAGES(Len + 19));
+      gBS->FreePages(BufferPtr, EFI_SIZE_TO_PAGES(Len + 4096));
     }
   }
 }
