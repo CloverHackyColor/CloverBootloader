@@ -1067,25 +1067,25 @@ MainPostBuildScript() {
       # Mandatory drivers
       echo "Copy Mandatory drivers:"
 # copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
-      binArray=( FSInject XhciDxe)
+      binArray=( FSInject XhciDxe SMCHelper )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
       done
 
-      binArray=( AppleImageCodec AppleKeyAggregator AppleUITheme FirmwareVolume SMCHelper )
+      binArray=( AppleImageCodec AppleKeyAggregator AppleUITheme FirmwareVolume )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/FileVault2/$efi-64.efi
       done
 
-      binArray=( FSInject DataHubDxe)
+      binArray=( FSInject DataHubDxe SMCHelper )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi
       done
 
-      binArray=( AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume SMCHelper )
+      binArray=( AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/$efi-64.efi
