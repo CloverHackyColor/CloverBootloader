@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-01 23:23+0200\n"
-"Last-Translator: Sherlocks <xaviolas@gmail.com>\n"
+"Last-Translator: vector sigma\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -16,8 +16,9 @@ msgstr ""
 "PO-Creation-Date: 2015-12-30 23:27+0000\n"
 "POT-Revision-Date: 2018-08-03 12:00+0500\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.5.0-rc1\n"
+"X-Generator: Poedit 2.1.1\n"
 "X-POOTLE-MTIME: 1451518021.0\n"
+"PO-Revision-Date: \n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
@@ -76,10 +77,8 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -89,7 +88,7 @@ msgstr "메인은 EDK2의 최신판입니다."
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
 msgid "http://sourceforge.net/projects/cloverefiboot/"
-msgstr ""
+msgstr "http://sourceforge.net/projects/cloverefiboot/"
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -103,28 +102,21 @@ msgstr "macOS 10.xx, Windows EFI, 그리고 Linux EFI로 부팅할 수 있습니
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid ""
-"It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더"
-"입니다."
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
 msgid ""
-"mostly Clover do automatic detection of hardware and set all properties by "
-"default. But user can change them by config.plist"
+"mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
 msgstr ""
-"대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다. 물"
-"론 사용자가 직접 config.plist를 수정할 수도 있습니다."
+"대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다. 물론 사용자가 직접 config.plist를 수정할 수도 있습"
+"니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니"
-"다."
+msgstr "Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -144,9 +136,7 @@ msgstr "ACPI는 standard 4.0으로 정정될 것입니다."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더"
-"입니다."
+msgstr "이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -156,25 +146,19 @@ msgstr "수정과 패턴으로 즉시 DSDT 패치할 수 있습니다."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
-"사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정"
-"할 수 있습니다."
+msgstr "사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid ""
-"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards. Also customizable."
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
 msgstr ""
-"ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 "
-"있습니다. 이 역시 사용자 환경에 맞게 조절할 수 있습니다."
+"ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 있습니다. 이 역시 사용자 환경에 맞게 조절할 수 "
+"있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
 msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
-"USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
-"할 수 있습니다."
+msgstr "USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
@@ -189,8 +173,7 @@ msgstr "CPU 터보 기능 구현과 P-state, C-state 생성 가능합니다."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)합니다."
+msgstr "ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)합니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -209,12 +192,8 @@ msgstr "다른 용도로 NVRAM 변수 설정합니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid ""
-"default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 "
-"스크린샷 기능(F10키) 등이 있습니다."
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 스크린샷 기능(F10키) 등이 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -415,8 +394,7 @@ msgid "Select the version of CloverEFI to install."
 msgstr "설치할 CloverEFI 종류를 선택하십시오"
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:69
-#: Resources/templates/Localizable.strings:70
+#: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32비트"
@@ -524,78 +502,67 @@ msgid "Select drivers for BIOS-booting with FileVault 2."
 msgstr "FileVault 2 BIOS 부팅을 위한 드라이버를 선택하십시오"
 
 #. type: "ApfsDriverLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:96
-#: Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
 msgstr "10.13 이상의 macOS에서 컨테이너으로부터 APFS 파일 시스템을 로드하기 위한 드라이버"
 
 #. type: "AppleImageCodec-64.UEFI_description"
-#: Resources/templates/Localizable.strings:97
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "FileVault2 용 PNG 및 BMP 디코딩 지원"
 
 #. type: "AppleImageLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:98
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
 msgstr "EfiBinary 서명 확인을 사용하여 AppleLoadImage 프로토콜을 구현한 보안 AppleEfiFat 바이너리 드라이버"
 
 #. type: "AppleKeyAggregator-64.UEFI_description"
-#: Resources/templates/Localizable.strings:99
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "FileVault2 용 부팅 UI 대화 상자 지원"
 
 #. type: "AppleKeyFeeder-64.UEFI_description"
-#: Resources/templates/Localizable.strings:100
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Support for PS/2 keyboard to use with FileVault2"
 msgstr "FileVault2 용 PS/2 키보드 사용을 지원"
 
 #. type: "AppleUISupport-64.UEFI_description"
-#: Resources/templates/Localizable.strings:101
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
 msgstr "FileVault 용 EfiLoginUi 지원을 위한 프로토콜 설정"
 
 #. type: "AppleUITheme-64.UEFI_description"
-#: Resources/templates/Localizable.strings:102
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "FileVault2 용 부팅 UI 테마를 지원"
 
 #. type: "AptioInputFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:103
-#: Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:103 Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 msgstr "AMI Aptio와 같은 UEFI 펌웨어의 입력 문제를 해결하는 드라이버"
 
 #. type: "AptioMemoryFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:104
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:104 Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버"
 
 #. type: "FirmwareVolume-64.UEFI_description"
-#: Resources/templates/Localizable.strings:105
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:105 Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "FileVault2 용 커서 이미지와 함께 FirmwareVolume을 만듭니다"
 
 #. type: "FSInject-64.UEFI_description"
-#: Resources/templates/Localizable.strings:106
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:106 Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr "Clover 폴더로부터 kexts의 인젝션을 제공"
@@ -625,8 +592,7 @@ msgid "UDF filesystem driver from GRUB."
 msgstr "GRUB의 UDF 파일 시스템 드라이버"
 
 #. type: "SMCHelper-64.UEFI_description"
-#: Resources/templates/Localizable.strings:111
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:111 Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "FakeSMC가 NVRAM에 남긴 SMC 키를 복원"
@@ -986,9 +952,7 @@ msgstr ""
 "포함된 Clover 업데이터는 Clover의 업데이트를 알려드립니다."
 
 #. type: "371.title"
-#: ../CloverUpdater/CloverUpdater.strings:1
-#: ../CloverUpdater/CloverUpdater.strings:2
-#: ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:1 ../CloverUpdater/CloverUpdater.strings:2 ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -1054,8 +1018,7 @@ msgid "Clover"
 msgstr "Clover"
 
 #. type: "Never"
-#: ../CloverPrefpane/CloverPrefpane.strings:2
-#: ../CloverPrefpane/Localizable.strings:5
+#: ../CloverPrefpane/CloverPrefpane.strings:2 ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "사용 안 함"
@@ -1273,15 +1236,13 @@ msgid "EFI Folder path"
 msgstr "EFI 폴더 경로:"
 
 #. type: "Auto"
-#: ../CloverPrefpane/CloverPrefpane.strings:38
-#: ../CloverPrefpane/Localizable.strings:2
+#: ../CloverPrefpane/CloverPrefpane.strings:38 ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "자동"
 
 #. type: "No"
-#: ../CloverPrefpane/CloverPrefpane.strings:39
-#: ../CloverPrefpane/Localizable.strings:6
+#: ../CloverPrefpane/CloverPrefpane.strings:39 ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "아니오"

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-30 18:15+0200\n"
-"PO-Revision-Date: 2018-09-30 18:51+0200\n"
+"PO-Revision-Date: 2018-10-02 11:40+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -86,7 +86,7 @@ msgstr "La principale è edk2 l'ultima revisione."
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
 msgid "http://sourceforge.net/projects/cloverefiboot/"
-msgstr ""
+msgstr "http://sourceforge.net/projects/cloverefiboot/"
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -385,7 +385,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr "Selezionare la versione di CloverEFI da installare."
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
+#: Resources/templates/Localizable.strings:69
+#: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32-bits"
@@ -497,67 +498,78 @@ msgid "Select drivers for BIOS-booting with FileVault 2."
 msgstr "Seleziona i drivers for BIOS-booting con FileVault2."
 
 #. type: "ApfsDriverLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
 msgstr "Supporto per il driver del filesystem APFS incluso nel contenitore di macOS 10.14."
 
 #. type: "AppleImageCodec-64.UEFI_description"
-#: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "Decodifica PNG e BMP per FileVault2."
 
 #. type: "AppleImageLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:98
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
 msgstr "Assicura il driver binario AppleEfiFat con l’implementazione del protocollo AppleLoadImage e con la verifica della firma EfiBinary."
 
 #. type: "AppleKeyAggregator-64.UEFI_description"
-#: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:99
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "Supporto per il boot UI dialog di FileVault2."
 
 #. type: "AppleKeyFeeder-64.UEFI_description"
-#: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:100
+#: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Support for PS/2 keyboard to use with FileVault2"
 msgstr "Supporto per tastiere PS/2 da usare con FileVault2"
 
 #. type: "AppleUISupport-64.UEFI_description"
-#: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:101
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
 msgstr "Set di protocolli per supportare EfiLoginUi di FileVault."
 
 #. type: "AppleUITheme-64.UEFI_description"
-#: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "Crea il supporto boot UI Themes perFileVault2."
 
 #. type: "AptioInputFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:103 Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:103
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 msgstr "Driver che risolve i problemi di input nei firmware UEFI come AMI Aptio."
 
 #. type: "AptioMemoryFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:104 Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:104
+#: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Driver a 64 bit preferito che risolve i problemi di memoria sul firmware UEFI come AMI Aptio bios."
 
 #. type: "FirmwareVolume-64.UEFI_description"
-#: Resources/templates/Localizable.strings:105 Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Crea il FirmwareVolume con ‘cursor images’ per FileVault2."
 
 #. type: "FSInject-64.UEFI_description"
-#: Resources/templates/Localizable.strings:106 Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr "Abilita l’iniezione di estensioni del kernel dalle cartelle di Clover."
@@ -587,7 +599,8 @@ msgid "UDF filesystem driver from GRUB."
 msgstr "Driver GRUB per il filesystem UDF."
 
 #. type: "SMCHelper-64.UEFI_description"
-#: Resources/templates/Localizable.strings:111 Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "Ripristina le chiavi SMC lasciate nell’NVRAM da FakeSMC."
@@ -950,7 +963,9 @@ msgstr ""
 "Include CloverUpdater che notifica la presenza di nuovi aggiornamenti."
 
 #. type: "371.title"
-#: ../CloverUpdater/CloverUpdater.strings:1 ../CloverUpdater/CloverUpdater.strings:2 ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:1
+#: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -1016,7 +1031,8 @@ msgid "Clover"
 msgstr "Clover"
 
 #. type: "Never"
-#: ../CloverPrefpane/CloverPrefpane.strings:2 ../CloverPrefpane/Localizable.strings:5
+#: ../CloverPrefpane/CloverPrefpane.strings:2
+#: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "Never"
@@ -1234,13 +1250,15 @@ msgid "EFI Folder path"
 msgstr "Percorso cartella EFI:"
 
 #. type: "Auto"
-#: ../CloverPrefpane/CloverPrefpane.strings:38 ../CloverPrefpane/Localizable.strings:2
+#: ../CloverPrefpane/CloverPrefpane.strings:38
+#: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "Auto"
 
 #. type: "No"
-#: ../CloverPrefpane/CloverPrefpane.strings:39 ../CloverPrefpane/Localizable.strings:6
+#: ../CloverPrefpane/CloverPrefpane.strings:39
+#: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "No"
