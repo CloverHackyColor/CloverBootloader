@@ -487,11 +487,12 @@ VOID CheckForFakeSMC(CHAR8 *InfoPlist, LOADER_ENTRY *Entry)
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
       OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
     if (AsciiStrStr(InfoPlist, "<string>org.netkas.driver.FakeSMC</string>") != NULL
-        || AsciiStrStr(InfoPlist, "<string>org.netkas.FakeSMC</string>") != NULL)
+        || AsciiStrStr(InfoPlist, "<string>org.netkas.FakeSMC</string>") != NULL
+        || AsciiStrStr(InfoPlist, "<string>as.vit9696.VirtualSMC</string>") != NULL)
     {
       Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
       if (Entry->KernelAndKextPatches->KPDebug) {
-        DBG_RT(Entry, "\nFakeSMC found, UNSET WITHKEXTS\n");
+        DBG_RT(Entry, "\nFakeSMC or VirtualSMC found, UNSET WITHKEXTS\n");
         gBS->Stall(5000000);
       }
     }
