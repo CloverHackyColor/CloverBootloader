@@ -215,7 +215,7 @@ msgstr "UEFI 부팅 전용으로 설치"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr "UEFI 메인보드 전용 Clover 설치"
+msgstr "UEFI 메인보드 전용 Clover를 설치합니다."
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
@@ -235,7 +235,7 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"선택한 볼륨의 ESP(EFI 시스템 파티션)에 Clover 설치하기\n"
+"선택한 볼륨의 ESP(EFI 시스템 파티션)에 Clover를 설치합니다.\n"
 "\n"
 "먼저 Mac에서 ESP를 FAT32으로 포맷합니다.\n"
 "\n"
@@ -261,7 +261,7 @@ msgstr ""
 "간단히 설명하자면, Clover EFI는 3개의 필수 파일이 필요합니다.\n"
 "boot0(드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.\n"
 "boot1(파티션의 boot-sector에 위치)은 boot2를 찾습니다.\n"
-"boot2(파티션의 root directory에 위치)는 /EFI/CLOVER/CLOVERIA32.efi 또는 CLOVERX64.efi, 그리고 kernel 등을 읽어 들입니다"
+"boot2(파티션의 root directory에 위치)는 /EFI/CLOVER/CLOVERIA32.efi 또는 CLOVERX64.efi, 그리고 kernel 등을 읽어 들입니다."
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
@@ -279,7 +279,7 @@ msgid ""
 msgstr ""
 "BIOS 메인보드에서 BIOS 부팅을 위해 사용됩니다.\n"
 "boot0af (boot0 첫번째 활성) 부트로더는 MBR의 활성화된 파티션으로 부트 시도합니다. 만약 활성 파티션이 없는 경우에는 첫번째 EFI/FAT32/HFS 파티션으로 유효한 PBR 시그니쳐로 부트 시도합니다. (먼저 MBR 그리고 GPT에 정의된 파티션)\n"
-"이 설정은 선택한 HFS/Fat32 파티션이 활성화 되게 설정합니다"
+"이 설정은 선택한 HFS/Fat32 파티션이 활성화 되게 설정합니다."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
@@ -299,13 +299,13 @@ msgstr ""
 "BIOS 메인보드에서 BIOS 부팅을 위해 사용됩니다.\n"
 "boot0ss (boot0 시그내쳐 스캐닝) 부트로더는 EFI/FAT32/HFS의 첫번째 파티션으로 유효 PBR 시그니쳐를 통해 부트 시도합니다(먼저 MBR, 다음에 GPT에 정의된 파티션). 만약 활성 파티션이 없는 경우에는 MBR의 활성화된 파티션으로 부트시도 합니다. \n"
 "이 설정은 Windows가 대체로 자신의 파티션이 활성화 되어야 하므로, Windows와 같은 디스크에 설치될 경우에 좋은 선택입니다.\n"
-"이 선택은 MBR의 어떤 파티션도 활성 상태로 바꾸지 않습니다"
+"이 선택은 MBR의 어떤 파티션도 활성 상태로 바꾸지 않습니다."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr "MBR 또는 PBR 섹터를 업데이트 하지 않습니다"
+msgstr "MBR 또는 PBR 섹터를 업데이트 안함"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:41
@@ -317,7 +317,7 @@ msgid ""
 msgstr ""
 "어느 부트로더도 설치하지 않습니다(boot0X, boot1X).\n"
 "어떠한 부트로더 파일도 필요하지 않은 UEFI 메인보드에 유용합니다.\n"
-"만약 MBR 또는 PBR섹터를 업그레이드하고 싶지 않은 경우에도 사용 가능합니다"
+"만약 MBR 또는 PBR섹터를 업그레이드하고 싶지 않은 경우에도 사용 가능합니다."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:45
@@ -356,7 +356,7 @@ msgstr ""
 "다른 부트 순서를 원하면, 다음 숫자 가운데 하나를 누르십시오.\n"
 "숫자 1을 누르면 boot1으로 부팅 = Chameleon 부트,\n"
 "숫자 3을 누르면 boot3으로 부팅 = Clover EFI 32비트 부트,\n"
-"숫자 6을 누르면 boot6으로 부팅 = Clover EFI 64비트 부트"
+"숫자 6을 누르면 boot6으로 부팅 = Clover EFI 64비트 부트."
 
 #. type: "boot64_title"
 #: Resources/templates/Localizable.strings:57
@@ -379,7 +379,7 @@ msgstr ""
 "다른 부트 순서를 원하면, 다음 숫자 가운데 하나를 누르십시오.\n"
 "숫자 1을 누르면 boot1으로 부팅 = Chameleon 부트,\n"
 "숫자 3을 누르면 boot3으로 부팅 = Clover EFI 32비트 부트,\n"
-"숫자 6을 누르면 boot6으로 부팅 = Clover EFI 64비트 부트"
+"숫자 6을 누르면 boot6으로 부팅 = Clover EFI 64비트 부트."
 
 #. type: "CloverEFI_title"
 #: Resources/templates/Localizable.strings:67
@@ -391,7 +391,7 @@ msgstr "CloverEFI"
 #: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr "설치할 CloverEFI 종류를 선택하십시오"
+msgstr "설치할 CloverEFI 종류를 선택하십시오."
 
 #. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
@@ -487,7 +487,7 @@ msgstr "BIOS 드라이버, 64비트"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Select drivers for BIOS-booting."
-msgstr "BIOS 부팅을 위한 드라이버를 선택하십시오"
+msgstr "BIOS 부팅을 위한 드라이버를 선택하십시오."
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:93
@@ -499,7 +499,7 @@ msgstr "FileVault 2 BIOS 드라이버, 64비트"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "Select drivers for BIOS-booting with FileVault 2."
-msgstr "FileVault 2 BIOS 부팅을 위한 드라이버를 선택하십시오"
+msgstr "FileVault 2 BIOS 부팅을 위한 드라이버를 선택하십시오."
 
 #. type: "ApfsDriverLoader-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:120
@@ -511,7 +511,7 @@ msgstr "10.13 이상의 macOS에서 컨테이너으로부터 APFS 파일 시스�
 #: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
-msgstr "FileVault2 용 PNG 및 BMP 디코딩 지원"
+msgstr "FileVault 2 용 PNG 및 BMP 디코딩 지원"
 
 #. type: "AppleImageLoader-64.UEFI_description"
 #: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:124
@@ -523,13 +523,13 @@ msgstr "EfiBinary 서명 확인을 사용하여 AppleLoadImage 프로토콜을 �
 #: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
-msgstr "FileVault2 용 부팅 UI 대화 상자 지원"
+msgstr "FileVault 2 용 부팅 UI 대화 상자 지원"
 
 #. type: "AppleKeyFeeder-64.UEFI_description"
 #: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Support for PS/2 keyboard to use with FileVault2"
-msgstr "FileVault2 용 PS/2 키보드 사용을 지원"
+msgstr "FileVault 2 용 PS/2 키보드 사용을 지원"
 
 #. type: "AppleUISupport-64.UEFI_description"
 #: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:127
@@ -541,7 +541,7 @@ msgstr "FileVault 용 EfiLoginUi 지원을 위한 프로토콜 설정"
 #: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid "Create boot UI Themes support"
-msgstr "FileVault2 용 부팅 UI 테마를 지원"
+msgstr "FileVault 2 용 부팅 UI 테마를 지원"
 
 #. type: "AptioInputFix-64.UEFI_description"
 #: Resources/templates/Localizable.strings:103 Resources/templates/Localizable.strings:129
@@ -559,7 +559,7 @@ msgstr "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하�
 #: Resources/templates/Localizable.strings:105 Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
-msgstr "FileVault2 용 커서 이미지와 함께 FirmwareVolume을 만듭니다"
+msgstr "FileVault 2 용 커서 이미지와 함께 FirmwareVolume을 만듭니다."
 
 #. type: "FSInject-64.UEFI_description"
 #: Resources/templates/Localizable.strings:106 Resources/templates/Localizable.strings:141
@@ -613,7 +613,7 @@ msgstr "UEFI 드라이버"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Select drivers for UEFI-booting."
-msgstr "UEFI 부팅을 위한 드라이버를 선택하십시오"
+msgstr "UEFI 부팅을 위한 드라이버를 선택하십시오."
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:117
@@ -625,19 +625,19 @@ msgstr "FileVault 2 UEFI 드라이버"
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Select drivers for UEFI-booting with FileVault 2."
-msgstr "FileVault 2 UEFI 부팅을 위한 드라이버를 선택하십시오"
+msgstr "FileVault 2 UEFI 부팅을 위한 드라이버를 선택하십시오."
 
 #. type: "AppleEvent-64.UEFI_description"
 #: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "Create AppleEvent protocol for FileVault2"
-msgstr "FileVault2 용 AppleEvent 프로토콜을 만듭니다"
+msgstr "FileVault 2 용 AppleEvent 프로토콜을 만듭니다."
 
 #. type: "AppleGraphicsConfig-64.UEFI_description"
 #: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "Create optional AppleGraphicsConfig protocol"
-msgstr "선택적 AppleGraphicsConfig 프로토콜을 만듭니다"
+msgstr "선택적 AppleGraphicsConfig 프로토콜을 만듭니다."
 
 #. type: "CsmVideoDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:131
@@ -651,7 +651,7 @@ msgstr ""
 "Clover GUI를 위한 64비트 비디오 드라이버는 더 다양한 해상도 설정을 가능하게 합니다.\n"
 "UEFI BIOS의 CSM모듈에 기반해있으므로 CSM이 활성화 되어야 합니다.\n"
 "Clover는 깨어나기에 문제가 있는 시스템에서는 정상적으로 시작하지 않을 수 있습니다.\n"
-"주의해서 사용해주시기 바랍니다"
+"주의해서 사용해주시기 바랍니다."
 
 #. type: "DataHubDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:135
@@ -661,7 +661,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "macOS에 필수적인 DataHub 프로토콜 지원합니다.\n"
-"대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다"
+"대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다."
 
 #. type: "EmuVariableUefi-64.UEFI_description"
 #: Resources/templates/Localizable.strings:137
@@ -670,7 +670,7 @@ msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "Mac OSX는 NVRAM 변수를 지원하는 64bit 드라이버를 필요로 합니다.\n"
 "대체로 UEFI 부트는 하드웨어 NVRAM을 이용하지만 간혹 이 드라이버가 필요할 수 있습니다.\n"
-"본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오"
+"본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오."
 
 #. type: "EnglishDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:138
@@ -688,7 +688,7 @@ msgstr "FAT 파일 시스템 드라이버"
 #: Resources/templates/Localizable.strings:142
 #, no-wrap
 msgid "Fix Hash support if absent in native UEFI BIOS"
-msgstr "기본 UEFI BIOS에 해시가 없으면 지원되도록 고칩니다"
+msgstr "기본 UEFI BIOS에 해시가 없으면 지원되도록 고칩니다."
 
 #. type: "HFSPlus.UEFI_description"
 #: Resources/templates/Localizable.strings:143
@@ -706,19 +706,19 @@ msgstr "NVM Express 장치 지원용 드라이버"
 #: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-msgstr "대체 드라이버 (v2)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오"
+msgstr "대체 드라이버 (v2)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오."
 
 #. type: "OsxAptioFix3Drv-64.UEFI_description"
 #: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
-msgstr "대체 드라이버 (v3)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오"
+msgstr "대체 드라이버 (v3)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오."
 
 #. type: "OsxAptioFixDrv-64.UEFI_description"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "이전 64 비트 드라이버로 AMI Aptio와 같은 UEFI 펌웨어의 메모리 문제를 해결할 수 있습니다. 다른 AptioFix와 함께 사용하지 마십시오"
+msgstr "이전 64 비트 드라이버로 AMI Aptio와 같은 UEFI 펌웨어의 메모리 문제를 해결할 수 있습니다. 다른 AptioFix와 함께 사용하지 마십시오."
 
 #. type: "OsxFatBinaryDrv-64.UEFI_description"
 #: Resources/templates/Localizable.strings:148
@@ -805,7 +805,7 @@ msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/BGM"
 msgstr ""
-"Blackosx의 BGM(흑녹색조) 테마,\n"
+"Blackosx의 BGM(흑녹색조) 테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
@@ -821,7 +821,7 @@ msgid ""
 "embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"Blackosx의 임베디드 테마,\n"
+"Blackosx의 임베디드 테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
@@ -837,7 +837,7 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
-"Slice의 The original metal 테마,\n"
+"Slice의 The original metal 테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
 #. type: "random_title"
@@ -853,7 +853,7 @@ msgid ""
 "random theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
-"Slice의 랜덤테마,\n"
+"Slice의 랜덤테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
@@ -869,7 +869,7 @@ msgid ""
 "steampunkblack theme from medik,\n"
 "Install to /EFI/CLOVER/themes/steampunkblack"
 msgstr ""
-"medik의 스팀펑크 블랙 테마,\n"
+"medik의 스팀펑크 블랙 테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
@@ -903,7 +903,7 @@ msgid ""
 "The target volume must be a bootable OSX system volume."
 msgstr ""
 "선택한 볼륨에 모든 RC 스크립트를 설치합니다.\n"
-"선택한 볼륨은 반드시 macOS 시스템 볼륨이어야 합니다"
+"선택한 볼륨은 반드시 macOS 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:196
@@ -915,7 +915,7 @@ msgstr "부팅 가능한 모든 macOS 볼륨에 RC 스크립트 설치"
 #: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "선택한 볼륨을 제외한 모든 내장 macOS 볼륨에 모든 RC 스크립트를 설치합니다"
+msgstr "선택한 볼륨을 제외한 모든 내장 macOS 볼륨에 모든 RC 스크립트를 설치합니다."
 
 #. type: "OptionalRCScripts"
 #: Resources/templates/Localizable.strings:198
@@ -927,13 +927,13 @@ msgstr "선택적 RC 스크립트"
 #: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "Disable sleep proxy client"
-msgstr "잠자기 프록시 클라이언트 서비스 비활성화"
+msgstr "잠자기 프록시 클라이언트 비활성화"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:200
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
+msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다."
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:205

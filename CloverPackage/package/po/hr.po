@@ -494,7 +494,7 @@ msgstr "FileVault 2 BIOS Drivers, 64 bit"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "Select drivers for BIOS-booting with FileVault 2."
-msgstr "Select drivers for BIOS-booting."
+msgstr "Select drivers for BIOS-booting with FileVault 2."
 
 #. type: "ApfsDriverLoader-64.UEFI_description"
 #: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:120
@@ -614,13 +614,13 @@ msgstr "Select drivers for UEFI-booting."
 #: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "FileVault 2 UEFI Drivers, 64 bit"
-msgstr "FileVault 2 UEFI Drivers, 64 bit"
+msgstr "FileVault 2 UEFI Drivers"
 
 #. type: "Drivers64UEFIFV2_description"
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Select drivers for UEFI-booting with FileVault 2."
-msgstr "Select drivers for UEFI-booting."
+msgstr "Select drivers for UEFI-booting with FileVault 2."
 
 #. type: "AppleEvent-64.UEFI_description"
 #: Resources/templates/Localizable.strings:121

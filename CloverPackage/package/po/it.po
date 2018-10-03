@@ -615,7 +615,7 @@ msgstr "Driver USB 3.0, 64bit"
 #: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "UEFI Drivers, 64 bit"
-msgstr "Drivers UEFI "
+msgstr "Drivers UEFI"
 
 #. type: "Drivers64UEFI_description"
 #: Resources/templates/Localizable.strings:115
@@ -627,7 +627,7 @@ msgstr "Seleziona drivers per UEFI-booting."
 #: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "FileVault 2 UEFI Drivers, 64 bit"
-msgstr "Drivers UEFI per FileVault 2 , 64 bit"
+msgstr "Drivers UEFI per FileVault 2"
 
 #. type: "Drivers64UEFIFV2_description"
 #: Resources/templates/Localizable.strings:118
