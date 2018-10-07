@@ -7113,12 +7113,22 @@ SetDevices (LOADER_ENTRY *Entry)
 
               // IntelBacklight reworked by Sherlocks. 2018.10.07
               if (gSettings.IntelBacklight) {
-                UINT32 LEVL = 0, LEVW = 0, LEVX = 0;
+                UINT32 LEV2 = 0, LEVL = 0, P0BL = 0, GRAN = 0;
+                UINT32 LEVW = 0, LEVX = 0, LEVD = 0, PCHL = 0;
                 UINT32 ShiftLEVX = 0, FBLEVX = 0;
                 UINT32 SYSLEVW = 0x80000000;
                 UINT32 OSXLEVW = 0xC0000000;
 
                 MsgLog ("Intel GFX IntelBacklight\n");
+                // Read LEV2
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0x48250,
+                                             1,
+                                             &LEV2
+                                             );
                 // Read LEVL
                 /*Status = */PciIo->Mem.Read(
                                              PciIo,
@@ -7127,6 +7137,24 @@ SetDevices (LOADER_ENTRY *Entry)
                                              0x48254,
                                              1,
                                              &LEVL
+                                             );
+                // Read P0BL
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0x70040,
+                                             1,
+                                             &P0BL
+                                             );
+                // Read GRAN
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0xC2000,
+                                             1,
+                                             &GRAN
                                              );
                 // Read LEVW
                 /*Status = */PciIo->Mem.Read(
@@ -7147,7 +7175,26 @@ SetDevices (LOADER_ENTRY *Entry)
                                              &LEVX
                                              );
                 ShiftLEVX = LEVX >> 16;
-                MsgLog ("  LEVL = 0x%x, LEVW = 0x%x, LEVX = 0x%x\n", LEVL, LEVW, ShiftLEVX);
+                // Read LEVD
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0xC8258,
+                                             1,
+                                             &LEVD
+                                             );
+                // Read PCHL
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0xE1180,
+                                             1,
+                                             &PCHL
+                                             );
+                MsgLog ("  LEV2 = 0x%x, LEVL = 0x%x, P0BL = 0x%x, GRAN = 0x%x\n", LEV2, LEVL, P0BL, GRAN);
+                MsgLog ("  LEVW = 0x%x, LEVX = 0x%x, LEVD = 0x%x, PCHL = 0x%x\n", LEVW, LEVX, LEVD, PCHL);
 
                 // Maximum brightness level of each framebuffers
                 //  Sandy Bridge/Ivy Bridge: 0x0710
@@ -7374,6 +7421,7 @@ SetDevices (LOADER_ENTRY *Entry)
                     break;
 
                   default:
+                    FBLEVX = 0xFFFF;
                     break;
                 }
 
@@ -7396,7 +7444,7 @@ SetDevices (LOADER_ENTRY *Entry)
                     // Write LEVW
                     if (gSettings.IntelBacklight) {
                       if (LEVW != SYSLEVW) {
-                        MsgLog ("  New LEVW = 0x%x\n", SYSLEVW);
+                        MsgLog ("  LEVW: new 0x%x\n", SYSLEVW);
                         /*Status = */PciIo->Mem.Write(
                                                       PciIo,
                                                       EfiPciIoWidthUint32,
@@ -7410,16 +7458,27 @@ SetDevices (LOADER_ENTRY *Entry)
 
                     // Write LEVX
                     if (gSettings.IntelMaxBacklight) {
-                      if (gSettings.IntelMaxValue) {
-                        FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  New FBLEVX = 0x%x\n", FBLEVX);
-                      } else {
-                        MsgLog ("  Default FBLEVX = 0x%x\n", FBLEVX);
+                      if (!LEVL) {
+                        MsgLog ("  LEVL: No valid, use default 0x%x\n", FBLEVX);
+                        LEVL = FBLEVX;
                       }
 
-                      if (ShiftLEVX != FBLEVX) {
+                      if (!LEVX) {
+                        MsgLog ("  LEVX: No valid, use default 0x%x\n", FBLEVX);
+                        ShiftLEVX = FBLEVX;
+                      }
+
+                      if (gSettings.IntelMaxValue) {
+                        FBLEVX = gSettings.IntelMaxValue;
+                        MsgLog ("  FBLEVX: new 0x%x\n", FBLEVX);
+                      } else {
+                        MsgLog ("  FBLEVX: default 0x%x\n", FBLEVX);
+                      }
+
+
+                      if ((ShiftLEVX != FBLEVX) || !LEVX) {
                         LEVX = (LEVL * FBLEVX) / ShiftLEVX;
-                        LEVL = FBLEVX << 16;
+                        LEVL = FBLEVX | FBLEVX << 16;
 
                         if (FBLEVX > ShiftLEVX) {
                           /*Status = */PciIo->Mem.Write(
@@ -7466,7 +7525,7 @@ SetDevices (LOADER_ENTRY *Entry)
                     // Write LEVW
                     if (gSettings.IntelBacklight) {
                       if (LEVW != OSXLEVW) {
-                        MsgLog ("  New LEVW = 0x%x\n", OSXLEVW);
+                        MsgLog ("  LEVW: new 0x%x\n", OSXLEVW);
                         /*Status = */PciIo->Mem.Write(
                                                       PciIo,
                                                       EfiPciIoWidthUint32,
@@ -7482,10 +7541,13 @@ SetDevices (LOADER_ENTRY *Entry)
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  New FBLEVX = 0x%x\n", FBLEVX);
-                        LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
+                        MsgLog ("  FBLEVX: new 0x%x\n", FBLEVX);
+                        LEVX = FBLEVX | FBLEVX << 16;
+                      } else if  (!LEVX) {
+                        MsgLog ("  FBLEVX: no valid LEVX, use default 0x%x\n", FBLEVX);
+                        LEVX = FBLEVX | FBLEVX << 16;
                       } else if  (ShiftLEVX != FBLEVX) {
-                        MsgLog ("  Default FBLEVX = 0x%x\n", FBLEVX);
+                        MsgLog ("  FBLEVX: default 0x%x\n", FBLEVX);
                         LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
                       }
 
