@@ -2278,7 +2278,7 @@ FillinCustomTool (
   return TRUE;
 }
 
-// EDID code was rewritten by Sherlocks
+// EDID reworked by Sherlocks
 VOID
 GetEDIDSettings(TagPtr DictPointer)
 {
@@ -4726,7 +4726,7 @@ GetUserSettings(
       gSettings.IntelMaxBacklight = IsPropertyTrue (Prop);
       
       Prop = GetProperty (DictPointer, "IntelMaxValue");
-      gSettings.IntelMaxValue = (UINT32)GetPropertyInteger (Prop, gSettings.IntelMaxValue);
+      gSettings.IntelMaxValue = (UINT16)GetPropertyInteger (Prop, gSettings.IntelMaxValue);
       
       Prop = GetProperty (DictPointer, "Properties");
       if (Prop != NULL) {
@@ -7025,7 +7025,7 @@ SetDevices (LOADER_ENTRY *Entry)
         PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
         PCIdevice.used                       = FALSE;
         
-        //      if (gSettings.NrAddProperties == 0xFFFE) {  //yyyy it means Arbitrary
+        //if (gSettings.NrAddProperties == 0xFFFE) {  //yyyy it means Arbitrary
         //------------------
         Prop = gSettings.ArbProperties;  //check for additional properties
         device = NULL;
@@ -7055,247 +7055,472 @@ SetDevices (LOADER_ENTRY *Entry)
         }
         //------------------
         if (PCIdevice.used) {
-          DBG("custom properties for device %02x:%02x.%02x injected\n",
-              Bus, Device, Function);
-          //            continue;
+          DBG("custom properties for device %02x:%02x.%02x injected\n", Bus, Device, Function);
+          //continue;
         }
-        //        }
+        //}
+
         // GFX
-        //if (/* gSettings.GraphicsInjector && */
-        //    (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-        //    (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
-        
         if (/* gSettings.GraphicsInjector && */
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
             ((Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) ||
              (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
+          //gGraphics.DeviceID = Pci.Hdr.DeviceId;
               
-              UINT32 LevelW = 0xC0000000;
-              // syscl: set PWMMax base on platform
-              // Sherlocks: the Xeon CPU of some laptop has built-in graphics. ex. Xeon E3-1505M v5/Xeon E3-1535M
-              // 10: Sandy/Ivy 0x0710
-              // 11: Haswell/Broadwell 0x056c/0x07a1/0x0ad9/0x1499
-              // 12: Skylake/KabyLake 0x056c
-              // 99: Other
-              UINT32 LevelMaxW = 0;
-              
-              switch (gCPUStructure.Model) {
-                case CPU_MODEL_SANDY_BRIDGE:
-                  if (gSettings.IgPlatform) {
-                    switch (gSettings.IgPlatform) {
-                      case (UINT32)0x00030010:
-                      case (UINT32)0x00050000:
-                        break;
-                      default:
-                        LevelMaxW = 0x07100000;
-                        break;
-                    }
-                  } else {
-                    LevelMaxW = 0x07100000;
-                  }
-                  break;
-                  
-                case CPU_MODEL_IVY_BRIDGE:
-                  LevelMaxW = 0x07100000;
-                  break;
-                  
-                case CPU_MODEL_HASWELL:
-                case CPU_MODEL_HASWELL_ULT:
-                case CPU_MODEL_CRYSTALWELL:
-                  if (gSettings.IgPlatform) {
-                    switch (gSettings.IgPlatform) {
-                      case (UINT32)0x04060000:
-                      case (UINT32)0x0c060000:
-                      case (UINT32)0x04160000:
-                      case (UINT32)0x0c160000:
-                      case (UINT32)0x04260000:
-                      case (UINT32)0x0c260000:
-                      case (UINT32)0x0d260000:
-                      case (UINT32)0x0d220003:
-                        LevelMaxW = 0x14990000;
-                        break;
-                      case (UINT32)0x0a160000:
-                      case (UINT32)0x0a260000:
-                      case (UINT32)0x0a260005:
-                      case (UINT32)0x0a260006:
-                        LevelMaxW = 0x0ad90000;
-                        break;
-                      case (UINT32)0x0d260007:
-                        LevelMaxW = 0x07a10000;
-                        break;
-                      case (UINT32)0x0a2e0008:
-                        LevelMaxW = 0x056c0000;
-                        break;
-                      case (UINT32)0x04120004:
-                      case (UINT32)0x0412000b:
-                        break;
-                      default:
-                        LevelMaxW = 0x056c0000;
-                        break;
-                    }
-                  } else {
-                    LevelMaxW = 0x056c0000;
-                  }
-                  break;
-                  
-                case CPU_MODEL_HASWELL_U5:    // Broadwell Mobile
-                case CPU_MODEL_BROADWELL_HQ:
-                  if (gSettings.IgPlatform) {
-                    switch (gSettings.IgPlatform) {
-                      case (UINT32)0x16060000:
-                      case (UINT32)0x160e0000:
-                      case (UINT32)0x16160000:
-                      case (UINT32)0x161e0000:
-                      case (UINT32)0x16220000:
-                      case (UINT32)0x16260000:
-                      case (UINT32)0x162b0000:
-                      case (UINT32)0x16260004:
-                      case (UINT32)0x162b0004:
-                      case (UINT32)0x16220007:
-                      case (UINT32)0x16260008:
-                      case (UINT32)0x162b0008:
-                        LevelMaxW = 0x14990000;
-                        break;
-                      case (UINT32)0x16260005:
-                      case (UINT32)0x16260006:
-                        LevelMaxW = 0x0ad90000;
-                        break;
-                      case (UINT32)0x16120003:
-                        LevelMaxW = 0x07a10000;
-                        break;
-                      case (UINT32)0x160e0001:
-                      case (UINT32)0x161e0001:
-                      case (UINT32)0x16060002:
-                      case (UINT32)0x16160002:
-                      case (UINT32)0x16220002:
-                      case (UINT32)0x16260002:
-                      case (UINT32)0x162b0002:
-                        LevelMaxW = 0x056c0000;
-                        break;
-                      default:
-                        LevelMaxW = 0x056c0000;
-                        break;
-                    }
-                  } else {
-                    LevelMaxW = 0x056c0000;
-                  }
-                  break;
-                  
-                case CPU_MODEL_SKYLAKE_U:
-                case CPU_MODEL_SKYLAKE_D:
-                  if (gSettings.IgPlatform) {
-                    switch (gSettings.IgPlatform) {
-                      case (UINT32)0x19120001:
-                        break;
-                      default:
-                        LevelMaxW = 0x056c0000;
-                        break;
-                    }
-                  } else {
-                    LevelMaxW = 0x056c0000;
-                  }
-                  break;
-                  
-                case CPU_MODEL_KABYLAKE1:    // Mobile
-                case CPU_MODEL_KABYLAKE2:    // Desktop
-                  LevelMaxW = 0x056c0000;
-                  break;
-                  
-                default:
-                  break;
+          switch (Pci.Hdr.VendorId) {
+            case 0x1002:
+              if (gSettings.InjectATI) {
+                //can't do this in one step because of C-conventions
+                TmpDirty    = setup_ati_devprop(Entry, &PCIdevice);
+                StringDirty |=  TmpDirty;
+              } else {
+                MsgLog ("ATI injection not set\n");
               }
-              UINT32 IntelDisable = 0x03;
-              
-              //        gGraphics.DeviceID = Pci.Hdr.DeviceId;
-              
-              switch (Pci.Hdr.VendorId) {
-                case 0x1002:
-                  if (gSettings.InjectATI) {
-                    //can't do this in one step because of C-conventions
-                    TmpDirty    = setup_ati_devprop(Entry, &PCIdevice);
-                    StringDirty |=  TmpDirty;
-                  } else {
-                    MsgLog ("ATI injection not set\n");
+
+              for (j = 0; j < 4; j++) {
+                if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
+                  if (gGraphics[j].ConnChanged) {
+                    *(UINT32*)(gGraphics[j].Mmio + RADEON_BIOS_0_SCRATCH) = gGraphics[j].Connectors;
                   }
-                  for (j = 0; j < 4; j++) {
-                    if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
-                      if (gGraphics[j].ConnChanged) {
-                        *(UINT32*)(gGraphics[j].Mmio + RADEON_BIOS_0_SCRATCH) = gGraphics[j].Connectors;
-                      }
-                      break;
-                    }
-                  }
-                  if (gSettings.DeInit) {
-                    for (j = 0; j < 4; j++) {
-                      if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6848) = 0; //EVERGREEN_GRPH_FLIP_CONTROL, 1<<0 SURFACE_UPDATE_H_RETRACE_EN
-                        *(UINT32*)(gGraphics[j].Mmio + 0x681C) = 0; //EVERGREEN_GRPH_PRIMARY_SURFACE_ADDRESS_HIGH
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6820) = 0; //EVERGREEN_GRPH_SECONDARY_SURFACE_ADDRESS_HIGH
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6808) = 0; //EVERGREEN_GRPH_LUT_10BIT_BYPASS_CONTROL, EVERGREEN_LUT_10BIT_BYPASS_EN            (1 << 8)
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //EVERGREEN_GRPH_ENABLE
-                        *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //EVERGREEN_MASTER_UPDATE_MODE
-                        //                   *(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
-                        DBG("Device %d deinited\n", j);
-                      }
-                    }
-                  }
-                  
                   break;
+                }
+              }
+
+              if (gSettings.DeInit) {
+                for (j = 0; j < 4; j++) {
+                  if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
+                    *(UINT32*)(gGraphics[j].Mmio + 0x6848) = 0; //EVERGREEN_GRPH_FLIP_CONTROL, 1<<0 SURFACE_UPDATE_H_RETRACE_EN
+                    *(UINT32*)(gGraphics[j].Mmio + 0x681C) = 0; //EVERGREEN_GRPH_PRIMARY_SURFACE_ADDRESS_HIGH
+                    *(UINT32*)(gGraphics[j].Mmio + 0x6820) = 0; //EVERGREEN_GRPH_SECONDARY_SURFACE_ADDRESS_HIGH
+                    *(UINT32*)(gGraphics[j].Mmio + 0x6808) = 0; //EVERGREEN_GRPH_LUT_10BIT_BYPASS_CONTROL, EVERGREEN_LUT_10BIT_BYPASS_EN  (1 << 8)
+                    *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //EVERGREEN_GRPH_ENABLE
+                    *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //EVERGREEN_MASTER_UPDATE_MODE
+                    //*(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
+                    DBG("Device %d deinited\n", j);
+                  }
+                }
+              }
+              break;
                   
-                case 0x8086:
-                  if (gSettings.InjectIntel) {
-                    TmpDirty    = setup_gma_devprop(Entry, &PCIdevice);
-                    StringDirty |=  TmpDirty;
-                    MsgLog ("Intel GFX revision  = 0x%x\n", PCIdevice.revision);
-                  } else {
-                    MsgLog ("Intel GFX injection not set\n");
-                  }
-                  if (gSettings.IntelBacklight) {
-                    /*Status = */PciIo->Mem.Write(
-                                                  PciIo,
-                                                  EfiPciIoWidthUint32,
-                                                  0,
-                                                  0xC8250,
-                                                  1,
-                                                  &LevelW
-                                                  );
-                    
-                  }
-                  if (gSettings.IntelMaxBacklight) {
-                    if (gSettings.IntelMaxValue) {
-                      LevelMaxW = gSettings.IntelMaxValue << 16;
+            case 0x8086:
+              if (gSettings.InjectIntel) {
+                TmpDirty    = setup_gma_devprop(Entry, &PCIdevice);
+                StringDirty |=  TmpDirty;
+                MsgLog ("Intel GFX revision  = 0x%x\n", PCIdevice.revision);
+              } else {
+                MsgLog ("Intel GFX injection not set\n");
+              }
+
+              // IntelBacklight reworked by Sherlocks. 2018.10.07
+              if (gSettings.IntelBacklight) {
+                UINT32 LEVL = 0, LEVW = 0, LEVX = 0;
+                UINT32 ShiftLEVX = 0, FBLEVX = 0;
+                UINT32 SYSLEVW = 0x80000000;
+                UINT32 OSXLEVW = 0xC0000000;
+
+                MsgLog ("Intel GFX IntelBacklight\n");
+                // Read LEVL
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0x48254,
+                                             1,
+                                             &LEVL
+                                             );
+                // Read LEVW
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0xC8250,
+                                             1,
+                                             &LEVW
+                                             );
+                // Read LEVX
+                /*Status = */PciIo->Mem.Read(
+                                             PciIo,
+                                             EfiPciIoWidthUint32,
+                                             0,
+                                             0xC8254,
+                                             1,
+                                             &LEVX
+                                             );
+                ShiftLEVX = LEVX >> 16;
+                MsgLog ("  LEVL = 0x%x, LEVW = 0x%x, LEVX = 0x%x\n", LEVL, LEVW, ShiftLEVX);
+
+                // Maximum brightness level of each framebuffers
+                //  Sandy Bridge/Ivy Bridge: 0x0710
+                //  Haswell/Broadwell: 0x056C/0x07A1/0x0AD9/0x1499
+                //  Skylake/KabyLake: 0x056C
+                //  Coffee Lake: 0xFF7B
+                switch (Pci.Hdr.DeviceId) {
+                  case 0x0102: // "Intel HD Graphics 2000"
+                  case 0x0106: // "Intel HD Graphics 2000"
+                  case 0x010A: // "Intel HD Graphics P3000"
+                  case 0x0112: // "Intel HD Graphics 3000"
+                  case 0x0116: // "Intel HD Graphics 3000"
+                  case 0x0122: // "Intel HD Graphics 3000"
+                  case 0x0126: // "Intel HD Graphics 3000"
+                    if (gSettings.IgPlatform) {
+                      switch (gSettings.IgPlatform) {
+                        case (UINT32)0x00030010:
+                        case (UINT32)0x00050000:
+                          break;
+                        default:
+                          FBLEVX = 0x0710;
+                          break;
+                      }
+                    } else {
+                      FBLEVX = 0x0710;
                     }
-                    if (LevelMaxW) {
+                    break;
+                              
+                  case 0x0152: // "Intel HD Graphics 2500"
+                  case 0x0156: // "Intel HD Graphics 2500"
+                  case 0x015A: // "Intel HD Graphics 2500"
+                  case 0x0162: // "Intel HD Graphics 4000"
+                  case 0x0166: // "Intel HD Graphics 4000"
+                  case 0x016A: // "Intel HD Graphics P4000"
+                    FBLEVX = 0x0710;
+                    break;
+
+                  case 0x0412: // "Intel HD Graphics 4600"
+                  case 0x0416: // "Intel HD Graphics 4600"
+                  case 0x041A: // "Intel HD Graphics P4600"
+                  case 0x041E: // "Intel HD Graphics 4400"
+                  case 0x0422: // "Intel HD Graphics 5000"
+                  case 0x0426: // "Intel HD Graphics 5000"
+                  case 0x042A: // "Intel HD Graphics 5000"
+                  case 0x0A06: // "Intel HD Graphics"
+                  case 0x0A16: // "Intel HD Graphics 4400"
+                  case 0x0A1E: // "Intel HD Graphics 4200"
+                  case 0x0A22: // "Intel Iris Graphics 5100"
+                  case 0x0A26: // "Intel HD Graphics 5000"
+                  case 0x0A2A: // "Intel Iris Graphics 5100"
+                  case 0x0A2B: // "Intel Iris Graphics 5100"
+                  case 0x0A2E: // "Intel Iris Graphics 5100"
+                  case 0x0D12: // "Intel HD Graphics 4600"
+                  case 0x0D16: // "Intel HD Graphics 4600"
+                  case 0x0D22: // "Intel Iris Pro Graphics 5200"
+                  case 0x0D26: // "Intel Iris Pro Graphics 5200"
+                  case 0x0D2A: // "Intel Iris Pro Graphics 5200"
+                  case 0x0D2B: // "Intel Iris Pro Graphics 5200"
+                  case 0x0D2E: // "Intel Iris Pro Graphics 5200"
+                    if (gSettings.IgPlatform) {
+                      switch (gSettings.IgPlatform) {
+                        case (UINT32)0x04060000:
+                        case (UINT32)0x0c060000:
+                        case (UINT32)0x04160000:
+                        case (UINT32)0x0c160000:
+                        case (UINT32)0x04260000:
+                        case (UINT32)0x0c260000:
+                        case (UINT32)0x0d260000:
+                        case (UINT32)0x0d220003:
+                          FBLEVX = 0x1499;
+                          break;
+                        case (UINT32)0x0a160000:
+                        case (UINT32)0x0a260000:
+                        case (UINT32)0x0a260005:
+                        case (UINT32)0x0a260006:
+                          FBLEVX = 0x0AD9;
+                          break;
+                        case (UINT32)0x0d260007:
+                          FBLEVX = 0x07A1;
+                          break;
+                        case (UINT32)0x04120004:
+                        case (UINT32)0x0412000b:
+                          break;
+                        default:
+                          FBLEVX = 0x056C;
+                          break;
+                      }
+                    } else {
+                      switch (Pci.Hdr.DeviceId) {
+                        case (UINT32)0x0406:
+                        case (UINT32)0x0C06:
+                        case (UINT32)0x0416:
+                        case (UINT32)0x0C16:
+                        case (UINT32)0x0426:
+                        case (UINT32)0x0C26:
+                        case (UINT32)0x0D22:
+                          FBLEVX = 0x1499;
+                          break;
+                        case (UINT32)0x0A16:
+                        case (UINT32)0x0A26:
+                          FBLEVX = 0x0AD9;
+                          break;
+                        case (UINT32)0x0D26:
+                          FBLEVX = 0x07A1;
+                          break;
+                        default:
+                          FBLEVX = 0x056C;
+                          break;
+                      }
+                    }
+                    break;
+                              
+                  case 0x1612: // "Intel HD Graphics 5600"
+                  case 0x1616: // "Intel HD Graphics 5500"
+                  case 0x161E: // "Intel HD Graphics 5300"
+                  case 0x1626: // "Intel HD Graphics 6000"
+                  case 0x162B: // "Intel Iris Graphics 6100"
+                  case 0x162D: // "Intel Iris Pro Graphics P6300"
+                  case 0x1622: // "Intel Iris Pro Graphics 6200"
+                  case 0x162A: // "Intel Iris Pro Graphics P6300"
+                    if (gSettings.IgPlatform) {
+                      switch (gSettings.IgPlatform) {
+                        case (UINT32)0x16060000:
+                        case (UINT32)0x160e0000:
+                        case (UINT32)0x16160000:
+                        case (UINT32)0x161e0000:
+                        case (UINT32)0x16220000:
+                        case (UINT32)0x16260000:
+                        case (UINT32)0x162b0000:
+                        case (UINT32)0x16260004:
+                        case (UINT32)0x162b0004:
+                        case (UINT32)0x16220007:
+                        case (UINT32)0x16260008:
+                        case (UINT32)0x162b0008:
+                          FBLEVX = 0x1499;
+                          break;
+                        case (UINT32)0x16260005:
+                        case (UINT32)0x16260006:
+                          FBLEVX = 0x0AD9;
+                          break;
+                        case (UINT32)0x16120003:
+                          FBLEVX = 0x07A1;
+                          break;
+                        default:
+                          FBLEVX = 0x056C;
+                          break;
+                      }
+                    } else {
+                      switch (Pci.Hdr.DeviceId) {
+                        case 0x1606:
+                        case 0x160E:
+                        case 0x1616:
+                        case 0x161E:
+                        case 0x1622:
+                          FBLEVX = 0x1499;
+                          break;
+                        case 0x1626:
+                          FBLEVX = 0x0AD9;
+                          break;
+                        case 0x1612:
+                          FBLEVX = 0x07A1;
+                          break;
+                        default:
+                          FBLEVX = 0x056C;
+                          break;
+                      }
+                    }
+                    break;
+                              
+                  case 0x1902: // "Intel HD Graphics 510"
+                  case 0x1906: // "Intel HD Graphics 510"
+                  case 0x190B: // "Intel HD Graphics 510"
+                  case 0x1912: // "Intel HD Graphics 530"
+                  case 0x1916: // "Intel HD Graphics 520"
+                  case 0x191B: // "Intel HD Graphics 530"
+                  case 0x191D: // "Intel HD Graphics P530"
+                  case 0x191E: // "Intel HD Graphics 515"
+                  case 0x1921: // "Intel HD Graphics 520"
+                  case 0x1923: // "Intel HD Graphics 535"
+                  case 0x1926: // "Intel Iris Graphics 540"
+                  case 0x1927: // "Intel Iris Graphics 550"
+                  case 0x192B: // "Intel Iris Graphics 555"
+                  case 0x192D: // "Intel Iris Graphics P555"
+                  case 0x1932: // "Intel Iris Pro Graphics 580"
+                  case 0x193A: // "Intel Iris Pro Graphics P580"
+                  case 0x193B: // "Intel Iris Pro Graphics 580"
+                  case 0x193D: // "Intel Iris Pro Graphics P580"
+                    if (gSettings.IgPlatform) {
+                      switch (gSettings.IgPlatform) {
+                        case (UINT32)0x19120001:
+                        break;
+                      default:
+                        FBLEVX = 0x056C;
+                        break;
+                      }
+                    } else {
+                      FBLEVX = 0x056C;
+                    }
+                    break;
+                              
+                  case 0x5902: // "Intel HD Graphics 610"
+                  case 0x5906: // "Intel HD Graphics 610"
+                  case 0x5912: // "Intel HD Graphics 630"
+                  case 0x5916: // "Intel HD Graphics 620"
+                  case 0x591A: // "Intel HD Graphics P630"
+                  case 0x591B: // "Intel HD Graphics 630"
+                  case 0x591D: // "Intel HD Graphics P630"
+                  case 0x591E: // "Intel HD Graphics 615"
+                  case 0x5923: // "Intel HD Graphics 635"
+                  case 0x5926: // "Intel Iris Plus Graphics 640"
+                  case 0x5927: // "Intel Iris Plus Graphics 650"
+                  case 0x5917: // "Intel UHD Graphics 620"
+                  case 0x87C0: // "Intel UHD Graphics 615"
+                    FBLEVX = 0x056C;
+                    break;
+
+                  case 0x3E90: // "Intel UHD Graphics 610"
+                  case 0x3E93: // "Intel UHD Graphics 610"
+                  case 0x3E91: // "Intel UHD Graphics 630"
+                  case 0x3E92: // "Intel UHD Graphics 630"
+                  case 0x3E9B: // "Intel UHD Graphics 630"
+                  case 0x3EA5: // "Intel Iris Plus Graphics 655"
+                    FBLEVX = 0xFF7B;
+                    break;
+
+                  default:
+                    break;
+                }
+
+                switch (Pci.Hdr.DeviceId) {
+                  case 0x0042: // "Intel HD Graphics"
+                  case 0x0046: // "Intel HD Graphics"
+                  case 0x0102: // "Intel HD Graphics 2000"
+                  case 0x0106: // "Intel HD Graphics 2000"
+                  case 0x010A: // "Intel HD Graphics P3000"
+                  case 0x0112: // "Intel HD Graphics 3000"
+                  case 0x0116: // "Intel HD Graphics 3000"
+                  case 0x0122: // "Intel HD Graphics 3000"
+                  case 0x0126: // "Intel HD Graphics 3000"
+                  case 0x0152: // "Intel HD Graphics 2500"
+                  case 0x0156: // "Intel HD Graphics 2500"
+                  case 0x015A: // "Intel HD Graphics 2500"
+                  case 0x0162: // "Intel HD Graphics 4000"
+                  case 0x0166: // "Intel HD Graphics 4000"
+                  case 0x016A: // "Intel HD Graphics P4000"
+                    // Write LEVW
+                    if (gSettings.IntelBacklight) {
+                      if (LEVW != SYSLEVW) {
+                        MsgLog ("  New LEVW = 0x%x\n", SYSLEVW);
+                        /*Status = */PciIo->Mem.Write(
+                                                      PciIo,
+                                                      EfiPciIoWidthUint32,
+                                                      0,
+                                                      0xC8250,
+                                                      1,
+                                                      &SYSLEVW
+                                                      );
+                      }
+                    }
+
+                    // Write LEVX
+                    if (gSettings.IntelMaxBacklight) {
+                      if (gSettings.IntelMaxValue) {
+                        FBLEVX = gSettings.IntelMaxValue;
+                        MsgLog ("  New FBLEVX = 0x%x\n", FBLEVX);
+                      } else {
+                        MsgLog ("  Default FBLEVX = 0x%x\n", FBLEVX);
+                      }
+
+                      if (ShiftLEVX != FBLEVX) {
+                        LEVX = (LEVL * FBLEVX) / ShiftLEVX;
+                        LEVL = FBLEVX << 16;
+
+                        if (FBLEVX > ShiftLEVX) {
+                          /*Status = */PciIo->Mem.Write(
+                                                        PciIo,
+                                                        EfiPciIoWidthUint32,
+                                                        0,
+                                                        0xC8254,
+                                                        1,
+                                                        &LEVL
+                                                        );
+                            
+                          /*Status = */PciIo->Mem.Write(
+                                                        PciIo,
+                                                        EfiPciIoWidthUint32,
+                                                        0,
+                                                        0x48254,
+                                                        1,
+                                                        &LEVX
+                                                        );
+                        } else {
+                          /*Status = */PciIo->Mem.Write(
+                                                        PciIo,
+                                                        EfiPciIoWidthUint32,
+                                                        0,
+                                                        0x48254,
+                                                        1,
+                                                        &LEVX
+                                                        );
+                            
+                          /*Status = */PciIo->Mem.Write(
+                                                        PciIo,
+                                                        EfiPciIoWidthUint32,
+                                                        0,
+                                                        0xC8254,
+                                                        1,
+                                                        &LEVL
+                                                        );
+                        }
+                      }
+                    }
+                    break;
+
+                  default:
+                    // Write LEVW
+                    if (gSettings.IntelBacklight) {
+                      if (LEVW != OSXLEVW) {
+                        MsgLog ("  New LEVW = 0x%x\n", OSXLEVW);
+                        /*Status = */PciIo->Mem.Write(
+                                                      PciIo,
+                                                      EfiPciIoWidthUint32,
+                                                      0,
+                                                      0xC8250,
+                                                      1,
+                                                      &OSXLEVW
+                                                      );
+                      }
+                    }
+
+                    // Write LEVX
+                    if (gSettings.IntelMaxBacklight) {
+                      if (gSettings.IntelMaxValue) {
+                        FBLEVX = gSettings.IntelMaxValue;
+                        MsgLog ("  New FBLEVX = 0x%x\n", FBLEVX);
+                        LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
+                      } else if  (ShiftLEVX != FBLEVX) {
+                        MsgLog ("  Default FBLEVX = 0x%x\n", FBLEVX);
+                        LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
+                      }
+
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
                                                     EfiPciIoWidthUint32,
                                                     0,
                                                     0xC8254,
                                                     1,
-                                                    &LevelMaxW
+                                                    &LEVX
                                                     );
-                      
                     }
-                  }
-                  if (gSettings.FakeIntel == 0x00008086) {
-                    PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x50, 1, &IntelDisable);
-                  }
-                  break;
-                  
-                case 0x10de:
-                  if (gSettings.InjectNVidia) {
-                    TmpDirty    = setup_nvidia_devprop(&PCIdevice);
-                    StringDirty |=  TmpDirty;
-                  } else {
-                    MsgLog ("NVidia GFX injection not set\n");
-                  }
-                  
-                  break;
-                  
-                default:
-                  break;
+                    break;
+                }
+    
+                if (gSettings.FakeIntel == 0x00008086) {
+                  UINT32 IntelDisable = 0x03;
+                  PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 0x50, 1, &IntelDisable);
+                }
               }
-            }
+              break;
+                  
+            case 0x10de:
+              if (gSettings.InjectNVidia) {
+                TmpDirty    = setup_nvidia_devprop(&PCIdevice);
+                StringDirty |=  TmpDirty;
+              } else {
+                MsgLog ("NVidia GFX injection not set\n");
+              }
+              break;
+                  
+            default:
+              break;
+          }
+        }
         
         //LAN
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
