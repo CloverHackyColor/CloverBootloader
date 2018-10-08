@@ -7284,20 +7284,20 @@ SetDevices (LOADER_ENTRY *Entry)
                       }
                     } else {
                       switch (Pci.Hdr.DeviceId) {
-                        case (UINT32)0x0406:
-                        case (UINT32)0x0C06:
-                        case (UINT32)0x0416:
-                        case (UINT32)0x0C16:
-                        case (UINT32)0x0426:
-                        case (UINT32)0x0C26:
-                        case (UINT32)0x0D22:
+                        case 0x0406:
+                        case 0x0C06:
+                        case 0x0416:
+                        case 0x0C16:
+                        case 0x0426:
+                        case 0x0C26:
+                        case 0x0D22:
                           FBLEVX = 0x1499;
                           break;
-                        case (UINT32)0x0A16:
-                        case (UINT32)0x0A26:
+                        case 0x0A16:
+                        case 0x0A26:
                           FBLEVX = 0x0AD9;
                           break;
-                        case (UINT32)0x0D26:
+                        case 0x0D26:
                           FBLEVX = 0x07A1;
                           break;
                         default:
@@ -7474,7 +7474,6 @@ SetDevices (LOADER_ENTRY *Entry)
                       } else {
                         MsgLog ("  FBLEVX: default 0x%x\n", FBLEVX);
                       }
-
 
                       if ((ShiftLEVX != FBLEVX) || !LEVX) {
                         LEVX = (LEVL * FBLEVX) / ShiftLEVX;

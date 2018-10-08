@@ -1882,8 +1882,19 @@ VOID FixS3D (UINT8* dsdt, UINT32 len)
 
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
-  UINT32 i; //, j, size;
-  UINT32  adr  = 0;
+  EFI_STATUS          Status;
+  EFI_HANDLE          *HandleBuffer = NULL;
+  EFI_HANDLE          Handle;
+  EFI_PCI_IO_PROTOCOL *PciIo;
+  PCI_TYPE00          Pci;
+  UINTN               HandleCount = 0;
+  UINTN               HandleIndex;
+  UINTN               Segment;
+  UINTN               Bus;
+  UINTN               Device;
+  UINTN               Function;
+  UINT32              i; //, j, size;
+  UINT32              adr = 0;
   DBG("Start PNLF Fix\n");
 
   if (FindBin(dsdt, len, (UINT8*)app2, 10) >= 0) {
@@ -1911,6 +1922,106 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   if (!adr) {
     return len;
   }
+
+  // _UID reworked by Sherlocks. 2018.10.08
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiPciIoProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
+
+  if (!EFI_ERROR (Status)) {
+    for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+      Handle = HandleBuffer[HandleIndex];
+      Status = gBS->HandleProtocol (
+                                    Handle,
+                                    &gEfiPciIoProtocolGuid,
+                                    (VOID **)&PciIo
+                                    );
+      if (!EFI_ERROR (Status)) {
+        PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        Status = PciIo->Pci.Read (
+                                  PciIo,
+                                  EfiPciIoWidthUint32,
+                                  0,
+                                  sizeof (Pci) / sizeof (UINT32),
+                                  &Pci
+                                  );
+      }
+
+      if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+          ((Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) ||
+           (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
+        switch (Pci.Hdr.VendorId) {
+          case 0x8086:
+            // followed standard _UID of AppleBacklight
+			// it works for both default and AppleBacklightInjector
+            switch (Pci.Hdr.DeviceId) {
+              case 0x0102: // "Intel HD Graphics 2000"
+              case 0x0106: // "Intel HD Graphics 2000"
+              case 0x010A: // "Intel HD Graphics P3000"
+              case 0x0112: // "Intel HD Graphics 3000"
+              case 0x0116: // "Intel HD Graphics 3000"
+              case 0x0122: // "Intel HD Graphics 3000"
+              case 0x0126: // "Intel HD Graphics 3000"
+              case 0x0152: // "Intel HD Graphics 2500"
+              case 0x0156: // "Intel HD Graphics 2500"
+              case 0x015A: // "Intel HD Graphics 2500"
+              case 0x0162: // "Intel HD Graphics 4000"
+              case 0x0166: // "Intel HD Graphics 4000"
+              case 0x016A: // "Intel HD Graphics P4000"
+                ((CHAR8*)pnlf)[39] = 0x0E; // _UID: 14
+                break;
+              case 0x0412: // "Intel HD Graphics 4600"
+              case 0x0416: // "Intel HD Graphics 4600"
+              case 0x041A: // "Intel HD Graphics P4600"
+              case 0x041E: // "Intel HD Graphics 4400"
+              case 0x0422: // "Intel HD Graphics 5000"
+              case 0x0426: // "Intel HD Graphics 5000"
+              case 0x042A: // "Intel HD Graphics 5000"
+              case 0x0A06: // "Intel HD Graphics"
+              case 0x0A16: // "Intel HD Graphics 4400"
+              case 0x0A1E: // "Intel HD Graphics 4200"
+              case 0x0A22: // "Intel Iris Graphics 5100"
+              case 0x0A26: // "Intel HD Graphics 5000"
+              case 0x0A2A: // "Intel Iris Graphics 5100"
+              case 0x0A2B: // "Intel Iris Graphics 5100"
+              case 0x0A2E: // "Intel Iris Graphics 5100"
+              case 0x0D12: // "Intel HD Graphics 4600"
+              case 0x0D16: // "Intel HD Graphics 4600"
+              case 0x0D22: // "Intel Iris Pro Graphics 5200"
+              case 0x0D26: // "Intel Iris Pro Graphics 5200"
+              case 0x0D2A: // "Intel Iris Pro Graphics 5200"
+              case 0x0D2B: // "Intel Iris Pro Graphics 5200"
+              case 0x0D2E: // "Intel Iris Pro Graphics 5200"
+              case 0x1612: // "Intel HD Graphics 5600"
+              case 0x1616: // "Intel HD Graphics 5500"
+              case 0x161E: // "Intel HD Graphics 5300"
+              case 0x1626: // "Intel HD Graphics 6000"
+              case 0x162B: // "Intel Iris Graphics 6100"
+              case 0x162D: // "Intel Iris Pro Graphics P6300"
+              case 0x1622: // "Intel Iris Pro Graphics 6200"
+              case 0x162A: // "Intel Iris Pro Graphics P6300"
+                ((CHAR8*)pnlf)[39] = 0x0F; // _UID: 15
+                break;
+
+              default:
+                ((CHAR8*)pnlf)[39] = 0x10; // _UID: 16
+                break;
+            }
+            break;
+
+          default:
+            // ATI/NVIDIA
+            // _UID: 10
+            break;
+        }
+      }
+    }
+  }
+
   i = adr - 2;
   len = move_data(i, dsdt, len, sizeof(pnlf));
   CopyMem(dsdt+i, pnlf, sizeof(pnlf));
@@ -4686,7 +4797,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
   //DBG("len = 0x%08x\n", len);
 
   for (i=0; i<len-10; i++)
-  {   //какой же здесь бред!
+  {   //what kind of nonsense here!
     if(dsdt[i] == '_' && dsdt[i+1] == 'L' && (dsdt[i-2] == 0x14 || dsdt[i-3] == 0x14 || dsdt[i-4] == 0x14 || dsdt[i-5] == 0x14)) {
       for (j=0; j<10; j++) {
         if(dsdt[i-j] == 0x14) {
