@@ -870,11 +870,11 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
     grad->fy = fy / r;
   }
   nsvg__xformMultiply(grad->xform, data->xform); //from GradientData "gradientTransform"
-	nsvg__xformMultiply(grad->xform, link->xform); //from shape. I also have shape->xform?
-  if (shape->link) {
-    nsvg__xformMultiply(grad->xform, shape->xform);
-  }
-
+/*	nsvg__xformMultiply(grad->xform, link->xform); //from shape. I also have shape->xform?
+    if (shape->link) {
+      nsvg__xformMultiply(grad->xform, shape->xform);
+    }
+*/
   grad->spread = data->spread;
   memcpy(grad->stops, stops, nstops*sizeof(NSVGgradientStop));
   grad->nstops = nstops;
@@ -2607,10 +2607,10 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 //  nsvg__xformIdentity(xform); //initial
 
   for (i = 0; dict[i]; i += 2) {
-      if (strcmp(dict[i], "x1") == 0) {
+      if (strcmp(dict[i], "x") == 0) {
         x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
       } else
-      if (strcmp(dict[i], "y1") == 0) {
+      if (strcmp(dict[i], "y") == 0) {
         y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
       } else
       if (strcmp(dict[i], "xlink:href") == 0) {
@@ -2639,9 +2639,9 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   y -= shape->bounds[1];
 
   nsvg__xformSetTranslation(xform, x, y);
-  nsvg__xformPremultiply(xform, attr->xform); //translate after rotate
+//  nsvg__xformIdentity(xform);
+  nsvg__xformPremultiply(xform, attr->xform); //translate after rotate or before?
   memcpy(shape->xform, xform, sizeof(float)*6);
-//  nsvg__xformMultiply(shape->xform, xform); //no keep both if present
 
   //  DBG("paint type=%d\n", shape->fill.type);
   if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {

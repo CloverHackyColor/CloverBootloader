@@ -83,7 +83,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
         } else {
           fontSVG = p1->font;
  //         DBG("font %a parsed\n", fontSVG->fontFamily);
-          
         }
 //        FreePool(FileData);
       }
@@ -125,7 +124,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
         }
         DBG("Banner size [%d,%d]\n", (int)Banner->width, (int)Banner->height);
         DBG("Banner shift dx=%s dy=%s\n", PoolPrintFloat(Banner->realBounds[0]), PoolPrintFloat(Banner->realBounds[1]));
-        shape->flags = 0;  //invisible
+   //     shape->flags = 0;  //invisible
+        shape = shapeNext;
+        continue;
       }
       shape->next = Banner->shapes; //add to head
       Banner->shapes = shape;
