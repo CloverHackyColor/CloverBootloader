@@ -1957,7 +1957,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
         switch (Pci.Hdr.VendorId) {
           case 0x8086:
             // followed standard _UID of AppleBacklight
-			// it works for both default and AppleBacklightInjector
+            // it works for both default and AppleBacklightInjector
             switch (Pci.Hdr.DeviceId) {
               case 0x0102: // "Intel HD Graphics 2000"
               case 0x0106: // "Intel HD Graphics 2000"
