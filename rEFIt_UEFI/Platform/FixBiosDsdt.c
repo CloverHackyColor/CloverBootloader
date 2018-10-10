@@ -1959,6 +1959,23 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
             // followed standard _UID of AppleBacklight
             // it works for both default and AppleBacklightInjector
             switch (Pci.Hdr.DeviceId) {
+              case 0x2772: // "Intel GMA 950"
+              case 0x2776: // "Intel GMA 950"
+              case 0x27A2: // "Intel GMA 950"
+              case 0x27A6: // "Intel GMA 950"
+              case 0x27AE: // "Intel GMA 950"
+              case 0xA001: // "Intel GMA 3150"
+              case 0xA002: // "Intel GMA 3150"
+              case 0xA011: // "Intel GMA 3150"
+              case 0xA012: // "Intel GMA 3150"
+              case 0x2A02: // "Intel GMA X3100"
+              case 0x2A03: // "Intel GMA X3100"
+              case 0x2A12: // "Intel GMA X3100"
+              case 0x2A13: // "Intel GMA X3100"
+              case 0x0042: // "Intel HD Graphics"
+              case 0x0046: // "Intel HD Graphics"
+                // _UID: 10
+                break;
               case 0x0102: // "Intel HD Graphics 2000"
               case 0x0106: // "Intel HD Graphics 2000"
               case 0x010A: // "Intel HD Graphics P3000"

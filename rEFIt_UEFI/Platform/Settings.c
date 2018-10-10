@@ -7442,18 +7442,16 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0166: // "Intel HD Graphics 4000"
                   case 0x016A: // "Intel HD Graphics P4000"
                     // Write LEVW
-                    if (gSettings.IntelBacklight) {
-                      if (LEVW != SYSLEVW) {
-                        MsgLog ("  LEVW: new 0x%x\n", SYSLEVW);
-                        /*Status = */PciIo->Mem.Write(
-                                                      PciIo,
-                                                      EfiPciIoWidthUint32,
-                                                      0,
-                                                      0xC8250,
-                                                      1,
-                                                      &SYSLEVW
-                                                      );
-                      }
+                    if (LEVW != SYSLEVW) {
+                      MsgLog ("  LEVW: new 0x%x\n", SYSLEVW);
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8250,
+                                                    1,
+                                                    &SYSLEVW
+                                                    );
                     }
 
                     // Write LEVX
@@ -7488,7 +7486,7 @@ SetDevices (LOADER_ENTRY *Entry)
                                                         1,
                                                         &LEVL
                                                         );
-                            
+
                           /*Status = */PciIo->Mem.Write(
                                                         PciIo,
                                                         EfiPciIoWidthUint32,
@@ -7506,7 +7504,7 @@ SetDevices (LOADER_ENTRY *Entry)
                                                         1,
                                                         &LEVX
                                                         );
-                            
+
                           /*Status = */PciIo->Mem.Write(
                                                         PciIo,
                                                         EfiPciIoWidthUint32,
@@ -7522,18 +7520,16 @@ SetDevices (LOADER_ENTRY *Entry)
 
                   default:
                     // Write LEVW
-                    if (gSettings.IntelBacklight) {
-                      if (LEVW != OSXLEVW) {
-                        MsgLog ("  LEVW: new 0x%x\n", OSXLEVW);
-                        /*Status = */PciIo->Mem.Write(
-                                                      PciIo,
-                                                      EfiPciIoWidthUint32,
-                                                      0,
-                                                      0xC8250,
-                                                      1,
-                                                      &OSXLEVW
-                                                      );
-                      }
+                    if (LEVW != OSXLEVW) {
+                      MsgLog ("  LEVW: new 0x%x\n", OSXLEVW);
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8250,
+                                                    1,
+                                                    &OSXLEVW
+                                                    );
                     }
 
                     // Write LEVX
