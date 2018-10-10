@@ -799,9 +799,8 @@ MainBuildScript() {
     # add github links below to checkout packages
     local extDriversDependecies=( 'https://github.com/acidanthera/AptioFixPkg'
                                   'https://github.com/acidanthera/AppleSupportPkg'
-                                  'https://github.com/CupertinoNet/CupertinoModulePkg'
-                                  'https://github.com/CupertinoNet/EfiMiscPkg'
-                                  'https://github.com/CupertinoNet/EfiPkg')
+                                  'https://github.com/acidanthera/OcSupportPkg'
+                                  'https://github.com/acidanthera/EfiPkg')
     # add below drivers you want to build
     local externalDrivers=( AptioFixPkg AppleSupportPkg )
 
@@ -824,8 +823,8 @@ MainBuildScript() {
         local branch=master
 
         case $pkg in
-        CupertinoModulePkg | EfiMiscPkg | EfiPkg)
-          branch=development
+        OcSupportPkg | EfiPkg)
+          branch=master
         ;;
         esac
 

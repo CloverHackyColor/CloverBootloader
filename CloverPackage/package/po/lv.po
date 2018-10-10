@@ -6,17 +6,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-01 23:23+0200\n"
+"POT-Creation-Date: 2018-10-10 07:47+0300\n"
 "PO-Revision-Date: 2018-10-02 11:42+0200\n"
 "Last-Translator: vector sigma\n"
+"Language-Team: \n"
 "Language: lv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
 "X-Generator: Poedit 2.1.1\n"
 "X-POOTLE-MTIME: 1443124326.0\n"
-"Language-Team: \n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:30 Resources/templates/Conclusion.html:19
@@ -75,8 +76,11 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "ir ielādētājs ar vāļējo izejas kodu, kura pamatā ir sekojošu projektu tehnoloģijas: Chameleon, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"ir ielādētājs ar vāļējo izejas kodu, kura pamatā ir sekojošu projektu "
+"tehnoloģijas: Chameleon, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -100,23 +104,36 @@ msgstr "Operētājsistēmu 10.xx macOS, Windows EFI и Linux EFI ielāde"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Clover EFI sistēmai nodrošina RuntimeServices, kas nav iespējāms ar BIOS-bāzētiem ielādētājiem."
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Clover EFI sistēmai nodrošina RuntimeServices, kas nav iespējāms ar BIOS-"
+"bāzētiem ielādētājiem."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Būtībā, Clover automātiski nosaka sistēmas aprīkojumu un attiecīgi pieskaņo ielādētāja konfigurāciju, bet, protams, lietotājs var arī brīvi mainīt šo konfigurāciju, rediģējot config.plist"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Būtībā, Clover automātiski nosaka sistēmas aprīkojumu un attiecīgi pieskaņo "
+"ielādētāja konfigurāciju, bet, protams, lietotājs var arī brīvi mainīt šo "
+"konfigurāciju, rediģējot config.plist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Jūs varat izmantot Startup Disk paneli no sistēmas iestātījumiem, lai uzreiz restartētu datoru citā operetājsistēmā"
+msgstr ""
+"Jūs varat izmantot Startup Disk paneli no sistēmas iestātījumiem, lai uzreiz "
+"restartētu datoru citā operetājsistēmā"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
 msgid "UUID written into config.plist will be the same as in OS"
-msgstr "Jūs varat noradīt savu unikālo UUID iekš config.plist, un būt drošam, ka tieši to ieraudzīs sistēma"
+msgstr ""
+"Jūs varat noradīt savu unikālo UUID iekš config.plist, un būt drošam, ka "
+"tieši to ieraudzīs sistēma"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
@@ -131,7 +148,9 @@ msgstr "Tiek vaikta ACPI tabulo korekcija, lai tas atbilstu stanadrtām 4.0."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Modificēta DSDT tabula tiks ielādēta no ielādējamas sistēmas saknes direktorijas, jeb no apakškataloga EFI"
+msgstr ""
+"Modificēta DSDT tabula tiks ielādēta no ielādējamas sistēmas saknes "
+"direktorijas, jeb no apakškataloga EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -141,17 +160,23 @@ msgstr "DSDT patching on the fly by fixes and by patterns;"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "Pārrestartēšanas un aizmigšanas/pamošanas problēmu automātiskā korekcija"
+msgstr ""
+"Pārrestartēšanas un aizmigšanas/pamošanas problēmu automātiskā korekcija"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Automātiskā grafisko karšu ieslēgšana priekš ATI, nVidia un Intel, ar lokānas konfigurācijas iespējām."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Automātiskā grafisko karšu ieslēgšana priekš ATI, nVidia un Intel, ar "
+"lokānas konfigurācijas iespējām."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
 msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "Problēmu, saistītu ar USB portu darbību, risināšana, t.s. priekš USB 3.0"
+msgstr ""
+"Problēmu, saistītu ar USB portu darbību, risināšana, t.s. priekš USB 3.0"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
@@ -185,13 +210,19 @@ msgstr "Set NVRAM variables for different purpose;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Autoielāde pēc laika intervāla, konfigurējamas tēmas un ekrānšāvienu saglabāšana (ar F10),"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Autoielāde pēc laika intervāla, konfigurējamas tēmas un ekrānšāvienu "
+"saglabāšana (ar F10),"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "Atskaišu saglabāšana pirms (ar F2) un pēc sistēmas palaišanas, problēmu diagnostikas nolūkiem."
+msgstr ""
+"Atskaišu saglabāšana pirms (ar F2) un pēc sistēmas palaišanas, problēmu "
+"diagnostikas nolūkiem."
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -383,7 +414,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr "Izvēlēties CloverEFI instalācija veidu."
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
+#: Resources/templates/Localizable.strings:69
+#: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32-bits"
@@ -491,67 +523,78 @@ msgid "Select drivers for BIOS-booting with FileVault 2."
 msgstr "Select drivers for BIOS-booting with FileVault 2."
 
 #. type: "ApfsDriverLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:96 Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
 msgstr "Supports APFS filesystem driver from container for macOS 10.14."
 
 #. type: "AppleImageCodec-64.UEFI_description"
-#: Resources/templates/Localizable.strings:97 Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "Decode PNG and BMP for FileVault2."
 
 #. type: "AppleImageLoader-64.UEFI_description"
-#: Resources/templates/Localizable.strings:98 Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:98
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
 msgstr "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
 
 #. type: "AppleKeyAggregator-64.UEFI_description"
-#: Resources/templates/Localizable.strings:99 Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:99
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "Support for boot UI dialog for FileVault2."
 
 #. type: "AppleKeyFeeder-64.UEFI_description"
-#: Resources/templates/Localizable.strings:100 Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:100
+#: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Support for PS/2 keyboard to use with FileVault2"
 msgstr "Support for PS/2 keyboard to use with FileVault2"
 
 #. type: "AppleUISupport-64.UEFI_description"
-#: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:101
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
 msgstr "Set of protocols for support EfiLoginUi for FileVault."
 
 #. type: "AppleUITheme-64.UEFI_description"
-#: Resources/templates/Localizable.strings:102 Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "Create boot UI Themes support for FileVault2."
 
 #. type: "AptioInputFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:103 Resources/templates/Localizable.strings:129
+#: Resources/templates/Localizable.strings:103
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 msgstr "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 
 #. type: "AptioMemoryFix-64.UEFI_description"
-#: Resources/templates/Localizable.strings:104 Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:104
+#: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Driveris atmiņas problemu koreikcijai, kas ir sastopama AMI Aptio un dažu citu OEM UEFI produkcijā."
 
 #. type: "FirmwareVolume-64.UEFI_description"
-#: Resources/templates/Localizable.strings:105 Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Create FirmwareVolume with cursor images for FileVault2."
 
 #. type: "FSInject-64.UEFI_description"
-#: Resources/templates/Localizable.strings:106 Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr "Provide injection of kernel extensions from Clover folder."
@@ -581,7 +624,8 @@ msgid "UDF filesystem driver from GRUB."
 msgstr "UDF filesystem driver."
 
 #. type: "SMCHelper-64.UEFI_description"
-#: Resources/templates/Localizable.strings:111 Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "Restore SMC keys left in NVRAM by FakeSMC."
@@ -941,7 +985,9 @@ msgstr ""
 "Ieskaitot programmu, kas paziņo par Clover aktuālo atjauninājumu pieejāmību."
 
 #. type: "371.title"
-#: ../CloverUpdater/CloverUpdater.strings:1 ../CloverUpdater/CloverUpdater.strings:2 ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:1
+#: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -1007,7 +1053,8 @@ msgid "Clover"
 msgstr "Clover"
 
 #. type: "Never"
-#: ../CloverPrefpane/CloverPrefpane.strings:2 ../CloverPrefpane/Localizable.strings:5
+#: ../CloverPrefpane/CloverPrefpane.strings:2
+#: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "Never"
@@ -1225,13 +1272,15 @@ msgid "EFI Folder path"
 msgstr "Ceļš līdz EFI mapei:"
 
 #. type: "Auto"
-#: ../CloverPrefpane/CloverPrefpane.strings:38 ../CloverPrefpane/Localizable.strings:2
+#: ../CloverPrefpane/CloverPrefpane.strings:38
+#: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
 msgstr "Auto"
 
 #. type: "No"
-#: ../CloverPrefpane/CloverPrefpane.strings:39 ../CloverPrefpane/Localizable.strings:6
+#: ../CloverPrefpane/CloverPrefpane.strings:39
+#: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "No"
