@@ -406,8 +406,8 @@ void nsvg__deleteParser(NSVGparser* p);
 void nsvg__xformInverse(float* inv, float* t);
 void nsvg__xformPremultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
-INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale);
-VOID LoadSVGfont(NSVGfont  *fontSVG);
+INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale, UINT32 color);
+VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;

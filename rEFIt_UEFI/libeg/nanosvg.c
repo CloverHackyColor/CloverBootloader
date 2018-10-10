@@ -605,7 +605,7 @@ void nsvg__deleteParser(NSVGparser* p)
         FreePool(attr->fontFace);
       }
       while (attr->group) {
-        NSVGgroup* group = attr->group;        
+        NSVGgroup* group = attr->group;
         attr->group = group->next;
         FreePool(group);
       }
@@ -3530,7 +3530,7 @@ static void nsvg__endElement(void* ud, const char* el)
   }
 }
 
-INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale)
+INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale, UINT32 color)
 {
   INTN x1 = x;
 //  INTN y = 0;
@@ -3574,7 +3574,7 @@ INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale)
   shape->id[0] = (char)(letter & 0xff);
   shape->id[1] = (char)((letter >> 8) & 0xff);
   shape->fill.type = NSVG_PAINT_COLOR;
-  shape->fill.color = NSVG_RGBA(0, 0, 0, 255); //black
+  shape->fill.color = color; //NSVG_RGBA(0, 0, 0, 255); //black
   shape->stroke.type = NSVG_PAINT_NONE;
   shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
   shape->strokeWidth = 1.0f;
@@ -3639,7 +3639,7 @@ static void addString(NSVGparser* p, char* s)
     if (!letter) {
       break;
     }
-    x = addLetter(p, letter, x, y, scale);
+    x = addLetter(p, letter, x, y, scale, p->text->fontColor);
   }
 }
 
