@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1983,14 +1983,15 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   else if (strcmp(name, "class") == 0) {
     NSVGstyles* style = p->styles;
     while (style) {
-      if (strcmp(style->name, value) == 0) {
-        break;
+      if (strstr(value, style->name) != NULL) {
+        nsvg__parseStyle(p, style->description);
+//        break;
       }
       style = style->next;
     }
-    if (style) {
+/*    if (style) {
       nsvg__parseStyle(p, style->description);
-    }
+    } */
   }
   else {
     return 0;
@@ -3615,10 +3616,11 @@ static void addString(NSVGparser* p, char* s)
   UINTN len = strlen(s);
 //  DBG("start parsing text content %a\n", s);
   UINTN i;
-  if (!p->font) {
+  if (!p->text->font) {
     return; //later we make external fonts
   }
-//  DBG("use font-family=%a\n", p->font->fontFamily);
+  p->font = p->text->font;
+  DBG("use font-family=%a\n", p->font->fontFamily);
 //  NSVGshape *shape;
 //  NSVGglyph* g;
   //calculate letter size

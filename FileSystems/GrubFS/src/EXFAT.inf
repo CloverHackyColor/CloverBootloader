@@ -33,7 +33,7 @@
 
 [Packages]
         MdePkg/MdePkg.dec
-        ShellPkg/ShellPkg.dec
+        Clover/ShellPkg/ShellPkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
         Clover/CloverPkg.dec
         Clover/FileSystems/GrubFS/efifs.dec

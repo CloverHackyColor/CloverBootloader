@@ -32,7 +32,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  ShellPkg/ShellPkg.dec
+  Clover/ShellPkg/ShellPkg.dec
 
 [LibraryClasses]
   ShellCEntryLib

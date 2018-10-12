@@ -153,7 +153,7 @@ typedef struct NSVGgroup
 	struct NSVGgroup* parent;			// Pointer to parent group or NULL
 	struct NSVGgroup* next;			// Pointer to next group or NULL
   struct NSVGshape* shapeList; // list of shapes inside the group
-  
+
 } NSVGgroup;
 
 typedef struct NSVGshape
@@ -308,7 +308,7 @@ typedef struct NSVGattrib
  	char* description;
  	struct NSVGstyles* next;
  } NSVGstyles;
- 
+
 //------------- Fonts ---------------------
 typedef struct NSVGglyph {
   char name[16];
@@ -355,6 +355,7 @@ typedef struct NSVGtext {
   unsigned int fontColor;
   NSVGstyles* style;
   NSVGshape* shapes;
+  struct NSVGtext *next;
 } NSVGtext;
 
 typedef struct NSVGparser
@@ -506,7 +507,7 @@ struct NSVGrasterizer
   unsigned char* scanline;
   int cscanline;
   NSVGscanlineFunction fscanline;
-  
+
   unsigned char* stencil;
   int stencilSize;
   int stencilStride;
