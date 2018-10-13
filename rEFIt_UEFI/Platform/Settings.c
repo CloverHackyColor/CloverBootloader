@@ -4724,6 +4724,9 @@ GetUserSettings(
       
       Prop = GetProperty (DictPointer, "SetIntelMaxBacklight");
       gSettings.IntelMaxBacklight = IsPropertyTrue (Prop);
+      if (gSettings.IntelMaxBacklight) {
+        gSettings.IntelBacklight = TRUE;
+      }
       
       Prop = GetProperty (DictPointer, "IntelMaxValue");
       gSettings.IntelMaxValue = (UINT16)GetPropertyInteger (Prop, gSettings.IntelMaxValue);
