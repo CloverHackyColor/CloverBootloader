@@ -125,7 +125,7 @@ REFIT_CONFIG   GlobalConfig = {
   NULL,           // CHAR16      *ScreenResolution;
   0,              // INTN        ConsoleMode;
   NULL,           // CHAR16      *BackgroundName;
-  None,           // SCALING     BackgroundScale;
+  imNone,         // SCALING     BackgroundScale;
   0,              // UINTN       BackgroundSharp;
   FALSE,          // BOOLEAN     BackgroundDark;
   FALSE,          // BOOLEAN     CustomIcons;
@@ -3392,7 +3392,7 @@ GetThemeTagSettings (
   TagPtr Dict, Dict2, Dict3;
   
   //fill default to have an ability change theme
-  GlobalConfig.BackgroundScale = Crop;
+  GlobalConfig.BackgroundScale = imCrop;
   
   if (GlobalConfig.BackgroundName != NULL) {
     FreePool (GlobalConfig.BackgroundName);
@@ -3498,9 +3498,9 @@ GetThemeTagSettings (
     Dict2 = GetProperty (Dict, "Type");
     if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
       if ((Dict2->string[0] == 'S') || (Dict2->string[0] == 's')) {
-        GlobalConfig.BackgroundScale = Scale;
+        GlobalConfig.BackgroundScale = imScale;
       } else if ((Dict2->string[0] == 'T') || (Dict2->string[0] == 't')) {
-        GlobalConfig.BackgroundScale = Tile;
+        GlobalConfig.BackgroundScale = imTile;
       }
     }
     //  }
@@ -4142,7 +4142,7 @@ finish:
     GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully
     // read theme settings
-    TagPtr DictPointer = GetProperty (ThemeDict, "Theme");
+    TagPtr DictPointer = GetProperty(ThemeDict, "Theme");
     if (DictPointer != NULL) {
       Status = GetThemeTagSettings(DictPointer);
       if (EFI_ERROR (Status)) {

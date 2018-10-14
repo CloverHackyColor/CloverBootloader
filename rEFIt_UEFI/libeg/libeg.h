@@ -254,7 +254,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 EFI_STATUS egScreenShot(VOID);
 
-VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* fontSVG, const CHAR16* text);
+VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* fontSVG, const CHAR16* text, UINT32 color);
 VOID testSVG(VOID);
 
 #endif /* __LIBEG_LIBEG_H__ */

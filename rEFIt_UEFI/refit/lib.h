@@ -461,10 +461,10 @@ struct _refit_menu_screen {
 #define HDBADGES_INLINE (1<<2)
 
 typedef enum {
-  None,
-  Scale,
-  Crop,
-  Tile
+  imNone,
+  imScale,
+  imCrop,
+  imTile
   
 } SCALING;
 

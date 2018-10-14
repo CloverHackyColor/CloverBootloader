@@ -74,8 +74,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, UINTN Id, float Scale)
     group = shape->group;
 
     shapeNext = shape->next;
-    while (group)
-    {
+    while (group) {
       if (strcmp(group->id, IconName) == 0) {
         break;
       }
@@ -115,13 +114,13 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, UINTN Id, float Scale)
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-  EG_IMAGE        *NewImage;
 
   if (!EFI_ERROR(Status)) {
-    NewImage = egCreateImage((int)Width, (int)Height, TRUE);
+    EG_IMAGE  *NewImage = egCreateImage((int)Width, (int)Height, TRUE);
     nsvgRasterize(rast, IconImage, 0,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
     if (Id == BUILTIN_ICON_BACKGROUND) { // special case for background
       BigBack = NewImage;
+      GlobalConfig.BackgroundScale = imScale;
     } else {
       BuiltinIconTable[Id].Image = NewImage;
       if (Id == BUILTIN_ICON_BANNER) {
@@ -193,18 +192,22 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (fontSVG) {
     if (text->font) {
       FontHeight = (int)(text->font->fontSize * Scale);
-      DBG("font height=%d\n", FontHeight);
+      DBG("font height=%d color=%x\n", FontHeight, text->fontColor);
     }
     if (!FontHeight) FontHeight = 16;
-    LoadSVGfont(fontSVG, text->fontColor);
+    LoadSVGfont(fontSVG, text->fontColor | 0xFF000000);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
 
   // make background
+  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
   Status = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, Scale);
   //make other icons
   for (i = BUILTIN_ICON_FUNC_ABOUT; i < BUILTIN_ICON_COUNT; i++) {
     Status = ParseSVGIcon(p, i, Scale);
+    if (EFI_ERROR(Status)) {
+      DBG("icon %d not parsed, status %r\n", Status);
+    }
   }
 
 #if 0 //test banner
@@ -288,19 +291,36 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     egFreeImage(NewImage);
 
   }
-  DBG("0\n");
   //  nsvg__deleteParser(p);
 
 #endif
   //Test text
-  DBG("1\n");
-#if 0  // test font
+
+#if 1  // test font
   if (fontSVG) {
     INTN iHeight = 260;
     INTN iWidth = UGAWidth-200;
     DBG("create textbuffer\n");
-    EG_IMAGE* TextBufferXY = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
-    drawSVGtext(TextBufferXY, fontSVG, L"Clover ready");
+    EG_IMAGE* TextBufferXY = egCreateFilledImage(iWidth, iHeight, TRUE, &DarkSelectionPixel);
+    drawSVGtext(TextBufferXY, fontSVG, L"Clover ready", NSVG_RGBA(150, 150, 150, 255));
+    //---------
+    //save picture as png yyyyy
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0U;
+    EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)TextBufferXY->PixelData;
+
+    unsigned lode_return =
+    eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, iWidth, iHeight);
+    DBG("  encode %d filelen=%d\n", lode_return, FileDataLength);
+    if (!lode_return) {
+      Status = egSaveFile(SelfRootDir, L"\\TestTextSVG.png", FileData, FileDataLength);
+      DBG("save file status=%r\n", Status);
+    } else {
+      DBG("wrong encode %d\n", lode_return);
+    }
+    //----------
+
+
     DBG("text ready to blit\n");
     BltImageAlpha(TextBufferXY,
                   (UGAWidth - iWidth) / 2,
@@ -313,23 +333,21 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 #endif
   if (p) {
-//    nsvg__deleteParser(p);
-    DBG("2\n");
+    nsvg__deleteParser(p);
+    p = NULL;
   }
   if (p1) {
-//    nsvg__deleteParser(p1);
-    DBG("2\n");
+    nsvg__deleteParser(p1);
+    p1 = NULL;
   }
 
-  DBG("3\n");
   nsvgDeleteRasterizer(rast);
-  DBG("4\n");
 
   *dict = AllocatePool(sizeof(TagStruct));
   (*dict)->type = kTagTypeNone;
-//  GlobalConfig.TypeSVG = TRUE;
-//  return EFI_SUCCESS;
-  return EFI_NOT_READY;
+  GlobalConfig.TypeSVG = TRUE;
+  return EFI_SUCCESS;
+//  return EFI_NOT_READY;
 }
 
 VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color)
@@ -363,17 +381,31 @@ VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color)
 
   p = nsvg__createParser();
   if (!p) {
-    DBG("no parser\n");
     return;
   }
-  p->font = fontSVG;
+//  p->font = fontSVG;
   p->image->height = Height;
   p->image->width = Width;
+
+  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  if (!text) {
+    return;
+  }
+  text->fontSize = FontHeight;
+  text->font = fontSVG;
+  text->fontColor = color;
+
+  DBG("LoadSVGfont: fontID=%a\n", text->font->id);
+  DBG("LoadSVGfont:  family=%a\n", text->font->fontFamily);
+  //add to head
+  text->next = p->text;
+  p->text = text;
   //for each letter rasterize glyph into FontImage
   //0..0xC0 == AsciiPageSize
   // cyrillic 0x410..0x450 at 0xC0
   INTN x = 0;
   INTN y = 0;
+  p->isText = TRUE;
   for (i = 0; i < AsciiPageSize; i++) {
     if (i > 0x20) {
 //      DBG("addLetter %x\n", i);
@@ -404,8 +436,7 @@ VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color)
   EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)FontImage->PixelData;
 
   unsigned lode_return =
-
-  eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)FontImage->Width, (UINTN)FontImage->Height);
+    eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)FontImage->Width, (UINTN)FontImage->Height);
 
   if (!lode_return) {
     egSaveFile(NULL, L"\\FontSVG.png", FileData, FileDataLength);
@@ -416,8 +447,8 @@ VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color)
   return;
 }
 // it is for test purpose
-// should also has color as parameter
-VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
+
+VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text, UINT32 color)
 {
   INTN Width, Height;
   int i;
@@ -426,7 +457,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
   NSVGshape *shape; //, *cur, *prev;
   NSVGrasterizer* rast;
   NSVGfont* fontSVG = (NSVGfont*)font;
-  float Scale;
+  float Scale, sx, sy;
   INTN x, y;
   if (!fontSVG) {
     DBG("no font\n");
@@ -438,23 +469,25 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
   }
   p = nsvg__createParser();
   if (!p) {
-    DBG("no parser\n");
     return;
   }
   len = StrLen(text);
   Width = TextBufferXY->Width;
   Height = TextBufferXY->Height;
 //  Height = 180; //for test
-  DBG("textBuffer: [%d,%d], fontHight=%d\n", Width, TextBufferXY->Height, fontSVG->unitsPerEm);
+  DBG("textBuffer: [%d,%d], fontUnits=%d\n", Width, TextBufferXY->Height, fontSVG->unitsPerEm);
   if (!fontSVG->unitsPerEm) {
     fontSVG->unitsPerEm = 1000;
   }
-  float fH = fontSVG->bbox[3] - fontSVG->bbox[1];
+  float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
-    fH = (float)fontSVG->unitsPerEm;
+    fH = (float)fontSVG->unitsPerEm;  //1000
   }
-  Scale = (float)Height / fH; //(float)fontSVG->unitsPerEm; //
+  sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
   //in font units
+  float fW = fontSVG->bbox[2] - fontSVG->bbox[0];
+  sx = (float)Width / (fW * len);
+  Scale = (sx > sy)?sy:sx;
   x = 0;
   y = 0;
   for (i=0; i < len; i++) {
@@ -502,7 +535,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     shape->id[0] = (char)(letter & 0xff);
     shape->id[1] = (char)((letter >> 8) & 0xff);
     shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = NSVG_RGBA(150, 150, 150, 255); //dark grey 20%
+    shape->fill.color = color; //NSVG_RGBA(150, 150, 150, 255); //dark grey 20%
     shape->stroke.type = NSVG_PAINT_NONE;
     shape->stroke.color = NSVG_RGBA(0,0,0, 255); //black?
     shape->strokeWidth = 2.0f;
@@ -523,23 +556,15 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
     x += g->horizAdvX; //position for next letter
     shape->strokeLineJoin = NSVG_JOIN_MITER;
     shape->strokeLineCap = NSVG_CAP_BUTT;
-    shape->stroke.color = (255<<24); //black non transparent
     shape->miterLimit = 4;
     shape->fillRule = NSVG_FILLRULE_NONZERO;
     shape->opacity = 1;
 
     // Add to tail
-
     if (p->image->shapes == NULL)
       p->image->shapes = shape;
-    else {
-      if (!p->shapesTail) {
-        p->shapesTail = shape;
-        p->shapesTail->next = NULL;
-      } else {
-        p->shapesTail->next = shape;
-      }
-    }
+    else
+      p->shapesTail->next = shape;
     p->shapesTail = shape;
   } //end of text
 
@@ -550,8 +575,9 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text)
 
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
-  DBG("begin raster text\n");
+  DBG("begin raster text, scale=%s\n", PoolPrintFloat(Scale));
   nsvgRasterize(rast, p->image, 0, 0, Scale, Scale, (UINT8*)TextBufferXY->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
+
   DBG("end raster text\n");
   nsvgDeleteRasterizer(rast);
 }
@@ -650,7 +676,7 @@ VOID testSVG()
       DBG("font parsed\n");
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
-      drawSVGtext(TextBufferXY, fontSVG, L"Clover");
+      drawSVGtext(TextBufferXY, fontSVG, L"Clover", NSVG_RGBA(0, 0, 0, 255));
       DBG("text ready to blit\n");
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,

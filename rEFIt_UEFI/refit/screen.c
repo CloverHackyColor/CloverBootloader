@@ -492,10 +492,10 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   
   if (BigBack != NULL) {
     switch (GlobalConfig.BackgroundScale) {
-      case Scale:
+      case imScale:
         ScaleImage(BackgroundImage, BigBack);
         break;
-      case Crop:
+      case imCrop:
         x = UGAWidth - BigBack->Width;
         if (x >= 0) {
           x1 = x >> 1;
@@ -520,7 +520,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
                   BigBack->PixelData + y2 * BigBack->Width + x2,
                   x, y, UGAWidth, BigBack->Width);
         break;
-      case Tile:
+      case imTile:
         x = (BigBack->Width * ((UGAWidth - 1) / BigBack->Width + 1) - UGAWidth) >> 1;
         y = (BigBack->Height * ((UGAHeight - 1) / BigBack->Height + 1) - UGAHeight) >> 1;
         p1 = BackgroundImage->PixelData;
@@ -531,7 +531,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
           }
         }
         break;
-      case None:
+      case imNone:
       default:
         // already scaled
         break;
@@ -583,6 +583,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
     Width = NewImage->Width;
     Height = NewImage->Height;
   }
+  DBG("w=%d, h=%d\n", Width, Height);
   // compose on background
   CompImage = egCreateFilledImage(Width, Height, (BackgroundImage != NULL), BackgroundPixel);
   egComposeImage(CompImage, NewImage, 0, 0);
@@ -596,7 +597,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   }
   NewImage = egCreateImage(Width, Height, FALSE);
   if (!NewImage) return;
-  
+  DBG("draw on background\n");
   egRawCopy(NewImage->PixelData,
             BackgroundImage->PixelData + YPos * BackgroundImage->Width + XPos,
             Width, Height,

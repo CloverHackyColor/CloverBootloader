@@ -81,7 +81,6 @@ OStartImage(
 		PRINT("ERROR: OStartImage: OpenProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
 		return EFI_INVALID_PARAMETER;
 	}
-	
 	//
 	// Extract file path from image device file path
 	//
