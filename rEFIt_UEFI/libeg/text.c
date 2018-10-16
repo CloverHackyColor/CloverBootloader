@@ -58,8 +58,9 @@ EG_IMAGE *FontImage = NULL;
 INTN FontWidth = 9;
 INTN FontHeight = 18;
 INTN TextHeight = 19;
+VOID *fontsDB = NULL;
 
-CONST EG_PIXEL WhitePixel = {255, 255, 255, 210};
+CONST EG_PIXEL WhitePixel = {255, 255, 255, 210}; //semitransparent
 
 //
 // Text rendering

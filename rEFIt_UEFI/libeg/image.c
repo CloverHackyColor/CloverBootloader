@@ -496,6 +496,10 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
   UINTN           FileDataLength = 0;
   EG_IMAGE        *NewImage;
 
+  if (GlobalConfig.TypeSVG) {
+    return NULL;
+  }
+
   if (BaseDir == NULL || FileName == NULL)
     return NULL;
 

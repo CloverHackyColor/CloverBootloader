@@ -106,19 +106,19 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   EG_IMAGE  *TextBuffer = NULL;
   CHAR16    *p;
   CHAR16    *Text;
-  
+
   if (Id >= BUILTIN_ICON_COUNT) {
     return NULL;
   }
-  
+
   if (BuiltinIconTable[Id].Image != NULL) {
     return BuiltinIconTable[Id].Image;
   }
-  
+
   Size = BuiltinIconTable[Id].PixelSize;
   //DBG("Load Icon [id:%d]");
-  
-  if (ThemeDir) {
+
+  if (ThemeDir && !GlobalConfig.TypeSVG) {
     CHAR16    *Path;
     Path = GetIconsExt(BuiltinIconTable[Id].Path, BuiltinIconTable[Id].Format);
     BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, Path, Size);
@@ -132,12 +132,12 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     }
     FreePool(Path);
   }
-  
+
   if (BuiltinIconTable[Id].Image) {
-    
+
     return BuiltinIconTable[Id].Image;
   }
-  
+
   if (GlobalConfig.DarkEmbedded) {
     switch (Id) {
       case BUILTIN_ICON_POINTER:
@@ -231,7 +231,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     }
   }
 //  DBG("Icon %d decoded, pointer %x\n", Id, (UINTN)(BuiltinIconTable[Id].Image));
-  
+
   if (!BuiltinIconTable[Id].Image) {
     TextBuffer = egCreateImage(Size, Size, TRUE);  //new pointer
     egFillImage(TextBuffer, &MenuBackgroundPixel);
@@ -248,7 +248,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     DebugLog(1, "        [!] Icon %d: Text <%s> rendered\n", Id, Text);
     FreePool(Text);
   }
-  
+
   return BuiltinIconTable[Id].Image;
 }
 

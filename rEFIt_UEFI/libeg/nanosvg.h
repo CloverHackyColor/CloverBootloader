@@ -186,7 +186,8 @@ typedef struct NSVGshape
 //  char fontWeight[64];
 //  float fontSize;
   BOOLEAN isText;
-  char pad2[7];
+  BOOLEAN debug;
+  char pad2[6];
 //  CHAR16 textData[kMaxTextLength];
   const char *image_href;
 } NSVGshape;
@@ -342,14 +343,16 @@ typedef struct NSVGfont {
   // -- glyphs
   NSVGglyph* missingGlyph;
   NSVGglyph* glyphs; // a chain
+  struct NSVGfont* next;
 } NSVGfont;
 
 typedef struct NSVGtext {
   char id[64];
-  char class[64];
+//  char class[64];
   float x,y;
   //  char fontFamily[64];
   NSVGfont* font;
+  NSVGfont* fontFace;
   float fontSize;
   char fontStyle;
   unsigned int fontColor;
@@ -381,7 +384,7 @@ typedef struct NSVGparser
   char styleFlag;
 //  char groupFlag;
   BOOLEAN isText;
-  char unknown[64];
+//  char unknown[64];
   NSVGtext* text;
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];

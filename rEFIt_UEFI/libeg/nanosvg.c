@@ -86,6 +86,7 @@
 //#include <math.h>
 
 typedef UINTN size_t;
+extern VOID *fontsDB;
 
 #define NSVG_PI (3.14159265358979323846264338327f)
 #define NSVG_PI_DEG (0.01745329251994f)
@@ -2754,19 +2755,53 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   text->y = y;
   text->fontSize = r;
   memcpy(&text->id, &attr->id, 64);
-  text->font = attr->fontFace;
+  text->fontFace = attr->fontFace;
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor;
   }
 
-  DBG("fontID=%a\n", text->font->id);
-  DBG("  family=%a\n", text->font->fontFamily);
+  DBG("fontID=%a\n", text->fontFace->id);
+  DBG("  family=%a\n", text->fontFace->fontFamily);
+
+  //if the font is not registered then we have to load new one
+  NSVGfont        *fontSVG = fontsDB;
+  while (fontSVG &&
+		(strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) != 0 ||
+		fontSVG->fontStyle != text->fontFace->fontStyle)) {  //should also compare fontStyle (italic, bold)
+	  fontSVG = fontSVG->next;
+  }
+  if (!fontSVG) {  // font not found
+    //then load it
+	  UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0;
+	  NSVGparser      *p1 = NULL;
+    EFI_STATUS      Status;
+      Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->fontFamily), &FileData, &FileDataLength);
+      DBG("font loaded status=%r\n", Status);
+      if (!EFI_ERROR(Status)) {
+        p1 = nsvgParse((CHAR8*)FileData, "px", 72);
+        if (!p1) {
+          DBG("font not parsed\n");
+        } else {
+          fontSVG = p1->font;
+          DBG("font family %a parsed\n", fontSVG->fontFamily);
+          fontSVG->next = fontsDB;
+          fontsDB = fontSVG;
+          text->font = fontSVG;
+        }
+        FreePool(FileData);
+        FileData = NULL;
+      } else {
+		text->font = p->font; //else embedded if present
+	  }
+  } else {
+	text->font = fontSVG;
+  }
+
   //add to head
   text->next = p->text;
   p->text = text;
   p->isText = TRUE;
-
-//  nsvg__addShape(p); //text is not shape. It is a group for content
 }
 
 static void nsvg__parseCircle(NSVGparser* p, const char** attr)
@@ -3169,6 +3204,7 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
   p->image->groups = group;
 }
 
+// parse embedded font
 static void nsvg__parseFont(NSVGparser* p, const char** dict)
 {
   int i;
@@ -3181,19 +3217,20 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   font = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
 
   for (i = 0; dict[i]; i += 2) {
-    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
-      if (strcmp(dict[i], "horiz-adv-x") == 0) {
-        font->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]);
-      }
+    if (strcmp(dict[i], "horiz-adv-x") == 0) {
+      font->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]);
+    } else
       if (strcmp(dict[i], "font-family") == 0) {
         AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
       }
-    }
+      else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }
-  DBG("found fontID=%a\n", curAttr->id);
+  DBG("found embedded font family=%a\n", font->fontFamily);
   AsciiStrCpyS(font->id, 64, curAttr->id);
 
   p->font = font;
+  font->next = fontsDB;
+  fontsDB = font;
 }
 
 static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
@@ -3206,13 +3243,15 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
   NSVGfont* font = p->font;
   DBG("begin parse font face, font->id=%a\n", font->id);
   for (i = 0; dict[i]; i += 2) {
-    if (!nsvg__parseAttr(p, dict[i], dict[i + 1])) {
       if (strcmp(dict[i], "font-family") == 0) {
         AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
         DBG("font-family %a\n", font->fontFamily);
       }
       else if (strcmp(dict[i], "font-weight") == 0) {
         font->fontWeight = (int)AsciiStrDecimalToUintn(dict[i+1]);
+      }
+      else if (strcmp(dict[i], "font-style") == 0) {
+        font->fontStyle = dict[i+1][0]; //just one letter i, b, n
       }
       else if (strcmp(dict[i], "units-per-em") == 0) {
         font->unitsPerEm = (int)AsciiStrDecimalToUintn(dict[i+1]);
@@ -3253,8 +3292,8 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
           font->unicodeRange[0] = (int)AsciiStrHexToUintn(a+2);
           font->unicodeRange[1] = (int)AsciiStrHexToUintn(a+7);
         }
-      }
-    }
+      } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
+
   }
 }
 
@@ -3532,18 +3571,19 @@ static void nsvg__endElement(void* ud, const char* el)
              strcmp(el, "use") == 0
              ) {
     p->shapeFlag = 0;
-  } else if (strcmp(el, p->unknown) == 0) {
+//  } else if (strcmp(el, p->unknown) == 0) {
 //    p->defsFlag = 0;
   }
 }
 
 INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale, UINT32 color)
 {
-  INTN x1 = x;
+  INTN x1 = x; //initial position
 //  INTN y = 0;
   NSVGshape *shape;
   NSVGglyph* g;
   if (!p->text || !p->text->font) {
+    DBG("font absent\n");
     return x;
   }
 
@@ -3555,8 +3595,11 @@ INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale, UINT32
     if (g->unicode == letter) {
       shape->paths = g->path;
       if (shape->paths) {
-         DBG("Found glyph %x, point[0]=(%d,%d) points=%d\n", letter,
-             (int)shape->paths->pts[0], (int)shape->paths->pts[1], shape->paths->npts);
+        if (letter == L'C') {
+          DBG("Found glyph %x, point[0]=(%d,%d) points=%d\n", letter,
+              (int)shape->paths->pts[0], (int)shape->paths->pts[1], shape->paths->npts);
+          shape->debug = TRUE;
+        }
       }
       break;
     }
@@ -3572,7 +3615,7 @@ INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale, UINT32
   }
   if (!shape->paths) {
     if (g) {
-      x1 += g->horizAdvX * scale;
+      x1 += g->horizAdvX * scale; //user space
     }
     if (shape) {
       FreePool(shape);
@@ -3626,8 +3669,9 @@ static void addString(NSVGparser* p, char* s)
 //  DBG("start parsing text content %a\n", s);
   UINTN i;
   if (!p->text->font) {
-    return; //later we make external fonts
+      return; //later we make external fonts
   }
+ // p->text->font = p->font; //we assigned font before
 //  p->font = p->text->font;
   DBG("use font-family=%a\n", p->text->font->fontFamily);
 //  NSVGshape *shape;
@@ -3640,9 +3684,9 @@ static void addString(NSVGparser* p, char* s)
   //required height
   float h = p->text->fontSize;
   float scale = h / sy;  //scale to font size
-//  DBG("font scale = %s\n", PoolPrintFloat(scale));
+  DBG("font scale = %s\n", PoolPrintFloat(scale));
   //text position based on ?
-  float x = p->text->x;
+  float x = p->text->x;  //user space
   float y = p->text->y;
   for (i = 0; i < len; i++) {
     CHAR16 letter = s[i];
@@ -3650,7 +3694,7 @@ static void addString(NSVGparser* p, char* s)
     if (!letter) {
       break;
     }
-    x = addLetter(p, letter, x, y, scale, p->text->fontColor);
+    x = addLetter(p, letter, x, y, scale, p->text->fontColor | 0xFF000000);
   }
 }
 
@@ -3771,7 +3815,9 @@ static char *nsvg__strndup(const char *s, size_t n)
   return result;
 }
 
-//bounds inited before use
+//image bounds for a shape group
+//bounds inited before use, called from nsvgParse
+//assumed each shape already has bounds calculated.
 int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
 {
   NSVGshape *shape, *shapeLink;
@@ -3790,7 +3836,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       shape = shapeLink->link;
       nsvg__xformPremultiply(xform, shape->xform);
     } else shape = shapeLink;
-//    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
 //    DumpFloat2("  transform", xform, 6);
 //    DumpFloat2("  shape bounds", shape->bounds, 4);
     nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
@@ -3808,9 +3854,13 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[2] = nsvg__maxf(bounds[2], newBounds[4]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
-//      DumpFloat2("  new bounds", bounds, 4);
+ //     if (shape->debug) {
+        DumpFloat2("  new shape bounds", bounds, 4);
+ //     }
+
       count++; //count visible
     }
+
   }
   return count;
 }

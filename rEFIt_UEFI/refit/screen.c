@@ -583,7 +583,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
     Width = NewImage->Width;
     Height = NewImage->Height;
   }
-  DBG("w=%d, h=%d\n", Width, Height);
+//  DBG("w=%d, h=%d\n", Width, Height);
   // compose on background
   CompImage = egCreateFilledImage(Width, Height, (BackgroundImage != NULL), BackgroundPixel);
   egComposeImage(CompImage, NewImage, 0, 0);
@@ -597,7 +597,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   }
   NewImage = egCreateImage(Width, Height, FALSE);
   if (!NewImage) return;
-  DBG("draw on background\n");
+//  DBG("draw on background\n");
   egRawCopy(NewImage->PixelData,
             BackgroundImage->PixelData + YPos * BackgroundImage->Width + XPos,
             Width, Height,

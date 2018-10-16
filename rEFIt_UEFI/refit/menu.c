@@ -1703,7 +1703,7 @@ VOID InitSelection(VOID)
     return;
   }
   // load big selection image
-  if (GlobalConfig.SelectionBigFileName != NULL) {
+  if (!GlobalConfig.TypeSVG && GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            row0TileSize, row0TileSize,
