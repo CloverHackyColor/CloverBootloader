@@ -4724,9 +4724,6 @@ GetUserSettings(
       
       Prop = GetProperty (DictPointer, "SetIntelMaxBacklight");
       gSettings.IntelMaxBacklight = IsPropertyTrue (Prop);
-      if (gSettings.IntelMaxBacklight) {
-        gSettings.IntelBacklight = TRUE;
-      }
       
       Prop = GetProperty (DictPointer, "IntelMaxValue");
       gSettings.IntelMaxValue = (UINT16)GetPropertyInteger (Prop, gSettings.IntelMaxValue);
@@ -6278,7 +6275,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
               OSVersion = AllocateCopyPool (5, "10.9");
-            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Mojave") || AsciiStrStr (Prop->string, "Install%20macOS%2010.14%20Beta")) {
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Mojave") || AsciiStrStr (Prop->string, "Install%20macOS%2010.14")) {
               OSVersion = AllocateCopyPool (6, "10.14");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20High%20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
               OSVersion = AllocateCopyPool (6, "10.13");
@@ -6984,12 +6981,11 @@ SetDevices (LOADER_ENTRY *Entry)
           }
           devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.IgPlatform, 4);
           DBG("   Add key=%a valuelen=%d\n", Prop2->Key, Prop2->ValueLen);
-        } else if (AsciiStrStr(Prop2->Key, "override-no-edid") || AsciiStrStr(Prop2->Key, "override-no-connect")) {
+        } else if ((AsciiStrStr(Prop2->Key, "override-no-edid") || AsciiStrStr(Prop2->Key, "override-no-connect"))
+          && gSettings.InjectEDID && gSettings.CustomEDID) {
           // special case for EDID properties
-          if (gSettings.InjectEDID && gSettings.CustomEDID) {
-            devprop_add_value(device, Prop2->Key, gSettings.CustomEDID, 128);
-            DBG("   Add key=%a from custom EDID\n", Prop2->Key);
-          }
+          devprop_add_value(device, Prop2->Key, gSettings.CustomEDID, 128);
+          DBG("   Add key=%a from custom EDID﻿\n", Prop2->Key);
         } else {
           devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
           DBG("   Add key=%a valuelen=%d\n", Prop2->Key, Prop2->ValueLen);
@@ -7122,7 +7118,7 @@ SetDevices (LOADER_ENTRY *Entry)
               }
 
               // IntelBacklight reworked by Sherlocks. 2018.10.07
-              if (gSettings.IntelBacklight) {
+              if (gSettings.IntelBacklight || gSettings.IntelMaxBacklight) {
                 UINT32 LEV2 = 0, LEVL = 0, P0BL = 0, GRAN = 0;
                 UINT32 LEVW = 0, LEVX = 0, LEVD = 0, PCHL = 0;
                 UINT32 ShiftLEVX = 0, FBLEVX = 0;
@@ -7210,7 +7206,7 @@ SetDevices (LOADER_ENTRY *Entry)
                 //  Sandy Bridge/Ivy Bridge: 0x0710
                 //  Haswell/Broadwell: 0x056C/0x07A1/0x0AD9/0x1499
                 //  Skylake/KabyLake: 0x056C
-                //  Coffee Lake: 0xFF7B
+                //  Coffee Lake: 0xFF7B/0xFFFF
                 switch (Pci.Hdr.DeviceId) {
                   case 0x0102: // "Intel HD Graphics 2000"
                   case 0x0106: // "Intel HD Graphics 2000"
@@ -7223,6 +7219,7 @@ SetDevices (LOADER_ENTRY *Entry)
                       switch (gSettings.IgPlatform) {
                         case (UINT32)0x00030010:
                         case (UINT32)0x00050000:
+                          FBLEVX = 0xFFFF;
                           break;
                         default:
                           FBLEVX = 0x0710;
@@ -7395,6 +7392,7 @@ SetDevices (LOADER_ENTRY *Entry)
                     if (gSettings.IgPlatform) {
                       switch (gSettings.IgPlatform) {
                         case (UINT32)0x19120001:
+                        FBLEVX = 0xFFFF;
                         break;
                       default:
                         FBLEVX = 0x056C;
@@ -7427,12 +7425,36 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E92: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
-                    FBLEVX = 0xFF7B;
+                    FBLEVX = 0xFFFF; // 0xFF7B
                     break;
 
                   default:
                     FBLEVX = 0xFFFF;
                     break;
+                }
+
+                // Write LEVW
+                if (LEVW != SYSLEVW) {
+                  MsgLog ("  Found invalid LEVW, set System LEVW: 0x%x\n", SYSLEVW);
+                  /*Status = */PciIo->Mem.Write(
+                                                PciIo,
+                                                EfiPciIoWidthUint32,
+                                                0,
+                                                0xC8250,
+                                                1,
+                                                &SYSLEVW
+                                                );
+                }
+                if (gSettings.IntelBacklight) {
+                  MsgLog ("  Write macOS LEVW: 0x%x\n", OSXLEVW);
+                  /*Status = */PciIo->Mem.Write(
+                                                PciIo,
+                                                EfiPciIoWidthUint32,
+                                                0,
+                                                0xC8250,
+                                                1,
+                                                &OSXLEVW
+                                                );
                 }
 
                 switch (Pci.Hdr.DeviceId) {
@@ -7451,41 +7473,30 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0162: // "Intel HD Graphics 4000"
                   case 0x0166: // "Intel HD Graphics 4000"
                   case 0x016A: // "Intel HD Graphics P4000"
-                    // Write LEVW
-                    if (LEVW != SYSLEVW) {
-                      MsgLog ("  LEVW: new 0x%x\n", SYSLEVW);
-                      /*Status = */PciIo->Mem.Write(
-                                                    PciIo,
-                                                    EfiPciIoWidthUint32,
-                                                    0,
-                                                    0xC8250,
-                                                    1,
-                                                    &SYSLEVW
-                                                    );
-                    }
-
                     // Write LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (!LEVL) {
-                        MsgLog ("  LEVL: No valid, use default 0x%x\n", FBLEVX);
                         LEVL = FBLEVX;
+                        MsgLog ("  Found invalid LEVL, set LEVL: 0x%x\n", LEVL);
                       }
 
                       if (!LEVX) {
-                        MsgLog ("  LEVX: No valid, use default 0x%x\n", FBLEVX);
                         ShiftLEVX = FBLEVX;
+                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", ShiftLEVX);
                       }
 
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  FBLEVX: new 0x%x\n", FBLEVX);
+                        MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
                       } else {
-                        MsgLog ("  FBLEVX: default 0x%x\n", FBLEVX);
+                        MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                       }
 
                       if ((ShiftLEVX != FBLEVX) || !LEVX) {
                         LEVX = (LEVL * FBLEVX) / ShiftLEVX;
+                        MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
                         LEVL = FBLEVX | FBLEVX << 16;
+                        MsgLog ("  Write new LEVL: 0x%x\n", LEVL);
 
                         if (FBLEVX > ShiftLEVX) {
                           /*Status = */PciIo->Mem.Write(
@@ -7528,33 +7539,50 @@ SetDevices (LOADER_ENTRY *Entry)
                     }
                     break;
 
-                  default:
-                    // Write LEVW
-                    if (LEVW != OSXLEVW) {
-                      MsgLog ("  LEVW: new 0x%x\n", OSXLEVW);
+                  case 0x3E90: // "Intel UHD Graphics 610"
+                  case 0x3E93: // "Intel UHD Graphics 610"
+                  case 0x3E91: // "Intel UHD Graphics 630"
+                  case 0x3E92: // "Intel UHD Graphics 630"
+                  case 0x3E9B: // "Intel UHD Graphics 630"
+                  case 0x3EA5: // "Intel Iris Plus Graphics 655"
+                    // Write LEVD
+                    if (gSettings.IntelMaxBacklight) {
+                      if (gSettings.IntelMaxValue) {
+                        FBLEVX = gSettings.IntelMaxValue;
+                        MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
+                      } else {
+                        MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
+                      }
+
+                      LEVD = (UINT64)FBLEVX * (UINT64)LEVX / 0xFFFFLL;
+                      MsgLog ("  Write new LEVD: 0x%x\n", LEVD);
+
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
                                                     EfiPciIoWidthUint32,
                                                     0,
-                                                    0xC8250,
+                                                    0xC8258,
                                                     1,
-                                                    &OSXLEVW
+                                                    &LEVD
                                                     );
                     }
+                    break;
 
+                  default:
                     // Write LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  FBLEVX: new 0x%x\n", FBLEVX);
+                        MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
                         LEVX = FBLEVX | FBLEVX << 16;
                       } else if  (!LEVX) {
-                        MsgLog ("  FBLEVX: no valid LEVX, use default 0x%x\n", FBLEVX);
+                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", FBLEVX);
                         LEVX = FBLEVX | FBLEVX << 16;
                       } else if  (ShiftLEVX != FBLEVX) {
-                        MsgLog ("  FBLEVX: default 0x%x\n", FBLEVX);
+                        MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                         LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
                       }
+                      MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -7592,7 +7620,7 @@ SetDevices (LOADER_ENTRY *Entry)
         //LAN
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-          //           MsgLog ("Ethernet device found\n");
+          //MsgLog ("Ethernet device found\n");
           if (!(gSettings.FixDsdt & FIX_LAN)) {
             TmpDirty = set_eth_props (&PCIdevice);
             StringDirty |=  TmpDirty;
