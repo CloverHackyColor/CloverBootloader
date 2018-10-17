@@ -53,7 +53,7 @@
 // well-known icons
 //
 
-BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
+BUILTIN_ICON BuiltinIconTable[] = {
   { NULL, L"icons\\func_about"             , L"png",  /*48*/32 },
   { NULL, L"icons\\func_options"           , L"png",  /*48*/32 },
   { NULL, L"icons\\func_clover"            , L"png",  /*48*/32 },
@@ -81,7 +81,35 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
 
   { NULL, L"logo"                          , L"png",  128 },
   { NULL, L"selection_small"               , L"png",  64  },
-  { NULL, L"selection_big"                 , L"png",  144 }
+  { NULL, L"selection_big"                 , L"png",  144 },
+  { NULL, NULL                 , NULL,  0 }
+};
+/*
+typedef struct MISC_ICONS {
+  EG_IMAGE *image;
+  CHAR8    *name;
+} MISC_ICONS;
+*/
+MISC_ICONS OSIconsTable[] = {
+  {NULL, "os_mac"},
+  {NULL, "os_tiger"},
+  {NULL, "os_leo"},
+  {NULL, "os_snow"},
+  {NULL, "os_lion"},
+  {NULL, "os_cougar"},
+  {NULL, "os_mav"},
+  {NULL, "os_yos"},
+  {NULL, "os_cap"},
+  {NULL, "os_sierra"},
+  {NULL, "os_hsierra"},
+  {NULL, "os_moja"},
+  {NULL, "os_linux"},
+  {NULL, "os_freebsd"},
+  {NULL, "os_freedos"},
+  {NULL, "os_win"},
+  {NULL, "os_vista"},
+  {NULL, "pointer"},
+  {NULL, NULL}
 };
 
 //#define DEC_BUILTIN_ICON(id, ico) BuiltinIconTable[id].Image = egDecodePNG(ico, sizeof(ico), BuiltinIconTable[id].PixelSize, TRUE)
@@ -92,14 +120,7 @@ CHAR16 * GetIconsExt(IN CHAR16 *Icon, IN CHAR16 *Def)
 {
   return PoolPrint(L"%s.%s", Icon, ((GlobalConfig.IconFormat != ICON_FORMAT_DEF) && (IconFormat != NULL)) ? IconFormat : Def);
 }
-/*
-EG_IMAGE * GetSmallHover(IN UINTN Id)
-{
-  CHAR16 *Path = AllocateZeroPool(256);
-  Path = GetIconsExt(PoolPrint(L"%s_hover", BuiltinIconTable[Id].Path), BuiltinIconTable[Id].Format);
-  return egLoadIcon(ThemeDir, Path, BuiltinIconTable[Id].PixelSize);
-}
-*/
+
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
 {
   INTN      Size;
@@ -332,19 +353,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
 
   return DummyImage(PixelSize);
 }
-/*
-EG_IMAGE * LoadHoverIcon(IN CHAR16 *OSIconName, IN UINTN PixelSize)
-{
-  EG_IMAGE        *Image = NULL;
 
-  if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
-    return NULL;
-
-  Image = egLoadIcon(ThemeDir, OSIconName, PixelSize);
-
-  return Image;
-}
-*/
 //
 // Load an image from a .icns file
 //

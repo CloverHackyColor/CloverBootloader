@@ -153,7 +153,7 @@ typedef struct NSVGgroup
 	struct NSVGgroup* parent;			// Pointer to parent group or NULL
 	struct NSVGgroup* next;			// Pointer to next group or NULL
   struct NSVGshape* shapeList; // list of shapes inside the group
-
+  int visibility;
 } NSVGgroup;
 
 typedef struct NSVGshape

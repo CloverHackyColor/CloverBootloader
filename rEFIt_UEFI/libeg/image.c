@@ -407,10 +407,10 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
     
   if (EFI_ERROR(Status)) {
       // make dir
-    DBG("no dir %r\n", Status);
+//    DBG("no dir %r\n", Status);
       Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                                EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
-    DBG("cant make dir %r\n", Status);
+//    DBG("cant make dir %r\n", Status);
   }
   // end of folder checking
 
@@ -422,7 +422,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
     if (Status == EFI_WARN_DELETE_FAILURE) {
       //This is READ_ONLY file system
       CreateNew = FALSE; // will write into existing file
-      DBG("RO FS %r\n", Status);
+//      DBG("RO FS %r\n", Status);
     }
   }
 
@@ -431,7 +431,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
     if (EFI_ERROR(Status)) {
-      DBG("no write %r\n", Status);
+//      DBG("no write %r\n", Status);
       return Status;
     }
   } else {
@@ -439,7 +439,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
     EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
     if (Info) {
       if (Info->FileSize < FileDataLength) {
-        DBG("no old file %r\n", Status);
+//        DBG("no old file %r\n", Status);
         return EFI_NOT_FOUND;
       }
       FreePool(Info);
@@ -447,7 +447,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   }
 
   if (!FileHandle) {
-    DBG("no FileHandle %r\n", Status);
+//    DBG("no FileHandle %r\n", Status);
     return EFI_DEVICE_ERROR;
   }
 
@@ -525,8 +525,34 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
   UINT8           *FileData;
   UINTN           FileDataLength;
   EG_IMAGE        *NewImage;
+  CHAR8           *IconName;
 
   if (!BaseDir || !FileName) {
+    return NULL;
+  }
+
+  if (GlobalConfig.TypeSVG) {
+    INTN    i = 0;
+    UINTN   Size;
+
+    CHAR16 *ptr = StrStr(FileName, L"\\");
+    if (!ptr) {
+      ptr = FileName;
+    } else {
+      ptr++;
+    }
+    Size = StrLen(ptr)+1;
+    IconName = AllocateZeroPool(Size);
+    UnicodeStrToAsciiStrS(ptr, IconName, Size);
+
+    while (OSIconsTable[i].name) {
+      if (AsciiStrCmp(OSIconsTable[i].name, IconName) == 0) {
+        FreePool(IconName);
+        return OSIconsTable[i].image;
+      }
+      i++;
+    }
+    FreePool(IconName);
     return NULL;
   }
   // load file

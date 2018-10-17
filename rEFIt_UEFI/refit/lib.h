@@ -919,6 +919,12 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 // config module
 //
 
+typedef struct MISC_ICONS {
+  EG_IMAGE *image;
+  CHAR8    *name;
+} MISC_ICONS;
+
+extern MISC_ICONS OSIconsTable[];
 extern BUILTIN_ICON BuiltinIconTable[];
 extern REFIT_CONFIG GlobalConfig;
 

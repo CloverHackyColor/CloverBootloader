@@ -1525,11 +1525,11 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 	int i, j;
 	NSVGgradient* grad;
   float xform[6];
-  float opacity = shape->opacity;
+//  float opacity = shape->opacity;
 
 	cache->type = paint->type;
   if (shape->debug) {
-    DBG("cachetype=%d color=%x opacity=%d\n", cache->type, paint->color, (int)(opacity*255.f));
+    DBG("cachetype=%d color=%x opacity=%d\n", cache->type, paint->color, (int)(shape->opacity*255.f));
   }
 
 	if (paint->type == NSVG_PAINT_COLOR) {

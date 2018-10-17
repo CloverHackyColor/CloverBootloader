@@ -2063,7 +2063,7 @@ static void nsvg__parseStyle(NSVGparser* p, const char* str)
     if (*str) ++str;
   }
 }
-
+/*
 static void nsvg__parseAttribs(NSVGparser* p, const char** dict)
 {
   int i;
@@ -2076,7 +2076,7 @@ static void nsvg__parseAttribs(NSVGparser* p, const char** dict)
     }
   }
 }
-
+*/
 static int nsvg__getArgsPerElement(char cmd)
 {
   switch (cmd) {
@@ -2418,7 +2418,7 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
   int nargs;
   int rargs = 0;
   float cpx, cpy, cpx2, cpy2;
-  const char* tmp[4];
+//  const char* tmp[4];
   char closedFlag;
   int i;
   char item[kMaxIDLength];
@@ -2427,11 +2427,14 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
     if (strcmp(attr[i], "d") == 0) {
       s = attr[i + 1];
     } else {
+      /*
       tmp[0] = attr[i];
       tmp[1] = attr[i + 1];
       tmp[2] = 0;
       tmp[3] = 0;
-      nsvg__parseAttribs(p, tmp);
+/     nsvg__parseAttribs(p, tmp);
+       */
+      nsvg__parseAttr(p, attr[i], attr[i + 1]);
     }
   }
 
@@ -3185,15 +3188,30 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 {
   NSVGgroup* group;
   NSVGattrib* curAttr = nsvg__getAttr(p);
+  int i;
+  int visSet = 0;
   if (!curAttr) {
     return;
   }
 
-  nsvg__parseAttribs(p, dict);
-  if (curAttr->id[0] == '\0') //skip anonymous groups
-    return;
-
   group = (NSVGgroup*)AllocateZeroPool(sizeof(NSVGgroup));
+
+//  if (curAttr->id[0] == '\0') //skip anonymous groups
+//    return;
+  for (i = 0; dict[i]; i += 2) {
+    if (strcmp(dict[i], "visibility") == 0) {
+      visSet = 1;
+      if (strcmp(dict[i+1], "hidden") == 0) {
+        group->visibility &= ~NSVG_VIS_VISIBLE;
+      } else if (strcmp(dict[i+1], "visible") == 0) {
+        group->visibility |= NSVG_VIS_VISIBLE;
+      }
+    } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
+  }
+
+  if (!visSet) {
+    group->visibility = group->parent->visibility;
+  }
 
   AsciiStrCpyS(group->id, 64, curAttr->id);
   group->parent = curAttr->group;
@@ -3836,7 +3854,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       shape = shapeLink->link;
       nsvg__xformPremultiply(xform, shape->xform);
     } else shape = shapeLink;
-    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+//    DBG("take Bounds: shapeID=%a\n", shapeLink->id);
 //    DumpFloat2("  transform", xform, 6);
 //    DumpFloat2("  shape bounds", shape->bounds, 4);
     nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
@@ -3855,7 +3873,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
  //     if (shape->debug) {
-        DumpFloat2("  new shape bounds", bounds, 4);
+ //       DumpFloat2("  new shape bounds", bounds, 4);
  //     }
 
       count++; //count visible
