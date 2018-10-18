@@ -394,7 +394,7 @@ UINT8 cannonlake_ig_vals[14][4] = {
   { 0x00, 0x00, 0x40, 0x5A },   //1 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
   { 0x09, 0x00, 0x40, 0x5A },   //2 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
   { 0x00, 0x00, 0x41, 0x5A },   //3 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
-  { 0x09, 0x00, 0x41, 0x5A },   //4 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65403
+  { 0x09, 0x00, 0x41, 0x5A },   //4 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
   { 0x00, 0x00, 0x49, 0x5A },   //5 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
   { 0x09, 0x00, 0x49, 0x5A },   //6 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
   { 0x00, 0x00, 0x50, 0x5A },   //7 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
