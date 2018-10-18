@@ -108,7 +108,10 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "os_freedos"},
   {NULL, "os_win"},
   {NULL, "os_vista"},
-  {NULL, "pointer"},
+  {NULL, "radio_button"},
+  {NULL, "radio_button_selected"},
+  {NULL, "checkbox"},
+  {NULL, "checkbox_checked"},
   {NULL, NULL}
 };
 
