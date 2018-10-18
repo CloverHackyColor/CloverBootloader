@@ -7406,7 +7406,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E92: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
-                    FBLEVX = 0xFFFF; // 0xFF7B
+                    FBLEVX = 0xFFFF;
                     break;
 
                   default:
@@ -7454,7 +7454,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0162: // "Intel HD Graphics 4000"
                   case 0x0166: // "Intel HD Graphics 4000"
                   case 0x016A: // "Intel HD Graphics P4000"
-                    // Write LEVX
+                    // Write LEVL/LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (!LEVL) {
                         LEVL = FBLEVX;
@@ -7526,8 +7526,13 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E92: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
-                    // Write LEVD
+                    // Write LEVX/LEVD
                     if (gSettings.IntelMaxBacklight) {
+                      if (!LEVX) {
+                        LEVX = FBLEVX;
+                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", LEVX);
+                      }
+
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
                         MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
@@ -7535,8 +7540,18 @@ SetDevices (LOADER_ENTRY *Entry)
                         MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                       }
 
-                      LEVD = (UINT64)FBLEVX * (UINT64)LEVX / 0xFFFFLL;
+                      LEVD = (LEVD * FBLEVX) / LEVX;
                       MsgLog ("  Write new LEVD: 0x%x\n", LEVD);
+                        
+                      if (FBLEVX > LEVX) {
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8254,
+                                                    1,
+                                                    &FBLEVX
+                                                    );
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -7546,6 +7561,25 @@ SetDevices (LOADER_ENTRY *Entry)
                                                     1,
                                                     &LEVD
                                                     );
+                      } else {
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8258,
+                                                    1,
+                                                    &LEVD
+                                                    );
+
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8254,
+                                                    1,
+                                                    &FBLEVX
+                                                    );
+                      }
                     }
                     break;
 
