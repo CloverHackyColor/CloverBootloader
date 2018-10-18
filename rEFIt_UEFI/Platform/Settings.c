@@ -4174,8 +4174,6 @@ ParseSMBIOSSettings(
 {
   CHAR8  *i, *j, *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
   CHAR16 UStr[64];
-  //  UINT32 FF, FFM;
-  //  UINT64 PF;
   TagPtr Prop, Prop1;
   BOOLEAN Default = FALSE;
   
@@ -4203,49 +4201,30 @@ ParseSMBIOSSettings(
   // Check for BiosVersion and BiosReleaseDate by Sherlocks
   Prop = GetProperty (DictPointer, "BiosVersion");
   if (Prop != NULL) {
-    if (AsciiStrLen(gSettings.RomVersion) == 16) {
-      i = gSettings.RomVersion;
-      j = Prop->string;
+    i = gSettings.RomVersion;
+    j = Prop->string;
 
-      if ((AsciiStrLen(i) == 16) && (AsciiStrLen(j) != 16)) {
-        DBG ("Found wrong BiosVersion in config, Using latest BiosVersion from clover\n");
-      } else if ((AsciiStrLen(i) == 16) && (AsciiStrLen(j) == 16)) {
-        if (i == j) {
-          DBG ("Found same BiosVersion in clover and config\n");
-        } else {
-          AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
-          DBG ("Using latest BiosVersion from config\n");
-        }
-      }
-    } else {
-      i = gSettings.RomVersion;
-      j = Prop->string;
+    i += AsciiStrLen (i);
+    while (*i != '.') {
+      i--;
+    }
+
+    j += AsciiStrLen (j);
+    while (*j != '.') {
+      j--;
+    }
     
-      i += AsciiStrLen (i);
-      while (*i != '.') {
-        i--;
-      }
-    
-      j += AsciiStrLen (j);
-      while (*j != '.') {
-        j--;
-      }
-    
-      if (((i[1] > '0') && (j[1] == '0')) || ((i[1] >= j[1]) && (i[2] > j[2]))) {
+    if (((i[1] > '0') && (j[1] == '0')) || ((i[1] >= j[1]) && (i[2] > j[2]))) {
+      DBG ("Using latest BiosVersion from clover\n");
+    } else if ((i[1] == j[1]) && (i[2] == j[2])) {
+      if (((i[3] > '0') && (j[3] == '0')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
         DBG ("Using latest BiosVersion from clover\n");
-      } else if ((i[1] == j[1]) && (i[2] == j[2])) {
-        if (((i[3] > '0') && (j[3] == '0')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
+      } else if ((i[3] == j[3]) && (i[4] == j[4])) {
+        if (((i[5] > '0') && (j[5] == '0')) || ((i[5] > '1') && (j[5] == '1')) ||
+            ((i[5] > '2') && (j[5] == '2')) || ((i[5] >= j[5]) && (i[6] > j[6]))) {
           DBG ("Using latest BiosVersion from clover\n");
-        } else if ((i[3] == j[3]) && (i[4] == j[4])) {
-          if (((i[5] > '0') && (j[5] == '0')) || ((i[5] > '1') && (j[5] == '1')) ||
-              ((i[5] > '2') && (j[5] == '2')) || ((i[5] >= j[5]) && (i[6] > j[6]))) {
-            DBG ("Using latest BiosVersion from clover\n");
-          } else if ((i[5] == j[5]) && (i[6] == j[6])) {
-            DBG ("Found same BiosVersion in clover and config\n");
-          } else {
-            AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
-            DBG ("Using latest BiosVersion from config\n");
-          }
+        } else if ((i[5] == j[5]) && (i[6] == j[6])) {
+          DBG ("Found same BiosVersion in clover and config\n");
         } else {
           AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
           DBG ("Using latest BiosVersion from config\n");
@@ -4254,6 +4233,9 @@ ParseSMBIOSSettings(
         AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
         DBG ("Using latest BiosVersion from config\n");
       }
+    } else {
+      AsciiStrCpyS (gSettings.RomVersion, 64, Prop->string);
+      DBG ("Using latest BiosVersion from config\n");
     }
   } else {
     DBG ("BiosVersion: not set, Using BiosVersion from clover\n");
@@ -4263,150 +4245,145 @@ ParseSMBIOSSettings(
   Prop1 = GetProperty (DictPointer, "BiosReleaseDate");
   if (Prop1 != NULL) {
     if (Prop != NULL) {
-      if (AsciiStrLen(gSettings.RomVersion) == 16) {
-        AsciiStrCpy (gSettings.ReleaseDate, Prop1->string);
-        //DBG ("Using BiosReleaseDate from config\n");
-      } else {
-        i = gSettings.ReleaseDate;
-        j = Prop1->string;
+      i = gSettings.ReleaseDate;
+      j = Prop1->string;
       
-        if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 8)) {
-          if (((i[6] > j[6]) && (i[7] > j[7])) &&
-              ((i[0] > j[0]) && (i[1] > j[1])) &&
-              ((i[3] > j[3]) && (i[4] > j[4]))) {
+      if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 8)) {
+        if (((i[6] > '0') && (j[6] == '0')) || ((i[6] >= j[6]) && (i[7] > j[7]))) {
+          //DBG ("Found old BiosReleaseDate from config\n");
+          //DBG ("Using latest BiosReleaseDate from clover\n");
+        } else if ((i[6] == j[6]) && (i[7] == j[7])) {
+          if (((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1]))) {
             //DBG ("Found old BiosReleaseDate from config\n");
             //DBG ("Using latest BiosReleaseDate from clover\n");
-          } else {
-            i = gSettings.RomVersion;
-          
-            i += AsciiStrLen (i);
-            while (*i != '.') {
-              i--;
-            }
-          
-            if (((i[1] == j[6]) && (i[2] == j[7])) &&
-                ((i[3] == j[0]) && (i[4] == j[1])) &&
-                ((i[5] == j[3]) && (i[6] == j[4]))) {
-              //DBG ("The date in BiosVersion matches BiosReleaseDate!\n");
+          } else if ((i[0] == j[0]) && (i[1] == j[1])) {
+            if (((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) ||
+                ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
+              //DBG ("Found old BiosReleaseDate from config\n");
+              //DBG ("Using latest BiosReleaseDate from clover\n");
+            } else if ((i[3] == j[3]) && (i[4] == j[4])) {
+              //DBG ("Found same BiosVersion in clover and config\n");
+            } else {
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
               //DBG ("Using latest BiosReleaseDate from config\n");
-            } else {
-              //DBG ("BiosReleaseDate: %a from config\n", Prop1->string);
-              //DBG ("The date in BiosReleaseDate from config doesn't match BiosVersion!\n");
-              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
-              //DBG ("Using the date of used BiosVersion\n");
             }
-          }
-        } else if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 10)) {
-          if (((i[6] > j[8]) && (i[7] > j[9])) &&
-              ((i[0] > j[0]) && (i[1] > j[1])) &&
-              ((i[3] > j[3]) && (i[4] > j[4]))) {
-            //DBG ("Found old BiosReleaseDate from config\n");
-            //DBG ("Using latest BiosReleaseDate from clover\n");
           } else {
-            i = gSettings.RomVersion;
-          
-            i += AsciiStrLen (i);
-            while (*i != '.') {
-              i--;
-            }
-          
-            if (((i[1] == j[6]) && (i[2] == j[7])) &&
-                ((i[3] == j[0]) && (i[4] == j[1])) &&
-                ((i[5] == j[3]) && (i[6] == j[4]))) {
-              //DBG ("The date in BiosVersion matches BiosReleaseDate!\n");
-              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
-              //DBG ("Using latest BiosReleaseDate from config, Found wrong date format and fixed it\n");
-            } else {
-              //DBG ("BiosReleaseDate: %a from config\n", Prop1->string);
-              //DBG ("The date in BiosReleaseDate from config doesn't match BiosVersion\n");
-              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
-              //DBG ("Using the date of used BiosVersion\n");
-            }
-          }
-        } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 10)) {
-          if (((i[8] > j[8]) && (i[9] > j[9])) &&
-              ((i[0] > j[0]) && (i[1] > j[1])) &&
-              ((i[3] > j[3]) && (i[4] > j[4]))) {
-            //DBG ("Found old BiosReleaseDate from config\n");
-            //DBG ("Using latest BiosReleaseDate from clover\n");
-          } else {
-            i = gSettings.RomVersion;
-          
-            i += AsciiStrLen (i);
-            while (*i != '.') {
-              i--;
-            }
-          
-            if (((i[1] == j[8]) && (i[2] == j[9])) &&
-                ((i[3] == j[0]) && (i[4] == j[1])) &&
-                ((i[5] == j[3]) && (i[6] == j[4]))) {
-              //DBG ("The date in BiosVersion matches BiosReleaseDate!\n");
-              AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
-              //DBG ("Using latest BiosReleaseDate from config\n");
-            } else {
-              //DBG ("BiosReleaseDate: %a from config\n", Prop1->string);
-              //DBG ("The date in BiosReleaseDate from config doesn't match BiosVersion!\n");
-              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
-              //DBG ("Using the date of used BiosVersion\n");
-            }
-          }
-        } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 8)) {
-          if (((i[8] > j[6]) && (i[9] > j[7])) &&
-              ((i[0] > j[0]) && (i[1] > j[1])) &&
-              ((i[3] > j[3]) && (i[4] > j[4]))) {
-            //DBG ("Found old BiosReleaseDate from config\n");
-            //DBG ("Using latest BiosReleaseDate from clover\n");
-          } else {
-            i = gSettings.RomVersion;
-          
-            i += AsciiStrLen (i);
-            while (*i != '.') {
-              i--;
-            }
-          
-            if (((i[1] == j[6]) && (i[2] == j[7])) &&
-                ((i[3] == j[0]) && (i[4] == j[1])) &&
-                ((i[5] == j[3]) && (i[6] == j[4]))) {
-              //DBG ("The date in BiosVersion matches BiosReleaseDate!\n");
-              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
-              //DBG ("Using latest BiosReleaseDate from config, Found wrong date format and fixed it\n");
-            } else {
-              //DBG ("BiosReleaseDate: %a from config\n", Prop1->string);
-              //DBG ("The date in BiosReleaseDate from config doesn't match BiosVersion\n");
-              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
-              //DBG ("Using the date of used BiosVersion\n");
-            }
+            AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
+            //DBG ("Using latest BiosReleaseDate from config\n");
           }
         } else {
-          //DBG ("Found unknown date format from config\n");
-          if (Prop != NULL) {
-            i = gSettings.ReleaseDate;
-            j = gSettings.RomVersion;
-          
-            j += AsciiStrLen (j);
-            while (*j != '.') {
-              j--;
-            }
-          
-            if ((AsciiStrLen(i) == 8)) {
-              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
-              //DBG ("Using the date of used BiosVersion\n");
-            } else if ((AsciiStrLen(i) == 10)) {
-              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-              AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
-              //DBG ("Using the date of used BiosVersion\n");
+          AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
+          //DBG ("Using latest BiosReleaseDate from config\n");
+        }
+      } else if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 10)) {
+        if (((i[6] > '0') && (j[8] == '0')) || ((i[6] >= j[8]) && (i[7] > j[9]))) {
+          //DBG ("Found old BiosReleaseDate from config\n");
+          //DBG ("Using latest BiosReleaseDate from clover\n");
+        } else if ((i[6] == j[8]) && (i[7] == j[9])) {
+          if (((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1]))) {
+            //DBG ("Found old BiosReleaseDate from config\n");
+            //DBG ("Using latest BiosReleaseDate from clover\n");
+          } else if ((i[0] == j[0]) && (i[1] == j[1])) {
+            if (((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) ||
+                ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
+              //DBG ("Found old BiosReleaseDate from config\n");
+              //DBG ("Using latest BiosReleaseDate from clover\n");
+            } else if ((i[3] == j[3]) && (i[4] == j[4])) {
+              //DBG ("Found same BiosVersion in clover and config\n");
+            } else {
+              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+              AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
+              //DBG ("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            //DBG ("Using BiosReleaseDate from clover\n");
+            AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+            AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
+            //DBG ("Using latest BiosReleaseDate from config\n");
           }
+        } else {
+          AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+          AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
+          //DBG ("Using latest BiosReleaseDate from config\n");
+        }
+      } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 10)) {
+        if (((i[8] > '0') && (j[8] == '0')) || ((i[8] >= j[8]) && (i[9] > j[9]))) {
+          //DBG ("Found old BiosReleaseDate from config\n");
+          //DBG ("Using latest BiosReleaseDate from clover\n");
+        } else if ((i[8] == j[8]) && (i[9] == j[9])) {
+          if (((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1]))) {
+            //DBG ("Found old BiosReleaseDate from config\n");
+            //DBG ("Using latest BiosReleaseDate from clover\n");
+          } else if ((i[0] == j[0]) && (i[1] == j[1])) {
+            if (((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) ||
+              ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
+              //DBG ("Found old BiosReleaseDate from config\n");
+              //DBG ("Using latest BiosReleaseDate from clover\n");
+            } else if ((i[3] == j[3]) && (i[4] == j[4])) {
+              //DBG ("Found same BiosVersion in clover and config\n");
+            } else {
+              AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
+              //DBG ("Using latest BiosReleaseDate from config\n");
+            }
+          } else {
+            AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
+            //DBG ("Using latest BiosReleaseDate from config\n");
+          }
+        } else {
+          AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
+          //DBG ("Using latest BiosReleaseDate from config\n");
+        }
+      } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 8)) {
+        if (((i[8] > '0') && (j[6] == '0')) || ((i[8] >= j[6]) && (i[9] > j[7]))) {
+          //DBG ("Found old BiosReleaseDate from config\n");
+          //DBG ("Using latest BiosReleaseDate from clover\n");
+        } else if ((i[8] == j[6]) && (i[9] == j[7])) {
+          if (((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1]))) {
+            //DBG ("Found old BiosReleaseDate from config\n");
+            //DBG ("Using latest BiosReleaseDate from clover\n");
+          } else if ((i[0] == j[0]) && (i[1] == j[1])) {
+            if (((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) ||
+                ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4]))) {
+              //DBG ("Found old BiosReleaseDate from config\n");
+              //DBG ("Using latest BiosReleaseDate from clover\n");
+            } else if ((i[3] == j[3]) && (i[4] == j[4])) {
+              //DBG ("Found same BiosVersion in clover and config\n");
+            } else {
+              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+              AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
+              //DBG ("Using latest BiosReleaseDate from config\n");
+            }
+          } else {
+            AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+            AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
+            //DBG ("Using latest BiosReleaseDate from config\n");
+          }
+        } else {
+          AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+          AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
+          //DBG ("Using latest BiosReleaseDate from config\n");
+        }
+      } else {
+        //DBG ("Found unknown date format from config\n");
+        if (Prop != NULL) {
+          i = gSettings.ReleaseDate;
+          j = gSettings.RomVersion;
+          
+          j += AsciiStrLen (j);
+          while (*j != '.') {
+            j--;
+          }
+          
+          if ((AsciiStrLen(i) == 8)) {
+            AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+            AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
+            //DBG ("Using the date of used BiosVersion\n");
+          } else if ((AsciiStrLen(i) == 10)) {
+            AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+            AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
+            //DBG ("Using the date of used BiosVersion\n");
+          }
+        } else {
+          //DBG ("Using BiosReleaseDate from clover\n");
         }
       }
     } else {
@@ -4415,32 +4392,36 @@ ParseSMBIOSSettings(
     }
   } else {
     if (Prop != NULL) {
-      if (AsciiStrLen(gSettings.RomVersion) == 16) {
-        //DBG ("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
-      } else {
-        i = gSettings.ReleaseDate;
-        j = gSettings.RomVersion;
+      i = gSettings.ReleaseDate;
+      j = gSettings.RomVersion;
       
-        j += AsciiStrLen (j);
-        while (*j != '.') {
-          j--;
-        }
-      
-        if ((AsciiStrLen(i) == 8)) {
-          AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-          AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res1);
-          //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
-        } else if ((AsciiStrLen(i) == 10)) {
-          AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-          AsciiStrCpyS (gSettings.ReleaseDate, 64,     Res2);
-          //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
-        }
+      j += AsciiStrLen (j);
+      while (*j != '.') {
+        j--;
+      }
+
+      if ((AsciiStrLen(i) == 8)) {
+        AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
+        //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
+      } else if ((AsciiStrLen(i) == 10)) {
+        AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
+        //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       }
     } else {
       //DBG ("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
     }
   }
   DBG ("BiosReleaseDate: %a\n", gSettings.ReleaseDate);
+  
+  Prop = GetProperty (DictPointer, "EfiVersion");
+  if (Prop != NULL) {
+    AsciiStrCpyS (gSettings.EfiVersion, 64, Prop->string);
+    DBG ("Using EfiVersion from config: %a\n", gSettings.EfiVersion);
+  } else if (iStrLen(gSettings.EfiVersion, 64) > 0) {
+    DBG ("Using EfiVersion from clover: %a\n", gSettings.EfiVersion);
+  }
   
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
   if (Prop != NULL) {
@@ -6985,7 +6966,7 @@ SetDevices (LOADER_ENTRY *Entry)
           && gSettings.InjectEDID && gSettings.CustomEDID) {
           // special case for EDID properties
           devprop_add_value(device, Prop2->Key, gSettings.CustomEDID, 128);
-          DBG("   Add key=%a from custom EDID﻿\n", Prop2->Key);
+          DBG("   Add key=%a from custom EDID\n", Prop2->Key);
         } else {
           devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
           DBG("   Add key=%a valuelen=%d\n", Prop2->Key, Prop2->ValueLen);

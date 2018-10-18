@@ -690,7 +690,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.NoCaches;
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //116 - DSDT chooser
   InputItems[InputItemsCount++].IValue = 116;
-
+    
+  InputItems[InputItemsCount].ItemType = ASString;  //117
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.EfiVersion);
 
 
   //menu for drop table
@@ -1298,6 +1303,10 @@ VOID ApplyInputs(VOID)
     } else {
       UnicodeSPrint(gSettings.DsdtName, 64, L"%s", DsdtsList[OldChosenDsdt]);
     }
+  }
+  i++; //117
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.EfiVersion, 64, "%s", InputItems[i].SValue);
   }
 
   if (NeedSave) {
@@ -4500,19 +4509,20 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gSettings.OEMProduct));
   AddMenuInfoLine(SubScreen, PoolPrint(L"with board %a", gSettings.OEMBoard));
 
-  AddMenuItem(SubScreen, 78, "Product Name:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 79, "Product Version:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 80, "Product SN:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 81, "Board ID:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 82, "Board SN:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 83, "Board Type:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 84, "Board Version:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 85, "Chassis Type:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 86, "ROM Version:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 87, "ROM Release Date:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 62, "FirmwareFeatures:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 63, "FirmwareFeaturesMask:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 17, "PlatformFeature:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 78,  "Product Name:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 79,  "Product Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 80,  "Product SN:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 81,  "Board ID:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 82,  "Board SN:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 83,  "Board Type:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 84,  "Board Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 85,  "Chassis Type:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 86,  "ROM Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 87,  "ROM Release Date:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 117, "EFI Version:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 62,  "FirmwareFeatures:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 63,  "FirmwareFeaturesMask:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 17,  "PlatformFeature:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;

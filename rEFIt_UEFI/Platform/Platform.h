@@ -864,6 +864,7 @@ typedef struct {
   // SMBIOS TYPE0
   CHAR8                   VendorName[64];
   CHAR8                   RomVersion[64];
+  CHAR8                   EfiVersion[64];
   CHAR8                   ReleaseDate[64];
   // SMBIOS TYPE1
   CHAR8                   ManufactureName[64];

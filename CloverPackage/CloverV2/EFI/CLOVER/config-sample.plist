@@ -911,6 +911,8 @@
 		</array>
 		<key>#BiosVersion</key>
 		<string>MB11.88Z.0061.B03.0809221748</string>
+		<key>#EfiVersion</key>
+		<string>220.200.252.0.0</string>
 		<key>#SerialNumber</key>
 		<string>4H629LYAU9C</string>
 		<key>#Family</key>

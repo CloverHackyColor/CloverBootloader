@@ -390,20 +390,20 @@ UINT8 coffeelake_hd_vals[8][4] = {
 
 
 UINT8 cannonlake_ig_vals[14][4] = {
-  { 0x00, 0x00, 0x01, 0x0A },   //0 Mobile: 1, PipeCount: 1, PortCount: 1, STOLEN: 34MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1, BL: 1388
-  { 0x00, 0x00, 0x40, 0x5A },   //1 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x09, 0x00, 0x40, 0x5A },   //2 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x00, 0x00, 0x41, 0x5A },   //3 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x09, 0x00, 0x41, 0x5A },   //4 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x00, 0x00, 0x49, 0x5A },   //5 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x09, 0x00, 0x49, 0x5A },   //6 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x00, 0x00, 0x50, 0x5A },   //7 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x09, 0x00, 0x50, 0x5A },   //8 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x00, 0x00, 0x51, 0x5A },   //9 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x09, 0x00, 0x51, 0x5A },   //10 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x00, 0x00, 0x52, 0x5A },   //11 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP1/HDMI1, BL: 1388
-  { 0x00, 0x00, 0x59, 0x5A },   //12 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP1/HDMI1, BL: 1388
-  { 0x09, 0x00, 0x59, 0x5A },   //13 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0x01, 0x0A },   //0 Mobile: 1, PipeCount: 1, PortCount: 1, STOLEN: 34MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1, BL: 65535
+  { 0x00, 0x00, 0x40, 0x5A },   //1 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x09, 0x00, 0x40, 0x5A },   //2 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x00, 0x00, 0x41, 0x5A },   //3 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x09, 0x00, 0x41, 0x5A },   //4 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65403
+  { 0x00, 0x00, 0x49, 0x5A },   //5 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x09, 0x00, 0x49, 0x5A },   //6 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x00, 0x00, 0x50, 0x5A },   //7 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x09, 0x00, 0x50, 0x5A },   //8 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x00, 0x00, 0x51, 0x5A },   //9 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x09, 0x00, 0x51, 0x5A },   //10 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
+  { 0x00, 0x00, 0x52, 0x5A },   //11 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP1/HDMI1, BL: 65535
+  { 0x00, 0x00, 0x59, 0x5A },   //12 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP1/HDMI1, BL: 65535
+  { 0x09, 0x00, 0x59, 0x5A },   //13 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 65535
 };
 
 UINT8 cannonlake_hd_vals[8][4] = {
@@ -2774,8 +2774,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x3E90:
         case 0x3E93:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2112") || AsciiStrStr(Entry->BuildVersion, "17G2208") ||
-               FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E908086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2803,8 +2802,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E91:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2112") || AsciiStrStr(Entry->BuildVersion, "17G2208") ||
-               FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E918086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2832,8 +2830,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E92:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2112") || AsciiStrStr(Entry->BuildVersion, "17G2208") ||
-               FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E928086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2861,8 +2858,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E9B:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2112") || AsciiStrStr(Entry->BuildVersion, "17G2208") ||
-               FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E9B8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2890,8 +2886,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3EA5:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2112") || AsciiStrStr(Entry->BuildVersion, "17G2208") ||
-               FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3EA58086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
