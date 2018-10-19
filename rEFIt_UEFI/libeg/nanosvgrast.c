@@ -541,7 +541,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
 		r->npoints = 0;
 		// Flatten path
     if (shape->debug) {
-      DBG("npts=%d\n", path->npts);
+//      DBG("npts=%d\n", path->npts);
     }
 
 //    DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
@@ -557,7 +557,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
 		// Close path
 		nsvg__addPathPoint(r, &pt, xform, 0);
     if (shape->debug) {
-      DBG("npoints=%d\n", r->npoints);
+//      DBG("npoints=%d\n", r->npoints);
     }
 		// Build edges
 		for (i = 0, j = r->npoints-1; i < r->npoints; j = i++)
@@ -1529,14 +1529,14 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 
 	cache->type = paint->type;
   if (shape->debug) {
-    DBG("cachetype=%d color=%x opacity=%d\n", cache->type, paint->color, (int)(shape->opacity*255.f));
+//    DBG("cachetype=%d color=%x opacity=%d\n", cache->type, paint->color, (int)(shape->opacity*255.f));
   }
 
 	if (paint->type == NSVG_PAINT_COLOR) {
 //		cache->colors[0] = nsvg__applyOpacity(paint->color, opacity);
     cache->colors[0] = paint->color;
     if (shape->debug) {
-      DBG("cache color=%x\n", cache->colors[0]);
+//      DBG("cache color=%x\n", cache->colors[0]);
     }
 		return;
 	}
@@ -1722,7 +1722,7 @@ static void nsvg__rasterizeShapes(
 
 			nsvg__flattenShape(r, shapeLink, xform);
       if (shapeLink->debug) {
-        DBG("shape to fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+//        DBG("shape to fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
       }
 			// Scale and translate edges
  //     DBG("edge translate [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
@@ -1742,6 +1742,7 @@ static void nsvg__rasterizeShapes(
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shapeLink->fill, shapeLink, xform);
+      //TODO-check there must be no tx,ty,sx,sx - they are alredy in the edges.
 			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule, &shapeLink->clip);
 		}
 		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * fabsf(min_scale)) > 0.01f) {

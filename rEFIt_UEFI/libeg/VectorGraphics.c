@@ -56,14 +56,17 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
     group = shape->group;
 
     shapeNext = shape->next;
-    if (Id != BUILTIN_ICON_BACKGROUND) {
+//    if (Id != BUILTIN_ICON_BACKGROUND) {
       while (group) {
+        if (Id == BUILTIN_SELECTION_BIG) {
+          DBG("group for selection_big=%a\n", group->id);
+        }
         if (strcmp(group->id, IconName) == 0) {
           break;
         }
-        group = group->parent;
+        group = group->next;
       }
-    }
+ //   }
 
     if (group) { //the shape is in the group
       if (Id == BUILTIN_ICON_BACKGROUND) {
@@ -84,7 +87,7 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
           DBG("IconImage size [%d,%d]\n", (int)IconImage->width, (int)IconImage->height);
           DBG("IconImage left corner x=%s y=%s\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
         }
-        //     shape->flags = 0;  //invisible
+        shape->flags = 0;  //invisible
         shape = shapeNext;
         Status = EFI_SUCCESS;
         continue; //while(shape) it is BoundingRect shape
@@ -205,6 +208,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
         fontSVG = p->font;
       }
     }
+    if (!fontSVG || !fontSVG->glyphs) {
+      fontSVG = fontsDB;
+    }
   }
   if (fontSVG) {
     if (text->font) {
@@ -225,14 +231,16 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
   GlobalConfig.BackgroundScale = imScale;
   Banner = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale);
+  BuiltinIconTable[BUILTIN_ICON_BANNER].Image = Banner;
   //make other icons
   i = BUILTIN_ICON_FUNC_ABOUT;
   CHAR8           *IconName;
   while (BuiltinIconTable[i].Path) {
-    if (i == BUILTIN_ICON_BANNER) { //skip because it is loaded separately
+/*    if (i == BUILTIN_ICON_BANNER) { //skip because it is loaded separately
       i++;
       continue;
     }
+ */
     CHAR16 *IconPath = BuiltinIconTable[i].Path;
     CHAR16 *ptr = StrStr(IconPath, L"\\");
     if (!ptr) {
@@ -256,7 +264,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   while (OSIconsTable[i].name) {
     DBG("search for %a\n", OSIconsTable[i].name);
     OSIconsTable[i].image = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale);
-    if (!OSIconsTable[i].image) {
+    if (OSIconsTable[i].image == NULL) {
       DBG("OSicon %d not parsed\n", i);
     }
     i++;
@@ -694,7 +702,7 @@ VOID testSVG()
 
       p = nsvgParse((CHAR8*)FileData, "px", 72);
       SVGimage = p->image;
-      DBG("Image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
+      DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
       FreePool(FileData);
 
       // Rasterize
@@ -724,10 +732,10 @@ VOID testSVG()
     //Test text
     Height = 260;
     Width = UGAWidth-200;
-    DBG("create textbuffer\n");
+    DBG("create test textbuffer\n");
     EG_IMAGE* TextBufferXY = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
     Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
-    DBG("font loaded status=%r\n", Status);
+    DBG("test font loaded status=%r\n", Status);
     if (!EFI_ERROR(Status)) {
       p = nsvgParse((CHAR8*)FileData, "px", 72);
       if (!p) {

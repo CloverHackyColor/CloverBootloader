@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -2781,9 +2781,9 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = fontsDB;
   while (fontSVG) {
-    DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
-    if (strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0 &&
-		    fontSVG->fontStyle == text->fontFace->fontStyle) {  //should also compare fontStyle (italic, bold)
+    DBG("probe fontFamily=%a fontStyle=%c required style=%c\n", fontSVG->fontFamily, fontSVG->fontStyle, text->fontFace->fontStyle);
+    if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0) &&
+		    (fontSVG->fontStyle == text->fontFace->fontStyle)) {  //should also compare fontStyle (italic, bold)
       break;
     }
 	  fontSVG = fontSVG->next;
@@ -2810,10 +2810,13 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
         FreePool(FileData);
         FileData = NULL;
       } else {
-		text->font = p->font; //else embedded if present
-	  }
+        text->font = p->font; //else embedded if present
+	    }
   } else {
     text->font = fontSVG;
+  }
+  if (!text->font || !text->font->glyphs) {
+    text->font = fontsDB;
   }
 
   //add to head
@@ -3225,11 +3228,11 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
   }
 
   if (!visSet) {
-    group->visibility = group->parent->visibility;
+    group->visibility = group->next->visibility;
   }
 
   AsciiStrCpyS(group->id, 64, curAttr->id);
-  group->parent = curAttr->group;
+//  group->parent = curAttr->group;
   curAttr->group = group;
 
   // Add to front of global group list
@@ -3572,6 +3575,7 @@ static void nsvg__endElement(void* ud, const char* el)
   if (strcmp(el, "g") == 0) {
 //    NSVGgroup *group = p->image->groups;
 	  p->image->groups = p->image->groups->next;
+//    p->image->groups->parent = NULL;
 //	  FreePool(group);
     nsvg__popAttr(p);
   } else if (strcmp(el, "path") == 0) {
@@ -3879,9 +3883,9 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       nsvg__xformPremultiply(xform, shape->xform);
     } else shape = shapeLink;
     if (shape->debug) {
-      DBG("take Bounds: shapeID=%a\n", shapeLink->id);
-      DumpFloat2("  transform", xform, 6);
-      DumpFloat2("  shape bounds", shape->bounds, 4);
+ //     DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+ //     DumpFloat2("  transform", xform, 6);
+ //     DumpFloat2("  shape bounds", shape->bounds, 4);
     }
     nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[2], &newBounds[3], shape->bounds[2], shape->bounds[3], xform);
@@ -3899,7 +3903,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
       if (shape->debug) {
-        DumpFloat2("  new shape bounds", bounds, 4);
+ //       DumpFloat2("  new shape bounds", bounds, 4);
       }
 
       count++; //count visible
