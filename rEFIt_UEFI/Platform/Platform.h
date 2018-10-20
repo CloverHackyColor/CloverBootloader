@@ -1907,6 +1907,12 @@ ResetNvram (VOID);
 EFI_STATUS
 ResetEmuNvram (VOID);
 
+BOOLEAN
+IsDeletableVariable (
+  IN CHAR16    *Name,
+  IN EFI_GUID  *Guid
+  );
+
 EFI_STATUS
 ResetNativeNvram (VOID);
 ;

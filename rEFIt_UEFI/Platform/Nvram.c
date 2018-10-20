@@ -42,6 +42,14 @@ CHAR16                   *gEfiBootLoaderPath;
 // contains GPT GUID from gEfiBootDeviceData or gBootCampHD (if exists)
 EFI_GUID                 *gEfiBootDeviceGuid;
 
+// Lilu/Ozmosis GUID
+EFI_GUID    mLiluNormalVariableGuid     = { 0x2660DD78, 0x81D2, 0x419D, { 0x81, 0x38, 0x7B, 0x1F, 0x36, 0x3F, 0x79, 0xA6 } };
+EFI_GUID    mLiluReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
+EFI_GUID    mLiluWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
+EFI_GUID    mOzmosisProprietary1Guid    = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
+EFI_GUID    mOzmosisProprietary2Guid    = { 0x1F8E0C02, 0x58A9, 0x4E34, { 0xAE, 0x22, 0x2B, 0x63, 0x74, 0x5F, 0xA1, 0x01 } };
+EFI_GUID    mOzmosisProprietary3Guid    = { 0x9480E8A1, 0x1793, 0x46C9, { 0x91, 0xD8, 0x11, 0x08, 0xDB, 0xA4, 0x73, 0x1C } };
+
 APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
 
 typedef struct NVRAM_DATA
@@ -52,34 +60,39 @@ typedef struct NVRAM_DATA
 
 CONST NVRAM_DATA ResetNvramData[] = {
   // Hibernationfixup Variables
-  //{ L"Boot0082",                  &gEfiGlobalVariableGuid },
-  //{ L"BootNext",                  &gEfiGlobalVariableGuid },
-  //{ L"IOHibernateRTCVariables",   &gEfiAppleBootGuid },
-  //{ L"boot-image",                &gEfiAppleBootGuid },
-  //{ L"boot-image-key",            &gEfiAppleBootGuid },
-  //{ L"boot-signature",            &gEfiAppleBootGuid },
-  //{ L"boot-switch-vars",          &gEfiAppleBootGuid },
+  //{ L"Boot0082",           &gEfiGlobalVariableGuid }, { L"BootNext",       &gEfiGlobalVariableGuid },
+  //{ L"IOHibernateRTCVariables", &gEfiAppleBootGuid }, { L"boot-image",     &gEfiAppleBootGuid },
+  //{ L"boot-image-key",          &gEfiAppleBootGuid }, { L"boot-signature", &gEfiAppleBootGuid },
+  //{ L"boot-switch-vars",        &gEfiAppleBootGuid },
 
   // Clover Variables
-  { L"Clover.BackupDirOnDestVol", &gEfiAppleBootGuid },
-  { L"Clover.KeepBackupLimit",    &gEfiAppleBootGuid },
-  { L"Clover.LogEveryBoot",       &gEfiAppleBootGuid },
-  { L"Clover.LogLineCount",       &gEfiAppleBootGuid },
-  { L"Clover.MountEFI",           &gEfiAppleBootGuid },
-  { L"Clover.NVRamDisk",          &gEfiAppleBootGuid },
-  { L"Clover.Theme",              &gEfiAppleBootGuid },
+  //{ L"Clover.BackupDirOnDestVol", &gEfiAppleBootGuid }, { L"Clover.KeepBackupLimit", &gEfiAppleBootGuid },
+  //{ L"Clover.LogEveryBoot",       &gEfiAppleBootGuid }, { L"Clover.LogLineCount",    &gEfiAppleBootGuid },
+  //{ L"Clover.MountEFI",           &gEfiAppleBootGuid }, { L"Clover.NVRamDisk",       &gEfiAppleBootGuid },
+  //{ L"Clover.Theme",              &gEfiAppleBootGuid },
 
   // Non-volatile Variables
-  //{ L"backlight-level",           &gEfiAppleBootGuid },
-  //{ L"bootercfg",                 &gEfiAppleBootGuid },
-  { L"boot-args",                 &gEfiAppleBootGuid },
-  //{ L"csr-active-config",         &gEfiAppleBootGuid },
-  { L"install-product-url",       &gEfiAppleBootGuid },
-  //{ L"platform-uuid",             &gEfiAppleBootGuid },
-  { L"previous-system-uuid",      &gEfiAppleBootGuid },
-  //{ L"prev-lang:kbd",             &gEfiAppleBootGuid },
-  //{ L"security-mode",             &gEfiAppleBootGuid },
-  { L"nvda_drv",                  &gEfiAppleBootGuid },
+  //{ L"BootOrder",       &gEfiGlobalVariableGuid }, { L"BootOptionSupport",       &gEfiGlobalVariableGuid },
+  //{ L"backlight-level",      &gEfiAppleBootGuid }, { L"bootercfg",               &gEfiAppleBootGuid },
+  //{ L"csr-active-config",    &gEfiAppleBootGuid }, { L"platform-uuid",           &gEfiAppleBootGuid },
+  //{ L"prev-lang:kbd",        &gEfiAppleBootGuid }, { L"security-mode",           &gEfiAppleBootGuid },
+  //{ L"UIScale",              &gEfiAppleBootGuid }, { L"nvda_drv",                &gEfiAppleBootGuid },
+  //{ L"fmm-computer-name",    &gEfiAppleBootGuid }, { L"bluetoothActiveControllerInfo", &gEfiAppleBootGuid },
+  //{ L"SystemAudioVolumeDB",  &gEfiAppleBootGuid }, { L"SystemAudioVolume",       &gEfiAppleBootGuid },
+  //{ L"install-product-url",  &gEfiAppleBootGuid }, { L"previous-system-uuid",    &gEfiAppleBootGuid },
+  //{ L"AAPL,PanicInfoLog",    &gEfiAppleBootGuid }, { L"AAPL,PathProperties0000", &gEfiAppleBootGuid },
+  //{ L"boot-args",            &gEfiAppleBootGuid },
+
+  // FakeSMC Variables
+  //{ L"fakesmc-key-$Num-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-$Adr-ui32", &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-RMde-char", &gEfiAppleBootGuid }, { L"fakesmc-key-RPlt-ch8*", &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-RBr -ch8*", &gEfiAppleBootGuid }, { L"fakesmc-key-EPCI-ui32", &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-REV -ch8*", &gEfiAppleBootGuid }, { L"fakesmc-key-BEMB-flag", &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-BATP-flag", &gEfiAppleBootGuid }, { L"fakesmc-key-BNum-ui8",  &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-BBIN-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSTc-ui8",  &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-MSAc-ui16", &gEfiAppleBootGuid }, { L"fakesmc-key-MSWr-ui8",  &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-MSFW-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSPS-ui16", &gEfiAppleBootGuid },
+  //{ L"fakesmc-key-#KEY-ui32", &gEfiAppleBootGuid },
 };
 
 /** returns given time as miliseconds.
@@ -236,6 +249,7 @@ DeleteNvramVariable (
   return Status;
 }
 
+// Reset EmuVariable NVRAM, implemented by Sherlocks
 EFI_STATUS
 ResetEmuNvram ()
 {
@@ -245,7 +259,8 @@ ResetEmuNvram ()
   REFIT_VOLUME    *Volume;
   EFI_FILE_HANDLE FileHandle;
 
-  //DBG("ResetEmuNvram: searching volumes for nvram.plist\n");
+  //DbgHeader("ResetEmuNvram: cleanup NVRAM variables");
+  //DBG("searching volumes for nvram.plist\n");
 
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
      Volume = Volumes[VolumeIndex];
@@ -285,22 +300,122 @@ ResetEmuNvram ()
   return Status;
 }
 
+BOOLEAN
+IsDeletableVariable (
+  IN CHAR16    *Name,
+  IN EFI_GUID  *Guid
+  )
+{
+
+  // Apple GUIDs
+  if (CompareGuid (Guid, &gEfiAppleVendorGuid) ||
+      CompareGuid (Guid, &gEfiAppleBootGuid)) {
+    return TRUE;
+
+  // Global variable boot options
+  } else if (CompareGuid (Guid, &gEfiGlobalVariableGuid)) {
+    // Only erase boot and driver entries for BDS
+    // I.e. BootOrder, Boot####, DriverOrder, Driver####
+    if (!StrnCmp (Name, L"Boot", StrLen(L"Boot")) ||
+        !StrnCmp (Name, L"Driver", StrLen(L"Driver"))) {
+      return TRUE;
+    }
+
+  // Lilu extensions
+  } else if (CompareGuid (Guid, &mLiluNormalVariableGuid) ||
+      CompareGuid (Guid, &mLiluReadOnlyVariableGuid) ||
+      CompareGuid (Guid, &mLiluWriteOnlyVariableGuid)) {
+    return TRUE;
+
+  // Ozmozis extensions
+  } else if (CompareGuid (Guid, &mOzmosisProprietary1Guid) ||
+      CompareGuid (Guid, &mOzmosisProprietary2Guid) ||
+      CompareGuid (Guid, &mOzmosisProprietary3Guid)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// Reset Native NVRAM by vit9696, implemented by Sherlocks
 EFI_STATUS
 ResetNativeNvram ()
 {
-  EFI_STATUS    Status = EFI_NOT_FOUND;
-  UINTN         Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
+  EFI_STATUS   Status = EFI_NOT_FOUND;
+  EFI_GUID     CurrentGuid;
+  CHAR16       *Buffer = NULL;
+  CHAR16       *TmpBuffer;
+  UINTN        BufferSize = 0;
+  UINTN        RequestedSize = 1024;
+  //UINTN         Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
+  BOOLEAN      Restart = TRUE;
+  BOOLEAN      ForceRescan = FALSE;
+    
+  //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
+  do {
+    if (RequestedSize > BufferSize) {
+      TmpBuffer = AllocateZeroPool (RequestedSize);
+      if (TmpBuffer) {
+        if (Buffer) {
+          CopyMem (TmpBuffer, Buffer, BufferSize);
+          FreePool (Buffer);
+        }
+        Buffer = TmpBuffer;
+        BufferSize = RequestedSize;
+      } else {
+        //DBG ("Failed to allocate variable name buffer of %u bytes\n", (UINT32)RequestedSize);
+        break;
+      }
+    }
+        
+    if (Restart) {
+      ZeroMem (&CurrentGuid, sizeof(CurrentGuid));
+      ZeroMem (Buffer, BufferSize);
+      Restart = FALSE;
+    }
+        
+    Status = gRT->GetNextVariableName (&RequestedSize, Buffer, &CurrentGuid);
+        
+    if (!EFI_ERROR (Status)) {
+      if (IsDeletableVariable (Buffer, &CurrentGuid)) {
+        //DBG ("Deleting %g:%s...", &CurrentGuid, Buffer);
+        Status = DeleteNvramVariable(Buffer, &CurrentGuid);
+
+        if (!EFI_ERROR (Status)) {
+          //DBG ("OK\n");
+          Restart = TRUE;
+        } else {
+          //DBG ("FAIL (%r)\n", Status);
+          break;
+        }
+      }
+    } else if (Status != EFI_BUFFER_TOO_SMALL && Status != EFI_NOT_FOUND) {
+      if (!ForceRescan) {
+        //DBG ("Unexpected error (%r), trying to rescan\n", Status);
+        ForceRescan = TRUE;
+      } else {
+        //DBG ("Unexpected error (%r), aborting\n", Status);
+        break;
+      }
+    }
+  } while (Status != EFI_NOT_FOUND);
+    
+  if (Buffer) {
+    FreePool (Buffer);
+  }
+
+  // Leave for the future
   //DBG("ResetNativeNvram: cleanup NVRAM variables\n");
 
-  for (Index = 0; Index < ResetNvramDataCount; Index++) {
+  /*for (Index = 0; Index < ResetNvramDataCount; Index++) {
     Status = DeleteNvramVariable(ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);
     if (EFI_ERROR(Status)) {
       //DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
     } else {
       //DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
     }
-  }
+  }*/
 
   return Status;
 }

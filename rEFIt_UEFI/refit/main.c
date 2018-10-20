@@ -1701,8 +1701,6 @@ VOID SetVariablesFromNvram()
 
 }
 
-// Reset Native NVRAM, by cecekpawon
-// Reset EmuVariable NVRAM, implemented by Sherlocks
 VOID ResetNvram () 
   {
     if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {

@@ -4262,7 +4262,7 @@ ParseSMBIOSSettings(
               //DBG ("Found old BiosReleaseDate from config\n");
               //DBG ("Using latest BiosReleaseDate from clover\n");
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
-              //DBG ("Found same BiosVersion in clover and config\n");
+              //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
               //DBG ("Using latest BiosReleaseDate from config\n");
@@ -4289,7 +4289,7 @@ ParseSMBIOSSettings(
               //DBG ("Found old BiosReleaseDate from config\n");
               //DBG ("Using latest BiosReleaseDate from clover\n");
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
-              //DBG ("Found same BiosVersion in clover and config\n");
+              //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
               AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
@@ -4319,7 +4319,7 @@ ParseSMBIOSSettings(
               //DBG ("Found old BiosReleaseDate from config\n");
               //DBG ("Using latest BiosReleaseDate from clover\n");
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
-              //DBG ("Found same BiosVersion in clover and config\n");
+              //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Prop1->string);
               //DBG ("Using latest BiosReleaseDate from config\n");
@@ -4346,7 +4346,7 @@ ParseSMBIOSSettings(
               //DBG ("Found old BiosReleaseDate from config\n");
               //DBG ("Using latest BiosReleaseDate from clover\n");
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
-              //DBG ("Found same BiosVersion in clover and config\n");
+              //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
               AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
@@ -7526,13 +7526,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E92: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
-                    // Write LEVX/LEVD
+                    // Write LEVD
                     if (gSettings.IntelMaxBacklight) {
-                      if (!LEVX) {
-                        LEVX = FBLEVX;
-                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", LEVX);
-                      }
-
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
                         MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
@@ -7540,18 +7535,8 @@ SetDevices (LOADER_ENTRY *Entry)
                         MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                       }
 
-                      LEVD = (LEVD * FBLEVX) / LEVX;
+                      LEVD = (UINT64)FBLEVX * (UINT64)LEVX / 0xFFFFLL;
                       MsgLog ("  Write new LEVD: 0x%x\n", LEVD);
-                        
-                      if (FBLEVX > LEVX) {
-                      /*Status = */PciIo->Mem.Write(
-                                                    PciIo,
-                                                    EfiPciIoWidthUint32,
-                                                    0,
-                                                    0xC8254,
-                                                    1,
-                                                    &FBLEVX
-                                                    );
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -7561,25 +7546,6 @@ SetDevices (LOADER_ENTRY *Entry)
                                                     1,
                                                     &LEVD
                                                     );
-                      } else {
-                      /*Status = */PciIo->Mem.Write(
-                                                    PciIo,
-                                                    EfiPciIoWidthUint32,
-                                                    0,
-                                                    0xC8258,
-                                                    1,
-                                                    &LEVD
-                                                    );
-
-                      /*Status = */PciIo->Mem.Write(
-                                                    PciIo,
-                                                    EfiPciIoWidthUint32,
-                                                    0,
-                                                    0xC8254,
-                                                    1,
-                                                    &FBLEVX
-                                                    );
-                      }
                     }
                     break;
 
