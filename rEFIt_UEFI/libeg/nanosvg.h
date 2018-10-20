@@ -324,9 +324,9 @@ typedef struct NSVGfont {
   int horizAdvX;
   // --- font-face
   char fontFamily[64];
-  int fontWeight; //usually 400 like stroke-width
+  float fontWeight; //usually 400 like stroke-width
   float fontSize; // 8,9,12,14...
-  int unitsPerEm; //usually 1000
+  float unitsPerEm; //usually 1000
 //  char panose[64]; //int[10] obsolete
   int ascent;
   int descent;
@@ -374,6 +374,11 @@ typedef struct NSVGparser
   NSVGgradientData* gradients;
   NSVGshape* shapesTail;
   struct NSVGfont* font;
+  // this is temporary set for Menu text, later each text will have own face
+  float fontSize;
+  char fontStyle;
+  unsigned int fontColor;
+  //------------
   float viewMinx, viewMiny, viewWidth, viewHeight;
   int alignX, alignY, alignType;
   float dpi;
@@ -409,6 +414,7 @@ void nsvg__xformIdentity(float* t);
 void nsvg__deleteParser(NSVGparser* p);
 void nsvg__xformInverse(float* inv, float* t);
 void nsvg__xformPremultiply(float* t, float* s);
+void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
 INTN addLetter(NSVGparser* p, CHAR16 letter, INTN x, INTN y, float scale, UINT32 color);
 VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color);

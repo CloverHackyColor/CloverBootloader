@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1152,7 +1152,7 @@ static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
 	int a = (((c0>>24) & 0xff)*(256-iu) + (((c1>>24) & 0xff)*iu)) >> 8;
 	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
-/*
+
 static unsigned int nsvg__applyOpacity(unsigned int c, float u)
 {
 	int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f);
@@ -1162,7 +1162,7 @@ static unsigned int nsvg__applyOpacity(unsigned int c, float u)
 	int a = (((c>>24) & 0xff)*iu) >> 8;
 	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
-*/
+
 static inline int nsvg__div255(int x)
 {
     return ((x+1) * 257) >> 16;
@@ -1525,16 +1525,16 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 	int i, j;
 	NSVGgradient* grad;
 
-//  float opacity = shape->opacity;
+  float opacity = shape->opacity;
 
 	cache->type = paint->type;
-  if (shape->debug) {
+//  if (shape->debug) {
 //    DBG("cachetype=%d color=%x opacity=%d\n", cache->type, paint->color, (int)(shape->opacity*255.f));
-  }
+//  }
 
 	if (paint->type == NSVG_PAINT_COLOR) {
-//		cache->colors[0] = nsvg__applyOpacity(paint->color, opacity);
-    cache->colors[0] = paint->color;
+		cache->colors[0] = nsvg__applyOpacity(paint->color, opacity);
+//    cache->colors[0] = paint->color;
     if (shape->debug) {
 //      DBG("cache color=%x\n", cache->colors[0]);
     }
@@ -1559,16 +1559,16 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
     }
 	} else if (grad->nstops == 1) {
     for (i = 0; i < 256; i++) {
-//			cache->colors[i] = nsvg__applyOpacity(grad->stops[i].color, opacity);
-      cache->colors[i] = grad->stops[i].color;
+			cache->colors[i] = nsvg__applyOpacity(grad->stops[i].color, opacity);
+//      cache->colors[i] = grad->stops[i].color;
     }
 	} else {  //nstops=2 as usual gradient
 		unsigned int ca, cb = 0;
 		float ua, ub, du, u;
 		int ia, ib, count;
 
-//		ca = nsvg__applyOpacity(grad->stops[0].color, opacity);
-    ca = grad->stops[0].color;
+		ca = nsvg__applyOpacity(grad->stops[0].color, opacity);
+//    ca = grad->stops[0].color;
 		ua = nsvg__clampf(grad->stops[0].offset, 0, 1);
 		ub = nsvg__clampf(grad->stops[grad->nstops-1].offset, ua, 1);
 		ia = (int)(ua * 255.0f);
@@ -1578,10 +1578,10 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 		}
 
 		for (i = 0; i < grad->nstops-1; i++) {
-//			ca = nsvg__applyOpacity(grad->stops[i].color, opacity);  //= color begin
-//			cb = nsvg__applyOpacity(grad->stops[i+1].color, opacity); //= color end
-      ca = grad->stops[i].color;
-      cb = grad->stops[i+1].color;
+			ca = nsvg__applyOpacity(grad->stops[i].color, opacity);  //= color begin
+			cb = nsvg__applyOpacity(grad->stops[i+1].color, opacity); //= color end
+//      ca = grad->stops[i].color;
+//      cb = grad->stops[i+1].color;
 			ua = nsvg__clampf(grad->stops[i].offset, 0, 1); //=0
 			ub = nsvg__clampf(grad->stops[i+1].offset, 0, 1); //=1
 			ia = (int)(ua * 255.0f);  //=0
@@ -1743,8 +1743,9 @@ static void nsvg__rasterizeShapes(
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shapeLink->fill, shapeLink, xform);
       //TODO-check there must be no tx,ty,sx,sx - they are alredy in the edges.
-			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule, &shapeLink->clip);
-		}
+//			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule, &shapeLink->clip);
+        nsvg__rasterizeSortedEdges(r, 0, 0, 1.0f, 1.0f, &cache, shapeLink->fillRule, &shapeLink->clip);
+    }
 		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * fabsf(min_scale)) > 0.01f) {
 			nsvg__resetPool(r);
 			r->freelist = NULL;
@@ -1769,7 +1770,7 @@ static void nsvg__rasterizeShapes(
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shapeLink->stroke, shapeLink, xform);
-			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, NSVG_FILLRULE_NONZERO, &shapeLink->clip);
+			nsvg__rasterizeSortedEdges(r, 0, 0, 1.0f, 1.0f, &cache, NSVG_FILLRULE_NONZERO, &shapeLink->clip);
 		}
 	}
 
