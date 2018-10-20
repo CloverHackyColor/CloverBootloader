@@ -72,12 +72,11 @@ CONST NVRAM_DATA ResetNvramData[] = {
   //{ L"Clover.Theme",              &gEfiAppleBootGuid },
 
   // Non-volatile Variables
-  //{ L"BootOrder",       &gEfiGlobalVariableGuid }, { L"BootOptionSupport",       &gEfiGlobalVariableGuid },
+  //{ L"fmm-computer-name",    &gEfiAppleBootGuid }, { L"bluetoothActiveControllerInfo", &gEfiAppleBootGuid },
   //{ L"backlight-level",      &gEfiAppleBootGuid }, { L"bootercfg",               &gEfiAppleBootGuid },
   //{ L"csr-active-config",    &gEfiAppleBootGuid }, { L"platform-uuid",           &gEfiAppleBootGuid },
   //{ L"prev-lang:kbd",        &gEfiAppleBootGuid }, { L"security-mode",           &gEfiAppleBootGuid },
   //{ L"UIScale",              &gEfiAppleBootGuid }, { L"nvda_drv",                &gEfiAppleBootGuid },
-  //{ L"fmm-computer-name",    &gEfiAppleBootGuid }, { L"bluetoothActiveControllerInfo", &gEfiAppleBootGuid },
   //{ L"SystemAudioVolumeDB",  &gEfiAppleBootGuid }, { L"SystemAudioVolume",       &gEfiAppleBootGuid },
   //{ L"install-product-url",  &gEfiAppleBootGuid }, { L"previous-system-uuid",    &gEfiAppleBootGuid },
   //{ L"AAPL,PanicInfoLog",    &gEfiAppleBootGuid }, { L"AAPL,PathProperties0000", &gEfiAppleBootGuid },
@@ -260,8 +259,8 @@ ResetEmuNvram ()
   EFI_FILE_HANDLE FileHandle;
 
   //DbgHeader("ResetEmuNvram: cleanup NVRAM variables");
-  //DBG("searching volumes for nvram.plist\n");
 
+  //DBG("searching volumes for nvram.plist\n");
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
      Volume = Volumes[VolumeIndex];
         
@@ -312,14 +311,15 @@ IsDeletableVariable (
       CompareGuid (Guid, &gEfiAppleBootGuid)) {
     return TRUE;
 
+  // Disable Clover Boot Options from being deleted
   // Global variable boot options
-  } else if (CompareGuid (Guid, &gEfiGlobalVariableGuid)) {
+  /*} else if (CompareGuid (Guid, &gEfiGlobalVariableGuid)) {
     // Only erase boot and driver entries for BDS
     // I.e. BootOrder, Boot####, DriverOrder, Driver####
     if (!StrnCmp (Name, L"Boot", StrLen(L"Boot")) ||
         !StrnCmp (Name, L"Driver", StrLen(L"Driver"))) {
       return TRUE;
-    }
+    }*/
 
   // Lilu extensions
   } else if (CompareGuid (Guid, &mLiluNormalVariableGuid) ||
