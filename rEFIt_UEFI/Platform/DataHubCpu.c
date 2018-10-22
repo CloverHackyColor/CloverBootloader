@@ -336,7 +336,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
       }
     }
 
-  // Sherlocks: to fix "OSInstall.mpkg appears to be missing or damaged" in 10.13, we should remove this variables.
+  // Sherlocks: to fix "OSInstall.mpkg appears to be missing or damaged" in 10.13+, we should remove this variables.
   if (Entry->LoaderType == OSTYPE_OSX_INSTALLER) {
     if (os_version > AsciiOSVersionToUint64("10.12")) {
       DeleteNvramVariable(L"install-product-url",  &gEfiAppleBootGuid);

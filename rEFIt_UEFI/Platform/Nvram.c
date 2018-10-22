@@ -42,7 +42,7 @@ CHAR16                   *gEfiBootLoaderPath;
 // contains GPT GUID from gEfiBootDeviceData or gBootCampHD (if exists)
 EFI_GUID                 *gEfiBootDeviceGuid;
 
-// Lilu/Ozmosis GUID
+// Lilu/Ozmosis GUIDs
 EFI_GUID    mLiluNormalVariableGuid     = { 0x2660DD78, 0x81D2, 0x419D, { 0x81, 0x38, 0x7B, 0x1F, 0x36, 0x3F, 0x79, 0xA6 } };
 EFI_GUID    mLiluReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
 EFI_GUID    mLiluWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
@@ -285,6 +285,7 @@ ResetEmuNvram ()
      }
   }
 
+  // Leave for the future
   //DBG("ResetEmuNvram: cleanup NVRAM variables\n");
     
   /*for (Index = 0; Index < ResetNvramDataCount; Index++) {
@@ -337,51 +338,53 @@ IsDeletableVariable (
   return FALSE;
 }
 
-// Reset Native NVRAM by vit9696, implemented by Sherlocks
+// Reset Native NVRAM by vit9696, reworked and implemented by Sherlocks
 EFI_STATUS
 ResetNativeNvram ()
 {
-  EFI_STATUS   Status = EFI_NOT_FOUND;
-  EFI_GUID     CurrentGuid;
-  CHAR16       *Buffer = NULL;
-  CHAR16       *TmpBuffer;
-  UINTN        BufferSize = 0;
-  UINTN        RequestedSize = 1024;
+  EFI_STATUS    Status = EFI_NOT_FOUND;
+  EFI_GUID      Guid;
+  CHAR16        *Name;
+  UINTN         NameSize;
+  UINTN         NewNameSize;
   //UINTN         Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
-  BOOLEAN      Restart = TRUE;
-  BOOLEAN      ForceRescan = FALSE;
-    
+  BOOLEAN       Restart = TRUE;
+
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
-  do {
-    if (RequestedSize > BufferSize) {
-      TmpBuffer = AllocateZeroPool (RequestedSize);
-      if (TmpBuffer) {
-        if (Buffer) {
-          CopyMem (TmpBuffer, Buffer, BufferSize);
-          FreePool (Buffer);
-        }
-        Buffer = TmpBuffer;
-        BufferSize = RequestedSize;
-      } else {
-        //DBG ("Failed to allocate variable name buffer of %u bytes\n", (UINT32)RequestedSize);
-        break;
-      }
-    }
-        
+  NameSize = sizeof (CHAR16);
+  Name     = AllocateZeroPool (NameSize);
+  if (Name == NULL) {
+    return Status;
+  }
+    
+  while (TRUE) {
     if (Restart) {
-      ZeroMem (&CurrentGuid, sizeof(CurrentGuid));
-      ZeroMem (Buffer, BufferSize);
+      ZeroMem (&Guid, sizeof(Guid));
+      ZeroMem (Name, sizeof(Name));
       Restart = FALSE;
     }
-        
-    Status = gRT->GetNextVariableName (&RequestedSize, Buffer, &CurrentGuid);
-        
-    if (!EFI_ERROR (Status)) {
-      if (IsDeletableVariable (Buffer, &CurrentGuid)) {
-        //DBG ("Deleting %g:%s...", &CurrentGuid, Buffer);
-        Status = DeleteNvramVariable(Buffer, &CurrentGuid);
+      
+    NewNameSize = NameSize;
+    Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      Name = ReallocatePool (NameSize, NewNameSize, Name);
+      if (Name == NULL) {
+        return Status;
+      }
 
+      Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+      NameSize = NewNameSize;
+    }
+
+    if (EFI_ERROR (Status)) {
+      break;
+    }
+
+    if (!EFI_ERROR (Status)) {
+      if (IsDeletableVariable (Name, &Guid)) {
+        //DBG ("Deleting %g:%s...", &Guid, Name);
+        Status = DeleteNvramVariable(Name, &Guid);
         if (!EFI_ERROR (Status)) {
           //DBG ("OK\n");
           Restart = TRUE;
@@ -390,19 +393,11 @@ ResetNativeNvram ()
           break;
         }
       }
-    } else if (Status != EFI_BUFFER_TOO_SMALL && Status != EFI_NOT_FOUND) {
-      if (!ForceRescan) {
-        //DBG ("Unexpected error (%r), trying to rescan\n", Status);
-        ForceRescan = TRUE;
-      } else {
-        //DBG ("Unexpected error (%r), aborting\n", Status);
-        break;
-      }
     }
-  } while (Status != EFI_NOT_FOUND);
-    
-  if (Buffer) {
-    FreePool (Buffer);
+  }
+
+  if (Name) {
+    FreePool (Name);
   }
 
   // Leave for the future

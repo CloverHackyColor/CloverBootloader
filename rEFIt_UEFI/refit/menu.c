@@ -4519,10 +4519,10 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuItem(SubScreen, 85,  "Chassis Type:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 86,  "ROM Version:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 87,  "ROM Release Date:", TAG_INPUT, TRUE);
-  AddMenuItem(SubScreen, 117, "EFI Version:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 62,  "FirmwareFeatures:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 63,  "FirmwareFeaturesMask:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 17,  "PlatformFeature:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 117, "EFI Version:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;

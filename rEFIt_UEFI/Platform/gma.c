@@ -838,7 +838,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3E92, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E94, "Intel Coffee Lake GT2"          }, //
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
-  { 0x3E98, "Intel Coffee Lake GT2"          }, //
+  { 0x3E98, "Intel UHD Graphics 630"         }, //
   { 0x3E9A, "Intel Coffee Lake GT2"          }, //
   { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile - MacBookPro15,1
   //GT3
@@ -1367,19 +1367,19 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
   if (gSettings.InjectEDID && gSettings.CustomEDID) {
     switch (gma_dev->device_id) {
-      case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-      case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-      case 0x27A2: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family - MacBook1,1/MacBook2,1
-      case 0x27A6: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-      case 0x27AE: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-      case 0xA001: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D410
-      case 0xA002: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D510
-      case 0xA011: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-      case 0xA012: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-      case 0x2A02: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family - MacBook3,1/MacBook4,1/MacbookAir1,1
-      case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-      case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-      case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
+      case 0x2772: // "Intel GMA 950"
+      case 0x2776: // "Intel GMA 950"
+      case 0x27A2: // "Intel GMA 950"
+      case 0x27A6: // "Intel GMA 950"
+      case 0x27AE: // "Intel GMA 950"
+      case 0xA001: // "Intel GMA 3150"
+      case 0xA002: // "Intel GMA 3150"
+      case 0xA011: // "Intel GMA 3150"
+      case 0xA012: // "Intel GMA 3150"
+      case 0x2A02: // "Intel GMA X3100"
+      case 0x2A03: // "Intel GMA X3100"
+      case 0x2A12: // "Intel GMA X3100"
+      case 0x2A13: // "Intel GMA X3100"
         devprop_add_value(device, "AAPL01,override-no-connect", gSettings.CustomEDID, 128);
         DBG("  AAPL01,override-no-connect: added\n");
         break;
@@ -1395,19 +1395,19 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   // High resolution(1400x1050+) - DualLink = 1
   // Default DualLink is auto-detection
   switch (gma_dev->device_id) {
-    case 0x2772: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-    case 0x2776: // "Intel GMA 950"                   // Desktop - Intel 82945G Express Chipset Family
-    case 0x27A2: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family - MacBook1,1/MacBook2,1
-    case 0x27A6: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-    case 0x27AE: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
-    case 0xA001: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D410
-    case 0xA002: // "Intel GMA 3150"                  // Nettop - Intel NetTop Atom D510
-    case 0xA011: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-    case 0xA012: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
-    case 0x2A02: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family - MacBook3,1/MacBook4,1/MacbookAir1,1
-    case 0x2A03: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-    case 0x2A12: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
-    case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
+    case 0x2772: // "Intel GMA 950"
+    case 0x2776: // "Intel GMA 950"
+    case 0x27A2: // "Intel GMA 950"
+    case 0x27A6: // "Intel GMA 950"
+    case 0x27AE: // "Intel GMA 950"
+    case 0xA001: // "Intel GMA 3150"
+    case 0xA002: // "Intel GMA 3150"
+    case 0xA011: // "Intel GMA 3150"
+    case 0xA012: // "Intel GMA 3150"
+    case 0x2A02: // "Intel GMA X3100"
+    case 0x2A03: // "Intel GMA X3100"
+    case 0x2A12: // "Intel GMA X3100"
+    case 0x2A13: // "Intel GMA X3100"
       if ((gSettings.DualLink == 0) || (gSettings.DualLink == 1)) {
         if (gSettings.DualLink == 1) {
           DBG("  DualLink: set to 1\n");
@@ -1478,13 +1478,13 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
   // platform-id
   switch (gma_dev->device_id) {
-    case 0x0102: // "Intel HD Graphics 2000"          // Desktop - iMac12,x
-    case 0x0106: // "Intel HD Graphics 2000"          // Mobile
-    case 0x010A: // "Intel HD Graphics P3000"         // Server
-    case 0x0112: // "Intel HD Graphics 3000"          // Desktop
-    case 0x0116: // "Intel HD Graphics 3000"          // Mobile - MacBookAir4,x/MacBookPro8,2/MacBookPro8,3
-    case 0x0122: // "Intel HD Graphics 3000"          // Desktop
-    case 0x0126: // "Intel HD Graphics 3000"          // Mobile - MacBookPro8,1/Macmini5,x
+    case 0x0102: // "Intel HD Graphics 2000"
+    case 0x0106: // "Intel HD Graphics 2000"
+    case 0x010A: // "Intel HD Graphics P3000"
+    case 0x0112: // "Intel HD Graphics 3000"
+    case 0x0116: // "Intel HD Graphics 3000"
+    case 0x0122: // "Intel HD Graphics 3000"
+    case 0x0126: // "Intel HD Graphics 3000"
       if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
         DBG("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
@@ -2762,7 +2762,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3E92: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E94: // "Intel Coffee Lake GT2"           //
     case 0x3E96: // "Intel Coffee Lake GT2"           //
-    case 0x3E98: // "Intel Coffee Lake GT2"           //
+    case 0x3E98: // "Intel UHD Graphics 630"          //
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
     case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1
       //GT3
