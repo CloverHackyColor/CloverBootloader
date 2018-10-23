@@ -1087,6 +1087,9 @@ typedef struct {
 
   CHAR8                   AirportBridgeDeviceName[5];
 
+  // Pre-language
+  BOOLEAN                 KbdPrevLang;
+
   //Pointer
   BOOLEAN                 PointerEnabled;
   INTN                    PointerSpeed;

@@ -852,6 +852,8 @@
 		</array>
 		<key>#CustomIcons</key>
 		<false/>
+		<key>#KbdPrevLang</key>
+		<false/>
 		<key>#Language</key>
 		<string>ru:0</string>
 		<key>#Scan</key>

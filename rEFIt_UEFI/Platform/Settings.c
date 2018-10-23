@@ -2786,6 +2786,11 @@ GetEarlyUserSettings (
         }
       }
       
+      Prop = GetProperty (DictPointer, "KbdPrevLang");
+      if (Prop != NULL) {
+        gSettings.KbdPrevLang = IsPropertyTrue (Prop);
+      }
+      
       Prop = GetProperty (DictPointer, "Mouse");
       if (Prop != NULL) {
         Dict2 = GetProperty (Prop, "Speed");

@@ -210,9 +210,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
   // we should think how to handle those vars from nvram.plist and ones set here from gSettings
 
-  if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded) {
-    Attributes |= EFI_VARIABLE_NON_VOLATILE;
-  } else {
+  if ((gFirmwareClover && gDriversFlags.EmuVariableLoaded) || gSettings.KbdPrevLang) {
     // using AddNvramVariable content instead of calling the function to do LangLen calculation only when necessary
     // Do not mess with prev-lang:kbd on UEFI systems without NVRAM emulation; it's OS X's business
     KbdPrevLang = L"prev-lang:kbd";
@@ -228,7 +226,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     } else {
       FreePool(OldData);
     }
+  } else {
+    Attributes |= EFI_VARIABLE_NON_VOLATILE;
   }
+
 //#define EFI_PLATFORM_LANG_VARIABLE_NAME             L"PlatformLang"
   PlatformLang = GetNvramVariable(EFI_PLATFORM_LANG_VARIABLE_NAME, &gEfiGlobalVariableGuid, NULL, NULL);
   //
