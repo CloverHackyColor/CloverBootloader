@@ -53,6 +53,7 @@
 UINTN ConWidth;
 UINTN ConHeight;
 CHAR16 *BlankLine = NULL;
+INTN BanHeight = 0;
 
 static VOID SwitchToText(IN BOOLEAN CursorEnabled);
 static VOID SwitchToGraphics(VOID);
@@ -407,7 +408,10 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
 {
   EG_PIXEL *p1;
   INTN i, j, x, x1, x2, y, y1, y2;
-  INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+  if (BanHeight < 2) {
+    BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+  }
+
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // Banner is used in this theme
