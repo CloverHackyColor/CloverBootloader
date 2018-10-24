@@ -680,7 +680,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", gSettings.IntelMaxValue);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.IntelMaxValue);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //113
   InputItems[InputItemsCount++].BValue = gSettings.AutoMerge;
@@ -1282,7 +1282,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //112
   if (InputItems[i].Valid) {
-    gSettings.IntelMaxValue = InputItems[i].BValue;
+    gSettings.IntelMaxValue = (UINT16)StrHexToUint64(InputItems[i].SValue);
   }
   i++; //113
   if (InputItems[i].Valid) {

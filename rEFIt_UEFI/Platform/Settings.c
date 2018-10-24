@@ -2786,9 +2786,11 @@ GetEarlyUserSettings (
         }
       }
       
-      Prop = GetProperty (DictPointer, "KbdPrevLang");
-      if (Prop != NULL) {
-        gSettings.KbdPrevLang = IsPropertyTrue (Prop);
+      if (gSettings.Language != NULL) {
+        Prop = GetProperty (DictPointer, "KbdPrevLang");
+        if (Prop != NULL) {
+          gSettings.KbdPrevLang = IsPropertyTrue (Prop);
+        }
       }
       
       Prop = GetProperty (DictPointer, "Mouse");
@@ -7562,10 +7564,10 @@ SetDevices (LOADER_ENTRY *Entry)
                         FBLEVX = gSettings.IntelMaxValue;
                         MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
                         LEVX = FBLEVX | FBLEVX << 16;
-                      } else if  (!LEVX) {
+                      } else if (!LEVX) {
                         MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", FBLEVX);
                         LEVX = FBLEVX | FBLEVX << 16;
-                      } else if  (ShiftLEVX != FBLEVX) {
+                      } else if (ShiftLEVX != FBLEVX) {
                         MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                         LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
                       }

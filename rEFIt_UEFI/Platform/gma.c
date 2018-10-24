@@ -838,7 +838,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3E92, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E94, "Intel Coffee Lake GT2"          }, //
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
-  { 0x3E98, "Intel UHD Graphics 630"         }, //
+  { 0x3E98, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E9A, "Intel Coffee Lake GT2"          }, //
   { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile - MacBookPro15,1
   //GT3
@@ -2762,7 +2762,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3E92: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E94: // "Intel Coffee Lake GT2"           //
     case 0x3E96: // "Intel Coffee Lake GT2"           //
-    case 0x3E98: // "Intel UHD Graphics 630"          //
+    case 0x3E98: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
     case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1
       //GT3
@@ -2829,6 +2829,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3E92:
+        case 0x3E98:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
               (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
