@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -146,6 +146,23 @@ void DumpFloat2 (char* s, float* t, int N)
   DBG("\n");
 #endif
 }
+
+static float nsvg__sqr(float x) { return x*x; }
+static float nsvg__vmag(float x, float y) { return sqrtf(x*x + y*y); }
+
+static float nsvg__vecrat(float ux, float uy, float vx, float vy)
+{
+  return (ux*vx + uy*vy) / (nsvg__vmag(ux,uy) * nsvg__vmag(vx,vy));
+}
+
+static float nsvg__vecang(float ux, float uy, float vx, float vy)
+{
+  float r = nsvg__vecrat(ux,uy, vx,vy);
+  if (r < -1.0f) r = -1.0f;
+  if (r > 1.0f) r = 1.0f;
+  return ((ux*vy < uy*vx) ? -1.0f : 1.0f) * acosf(r);
+}
+
 
 static char *nsvg__strndup(const char *s, size_t n);
 
@@ -874,12 +891,13 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
     fy = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.fy, oy, sh);
     r  = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.r, 0, sl);
     // Calculate transform aligned to the circle
+    float r1 = r * nsvg__vmag(data->xform[0], data->xform[1]);
 
-    grad->xform[0] = r; grad->xform[1] = 0;
-    grad->xform[2] = 0; grad->xform[3] = r;
+    grad->xform[0] = r1; grad->xform[1] = 0;
+    grad->xform[2] = 0; grad->xform[3] = r1;
     grad->xform[4] = cx; grad->xform[5] = cy;
-    grad->fx = fx / r;
-    grad->fy = fy / r;
+    grad->fx = fx / r1;
+    grad->fy = fy / r1;
   }
   nsvg__xformMultiply(grad->xform, data->xform); //from GradientData "gradientTransform"
 /*
@@ -899,9 +917,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
 
 static float nsvg__getAverageScale(float* t)
 {
-  float sx = sqrtf(t[0]*t[0] + t[2]*t[2]);
-  float sy = sqrtf(t[1]*t[1] + t[3]*t[3]);
-  return (sx + sy) * 0.5f;
+  return (nsvg__vmag(t[0], t[2]) + nsvg__vmag(t[1], t[3])) * 0.5f;
 }
 
 static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, float* atXform)
@@ -2280,22 +2296,6 @@ static void nsvg__pathQuadBezShortTo(NSVGparser* p, float* cpx, float* cpy,
   *cpy2 = cy;
   *cpx = x2;
   *cpy = y2;
-}
-
-static float nsvg__sqr(float x) { return x*x; }
-static float nsvg__vmag(float x, float y) { return sqrtf(x*x + y*y); }
-
-static float nsvg__vecrat(float ux, float uy, float vx, float vy)
-{
-  return (ux*vx + uy*vy) / (nsvg__vmag(ux,uy) * nsvg__vmag(vx,vy));
-}
-
-static float nsvg__vecang(float ux, float uy, float vx, float vy)
-{
-  float r = nsvg__vecrat(ux,uy, vx,vy);
-  if (r < -1.0f) r = -1.0f;
-  if (r > 1.0f) r = 1.0f;
-  return ((ux*vy < uy*vx) ? -1.0f : 1.0f) * acosf(r);
 }
 
 static void nsvg__pathArcTo(NSVGparser* p, float* cpx, float* cpy, float* args, int rel)

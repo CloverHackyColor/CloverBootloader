@@ -722,7 +722,7 @@
 		<key>#SetIntelMaxBacklight</key>
 		<true/>
 		<key>#IntelMaxValue</key>
-		<integer>1808</integer>
+		<string>0x710</string>
 		<key>#ForceHPET</key>
 		<false/>
 		<key>#DisableFunctions</key>

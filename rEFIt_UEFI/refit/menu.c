@@ -676,7 +676,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //111
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaSingle;
 
-  InputItems[InputItemsCount].ItemType = Decimal;  //112
+  InputItems[InputItemsCount].ItemType = Hex;  //112
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
   }
