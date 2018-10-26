@@ -32,6 +32,7 @@ float FloorF(float X);
 float ModF(float X, float Y);
 float AcosF(float X);
 float Atan2F(float X, float Y);
+float FabsF(float X);
 
 RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,

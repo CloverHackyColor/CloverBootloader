@@ -189,7 +189,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     }
   }
   if (fontSVG) {
-    DBG("using font-family=%a\n", fontSVG->fontFamily);
+    DBG("theme uses font-family=%a\n", fontSVG->fontFamily);
   }
 
 //already done during nsvgParse
@@ -242,7 +242,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     LoadSVGfont(fontSVG, p->fontColor);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
-
+/*
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
   BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
@@ -252,7 +252,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   Banner = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale);
   BuiltinIconTable[BUILTIN_ICON_BANNER].Image = Banner;
   BanHeight = (int)(Banner->Height * Scale);
-
+  DBG("parsed banner->width=%d\n", Banner->Width);
+*/
 // --- Make other icons
 #if 0
   INTN i = BUILTIN_ICON_FUNC_ABOUT;
@@ -288,7 +289,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 #endif
 
-#if 0 //test banner
+#if 1 //test banner
+  DBG("test banner\n");
   NSVGshape   *shape;
   NSVGgroup   *group;
   NSVGimage *BannerSVG = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
