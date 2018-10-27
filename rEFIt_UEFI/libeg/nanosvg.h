@@ -412,6 +412,7 @@ void nsvg__xformInverse(float* inv, float* t);
 void nsvg__xformPremultiply(float* t, float* s);
 void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
+void nsvg__imageBounds(NSVGparser* p, float* bounds);
 float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
 VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color);
 

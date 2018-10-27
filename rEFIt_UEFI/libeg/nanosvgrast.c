@@ -541,13 +541,13 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
 	for (path = shape->paths; path != NULL; path = path->next) {
 		r->npoints = 0;
 		// Flatten path
-    if (shape->debug) {
+//    if (shape->debug) {
 //      DBG("npts=%d\n", path->npts);
-    }
+//    }
 
-    if (shape->debug) {
-      DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
-    }
+//    if (shape->debug) {
+//      DBG("first point [%d,%d]\n", (int)path->pts[0], (int)path->pts[1]);
+//    }
     pt.x = path->pts[0];
     pt.y = path->pts[1];
     nsvg__addPathPoint(r, &pt, xform, 0);
@@ -559,10 +559,10 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
 
 		// Close path
 		nsvg__addPathPoint(r, &pt, xform, 0);
-    if (shape->debug) {
-      DBG("npoints=%d\n", r->npoints);
-      DBG("first point x=%s y=%s\n", PoolPrintFloat(pt.x), PoolPrintFloat(pt.y));
-    }
+//    if (shape->debug) {
+//      DBG("npoints=%d\n", r->npoints);
+//      DBG("first point x=%s y=%s\n", PoolPrintFloat(pt.x), PoolPrintFloat(pt.y));
+//    }
 		// Build edges
 		for (i = 0, j = r->npoints-1; i < r->npoints; j = i++)
 			nsvg__addEdge(r, r->points[j].x, r->points[j].y, r->points[i].x, r->points[i].y);
@@ -1834,7 +1834,7 @@ void nsvgRasterize(
 
   tx -= image->realBounds[0] * scalex;
   ty -= image->realBounds[1] * scaley;
-  DBG("  image will be shifted by [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
+//  DBG("  image will be shifted by [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
   DumpFloat("  image real bounds ", image->realBounds, 4);
    // image will be shifted by [ 4.939199, 3.614399]
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);

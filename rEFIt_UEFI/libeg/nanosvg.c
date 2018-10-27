@@ -3660,13 +3660,13 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   while (g) {
     if (g->unicode == letter) {
       shape->paths = g->path;
-      if (shape->paths) {
+/*      if (shape->paths) {
         if (letter == L'C') {
           DBG("Found glyph %x, point[0]=(%d,%d) points=%d\n", letter,
               (int)shape->paths->pts[0], (int)shape->paths->pts[1], shape->paths->npts);
           shape->debug = TRUE;
         }
-      }
+      } */
       break;
     }
     g = g->next;
@@ -3923,7 +3923,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
   return count;
 }
 
-static void nsvg__imageBounds(NSVGparser* p, float* bounds)
+void nsvg__imageBounds(NSVGparser* p, float* bounds)
 {
   NSVGimage* image = p->image;
   NSVGclipPath* clipPath;
@@ -3973,6 +3973,10 @@ static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
   int i;
   NSVGclipPath *clipPath;
   float tx, ty, sx, sy, us, bounds[4];
+  bounds[0] = FLT_MAX;
+  bounds[1] = FLT_MAX;
+  bounds[2] = -FLT_MAX;
+  bounds[3] = -FLT_MAX;
 
   // Guess image size if not set completely.
   nsvg__imageBounds(p, bounds);
