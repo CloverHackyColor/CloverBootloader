@@ -50,7 +50,7 @@
 	NSVGimage* image;
 	image = nsvgParseFromFile("test.svg", "px", 96);
   or
-   image = nsvgParse(data, units, dpi);
+   image = nsvgParse(data, units, dpi, 0.f);
 	printf("size: %f x %f\n", image->width, image->height);
 	// Use...
 	for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1942,7 +1942,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "opacity") == 0) {
     attr->opacity = nsvg__parseOpacity(value);
     if (attr->opacity == 0.0f) {
-      attr->opacity = 1.0f;  //some trick for seal an image on preview
+      attr->opacity = p->opacity;  //some trick for seal an image on preview
     }
   } else if (strcmp(name, "fill-opacity") == 0) {
     attr->fillOpacity = nsvg__parseOpacity(value);
@@ -2666,8 +2666,8 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   }
 
   AsciiStrCatS(shape->id, 64, "_lnk");
-  x -= shape->bounds[0];
-  y -= shape->bounds[1];
+//  x -= shape->bounds[0];
+//  y -= shape->bounds[1];
 
   nsvg__xformSetTranslation(&xform[0], x, y);
 //  nsvg__xformIdentity(xform);
@@ -2812,7 +2812,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->fontFamily), &FileData, &FileDataLength);
 //      DBG("font loaded status=%r\n", Status);
       if (!EFI_ERROR(Status)) {
-        p1 = nsvgParse((CHAR8*)FileData, "px", 72);
+        p1 = nsvgParse((CHAR8*)FileData, "px", 72, 1.0f);
         if (!p1) {
           DBG("font not parsed\n");
         } else {
@@ -3893,7 +3893,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       shape = shapeLink->link;
       nsvg__xformPremultiply(&xform[0], shape->xform);
     } else shape = shapeLink;
-    if (shape->debug) {
+    if (strstr(shapeLink->id, "shar")) {
       DBG("take Bounds: shapeID=%a\n", shapeLink->id);
       DumpFloat2("  transform", xform, 6);
       DumpFloat2("  shape initial bounds", shape->bounds, 4);
@@ -3913,7 +3913,7 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[2] = nsvg__maxf(bounds[2], newBounds[4]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
-      if (shape->debug) {
+      if (strstr(shapeLink->id, "shar")) {
         DumpFloat2("  new shape bounds", bounds, 4);
       }
 
@@ -4100,7 +4100,7 @@ static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float s
   }
 }
 #endif
-NSVGparser* nsvgParse(char* input, const char* units, float dpi)
+NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity)
 {
   NSVGparser* p;
   float bounds[4];
@@ -4114,12 +4114,9 @@ NSVGparser* nsvgParse(char* input, const char* units, float dpi)
     return NULL;
   }
   p->dpi = dpi;
+  p->opacity = opacity;
   nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
 	nsvg__assignGradients(p);
-//  DBG("p->image width=%s height=%s\n", PoolPrintFloat(p->image->width),
-//      PoolPrintFloat(p->image->height));
-
-//  nsvg__scaleToViewbox(p, units);
   nsvg__imageBounds(p, bounds);
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 

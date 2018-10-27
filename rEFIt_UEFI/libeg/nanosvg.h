@@ -369,6 +369,7 @@ typedef struct NSVGparser
   NSVGgradientData* gradients;
   NSVGshape* shapesTail;
   struct NSVGfont* font;
+  float opacity;
   // this is temporary set for Menu text, later each text will have own face
   float fontSize;
   char fontStyle;
@@ -401,7 +402,7 @@ typedef struct NSVGparser
 
 // Parses SVG file from a null terminated string, returns SVG image as paths.
 // Important note: changes the string.
-NSVGparser* nsvgParse(char* input, const char* units, float dpi);
+NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity);
 
 // Deletes list of paths.
 void nsvgDelete(NSVGimage* image);
@@ -483,7 +484,7 @@ typedef struct NSVGcachedPaint {
 
 typedef void (*NSVGscanlineFunction)(
         unsigned char* dst, int count, unsigned char* cover, int x, int y,
-        float tx, float ty, float scalex, float scaley, NSVGcachedPaint* cache);
+    /*    float tx, float ty, float scalex, float scaley, */ NSVGcachedPaint* cache);
 
 struct NSVGrasterizer
 {

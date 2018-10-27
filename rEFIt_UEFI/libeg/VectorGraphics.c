@@ -159,7 +159,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   NSVGrasterizer  *rast = nsvgCreateRasterizer();
 
 // --- Parse Theme.svg
-  p = nsvgParse((CHAR8*)buffer, "px", 72);
+  p = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
   SVGimage = p->image;
   if (!SVGimage) {
     DBG("Theme not parsed!\n");
@@ -210,7 +210,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
         Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->id), &FileData, &FileDataLength);
       }
       if (!EFI_ERROR(Status)) {
-        p1 = nsvgParse((CHAR8*)FileData, "px", 72);
+        p1 = nsvgParse((CHAR8*)FileData, "px", 72, 1.0f);
         if (!p1) {
           DBG("font not parsed\n");
         } else {
@@ -242,12 +242,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     LoadSVGfont(fontSVG, p->fontColor);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
-/*
+
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
   BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
   GlobalConfig.BackgroundScale = imScale;
-
+/*
 // --- Make Banner
   Banner = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale);
   BuiltinIconTable[BUILTIN_ICON_BANNER].Image = Banner;
@@ -289,7 +289,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 #endif
 
-#if 1 //test banner
+#if 0 //test banner
   DBG("test banner\n");
   NSVGshape   *shape;
   NSVGgroup   *group;
@@ -337,8 +337,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
   //suppose Banner will be 2-30% of Height
   float Height = UGAHeight * 0.28f;
-
-  float Width = BannerSVG->width * Scale;
+  float Scale1 = Height / BannerSVG->height;
+  float Width = BannerSVG->width * Scale1;
   EG_IMAGE        *NewImage1;
   // FreePool(FileData);
   // FileData = NULL;
@@ -353,7 +353,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     float ty = 0; //-Banner->realBounds[1] * Scale;
     //  DBG("Banner shift by %d, %d\n", (int)tx, (int)ty);
 
-    nsvgRasterize(rast, BannerSVG, tx,ty,Scale,Scale, (UINT8*)NewImage1->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+    nsvgRasterize(rast, BannerSVG, tx,ty,Scale1,Scale1, (UINT8*)NewImage1->PixelData, (int)Width, (int)Height, ((int)Width)*4, NULL, NULL);
     //now show it!
 
     BltImageAlpha(NewImage1,
@@ -367,7 +367,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)NewImage1->PixelData;
     unsigned lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)NewImage1->Width, (UINTN)NewImage1->Height);
     if (!lode_return) {
-      egSaveFile(NULL, L"\\Banner.png", FileData, FileDataLength);
+      egSaveFile(SelfRootDir, L"\\Banner.png", FileData, FileDataLength);
       FreePool(FileData);
       FileData = NULL;
     }
@@ -378,7 +378,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
 #endif
 
-#if 1
+#if 0
   BltImageAlpha(Banner,
                 (int)(UGAWidth - Banner->Width) / 4,
                 (int)(UGAHeight * 0.05f),
@@ -389,7 +389,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 #endif
   //Test text
 
-#if TEST_FONT  // test font
+#if 0 //TEST_FONT  // test font
   if (fontSVG) {
     INTN iHeight = 260;
     INTN iWidth = UGAWidth-200;
@@ -697,7 +697,7 @@ VOID testSVG()
 
 #if TEST_MATH
     //Test mathematique
-#define fabsf(x) ((x >= 0.0f)?x:(-x))
+//#define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define pr(x) (int)fabsf(x), (int)fabsf((x - (int)x) * 1000000.0f)
     int i;
     float x, y1, y2;
@@ -728,12 +728,13 @@ VOID testSVG()
     EG_IMAGE        *NewImage;
     NSVGimage       *SVGimage;
     float Scale, ScaleX, ScaleY;
+    
     // load file
     Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
     if (!EFI_ERROR(Status)) {
       //Parse XML to vector data
 
-      p = nsvgParse((CHAR8*)FileData, "px", 72);
+      p = nsvgParse((CHAR8*)FileData, "px", 72, 0.f);
       SVGimage = p->image;
       DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
       FreePool(FileData);
@@ -770,7 +771,7 @@ VOID testSVG()
     Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
     DBG("test font loaded status=%r\n", Status);
     if (!EFI_ERROR(Status)) {
-      p = nsvgParse((CHAR8*)FileData, "px", 72);
+      p = nsvgParse((CHAR8*)FileData, "px", 72, 1.f);
       if (!p) {
         DBG("font not parsed\n");
         break;
