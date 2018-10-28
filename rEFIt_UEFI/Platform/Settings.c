@@ -7111,7 +7111,7 @@ SetDevices (LOADER_ENTRY *Entry)
                 UINT32 LEVW = 0, LEVX = 0, LEVD = 0, PCHL = 0;
                 UINT32 ShiftLEVX = 0, FBLEVX = 0;
                 UINT32 SYSLEVW = 0x80000000;
-                UINT32 OSXLEVW = 0xC0000000;
+                UINT32 MACLEVW = 0xC0000000;
 
                 MsgLog ("Intel GFX IntelBacklight\n");
                 // Read LEV2
@@ -7434,17 +7434,6 @@ SetDevices (LOADER_ENTRY *Entry)
                                                 &SYSLEVW
                                                 );
                 }
-                if (gSettings.IntelBacklight) {
-                  MsgLog ("  Write macOS LEVW: 0x%x\n", OSXLEVW);
-                  /*Status = */PciIo->Mem.Write(
-                                                PciIo,
-                                                EfiPciIoWidthUint32,
-                                                0,
-                                                0xC8250,
-                                                1,
-                                                &OSXLEVW
-                                                );
-                }
 
                 switch (Pci.Hdr.DeviceId) {
                   case 0x0042: // "Intel HD Graphics"
@@ -7462,6 +7451,10 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0162: // "Intel HD Graphics 4000"
                   case 0x0166: // "Intel HD Graphics 4000"
                   case 0x016A: // "Intel HD Graphics P4000"
+                    // Write LEVW
+                    // if change SYS LEVW to macOS LEVW, the brightness of the pop-up may decrease or increase.
+                    // but the brightness of the monitor will not actually change. so we should not use this.
+
                     // Write LEVL/LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (!LEVL) {
@@ -7481,50 +7474,29 @@ SetDevices (LOADER_ENTRY *Entry)
                         MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                       }
 
-                      if ((ShiftLEVX != FBLEVX) || !LEVX) {
-                        LEVX = (LEVL * FBLEVX) / ShiftLEVX;
-                        MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
-                        LEVL = FBLEVX | FBLEVX << 16;
-                        MsgLog ("  Write new LEVL: 0x%x\n", LEVL);
+                      LEVL = (LEVL * FBLEVX) / ShiftLEVX;
+                      MsgLog ("  Write new LEVL: 0x%x\n", LEVL);
 
-                        if (FBLEVX > ShiftLEVX) {
-                          /*Status = */PciIo->Mem.Write(
-                                                        PciIo,
-                                                        EfiPciIoWidthUint32,
-                                                        0,
-                                                        0xC8254,
-                                                        1,
-                                                        &LEVL
-                                                        );
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0x48254,
+                                                    1,
+                                                    &LEVL
+                                                    );
 
-                          /*Status = */PciIo->Mem.Write(
-                                                        PciIo,
-                                                        EfiPciIoWidthUint32,
-                                                        0,
-                                                        0x48254,
-                                                        1,
-                                                        &LEVX
-                                                        );
-                        } else {
-                          /*Status = */PciIo->Mem.Write(
-                                                        PciIo,
-                                                        EfiPciIoWidthUint32,
-                                                        0,
-                                                        0x48254,
-                                                        1,
-                                                        &LEVX
-                                                        );
+                      LEVX = FBLEVX | FBLEVX << 16;
+                      MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
 
-                          /*Status = */PciIo->Mem.Write(
-                                                        PciIo,
-                                                        EfiPciIoWidthUint32,
-                                                        0,
-                                                        0xC8254,
-                                                        1,
-                                                        &LEVL
-                                                        );
-                        }
-                      }
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8254,
+                                                    1,
+                                                    &LEVX
+                                                    );
                     }
                     break;
 
@@ -7534,6 +7506,19 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E92: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
+                    // Write LEVW
+                    if (gSettings.IntelBacklight) {
+                      MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8250,
+                                                    1,
+                                                    &MACLEVW
+                                                    );
+                    }
+
                     // Write LEVD
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
@@ -7558,6 +7543,19 @@ SetDevices (LOADER_ENTRY *Entry)
                     break;
 
                   default:
+                    // Write LEVW
+                    if (gSettings.IntelBacklight) {
+                      MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8250,
+                                                    1,
+                                                    &MACLEVW
+                                                    );
+                    }
+
                     // Write LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
