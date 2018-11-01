@@ -717,7 +717,7 @@ static void nsvg__pushAttr(NSVGparser* p)
     p->attrHead++;
     memcpy(&p->attr[p->attrHead], &p->attr[p->attrHead-1], sizeof(NSVGattrib));
     memset(&p->attr[p->attrHead].id, 0, sizeof(p->attr[p->attrHead].id));
-    p->attr[p->attrHead].opacity = 1.0f;
+//    p->attr[p->attrHead].opacity = 1.0f; //let it be copy
   }
 }
 
@@ -996,9 +996,10 @@ static void nsvg__addShape(NSVGparser* p)
   shape->strokeLineCap = attr->strokeLineCap;
   shape->miterLimit = attr->miterLimit;
   shape->fillRule = attr->fillRule;
-  float alpha = 1.f - shape->opacity;
-  shape->opacity = 1.f - alpha * (1.f - attr->opacity);
+//  float alpha = 1.f - shape->opacity;
+//  shape->opacity = 1.f - alpha * (1.f - attr->opacity);
 //  nsvg__xformIdentity(shape->xform);
+  shape->opacity = attr->opacity;
   memcpy(shape->xform, attr->xform, sizeof(float)*6);
 
     shape->paths = p->plist;
@@ -1909,6 +1910,23 @@ static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
   return *link;
 }
 
+static int substr(const char* class, char* style)
+{
+  const char *p;
+
+  while (*class) {
+    char *s = style;
+    p = class++;
+    while (*p++ == *s++) {
+      if (*s == '\0') {
+        if ((*p == '\0') || (*p == ' ')) {
+          return 1;
+        } else break;
+      }
+    }
+  }
+  return 0;
+}
 
 static void nsvg__parseStyle(NSVGparser* p, const char* str);
 
@@ -1942,7 +1960,8 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
       attr->fillColor = nsvg__parseColor(value);
     }
   } else if (strcmp(name, "opacity") == 0) {
-    attr->opacity = nsvg__parseOpacity(value);
+    float opacity = nsvg__parseOpacity(value);
+    attr->opacity *= opacity;
     if (attr->opacity == 0.0f) {
       attr->opacity = p->opacity;  //some trick for seal an image on preview
     }
@@ -2028,15 +2047,11 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   else if (strcmp(name, "class") == 0) {
     NSVGstyles* style = p->styles;
     while (style) {
-      if (strstr(value, style->name) != NULL) {
+      if (substr(value, style->name) != 0) {
         nsvg__parseStyle(p, style->description);
-//        break;
       }
       style = style->next;
     }
-/*    if (style) {
-      nsvg__parseStyle(p, style->description);
-    } */
   }
   else {
     return 0;
@@ -3031,11 +3046,8 @@ static void nsvg__parseIMAGE(NSVGparser* p, const char** attr)
     memcpy(shape->title, attr->title, sizeof shape->title);
 //    DBG("shapeID=%a\n", shape->id);
     shape->group = attr->group;
-
     scale = nsvg__getAverageScale(attr->xform);
-    float alpha = 1.f - shape->opacity;
-    shape->opacity = 1.f - alpha * (1.f - attr->opacity);
-
+    shape->opacity = attr->opacity;
     shape->image_href = href;
     p->plist = NULL;
 
@@ -3239,7 +3251,7 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 {
   NSVGgroup* group;
   NSVGattrib* oldAttr = nsvg__getAttr(p);
-   nsvg__pushAttr(p);
+  nsvg__pushAttr(p);
   NSVGattrib* curAttr = nsvg__getAttr(p);
   int i;
   int visSet = 0;
@@ -3817,7 +3829,7 @@ static void nsvg__content(void* ud, char* s)
         state = 3;
       } else if (state == 3 && c == '}') {
         p->styles->description = nsvg__strndup(start, (size_t)(s - start));
-        nsvg__parseStyle(p, p->styles->description);
+   //     nsvg__parseStyle(p, p->styles->description);
         state = 0;
       }
       else if (state == 0 && c == '.') {

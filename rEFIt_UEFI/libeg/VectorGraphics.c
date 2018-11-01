@@ -164,14 +164,14 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &MenuBackgroundPixel);
   DBG("begin rasterize %a\n", IconName);
   nsvgRasterize(rast, IconImage, 0,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
-
+#if 0
   BltImageAlpha(NewImage,
                 (int)(UGAWidth - NewImage->Width) / 2,
                 (int)(UGAHeight * 0.05f),
                 &MenuBackgroundPixel,
                 16);
 //  WaitForKeyPress(L"waiting for key press...\n");
-
+#endif
   nsvgDeleteRasterizer(rast);
   nsvg__deleteParser(p2);
   return NewImage;
@@ -369,7 +369,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
 #endif
 
-#if 1
+#if 0
   BltImageAlpha(Banner,
                 (int)(UGAWidth - Banner->Width) / 4,
                 (int)(UGAHeight * 0.05f),
