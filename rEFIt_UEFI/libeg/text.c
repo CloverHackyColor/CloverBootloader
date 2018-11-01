@@ -60,7 +60,7 @@ INTN FontHeight = 18;
 INTN TextHeight = 19;
 VOID *fontsDB = NULL;
 
-CONST EG_PIXEL WhitePixel = {255, 255, 255, 210}; //semitransparent
+CONST EG_PIXEL SemiWhitePixel = {255, 255, 255, 210}; //semitransparent
 
 //
 // Text rendering
@@ -143,7 +143,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
             ) {
           PixelPtr->a = 0;
         } else if (GlobalConfig.DarkEmbedded) {
-          *PixelPtr = WhitePixel;
+          *PixelPtr = SemiWhitePixel;
         }
         NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
       }

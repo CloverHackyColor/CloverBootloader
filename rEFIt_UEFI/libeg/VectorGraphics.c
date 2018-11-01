@@ -161,17 +161,17 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   DBG("icon %a width=%s height=%s\n", IconName, PoolPrintFloat(Width), PoolPrintFloat(Height));
   EG_IMAGE  *NewImage = NULL;
 //  NewImage = egCreateImage((int)Width, (int)Height, TRUE);
-  NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &DarkSelectionPixel);
+  NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &MenuBackgroundPixel);
   DBG("begin rasterize %a\n", IconName);
   nsvgRasterize(rast, IconImage, 0,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
-/*
+
   BltImageAlpha(NewImage,
                 (int)(UGAWidth - NewImage->Width) / 2,
                 (int)(UGAHeight * 0.05f),
                 &MenuBackgroundPixel,
                 16);
 //  WaitForKeyPress(L"waiting for key press...\n");
-*/
+
   nsvgDeleteRasterizer(rast);
   nsvg__deleteParser(p2);
   return NewImage;
@@ -369,7 +369,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
 #endif
 
-#if 0
+#if 1
   BltImageAlpha(Banner,
                 (int)(UGAWidth - Banner->Width) / 4,
                 (int)(UGAHeight * 0.05f),

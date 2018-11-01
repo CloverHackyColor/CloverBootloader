@@ -799,6 +799,7 @@ extern EG_PIXEL DarkBackgroundPixel;
 extern EG_PIXEL SelectionBackgroundPixel;
 extern EG_PIXEL DarkEmbeddedBackgroundPixel;
 extern EG_PIXEL DarkSelectionPixel;
+extern EG_PIXEL WhitePixel;
 
 extern EG_RECT  BannerPlace;
 extern EG_IMAGE *BackgroundImage;

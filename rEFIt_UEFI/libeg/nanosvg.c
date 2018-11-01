@@ -717,6 +717,7 @@ static void nsvg__pushAttr(NSVGparser* p)
     p->attrHead++;
     memcpy(&p->attr[p->attrHead], &p->attr[p->attrHead-1], sizeof(NSVGattrib));
     memset(&p->attr[p->attrHead].id, 0, sizeof(p->attr[p->attrHead].id));
+    p->attr[p->attrHead].opacity = 1.0f;
   }
 }
 
@@ -995,7 +996,8 @@ static void nsvg__addShape(NSVGparser* p)
   shape->strokeLineCap = attr->strokeLineCap;
   shape->miterLimit = attr->miterLimit;
   shape->fillRule = attr->fillRule;
-  shape->opacity = attr->opacity;
+  float alpha = 1.f - shape->opacity;
+  shape->opacity = 1.f - alpha * (1.f - attr->opacity);
 //  nsvg__xformIdentity(shape->xform);
   memcpy(shape->xform, attr->xform, sizeof(float)*6);
 
@@ -3031,7 +3033,8 @@ static void nsvg__parseIMAGE(NSVGparser* p, const char** attr)
     shape->group = attr->group;
 
     scale = nsvg__getAverageScale(attr->xform);
-    shape->opacity = attr->opacity;
+    float alpha = 1.f - shape->opacity;
+    shape->opacity = 1.f - alpha * (1.f - attr->opacity);
 
     shape->image_href = href;
     p->plist = NULL;

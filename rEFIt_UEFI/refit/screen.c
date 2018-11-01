@@ -82,6 +82,7 @@ EG_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
 EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
 EG_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
 EG_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
+EG_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
 
 EG_IMAGE *BackgroundImage = NULL;
 EG_IMAGE *Banner = NULL;

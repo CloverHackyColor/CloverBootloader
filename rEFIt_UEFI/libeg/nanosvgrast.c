@@ -1478,7 +1478,7 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
 		}
 	}
 }
-/*
+
 static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int stride)
 {
 	int x,y;
@@ -1537,7 +1537,7 @@ static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int str
 		}
 	}
 }
-*/
+
 
 static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape* shape, float *xformShape)
 {
@@ -1747,8 +1747,6 @@ static void nsvg__rasterizeShapes(
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shapeLink->fill, shapeLink, &xform[0]);
-      //TODO-check there must be no tx,ty,sx,sx - they are alredy in the edges.
-//			nsvg__rasterizeSortedEdges(r, tx, ty, scalex, scaley, &cache, shapeLink->fillRule, &shapeLink->clip);
         nsvg__rasterizeSortedEdges(r, &cache, shapeLink->fillRule, &shapeLink->clip);
     }
 		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * fabsf(min_scale)) > 0.01f) {
@@ -1841,9 +1839,6 @@ void nsvgRasterize(
 
   nsvg__rasterizeShapes(r, image->shapes, tx, ty, scalex, scaley,
                         dst, w, h, stride, nsvg__scanlineSolid, external_image, obj);
-  /*
-  if (0) {
-    nsvg__unpremultiplyAlpha(dst, w, h, stride);
-  }
-   */
+
+  nsvg__unpremultiplyAlpha(dst, w, h, stride);
 }
