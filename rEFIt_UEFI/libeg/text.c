@@ -161,7 +161,7 @@ VOID PrepareFont()
   INTN         Width, Height;
 
   if (GlobalConfig.TypeSVG) {
-//    FontImage = LoadSVGfont();
+//    FontImage = RenderSVGfont();
     return;
   }
 

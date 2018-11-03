@@ -414,7 +414,7 @@ void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
 void nsvg__imageBounds(NSVGparser* p, float* bounds);
 float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
-VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color);
+VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;

@@ -3985,6 +3985,7 @@ InitTheme(
   UINTN      Rnd;
   
   DbgHeader("InitTheme");
+  GlobalConfig.TypeSVG = FALSE;
   
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
   

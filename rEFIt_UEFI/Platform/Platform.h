@@ -2162,7 +2162,7 @@ ParseXML (
   );
 
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize);
-//VOID LoadSVGfont(NSVGfont  *fontSVG);
+//VOID RenderSVGfont(NSVGfont  *fontSVG);
 
 TagPtr
 GetProperty (

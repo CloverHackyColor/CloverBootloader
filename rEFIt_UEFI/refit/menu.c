@@ -3330,16 +3330,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       TitleLen = StrLen(EntryL->Title);
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryL->Title);
 
-			/*
-      if (EntryL->Tag == TAG_SWITCH) {
-        if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 3) {
-          OldChosenItem = OldChosenTheme;
-        } else if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 90) {
-          OldChosenItem = OldChosenConfig;
-        }
-      }
-			*/
-
       // redraw selection cursor
       // 1. blackosx swapped this around so drawing of selection comes before drawing scrollbar.
       // 2. usr-sse2
@@ -3454,11 +3444,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
 {
 //  EG_IMAGE *TmpBuffer = NULL;
   INTN Scale = GlobalConfig.MainEntriesSize >> 3;
-/*
-  if (GlobalConfig.BootCampStyle && (Entry->Row == 1)) {
-    return;
-  }
-*/
+
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
       !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
       (Entry->Row == 0)) {
@@ -3653,14 +3639,14 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
       //adjustable by theme.plist?
-      EntriesPosY = LAYOUT_Y_EDGE;
+      EntriesPosY = (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale);
       EntriesGap = GlobalConfig.TileYSpace;
-      EntriesWidth = GlobalConfig.MainEntriesSize + 16;
-      EntriesHeight = GlobalConfig.MainEntriesSize + 16;
+      EntriesWidth = GlobalConfig.MainEntriesSize + (int)(16 * GlobalConfig.Scale);
+      EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16 * GlobalConfig.Scale);
       //
-      VisibleHeight = (UGAHeight - EntriesPosY - LAYOUT_Y_EDGE + EntriesGap) / (EntriesHeight + EntriesGap);
-      EntriesPosX = UGAWidth - EntriesWidth - BAR_WIDTH - LAYOUT_X_EDGE;
-      TimeoutPosY = UGAHeight - LAYOUT_Y_EDGE - TextHeight;
+      VisibleHeight = (UGAHeight - EntriesPosY - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale) + EntriesGap) / (EntriesHeight + EntriesGap);
+      EntriesPosX = UGAWidth - EntriesWidth - (int)((BAR_WIDTH + LAYOUT_X_EDGE) * GlobalConfig.Scale);
+      TimeoutPosY = UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale) - TextHeight;
 
       CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight, 0);
@@ -3792,9 +3778,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 
       EntriesGap = GlobalConfig.TileXSpace;
       EntriesWidth = GlobalConfig.MainEntriesSize + (16 * row0TileSize) / 144;
-      EntriesHeight = GlobalConfig.MainEntriesSize + 16;
+      EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16.f * GlobalConfig.Scale);
 
-      MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (EntriesWidth + EntriesGap); //8
+      MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* GlobalConfig.Scale)) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen, 0);
       row0PosX = (UGAWidth + 8 - (EntriesWidth + EntriesGap) *
@@ -3872,8 +3858,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                                    EntriesWidth + GlobalConfig.TileXSpace, TextHeight, &MenuBackgroundPixel,
                                    X_IS_CENTER);
               // draw the text
-              DrawBCSText(Screen->Entries[i]->Title, itemPosX[i - State->FirstVisible] + (row0TileSize / 2),
-                           textPosY, X_IS_CENTER);
+              DrawBCSText(Screen->Entries[i]->Title,
+                          itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY, X_IS_CENTER);
             }
           }
         } else {

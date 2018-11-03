@@ -94,6 +94,10 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
  //         DBG("IconImage left corner x=%s y=%s\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
  //         DumpFloat2("IconImage real bounds", IconImage->realBounds, 4);
  //       }
+        if (Id == BUILTIN_SELECTION_BIG) {
+          GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale) - 4; //xxx
+        }
+
         shape->flags = 0;  //invisible
         if (shapePrev) {
           shapePrev->next = shapeNext;
@@ -170,13 +174,11 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &MenuBackgroundPixel);
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f;
-/*  if (Width > (float)UGAWidth) {
-    tx = - (Width - (float)UGAWidth) * 0.5f;
-  } */
   if (Id == BUILTIN_ICON_BACKGROUND) {
     tx = - GlobalConfig.CentreShift;
   }
   nsvgRasterize(rast, IconImage, tx,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+  
 #if 0
   BltImageAlpha(NewImage,
                 (int)(UGAWidth - NewImage->Width) / 2,
@@ -244,7 +246,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     if (fontSVG->fontFamily[0] < 0x30) {
       AsciiStrCpyS(fontSVG->fontFamily, 64, fontSVG->id);
     }
-    LoadSVGfont(fontSVG, p->fontColor);
+    RenderSVGfont(fontSVG, p->fontColor);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
 // WaitForKeyPress(L"waiting for key press...\n");
@@ -359,7 +361,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //  return EFI_NOT_READY;
 }
 
-VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color)
+VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 {
 //  EFI_STATUS      Status;
   float           FontScale;
@@ -408,8 +410,8 @@ VOID LoadSVGfont(NSVGfont  *fontSVG, UINT32 color)
   text->font = fontSVG;
   text->fontColor = color;
 
-//  DBG("LoadSVGfont: fontID=%a\n", text->font->id);
-//  DBG("LoadSVGfont:  family=%a\n", text->font->fontFamily);
+//  DBG("RenderSVGfont: fontID=%a\n", text->font->id);
+//  DBG("RenderSVGfont:  family=%a\n", text->font->fontFamily);
   //add to head
   text->next = p->text;
   p->text = text;
