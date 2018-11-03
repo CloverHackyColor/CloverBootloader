@@ -410,7 +410,8 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   EG_PIXEL *p1;
   INTN i, j, x, x1, x2, y, y1, y2;
   if (BanHeight < 2) {
-    BanHeight = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale);
+    BanHeight = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1);
+    //+ (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale); //LAYOUT_TOTAL_HEIGHT=376
   }
 
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
@@ -445,22 +446,29 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
       BannerPlace.Width = Banner->Width;
       BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
       DBG("banner width-height [%d,%d]\n", BannerPlace.Width, BannerPlace.Height);
-      // Check if new style placement value was used for banner in theme.plist
-      if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=1000) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=1000)) {
-        // Check if screen size being used is different from theme origination size.
-        // If yes, then recalculate the placement % value.
-        // This is necessary because screen can be a different size, but banner is not scaled.
-        BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-        BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-        // Check if banner is required to be nudged.
-        BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
-        BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
-        DBG("banner position new style\n");
+      DBG("global banner pos [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
+      if (GlobalConfig.TypeSVG) {
+        BannerPlace.XPos = GlobalConfig.BannerPosX;
+        BannerPlace.YPos = GlobalConfig.BannerPosY;
       } else {
-        // Use rEFIt default (no placement values speicifed)
-        BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-        BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
-        DBG("banner position old style\n");
+        // Check if new style placement value was used for banner in theme.plist
+
+        if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=1000) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=1000)) {
+          // Check if screen size being used is different from theme origination size.
+          // If yes, then recalculate the placement % value.
+          // This is necessary because screen can be a different size, but banner is not scaled.
+          BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
+          BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
+          // Check if banner is required to be nudged.
+          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
+          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
+          DBG("banner position new style\n");
+        } else {
+          // Use rEFIt default (no placement values speicifed)
+          BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
+          BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+          DBG("banner position old style\n");
+        }
       }
     }
   }

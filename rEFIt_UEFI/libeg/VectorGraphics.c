@@ -151,16 +151,14 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   bounds[1] = FLT_MAX;
   bounds[2] = -FLT_MAX;
   bounds[3] = -FLT_MAX;
-
-  // Guess image size if not set completely.
   nsvg__imageBounds(p2, bounds);
 //  DumpFloat2("p2 image bounds", bounds, 4);
   // Patch: save real bounds.
   memcpy(IconImage->realBounds, bounds, 4*sizeof(float));
 
-  if (Id == BUILTIN_ICON_BANNER) {
-    GlobalConfig.BannerPosX = -1; //(int)(bounds[0] * Scale);
-    GlobalConfig.BannerPosY = -1; //(int)(bounds[1] * Scale);
+  if ((Id == BUILTIN_ICON_BANNER) && (strcmp(IconName, "Banner") == 0)) {
+    GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
+    GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
     DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
   }
 
@@ -172,8 +170,11 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &MenuBackgroundPixel);
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f;
-  if (Width > (float)UGAWidth) {
+/*  if (Width > (float)UGAWidth) {
     tx = - (Width - (float)UGAWidth) * 0.5f;
+  } */
+  if (Id == BUILTIN_ICON_BACKGROUND) {
+    tx = - GlobalConfig.CentreShift;
   }
   nsvgRasterize(rast, IconImage, tx,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
 #if 0
@@ -219,6 +220,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   Scale = UGAHeight / SVGimage->height;
   DBG("using scale %s\n", PoolPrintFloat(Scale));
   GlobalConfig.Scale = Scale;
+  GlobalConfig.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
 // --- Get theme embedded font (already parsed above)
   fontSVG = p->font;
@@ -231,7 +233,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (fontSVG) {
     DBG("theme uses font-family=%a\n", fontSVG->fontFamily);
   }
-
 
 // --- Create rastered font
   if (fontSVG) {
@@ -247,6 +248,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
 // WaitForKeyPress(L"waiting for key press...\n");
+
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
   BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);

@@ -3216,8 +3216,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE)) {
         DrawTextXY(Screen->Title, (UGAWidth >> 1), EntriesPosY - TextHeight * 2, X_IS_CENTER);
       }
-      //xxx
-      DrawTextXY(L"0123456789", 10, 10, X_IS_LEFT);
 
       if (Screen->TitleImage) {
         INTN FilmXPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));

@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -3713,6 +3713,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   float x1 = x; //initial position
 //  INTN y = 0;
   NSVGshape *shape;
+//  NSVGattrib* attr = nsvg__getAttr(p);
   NSVGglyph* g;
   if (!p->text || !p->text->font) {
     DBG("font absent\n");
@@ -3756,6 +3757,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   }
   //fill shape
 //  DBG("fill shape\n");
+//  shape->group = attr->group; //xxx will be good feature but not now
   shape->id[0] = (char)(letter & 0xff);
   shape->id[1] = (char)((letter >> 8) & 0xff);
   shape->fill.type = NSVG_PAINT_COLOR;

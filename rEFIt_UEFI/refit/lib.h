@@ -522,6 +522,7 @@ typedef struct {
   INTN        Codepage;
   INTN        CodepageSize;
   float       Scale;
+  float       CentreShift;
 } REFIT_CONFIG;
 
 // types

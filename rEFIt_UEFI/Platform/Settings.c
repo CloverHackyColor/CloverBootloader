@@ -158,6 +158,7 @@ REFIT_CONFIG   GlobalConfig = {
   0,              // INTN        Codepage;
   0,              // INTN        CodepageSize;
   1.0f,           // float       Scale;
+  0.0f,           // float       CentreShift;
 };
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =
