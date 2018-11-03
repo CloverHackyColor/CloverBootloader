@@ -1764,7 +1764,13 @@ VOID InitSelection(VOID)
   Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE); //memory leak
   Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
   if (!Buttons[0]) {
+    Buttons[0] = egLoadIcon(ThemeDir, L"radio_button.png", 48);
+  }
+  if (!Buttons[0]) {
     Buttons[0] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button), TRUE);
+  }
+  if (!Buttons[1]) {
+    Buttons[1] = egLoadIcon(ThemeDir, L"radio_button_selected.png", 48);
   }
 
   if (!Buttons[1]) {
@@ -1774,6 +1780,13 @@ VOID InitSelection(VOID)
   // Checkbox
   Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
   Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
+  if (!Buttons[2]) {
+    Buttons[2] = egLoadIcon(ThemeDir, L"checkbox.png", 48);
+  }
+  if (!Buttons[3]) {
+    Buttons[3] = egLoadIcon(ThemeDir, L"checkbox_checked.png", 48);
+  }
+
   if (!Buttons[2]) {
     Buttons[2] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox), TRUE);
   }
@@ -1791,7 +1804,7 @@ VOID InitSelection(VOID)
                                              TRUE, &MenuBackgroundPixel);
   } else { // using embedded theme (this is an assumption but a better check is required)
     EG_PIXEL BackgroundPixel = DarkEmbeddedBackgroundPixel;
-    BackgroundPixel.a = 0xff;
+    BackgroundPixel.a = 0x00;
     if (GlobalConfig.DarkEmbedded) {
       SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                                TRUE, &BackgroundPixel);
@@ -1800,9 +1813,9 @@ VOID InitSelection(VOID)
 
     } else {
       SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                               TRUE, &StdBackgroundPixel);
+                                               TRUE, &MenuBackgroundPixel); //&StdBackgroundPixel);
       SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                               TRUE, &StdBackgroundPixel);
+                                               TRUE, &MenuBackgroundPixel);
     }
   }
 //  DBG("selections inited\n");
@@ -3165,31 +3178,24 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime(Screen);
 			SwitchToGraphicsAndClear();
-			//BltClearScreen(FALSE);
 
-      EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LayoutBannerOffset + (TextHeight << 1);
+      EntriesPosY = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + LayoutBannerOffset + (TextHeight << 1);
 
       VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 2;/* - GlobalConfig.PruneScrollRows; */
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       if (Screen->Entries[0]->Tag == TAG_SWITCH) {
         if (((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 3) {
-   /*       if ((OldChosenTheme != 0xFFFF)) { //embedded theme
-            j = OldChosenTheme;
-          } */
           j = (OldChosenTheme == 0xFFFF) ? 0: (OldChosenTheme + 1);
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 90) {
           j = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 116) {
-      /*    if ((OldChosenDsdt != 0xFFFF)) { //embedded DSDT
-            j = OldChosenDsdt;
-          } */
           j = (OldChosenDsdt == 0xFFFF) ? 0: (OldChosenDsdt + 1);
         }
       }
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, j);
       // determine width of the menu - not working
       //MenuWidth = 80;  // minimum
-      MenuWidth = LAYOUT_TEXT_WIDTH; //500
+      MenuWidth = (int)(LAYOUT_TEXT_WIDTH * GlobalConfig.Scale); //500
       DrawMenuText(NULL, 0, 0, 0, 0);
 
       if (Screen->TitleImage) {
@@ -3210,6 +3216,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE)) {
         DrawTextXY(Screen->Title, (UGAWidth >> 1), EntriesPosY - TextHeight * 2, X_IS_CENTER);
       }
+      //xxx
+      DrawTextXY(L"0123456789", 10, 10, X_IS_LEFT);
 
       if (Screen->TitleImage) {
         INTN FilmXPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
@@ -3261,16 +3269,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         Entry->Place.Width = TitleLen * GlobalConfig.CharWidth;
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
-
-				/*
-        if (Entry->Tag == TAG_SWITCH) {
-          if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 3) {
-            OldChosenItem = OldChosenTheme;
-          } else if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 90) {
-            OldChosenItem = OldChosenConfig;
-          }
-        }
-				*/
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {

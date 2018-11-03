@@ -449,13 +449,7 @@ struct _refit_menu_screen {
 #define HIDEUI_FLAG_HELP              (0x4000)
 #define HIDEUI_FLAG_ROW1              (0x8000)
 #define HIDEUI_ALL                    (0xffff & (~VOLTYPE_INTERNAL))
-/*
- #define HDBADGES_NONE   0
- #define HDBADGES_INT    1
- #define HDBADGES_ALL    2
- #define HDBADGES_SWAP   3
- #define HDBADGES_DRIVE  4
- */
+
 #define HDBADGES_SWAP   (1<<0)
 #define HDBADGES_SHOW   (1<<1)
 #define HDBADGES_INLINE (1<<2)
@@ -527,6 +521,7 @@ typedef struct {
   BOOLEAN     TypeSVG;
   INTN        Codepage;
   INTN        CodepageSize;
+  float       Scale;
 } REFIT_CONFIG;
 
 // types

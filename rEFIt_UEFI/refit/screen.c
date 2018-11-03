@@ -410,10 +410,9 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
   EG_PIXEL *p1;
   INTN i, j, x, x1, x2, y, y1, y2;
   if (BanHeight < 2) {
-    BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+    BanHeight = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale);
   }
 
-  
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // Banner is used in this theme
     if (!Banner) {
@@ -444,9 +443,10 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
     if (Banner) {
       // Banner was loaded, so calculate its size and position
       BannerPlace.Width = Banner->Width;
-      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight; 
+      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
+      DBG("banner width-height [%d,%d]\n", BannerPlace.Width, BannerPlace.Height);
       // Check if new style placement value was used for banner in theme.plist
-      if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=100) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=100)) {
+      if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=1000) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=1000)) {
         // Check if screen size being used is different from theme origination size.
         // If yes, then recalculate the placement % value.
         // This is necessary because screen can be a different size, but banner is not scaled.
@@ -455,14 +455,18 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
         // Check if banner is required to be nudged.
         BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
         BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
+        DBG("banner position new style\n");
       } else {
         // Use rEFIt default (no placement values speicifed)
         BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
         BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+        DBG("banner position old style\n");
       }
     }
   }
-  
+  //xxx
+  DBG("Banner position [%d,%d]\n",  BannerPlace.XPos, BannerPlace.YPos);
+
   if (!Banner || (GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER) || 
       !IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) || 
       !IsImageWithinScreenLimits(BannerPlace.YPos, BannerPlace.Height, UGAHeight)) {

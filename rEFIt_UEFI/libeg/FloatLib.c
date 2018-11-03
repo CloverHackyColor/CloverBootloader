@@ -360,7 +360,7 @@ CHAR16* PoolPrintFloat(float X)
   CHAR8 S = ' ';
   float D;
   I = (INTN)X;
-  D = I;
+  D = (float)I;
   if (I == 0 && X < 0) {
     S = '-';
   }

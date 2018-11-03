@@ -284,15 +284,8 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (gLanguage != korean) {
-      /*      if (GlobalConfig.Font != FONT_LOAD) {
-       if (c < 0x20 || c >= 0x7F)
-       c = 0x5F;
-       else
-       c -= 0x20;
-       } else { */
-      c1 = (((c >=0x410) ? (c -= 0x350) : c) & 0xff); //Russian letters
+      c1 = (((c >= GlobalConfig.Codepage) ? (c - (GlobalConfig.Codepage - AsciiPageSize)) : c) & 0xff); //International letters
       c = c1;
-      //      }
 
       if (GlobalConfig.Proportional) {
         if (c0 <= 0x20) {  // space before or at buffer edge

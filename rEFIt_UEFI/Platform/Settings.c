@@ -157,7 +157,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     TypeSVG;
   0,              // INTN        Codepage;
   0,              // INTN        CodepageSize;
-
+  1.0f,           // float       Scale;
 };
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =

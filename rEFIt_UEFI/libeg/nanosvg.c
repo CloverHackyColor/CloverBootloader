@@ -142,7 +142,7 @@ void DumpFloat2 (char* s, float* t, int N)
     float a = t[i];
     int b = (int)a;
     int sign = (a < 0.f);
-    DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-b)*1e6f)));
+    DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-(float)b)*1.0e6f)));
   }
   DBG("\n");
 #endif
@@ -3288,7 +3288,53 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
       group->visibility = NSVG_VIS_VISIBLE;
     }
   }
+}
 
+static int getIntegerDict(const char* s)
+{
+  if ((s[1] == 'x') || (s[1] == 'X')) {
+    return (int)AsciiStrHexToUintn (s);
+  } else if (IS_DIGIT(s[0])) {
+    return (int)AsciiStrDecimalToUintn(s);
+  }
+  return 0xFFFF;
+}
+
+//parse Clover settings for theme
+static void parseTheme(NSVGparser* p, const char** dict)
+{
+  int i;
+  for (i = 0; dict[i]; i += 2) {
+    if (strcmp(dict[i], "SelectionOnTop") == 0) {
+      GlobalConfig.SelectionOnTop = getIntegerDict(dict[i+1]);
+    } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
+      GlobalConfig.BadgeOffsetX = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
+      GlobalConfig.BadgeOffsetY = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
+      GlobalConfig.NonSelectedGrey = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "CharWidth") == 0) {
+      GlobalConfig.CharWidth = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "BackgroundDark") == 0) {
+      GlobalConfig.BackgroundDark = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
+      GlobalConfig.BackgroundSharp = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "Badges") == 0) {
+      GlobalConfig.HideBadges = 0;
+      if (strstr(dict[i+1], "show") != NULL)  {
+        GlobalConfig.HideBadges |= HDBADGES_SHOW;
+      }
+      if (strstr(dict[i+1], "swap") != NULL)  {
+        GlobalConfig.HideBadges |= HDBADGES_SWAP;
+      }
+      if (strstr(dict[i+1], "inline") != NULL)  {
+        GlobalConfig.HideBadges |= HDBADGES_INLINE;
+      }
+    } else if (strcmp(dict[i], "SelectionColor") == 0) {
+      GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
+
+    } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
+  }
 }
 
 // parse embedded font
@@ -3314,6 +3360,9 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   }
   DBG("found embedded font family=%a\n", font->fontFamily);
   AsciiStrCpyS(font->id, 64, curAttr->id);
+  if (!font->horizAdvX) {
+    font->horizAdvX = 1000;
+  }
 
   p->font = font;
   font->next = fontsDB;
@@ -3328,7 +3377,7 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
     return;
   }
   NSVGfont* font = p->font;
-//  DBG("begin parse font face, font->id=%a\n", font->id);
+  DBG("begin parse font face, font->id=%a\n", font->id);
   for (i = 0; dict[i]; i += 2) {
       if (strcmp(dict[i], "font-family") == 0) {
         AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
@@ -3380,6 +3429,7 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
         AsciiStrToFloat((const char*)Next, &Next, &font->bbox[1]);
         AsciiStrToFloat((const char*)Next, &Next, &font->bbox[2]);
         AsciiStrToFloat((const char*)Next, &Next, &font->bbox[3]);
+        DumpFloat2("font bbox=", font->bbox, 4);
       }
       else if (strcmp(dict[i], "unicode-range") == 0) {
         const char * a = dict[i + 1];
@@ -3498,7 +3548,6 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     return;
   }
 
-    // Skip everything but gradients, font and style in defs
     if (strcmp(el, "linearGradient") == 0) {
       nsvg__parseGradient(p, dict, NSVG_PAINT_LINEAR_GRADIENT);
     } else if (strcmp(el, "radialGradient") == 0) {
@@ -3600,6 +3649,8 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     nsvg__pushAttr(p);
     nsvg__parseIMAGE(p, dict);
     nsvg__popAttr(p);
+  } else if (strcmp(el, "clover:theme") == 0) {
+    parseTheme(p, dict);
   } else {
     strncpy(p->unknown, el, 63);
   }
@@ -3717,15 +3768,24 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   //scale convert shape from glyph size to user's font-size
   shape->xform[0] = scale; //1.f;
   shape->xform[3] = -scale; //-1.f; //glyphs are mirrored by Y
-  shape->xform[4] = x - p->font->bbox[0] * scale;
-  shape->xform[5] = y + p->font->bbox[3] * scale; // Y3 is a floor for a letter, so Y+x[5]=realY
-  //    DumpFloat2("glyph xform:", shape->xform, 6);
+  shape->xform[4] = x - p->text->font->bbox[0] * scale;
+  shape->xform[5] = y + p->text->font->bbox[3] * scale; // Y3 is a floor for a letter, so Y+x[5]=realY
+/*
+  if (letter == L'C') {
+    DBG("bbox0=%s ", PoolPrintFloat(p->text->font->bbox[0]));
+    DBG("bbox3=%s ", PoolPrintFloat(p->text->font->bbox[3]));
+    
+      DumpFloat2("glyph xform:", shape->xform, 6);
+  }
+ */
   //in glyph units
   shape->bounds[0] = p->text->font->bbox[0]; //x + p->font->bbox[0] * scale;
   shape->bounds[1] = p->text->font->bbox[1]; //y + p->font->bbox[1] * scale;
   shape->bounds[2] = p->text->font->bbox[2]; //x + p->font->bbox[2] * scale;
   shape->bounds[3] = p->text->font->bbox[3]; //y + p->font->bbox[3] * scale;
-  //    DumpFloat2("glyph bounds in text", shape->bounds, 4);
+//  if (letter == L'C') {
+//      DumpFloat2("glyph bounds in text", shape->bounds, 4);
+//  }
 
   x1 += g->horizAdvX * scale; //position for next letter in user's units
   shape->strokeLineJoin = NSVG_JOIN_MITER;
@@ -4139,12 +4199,12 @@ NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity)
   nsvg__imageBounds(p, bounds);
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
-  DumpFloat2("image real bounds", bounds, 4);
+//  DumpFloat2("image real bounds", bounds, 4);
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 
-  DBG("scaled width=%s height=%s\n", PoolPrintFloat(p->image->width),
-      PoolPrintFloat(p->image->height));
+//  DBG("scaled width=%s height=%s\n", PoolPrintFloat(p->image->width),
+//      PoolPrintFloat(p->image->height));
   return p;
 }
 

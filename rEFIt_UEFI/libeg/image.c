@@ -454,7 +454,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   BufferSize = FileDataLength;
   Status = FileHandle->Write(FileHandle, &BufferSize, FileData);
   FileHandle->Close(FileHandle);
-  DBG("not written %r\n", Status);
+//  DBG("not written %r\n", Status);
   return Status;
 }
 
@@ -541,9 +541,10 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
     } else {
       ptr++;
     }
-    Size = StrLen(ptr)+1;
+    CHAR16 *ptr2 = StrStr(ptr, L".");
+    Size = ptr2 - ptr + 2;
     IconName = AllocateZeroPool(Size);
-    UnicodeStrToAsciiStrS(ptr, IconName, Size);
+    UnicodeStrToAsciiStrS(ptr, IconName, Size - 2);
 
     while (OSIconsTable[i].name) {
       if (AsciiStrCmp(OSIconsTable[i].name, IconName) == 0) {

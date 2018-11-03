@@ -77,7 +77,7 @@ void DumpFloat (char* s, float* t, int N)
     float a = t[i];
     int b = (int)a;
     int sign = (a < 0.f);
-    DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-b)*1e6f)));
+    DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-(float)b)*1.0e6f)));
   }
   DBG("\n");
 #endif
@@ -93,8 +93,7 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
   float med = Array[Imed].y0;
 //  Temp = AllocatePool(sizeof(NSVGedge));
   // Sort around center
-  while (i <= j)
-  {
+  while (i <= j) {
     while (Array[i].y0 < med) i++;
     while (Array[j].y0 > med) j--;
     // Change
@@ -1696,11 +1695,11 @@ static void nsvg__rasterizeShapes(
     } else {
       shapeLink = shape;
     }
-    if (strstr(shapeLink->id, "shar")) {
-      DBG("ShapeID=%a\n", shapeLink->id);
-      DumpFloat("shape xform before move", &xform[0], 6);
+//    if (strstr(shapeLink->id, "shar")) {
+//      DBG("ShapeID=%a\n", shapeLink->id);
+//      DumpFloat("shape xform before move", &xform[0], 6);
 //      DBG("t4=%x t5=%x\n", xform[4], xform[5]);
-    }
+//    }
     xform[0] *= scalex;
     xform[1] *= scaley;
     xform[2] *= scalex;
@@ -1708,12 +1707,12 @@ static void nsvg__rasterizeShapes(
     xform[4] = xform[4] * scalex + tx;
     xform[5] = xform[5] * scaley + ty;
 
-    if (strstr(shapeLink->id, "shar")) {
-        DumpFloat("shape xform", &xform[0], 6);
-        DumpFloat("shape bounds", shapeLink->bounds, 4);
+//    if (strstr(shapeLink->id, "shar")) {
+//        DumpFloat("shape xform", &xform[0], 6);
+//        DumpFloat("shape bounds", shapeLink->bounds, 4);
 //      DBG("shape opacity=%s\n", PoolPrintFloat(shapeLink->opacity));
 //      DBG("shape flag=%d\n", (int)shapeLink->flags);
-    }
+//    }
 
      if( shapeLink->image_href && external_image )// load external file
      {
@@ -1833,8 +1832,8 @@ void nsvgRasterize(
   tx -= image->realBounds[0] * scalex;
   ty -= image->realBounds[1] * scaley;
 //  DBG("  image will be shifted by [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
-  DumpFloat("  image real bounds ", image->realBounds, 4);
-   // image will be shifted by [ 4.939199, 3.614399]
+//  DumpFloat("  image real bounds ", image->realBounds, 4);
+
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
 
   nsvg__rasterizeShapes(r, image->shapes, tx, ty, scalex, scaley,
