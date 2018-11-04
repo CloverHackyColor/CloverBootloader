@@ -736,7 +736,7 @@
 </font>
 
 	<g id="Background">
-	<rect id="BoundingRect" y="0" class="st0" width="1200" height="768"/>
+	<rect visibility="hidden" id="BoundingRect" y="0" class="st0" width="1200" height="768"/>
 
 		<radialGradient id="GrayRadialBackground_1_" cx="179.3926" cy="680.7656" r="0.8783" gradientTransform="matrix(4.702644e-14 768 768 -4.702644e-14 -522222.5 -137560.8906)" gradientUnits="userSpaceOnUse">
 		<stop  offset="0" style="stop-color:#606060"/>
@@ -745,80 +745,6 @@
 	<rect id="GrayRadialBackground" y="0" class="st1" width="1200" height="768"/>
 </g>
 <g id="MenuScreen_Transp" transform="translate(0.000000, 280.000000)" class="st2">
-	<g id="MenuContainer" transform="translate(330.000000, 88.000000)">
-		<rect id="ContainerBorder" x="0.5" y="0.5" class="st3" width="551" height="358"/>
-		<g id="MenuSelection" transform="translate(1.000000, 0.000000)">
-			<rect id="BoundingBox" y="0" class="st4" width="551" height="25"/>
-		</g>
-		<g id="MenuRows" transform="translate(29.000000, 0.000000)">
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 15)" class="st6 st7 st8">Boot Ags: </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 39)" class="st6 st7 st8">Confgs »</text>
-			</g>
-			<g>
-				<text transform="matrix(1 0 0 1 66.959 39)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 63)" class="st6 st7 st8">GUI tuning »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 88.6067 63)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 87)" class="st6 st7 st8">ACPI patching »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 114.9741 87)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 111)" class="st6 st7 st8">SMBIOS »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 73.7913 111)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 135)" class="st6 st7 st8">PCI devices »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 97.1824 135)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 159)" class="st6 st7 st8">CPU tuning »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 94.2388 159)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 183)" class="st6 st7 st8">Graphics Injector »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 134.2214 183)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 207)" class="st6 st7 st8">Audio tuning »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 102.2546 207)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 231)" class="st6 st7 st8">Binaries patching »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 136.0137 231)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 255)" class="st6 st7 st8">System parameters »</text>
-			</g>
-			<g class="st9">
-				<text transform="matrix(1 0 0 1 151.1499 255)" class="st6 st7 st8"> </text>
-			</g>
-			<g class="st5">
-				<text transform="matrix(1 0 0 1 0 279)" class="st6 st7 st8">Return</text>
-			</g>
-		</g>
-	</g>
 	<g id="Controls" transform="translate(330.000000, 88.000000)">
 		<g id="MenuScroll" transform="translate(540.000000, 0.000000)">
 			<rect id="Bar" y="0" class="st10" width="12" height="359"/>
@@ -826,7 +752,7 @@
 				C3.015,70,1,67.985,1,65.5v-59C1,4.015,3.015,2,5.5,2z"/>
 		</g>
 		<g id="radio_button_selected" transform="translate(0.000000, 97.000000)">
-			<rect id="BoundingRect_1_" y="0" class="st0" width="24" height="24"/>
+			<rect visibility="hidden" id="BoundingRect_1_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon" transform="translate(5.000000, 4.000000)">
 				<path id="Ring" class="st12" d="M7.5,0.75L7.5,0.75c3.728,0,6.75,3.022,6.75,6.75l0,0c0,3.728-3.022,6.75-6.75,6.75l0,0
 					c-3.728,0-6.75-3.022-6.75-6.75l0,0C0.75,3.772,3.772,0.75,7.5,0.75z"/>
@@ -834,14 +760,14 @@
 			</g>
 		</g>
 		<g id="radio_button" transform="translate(0.000000, 73.000000)">
-			<rect id="BoundingRect_2_" y="0" class="st0" width="24" height="24"/>
+			<rect visibility="hidden" id="BoundingRect_2_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon_1_" transform="translate(5.000000, 4.000000)">
 				<path id="Ring_1_" class="st12" d="M7.5,0.75L7.5,0.75c3.728,0,6.75,3.022,6.75,6.75l0,0c0,3.728-3.022,6.75-6.75,6.75l0,0
 					c-3.728,0-6.75-3.022-6.75-6.75l0,0C0.75,3.772,3.772,0.75,7.5,0.75z"/>
 			</g>
 		</g>
 		<g id="checkbox_checked" transform="translate(0.000000, 49.000000)">
-			<rect id="BoundingRect_3_" y="0" class="st0" width="24" height="24"/>
+			<rect visibility="hidden" id="BoundingRect_3_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon_2_" transform="translate(5.000000, 5.000000)">
 				<path id="Rectangle" class="st12" d="M4.25,0.25h6.5c1.657,0,3,1.343,3,3v6.5c0,1.657-1.343,3-3,3h-6.5c-1.657,0-3-1.343-3-3
 					v-6.5C1.25,1.593,2.593,0.25,4.25,0.25z"/>
@@ -849,7 +775,7 @@
 			</g>
 		</g>
 		<g id="checkbox" transform="translate(0.000000, 25.000000)">
-			<rect id="BoundingRect_4_" y="0" class="st0" width="24" height="24"/>
+			<rect visibility="hidden" id="BoundingRect_4_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon_3_">
 				<rect id="BoundingBox_5_" y="0" class="st0" width="24" height="24"/>
 				<path id="Rectangle_1_" class="st12" d="M9.25,5.25h6.5c1.657,0,3,1.343,3,3v6.5c0,1.657-1.343,3-3,3h-6.5c-1.657,0-3-1.343-3-3
@@ -857,13 +783,8 @@
 			</g>
 		</g>
 	</g>
-	<g id="MenuTitle" transform="translate(0.000000, 50.000000)">
-		<g class="st5">
-			<text transform="matrix(1 0 0 1 564.8 19)" class="st6 st7 st14">Options</text>
-		</g>
-	</g>
 	<g id="MenuIcon" transform="translate(576.000000, 0.000000)">
-		<rect id="BoundingRect_1_" y="0" class="st0" width="48" height="48"/>
+		<rect visibility="hidden" visibility="hidden" id="BoundingRect_1_" y="0" class="st0" width="48" height="48"/>
 		<g id="icon_4_" transform="translate(8.000000, 8.000000)">
 			<path id="Stroke-1" class="st13" d="M17.965,0.121c-1.305-0.161-2.625-0.161-3.931,0l-1.291,4.093
 				c-0.968,0.267-1.901,0.653-2.775,1.149L6.161,3.382c-1.037,0.808-1.97,1.742-2.779,2.78l1.981,3.806
@@ -881,7 +802,7 @@
 </g>
 <g id="MainScreen">
 	<g id="selection_big" transform="translate(528.000000, 320.000000)">
-		<rect id="BoundingRect_2_" y="0" class="st0" width="144" height="144"/>
+		<rect visibility="hidden" id="BoundingRect_2_" y="0" class="st0" width="144" height="144"/>
 		<g id="icon_5_" transform="translate(8.000000, 8.000000)" class="st15">
 			<path id="rrect" class="st6" d="M10,0h108c5.523,0,10,4.477,10,10v108c0,5.523-4.477,10-10,10H10c-5.523,0-10-4.477-10-10V10
 				C0,4.477,4.477,0,10,0z"/>
@@ -889,7 +810,7 @@
 	</g>
 	<g id="Volumes_Transp" transform="translate(792.000000, 0.000000)" class="st2">
 		<g id="vol_hfs_mojave">
-			<rect id="BoundingRect_3_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_3_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 33.664 114)" class="st6 st7 st16">MojaveTest</text>
 			<g id="icon_6_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -908,7 +829,7 @@
 			</g>
 		</g>
 		<g id="vol_ntfs_win7" transform="translate(0.000000, 128.000000)">
-			<rect id="BoundingRect_4_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_4_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 50.44 114)" class="st6 st7 st16">Win7</text>
 			<g id="icon_7_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_1_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -967,7 +888,7 @@
 			</g>
 		</g>
 		<g id="vol_hfs_hsierra" transform="translate(128.000000, 0.000000)">
-			<rect id="BoundingRect_5_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_5_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 44.11 114)" class="st6 st7 st16">HSDisk</text>
 			<g id="icon_8_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_2_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -986,7 +907,7 @@
 			</g>
 		</g>
 		<g id="vol_hfs_sierra" transform="translate(256.000000, 0.000000)">
-			<rect id="BoundingRect_6_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_6_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 41.116 114)" class="st6 st7 st16">SerraHD</text>
 			<g id="icon_9_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_3_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1007,7 +928,7 @@
 	</g>
 	<g id="Volumes" transform="translate(152.000000, 328.000000)">
 		<g id="vol_external" transform="translate(768.000000, 0.000000)">
-			<rect id="BoundingRect_7_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_7_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 28.78 114)" class="st6 st7 st16">External Disk</text>
 			<g id="icon_10_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_4_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1046,7 +967,7 @@
 			</g>
 		</g>
 		<g id="vol_internal" transform="translate(640.000000, 0.000000)">
-			<rect id="BoundingRect_8_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_8_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 43.108 114)" class="st6 st7 st16">Untitled</text>
 			<g id="icon_11_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_5_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1056,7 +977,7 @@
 			</g>
 		</g>
 		<g id="vol_internal_ntfs" transform="translate(512.000000, 0.000000)">
-			<rect id="BoundingRect_9_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_9_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 42.106 114)" class="st6 st7 st16">WinDisk</text>
 			<g id="icon_12_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_6_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1068,7 +989,7 @@
 			</g>
 		</g>
 		<g id="vol_internal_hfs" transform="translate(384.000000, 0.000000)">
-			<rect id="BoundingRect_10_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_10_" y="0" class="st0" width="128" height="128" visibility="hidden" />
 			<text transform="matrix(1 0 0 1 35.326 114)" class="st6 st7 st16">SystemHD</text>
 			<g id="icon_13_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_7_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1084,7 +1005,7 @@
 			</g>
 		</g>
 		<g id="vol_internal_recovery" transform="translate(256.000000, 0.000000)">
-			<rect id="BoundingRect_11_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_11_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 38.782 114)" class="st6 st7 st16">Recovery</text>
 			<g id="icon_14_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_8_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1098,7 +1019,7 @@
 			</g>
 		</g>
 		<g id="vol_internal_ext" transform="translate(128.000000, 0.000000)">
-			<rect id="BoundingRect_12_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_12_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 37.882 114)" class="st6 st7 st16">LinuxDisk</text>
 			<g id="icon_15_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_9_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1235,7 +1156,7 @@
 			</g>
 		</g>
 		<g id="vol_internal_booter">
-			<rect id="BoundingRect_13_" y="0" class="st0" width="128" height="128"/>
+			<rect visibility="hidden" id="BoundingRect_13_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 45.892 114)" class="st6 st7 st16">Booter</text>
 			<g id="icon_16_" transform="translate(31.000000, 15.000000)">
 				<path id="bottom_10_" class="st17" d="M7,0h52c3.866,0,7,3.134,7,7v66c0,3.866-3.134,7-7,7H7c-3.866,0-7-3.134-7-7V7
@@ -1261,7 +1182,7 @@
 	</g>
 	<g id="OS_Transp_1_" class="st4" visibility="hidden">
 		<g id="os_hsierra">
-			<rect id="BoundingRect_39_" y="0" class="st0" width="128" height="128" visibility="hidden"/>
+			<rect visibility="hidden" id="BoundingRect_39_" y="0" class="st0" width="128" height="128" visibility="hidden"/>
 			<g id="icon_28_">
 				<text id="Name_1_" transform="matrix(1 0 0 1 41.4738 72.3878)" class="st33 st9 st24">High Sierra</text>
 				<g id="Logo_1_">
@@ -1406,7 +1327,7 @@
 			</g>
 		</g>
 		<g id="os_moja">
-			<rect id="BoundingRect_40_" x="128" y="0" class="st0" width="128" height="128" visibility="hidden"/>
+			<rect visibility="hidden" id="BoundingRect_40_" x="128" y="0" class="st0" width="128" height="128" visibility="hidden"/>
 			<g id="icon_38_">
 				<text id="Name_2_" transform="matrix(1 0 0 1 177.2189 72.3878)" class="st33 st9 st24">Mojave</text>
 				<g id="Logo">
@@ -1472,7 +1393,7 @@
 	</g>
 
 	<g id="selection_small" transform="translate(600.000000, 475.000000)" class="st2">
-		<rect id="BoundingRect_14_" y="0" class="st0" width="64" height="64"/>
+		<rect visibility="hidden" id="BoundingRect_14_" y="0" class="st0" width="64" height="64"/>
 		<g id="icon_17_" transform="translate(1.000000, 1.000000)" class="st49">
 			<path id="rrect_1_" class="st6" d="M10,0h42c5.523,0,10,4.477,10,10v42c0,5.523-4.477,10-10,10H10C4.477,62,0,57.523,0,52V10
 				C0,4.477,4.477,0,10,0z"/>
@@ -1480,7 +1401,7 @@
 	</g>
 	<g id="Functions_Transp" transform="translate(416.000000, 692.000000)" class="st2">
 		<g id="func_secureboot_config" transform="translate(128.000000, 0.000000)">
-			<rect id="BoundingRect_15_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_15_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_18_" transform="translate(8.000000, 8.000000)">
 				<path id="Stroke-1_2_" class="st50" d="M0.5,16C0.5,7.439,7.439,0.5,16,0.5S31.5,7.439,31.5,16S24.561,31.5,16,31.5
 					S0.5,24.561,0.5,16z"/>
@@ -1490,7 +1411,7 @@
 			</g>
 		</g>
 		<g id="func_secureboot" transform="translate(64.000000, 0.000000)">
-			<rect id="BoundingRect_16_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_16_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_19_" transform="translate(8.000000, 8.000000)">
 				<path id="Stroke-1_3_" class="st50" d="M0.5,16C0.5,7.439,7.439,0.5,16,0.5S31.5,7.439,31.5,16S24.561,31.5,16,31.5
 					S0.5,24.561,0.5,16z"/>
@@ -1500,7 +1421,7 @@
 			</g>
 		</g>
 		<g id="func_help">
-			<rect id="BoundingRect_17_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_17_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_20_" transform="translate(8.000000, 8.000000)">
 				<path id="Stroke-1_4_" class="st50" d="M0.5,16C0.5,7.439,7.439,0.5,16,0.5S31.5,7.439,31.5,16S24.561,31.5,16,31.5
 					S0.5,24.561,0.5,16z"/>
@@ -1510,7 +1431,7 @@
 	</g>
 	<g id="Functions" transform="translate(416.000000, 482.000000)" class="st53">
 		<g id="func_shutdown" transform="translate(320.000000, 0.000000)">
-			<rect id="BoundingRect_18_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_18_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_21_" transform="translate(10.000000, 8.000000)">
 				<path id="Stroke-1_5_" class="st13" d="M25.5,14.498v9.415c0,3.073-2.514,5.587-5.587,5.587H6.087
 					c-3.073,0-5.587-2.514-5.587-5.587V10.087C0.5,7.014,3.014,4.5,6.087,4.5h9.223"/>
@@ -1519,13 +1440,13 @@
 			</g>
 		</g>
 		<g id="func_reset" transform="translate(256.000000, 0.000000)">
-			<rect id="BoundingRect_19_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_19_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_22_" transform="translate(12.000000, 10.000000)">
 				<polygon id="Stroke-1_6_" class="st13" points="0,14.032 17.568,28.064 17.568,0 				"/>
 			</g>
 		</g>
 		<g id="func_about" transform="translate(192.000000, 0.000000)">
-			<rect id="BoundingRect_20_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_20_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_23_" transform="translate(8.000000, 8.000000)">
 				<path id="Stroke-1_7_" class="st54" d="M13.985,13.994V5.019L13.984,5.01c-0.074-0.913-0.487-1.782-1.193-2.487
 					c-1.569-1.569-4.113-1.569-5.682,0C6.43,3.201,6.028,4.078,5.947,5.012l-0.07,0.874L5.003,5.957
@@ -1545,7 +1466,7 @@
 			</g>
 		</g>
 		<g id="func_options" transform="translate(128.000000, 0.000000)">
-			<rect id="BoundingRect_21_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_21_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_24_" transform="translate(8.000000, 8.000000)">
 				<path id="Stroke-1_8_" class="st13" d="M17.965,0.121c-1.305-0.161-2.625-0.161-3.931,0l-1.291,4.093
 					c-0.968,0.267-1.901,0.653-2.775,1.149L6.161,3.382c-1.037,0.808-1.97,1.742-2.779,2.78l1.981,3.806
@@ -1561,14 +1482,14 @@
 			</g>
 		</g>
 		<g id="func_clover" transform="translate(64.000000, 0.000000)">
-			<rect id="BoundingRect_22_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_22_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_25_" transform="translate(9.000000, 9.000000)">
 				<polygon id="Stroke-1_9_" class="st55" points="15.5,22 22.5,13 8.5,13 				"/>
 				<path id="Stroke-3_3_" class="st50" d="M0,15.5C0,6.939,6.939,0,15.5,0S31,6.939,31,15.5S24.061,31,15.5,31S0,24.061,0,15.5z"/>
 			</g>
 		</g>
 		<g id="tool_shell">
-			<rect id="BoundingRect_23_" y="0" class="st0" width="48" height="48"/>
+			<rect visibility="hidden" id="BoundingRect_23_" y="0" class="st0" width="48" height="48"/>
 			<g id="icon_26_" transform="translate(9.000000, 9.000000)">
 				<polyline id="Stroke-1_10_" class="st13" points="7,22.183 14,15 7,7.818 				"/>
 				<path id="Stroke-3_4_" class="st50" d="M24.493,30H5.507C2.478,30,0,27.522,0,24.493V5.507C0,2.478,2.478,0,5.507,0h18.986
@@ -1585,7 +1506,7 @@
 </g>
 <g id="CommonItems" transform="translate(536.000000, 117.000000)">
 	<g id="Banner">
-		<rect id="BoundingRect_24_" y="0" class="st0" width="128" height="128" />
+		<rect visibility="hidden" id="BoundingRect_24_" y="0" class="st0" width="128" height="128" />
 		<g id="icon_27_" transform="translate(9.533333, 1.706667)">
 			<path id="LogoShadow" class="st56" d="M76.342,33.475h-0.064h-20v19.999v0.065c0.185,2.282,1.214,4.45,2.961,6.195
 				c3.905,3.906,10.236,3.906,14.141,0c1.746-1.746,2.711-3.978,2.896-6.26h0.002v-0.002c2.281-0.184,4.513-1.148,6.259-2.895
@@ -1718,7 +1639,7 @@
 		</g>
 	</g>
 	<g id="pointer" transform="translate(79.000000, 263.000000)">
-		<rect id="BoundingRect_25_" x="1" y="0" class="st0" width="22" height="22"/>
+		<rect visibility="hidden" id="BoundingRect_25_" x="1" y="0" class="st0" width="22" height="22"/>
 
 			<linearGradient id="Shadow_1_" gradientUnits="userSpaceOnUse" x1="-449.2685" y1="305.5207" x2="-449.2685" y2="304.5207" gradientTransform="matrix(13.0007 0 0 -20.2588 5848.2881 6189.624)">
 			<stop  offset="0" style="stop-color:#000000;stop-opacity:0.0956"/>
