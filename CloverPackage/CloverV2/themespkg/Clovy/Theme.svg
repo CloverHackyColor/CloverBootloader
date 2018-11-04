@@ -79,7 +79,7 @@
 <clover:theme
   SelectionOnTop="0" BadgeOffsetX="0xFFFF" BadgeOffsetY="0xFFFF" NonSelectedGrey="0" CharWidth="14"
   BackgroundDark="1" BackgroundSharp="0x80" Badges="none"
-  SelectionColor="0x80808080"
+  SelectionColor="0x80808080" VerticalLayout="0"
   />
 <font horiz-adv-x="2048">
 
@@ -809,7 +809,7 @@
 		</g>
 	</g>
 	<g id="Volumes_Transp" transform="translate(792.000000, 0.000000)" class="st2">
-		<g id="vol_hfs_mojave">
+		<g id="vol_internal_apfs">
 			<rect visibility="hidden" id="BoundingRect_3_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 33.664 114)" class="st6 st7 st16">MojaveTest</text>
 			<g id="icon_6_" transform="translate(31.000000, 15.000000)">
@@ -1004,7 +1004,7 @@
 					c1.115,0,3.208-1.236,5.408-1.055c0.921,0.033,3.505,0.304,5.165,2.281C42.127,28.909,39.174,30.309,39.209,33.22"/>
 			</g>
 		</g>
-		<g id="vol_internal_recovery" transform="translate(256.000000, 0.000000)">
+		<g id="vol_recovery" transform="translate(256.000000, 0.000000)">
 			<rect visibility="hidden" id="BoundingRect_11_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 38.782 114)" class="st6 st7 st16">Recovery</text>
 			<g id="icon_14_" transform="translate(31.000000, 15.000000)">
@@ -1018,7 +1018,7 @@
 				</g>
 			</g>
 		</g>
-		<g id="vol_internal_ext" transform="translate(128.000000, 0.000000)">
+		<g id="vol_internal_ext3" transform="translate(128.000000, 0.000000)">
 			<rect visibility="hidden" id="BoundingRect_12_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 37.882 114)" class="st6 st7 st16">LinuxDisk</text>
 			<g id="icon_15_" transform="translate(31.000000, 15.000000)">
@@ -1155,7 +1155,7 @@
 				</g>
 			</g>
 		</g>
-		<g id="vol_internal_booter">
+		<g id="vol_clover">
 			<rect visibility="hidden" id="BoundingRect_13_" y="0" class="st0" width="128" height="128"/>
 			<text transform="matrix(1 0 0 1 45.892 114)" class="st6 st7 st16">Booter</text>
 			<g id="icon_16_" transform="translate(31.000000, 15.000000)">

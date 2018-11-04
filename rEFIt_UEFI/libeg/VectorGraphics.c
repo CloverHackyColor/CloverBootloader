@@ -159,16 +159,16 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
 //  DumpFloat2("p2 image bounds", bounds, 4);
   // Patch: save real bounds.
   memcpy(IconImage->realBounds, bounds, 4*sizeof(float));
-
+/*
   if (strstr(IconName, "vol_internal") != NULL) {
     DBG("icon=%a ", IconName);
     DumpFloat2(" ", bounds, 4);
   }
-
+*/
   if ((Id == BUILTIN_ICON_BANNER) && (strcmp(IconName, "Banner") == 0)) {
     GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
     GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
-    DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
+//    DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
   }
 
   float Height = IconImage->height * Scale;
@@ -306,69 +306,22 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     i++;
   }
 
-  //Test text
-#if TEST_FONT
-  if (fontSVG) {
-    EFI_STATUS Status = EFI_SUCCESS;
-    INTN iHeight = 260;
-    INTN iWidth = UGAWidth-200;
-    DBG("test font: create textbuffer\n");
-    EG_IMAGE* TextBufferXY = egCreateFilledImage(iWidth, iHeight, TRUE, &DarkSelectionPixel);
-    drawSVGtext(TextBufferXY, fontSVG, L"Clover ready", NSVG_RGBA(150, 150, 150, 255));
-    //---------
-    //save picture as png yyyyy
-    UINT8           *FileData = NULL;
-    UINTN           FileDataLength = 0U;
-    EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)TextBufferXY->PixelData;
-
-    unsigned lode_return =
-    eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, iWidth, iHeight);
-    DBG("  encode %d filelen=%d\n", lode_return, FileDataLength);
-    if (!lode_return) {
-      Status = egSaveFile(SelfRootDir, L"\\TestTextSVG.png", FileData, FileDataLength);
-      DBG("save file status=%r\n", Status);
-    } else {
-      DBG("wrong encode %d\n", lode_return);
-    }
-    //----------
-
-
-    DBG("text ready to blit\n");
-    BltImageAlpha(TextBufferXY,
-                  (UGAWidth - iWidth) / 2,
-                  (UGAHeight - iHeight) / 2,
-                  &MenuBackgroundPixel,
-                  16);
-    egFreeImage(TextBufferXY);
-    //    DBG("draw finished\n");
-    WaitForKeyPress(L"waiting for key press...\n");
-  }
-#endif
 
   if (p) {
     nsvg__deleteParser(p);
     p = NULL;
   }
 
-#if 0 //TEST_FONT
-  if (p1) {
-    nsvg__deleteParser(p1);
-    p1 = NULL;
-  }
-#endif
-
   nsvgDeleteRasterizer(rast);
 
-  *dict = AllocatePool(sizeof(TagStruct));
+  *dict = AllocateZeroPool(sizeof(TagStruct));
   (*dict)->type = kTagTypeNone;
   GlobalConfig.TypeSVG = TRUE;
   GlobalConfig.ThemeDesignHeight = (int)SVGimage->height;
   GlobalConfig.ThemeDesignWidth = (int)SVGimage->width;
   row0TileSize = (INTN)(144.f * Scale);
   row1TileSize = (INTN)(64.f * Scale);
-//  GlobalConfig.SelectionOnTop = FALSE;
   return EFI_SUCCESS;
-//  return EFI_NOT_READY;
 }
 
 VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
@@ -386,10 +339,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
     egFreeImage (FontImage);
     FontImage = NULL;
   }
-  INTN Height = FontHeight + 2;
-//  INTN Width = Height * (0xC0 + GlobalConfig.CodepageSize);
-//  FontWidth = Height;
-//  FontImage = egCreateImage(Width, Height, TRUE);
+  INTN Height = FontHeight + 4;
 //  DBG("load font %a\n", fontSVG->fontFamily);
   if (fontSVG->unitsPerEm < 1.f) {
     fontSVG->unitsPerEm = 1000.f;
@@ -429,7 +379,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
   //0..0xC0 == AsciiPageSize
   // cyrillic 0x410..0x450 at 0xC0
   float x = 0.f;
-  float y = 0.f; //(float)Height;
+  float y = -1.0f; //(float)Height;
   p->isText = TRUE;
   for (i = 0; i < AsciiPageSize; i++) {
     addLetter(p, i, x, y, FontScale, color);
@@ -449,7 +399,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
   rast = nsvgCreateRasterizer();
   nsvgRasterize(rast, p->image, 0, 0, 1.0f, 1.0f, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
 
-#if DEBUG_FONT
+#if 0 //DEBUG_FONT
   //save font as png yyyyy
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;

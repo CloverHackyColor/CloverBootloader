@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -3333,6 +3333,8 @@ static void parseTheme(NSVGparser* p, const char** dict)
       }
     } else if (strcmp(dict[i], "SelectionColor") == 0) {
       GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "VerticalLayout") == 0) {
+      GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1]);
 
     } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }

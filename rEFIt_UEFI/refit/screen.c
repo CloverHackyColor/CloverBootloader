@@ -445,8 +445,8 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
       // Banner was loaded, so calculate its size and position
       BannerPlace.Width = Banner->Width;
       BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
-      DBG("banner width-height [%d,%d]\n", BannerPlace.Width, BannerPlace.Height);
-      DBG("global banner pos [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
+ //     DBG("banner width-height [%d,%d]\n", BannerPlace.Width, BannerPlace.Height);
+ //     DBG("global banner pos [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
       if (GlobalConfig.TypeSVG) {
         BannerPlace.XPos = GlobalConfig.BannerPosX;
         BannerPlace.YPos = GlobalConfig.BannerPosY;
@@ -462,18 +462,18 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
           // Check if banner is required to be nudged.
           BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
           BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
-          DBG("banner position new style\n");
+ //         DBG("banner position new style\n");
         } else {
           // Use rEFIt default (no placement values speicifed)
           BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
           BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
-          DBG("banner position old style\n");
+  //        DBG("banner position old style\n");
         }
       }
     }
   }
-  //xxx
-  DBG("Banner position [%d,%d]\n",  BannerPlace.XPos, BannerPlace.YPos);
+
+//  DBG("Banner position [%d,%d]\n",  BannerPlace.XPos, BannerPlace.YPos);
 
   if (!Banner || (GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER) || 
       !IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) || 

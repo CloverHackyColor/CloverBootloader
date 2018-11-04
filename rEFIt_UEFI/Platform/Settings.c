@@ -155,7 +155,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     SignatureFixup;
   FALSE,          // BOOLEAN     DarkEmbedded;
   FALSE,          // BOOLEAN     TypeSVG;
-  0,              // INTN        Codepage;
+  0xC0,           // INTN        Codepage;
   0,              // INTN        CodepageSize;
   1.0f,           // float       Scale;
   0.0f,           // float       CentreShift;
@@ -2751,7 +2751,8 @@ GetEarlyUserSettings (
         AsciiStrCpyS (gSettings.Language, 16, Prop->string);
         if (AsciiStrStr (Prop->string, "en")) {
           gLanguage = english;
-          GlobalConfig.Codepage = 0;
+          GlobalConfig.Codepage = 0xC0;
+          GlobalConfig.CodepageSize = 0;
         } else if (AsciiStrStr (Prop->string, "ru")) {
           gLanguage = russian;
           GlobalConfig.Codepage = 0x410;
@@ -3850,7 +3851,6 @@ GetThemeTagSettings (
           Anime->Next = GuiAnime;
         }
         GuiAnime      = Anime;
-        
       } else {
         GuiAnime      = Anime; //first anime
       }
@@ -3911,7 +3911,6 @@ LoadTheme (CHAR16 *TestTheme)
     if (ThemePath != NULL) {
       FreePool (ThemePath);
     }
-    
     if (UGAHeight > HEIGHT_2K) {
       ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
     } else {
@@ -3922,7 +3921,6 @@ LoadTheme (CHAR16 *TestTheme)
         ThemeDir->Close (ThemeDir);
         ThemeDir = NULL;
       }
-      
       Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
       if (EFI_ERROR (Status)) {
         FreePool (ThemePath);
@@ -3933,33 +3931,27 @@ LoadTheme (CHAR16 *TestTheme)
         Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
           Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict, 0);
-          
           if (EFI_ERROR(Status)) {
             ThemeDict = NULL;
           }
-          
           if (ThemeDict == NULL) {
             DBG("svg file %s not parsed\n", CONFIG_THEME_SVG);
           } else {
             DBG("Using vector theme '%s' (%s)\n", TestTheme, ThemePath);
           }
-         
         } else {
           Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
           if (!EFI_ERROR (Status) && (ThemePtr != NULL) && (Size != 0)) {
             Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
-            
             if (EFI_ERROR (Status)) {
               ThemeDict = NULL;
             }
-            
             if (ThemeDict == NULL) {
               DBG ("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
             } else {
               DBG ("Using theme '%s' (%s)\n", TestTheme, ThemePath);
             }
           }
-          
         }
       }
     }
@@ -4020,7 +4012,7 @@ InitTheme(
   KillMouse();
   
   // Invalidate BuiltinIcons
-  //  DBG ("Invalidating BuiltinIcons...\n");
+//    DBG ("Invalidating BuiltinIcons...\n");
   for (i = 0; i < BUILTIN_ICON_COUNT; i++) {
     if (BuiltinIconTable[i].Image != NULL) {
       egFreeImage (BuiltinIconTable[i].Image);
@@ -4047,13 +4039,13 @@ InitTheme(
       if (TestTheme != NULL) {
         ThemeDict = LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
-          //        DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
+//                  DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
           if (GlobalConfig.Theme) {
             FreePool (GlobalConfig.Theme);
           }
           GlobalConfig.Theme = TestTheme;
         } else { // special theme not loaded
-          //         DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
+ //                  DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
           FreePool (TestTheme);
         }
         TestTheme = NULL;
@@ -4074,7 +4066,6 @@ InitTheme(
         TestTheme   = PoolPrint (L"%a", ChosenTheme);
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
-          //         DBG("3\n");
           if (ThemeDict != NULL) {
             DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
             if (GlobalConfig.Theme != NULL) {
@@ -4116,16 +4107,8 @@ InitTheme(
         }
       }
     }
-    // Try to get a theme
-/*  if (ThemeDict == NULL) { //use embedded
-      ThemeDict = LoadTheme (ThemesList[Rnd]);
-      if (ThemeDict != NULL) {
-        GlobalConfig.Theme = AllocateCopyPool (StrSize (ThemesList[Rnd]), ThemesList[Rnd]);
-      }
-    } */
   } // ThemesNum>0
-  
-  
+
 finish:
   if (!ThemeDict) {  // No theme could be loaded, use embedded
     DBG (" using embedded theme\n");
@@ -4151,11 +4134,13 @@ finish:
     GlobalConfig.BadgeScale = 16;
   } else { // theme loaded successfully
     // read theme settings
-    TagPtr DictPointer = GetProperty(ThemeDict, "Theme");
-    if (DictPointer != NULL) {
-      Status = GetThemeTagSettings(DictPointer);
-      if (EFI_ERROR (Status)) {
-        DBG ("Config theme error: %r\n", Status);
+    if (!GlobalConfig.TypeSVG) {
+      TagPtr DictPointer = GetProperty(ThemeDict, "Theme");
+      if (DictPointer != NULL) {
+        Status = GetThemeTagSettings(DictPointer);
+        if (EFI_ERROR (Status)) {
+          DBG ("Config theme error: %r\n", Status);
+        }
       }
     }
     FreeTag(ThemeDict);
@@ -4166,12 +4151,9 @@ finish:
       break;
     }
   }
-  
   if (ChosenTheme != NULL) {
     FreePool (ChosenTheme);
   }
-  
-  //  DBG("8\n");
   PrepareFont();
   return Status;
 }
