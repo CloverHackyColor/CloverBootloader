@@ -342,8 +342,8 @@ UINT8 kabylake_ig_vals[19][4] = {
   { 0x00, 0x00, 0x27, 0x59 },   //14 Intel Iris Plus Graphics 650 - Mobile: 0, PipeCount: 3, PortCount: 3, STOLEN: 38MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
   { 0x04, 0x00, 0x27, 0x59 },   //15 *MacBookPro14,2 - Intel Iris Plus Graphics 650 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
   { 0x09, 0x00, 0x27, 0x59 },   //16 Intel Iris Plus Graphics 650 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 38MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x00, 0x00, 0xC0, 0x87 },   //17 Intel UHD Graphics 615 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 34MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
-  { 0x05, 0x00, 0xC0, 0x87 },   //18 Intel UHD Graphics 615 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x00, 0x00, 0xC0, 0x87 },   //17 Intel UHD Graphics 617 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 34MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
+  { 0x05, 0x00, 0xC0, 0x87 },   //18 *MacBookAir8,1 - Intel UHD Graphics 617 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 1388
 };
 
 UINT8 kabylake_hd_vals[12][4] = {
@@ -827,7 +827,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //----------------Amber Lake----------------
   //GT2
   { 0x591C, "Intel Amber Lake GT2"           }, //
-  { 0x87C0, "Intel UHD Graphics 615"         }, // Mobile
+  { 0x87C0, "Intel UHD Graphics 617"         }, // Mobile
 
   //----------------Coffee Lake---------------
   //GT1
@@ -840,7 +840,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3E96, "Intel Coffee Lake GT2"          }, //
   { 0x3E98, "Intel UHD Graphics 630"         }, // Desktop
   { 0x3E9A, "Intel Coffee Lake GT2"          }, //
-  { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile - MacBookPro15,1
+  { 0x3E9B, "Intel UHD Graphics 630"         }, // Mobile - MacBookPro15,1/Macmini8,1
   //GT3
   { 0x3EA5, "Intel Iris Plus Graphics 655"   }, // Mobile - MacBookPro15,2
   { 0x3EA6, "Intel Coffee Lake GT3"          }, //
@@ -2570,7 +2570,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       //----------------Amber Lake----------------
       //GT2
     case 0x591C: // "Intel Amber Lake GT2"            //
-    case 0x87C0: // "Intel UHD Graphics 615"          // Mobile
+    case 0x87C0: // "Intel UHD Graphics 617"          // Mobile
       switch (gma_dev->device_id) {
         case 0x5902:
         case 0x5906:
@@ -2740,7 +2740,6 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           switch (gma_dev->device_id) {
             case 0x5917:
-            case 0x87C0:
               // Rehabman: GfxYTile causes a hang on boot in 10.14 beta when using Kaby Lake-R UHD Graphics 620
               if (os_version < AsciiOSVersionToUint64("10.14")) {
                 devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
@@ -2764,7 +2763,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3E96: // "Intel Coffee Lake GT2"           //
     case 0x3E98: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
-    case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1
+    case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1/Macmini8,1
       //GT3
     case 0x3EA5: // "Intel Iris Plus Graphics 655"    // Mobile - MacBookPro15,2
     case 0x3EA6: // "Intel Coffee Lake GT3"           //
@@ -2774,7 +2773,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x3E90:
         case 0x3E93:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E908086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2802,7 +2801,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E91:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E918086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2831,7 +2830,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x3E92:
         case 0x3E98:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E928086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2859,7 +2858,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E9B:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E9B8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2887,7 +2886,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3EA5:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3EA58086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2922,21 +2921,20 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         default:
           switch (MacModel) {
-            // TODO: need to check ioreg
             case MacBookPro151:  // it has only the "graphic-options" value. However, we use built-in graphics.
             case MacBookPro152:
-              //devprop_add_value(device, "AAPL,Gfx324", coffeelake_hd_vals[0], 4);
-              //devprop_add_value(device, "AAPL00,PanelCycleDelay", coffeelake_hd_vals[2], 4);
-              //devprop_add_value(device, "AAPL00,PanelPowerDown", coffeelake_hd_vals[3], 4);
-              //devprop_add_value(device, "AAPL00,PanelPowerOff", coffeelake_hd_vals[4], 4);
-              //devprop_add_value(device, "AAPL00,PanelPowerOn", coffeelake_hd_vals[5], 4);
-              //devprop_add_value(device, "AAPL00,PanelPowerUp", coffeelake_hd_vals[6], 4);
-              //devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
+              devprop_add_value(device, "AAPL,Gfx324", coffeelake_hd_vals[0], 4);
+              devprop_add_value(device, "AAPL00,PanelCycleDelay", coffeelake_hd_vals[2], 4);
+              devprop_add_value(device, "AAPL00,PanelPowerDown", coffeelake_hd_vals[3], 4);
+              devprop_add_value(device, "AAPL00,PanelPowerOff", coffeelake_hd_vals[4], 4);
+              devprop_add_value(device, "AAPL00,PanelPowerOn", coffeelake_hd_vals[5], 4);
+              devprop_add_value(device, "AAPL00,PanelPowerUp", coffeelake_hd_vals[6], 4);
+              devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
               break;
             default:
               break;
           }
-          //devprop_add_value(device, "AAPL,GfxYTile", coffeelake_hd_vals[1], 4);
+          devprop_add_value(device, "AAPL,GfxYTile", coffeelake_hd_vals[1], 4);
           break;
       }
       break;

@@ -7196,7 +7196,7 @@ SetDevices (LOADER_ENTRY *Entry)
                 //  Sandy Bridge/Ivy Bridge: 0x0710
                 //  Haswell/Broadwell: 0x056C/0x07A1/0x0AD9/0x1499
                 //  Skylake/KabyLake: 0x056C
-                //  Coffee Lake: 0xFF7B/0xFFFF
+                //  Coffee Lake: 0xFFFF
                 switch (Pci.Hdr.DeviceId) {
                   case 0x0102: // "Intel HD Graphics 2000"
                   case 0x0106: // "Intel HD Graphics 2000"
@@ -7405,7 +7405,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x5926: // "Intel Iris Plus Graphics 640"
                   case 0x5927: // "Intel Iris Plus Graphics 650"
                   case 0x5917: // "Intel UHD Graphics 620"
-                  case 0x87C0: // "Intel UHD Graphics 615"
+                  case 0x87C0: // "Intel UHD Graphics 617"
                     FBLEVX = 0x056C;
                     break;
 
@@ -7437,6 +7437,51 @@ SetDevices (LOADER_ENTRY *Entry)
                                                 );
                 }
 
+                switch (gCPUStructure.Model) {
+                  case CPU_MODEL_SANDY_BRIDGE:
+                  case CPU_MODEL_IVY_BRIDGE:
+                  case CPU_MODEL_IVY_BRIDGE_E5:
+                    // if change SYS LEVW to macOS LEVW, the brightness of the pop-up may decrease or increase.
+                    // but the brightness of the monitor will not actually change. so we should not use this.
+                    MsgLog ("  Skip writing macOS LEVW: 0x%x\n", MACLEVW);
+                    break;
+
+                  case CPU_MODEL_HASWELL:
+                  case CPU_MODEL_HASWELL_ULT:
+                  case CPU_MODEL_HASWELL_U5:    // Broadwell
+                  case CPU_MODEL_BROADWELL_HQ:
+                  case CPU_MODEL_BROADWELL_E5:
+                  case CPU_MODEL_BROADWELL_DE:
+                    // if not change SYS LEVW to macOS LEVW, backlight will be dark and don't work keys for backlight.
+                    // so we should use this.
+                    MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
+
+                    /*Status = */PciIo->Mem.Write(
+                                                  PciIo,
+                                                  EfiPciIoWidthUint32,
+                                                  0,
+                                                  0xC8250,
+                                                  1,
+                                                  &MACLEVW
+                                                  );
+                    break;
+
+                  default:
+                    if (gSettings.IntelBacklight) {
+                      MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
+
+                      /*Status = */PciIo->Mem.Write(
+                                                    PciIo,
+                                                    EfiPciIoWidthUint32,
+                                                    0,
+                                                    0xC8250,
+                                                    1,
+                                                    &MACLEVW
+                                                    );
+                    }
+                    break;
+                }
+
                 switch (Pci.Hdr.DeviceId) {
                   case 0x0042: // "Intel HD Graphics"
                   case 0x0046: // "Intel HD Graphics"
@@ -7453,10 +7498,6 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0162: // "Intel HD Graphics 4000"
                   case 0x0166: // "Intel HD Graphics 4000"
                   case 0x016A: // "Intel HD Graphics P4000"
-                    // Write LEVW
-                    // if change SYS LEVW to macOS LEVW, the brightness of the pop-up may decrease or increase.
-                    // but the brightness of the monitor will not actually change. so we should not use this.
-
                     // Write LEVL/LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (!LEVL) {
@@ -7508,19 +7549,6 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E92: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
-                    // Write LEVW
-                    if (gSettings.IntelBacklight) {
-                      MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
-                      /*Status = */PciIo->Mem.Write(
-                                                    PciIo,
-                                                    EfiPciIoWidthUint32,
-                                                    0,
-                                                    0xC8250,
-                                                    1,
-                                                    &MACLEVW
-                                                    );
-                    }
-
                     // Write LEVD
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
@@ -7545,19 +7573,6 @@ SetDevices (LOADER_ENTRY *Entry)
                     break;
 
                   default:
-                    // Write LEVW
-                    if (gSettings.IntelBacklight) {
-                      MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
-                      /*Status = */PciIo->Mem.Write(
-                                                    PciIo,
-                                                    EfiPciIoWidthUint32,
-                                                    0,
-                                                    0xC8250,
-                                                    1,
-                                                    &MACLEVW
-                                                    );
-                    }
-
                     // Write LEVX
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
@@ -7571,6 +7586,7 @@ SetDevices (LOADER_ENTRY *Entry)
                         MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                         LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
                       }
+
                       MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
 
                       /*Status = */PciIo->Mem.Write(
