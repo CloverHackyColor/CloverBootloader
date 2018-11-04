@@ -707,6 +707,8 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     DBG("Can't create CompImage\n");
     return;
   }
+  DBG("compose image total=[%d,%d], comp=[%d,%d] at [%d,%d]\n", TotalWidth, TotalHeight,
+      CompWidth, CompHeight, XPos, YPos);
   //to simplify suppose square images
   if (CompWidth < TotalWidth) {
     OffsetX = (TotalWidth - CompWidth) >> 1;

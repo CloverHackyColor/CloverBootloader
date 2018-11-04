@@ -4,7 +4,8 @@
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:clover="https://sourceforge.net/projects/cloverefiboot"
-	 x="0px" y="0px" viewBox="0 0 1200 768" style="enable-background:new 0 0 1200 768;" xml:space="preserve">
+	 x="0px" y="0px" viewBox="0 0 1200 768"
+	 xml:space="preserve">
 <style type="text/css">
 	.st0{fill:none;}
 	.st1{fill:url(#GrayRadialBackground_1_);}
@@ -76,7 +77,7 @@
 	.st67{stroke:#00FF00;}
 </style>
 <clover:theme
-  SelectionOnTop="0" BadgeOffsetX="0xFFFF" BadgeOffsetY="0xFFFF" NonSelectedGrey="0" CharWidth="16"
+  SelectionOnTop="0" BadgeOffsetX="0xFFFF" BadgeOffsetY="0xFFFF" NonSelectedGrey="0" CharWidth="14"
   BackgroundDark="1" BackgroundSharp="0x80" Badges="none"
   SelectionColor="0x80808080"
   />
@@ -825,7 +826,7 @@
 				C3.015,70,1,67.985,1,65.5v-59C1,4.015,3.015,2,5.5,2z"/>
 		</g>
 		<g id="radio_button_selected" transform="translate(0.000000, 97.000000)">
-			<rect id="BoundingBox_1_" y="0" class="st0" width="24" height="24"/>
+			<rect id="BoundingRect_1_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon" transform="translate(5.000000, 4.000000)">
 				<path id="Ring" class="st12" d="M7.5,0.75L7.5,0.75c3.728,0,6.75,3.022,6.75,6.75l0,0c0,3.728-3.022,6.75-6.75,6.75l0,0
 					c-3.728,0-6.75-3.022-6.75-6.75l0,0C0.75,3.772,3.772,0.75,7.5,0.75z"/>
@@ -833,14 +834,14 @@
 			</g>
 		</g>
 		<g id="radio_button" transform="translate(0.000000, 73.000000)">
-			<rect id="BoundingBox_2_" y="0" class="st0" width="24" height="24"/>
+			<rect id="BoundingRect_2_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon_1_" transform="translate(5.000000, 4.000000)">
 				<path id="Ring_1_" class="st12" d="M7.5,0.75L7.5,0.75c3.728,0,6.75,3.022,6.75,6.75l0,0c0,3.728-3.022,6.75-6.75,6.75l0,0
 					c-3.728,0-6.75-3.022-6.75-6.75l0,0C0.75,3.772,3.772,0.75,7.5,0.75z"/>
 			</g>
 		</g>
 		<g id="checkbox_checked" transform="translate(0.000000, 49.000000)">
-			<rect id="BoundingBox_3_" y="0" class="st0" width="24" height="24"/>
+			<rect id="BoundingRect_3_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon_2_" transform="translate(5.000000, 5.000000)">
 				<path id="Rectangle" class="st12" d="M4.25,0.25h6.5c1.657,0,3,1.343,3,3v6.5c0,1.657-1.343,3-3,3h-6.5c-1.657,0-3-1.343-3-3
 					v-6.5C1.25,1.593,2.593,0.25,4.25,0.25z"/>
@@ -848,7 +849,7 @@
 			</g>
 		</g>
 		<g id="checkbox" transform="translate(0.000000, 25.000000)">
-			<rect id="BoundingBox_4_" y="0" class="st0" width="24" height="24"/>
+			<rect id="BoundingRect_4_" y="0" class="st0" width="24" height="24"/>
 			<g id="icon_3_">
 				<rect id="BoundingBox_5_" y="0" class="st0" width="24" height="24"/>
 				<path id="Rectangle_1_" class="st12" d="M9.25,5.25h6.5c1.657,0,3,1.343,3,3v6.5c0,1.657-1.343,3-3,3h-6.5c-1.657,0-3-1.343-3-3

@@ -61,7 +61,6 @@ BUILTIN_ICON BuiltinIconTable[] = {
   { NULL, L"icons\\func_secureboot_config" , L"png",  /*48*/32 },
   { NULL, L"icons\\func_reset"             , L"png",  /*48*/32 },
   { NULL, L"icons\\func_shutdown"          , L"png",  /*48*/32 },
-//  { NULL, L"icons\\func_exit"              , L"png",  /*48*/32 },
   { NULL, L"icons\\func_help"              , L"png",  /*48*/32 },
   { NULL, L"icons\\tool_shell"             , L"png",  /*48*/32 },
   { NULL, L"icons\\tool_part"              , L"png",  /*48*/32 },

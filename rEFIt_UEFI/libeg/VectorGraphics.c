@@ -160,6 +160,11 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   // Patch: save real bounds.
   memcpy(IconImage->realBounds, bounds, 4*sizeof(float));
 
+  if (strstr(IconName, "vol_internal") != NULL) {
+    DBG("icon=%a ", IconName);
+    DumpFloat2(" ", bounds, 4);
+  }
+
   if ((Id == BUILTIN_ICON_BANNER) && (strcmp(IconName, "Banner") == 0)) {
     GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
     GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
@@ -173,11 +178,16 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
 
   NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &MenuBackgroundPixel);
 //  DBG("begin rasterize %a\n", IconName);
-  float tx = 0.f;
+  float tx = 0.f, ty = 0.f;
   if (Id == BUILTIN_ICON_BACKGROUND) {
     tx = - GlobalConfig.CentreShift;
+  } else if (Id != BUILTIN_ICON_BANNER) {
+    float realWidth = (bounds[2] - bounds[0]) * Scale;
+    float realHeight = (bounds[3] - bounds[1]) * Scale;
+    tx = (Width - realWidth) * 0.5f;
+    ty = (Height - realHeight) * 0.5f;
   }
-  nsvgRasterize(rast, IconImage, tx,0,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
   
 #if 0
   BltImageAlpha(NewImage,

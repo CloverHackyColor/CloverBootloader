@@ -354,6 +354,7 @@ typedef struct NSVGtext {
   NSVGstyles* style;
   NSVGshape* shapes;
   struct NSVGtext *next;
+  NSVGgroup* group;
 } NSVGtext;
 
 typedef struct NSVGparser

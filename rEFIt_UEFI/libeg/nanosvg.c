@@ -2776,6 +2776,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (!text) {
     return;
   }
+  text->group = attr->group;
 
   for (i = 0; dict[i]; i += 2) {
       if (strcmp(dict[i], "x") == 0) {
@@ -2848,17 +2849,17 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
 //    DBG("set font for text %a\n", fontSVG->id);
     text->font = fontSVG;
   }
-  //here we want to set text->font as p->font if text->groupID == MenuRows
+  //here we want to set text->font as p->font if text->groupID == MessageRow
   //instead of embedded
   if (fontSVG && fontSVG->glyphs && !once) {
 	  NSVGgroup* group = attr->group;
-    once++;
 	  while (group) {
-		  if (strstr(group->id, "MenuRows") != NULL) {
+		  if (strstr(group->id, "MessageRow") != NULL) {
 			  p->font = fontSVG;
 			  p->fontSize = text->fontSize;
 			  p->fontColor = text->fontColor;
-        DBG("set p->font=%a color=%x as in MenuRows\n", fontSVG->id, text->fontColor);
+        DBG("set p->font=%a color=%x as in MessageRow\n", fontSVG->id, text->fontColor);
+        once++;
 			  break;
 		  }
 		  group = group->next;
@@ -3765,7 +3766,8 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   shape->stroke.type = NSVG_PAINT_NONE;
   shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
   shape->strokeWidth = 1.0f;
-  shape->flags = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;;
+  shape->flags = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
+  shape->isText = TRUE;
   nsvg__xformIdentity(shape->xform);
   //scale convert shape from glyph size to user's font-size
   shape->xform[0] = scale; //1.f;
@@ -3954,7 +3956,7 @@ static char *nsvg__strndup(const char *s, size_t n)
 //image bounds for a shape group
 //bounds inited before use, called from nsvgParse
 //assumed each shape already has bounds calculated.
-int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
+int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
 {
   NSVGshape *shape, *shapeLink;
   float xform[6];
@@ -3970,18 +3972,22 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       shape = shapeLink->link;
       nsvg__xformPremultiply(&xform[0], shape->xform);
     } else shape = shapeLink;
-    if (strstr(shapeLink->id, "shar")) {
+
+    if (shape->isText || !visibility) { //dont count text
+      continue;
+    }
+/*    if (strstr(shapeLink->id, "shar")) {
       DBG("take Bounds: shapeID=%a\n", shapeLink->id);
       DumpFloat2("  transform", xform, 6);
       DumpFloat2("  shape initial bounds", shape->bounds, 4);
-    }
+    } */
     nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[2], &newBounds[3], shape->bounds[2], shape->bounds[3], xform);
     nsvg__xformPoint(&newBounds[4], &newBounds[5], shape->bounds[2], shape->bounds[1], xform);
     nsvg__xformPoint(&newBounds[6], &newBounds[7], shape->bounds[0], shape->bounds[3], xform);
 
 
-    if (visibility == NSVG_VIS_VISIBLE) {
+//    if (visibility == NSVG_VIS_VISIBLE) {
       bounds[0] = nsvg__minf(bounds[0], newBounds[0]);
       bounds[0] = nsvg__minf(bounds[0], newBounds[6]);
       bounds[1] = nsvg__minf(bounds[1], newBounds[1]);
@@ -3990,12 +3996,12 @@ int nsvg__shapesBound(NSVGimage* image, NSVGshape *shapes, float* bounds)
       bounds[2] = nsvg__maxf(bounds[2], newBounds[4]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
       bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
-      if (strstr(shapeLink->id, "shar")) {
+/*      if (strstr(shapeLink->id, "shar")) {
         DumpFloat2("  new shape bounds", bounds, 4);
-      }
+      } */
 
       count++; //count visible
-    }
+//    }
   }
   return count;
 }
@@ -4010,177 +4016,18 @@ void nsvg__imageBounds(NSVGparser* p, float* bounds)
   while (clipPath != NULL) {
     if (clipPath->index == 0) { // this is bottom image
       //check max bound only for this image
-      count = nsvg__shapesBound(image, clipPath->shapes, bounds);
+      count = nsvg__shapesBound(/*image,*/ clipPath->shapes, bounds);
     }
     clipPath = clipPath->next;
   }
 
-  count += nsvg__shapesBound(image, image->shapes, bounds);
+  count += nsvg__shapesBound(/*image,*/ image->shapes, bounds);
 
   if (count == 0) {
     bounds[0] = bounds[1] = bounds[2] = bounds[3] = 0.0;
   }
 }
 
-#if 0
-static float nsvg__viewAlign(float content, float container, int type)
-{
-  if (type == NSVG_ALIGN_MIN)
-    return 0;
-  else if (type == NSVG_ALIGN_MAX)
-    return container - content;
-  // mid
-  return (container - content) * 0.5f;
-}
-
-static void nsvg__scaleGradient(NSVGgradient* grad, float tx, float ty, float sx, float sy)
-{
-  float t[6];
-  nsvg__xformSetTranslation(t, tx, ty);
-  nsvg__xformMultiply (grad->xform, t);
-
-  nsvg__xformSetScale(t, sx, sy);
-  nsvg__xformMultiply (grad->xform, t);
-}
-
-static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float sx, float sy);
-
-static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
-{
-  int i;
-  NSVGclipPath *clipPath;
-  float tx, ty, sx, sy, us, bounds[4];
-  bounds[0] = FLT_MAX;
-  bounds[1] = FLT_MAX;
-  bounds[2] = -FLT_MAX;
-  bounds[3] = -FLT_MAX;
-
-  // Guess image size if not set completely.
-  nsvg__imageBounds(p, bounds);
-//  DumpFloat2("image bounds", bounds, 4);
-  // Patch: save real bounds.
-  memcpy(p->image->realBounds, bounds, 4*sizeof(float));
-  p->image->width = bounds[2] - bounds[0];
-  p->image->height = bounds[3] - bounds[1];
-
-  if (p->viewWidth == 0) {
-    if (p->image->width > 0) {
-      p->viewWidth = p->image->width;
-    } else {
-      p->viewMinx = bounds[0];
-      p->viewWidth = bounds[2] - bounds[0];
-    }
-  }
-  if (p->viewHeight == 0) {
-    if (p->image->height > 0) {
-      p->viewHeight = p->image->height;
-    } else {
-      p->viewMiny = bounds[1];
-      p->viewHeight = bounds[3] - bounds[1];
-    }
-  }
-  if (p->image->width == 0)
-    p->image->width = p->viewWidth;
-  if (p->image->height == 0)
-    p->image->height = p->viewHeight;
-
-  tx = -p->viewMinx;
-  ty = -p->viewMiny;
-  sx = p->viewWidth > 0 ? p->image->width / p->viewWidth : 0;
-  sy = p->viewHeight > 0 ? p->image->height / p->viewHeight : 0;
-  if (sx == 0.f) {
-    sx = 1.0f;
-    DBG("sx=1\n");
-  }
-  if (sy == 0.f) {
-    sy = 1.0f;
-    DBG("sy=1\n");
-  }
-  // Unit scaling
-  NSVGcoordinate coord = nsvg__coord(1.0f, nsvg__parseUnits(units));
-  us = 1.0f / nsvg__convertToPixels(p, &coord, 0.0f, 1.0f);
-
-  // Fix aspect ratio
-  if (p->alignType == NSVG_ALIGN_MEET) {
-    // fit whole image into viewbox
-    sx = sy = nsvg__minf(sx, sy);
-    tx += nsvg__viewAlign(p->viewWidth*sx, p->image->width, p->alignX) / sx;
-    ty += nsvg__viewAlign(p->viewHeight*sy, p->image->height, p->alignY) / sy;
-  } else if (p->alignType == NSVG_ALIGN_SLICE) {
-    // fill whole viewbox with image
-    sx = sy = nsvg__maxf(sx, sy);
-    tx += nsvg__viewAlign(p->viewWidth*sx, p->image->width, p->alignX) / sx;
-    ty += nsvg__viewAlign(p->viewHeight*sy, p->image->height, p->alignY) / sy;
-  } else {
-    sx = sy;
-  }
-
-  // Transform
-  sx *= us;
-  sy *= us;
-  nsvg__transformShapes(p->image->shapes, tx, ty, sx, sy);
-
-  clipPath = p->image->clipPaths;
-  while (clipPath != NULL) {
-    nsvg__transformShapes(clipPath->shapes, tx, ty, sx, sy);
-    clipPath = clipPath->next;
-  }
-}
-
-static void nsvg__transformShapes(NSVGshape* shapes, float tx, float ty, float sx, float sy)
-{
-  NSVGshape *shapeLink;
-  NSVGshape* shape;
-  NSVGpath* path;
-  float avgs, /*bounds[4],*/ t[6];
-  int i;
-  float* pt;
-
-  avgs = (sx+sy) / 2.0f;
-  for (shapeLink = shapes; shapeLink != NULL; shapeLink = shapeLink->next) {
-    if (shapeLink->link) {
-      shape = shapeLink->link;
-    } else shape = shapeLink;
-
-    shape->bounds[0] = (shape->bounds[0] + tx) * sx;
-    shape->bounds[1] = (shape->bounds[1] + ty) * sy;
-    shape->bounds[2] = (shape->bounds[2] + tx) * sx;
-    shape->bounds[3] = (shape->bounds[3] + ty) * sy;
-    for (path = shape->paths; path != NULL; path = path->next) {
-      path->bounds[0] = (path->bounds[0] + tx) * sx;
-      path->bounds[1] = (path->bounds[1] + ty) * sy;
-      path->bounds[2] = (path->bounds[2] + tx) * sx;
-      path->bounds[3] = (path->bounds[3] + ty) * sy;
-      for (i =0; i < path->npts; i++) {
-        pt = &path->pts[i*2];
-        pt[0] = (pt[0] + tx) * sx;
-        pt[1] = (pt[1] + ty) * sy;
-      }
-    }
-    DBG("shape id to transform %a\n", shape->id);
-    DumpFloat2("shape bound transformed", shape->bounds, 4);
-
-    if (shape->fill.type == NSVG_PAINT_LINEAR_GRADIENT ||
-        shape->fill.type == NSVG_PAINT_RADIAL_GRADIENT ||
-        shape->fill.type == NSVG_PAINT_CONIC_GRADIENT) {
-      nsvg__scaleGradient(shape->fill.gradient, tx,ty, sx,sy);
-      memcpy(t, shape->fill.gradient->xform, sizeof(float) * 6);
-      nsvg__xformInverse(shape->fill.gradient->xform, t);
-    }
-    if (shape->stroke.type == NSVG_PAINT_LINEAR_GRADIENT ||
-        shape->stroke.type == NSVG_PAINT_RADIAL_GRADIENT ||
-        shape->stroke.type == NSVG_PAINT_CONIC_GRADIENT) {
-      nsvg__scaleGradient(shape->stroke.gradient, tx,ty, sx,sy);
-      memcpy(t, shape->stroke.gradient->xform, sizeof(float) * 6);
-      nsvg__xformInverse(shape->stroke.gradient->xform, t);
-    }
-    shape->strokeWidth *= avgs;
-    shape->strokeDashOffset *= avgs;
-    for (i = 0; i < shape->strokeDashCount; i++)
-      shape->strokeDashArray[i] *= avgs;
-  }
-}
-#endif
 NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity)
 {
   NSVGparser* p;
