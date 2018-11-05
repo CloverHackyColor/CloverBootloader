@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -3320,6 +3320,18 @@ static void parseTheme(NSVGparser* p, const char** dict)
       GlobalConfig.BackgroundDark = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
       GlobalConfig.BackgroundSharp = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "BackgroundScale") == 0) {
+      GlobalConfig.BackgroundScale = imNone;
+      if (strstr(dict[i+1], "scale") != NULL)  {
+        GlobalConfig.BackgroundScale = imScale;
+      }
+      if (strstr(dict[i+1], "crop") != NULL)  {
+        GlobalConfig.BackgroundScale = imCrop;
+      }
+      if (strstr(dict[i+1], "tile") != NULL)  {
+        GlobalConfig.BackgroundScale = imTile;
+      }
+
     } else if (strcmp(dict[i], "Badges") == 0) {
       GlobalConfig.HideBadges = 0;
       if (strstr(dict[i+1], "show") != NULL)  {
@@ -3471,6 +3483,18 @@ CHAR16 nsvg__parseUnicode(const char *s)
   } else if (strstr(s, "&#x") !=0 ) {
     n = hex2bin((char*)s + 3, c, 4); //big endian
     A = (n=1)?c[0]:(n=2)?((c[0] << 8) + c[1]):((c[0] << 16) + (c[1] << 8) + c[2]);
+  } else if (strstr(s, "&amp;") !=0 ) {
+    A = 0x26; //&
+  } else if (strstr(s, "&quot;") !=0 ) {
+    A = 0x22; //"
+  } else if (strstr(s, "&lt;") !=0 ) {
+    A = 0x3C; //<
+  } else if (strstr(s, "&qt;") !=0 ) {
+    A = 0x3E; //>
+  } else if (strstr(s, "&nbsp;") !=0 ) {
+    A = 0xA0; //>
+  } else if (strstr(s, "&copy;") !=0 ) {
+    A = 0xA9; //>
   }
   return A;
 }

@@ -131,7 +131,7 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   } //while shape
   shapesTail->next = NULL;
 
-  //add clipPaths  xxx
+  //add clipPaths  //xxx
   NSVGclipPath* clipPaths = SVGimage->clipPaths;
   NSVGclipPath* clipNext = NULL;
   while (clipPaths) {
@@ -175,19 +175,22 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   float Width = IconImage->width * Scale;
 //  DBG("icon %a width=%s height=%s\n", IconName, PoolPrintFloat(Width), PoolPrintFloat(Height));
   EG_IMAGE  *NewImage = NULL;
+  int iWidth = (int)(Width + 0.5f);
+  int iHeight = (int)(Height + 0.5f);
 
-  NewImage = egCreateFilledImage((int)Width, (int)Height, TRUE, &MenuBackgroundPixel);
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f, ty = 0.f;
   if (Id == BUILTIN_ICON_BACKGROUND) {
-    tx = - GlobalConfig.CentreShift;
+//    tx = - GlobalConfig.CentreShift;
+//    iWidth = (int)UGAWidth;
   } else if (Id != BUILTIN_ICON_BANNER) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
-  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+  NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
+  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, iWidth, iHeight, iWidth*4, NULL, NULL);
   
 #if 0
   BltImageAlpha(NewImage,
@@ -264,7 +267,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
   BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
-  GlobalConfig.BackgroundScale = imScale;
+//  GlobalConfig.BackgroundScale = imScale;
 
 // --- Make Banner
   Banner = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale);
@@ -287,7 +290,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     UINTN Size = StrLen(ptr)+1;
     IconName = AllocateZeroPool(Size);
     UnicodeStrToAsciiStrS(ptr, IconName, Size);
-    DBG("search for icon name %a\n", IconName);
+//    DBG("search for icon name %a\n", IconName);
 
     BuiltinIconTable[i].Image = ParseSVGIcon(p, i, IconName, Scale);
     if (!BuiltinIconTable[i].Image) {
@@ -419,13 +422,12 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 }
 // it is for test purpose
 
-VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text, UINT32 color)
+VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* string, UINT32 color, INTN Cursor)
 {
   INTN Width, Height;
   int i;
   UINTN len;
   NSVGparser* p;
-  NSVGshape *shape; //, *cur, *prev;
   NSVGrasterizer* rast;
   NSVGfont* fontSVG = (NSVGfont*)font;
   float Scale, sx, sy;
@@ -442,7 +444,15 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text, UINT32 
   if (!p) {
     return;
   }
-  len = StrLen(text);
+  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  if (!text) {
+    return;
+  }
+  text->font = font;
+  text->fontColor = color;
+  p->text = text;
+
+  len = StrLen(string);
   Width = TextBufferXY->Width;
   Height = TextBufferXY->Height;
 //  Height = 180; //for test
@@ -458,19 +468,29 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text, UINT32 
   //in font units
   float fW = fontSVG->bbox[2] - fontSVG->bbox[0];
   sx = (float)Width / (fW * len);
-  Scale = (sx > sy)?sy:sx;
+//  Scale = (sx > sy)?sy:sx;
+  Scale = sy;
   x = 0.f;
   y = 0.f;
+  p->isText = TRUE;
   for (i=0; i < len; i++) {
-    CHAR16 letter = text[i];
-    NSVGglyph* g;
+    CHAR16 letter = string[i];
     if (!letter) {
       break;
     }
+    DBG("add letter 0x%x\n", letter);
+    if (i == Cursor) {
+      addLetter(p, 0x5F, x, y, sy, color);
+    }
+    x = addLetter(p, letter, x, y, sy, color);
 
+#if 0
+    {
+    NSVGshape *shape; //, *cur, *prev;
     shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
     if (shape == NULL) return;
     shape->strokeWidth = 1.2f;
+    NSVGglyph* g;
 
     g = fontSVG->glyphs;
     while (g) {
@@ -540,7 +560,10 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* text, UINT32 
     else
       p->shapesTail->next = shape;
     p->shapesTail = shape;
-  } //end of text
+    }
+#endif
+
+  } //end of string
 
   p->image->realBounds[0] = fontSVG->bbox[0] * Scale;
   p->image->realBounds[1] = fontSVG->bbox[1] * Scale;
@@ -636,7 +659,7 @@ VOID testSVG()
     }
 #endif
     //Test text
-    Height = 260;
+    Height = 80;
     Width = UGAWidth-200;
     DBG("create test textbuffer\n");
     EG_IMAGE* TextBufferXY = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
@@ -649,10 +672,10 @@ VOID testSVG()
         break;
       }
       NSVGfont* fontSVG = p->font;
-      DBG("font parsed\n");
+      DBG("font parsed family=%a\n", p->font->fontFamily);
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
-      drawSVGtext(TextBufferXY, fontSVG, L"Clover", NSVG_RGBA(0, 0, 0, 255));
+      drawSVGtext(TextBufferXY, fontSVG, L"Clover Кловер", NSVG_RGBA(0x80, 0xFF, 0, 255), 1);
       DBG("text ready to blit\n");
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,

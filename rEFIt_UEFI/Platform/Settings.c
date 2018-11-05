@@ -156,7 +156,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     DarkEmbedded;
   FALSE,          // BOOLEAN     TypeSVG;
   0xC0,           // INTN        Codepage;
-  0,              // INTN        CodepageSize;
+  0xC0,           // INTN        CodepageSize; //extended latin
   1.0f,           // float       Scale;
   0.0f,           // float       CentreShift;
 };
@@ -2757,8 +2757,12 @@ GetEarlyUserSettings (
           gLanguage = russian;
           GlobalConfig.Codepage = 0x410;
           GlobalConfig.CodepageSize = 0x40;
+        } else if (AsciiStrStr (Prop->string, "ua")) {
+          gLanguage = ukrainian;
+          GlobalConfig.Codepage = 0x400;
+          GlobalConfig.CodepageSize = 0x60;
         } else if (AsciiStrStr (Prop->string, "fr")) {
-          gLanguage = french;
+          gLanguage = french; //default is extended latin
         } else if (AsciiStrStr (Prop->string, "it")) {
           gLanguage = italian;
         } else if (AsciiStrStr (Prop->string, "es")) {
@@ -2773,18 +2777,18 @@ GetEarlyUserSettings (
           gLanguage = dutch;
         } else if (AsciiStrStr (Prop->string, "pl")) {
           gLanguage = polish;
-        } else if (AsciiStrStr (Prop->string, "ua")) {
-          gLanguage = ukrainian;
         } else if (AsciiStrStr (Prop->string, "cz")) {
           gLanguage = czech;
         } else if (AsciiStrStr (Prop->string, "hr")) {
           gLanguage = croatian;
         } else if (AsciiStrStr (Prop->string, "id")) {
           gLanguage = indonesian;
-        } else if (AsciiStrStr (Prop->string, "ko")) {
-          gLanguage = korean;
         } else if (AsciiStrStr (Prop->string, "ro")) {
           gLanguage = romanian;
+        } else if (AsciiStrStr (Prop->string, "ko")) {
+          gLanguage = korean;
+          GlobalConfig.Codepage = 0x1100;
+          GlobalConfig.CodepageSize = 0x100;
         }
       }
       

@@ -41,7 +41,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif

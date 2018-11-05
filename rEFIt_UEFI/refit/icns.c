@@ -103,6 +103,8 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "os_hsierra"},
   {NULL, "os_moja"},
   {NULL, "os_linux"},
+  {NULL, "os_ubuntu"},
+  {NULL, "os_suse"},
   {NULL, "os_freebsd"},
   {NULL, "os_freedos"},
   {NULL, "os_win"},
