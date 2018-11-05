@@ -3490,8 +3490,8 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     if (Entry->Row == 0) {
       BltImageAlpha(SelectionImages[(4) + (selected ? 0 : 1)],
                     XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-                    row0PosY + row0TileSize
-                    + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 :
+                    row0PosY + row0TileSize +
+                    ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? (INTN)(10.f * GlobalConfig.Scale):
                        (FontHeight  + (INTN)((20 - TEXT_YMARGIN) * GlobalConfig.Scale))),
                     &MenuBackgroundPixel, Scale);
 
@@ -3658,7 +3658,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
-      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
+      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE_XSPACING* GlobalConfig.Scale)) * row1Count) >> 1;
       textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - TextHeight;
       row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
@@ -3676,7 +3676,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
         } else {
           itemPosX[i] = row1PosXRunning;
           itemPosY[i] = row1PosY;
-          row1PosXRunning += row1TileSize + TILE_XSPACING;
+          row1PosXRunning += row1TileSize + (int)(TILE_XSPACING* GlobalConfig.Scale);
           //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
@@ -3782,7 +3782,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
 
-      EntriesGap = GlobalConfig.TileXSpace;
+      EntriesGap = (int)(GlobalConfig.TileXSpace * GlobalConfig.Scale);
       EntriesWidth = GlobalConfig.MainEntriesSize + (16 * row0TileSize) / 144;
       EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16.f * GlobalConfig.Scale);
 
@@ -3794,7 +3794,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
                   LayoutBannerOffset * GlobalConfig.Scale);
 
-      row1PosX = (UGAWidth + 8 - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (row1TileSize + EntriesGap) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle) {
         row1PosY = row0PosY + row0TileSize +

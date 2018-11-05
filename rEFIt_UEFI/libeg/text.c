@@ -161,6 +161,7 @@ VOID PrepareFont()
   EG_PIXEL    *p;
   INTN         Width, Height;
 
+  TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * GlobalConfig.Scale);
   if (GlobalConfig.TypeSVG) {
 //    FontImage = RenderSVGfont();
     return;
@@ -177,7 +178,7 @@ VOID PrepareFont()
 //      FontHeight = 16;  //delete?
       GlobalConfig.CharWidth = 22;
 //      FontWidth = GlobalConfig.CharWidth; //delete?
-      TextHeight = FontHeight + TEXT_YMARGIN * 2;
+//      TextHeight = FontHeight + TEXT_YMARGIN * 2;
       MsgLog("Using Korean font matrix\n");
       return;
     } else {
@@ -206,7 +207,7 @@ VOID PrepareFont()
       }
     }
     
-    TextHeight = FontHeight + TEXT_YMARGIN * 2;
+//    TextHeight = FontHeight + TEXT_YMARGIN * 2;
     DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
   } else {
     DBG("Failed to load font\n");

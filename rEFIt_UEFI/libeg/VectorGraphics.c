@@ -476,7 +476,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* string, UINT3
 //  Scale = (sx > sy)?sy:sx;
   Scale = sy;
   x = 0.f;
-  y = 0.f;
+  y = fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
   for (i=0; i < len; i++) {
     CHAR16 letter = string[i];
