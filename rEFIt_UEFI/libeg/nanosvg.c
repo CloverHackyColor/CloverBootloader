@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -3472,8 +3472,6 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
 CHAR16 nsvg__parseUnicode(const char *s)
 {
   CHAR16 A = L'\0';
-  UINT8 c[4];
-  int n;
   if (*s != '&') {
     if (strlen(s) == 2) {
       A = (*s << 8) + *(s+1);
@@ -3481,8 +3479,18 @@ CHAR16 nsvg__parseUnicode(const char *s)
       A = *s;
     }
   } else if (strstr(s, "&#x") !=0 ) {
-    n = hex2bin((char*)s + 3, c, 4); //big endian
-    A = (n=1)?c[0]:(n=2)?((c[0] << 8) + c[1]):((c[0] << 16) + (c[1] << 8) + c[2]);
+    s += 3;
+    while (IS_HEX(*s) || IS_DIGIT(*s)) {
+      A <<= 4;
+      if (IS_DIGIT(*s)) {
+        A += *s - 0x30;
+      } else if (IS_UPPER(*s)) {
+        A += *s - 0x41 + 10;
+      } else {
+        A += *s - 0x61 + 10;
+      }
+      s++;
+    }
   } else if (strstr(s, "&amp;") !=0 ) {
     A = 0x26; //&
   } else if (strstr(s, "&quot;") !=0 ) {
@@ -3529,7 +3537,7 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
         glyph->unicode = nsvg__parseUnicode(dict[i+1]);
       } else
       if (strcmp(dict[i], "horiz-adv-x") == 0) {
-        glyph->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]); // AsciiStrToFloat(dict[i+1], NULL, &X);
+        glyph->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]);
       } else
       if (strcmp(dict[i], "glyph-name") == 0) {
         strncpy(glyph->name, dict[i+1], 16);
@@ -3816,6 +3824,13 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
 //  if (letter == L'C') {
 //      DumpFloat2("glyph bounds in text", shape->bounds, 4);
 //  }
+  if (color == NSVG_RGBA(0x80, 0xFF, 0, 255)) {
+    DBG("glyph code=%x\n", letter);
+    DumpFloat2("glyph xform", shape->xform, 6);
+    DumpFloat2("glyph bounds", shape->bounds, 4);
+    DBG("glyph width=%d\n", g->horizAdvX);
+  }
+
 
   x1 += g->horizAdvX * scale; //position for next letter in user's units
   shape->strokeLineJoin = NSVG_JOIN_MITER;
