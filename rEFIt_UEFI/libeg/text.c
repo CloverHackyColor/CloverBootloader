@@ -68,8 +68,9 @@ CONST EG_PIXEL SemiWhitePixel = {255, 255, 255, 210}; //semitransparent
 
 VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
 {
+  INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
     if (Width != NULL)
-        *Width = StrLen(Text) * ((FontWidth > GlobalConfig.CharWidth)?FontWidth:GlobalConfig.CharWidth);
+        *Width = StrLen(Text) * ((FontWidth > ScaledWidth)?FontWidth:ScaledWidth);
     if (Height != NULL)
         *Height = FontHeight;
 }
@@ -256,6 +257,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   UINTN           Cho = 0, Jong = 0, Joong = 0;
   UINTN           LeftSpace, RightSpace;
   INTN            RealWidth = 0;
+  INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
   
   // clip the text
   TextLength = StrLen(Text);
@@ -275,11 +277,11 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   FontLineOffset = FontImage->Width;
 //  DBG("BufferLineOffset=%d  FontLineOffset=%d\n", BufferLineOffset, FontLineOffset);
 
-  if (GlobalConfig.CharWidth < FontWidth) {
-    Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
+  if (ScaledWidth < FontWidth) {
+    Shift = (FontWidth - ScaledWidth) >> 1;
   }
   c0 = 0;
-  RealWidth = GlobalConfig.CharWidth;
+  RealWidth = ScaledWidth;
 //  DBG("FontWidth=%d, CharWidth=%d\n", FontWidth, RealWidth);
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
@@ -291,14 +293,14 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
         if (c0 <= 0x20) {  // space before or at buffer edge
           LeftSpace = 2;
         } else {
-          LeftSpace = GetEmpty(BufferPtr, FirstPixelBuf, GlobalConfig.CharWidth, -1, BufferLineOffset);
+          LeftSpace = GetEmpty(BufferPtr, FirstPixelBuf, ScaledWidth, -1, BufferLineOffset);
         }
         if (c <= 0x20) { //new space will be half width
           RightSpace = 1;
-          RealWidth = (GlobalConfig.CharWidth >> 1) + 1;
+          RealWidth = (ScaledWidth >> 1) + 1;
         } else {
           RightSpace = GetEmpty(FontPixelData + c * FontWidth, FontPixelData, FontWidth, 1, FontLineOffset);
-          if (RightSpace >= GlobalConfig.CharWidth + Shift) {
+          if (RightSpace >= ScaledWidth + Shift) {
             RightSpace = 0; //empty place for invisible characters
           }
           RealWidth = FontWidth - RightSpace;
@@ -346,25 +348,25 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
 //        DBG("Cho=%d Joong=%d Jong=%d\n", Cho, Joong, Jong);
       if (Shift == 18) {
         egRawCompose(BufferPtr, FontPixelData + Cho * FontWidth + 4 + FontLineOffset,
-                     GlobalConfig.CharWidth, FontHeight,
+                     ScaledWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       } else {
         egRawCompose(BufferPtr + BufferLineOffset * 3, FontPixelData + Cho * FontWidth + 2,
-                     GlobalConfig.CharWidth, FontHeight,
+                     ScaledWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
       if (i == Cursor) {
         c = 99;
         egRawCompose(BufferPtr, FontPixelData + c * FontWidth + 2,
-                     GlobalConfig.CharWidth, FontHeight,
+                     ScaledWidth, FontHeight,
                      BufferLineOffset, FontLineOffset);
       }
       if (Shift == 18) {
         egRawCompose(BufferPtr + 9, FontPixelData + Joong * FontWidth + 6, //9 , 4 are tunable
-                     GlobalConfig.CharWidth - 8, FontHeight,
+                     ScaledWidth - 8, FontHeight,
                      BufferLineOffset, FontLineOffset);
         egRawCompose(BufferPtr + BufferLineOffset * 9, FontPixelData + Jong * FontWidth + 1,
-                     GlobalConfig.CharWidth, FontHeight - 3,
+                     ScaledWidth, FontHeight - 3,
                      BufferLineOffset, FontLineOffset);
 
       }

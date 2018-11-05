@@ -131,7 +131,7 @@ INTN ScrollbarYMovement;
 //#define ROW0__TILESIZE (144)
 //#define ROW1_TILESIZE (64)
 #define TILE_XSPACING (8)
-#define TILE_YSPACING (24)
+//#define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
 #define INDICATOR_SIZE (52)
 
@@ -1743,13 +1743,14 @@ VOID InitSelection(VOID)
       SelectionImages[4] = egDecodePNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator), TRUE);
 
     }
-    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], INDICATOR_SIZE, INDICATOR_SIZE, &MenuBackgroundPixel);
+    INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * GlobalConfig.Scale);
+    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
     if (!SelectionImages[4]) {
-      SelectionImages[4] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
+      SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
                                                TRUE, &StdBackgroundPixel);
 
     }
-    SelectionImages[5] = egCreateFilledImage(INDICATOR_SIZE, INDICATOR_SIZE,
+    SelectionImages[5] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
                                              TRUE, &MenuBackgroundPixel);
   }
 
@@ -1796,7 +1797,6 @@ VOID InitSelection(VOID)
   }
 
   // non-selected background images
-  //TODO FALSE -> TRUE
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                              TRUE, &MenuBackgroundPixel);
@@ -3169,6 +3169,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN PlaceCentre = (TextHeight / 2) - 7;
   UINTN OldChosenItem = ~(UINTN)0;
 	INTN TitleLen = 0;
+  INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
 
   HidePointer();
 
@@ -3179,7 +3180,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       InitAnime(Screen);
 			SwitchToGraphicsAndClear();
 
-      EntriesPosY = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + LayoutBannerOffset + (TextHeight << 1);
+      EntriesPosY = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + (int)(LayoutBannerOffset * GlobalConfig.Scale) + (TextHeight << 1);
 
       VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLineCount - 2;/* - GlobalConfig.PruneScrollRows; */
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
@@ -3252,7 +3253,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 			//DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
 			//DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
       t2 = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
-      t1 = EntriesPosX + TextHeight + TEXT_XMARGIN + MenuWidth + 16;
+      t1 = EntriesPosX + TextHeight + MenuWidth  + (INTN)((TEXT_XMARGIN + 16) * GlobalConfig.Scale);
 			//DBG("PAINT_ALL: %d %d\n", t1, t2);
       SetBar(t1, EntriesPosY, t2, State);
 
@@ -3264,24 +3265,24 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
         Entry->Place.XPos = EntriesPosX;
         Entry->Place.YPos = EntriesPosY + j * TextHeight;
-        Entry->Place.Width = TitleLen * GlobalConfig.CharWidth;
+        Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
-            Entry->Place.Width = StrLen(ResultString) * GlobalConfig.CharWidth;
+            Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
             DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
                          EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
             BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
-                  EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
+                  EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale), Entry->Place.YPos + PlaceCentre,
                   &MenuBackgroundPixel, 16);
           } else {
 						// text input
             StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue);
             StrCatS(ResultString, TITLE_MAX_LEN, L" ");
-            Entry->Place.Width = StrLen(ResultString) * GlobalConfig.CharWidth;
+            Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
             // Slice - suppose to use Row as Cursor in text
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0, EntriesPosX,
                          Entry->Place.YPos, TitleLen + Entry->Row);
@@ -3429,7 +3430,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
     }
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
-      X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
+      X = (UGAWidth - StrLen(ParamText) * ScaledWidth) >> 1;
       DrawMenuText(ParamText, 0, X, TimeoutPosY, 0xFFFF);
       break;
   }
@@ -3462,7 +3463,11 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     }
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-  Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
+  if (GlobalConfig.TypeSVG) {
+    Scale = 16 * (selected ? 1 : -1);
+  } else {
+    Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
+  }
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
@@ -3484,10 +3489,10 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (GlobalConfig.BootCampStyle) {
     if (Entry->Row == 0) {
       BltImageAlpha(SelectionImages[(4) + (selected ? 0 : 1)],
-                    XPos + (row0TileSize / 2) - (INDICATOR_SIZE / 2),
+                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
                     row0PosY + row0TileSize
                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 10 :
-                       (FontHeight - TEXT_YMARGIN + 20)),
+                       (FontHeight  + (INTN)((20 - TEXT_YMARGIN) * GlobalConfig.Scale))),
                     &MenuBackgroundPixel, Scale);
 
     }
@@ -3523,6 +3528,7 @@ static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN I
 static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
 {
   INTN TextWidth;
+  INTN BadgeDim = (INTN)(BADGE_DIMENSION * GlobalConfig.Scale);
 
   egMeasureText(Text, &TextWidth, NULL);
 
@@ -3535,8 +3541,8 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
       && (GlobalConfig.HideBadges & HDBADGES_INLINE) && (!OldRow)
       && (OldTextWidth) && (OldTextWidth != TextWidth)) {
     //Clear badge
-    BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BADGE_DIMENSION + 16)),
-                  (OldY - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
+    BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BadgeDim + 16)),
+                  (OldY - ((BadgeDim - TextHeight) >> 1)), &MenuBackgroundPixel, BadgeDim >> 3);
   }
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
@@ -3546,8 +3552,8 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
        (Screen->Entries[State->CurrentSelection]->Row == 0)) {
     // Display Inline Badge: small icon before the text
     BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->me.Image,
-                  (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),
-                  (YPos - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
+                  (XPos - (TextWidth >> 1) - (BadgeDim + 16)),
+                  (YPos - ((BadgeDim - TextHeight) >> 1)), &MenuBackgroundPixel, BadgeDim >> 3);
   }
 
   OldX = XPos;
@@ -3640,7 +3646,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 			//BltClearScreen(FALSE);
       //adjustable by theme.plist?
       EntriesPosY = (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale);
-      EntriesGap = GlobalConfig.TileYSpace;
+      EntriesGap = (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale);
       EntriesWidth = GlobalConfig.MainEntriesSize + (int)(16 * GlobalConfig.Scale);
       EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16 * GlobalConfig.Scale);
       //
@@ -3653,8 +3659,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
       row1PosX = (UGAWidth + EntriesGap - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
-      textPosY = TimeoutPosY - GlobalConfig.TileYSpace - TextHeight;
-      row1PosY = textPosY - row1TileSize - GlobalConfig.TileYSpace - LayoutTextOffset;
+      textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - TextHeight;
+      row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
         itemPosY = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
@@ -3785,32 +3791,35 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen, 0);
       row0PosX = (UGAWidth + 8 - (EntriesWidth + EntriesGap) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
-      row0PosY = ((UGAHeight - LayoutMainMenuHeight) >> 1) + LayoutBannerOffset; //LAYOUT_BANNER_YOFFSET;
+      row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
+                  LayoutBannerOffset * GlobalConfig.Scale);
 
       row1PosX = (UGAWidth + 8 - (row1TileSize + TILE_XSPACING) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle) {
-        row1PosY = row0PosY + row0TileSize + LayoutButtonOffset + GlobalConfig.TileYSpace + INDICATOR_SIZE
+        row1PosY = row0PosY + row0TileSize +
+        (int)((LayoutButtonOffset + GlobalConfig.TileYSpace + INDICATOR_SIZE) * GlobalConfig.Scale)
                      + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 15 : (FontHeight + 30));
       } else {
-        row1PosY = row0PosY + EntriesHeight + GlobalConfig.TileYSpace + LayoutButtonOffset;
+        row1PosY = row0PosY + EntriesHeight +
+            (INTN)((GlobalConfig.TileYSpace + LayoutButtonOffset) * GlobalConfig.Scale);
       }
 
       if (row1Count > 0) {
         if (GlobalConfig.BootCampStyle) {
-          textPosY = row0PosY + row0TileSize + 10;
+          textPosY = row0PosY + row0TileSize + (INTN)(10 * GlobalConfig.Scale);
         } else {
-          textPosY = row1PosY + row1TileSize + GlobalConfig.TileYSpace + LayoutTextOffset;
+          textPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
         }
       } else {
         if (GlobalConfig.BootCampStyle) {
-          textPosY = row0PosY + row0TileSize + 10;
+          textPosY = row0PosY + row0TileSize + (INTN)(10 * GlobalConfig.Scale);
         } else {
           textPosY = row1PosY;
         }
       }
 
-      FunctextPosY = row1PosY + row1TileSize + GlobalConfig.TileYSpace + LayoutTextOffset;
+      FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
@@ -3824,7 +3833,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
           itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += row1TileSize + TILE_XSPACING;
+          row1PosXRunning += row1TileSize + (INTN)(TILE_XSPACING * GlobalConfig.Scale);
           //DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }

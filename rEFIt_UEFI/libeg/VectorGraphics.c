@@ -73,9 +73,9 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
       }
 
     if (group) { //the shape is in the group
-      DBG("found shape %a", shape->id);
+/*      DBG("found shape %a", shape->id);
       DBG(" from group %a\n", group->id);
-/*      if ((Id == BUILTIN_SELECTION_BIG) ||
+      if ((Id == BUILTIN_SELECTION_BIG) ||
           (Id == BUILTIN_ICON_BACKGROUND) ||
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
@@ -94,9 +94,10 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
  //         DBG("IconImage left corner x=%s y=%s\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
  //         DumpFloat2("IconImage real bounds", IconImage->realBounds, 4);
  //       }
-        if (Id == BUILTIN_SELECTION_BIG) {
-          GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale) - 4; //xxx
-        }
+ //       if (Id == BUILTIN_SELECTION_BIG) {
+ //         GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale) - 4; //xxx
+ //         DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
+ //       }
 
         shape->flags = 0;  //invisible
         if (shapePrev) {
@@ -295,6 +296,10 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     BuiltinIconTable[i].Image = ParseSVGIcon(p, i, IconName, Scale);
     if (!BuiltinIconTable[i].Image) {
       DBG("icon %d not parsed\n", i);
+    }
+    if (i == BUILTIN_SELECTION_BIG) {
+      DBG("icon main size=[%d,%d]\n", BuiltinIconTable[i].Image->Width,
+          BuiltinIconTable[i].Image->Height);
     }
     i++;
     FreePool(IconName);

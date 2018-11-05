@@ -707,8 +707,8 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     DBG("Can't create CompImage\n");
     return;
   }
-  DBG("compose image total=[%d,%d], comp=[%d,%d] at [%d,%d]\n", TotalWidth, TotalHeight,
-      CompWidth, CompHeight, XPos, YPos);
+  DBG("compose image total=[%d,%d], comp=[%d,%d] at [%d,%d] scale=%d\n", TotalWidth, TotalHeight,
+      CompWidth, CompHeight, XPos, YPos, Scale);
   //to simplify suppose square images
   if (CompWidth < TotalWidth) {
     OffsetX = (TotalWidth - CompWidth) >> 1;
@@ -936,7 +936,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
   // to avoid overlapping the menu text on menu pages at lower resolutions is set.
   if ((Screen->ID > 1) && (LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
-    MenuWidth = TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth); // taken from menu.c
+    MenuWidth = TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth * GlobalConfig.Scale); // taken from menu.c
     if ((x + Screen->Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
       if ((x + LayoutAnimMoveForMenuX >= 0) || (UGAWidth-(x + LayoutAnimMoveForMenuX + Screen->Film[0]->Width)) <= 100) {
         x += LayoutAnimMoveForMenuX;
