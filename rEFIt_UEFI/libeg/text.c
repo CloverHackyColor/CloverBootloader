@@ -60,6 +60,7 @@ INTN FontHeight = 18;
 INTN TextHeight = 19;
 VOID *fontsDB = NULL;
 
+
 CONST EG_PIXEL SemiWhitePixel = {255, 255, 255, 210}; //semitransparent
 
 //
@@ -245,7 +246,7 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
 }
 
 INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
-                  IN INTN PosX, IN INTN PosY, IN INTN Cursor)
+                  IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
 {
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
@@ -259,6 +260,10 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   UINTN           LeftSpace, RightSpace;
   INTN            RealWidth = 0;
   INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
+
+  if (GlobalConfig.TypeSVG) {
+//    return drawSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
+  }
   
   // clip the text
   TextLength = StrLen(Text);

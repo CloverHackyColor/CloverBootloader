@@ -341,6 +341,12 @@ typedef struct NSVGfont {
   struct NSVGfont* next;
 } NSVGfont;
 
+typedef struct textFaces {
+  NSVGfont *font;
+  UINT32 color;
+  INTN   size;
+} textFaces;
+
 typedef struct NSVGtext {
   char id[64];
 //  char class[64];

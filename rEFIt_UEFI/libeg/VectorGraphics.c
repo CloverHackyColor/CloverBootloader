@@ -44,6 +44,9 @@ extern INTN row0TileSize;
 extern INTN row1TileSize;
 extern INTN FontWidth;
 
+textFaces textFace[4]; //0-help 1-message 2-menu 3-test
+
+
 EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
 {
 //  EFI_STATUS      Status = EFI_NOT_FOUND;
@@ -387,7 +390,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
   //0..0xC0 == AsciiPageSize
   // cyrillic 0x410..0x450 at 0xC0
   float x = 0.f;
-  float y = -1.0f; //(float)Height;
+  float y = fontSVG->bbox[1] * FontScale;; //(float)Height;
   p->isText = TRUE;
   for (i = 0; i < AsciiPageSize; i++) {
     addLetter(p, i, x, y, FontScale, color);
@@ -425,41 +428,45 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 //  nsvg__deleteParser(p);
   return;
 }
-// it is for test purpose
 
-VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* string, UINT32 color, INTN Cursor)
+//textType = 0-help 1-message 2-menu 3-test
+//return text width in pixels
+INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, INTN Cursor)
 {
-  INTN Width, Height;
+  INTN Width;
   int i;
   UINTN len;
   NSVGparser* p;
   NSVGrasterizer* rast;
-  NSVGfont* fontSVG = (NSVGfont*)font;
-  float Scale, sx, sy;
+  NSVGfont* fontSVG = textFace[textType].font;
+  UINT32 color = textFace[textType].color;
+  INTN Height = textFace[textType].size;
+  float Scale, sy;
   float x, y;
   if (!fontSVG) {
-    DBG("no font in drawSVGtext\n");
-    return;
+    DBG("no font for drawSVGtext\n");
+    return 0;
   }
   if (!TextBufferXY) {
     DBG("no buffer\n");
-    return;
+    return 0;
   }
   p = nsvg__createParser();
   if (!p) {
-    return;
+    return 0;
   }
   NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
   if (!text) {
-    return;
+    return 0;
   }
-  text->font = font;
+  text->font = fontSVG;
   text->fontColor = color;
   p->text = text;
 
   len = StrLen(string);
   Width = TextBufferXY->Width;
-  Height = TextBufferXY->Height;
+//  Height = TextBufferXY->Height;
+
 //  Height = 180; //for test
 //  DBG("textBuffer: [%d,%d], fontUnits=%d\n", Width, TextBufferXY->Height, (int)fontSVG->unitsPerEm);
   if (!fontSVG->unitsPerEm) {
@@ -471,12 +478,12 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* string, UINT3
   }
   sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
   //in font units
-  float fW = fontSVG->bbox[2] - fontSVG->bbox[0];
-  sx = (float)Width / (fW * len);
+//  float fW = fontSVG->bbox[2] - fontSVG->bbox[0];
+//  sx = (float)Width / (fW * len);
 //  Scale = (sx > sy)?sy:sx;
   Scale = sy;
-  x = 0.f;
-  y = fontSVG->bbox[1] * Scale;
+  x = (float)posX; //0.f;
+  y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
   for (i=0; i < len; i++) {
     CHAR16 letter = string[i];
@@ -583,6 +590,7 @@ VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* font, CONST CHAR16* string, UINT3
 //  DBG("end raster text\n");
   nsvgDeleteRasterizer(rast);
   nsvg__deleteParser(p);
+  return (INTN)x;
 }
 
 VOID testSVG()
@@ -676,11 +684,14 @@ VOID testSVG()
         DBG("font not parsed\n");
         break;
       }
-      NSVGfont* fontSVG = p->font;
+//     NSVGfont* fontSVG = p->font;
+      textFace[3].font = p->font;
+      textFace[3].color = NSVG_RGBA(0x80, 0xFF, 0, 255);
+      textFace[3].size = Height;
       DBG("font parsed family=%a\n", p->font->fontFamily);
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
-      drawSVGtext(TextBufferXY, fontSVG, L"Clover Кловер", NSVG_RGBA(0x80, 0xFF, 0, 255), 1);
+      drawSVGtext(TextBufferXY, 0, 0, 3, L"Clover Кловер", 1);
       DBG("text ready to blit\n");
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,

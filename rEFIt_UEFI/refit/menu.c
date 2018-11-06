@@ -2864,7 +2864,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   TextBufferXY = egCreateFilledImage(TextWidth, TextHeight, TRUE, &MenuBackgroundPixel);
 
   // render the text
-  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
+  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, 1);
 
   if (XAlign != X_IS_LEFT) {
     // shift 64 is prohibited
@@ -2977,7 +2977,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   }
 
   // render the text
-  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor);
+  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, 2);
   BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
 }
 

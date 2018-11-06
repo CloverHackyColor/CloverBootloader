@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -131,6 +131,7 @@ extern VOID *fontsDB;
 	#define NSVG_INLINE inline
 #endif
 
+extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
 
 void DumpFloat2 (char* s, float* t, int N)
 {
@@ -2760,6 +2761,7 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
 }
 
 static int once = 0;
+static int once2 = 0;
 
 static void nsvg__parseText(NSVGparser* p, const char** dict)
 {
@@ -2827,8 +2829,8 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     UINTN           FileDataLength = 0;
 	  NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
-      Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->font->fontFamily), &FileData, &FileDataLength);
-//      DBG("font loaded status=%r\n", Status);
+      Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
+      DBG("font loaded status=%r\n", Status);
       if (!EFI_ERROR(Status)) {
         p1 = nsvgParse((CHAR8*)FileData, "px", 72, 1.0f);
         if (!p1) {
@@ -2851,17 +2853,37 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   }
   //here we want to set text->font as p->font if text->groupID == MessageRow
   //instead of embedded
-  if (fontSVG && fontSVG->glyphs && !once) {
+  if (fontSVG && fontSVG->glyphs) {
 	  NSVGgroup* group = attr->group;
 	  while (group) {
 		  if (strstr(group->id, "MessageRow") != NULL) {
-			  p->font = fontSVG;
-			  p->fontSize = text->fontSize;
-			  p->fontColor = text->fontColor;
-        DBG("set p->font=%a color=%x as in MessageRow\n", fontSVG->id, text->fontColor);
-        once++;
+        if (!once) {
+          p->font = fontSVG;
+          p->fontSize = text->fontSize;
+          p->fontColor = text->fontColor;
+          textFace[1].font = fontSVG;
+          textFace[1].size = text->fontSize;
+          textFace[1].color = text->fontColor;
+          DBG("set message->font=%a color=%x as in MessageRow\n", fontSVG->fontFamily, text->fontColor);
+          once++;
+        }
 			  break;
-		  }
+		  } else if (strstr(group->id, "MenuRows") != NULL) {
+        if (!once2) {
+          textFace[2].font = fontSVG;
+          textFace[2].size = text->fontSize;
+          textFace[2].color = text->fontColor;
+          DBG("set menu->font=%a color=%x as in MenuRows\n", fontSVG->fontFamily, text->fontColor);
+          once2++;
+        }
+        break;
+      } else if (strstr(group->id, "HelpRows") != NULL) {
+        textFace[0].font = fontSVG;
+        textFace[0].size = text->fontSize;
+        textFace[0].color = text->fontColor;
+        DBG("set help->font=%a color=%x as in HelpRows\n", fontSVG->fontFamily, text->fontColor);
+        break;
+      }
 		  group = group->next;
 	  }
   }
@@ -3368,16 +3390,17 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
     if (strcmp(dict[i], "horiz-adv-x") == 0) {
       font->horizAdvX = (int)AsciiStrDecimalToUintn(dict[i+1]);
     } else
-      if (strcmp(dict[i], "font-family") == 0) {
+      if (strcmp(dict[i], "font-family") == 0) { //usually absent here
         AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
       }
       else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }
-  DBG("found embedded font family=%a\n", font->fontFamily);
+
   AsciiStrCpyS(font->id, 64, curAttr->id);
   if (!font->horizAdvX) {
     font->horizAdvX = 1000;
   }
+  DBG("found embedded font id=%a\n", font->id);
 
   p->font = font;
   font->next = fontsDB;
@@ -3830,7 +3853,6 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
     DumpFloat2("glyph bounds", shape->bounds, 4);
     DBG("glyph width=%d\n", g->horizAdvX);
   }
-
 
   x1 += g->horizAdvX * scale; //position for next letter in user's units
   shape->strokeLineJoin = NSVG_JOIN_MITER;

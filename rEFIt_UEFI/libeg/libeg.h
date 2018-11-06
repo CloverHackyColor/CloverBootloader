@@ -241,7 +241,7 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
 VOID PrepareFont(VOID);
 VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
-INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor);
+INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
 //VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY);
@@ -254,7 +254,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 EFI_STATUS egScreenShot(VOID);
 
-VOID drawSVGtext(EG_IMAGE* TextBufferXY, VOID* fontSVG, const CHAR16* text, UINT32 color, INTN Cursor);
+INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, const CHAR16* text, INTN Cursor);
 VOID testSVG(VOID);
 
 #endif /* __LIBEG_LIBEG_H__ */
