@@ -1803,8 +1803,14 @@ VOID InitSelection(VOID)
     SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
                                              TRUE, &MenuBackgroundPixel);
   } else { // using embedded theme (this is an assumption but a better check is required)
-    EG_PIXEL BackgroundPixel = DarkEmbeddedBackgroundPixel;
-    BackgroundPixel.a = 0x00;
+    EG_PIXEL BackgroundPixel;
+    if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
+      BackgroundPixel = DarkEmbeddedBackgroundPixel;
+      BackgroundPixel.a = 0x00;
+    } else {
+      BackgroundPixel = StdBackgroundPixel;
+      BackgroundPixel.a = 0xff;
+    }
     if (GlobalConfig.DarkEmbedded) {
       SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                                TRUE, &BackgroundPixel);
@@ -1813,9 +1819,9 @@ VOID InitSelection(VOID)
 
     } else {
       SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                               TRUE, &MenuBackgroundPixel); //&StdBackgroundPixel);
+                                               TRUE, &BackgroundPixel); //&StdBackgroundPixel);
       SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                               TRUE, &MenuBackgroundPixel);
+                                               TRUE, &BackgroundPixel);
     }
   }
 //  DBG("selections inited\n");

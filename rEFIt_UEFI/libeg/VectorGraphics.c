@@ -97,10 +97,10 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
  //         DBG("IconImage left corner x=%s y=%s\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
  //         DumpFloat2("IconImage real bounds", IconImage->realBounds, 4);
  //       }
- //       if (Id == BUILTIN_SELECTION_BIG) {
- //         GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale) - 4; //xxx
- //         DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
- //       }
+        if (Id == BUILTIN_SELECTION_BIG) {
+          GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
+          DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
+        }
 
         shape->flags = 0;  //invisible
         if (shapePrev) {
