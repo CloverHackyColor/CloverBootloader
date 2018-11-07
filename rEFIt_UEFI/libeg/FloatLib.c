@@ -368,4 +368,11 @@ CHAR16* PoolPrintFloat(float X)
   return PoolPrint(L"%c%d.%06d", S, I, (INTN)Fract);
 }
 
-
+//there is
+#if 0
+BOOLEAN
+EFIAPI
+AsmRdRand16 (
+             OUT     UINT16                    *Rand
+             );
+#endif

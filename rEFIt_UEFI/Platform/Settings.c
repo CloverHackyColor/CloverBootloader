@@ -3982,6 +3982,12 @@ InitTheme(
   
   DbgHeader("InitTheme");
   GlobalConfig.TypeSVG = FALSE;
+  row0TileSize = 144;
+  row1TileSize = 64;
+  if (FontImage != NULL) {
+    egFreeImage (FontImage);
+    FontImage = NULL;
+  }
   
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
   

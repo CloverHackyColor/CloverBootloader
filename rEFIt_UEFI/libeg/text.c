@@ -132,6 +132,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   
   FontWidth = ImageWidth / Cols;
   FontHeight = ImageHeight / Rows;
+  TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * GlobalConfig.Scale);
   FirstPixel = *PixelPtr;
   for (y = 0; y < Rows; y++) {
     for (j = 0; j < FontHeight; j++) {

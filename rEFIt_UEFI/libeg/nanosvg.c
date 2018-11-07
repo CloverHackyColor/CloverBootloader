@@ -70,7 +70,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -2857,30 +2857,35 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
 	  NSVGgroup* group = attr->group;
 	  while (group) {
 		  if (strstr(group->id, "MessageRow") != NULL) {
-        if (!once) {
+        if (!textFace[1].valid) {
           p->font = fontSVG;
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
           textFace[1].font = fontSVG;
           textFace[1].size = text->fontSize;
           textFace[1].color = text->fontColor;
+          textFace[1].valid = TRUE;
           DBG("set message->font=%a color=%x as in MessageRow\n", fontSVG->fontFamily, text->fontColor);
           once++;
         }
 			  break;
 		  } else if (strstr(group->id, "MenuRows") != NULL) {
-        if (!once2) {
+        if (!textFace[2].valid) {
           textFace[2].font = fontSVG;
           textFace[2].size = text->fontSize;
           textFace[2].color = text->fontColor;
+          textFace[2].valid = TRUE;
           DBG("set menu->font=%a color=%x as in MenuRows\n", fontSVG->fontFamily, text->fontColor);
           once2++;
         }
         break;
       } else if (strstr(group->id, "HelpRows") != NULL) {
-        textFace[0].font = fontSVG;
-        textFace[0].size = text->fontSize;
-        textFace[0].color = text->fontColor;
+        if (!textFace[0].valid) {
+          textFace[0].font = fontSVG;
+          textFace[0].size = text->fontSize;
+          textFace[0].color = text->fontColor;
+          textFace[0].valid = TRUE;
+        }
         DBG("set help->font=%a color=%x as in HelpRows\n", fontSVG->fontFamily, text->fontColor);
         break;
       }

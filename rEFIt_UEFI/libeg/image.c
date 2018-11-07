@@ -777,11 +777,11 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
   // compose
   if (CompWidth > 0) {
     if (CompImage->HasAlpha && !BackgroundImage) {
-      CompImage->HasAlpha = FALSE;
+       CompImage->HasAlpha = FALSE;
     }
 
     if (TopImage->HasAlpha) {
-      if (CompImage->HasAlpha) {
+      if (CompImage->HasAlpha) {  //aaaa
         egRawCompose(CompImage->PixelData + PosY * CompImage->Width + PosX,
                      TopImage->PixelData,
                      CompWidth, CompHeight, CompImage->Width, TopImage->Width);

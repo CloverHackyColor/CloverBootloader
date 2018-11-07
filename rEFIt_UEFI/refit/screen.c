@@ -960,7 +960,8 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
               Screen->Film[Screen->Frames]->Height,
               AnimeImage->Width,
               Screen->Film[Screen->Frames]->Width);
-    egComposeImage(AnimeImage, Screen->Film[Screen->CurrentFrame], 0, 0);
+    AnimeImage->HasAlpha = FALSE;
+    egComposeImage(AnimeImage, Screen->Film[Screen->CurrentFrame], 0, 0);  //aaaa
     BltImage(AnimeImage, x, y);
   }
   Screen->CurrentFrame++;

@@ -97,9 +97,15 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
  //         DBG("IconImage left corner x=%s y=%s\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
  //         DumpFloat2("IconImage real bounds", IconImage->realBounds, 4);
  //       }
-        if (Id == BUILTIN_SELECTION_BIG) {
+        if ((Id == BUILTIN_SELECTION_BIG) && (!GlobalConfig.SelectionOnTop)) {
           GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
+          row0TileSize = GlobalConfig.MainEntriesSize; // + (int)(16.f * Scale);
           DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
+        }
+   //     GlobalConfig.SelectionOnTop
+   //     row0TileSize = (INTN)(144.f * Scale);
+        if ((Id == BUILTIN_SELECTION_SMALL) && (!GlobalConfig.SelectionOnTop)) {
+          row1TileSize = (int)(IconImage->width * Scale);
         }
 
         shape->flags = 0;  //invisible
@@ -185,7 +191,9 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f, ty = 0.f;
   if (Id == BUILTIN_ICON_BACKGROUND) {
-//    tx = - GlobalConfig.CentreShift;
+    tx = - GlobalConfig.CentreShift;
+    IconImage->realBounds[0] += tx;
+    IconImage->realBounds[2] += tx;
 //    iWidth = (int)UGAWidth;
   } else if (Id != BUILTIN_ICON_BANNER) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
@@ -266,7 +274,23 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     RenderSVGfont(fontSVG, p->fontColor);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
-// WaitForKeyPress(L"waiting for key press...\n");
+#if 0
+  //Test text
+  INTN Height = 80;
+  INTN Width = UGAWidth-200;
+  DBG("create test textbuffer\n");
+  EG_IMAGE* TextBufferXY = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
+  drawSVGtext(TextBufferXY, 0, 0, 1, L"Clover Кловер", 1); //aka message
+  DBG("text ready to blit\n");
+  BltImageAlpha(TextBufferXY,
+                (UGAWidth - Width) / 2,
+                (UGAHeight - Height) / 2,
+                &MenuBackgroundPixel,
+                16);
+  egFreeImage(TextBufferXY);
+
+  WaitForKeyPress(L"\n");
+#endif
 
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
@@ -317,7 +341,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     i++;
   }
 
-
   if (p) {
     nsvg__deleteParser(p);
     p = NULL;
@@ -330,8 +353,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   GlobalConfig.TypeSVG = TRUE;
   GlobalConfig.ThemeDesignHeight = (int)SVGimage->height;
   GlobalConfig.ThemeDesignWidth = (int)SVGimage->width;
-  row0TileSize = (INTN)(144.f * Scale);
-  row1TileSize = (INTN)(64.f * Scale);
+  if (GlobalConfig.SelectionOnTop) {
+    row0TileSize = (INTN)(144.f * Scale);
+    row1TileSize = (INTN)(64.f * Scale);
+    GlobalConfig.MainEntriesSize = (INTN)(128.f * Scale);
+  }
+
   return EFI_SUCCESS;
 }
 
@@ -438,6 +465,18 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   UINTN len;
   NSVGparser* p;
   NSVGrasterizer* rast;
+  if (!textFace[textType].valid) {
+    for (i=0; i<4; i++) {
+      if (textFace[i].valid) {
+        textType = i;
+        break;
+      }
+    }
+  }
+  if (!textFace[textType].valid) {
+    DBG("valid fontface not found!\n");
+    return 0;
+  }
   NSVGfont* fontSVG = textFace[textType].font;
   UINT32 color = textFace[textType].color;
   INTN Height = textFace[textType].size;

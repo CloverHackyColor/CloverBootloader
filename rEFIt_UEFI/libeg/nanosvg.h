@@ -345,6 +345,7 @@ typedef struct textFaces {
   NSVGfont *font;
   UINT32 color;
   INTN   size;
+  BOOLEAN valid;
 } textFaces;
 
 typedef struct NSVGtext {
