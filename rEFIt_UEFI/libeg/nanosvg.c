@@ -3525,7 +3525,7 @@ CHAR16 nsvg__parseUnicode(const char *s)
     A = 0x22; //"
   } else if (strstr(s, "&lt;") !=0 ) {
     A = 0x3C; //<
-  } else if (strstr(s, "&qt;") !=0 ) {
+  } else if (strstr(s, "&gt;") !=0 ) {
     A = 0x3E; //>
   } else if (strstr(s, "&nbsp;") !=0 ) {
     A = 0xA0; //>
