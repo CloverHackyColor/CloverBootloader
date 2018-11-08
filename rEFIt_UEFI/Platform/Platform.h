@@ -1319,6 +1319,7 @@ typedef enum {
   MacMini61,
   MacMini62,
   MacMini71,
+  MacMini81,
   iMac41,
   iMac42,
   iMac51,

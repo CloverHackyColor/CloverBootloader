@@ -313,6 +313,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "Macmini7,1", "MM71.88Z.0234.B00.1809171422", "236.0.0.0.0", "Mac-35C5E08120C7EEAF", // Intel Core i5-4278U @ 2.60 GHz
     "Mac mini", "1.0", "C02NN7NHG1J0", "Mini-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 },
+  //Macmini8,1
+  { "Macmini8,1", "MM81.88Z.F000.B00.1809171422", "220.207.27.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
+    "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
+    { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 }, // need BIOS REV rBR RPlt ECPI
   //iMac4,1
   { "iMac4,1", "IM41.88Z.0055.B08.0609061538", NULL, "Mac-F42787C8", // Intel Core 2 Duo T7200 @ 2.00 GHz
     "iMac", "1.0", "W8608HACU2P", "iMac",
@@ -626,6 +630,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro142:
     case MacBookPro151:
     case MacBookPro152:
+    case MacMini81:
     case iMac171:
     case iMac181:
     case iMac182:
@@ -721,6 +726,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacMini53:
     case MacMini61:
     case MacMini62:
+    case MacMini81:
     case iMac131:
     case iMac132:
     case iMac133:
@@ -894,6 +900,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro143:
     case MacBookPro151:
     case MacBookPro152:
+    case MacMini81:
     case iMac161:
     case iMac162:
     case iMac171:
@@ -903,6 +910,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMacPro11:
       gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
+        case MacMini81:
         case iMac161:
         case iMac162:
         case iMac171:
