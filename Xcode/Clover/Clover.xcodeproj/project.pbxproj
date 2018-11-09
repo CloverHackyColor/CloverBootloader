@@ -90,7 +90,6 @@
 		126151501A15BBB000903E7B /* libeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libeg.h; sourceTree = "<group>"; };
 		126151511A15BBB000903E7B /* libegint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
 		126151521A15BBB000903E7B /* libscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
-		126151531A15BBB000903E7B /* load_bmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
 		126151541A15BBB000903E7B /* load_icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		126151551A15BBB000903E7B /* text.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
 		126151571A15BBB000903E7B /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
@@ -994,7 +993,6 @@
 				126151501A15BBB000903E7B /* libeg.h */,
 				126151511A15BBB000903E7B /* libegint.h */,
 				126151521A15BBB000903E7B /* libscreen.c */,
-				126151531A15BBB000903E7B /* load_bmp.c */,
 				126151541A15BBB000903E7B /* load_icns.c */,
 				12E301581D5A413A00EED426 /* lodepng.c */,
 				12E301591D5A413A00EED426 /* lodepng.h */,

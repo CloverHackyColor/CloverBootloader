@@ -368,6 +368,24 @@ CHAR16* PoolPrintFloat(float X)
   return PoolPrint(L"%c%d.%06d", S, I, (INTN)Fract);
 }
 
+static UINT32 seed = 12345;
+float rndf() //expected 0..1
+{
+//  UINT16 Rand = 0;
+//  AsmRdRand16(&Rand);  //it's a pity panic
+//  return (float)Rand / 65536.f;
+  seed = seed * 214013 + 2531011;
+  float x = seed / 4294967296.0f;
+  return x;
+}
+
+int dither(float x)
+{
+  int i = (int)x;
+  float dx = x - (float)i;
+  if (dx > rndf()) i++;
+  return i;
+}
 //there is
 #if 0
 BOOLEAN

@@ -33,6 +33,8 @@ float ModF(float X, float Y);
 float AcosF(float X);
 float Atan2F(float X, float Y);
 float FabsF(float X);
+float rndf(void);  //random number from 0 to 1.0f
+int dither(float x);
 
 RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,

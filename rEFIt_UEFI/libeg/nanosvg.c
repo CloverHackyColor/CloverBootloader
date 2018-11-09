@@ -1053,6 +1053,17 @@ static void nsvg__addShape(NSVGparser* p)
       FreePool(shape);
       return;
     }
+  } else if (attr->hasFill == 3) {
+    shape->fill.type = NSVG_PAINT_PATTERN;
+    const char *id = attr->fillGradient;
+    NSVGpattern* pt = p->patterns;
+    while (pt) {
+      if (strcmp(pt->id, id) == 0) {
+        break;
+      }
+      pt = pt->next;
+    }
+    shape->fill.gradient = (NSVGgradient*)pt;
   }
 
   // Set stroke
@@ -1072,6 +1083,17 @@ static void nsvg__addShape(NSVGparser* p)
       FreePool(shape);
       return;
     }
+  } else if (attr->hasStroke == 3) {
+    shape->stroke.type = NSVG_PAINT_PATTERN;
+    const char *id = attr->strokeGradient;
+    NSVGpattern* pt = p->patterns;
+    while (pt) {
+      if (strcmp(pt->id, id) == 0) {
+        break;
+      }
+      pt = pt->next;
+    }
+    shape->stroke.gradient = (NSVGgradient*)pt;
   }
 
   // Set flags
@@ -1150,7 +1172,6 @@ static void nsvg__addPath(NSVGparser* p, char closed)
   }
   path->next = p->plist;
   p->plist = path;
-
   return;
 }
 
@@ -1954,8 +1975,25 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     if (strcmp(value, "none") == 0) {
       attr->hasFill = 0;
     } else if (strncmp(value, "url(", 4) == 0) {
-      attr->hasFill = 2;
+      if (strstr(value, "pattern")) {
+        attr->hasFill = 3;
+        /*
+        const char *id = value + 5;
+        NSVGpattern* pt = p->patterns;
+        while (pt) {
+          if (strcmp(pt->id, id) == 0) {
+            attr->hasFill = 3;
+            attr->pattern = pt;
+            break;
+          }
+          pt = pt->next;
+        }
+         */
+      } else {
+        attr->hasFill = 2;
+      }
       nsvg__parseUrl(attr->fillGradient, value);
+
     } else {
       attr->hasFill = 1;
       attr->fillColor = nsvg__parseColor(value);
@@ -1972,8 +2010,29 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     if (strcmp(value, "none") == 0) {
       attr->hasStroke = 0;
     } else if (strncmp(value, "url(", 4) == 0) {
-      attr->hasStroke = 2;
+      if (strstr(value, "pattern")) {
+        attr->hasStroke = 3;
+      } else {
+        attr->hasStroke = 2;
+      }
       nsvg__parseUrl(attr->strokeGradient, value);
+/*
+      if (nsvg__findGradientData(p,value+5) ) {
+        attr->hasStroke = 2;
+        nsvg__parseUrl(attr->strokeGradient, value);
+      } else {
+        const char *id = value + 5;
+        NSVGpattern* pt = p->patterns;
+        while (pt) {
+          if (strcmp(pt->id, id) == 0) {
+            attr->hasStroke = 3;
+            attr->pattern = pt;
+            break;
+          }
+          pt = pt->next;
+        }
+      }
+ */
     } else {
       attr->hasStroke = 1;
       attr->strokeColor = nsvg__parseColor(value);
@@ -3028,6 +3087,7 @@ static void nsvg__parsePoly(NSVGparser* p, const char** attr, int closeFlag)
   nsvg__addShape(p);
 }
 
+/* Slice - I dont know what it should be
 static void nsvg__parseIMAGE(NSVGparser* p, const char** attr)
 {
   float x = 0.0f;
@@ -3103,6 +3163,72 @@ static void nsvg__parseIMAGE(NSVGparser* p, const char** attr)
 
     return;
   }
+}
+*/
+
+static void parseImage(NSVGparser* p, const char** dict)
+{
+//  NSVGattrib* attr = nsvg__getAttr(p);
+  NSVGpattern *pt = NULL;
+  int i;
+  UINTN len = 0;
+  float w,h;
+  const char *href = NULL;
+  UINT8 *tmpData = NULL;
+  EG_IMAGE *NewImage = NULL;
+
+  for (i = 0; dict[i]; i += 2) {
+    if (strcmp(dict[i], "width") == 0) {
+      w = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualWidth(p));
+    } else if (strcmp(dict[i], "height") == 0) {
+      h = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
+    } else if (strcmp(dict[i], "xlink:href") == 0) {
+      href = dict[i+1];
+    } else {
+      nsvg__parseAttr(p, dict[i], dict[i + 1]);
+    }
+  }
+  if (!href || (strstr(href, "data:image/png;") == NULL)) {
+    return;
+  }
+  href = strstr(href, "base64,") + 7;
+  if (p->patternFlag) {
+    pt = p->patterns; //the last one
+  }
+  tmpData = (UINT8 *)Base64Decode((char*)href, &len);
+  if (len == 0) {
+    DBG("image not decoded from base64\n");
+  }
+  NewImage = egDecodePNG(tmpData, len, TRUE);
+  pt->image = (void *)NewImage;
+  if (tmpData) {
+    FreePool(tmpData);
+  }
+}
+
+static void parsePattern(NSVGparser* p, const char** dict)
+{
+  NSVGattrib* attr = nsvg__getAttr(p);
+  int i;
+  float w,h;
+  NSVGpattern *pt;
+
+  for (i = 0; dict[i]; i += 2) {
+    if (strcmp(dict[i], "width") == 0) {
+      w = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualWidth(p));
+    } else if (strcmp(dict[i], "height") == 0) {
+      h = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
+    } else {
+      nsvg__parseAttr(p, dict[i], dict[i + 1]);
+    }
+  }
+
+  pt = AllocateZeroPool(sizeof(NSVGpattern));
+  AsciiStrCpyS(pt->id, 64, attr->id);
+  pt->width = w;
+  pt->height = h;
+  pt->next = p->patterns;
+  p->patterns = pt;
 }
 
 static void nsvg__parseSVG(NSVGparser* p, const char** attr)
@@ -3709,9 +3835,14 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
   } else if (strcmp(el, "title") == 0) {
     p->titleFlag = 1;
   } else if (strcmp(el, "image") == 0) {
-    nsvg__pushAttr(p);
-    nsvg__parseIMAGE(p, dict);
-    nsvg__popAttr(p);
+//    nsvg__pushAttr(p);
+//    nsvg__parseIMAGE(p, dict);
+    parseImage(p, dict);
+//    nsvg__popAttr(p);
+  } else if (strcmp(el, "pattern") == 0) {
+    parsePattern(p, dict);
+    p->patternFlag = 1;
+
   } else if (strcmp(el, "clover:theme") == 0) {
     parseTheme(p, dict);
   } else {
@@ -3730,6 +3861,8 @@ static void nsvg__endElement(void* ud, const char* el)
     p->pathFlag = 0;
   } else if (strcmp(el, "defs") == 0) {
     p->defsFlag = 0;
+  } else if (strcmp(el, "pattern") == 0) {
+    p->patternFlag = 0;
   } else if (strcmp(el, "symbol") == 0) {
     nsvg__addShape(p);
     nsvg__popAttr(p);

@@ -65,7 +65,8 @@ enum NSVGpaintType {
   NSVG_PAINT_LINEAR_GRADIENT = 2,
   NSVG_PAINT_RADIAL_GRADIENT = 3,
   NSVG_PAINT_CONIC_GRADIENT = 4,
-  NSVG_PAINT_GRADIENT_LINK = 5
+  NSVG_PAINT_GRADIENT_LINK = 5,
+  NSVG_PAINT_PATTERN = 6,
 };
 
 enum NSVGspreadType {
@@ -147,6 +148,15 @@ typedef struct NSVGclip
 #define kMaxTextLength 256
 
 typedef struct NSVGshape NSVGshape;
+
+typedef struct NSVGpattern {
+  char id[64];
+  int nx, ny;  //repeat
+  float width;
+  float height;
+  void* image;
+  struct NSVGpattern* next;
+} NSVGpattern;
 
 typedef struct NSVGgroup
 {
@@ -296,6 +306,7 @@ typedef struct NSVGattrib
   char visible;
   NSVGclipPathIndex clipPathCount;
   NSVGgroup* group;
+//  NSVGpattern* pattern;
 } NSVGattrib;
 
  typedef struct NSVGstyles
@@ -391,10 +402,12 @@ typedef struct NSVGparser
   char titleFlag;
   char shapeFlag;
   char styleFlag;
+  char patternFlag;
 //  char groupFlag;
   BOOLEAN isText;
   char unknown[64];
   NSVGtext* text;
+  NSVGpattern *patterns;
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
 } NSVGparser;
@@ -488,6 +501,7 @@ typedef struct NSVGcachedPaint {
   char spread;
   char pad[6];
   float xform[6];
+  void *image;
   unsigned int colors[256];
 } NSVGcachedPaint;
 

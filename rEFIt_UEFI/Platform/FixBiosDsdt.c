@@ -5369,7 +5369,7 @@ VOID RenameDevices(UINT8* table)
         break; //not found
       }
       adr += shift;
-      DBG("found Name @ 0x%x\n", adr);
+//      DBG("found Name @ 0x%x\n", adr);
       if (!Bridge || (FindBin(table + adr - 4, 5, (UINT8*)(Bridge->Name), 4) == 0)) { // long name like "RP02.PXSX"
         CopyMem(table + adr, Replace, 4);
         adr += 5; //at least, it is impossible to see  PXSXPXSX
