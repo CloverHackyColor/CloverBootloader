@@ -273,6 +273,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "MacBookAir7,2", "MBA71.88Z.0180.B00.1809171321", "182.0.0.0.0", "Mac-937CB26E2E02BB01", // Intel Core i7-5650U @ 2.20 GHz
     "MacBook Air", "1.0", "C02Q1HACG940", "Air-Enclosure",
     { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0x7b007 }, // need ECPI
+  //MacBookAir8,1
+  { "MacBookAir8,1", "MBA81.88Z.F000.B00.1809171321", "220.220.100.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
+    "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
+    { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need BIOS REV rBR RPlt ECPI
   //Macmini1,1
   { "Macmini1,1", "MM11.88Z.0055.B08.0610121326", NULL, "Mac-F4208EC8", // Intel Core 2 Duo T7200 @ 2.00 GHz
     "Mac mini", "1.0", "W8702N1JU35", "Mini-Aluminum",
@@ -316,7 +320,7 @@ PLATFORMDATA ApplePlatformData[] =
   //Macmini8,1
   { "Macmini8,1", "MM81.88Z.F000.B00.1809171422", "220.207.27.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
-    { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 }, // need BIOS REV rBR RPlt ECPI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt ECPI
   //iMac4,1
   { "iMac4,1", "IM41.88Z.0055.B08.0609061538", NULL, "Mac-F42787C8", // Intel Core 2 Duo T7200 @ 2.00 GHz
     "iMac", "1.0", "W8608HACU2P", "iMac",
@@ -420,11 +424,11 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac18,1
   { "iMac18,1", "IM181.88Z.F000.B00.1809171524", "165.0.0.0.0", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",
-    { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "NA", 0xf07009 }, // need RPlt ECPI
+    { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt ECPI
   //iMac18,2
   { "iMac18,2", "IM183.88Z.F000.B00.1809280842", "166.0.0.0.0", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
     "iMac", "1.0", "C02TDHACJ1G5", "iMac-Aluminum",
-    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "NA", 0xf07009 }, // need RPlt ECPI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt ECPI
   //iMac18,3
   { "iMac18,3", "IM183.88Z.F000.B00.1809280842", "166.0.0.0.0", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
@@ -628,9 +632,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro132:
     case MacBookPro141:
     case MacBookPro142:
-    case MacBookPro151:
-    case MacBookPro152:
-    case MacMini81:
     case iMac171:
     case iMac181:
     case iMac182:
@@ -677,9 +678,13 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacPro51:
       gFwFeatures             = 0xE80FE137;
       break;
+    case MacBookPro121:
+    case MacBookPro151:
+    case MacBookPro152:
+    case MacBookAir81:
+    case MacMini81:
     case iMac161:
     case iMac162:
-    case MacBookPro121:
       gFwFeatures             = 0xFC0FE137;
       break;
     case MacBook61:
@@ -713,8 +718,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
-    case MacBookPro151:
-    case MacBookPro152:
     case MacBookAir41:
     case MacBookAir42:
     case MacBookAir51:
@@ -726,7 +729,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacMini53:
     case MacMini61:
     case MacMini62:
-    case MacMini81:
     case iMac131:
     case iMac132:
     case iMac133:
@@ -757,10 +759,16 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro82:
     case MacBookPro83:
     case MacBookPro121:
+    case MacBookPro151:
+    case MacBookPro152:
     case MacBookAir31:
     case MacBookAir32:
     case MacBookAir71:
     case MacBookAir72:
+    case MacBookAir81:
+    case MacMini41:
+    case MacMini71:
+    case MacMini81:
     case iMac101:
     case iMac111:
     case iMac112:
@@ -769,8 +777,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac122:
     case iMac161:
     case iMac162:
-    case MacMini41:
-    case MacMini71:
     case MacPro51:
       gFwFeaturesMask         = 0xFF1FFF3F;
       break;
@@ -808,6 +814,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacBookPro121:
+    case MacMini81:
       gPlatformFeature        = 0x02;   //soldered RAM - memory tab disappearing
       break;
     case MacMini71:
@@ -827,6 +834,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro143:
     case MacBookPro151:
     case MacBookPro152:
+    case MacBookAir81:
       gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
       break;
 
@@ -889,8 +897,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBook81:
     case MacBook91:
     case MacBook101:
-    case MacBookAir71:
-    case MacBookAir72:
     case MacBookPro121:
     case MacBookPro131:
     case MacBookPro132:
@@ -900,6 +906,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro143:
     case MacBookPro151:
     case MacBookPro152:
+    case MacBookAir71:
+    case MacBookAir72:
+    case MacBookAir81:
     case MacMini81:
     case iMac161:
     case iMac162:

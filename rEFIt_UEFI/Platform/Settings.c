@@ -7539,6 +7539,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E93: // "Intel UHD Graphics 610"
                   case 0x3E91: // "Intel UHD Graphics 630"
                   case 0x3E92: // "Intel UHD Graphics 630"
+                  case 0x3E98: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
                     // Write LEVD

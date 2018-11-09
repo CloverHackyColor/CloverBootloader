@@ -370,7 +370,7 @@ UINT8 coffeelake_ig_vals[12][4] = {
   { 0x09, 0x00, 0x92, 0x3E },   //4 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DUMMY2, BL: 0xFFFF
   { 0x00, 0x00, 0x9B, 0x3E },   //5 *MacBookPro15,1 - Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x06, 0x00, 0x9B, 0x3E },   //6 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 1, PortCount: 1, STOLEN: 38MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1, BL: 0xFFFF
-  { 0x07, 0x00, 0x9B, 0x3E },   //7 Intel UHD Graphics 630 - Mobile: 0, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
+  { 0x07, 0x00, 0x9B, 0x3E },   //7 *Macmini8,1 - Intel UHD Graphics 630 - Mobile: 0, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x09, 0x00, 0x9B, 0x3E },   //8 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x00, 0x00, 0xA5, 0x3E },   //9 Intel Iris Plus Graphics 655 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x04, 0x00, 0xA5, 0x3E },   //10 *MacBookPro15,2 - Intel Iris Plus Graphics 655 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
@@ -2717,6 +2717,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         default:
           switch (MacModel) {
             case MacBook101:
+            case MacBookAir81:
               devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
               devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[3], 4);
               devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[4], 4);
@@ -2929,6 +2930,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               devprop_add_value(device, "AAPL00,PanelPowerOff", coffeelake_hd_vals[4], 4);
               devprop_add_value(device, "AAPL00,PanelPowerOn", coffeelake_hd_vals[5], 4);
               devprop_add_value(device, "AAPL00,PanelPowerUp", coffeelake_hd_vals[6], 4);
+              devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
+              break;
+            case MacMini81:
               devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
               break;
             default:
