@@ -214,7 +214,8 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
 //  WaitForKeyPress(L"waiting for key press...\n");
 #endif
   nsvgDeleteRasterizer(rast);
-  nsvg__deleteParser(p2);
+//  nsvg__deleteParser(p2);
+//  nsvgDelete(p2->image);
   return NewImage;
 }
 
@@ -343,7 +344,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 
   if (p) {
-    nsvg__deleteParser(p);
+//    nsvg__deleteParser(p);
     p = NULL;
   }
 
@@ -501,6 +502,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   }
   text->font = fontSVG;
   text->fontColor = color;
+  text->fontSize = Height;
   p->text = text;
 
   len = StrLen(string);
@@ -514,7 +516,9 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
-    fH = fontSVG->unitsPerEm;  //1000
+    DBG("wrong font: %s\n", PoolPrintFloat(fontSVG->unitsPerEm));
+    DumpFloat2("Font bbox", fontSVG->bbox, 4);
+    fH = fontSVG->unitsPerEm?fontSVG->unitsPerEm:1000.0f;  //1000
   }
   sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
   //in font units
@@ -530,7 +534,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
     if (!letter) {
       break;
     }
-    DBG("add letter 0x%x\n", letter);
+//    DBG("add letter 0x%x\n", letter);
     if (i == Cursor) {
       addLetter(p, 0x5F, x, y, sy, color);
     }
@@ -629,7 +633,8 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
 
 //  DBG("end raster text\n");
   nsvgDeleteRasterizer(rast);
-  nsvg__deleteParser(p);
+//  nsvg__deleteParser(p);
+  nsvgDelete(p->image);
   return (INTN)x;
 }
 
@@ -753,19 +758,19 @@ VOID testSVG()
       textFace[3].font = p->font;
       textFace[3].color = NSVG_RGBA(0x80, 0xFF, 0, 255);
       textFace[3].size = Height;
-      DBG("font parsed family=%a\n", p->font->fontFamily);
+//      DBG("font parsed family=%a\n", p->font->fontFamily);
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
       drawSVGtext(TextBufferXY, 0, 0, 3, L"Clover Кловер", 1);
-      DBG("text ready to blit\n");
+//      DBG("text ready to blit\n");
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,
                     (UGAHeight - Height) / 2,
                     &MenuBackgroundPixel,
                     16);
       egFreeImage(TextBufferXY);
-      nsvg__deleteParser(p);
-      DBG("draw finished\n");
+//      nsvg__deleteParser(p);
+//      DBG("draw finished\n");
     }
   } while (0);
 

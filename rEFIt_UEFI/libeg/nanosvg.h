@@ -359,6 +359,8 @@ typedef struct textFaces {
   BOOLEAN valid;
 } textFaces;
 
+extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
+
 typedef struct NSVGtext {
   char id[64];
 //  char class[64];

@@ -131,7 +131,6 @@ extern VOID *fontsDB;
 	#define NSVG_INLINE inline
 #endif
 
-extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
 
 void DumpFloat2 (char* s, float* t, int N)
 {
@@ -2819,8 +2818,8 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
   }
 }
 
-static int once = 0;
-static int once2 = 0;
+//static int once = 0;
+//static int once2 = 0;
 
 static void nsvg__parseText(NSVGparser* p, const char** dict)
 {
@@ -2832,7 +2831,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   NSVGattrib* attr = nsvg__getAttr(p);
 
   int i;
-
+//  DBG("text found\n");
   NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
   if (!text) {
     return;
@@ -2868,16 +2867,18 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor | ((int)(attr->fillOpacity * 255.f) << 24);
   }
+
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
   }
-
+//  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = fontsDB;
   while (fontSVG) {
-//    DBG("probe fontFamily=%a fontStyle=%c required style=%c\n", fontSVG->fontFamily, fontSVG->fontStyle, text->fontStyle);
-    if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0) /* &&
-		    (fontSVG->fontStyle == text->fontStyle) */) {  //should also compare fontStyle (italic, bold)
+//    DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
+    if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0)  &&
+		    (fontSVG->fontStyle == text->fontStyle)) {
+//      DBG("font %a found\n", fontSVG->fontFamily);
       break;
     }
 	  fontSVG = fontSVG->next;
@@ -2888,15 +2889,16 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     UINTN           FileDataLength = 0;
 	  NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
+    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
       Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
-      DBG("font loaded status=%r\n", Status);
+      DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
       if (!EFI_ERROR(Status)) {
         p1 = nsvgParse((CHAR8*)FileData, "px", 72, 1.0f);
         if (!p1) {
           DBG("font not parsed\n");
         } else {
-          fontSVG = p1->font;
- //         DBG("font family %a parsed\n", fontSVG->fontFamily);
+          fontSVG = AllocateCopyPool(sizeof(NSVGfont), p1->font);
+//          DBG("font family %a parsed\n", fontSVG->fontFamily);
           fontSVG->next = fontsDB;
           fontsDB = fontSVG;
           text->font = fontSVG;
@@ -2910,13 +2912,14 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
 //    DBG("set font for text %a\n", fontSVG->id);
     text->font = fontSVG;
   }
-  //here we want to set text->font as p->font if text->groupID == MessageRow
+
   //instead of embedded
   if (fontSVG && fontSVG->glyphs) {
 	  NSVGgroup* group = attr->group;
 	  while (group) {
 		  if (strstr(group->id, "MessageRow") != NULL) {
         if (!textFace[1].valid) {
+          //here we want to set text->font as p->font if text->groupID == MessageRow
           p->font = fontSVG;
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
@@ -2924,8 +2927,8 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[1].size = text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
-          DBG("set message->font=%a color=%x as in MessageRow\n", fontSVG->fontFamily, text->fontColor);
-          once++;
+          DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+          break;
         }
 			  break;
 		  } else if (strstr(group->id, "MenuRows") != NULL) {
@@ -2934,8 +2937,8 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[2].size = text->fontSize;
           textFace[2].color = text->fontColor;
           textFace[2].valid = TRUE;
-          DBG("set menu->font=%a color=%x as in MenuRows\n", fontSVG->fontFamily, text->fontColor);
-          once2++;
+          DBG("set menu->font=%a color=%x size=%s as in MenuRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+          break;
         }
         break;
       } else if (strstr(group->id, "HelpRows") != NULL) {
@@ -2944,9 +2947,9 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[0].size = text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
+          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+          break;
         }
-        DBG("set help->font=%a color=%x as in HelpRows\n", fontSVG->fontFamily, text->fontColor);
-        break;
       }
 		  group = group->next;
 	  }
@@ -3531,7 +3534,7 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   if (!font->horizAdvX) {
     font->horizAdvX = 1000;
   }
-  DBG("found embedded font id=%a\n", font->id);
+  DBG("found font id=%a\n", font->id);
 
   p->font = font;
   font->next = fontsDB;
@@ -3620,6 +3623,9 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
   }
   if (font->fontWeight < 1.f) {
     font->fontWeight = font->unitsPerEm;
+  }
+  if (font->fontStyle < 0x30) {
+    font->fontStyle = 'n';
   }
 }
 

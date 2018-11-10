@@ -185,6 +185,7 @@ INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
 //INTN NewChosenTheme;
+INTN TextStyle;
 
 BOOLEAN mGuiReady = FALSE;
 
@@ -2321,6 +2322,16 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   CHAR16        *TimeoutMessage;
   UINTN         MenuExit;
 
+  if (ChosenEntry == NULL) {
+    TextStyle = 0;
+  } else {
+    TextStyle = 2;
+  }
+
+  if (textFace[TextStyle].valid) {
+//    TextHeight = textFace[TextStyle].size + (int)(4 * GlobalConfig.Scale);
+  }
+
   //no default - no timeout!
   if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
     //      DBG("have timeout\n");
@@ -2983,7 +2994,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   }
 
   // render the text
-  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, 2);
+  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
   BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
 }
 

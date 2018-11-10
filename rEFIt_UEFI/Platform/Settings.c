@@ -3649,8 +3649,6 @@ GetThemeTagSettings (
     Dict2 = GetProperty (Dict, "SelectionSmallWidth");
     row1TileSize = (INTN)GetPropertyInteger (Dict2, row1TileSize);
     
-    //    Dict2 = GetProperty (Dict, "PruneScrollRows");
-    //    GlobalConfig.PruneScrollRows = (INT32)GetPropertyInteger (Dict2, 0);
   }
   
   Dict = GetProperty (DictPointer, "Components");

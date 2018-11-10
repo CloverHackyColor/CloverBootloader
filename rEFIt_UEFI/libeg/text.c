@@ -263,7 +263,7 @@ INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
 
   if (GlobalConfig.TypeSVG) {
-//    return drawSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
+    return drawSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
   }
   
   // clip the text
