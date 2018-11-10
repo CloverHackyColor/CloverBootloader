@@ -134,7 +134,8 @@ card_config_t card_configs[] = {
   /* AMD9520Controller */
   {"Elqui", 5},
   {"Caroni", 5},
-  {"Florin", 6}
+  {"Florin", 6},
+  {"Radeon",4},
 };
 
 radeon_card_info_t radeon_cards[] = {
@@ -1867,6 +1868,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
       continue;
     }
     card->info = AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
+    if (!card->info->cfg_name) {
+      card->info->cfg_name = kRadeon;
+    }
     break;
   }
 
@@ -1891,8 +1895,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
       }
     }
     if (!card->info->cfg_name) {
-      DBG("...compatible config is not found\n");
-      return FALSE;
+      DBG("...compatible config is not found, set common\n");
+      card->info->cfg_name = kRadeon;
+//      return FALSE;
     }
   }
 

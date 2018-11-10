@@ -216,6 +216,7 @@ typedef enum {
  kElqui,
  kCaroni,
  kFlorin,
+ kRadeon, // this is absent FB if not set
  kCfgEnd
 } config_name_t;
 
