@@ -20,7 +20,6 @@
  * The polygon rasterization is heavily based on stb_truetype rasterizer
  * by Sean Barrett - http://nothings.org/
  *
- * rudimentary support for 'image' element. aspect ratio not fixed to 1 when rendering, by aksdfauytv
  */
 
 /* Example Usage:
@@ -34,7 +33,6 @@
 	// Rasterize
   scaleX = width_to_see / design_width
 	nsvgRasterize(rast, image, 0,0, scaleX, scaleY, img, w, h, w*4, NULL, NULL);
-
 */
 
 #include "nanosvg.h"
@@ -122,7 +120,7 @@ NSVGrasterizer* nsvgCreateRasterizer()
 {
 	NSVGrasterizer* r = (NSVGrasterizer*)AllocateZeroPool(sizeof(NSVGrasterizer));
 	if (r == NULL) return NULL;
-	r->tessTol = 0.25f;
+  r->tessTol = 0.1f;  //0.25f;
 	r->distTol = 0.01f;
 	return r;
 }
@@ -732,8 +730,8 @@ static void nsvg__roundJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 	float da = a1 - a0;
 	float lx, ly, rx, ry;
 
-	if (da < NSVG_PI) da += NSVG_PI*2;
-	if (da > NSVG_PI) da -= NSVG_PI*2;
+  if (da < -NSVG_PI) da += PI2; //NSVG_PI*2;
+  if (da > NSVG_PI) da -= PI2; //NSVG_PI*2;
 
 	n = (int)ceilf((nsvg__absf(da) / NSVG_PI) * (float)ncap);
 	if (n < 2) n = 2;

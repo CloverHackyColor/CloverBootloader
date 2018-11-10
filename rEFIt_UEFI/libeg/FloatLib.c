@@ -201,7 +201,7 @@ float AtanF(float X) //assume 0.0 < X < 1.0
   return Y;
 }
 
-float Atan2F(float Y, float X)
+float Atan2F(float Y, float X)  //result -pi..+pi
 {
   float sign = (((X >= 0.0f) && (Y < 0.0f)) ||
                 ((X < 0.0f) && (Y >= 0.0f)))?-1.0f:1.0f;
