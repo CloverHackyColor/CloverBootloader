@@ -27,7 +27,7 @@
 #define TEST_SVG_IMAGE 1
 #define TEST_SIZEOF 0
 #define TEST_FONT 0
-#define TEST_DITHER 0
+#define TEST_DITHER 1
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
@@ -678,12 +678,19 @@ VOID testSVG()
     NSVGparser* p;
 #if TEST_DITHER
     {
-      EG_IMAGE        *RndImage = egCreateImage(200, 200, TRUE);
-      INTN i;
-      for (i=0; i<2000; i++) {
-        INTN x = (int)(rndf() * 200.f);
-        INTN y = (int)(rndf() * 200.f);
-        RndImage->PixelData[y * 200 + x] = WhitePixel;
+      EG_IMAGE        *RndImage = egCreateImage(256, 256, TRUE);
+      INTN i,j;
+      EG_PIXEL pixel = WhitePixel;
+      for (i=0; i<256; i++) {
+        for (j=0; j<256; j++) {
+          pixel.b = 0x40 + (dither((float)j / 32.0f, 1) * 8);
+          pixel.r = 0x0;
+          pixel.g = 0x0;
+          if (i==1) {
+            DBG("r=%x g=%x\n", pixel.r, pixel.g);
+          }
+          RndImage->PixelData[i * 256 + j] = pixel;
+        }
       }
 
       BltImageAlpha(RndImage,

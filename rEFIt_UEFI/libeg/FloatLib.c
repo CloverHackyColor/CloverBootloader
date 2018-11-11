@@ -379,11 +379,17 @@ float rndf() //expected 0..1
   return x;
 }
 
-int dither(float x)
+int dither(float x, int level)
 {
-  int i = (int)x;
-  float dx = x - (float)i;
-  if (dx > rndf()) i++;
+  if (!level) {
+    return (int)x;
+  }
+  int i = (int)(x) * level;  //5.1 * 4 = 20.4, 5.8 * 4 = 23.2|i=20
+  float dx = x * level - (float)(i); //0.4, 3.2
+  i /= level;
+  if (dx > rndf() * level) {
+    i += (int)((0.9999f+rndf())*level); //because rndf has mean value 0.5, but (int)rnd=0
+  }
   return i;
 }
 //there is

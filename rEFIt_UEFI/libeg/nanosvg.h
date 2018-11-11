@@ -108,8 +108,9 @@ typedef struct NSVGgradientStop {
 
 typedef struct NSVGgradient {
   float xform[6];
-  float position[6];
+//  float position[6];
   float fx, fy;
+  int ditherCoarse;
   char spread;
   int nstops;
   NSVGgradientStop stops[1];
@@ -268,6 +269,7 @@ typedef struct NSVGgradientData
   };
   char spread;
   char units;
+  int ditherCoarse;
   float xform[6];
   int nstops;
   NSVGgradientStop* stops;
@@ -501,10 +503,13 @@ typedef struct NSVGmemPage {
 typedef struct NSVGcachedPaint {
   char type;
   char spread;
-  char pad[6];
+  char pad[2];
+  int coarse;
   float xform[6];
+//  float opacity;
   void *image;
   unsigned int colors[256];
+//  unsigned int colors2[256];
 } NSVGcachedPaint;
 
 typedef void (*NSVGscanlineFunction)(

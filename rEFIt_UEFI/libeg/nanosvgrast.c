@@ -1147,14 +1147,15 @@ static unsigned int nsvg__RGBA(unsigned char r, unsigned char g, unsigned char b
 	return (b) | (g << 8) | (r << 16) | (a << 24);
 }
 
-static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
+static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u, float opacity)
 {
   float xu = nsvg__clampf(u, 0.0f, 1.0f) * 256.0f;
-	int iu = (int)xu; //0..256
+	int iu = (int)(xu); //0..256
+  int ia = (int)(nsvg__clampf(opacity, 0.0f, 1.0f) * 256.0f);
 	int b = (((c0) & 0xff)*(256-iu) + (((c1) & 0xff)*iu)) >> 8;
 	int g = (((c0>>8) & 0xff)*(256-iu) + (((c1>>8) & 0xff)*iu)) >> 8;
 	int r = (((c0>>16) & 0xff)*(256-iu) + (((c1>>16) & 0xff)*iu)) >> 8;
-	int a = (((c0>>24) & 0xff)*(256-iu) + (((c1>>24) & 0xff)*iu)) >> 8;
+	int a = ((((c0>>24) & 0xff)*(256-iu) + (((c1>>24) & 0xff)*iu)) * ia) >> 16;
 	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
 
@@ -1182,12 +1183,6 @@ static void nsvg__scanlineBit(
     row[x / 8] |= 1 << (x % 8);
   }
 }
-
-//  float du = xu - (float)iu;
-//  if (du > rndf()) {
-//    iu++;   //dithering
-//  }
-
 
 static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* cover, int x, int y,
 							/*	float tx, float ty, float scalex, float scaley, */ NSVGcachedPaint* cache)
@@ -1227,24 +1222,22 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 	} else if (cache->type == NSVG_PAINT_LINEAR_GRADIENT) {
 		// TODO: spread modes.
 		// TODO: plenty of opportunities to optimize.
-		float fx, fy, dx, gy;
+		float fx, fy, gy;
 		float* t = cache->xform;
 
 //    DumpFloat("cache grad xform", t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
 //x,y - pixels
-//		fx = ((float)x - tx) / scalex;
-//		fy = ((float)y - ty) / scaley;
-//		dx = 1.0f / scalex;
     fx = (float)x;
     fy = (float)y;
-    dx = 1.0f;
+//    dx = 1.0f;
+    gy = fx*t[1] + fy*t[3] + t[5]; //gradient direction. Point at cut
 
 		for (i = 0; i < count; i++) {
 			int r,g,b,a,ia;
-			gy = fx*t[1] + fy*t[3] + t[5]; //gradient direction. Point at cut
-			c = cache->colors[dither(nsvg__clampf(gy*255.0f, 0, 254.99f))]; //assumed gy = 0.0 ... 1.0f
+      int level = cache->coarse;
+			c = cache->colors[dither(nsvg__clampf(gy*(255.0f-level), 0, (float)(255-level)), level)]; //assumed gy = 0.0 ... 1.0f
 			cr = (c) & 0xff;
 			cg = (c >> 8) & 0xff;
 			cb = (c >> 16) & 0xff;
@@ -1268,32 +1261,30 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 
 			cover++;
 			dst += 4;
-			fx += dx;
+//			fx += dx;
+      gy += t[1];
 		}
 	} else if (cache->type == NSVG_PAINT_RADIAL_GRADIENT) {
 		// TODO: spread modes.
 		// TODO: plenty of opportunities to optimize.
 		// TODO: focus (fx,fy)
-		float fx, fy, dx, gx, gy, gd;
+		float fx, fy, gx, gy, gd;
 		float* t = cache->xform;
 //    DumpFloat("cache grad xform", t, 6);
 		int i, cr, cg, cb, ca;
 		unsigned int c;
-
-//		fx = ((float)x - tx) / scalex;
-//		fy = ((float)y - ty) / scaley;
-//    dx = 1.0f / scalex;
     fx = (float)x;
     fy = (float)y;
-    dx = 1.0f;
+//    dx = 1.0f;
+    gx = fx*t[0] + fy*t[2] + t[4];
+    gy = fx*t[1] + fy*t[3] + t[5];
 
 		for (i = 0; i < count; i++) {
 			int r,g,b,a,ia;
-			gx = fx*t[0] + fy*t[2] + t[4];
-			gy = fx*t[1] + fy*t[3] + t[5];
 			gd = sqrtf(gx*gx + gy*gy);
 //     DBG("gx=%s gy=%s\n", PoolPrintFloat(gx), PoolPrintFloat(gy));
-			c = cache->colors[dither(nsvg__clampf(gd*255.0f, 0, 254.99f))];
+      int level = cache->coarse;
+			c = cache->colors[dither(nsvg__clampf(gd*(255.0f-level*2), 0, (254.99f-level*2)), level)];
 			cr = (c) & 0xff;
 			cg = (c >> 8) & 0xff;
 			cb = (c >> 16) & 0xff;
@@ -1320,7 +1311,9 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 
 			cover++;
 			dst += 4;
-			fx += dx;
+//			fx += dx;
+      gx += t[0];
+      gy += t[1];
     }
   } else if (cache->type == NSVG_PAINT_PATTERN) {
     // TODO
@@ -1333,11 +1326,6 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     }
     INTN Width = Pattern->Width;
     INTN Height = Pattern->Height;
-//    if ((x % 10) == 0) {
-//      DBG("found pattern [%d,%d]\n", Width, Height);
-//      DumpFloat("cache grad xform", t, 6);
-//    }
-    //    DumpFloat("cache grad xform", t, 6);
     int i, cr, cg, cb, ca, ix, iy;
     INTN j;
     fx = (float)x;
@@ -1349,18 +1337,8 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
       int r,g,b,a,ia;
       gx = fx*t[0] + fy*t[2] + t[4];
       gy = fx*t[1] + fy*t[3] + t[5];
-      ix = dither(gx * Width) % Width;
-//      if ((x + i) % 10 == 0) {
-//        DBG("gx=%s gy=%s\n", PoolPrintFloat(gx), PoolPrintFloat(gy));
-//        DBG("ix=%d\n", ix);
-//      }
-//      if (ix >= Width) {
-//        ix = (int)Width - 1;
-//      }
-      iy = dither(gy * Height) % Height;
-//      if (iy >= Height) {
-//        iy = (int)Height - 1;
- //     }
+      ix = dither(gx * Width, 2) % Width;
+      iy = dither(gy * Height, 2) % Height;
       j = iy * Width + ix;
       cr = Pattern->PixelData[j].r;
       cb = Pattern->PixelData[j].b;
@@ -1393,7 +1371,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
       // TODO: spread modes.
       // TODO: plenty of opportunities to optimize.
       // TODO: focus (fx,fy)
-      float fx, fy, dx, gx, gy, gd;
+      float fx, fy, gx, gy, gd;
       float* t = cache->xform;
       //    DumpFloat("cache grad xform", t, 6);
       int i, cr, cg, cb, ca;
@@ -1401,18 +1379,17 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 
       fx = (float)x;
       fy = (float)y;
-      dx = 1.0f;
+ //     dx = 1.0f;
+    gx = fx*t[0] + fy*t[2] + t[4];
+    gy = fx*t[1] + fy*t[3] + t[5];
 
       for (i = 0; i < count; i++) {
         int r,g,b,a,ia;
-        gx = fx*t[0] + fy*t[2] + t[4];
-        gy = fx*t[1] + fy*t[3] + t[5];
-   //     gd = sqrtf(gx*gx + gy*gy);
         if ((gx == 0.f) && (gy == 0.f)) {
           c = 0;
         } else {
           gd = (Atan2F(gy, gx) + PI) / PI2;
-          c = cache->colors[dither(nsvg__clampf(gd*255.0f, 0, 254.99f))];
+          c = cache->colors[dither(nsvg__clampf(gd*254.0f, 0, 253.99f), 1)];
         }
         cr = (c) & 0xff;
         cg = (c >> 8) & 0xff;
@@ -1440,7 +1417,9 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
 
         cover++;
         dst += 4;
-        fx += dx;
+//        fx += dx;
+        gx += t[0];
+        gy += t[1];
       }
 	}
 }
@@ -1613,6 +1592,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
   float opacity = shape->opacity;
 
 	cache->type = paint->type;
+  cache->coarse = grad->ditherCoarse;
 
 //  DBG("shape=%a, paint-type=%d\n", shape->id, cache->type);
 
@@ -1663,8 +1643,10 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 		}
 
 		for (i = 0; i < grad->nstops-1; i++) {
-			ca = nsvg__applyOpacity(grad->stops[i].color, opacity);  //= color begin
-			cb = nsvg__applyOpacity(grad->stops[i+1].color, opacity); //= color end
+//			ca = nsvg__applyOpacity(grad->stops[i].color, opacity);  //= color begin
+//			cb = nsvg__applyOpacity(grad->stops[i+1].color, opacity); //= color end
+      ca = grad->stops[i].color;
+      cb = grad->stops[i+1].color;
 			ua = nsvg__clampf(grad->stops[i].offset, 0, 1); //=0
 			ub = nsvg__clampf(grad->stops[i+1].offset, 0, 1); //=1
 			ia = (int)(ua * 255.0f);  //=0
@@ -1674,7 +1656,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 			u = 0;
 			du = 1.0f / (float)count;
 			for (j = 0; j < count; j++) {
-				cache->colors[ia+j] = nsvg__lerpRGBA(ca,cb,u);
+				cache->colors[ia+j] = nsvg__lerpRGBA(ca,cb,u, opacity);
 				u += du;
 			}
 		}
@@ -1683,8 +1665,10 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 //        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
 //        cache->colors[200], cache->colors[250]);
 //    }
-		for (i = ib; i < 256; i++)  //tail
+    for (i = ib; i < 256; i++) { //tail
 			cache->colors[i] = cb;
+//      cache->colors2[i] = cb;
+    }
 	}
 }
 

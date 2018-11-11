@@ -148,6 +148,16 @@ void DumpFloat2 (char* s, float* t, int N)
 #endif
 }
 
+static int getIntegerDict(const char* s)
+{
+  if ((s[1] == 'x') || (s[1] == 'X')) {
+    return (int)AsciiStrHexToUintn (s);
+  } else if (IS_DIGIT(s[0])) {
+    return (int)AsciiStrDecimalToUintn(s);
+  }
+  return 0xFFFF;
+}
+
 static float nsvg__sqr(float x) { return x*x; }
 static float nsvg__vmag(float x, float y) { return sqrtf(x*x + y*y); }
 
@@ -807,13 +817,12 @@ static NSVGgradientData* nsvg__findGradientData(NSVGparser* p, const char* id)
   return NULL;
 }
 
-static NSVGgradientLink* nsvg__createGradientLink(const char* id, const float *xform)
+static NSVGgradientLink* nsvg__createGradientLink(const char* id)
 {
 	NSVGgradientLink* grad = (NSVGgradientLink*)AllocateZeroPool(sizeof(NSVGgradientLink));
 	if (grad == NULL) return NULL;
 	strncpy(grad->id, id, 63);
 	grad->id[63] = '\0';
-//	memcpy(grad->xform, xform, sizeof(float) * 6);  //from shape?
 	return grad;
 }
 
@@ -914,6 +923,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   nsvg__xformInverse(grad->xform, gradForm);
 
   grad->spread = data->spread;
+  grad->ditherCoarse = data->ditherCoarse;
   memcpy(grad->stops, stops, nstops*sizeof(NSVGgradientStop));
   grad->nstops = nstops;
 
@@ -930,10 +940,12 @@ static float nsvg__getAverageScale(float* t)
 static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atXform)
 {
   NSVGpath* path;
-  float curve[4*2], curveBounds[4];
-  float xform[6];
+//  float curve[4*2];
+  float *curve;
+  float curveBounds[4];
+//  float xform[6];
   int i, first = 1;
-  nsvg__xformIdentity(xform);
+//  nsvg__xformIdentity(xform);
 /*  memcpy(&xform[0], shape->xform, 6*sizeof(float));
   if (shape->link) {
     nsvg__xformPremultiply(&xform[0], shape->link->xform);
@@ -941,11 +953,12 @@ static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atX
 */
 //  nsvg__xformMultiply(&xform[0], atXform);
   for (path = shape->paths; path != NULL; path = path->next) {
-    nsvg__xformPoint(&curve[0], &curve[1], path->pts[0], path->pts[1], xform);
+//    nsvg__xformPoint(&curve[0], &curve[1], path->pts[0], path->pts[1], xform);
     for (i = 0; i < path->npts-1; i += 3) {
-      nsvg__xformPoint(&curve[2], &curve[3], path->pts[(i+1)*2], path->pts[(i+1)*2+1], xform);
-      nsvg__xformPoint(&curve[4], &curve[5], path->pts[(i+2)*2], path->pts[(i+2)*2+1], xform);
-      nsvg__xformPoint(&curve[6], &curve[7], path->pts[(i+3)*2], path->pts[(i+3)*2+1], xform);
+      curve = &path->pts[i*2];
+//      nsvg__xformPoint(&curve[2], &curve[3], path->pts[(i+1)*2], path->pts[(i+1)*2+1], xform);
+//      nsvg__xformPoint(&curve[4], &curve[5], path->pts[(i+2)*2], path->pts[(i+2)*2+1], xform);
+//      nsvg__xformPoint(&curve[6], &curve[7], path->pts[(i+3)*2], path->pts[(i+3)*2+1], xform);
       nsvg__curveBounds(curveBounds, curve);
       if (first) {
         bounds[0] = curveBounds[0];
@@ -1043,7 +1056,7 @@ static void nsvg__addShape(NSVGparser* p)
   } else if (attr->hasFill == 2) {
 //    shape->fill.gradient = nsvg__createGradient(p, attr->fillGradient, localBounds, &shape->fill.type);
 		shape->fill.type = NSVG_PAINT_GRADIENT_LINK;
-		shape->fill.gradientLink = nsvg__createGradientLink(attr->fillGradient, attr->xform);
+    shape->fill.gradientLink = nsvg__createGradientLink(attr->fillGradient);
     if (shape->fill.gradientLink == NULL) {
       shape->fill.type = NSVG_PAINT_NONE;
       if (shape->clip.index) {
@@ -1073,7 +1086,7 @@ static void nsvg__addShape(NSVGparser* p)
   } else if (attr->hasStroke == 2) {
 //    shape->stroke.gradient = nsvg__createGradient(p, attr->strokeGradient, localBounds, &shape->stroke.type);
 		shape->stroke.type = NSVG_PAINT_GRADIENT_LINK;
-		shape->stroke.gradientLink = nsvg__createGradientLink(attr->strokeGradient, attr->xform);
+    shape->stroke.gradientLink = nsvg__createGradientLink(attr->strokeGradient);
     if (shape->stroke.gradientLink == NULL) {
       shape->fill.type = NSVG_PAINT_NONE;
       if (shape->clip.index) {
@@ -2698,20 +2711,13 @@ static void nsvg__parseRect(NSVGparser* p, const char** attr)
 static void nsvg__parseUse(NSVGparser* p, const char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
-//  float scale = 1.0f;
   NSVGshape* shape = NULL;
-//  NSVGpath* path = NULL;
-//  NSVGpath* refPath;
   NSVGshape* ref = NULL;
   int i;
 
   float x = 0.0f;
   float y = 0.0f;
   float xform[6];
-
-//  float inv[6], localBounds[4];
-
-//  nsvg__xformIdentity(xform); //initial
 
   for (i = 0; dict[i]; i += 2) {
       if (strcmp(dict[i], "x") == 0) {
@@ -2742,26 +2748,19 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
   }
 
   AsciiStrCatS(shape->id, 64, "_lnk");
-//  x -= shape->bounds[0];
-//  y -= shape->bounds[1];
 
   nsvg__xformSetTranslation(&xform[0], x, y);
-//  nsvg__xformIdentity(xform);
   nsvg__xformPremultiply(&xform[0], attr->xform); //translate after rotate
   memcpy(shape->xform, &xform[0], sizeof(float)*6);
 
   //  DBG("paint type=%d\n", shape->fill.type);
   if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {
-    shape->fill.gradientLink = nsvg__createGradientLink(ref->fill.gradientLink->id, shape->xform);
+    shape->fill.gradientLink = nsvg__createGradientLink(ref->fill.gradientLink->id);
   }
 
   if (shape->stroke.type == NSVG_PAINT_GRADIENT_LINK) {
-    shape->stroke.gradientLink = nsvg__createGradientLink(ref->stroke.gradientLink->id, shape->xform);
+    shape->stroke.gradientLink = nsvg__createGradientLink(ref->stroke.gradientLink->id);
   }
-
-
-//  nsvg__xformInverse(inv, xform);
-//  nsvg__getLocalBounds(localBounds, shape, inv);
 
   shape->link = ref;
   shape->next = NULL;
@@ -3287,6 +3286,7 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
   //defaults
   grad->units = NSVG_USER_SPACE; //NSVG_OBJECT_SPACE;
   grad->type = type;
+  grad->ditherCoarse = 1; //default value
   if (grad->type == NSVG_PAINT_LINEAR_GRADIENT) {
     grad->linear.x1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
     grad->linear.y1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
@@ -3338,6 +3338,8 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
           grad->linear.x2 = nsvg__parseCoordinateRaw(attr[i + 1]);
         } else if (strcmp(attr[i], "y2") == 0) {
           grad->linear.y2 = nsvg__parseCoordinateRaw(attr[i + 1]);
+        } else if (strcmp(attr[i], "clover:ditherCoarse") == 0) {
+          grad->ditherCoarse = getIntegerDict(attr[i + 1]);
         } else if (strcmp(attr[i], "spreadMethod") == 0) {
           if (strcmp(attr[i+1], "pad") == 0)
             grad->spread = NSVG_SPREAD_PAD;
@@ -3445,16 +3447,6 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
       group->visibility = NSVG_VIS_VISIBLE;
     }
   }
-}
-
-static int getIntegerDict(const char* s)
-{
-  if ((s[1] == 'x') || (s[1] == 'X')) {
-    return (int)AsciiStrHexToUintn (s);
-  } else if (IS_DIGIT(s[0])) {
-    return (int)AsciiStrDecimalToUintn(s);
-  }
-  return 0xFFFF;
 }
 
 //parse Clover settings for theme
