@@ -828,6 +828,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT2
   { 0x591C, "Intel Amber Lake GT2"           }, //
   { 0x87C0, "Intel UHD Graphics 617"         }, // Mobile - MacBookAir8,1
+  { 0x87CA, "Intel Amber Lake GT2"           }, //
 
   //----------------Coffee Lake---------------
   //GT1
@@ -2571,6 +2572,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       //GT2
     case 0x591C: // "Intel Amber Lake GT2"            //
     case 0x87C0: // "Intel UHD Graphics 617"          // Mobile - MacBookAir8,1
+    case 0x87CA: // "Intel Amber Lake GT2"            //
       switch (gma_dev->device_id) {
         case 0x5902:
         case 0x5906:
@@ -2774,7 +2776,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x3E90:
         case 0x3E93:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E908086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2802,7 +2804,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E91:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E918086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2831,7 +2833,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x3E92:
         case 0x3E98:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E928086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2859,7 +2861,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E9B:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E9B8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2887,7 +2889,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3EA5:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
-              (AsciiStrStr(Entry->BuildVersion, "17G") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+              (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3EA58086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
