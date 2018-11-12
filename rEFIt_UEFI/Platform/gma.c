@@ -2576,114 +2576,238 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (gma_dev->device_id) {
         case 0x5902:
         case 0x5906:
-          if (!SetFake) {
-            FakeID = 0x59028086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x59028086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[2], 4);
-            DBG("  Found ig-platform-id = 0x59160000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x19028086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x19028086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[3], 4);
+              DBG("  Found ig-platform-id = 0x19160000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x59028086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x59028086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[2], 4);
+              DBG("  Found ig-platform-id = 0x59160000\n");
+            }
           }
           break;
         case 0x5912:
-          if (!SetFake) {
-            FakeID = 0x59128086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x59128086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[0], 4);
-            DBG("  Found ig-platform-id = 0x59120000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x19128086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x19128086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[1], 4);
+              DBG("  Found ig-platform-id = 0x19120000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x59128086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x59128086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[0], 4);
+              DBG("  Found ig-platform-id = 0x59120000\n");
+            }
           }
           break;
         case 0x5916:
         case 0x5917:
-          if (!SetFake) {
-            FakeID = 0x59168086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x59168086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[2], 4);
-            DBG("  Found ig-platform-id = 0x59160000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x19168086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x19168086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[3], 4);
+              DBG("  Found ig-platform-id = 0x19160000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x59168086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x59168086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[2], 4);
+              DBG("  Found ig-platform-id = 0x59160000\n");
+            }
           }
           break;
         case 0x591A:
         case 0x591B:
         case 0x591D:
-          if (!SetFake) {
-            FakeID = 0x591B8086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x591B8086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[5], 4);
-            DBG("  Found ig-platform-id = 0x591B0000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x191B8086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x191B8086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[6], 4);
+              DBG("  Found ig-platform-id = 0x191B0000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x591B8086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x591B8086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[5], 4);
+              DBG("  Found ig-platform-id = 0x591B0000\n");
+            }
           }
           break;
         case 0x591E:
-          if (!SetFake) {
-            FakeID = 0x591E8086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x591E8086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[8], 4);
-            DBG("  Found ig-platform-id = 0x591E0000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x191E8086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x191E8086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[8], 4);
+              DBG("  Found ig-platform-id = 0x191E0000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x591E8086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x591E8086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[8], 4);
+              DBG("  Found ig-platform-id = 0x591E0000\n");
+            }
           }
           break;
         case 0x5923:
-          if (!SetFake) {
-            FakeID = 0x59238086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x59238086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[10], 4);
-            DBG("  Found ig-platform-id = 0x59230000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x19168086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x19168086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[3], 4);
+              DBG("  Found ig-platform-id = 0x19160000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x59238086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x59238086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[10], 4);
+              DBG("  Found ig-platform-id = 0x59230000\n");
+            }
           }
           break;
         case 0x5926:
-          if (!SetFake) {
-            FakeID = 0x59268086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x59268086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[11], 4);
-            DBG("  Found ig-platform-id = 0x59260000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x19268086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x19268086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[10], 4);
+              DBG("  Found ig-platform-id = 0x19260000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x59268086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x59268086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[11], 4);
+              DBG("  Found ig-platform-id = 0x59260000\n");
+            }
           }
           break;
         case 0x5927:
-          if (!SetFake) {
-            FakeID = 0x59278086 >> 16;
-            DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
-            devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-            FakeID = 0x59278086 & 0xFFFF;
-            devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-          }
-          if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[14], 4);
-            DBG("  Found ig-platform-id = 0x59270000\n");
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x19278086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x19278086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[14], 4);
+              DBG("  Found ig-platform-id = 0x19270000\n");
+            }
+          } else {
+            if (!SetFake) {
+              FakeID = 0x59278086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x59278086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[14], 4);
+              DBG("  Found ig-platform-id = 0x59270000\n");
+            }
           }
           break;
         case 0x87C0:
-          if (os_version < AsciiOSVersionToUint64("10.14")) {
+          if (os_version < AsciiOSVersionToUint64("10.12.6")) {
+            if (!SetFake) {
+              FakeID = 0x191E8086 >> 16;
+              DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
+              devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+              FakeID = 0x191E8086 & 0xFFFF;
+              devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
+            }
+            if (!SetIg) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[8], 4);
+              DBG("  Found ig-platform-id = 0x191E0000\n");
+            }
+          } else if (os_version < AsciiOSVersionToUint64("10.14")) {
             if (!SetFake) {
               FakeID = 0x591E8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04lx8086\n", FakeID);
@@ -2743,7 +2867,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           switch (gma_dev->device_id) {
             case 0x5917:
-              // Rehabman: GfxYTile causes a hang on boot in 10.14 beta when using Kaby Lake-R UHD Graphics 620
+              // Rehabman: GfxYTile causes a hang on boot in 10.14 when using Kaby Lake-R UHD Graphics 620
               if (os_version < AsciiOSVersionToUint64("10.14")) {
                 devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
               }
@@ -2752,6 +2876,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
               break;
           }
+          break;
       }
       break;
 
