@@ -130,7 +130,7 @@ INTN ScrollbarYMovement;
 
 //#define ROW0__TILESIZE (144)
 //#define ROW1_TILESIZE (64)
-#define TILE_XSPACING (8)
+#define TILE1_XSPACING (8)
 //#define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
 #define INDICATOR_SIZE (52)
@@ -3693,7 +3693,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
-      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE_XSPACING* GlobalConfig.Scale)) * row1Count) >> 1;
+      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE1_XSPACING* GlobalConfig.Scale)) * row1Count) >> 1;
       textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - TextHeight;
       row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
@@ -3711,7 +3711,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
         } else {
           itemPosX[i] = row1PosXRunning;
           itemPosY[i] = row1PosY;
-          row1PosXRunning += row1TileSize + (int)(TILE_XSPACING* GlobalConfig.Scale);
+          row1PosXRunning += row1TileSize + (int)(TILE1_XSPACING* GlobalConfig.Scale);
           //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
@@ -3829,7 +3829,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
                   LayoutBannerOffset * GlobalConfig.Scale);
 
-      row1PosX = (UGAWidth + 8 - (row1TileSize + EntriesGap) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (row1TileSize + TILE1_XSPACING * GlobalConfig.Scale) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle) {
         row1PosY = row0PosY + row0TileSize +
@@ -3868,7 +3868,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
           itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += row1TileSize + (INTN)(TILE_XSPACING * GlobalConfig.Scale);
+          row1PosXRunning += row1TileSize + (INTN)(TILE1_XSPACING * GlobalConfig.Scale);
           //DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
