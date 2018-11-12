@@ -3829,7 +3829,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
                   LayoutBannerOffset * GlobalConfig.Scale);
 
-      row1PosX = (UGAWidth + 8 - (row1TileSize + TILE1_XSPACING * GlobalConfig.Scale) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (row1TileSize + (int)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle) {
         row1PosY = row0PosY + row0TileSize +
