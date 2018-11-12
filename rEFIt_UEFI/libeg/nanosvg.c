@@ -33,44 +33,13 @@
 //
 // NanoSVG supports a wide range of SVG features, but something may be missing, feel free to create a pull request!
 //
-// The shapes in the SVG images are transformed by the viewBox and converted to specified units.
-// That is, you should get the same looking data as your designed in your favorite app.
-//
-// NanoSVG can return the paths in few different units. For example if you want to render an image, you may choose
-// to get the paths in pixels, or if you are feeding the data into a CNC-cutter, you may want to use millimeters.
-//
-// The units passed to NanoVG should be one of: 'px', 'pt', 'pc' 'mm', 'cm', or 'in'.
-// DPI (dots-per-inch) controls how the unit conversion is done.
-//
-// If you don't know or care about the units stuff, "px" and 96 should get you going.
-
-
-/* Example Usage:
-	// Load
-	NSVGimage* image;
-	image = nsvgParseFromFile("test.svg", "px", 96);
-  or
-   image = nsvgParse(data, units, dpi, 0.f);
-	printf("size: %f x %f\n", image->width, image->height);
-	// Use...
-	for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
-		for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
-			for (int i = 0; i < path->npts-1; i += 3) {
-				float* p = &path->pts[i*2];
-				drawCubicBez(p[0],p[1], p[2],p[3], p[4],p[5], p[6],p[7]);
-			}
-		}
-	}
-	// Delete
-	nsvgDelete(image);
-*/
 
 
 #include "nanosvg.h"
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -2870,7 +2839,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
   }
-//  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
+  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = fontsDB;
   while (fontSVG) {
@@ -4005,6 +3974,72 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   p->shapesTail = shape;
   return x1;
 }
+/*
+Translate VT-UTF8 characters into one Unicode character.
+
+UTF8 Encoding Table
+Bits per Character | Unicode Character Range | Unicode Binary  Encoding |  UTF8 Binary Encoding
+0-7                |     0x0000 - 0x007F     |     00000000 0xxxxxxx    |   0xxxxxxx
+8-11               |     0x0080 - 0x07FF     |     00000xxx xxxxxxxx    |   110xxxxx 10xxxxxx
+12-16              |     0x0800 - 0xFFFF     |     xxxxxxxx xxxxxxxx    |   1110xxxx 10xxxxxx 10xxxxxx
+
+ $  U+0024    10 0100             00100100                    24
+ ¢  U+00A2  1010 0010             11000010 10100010           C2 A2
+ €  U+20AC  0010 0000 1010 1100   11100010 10000010 10101100  E2 82 AC
+ 𐍈  U+10348 1 0000 0011 0100 1000  11110000 10010000 10001101 10001000  F0 90 8D 88
+*/
+
+CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar)
+{
+  INT8 ValidBytes = 0;
+  UINT8 Byte0, Byte1, Byte2;
+  UINT8 UnicodeByte0, UnicodeByte1;
+
+  if ((*s & 0x80) == 0) {
+    ValidBytes = 1;
+  } else if ((*s & 0xe0) == 0xc0) {
+    ValidBytes = 2;
+  } else if ((*s & 0xf0) == 0xe0) {
+    ValidBytes = 3;
+  }
+  switch (ValidBytes) {
+    case 1:
+      //
+      // one-byte utf8 code
+      //
+      *UnicodeChar = (UINT16) (*s++);
+      break;
+
+    case 2:
+      //
+      // two-byte utf8 code
+      //
+      Byte1         = *s++;  //c2
+      Byte0         = *s++;  //a2
+
+      UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
+      UnicodeByte1  = (UINT8) ((Byte1 >> 2) & 0x07);
+      *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
+      break;
+
+    case 3:
+      //
+      // three-byte utf8 code
+      // sample E3 90 A1 = 0x3421
+      //
+      Byte2         = *s++;
+      Byte1         = *s++;
+      Byte0         = *s++;
+
+      UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
+      UnicodeByte1  = (UINT8) ((Byte2 << 4) | ((Byte1 >> 2) & 0x0f));
+      *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
+
+    default:
+      break;
+  }
+  return s;
+}
 
 static void addString(NSVGparser* p, char* s)
 {
@@ -4015,6 +4050,7 @@ static void addString(NSVGparser* p, char* s)
     DBG("font for the text is not loaded\n");
     return; //use external fonts
   }
+//  DBG("the text %s uses font %a\n", s, p->text->fontFace->fontFamily);
 
   //calculate letter size
   float sy = p->text->font->bbox[3] - p->text->font->bbox[1];
@@ -4026,7 +4062,11 @@ static void addString(NSVGparser* p, char* s)
   float x = p->text->x;  //user space
   float y = p->text->y - h;
   for (i = 0; i < len; i++) {
-    CHAR16 letter = s[i];
+    CHAR16 letter = 0;
+    s = GetUnicodeChar(s, &letter);
+    if (letter > 0x400) {
+      DBG("encounter letter=%x\n", letter);
+    }
 //    DBG("encounter letter=%c\n", s[i]);
     if (!letter) {
       break;

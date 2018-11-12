@@ -686,9 +686,9 @@ VOID testSVG()
           pixel.b = 0x40 + (dither((float)j / 32.0f, 1) * 8);
           pixel.r = 0x0;
           pixel.g = 0x0;
-          if (i==1) {
-            DBG("r=%x g=%x\n", pixel.r, pixel.g);
-          }
+//          if (i==1) {
+//            DBG("r=%x g=%x\n", pixel.r, pixel.g);
+//          }
           RndImage->PixelData[i * 256 + j] = pixel;
         }
       }
