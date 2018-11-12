@@ -1643,6 +1643,24 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"R - Soft Reset");
         AddMenuInfo(&HelpMenu, L"U - Inchidere");
         break;
+      case chinese:
+        AddMenuInfo(&HelpMenu, L"ESC - 离开子菜单， 刷新主菜单");
+        AddMenuInfo(&HelpMenu, L"F1  - 帮助");
+        AddMenuInfo(&HelpMenu, L"F2  - 保存 preboot.log 到 EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - 显示隐藏的启动项");
+        AddMenuInfo(&HelpMenu, L"F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F10 - 保存截图到 EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F11 - 重置 NVRAM");
+        AddMenuInfo(&HelpMenu, L"F12 - 推出选中的卷 (DVD)");
+        AddMenuInfo(&HelpMenu, L"空格 - 关于选中项的详情");
+        AddMenuInfo(&HelpMenu, L"数字 1-9 - 菜单快捷键");
+        AddMenuInfo(&HelpMenu, L"A - 关于");
+        AddMenuInfo(&HelpMenu, L"O - 选项");
+        AddMenuInfo(&HelpMenu, L"R - 软复位");
+        AddMenuInfo(&HelpMenu, L"U - 退出");
+        break;
       case english:
       default:
         AddMenuInfo(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");

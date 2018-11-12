@@ -2783,6 +2783,10 @@ GetEarlyUserSettings (
           gLanguage = croatian;
         } else if (AsciiStrStr (Prop->string, "id")) {
           gLanguage = indonesian;
+        } else if (AsciiStrStr (Prop->string, "cn")) {
+          gLanguage = chinese;
+          GlobalConfig.Codepage = 0x3400;
+          GlobalConfig.CodepageSize = 0x19C0;
         } else if (AsciiStrStr (Prop->string, "ro")) {
           gLanguage = romanian;
         } else if (AsciiStrStr (Prop->string, "ko")) {
