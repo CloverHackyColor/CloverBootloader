@@ -367,3 +367,70 @@ TimeCompare (
   return (BOOLEAN) (FirstTime->Nanosecond <= SecondTime->Nanosecond);
 }
 
+/*
+ Translate VT-UTF8 characters into one Unicode character.
+
+ UTF8 Encoding Table
+ Bits per Character | Unicode Character Range | Unicode Binary  Encoding |  UTF8 Binary Encoding
+ 0-7                |     0x0000 - 0x007F     |     00000000 0xxxxxxx    |   0xxxxxxx
+ 8-11               |     0x0080 - 0x07FF     |     00000xxx xxxxxxxx    |   110xxxxx 10xxxxxx
+ 12-16              |     0x0800 - 0xFFFF     |     xxxxxxxx xxxxxxxx    |   1110xxxx 10xxxxxx 10xxxxxx
+
+ $  U+0024    10 0100             00100100                    24
+ ¢  U+00A2  1010 0010             11000010 10100010           C2 A2
+ €  U+20AC  0010 0000 1010 1100   11100010 10000010 10101100  E2 82 AC
+ 𐍈  U+10348 1 0000 0011 0100 1000  11110000 10010000 10001101 10001000  F0 90 8D 88
+ */
+
+CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar)
+{
+  INT8 ValidBytes = 0;
+  UINT8 Byte0, Byte1, Byte2;
+  UINT8 UnicodeByte0, UnicodeByte1;
+
+  if ((*s & 0x80) == 0) {
+    ValidBytes = 1;
+  } else if ((*s & 0xe0) == 0xc0) {
+    ValidBytes = 2;
+  } else if ((*s & 0xf0) == 0xe0) {
+    ValidBytes = 3;
+  }
+  switch (ValidBytes) {
+    case 1:
+      //
+      // one-byte utf8 code
+      //
+      *UnicodeChar = (UINT16) (*s++);
+      break;
+
+    case 2:
+      //
+      // two-byte utf8 code
+      //
+      Byte1         = *s++;  //c2
+      Byte0         = *s++;  //a2
+
+      UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
+      UnicodeByte1  = (UINT8) ((Byte1 >> 2) & 0x07);
+      *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
+      break;
+
+    case 3:
+      //
+      // three-byte utf8 code
+      // sample E3 90 A1 = 0x3421
+      //
+      Byte2         = *s++;
+      Byte1         = *s++;
+      Byte0         = *s++;
+
+      UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
+      UnicodeByte1  = (UINT8) ((Byte2 << 4) | ((Byte1 >> 2) & 0x0f));
+      *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
+
+    default:
+      break;
+  }
+  return s;
+}
+

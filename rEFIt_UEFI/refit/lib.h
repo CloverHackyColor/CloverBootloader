@@ -1004,6 +1004,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 
 UINT32 EncodeOptions(CHAR16 *Options);
 
+CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar);
 
 #define KERNEL_MAX_SIZE 40000000
 #if defined(FKERNELPATCH)

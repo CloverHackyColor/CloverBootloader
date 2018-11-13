@@ -2880,10 +2880,19 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
   INTN      XText = 0;
+  INTN      Height;
+  INTN      TextXYStyle = 1;
   EG_IMAGE  *TextBufferXY = NULL;
 
   if (!Text) {
     return 0;
+  }
+  if (!textFace[1].valid) {
+    if (textFace[2].valid) {
+      TextXYStyle = 2;
+    } else {
+      TextXYStyle = 0;
+    }
   }
 
   egMeasureText(Text, &TextWidth, NULL);
@@ -2893,13 +2902,16 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     XText = XPos;
   }
 
-  //TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
-  //egFillImage(TextBufferXY, &MenuBackgroundPixel);
+  if (GlobalConfig.TypeSVG) {
+    Height = textFace[TextXYStyle].size + (int)(4 * GlobalConfig.Scale);
+  } else {
+    Height = TextHeight;
+  }
 
-  TextBufferXY = egCreateFilledImage(TextWidth, TextHeight, TRUE, &MenuBackgroundPixel);
+  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
 
   // render the text
-  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, 1);
+  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
 
   if (XAlign != X_IS_LEFT) {
     // shift 64 is prohibited
@@ -2980,6 +2992,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
  */
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
+  INTN Height;
   //use Text=null to reinit the buffer
   if (!Text) {
     if (TextBuffer) {
@@ -2989,13 +3002,20 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
     return;
   }
 
-  if (TextBuffer && (TextBuffer->Height != TextHeight)) {
+  if (GlobalConfig.TypeSVG) {
+    Height = textFace[TextStyle].size + (int)(4 * GlobalConfig.Scale);
+  } else {
+    Height = TextHeight;
+  }
+
+
+  if (TextBuffer && (TextBuffer->Height != Height)) {
     egFreeImage(TextBuffer);
     TextBuffer = NULL;
   }
 
   if (TextBuffer == NULL) {
-    TextBuffer = egCreateImage(UGAWidth-XPos, TextHeight, TRUE);
+    TextBuffer = egCreateImage(UGAWidth-XPos, Height, TRUE);
   }
 
   if (Cursor != 0xFFFF) {
@@ -3842,13 +3862,13 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 
       if (row1Count > 0) {
         if (GlobalConfig.BootCampStyle) {
-          textPosY = row0PosY + row0TileSize + (INTN)(10 * GlobalConfig.Scale);
+          textPosY = row0PosY + row0TileSize + (INTN)(1.0f * GlobalConfig.Scale);
         } else {
           textPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
         }
       } else {
         if (GlobalConfig.BootCampStyle) {
-          textPosY = row0PosY + row0TileSize + (INTN)(10 * GlobalConfig.Scale);
+          textPosY = row0PosY + row0TileSize + (INTN)(10.0f * GlobalConfig.Scale);
         } else {
           textPosY = row1PosY;
         }

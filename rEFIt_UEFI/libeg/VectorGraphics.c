@@ -266,33 +266,16 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 // --- Create rastered font
   if (fontSVG) {
     if (p->font) {
-      FontHeight = (int)(p->fontSize * Scale);
-      DBG("font height=%d color=%x\n", FontHeight, p->fontColor);
+      FontHeight = (int)(textFace[2].size * Scale); //as in MenuRows
+      DBG("Menu font scaled height=%d color=%x\n", FontHeight, textFace[2].color);
     }
-    if (!FontHeight) FontHeight = 16;
+    if (!FontHeight) FontHeight = 16;  //xxx
     if (fontSVG->fontFamily[0] < 0x30) {
       AsciiStrCpyS(fontSVG->fontFamily, 64, fontSVG->id);
     }
     RenderSVGfont(fontSVG, p->fontColor);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
-#if 0
-  //Test text
-  INTN Height = 80;
-  INTN Width = UGAWidth-200;
-  DBG("create test textbuffer\n");
-  EG_IMAGE* TextBufferXY = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
-  drawSVGtext(TextBufferXY, 0, 0, 1, L"Clover Кловер", 1); //aka message
-  DBG("text ready to blit\n");
-  BltImageAlpha(TextBufferXY,
-                (UGAWidth - Width) / 2,
-                (UGAHeight - Height) / 2,
-                &MenuBackgroundPixel,
-                16);
-  egFreeImage(TextBufferXY);
-
-  WaitForKeyPress(L"\n");
-#endif
 
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
@@ -508,6 +491,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   len = StrLen(string);
   Width = TextBufferXY->Width;
 //  Height = TextBufferXY->Height;
+  DBG("Text Height=%d  Buffer Height=%d\n", Height, TextBufferXY->Height);
 
 //  Height = 180; //for test
 //  DBG("textBuffer: [%d,%d], fontUnits=%d\n", Width, TextBufferXY->Height, (int)fontSVG->unitsPerEm);
@@ -530,7 +514,8 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
   for (i=0; i < len; i++) {
-    CHAR16 letter = string[i];
+    CHAR16 letter = string[i]; //already UTF16
+//    string = GetUnicodeChar(string, &letter);
     if (!letter) {
       break;
     }
@@ -539,86 +524,6 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
       addLetter(p, 0x5F, x, y, sy, color);
     }
     x = addLetter(p, letter, x, y, sy, color);
-
-#if 0
-    {
-    NSVGshape *shape; //, *cur, *prev;
-    shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
-    if (shape == NULL) return;
-    shape->strokeWidth = 1.2f;
-    NSVGglyph* g;
-
-    g = fontSVG->glyphs;
-    while (g) {
-      if (g->unicode == letter) {
-        shape->paths = g->path;
-        if (shape->paths) {
- /*         if (letter == L'C') {
-            DBG("Found letter %x, point[0]=(%d,%d)\n", letter,
-                (int)shape->paths->pts[0], (int)shape->paths->pts[1]);
-            shape->debug = TRUE;
-          }
-*/
-        } else {
-          DBG("Found letter %x, no path\n", letter);
-        }
-        break;
-      }
-      g = g->next;
-    }
-    if (!g) {
-      //missing glyph
-      NSVGglyph* g = fontSVG->missingGlyph;
-      shape->paths = g->path;
-      DBG("Missing letter %x\n", letter);
-    }
-    if (!shape->paths) {
-      if (g) {
-        x += g->horizAdvX  * Scale;
-      }
-      if (shape) {
-        FreePool(shape);
-      }
-      continue;
-    }
-    //fill shape
-    shape->id[0] = (char)(letter & 0xff);
-    shape->id[1] = (char)((letter >> 8) & 0xff);
-    shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = color; //NSVG_RGBA(150, 150, 150, 255); //dark grey 20%
-    shape->stroke.type = NSVG_PAINT_NONE;
-    shape->stroke.color = NSVG_RGBA(0,0,0, 255); //black?
-    shape->strokeWidth = 2.0f;
-    shape->flags = NSVG_VIS_VISIBLE;
-    nsvg__xformIdentity(shape->xform);
-    shape->xform[0] = 1.f * Scale;
-    shape->xform[3] = -1.f * Scale; //glyphs are mirrored by Y
-    shape->xform[4] = x - fontSVG->bbox[0] * Scale;
-    shape->xform[5] = y + fontSVG->bbox[3] * Scale; // Y2 is a floor for a letter
-//    DumpFloat2(shape->xform, 6);
-    //in glyph units
-    shape->bounds[0] = fontSVG->bbox[0];
-    shape->bounds[1] = fontSVG->bbox[1];
-    shape->bounds[2] = fontSVG->bbox[2];
-    shape->bounds[3] = fontSVG->bbox[3];
-//    DumpFloat2("letter bounds", shape->bounds, 4);
-
-    x += g->horizAdvX * Scale; //position for next letter
-    shape->strokeLineJoin = NSVG_JOIN_MITER;
-    shape->strokeLineCap = NSVG_CAP_BUTT;
-    shape->miterLimit = 4;
-    shape->fillRule = NSVG_FILLRULE_NONZERO;
-    shape->opacity = 1.f;
-
-    // Add to tail
-    if (p->image->shapes == NULL)
-      p->image->shapes = shape;
-    else
-      p->shapesTail->next = shape;
-    p->shapesTail = shape;
-    }
-#endif
-
   } //end of string
 
   p->image->realBounds[0] = fontSVG->bbox[0] * Scale;
