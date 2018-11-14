@@ -2346,8 +2346,22 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     TextStyle = 2;
   }
 
-  if (textFace[TextStyle].valid) {
-//    TextHeight = textFace[TextStyle].size + (int)(4 * GlobalConfig.Scale);
+  if (GlobalConfig.TypeSVG) {
+    if (!textFace[TextStyle].valid) {
+      if (textFace[0].valid) {
+        TextStyle = 0;
+      } else if (textFace[2].valid) {
+        TextStyle = 2;
+      } else if (textFace[1].valid) {
+        TextStyle = 1;
+      } else {
+        DBG("no valid text style\n");
+        textFace[TextStyle].size = TextHeight - 4;
+      }
+    }
+    if (textFace[TextStyle].valid) {
+      TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
+    }
   }
 
   //no default - no timeout!
@@ -2903,7 +2917,13 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   }
 
   if (GlobalConfig.TypeSVG) {
-    Height = textFace[TextXYStyle].size + (int)(4 * GlobalConfig.Scale);
+    TextWidth += TextHeight * 2; //give more place for buffer
+    if (!textFace[TextXYStyle].valid) {
+      DBG("no vaid text face for message!\n");
+      Height = TextHeight;
+    } else {
+      Height = (int)((textFace[TextXYStyle].size + 4) * GlobalConfig.Scale);
+    }
   } else {
     Height = TextHeight;
   }
@@ -2915,7 +2935,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
   if (XAlign != X_IS_LEFT) {
     // shift 64 is prohibited
-    XText = XPos - (TextWidth >> XAlign);
+    XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
   }
 
   BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
@@ -3003,11 +3023,10 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   }
 
   if (GlobalConfig.TypeSVG) {
-    Height = textFace[TextStyle].size + (int)(4 * GlobalConfig.Scale);
+    Height = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
   } else {
     Height = TextHeight;
   }
-
 
   if (TextBuffer && (TextBuffer->Height != Height)) {
     egFreeImage(TextBuffer);
@@ -3221,7 +3240,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN X, t1, t2;
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
-  INTN PlaceCentre = (TextHeight / 2) - 7;
+  INTN PlaceCentre = 0; //(TextHeight / 2) - 7;
   UINTN OldChosenItem = ~(UINTN)0;
 	INTN TitleLen = 0;
   INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
@@ -3323,14 +3342,17 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
+        BOOLEAN Checked = (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue);
+        PlaceCentre = (TextHeight - (Checked ?(Buttons[3]->Height):(Buttons[2]->Height))) / 2;
+        PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
             Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
-            DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
+    //        DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
                          EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
-            BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
+            BltImageAlpha( Checked ? Buttons[3] :Buttons[2],
                   EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale), Entry->Place.YPos + PlaceCentre,
                   &MenuBackgroundPixel, 16);
           } else {
@@ -3343,7 +3365,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                          Entry->Place.YPos, TitleLen + Entry->Row);
           }
         } else if (Entry->Tag == TAG_CHECKBIT) {
-          DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
+   //       DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
           DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
                        EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->IValue & Entry->Row) ? Buttons[3] :Buttons[2],

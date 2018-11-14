@@ -464,7 +464,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   }
   NSVGfont* fontSVG = textFace[textType].font;
   UINT32 color = textFace[textType].color;
-  INTN Height = textFace[textType].size;
+  INTN Height = (INTN)(textFace[textType].size * GlobalConfig.Scale);
   float Scale, sy;
   float x, y;
   if (!fontSVG) {
@@ -491,7 +491,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   len = StrLen(string);
   Width = TextBufferXY->Width;
 //  Height = TextBufferXY->Height;
-  DBG("Text Height=%d  Buffer Height=%d\n", Height, TextBufferXY->Height);
+//  DBG("Text Height=%d  Buffer Height=%d\n", Height, TextBufferXY->Height);
 
 //  Height = 180; //for test
 //  DBG("textBuffer: [%d,%d], fontUnits=%d\n", Width, TextBufferXY->Height, (int)fontSVG->unitsPerEm);
