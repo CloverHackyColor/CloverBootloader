@@ -92,11 +92,11 @@ do
         tmp=$( "$partutil" --show-uuid /dev/${dfMounts[$s]} )
         [[ $tmp == "" ]] && tmp="$zeroUUID" # MBR partitioned device do not have UUID's. Fill with zeros
         _uniquePartitionGuid="$tmp"
-            
+
         # Write data to file.
         echo "${dfMounts[$s]}@${_volName}@${mp}@ @${_uniquePartitionGuid}@${themeDir}" >> "$themeDirInfo"
     fi
-    
+
     _content=$( "$partutil" --show-contenttype /dev/${dfMounts[$s]} )
     # Record mounted esp info to file.
     if [ "$_content" == "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" ]; then

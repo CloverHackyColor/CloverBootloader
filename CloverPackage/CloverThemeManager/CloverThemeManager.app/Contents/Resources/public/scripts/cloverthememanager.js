@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-//Version=0.76.6
+//Version=0.76.8
 
 var gTmpDir = "/tmp/CloverThemeManager";
 var gLogBashToJs = "bashToJs";
@@ -343,7 +343,7 @@ function readBashToJsMessageFile()
         var firstLine = (incoming[0]);
     
         // Split firstLine by @
-        var firstLineSplit = (firstLine).split('@');
+        var firstLineSplit = (firstLine).split('‡');
         var firstLineCommand = (firstLineSplit[0]);
         
         // match command against known ones.
@@ -571,7 +571,7 @@ function updateBandsWithInstalledThemes(themeList)
             var readButton = $("#ShowHideToggleButton").text();
             if (readButton.indexOf("Show") >= 0) {
                 // Hide previews of uninstalled themes
-                ClosePreviewsForUninstalledThemes();
+                //ClosePreviewsForUninstalledThemes();
             }
 
             // Update number of installed themes
@@ -1000,7 +1000,7 @@ $(function()
         // The bash script will then check if any of the themes have available updates.
         
         // Send a message to the bash script to fetch new theme list.
-        macgap.app.launch("CTM_selectedPartition@" + selectedPartition);
+        macgap.app.launch("CTM_selectedPartition‡" + selectedPartition);
         
         // The bash script will send back:
         // 1 - A list of themes.
@@ -1189,10 +1189,10 @@ function ActionShowHideBootlog()
     var hidden = $('#BootLogContainer').is(":hidden");
     if (!hidden) {
         SetBootLogState("Close");
-        macgap.app.launch("CTM_bootlog@Close");
+        macgap.app.launch("CTM_bootlog‡Close");
     } else {
         SetBootLogState("Open");
-        macgap.app.launch("CTM_bootlog@Open");
+        macgap.app.launch("CTM_bootlog‡Open");
     }
 }
 
@@ -1267,7 +1267,7 @@ function ActionUpdateAll()
     themeList = themeList.slice(0, -1);
 
     // Send a message to the bash script
-    macgap.app.launch("CTM_UpdateAll@" + themeList);
+    macgap.app.launch("CTM_UpdateAll‡" + themeList);
 
     // Show a message to the user
     ChangeMessageBoxHeaderColour("blue");
@@ -1305,7 +1305,7 @@ function ActionChangedDropDownNvram()
 	var chosenOption=$("#installedThemeDropDownNvram").val();
 	if(chosenOption != "-") {
 		// Send message to bash script to notify change.
-		macgap.app.launch("CTM_changeThemeN@" + chosenOption);
+		macgap.app.launch("CTM_changeThemeN‡" + chosenOption);
 		// Remove the Remove option from the menu
 		$("#installedThemeDropDownNvram option[value='!Remove!']").remove();
 		// If chosing to remove the entry then select the top (blank) option from the menu
@@ -1322,7 +1322,7 @@ function ActionChangedDropDownConfigP()
 	var chosenOption=$("#installedThemeDropDownConfigP").val();
 	if(chosenOption != "-") {
 		// Send message to bash script to notify change.
-		macgap.app.launch("CTM_changeThemeC@" + chosenOption);
+		macgap.app.launch("CTM_changeThemeC‡" + chosenOption);
 		// Remove the Remove option from the menu
 		$("#installedThemeDropDownConfigP option[value='!Remove!']").remove();
 		// If chosing to remove the entry then select the top (blank) option from the menu
@@ -1724,7 +1724,7 @@ function ChangeThumbnailSize(action)
             
         // Send a message to the bash script to record thumbnail width
         if (newThumbWidth >= 100 && newThumbWidth <= 200)
-            macgap.app.launch("CTM_thumbSize@" + newThumbWidth + " " + newThumbHeight);
+            macgap.app.launch("CTM_thumbSize‡" + newThumbWidth + " " + newThumbHeight);
     }
 }
 
@@ -1769,8 +1769,8 @@ function RespondToButtonPress(button,status)
     }
 
     // Notify bash script. Send button name and it's current state.
-    macgap.app.launch("CTM_ThemeAction@" + button + "@" + status);
-        
+    macgap.app.launch("CTM_ThemeAction‡" + button + "‡" + status);
+
     // Prepare vars for legible user message
     // PresedButton will begin with "button_"
     button=button.substring(7);

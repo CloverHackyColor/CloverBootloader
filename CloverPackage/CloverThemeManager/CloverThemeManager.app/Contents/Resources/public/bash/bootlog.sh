@@ -16,16 +16,16 @@
 # Extracts bootlog from ioreg and then parses it for theme info.
 # Html is then constructed and injected in to the main template.
 
-# v0.76.5
+# v0.76.7
     
 # ---------------------------------------------------------------------------------------
 SetHtmlBootlogSectionTemplates()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}SetHtmlBootlogSectionTemplates()"
-    
+
     blcOpen=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">Boot Device Info<\/span><\/div>\r")
-    
+
     blcLineDeviceInfoMbr=$(printf "        <div id=\"bandDescription\">\r")
     blcLineDeviceInfoMbr="$blcLineDeviceInfoMbr"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Type:<\/span><span class=\"infoBody\">${blBootDeviceType} (${blBootDevicePartType})<\/span><\/div>\r")
     blcLineDeviceInfoMbr="$blcLineDeviceInfoMbr"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Signature:<\/span><span class=\"infoBody\">${blBootDevicePartSignature}<\/span><\/div>\r")
@@ -34,20 +34,20 @@ SetHtmlBootlogSectionTemplates()
     blcLineDeviceInfoMbr="$blcLineDeviceInfoMbr"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Size:<\/span><span class=\"infoBody\">${blBootDevicePartSizeDec}<\/span><\/div>\r")
     blcLineDeviceInfoMbr="$blcLineDeviceInfoMbr"$(printf "        <\/div>\r")
     blcLineDeviceInfoMbr="$blcLineDeviceInfoMbr"$(printf "\r")
-    
+
     blcLineDeviceInfoGpt=$(printf "        <div id=\"bandDescription\">\r")
     blcLineDeviceInfoGpt="$blcLineDeviceInfoGpt"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Type:<\/span><span class=\"infoBody\">${blBootDeviceType} (${blBootDevicePartType})<\/span><\/div>\r")
     blcLineDeviceInfoGpt="$blcLineDeviceInfoGpt"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Signature:<\/span><span class=\"infoBody\">${blBootDevicePartSignature}<\/span><\/div>\r")
     blcLineDeviceInfoGpt="$blcLineDeviceInfoGpt"$(printf "        <\/div>\r")
     blcLineDeviceInfoGpt="$blcLineDeviceInfoGpt"$(printf "\r")
-    
+
     blcLineDevice=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">Boot Device<\/span><\/div>\r")
     blcLineDevice="$blcLineDevice"$(printf "        <div id=\"bandDescription\">\r")
     blcLineDevice="$blcLineDevice"$(printf "            <div id=\"bandIdentifer\"><span class=\"infoTitle\">Identifier:<\/span><span class=\"infoBody\">${gBootDeviceIdentifierPrint}<\/span><\/div>\r")
     blcLineDevice="$blcLineDevice"$(printf "            <div id=\"bandMountpoint\"><span class=\"infoTitle\">mountpoint:<\/span><span class=\"infoBody\">${mountpointPrint}<\/span><\/div>\r")
     blcLineDevice="$blcLineDevice"$(printf "        <\/div>\r")
     blcLineDevice="$blcLineDevice"$(printf "\r")
-    
+
     blcLineDeviceRescan=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">Boot Device<\/span><\/div>\r")
     blcLineDeviceRescan="$blcLineDeviceRescan"$(printf "        <div id=\"bandDescription\">\r")
     blcLineDeviceRescan="$blcLineDeviceRescan"$(printf "            <div id=\"bandIdentifer\"><span class=\"infoTitle\">Identifier:<\/span><span class=\"infoBody\">${gBootDeviceIdentifierPrint}<\/span><\/div>\r")
@@ -57,7 +57,7 @@ SetHtmlBootlogSectionTemplates()
     blcLineDeviceRescan="$blcLineDeviceRescan"$(printf "            <\/div> <!-- End RescanButton -->\r")
     blcLineDeviceRescan="$blcLineDeviceRescan"$(printf "        <\/div>\r")
     blcLineDeviceRescan="$blcLineDeviceRescan"$(printf "\r")
-    
+
     if [ $blFastOption -eq 0 ]; then
 
         # No theme was used so don't we don't know if theme existed or not.
@@ -67,9 +67,9 @@ SetHtmlBootlogSectionTemplates()
         blcLineNvram="$blcLineNvram"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Clover.Theme:<\/span><span class=\"infoBodyTheme\">${blNvramThemeEntry}<\/span><\/div>\r")
         blcLineNvram="$blcLineNvram"$(printf "        <\/div>\r")
         blcLineNvram="$blcLineNvram"$(printf "\r")
-        
+
     else
-    
+
         blcLineNvram=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">NVRAM<\/span><\/div>\r")
         blcLineNvram="$blcLineNvram"$(printf "        <div id=\"bandDescription\">\r")
         blcLineNvram="$blcLineNvram"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">read from:<\/span><span class=\"infoBody\">${blNvramReadFromPrint}<\/span><\/div>\r")
@@ -84,30 +84,30 @@ SetHtmlBootlogSectionTemplates()
         blcLineNvramNoTheme="$blcLineNvramNoTheme"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">Clover.Theme:<\/span><span class=\"infoBodyTheme\"><\/span><\/div>\r")
         blcLineNvramNoTheme="$blcLineNvramNoTheme"$(printf "        <\/div>\r")
         blcLineNvramNoTheme="$blcLineNvramNoTheme"$(printf "\r")
-        
+
     fi
-    
+
     blcLineConfig=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">config.plist<\/span><\/div>\r")
     blcLineConfig="$blcLineConfig"$(printf "        <div id=\"bandDescription\">\r")
     blcLineConfig="$blcLineConfig"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">path:<\/span><span class=\"infoBodyReplaceable\">${blConfigPlistFilePathPrint}<\/span><\/div>\r")
     blcLineConfig="$blcLineConfig"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">theme entry:<\/span><span class=\"infoBodyTheme\">${blConfigPlistThemeEntry}<\/span><\/div>\r")
     blcLineConfig="$blcLineConfig"$(printf "        <\/div>\r")
     blcLineConfig="$blcLineConfig"$(printf "\r")
-    
+
     blcLineThemeAsked=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">Theme asked for<\/span><\/div>\r")
     blcLineThemeAsked="$blcLineThemeAsked"$(printf "        <div id=\"bandDescription\">\r")
     blcLineThemeAsked="$blcLineThemeAsked"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">path:<\/span><span class=\"infoBodyReplaceable\">${blThemeAskedForPathPrint}<\/span><\/div>\r")
     blcLineThemeAsked="$blcLineThemeAsked"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">did theme exist?<\/span><span class=\"${themeExistCssClass}\">${blThemeAskedForExisted}<\/span><\/div>\r")
     blcLineThemeAsked="$blcLineThemeAsked"$(printf "        <\/div>\r")
     blcLineThemeAsked="$blcLineThemeAsked"$(printf "\r")
-    
+
     blcLineThemeUsed=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">Theme used<\/span><\/div>\r")
     blcLineThemeUsed="$blcLineThemeUsed"$(printf "        <div id=\"bandDescription\">\r")
     blcLineThemeUsed="$blcLineThemeUsed"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">path:<\/span><span class=\"infoBodyReplaceable\">${blThemeUsedPathPrint}<\/span><\/div>\r")
     blcLineThemeUsed="$blcLineThemeUsed"$(printf "            <div id=\"bandCbandColumnLeftolumnRight\"><span class=\"infoTitle\">Chosen:<\/span><span class=\"infoBodyTheme\">${blThemeNameChosen}<\/span><\/div>\r")
     blcLineThemeUsed="$blcLineThemeUsed"$(printf "        <\/div>\r")
     blcLineThemeUsed="$blcLineThemeUsed"$(printf "\r")
-    
+
     blcLineOverrideUi=$(printf "        <div id=\"bandHeader\"><span class=\"infoTitle\">Override in GUI<\/span><\/div>\r")
     blcLineOverrideUi="$blcLineOverrideUi"$(printf "        <div id=\"bandDescription\">\r")
     blcLineOverrideUi="$blcLineOverrideUi"$(printf "            <div id=\"bandColumnLeft\"><span class=\"infoTitle\">theme:<\/span><span class=\"infoBody\">${blGuiOverrideTheme}<\/span><\/div>\r")
@@ -120,7 +120,7 @@ SetBootlogTextColourClasses()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}SetBootlogTextColourClasses()"
-    
+
     # Set class and text of NVRAM theme exists
     if [ $blNvramThemeExists -eq 0 ]; then
         nvramThemeExistsCssClass="infoBodyGreen"
@@ -129,7 +129,7 @@ SetBootlogTextColourClasses()
         nvramThemeExistsCssClass="infoBodyRed"
         nvramExistText="No"
     fi
-    
+
     # Set class of 'theme exists' text
     if [ "$blThemeAskedForExisted" == "No" ]; then
         themeExistCssClass="infoBodyRed"
@@ -143,11 +143,11 @@ ReadBootLog()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}ReadBootLog()"
-               
+
     # Set default vars
     blCloverRevision=""               # Clover revision
     blBootType=""                     # Either legacy or UEFI
-    blBootDeviceType="-"              # Example: USB, SATA, VenHW
+    blBootDeviceType="-"              # Example: USB, SATA, VenHW, NVMe
     blBootDevicePartition=""          # Example: 1
     blBootDevicePartType=""           # Example: MBR, GPT
     blBootDevicePartSignature=""      # Example: GUID (for GPT), 0x00000000 (for MBR)
@@ -184,7 +184,7 @@ ReadBootLog()
 
     while read -r lineRead
     do
-    
+
         if [[ "$lineRead" == *"Starting Clover"* ]]; then
             blCloverRevision="${lineRead##*Starting Clover revision: }"
             blCloverRevision="${blCloverRevision% on*}"
@@ -195,7 +195,7 @@ ReadBootLog()
                 blBootType="UEFI"
             fi
         fi
-        
+
         #0:100  0:000  SelfDevicePath=PciRoot(0x0)\Pci(0x1F,0x2)\Sata(0x0,0xFFFF,0x0)\HD(1,GPT,BC1B343C-2D6B-4C0C-8B88-71C2AFCF6E65,0x28,0x64000) @C7AA598
         if [[ "$lineRead" == *"SelfDevicePath"* ]]; then
 
@@ -206,10 +206,18 @@ ReadBootLog()
             IFS=$'\\'
             devicePathArr=($devicePath)
             IFS="$oIFS"
-            blBootDeviceType="${devicePathArr[2]%(*}"
-            # Split HD in to parts
-            #devicePathHD="${devicePathArr[$hd]}"
-            devicePathHD="${devicePathArr[3]%)*}"
+
+            # Identify sections
+            idx=${#devicePathArr[@]}
+            while [[ "${devicePathArr[$idx]}" != "HD("* ]]
+            do
+                ((idx--))
+            done
+
+            blBootDeviceType="${devicePathArr[$((idx-1))]%(*}"
+            devicePathHD="${devicePathArr[$idx]%)*}"
+
+            # Split HD in to parts   
             devicePathHD="${devicePathHD#*(}"
             # Should be something like these examples:
             #1,MBR,0x2A482A48,0x2,0x4EFC1B80
@@ -245,51 +253,51 @@ ReadBootLog()
                 fi
             fi
         fi
-        
+
         # 3:539  0:023  Using OEM config.plist at path: EFI\CLOVER\config.plist
         if [[ "$lineRead" == *"config.plist at path:"* ]]; then
             blConfigOem="${lineRead##*Using }"
             blConfigOem="${blConfigOem% config.plist*}"
         fi
-        
+
         # 3:539  0:000  EFI\CLOVER\config.plist loaded: Success
         if [[ "$lineRead" == *"config.plist loaded: Success"* ]]; then
             blConfigPlistFilePath=$( echo "$lineRead" | awk '{print $3}' )
             blConfigPlistFilePath="/"$( echo "$blConfigPlistFilePath" | sed 's/\\/\//g' )
         fi
-        
+
         # 1:862  0:000  Fast option enabled
         if [[ "$lineRead" == *"Fast option enabled" ]]; then
             blFastOption=0
         fi
-        
+
         # 1:862  0:000  TextOnly option enabled
         if [[ "$lineRead" == *"TextOnly option enabled" ]]; then
             blTextOnlyOption=0
         fi
-        
+
         # 0:110  0:000  Default theme: red
         if [[ "$lineRead" == *"Default theme"* ]]; then
             blConfigPlistThemeEntry="${lineRead##*: }"
             blThemeAskedForTitle="$blConfigPlistThemeEntry"
         fi
-        
+
         # 1:104  0:000  EmuVariable InstallEmulation: orig vars copied, emu.va.....
         if [[ "$lineRead" == *"EmuVariable InstallEmulation"* ]] && [[ "$lineRead" == *"orig vars copied"* ]] ; then
             blEmuVariable=0
         fi
-        
+
         # 6:149  0:172  Loading nvram.plist from Vol 'OSX' - loaded, size=2251
         if [[ "$lineRead" == *"Loading nvram.plist"* ]]; then
             blNvramPlistVolume="${lineRead#*\'}"
             blNvramPlistVolume="${blNvramPlistVolume%\'*}"
         fi
-        
+
         # 6:167  0:018  PutNvramPlistToRtVars ...
         if [[ "$lineRead" == *"PutNvramPlistToRtVars"* ]]; then
             blNvramPlistExists=0
         fi
-        
+
         # 6:167  0:000   Adding Key: Clover.Theme: Size = 11, Data: 62 6C 61 63 6B 5F 67 72 65 65 6E 
         if [[ "$lineRead" == *"Adding Key: Clover.Theme:"* ]]; then
             # Remove any trailing spaces
@@ -306,7 +314,7 @@ ReadBootLog()
                 blNvramReadFrom="/Volumes/${blNvramPlistVolume}/nvram.plist"
             fi
         fi
-        
+
         # 0:718  0:000  theme ios7 chosen from nvram is absent, using theme defined in config: red
         if [[ "$lineRead" == *"chosen from nvram is absent"* ]]; then
             blNvramThemeEntry="${lineRead#*theme }"
@@ -317,34 +325,34 @@ ReadBootLog()
             blNvramThemeAbsent=0
             blThemeAskedForTitle="$blConfigPlistThemeEntry"
         fi
-        
+
         # 0:732  0:000  found boot-args in NVRAM:-v kext-dev-mode=1, size=18
         if [[ "$lineRead" == *"found boot-args in NVRAM"* ]]; then
             blNvramBootArgs=0
         fi
-        
+
         if [[ "$lineRead" == *"EDITED:"* ]]; then
             blGuiOverrideTheme="${lineRead##*: }"
         fi
-        
+
         if [[ "$lineRead" == *"change theme"* ]]; then
             if [ "$blGuiOverrideTheme" != "" ]; then
                 blGuiOverrideThemeChanged=0
             fi
         fi
-        
+
         if [[ "$lineRead" == *"no default theme"* ]]; then
             if [[ "$lineRead" == *"get random"* ]]; then
                 blUsedRandomTheme=0
             fi
         fi
-        
+
         # 1:805  0:000  GlobalConfig: theme.plist not found, get random theme BGM
         if [[ "$lineRead" == *"theme.plist not found, get random theme"* ]]; then
             blConfigThemePlistNotFound=0
             blUsedRandomTheme=0
         fi
-        
+
         # 0:718  0:000  Using theme 'red' (EFI\CLOVER\themes\red)
         if [[ "$lineRead" == *"Using theme"* ]]; then
             blUsingTheme="${lineRead#*\'}"
@@ -354,7 +362,7 @@ ReadBootLog()
             blThemeUsedPath=$( echo "$blThemeUsedPath" | sed 's/\\/\//g' )
             blThemeUsedPath="/${blThemeUsedPath%/*}"
         fi
-        
+
         # 6:208  0:000  theme black_green defined in NVRAM found and theme.plist parsed
         if [[ "$lineRead" == *"defined in NVRAM found"* ]]; then
             blNvramThemeEntry="${lineRead#*theme }"
@@ -364,12 +372,17 @@ ReadBootLog()
             fi
             blNvramThemeExists=0
         fi
-        
+
         # 6:227  0:000  Choosing theme black_green
         if [[ "$lineRead" == *"Choosing theme"* ]]; then
             blThemeNameChosen=$( echo "${lineRead##*Choosing theme }" | sed 's/ *$//' )
         fi
-        
+
+        # 4:769  0:002  Chosen theme black_green
+        if [[ "$lineRead" == *"Chosen theme"* ]]; then
+            blThemeNameChosen=$( echo "${lineRead##*Chosen theme }" | sed 's/ *$//' )
+        fi
+
         # 1:848  0:000  no themes available, using embedded
         if [[ "$lineRead" == *"no themes available, using embedded"* ]]; then
             blUsingEmbedded=0
@@ -418,7 +431,7 @@ PostProcess()
     # Was theme name asked for, used?
     elif [ "$blThemeAskedForTitle" == "$blUsingTheme" ]; then
         blThemeAskedForPath="${blThemeUsedPath}"/"${blThemeAskedForTitle}"
-    
+
     # Was embedded theme asked for?
     elif [ "$blThemeAskedForTitle" == "embedded" ] && [ "$blUsingTheme" == "" ] ; then
         blThemeAskedForPath="internal"
@@ -439,7 +452,7 @@ PostProcess()
     if [ $blNvramPlistExists -eq 0 ]; then
         gNvramWorkingType="Fake"
     fi
-    
+
     if [ "$blNvramReadFrom" == "" ] && [ $blNvramPlistExists -eq 0 ] && [ "$blNvramThemeEntry" == "" ] && [ "$blNvramPlistVolume" != "" ]; then
         blNvramReadFrom="/Volumes/${blNvramPlistVolume}/nvram.plist"
     fi
@@ -478,6 +491,14 @@ PostProcess()
     # If Fast Boot was used then there will be no NVRAM messages in bootlog linked to themes
     # So if all other checks remain blank and UEFI boot was used without the emulation driver...
     if [ "$blNvramReadFrom" == "" ] && [ "$gNvramWorkingType" == "" ] && [ "$blBootType" == "UEFI" ] && [ $blEmuVariable -eq 1 ] && [ $blFastOption -eq 0 ]; then
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}NVRAM checks are blank but UEFI boot without EmuVariable and FastBoot detected. Setting as working"
+        blNvramReadFrom="Native NVRAM"
+        gNvramWorkingType="Native"
+
+    # Added in response to SavageAUS' example where NVRAM was working with UEFI boot but just not being used for themes.
+    # So as above but without fast boot.
+    elif [ "$blNvramReadFrom" == "" ] && [ "$gNvramWorkingType" == "" ] && [ "$blBootType" == "UEFI" ] && [ $blEmuVariable -eq 1 ]; then
+        [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}NVRAM checks are blank but UEFI boot without EmuVariable. Setting as working"
         blNvramReadFrom="Native NVRAM"
         gNvramWorkingType="Native"
     fi
@@ -485,7 +506,7 @@ PostProcess()
     # Convert device hex info to human readable
     blBootDevicePartStartDec=$(echo "ibase=16; ${blBootDevicePartStart#*x}" | bc)
     blBootDevicePartSizeDec=$(echo "ibase=16; ${blBootDevicePartSize#*x}" | bc)
-    
+
     if [ "$gBootDeviceIdentifier" == "" ]; then
         gBootDeviceIdentifier="not found"
     else
@@ -499,7 +520,7 @@ EscapeVarsForHtml()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}EscapeVarsForHtml()"
-    
+
     gBootDeviceIdentifierPrint=$( echo "$gBootDeviceIdentifierPrint" | sed 's/\//\\\//g' )
     mountpointPrint=$( echo "$mountpointPrint" | sed 's/\//\\\//g' )
     blConfigPlistFilePathPrint=$( echo "$blConfigPlistFilePathPrint" | sed 's/\//\\\//g' )
@@ -513,10 +534,10 @@ CheckNvramIsWorking()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}CheckNvramIsWorking()"
-    
+
     # $blBootType (either UEFI or Legacy) / $gNvramWorkingType (either Fake or Native)
     if [ "$blBootType" != "" ] && [ "$gNvramWorkingType" != "" ]; then
-    
+
         if [ "$blBootType" == "Legacy" ] || [[ "$blBootType" == "UEFI" && $blEmuVariable -eq 0 ]]; then
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Boot type=$blBootType | blEmuVariable=$blEmuVariable"
             # Check for necessary files to save nvram.plist file to disk
@@ -571,7 +592,7 @@ PrintVarsToLog()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}PrintVarsToLog()"
-    
+
     WriteToLog "${debugIndentTwo}Read Boot Log"
     WriteToLog "${debugIndentTwo}Clover Revision=$blCloverRevision"
     WriteToLog "${debugIndentTwo}Boot Type=$blBootType"
@@ -621,12 +642,12 @@ PopulateNvramFunctionalityBand()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}PopulateNvramFunctionalityBand() option $1"
-    
+
     local message=""
     local fillColour=""
-    
+
     if [ "$1" == "0" ]; then
-    
+
         if [ $gNvramWorking -eq 0 ]; then
             if [ "$blBootType" == "Legacy" ]; then
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Launch daemon \&amp; rc scripts appear to be working. NVRAM changes will be saved (to nvram.plist)"
@@ -656,15 +677,15 @@ PopulateNvramFunctionalityBand()
                 fi
             fi
         fi
-    
+
     elif [ "$1" == "1" ]; then
 
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}This system was booted using Clover older than r2025."
         message="This system was booted using a Clover revision older than r2025."
         fillColour="nvramFillRed"
-    
+
     elif [ "$1" == "2" ]; then
-        
+
         if [ ! -f "$bootLogFile" ]; then
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}This system was not booted using Clover."
         else
@@ -672,24 +693,24 @@ PopulateNvramFunctionalityBand()
         fi
         message="This system was not booted using Clover."
         fillColour="nvramFillRed"
-    
+
     fi
-    
+
     if [ "$message" != "" ]; then
-    
-        # Create html mesasage
+
+        # Create html message
         local htmlToInsert=""
         htmlToInsert="$htmlToInsert"$(printf "    <div id=\"NvramFunctionalityBand\" class=\"${fillColour}\">\r")
         htmlToInsert="$htmlToInsert"$(printf "        <div id=\"nvramTextArea\">\r")
         htmlToInsert="$htmlToInsert"$(printf "            <span class=\"textBody\">${message}<\/span>\r")
         htmlToInsert="$htmlToInsert"$(printf "        <\/div>\r")
         htmlToInsert="$htmlToInsert"$(printf "    <\/div> <!-- End NvramFunctionalityBand -->\r")
-        
+
         # Insert bootlog Html in to placeholder
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Inserting nvram functionality message HTML in to managethemes.html"
         #LANG=C sed -ie "s/<!--INSERT_NVRAM_MESSAGE_BAND_HERE-->/${htmlToInsert}/g" "${PUBLIC_DIR}"/managethemes.html
         LANG=C sed -ie "s/<!--INSERT_NVRAM_MESSAGE_BAND_HERE-->/${htmlToInsert}/g" "${TEMPDIR}"/managethemes.html
-        
+
         # Clean up
         if [ -f "${TEMPDIR}"/managethemes.htmle ]; then
             rm "${TEMPDIR}"/managethemes.htmle
@@ -702,12 +723,12 @@ PopulateBootLogTitleBand()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}PopulateBootLogTitleBand()"
-    
+
     # Create bootlog band and title html
     bootlogBandTitleHtml=$(printf "    <div id=\"BootLogTitleBar\" class=\"bootlogBandFill\" tabindex=\"1\">\r")
     bandTitle=$(printf "        <span class=\"titleBarTextTitle\">LAST BOOT\&nbsp;\&nbsp;\&\#x25BE\&nbsp;\&nbsp;\&nbsp;\&nbsp;|<\/span>")
     bandTitleDescStart=$(printf "<span class=\"titleBarTextDescription\">")
-    
+
     if [ $blTextOnlyOption -eq 0 ] && [ $blFastOption -eq 0 ]; then
         bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} - Fast boot and TextOnly options were both set in config.plist so no theme was loaded<\/span>"
     elif [ $blFastOption -eq 0 ]; then
@@ -715,7 +736,7 @@ PopulateBootLogTitleBand()
     elif [ $blTextOnlyOption -eq 0 ]; then
         bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} - Text Only option was set in config.plist so no theme was loaded<\/span>"
     else
-    
+
         # Was the Christmas or NewYear theme used?
         if [ "$blThemeNameChosen" == "christmas" ] || [ "$blThemeNameChosen" == "newyear" ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded <span class=\"themeName\">${blThemeNameChosen}<\/span> as it's that time of year. <span class=\"themeAction\">Uninstall theme if not wanted.<\/span><\/span>"
@@ -723,11 +744,11 @@ PopulateBootLogTitleBand()
         # No nvram theme entry and chosen theme matches config.plist entry as long as they're not blank
         elif [ "$blNvramThemeEntry" == "" ] && [ "$blThemeNameChosen" != "" ] && [ "$blConfigPlistThemeEntry" != "" ] && [ "$blThemeNameChosen" == "$blConfigPlistThemeEntry" ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded <span class=\"themeName\">${blThemeNameChosen}<\/span> as set in ${blConfigPlistFilePathPrint} on device ${gBootDeviceIdentifier}<\/span>"
-    
+
         # nvram theme entry was used
         elif [ "$blNvramThemeEntry" != "" ] && [ "$blThemeNameChosen" == "$blNvramThemeEntry" ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded <span class=\"themeName\">${blThemeNameChosen}<\/span> as set in Clover.Theme var from ${blNvramReadFromPrint}<\/span>"
-    
+
         # nvram theme entry points to non-existent theme AND chosen theme matches config.plist entry
         elif [ "$blNvramThemeEntry" != "" ] && [ $blNvramThemeExists -eq 1 ] && [ "$blThemeNameChosen" == "$blConfigPlistThemeEntry" ] && [ "$themeExist" == "Yes" ] && [ $blNvramThemeAbsent -eq 0 ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded <span class=\"themeName\">${blThemeNameChosen}<\/span> as set in ${blConfigPlistFilePathPrint} as NVRAM theme was absent<\/span>"
@@ -735,48 +756,48 @@ PopulateBootLogTitleBand()
         # Any pointed to theme does not exist AND embedded theme was not used AND random theme was used
         elif [ $blNvramThemeAbsent -eq 0 ] && [ $blUsingEmbedded -eq 1 ] && [ $blUsedRandomTheme -eq 0 ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded a random theme <span class=\"themeName\">($blThemeNameChosen)<\/span> as it couldn't find the theme asked for<\/span>"
-    
+
         # nvram entry was blank AND config.plist entry was blank AND embedded theme was not used AND random theme was used
         elif [ "$blNvramThemeEntry" == "" ] && [ "$blConfigPlistThemeEntry" == "" ] && [ $blUsingEmbedded -eq 1 ] && [ $blUsedRandomTheme -eq 0 ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded a random theme <span class=\"themeName\">($blThemeNameChosen)<\/span> as no theme was set<\/span>"
-    
+
         # Embedded theme was used
         elif [ $blUsingEmbedded -eq 0 ] && [ "$blThemeAskedForTitle" == "embedded" ] && [ "$blUsingTheme" == "" ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded theme embedded as it couldn't find any themes<\/span>"
-    
+
         # Embedded theme was used
         elif [ $blUsingEmbedded -eq 0 ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded theme embedded as it was asked for<\/span>"
-    
+
         # User set random
         elif [ "$blConfigPlistThemeEntry" == "random" ] || [ "$blNvramThemeEntry" == "random" ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded <span class=\"themeName\">${blThemeNameChosen}<\/span> as a random theme was asked for<\/span>"
-    
+
         # theme.plist missing so random theme chosen.
         elif [ $blConfigThemePlistNotFound -eq 0 ] && [ $blUsedRandomTheme -eq 0 ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded a random theme <span class=\"themeName\">($blThemeNameChosen)<\/span> as theme asked for didn't exist.<\/span>"
-    
+
         # was theme overridden from GUI?
         elif [ $blGuiOverrideThemeChanged -eq 0 ] && [ "$blGuiOverrideTheme" != "" ] && [ "$blGuiOverrideTheme" == "$blThemeNameChosen" ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} loaded theme <span class=\"themeName\">${blThemeNameChosen}<\/span> as chosen in the GUI<\/span>"
-    
+
         # was fast boot used?
         elif [ "$blUsingTheme" == "" ] && [ "$blThemeUsedPath" == "" ] && [ "$blThemeNameChosen" == "" ] && [ $blFastOption -eq 0 ]; then
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision} - Fast Boot option was set in config.plist so no theme was loaded<\/span>"
-    
+
         # Something else happened
         else
             bootlogBandTitleHtml="${bootlogBandTitleHtml}${bandTitle}${bandTitleDescStart}${blBootType} Clover ${blCloverRevision}<\/span>"
         fi
     fi
-    
+
     bootlogBandTitleHtml="$bootlogBandTitleHtml"$(printf "\r    <\/div> <!-- End BootLogTitleBar -->\r")
 
     # Insert bootlog Html in to placeholder
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Inserting bootlog Band Title HTML in to managethemes.html"
     #LANG=C sed -ie "s/<!--INSERT_BOOTLOG_BAND_TITLE_HERE-->/${bootlogBandTitleHtml}/g" "${PUBLIC_DIR}"/managethemes.html && (( insertCount++ ))
     LANG=C sed -ie "s/<!--INSERT_BOOTLOG_BAND_TITLE_HERE-->/${bootlogBandTitleHtml}/g" "${TEMPDIR}"/managethemes.html && (( insertCount++ ))
-    
+
     # Clean up
     if [ -f "${TEMPDIR}"/managethemes.htmle ]; then
         rm "${TEMPDIR}"/managethemes.htmle
@@ -788,7 +809,7 @@ PopulateBootLog()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}PopulateBootLog()"
-    
+
     # Create bootlog container HTML
     bootlogHtml=$(printf "    <div id=\"BootLogContainer\" class=\"nvramFillNone\">\r")
     bootlogHtml="$bootlogHtml"$(printf "\r")
@@ -820,22 +841,22 @@ PopulateBootLog()
 
     # Add HTML for Config.plist section
     bootlogHtml="${bootlogHtml}${blcLineConfig}"
-    
+
     # Add HTML for Theme asked for section (providing a theme was asked for), and Text Only option was not used
     if [ "$blThemeAskedForPath" != "" ] && [ "$blThemeAskedForTitle" != "" ] && [ $blTextOnlyOption -eq 1 ]; then
         bootlogHtml="${bootlogHtml}${blcLineThemeAsked}"
     fi
-    
+
     # If GUI was used to override theme then add this HTML section
     if [ $blGuiOverrideThemeChanged -eq 0 ] && [ "$blGuiOverrideTheme" != "" ]; then
         bootlogHtml="${bootlogHtml}${blcLineOverrideUi}"
     fi
-    
+
     # If fast boot and text only options were not used then add HTML for Theme used section
     if ([ "$blUsingTheme" != "" ] || [ "$blThemeUsedPath" != "" ] || [ "$blThemeNameChosen" != "" ]) && [ $blFastOption -eq 1 ] && [ $blTextOnlyOption -eq 1 ]; then
         bootlogHtml="${bootlogHtml}${blcLineThemeUsed}"
     fi
-    
+
     # Add ending HTML
     bootlogHtml="${bootlogHtml}    <\/div> <!-- End BootLogContainer -->"
 
@@ -852,8 +873,6 @@ PopulateBootLog()
         rm "${TEMPDIR}"/managethemes.htmle
     fi
 }
-
-
 
 # Resolve path
 SELF_PATH=$(cd -P -- "$(dirname -- "$0")" && pwd -P) && SELF_PATH=$SELF_PATH/$(basename -- "$0")
@@ -886,19 +905,18 @@ if [ -f "$bootLogFile" ]; then
     checkLog=$( grep "Starting Clover" "$bootLogFile" )
     if [ "$checkLog" != "" ]; then
         ReadBootLog
-        ReadConfigPList
         PostProcess
         CheckNvramIsWorking
         if [ "$gRunInfo" == "Init" ]; then
             EscapeVarsForHtml
             [[ DEBUG -eq 1 ]] && PrintVarsToLog
-            
+
             # Write boot device info to file
             echo "${blBootDevicePartition}@${blBootDevicePartType}@${blBootDevicePartSignature}@${blBootDevicePartStartDec}@${blBootDevicePartSizeDec}" > "$bootDeviceInfo"
-            
+
             # Create NVRAM functionality band
             PopulateNvramFunctionalityBand "0"
-            
+
             # Show user what happened last boot
             PopulateBootLogTitleBand
             SetBootlogTextColourClasses
@@ -918,15 +936,15 @@ if [ -f "$bootLogFile" ]; then
 
         # Write some vars to file for script.sh to use.
         if [ "$blNvramReadFrom" != "" ]; then
-            echo "nvram@$blNvramReadFrom" >> "$bootlogScriptOutfile"
+            echo "nvram‡$blNvramReadFrom" >> "$bootlogScriptOutfile"
         elif [ $blNvramBootArgs -eq 0 ]; then
-            echo "nvram@Native NVRAM" >> "$bootlogScriptOutfile"
+            echo "nvram‡Native NVRAM" >> "$bootlogScriptOutfile"
         fi
-        [[ "$blNvramThemeEntry" != "" ]] && echo "nvramThemeEntry@$blNvramThemeEntry" >> "$bootlogScriptOutfile"
-        [[ "$blConfigPlistFilePath" != "" ]] && echo "config@$blConfigPlistFilePath" >> "$bootlogScriptOutfile"
-        [[ "$blBootType" != "" ]] && echo "bootType@$blBootType" >> "$bootlogScriptOutfile"
-        echo "nvramSave@$gNvramWorking" >> "$bootlogScriptOutfile"
-    
+        [[ "$blNvramThemeEntry" != "" ]] && echo "nvramThemeEntry‡$blNvramThemeEntry" >> "$bootlogScriptOutfile"
+        [[ "$blConfigPlistFilePath" != "" ]] && echo "config‡$blConfigPlistFilePath" >> "$bootlogScriptOutfile"
+        [[ "$blBootType" != "" ]] && echo "bootType‡$blBootType" >> "$bootlogScriptOutfile"
+        echo "nvramSave‡$gNvramWorking" >> "$bootlogScriptOutfile"
+
     else
         checkLog=$( grep "Starting rEFIt" "$bootLogFile" )
         if [ "$checkLog" != "" ]; then
@@ -938,7 +956,7 @@ if [ -f "$bootLogFile" ]; then
             PopulateNvramFunctionalityBand "2"
         fi
     fi
-    
+
 else
     # Show message that system was booted without using Clover
     PopulateNvramFunctionalityBand "2"

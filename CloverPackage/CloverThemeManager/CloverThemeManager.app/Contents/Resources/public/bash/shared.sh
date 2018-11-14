@@ -37,7 +37,7 @@ logJsToBash="${TEMPDIR}/jsToBash" # Note - this is created in AppDelegate.m
 logBashToJs="${TEMPDIR}/bashToJs" # Note - this is created in AppDelegate.m
 
 # Globals
-remoteRepositoryUrl="http://git.code.sf.net/p/cloverefiboot"
+remoteRepositoryUrl="https://git.code.sf.net/p/cloverefiboot"
 zeroUUID="00000000-0000-0000-0000-000000000000"
 gESPMountPrefix="ctmTempMp"
 debugIndent="    "

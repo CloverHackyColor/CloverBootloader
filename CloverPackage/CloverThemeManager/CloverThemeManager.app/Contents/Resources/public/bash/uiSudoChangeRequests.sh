@@ -23,7 +23,7 @@ SendToUI() {
 
 # ---------------------------------------------------------------------------------------
 WriteToLog() {
-    printf "@${1}@\n" >> "$logFile"
+    printf "‡${1}‡\n" >> "$logFile"
 }
 
 # ---------------------------------------------------------------------------------------
@@ -31,9 +31,9 @@ MoveThemeToTarget()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}MoveThemeToTarget()"
-    
+
     local successFlag=1
-    
+
     # Create theme dir on target.
     chckDir=0
     mkdir "$targetThemeDir" && chckDir=1
@@ -47,7 +47,7 @@ MoveThemeToTarget()
             shopt -u dotglob
         fi
     fi
-        
+
     echo $successFlag
 }
 
@@ -56,14 +56,14 @@ UnInstallTheme()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}UnInstallTheme()"
-    
+
     local successFlag=1
 
     cd "$targetThemeDir"
     if [ -d "$themeName" ]; then
         rm -rf "$themeName" && WriteToLog "Deletion was successful." && successFlag=0
     fi
-    
+
     echo $successFlag
 }
 
@@ -72,9 +72,9 @@ UpdateTheme()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}UpdateTheme()"
-    
+
     local successFlag=1
-    
+
     # Remove existing theme dir on target.
     if [ -d "$targetThemeDir" ]; then
         chckDir=0
@@ -91,7 +91,7 @@ UpdateTheme()
             fi
         fi
     fi
-        
+
     echo $successFlag
 }
 
@@ -100,12 +100,12 @@ SetNVRAMVariable()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}SetNVRAMVariable()"
-    
+
     local successFlag=1
-    
+
     WriteToLog "Setting Clover.Theme NVRAM Variable"
     nvram Clover.Theme="$themeName" && successFlag=0
-    
+
     echo $successFlag
 }
 
@@ -114,12 +114,12 @@ DeleteNVRAMVariable()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}DeleteNVRAMVariable()"
-    
+
     local successFlag=1
-    
+
     WriteToLog "Deleting Clover.Theme NVRAM Variable"
     nvram -d Clover.Theme && successFlag=0
-    
+
     echo $successFlag
 }
 
@@ -128,13 +128,13 @@ SetNVRAMFile()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}SetNVRAMFile()"
-    
+
     local successFlag=1
-    
+
     if [ -f "$fileToChange" ]; then
-       
+
         successFlag=$( DeletePlistEntry )
-        
+
         if [ $successFlag -eq 0 ]; then
             successFlag=1
             if [[ "$fileToChange" == *"nvram"* ]]; then
@@ -157,11 +157,11 @@ DeletePlistEntry()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}DeletePlistEntry()"
-    
+
     local successFlag=1
 
     if [ -f "$fileToChange" ]; then
-    
+
         # Remove existing entry if already exists
         if [[ "$fileToChange" == *"nvram.plis"* ]]; then
             local readCurrentTheme=$( /usr/libexec/PlistBuddy -c "Print:Clover.Theme" "$fileToChange" 2>/dev/null )
@@ -183,7 +183,7 @@ DeletePlistEntry()
             fi
         fi
     fi
-    
+
     echo $successFlag
 }
 
@@ -192,7 +192,7 @@ MountESP()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}MountESP()"
-    
+
     local passedDevice="$1"
     local passedMountpoint="$2"
     local successFlag=1
@@ -214,7 +214,7 @@ MountESP()
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}/EFI/Clover/Themes directory found on $passedDevice"
         fi
     fi
-    
+
     echo $successFlag
 }
 
@@ -224,14 +224,14 @@ ManageESP()
     # Read espList.txt file
     # Store identifiers for unmounted ESP's in array
     # espList.txt is created by findThemeDirs.sh script.
-    
+
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}ManageESP()"
-    
+
     local mountSuccess=1
     local mountedEspWithThemes=0
     unset unmountedEsp
-    
+
     if [ -f "$espList" ]; then
         oIFS="$IFS"; IFS=$'\r\n'
         while read -r line
@@ -254,7 +254,7 @@ ManageESP()
     else
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Error. Missing $espList file"
     fi
-    
+
     echo $mountedEspWithThemes
 }
 
@@ -263,15 +263,15 @@ FindMbrDevice()
 {
     [[ DEBUG -eq 1 ]] && WriteLinesToLog
     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndent}FindMbrDevice()"
-    
+
     local foundDisk=""
-    
+
     fileToRead="${TEMPDIR}/bootDeviceInfo.txt"
     bootdeviceLine=$( cat "$fileToRead" )
     declare -a bootDeviceInfo
-    oIFS="$IFS"; IFS=$'@'
+    oIFS="$IFS"; IFS=$'‡'
     bootDeviceInfo=($bootdeviceLine)
-    
+
     IFS=$'\r\n'
     while read -r line
     do
@@ -280,21 +280,21 @@ FindMbrDevice()
             [[ DEBUG -eq 1 ]] && WriteToLog "/usr/sbin/fdisk /dev/$line | grep ${bootDeviceInfo[4]}"
             readFdisk=$( /usr/sbin/fdisk /dev/"$line" | grep "${bootDeviceInfo[4]}" )
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}readFdisk=$readFdisk"
-        
+
             if [ $readFdisk ]; then # We have a match on total sectors
                 [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Found block size match: ${bootDeviceInfo[4]}"
-        
+
                 # Check if partition number is the same
                 partNum=$( echo "${readFdisk%:*}" | tr -d '* ' )
                 if [ "$partNum" == "${bootDeviceInfo[0]}" ]; then # We have a match on partition number
                     [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Found partition number match: $partNum"
-        
+
                     # Check if start block is the same
                     startBlock=$( echo "${readFdisk#*[}" | tr -d ' ' )
                     startBlock=$( echo "${startBlock%%-*}" )
                     if [ "$startBlock" == "${bootDeviceInfo[3]}" ]; then # We have a match on start block
                         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Found start block match: $startBlock"
-            
+
                         # Check Signature matches by comparing bytes 01B8->01BE
                         signature=$( dd 2>/dev/null if="/dev/$line" bs=4 count=1 skip=110 | perl -ne '@a=split"";for(@a){printf"%02x",ord}' )
                         signatureLE="${bootDeviceInfo[2]:8:2}${bootDeviceInfo[2]:6:2}${bootDeviceInfo[2]:4:2}${bootDeviceInfo[2]:2:2}"
@@ -313,7 +313,6 @@ FindMbrDevice()
     done < "$mbrList" # Previously populated list of MBR disks. Done in findThemeDirs.sh
     IFS="$oIFS"
 
-    
     echo "$foundDisk"
 }
 
@@ -328,17 +327,25 @@ source "${SELF_PATH%/*}"/shared.sh
 declare -a unmountedEsp
 
 # Passing strings with spaces fails as that's used as a delimiter.
-# Instead, I pass each argument delimited by character @
+# Instead, I pass each argument delimited by character ‡
 
 # Parse arguments
 declare -a "arguments"
 passedArguments="$@"
-numFields=$( grep -o "@" <<< "$passedArguments" | wc -l )
+numFields=$( grep -o "‡" <<< "$passedArguments" | wc -l )
 (( numFields++ ))
-for (( f=2; f<=$numFields; f++ ))
+
+arguments[1]=$( echo "$passedArguments" | awk '{split($0,a,"‡"); print a[1]}' )
+arguments[2]=$( echo "$passedArguments" | awk '{split($0,a,"‡"); print a[2]}' )
+arguments[3]=$( echo "$passedArguments" | awk '{split($0,a,"‡"); print a[3]}' )
+arguments[4]=$( echo "$passedArguments" | awk '{split($0,a,"‡"); print a[4]}' )
+arguments[5]=$( echo "$passedArguments" | awk '{split($0,a,"‡"); print a[5]}' )
+arguments[6]=$( echo "$passedArguments" | awk '{split($0,a,"‡"); print a[6]}' )
+
+# print results (debug)
+for (( u=0; u<${#arguments[@]}; u++ ))
 do
-    arguments[$f]=$( echo "$passedArguments" | cut -d '@' -f$f )
-    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}arguments[$f]=${arguments[$f]}"
+    [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}arguments[$u]=${arguments[$u]}"
 done
 
 whichFunction="${arguments[2]}"
