@@ -1934,7 +1934,7 @@ AsciiStrToUnicodeStr (
 
   ReturnValue = Destination;
   while (*Source != '\0') {
-    *(Destination++) = (CHAR16) *(Source++);
+    *(Destination++) = (CHAR16)(UINT8) *(Source++);
   }
   //
   // End the Destination with a NULL.
