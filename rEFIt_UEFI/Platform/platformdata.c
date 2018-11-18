@@ -77,11 +77,11 @@ PLATFORMDATA ApplePlatformData[] =
   { "MacBook8,1", "MB81.88Z.0175.B00.1809171422", "177.0.0.0.0", "Mac-BE0E8AC46FE800CC", // Intel Core M-5Y51 @ 1.20 GHz
     "MacBook", "1.0", "C02RCE58GCN3", "MacBook-Aluminum",
     { 0x02, 0x25, 0x0f, 0, 0, 0x87 },  "j92", "j92", 0xf0e007 },
-  //VMacBook9,1 / MacBook (Retina, 12-inch, Early 2016)
+  //MacBook9,1 / MacBook (Retina, 12-inch, Early 2016)
   { "MacBook9,1", "MB91.88Z.F000.B00.1809171414", "175.0.0.0.0", "Mac-9AE82516C7C6B903", // Intel Core m5-6Y54 @ 1.20 GHz
     "MacBook", "1.0", "C02RM408HDNK", "MacBook-Aluminum",
     { 0x02, 0x35, 0x0f, 0, 1, 0x05 },  "j93", "j93", 0xf0e007 }, // need ECPI
-  //MacBook10,1 / MacBook (Retina, 12-inch, 2017
+  //MacBook10,1 / MacBook (Retina, 12-inch, 2017)
   { "MacBook10,1", "MB101.88Z.F000.B00.1809191505", "168.0.0.0.0", "Mac-EE2EBD4B90B839A8", // Intel Core i5-7Y54 @ 1.30 GHz
     "MacBook", "1.0", "C02TQHACHH27", "MacBook-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need ECPI
@@ -194,15 +194,15 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02Q51OSH1DP", "MacBook-Aluminum",
     { 0x02, 0x28, 0x0f, 0, 0, 0x07 },  "j52", "j52", 0xf01008 },
   //MacBookPro13,1 / MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)
-  { "MacBookPro13,1", "MBP131.88Z.F000.B00.1809171523", "227.0.0.0.0", "Mac-473D31EABEB93F9B", // Intel Core i5-6360U @ 2.00 GHz
+  { "MacBookPro13,1", "MBP131.88Z.F000.B00.1810301605", "228.0.0.0.0", "Mac-473D31EABEB93F9B", // Intel Core i5-6360U @ 2.00 GHz
     "MacBook Pro", "1.0", "C02SLHACGVC1", "MacBook-Aluminum",
     { 0x02, 0x36, 0x0f, 0, 0, 0x97 },  "2016mb", "j130", 0xf02009 }, // need ECPI
   //MacBookPro13,2 / MacBook Pro (13-inch, 2016, Four Thunderbolt 3 Ports)
-  { "MacBookPro13,2", "MBP132.88Z.F000.B00.1809171523", "250.0.0.0.0", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
+  { "MacBookPro13,2", "MBP132.88Z.F000.B00.1810301605", "251.0.0.0.0", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
     "MacBook Pro", "1.0", "C02SLHACGYFH", "MacBook-Aluminum",
     { 0x02, 0x37, 0x0f, 0, 0, 0x20 },  "2016mb", "j79", 0xf02009 },
   //MacBookPro13,3 / MacBook Pro (15-inch, 2016)
-  { "MacBookPro13,3", "MBP133.88Z.F000.B00.1809171523", "250.0.0.0.0", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
+  { "MacBookPro13,3", "MBP133.88Z.F000.B00.1810301606", "251.0.0.0.0", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
     "MacBook Pro", "1.0", "C02SLHACGTFN", "MacBook-Aluminum",
     { 0x02, 0x38, 0x0f, 0, 0, 0x07 },  "2016mb", "j80g", 0xf04009 },
   //MacBookPro14,1 / MacBook Pro (13-inch, 2017, Two Thunderbolt 3 ports)
