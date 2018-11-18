@@ -534,7 +534,8 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
 //  DBG("begin raster text, scale=%s\n", PoolPrintFloat(Scale));
-  nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
+  nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY->PixelData,
+                (int)TextBufferXY->Width, (int)TextBufferXY->Height, (int)(Width*4), NULL, NULL);
 
 //  DBG("end raster text\n");
   nsvgDeleteRasterizer(rast);

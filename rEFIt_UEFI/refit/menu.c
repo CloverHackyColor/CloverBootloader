@@ -3046,12 +3046,16 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
 
   if (SelectedWidth > 0) {
     // draw selection bar background
-    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, TextBuffer->Height,
+    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, Height,
                     &SelectionBackgroundPixel);
   }
 
   // render the text
-  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
+  if (GlobalConfig.TypeSVG) {
+    egRenderText(Text, TextBuffer, 0, 0, Cursor, TextStyle);
+  } else {
+    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
+  }
   BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
 }
 
@@ -3343,15 +3347,16 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
         BOOLEAN Checked = (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue);
-        PlaceCentre = (TextHeight - (Checked ?(Buttons[3]->Height):(Buttons[2]->Height))) / 2;
+        PlaceCentre = (TextHeight - (INTN)((Checked ?(Buttons[3]->Height):(Buttons[2]->Height)) * GlobalConfig.Scale)) / 2;
         PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
             Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
-    //        DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
+            DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
-                         EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
+                         EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                         Entry->Place.YPos, 0xFFFF);
             BltImageAlpha( Checked ? Buttons[3] :Buttons[2],
                   EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale), Entry->Place.YPos + PlaceCentre,
                   &MenuBackgroundPixel, 16);
@@ -3361,11 +3366,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
             StrCatS(ResultString, TITLE_MAX_LEN, L" ");
             Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
             // Slice - suppose to use Row as Cursor in text
-            DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0, EntriesPosX,
+            DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
+                         EntriesPosX,
                          Entry->Place.YPos, TitleLen + Entry->Row);
           }
         } else if (Entry->Tag == TAG_CHECKBIT) {
-   //       DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
+          DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
           DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
                        EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->IValue & Entry->Row) ? Buttons[3] :Buttons[2],
