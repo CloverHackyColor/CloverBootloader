@@ -524,24 +524,26 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
       addLetter(p, 0x5F, x, y, sy, color);
     }
     x = addLetter(p, letter, x, y, sy, color);
+//    DBG("next x=%s\n", PoolPrintFloat(x));
   } //end of string
 
   p->image->realBounds[0] = fontSVG->bbox[0] * Scale;
   p->image->realBounds[1] = fontSVG->bbox[1] * Scale;
   p->image->realBounds[2] = fontSVG->bbox[2] * Scale + x; //last bound
   p->image->realBounds[3] = fontSVG->bbox[3] * Scale;
-
+//  DBG("internal Scale=%s\n", PoolPrintFloat(Scale));
+//  DumpFloat2("text bounds", p->image->realBounds, 4);
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
 //  DBG("begin raster text, scale=%s\n", PoolPrintFloat(Scale));
   nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY->PixelData,
                 (int)TextBufferXY->Width, (int)TextBufferXY->Height, (int)(Width*4), NULL, NULL);
-
+  float RealWidth = p->image->realBounds[2] - p->image->realBounds[0];
 //  DBG("end raster text\n");
   nsvgDeleteRasterizer(rast);
 //  nsvg__deleteParser(p);
   nsvgDelete(p->image);
-  return (INTN)x;
+  return (INTN)RealWidth; //x;
 }
 
 VOID testSVG()

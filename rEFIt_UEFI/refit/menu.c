@@ -2937,7 +2937,8 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     // shift 64 is prohibited
     XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
   }
-
+  DBG("draw text %s\n", Text);
+  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
   BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
   egFreeImage(TextBufferXY);
 

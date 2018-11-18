@@ -548,6 +548,8 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
 
     while (OSIconsTable[i].name) {
       if (AsciiStrCmp(OSIconsTable[i].name, IconName) == 0) {
+//        DBG("theme defined %a\n", IconName);
+//        DBG(" icon size=[%d,%d]\n", OSIconsTable[i].image->Width, OSIconsTable[i].image->Height);
         FreePool(IconName);
         return OSIconsTable[i].image;
       }

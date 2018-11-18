@@ -3948,12 +3948,12 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
 //  if (letter == L'C') {
 //      DumpFloat2("glyph bounds in text", shape->bounds, 4);
 //  }
-  if (color == NSVG_RGBA(0x80, 0xFF, 0, 255)) {
-    DBG("glyph code=%x\n", letter);
-    DumpFloat2("glyph xform", shape->xform, 6);
-    DumpFloat2("glyph bounds", shape->bounds, 4);
-    DBG("glyph width=%d\n", g->horizAdvX);
-  }
+//  if (color == NSVG_RGBA(0x80, 0xFF, 0, 255)) {
+//    DBG("glyph code=%x\n", letter);
+//    DumpFloat2("glyph xform", shape->xform, 6);
+//    DumpFloat2("glyph bounds", shape->bounds, 4);
+//    DBG("glyph width=%d\n", g->horizAdvX);
+//  }
 
   x1 += g->horizAdvX * scale; //position for next letter in user's units
   shape->strokeLineJoin = NSVG_JOIN_MITER;
