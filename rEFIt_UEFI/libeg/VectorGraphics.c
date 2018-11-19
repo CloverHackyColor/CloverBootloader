@@ -191,12 +191,13 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
 
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f, ty = 0.f;
-  if (Id == BUILTIN_ICON_BACKGROUND) {
+//  if (Id == BUILTIN_ICON_BACKGROUND) {
 //    tx = - GlobalConfig.CentreShift;
 //    IconImage->realBounds[0] += tx;
 //    IconImage->realBounds[2] += tx;
 //    iWidth = (int)UGAWidth;
-  } else if (Id != BUILTIN_ICON_BANNER) {
+//  } else
+  if ((Id != BUILTIN_ICON_BACKGROUND) && (strcmp(IconName, "Banner") != 0)) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
     tx = (Width - realWidth) * 0.5f;
@@ -260,9 +261,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     }
   }
   if (fontSVG) {
-    DBG("theme uses font-family=%a\n", fontSVG->fontFamily);
+    DBG("theme contains font-family=%a\n", fontSVG->fontFamily);
   }
-
+#if 0
 // --- Create rastered font
   if (fontSVG) {
     if (p->font) {
@@ -276,7 +277,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     RenderSVGfont(fontSVG, p->fontColor);
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
-
+#endif
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
   BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
@@ -307,7 +308,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
     BuiltinIconTable[i].Image = ParseSVGIcon(p, i, IconName, Scale);
     if (!BuiltinIconTable[i].Image) {
-      DBG("icon %d not parsed\n", i);
+      DBG(" icon %d not parsed\n", i);
     }
     if (i == BUILTIN_SELECTION_BIG) {
       DBG("icon main size=[%d,%d]\n", BuiltinIconTable[i].Image->Width,
@@ -316,6 +317,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     i++;
     FreePool(IconName);
   }
+
+  // OS icons and buttons
   i = 0;
   while (OSIconsTable[i].name) {
 //    DBG("search for %a\n", OSIconsTable[i].name);

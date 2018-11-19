@@ -1801,17 +1801,21 @@ VOID InitSelection(VOID)
   Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
   Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
   if (!Buttons[2]) {
+//    DBG("egLoadIcon checkbox\n");
     Buttons[2] = egLoadIcon(ThemeDir, L"checkbox.png", 48);
   }
   if (!Buttons[3]) {
+//    DBG("egLoadIcon checkbox_checked\n");
     Buttons[3] = egLoadIcon(ThemeDir, L"checkbox_checked.png", 48);
   }
 
   if (!Buttons[2]) {
+//    DBG("embedded checkbox\n");
     Buttons[2] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox), TRUE);
   }
 
   if (!Buttons[3]) {
+//    DBG("embedded checkbox_checked\n");
     Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
   }
 
@@ -2937,8 +2941,8 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     // shift 64 is prohibited
     XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
   }
-  DBG("draw text %s\n", Text);
-  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
+//  DBG("draw text %s\n", Text);
+//  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
   BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
   egFreeImage(TextBufferXY);
 
@@ -3246,6 +3250,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   INTN VisibleHeight = 0; //assume vertical layout
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
   INTN PlaceCentre = 0; //(TextHeight / 2) - 7;
+  INTN PlaceCentre1 = 0;
   UINTN OldChosenItem = ~(UINTN)0;
 	INTN TitleLen = 0;
   INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
@@ -3279,10 +3284,10 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       DrawMenuText(NULL, 0, 0, 0, 0);
 
       if (Screen->TitleImage) {
-        if (MenuWidth > (INTN)(UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width)) {
-          MenuWidth = UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width - 2;
+        if (MenuWidth > (INTN)(UGAWidth - (int)(TITLEICON_SPACING * GlobalConfig.Scale) - Screen->TitleImage->Width)) {
+          MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * GlobalConfig.Scale) - Screen->TitleImage->Width - 2;
         }
-        EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + TITLEICON_SPACING + MenuWidth)) >> 1;
+        EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + (int)(TITLEICON_SPACING * GlobalConfig.Scale) + MenuWidth)) >> 1;
         //DBG("UGAWIdth=%d TitleImage=%d MenuWidth=%d\n", UGAWidth,
         //Screen->TitleImage->Width, MenuWidth);
         MenuWidth += Screen->TitleImage->Width;
@@ -3298,7 +3303,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       }
 
       if (Screen->TitleImage) {
-        INTN FilmXPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
+        INTN FilmXPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + (int)(TITLEICON_SPACING * GlobalConfig.Scale)));
         INTN FilmYPos = (INTN)EntriesPosY;
         BltImageAlpha(Screen->TitleImage, FilmXPos, FilmYPos, &MenuBackgroundPixel, 16);
 
@@ -3348,8 +3353,9 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
         BOOLEAN Checked = (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue);
-        PlaceCentre = (TextHeight - (INTN)((Checked ?(Buttons[3]->Height):(Buttons[2]->Height)) * GlobalConfig.Scale)) / 2;
+        PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
         PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
+        PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
@@ -3359,8 +3365,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                          EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                          Entry->Place.YPos, 0xFFFF);
             BltImageAlpha( Checked ? Buttons[3] :Buttons[2],
-                  EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale), Entry->Place.YPos + PlaceCentre,
-                  &MenuBackgroundPixel, 16);
+                          EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                          Entry->Place.YPos + PlaceCentre,
+                          &MenuBackgroundPixel, 16);
+//            DBG("X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+//                Entry->Place.YPos, Entry->Place.YPos + PlaceCentre);
+
           } else {
 						// text input
             StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue);
@@ -3374,9 +3384,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         } else if (Entry->Tag == TAG_CHECKBIT) {
           DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
           DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
-                       EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
+                       EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                       Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->IValue & Entry->Row) ? Buttons[3] :Buttons[2],
-                        EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
+                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                        Entry->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
         } else if (Entry->Tag == TAG_SWITCH) {
 
@@ -3391,9 +3403,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
-                       EntriesPosX + (TextHeight + TEXT_XMARGIN), Entry->Place.YPos, 0xFFFF);
+                       EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                       Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((Entry->Row == OldChosenItem) ? Buttons[1] : Buttons[0],
-                        EntriesPosX + TEXT_XMARGIN, Entry->Place.YPos + PlaceCentre,
+                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                        Entry->Place.YPos + PlaceCentre1,
                         &MenuBackgroundPixel, 16);
         } else {
 					//DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
@@ -3415,6 +3429,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       TitleLen = StrLen(EntryL->Title);
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryL->Title);
 
+      BOOLEAN Checked = ((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row;
+      PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
+      PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
+      PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
+
+
       // redraw selection cursor
       // 1. blackosx swapped this around so drawing of selection comes before drawing scrollbar.
       // 2. usr-sse2
@@ -3423,8 +3443,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
                        EntryL->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->BValue)? Buttons[3] : Buttons[2],
-                        EntriesPosX + TEXT_XMARGIN,  EntryL->Place.YPos + PlaceCentre,
+                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                        EntryL->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
+//          DBG("se:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+//              EntryL->Place.YPos, EntryL->Place.YPos + PlaceCentre);
         } else {
           StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(EntryL))->Item->SValue +
                  ((REFIT_INPUT_DIALOG*)(EntryL))->Item->LineShift);
@@ -3443,16 +3466,21 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           OldChosenItem = (OldChosenDsdt == 0xFFFF) ? 0: OldChosenDsdt + 1;
         }
 
-        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
+        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
         BltImageAlpha((EntryL->Row == OldChosenItem) ? Buttons[1] : Buttons[0],
-          EntriesPosX + TEXT_XMARGIN, EntryL->Place.YPos + PlaceCentre,
+                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                      EntryL->Place.YPos + PlaceCentre1,
                       &MenuBackgroundPixel, 16);
       } else if (EntryL->Tag == TAG_CHECKBIT) {
-        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryL->Place.YPos, 0xFFFF);
-        BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row) ? Buttons[3] : Buttons[2],
-                      EntriesPosX + TEXT_XMARGIN, EntryL->Place.YPos + PlaceCentre,
+        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                     EntryL->Place.YPos, 0xFFFF);
+        BltImageAlpha(Checked ? Buttons[3] : Buttons[2],
+                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                      EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
+//        DBG("ce:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+//            EntryL->Place.YPos, EntryL->Place.YPos + PlaceCentre);
       } else {
         DrawMenuText(EntryL->Title, 0, EntriesPosX,
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
@@ -3473,10 +3501,15 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
       if (EntryC->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryC)->Item->ItemType == BoolValue) {
-          DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryC->Place.YPos, 0xFFFF);
+          DrawMenuText(ResultString, MenuWidth,
+                       EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                       EntryC->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->BValue)? Buttons[3] : Buttons[2],
-                        EntriesPosX + TEXT_XMARGIN, EntryC->Place.YPos + PlaceCentre,
+                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                        EntryC->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
+//          DBG("3:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+//              EntryC->Place.YPos, EntryC->Place.YPos + PlaceCentre);
         } else {
           StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)EntryC)->Item->SValue +
                                ((REFIT_INPUT_DIALOG*)EntryC)->Item->LineShift);
@@ -3487,18 +3520,25 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         }
       } else if (EntryC->Tag == TAG_SWITCH) {
         StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
-        DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN),
+        DrawMenuText(ResultString, MenuWidth,
+                     EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      0xFFFF);
         BltImageAlpha((EntryC->Row == OldChosenItem) ? Buttons[1]:Buttons[0],
-          EntriesPosX + TEXT_XMARGIN, EntryC->Place.YPos + PlaceCentre,
-          &MenuBackgroundPixel, 16);
-      } else if (EntryC->Tag == TAG_CHECKBIT) {
-        DrawMenuText(ResultString, MenuWidth, EntriesPosX + (TextHeight + TEXT_XMARGIN), EntryC->Place.YPos, 0xFFFF);
-        BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue & EntryC->Row) ? Buttons[3] :Buttons[2],
-                      EntriesPosX + TEXT_XMARGIN, EntryC->Place.YPos + PlaceCentre,
+                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                      EntryC->Place.YPos + PlaceCentre1,
                       &MenuBackgroundPixel, 16);
-      } else {
+      } else if (EntryC->Tag == TAG_CHECKBIT) {
+        DrawMenuText(ResultString, MenuWidth,
+                     EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                     EntryC->Place.YPos, 0xFFFF);
+        BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue & EntryC->Row) ? Buttons[3] :Buttons[2],
+                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                      EntryC->Place.YPos + PlaceCentre,
+                      &MenuBackgroundPixel, 16);
+//        DBG("4:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+//            EntryC->Place.YPos, EntryC->Place.YPos + PlaceCentre);
+     } else {
         DrawMenuText(EntryC->Title, MenuWidth, EntriesPosX,
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      0xFFFF);
@@ -4125,9 +4165,9 @@ VOID AddMenuItem(REFIT_MENU_SCREEN  *SubScreen, INTN Inx, CONST CHAR8 *Title, UI
   InputBootArgs->Entry.Title          = PoolPrint(L"%a", Title);
   InputBootArgs->Entry.Tag            = Tag;
   if (Inx == 3 || Inx == 116) {
-    InputBootArgs->Entry.Row = 0;
+    InputBootArgs->Entry.Row          = 0;
   } else {
-    InputBootArgs->Entry.Row            = Cursor?StrLen(InputItems[Inx].SValue):0xFFFF;
+    InputBootArgs->Entry.Row          = Cursor?StrLen(InputItems[Inx].SValue):0xFFFF;
   }
   InputBootArgs->Item                 = &InputItems[Inx];
   InputBootArgs->Entry.AtClick        = Cursor?ActionSelect:ActionEnter;

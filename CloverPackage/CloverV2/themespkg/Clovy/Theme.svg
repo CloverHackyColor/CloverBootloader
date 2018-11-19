@@ -48,7 +48,7 @@
 	.st31{opacity:0.15;}
 	.st32{opacity:0.15;enable-background:new    ;}
 	.st33{fill:url(#shadow_13_);}
-	.st34{opacity:0.33;enable-background:new    ;}
+	.st34{opacity:0.15;}
 	.st35{fill:url(#shadow_14_);}
 	.st36{opacity:0.9;fill:#FF2828;fill-opacity:0.7969;}
 	.st37{fill:url(#shadow_15_);}
@@ -184,9 +184,8 @@
 	.st167{stroke:#FFFFFF;}
 </style>
 <clover:theme
-  SelectionOnTop="0" BadgeOffsetX="0xFFFF" BadgeOffsetY="0xFFFF"
-  NonSelectedGrey="0" CharWidth="12"
-  BackgroundDark="1" BackgroundSharp="0x80" Badges="swap" BackgroundScale="scale"
+  SelectionOnTop="0" BadgeOffsetX="0xFFFF" BadgeOffsetY="0xFFFF" NonSelectedGrey="0" CharWidth="16"
+  BackgroundDark="1" BackgroundSharp="0x80" Badges="swap" BackgroundScale="crop"
   SelectionColor="0x80808080"
   />
 <font horiz-adv-x="2048">
@@ -1090,7 +1089,7 @@ bbox="-200 -340 1848 1708"
 <g id="Background">
 	<rect visibility="hidden" id="BoundingRect" y="0" class="st0" width="1200" height="768"/>
 
-		<radialGradient id="GrayRadialBackground_1_" cx="358.2806" cy="0.743" r="0.8783" gradientTransform="matrix(4.700000e-14 768 -768 4.700000e-14 1176.1536 -274946.875)" gradientUnits="userSpaceOnUse">
+		<radialGradient id="GrayRadialBackground_1_" cx="358.2806" cy="0.743" r="0.8783" gradientTransform="matrix(4.700000e-14 768 -768 4.700000e-14 1176.1536 -274946.875)" gradientUnits="userSpaceOnUse" clover:ditherCoarse="16">
 		<stop  offset="0" style="stop-color:#606060"/>
 		<stop  offset="1" style="stop-color:#1F1F1F"/>
 	</radialGradient>
@@ -1107,123 +1106,12 @@ bbox="-200 -340 1848 1708"
 				<g>
 					<text transform="matrix(1 0 0 1 0 17)" class="st9 st10 st11">Boot Aguments: </text>
 				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 17)" class="st9 st10 st11">Boot Aguments: </text>
-				</g>
 			</g>
-			<g class="st12">
+		</g>
+		<g id="HelpRows" transform="translate(29.000000, 0.000000)">
+			<g class="st8">
 				<g>
-					<text transform="matrix(1 0 0 1 0 41)" class="st9 st10 st11">Confgs ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 41)" class="st9 st10 st11">Confgs ...</text>
-				</g>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 65)" class="st9 st10 st11">GUI tuning ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 65)" class="st9 st10 st11">GUI tuning ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 88.6067 63)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 89)" class="st9 st10 st11">ACPI patching ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 89)" class="st9 st10 st11">ACPI patching ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 114.9741 87)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 113)" class="st9 st10 st11">SMBIOS ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 113)" class="st9 st10 st11">SMBIOS ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 73.7913 111)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 137)" class="st9 st10 st11">PCI devices ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 137)" class="st9 st10 st11">PCI devices ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 97.1824 135)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 161)" class="st9 st10 st11">CPU tuning ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 161)" class="st9 st10 st11">CPU tuning ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 94.2388 159)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 185)" class="st9 st10 st11">Graphics Injector ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 185)" class="st9 st10 st11">Graphics Injector ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 134.2214 183)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 209)" class="st9 st10 st11">Audio tuning ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 209)" class="st9 st10 st11">Audio tuning ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 102.2546 207)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 233)" class="st9 st10 st11">Binaries patching ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 233)" class="st9 st10 st11">Binaries patching ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 136.0137 231)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 257)" class="st9 st10 st11">System parameters ...</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 257)" class="st9 st10 st11">System parameters ...</text>
-				</g>
-			</g>
-			<g class="st13">
-				<text transform="matrix(1 0 0 1 151.1499 255)" class="st9 st10 st11"> </text>
-			</g>
-			<g class="st12">
-				<g>
-					<text transform="matrix(1 0 0 1 0 281)" class="st9 st10 st11">Return</text>
-				</g>
-				<g>
-					<text transform="matrix(1 0 0 1 0 281)" class="st9 st10 st11">Return</text>
+					<text transform="matrix(1 0 0 1 0 17)" class="st9a st10a st11a">Help:</text>
 				</g>
 			</g>
 		</g>
@@ -1251,7 +1139,7 @@ bbox="-200 -340 1848 1708"
 		</g>
 		<g id="checkbox_checked" transform="translate(0.000000, 49.000000)">
 			<rect visibility="hidden" id="BoundingRect_23_" y="0" class="st0" width="24" height="24"/>
-			<g id="icon_2_" transform="translate(5.000000, 5.000000)">
+			<g id="icon_2_">
 				<path id="Rectangle" class="st16" d="M4.25,0.25h6.5c1.657,0,3,1.343,3,3v6.5c0,1.657-1.343,3-3,3h-6.5c-1.657,0-3-1.343-3-3
 					v-6.5C1.25,1.593,2.593,0.25,4.25,0.25z"/>
 				<polyline id="Path-4" class="st17" points="4.75,6.5 6.75,8.5 10.75,4.5 				"/>
@@ -1433,7 +1321,7 @@ bbox="-200 -340 1848 1708"
 					c1.115,0,3.208-1.236,5.408-1.055c0.921,0.033,3.505,0.304,5.165,2.281C171.127,24.909,168.174,26.309,168.209,29.22"/>
 			</g>
 		</g>
-		<g id="vol_internal_hfs_1_" transform="translate(384.000000, 0.000000)">
+		<g id="vol_internal_hfs" transform="translate(384.000000, 0.000000)">
 			<rect visibility="hidden" id="BoundingRect_6_" y="0" class="st0" width="128" height="128"/>
 			<g id="icon_8_" transform="translate(31.000000, 15.000000)">
 				<g id="HD_8_">
@@ -1787,7 +1675,7 @@ bbox="-200 -340 1848 1708"
 		</g>
 	</g>
 	<g id="OSBadgesPreview">
-		<g id="os_manjaro_1_" transform="translate(0.000000, 128.000000)">
+		<g id="os_manjaro_1" transform="translate(0.000000, 128.000000)">
 			<rect visibility="hidden" id="BoundingRect_35_" x="1048" y="200" class="st0" width="128" height="128"/>
 			<g id="icon_48_" transform="translate(31.000000, 15.000000)">
 				<g class="st12">
@@ -1822,7 +1710,7 @@ bbox="-200 -340 1848 1708"
 					 M1087.809,218.513v22.974h8.546v-22.974H1087.809z M1076.733,241.487h8.534v-14.664h-8.534V241.487z"/>
 			</g>
 		</g>
-		<g id="os_vista_1_" transform="translate(0.000000, 128.000000)">
+		<g id="os_vista_1" transform="translate(0.000000, 128.000000)">
 			<rect visibility="hidden" id="BoundingRect_37_" x="920" y="200" class="st0" width="128" height="128"/>
 			<g id="icon_50_" transform="translate(31.000000, 15.000000)">
 				<g class="st12">
@@ -2447,9 +2335,6 @@ bbox="-200 -340 1848 1708"
 	<g id="MessageRow" transform="translate(0.000000, 580.000000)">
 		<g>
 			<text id="MessageRowText_7_" transform="matrix(1 0 0 1 509.4727 15)" class="st9 st10 st11">Boot macOS from SystemHD</text>
-		</g>
-		<g>
-			<text id="MessageRowText_6_" transform="matrix(1 0 0 1 509.4727 15)" class="st97 st10 st11">Boot macOS from SystemHD</text>
 		</g>
 	</g>
 	<g id="OSBadges" class="st4">
