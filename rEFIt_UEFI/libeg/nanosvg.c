@@ -3456,6 +3456,8 @@ static void parseTheme(NSVGparser* p, const char** dict)
       if (strstr(dict[i+1], "inline") != NULL)  {
         GlobalConfig.HideBadges |= HDBADGES_INLINE;
       }
+    } else if (strcmp(dict[i], "BadgeScale") == 0) {
+      GlobalConfig.BadgeScale = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "SelectionColor") == 0) {
       GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
