@@ -3352,7 +3352,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
-        BOOLEAN Checked = (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue);
         PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
         PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
         PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
@@ -3364,7 +3363,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
                          EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                          Entry->Place.YPos, 0xFFFF);
-            BltImageAlpha( Checked ? Buttons[3] :Buttons[2],
+            BltImageAlpha( (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
                           EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
                           Entry->Place.YPos + PlaceCentre,
                           &MenuBackgroundPixel, 16);
@@ -3428,8 +3427,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       REFIT_MENU_ENTRY *EntryC = Screen->Entries[State->CurrentSelection];
       TitleLen = StrLen(EntryL->Title);
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryL->Title);
-
-      BOOLEAN Checked = ((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row;
       PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
       PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
       PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
@@ -3475,7 +3472,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       } else if (EntryL->Tag == TAG_CHECKBIT) {
         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                      EntryL->Place.YPos, 0xFFFF);
-        BltImageAlpha(Checked ? Buttons[3] : Buttons[2],
+        BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row) ? Buttons[3] : Buttons[2],
                       EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
                       EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
