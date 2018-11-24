@@ -179,7 +179,7 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   if ((Id == BUILTIN_ICON_BANNER) && (strcmp(IconName, "Banner") == 0)) {
     GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
     GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
-//    DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
+    DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
   }
 
   float Height = IconImage->height * Scale;
@@ -205,7 +205,7 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   }
   NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
   nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, iWidth, iHeight, iWidth*4, NULL, NULL);
-  
+//  DBG("%a rastered, blt\n", IconImage);
 #if 0
   BltImageAlpha(NewImage,
                 (int)(UGAWidth - NewImage->Width) / 2,
@@ -227,6 +227,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   NSVGfont        *fontSVG;
   NSVGimage       *SVGimage;
   NSVGrasterizer  *rast = nsvgCreateRasterizer();
+  EFI_TIME          Now;
+  gRT->GetTime(&Now, NULL);
+  INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+  BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
+
 
 // --- Parse Theme.svg
   p = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
@@ -280,7 +285,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 #endif
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
-  BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
+  if (DayLight) {
+    BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
+  } else {
+    BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background_night", Scale);
+  }
+
 //  GlobalConfig.BackgroundScale = imScale;
 
 // --- Make Banner
@@ -295,16 +305,18 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   CHAR8           *IconName;
   while (BuiltinIconTable[i].Path) {
     CHAR16 *IconPath = BuiltinIconTable[i].Path;
+//    DBG("next table icon=%s\n", IconPath);
     CHAR16 *ptr = StrStr(IconPath, L"\\");
     if (!ptr) {
       ptr = IconPath;
     } else {
       ptr++;
     }
+ //   DBG("next icon=%s Len=%d\n", ptr, StrLen(ptr));
     UINTN Size = StrLen(ptr)+1;
     IconName = AllocateZeroPool(Size);
     UnicodeStrToAsciiStrS(ptr, IconName, Size);
-    DBG("search for icon name %a\n", IconName);
+//    DBG("search for icon name %a\n", IconName);
 
     BuiltinIconTable[i].Image = ParseSVGIcon(p, i, IconName, Scale);
     if (!BuiltinIconTable[i].Image) {
@@ -322,7 +334,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   i = 0;
   while (OSIconsTable[i].name) {
 //    DBG("search for %a\n", OSIconsTable[i].name);
-    OSIconsTable[i].image = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale);
+    if ((strcmp(OSIconsTable[i].name, "os_moja") == 0) && !DayLight) {
+      OSIconsTable[i].image = ParseSVGIcon(p, i, "os_moja_night", Scale);
+    } else {
+      OSIconsTable[i].image = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale);
+    }
     if (OSIconsTable[i].image == NULL) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
     }
@@ -346,7 +362,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     row1TileSize = (INTN)(64.f * Scale);
     GlobalConfig.MainEntriesSize = (INTN)(128.f * Scale);
   }
-
+  DBG("parsing theme finish\n");
   return EFI_SUCCESS;
 }
 

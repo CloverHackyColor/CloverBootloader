@@ -3251,7 +3251,7 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
   //defaults
   grad->units = NSVG_USER_SPACE; //NSVG_OBJECT_SPACE;
   grad->type = type;
-  grad->ditherCoarse = 1; //default value
+  grad->ditherCoarse = 0; //default value
   if (grad->type == NSVG_PAINT_LINEAR_GRADIENT) {
     grad->linear.x1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
     grad->linear.y1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);

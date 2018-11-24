@@ -519,6 +519,7 @@ typedef struct {
   BOOLEAN     SignatureFixup;
   BOOLEAN     DarkEmbedded;
   BOOLEAN     TypeSVG;
+  INT32       Timezone;
   INTN        Codepage;
   INTN        CodepageSize;
   float       Scale;

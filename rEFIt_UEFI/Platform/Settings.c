@@ -155,6 +155,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     SignatureFixup;
   FALSE,          // BOOLEAN     DarkEmbedded;
   FALSE,          // BOOLEAN     TypeSVG;
+  0,              // INT32       Timezone;
   0xC0,           // INTN        Codepage;
   0xC0,           // INTN        CodepageSize; //extended latin
   1.0f,           // float       Scale;
@@ -2660,6 +2661,8 @@ GetEarlyUserSettings (
     
     DictPointer = GetProperty (Dict, "GUI");
     if (DictPointer != NULL) {
+      Prop = GetProperty (DictPointer, "Timezone");
+      GlobalConfig.Timezone = (INT32)GetPropertyInteger (Prop, GlobalConfig.Timezone);
       Prop = GetProperty (DictPointer, "Theme");
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
@@ -2682,8 +2685,13 @@ GetEarlyUserSettings (
               } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
                 GlobalConfig.DarkEmbedded = FALSE;
                 GlobalConfig.Font = FONT_ALFA;
-              } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
-                GlobalConfig.TypeSVG = TRUE;
+              } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
+                EFI_TIME          Now;
+                gRT->GetTime(&Now, NULL);
+                INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+                BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
+                GlobalConfig.DarkEmbedded = !DayLight;
+                GlobalConfig.Font = DayLight?FONT_ALFA:FONT_GRAY;
               }
             }
           }
@@ -2697,8 +2705,13 @@ GetEarlyUserSettings (
           } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
             GlobalConfig.DarkEmbedded = FALSE;
             GlobalConfig.Font = FONT_ALFA;
-          } else if (AsciiStriCmp (Prop->string, "SVG") == 0) {
-            GlobalConfig.TypeSVG = TRUE;
+          } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
+            EFI_TIME          Now;
+            gRT->GetTime(&Now, NULL);
+            INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+            BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
+            GlobalConfig.DarkEmbedded = !DayLight;
+            GlobalConfig.Font = DayLight?FONT_ALFA:FONT_GRAY;
           }
         }
       }

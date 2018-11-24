@@ -412,40 +412,32 @@
 				<key>Replace</key>
 				<data>6/7/6PXb/v8=</data>
 			</dict>
-            <dict>
-                <key>Comment</key>
-                <string>Disable panic kext logging on 10.14 Release kernel</string>
-                <key>Disabled</key>
-                <true/>
-                <key>Find</key>
-                <data>
-                igKEwHRC
-                </data>
-                <key>MatchOS</key>
-                <string>10.14</string>
-                <key>Replace</key>
-                <data>
-                igKEwOtC
-                </data>
-            </dict>
-            <dict>
-                <key>Comment</key>
-                <string>Disable panic kext logging on 10.13 Release kernel</string>
-                <key>Disabled</key>
-                <true/>
-                <key>Find</key>
-                <data>
-                igKEwHRE
-                </data>
-                <key>MatchOS</key>
-                <string>10.13</string>
-                <key>Replace</key>
-                <data>
-                igKEwOtE
-                </data>
-            </dict>
-        </array>
-        <key>#ForceKextsToLoad</key>
+			<dict>
+				<key>Comment</key>
+				<string>Disable panic kext logging on 10.14 Release kernel</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>igKEwHRC</data>
+				<key>MatchOS</key>
+				<string>10.14</string>
+				<key>Replace</key>
+				<data>igKEwOtC</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Disable panic kext logging on 10.13 Release kernel</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>igKEwHRE</data>
+				<key>MatchOS</key>
+				<string>10.13</string>
+				<key>Replace</key>
+				<data>igKEwOtE</data>
+			</dict>
+		</array>
+		<key>#ForceKextsToLoad</key>
 		<array>
 			<string>\System\Library\Extensions\AMD6000Controller.kext</string>
 			<string>\System\Library\Extensions\AMDFramebuffer.kext</string>
@@ -899,10 +891,12 @@
 		</dict>
 		<key>ShowOptimus</key>
 		<false/>
+		<key>Timezone</key>
+		<integer>3</integer>
 		<key>Theme</key>
-		<string>metal</string>
-		<key>#EmbeddedThemeType</key>
-		<string>Dark</string>
+		<string>Clovy</string>
+		<key>EmbeddedThemeType</key>
+		<string>Daytime</string>
 	</dict>
 	<key>BootGraphics</key>
 	<dict>
