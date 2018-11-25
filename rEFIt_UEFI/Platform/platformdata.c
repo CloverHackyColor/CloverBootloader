@@ -59,7 +59,7 @@ PLATFORMDATA ApplePlatformData[] =
     { 0x01, 0x31, 0x0f, 0, 0, 0x01 },  "branch", "m82", 0x74001 },
   //MacBook5,1 / MacBook (13-inch, Aluminum, Late 2008)
   { "MacBook5,1", "MB51.88Z.007D.B03.0904271443", NULL, "Mac-F42D89C8", // Intel Core 2 Duo P7350 @ 2.00 GHz
-    "MacBook", "1.3", "W8944T1S1AQ", "MacBook-Black",
+    "MacBook", "1.3", "W8944T1S1AQ", "MacBook-Aluminum",
     { 0x01, 0x32, 0x0f, 0, 0, 0x08 },  "branch", "m97", 0x7a002 }, // need ECPI
   //MacBook5,2 / MacBook (13-inch, Early 2009)
   { "MacBook5,2", "MB52.88Z.0088.B05.0904162222", NULL, "Mac-F22788AA", // Intel Core 2 Duo P7450 @ 2.13 GHz

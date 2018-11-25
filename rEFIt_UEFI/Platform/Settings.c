@@ -7412,6 +7412,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x5926: // "Intel Iris Plus Graphics 640"
                   case 0x5927: // "Intel Iris Plus Graphics 650"
                   case 0x5917: // "Intel UHD Graphics 620"
+                  case 0x591C: // "Intel UHD Graphics 615"
                   case 0x87C0: // "Intel UHD Graphics 617"
                     FBLEVX = 0x056C;
                     break;
@@ -7423,6 +7424,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E98: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
+                  case 0x3EA0: // "Intel UHD Graphics 620"
                     FBLEVX = 0xFFFF;
                     break;
 
@@ -7557,6 +7559,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x3E98: // "Intel UHD Graphics 630"
                   case 0x3E9B: // "Intel UHD Graphics 630"
                   case 0x3EA5: // "Intel Iris Plus Graphics 655"
+                  case 0x3EA0: // "Intel UHD Graphics 620"
                     // Write LEVD
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
