@@ -168,15 +168,8 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   bounds[2] = -FLT_MAX;
   bounds[3] = -FLT_MAX;
   nsvg__imageBounds(p2, bounds);
-//  DumpFloat2("p2 image bounds", bounds, 4);
-  // Patch: save real bounds.
   memcpy(IconImage->realBounds, bounds, 4*sizeof(float));
-/*
-  if (strstr(IconName, "vol_internal") != NULL) {
-    DBG("icon=%a ", IconName);
-    DumpFloat2(" ", bounds, 4);
-  }
-*/
+
   if ((Id == BUILTIN_ICON_BANNER) && (strcmp(IconName, "Banner") == 0)) {
     GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
     GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
@@ -225,7 +218,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
 
   NSVGparser      *p = NULL;
-  NSVGfont        *fontSVG;
+//  NSVGfont        *fontSVG;
   NSVGimage       *SVGimage;
   NSVGrasterizer  *rast = nsvgCreateRasterizer();
   EFI_TIME          Now;
@@ -257,7 +250,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   DBG("using scale %s\n", PoolPrintFloat(Scale));
   GlobalConfig.Scale = Scale;
   GlobalConfig.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
-
+#if 0
 // --- Get theme embedded font (already parsed above)
   fontSVG = p->font;
   if (!fontSVG) {
@@ -266,8 +259,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 	    fontSVG = fontSVG->next;
     }
   }
-  if (fontSVG) {
-    DBG("theme contains font-family=%a\n", fontSVG->fontFamily);
+#endif
+  if (p->font) {
+    DBG("theme contains font-family=%a\n", p->font->fontFamily);
   }
 #if 0
 // --- Create rastered font
@@ -345,6 +339,14 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     }
     i++;
   }
+
+  //selection for bootcamp style
+  SelectionImages[4] = ParseSVGIcon(p, BUILTIN_ICON_SELECTION, "selection_indicator", Scale);
+  if (SelectionImages[4]) {
+    DBG("selection_indicator parsed, size=[%d,%d]\n",
+        SelectionImages[4]->Width, SelectionImages[4]->Height);
+  }
+
 
   if (p) {
 //    nsvg__deleteParser(p);

@@ -3997,6 +3997,8 @@ InitTheme(
   
   DbgHeader("InitTheme");
   GlobalConfig.TypeSVG = FALSE;
+  GlobalConfig.BootCampStyle = FALSE;
+
   row0TileSize = 144;
   row1TileSize = 64;
   if (FontImage != NULL) {

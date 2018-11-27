@@ -3462,6 +3462,8 @@ static void parseTheme(NSVGparser* p, const char** dict)
       GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
       GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "BootCampStyle") == 0) {
+      GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1]);
 
     } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }

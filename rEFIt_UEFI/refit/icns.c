@@ -113,6 +113,7 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "radio_button_selected"},
   {NULL, "checkbox"},
   {NULL, "checkbox_checked"},
+//  {NULL, "selection_indicator"},
   {NULL, NULL}
 };
 

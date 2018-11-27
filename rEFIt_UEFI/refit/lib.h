@@ -875,6 +875,7 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define BUILTIN_SELECTION_BIG                  (24)
 #define BUILTIN_ICON_COUNT                     (25)
 #define BUILTIN_ICON_BACKGROUND                (100)
+#define BUILTIN_ICON_SELECTION                 (101)
 //
 // menu module
 //
