@@ -52,7 +52,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBook3,1 / MacBook (13-inch Late 2007)
   { "MacBook3,1", "MB31.88Z.008E.B02.0803051832", NULL, "Mac-F22788C8", // Intel Core 2 Duo T7500 @ 2.20 GHz
     "MacBook", "1.3", "W8747HACZ63", "MacBook-White",
-    { 0x01, 0x24, 0x0f, 0, 0, 0x03 },  "branch", "k36", 0x72001 }, // need ECPI
+    { 0x01, 0x24, 0x0f, 0, 0, 0x03 },  "branch", "k36", 0x72001 }, // need EPCI
   //MacBook4,1 / MacBook (13-inch, Early 2008)
   { "MacBook4,1", "MB41.88Z.00C1.B00.0802091535", NULL, "Mac-F22788A9", // Intel Core 2 Duo T8300 @ 2.40 GHz
     "MacBook", "1.3", "W88A041A0P0", "MacBook-Black",
@@ -60,7 +60,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBook5,1 / MacBook (13-inch, Aluminum, Late 2008)
   { "MacBook5,1", "MB51.88Z.007D.B03.0904271443", NULL, "Mac-F42D89C8", // Intel Core 2 Duo P7350 @ 2.00 GHz
     "MacBook", "1.3", "W8944T1S1AQ", "MacBook-Aluminum",
-    { 0x01, 0x32, 0x0f, 0, 0, 0x08 },  "branch", "m97", 0x7a002 }, // need ECPI
+    { 0x01, 0x32, 0x0f, 0, 0, 0x08 },  "branch", "m97", 0x7a002 }, // need EPCI
   //MacBook5,2 / MacBook (13-inch, Early 2009)
   { "MacBook5,2", "MB52.88Z.0088.B05.0904162222", NULL, "Mac-F22788AA", // Intel Core 2 Duo P7450 @ 2.13 GHz
     "MacBook", "1.3", "W8913HAC4R1", "MacBook-Black",
@@ -68,11 +68,11 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBook6,1 / MacBook (13-inch, Late 2009)
   { "MacBook6,1", "MB61.88Z.00CC.B00.1802021826", "207.0.0.0.0", "Mac-F22C8AC8", // Intel Core 2 Duo P7550 @ 2.26 GHz
     "MacBook", "1.0", "451131JCGAY", "MacBook-White",
-    { 0x01, 0x51, 0x0f, 0, 0, 0x53 },  "NA", "NA", 0x7a002 }, // need rBR RPlt ECPI
+    { 0x01, 0x51, 0x0f, 0, 0, 0x53 },  "k84", "k84", 0x72004 },
   //MacBook7,1 / MacBook (13-inch, Mid 2010)
   { "MacBook7,1", "MB71.88Z.003F.B00.1802022149", "66.0.0.0.0", "Mac-F22C89C8", // Intel Core 2 Duo P8600 @ 2.40 GHz
     "MacBook", "1.0", "451211MEF5X", "MacBook-White",
-    { 0x01, 0x60, 0x0f, 0, 0, 0x06 },  "k87", "k87", 0x7a002 }, // need ECPI
+    { 0x01, 0x60, 0x0f, 0, 0, 0x06 },  "k87", "k87", 0x72005 },
   //MacBook8,1 / MacBook (Retina, 12-inch, Early 2015)
   { "MacBook8,1", "MB81.88Z.0175.B00.1809171422", "177.0.0.0.0", "Mac-BE0E8AC46FE800CC", // Intel Core M-5Y51 @ 1.20 GHz
     "MacBook", "1.0", "C02RCE58GCN3", "MacBook-Aluminum",
@@ -80,35 +80,35 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBook9,1 / MacBook (Retina, 12-inch, Early 2016)
   { "MacBook9,1", "MB91.88Z.F000.B00.1809171414", "175.0.0.0.0", "Mac-9AE82516C7C6B903", // Intel Core m5-6Y54 @ 1.20 GHz
     "MacBook", "1.0", "C02RM408HDNK", "MacBook-Aluminum",
-    { 0x02, 0x35, 0x0f, 0, 1, 0x05 },  "j93", "j93", 0xf0e007 }, // need ECPI
+    { 0x02, 0x35, 0x0f, 0, 1, 0x05 },  "j93", "j93", 0xf0e007 }, // need EPCI
   //MacBook10,1 / MacBook (Retina, 12-inch, 2017)
   { "MacBook10,1", "MB101.88Z.F000.B00.1809191505", "168.0.0.0.0", "Mac-EE2EBD4B90B839A8", // Intel Core i5-7Y54 @ 1.30 GHz
     "MacBook", "1.0", "C02TQHACHH27", "MacBook-Aluminum",
-    { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need ECPI
+    { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need EPCI
   //MacBookPro1,1 / MacBook Pro (15-inch Glossy)
   { "MacBookPro1,1", "MBP11.88Z.0055.B08.0610121325", NULL, "Mac-F425BEC8", // Intel Core Duo T2500 @ 2.00 GHz
     "MacBook Pro", "1.0", "W8634HACVWZ", "MacBook-Aluminum",
-    { 0x01, 0x02, 0x0f, 0, 0, 0x10 },  "m1", "m1", 0x7b002 }, // need ECPI
+    { 0x01, 0x02, 0x0f, 0, 0, 0x10 },  "m1", "m1", 0x7b002 }, // need EPCI
   //MacBookPro1,2 / MacBook Pro (17-inch)
   { "MacBookPro1,2", "MBP12.88Z.0061.B03.0610121334", NULL, "Mac-F42DBEC8", // Intel Core Duo T2600 @ 2.17 GHz
     "MacBook Pro", "1.0", "W8629HACTHY", "MacBook-Aluminum",
-    { 0x01, 0x05, 0x0f, 0, 0, 0x10 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x05, 0x0f, 0, 0, 0x10 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro2,1 / MacBook Pro (17-inch Core 2 Duo)
   { "MacBookPro2,1", "MBP21.88Z.00A5.B08.0708131242", NULL, "Mac-F42189C8", // Intel Core 2 Duo T7600 @ 2.33 GHz
     "MacBook Pro", "1.0", "W8715HACW0J", "MacBook-Aluminum",
-    { 0x01, 0x14, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x14, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro2,2 / MacBook Pro (15-inch Core 2 Duo)
   { "MacBookPro2,2", "MBP22.88Z.00A5.B07.0708131242", NULL, "Mac-F42187C8", // Intel Core 2 Duo T7400 @ 2.16 GHz
     "MacBook Pro", "1.0", "W8827B4CW0L", "MacBook-Aluminum",
-    { 0x01, 0x13, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x13, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro3,1 / MacBook Pro (17-inch 2.4GHZ) - not exists in server
   { "MacBookPro3,1", "MBP31.88Z.0070.B07.0803051658", NULL, "Mac-F4238BC8", // Intel Core 2 Duo T7700 @ 2.40 GHz
     "MacBook Pro", "1.0", "W8841OHZX91", "MacBook-Aluminum",
-    { 0x01, 0x16, 0x0f, 0, 0, 0x11 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x16, 0x0f, 0, 0, 0x11 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro4,1 / MacBook Pro (17-inch, Early 2008)
   { "MacBookPro4,1", "MBP41.88Z.00C1.B03.0802271651", NULL, "Mac-F42C89C8", // Intel Core 2 Duo T9500 @ 2.60 GHz
     "MacBook Pro", "1.0", "W88484F2YP4", "MacBook-Aluminum",
-    { 0x01, 0x27, 0x0f, 0, 0, 0x03 },  "m87", "m87", 0x7b002 }, // need ECPI
+    { 0x01, 0x27, 0x0f, 0, 0, 0x03 },  "m87", "m87", 0x7b002 }, // need EPCI
   //MacBookPro5,1 / MacBook Pro (15-inch, Late 2008)
   { "MacBookPro5,1", "MBP51.88Z.007E.B06.1202061253", NULL, "Mac-F42D86C8", // Intel Core 2 Duo P8600 @ 2.40 GHz
     "MacBook Pro", "1.0", "W88439FE1G0", "MacBook-Aluminum",
@@ -116,23 +116,23 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro5,2 / MacBook Pro (17-inch, Early 2009)
   { "MacBookPro5,2", "MBP52.88Z.008E.B05.0905042202", NULL, "Mac-F2268EC8", // Intel Core 2 Duo T9600 @ 2.80 GHz
     "MacBook Pro", "1.0", "W8908HAC2QP", "MacBook-Aluminum",
-    { 0x01, 0x42, 0x0f, 0, 0, 0x04 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x42, 0x0f, 0, 0, 0x04 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro5,3 / MacBook Pro (15-inch, Mid 2009)
   { "MacBookPro5,3", "MBP53.88Z.00AC.B03.0906151647", NULL, "Mac-F22587C8", // Intel Core 2 Duo P8800 @ 2.66 GHz
     "MacBook Pro", "1.0", "W89E6HAC64C", "MacBook-Aluminum",
-    { 0x01, 0x48, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x48, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro5,4 / MacBook Pro (15-inch, 2.53GHz, Mid 2009)
   { "MacBookPro5,4", "MBP53.88Z.00AC.B03.0906151647", NULL, "Mac-F22587A1", // Intel Core 2 Duo P8700 @ 2.53 GHz
     "MacBook Pro", "1.0", "W8948HAC7XJ", "MacBook-Aluminum",
-    { 0x01, 0x49, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x49, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro5,5 / MacBook Pro (13-inch, Mid 2009)
   { "MacBookPro5,5", "MBP55.88Z.00AC.B03.0906151708", NULL, "Mac-F2268AC8", // Intel Core 2 Duo P7550 @ 2.26 GHz
     "MacBook Pro", "1.0", "W8951HAC66E", "MacBook-Aluminum",
-    { 0x01, 0x47, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x7b002 }, // need rBR RPlt ECPI
+    { 0x01, 0x47, 0x0f, 0, 0, 0x02 },  "branch", "k24", 0x7a003 },
   //MacBookPro6,1 / MacBook Pro (17-inch, Mid 2010)
   { "MacBookPro6,1", "MBP61.88Z.005D.B00.1804100943", "96.0.0.0.0", "Mac-F22589C8", // Intel Core i5-540M @ 2.53 GHz
     "MacBook Pro", "1.0", "C02G5834DC79", "MacBook-Aluminum",
-    { 0x01, 0x57, 0x0f, 0, 0, 0x18 },  "k17", "k17", 0x7a004 }, // need ECPI
+    { 0x01, 0x57, 0x0f, 0, 0, 0x18 },  "k17", "k17", 0x7a004 }, // need EPCI
   //MacBookPro6,2 / MacBook Pro (15-inch, Mid 2010)
   { "MacBookPro6,2", "MBP61.88Z.005D.B00.1804100943", "96.0.0.0.0", "Mac-F22586C8", // Intel Core i7-620M @ 2.66 GHz
     "MacBook Pro", "1.0", "CK132A91AGW", "MacBook-Aluminum",
@@ -140,7 +140,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro7,1 / MacBook Pro (13-inch, Mid 2010)
   { "MacBookPro7,1", "MBP71.88Z.003F.B00.1802021458", "66.0.0.0.0", "Mac-F222BEC8", // Intel Core 2 Duo P8600 @ 2.40 GHz
     "MacBook Pro", "1.0", "CK145C7NATM", "MacBook-Aluminum",
-    { 0x01, 0x62, 0x0f, 0, 0, 0x07 },  "branch", "k6", 0x7a004 }, // need ECPI
+    { 0x01, 0x62, 0x0f, 0, 0, 0x07 },  "branch", "k6", 0x7a004 }, // need EPCI
   //MacBookPro8,1 / MacBook Pro (13-inch, Early 2011)
   { "MacBookPro8,1", "MBP81.88Z.0050.B00.1804101331", "82.0.0.0.0", "Mac-94245B3640C91C81", // Intel Core i5-2415M @ 2.30 GHz
     "MacBook Pro", "1.0", "W89F9196DH2G", "MacBook-Aluminum",
@@ -148,7 +148,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro8,2 / MacBook Pro (15-inch, Early 2011)
   { "MacBookPro8,2", "MBP81.88Z.0050.B00.1804101331", "82.0.0.0.0", "Mac-94245A3940C91C80", // Intel Core i7-2675QM @ 2.20 GHz
     "MacBook Pro", "1.0", "C02HL0FGDF8X", "MacBook-Aluminum",
-    { 0x01, 0x69, 0x0f, 0, 0, 0x04 },  "trunk", "k91f", 0x7b005 }, // need ECPI
+    { 0x01, 0x69, 0x0f, 0, 0, 0x04 },  "trunk", "k91f", 0x7b005 }, // need EPCI
   //MacBookPro8,3 / MacBook Pro (17-inch, Early 2011)
   { "MacBookPro8,3", "MBP81.88Z.0050.B00.1804101331", "82.0.0.0.0", "Mac-942459F5819B171B", // Intel Core i7-2860QM @ 2.49 GHz
     "MacBook Pro", "1.0", "W88F9CDEDF93", "MacBook-Aluminum",
@@ -156,7 +156,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro9,1 / MacBook Pro (15-inch, Mid 2012)
   { "MacBookPro9,1", "MBP91.88Z.F000.B00.1809210851", "222.0.0.0.0", "Mac-4B7AC7E43945597E", // Intel Core i7-3720QM @ 2.60 GHz
     "MacBook Pro", "1.0", "C02LW984F1G4", "MacBook-Aluminum",
-    { 0x02, 0x01, 0x0f, 0, 1, 0x75 },  "j31", "j31", 0x76006 }, // need ECPI
+    { 0x02, 0x01, 0x0f, 0, 1, 0x75 },  "j31", "j31", 0x76006 }, // need EPCI
   //MacBookPro9,2 / MacBook Pro (13-inch, Mid 2012)
   { "MacBookPro9,2", "MBP91.88Z.F000.B00.1809210851", "222.0.0.0.0", "Mac-6F01561E16C75D06", // Intel Core i5-3210M @ 2.50 GHz
     "MacBook Pro", "1.0", "C02HA041DTY3", "MacBook-Aluminum",
@@ -176,7 +176,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro11,2 / MacBook Pro (Retina, 15-inch, Mid 2014)
   { "MacBookPro11,2", "MBP112.88Z.0147.B00.1809171519", "149.0.0.0.0", "Mac-3CBD00234E554E41", // Intel Core i7-4750HQ @ 2.00 GHz
     "MacBook Pro", "1.0", "C02P9HACG9FT", "MacBook-Aluminum",
-    { 0x02, 0x18, 0x0f, 0, 0, 0x15 },  "j45", "j45", 0xf0b007 }, // need ECPI
+    { 0x02, 0x18, 0x0f, 0, 0, 0x15 },  "j45", "j45", 0xf0b007 }, // need EPCI
   //MacBookPro11,3 / MacBook Pro (Retina, 15-inch, Mid 2014)
   { "MacBookPro11,3", "MBP112.88Z.0147.B00.1809171519", "149.0.0.0.0", "Mac-2BD1B31983FE1663", // Intel Core i7-4870HQ @ 2.50 GHz
     "MacBook Pro", "1.0", "C02NNHACG3QP", "MacBook-Aluminum",
@@ -184,11 +184,11 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro11,4 / MacBook Pro (Retina, 15-inch, Mid 2015)
   { "MacBookPro11,4", "MBP114.88Z.0185.B00.1809171422", "187.0.0.0.0", "Mac-06F11FD93F0323C5", // Intel Core i7-4770HQ @ 2.20 GHz
     "MacBook Pro", "1.0", "C02Q7HACG8WL", "MacBook-Aluminum",
-    { 0x02, 0x29, 0x0f, 0, 0, 0x23 },  "NA", "NA", 0xf0b007 }, // need rBR RPlt ECPI
+    { 0x02, 0x29, 0x0f, 0, 0, 0x23 },  "j145", "j145", 0xf07008 },
   //MacBookPro11,5 / MacBook Pro (Retina, 15-inch, Mid 2015)
   { "MacBookPro11,5", "MBP114.88Z.0185.B00.1809171422", "187.0.0.0.0", "Mac-06F11F11946D27C5", // Intel Core i7-4870HQ @ 2.50 GHz
     "MacBook Pro", "1.0", "C02Q3HACG8WM", "MacBook-Aluminum",
-    { 0x02, 0x30, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0xf0b007 }, // need rBR RPlt ECPI
+    { 0x02, 0x30, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0xf0b007 }, // need rBR RPlt EPCI
   //MacBookPro12,1 / MacBook Pro (Retina, 13-inch, Early 2015)
   { "MacBookPro12,1", "MBP121.88Z.0178.B00.1809171422", "180.0.0.0.0", "Mac-E43C1C25D4880AD6", // Intel Core i5-5257U @ 2.70 GHz
     "MacBook Pro", "1.0", "C02Q51OSH1DP", "MacBook-Aluminum",
@@ -196,7 +196,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro13,1 / MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)
   { "MacBookPro13,1", "MBP131.88Z.F000.B00.1810301605", "228.0.0.0.0", "Mac-473D31EABEB93F9B", // Intel Core i5-6360U @ 2.00 GHz
     "MacBook Pro", "1.0", "C02SLHACGVC1", "MacBook-Aluminum",
-    { 0x02, 0x36, 0x0f, 0, 0, 0x97 },  "2016mb", "j130", 0xf02009 }, // need ECPI
+    { 0x02, 0x36, 0x0f, 0, 0, 0x97 },  "2016mb", "j130", 0xf02009 }, // need EPCI
   //MacBookPro13,2 / MacBook Pro (13-inch, 2016, Four Thunderbolt 3 Ports)
   { "MacBookPro13,2", "MBP132.88Z.F000.B00.1810301605", "251.0.0.0.0", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
     "MacBook Pro", "1.0", "C02SLHACGYFH", "MacBook-Aluminum",
@@ -220,19 +220,19 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
   { "MacBookPro15,1", "MBP151.88Z.F000.B00.1809280842", "220.200.252.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
-    { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2018mbp", "j130b", 0xf0a009 }, // need BIOS REV rBR RPlt ECPI
+    { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2018mbp", "j680", 0xf0a009 }, // there are no BIOS REV rBR EPCI
   //MacBookPro15,2 / MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
   { "MacBookPro15,2", "MBP152.88Z.F000.B00.1809171524", "220.200.252.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
-    { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j79b", 0xf09009 }, // need BIOS REV rBR RPlt ECPI
+    { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j132", 0xf09009 }, // there are no BIOS REV rBR EPCI
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", NULL, "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
-    { 0x01, 0x23, 0x0f, 0, 0, 0x20 },  "NA", "NA", 0x76005 }, // need rBR RPlt ECPI
+    { 0x01, 0x23, 0x0f, 0, 0, 0x20 },  "NA", "NA", 0x76005 }, // need rBR RPlt EPCI
   //MacBookAir2,1 / MacBook Air (Mid 2009)
   { "MacBookAir2,1", "MBA21.88Z.0075.B05.1003051506", NULL, "Mac-F42D88C8", // Intel Core 2 Duo L9600 @ 2.13 GHz
     "MacBook Air", "1.0", "W86494769A7", "Air-Enclosure",
-    { 0x01, 0x34, 0x0f, 0, 0, 0x08 },  "NA", "NA", 0x76005 }, // need rBR RPlt ECPI
+    { 0x01, 0x34, 0x0f, 0, 0, 0x08 },  "NA", "NA", 0x76005 }, // need rBR RPlt EPCI
   //MacBookAir3,1 / MacBook Air (11-inch, Late 2010)
   { "MacBookAir3,1", "MBA31.88Z.0069.B00.1802022340", "108.0.0.0.0", "Mac-942452F5819B1C1B", // Intel Core 2 Duo U9600 @ 1.60 GHz
     "MacBook Air", "1.0", "C02DNHACDDR0", "Air-Enclosure",
@@ -240,19 +240,19 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir3,2 / MacBook Air (13-inch, Late 2010)
   { "MacBookAir3,2", "MBA31.88Z.0069.B00.1802022340", "108.0.0.0.0", "Mac-942C5DF58193131B", // Intel Core 2 Duo L9600 @ 2.13 GHz
     "MacBook Air", "1.0", "C02DRHACDDR3", "Air-Enclosure",
-    { 0x01, 0x66, 0x0f, 0, 0, 0x61 },  "NA", "NA", 0x76005 }, // need rBR RPlt ECPI
+    { 0x01, 0x66, 0x0f, 0, 0, 0x61 },  "NA", "NA", 0x76005 }, // need rBR RPlt EPCI
   //MacBookAir4,1 / MacBook Air (11-inch, Mid 2011)
   { "MacBookAir4,1", "MBA41.88Z.0080.B00.1804111222", "130.0.0.0.0", "Mac-C08A6BB70A942AC2", // Intel Core i7-2677M @ 1.80 GHz
     "MacBook Air", "1.0", "C02HVHACDJYC", "Air-Enclosure",
-    { 0x01, 0x74, 0x0f, 0, 0, 0x04 },  "k21k78", "k78", 0x76005 }, // need ECPI
+    { 0x01, 0x74, 0x0f, 0, 0, 0x04 },  "k21k78", "k78", 0x76005 }, // need EPCI
   //MacBookAir4,2 / MacBook Air (13-inch, Mid 2011)
   { "MacBookAir4,2", "MBA41.88Z.0080.B00.1804111222", "130.0.0.0.0", "Mac-742912EFDBEE19B3", // Intel Core i5-2557M @ 1.70 GHz
     "MacBook Air", "1.0", "C02GLHACDJWT", "Air-Enclosure",
-    { 0x01, 0x73, 0x0f, 0, 0, 0x66 },  "k21k78", "k21", 0x76005 }, // need ECPI
+    { 0x01, 0x73, 0x0f, 0, 0, 0x66 },  "k21k78", "k21", 0x76005 }, // need EPCI
   //MacBookAir5,1 / MacBook Air (11-inch, Mid 2012)
   { "MacBookAir5,1", "MBA51.88Z.F000.B00.1809210852", "253.0.0.0.0", "Mac-66F35F19FE2A0D05", // Intel Core i7-3667U @ 2.00 GHz
     "MacBook Air", "1.0", "C02J6HACDRV6", "Air-Enclosure",
-    { 0x02, 0x04, 0x0f, 0, 0, 0x19 },  "j11j13", "j11", 0x7b006 }, // need ECPI
+    { 0x02, 0x04, 0x0f, 0, 0, 0x19 },  "j11j13", "j11", 0x7b006 }, // need EPCI
   //MacBookAir5,2 / MacBook Air (13-inch, Mid 2012)
   { "MacBookAir5,2", "MBA51.88Z.F000.B00.1809210852", "253.0.0.0.0", "Mac-2E6FAB96566FE58C", // Intel Core i5-3427U @ 1.80 GHz
     "MacBook Air", "1.0", "C02HA041DRVC", "Air-Enclosure",
@@ -260,7 +260,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir6,1 / MacBook Air (11-inch, Mid 2013)
   { "MacBookAir6,1", "MBA61.88Z.0108.B00.1809171520", "110.0.0.0.0", "Mac-35C1E88140C3E6CF", // Intel Core i7-4650U @ 1.70 GHz
     "MacBook Air", "1.0", "C2QM6HACFKYN", "Air-Enclosure",
-    { 0x02, 0x12, 0x0f, 0, 1, 0x43 },  "j41j43", "j41", 0x7b007 }, // need ECPI
+    { 0x02, 0x12, 0x0f, 0, 1, 0x43 },  "j41j43", "j41", 0x7b007 }, // need EPCI
   //MacBookAir6,2 / MacBook Air (13-inch, Mid 2013)
   { "MacBookAir6,2", "MBA61.88Z.0108.B00.1809171520", "110.0.0.0.0", "Mac-7DF21CB3ED6977E5", // Intel Core i5-4250U @ 1.30 GHz
     "MacBook Air", "1.0", "C02L9HACF5V7", "Air-Enclosure",
@@ -272,43 +272,43 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir7,2 / MacBook Air (13-inch, Early 2015)
   { "MacBookAir7,2", "MBA71.88Z.0180.B00.1809171321", "182.0.0.0.0", "Mac-937CB26E2E02BB01", // Intel Core i7-5650U @ 2.20 GHz
     "MacBook Air", "1.0", "C02Q1HACG940", "Air-Enclosure",
-    { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0x7b007 }, // need ECPI
+    { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0xf0a008 },
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
   { "MacBookAir8,1", "MBA81.88Z.F000.B00.1809171321", "220.220.100.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
-    { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need BIOS REV rBR RPlt ECPI
+    { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j140k", "j140k", 0xf08009 }, // there are no BIOS REV rBR EPCI
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1", "MM11.88Z.0055.B08.0610121326", NULL, "Mac-F4208EC8", // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini", "1.0", "W8702N1JU35", "Mini-Aluminum",
-    { 0x01, 0x03, 0x0f, 0, 0, 0x04 },  "m40", "m40", 0x78002 }, // need ECPI
+    { 0x01, 0x03, 0x0f, 0, 0, 0x04 },  "m40", "m40", 0x78002 }, // need EPCI
   //Macmini2,1 / Mac mini (Mid 2007)
   { "Macmini2,1", "MM21.88Z.009A.B00.0706281359", NULL, "Mac-F4208EAA", // Intel Core 2 Duo T7200 @ 2.00 GHz
     "Mac mini", "1.1", "W8705W9LYL2", "Mini-Aluminum",
-    { 0x01, 0x19, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x78002 }, // need rBR RPlt
+    { 0x01, 0x19, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x78002 }, // need rBR EPCI
   //Macmini3,1 / Mac mini (Late 2009)
   { "Macmini3,1", "MM31.88Z.0081.B06.0904271717", NULL, "Mac-F22C86C8", // Intel Core 2 Duo P8700 @ 2.53 GHz
     "Mac mini", "1.0", "YM003HAC9G6", "Mini-Aluminum",
-    { 0x01, 0x35, 0x0f, 0, 0, 0x01 },  "NA", "NA", 0x78002 }, // need rBR RPlt ECPI
+    { 0x01, 0x35, 0x0f, 0, 0, 0x01 },  "NA", "NA", 0x78002 }, // need rBR RPlt EPCI
   //Macmini4,1 / Mac mini (Mid 2010)
   { "Macmini4,1", "MM41.88Z.0047.B00.1802021546", "74.0.0.0.0", "Mac-F2208EC8", // Intel Core 2 Duo P8800 @ 2.66 GHz
     "Mac mini", "1.0", "C02FHBBEDD6H", "Mini-Aluminum",
-    { 0x01, 0x65, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x78002 }, // need rBR RPlt ECPI
+    { 0x01, 0x65, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x78002 }, // need rBR RPlt EPCI
   //Macmini5,1 / Mac mini (Mid 2011)
   { "Macmini5,1", "MM51.88Z.0080.B00.1804091930", "130.0.0.0.0", "Mac-8ED6AF5B48C039E1", // Intel Core i5-2415M @ 2.30 GHz
     "Mac mini", "1.0", "C07GA041DJD0", "Mini-Aluminum",
-    { 0x01, 0x30, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x7d005 }, // need rBR RPlt
+    { 0x01, 0x30, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x7d005 }, // need rBR EPCI
   //Macmini5,2 / Mac mini (Mid 2011)
   { "Macmini5,2", "MM51.88Z.0080.B00.1804091930", "130.0.0.0.0", "Mac-4BC72D62AD45599E", // Intel Core i7-2620M @ 2.70 GHz
     "Mac mini", "1.0", "C07HVHACDJD1", "Mini-Aluminum",
-    { 0x01, 0x75, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x7d005 }, // need rBR RPlt ECPI
+    { 0x01, 0x75, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x7d005 }, // need rBR RPlt EPCI
   //Macmini5,3 / Mac mini Server (Mid 2011)
   { "Macmini5,3", "MM51.88Z.0080.B00.1804091930", "130.0.0.0.0", "Mac-7BA5B2794B2CDB12", // Intel Core i7-2635QM @ 2.00 GHz
     "Mac mini", "1.0", "C07GWHACDKDJ", "Mini-Aluminum",
-    { 0x01, 0x77, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x7d005 }, // need rBR RPlt ECPI
+    { 0x01, 0x77, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x7d005 }, // need rBR RPlt EPCI
   //Macmini6,1 / Mac mini (Late 2012)
   { "Macmini6,1", "MM61.88Z.F000.B00.1809171514", "274.0.0.0.0", "Mac-031AEE4D24BFF0B1", // Intel Core i5-3210M @ 2.50 GHz
     "Mac mini", "1.0", "C07JNHACDY3H", "Mini-Aluminum",
-    { 0x02, 0x07, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x7d006 }, // need rBR RPlt ECPI
+    { 0x02, 0x07, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x7d006 }, // need rBR RPlt EPCI
   //Macmini6,2 / Mac mini Server (Late 2012)
   { "Macmini6,2", "MM61.88Z.F000.B00.1809171514", "274.0.0.0.0", "Mac-F65AE981FFA204ED", // Intel Core i7-3615QM @ 2.30 GHz
     "Mac mini", "1.0", "C07JD041DWYN", "Mini-Aluminum",
@@ -320,31 +320,31 @@ PLATFORMDATA ApplePlatformData[] =
   //Macmini8,1 / Mac mini (2018)
   { "Macmini8,1", "MM81.88Z.F000.B00.1809171422", "220.207.27.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
-    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt ECPI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt EPCI
   //iMac4,1 / iMac (20-inch, Early 2006)
   { "iMac4,1", "IM41.88Z.0055.B08.0609061538", NULL, "Mac-F42786C8", // Intel Core 2 Duo T2500 @ 2.00 GHz
     "iMac", "1.0", "W8610HACVGM", "iMac",
-    { 0x01, 0x01, 0x0f, 0, 0, 0x05 },  "m38m39", "m38", 0x73002 }, // need ECPI
+    { 0x01, 0x01, 0x0f, 0, 0, 0x05 },  "m38m39", "m38", 0x73002 }, // need EPCI
   //iMac4,2 / iMac (17-inch, Late 2006 CD)
   { "iMac4,2", "IM42.88Z.0071.B03.0610121320", NULL, "Mac-F4218EC8", // Intel Core 2 Duo T2400 @ 1.83 GHz
     "iMac", "1.0", "W8727HACWH5", "iMac",
-    { 0x01, 0x06, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x73002 }, // need rBR RPlt ECPI
+    { 0x01, 0x06, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x73002 }, // need rBR RPlt EPCI
   //iMac5,1 / iMac (20-inch, Late 2006)
   { "iMac5,1", "IM51.88Z.0090.B09.0706270921", NULL, "Mac-F4228EC8", // Intel Core 2 Duo T7400 @ 2.16 GHz
     "iMac", "1.0", "CK708HACVUW", "iMac",
-    { 0x01, 0x08, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x73002 }, // need rBR RPlt ECPI
+    { 0x01, 0x08, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x73002 }, // need rBR RPlt EPCI
   //iMac5,2 / iMac (17-inch, Late 2006 CD)
   { "iMac5,2", "IM52.88Z.0090.B09.0706270913", NULL, "Mac-F4218EC8", // Intel Core 2 Duo T5600 @ 1.83 GHz
     "iMac", "1.0", "QP702HACWH4", "iMac",
-    { 0x01, 0x06, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x73002 }, // need rBR RPlt ECPI
+    { 0x01, 0x06, 0x0f, 0, 0, 0x00 },  "NA", "NA", 0x73002 }, // need rBR RPlt EPCI
   //iMac6,1 / iMac (24-inch, Late 2006)
   { "iMac6,1", "IM61.88Z.0093.B07.0804281538", NULL, "Mac-F4218FC8", // Intel Core 2 Duo T7600 @ 2.33 GHz
     "iMac", "1.0", "QP708HACXA6", "iMac",
-    { 0x01, 0x08, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x73002 }, // need rBR RPlt ECPI
+    { 0x01, 0x08, 0x0f, 0, 0, 0x02 },  "NA", "NA", 0x73002 }, // need rBR RPlt EPCI
   //iMac7,1 / iMac (20-inch, Mid 2007)
   { "iMac7,1", "IM71.88Z.007A.B03.0803051705", NULL, "Mac-F42386C8", // Intel Core 2 Extreme X7900 @ 2.80 GHz
     "iMac", "1.0", "W8739HACX85", "iMac-Aluminum",
-    { 0x01, 0x20, 0x0f, 0, 0, 0x04 },  "NA", "NA", 0x73002 }, // need rBR RPlt ECPI
+    { 0x01, 0x20, 0x0f, 0, 0, 0x04 },  "NA", "NA", 0x73002 }, // need rBR RPlt EPCI
   //iMac8,1 / iMac (24-inch, Early 2008)
   { "iMac8,1", "IM81.88Z.00C1.B00.0802091538", NULL, "Mac-F227BEC8", // Intel Core 2 Duo E8235 @ 2.80 GHz
     "iMac", "1.3", "QP849HACZE7", "iMac-Aluminum",
@@ -352,7 +352,7 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac9,1 / iMac (24-inch, Early 2009)
   { "iMac9,1", "IM91.88Z.008D.B08.0904271717", NULL, "Mac-F2218FA9", // Intel Core 2 Duo E8435 @ 3.06 GHz
     "iMac", "1.0", "W8919HAC0TG", "iMac-Aluminum",
-    { 0x01, 0x36, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x73002 }, // need rBR RPlt ECPI
+    { 0x01, 0x36, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x73002 }, // need rBR RPlt EPCI
   //iMac10,1 / iMac (27-inch, Late 2009)
   { "iMac10,1", "IM101.88Z.00D0.B00.1802021905", "213.0.0.0.0", "Mac-F2268CC8", // Intel Core 2 Duo E7600 @ 3.06 GHz
     "iMac", "1.0", "W80AA98A5PE", "iMac-Aluminum",
@@ -388,7 +388,7 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac13,3 / iMac (21.5-inch, Early 2013) - not exists in server
   { "iMac13,3", "IM131.88Z.F000.B00.1809171346", "281.0.0.0.0", "Mac-7DF2A3B5E5D671ED", // Intel Core i3-3225 @ 3.30 GHz
     "iMac", "1.0", "C02KVHACFFYV", "iMac-Aluminum",
-    { 0x02, 0x13, 0x0f, 0, 0, 0x15 },  "d8", "d8", 0x79006 }, // need ECPI
+    { 0x02, 0x13, 0x0f, 0, 0, 0x15 },  "d8", "d8", 0x79006 }, // need EPCI
   //iMac14,1 / iMac (21.5-inch, Late 2013)
   { "iMac14,1", "IM141.88Z.0131.B00.1809171347", "133.0.0.0.0", "Mac-031B6874CF7F642A", // Intel Core i5-4570R @ 2.70 GHz
     "iMac", "1.0", "D25LHACKF8J2", "iMac-Aluminum",
@@ -400,11 +400,11 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac14,3 / iMac (21.5-inch, Late 2013)
   { "iMac14,3", "IM143.88Z.0131.B00.1809171346", "133.0.0.0.0", "Mac-77EB7D7DAF985301", // Intel Core i5-4570S @ 2.90 GHz
     "iMac", "1.0", "D25LHACKF8J3", "iMac-Aluminum",
-    { 0x02, 0x17, 0x0f, 0, 0, 0x07 },  "j16g", "j16g", 0x7a007 }, // need ECPI
+    { 0x02, 0x17, 0x0f, 0, 0, 0x07 },  "j16g", "j16g", 0x7a007 }, // need EPCI
   //iMac14,4 / iMac (21.5-inch, Mid 2014)
   { "iMac14,4", "IM144.88Z.0190.B00.1809171521", "192.0.0.0.0", "Mac-81E3E92DD6088272", // Intel Core i5-4260U @ 1.40 GHz
     "iMac", "1.0", "D25LHACKFY0T", "iMac-Aluminum",
-    { 0x02, 0x21, 0x0f, 0, 0, 0x92 },  "j70", "j70", 0x7a007 }, // need ECPI
+    { 0x02, 0x21, 0x0f, 0, 0, 0x92 },  "j70", "j70", 0x7a007 }, // need EPCI
   //iMac15,1 / iMac (Retina 5K, 27-inch, Mid 2015)
   { "iMac15,1", "IM151.88Z.0219.B00.1809190740", "222.0.0.0.0", "Mac-42FD25EABCABB274", // Intel Core i5-4690 @ 3.50 GHz
     "iMac", "1.0", "C02Q6HACFY10", "iMac-Aluminum",
@@ -412,11 +412,11 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac16,1 / iMac (21.5-inch, Late 2015)
   { "iMac16,1", "IM161.88Z.0221.B00.1809171321", "223.0.0.0.0", "Mac-A369DDC4E67F1C45", // Intel Core i5-5250U @ 1.60 GHz
     "iMac", "1.0", "C02QQHACGF1J", "iMac-Aluminum",
-    { 0x02, 0x31, 0x0f, 0, 0, 0x36 },  "j117", "j117", 0xf00008 }, // need ECPI
+    { 0x02, 0x31, 0x0f, 0, 0, 0x36 },  "j117", "j117", 0xf00008 }, // need EPCI
   //iMac16,2 / iMac (Retina 4K, 21.5-inch, Late 2015)
   { "iMac16,2", "IM162.88Z.0221.B00.1809171530", "223.0.0.0.0", "Mac-FFE5EF870D7BA81A", // Intel Core i5-5575R @ 2.80 GHz
     "iMac", "1.0", "C02PNHACGG78", "iMac-Aluminum",
-    { 0x02, 0x32, 0x0f, 0, 0, 0x20 },  "j94", "j94", 0xf00008 }, // need ECPI
+    { 0x02, 0x32, 0x0f, 0, 0, 0x20 },  "j94", "j94", 0xf00008 }, // need EPCI
   //iMac17,1 / iMac (Retina 5K, 27-inch, Late 2015)
   { "iMac17,1", "IM171.88Z.F000.B00.1809251200", "161.0.0.0.0", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
     "iMac17,1", "1.0", "C02QFHACGG7L", "iMac-Aluminum",
@@ -424,11 +424,11 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac18,1 / iMac (21.5-inch, 2017)
   { "iMac18,1", "IM181.88Z.F000.B00.1809171524", "165.0.0.0.0", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",
-    { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt ECPI
+    { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
   //iMac18,2 / iMac (Retina 4K, 21.5-inch, 2017)
   { "iMac18,2", "IM183.88Z.F000.B00.1809280842", "166.0.0.0.0", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
     "iMac", "1.0", "C02TDHACJ1G5", "iMac-Aluminum",
-    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt ECPI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
   //iMac18,3 / iMac (Retina 5K, 27-inch, 2017)
   { "iMac18,3", "IM183.88Z.F000.B00.1809280842", "166.0.0.0.0", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
@@ -436,15 +436,15 @@ PLATFORMDATA ApplePlatformData[] =
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1", "IMP11.88Z.0064.B30.1712081714", "220.200.252.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
-    { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j137", "j137", 0xf07009 }, // need REV rBR ECPI
+    { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j137", "j137", 0xf07009 }, // need REV rBR EPCI
   //MacPro1,1 / Mac Pro
   { "MacPro1,1", "MP11.88Z.005C.B08.0707021221", NULL, "Mac-F4208DC8", // Intel Xeon X5355 @ 2.66 GHz x2
     "MacPro", "1.0", "W88A7HACUQ2", "Pro-Enclosure",
-    { 0x01, 0x07, 0x0f, 0, 0, 0x10 },  "m43", "m43", 0x79001 }, // need ECPI
+    { 0x01, 0x07, 0x0f, 0, 0, 0x10 },  "m43", "m43", 0x79001 }, // need EPCI
   //MacPro2,1 / Mac Pro
   { "MacPro2,1", "MP21.88Z.007F.B06.0707021348", NULL, "Mac-F4208DA9", // Intel Xeon X5365 @ 2.99 GHz x2
     "MacPro", "1.0", "W8930518UPZ", "Pro-Enclosure",
-    { 0x01, 0x15, 0x0f, 0, 0, 0x03 },  "m43a", "m43a", 0x79001 }, // need ECPI
+    { 0x01, 0x15, 0x0f, 0, 0, 0x03 },  "m43a", "m43a", 0x79001 }, // need EPCI
   //MacPro3,1 / Mac Pro (Early 2008)
   { "MacPro3,1", "MP31.88Z.006C.B05.0802291410", NULL, "Mac-F42C88C8", // Intel Xeon E5462 @ 2.80 GHz x2
     "MacPro", "1.3", "W88A77AA5J4", "Pro-Enclosure",
@@ -455,7 +455,7 @@ PLATFORMDATA ApplePlatformData[] =
     { 0x01, 0x39, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x7c002 }, // need rBR RPlt
   //MacPro5,1 / Mac Pro (Mid 2012)
   { "MacPro5,1", "MP51.88Z.F000.B00.1809191555", "140.0.0.0.0", "Mac-F221BEC8", // Intel Xeon X5675 @ 3.06 GHz x2
-    "MacPro", "1.2", "C07J77F7F4MC", "Pro-Enclosure", //Note: C07J50F7F4MC CK04000AHFC CG154TB9WU3
+    "MacPro", "1.2", "C07J77F7F4MC", "Pro-Enclosure", // Note: C07J50F7F4MC CK04000AHFC CG154TB9WU3
     { 0x01, 0x39, 0x0f, 0, 0, 0x11 },  "k5", "k5", 0x7c002 },
   //MacPro6,1 / Mac Pro (Late 2013)
   { "MacPro6,1", "MP61.88Z.0125.B00.1809171517", "127.0.0.0.0", "Mac-F60DEB81FF30ACF6", // Intel Xeon E5-1650 v2 @ 3.50 GHz
@@ -464,15 +464,15 @@ PLATFORMDATA ApplePlatformData[] =
   //Xserve1,1 / Xserve (Late 2006)
   { "Xserve1,1", "XS11.88Z.0080.B01.0706271533", NULL, "Mac-F4208AC8", // Intel Xeon E5345 @ 2.33 GHz x2
     "Xserve", "1.0", "CK703E1EV2Q", "Xserve",
-    { 0x01, 0x11, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x79001 }, // need rBR RPlt ECPI
+    { 0x01, 0x11, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x79001 }, // need rBR RPlt EPCI
   //Xserve2,1 / Xserve (Early 2008)
   { "Xserve2,1", "XS21.88Z.006C.B06.0804011317", NULL, "Mac-F42289C8", // Intel Xeon E5472 @ 3.00 GHz x2
     "Xserve", "1.0", "CK830DLQX8S", "Xserve",
-    { 0x01, 0x26, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x79001 }, // need rBR RPlt ECPI
+    { 0x01, 0x26, 0x0f, 0, 0, 0x03 },  "NA", "NA", 0x79001 }, // need rBR RPlt EPCI
   //Xserve3,1 / Xserve (Early 2009)
   { "Xserve3,1", "XS31.88Z.0081.B06.0908061300", NULL, "Mac-F223BEC8", // Intel Xeon E5520 @ 2.26 GHz
     "Xserve", "1.0", "CK933YJ16HS", "Xserve",
-    { 0x01, 0x43, 0x0f, 0, 0, 0x04 },  "NA", "NA", 0x79001 }, // need rBR RPlt ECPI
+    { 0x01, 0x43, 0x0f, 0, 0, 0x04 },  "NA", "NA", 0x79001 }, // need rBR RPlt EPCI
 };
 
 VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
