@@ -7569,7 +7569,7 @@ SetDevices (LOADER_ENTRY *Entry)
                         MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
                       }
 
-                      LEVD = (UINT64)FBLEVX * (UINT64)LEVX / 0xFFFFLL;
+                      LEVD = DivU64x32(MultU64x32(FBLEVX, LEVX), 0xFFFF);
                       MsgLog ("  Write new LEVD: 0x%x\n", LEVD);
 
                       /*Status = */PciIo->Mem.Write(

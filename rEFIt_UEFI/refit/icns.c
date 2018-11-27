@@ -76,7 +76,7 @@ BUILTIN_ICON BuiltinIconTable[] = {
   { NULL, L"icons\\vol_internal_apfs"      , L"icns", 128 },
   { NULL, L"icons\\vol_internal_ntfs"      , L"icns", 128 },
   { NULL, L"icons\\vol_internal_ext3"      , L"icns", 128 },
-  { NULL, L"icons\\vol_recovery"           , L"icns", 128 },//20
+  { NULL, L"icons\\vol_recovery"           , L"icns", 128 },//21
 
   { NULL, L"logo"                          , L"png",  128 },
   { NULL, L"selection_small"               , L"png",  64  },
@@ -258,8 +258,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 //  DBG("Icon %d decoded, pointer %x\n", Id, (UINTN)(BuiltinIconTable[Id].Image));
 
   if (!BuiltinIconTable[Id].Image) {
-    TextBuffer = egCreateImage(Size, Size, TRUE);  //new pointer
-    egFillImage(TextBuffer, &MenuBackgroundPixel);
+    TextBuffer = egCreateFilledImage(Size, Size, TRUE, &MenuBackgroundPixel);  //new pointer
+//    egFillImage(TextBuffer, &MenuBackgroundPixel);
     p = StrStr(BuiltinIconTable[Id].Path, L"_"); p++;
     Text = (CHAR16*)AllocateCopyPool(30, (VOID*)p);
     p = StrStr(Text, L".");
@@ -348,11 +348,11 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
   }
 
   if (IsEmbeddedTheme()) { // embedded theme - return rendered icon name
-    EG_IMAGE  *TextBuffer = egCreateImage(PixelSize, PixelSize, TRUE);
-    egFillImage(TextBuffer, &MenuBackgroundPixel);
+//    EG_IMAGE  *TextBuffer = egCreateFilledImage(PixelSize, PixelSize, TRUE, &MenuBackgroundPixel);
+//    egFillImage(TextBuffer, &MenuBackgroundPixel);
 //    egRenderText(FirstName, TextBuffer, PixelSize/4, PixelSize/3, 0xFFFF, 1);
 //    DebugLog(1, "Text <%s> rendered\n", FirstName);
-    return TextBuffer;
+    return NULL; //TextBuffer;
   }
 
   return DummyImage(PixelSize);
@@ -364,16 +364,14 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
 
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN PixelSize)
 {
-    if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
-        return NULL;
+  if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
+    return NULL;
   if (BaseDir) {
     return egLoadIcon(BaseDir, FileName, PixelSize);
   }
   return DummyImage(PixelSize);
 }
 
-static EG_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0 };
-//static EG_PIXEL YellowPixel = { 0x00, 0xff, 0xff, 0 };
 
 EG_IMAGE * DummyImage(IN UINTN PixelSize)
 {

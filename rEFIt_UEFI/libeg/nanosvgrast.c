@@ -1650,11 +1650,11 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 				u += du;
 			}
 		}
-//    if (shape->debug) {
-//      DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
-//        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
-//        cache->colors[200], cache->colors[250]);
-//    }
+    if (shape->debug) {
+      DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
+        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
+        cache->colors[200], cache->colors[250]);
+    }
     for (i = ib; i < 256; i++) { //tail
 			cache->colors[i] = cb;
 //      cache->colors2[i] = cb;
@@ -1785,9 +1785,9 @@ static void nsvg__rasterizeShapes(
 			r->nedges = 0;
 
 			nsvg__flattenShape(r, shapeLink, xform);
-//      if (shapeLink->debug) {
-//        DBG("shape to fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
-//      }
+      if (shapeLink->debug) {
+        DBG("shape to fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
+      }
 			// Scale and translate edges
 			for (i = 0; i < r->nedges; i++) {
 				e = &r->edges[i];

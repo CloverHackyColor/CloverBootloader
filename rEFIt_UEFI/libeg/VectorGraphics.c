@@ -27,7 +27,7 @@
 #define TEST_SVG_IMAGE 1
 #define TEST_SIZEOF 0
 #define TEST_FONT 0
-#define TEST_DITHER 1
+#define TEST_DITHER 0
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
@@ -77,6 +77,7 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
       }
 
     if (group) { //the shape is in the group
+      // keep this sample for debug purpose
 /*      DBG("found shape %a", shape->id);
       DBG(" from group %a\n", group->id);
       if ((Id == BUILTIN_SELECTION_BIG) ||
@@ -233,7 +234,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
 
 
-// --- Parse Theme.svg
+// --- Parse theme.svg --- low case
   p = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
   SVGimage = p->image;
   if (!SVGimage) {
@@ -284,14 +285,13 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 #endif
 // --- Make background
-  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &MenuBackgroundPixel);
+  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &BlackPixel);
   if (DayLight) {
+    DBG("use daylight theme\n");
     BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
   } else {
     BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background_night", Scale);
   }
-
-//  GlobalConfig.BackgroundScale = imScale;
 
 // --- Make Banner
   Banner = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale);
@@ -336,6 +336,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //    DBG("search for %a\n", OSIconsTable[i].name);
     if ((strcmp(OSIconsTable[i].name, "os_moja") == 0) && !DayLight) {
       OSIconsTable[i].image = ParseSVGIcon(p, i, "os_moja_night", Scale);
+      DBG("chosen moja_night\n");
     } else {
       OSIconsTable[i].image = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale);
     }
@@ -605,7 +606,7 @@ VOID testSVG()
     NSVGparser* p;
 #if TEST_DITHER
     {
-      EG_IMAGE        *RndImage = egCreateImage(256, 256, TRUE);
+      EG_IMAGE        *RndImage = egCreateImage(256, 256, FALSE);
       INTN i,j;
       EG_PIXEL pixel = WhitePixel;
       for (i=0; i<256; i++) {
@@ -652,7 +653,7 @@ VOID testSVG()
       }
 */
       // Rasterize
-      NewImage = egCreateImage(Width, Height, TRUE);
+      NewImage = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
       if (SVGimage->width <= 0) SVGimage->width = Width;
       if (SVGimage->height <= 0) SVGimage->height = Height;
 
