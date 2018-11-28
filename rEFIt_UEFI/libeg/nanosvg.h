@@ -379,6 +379,15 @@ typedef struct NSVGtext {
   NSVGgroup* group;
 } NSVGtext;
 
+typedef struct NSVGsymbol {
+	char id[64];
+	float xform[6];
+	float bounds[4];
+	NSVGshape* shapes;
+	NSVGshape* shapesTail;
+	struct NSVGsymbol *next;
+} NSVGsymbol;
+
 typedef struct NSVGparser
 {
   NSVGattrib attr[NSVG_MAX_ATTR];
@@ -407,10 +416,11 @@ typedef struct NSVGparser
   char shapeFlag;
   char styleFlag;
   char patternFlag;
-//  char groupFlag;
+  char symbolFlag;
   BOOLEAN isText;
   char unknown[64];
   NSVGtext* text;
+  NSVGsymbol* symbols;
   NSVGpattern *patterns;
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
@@ -434,6 +444,7 @@ void nsvgDelete(NSVGimage* image);
 void nsvg__xformIdentity(float* t);
 void nsvg__deleteParser(NSVGparser* p);
 void nsvg__xformInverse(float* inv, float* t);
+void nsvg__xformSetScale(float* t, float sx, float sy);
 void nsvg__xformPremultiply(float* t, float* s);
 void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);

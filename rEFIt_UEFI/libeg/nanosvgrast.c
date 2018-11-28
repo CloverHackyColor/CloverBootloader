@@ -66,6 +66,9 @@
 
 #define MALCOLM 1
 
+static void renderShape(NSVGrasterizer* r,
+                        NSVGshape* shape, float *xform, float min_scale);
+
 void DumpFloat (char* s, float* t, int N)
 {
 #if DEBUG_SVG
@@ -543,10 +546,8 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
     nsvg__addPathPoint(r, &pt, xform, 0);
     for (i = 0; i < path->npts-1; i += 3) {
       float* p = &path->pts[i*2];
-//      nsvg__flattenCubicBez(r, (p[0]*scalex+dx), (p[1]*scaley+dy), (p[2]*scalex+dx), (p[3]*scaley+dy), (p[4]*scalex+dx), (p[5]*scaley+dy), (p[6]*scalex+dx), (p[7]*scaley+dy), 0, 0);
       nsvg__flattenCubicBez2(r, p, xform, 0);
     }
-
 		// Close path
 		nsvg__addPathPoint(r, &pt, xform, 0);
 
@@ -1015,7 +1016,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
 		}
 	}
 }
-
+/*
 static int nsvg__cmpEdge(const void *p, const void *q)
 {
 	const NSVGedge* a = (const NSVGedge*)p;
@@ -1025,7 +1026,7 @@ static int nsvg__cmpEdge(const void *p, const void *q)
 	if (a->y0 > b->y0) return  1;
 	return 0;
 }
-
+*/
 
 static NSVGactiveEdge* nsvg__addActive(NSVGrasterizer* r, NSVGedge* e, float startPoint)
 {
@@ -1650,11 +1651,11 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 				u += du;
 			}
 		}
-    if (shape->debug) {
-      DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
-        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
-        cache->colors[200], cache->colors[250]);
-    }
+//    if (shape->debug) {
+//      DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
+//        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
+//        cache->colors[200], cache->colors[250]);
+//    }
     for (i = ib; i < 256; i++) { //tail
 			cache->colors[i] = cb;
 //      cache->colors2[i] = cb;
@@ -1712,20 +1713,14 @@ static void nsvg__rasterizeShapes(
                                   const void *obj)
 {
 	NSVGshape *shape = NULL, *shapeLink = NULL;
-	NSVGedge *e = NULL;
-	NSVGcachedPaint cache;
-  float xform[6];
-	int i;
-  float min_scale = fabsf(scalex) < fabsf(scaley) ? scalex : scaley;
-
-  memset(&cache, 0, sizeof(NSVGcachedPaint));
+	float xform[6], xform2[6];
+	float min_scale = fabsf(scalex) < fabsf(scaley) ? fabsf(scalex) : fabsf(scaley);
 
 	r->bitmap = dst;
 	r->width = w;
 	r->height = h;
 	r->stride = stride;
   r->fscanline = fscanline;
-//  DBG("scanline=%d, rwidth=%d\n", r->cscanline, r->width);
 
 	if (w > r->cscanline) {
     int oldw = r->cscanline;
@@ -1738,22 +1733,15 @@ static void nsvg__rasterizeShapes(
 		if (r->scanline == NULL) return;
 	}
 
+	nsvg__xformSetScale(&xform2[0], scalex, scaley);
+	xform2[4] = tx; xform2[5] = ty;
+
 	for (shape = shapes; shape != NULL; shape = shape->next) {
 		if (!(shape->flags & NSVG_VIS_VISIBLE))
 			continue;
 
     memcpy(&xform[0], shape->xform, sizeof(float)*6);
-    if (shape->link) {
-      shapeLink = shape->link; //original shape
-      nsvg__xformPremultiply(xform, shapeLink->xform);
-    } else {
-      shapeLink = shape;
-    }
-//    if (strstr(shapeLink->id, "shar")) {
-//      DBG("ShapeID=%a\n", shapeLink->id);
-//      DumpFloat("shape xform before move", &xform[0], 6);
-//      DBG("t4=%x t5=%x\n", xform[4], xform[5]);
-//    }
+//		nsvg__xformMultiply(xform, xform2);
     xform[0] *= scalex;
     xform[1] *= scaley;
     xform[2] *= scalex;
@@ -1761,76 +1749,73 @@ static void nsvg__rasterizeShapes(
     xform[4] = xform[4] * scalex + tx;
     xform[5] = xform[5] * scaley + ty;
 
-//    if (strstr(shapeLink->id, "shar")) {
-//        DumpFloat("shape xform", &xform[0], 6);
-//        DumpFloat("shape bounds", shapeLink->bounds, 4);
-//      DBG("shape opacity=%s\n", PoolPrintFloat(shapeLink->opacity));
-//      DBG("shape flag=%d\n", (int)shapeLink->flags);
-//    }
-
-     if( shapeLink->image_href && external_image )// load external file
-     {
-       // compute size
-       float rect[4];
-       rect[0] = shapeLink->bounds[0] * scalex + tx;
-       rect[1] = shapeLink->bounds[1] * scaley + ty;
-       rect[2] = shapeLink->bounds[2] * scalex + tx;
-       rect[3] = shapeLink->bounds[3] * scaley + ty;
-       external_image(obj, r, shapeLink->image_href, rect);
-     }
-
-		if (shapeLink->fill.type != NSVG_PAINT_NONE) {
-			nsvg__resetPool(r);
-			r->freelist = NULL;
-			r->nedges = 0;
-
-			nsvg__flattenShape(r, shapeLink, xform);
-      if (shapeLink->debug) {
-        DBG("shape to fill %a, edges=%d\n", (CHAR8*)(shapeLink->id), r->nedges);
-      }
-			// Scale and translate edges
-			for (i = 0; i < r->nedges; i++) {
-				e = &r->edges[i];
-        e->y0 *= NSVG__SUBSAMPLES;
-        e->y1 *= NSVG__SUBSAMPLES;
-			}
-
-			// Rasterize edges
-			qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
-
-			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
-			nsvg__initPaint(&cache, &shapeLink->fill, shapeLink, &xform[0]);
-      nsvg__rasterizeSortedEdges(r, &cache, shapeLink->fillRule, &shapeLink->clip);
-    }
-		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * fabsf(min_scale)) > 0.01f) {
-			nsvg__resetPool(r);
-			r->freelist = NULL;
-			r->nedges = 0;
-			nsvg__flattenShapeStroke(r, shapeLink, xform);
-
-			// Scale and translate edges
-			for (i = 0; i < r->nedges; i++) {
-				e = &r->edges[i];
-        e->y0 *= NSVG__SUBSAMPLES;
-        e->y1 *= NSVG__SUBSAMPLES;
-			}
-
-			// Rasterize edges
-			qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
-
-			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
-			nsvg__initPaint(&cache, &shapeLink->stroke, shapeLink, &xform[0]);
-			nsvg__rasterizeSortedEdges(r, &cache, NSVG_FILLRULE_NONZERO, &shapeLink->clip);
+		if (!shape->link) {
+			renderShape(r, shape, &xform[0], min_scale);
 		}
-	}
-
-//	nsvg__unpremultiplyAlpha(dst, w, h, stride);
+		shapeLink = shape->link;  //this is <use>
+		while (shapeLink) {
+			memcpy(&xform2[0], &xform[0], sizeof(float)*6);
+			nsvg__xformPremultiply(&xform2[0], shapeLink->xform);
+			renderShape(r, shapeLink, &xform2[0], min_scale);
+			shapeLink = shapeLink->next;
+		}
+  }
 
 	r->bitmap = NULL;
 	r->width = 0;
 	r->height = 0;
 	r->stride = 0;
-  r->fscanline = NULL;
+	r->fscanline = NULL;
+}
+
+static void renderShape(NSVGrasterizer* r,
+                                  NSVGshape* shape, float *xform, float min_scale)
+{
+	NSVGedge *e = NULL;
+	NSVGcachedPaint cache;
+  int i;
+	memset(&cache, 0, sizeof(NSVGcachedPaint));
+
+		if (shape->fill.type != NSVG_PAINT_NONE) {
+			nsvg__resetPool(r);
+			r->freelist = NULL;
+			r->nedges = 0;
+
+			nsvg__flattenShape(r, shape, xform);
+			// Scale and translate edges
+			for (i = 0; i < r->nedges; i++) {
+				e = &r->edges[i];
+        e->y0 *= NSVG__SUBSAMPLES;
+        e->y1 *= NSVG__SUBSAMPLES;
+			}
+
+			// Rasterize edges
+			qsort(r->edges, r->nedges, sizeof(NSVGedge), NULL);
+
+			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
+			nsvg__initPaint(&cache, &shape->fill, shape, xform);
+			nsvg__rasterizeSortedEdges(r, &cache, shape->fillRule, &shape->clip);
+    }
+		if (shape->stroke.type != NSVG_PAINT_NONE && (shape->strokeWidth * min_scale) > 0.01f) {
+			nsvg__resetPool(r);
+			r->freelist = NULL;
+			r->nedges = 0;
+			nsvg__flattenShapeStroke(r, shape, xform);
+
+			// Scale and translate edges
+			for (i = 0; i < r->nedges; i++) {
+				e = &r->edges[i];
+        e->y0 *= NSVG__SUBSAMPLES;
+        e->y1 *= NSVG__SUBSAMPLES;
+			}
+
+			// Rasterize edges
+			qsort(r->edges, r->nedges, sizeof(NSVGedge), NULL);
+
+			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
+			nsvg__initPaint(&cache, &shape->stroke, shape, xform);
+			nsvg__rasterizeSortedEdges(r, &cache, NSVG_FILLRULE_NONZERO, &shape->clip);
+		}
 }
 
 void nsvg__rasterizeClipPaths(
@@ -1857,11 +1842,12 @@ void nsvg__rasterizeClipPaths(
   //                                      r->stencil, r->stencilSize * clipPathCount);
   if (oldSize == 0) {
     r->stencil = (unsigned char*)AllocateZeroPool(r->stencilSize * clipPathCount);
+	if (r->stencil == NULL) return;
   } else {
     r->stencil = (unsigned char*)ReallocatePool(oldSize, r->stencilSize * clipPathCount, r->stencil);
+	if (r->stencil == NULL) return;
     memset(r->stencil, 0, r->stencilSize * clipPathCount);
   }
-  if (r->stencil == NULL) return;
 
   clipPath = image->clipPaths;
   while (clipPath != NULL) {

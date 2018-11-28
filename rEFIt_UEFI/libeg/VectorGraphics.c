@@ -85,6 +85,9 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
       } */
+      if ((Id == BUILTIN_SELECTION_BIG) && GlobalConfig.BootCampStyle) {
+        shape->opacity = 0.f;
+      }
       if (strstr(shape->id, "BoundingRect") != NULL) {
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
@@ -285,6 +288,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
   } else {
     BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background_night", Scale);
+    if (!BigBack) {
+      BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
+    }
   }
 
 // --- Make Banner
@@ -635,7 +641,7 @@ VOID testSVG()
     EG_IMAGE        *NewImage;
     NSVGimage       *SVGimage;
     float Scale, ScaleX, ScaleY;
-    
+
     // load file
     Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
     if (!EFI_ERROR(Status)) {
