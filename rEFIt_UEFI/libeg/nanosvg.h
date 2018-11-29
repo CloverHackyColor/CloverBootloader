@@ -185,7 +185,7 @@ typedef struct NSVGshape
   unsigned char flags;    // Logical or of NSVG_FLAGS_* flags
   BOOLEAN isText;
   BOOLEAN debug;
-  char pad0[1];
+  BOOLEAN isSymbol;
   float miterLimit;      // Miter limit
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
@@ -193,7 +193,7 @@ typedef struct NSVGshape
   NSVGgroup* group;      // Pointer to parent group or NULL
   NSVGclip clip;
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
-  struct NSVGshape* link;
+  struct NSVGshape* link;    // pointer for reference shape
   struct NSVGfont* fontFace; //one letter - one shape
   const char *image_href;
 } NSVGshape;
@@ -381,8 +381,9 @@ typedef struct NSVGtext {
 
 typedef struct NSVGsymbol {
   char id[64];
-  float xform[6];
+//  float xform[6];
   float bounds[4];
+  float viewBox[4];
   NSVGshape* shapes;
   NSVGshape* shapesTail;
   struct NSVGsymbol *next;
@@ -471,7 +472,7 @@ NSVGrasterizer* nsvgCreateRasterizer(VOID);
 //   stride - number of bytes per scaleline in the destination buffer
 void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
-                   unsigned char* dst, int w, int h, int stride, recursive_image external_image, const void *obj);
+                   unsigned char* dst, int w, int h, int stride);
 
 // Deletes rasterizer context.
 void nsvgDeleteRasterizer(NSVGrasterizer*);

@@ -261,9 +261,10 @@ typedef struct {
 #define MKFLAG(n)   (1 << n)
 #define FLAGTRUE    MKFLAG(0)
 #define EVERGREEN   MKFLAG(1)
-#define FLAGMOBILE MKFLAG(2)
+#define FLAGMOBILE  MKFLAG(2)
 #define FLAGOLD     MKFLAG(3)
 #define FLAGNOTFAKE MKFLAG(4)
+#define FLAGDYNAMIC MKFLAG(5)
 
 typedef struct {
  type_t  type;

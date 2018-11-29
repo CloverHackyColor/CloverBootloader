@@ -205,7 +205,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
     ty = (Height - realHeight) * 0.5f;
   }
 
-  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, iWidth, iHeight, iWidth*4, NULL, NULL);
+  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, iWidth, iHeight, iWidth*4);
 //  DBG("%a rastered, blt\n", IconImage);
 #if 0
   BltImageAlpha(NewImage,
@@ -346,7 +346,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
       Status = ParseSVGIcon(p, i, IconName, Scale, &BuiltinIconTable[i].Image);
     }
     if (EFI_ERROR(Status)) {
-      DBG(" icon %d not parsed\n", i);
+      DBG(" icon %d not parsed take common\n", i);
+      if ((i >= BUILTIN_ICON_VOL_EXTERNAL) && (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
+        if (BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Image) {
+          BuiltinIconTable[i].Image = egCopyImage(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Image);
+        }
+      }
     }
     if (i == BUILTIN_SELECTION_BIG) {
       DBG("icon main size=[%d,%d]\n", BuiltinIconTable[i].Image->Width,
@@ -365,16 +370,28 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     OSIconsTable[i].image = NULL;
     Status = EFI_NOT_FOUND;
     if (!DayLight) {
-      DBG("search for %a\n", IconNight);
+//      DBG("search for %a\n", IconNight);
       Status = ParseSVGIcon(p, i, IconNight, Scale, &OSIconsTable[i].image);
     }
     if (EFI_ERROR(Status)) {
-      DBG("search for %a\n", OSIconsTable[i].name);
+//      DBG("search for %a\n", OSIconsTable[i].name);
       Status = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
+    }
+    if (i == 0) {
+      DBG("load os_mac status=%r\n", Status);
     }
 //    DBG("search for %a\n", OSIconsTable[i].name);
     if (EFI_ERROR(Status)) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
+      if ((i > 0) && (i < 12)) {
+        if (OSIconsTable[0].image) {
+          OSIconsTable[i].image = egCopyImage(OSIconsTable[0].image);
+        }
+      } else if (i < 17) {
+        if (OSIconsTable[12].image) {
+          OSIconsTable[i].image = egCopyImage(OSIconsTable[12].image);
+        }
+      }
     }
     i++;
   }
@@ -488,7 +505,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
-  nsvgRasterize(rast, p->image, 0, 0, 1.0f, 1.0f, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4), NULL, NULL);
+  nsvgRasterize(rast, p->image, 0, 0, 1.0f, 1.0f, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4));
 
 #if 0 //DEBUG_FONT
   //save font as png yyyyy
@@ -605,7 +622,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   rast = nsvgCreateRasterizer();
 //  DBG("begin raster text, scale=%s\n", PoolPrintFloat(Scale));
   nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY->PixelData,
-                (int)TextBufferXY->Width, (int)TextBufferXY->Height, (int)(Width*4), NULL, NULL);
+                (int)TextBufferXY->Width, (int)TextBufferXY->Height, (int)(Width*4));
   float RealWidth = p->image->realBounds[2] - p->image->realBounds[0];
 //  DBG("end raster text\n");
   nsvgDeleteRasterizer(rast);
@@ -711,7 +728,7 @@ VOID testSVG()
       float tx = 0; //-SVGimage->realBounds[0] * Scale;
       float ty = 0; //-SVGimage->realBounds[1] * Scale;
       DBG("timing rasterize start tx=%s ty=%s\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
-      nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4, NULL, NULL);
+      nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       //now show it!
       BltImageAlpha(NewImage,

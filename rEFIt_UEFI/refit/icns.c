@@ -90,7 +90,7 @@ typedef struct MISC_ICONS {
 } MISC_ICONS;
 */
 MISC_ICONS OSIconsTable[] = {
-  {NULL, "os_mac"},
+  {NULL, "os_mac"},  //0
   {NULL, "os_tiger"},
   {NULL, "os_leo"},
   {NULL, "os_snow"},
@@ -101,11 +101,11 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "os_cap"},
   {NULL, "os_sierra"},
   {NULL, "os_hsierra"},
-  {NULL, "os_moja"},
+  {NULL, "os_moja"},  //11
   {NULL, "os_linux"},
   {NULL, "os_ubuntu"},
   {NULL, "os_suse"},
-  {NULL, "os_freebsd"},
+  {NULL, "os_freebsd"}, //15
   {NULL, "os_freedos"},
   {NULL, "os_win"},
   {NULL, "os_vista"},

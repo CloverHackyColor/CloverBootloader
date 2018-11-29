@@ -32,7 +32,7 @@
  unsigned char* img = malloc(w*h*4);
  // Rasterize
  scaleX = width_to_see / design_width
- nsvgRasterize(rast, image, 0,0, scaleX, scaleY, img, w, h, w*4, NULL, NULL);
+ nsvgRasterize(rast, image, 0,0, scaleX, scaleY, img, w, h, w*4);
  */
 
 #include "nanosvg.h"
@@ -1705,12 +1705,10 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
  }
  */
 
-static void nsvg__rasterizeShapes(
-                                  NSVGrasterizer* r,
+static void nsvg__rasterizeShapes(NSVGrasterizer* r,
                                   NSVGshape* shapes, float tx, float ty, float scalex, float scaley,
                                   unsigned char* dst, int w, int h, int stride,
-                                  NSVGscanlineFunction fscanline, recursive_image external_image,
-                                  const void *obj)
+                                  NSVGscanlineFunction fscanline)
 {
   NSVGshape *shape = NULL, *shapeLink = NULL;
   float xform[6], xform2[6];
@@ -1757,6 +1755,9 @@ static void nsvg__rasterizeShapes(
       memcpy(&xform2[0], &xform[0], sizeof(float)*6);
       nsvg__xformPremultiply(&xform2[0], shapeLink->xform);
       renderShape(r, shapeLink, &xform2[0], min_scale);
+      if (!shape->isSymbol) {
+        break;
+      }
       shapeLink = shapeLink->next;
     }
   }
@@ -1853,16 +1854,14 @@ void nsvg__rasterizeClipPaths(
   while (clipPath != NULL) {
     nsvg__rasterizeShapes(r, clipPath->shapes, tx, ty, scalex, scaley,
                           &r->stencil[r->stencilSize * clipPath->index],
-                          w, h, r->stencilStride, nsvg__scanlineBit, NULL, NULL);
+                          w, h, r->stencilStride, nsvg__scanlineBit);
     clipPath = clipPath->next;
   }
 }
 
-void nsvgRasterize(
-                   NSVGrasterizer* r,
+void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
-                   unsigned char* dst, int w, int h, int stride, recursive_image external_image,
-                   const void *obj)
+                   unsigned char* dst, int w, int h, int stride)
 {
   //  int i;
 
@@ -1871,13 +1870,13 @@ void nsvgRasterize(
 
   tx -= image->realBounds[0] * scalex;
   ty -= image->realBounds[1] * scaley;
-  //  DBG("  image will be shifted by [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
-  //  DumpFloat("  image real bounds ", image->realBounds, 4);
+//    DBG("  image will be shifted by [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
+//   DumpFloat("  image real bounds ", image->realBounds, 4);
 
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
 
   nsvg__rasterizeShapes(r, image->shapes, tx, ty, scalex, scaley,
-                        dst, w, h, stride, nsvg__scanlineSolid, external_image, obj);
+                        dst, w, h, stride, nsvg__scanlineSolid);
 
   nsvg__unpremultiplyAlpha(dst, w, h, stride);
 }

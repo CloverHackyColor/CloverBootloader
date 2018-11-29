@@ -896,14 +896,17 @@ static float nsvg__getAverageScale(float* t)
 static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atXform)
 {
   NSVGpath* path;
-  float *curve;
+  float curve[8];
   float curveBounds[4];
 
   int i, first = 1;
 
   for (path = shape->paths; path != NULL; path = path->next) {
-    for (i = 0; i < path->npts-1; i += 3) {
-      curve = &path->pts[i*2];
+    curve[0] = path->pts[0];
+    curve[1] = path->pts[1];
+    for (i = 1; i < path->npts; i += 3) {
+   //   curve = &path->pts[i*2];
+      memcpy(&curve[2], &path->pts[i*2], 6*sizeof(float));
       nsvg__curveBounds(curveBounds, curve);
       if (first) {
         bounds[0] = curveBounds[0];
@@ -934,9 +937,9 @@ static void  nsvg__getSymbolBounds(NSVGparser* p)
   symbol->bounds[3] = -FLT_MAX;
   nsvg__shapesBound(shape, symbol->bounds);
   DumpFloat2("Symbol has bounds", symbol->bounds, 4);
-  DumpFloat2("  and xform", symbol->xform, 6);
+  DumpFloat2("  and viewbox", symbol->viewBox, 4);
 }
-
+#if 0
 static void  nsvg_getShapeBounds(NSVGshape* shape)
 {
   NSVGpath* path;
@@ -955,7 +958,7 @@ static void  nsvg_getShapeBounds(NSVGshape* shape)
     }
   }
 }
-
+#endif
 static void nsvg__addShape(NSVGparser* p)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
@@ -999,8 +1002,8 @@ static void nsvg__addShape(NSVGparser* p)
     }
   }
 
-  nsvg_getShapeBounds(shape);
-  //  nsvg__getLocalBounds(shape->bounds, shape);
+  //nsvg_getShapeBounds(shape);
+  nsvg__getLocalBounds(shape->bounds, shape);
 
   // Set fill
   shape->fill.type = NSVG_PAINT_NONE;
@@ -1286,27 +1289,16 @@ static unsigned int nsvg__parseColorHex(const char* str)
   while(str[n] && IsHexDigit(str[n]))
     n++;
   if (n == 6) {
-    //    sscanf(str, "%x", &c);
-    //    c = AsciiStrHexToUintn(str);
     n = hex2bin((CHAR8*)str, (UINT8*)&c, 3); //big endian
     b = (c >> 16) & 0xff;
     g = (c >> 8) & 0xff;
     r = c & 0xff;
-
   } else if (n == 3) {
-    //    sscanf(str, "%x", &c);
-    //    hex2bin(str, &c, 3);
     c = AsciiStrHexToUintn(str);
     r = ((c&0xf00) >> 8) * 17;
     g = ((c&0xf0) >> 4) * 17;
     b = (c&0xf) * 17;
-    //    c = (c&0xf) | ((c&0xf0) << 4) | ((c&0xf00) << 8);
-    //    c |= c<<4;
   }
-  //  r = (c >> 16) & 0xff;
-  //  g = (c >> 8) & 0xff;
-  //  b = c & 0xff;
-  //  DBG("color=(%d,%d,%d)\n",r,g,b);
   return NSVG_RGB(r,g,b);
 }
 
@@ -1314,9 +1306,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
 {
   int r = -1, g = -1, b = -1;
   float fr, fg, fb;
-  //  char s1[32]="", s2[32]="";
   char *s1 = NULL;
-  //  sscanf(str + 4, "%d%[%%, \t]%d%[%%, \t]%d", &r, s1, &g, s2, &b);
   AsciiStrToFloat(str+4, &s1, &fr);
   if (*s1 == '%') {
     r = (int)(fr * 2.55f);
@@ -2657,13 +2647,23 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
     }
   }
 
+  if (refSym) {
+    x -= refSym->viewBox[0];
+    y -= refSym->viewBox[1];
+  } else if (ref) {
+    x -= ref->bounds[0];
+    y -= ref->bounds[1];
+  }
+
   nsvg__xformSetTranslation(&xform[0], x, y);
-  nsvg__xformPremultiply(&xform[0], attr->xform); //translate after rotate
+  nsvg__xformMultiply(&xform[0], attr->xform); //translate before rotate
+  DumpFloat2("use xform", xform, 6);
 
   if (ref) {
     shape = (NSVGshape*)AllocateCopyPool(sizeof(NSVGshape), ref);
     if (!shape) return;
     memcpy(shape->xform, &xform[0], sizeof(float)*6);
+    shape->isSymbol = FALSE;
     shape->link = ref;
     AsciiStrCatS(shape->id, 64, "_lnk");
     shape->bounds[0] = FLT_MAX;
@@ -2671,11 +2671,13 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
     shape->bounds[2] = -FLT_MAX;
     shape->bounds[3] = -FLT_MAX;
     takeXformBounds(ref, &xform[0], shape->bounds);
+    DumpFloat2("used shape has bounds", shape->bounds, 4);
   } else if (refSym) {
     shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
     if (!shape) return;
-    memcpy(shape->xform, refSym->xform, sizeof(float)*6);
-    nsvg__xformMultiply(shape->xform, &xform[0]);
+    memcpy(shape->xform, xform, sizeof(float)*6);
+//    nsvg__xformMultiply(shape->xform, &xform[0]);
+    shape->isSymbol = TRUE;
     shape->link = refSym->shapes;
     AsciiStrCpyS(shape->id, 64, attr->id);
     shape->bounds[0] = FLT_MAX;
@@ -2690,7 +2692,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
       takeXformBounds(shapeInt, &xform2[0], shape->bounds);
       shapeInt = shapeInt->next;
     }
-//    DumpFloat2("used symbol has bounds", shape->bounds, 4);
+    DumpFloat2("used symbol has bounds", shape->bounds, 4);
   }
 
   /* //there can't be own gradient
@@ -3177,7 +3179,6 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
       } else if (strcmp(attr[i], "height") == 0) {
         p->image->height = nsvg__parseCoordinate(p, attr[i + 1], 0.0f, 0.0f);
       } else if (strcmp(attr[i], "viewBox") == 0) {
-        //Slice -
         char* Next = 0;
         AsciiStrToFloat(attr[i + 1], &Next, &p->viewMinx);
         AsciiStrToFloat((const char*)Next, &Next, &p->viewMiny);
@@ -3347,10 +3348,16 @@ static void nsvg__parseSymbol(NSVGparser* p, const char** dict)
   int i;
   symbol = (NSVGsymbol*)AllocateZeroPool(sizeof(NSVGsymbol));
   for (i = 0; dict[i]; i += 2) {
-    nsvg__parseAttr(p, dict[i], dict[i + 1]);
+    if (strcmp(dict[i], "viewBox") == 0) {
+      char* Next = 0;
+      AsciiStrToFloat(dict[i + 1], &Next, &symbol->viewBox[0]);
+      AsciiStrToFloat((const char*)Next, &Next, &symbol->viewBox[1]);
+      AsciiStrToFloat((const char*)Next, &Next, &symbol->viewBox[2]);
+      AsciiStrToFloat((const char*)Next, &Next, &symbol->viewBox[3]);
+    } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }
   AsciiStrCpyS(symbol->id, 64, curAttr->id);
-  memcpy(symbol->xform, curAttr->xform, 6*sizeof(float));
+//  memcpy(symbol->xform, curAttr->xform, 6*sizeof(float));
   symbol->next = p->symbols;
   p->symbols = symbol;
 }

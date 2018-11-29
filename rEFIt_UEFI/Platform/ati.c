@@ -1099,7 +1099,7 @@ AtiDevProp ati_devprop_list[] = {
   // {FLAGTRUE, FALSE, "@0,ATY,EFIDisplay",  NULL,     STRVAL("TMDSA")   },
 
   //{FLAGTRUE, TRUE, "@0,AAPL,vram-memory",  get_vrammemory_val,  NULVAL    },
-  {FLAGTRUE, TRUE, "AAPL00,override-no-connect",  get_edid_val,       NULVAL        },
+  {FLAGDYNAMIC, TRUE, "AAPL00,override-no-connect",  get_edid_val,       NULVAL        },
   {FLAGNOTFAKE, TRUE, "@0,compatible",              get_name_val,       NULVAL    },
   {FLAGTRUE, TRUE, "@0,connector-type",          get_conntype_val,  NULVAL        },
   {FLAGTRUE, TRUE, "@0,device_type",             NULL,     STRVAL("display")   },
@@ -1124,7 +1124,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGMOBILE, FALSE, "AAPL,HasLid",            NULL,     DWRVAL(1)   },
   {FLAGMOBILE, FALSE, "AAPL,backlight-control", NULL,     DWRVAL(1)   },
   {FLAGTRUE, FALSE, "AAPL,overwrite_binimage", get_binimage_owr,  NULVAL    },
-  {FLAGTRUE, FALSE, "ATY,bin_image",            get_binimage_val,  NULVAL    },
+  {FLAGDYNAMIC, FALSE, "ATY,bin_image",        get_binimage_val,  NULVAL    },
   {FLAGTRUE, FALSE, "ATY,Copyright", NULL, STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
   {FLAGTRUE, FALSE, "ATY,EFIVersion", NULL, STRVAL("01.00.3180")                  },
   {FLAGTRUE, FALSE, "ATY,Card#",   get_romrevision_val, NULVAL                },
@@ -1486,7 +1486,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
   Sier = (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.12"));
 
   for (i = 0; devprop_list[i].name != NULL; i++) {
-    if ((devprop_list[i].flags == FLAGTRUE) || (devprop_list[i].flags & card->flags)) {
+    if ((devprop_list[i].flags & card->flags) != 0) {
       if (devprop_list[i].get_value && devprop_list[i].get_value(val, 0, Sier)) {
         devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
         free_val(val);
@@ -1937,11 +1937,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     }
   }
 
-  if (card->info->chip_family >= CHIP_FAMILY_CEDAR) {
-    DBG("ATI Radeon EVERGREEN+ family\n");
-    card->flags |= EVERGREEN;
-  }
-
+  card->flags = FLAGTRUE | FLAGDYNAMIC;
   if (card->info->chip_family <= CHIP_FAMILY_RV670) {
     DBG("ATI Radeon OLD family\n");
     card->flags |= FLAGOLD;
@@ -2054,16 +2050,20 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);
   }
 
+  if (gSettings.NoDefaultProperties) {
+    card->flags &= ~FLAGTRUE;
+    DBG("ATI: No default properties injected\n");
+  }
+
+  devprop_add_list(ati_devprop_list, Entry->OSVersion);
   if (!gSettings.NoDefaultProperties) {
-    devprop_add_list(ati_devprop_list, Entry->OSVersion);
     if (gSettings.UseIntelHDMI) {
       devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
     } else {
       devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
     }
-  } else {
-    DBG("ATI: No default properties injected\n");
   }
+
 
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
