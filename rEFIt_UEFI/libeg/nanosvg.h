@@ -161,16 +161,16 @@ typedef struct NSVGpattern {
 
 typedef struct NSVGgroup
 {
-	char id[kMaxIDLength];
-	struct NSVGgroup* parent;			// Pointer to parent group or NULL
-	struct NSVGgroup* next;			// Pointer to next group or NULL
+  char id[kMaxIDLength];
+  struct NSVGgroup* parent;      // Pointer to parent group or NULL
+  struct NSVGgroup* next;      // Pointer to next group or NULL
   struct NSVGshape* shapeList; // list of shapes inside the group
   int visibility;
 } NSVGgroup;
 
 typedef struct NSVGshape
 {
-	char id[kMaxIDLength];				// Optional 'id' attr of the shape
+  char id[kMaxIDLength];        // Optional 'id' attr of the shape
   char title[kMaxIDLength];        // Optional 'title' of the shape or its ancestor(s)
   NSVGpaint fill;        // Fill paint
   NSVGpaint stroke;      // Stroke paint
@@ -190,7 +190,7 @@ typedef struct NSVGshape
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
   NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
-	NSVGgroup* group;			// Pointer to parent group or NULL
+  NSVGgroup* group;      // Pointer to parent group or NULL
   NSVGclip clip;
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
   struct NSVGshape* link;
@@ -212,7 +212,7 @@ typedef struct NSVGimage
   float height;        // Height of the image.
   float realBounds[4];
   NSVGshape* shapes;      // Linked list of shapes in the image.
-	NSVGgroup* groups;			// Linked list of all groups in the image
+  NSVGgroup* groups;      // Linked list of all groups in the image
   BOOLEAN isFont;
   NSVGclipPath* clipPaths;
 } NSVGimage;
@@ -241,8 +241,8 @@ enum NSVGunits {
 };
 
 enum NSVGvisibility {
-	NSVG_VIS_DISPLAY = 1,
-	NSVG_VIS_VISIBLE = 2,
+  NSVG_VIS_DISPLAY = 1,
+  NSVG_VIS_VISIBLE = 2,
 };
 
 typedef struct NSVGcoordinate {
@@ -313,9 +313,9 @@ typedef struct NSVGattrib
 
  typedef struct NSVGstyles
  {
- 	char*	name;
- 	char* description;
- 	struct NSVGstyles* next;
+   char*  name;
+   char* description;
+   struct NSVGstyles* next;
  } NSVGstyles;
 
 //------------- Fonts ---------------------
@@ -380,12 +380,12 @@ typedef struct NSVGtext {
 } NSVGtext;
 
 typedef struct NSVGsymbol {
-	char id[64];
-	float xform[6];
-	float bounds[4];
-	NSVGshape* shapes;
-	NSVGshape* shapesTail;
-	struct NSVGsymbol *next;
+  char id[64];
+  float xform[6];
+  float bounds[4];
+  NSVGshape* shapes;
+  NSVGshape* shapesTail;
+  struct NSVGsymbol *next;
 } NSVGsymbol;
 
 typedef struct NSVGparser

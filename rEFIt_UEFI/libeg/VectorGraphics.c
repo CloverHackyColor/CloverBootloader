@@ -48,9 +48,9 @@ extern INTN FontWidth;
 textFaces textFace[4]; //0-help 1-message 2-menu 3-test
 
 
-EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
+EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, EG_IMAGE  **Image)
 {
-//  EFI_STATUS      Status = EFI_NOT_FOUND;
+  EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   SVGimage = p->image;
@@ -66,15 +66,13 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   shapePrev = NULL;
   while (shape) {
     group = shape->group;
-
     shapeNext = shape->next;
-
-      while (group) {
-        if (strcmp(group->id, IconName) == 0) {
-          break;
-        }
-        group = group->next;
+    while (group) {
+      if (strcmp(group->id, IconName) == 0) {
+        break;
       }
+      group = group->next;
+    }
 
     if (group) { //the shape is in the group
       // keep this sample for debug purpose
@@ -182,9 +180,15 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
 //  DBG("icon %a width=%s height=%s\n", IconName, PoolPrintFloat(Width), PoolPrintFloat(Height));
-  EG_IMAGE  *NewImage = NULL;
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
+  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
+
+  if (IconImage->shapes == NULL) {
+    *Image = NewImage;
+    return Status;
+  }
+
 
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f, ty = 0.f;
@@ -200,7 +204,7 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
-  NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
+
   nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, iWidth, iHeight, iWidth*4, NULL, NULL);
 //  DBG("%a rastered, blt\n", IconImage);
 #if 0
@@ -214,12 +218,13 @@ EG_IMAGE  *ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale)
   nsvgDeleteRasterizer(rast);
 //  nsvg__deleteParser(p2);
 //  nsvgDelete(p2->image);
-  return NewImage;
+  *Image = NewImage;
+  return EFI_SUCCESS;
 }
 
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
-
+  EFI_STATUS Status;
   NSVGparser      *p = NULL;
 //  NSVGfont        *fontSVG;
   NSVGimage       *SVGimage;
@@ -283,18 +288,31 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 #endif
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &BlackPixel);
-  if (DayLight) {
-    DBG("use daylight theme\n");
-    BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
-  } else {
-    BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background_night", Scale);
-    if (!BigBack) {
-      BigBack = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale);
-    }
+  if (BigBack) {
+    egFreeImage(BigBack);
+    BigBack = NULL;
+  }
+  Status = EFI_NOT_FOUND;
+  if (!DayLight) {
+    Status = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &BigBack);
+  }
+  if (EFI_ERROR(Status)) {
+    Status = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale, &BigBack);
   }
 
 // --- Make Banner
-  Banner = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale);
+  if (Banner) {
+    egFreeImage(Banner);
+    Banner = NULL;
+  }
+  Status = EFI_NOT_FOUND;
+  if (!DayLight) {
+    Status = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner_night", Scale, &Banner);
+  }
+  if (EFI_ERROR(Status)) {
+    Status = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale, &Banner);
+  }
+
   BuiltinIconTable[BUILTIN_ICON_BANNER].Image = Banner;
   BanHeight = (int)(Banner->Height * Scale + 1.f);
   DBG("parsed banner->width=%d\n", Banner->Width);
@@ -317,9 +335,17 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     IconName = AllocateZeroPool(Size);
     UnicodeStrToAsciiStrS(ptr, IconName, Size);
 //    DBG("search for icon name %a\n", IconName);
-
-    BuiltinIconTable[i].Image = ParseSVGIcon(p, i, IconName, Scale);
-    if (!BuiltinIconTable[i].Image) {
+    CHAR8 IconNight[64];
+    AsciiStrCpyS(IconNight, 64, IconName);
+    AsciiStrCatS(IconNight, 64, "_night");
+    Status = EFI_NOT_FOUND;
+    if (!DayLight) {
+      Status = ParseSVGIcon(p, i, IconNight, Scale, &BuiltinIconTable[i].Image);
+    }
+    if (EFI_ERROR(Status)) {
+      Status = ParseSVGIcon(p, i, IconName, Scale, &BuiltinIconTable[i].Image);
+    }
+    if (EFI_ERROR(Status)) {
       DBG(" icon %d not parsed\n", i);
     }
     if (i == BUILTIN_SELECTION_BIG) {
@@ -333,26 +359,40 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   // OS icons and buttons
   i = 0;
   while (OSIconsTable[i].name) {
-//    DBG("search for %a\n", OSIconsTable[i].name);
-    if ((strcmp(OSIconsTable[i].name, "os_moja") == 0) && !DayLight) {
-      OSIconsTable[i].image = ParseSVGIcon(p, i, "os_moja_night", Scale);
-      DBG("chosen moja_night\n");
-    } else {
-      OSIconsTable[i].image = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale);
+    CHAR8 IconNight[64];
+    AsciiStrCpyS(IconNight, 64, OSIconsTable[i].name);
+    AsciiStrCatS(IconNight, 64, "_night");
+    OSIconsTable[i].image = NULL;
+    Status = EFI_NOT_FOUND;
+    if (!DayLight) {
+      DBG("search for %a\n", IconNight);
+      Status = ParseSVGIcon(p, i, IconNight, Scale, &OSIconsTable[i].image);
     }
-    if (OSIconsTable[i].image == NULL) {
+    if (EFI_ERROR(Status)) {
+      DBG("search for %a\n", OSIconsTable[i].name);
+      Status = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
+    }
+//    DBG("search for %a\n", OSIconsTable[i].name);
+    if (EFI_ERROR(Status)) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
     }
     i++;
   }
 
   //selection for bootcamp style
-  SelectionImages[4] = ParseSVGIcon(p, BUILTIN_ICON_SELECTION, "selection_indicator", Scale);
+  Status = EFI_NOT_FOUND;
+  if (!DayLight) {
+    Status = ParseSVGIcon(p, BUILTIN_ICON_SELECTION, "selection_indicator_night", Scale, &SelectionImages[4]);
+  }
+  if (EFI_ERROR(Status)) {
+    Status = ParseSVGIcon(p, BUILTIN_ICON_SELECTION, "selection_indicator", Scale, &SelectionImages[4]);
+  }
+/*
   if (SelectionImages[4]) {
     DBG("selection_indicator parsed, size=[%d,%d]\n",
         SelectionImages[4]->Width, SelectionImages[4]->Height);
   }
-
+*/
 
   if (p) {
 //    nsvg__deleteParser(p);
@@ -374,7 +414,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   DBG("parsing theme finish\n");
   return EFI_SUCCESS;
 }
-
+#if 0
 VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 {
 //  EFI_STATUS      Status;
@@ -468,7 +508,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 //  nsvg__deleteParser(p);
   return;
 }
-
+#endif
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
 INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, INTN Cursor)
