@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-10 07:47+0300\n"
+"POT-Creation-Date: 2018-11-30 20:40+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -627,7 +627,7 @@ msgstr "GRUB의 UDF 파일 시스템 드라이버"
 
 #. type: "SMCHelper-64.UEFI_description"
 #: Resources/templates/Localizable.strings:111
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "FakeSMC가 NVRAM에 남긴 SMC 키를 복원"
@@ -737,104 +737,98 @@ msgstr "순정 HFS+ 파일 시스템 드라이버"
 msgid "Driver for support NVM Express devices."
 msgstr "NVM Express 장치 지원용 드라이버"
 
-#. type: "OsxAptioFix2Drv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:145
-#, no-wrap
-msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-msgstr "대체 드라이버 (v2)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오."
-
 #. type: "OsxAptioFix3Drv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
 msgstr "대체 드라이버 (v3)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오."
 
 #. type: "OsxAptioFixDrv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "이전 64 비트 드라이버로 AMI Aptio와 같은 UEFI 펌웨어의 메모리 문제를 해결할 수 있습니다. 다른 AptioFix와 함께 사용하지 마십시오."
 
 #. type: "OsxFatBinaryDrv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:148
+#: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
 msgstr "10.9 이하의 OS X를 위한 FAT 바이너리 실행 드라이버"
 
 #. type: "OsxLowMemFixDrv-64.UEFI_description"
-#: Resources/templates/Localizable.strings:149
+#: Resources/templates/Localizable.strings:148
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "OsxAptioFixDrv의 간소화 형태(간소화되지 않는 버전과 함께 사용하지 마십시오)"
 
 #. type: "PartitionDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:149
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "GPT/MBR 또는 Apple Partition Map과 같은 희귀 파티션맵을 지원하기 위한 64비트 드라이버"
 
 #. type: "Ps2MouseDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr "PS/2 마우스 드라이버, 64비트"
 
 #. type: "UsbKbDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
 msgstr "부팅 UI 지원을 위한 키보드 드라이버"
 
 #. type: "UsbMouseDxe-64.UEFI_description"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr "USB 마우스 드라이버, 64비트"
 
 #. type: "VBoxExt2-64.UEFI_description"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox 용 Ext2/3 파일 시스템 드라이버, 64비트"
 
 #. type: "VBoxExt4-64.UEFI_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox 용 Ext4 파일 시스템 드라이버, 64비트"
 
 #. type: "VBoxHfs-64.UEFI_description"
-#: Resources/templates/Localizable.strings:157
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "HFS+ filesystem driver."
 msgstr "오픈소스 HFS+ 파일 시스템 드라이버"
 
 #. type: "VBoxIso9600-64.UEFI_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "ISO 9600 filesystem driver."
 msgstr "ISO 9600 파일 시스템 드라이버"
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid "Themes"
 msgstr "테마"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "Select to install themes."
 msgstr "사용자가 원하는 테마를 설치합니다."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:166
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "흑녹색조"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -844,13 +838,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:170
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "embedded"
 msgstr "임베디드"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid ""
 "embedded theme from Blackosx,\n"
@@ -860,13 +854,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:174
+#: Resources/templates/Localizable.strings:173
 #, no-wrap
 msgid "metal"
 msgstr "금속 테마"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:175
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -875,30 +869,53 @@ msgstr ""
 "Slice의 The original metal 테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
-#. type: "random_title"
+#. type: "clovy_title"
+#: Resources/templates/Localizable.strings:177
+#, fuzzy, no-wrap
+#| msgid "Clover"
+msgid "Clovy"
+msgstr "Clover"
+
+#. type: "clovy_description"
 #: Resources/templates/Localizable.strings:178
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal"
+msgid ""
+"Vector SVG theme from Clovy,\n"
+"Install to /EFI/CLOVER/themes/Clovy"
+msgstr ""
+"Slice의 The original metal 테마.\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/metal"
+
+#. type: "random_title"
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "random"
 msgstr "랜덤"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:179
-#, no-wrap
+#: Resources/templates/Localizable.strings:182
+#, fuzzy, no-wrap
+#| msgid ""
+#| "random theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgid ""
-"random theme from Slice,\n"
+"random theme,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
 "Slice의 랜덤테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:182
+#: Resources/templates/Localizable.strings:185
 #, no-wrap
 msgid "steampunkblack"
 msgstr "스팀펑크 블랙"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -908,13 +925,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:186
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover 테마"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -925,13 +942,13 @@ msgstr ""
 "다음에 설치합니다: /응용 프로그램"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:196
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "선택한 볼륨에 RC 스크립트 설치"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:194
+#: Resources/templates/Localizable.strings:197
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -941,43 +958,43 @@ msgstr ""
 "선택한 볼륨은 반드시 macOS 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "부팅 가능한 모든 macOS 볼륨에 RC 스크립트 설치"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:197
+#: Resources/templates/Localizable.strings:200
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "선택한 볼륨을 제외한 모든 내장 macOS 볼륨에 모든 RC 스크립트를 설치합니다."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:198
+#: Resources/templates/Localizable.strings:201
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "선택적 RC 스크립트"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:202
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "잠자기 프록시 클라이언트 비활성화"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:203
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:205
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:206
+#: Resources/templates/Localizable.strings:209
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1328,3 +1345,6 @@ msgstr "EFI 디렉토리를 설정하세요"
 #, no-wrap
 msgid "Unknown"
 msgstr "알 수 없음"
+
+#~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
+#~ msgstr "대체 드라이버 (v2)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오."

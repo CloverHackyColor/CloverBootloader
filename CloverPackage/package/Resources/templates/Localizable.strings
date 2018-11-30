@@ -142,7 +142,6 @@ Usually it is already present but sometime it may be missed. In this case you sh
 "HashServiceFix-64.UEFI_description" = "Fix Hash support if absent in native UEFI BIOS";
 "HFSPlus.UEFI_description" = "Alternate HFS+ filesystem driver.";
 "NvmExpressDxe-64.UEFI_description" = "Driver for support NVM Express devices.";
-"OsxAptioFix2Drv-64.UEFI_description" = "Alternate driver (v2) to fix Memory problems on UEFI firmware.";
 "OsxAptioFix3Drv-64.UEFI_description" = "Alternate driver (v3) to fix Memory problems on UEFI firmware.";
 "OsxAptioFixDrv-64.UEFI_description" = "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
 "OsxFatBinaryDrv-64.UEFI_description" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
@@ -175,8 +174,12 @@ Install to /EFI/CLOVER/themes/embedded";
 "metal_description" = "The original metal theme from Slice,
 Install to /EFI/CLOVER/themes/metal";
 
+"clovy_title" = "Clovy";
+"clovy_description" = "Vector SVG theme from Clovy,
+Install to /EFI/CLOVER/themes/Clovy";
+
 "random_title" = "random";
-"random_description" = "random theme from Slice,
+"random_description" = "random theme,
 Install to /EFI/CLOVER/themes/random choose a theme from others";
 
 "steampunkblack_title" = "steampunkblack";

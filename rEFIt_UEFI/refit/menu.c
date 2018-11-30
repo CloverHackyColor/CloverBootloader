@@ -3556,7 +3556,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       break;
     }
 
-    case MENU_FUNCTION_PAINT_TIMEOUT:
+    case MENU_FUNCTION_PAINT_TIMEOUT: //ever be here?
       X = (UGAWidth - StrLen(ParamText) * ScaledWidth) >> 1;
       DrawMenuText(ParamText, 0, X, TimeoutPosY, 0xFFFF);
       break;
@@ -3763,6 +3763,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
   INTN i;
   INTN row0PosYRunning;
   INTN VisibleHeight = 0; //assume vertical layout
+  INTN MessageHeight = 20;
 
   switch (Function) {
 
@@ -3785,7 +3786,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
-      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE1_XSPACING* GlobalConfig.Scale)) * row1Count) >> 1;
+      row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE1_XSPACING * GlobalConfig.Scale)) * row1Count) >> 1;
       textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - TextHeight;
       row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
@@ -3794,6 +3795,13 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       }
       row0PosYRunning = row0PosY;
       row1PosXRunning = row1PosX;
+
+    if (GlobalConfig.TypeSVG && textFace[1].valid) {
+      MessageHeight = (INTN)((textFace[1].size + 2) * GlobalConfig.Scale);
+    } else {
+      MessageHeight = TextHeight;
+    }
+
       //     DBG("EntryCount =%d\n", Screen->EntryCount);
       for (i = 0; i < (INTN)Screen->EntryCount; i++) {
         if (Screen->Entries[i]->Row == 0) {
@@ -3884,9 +3892,9 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        FillRectAreaOfScreen((UGAWidth >> 1), textPosY + TextHeight * i,
+        FillRectAreaOfScreen((UGAWidth >> 1), textPosY + MessageHeight * i,
                              OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight * i, X_IS_CENTER);
+        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + MessageHeight * i, X_IS_CENTER);
       }
 
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
@@ -3900,6 +3908,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
+  INTN MessageHeight = 20;
 
   switch (Function) {
 
@@ -3949,6 +3958,12 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
+      }
+
+      if (GlobalConfig.TypeSVG && textFace[1].valid) {
+        MessageHeight = (INTN)((textFace[1].size + 2) * GlobalConfig.Scale);
+      } else {
+        MessageHeight = TextHeight;
       }
 
       row0PosXRunning = row0PosX;
@@ -4075,9 +4090,9 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + TextHeight * i,
+        FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
                                    OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), FunctextPosY + TextHeight * i, X_IS_CENTER);
+        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);

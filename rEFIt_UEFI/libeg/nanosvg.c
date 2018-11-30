@@ -4112,14 +4112,25 @@ static void takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
   nsvg__xformPoint(&newBounds[2], &newBounds[3], shape->bounds[2], shape->bounds[3], xform);
   nsvg__xformPoint(&newBounds[4], &newBounds[5], shape->bounds[2], shape->bounds[1], xform);
   nsvg__xformPoint(&newBounds[6], &newBounds[7], shape->bounds[0], shape->bounds[3], xform);
-
+//we have to take into account all points, as x1 can be > x2 etc.
   bounds[0] = nsvg__minf(bounds[0], newBounds[0]);
+  bounds[0] = nsvg__minf(bounds[0], newBounds[2]);
+  bounds[0] = nsvg__minf(bounds[0], newBounds[4]);
   bounds[0] = nsvg__minf(bounds[0], newBounds[6]);
+
   bounds[1] = nsvg__minf(bounds[1], newBounds[1]);
+  bounds[1] = nsvg__minf(bounds[1], newBounds[3]);
   bounds[1] = nsvg__minf(bounds[1], newBounds[5]);
+  bounds[1] = nsvg__minf(bounds[1], newBounds[7]);
+
+  bounds[2] = nsvg__maxf(bounds[2], newBounds[0]);
   bounds[2] = nsvg__maxf(bounds[2], newBounds[2]);
   bounds[2] = nsvg__maxf(bounds[2], newBounds[4]);
+  bounds[2] = nsvg__maxf(bounds[2], newBounds[6]);
+  
+  bounds[3] = nsvg__maxf(bounds[3], newBounds[1]);
   bounds[3] = nsvg__maxf(bounds[3], newBounds[3]);
+  bounds[3] = nsvg__maxf(bounds[3], newBounds[5]);
   bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
 }
 //image bounds for a shape group

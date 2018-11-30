@@ -130,20 +130,20 @@ float PowF(float x, INTN n)
 
 float CeilF(float X)
 {
-  INT32 I = X;
+  INT32 I = (INT32)X;
   return (float)(++I);
 }
 
 float FloorF(float X)
 {
-  INT32 I = X;
+  INT32 I = (INT32)X;
   return (float)I;
 }
 
 float ModF(float X, float Y)
 {
   INT32 I = (INT32)(X / Y);
-  return (X - I * Y);
+  return (X - (float)I * Y);
 }
 
 float AcosF(float X)
@@ -259,13 +259,13 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
   }
 
   Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
-  Mantissa = Temp;
+  Mantissa = (float)Temp;
   String = TmpStr;
   if (*String == '.') {
     String++;
     Temp = 0;
     Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
-    Ftemp = Temp;
+    Ftemp = (float)Temp;
     while (String != TmpStr) {
       if (*String == '\0') {
         break;
@@ -292,7 +292,7 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
       Mantissa *= Ftemp;
     }
   }
-  *Data = Mantissa * Sign;
+  *Data = (Sign > 0)?Mantissa:-Mantissa;
   if (EndPointer != NULL) {
     *EndPointer = (CHAR8 *) TmpStr;
   }
@@ -348,7 +348,7 @@ VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
   }
   
   I = (INTN)X;
-  D = I;
+  D = (float)I;
   Fract = fabsf((X - D) * 1000000.0f);
   AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
 }
@@ -375,7 +375,7 @@ float rndf() //expected 0..1
 //  AsmRdRand16(&Rand);  //it's a pity panic
 //  return (float)Rand / 65536.f;
   seed = seed * 214013 + 2531011;
-  float x = seed / 4294967296.0f;
+  float x = (float)seed / 4294967296.0f;
   return x;
 }
 
