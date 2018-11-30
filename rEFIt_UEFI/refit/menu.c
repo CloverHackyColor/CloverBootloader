@@ -691,7 +691,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.NoCaches;
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //116 - DSDT chooser
   InputItems[InputItemsCount++].IValue = 116;
-    
+
   InputItems[InputItemsCount].ItemType = ASString;  //117
   if (New) {
     InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
@@ -2585,10 +2585,10 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 */
       case SCAN_F8:
         testSVG();
-        
+
          break;
 
-  
+
       case SCAN_F9:
         SetNextScreenMode(1);
         break;
@@ -3352,9 +3352,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)TextHeight;
         StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title);
-        PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
-        PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
-        PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
+        //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
+        //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
+        //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
+        PlaceCentre = (INTN)((TextHeight - (INTN)(Buttons[2]->Height)) * GlobalConfig.Scale / 2);
+        PlaceCentre1 = (INTN)((TextHeight - (INTN)(Buttons[0]->Height)) * GlobalConfig.Scale / 2);
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
@@ -3427,9 +3429,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       REFIT_MENU_ENTRY *EntryC = Screen->Entries[State->CurrentSelection];
       TitleLen = StrLen(EntryL->Title);
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryL->Title);
-      PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
-      PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
-      PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
+      //clovy//PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
+      //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
+      //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
+      PlaceCentre = (INTN)((TextHeight - (INTN)(Buttons[2]->Height)) * GlobalConfig.Scale / 2);
+      PlaceCentre1 = (INTN)((TextHeight - (INTN)(Buttons[0]->Height)) * GlobalConfig.Scale / 2);
 
 
       // redraw selection cursor
@@ -3437,7 +3441,9 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       // 2. usr-sse2
       if (EntryL->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryL)->Item->ItemType == BoolValue) {
-          DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
+          //clovy//DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
+          //clovy//             EntryL->Place.YPos, 0xFFFF);
+          DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                        EntryL->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->BValue)? Buttons[3] : Buttons[2],
                         EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
@@ -4756,12 +4762,12 @@ REFIT_MENU_ENTRY  *SubMenuDsdts()
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
   UINTN               i;
-  
+
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Dsdt name->");
-  
+
   AddMenuInfoLine(SubScreen, L"Select a DSDT file:");
   AddMenuItem(SubScreen, 116,  "BIOS.aml", TAG_SWITCH, FALSE);
-  
+
   for (i = 0; i < DsdtsNum; i++) {
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%s", DsdtsList[i]);
@@ -4791,7 +4797,7 @@ REFIT_MENU_ENTRY *SubMenuACPI()
 
   AddMenuItem(SubScreen, 102, "Debug DSDT", TAG_INPUT, FALSE);
 //  AddMenuItem(SubScreen, 1,   "DSDT name:", TAG_INPUT, TRUE);
-  
+
   AddMenuEntry(SubScreen, SubMenuDsdts());
   AddMenuEntry(SubScreen, SubMenuDropTables());
   AddMenuEntry(SubScreen, SubMenuDropDSM());
