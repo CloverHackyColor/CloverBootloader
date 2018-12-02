@@ -3677,9 +3677,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
-//    if (GlobalConfig.BootCampStyle) {
-//      SelectionImages[4]->HasAlpha = TRUE;
-//    }
     //MainImage->HasAlpha = TRUE;
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
@@ -3693,7 +3690,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   }
 
   // draw BCS indicator
-  // Needy: if Labels (Titles) Hidden no point to draw the indicator
+  // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
   if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
     SelectionImages[4]->HasAlpha = TRUE;
 
@@ -3989,8 +3986,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
  */
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-  INTN i;
-  INTN MessageHeight;
+  INTN i = 0;
+  INTN MessageHeight = 0;
 // clovy
 	if (GlobalConfig.TypeSVG && textFace[1].valid) {
 		MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
@@ -4089,15 +4086,12 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                               itemPosX[i - State->FirstVisible], row0PosY);
             // draw static text for the boot options, BootCampStyle
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+              INTN textPosX = itemPosX[i - State->FirstVisible] + (row0TileSize / 2);
               // clear the screen
-              FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
-// clovy                                   EntriesWidth + GlobalConfig.TileXSpace, TextHeight, &MenuBackgroundPixel,
-                                   EntriesWidth + GlobalConfig.TileXSpace, MessageHeight, &MenuBackgroundPixel,
-                                   X_IS_CENTER);
+              FillRectAreaOfScreen(textPosX, textPosY,EntriesWidth + GlobalConfig.TileXSpace,
+                                   MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
               // draw the text
- //             DrawBCSText(Screen->Entries[i]->Title, textPosX, textPosY, X_IS_CENTER);
-               DrawBCSText(Screen->Entries[i]->Title,
-                          itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY, X_IS_CENTER);
+              DrawBCSText(Screen->Entries[i]->Title, textPosX, textPosY, X_IS_CENTER);
             }
           }
         } else {
