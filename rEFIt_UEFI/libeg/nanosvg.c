@@ -96,6 +96,8 @@ extern VOID *fontsDB;
 #define NSVG_INLINE inline
 #endif
 
+UINTN NumFrames;
+UINTN FrameTime;
 int nsvg__shapesBound(NSVGshape *shapes, float* bounds);
 static void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
 
@@ -3455,6 +3457,10 @@ static void parseTheme(NSVGparser* p, const char** dict)
       GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BootCampStyle") == 0) {
       GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "AnimeFrames") == 0) {
+      NumFrames = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "FrameTime") == 0) {
+      FrameTime = getIntegerDict(dict[i + 1]);
 
     } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }

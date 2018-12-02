@@ -44,8 +44,11 @@ extern INTN BanHeight;
 extern INTN row0TileSize;
 extern INTN row1TileSize;
 extern INTN FontWidth;
+extern UINTN NumFrames;
+extern UINTN FrameTime;
 
-textFaces textFace[4]; //0-help 1-message 2-menu 3-test
+textFaces       textFace[4]; //0-help 1-message 2-menu 3-test
+NSVGparser      *mainParser = NULL;  //it must be global variable
 
 
 EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, EG_IMAGE  **Image)
@@ -225,7 +228,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
   EFI_STATUS Status;
-  NSVGparser      *p = NULL;
+//  NSVGparser      *p = NULL;
 //  NSVGfont        *fontSVG;
   NSVGimage       *SVGimage;
   NSVGrasterizer  *rast = nsvgCreateRasterizer();
@@ -236,8 +239,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
 
 // --- Parse theme.svg --- low case
-  p = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
-  SVGimage = p->image;
+  mainParser = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
+  SVGimage = mainParser->image;
   if (!SVGimage) {
     DBG("Theme not parsed!\n");
     return EFI_NOT_STARTED;
@@ -246,8 +249,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 // --- Get scale as theme design height vs screen height
   float Scale;
   // must be svg view-box
-  float vbx = p->viewWidth;
-  float vby = p->viewHeight;
+  float vbx = mainParser->viewWidth;
+  float vby = mainParser->viewHeight;
   DBG("Theme view-bounds: w=%d h=%d units=%a\n", (int)vbx, (int)vby, "px");
     if (vby > 1.0f) {
       SVGimage->height = vby;
@@ -268,8 +271,8 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     }
   }
 #endif
-  if (p->font) {
-    DBG("theme contains font-family=%a\n", p->font->fontFamily);
+  if (mainParser->font) {
+    DBG("theme contains font-family=%a\n", mainParser->font->fontFamily);
   }
 #if 0
 // --- Create rastered font
@@ -294,10 +297,10 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &BigBack);
+    Status = ParseSVGIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGIcon(p, BUILTIN_ICON_BACKGROUND, "Background", Scale, &BigBack);
+    Status = ParseSVGIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, &BigBack);
   }
 
 // --- Make Banner
@@ -307,10 +310,10 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner_night", Scale, &Banner);
+    Status = ParseSVGIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night", Scale, &Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGIcon(p, BUILTIN_ICON_BANNER, "Banner", Scale, &Banner);
+    Status = ParseSVGIcon(mainParser, BUILTIN_ICON_BANNER, "Banner", Scale, &Banner);
   }
 
   BuiltinIconTable[BUILTIN_ICON_BANNER].Image = Banner;
@@ -340,10 +343,10 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     AsciiStrCatS(IconNight, 64, "_night");
     Status = EFI_NOT_FOUND;
     if (!DayLight) {
-      Status = ParseSVGIcon(p, i, IconNight, Scale, &BuiltinIconTable[i].Image);
+      Status = ParseSVGIcon(mainParser, i, IconNight, Scale, &BuiltinIconTable[i].Image);
     }
     if (EFI_ERROR(Status)) {
-      Status = ParseSVGIcon(p, i, IconName, Scale, &BuiltinIconTable[i].Image);
+      Status = ParseSVGIcon(mainParser, i, IconName, Scale, &BuiltinIconTable[i].Image);
     }
     if (EFI_ERROR(Status)) {
       DBG(" icon %d not parsed take common\n", i);
@@ -371,11 +374,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     Status = EFI_NOT_FOUND;
     if (!DayLight) {
 //      DBG("search for %a\n", IconNight);
-      Status = ParseSVGIcon(p, i, IconNight, Scale, &OSIconsTable[i].image);
+      Status = ParseSVGIcon(mainParser, i, IconNight, Scale, &OSIconsTable[i].image);
     }
     if (EFI_ERROR(Status)) {
 //      DBG("search for %a\n", OSIconsTable[i].name);
-      Status = ParseSVGIcon(p, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
+      Status = ParseSVGIcon(mainParser, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
     }
     if (i == 0) {
       DBG("load os_mac status=%r\n", Status);
@@ -399,22 +402,25 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGIcon(p, BUILTIN_ICON_SELECTION, "selection_indicator_night", Scale, &SelectionImages[4]);
+    Status = ParseSVGIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night", Scale, &SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGIcon(p, BUILTIN_ICON_SELECTION, "selection_indicator", Scale, &SelectionImages[4]);
+    Status = ParseSVGIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator", Scale, &SelectionImages[4]);
   }
-/*
-  if (SelectionImages[4]) {
-    DBG("selection_indicator parsed, size=[%d,%d]\n",
-        SelectionImages[4]->Width, SelectionImages[4]->Height);
-  }
-*/
 
-  if (p) {
+  //banner animation
+  GUI_ANIME *Anime = AllocateZeroPool (sizeof(GUI_ANIME));
+  Anime->ID = 1; //main screen
+  //there is no Anime->Path in vectors
+  Anime->Frames = NumFrames;
+  Anime->FrameTime = FrameTime;
+  Anime->Next = GuiAnime;
+  GuiAnime = Anime;
+
+//  if (p) {
 //    nsvg__deleteParser(p);
-    p = NULL;
-  }
+//    p = NULL;
+//  }
 
   nsvgDeleteRasterizer(rast);
 
@@ -431,6 +437,17 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   DBG("parsing theme finish\n");
   return EFI_SUCCESS;
 }
+
+EG_IMAGE * LoadSvgFrame(INTN i)
+{
+  EG_IMAGE  *Frame = NULL;
+  EFI_STATUS Status;
+  CHAR8 FrameName[64];
+  AsciiSPrint(FrameName, 63, "frame_%d", i);
+  Status = ParseSVGIcon(mainParser, BUILTIN_ICON_ANIME, FrameName, GlobalConfig.Scale, &Frame);
+  return Frame;
+}
+
 #if 0
 VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 {

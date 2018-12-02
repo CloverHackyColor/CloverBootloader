@@ -67,6 +67,8 @@ static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN Desig
 static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 
+EG_IMAGE * LoadSvgFrame(INTN i);
+
 // UGA defines and variables
 
 INTN   UGAWidth;
@@ -1012,13 +1014,19 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
   if (Anime && Screen->Film == NULL) {
     Path = Anime->Path;
     Screen->Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
-    if (Path && Screen->Film) {
+    if ((GlobalConfig.TypeSVG || Path) && Screen->Film) {
       // Look through contents of the directory
       UINTN i;
       for (i = 0; i < Anime->Frames; i++) {
-        UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+
  //       DBG("Try to load file %s\n", FileName);
-        p = egLoadImage(ThemeDir, FileName, TRUE);
+        if (GlobalConfig.TypeSVG) {
+          p = LoadSvgFrame(i);
+          DBG("frame %d loaded\n", i);
+        } else {
+          UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+          p = egLoadImage(ThemeDir, FileName, TRUE);
+        }
         if (!p) {
           p = Last;
           if (!p) break;
