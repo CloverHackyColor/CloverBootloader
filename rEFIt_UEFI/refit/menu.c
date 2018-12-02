@@ -126,6 +126,10 @@ INTN ScrollbarYMovement;
 
 
 //#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
+
+// clovy - set row height based on text size
+#define RowHeightFromTextHeight (1.35f)
+
 #define TITLEICON_SPACING (16)
 
 //#define ROW0__TILESIZE (144)
@@ -2364,7 +2368,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       }
     }
     if (textFace[TextStyle].valid) {
-      TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
+      // TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
+      //clovy - row height / text size factor
+      TextHeight = (int)((textFace[TextStyle].size * RowHeightFromTextHeight) * GlobalConfig.Scale);
     }
   }
 
@@ -2926,7 +2932,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
       DBG("no vaid text face for message!\n");
       Height = TextHeight;
     } else {
-      Height = (int)((textFace[TextXYStyle].size + 4) * GlobalConfig.Scale);
+      Height = (int)(textFace[TextXYStyle].size * RowHeightFromTextHeight * GlobalConfig.Scale);
     }
   } else {
     Height = TextHeight;
@@ -3015,6 +3021,8 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 /**
  * Draw menu text.
  */
+
+/* clovy
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   INTN Height;
@@ -3058,6 +3066,52 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   // render the text
   if (GlobalConfig.TypeSVG) {
     egRenderText(Text, TextBuffer, 0, 0, Cursor, TextStyle);
+  } else {
+    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
+  }
+  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
+}
+*/
+
+VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
+{
+  //use Text=null to reinit the buffer
+  if (!Text) {
+    if (TextBuffer) {
+      egFreeImage(TextBuffer);
+      TextBuffer = NULL;
+    }
+    return;
+  }
+
+  if (TextBuffer && (TextBuffer->Height != TextHeight)) {
+    egFreeImage(TextBuffer);
+    TextBuffer = NULL;
+  }
+
+  if (TextBuffer == NULL) {
+    TextBuffer = egCreateImage(UGAWidth-XPos, TextHeight, TRUE);
+  }
+
+  if (Cursor != 0xFFFF) {
+    egFillImage(TextBuffer, &MenuBackgroundPixel);
+  } else {
+    egFillImage(TextBuffer, &InputBackgroundPixel);
+  }
+
+
+  if (SelectedWidth > 0) {
+    // draw selection bar background
+    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, TextHeight,
+                    &SelectionBackgroundPixel);
+  }
+
+  // render the text
+  if (GlobalConfig.TypeSVG) {
+    //clovy - text veltically centred on Height
+    egRenderText(Text, TextBuffer, 0,
+                    (INTN)((TextHeight - (textFace[TextStyle].size * GlobalConfig.Scale)) / 2),
+                    Cursor, TextStyle);
   } else {
     egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
   }
@@ -3254,6 +3308,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
   UINTN OldChosenItem = ~(UINTN)0;
 	INTN TitleLen = 0;
   INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
+// clovy
+	INTN ctrlX, ctrlY, ctrlTextX;
 
   HidePointer();
 
@@ -3357,17 +3413,23 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
         PlaceCentre = (INTN)((TextHeight - (INTN)(Buttons[2]->Height)) * GlobalConfig.Scale / 2);
         PlaceCentre1 = (INTN)((TextHeight - (INTN)(Buttons[0]->Height)) * GlobalConfig.Scale / 2);
+// clovy
+        ctrlX = EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale);
+        if (GlobalConfig.TypeSVG)
+          ctrlX = EntriesPosX;
+        ctrlTextX = ctrlX + Buttons[0]->Width + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale / 2);
+        ctrlY = Entry->Place.YPos + PlaceCentre;
 
         if (Entry->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)Entry)->Item->ItemType == BoolValue) {
             Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
             DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
-                         EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy                    EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                         ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
-            BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
-                          EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
-                          Entry->Place.YPos + PlaceCentre,
+            BltImageAlpha( (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
+                          ctrlX, ctrlY,
                           &MenuBackgroundPixel, 16);
 //            DBG("X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
 //                Entry->Place.YPos, Entry->Place.YPos + PlaceCentre);
@@ -3385,14 +3447,15 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         } else if (Entry->Tag == TAG_CHECKBIT) {
           DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
           DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
-                       EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                       ctrlTextX,
                        Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->IValue & Entry->Row) ? Buttons[3] :Buttons[2],
-                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
-                        Entry->Place.YPos + PlaceCentre,
+                        ctrlX,
+                        ctrlY,
                         &MenuBackgroundPixel, 16);
-        } else if (Entry->Tag == TAG_SWITCH) {
 
+        } else if (Entry->Tag == TAG_SWITCH) {
 					if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 3) {
 						//OldChosenItem = OldChosenTheme;
             OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: (OldChosenTheme + 1);
@@ -3404,11 +3467,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
           DrawMenuText(ResultString,
                        (i == State->CurrentSelection) ? MenuWidth : 0,
-                       EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                       ctrlTextX,
                        Entry->Place.YPos, 0xFFFF);
           BltImageAlpha((Entry->Row == OldChosenItem) ? Buttons[1] : Buttons[0],
-                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
-                        Entry->Place.YPos + PlaceCentre1,
+                        ctrlX,
+                        ctrlY,
                         &MenuBackgroundPixel, 16);
         } else {
 					//DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
@@ -3435,6 +3499,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       PlaceCentre = (INTN)((TextHeight - (INTN)(Buttons[2]->Height)) * GlobalConfig.Scale / 2);
       PlaceCentre1 = (INTN)((TextHeight - (INTN)(Buttons[0]->Height)) * GlobalConfig.Scale / 2);
 
+// clovy
+			ctrlX = EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale);
+      if (GlobalConfig.TypeSVG)
+        ctrlX = EntriesPosX;
+			ctrlTextX = ctrlX + Buttons[0]->Width + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale / 2);
+
       // redraw selection cursor
       // 1. blackosx swapped this around so drawing of selection comes before drawing scrollbar.
       // 2. usr-sse2
@@ -3442,10 +3512,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
         if (((REFIT_INPUT_DIALOG*)EntryL)->Item->ItemType == BoolValue) {
           //clovy//DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + TEXT_XMARGIN),
           //clovy//             EntryL->Place.YPos, 0xFFFF);
-          DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+          DrawMenuText(ResultString, 0,
+                        ctrlTextX,
                        EntryL->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->BValue)? Buttons[3] : Buttons[2],
-                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                        ctrlX,
                         EntryL->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
 //          DBG("se:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
@@ -3468,17 +3539,23 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           OldChosenItem = (OldChosenDsdt == 0xFFFF) ? 0: OldChosenDsdt + 1;
         }
 
-        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy
+//         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+//                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+        DrawMenuText(ResultString, 0, ctrlTextX,
                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
         BltImageAlpha((EntryL->Row == OldChosenItem) ? Buttons[1] : Buttons[0],
-                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                     ctrlX,
                       EntryL->Place.YPos + PlaceCentre1,
                       &MenuBackgroundPixel, 16);
       } else if (EntryL->Tag == TAG_CHECKBIT) {
-        DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy
+//         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+//                      EntryL->Place.YPos, 0xFFFF);
+        DrawMenuText(ResultString, 0, ctrlTextX,
                      EntryL->Place.YPos, 0xFFFF);
         BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue & EntryL->Row) ? Buttons[3] : Buttons[2],
-                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                     ctrlX,
                       EntryL->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
 //        DBG("ce:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
@@ -3504,10 +3581,11 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       if (EntryC->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryC)->Item->ItemType == BoolValue) {
           DrawMenuText(ResultString, MenuWidth,
-                       EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                       ctrlTextX,
                        EntryC->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->BValue)? Buttons[3] : Buttons[2],
-                        EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                        ctrlX,
                         EntryC->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
 //          DBG("3:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
@@ -3523,19 +3601,21 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       } else if (EntryC->Tag == TAG_SWITCH) {
         StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
         DrawMenuText(ResultString, MenuWidth,
-                     EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy               EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                     ctrlTextX,
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      0xFFFF);
         BltImageAlpha((EntryC->Row == OldChosenItem) ? Buttons[1]:Buttons[0],
-                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                      ctrlX,
                       EntryC->Place.YPos + PlaceCentre1,
                       &MenuBackgroundPixel, 16);
       } else if (EntryC->Tag == TAG_CHECKBIT) {
         DrawMenuText(ResultString, MenuWidth,
-                     EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+// clovy               EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
+                     ctrlTextX,
                      EntryC->Place.YPos, 0xFFFF);
         BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue & EntryC->Row) ? Buttons[3] :Buttons[2],
-                      EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
+                      ctrlX,
                       EntryC->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
 //        DBG("4:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
@@ -3597,6 +3677,9 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
+//    if (GlobalConfig.BootCampStyle) {
+//      SelectionImages[4]->HasAlpha = TRUE;
+//    }
     //MainImage->HasAlpha = TRUE;
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
@@ -3741,10 +3824,10 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 
   switch (Align) {
     case X_IS_LEFT:
-      Xpos = 5;
+      Xpos = (INTN)(TextHeight * 0.75f);
       break;
     case X_IS_RIGHT:
-      Xpos = UGAWidth - 5;//2
+      Xpos = UGAWidth - (INTN)(TextHeight * 0.7f);//2
       break;
     case X_IS_CENTER:
       Xpos = UGAWidth >> 1;
@@ -3753,7 +3836,8 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       return;
   }
   //  DBG("draw text %s at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
-  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
+// clovy  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
+  DrawTextXY(Text, Xpos, UGAHeight - (INTN)(TextHeight * 1.5f), Align);
 }
 
 VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
@@ -3906,7 +3990,13 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
-  INTN MessageHeight = 20;
+  INTN MessageHeight;
+// clovy
+	if (GlobalConfig.TypeSVG && textFace[1].valid) {
+		MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
+	} else {
+		MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * GlobalConfig.Scale);
+	}
 
   switch (Function) {
 
@@ -3954,11 +4044,12 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
 
-      if (GlobalConfig.TypeSVG && textFace[1].valid) {
-        MessageHeight = (INTN)((textFace[1].size + 2) * GlobalConfig.Scale);
-      } else {
-        MessageHeight = TextHeight;
-      }
+// clovy - moved to top of function, out of case MENU_FUNCTION_INIT
+//       if (GlobalConfig.TypeSVG && textFace[1].valid) {
+//         MessageHeight = (INTN)((textFace[1].size + 2) * GlobalConfig.Scale);
+//       } else {
+//         MessageHeight = TextHeight;
+//       }
 
       row0PosXRunning = row0PosX;
       row1PosXRunning = row1PosX;
@@ -3998,12 +4089,15 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                               itemPosX[i - State->FirstVisible], row0PosY);
             // draw static text for the boot options, BootCampStyle
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-              INTN textPosX = itemPosX[i - State->FirstVisible] + (row0TileSize / 2);
               // clear the screen
-              FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
-                                   TextHeight, &MenuBackgroundPixel,X_IS_CENTER);
+              FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
+// clovy                                   EntriesWidth + GlobalConfig.TileXSpace, TextHeight, &MenuBackgroundPixel,
+                                   EntriesWidth + GlobalConfig.TileXSpace, MessageHeight, &MenuBackgroundPixel,
+                                   X_IS_CENTER);
               // draw the text
-              DrawBCSText(Screen->Entries[i]->Title, textPosX, textPosY, X_IS_CENTER);
+ //             DrawBCSText(Screen->Entries[i]->Title, textPosX, textPosY, X_IS_CENTER);
+               DrawBCSText(Screen->Entries[i]->Title,
+                          itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY, X_IS_CENTER);
             }
           }
         } else {
@@ -4016,7 +4110,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       if ((GlobalConfig.BootCampStyle) && (Screen->Entries[State->LastSelection]->Row == 1)
           && (Screen->Entries[State->CurrentSelection]->Row == 0) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
           FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
-                               OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+// clovy                               OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+                               OldTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
       }
 
       // something is wrong with the DrawMainMenuLabel or Screen->Entries[State->CurrentSelection]
@@ -4084,7 +4179,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
-                                   OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+                           OldTimeoutTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
         OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
       }
 
