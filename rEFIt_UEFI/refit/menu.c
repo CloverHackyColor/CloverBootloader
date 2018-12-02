@@ -2961,7 +2961,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   }
 
   // init
-  INTN ChrsNum = 12;
+  INTN MaxTextLen           = 12;
   INTN TextLen = StrLen(Text);
 	INTN EllipsisLen = 3;
   CHAR16 *BCSText = NULL;
@@ -2971,32 +2971,32 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
   // more space, more characters
   if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
-    ChrsNum = 13;
+    MaxTextLen = 13;
   } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
-    ChrsNum = 14;
+    MaxTextLen = 14;
   } else if (GlobalConfig.TileXSpace >= 35 && GlobalConfig.TileXSpace < 40) {
-    ChrsNum = 15;
+    MaxTextLen = 15;
   } else if (GlobalConfig.TileXSpace >= 40 && GlobalConfig.TileXSpace < 45) {
-    ChrsNum = 16;
+    MaxTextLen = 16;
   } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
-    ChrsNum = 17;
+    MaxTextLen = 17;
   } else if (GlobalConfig.TileXSpace >= 50) {
-    ChrsNum = 18;
+    MaxTextLen = 18;
   }
 
   // if the text exceeds the given limit
-  if (TextLen > ChrsNum) {
-    BCSText = AllocatePool((sizeof(CHAR16) * ChrsNum) + 1);
+  if (TextLen > MaxTextLen) {
+    BCSText = AllocatePool((sizeof(CHAR16) * MaxTextLen) + 1);
 
     // copy the permited amound of chars minus the ellipsis
-    StrnCpyS(BCSText, (ChrsNum - EllipsisLen) + 1, Text, ChrsNum - EllipsisLen);
+    StrnCpyS(BCSText, (MaxTextLen - EllipsisLen) + 1, Text, MaxTextLen - EllipsisLen);
 
-    BCSText[ChrsNum - EllipsisLen] = '\0';
+    BCSText[MaxTextLen - EllipsisLen] = '\0';
 
     // add ellipsis
-    StrnCatS(BCSText, ChrsNum + 1, EllipsisText, EllipsisLen);
+    StrnCatS(BCSText, MaxTextLen + 1, EllipsisText, EllipsisLen);
 
-    BCSText[ChrsNum] = '\0';
+    BCSText[MaxTextLen] = '\0';
 
     // error check
     if (!BCSText) {
@@ -3365,7 +3365,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
             DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
                          EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                          Entry->Place.YPos, 0xFFFF);
-            BltImageAlpha( (((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
+            BltImageAlpha((((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue) ? Buttons[3] :Buttons[2],
                           EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
                           Entry->Place.YPos + PlaceCentre,
                           &MenuBackgroundPixel, 16);
@@ -3434,7 +3434,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
       PlaceCentre = (INTN)((TextHeight - (INTN)(Buttons[2]->Height)) * GlobalConfig.Scale / 2);
       PlaceCentre1 = (INTN)((TextHeight - (INTN)(Buttons[0]->Height)) * GlobalConfig.Scale / 2);
-
 
       // redraw selection cursor
       // 1. blackosx swapped this around so drawing of selection comes before drawing scrollbar.
@@ -3598,9 +3597,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
-    if (GlobalConfig.BootCampStyle) {
-      SelectionImages[4]->HasAlpha = TRUE;
-    }
     //MainImage->HasAlpha = TRUE;
     BltImageCompositeBadge(MainImage,
                            SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
@@ -3613,15 +3609,17 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
       XPos, YPos, Scale);
   }
 
-  if (GlobalConfig.BootCampStyle) {
-    if (Entry->Row == 0) {
-      BltImageAlpha(SelectionImages[(4) + (selected ? 0 : 1)],
-                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-                    row0PosY + row0TileSize +
-                    ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? (INTN)(10.f * GlobalConfig.Scale):
-                       (FontHeight  + (INTN)((20 - TEXT_YMARGIN) * GlobalConfig.Scale))),
-                    &MenuBackgroundPixel, Scale);
+  // draw BCS indicator
+  // Needy: if Labels (Titles) Hidden no point to draw the indicator
+  if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+    SelectionImages[4]->HasAlpha = TRUE;
 
+    // inidcator is for row 0, main entries, only
+    if (Entry->Row == 0) {
+      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
+                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
+                    row0PosY + row0TileSize + TextHeight + (BCSMargin * 2),
+                    &MenuBackgroundPixel, Scale);
     }
   }
 
@@ -3925,34 +3923,30 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* GlobalConfig.Scale)) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen, 0);
-      row0PosX = (UGAWidth + 8 - (EntriesWidth + EntriesGap) *
-                  ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
+      row0PosX = (UGAWidth + EntriesGap - (EntriesWidth + EntriesGap)
+                  * ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
       row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
                   LayoutBannerOffset * GlobalConfig.Scale);
 
-      row1PosX = (UGAWidth + 8 - (row1TileSize + (int)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (row1TileSize + (INTN)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
 
-      if (GlobalConfig.BootCampStyle) {
-        row1PosY = row0PosY + row0TileSize +
-        (int)((LayoutButtonOffset + GlobalConfig.TileYSpace + INDICATOR_SIZE) * GlobalConfig.Scale)
-                     + ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL) ? 15 : (FontHeight + 30));
+      if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        row1PosY = row0PosY + EntriesHeight + (BCSMargin * 2) + TextHeight +
+            (INTN)(INDICATOR_SIZE * GlobalConfig.Scale) +
+            (INTN)((LayoutButtonOffset + GlobalConfig.TileYSpace) * GlobalConfig.Scale);
       } else {
         row1PosY = row0PosY + EntriesHeight +
             (INTN)((GlobalConfig.TileYSpace + LayoutButtonOffset) * GlobalConfig.Scale);
       }
 
       if (row1Count > 0) {
-        if (GlobalConfig.BootCampStyle) {
-          textPosY = row0PosY + row0TileSize + (INTN)(1.0f * GlobalConfig.Scale);
-        } else {
           textPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
-        }
-      } else {
-        if (GlobalConfig.BootCampStyle) {
-          textPosY = row0PosY + row0TileSize + (INTN)(10.0f * GlobalConfig.Scale);
         } else {
           textPosY = row1PosY;
         }
+
+      if (GlobalConfig.BootCampStyle) {
+        textPosY = row0PosY + row0TileSize + TEXT_YMARGIN + BCSMargin;
       }
 
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
@@ -4004,13 +3998,12 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
                               itemPosX[i - State->FirstVisible], row0PosY);
             // draw static text for the boot options, BootCampStyle
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+              INTN textPosX = itemPosX[i - State->FirstVisible] + (row0TileSize / 2);
               // clear the screen
-              FillRectAreaOfScreen(itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY,
-                                   EntriesWidth + GlobalConfig.TileXSpace, TextHeight, &MenuBackgroundPixel,
-                                   X_IS_CENTER);
+              FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
+                                   TextHeight, &MenuBackgroundPixel,X_IS_CENTER);
               // draw the text
-              DrawBCSText(Screen->Entries[i]->Title,
-                          itemPosX[i - State->FirstVisible] + (row0TileSize / 2), textPosY, X_IS_CENTER);
+              DrawBCSText(Screen->Entries[i]->Title, textPosX, textPosY, X_IS_CENTER);
             }
           }
         } else {

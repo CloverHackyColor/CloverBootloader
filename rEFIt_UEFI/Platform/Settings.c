@@ -86,6 +86,7 @@ EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 
 INTN row0TileSize = 144;
 INTN row1TileSize = 64;
+INTN BCSMargin = 11;
 
 
 extern MEM_STRUCTURE            gRAM;

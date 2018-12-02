@@ -828,7 +828,7 @@ msgstr "Выберите темы для установки."
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Black_Green_Moody"
-msgstr "Black Green Moody"
+msgstr "Тоскливо-зеленая"
 
 #. type: "BGM_description"
 #: Resources/templates/Localizable.strings:166
@@ -850,11 +850,11 @@ msgstr "Встроенная"
 #: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid ""
-"embedded theme from Blackosx,\n"
+"embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"Черно-зеленая тема от Blackosx.\n"
-"Установка будет выполнена в /EFI/CLOVER/themes/black_green."
+"Встроенная тема от Clovy.\n"
+"Меняет цвет от времени дня."
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:173
@@ -870,27 +870,23 @@ msgid ""
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
 "Нержавейка от Slice.\n"
-"Установка будет выполнена в /EFI/CLOVER/themes/metal."
+"Установка будет выполнена в /EFI/CLOVER/themes/metal"
 
 #. type: "clovy_title"
 #: Resources/templates/Localizable.strings:177
-#, fuzzy, no-wrap
-#| msgid "Clover"
+#, no-wrap
 msgid "Clovy"
-msgstr "Clover"
+msgstr "Clovy"
 
 #. type: "clovy_description"
 #: Resources/templates/Localizable.strings:178
-#, fuzzy, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal"
+#, no-wrap
 msgid ""
 "Vector SVG theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/Clovy"
 msgstr ""
-"Нержавейка от Slice.\n"
-"Установка будет выполнена в /EFI/CLOVER/themes/metal."
+"Векторная тема от Clovy.\n"
+"Установка будет выполнена в /EFI/CLOVER/themes/Clovy"
 
 #. type: "random_title"
 #: Resources/templates/Localizable.strings:181
@@ -900,16 +896,13 @@ msgstr "Случайная"
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:182
-#, fuzzy, no-wrap
-#| msgid ""
-#| "random theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/random choose a theme from others"
+#, no-wrap
 msgid ""
 "random theme,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
-"Апельсиновая тема от dwm.\n"
-"Установка будет выполнена в /EFI/CLOVER/themes/orange."
+"Случайный выбор темы из имеющихся. Зависит от скорости ветра.\n"
+"Установка будет выполнена в /EFI/CLOVER/themes/random."
 
 #. type: "steampunkblack_title"
 #: Resources/templates/Localizable.strings:185
@@ -925,7 +918,7 @@ msgid ""
 "Install to /EFI/CLOVER/themes/steampunkblack"
 msgstr ""
 "Тема по мотивам BootCamp от Bijo.\n"
-"Установка будет выполнена в /EFI/CLOVER/themes/bootcamp."
+"Установка будет выполнена в /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
 #: Resources/templates/Localizable.strings:189
