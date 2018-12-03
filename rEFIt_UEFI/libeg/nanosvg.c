@@ -927,7 +927,7 @@ static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atX
     }
   }
 }
-
+/*
 static void  nsvg__getSymbolBounds(NSVGparser* p)
 {
   NSVGsymbol* symbol = p->symbols;
@@ -938,29 +938,10 @@ static void  nsvg__getSymbolBounds(NSVGparser* p)
   symbol->bounds[2] = -FLT_MAX;
   symbol->bounds[3] = -FLT_MAX;
   nsvg__shapesBound(shape, symbol->bounds);
-  DumpFloat2("Symbol has bounds", symbol->bounds, 4);
-  DumpFloat2("  and viewbox", symbol->viewBox, 4);
+//  DumpFloat2("Symbol has bounds", symbol->bounds, 4); //nothing
+  DumpFloat2("Symbol has viewbox", symbol->viewBox, 4);
 }
-#if 0
-static void  nsvg_getShapeBounds(NSVGshape* shape)
-{
-  NSVGpath* path;
-  // Calculate shape bounds
-  if (shape->paths) {
-
-    shape->bounds[0] = shape->paths->bounds[0];
-    shape->bounds[1] = shape->paths->bounds[1];
-    shape->bounds[2] = shape->paths->bounds[2];
-    shape->bounds[3] = shape->paths->bounds[3];
-    for (path = shape->paths->next; path != NULL; path = path->next) {
-      shape->bounds[0] = nsvg__minf(shape->bounds[0], path->bounds[0]);
-      shape->bounds[1] = nsvg__minf(shape->bounds[1], path->bounds[1]);
-      shape->bounds[2] = nsvg__maxf(shape->bounds[2], path->bounds[2]);
-      shape->bounds[3] = nsvg__maxf(shape->bounds[3], path->bounds[3]);
-    }
-  }
-}
-#endif
+*/
 static void nsvg__addShape(NSVGparser* p)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
@@ -996,16 +977,15 @@ static void nsvg__addShape(NSVGparser* p)
 
   shape->clip.count = attr->clipPathCount;
   if (shape->clip.count > 0) {
-    shape->clip.index = (NSVGclipPathIndex*)AllocateCopyPool(
-                                                             attr->clipPathCount * sizeof(NSVGclipPathIndex), p->clipPathStack);
+    shape->clip.index = (NSVGclipPathIndex*)AllocateCopyPool(attr->clipPathCount * sizeof(NSVGclipPathIndex),
+                                                             p->clipPathStack);
     if (shape->clip.index == NULL) {
       FreePool(shape);
       return;
     }
   }
 
-  //nsvg_getShapeBounds(shape);
-  nsvg__getLocalBounds(shape->bounds, shape);
+  nsvg__getLocalBounds(shape->bounds, shape);  //(dest, src)
 
   // Set fill
   shape->fill.type = NSVG_PAINT_NONE;
@@ -2659,7 +2639,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 
   nsvg__xformSetTranslation(&xform[0], x, y);
   nsvg__xformMultiply(&xform[0], attr->xform); //translate before rotate
-  DumpFloat2("use xform", xform, 6);
+//  DumpFloat2("use xform", xform, 6);
 
   if (ref) {
     shape = (NSVGshape*)AllocateCopyPool(sizeof(NSVGshape), ref);
@@ -2814,6 +2794,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor | ((int)(attr->fillOpacity * 255.f) << 24);
   }
+  memcpy(text->xform, attr->xform, 6*sizeof(float));
 
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
@@ -3823,7 +3804,7 @@ static void nsvg__endElement(void* ud, const char* el)
   } else if (strcmp(el, "pattern") == 0) {
     p->patternFlag = 0;
   } else if (strcmp(el, "symbol") == 0) {
-    nsvg__getSymbolBounds(p);
+//    nsvg__getSymbolBounds(p); //no sense
     nsvg__popAttr(p);
     p->symbolFlag = 0;
   } else if (strcmp(el, "svg") == 0) {
@@ -3929,6 +3910,9 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   shape->xform[3] = -scale; //-1.f; //glyphs are mirrored by Y
   shape->xform[4] = x - p->text->font->bbox[0] * scale;
   shape->xform[5] = y + p->text->font->bbox[3] * scale; // Y3 is a floor for a letter, so Y+x[5]=realY
+// then apply text transform
+  nsvg__xformMultiply(shape->xform, p->text->xform);
+
   /*
    if (letter == L'C') {
      DBG("bbox0=%s ", PoolPrintFloat(p->text->font->bbox[0]));

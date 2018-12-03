@@ -415,12 +415,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   Anime->Frames = NumFrames;
   Anime->FrameTime = FrameTime;
   Anime->Next = GuiAnime;
+  Anime->FilmX = INITVALUE;
+  Anime->FilmY = INITVALUE;
+  Anime->NudgeX = INITVALUE;
+  Anime->NudgeY = INITVALUE;
   GuiAnime = Anime;
-
-//  if (p) {
-//    nsvg__deleteParser(p);
-//    p = NULL;
-//  }
 
   nsvgDeleteRasterizer(rast);
 
@@ -443,8 +442,11 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   EG_IMAGE  *Frame = NULL;
   EFI_STATUS Status;
   CHAR8 FrameName[64];
-  AsciiSPrint(FrameName, 63, "frame_%d", i);
+  AsciiSPrint(FrameName, 63, "frame_%d", i+1);
   Status = ParseSVGIcon(mainParser, BUILTIN_ICON_ANIME, FrameName, GlobalConfig.Scale, &Frame);
+  if (EFI_ERROR(Status)) {
+    DBG("icon '%a' not loaded, status=%r\n", FrameName, Status);
+  }
   return Frame;
 }
 
@@ -588,6 +590,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   text->font = fontSVG;
   text->fontColor = color;
   text->fontSize = Height;
+  nsvg__xformIdentity(text->xform);
   p->text = text;
 
   len = StrLen(string);

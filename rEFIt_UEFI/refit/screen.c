@@ -924,15 +924,19 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
     if (AnimeImage) {
       egFreeImage(AnimeImage);
     }
+//    DBG("create new AnimeImage [%d,%d]\n", Screen->Film[0]->Width, Screen->Film[0]->Height);
     AnimeImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
   }
+//  DBG("anime rect pos=[%d,%d] size=[%d,%d]\n", Place->XPos, Place->YPos,
+//      Place->Width, Place->Height);
+//  DBG("anime size=[%d,%d]\n", AnimeImage->Width, AnimeImage->Height);
   
   // Retained for legacy themes without new anim placement options.
   x = Place->XPos + (Place->Width - AnimeImage->Width) / 2;
   y = Place->YPos + (Place->Height - AnimeImage->Height) / 2;
   
   if (!IsImageWithinScreenLimits(x, Screen->Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Screen->Film[0]->Height, UGAHeight)) {
-    // This anime can't be displayed
+    DBG(") This anime can't be displayed\n");
     return;
   }
   
@@ -1022,7 +1026,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
  //       DBG("Try to load file %s\n", FileName);
         if (GlobalConfig.TypeSVG) {
           p = LoadSvgFrame(i);
-          DBG("frame %d loaded\n", i);
+   //       DBG("frame %d loaded\n", i);
         } else {
           UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
           p = egLoadImage(ThemeDir, FileName, TRUE);
@@ -1037,7 +1041,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       }
       if (Screen->Film[0] != NULL) {
         Screen->Frames = i;
- //       DBG(" found %d frames of the anime\n", i);
+        DBG(" found %d frames of the anime\n", i);
         // Create background frame
         Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
         // Copy some settings from Anime into Screen
@@ -1065,7 +1069,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     
     Screen->FilmPlace.Width = Screen->Film[0]->Width;
     Screen->FilmPlace.Height = Screen->Film[0]->Height;
-//    DBG("recalculated Screen->Film position\n");
+    DBG("recalculated Screen->Film position\n");
   } else {
     // We are here if there is no anime, or if we use oldstyle placement values
     // For both these cases, FilmPlace will be set after banner/menutitle positions are known
@@ -1075,11 +1079,12 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     Screen->FilmPlace.Height = 0;
   }
   if (Screen->Film != NULL && Screen->Film[0] != NULL) {
-    // Anime seems OK, init it
+    DBG(" Anime seems OK, init it\n");
     Screen->AnimeRun = TRUE;
     Screen->CurrentFrame = 0;
     Screen->LastDraw = 0;
   } else {
+    DBG("not run anime\n");
     Screen->AnimeRun = FALSE;
   }
 //  DBG("anime inited\n");
@@ -1096,7 +1101,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
     return FALSE;
   }
   
-//  DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
+  DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
   
   return TRUE;
 }

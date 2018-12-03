@@ -367,6 +367,7 @@ typedef struct NSVGtext {
   char id[64];
 //  char class[64];
   float x,y;
+  float xform[6];
   //  char fontFamily[64];
   NSVGfont* font;
   NSVGfont* fontFace;
