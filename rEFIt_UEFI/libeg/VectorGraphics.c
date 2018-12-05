@@ -201,7 +201,9 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
 //    IconImage->realBounds[2] += tx;
 //    iWidth = (int)UGAWidth;
 //  } else
-  if ((Id != BUILTIN_ICON_BACKGROUND) && (strstr(IconName, "Banner") != NULL)) {
+  if ((Id != BUILTIN_ICON_BACKGROUND) &&
+      (Id != BUILTIN_ICON_ANIME) &&
+      (strstr(IconName, "Banner") == NULL)) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
     tx = (Width - realWidth) * 0.5f;
@@ -371,6 +373,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     AsciiStrCpyS(IconNight, 64, OSIconsTable[i].name);
     AsciiStrCatS(IconNight, 64, "_night");
     OSIconsTable[i].image = NULL;
+    DBG("search for %a\n", OSIconsTable[i].name);
     Status = EFI_NOT_FOUND;
     if (!DayLight) {
 //      DBG("search for %a\n", IconNight);

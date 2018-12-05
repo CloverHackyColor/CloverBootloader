@@ -58,6 +58,8 @@
 #define strlen(s) AsciiStrLen(s)
 #define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
 
+extern VOID *fontsDB;
+extern struct NSVGparser *mainParser;
 
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,

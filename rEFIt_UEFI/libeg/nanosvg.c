@@ -39,7 +39,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -99,7 +99,8 @@ extern VOID *fontsDB;
 UINTN NumFrames;
 UINTN FrameTime;
 int nsvg__shapesBound(NSVGshape *shapes, float* bounds);
-static void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
+void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
+void nsvg__deleteShapes(NSVGshape* shape);
 
 void DumpFloat2 (char* s, float* t, int N)
 {
@@ -570,6 +571,7 @@ static void nsvg__deletePaint(NSVGpaint* paint)
       paint->type == NSVG_PAINT_RADIAL_GRADIENT ||
       paint->type == NSVG_PAINT_CONIC_GRADIENT) {
     FreePool(paint->gradient);
+    paint->gradient = NULL;
   }
 }
 
@@ -586,23 +588,31 @@ static void nsvg__deleteGradientData(NSVGgradientData* grad)
   }
 }
 
+
+static void nsvg__deleteSymbols(NSVGsymbol* symbol)
+{
+  NSVGsymbol* next;
+  while (symbol) {
+    next = symbol->next;
+    NSVGshape* shape = symbol->shapes;
+    nsvg__deleteShapes(shape);
+    FreePool(symbol);
+    symbol = next;
+  }
+}
+
 void nsvg__deleteParser(NSVGparser* p)
 {
   int i;
   if (p != NULL) {
     nsvg__deleteStyles(p->styles);
-    p->styles = NULL;
+    nsvg__deleteSymbols(p->symbols);
     nsvg__deletePaths(p->plist);
-    p->plist = NULL;
     nsvg__deleteGradientData(p->gradients);
-    p->gradients = NULL;
     nsvg__deleteFont(p->font);
-    p->font = NULL;
     nsvgDelete(p->image);
-    p->image = NULL;
     if (p->cpts > 0 && p->pts) {
       FreePool(p->pts);
-      p->pts = NULL;
     }
     for (i=0; i<NSVG_MAX_ATTR; i++) {
       NSVGattrib* attr = &(p->attr[i]);
@@ -2799,7 +2809,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
   }
-  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
+//  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = fontsDB;
   while (fontSVG) {
@@ -2817,9 +2827,9 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     UINTN           FileDataLength = 0;
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
-    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
+//    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
     Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
-    DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
+ //   DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, "px", 72, 1.0f);
       if (!p1) {
@@ -2855,7 +2865,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[1].size = text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
-          DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+   //       DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
           break;
         }
         break;
@@ -2865,7 +2875,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[2].size = text->fontSize;
           textFace[2].color = text->fontColor;
           textFace[2].valid = TRUE;
-          DBG("set menu->font=%a color=%x size=%s as in MenuRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+  //        DBG("set menu->font=%a color=%x size=%s as in MenuRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
           break;
         }
         break;
@@ -2875,7 +2885,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[0].size = text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
-          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+//          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
           break;
         }
       }
@@ -3440,6 +3450,9 @@ static void parseTheme(NSVGparser* p, const char** dict)
       GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "AnimeFrames") == 0) {
       NumFrames = getIntegerDict(dict[i + 1]);
+      if (NumFrames == 0xFFFF) {
+        NumFrames = 0;
+      }
     } else if (strcmp(dict[i], "FrameTime") == 0) {
       FrameTime = getIntegerDict(dict[i + 1]);
 
@@ -3473,7 +3486,7 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   if (!font->horizAdvX) {
     font->horizAdvX = 1000;
   }
-  DBG("found font id=%a\n", font->id);
+//  DBG("found font id=%a\n", font->id);
 
   p->font = font;
   font->next = fontsDB;
@@ -3540,7 +3553,7 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
       AsciiStrToFloat((const char*)Next, &Next, &font->bbox[1]);
       AsciiStrToFloat((const char*)Next, &Next, &font->bbox[2]);
       AsciiStrToFloat((const char*)Next, &Next, &font->bbox[3]);
-      DumpFloat2("font bbox=", font->bbox, 4);
+//      DumpFloat2("font bbox=", font->bbox, 4);
     }
     else if (strcmp(dict[i], "unicode-range") == 0) {
       const char * a = dict[i + 1];
@@ -4095,7 +4108,7 @@ static char *nsvg__strndup(const char *s, size_t n)
   return result;
 }
 
-static void takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
+void takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
 {
   float newBounds[8]; //(x1, y1), (x2, y2), (x2, y1), (x1, y2)
   nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
@@ -4207,7 +4220,7 @@ NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity)
   nsvg__imageBounds(p, bounds);
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
-  DumpFloat2("image real bounds", bounds, 4);
+//  DumpFloat2("image real bounds", bounds, 4);
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 

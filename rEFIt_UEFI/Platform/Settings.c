@@ -5,6 +5,7 @@
 #include "entry_scan.h"
 #include "kernel_patcher.h"
 #include "ati.h"
+#include "nanosvg.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -3999,6 +4000,23 @@ InitTheme(
   DbgHeader("InitTheme");
   GlobalConfig.TypeSVG = FALSE;
   GlobalConfig.BootCampStyle = FALSE;
+  GlobalConfig.Scale = 1.0f;
+
+  for (i = 0; i < 3; i++) {
+    textFace[i].valid = FALSE;
+  }
+
+  NSVGfont *font = fontsDB;
+  while (font) {
+    nsvg__deleteFont(font);
+    font = font->next;
+  }
+  fontsDB = NULL;
+  if (mainParser) {
+    nsvg__deleteParser(mainParser);
+    mainParser = NULL;
+  }
+
 
   row0TileSize = 144;
   row1TileSize = 64;
@@ -4053,6 +4071,8 @@ InitTheme(
     FreeAnime (GuiAnime);
     GuiAnime             = NextAnime;
   }
+
+  GetThemeTagSettings(NULL);
   
   if (ThemesNum > 0 &&
       (!GlobalConfig.Theme || StriCmp(GlobalConfig.Theme, L"embedded") != 0)) {

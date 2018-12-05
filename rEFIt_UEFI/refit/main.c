@@ -37,6 +37,7 @@
 #include "entry_scan.h"
 //#include "Platform.h"
 //#include "../include/Handle.h"
+#include "nanosvg.h"
 
 #include "Version.h"
 
@@ -560,6 +561,18 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
   }
   FreeMenu(&OptionMenu);
+  //there is a place to free memory
+  // GuiAnime
+  // mainParser
+  // BuiltinIcons
+  // OSIcons
+  NSVGfont *font = fontsDB;
+  while (font) {
+    nsvg__deleteFont(font);
+    font = font->next;
+  }
+  nsvg__deleteParser(mainParser);
+
   
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
