@@ -174,7 +174,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
   nsvg__imageBounds(p2, bounds);
   memcpy(IconImage->realBounds, bounds, 4*sizeof(float));
 
-  if ((Id == BUILTIN_ICON_BANNER) && (strcmp(IconName, "Banner") == 0)) {
+  if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
     GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
     GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
     DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
