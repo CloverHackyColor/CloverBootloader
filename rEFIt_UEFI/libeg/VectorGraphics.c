@@ -201,7 +201,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
 //    IconImage->realBounds[2] += tx;
 //    iWidth = (int)UGAWidth;
 //  } else
-  if ((Id != BUILTIN_ICON_BACKGROUND) && (strcmp(IconName, "Banner") != 0)) {
+  if ((Id != BUILTIN_ICON_BACKGROUND) && (strstr(IconName, "Banner") != NULL)) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
     tx = (Width - realWidth) * 0.5f;
