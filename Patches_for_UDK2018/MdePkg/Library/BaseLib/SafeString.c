@@ -14,7 +14,7 @@
 
 #include "BaseLibInternals.h"
 // this is 1.000.000
-#define RSIZE_MAX  100000000ull 
+#define RSIZE_MAX  100000000ull
 //(PcdGet32 (PcdMaximumUnicodeStringLength))
 
 #define ASCII_RSIZE_MAX  100000000ull
@@ -2952,7 +2952,7 @@ AsciiStrToUnicodeStrS (
   // Convert string
   //
   while ((*Source != '\0') && (--DestMax > 0)) {
-    *(Destination++) = (CHAR16)*(Source++);
+    *(Destination++) = (CHAR16)(UINT8)*(Source++);
   }
   *Destination = L'\0';
 
@@ -3065,7 +3065,7 @@ AsciiStrnToUnicodeStrS (
   // Convert string
   //
   while ((*Source != 0) && (SourceLen > 0)  && (--DestMax > 0)) {
-    *(Destination++) = (CHAR16)*(Source++);
+    *(Destination++) = (CHAR16)(UINT8)*(Source++);
     SourceLen--;
     (*DestinationLength)++;
   }

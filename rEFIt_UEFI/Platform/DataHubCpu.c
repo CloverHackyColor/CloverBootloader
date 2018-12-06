@@ -311,6 +311,12 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
   }
 */
+  INTN CfgStrLen = AsciiStrLen(gSettings.BooterCfgStr);
+  if (CfgStrLen > 0) {
+    SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, CfgStrLen+1, &gSettings.BooterCfgStr[0]);
+  } else {
+    DeleteNvramVariable(L"bootercfg", &gEfiAppleBootGuid);
+  }
   if (gSettings.NvidiaWeb) {
     NvidiaWebValue = "1";
     SetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, Attributes, 2, (VOID*)NvidiaWebValue);

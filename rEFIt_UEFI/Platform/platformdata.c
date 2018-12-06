@@ -1232,6 +1232,8 @@ VOID GetDefaultSettings()
   gSettings.RtROMLen             = 0;
   gSettings.CsrActiveConfig      = 0xFFFF;
   gSettings.BooterConfig         = 0;
+//  MemSet(gSettings.BooterCfgStr, 64, 0);
+  AsciiStrCpyS(gSettings.BooterCfgStr, 64, "log=0");
   gSettings.DisableCloverHotkeys = FALSE;
   gSettings.UIScale              = 1;
   

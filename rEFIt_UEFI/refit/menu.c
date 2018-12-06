@@ -701,6 +701,12 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.EfiVersion);
+  InputItems[InputItemsCount].ItemType = ASString;  //118
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BooterCfgStr);
+
 
 
   //menu for drop table
@@ -1313,6 +1319,11 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.EfiVersion, 64, "%s", InputItems[i].SValue);
   }
+  i++; //118
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.BooterCfgStr, 64, "%s", InputItems[i].SValue);
+  }
+
 
   if (NeedSave) {
     SaveSettings();
@@ -5136,6 +5147,7 @@ REFIT_MENU_ENTRY *SubMenuSystem()
 
   AddMenuItem(SubScreen, 2,  "Block kext:", TAG_INPUT, TRUE);
   AddMenuItem(SubScreen, 51, "Set OS version if not:", TAG_INPUT, TRUE);
+  AddMenuItem(SubScreen, 118, "Booter Cfg Command:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, SubMenuCSR());
   AddMenuEntry(SubScreen, SubMenuBLC());

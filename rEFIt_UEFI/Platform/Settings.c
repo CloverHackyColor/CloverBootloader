@@ -6051,13 +6051,15 @@ GetUserSettings(
       // CsrActiveConfig
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
-      //     SysVarsTmpCsrActiveConfig = gSettings.CsrActiveConfig;
-      
+
       //BooterConfig
       Prop = GetProperty (DictPointer, "BooterConfig");
       gSettings.BooterConfig = (UINT16)GetPropertyInteger (Prop, 0); //the value 0 means not set
-      //      SysVarsTmpBooterConfig = gSettings.BooterConfig;
-      
+      //let it be string like "log=0"
+      Prop = GetProperty (DictPointer, "BooterCfg");
+      if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
+        AsciiStrCpyS (gSettings.BooterCfgStr, 64, Prop->string);
+      }
     }
     
     if (gSettings.RtROM == NULL) {

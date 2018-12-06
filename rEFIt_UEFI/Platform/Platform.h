@@ -1109,6 +1109,7 @@ typedef struct {
 
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
+  CHAR8                   BooterCfgStr[64];
   BOOLEAN                 DisableCloverHotkeys;
   BOOLEAN                 NeverDoRecovery;
 
