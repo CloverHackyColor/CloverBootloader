@@ -102,6 +102,8 @@ int nsvg__shapesBound(NSVGshape *shapes, float* bounds);
 void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
 void nsvg__deleteShapes(NSVGshape* shape);
 
+extern BOOLEAN DayLight;
+
 void DumpFloat2 (char* s, float* t, int N)
 {
 #if DEBUG_SVG
@@ -2855,7 +2857,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (fontSVG && fontSVG->glyphs) {
     NSVGgroup* group = attr->group;
     while (group) {
-      if (strstr(group->id, "MessageRow") != NULL) {
+      if (strcmp(group->id, "MessageRow") == 0) {
         if (!textFace[1].valid) {
           //here we want to set text->font as p->font if text->groupID == MessageRow
           p->font = fontSVG;
@@ -2866,28 +2868,50 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
    //       DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
-          break;
         }
         break;
-      } else if (strstr(group->id, "MenuRows") != NULL) {
+      } else if (!DayLight && strcmp(group->id, "MessageRow_night") == 0) {
+          //replace daylight settings
+          p->font = fontSVG;
+          p->fontSize = text->fontSize;
+          p->fontColor = text->fontColor;
+          textFace[1].font = fontSVG;
+          textFace[1].size = text->fontSize;
+          textFace[1].color = text->fontColor;
+          textFace[1].valid = TRUE;
+          //       DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+          break;
+      } else if (strcmp(group->id, "MenuRows") == 0) {
         if (!textFace[2].valid) {
           textFace[2].font = fontSVG;
           textFace[2].size = text->fontSize;
           textFace[2].color = text->fontColor;
           textFace[2].valid = TRUE;
   //        DBG("set menu->font=%a color=%x size=%s as in MenuRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
-          break;
         }
         break;
-      } else if (strstr(group->id, "HelpRows") != NULL) {
+      } else if (!DayLight && strcmp(group->id, "MenuRows_night") == 0) {
+          textFace[2].font = fontSVG;
+          textFace[2].size = text->fontSize;
+          textFace[2].color = text->fontColor;
+          textFace[2].valid = TRUE;
+        break;
+      } else if (strcmp(group->id, "HelpRows") == 0) {
         if (!textFace[0].valid) {
           textFace[0].font = fontSVG;
           textFace[0].size = text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
 //          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
-          break;
         }
+        break;
+      } else if (!DayLight && strstr(group->id, "HelpRows_night") != NULL) {
+          textFace[0].font = fontSVG;
+          textFace[0].size = text->fontSize;
+          textFace[0].color = text->fontColor;
+          textFace[0].valid = TRUE;
+          //          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+          break;
       }
       group = group->next;
     }
@@ -3402,6 +3426,8 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 static void parseTheme(NSVGparser* p, const char** dict)
 {
   int i;
+  BOOLEAN found = FALSE;
+  UINT32 Color = 0x80808080; //default value
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "SelectionOnTop") == 0) {
       GlobalConfig.SelectionOnTop = getIntegerDict(dict[i+1]);
@@ -3443,7 +3469,15 @@ static void parseTheme(NSVGparser* p, const char** dict)
     } else if (strcmp(dict[i], "BadgeScale") == 0) {
       GlobalConfig.BadgeScale = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "SelectionColor") == 0) {
-      GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
+      Color = getIntegerDict(dict[i + 1]);
+      if (DayLight) {
+        GlobalConfig.SelectionColor = Color;
+      }
+    } else if (strcmp(dict[i], "SelectionColor_night") == 0) {
+      found = TRUE;
+      if (!DayLight) {
+        GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
+      }
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
       GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BootCampStyle") == 0) {
@@ -3457,6 +3491,9 @@ static void parseTheme(NSVGparser* p, const char** dict)
       FrameTime = getIntegerDict(dict[i + 1]);
 
     } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
+  }
+  if (!found) {
+    GlobalConfig.SelectionColor = Color;
   }
 }
 

@@ -88,6 +88,7 @@ EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 INTN row0TileSize = 144;
 INTN row1TileSize = 64;
 INTN BCSMargin = 11;
+BOOLEAN DayLight;
 
 
 extern MEM_STRUCTURE            gRAM;
@@ -2351,6 +2352,7 @@ GetEarlyUserSettings (
   VOID        *Value = NULL;
   UINTN       Size = 0;
   BOOLEAN     SpecialBootMode = FALSE;
+
   //read aptiofixflag from nvram for special boot
   Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
   if (!EFI_ERROR(Status)) {
@@ -2665,6 +2667,12 @@ GetEarlyUserSettings (
     if (DictPointer != NULL) {
       Prop = GetProperty (DictPointer, "Timezone");
       GlobalConfig.Timezone = (INT32)GetPropertyInteger (Prop, GlobalConfig.Timezone);
+      //initialize Daylight when we know timezone
+      EFI_TIME          Now;
+      gRT->GetTime(&Now, NULL);
+      INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+      DayLight = (NowHour > 8) && (NowHour < 20);
+
       Prop = GetProperty (DictPointer, "Theme");
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
@@ -2688,10 +2696,6 @@ GetEarlyUserSettings (
                 GlobalConfig.DarkEmbedded = FALSE;
                 GlobalConfig.Font = FONT_ALFA;
               } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
-                EFI_TIME          Now;
-                gRT->GetTime(&Now, NULL);
-                INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
-                BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
                 GlobalConfig.DarkEmbedded = !DayLight;
                 GlobalConfig.Font = DayLight?FONT_ALFA:FONT_GRAY;
               }
@@ -2708,10 +2712,6 @@ GetEarlyUserSettings (
             GlobalConfig.DarkEmbedded = FALSE;
             GlobalConfig.Font = FONT_ALFA;
           } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
-            EFI_TIME          Now;
-            gRT->GetTime(&Now, NULL);
-            INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
-            BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
             GlobalConfig.DarkEmbedded = !DayLight;
             GlobalConfig.Font = DayLight?FONT_ALFA:FONT_GRAY;
           }

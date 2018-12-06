@@ -46,6 +46,7 @@ extern INTN row1TileSize;
 extern INTN FontWidth;
 extern UINTN NumFrames;
 extern UINTN FrameTime;
+extern BOOLEAN DayLight;
 
 textFaces       textFace[4]; //0-help 1-message 2-menu 3-test
 NSVGparser      *mainParser = NULL;  //it must be global variable
@@ -234,11 +235,12 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //  NSVGfont        *fontSVG;
   NSVGimage       *SVGimage;
   NSVGrasterizer  *rast = nsvgCreateRasterizer();
+  /*
   EFI_TIME          Now;
   gRT->GetTime(&Now, NULL);
   INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
   BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
-
+*/
 
 // --- Parse theme.svg --- low case
   mainParser = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
