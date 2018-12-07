@@ -1211,6 +1211,7 @@ if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript
 else
  copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
+ copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
 fi
 
 # Local Variables:      #

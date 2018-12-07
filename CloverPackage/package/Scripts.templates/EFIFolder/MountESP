@@ -48,6 +48,16 @@ if [[ "$(echo $(LC_ALL=C diskutil list "$DiskDevice" | grep -i 'APFS Container S
         sed -n 's/.*Part [oO]f Whole: *//p')
 fi
 
+# check one more time for RAID.
+if [[ ! -z "$(echo $(LC_ALL=C diskutil ar list | grep "$DiskDevice$"))" ]]; then
+  realDisk="$(diskutil ar list | grep -A 10 "${DiskDevice}$" | sed -n 's/Online//p' | head -1 | sed 's/[0-9]*[ ]*\([^ ]*\)[ ]*.*$/\1/g')"
+  # Find first online disk.
+  echo Target volume "$1" on "$DiskDevice" is RAID on physical store "$realDisk"
+  DiskDevice=$(LC_ALL=C diskutil info "$realDisk" 2>/dev/null | \
+  sed -n 's/.*Part [oO]f Whole: *//p')
+fi
+
+
 # echo "realDisk = $realDisk"
 # echo "UUID = $UUID"
 # echo "DiskDevice = $DiskDevice"
