@@ -324,7 +324,7 @@ static float nsvg__normalize(float *x, float* y)
 
 static float nsvg__absf(float x) { return x < 0 ? -x : x; }
 static float nsvg__sqr(float x) { return x*x; }
-#if MALCOLM          //                   0         1         2         3         4         5         6         7
+                    //                   0         1         2         3         4         5         6         7
 static float nsvg__controlPathLength(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 {
   float l1, l2, l3;
@@ -335,8 +335,6 @@ static float nsvg__controlPathLength(float x1, float y1, float x2, float y2, flo
 
   return l1 + l2 + l3;
 }
-#endif
-
 
 static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int type)
 {
@@ -420,117 +418,7 @@ static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int ty
   return;
 
 }
-#if 0
-static void nsvg__flattenCubicBez(NSVGrasterizer* r,
-                                  float x1, float y1, float x2, float y2,
-                                  float x3, float y3, float x4, float y4,
-                                  int level, int type)
-{
-#if MALCOLM
-  float ax, ay, bx, by, cx, cy, dx, dy;
-  //  float pointX, pointY;
-  NSVGpoint p;
-  float firstFDX, firstFDY, secondFDX, secondFDY, thirdFDX, thirdFDY;
-  float h, h2, h3;
-  int i;
-  float control_path_len;
-  int N;
 
-  control_path_len = nsvg__controlPathLength(x1, y1, x2, y2, x3, y3, x4, y4);
-
-  /* This is going to need tweaking, gives approximate same number of divisons
-   as old code on the test image */
-  N = (int)(control_path_len / ( 32 * r->tessTol)) + 2;
-
-  if (N > 1024)
-    N = 1024;
-
-  /* Compute polynomial coefficients from Bezier points */
-
-  ax = -x1 + 3.f * x2 + -3.f * x3 + x4;
-  ay = -y1 + 3.f * y2 + -3.f * y3 + y4;
-
-  bx = 3.f * x1 - 6.f * x2 + 3.f * x3;
-  by = 3.f * y1 - 6.f * y2 + 3.f * y3;
-
-  cx = 3.0f * (x2 - x1); //-3 * x1 + 3 * x2;
-  cy = 3.0f * (y2 - y1); //-3 * y1 + 3 * y2;
-
-  dx = x1;
-  dy = y1;
-
-  /* Set up  step size */
-
-  h = 1.0f / (N-1);
-  h2 = h * h;
-  h3 = h2 * h;
-
-  /* Compute forward differences from Bezier points and "h" */
-
-  p.x = dx;
-  p.y = dy;
-
-  firstFDX = ((ax * h + bx) * h + cx) * h;
-  firstFDY = ((ay * h + by) * h + cy) * h;
-
-  secondFDX = (6.0f * ax * h + 2.0f * bx) * h2;
-  secondFDY = (6.0f * ay * h + 2.0f * by) * h2;
-
-  thirdFDX = 6.0f * ax * h3;
-  thirdFDY = 6.0f * ay * h3;
-
-  /* Compute points at each step */
-  for (i = 0; i < N-1; i++)  {
-    nsvg__addPathPoint(r, &p, NULL, 0);
-    p.x += firstFDX;
-    p.y += firstFDY;
-
-    firstFDX += secondFDX;
-    firstFDY += secondFDY;
-
-    secondFDX += thirdFDX;
-    secondFDY += thirdFDY;
-
-  }
-  nsvg__addPathPoint(r, &p, NULL, type);
-
-  return;
-
-#else
-  float x12,y12,x23,y23,x34,y34,x123,y123,x234,y234,x1234,y1234;
-  float dx,dy,d2,d3;
-
-  if (level > 10) return;
-
-  x12 = (x1+x2)*0.5f;
-  y12 = (y1+y2)*0.5f;
-  x23 = (x2+x3)*0.5f;
-  y23 = (y2+y3)*0.5f;
-  x34 = (x3+x4)*0.5f;
-  y34 = (y3+y4)*0.5f;
-  x123 = (x12+x23)*0.5f;
-  y123 = (y12+y23)*0.5f;
-
-  dx = x4 - x1;
-  dy = y4 - y1;
-  d2 = nsvg__absf(((x2 - x4) * dy - (y2 - y4) * dx));
-  d3 = nsvg__absf(((x3 - x4) * dy - (y3 - y4) * dx));
-
-  if (nsvg__sqr(d2 + d3) < r->tessTol * (dx*dx + dy*dy)) {
-    nsvg__addPathPoint(r, x4, y4, type);
-    return;
-  }
-
-  x234 = (x23+x34)*0.5f;
-  y234 = (y23+y34)*0.5f;
-  x1234 = (x123+x234)*0.5f;
-  y1234 = (y123+y234)*0.5f;
-
-  nsvg__flattenCubicBez(r, x1,y1, x12,y12, x123,y123, x1234,y1234, level+1, 0);
-  nsvg__flattenCubicBez(r, x1234,y1234, x234,y234, x34,y34, x4,y4, level+1, type);
-#endif
-}
-#endif
 static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform)
 {
   int i, j;
@@ -906,13 +794,18 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
   NSVGpath* path;
   NSVGpoint* p0, *p1;
   NSVGpoint p;
-  float scalex = xform[0];
-  float scaley = xform[3];
+  float scalex1 = fabsf(xform[0]);
+  float scalex2 = fabsf(xform[2]);
+  float scaley1 = fabsf(xform[1]);
+  float scaley2 = fabsf(xform[3]);
+//  float scale = (scalex > scaley)?scalex:scaley;  //(scalex + scaley) * 0.5f
+  float scale = (sqrtf(scalex1*scalex1 + scalex2*scalex2) +
+                 sqrtf(scaley1*scaley1 + scaley2*scaley2)) * 0.5f;
 
   float miterLimit = shape->miterLimit;
   int lineJoin = shape->strokeLineJoin;
   int lineCap = shape->strokeLineCap;
-  float lineWidth = shape->strokeWidth * (scalex + scaley) * 0.5f;
+  float lineWidth = shape->strokeWidth * scale;
   //DumpFloat("shapeStroke", xform, 6);
   for (path = shape->paths; path != NULL; path = path->next) {
     // Flatten path
@@ -922,7 +815,6 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
     nsvg__addPathPoint(r, &p, xform, NSVG_PT_CORNER);
     for (i = 0; i < path->npts-1; i += 3) {
       float* p = &path->pts[i*2];
-      //      nsvg__flattenCubicBez(r, (p[0]*scalex+dx), (p[1]*scaley+dy), (p[2]*scalex+dx), (p[3]*scaley+dy), (p[4]*scalex+dx), (p[5]*scaley+dy), (p[6]*scalex+dx), (p[7]*scaley+dy), 0, NSVG_PT_CORNER);
       nsvg__flattenCubicBez2(r, p, xform, NSVG_PT_CORNER);
     }
     if (r->npoints < 2)
@@ -969,7 +861,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
         dashOffset -= shape->strokeDashArray[idash];
         idash = (idash + 1) % shape->strokeDashCount;
       }
-      dashLen = (shape->strokeDashArray[idash] - dashOffset) * (scalex + scaley) * 0.5f;
+      dashLen = (shape->strokeDashArray[idash] - dashOffset) * scale;
 
       for (j = 1; j < r->npoints2; ) {
         float dx = r->points2[j].x - cur->x;
@@ -992,7 +884,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
           // Advance dash pattern
           dashState = !dashState;
           idash = (idash+1) % shape->strokeDashCount;
-          dashLen = shape->strokeDashArray[idash] * (scalex + scaley) * 0.5f;
+          dashLen = shape->strokeDashArray[idash] * scale;
           // Restart
           cur->x = pc.x;
           cur->y = pc.y;

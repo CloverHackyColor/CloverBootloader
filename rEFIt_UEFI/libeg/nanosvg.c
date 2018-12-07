@@ -130,8 +130,8 @@ static int getIntegerDict(const char* s)
   return 0xFFFF;
 }
 
-static float nsvg__sqr(float x) { return x*x; }
-static float nsvg__vmag(float x, float y) { return sqrtf(x*x + y*y); }
+float nsvg__sqr(float x) { return x*x; }
+float nsvg__vmag(float x, float y) { return sqrtf(x*x + y*y); }
 
 static float nsvg__vecrat(float ux, float uy, float vx, float vy)
 {
@@ -741,7 +741,7 @@ static float nsvg__actualHeight(NSVGparser* p)
 static float nsvg__actualLength(NSVGparser* p)
 {
   float w = nsvg__actualWidth(p), h = nsvg__actualHeight(p);
-  return sqrtf(w*w + h*h) * 0.70710678118655f; // 1.0/sqrtf(2.0f);
+  return nsvg__vmag(w, h) * 0.70710678118655f; // 1.0/sqrtf(2.0f);
 }
 
 static float nsvg__convertToPixels(NSVGparser* p, NSVGcoordinate* c, float orig, float length)
@@ -1997,7 +1997,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     if (attr->fontFace) {
       if (value[0] == 0x27) {  //'
         CHAR8* apo = strstr(++value, "'");
-        apo[0] = '\0';
+        if (apo) apo[0] = '\0';
       }
  //     DBG("reduced font-family:%a\n", value);
       strncpy(attr->fontFace->fontFamily, value, 63);
@@ -2336,7 +2336,8 @@ static void nsvg__pathArcTo(NSVGparser* p, float* cpx, float* cpy, float* args, 
   }
   dx = x1 - x2;
   dy = y1 - y2;
-  d = sqrtf(dx*dx + dy*dy);
+//  d = sqrtf(dx*dx + dy*dy);
+  d = nsvg__vmag(dx, dy);
   if (d < 1e-6f || rx < 1e-6f || ry < 1e-6f) {
     // The arc degenerates to a line
     nsvg__lineTo(p, x2, y2);

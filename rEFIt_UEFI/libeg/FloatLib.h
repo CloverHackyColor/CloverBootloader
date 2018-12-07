@@ -35,6 +35,7 @@ float Atan2F(float X, float Y);
 float FabsF(float X);
 float rndf(void);  //random number from 0 to 1.0f
 int dither(float x, int level);
+float nsvg__vmag(float x, float y); //sqrt(x*x+y*y)
 
 RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,
