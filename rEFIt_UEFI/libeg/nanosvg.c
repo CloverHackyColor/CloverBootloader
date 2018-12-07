@@ -39,7 +39,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1995,6 +1995,11 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
       attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
     }
     if (attr->fontFace) {
+      if (value[0] == 0x27) {  //'
+        CHAR8* apo = strstr(++value, "'");
+        apo[0] = '\0';
+      }
+ //     DBG("reduced font-family:%a\n", value);
       strncpy(attr->fontFace->fontFamily, value, 63);
       attr->fontFace->fontFamily[63] = '\0';
     }
@@ -3538,7 +3543,7 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
     return;
   }
   NSVGfont* font = p->font;
-  DBG("begin parse font face, font->id=%a\n", font->id);
+//  DBG("begin parse font face, font->id=%a\n", font->id);
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "font-family") == 0) {
       AsciiStrCpyS(font->fontFamily, 64, dict[i+1]);
