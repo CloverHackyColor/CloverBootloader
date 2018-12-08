@@ -42,6 +42,7 @@
 		2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */; };
 		2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */; };
 		A5582AFD21019EA6002CFB6E /* VectorGraphics.c in Sources */ = {isa = PBXBuildFile; fileRef = A5582AFC21019EA6002CFB6E /* VectorGraphics.c */; };
+		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
 		A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392620D9F17B004340E1 /* FloatLib.c */; };
 		A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392920D9F18C004340E1 /* nanosvgrast.c */; };
 		A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392A20D9F18C004340E1 /* nanosvg.c */; };
@@ -909,6 +910,10 @@
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
+		A59CB66521BC14AA0054A7CF /* SmbiosGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SmbiosGen.c; sourceTree = "<group>"; };
+		A59CB66621BC14AA0054A7CF /* SmbiosGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmbiosGen.h; sourceTree = "<group>"; };
+		A59CB66721BC14AA0054A7CF /* SmbiosGen.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGen.inf; sourceTree = "<group>"; };
+		A59CB66821BC14AA0054A7CF /* SmbiosGenStrings.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGenStrings.uni; sourceTree = "<group>"; };
 		A5BF392520D9F17A004340E1 /* FloatLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatLib.h; sourceTree = "<group>"; };
 		A5BF392620D9F17B004340E1 /* FloatLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FloatLib.c; sourceTree = "<group>"; };
 		A5BF392820D9F18C004340E1 /* nanosvg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nanosvg.h; sourceTree = "<group>"; };
@@ -1399,6 +1404,7 @@
 				12C86B5C1DE4271D00BF4974 /* OsxDxeCore */,
 				12C86B8E1DE4271D00BF4974 /* OsxDxeIpl */,
 				12C86BA41DE4271D00BF4974 /* OsxEfiLdr */,
+				A59CB66421BC14AA0054A7CF /* OsxSmbiosGenDxe */,
 				12C86BB31DE4271D00BF4974 /* OsxPciBusNoEnumerationDxe */,
 				12C86BCB1DE4271D00BF4974 /* PcatRealTimeClockRuntimeDxe */,
 				12C86BD21DE4271D00BF4974 /* PciRootBridgeDxe */,
@@ -2919,6 +2925,17 @@
 			path = ../CloverEFI;
 			sourceTree = "<group>";
 		};
+		A59CB66421BC14AA0054A7CF /* OsxSmbiosGenDxe */ = {
+			isa = PBXGroup;
+			children = (
+				A59CB66521BC14AA0054A7CF /* SmbiosGen.c */,
+				A59CB66621BC14AA0054A7CF /* SmbiosGen.h */,
+				A59CB66721BC14AA0054A7CF /* SmbiosGen.inf */,
+				A59CB66821BC14AA0054A7CF /* SmbiosGenStrings.uni */,
+			);
+			path = OsxSmbiosGenDxe;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
@@ -3023,6 +3040,7 @@
 				A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */,
 				2C794E491A0AA85900D845B0 /* OsxAptioFixDrv.c in Sources */,
 				2C794E4B1A0AA85900D845B0 /* AsmFuncsX64.asm in Sources */,
+				A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */,
 				2C794E441A0AA85900D845B0 /* device_tree.c in Sources */,
 				1288B5211A30CEFB007CBCEF /* Net.c in Sources */,
 				12A60F5A1DB610500068BF8B /* AppleImageCodec.c in Sources */,

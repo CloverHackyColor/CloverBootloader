@@ -93,9 +93,9 @@ INF  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 INF  Clover/CloverEFI/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
+#INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
 #INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
-#INF  Clover/OemSmbiosGenDxe/SmbiosGen.inf
+INF  Clover/CloverEFI/OsxSmbiosGenDxe/SmbiosGen.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF  Clover/CloverEFI/OsxBdsDxe/BdsDxe.inf
 INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf

@@ -277,9 +277,9 @@
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
+  #DuetPkg/SmbiosGenDxe/SmbiosGen.inf
   #Clover/OsxSmbiosDxe/SmbiosDxe.inf
-  #Clover/OemSmbiosGenDxe/SmbiosGen.inf
+  Clover/CloverEFI/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/EfiLdr/EfiLdr.inf {
   Clover/CloverEFI/OsxEfiLdr/EfiLdr.inf {

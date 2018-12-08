@@ -20,9 +20,10 @@
   ENTRY_POINT                    = OsxLowMemFixDrvEntrypoint
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  DuetPkg/DuetPkg.dec
+#  DuetPkg/DuetPkg.dec
 
 [LibraryClasses]
   UefiLib
