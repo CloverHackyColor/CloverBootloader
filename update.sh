@@ -9,8 +9,6 @@ cd ../MdeModulePkg/
 svn up
 cd ../CryptoPkg/
 svn up
-cd ../DuetPkg/
-svn up
 cd ../EdkCompatibilityPkg/
 svn up
 cd ../IntelFrameworkModulePkg/
