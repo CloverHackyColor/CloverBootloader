@@ -109,9 +109,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
           row0TileSize = GlobalConfig.MainEntriesSize; // + (int)(16.f * Scale);
           DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
         }
-   //     GlobalConfig.SelectionOnTop
-   //     row0TileSize = (INTN)(144.f * Scale);
-        if ((Id == BUILTIN_SELECTION_SMALL) && (!GlobalConfig.SelectionOnTop)) {
+         if ((Id == BUILTIN_SELECTION_SMALL) && (!GlobalConfig.SelectionOnTop)) {
           row1TileSize = (int)(IconImage->width * Scale);
         }
 
@@ -193,15 +191,8 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
     return Status;
   }
 
-
 //  DBG("begin rasterize %a\n", IconName);
   float tx = 0.f, ty = 0.f;
-//  if (Id == BUILTIN_ICON_BACKGROUND) {
-//    tx = - GlobalConfig.CentreShift;
-//    IconImage->realBounds[0] += tx;
-//    IconImage->realBounds[2] += tx;
-//    iWidth = (int)UGAWidth;
-//  } else
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
       (Id != BUILTIN_ICON_ANIME) &&
       (strstr(IconName, "Banner") == NULL)) {
@@ -231,19 +222,11 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 {
   EFI_STATUS Status;
-//  NSVGparser      *p = NULL;
-//  NSVGfont        *fontSVG;
   NSVGimage       *SVGimage;
   NSVGrasterizer  *rast = nsvgCreateRasterizer();
-  /*
-  EFI_TIME          Now;
-  gRT->GetTime(&Now, NULL);
-  INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
-  BOOLEAN DayLight = (NowHour > 8) && (NowHour < 20);
-*/
 
 // --- Parse theme.svg --- low case
-  mainParser = nsvgParse((CHAR8*)buffer, "px", 72, 1.f);
+  mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f);
   SVGimage = mainParser->image;
   if (!SVGimage) {
     DBG("Theme not parsed!\n");
@@ -729,7 +712,7 @@ VOID testSVG()
     if (!EFI_ERROR(Status)) {
       //Parse XML to vector data
 
-      p = nsvgParse((CHAR8*)FileData, "px", 72, 0.f);
+      p = nsvgParse((CHAR8*)FileData, 72, 0.f);
       SVGimage = p->image;
       DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
       FreePool(FileData);
@@ -774,7 +757,7 @@ VOID testSVG()
     Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
     DBG("test Font.svg loaded status=%r\n", Status);
     if (!EFI_ERROR(Status)) {
-      p = nsvgParse((CHAR8*)FileData, "px", 72, 1.f);
+      p = nsvgParse((CHAR8*)FileData, 72, 1.f);
       if (!p) {
         DBG("font not parsed\n");
         break;

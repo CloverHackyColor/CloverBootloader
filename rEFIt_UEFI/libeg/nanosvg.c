@@ -749,7 +749,7 @@ static float nsvg__convertToPixels(NSVGparser* p, NSVGcoordinate* c, float orig,
   NSVGattrib* attr = nsvg__getAttr(p);
   float fontSize = 10;
   if ((p->dpi <= 0) || (p->dpi > 2400)) {
-    DBG("wrong dpi=%d\n", (int)p->dpi);
+//    DBG("wrong dpi=%d\n", (int)p->dpi);
     p->dpi = 72;
   }
   if (attr->fontFace) {
@@ -2665,6 +2665,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
     memcpy(shape->xform, &xform[0], sizeof(float)*6);
     shape->isSymbol = FALSE;
     shape->link = ref;
+    shape->group = attr->group;
     AsciiStrCatS(shape->id, 64, "_lnk");
     shape->bounds[0] = FLT_MAX;
     shape->bounds[1] = FLT_MAX;
@@ -2679,6 +2680,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 //    nsvg__xformMultiply(shape->xform, &xform[0]);
     shape->isSymbol = TRUE;
     shape->link = refSym->shapes;
+    shape->group = attr->group;
     AsciiStrCpyS(shape->id, 64, attr->id);
     shape->bounds[0] = FLT_MAX;
     shape->bounds[1] = FLT_MAX;
@@ -2839,7 +2841,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
  //   DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
     if (!EFI_ERROR(Status)) {
-      p1 = nsvgParse((CHAR8*)FileData, "px", 72, 1.0f);
+      p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);
       if (!p1) {
         DBG("font not parsed\n");
       } else {
@@ -4108,9 +4110,9 @@ static void nsvg__content(void* ud, char* s)
     }
 }
 
-static void nsvg__assignGradients(NSVGparser* p)
+static void nsvg__assignGradients(NSVGparser* p, NSVGshape* shapes)
 {
-  for (NSVGshape* shape = p->image->shapes; shape != NULL; shape = shape->next) {
+  for (NSVGshape* shape = shapes; shape != NULL; shape = shape->next) {
 
     if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {
       NSVGgradientLink* link = shape->fill.gradientLink;
@@ -4242,10 +4244,12 @@ void nsvg__imageBounds(NSVGparser* p, float* bounds)
     bounds[0] = bounds[1] = bounds[2] = bounds[3] = 0.0;
   }
 }
-
-NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity)
+// units like "px" is not used so just exclude it
+NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opacity)
 {
   NSVGparser* p;
+  NSVGclipPath* clipPath;
+  NSVGsymbol* symbol;
   float bounds[4];
   bounds[0] = FLT_MAX;
   bounds[1] = FLT_MAX;
@@ -4259,7 +4263,20 @@ NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity)
   p->dpi = dpi;
   p->opacity = opacity;
   nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
-  nsvg__assignGradients(p);
+
+//assign gradients
+  clipPath = p->image->clipPaths;
+  while (clipPath != NULL) {
+    nsvg__assignGradients(p, clipPath->shapes);
+    clipPath = clipPath->next;
+  }
+  symbol = p->symbols;
+  while (symbol) {
+    nsvg__assignGradients(p, symbol->shapes);
+    symbol = symbol->next;
+  }
+  nsvg__assignGradients(p, p->image->shapes);
+
   nsvg__imageBounds(p, bounds);
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 

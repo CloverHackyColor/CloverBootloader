@@ -441,7 +441,7 @@ typedef struct NSVGparser
 
 // Parses SVG file from a null terminated string, returns SVG image as paths.
 // Important note: changes the string.
-NSVGparser* nsvgParse(char* input, const char* units, float dpi, float opacity);
+NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opacity);
 
 // Deletes list of paths.
 void nsvgDelete(NSVGimage* image);
