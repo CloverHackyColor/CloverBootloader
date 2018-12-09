@@ -84,7 +84,7 @@ InitializeInterruptRedirection (
   EFI_STATUS            Status;
   EFI_PHYSICAL_ADDRESS  LegacyRegionBase;
   UINTN                 LegacyRegionLength;
-  UINT32                *IdtArray;
+  volatile UINT32       *IdtArray;
   UINTN                 Index;
   UINT8                 ProtectedModeBaseVector;
 
@@ -107,7 +107,7 @@ InitializeInterruptRedirection (
   //
   // Copy code to legacy region
   //
-  CopyMem ((VOID *)(UINTN)LegacyRegionBase, InterruptRedirectionCode, sizeof (InterruptRedirectionCode));
+  gBS->CopyMem ((VOID *)(UINTN)LegacyRegionBase, (VOID *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
 
   //
   // Get VectorBase, it should be 0x68
@@ -156,7 +156,7 @@ LegacyBiosInt86 (
   BOOLEAN               Ret;
   UINT16                *Stack16;
   
-  ZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
+  gBS->SetMem (&ThunkRegSet, sizeof (ThunkRegSet), 0);
   ThunkRegSet.E.EFLAGS.Bits.Reserved_0 = 1;
   ThunkRegSet.E.EFLAGS.Bits.Reserved_1 = 0;
   ThunkRegSet.E.EFLAGS.Bits.Reserved_2 = 0;
@@ -226,7 +226,7 @@ LegacyBiosInt86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-  CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+  gBS->CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
   Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
 

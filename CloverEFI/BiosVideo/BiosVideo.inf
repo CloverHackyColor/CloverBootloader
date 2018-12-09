@@ -1,7 +1,7 @@
 ## @file
-#  This module provides EFI_GRAPHIC_OUT_PROTOCOL based on functions of video 
+#  This module provides EFI_GRAPHIC_OUT_PROTOCOL based on functions of video
 #  on legacy BIOS.
-#  
+#
 #  Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
@@ -48,7 +48,7 @@
   ComponentName.c
 #  VesaBiosExtensions.h
   LegacyBiosThunk.c
-  
+
 [Protocols]
   gEfiPciIoProtocolGuid
   gEfiVgaMiniPortProtocolGuid
@@ -63,6 +63,6 @@
   gEfiGlobalVariableGuid
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
+  XCODE:*_*_*_CC_FLAGS = -O0 -fno-builtin -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
   MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
