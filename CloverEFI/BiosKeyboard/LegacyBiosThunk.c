@@ -84,7 +84,7 @@ InitializeInterruptRedirection (
   EFI_STATUS            Status;
   EFI_PHYSICAL_ADDRESS  LegacyRegionBase;
   UINTN                 LegacyRegionLength;
-  UINT32                *IdtArray;
+  volatile UINT32                *IdtArray;
   UINTN                 Index;
   UINT8                 ProtectedModeBaseVector;
 
@@ -107,7 +107,7 @@ InitializeInterruptRedirection (
   //
   // Copy code to legacy region
   //
-  CopyMem ((VOID *)(UINTN)LegacyRegionBase, InterruptRedirectionCode, sizeof (InterruptRedirectionCode));
+  gBS->CopyMem ((VOID *)(UINTN)LegacyRegionBase, InterruptRedirectionCode, sizeof (InterruptRedirectionCode));
 
   //
   // Get VectorBase, it should be 0x68
@@ -156,7 +156,7 @@ LegacyBiosInt86 (
   BOOLEAN               Ret;
   UINT16                *Stack16;
   
-  ZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
+  gBS->SetMem (&ThunkRegSet, sizeof (ThunkRegSet), 0);
   ThunkRegSet.E.EFLAGS.Bits.Reserved_0 = 1;
   ThunkRegSet.E.EFLAGS.Bits.Reserved_1 = 0;
   ThunkRegSet.E.EFLAGS.Bits.Reserved_2 = 0;
@@ -189,7 +189,7 @@ LegacyBiosInt86 (
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
   Status = BiosDev->Legacy8259->SetMode (BiosDev->Legacy8259, Efi8259LegacyMode, NULL, NULL);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
   
   Stack16 = (UINT16 *)((UINT8 *) BiosDev->ThunkContext->RealModeBuffer + BiosDev->ThunkContext->RealModeBufferSize - sizeof (UINT16));
 
@@ -205,7 +205,7 @@ LegacyBiosInt86 (
   // Restore protected mode interrupt state
   //
   Status = BiosDev->Legacy8259->SetMode (BiosDev->Legacy8259, Efi8259ProtectedMode, NULL, NULL);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   //
   // End critical section
@@ -226,7 +226,7 @@ LegacyBiosInt86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-  CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+  gBS->CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
   Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
 

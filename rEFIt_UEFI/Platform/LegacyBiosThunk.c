@@ -101,7 +101,7 @@ InitializeInterruptRedirection (
   EFI_STATUS            Status;
   EFI_PHYSICAL_ADDRESS  LegacyRegionBase;
   UINTN                 LegacyRegionLength;
-  UINT32                *IdtArray;
+  volatile UINT32                *IdtArray;
   UINTN                 Index;
   UINT8                 ProtectedModeBaseVector;
 
