@@ -1738,6 +1738,7 @@ VOID InitSelection(VOID)
   }
   if (SelectionImages[2] == NULL){
     SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
+    SelectionImages[2]->HasAlpha = FALSE; // support transparensy for selection icons
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
   }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
@@ -1755,6 +1756,7 @@ VOID InitSelection(VOID)
   if (SelectionImages[0] == NULL) {
     // calculate big selection image from small one
     SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
+    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
     if (SelectionImages[0] == NULL) {
       egFreeImage(SelectionImages[2]);

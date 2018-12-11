@@ -14,7 +14,7 @@
 
 #ifndef DEBUG_FIX
 #ifndef DEBUG_ALL
-#define DEBUG_FIX 1
+#define DEBUG_FIX 0
 #else
 #define DEBUG_FIX DEBUG_ALL
 #endif
@@ -940,7 +940,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
         //1. if name begin with \\ this is with score
         //2. else find outer device or scope until \\ is found
         //3. add new name everytime is found
-        DBG("first CPU found at %x offset %x\n", i, offset);
+  //      DBG("first CPU found at %x offset %x\n", i, offset);
 
         if (dsdt[offset] == '\\') {
           // "\_PR.CPU0"
@@ -952,7 +952,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             j = 2 + (c1 - 2) * 4;
           }
           CopyMem(acpi_cpu_score, dsdt + offset + j, 4);
-          DBG("slash found\n");
+//          DBG("slash found\n");
         } else {
 //--------
           j = i - 1; //usually adr = &5B - 1 = sizefield - 3
@@ -961,7 +961,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             k = j + 2;
             if ((dsdt[j] == 0x5B) && (dsdt[j + 1] == 0x82) &&
                 !CmpNum(dsdt, j, TRUE)) { //device candidate
-              DBG("device candidate at %x\n", j);
+  //            DBG("device candidate at %x\n", j);
               size = get_size(dsdt, k);
               if (size) {
                 if (k + size > i + 3) {  //Yes - it is outer
@@ -969,11 +969,11 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                   if (dsdt[off2] == '\\') {
                     // "\_SB.SCL0"
                     InsertScore(dsdt, off2, 1);
-                    DBG("acpi_cpu_score calculated as %a\n", acpi_cpu_score);
+   //                 DBG("acpi_cpu_score calculated as %a\n", acpi_cpu_score);
                     break;
                   } else {
                     InsertScore(dsdt, off2, 0);
-                    DBG("device inserted in acpi_cpu_score %a\n", acpi_cpu_score);
+   //                 DBG("device inserted in acpi_cpu_score %a\n", acpi_cpu_score);
                   }
                 }  //else not an outer device
               } //else wrong size field - not a device
@@ -985,7 +985,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                  dsdt[j + 2] == 'B' && dsdt[j + 3] == '_') ||
                 (dsdt[j] == '_' && dsdt[j + 1] == 'P' &&
                  dsdt[j + 2] == 'R' && dsdt[j + 3] == '_')) {
-              DBG("score candidate at %x\n", j);
+   //           DBG("score candidate at %x\n", j);
               for (j1=0; j1 < 10; j1++) {
                 if (dsdt[j - j1] != 0x10) {
                   continue;
@@ -1007,7 +1007,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             } //else not a scope
             if (SBFound) {
               InsertScore(dsdt, j, 0);
-              DBG("score inserted in acpi_cpu_score %a\n", acpi_cpu_score);
+ //             DBG("score inserted in acpi_cpu_score %a\n", acpi_cpu_score);
               break;
             }
             j = k - 3;    //if found then search again from found
@@ -1446,7 +1446,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       if (OldName) {
-        DBG("NewName %a already present, renaming impossible\n", NewName);
+        MsgLog("NewName %a already present, renaming impossible\n", NewName);
       } else {
         DBG("name %a present at %x\n", NewName, i);
       }
@@ -1460,7 +1460,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, /* CONST*/ CHAR8 *OldName, /* CONST*/ 
   for (i = 0; len >= 4 && i < len - 4; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
-      DBG("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
+      MsgLog("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
       dsdt[i+0] = NewName[0];
       dsdt[i+1] = NewName[1];
       dsdt[i+2] = NewName[2];
@@ -1490,7 +1490,7 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
       }  //else continue
     }
   }
-  DBG("Device definition before adr=%x not found\n", address);
+  MsgLog("Device definition before adr=%x not found\n", address);
   return 0; //impossible value for fool proof
 }
 
@@ -1525,7 +1525,7 @@ UINT32 DeleteDevice(/*CONST*/ CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j;
   INT32 size = 0, sizeoffset;
-  DBG(" deleting device %a\n", Name);
+  MsgLog(" deleting device %a\n", Name);
   for (i=20; i<len; i++) {
     j = CmpDev(dsdt, i, (UINT8*)Name);
     if (j != 0) {
@@ -1625,7 +1625,7 @@ VOID  findPciRoot (UINT8 *dsdt, UINT32 len)
       }
     }
   } else {
-    DBG("Warning! PCI root is not found!");
+    MsgLog("Warning! PCI root is not found!");
   }
 }
 
@@ -1657,7 +1657,7 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   shift = FindBin(dsdt, len, (UINT8*)acpi3, sizeof(acpi3));
   if (shift < 0) {
     // not found - create new one or do nothing
-    DBG("no device(AC) exists\n");
+    MsgLog("no device(AC) exists\n");
     return len;
   }
   adr = devFind(dsdt, (UINT32)shift);
@@ -1700,9 +1700,9 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     DBG(" invalid patches!\n");
     return len;
   }
-  DBG(" pattern %02x%02x%02x%02x,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  MsgLog(" pattern %02x%02x%02x%02x,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
-    DBG(" the patch is too large!\n");
+    MsgLog(" the patch is too large!\n");
     return len;
   }
   sizeoffset = LenTR - LenTF;
@@ -1710,18 +1710,18 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     adr = FindBin(dsdt + i, len - i, ToFind, LenTF);
     if (adr < 0) {
       if (found) {
-        DBG(" ]\n");
+        MsgLog(" ]\n");
       } else {
-        DBG(" bin not found / already patched!\n");
+        MsgLog(" bin not found / already patched!\n");
       }
       return len;
     }
 
     if (!found) {
-      DBG(" patched at: [");
+      MsgLog(" patched at: [");
     }
 
-    DBG(" (%x)", adr);
+    MsgLog(" (%x)", adr);
     found = TRUE;
     len = move_data(adr + i, dsdt, len, sizeoffset);
     if ((LenTR > 0) && (ToReplace != NULL)) {
@@ -1731,53 +1731,10 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
     i += adr + LenTR;
   }
-  DBG(" ]\n"); //should not be here
+  MsgLog(" ]\n"); //should not be here
   return len;
 }
-/* old method
-UINT32 FixRenameByBridge (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* TgtDevName, UINT8* TgtReplName)
-{
-  UINT32 i, k;
-  UINT32 BrdADR = 0, BridgeSize, DevADR;
-  CHAR8*  DevName;
-  UINT32 PCIADR, PCISIZE = 0;
 
-  PCIADR = GetPciDevice(dsdt, len);
-  if (PCIADR) {
-    PCISIZE = get_size(dsdt, PCIADR);
-  }
-  if (!PCISIZE) return len; //what is the bad DSDT ?!
-
-  DBG("Start ByBridge Rename Fix\n");
-  for (i=0x20; len >= 10 && i < len - 10; i++) {
-    if (CmpDev(dsdt, i, (UINT8*)TgtBrgName)) {
-      BrdADR = devFind(dsdt, i);
-      if (!BrdADR) {
-        continue;
-      }
-      BridgeSize = get_size(dsdt, BrdADR);
-      if(!BridgeSize) continue;
-      for (k = BrdADR + 9; k < BrdADR + BridgeSize; k++) {
-        if (CmpDev(dsdt, k, (UINT8*)TgtDevName)) {
-          DevADR = devFind(dsdt, k);
-          if (!DevADR) {
-            continue;
-          }
-          DevName = AllocateZeroPool(5);
-          CHAR8* NewDevName = (CHAR8*)TgtReplName;
-          CopyMem(DevName, dsdt+k, 4);
-          DBG("found device %a at bridge %a, renaming to %a\n",
-              DevName, TgtBrgName, NewDevName);
-          ReplaceName(dsdt + BrdADR, BridgeSize, DevName, NewDevName);
-          ArptName = TRUE;
-          break;
-        }
-      }
-    }
-  }
-  return len;
-}
-*/
 //new method. by goodwin_c
 UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR)
 {
@@ -2081,13 +2038,13 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
     // IO (Decode16, ((0x0070, 0x0070)) =>> find this
     if (dsdt[i] == 0x70 && dsdt[i+1] == 0x00 && dsdt[i+2] == 0x70 && dsdt[i+3] == 0x00) {
       if (dsdt[i+5] == 0x08 && gSettings.Rtc8Allowed) {
-        DBG("CMOS reset not will be, patch length is not needed\n");
+        MsgLog("CMOS reset not will be, patch length is not needed\n");
       } else {
         // First Fix RTC CMOS Reset Problem
         if (dsdt[i+4] != 0x00 || dsdt[i+5] != 0x02) { //dsdt[j+4] => Alignment  dsdt[j+5] => Length
           dsdt[i+4] = 0x00;  //Alignment
           dsdt[i+5] = 0x02;  //Length
-          DBG("found RTC Length not match, Maybe will cause CMOS reset will patch it.\n");
+          MsgLog("found RTC Length not match, Maybe will cause CMOS reset, will patch it.\n");
         }
       }
       for (l = adr + 4; l < i; l++) {
@@ -2109,7 +2066,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
         if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
             ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09))) {
           sizeoffset = l - k;  //usually = -3
-          DBG("found RTC had IRQNoFlag will move %d bytes\n", sizeoffset);
+          MsgLog("found RTC had IRQNoFlag will move %d bytes\n", sizeoffset);
           // First move offset byte remove IRQNoFlag
           len = move_data(l, dsdt, len, sizeoffset);
           DBG("...len=%x\n", len);
@@ -2267,7 +2224,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
             ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
             ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09))) {
           sizeoffset = i - k;
-          DBG("found PIC had IRQNoFlag will move %d bytes\n", sizeoffset);
+          MsgLog("found PIC had IRQNoFlag will move %d bytes\n", sizeoffset);
           // First move offset byte remove IRQNoFlag
           len = move_data(i, dsdt, len, sizeoffset);
           // Fix IO (Decode16, size and _CRS size
@@ -2307,7 +2264,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   INT32   shift = 0;
   UINT32  LPCBADR = 0, LPCBSIZE = 0;
 
-  DBG("Start HPET Fix\n");
+  MsgLog("Start HPET Fix\n");
   //have to find LPC
   for (j=0x20; len >= 10 && j < len - 10; j++) {
     if (CmpAdr(dsdt, j, 0x001F0000)) {
@@ -2319,7 +2276,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
     }  // End LPCB find
   }
   if (!LPCBSIZE) {
-    DBG("No LPCB device! Patch HPET will not be applied\n");
+    MsgLog("No LPCB device! Patch HPET will not be applied\n");
     return len;
   }
   for (j=20; j<len; j++) {
@@ -2386,7 +2343,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
       LPCBSIZE = get_size(dsdt, LPCBADR);
       device_name[3] = AllocateZeroPool(5);
       CopyMem(device_name[3], dsdt + j, 4);
-      DBG("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
+      MsgLog("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
           device_name[3]);
 
       if (LPCBSIZE) break;
@@ -2411,9 +2368,9 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
         len = move_data(k - 1, dsdt, len, sizeoffset);
         //to correct outers we have to calculate offset
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-        DBG("_DSM in LPC already exists, dropped\n");
+        MsgLog("_DSM in LPC already exists, dropped\n");
       } else {
-        DBG("_DSM already exists, patch LPC will not be applied\n");
+        MsgLog("_DSM already exists, patch LPC will not be applied\n");
         return len;
       }
     }
@@ -2485,7 +2442,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
 
-  DBG("Start Display%d Fix\n", VCard);
+  MsgLog("Start Display%d Fix\n", VCard);
   root = aml_create_node(NULL);
 
   //search DisplayADR1[0]
@@ -2513,7 +2470,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         }
         devsize1 = get_size(dsdt, devadr1);
         if (devsize1) {
-          DBG("Found internal video device %x @%x\n", DisplayADR2[VCard], devadr1);
+          MsgLog("Found internal video device %x @%x\n", DisplayADR2[VCard], devadr1);
           DISPLAYFIX = TRUE;
           break;
         }
@@ -2532,10 +2489,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
             if (gSettings.ReuseFFFF) {
               dsdt[j+10] = 0;
               dsdt[j+11] = 0;
-              DBG("Found internal video device FFFF@%x, ReUse as 0\n", devadr1);
+              MsgLog("Found internal video device FFFF@%x, ReUse as 0\n", devadr1);
             } else {
               NonUsable = TRUE;
-              DBG("Found internal video device FFFF@%x, unusable\n", devadr1);
+              MsgLog("Found internal video device FFFF@%x, unusable\n", devadr1);
             }
             DISPLAYFIX = TRUE;
             break;
@@ -2551,7 +2508,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       i = devadr;
       DISPLAYFIX = TRUE;
       devadr1 = devadr;
-      DBG(" builtin display\n");
+      MsgLog(" builtin display\n");
     }
 
     if (i != 0) {
@@ -2566,9 +2523,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           sizeoffset = - 1 - Size;
           len = move_data(k - 1, dsdt, len, sizeoffset); //kill _DSM
           len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-          DBG("_DSM in display already exists, dropped\n");
+          MsgLog("_DSM in display already exists, dropped\n");
         } else {
-          DBG("_DSM already exists, patch display will not be applied\n");
+          MsgLog("_DSM already exists, patch display will not be applied\n");
           //        return len;
           DisplayADR1[VCard] = 0;  //xxx
           DsmFound = TRUE;
@@ -2581,13 +2538,13 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     peg0 = aml_add_device(root, "PEG0");
     aml_add_name(peg0, "_ADR");
     aml_add_dword(peg0, DisplayADR1[VCard]);
-    DBG("add device PEG0\n");
+    MsgLog("add device PEG0\n");
   } else
     peg0 = root;
 
   if (!DISPLAYFIX) {   //bridge or builtin not found
     gfx0 = aml_add_device(peg0, "GFX0");
-    DBG("add device GFX0\n");
+    MsgLog("add device GFX0\n");
     aml_add_name(gfx0, "_ADR");
     if (DisplayADR2[VCard] > 0x3F)
       aml_add_dword(gfx0, DisplayADR2[VCard]);
@@ -2608,11 +2565,11 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       )
     )
   ) {
-    DBG("Skipping Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
+    MsgLog("Skipping Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
     goto Skip_DSM;
   }
 
-  DBG("Creating Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
+  MsgLog("Creating Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
   met = aml_add_method(gfx0, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
@@ -2686,7 +2643,7 @@ Skip_DSM:
           }
         }
       } else {
-        DBG("Warning: Method(_SUN) found for %04x card\n", DisplayVendor[VCard]);
+        MsgLog("Warning: Method(_SUN) found for %04x card\n", DisplayVendor[VCard]);
       }
       break;
   }
@@ -3268,62 +3225,38 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   // add Method(_DSM,4,NotSerialized) for network
   if (gSettings.FakeWIFI || !gSettings.NoDefaultProperties) {
     met = aml_add_method(dev, "_DSM", 4);
-  met2 = aml_add_store(met);
-  pack = aml_add_package(met2);
-  if (!gSettings.NoDefaultProperties) {
-    aml_add_string(pack, "built-in");
-    aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
-    aml_add_string(pack, "model");
-    aml_add_string_buffer(pack, "Apple WiFi card");
-    //aml_add_string(pack, "subsystem-id");
-    //aml_add_byte_buffer(pack, data2ATH, 4);
-    //aml_add_string(pack, "subsystem-vendor-id");
-    //aml_add_byte_buffer(pack, data3ATH, 4);
-/*    if (ArptBCM) {
-      if (!gSettings.FakeWIFI) {
-        aml_add_string(pack, "model");
-        aml_add_string_buffer(pack, "Dell Wireless 1395");
-        aml_add_string(pack, "name");
-        aml_add_string_buffer(pack, "pci14e4,4312");
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, dataBCM, 4);
-      }
-    } else if (ArptAtheros) {
+    met2 = aml_add_store(met);
+    pack = aml_add_package(met2);
+    if (!gSettings.NoDefaultProperties) {
+      aml_add_string(pack, "built-in");
+      aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
       aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
-      if (!gSettings.FakeWIFI && ArptDID != 0x30) {
-        aml_add_string(pack, "name");
-        aml_add_string_buffer(pack, "pci168c,2a");
-        aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, data1ATH, 4);
-      }
+      aml_add_string_buffer(pack, "Apple WiFi card");
+      aml_add_string(pack, "device_type");
+      aml_add_string_buffer(pack, "Airport");
+      //    aml_add_string(pack, "AAPL,slot-name");
+      //    aml_add_string_buffer(pack, "AirPort");
     }
- */
-    aml_add_string(pack, "device_type");
-    aml_add_string_buffer(pack, "Airport");
-//    aml_add_string(pack, "AAPL,slot-name");
-//    aml_add_string_buffer(pack, "AirPort");
-  }
 
-  if (gSettings.FakeWIFI) {
-    //aml_add_string(pack, "device-id");
-    //aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
-    //aml_add_string(pack, "vendor-id");
-    //aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
-    aml_add_string(pack, "name");
-    aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
-    aml_add_string(pack, "compatible");
-    aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
-  }
-  if (!CustProperties(pack, DEV_WIFI) &&
-      !gSettings.NoDefaultProperties &&
-      !gSettings.FakeWIFI) {
-    aml_add_string(pack, "empty");
-    aml_add_byte(pack, 0);
-  }
+    if (gSettings.FakeWIFI) {
+      //aml_add_string(pack, "device-id");
+      //aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
+      //aml_add_string(pack, "vendor-id");
+      //aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
+      aml_add_string(pack, "name");
+      aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
+      aml_add_string(pack, "compatible");
+      aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
+    }
+    if (!CustProperties(pack, DEV_WIFI) &&
+        !gSettings.NoDefaultProperties &&
+        !gSettings.FakeWIFI) {
+      aml_add_string(pack, "empty");
+      aml_add_byte(pack, 0);
+    }
 
-  aml_add_local0(met);
-  aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+    aml_add_local0(met);
+    aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   }
   // finish Method(_DSM,4,NotSerialized)
 
@@ -3563,7 +3496,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
       if (CmpAdr(dsdt, i, IMEIADR1)) {
         k = devFind(dsdt, i);
         if (k) {
-          DBG("device (IMEI) found at %x, don't add!\n", k);
+          MsgLog("device (IMEI) found at %x, don't add!\n", k);
           //         break;
           return len;
         }
@@ -3574,12 +3507,12 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     k = CmpDev(dsdt, i, (UINT8*)"IMEI");
     if (k != 0) {
-      DBG("device name (IMEI) found at %x, don't add!\n", k);
+      MsgLog("device name (IMEI) found at %x, don't add!\n", k);
       return len;
     }
   }
 
-  DBG("Start Add IMEI\n");
+  MsgLog("Start Add IMEI\n");
   root = aml_create_node(NULL);
   device = aml_add_device(root, "IMEI");
   aml_add_name(device, "_ADR");
@@ -3833,7 +3766,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
 
   root = aml_create_node(NULL);
   if (HDAFIX) {
-    DBG("Start Add Device HDEF\n");
+    MsgLog("Start Add Device HDEF\n");
     device = aml_add_device(root, "HDEF");
     aml_add_name(device, "_ADR");
     aml_add_dword(device, HDAADR1);
@@ -4918,7 +4851,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
   DBG("Start SHUTDOWN Fix len=%x\n", len);
   adr = FindMethod(dsdt, len, "_PTS");
   if (!adr) {
-    DBG("no _PTS???\n");
+    MsgLog("no _PTS???\n");
     return len;
   }
 
@@ -5123,7 +5056,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
             if (GetName(dsdt, (INT32)(i+7+shift), &NameAdr[0], NULL)) {
               j = FindName(dsdt, len, &NameAdr[0]);
               if (j > 0) {
-                DBG("  indirect name=%a\n", NameAdr);
+                MsgLog("  indirect name=%a\n", NameAdr);
                 if (dsdt[j+4] == 0x0C) {
                   CopyMem(&oldAddress, &dsdt[j+5], 4);
                   CopyMem(&dsdt[j+5], &p->Address, 4);
@@ -5132,13 +5065,13 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
                   CopyMem(&oldAddress, &dsdt[j+5], 2);
                   CopyMem(&dsdt[j+5], &p->Address, 2);
                 } else {
-                  DBG("... value not defined\n");
+                  MsgLog("... value not defined\n");
                 }
               }
             }
           }
           if (oldAddress != p->Address) {
-            DBG("OperationRegion (%a...) corrected to addr=0x%x\n", Name, p->Address);
+            MsgLog("OperationRegion (%a...) corrected from 0x%x to addr=0x%x\n", Name, oldAddress, p->Address);
           }
           break;
         }
@@ -5147,55 +5080,6 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
     }
   }
 }
-/* commented out as Rehabman proposed the better one
-VOID GetBiosRegions(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
-{
-  EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
-  UINT8       *buffer = NULL;
-  UINT32      bufferLen = 0;
-  UINTN       i, j;
-  INTN        shift, shift2;
-  OPER_REGION *tmpRegion;
-  CHAR8       Name[8];
-  CHAR8       NameAdr[8];
-
-  gRegions = NULL;
-  buffer = (UINT8*)(UINTN)fadt->Dsdt;
-  TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-  bufferLen = TableHeader->Length;
-
-  for (i=0x24; i<bufferLen-15; i++) {
-    if ((buffer[i] == 0x5B) && (buffer[i+1] == 0x80) &&
-        GetName(buffer, (INT32)(i+2), &Name[0], &shift)) {
-      if (buffer[i+6+shift] == 0) {
-        //this is SystemMemory region. Write to bios regions tables
-        tmpRegion = gRegions;
-        gRegions = AllocateZeroPool(sizeof(OPER_REGION));
-        CopyMem(&gRegions->Name[0], &buffer[i+2+shift], 4);
-        gRegions->Name[4] = 0;
-        if (buffer[i+7+shift] == 0x0C) {
-          CopyMem(&gRegions->Address, &buffer[i+8+shift], 4);
-        } else if (buffer[i+7+shift] == 0x0B) {
-          CopyMem(&gRegions->Address, &buffer[i+8+shift], 2);
-        } else if (GetName(buffer, (INT32)(i+7+shift), &NameAdr[0], &shift2)) {
-          j = FindName(buffer, bufferLen, &NameAdr[0]);
-          if (j > 0) {
-            if (buffer[j+4] == 0x0C) {
-              CopyMem(&gRegions->Address, &buffer[j+5], 4);
-            } else if (buffer[j+4] == 0x0B) {
-              CopyMem(&gRegions->Address, &buffer[j+5], 2);
-            }
-          }
-        }
-        if (gRegions->Address != 0) {
-          DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", gRegions->Name, gRegions->Address);
-        }
-        gRegions->next = tmpRegion;
-      }
-    }
-  }
-}
-*/
 
 VOID GetBiosRegions(UINT8  *buffer)
 {
@@ -5241,7 +5125,7 @@ VOID GetBiosRegions(UINT8  *buffer)
         }
         if (tmp.Address) {
           OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
-          DBG("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
+          MsgLog("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
           *newRegion = tmp;
           newRegion->next = gRegions;
           gRegions = newRegion;
@@ -5265,12 +5149,12 @@ VOID FixMutex(UINT8 *dsdt, UINT32 len)
 {
   UINT8* p = dsdt + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
   UINT8* end = dsdt + len - 7; // pattern is 7-bytes
-  DBG("Start Mutex Fix\n");
+  MsgLog("Start Mutex Fix\n");
   for (; p <= end; p++) {
     if (p[0] == 0x5b && p[1] == 0x01 &&
         IsNameChar(p[2]) && IsNameChar(p[3]) && IsNameChar(p[4]) && IsNameChar(p[5])) {
       if (p[6] != 0) {
-        DBG("Fixing Mutex(%c%c%c%c, %d)\n", p[2], p[3], p[4], p[5], p[6]);
+        MsgLog("Fixing Mutex(%c%c%c%c, %d)\n", p[2], p[3], p[4], p[5], p[6]);
       }
       p[6] = 0;
     }
@@ -5360,7 +5244,7 @@ VOID RenameDevices(UINT8* table)
     Replace = gSettings.DeviceRename[index].Name;
     Find = List->Name;
     Bridge = List->Next;
-    DBG("Name: %a, Bridge: %a, Replace: %a\n", Find, Bridge->Name, Replace);
+    MsgLog("Name: %a, Bridge: %a, Replace: %a\n", Find, Bridge->Name, Replace);
     adr = 0;
     do
     {
@@ -5425,7 +5309,7 @@ VOID RenameDevices(UINT8* table)
       adr += 5;
     } while (1); //next occurence
   }   //DeviceRenameCount
- DBG("  %d replacements\n", Num);
+  MsgLog("  %d replacements\n", Num);
 }
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
@@ -5444,7 +5328,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
   DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
   if ((DsdtLen < 20) || (DsdtLen > 400000)) { //fool proof (some ASUS dsdt > 300kb?)
-    DBG("DSDT length out of range\n");
+    MsgLog("DSDT length out of range\n");
     return;
   }
 
@@ -5456,13 +5340,13 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
   //arbitrary fixes
   if (gSettings.PatchDsdtNum > 0) {
-    DBG("Patching DSDT:\n");
+    MsgLog("Patching DSDT:\n");
     for (i = 0; i < gSettings.PatchDsdtNum; i++) {
       if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
         continue;
       }
 
-      DBG(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
+      MsgLog(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
       if (gSettings.PatchDsdtMenuItem[i].BValue) {
         if (!gSettings.PatchDsdtTgt[i]) {
               DsdtLen = FixAny(temp, DsdtLen,
@@ -5480,15 +5364,13 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
         }
       } else {
-        DBG(" disabled\n");
+        MsgLog(" disabled\n");
       }
     }
   }
 
   //renaming Devices
-
   RenameDevices(temp);
-
 
   // find ACPI CPU name and hardware address
   findCPU(temp, DsdtLen);
@@ -5543,7 +5425,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
           if (((DisplayVendor[i] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
               ((DisplayVendor[i] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
             DsdtLen = FIXDisplay(temp, DsdtLen, i);
-            DBG("patch Display #%d of Vendor=0x%4x\n", i, DisplayVendor[i]);
+            MsgLog("patch Display #%d of Vendor=0x%4x\n", i, DisplayVendor[i]);
           }
       }
     }

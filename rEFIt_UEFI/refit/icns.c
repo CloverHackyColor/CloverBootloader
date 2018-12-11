@@ -190,6 +190,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
         DEC_BUILTIN_ICON(Id, emb_dark_vol_internal); break;
       case BUILTIN_ICON_VOL_EXTERNAL:
         DEC_BUILTIN_ICON(Id, emb_dark_vol_external); break;
+      case BUILTIN_ICON_VOL_OPTICAL:
+        DEC_BUILTIN_ICON(Id, emb_dark_vol_optical); break;
       case BUILTIN_ICON_VOL_BOOTER:
         DEC_BUILTIN_ICON(Id, emb_dark_vol_internal_booter); break;
       case BUILTIN_ICON_VOL_INTERNAL_HFS:
@@ -236,6 +238,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
         DEC_BUILTIN_ICON(Id, emb_vol_internal); break;
       case BUILTIN_ICON_VOL_EXTERNAL:
         DEC_BUILTIN_ICON(Id, emb_vol_external); break;
+      case BUILTIN_ICON_VOL_OPTICAL:
+        DEC_BUILTIN_ICON(Id, emb_vol_optical); break;
       case BUILTIN_ICON_VOL_BOOTER:
         DEC_BUILTIN_ICON(Id, emb_vol_internal_booter); break;
       case BUILTIN_ICON_VOL_INTERNAL_HFS:

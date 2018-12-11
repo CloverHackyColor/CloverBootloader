@@ -23,7 +23,7 @@
 
 #ifndef DEBUG_SPD
 #ifndef DEBUG_ALL
-#define DEBUG_SPD 1
+#define DEBUG_SPD 0
 #else
 #define DEBUG_SPD DEBUG_ALL
 #endif
