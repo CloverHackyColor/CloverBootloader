@@ -12,6 +12,7 @@
  *  https://github.com/acidanthera/WhateverGreen/blob/master/Manual/IntelFramebuffer.bt
  */
 
+#define WILL_WORK 0
 
 /*
  ============== Information ===============
@@ -65,7 +66,7 @@
 
 #ifndef DEBUG_GMA
 #ifndef DEBUG_ALL
-#define DEBUG_GMA 1
+#define DEBUG_GMA 0
 #else
 #define DEBUG_GMA DEBUG_ALL
 #endif
@@ -462,7 +463,8 @@ UINT8 mn_HD3000_os_info[20] = {
 
 
 static struct gma_gpu_t KnownGPUS[] = {
-
+  { 0xFFFF, "Intel Unsupported"              }, // common name for unsuported devices
+#if WILL_WORK
   //============== PowerVR ===================
   //--------Canmore/Sodaville/Groveland-------
   { 0x2E5B, "Intel 500"                      }, //
@@ -533,7 +535,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //----------------Alviso--------------------
   { 0x2592, "Intel GMA 900"                  }, // Mobile - Intel 82915GM/GMS, 910GML Express Chipset Family
   { 0x2792, "Intel GMA 900"                  }, // Mobile - Intel 82915GM/GMS, 910GML Express Chipset Family
-
+#endif
   //----------------Lakeport------------------
   { 0x2772, "Intel GMA 950"                  }, // Desktop - Intel 82945G Express Chipset Family
   { 0x2776, "Intel GMA 950"                  }, // Desktop - Intel 82945G Express Chipset Family
@@ -542,7 +544,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x27A2, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family - MacBook1,1/MacBook2,1
   { 0x27A6, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family
   { 0x27AE, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family
-
+#if WILL_WORK
   //----------------Bearlake------------------
   { 0x29B2, "Intel GMA 3100"                 }, // Desktop - Intel Q35 Express Chipset Family
   { 0x29B3, "Intel GMA 3100"                 }, // Desktop - Intel Q35 Express Chipset Family
@@ -568,13 +570,13 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x2993, "Intel GMA 3000"                 }, // Desktop - Intel Q965/Q963 Express Chipset Family
   { 0x29A2, "Intel GMA X3000"                }, // Desktop - Intel G965 Express Chipset Family
   { 0x29A3, "Intel GMA X3000"                }, // Desktop - Intel G965 Express Chipset Family
-
+#endif
   //----------------Crestline-----------------
   { 0x2A02, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family - MacBook3,1/MacBook4,1/MacbookAir1,1
   { 0x2A03, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
   { 0x2A12, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
   { 0x2A13, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
-
+#if WILL_WORK
   //----------------Bearlake------------------
   { 0x2982, "Intel GMA X3500"                }, // Desktop - Intel G35 Express Chipset Family
   { 0x2983, "Intel GMA X3500"                }, // Desktop - Intel G35 Express Chipset Family
@@ -597,7 +599,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x2A42, "Intel GMA X4500MHD"             }, // Mobile - Intel 4 Series Express Chipset Family
   { 0x2A43, "Intel GMA X4500MHD"             }, // Mobile - Intel 4 Series Express Chipset Family
 
-
+#endif
   //============== 5th generation ============
   //----------------Ironlake------------------
   { 0x0042, "Intel HD Graphics"              }, // Desktop - Clarkdale
@@ -959,7 +961,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   }
   //DBG("Finally model=%a\n", model);
 
-  DBG("%a [%04x:%04x] :: %a\n",
+  MsgLog("%a [%04x:%04x] :: %a\n",
       model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
 
   // Resolution
@@ -1370,12 +1372,12 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   }
 
   if (Injected) {
-    DBG("  Additional Intel GFX properties injected, continue\n");
+    MsgLog("  Additional Intel GFX properties injected, continue\n");
   }
 
   if (gSettings.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
-    DBG("  IntelHDMI: used\n");
+    MsgLog("  IntelHDMI: used\n");
   }
 
   if (gSettings.InjectEDID && gSettings.CustomEDID) {
@@ -1484,7 +1486,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     FakeID = gSettings.FakeIntel & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
     SetFake = TRUE;
-    DBG("  FakeID Intel GFX = 0x%08lx\n", gSettings.FakeIntel);
+    MsgLog("  FakeID Intel GFX = 0x%08lx\n", gSettings.FakeIntel);
   } else {
     DBG("  FakeID Intel GFX: not set\n");
   }
@@ -1500,7 +1502,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x0126: // "Intel HD Graphics 3000"
       if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
-        DBG("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
+        MsgLog("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetSnb = TRUE;
       } else {
         DBG("  snb-platform-id: not set\n");
@@ -1509,7 +1511,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     default:
       if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
-        DBG("  ig-platform-id = 0x%08lx\n", gSettings.IgPlatform);
+        MsgLog("  ig-platform-id = 0x%08lx\n", gSettings.IgPlatform);
         SetIg = TRUE;
       } else {
         DBG("  ig-platform-id: not set\n");
@@ -1518,7 +1520,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   }
 
   if (gSettings.NoDefaultProperties) {
-    DBG("  Intel: no default properties\n");
+    MsgLog("  Intel: no default properties\n");
     return TRUE;
   }
 

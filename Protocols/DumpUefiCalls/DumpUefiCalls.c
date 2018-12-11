@@ -58,68 +58,74 @@ OStartImage(
 	OUT CHAR16				**ExitData  OPTIONAL
 )
 {
-	EFI_STATUS				Status;
-	EFI_LOADED_IMAGE_PROTOCOL		*Image;
-	CHAR16            *FilePathText = NULL;
-//	CHAR16					*BootLoaders[] = BOOT_LOADERS;
-	UINTN					Index;
-	
-	PRINT("->StartImage(0x%lx, , )\n", ImageHandle);
+  EFI_STATUS        Status;
+  EFI_LOADED_IMAGE_PROTOCOL    *Image;
+  CHAR16            *FilePathText = NULL;
+  //  CHAR16          *BootLoaders[] = BOOT_LOADERS;
+  UINTN          Index;
 
-	//
-	// Get gEfiLoadedImageProtocolGuid for image that is starting
-	//
-	Status = gBS->OpenProtocol (
-		ImageHandle,
-		&gEfiLoadedImageProtocolGuid,
-		(VOID **) &Image,
-		gImageHandle,
-		NULL,
-		EFI_OPEN_PROTOCOL_GET_PROTOCOL
-	);
-	if (Status != EFI_SUCCESS) {
-		PRINT("ERROR: OStartImage: OpenProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
-		return EFI_INVALID_PARAMETER;
-	}
-	//
-	// Extract file path from image device file path
-	//
-	FilePathText = FileDevicePathToText(Image->FilePath);
-	if (FilePathText == NULL) {
-		PRINT("ERROR: OStartImage: image file path is NULL\n");
-		return EFI_INVALID_PARAMETER;
-	}
-	PRINT(" File: %s\n", FilePathText);
-	PRINT(" Image: %p - %x (%x)\n", Image->ImageBase, (UINTN)Image->ImageBase + Image->ImageSize, Image->ImageSize);
-	
-	Status = gBS->CloseProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, gImageHandle, NULL);
-	if (EFI_ERROR(Status)) {
-		PRINT("CloseProtocol error: %r\n", Status);
-	}
-	
-	//
-	// Check if this is some known boot manager/loader
-	//
-	for (Index = 0; BootLoaders[Index] != NULL && !StrStriBasic(FilePathText, BootLoaders[Index]); Index++);
-	if (BootLoaders[Index] != NULL) {
-		//
-		// it is
-		// restore original StartImage
-		// and start our overrides
-		//
-		gBS->StartImage = OrgStartImage;
-		
-		StartOverrides();
-		PRINT("\nSTARTING: %s\n\n", FilePathText);
-	}
-	
-	//
-	// Start image by calling original StartImage
-	//
-	Status = OrgStartImage(ImageHandle, ExitDataSize, ExitData);
-	
-	FreePool(FilePathText);
-	return Status;
+  PRINT("->StartImage(0x%lx, , )\n", ImageHandle);
+
+  //
+  // Get gEfiLoadedImageProtocolGuid for image that is starting
+  //
+  Status = gBS->OpenProtocol (
+                              ImageHandle,
+                              &gEfiLoadedImageProtocolGuid,
+                              (VOID **) &Image,
+                              gImageHandle,
+                              NULL,
+                              EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                              );
+  if (Status != EFI_SUCCESS) {
+    PRINT("ERROR: OStartImage: OpenProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
+    return EFI_INVALID_PARAMETER;
+  }
+  //
+  // Extract file path from image device file path
+  //
+  FilePathText = FileDevicePathToText(Image->FilePath);
+  if (FilePathText == NULL) {
+    PRINT("ERROR: OStartImage: image file path is NULL. Use direct start\n");
+
+    Status = gBS->CloseProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, gImageHandle, NULL);
+    if (EFI_ERROR(Status)) {
+      PRINT("CloseProtocol error: %r\n", Status);
+    }
+  } else {
+    PRINT(" File: %s\n", FilePathText);
+    PRINT(" Image: %p - %x (%x)\n", Image->ImageBase, (UINTN)Image->ImageBase + Image->ImageSize, Image->ImageSize);
+
+    Status = gBS->CloseProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, gImageHandle, NULL);
+    if (EFI_ERROR(Status)) {
+      PRINT("CloseProtocol error: %r\n", Status);
+    }
+
+    //
+    // Check if this is some known boot manager/loader
+    //
+    for (Index = 0; BootLoaders[Index] != NULL && !StrStriBasic(FilePathText, BootLoaders[Index]); Index++);
+    if (BootLoaders[Index] != NULL) {
+      //
+      // it is
+      // restore original StartImage
+      // and start our overrides
+      //
+      gBS->StartImage = OrgStartImage;
+
+      StartOverrides();
+      PRINT("\nSTARTING: %s\n\n", FilePathText);
+    }
+  }
+
+  //
+  // Start image by calling original StartImage
+  //
+  Status = OrgStartImage(ImageHandle, ExitDataSize, ExitData);
+  if (FilePathText) {
+    FreePool(FilePathText);
+  }
+  return Status;
 }
 
 /** Driver's entry point. Installs our StartImage to detect boot loader start. */
