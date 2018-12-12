@@ -358,7 +358,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     AsciiStrCpyS(IconNight, 64, OSIconsTable[i].name);
     AsciiStrCatS(IconNight, 64, "_night");
     OSIconsTable[i].image = NULL;
-    DBG("search for %a\n", OSIconsTable[i].name);
+ //   DBG("search for %a\n", OSIconsTable[i].name);
     Status = EFI_NOT_FOUND;
     if (!DayLight) {
 //      DBG("search for %a\n", IconNight);
@@ -368,9 +368,9 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //      DBG("search for %a\n", OSIconsTable[i].name);
       Status = ParseSVGIcon(mainParser, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
     }
-    if (i == 0) {
-      DBG("load os_mac status=%r\n", Status);
-    }
+//    if (i == 0) {
+//      DBG("load os_mac status=%r\n", Status);
+//    }
 //    DBG("search for %a\n", OSIconsTable[i].name);
     if (EFI_ERROR(Status)) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
@@ -712,10 +712,10 @@ VOID testSVG()
     if (!EFI_ERROR(Status)) {
       //Parse XML to vector data
 
-      p = nsvgParse((CHAR8*)FileData, 72, 0.f);
+      p = nsvgParse((CHAR8*)FileData, 72, 1.f);
       SVGimage = p->image;
       DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
-      FreePool(FileData);
+//      FreePool(FileData);
 /*
       if (p->patterns && p->patterns->image) {
         BltImageAlpha((EG_IMAGE*)(p->patterns->image),
@@ -744,6 +744,8 @@ VOID testSVG()
                     (UGAHeight - Height) / 2,
                     &MenuBackgroundPixel,
                     16);
+      FreePool(FileData);
+      FileData = NULL;
       egFreeImage(NewImage);
       nsvg__deleteParser(p);
       nsvgDeleteRasterizer(rast);

@@ -314,48 +314,65 @@ VOID egFreeImage(IN EG_IMAGE *Image)
 //
 // Basic file operations
 //
-
 EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength)
 {
-    EFI_STATUS          Status;
-    EFI_FILE_HANDLE     FileHandle;
-    EFI_FILE_INFO       *FileInfo;
-    UINT64              ReadSize;
-    UINTN               BufferSize;
-    UINT8               *Buffer;
+  EFI_STATUS          Status = EFI_NOT_FOUND;
+  EFI_FILE_HANDLE     FileHandle = 0;
+  EFI_FILE_INFO       *FileInfo;
+  UINT64              ReadSize;
+  UINTN               BufferSize;
+  UINT8               *Buffer;
 
-    Status = BaseDir->Open(BaseDir, &FileHandle, FileName, EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR(Status))
-        return Status;
+  if (!BaseDir) {
+    goto Error;
+  }
 
-    FileInfo = EfiLibFileInfo(FileHandle);
-    if (FileInfo == NULL) {
-        FileHandle->Close(FileHandle);
-        return EFI_NOT_FOUND;
-    }
-    ReadSize = FileInfo->FileSize;
-    if (ReadSize > MAX_FILE_SIZE)
-        ReadSize = MAX_FILE_SIZE;
-    FreePool(FileInfo);
+  Status = BaseDir->Open(BaseDir, &FileHandle, FileName, EFI_FILE_MODE_READ, 0);
+  if (EFI_ERROR(Status) || !FileHandle) {
+    goto Error;
+  }
 
-    BufferSize = (UINTN)ReadSize;   // was limited to 1 GB above, so this is safe
-    Buffer = (UINT8 *) AllocatePool (BufferSize);
-    if (Buffer == NULL) {
-        FileHandle->Close(FileHandle);
-        return EFI_OUT_OF_RESOURCES;
-    }
-
-    Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
+  FileInfo = EfiLibFileInfo(FileHandle);
+  if (FileInfo == NULL) {
     FileHandle->Close(FileHandle);
-    if (EFI_ERROR(Status)) {
-        FreePool(Buffer);
-        return Status;
-    }
+    goto Error;
+  }
+  ReadSize = FileInfo->FileSize;
+  if (ReadSize > MAX_FILE_SIZE)
+    ReadSize = MAX_FILE_SIZE;
+  FreePool(FileInfo);
 
+  BufferSize = (UINTN)ReadSize;   // was limited to 1 GB above, so this is safe
+  Buffer = (UINT8 *) AllocatePool (BufferSize);
+  if (Buffer == NULL) {
+    FileHandle->Close(FileHandle);
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Error;
+  }
+
+  Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
+  FileHandle->Close(FileHandle);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buffer);
+    goto Error;
+  }
+
+  if(FileData) {
     *FileData = Buffer;
+  }
+  if (FileDataLength) {
     *FileDataLength = BufferSize;
-    return EFI_SUCCESS;
+  }
+  return Status;
+Error:
+  if (FileData) {
+    *FileData = NULL;
+  }
+  if (FileDataLength) {
+    *FileDataLength = 0;
+  }
+  return Status;
 }
 //Slice - this is gEfiPartTypeSystemPartGuid
 //static EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };

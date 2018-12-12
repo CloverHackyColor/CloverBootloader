@@ -39,7 +39,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -305,16 +305,16 @@ void nsvg__parseXML(char* input,
       // Start of a tag
       *s++ = '\0';
       nsvg__parseContent(mark, contentCb, ud);
-      //     DBG("tag content %a parsed\n", mark);
+//           DBG("tag content %a parsed\n", mark);
       mark = s;
       state = NSVG_XML_TAG;
     } else if (*s == '>' && state == NSVG_XML_TAG) {
       // Start of a content or new tag.
       *s++ = '\0';
       //    nsvg__parseContent(mark, contentCb, ud);
-      //    DBG("content  %a parsed\n", mark);
+//          DBG("nsvg__parseElement %a\n", mark);
       nsvg__parseElement(mark, startelCb, endelCb, ud);
-      //    DBG(" element %a parsed\n", mark);
+//          DBG(" element %a parsed\n", mark);
       mark = s;
       state = NSVG_XML_CONTENT;
     } else {
@@ -2013,6 +2013,21 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
       AsciiStrToFloat(value, NULL /*&Next*/, &fontWeight);
       attr->fontFace->fontWeight = fontWeight;
     }
+  } else if (strcmp(name, "font-style") == 0)  {
+    DBG("attr=%a value=%a\n", name, value);
+    if (!attr->fontFace) {
+      attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
+    }
+    if (strstr(value, "italic") != NULL)  {
+      DBG("it is italic\n");
+      attr->fontFace->fontStyle = 'i';
+    } else if (strstr(value, "bold") != NULL)  {
+      DBG("it is bold\n");
+      attr->fontFace->fontStyle = 'b';
+    } else {
+      DBG("it is other\n");
+      attr->fontFace->fontStyle = 'n';
+    }
   } else if (strcmp(name, "id") == 0) {
     strncpy(attr->id, value, 63);
     attr->id[63] = '\0';
@@ -2727,22 +2742,23 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
   NSVGtext* text = p->text;
   float x = 0.f, y = 0.f, r = 0.f;
   int i;
-  //  DBG("parse textSpan\n");
+    DBG("parse textSpan\n");
   //there should be text->next with own attribs
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "x") == 0) {
       x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
       text->x = x;
-      //      DBG("span posX=%s\n", PoolPrintFloat(x));
+            DBG("span posX=%s\n", PoolPrintFloat(x));
     } else if (strcmp(dict[i], "y") == 0) {
       y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
       text->y = y;
-      //      DBG("span posY=%s\n", PoolPrintFloat(y));
+            DBG("span posY=%s\n", PoolPrintFloat(y));
     } else if (strcmp(dict[i], "font-size") == 0)  {
       r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
       text->fontSize = r;
-      //      DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
+            DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
     } else if (strcmp(dict[i], "font-style") == 0)  {
+      DBG("span: attr=%a value=%a\n", dict[i], dict[i+1]);
       if (strstr(dict[i+1], "italic") != NULL)  {
         text->fontStyle = 'i';
       } else if (strstr(dict[i+1], "bold") != NULL)  {
@@ -2772,7 +2788,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
 {
   float x = 0.0f;
   float y = 0.0f;
-  float r = 0.0f;
+  //float r = 0.0f;
   //  float xform[6];
 
   NSVGattrib* attr = nsvg__getAttr(p);
@@ -2790,43 +2806,49 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
     } else if (strcmp(dict[i], "y") == 0) {
       y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-    } else if (strcmp(dict[i], "font-size") == 0)  {
+/*    } else if (strcmp(dict[i], "font-size") == 0)  {
+      DBG("attr=%a value=%a\n", dict[i], dict[i+1]);
       r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
     } else if (strcmp(dict[i], "font-style") == 0)  {
+      DBG("attr=%a value=%a\n", dict[i], dict[i+1]);
       if (strstr(dict[i+1], "italic") != NULL)  {
+        DBG("it is italic\n");
         text->fontStyle = 'i';
       } else if (strstr(dict[i+1], "bold") != NULL)  {
+        DBG("it is bold\n");
         text->fontStyle = 'b';
       } else {
+        DBG("it is other\n");
         text->fontStyle = 'n';
       }
+ */
     } else {
+//      DBG("%d: attr=%a value=%a\n", i, dict[i], dict[i+1]);
       nsvg__parseAttr(p, dict[i], dict[i + 1]);
     }
   }
-  if (r <= 0.f) r=attr->fontFace->fontSize;
-
+  DBG("text: x=%s y=%s attr:Style=%x, size=%s, id=%a\n", PoolPrintFloat(x), PoolPrintFloat(y), attr->fontFace->fontStyle, PoolPrintFloat(attr->fontFace->fontSize), attr->id);
   text->x = x;
   text->y = y;
-  text->fontSize = r;
+  text->fontSize = attr->fontFace->fontSize;
+  text->fontStyle = attr->fontFace->fontStyle;
   memcpy(text->id, attr->id, 64);
   text->fontFace = attr->fontFace;
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor | ((int)(attr->fillOpacity * 255.f) << 24);
   }
   memcpy(text->xform, attr->xform, 6*sizeof(float));
-
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
   }
-//  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
+  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = fontsDB;
   while (fontSVG) {
-    //    DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
+//        DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
     if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0)  &&
         (fontSVG->fontStyle == text->fontStyle)) {
-      //      DBG("font %a found\n", fontSVG->fontFamily);
+//            DBG("font %a found\n", fontSVG->fontFamily);
       break;
     }
     fontSVG = fontSVG->next;
@@ -2837,16 +2859,16 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     UINTN           FileDataLength = 0;
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
-//    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
+    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
     Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
- //   DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
+//    DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);
       if (!p1) {
         DBG("font not parsed\n");
       } else {
         fontSVG = AllocateCopyPool(sizeof(NSVGfont), p1->font);
-        //          DBG("font family %a parsed\n", fontSVG->fontFamily);
+  //                DBG("font family %a parsed\n", fontSVG->fontFamily);
         fontSVG->next = fontsDB;
         fontsDB = fontSVG;
         text->font = fontSVG;
@@ -2857,7 +2879,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       text->font = p->font; //else embedded if present
     }
   } else {
-    //    DBG("set font for text %a\n", fontSVG->id);
+        DBG("set font for text %a\n", fontSVG->id);
     text->font = fontSVG;
   }
 
@@ -2875,7 +2897,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[1].size = text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
-   //       DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+  //        DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
         }
         break;
       } else if (!DayLight && strcmp(group->id, "MessageRow_night") == 0) {
@@ -2887,7 +2909,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[1].size = text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
-          //       DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+   //              DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
           break;
       } else if (strcmp(group->id, "MenuRows") == 0) {
         if (!textFace[2].valid) {
@@ -2910,7 +2932,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[0].size = text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
-//          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+ //         DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
         }
         break;
       } else if (!DayLight && strstr(group->id, "HelpRows_night") != NULL) {
@@ -2918,7 +2940,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[0].size = text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
-          //          DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
+     //               DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
           break;
       }
       group = group->next;
@@ -3173,7 +3195,7 @@ static void parsePattern(NSVGparser* p, const char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
   int i;
-  float w,h;
+  float w = 0.f, h=0.f;
   NSVGpattern *pt;
 
   for (i = 0; dict[i]; i += 2) {
@@ -3907,10 +3929,13 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   float x1 = x; //initial position
   //  INTN y = 0;
   NSVGshape *shape;
-  //  NSVGattrib* attr = nsvg__getAttr(p);
+  NSVGattrib* attr = nsvg__getAttr(p);
   NSVGglyph* g;
   if (!p->text || !p->text->font) {
     DBG("font absent\n");
+    return x;
+  }
+  if (!scale) {
     return x;
   }
 
@@ -3952,7 +3977,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   }
   //fill shape
   //  DBG("fill shape\n");
-  //  shape->group = attr->group; //xxx will be good feature but not now
+  shape->group = attr->group; //xxx will be good feature but not now
   shape->id[0] = (char)(letter & 0xff);
   shape->id[1] = (char)((letter >> 8) & 0xff);
   shape->fill.type = NSVG_PAINT_COLOR;
@@ -3979,10 +4004,10 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
    }
    */
   //in glyph units
-  shape->bounds[0] = p->text->font->bbox[0]; //x + p->font->bbox[0] * scale;
-  shape->bounds[1] = p->text->font->bbox[1]; //y + p->font->bbox[1] * scale;
-  shape->bounds[2] = p->text->font->bbox[2]; //x + p->font->bbox[2] * scale;
-  shape->bounds[3] = p->text->font->bbox[3]; //y + p->font->bbox[3] * scale;
+  shape->bounds[0] = p->text->font->bbox[0] + x/scale; //x + p->font->bbox[0] * scale;
+  shape->bounds[1] = p->text->font->bbox[1] + y/scale; //y + p->font->bbox[1] * scale;
+  shape->bounds[2] = p->text->font->bbox[2] + x/scale; //x + p->font->bbox[2] * scale;
+  shape->bounds[3] = p->text->font->bbox[3] + y/scale; //y + p->font->bbox[3] * scale;
   //  if (letter == L'C') {
   //      DumpFloat2("glyph bounds in text", shape->bounds, 4);
   //  }
@@ -4191,34 +4216,31 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
   float xform2[6];
   int count = 0;
   int visibility;
-
   for (shapeLink = shapes; shapeLink != NULL; shapeLink = shapeLink->next) {
     memcpy(&xform[0], shapeLink->xform, sizeof(float)*6);
     visibility = (shapeLink->flags & NSVG_VIS_VISIBLE); //check origin visibility, not link
 
-    if (shapeLink->isText || !visibility) { //dont count text
+    if (/*shapeLink->isText ||*/ !visibility) { //dont count text
       continue;
     }
     shape = shapeLink->link;  //this is <use>
     if (!shape) {
       takeXformBounds(shapeLink, &xform[0], bounds);
     }
-
-    while (shape) {
+    while (shape) { //take bounds from symbol's shapes
       memcpy(xform2, xform, sizeof(float)*6);
       nsvg__xformPremultiply(&xform2[0], shape->xform);
       takeXformBounds(shape, &xform2[0], bounds);
       shape = shape->next;
     }
 
-    /*    if (strstr(shapeLink->id, "shar")) {
-       DBG("take Bounds: shapeID=%a\n", shapeLink->id);
-       DumpFloat2("  transform", xform, 6);
-       DumpFloat2("  shape initial bounds", shape->bounds, 4);
-     } */
+ //    if (strstr(shapeLink->id, "shar")) {
+ //      DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+ //      DumpFloat2("  transform", xform, 6);
+ //      DumpFloat2("  shape initial bounds", shapeLink->bounds, 4);
+ //    }
 
     count++; //count visible
-
   }
   return count;
 }
@@ -4228,7 +4250,6 @@ void nsvg__imageBounds(NSVGparser* p, float* bounds)
   NSVGimage* image = p->image;
   NSVGclipPath* clipPath;
   int count = 0;
-
   clipPath = image->clipPaths;
   while (clipPath != NULL) {
     if (clipPath->index == 0) { // this is bottom image
@@ -4237,11 +4258,11 @@ void nsvg__imageBounds(NSVGparser* p, float* bounds)
     }
     clipPath = clipPath->next;
   }
-
   count += nsvg__shapesBound(image->shapes, bounds);
-
+//  DBG("found shapes=%d\n", count);
   if (count == 0) {
-    bounds[0] = bounds[1] = bounds[2] = bounds[3] = 0.0;
+    bounds[0] = bounds[1] = 0.0f;
+    bounds[2] = bounds[3] = 1.0f;
   }
 }
 // units like "px" is not used so just exclude it
@@ -4263,7 +4284,6 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
   p->dpi = dpi;
   p->opacity = opacity;
   nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
-
 //assign gradients
   clipPath = p->image->clipPaths;
   while (clipPath != NULL) {
@@ -4276,7 +4296,6 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
     symbol = symbol->next;
   }
   nsvg__assignGradients(p, p->image->shapes);
-
   nsvg__imageBounds(p, bounds);
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
