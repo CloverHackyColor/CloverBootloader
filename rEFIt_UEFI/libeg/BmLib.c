@@ -387,49 +387,82 @@ CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar)
   INT8 ValidBytes = 0;
   UINT8 Byte0, Byte1, Byte2;
   UINT8 UnicodeByte0, UnicodeByte1;
+  CHAR16 A = L'\0';
+  if (*s == '&') {
+    if (AsciiStrStr(s, "&#x") !=0 ) {
+      s += 3;
+      while (IS_HEX(*s) || IS_DIGIT(*s)) {
+        A <<= 4;
+        if (IS_DIGIT(*s)) {
+          A += *s - 0x30;
+        } else if (IS_UPPER(*s)) {
+          A += *s - 0x41 + 10;
+        } else {
+          A += *s - 0x61 + 10;
+        }
+        s++;
+      }
+    } else if (AsciiStrStr(s, "&amp;") !=0 ) {
+      A = 0x26; //&
+      s += 5;
+    } else if (AsciiStrStr(s, "&quot;") !=0 ) {
+      A = 0x22; //"
+      s += 6;
+    } else if (AsciiStrStr(s, "&lt;") !=0 ) {
+      A = 0x3C; //<
+      s += 4;
+    } else if (AsciiStrStr(s, "&gt;") !=0 ) {
+      A = 0x3E; //>
+      s += 4;
+    } else if (AsciiStrStr(s, "&nbsp;") !=0 ) {
+      A = 0xA0; //>
+      s += 6;
+    }
+    *UnicodeChar = A;
+  } else {
+    if ((*s & 0x80) == 0) {
+      ValidBytes = 1;
+    } else if ((*s & 0xe0) == 0xc0) {
+      ValidBytes = 2;
+    } else if ((*s & 0xf0) == 0xe0) {
+      ValidBytes = 3;
+    }
+    switch (ValidBytes) {
+      case 1:
+        //
+        // one-byte utf8 code
+        //
+        *UnicodeChar = (UINT16) (*s++);
+        break;
 
-  if ((*s & 0x80) == 0) {
-    ValidBytes = 1;
-  } else if ((*s & 0xe0) == 0xc0) {
-    ValidBytes = 2;
-  } else if ((*s & 0xf0) == 0xe0) {
-    ValidBytes = 3;
-  }
-  switch (ValidBytes) {
-    case 1:
-      //
-      // one-byte utf8 code
-      //
-      *UnicodeChar = (UINT16) (*s++);
-      break;
+      case 2:
+        //
+        // two-byte utf8 code
+        //
+        Byte1         = *s++;  //c2
+        Byte0         = *s++;  //a2
 
-    case 2:
-      //
-      // two-byte utf8 code
-      //
-      Byte1         = *s++;  //c2
-      Byte0         = *s++;  //a2
+        UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
+        UnicodeByte1  = (UINT8) ((Byte1 >> 2) & 0x07);
+        *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
+        break;
 
-      UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
-      UnicodeByte1  = (UINT8) ((Byte1 >> 2) & 0x07);
-      *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
-      break;
+      case 3:
+        //
+        // three-byte utf8 code
+        // sample E3 90 A1 = 0x3421
+        //
+        Byte2         = *s++;
+        Byte1         = *s++;
+        Byte0         = *s++;
 
-    case 3:
-      //
-      // three-byte utf8 code
-      // sample E3 90 A1 = 0x3421
-      //
-      Byte2         = *s++;
-      Byte1         = *s++;
-      Byte0         = *s++;
+        UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
+        UnicodeByte1  = (UINT8) ((Byte2 << 4) | ((Byte1 >> 2) & 0x0f));
+        *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
 
-      UnicodeByte0  = (UINT8) ((Byte1 << 6) | (Byte0 & 0x3f));
-      UnicodeByte1  = (UINT8) ((Byte2 << 4) | ((Byte1 >> 2) & 0x0f));
-      *UnicodeChar  = (UINT16) (UnicodeByte0 | (UnicodeByte1 << 8));
-
-    default:
-      break;
+      default:
+        break;
+    }
   }
   return s;
 }

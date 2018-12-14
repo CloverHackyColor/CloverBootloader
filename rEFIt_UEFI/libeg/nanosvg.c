@@ -39,7 +39,7 @@
 #include "FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -2687,7 +2687,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
     shape->bounds[2] = -FLT_MAX;
     shape->bounds[3] = -FLT_MAX;
     takeXformBounds(ref, &xform[0], shape->bounds);
-    DumpFloat2("used shape has bounds", shape->bounds, 4);
+//    DumpFloat2("used shape has bounds", shape->bounds, 4);
   } else if (refSym) {
     shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
     if (!shape) return;
@@ -2709,7 +2709,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
       takeXformBounds(shapeInt, &xform2[0], shape->bounds);
       shapeInt = shapeInt->next;
     }
-    DumpFloat2("used symbol has bounds", shape->bounds, 4);
+//    DumpFloat2("used symbol has bounds", shape->bounds, 4);
   }
 
   /* //there can't be own gradient
@@ -2806,28 +2806,12 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
     } else if (strcmp(dict[i], "y") == 0) {
       y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
-/*    } else if (strcmp(dict[i], "font-size") == 0)  {
-      DBG("attr=%a value=%a\n", dict[i], dict[i+1]);
-      r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
-    } else if (strcmp(dict[i], "font-style") == 0)  {
-      DBG("attr=%a value=%a\n", dict[i], dict[i+1]);
-      if (strstr(dict[i+1], "italic") != NULL)  {
-        DBG("it is italic\n");
-        text->fontStyle = 'i';
-      } else if (strstr(dict[i+1], "bold") != NULL)  {
-        DBG("it is bold\n");
-        text->fontStyle = 'b';
-      } else {
-        DBG("it is other\n");
-        text->fontStyle = 'n';
-      }
- */
     } else {
 //      DBG("%d: attr=%a value=%a\n", i, dict[i], dict[i+1]);
       nsvg__parseAttr(p, dict[i], dict[i + 1]);
     }
   }
-  DBG("text: x=%s y=%s attr:Style=%x, size=%s, id=%a\n", PoolPrintFloat(x), PoolPrintFloat(y), attr->fontFace->fontStyle, PoolPrintFloat(attr->fontFace->fontSize), attr->id);
+//  DBG("text: x=%s y=%s attr:Style=%x, size=%s, id=%a\n", PoolPrintFloat(x), PoolPrintFloat(y), attr->fontFace->fontStyle, PoolPrintFloat(attr->fontFace->fontSize), attr->id);
   text->x = x;
   text->y = y;
   text->fontSize = attr->fontFace->fontSize;
@@ -2841,7 +2825,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
   }
-  DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
+ // DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = fontsDB;
   while (fontSVG) {
@@ -2859,13 +2843,13 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     UINTN           FileDataLength = 0;
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
-    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
+//    DBG("required font %a not found, try to load external\n", text->fontFace->fontFamily);
     Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
 //    DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);
       if (!p1) {
-        DBG("font not parsed\n");
+        DBG("font %a not parsed\n", text->fontFace->fontFamily);
       } else {
         fontSVG = AllocateCopyPool(sizeof(NSVGfont), p1->font);
   //                DBG("font family %a parsed\n", fontSVG->fontFamily);
@@ -2879,7 +2863,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       text->font = p->font; //else embedded if present
     }
   } else {
-        DBG("set font for text %a\n", fontSVG->id);
+//        DBG("set font for text %a\n", fontSVG->id);
     text->font = fontSVG;
   }
 
@@ -4259,7 +4243,7 @@ void nsvg__imageBounds(NSVGparser* p, float* bounds)
     clipPath = clipPath->next;
   }
   count += nsvg__shapesBound(image->shapes, bounds);
-//  DBG("found shapes=%d\n", count);
+  DBG("found shapes=%d\n", count);
   if (count == 0) {
     bounds[0] = bounds[1] = 0.0f;
     bounds[2] = bounds[3] = 1.0f;
@@ -4299,12 +4283,12 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
   nsvg__imageBounds(p, bounds);
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
-//  DumpFloat2("image real bounds", bounds, 4);
+  DumpFloat2("image real bounds", bounds, 4);
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 
-  //  DBG("scaled width=%s height=%s\n", PoolPrintFloat(p->image->width),
-  //      PoolPrintFloat(p->image->height));
+   DBG("scaled width=%s height=%s\n", PoolPrintFloat(p->image->width),
+        PoolPrintFloat(p->image->height));
   return p;
 }
 
