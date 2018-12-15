@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-30 20:40+0300\n"
+"POT-Creation-Date: 2018-12-15 15:01+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -848,9 +848,12 @@ msgstr "Встроенная"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:170
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "embedded theme from Clovy,\n"
+#| "Install to /EFI/CLOVER/themes/embedded"
 msgid ""
-"embedded theme from Clovy,\n"
+"embedded theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
 "Встроенная тема от Clovy.\n"
