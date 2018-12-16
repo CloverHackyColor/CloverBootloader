@@ -936,7 +936,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   y = Place->YPos + (Place->Height - AnimeImage->Height) / 2;
   
   if (!IsImageWithinScreenLimits(x, Screen->Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Screen->Film[0]->Height, UGAHeight)) {
-    DBG(") This anime can't be displayed\n");
+ //   DBG(") This anime can't be displayed\n");
     return;
   }
   

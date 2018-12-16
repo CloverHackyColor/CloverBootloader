@@ -87,7 +87,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
       } */
-      if ((Id == BUILTIN_SELECTION_BIG) && GlobalConfig.BootCampStyle) {
+      if ((strstr(IconName, "selection_big") != NULL) && GlobalConfig.BootCampStyle) {
         shape->opacity = 0.f;
       }
       if (strstr(shape->id, "BoundingRect") != NULL) {
@@ -104,12 +104,12 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
  //         DBG("IconImage left corner x=%s y=%s\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
  //         DumpFloat2("IconImage real bounds", IconImage->realBounds, 4);
  //       }
-        if ((Id == BUILTIN_SELECTION_BIG) && (!GlobalConfig.SelectionOnTop)) {
+        if ((strstr(IconName, "selection_big") != NULL) && (!GlobalConfig.SelectionOnTop)) {
           GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
           row0TileSize = GlobalConfig.MainEntriesSize; // + (int)(16.f * Scale);
           DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
         }
-         if ((Id == BUILTIN_SELECTION_SMALL) && (!GlobalConfig.SelectionOnTop)) {
+         if ((strstr(IconName, "selection_small") != NULL) && (!GlobalConfig.SelectionOnTop)) {
           row1TileSize = (int)(IconImage->width * Scale);
         }
 
@@ -120,12 +120,9 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
           SVGimage->shapes = shapeNext;
         }
         shape = shapeNext;
-//        Status = EFI_SUCCESS;
         continue; //while(shape) it is BoundingRect shape
       }
       shape->flags = NSVG_VIS_VISIBLE;
-//      DBG("shape opacity=%s, fill color=0x%x\n", PoolPrintFloat(shape->opacity), shape->fill.color);
-      //should be added to tail
       // Add to tail
       if (IconImage->shapes == NULL)
         IconImage->shapes = shape;
@@ -248,19 +245,11 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   DBG("using scale %s\n", PoolPrintFloat(Scale));
   GlobalConfig.Scale = Scale;
   GlobalConfig.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
-#if 0
-// --- Get theme embedded font (already parsed above)
-  fontSVG = p->font;
-  if (!fontSVG) {
-    fontSVG = fontsDB;
-    while (fontSVG && !fontSVG->glyphs) {
-	    fontSVG = fontSVG->next;
-    }
-  }
-#endif
+
   if (mainParser->font) {
     DBG("theme contains font-family=%a\n", mainParser->font->fontFamily);
   }
+
 #if 0
 // --- Create rastered font
   if (fontSVG) {
@@ -276,6 +265,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     DBG("font %a parsed\n", fontSVG->fontFamily);
   }
 #endif
+
 // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &BlackPixel);
   if (BigBack) {
@@ -308,7 +298,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   DBG("parsed banner->width=%d\n", Banner->Width);
 
 // --- Make other icons
-
   INTN i = BUILTIN_ICON_FUNC_ABOUT;
   CHAR8           *IconName;
   while (BuiltinIconTable[i].Path) {
@@ -336,7 +325,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
       Status = ParseSVGIcon(mainParser, i, IconName, Scale, &BuiltinIconTable[i].Image);
     }
     if (EFI_ERROR(Status)) {
-      DBG(" icon %d not parsed take common\n", i);
+      DBG(" icon %d not parsed take common %s\n", i, BuiltinIconTable[i].Path);
       if ((i >= BUILTIN_ICON_VOL_EXTERNAL) && (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
         if (BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Image) {
           BuiltinIconTable[i].Image = egCopyImage(BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Image);
@@ -361,17 +350,15 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
  //   DBG("search for %a\n", OSIconsTable[i].name);
     Status = EFI_NOT_FOUND;
     if (!DayLight) {
-//      DBG("search for %a\n", IconNight);
       Status = ParseSVGIcon(mainParser, i, IconNight, Scale, &OSIconsTable[i].image);
     }
     if (EFI_ERROR(Status)) {
-//      DBG("search for %a\n", OSIconsTable[i].name);
       Status = ParseSVGIcon(mainParser, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
     }
-//    if (i == 0) {
-//      DBG("load os_mac status=%r\n", Status);
+//    if (i > 20) {
+//      DBG("load %a status=%r\n", OSIconsTable[i].name, Status);
 //    }
-//    DBG("search for %a\n", OSIconsTable[i].name);
+
     if (EFI_ERROR(Status)) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
       if ((i > 0) && (i < 12)) {

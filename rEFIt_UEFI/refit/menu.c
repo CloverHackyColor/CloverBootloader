@@ -3173,7 +3173,7 @@ VOID InitBar(VOID)
 {
   if (ThemeDir) {
     if (!ScrollbarBackgroundImage) {
-      ScrollbarBackgroundImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_fill", L"png"), FALSE);
+        ScrollbarBackgroundImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_fill", L"png"), FALSE);
     }
     if (!BarStartImage) {
       BarStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_start", L"png"), TRUE);
@@ -3198,43 +3198,67 @@ VOID InitBar(VOID)
     }
   }
 
-  if (!BarStartImage) {
+  if (!BarStartImage  && !GlobalConfig.TypeSVG) {
     BarStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start), TRUE);
   }
-  if (!BarEndImage) {
+  if (!BarEndImage && !GlobalConfig.TypeSVG) {
     BarEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end), TRUE);
   }
   if (!ScrollbarBackgroundImage) {
-    ScrollbarBackgroundImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill), TRUE);
+    if (GlobalConfig.TypeSVG) {
+       ScrollbarBackgroundImage = egLoadIcon(ThemeDir, L"scrollbar-background.png", 48);
+    }
+    if (!ScrollbarBackgroundImage) {
+      ScrollbarBackgroundImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill), TRUE);
+    }
   }
   if (!ScrollbarImage) {
-    ScrollbarImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill), TRUE);
+    if (GlobalConfig.TypeSVG) {
+      ScrollbarImage = egLoadIcon(ThemeDir, L"scrollbar-holder.png", 48);
+    }
+    if (!ScrollbarImage) {
+      ScrollbarImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill), TRUE);
+    }
   }
-  if (!ScrollStartImage) {
+  if (!ScrollStartImage && !GlobalConfig.TypeSVG) {
     ScrollStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start), TRUE);
   }
-  if (!ScrollEndImage) {
+  if (!ScrollEndImage && !GlobalConfig.TypeSVG) {
     ScrollEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end), TRUE);
   }
-  if (!UpButtonImage) {
+  if (!UpButtonImage && !GlobalConfig.TypeSVG) {
     UpButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button), TRUE);
   }
-  if (!DownButtonImage) {
+  if (!DownButtonImage && !GlobalConfig.TypeSVG) {
     DownButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button), TRUE);
   }
-  UpButton.Width      = ScrollWidth; // 16
-  UpButton.Height     = ScrollButtonsHeight; // 20
-  DownButton.Width    = UpButton.Width;
-  DownButton.Height   = ScrollButtonsHeight;
-  BarStart.Height     = ScrollBarDecorationsHeight; // 5
-  BarEnd.Height       = ScrollBarDecorationsHeight;
-  ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
-  ScrollEnd.Height    = ScrollScrollDecorationsHeight;
+  if (!GlobalConfig.TypeSVG) {
+    UpButton.Width      = ScrollWidth; // 16
+    UpButton.Height     = ScrollButtonsHeight; // 20
+    DownButton.Width    = UpButton.Width;
+    DownButton.Height   = ScrollButtonsHeight;
+    BarStart.Height     = ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ScrollBarDecorationsHeight;
+    ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
+    ScrollEnd.Height    = ScrollScrollDecorationsHeight;
+
+  } else {
+    UpButton.Width      = ScrollWidth; // 16
+    UpButton.Height     = 0; // 20
+    DownButton.Width    = UpButton.Width;
+    DownButton.Height   = 0;
+    BarStart.Height     = ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ScrollBarDecorationsHeight;
+    ScrollStart.Height  = 0; // 7
+    ScrollEnd.Height    = 0;
+
+  }
 }
 
 VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
 {
 //  DBG("SetBar <= %d %d %d %d %d\n", UpPosY, DownPosY, State->MaxVisible, State->MaxIndex, State->FirstVisible);
+//SetBar <= 302 722 19 31 0
   UpButton.XPos = PosX;
   UpButton.YPos = UpPosY;
 
@@ -3273,7 +3297,7 @@ VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
   ScrollTotal.YPos = UpButton.YPos;
   ScrollTotal.Width = UpButton.Width;
   ScrollTotal.Height = DownButton.YPos + DownButton.Height - UpButton.YPos;
-//  DBG("ScrollTotal.Height = %d\n", ScrollTotal.Height);
+//  DBG("ScrollTotal.Height = %d\n", ScrollTotal.Height);  //ScrollTotal.Height = 420
 }
 
 VOID ScrollingBar(IN SCROLL_STATE *State)
@@ -3283,16 +3307,21 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 
   ScrollEnabled = (State->MaxFirstVisible != 0);
   if (ScrollEnabled) {
-    Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
-    for (i = 0; i < ScrollbarBackground.Height; i++) {
-      egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
+    Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, FALSE, &MenuBackgroundPixel);
+
+    if (ScrollbarBackgroundImage && ScrollbarBackgroundImage->Height) {
+      for (i = 0; i < ScrollbarBackground.Height; i+=ScrollbarBackgroundImage->Height) {
+        egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
+      }
     }
 
     egComposeImage(Total, BarStartImage, BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos);
     egComposeImage(Total, BarEndImage, BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos);
 
-    for (i = 0; i < Scrollbar.Height; i++) {
-      egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
+    if (ScrollbarImage && ScrollbarImage->Height) {
+      for (i = 0; i < Scrollbar.Height; i+=ScrollbarImage->Height) {
+        egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
+      }
     }
 
     egComposeImage(Total, UpButtonImage, UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos);
@@ -3403,12 +3432,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 
     case MENU_FUNCTION_PAINT_ALL:
       DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
-			//DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
-			//DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
+	//		DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
+	//		DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
       t2 = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
       t1 = EntriesPosX + TextHeight + MenuWidth  + (INTN)((TEXT_XMARGIN + 16) * GlobalConfig.Scale);
-			//DBG("PAINT_ALL: %d %d\n", t1, t2);
-      SetBar(t1, EntriesPosY, t2, State);
+	//		DBG("PAINT_ALL: %d %d\n", t1, t2);
+      SetBar(t1, EntriesPosY, t2, State); //823 302 554
 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
 
@@ -3927,7 +3956,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-      SetBar(EntriesPosX + EntriesWidth + 10, EntriesPosY, UGAHeight - LAYOUT_Y_EDGE, State);
+      SetBar(EntriesPosX + EntriesWidth + (int)(10 * GlobalConfig.Scale),
+             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale), State);
       for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
