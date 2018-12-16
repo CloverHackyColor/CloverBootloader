@@ -16,7 +16,7 @@
 # Extracts bootlog from ioreg and then parses it for theme info.
 # Html is then constructed and injected in to the main template.
 
-# v0.76.7
+# v0.76.8
     
 # ---------------------------------------------------------------------------------------
 SetHtmlBootlogSectionTemplates()
@@ -355,6 +355,16 @@ ReadBootLog()
 
         # 0:718  0:000  Using theme 'red' (EFI\CLOVER\themes\red)
         if [[ "$lineRead" == *"Using theme"* ]]; then
+            blUsingTheme="${lineRead#*\'}"
+            blUsingTheme="${blUsingTheme%\'*}"
+            blThemeUsedPath="${lineRead#*(}"
+            blThemeUsedPath="${blThemeUsedPath%)*}"
+            blThemeUsedPath=$( echo "$blThemeUsedPath" | sed 's/\\/\//g' )
+            blThemeUsedPath="/${blThemeUsedPath%/*}"
+        fi
+
+        # 5:740  0:002  Using vector theme 'Clovy' (EFI\CLOVER\themes\Clovy)
+        if [[ "$lineRead" == *"Using vector theme"* ]]; then
             blUsingTheme="${lineRead#*\'}"
             blUsingTheme="${blUsingTheme%\'*}"
             blThemeUsedPath="${lineRead#*(}"

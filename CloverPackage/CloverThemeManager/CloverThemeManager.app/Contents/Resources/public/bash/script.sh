@@ -22,7 +22,7 @@
 # Thanks to apianti, dmazar & JrCs for their git know-how. 
 # Thanks to alexq, asusfreak, chris1111, droplets, eMatoS, kyndder & oswaldini for testing.
 
-VERS="0.78.1"
+VERS="0.78.2"
 
 # =======================================================================================
 # Helper Functions/Routines
@@ -696,13 +696,25 @@ CreateThemeListHtml()
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Creating html for ${themeTitle[$n]} theme"
             themeHtml="$themeHtml"$(printf "    <div id=\"ThemeBand\" class=\"accordion\">\r")
             themeHtml="$themeHtml"$(printf "        <div id=\"ThemeItems\">\r")
-            themeHtml="$themeHtml"$(printf "            <div class=\"thumbnail\"><img src=\"${TEMPDIR}/themes/${themeTitle[$n]}/screenshot.$imageFormat\" onerror=\"imgErrorThumb(this);\"></div>\r")
+
+            if [ -f "${TEMPDIR}/themes/${themeTitle[$n]}/Theme.svg" ]; then
+              themeHtml="$themeHtml"$(printf "            <div class=\"thumbnail\"><img src=\"${TEMPDIR}/themes/${themeTitle[$n]}/Theme.svg\" onerror=\"imgErrorThumb(this);\"></div>\r")
+            elif [ -f "${TEMPDIR}/themes/${themeTitle[$n]}/screenshot.$imageFormat" ]; then
+              themeHtml="$themeHtml"$(printf "            <div class=\"thumbnail\"><img src=\"${TEMPDIR}/themes/${themeTitle[$n]}/screenshot.$imageFormat\" onerror=\"imgErrorThumb(this);\"></div>\r")
+            fi
+
             themeHtml="$themeHtml"$(printf "            <div id=\"ThemeText\"><p class=\"themeTitle\">${themeTitle[$n]}<br><span class=\"themeDescription\">${themeDescription[$n]}</span><br><span class=\"themeAuthor\">${themeAuthor[$n]}</span></p></div>\r")
             themeHtml="$themeHtml"$(printf "            <div class=\"versionControl\" id=\"indicator_${themeTitle[$n]}\"></div>\r")
             themeHtml="$themeHtml"$(printf "            <div class=\"buttonInstall\" id=\"button_${themeTitle[$n]}\"></div>\r")
             themeHtml="$themeHtml"$(printf "        </div> <!-- End ThemeItems -->\r")
             themeHtml="$themeHtml"$(printf "    </div> <!-- End ThemeBand -->\r")
-            themeHtml="$themeHtml"$(printf "    <div class=\"accordionContent\"><img src=\"${TEMPDIR}/themes/${themeTitle[$n]}/screenshot.$imageFormat\" onerror=\"imgErrorPreview(this);\" width=\"100%%\"></div>\r")
+
+            if [ -f "${TEMPDIR}/themes/${themeTitle[$n]}/Theme.svg" ]; then
+              themeHtml="$themeHtml"$(printf "    <div class=\"accordionContent\"><img src=\"${TEMPDIR}/themes/${themeTitle[$n]}/Theme.svg\" onerror=\"imgErrorPreview(this);\" width=\"100%%\"></div>\r")
+            elif [ -f "${TEMPDIR}/themes/${themeTitle[$n]}/screenshot.$imageFormat" ]; then
+              themeHtml="$themeHtml"$(printf "    <div class=\"accordionContent\"><img src=\"${TEMPDIR}/themes/${themeTitle[$n]}/screenshot.$imageFormat\" onerror=\"imgErrorPreview(this);\" width=\"100%%\"></div>\r")
+            fi
+
             themeHtml="$themeHtml"$(printf "\r")
         done
         WriteToLog "CTM_ThemeListOK"
@@ -1175,14 +1187,35 @@ GetLatestIndexAndEnsureThemeHtml()
 
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Reading theme plists."
 
-        # Read each themes' theme.plist from the repository to extract Author & Description.
+        # Read each themes' Author & Description.
         for ((n=0; n<${#themeList[@]}; n++ ));
         do
             tmpTitle="${themeList[$n]##*/}"
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Reading theme plists for $tmpTitle" 
             themeTitle+=("$tmpTitle")
-            themeAuthor+=( $(FindStringInPlist "Author" "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.plist"))
-            themeDescription+=( $(FindStringInPlist "Description" "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.plist"))
+
+            if [ -f "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.plist" ]; then
+
+              # Read theme.plist to extract Author & Description.
+
+              themeAuthor+=( $(FindStringInPlist "Author" "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.plist"))
+              themeDescription+=( $(FindStringInPlist "Description" "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.plist"))
+
+            elif [ -f "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.svg" ]; then
+            
+              # convert to unix line endings and extract Author & Description.
+
+              tmpAuthor=$( tr '\r' '\n' < "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.svg" | grep "Author=" )
+              tmpAuthor="${tmpAuthor#*=\"}"
+              tmpAuthor="${tmpAuthor%*\"}"
+              themeAuthor+=("$tmpAuthor")
+
+              tmpDescription=$( tr '\r' '\n' < "${WORKING_PATH}/${APP_DIR_NAME}/themes/${tmpTitle}/theme.svg" | grep "Description=" )
+              tmpDescription="${tmpDescription#*=\"}"
+              tmpDescription="${tmpDescription%*\"}"
+              themeDescription+=("$tmpDescription")
+
+            fi
         done
         IFS="$oIFS"
     }
