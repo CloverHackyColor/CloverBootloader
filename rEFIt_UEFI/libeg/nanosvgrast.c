@@ -794,6 +794,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
   NSVGpath* path;
   NSVGpoint* p0, *p1;
   NSVGpoint p;
+  float lineWidth = 0.5;
   float scalex1 = fabsf(xform[0]);
   float scalex2 = fabsf(xform[2]);
   float scaley1 = fabsf(xform[1]);
@@ -805,7 +806,11 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
   float miterLimit = shape->miterLimit;
   int lineJoin = shape->strokeLineJoin;
   int lineCap = shape->strokeLineCap;
-  float lineWidth = shape->strokeWidth * scale;
+/*  if (shape->isText) {
+    lineWidth = shape->strokeWidth;
+  } else { */
+    lineWidth = shape->strokeWidth * scale;
+//  }
   //DumpFloat("shapeStroke", xform, 6);
   for (path = shape->paths; path != NULL; path = path->next) {
     // Flatten path

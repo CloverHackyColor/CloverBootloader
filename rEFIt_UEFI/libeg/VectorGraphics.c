@@ -301,6 +301,10 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   INTN i = BUILTIN_ICON_FUNC_ABOUT;
   CHAR8           *IconName;
   while (BuiltinIconTable[i].Path) {
+    if (i == BUILTIN_ICON_BANNER) {
+      i++;
+      continue;
+    }
     CHAR16 *IconPath = BuiltinIconTable[i].Path;
 //    DBG("next table icon=%s\n", IconPath);
     CHAR16 *ptr = StrStr(IconPath, L"\\");
@@ -355,10 +359,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     if (EFI_ERROR(Status)) {
       Status = ParseSVGIcon(mainParser, i, OSIconsTable[i].name, Scale, &OSIconsTable[i].image);
     }
-//    if (i > 20) {
-//      DBG("load %a status=%r\n", OSIconsTable[i].name, Status);
-//    }
-
     if (EFI_ERROR(Status)) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
       if ((i > 0) && (i < 12)) {

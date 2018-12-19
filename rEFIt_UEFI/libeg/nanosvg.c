@@ -971,7 +971,7 @@ static void nsvg__addShape(NSVGparser* p)
   memcpy(shape->title, attr->title, sizeof shape->title);
   //  DBG("shapeID=%a\n", shape->id);
   shape->group = attr->group;
-  scale = nsvg__getAverageScale(attr->xform);
+  scale = nsvg__getAverageScale(attr->xform);  //ssss
   shape->strokeWidth = attr->strokeWidth * scale;
   shape->strokeDashOffset = attr->strokeDashOffset * scale;
   shape->strokeDashCount = (char)attr->strokeDashCount;
@@ -2748,17 +2748,17 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
     if (strcmp(dict[i], "x") == 0) {
       x = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigX(p), nsvg__actualWidth(p));
       text->x = x;
-            DBG("span posX=%s\n", PoolPrintFloat(x));
+//            DBG("span posX=%s\n", PoolPrintFloat(x));
     } else if (strcmp(dict[i], "y") == 0) {
       y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
       text->y = y;
-            DBG("span posY=%s\n", PoolPrintFloat(y));
+//            DBG("span posY=%s\n", PoolPrintFloat(y));
     } else if (strcmp(dict[i], "font-size") == 0)  {
       r = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
       text->fontSize = r;
-            DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
+//            DBG("span fontSize=%s from=%a\n", PoolPrintFloat(r), dict[i+1]);
     } else if (strcmp(dict[i], "font-style") == 0)  {
-      DBG("span: attr=%a value=%a\n", dict[i], dict[i+1]);
+//      DBG("span: attr=%a value=%a\n", dict[i], dict[i+1]);
       if (strstr(dict[i+1], "italic") != NULL)  {
         text->fontStyle = 'i';
       } else if (strstr(dict[i+1], "bold") != NULL)  {
@@ -2775,6 +2775,10 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
   }
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor | ((int)(attr->fillOpacity * 255.f) << 24);
+  }
+  if (attr->hasStroke == 1) {
+    text->strokeColor = attr->strokeColor | ((int)(attr->strokeOpacity * 255.f) << 24);
+    text->strokeWidth = attr->strokeWidth;
   }
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
@@ -2821,6 +2825,11 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor | ((int)(attr->fillOpacity * 255.f) << 24);
   }
+  if (attr->hasStroke == 1) {
+    text->strokeColor = attr->strokeColor | ((int)(attr->strokeOpacity * 255.f) << 24);
+    text->strokeWidth = attr->strokeWidth;
+  }
+
   memcpy(text->xform, attr->xform, 6*sizeof(float));
   if (text->fontStyle < 0x30) {
     text->fontStyle = 'n';
@@ -3960,15 +3969,28 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
     return x1;
   }
   //fill shape
-  //  DBG("fill shape\n");
-  shape->group = attr->group; //xxx will be good feature but not now
+  //  DBG("fill shape\n");   //ssss
+  shape->group = p->text->group;
   shape->id[0] = (char)(letter & 0xff);
   shape->id[1] = (char)((letter >> 8) & 0xff);
-  shape->fill.type = NSVG_PAINT_COLOR;
-  shape->fill.color = color; //NSVG_RGBA(0, 0, 0, 255); //black
+  shape->strokeWidth = p->text->strokeWidth / scale;
+  shape->strokeLineJoin = attr->strokeLineJoin;
+  shape->strokeLineCap = attr->strokeLineCap;
+  shape->miterLimit = attr->miterLimit;
+  shape->fillRule = NSVG_FILLRULE_NONZERO;
+  shape->opacity = 1.f;
+
+  shape->fill.type = NSVG_PAINT_NONE;
+  if (attr->hasFill == 1) {
+    shape->fill.type = NSVG_PAINT_COLOR;
+    shape->fill.color = color;
+  }
   shape->stroke.type = NSVG_PAINT_NONE;
-  shape->stroke.color = NSVG_RGBA(0, 0, 0, 255); //black?
-  shape->strokeWidth = 1.0f;
+  if (attr->hasStroke == 1) {
+    shape->stroke.type = NSVG_PAINT_COLOR;
+    shape->stroke.color = p->text->strokeColor;
+  }
+
   shape->flags = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
   shape->isText = TRUE;
   nsvg__xformIdentity(shape->xform);
@@ -3980,13 +4002,15 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
 // then apply text transform
   nsvg__xformMultiply(shape->xform, p->text->xform);
 
-  /*
+/*
    if (letter == L'C') {
      DBG("bbox0=%s ", PoolPrintFloat(p->text->font->bbox[0]));
-     DBG("bbox3=%s ", PoolPrintFloat(p->text->font->bbox[3]));
+     DBG("bbox3=%s \n", PoolPrintFloat(p->text->font->bbox[3]));
      DumpFloat2("glyph xform:", shape->xform, 6);
+     DBG("stroke-color=%x ", shape->stroke.color);
+     DBG("stroke-width=%s\n", PoolPrintFloat(shape->strokeWidth));
    }
-   */
+*/
   //in glyph units
   shape->bounds[0] = p->text->font->bbox[0] + x/scale; //x + p->font->bbox[0] * scale;
   shape->bounds[1] = p->text->font->bbox[1] + y/scale; //y + p->font->bbox[1] * scale;
@@ -4003,11 +4027,6 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   //  }
 
   x1 += g->horizAdvX * scale; //position for next letter in user's units
-  shape->strokeLineJoin = NSVG_JOIN_MITER;
-  shape->strokeLineCap = NSVG_CAP_BUTT;
-  shape->miterLimit = 4;
-  shape->fillRule = NSVG_FILLRULE_NONZERO;
-  shape->opacity = 1.f;
 
   // Add to tail
   if (p->image->shapes == NULL)
@@ -4217,13 +4236,13 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
       takeXformBounds(shape, &xform2[0], bounds);
       shape = shape->next;
     }
-
- //    if (strstr(shapeLink->id, "shar")) {
- //      DBG("take Bounds: shapeID=%a\n", shapeLink->id);
- //      DumpFloat2("  transform", xform, 6);
- //      DumpFloat2("  shape initial bounds", shapeLink->bounds, 4);
- //    }
-
+/*
+    if (shapeLink->isText) { //strstr(shapeLink->id, "shar")) {
+       DBG("take Bounds: shapeID=%a\n", shapeLink->id);
+       DumpFloat2("  transform", xform, 6);
+       DumpFloat2("  shape initial bounds", shapeLink->bounds, 4);
+     }
+*/
     count++; //count visible
   }
   return count;

@@ -376,6 +376,10 @@ typedef struct NSVGtext {
   float fontSize;
   char fontStyle;
   unsigned int fontColor;
+  unsigned int strokeColor;
+  float fillOpacity;
+  float strokeOpacity;
+  float strokeWidth;
   NSVGstyles* style;
   NSVGshape* shapes;
   struct NSVGtext *next;
