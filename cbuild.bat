@@ -8,14 +8,14 @@ set "CURRENTDIR=%CD%"
 rem # parse parameters for what we need
 set ENABLE_SECURE_BOOT=0
 set MULTIARCH=0
-set TARGETARCH=
+set TARGETARCH=X64
 set TOOLCHAIN=VS2013x86
 set BUILDTARGET=
 set DSCFILE=
 set CLEANING=
 set BOOTSECTOR=1
 set errorlevel=0
-set THREADNUMBER=0
+set THREADNUMBER=2
 set SHOW_USAGE=0
 set EDK_BUILDINFOS=
 set NOLOGO=0
@@ -68,8 +68,8 @@ rem # get the current revision number
   rem echo "4813" > %F_VER_TXT%
   rem set /P s=<%F_VER_TXT%
   rem del %F_VER_TXT%
-  set SVNREVISION=4813
-  goto init
+  rem set SVNREVISION=4813
+  rem goto init
 
 rem # get the current revision number
 :fixrevision
@@ -952,6 +952,10 @@ rem # print Logo
   if ["%1"] == ["-t"] (
     set TOOLCHAIN=%2
   )
+   if ["%1"] == ["-r"] (
+    set SVNREVISION=%2
+  )
+
   if ["%1"] == ["--tagname"] (
     set TOOLCHAIN=%2
   )
