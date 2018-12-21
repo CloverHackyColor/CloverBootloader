@@ -568,7 +568,7 @@ VOID PatchAllTables()
     if (NewTable->Signature == MCFG_SIGN && gSettings.FixMCFG) {
       INTN Len1 = ((Len + 4 - 1) / 16 + 1) * 16 - 4;
       CopyMem(NewTable, Table, Len1); //Len increased but less than EFI_PAGE
-      NewTable->Length = Len1;
+      NewTable->Length = (UINT32)(UINTN)Len1;
       Patched = TRUE;
     }
     if (Patched) {

@@ -564,7 +564,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   }
   text->font = fontSVG;
   text->fontColor = color;
-  text->fontSize = Height;
+  text->fontSize = (float)Height;
   nsvg__xformIdentity(text->xform);
   p->text = text;
 
@@ -714,8 +714,8 @@ VOID testSVG()
 */
       // Rasterize
       NewImage = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
-      if (SVGimage->width <= 0) SVGimage->width = Width;
-      if (SVGimage->height <= 0) SVGimage->height = Height;
+      if (SVGimage->width <= 0) SVGimage->width = (float)Width;
+      if (SVGimage->height <= 0) SVGimage->height = (float)Height;
 
       ScaleX = Width / SVGimage->width;
       ScaleY = Height / SVGimage->height;

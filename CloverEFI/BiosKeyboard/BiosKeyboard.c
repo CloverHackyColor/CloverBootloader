@@ -1840,6 +1840,194 @@ CheckKeyboardConnect (
 **/
 static int apple_need_zero = 0;
 
+int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap)
+{
+	if ( KeyData.Key.UnicodeChar == 0 )
+	{
+		*pCurModifierMap = 0;
+		switch (KeyData.Key.ScanCode) {
+			case 0x01: // up arrow
+				*pKey = 0x7052;
+				return 1;
+			case 0x02: // down arrow
+				*pKey = 0x7051;
+				return 1;
+			case 0x03: // left arrow
+				*pKey = 0x7050;
+				return 1;
+			case 0x04: // right arrow
+				*pKey = 0x704F;
+				return 1;
+		}
+		return 0;
+	}
+	if ( KeyData.Key.UnicodeChar >= 'a'  &&  KeyData.Key.UnicodeChar <= 'z' ) {
+		*pKey = 0x7004 + ( KeyData.Key.UnicodeChar - 'a');
+		*pCurModifierMap = 0;
+		return 1;
+	}
+	if ( KeyData.Key.UnicodeChar >= 'A'  &&  KeyData.Key.UnicodeChar <= 'Z' ) {
+		*pKey = 0x7004 + ( KeyData.Key.UnicodeChar - 'A');
+		*pCurModifierMap = 2;
+		return 1;
+	}
+	if ( KeyData.Key.UnicodeChar == '0' ) { // Could have put that in the switch, but wanted to make very clear that the 0 wasn't forgotten and that this : "KeyData.Key.UnicodeChar >= '1'" (instead of '0') is not a mistake !!!
+		*pKey = 0x7027;
+		return 1;
+	}
+	if ( KeyData.Key.UnicodeChar >= '1'  &&  KeyData.Key.UnicodeChar <= '9' ) {
+		*pKey = 0x701E + ( KeyData.Key.UnicodeChar - '1');
+		return 1;
+	}
+
+	*pCurModifierMap = 0;
+	switch (KeyData.Key.UnicodeChar) {
+		case 0x01: // up arrow
+			*pKey = 0x7052;
+			return 1;
+		case 0x02: // down arrow
+			*pKey = 0x7051;
+			return 1;
+		case 0x03: // left arrow
+			*pKey = 0x7050;
+			return 1;
+		case 0x04: // right arrow
+			*pKey = 0x704F;
+			return 1;
+		case 0x08: // backspace
+			*pKey = 0x702A;
+			return 1;
+		case 0x0D: // return
+			*pKey = 0x7028;
+			return 1;
+		case ' ': // return
+			*pKey = 0x702C;
+			return 1;
+		case '!': // return
+			*pKey = 0x701E;
+			*pCurModifierMap = 2;
+			return 1;
+		case '"': // return
+			*pKey = 0x7034;
+			*pCurModifierMap = 2;
+			return 1;
+		case '#': // return
+			*pKey = 0x7020;
+			*pCurModifierMap = 2;
+			return 1;
+		case '$': // return
+			*pKey = 0x7021;
+			*pCurModifierMap = 2;
+			return 1;
+		case '%': // return
+			*pKey = 0x7022;
+			*pCurModifierMap = 2;
+			return 1;
+		case '&': // return
+			*pKey = 0x7024;
+			*pCurModifierMap = 2;
+			return 1;
+		case '\'': // return
+			*pKey = 0x7034;
+			return 1;
+		case '(': // return
+			*pKey = 0x7026;
+			*pCurModifierMap = 2;
+			return 1;
+		case ')': // return
+			*pKey = 0x7027;
+			*pCurModifierMap = 2;
+			return 1;
+		case '*': // return
+			*pKey = 0x7025;
+			*pCurModifierMap = 2;
+			return 1;
+		case '+': // return
+			*pKey = 0x702E;
+			*pCurModifierMap = 2;
+			return 1;
+		case ',': // return
+			*pKey = 0x7036;
+			return 1;
+		case '-': // return
+			*pKey = 0x702D;
+			return 1;
+		case '.': // return
+			*pKey = 0x7037;
+			return 1;
+		case '/': // return
+			*pKey = 0x7038;
+			return 1;
+
+		case ':': // return
+			*pKey = 0x7033;
+			*pCurModifierMap = 2;
+			return 1;
+		case ';': // return
+			*pKey = 0x7033;
+			return 1;
+		case '<': // return
+			*pKey = 0x7036;
+			*pCurModifierMap = 2;
+			return 1;
+		case '=': // return
+			*pKey = 0x702E;
+			return 1;
+		case '>': // return
+			*pKey = 0x7037;
+			*pCurModifierMap = 2;
+			return 1;
+		case '?': // return
+			*pKey = 0x7038;
+			*pCurModifierMap = 2;
+			return 1;
+		case '@': // return
+			*pKey = 0x701F;
+			*pCurModifierMap = 2;
+			return 1;
+
+
+		case '[': // return
+			*pKey = 0x702F;
+			return 1;
+		case '\\': // return
+			*pKey = 0x7031;
+			return 1;
+		case ']': // return
+			*pKey = 0x7030;
+			return 1;
+		case '^': // return
+			*pKey = 0x7023;
+			*pCurModifierMap = 2;
+			return 1;
+		case '_': // return
+			*pKey = 0x702D;
+			*pCurModifierMap = 2;
+			return 1;
+		case '`': // return
+			*pKey = 0x7035;
+			return 1;
+
+		case '{': // return
+			*pKey = 0x702F;
+			*pCurModifierMap = 2;
+			return 1;
+		case '|': // return
+			*pKey = 0x7031;
+			*pCurModifierMap = 2;
+			return 1;
+		case '}': // return
+			*pKey = 0x7030;
+			*pCurModifierMap = 2;
+			return 1;
+		case '~': // return
+			*pKey = 0x7035;
+			*pCurModifierMap = 2;
+			return 1;
+	}
+	return 0;
+}
+
 VOID
 EFIAPI
 BiosKeyboardTimerHandler (
@@ -2129,7 +2317,6 @@ BiosKeyboardTimerHandler (
 
   // Parse the modifier key, which is the first byte of keyboard input report.
   //
-extern int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap);
 
 DBG("2 Got bios key ScanCode=%x, Uchar=%x, ShiftState=%x, ToogleState=%x\n", KeyData.Key.ScanCode, KeyData.Key.UnicodeChar, KeyData.KeyState.KeyShiftState, KeyData.KeyState.KeyToggleState);
 
@@ -2170,193 +2357,6 @@ DBG("2 Got bios key ScanCode=%x, Uchar=%x, ShiftState=%x, ToogleState=%x\n", Key
   return ;
 }
 
-int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap)
-{
-	if ( KeyData.Key.UnicodeChar == 0 )
-	{
-		*pCurModifierMap = 0;
-		switch (KeyData.Key.ScanCode) {
-			case 0x01: // up arrow
-				*pKey = 0x7052;
-				return 1;
-			case 0x02: // down arrow
-				*pKey = 0x7051;
-				return 1;
-			case 0x03: // left arrow
-				*pKey = 0x7050;
-				return 1;
-			case 0x04: // right arrow
-				*pKey = 0x704F;
-				return 1;
-		}
-		return 0;
-	}
-	if ( KeyData.Key.UnicodeChar >= 'a'  &&  KeyData.Key.UnicodeChar <= 'z' ) {
-		*pKey = 0x7004 + ( KeyData.Key.UnicodeChar - 'a');
-		*pCurModifierMap = 0;
-		return 1;
-	}
-	if ( KeyData.Key.UnicodeChar >= 'A'  &&  KeyData.Key.UnicodeChar <= 'Z' ) {
-		*pKey = 0x7004 + ( KeyData.Key.UnicodeChar - 'A');
-		*pCurModifierMap = 2;
-		return 1;
-	}
-	if ( KeyData.Key.UnicodeChar == '0' ) { // Could have put that in the switch, but wanted to make very clear that the 0 wasn't forgotten and that this : "KeyData.Key.UnicodeChar >= '1'" (instead of '0') is not a mistake !!!
-		*pKey = 0x7027;
-		return 1;
-	}
-	if ( KeyData.Key.UnicodeChar >= '1'  &&  KeyData.Key.UnicodeChar <= '9' ) {
-		*pKey = 0x701E + ( KeyData.Key.UnicodeChar - '1');
-		return 1;
-	}
-
-	*pCurModifierMap = 0;
-	switch (KeyData.Key.UnicodeChar) {
-		case 0x01: // up arrow
-			*pKey = 0x7052;
-			return 1;
-		case 0x02: // down arrow
-			*pKey = 0x7051;
-			return 1;
-		case 0x03: // left arrow
-			*pKey = 0x7050;
-			return 1;
-		case 0x04: // right arrow
-			*pKey = 0x704F;
-			return 1;
-		case 0x08: // backspace
-			*pKey = 0x702A;
-			return 1;
-		case 0x0D: // return
-			*pKey = 0x7028;
-			return 1;
-		case ' ': // return
-			*pKey = 0x702C;
-			return 1;
-		case '!': // return
-			*pKey = 0x701E;
-			*pCurModifierMap = 2;
-			return 1;
-		case '"': // return
-			*pKey = 0x7034;
-			*pCurModifierMap = 2;
-			return 1;
-		case '#': // return
-			*pKey = 0x7020;
-			*pCurModifierMap = 2;
-			return 1;
-		case '$': // return
-			*pKey = 0x7021;
-			*pCurModifierMap = 2;
-			return 1;
-		case '%': // return
-			*pKey = 0x7022;
-			*pCurModifierMap = 2;
-			return 1;
-		case '&': // return
-			*pKey = 0x7024;
-			*pCurModifierMap = 2;
-			return 1;
-		case '\'': // return
-			*pKey = 0x7034;
-			return 1;
-		case '(': // return
-			*pKey = 0x7026;
-			*pCurModifierMap = 2;
-			return 1;
-		case ')': // return
-			*pKey = 0x7027;
-			*pCurModifierMap = 2;
-			return 1;
-		case '*': // return
-			*pKey = 0x7025;
-			*pCurModifierMap = 2;
-			return 1;
-		case '+': // return
-			*pKey = 0x702E;
-			*pCurModifierMap = 2;
-			return 1;
-		case ',': // return
-			*pKey = 0x7036;
-			return 1;
-		case '-': // return
-			*pKey = 0x702D;
-			return 1;
-		case '.': // return
-			*pKey = 0x7037;
-			return 1;
-		case '/': // return
-			*pKey = 0x7038;
-			return 1;
-
-		case ':': // return
-			*pKey = 0x7033;
-			*pCurModifierMap = 2;
-			return 1;
-		case ';': // return
-			*pKey = 0x7033;
-			return 1;
-		case '<': // return
-			*pKey = 0x7036;
-			*pCurModifierMap = 2;
-			return 1;
-		case '=': // return
-			*pKey = 0x702E;
-			return 1;
-		case '>': // return
-			*pKey = 0x7037;
-			*pCurModifierMap = 2;
-			return 1;
-		case '?': // return
-			*pKey = 0x7038;
-			*pCurModifierMap = 2;
-			return 1;
-		case '@': // return
-			*pKey = 0x701F;
-			*pCurModifierMap = 2;
-			return 1;
-
-
-		case '[': // return
-			*pKey = 0x702F;
-			return 1;
-		case '\\': // return
-			*pKey = 0x7031;
-			return 1;
-		case ']': // return
-			*pKey = 0x7030;
-			return 1;
-		case '^': // return
-			*pKey = 0x7023;
-			*pCurModifierMap = 2;
-			return 1;
-		case '_': // return
-			*pKey = 0x702D;
-			*pCurModifierMap = 2;
-			return 1;
-		case '`': // return
-			*pKey = 0x7035;
-			return 1;
-
-		case '{': // return
-			*pKey = 0x702F;
-			*pCurModifierMap = 2;
-			return 1;
-		case '|': // return
-			*pKey = 0x7031;
-			*pCurModifierMap = 2;
-			return 1;
-		case '}': // return
-			*pKey = 0x7030;
-			*pCurModifierMap = 2;
-			return 1;
-		case '~': // return
-			*pKey = 0x7035;
-			*pCurModifierMap = 2;
-			return 1;
-	}
-	return 0;
-}
 /**
   Free keyboard notify list.
 

@@ -5205,7 +5205,7 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
 {
   // "RP02" NameLen=4
   // "_SB_PCI0RP02" NameLen=12
-  INTN NameLen = 0;
+  UINTN NameLen = 0;
   INTN i = 0;
   CHAR8 *Name;
   while ((NameLen < Len) && isACPI_Char((CHAR8)Table[NameLen])) NameLen++;
@@ -5248,7 +5248,7 @@ VOID RenameDevices(UINT8* table)
     adr = 0;
     do
     {
-      shift = FindBin(table + adr, len - adr, (UINT8*)Find, 4); //next occurence
+      shift = FindBin(table + adr, (UINT32)(len - adr), (UINT8*)Find, 4); //next occurence
       if (shift < 0) {
         break; //not found
       }
@@ -5269,17 +5269,17 @@ VOID RenameDevices(UINT8* table)
       while (i > 0x20) {  //find devices that previous to adr
         found = FALSE;
         //check device
-        if ((table[i] == 0x5B) && (table[i + 1] == 0x82) && !CmpNum(table, i, TRUE)) { //device candidate
+        if ((table[i] == 0x5B) && (table[i + 1] == 0x82) && !CmpNum(table, (INT32)i, TRUE)) { //device candidate
           k = i + 2;
           found = TRUE;
         }
         //check scope
-        if ((table[i] == 0x10) && !CmpNum(table, i, TRUE)) {
+        if ((table[i] == 0x10) && !CmpNum(table, (INT32)i, TRUE)) {
           k = i + 1;
           found = TRUE;
         }
         if (found) {  // i points to Device or Scope
-          size = get_size(table, k); //k points to size
+          size = get_size(table, (UINT32)(UINTN)k); //k points to size
   //        DBG("found bridge candidate 0x%x size %d\n", table[i], size);
           if (size) {
             if ((k + size) > (adr + 4)) {  //Yes - it is outer

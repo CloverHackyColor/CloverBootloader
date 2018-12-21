@@ -59,7 +59,7 @@ float SinF(float X)
     X = -X;
     Sign = -1.0f;
   }
-  Period = X / PI2;
+  Period = (INTN)(X / PI2);
   X = X - Period * PI2;
   if (X > PI) {
     X = X - PI;
@@ -85,7 +85,7 @@ float CosF(float X)
   if (X < 0.0f) {
     X = -X;
   }
-  Period = X / PI2;
+  Period = (INTN)(X / PI2);
   X = X - Period * PI2;
   if (X > PI) {
     X = PI - X;
@@ -106,7 +106,7 @@ float TanF(float X)
 {
   float Y = CosF(X);
   if (Y == 0.0f) {
-    Y = 1.0e-37;
+    Y = 1.0e-37f;
   }
   return SinF(X)/Y;
 }
@@ -163,7 +163,7 @@ float AcosF(float X)
       Sign = 1;
     }
     Y = 1.0f - X; //for X ~ 1
-    X2 = Y * (2.0 + Y * (1.0 / 3.0 + Y * (4.0f / 45.0 + Y  / 35.0f))); //Dwight, form.508
+    X2 = Y * (2.0f + Y * (1.0f / 3.0f + Y * (4.0f / 45.0f + Y  / 35.0f))); //Dwight, form.508
     res = SqrtF(X2);
     if (Sign) {
       res = PI - res;
@@ -175,7 +175,7 @@ float AcosF(float X)
 
 float AtanF(float X) //assume 0.0 < X < 1.0
 {
-  float Eps = 1.0e-8;
+  float Eps = 1.0e-8f;
   int i = 1;
   float X2 = X * X;
   float D = X;
@@ -364,7 +364,7 @@ CHAR16* PoolPrintFloat(float X)
   if (I == 0 && X < 0) {
     S = '-';
   }
-  Fract = fabsf((X - D) * 1000000.0f);
+  Fract = (INTN)fabsf((X - D) * 1000000.0f);
   return PoolPrint(L"%c%d.%06d", S, I, (INTN)Fract);
 }
 

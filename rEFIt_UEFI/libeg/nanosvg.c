@@ -456,24 +456,24 @@ static void nsvg__curveBounds(float* bounds, float* curve)
 
   // Add bezier curve inflection points in X and Y.
   for (i = 0; i < 2; i++) {
-    a = -3.0 * v0[i] + 9.0 * v1[i] - 9.0 * v2[i] + 3.0 * v3[i];
-    b = 6.0 * v0[i] - 12.0 * v1[i] + 6.0 * v2[i];
-    c = 3.0 * v1[i] - 3.0 * v0[i];
+    a = -3.0f * v0[i] + 9.0f * v1[i] - 9.0f * v2[i] + 3.0f * v3[i];
+    b = 6.0f * v0[i] - 12.0f * v1[i] + 6.0f * v2[i];
+    c = 3.0f * v1[i] - 3.0f * v0[i];
     count = 0;
     if (fabs(a) < NSVG_EPSILON) {
       if (fabs(b) > NSVG_EPSILON) {
         t = -c / b;
-        if (t > NSVG_EPSILON && t < 1.0-NSVG_EPSILON)
+        if (t > NSVG_EPSILON && t < 1.0f-NSVG_EPSILON)
           roots[count++] = t;
       }
     } else {
-      b2ac = b*b - 4.0*c*a;
+      b2ac = b*b - 4.0f*c*a;
       if (b2ac > NSVG_EPSILON) {
-        t = (-b + sqrt(b2ac)) / (2.0 * a);
-        if (t > NSVG_EPSILON && t < 1.0-NSVG_EPSILON)
+        t = (-b + sqrt((float)b2ac)) / (2.0f * a);
+        if (t > NSVG_EPSILON && t < 1.0f-NSVG_EPSILON)
           roots[count++] = t;
-        t = (-b - sqrt(b2ac)) / (2.0 * a);
-        if (t > NSVG_EPSILON && t < 1.0-NSVG_EPSILON)
+        t = (-b - sqrt((float)b2ac)) / (2.0f * a);
+        if (t > NSVG_EPSILON && t < 1.0f-NSVG_EPSILON)
           roots[count++] = t;
       }
     }
@@ -1329,7 +1329,7 @@ static unsigned int nsvg__parseColorRGB(const char* str)
   if (*s1 == '%') {
     b = (int)(fb * 2.55f);
   }  else {
-    b = fb;
+    b = (int)fb;
   }
   return NSVG_RGB(r,g,b);
 }
@@ -1855,7 +1855,7 @@ static NSVGclipPath* nsvg__createClipPath(const char* name, int index)
 
   strncpy(clipPath->id, name, 63);
   clipPath->id[63] = '\0';
-  clipPath->index = index;
+  clipPath->index = (NSVGclipPathIndex)index;
   return clipPath;
 }
 
@@ -2887,7 +2887,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
           textFace[1].font = fontSVG;
-          textFace[1].size = text->fontSize;
+          textFace[1].size = (INTN)text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
   //        DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
@@ -2899,7 +2899,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
           textFace[1].font = fontSVG;
-          textFace[1].size = text->fontSize;
+          textFace[1].size = (INTN)text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
    //              DBG("set message->font=%a color=%x size=%s as in MessageRow\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
@@ -2907,7 +2907,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       } else if (strcmp(group->id, "MenuRows") == 0) {
         if (!textFace[2].valid) {
           textFace[2].font = fontSVG;
-          textFace[2].size = text->fontSize;
+          textFace[2].size = (INTN)text->fontSize;
           textFace[2].color = text->fontColor;
           textFace[2].valid = TRUE;
   //        DBG("set menu->font=%a color=%x size=%s as in MenuRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
@@ -2915,14 +2915,14 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
         break;
       } else if (!DayLight && strcmp(group->id, "MenuRows_night") == 0) {
           textFace[2].font = fontSVG;
-          textFace[2].size = text->fontSize;
+          textFace[2].size = (INTN)text->fontSize;
           textFace[2].color = text->fontColor;
           textFace[2].valid = TRUE;
         break;
       } else if (strcmp(group->id, "HelpRows") == 0) {
         if (!textFace[0].valid) {
           textFace[0].font = fontSVG;
-          textFace[0].size = text->fontSize;
+          textFace[0].size = (INTN)text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
  //         DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
@@ -2930,7 +2930,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
         break;
       } else if (!DayLight && strstr(group->id, "HelpRows_night") != NULL) {
           textFace[0].font = fontSVG;
-          textFace[0].size = text->fontSize;
+          textFace[0].size = (INTN)text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
      //               DBG("set help->font=%a color=%x size=%s as in HelpRows\n", fontSVG->fontFamily, text->fontColor, PoolPrintFloat(text->fontSize));
@@ -3453,17 +3453,17 @@ static void parseTheme(NSVGparser* p, const char** dict)
   UINT32 Color = 0x80808080; //default value
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "SelectionOnTop") == 0) {
-      GlobalConfig.SelectionOnTop = getIntegerDict(dict[i+1]);
+      GlobalConfig.SelectionOnTop = (BOOLEAN)getIntegerDict(dict[i+1]);
     } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
       GlobalConfig.BadgeOffsetX = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
       GlobalConfig.BadgeOffsetY = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
-      GlobalConfig.NonSelectedGrey = getIntegerDict(dict[i + 1]);
+      GlobalConfig.NonSelectedGrey = (BOOLEAN)getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "CharWidth") == 0) {
       GlobalConfig.CharWidth = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundDark") == 0) {
-      GlobalConfig.BackgroundDark = getIntegerDict(dict[i + 1]);
+      GlobalConfig.BackgroundDark = (BOOLEAN)getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
       GlobalConfig.BackgroundSharp = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundScale") == 0) {
@@ -3502,9 +3502,9 @@ static void parseTheme(NSVGparser* p, const char** dict)
         GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
       }
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
-      GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1]);
+      GlobalConfig.VerticalLayout = (BOOLEAN)getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BootCampStyle") == 0) {
-      GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1]);
+      GlobalConfig.BootCampStyle = (BOOLEAN)getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "AnimeFrames") == 0) {
       NumFrames = getIntegerDict(dict[i + 1]);
       if (NumFrames == 0xFFFF) {

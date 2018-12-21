@@ -943,7 +943,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
   // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
   // to avoid overlapping the menu text on menu pages at lower resolutions is set.
   if ((Screen->ID > 1) && (LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
-    MenuWidth = TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth * GlobalConfig.Scale); // taken from menu.c
+    MenuWidth = (INTN)(TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth * GlobalConfig.Scale)); // taken from menu.c
     if ((x + Screen->Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
       if ((x + LayoutAnimMoveForMenuX >= 0) || (UGAWidth-(x + LayoutAnimMoveForMenuX + Screen->Film[0]->Width)) <= 100) {
         x += LayoutAnimMoveForMenuX;

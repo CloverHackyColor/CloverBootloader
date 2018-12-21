@@ -504,6 +504,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
   UINTN                   i;
+  NSVGfont                *font;
 
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");
@@ -566,7 +567,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   // mainParser
   // BuiltinIcons
   // OSIcons
-  NSVGfont *font = fontsDB;
+  font = fontsDB;
   while (font) {
     nsvg__deleteFont(font);
     font = font->next;
@@ -1841,6 +1842,7 @@ VOID SystemVersionInit(VOID)
   UINTN      InsIter            = 1;
   UINTN      RecIter            = 1;
   UINTN      k                  = 0;
+  UINTN      i;
 
   // If scanloader starts multiple times, then we need to free systemplists, installplists, recoveryplists variables, also
   // refresh APFSUUIDBank
@@ -1904,7 +1906,7 @@ VOID SystemVersionInit(VOID)
   RecoveryPlists[1] = NULL;
   /************************************************************************/
   //Fill Plists 
-  for (UINTN i = 0; i < APFSUUIDBankCounter+1; i++) {
+  for (i = 0; i < APFSUUIDBankCounter+1; i++) {
     //Store UUID from bank
     CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
     //Init temp string with system/install/recovery APFS path
