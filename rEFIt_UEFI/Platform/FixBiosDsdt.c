@@ -5234,7 +5234,8 @@ VOID RenameDevices(UINT8* table)
   ACPI_NAME_LIST *Bridge;
   CHAR8 *Replace;
   CHAR8 *Find;
-  INTN i, k, index;
+  INTN i, k;
+  UINTN index;
   INTN size;
   UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
   INTN adr, shift, Num = 0;
@@ -5315,7 +5316,7 @@ VOID RenameDevices(UINT8* table)
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {
   UINT32 DsdtLen;
-  INTN i;
+  UINTN i;
 
   if (!temp) {
     return;

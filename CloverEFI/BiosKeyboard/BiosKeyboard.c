@@ -2336,7 +2336,7 @@ DBG("2 Got bios key ScanCode=%x, Uchar=%x, ShiftState=%x, ToogleState=%x\n", Key
     {
     	NumberOfKeys=1;
   DBG("3BiosKeyboardPrivate->KeyMapDb(0x%x)->SetKeyStrokeBufferKeys CurModifierMap=%x, NumberOfKeys=%d ", BiosKeyboardPrivate->KeyMapDb, CurModifierMap, NumberOfKeys);
-  int zud; for (zud=0;zud<NumberOfKeys;zud++) {
+  UINTN zud; for (zud=0;zud<NumberOfKeys;zud++) {
     DBG("Keys[%d]=%d(%d %d) 0x%x ", zud, Keys[zud], Keys[zud]>>8, Keys[zud]&0xFF, Keys[zud]);
   }
     DBG("\n");

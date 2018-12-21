@@ -522,10 +522,10 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 #endif
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
-INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, INTN Cursor)
+INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, UINTN Cursor)
 {
   INTN Width;
-  int i;
+  UINTN i;
   UINTN len;
   NSVGparser* p;
   NSVGrasterizer* rast;

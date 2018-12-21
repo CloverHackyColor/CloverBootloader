@@ -133,6 +133,9 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
 
 #if defined(ANDX86)
+#if !defined(MDE_CPU_X64)
+#undef ANDX86
+#else
 // ANDX86 loader path data
 #define ANDX86_FINDLEN 3
 typedef struct ANDX86_PATH_DATA
@@ -144,7 +147,6 @@ typedef struct ANDX86_PATH_DATA
 } ANDX86_PATH_DATA;
 
 STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
-#if defined(MDE_CPU_X64)
   //{ L"\\EFI\\boot\\grubx64.efi", L"Grub", L"grub,linux" },
   //{ L"\\EFI\\boot\\bootx64.efi", L"Grub", L"grub,linux" },
   { L"\\EFI\\remixos\\grubx64.efi",         L"Remix",     L"remix,grub,linux",   { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
@@ -154,9 +156,9 @@ STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
 /*
 #else
 */
-#endif
 };
 STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(ANDX86_PATH_DATA));
+#endif
 #endif
 
 CHAR16  *PaperBoot   = L"\\com.apple.boot.P\\boot.efi";
