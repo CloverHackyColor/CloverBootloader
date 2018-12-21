@@ -58,7 +58,7 @@ typedef struct NVRAM_DATA
   EFI_GUID    *Guid;
 } NVRAM_DATA;
 
-//CONST NVRAM_DATA ResetNvramData[] = {
+
   // Hibernationfixup Variables
   //{ L"Boot0082",           &gEfiGlobalVariableGuid }, { L"BootNext",       &gEfiGlobalVariableGuid },
   //{ L"IOHibernateRTCVariables", &gEfiAppleBootGuid }, { L"boot-image",     &gEfiAppleBootGuid },
@@ -92,8 +92,8 @@ typedef struct NVRAM_DATA
   //{ L"fakesmc-key-MSAc-ui16", &gEfiAppleBootGuid }, { L"fakesmc-key-MSWr-ui8",  &gEfiAppleBootGuid },
   //{ L"fakesmc-key-MSFW-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSPS-ui16", &gEfiAppleBootGuid },
   //{ L"fakesmc-key-#KEY-ui32", &gEfiAppleBootGuid },
+//  {NULL, NULL}
 //};
-
 /** returns given time as miliseconds.
  *  assumes 31 days per month, so it's not correct,
  *  but is enough for basic checks.

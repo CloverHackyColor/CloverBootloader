@@ -1475,7 +1475,7 @@ static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int str
 static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape* shape, float *xformShape)
 {
   int i, j;
-  NSVGgradient* grad = paint->gradient;
+  NSVGgradient* grad = paint->paint.gradient;
 
   float opacity = shape->opacity;
 
@@ -1485,7 +1485,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
   //  DBG("shape=%a, paint-type=%d\n", shape->id, cache->type);
 
   if (cache->type == NSVG_PAINT_COLOR) {
-    cache->colors[0] = nsvg__applyOpacity(paint->color, opacity);
+    cache->colors[0] = nsvg__applyOpacity(paint->paint.color, opacity);
     return;
   }
   if (cache->type == NSVG_PAINT_PATTERN) {

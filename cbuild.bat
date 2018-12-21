@@ -9,7 +9,7 @@ rem # parse parameters for what we need
 set ENABLE_SECURE_BOOT=0
 set MULTIARCH=0
 set TARGETARCH=
-set TOOLCHAIN=
+set TOOLCHAIN=VS2013x86
 set BUILDTARGET=
 set DSCFILE=
 set CLEANING=
@@ -37,11 +37,11 @@ set GENPAGE=0
 set MSG=
 set DEVSTAGE=
 
-set DEFAULT_CYGWIN_HOME=c:\cygwin
-set DEFAULT_PYTHONHOME=c:\Python27
+set DEFAULT_CYGWIN_HOME=D:\Projects\edk2\BaseTools\Bin\CYGWIN_NT-5.1-i686
+set DEFAULT_PYTHONHOME=D:\Projects\edk2\BaseTools\Source\Python
 set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
 set DEFAULT_NASM_PREFIX=%DEFAULT_CYGWIN_HOME%\bin
-set DEFAULT_TOOLCHAIN=VS2012x86
+set DEFAULT_TOOLCHAIN=VS2013x86
 set DEFAULT_BUILDTARGET=RELEASE
 set DEFAULT_TARGETARCH=X64
 set DEFAULT_THREADNUMBER=%NUMBER_OF_PROCESSORS%
@@ -65,10 +65,11 @@ rem # get the current revision number
 :getrevision
   cd "%CURRENTDIR%"
   rem  get svn revision number
-  svnversion -n>%F_VER_TXT%
-  set /P s=<%F_VER_TXT%
+  rem echo "4813" > %F_VER_TXT%
+  rem set /P s=<%F_VER_TXT%
   rem del %F_VER_TXT%
-  set SVNREVISION=
+  set SVNREVISION=4813
+  goto init
 
 rem # get the current revision number
 :fixrevision

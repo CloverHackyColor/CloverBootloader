@@ -469,12 +469,10 @@ static void nsvg__curveBounds(float* bounds, float* curve)
     } else {
       b2ac = b*b - 4.0f*c*a;
       if (b2ac > NSVG_EPSILON) {
-        t = (-b + sqrt((float)b2ac)) / (2.0f * a);
-        if (t > NSVG_EPSILON && t < 1.0f-NSVG_EPSILON)
-          roots[count++] = t;
-        t = (-b - sqrt((float)b2ac)) / (2.0f * a);
-        if (t > NSVG_EPSILON && t < 1.0f-NSVG_EPSILON)
-          roots[count++] = t;
+        t = (-b + (double)sqrtf((float)b2ac)) / (2.0 * a);
+        if (t > NSVG_EPSILON && t < 1.0-NSVG_EPSILON)          roots[count++] = t;
+        t = (-b - (double)sqrtf((float)b2ac)) / (2.0 * a);
+        if (t > NSVG_EPSILON && t < 1.0-NSVG_EPSILON)          roots[count++] = t;
       }
     }
     for (j = 0; j < count; j++) {
@@ -566,14 +564,14 @@ void nsvg__deleteFont(NSVGfont* font)
 
 static void nsvg__deletePaint(NSVGpaint* paint)
 {
-  if (!paint || !paint->gradient) {
+  if (!paint || !paint->paint.gradient) {
     return;
   }
   if (paint->type == NSVG_PAINT_LINEAR_GRADIENT ||
       paint->type == NSVG_PAINT_RADIAL_GRADIENT ||
       paint->type == NSVG_PAINT_CONIC_GRADIENT) {
-    FreePool(paint->gradient);
-    paint->gradient = NULL;
+    FreePool(paint->paint.gradient);
+    paint->paint.gradient = NULL;
   }
 }
 
@@ -860,10 +858,10 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   if (data->type == NSVG_PAINT_LINEAR_GRADIENT) {
     float x1, y1, x2, y2, dx, dy;
 
-    x1 = nsvg__convertToPixelsForGradient(p, data->units, &data->linear.x1, ox, sw);
-    y1 = nsvg__convertToPixelsForGradient(p, data->units, &data->linear.y1, oy, sh);
-    x2 = nsvg__convertToPixelsForGradient(p, data->units, &data->linear.x2, ox, sw);
-    y2 = nsvg__convertToPixelsForGradient(p, data->units, &data->linear.y2, oy, sh);
+    x1 = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.linear.x1, ox, sw);
+    y1 = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.linear.y1, oy, sh);
+    x2 = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.linear.x2, ox, sw);
+    y2 = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.linear.y2, oy, sh);
     // Calculate transform aligned to the line
     dx = x2 - x1;
     dy = y2 - y1;
@@ -874,11 +872,11 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   } else if ((data->type == NSVG_PAINT_RADIAL_GRADIENT) ||
              (data->type == NSVG_PAINT_CONIC_GRADIENT)) {
     float cx, cy, fx, fy, r;
-    cx = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.cx, ox, sw);
-    cy = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.cy, oy, sh);
-    fx = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.fx, ox, sw);
-    fy = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.fy, oy, sh);
-    r  = nsvg__convertToPixelsForGradient(p, data->units, &data->radial.r, 0, sl);
+    cx = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.radial.cx, ox, sw);
+    cy = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.radial.cy, oy, sh);
+    fx = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.radial.fx, ox, sw);
+    fy = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.radial.fy, oy, sh);
+    r  = nsvg__convertToPixelsForGradient(p, data->units, &data->direction.radial.r, 0, sl);
     // Calculate transform aligned to the circle
     gradForm[0] = r; gradForm[1] = 0;
     gradForm[2] = 0;  gradForm[3] = r;
@@ -1003,11 +1001,11 @@ static void nsvg__addShape(NSVGparser* p)
   shape->fill.type = NSVG_PAINT_NONE;
   if (attr->hasFill == 1) {
     shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = ((unsigned int)(attr->fillOpacity*255) << 24) | attr->fillColor;
+    shape->fill.paint.color = ((unsigned int)(attr->fillOpacity*255) << 24) | attr->fillColor;
   } else if (attr->hasFill == 2) {
     shape->fill.type = NSVG_PAINT_GRADIENT_LINK;
-    shape->fill.gradientLink = nsvg__createGradientLink(attr->fillGradient);
-    if (shape->fill.gradientLink == NULL) {
+    shape->fill.paint.gradientLink = nsvg__createGradientLink(attr->fillGradient);
+    if (shape->fill.paint.gradientLink == NULL) {
       shape->fill.type = NSVG_PAINT_NONE;
       if (shape->clip.index) {
         FreePool(shape->clip.index);
@@ -1025,18 +1023,18 @@ static void nsvg__addShape(NSVGparser* p)
       }
       pt = pt->next;
     }
-    shape->fill.gradient = (NSVGgradient*)pt;
+    shape->fill.paint.gradient = (NSVGgradient*)pt;
   }
 
   // Set stroke
   shape->stroke.type = NSVG_PAINT_NONE;
   if (attr->hasStroke == 1) {
     shape->stroke.type = NSVG_PAINT_COLOR;
-    shape->stroke.color = ((unsigned int)(attr->strokeOpacity*255) << 24) | attr->strokeColor;
+    shape->stroke.paint.color = ((unsigned int)(attr->strokeOpacity*255) << 24) | attr->strokeColor;
   } else if (attr->hasStroke == 2) {
     shape->stroke.type = NSVG_PAINT_GRADIENT_LINK;
-    shape->stroke.gradientLink = nsvg__createGradientLink(attr->strokeGradient);
-    if (shape->stroke.gradientLink == NULL) {
+    shape->stroke.paint.gradientLink = nsvg__createGradientLink(attr->strokeGradient);
+    if (shape->stroke.paint.gradientLink == NULL) {
       shape->fill.type = NSVG_PAINT_NONE;
       if (shape->clip.index) {
         FreePool(shape->clip.index);
@@ -1054,7 +1052,7 @@ static void nsvg__addShape(NSVGparser* p)
       }
       pt = pt->next;
     }
-    shape->stroke.gradient = (NSVGgradient*)pt;
+    shape->stroke.paint.gradient = (NSVGgradient*)pt;
   }
 
   // Set flags
@@ -3263,18 +3261,18 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
   grad->type = type;
   grad->ditherCoarse = 0; //default value
   if (grad->type == NSVG_PAINT_LINEAR_GRADIENT) {
-    grad->linear.x1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
-    grad->linear.y1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
-    grad->linear.x2 = nsvg__coord(100.0f, NSVG_UNITS_PERCENT);
-    grad->linear.y2 = nsvg__coord(100.0f, NSVG_UNITS_PERCENT);
+    grad->direction.linear.x1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
+    grad->direction.linear.y1 = nsvg__coord(0.0f, NSVG_UNITS_PERCENT);
+    grad->direction.linear.x2 = nsvg__coord(100.0f, NSVG_UNITS_PERCENT);
+    grad->direction.linear.y2 = nsvg__coord(100.0f, NSVG_UNITS_PERCENT);
   } else if (grad->type == NSVG_PAINT_RADIAL_GRADIENT) {
-    grad->radial.cx = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
-    grad->radial.cy = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
-    grad->radial.r = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->direction.radial.cx = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->direction.radial.cy = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->direction.radial.r = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
   } else if (grad->type == NSVG_PAINT_CONIC_GRADIENT) {
-    grad->radial.cx = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
-    grad->radial.cy = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
-    grad->radial.r = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->direction.radial.cx = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->direction.radial.cy = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
+    grad->direction.radial.r = nsvg__coord(50.0f, NSVG_UNITS_PERCENT);
   }
 
   nsvg__xformIdentity(grad->xform);
@@ -3296,23 +3294,23 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
       } else if (strcmp(attr[i], "gradientTransform") == 0) {
         nsvg__parseTransform(grad->xform, attr[i + 1]);
       } else if (strcmp(attr[i], "cx") == 0) {
-        grad->radial.cx = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.radial.cx = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "cy") == 0) {
-        grad->radial.cy = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.radial.cy = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "r") == 0) {
-        grad->radial.r = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.radial.r = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "fx") == 0) {
-        grad->radial.fx = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.radial.fx = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "fy") == 0) {
-        grad->radial.fy = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.radial.fy = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "x1") == 0) {
-        grad->linear.x1 = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.linear.x1 = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "y1") == 0) {
-        grad->linear.y1 = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.linear.y1 = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "x2") == 0) {
-        grad->linear.x2 = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.linear.x2 = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "y2") == 0) {
-        grad->linear.y2 = nsvg__parseCoordinateRaw(attr[i + 1]);
+        grad->direction.linear.y2 = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "clover:ditherCoarse") == 0) {
         grad->ditherCoarse = getIntegerDict(attr[i + 1]);
       } else if (strcmp(attr[i], "spreadMethod") == 0) {
@@ -3453,18 +3451,15 @@ static void parseTheme(NSVGparser* p, const char** dict)
   UINT32 Color = 0x80808080; //default value
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "SelectionOnTop") == 0) {
-      GlobalConfig.SelectionOnTop = (BOOLEAN)getIntegerDict(dict[i+1]);
-    } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
+      GlobalConfig.SelectionOnTop = getIntegerDict(dict[i+1])>0;    } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
       GlobalConfig.BadgeOffsetX = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
       GlobalConfig.BadgeOffsetY = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
-      GlobalConfig.NonSelectedGrey = (BOOLEAN)getIntegerDict(dict[i + 1]);
-    } else if (strcmp(dict[i], "CharWidth") == 0) {
+      GlobalConfig.NonSelectedGrey = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "CharWidth") == 0) {
       GlobalConfig.CharWidth = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundDark") == 0) {
-      GlobalConfig.BackgroundDark = (BOOLEAN)getIntegerDict(dict[i + 1]);
-    } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
+      GlobalConfig.BackgroundDark = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
       GlobalConfig.BackgroundSharp = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundScale") == 0) {
       GlobalConfig.BackgroundScale = imNone;
@@ -3502,10 +3497,8 @@ static void parseTheme(NSVGparser* p, const char** dict)
         GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
       }
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
-      GlobalConfig.VerticalLayout = (BOOLEAN)getIntegerDict(dict[i + 1]);
-    } else if (strcmp(dict[i], "BootCampStyle") == 0) {
-      GlobalConfig.BootCampStyle = (BOOLEAN)getIntegerDict(dict[i + 1]);
-    } else if (strcmp(dict[i], "AnimeFrames") == 0) {
+      GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "BootCampStyle") == 0) {
+      GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "AnimeFrames") == 0) {
       NumFrames = getIntegerDict(dict[i + 1]);
       if (NumFrames == 0xFFFF) {
         NumFrames = 0;
@@ -3983,12 +3976,12 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   shape->fill.type = NSVG_PAINT_NONE;
   if (attr->hasFill == 1) {
     shape->fill.type = NSVG_PAINT_COLOR;
-    shape->fill.color = color;
+    shape->fill.paint.color = color;
   }
   shape->stroke.type = NSVG_PAINT_NONE;
   if (attr->hasStroke == 1) {
     shape->stroke.type = NSVG_PAINT_COLOR;
-    shape->stroke.color = p->text->strokeColor;
+    shape->stroke.paint.color = p->text->strokeColor;
   }
 
   shape->flags = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
@@ -4143,22 +4136,22 @@ static void nsvg__assignGradients(NSVGparser* p, NSVGshape* shapes)
   for (NSVGshape* shape = shapes; shape != NULL; shape = shape->next) {
 
     if (shape->fill.type == NSVG_PAINT_GRADIENT_LINK) {
-      NSVGgradientLink* link = shape->fill.gradientLink;
-      shape->fill.gradient = nsvg__createGradient(p, shape, link, &shape->fill.type);
+      NSVGgradientLink* link = shape->fill.paint.gradientLink;
+      shape->fill.paint.gradient = nsvg__createGradient(p, shape, link, &shape->fill.type);
       if (link != NULL) {
         FreePool(link);
       }
-      if (shape->fill.gradient == NULL) {
+      if (shape->fill.paint.gradient == NULL) {
         shape->fill.type = NSVG_PAINT_NONE;
       }
     }
     if (shape->stroke.type == NSVG_PAINT_GRADIENT_LINK) {
-      NSVGgradientLink* link = shape->stroke.gradientLink;
-      shape->stroke.gradient = nsvg__createGradient(p, shape, link, &shape->stroke.type);
+      NSVGgradientLink* link = shape->stroke.paint.gradientLink;
+      shape->stroke.paint.gradient = nsvg__createGradient(p, shape, link, &shape->stroke.type);
       if (link != NULL) {
         FreePool(link);
       }
-      if (shape->stroke.gradient == NULL) {
+      if (shape->stroke.paint.gradient == NULL) {
         shape->stroke.type = NSVG_PAINT_NONE;
       }
     }

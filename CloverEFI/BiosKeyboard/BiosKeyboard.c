@@ -37,7 +37,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...)
 #endif
 
-
+extern int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap);
 //
 // EFI Driver Binding Protocol Instance
 //
@@ -2317,6 +2317,7 @@ BiosKeyboardTimerHandler (
 
   // Parse the modifier key, which is the first byte of keyboard input report.
   //
+
 
 DBG("2 Got bios key ScanCode=%x, Uchar=%x, ShiftState=%x, ToogleState=%x\n", KeyData.Key.ScanCode, KeyData.Key.UnicodeChar, KeyData.KeyState.KeyShiftState, KeyData.KeyState.KeyToggleState);
 

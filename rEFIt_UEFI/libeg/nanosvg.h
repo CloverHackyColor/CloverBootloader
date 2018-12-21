@@ -123,7 +123,7 @@ typedef struct NSVGpaint {
     unsigned int color;
     NSVGgradient* gradient;
     NSVGgradientLink* gradientLink;
-  };
+  } paint;
   char type;
   char pad[7]; //alignment
 } NSVGpaint;
@@ -268,7 +268,7 @@ typedef struct NSVGgradientData
   union {
     NSVGlinearData linear;
     NSVGradialData radial;
-  };
+  } direction;
   char spread;
   char units;
   int ditherCoarse;

@@ -568,8 +568,7 @@ VOID PatchAllTables()
     if (NewTable->Signature == MCFG_SIGN && gSettings.FixMCFG) {
       INTN Len1 = ((Len + 4 - 1) / 16 + 1) * 16 - 4;
       CopyMem(NewTable, Table, Len1); //Len increased but less than EFI_PAGE
-      NewTable->Length = (UINT32)(UINTN)Len1;
-      Patched = TRUE;
+      NewTable->Length = (UINT32)(UINTN)Len1;      Patched = TRUE;
     }
     if (Patched) {
       WriteUnaligned64(Ptr, BufferPtr);
@@ -1534,8 +1533,9 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
     UINT32 Count = XsdtTableCount();
     DBG("  Tables in Xsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
-    UINT64* Ptr = XsdtEntryPtrFromIndex(0);
-    UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
+
+    unsigned long long *Ptr = XsdtEntryPtrFromIndex(0);
+    unsigned long long *EndPtr = XsdtEntryPtrFromIndex(Count);
     SsdtCount = 0;
     for (; Ptr < EndPtr; Ptr++) {
       DBG("  %d.", IndexFromXsdtEntryPtr(Ptr));
@@ -1577,8 +1577,8 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
     UINT32 Count = RsdtTableCount();
     DBG("  Tables in Rsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
-    UINT32* Ptr = RsdtEntryPtrFromIndex(0);
-    UINT32* EndPtr = RsdtEntryPtrFromIndex(Count);
+    unsigned long *Ptr = RsdtEntryPtrFromIndex(0);
+    unsigned long *EndPtr = RsdtEntryPtrFromIndex(Count);
     for (; Ptr < EndPtr; Ptr++) {
       DBG("  %d.", IndexFromRsdtEntryPtr(Ptr));
       EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)*Ptr;

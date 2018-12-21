@@ -1,2 +1,7 @@
-Initial propose: (http://www.insanelymac.com/forum/topic/306156-clover-bugissue-report-and-patch/?p=2236614)
-If you believe by do templating (cut-off unused compiler) can speed build time as reported here (https://github.com/tianocore/edk2/issues/56), otherwise we can remove this method.
+This directory will be used to contain the new EDK II files:
+    FrameworkDatabase.db  - Second generation XML workspace info
+    target.txt            - Restricts a build to defined values
+    tools_def.txt         - Information about 3rd party tools
+
+These files will be created from the template files in the new
+BaseTools\Conf directory if and only if they do not exist.

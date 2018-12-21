@@ -22,28 +22,31 @@ float FabsF(float x)
 //we will assume sqrt(abs(x))
 float SqrtF(float X)
 {
+	/*
   struct FloatInt {
     union {
       INT32 i;
       float f;
-    };
+    } fi;
   };
+  */
   if (X == 0.0f) {
     return 0.0f;
   } else if (X < 0.0f) {
     X = -X;
   }
-  struct FloatInt Y;
-  Y.f = X * 0.3f;
+//  struct FloatInt Y;
+  float Yf;
+  Yf = X * 0.3f;
 //  Y.i = Y.i >> 1; // dirty hack - first iteration
   //do six iterations
-  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
-  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
-  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
-  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
-  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
-  Y.f = Y.f * 0.5f + X / (Y.f * 2.0f);
-  return Y.f;
+  Yf = Yf * 0.5f + X / (Yf * 2.0f);
+  Yf = Yf * 0.5f + X / (Yf * 2.0f);
+  Yf = Yf * 0.5f + X / (Yf * 2.0f);
+  Yf = Yf * 0.5f + X / (Yf * 2.0f);
+  Yf = Yf * 0.5f + X / (Yf * 2.0f);
+  Yf = Yf * 0.5f + X / (Yf * 2.0f);
+  return Yf;
 }
 
 float CosF(float X);
@@ -179,7 +182,7 @@ float AtanF(float X) //assume 0.0 < X < 1.0
   int i = 1;
   float X2 = X * X;
   float D = X;
-  float Y = 0;
+  float Y = 0.f;
   float sign = 1.0f;
 
   if (X > 0.5f) {
@@ -365,7 +368,7 @@ CHAR16* PoolPrintFloat(float X)
     S = '-';
   }
   Fract = (INTN)fabsf((X - D) * 1000000.0f);
-  return PoolPrint(L"%c%d.%06d", S, I, (INTN)Fract);
+  return PoolPrint(L"%c%d.%06d", S, I, Fract);
 }
 
 static UINT32 seed = 12345;

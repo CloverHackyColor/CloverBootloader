@@ -5205,6 +5205,7 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
 {
   // "RP02" NameLen=4
   // "_SB_PCI0RP02" NameLen=12
+
   UINTN NameLen = 0;
   INTN i = 0;
   CHAR8 *Name;
@@ -5234,6 +5235,7 @@ VOID RenameDevices(UINT8* table)
   ACPI_NAME_LIST *Bridge;
   CHAR8 *Replace;
   CHAR8 *Find;
+
   INTN i, k;
   UINTN index;
   INTN size;
@@ -5249,6 +5251,7 @@ VOID RenameDevices(UINT8* table)
     adr = 0;
     do
     {
+
       shift = FindBin(table + adr, (UINT32)(len - adr), (UINT8*)Find, 4); //next occurence
       if (shift < 0) {
         break; //not found
@@ -5275,13 +5278,13 @@ VOID RenameDevices(UINT8* table)
           found = TRUE;
         }
         //check scope
+
         if ((table[i] == 0x10) && !CmpNum(table, (INT32)i, TRUE)) {
           k = i + 1;
           found = TRUE;
         }
         if (found) {  // i points to Device or Scope
-          size = get_size(table, (UINT32)(UINTN)k); //k points to size
-  //        DBG("found bridge candidate 0x%x size %d\n", table[i], size);
+          size = get_size(table, (UINT32)(UINTN)k); //k points to size  //        DBG("found bridge candidate 0x%x size %d\n", table[i], size);
           if (size) {
             if ((k + size) > (adr + 4)) {  //Yes - it is outer
      //            DBG("found Bridge device begin=%x end=%x\n", k, k+size);
@@ -5316,6 +5319,7 @@ VOID RenameDevices(UINT8* table)
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {
   UINT32 DsdtLen;
+
   UINTN i;
 
   if (!temp) {
