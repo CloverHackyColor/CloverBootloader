@@ -3313,6 +3313,11 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
         grad->direction.linear.y2 = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "clover:ditherCoarse") == 0) {
         grad->ditherCoarse = getIntegerDict(attr[i + 1]);
+      } else if (strcmp(attr[i], "clover:conic") == 0) {
+        int conic = getIntegerDict(attr[i + 1]);
+        if (conic > 0) {
+          grad->type = NSVG_PAINT_CONIC_GRADIENT;
+        }
       } else if (strcmp(attr[i], "spreadMethod") == 0) {
         if (strcmp(attr[i+1], "pad") == 0)
           grad->spread = NSVG_SPREAD_PAD;
