@@ -1577,8 +1577,8 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
     UINT32 Count = RsdtTableCount();
     DBG("  Tables in Rsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
-    unsigned long *Ptr = RsdtEntryPtrFromIndex(0);
-    unsigned long *EndPtr = RsdtEntryPtrFromIndex(Count);
+    unsigned int *Ptr = RsdtEntryPtrFromIndex(0);
+    unsigned int *EndPtr = RsdtEntryPtrFromIndex(Count);
     for (; Ptr < EndPtr; Ptr++) {
       DBG("  %d.", IndexFromRsdtEntryPtr(Ptr));
       EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)*Ptr;
