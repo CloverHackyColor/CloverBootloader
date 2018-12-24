@@ -852,6 +852,7 @@ void PostCleanupRSDT()
 
 void PreCleanupXSDT()
 {
+	UINT64 *Ptr, *EndPtr;
   if (!Xsdt) {
     return;
   }
@@ -863,8 +864,8 @@ void PreCleanupXSDT()
     return;
   }
   DBG("PreCleanup XSDT: count=%d, length=%d\n", Count, (UINT32)Xsdt->Header.Length);
-  UINT64* Ptr = XsdtEntryPtrFromIndex(0);
-  UINT64* EndPtr = XsdtEntryPtrFromIndex(Count-1);
+  Ptr = XsdtEntryPtrFromIndex(0);
+  EndPtr = XsdtEntryPtrFromIndex(Count-1);
   for (; Ptr < EndPtr; Ptr++) {
     if (0 == ReadUnaligned64(Ptr+0) && 0 == ReadUnaligned64(Ptr+1)) {
       // double zero found, terminate XSDT entry table here
@@ -878,6 +879,7 @@ void PreCleanupXSDT()
 
 void PostCleanupXSDT()
 {
+	UINT64 *Dest, *EndPtr, *Source;
   if (!Xsdt) {
     return;
   }
@@ -885,9 +887,9 @@ void PostCleanupXSDT()
   // remove NULL entries from XSDT table
   UINT32 Count = XsdtTableCount();
   DBG("Cleanup XSDT: count=%d, length=%d\n", Count, (UINT32)Xsdt->Header.Length);
-  UINT64* Source = XsdtEntryPtrFromIndex(0);
-  UINT64* Dest = Source;
-  UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
+  Source = XsdtEntryPtrFromIndex(0);
+  Dest = Source;
+  EndPtr = XsdtEntryPtrFromIndex(Count);
   while (Source < EndPtr) {
     if (0 == *Source) {
       // skip NULL entry
@@ -1530,12 +1532,13 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
   }
 
   if (Xsdt) {
+	  UINT64 *Ptr, *EndPtr;
     UINT32 Count = XsdtTableCount();
     DBG("  Tables in Xsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
 
-    unsigned long long *Ptr = XsdtEntryPtrFromIndex(0);
-    unsigned long long *EndPtr = XsdtEntryPtrFromIndex(Count);
+    Ptr = XsdtEntryPtrFromIndex(0);
+    EndPtr = XsdtEntryPtrFromIndex(Count);
     SsdtCount = 0;
     for (; Ptr < EndPtr; Ptr++) {
       DBG("  %d.", IndexFromXsdtEntryPtr(Ptr));
@@ -1570,6 +1573,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
   } // if Xsdt
 
   if (Rsdt) {
+	UINT32 *Ptr, *EndPtr;
     // additional Rsdt tables which are not present in Xsdt will have "RSDT-" prefix, like RSDT-FACS.aml
     FileNamePrefix = L"RSDT-";
     // Take tables from Rsdt
@@ -1577,8 +1581,8 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
     UINT32 Count = RsdtTableCount();
     DBG("  Tables in Rsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
-    unsigned int *Ptr = RsdtEntryPtrFromIndex(0);
-    unsigned int *EndPtr = RsdtEntryPtrFromIndex(Count);
+    Ptr = RsdtEntryPtrFromIndex(0);
+    EndPtr = RsdtEntryPtrFromIndex(Count);
     for (; Ptr < EndPtr; Ptr++) {
       DBG("  %d.", IndexFromRsdtEntryPtr(Ptr));
       EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)*Ptr;
