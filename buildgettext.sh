@@ -95,7 +95,7 @@ fnDownloadGettext ()
     local tarball="${GETTEXT_VERSION}.tar.xz"
     if [[ ! -f "$tarball" ]]; then
         echo "Status: $tarball not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
+        curl -f -o download.tmp --remote-name https://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
         mv download.tmp $tarball
     fi
 }
