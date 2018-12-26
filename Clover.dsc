@@ -128,10 +128,6 @@
   S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
-!ifdef NO_CLOVER_SHELL
-  #ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
-  ShellLib|Clover/ShellPkg/Library/UefiShellLib/UefiShellLib.inf
-!endif
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf

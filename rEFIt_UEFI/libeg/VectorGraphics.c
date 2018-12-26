@@ -106,7 +106,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
  //       }
         if ((strstr(IconName, "selection_big") != NULL) && (!GlobalConfig.SelectionOnTop)) {
           GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
-          row0TileSize = GlobalConfig.MainEntriesSize; // + (int)(16.f * Scale);
+          row0TileSize = GlobalConfig.MainEntriesSize + (int)(16.f * Scale);
           DBG("main entry size = %d\n", GlobalConfig.MainEntriesSize);
         }
          if ((strstr(IconName, "selection_small") != NULL) && (!GlobalConfig.SelectionOnTop)) {
@@ -144,6 +144,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
   shapesTail->next = NULL;
 
   //add clipPaths  //xxx
+  /*
   NSVGclipPath* clipPaths = SVGimage->clipPaths;
   NSVGclipPath* clipNext = NULL;
   while (clipPaths) {
@@ -161,6 +162,8 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
     }
     clipPaths = clipNext;
   }
+  */
+  IconImage->clipPaths = SVGimage->clipPaths;
 
   float bounds[4];
   bounds[0] = FLT_MAX;
@@ -168,7 +171,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
   bounds[2] = -FLT_MAX;
   bounds[3] = -FLT_MAX;
   nsvg__imageBounds(p2, bounds);
-  memcpy(IconImage->realBounds, bounds, 4*sizeof(float));
+  CopyMem(IconImage->realBounds, bounds, 4*sizeof(float));
 
   if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
     GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
@@ -593,9 +596,16 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
+  CHAR8 *Str8 = (CHAR8*)string;
+
   for (i=0; i < len; i++) {
-    CHAR16 letter = string[i]; //already UTF16
-//    string = GetUnicodeChar(string, &letter);
+    CHAR16 letter = 0;
+#ifdef _MSC_VER
+    Str8 = GetUnicodeChar(Str8, &letter);
+    Str8++;
+#else
+    letter = string[i]; //already UTF16 in clang
+#endif
     if (!letter) {
       break;
     }
