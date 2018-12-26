@@ -163,7 +163,10 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
     clipPaths = clipNext;
   }
   */
-  IconImage->clipPaths = SVGimage->clipPaths;
+  if (Id == BUILTIN_ICON_BANNER) {
+    IconImage->clipPaths = SVGimage->clipPaths;
+  }
+
 
   float bounds[4];
   bounds[0] = FLT_MAX;
@@ -596,7 +599,9 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
+#ifdef _MSC_VER
   CHAR8 *Str8 = (CHAR8*)string;
+#endif
 
   for (i=0; i < len; i++) {
     CHAR16 letter = 0;

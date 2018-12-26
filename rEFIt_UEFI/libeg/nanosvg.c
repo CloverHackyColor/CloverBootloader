@@ -3502,8 +3502,12 @@ static void parseTheme(NSVGparser* p, const char** dict)
         GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
       }
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
-      GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "BootCampStyle") == 0) {
-      GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "AnimeFrames") == 0) {
+      GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1])>0;
+
+    } else if (strcmp(dict[i], "BootCampStyle") == 0) {
+      GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1])>0;
+
+    } else if (strcmp(dict[i], "AnimeFrames") == 0) {
       NumFrames = getIntegerDict(dict[i + 1]);
       if (NumFrames == 0xFFFF) {
         NumFrames = 0;
