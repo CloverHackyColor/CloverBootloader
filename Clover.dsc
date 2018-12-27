@@ -154,9 +154,9 @@
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
   VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
     
+  ShellLib|Clover/ShellPkg/Library/UefiShellLib/UefiShellLib.inf
 !ifndef NO_CLOVER_SHELL
   #Shell
-  ShellLib|Clover/ShellPkg/Library/UefiShellLib/UefiShellLib.inf
   ShellCommandLib|Clover/ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib.inf
   ShellCEntryLib|Clover/ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
   HandleParsingLib|Clover/ShellPkg/Library/UefiHandleParsingLib/UefiHandleParsingLib.inf
