@@ -284,7 +284,8 @@ GetPropertyInteger (
       return -(INTN)AsciiStrDecimalToUintn (Prop->string + 1);
     }
     
-    return (INTN)AsciiStrDecimalToUintn (Prop->string);
+//    return (INTN)AsciiStrDecimalToUintn (Prop->string);
+    return (INTN)AsciiStrDecimalToUintn((Prop->string[0] == '+') ? (Prop->string + 1) : Prop->string);
   }
   return Default;
 }

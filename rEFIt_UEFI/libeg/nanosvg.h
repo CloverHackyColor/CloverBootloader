@@ -205,6 +205,7 @@ typedef struct NSVGclipPath
   char id[64];        // Unique id of this clip path (from SVG).
   NSVGclipPathIndex index;  // Unique internal index of this clip path.
   NSVGshape* shapes;      // Linked list of shapes in this clip path.
+  NSVGgroup* group;      // Pointer to parent group or NULL
   struct NSVGclipPath* next;  // Pointer to next clip path or NULL.
 } NSVGclipPath;
 

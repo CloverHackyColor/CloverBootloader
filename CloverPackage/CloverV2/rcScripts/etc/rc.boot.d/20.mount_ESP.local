@@ -47,6 +47,12 @@ function mountESP {
             ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
              sed -n 's/.*Part [Oo]f Whole: *//p')
         fi
+		# When ${ESPDevice} is an "Apple_APFS Container" on expected "Boot Volume" (ie. "Volume de démarrage")
+        # at "Force mount selected ESP at startup:"(ie. "Forcer le montage de l'ESP sélectionné au démarrage")
+        if [[ $(diskutil info / | sed -n 's/.*File System Personality: *//p' | tr "[:upper:]" "[:lower:]") = "apfs" ]] ; then
+            ESPDevice=$(diskutil list | grep "Apple_APFS Container ${ESPDevice}" | \
+             awk '{ print $NF}' | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+        fi
     elif [[ "$arg" =~ $guidRegExp ]]; then
         ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
          sed -n 's/.*Part [Oo]f Whole: *//p')

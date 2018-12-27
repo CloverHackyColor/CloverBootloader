@@ -1861,6 +1861,7 @@ static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
 {
   int i = 0;
   NSVGclipPath** link;
+  NSVGattrib* attr = nsvg__getAttr(p);
 
   link = &p->image->clipPaths;
   while (*link != NULL) {
@@ -1872,6 +1873,7 @@ static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
   }
   if (*link == NULL) {
     *link = nsvg__createClipPath(name, i);
+    *link->group = attr->group;
   }
   return *link;
 }

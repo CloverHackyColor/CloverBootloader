@@ -3692,7 +3692,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
 //  EG_IMAGE *TmpBuffer = NULL;
-  INTN Scale = GlobalConfig.MainEntriesSize >> 3;
+  INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
 
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
       !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
