@@ -1873,7 +1873,7 @@ static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
   }
   if (*link == NULL) {
     *link = nsvg__createClipPath(name, i);
-    *link->group = attr->group;
+    (*link)->group = attr->group;
   }
   return *link;
 }
