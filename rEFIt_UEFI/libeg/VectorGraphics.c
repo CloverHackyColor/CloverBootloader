@@ -62,6 +62,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
   NSVGgroup   *group;
   NSVGimage *IconImage; // = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
   NSVGshape *shapeNext, *shapesTail=NULL, *shapePrev;
+//  INTN ClipCount = 0;
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
@@ -80,7 +81,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
 
     if (group) { //the shape is in the group
       // keep this sample for debug purpose
-/*      DBG("found shape %a", shape->id);
+/*    DBG("found shape %a", shape->id);
       DBG(" from group %a\n", group->id);
       if ((Id == BUILTIN_SELECTION_BIG) ||
           (Id == BUILTIN_ICON_BACKGROUND) ||
@@ -94,8 +95,6 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
         IconImage->height = shape->bounds[3] - shape->bounds[1];
-
-  //      memcpy(IconImage->realBounds, shape->bounds, 4*sizeof(float));
         if (!IconImage->height) {
           IconImage->height = 200;
         }
@@ -124,6 +123,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
       }
       shape->flags = NSVG_VIS_VISIBLE;
       // Add to tail
+//      ClipCount += shape->clip.count;
       if (IconImage->shapes == NULL)
         IconImage->shapes = shape;
       else
@@ -144,10 +144,10 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
   shapesTail->next = NULL;
 
   //add clipPaths  //xxx
-  /*
   NSVGclipPath* clipPaths = SVGimage->clipPaths;
   NSVGclipPath* clipNext = NULL;
   while (clipPaths) {
+ //   ClipCount += clipPaths->shapes->clip.count;
     group = clipPaths->shapes->group;
     clipNext = clipPaths->next;
     while (group) {
@@ -158,14 +158,15 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
     }
     if (group) {
       DBG("found clipPaths for %a\n", IconName);
-      IconImage->clipPaths = clipPaths;
+      IconImage->clipPaths = SVGimage->clipPaths;
+      break;
     }
     clipPaths = clipNext;
   }
-  */
-  if (Id == BUILTIN_ICON_BANNER) {
-    IconImage->clipPaths = SVGimage->clipPaths;
-  }
+//  DBG("found %d clips for %a\n", ClipCount, IconName);
+//  if (ClipCount) { //Id == BUILTIN_ICON_BANNER) {
+//    IconImage->clipPaths = SVGimage->clipPaths;
+//  }
 
 
   float bounds[4];

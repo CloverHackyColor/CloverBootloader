@@ -4002,6 +4002,12 @@ InitTheme(
   GlobalConfig.BootCampStyle = FALSE;
   GlobalConfig.Scale = 1.0f;
 
+  if (DayLight) {
+    DBG("use daylight theme\n");
+  } else {
+    DBG("use night theme\n");
+  }
+
   for (i = 0; i < 3; i++) {
     textFace[i].valid = FALSE;
   }
