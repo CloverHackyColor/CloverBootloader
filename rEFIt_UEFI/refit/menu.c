@@ -3307,7 +3307,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 
   ScrollEnabled = (State->MaxFirstVisible != 0);
   if (ScrollEnabled) {
-    Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, FALSE, &MenuBackgroundPixel);
+    Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
 
     if (ScrollbarBackgroundImage && ScrollbarBackgroundImage->Height) {
       for (i = 0; i < ScrollbarBackground.Height; i+=ScrollbarBackgroundImage->Height) {
