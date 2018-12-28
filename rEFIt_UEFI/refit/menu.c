@@ -4047,14 +4047,19 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 			//BltClearScreen(FALSE);
 
       EntriesGap = (int)(GlobalConfig.TileXSpace * GlobalConfig.Scale);
-      EntriesWidth = GlobalConfig.MainEntriesSize + (16 * row0TileSize) / 144;
+      EntriesWidth = row0TileSize;
       EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16.f * GlobalConfig.Scale);
 
       MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* GlobalConfig.Scale)) / (EntriesWidth + EntriesGap); //8
       CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen, 0);
-      row0PosX = (UGAWidth + (GlobalConfig.TypeSVG ? EntriesGap : 8) - (EntriesWidth + EntriesGap)
-                  * ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
+
+      row0PosX = EntriesWidth + EntriesGap;
+      row0PosX = row0PosX * ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count);
+      row0PosX = row0PosX - EntriesGap;
+      row0PosX = UGAWidth - row0PosX;
+      row0PosX = row0PosX >> 1;
+
       row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
                   LayoutBannerOffset * GlobalConfig.Scale);
 
