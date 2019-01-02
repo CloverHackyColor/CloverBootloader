@@ -88,7 +88,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
       } */
-      if ((strstr(IconName, "selection_big") != NULL) && GlobalConfig.BootCampStyle) {
+      if (GlobalConfig.BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
         shape->opacity = 0.f;
       }
       if (strstr(shape->id, "BoundingRect") != NULL) {
@@ -112,6 +112,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
           row1TileSize = (int)(IconImage->width * Scale);
         }
 
+// not exclude BoundingRect from IconImage?
         shape->flags = 0;  //invisible
         if (shapePrev) {
           shapePrev->next = shapeNext;
@@ -120,6 +121,8 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CHAR8 *IconName, float Scale, E
         }
         shape = shapeNext;
         continue; //while(shape) it is BoundingRect shape
+
+//        shape->opacity = 0.3f;
       }
       shape->flags = NSVG_VIS_VISIBLE;
       // Add to tail

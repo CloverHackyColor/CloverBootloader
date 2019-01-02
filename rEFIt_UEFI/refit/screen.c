@@ -669,6 +669,9 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
   --------------------------------------------------------------------
    GlobalConfig.SelectionOnTop  : MainImage -> Badge      -> Selection
   !GlobalConfig.SelectionOnTop  : Selection -> MainImage  -> Badge
+
+ GlobalConfig.SelectionOnTop
+  BaseImage = MainImage, TopImage = Selection
 */
 
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
@@ -695,11 +698,11 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   }
 
   NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
-  TotalWidth = NewBaseImage->Width;
+  TotalWidth = NewBaseImage->Width;  //mainImage sizes if GlobalConfig.SelectionOnTop
   TotalHeight = NewBaseImage->Height;
 
   NewTopImage = egCopyScaledImage(TopImage, Scale); //will be Scale/16
-  CompWidth = NewTopImage->Width;
+  CompWidth = NewTopImage->Width;  //selection sizes if GlobalConfig.SelectionOnTop
   CompHeight = NewTopImage->Height;
   CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
                                     (CompHeight > TotalHeight)?CompHeight:TotalHeight,
