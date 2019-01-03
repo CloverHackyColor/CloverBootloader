@@ -2602,14 +2602,16 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
 */
+      case SCAN_F7:
+        StartupSoundPlay(SelfRootDir, L"sound.wav");
+        break;
       case SCAN_F8:
         testSVG();
-
-         break;
-
+        break;
 
       case SCAN_F9:
         SetNextScreenMode(1);
+        InitTheme(FALSE, NULL);
         break;
       case SCAN_F10:
         egScreenShot();

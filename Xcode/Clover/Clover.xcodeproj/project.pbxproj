@@ -42,6 +42,7 @@
 		2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */; };
 		2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */; };
 		A5582AFD21019EA6002CFB6E /* VectorGraphics.c in Sources */ = {isa = PBXBuildFile; fileRef = A5582AFC21019EA6002CFB6E /* VectorGraphics.c */; };
+		A5611B3421DCBA53008FDB96 /* StartupSound.c in Sources */ = {isa = PBXBuildFile; fileRef = A5611B3321DCBA53008FDB96 /* StartupSound.c */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
 		A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392620D9F17B004340E1 /* FloatLib.c */; };
 		A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392920D9F18C004340E1 /* nanosvgrast.c */; };
@@ -910,6 +911,16 @@
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
+		A5611B2A21DCB97F008FDB96 /* Riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Riff.h; sourceTree = "<group>"; };
+		A5611B2B21DCB9A0008FDB96 /* HdaModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaModels.h; sourceTree = "<group>"; };
+		A5611B2C21DCB9A0008FDB96 /* WaveLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveLib.h; sourceTree = "<group>"; };
+		A5611B2D21DCB9A0008FDB96 /* HdaRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaRegisters.h; sourceTree = "<group>"; };
+		A5611B2E21DCB9A0008FDB96 /* HdaVerbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaVerbs.h; sourceTree = "<group>"; };
+		A5611B2F21DCB9BA008FDB96 /* AudioIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioIo.h; sourceTree = "<group>"; };
+		A5611B3021DCB9CD008FDB96 /* HdaCodecInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodecInfo.h; sourceTree = "<group>"; };
+		A5611B3121DCB9CD008FDB96 /* HdaControllerInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaControllerInfo.h; sourceTree = "<group>"; };
+		A5611B3221DCB9CE008FDB96 /* HdaIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaIo.h; sourceTree = "<group>"; };
+		A5611B3321DCBA53008FDB96 /* StartupSound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = StartupSound.c; sourceTree = "<group>"; };
 		A59CB66521BC14AA0054A7CF /* SmbiosGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SmbiosGen.c; sourceTree = "<group>"; };
 		A59CB66621BC14AA0054A7CF /* SmbiosGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmbiosGen.h; sourceTree = "<group>"; };
 		A59CB66721BC14AA0054A7CF /* SmbiosGen.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGen.inf; sourceTree = "<group>"; };
@@ -1078,6 +1089,7 @@
 				126151911A15BBB000903E7B /* string.c */,
 				126151921A15BBB000903E7B /* string.h */,
 				126151931A15BBB000903E7B /* usbfix.c */,
+				A5611B3321DCBA53008FDB96 /* StartupSound.c */,
 			);
 			path = Platform;
 			sourceTree = "<group>";
@@ -2740,6 +2752,7 @@
 				2C794AC41A0AA85900D845B0 /* PciCommand.h */,
 				2C794AC51A0AA85900D845B0 /* PeImage.h */,
 				2C794AC61A0AA85900D845B0 /* PiBootMode.h */,
+				A5611B2A21DCB97F008FDB96 /* Riff.h */,
 				12AAF55E1DBE448000A52B12 /* UsbHid.h */,
 				2C794AC81A0AA85900D845B0 /* VesaBiosExtensions.h */,
 			);
@@ -2750,6 +2763,10 @@
 			isa = PBXGroup;
 			children = (
 				2C794ACA1A0AA85900D845B0 /* GenericBdsLib.h */,
+				A5611B2B21DCB9A0008FDB96 /* HdaModels.h */,
+				A5611B2D21DCB9A0008FDB96 /* HdaRegisters.h */,
+				A5611B2E21DCB9A0008FDB96 /* HdaVerbs.h */,
+				A5611B2C21DCB9A0008FDB96 /* WaveLib.h */,
 				2C794ACB1A0AA85900D845B0 /* MemLogLib.h */,
 				2C794ACC1A0AA85900D845B0 /* PeCoffLib.h */,
 				2C794ACD1A0AA85900D845B0 /* UefiHiiServicesLib.h */,
@@ -2772,9 +2789,13 @@
 				12AAF55F1DBE44A300A52B12 /* AppleKeyMapDatabase.h */,
 				12AAF5601DBE44AD00A52B12 /* ApplePlatformInfoDatabase.h */,
 				2C794AD51A0AA85900D845B0 /* AppleSMC.h */,
+				A5611B2F21DCB9BA008FDB96 /* AudioIo.h */,
 				2C794AD61A0AA85900D845B0 /* efiConsoleControl.h */,
 				2C794AD71A0AA85900D845B0 /* EmuVariableControl.h */,
 				12AAF5611DBE44BC00A52B12 /* Hash.h */,
+				A5611B3021DCB9CD008FDB96 /* HdaCodecInfo.h */,
+				A5611B3121DCB9CD008FDB96 /* HdaControllerInfo.h */,
+				A5611B3221DCB9CE008FDB96 /* HdaIo.h */,
 				2C794AD81A0AA85900D845B0 /* FSInjectProtocol.h */,
 				12AAF5621DBE44C500A52B12 /* KeyboardInfo.h */,
 				2C794AD91A0AA85900D845B0 /* MsgLog.h */,
@@ -3024,6 +3045,7 @@
 				2C794E4D1A0AA85900D845B0 /* AsmFuncsX64.S in Sources */,
 				2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */,
 				2C794E421A0AA85900D845B0 /* BootFixes.c in Sources */,
+				A5611B3421DCBA53008FDB96 /* StartupSound.c in Sources */,
 				2C794E481A0AA85900D845B0 /* OsxAptioFix2Drv.c in Sources */,
 				2C794E501A0AA85900D845B0 /* Lib.c in Sources */,
 				12E3015A1D5A413A00EED426 /* lodepng.c in Sources */,

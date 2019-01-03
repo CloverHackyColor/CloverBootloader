@@ -4199,6 +4199,14 @@ finish:
       }
     }
     FreeTag(ThemeDict);
+
+    if (!DayLight) {
+      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav");
+    }
+    if (EFI_ERROR(Status)) {
+      Status = StartupSoundPlay(ThemeDir, L"sound.wav");
+    }
+
   }
   for (i = 0; i < ThemesNum; i++) {
     if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {

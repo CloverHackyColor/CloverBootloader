@@ -37,6 +37,7 @@ Headers collection for procedures
 #include <Library/UsbMass.h>
 #include <Library/VideoBiosPatchLib.h>
 #include <Library/MemLogLib.h>
+#include <Library/WaveLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 
@@ -47,6 +48,7 @@ Headers collection for procedures
 #include <IndustryStandard/AppleSmBios.h>
 #include <IndustryStandard/Bmp.h>
 
+#include <Protocol/AudioIo.h>
 #include <Protocol/Cpu.h>
 #include <Protocol/CpuIo.h>
 #include <Protocol/DataHub.h>
@@ -1841,6 +1843,9 @@ InitTheme (
   BOOLEAN  UseThemeDefinedInNVRam,
   EFI_TIME *Time
   );
+
+EFI_STATUS
+StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile);
 
 EFI_STATUS
 SetFSInjection (

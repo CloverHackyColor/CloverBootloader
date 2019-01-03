@@ -133,6 +133,7 @@
   Platform/PlatformDriverOverride.c
 	Platform/Hibernate.c
   Platform/Net.c
+  Platform/StartupSound.c
 
 [Packages]
 	Clover/CloverPkg.dec
@@ -145,9 +146,9 @@
   UefiApplicationEntryPoint
   UefiBootServicesTableLib
   UefiLib
-   MemoryAllocationLib
-   BaseMemoryLib
-   BaseLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
   DevicePathLib
   DebugLib
   DxeServicesLib
@@ -162,6 +163,7 @@
   VideoBiosPatchLib
   OpensslLib
   NetLib
+  WaveLib
 
 [Guids]
   gEfiAcpiTableGuid
@@ -193,6 +195,7 @@
   gEfiCertTypeRsa2048Sha256Guid
 
   gAppleOsLoadedNamedEventGuid
+  gBootChimeVendorVariableGuid
 
 
 [Ppis]
@@ -256,6 +259,7 @@
   gMsgLogProtocolGuid
   gEfiPlatformDriverOverrideProtocolGuid
   gEmuVariableControlProtocolGuid
+  gEfiAudioIoProtocolGuid # CONSUMES
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
@@ -264,6 +268,6 @@
 
 [BuildOptions]
 #  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-common
-  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2
+  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer
   GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
   MSFT:*_*_*_CC_FLAGS = /Os /wd4201

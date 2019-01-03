@@ -153,6 +153,7 @@
   #
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
   VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
+  WaveLib|Clover/Library/WaveLib/WaveLib.inf
     
   ShellLib|Clover/ShellPkg/Library/UefiShellLib/UefiShellLib.inf
 !ifndef NO_CLOVER_SHELL
