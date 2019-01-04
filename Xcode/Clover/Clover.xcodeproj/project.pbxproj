@@ -910,6 +910,8 @@
 		2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
+		A51C783321E00504001385A7 /* WaveLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = WaveLib.c; sourceTree = "<group>"; };
+		A51C783421E00504001385A7 /* WaveLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = WaveLib.inf; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
 		A5611B2A21DCB97F008FDB96 /* Riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Riff.h; sourceTree = "<group>"; };
 		A5611B2B21DCB9A0008FDB96 /* HdaModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaModels.h; sourceTree = "<group>"; };
@@ -1263,6 +1265,7 @@
 				12C86ABC1DE426F800BF4974 /* UefiHiiServicesLib */,
 				12C86ABF1DE426F800BF4974 /* VBoxPeCoffLib */,
 				12C86AC41DE426F800BF4974 /* VideoBiosPatchLib */,
+				A51C783221E00504001385A7 /* WaveLib */,
 			);
 			name = Library;
 			path = ../../Library;
@@ -2944,6 +2947,15 @@
 			);
 			name = CloverUEFI;
 			path = ../CloverEFI;
+			sourceTree = "<group>";
+		};
+		A51C783221E00504001385A7 /* WaveLib */ = {
+			isa = PBXGroup;
+			children = (
+				A51C783321E00504001385A7 /* WaveLib.c */,
+				A51C783421E00504001385A7 /* WaveLib.inf */,
+			);
+			path = WaveLib;
 			sourceTree = "<group>";
 		};
 		A59CB66421BC14AA0054A7CF /* OsxSmbiosGenDxe */ = {

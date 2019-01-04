@@ -32,7 +32,7 @@
 
 [Packages]
     MdePkg/MdePkg.dec
-    AudioPkg/AudioPkg.dec
+    Clover/CloverPkg.dec
 
 [LibraryClasses]
     BaseMemoryLib
