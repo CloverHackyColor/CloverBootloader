@@ -166,8 +166,8 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   }
 
   // Start playback.
-  Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0,                                       NULL, NULL);
-//  Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
+//  Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0,                                       NULL, NULL);
+  Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
   if (EFI_ERROR(Status)) {
     MsgLog("StartupSound: Error starting playback: %r\n", Status);
     goto DONE_ERROR;
