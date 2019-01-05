@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
-#include "HdaCodec.h"
+//#include "HdaCodec.h"
+#include "../AudioDxe.h"
+//#include <IndustryStandard/HdaCodec.h>
 #include <Protocol/AudioIo.h>
 
 // HDA I/O Stream callback.
@@ -555,9 +557,7 @@ HdaCodecAudioIoStartPlaybackAsync(
     // Start stream.
     Status = HdaIo->StartStream(HdaIo, EfiHdaIoTypeOutput, Data, DataLength, Position,
         (VOID*)HdaCodecHdaIoStreamCallback, (VOID*)This, (VOID*)Callback, Context);
-    if (EFI_ERROR(Status))
-        return Status;
-    return EFI_SUCCESS;
+    return Status;
 }
 
 /**

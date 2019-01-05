@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
-#include "HdaCodec.h"
+//#include "HdaCodec.h"
+#include "../AudioDxe.h"
+//#include <IndustryStandard/HdaCodec.h>
 
 /**
   Gets the codec's name.

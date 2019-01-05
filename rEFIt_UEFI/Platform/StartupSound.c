@@ -49,6 +49,8 @@ extern BOOLEAN DayLight;
 
 extern EFI_GUID gBootChimeVendorVariableGuid;
 
+EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
+
 #define BOOT_CHIME_VAR_ATTRIBUTES   (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS)
 #define BOOT_CHIME_VAR_DEVICE       (L"Device")
 #define BOOT_CHIME_VAR_INDEX        (L"Index")
@@ -68,7 +70,6 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
   WAVE_FILE_DATA WaveData;
-  EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
   UINTN OutputIndex = 0;
   UINT8 OutputVolume = 0;
 
@@ -165,8 +166,8 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   }
 
   // Start playback.
-//  Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0,                                       NULL, NULL);
-  Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
+  Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0,                                       NULL, NULL);
+//  Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
   if (EFI_ERROR(Status)) {
     MsgLog("StartupSound: Error starting playback: %r\n", Status);
     goto DONE_ERROR;
@@ -299,5 +300,29 @@ DONE:
     FreePool(AudioIoHandles);
   if (DevicePathStr != NULL)
     FreePool(DevicePathStr);
+  return Status;
+}
+
+EFI_STATUS CheckSyncSound()
+{
+  EFI_STATUS Status;
+  AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
+  EFI_HDA_IO_PROTOCOL *HdaIo;
+  BOOLEAN StreamRunning = FALSE;
+
+  // Get private data.
+  AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(AudioIo);
+  if (!AudioIoPrivateData) {
+    return EFI_NOT_STARTED;
+  }
+  HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
+  if (!HdaIo) {
+    return EFI_NOT_STARTED;
+  }
+
+  Status = HdaIo->GetStream(HdaIo, EfiHdaIoTypeOutput, &StreamRunning);
+  if (EFI_ERROR(Status)) {
+    HdaIo->StopStream(HdaIo, EfiHdaIoTypeOutput);
+  }
   return Status;
 }

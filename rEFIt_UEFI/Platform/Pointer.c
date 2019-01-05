@@ -28,6 +28,7 @@
 #define DBG(...) DebugLog(DEBUG_MOUSE, __VA_ARGS__)
 #endif
 
+extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 // make them theme dependent? No, 32 is good value for all.
 #define POINTER_WIDTH  32
@@ -425,6 +426,7 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
 {
   EFI_STATUS Status = EFI_SUCCESS;
   UINTN TimeoutRemain = TimeoutDefault * 100;
+
   while (TimeoutRemain != 0) {
     
 //    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
@@ -434,6 +436,7 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
       break;
     }
     UpdateAnime(Screen, &(Screen->FilmPlace));
+    CheckSyncSound();
 /*    if ((INTN)gItemID < Screen->EntryCount) {
       UpdateAnime(Screen->Entries[gItemID]->SubScreen, &(Screen->Entries[gItemID]->Place));
     } */

@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-#include "HdaCodec.h"
+//#include "HdaCodec.h"
 #include "HdaCodecComponentName.h"
+//#include <IndustryStandard/HdaCodec.h>
 
 EFI_STATUS
 EFIAPI
@@ -797,7 +798,8 @@ HdaCodecEnableWidgetPath(
     IN HDA_WIDGET_DEV *HdaWidget,
     IN UINT8 Volume,
     IN UINT8 StreamId,
-    IN UINT16 StreamFormat) {
+    IN UINT16 StreamFormat)
+{
     //DEBUG((DEBUG_INFO, "HdaCodecEnableWidgetPath(): start\n"));
 
     // Check if widget is valid.
@@ -907,7 +909,8 @@ HdaCodecEnableWidgetPath(
 VOID
 EFIAPI
 HdaCodecCleanup(
-    IN HDA_CODEC_DEV *HdaCodecDev) {
+    IN HDA_CODEC_DEV *HdaCodecDev)
+{
     DEBUG((DEBUG_INFO, "HdaCodecCleanup(): start\n"));
 
     // Create variables.

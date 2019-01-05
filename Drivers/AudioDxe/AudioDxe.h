@@ -40,9 +40,8 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiLib.h>
 
-
 #include <Library/HdaVerbs.h>
-
+#include <IndustryStandard/HdaCodec.h>
 //
 // Proctols that are consumed/produced.
 //

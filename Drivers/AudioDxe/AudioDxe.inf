@@ -58,7 +58,7 @@
     HdaCodec/HdaCodecComponentName.c
     HdaCodec/HdaCodecInfo.c
     HdaCodec/HdaCodecAudioIo.c
-    HdaCodec/HdaCodec.h
+#    HdaCodec/HdaCodec.h
     HdaCodec/HdaCodec.c
     HdaController/HdaControllerComponentName.h
     HdaController/HdaControllerComponentName.c

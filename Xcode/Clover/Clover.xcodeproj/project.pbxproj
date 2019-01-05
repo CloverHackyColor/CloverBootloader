@@ -929,6 +929,7 @@
 		A51C784621E0981C001385A7 /* HdaControllerInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerInfo.c; sourceTree = "<group>"; };
 		A51C784721E0981C001385A7 /* HdaControllerMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerMem.c; sourceTree = "<group>"; };
 		A51C784821E0981C001385A7 /* HdaModels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaModels.c; sourceTree = "<group>"; };
+		A51C784921E0C280001385A7 /* HdaCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodec.h; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
 		A5611B2A21DCB97F008FDB96 /* Riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Riff.h; sourceTree = "<group>"; };
 		A5611B2B21DCB9A0008FDB96 /* HdaModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaModels.h; sourceTree = "<group>"; };
@@ -2769,6 +2770,7 @@
 				12AAF55C1DBE447200A52B12 /* AppleHid.h */,
 				12344F581CAB9A5700318A6E /* AppleSmBios.h */,
 				2C794AC21A0AA85900D845B0 /* AtomBios.h */,
+				A51C784921E0C280001385A7 /* HdaCodec.h */,
 				2C794AC31A0AA85900D845B0 /* PciBus.h */,
 				2C794AC41A0AA85900D845B0 /* PciCommand.h */,
 				2C794AC51A0AA85900D845B0 /* PeImage.h */,

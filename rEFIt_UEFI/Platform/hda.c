@@ -274,10 +274,10 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_ALC892, 0,          "ALC892" },
   { HDA_CODEC_ALC898, 0,          "ALC898" },
   //  { HDA_CODEC_ALC899, 0,    "ALC899" },
-  { HDA_CODEC_ALC900, 0,          "ALC1150" },
-  { HDA_CODEC_ALCS1220A, 0,    "ALCS1220A" },
-  { HDA_CODEC_ALC1220, 0,    "ALC1220" },
-  
+  { HDA_CODEC_ALC1150, 0,         "ALC1150" },
+  { HDA_CODEC_ALC1220A, 0,        "ALCS1220A" },
+  { HDA_CODEC_ALC1220, 0,         "ALC1220" },
+
   { HDA_CODEC_AD1882, 0,          "AD1882" },
   { HDA_CODEC_AD1882A, 0,         "AD1882A" },
   { HDA_CODEC_AD1883, 0,          "AD1883" },
@@ -293,8 +293,8 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_AD1988, 0,          "AD1988A" },
   { HDA_CODEC_AD1988B, 0,         "AD1988B" },
   { HDA_CODEC_AD1989A, 0,         "AD1989A" },
-  { HDA_CODEC_AD1989B, 0x0200,  "AD2000B" }, // Revision Id: 0x100200
-  { HDA_CODEC_AD1989B, 0x0300,  "AD2000B" }, // Revision Id: 0x100300
+  { HDA_CODEC_AD1989B, 0x0200,    "AD2000B" }, // Revision Id: 0x100200
+  { HDA_CODEC_AD1989B, 0x0300,    "AD2000B" }, // Revision Id: 0x100300
   { HDA_CODEC_AD1989B, 0,         "AD1989B" },
   
   { HDA_CODEC_XFIEA, 0,           "X-Fi Extreme A" },
@@ -508,22 +508,22 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_NVIDIAGTX570, 0,    "GTX570" },
   { HDA_CODEC_NVIDIAGT610, 0,  "GT610" },
   
-  { HDA_CODEC_INTELIP, 0,         "Ibex Peak" },
-  { HDA_CODEC_INTELBL, 0,         "Bearlake" },
-  { HDA_CODEC_INTELCA, 0,         "Cantiga" },
-  { HDA_CODEC_INTELEL, 0,         "Eaglelake" },
-  { HDA_CODEC_INTELIP2, 0,        "Ibex Peak" },
-  { HDA_CODEC_INTELCPT, 0,        "Cougar Point" },
-  { HDA_CODEC_INTELPPT, 0,        "Panther Point" },
-  { HDA_CODEC_INTELLLP, 0,        "Haswell" },
-  { HDA_CODEC_INTELBRW, 0,        "Broadwell" },
-  { HDA_CODEC_INTELSKL, 0,        "Skylake" },
-  { HDA_CODEC_INTELBRO, 0,        "Broxton" },
-  { HDA_CODEC_INTELKAB, 0,        "Kabylake" },
-  { HDA_CODEC_INTELCDT, 0,        "CedarTrail" },
-  { HDA_CODEC_INTELVLV, 0,        "Valleyview2" },
-  { HDA_CODEC_INTELBSW, 0,        "Braswell" },
-  { HDA_CODEC_INTELCL, 0,         "Crestline" },
+  { HDA_CODEC_INTELIBEXPEAK2, 0,      "Ibex Peak" },
+  { HDA_CODEC_INTELBEARLAKE, 0,       "Bearlake" },
+  { HDA_CODEC_INTELCANTIGA, 0,        "Cantiga" },
+  { HDA_CODEC_INTELEAGLELAKE, 0,      "Eaglelake" },
+  { HDA_CODEC_INTELIBEXPEAK, 0,       "Ibex Peak" },
+  { HDA_CODEC_INTELCOUGARPOINT, 0,    "Cougar Point" },
+  { HDA_CODEC_INTELPANTHERPOINT, 0,   "Panther Point" },
+  { HDA_CODEC_INTELHASWELL, 0,        "Haswell" },
+  { HDA_CODEC_INTELBROADWELL, 0,      "Broadwell" },
+  { HDA_CODEC_INTELSKYLAKE, 0,        "Skylake" },
+  { HDA_CODEC_INTELBROXTON, 0,        "Broxton" },
+  { HDA_CODEC_INTELKABYLAKE, 0,       "Kabylake" },
+  { HDA_CODEC_INTELCDT, 0,            "CedarTrail" },
+  { HDA_CODEC_INTELVLV, 0,            "Valleyview2" },
+  { HDA_CODEC_INTELBSW, 0,            "Braswell" },
+  { HDA_CODEC_INTELCRESTLINE, 0,      "Crestline" },
   
   { HDA_CODEC_SII1390, 0,         "SiI1390 HDMi" },
   { HDA_CODEC_SII1392, 0,         "SiI1392 HDMi" },
@@ -568,25 +568,25 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
   /* Get format for vendor ID */
   switch (controller_vendor_id)
   {
-    case ATI_VENDORID:
+    case VEN_ATI_ID:
       name_format = "ATI %a HDA Controller (HDMi)"; break;
       
-    case INTEL_VENDORID:
+    case VEN_INTEL_ID:
       name_format = "Intel %a HDA Controller"; break;
       
-    case NVIDIA_VENDORID:
+    case VEN_NVIDIA_ID:
       name_format = "Nvidia %a HDA Controller (HDMi)"; break;
       
-    case RDC_VENDORID:
+    case VEN_RDC_ID:
       name_format = "RDC %a HDA Controller"; break;
       
-    case SIS_VENDORID:
+    case VEN_SIS_ID:
       name_format = "SiS %a HDA Controller"; break;
       
-    case ULI_VENDORID:
+    case VEN_ULI_ID:
       name_format = "ULI %a HDA Controller"; break;
       
-    case VIA_VENDORID:
+    case VEN_VIA_ID:
       name_format = "VIA %a HDA Controller"; break;
       
     default:
@@ -621,62 +621,62 @@ CHAR8 *get_hda_codec_name(UINT16 codec_vendor_id, UINT16 codec_device_id, UINT8 
   // Get format for vendor ID
   switch ( codec_vendor_id ) // UINT16
   {
-    case ATI_VENDORID:
+    case VEN_ATI_ID:
       lName_format = "ATI %a"; break;
       
-    case CIRRUSLOGIC_VENDORID:
+    case  VEN_CIRRUSLOGIC_ID:
       lName_format = "Cirrus Logic %a"; break;
       
-    case MOTO_VENDORID:
+    case  VEN_MOTO_ID:
       lName_format = "Motorola %a"; break;
       
-    case SII_VENDORID:
+    case  VEN_SII_ID:
       lName_format = "Silicon Image %a"; break;
       
-    case NVIDIA_VENDORID:
+    case  VEN_NVIDIA_ID:
       lName_format = "Nvidia %a"; break;
       
-    case REALTEK_VENDORID:
+    case  VEN_REALTEK_ID:
       lName_format = "Realtek %a"; break;
       
-    case CREATIVE_VENDORID:
+    case  VEN_CREATIVE_ID:
       lName_format = "Creative %a"; break;
       
-    case VIA_VENDORID:
+    case  VEN_VIA_ID:
       lName_format = "VIA %a"; break;
       
-    case IDT_VENDORID:
+    case  VEN_IDT_ID:
       lName_format = "IDT %a"; break;
       
-    case AGERE_VENDORID:
+    case  VEN_AGERE_ID:
       lName_format = "LSI %a"; break;
       
-    case ANALOGDEVICES_VENDORID:
+    case  VEN_ANALOGDEVICES_ID:
       lName_format = "Analog Devices %a"; break;
       
-    case CMEDIA_VENDORID:
-    case CMEDIA2_VENDORID:
+    case  VEN_CMEDIA_ID:
+    case  VEN_CMEDIA2_ID:
       lName_format = "CMedia %a"; break;
       
-    case CONEXANT_VENDORID:
+    case  VEN_CONEXANT_ID:
       lName_format = "Conexant %s"; break;
       
-    case CHRONTEL_VENDORID:
+    case  VEN_CHRONTEL_ID:
       lName_format = "Chrontel %a"; break;
       
-    case LG_VENDORID:
+    case  VEN_LG_ID:
       lName_format = "LG %a"; break;
       
-    case WOLFSON_VENDORID:
+    case  VEN_WOLFSON_ID:
       lName_format = "Wolfson Microelectronics %a"; break;
       
-    case QEMU_VENDORID:
+    case  VEN_QEMU_ID:
       lName_format = "QEMU %a"; break;
       
-    case INTEL_VENDORID:
+    case  VEN_INTEL_ID:
       lName_format = "Intel %a"; break;
       
-    case SIGMATEL_VENDORID:
+    case  VEN_SIGMATEL_ID:
       lName_format = "Sigmatel %a"; break;
       
     default:

@@ -24,6 +24,7 @@ Headers collection for procedures
 #include <Library/DevicePathLib.h>
 #include <Library/GenericBdsLib.h>
 #include <Library/HiiLib.h>
+#include <Library/HdaModels.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PerformanceLib.h>
@@ -47,6 +48,7 @@ Headers collection for procedures
 #include <IndustryStandard/AppleHid.h>
 #include <IndustryStandard/AppleSmBios.h>
 #include <IndustryStandard/Bmp.h>
+#include <IndustryStandard/HdaCodec.h>
 
 #include <Protocol/AudioIo.h>
 #include <Protocol/Cpu.h>
@@ -55,6 +57,7 @@ Headers collection for procedures
 #include <Protocol/DevicePathToText.h>
 #include <Protocol/EdidOverride.h>
 #include <Protocol/FrameworkHii.h>
+#include <Protocol/HdaIo.h>
 #include <Protocol/SimplePointer.h>
 #include <Protocol/Smbios.h>
 #include <Protocol/VariableWrite.h>
@@ -1846,6 +1849,8 @@ InitTheme (
 
 EFI_STATUS
 StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile);
+
+EFI_STATUS CheckSyncSound();
 
 EFI_STATUS
 SetFSInjection (

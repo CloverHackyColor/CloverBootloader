@@ -25,8 +25,9 @@
 #include "AudioDxe.h"
 #include "HdaController/HdaController.h"
 #include "HdaController/HdaControllerComponentName.h"
-#include "HdaCodec/HdaCodec.h"
+//#include "HdaCodec/HdaCodec.h"
 #include "HdaCodec/HdaCodecComponentName.h"
+
 
 // HdaController Driver Binding.
 EFI_DRIVER_BINDING_PROTOCOL gHdaControllerDriverBinding = {
