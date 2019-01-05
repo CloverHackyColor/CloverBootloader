@@ -710,7 +710,8 @@ EFI_STATUS
 EFIAPI
 HdaCodecGetSupportedPcmRates(
     IN  HDA_WIDGET_DEV *HdaPinWidget,
-    OUT UINT32 *SupportedRates) {
+    OUT UINT32 *SupportedRates)
+{
     DEBUG((DEBUG_INFO, "HdaCodecGetSupportedPcmRates(): start\n"));
 
     // Check that parameters are valid.

@@ -36,14 +36,14 @@
 
 [LibraryClasses]
     BaseMemoryLib
-    BaseSynchronizationLib
+    SynchronizationLib
     DebugLib
     DevicePathLib
     MemoryAllocationLib
     PcdLib
     UefiBootServicesTableLib
     UefiDriverEntryPoint
-    UefiFileHandleLib
+    FileHandleLib
     UefiLib
 
 [Protocols]
