@@ -486,6 +486,9 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
   }
 
+  # Driver Audio
+  Clover/Drivers/AudioDxe/AudioDxe.inf
+
   #
   # Sample Application
   #
