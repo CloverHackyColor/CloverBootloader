@@ -29,7 +29,8 @@
 EFI_STATUS
 EFIAPI
 HdaCodecProbeWidget(
-    IN HDA_WIDGET_DEV *HdaWidget) {
+    IN HDA_WIDGET_DEV *HdaWidget)
+{
     //DEBUG((DEBUG_INFO, "HdaCodecProbeWidget(): start\n"));
 
     // Create variables.

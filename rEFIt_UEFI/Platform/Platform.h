@@ -1119,11 +1119,11 @@ typedef struct {
   BOOLEAN                 NeverDoRecovery;
 
   // Multi-config
-  CHAR16  ConfigName[30];
-  CHAR16  *MainConfigName;
+  CHAR16                  ConfigName[30];
+  CHAR16                  *MainConfigName;
 
   //Drivers
-  INTN    BlackListCount;
+  INTN                    BlackListCount;
   CHAR16                  **BlackList;
 
   //SMC keys
@@ -1136,6 +1136,7 @@ typedef struct {
   BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
+  BOOLEAN                 PlayAsync;
   UINT32                  DisableFunctions;
 
   //Patch DSDT arbitrary
@@ -1224,7 +1225,7 @@ typedef struct {
   UINT64                  ExternalClock;
   UINT32                  MaxSpeed;       //MHz
   UINT32                  CurrentSpeed;   //MHz
-  UINT32                  Pad;
+//  UINT32                  Pad;
 
   //calculated from MSR
   UINT64                  MicroCode;

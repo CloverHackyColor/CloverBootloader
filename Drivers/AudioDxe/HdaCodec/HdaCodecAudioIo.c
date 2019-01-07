@@ -93,7 +93,8 @@ HdaCodecAudioIoGetOutputs(
         HdaOutputPorts[i].Type = EfiAudioIoTypeOutput;
 
         // Get device type.
-        switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_DEVICE(HdaCodecDev->OutputPorts[i]->DefaultConfiguration)) {
+        switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_DEVICE(HdaCodecDev->OutputPorts[i]->DefaultConfiguration))
+        {
             case HDA_CONFIG_DEFAULT_DEVICE_LINE_OUT:
             case HDA_CONFIG_DEFAULT_DEVICE_LINE_IN:
                 HdaOutputPorts[i].Device = EfiAudioIoDeviceLine;

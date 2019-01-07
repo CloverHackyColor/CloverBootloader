@@ -2718,6 +2718,9 @@ GetEarlyUserSettings (
           }
         }
       }
+
+      Prop = GetProperty (DictPointer, "PlayAsync"); //PlayAsync
+      gSettings.PlayAsync = IsPropertyTrue (Prop);
       
       // CustomIcons
       Prop = GetProperty (DictPointer, "CustomIcons");

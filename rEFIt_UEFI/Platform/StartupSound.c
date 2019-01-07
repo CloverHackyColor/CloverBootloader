@@ -166,8 +166,13 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   }
 
   // Start playback.
-//  Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0,                                       NULL, NULL);
-  Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
+  if (gSettings.PlayAsync) {
+    Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0,                                       NULL, NULL);
+  } else {
+    Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
+  }
+//
+
   if (EFI_ERROR(Status)) {
     MsgLog("StartupSound: Error starting playback: %r\n", Status);
     goto DONE_ERROR;
@@ -309,6 +314,9 @@ EFI_STATUS CheckSyncSound()
   AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
   EFI_HDA_IO_PROTOCOL *HdaIo;
   BOOLEAN StreamRunning = FALSE;
+  if (!AudioIo) {
+    return EFI_NOT_STARTED;
+  }
 
   // Get private data.
   AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(AudioIo);
@@ -321,8 +329,13 @@ EFI_STATUS CheckSyncSound()
   }
 
   Status = HdaIo->GetStream(HdaIo, EfiHdaIoTypeOutput, &StreamRunning);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR(Status) && StreamRunning) {
     HdaIo->StopStream(HdaIo, EfiHdaIoTypeOutput);
+  }
+
+  if (!StreamRunning) {
+    AudioIo = NULL;
+    Status = EFI_NOT_STARTED;
   }
   return Status;
 }

@@ -916,7 +916,6 @@
 		A51C783721E0981C001385A7 /* AudioDxe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioDxe.h; sourceTree = "<group>"; };
 		A51C783821E0981C001385A7 /* AudioDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioDxe.inf; sourceTree = "<group>"; };
 		A51C783A21E0981C001385A7 /* HdaCodec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaCodec.c; sourceTree = "<group>"; };
-		A51C783B21E0981C001385A7 /* HdaCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodec.h; sourceTree = "<group>"; };
 		A51C783C21E0981C001385A7 /* HdaCodecAudioIo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaCodecAudioIo.c; sourceTree = "<group>"; };
 		A51C783D21E0981C001385A7 /* HdaCodecComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaCodecComponentName.c; sourceTree = "<group>"; };
 		A51C783E21E0981C001385A7 /* HdaCodecComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodecComponentName.h; sourceTree = "<group>"; };
@@ -2995,7 +2994,6 @@
 			isa = PBXGroup;
 			children = (
 				A51C783A21E0981C001385A7 /* HdaCodec.c */,
-				A51C783B21E0981C001385A7 /* HdaCodec.h */,
 				A51C783C21E0981C001385A7 /* HdaCodecAudioIo.c */,
 				A51C783D21E0981C001385A7 /* HdaCodecComponentName.c */,
 				A51C783E21E0981C001385A7 /* HdaCodecComponentName.h */,
