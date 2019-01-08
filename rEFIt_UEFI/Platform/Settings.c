@@ -98,6 +98,7 @@ extern INTN                     ScrollWidth;
 extern INTN                     ScrollButtonsHeight;
 extern INTN                     ScrollBarDecorationsHeight;
 extern INTN                     ScrollScrollDecorationsHeight;
+extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
 
 
 // global configuration with default values
