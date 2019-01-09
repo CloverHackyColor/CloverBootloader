@@ -102,6 +102,7 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "AppleUITheme-64_description" = "Create boot UI Themes support";
 "AptioInputFix-64_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
 "AptioMemoryFix-64_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
+"AudioDxe-64_description" = "HDA driver to play Startup Sound";
 "FirmwareVolume-64_description" = "Create FirmwareVolume with cursor images";
 "FSInject-64_description" = "Provide injection of kexts from Clover folder.";
 "GrubEXFAT-64_description" = "ExFAT filesystem driver from GRUB.";
@@ -128,6 +129,7 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "AppleUITheme-64.UEFI_description" = "Create boot UI Themes support";
 "AptioInputFix-64.UEFI_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
 "AptioMemoryFix-64.UEFI_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
+"AudioDxe-64.UEFI_description" = "HDA driver to play Startup Sound at boot time";
 "CsmVideoDxe-64.UEFI_description" = "64bit video driver for Clover GUI allowing to choose more resolutions.
 It is based on CSM module in UEFI BIOS and required CSM will be enabled.
 Clover may not started with it and you may have wake problem in system.
