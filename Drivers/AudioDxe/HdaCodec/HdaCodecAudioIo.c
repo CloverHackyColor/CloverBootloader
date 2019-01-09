@@ -427,6 +427,8 @@ HdaCodecAudioIoSetupPlayback(
 
     // Disable all widget paths.
     for (UINTN w = 0; w < HdaCodecDev->OutputPortsCount; w++) {
+        if (w == OutputIndex)
+            continue;
         Status = HdaCodecDisableWidgetPath(HdaCodecDev->OutputPorts[w]);
         if (EFI_ERROR(Status))
             return Status;
@@ -450,9 +452,6 @@ HdaCodecAudioIoSetupPlayback(
     Status = HdaCodecEnableWidgetPath(PinWidget, Volume, HdaStreamId, StreamFmt);
     if (EFI_ERROR(Status))
         goto CLOSE_STREAM;
-
-    // Wait 750ms for all widgets to fully come on.
-    gBS->Stall(MS_TO_MICROSECOND(750));
     return EFI_SUCCESS;
 
 CLOSE_STREAM:

@@ -573,9 +573,11 @@ HdaCodecParsePorts(
 
     // Create variables.
     EFI_STATUS Status;
+    EFI_HDA_IO_PROTOCOL *HdaIo = HdaCodecDev->HdaIo;
     HDA_FUNC_GROUP *HdaFuncGroup;
     HDA_WIDGET_DEV *HdaWidget;
     UINT8 DefaultDeviceType;
+    UINT32 Response;
 
     // Loop through each function group.
     for (UINT8 f = 0; f < HdaCodecDev->FuncGroupsCount; f++) {
@@ -607,6 +609,44 @@ HdaCodecParsePorts(
                 if (EFI_ERROR(Status))
                     continue;
 
+                // Enable output amp.
+                Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_PIN_WIDGET_CONTROL,
+                    HDA_VERB_SET_PIN_WIDGET_CONTROL_PAYLOAD(0, FALSE, FALSE, TRUE, FALSE)), &Response);
+                if (EFI_ERROR(Status))
+                    continue;
+
+                // If EAPD is present, enable.
+                if (HdaWidget->PinCapabilities & HDA_PARAMETER_PIN_CAPS_EAPD) {
+                    // Get current EAPD setting.
+                    Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_GET_EAPD_BTL_ENABLE, 0), &Response);
+                    if (EFI_ERROR(Status))
+                        return Status;
+
+                    // If the EAPD is not set, set it.
+                    if (!(Response & HDA_EAPD_BTL_ENABLE_EAPD)) {
+                        Response |= HDA_EAPD_BTL_ENABLE_EAPD;
+                        Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_EAPD_BTL_ENABLE,
+                            (UINT8)Response), &Response);
+                        if (EFI_ERROR(Status))
+                            return Status;
+                    }
+                }
+
+                // If the output amp supports muting, unmute.
+                if (HdaWidget->AmpOutCapabilities & HDA_PARAMETER_AMP_CAPS_MUTE) {
+                    UINT8 offset = HDA_PARAMETER_AMP_CAPS_OFFSET(HdaWidget->AmpOutCapabilities); // TODO set volume.
+
+                    // If there are no overriden amp capabilities, check function group.
+                    if (!(HdaWidget->AmpOverride))
+                        offset = HDA_PARAMETER_AMP_CAPS_OFFSET(HdaWidget->FuncGroup->AmpOutCapabilities);
+
+                    // Unmute amp.
+                    Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_AMP_GAIN_MUTE,
+                        HDA_VERB_SET_AMP_GAIN_MUTE_PAYLOAD(0, offset, FALSE, TRUE, TRUE, FALSE, TRUE)), &Response);
+                    if (EFI_ERROR(Status))
+                        return Status;
+                }
+
                 // Reallocate output array.
                 HdaCodecDev->OutputPorts = ReallocatePool(sizeof(HDA_WIDGET_DEV*) * HdaCodecDev->OutputPortsCount, sizeof(HDA_WIDGET_DEV*) * (HdaCodecDev->OutputPortsCount + 1), HdaCodecDev->OutputPorts);
                 if (HdaCodecDev->OutputPorts == NULL)
@@ -618,6 +658,9 @@ HdaCodecParsePorts(
             }
         }
     }
+
+    // Wait 1000ms for all widgets to fully come on.
+    gBS->Stall(MS_TO_MICROSECOND(1000));
 
     return EFI_SUCCESS;
 }
@@ -761,28 +804,22 @@ HdaCodecDisableWidgetPath(
 
     // Crawl through widget path.
     while (HdaWidget != NULL) {
-        // If pin complex, clear pin control
-        if (HdaWidget->Type == HDA_WIDGET_TYPE_PIN_COMPLEX) {
-            Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_PIN_WIDGET_CONTROL,
-                HDA_VERB_SET_PIN_WIDGET_CONTROL_PAYLOAD(0, FALSE, FALSE, FALSE, FALSE)), &Response);
-            if (EFI_ERROR(Status))
-                return Status;
-        }
-
-        // If there is an output amp, mute.
-        if (HdaWidget->Capabilities & HDA_PARAMETER_WIDGET_CAPS_OUT_AMP) {
-            Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_AMP_GAIN_MUTE,
-                HDA_VERB_SET_AMP_GAIN_MUTE_PAYLOAD(0, 0, TRUE, TRUE, TRUE, FALSE, TRUE)), &Response);
-            if (EFI_ERROR(Status))
-                return Status;
-        }
-
         // If Output, disable stream.
         if (HdaWidget->Type == HDA_WIDGET_TYPE_OUTPUT) {
             Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_CONVERTER_STREAM_CHANNEL,
                 HDA_VERB_SET_CONVERTER_STREAM_PAYLOAD(0, 0)), &Response);
             if (EFI_ERROR(Status))
                 return Status;
+        }
+
+        // If there is more than one connection, change to another.
+        if (HdaWidget->Type == HDA_WIDGET_TYPE_PIN_COMPLEX) {
+            if (HdaWidget->ConnectionCount > 1) {
+                Status = HdaIo->SendCommand(HdaIo, HdaWidget->NodeId, HDA_CODEC_VERB(HDA_VERB_SET_CONN_SELECT_CONTROL,
+                    (HdaWidget->UpstreamIndex + 1) % HdaWidget->ConnectionCount), &Response);
+            if (EFI_ERROR(Status))
+                return Status;
+            }
         }
 
         // Move to upstream widget.

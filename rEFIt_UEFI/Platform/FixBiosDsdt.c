@@ -4383,7 +4383,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-CHAR8 DevSATA[] = {0x81, 0x26, 0x00, 0x00};
+//CHAR8 DevSATA[] = {0x81, 0x26, 0x00, 0x00};
 
 UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 {
@@ -4482,7 +4482,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-CHAR8 DevSATA0[] = {0x80, 0x26, 0x00, 0x00};
+//CHAR8 DevSATA0[] = {0x80, 0x26, 0x00, 0x00};
 
 UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 {

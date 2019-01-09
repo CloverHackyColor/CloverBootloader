@@ -28,7 +28,6 @@
 //#include "HdaCodec/HdaCodec.h"
 #include "HdaCodec/HdaCodecComponentName.h"
 
-
 // HdaController Driver Binding.
 EFI_DRIVER_BINDING_PROTOCOL gHdaControllerDriverBinding = {
     HdaControllerDriverBindingSupported,
