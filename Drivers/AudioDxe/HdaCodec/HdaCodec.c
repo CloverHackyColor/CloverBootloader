@@ -1067,7 +1067,8 @@ EFIAPI
 HdaCodecDriverBindingStart(
     IN EFI_DRIVER_BINDING_PROTOCOL *This,
     IN EFI_HANDLE ControllerHandle,
-    IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL) {
+    IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL)
+{
     DEBUG((DEBUG_INFO, "HdaCodecDriverBindingStart(): start\n"));
 
     // Create variables.
@@ -1087,7 +1088,6 @@ HdaCodecDriverBindingStart(
         This->DriverBindingHandle, ControllerHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
     if (EFI_ERROR (Status))
         goto CLOSE_CODEC;
-
     // Allocate codec device.
     HdaCodecDev = AllocateZeroPool(sizeof(HDA_CODEC_DEV));
     if (HdaCodecDev == NULL) {
@@ -1100,7 +1100,6 @@ HdaCodecDriverBindingStart(
     HdaCodecDev->HdaIo = HdaIo;
     HdaCodecDev->DevicePath = HdaCodecDevicePath;
     HdaCodecDev->ControllerHandle = ControllerHandle;
-
     // Probe codec.
     Status = HdaCodecProbeCodec(HdaCodecDev);
     if (EFI_ERROR (Status))

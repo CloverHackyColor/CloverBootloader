@@ -264,9 +264,9 @@ INF  Clover/Protocols/MsgLog/MsgLog.inf
 #INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 INF  Clover/FileSystems/FatPkg/EnhancedFatDxe/Fat.inf
 
-FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
-	SECTION RAW = Clover/Logo/Logo.bmp
-  }
+#FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
+#	SECTION RAW = Clover/Logo/Logo.bmp
+#  }
 
 [Rule.Common.SEC]
   FILE SEC = $(NAMED_GUID)  {

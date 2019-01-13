@@ -23,6 +23,19 @@
 		125E171120B025A5005657CD /* ShellPkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ShellPkg; path = ../../ShellPkg; sourceTree = "<group>"; };
 		A512208C20B14ADE005FC3D2 /* MdeModulePkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MdeModulePkg; path = ../../../MdeModulePkg; sourceTree = "<group>"; };
 		A512208D20B14AE5005FC3D2 /* MdePkg */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MdePkg; path = ../../../MdePkg; sourceTree = "<group>"; };
+		A5FED73A21E7D613000B0579 /* 024533.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = 024533.diff; sourceTree = "<group>"; };
+		A5FED73B21E7D613000B0579 /* 024534.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = 024534.diff; sourceTree = "<group>"; };
+		A5FED73C21E7D613000B0579 /* 024535.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = 024535.diff; sourceTree = "<group>"; };
+		A5FED73D21E7D613000B0579 /* 024536.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = 024536.diff; sourceTree = "<group>"; };
+		A5FED73E21E7D613000B0579 /* 024537.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = 024537.diff; sourceTree = "<group>"; };
+		A5FED73F21E7D613000B0579 /* apfs-handle-size.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "apfs-handle-size.diff"; sourceTree = "<group>"; };
+		A5FED74021E7D613000B0579 /* debug-printing.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "debug-printing.diff"; sourceTree = "<group>"; };
+		A5FED74121E7D613000B0579 /* hii-database.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "hii-database.diff"; sourceTree = "<group>"; };
+		A5FED74221E7D613000B0579 /* mac-switch-to-text.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mac-switch-to-text.diff"; sourceTree = "<group>"; };
+		A5FED74321E7D613000B0579 /* optional-device-path.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "optional-device-path.diff"; sourceTree = "<group>"; };
+		A5FED74421E7D613000B0579 /* skip-non-device-connect.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "skip-non-device-connect.diff"; sourceTree = "<group>"; };
+		A5FED74521E7D613000B0579 /* unicode-collation-add.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "unicode-collation-add.diff"; sourceTree = "<group>"; };
+		A5FED74621E7D613000B0579 /* unicode-collation-choose.diff */ = {isa = PBXFileReference; lastKnownFileType = text; path = "unicode-collation-choose.diff"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				125E170820B02572005657CD /* Products */,
+				A5FED73921E7D613000B0579 /* Patches */,
 				A512208C20B14ADE005FC3D2 /* MdeModulePkg */,
 				A512208D20B14AE5005FC3D2 /* MdePkg */,
 				125E171120B025A5005657CD /* ShellPkg */,
@@ -52,6 +66,26 @@
 				125E170720B02572005657CD /* Shell */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A5FED73921E7D613000B0579 /* Patches */ = {
+			isa = PBXGroup;
+			children = (
+				A5FED73A21E7D613000B0579 /* 024533.diff */,
+				A5FED73B21E7D613000B0579 /* 024534.diff */,
+				A5FED73C21E7D613000B0579 /* 024535.diff */,
+				A5FED73D21E7D613000B0579 /* 024536.diff */,
+				A5FED73E21E7D613000B0579 /* 024537.diff */,
+				A5FED73F21E7D613000B0579 /* apfs-handle-size.diff */,
+				A5FED74021E7D613000B0579 /* debug-printing.diff */,
+				A5FED74121E7D613000B0579 /* hii-database.diff */,
+				A5FED74221E7D613000B0579 /* mac-switch-to-text.diff */,
+				A5FED74321E7D613000B0579 /* optional-device-path.diff */,
+				A5FED74421E7D613000B0579 /* skip-non-device-connect.diff */,
+				A5FED74521E7D613000B0579 /* unicode-collation-add.diff */,
+				A5FED74621E7D613000B0579 /* unicode-collation-choose.diff */,
+			);
+			path = Patches;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

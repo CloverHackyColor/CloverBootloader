@@ -424,7 +424,8 @@ HdaControllerSendCommands(
     IN HDA_CONTROLLER_DEV *HdaDev,
     IN UINT8 CodecAddress,
     IN UINT8 Node,
-    IN EFI_HDA_IO_VERB_LIST *Verbs) {
+    IN EFI_HDA_IO_VERB_LIST *Verbs)
+{
     //DEBUG((DEBUG_INFO, "HdaControllerSendCommands(): start\n"));
 
     // Create variables.

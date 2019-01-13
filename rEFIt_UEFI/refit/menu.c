@@ -4068,7 +4068,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row1PosX = (UGAWidth + 8 - (row1TileSize + (INTN)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        row1PosY = row0PosY + EntriesHeight + (BCSMargin * 2) + TextHeight +
+        row1PosY = row0PosY + row0TileSize + (BCSMargin * 2) + TextHeight +
             (INTN)(INDICATOR_SIZE * GlobalConfig.Scale) +
             (INTN)((LayoutButtonOffset + GlobalConfig.TileYSpace) * GlobalConfig.Scale);
       } else {
@@ -4087,6 +4087,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
 
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
+      
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
@@ -4138,7 +4139,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
               INTN textPosX = itemPosX[i - State->FirstVisible] + (row0TileSize / 2);
               // clear the screen
-              FillRectAreaOfScreen(textPosX, textPosY,EntriesWidth + GlobalConfig.TileXSpace,
+              FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
                                    MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
               // draw the text
               DrawBCSText(Screen->Entries[i]->Title, textPosX, textPosY, X_IS_CENTER);

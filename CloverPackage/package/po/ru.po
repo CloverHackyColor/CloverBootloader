@@ -591,9 +591,11 @@ msgstr ""
 
 #. type: "AudioDxe-64_description"
 #: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "HDA driver to play Startup Sound"
 msgstr ""
+"Драйвер для бу-бум при старте компьютера"
 
 #. type: "FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:106
