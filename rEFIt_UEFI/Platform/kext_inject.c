@@ -671,6 +671,10 @@ UINT8   KBEMojaReplaceEXT[]      = { 0xE8, 0xAF, 0x00, 0x00, 0x00, 0x90, 0x90, 0
 UINT8   KBEHighSieMojaSearchSIP[]    = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x69, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 UINT8   KBEHighSieMojaReplaceSIP[]   = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
 
+// Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
+UINT8   KBEMojaSearchKxldUnmap[]     = { 0x00, 0x0F, 0x85, 0xB2, 0x01, 0x00, 0x00, 0x48 };
+UINT8   KBEMojaReplaceKxldUnmap[]    = { 0x00, 0x90, 0xE9, 0xB2, 0x01, 0x00, 0x00, 0x48 };
+
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -733,7 +737,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   // X64
   if (NumMoja == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMojaSearchEXT, sizeof(KBEMojaSearchEXT), KBEMojaReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEHighSieMojaSearchSIP, sizeof(KBEHighSieMojaSearchSIP), KBEHighSieMojaReplaceSIP, 1);
+          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEHighSieMojaSearchSIP, sizeof(KBEHighSieMojaSearchSIP), KBEHighSieMojaReplaceSIP, 1) +
+          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMojaSearchKxldUnmap, sizeof(KBEMojaSearchKxldUnmap), KBEMojaReplaceKxldUnmap, 1);
     DBG_RT(Entry, "==> kernel Mojave: %d replaces done.\n", Num);
   } else if (NumHighSieMoja == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
