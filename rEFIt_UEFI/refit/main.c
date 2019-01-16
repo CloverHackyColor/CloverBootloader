@@ -94,6 +94,8 @@ extern UINTN            ConfigsNum;
 extern CHAR16           *ConfigsList[];
 extern UINTN            DsdtsNum;
 extern CHAR16           *DsdtsList[];
+extern UINTN                           AudioNum;
+extern HDA_OUTPUTS                     AudioList[20];
 
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,

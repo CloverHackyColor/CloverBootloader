@@ -61,7 +61,8 @@ UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
 UINTN                           DsdtsNum;
 CHAR16                          *DsdtsList[20];
-
+UINTN                           AudioNum;
+HDA_OUTPUTS                     AudioList[20];
 
 // firmware
 BOOLEAN                         gFirmwareClover             = FALSE;
@@ -6674,6 +6675,7 @@ GetDevices ()
   
   NGFX = 0;
   NHDA = 0;
+  AudioNum = 0;
   //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
   
   DbgHeader("GetDevices");
@@ -6775,16 +6777,6 @@ GetDevices ()
               gfx->Ports = 1;
               gfx->Connectors = (1 << NGFX);
               gfx->ConnChanged = FALSE;
-              /*
-               SlotDevice                  = &SlotDevices[2];
-               SlotDevice->SegmentGroupNum = (UINT16)Segment;
-               SlotDevice->BusNum          = (UINT8)Bus;
-               SlotDevice->DevFuncNum      = (UINT8)((Device << 4) | (Function & 0x0F));
-               SlotDevice->Valid           = TRUE;
-               AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot 0");
-               SlotDevice->SlotID          = 0;
-               SlotDevice->SlotType        = SlotTypePciExpressX16;
-               */
               break;
               
             case 0x10de:
@@ -6935,12 +6927,19 @@ GetDevices ()
           // Populate Controllers IDs
           hda->controller_vendor_id       = Pci.Hdr.VendorId;
           hda->controller_device_id       = Pci.Hdr.DeviceId;
-          
-          
+
           // HDA Controller Info
           AsciiSPrint ( hda->controller_name,64, "%a",
                        get_hda_controller_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId )
                        );
+//          AsciiSPrint ( hda->codec_name,64, "%a",
+//                       get_hda_codec_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId, 0, 0 )
+//                       );
+
+//temp
+          AddAudioOutput(HandleArray[Index]);
+//          AudioList[AudioNum].Name = hda->codec_name;
+//          AudioList[AudioNum++].Handle = HandleArray[Index];
           
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");

@@ -374,6 +374,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_BOOTER     27
 #define SCREEN_KEXT_INJECT   28
 #define SCREEN_KEXTS_MAN     29
+#define SCREEN_AUDIOPORTS    30
 
 #define MAX_ANIME  41
 

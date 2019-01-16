@@ -63,161 +63,166 @@ EFIAPI
 HdaCodecAudioIoGetOutputs(
     IN  EFI_AUDIO_IO_PROTOCOL *This,
     OUT EFI_AUDIO_IO_PROTOCOL_PORT **OutputPorts,
-    OUT UINTN *OutputPortsCount) {
-    DEBUG((DEBUG_INFO, "HdaCodecAudioIoGetOutputs(): start\n"));
+    OUT UINTN *OutputPortsCount)
+{
+  DEBUG((DEBUG_INFO, "HdaCodecAudioIoGetOutputs(): start\n"));
 
-    // Create variables.
-    EFI_STATUS Status;
-    AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
-    HDA_CODEC_DEV *HdaCodecDev;
-    EFI_AUDIO_IO_PROTOCOL_PORT *HdaOutputPorts;
-    UINT32 SupportedRates;
+  // Create variables.
+  EFI_STATUS Status;
+  AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
+  HDA_CODEC_DEV *HdaCodecDev;
+  EFI_AUDIO_IO_PROTOCOL_PORT *HdaOutputPorts;
+  UINT32 SupportedRates;
 
-    // If a parameter is invalid, return error.
-    if ((This == NULL) || (OutputPorts == NULL) ||
-        (OutputPortsCount == NULL))
-        return EFI_INVALID_PARAMETER;
+  // If a parameter is invalid, return error.
+  if ((This == NULL) || (OutputPorts == NULL) ||
+      (OutputPortsCount == NULL))
+    return EFI_INVALID_PARAMETER;
 
-    // Get private data.
-    AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
-    HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
+  // Get private data.
+  AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
+  if (!AudioIoPrivateData) {
+    return EFI_NOT_STARTED;
+  }
 
-    // Allocate buffer.
-    HdaOutputPorts = AllocateZeroPool(sizeof(EFI_AUDIO_IO_PROTOCOL_PORT) * HdaCodecDev->OutputPortsCount);
-    if (HdaOutputPorts == NULL)
-        return EFI_OUT_OF_RESOURCES;
+  HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
 
-    // Get output ports.
-    for (UINTN i = 0; i < HdaCodecDev->OutputPortsCount; i++) {
-        // Port is an output.
-        HdaOutputPorts[i].Type = EfiAudioIoTypeOutput;
+  // Allocate buffer.
+  HdaOutputPorts = AllocateZeroPool(sizeof(EFI_AUDIO_IO_PROTOCOL_PORT) * HdaCodecDev->OutputPortsCount);
+  if (HdaOutputPorts == NULL)
+    return EFI_OUT_OF_RESOURCES;
 
-        // Get device type.
-        switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_DEVICE(HdaCodecDev->OutputPorts[i]->DefaultConfiguration))
-        {
-            case HDA_CONFIG_DEFAULT_DEVICE_LINE_OUT:
-            case HDA_CONFIG_DEFAULT_DEVICE_LINE_IN:
-                HdaOutputPorts[i].Device = EfiAudioIoDeviceLine;
-                break;
+  // Get output ports.
+  for (UINTN i = 0; i < HdaCodecDev->OutputPortsCount; i++) {
+    // Port is an output.
+    HdaOutputPorts[i].Type = EfiAudioIoTypeOutput;
 
-            case HDA_CONFIG_DEFAULT_DEVICE_SPEAKER:
-                HdaOutputPorts[i].Device = EfiAudioIoDeviceSpeaker;
-                break;
+    // Get device type.
+    switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_DEVICE(HdaCodecDev->OutputPorts[i]->DefaultConfiguration))
+    {
+      case HDA_CONFIG_DEFAULT_DEVICE_LINE_OUT:
+      case HDA_CONFIG_DEFAULT_DEVICE_LINE_IN:
+        HdaOutputPorts[i].Device = EfiAudioIoDeviceLine;
+        break;
 
-            case HDA_CONFIG_DEFAULT_DEVICE_HEADPHONE_OUT:
-                HdaOutputPorts[i].Device = EfiAudioIoDeviceHeadphones;
-                break;
+      case HDA_CONFIG_DEFAULT_DEVICE_SPEAKER:
+        HdaOutputPorts[i].Device = EfiAudioIoDeviceSpeaker;
+        break;
 
-            case HDA_CONFIG_DEFAULT_DEVICE_SPDIF_OUT:
-            case HDA_CONFIG_DEFAULT_DEVICE_SPDIF_IN:
-                HdaOutputPorts[i].Device = EfiAudioIoDeviceSpdif;
-                break;
+      case HDA_CONFIG_DEFAULT_DEVICE_HEADPHONE_OUT:
+        HdaOutputPorts[i].Device = EfiAudioIoDeviceHeadphones;
+        break;
 
-            case HDA_CONFIG_DEFAULT_DEVICE_MIC_IN:
-                HdaOutputPorts[i].Device = EfiAudioIoDeviceMic;
-                break;
+      case HDA_CONFIG_DEFAULT_DEVICE_SPDIF_OUT:
+      case HDA_CONFIG_DEFAULT_DEVICE_SPDIF_IN:
+        HdaOutputPorts[i].Device = EfiAudioIoDeviceSpdif;
+        break;
 
-            default:
-                if (HdaCodecDev->OutputPorts[i]->PinCapabilities & HDA_PARAMETER_PIN_CAPS_HDMI)
-                    HdaOutputPorts[i].Device = EfiAudioIoDeviceHdmi;
-                else
-                    HdaOutputPorts[i].Device = EfiAudioIoDeviceOther;
-        }
+      case HDA_CONFIG_DEFAULT_DEVICE_MIC_IN:
+        HdaOutputPorts[i].Device = EfiAudioIoDeviceMic;
+        break;
 
-        // Get location.
-        switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_LOC(HdaCodecDev->OutputPorts[i]->DefaultConfiguration)) {
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_NA:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationNone;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_REAR:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationRear;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_FRONT:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationFront;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_LEFT:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationLeft;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_RIGHT:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationRight;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_TOP:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationTop;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SPEC_BOTTOM:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationBottom;
-                break;
-
-            default:
-                HdaOutputPorts[i].Location = EfiAudioIoLocationOther;
-        }
-
-        // Get surface.
-        switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_SURF(HdaCodecDev->OutputPorts[i]->DefaultConfiguration)) {
-            case HDA_CONFIG_DEFAULT_LOC_SURF_EXTERNAL:
-                HdaOutputPorts[i].Surface = EfiAudioIoSurfaceExternal;
-                break;
-
-            case HDA_CONFIG_DEFAULT_LOC_SURF_INTERNAL:
-                HdaOutputPorts[i].Surface = EfiAudioIoSurfaceInternal;
-                break;
-
-            default:
-                HdaOutputPorts[i].Surface = EfiAudioIoSurfaceOther;
-        }
-
-        // Get supported stream formats.
-        Status = HdaCodecGetSupportedPcmRates(HdaCodecDev->OutputPorts[i], &SupportedRates);
-        if (EFI_ERROR(Status))
-            return Status;
-
-        // Get supported bit depths.
-        HdaOutputPorts[i].SupportedBits = 0;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_8BIT)
-            HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits8;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_16BIT)
-            HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits16;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_20BIT)
-            HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits20;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_24BIT)
-            HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits24;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_32BIT)
-            HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits32;
-
-        // Get supported sample rates.
-        HdaOutputPorts[i].SupportedFreqs = 0;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_8KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq8kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_11KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq11kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_16KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq16kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_22KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq22kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_32KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq32kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_44KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq44kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_48KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq48kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_88KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq88kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_96KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq96kHz;
-        if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_192KHZ)
-            HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq192kHz;
+      default:
+        if (HdaCodecDev->OutputPorts[i]->PinCapabilities & HDA_PARAMETER_PIN_CAPS_HDMI)
+          HdaOutputPorts[i].Device = EfiAudioIoDeviceHdmi;
+        else
+          HdaOutputPorts[i].Device = EfiAudioIoDeviceOther;
     }
 
-    // Ports gotten successfully.
-    *OutputPorts = HdaOutputPorts;
-    *OutputPortsCount = HdaCodecDev->OutputPortsCount;
-    return EFI_SUCCESS;
+    // Get location.
+    switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_LOC(HdaCodecDev->OutputPorts[i]->DefaultConfiguration)) {
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_NA:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationNone;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_REAR:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationRear;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_FRONT:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationFront;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_LEFT:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationLeft;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_RIGHT:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationRight;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_TOP:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationTop;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SPEC_BOTTOM:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationBottom;
+        break;
+
+      default:
+        HdaOutputPorts[i].Location = EfiAudioIoLocationOther;
+    }
+
+    // Get surface.
+    switch (HDA_VERB_GET_CONFIGURATION_DEFAULT_SURF(HdaCodecDev->OutputPorts[i]->DefaultConfiguration)) {
+      case HDA_CONFIG_DEFAULT_LOC_SURF_EXTERNAL:
+        HdaOutputPorts[i].Surface = EfiAudioIoSurfaceExternal;
+        break;
+
+      case HDA_CONFIG_DEFAULT_LOC_SURF_INTERNAL:
+        HdaOutputPorts[i].Surface = EfiAudioIoSurfaceInternal;
+        break;
+
+      default:
+        HdaOutputPorts[i].Surface = EfiAudioIoSurfaceOther;
+    }
+
+    // Get supported stream formats.
+    Status = HdaCodecGetSupportedPcmRates(HdaCodecDev->OutputPorts[i], &SupportedRates);
+    if (EFI_ERROR(Status))
+      return Status;
+
+    // Get supported bit depths.
+    HdaOutputPorts[i].SupportedBits = 0;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_8BIT)
+      HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits8;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_16BIT)
+      HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits16;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_20BIT)
+      HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits20;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_24BIT)
+      HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits24;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_32BIT)
+      HdaOutputPorts[i].SupportedBits |= EfiAudioIoBits32;
+
+    // Get supported sample rates.
+    HdaOutputPorts[i].SupportedFreqs = 0;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_8KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq8kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_11KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq11kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_16KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq16kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_22KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq22kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_32KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq32kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_44KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq44kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_48KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq48kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_88KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq88kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_96KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq96kHz;
+    if (SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_192KHZ)
+      HdaOutputPorts[i].SupportedFreqs |= EfiAudioIoFreq192kHz;
+  }
+
+  // Ports gotten successfully.
+  *OutputPorts = HdaOutputPorts;
+  *OutputPortsCount = HdaCodecDev->OutputPortsCount;
+  return EFI_SUCCESS;
 }
 
 /**

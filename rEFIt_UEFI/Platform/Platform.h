@@ -1192,6 +1192,7 @@ typedef struct {
 
   //other
   UINT32                  IntelMaxValue;
+  UINT32                  AudioVolume;
 
   // boot.efi
   UINT32 OptionsBits;
@@ -1477,7 +1478,7 @@ typedef struct {
     HRDW_MANUFACTERER  Vendor;
     UINT16            controller_vendor_id;
     UINT16            controller_device_id;
-    CHAR8             controller_name[64];
+    CHAR8             controller_name[32];
 // -- Codec Info -- //
     UINT16            codec_vendor_id;
     UINT16            codec_device_id;
@@ -1486,8 +1487,15 @@ typedef struct {
     UINT8             codec_maj_rev;
     UINT8             codec_min_rev;
     UINT8             codec_num_function_groups;
-    CHAR8             codec_name[64];
+    CHAR8             codec_name[32];
 } HDA_PROPERTIES;
+
+typedef struct {
+  CHAR16          *Name;
+//  CHAR8           *LineName;
+  INTN            Index;
+  EFI_HANDLE      Handle;
+} HDA_OUTPUTS;
 
 typedef struct {
   UINT16            SegmentGroupNum;
@@ -1643,6 +1651,7 @@ extern UINTN                           gItemID;
 extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
+extern INTN                            OldChosenAudio;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64                          BiosDsdt;
@@ -2016,6 +2025,13 @@ CHAR8
   IN UINT16 DeviceID
   );
 
+#define BOOT_CHIME_VAR_ATTRIBUTES   (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS)
+#define BOOT_CHIME_VAR_DEVICE       (L"Device")
+#define BOOT_CHIME_VAR_DEVICE_PATH  (L"device_path")
+#define BOOT_CHIME_VAR_INDEX        (L"Index")
+#define BOOT_CHIME_VAR_VOLUME       (L"Volume")
+
+
 BOOLEAN
 setup_hda_devprop (
   EFI_PCI_IO_PROTOCOL *PciIo,
@@ -2050,6 +2066,7 @@ CHAR8
   );
 
 UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
+EFI_STATUS AddAudioOutput(EFI_HANDLE PciDevHandle);
 
 VOID
 FillCardList (

@@ -71,9 +71,12 @@ extern UINTN            ConfigsNum;
 extern CHAR16           *ConfigsList[];
 extern UINTN            DsdtsNum;
 extern CHAR16           *DsdtsList[];
+extern UINTN            AudioNum;
+extern HDA_OUTPUTS      AudioList[20];
 extern CHAR8            *NonDetected;
 extern BOOLEAN          GetLegacyLanAddress;
 extern UINT8            gLanMac[4][6]; // their MAC addresses
+extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 INTN LayoutBannerOffset = 64;
 INTN LayoutButtonOffset = 0;
@@ -188,6 +191,7 @@ UINTN  InputItemsCount = 0;
 INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
+INTN OldChosenAudio;
 //INTN NewChosenTheme;
 INTN TextStyle;
 
@@ -203,8 +207,6 @@ REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', 
   {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
 REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return", TAG_RETURN, 0, 0, 0,  NULL, NULL, NULL,
   {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-//REFIT_MENU_ENTRY MenuEntryHelp    = { L"Help", TAG_HELP, 1, 0, 'H', NULL, NULL, NULL,
-//  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
 
 REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
@@ -584,13 +586,6 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.DoubleFirstState;
   InputItems[InputItemsCount].ItemType = BoolValue; //89
   InputItems[InputItemsCount++].BValue = gSettings.EnableC7;
-/*
-  InputItems[InputItemsCount].ItemType = UNIString; //90
-  if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
-  }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
-*/
   InputItems[InputItemsCount].ItemType = RadioSwitch; //90
   InputItems[InputItemsCount++].IValue = 90;
 
@@ -640,11 +635,6 @@ VOID FillInputs(BOOLEAN New)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = CheckBit;  //101
   InputItems[InputItemsCount++].IValue = dropDSM;
-/*  if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
-  }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%04X", dropDSM);
- */
 
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;
@@ -706,6 +696,14 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BooterCfgStr);
+
+  InputItems[InputItemsCount].ItemType = RadioSwitch;  //119 - Audio chooser
+  InputItems[InputItemsCount++].IValue = 119;
+  InputItems[InputItemsCount].ItemType = Decimal;  //120
+  if (New) {
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+  }
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", gSettings.AudioVolume);
 
 
 
@@ -1137,55 +1135,12 @@ VOID ApplyInputs(VOID)
       Status = GetUserSettings(SelfRootDir, dict);
       if (gConfigDict[2]) FreeTag(gConfigDict[2]);
       gConfigDict[2] = dict;
- /*     if (gSettings.ConfigName) {
-        FreePool(gSettings.ConfigName);
-      } */
       UnicodeSPrint(gSettings.ConfigName, 64, L"%s", ConfigsList[OldChosenConfig]);
- //     gSettings.ConfigName = EfiStrDuplicate(ConfigsList[OldChosenConfig]);
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
     }
-
-/*
-    if (StriCmp(InputItems[i].SValue, gSettings.ConfigName) != 0) {
-      gBootChanged = TRUE;
-      gThemeChanged = TRUE;
-      if ((StrLen(InputItems[i].SValue) == 0) ||
-          (StriCmp(InputItems[i].SValue, gSettings.MainConfigName) == 0)) {
-        INTN Ind;
-        for (Ind=0; Ind<2; Ind++) {
-          if (gConfigDict[Ind]) {
-            Status = GetUserSettings(SelfRootDir, gConfigDict[Ind]);
-            if (!EFI_ERROR(Status)) {
-              if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
-              gSettings.ConfigName = EfiStrDuplicate(gSettings.MainConfigName);
-              if (gConfigDict[2]) FreeTag(gConfigDict[2]);
-              gConfigDict[2] = NULL;
-            }
-            DBG("Main settings%d from menu: %r\n", Ind, Status);
-          }
-        }
-      } else {
-        Status = LoadUserSettings(SelfRootDir, InputItems[i].SValue, &dict);
-        if (!EFI_ERROR(Status)) {
-          if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
-          //gSettings.ConfigName  = PoolPrint(L"");
-          GetUserSettings(SelfRootDir, dict);
-          if (gConfigDict[2]) FreeTag(gConfigDict[2]);
-          gConfigDict[2] = dict;
-          //if (gSettings.ConfigName) FreePool(gSettings.ConfigName);
-          gSettings.ConfigName = EfiStrDuplicate(InputItems[i].SValue);
-        }
-        DBG("Main settings3 from menu: %r\n", Status);
-      }
-
-      FillInputs(FALSE);
-      NeedSave = FALSE;
-    }
-*/
     FillInputs(FALSE);
     NeedSave = FALSE;
-
   }
   i++; //91
   if (InputItems[i].Valid) {
@@ -1322,6 +1277,29 @@ VOID ApplyInputs(VOID)
   i++; //118
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.BooterCfgStr, 64, "%s", InputItems[i].SValue);
+  }
+  i++; //119
+  if (InputItems[i].Valid) {
+    EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
+    DBG("Chosen output %d:%s\n", OldChosenAudio, AudioList[OldChosenAudio].Name);
+
+    DevicePath = DevicePathFromHandle(AudioList[OldChosenAudio].Handle);
+    if (DevicePath != NULL) {
+      SetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid,
+                       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                       GetDevicePathSize(DevicePath), (UINT8 *)DevicePath);
+      SetNvramVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid,
+                       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                       sizeof(INTN), (UINT8 *)(AudioList[OldChosenAudio].Index));
+
+    }
+  }
+  i++; //120
+  if (InputItems[i].Valid) {
+    gSettings.AudioVolume = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
+    SetNvramVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid,
+                     EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                     sizeof(gSettings.AudioVolume), &gSettings.AudioVolume);
   }
 
 
@@ -2210,6 +2188,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         OldChosenConfig = Pos;
       } else if (Item->IValue == 116) {
         OldChosenDsdt = Pos? Pos - 1: 0xFFFF;
+      } else if (Item->IValue == 119) {
+        OldChosenAudio = Pos;
       }
       MenuExit = MENU_EXIT_ENTER;
     } else if (Item->ItemType == CheckBit) {
@@ -2603,7 +2583,10 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
 */
       case SCAN_F7:
-        StartupSoundPlay(SelfRootDir, L"sound.wav");
+        Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
+        if (!EFI_ERROR(Status)) {
+          StartupSoundPlay(SelfRootDir, L"sound.wav");
+        }
         break;
       case SCAN_F8:
         testSVG();
@@ -2723,6 +2706,8 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 					j = OldChosenConfig;
       } else if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 116) {
         j = OldChosenDsdt;
+      } else if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 119) {
+        j = OldChosenAudio;
       }
 
       break;
@@ -2784,6 +2769,8 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 						OldChosenItem = OldChosenConfig;
           } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 116) {
             OldChosenItem = OldChosenDsdt;
+          } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 119) {
+            OldChosenItem = OldChosenAudio;
           }
 
 					StrCatS(ResultString, TITLE_MAX_LEN, (Screen->Entries[i]->Row == OldChosenItem) ? L": (*)" : L": ( )");
@@ -2842,6 +2829,8 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 					OldChosenItem = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 116) {
           OldChosenItem = OldChosenDsdt;
+        } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 119) {
+          OldChosenItem = OldChosenAudio;
         }
 
 				StrCatS(ResultString, TITLE_MAX_LEN,
@@ -2877,6 +2866,8 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 					OldChosenItem = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 116) {
           OldChosenItem = OldChosenDsdt;
+        } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 119) {
+          OldChosenItem = OldChosenAudio;
         }
 
 				StrCatS(ResultString, TITLE_MAX_LEN,
@@ -3375,6 +3366,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           j = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 116) {
           j = (OldChosenDsdt == 0xFFFF) ? 0: (OldChosenDsdt + 1);
+        } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 119) {
+          j = OldChosenAudio;
         }
       }
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight, j);
@@ -3507,6 +3500,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 						OldChosenItem = OldChosenConfig;
           } else if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 116) {
             OldChosenItem =  (OldChosenDsdt == 0xFFFF) ? 0: (OldChosenDsdt + 1);
+          } else if (((REFIT_INPUT_DIALOG*)Entry)->Item->IValue == 119) {
+            OldChosenItem = OldChosenAudio;
           }
 
           DrawMenuText(ResultString,
@@ -3581,6 +3576,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 					OldChosenItem = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 116) {
           OldChosenItem = (OldChosenDsdt == 0xFFFF) ? 0: OldChosenDsdt + 1;
+        } else if (((REFIT_INPUT_DIALOG*)EntryL)->Item->IValue == 119) {
+          OldChosenItem = OldChosenAudio;
         }
 
 // clovy
@@ -3619,6 +3616,8 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
           OldChosenItem = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue == 116) {
           OldChosenItem = (OldChosenDsdt == 0xFFFF) ? 0: OldChosenDsdt + 1;
+        } else if (((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue == 119) {
+          OldChosenItem = OldChosenAudio;
         }
       }
 
@@ -4911,7 +4910,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdts()
   REFIT_INPUT_DIALOG *InputBootArgs;
   UINTN               i;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Dsdt name->");
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->");
 
   AddMenuInfoLine(SubScreen, L"Select a DSDT file:");
   AddMenuItem(SubScreen, 116,  "BIOS.aml", TAG_SWITCH, FALSE);
@@ -4944,7 +4943,6 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to patch ACPI"));
 
   AddMenuItem(SubScreen, 102, "Debug DSDT", TAG_INPUT, FALSE);
-//  AddMenuItem(SubScreen, 1,   "DSDT name:", TAG_INPUT, TRUE);
 
   AddMenuEntry(SubScreen, SubMenuDsdts());
   AddMenuEntry(SubScreen, SubMenuDropTables());
@@ -4952,6 +4950,33 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   AddMenuEntry(SubScreen, SubMenuDsdtFix());
   AddMenuEntry(SubScreen, SubMenuDSDTPatches());
   AddMenuItem(SubScreen, 49, "Fix MCFG", TAG_INPUT, FALSE);
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  return Entry;
+}
+
+REFIT_MENU_ENTRY  *SubMenuAudioPort()
+{
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  UINTN               i;
+
+  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->");
+
+  AddMenuInfoLine(SubScreen, L"Select an audio output, press F7 to test");
+  AddMenuItem(SubScreen, 120, "Volume:", TAG_INPUT, TRUE);
+
+  for (i = 0; i < AudioNum; i++) {
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"%s", AudioList[i].Name);
+    InputBootArgs->Entry.Tag = TAG_SWITCH;
+    InputBootArgs->Entry.Row = i;
+    InputBootArgs->Item = &InputItems[119];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  }
 
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;
@@ -5274,6 +5299,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuAudio());
+    AddMenuEntry(&OptionMenu, SubMenuAudioPort());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
     AddMenuEntry(&OptionMenu, SubMenuSystem());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
@@ -5311,11 +5337,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
                   NextMenuExit = 0;
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);
-           /*       if (TmpChosenEntry->ShortcutDigit == 0xF1) {
-                    NextMenuExit = MENU_EXIT_ENTER;
-                    //DBG("Escape menu from input dialog\n");
-                    break;
-                  } //if F1 */
                 }
               } //while(!NextMenuExit)
             }
@@ -5323,28 +5344,16 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
             SubMenuExit = 0;
             ApplyInputs();
             ModifyTitles(TmpChosenEntry);
-       /*     if (NextChosenEntry->ShortcutDigit == 0xF1) {
-              SubMenuExit = MENU_EXIT_ENTER;
-              //DBG("Escape menu from input dialog\n");
-              goto exit;
-            } //if F1 */
           }
         } //while(!SubMenuExit)
       }
       MenuExit = 0;
- /*     if ((*ChosenEntry)->ShortcutDigit == 0xF1) {
-        MenuExit = MENU_EXIT_ENTER;
-        //     DBG("Escape options menu\n");
-        break;
-      } //if F1 */
     } // if MENU_EXIT_ENTER
   }
 //exit:
   GlobalConfig.Proportional = OldFontStyle;
   ApplyInputs();
 }
-
-
 
 UINT32 EncodeOptions(CHAR16 *Options)
 {

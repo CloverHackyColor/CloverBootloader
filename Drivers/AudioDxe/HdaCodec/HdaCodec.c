@@ -438,7 +438,8 @@ HdaCodecProbeFuncGroup(
 EFI_STATUS
 EFIAPI
 HdaCodecProbeCodec(
-    IN HDA_CODEC_DEV *HdaCodecDev) {
+    IN HDA_CODEC_DEV *HdaCodecDev)
+{
     //DEBUG((DEBUG_INFO, "HdaCodecProbeCodec(): start\n"));
 
     // Create variables.
