@@ -42,6 +42,7 @@
 		2C794E511A0AA85900D845B0 /* NVRAMDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1A1A0AA85900D845B0 /* NVRAMDebug.c */; };
 		2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */; };
 		A5582AFD21019EA6002CFB6E /* VectorGraphics.c in Sources */ = {isa = PBXBuildFile; fileRef = A5582AFC21019EA6002CFB6E /* VectorGraphics.c */; };
+		A5603D0421F04ECE005F400E /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = A5603D0321F04ECE005F400E /* sound.c */; };
 		A5611B3421DCBA53008FDB96 /* StartupSound.c in Sources */ = {isa = PBXBuildFile; fileRef = A5611B3321DCBA53008FDB96 /* StartupSound.c */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
 		A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392620D9F17B004340E1 /* FloatLib.c */; };
@@ -930,6 +931,7 @@
 		A51C784821E0981C001385A7 /* HdaModels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaModels.c; sourceTree = "<group>"; };
 		A51C784921E0C280001385A7 /* HdaCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodec.h; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
+		A5603D0321F04ECE005F400E /* sound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
 		A5611B2A21DCB97F008FDB96 /* Riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Riff.h; sourceTree = "<group>"; };
 		A5611B2B21DCB9A0008FDB96 /* HdaModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaModels.h; sourceTree = "<group>"; };
 		A5611B2C21DCB9A0008FDB96 /* WaveLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveLib.h; sourceTree = "<group>"; };
@@ -1109,6 +1111,7 @@
 				126151921A15BBB000903E7B /* string.h */,
 				126151931A15BBB000903E7B /* usbfix.c */,
 				A5611B3321DCBA53008FDB96 /* StartupSound.c */,
+				A5603D0321F04ECE005F400E /* sound.c */,
 			);
 			path = Platform;
 			sourceTree = "<group>";
@@ -3121,6 +3124,7 @@
 				12E3015A1D5A413A00EED426 /* lodepng.c in Sources */,
 				2C794E451A0AA85900D845B0 /* Lib.c in Sources */,
 				2C794E4C1A0AA85900D845B0 /* AsmFuncsX64.nasm in Sources */,
+				A5603D0421F04ECE005F400E /* sound.c in Sources */,
 				2C794E521A0AA85900D845B0 /* OsxLowMemFixDrv.c in Sources */,
 				2C794E4E1A0AA85900D845B0 /* TestAsm32.asm in Sources */,
 				A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */,

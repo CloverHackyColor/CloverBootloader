@@ -1860,6 +1860,8 @@ InitTheme (
 EFI_STATUS
 StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile);
 
+VOID GetOutputs();
+
 EFI_STATUS CheckSyncSound();
 
 EFI_STATUS

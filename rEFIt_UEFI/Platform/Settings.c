@@ -6937,7 +6937,7 @@ GetDevices ()
 //                       );
 
 //temp
-          AddAudioOutput(HandleArray[Index]);
+//          AddAudioOutput(HandleArray[Index]);
 //          AudioList[AudioNum].Name = hda->codec_name;
 //          AudioList[AudioNum++].Handle = HandleArray[Index];
           

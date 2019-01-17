@@ -133,6 +133,7 @@
   Platform/PlatformDriverOverride.c
 	Platform/Hibernate.c
   Platform/Net.c
+  Platform/sound.c
   Platform/StartupSound.c
 
 [Packages]

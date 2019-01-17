@@ -2584,6 +2584,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 */
       case SCAN_F7:
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
+        DBG("open %d audio handle status=%r\n", OldChosenAudio, Status);
         if (!EFI_ERROR(Status)) {
           StartupSoundPlay(SelfRootDir, L"sound.wav");
         }
@@ -3624,15 +3625,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       if (EntryC->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)EntryC)->Item->ItemType == BoolValue) {
           DrawMenuText(ResultString, MenuWidth,
-// clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                        ctrlTextX,
                        EntryC->Place.YPos, 0xFFFF);
           BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->BValue)? Buttons[3] : Buttons[2],
                         ctrlX,
                         EntryC->Place.YPos + PlaceCentre,
                         &MenuBackgroundPixel, 16);
-//          DBG("3:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
-//              EntryC->Place.YPos, EntryC->Place.YPos + PlaceCentre);
         } else {
           StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)EntryC)->Item->SValue +
                                ((REFIT_INPUT_DIALOG*)EntryC)->Item->LineShift);
@@ -3644,7 +3642,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       } else if (EntryC->Tag == TAG_SWITCH) {
         StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
         DrawMenuText(ResultString, MenuWidth,
-// clovy               EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                      ctrlTextX,
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      0xFFFF);
@@ -3654,15 +3651,12 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
                       &MenuBackgroundPixel, 16);
       } else if (EntryC->Tag == TAG_CHECKBIT) {
         DrawMenuText(ResultString, MenuWidth,
-// clovy               EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                      ctrlTextX,
                      EntryC->Place.YPos, 0xFFFF);
         BltImageAlpha((((REFIT_INPUT_DIALOG*)EntryC)->Item->IValue & EntryC->Row) ? Buttons[3] :Buttons[2],
                       ctrlX,
                       EntryC->Place.YPos + PlaceCentre,
                       &MenuBackgroundPixel, 16);
-//        DBG("4:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
-//            EntryC->Place.YPos, EntryC->Place.YPos + PlaceCentre);
      } else {
         DrawMenuText(EntryC->Title, MenuWidth, EntriesPosX,
                      EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
@@ -3674,7 +3668,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height; // ScrollEnd.Height is already subtracted
       ScrollingBar(State);
 
-      //MouseBirth();
       break;
     }
 
@@ -3692,7 +3685,6 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
  */
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-//  EG_IMAGE *TmpBuffer = NULL;
   INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
 
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&

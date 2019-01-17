@@ -2382,6 +2382,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FreePool(FirstMessage);
   }
 
+  GetOutputs();
   GetListOfDsdts(); //only after GetUserSettings
   GetListOfACPI(); //ssdt and other tables
 
