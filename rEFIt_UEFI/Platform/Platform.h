@@ -2046,7 +2046,7 @@ CHAR8
   UINT16 controller_device_id,
   UINT16 controller_vendor_id
   );
-
+/*
 CHAR8
 *get_hda_codec_name (
   UINT16 codec_vendor_id,
@@ -2054,7 +2054,7 @@ CHAR8
   UINT8 codec_revision_id,
   UINT8 codec_stepping_id
   );
-
+*/
 BOOLEAN
 setup_nvidia_devprop (
   pci_dt_t *nvda_dev

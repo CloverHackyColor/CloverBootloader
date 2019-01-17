@@ -1066,6 +1066,8 @@ static void nsvg__scanlineBit(
                               unsigned char* row, int count, unsigned char* cover, int x, int y,
                               /*   float tx, float ty, float scalex, float scaley, */ NSVGcachedPaint* cache)
 {
+    //xxx where is security check that x/8 and (x+count)/8 is inside row[] index?
+    // called by       r->fscanline(&r->bitmap[y * r->stride], xmax-xmin+1, &r->scanline[xmin], xmin, y,/* tx,ty, scalex, scaley, */ cache);
   int x1 = x + count;
   for (; x < x1; x++) {
     row[x / 8] |= 1 << (x % 8);

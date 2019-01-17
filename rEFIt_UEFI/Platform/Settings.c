@@ -6932,14 +6932,7 @@ GetDevices ()
           AsciiSPrint ( hda->controller_name,64, "%a",
                        get_hda_controller_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId )
                        );
-//          AsciiSPrint ( hda->codec_name,64, "%a",
-//                       get_hda_codec_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId, 0, 0 )
-//                       );
 
-//temp
-//          AddAudioOutput(HandleArray[Index]);
-//          AudioList[AudioNum].Name = hda->codec_name;
-//          AudioList[AudioNum++].Handle = HandleArray[Index];
           
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");

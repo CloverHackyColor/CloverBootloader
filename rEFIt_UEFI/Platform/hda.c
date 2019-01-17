@@ -87,6 +87,7 @@ static hda_controller_devices know_hda_controller[] = {
   { HDA_INTEL_UNPT,  "Union Point"    /*, 0, 0 */ }, // Kabylake-H
   
   //10de  NVIDIA Corporation
+#if 0
   { HDA_NVIDIA_MCP51,  "MCP51" /*, 0, HDAC_QUIRK_MSI */ },
   { HDA_NVIDIA_MCP55,  "MCP55" /*, 0, HDAC_QUIRK_MSI */ },
   { HDA_NVIDIA_MCP61_1,  "MCP61" /*, 0, 0 */ },
@@ -101,6 +102,7 @@ static hda_controller_devices know_hda_controller[] = {
   { HDA_NVIDIA_MCP78_2,  "MCP78" /*, 0, HDAC_QUIRK_64BIT */ },
   { HDA_NVIDIA_MCP78_3,  "MCP78" /*, 0, HDAC_QUIRK_64BIT */ },
   { HDA_NVIDIA_MCP78_4,  "MCP78" /*, 0, HDAC_QUIRK_64BIT */ },
+#endif
   { HDA_NVIDIA_MCP79_1,  "MCP79" /*, 0, 0 */ },
   { HDA_NVIDIA_MCP79_2,  "MCP79" /*, 0, 0 */ },
   { HDA_NVIDIA_MCP79_3,  "MCP79" /*, 0, 0 */ },
@@ -205,7 +207,7 @@ static hda_controller_devices know_hda_controller[] = {
  *  Revision Id: 0x100100
  * --------------------------------
  */
-
+#if 0
 static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_CS4206, 0,    "CS4206" },
   { HDA_CODEC_CS4207, 0,    "CS4207" },
@@ -551,6 +553,7 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_VTXXXX, 0,          "VIA" },
 };
 #define HDACC_CODECS_LEN (sizeof(know_codecs) / sizeof(know_codecs[0]))
+#endif
 
 /*****************
  * Device Methods
@@ -607,7 +610,7 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
               controller_vendor_id, controller_device_id);
   return desc;
 }
-
+#if 0
 /* get Codec name */
 CHAR8 *get_hda_codec_name(UINT16 codec_vendor_id, UINT16 codec_device_id, UINT8 codec_revision_id, UINT8 codec_stepping_id)
 {
@@ -707,6 +710,9 @@ CHAR8 *get_hda_codec_name(UINT16 codec_vendor_id, UINT16 codec_device_id, UINT8 
   return desc;
 }
 
+#endif
+
+#if 0
 // executing HDA verb command using Immediate Command Input and Output Registers
 UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb)
 {
@@ -746,7 +752,9 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
   if (EFI_ERROR(Status)) return 0;
   return data32;
 }
+#endif
 
+#if 0
 UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo) {
   EFI_STATUS  Status;
   //UINT8    ver[2];
@@ -782,7 +790,9 @@ UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo) {
   // all ok - read Ids
   return HDA_IC_sendVerb(PciIo, 0/*codecAdr*/, 0/*nodeId*/, 0xF0000/*verb*/);
 }
+#endif
 
+#if 0
 UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId)
 {
   UINT32  layoutId = 0;
@@ -811,6 +821,7 @@ UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId)
   
   return layoutId;
 }
+#endif
 
 BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
 {
@@ -931,6 +942,8 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
       layoutId = (UINT32)gSettings.HDALayoutId;
       DBG(" setting specified layout-id=%d (0x%x)\n", layoutId, layoutId);
     } else {
+        layoutId = 12;
+        /*
       // use detection: layoutId=codec dviceId or use default 12
       codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
       if (codecId != 0) {
@@ -944,6 +957,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
         layoutId = 12;
       }
       //     DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
+      */
     }
     if (gSettings.NrAddProperties != 0xFFFE) {
       for (i = 0; i < gSettings.NrAddProperties; i++) {
