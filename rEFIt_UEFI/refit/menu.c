@@ -192,6 +192,7 @@ INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
 INTN OldChosenAudio;
+UINT8 DefaultAudioVolume;
 //INTN NewChosenTheme;
 INTN TextStyle;
 
@@ -233,6 +234,16 @@ CHAR16* ArgOptional[NUM_OPT] = {
   L"-alcoff",         //17
   L"-shikioff",       //18
   L"nvda_drv=1"       //19
+};
+
+CHAR8* OutputNames[] = {
+  "LineOut",
+  "Speaker",
+  "Headphones",
+  "SPDIF",
+  "Garniture",
+  "HDMI",
+  "Other"
 };
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
@@ -1281,7 +1292,7 @@ VOID ApplyInputs(VOID)
   i++; //119
   if (InputItems[i].Valid) {
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
-    DBG("Chosen output %d:%s\n", OldChosenAudio, AudioList[OldChosenAudio].Name);
+    DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, OutputNames[OldChosenAudio]);
 
     DevicePath = DevicePathFromHandle(AudioList[OldChosenAudio].Handle);
     if (DevicePath != NULL) {
@@ -2586,7 +2597,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
         DBG("open %d audio handle status=%r\n", OldChosenAudio, Status);
         if (!EFI_ERROR(Status)) {
-          StartupSoundPlay(SelfRootDir, L"sound.wav");
+          StartupSoundPlay(SelfRootDir, NULL, OldChosenAudio); //play embedded sound
         }
         break;
       case SCAN_F8:
@@ -4961,7 +4972,7 @@ REFIT_MENU_ENTRY  *SubMenuAudioPort()
 
   for (i = 0; i < AudioNum; i++) {
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"%s", AudioList[i].Name);
+    InputBootArgs->Entry.Title = PoolPrint(L"%s_%a", AudioList[i].Name, OutputNames[AudioList[i].Device]);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i;
     InputBootArgs->Item = &InputItems[119];

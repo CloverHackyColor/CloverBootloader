@@ -348,7 +348,7 @@ HdaCodecAudioIoSetupPlayback(
         case EfiAudioIoFreq11kHz:
             if (!(SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_11KHZ))
                 return EFI_UNSUPPORTED;
-            StreamBase44kHz = FALSE;
+            StreamBase44kHz = TRUE;
             StreamDiv = 4;
             StreamMult = 1;
             break;
@@ -366,7 +366,7 @@ HdaCodecAudioIoSetupPlayback(
         case EfiAudioIoFreq22kHz:
             if (!(SupportedRates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_22KHZ))
                 return EFI_UNSUPPORTED;
-            StreamBase44kHz = FALSE;
+            StreamBase44kHz = TRUE;
             StreamDiv = 2;
             StreamMult = 1;
             break;
@@ -490,7 +490,7 @@ HdaCodecAudioIoStartPlayback(
     EFI_STATUS Status;
     AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
     EFI_HDA_IO_PROTOCOL *HdaIo;
-    BOOLEAN StreamRunning;
+    BOOLEAN StreamRunning = FALSE;
 
     // If a parameter is invalid, return error.
     if ((This == NULL) || (Data == NULL) || (DataLength == 0))
@@ -498,6 +498,9 @@ HdaCodecAudioIoStartPlayback(
 
     // Get private data.
     AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
+  if (!AudioIoPrivateData || !AudioIoPrivateData->HdaCodecDev || !AudioIoPrivateData->HdaCodecDev->HdaIo) {
+    return EFI_NOT_FOUND;
+  }
     HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
 
     // Start stream.
@@ -557,6 +560,9 @@ HdaCodecAudioIoStartPlaybackAsync(
 
     // Get private data.
     AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
+  if (!AudioIoPrivateData || !AudioIoPrivateData->HdaCodecDev || !AudioIoPrivateData->HdaCodecDev->HdaIo) {
+    return EFI_NOT_FOUND;
+  }
     HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
 
     // Start stream.
@@ -589,6 +595,9 @@ HdaCodecAudioIoStopPlayback(
 
     // Get private data.
     AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
+  if (!AudioIoPrivateData || !AudioIoPrivateData->HdaCodecDev || !AudioIoPrivateData->HdaCodecDev->HdaIo) {
+    return EFI_NOT_FOUND;
+  }
     HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
 
     // Stop stream.

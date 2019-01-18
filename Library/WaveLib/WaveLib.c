@@ -29,13 +29,15 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiLib.h>
 #include <Library/WaveLib.h>
+#include <Library/MemoryAllocationLib.h>
 
 EFI_STATUS
 EFIAPI
 WaveGetFileData(
     IN  CONST VOID *FileData,
     IN  UINTN FileLength,
-    OUT WAVE_FILE_DATA *WaveFileData) {
+    OUT WAVE_FILE_DATA *WaveFileData)
+{
 
     // Create variables.
     UINT8 *FilePtr = NULL;
@@ -86,9 +88,9 @@ WaveGetFileData(
     ZeroMem(WaveFileData, sizeof(WAVE_FILE_DATA));
     WaveFileData->FileLength = FileLength;
     WaveFileData->DataLength = RiffChunk->Size;
-    WaveFileData->Format = (WAVE_FORMAT_DATA*)FormatChunk->Data;
+    WaveFileData->Format = (WAVE_FORMAT_DATA*)AllocateCopyPool(sizeof(WAVE_FORMAT_DATA), FormatChunk->Data);
     WaveFileData->FormatLength = FormatChunk->Size;
-    WaveFileData->Samples = DataChunk->Data;
+    WaveFileData->Samples = AllocateCopyPool(DataChunk->Size, DataChunk->Data);
     WaveFileData->SamplesLength = DataChunk->Size;
     return EFI_SUCCESS;
 }

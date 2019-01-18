@@ -92,6 +92,7 @@ INTN BCSMargin = 11;
 BOOLEAN DayLight;
 
 
+
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
 
@@ -100,6 +101,7 @@ extern INTN                     ScrollButtonsHeight;
 extern INTN                     ScrollBarDecorationsHeight;
 extern INTN                     ScrollScrollDecorationsHeight;
 extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
+extern INTN                     OldChosenAudio;
 
 
 // global configuration with default values
@@ -4207,10 +4209,10 @@ finish:
     FreeTag(ThemeDict);
 
     if (!DayLight) {
-      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav");
+      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav", OldChosenAudio);
     }
     if (EFI_ERROR(Status)) {
-      Status = StartupSoundPlay(ThemeDir, L"sound.wav");
+      Status = StartupSoundPlay(ThemeDir, L"sound.wav", OldChosenAudio);
     }
 
   }

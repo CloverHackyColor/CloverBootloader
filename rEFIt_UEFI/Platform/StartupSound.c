@@ -56,22 +56,16 @@ extern EFI_GUID gBootChimeVendorVariableGuid;
 
 EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
 
-EFI_STATUS
-GetStoredOutput(
-                         OUT EFI_AUDIO_IO_PROTOCOL **AudioIo,
-                         OUT UINTN *Index,
-                         OUT UINT8 *Volume);
-
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
+StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
 {
   EFI_STATUS Status  = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
   WAVE_FILE_DATA  WaveData;
-  UINTN           OutputIndex = 0;
-  UINT8           OutputVolume = 0;
+  UINTN           OutputIndex = OldChosenAudio;
+  UINT8           OutputVolume = DefaultAudioVolume;
   UINT16          *TempData;
 
   if (SoundFile) {
@@ -95,7 +89,6 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
     return Status;
   }
   MsgLog("  Channels: %u  Sample rate: %u Hz  Bits: %u\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
-
 
   EFI_AUDIO_IO_PROTOCOL_BITS bits;
   switch (WaveData.Format->BitsPerSample) {
@@ -154,10 +147,6 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
       return EFI_UNSUPPORTED;
   }
 
-  Status = GetStoredOutput(&AudioIo, &OutputIndex, &OutputVolume);
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
   DBG("output to channel %d with volume %d, len=%d\n", OutputIndex, OutputVolume, WaveData.SamplesLength);
   DBG(" sound channels=%d bits=%d freq=%d\n", WaveData.Format->Channels, WaveData.Format->BitsPerSample, WaveData.Format->SamplesPerSec);
 
@@ -166,15 +155,16 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
     goto DONE_ERROR;
   }
 
-  if ((freq == EfiAudioIoFreq8kHz) && (bits == EfiAudioIoBits8)) {
+  if ((freq == EfiAudioIoFreq8kHz) && (bits == EfiAudioIoBits16)) {
     //making conversion
     UINTN Len = WaveData.SamplesLength * 6; //8000<->48000
     INTN Ind, Out=0, Tact;
-    UINT16 Tmp, Next, Delta;
-    TempData = AllocateZeroPool(Len * sizeof(UINT16));
-    Tmp = (UINT16)(WaveData.Samples[0]) << 8;
-    for (Ind = 0; Ind < WaveData.SamplesLength * 2 - 1; Ind++) {
-      Next = (UINT16)(WaveData.Samples[Ind+1]) << 8;
+    INT16 Tmp, Next, Delta;
+    INT16 *Ptr = (INT16*)WaveData.Samples;
+    TempData = AllocateZeroPool(Len * sizeof(INT16));
+    Tmp = *(Ptr++);
+    for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
+      Next = *(Ptr++);
       Delta = (Next - Tmp) / 6;
       for (Tact = 0; Tact < 6; Tact++) {
         TempData[Out++] = Tmp;
@@ -182,10 +172,17 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
       }
       Tmp = Next;
     }
-    freq = EfiAudioIoFreq48kHz;;
-    bits = EfiAudioIoBits16;
+    freq = EfiAudioIoFreq48kHz;
+    WaveData.SamplesLength *= 6;
+    DBG("sound converted to 48kHz\n");
   } else {
     TempData = (UINT16*)WaveData.Samples;
+  }
+
+  if (AudioIo == NULL) {
+    Status = EFI_NOT_FOUND;
+    DBG("not found AudioIo\n");
+    goto DONE_ERROR;
   }
 
   // Setup playback.
@@ -217,7 +214,7 @@ DONE_ERROR:
 EFI_STATUS
 GetStoredOutput(
                 OUT EFI_AUDIO_IO_PROTOCOL **AudioIo,
-                OUT UINTN *Index,
+                OUT INTN *Index,
                 OUT UINT8 *Volume)
 {
   // Create variables.
@@ -308,6 +305,9 @@ GetStoredOutput(
   if (EFI_ERROR(Status)) {
     OutputVolume = 90; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
     Status = EFI_SUCCESS;
+  } else {
+    gSettings.AudioVolume = OutputVolume;
+//    DefaultAudioVolume = OutputVolume;
   }
   DBG("got volume %d\n", OutputVolume);
   // Success.
@@ -357,42 +357,18 @@ EFI_STATUS CheckSyncSound()
   return Status;
 }
 
-EFI_STATUS AddAudioOutput(EFI_HANDLE PciDevHandle)
-{
-  EFI_STATUS Status;
-  AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
-  EFI_AUDIO_IO_PROTOCOL *AudioIoTmp = NULL;
-  HDA_CODEC_DEV *HdaCodecDev;
-  DBG("search outputs for handle %x\n", PciDevHandle);
-  Status = gBS->HandleProtocol(PciDevHandle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIoTmp);
-  if (EFI_ERROR(Status)) {
-    DBG("dont handle AudioIo\n");
-    return Status;
-  }
-
-  AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(AudioIoTmp);
-  if (!AudioIoPrivateData) {
-    return EFI_NOT_STARTED;
-  }
-  HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
-
-  // Get output ports.
-  for (UINTN i = 0; i < HdaCodecDev->OutputPortsCount; i++) {
-//    HdaCodecDev->OutputPorts[i];
-    AudioList[AudioNum].Name = HdaCodecDev->Name;
-    AudioList[AudioNum].Handle = PciDevHandle;
-    AudioList[AudioNum++].Index = i;
-  }
-  
-  return Status;
-}
-
 VOID GetOutputs()
 {
   EFI_STATUS Status;
   // Audio I/O.
   EFI_HANDLE *AudioIoHandles = NULL;
   UINTN AudioIoHandleCount = 0;
+  AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
+  EFI_AUDIO_IO_PROTOCOL *AudioIoTmp = NULL;
+  HDA_CODEC_DEV *HdaCodecDev;
+  EFI_AUDIO_IO_PROTOCOL_PORT *HdaOutputPorts;
+  UINTN OutputPortsCount = 0;
+
   UINTN h;
 
   // Get Audio I/O protocols.
@@ -402,10 +378,35 @@ VOID GetOutputs()
     return;
   }
 
-  if (AudioNum == 0) {
-    for (h = 0; h < AudioIoHandleCount; h++) {
-      AddAudioOutput(AudioIoHandles[h]);
+  for (h = 0; h < AudioIoHandleCount; h++) {
+    Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (VOID**)&AudioIoTmp);
+    if (EFI_ERROR(Status)) {
+      DBG("dont handle AudioIo at %d\n", h);
+      continue;
     }
-    DBG("creating list with %d outputs\n", AudioNum);
+    // Get output ports.
+    Status = AudioIoTmp->GetOutputs(AudioIoTmp, &HdaOutputPorts, &OutputPortsCount);
+    if (EFI_ERROR(Status)) {
+      continue;
+    }
+    AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(AudioIoTmp);
+    if (!AudioIoPrivateData) {
+      continue;
+    }
+    HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
+    for (UINTN i = 0; i < OutputPortsCount; i++) {
+      //    HdaCodecDev->OutputPorts[i];
+      AudioList[AudioNum].Name = HdaCodecDev->Name;
+      AudioList[AudioNum].Handle = AudioIoHandles[h];
+      AudioList[AudioNum].Device = HdaOutputPorts[i].Device;
+      AudioList[AudioNum++].Index = i;
+    }
+
+
+  }
+
+  Status = GetStoredOutput(&AudioIo, &OldChosenAudio, &DefaultAudioVolume);
+  if (EFI_ERROR(Status)) {
+    DBG("no stored audio parameters\n");
   }
 }

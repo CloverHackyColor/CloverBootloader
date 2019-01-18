@@ -29,8 +29,8 @@ VOID
 EFIAPI
 HdaControllerStreamPollTimerHandler(
     IN EFI_EVENT Event,
-    IN VOID *Context) {
-
+    IN VOID *Context)
+{
     // Create variables.
     EFI_STATUS Status;
     HDA_STREAM *HdaStream = (HDA_STREAM*)Context;
@@ -117,7 +117,8 @@ CLEAR_BIT:
 EFI_STATUS
 EFIAPI
 HdaControllerInitPciHw(
-    IN HDA_CONTROLLER_DEV *HdaControllerDev) {
+    IN HDA_CONTROLLER_DEV *HdaControllerDev)
+{
     DEBUG((DEBUG_INFO, "HdaControllerInitPciHw(): start\n"));
 
     // Create variables.
@@ -211,7 +212,8 @@ HdaControllerInitPciHw(
 VOID
 EFIAPI
 HdaControllerGetName(
-    IN HDA_CONTROLLER_DEV *HdaControllerDev) {
+    IN HDA_CONTROLLER_DEV *HdaControllerDev)
+{
     DEBUG((DEBUG_INFO, "HdaControllerGetName(): start\n"));
 
     // Try to match controller name.
@@ -244,7 +246,8 @@ HdaControllerGetName(
 EFI_STATUS
 EFIAPI
 HdaControllerReset(
-    IN HDA_CONTROLLER_DEV *HdaControllerDev) {
+    IN HDA_CONTROLLER_DEV *HdaControllerDev)
+{
     DEBUG((DEBUG_INFO, "HdaControllerReset(): start\n"));
 
     // Create variables.
@@ -704,7 +707,8 @@ EFIAPI
 HdaControllerDriverBindingStart(
     IN EFI_DRIVER_BINDING_PROTOCOL *This,
     IN EFI_HANDLE ControllerHandle,
-    IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL) {
+    IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL)
+{
     DEBUG((DEBUG_INFO, "HdaControllerDriverBindingStart(): start\n"));
 
     // Create variables.
@@ -811,7 +815,8 @@ HdaControllerDriverBindingStop(
     IN EFI_DRIVER_BINDING_PROTOCOL *This,
     IN EFI_HANDLE ControllerHandle,
     IN UINTN NumberOfChildren,
-    IN EFI_HANDLE *ChildHandleBuffer OPTIONAL) {
+    IN EFI_HANDLE *ChildHandleBuffer OPTIONAL)
+{
     DEBUG((DEBUG_INFO, "HdaControllerDriverBindingStop(): start\n"));
     // Create variables.
     EFI_STATUS Status;

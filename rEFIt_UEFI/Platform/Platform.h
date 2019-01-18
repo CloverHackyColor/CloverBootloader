@@ -1495,6 +1495,7 @@ typedef struct {
 //  CHAR8           *LineName;
   INTN            Index;
   EFI_HANDLE      Handle;
+  EFI_AUDIO_IO_PROTOCOL_DEVICE Device;
 } HDA_OUTPUTS;
 
 typedef struct {
@@ -1652,6 +1653,7 @@ extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
 extern INTN                            OldChosenAudio;
+extern UINT8                            DefaultAudioVolume;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64                          BiosDsdt;
@@ -1858,7 +1860,7 @@ InitTheme (
   );
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile);
+StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index);
 
 VOID GetOutputs();
 
