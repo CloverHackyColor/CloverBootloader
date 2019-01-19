@@ -33,7 +33,7 @@
 extern BOOLEAN DayLight;
 extern UINTN                           AudioNum;
 extern HDA_OUTPUTS                     AudioList[20];
-extern UINT8 *EmbeddedSound;
+extern UINT8 EmbeddedSound[];
 extern UINTN EmbeddedSoundLength;
 
 
@@ -66,26 +66,24 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
   WAVE_FILE_DATA  WaveData;
   UINTN           OutputIndex = OldChosenAudio;
   UINT8           OutputVolume = DefaultAudioVolume;
-  UINT16          *TempData;
+  UINT16          *TempData = NULL;
 
   if (SoundFile) {
     Status = egLoadFile(Dir, SoundFile, &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
-      //    Status = egLoadFile(SelfRootDir, SoundFile, &FileData, &FileDataLength);
-      //    if (EFI_ERROR(Status)) {
-      DBG("file sound not found\n");
-      return Status;
-      //    }
+      DBG("file sound read: %r\n", Status);
     }
-  } else {
+  }
+  if (EFI_ERROR(Status)) {
     FileData = EmbeddedSound;
     FileDataLength = EmbeddedSoundLength;
     DBG("got embedded sound\n");
   }
 
+  WaveData.Samples = NULL;
   Status = WaveGetFileData(FileData, (UINT32)FileDataLength, &WaveData);
   if (EFI_ERROR(Status)) {
-    MsgLog(" wrong sound file Status=%r\n", Status);
+    MsgLog(" wrong sound file, wave status=%r\n", Status);
     return Status;
   }
   MsgLog("  Channels: %u  Sample rate: %u Hz  Bits: %u\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
@@ -161,6 +159,11 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
     INTN Ind, Out=0, Tact;
     INT16 Tmp, Next, Delta;
     INT16 *Ptr = (INT16*)WaveData.Samples;
+    if (!Ptr) {
+      Status = EFI_NOT_FOUND;
+      DBG("not found wave data\n");
+      goto DONE_ERROR;
+    }
     TempData = AllocateZeroPool(Len * sizeof(INT16));
     Tmp = *(Ptr++);
     for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
@@ -179,9 +182,9 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
     TempData = (UINT16*)WaveData.Samples;
   }
 
-  if (AudioIo == NULL) {
+  if (!AudioIo) {
     Status = EFI_NOT_FOUND;
-    DBG("not found AudioIo\n");
+    DBG("not found AudioIo to play\n");
     goto DONE_ERROR;
   }
 
@@ -205,17 +208,14 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
   }
 
 DONE_ERROR:
-  if (FileData) {
+  if (FileData && SoundFile) {  //dont free embedded sound
     FreePool(FileData);
   }
   return Status;
 }
 
 EFI_STATUS
-GetStoredOutput(
-                OUT EFI_AUDIO_IO_PROTOCOL **AudioIo,
-                OUT INTN *Index,
-                OUT UINT8 *Volume)
+GetStoredOutput()
 {
   // Create variables.
   EFI_STATUS Status;
@@ -287,7 +287,7 @@ GetStoredOutput(
   // If the Audio I/O variable is still null, we couldn't find it.
   if (AudioIoProto == NULL) {
     Status = EFI_NOT_FOUND;
-    DBG("not found AudioIo\n");
+    DBG("not found AudioIo in nvram\n");
     goto DONE;
   }
 
@@ -304,16 +304,14 @@ GetStoredOutput(
                             &OutputVolumeSize, &OutputVolume);
   if (EFI_ERROR(Status)) {
     OutputVolume = 90; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
-    Status = EFI_SUCCESS;
   } else {
     gSettings.AudioVolume = OutputVolume;
-//    DefaultAudioVolume = OutputVolume;
   }
   DBG("got volume %d\n", OutputVolume);
-  // Success.
-  *AudioIo = AudioIoProto;
-  *Index = OutputPortIndex;
-  *Volume = OutputVolume;
+  // Success. Assign global variables
+  AudioIo = AudioIoProto;
+  OldChosenAudio = OutputPortIndex;
+  DefaultAudioVolume = OutputVolume;
   Status = EFI_SUCCESS;
 
 DONE:
@@ -366,7 +364,7 @@ VOID GetOutputs()
   AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
   EFI_AUDIO_IO_PROTOCOL *AudioIoTmp = NULL;
   HDA_CODEC_DEV *HdaCodecDev;
-  EFI_AUDIO_IO_PROTOCOL_PORT *HdaOutputPorts;
+  EFI_AUDIO_IO_PROTOCOL_PORT *HdaOutputPorts = NULL;
   UINTN OutputPortsCount = 0;
 
   UINTN h;
@@ -401,11 +399,9 @@ VOID GetOutputs()
       AudioList[AudioNum].Device = HdaOutputPorts[i].Device;
       AudioList[AudioNum++].Index = i;
     }
-
-
   }
 
-  Status = GetStoredOutput(&AudioIo, &OldChosenAudio, &DefaultAudioVolume);
+  Status = GetStoredOutput();
   if (EFI_ERROR(Status)) {
     DBG("no stored audio parameters\n");
   }

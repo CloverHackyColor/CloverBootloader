@@ -4031,8 +4031,6 @@ InitTheme(
     mainParser = NULL;
   }
 
-  AudioIo = NULL;
-
   row0TileSize = 144;
   row1TileSize = 64;
   if (FontImage != NULL) {
