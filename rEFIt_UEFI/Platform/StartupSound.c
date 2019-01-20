@@ -303,15 +303,14 @@ GetStoredOutput()
   Status = gRT->GetVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid, NULL,
                             &OutputVolumeSize, &OutputVolume);
   if (EFI_ERROR(Status)) {
-    OutputVolume = 90; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
+    OutputVolume = DefaultAudioVolume; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
   } else {
-    gSettings.AudioVolume = OutputVolume;
+    DefaultAudioVolume = OutputVolume;
   }
   DBG("got volume %d\n", OutputVolume);
   // Success. Assign global variables
   AudioIo = AudioIoProto;
   OldChosenAudio = OutputPortIndex;
-  DefaultAudioVolume = OutputVolume;
   Status = EFI_SUCCESS;
 
 DONE:

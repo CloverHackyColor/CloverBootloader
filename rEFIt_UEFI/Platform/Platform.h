@@ -1192,7 +1192,7 @@ typedef struct {
 
   //other
   UINT32                  IntelMaxValue;
-  UINT32                  AudioVolume;
+//  UINT32                  AudioVolume;
 
   // boot.efi
   UINT32 OptionsBits;
