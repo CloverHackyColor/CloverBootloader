@@ -71,10 +71,10 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
   if (SoundFile) {
     Status = egLoadFile(Dir, SoundFile, &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
-      DBG("file sound read: %r\n", Status);
+      DBG("file sound read: %s %r\n", SoundFile, Status);
+      return Status;
     }
-  }
-  if (EFI_ERROR(Status)) {
+  } else {
     FileData = EmbeddedSound;
     FileDataLength = EmbeddedSoundLength;
     DBG("got embedded sound\n");
