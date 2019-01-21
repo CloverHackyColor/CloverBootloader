@@ -1301,13 +1301,19 @@ VOID ApplyInputs(VOID)
                        GetDevicePathSize(DevicePath), (UINT8 *)DevicePath);
       SetNvramVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                       1, (UINT8 *)(AudioList[OldChosenAudio].Index));
+                       1, (UINT8 *)&(AudioList[OldChosenAudio].Index));
 
     }
   }
   i++; //120
   if (InputItems[i].Valid) {
-    DefaultAudioVolume = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
+    DefaultAudioVolume = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
+    if (DefaultAudioVolume > 100)
+    {
+        // correct wrong input
+        DefaultAudioVolume = 90;
+        UnicodeSPrint(InputItems[i].SValue, 16, L"%04d", DefaultAudioVolume);
+    }
     SetNvramVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid,
                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                      1, &DefaultAudioVolume);
@@ -2594,6 +2600,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
 */
       case SCAN_F7:
+        if (OldChosenAudio > AudioNum) {
+              OldChosenAudio = 0; //security correction
+        }
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
         DBG("open %d audio handle status=%r\n", OldChosenAudio, Status);
         if (!EFI_ERROR(Status)) {
