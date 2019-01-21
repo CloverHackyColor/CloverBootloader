@@ -337,7 +337,7 @@ HdaControllerHdaIoStartStream(
 
     // Stream.
     HDA_STREAM *HdaStream;
-    UINT8 HdaStreamId;
+    UINT8 HdaStreamId = 0;
     UINT16 HdaStreamSts;
     UINT32 HdaStreamDmaPos;
     UINTN HdaStreamDmaRemainingLength;

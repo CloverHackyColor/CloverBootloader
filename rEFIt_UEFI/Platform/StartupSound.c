@@ -292,6 +292,7 @@ GetStoredOutput()
   }
 
   // Get stored device index.
+  OutputPortIndex = 0;
   Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
                             &OutputPortIndexSize, &OutputPortIndex);
   if (EFI_ERROR(Status)) {
@@ -300,6 +301,7 @@ GetStoredOutput()
   }
   DBG("got index=%d\n", OutputPortIndex);
   // Get stored volume. If this fails, just use the max.
+  OutputVolume = DefaultAudioVolume;
   Status = gRT->GetVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid, NULL,
                             &OutputVolumeSize, &OutputVolume);
   if (EFI_ERROR(Status)) {
@@ -333,13 +335,10 @@ EFI_STATUS CheckSyncSound()
 
   // Get private data.
   AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(AudioIo);
-  if (!AudioIoPrivateData) {
+  if (!AudioIoPrivateData || !AudioIoPrivateData->HdaCodecDev || !AudioIoPrivateData->HdaCodecDev->HdaIo) {
     return EFI_NOT_STARTED;
   }
   HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
-  if (!HdaIo) {
-    return EFI_NOT_STARTED;
-  }
 
   Status = HdaIo->GetStream(HdaIo, EfiHdaIoTypeOutput, &StreamRunning);
   if (EFI_ERROR(Status) && StreamRunning) {

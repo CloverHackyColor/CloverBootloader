@@ -192,7 +192,7 @@ INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
 INTN OldChosenAudio;
-UINT8 DefaultAudioVolume;
+UINT8 DefaultAudioVolume = 70;
 //INTN NewChosenTheme;
 INTN TextStyle;
 
@@ -1308,8 +1308,7 @@ VOID ApplyInputs(VOID)
   i++; //120
   if (InputItems[i].Valid) {
     DefaultAudioVolume = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
-    if (DefaultAudioVolume > 100)
-    {
+    if (DefaultAudioVolume > 100) {
         // correct wrong input
         DefaultAudioVolume = 90;
         UnicodeSPrint(InputItems[i].SValue, 16, L"%04d", DefaultAudioVolume);
