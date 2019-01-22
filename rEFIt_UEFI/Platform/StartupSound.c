@@ -245,11 +245,16 @@ GetStoredOutput()
     goto DONE;
   }
   DBG("found %d handles with audio\n", AudioIoHandleCount);
-  // Get stored device path size.
-  StoredDevicePath = GetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid, NULL, &StoredDevicePathSize);
+  // Get stored device path size. First from AppleBootGuid
+  StoredDevicePath = GetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid, NULL, &StoredDevicePathSize);
   if (!StoredDevicePath) {
-    MsgLog("No AudioIoDevice, status=%r\n", Status);
-    goto DONE;
+    // second attempt with BootChimeGuid
+    StoredDevicePath = GetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid, NULL, &StoredDevicePathSize);
+    if (!StoredDevicePath) {
+      MsgLog("No AudioIoDevice stored\n");
+      Status = EFI_NOT_FOUND;
+      goto DONE;
+    }
   }
 
   //we have to convert str->data if happen
@@ -293,21 +298,29 @@ GetStoredOutput()
 
   // Get stored device index.
   OutputPortIndex = 0;
-  Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
+  Status = gRT->GetVariable(L"Clover.SoundIndex", &gEfiAppleBootGuid, NULL,
                             &OutputPortIndexSize, &OutputPortIndex);
   if (EFI_ERROR(Status)) {
-    MsgLog("Bad output index, status=%r\n", Status);
-    goto DONE;
+    Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
+                              &OutputPortIndexSize, &OutputPortIndex);
+    if (EFI_ERROR(Status)) {
+      MsgLog("Bad output index, status=%r\n", Status);
+      goto DONE;
+    }
   }
   DBG("got index=%d\n", OutputPortIndex);
   // Get stored volume. If this fails, just use the max.
   OutputVolume = DefaultAudioVolume;
-  Status = gRT->GetVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid, NULL,
+  Status = gRT->GetVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid, NULL,
                             &OutputVolumeSize, &OutputVolume);
   if (EFI_ERROR(Status)) {
-    OutputVolume = DefaultAudioVolume; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
-  } else {
-    DefaultAudioVolume = OutputVolume;
+    Status = gRT->GetVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid, NULL,
+                              &OutputVolumeSize, &OutputVolume);
+    if (EFI_ERROR(Status)) {
+      OutputVolume = DefaultAudioVolume; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
+    } else {
+      DefaultAudioVolume = OutputVolume;
+    }
   }
   DBG("got volume %d\n", OutputVolume);
   // Success. Assign global variables

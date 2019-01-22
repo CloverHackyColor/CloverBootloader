@@ -1292,16 +1292,17 @@ VOID ApplyInputs(VOID)
   i++; //119
   if (InputItems[i].Valid) {
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
+    UINT8 TmpIndex = OldChosenAudio & 0xFF;
     DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, OutputNames[OldChosenAudio]);
 
     DevicePath = DevicePathFromHandle(AudioList[OldChosenAudio].Handle);
     if (DevicePath != NULL) {
-      SetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid,
+      SetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                        GetDevicePathSize(DevicePath), (UINT8 *)DevicePath);
-      SetNvramVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid,
+      SetNvramVariable(L"Clover.SoundIndex", &gEfiAppleBootGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                       1, (UINT8 *)&(AudioList[OldChosenAudio].Index));
+                       1, (UINT8 *)&TmpIndex);
 
     }
   }
@@ -1313,7 +1314,7 @@ VOID ApplyInputs(VOID)
         DefaultAudioVolume = 90;
         UnicodeSPrint(InputItems[i].SValue, 16, L"%04d", DefaultAudioVolume);
     }
-    SetNvramVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid,
+    SetNvramVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid,
                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                      1, &DefaultAudioVolume);
   }
