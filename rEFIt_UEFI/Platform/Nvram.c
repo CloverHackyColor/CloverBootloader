@@ -42,13 +42,18 @@ CHAR16                   *gEfiBootLoaderPath;
 // contains GPT GUID from gEfiBootDeviceData or gBootCampHD (if exists)
 EFI_GUID                 *gEfiBootDeviceGuid;
 
-// Lilu/Ozmosis GUIDs
+// Lilu
 EFI_GUID    mLiluNormalVariableGuid     = { 0x2660DD78, 0x81D2, 0x419D, { 0x81, 0x38, 0x7B, 0x1F, 0x36, 0x3F, 0x79, 0xA6 } };
 EFI_GUID    mLiluReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
 EFI_GUID    mLiluWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
+
+// Ozmosis
 EFI_GUID    mOzmosisProprietary1Guid    = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
 EFI_GUID    mOzmosisProprietary2Guid    = { 0x1F8E0C02, 0x58A9, 0x4E34, { 0xAE, 0x22, 0x2B, 0x63, 0x74, 0x5F, 0xA1, 0x01 } };
 EFI_GUID    mOzmosisProprietary3Guid    = { 0x9480E8A1, 0x1793, 0x46C9, { 0x91, 0xD8, 0x11, 0x08, 0xDB, 0xA4, 0x73, 0x1C } };
+
+// BootChime
+extern EFI_GUID gBootChimeVendorVariableGuid;
 
 APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
 
@@ -58,7 +63,7 @@ typedef struct NVRAM_DATA
   EFI_GUID    *Guid;
 } NVRAM_DATA;
 
-
+CONST NVRAM_DATA ResetNvramData[] = {
   // Hibernationfixup Variables
   //{ L"Boot0082",           &gEfiGlobalVariableGuid }, { L"BootNext",       &gEfiGlobalVariableGuid },
   //{ L"IOHibernateRTCVariables", &gEfiAppleBootGuid }, { L"boot-image",     &gEfiAppleBootGuid },
@@ -92,8 +97,12 @@ typedef struct NVRAM_DATA
   //{ L"fakesmc-key-MSAc-ui16", &gEfiAppleBootGuid }, { L"fakesmc-key-MSWr-ui8",  &gEfiAppleBootGuid },
   //{ L"fakesmc-key-MSFW-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSPS-ui16", &gEfiAppleBootGuid },
   //{ L"fakesmc-key-#KEY-ui32", &gEfiAppleBootGuid },
-//  {NULL, NULL}
-//};
+
+  // BootChime Variables
+  { L"Device",  &gBootChimeVendorVariableGuid }, { L"Volume", &gBootChimeVendorVariableGuid },
+  { L"Index",   &gBootChimeVendorVariableGuid }
+};
+
 /** returns given time as miliseconds.
  *  assumes 31 days per month, so it's not correct,
  *  but is enough for basic checks.
@@ -254,7 +263,7 @@ ResetEmuNvram ()
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINTN           VolumeIndex;
-  //UINTN           Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
+  UINTN           Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
   REFIT_VOLUME    *Volume;
   EFI_FILE_HANDLE FileHandle;
 
@@ -285,17 +294,16 @@ ResetEmuNvram ()
      }
   }
 
-  // Leave for the future
   //DBG("ResetEmuNvram: cleanup NVRAM variables\n");
     
-  /*for (Index = 0; Index < ResetNvramDataCount; Index++) {
+  for (Index = 0; Index < ResetNvramDataCount; Index++) {
     Status = DeleteNvramVariable(ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);
     if (EFI_ERROR(Status)) {
-      DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
+      //DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
     } else {
-      DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
+      //DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
     }
-  }*/
+  }
 
   return Status;
 }
@@ -332,6 +340,10 @@ IsDeletableVariable (
   } else if (CompareGuid (Guid, &mOzmosisProprietary1Guid) ||
       CompareGuid (Guid, &mOzmosisProprietary2Guid) ||
       CompareGuid (Guid, &mOzmosisProprietary3Guid)) {
+    return TRUE;
+
+  // BootChime
+  } else if (CompareGuid (Guid, &gBootChimeVendorVariableGuid)) {
     return TRUE;
   }
 
