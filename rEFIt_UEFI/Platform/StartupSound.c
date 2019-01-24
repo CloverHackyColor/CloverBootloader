@@ -316,11 +316,16 @@ GetStoredOutput()
     Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
                               &OutputPortIndexSize, &OutputPortIndex);
     if (EFI_ERROR(Status)) {
-      MsgLog("Bad output index, status=%r\n", Status);
-      goto DONE;
+      MsgLog("Bad output index, status=%r, set 0\n", Status);
+      OutputPortIndex = 0;
     }
   }
+  OutputPortIndex &= 0x2F;
   DBG("got index=%d\n", OutputPortIndex);
+  if (OutputPortIndex > AudioNum) {
+    DBG("... but max=%d, so reset to 0\n", AudioNum);
+    OutputPortIndex = 0;
+  }
   // Get stored volume. If this fails, just use the max.
   OutputVolume = DefaultAudioVolume;
   Status = gRT->GetVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid, NULL,
@@ -330,10 +335,9 @@ GetStoredOutput()
                               &OutputVolumeSize, &OutputVolume);
     if (EFI_ERROR(Status)) {
       OutputVolume = DefaultAudioVolume; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;
-    } else {
-      DefaultAudioVolume = OutputVolume;
     }
   }
+  DefaultAudioVolume = OutputVolume;
   DBG("got volume %d\n", OutputVolume);
   // Success. Assign global variables
   AudioIo = AudioIoProto;
