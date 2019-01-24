@@ -1087,7 +1087,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
     Screen->CurrentFrame = 0;
     Screen->LastDraw = 0;
   } else {
-    DBG("not run anime\n");
+//    DBG("not run anime\n");
     Screen->AnimeRun = FALSE;
   }
 //  DBG("anime inited\n");

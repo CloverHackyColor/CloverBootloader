@@ -1860,7 +1860,7 @@ InitTheme (
   );
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index);
+StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile);
 
 VOID GetOutputs();
 

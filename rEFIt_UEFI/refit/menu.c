@@ -2606,7 +2606,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
         DBG("open %d audio handle status=%r\n", OldChosenAudio, Status);
         if (!EFI_ERROR(Status)) {
-          StartupSoundPlay(SelfRootDir, NULL, OldChosenAudio); //play embedded sound
+          StartupSoundPlay(SelfRootDir, NULL); //play embedded sound
         }
         break;
       case SCAN_F8:

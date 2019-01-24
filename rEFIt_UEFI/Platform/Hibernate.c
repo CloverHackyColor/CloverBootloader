@@ -986,8 +986,8 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   EFI_STATUS                  Status;
   UINT64                      SleepImageOffset;
   EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
-  UINTN                       Size;
-  VOID                        *Value;
+  UINTN                       Size = 0;
+  VOID                        *Value = NULL;
   AppleRTCHibernateVars       RtcVars;
   UINT8                       *VarData = NULL;
   REFIT_VOLUME                *SleepImageVolume;
@@ -1060,18 +1060,19 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
       RtcRawVars[Index] = SimpleRtcRead (Index + 128);
     }
     
-    HasHibernateInfoInRTC = RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
-    RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L';
+    HasHibernateInfoInRTC = (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
+    RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L');
     HasHibernateInfo = HasHibernateInfoInRTC;
     //
     // If RTC variables is still written to NVRAM (and RTC is broken).
     // Prior to 10.13.6.
     //
     Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
+    DBG("get IOHR variable status=%r, size=%d, RTC info=%d\n", Status, Size, HasHibernateInfoInRTC);
     if (!HasHibernateInfo && !EFI_ERROR (Status) && Size == sizeof (RtcVars)) {
       CopyMem (RtcRawVars, Value, sizeof (RtcVars));
-      HasHibernateInfo = RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
-      RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L';
+      HasHibernateInfo = (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
+      RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L');
     }
     
     //
@@ -1093,6 +1094,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
                         EFI_VARIABLE_BOOTSERVICE_ACCESS, sizeof (RtcVars.wiredCryptKey), RtcVars.wiredCryptKey);
       gRT->SetVariable (L"boot-signature", &gEfiAppleBootGuid,
                         EFI_VARIABLE_BOOTSERVICE_ACCESS, sizeof (RtcVars.booterSignature), RtcVars.booterSignature);
+      DBG("variables boot-image-key and boot-signature saved\n");
     }
     
     //
@@ -1123,6 +1125,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   // if IOHibernateRTCVariables exists (NVRAM working), then copy it to boot-switch-vars
   // else (no NVRAM) set boot-switch-vars to dummy one
   //
+  Value = NULL;
   Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
   if (!EFI_ERROR (Status)) {
     DBG(" IOHibernateRTCVariables found - will be used as boot-switch-vars\n");

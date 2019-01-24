@@ -58,7 +58,7 @@ EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
 
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
+StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
 {
   EFI_STATUS Status  = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
@@ -157,7 +157,8 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
     //making conversion
     UINTN Len = WaveData.SamplesLength * 6; //8000<->48000
     INTN Ind, Out=0, Tact;
-    INT16 Tmp, Next, Delta;
+    INT16 Tmp, Next;
+    float Delta;
     INT16 *Ptr = (INT16*)WaveData.Samples;
     if (!Ptr) {
       Status = EFI_NOT_FOUND;
@@ -168,16 +169,18 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
     Tmp = *(Ptr++);
     for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
       Next = *(Ptr++);
-      Delta = (Next - Tmp) / 6;
+      Delta = (Next - Tmp) / 6.f;
       for (Tact = 0; Tact < 6; Tact++) {
         TempData[Out++] = Tmp;
-        Tmp += Delta;
+        Tmp = (INT16)(Delta + Tmp + 0.5f);
       }
       Tmp = Next;
     }
     freq = EfiAudioIoFreq48kHz;
     WaveData.SamplesLength *= 6;
     DBG("sound converted to 48kHz\n");
+    FreePool(WaveData.Samples);
+    WaveData.Samples = (UINT8*)TempData;
   } else {
     TempData = (UINT16*)WaveData.Samples;
   }
@@ -189,18 +192,27 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile, INTN Index)
   }
 
   // Setup playback.
-  Status = AudioIo->SetupPlayback(AudioIo, OutputIndex, OutputVolume,
+  if (OutputIndex > AudioNum) {
+    OutputIndex = 0;
+    DBG("wrong index for Audio output\n");
+  }
+  Status = AudioIo->SetupPlayback(AudioIo, AudioList[OutputIndex].Index, OutputVolume,
                                   freq, bits, WaveData.Format->Channels);
   if (EFI_ERROR(Status)) {
     MsgLog("StartupSound: Error setting up playback: %r\n", Status);
     goto DONE_ERROR;
   }
-
+//  DBG("playback set\n");
   // Start playback.
   if (gSettings.PlayAsync) {
     Status = AudioIo->StartPlaybackAsync(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0,                                       NULL, NULL);
+//    DBG("async started, status=%r\n", Status);
   } else {
     Status = AudioIo->StartPlayback(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0);
+//    DBG("sync started, status=%r\n", Status);
+    if (!EFI_ERROR(Status)) {
+      FreePool(TempData);
+    }
   }
 
   if (EFI_ERROR(Status)) {
@@ -388,6 +400,7 @@ VOID GetOutputs()
   }
 
   for (h = 0; h < AudioIoHandleCount; h++) {
+    UINTN i;
     Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (VOID**)&AudioIoTmp);
     if (EFI_ERROR(Status)) {
       DBG("dont handle AudioIo at %d\n", h);
@@ -403,7 +416,7 @@ VOID GetOutputs()
       continue;
     }
     HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
-    for (UINTN i = 0; i < OutputPortsCount; i++) {
+    for (i = 0; i < OutputPortsCount; i++) {
       //    HdaCodecDev->OutputPorts[i];
       AudioList[AudioNum].Name = HdaCodecDev->Name;
       AudioList[AudioNum].Handle = AudioIoHandles[h];

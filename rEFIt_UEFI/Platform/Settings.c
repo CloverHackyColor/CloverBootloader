@@ -4195,7 +4195,7 @@ finish:
     GlobalConfig.CharWidth = 9;
     GlobalConfig.HideBadges = HDBADGES_SHOW;
     GlobalConfig.BadgeScale = 16;
-      Status = StartupSoundPlay(ThemeDir, NULL, OldChosenAudio);
+      Status = StartupSoundPlay(ThemeDir, NULL);
   } else { // theme loaded successfully
     // read theme settings
     if (!GlobalConfig.TypeSVG) {
@@ -4210,12 +4210,12 @@ finish:
     FreeTag(ThemeDict);
 
     if (!DayLight) {
-      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav", OldChosenAudio);
+      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav");
       if (EFI_ERROR(Status)) {
-        Status = StartupSoundPlay(ThemeDir, L"sound.wav", OldChosenAudio);
+        Status = StartupSoundPlay(ThemeDir, L"sound.wav");
       }
     } else {
-      Status = StartupSoundPlay(ThemeDir, L"sound.wav", OldChosenAudio);
+      Status = StartupSoundPlay(ThemeDir, L"sound.wav");
     }
 
   }
