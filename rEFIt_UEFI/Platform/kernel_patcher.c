@@ -623,14 +623,14 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         bytes[i+4] == 0x3C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
         bytes[i+45] == 0x65 && bytes[i+46] == 0x8B && bytes[i+47] == 0x04 && bytes[i+48] == 0x25 &&
         bytes[i+49] == 0x3C && bytes[i+50] == 0x00 && bytes[i+51] == 0x00 && bytes[i+52] == 0x00) {
-        patchLocation = i+40;
+      patchLocation = i+40;
       DBG("Found Snow Leopard Lapic panic at 0x%08x\n", patchLocation);
       break;
     } else if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0x8B && bytes[i+2]  == 0x04 && bytes[i+3]  == 0x25 &&
                bytes[i+4]  == 0x14 && bytes[i+5]  == 0x00 && bytes[i+6]  == 0x00 && bytes[i+7]  == 0x00 &&
                bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
                bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
-               patchLocation = i+30;
+      patchLocation = i+30;
       DBG("Found Lion/Mountain Lion Lapic panic at 0x%08x\n", patchLocation);
       break;
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
@@ -672,13 +672,21 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       patchLocation = i+1396;
       DBG("Found High Sierra Lapic panic at 0x%08x\n", patchLocation);
       break;
-    // PMheart: 10.14.DP1
+    // PMheart: 10.14 - 10.14.3
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+1396] == 0x65 && bytes[i+1397] == 0x8B && bytes[i+1398] == 0x0C && bytes[i+1399] == 0x25 &&
                bytes[i+1400] == 0x1C && bytes[i+1401] == 0x00 && bytes[i+1402] == 0x00 && bytes[i+1403] == 0x00) {
       patchLocation = i+1385;
-      DBG("Found Mojave Lapic panic at 0x%08x\n", patchLocation);
+      DBG("Found Mojave (10.14 - 10.14.3) Lapic panic at 0x%08x\n", patchLocation);
+      break;
+    // PMheart: 10.14.4+
+    } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
+               bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
+               bytes[i+1405] == 0x65 && bytes[i+1406] == 0x8B && bytes[i+1407] == 0x0C && bytes[i+1408] == 0x25 &&
+               bytes[i+1409] == 0x1C && bytes[i+1410] == 0x00 && bytes[i+1411] == 0x00 && bytes[i+1412] == 0x00) {
+      patchLocation = i+1394;
+      DBG("Found Mojave (10.14.4+) Lapic panic at 0x%08x\n", patchLocation);
       break;
     }
   }

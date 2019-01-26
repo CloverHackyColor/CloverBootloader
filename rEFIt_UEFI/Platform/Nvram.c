@@ -64,19 +64,19 @@ typedef struct NVRAM_DATA
 } NVRAM_DATA;
 
 CONST NVRAM_DATA ResetNvramData[] = {
-  // Hibernationfixup Variables
+  // Hibernationfixup variables
   //{ L"Boot0082",           &gEfiGlobalVariableGuid }, { L"BootNext",       &gEfiGlobalVariableGuid },
   //{ L"IOHibernateRTCVariables", &gEfiAppleBootGuid }, { L"boot-image",     &gEfiAppleBootGuid },
   //{ L"boot-image-key",          &gEfiAppleBootGuid }, { L"boot-signature", &gEfiAppleBootGuid },
   //{ L"boot-switch-vars",        &gEfiAppleBootGuid },
 
-  // Clover Variables
+  // Clover variables stored in macOS
   //{ L"Clover.BackupDirOnDestVol", &gEfiAppleBootGuid }, { L"Clover.KeepBackupLimit", &gEfiAppleBootGuid },
   //{ L"Clover.LogEveryBoot",       &gEfiAppleBootGuid }, { L"Clover.LogLineCount",    &gEfiAppleBootGuid },
   //{ L"Clover.MountEFI",           &gEfiAppleBootGuid }, { L"Clover.NVRamDisk",       &gEfiAppleBootGuid },
   //{ L"Clover.Theme",              &gEfiAppleBootGuid },
 
-  // Non-volatile Variables
+  // Non-volatile variables
   //{ L"fmm-computer-name",    &gEfiAppleBootGuid }, { L"bluetoothActiveControllerInfo", &gEfiAppleBootGuid },
   //{ L"backlight-level",      &gEfiAppleBootGuid }, { L"bootercfg",               &gEfiAppleBootGuid },
   //{ L"csr-active-config",    &gEfiAppleBootGuid }, { L"platform-uuid",           &gEfiAppleBootGuid },
@@ -87,7 +87,7 @@ CONST NVRAM_DATA ResetNvramData[] = {
   //{ L"AAPL,PanicInfoLog",    &gEfiAppleBootGuid }, { L"AAPL,PathProperties0000", &gEfiAppleBootGuid },
   //{ L"boot-args",            &gEfiAppleBootGuid },
 
-  // FakeSMC Variables
+  // FakeSMC variables
   //{ L"fakesmc-key-$Num-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-$Adr-ui32", &gEfiAppleBootGuid },
   //{ L"fakesmc-key-RMde-char", &gEfiAppleBootGuid }, { L"fakesmc-key-RPlt-ch8*", &gEfiAppleBootGuid },
   //{ L"fakesmc-key-RBr -ch8*", &gEfiAppleBootGuid }, { L"fakesmc-key-EPCI-ui32", &gEfiAppleBootGuid },
@@ -98,7 +98,9 @@ CONST NVRAM_DATA ResetNvramData[] = {
   //{ L"fakesmc-key-MSFW-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSPS-ui16", &gEfiAppleBootGuid },
   //{ L"fakesmc-key-#KEY-ui32", &gEfiAppleBootGuid },
 
-  // BootChime Variables
+  // BootChime variables stored in Clover GUI
+  { L"Clover.SoundDevice", &gEfiAppleBootGuid }, { L"Clover.SoundVolume", &gEfiAppleBootGuid },
+  { L"Clover.SoundIndex",  &gEfiAppleBootGuid },
   { L"Device",  &gBootChimeVendorVariableGuid }, { L"Volume", &gBootChimeVendorVariableGuid },
   { L"Index",   &gBootChimeVendorVariableGuid }
 };
@@ -314,7 +316,6 @@ IsDeletableVariable (
   IN EFI_GUID  *Guid
   )
 {
-
   // Apple GUIDs
   if (CompareGuid (Guid, &gEfiAppleVendorGuid) ||
       CompareGuid (Guid, &gEfiAppleBootGuid)) {
