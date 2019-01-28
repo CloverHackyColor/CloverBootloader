@@ -71,12 +71,13 @@ HdaControllerHdaIoSendCommand(
     IN  EFI_HDA_IO_PROTOCOL *This,
     IN  UINT8 Node,
     IN  UINT32 Verb,
-    OUT UINT32 *Response) {
-
+    OUT UINT32 *Response)
+{
+   UINT32 Verba = Verb;
     // Create verb list with single item.
     EFI_HDA_IO_VERB_LIST HdaCodecVerbList;
     HdaCodecVerbList.Count = 1;
-    HdaCodecVerbList.Verbs = &Verb;
+    HdaCodecVerbList.Verbs = &Verba;
     HdaCodecVerbList.Responses = Response;
 
     // Call SendCommands().
@@ -98,7 +99,8 @@ EFIAPI
 HdaControllerHdaIoSendCommands(
     IN EFI_HDA_IO_PROTOCOL *This,
     IN UINT8 Node,
-    IN EFI_HDA_IO_VERB_LIST *Verbs) {
+    IN EFI_HDA_IO_VERB_LIST *Verbs)
+{
     // Create variables.
     HDA_IO_PRIVATE_DATA *HdaPrivateData;
 
@@ -117,7 +119,8 @@ HdaControllerHdaIoSetupStream(
     IN  EFI_HDA_IO_PROTOCOL *This,
     IN  EFI_HDA_IO_PROTOCOL_TYPE Type,
     IN  UINT16 Format,
-    OUT UINT8 *StreamId) {
+    OUT UINT8 *StreamId)
+{
     //DEBUG((DEBUG_INFO, "HdaControllerHdaIoSetupStream(): start\n"));
 
     // Create variables.
@@ -128,9 +131,10 @@ HdaControllerHdaIoSetupStream(
 
     // Stream.
     HDA_STREAM *HdaStream;
-    UINT16 HdaStreamFormat;
-    UINT8 HdaStreamId;
+    UINT16 HdaStreamFormat = 0;
+    UINT8 HdaStreamId = 0;
     EFI_TPL OldTpl = 0;
+  UINT8 i;
 
     // If a parameter is invalid, return error.
     if ((This == NULL) || (Type >= EfiHdaIoTypeMaximum) || (StreamId == NULL))
@@ -163,7 +167,7 @@ HdaControllerHdaIoSetupStream(
     OldTpl = gBS->RaiseTPL(TPL_HIGH_LEVEL);
 
     // Find and allocate stream ID.
-    for (UINT8 i = HDA_STREAM_ID_MIN; i <= HDA_STREAM_ID_MAX; i++) {
+    for (i = HDA_STREAM_ID_MIN; i <= HDA_STREAM_ID_MAX; i++) {
         if (!(HdaControllerDev->StreamIdMapping & (1 << i))) {
             HdaControllerDev->StreamIdMapping |= (1 << i);
             HdaStreamId = i;
@@ -186,7 +190,7 @@ HdaControllerHdaIoSetupStream(
     // Reset stream if format has changed.
     if (Format != HdaStreamFormat) {
         // Reset stream.
-        DEBUG((DEBUG_INFO, "HdaControllerHdaIoSetupStream(): format changed, resetting stream\n"));
+//        DEBUG((DEBUG_INFO, "HdaControllerHdaIoSetupStream(): format changed, resetting stream\n"));
         HdaControllerDev->DmaPositions[HdaStream->Index].Position = 0;
         Status = HdaControllerResetStream(HdaStream);
         if (EFI_ERROR(Status))
@@ -203,11 +207,11 @@ HdaControllerHdaIoSetupStream(
     //DEBUG((DEBUG_INFO, "HdaControllerHdaIoSetupStream(): setting format 0x%X\n", Format));
     Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR,
         HDA_REG_SDNFMT(HdaStream->Index), 1, &Format);
-    if (EFI_ERROR(Status))
-        goto DONE;
+//    if (EFI_ERROR(Status))
+//        goto DONE;
 
     // Stream is ready.
-    Status = EFI_SUCCESS;
+//    Status = EFI_SUCCESS;
 
 DONE:
     // Restore TPL if needed.
@@ -221,7 +225,8 @@ EFI_STATUS
 EFIAPI
 HdaControllerHdaIoCloseStream(
     IN EFI_HDA_IO_PROTOCOL *This,
-    IN EFI_HDA_IO_PROTOCOL_TYPE Type) {
+    IN EFI_HDA_IO_PROTOCOL_TYPE Type)
+{
     //DEBUG((DEBUG_INFO, "HdaControllerHdaIoCloseStream(): start\n"));
 
     // Create variables.
@@ -231,7 +236,7 @@ HdaControllerHdaIoCloseStream(
 
     // Stream.
     HDA_STREAM *HdaStream;
-    UINT8 HdaStreamId;
+    UINT8 HdaStreamId = 0;
     EFI_TPL OldTpl = 0;
 
     // If a parameter is invalid, return error.
@@ -276,7 +281,7 @@ HdaControllerHdaIoCloseStream(
     HdaControllerDev->StreamIdMapping &= ~(1 << HdaStreamId);
 
     // Stream closed successfully.
-    Status = EFI_SUCCESS;
+//    Status = EFI_SUCCESS; // already done
 
 DONE:
     // Restore TPL if needed.
@@ -291,7 +296,8 @@ EFIAPI
 HdaControllerHdaIoGetStream(
     IN  EFI_HDA_IO_PROTOCOL *This,
     IN  EFI_HDA_IO_PROTOCOL_TYPE Type,
-    OUT BOOLEAN *State) {
+    OUT BOOLEAN *State)
+{
     //DEBUG((DEBUG_INFO, "HdaControllerHdaIoGetStream(): start\n"));
 
     // Create variables.
@@ -326,7 +332,8 @@ HdaControllerHdaIoStartStream(
     IN EFI_HDA_IO_STREAM_CALLBACK Callback OPTIONAL,
     IN VOID *Context1 OPTIONAL,
     IN VOID *Context2 OPTIONAL,
-    IN VOID *Context3 OPTIONAL) {
+    IN VOID *Context3 OPTIONAL)
+{
     //DEBUG((DEBUG_INFO, "HdaControllerHdaIoStartStream(): start\n"));
 
     // Create variables.
@@ -380,8 +387,8 @@ HdaControllerHdaIoStartStream(
     HdaStreamCurrentBlock = HdaStreamDmaPos / HDA_BDL_BLOCKSIZE;
     HdaStreamNextBlock = HdaStreamCurrentBlock + 1;
     HdaStreamNextBlock %= HDA_BDL_ENTRY_COUNT;
-    DEBUG((DEBUG_INFO, "HdaControllerHdaIoStartStream(): stream %u DMA pos 0x%X\n",
-        HdaStream->Index, HdaStreamDmaPos));
+//    DEBUG((DEBUG_INFO, "HdaControllerHdaIoStartStream(): stream %u DMA pos 0x%X\n",
+//        HdaStream->Index, HdaStreamDmaPos));
 
     // Save pointer to buffer.
     HdaStream->BufferSource = Buffer;
@@ -393,43 +400,43 @@ HdaControllerHdaIoStartStream(
     HdaStream->CallbackContext3 = Context3;
 
     // Zero out buffer.
-    ZeroMem(HdaStream->BufferData, HDA_STREAM_BUF_SIZE);
+    gBS->SetMem(HdaStream->BufferData, HDA_STREAM_BUF_SIZE, 0);
 
     // Fill rest of current block.
     HdaStreamDmaRemainingLength = HDA_BDL_BLOCKSIZE - (HdaStreamDmaPos - (HdaStreamCurrentBlock * HDA_BDL_BLOCKSIZE));
     if ((HdaStream->BufferSourcePosition + HdaStreamDmaRemainingLength) > BufferLength)
         HdaStreamDmaRemainingLength = BufferLength;
-    CopyMem(HdaStream->BufferData + HdaStreamDmaPos, HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStreamDmaRemainingLength);
+    gBS->CopyMem(HdaStream->BufferData + HdaStreamDmaPos, HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStreamDmaRemainingLength);
     HdaStream->BufferSourcePosition += HdaStreamDmaRemainingLength;
-    DEBUG((DEBUG_INFO, "%u (0x%X) bytes written to 0x%X (block %u of %u)\n", HdaStreamDmaRemainingLength, HdaStreamDmaRemainingLength,
-        HdaStream->BufferData + HdaStreamDmaPos, HdaStreamCurrentBlock, HDA_BDL_ENTRY_COUNT));
+//    DEBUG((DEBUG_INFO, "%u (0x%X) bytes written to 0x%X (block %u of %u)\n", HdaStreamDmaRemainingLength, HdaStreamDmaRemainingLength,
+//        HdaStream->BufferData + HdaStreamDmaPos, HdaStreamCurrentBlock, HDA_BDL_ENTRY_COUNT));
 
     // Fill next block.
     if (HdaStream->BufferSourcePosition < BufferLength) {
         HdaStreamDmaRemainingLength = HDA_BDL_BLOCKSIZE;
         if ((HdaStream->BufferSourcePosition + HdaStreamDmaRemainingLength) > BufferLength)
             HdaStreamDmaRemainingLength = BufferLength;
-        CopyMem(HdaStream->BufferData + (HdaStreamNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStreamDmaRemainingLength);
+        gBS->CopyMem(HdaStream->BufferData + (HdaStreamNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStreamDmaRemainingLength);
         HdaStream->BufferSourcePosition += HdaStreamDmaRemainingLength;
-        DEBUG((DEBUG_INFO, "%u (0x%X) bytes written to 0x%X (block %u of %u)\n", HdaStreamDmaRemainingLength, HdaStreamDmaRemainingLength,
-            HdaStream->BufferData + (HdaStreamNextBlock * HDA_BDL_BLOCKSIZE), HdaStreamNextBlock, HDA_BDL_ENTRY_COUNT));
+//        DEBUG((DEBUG_INFO, "%u (0x%X) bytes written to 0x%X (block %u of %u)\n", HdaStreamDmaRemainingLength, HdaStreamDmaRemainingLength,
+//            HdaStream->BufferData + (HdaStreamNextBlock * HDA_BDL_BLOCKSIZE), HdaStreamNextBlock, HDA_BDL_ENTRY_COUNT));
     }
 
     // Setup polling timer.
     HdaStream->BufferSourceDone = FALSE;
     Status = gBS->SetTimer(HdaStream->PollTimer, TimerPeriodic, HDA_STREAM_POLL_TIME);
     if (EFI_ERROR(Status))
-        goto STOP_STREAM;
+        return Status;
 
     // Change stream state.
     Status = HdaControllerSetStream(HdaStream, TRUE);
     if (EFI_ERROR(Status))
-        goto STOP_STREAM;
-    return EFI_SUCCESS;
+        HdaControllerHdaIoStopStream(This, Type);
+//    return EFI_SUCCESS;
 
-STOP_STREAM:
+//STOP_STREAM:
     // Stop stream.
-    HdaControllerHdaIoStopStream(This, Type);
+
     return Status;
 }
 
@@ -437,7 +444,8 @@ EFI_STATUS
 EFIAPI
 HdaControllerHdaIoStopStream(
     IN EFI_HDA_IO_PROTOCOL *This,
-    IN EFI_HDA_IO_PROTOCOL_TYPE Type) {
+    IN EFI_HDA_IO_PROTOCOL_TYPE Type)
+{
     //DEBUG((DEBUG_INFO, "HdaControllerHdaIoStopStream(): start\n"));
 
     // Create variables.

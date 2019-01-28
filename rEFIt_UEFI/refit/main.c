@@ -2382,7 +2382,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FreePool(FirstMessage);
   }
 
-  GetOutputs();
+
   GetListOfDsdts(); //only after GetUserSettings
   GetListOfACPI(); //ssdt and other tables
 
@@ -2423,7 +2423,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.FastBoot) {
 
       CHAR16 *TmpArgs;
-
+      GetOutputs();
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;

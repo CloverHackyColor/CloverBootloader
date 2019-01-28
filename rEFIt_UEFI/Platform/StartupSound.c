@@ -206,7 +206,7 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   // Start playback.
   if (gSettings.PlayAsync) {
     Status = AudioIo->StartPlaybackAsync(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0,                                       NULL, NULL);
-//    DBG("async started, status=%r\n", Status);
+    DBG("async started, status=%r\n", Status);
   } else {
     Status = AudioIo->StartPlayback(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0);
 //    DBG("sync started, status=%r\n", Status);
@@ -221,8 +221,10 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
 
 DONE_ERROR:
   if (FileData && SoundFile) {  //dont free embedded sound
+    DBG("free sound\n");
     FreePool(FileData);
   }
+  DBG("sound play end with status=%r\n");
   return Status;
 }
 

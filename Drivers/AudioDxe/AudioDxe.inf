@@ -70,3 +70,6 @@
     HdaModels.c
     AudioDxe.h
     AudioDxe.c
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
