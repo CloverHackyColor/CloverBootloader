@@ -90,9 +90,9 @@ WaveGetFileData(
     WaveFileData->DataLength = RiffChunk->Size;
     WaveFileData->Format = (WAVE_FORMAT_DATA*)AllocateCopyPool(sizeof(WAVE_FORMAT_DATA), FormatChunk->Data);
     WaveFileData->FormatLength = FormatChunk->Size;
-    WaveFileData->Samples = AllocateCopyPool(DataChunk->Size, DataChunk->Data);
-//    WaveFileData->Samples = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DataChunk->Size), 128);
-//  CopyMem(WaveFileData->Samples, DataChunk->Data, DataChunk->Size);
+//    WaveFileData->Samples = AllocateCopyPool(DataChunk->Size, DataChunk->Data);
+    WaveFileData->Samples = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DataChunk->Size+4095), 128);
+    CopyMem(WaveFileData->Samples, DataChunk->Data, DataChunk->Size);
     WaveFileData->SamplesLength = DataChunk->Size;
     return EFI_SUCCESS;
 }

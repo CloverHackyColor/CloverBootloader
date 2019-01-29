@@ -26,15 +26,16 @@
 #include "../AudioDxe.h"
 //#include <IndustryStandard/HdaCodec.h>
 #include <Protocol/AudioIo.h>
-
+/*
 // HDA I/O Stream callback.
 VOID
 HdaCodecHdaIoStreamCallback(
     IN EFI_HDA_IO_PROTOCOL_TYPE Type,
     IN VOID *Context1,
     IN VOID *Context2,
-    IN VOID *Context3) {
-    DEBUG((DEBUG_INFO, "HdaCodecHdaIoStreamCallback(): start\n"));
+    IN VOID *Context3)
+{
+//    DEBUG((DEBUG_INFO, "HdaCodecHdaIoStreamCallback(): start\n"));
 
     // Create variables.
     EFI_AUDIO_IO_PROTOCOL *AudioIo = (EFI_AUDIO_IO_PROTOCOL*)Context1;
@@ -47,7 +48,7 @@ HdaCodecHdaIoStreamCallback(
     // Invoke callback.
     AudioIoCallback(AudioIo, Context3);
 }
-
+*/
 /**
   Gets the collection of output ports.
 
@@ -65,7 +66,7 @@ HdaCodecAudioIoGetOutputs(
     OUT EFI_AUDIO_IO_PROTOCOL_PORT **OutputPorts,
     OUT UINTN *OutputPortsCount)
 {
-  DEBUG((DEBUG_INFO, "HdaCodecAudioIoGetOutputs(): start\n"));
+//  DEBUG((DEBUG_INFO, "HdaCodecAudioIoGetOutputs(): start\n"));
 
   // Create variables.
   EFI_STATUS Status;
@@ -73,6 +74,7 @@ HdaCodecAudioIoGetOutputs(
   HDA_CODEC_DEV *HdaCodecDev;
   EFI_AUDIO_IO_PROTOCOL_PORT *HdaOutputPorts;
   UINT32 SupportedRates;
+  UINTN i;
 
   // If a parameter is invalid, return error.
   if ((This == NULL) || (OutputPorts == NULL) ||
@@ -93,7 +95,7 @@ HdaCodecAudioIoGetOutputs(
     return EFI_OUT_OF_RESOURCES;
 
   // Get output ports.
-  for (UINTN i = 0; i < HdaCodecDev->OutputPortsCount; i++) {
+  for (i = 0; i < HdaCodecDev->OutputPortsCount; i++) {
     // Port is an output.
     HdaOutputPorts[i].Type = EfiAudioIoTypeOutput;
 
@@ -248,7 +250,7 @@ HdaCodecAudioIoSetupPlayback(
     IN EFI_AUDIO_IO_PROTOCOL_BITS Bits,
     IN UINT8 Channels)
 {
-    DEBUG((DEBUG_INFO, "HdaCodecAudioIoSetupPlayback(): start\n"));
+//    DEBUG((DEBUG_INFO, "HdaCodecAudioIoSetupPlayback(): start\n"));
 
     // Create variables.
     EFI_STATUS Status;
@@ -484,7 +486,7 @@ HdaCodecAudioIoStartPlayback(
     IN UINTN DataLength,
     IN UINTN Position OPTIONAL)
 {
-    DEBUG((DEBUG_INFO, "HdaCodecAudioIoStartPlayback(): start\n"));
+//    DEBUG((DEBUG_INFO, "HdaCodecAudioIoStartPlayback(): start\n"));
 
     // Create variables.
     EFI_STATUS Status;
@@ -547,7 +549,7 @@ HdaCodecAudioIoStartPlaybackAsync(
     IN EFI_AUDIO_IO_CALLBACK Callback OPTIONAL,
     IN VOID *Context OPTIONAL)
 {
-    DEBUG((DEBUG_INFO, "HdaCodecAudioIoStartPlaybackAsync(): start\n"));
+ //   DEBUG((DEBUG_INFO, "HdaCodecAudioIoStartPlaybackAsync(): start\n"));
 
     // Create variables.
     EFI_STATUS Status;
@@ -566,8 +568,11 @@ HdaCodecAudioIoStartPlaybackAsync(
     HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
 
     // Start stream.
-    Status = HdaIo->StartStream(HdaIo, EfiHdaIoTypeOutput, Data, DataLength, Position,
-        (VOID*)HdaCodecHdaIoStreamCallback, (VOID*)This, (VOID*)Callback, Context);
+//    Status = HdaIo->StartStream(HdaIo, EfiHdaIoTypeOutput, Data, DataLength, Position,
+//        (VOID*)HdaCodecHdaIoStreamCallback, (VOID*)This, (VOID*)Callback, Context);
+  Status = HdaIo->StartStream(HdaIo, EfiHdaIoTypeOutput, Data, DataLength, Position,
+                              NULL, (VOID*)This, (VOID*)Callback, Context);
+
     return Status;
 }
 

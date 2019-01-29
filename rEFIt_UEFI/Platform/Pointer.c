@@ -436,9 +436,9 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
       break;
     }
     UpdateAnime(Screen, &(Screen->FilmPlace));
-//    if (gSettings.PlayAsync) {
-//      CheckSyncSound();
-//    }
+    if (gSettings.PlayAsync) {
+      CheckSyncSound();
+    }
 /*    if ((INTN)gItemID < Screen->EntryCount) {
       UpdateAnime(Screen->Entries[gItemID]->SubScreen, &(Screen->Entries[gItemID]->Place));
     } */
