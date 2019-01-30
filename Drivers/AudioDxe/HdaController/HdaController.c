@@ -790,8 +790,10 @@ HdaControllerDriverBindingStart(
         goto FREE_CONTROLLER;
 
     // needed for QEMU.
-    // UINT16 dd = 0xFF;
-    // PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_RINTCNT, 1, &dd);
+#ifdef QEMU
+     UINT16 dd = 0xFF;
+     PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_RINTCNT, 1, &dd);
+#endif
 
     // Start CORB and RIRB
     Status = HdaControllerSetCorb(HdaControllerDev, TRUE);

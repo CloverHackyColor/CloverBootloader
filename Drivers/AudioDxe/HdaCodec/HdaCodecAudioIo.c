@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef _WIN32
 #pragma warning  (disable: 4054)
+#endif
 //#include "HdaCodec.h"
 #include "../AudioDxe.h"
 //#include <IndustryStandard/HdaCodec.h>

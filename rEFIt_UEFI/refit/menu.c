@@ -3899,10 +3899,10 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
   INTN VisibleHeight = 0; //assume vertical layout
   INTN MessageHeight = 20;
   if (GlobalConfig.TypeSVG && textFace[1].valid) {
-      MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
+    MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
   }
   else {
-      MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * GlobalConfig.Scale);
+    MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * GlobalConfig.Scale);
   }
 
   switch (Function) {
@@ -3920,14 +3920,14 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       //
       VisibleHeight = (UGAHeight - EntriesPosY - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale) + EntriesGap) / (EntriesHeight + EntriesGap);
       EntriesPosX = UGAWidth - EntriesWidth - (int)((BAR_WIDTH + LAYOUT_X_EDGE) * GlobalConfig.Scale);
-      TimeoutPosY = UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale) - MessageHeight;
+      TimeoutPosY = UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale) - MessageHeight * 2; //optimus + timeout texts
 
       CountItems(Screen);
       InitScroll(State, row0Count, Screen->EntryCount, VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
       row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE1_XSPACING * GlobalConfig.Scale)) * row1Count) >> 1;
-      textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - MessageHeight;
+      textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - MessageHeight; //message text
       row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
         itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
@@ -3989,6 +3989,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 
       ScrollingBar(State);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       MouseBirth();
       break;
 
@@ -4020,6 +4021,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 
       ScrollingBar(State);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       MouseBirth();
       break;
 
@@ -4088,7 +4090,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       }
 
       if (row1Count > 0) {
-          textPosY = row1PosY + MessageHeight + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
+          textPosY = row1PosY + MAX(row1TileSize, MessageHeight) + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
         } else {
           textPosY = row1PosY;
         }
