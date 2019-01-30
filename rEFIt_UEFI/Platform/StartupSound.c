@@ -64,7 +64,7 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
   WAVE_FILE_DATA  WaveData;
-  UINTN           OutputIndex = OldChosenAudio;
+  UINT8           OutputIndex = (OldChosenAudio & 0xFF);
   UINT8           OutputVolume = DefaultAudioVolume;
   UINT16          *TempData = NULL;
 
@@ -196,8 +196,8 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
     OutputIndex = 0;
     DBG("wrong index for Audio output\n");
   }
-  Status = AudioIo->SetupPlayback(AudioIo, AudioList[OutputIndex].Index, OutputVolume,
-                                  freq, bits, WaveData.Format->Channels);
+  Status = AudioIo->SetupPlayback(AudioIo, (UINT8)(AudioList[OutputIndex].Index), OutputVolume,
+                                  freq, bits, (UINT8)(WaveData.Format->Channels));
   if (EFI_ERROR(Status)) {
     MsgLog("StartupSound: Error setting up playback: %r\n", Status);
     goto DONE_ERROR;

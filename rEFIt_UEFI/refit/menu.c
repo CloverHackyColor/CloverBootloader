@@ -191,7 +191,7 @@ UINTN  InputItemsCount = 0;
 INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
-INTN OldChosenAudio;
+UINTN OldChosenAudio;
 UINT8 DefaultAudioVolume = 70;
 //INTN NewChosenTheme;
 INTN TextStyle;
@@ -2697,15 +2697,15 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       // vertical layout
       MenuPosY = 4;
 
-			if (Screen->InfoLineCount > 0) {
+	  if (Screen->InfoLineCount > 0) {
         MenuPosY += Screen->InfoLineCount + 1;
-			}
+	  }
 
       MenuHeight = ConHeight - MenuPosY;
 
-			if (Screen->TimeoutSeconds > 0) {
+	  if (Screen->TimeoutSeconds > 0) {
         MenuHeight -= 2;
-			}
+	  }
 
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight, 0);
 
@@ -2714,17 +2714,17 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       for (i = 0; i <= State->MaxIndex; i++) {
         ItemWidth = StrLen(Screen->Entries[i]->Title);
 
-				if (TextMenuWidth < ItemWidth) {
+		if (TextMenuWidth < ItemWidth) {
           TextMenuWidth = ItemWidth;
         }
       }
 
-			if (TextMenuWidth > ConWidth - 6) {
+	  if (TextMenuWidth > ConWidth - 6) {
         TextMenuWidth = ConWidth - 6;
-			}
+	  }
 
-			if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 90) {
-					j = OldChosenConfig;
+	  if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 90) {
+		j = OldChosenConfig;
       } else if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 116) {
         j = OldChosenDsdt;
       } else if (Screen->Entries[0]->Tag == TAG_SWITCH && ((REFIT_INPUT_DIALOG*)(Screen->Entries[0]))->Item->IValue == 119) {
@@ -2737,19 +2737,19 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       // release temporary memory
 
 			// reset default output colours
-			gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
+	  gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
 
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
       // paint the whole screen (initially and after scrolling)
-			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-			for (i = 0; i < (INTN)ConHeight - 4; i++) {
-				gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4 + i);
-				gST->ConOut->OutputString (gST->ConOut, BlankLine);
-			}
+	  gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+	  for (i = 0; i < (INTN)ConHeight - 4; i++) {
+		gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4 + i);
+		gST->ConOut->OutputString (gST->ConOut, BlankLine);
+	  }
 
-			BeginTextScreen(Screen->Title);
+      BeginTextScreen(Screen->Title);
 
       if (Screen->InfoLineCount > 0) {
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
@@ -2761,15 +2761,15 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       }
 
       for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
-				gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
+		gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
 
-				if (i == State->CurrentSelection) {
-					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-				} else {
-					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-				}
+		if (i == State->CurrentSelection) {
+			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
+		} else {
+			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+		}
 
-				StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[i]->Title);
+		StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[i]->Title);
 
         if (Screen->Entries[i]->Tag == TAG_INPUT) {
           if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->ItemType == BoolValue) {
@@ -2782,46 +2782,46 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 					// check boxes
           StrCatS(ResultString, TITLE_MAX_LEN, (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue &
                                 (Screen->Entries[i]->Row)) ? L": [+]" : L": [ ]");
-				} else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
+		} else if (Screen->Entries[i]->Tag == TAG_SWITCH) {
 					// radio buttons
 
-					// update chosen config
-					if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 90) {
-						OldChosenItem = OldChosenConfig;
+				// update chosen config
+		  if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 90) {
+			OldChosenItem = OldChosenConfig;
           } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 116) {
             OldChosenItem = OldChosenDsdt;
           } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->IValue == 119) {
             OldChosenItem = OldChosenAudio;
           }
 
-					StrCatS(ResultString, TITLE_MAX_LEN, (Screen->Entries[i]->Row == OldChosenItem) ? L": (*)" : L": ( )");
+		  StrCatS(ResultString, TITLE_MAX_LEN, (Screen->Entries[i]->Row == OldChosenItem) ? L": (*)" : L": ( )");
         }
 
-				for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
-					ResultString[j] = L' ';
-				}
+		for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
+		  ResultString[j] = L' ';
+		}
 
-				ResultString[j] = 0;
-				gST->ConOut->OutputString (gST->ConOut, ResultString);
+		ResultString[j] = 0;
+		gST->ConOut->OutputString (gST->ConOut, ResultString);
       }
 
       // scrolling indicators
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
       gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY);
 
-			if (State->FirstVisible > 0) {
+	  if (State->FirstVisible > 0) {
         gST->ConOut->OutputString (gST->ConOut, ArrowUp);
-			} else {
+	  } else {
         gST->ConOut->OutputString (gST->ConOut, L" ");
-			}
+	  }
 
       gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + State->MaxVisible);
 
-			if (State->LastVisible < State->MaxIndex) {
+	  if (State->LastVisible < State->MaxIndex) {
         gST->ConOut->OutputString (gST->ConOut, ArrowDown);
-			} else {
+	  } else {
         gST->ConOut->OutputString (gST->ConOut, L" ");
-			}
+	  }
 
       break;
 
@@ -2841,66 +2841,66 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       } else if (Screen->Entries[State->LastSelection]->Tag == TAG_CHECKBIT) {
 				// check boxes
         StrCatS(ResultString, TITLE_MAX_LEN,
-								(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue &
-								 (Screen->Entries[State->LastSelection]->Row)) ? L": [+]" : L": [ ]");
-			} else if (Screen->Entries[State->LastSelection]->Tag == TAG_SWITCH) {
+				(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue &
+					(Screen->Entries[State->LastSelection]->Row)) ? L": [+]" : L": [ ]");
+	  } else if (Screen->Entries[State->LastSelection]->Tag == TAG_SWITCH) {
 				// radio buttons
 
-				if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 90) {
-					OldChosenItem = OldChosenConfig;
+		if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 90) {
+		  OldChosenItem = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 116) {
           OldChosenItem = OldChosenDsdt;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->IValue == 119) {
           OldChosenItem = OldChosenAudio;
         }
 
-				StrCatS(ResultString, TITLE_MAX_LEN,
-								(Screen->Entries[State->LastSelection]->Row == OldChosenItem) ? L": (*)" : L": ( )");
+		StrCatS(ResultString, TITLE_MAX_LEN,
+				(Screen->Entries[State->LastSelection]->Row == OldChosenItem) ? L": (*)" : L": ( )");
       }
 
-			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
-				ResultString[j] = L' ';
+	  for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
+		ResultString[j] = L' ';
       }
 
-			ResultString[j] = 0;
-			gST->ConOut->OutputString (gST->ConOut, ResultString);
+	  ResultString[j] = 0;
+	  gST->ConOut->OutputString (gST->ConOut, ResultString);
 
 			// current selection
-			gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
+	  gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-			StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[State->CurrentSelection]->Title);
+	  StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[State->CurrentSelection]->Title);
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
         if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->ItemType == BoolValue) {
-			    StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue? L": [+]" : L": [ ]");
+		  StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->BValue? L": [+]" : L": [ ]");
         } else {
           StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
         }
       } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_CHECKBIT) {
 				// check boxes
         StrCatS(ResultString, TITLE_MAX_LEN,
-								(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue &
-								 (Screen->Entries[State->CurrentSelection]->Row)) ? L": [+]" : L": [ ]");
-			} else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_SWITCH) {
+				(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue &
+					(Screen->Entries[State->CurrentSelection]->Row)) ? L": [+]" : L": [ ]");
+	  } else if (Screen->Entries[State->CurrentSelection]->Tag == TAG_SWITCH) {
 				// radio buttons
 
-				if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 90) {
-					OldChosenItem = OldChosenConfig;
+		if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 90) {
+		  OldChosenItem = OldChosenConfig;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 116) {
           OldChosenItem = OldChosenDsdt;
         } else if (((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->IValue == 119) {
           OldChosenItem = OldChosenAudio;
         }
 
-				StrCatS(ResultString, TITLE_MAX_LEN,
-								 (Screen->Entries[State->CurrentSelection]->Row == OldChosenItem) ? L": (*)" : L": ( )");
-			}
+		StrCatS(ResultString, TITLE_MAX_LEN,
+				(Screen->Entries[State->CurrentSelection]->Row == OldChosenItem) ? L": (*)" : L": ( )");
+	  }
 
-			for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
-				ResultString[j] = L' ';
+	  for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
+		ResultString[j] = L' ';
       }
 
-			ResultString[j] = 0;
-			gST->ConOut->OutputString (gST->ConOut, ResultString);
+	  ResultString[j] = 0;
+	  gST->ConOut->OutputString (gST->ConOut, ResultString);
       //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
 
       break;

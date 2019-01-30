@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#pragma warning  (disable: 4054)
 //#include "HdaCodec.h"
 #include "../AudioDxe.h"
 //#include <IndustryStandard/HdaCodec.h>
@@ -571,7 +571,7 @@ HdaCodecAudioIoStartPlaybackAsync(
 //    Status = HdaIo->StartStream(HdaIo, EfiHdaIoTypeOutput, Data, DataLength, Position,
 //        (VOID*)HdaCodecHdaIoStreamCallback, (VOID*)This, (VOID*)Callback, Context);
   Status = HdaIo->StartStream(HdaIo, EfiHdaIoTypeOutput, Data, DataLength, Position,
-                              NULL, (VOID*)This, (VOID*)Callback, Context);
+                              NULL, (VOID*)This, NULL, Context);
 
     return Status;
 }

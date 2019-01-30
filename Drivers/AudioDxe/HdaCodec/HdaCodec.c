@@ -86,7 +86,7 @@ HdaCodecProbeWidget(
             }
 
             // Populate entry list.
-            if (HdaWidget->ConnectionListLength & HDA_PARAMETER_CONN_LIST_LENGTH_LONG)
+            if ((HdaWidget->ConnectionListLength & HDA_PARAMETER_CONN_LIST_LENGTH_LONG))
                 HdaWidget->Connections[c] = HDA_VERB_GET_CONN_LIST_ENTRY_LONG(Response, c % 2);
             else
                 HdaWidget->Connections[c] = HDA_VERB_GET_CONN_LIST_ENTRY_SHORT(Response, c % 4);
@@ -526,23 +526,25 @@ EFI_STATUS
 EFIAPI
 HdaCodecFindUpstreamOutput(
     IN HDA_WIDGET_DEV *HdaWidget,
-    IN UINT8 Level) {
+    IN UINT8 Level)
+{
+    EFI_STATUS Status;
+    HDA_WIDGET_DEV *HdaConnectedWidget;
+
     //DEBUG((DEBUG_INFO, "HdaCodecFindUpstreamOutput(): start\n"));
 
     // If level is above 15, we may have entered an infinite loop so just give up.
-    if (Level > 15)
+    if (Level > 15) {
         return EFI_ABORTED;
-
-    // Create variables.
-    EFI_STATUS Status;
-    HDA_WIDGET_DEV *HdaConnectedWidget;
+    }
 
     // Go through connections and check for Output widgets.
     for (UINT8 c = 0; c < HdaWidget->ConnectionCount; c++) {
         // Get connected widget.
         HdaConnectedWidget = HdaWidget->WidgetConnections[c];
-        for (UINT8 i = 0; i <= Level; i++)
+        for (UINT8 i = 0; i <= Level; i++) {
             DEBUG((DEBUG_INFO, "  "));
+        }
         DEBUG((DEBUG_INFO, "Widget @ 0x%X (type 0x%X)\n", HdaConnectedWidget->NodeId, HdaConnectedWidget->Type));
 
         // If this is an Output, we are done.
@@ -729,7 +731,8 @@ EFI_STATUS
 EFIAPI
 HdaCodecGetOutputDac(
     IN  HDA_WIDGET_DEV *HdaWidget,
-    OUT HDA_WIDGET_DEV **HdaOutputWidget) {
+    OUT HDA_WIDGET_DEV **HdaOutputWidget)
+{
     DEBUG((DEBUG_INFO, "HdaCodecGetOutputDac(): start\n"));
 
     // Check that parameters are valid.
@@ -758,15 +761,14 @@ HdaCodecGetSupportedPcmRates(
     IN  HDA_WIDGET_DEV *HdaPinWidget,
     OUT UINT32 *SupportedRates)
 {
-    DEBUG((DEBUG_INFO, "HdaCodecGetSupportedPcmRates(): start\n"));
+    EFI_STATUS Status;
+    HDA_WIDGET_DEV *HdaOutputWidget;
+
+//    DEBUG((DEBUG_INFO, "HdaCodecGetSupportedPcmRates(): start\n"));
 
     // Check that parameters are valid.
     if ((HdaPinWidget == NULL) || (SupportedRates == NULL))
         return EFI_INVALID_PARAMETER;
-
-    // Create variables.
-    EFI_STATUS Status;
-    HDA_WIDGET_DEV *HdaOutputWidget;
 
     // Get output DAC widget.
     Status = HdaCodecGetOutputDac(HdaPinWidget, &HdaOutputWidget);
@@ -791,17 +793,18 @@ HdaCodecGetSupportedPcmRates(
 EFI_STATUS
 EFIAPI
 HdaCodecDisableWidgetPath(
-    IN HDA_WIDGET_DEV *HdaWidget) {
+    IN HDA_WIDGET_DEV *HdaWidget)
+{
+    // Create variables.
+    EFI_STATUS Status;
+    EFI_HDA_IO_PROTOCOL *HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
+    UINT32 Response = 0;
+
     //DEBUG((DEBUG_INFO, "HdaCodecDisableWidgetPath(): start\n"));
 
     // Check if widget is valid.
     if (HdaWidget == NULL)
         return EFI_INVALID_PARAMETER;
-
-    // Create variables.
-    EFI_STATUS Status;
-    EFI_HDA_IO_PROTOCOL *HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
-    UINT32 Response;
 
     // Crawl through widget path.
     while (HdaWidget != NULL) {
@@ -837,18 +840,18 @@ HdaCodecEnableWidgetPath(
     IN UINT8 StreamId,
     IN UINT16 StreamFormat)
 {
+    // Create variables.
+    EFI_STATUS Status;
+    EFI_HDA_IO_PROTOCOL *HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
+    UINT32 Response = 0;
+
     //DEBUG((DEBUG_INFO, "HdaCodecEnableWidgetPath(): start\n"));
 
     // Check if widget is valid.
     if ((HdaWidget == NULL) || (Volume > EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME))
         return EFI_INVALID_PARAMETER;
 
-    // Create variables.
-    EFI_STATUS Status;
-    EFI_HDA_IO_PROTOCOL *HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
-    UINT32 Response;
-
-    // Crawl through widget path.
+     // Crawl through widget path.
     while (HdaWidget != NULL) {
         DEBUG((DEBUG_INFO, "Widget @ 0x%X setting up\n", HdaWidget->NodeId));
 
@@ -966,7 +969,7 @@ EFIAPI
 HdaCodecCleanup(
     IN HDA_CODEC_DEV *HdaCodecDev)
 {
-    DEBUG((DEBUG_INFO, "HdaCodecCleanup(): start\n"));
+//    DEBUG((DEBUG_INFO, "HdaCodecCleanup(): start\n"));
 
     // Create variables.
     EFI_STATUS Status;
@@ -1051,7 +1054,8 @@ EFIAPI
 HdaCodecDriverBindingSupported(
     IN EFI_DRIVER_BINDING_PROTOCOL *This,
     IN EFI_HANDLE ControllerHandle,
-    IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL) {
+    IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL)
+{
 
     // Create variables.
     EFI_STATUS Status;
@@ -1086,7 +1090,7 @@ HdaCodecDriverBindingStart(
     IN EFI_HANDLE ControllerHandle,
     IN EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath OPTIONAL)
 {
-    DEBUG((DEBUG_INFO, "HdaCodecDriverBindingStart(): start\n"));
+//    DEBUG((DEBUG_INFO, "HdaCodecDriverBindingStart(): start\n"));
 
     // Create variables.
     EFI_STATUS Status;
@@ -1153,8 +1157,9 @@ HdaCodecDriverBindingStop(
     IN EFI_DRIVER_BINDING_PROTOCOL *This,
     IN EFI_HANDLE ControllerHandle,
     IN UINTN NumberOfChildren,
-    IN EFI_HANDLE *ChildHandleBuffer OPTIONAL) {
-    DEBUG((DEBUG_INFO, "HdaCodecDriverBindingStop(): start\n"));
+    IN EFI_HANDLE *ChildHandleBuffer OPTIONAL)
+{
+//    DEBUG((DEBUG_INFO, "HdaCodecDriverBindingStop(): start\n"));
 
     // Create variables.
     EFI_STATUS Status;

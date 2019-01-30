@@ -298,11 +298,12 @@ HdaControllerScanCodecs(
 
     // Create variables.
     EFI_STATUS Status;
-    EFI_PCI_IO_PROTOCOL *PciIo = HdaControllerDev->PciIo;
+    EFI_PCI_IO_PROTOCOL *PciIo;
     UINT16 HdaStatests = 0;
     EFI_HDA_IO_VERB_LIST HdaCodecVerbList;
     UINT32 VendorVerb;
     UINT32 VendorResponse;
+    UINT8 i;
 
     // Streams.
     UINTN CurrentOutputStreamIndex = 0;
@@ -311,6 +312,12 @@ HdaControllerScanCodecs(
     // Protocols.
     HDA_IO_PRIVATE_DATA *HdaIoPrivateData;
     VOID *TmpProtocol;
+
+    if (!HdaControllerDev) {
+        return EFI_INVALID_PARAMETER;
+    }
+
+    PciIo = HdaControllerDev->PciIo;
 
     // Get STATESTS register.
     Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_STATESTS, 1, &HdaStatests);
@@ -325,9 +332,9 @@ HdaControllerScanCodecs(
     HdaCodecVerbList.Responses = &VendorResponse;
 
     // Iterate through register looking for active codecs.
-    for (UINT8 i = 0; i < HDA_MAX_CODECS; i++) {
+    for (i = 0; i < HDA_MAX_CODECS; i++) {
         // Do we have a codec at this address?
-        if (HdaStatests & (1 << i)) {
+        if ((HdaStatests & (1 << i))) {
 //            DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): found codec @ 0x%X\n", i));
 
             // Try to get the vendor ID. If this fails, ignore the codec.
@@ -381,7 +388,7 @@ HdaControllerScanCodecs(
         return Status;
 
     // Install protocols on each codec.
-  UINT8 i;
+  
     for (i = 0; i < HDA_MAX_CODECS; i++) {
         // Do we have a codec at this address?
         if (HdaControllerDev->HdaIoChildren[i].PrivateData != NULL) {
@@ -436,18 +443,9 @@ HdaControllerSendCommands(
 
     // Create variables.
     EFI_STATUS Status;
-    EFI_PCI_IO_PROTOCOL *PciIo = HdaDev->PciIo;
+    EFI_PCI_IO_PROTOCOL *PciIo;
     UINT32 *HdaCorb;
     UINT64 *HdaRirb;
-
-    // Ensure parameters are valid.
-    if (CodecAddress >= HDA_MAX_CODECS || Verbs == NULL || Verbs->Count < 1)
-        return EFI_INVALID_PARAMETER;
-
-    // Get pointers to CORB and RIRB.
-    HdaCorb = HdaDev->CorbBuffer;
-    HdaRirb = HdaDev->RirbBuffer;
-
     UINT32 RemainingVerbs;
     UINT32 RemainingResponses;
     UINT16 HdaCorbReadPointer = 0;
@@ -457,6 +455,16 @@ HdaControllerSendCommands(
     UINT64 RirbResponse;
     UINT32 VerbCommand;
     BOOLEAN Retry = FALSE;
+
+    // Ensure parameters are valid.
+    if (!HdaDev || (CodecAddress >= HDA_MAX_CODECS) || !Verbs || (Verbs->Count < 1))
+        return EFI_INVALID_PARAMETER;
+
+    // Get pointers to CORB and RIRB.
+    HdaCorb = HdaDev->CorbBuffer;
+    HdaRirb = HdaDev->RirbBuffer;
+
+    PciIo = HdaDev->PciIo;
 
     // Lock.
     AcquireSpinLock(&HdaDev->SpinLock);
@@ -601,15 +609,17 @@ HdaControllerCleanup(
 {
 //    DEBUG((DEBUG_INFO, "HdaControllerCleanup(): start\n"));
 
-    // If controller device is already free, we are done.
-    if (HdaControllerDev == NULL)
-        return;
-
     // Create variables.
     EFI_STATUS Status;
-    EFI_PCI_IO_PROTOCOL *PciIo = HdaControllerDev->PciIo;
+    EFI_PCI_IO_PROTOCOL *PciIo;
     UINT32 HdaGCtl = 0;
-  UINT8 i;
+    UINT8 i;
+
+  // If controller device is already free, we are done.
+  if (HdaControllerDev == NULL)
+      return;
+
+  PciIo = HdaControllerDev->PciIo;
 
     // Clean HDA Controller info protocol.
     if (HdaControllerDev->HdaControllerInfoData != NULL) {

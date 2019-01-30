@@ -1652,7 +1652,7 @@ extern UINTN                           gItemID;
 extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
-extern INTN                            OldChosenAudio;
+extern UINTN                            OldChosenAudio;
 extern UINT8                            DefaultAudioVolume;
 
 //CHAR8*   orgBiosDsdt;

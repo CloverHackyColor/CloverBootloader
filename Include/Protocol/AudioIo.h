@@ -115,7 +115,7 @@ typedef struct {
 // Callback function.
 typedef
 VOID
-(EFIAPI* EFI_AUDIO_IO_CALLBACK)(
+(EFIAPI *EFI_AUDIO_IO_CALLBACK)(
     IN EFI_AUDIO_IO_PROTOCOL *AudioIo,
     IN VOID *Context);
 
