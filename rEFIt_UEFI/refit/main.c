@@ -798,7 +798,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
 
     if (AudioIo) {
-      AudioIo->StopPlayBack();
+      AudioIo->StopPlayback();
     }
 
     DBG("Closing events for Windows\n");
