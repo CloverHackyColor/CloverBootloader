@@ -88,14 +88,16 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
 extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
-extern UINTN            ThemesNum;
-extern CHAR16           *ThemesList[];
-extern UINTN            ConfigsNum;
-extern CHAR16           *ConfigsList[];
-extern UINTN            DsdtsNum;
-extern CHAR16           *DsdtsList[];
-extern UINTN                           AudioNum;
-extern HDA_OUTPUTS                     AudioList[20];
+
+extern UINTN                ThemesNum;
+extern CHAR16               *ThemesList[];
+extern UINTN                 ConfigsNum;
+extern CHAR16                *ConfigsList[];
+extern UINTN                 DsdtsNum;
+extern CHAR16                *DsdtsList[];
+extern UINTN                 AudioNum;
+extern HDA_OUTPUTS           AudioList[20];
+extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
@@ -794,6 +796,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         }
   }
   else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
+
+    if (AudioIo) {
+      AudioIo->StopPlayBack();
+    }
 
     DBG("Closing events for Windows\n");
     gBS->CloseEvent (OnReadyToBootEvent);
