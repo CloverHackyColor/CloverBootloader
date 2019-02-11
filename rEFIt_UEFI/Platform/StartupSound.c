@@ -398,6 +398,8 @@ VOID GetOutputs()
 
   UINTN h;
 
+  AudioNum = 0;
+
   // Get Audio I/O protocols.
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiAudioIoProtocolGuid, NULL, &AudioIoHandleCount, &AudioIoHandles);
   if (EFI_ERROR(Status)) {
