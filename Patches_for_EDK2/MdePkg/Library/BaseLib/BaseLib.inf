@@ -336,6 +336,7 @@
   X86DisablePaging32.c
   X86RdRand.c
   X86PatchInstruction.c
+  X86SpeculationBarrier.c
 
 [Sources.X64]
   X64/Thunk16.nasm
@@ -515,6 +516,7 @@
   X86DisablePaging32.c
   X86RdRand.c
   X86PatchInstruction.c
+  X86SpeculationBarrier.c
   X64/GccInline.c | GCC
 #  X64/Thunk16.S | XCODE
   X64/SwitchStack.nasm| GCC
@@ -543,6 +545,7 @@
   Ebc/CpuBreakpoint.c
   Ebc/SetJumpLongJump.c
   Ebc/SwitchStack.c
+  Ebc/SpeculationBarrier.c
   Unaligned.c
   Math64.c
 
@@ -560,6 +563,7 @@
   Arm/CpuPause.asm           | RVCT
   Arm/CpuBreakpoint.asm      | RVCT
   Arm/MemoryFence.asm        | RVCT
+  Arm/SpeculationBarrier.S   | RVCT
 
   Arm/SwitchStack.asm        | MSFT
   Arm/SetJumpLongJump.asm    | MSFT
@@ -569,6 +573,7 @@
   Arm/CpuPause.asm           | MSFT
   Arm/CpuBreakpoint.asm      | MSFT
   Arm/MemoryFence.asm        | MSFT
+  Arm/SpeculationBarrier.asm | MSFT
 
   Arm/Math64.S                  | GCC
   Arm/SwitchStack.S             | GCC
@@ -578,6 +583,7 @@
   Arm/SetJumpLongJump.S         | GCC
   Arm/CpuBreakpoint.S           | GCC
   Arm/MemoryFence.S             | GCC
+  Arm/SpeculationBarrier.S      | GCC
 
 [Sources.AARCH64]
   Arm/InternalSwitchStack.c
@@ -591,6 +597,7 @@
   AArch64/GetInterruptsState.S      | GCC
   AArch64/SetJumpLongJump.S         | GCC
   AArch64/CpuBreakpoint.S           | GCC
+  AArch64/SpeculationBarrier.S      | GCC
 
   AArch64/MemoryFence.asm           | MSFT
   AArch64/SwitchStack.asm           | MSFT
@@ -599,6 +606,7 @@
   AArch64/GetInterruptsState.asm    | MSFT
   AArch64/SetJumpLongJump.asm       | MSFT
   AArch64/CpuBreakpoint.asm         | MSFT
+  AArch64/SpeculationBarrier.asm    | MSFT
 
 [Packages]
   MdePkg/MdePkg.dec

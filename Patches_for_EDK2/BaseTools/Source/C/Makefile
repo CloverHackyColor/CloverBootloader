@@ -1,7 +1,7 @@
 ## @file
 # Windows makefile for C tools build.
 #
-# Copyright (c) 2009 - 2017, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2009 - 2018, Intel Corporation. All rights reserved.<BR>
 # This program and the accompanying materials
 # are licensed and made available under the terms and conditions of the BSD License
 # which accompanies this distribution.  The full text of the license may be found at
@@ -40,7 +40,8 @@ libs: $(LIBRARIES)
 	@echo # Build libraries
 	@echo ######################
 	@if not exist $(LIB_PATH) mkdir $(LIB_PATH)
-	@Makefiles\NmakeSubdirs.bat all $**
+  @if defined PYTHON_COMMAND $(PYTHON_COMMAND) Makefiles\NmakeSubdirs.py all $**
+  @if not defined PYTHON_COMMAND $(PYTHON_HOME)\python.exe Makefiles\NmakeSubdirs.py all $**
 
 apps: $(APPLICATIONS)
 	@echo.
@@ -48,7 +49,8 @@ apps: $(APPLICATIONS)
 	@echo # Build executables
 	@echo ######################
 	@if not exist $(BIN_PATH) mkdir $(BIN_PATH)
-	@Makefiles\NmakeSubdirs.bat all $**
+  @if defined PYTHON_COMMAND $(PYTHON_COMMAND) Makefiles\NmakeSubdirs.py all $**
+  @if not defined PYTHON_COMMAND $(PYTHON_HOME)\python.exe Makefiles\NmakeSubdirs.py all $**
 
 install: $(LIB_PATH) $(BIN_PATH)
 	@echo.
@@ -62,11 +64,13 @@ install: $(LIB_PATH) $(BIN_PATH)
 
 .PHONY: clean
 clean:
-  @Makefiles\NmakeSubdirs.bat clean $(LIBRARIES) $(APPLICATIONS)
+  @if defined PYTHON_COMMAND $(PYTHON_COMMAND) Makefiles\NmakeSubdirs.py clean $(LIBRARIES) $(APPLICATIONS)
+  @if not defined PYTHON_COMMAND $(PYTHON_HOME)\python.exe Makefiles\NmakeSubdirs.py clean $(LIBRARIES) $(APPLICATIONS)
 
 .PHONY: cleanall
 cleanall:
-  @Makefiles\NmakeSubdirs.bat cleanall $(LIBRARIES) $(APPLICATIONS)
+  @if defined PYTHON_COMMAND $(PYTHON_COMMAND) $(PYTHON_COMMAND) Makefiles\NmakeSubdirs.py cleanall $(LIBRARIES) $(APPLICATIONS)
+  @if not defined PYTHON_COMMAND $(PYTHON_HOME)\python.exe $(PYTHON_COMMAND) Makefiles\NmakeSubdirs.py cleanall $(LIBRARIES) $(APPLICATIONS)
 
 !INCLUDE Makefiles\ms.rule
 
