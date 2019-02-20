@@ -16,6 +16,7 @@ HOST_ARCH = IA32
 
 LIBRARIES = Common
 APPLICATIONS = \
+  VfrCompile \
   BrotliCompress \
   EfiLdrImage \
   EfiRom \
@@ -29,7 +30,6 @@ APPLICATIONS = \
   Split \
   TianoCompress \
   VolInfo \
-  VfrCompile \
   DevicePath
 
 all: libs apps install

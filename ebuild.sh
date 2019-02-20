@@ -666,7 +666,9 @@ MainBuildScript() {
         # This version is for the tools source in edk2
         cd "$EDK2DIR"
         export EDK_TOOLS_PATH="${PWD}"/BaseTools
+        set +u
         source ./edksetup.sh BaseTools
+        set -u
         cd "$CLOVERROOT"
     else
         echo "Building from: $WORKSPACE"
