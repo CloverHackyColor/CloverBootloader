@@ -722,7 +722,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   tmpTag->type = kTagTypeData;
   tmpTag->string = tmpString;
   // dmazar: base64 decode data
-  tmpTag->data = (UINT8 *)Base64Decode(tmpTag->string, &len);
+  tmpTag->data = (UINT8 *)Base64DecodeClover(tmpTag->string, &len);
   tmpTag->dataLen = len;
   tmpTag->tag = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);

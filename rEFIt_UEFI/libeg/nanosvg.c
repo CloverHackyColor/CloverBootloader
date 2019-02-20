@@ -3173,7 +3173,7 @@ static void parseImage(NSVGparser* p, const char** dict)
   if (p->patternFlag) {
     pt = p->patterns; //the last one
   }
-  tmpData = (UINT8 *)Base64Decode((char*)href, &len);
+  tmpData = (UINT8 *)Base64DecodeClover((char*)href, &len);
   if (len == 0) {
     DBG("image not decoded from base64\n");
   }

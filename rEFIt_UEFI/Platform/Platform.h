@@ -2275,7 +2275,7 @@ EFI_STATUS
 FixOwnership (VOID);
 
 UINT8
-*Base64Decode (
+*Base64DecodeClover (
   IN      CHAR8 *EncodedData,
      OUT  UINTN *DecodedSize
   );
