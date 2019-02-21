@@ -1967,6 +1967,7 @@ STATIC CHAR8 EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                 "abcdefghijklmnopqrstuvwxyz"
                                 "0123456789+/";
 
+#if 0
 STATIC UINT8 DecodingTable[] = {
   //
   // Valid characters ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
@@ -1989,6 +1990,7 @@ STATIC UINT8 DecodingTable[] = {
   BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,   //  d0
   BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V,  BAD_V    //  f0
 };
+#endif
 
 /**
   Convert binary data to a Base64 encoded ascii string based on RFC4648.
