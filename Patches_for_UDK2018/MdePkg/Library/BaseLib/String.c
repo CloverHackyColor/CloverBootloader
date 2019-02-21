@@ -76,7 +76,7 @@ StrCpy (
 /**
   [ATTENTION] This function will be deprecated for security reason.
 
-  Copies up to a specified length from one Null-terminated Unicode string  to
+  Copies up to a specified length from one Null-terminated Unicode string  to 
   another Null-terminated Unicode string and returns the new Unicode string.
 
   This function copies the contents of the Unicode string Source to the Unicode
@@ -92,7 +92,7 @@ StrCpy (
   If Length > 0 and Source is NULL, then ASSERT().
   If Length > 0 and Source is not aligned on a 16-bit boundary, then ASSERT().
   If Source and Destination overlap, then ASSERT().
-  If PcdMaximumUnicodeStringLength is not zero, and Length is greater than
+  If PcdMaximumUnicodeStringLength is not zero, and Length is greater than 
   PcdMaximumUnicodeStringLength, then ASSERT().
   If PcdMaximumUnicodeStringLength is not zero, and Source contains more than
   PcdMaximumUnicodeStringLength Unicode characters, not including the Null-terminator,
@@ -200,7 +200,7 @@ StrLen (
   Returns the size of a Null-terminated Unicode string in bytes, including the
   Null terminator.
 
-  This function returns the size, in bytes, of the Null-terminated Unicode string
+  This function returns the size, in bytes, of the Null-terminated Unicode string 
   specified by String.
 
   If String is NULL, then ASSERT().
@@ -288,7 +288,7 @@ StrCmp (
 /**
   Compares up to a specified length the contents of two Null-terminated Unicode strings,
   and returns the difference between the first mismatched Unicode characters.
-
+  
   This function compares the Null-terminated Unicode string FirstString to the
   Null-terminated Unicode string SecondString. At most, Length Unicode
   characters will be compared. If Length is 0, then 0 is returned. If
@@ -411,8 +411,8 @@ StrCat (
 /**
   [ATTENTION] This function will be deprecated for security reason.
 
-  Concatenates up to a specified length one Null-terminated Unicode to the end
-  of another Null-terminated Unicode string, and returns the concatenated
+  Concatenates up to a specified length one Null-terminated Unicode to the end 
+  of another Null-terminated Unicode string, and returns the concatenated 
   Unicode string.
 
   This function concatenates two Null-terminated Unicode strings. The contents
@@ -428,7 +428,7 @@ StrCat (
   If Length > 0 and Source is NULL, then ASSERT().
   If Length > 0 and Source is not aligned on a 16-bit boundary, then ASSERT().
   If Source and Destination overlap, then ASSERT().
-  If PcdMaximumUnicodeStringLength is not zero, and Length is greater than
+  If PcdMaximumUnicodeStringLength is not zero, and Length is greater than 
   PcdMaximumUnicodeStringLength, then ASSERT().
   If PcdMaximumUnicodeStringLength is not zero, and Destination contains more
   than PcdMaximumUnicodeStringLength Unicode characters, not including the
@@ -524,13 +524,13 @@ StrStr (
   while (*String != L'\0') {
     SearchStringTmp = SearchString;
     FirstMatch = String;
-
-    while ((*String == *SearchStringTmp)
+    
+    while ((*String == *SearchStringTmp) 
             && (*String != L'\0')) {
       String++;
       SearchStringTmp++;
-    }
-
+    } 
+    
     if (*SearchStringTmp == L'\0') {
       return (CHAR16 *) FirstMatch;
     }
@@ -548,7 +548,7 @@ StrStr (
 /**
   Check if a Unicode character is a decimal character.
 
-  This internal function checks if a Unicode character is a
+  This internal function checks if a Unicode character is a 
   decimal character. The valid decimal character is from
   L'0' to L'9'.
 
@@ -568,7 +568,7 @@ InternalIsDecimalDigitCharacter (
 }
 
 /**
-  Convert a Unicode character to upper case only if
+  Convert a Unicode character to upper case only if 
   it maps to a valid small-case ASCII character.
 
   This internal function only deal with Unicode character
@@ -600,7 +600,7 @@ InternalCharToUpper (
 
   This internal function only deal with Unicode character
   which maps to a valid hexadecimal ASII character, i.e.
-  L'0' to L'9', L'a' to L'f' or L'A' to L'F'. For other
+  L'0' to L'9', L'a' to L'f' or L'A' to L'F'. For other 
   Unicode character, the value returned does not make sense.
 
   @param  Char  The character to convert.
@@ -624,8 +624,8 @@ InternalHexCharToUintn (
 /**
   Check if a Unicode character is a hexadecimal character.
 
-  This internal function checks if a Unicode character is a
-  decimal character.  The valid hexadecimal character is
+  This internal function checks if a Unicode character is a 
+  decimal character.  The valid hexadecimal character is 
   L'0' to L'9', L'a' to L'f', or L'A' to L'F'.
 
 
@@ -740,7 +740,7 @@ StrDecimalToUint64 (
 {
   UINT64     Result = 0;
   RETURN_STATUS Status;
-
+  
   Status = StrDecimalToUint64S (String, (CHAR16 **) NULL, &Result);
   if (Status != RETURN_SUCCESS) {
     return 0;
@@ -915,7 +915,7 @@ StrHexToUint64 (
 /**
   Check if a ASCII character is a decimal character.
 
-  This internal function checks if a Unicode character is a
+  This internal function checks if a Unicode character is a 
   decimal character. The valid decimal character is from
   '0' to '9'.
 
@@ -937,8 +937,8 @@ InternalAsciiIsDecimalDigitCharacter (
 /**
   Check if a ASCII character is a hexadecimal character.
 
-  This internal function checks if a ASCII character is a
-  decimal character.  The valid hexadecimal character is
+  This internal function checks if a ASCII character is a 
+  decimal character.  The valid hexadecimal character is 
   L'0' to L'9', L'a' to L'f', or L'A' to L'F'.
 
 
@@ -1027,7 +1027,7 @@ UnicodeStrToAsciiStr (
   ReturnValue = Destination;
   while (*Source != '\0') {
     //
-    // If any Unicode characters in Source contain
+    // If any Unicode characters in Source contain 
     // non-zero value in the upper 8 bits, then ASSERT().
     //
     //ASSERT (*Source < 0x100);
@@ -1102,7 +1102,7 @@ AsciiStrCpy (
 /**
   [ATTENTION] This function will be deprecated for security reason.
 
-  Copies up to a specified length one Null-terminated ASCII string to another
+  Copies up to a specified length one Null-terminated ASCII string to another 
   Null-terminated ASCII string and returns the new ASCII string.
 
   This function copies the contents of the ASCII string Source to the ASCII
@@ -1115,7 +1115,7 @@ AsciiStrCpy (
   If Destination is NULL, then ASSERT().
   If Source is NULL, then ASSERT().
   If Source and Destination overlap, then ASSERT().
-  If PcdMaximumAsciiStringLength is not zero, and Length is greater than
+  If PcdMaximumAsciiStringLength is not zero, and Length is greater than 
   PcdMaximumAsciiStringLength, then ASSERT().
   If PcdMaximumAsciiStringLength is not zero, and Source contains more than
   PcdMaximumAsciiStringLength ASCII characters, not including the Null-terminator,
@@ -1317,7 +1317,7 @@ AsciiStrCmp (
 
   @param  Chr   one Ascii character
 
-  @return The uppercase value of Ascii character
+  @return The uppercase value of Ascii character 
 
 **/
 CHAR8
@@ -1334,7 +1334,7 @@ InternalBaseLibAsciiToUpper (
 
   This internal function only deal with Unicode character
   which maps to a valid hexadecimal ASII character, i.e.
-  '0' to '9', 'a' to 'f' or 'A' to 'F'. For other
+  '0' to '9', 'a' to 'f' or 'A' to 'F'. For other 
   ASCII character, the value returned does not make sense.
 
   @param  Char  The character to convert.
@@ -1435,7 +1435,7 @@ AsciiStriCmp (
 
   If Length > 0 and FirstString is NULL, then ASSERT().
   If Length > 0 and SecondString is NULL, then ASSERT().
-  If PcdMaximumAsciiStringLength is not zero, and Length is greater than
+  If PcdMaximumAsciiStringLength is not zero, and Length is greater than 
   PcdMaximumAsciiStringLength, then ASSERT().
   If PcdMaximumAsciiStringLength is not zero, and FirstString contains more than
   PcdMaximumAsciiStringLength ASCII characters, not including the Null-terminator,
@@ -1447,7 +1447,7 @@ AsciiStriCmp (
   @param  FirstString   A pointer to a Null-terminated ASCII string.
   @param  SecondString  A pointer to a Null-terminated ASCII string.
   @param  Length        The maximum number of ASCII characters for compare.
-
+  
   @retval ==0       FirstString is identical to SecondString.
   @retval !=0       FirstString is not identical to SecondString.
 
@@ -1548,8 +1548,8 @@ AsciiStrCat (
 /**
   [ATTENTION] This function will be deprecated for security reason.
 
-  Concatenates up to a specified length one Null-terminated ASCII string to
-  the end of another Null-terminated ASCII string, and returns the
+  Concatenates up to a specified length one Null-terminated ASCII string to 
+  the end of another Null-terminated ASCII string, and returns the 
   concatenated ASCII string.
 
   This function concatenates two Null-terminated ASCII strings. The contents
@@ -1656,13 +1656,13 @@ AsciiStrStr (
   while (*String != '\0') {
     SearchStringTmp = SearchString;
     FirstMatch = String;
-
-    while ((*String == *SearchStringTmp)
+    
+    while ((*String == *SearchStringTmp) 
             && (*String != '\0')) {
       String++;
       SearchStringTmp++;
-    }
-
+    } 
+    
     if (*SearchStringTmp == '\0') {
       return (CHAR8 *) FirstMatch;
     }
@@ -1715,7 +1715,7 @@ AsciiStrDecimalToUintn (
 {
   UINTN     Result = 0;
   RETURN_STATUS Status;
-
+  
   Status = AsciiStrDecimalToUintnS (String, (CHAR8 **) NULL, &Result);
   if (Status != RETURN_SUCCESS) {
     return 0;
@@ -1762,7 +1762,7 @@ AsciiStrDecimalToUint64 (
 {
   UINT64     Result = 0;
   RETURN_STATUS Status;
-
+  
   Status = AsciiStrDecimalToUint64S (String, (CHAR8 **) NULL, &Result);
   if (Status != RETURN_SUCCESS) {
     return 0;
