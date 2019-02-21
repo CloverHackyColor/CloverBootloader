@@ -2129,6 +2129,7 @@ Base64Encode (
   @retval RETURN_INVALID_PARAMETER   If there is any invalid character in input stream.
   @retval RETURN_BUFFER_TOO_SMALL    If buffer length is smaller than required buffer size.
  **/
+#if 0
 RETURN_STATUS
 EFIAPI
 Base64Decode (
@@ -2281,6 +2282,7 @@ Base64Decode (
 
   return RETURN_SUCCESS;
 }
+#endif
 
 /**
   Converts an 8-bit value to an 8-bit BCD value.
