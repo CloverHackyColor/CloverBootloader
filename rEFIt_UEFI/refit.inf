@@ -87,6 +87,7 @@
 	Platform/Events.c
 	Platform/hda.c
 #	Platform/hda.h
+    Platform/HdaCodecDump.c
 	Platform/gma.c
 #	Platform/gma.h
 	Platform/guid.c

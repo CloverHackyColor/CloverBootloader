@@ -42,6 +42,7 @@
 
 #include "nanosvg.h"
 #include "FloatLib.h"
+#include "HdaCodecDump.h"
 
 
 #ifndef DEBUG_ALL
@@ -2610,7 +2611,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
       case SCAN_F8:
-        testSVG();
+ //       testSVG();
+		  SaveHdaDumpBin();
+          SaveHdaDumpTxt();
         break;
 
       case SCAN_F9:
