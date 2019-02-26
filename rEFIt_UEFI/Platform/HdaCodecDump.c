@@ -404,7 +404,6 @@ EFI_STATUS SaveHdaDumpBin() {
 			}
 		}
 		
-		CodecAddress;
 		Status = HdaIo->GetAddress(HdaIo, &CodecAddress);
 		
 		CopyMem(HdaCodec.Header, hdcID, 4);
