@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Script for GCC chainload in OS X made for EDKII
-# 
+#
 # Primary use is for creating better crosscompile support than
 # mingw-gcc-build.py that is found in BaseTools/gcc/
-# 
+#
 # With this we can use Native GCC chainload for EDKII
 # development
 #
@@ -17,7 +17,7 @@
 #                  "Xcode 5.0.1" - Mavericks
 #                  "Xcode 6.1"   - Yosemite
 #
-#  
+#
 # Created by Jadran Puharic on 1/25/12.
 # Enhanced by JrCs on 01/19/2013.
 #
@@ -45,7 +45,7 @@ export PREFIX=${PREFIX:-~/src/opt/local}
 export GCC_MAJOR_VERSION=$(echo $GCC_VERSION | awk -F. '{ print $1$2}')
 
 # You can change DIR_MAIN if u wan't gcc source downloaded
-# in different folder. 
+# in different folder.
 #
 export RAMDISK_MNT_PT=/tmp/buildgcc-ramdisk
 export DIR_MAIN=${DIR_MAIN:-~/src}
@@ -97,7 +97,7 @@ CheckXCode () {
     fi
 }
 
-### Main Function START ### 
+### Main Function START ###
 
 # Function: Creating directory structure for EDK
 
@@ -284,14 +284,14 @@ CompileLibs () {
         rm -rf "${DIR_BUILD}/$ARCH-mpc"
         mkdir -p "${DIR_BUILD}/$ARCH-mpc" && cd "${DIR_BUILD}/$ARCH-mpc"
         echo "- ${MPC_VERSION} configure..."
-        "${MPC_DIR}"/configure --prefix=$PREFIX --with-gettext=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2> /dev/null
+        "${MPC_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2> /dev/null
         echo "- ${MPC_VERSION} make..."
         make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-mpc" "$MPC_DIR"
         echo "- ${MPC_VERSION} installed in $PREFIX"
     fi
-    
+
     if [[ ! -f $PREFIX/lib/libisl.a ]]; then
         # Mount RamDisk
         mountRamDisk
@@ -316,7 +316,7 @@ CompileLibs () {
 
         # Compile CLOOG
         local CLOOG_DIR=$(ExtractTarball "${CLOOG_VERSION}.tar.gz")
-        
+
         rm -rf "${DIR_BUILD}/$ARCH-cloog"
         mkdir -p "${DIR_BUILD}/$ARCH-cloog" && cd "${DIR_BUILD}/$ARCH-cloog"
         echo "- ${CLOOG_VERSION} configure..."

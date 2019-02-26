@@ -2993,51 +2993,50 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     return;
   }
 
-  // init
-  INTN MaxTextLen           = 12;
   INTN TextLen = StrLen(Text);
-	INTN EllipsisLen = 3;
-  CHAR16 *BCSText = NULL;
-  CHAR16 *EllipsisText = L"...";
 
-	EllipsisText[EllipsisLen] = '\0';
+  // number of chars to be drawn on the screen
+  INTN MaxTextLen = 13;
+  INTN EllipsisLen = 2;
+  
+  CHAR16 *BCSText = NULL;
 
   // more space, more characters
   if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
-    MaxTextLen = 13;
-  } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
     MaxTextLen = 14;
-  } else if (GlobalConfig.TileXSpace >= 35 && GlobalConfig.TileXSpace < 40) {
+  } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
     MaxTextLen = 15;
-  } else if (GlobalConfig.TileXSpace >= 40 && GlobalConfig.TileXSpace < 45) {
+  } else if (GlobalConfig.TileXSpace >= 35 && GlobalConfig.TileXSpace < 40) {
     MaxTextLen = 16;
-  } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
+  } else if (GlobalConfig.TileXSpace >= 40 && GlobalConfig.TileXSpace < 45) {
     MaxTextLen = 17;
-  } else if (GlobalConfig.TileXSpace >= 50) {
+  } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
     MaxTextLen = 18;
+  } else if (GlobalConfig.TileXSpace >= 50) {
+    MaxTextLen = 19;
   }
+
+  MaxTextLen += EllipsisLen;
 
   // if the text exceeds the given limit
   if (TextLen > MaxTextLen) {
     BCSText = AllocatePool((sizeof(CHAR16) * MaxTextLen) + 1);
 
-    // copy the permited amound of chars minus the ellipsis
-    StrnCpyS(BCSText, (MaxTextLen - EllipsisLen) + 1, Text, MaxTextLen - EllipsisLen);
-
-    BCSText[MaxTextLen - EllipsisLen] = '\0';
-
-    // add ellipsis
-    StrnCatS(BCSText, MaxTextLen + 1, EllipsisText, EllipsisLen);
-
-    BCSText[MaxTextLen] = '\0';
-
-    // error check
+    // error check, not enough memory
     if (!BCSText) {
       return;
     }
 
-    DrawTextXY(BCSText, XPos, YPos, XAlign);
+    // copy the permited amound of chars minus the ellipsis
+    StrnCpyS(BCSText, (MaxTextLen - EllipsisLen) + 1, Text, MaxTextLen - EllipsisLen);
+    BCSText[MaxTextLen - EllipsisLen] = '\0';
 
+    // add ellipsis
+    StrnCatS(BCSText, MaxTextLen + 1, L"..", EllipsisLen);
+    // redundant, used for safety measures
+    BCSText[MaxTextLen] = '\0';
+
+    DrawTextXY(BCSText, XPos, YPos, XAlign);
     FreePool(BCSText);
   } else {
 		// draw full text
