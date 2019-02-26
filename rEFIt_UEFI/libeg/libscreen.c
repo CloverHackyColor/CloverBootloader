@@ -397,6 +397,8 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
         }
     }
 
+    egDumpSetConsoleVideoModes();
+
     // get screen size
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
@@ -428,8 +430,6 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
             egHasGraphics = TRUE;
         }
     }
-
-    egDumpSetConsoleVideoModes();
 }
 
 VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)

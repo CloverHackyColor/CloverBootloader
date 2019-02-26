@@ -103,6 +103,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
   UINTN       N = 0;
+  UINT8       NewChecksum;
   //gEDID       = NULL;
 
   if (gSettings.CustomEDID) {
@@ -151,12 +152,13 @@ EFI_STATUS GetEdidDiscovered(VOID)
       ((UINT8*)gSettings.CustomEDID)[20] = gSettings.EdidFixVideoInputSignal;
     }
 
+    NewChecksum = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
     if ((gSettings.VendorEDID) || (gSettings.ProductEDID) || (gSettings.EdidFixHorizontalSyncPulseWidth) || (gSettings.EdidFixVideoInputSignal)) {
-      ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+      ((UINT8*)gSettings.CustomEDID)[127] = NewChecksum;
       DebugDumpEDID("--- Patched EDID Table", N);
-    } else if ((UINT8)gSettings.CustomEDID[127] != (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127))){
+    } else if (((UINT8*)gSettings.CustomEDID)[127] != NewChecksum) {
       DBG("    Fix wrong checksum = 0x%02lx changed to ", ((UINT8*)gSettings.CustomEDID)[127]);
-      ((UINT8*)gSettings.CustomEDID)[127] = (UINT8)(256 - Checksum8(gSettings.CustomEDID, 127));
+      ((UINT8*)gSettings.CustomEDID)[127] = NewChecksum;
       DBG("0x%02lx\n", ((UINT8*)gSettings.CustomEDID)[127]);
       DebugDumpEDID("--- Patched EDID Table", N);
     }
