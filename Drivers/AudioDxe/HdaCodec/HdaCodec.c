@@ -240,7 +240,7 @@ HdaCodecProbeWidget(
             if (EFI_ERROR(Status))
                 return Status;
             HdaWidget->DefaultEapd = (UINT8)Response;
-            HdaWidget->DefaultEapd &? = 0x7;
+            HdaWidget->DefaultEapd &= 0x7;
             HdaWidget->DefaultEapd |= HDA_EAPD_BTL_ENABLE_EAPD;
             //DEBUG((DEBUG_INFO, "Widget @ 0x%X EAPD: 0x%X\n", HdaWidget->NodeId, HdaWidget->DefaultEapd));
         }
