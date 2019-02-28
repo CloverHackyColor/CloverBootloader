@@ -213,15 +213,12 @@ HdaCodecDumpPrintWidgets(
 
             // Print EAPD info.
             if (Widgets[w].PinCapabilities & HDA_PARAMETER_PIN_CAPS_EAPD) {
-            	UINT8 DefaultEapd = Widgets[w].DefaultEapd;
-            	DefaultEapd &= 0x7;
-            	DefaultEapd |= HDA_EAPD_BTL_ENABLE_EAPD;
-                HdaLog("  EAPD 0x%X:", DefaultEapd);
-                if (DefaultEapd & HDA_EAPD_BTL_ENABLE_BTL)
+                HdaLog("  EAPD 0x%X:", Widgets[w].DefaultEapd);
+                if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_BTL)
                     HdaLog(" BTL");
-                if (DefaultEapd & HDA_EAPD_BTL_ENABLE_EAPD)
+                if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_EAPD)
                     HdaLog(" EAPD");
-                if (DefaultEapd & HDA_EAPD_BTL_ENABLE_L_R_SWAP)
+                if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_L_R_SWAP)
                     HdaLog(" R/L");
                 HdaLog("\n");
             }
