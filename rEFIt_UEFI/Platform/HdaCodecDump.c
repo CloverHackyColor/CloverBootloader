@@ -26,30 +26,29 @@
 #include "StateGenerator.h"
 #include "AmlGenerator.h"
 
-const CHAR16 *gWidgetNames[HDA_WIDGET_TYPE_VENDOR + 1] = {
-	L"Audio Output", L"Audio Input", L"Audio Mixer",
-	L"Audio Selector", L"Pin Complex", L"Power Widget",
-	L"Volume Knob Widget", L"Beep Generator Widget",
-	L"Reserved", L"Reserved", L"Reserved", L"Reserved",
-	L"Reserved", L"Reserved", L"Reserved",
-	L"Vendor Defined Widget"
-};
-const CHAR16 *gPortConnectivities[4] = { L"Jack", L"None", L"Fixed", L"Int Jack" };
-const CHAR16 *gDefaultDevices[HDA_CONFIG_DEFAULT_DEVICE_OTHER + 1] = {
-	L"Line Out", L"Speaker", L"HP Out", L"CD", L"SPDIF Out",
-	L"Digital Out", L"Modem Line", L"Modem Handset", L"Line In", L"Aux",
-	L"Mic", L"Telephone", L"SPDIF In", L"Digital In", L"Reserved", L"Other" };
-const CHAR16 *gSurfaces[4] = { L"Ext", L"Int", L"Ext", L"Other" };
-const CHAR16 *gLocations[0xF + 1] = {
-	L"N/A", L"Rear", L"Front", L"Left", L"Right", L"Top", L"Bottom", L"Special",
-	L"Special", L"Special", L"Reserved", L"Reserved", L"Reserved", L"Reserved" };
-const CHAR16 *gConnTypes[HDA_CONFIG_DEFAULT_CONN_OTHER + 1] = {
-	L"Unknown", L"1/8", L"1/4", L"ATAPI", L"RCA", L"Optical", L"Digital",
-	L"Analog", L"Multi", L"XLR", L"RJ11", L"Combo", L"Other", L"Other", L"Other", L"Other" };
-const CHAR16 *gColors[HDA_CONFIG_DEFAULT_COLOR_OTHER + 1] = {
-	L"Unknown", L"Black", L"Grey", L"Blue", L"Green", L"Red", L"Orange",
-	L"Yellow", L"Purple", L"Pink", L"Reserved", L"Reserved", L"Reserved",
-	L"Reserved", L"White", L"Other" };
+CONST CHAR8 *gWidgetNames[HDA_WIDGET_TYPE_VENDOR + 1] = {
+	"Audio Output", "Audio Input", "Audio Mixer",
+	"Audio Selector", "Pin Complex", "Power Widget",
+	"Volume Knob Widget", "Beep Generator Widget",
+	"Reserved", "Reserved", "Reserved", "Reserved",
+	"Reserved", "Reserved", "Reserved",
+	"Vendor Defined Widget" };
+CONST CHAR8 *gPortConnectivities[4] = { "Jack", "None", "Fixed", "Int Jack" };
+CONST CHAR8 *gDefaultDevices[HDA_CONFIG_DEFAULT_DEVICE_OTHER + 1] = {
+	"Line Out", "Speaker", "HP Out", "CD", "SPDIF Out",
+	"Digital Out", "Modem Line", "Modem Handset", "Line In", "Aux",
+	"Mic", "Telephone", "SPDIF In", "Digital In", "Reserved", "Other" };
+CONST CHAR8 *gSurfaces[4] = { "Ext", "Int", "Ext", "Other" };
+CONST CHAR8 *gLocations[0xF + 1] = {
+	"N/A", "Rear", "Front", "Left", "Right", "Top", "Bottom", "Special",
+	"Special", "Special", "Reserved", "Reserved", "Reserved", "Reserved" };
+CONST CHAR8 *gConnTypes[HDA_CONFIG_DEFAULT_CONN_OTHER + 1] = {
+	"Unknown", "1/8", "1/4", "ATAPI", "RCA", "Optical", "Digital",
+	"Analog", "Multi", "XLR", "RJ11", "Combo", "Other", "Other", "Other", "Other" };
+CONST CHAR8 *gColors[HDA_CONFIG_DEFAULT_COLOR_OTHER + 1] = {
+	"Unknown", "Black", "Grey", "Blue", "Green", "Red", "Orange",
+	"Yellow", "Purple", "Pink", "Reserved", "Reserved", "Reserved",
+	"Reserved", "White", "Other" };	
 
 #define HDC_ID        { 'H','D','C','O' }
 #define HdaLog(n, ...)	MemLog(FALSE, 0, n, ##__VA_ARGS__)
@@ -59,6 +58,7 @@ CONST CHAR8  hdcID[4]       = HDC_ID;
 extern UINTN					AudioNum;
 extern HDA_OUTPUTS				AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL	*AudioIo;
+extern CHAR16           		*OEMPath;
 
 VOID
 EFIAPI
@@ -140,7 +140,7 @@ HdaCodecDumpPrintWidgets(
     // Print each widget.
     for (UINTN w = 0; w < WidgetCount; w++) {    
         // Print header and capabilities.
-        HdaLog("Node 0x%02X [%s] wcaps 0x%08X:", Widgets[w].NodeId,
+        HdaLog("Node 0x%02X [%a] wcaps 0x%08X:", Widgets[w].NodeId,
             gWidgetNames[HDA_PARAMETER_WIDGET_CAPS_TYPE(Widgets[w].Capabilities)], Widgets[w].Capabilities);
         if (Widgets[w].Capabilities & HDA_PARAMETER_WIDGET_CAPS_STEREO)
             HdaLog(" Stereo");
@@ -213,25 +213,28 @@ HdaCodecDumpPrintWidgets(
 
             // Print EAPD info.
             if (Widgets[w].PinCapabilities & HDA_PARAMETER_PIN_CAPS_EAPD) {
-                HdaLog("  EAPD 0x%X:", Widgets[w].DefaultEapd);
-                if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_BTL)
+            	UINT8 DefaultEapd = Widgets[w].DefaultEapd;
+            	DefaultEapd &= 0x7;
+            	DefaultEapd |= HDA_EAPD_BTL_ENABLE_EAPD;
+                HdaLog("  EAPD 0x%X:", DefaultEapd);
+                if (DefaultEapd & HDA_EAPD_BTL_ENABLE_BTL)
                     HdaLog(" BTL");
-                if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_EAPD)
+                if (DefaultEapd & HDA_EAPD_BTL_ENABLE_EAPD)
                     HdaLog(" EAPD");
-                if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_L_R_SWAP)
+                if (DefaultEapd & HDA_EAPD_BTL_ENABLE_L_R_SWAP)
                     HdaLog(" R/L");
                 HdaLog("\n");
             }
 
             // Print pin default header.
-            HdaLog("  Pin Default 0x%08X: [%s] %s at %s %s\n", Widgets[w].DefaultConfiguration,
+            HdaLog("  Pin Default 0x%08X: [%a] %a at %a %a\n", Widgets[w].DefaultConfiguration,
                 gPortConnectivities[HDA_VERB_GET_CONFIGURATION_DEFAULT_PORT_CONN(Widgets[w].DefaultConfiguration)],
                 gDefaultDevices[HDA_VERB_GET_CONFIGURATION_DEFAULT_DEVICE(Widgets[w].DefaultConfiguration)],
                 gSurfaces[HDA_VERB_GET_CONFIGURATION_DEFAULT_SURF(Widgets[w].DefaultConfiguration)],
                 gLocations[HDA_VERB_GET_CONFIGURATION_DEFAULT_LOC(Widgets[w].DefaultConfiguration)]);
 
             // Print connection type and color.
-            HdaLog("    Conn = %s, Color = %s\n",
+            HdaLog("    Conn = %a, Color = %a\n",
                 gConnTypes[HDA_VERB_GET_CONFIGURATION_DEFAULT_CONN_TYPE(Widgets[w].DefaultConfiguration)],
                 gColors[HDA_VERB_GET_CONFIGURATION_DEFAULT_COLOR(Widgets[w].DefaultConfiguration)]);
 
