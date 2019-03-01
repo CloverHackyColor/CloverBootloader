@@ -1309,6 +1309,7 @@ BiosVideoCheckForVbe (
   }
 
   if (!EdidOverrideFound || EdidAttributes == EFI_EDID_OVERRIDE_DONT_OVERRIDE) {
+	  UINT8 VGAPort = 0;
     //
     // If EDID Override data doesn't exist or EFI_EDID_OVERRIDE_DONT_OVERRIDE returned,
     // read EDID information through INT10 call
@@ -1335,10 +1336,12 @@ BiosVideoCheckForVbe (
      block 0 - VESA Structure
      block 1 - CEA Ext Structure
      */
+	 EdidFound = FALSE;
+	 while (!EdidFound && (VGAPort < 4)) {		 
     ZeroMem (&Regs, sizeof (Regs));
     Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
     Regs.X.BX = 1;
-    Regs.X.CX = 0;
+    Regs.X.CX = VGAPort;
     Regs.X.DX = 1; //block 0
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
@@ -1348,7 +1351,7 @@ BiosVideoCheckForVbe (
     //
     // See if the VESA call succeeded
     //
-    EdidFound = FALSE;
+    
     if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
       EdidFound = TRUE;
       DBG(" Edid1+\n");
@@ -1361,7 +1364,7 @@ BiosVideoCheckForVbe (
     ZeroMem (&Regs, sizeof (Regs));
     Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
     Regs.X.BX = 1;
-    Regs.X.CX = 0;
+    Regs.X.CX = VGAPort;
     Regs.X.DX = 0; //block 1
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
@@ -1383,6 +1386,7 @@ BiosVideoCheckForVbe (
     } else {
       DBG(" Edid0-\n");
     }
+	 }
   }
 	
   if (EdidOverrideFound) {
