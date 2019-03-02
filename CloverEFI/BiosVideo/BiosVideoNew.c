@@ -1336,59 +1336,61 @@ BiosVideoCheckForVbe (
      block 0 - VESA Structure
      block 1 - CEA Ext Structure
      */
-	 EdidFound = FALSE;
-	 while (!EdidFound && (VGAPort < 4)) {		 
-    ZeroMem (&Regs, sizeof (Regs));
-    Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
-    Regs.X.BX = 1;
-    Regs.X.CX = VGAPort;
-    Regs.X.DX = 1; //block 0
-    Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-    Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-
-    LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
-
-    //
-    // See if the VESA call succeeded
-    //
-    
-    if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
-      EdidFound = TRUE;
-      DBG(" Edid1+\n");
-      ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
-    } else {
-      DBG(" Edid1-\n");
+    EdidFound = FALSE;
+    while (!EdidFound && (VGAPort < 4)) {
+      ZeroMem (&Regs, sizeof (Regs));
+      Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
+      Regs.X.BX = 1;
+      Regs.X.CX = VGAPort;
+      Regs.X.DX = 1; //block 0
+      Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+      Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+      
+      LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
+      
+      //
+      // See if the VESA call succeeded
+      //
+      
+      if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
+        EdidFound = TRUE;
+        DBG(" Edid1+\n");
+        ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
+        break;
+      } else {
+        DBG(" Edid1-\n");
+      }
+      
+      //Slice - attempt Nr2
+      ZeroMem (&Regs, sizeof (Regs));
+      Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
+      Regs.X.BX = 1;
+      Regs.X.CX = VGAPort;
+      Regs.X.DX = 0; //block 1
+      Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+      Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+      
+      LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
+      EdidFound = (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS);
+      //&& bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock);
+      
+      if (!bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
+        //		MsgLog(" Edid broken\n");
+      }
+      //
+      // Parse EDID data structure to retrieve modes supported by monitor
+      //
+      if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
+        EdidFound = TRUE;
+        DBG(" Edid0+\n");
+        ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
+      } else {
+        DBG(" Edid0-\n");
+      }
+      VGAPort++;
     }
-
-    //Slice - attempt Nr2
-    ZeroMem (&Regs, sizeof (Regs));
-    Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
-    Regs.X.BX = 1;
-    Regs.X.CX = VGAPort;
-    Regs.X.DX = 0; //block 1
-    Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-    Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-
-    LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
-    EdidFound = (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS);
-    //&& bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock);
-
-    if (!bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
-      //		MsgLog(" Edid broken\n");
-    }
-    //
-    // Parse EDID data structure to retrieve modes supported by monitor
-    //
-    if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
-      EdidFound = TRUE;
-      DBG(" Edid0+\n");
-      ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
-    } else {
-      DBG(" Edid0-\n");
-    }
-	 }
   }
-	
+  
   if (EdidOverrideFound) {
     EdidActiveDataSize  = EdidOverrideDataSize;
     EdidActiveDataBlock = EdidOverrideDataBlock;
