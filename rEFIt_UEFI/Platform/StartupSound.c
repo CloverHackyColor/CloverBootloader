@@ -156,7 +156,7 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
   if ((freq == EfiAudioIoFreq8kHz) && (bits == EfiAudioIoBits16)) {
     //making conversion
     UINTN Len = WaveData.SamplesLength * 6; //8000<->48000
-    INTN Ind, Out=0, Tact;
+    UINTN Ind, Out=0, Tact;
     INT16 Tmp, Next;
     float Delta;
     INT16 *Ptr = (INT16*)WaveData.Samples;

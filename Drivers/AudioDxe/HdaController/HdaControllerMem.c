@@ -102,7 +102,7 @@ HdaControllerInitCorb(
 
     // If 64-bit supported, set upper base address.
     if (HdaDev->Capabilities & HDA_REG_GCAP_64OK) {
-        HdaUpperCorbBaseAddr = (UINT32)(CorbPhysAddr >> 32);
+        HdaUpperCorbBaseAddr = (UINT32)RShiftU64(CorbPhysAddr, 32);
         Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_CORBUBASE, 1, &HdaUpperCorbBaseAddr);
         ASSERT_EFI_ERROR(Status);
         if (EFI_ERROR(Status))
@@ -538,7 +538,7 @@ HdaControllerInitStreams(
 
     // If 64-bit supported, set DMA positions upper base address.
     if (HdaControllerDev->Capabilities & HDA_REG_GCAP_64OK) {
-        UpperBaseAddr = (UINT32)(HdaControllerDev->DmaPositionsPhysAddr >> 32);
+        UpperBaseAddr = (UINT32)RShiftU64(HdaControllerDev->DmaPositionsPhysAddr, 32);
         Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_DPUBASE, 1, &UpperBaseAddr);
         if (EFI_ERROR(Status))
             goto FREE_BUFFER;
@@ -626,7 +626,7 @@ HdaControllerResetStream(
 
     // If 64-bit supported, set buffer list upper base address.
     if (HdaStream->HdaControllerDev->Capabilities & HDA_REG_GCAP_64OK) {
-        UpperBaseAddr = (UINT32)(HdaStream->BufferListPhysAddr >> 32);
+        UpperBaseAddr = (UINT32)RShiftU64(HdaStream->BufferListPhysAddr, 32);
         Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_SDNBDPU(HdaStream->Index), 1, &UpperBaseAddr);
         if (EFI_ERROR(Status))
             return Status;

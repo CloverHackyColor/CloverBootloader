@@ -137,6 +137,9 @@
   Platform/sound.c
   Platform/StartupSound.c
 
+[Sources.IA32]
+  libeg/ftol.asm | MSFT
+
 [Packages]
 	Clover/CloverPkg.dec
     MdePkg/MdePkg.dec
