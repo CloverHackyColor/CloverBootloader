@@ -1,0 +1,54 @@
+!ifndef DESTDIR
+!error Variable DESTDIR must be defined!
+!endif
+
+!ifdef NASM_PREFIX
+NASM=$(NASM_PREFIX)nasm
+!else
+NASM=nasm
+!endif
+
+all: boot0 boot0af boot0ss boot0md boot1h boot1h2 boot1f32 boot1f32alt boot1x boot1xalt
+
+boot0: boot0.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot0af: boot0af.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot0ss: boot0ss.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot0md: boot0md.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot1h: boot1h.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot1h2: boot1h2.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot1f32: boot1f32.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot1f32alt: boot1f32alt.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot1x: boot1x.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+boot1xalt: boot1xalt.s
+	@echo -^> "$@"
+	@"$(NASM)" $(@F).s -o $(DESTDIR)\$@
+
+clean:
+	del /f boot0 boot0af boot0ss boot0md boot1h boot1h2 boot1f32 boot1f32alt boot1x boot1xalt *~

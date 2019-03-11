@@ -3957,7 +3957,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   }
   if (!g) {
     //missing glyph
-    NSVGglyph* g = p->text->font->missingGlyph;
+    g = p->text->font->missingGlyph;
     shape->paths = g->path;
     //    if (shape->paths) {
     //      DBG("Missing glyph %x, path[0]=%d\n", letter, (int)shape->paths->pts[0]);

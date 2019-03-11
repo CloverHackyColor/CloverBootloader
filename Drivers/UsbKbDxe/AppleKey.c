@@ -28,7 +28,7 @@ STATIC UINT16 mIdProduct = 0x021d; //iMac aluminium keyboard
 STATIC UINT8 mCountryCode = 0;
 */
 STATIC VOID *mAppleKeyMapDbRegistration = NULL;
-APPLE_KEY_MAP_DATABASE_PROTOCOL *AppleKeyMapDb = NULL;
+APPLE_KEY_MAP_DATABASE_PROTOCOL *mAppleKeyMapDb = NULL;
 
 STATIC
 EFI_STATUS
@@ -79,10 +79,10 @@ UsbKbAppleKeyMapDbInstallNotify (
   Status = gBS->LocateProtocol (
                   &gAppleKeyMapDatabaseProtocolGuid,
                   mAppleKeyMapDbRegistration,
-                  (VOID **)&AppleKeyMapDb
+                  (VOID **)&mAppleKeyMapDb
                   );
   if (!EFI_ERROR (Status)) {
-    UsbKbSetAppleKeyMapDb ((USB_KB_DEV *)Context, AppleKeyMapDb);
+    UsbKbSetAppleKeyMapDb ((USB_KB_DEV *)Context, mAppleKeyMapDb);
     gBS->CloseEvent (Event);
   }
 }
@@ -103,10 +103,10 @@ UsbKbLocateAppleKeyMapDb (
   Status = gBS->LocateProtocol (
                   &gAppleKeyMapDatabaseProtocolGuid,
                   NULL,
-                  (VOID **)&AppleKeyMapDb
+                  (VOID **)&mAppleKeyMapDb
                   );
   if (!EFI_ERROR (Status)) {
-    UsbKbSetAppleKeyMapDb (UsbKeyboardDevice, AppleKeyMapDb);
+    UsbKbSetAppleKeyMapDb (UsbKeyboardDevice, mAppleKeyMapDb);
   } 
     else /*if (PcdGetBool (PcdNotifyAppleKeyMapDbInUsbKbDriver))*/ {  //true
     EfiCreateProtocolNotifyEvent (

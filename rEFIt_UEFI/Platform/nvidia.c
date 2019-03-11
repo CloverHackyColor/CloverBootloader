@@ -2393,12 +2393,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       nvCardType, nvda_dev->vendor_id, nvda_dev->device_id,
       devicepath, devices_number);
 
-  if (!string) {
-    string = devprop_create_string();
+  if (!device_inject_string) {
+    device_inject_string = devprop_create_string();
   }
 
   if (nvda_dev && !nvda_dev->used) {
-    device = devprop_add_device_pci(string, nvda_dev, NULL);
+    device = devprop_add_device_pci(device_inject_string, nvda_dev, NULL);
     nvda_dev->used = TRUE;
   }
 

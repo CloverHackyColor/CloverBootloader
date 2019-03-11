@@ -5424,13 +5424,13 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
 
   // Fix Display
   if ((gSettings.FixDsdt & FIX_DISPLAY) || (gSettings.FixDsdt & FIX_INTELGFX)) {
-    INT32 i;
-    for (i=0; i<4; i++) {
-      if (DisplayADR1[i]) {
-          if (((DisplayVendor[i] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
-              ((DisplayVendor[i] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
-            DsdtLen = FIXDisplay(temp, DsdtLen, i);
-            MsgLog("patch Display #%d of Vendor=0x%4x\n", i, DisplayVendor[i]);
+    INT32 j;
+    for (j=0; j<4; ++j) {
+      if (DisplayADR1[j]) {
+          if (((DisplayVendor[j] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
+              ((DisplayVendor[j] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
+            DsdtLen = FIXDisplay(temp, DsdtLen, j);
+            MsgLog("patch Display #%d of Vendor=0x%4x\n", j, DisplayVendor[j]);
           }
       }
     }

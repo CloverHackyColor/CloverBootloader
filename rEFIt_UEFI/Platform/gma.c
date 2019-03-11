@@ -1339,12 +1339,12 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       break;
   }
 
-  if (!string) {
-    string = devprop_create_string();
+  if (!device_inject_string) {
+    device_inject_string = devprop_create_string();
   }
 
   if (gma_dev && !gma_dev->used) {
-    device = devprop_add_device_pci(string, gma_dev, NULL);
+    device = devprop_add_device_pci(device_inject_string, gma_dev, NULL);
     gma_dev->used = TRUE;
   }
 

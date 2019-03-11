@@ -83,7 +83,7 @@ HSHash(
   return EFI_SUCCESS;  
 }
 
-EFI_HASH_PROTOCOL HashProto = {
+EFI_HASH_PROTOCOL mHashProto = {
   &HSGetHashSize,
   &HSHash
 };
@@ -107,7 +107,7 @@ HSCreateChild(
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem(&PrivateData->Proto, &HashProto, sizeof HashProto);
+  CopyMem(&PrivateData->Proto, &mHashProto, sizeof mHashProto);
 
   Status = gBS->InstallProtocolInterface(
     ChildHandle,

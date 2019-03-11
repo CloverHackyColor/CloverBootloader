@@ -26,9 +26,9 @@
 
 UINT32 devices_number = 1;
 UINT32 builtin_set    = 0;
-DevPropString *string = NULL;
-UINT8  *stringdata    = NULL;
-UINT32 stringlength   = 0;
+DevPropString *device_inject_string = NULL;
+UINT8  *device_inject_stringdata    = NULL;
+UINT32 device_inject_stringlength   = 0;
 
 //pci_dt_t* nvdevice;
 //SwapBytes16 or 32
@@ -50,14 +50,14 @@ UINT32 stringlength   = 0;
 DevPropString *devprop_create_string(VOID)
 {
   //	DBG("Begin creating strings for devices:\n");
-  string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
+  device_inject_string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
 
-  if(string == NULL)
+  if(device_inject_string == NULL)
     return NULL;
 
-  string->length = 12;
-  string->WHAT2 = 0x01000000;
-  return string;
+  device_inject_string->length = 12;
+  device_inject_string->WHAT2 = 0x01000000;
+  return device_inject_string;
 }
 
 
@@ -357,14 +357,14 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     return FALSE;
   }
 
-  if (!string) {
-    string = devprop_create_string();
+  if (!device_inject_string) {
+    device_inject_string = devprop_create_string();
   }
 #if DEBUG_INJECT
   devicepath = get_pci_dev_path(eth_dev);
 #endif
   if (eth_dev && !eth_dev->used) {
-    device = devprop_add_device_pci(string, eth_dev, NULL);
+    device = devprop_add_device_pci(device_inject_string, eth_dev, NULL);
     eth_dev->used = TRUE;
   }
 
@@ -437,14 +437,14 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   BOOLEAN         Injected = FALSE;
   UINTN           i;
 
-  if (!string)
-    string = devprop_create_string();
+  if (!device_inject_string)
+    device_inject_string = devprop_create_string();
 #if DEBUG_INJECT
   devicepath = get_pci_dev_path(usb_dev);
 #endif
 
   if (usb_dev && !usb_dev->used) {
-    device = devprop_add_device_pci(string, usb_dev, NULL);
+    device = devprop_add_device_pci(device_inject_string, usb_dev, NULL);
     usb_dev->used = TRUE;
   }
 

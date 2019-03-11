@@ -2019,14 +2019,14 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
 
   // -------------------------------------------------
   // Find a better way to do this (in device_inject.c)
-  if (!string) {
-    string = devprop_create_string();
+  if (!device_inject_string) {
+    device_inject_string = devprop_create_string();
   }
 
   devicepath = get_pci_dev_path(ati_dev);
   //card->device = devprop_add_device(string, devicepath);
   if (ati_dev && !ati_dev->used) {
-    card->device = devprop_add_device_pci(string, ati_dev, NULL);
+    card->device = devprop_add_device_pci(device_inject_string, ati_dev, NULL);
     ati_dev->used = TRUE;
   }
 

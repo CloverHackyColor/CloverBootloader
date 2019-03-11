@@ -154,9 +154,9 @@ struct DevPropString {
 
 typedef struct DevPropString  DevPropString;
 
-extern DevPropString *string;
-extern UINT8 *stringdata;
-extern UINT32 stringlength;
+extern DevPropString *device_inject_string;
+extern UINT8 *device_inject_stringdata;
+extern UINT32 device_inject_stringlength;
 
 
 DevPropString	*devprop_create_string(void);

@@ -868,14 +868,14 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
   BOOLEAN                 Injected = FALSE;
   UINTN                   i;
   
-  if (!string) {
-    string = devprop_create_string();
+  if (!device_inject_string) {
+    device_inject_string = devprop_create_string();
   }
 #if DEBUG_INJECT
   devicepath = get_pci_dev_path(hda_dev);
 #endif
   if (hda_dev && !hda_dev->used) {
-    device = devprop_add_device_pci(string, hda_dev, NULL);
+    device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
     hda_dev->used = TRUE;
   }
   
@@ -893,7 +893,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
     }
     
     if (hda_dev && !hda_dev->used) {
-      device = devprop_add_device_pci(string, hda_dev, NULL);
+      device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
       hda_dev->used = TRUE;
     }
     if (!device) {
@@ -930,7 +930,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
       return FALSE;
     }
     if (hda_dev && !hda_dev->used) {
-      device = devprop_add_device_pci(string, hda_dev, NULL);
+      device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
       hda_dev->used = TRUE;
     }
     if (!device) {

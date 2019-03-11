@@ -400,9 +400,7 @@ FVEntrypoint (IN EFI_HANDLE           ImageHandle,
               )
 {
   EFI_STATUS					            Status; 
-  EFI_BOOT_SERVICES               *gBS;
   EFI_FIRMWARE_VOLUME_PROTOCOL    *ExistingFirmwareVolume;
-  gBS				= SystemTable->BootServices;
   
   Status = gBS->LocateProtocol (&gEfiFirmwareVolumeProtocolGuid, NULL, (VOID **)&ExistingFirmwareVolume);
 

@@ -22,7 +22,7 @@
 
 
 STATIC VOID *mAppleKeyMapDbRegistration = NULL;
-APPLE_KEY_MAP_DATABASE_PROTOCOL *AppleKeyMapDb = NULL;
+APPLE_KEY_MAP_DATABASE_PROTOCOL *mAppleKeyMapDb = NULL;
 
 STATIC
 EFI_STATUS
@@ -72,10 +72,10 @@ BiosKbAppleKeyMapDbInstallNotify (
   Status = gBS->LocateProtocol (
                   &gAppleKeyMapDatabaseProtocolGuid,
                   mAppleKeyMapDbRegistration,
-                  (VOID **)&AppleKeyMapDb
+                  (VOID **)&mAppleKeyMapDb
                   );
   if (!EFI_ERROR (Status)) {
-    BiosKbSetAppleKeyMapDb ((BIOS_KEYBOARD_DEV *)Context, AppleKeyMapDb);
+    BiosKbSetAppleKeyMapDb ((BIOS_KEYBOARD_DEV *)Context, mAppleKeyMapDb);
     gBS->CloseEvent (Event);
   }
 }
@@ -96,10 +96,10 @@ BiosKbLocateAppleKeyMapDb (
   Status = gBS->LocateProtocol (
                   &gAppleKeyMapDatabaseProtocolGuid,
                   NULL,
-                  (VOID **)&AppleKeyMapDb
+                  (VOID **)&mAppleKeyMapDb
                   );
   if (!EFI_ERROR (Status)) {
-    BiosKbSetAppleKeyMapDb (BiosKeyboardDevice, AppleKeyMapDb);
+    BiosKbSetAppleKeyMapDb (BiosKeyboardDevice, mAppleKeyMapDb);
   } 
     else  {  
     EfiCreateProtocolNotifyEvent (

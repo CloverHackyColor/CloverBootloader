@@ -2074,7 +2074,6 @@ BiosKeyboardTimerHandler (
   if (Regs.E.EFLAGS.Bits.ZF != 0) {
     gBS->RestoreTPL (OldTpl);
     if ( apple_need_zero ) {
-    	APPLE_KEY           Keys[8]; // APPLE_KEY is UINT16
 //DBG("BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys 0\n");
     	BiosKeyboardPrivate->KeyMapDb->SetKeyStrokeBufferKeys (
                                                            BiosKeyboardPrivate->KeyMapDb,

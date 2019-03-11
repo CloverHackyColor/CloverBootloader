@@ -315,7 +315,10 @@ ParseACPIName(CHAR8 *String)
       for (i = pos0 + 1, j = 0; i < pos1; i++) {
         List->Name[j++] = String[i];
       }
-      while (j < 4) List->Name[j++] = '_';  //extend by '_' up to 4 symbols
+      // extend by '_' up to 4 symbols
+      if (j < 4) {
+        gBS->SetMem(List->Name + j, 4 - j, '_');
+      }
       List->Name[4] = '\0';
       //    }
       //      DBG("string between [%d,%d]: %a\n", pos0, pos1, List->Name);
@@ -2403,7 +2406,7 @@ GetEarlyUserSettings (
 
       Prop = GetProperty (DictPointer, "DefaultVolume");
       if (Prop != NULL) {
-        UINTN Size = AsciiStrSize (Prop->string);
+        Size = AsciiStrSize (Prop->string);
         if (Size > 0) {
           if (gSettings.DefaultVolume  != NULL) { //override value from Boot Option
             FreePool(gSettings.DefaultVolume);
@@ -4836,7 +4839,7 @@ GetUserSettings(
                   PropCount = GetTagCount(Prop2);  //properties count for this device
                   //         DBG("Add %d properties:\n", PropCount);
                   for (j = 0; j < PropCount; j++) {
-                    TagPtr Prop3 = NULL;
+                    Prop3 = NULL;
                     DevProps = *Child;
                     *Child = AllocateZeroPool(sizeof(DEV_PROPERTY));
                     (*Child)->Next = DevProps;
@@ -6393,7 +6396,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // Check for ia.log - InstallESD/createinstallmedia/startosinstall
     // Implemented by Sherlocks
     if (OSVersion == NULL) {
-      CHAR8  *i, *fileBuffer, *targetString;
+      CHAR8  *s, *fileBuffer, *targetString;
       CHAR8  *Res5 = AllocateZeroPool(5), *Res6 = AllocateZeroPool(6), *Res7 = AllocateZeroPool(7), *Res8 = AllocateZeroPool(8);
       UINTN  fileLen = 0;
       CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log"; // 10.7
@@ -6408,51 +6411,51 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR (Status)) {
           targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
           CopyMem((VOID*)targetString, (VOID*)fileBuffer, fileLen);
-          i = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
-          if (i[31] == ' ') {
-            AsciiSPrint (Res5, 5, "%c%c.%c\n", i[27], i[28], i[30]);
+          s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
+          if (s[31] == ' ') {
+            AsciiSPrint (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
             OSVersion = AllocateCopyPool (AsciiStrSize (Res5), Res5);
-            if (i[38] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37]);
+            if (s[38] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-            } else if (i[39] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[33], i[34], i[35], i[36], i[37], i[38]);
+            } else if (s[39] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
-          } else if (i[31] == '.') {
-            AsciiSPrint (Res7, 7, "%c%c.%c.%c\n", i[27], i[28], i[30], i[32]);
+          } else if (s[31] == '.') {
+            AsciiSPrint (Res7, 7, "%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
             OSVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-            if (i[40] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39]);
+            if (s[40] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-            } else if (i[41] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[35], i[36], i[37], i[38], i[39], i[40]);
+            } else if (s[41] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
-          } else if (i[32] == ' ') {
-            AsciiSPrint (Res6, 6, "%c%c.%c%c\n", i[27], i[28], i[30], i[31]);
+          } else if (s[32] == ' ') {
+            AsciiSPrint (Res6, 6, "%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
             OSVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-            if (i[39] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38]);
+            if (s[39] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-            } else if (i[40] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39]);
+            } else if (s[40] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-            } else if (i[41] == ')') {
-              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[34], i[35], i[36], i[37], i[38], i[39], i[40]);
+            } else if (s[41] == ')') {
+              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
-          } else if (i[32] == '.') {
-            AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", i[27], i[28], i[30], i[31], i[33]);
+          } else if (s[32] == '.') {
+            AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
             OSVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
-            if (i[41] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40]);
+            if (s[41] == ')') {
+              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res6), Res6);
-            } else if (i[42] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41]);
+            } else if (s[42] == ')') {
+              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res7), Res7);
-            } else if (i[43] == ')') {
-              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", i[36], i[37], i[38], i[39], i[40], i[41], i[42]);
+            } else if (s[43] == ')') {
+              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
               Entry->BuildVersion = AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           }
@@ -7001,15 +7004,15 @@ SetDevices (LOADER_ENTRY *Entry)
   //First make string from Device->Properties
   Prop = gSettings.ArbProperties;
   device = NULL;
-  if (!string) {
-    string = devprop_create_string();
+  if (!device_inject_string) {
+    device_inject_string = devprop_create_string();
   }
   while (Prop) {
     if (Prop->Device != 0) {
       Prop = Prop->Next; //skip CustomProperties
       continue;
     }
-    device = devprop_add_device_pci(string, NULL, Prop->DevicePath);
+    device = devprop_add_device_pci(device_inject_string, NULL, Prop->DevicePath);
     DBG("add device: %s\n", DevicePathToStr(Prop->DevicePath));
     Prop2 = Prop->Child;
     while (Prop2) {
@@ -7083,7 +7086,7 @@ SetDevices (LOADER_ENTRY *Entry)
             continue;
           }
           if (!PCIdevice.used) {
-            device = devprop_add_device_pci(string, &PCIdevice, NULL);
+            device = devprop_add_device_pci(device_inject_string, &PCIdevice, NULL);
             PCIdevice.used = TRUE;
           }
           //special corrections
@@ -7799,21 +7802,21 @@ SetDevices (LOADER_ENTRY *Entry)
 
   if (StringDirty) {
     EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-    stringlength                   = string->length * 2;
-    DBG ("stringlength = %d\n", stringlength);
-    // gDeviceProperties            = AllocateAlignedPages EFI_SIZE_TO_PAGES (stringlength + 1), 64);
+    device_inject_stringlength                   = device_inject_string->length * 2;
+    DBG ("stringlength = %d\n", device_inject_stringlength);
+    // gDeviceProperties            = AllocateAlignedPages EFI_SIZE_TO_PAGES (device_inject_stringlength + 1), 64);
 
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
                                  EfiACPIReclaimMemory,
-                                 EFI_SIZE_TO_PAGES (stringlength + 1),
+                                 EFI_SIZE_TO_PAGES (device_inject_stringlength + 1),
                                  &BufferPtr
                                  );
 
     if (!EFI_ERROR (Status)) {
       mProperties       = (UINT8*)(UINTN)BufferPtr;
-      gDeviceProperties = (VOID*)devprop_generate_string (string);
-      gDeviceProperties[stringlength] = 0;
+      gDeviceProperties = (VOID*)devprop_generate_string (device_inject_string);
+      gDeviceProperties[device_inject_stringlength] = 0;
       //     DBG (gDeviceProperties);
       //     DBG ("\n");
       //     StringDirty = FALSE;
@@ -7829,9 +7832,9 @@ SetDevices (LOADER_ENTRY *Entry)
         FreePool(gSettings.AddProperties);
       }
       if (gSettings.ArbProperties) {
-        DEV_PROPERTY *Prop = gSettings.ArbProperties;
         DEV_PROPERTY *Props;
         DEV_PROPERTY *Next;
+        Prop = gSettings.ArbProperties;
         while (Prop) {
           Props = Prop->Child;
           if (Prop->Label) {

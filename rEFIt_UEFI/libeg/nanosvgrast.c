@@ -819,8 +819,8 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
     p.y = path->pts[1];
     nsvg__addPathPoint(r, &p, xform, NSVG_PT_CORNER);
     for (i = 0; i < path->npts-1; i += 3) {
-      float* p = &path->pts[i*2];
-      nsvg__flattenCubicBez2(r, p, xform, NSVG_PT_CORNER);
+      float* pt = &path->pts[i*2];
+      nsvg__flattenCubicBez2(r, pt, xform, NSVG_PT_CORNER);
     }
     if (r->npoints < 2)
       continue;
