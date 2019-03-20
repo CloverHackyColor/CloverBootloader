@@ -601,13 +601,13 @@
 		<key>#FakeID</key>
 		<dict>
 			<key>#WIFI</key>
-			<string>0x431214e4</string>
+			<string>0x0030168C</string>
 			<key>#IntelGFX</key>
-			<string>0x01268086</string>
+			<string>0x01668086</string>
 			<key>#LAN</key>
 			<string>0x100E8086</string>
 			<key>#SATA</key>
-			<string>0x25628086</string>
+			<string>0x26818086</string>
 			<key>#IMEI</key>
 			<string>0x1e208086</string>
 			<key>#ATI</key>

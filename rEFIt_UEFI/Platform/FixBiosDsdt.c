@@ -2822,21 +2822,6 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
       aml_add_byte(dev, 0x01);
     }
     met = aml_add_method(dev, "_DSM", 4);
-    //something here is not liked by apple...
-/*    k = FindMethod(dsdt + i, Size, "_SUN");
-    if (k == 0) {
-      k = FindName(dsdt + i, Size, "_SUN");
-      if (k == 0) {
-        aml_add_name(dev, "_SUN");
-        aml_add_dword(dev, SlotDevices[4].SlotID);
-      } else {
-        //we have name sun, set the number
-        if (dsdt[k + 4] == 0x0A) {
-          dsdt[k + 5] = SlotDevices[4].SlotID;
-        }
-      }
-    }
- */
   } else {
     //HDAU device already present
     met = aml_add_method(root, "_DSM", 4);
@@ -2853,6 +2838,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
       aml_add_string_buffer(pack, "onboard-1");
     }
   }
+  /*
   if (!CustProperties(pack, DEV_HDMI)) {
     DBG("  with default properties\n");
     aml_add_string(pack, "layout-id");
@@ -2861,6 +2847,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "PinConfigurations");
     aml_add_byte_buffer(pack, data2, sizeof(data2));
   }
+   */
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
