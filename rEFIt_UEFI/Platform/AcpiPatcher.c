@@ -1881,16 +1881,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     if (gSettings.C3Latency == 0) {
       gSettings.C3Latency = newFadt->PLvl3Lat;
     }
+    
     newFadt->IaPcBootArch = 0x3;
-
-    newFadt->Flags |= 0x400; //Reset Register Supported
     if (gSettings.NoASPM) {
-      newFadt->Flags |= 0x10;
-    } else {
-      newFadt->Flags |= 0x20;
-      newFadt->Flags &= ~0x10; //by default the bit must be zero while not in OEM BIOS
+      newFadt->IaPcBootArch |= 0x10;  // disable ASPM
     }
-    newFadt->Flags &= ~0x10000; //RTC_STS not valid
+    newFadt->Flags |= 0x420; //Reset Register Supported and SleepButton active
+    newFadt->Flags &= ~0x10010; //RTC_STS not valid and PowerButton disable
     XDsdt = newFadt->XDsdt; //save values if present
     XFirmwareCtrl = newFadt->XFirmwareCtrl;
     CopyMem(&newFadt->ResetReg, pmBlock, 0x80);
