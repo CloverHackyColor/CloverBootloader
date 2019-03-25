@@ -485,7 +485,9 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 
   fake_devid = usb_dev->device_id & 0xFFFF;
   if ((fake_devid & 0xFF00) == 0x2900) {
-    fake_devid &= 0xFEFF;
+//    fake_devid &= 0xFEFF;
+    fake_devid &= ~0xFF00;
+    fake_devid |= 0x3A00;
     devprop_add_value(device, "device-id", (UINT8*)&fake_devid, 4);
   }
   switch (usb_dev->subclass) {
