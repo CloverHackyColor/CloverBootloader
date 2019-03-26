@@ -376,7 +376,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   if (eth_dev->vendor_id != 0x168c && builtin_set == 0) {
  		builtin_set = 1;
  		builtin = 0x01;
- 	}
+  }
 
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
@@ -412,6 +412,12 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     FakeID = gSettings.FakeLAN & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
+  else if (eth_dev->vendor_id == 0x11AB && eth_dev->device_id == 0x4364)
+  {
+      UINT32 FakeID = 0x4354;
+      devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
+  }
+
 
   return devprop_add_value(device, "built-in", (UINT8*)&builtin, 1);
 }

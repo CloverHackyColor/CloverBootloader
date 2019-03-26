@@ -55,8 +55,11 @@ BOOLEAN FirewireName;
 // for read computer data
 UINT32 DisplayADR1[4];
 UINT32 DisplayADR2[4];
-UINT32 NetworkADR1;
-UINT32 NetworkADR2;
+UINT32 NetworkADR1[4];
+UINT32 NetworkADR2[4];
+CHAR8*  Netmodel[4];
+CHAR8*  NetName[4] = { "ETH0", "ETH1", "ETH2", "ETH3" };
+UINT32 net_count = 0; 
 UINT32 ArptADR1;
 UINT32 ArptADR2;
 UINT32 FirewireADR1;
@@ -689,7 +692,9 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
             GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2, NULL);
  //           DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
-            Netmodel = get_net_model(deviceid);
+ //           Netmodel = get_net_model(deviceid);
+            Netmodel[net_count] = get_net_model(deviceid);
+            net_count++;
           }
 
           //Network WiFi ADR
@@ -2882,7 +2887,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
 
 //Network -------------------------------------------------------------
 
-UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
+UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
 {
   UINT32 i, k;
   UINT32 NetworkADR = 0, BridgeSize, Size, BrdADR = 0;
@@ -2898,15 +2903,15 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   UINT32 FakeVen = 0;
   CHAR8  NameCard[32];
 
-  if (!NetworkADR1) return len;
-  DBG("Start NetWork Fix\n");
+  if (!NetworkADR1[card]) return len;
+  DBG("Start NetWork %d Fix\n", card);
 
   if (gSettings.FakeLAN) {
     FakeID = gSettings.FakeLAN >> 16;
     FakeVen = gSettings.FakeLAN & 0xFFFF;
     AsciiSPrint(NameCard, 32, "pci%x,%x\0", FakeVen, FakeID);
     LowCase(NameCard);
-    Netmodel = get_net_model((FakeVen << 16) + FakeID);
+    Netmodel[card] = get_net_model((FakeVen << 16) + FakeID);
   }
 
   PCIADR = GetPciDevice(dsdt, len);
@@ -2917,7 +2922,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   NetworkName = FALSE;
   // Network Address
   for (i = 0x24; len >=10 && i < len - 10; i++) {
-    if (CmpAdr(dsdt, i, NetworkADR1)) { //0x001C0004
+    if (CmpAdr(dsdt, i, NetworkADR1[card])) { //0x001C0004
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
         continue;
@@ -2927,9 +2932,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       if (!BridgeSize) {
         continue;
       }
-      if (NetworkADR2 != 0xFFFE){  //0
+      if (NetworkADR2[card] != 0xFFFE){  //0
         for (k = BrdADR + 9; k < BrdADR + BridgeSize; k++) {
-          if (CmpAdr(dsdt, k, NetworkADR2)) {
+            if (CmpAdr(dsdt, k, NetworkADR2[card])) {
             NetworkADR = devFind(dsdt, k);
             if (!NetworkADR) {
               continue;
@@ -2938,7 +2943,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
             device_name[1] = AllocateZeroPool(5);
             CopyMem(device_name[1], dsdt+k, 4);
             DBG("found NetWork device [0x%08x:%x] at %x and Name is %a\n",
-                NetworkADR1, NetworkADR2, NetworkADR, device_name[1]);
+                NetworkADR1[card], NetworkADR2[card], NetworkADR, device_name[1]);
             //renaming disabled until better way will found
        //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[1], "GIGE");
             NetworkName = TRUE;
@@ -2946,7 +2951,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
           }
         }
         if (!NetworkName) {
-          DBG("have no Network device while NetworkADR2=%x\n", NetworkADR2);
+            DBG("have no Network device while NetworkADR2=%x\n", NetworkADR2[card]);
           //in this case NetworkADR point to bridge
           NetworkADR = BrdADR;
         }
@@ -2981,20 +2986,20 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     root = aml_add_device(brd, "LAN0");
     aml_add_name(root, "_ADR");
     aml_add_dword(root, NetworkADR1);
-    DBG("Created  bridge device with ADR=0x%x\n", NetworkADR1);
+    DBG("Created  bridge device with ADR=0x%x\n", NetworkADR1[card]);
   }
 
-  DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1, NetworkADR2);
+  DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1[card], NetworkADR2[card]);
   dev = root;
-  if (!NetworkName && (NetworkADR2 != 0xFFFE)) //there is no network device at dsdt, creating new one
+  if (!NetworkName && (NetworkADR2[card] != 0xFFFE)) //there is no network device at dsdt, creating new one
   {
     dev = aml_add_device(root, "GIGE");
     aml_add_name(dev, "_ADR");
     if (NetworkADR2) {
       if (NetworkADR2> 0x3F)
-        aml_add_dword(dev, NetworkADR2);
+          aml_add_dword(dev, NetworkADR2[card]);
       else
-        aml_add_byte(dev, (UINT8)NetworkADR2);
+          aml_add_byte(dev, (UINT8)NetworkADR2[card]);
     } else {
       aml_add_byte(dev, 0x00);
     }
@@ -3023,7 +3028,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "built-in");
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "model");
-    aml_add_string_buffer(pack, Netmodel);
+    aml_add_string_buffer(pack, Netmodel[card]);
 //    aml_add_string(pack, "device_type");
 //    aml_add_string_buffer(pack, "Ethernet");
     if (gSettings.FakeLAN) {
@@ -3040,12 +3045,12 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     }
 
     // Could we just comment this part? (Until remember what was the purposes?)
-  if (!CustProperties(pack, DEV_LAN) &&
+/*  if (!CustProperties(pack, DEV_LAN) &&
         !gSettings.FakeLAN &&
       !gSettings.NoDefaultProperties) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
-  }
+  } */
   aml_add_local0(met2);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   }
@@ -5425,9 +5430,15 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   }
 
   // Fix Network
-  if (NetworkADR1 && (gSettings.FixDsdt & FIX_LAN)) {
+  if ((gSettings.FixDsdt & FIX_LAN)) {
 //    DBG("patch LAN in DSDT \n");
-    DsdtLen = FIXNetwork(temp, DsdtLen);
+    INT32 j;
+    for (j = 0; j <= net_count; ++j) {
+        if (NetworkADR1[j]) {
+            MsgLog("patch LAN0 in DSDT \n");
+            DsdtLen = FIXNetwork(temp, DsdtLen, j);
+        }
+    }
   }
 
   // Fix Airport

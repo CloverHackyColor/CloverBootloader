@@ -7698,10 +7698,8 @@ SetDevices (LOADER_ENTRY *Entry)
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
           //MsgLog ("Ethernet device found\n");
-          if (!(gSettings.FixDsdt & FIX_LAN)) {
             TmpDirty = set_eth_props (&PCIdevice);
             StringDirty |=  TmpDirty;
-          }
         }
 
         //USB
