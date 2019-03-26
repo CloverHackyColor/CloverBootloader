@@ -6732,6 +6732,7 @@ GetDevices ()
             ((Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_VGA)) ||
              (Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_OTHER))) &&
             (NGFX < 4)) {
+          CHAR8 *CardFamily = "";
           GFX_PROPERTIES *gfx = &gGraphics[NGFX];
           gfx->DeviceID       = Pci.Hdr.DeviceId;
           gfx->Segment        = Segment;
@@ -6793,7 +6794,22 @@ GetDevices ()
               gfx->Mmio   = (UINT8*)(UINTN)(Bar0 & ~0x0f);
               //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
-              gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x1ff;
+              gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x3ff;
+              if ((gfx->Family >= 0xE0) && (gfx->Family < 0x10F)) {
+                  CardFamily = "Kepler";
+              }
+              else if ((gfx->Family >= 0xC0) && (gfx->Family < 0xDF)) {
+                  CardFamily = "Fermi";
+              }
+              else if ((gfx->Family >= 0x110) && (gfx->Family < 0x12F)) {
+                  CardFamily = "Maxwell";
+              }
+              else if ((gfx->Family >= 0x130) && (gfx->Family < 0x13F)) {
+                  CardFamily = "Pascal";
+              }
+              else {
+                  CardFamily = "Tesla";
+              }
 
               AsciiSPrint (
                            gfx->Model,
@@ -6804,7 +6820,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                            );
 
-              DBG (" - GFX: Model=%a family %x (Nvidia)\n", gfx->Model, gfx->Family);
+              DBG(" - GFX: Model=%a family %x (%a)\n", gfx->Model, gfx->Family, CardFamily);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
