@@ -30,7 +30,6 @@ OPER_REGION *gRegions = NULL;
 
 CHAR8*  device_name[12];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI 11=>HDMI
 CHAR8*  UsbName[10];
-CHAR8*  Netmodel;
 
 BOOLEAN HDAFIX = TRUE;
 BOOLEAN GFXHDAFIX = TRUE;
@@ -690,7 +689,7 @@ VOID CheckHardware()
           //Network ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-            GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2, NULL);
+            GetPciADR(DevicePath, &NetworkADR1[net_count], &NetworkADR2[net_count], NULL);
  //           DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
  //           Netmodel = get_net_model(deviceid);
             Netmodel[net_count] = get_net_model(deviceid);
@@ -2985,7 +2984,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     brd = aml_create_node(NULL);
     root = aml_add_device(brd, "LAN0");
     aml_add_name(root, "_ADR");
-    aml_add_dword(root, NetworkADR1);
+    aml_add_dword(root, NetworkADR1[card]);
     DBG("Created  bridge device with ADR=0x%x\n", NetworkADR1[card]);
   }
 
@@ -2995,8 +2994,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   {
     dev = aml_add_device(root, "GIGE");
     aml_add_name(dev, "_ADR");
-    if (NetworkADR2) {
-      if (NetworkADR2> 0x3F)
+    if (NetworkADR2[card]) {
+      if (NetworkADR2[card] > 0x3F)
           aml_add_dword(dev, NetworkADR2[card]);
       else
           aml_add_byte(dev, (UINT8)NetworkADR2[card]);
@@ -3225,7 +3224,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, "Apple WiFi card");
       aml_add_string(pack, "device_type");
-      aml_add_string_buffer(pack, "Airport");
+      aml_add_string_buffer(pack, "AirPort");
       //    aml_add_string(pack, "AAPL,slot-name");
       //    aml_add_string_buffer(pack, "AirPort");
     }
