@@ -2992,7 +2992,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   dev = root;
   if (!NetworkName && (NetworkADR2[card] != 0xFFFE)) //there is no network device at dsdt, creating new one
   {
-    dev = aml_add_device(root, "GIGE");
+    dev = aml_add_device(root, NetName[card]);
     aml_add_name(dev, "_ADR");
     if (NetworkADR2[card]) {
       if (NetworkADR2[card] > 0x3F)
