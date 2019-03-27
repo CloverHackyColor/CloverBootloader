@@ -6795,20 +6795,22 @@ GetDevices ()
               //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
               gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x3ff;
-              if ((gfx->Family >= 0xE0) && (gfx->Family < 0x10F)) {
-                  CardFamily = "Kepler";
+              if ((gfx->Family >= 0xE0) && (gfx->Family <= 0x10F)) {
+                CardFamily = "Kepler";
               }
-              else if ((gfx->Family >= 0xC0) && (gfx->Family < 0xDF)) {
-                  CardFamily = "Fermi";
+              else if ((gfx->Family >= 0xC0) && (gfx->Family <= 0xDF)) {
+                CardFamily = "Fermi";
               }
-              else if ((gfx->Family >= 0x110) && (gfx->Family < 0x12F)) {
-                  CardFamily = "Maxwell";
+              else if ((gfx->Family >= 0x110) && (gfx->Family <= 0x12F)) {
+                CardFamily = "Maxwell";
               }
-              else if ((gfx->Family >= 0x130) && (gfx->Family < 0x13F)) {
-                  CardFamily = "Pascal";
+              else if ((gfx->Family >= 0x130) && (gfx->Family <= 0x13F)) {
+                CardFamily = "Pascal";
               }
-              else {
-                  CardFamily = "Tesla";
+              else if ((gfx->Family >= 0x50) && (gfx->Family <= 0xAF)) {
+                CardFamily = "Tesla";
+              } else {
+                CardFamily = "unknown";
               }
 
               AsciiSPrint (
