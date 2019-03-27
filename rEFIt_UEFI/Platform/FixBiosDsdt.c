@@ -5431,7 +5431,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   // Fix Network
   if ((gSettings.FixDsdt & FIX_LAN)) {
 //    DBG("patch LAN in DSDT \n");
-    INT32 j;
+    UINT32 j;
     for (j = 0; j <= net_count; ++j) {
         if (NetworkADR1[j]) {
             MsgLog("patch LAN0 in DSDT \n");
