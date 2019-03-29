@@ -406,9 +406,13 @@ STATIC UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
 STATIC UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
 STATIC UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
 
-// SunKi: 10.9 - 10.14
-STATIC UINT8   MavSearch[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
-STATIC UINT8   MavReplace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
+// SunKi: 10.9 - 10.14.3
+STATIC UINT8   MavMoj3Search[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
+STATIC UINT8   MavMoj3Replace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
+
+// RodionS: 10.14.4+
+STATIC UINT8   Moj4Search[]  = { 0x75, 0x33, 0x0f, 0xb7 };
+STATIC UINT8   Moj4Replace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -425,7 +429,8 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
-  UINTN   NumMav = 0;
+  UINTN   NumMavMoj3 = 0;
+  UINTN   NumMoj4 = 0;
   
   DBG_RT(Entry, "\nAppleRTCPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   if (Entry->KernelAndKextPatches->KPDebug) {
@@ -436,16 +441,17 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
     NumML  = SearchAndCount(Driver, DriverSize, MLSearch,  sizeof(MLSearch));
-    NumMav = SearchAndCount(Driver, DriverSize, MavSearch, sizeof(MavSearch));
+    NumMavMoj3 = SearchAndCount(Driver, DriverSize, MavMoj3Search, sizeof(MavMoj3Search));
+    NumMoj4 = SearchAndCount(Driver, DriverSize, Moj4Search, sizeof(Moj4Search));
   } else {
     NumLion_i386 = SearchAndCount(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386));
   }
   
-  if (NumLion_X64 + NumLion_i386 + NumML + NumMav > 1) {
+  if (NumLion_X64 + NumLion_i386 + NumML + NumMavMoj3 + NumMoj4 > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d, Mav: %d) - skipping patching!\n",
-          NumLion_X64, NumLion_i386, NumML, NumMav);
+    Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d, MavMoj3: %d, Moj4: %d) - skipping patching!\n",
+          NumLion_X64, NumLion_i386, NumML, NumMavMoj3, NumMoj4);
     gBS->Stall(5000000);
     return;
   }
@@ -453,20 +459,19 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   if (NumLion_X64 == 1) {
     Num = SearchAndReplace(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64), LionReplace_X64, 1);
     DBG_RT(Entry, "==> Lion X64: %d replaces done.\n", Num);
-  }
-  else if (NumLion_i386 == 1) {
+  } else if (NumLion_i386 == 1) {
     Num = SearchAndReplace(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386), LionReplace_i386, 1);
     DBG_RT(Entry, "==> Lion i386: %d replaces done.\n", Num);
-  }
-  else if (NumML == 1) {
+  } else if (NumML == 1) {
     Num = SearchAndReplace(Driver, DriverSize, MLSearch, sizeof(MLSearch), MLReplace, 1);
     DBG_RT(Entry, "==> MountainLion X64: %d replaces done.\n", Num);
-  }
-  else if (NumMav == 1) {
-    Num = SearchAndReplace(Driver, DriverSize, MavSearch, sizeof(MavSearch), MavReplace, 1);
-    DBG_RT(Entry, "==> Mav/Yos/El/Sie/HS/Moj X64: %d replaces done.\n", Num);
-  }
-  else {
+  } else if (NumMavMoj3 == 1) {
+    Num = SearchAndReplace(Driver, DriverSize, MavMoj3Search, sizeof(MavMoj3Search), MavMoj3Replace, 1);
+    DBG_RT(Entry, "==> Mav/Yos/El/Sie/HS/Moj3 X64: %d replaces done.\n", Num);
+  } else if (NumMoj4 == 1) {
+    Num = SearchAndReplace(Driver, DriverSize, Moj4Search, sizeof(Moj4Search), Moj4Replace, 1);
+    DBG_RT(Entry, "==> Mojave4 X64: %d replaces done.\n", Num);
+  } else {
     DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
   }
   if (Entry->KernelAndKextPatches->KPDebug) {
