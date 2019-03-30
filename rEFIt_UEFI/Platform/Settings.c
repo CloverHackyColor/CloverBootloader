@@ -1486,9 +1486,11 @@ BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
   currOStoc = GetStrArraySeparatedByChar(CurrOS,  '.');
 
   if (osToc->count == 2) {
-    if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
-        && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0) {
-      ret = TRUE;
+    if (currOStoc->count == 2) {
+      if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
+          && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0) {
+        ret = TRUE;
+      }
     }
   } else if (osToc->count == 3) {
     if (currOStoc->count == 3) {
@@ -1511,7 +1513,6 @@ BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
         ret = TRUE;
       }
     }
-
   }
 
   deallocMatchOSes(osToc);
