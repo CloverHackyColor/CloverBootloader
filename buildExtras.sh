@@ -41,7 +41,7 @@ if [ "$nasmcheck" == 200 ]; then
 	fi
 	export NASM_VERSION="${nasmVersInfo:154:$verLen}"
 else
-	export NASM_VERSION=2.13.03
+	export NASM_VERSION=2.14.02
 fi
 
 #

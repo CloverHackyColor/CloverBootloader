@@ -6,7 +6,7 @@
 # Ctools source version
 # here we can change source versions of tools
 #
-export CCTOOLS_VERSION=${CCTOOLS_VERSION:-895}
+export CCTOOLS_VERSION=${CCTOOLS_VERSION:-921}
 
 # Change PREFIX if you want mtoc installed on different place
 #
@@ -158,6 +158,8 @@ fnCompileMtoc ()
     # Mtoc build
     local cmd logfile
     cd "$CCTOOLS_DIR"
+    # Removal of _structs.h needed as a workaround for a bug in cctools-900 or above
+    /bin/rm -f ./include/mach/i386/_structs.h
     echo "-  cctools-${CCTOOLS_VERSION} make mtoc..."
     cmd="(make LTO= EFITOOLS=efitools -C libstuff) && (make -C efitools)"
     logfile="$DIR_LOGS/mtoc.make.log.txt"
