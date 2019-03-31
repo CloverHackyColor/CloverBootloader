@@ -3,7 +3,7 @@
  *
  *
  *  Created by Slice
- *  Fully reworked by Sherlocks, 2017-2018
+ *  Fully reworked by Sherlocks, 2017-2019
  *
  *  Original patch by Nawcom
  *  http://forum.voodooprojects.org/index.php/topic,1029.0.html
@@ -1528,14 +1528,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   //devprop_add_value(device, "device_type", (UINT8*)"display", 7);  // this key displays two intel graphics cards in system report on 10.13.4+
   devprop_add_value(device, "subsystem-vendor-id", common_vals[2], 4);
   devprop_add_value(device, "class-code", (UINT8*)ClassFix, 4);
-  if (gSettings.Mobile) {
+  /*if (gSettings.Mobile) {
     UINT32    IntelDisplay = 1;
     // these are not reference keys for all. why add these keys?
     devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&IntelDisplay, 4);
     devprop_add_value(device, "AAPL,HasLid", (UINT8*)&IntelDisplay, 4);
     devprop_add_value(device, "AAPL,HasPanel", (UINT8*)&IntelDisplay, 4);
     devprop_add_value(device, "@0,backlight-control", (UINT8*)&IntelDisplay, 4);
-  }
+  }*/
 
   // Clover will automatically detect these values if there is no ig-platform-id or FakeID Intel GFX value.
   // If there are Intel GFX values in ACPI injection, their values will be overwritten on the values of Intel GFX auto-detection.
@@ -1858,16 +1858,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (MacModel) {
         case MacBookPro61:
         case MacBookPro62:
-          devprop_add_value(device, "AAPL,os-info", mbp_HD_os_info, 20);
+          if (os_version < AsciiOSVersionToUint64("10.7")) {
+            devprop_add_value(device, "AAPL,os-info", mbp_HD_os_info, 20);
+          }
           devprop_add_value(device, "AAPL,aux-power-connected", ironlake_hd_vals[0], 4);
           devprop_add_value(device, "AAPL,backlight-control", ironlake_hd_vals[1], 4);
-          devprop_add_value(device, "AAPL00,T1", ironlake_hd_vals[2], 4);
-          devprop_add_value(device, "AAPL00,T2", ironlake_hd_vals[3], 4);
-          devprop_add_value(device, "AAPL00,T3", ironlake_hd_vals[4], 4);
-          devprop_add_value(device, "AAPL00,T4", ironlake_hd_vals[5], 4);
-          devprop_add_value(device, "AAPL00,T5", ironlake_hd_vals[6], 4);
-          devprop_add_value(device, "AAPL00,T6", ironlake_hd_vals[7], 4);
-          devprop_add_value(device, "AAPL00,T7", ironlake_hd_vals[8], 4);
+          //devprop_add_value(device, "AAPL00,T1", ironlake_hd_vals[2], 4);
+          //devprop_add_value(device, "AAPL00,T2", ironlake_hd_vals[3], 4);
+          //devprop_add_value(device, "AAPL00,T3", ironlake_hd_vals[4], 4);
+          //devprop_add_value(device, "AAPL00,T4", ironlake_hd_vals[5], 4);
+          //devprop_add_value(device, "AAPL00,T5", ironlake_hd_vals[6], 4);
+          //devprop_add_value(device, "AAPL00,T6", ironlake_hd_vals[7], 4);
+          //devprop_add_value(device, "AAPL00,T7", ironlake_hd_vals[8], 4);
           devprop_add_value(device, "VRAM,totalsize", ironlake_hd_vals[9], 4);
           break;
         default:
@@ -1936,33 +1938,39 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           switch (MacModel) {
             case MacBookAir41:
             case MacBookAir42:
-              devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
+              if (os_version < AsciiOSVersionToUint64("10.7")) {
+                devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
+                devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
+              }
               break;
             case MacBookPro81:
             case MacBookPro82:
             case MacBookPro83:
-              devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
-              devprop_add_value(device, "AAPL00,DataJustify", sandy_bridge_hd_vals[0], 4);
-              devprop_add_value(device, "AAPL00,Dither", sandy_bridge_hd_vals[1], 4);
-              devprop_add_value(device, "AAPL00,LinkFormat", sandy_bridge_hd_vals[2], 4);
-              devprop_add_value(device, "AAPL00,LinkType", sandy_bridge_hd_vals[3], 4);
-              devprop_add_value(device, "AAPL00,PixelFormat", sandy_bridge_hd_vals[4], 4);
-              devprop_add_value(device, "AAPL00,T1", sandy_bridge_hd_vals[5], 4);
-              devprop_add_value(device, "AAPL00,T2", sandy_bridge_hd_vals[6], 4);
-              devprop_add_value(device, "AAPL00,T3", sandy_bridge_hd_vals[7], 4);
-              devprop_add_value(device, "AAPL00,T4", sandy_bridge_hd_vals[8], 4);
-              devprop_add_value(device, "AAPL00,T5", sandy_bridge_hd_vals[9], 4);
-              devprop_add_value(device, "AAPL00,T6", sandy_bridge_hd_vals[10], 4);
-              devprop_add_value(device, "AAPL00,T7", sandy_bridge_hd_vals[11], 4);
+              if (os_version < AsciiOSVersionToUint64("10.7")) {
+                devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
+                devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
+              }
+              //devprop_add_value(device, "AAPL00,DataJustify", sandy_bridge_hd_vals[0], 4);
+              //devprop_add_value(device, "AAPL00,Dither", sandy_bridge_hd_vals[1], 4);
+              //devprop_add_value(device, "AAPL00,LinkFormat", sandy_bridge_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,LinkType", sandy_bridge_hd_vals[3], 4);
+              //devprop_add_value(device, "AAPL00,PixelFormat", sandy_bridge_hd_vals[4], 4);
+              //devprop_add_value(device, "AAPL00,T1", sandy_bridge_hd_vals[5], 4);
+              //devprop_add_value(device, "AAPL00,T2", sandy_bridge_hd_vals[6], 4);
+              //devprop_add_value(device, "AAPL00,T3", sandy_bridge_hd_vals[7], 4);
+              //devprop_add_value(device, "AAPL00,T4", sandy_bridge_hd_vals[8], 4);
+              //devprop_add_value(device, "AAPL00,T5", sandy_bridge_hd_vals[9], 4);
+              //devprop_add_value(device, "AAPL00,T6", sandy_bridge_hd_vals[10], 4);
+              //devprop_add_value(device, "AAPL00,T7", sandy_bridge_hd_vals[11], 4);
               break;
             default:
-              devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
-              devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
+              if (os_version < AsciiOSVersionToUint64("10.7")) {
+                devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
+                devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
+              }
               break;
           }
-          devprop_add_value(device, "graphic-options", sandy_bridge_hd_vals[12], 4);
+          //devprop_add_value(device, "graphic-options", sandy_bridge_hd_vals[12], 4);
           break;
       }
       break;
@@ -2041,6 +2049,15 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         default:
+          if (!SetIg) {
+            if (gSettings.Mobile) {
+              devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[7], 4);
+              DBG("  Found ig-platform-id = 0x01660004\n");
+            } else {
+              devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[9], 4);
+              DBG("  Found ig-platform-id = 0x01660009\n");
+            }
+          }
           break;
       }
       switch (gSettings.IgPlatform) {
@@ -2048,7 +2065,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case (UINT32)0x01620007:
           break;
         default:
-          devprop_add_value(device, "graphic-options", ivy_bridge_hd_vals[0], 4);
+          //devprop_add_value(device, "graphic-options", ivy_bridge_hd_vals[0], 4);
           break;
       }
       break;
@@ -2209,7 +2226,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case (UINT32)0x0412000B:
           break;
         default:
-          devprop_add_value(device, "graphic-options", haswell_hd_vals[0], 4);
+          //devprop_add_value(device, "graphic-options", haswell_hd_vals[0], 4);
           break;
       }
       break;
@@ -2337,16 +2354,20 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         default:
+          if (!SetIg) {
+            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[16], 4);
+            DBG("  Found ig-platform-id = 0x16260006\n");
+          }
           break;
       }
       switch (MacModel) {
         case MacBook81:
-          devprop_add_value(device, "AAPL,ig-tcon-scaler", broadwell_hd_vals[0], 4);
+          //devprop_add_value(device, "AAPL,ig-tcon-scaler", broadwell_hd_vals[0], 4);
           break;
         default:
           break;
       }
-      devprop_add_value(device, "graphic-options", broadwell_hd_vals[1], 4);
+      //devprop_add_value(device, "graphic-options", broadwell_hd_vals[1], 4);
       break;
 
       //------------Cherryview/Braswell-----------
@@ -2506,6 +2527,15 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         default:
+          if (!SetIg) {
+            if (gSettings.Mobile) {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[1], 4);
+              DBG("  Found ig-platform-id = 0x19120000\n");
+            } else {
+              devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[3], 4);
+              DBG("  Found ig-platform-id = 0x19160000\n");
+            }
+          }
           break;
       }
       switch (gSettings.IgPlatform) {
@@ -2517,29 +2547,33 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         default:
           switch (MacModel) {
             case MacBook91:
-              devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[2], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[3], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[4], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[5], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[6], 4);
-              devprop_add_value(device, "graphic-options", skylake_hd_vals[11], 4);
+              //devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[3], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[4], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[5], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[6], 4);
+              //devprop_add_value(device, "graphic-options", skylake_hd_vals[11], 4);
               break;
             case MacBookPro131:
             case MacBookPro132:
             case MacBookPro133:  // it has only the "graphic-options" value. However, we use built-in graphics.
-              devprop_add_value(device, "AAPL,Gfx324", skylake_hd_vals[0], 4);
-              devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[2], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[7], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[8], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[9], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[10], 4);
-              devprop_add_value(device, "graphic-options", skylake_hd_vals[11], 4);
+              //devprop_add_value(device, "AAPL,Gfx324", skylake_hd_vals[0], 4);
+              //devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[7], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[8], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[9], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[10], 4);
+              //devprop_add_value(device, "graphic-options", skylake_hd_vals[11], 4);
               break;
             default:
               break;
           }
-          devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[1], 4);
           break;
+      }
+
+      // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
+      if (os_version < AsciiOSVersionToUint64("10.14")) {
+        devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[1], 4);
       }
       break;
 
@@ -2849,6 +2883,15 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         default:
+          if (!SetIg) {
+            if (gSettings.Mobile) {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[0], 4);
+              DBG("  Found ig-platform-id = 0x59120000\n");
+            } else {
+              devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[2], 4);
+              DBG("  Found ig-platform-id = 0x59160000\n");
+            }
+          }
           break;
       }
       switch (gSettings.IgPlatform) {
@@ -2859,39 +2902,33 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           switch (MacModel) {
             case MacBook101:
             case MacBookAir81:
-              devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[3], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[4], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[5], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[6], 4);
-              devprop_add_value(device, "graphic-options", kabylake_hd_vals[11], 4);
+              //devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[3], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[4], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[5], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[6], 4);
+              //devprop_add_value(device, "graphic-options", kabylake_hd_vals[11], 4);
               break;
             case MacBookPro141:
             case MacBookPro142:
             case MacBookPro143:  // it has only the "graphic-options" value. However, we use built-in graphics.
-              devprop_add_value(device, "AAPL,Gfx324", kabylake_hd_vals[0], 4);
-              devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[7], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[8], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[9], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[10], 4);
-              devprop_add_value(device, "graphic-options", kabylake_hd_vals[11], 4);
+              //devprop_add_value(device, "AAPL,Gfx324", kabylake_hd_vals[0], 4);
+              //devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[7], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[8], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[9], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[10], 4);
+              //devprop_add_value(device, "graphic-options", kabylake_hd_vals[11], 4);
               break;
             default:
-              break;
-          }
-          switch (gma_dev->device_id) {
-            case 0x5917:
-              // Rehabman: GfxYTile causes a hang on boot in 10.14 when using Kaby Lake-R UHD Graphics 620
-              if (os_version < AsciiOSVersionToUint64("10.14")) {
-                devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
-              }
-              break;
-            default:
-              devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
               break;
           }
           break;
+      }
+
+      // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
+      if (os_version < AsciiOSVersionToUint64("10.14")) {
+        devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
       }
       break;
 
@@ -3069,6 +3106,15 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         default:
+          if (!SetIg) {
+            if (gSettings.Mobile) {
+              devprop_add_value(device, "AAPL,ig-platform-id", coffeelake_ig_vals[5], 4);
+              DBG("  Found ig-platform-id = 0x3E9B0000\n");
+            } else {
+              devprop_add_value(device, "AAPL,ig-platform-id", coffeelake_ig_vals[2], 4);
+              DBG("  Found ig-platform-id = 0x3E920000\n");
+            }
+          }
           break;
       }
       switch (gSettings.IgPlatform) {
@@ -3079,22 +3125,26 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           switch (MacModel) {
             case MacBookPro151:  // it has only the "graphic-options" value. However, we use built-in graphics.
             case MacBookPro152:
-              devprop_add_value(device, "AAPL,Gfx324", coffeelake_hd_vals[0], 4);
-              devprop_add_value(device, "AAPL00,PanelCycleDelay", coffeelake_hd_vals[2], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerDown", coffeelake_hd_vals[3], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOff", coffeelake_hd_vals[4], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerOn", coffeelake_hd_vals[5], 4);
-              devprop_add_value(device, "AAPL00,PanelPowerUp", coffeelake_hd_vals[6], 4);
-              devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
+              //devprop_add_value(device, "AAPL,Gfx324", coffeelake_hd_vals[0], 4);
+              //devprop_add_value(device, "AAPL00,PanelCycleDelay", coffeelake_hd_vals[2], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerDown", coffeelake_hd_vals[3], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOff", coffeelake_hd_vals[4], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerOn", coffeelake_hd_vals[5], 4);
+              //devprop_add_value(device, "AAPL00,PanelPowerUp", coffeelake_hd_vals[6], 4);
+              //devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
               break;
             case MacMini81:
-              devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
+              //devprop_add_value(device, "graphic-options", coffeelake_hd_vals[7], 4);
               break;
             default:
               break;
           }
-          devprop_add_value(device, "AAPL,GfxYTile", coffeelake_hd_vals[1], 4);
           break;
+      }
+
+      // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
+      if (os_version < AsciiOSVersionToUint64("10.14")) {
+        devprop_add_value(device, "AAPL,GfxYTile", coffeelake_hd_vals[1], 4);
       }
       break;
 
@@ -3254,9 +3304,13 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
             default:
               break;
           }
-          //devprop_add_value(device, "AAPL,GfxYTile", cannonlake_hd_vals[1], 4);
           break;
       }*/
+
+      // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
+      if (os_version < AsciiOSVersionToUint64("10.14")) {
+        devprop_add_value(device, "AAPL,GfxYTile", cannonlake_hd_vals[1], 4);
+      }
       break;
 
 

@@ -591,7 +591,7 @@ msgstr "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하�
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "HDA driver to play Startup Sound"
-msgstr ""
+msgstr "시동시 시동 음을 재생하는 HDA 드라이버"
 
 #. type: "FirmwareVolume-64.UEFI_description"
 #: Resources/templates/Localizable.strings:106
@@ -684,7 +684,7 @@ msgstr "선택적 AppleGraphicsConfig 프로토콜을 만듭니다."
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "HDA driver to play Startup Sound at boot time"
-msgstr ""
+msgstr "시동시 시동 음을 재생하는 HDA 드라이버"
 
 #. type: "CsmVideoDxe-64.UEFI_description"
 #: Resources/templates/Localizable.strings:133
