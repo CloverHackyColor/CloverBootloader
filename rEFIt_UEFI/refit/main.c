@@ -2004,12 +2004,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gAudios[0], sizeof(HDA_PROPERTIES) * 4);
 
   DBG("\n");
-  if (Now.TimeZone < 0 || Now.TimeZone > 24) {
+  if (Now.TimeZone < -1440 || Now.TimeZone > 1440) {
     MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT)\n",
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
   } else {
+    GlobalConfig.Timezone = Now.TimeZone / 60;
     MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
-      Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, Now.TimeZone);
+      Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
   }
   //MsgLog("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   MsgLog("Starting %a on %s EFI\n", REVISION_STR, gST->FirmwareVendor);
