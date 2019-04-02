@@ -2008,7 +2008,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT)\n",
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
   } else {
-    GlobalConfig.Timezone = Now.TimeZone / 60;
     MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
   }

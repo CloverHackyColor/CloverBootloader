@@ -2681,7 +2681,7 @@ GetEarlyUserSettings (
       gRT->GetTime(&Now, NULL);
       INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
       if (NowHour <  0 ) NowHour += 24;
-      if (NowHour > 24 ) NowHour -= 24;
+      if (NowHour >= 24 ) NowHour -= 24;
       DayLight = (NowHour > 8) && (NowHour < 20);
 
       Prop = GetProperty (DictPointer, "Theme");
