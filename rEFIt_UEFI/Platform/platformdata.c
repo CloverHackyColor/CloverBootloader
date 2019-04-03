@@ -433,6 +433,14 @@ PLATFORMDATA ApplePlatformData[] =
   { "iMac18,3", "IM183.88Z.F000.B00.1902181222", "170.0.0.0.0", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
+  //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
+  { "iMac19,1", "IM191.88Z.F000.B00.1902181222", "220.250.368.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i7-9900K @ 3.60 GHz
+    "iMac", "1.0", "C02Y9HACJV3P", "iMac-Aluminum",
+    { 0x44, 0xE6, 0x6E, 0x2A, 0xC8, 0x5C },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt EPCI
+  //iMac19,2 / iMac (Retina 4K, 21.5-inch, 2019)
+  { "iMac19,2", "IM192.88Z.F000.B00.1902181222", "220.250.368.0.0", "Mac-63001698E7A34814", // Intel Core I7-8700B @ 3.20 GHz
+    "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
+    { 0x44, 0xE6, 0x6E, 0x28, 0x9F, 0x5C },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt EPCI
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1", "IMP11.88Z.0064.B30.1712081714", "220.250.330.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
@@ -636,6 +644,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
+    case iMac191:
+    case iMac192:
       gFwFeatures             = 0xFC0FE137;
       break;
     case MacBook91:
@@ -741,6 +751,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
+    case iMac191:
+    case iMac192:
     case MacPro61:
       gFwFeaturesMask         = 0xFF1FFF3F;
       break;
@@ -794,6 +806,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
+    case iMac191:
+    case iMac192:
       gPlatformFeature        = 0x00;   //not soldered RAM - memory tab appearing
       break;
     case MacMini61:
@@ -916,6 +930,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
+    case iMac191:
+    case iMac192:
     case iMacPro11:
       gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
@@ -926,6 +942,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
         case iMac181:
         case iMac182:
         case iMac183:
+        case iMac191:
+        case iMac192:
         case iMacPro11:
           gSettings.Mobile      = FALSE;
           break;
