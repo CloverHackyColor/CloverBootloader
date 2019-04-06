@@ -485,8 +485,6 @@ BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
 
 // for HDA from device_inject.c and mark device_inject function
 //extern UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb);
-//extern UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo);
-//extern UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId);
 
 BOOLEAN get_lpc_model(UINT32 id) {
   int  i;
@@ -775,13 +773,6 @@ VOID CheckHardware()
       //      if ((Pci.Hdr.VendorId == 0x8086) &&
       //          ((Pci.Hdr.DeviceId & 0xFF00) != 0x0C00)) { //0x0C0C is HDMI sound
               GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
-    /*          codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
-              if (codecId > 0) {
-                layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-                if (layoutId == 0) {
-                  layoutId = 12;
-                }
-              }  */
               if (gSettings.HDALayoutId > 0) {
                 // layoutId is specified - use it
                 layoutId = (UINT32)gSettings.HDALayoutId;

@@ -733,11 +733,13 @@
 			<key>AFGLowPowerState</key>
 			<true/>
 			<key>#Inject</key>
-			<string>0x0887</string>
+			<string>12</string>
 			<key>ResetHDA</key>
 			<true/>
 		</dict>
 		<key>LANInjection</key>
+		<false/>
+		<key>HDMIInjection</key>
 		<false/>
 		<key>UseIntelHDMI</key>
 		<false/>

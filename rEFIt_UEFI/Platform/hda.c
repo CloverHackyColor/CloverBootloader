@@ -754,74 +754,6 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 }
 #endif
 
-#if 0
-UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo) {
-  EFI_STATUS  Status;
-  //UINT8    ver[2];
-  UINT32    data32 = 0;
-  
-  // check HDA version - should be 1.0
-  /*
-   Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint8, 0, HDA_VMIN, 2, &ver[0]);
-   DBG("HDA Version: Status=%r, version=%d.%d\n", Status, ver[1], ver[0]);
-   if (EFI_ERROR(Status)) {
-   return 0;
-   }
-   */
-  
-  // check if controller is out of reset - GCTL-08h[CRST-bit 0] == 1
-  Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0, HDA_GCTL, 1, &data32);
-  //DBG("check CRST == 1: Status=%r, CRST=%d\n", Status, (data32 & 0x1));
-  if (EFI_ERROR(Status)) {
-    return 0;
-  }
-  if ((data32 & 0x1) == 0) {
-    // this controller is not inited yet - we can not read codec ids
-    // if needed, we can init it by:
-    // - set Control reset bit in Global Control reg 08h[0] to 1
-    // - poll it to become 1 again
-    // - wait at least 521 micro sec for codecs to init
-    // - we can check STATESTS reg 0eh where each running codec will set one bit
-    //   codec addr 0 bit 0, codec addr 1 bit 1 ...
-    
-    return 0;
-  }
-  //Slice - TODO check codecAdr=2 - it is my Dell 1525.
-  // all ok - read Ids
-  return HDA_IC_sendVerb(PciIo, 0/*codecAdr*/, 0/*nodeId*/, 0xF0000/*verb*/);
-}
-#endif
-
-#if 0
-UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId)
-{
-  UINT32  layoutId = 0;
-  UINT8    hexDigit = 0;
-  
-  // extract device id - 2 lower bytes,
-  // convert it to decimal like this: 0x0887 => 887 decimal
-  hexDigit = vendorDeviceId & 0xF;
-  if (hexDigit > 9) return 0;
-  layoutId = hexDigit;
-  
-  vendorDeviceId = vendorDeviceId >> 4;
-  hexDigit = vendorDeviceId & 0xF;
-  if (hexDigit > 9) return 0;
-  layoutId += hexDigit * 10;
-  
-  vendorDeviceId = vendorDeviceId >> 4;
-  hexDigit = vendorDeviceId & 0xF;
-  if (hexDigit > 9) return 0;
-  layoutId += hexDigit * 100;
-  
-  vendorDeviceId = vendorDeviceId >> 4;
-  hexDigit = vendorDeviceId & 0xF;
-  if (hexDigit > 9) return 0;
-  layoutId += hexDigit * 1000;
-  
-  return layoutId;
-}
-#endif
 
 BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
 {
@@ -859,9 +791,6 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
 
 BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *OSVersion)
 {
-#if DEBUG_INJECT
-  CHAR8           *devicepath;
-#endif
   DevPropDevice           *device = NULL;
   UINT32                  layoutId = 0;
   UINT32                  codecId = 0;
@@ -871,22 +800,6 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
   if (!device_inject_string) {
     device_inject_string = devprop_create_string();
   }
-#if DEBUG_INJECT
-  devicepath = get_pci_dev_path(hda_dev);
-#endif
-  if (hda_dev && !hda_dev->used) {
-    device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
-    hda_dev->used = TRUE;
-  }
-  
-  if (!device) {
-    return FALSE;
-  }
-  
-#if DEBUG_INJECT
-  DBG("HDA Controller [%04x:%04x] :: %a =>", hda_dev->vendor_id, hda_dev->device_id, devicepath);
-#endif
-  
   if (IsHDMIAudio(hda_dev->DeviceHandle)) {
     if (!gSettings.HDMIInjection) {
       return FALSE;
@@ -943,21 +856,6 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
       DBG(" setting specified layout-id=%d (0x%x)\n", layoutId, layoutId);
     } else {
         layoutId = 12;
-        /*
-      // use detection: layoutId=codec dviceId or use default 12
-      codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
-      if (codecId != 0) {
-        DBG(" detected codec: %04x:%04x\n", (codecId >> 16), (codecId & 0xFFFF));
-        layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-      } else {
-        DBG(" codec not detected\n");
-      }
-      // if not detected - use 12 as default
-      if (layoutId == 0) {
-        layoutId = 12;
-      }
-      //     DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
-      */
     }
     if (gSettings.NrAddProperties != 0xFFFE) {
       for (i = 0; i < gSettings.NrAddProperties; i++) {
