@@ -834,9 +834,14 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
     if (Injected) {
       DBG("Additional HDMI properties injected, continue\n");
       //return TRUE;
-    } else if (gSettings.UseIntelHDMI) {
-      DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");
-      devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    } else {
+      if (gSettings.UseIntelHDMI) {
+        DBG(" HDMI Audio, used with HDA setting hda-gfx=onboard-2\n");
+        devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
+      } else {
+        DBG(" HDMI Audio, used without HDA setting hda-gfx=onboard-1\n");
+        devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+      }
     }
   } else {
     if (!gSettings.HDAInjection) {
@@ -855,7 +860,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
       layoutId = (UINT32)gSettings.HDALayoutId;
       DBG(" setting specified layout-id=%d (0x%x)\n", layoutId, layoutId);
     } else {
-        layoutId = 12;
+      layoutId = 12;
     }
     if (gSettings.NrAddProperties != 0xFFFE) {
       for (i = 0; i < gSettings.NrAddProperties; i++) {
@@ -880,9 +885,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
         devprop_add_value(device, "layout-id", (UINT8 *)&layoutId, 4);
       }
       layoutId = 0; // reuse variable
-      if (gSettings.UseIntelHDMI) {
-        devprop_add_value(device, "hda-gfx", (UINT8 *)"onboard-1", 10);
-      }
+      devprop_add_value(device, "hda-gfx", (UINT8 *)"onboard-1", 10);
       codecId = 1; // reuse variable again
       if (gSettings.AFGLowPowerState) {
         devprop_add_value(device, "AFGLowPowerState", (UINT8 *)&codecId, 4);
