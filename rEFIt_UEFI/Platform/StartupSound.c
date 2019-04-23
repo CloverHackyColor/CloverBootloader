@@ -224,7 +224,7 @@ DONE_ERROR:
     DBG("free sound\n");
     FreePool(FileData);
   }
-  DBG("sound play end with status=%r\n");
+  DBG("sound play end with status=%r\n", Status);
   return Status;
 }
 
