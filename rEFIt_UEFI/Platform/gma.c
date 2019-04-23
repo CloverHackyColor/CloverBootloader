@@ -1858,9 +1858,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (MacModel) {
         case MacBookPro61:
         case MacBookPro62:
-          if (os_version < AsciiOSVersionToUint64("10.7")) {
-            devprop_add_value(device, "AAPL,os-info", mbp_HD_os_info, 20);
-          }
+          devprop_add_value(device, "AAPL,os-info", mbp_HD_os_info, 20);
           devprop_add_value(device, "AAPL,aux-power-connected", ironlake_hd_vals[0], 4);
           devprop_add_value(device, "AAPL,backlight-control", ironlake_hd_vals[1], 4);
           //devprop_add_value(device, "AAPL00,T1", ironlake_hd_vals[2], 4);
@@ -1938,18 +1936,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           switch (MacModel) {
             case MacBookAir41:
             case MacBookAir42:
-              if (os_version < AsciiOSVersionToUint64("10.7")) {
-                devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
-                devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
-              }
+              devprop_add_value(device, "AAPL,tbl-info", mba_HD3000_tbl_info, 18);
+              devprop_add_value(device, "AAPL,os-info", mba_HD3000_os_info, 20);
               break;
             case MacBookPro81:
             case MacBookPro82:
             case MacBookPro83:
-              if (os_version < AsciiOSVersionToUint64("10.7")) {
-                devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
-                devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
-              }
+              devprop_add_value(device, "AAPL,tbl-info", mbp_HD3000_tbl_info, 18);
+              devprop_add_value(device, "AAPL,os-info", mbp_HD3000_os_info, 20);
               //devprop_add_value(device, "AAPL00,DataJustify", sandy_bridge_hd_vals[0], 4);
               //devprop_add_value(device, "AAPL00,Dither", sandy_bridge_hd_vals[1], 4);
               //devprop_add_value(device, "AAPL00,LinkFormat", sandy_bridge_hd_vals[2], 4);
@@ -1964,10 +1958,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               //devprop_add_value(device, "AAPL00,T7", sandy_bridge_hd_vals[11], 4);
               break;
             default:
-              if (os_version < AsciiOSVersionToUint64("10.7")) {
-                devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
-                devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
-              }
+              devprop_add_value(device, "AAPL,tbl-info", mn_HD3000_tbl_info, 18);
+              devprop_add_value(device, "AAPL,os-info", mn_HD3000_os_info, 20);
               break;
           }
           //devprop_add_value(device, "graphic-options", sandy_bridge_hd_vals[12], 4);
