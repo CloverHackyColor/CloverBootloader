@@ -599,7 +599,14 @@ downloadExtDriver() {
         if [[ "$ret" -eq 0 ]]; then
             ret=0; unzip -q ../"${3}${vers}${4}.zip" || ret=1
             if [[ "$ret" -eq 0 ]]; then
-                ret=0; cp Drivers/*.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/ || ret=1
+                if [[ ! -d Drivers ]]; then
+                    echo "No Drivers dir!"
+                else
+                    pushd Drivers >/dev/null
+                    ret=0; for driver in *.efi; do cp -- "$driver" "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/"${driver%.*}-64.efi"; done || ret=1
+                    popd >/dev/null
+                fi
+
                 if [[ "$ret" -ne 0 ]]; then
                     echo "Failed to copy ${2} drivers!"
                 fi
@@ -809,10 +816,11 @@ MainBuildScript() {
 
   # if [[ $TOOLCHAIN == XCODE* ]]; then # this can be also for XCODE8... waiting the mantainer to do a little fix
   # described here: https://www.insanelymac.com/forum/topic/306156-clover-problems-and-solutions/?do=findComment&comment=2638177
-    if [[ $TOOLCHAIN == XCODE5 ]]; then
-      extDriversDependecies+=( 'https://github.com/acidanthera/VirtualSMC' )
-      externalDrivers+=( VirtualSmcPkg )
-    fi
+    #if [[ $TOOLCHAIN == XCODE5 ]]; then
+      #Obsolete. 25.04.19
+      #extDriversDependecies+=( 'https://github.com/acidanthera/VirtualSMC' )
+      #externalDrivers+=( VirtualSmcPkg )
+    #fi
 
     if [[ "$EXT_DOWNLOAD" -eq 2 ]]; then
       local pkg=""
@@ -839,12 +847,12 @@ MainBuildScript() {
           echo "Error: $pkg cannot be cloned!"
           exit 1
         fi
-        case $pkg in
-        VirtualSMC)
-          cp -R "${EXT_PACKAGES}/${pkg}"/VirtualSmcPkg "${EXT_PACKAGES}"/
-          rm -rf "${EXT_PACKAGES}/${pkg}"
-        ;;
-        esac
+        #case $pkg in
+        #VirtualSMC)
+          #cp -R "${EXT_PACKAGES}/${pkg}"/VirtualSmcPkg "${EXT_PACKAGES}"/
+          #rm -rf "${EXT_PACKAGES}/${pkg}"
+        #;;
+        #esac
       done
     fi
 
@@ -870,6 +878,10 @@ MainBuildScript() {
           exit 1
         fi
       done
+
+      if [[ $TOOLCHAIN != XCODE5 ]]; then
+        rm -f "${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"/VirtualSMC.efi 2> /dev/null
+      fi
     fi
 }
 
@@ -939,7 +951,7 @@ MainPostBuildScript() {
     export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
     export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
     export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
-    export VIRTUALSMC_BUILD_DIR_ARCH="${WORKSPACE}/Build/VirtualSmcPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+    export VIRTUALSMC_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
 	if (( $NOBOOTFILES == 0 )); then
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
@@ -1110,8 +1122,10 @@ MainPostBuildScript() {
       done
 
       # Optional VirtualSMC
-      copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VirtualSMC-64.efi
-      copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/VirtualSMC-64.efi
+      if [[ $TOOLCHAIN == XCODE5 ]]; then
+        copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VirtualSMC-64.efi
+        copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/VirtualSMC-64.efi
+      fi
 
       if [[ $M_APPLEHFS -eq 0 ]]; then
         copyBin "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/VBoxHfs-64.efi
@@ -1141,6 +1155,8 @@ MainPostBuildScript() {
         1)
           downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
           downloadExtDriver "acidanthera/AppleSupportPkg" AppleSupport "AppleSupport-v" "-RELEASE"
+          # Fix me in future!
+          downloadExtDriver "acidanthera/VirtualSMC" VirtualSMC "" ".RELEASE"
         ;;
         0 | 2 | 3)
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
@@ -1155,6 +1171,7 @@ MainPostBuildScript() {
           done
         ;;
       esac
+
       # drivers64UEFI
       binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
 
