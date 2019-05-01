@@ -1918,6 +1918,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       DBG(" SignatureFixup: 0x%x -> 0x0\n", Facs->HardwareSignature);
       Facs->HardwareSignature = 0x0;
     }
+    Facs->Flags = 0; //dont' support S4BIOS, as well as 64bit wake
     //
 
     if ((gSettings.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
