@@ -1192,6 +1192,7 @@ MainPostBuildScript() {
       echo "Copy Applications:"
       copyBin "$BUILD_DIR_ARCH"/bdmesg.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/
 
+
       if [[ "${EDK2SHELL:-}" == "MinimumShell" ]]; then
         copyBin "${WORKSPACE}"/ShellBinPkg/MinUefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
       elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then

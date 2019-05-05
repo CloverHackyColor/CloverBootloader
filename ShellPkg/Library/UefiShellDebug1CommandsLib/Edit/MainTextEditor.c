@@ -1387,8 +1387,7 @@ MainCommandDisplayHelp (
       continue;
     }
 
-    if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) == 0) ||
-        (KeyData.KeyState.KeyShiftState == EFI_SHIFT_STATE_VALID)) {
+/*    if ((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) == 0) {
       //
       // For consoles that don't support/report shift state,
       // CTRL+W is translated to L'W' - L'A' + 1.
@@ -1396,9 +1395,10 @@ MainCommandDisplayHelp (
       if (KeyData.Key.UnicodeChar == L'W' - L'A' + 1) {
         break;
       }
-    } else if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) != 0) &&
-               ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) &&
-               ((KeyData.KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID | EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) == 0)) {
+    } else */
+    if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) != 0) &&
+        ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) &&
+        ((KeyData.KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID | EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) == 0)) {
       //
       // For consoles that supports/reports shift state,
       // make sure that only CONTROL shift key is pressed.
@@ -1894,18 +1894,21 @@ MainEditorKeyInput (
         //
         // NoShiftState: TRUE when no shift key is pressed.
         //
-        NoShiftState = ((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) == 0) || (KeyData.KeyState.KeyShiftState == EFI_SHIFT_STATE_VALID);
+        NoShiftState = ((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) == 0) ||
+          ((KeyData.KeyState.KeyShiftState == EFI_SHIFT_STATE_VALID) &&
+           ((KeyData.KeyState.KeyShiftState & (EFI_RIGHT_SHIFT_PRESSED | EFI_LEFT_SHIFT_PRESSED)) == 0));
         //
         // dispatch to different components' key handling function
         //
         if (EFI_NOT_FOUND != MenuBarDispatchControlHotKey(&KeyData)) {
           Status = EFI_SUCCESS;
-        } else if (NoShiftState && ((KeyData.Key.ScanCode == SCAN_NULL) || ((KeyData.Key.ScanCode >= SCAN_UP) && (KeyData.Key.ScanCode <= SCAN_PAGE_DOWN)))) {
+        } else if (/*NoShiftState &&*/ ((KeyData.Key.ScanCode == SCAN_NULL) || ((KeyData.Key.ScanCode >= SCAN_UP) && (KeyData.Key.ScanCode <= SCAN_PAGE_DOWN)))) {
+          KeyData.KeyState.KeyShiftState &= ~EFI_SHIFT_STATE_VALID;
           Status = FileBufferHandleInput (&KeyData.Key);
         } else if (NoShiftState && (KeyData.Key.ScanCode >= SCAN_F1) && (KeyData.Key.ScanCode <= SCAN_F12)) {
           Status = MenuBarDispatchFunctionKey (&KeyData.Key);
         } else {
-          StatusBarSetStatusString (L"Unknown Command");
+         StatusBarSetStatusString (CatSPrint (NULL, L"UC: %x SC: %x SS: %x", KeyData.Key.UnicodeChar, KeyData.Key.ScanCode, KeyData.KeyState.KeyShiftState));
           FileBufferMouseNeedRefresh = FALSE;  
         }
         
