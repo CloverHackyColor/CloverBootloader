@@ -85,7 +85,7 @@ static hda_controller_devices know_hda_controller[] = {
   { HDA_INTEL_LEWISBURG1,  "Lewisburg"  /*, 0, 0 */ }, // Lewisburg
   { HDA_INTEL_LEWISBURG2,  "Lewisburg"  /*, 0, 0 */ }, // Lewisburg
   { HDA_INTEL_UNPT,  "Union Point"    /*, 0, 0 */ }, // Kabylake-H
-  
+
   //10de  NVIDIA Corporation
 #if 0
   { HDA_NVIDIA_MCP51,  "MCP51" /*, 0, HDAC_QUIRK_MSI */ },
@@ -128,7 +128,7 @@ static hda_controller_devices know_hda_controller[] = {
   { HDA_NVIDIA_GK104,  "GK104" /*, 0, ? */ },
   { HDA_NVIDIA_GP104_2, "Pascal GP104-200" /*, 0, ? */ },
   { HDA_NVIDIA_GM204_2, "Maxwell GP204-200" /*, 0, ? */ },
-  
+
   //1002  Advanced Micro Devices [AMD] nee ATI Technologies Inc
   { HDA_ATI_SB450,  "SB4x0" /*, 0, 0 */ },
   { HDA_ATI_SB600,  "SB600" /*, 0, 0 */ },
@@ -158,19 +158,19 @@ static hda_controller_devices know_hda_controller[] = {
   { HDA_ATI_R1000,  "R1000" /*, 0, 0 */ }, // HDMi
   { HDA_ATI_SI,    "SI" /*, 0, 0 */ },
   { HDA_ATI_VERDE,  "Cape Verde" /*, 0, ? */ }, // HDMi
-  
+
   //17f3  RDC Semiconductor, Inc.
   { HDA_RDC_M3010,  "M3010" /*, 0, 0 */ },
-  
+
   //1106  VIA Technologies, Inc.
   { HDA_VIA_VT82XX,  "VT8251/8237A" /*, 0, 0 */ },
-  
+
   //1039  Silicon Integrated Systems [SiS]
   { HDA_SIS_966,    "966" /*, 0, 0 */ },
-  
+
   //10b9  ULi Electronics Inc.(Split off ALi Corporation in 2003)
   { HDA_ULI_M5461,  "M5461" /*, 0, 0 */ },
-  
+
   /* Unknown */
   { HDA_INTEL_ALL,  "Unknown Intel device" /*, 0, 0 */ },
   { HDA_NVIDIA_ALL,  "Unknown NVIDIA device" /*, 0, 0 */ },
@@ -214,7 +214,7 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_CS4208, 0,    "CS4208" },
   { HDA_CODEC_CS4210, 0,    "CS4210" },
   { HDA_CODEC_CS4213, 0,          "CS4213" },
-  
+
   { HDA_CODEC_ALC221, 0,          "ALC221" },
   { HDA_CODEC_ALC231, 0,          "ALC231" },
   { HDA_CODEC_ALC233, 0,          "ALC233" },
@@ -298,14 +298,14 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_AD1989B, 0x0200,    "AD2000B" }, // Revision Id: 0x100200
   { HDA_CODEC_AD1989B, 0x0300,    "AD2000B" }, // Revision Id: 0x100300
   { HDA_CODEC_AD1989B, 0,         "AD1989B" },
-  
+
   { HDA_CODEC_XFIEA, 0,           "X-Fi Extreme A" },
   { HDA_CODEC_XFIED, 0,           "X-Fi Extreme D" },
   { HDA_CODEC_CA0132, 0,          "CA0132" },
   { HDA_CODEC_SB0880, 0,          "SB0880 X-Fi" },
   { HDA_CODEC_CMI9880, 0,         "CMI9880" },
   { HDA_CODEC_CMI98802, 0,        "CMI9880" },
-  
+
   { HDA_CODEC_CXD9872RDK, 0,      "CXD9872RD/K" },
   { HDA_CODEC_CXD9872AKD, 0,      "CXD9872AKD" },
   { HDA_CODEC_STAC9200D, 0,       "STAC9200D" },
@@ -349,7 +349,7 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_STAC9202, 0,  "STAC9202" },
   { HDA_CODEC_STAC9202D, 0,  "STAC9202D" },
   { HDA_CODEC_STAC9872AK, 0,      "STAC9872AK" },
-  
+
   { HDA_CODEC_IDT92HD005, 0,      "92HD005" },
   { HDA_CODEC_IDT92HD005D, 0,     "92HD005D" },
   { HDA_CODEC_IDT92HD206X, 0,     "92HD206X" },
@@ -412,7 +412,7 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_IDT92HD93BXX, 0,    "92HD93BXX" },
   { HDA_CODEC_IDT92HD98BXX, 0,    "92HD98BXX" },
   { HDA_CODEC_IDT92HD99BXX, 0,    "92HD99BXX" },
-  
+
   { HDA_CODEC_CX20549, 0,         "CX20549 (Venice)" },
   { HDA_CODEC_CX20551, 0,         "CX20551 (Waikiki)" },
   { HDA_CODEC_CX20561, 0,         "CX20561 (Hermosa)" },
@@ -437,7 +437,7 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_CX20756, 0,         "CX20756" },
   { HDA_CODEC_CX20757, 0,         "CX20757" },
   { HDA_CODEC_CX20952, 0,         "CX20952" },
-  
+
   { HDA_CODEC_VT1708_8, 0,        "VT1708_8" },
   { HDA_CODEC_VT1708_9, 0,        "VT1708_9" },
   { HDA_CODEC_VT1708_A, 0,        "VT1708_A" },
@@ -486,12 +486,12 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_VT2002P_0, 0,       "VT2002P_0" },
   { HDA_CODEC_VT2002P_1, 0,       "VT2002P_1" },
   { HDA_CODEC_VT2020, 0,          "VT2020" },
-  
+
   { HDA_CODEC_ATIRS600_1, 0,      "RS600" },
   { HDA_CODEC_ATIRS600_2, 0,      "RS600" },
   { HDA_CODEC_ATIRS690, 0,        "RS690/780" },
   { HDA_CODEC_ATIR6XX, 0,         "R6xx" },
-  
+
   { HDA_CODEC_NVIDIAMCP67, 0,     "MCP67" },
   { HDA_CODEC_NVIDIAMCP73, 0,     "MCP73" },
   { HDA_CODEC_NVIDIAMCP78, 0,     "MCP78" },
@@ -509,7 +509,7 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_NVIDIAGTX550, 0,    "GTX550" },
   { HDA_CODEC_NVIDIAGTX570, 0,    "GTX570" },
   { HDA_CODEC_NVIDIAGT610, 0,  "GT610" },
-  
+
   { HDA_CODEC_INTELIBEXPEAK2, 0,      "Ibex Peak" },
   { HDA_CODEC_INTELBEARLAKE, 0,       "Bearlake" },
   { HDA_CODEC_INTELCANTIGA, 0,        "Cantiga" },
@@ -526,10 +526,10 @@ static hdacc_codecs know_codecs[] = {
   { HDA_CODEC_INTELVLV, 0,            "Valleyview2" },
   { HDA_CODEC_INTELBSW, 0,            "Braswell" },
   { HDA_CODEC_INTELCRESTLINE, 0,      "Crestline" },
-  
+
   { HDA_CODEC_SII1390, 0,         "SiI1390 HDMi" },
   { HDA_CODEC_SII1392, 0,         "SiI1392 HDMi" },
-  
+
   // Unknown CODECs
   { HDA_CODEC_ADXXXX, 0,          "Analog Devices" },
   { HDA_CODEC_AGEREXXXX, 0,       "LSI" },
@@ -563,39 +563,39 @@ static hdacc_codecs know_codecs[] = {
 CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_vendor_id)
 {
   static char desc[128];
-  
+
   CHAR8 *name_format  = "Unknown HD Audio device %a";
   UINT32 controller_model = ((controller_device_id << 16) | controller_vendor_id);
   INT32 i;
-  
+
   /* Get format for vendor ID */
   switch (controller_vendor_id)
   {
     case VEN_ATI_ID:
       name_format = "ATI %a HDA Controller (HDMi)"; break;
-      
+
     case VEN_INTEL_ID:
       name_format = "Intel %a HDA Controller"; break;
-      
+
     case VEN_NVIDIA_ID:
       name_format = "Nvidia %a HDA Controller (HDMi)"; break;
-      
+
     case VEN_RDC_ID:
       name_format = "RDC %a HDA Controller"; break;
-      
+
     case VEN_SIS_ID:
       name_format = "SiS %a HDA Controller"; break;
-      
+
     case VEN_ULI_ID:
       name_format = "ULI %a HDA Controller"; break;
-      
+
     case VEN_VIA_ID:
       name_format = "VIA %a HDA Controller"; break;
-      
+
     default:
       break;
   }
-  
+
   for (i = 0; i < HDAC_DEVICES_LEN; i++)
   {
     if (know_hda_controller[i].model == controller_model)
@@ -604,7 +604,7 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
       return desc;
     }
   }
-  
+
   /* Not in table */
   AsciiSPrint(desc, sizeof(desc), "Unknown HDA device, vendor %04x, model %04x",
               controller_vendor_id, controller_device_id);
@@ -615,78 +615,78 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
 CHAR8 *get_hda_codec_name(UINT16 codec_vendor_id, UINT16 codec_device_id, UINT8 codec_revision_id, UINT8 codec_stepping_id)
 {
   static char desc[128];
-  
+
   CHAR8    *lName_format  = NULL;
   UINT32    lCodec_model = ((UINT32)(codec_vendor_id) << 16) + (codec_device_id);
   UINT32    lCodec_rev = (((UINT16)(codec_revision_id) << 8) + codec_stepping_id);
   INT32    i;
-  
+
   // Get format for vendor ID
   switch ( codec_vendor_id ) // UINT16
   {
     case VEN_ATI_ID:
       lName_format = "ATI %a"; break;
-      
+
     case  VEN_CIRRUSLOGIC_ID:
       lName_format = "Cirrus Logic %a"; break;
-      
+
     case  VEN_MOTO_ID:
       lName_format = "Motorola %a"; break;
-      
+
     case  VEN_SII_ID:
       lName_format = "Silicon Image %a"; break;
-      
+
     case  VEN_NVIDIA_ID:
       lName_format = "Nvidia %a"; break;
-      
+
     case  VEN_REALTEK_ID:
       lName_format = "Realtek %a"; break;
-      
+
     case  VEN_CREATIVE_ID:
       lName_format = "Creative %a"; break;
-      
+
     case  VEN_VIA_ID:
       lName_format = "VIA %a"; break;
-      
+
     case  VEN_IDT_ID:
       lName_format = "IDT %a"; break;
-      
+
     case  VEN_AGERE_ID:
       lName_format = "LSI %a"; break;
-      
+
     case  VEN_ANALOGDEVICES_ID:
       lName_format = "Analog Devices %a"; break;
-      
+
     case  VEN_CMEDIA_ID:
     case  VEN_CMEDIA2_ID:
       lName_format = "CMedia %a"; break;
-      
+
     case  VEN_CONEXANT_ID:
       lName_format = "Conexant %s"; break;
-      
+
     case  VEN_CHRONTEL_ID:
       lName_format = "Chrontel %a"; break;
-      
+
     case  VEN_LG_ID:
       lName_format = "LG %a"; break;
-      
+
     case  VEN_WOLFSON_ID:
       lName_format = "Wolfson Microelectronics %a"; break;
-      
+
     case  VEN_QEMU_ID:
       lName_format = "QEMU %a"; break;
-      
+
     case  VEN_INTEL_ID:
       lName_format = "Intel %a"; break;
-      
+
     case  VEN_SIGMATEL_ID:
       lName_format = "Sigmatel %a"; break;
-      
+
     default:
       lName_format = UNKNOWN; break;
       break;
   }
-  
+
   for (i = 0; i < HDACC_CODECS_LEN; i++)
   {
     if ( know_codecs[i].id == lCodec_model )
@@ -698,13 +698,13 @@ CHAR8 *get_hda_codec_name(UINT16 codec_vendor_id, UINT16 codec_device_id, UINT8 
       }
     }
   }
-  
+
   if ( AsciiStrStr(lName_format, "%a" ) != NULL )
   {
     // Dirty way to remove '%a' from the end of the lName_format
     lName_format[AsciiStrLen(lName_format)-3] = '\0';
   }
-  
+
   // Not in table
   AsciiSPrint(desc, sizeof(desc), "unknown %a Codec", lName_format);
   return desc;
@@ -720,14 +720,14 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
   UINT16    ics = 0;
   UINT32    data32 = 0;
   UINT64    data64 = 0;
-  
+
   // about that polling below ...
   // spec says that delay is in 100ns units. value 1.000.000.0
   // should then be 1 second, but users of newer Aptio boards were reporting
   // delays of 10-20 secs when this value was used. maybe this polling timeout
   // value does not mean the same on all implementations?
   // anyway, delay is lowered now to 10.000.0 (10 millis).
-  
+
   // poll ICS[0] to become 0
   Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 100000/*delay in 100ns*/, &data64);
   ics = (UINT16)(data64 & 0xFFFF);
@@ -764,19 +764,19 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
   UINTN               Device;
   UINTN               Function;
   UINTN               Index;
-  
+
   // get device PciIo protocol
   Status = gBS->OpenProtocol(PciDevHandle, &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) {
     return FALSE;
   }
-  
+
   // get device location
   Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
   if (EFI_ERROR(Status)) {
     return FALSE;
   }
-  
+
   // iterate over all GFX devices and check for sibling
   for (Index = 0; Index < NGFX; Index++) {
     if (gGraphics[Index].Segment == Segment
@@ -785,7 +785,7 @@ BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
       return TRUE;
     }
   }
-  
+
   return FALSE;
 }
 
@@ -796,7 +796,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
   UINT32                  codecId = 0;
   BOOLEAN                 Injected = FALSE;
   UINTN                   i;
-  
+
   if (!device_inject_string) {
     device_inject_string = devprop_create_string();
   }
@@ -804,7 +804,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
     if (!gSettings.HDMIInjection) {
       return FALSE;
     }
-    
+
     if (hda_dev && !hda_dev->used) {
       device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
       hda_dev->used = TRUE;
@@ -812,7 +812,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
     if (!device) {
       return FALSE;
     }
-        
+
     if (gSettings.NrAddProperties != 0xFFFE) {
       for (i = 0; i < gSettings.NrAddProperties; i++) {
         if (gSettings.AddProperties[i].Device != DEV_HDMI) {
@@ -885,12 +885,14 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, CHAR8 *
         devprop_add_value(device, "layout-id", (UINT8 *)&layoutId, 4);
       }
       layoutId = 0; // reuse variable
-      devprop_add_value(device, "hda-gfx", (UINT8 *)"onboard-1", 10);
+      if (gSettings.UseIntelHDMI) {
+        devprop_add_value(device, "hda-gfx", (UINT8 *)"onboard-1", 10);
+      }
       codecId = 1; // reuse variable again
       if (gSettings.AFGLowPowerState) {
         devprop_add_value(device, "AFGLowPowerState", (UINT8 *)&codecId, 4);
       }
-      
+
       devprop_add_value(device, "MaximumBootBeepVolume", (UINT8 *)&layoutId, 1);
       devprop_add_value(device, "PinConfigurations", (UINT8 *)&layoutId, 1);
     }
