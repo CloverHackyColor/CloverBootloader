@@ -191,7 +191,8 @@ InputBarRefresh (
       //
       // Shift key pressed.
       //
-      continue;
+      //continue; //Slice - why Shift prohibited?
+      KeyData.KeyState.KeyShiftState &= ~EFI_SHIFT_STATE_VALID;
     }
     //
     // pressed ESC
