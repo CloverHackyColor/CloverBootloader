@@ -13,13 +13,7 @@ cd ../IntelFrameworkModulePkg/
 svn up
 cd ../IntelFrameworkPkg/
 svn up
-cd ../OvmfPkg/
-svn up
-cd ../OptionRomPkg/
-svn up
 cd ../PcAtChipsetPkg/
-svn up
-cd ../ShellPkg/
 svn up
 cd ../UefiCpuPkg/
 svn up
