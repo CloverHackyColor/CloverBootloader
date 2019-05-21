@@ -363,21 +363,22 @@ UINT8 kabylake_hd_vals[12][4] = {
 };
 
 
-UINT8 coffeelake_ig_vals[14][4] = {
+UINT8 coffeelake_ig_vals[15][4] = {
   { 0x00, 0x00, 0x00, 0x3E },   // 0 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x03, 0x00, 0x91, 0x3E },   // 1 Intel UHD Graphics 630 - Mobile: 0, PipeCount: 0, PortCount: 0, STOLEN:  0MB, FBMEM: 0MB, VRAM: 1536MB, Connector: DUMMY3, BL: 0xFFFF
   { 0x00, 0x00, 0x92, 0x3E },   // 2 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x03, 0x00, 0x92, 0x3E },   // 3 Intel UHD Graphics 630 - Mobile: 0, PipeCount: 0, PortCount: 0, STOLEN:  0MB, FBMEM: 0MB, VRAM: 1536MB, Connector: DUMMY3, BL: 0xFFFF
   { 0x09, 0x00, 0x92, 0x3E },   // 4 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DUMMY2, BL: 0xFFFF
-  { 0x03, 0x00, 0x98, 0x3E },   // 5 Intel UHD Graphics 630 - Mobile: 0, PipeCount: 0, PortCount: 0, STOLEN:  0MB, FBMEM: 0MB, VRAM: 1536MB, Connector: DUMMY3, BL: 0xFFFF
-  { 0x00, 0x00, 0x9B, 0x3E },   // 6 *MacBookPro15,1 - Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
-  { 0x06, 0x00, 0x9B, 0x3E },   // 7 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 1, PortCount: 1, STOLEN: 38MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DUMMY2, BL: 0xFFFF
-  { 0x07, 0x00, 0x9B, 0x3E },   // 8 *Macmini8,1 - Intel UHD Graphics 630 - Mobile: 0, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: DP3, BL: 0xFFFF
+  { 0x03, 0x00, 0x98, 0x3E },   // 5 *iMac19,1 - Intel UHD Graphics 630 - Mobile: 0, PipeCount: 0, PortCount: 0, STOLEN:  0MB, FBMEM: 0MB, VRAM: 1536MB, Connector: DUMMY3, BL: 0xFFFF
+  { 0x00, 0x00, 0x9B, 0x3E },   // 6 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
+  { 0x06, 0x00, 0x9B, 0x3E },   // 7 *MacBookPro15,1 - Intel UHD Graphics 630 - Mobile: 1, PipeCount: 1, PortCount: 1, STOLEN: 38MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DUMMY2, BL: 0xFFFF
+  { 0x07, 0x00, 0x9B, 0x3E },   // 8 *Macmini8,1/iMac19,2 - Intel UHD Graphics 630 - Mobile: 0, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: DP3, BL: 0xFFFF
   { 0x09, 0x00, 0x9B, 0x3E },   // 9 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x00, 0x00, 0xA5, 0x3E },   //10 Intel Iris Plus Graphics 655 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x04, 0x00, 0xA5, 0x3E },   //11 *MacBookPro15,2 - Intel Iris Plus Graphics 655 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x05, 0x00, 0xA5, 0x3E },   //12 Intel UHD Graphics 630 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
   { 0x09, 0x00, 0xA5, 0x3E },   //13 Intel Iris Plus Graphics 655 - Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
+  { 0x05, 0x00, 0xA6, 0x3E },   //14 Mobile: 1, PipeCount: 3, PortCount: 3, STOLEN: 57MB, FBMEM: 0MB, VRAM: 1536MB, Connector: LVDS1/DP2, BL: 0xFFFF
 };
 
 UINT8 coffeelake_hd_vals[8][4] = {
@@ -2936,9 +2937,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3E92: // "Intel UHD Graphics 630"          // Desktop
     case 0x3E94: // "Intel Coffee Lake GT2"           //
     case 0x3E96: // "Intel Coffee Lake GT2"           //
-    case 0x3E98: // "Intel UHD Graphics 630"          // Desktop
+    case 0x3E98: // "Intel UHD Graphics 630"          // Desktop - iMac19,1
     case 0x3E9A: // "Intel Coffee Lake GT2"           //
-    case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1/Macmini8,1
+    case 0x3E9B: // "Intel UHD Graphics 630"          // Mobile - MacBookPro15,1/Macmini8,1/iMac19,2
     case 0x3EA9: // "Intel Coffee Lake GT2"           //
       //GT3
     case 0x3EA5: // "Intel Iris Plus Graphics 655"    // Mobile - MacBookPro15,2
@@ -3114,6 +3115,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (gSettings.IgPlatform) {
         case (UINT32)0x3E910003:
         case (UINT32)0x3E920003:
+        case (UINT32)0x3E980003:
           break;
         default:
           switch (MacModel) {

@@ -218,11 +218,11 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02TQHACHTD5", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2017mbp", "j80ga", 0xf0a009 },
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
-  { "MacBookPro15,1", "MBP151.88Z.F000.B00.1809280842", "220.260.154.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
+  { "MacBookPro15,1", "MBP151.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2018mbp", "j680", 0xf0a009 }, // there are no BIOS REV rBR EPCI
   //MacBookPro15,2 / MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
-  { "MacBookPro15,2", "MBP152.88Z.F000.B00.1809171524", "220.260.154.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
+  { "MacBookPro15,2", "MBP152.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
     { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2018mbp", "j132", 0xf09009 }, // there are no BIOS REV rBR EPCI
   //MacBookAir1,1 / MacBook Air (Original)
@@ -274,7 +274,7 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Air", "1.0", "C02Q1HACG940", "Air-Enclosure",
     { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0xf0a008 },
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
-  { "MacBookAir8,1", "AAPJ140K.88Z.F000.B00.1810242138", "220.260.154.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
+  { "MacBookAir8,1", "MBA81.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
     { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j140k", "j140k", 0xf08009 }, // there are no BIOS REV rBR EPCI
   //Macmini1,1 / Mac mini (Early 2006)
@@ -318,7 +318,7 @@ PLATFORMDATA ApplePlatformData[] =
     "Mac mini", "1.0", "C02NN7NHG1J0", "Mini-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 },
   //Macmini8,1 / Mac mini (2018)
-  { "Macmini8,1", "MM81.88Z.F000.B00.1809171422", "220.260.154.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
+  { "Macmini8,1", "MM81.88Z.F000.B00.1904232231", "220.260.170.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
     { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt EPCI
   //iMac4,1 / iMac (20-inch, Early 2006)
@@ -434,15 +434,15 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
   //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
-  { "iMac19,1", "IM191.88Z.F000.B00.1904151856", "220.260.167.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i7-9900K @ 3.60 GHz
+  { "iMac19,1", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i7-9900K @ 3.60 GHz
     "iMac", "1.0", "C02Y9HACJV3P", "iMac-Aluminum",
     { 0x44, 0xE6, 0x6E, 0x2A, 0xC8, 0x5C },  "j133_4_5", "j135", 0xf07009 }, // need rBR RPlt EPCI
   //iMac19,2 / iMac (Retina 4K, 21.5-inch, 2019)
-  { "iMac19,2", "IM191.88Z.F000.B00.1904151856", "220.260.167.0.0", "Mac-63001698E7A34814", // Intel Core i7-8700B @ 3.20 GHz
+  { "iMac19,2", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-63001698E7A34814", // Intel Core i7-8700B @ 3.20 GHz
     "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
     { 0x44, 0xE6, 0x6E, 0x28, 0x9F, 0x5C },  "j133_4_5", "j135", 0xf07009 }, // need rBR RPlt EPCI
   //iMacPro1,1 /iMac Pro (2017)
-  { "iMacPro1,1", "IMP11.88Z.0064.B30.1712081714", "220.260.154.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
+  { "iMacPro1,1", "IMP11.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j137", "j137", 0xf07009 }, // need REV rBR EPCI
   //MacPro1,1 / Mac Pro
@@ -462,7 +462,7 @@ PLATFORMDATA ApplePlatformData[] =
     "MacPro", "1.4", "CT930HAC4PD", "Pro-Enclosure",
     { 0x01, 0x39, 0x0f, 0, 0, 0x05 },  "NA", "NA", 0x7c002 }, // need rBR RPlt
   //MacPro5,1 / Mac Pro (Mid 2012)
-  { "MacPro5,1", "MP51.88Z.F000.B00.1902142049", "142.0.0.0.0", "Mac-F221BEC8", // Intel Xeon X5675 @ 3.06 GHz x2
+  { "MacPro5,1", "MP51.88Z.F000.B00.1904121248", "144.0.0.0.0", "Mac-F221BEC8", // Intel Xeon X5675 @ 3.06 GHz x2
     "MacPro", "1.2", "C07J77F7F4MC", "Pro-Enclosure", // Note: C07J50F7F4MC CK04000AHFC CG154TB9WU3
     { 0x01, 0x39, 0x0f, 0, 0, 0x11 },  "k5", "k5", 0x7c002 },
   //MacPro6,1 / Mac Pro (Late 2013)
@@ -857,7 +857,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
   }
 
-  if (Model >= MacPro31) {
+  if (Model > MacPro31) {
     gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
   } else {
     gSettings.BoardType = BaseBoardTypeMotherBoard; //0xA;
