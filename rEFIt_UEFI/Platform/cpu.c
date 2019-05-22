@@ -1362,6 +1362,8 @@ UINT16 GetAdvancedCpuType ()
               return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
               return 0x605; // Core i5
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-8"))
+              return 0x709; // Core i7 CoffeeLake
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
               return 0x705; // Core i7
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m3"))

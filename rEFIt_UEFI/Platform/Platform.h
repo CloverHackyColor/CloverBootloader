@@ -198,7 +198,7 @@ Headers collection for procedures
 #define CPU_MODEL_CANNONLAKE    0x66
 #define CPU_MODEL_XEON_MILL     0x85  /* Knights Mill */
 #define CPU_MODEL_KABYLAKE1     0x8E  /* Kabylake Mobile */
-#define CPU_MODEL_KABYLAKE2     0x9E  /* Kabylake Dektop */
+#define CPU_MODEL_KABYLAKE2     0x9E  /* Kabylake Dektop, CoffeeLake */
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541

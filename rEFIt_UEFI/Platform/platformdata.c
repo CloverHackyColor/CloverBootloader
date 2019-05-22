@@ -320,7 +320,7 @@ PLATFORMDATA ApplePlatformData[] =
   //Macmini8,1 / Mac mini (2018)
   { "Macmini8,1", "MM81.88Z.F000.B00.1904232231", "220.260.170.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
-    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need BIOS REV rBR RPlt EPCI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j174", "j174", 0xf07009 }, // need BIOS REV rBR EPCI
   //iMac4,1 / iMac (20-inch, Early 2006)
   { "iMac4,1", "IM41.88Z.0055.B08.0609061538", NULL, "Mac-F42786C8", // Intel Core 2 Duo T2500 @ 2.00 GHz
     "iMac", "1.0", "W8610HACVGM", "iMac",
@@ -436,11 +436,11 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
   { "iMac19,1", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i7-9900K @ 3.60 GHz
     "iMac", "1.0", "C02Y9HACJV3P", "iMac-Aluminum",
-    { 0x44, 0xE6, 0x6E, 0x2A, 0xC8, 0x5C },  "j133_4_5", "j135", 0xf07009 }, // need rBR RPlt EPCI
+    { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12 },  "j138_9", "j138", 0xf0d009 }, // 
   //iMac19,2 / iMac (Retina 4K, 21.5-inch, 2019)
   { "iMac19,2", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-63001698E7A34814", // Intel Core i7-8700B @ 3.20 GHz
     "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
-    { 0x44, 0xE6, 0x6E, 0x28, 0x9F, 0x5C },  "j133_4_5", "j135", 0xf07009 }, // need rBR RPlt EPCI
+    { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12  },  "j138_9", "j138", 0xf0d009 }, // 
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1", "IMP11.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
@@ -613,6 +613,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac133:
       gFwFeatures             = 0xE00DE137;
       break;
+	case MacMini81:
+	  gFwFeatures             = 0xFD8FF466;
+	  break;
     case MacBookAir61:
     case MacBookAir62:
     case iMac141:
@@ -655,6 +658,11 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMacPro11:
       gFwFeatures             = 0xFD8FF53F;
       break;
+	case iMac191:
+    case iMac192:
+      gFwFeatures             = 0xFD8FF576;
+      break;
+
 
     // Verified list from Users
     case MacBookPro61:
@@ -690,11 +698,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro151:
     case MacBookPro152:
     case MacBookAir81:
-    case MacMini81:
     case iMac161:
     case iMac162:
-    case iMac191:
-    case iMac192:
       gFwFeatures             = 0xFC0FE137;
       break;
     case MacBook61:
@@ -757,6 +762,11 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMacPro11:
       gFwFeaturesMask         = 0xFF9FFF3F;
       break;
+    case iMac191:
+    case iMac192:
+    case MacMini81:
+      gFwFeaturesMask         = 0xFFDFFF7F;
+      break;
 
     // Verified list from Users
     case MacBook61:
@@ -778,7 +788,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookAir81:
     case MacMini41:
     case MacMini71:
-    case MacMini81:
     case iMac101:
     case iMac111:
     case iMac112:
@@ -787,8 +796,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac122:
     case iMac161:
     case iMac162:
-    case iMac191:
-    case iMac192:
     case MacPro51:
       gFwFeaturesMask         = 0xFF1FFF3F;
       break;
