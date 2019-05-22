@@ -4486,8 +4486,14 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty (DictPointer, "EfiVersion");
   if (Prop != NULL) {
-    AsciiStrCpyS (gSettings.EfiVersion, 64, Prop->string);
-    DBG ("Using EfiVersion from config: %a\n", gSettings.EfiVersion);
+    if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->string, 4, 5)) {
+      DBG ("Using latest EfiVersion from clover: %a\n", gSettings.EfiVersion);
+    } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->string, 4, 5)) {
+      AsciiStrCpyS (gSettings.EfiVersion, 64, Prop->string);
+      DBG ("Using latest EfiVersion from config: %a\n", gSettings.EfiVersion);
+    } else {
+      DBG ("Using EfiVersion from clover: %a\n", gSettings.EfiVersion);
+    }
   } else if (iStrLen(gSettings.EfiVersion, 64) > 0) {
     DBG ("Using EfiVersion from clover: %a\n", gSettings.EfiVersion);
   }

@@ -434,13 +434,13 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
     { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
   //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
-  { "iMac19,1", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i7-9900K @ 3.60 GHz
+  { "iMac19,1", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i9-9900K @ 3.60 GHz
     "iMac", "1.0", "C02Y9HACJV3P", "iMac-Aluminum",
     { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12 },  "j138_9", "j138", 0xf0d009 }, // 
   //iMac19,2 / iMac (Retina 4K, 21.5-inch, 2019)
   { "iMac19,2", "IM191.88Z.F000.B00.1904222222", "220.260.170.0.0", "Mac-63001698E7A34814", // Intel Core i7-8700B @ 3.20 GHz
     "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
-    { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12  },  "j138_9", "j138", 0xf0d009 }, // 
+    { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12 },  "j138_9", "j138", 0xf0d009 }, // 
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1", "IMP11.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
@@ -613,9 +613,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac133:
       gFwFeatures             = 0xE00DE137;
       break;
-	case MacMini81:
-	  gFwFeatures             = 0xFD8FF466;
-	  break;
+    case MacMini81:
+      gFwFeatures             = 0xFD8FF466;
+      break;
     case MacBookAir61:
     case MacBookAir62:
     case iMac141:
@@ -658,11 +658,10 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMacPro11:
       gFwFeatures             = 0xFD8FF53F;
       break;
-	case iMac191:
+    case iMac191:
     case iMac192:
       gFwFeatures             = 0xFD8FF576;
       break;
-
 
     // Verified list from Users
     case MacBookPro61:
