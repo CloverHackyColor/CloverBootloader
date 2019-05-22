@@ -10,7 +10,7 @@ set -u
 # Gettext source version
 # here we can change source versions of tools
 #
-export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-latest}
+export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-0.20.1}
 
 # Change PREFIX if you want gettext installed on different place
 #
