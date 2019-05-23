@@ -1364,8 +1364,12 @@ UINT16 GetAdvancedCpuType ()
               return 0x605; // Core i5
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-8"))
               return 0x709; // Core i7 CoffeeLake
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-9"))
+              return 0x1005; // Core i7 CoffeeLake
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
               return 0x705; // Core i7
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i9"))
+              return 0x1009; // Core i7 CoffeeLake
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m3"))
               return 0xC05;
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m5"))
