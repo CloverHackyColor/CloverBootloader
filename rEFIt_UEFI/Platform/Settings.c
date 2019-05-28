@@ -2812,7 +2812,7 @@ GetEarlyUserSettings (
           gLanguage = croatian;
         } else if (AsciiStrStr (Prop->string, "id")) {
           gLanguage = indonesian;
-        } else if (AsciiStrStr (Prop->string, "cn")) {
+        } else if (AsciiStrStr (Prop->string, "zh_CN")) {
           gLanguage = chinese;
           GlobalConfig.Codepage = 0x3400;
           GlobalConfig.CodepageSize = 0x19C0;
