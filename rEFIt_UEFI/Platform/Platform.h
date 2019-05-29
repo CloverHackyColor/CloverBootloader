@@ -2310,6 +2310,10 @@ BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS);
 struct
 MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep);
 
+/** trim spaces in MatchOSes struct array */
+VOID
+TrimMatchOSArray(struct MatchOSes *s);
+
 /** free MatchOSes struct and its array. */
 VOID deallocMatchOSes(struct MatchOSes *s);
 

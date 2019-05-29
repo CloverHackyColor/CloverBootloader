@@ -1374,6 +1374,9 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
   if (!mos) {
     return TRUE; //memory fails -> anyway the patch enabled
   }
+  
+  TrimMatchOSArray(mos);
+  
   if (AsciiStrStr(mos->array[0], "All") != NULL) {
     return TRUE;
   }
@@ -1464,6 +1467,42 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
     mo->array[0] = AllocateCopyPool(AsciiStrLen(str)+1, str);
   }
   return mo;
+}
+
+CHAR8*
+TrimString(CHAR8* String)
+{
+  CHAR8 *End, *TrimmedString;
+  
+  if (!String) {
+    return NULL;
+  }
+  
+  for ( ; *String == ' '; String++) {
+  }
+  
+  End = String + AsciiStrLen(String) - 1;
+  
+  for ( ; (End > String) && (*End == ' '); End--) {
+  }
+  *(End + 1) = '\0';
+  
+  TrimmedString = AllocateCopyPool(AsciiStrSize(String), String);
+  FreePool(String);
+  return TrimmedString;
+}
+
+VOID
+TrimMatchOSArray(struct MatchOSes *s)
+{
+  INTN i;
+  if (!s) {
+    return;
+  }
+  
+  for (i = 0; i < s->count; i++) {
+    s->array[i] = TrimString(s->array[i]);
+  }
 }
 
 BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
