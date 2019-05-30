@@ -1472,22 +1472,23 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
 CHAR8*
 TrimString(CHAR8* String)
 {
-  CHAR8 *End, *TrimmedString;
+  CHAR8 *TempString, *End, *TrimmedString;
   
   if (!String) {
     return NULL;
   }
   
-  for ( ; *String == ' '; String++) {
+  TempString = String;
+  for ( ; *TempString == ' '; TempString++) {
   }
   
-  End = String + AsciiStrLen(String) - 1;
+  End = TempString + AsciiStrLen(TempString) - 1;
   
-  for ( ; (End > String) && (*End == ' '); End--) {
+  for ( ; (End > TempString) && (*End == ' '); End--) {
   }
   *(End + 1) = '\0';
   
-  TrimmedString = AllocateCopyPool(AsciiStrSize(String), String);
+  TrimmedString = AllocateCopyPool(AsciiStrSize(TempString), TempString);
   FreePool(String);
   return TrimmedString;
 }
