@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # A script for Clover Theme Manager
-# Copyright (C) 2014-2018 Blackosx
+# Copyright (C) 2014-2019 Blackosx
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 # Thanks to apianti, dmazar & JrCs for their git know-how. 
 # Thanks to alexq, asusfreak, chris1111, droplets, eMatoS, kyndder & oswaldini for testing.
 
-VERS="0.78.2"
+VERS="0.78.3"
 
 # =======================================================================================
 # Helper Functions/Routines
@@ -1505,7 +1505,7 @@ GetSelfDevicePath()
 
         [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Reading bootlog"
 
-        local selfDevicePath=$( grep SelfDevicePath "$bootLogFile" )
+        local selfDevicePath=$( grep -a SelfDevicePath "$bootLogFile" )
         if [[ "$selfDevicePath" ]]; then
 
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Found selfDevicePath"

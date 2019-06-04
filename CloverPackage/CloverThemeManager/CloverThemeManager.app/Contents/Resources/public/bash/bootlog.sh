@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # A script for Clover Theme Manager
-# Copyright (C) 2014-2017 Blackosx
+# Copyright (C) 2014-2019 Blackosx
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 # Extracts bootlog from ioreg and then parses it for theme info.
 # Html is then constructed and injected in to the main template.
 
-# v0.76.8
+# v0.76.9
     
 # ---------------------------------------------------------------------------------------
 SetHtmlBootlogSectionTemplates()
@@ -912,7 +912,7 @@ if [ -f "$bootLogFile" ]; then
     # Note: Clover r2025 rebranded rEFIt to Clover.
     #       So any log pre r2025 will not be read correctly.
 
-    checkLog=$( grep "Starting Clover" "$bootLogFile" )
+    checkLog=$( grep -a "Starting Clover" "$bootLogFile" )
     if [ "$checkLog" != "" ]; then
         ReadBootLog
         PostProcess
@@ -956,7 +956,7 @@ if [ -f "$bootLogFile" ]; then
         echo "nvramSave‡$gNvramWorking" >> "$bootlogScriptOutfile"
 
     else
-        checkLog=$( grep "Starting rEFIt" "$bootLogFile" )
+        checkLog=$( grep -a "Starting rEFIt" "$bootLogFile" )
         if [ "$checkLog" != "" ]; then
             [[ DEBUG -eq 1 ]] && WriteToLog "${debugIndentTwo}Found Clover boot.log but revision is older than r2025"
             # Create NVRAM functionality band
