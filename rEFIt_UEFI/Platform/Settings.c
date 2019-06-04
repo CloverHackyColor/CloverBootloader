@@ -6578,9 +6578,9 @@ CHAR16
   CHAR16 *OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac";
-  } else if (AsciiStrStr(OSVersion, "10.15") != 0) {
-	  // Catalina
-	  OSIconName = L"cata,mac";
+  } else if (AsciiStrStr (OSVersion, "10.15") != 0) {
+    // Catalina
+    OSIconName = L"cata,mac";
   } else if (AsciiStrStr (OSVersion, "10.14") != 0) {
     // Mojave
     OSIconName = L"moja,mac";

@@ -709,6 +709,12 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       patchLocation = i+1394;
       DBG("Found Mojave (10.14.4+) Lapic panic at 0x%08x\n", patchLocation);
       break;
+    // Sherlocks: 10.15.DP1
+    } else if (bytes[i+0] == 0xE8 && bytes[i+1] == 0x1A && bytes[i+2] == 0x81 && bytes[i+3] == 0x64 &&
+               bytes[i+4] == 0x00 && bytes[i+5] == 0x66 && bytes[i+6] == 0x90 && bytes[i+7] == 0x43) {
+      patchLocation = i;
+      DBG("Found Catalina Lapic panic at 0x%08x\n", patchLocation);
+      break;
     }
   }
 
