@@ -566,7 +566,7 @@ VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
 // High Sierra/Mojave patterns
 // Sherlocks: 10.13/10.14
   DBG_RT(Entry, "CPUID: try High Sierra/Mojave patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &CataSearchModel[0],
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieMojSearchModel[0],
                  &YosECSieSearchExt[0], &LionReplaceModel[0], &LionReplaceModel[0],
                  sizeof(HSieMojSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
@@ -575,9 +575,10 @@ VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
 // Catalina patterns
 // PMheart: 10.15.DP1
   DBG_RT(Entry, "CPUID: try Catalina patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieMojSearchModel[0],
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &CataSearchModel[0],
                  &CataSearchExt[0], &CataReplaceMovEax[0], &CataReplaceMovEax[0],
                  sizeof(CataSearchModel), Entry)) {
+    DBG_RT(Entry, "...done!\n");
     return;
   }
 }
