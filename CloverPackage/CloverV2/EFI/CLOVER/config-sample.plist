@@ -401,18 +401,6 @@
 		<key>KernelToPatch</key>
 		<array>
 			<dict>
-				<key>Find</key>
-				<data>TIn/6PXb/v8=</data>
-				<key>Comment</key>
-				<string>Infinite loop at wake</string>
-				<key>Disabled</key>
-				<true/>
-				<key>MatchOS</key>
-				<string>10.11</string>
-				<key>Replace</key>
-				<data>6/7/6PXb/v8=</data>
-			</dict>
-			<dict>
 				<key>Comment</key>
 				<string>Disable panic kext logging on 10.14 Release kernel</string>
 				<key>Disabled</key>
