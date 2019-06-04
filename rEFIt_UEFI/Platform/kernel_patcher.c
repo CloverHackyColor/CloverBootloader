@@ -483,6 +483,18 @@ STATIC UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
 STATIC UINT8 HSieMojSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
 // Need to use YosECSieSearchExt, LionReplaceModel
 
+// Catalina
+/*
+ This patch searches
+  mov eax, r12   ||   mov eax, r12
+  shr al, 0x4    ||   shr eax, 0x10
+ and replaces to
+  mov eax, FakeModel || mov eax, FakeExt
+  nop                || nop
+*/
+STATIC UINT8 CataSearchModel[]      = {0x44, 0x89, 0xE0, 0xC0, 0xE8, 0x04};
+STATIC UINT8 CataSearchExt[]        = {0x44, 0x89, 0xE0, 0xC1, 0xE8, 0x10};
+STATIC UINT8 CataReplaceMovEax[]    = {0xB8, 0x00, 0x00, 0x00, 0x00, 0x90}; // mov eax, val || nop
 
 BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
                    UINT8* Search4, UINT8* Search10, UINT8* ReplaceModel,
@@ -552,12 +564,20 @@ VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
     return;
   }
 // High Sierra/Mojave patterns
-// Sherlocks: 10.13/10.14.DP1
+// Sherlocks: 10.13/10.14
   DBG_RT(Entry, "CPUID: try High Sierra/Mojave patch...\n");
-  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieMojSearchModel[0],
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &CataSearchModel[0],
                  &YosECSieSearchExt[0], &LionReplaceModel[0], &LionReplaceModel[0],
                  sizeof(HSieMojSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
+    return;
+  }
+// Catalina patterns
+// PMheart: 10.15.DP1
+  DBG_RT(Entry, "CPUID: try Catalina patch...\n");
+  if (PatchCPUID(kernelData, &StrMsr8b[0], sizeof(StrMsr8b), &HSieMojSearchModel[0],
+                 &CataSearchExt[0], &CataReplaceMovEax[0], &CataReplaceMovEax[0],
+                 sizeof(CataSearchModel), Entry)) {
     return;
   }
 }
