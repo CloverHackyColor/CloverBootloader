@@ -902,6 +902,11 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
         STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
         STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
+    // PMheart: attempt to add 10.15 compatibility
+    } else if (os_version < AsciiOSVersionToUint64("10.16")) {
+        STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+        STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
     }
     
     DBG("Searching _xcpm_pkg_scope_msr ...\n");
@@ -1057,12 +1062,17 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
         STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
         STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
+    // PMheart: attempt to add 10.15 compatibility
+    } else if (os_version < AsciiOSVersionToUint64("10.16")) {
+        STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+        STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
+        applyKernPatch(kern, find, sizeof(find), repl, comment);
     }
 
     comment = "_cpuid_set_info_rdmsr";
-    // PMheart: attempt to add 10.14 compatibility
-    if (os_version >= AsciiOSVersionToUint64("10.12") && os_version < AsciiOSVersionToUint64("10.15")) {
-        // 10.12 - 10.14
+    // PMheart: bytes seem stable as of 10.12
+    if (os_version >= AsciiOSVersionToUint64("10.12")) {
+        // 10.12+
         STATIC UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
         STATIC UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
         applyKernPatch(kern, find, sizeof(find), repl, comment);
@@ -1144,6 +1154,11 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
     STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
+  // PMheart: attempt to add 10.15 compatibility
+  } else if (os_version < AsciiOSVersionToUint64("10.16")) {
+      STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+      STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
+      applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
   
   DBG("KernelIvyBridgeXCPM() <===\n");
@@ -1285,8 +1300,13 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
   } else if (os_version < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
     STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
-    STATIC UINT8 repl[] = { 0x89, 0xD8, 0xC2, 0xC1, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
+  // PMheart: attempt to add 10.15 compatibility
+  } else if (os_version < AsciiOSVersionToUint64("10.16")) {
+      STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+      STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
+      applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
   
   DBG("KernelIvyE5XCPM() <===\n");

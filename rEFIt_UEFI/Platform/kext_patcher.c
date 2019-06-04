@@ -410,9 +410,9 @@ STATIC UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
 STATIC UINT8   MavMoj3Search[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
 STATIC UINT8   MavMoj3Replace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
 
-// RodionS: 10.14.4+
-STATIC UINT8   Moj4Search[]  = { 0x75, 0x33, 0x0f, 0xb7 };
-STATIC UINT8   Moj4Replace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
+// RodionS: 10.14.4+ / 10.15 DB1
+STATIC UINT8   Moj4CataSearch[]  = { 0x75, 0x33, 0x0f, 0xb7 };
+STATIC UINT8   Moj4CataReplace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -442,7 +442,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
     NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
     NumML  = SearchAndCount(Driver, DriverSize, MLSearch,  sizeof(MLSearch));
     NumMavMoj3 = SearchAndCount(Driver, DriverSize, MavMoj3Search, sizeof(MavMoj3Search));
-    NumMoj4 = SearchAndCount(Driver, DriverSize, Moj4Search, sizeof(Moj4Search));
+    NumMoj4 = SearchAndCount(Driver, DriverSize, Moj4CataSearch, sizeof(Moj4CataSearch));
   } else {
     NumLion_i386 = SearchAndCount(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386));
   }
@@ -469,7 +469,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
     Num = SearchAndReplace(Driver, DriverSize, MavMoj3Search, sizeof(MavMoj3Search), MavMoj3Replace, 1);
     DBG_RT(Entry, "==> Mav/Yos/El/Sie/HS/Moj3 X64: %d replaces done.\n", Num);
   } else if (NumMoj4 == 1) {
-    Num = SearchAndReplace(Driver, DriverSize, Moj4Search, sizeof(Moj4Search), Moj4Replace, 1);
+    Num = SearchAndReplace(Driver, DriverSize, Moj4CataSearch, sizeof(Moj4CataSearch), Moj4CataReplace, 1);
     DBG_RT(Entry, "==> Mojave4 X64: %d replaces done.\n", Num);
   } else {
     DBG_RT(Entry, "==> Patterns not found - patching NOT done.\n");
@@ -841,8 +841,8 @@ STATIC UINT8   BroadwellE_IOPCI_Find_SieHS[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0
 STATIC UINT8   BroadwellE_IOPCI_Repl_SieHS[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x00, 0x80 };
 
 // Mojave
-STATIC UINT8   BroadwellE_IOPCI_Find_Moj[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x40 };
-STATIC UINT8   BroadwellE_IOPCI_Repl_Moj[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x80 };
+STATIC UINT8   BroadwellE_IOPCI_Find_MojCata[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x40 };
+STATIC UINT8   BroadwellE_IOPCI_Repl_MojCata[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x80 };
 
 VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, LOADER_ENTRY *Entry)
 {
@@ -864,7 +864,7 @@ VOID BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 
   } else if (os_ver < AsciiOSVersionToUint64("10.14")) {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_SieHS, sizeof(BroadwellE_IOPCI_Find_SieHS), BroadwellE_IOPCI_Repl_SieHS, 0);
   } else {
-    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_Moj, sizeof(BroadwellE_IOPCI_Find_Moj), BroadwellE_IOPCI_Repl_Moj, 0);
+    count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_MojCata, sizeof(BroadwellE_IOPCI_Find_MojCata), BroadwellE_IOPCI_Repl_MojCata, 0);
   }
   
   if (count) {
