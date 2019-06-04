@@ -371,13 +371,13 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     }
     if (EFI_ERROR(Status)) {
       DBG("OSicon %a not parsed\n", OSIconsTable[i].name);
-      if ((i > 0) && (i < 12)) {
+      if ((i > 0) && (i < 13)) {
         if (OSIconsTable[0].image) {
           OSIconsTable[i].image = egCopyImage(OSIconsTable[0].image);
         }
-      } else if (i < 17) {
-        if (OSIconsTable[12].image) {
-          OSIconsTable[i].image = egCopyImage(OSIconsTable[12].image);
+      } else if (i < 18) {
+        if (OSIconsTable[13].image) {
+          OSIconsTable[i].image = egCopyImage(OSIconsTable[13].image);
         }
       }
     }

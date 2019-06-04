@@ -102,10 +102,11 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "os_sierra"},
   {NULL, "os_hsierra"},
   {NULL, "os_moja"},  //11
+  {NULL, "os_cata"},  //12
   {NULL, "os_linux"},
   {NULL, "os_ubuntu"},
   {NULL, "os_suse"},
-  {NULL, "os_freebsd"}, //15
+  {NULL, "os_freebsd"}, //16
   {NULL, "os_freedos"},
   {NULL, "os_win"},
   {NULL, "os_vista"},
@@ -113,7 +114,7 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "radio_button_selected"},
   {NULL, "checkbox"},
   {NULL, "checkbox_checked"},
-  {NULL, "scrollbar-background"}, //23
+  {NULL, "scrollbar-background"}, //24
   {NULL, "scrollbar-holder"},
 //  {NULL, "selection_indicator"},
   {NULL, NULL}
