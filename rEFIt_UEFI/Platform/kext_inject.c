@@ -732,7 +732,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumSieSIP          = 0;
   UINTN   NumSieDebugSIP     = 0;
   UINTN   NumHighSieMoja3SIP = 0; // 10.13.X - 10.14.3
-  UINTN   NumMojaCataEXT     = 0; // 10.14.X - 10.5
+  UINTN   NumMojaCataEXT     = 0; // 10.14.X - 10.15
   UINTN   NumMoja4SIP        = 0; // 10.14.4+
   UINTN   NumCataSIP         = 0; // 10.15
 
@@ -751,7 +751,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     NumSieSIP           = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP));
     NumSieDebugSIP      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP));
     NumHighSieMoja3SIP  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEHighSieMoja3SearchSIP, sizeof(KBEHighSieMoja3SearchSIP));
-    NumMojaCataEXT      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT));   // general EXT patch, for all 10.14.x - 10.5
+    NumMojaCataEXT      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT));   // general EXT patch, for all 10.14.x - 10.15
     NumMoja4SIP         = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchSIP, sizeof(KBEMoja4SearchSIP));         // SIP patch, ONLY for 10.14.4+
     NumCataSIP          = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP));
   } else {
@@ -773,7 +773,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT), KBEMojaCataReplaceEXT, 1);
     // then apply corresponding patches based on what we found
     if (NumCataSIP == 1) {
-      // firstly, try to patch 10.5
+      // firstly, try to patch 10.15
       Num += SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP), KBECataReplaceSIP, 1) +
              SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchKxldUnmap, sizeof(KBECataSearchKxldUnmap), KBECataReplaceKxldUnmap, 1);
       DBG_RT(Entry, "==> kernel Catalina: %d replaces done.\n", Num);
