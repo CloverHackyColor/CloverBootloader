@@ -396,7 +396,6 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
         }
       } else {
         DBG("    read prefs %s status=%r\n", PrefName3, Status);
-        FreePool(PrefName3);
       }
     } else {
       DBG("    read prefs %s status=%r\n", PrefName, Status);
@@ -464,7 +463,9 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   if (PrefBuffer) {
     FreePool(PrefBuffer); //allocated by egLoadFile
   }
-  
+  if (PrefName3) {
+    FreePool(PrefName3); //allocated by PoolPrint
+  }
   *SleepImageVolume = ImageVolume;
   *SleepImageName = ImageName;
 }
