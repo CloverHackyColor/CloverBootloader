@@ -732,7 +732,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumSieSIP          = 0;
   UINTN   NumSieDebugSIP     = 0;
   UINTN   NumHighSieMoja3SIP = 0; // 10.13.X - 10.14.3
-  UINTN   NumMojaEXT         = 0; // 10.14.X
+  UINTN   NumMojaCataEXT     = 0; // 10.14.X - 10.5
   UINTN   NumMoja4SIP        = 0; // 10.14.4+
   UINTN   NumCataSIP         = 0; // 10.15
 
@@ -751,7 +751,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     NumSieSIP           = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP));
     NumSieDebugSIP      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP));
     NumHighSieMoja3SIP  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEHighSieMoja3SearchSIP, sizeof(KBEHighSieMoja3SearchSIP));
-    NumMojaEXT          = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT));   // general EXT patch, for all 10.14.x
+    NumMojaCataEXT      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT));   // general EXT patch, for all 10.14.x - 10.5
     NumMoja4SIP         = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchSIP, sizeof(KBEMoja4SearchSIP));         // SIP patch, ONLY for 10.14.4+
     NumCataSIP          = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP));
   } else {
@@ -768,17 +768,17 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   }
 
   // X64
-  if (NumCataSIP == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT), KBEMojaCataReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP), KBECataReplaceSIP, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchKxldUnmap, sizeof(KBECataSearchKxldUnmap), KBECataReplaceKxldUnmap, 1);
-    DBG_RT(Entry, "==> kernel Catalina: %d replaces done.\n", Num);
-  } else if (NumMojaEXT == 1) {
+  if (NumMojaCataEXT == 1) {
     // apply EXT patch first
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT), KBEMojaCataReplaceEXT, 1);
     // then apply corresponding patches based on what we found
-    if (NumMoja4SIP == 1) {
-      // firstly, try to patch 10.14.4+
+    if (NumCataSIP == 1) {
+      // firstly, try to patch 10.5
+      Num += SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP), KBECataReplaceSIP, 1) +
+             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchKxldUnmap, sizeof(KBECataSearchKxldUnmap), KBECataReplaceKxldUnmap, 1);
+      DBG_RT(Entry, "==> kernel Catalina: %d replaces done.\n", Num);
+    } else if (NumMoja4SIP == 1) {
+      // then, try to patch 10.14.4+
       Num += SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchSIP, sizeof(KBEMoja4SearchSIP), KBEMoja4ReplaceSIP, 1) +
              SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchKxldUnmap, sizeof(KBEMoja4SearchKxldUnmap), KBEMoja4ReplaceKxldUnmap, 1);
       DBG_RT(Entry, "==> kernel Mojave (10.14.4+): %d replaces done.\n", Num);
@@ -789,7 +789,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       DBG_RT(Entry, "==> kernel Mojave (10.14 - 10.14.3): %d replaces done.\n", Num);
     } else {
       // no SIP and KxldUnmap pattern found!
-      DBG_RT(Entry, "==> kernel Mojave WARNING: pattern NOT found - only %d replaces done.\nKext Injection will NOT work!\n", Num);
+      DBG_RT(Entry, "==> kernel Mojave/Catalina WARNING: pattern NOT found - only %d replaces done.\nKext Injection will NOT work!\n", Num);
     }
   } else if (NumHighSieMoja3SIP == 1) {
     Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
