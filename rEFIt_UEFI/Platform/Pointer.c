@@ -114,16 +114,18 @@ EFI_STATUS MouseBirth()
 
   // Try first to use mouse from System Table
   Status = gBS->HandleProtocol (gST->ConsoleInHandle, &gEfiSimplePointerProtocolGuid, (VOID**)&gPointer.SimplePointerProtocol);
-  if (EFI_ERROR (Status)) {
+/*  if (EFI_ERROR (Status)) {
       // not found, so use the first found device
       DBG("MouseBirth: No mouse at ConIn, checking if any other device exists\n");
       Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
-  }
+  } */
   /*else {
       DBG("MouseBirth: Mouse located at ConIn\n");
   }*/
 
   if(EFI_ERROR(Status)) {
+    gPointer.Pointer = NULL;
+    gPointer.MouseEvent = NoEvents;
     gPointer.SimplePointerProtocol = NULL;
     MsgLog("No mouse!\n");
     return Status;
