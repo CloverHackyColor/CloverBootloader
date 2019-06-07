@@ -1100,7 +1100,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   if (!Screen || !GuiAnime) return FALSE;
   
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != Screen->ID; Anime = Anime->Next);
-  if (Anime == NULL) {
+  if (Anime == NULL || Anime->Path == NULL) {
     return FALSE;
   }
   
