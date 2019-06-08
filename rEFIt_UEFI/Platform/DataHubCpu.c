@@ -19,9 +19,9 @@
 //
 // CHANGELOG:
 //
-// 2014/11/20
-// Download-Fritz
-// Removed commented out code in rev 2963 and 2965
+// 2019/06/08
+// vector sigma
+// don't inject REV, RBr and EPCI keys if gSettings.REV is zeroed
 //
 
 #ifndef DEBUG_ALL
@@ -379,6 +379,12 @@ SetupDataForOSX(BOOLEAN Hibernate)
   CHAR16*    SerialNumber;
   UINTN      Revision;
   UINT16     Zero = 0;
+  BOOLEAN    isRevLess = (gSettings.REV[0] == 0 &&
+                          gSettings.REV[1] == 0 &&
+                          gSettings.REV[2] == 0 &&
+                          gSettings.REV[3] == 0 &&
+                          gSettings.REV[4] == 0 &&
+                          gSettings.REV[5] == 0);
 
   Revision = StrDecimalToUintn(gFirmwareRevision);
 
@@ -452,10 +458,12 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   (UINT32)iStrLen(gSettings.OEMBoard,   64) + 1);
 
     // SMC helper
+    if (!isRevLess) {
+      LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,    8);
+      LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI,   4);
+      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,    6);
+    }
     LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt,   8);
-    LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,    8);
-    LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI,   4);
-    LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,    6);
     LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
 
     // all current settings
@@ -464,10 +472,12 @@ SetupDataForOSX(BOOLEAN Hibernate)
   if (!gAppleSmc) {
     return;
   }
+  if (!isRevLess) {
+    AddSMCkey(SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.RBr);
+    AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&gSettings.EPCI);
+    AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.REV);
+  }
   AddSMCkey(SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.RPlt);
-  AddSMCkey(SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.RBr);
-  AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&gSettings.EPCI);
-  AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.REV);
   AddSMCkey(SMC_MAKE_KEY('B','E','M','B'), 1, SmcKeyTypeFlag, (SMC_DATA *)&gSettings.Mobile);
   //laptop battery keys will be better to import from nvram.plist or read from ACPI(?)
   //they are needed for FileVault2 who want to draw battery status
