@@ -220,11 +220,11 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
   { "MacBookPro15,1", "MBP151.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
-    NULL, NULL, "j680", NULL }, // there are no BIOS REV rBR EPCI
+    { 0, 0, 0, 0, 0, 0 }, "", "j680", 0 }, // there are no BIOS REV rBR EPCI
   //MacBookPro15,2 / MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
   { "MacBookPro15,2", "MBP152.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
-    NULL, NULL, "j132", NULL }, // there are no BIOS REV rBR EPCI
+    { 0, 0, 0, 0, 0, 0 }, "", "j132", 0 }, // there are no BIOS REV rBR EPCI
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", NULL, "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
@@ -276,7 +276,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
   { "MacBookAir8,1", "MBA81.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
-    NULL, NULL, "j140k", NULL }, // there are no BIOS REV rBR EPCI
+    { 0, 0, 0, 0, 0, 0 }, "", "j140k", 0 }, // there are no BIOS REV rBR EPCI
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1", "MM11.88Z.0055.B08.0610121326", NULL, "Mac-F4208EC8", // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini", "1.0", "W8702N1JU35", "Mini-Aluminum",
@@ -320,7 +320,7 @@ PLATFORMDATA ApplePlatformData[] =
   //Macmini8,1 / Mac mini (2018)
   { "Macmini8,1", "MM81.88Z.F000.B00.1904232231", "220.260.170.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
-    NULL, NULL, "j174", NULL }, // there are no BIOS REV rBR EPCI
+    { 0, 0, 0, 0, 0, 0 }, "", "j174", 0 }, // there are no BIOS REV rBR EPCI
   //iMac4,1 / iMac (20-inch, Early 2006)
   { "iMac4,1", "IM41.88Z.0055.B08.0609061538", NULL, "Mac-F42786C8", // Intel Core 2 Duo T2500 @ 2.00 GHz
     "iMac", "1.0", "W8610HACVGM", "iMac",
@@ -444,7 +444,7 @@ PLATFORMDATA ApplePlatformData[] =
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1", "IMP11.88Z.F000.B00.1904222000", "220.260.170.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
-    NULL, NULL, "j137", NULL }, // there are no BIOS REV rBR EPCI
+    { 0, 0, 0, 0, 0, 0 }, "", "j137", 0 }, // there are no BIOS REV rBR EPCI
   //MacPro1,1 / Mac Pro
   { "MacPro1,1", "MP11.88Z.005C.B08.0707021221", NULL, "Mac-F4208DC8", // Intel Xeon X5355 @ 2.66 GHz x2
     "MacPro", "1.0", "W88A7HACUQ2", "Pro-Enclosure",
