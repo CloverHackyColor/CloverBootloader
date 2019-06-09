@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>15G1611</string>
+	<string>17G7024</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>KEXT</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.5.0</string>
+	<string>3.5.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -25,11 +25,11 @@
 		<string>MacOSX</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3.5.0</string>
+	<string>3.5.2</string>
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>7D1014</string>
+	<string>10B61</string>
 	<key>DTPlatformVersion</key>
 	<string>GM</string>
 	<key>DTSDKBuild</key>
@@ -37,9 +37,9 @@
 	<key>DTSDKName</key>
 	<string>macosx10.11</string>
 	<key>DTXcode</key>
-	<string>0731</string>
+	<string>1010</string>
 	<key>DTXcodeBuild</key>
-	<string>7D1014</string>
+	<string>10B61</string>
 	<key>IOKitPersonalities</key>
 	<dict>
 		<key>SMC Device Emulator</key>
@@ -81,12 +81,9 @@
 					<key>ALV0</key>
 					<array>
 						<string>{alv</string>
-						<data>AQEDtwCjABVq9A==</data>
-					</array>
-					<key>ALV1</key>
-					<array>
-						<string>{alv</string>
-						<data>AAEAAAAAAAAAAA==</data>
+						<data>
+						AQEDtwCjABVq9A==
+						</data>
 					</array>
 					<key>CLKH</key>
 					<array>
