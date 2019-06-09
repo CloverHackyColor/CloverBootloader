@@ -508,7 +508,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
   UINTN                   i;
-  NSVGfont                *font;
+  NSVGfont                *font, *nextFont;
 
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");
@@ -573,8 +573,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   // OSIcons
   font = fontsDB;
   while (font) {
+    nextFont = font->next;
     nsvg__deleteFont(font);
-    font = font->next;
+    font = nextFont;
   }
   nsvg__deleteParser(mainParser);
 

@@ -4066,10 +4066,11 @@ InitTheme(
     textFace[i].valid = FALSE;
   }
 
-  NSVGfont *font = fontsDB;
+  NSVGfont *nextFont, *font = fontsDB;
   while (font) {
+    nextFont = font->next;
     nsvg__deleteFont(font);
-    font = font->next;
+    font = nextFont;
   }
   fontsDB = NULL;
   if (mainParser) {

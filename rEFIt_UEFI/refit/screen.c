@@ -1011,6 +1011,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
       }
       FreePool(Screen->Film);
       Screen->Film = NULL;
+      Screen->Frames = 0;
     }
     if (Screen->Theme) {
       FreePool(Screen->Theme);
