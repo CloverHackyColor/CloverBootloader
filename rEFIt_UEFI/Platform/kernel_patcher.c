@@ -701,17 +701,17 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       patchLocation = i+1385;
       DBG("Found Mojave (10.14 - 10.14.3) Lapic panic at 0x%08x\n", patchLocation);
       break;
-    // PMheart: 10.14.4+
+    // PMheart: 10.14.4 - 10.14.6
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x0C && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+1405] == 0x65 && bytes[i+1406] == 0x8B && bytes[i+1407] == 0x0C && bytes[i+1408] == 0x25 &&
                bytes[i+1409] == 0x1C && bytes[i+1410] == 0x00 && bytes[i+1411] == 0x00 && bytes[i+1412] == 0x00) {
       patchLocation = i+1394;
-      DBG("Found Mojave (10.14.4+) Lapic panic at 0x%08x\n", patchLocation);
+      DBG("Found Mojave (10.14.4 - 10.14.6) Lapic panic at 0x%08x\n", patchLocation);
       break;
-    // Sherlocks: 10.15.DP1
-    } else if (bytes[i+0] == 0xE8 && bytes[i+1] == 0x1A && bytes[i+2] == 0x81 && bytes[i+3] == 0x64 &&
-               bytes[i+4] == 0x00 && bytes[i+5] == 0x66 && bytes[i+6] == 0x90 && bytes[i+7] == 0x43) {
+    // PMheart: 10.15.DP1
+    } else if (bytes[i+0] == 0x9E && bytes[i+1] == 0x00 && bytes[i+2] == 0x00 && bytes[i+3] == 0x74 &&
+               bytes[i+4] == 0x0E && bytes[i+5] == 0x8B) {
       patchLocation = i;
       DBG("Found Catalina Lapic panic at 0x%08x\n", patchLocation);
       break;
@@ -724,18 +724,27 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
   }
 
   // Already patched?  May be running a non-vanilla kernel already?
-
-  if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 &&
+  if (bytes[patchLocation + 0] == 0x9E && bytes[patchLocation + 1] == 0x00 &&
+      bytes[patchLocation + 2] == 0x00 && bytes[patchLocation + 3] == 0xEB &&
+      bytes[patchLocation + 4] == 0x22 && bytes[patchLocation + 5] == 0x8B) {
+    DBG("Lapic panic already patched, kernel file (10.15) manually patched?\n");
+    return FALSE;
+  } else if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 &&
       bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90 &&
       bytes[patchLocation + 4] == 0x90) {
-    DBG("Lapic panic already patched, kernel file manually patched?\n");
+    DBG("Lapic panic already patched, kernel file (10.6 - 10.14) manually patched?\n");
     return FALSE;
   } else {
-    bytes[patchLocation + 0] = 0x90;
-    bytes[patchLocation + 1] = 0x90;
-    bytes[patchLocation + 2] = 0x90;
-    bytes[patchLocation + 3] = 0x90;
-    bytes[patchLocation + 4] = 0x90;
+    if (bytes[patchLocation + 0] == 0x9E && bytes[patchLocation + 1] == 0x00) {
+      bytes[patchLocation + 3] = 0xEB;
+      bytes[patchLocation + 4] = 0x22;
+    } else {
+      bytes[patchLocation + 0] = 0x90;
+      bytes[patchLocation + 1] = 0x90;
+      bytes[patchLocation + 2] = 0x90;
+      bytes[patchLocation + 3] = 0x90;
+      bytes[patchLocation + 4] = 0x90;
+    }
   }
   return TRUE;
 }
