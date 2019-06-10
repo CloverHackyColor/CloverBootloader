@@ -829,7 +829,7 @@
 		12C874D01DE42A4900BF4974 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
-		12E94D31213EEA4100D1F644 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
+		12E94D31213EEA4100D1F644 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Clover; path = /Volumes/MacHD/Users/sergey/src/UDK2018/Clover/Xcode/Clover/build/Debug/Clover; sourceTree = "<absolute>"; };
 		12E94D32213EF04A00D1F644 /* AppleKeyFeeder */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppleKeyFeeder; sourceTree = "<group>"; };
 		12EA7C221E65FC3D00085A48 /* HashServiceFix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HashServiceFix.c; sourceTree = "<group>"; };
 		12EA7C231E65FC3D00085A48 /* HashServiceFix.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HashServiceFix.inf; sourceTree = "<group>"; };
@@ -946,6 +946,11 @@
 		A59CB66621BC14AA0054A7CF /* SmbiosGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmbiosGen.h; sourceTree = "<group>"; };
 		A59CB66721BC14AA0054A7CF /* SmbiosGen.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGen.inf; sourceTree = "<group>"; };
 		A59CB66821BC14AA0054A7CF /* SmbiosGenStrings.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGenStrings.uni; sourceTree = "<group>"; };
+		A59F76E422AEB6CD009DF043 /* ApfsDriverLoader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ApfsDriverLoader.c; sourceTree = "<group>"; };
+		A59F76E522AEB6CD009DF043 /* ApfsDriverLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsDriverLoader.h; sourceTree = "<group>"; };
+		A59F76E622AEB6CD009DF043 /* ApfsDriverLoader.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApfsDriverLoader.inf; sourceTree = "<group>"; };
+		A59F76E722AEB6CD009DF043 /* EfiComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = EfiComponentName.c; sourceTree = "<group>"; };
+		A59F76E822AEB6CD009DF043 /* EfiComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiComponentName.h; sourceTree = "<group>"; };
 		A5BF392520D9F17A004340E1 /* FloatLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatLib.h; sourceTree = "<group>"; };
 		A5BF392620D9F17B004340E1 /* FloatLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FloatLib.c; sourceTree = "<group>"; };
 		A5BF392820D9F18C004340E1 /* nanosvg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nanosvg.h; sourceTree = "<group>"; };
@@ -2500,6 +2505,7 @@
 		12C86CCA1DE428FB00BF4974 /* FileSystems */ = {
 			isa = PBXGroup;
 			children = (
+				A59F76E322AEB6CD009DF043 /* ApfsDriverLoader */,
 				12C86CCB1DE428FB00BF4974 /* FatPkg */,
 				12C870AA1DE428FC00BF4974 /* VBoxFsDxe */,
 			);
@@ -2747,7 +2753,6 @@
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
 				12FEB9EE212F3278002B6CE2 /* Patches_for_UDK2018 */,
 				A511943C1F74B380005B0121 /* Patches_for_EDK2 */,
-				12E94D31213EEA4100D1F644 /* Clover */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3028,6 +3033,18 @@
 				A59CB66821BC14AA0054A7CF /* SmbiosGenStrings.uni */,
 			);
 			path = OsxSmbiosGenDxe;
+			sourceTree = "<group>";
+		};
+		A59F76E322AEB6CD009DF043 /* ApfsDriverLoader */ = {
+			isa = PBXGroup;
+			children = (
+				A59F76E422AEB6CD009DF043 /* ApfsDriverLoader.c */,
+				A59F76E522AEB6CD009DF043 /* ApfsDriverLoader.h */,
+				A59F76E622AEB6CD009DF043 /* ApfsDriverLoader.inf */,
+				A59F76E722AEB6CD009DF043 /* EfiComponentName.c */,
+				A59F76E822AEB6CD009DF043 /* EfiComponentName.h */,
+			);
+			path = ApfsDriverLoader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

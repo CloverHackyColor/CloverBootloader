@@ -1133,6 +1133,8 @@ MainPostBuildScript() {
         copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/HFSPlus.efi
       fi
 
+      copyBin "$BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/ApfsDriverLoader-64.efi
+
       # Optional drivers
 #echo "Copy Optional drivers:"
       # drivers64
@@ -1163,7 +1165,7 @@ MainPostBuildScript() {
           copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/AptioInputFix-64.efi
 
           copyBin "$APFS_BUILD_DIR_ARCH"/AppleUISupport.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/AppleUISupport-64.efi
-          binArray=( ApfsDriverLoader AppleImageLoader )
+          binArray=( AppleImageLoader )
           for efi in "${binArray[@]}"
           do
             copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi

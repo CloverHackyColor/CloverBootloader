@@ -1,0 +1,69 @@
+## @file
+# APFS Driver Loader - loads apfs.efi from EfiBootRecord block
+#
+# Copyright (c) 2017-2018, savvas
+#
+# All rights reserved.
+#
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+[Defines]
+  INF_VERSION                         = 0x00010005
+  BASE_NAME                           = ApfsDriverLoader
+  FILE_GUID                           = BA6ED98D-D133-4F5B-8787-D2464BB21122
+  MODULE_TYPE                         = UEFI_DRIVER
+  VERSION_STRING                      = 2.0.6
+  EDK_RELEASE_VERSION                 = 0x00020000
+  EFI_SPECIFICATION_VERSION           = 0x00020000
+  ENTRY_POINT                         = ApfsDriverLoaderInit
+
+[Sources]
+  ApfsDriverLoader.c
+  ApfsDriverLoader.h
+  EfiComponentName.c
+  EfiComponentName.h
+
+[Packages]
+  Clover/CloverPkg.dec
+#  AppleSupportPkg/AppleSupportPkg.dec
+  MdePkg/MdePkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+#  EfiPkg/EfiPkg.dec
+#  OcSupportPkg/OcSupportPkg.dec
+
+[LibraryClasses]
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  DebugLib
+  PcdLib
+#  OcAppleImageVerificationLib
+
+[Guids]
+  gAppleApfsPartitionTypeGuid                     ## GUID CONSUMES
+
+[Protocols]
+  gEfiDiskIoProtocolGuid                          ## PROTOCOL CONSUMES
+  gEfiDiskIo2ProtocolGuid                         ## PROTOCOL CONSUMES
+  gEfiBlockIoProtocolGuid                         ## PROTOCOL CONSUMES
+  gEfiBlockIo2ProtocolGuid                        ## PROTOCOL CONSUMES
+  gEfiUnicodeCollationProtocolGuid                ## PROTOCOL CONSUMES
+  gEfiUnicodeCollation2ProtocolGuid               ## PROTOCOL CONSUMES
+  gEfiPartitionInfoProtocolGuid                   ## PROTOCOL CONSUMES
+  gApplePartitionInfoProtocolGuid                 ## PROTOCOL CONSUMES
+  gApfsEfiBootRecordInfoProtocolGuid              ## PROTOCOL PRODUCES
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang

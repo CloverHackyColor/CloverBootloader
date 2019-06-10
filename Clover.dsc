@@ -352,6 +352,7 @@
   #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
   #Clover/OsxMmcDxe/MmcDxe.inf
   Clover/FileSystems/FatPkg/EnhancedFatDxe/Fat.inf
+  Clover/FileSystems/ApfsDriverLoader/ApfsDriverLoader.inf
   # FS from grub
 !ifndef NO_GRUB_DRIVERS
   Clover/FileSystems/GrubFS/src/EXFAT.inf
