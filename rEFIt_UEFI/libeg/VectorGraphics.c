@@ -289,6 +289,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (EFI_ERROR(Status)) {
     Status = ParseSVGIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, &BigBack);
   }
+  DBG("background parsed\n");
 
 // --- Make Banner
   if (Banner) {
@@ -302,6 +303,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   if (EFI_ERROR(Status)) {
     Status = ParseSVGIcon(mainParser, BUILTIN_ICON_BANNER, "Banner", Scale, &Banner);
   }
+  DBG("Banner parsed\n");
 
   BuiltinIconTable[BUILTIN_ICON_BANNER].Image = Banner;
   BanHeight = (int)(Banner->Height * Scale + 1.f);

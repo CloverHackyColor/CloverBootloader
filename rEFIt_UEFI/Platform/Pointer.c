@@ -88,9 +88,9 @@ VOID DrawPointer()
 VOID RedrawPointer()
 {
   //always assumed
-  /*  if (!gPointer.SimplePointerProtocol) {
+  if (!gPointer.SimplePointerProtocol) {
    return;
-   }*/
+  }
   HidePointer();
   DrawPointer();
 }
@@ -98,9 +98,7 @@ VOID RedrawPointer()
 EFI_STATUS MouseBirth()
 {
   EFI_STATUS Status = EFI_UNSUPPORTED;
-//  EFI_SIMPLE_POINTER_MODE  *CurrentMode;
-//  EG_PIXEL pi;
-  
+
   if (!gSettings.PointerEnabled) {
     return EFI_UNSUPPORTED;
   }
@@ -114,11 +112,11 @@ EFI_STATUS MouseBirth()
 
   // Try first to use mouse from System Table
   Status = gBS->HandleProtocol (gST->ConsoleInHandle, &gEfiSimplePointerProtocolGuid, (VOID**)&gPointer.SimplePointerProtocol);
-/*  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status)) {
       // not found, so use the first found device
       DBG("MouseBirth: No mouse at ConIn, checking if any other device exists\n");
       Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
-  } */
+  }
   /*else {
       DBG("MouseBirth: Mouse located at ConIn\n");
   }*/
@@ -128,21 +126,10 @@ EFI_STATUS MouseBirth()
     gPointer.MouseEvent = NoEvents;
     gPointer.SimplePointerProtocol = NULL;
     MsgLog("No mouse!\n");
+    gSettings.PointerEnabled = FALSE;
     return Status;
   }
-//  CurrentMode = gPointer.SimplePointerProtocol->Mode;
-//  DBG("Found Mouse device:\n");
-//  DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);
-//  DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
-//  DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);
-//  DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
-//  DBG(" - Right button %a present\n", CurrentMode->RightButton?" ":"not");
-//  DBG(" - WaitForInput %a present\n", gPointer.SimplePointerProtocol->WaitForInput?" ":"not");
-  //TODO - config and menu?
-  //CurrentMode->ResolutionX = gSettings.PointerSpeed;
-  //CurrentMode->ResolutionY = gSettings.PointerSpeed;
-  //CurrentMode->ResolutionZ = 0;
-  
+
   //there may be also trackpad protocol but afaik it is not properly work and
   // trackpad is usually controlled by simple mouse driver
   

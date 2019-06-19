@@ -2549,7 +2549,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
     MainAnime = GetAnime(&MainMenu);
-
+//    DBG("MainAnime=%d\n", MainAnime);
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
@@ -2561,7 +2561,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainMenu.AnimeRun = MainAnime;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
       }
-
+      DBG("exit from MainMenu %d\n", MenuExit);
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
       //remember OS before go to second row
