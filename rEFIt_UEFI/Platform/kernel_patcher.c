@@ -71,239 +71,237 @@ VOID SetKernelRelocBase()
 }
 
 //TimeWalker - extended and corrected for systems up to Yosemite
-
 VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
 {
+  UINT8       *bytes = (UINT8*)kernelData;
+  UINT32      patchLocation=0, patchLocation1=0;
+  UINT32      i;
+  UINT32      switchaddr=0;
+  UINT32      mask_family=0, mask_model=0;
+  UINT32      cpuid_family_addr=0, cpuid_model_addr=0;
+  UINT64      os_version;
 
-    UINT8       *bytes = (UINT8*)kernelData;
-    UINT32      patchLocation=0, patchLocation1=0;
-    UINT32      i;
-    UINT32      switchaddr=0;
-    UINT32      mask_family=0, mask_model=0;
-    UINT32      cpuid_family_addr=0, cpuid_model_addr=0;
-    UINT64      os_version;
+  DBG_RT(Entry, "\nLooking for _cpuid_set_info _panic ...\n");
 
-    DBG_RT(Entry, "\nLooking for _cpuid_set_info _panic ...\n");
-
-    // Determine location of _cpuid_set_info _panic call for reference
-    // basically looking for info_p->cpuid_model = bitfield32(reg[eax],  7,  4);
-    for (i=0; i<0x1000000; i++) {
-        if (bytes[i+ 0] == 0xC7 && bytes[i+ 1] == 0x05 && bytes[i+ 5] == 0x00 &&
-            bytes[i+ 6] == 0x07 && bytes[i+ 7] == 0x00 && bytes[i+ 8] == 0x00 && bytes[i+ 9] == 0x00 &&
-            bytes[i-5] == 0xE8) { // matching 0xE8 for _panic call start
-            patchLocation = i-5;
-            break;
-        }
+  // Determine location of _cpuid_set_info _panic call for reference
+  // basically looking for info_p->cpuid_model = bitfield32(reg[eax],  7,  4);
+  for (i=0; i<0x1000000; i++) {
+    if (bytes[i+ 0] == 0xC7 && bytes[i+ 1] == 0x05 && bytes[i+ 5] == 0x00 &&
+        bytes[i+ 6] == 0x07 && bytes[i+ 7] == 0x00 && bytes[i+ 8] == 0x00 && bytes[i+ 9] == 0x00 &&
+        bytes[i-5] == 0xE8) { // matching 0xE8 for _panic call start
+      patchLocation = i-5;
+      break;
     }
+  }
 
-    if (!patchLocation) {
-        DBG_RT(Entry, "_cpuid_set_info Unsupported CPU _panic not found \n");
+  if (!patchLocation) {
+    DBG_RT(Entry, "_cpuid_set_info Unsupported CPU _panic not found \n");
+    return;
+  }
+
+  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+
+  // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
+  if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
+
+    DBG_RT(Entry, "will patch kernel for macOS 10.6.0 to 10.7.3\n");
+
+    // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
+    if (os_version < AsciiOSVersionToUint64("10.6.2")) {
+      for (i=0; i<0x1000000; i++) {
+        // find _tsc_init panic address by byte sequence 488d3df4632a00
+        if (bytes[i] == 0x48 && bytes[i+1] == 0x8D && bytes[i+2] == 0x3D && bytes[i+3] == 0xF4 &&
+            bytes[i+4] == 0x63 && bytes[i+5] == 0x2A && bytes[i+6] == 0x00) {
+          patchLocation1 = i+9;
+          DBG_RT(Entry, "Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
+          break;
+        }
+      }
+
+      // NOP _panic call
+      if (patchLocation1) {
+        bytes[patchLocation1 + 0] = 0x90;
+        bytes[patchLocation1 + 1] = 0x90;
+        bytes[patchLocation1 + 2] = 0x90;
+        bytes[patchLocation1 + 3] = 0x90;
+        bytes[patchLocation1 + 4] = 0x90;
+      }
+    }
+    else { // assume patching logic for OSX 10.6.2 to 10.7.3
+
+      /*
+       Here is our case from CPUID switch statement, it sets CPUFAMILY_UNKNOWN
+       C7051C2C5F0000000000   mov     dword [ds:0xffffff80008a22c0], 0x0 (example from 10.7)
+       */
+      switchaddr = patchLocation - 19;
+      DBG_RT(Entry, "switch statement patch location is 0x%08x\n", (switchaddr+6));
+
+      if (bytes[switchaddr + 0] == 0xC7 && bytes[switchaddr + 1] == 0x05 &&
+          bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
+          bytes[switchaddr + 7] == 0x00 && bytes[switchaddr + 8] == 0x00) {
+
+        // Determine cpuid_family address from above mov operation
+        cpuid_family_addr =
+        bytes[switchaddr + 2] <<  0 |
+        bytes[switchaddr + 3] <<  8 |
+        bytes[switchaddr + 4] << 16 |
+        bytes[switchaddr + 5] << 24;
+        cpuid_family_addr = cpuid_family_addr + (switchaddr + 10);
+
+        if (cpuid_family_addr) {
+
+          // Determine cpuid_model address
+          // for 10.6.2 kernels it's offset by 299 bytes from cpuid_family address
+          if (os_version ==  AsciiOSVersionToUint64("10.6.2")) {
+            cpuid_model_addr = cpuid_family_addr - 0X12B;
+          }
+          // for 10.6.3 to 10.6.7 it's offset by 303 bytes
+          else if (os_version <= AsciiOSVersionToUint64("10.6.7")) {
+            cpuid_model_addr = cpuid_family_addr - 0X12F;
+          }
+          // for 10.6.8 to 10.7.3 kernels - by 339 bytes
+          else {
+            cpuid_model_addr = cpuid_family_addr - 0X153;
+          }
+
+          DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
+          DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
+
+          switchaddr += 6; // offset 6 bytes in mov operation to write a dword instead of zero
+
+          // calculate mask for patching, cpuid_family mask not needed as we offset on a valid mask
+          mask_model   = cpuid_model_addr - (switchaddr+14);
+          DBG_RT(Entry, "model mask 0x%08x\n", mask_model);
+
+          DBG_RT(Entry, "overriding cpuid_family and cpuid_model as CPUID_INTEL_PENRYN\n");
+          bytes[switchaddr+0] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
+          bytes[switchaddr+1] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
+          bytes[switchaddr+2] = (CPUFAMILY_INTEL_PENRYN & 0x00FF0000) >> 16;
+          bytes[switchaddr+3] = (CPUFAMILY_INTEL_PENRYN & 0xFF000000) >> 24;
+
+          // mov  dword [ds:0xffffff80008a216d], 0x2000117
+          bytes[switchaddr+4] = 0xC7;
+          bytes[switchaddr+5] = 0x05;
+          bytes[switchaddr+6] = (UINT8)((mask_model & 0x000000FF) >> 0);
+          bytes[switchaddr+7] = (UINT8)((mask_model & 0x0000FF00) >> 8);
+          bytes[switchaddr+8] = (UINT8)((mask_model & 0x00FF0000) >> 16);
+          bytes[switchaddr+9] = (UINT8)((mask_model & 0xFF000000) >> 24);
+          bytes[switchaddr+10] = 0x17; // cpuid_model (Penryn)
+          bytes[switchaddr+11] = 0x01; // cpuid_extmodel
+          bytes[switchaddr+12] = 0x00; // cpuid_extfamily
+          bytes[switchaddr+13] = 0x02; // cpuid_stepping
+
+          // fill remainder with 4 NOPs
+          for (i=14; i<18; i++) {
+            bytes[switchaddr+i] = 0x90;
+          }
+        }
+      }
+      else {
+        DBG_RT(Entry, "Unable to determine cpuid_family address, patching aborted\n");
         return;
+      }
     }
 
-    os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-
-    // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
-    if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
-
-        DBG_RT(Entry, "will patch kernel for macOS 10.6.0 to 10.7.3\n");
-
-        // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
-        if (os_version < AsciiOSVersionToUint64("10.6.2")) {
-            for (i=0; i<0x1000000; i++) {
-                // find _tsc_init panic address by byte sequence 488d3df4632a00
-                if (bytes[i] == 0x48 && bytes[i+1] == 0x8D && bytes[i+2] == 0x3D && bytes[i+3] == 0xF4 &&
-                    bytes[i+4] == 0x63 && bytes[i+5] == 0x2A && bytes[i+6] == 0x00) {
-                    patchLocation1 = i+9;
-                    DBG_RT(Entry, "Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
-                    break;
-                }
-            }
-
-            // NOP _panic call
-            if (patchLocation1) {
-                bytes[patchLocation1 + 0] = 0x90;
-                bytes[patchLocation1 + 1] = 0x90;
-                bytes[patchLocation1 + 2] = 0x90;
-                bytes[patchLocation1 + 3] = 0x90;
-                bytes[patchLocation1 + 4] = 0x90;
-            }
-        }
-        else { // assume patching logic for OSX 10.6.2 to 10.7.3
-
-            /*
-             Here is our case from CPUID switch statement, it sets CPUFAMILY_UNKNOWN
-             C7051C2C5F0000000000   mov     dword [ds:0xffffff80008a22c0], 0x0 (example from 10.7)
-             */
-            switchaddr = patchLocation - 19;
-            DBG_RT(Entry, "switch statement patch location is 0x%08x\n", (switchaddr+6));
-
-            if (bytes[switchaddr + 0] == 0xC7 && bytes[switchaddr + 1] == 0x05 &&
-                bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
-                bytes[switchaddr + 7] == 0x00 && bytes[switchaddr + 8] == 0x00) {
-
-                // Determine cpuid_family address from above mov operation
-                cpuid_family_addr =
-                  bytes[switchaddr + 2] <<  0 |
-                  bytes[switchaddr + 3] <<  8 |
-                  bytes[switchaddr + 4] << 16 |
-                  bytes[switchaddr + 5] << 24;
-                cpuid_family_addr = cpuid_family_addr + (switchaddr + 10);
-
-                if (cpuid_family_addr) {
-
-                    // Determine cpuid_model address
-                    // for 10.6.2 kernels it's offset by 299 bytes from cpuid_family address
-                    if (os_version ==  AsciiOSVersionToUint64("10.6.2")) {
-                        cpuid_model_addr = cpuid_family_addr - 0X12B;
-                    }
-                    // for 10.6.3 to 10.6.7 it's offset by 303 bytes
-                    else if (os_version <= AsciiOSVersionToUint64("10.6.7")) {
-                        cpuid_model_addr = cpuid_family_addr - 0X12F;
-                    }
-                    // for 10.6.8 to 10.7.3 kernels - by 339 bytes
-                    else {
-                        cpuid_model_addr = cpuid_family_addr - 0X153;
-                    }
-
-                    DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
-                    DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
-
-                    switchaddr += 6; // offset 6 bytes in mov operation to write a dword instead of zero
-
-                    // calculate mask for patching, cpuid_family mask not needed as we offset on a valid mask
-                    mask_model   = cpuid_model_addr - (switchaddr+14);
-                    DBG_RT(Entry, "model mask 0x%08x\n", mask_model);
-
-                    DBG_RT(Entry, "overriding cpuid_family and cpuid_model as CPUID_INTEL_PENRYN\n");
-                    bytes[switchaddr+0] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
-                    bytes[switchaddr+1] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
-                    bytes[switchaddr+2] = (CPUFAMILY_INTEL_PENRYN & 0x00FF0000) >> 16;
-                    bytes[switchaddr+3] = (CPUFAMILY_INTEL_PENRYN & 0xFF000000) >> 24;
-
-                    // mov  dword [ds:0xffffff80008a216d], 0x2000117
-                    bytes[switchaddr+4] = 0xC7;
-                    bytes[switchaddr+5] = 0x05;
-                    bytes[switchaddr+6] = (UINT8)((mask_model & 0x000000FF) >> 0);
-                    bytes[switchaddr+7] = (UINT8)((mask_model & 0x0000FF00) >> 8);
-                    bytes[switchaddr+8] = (UINT8)((mask_model & 0x00FF0000) >> 16);
-                    bytes[switchaddr+9] = (UINT8)((mask_model & 0xFF000000) >> 24);
-                    bytes[switchaddr+10] = 0x17; // cpuid_model (Penryn)
-                    bytes[switchaddr+11] = 0x01; // cpuid_extmodel
-                    bytes[switchaddr+12] = 0x00; // cpuid_extfamily
-                    bytes[switchaddr+13] = 0x02; // cpuid_stepping
-
-                    // fill remainder with 4 NOPs
-                    for (i=14; i<18; i++) {
-                        bytes[switchaddr+i] = 0x90;
-                    }
-                }
-            }
-            else {
-                DBG_RT(Entry, "Unable to determine cpuid_family address, patching aborted\n");
-                return;
-            }
-        }
-
-        // patch ssse3
-        if (!SSSE3 && (AsciiStrnCmp(Entry->OSVersion,"10.6",4)==0)) {
-            Patcher_SSE3_6((VOID*)bytes);
-        }
-        if (!SSSE3 && (AsciiStrnCmp(Entry->OSVersion,"10.7",4)==0)) {
-            Patcher_SSE3_7((VOID*)bytes);
-        }
+    // patch ssse3
+    if (!SSSE3 && (AsciiStrnCmp(Entry->OSVersion,"10.6",4)==0)) {
+      Patcher_SSE3_6((VOID*)bytes);
     }
-
-    // all 10.7.4+ kernels share common CPUID switch statement logic,
-    // it needs to be exploited in diff manner due to the lack of space
-    else if (os_version >= AsciiOSVersionToUint64("10.7.4")) {
-
-        DBG_RT(Entry, "will patch kernel for macOS 10.7.4+\n");
-
-        /*
-         Here is our switchaddress location ... it should be case 20 from CPUID switch statement
-         833D78945F0000  cmp        dword [ds:0xffffff80008a21d0], 0x0;
-         7417            je         0xffffff80002a8d71
-         */
-        switchaddr = patchLocation-45;
-        DBG_RT(Entry, "switch statement patch location is 0x%08x\n", switchaddr);
-
-        if(bytes[switchaddr + 0] == 0x83 && bytes[switchaddr + 1] == 0x3D &&
-           bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
-           bytes[switchaddr + 7] == 0x74) {
-
-            // Determine cpuid_family address
-            // 891D4F945F00    mov        dword [ds:0xffffff80008a21a0], ebx
-            cpuid_family_addr =
-              bytes[switchaddr - 4] <<  0 |
-              bytes[switchaddr - 3] <<  8 |
-              bytes[switchaddr - 2] << 16 |
-              bytes[switchaddr - 1] << 24;
-            cpuid_family_addr = cpuid_family_addr + switchaddr;
-
-            if (cpuid_family_addr) {
-
-            // Determine cpuid_model address
-                // for 10.6.8+ kernels it's 339 bytes apart from cpuid_family address
-                cpuid_model_addr = cpuid_family_addr - 0X153;
-
-                DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
-                DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
-
-                // Calculate masks for patching
-                mask_family  = cpuid_family_addr - (switchaddr +15);
-                mask_model   = cpuid_model_addr -  (switchaddr +25);
-                DBG_RT(Entry, "\nfamily mask: 0x%08x \nmodel mask: 0x%08x\n", mask_family, mask_model);
-
-                // retain original
-                // test ebx, ebx
-                bytes[switchaddr+0] = bytes[patchLocation-13];
-                bytes[switchaddr+1] = bytes[patchLocation-12];
-                // retain original, but move jump offset by 20 bytes forward
-                // jne for above test
-                bytes[switchaddr+2] = bytes[patchLocation-11];
-                bytes[switchaddr+3] = bytes[patchLocation-10]+0x20;
-                // mov ebx, 0x78ea4fbc
-                bytes[switchaddr+4] = 0xBB;
-                bytes[switchaddr+5] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
-                bytes[switchaddr+6] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
-                bytes[switchaddr+7] = (CPUFAMILY_INTEL_PENRYN & 0x00FF0000) >> 16;
-                bytes[switchaddr+8] = (CPUFAMILY_INTEL_PENRYN & 0xFF000000) >> 24;
-
-                // mov dword, ebx
-                bytes[switchaddr+9]  = 0x89;
-                bytes[switchaddr+10] = 0x1D;
-                // cpuid_cpufamily address 0xffffff80008a21a0
-                bytes[switchaddr+11] = (UINT8)((mask_family & 0x000000FF) >> 0);
-                bytes[switchaddr+12] = (UINT8)((mask_family & 0x0000FF00) >> 8);
-                bytes[switchaddr+13] = (UINT8)((mask_family & 0x00FF0000) >> 16);
-                bytes[switchaddr+14] = (UINT8)((mask_family & 0xFF000000) >> 24);
-
-                // mov dword
-                bytes[switchaddr+15] = 0xC7;
-                bytes[switchaddr+16] = 0x05;
-                // cpuid_model address 0xffffff80008b204d
-                bytes[switchaddr+17] = (UINT8)((mask_model & 0x000000FF) >> 0);
-                bytes[switchaddr+18] = (UINT8)((mask_model & 0x0000FF00) >> 8);
-                bytes[switchaddr+19] = (UINT8)((mask_model & 0x00FF0000) >> 16);
-                bytes[switchaddr+20] = (UINT8)((mask_model & 0xFF000000) >> 24);
-
-                bytes[switchaddr+21] = 0x17; // cpuid_model
-                bytes[switchaddr+22] = 0x01; // cpuid_extmodel
-                bytes[switchaddr+23] = 0x00; // cpuid_extfamily
-                bytes[switchaddr+24] = 0x02; // cpuid_stepping
-
-                // fill remainder with 25 NOPs
-                for (i=25; i<25+25; i++) {
-                    bytes[switchaddr+i] = 0x90;
-                }
-            }
-        }
-        else {
-            DBG_RT(Entry, "Unable to determine cpuid_family address, patching aborted\n");
-            return;
-        }
+    if (!SSSE3 && (AsciiStrnCmp(Entry->OSVersion,"10.7",4)==0)) {
+      Patcher_SSE3_7((VOID*)bytes);
     }
+  }
+
+  // all 10.7.4+ kernels share common CPUID switch statement logic,
+  // it needs to be exploited in diff manner due to the lack of space
+  else if (os_version >= AsciiOSVersionToUint64("10.7.4")) {
+
+    DBG_RT(Entry, "will patch kernel for macOS 10.7.4+\n");
+
+    /*
+     Here is our switchaddress location ... it should be case 20 from CPUID switch statement
+     833D78945F0000  cmp        dword [ds:0xffffff80008a21d0], 0x0;
+     7417            je         0xffffff80002a8d71
+     */
+    switchaddr = patchLocation-45;
+    DBG_RT(Entry, "switch statement patch location is 0x%08x\n", switchaddr);
+
+    if(bytes[switchaddr + 0] == 0x83 && bytes[switchaddr + 1] == 0x3D &&
+       bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
+       bytes[switchaddr + 7] == 0x74) {
+
+      // Determine cpuid_family address
+      // 891D4F945F00    mov        dword [ds:0xffffff80008a21a0], ebx
+      cpuid_family_addr =
+      bytes[switchaddr - 4] <<  0 |
+      bytes[switchaddr - 3] <<  8 |
+      bytes[switchaddr - 2] << 16 |
+      bytes[switchaddr - 1] << 24;
+      cpuid_family_addr = cpuid_family_addr + switchaddr;
+
+      if (cpuid_family_addr) {
+
+        // Determine cpuid_model address
+        // for 10.6.8+ kernels it's 339 bytes apart from cpuid_family address
+        cpuid_model_addr = cpuid_family_addr - 0X153;
+
+        DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
+        DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
+
+        // Calculate masks for patching
+        mask_family  = cpuid_family_addr - (switchaddr +15);
+        mask_model   = cpuid_model_addr -  (switchaddr +25);
+        DBG_RT(Entry, "\nfamily mask: 0x%08x \nmodel mask: 0x%08x\n", mask_family, mask_model);
+
+        // retain original
+        // test ebx, ebx
+        bytes[switchaddr+0] = bytes[patchLocation-13];
+        bytes[switchaddr+1] = bytes[patchLocation-12];
+        // retain original, but move jump offset by 20 bytes forward
+        // jne for above test
+        bytes[switchaddr+2] = bytes[patchLocation-11];
+        bytes[switchaddr+3] = bytes[patchLocation-10]+0x20;
+        // mov ebx, 0x78ea4fbc
+        bytes[switchaddr+4] = 0xBB;
+        bytes[switchaddr+5] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
+        bytes[switchaddr+6] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
+        bytes[switchaddr+7] = (CPUFAMILY_INTEL_PENRYN & 0x00FF0000) >> 16;
+        bytes[switchaddr+8] = (CPUFAMILY_INTEL_PENRYN & 0xFF000000) >> 24;
+
+        // mov dword, ebx
+        bytes[switchaddr+9]  = 0x89;
+        bytes[switchaddr+10] = 0x1D;
+        // cpuid_cpufamily address 0xffffff80008a21a0
+        bytes[switchaddr+11] = (UINT8)((mask_family & 0x000000FF) >> 0);
+        bytes[switchaddr+12] = (UINT8)((mask_family & 0x0000FF00) >> 8);
+        bytes[switchaddr+13] = (UINT8)((mask_family & 0x00FF0000) >> 16);
+        bytes[switchaddr+14] = (UINT8)((mask_family & 0xFF000000) >> 24);
+
+        // mov dword
+        bytes[switchaddr+15] = 0xC7;
+        bytes[switchaddr+16] = 0x05;
+        // cpuid_model address 0xffffff80008b204d
+        bytes[switchaddr+17] = (UINT8)((mask_model & 0x000000FF) >> 0);
+        bytes[switchaddr+18] = (UINT8)((mask_model & 0x0000FF00) >> 8);
+        bytes[switchaddr+19] = (UINT8)((mask_model & 0x00FF0000) >> 16);
+        bytes[switchaddr+20] = (UINT8)((mask_model & 0xFF000000) >> 24);
+
+        bytes[switchaddr+21] = 0x17; // cpuid_model
+        bytes[switchaddr+22] = 0x01; // cpuid_extmodel
+        bytes[switchaddr+23] = 0x00; // cpuid_extfamily
+        bytes[switchaddr+24] = 0x02; // cpuid_stepping
+
+        // fill remainder with 25 NOPs
+        for (i=25; i<25+25; i++) {
+          bytes[switchaddr+i] = 0x90;
+        }
+      }
+    }
+    else {
+      DBG_RT(Entry, "Unable to determine cpuid_family address, patching aborted\n");
+      return;
+    }
+  }
 }
 
 VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
@@ -830,142 +828,142 @@ BOOLEAN SandyBridgeEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_i
 //
 BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
-    DBG("HaswellEXCPM() ===>\n");
-    UINT8       *kern = (UINT8*)kernelData;
-    CHAR8       *comment;
-    UINT32      i;
-    UINT32      patchLocation;
-    UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-  
-    // check OS version suit for patches
-    if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
-        DBG("Unsupported macOS.\nHaswell-E requires macOS 10.8.5 - 10.13.x, aborted\n");
-        DBG("HaswellEXCPM() <===FALSE\n");
-        return FALSE;
-    }
-    
-    // _cpuid_set_info
-    comment = "_cpuid_set_info";
-    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
-        // 10.8.5
-        STATIC UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x74, 0x2D };
-        STATIC UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x74, 0x2D };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
-        // 10.9.x
-        STATIC UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x75, 0x07 };
-        STATIC UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x75, 0x07 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.10.1")) {
-        // 10.10 - 10.10.1
-        STATIC UINT8 find[] = { 0x74, 0x11, 0x83, 0xF8, 0x3C };
-        STATIC UINT8 repl[] = { 0x74, 0x11, 0x83, 0xF8, 0x3F };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } // 10.10.2+: native support reached, no need to patch
-    
-    // _xcpm_bootstrap
-    comment = "_xcpm_bootstrap";
-    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
-        // 10.8.5
-        STATIC UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x54 };
-        STATIC UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x54 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
-        // 10.9.x
-        STATIC UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x68 };
-        STATIC UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x68 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.10.2")) {
-        // 10.10 - 10.10.2
-        STATIC UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x63 };
-        STATIC UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x63 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.10.5")) {
-        // 10.10.3 - 10.10.5
-        STATIC UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
-        STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.11")) {
-        // 10.11 DB/PB - 10.11.0
-        STATIC UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
-        STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.11.6")) {
-        // 10.11.1 - 10.11.6
-        STATIC UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
-        STATIC UINT8 repl[] = { 0x83, 0xC3, 0xB8, 0x83, 0xFB, 0x09 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
-        // 10.12 - 10.12.5
-        STATIC UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
-        STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC1, 0x83, 0xFB, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.6
-        STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
-        STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x83, 0xF8, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
+  DBG("HaswellEXCPM() ===>\n");
+  UINT8       *kern = (UINT8*)kernelData;
+  CHAR8       *comment;
+  UINT32      i;
+  UINT32      patchLocation;
+  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+
+  // check OS version suit for patches
+  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
+    DBG("Unsupported macOS.\nHaswell-E requires macOS 10.8.5 - 10.13.x, aborted\n");
+    DBG("HaswellEXCPM() <===FALSE\n");
+    return FALSE;
+  }
+
+  // _cpuid_set_info
+  comment = "_cpuid_set_info";
+  if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+    // 10.8.5
+    STATIC UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x74, 0x2D };
+    STATIC UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x74, 0x2D };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+    // 10.9.x
+    STATIC UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x75, 0x07 };
+    STATIC UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x75, 0x07 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.10.1")) {
+    // 10.10 - 10.10.1
+    STATIC UINT8 find[] = { 0x74, 0x11, 0x83, 0xF8, 0x3C };
+    STATIC UINT8 repl[] = { 0x74, 0x11, 0x83, 0xF8, 0x3F };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } // 10.10.2+: native support reached, no need to patch
+
+  // _xcpm_bootstrap
+  comment = "_xcpm_bootstrap";
+  if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+    // 10.8.5
+    STATIC UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x54 };
+    STATIC UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x54 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+    // 10.9.x
+    STATIC UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x68 };
+    STATIC UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x68 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.10.2")) {
+    // 10.10 - 10.10.2
+    STATIC UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x63 };
+    STATIC UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x63 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.10.5")) {
+    // 10.10.3 - 10.10.5
+    STATIC UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
+    STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.11")) {
+    // 10.11 DB/PB - 10.11.0
+    STATIC UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
+    STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.11.6")) {
+    // 10.11.1 - 10.11.6
+    STATIC UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
+    STATIC UINT8 repl[] = { 0x83, 0xC3, 0xB8, 0x83, 0xFB, 0x09 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+    // 10.12 - 10.12.5
+    STATIC UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+    STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC1, 0x83, 0xFB, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+    // 10.12.6
+    STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+    STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x83, 0xF8, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.14 compatibility
-    } else if (os_version < AsciiOSVersionToUint64("10.15")) {
-        // 10.13/10.14
-        STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
-        STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.15")) {
+    // 10.13/10.14
+    STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.15 compatibility
-    } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-        STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
-        STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.16")) {
+    STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+
+  DBG("Searching _xcpm_pkg_scope_msr ...\n");
+  comment = "_xcpm_pkg_scope_msrs";
+  if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
+    // 10.8.5
+    STATIC UINT8 find[] = {
+      0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+      0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
+      0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+      0x00, 0x00, 0x31, 0xD2, 0xE8, 0x28, 0x02, 0x00, 0x00
+    };
+    STATIC UINT8 repl[] = {
+      0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
+      0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x8D,
+      0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
+      0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
+    };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.10")) {
+    // 10.9.x
+    STATIC UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
+    STATIC UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else {
+    // 10.10+
+    patchLocation = 0; // clean out the value just in case
+    for (i = 0; i < 0x1000000; i++) {
+      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+          kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+        patchLocation = i+7;
+        DBG("Found _xcpm_pkg_scope_msr\n");
+        break;
+      }
     }
-    
-    DBG("Searching _xcpm_pkg_scope_msr ...\n");
-    comment = "_xcpm_pkg_scope_msrs";
-    if (os_version <= AsciiOSVersionToUint64("10.8.5")) {
-        // 10.8.5
-        STATIC UINT8 find[] = {
-            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
-            0x07, 0x00, 0x00, 0x00, 0xEB, 0x1F, 0x48, 0x8D,
-            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
-            0x00, 0x00, 0x31, 0xD2, 0xE8, 0x28, 0x02, 0x00, 0x00
-        };
-        STATIC UINT8 repl[] = {
-            0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
-            0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x8D,
-            0x3D, 0xF4, 0x70, 0x55, 0x00, 0xBE, 0x07, 0x00,
-            0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
-        };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.10")) {
-        // 10.9.x
-        STATIC UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
-        STATIC UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
+
+    if (patchLocation) {
+      for (i = 0; i < 5; i++) {
+        kern[patchLocation+i] = 0x90;
+      }
+      DBG("Applied _xcpm_pkg_scope_msr patch\n");
     } else {
-        // 10.10+
-        patchLocation = 0; // clean out the value just in case
-        for (i = 0; i < 0x1000000; i++) {
-            if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
-                kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
-                patchLocation = i+7;
-                DBG("Found _xcpm_pkg_scope_msr\n");
-                break;
-            }
-        }
-        
-        if (patchLocation) {
-            for (i = 0; i < 5; i++) {
-                kern[patchLocation+i] = 0x90;
-            }
-            DBG("Applied _xcpm_pkg_scope_msr patch\n");
-        } else {
-            DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-            DBG("HaswellEXCPM() <===FALSE\n");
-            return FALSE;
-        }
+      DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+      DBG("HaswellEXCPM() <===FALSE\n");
+      return FALSE;
     }
-    
-    DBG("HaswellEXCPM() <===\n");
-    return TRUE;
+  }
+
+  DBG("HaswellEXCPM() <===\n");
+  return TRUE;
 }
 
 //
@@ -973,49 +971,49 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
 //
 BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
-    DBG("BroadwellEPM() ===>\n");
-    UINT8       *kern = (UINT8*)kernelData;
-    UINT32      i;
-    UINT32      patchLocation;
-    UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    
-    // check OS version suit for patches
-    if (os_version < AsciiOSVersionToUint64("10.8.5")) {
-        DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS at least 10.8.5, aborted\n");
-        DBG("BroadwellEPM() <===FALSE\n");
-        return FALSE;
+  DBG("BroadwellEPM() ===>\n");
+  UINT8       *kern = (UINT8*)kernelData;
+  UINT32      i;
+  UINT32      patchLocation;
+  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+
+  // check OS version suit for patches
+  if (os_version < AsciiOSVersionToUint64("10.8.5")) {
+    DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS at least 10.8.5, aborted\n");
+    DBG("BroadwellEPM() <===FALSE\n");
+    return FALSE;
+  }
+
+  Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(os_version < AsciiOSVersionToUint64("10.10.3") ? 0x0306C0 : 0x040674);
+  KernelCPUIDPatch(kern, Entry);
+
+  DBG("Searching _xcpm_pkg_scope_msr ...\n");
+  if (os_version >= AsciiOSVersionToUint64("10.12")) {
+    // 10.12+
+    patchLocation = 0; // clean out the value just in case
+    for (i = 0; i < 0x1000000; i++) {
+      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+          kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+        patchLocation = i+7;
+        DBG("Found _xcpm_pkg_scope_msr\n");
+        break;
+      }
     }
-    
-    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(os_version < AsciiOSVersionToUint64("10.10.3") ? 0x0306C0 : 0x040674);
-    KernelCPUIDPatch(kern, Entry);
-    
-    DBG("Searching _xcpm_pkg_scope_msr ...\n");
-    if (os_version >= AsciiOSVersionToUint64("10.12")) {
-        // 10.12+
-        patchLocation = 0; // clean out the value just in case
-        for (i = 0; i < 0x1000000; i++) {
-            if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
-                kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
-                patchLocation = i+7;
-                DBG("Found _xcpm_pkg_scope_msr\n");
-                break;
-            }
-        }
-        
-        if (patchLocation) {
-            for (i = 0; i < 5; i++) {
-                kern[patchLocation+i] = 0x90;
-            }
-            DBG("Applied _xcpm_pkg_scope_msr patch\n");
-        } else {
-            DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-            DBG("BroadwellEPM() <===FALSE\n");
-            return FALSE;
-        }
+
+    if (patchLocation) {
+      for (i = 0; i < 5; i++) {
+        kern[patchLocation+i] = 0x90;
+      }
+      DBG("Applied _xcpm_pkg_scope_msr patch\n");
+    } else {
+      DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+      DBG("BroadwellEPM() <===FALSE\n");
+      return FALSE;
     }
-    
-    DBG("BroadwellEPM() <===\n");
-    return TRUE;
+  }
+
+  DBG("BroadwellEPM() <===\n");
+  return TRUE;
 }
 //
 // syscl - this patch provides XCPM support for Haswell low-end(HSWLowEnd) and platforms later than Haswell
@@ -1024,71 +1022,71 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
 //
 BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idle)
 {
-    DBG("HaswellLowEndXCPM() ===>\n");
-    UINT8       *kern = (UINT8*)kernelData;
-    UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-    CHAR8       *comment;
-    
-    // check OS version suit for patches
-    if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
-        DBG("Unsupported macOS.\nHaswell Celeron/Pentium requires macOS 10.8.5 - 10.13.x, aborted\n");
-        DBG("HaswellLowEndXCPM() <===FALSE\n");
-        return FALSE;
-    }
-    
-    Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
-    KernelCPUIDPatch(kern, Entry);
-    
-    // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
-    if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12") &&
-       (!use_xcpm_idle)) {
-        DBG("HaswellLowEndXCPM() <===\n");
-        return TRUE;
-    }
-    
-    // _xcpm_idle
-    if (use_xcpm_idle) {
-        DBG("HWPEnable - ON.\n");
-        comment = "_xcpm_idle";
-        STATIC UINT8 find[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30 };
-        STATIC UINT8 repl[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
-    
-    comment = "_xcpm_bootstrap";
-    if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
-        // 10.12 - 10.12.5
-        STATIC UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
-        STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.13")) {
-        // 10.12.6
-        STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
-        STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    } else if (os_version < AsciiOSVersionToUint64("10.15")) {
-        // 10.13/10.14
-        STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
-        STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    // PMheart: attempt to add 10.15 compatibility
-    } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-        STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
-        STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
+  DBG("HaswellLowEndXCPM() ===>\n");
+  UINT8       *kern = (UINT8*)kernelData;
+  UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  CHAR8       *comment;
 
-    comment = "_cpuid_set_info_rdmsr";
-    // PMheart: bytes seem stable as of 10.12
-    if (os_version >= AsciiOSVersionToUint64("10.12")) {
-        // 10.12+
-        STATIC UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
-        STATIC UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
-        applyKernPatch(kern, find, sizeof(find), repl, comment);
-    }
+  // check OS version suit for patches
+  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
+    DBG("Unsupported macOS.\nHaswell Celeron/Pentium requires macOS 10.8.5 - 10.13.x, aborted\n");
+    DBG("HaswellLowEndXCPM() <===FALSE\n");
+    return FALSE;
+  }
 
+  Entry->KernelAndKextPatches->FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
+  KernelCPUIDPatch(kern, Entry);
+
+  // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
+  if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12") &&
+      (!use_xcpm_idle)) {
     DBG("HaswellLowEndXCPM() <===\n");
     return TRUE;
+  }
+
+  // _xcpm_idle
+  if (use_xcpm_idle) {
+    DBG("HWPEnable - ON.\n");
+    comment = "_xcpm_idle";
+    STATIC UINT8 find[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30 };
+    STATIC UINT8 repl[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+
+  comment = "_xcpm_bootstrap";
+  if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+    // 10.12 - 10.12.5
+    STATIC UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
+    STATIC UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.13")) {
+    // 10.12.6
+    STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
+    STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  } else if (os_version < AsciiOSVersionToUint64("10.15")) {
+    // 10.13/10.14
+    STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+    // PMheart: attempt to add 10.15 compatibility
+  } else if (os_version < AsciiOSVersionToUint64("10.16")) {
+    STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+
+  comment = "_cpuid_set_info_rdmsr";
+  // PMheart: bytes seem stable as of 10.12
+  if (os_version >= AsciiOSVersionToUint64("10.12")) {
+    // 10.12+
+    STATIC UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
+    STATIC UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
+  }
+
+  DBG("HaswellLowEndXCPM() <===\n");
+  return TRUE;
 }
 
 //
@@ -1101,51 +1099,51 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
   UINT32      i;
   UINT32      patchLocation;
   UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-  
+
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
-      DBG("Unsupported platform.\nRequires Ivy Bridge, aborted\n");
-      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-      return FALSE;
+    DBG("Unsupported platform.\nRequires Ivy Bridge, aborted\n");
+    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+    return FALSE;
   }
-  
+
   // check OS version suit for patches
   // PMheart: attempt to add 10.14 compatibility
   if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.15")) {
-      DBG("Unsupported macOS.\nIvy Bridge XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
-      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-      return FALSE;
+    DBG("Unsupported macOS.\nIvy Bridge XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
+    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+    return FALSE;
   } else if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
-      // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
-      DBG("KernelIvyBridgeXCPM() <===\n");
-      return TRUE;
+    // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
+    DBG("KernelIvyBridgeXCPM() <===\n");
+    return TRUE;
   }
-  
+
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
   if (os_version >= AsciiOSVersionToUint64("10.12")) {
-      // 10.12+
-      patchLocation = 0; // clean out the value just in case
-      for (i = 0; i < 0x1000000; i++) {
-          if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
-              kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
-              patchLocation = i+7;
-              DBG("Found _xcpm_pkg_scope_msr\n");
-              break;
-          }
+    // 10.12+
+    patchLocation = 0; // clean out the value just in case
+    for (i = 0; i < 0x1000000; i++) {
+      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+          kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+        patchLocation = i+7;
+        DBG("Found _xcpm_pkg_scope_msr\n");
+        break;
       }
-      
-      if (patchLocation) {
-          for (i = 0; i < 5; i++) {
-              kern[patchLocation+i] = 0x90;
-          }
-          DBG("Applied _xcpm_pkg_scope_msr patch\n");
-      } else {
-          DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-          DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-          return FALSE;
+    }
+
+    if (patchLocation) {
+      for (i = 0; i < 5; i++) {
+        kern[patchLocation+i] = 0x90;
       }
+      DBG("Applied _xcpm_pkg_scope_msr patch\n");
+    } else {
+      DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
+      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
+      return FALSE;
+    }
   }
-  
+
   comment = "_xcpm_bootstrap";
   if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
@@ -1157,19 +1155,19 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
     STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
-  // PMheart: attempt to add 10.14 compatibility
+    // PMheart: attempt to add 10.14 compatibility
   } else if (os_version < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
     STATIC UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     STATIC UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
-  // PMheart: attempt to add 10.15 compatibility
+    // PMheart: attempt to add 10.15 compatibility
   } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-      STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
-      STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
-      applyKernPatch(kern, find, sizeof(find), repl, comment);
+    STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
-  
+
   DBG("KernelIvyBridgeXCPM() <===\n");
   return TRUE;
 }
@@ -1313,9 +1311,9 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   // PMheart: attempt to add 10.15 compatibility
   } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-      STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
-      STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
-      applyKernPatch(kern, find, sizeof(find), repl, comment);
+    STATIC UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
+    STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
+    applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
   
   DBG("KernelIvyE5XCPM() <===\n");
