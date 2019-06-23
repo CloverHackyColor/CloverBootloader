@@ -595,8 +595,6 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 // KernelBooterExtensionsPatch to load extra kexts besides kernelcache
 //
 //
-// KBE*EXT - load extra kexts besides kernelcache.
-// KBE*SIP - bypass kext check by System Integrity Protection.
 
 // Snow Leopard i386
 UINT8   KBESnowSearchEXT_i386[]  = { 0xE8, 0xED, 0xF9, 0xFF, 0xFF, 0xEB, 0x08, 0x89, 0x1C, 0x24 };
@@ -614,97 +612,6 @@ UINT8   KBELionReplaceEXT_i386[] = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0
 UINT8   KBELionSearchEXT_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-// Mountain Lion/Mavericks
-UINT8   KBEMLMavSearchEXT[]      = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
-UINT8   KBEMLMavReplaceEXT[]     = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
-
-// Mountain Lion Debug
-// PMheart: still need to test
-UINT8   KBEMLDebugSearchEXT[]    = { 0xE8, 0x3E, 0x00, 0x00, 0x00, 0xE9, 0x09, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x7D, 0xE0, 0xE8 };
-UINT8   KBEMLDebugReplaceEXT[]   = { 0xE8, 0x3E, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x7D, 0xE0, 0xE8 };
-
-// Yosemite - High Sierra
-// PMheart: Universal for 10.10 - 10.13
-UINT8   KBEYosECSieHighSearchEXT[]  = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8 };
-UINT8   KBEYosECSieHighReplaceEXT[] = { 0xE8, 0x25, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8 };
-
-// Mavericks/Yosemite Debug
-// PMheart: still need to test
-UINT8   KBEMavYosDebugSearchEXT[]   = { 0xE8, 0x3E, 0x00, 0x00, 0x00, 0xE9, 0x09, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x7D, 0xE8, 0xE8 };
-UINT8   KBEMavYosDebugReplaceEXT[]  = { 0xE8, 0x3E, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x7D, 0xE8, 0xE8 };
-
-// El Capitan
-// crazybirdy: checked KBEYos*EXT
-// Need to use KBEYos*EXT
-UINT8   KBEECSearchSIP[]         = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x70, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-UINT8   KBEECReplaceSIP[]        = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-
-// El Capitan Debug
-// PMheart: still need to test
-UINT8   KBEECDebugSearchEXT[]    = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0xE9, 0x37, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x7D, 0xE8, 0xE8 };
-UINT8   KBEECDebugReplaceEXT[]   = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x7D, 0xE8, 0xE8 };
-UINT8   KBEECDebugSearchSIP[]    = { 0x31, 0xC9, 0x39, 0xC1, 0x0F, 0x85, 0x3C, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x85 };
-UINT8   KBEECDebugReplaceSIP[]   = { 0x31, 0xC9, 0x39, 0xC1, 0xEB, 0x80, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x85 };
-
-// Sierra
-// crazybirdy: checked KBEYos*EXT
-// Need to use KBEYos*EXT
-UINT8   KBESieSearchSIP[]        = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x71, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-UINT8   KBESieReplaceSIP[]       = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-
-// Sierra Debug
-// PMheart: corrected typo for KBESieDebugReplaceEXT (The jmpq should be NOP out fully.)
-UINT8   KBESieDebugSearchEXT[]   = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0xE9, 0x09, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x7D, 0xE8, 0xE8 };
-UINT8   KBESieDebugReplaceEXT[]  = { 0xE8, 0x47, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x7D, 0xE8, 0xE8 };
-UINT8   KBESieDebugSearchSIP[]   = { 0x31, 0xC9, 0x39, 0xC1, 0x0F, 0x85, 0x3C, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x85 };
-UINT8   KBESieDebugReplaceSIP[]  = { 0x31, 0xC9, 0x39, 0xC1, 0xEB, 0x80, 0x90, 0x90, 0x90, 0x90, 0x48, 0x8B, 0x85 };
-
-// Mojave / Catalina (EXT)
-// PMheart: checked  KBEMojaCata*EXT
-// Need to pair with KBEHighSieMoja*SIP (10.13 / 10.14) / KBECata*SIP (10.15)
-UINT8   KBEMojaCataSearchEXT[]       = { 0xE8, 0xAF, 0x00, 0x00, 0x00, 0xEB, 0x05, 0xE8 };
-UINT8   KBEMojaCataReplaceEXT[]      = { 0xE8, 0xAF, 0x00, 0x00, 0x00, 0x90, 0x90, 0xE8 };
-
-// High Sierra / Mojave 10.14 - 10.14.3 (SIP)
-// PMheart: for 10.14.4+, see KBEMoja4SearchSIP and KBEMoja4ReplaceSIP below
-// PMheart: checked KBEHighSieMoja3*SIP
-// Need to pair with KBEMojaCata*EXT
-UINT8   KBEHighSieMoja3SearchSIP[]    = { 0xC3, 0x48, 0x85, 0xDB, 0x74, 0x69, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-UINT8   KBEHighSieMoja3ReplaceSIP[]   = { 0xC3, 0x48, 0x85, 0xDB, 0xEB, 0x12, 0x48, 0x8B, 0x03, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-
-// Mojave 10.14.4+ (SIP)
-// PMheart: checked KBEMoja4*SIP
-// Need to pair with KBEMojaCata*EXT
-UINT8   KBEMoja4SearchSIP[]           = { 0x48, 0x85, 0xC0, 0x74, 0x6C, 0x48, 0x89, 0xC3, 0x48, 0x8B, 0x00, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-UINT8   KBEMoja4ReplaceSIP[]          = { 0x48, 0x85, 0xC0, 0xEB, 0x15, 0x48, 0x89, 0xC3, 0x48, 0x8B, 0x00, 0x48, 0x89, 0xDF, 0xFF, 0x50, 0x28, 0x48 };
-
-// Catalina (SIP)
-// PMheart: checked
-// Need to pair with KBEMojaCata*EXT
-UINT8   KBECataSearchSIP[]            = { 0x00, 0x85, 0xC0, 0x0F, 0x84, 0x87, 0x00, 0x00, 0x00, 0x49 };
-UINT8   KBECataReplaceSIP[]           = { 0x00, 0x85, 0xC0, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x49 };
-
-// Mojave 10.14 - 10.14.3
-// Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
-// by vit9696
-// Need to pair with KBEMojaCata*EXT and KBEHighSieMoja3*SIP
-UINT8   KBEMoja3SearchKxldUnmap[]     = { 0x00, 0x0F, 0x85, 0xB2, 0x01, 0x00, 0x00, 0x48 };
-UINT8   KBEMoja3ReplaceKxldUnmap[]    = { 0x00, 0x90, 0xE9, 0xB2, 0x01, 0x00, 0x00, 0x48 };
-
-// Mojave 10.14.4+
-// Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
-// by PMheart, based on vit9696's work
-// Need to pair with KBEMojaCata*EXT and KBEMoja4*SIP
-UINT8   KBEMoja4SearchKxldUnmap[]     = { 0x00, 0x0F, 0x85, 0xB1, 0x01, 0x00, 0x00, 0x48 };
-UINT8   KBEMoja4ReplaceKxldUnmap[]    = { 0x00, 0x90, 0xE9, 0xB1, 0x01, 0x00, 0x00, 0x48 };
-
-// Catalina
-// Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
-// by PMheart, based on vit9696's work
-// Need to pair with KBEMojaCata*EXT and KBECata*SIP
-UINT8   KBECataSearchKxldUnmap[]      = { 0x00, 0x0F, 0x85, 0x7E, 0x01, 0x00, 0x00, 0x48 };
-UINT8   KBECataReplaceKxldUnmap[]     = { 0x00, 0x90, 0xE9, 0x7E, 0x01, 0x00, 0x00, 0x48 };
-
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -713,7 +620,7 @@ UINT8   KBECataReplaceKxldUnmap[]     = { 0x00, 0x90, 0xE9, 0x7E, 0x01, 0x00, 0x
 // Actually, we'll at least check that if we can find only one instance of code that
 // we are planning to patch.
 //
-// PMheart: Slice's code has not been used for a long while, removed. Still thanks to his effort!
+// Fully reworked by Sherlocks. 2019.06.23
 //
 
 VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
@@ -723,121 +630,180 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumSnow_X64_EXT    = 0;
   UINTN   NumLion_i386_EXT   = 0;
   UINTN   NumLion_X64_EXT    = 0;
-  UINTN   NumMLMavEXT        = 0;
-  UINTN   NumMLDebugEXT      = 0;
-  UINTN   NumYosEXT          = 0;
-  UINTN   NumMavYosDebugEXT  = 0;
-  UINTN   NumECSIP           = 0;
-  UINTN   NumECDebugSIP      = 0;
-  UINTN   NumSieSIP          = 0;
-  UINTN   NumSieDebugSIP     = 0;
-  UINTN   NumHighSieMoja3SIP = 0; // 10.13.X - 10.14.3
-  UINTN   NumMojaCataEXT     = 0; // 10.14.X - 10.15
-  UINTN   NumMoja4SIP        = 0; // 10.14.4+
-  UINTN   NumCataSIP         = 0; // 10.15
-
+  UINT32  patchLocation1 = 0, patchLocation2 = 0, patchLocation3 = 0;
+  UINT32  i, y;
 
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
 
   if (is64BitKernel) {
-    NumSnow_X64_EXT     = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64));
-    NumLion_X64_EXT     = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64));
-    NumMLMavEXT         = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT));
-    //NumMLDebugEXT     = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLDebugSearchEXT, sizeof(KBEMLDebugSearchEXT));
-    NumYosEXT           = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT));
-    //NumMavYosDebugEXT = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugSearchEXT));
-    NumECSIP            = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP));
-    //NumECDebugSIP     = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchSIP, sizeof(KBEECDebugSearchSIP));
-    NumSieSIP           = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP));
-    NumSieDebugSIP      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP));
-    NumHighSieMoja3SIP  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEHighSieMoja3SearchSIP, sizeof(KBEHighSieMoja3SearchSIP));
-    NumMojaCataEXT      = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT));   // general EXT patch, for all 10.14.x - 10.15
-    NumMoja4SIP         = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchSIP, sizeof(KBEMoja4SearchSIP));         // SIP patch, ONLY for 10.14.4+
-    NumCataSIP          = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP));
+    NumSnow_X64_EXT  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64));
+    NumLion_X64_EXT  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64));
   } else {
     NumSnow_i386_EXT = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386));
     NumLion_i386_EXT = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386));
   }
 
-  if (NumSnow_i386_EXT + NumSnow_X64_EXT + NumLion_i386_EXT + NumLion_X64_EXT + NumMLMavEXT > 1) {
+  if (NumSnow_i386_EXT + NumSnow_X64_EXT + NumLion_i386_EXT + NumLion_X64_EXT > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %d, SnowX64: %d, Lioni386: %d, LionX64: %d, MLMav: %d) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT, NumMLMavEXT);
+    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %d, SnowX64: %d, Lioni386: %d, LionX64: %d) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT);
     gBS->Stall(10000000);
     return;
   }
 
   // X64
-  if (NumMojaCataEXT == 1) {
-    // apply EXT patch first
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMojaCataSearchEXT, sizeof(KBEMojaCataSearchEXT), KBEMojaCataReplaceEXT, 1);
-    // then apply corresponding patches based on what we found
-    if (NumCataSIP == 1) {
-      // firstly, try to patch 10.15
-      Num += SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchSIP, sizeof(KBECataSearchSIP), KBECataReplaceSIP, 1) +
-             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBECataSearchKxldUnmap, sizeof(KBECataSearchKxldUnmap), KBECataReplaceKxldUnmap, 1);
-      DBG_RT(Entry, "==> kernel Catalina: %d replaces done.\n", Num);
-    } else if (NumMoja4SIP == 1) {
-      // then, try to patch 10.14.4+
-      Num += SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchSIP, sizeof(KBEMoja4SearchSIP), KBEMoja4ReplaceSIP, 1) +
-             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMoja4SearchKxldUnmap, sizeof(KBEMoja4SearchKxldUnmap), KBEMoja4ReplaceKxldUnmap, 1);
-      DBG_RT(Entry, "==> kernel Mojave (10.14.4+): %d replaces done.\n", Num);
-    } else if (NumHighSieMoja3SIP == 1) {
-      // then 10.14 - 10.14.3
-      Num += SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEHighSieMoja3SearchSIP, sizeof(KBEHighSieMoja3SearchSIP), KBEHighSieMoja3ReplaceSIP, 1) +
-             SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMoja3SearchKxldUnmap, sizeof(KBEMoja3SearchKxldUnmap), KBEMoja3ReplaceKxldUnmap, 1);
-      DBG_RT(Entry, "==> kernel Mojave (10.14 - 10.14.3): %d replaces done.\n", Num);
+  if (is64BitKernel) {
+    if (NumSnow_X64_EXT == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
+      DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
+    } else if (NumLion_X64_EXT == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
+      DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
     } else {
-      // no SIP and KxldUnmap pattern found!
-      DBG_RT(Entry, "==> kernel Mojave/Catalina WARNING: pattern NOT found - only %d replaces done.\nKext Injection will NOT work!\n", Num);
+      // EXT - load extra kexts besides kernelcache.
+      for (i = 0; i < 0x1000000; i++) {
+        // 01 00 31 FF BE 14 00 05
+        if (Kernel[i+0] == 0x01 && Kernel[i+1] == 0x00 && Kernel[i+2] == 0x31 &&
+            Kernel[i+3] == 0xFF && Kernel[i+4] == 0xBE && Kernel[i+5] == 0x14 &&
+            Kernel[i+6] == 0x00 && Kernel[i+7] == 0x05) {
+          for (y = i; y < 0x1000000; y++) {
+            // E8 XX 00 00 00 EB XX (48:10.8-10.9/E8:10.10+)
+            if (Kernel[y+0] == 0xE8 && Kernel[y+2] == 0x00 && Kernel[y+3] == 0x00 &&
+                Kernel[y+4] == 0x00 && Kernel[y+5] == 0xEB &&
+                (Kernel[y+7] == 0x48 || Kernel[y+7] == 0xE8)) {
+              patchLocation1 = y;
+              DBG_RT(Entry, "==> found EXT (10.8 - recent macOS) at 0x%08x\n", patchLocation1);
+              break;
+            }
+          }
+          break;
+        }
+      }
+            
+      if (!patchLocation1) {
+        DBG_RT(Entry, "==> can't find EXT (10.8 - recent macOS), kernel patch aborted.\n");
+        gBS->Stall(3000000);
+      }
+            
+      if (patchLocation1) {
+        DBG_RT(Entry, "==> patched EXT (10.8 - recent macOS)\n");
+        for (i = 5; i < 7; i++) {
+          // E8 XX 00 00 00 EB XX
+          // E8 XX 00 00 00 90 90
+          Kernel[patchLocation1 + i] = 0x90;
+        }
+      }
+            
+      // SIP - bypass kext check by System Integrity Protection.
+      for (i = 0; i < 0x1000000; i++) {
+        // 45 31 FF 41 (BF:10.11/BE:10.12+) 01 00 00 DC 48
+        if (Kernel[i+0] == 0x45 && Kernel[i+1] == 0x31 && Kernel[i+3] == 0x41 &&
+            (Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) &&
+            Kernel[i+5] == 0x01 && Kernel[i+6] == 0x00 && Kernel[i+7] == 0x00 &&
+            Kernel[i+8] == 0xDC && Kernel[i+9] == 0x48) {
+          for (y = i; y < 0x1000000; y++) {
+            // 48 85 XX 74 XX 48 XX XX 48
+            if (Kernel[y+0] == 0x48 && Kernel[y+1] == 0x85 && Kernel[y+3] == 0x74 &&
+                Kernel[y+5] == 0x48 && Kernel[y+8] == 0x48) {
+              patchLocation2 = y;
+              DBG_RT(Entry, "==> found SIP (10.11 - 10.14) at 0x%08x\n", patchLocation2);
+              break;
+            // 00 85 C0 0F 84 87 00 00 00 49
+            } else if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x85 && Kernel[y+2] == 0xC0 && Kernel[y+3] == 0x0F &&
+                       Kernel[y+4] == 0x84 && Kernel[y+5] == 0x87 && Kernel[y+9] == 0x49) {
+              patchLocation2 = y;
+              DBG_RT(Entry, "==> found SIP (10.15 - recent macOS) at 0x%08x\n", patchLocation2);
+              break;
+            }
+          }
+          break;
+        }
+      }
+            
+      if (!patchLocation2) {
+        DBG_RT(Entry, "==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
+        gBS->Stall(3000000);
+      }
+                
+      if (patchLocation2) {
+        if (Kernel[patchLocation2 + 0] == 0x48 && Kernel[patchLocation2 + 1] == 0x85) {
+            Kernel[patchLocation2 + 3] = 0xEB;
+          DBG_RT(Entry, "==> patched SIP (10.11 - 10.14)\n");
+          if (Kernel[patchLocation2 + 4] == 0x6C) {
+            // 48 85 XX 74 6C 48 XX XX 48
+            // 48 85 XX EB 15 48 XX XX 48
+            Kernel[patchLocation2 + 4] = 0x15; // 10.14.4-10.14.6
+          } else {
+            // 48 85 XX 74 XX 48 XX XX 48
+            // 48 85 XX EB 12 48 XX XX 48
+            Kernel[patchLocation2 + 4] = 0x12; // 10.11-10.14.3
+          }
+        // PMheart
+        } else if (Kernel[patchLocation2 + 0] == 0x00 && Kernel[patchLocation2 + 1] == 0x85) {
+          DBG_RT(Entry, "==> patched SIP (10.15)\n");
+          for (i = 3; i < 9; i++) {
+            // 00 85 C0 0F 84 87 00 00 00 49
+            // 00 85 C0 90 90 90 90 90 90 49
+            Kernel[patchLocation2 + i] = 0x90;
+          }
+        }
+      }
+            
+      // KxldUnmap by vit9696
+      // Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
+      for (i = 0; i < 0x1000000; i++) {
+        // 55 48 89 E5 41 57 41 56 41 54 53 //10
+        // 48 83 EC 30 48 C7 45 B8 XX XX XX //21
+        // XX XX XX XX XX XX XX XX XX XX XX //32
+        // XX XX XX XX XX XX XX XX XX XX XX //43
+        // XX XX XX XX XX XX XX XX 31 FF BE //54
+        // 14 XX XX XX 31 C0 E8 XX XX FF FF //65
+        if (Kernel[i+0] == 0x55 && Kernel[i+1] == 0x48 && Kernel[i+2] == 0x89 &&
+            Kernel[i+3] == 0xE5 && Kernel[i+4] == 0x41 && Kernel[i+5] == 0x57 &&
+            Kernel[i+6] == 0x41 && Kernel[i+7] == 0x56 && Kernel[i+8] == 0x41 &&
+            Kernel[i+9] == 0x54 && Kernel[i+10] == 0x53 && Kernel[i+11] == 0x48 &&
+            Kernel[i+12] == 0x83 && Kernel[i+13] == 0xEC && Kernel[i+14] == 0x30 &&
+            Kernel[i+15] == 0x48 && Kernel[i+16] == 0xC7 && Kernel[i+17] == 0x45 &&
+            Kernel[i+18] == 0xB8 && Kernel[i+52] == 0x31 && Kernel[i+53] == 0xFF &&
+            Kernel[i+54] == 0xBE && Kernel[i+55] == 0x14 && Kernel[i+59] == 0x31 &&
+            Kernel[i+60] == 0xC0 && Kernel[i+61] == 0xE8 && Kernel[i+64] == 0xFF && Kernel[i+65] == 0xFF) {
+          for (y = i; y < 0x1000000; y++) {
+            // 00 0F 85 XX 01 00 00 48
+            if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x0F && Kernel[y+2] == 0x85 && Kernel[y+4] == 0x01 &&
+                Kernel[y+5] == 0x00 && Kernel[y+6] == 0x00 && Kernel[y+7] == 0x48) {
+              patchLocation3 = y;
+              DBG_RT(Entry, "==> found KxldUnmap (10.14 - recent macOS) at 0x%08x\n", patchLocation3);
+              break;
+            }
+          }
+          break;
+        }
+      }
+            
+      if (!patchLocation3) {
+        DBG_RT(Entry, "==> can't find KxldUnmap (10.14 - recent macOS), kernel patch aborted.\n");
+        gBS->Stall(3000000);
+      }
+
+      if (patchLocation3) {
+        DBG_RT(Entry, "==> patched KxldUnmap (10.14 - recent macOS)\n");
+        // 00 0F 85 XX 01 00 00 48
+        // 00 90 E9 XX 01 00 00 48
+        Kernel[patchLocation3 + 1] = 0x90;
+        Kernel[patchLocation3 + 2] = 0xE9;
+      }
     }
-  } else if (NumHighSieMoja3SIP == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEHighSieMoja3SearchSIP, sizeof(KBEHighSieMoja3SearchSIP), KBEHighSieMoja3ReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel High Sierra: %d replaces done.\n", Num);
-  } else if (NumSieDebugSIP == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchEXT, sizeof(KBESieDebugSearchEXT), KBESieDebugReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieDebugSearchSIP, sizeof(KBESieDebugSearchSIP), KBESieDebugReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel Sierra Debug: %d replaces done.\n", Num);
-  } else if (NumSieSIP == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESieSearchSIP, sizeof(KBESieSearchSIP), KBESieReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel Sierra: %d replaces done.\n", Num);
-  } else if (NumECDebugSIP == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchEXT, sizeof(KBEECDebugSearchEXT), KBEECDebugReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECDebugSearchSIP, sizeof(KBEECDebugSearchSIP), KBEECDebugReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel El Capitan Debug: %d replaces done.\n", Num);
-  } else if (NumECSIP == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1) +
-          SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEECSearchSIP, sizeof(KBEECSearchSIP), KBEECReplaceSIP, 1);
-    DBG_RT(Entry, "==> kernel El Capitan: %d replaces done.\n", Num);
-  } else if (NumMavYosDebugEXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMavYosDebugSearchEXT, sizeof(KBEMavYosDebugReplaceEXT), KBEMavYosDebugReplaceEXT, 1);
-    DBG_RT(Entry, "==> kernel Yosemite Debug: %d replaces done.\n", Num);
-  } else if (NumYosEXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEYosECSieHighSearchEXT, sizeof(KBEYosECSieHighSearchEXT), KBEYosECSieHighReplaceEXT, 1);
-    DBG_RT(Entry, "==> kernel Yosemite: %d replaces done.\n", Num);
-  } else if (NumMLDebugEXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLDebugSearchEXT, sizeof(KBEMLDebugSearchEXT), KBEMLDebugReplaceEXT, 1);
-    DBG_RT(Entry, "==> kernel Mountain Lion Debug: %d replaces done.\n", Num)
-  } else if (NumMLMavEXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLMavSearchEXT, sizeof(KBEMLMavSearchEXT), KBEMLMavReplaceEXT, 1);
-    DBG_RT(Entry, "==> kernel Mountain Lion/Mavericks: %d replaces done.\n", Num);
-  } else if (NumLion_X64_EXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
-    DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
-  } else if (NumSnow_X64_EXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
-    DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
-  // i386
-  } else if (NumLion_i386_EXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-    DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
-  } else if (NumSnow_i386_EXT == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
-    DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
   } else {
-    DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
+    // i386
+    if (NumLion_i386_EXT == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
+      DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
+    } else if (NumSnow_i386_EXT == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
+      DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
+    } else {
+      DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
+    }
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
