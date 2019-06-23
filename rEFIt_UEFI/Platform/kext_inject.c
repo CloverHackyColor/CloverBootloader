@@ -667,10 +667,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
             Kernel[i+3] == 0xFF && Kernel[i+4] == 0xBE && Kernel[i+5] == 0x14 &&
             Kernel[i+6] == 0x00 && Kernel[i+7] == 0x05) {
           for (y = i; y < 0x1000000; y++) {
-            // E8 XX 00 00 00 EB XX (48:10.8-10.9/E8:10.10+)
+            // E8 XX 00 00 00 EB XX
             if (Kernel[y+0] == 0xE8 && Kernel[y+2] == 0x00 && Kernel[y+3] == 0x00 &&
-                Kernel[y+4] == 0x00 && Kernel[y+5] == 0xEB &&
-                (Kernel[y+7] == 0x48 || Kernel[y+7] == 0xE8)) {
+                Kernel[y+4] == 0x00 && Kernel[y+5] == 0xEB) {
+                //(Kernel[y+7] == 0x48 || Kernel[y+7] == 0xE8)) { // 48:10.8-10.9/E8:10.10+
               patchLocation1 = y;
               DBG_RT(Entry, "==> found EXT (10.8 - recent macOS) at 0x%08x\n", patchLocation1);
               break;
@@ -696,9 +696,9 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
             
       // SIP - bypass kext check by System Integrity Protection.
       for (i = 0; i < 0x1000000; i++) {
-        // 45 31 FF 41 (BF:10.11/BE:10.12+) 01 00 00 DC 48
+        // 45 31 FF 41 XX 01 00 00 DC 48
         if (Kernel[i+0] == 0x45 && Kernel[i+1] == 0x31 && Kernel[i+3] == 0x41 &&
-            (Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) &&
+            //(Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) && // BF:10.11/BE:10.12+
             Kernel[i+5] == 0x01 && Kernel[i+6] == 0x00 && Kernel[i+7] == 0x00 &&
             Kernel[i+8] == 0xDC && Kernel[i+9] == 0x48) {
           for (y = i; y < 0x1000000; y++) {
@@ -708,9 +708,9 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
               patchLocation2 = y;
               DBG_RT(Entry, "==> found SIP (10.11 - 10.14) at 0x%08x\n", patchLocation2);
               break;
-            // 00 85 C0 0F 84 87 00 00 00 49
-            } else if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x85 && Kernel[y+2] == 0xC0 && Kernel[y+3] == 0x0F &&
-                       Kernel[y+4] == 0x84 && Kernel[y+5] == 0x87 && Kernel[y+9] == 0x49) {
+            // 00 85 C0 0F 84 XX 00 00 00 49
+            } else if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x85 && Kernel[y+2] == 0xC0 &&
+                       Kernel[y+3] == 0x0F && Kernel[y+4] == 0x84 && Kernel[y+9] == 0x49) {
               patchLocation2 = y;
               DBG_RT(Entry, "==> found SIP (10.15 - recent macOS) at 0x%08x\n", patchLocation2);
               break;
@@ -742,7 +742,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
         } else if (Kernel[patchLocation2 + 0] == 0x00 && Kernel[patchLocation2 + 1] == 0x85) {
           DBG_RT(Entry, "==> patched SIP (10.15)\n");
           for (i = 3; i < 9; i++) {
-            // 00 85 C0 0F 84 87 00 00 00 49
+            // 00 85 C0 0F 84 XX 00 00 00 49
             // 00 85 C0 90 90 90 90 90 90 49
             Kernel[patchLocation2 + i] = 0x90;
           }
@@ -768,8 +768,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
             Kernel[i+54] == 0xBE && Kernel[i+55] == 0x14 && Kernel[i+59] == 0x31 &&
             Kernel[i+60] == 0xC0 && Kernel[i+61] == 0xE8 && Kernel[i+64] == 0xFF && Kernel[i+65] == 0xFF) {
           for (y = i; y < 0x1000000; y++) {
-            // 00 0F 85 XX 01 00 00 48
-            if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x0F && Kernel[y+2] == 0x85 && Kernel[y+4] == 0x01 &&
+            // 00 0F 85 XX XX 00 00 48
+            if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x0F && Kernel[y+2] == 0x85 &&
                 Kernel[y+5] == 0x00 && Kernel[y+6] == 0x00 && Kernel[y+7] == 0x48) {
               patchLocation3 = y;
               DBG_RT(Entry, "==> found KxldUnmap (10.14 - recent macOS) at 0x%08x\n", patchLocation3);
@@ -787,8 +787,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 
       if (patchLocation3) {
         DBG_RT(Entry, "==> patched KxldUnmap (10.14 - recent macOS)\n");
-        // 00 0F 85 XX 01 00 00 48
-        // 00 90 E9 XX 01 00 00 48
+        // 00 0F 85 XX XX 00 00 48
+        // 00 90 E9 XX XX 00 00 48
         Kernel[patchLocation3 + 1] = 0x90;
         Kernel[patchLocation3 + 2] = 0xE9;
       }
