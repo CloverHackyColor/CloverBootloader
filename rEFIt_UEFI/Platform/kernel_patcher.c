@@ -632,7 +632,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
   UINT8       *bytes = (UINT8*)kernelData;
-  UINT32      patchLocation = 0;
+  UINT32      patchLocation1 = 0, patchLocation2 = 0;
   UINT32      i, y;
 
   DBG("Looking for Lapic panic call (64-bit) Start\n");
@@ -642,33 +642,38 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         bytes[i+4] == 0x3C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
         bytes[i+45] == 0x65 && bytes[i+46] == 0x8B && bytes[i+47] == 0x04 && bytes[i+48] == 0x25 &&
         bytes[i+49] == 0x3C && bytes[i+50] == 0x00 && bytes[i+51] == 0x00 && bytes[i+52] == 0x00) {
-      patchLocation = i+40;
-      DBG("Found Lapic panic (10.6) at 0x%08x\n", patchLocation);
+      patchLocation1 = i+40;
+      DBG("Found Lapic panic (10.6) at 0x%08x\n", patchLocation1);
       break;
     } else if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0x8B && bytes[i+2]  == 0x04 && bytes[i+3]  == 0x25 &&
                bytes[i+4]  == 0x14 && bytes[i+5]  == 0x00 && bytes[i+6]  == 0x00 && bytes[i+7]  == 0x00 &&
                bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
                bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
-      patchLocation = i+30;
-      DBG("Found Lapic panic (10.7 - 10.8) at 0x%08x\n", patchLocation);
+      patchLocation1 = i+30;
+      DBG("Found Lapic panic (10.7 - 10.8) at 0x%08x\n", patchLocation1);
       break;
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+36] == 0x65 && bytes[i+37] == 0x8B && bytes[i+38] == 0x04 && bytes[i+39] == 0x25 &&
                bytes[i+40] == 0x1C && bytes[i+41] == 0x00 && bytes[i+42] == 0x00 && bytes[i+43] == 0x00) {
-      patchLocation = i+31;
-      DBG("Found Lapic panic (10.9) at 0x%08x\n", patchLocation);
+      patchLocation1 = i+31;
+      DBG("Found Lapic panic (10.9) at 0x%08x\n", patchLocation1);
       break;
-    } else if (bytes[i+0] == 0x8B && bytes[i+1] == 0x05 && bytes[i+5] == 0x00 && bytes[i+6] == 0x29 &&
-               bytes[i+7] == 0xC7 && bytes[i+8] == 0x78 && bytes[i+9] == 0x4F && bytes[i+10] == 0x31 &&
-               bytes[i+11] == 0xDB && bytes[i+12] == 0x8D && bytes[i+13] == 0x47 && bytes[i+14] == 0xFA &&
-               bytes[i+15] == 0x83) {
+    // 00 29 C7 78 XX 31 DB 8D 47 FA 83
+    } else if (bytes[i+0] == 0x00 && bytes[i+1] == 0x29 && bytes[i+2] == 0xC7 && bytes[i+3] == 0x78 &&
+               //(bytes[i+4] == 0x3F || bytes[i+4] == 0x4F) && // 3F:10.10-10.12/4F:10.13+
+               bytes[i+5] == 0x31 && bytes[i+6] == 0xDB && bytes[i+7] == 0x8D && bytes[i+8] == 0x47 &&
+               bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
       for (y = i; y < 0x1000000; y++) {
+        // Lapic panic patch, by vit9696
+        // mov eax, gs:1Ch
+        // cmp eax, cs:_master_cpu
+        // 65 8B 04 25 1C 00 00 00 3B 05 XX XX XX 00
         if (bytes[y+0] == 0x65 && bytes[y+1] == 0x8B && bytes[y+2] == 0x04 && bytes[y+3] == 0x25 &&
             bytes[y+4] == 0x1C && bytes[y+5] == 0x00 && bytes[y+6] == 0x00 && bytes[y+7] == 0x00 &&
             bytes[y+8] == 0x3B && bytes[y+9] == 0x05 && bytes[y+13] == 0x00) {
-          patchLocation = y;
-          DBG("Found Lapic panic (10.10 - recent macOS) at 0x%08x\n", patchLocation);
+          patchLocation1 = y;
+          DBG("Found Lapic panic (10.10 - recent macOS) at 0x%08x\n", patchLocation1);
           break;
         }
       }
@@ -676,31 +681,77 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
     }
   }
 
-  if (!patchLocation) {
+  if (!patchLocation1) {
     DBG("Can't find Lapic panic, kernel patch aborted.\n");
     return FALSE;
   }
 
   // Already patched?  May be running a non-vanilla kernel already?
-  if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 &&
-      bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90 &&
-      bytes[patchLocation + 4] == 0x90) {
+  if (bytes[patchLocation1 + 0] == 0x90 && bytes[patchLocation1 + 1] == 0x90 &&
+      bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90 &&
+      bytes[patchLocation1 + 4] == 0x90) {
     DBG("Lapic panic already patched, kernel file (10.6 - 10.9) manually patched?\n");
     return FALSE;
-  } else if (bytes[patchLocation + 0] == 0x31 && bytes[patchLocation + 1] == 0xC0 &&
-             bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90) {
+  } else if (bytes[patchLocation1 + 0] == 0x31 && bytes[patchLocation1 + 1] == 0xC0 &&
+             bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90) {
     DBG("Lapic panic already patched, kernel file (10.10 - recent macOS) manually patched?\n");
     return FALSE;
   } else {
-    if (bytes[patchLocation + 8] == 0x3B && bytes[patchLocation + 9] == 0x05 && bytes[patchLocation + 13] == 0x00) {
-      bytes[patchLocation + 0] = 0x31;
-      bytes[patchLocation + 1] = 0xC0;
+    if (bytes[patchLocation1 + 8] == 0x3B && bytes[patchLocation1 + 9] == 0x05 &&
+        bytes[patchLocation1 + 13] == 0x00) {
+      // 65 8B 04 25 1C 00 00 00 3B XX XX XX XX 00
+      // 31 C0 90 90 90 90 90 90 90 90 90 90 90 90
+      DBG("Patched Lapic panic (10.10 - recent macOS)\n");
+      bytes[patchLocation1 + 0] = 0x31;
+      bytes[patchLocation1 + 1] = 0xC0;
       for (i = 2; i < 14; i++) {
-        bytes[patchLocation + i] = 0x90;
+        bytes[patchLocation1 + i] = 0x90;
+      }
+
+      for (i = 0; i < 0x1000000; i++) {
+        // 00 29 C7 78 XX 31 DB 8D 47 FA 83
+        if (bytes[i+0] == 0x00 && bytes[i+1] == 0x29 && bytes[i+2] == 0xC7 && bytes[i+3] == 0x78 &&
+            //(bytes[i+4] == 0x3F || bytes[i+4] == 0x4F) && // 3F:10.10-10.12/4F:10.13+
+            bytes[i+5] == 0x31 && bytes[i+6] == 0xDB && bytes[i+7] == 0x8D && bytes[i+8] == 0x47 &&
+            bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
+          for (y = i; y < 0x1000000; y++) {
+            // Lapic panic master patch, by vit9696
+            // cmp cs:_debug_boot_arg, 0
+            // E8 XX XX FF FF 83 XX XX XX XX 00 00
+            if (bytes[y+0] == 0xE8 && bytes[y+3] == 0xFF && bytes[y+4] == 0xFF &&
+                bytes[y+5] == 0x83 && bytes[y+10] == 0x00 && bytes[y+11] == 0x00) {
+              patchLocation2 = y;
+              DBG("Found Lapic panic master (10.10 - recent macOS) at 0x%08x\n", patchLocation2);
+              break;
+            }
+          }
+          break;
+        }
+      }
+        
+      if (!patchLocation2) {
+        DBG("Can't find Lapic panic master (10.10 - recent macOS), kernel patch aborted.\n");
+        return FALSE;
+      }
+        
+      // Already patched? May be running a non-vanilla kernel already?
+      if (bytes[patchLocation2 + 5] == 0x31 && bytes[patchLocation2 + 6] == 0xC0) {
+        DBG("Lapic panic master already patched, kernel file (10.6 - 10.9) manually patched?\n");
+        return FALSE;
+      } else {
+        DBG("Patched Lapic panic master (10.10 - recent macOS)\n");
+        // E8 XX XX FF FF 83 XX XX XX XX 00 00
+        // E8 XX XX FF FF 31 C0 90 90 90 90 90
+        bytes[patchLocation2 + 5] = 0x31;
+        bytes[patchLocation2 + 6] = 0xC0;
+        for (i = 7; i < 12; i++) {
+          bytes[patchLocation2 + i] = 0x90;
+        }
       }
     } else {
+      DBG("Patched Lapic panic (10.6 - 10.9)\n");
       for (i = 0; i < 5; i++) {
-        bytes[patchLocation + i] = 0x90;
+        bytes[patchLocation1 + i] = 0x90;
       }
     }
   }
@@ -741,6 +792,7 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
     DBG("Lapic panic already patched, kernel file manually patched?\n");
     return FALSE;
   } else {
+    DBG("Patched Lapic panic (32-bit)\n");
     for (i = 0; i < 5; i++) {
       bytes[patchLocation + i] = 0x90;
     }

@@ -667,7 +667,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
             Kernel[i+3] == 0xFF && Kernel[i+4] == 0xBE && Kernel[i+5] == 0x14 &&
             Kernel[i+6] == 0x00 && Kernel[i+7] == 0x05) {
           for (y = i; y < 0x1000000; y++) {
-            // E8 XX 00 00 00 EB XX
+            // E8 XX 00 00 00 EB XX XX
             if (Kernel[y+0] == 0xE8 && Kernel[y+2] == 0x00 && Kernel[y+3] == 0x00 &&
                 Kernel[y+4] == 0x00 && Kernel[y+5] == 0xEB) {
                 //(Kernel[y+7] == 0x48 || Kernel[y+7] == 0xE8)) { // 48:10.8-10.9/E8:10.10+
@@ -740,7 +740,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
           }
         // PMheart
         } else if (Kernel[patchLocation2 + 0] == 0x00 && Kernel[patchLocation2 + 1] == 0x85) {
-          DBG_RT(Entry, "==> patched SIP (10.15)\n");
+          DBG_RT(Entry, "==> patched SIP (10.15 - recent macOS)\n");
           for (i = 3; i < 9; i++) {
             // 00 85 C0 0F 84 XX 00 00 00 49
             // 00 85 C0 90 90 90 90 90 90 49
