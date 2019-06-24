@@ -100,7 +100,10 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         case CPU_MODEL_IVY_BRIDGE:
           Aplf = 8;
           break;
-        default:
+	    case CPU_MODEL_IVY_BRIDGE_E5:
+		  Aplf = 4;
+		  break;
+		default:
           Aplf = 0;
           break;
       }
