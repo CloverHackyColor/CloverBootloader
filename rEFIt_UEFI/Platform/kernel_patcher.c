@@ -821,6 +821,15 @@ static inline VOID applyKernPatch(UINT8 *kern, UINT8 *find, UINTN size, UINT8 *r
     }
 }
 
+// PMHeart
+// Global XCPM patches compatibility
+// Currently 10.8.5 - 10.15
+//
+static inline BOOLEAN IsXCPMOSVersionCompat(UINT64 os_version)
+{
+  return (os_version >= AsciiOSVersionToUint64("10.8.5")) && (os_version < AsciiOSVersionToUint64("10.16")); 
+}
+
 //
 // Enable Unsupported CPU PowerManagement
 //
@@ -846,8 +855,8 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
   UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
 
   // check OS version suit for patches
-  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
-    DBG("Unsupported macOS.\nHaswell-E requires macOS 10.8.5 - 10.13.x, aborted\n");
+  if (!IsXCPMOSVersionCompat(os_version)) {
+    DBG("HaswellEXCPM(): Unsupported macOS.\n");
     DBG("HaswellEXCPM() <===FALSE\n");
     return FALSE;
   }
@@ -988,8 +997,8 @@ BOOLEAN BroadwellEPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
   UINT64      os_version = AsciiOSVersionToUint64(Entry->OSVersion);
 
   // check OS version suit for patches
-  if (os_version < AsciiOSVersionToUint64("10.8.5")) {
-    DBG("Unsupported macOS.\nBroadwell-E/EP requires macOS at least 10.8.5, aborted\n");
+  if (!IsXCPMOSVersionCompat(os_version)) {
+    DBG("BroadwellEPM(): Unsupported macOS.\n");
     DBG("BroadwellEPM() <===FALSE\n");
     return FALSE;
   }
@@ -1038,8 +1047,8 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
   CHAR8       *comment;
 
   // check OS version suit for patches
-  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.14")) {
-    DBG("Unsupported macOS.\nHaswell Celeron/Pentium requires macOS 10.8.5 - 10.13.x, aborted\n");
+  if (!IsXCPMOSVersionCompat(os_version)) {
+    DBG("Unsupported macOS.\n");
     DBG("HaswellLowEndXCPM() <===FALSE\n");
     return FALSE;
   }
@@ -1119,8 +1128,8 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
 
   // check OS version suit for patches
   // PMheart: attempt to add 10.14 compatibility
-  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.15")) {
-    DBG("Unsupported macOS.\nIvy Bridge XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
+  if (!IsXCPMOSVersionCompat(os_version)) {
+    DBG("Unsupported macOS.\n");
     DBG("KernelIvyBridgeXCPM() <===FALSE\n");
     return FALSE;
   } else if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
@@ -1202,9 +1211,9 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
   }
   
   // check OS version suit for patches
-  // PMheart: attempt to add 10.14 compatibility
-  if (os_version < AsciiOSVersionToUint64("10.8.5") || os_version >= AsciiOSVersionToUint64("10.15")) {
-    DBG("Unsupported macOS.\nIvy Bridge-E XCPM requires macOS 10.8.5 - 10.13.x, aborted\n");
+  // PMheart: attempt to add 10.15 compatibility
+  if (!IsXCPMOSVersionCompat(os_version)) {
+    DBG("Unsupported macOS.\n");
     DBG("KernelIvyE5XCPM() <===FALSE\n");
     return FALSE;
   }
@@ -1482,9 +1491,9 @@ VOID Get_PreLink()
   UINT32  binaryIndex;
   UINTN   cnt;
   UINT8*  binary = (UINT8*)KernelData;
-  struct load_command         *loadCommand;
+  struct  load_command        *loadCommand;
   struct  segment_command     *segCmd;
-  struct segment_command_64   *segCmd64;
+  struct  segment_command_64  *segCmd64;
 
 
   if (is64BitKernel) {
