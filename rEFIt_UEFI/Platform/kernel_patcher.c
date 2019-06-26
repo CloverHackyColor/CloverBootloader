@@ -1048,7 +1048,7 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
 
   // check OS version suit for patches
   if (!IsXCPMOSVersionCompat(os_version)) {
-    DBG("Unsupported macOS.\n");
+    DBG("HaswellLowEndXCPM(): Unsupported macOS.\n");
     DBG("HaswellLowEndXCPM() <===FALSE\n");
     return FALSE;
   }
@@ -1121,7 +1121,7 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
 
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
-    DBG("Unsupported platform.\nRequires Ivy Bridge, aborted\n");
+    DBG("KernelIvyBridgeXCPM(): Unsupported platform.\nRequires Ivy Bridge, aborted\n");
     DBG("KernelIvyBridgeXCPM() <===FALSE\n");
     return FALSE;
   }
@@ -1129,7 +1129,7 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
   // check OS version suit for patches
   // PMheart: attempt to add 10.14 compatibility
   if (!IsXCPMOSVersionCompat(os_version)) {
-    DBG("Unsupported macOS.\n");
+    DBG("KernelIvyBridgeXCPM():Unsupported macOS.\n");
     DBG("KernelIvyBridgeXCPM() <===FALSE\n");
     return FALSE;
   } else if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
@@ -1205,7 +1205,7 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
   
   // check whether Ivy Bridge-E5
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE_E5) {
-    DBG("Unsupported platform.\nRequires Ivy Bridge-E, aborted\n");
+    DBG("KernelIvyE5XCPM(): Unsupported platform.\nRequires Ivy Bridge-E, aborted\n");
     DBG("KernelIvyE5XCPM() <===FALSE\n");
     return FALSE;
   }
@@ -1213,7 +1213,7 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
   // check OS version suit for patches
   // PMheart: attempt to add 10.15 compatibility
   if (!IsXCPMOSVersionCompat(os_version)) {
-    DBG("Unsupported macOS.\n");
+    DBG("KernelIvyE5XCPM(): Unsupported macOS.\n");
     DBG("KernelIvyE5XCPM() <===FALSE\n");
     return FALSE;
   }
