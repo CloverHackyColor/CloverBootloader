@@ -300,7 +300,7 @@ EFI_STATUS UpdateSmbiosString (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBI
   }
   // AString is at place to copy
   ALength = iStrLen(AString, 0);
-  BLength = iStrLen(Buffer, SMBIOS_STRING_MAX_LENGTH);
+  BLength = iStrLen(Buffer, MAX_OEM_STRING);
   //  DBG("Table type %d field %d\n", SmbiosTable.Hdr->Type, *Field);
   //  DBG("Old string length=%d new length=%d\n", ALength, BLength);
   if (BLength > ALength) {

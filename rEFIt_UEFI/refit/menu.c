@@ -4046,6 +4046,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
  */
 VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
+  EFI_STATUS Status = EFI_SUCCESS;
   INTN i = 0;
   INTN MessageHeight = 0;
 // clovy
@@ -4187,7 +4188,10 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      MouseBirth();
+      Status = MouseBirth();
+      if(EFI_ERROR(Status)) {
+        DBG("can't bear mouse at all! Status=%r\n", Status);
+      }
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
@@ -4224,7 +4228,10 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      MouseBirth();
+      Status = MouseBirth();
+      if(EFI_ERROR(Status)) {
+        DBG("can't bear mouse at sel! Status=%r\n", Status);
+      }
       break;
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
@@ -4239,7 +4246,10 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      MouseBirth();
+      Status = MouseBirth();
+      if(EFI_ERROR(Status)) {
+        DBG("can't bear mouse at timeout! Status=%r\n", Status);
+      }
       break;
 
   }

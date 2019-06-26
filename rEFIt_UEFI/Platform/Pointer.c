@@ -136,7 +136,7 @@ EFI_STATUS MouseBirth()
   gPointer.Pointer = BuiltinIcon(BUILTIN_ICON_POINTER);
 	if(!gPointer.Pointer) {
     //this is impossible after BuiltinIcon
-	//	DBG("No pointer image!\n");
+		DBG("No pointer image!\n");
     gPointer.SimplePointerProtocol = NULL;
     return EFI_NOT_FOUND;
 	}

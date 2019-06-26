@@ -2561,7 +2561,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainMenu.AnimeRun = MainAnime;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
       }
-      DBG("exit from MainMenu %d\n", MenuExit);
+      DBG("exit from MainMenu %d\n", MenuExit); //MENU_EXIT_ENTER       (1)
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
       //remember OS before go to second row
