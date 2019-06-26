@@ -10,7 +10,8 @@
 	<readme file='Description.html'/>
 	<conclusion file="Conclusion.html"/>
 	<background file='background.tiff' alignment='topleft' scaling='proportional'/>
-
+  <background-darkAqua file="background.tiff" alignment='topleft' scaling="proportional"/>
+  
 	<title>Clover %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader</title>
 
 	<script>
