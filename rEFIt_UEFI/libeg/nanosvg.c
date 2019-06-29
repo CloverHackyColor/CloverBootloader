@@ -609,7 +609,8 @@ void nsvg__deleteParser(NSVGparser* p)
     nsvg__deleteSymbols(p->symbols);
     nsvg__deletePaths(p->plist);
     nsvg__deleteGradientData(p->gradients);
-    nsvg__deleteFont(p->font);
+    // do not delete font here, as we free all fonts later by following fontsdb
+    //nsvg__deleteFont(p->font);
     nsvgDelete(p->image);
     if (p->cpts > 0 && p->pts) {
       FreePool(p->pts);
