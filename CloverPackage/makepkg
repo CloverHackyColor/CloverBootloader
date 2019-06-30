@@ -35,7 +35,8 @@ version=v2.4k
 if [[ -d ../.git ]]; then
   revision=$(git svn info | grep Revision | tr -cd [:digit:])
 else
-  revision=$(svnversion -n | tr -d [:alpha:])
+#  revision=$(svnversion -n | tr -d [:alpha:])
+  revision=$(svn info | grep "Revision" | tr -cd [:digit:])
 fi
 
 SRCROOT="${PWD}"
