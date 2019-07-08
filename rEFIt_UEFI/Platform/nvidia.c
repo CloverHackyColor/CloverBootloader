@@ -2116,17 +2116,18 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
    }
    }
    */
-  if (nvCardType < NV_ARCH_50) {
+  if (nvCardType < NV_ARCH_TESLA) {
     vram_size  = (UINT64)(REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA));
     vram_size &= NV10_PFB_FIFO_DATA_RAM_AMOUNT_MB_MASK;
-  } else if (nvCardType < NV_ARCH_C0) {
+  } else if (nvCardType < NV_ARCH_FERMI1) {
     vram_size = (UINT64)(REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA));
     vram_size |= LShiftU64(vram_size & 0xff, 32);
     vram_size &= 0xffffffff00ll;
-  } else if (nvCardType < NV_ARCH_E0) {
+  } else if (nvCardType < NV_ARCH_KEPLER1) {
     vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
     vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT));
-  } else if ((nvCardType < NV_ARCH_100) || ((nvCardType >= NV_ARCH_120) && (nvCardType < NV_ARCH_130))) {
+  } else if ((nvCardType < NV_ARCH_KEPLER3) || ((nvCardType >= NV_ARCH_MAXWELL2) &&
+                                                (nvCardType < NV_ARCH_PASCAL))) {
     // Kepler - GT 6XX/GTX 6XX/GTX 6XX Ti/Tesla K20X/GTX 780/GTX TITAN/TITAN LE
     // Maxwell - GTX 9XX/9XX Ti/TITAN X
     vram_size = LShiftU64(2 * REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
@@ -2171,10 +2172,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
   const         INT32 MAX_BIOS_VERSION_LENGTH = 32;
   EFI_STATUS    Status = EFI_NOT_FOUND;
-  DevPropDevice  *device = NULL;
+  DevPropDevice *device = NULL;
   CHAR8         *devicepath = NULL;
-  BOOLEAN        load_vbios = gSettings.LoadVBios;
-  BOOLEAN        Injected = FALSE;
+  BOOLEAN       load_vbios = gSettings.LoadVBios;
+  BOOLEAN       Injected = FALSE;
   UINT8         *rom = NULL;
   UINT16        nvCardType = 0;
   UINT64        videoRam = 0;

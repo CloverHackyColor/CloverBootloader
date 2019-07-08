@@ -120,15 +120,15 @@ struct bios {
 #define NV_ARCH_20  0x20
 #define NV_ARCH_30  0x30
 #define NV_ARCH_40  0x40
-#define NV_ARCH_50  0x50
-#define NV_ARCH_C0  0xC0 // Fermi
-#define NV_ARCH_D0  0xD0 // Fermi
-#define NV_ARCH_E0  0xE0 // Kepler - GT 6XX/GTX 6XX/GTX 6XX Ti
-#define NV_ARCH_F0  0xF0 // Kepler - Tesla K20X/GTX 780/GTX TITAN/TITAN LE
-#define NV_ARCH_100  0x100  // Kepler - GT 630.Rev2/635/640.Rev2/710/720/730/740
-#define NV_ARCH_110  0x110  // Maxwell - GTX 745/750/750 Ti
-#define NV_ARCH_120  0x120  // Maxwell - GTX 9XX/9XX Ti/TITAN X
-#define NV_ARCH_130  0x130  // Pascal - GTX 10XX/10XX Ti/TITAN X/Xp
+#define NV_ARCH_TESLA     0x50
+#define NV_ARCH_FERMI1    0xC0 // Fermi
+#define NV_ARCH_FERMI2    0xD0 // Fermi
+#define NV_ARCH_KEPLER1   0xE0 // Kepler - GT 6XX/GTX 6XX/GTX 6XX Ti
+#define NV_ARCH_KEPLER2   0xF0 // Kepler - Tesla K20X/GTX 780/GTX TITAN/TITAN LE
+#define NV_ARCH_KEPLER3   0x100  // Kepler - GT 630.Rev2/635/640.Rev2/710/720/730/740
+#define NV_ARCH_MAXWELL1  0x110  // Maxwell - GTX 745/750/750 Ti
+#define NV_ARCH_MAXWELL2  0x120  // Maxwell - GTX 9XX/9XX Ti/TITAN X
+#define NV_ARCH_PASCAL    0x130  // Pascal - GTX 10XX/10XX Ti/TITAN X/Xp
 
 
 #define CHIPSET_NV03     0x0010

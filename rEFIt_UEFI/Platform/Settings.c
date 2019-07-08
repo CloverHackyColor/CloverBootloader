@@ -6,6 +6,7 @@
 #include "kernel_patcher.h"
 #include "ati.h"
 #include "nanosvg.h"
+#include "nvidia.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -6783,6 +6784,7 @@ GetDevices ()
              (Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_OTHER))) &&
             (NGFX < 4)) {
           CHAR8 *CardFamily = "";
+          UINT16 UFamily;
           GFX_PROPERTIES *gfx = &gGraphics[NGFX];
           gfx->DeviceID       = Pci.Hdr.DeviceId;
           gfx->Segment        = Segment;
@@ -6845,19 +6847,24 @@ GetDevices ()
               //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
               gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x3ff;
-              if ((gfx->Family >= 0xE0) && (gfx->Family <= 0x10F)) {
+              UFamily = gfx->Family & 0x3F0;
+              if ((UFamily == NV_ARCH_KEPLER1) ||
+                  (UFamily == NV_ARCH_KEPLER2) ||
+                  (UFamily == NV_ARCH_KEPLER3)) {
                 CardFamily = "Kepler";
               }
-              else if ((gfx->Family >= 0xC0) && (gfx->Family <= 0xDF)) {
+              else if ((UFamily == NV_ARCH_FERMI1) ||
+                       (UFamily == NV_ARCH_FERMI2)) {
                 CardFamily = "Fermi";
               }
-              else if ((gfx->Family >= 0x110) && (gfx->Family <= 0x12F)) {
+              else if ((UFamily == NV_ARCH_MAXWELL1) ||
+                       (UFamily == NV_ARCH_MAXWELL2)) {
                 CardFamily = "Maxwell";
               }
-              else if ((gfx->Family >= 0x130) && (gfx->Family <= 0x13F)) {
+              else if (UFamily == NV_ARCH_PASCAL){
                 CardFamily = "Pascal";
               }
-              else if ((gfx->Family >= 0x50) && (gfx->Family <= 0xAF)) {
+              else if ((UFamily >= NV_ARCH_TESLA) && (UFamily < 0xB0)) { //not sure if 0xB0 is Tesla or Fermi
                 CardFamily = "Tesla";
               } else {
                 CardFamily = "unknown";
