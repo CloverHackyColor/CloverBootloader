@@ -17,6 +17,9 @@ cd "$(dirname $0)"
 declare -r SELF="${0##*/}"
 declare -r CLOVERROOT="$PWD"
 declare -r SYSNAME="$(uname)"
+declare -r DRIVERS_LEGACY="BiosDrivers" # same in buildpkg.sh
+declare -r DRIVERS_UEFI="UEFIDrivers" # same in buildpkg.sh
+
 if [[ "$SYSNAME" == Linux ]]; then
   declare -r NUMBER_OF_CPUS=$(nproc)
 else
@@ -42,7 +45,6 @@ export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
-export EXT_DOWNLOAD=0 # 0 = don't download, 1 = download precompiled, 2 = checkout & build, 3 = build
 #export NASM_PREFIX=
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
@@ -248,10 +250,6 @@ addEdk2BuildOption() {
 addEdk2BuildMacro() {
   local macro="$1"
   [[ "$macro" == "NO_GRUB_DRIVERS" ]] && M_NOGRUB=1
-  if [[ "$macro" == "USE_APPLE_HFSPLUS_DRIVER" && "$TARGETARCH" == "X64" ]]; then
-    [[ ! -e "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi ]] && return
-    M_APPLEHFS=1
-  fi
   addEdk2BuildOption "-D" "$macro"
 }
 
@@ -374,10 +372,8 @@ usage() {
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
-    print_option_help "-ia32"      "build Clover in 32-bit [boot3]"
     print_option_help "-x64"       "build Clover in 64-bit [boot6] [Default]"
     print_option_help "-mc, --x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
-    print_option_help "-a TARGETARCH, --arch=TARGETARCH" "overrides target.txt's TARGET_ARCH definition"
     print_option_help "-p PLATFORMFILE, --platform=PLATFORMFILE" "Build the platform specified by the DSC filename argument"
     print_option_help "-m MODULEFILE, --module=MODULEFILE" "Build only the module specified by the INF filename argument"
     print_option_help "-b BUILDTARGET, --buildtarget=BUILDTARGET" "using the BUILDTARGET to build the platform"
@@ -392,9 +388,9 @@ usage() {
     print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
-    print_option_help "--ext-pre" "enable external driver download"
-    print_option_help "--ext-co" "checkout & build external drivers at ..src/EXT_PACKAGES"
-    print_option_help "--ext-build" "build existing external drivers located at ..src/EXT_PACKAGES"
+    print_option_help "--ext-pre" "deprecated option"
+    print_option_help "--ext-co" "deprecated option"
+    print_option_help "--ext-build" "deprecated option"
     print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "build options:"
@@ -433,19 +429,24 @@ checkCmdlineArguments() {
             -gcc53  | --gcc53)   TOOLCHAIN=GCC53   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
-            -ia32 | --ia32)      TARGETARCH=IA32   ;;
-            -x64 | --x64)        TARGETARCH=X64    ;;
-            -mc | --x64-mcp)     TARGETARCH=X64 ; USE_BIOS_BLOCKIO=1 ;;
+            -x64 | --x64)
+                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+                sleep 4
+                ;;
+            -mc | --x64-mcp)   USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
             -fr | --force-rebuild) FORCEREBUILD=1 ;;
             -nb | --no-bootfiles) NOBOOTFILES=1 ;;
 #            -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
 #            -r | -release | --release) BUILDTARGET=RELEASE ;;
-            -a) TARGETARCH=$(argument $option "$@"); shift
+            -a) TARGETARCH=$(argument $option "$@")
+                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+                sleep 4
                 ;;
             --arch=*)
-                TARGETARCH=$(echo "$option" | sed 's/--arch=//')
+                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+                sleep 4
                 ;;
             -p) PLATFORMFILE=$(argument $option "$@"); shift
                 ;;
@@ -494,14 +495,9 @@ checkCmdlineArguments() {
             --no-lto)
                 addEdk2BuildMacro DISABLE_LTO
                 ;;
-            --ext-pre)
-                EXT_DOWNLOAD=1
-                ;;
-            --ext-co)
-                EXT_DOWNLOAD=2
-                ;;
-            --ext-build)
-                EXT_DOWNLOAD=3
+            --ext-pre | --ext-co | --ext-build)
+                printf "\`%s' is deprecated. This message will be removed soon\n" "$option" 1>&2
+                sleep 4
                 ;;
             --edk2shell) EDK2SHELL=$(argument $option "$@"); shift
                 ;;
@@ -542,93 +538,10 @@ checkToolchain() {
     esac
 }
 
-checkExtTools() {
-    case "$EXT_DOWNLOAD" in
-        1)
-          if [[ ! -x $(which wget) ]] && [[ ! -x $(which curl) ]]; then
-            echo "Missing wget or curl, will not download external drivers!"
-            EXT_DOWNLOAD=0
-          fi ;;
-        2 | 3)
-          if [[ ! -x $(which git) ]]; then
-            echo "Missing git, can't clone external drivers!"
-            EXT_DOWNLOAD=0
-          fi ;;
-    esac
-}
-
-downloadExtDriver() {
-    # Downloads latest zip release from GitHub.
-    # Usage: downloadExtDriver "org/project" "ProjectName" "ReleasePrefix" "ReleaseSuffix"
-    # Release filename is made of "${ReleasePrefix}${ReleaseTag}${ReleaseSuffix}.zip"
-    if [ -d tmp ]; then
-        echo "tmp dir already exists, aborting!"
-        return
-    fi
-
-    url="https://api.github.com/repos/${1}/releases/latest"
-    if [ "$(which curl)" != "" ]; then
-        vers=$(curl -Ls "${url}" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-    else
-        vers=$(wget -qO - "${url}" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-    fi
-
-    if [ "$vers" = "" ]; then
-        echo "Skipping ${2} due to unknown version!"
-        return
-    fi
-
-    echo "  -> Downloading ${2} version ${vers}..."
-
-    url="https://github.com/${1}/releases/download/${vers}/${3}${vers}${4}.zip"
-    ret=0
-    if [ "$(which curl)" != "" ]; then
-        curl -sOL "${url}" || ret=1
-    else
-        wget -qO "${url}" || ret=1
-    fi
-
-    if [[ "$ret" -ne 0 ]] || [ ! -f "${3}${vers}${4}.zip" ]; then
-        echo "Failed to download ${2}!"
-        return
-    fi
-
-    ret=0; mkdir tmp || ret=1
-    if [[ "$ret" -eq 0 ]]; then
-        ret=0; cd tmp || ret=1
-        if [[ "$ret" -eq 0 ]]; then
-            ret=0; unzip -q ../"${3}${vers}${4}.zip" || ret=1
-            if [[ "$ret" -eq 0 ]]; then
-                if [[ ! -d Drivers ]]; then
-                    echo "No Drivers dir!"
-                else
-                    pushd Drivers >/dev/null
-                    ret=0; for driver in *.efi; do cp -- "$driver" "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/"${driver%.*}-64.efi"; done || ret=1
-                    popd >/dev/null
-                fi
-
-                if [[ "$ret" -ne 0 ]]; then
-                    echo "Failed to copy ${2} drivers!"
-                fi
-            else
-                echo "Failed to unzip to ${3}${vers}${4}.zip!"
-            fi
-            cd - &>/dev/null
-        else
-            echo "Failed to cd to tmp dir!"
-        fi
-    else
-        echo "Failed to create tmp dir!"
-    fi
-
-    rm -rf "${3}${vers}${4}.zip" tmp
-}
-
 # Main build script
 MainBuildScript() {
     checkCmdlineArguments $@
     #checkToolchain
-    checkExtTools
     checkPatch
 
 #    echo "NASM_PREFIX: ${NASM_PREFIX}"
@@ -714,7 +627,7 @@ MainBuildScript() {
         (
             echo "Cleaning packaging files..."
             shopt -s nullglob
-            find  "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
+            find  "$CLOVER_PKG_DIR"/Bootloaders/x64/ -mindepth 1 -not -path "**/.svn*" -delete
             if [[ -d "$CLOVER_PKG_DIR"/EFI/BOOT ]]; then
                 find  "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
                 rmdir "$CLOVER_PKG_DIR"/EFI/BOOT &>/dev/null
@@ -733,7 +646,7 @@ MainBuildScript() {
         exit $?
 
     elif [[ "$TARGETRULE" == clean || "$TARGETRULE" == cleanall ]]; then
-        build --quiet -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET \
+        build --quiet -p $PLATFORMFILE  -b $BUILDTARGET \
          -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE
         [[ "$TARGETRULE" == cleanall ]] && make -C $WORKSPACE/BaseTools clean
         exit $?
@@ -802,99 +715,16 @@ MainBuildScript() {
     fi
 
     eval "$cmd"
-
-    # looks for external drivers to build
-    local EXT_PACKAGES="$EDK2DIR"/../EXT_PACKAGES
-
-    # add github links below to checkout packages
-    local extDriversDependecies=( 'https://github.com/acidanthera/AptioFixPkg'
-                                  'https://github.com/acidanthera/AppleSupportPkg'
-                                  'https://github.com/acidanthera/OcSupportPkg'
-                                  'https://github.com/acidanthera/EfiPkg')
-    # add below drivers you want to build
-    local externalDrivers=( AptioFixPkg AppleSupportPkg )
-
-  # if [[ $TOOLCHAIN == XCODE* ]]; then # this can be also for XCODE8... waiting the mantainer to do a little fix
-  # described here: https://www.insanelymac.com/forum/topic/306156-clover-problems-and-solutions/?do=findComment&comment=2638177
-    #if [[ $TOOLCHAIN == XCODE5 ]]; then
-      #Obsolete. 25.04.19
-      #extDriversDependecies+=( 'https://github.com/acidanthera/VirtualSMC' )
-      #externalDrivers+=( VirtualSmcPkg )
-    #fi
-
-    if [[ "$EXT_DOWNLOAD" -eq 2 ]]; then
-      local pkg=""
-      for link in "${extDriversDependecies[@]}"
-      do
-        mkdir -p "$EXT_PACKAGES"
-        pkg=$(basename $link)
-
-        rm -rf "${EXT_PACKAGES}/${pkg}"
-
-        local branch=master
-
-        case $pkg in
-        OcSupportPkg | EfiPkg)
-          branch=master
-        ;;
-        esac
-
-        cmd="git clone $link -b $branch ${EXT_PACKAGES}/${pkg}"
-        eval "$cmd"
-        if [[ $? -eq 0 ]]; then
-          EXT_DOWNLOAD=3
-        else
-          echo "Error: $pkg cannot be cloned!"
-          exit 1
-        fi
-        #case $pkg in
-        #VirtualSMC)
-          #cp -R "${EXT_PACKAGES}/${pkg}"/VirtualSmcPkg "${EXT_PACKAGES}"/
-          #rm -rf "${EXT_PACKAGES}/${pkg}"
-        #;;
-        #esac
-      done
-    fi
-
-    if [[ "$EXT_DOWNLOAD" -eq 3 ]]; then
-      for drv in "${externalDrivers[@]}"
-      do
-        if [[ -f "$EXT_PACKAGES"/"${drv}"/"${drv}".dsc ]]; then
-          packagesPathmunge "$EXT_PACKAGES" after
-          cmd="build"
-#          if (( $SkipAutoGen == 1 )) && (( $FORCEREBUILD == 0 )); then
-#            cmd+=" --skip-autogen"
-#          fi # SkipAutoGen is not adviced here
-          cmd+=" -a $TARGETARCH -b $BUILDTARGET -t $TOOLCHAIN -n $BUILDTHREADS"
-          cmd+=" -p ${EXT_PACKAGES}/${drv}/${drv}.dsc"
-          echo
-          echo "Running edk2 build for ${drv}${TARGETARCH} using the command:"
-          echo "$cmd"
-          eval "$cmd"
-          echo
-        else
-          echo "Error: can't find ${drv}/${drv}.dsc,"
-          echo "retry with --ext-co (require internet connection)"
-          exit 1
-        fi
-      done
-
-      if [[ $TOOLCHAIN != XCODE5 ]]; then
-        rm -f "${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"/VirtualSMC.efi 2> /dev/null
-      fi
-    fi
 }
 
 copyBin() {
   local cpSrc="$1"
   local cpDest="$2"
   local cpFile=$(basename "$2")
-  #local cpArch=32
   local cpDestDIR=$(dirname "$cpDest")
 
   [[ ! -f  "$cpSrc" || ! -d  "$cpDestDIR" ]] && return
   [[ -d  "$cpDest" ]] && cpFile=$(basename "$cpSrc")
-  #[[ "$cpFile" == *"-64"* ]] && cpArch=64
 
   echo "  -> $cpFile"
   cp -f "$cpSrc" "$cpDest" 2>/dev/null
@@ -943,15 +773,12 @@ setInitBootMsg(){
 
 # Deploy Clover files for packaging
 MainPostBuildScript() {
-    if [[ -z "$EDK_TOOLS_PATH" ]]; then
-      export BASETOOLS_DIR="$WORKSPACE"/BaseTools/Source/C/bin
-    else
-      export BASETOOLS_DIR="$EDK_TOOLS_PATH"/Source/C/bin
-    fi
-    export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
-    export APTIO_BUILD_DIR_ARCH="${WORKSPACE}/Build/AptioFixPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
-    export APFS_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
-    export VIRTUALSMC_BUILD_DIR_ARCH="${WORKSPACE}/Build/AppleSupportPkg/${BUILDTARGET}_${TOOLCHAIN}/$TARGETARCH"
+  if [[ -z "$EDK_TOOLS_PATH" ]]; then
+    export BASETOOLS_DIR="$WORKSPACE"/BaseTools/Source/C/bin
+  else
+    export BASETOOLS_DIR="$EDK_TOOLS_PATH"/Source/C/bin
+  fi
+  export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
 	if (( $NOBOOTFILES == 0 )); then
     echo Compressing DUETEFIMainFv.FV ...
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.z" "${BUILD_DIR}/FV/DUETEFIMAINFV${TARGETARCH}.Fv"
@@ -964,254 +791,189 @@ MainPostBuildScript() {
 
     echo "Generate Loader Image ..."
 	fi
-    if [[ "${TARGETARCH}" = IA32 ]]; then
-      cloverEFIFile=boot3
-      if (( $NOBOOTFILES == 0 )); then
-        "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
-        "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr32 \
-        "${BUILD_DIR}"/${TARGETARCH}/EfiLoader.efi                \
-        "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z                   \
-        "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z                  \
-        "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-        cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 \
-        "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
+
+  cloverEFIFile=boot$((6 + USE_BIOS_BLOCKIO))
+  if (( $NOBOOTFILES == 0 )); then
+    "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
+    "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
+    "$BUILD_DIR_ARCH"/EfiLoader.efi                \
+    "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
+    "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
+    "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
+    if [[ "$GENPAGE" -eq 0 && "$USE_LOW_EBDA" -ne 0 ]]; then
+      if [[ "$SYSNAME" == Linux ]]; then
+        local -r EL_SIZE=$(stat -c "%s" "${BUILD_DIR}"/FV/Efildr64)
+      else
+        local -r EL_SIZE=$(stat -f "%z" "${BUILD_DIR}"/FV/Efildr64)
       fi
-      rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers3* 2> /dev/null
-      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers3* 2> /dev/null
-
-      mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/ia32
-      mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
-      mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32
-      mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI
-      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers32
-      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers32UEFI
-
-      # CloverEFI
-      copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
-      # The following line is bad because the character '3' is at offset 0xc5 of start32H.com2, not offset 0xa9 - zenith432
-      #setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
-      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
-      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERIA32.efi
-
-      # Mandatory drivers
-      echo "Copy Mandatory drivers:"
-      copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32/FSInject-32.efi
-
-      binArray=( FSInject OsxFatBinaryDrv VBoxHfs )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/$efi-32.efi
-      done
-
-      # Optional drivers
-      echo "Copy Optional drivers:"
-      binArray=( VBoxIso9600 VBoxExt2 VBoxExt4 )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/$efi-32.efi
-      done
-
-      if [[ $M_NOGRUB -eq 0 ]] && (( $NOBOOTFILES == 0 )); then
-        binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
-        for efi in "${binArray[@]}"
-        do
-          copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/$efi-32.efi
-        done
-      fi
-
-      binArray=( Ps2KeyboardDxe Ps2MouseAbsolutePointerDxe Ps2MouseDxe UsbMouseDxe XhciDxe )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/$efi-32.efi
-      done
-
-      # Applications
-      echo "Copy Applications:"
-      copyBin "$BUILD_DIR_ARCH"/bdmesg.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/bdmesg-32.efi
-
-      if [[ "${EDK2SHELL:-}" == "MinimumShell" ]]; then
-        copyBin "${WORKSPACE}"/ShellBinPkg/MinUefiShell/Ia32/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell32.efi
-      elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then
-        copyBin "${WORKSPACE}"/ShellBinPkg/UefiShell/Ia32/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell32.efi
+      if (( $((EL_SIZE)) > 417792 )); then
+        echo 'warning: boot file bigger than low-ebda permits, switching to --std-ebda'
+        USE_LOW_EBDA=0
       fi
     fi
 
-    if [[ "$TARGETARCH" = X64 ]]; then
-      cloverEFIFile=boot$((6 + USE_BIOS_BLOCKIO))
-     if (( $NOBOOTFILES == 0 )); then
-        "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
-        "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
-        "$BUILD_DIR_ARCH"/EfiLoader.efi                \
-        "${BUILD_DIR}"/FV/DxeIpl${TARGETARCH}.z        \
-        "${BUILD_DIR}"/FV/DxeMain${TARGETARCH}.z       \
-        "${BUILD_DIR}"/FV/DUETEFIMAINFV${TARGETARCH}.z
-        if [[ "$GENPAGE" -eq 0 && "$USE_LOW_EBDA" -ne 0 ]]; then
-          if [[ "$SYSNAME" == Linux ]]; then
-            local -r EL_SIZE=$(stat -c "%s" "${BUILD_DIR}"/FV/Efildr64)
-          else
-            local -r EL_SIZE=$(stat -f "%z" "${BUILD_DIR}"/FV/Efildr64)
-          fi
-          if (( $((EL_SIZE)) > 417792 )); then
-            echo 'warning: boot file bigger than low-ebda permits, switching to --std-ebda'
-            USE_LOW_EBDA=0
-          fi
-        fi
-        local -ar COM_NAMES=(H H2 H3 H4 H5 H6 H5 H6)           # Note: (H{,2,3,4,5,6,5,6}) works in Linux bash, but not Darwin bash
-        startBlock=Start64${COM_NAMES[$((GENPAGE << 2 | USE_LOW_EBDA << 1 | USE_BIOS_BLOCKIO))]}.com
-        if [[ "$GENPAGE" -ne 0 ]]; then
-          cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/boot
-        else
-          cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
+    local -ar COM_NAMES=(H H2 H3 H4 H5 H6 H5 H6)           # Note: (H{,2,3,4,5,6,5,6}) works in Linux bash, but not Darwin bash
+    startBlock=Start64${COM_NAMES[$((GENPAGE << 2 | USE_LOW_EBDA << 1 | USE_BIOS_BLOCKIO))]}.com
+    if [[ "$GENPAGE" -ne 0 ]]; then
+      cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/boot
+    else
+      cat $BOOTSECTOR_BIN_DIR/$startBlock $BOOTSECTOR_BIN_DIR/efi64.com3 "${BUILD_DIR}"/FV/Efildr64 > "${BUILD_DIR}"/FV/Efildr20Pure
 
-          if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
-            "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
-          else
-            "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
-          fi
-          # Create CloverEFI file
-          dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
-        fi
-      fi
-
-      rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
-      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers6* 2> /dev/null
-
-      # Be sure that all needed directories exists
-      mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
-      mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
-      mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64
-      mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI
-      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64/FileVault2
-      mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2
-
-      # Install CloverEFI file
-      echo "Copy CloverEFI:"
-      copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
-      # For GENPAGE, the character "[TX]" is at offset 0x74 of Start64H[56].com, not offset 0xa9 - zenith432
-      if [[ "$GENPAGE" -eq 0 ]]; then
-        setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
-      fi
-      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
-      copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
-
-      # Mandatory drivers
-      echo "Copy Mandatory drivers:"
-# copyBin "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/FSInject-64.efi
-      binArray=( FSInject XhciDxe SMCHelper AudioDxe )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64/$efi-64.efi
-      done
-
-      binArray=( AppleImageCodec AppleKeyAggregator AppleUITheme FirmwareVolume )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/FileVault2/$efi-64.efi
-      done
-
-      binArray=( FSInject DataHubDxe SMCHelper AudioDxe )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/$efi-64.efi
-      done
-
-      binArray=( AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume )
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/$efi-64.efi
-      done
-
-      # Optional VirtualSMC
-      if [[ $TOOLCHAIN == XCODE5 ]]; then
-        copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VirtualSMC-64.efi
-        copyBin "$VIRTUALSMC_BUILD_DIR_ARCH"/VirtualSMC.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/VirtualSMC-64.efi
-      fi
-
-      if [[ $M_APPLEHFS -eq 0 ]]; then
-        copyBin "$BUILD_DIR_ARCH"/VBoxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/VBoxHfs-64.efi
+      if [[ "$USE_LOW_EBDA" -ne 0 ]]; then
+        "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -b 0x88000 -f 0x68000 -o "${BUILD_DIR}"/FV/Efildr20
       else
-        copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/HFSPlus.efi
+        "$BASETOOLS_DIR"/GenPage "${BUILD_DIR}"/FV/Efildr20Pure -o "${BUILD_DIR}"/FV/Efildr20
       fi
-
-      copyBin "$BUILD_DIR_ARCH"/ApfsDriverLoader.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI/ApfsDriverLoader-64.efi
-
-      # Optional drivers
-#echo "Copy Optional drivers:"
-      # drivers64
-      # Ps2KeyboardDxe Ps2MouseAbsolutePointerDxe
-#binArray=( )
-#for efi in "${binArray[@]}"
-#do
-#copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
-#done
-
-      if [[ $M_NOGRUB -eq 0 ]]; then
-        binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
-        for efi in "${binArray[@]}"
-        do
-          copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
-        done
-      fi
-
-      case "$EXT_DOWNLOAD" in
-        1)
-          downloadExtDriver "acidanthera/AptioFixPkg" AptioFix "AptioFix-" "-RELEASE"
-          downloadExtDriver "acidanthera/AppleSupportPkg" AppleSupport "AppleSupport-v" "-RELEASE"
-          # Fix me in future!
-          downloadExtDriver "acidanthera/VirtualSMC" VirtualSMC "" ".RELEASE"
-        ;;
-        0 | 2 | 3)
-          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioMemoryFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/AptioMemoryFix-64.efi
-          copyBin "$APTIO_BUILD_DIR_ARCH"/AptioInputFix.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/AptioInputFix-64.efi
-
-          copyBin "$APFS_BUILD_DIR_ARCH"/AppleUISupport.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/AppleUISupport-64.efi
-          binArray=( AppleImageLoader )
-          for efi in "${binArray[@]}"
-          do
-            copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
-            copyBin "$APFS_BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/$efi-64.efi
-          done
-        ;;
-      esac
-
-      # drivers64UEFI
-      binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi Fat NvmExpressDxe OsxAptioFix3Drv OsxAptioFixDrv OsxFatBinaryDrv OsxLowMemFixDrv PartitionDxe Ps2MouseDxe UsbKbDxe UsbMouseDxe VBoxExt2 VBoxExt4 VBoxIso9600)
-
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/$efi-64.efi
-      done
-
-      # drivers64UEFI/FileVault2
-      binArray=( AppleKeyFeeder HashServiceFix )
-
-      for efi in "${binArray[@]}"
-      do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/FileVault2/$efi-64.efi
-      done
-
-      # Applications
-      echo "Copy Applications:"
-      copyBin "$BUILD_DIR_ARCH"/bdmesg.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/
-
-
-      if [[ "${EDK2SHELL:-}" == "MinimumShell" ]]; then
-        copyBin "${WORKSPACE}"/ShellBinPkg/MinUefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
-      elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then
-        copyBin "${WORKSPACE}"/ShellBinPkg/UefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
-      else
-        copyBin "$BUILD_DIR_ARCH"/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
-      fi
+      # Create CloverEFI file
+      dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
     fi
 
-    echo "Done!"
+    rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
+    rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers6* 2> /dev/null
 
-    # Build and install Bootsectors
-    echo
-    echo "Generating BootSectors"
-    local BOOTHFS="$CLOVERROOT"/BootHFS
-    DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
-    echo "Done!"
+    # clean old drivers directories
+    if [[ "$DRIVERS_LEGACY" != drivers64 ]]; then
+      rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64
+      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers64
+    fi
+
+    if [[ "$DRIVERS_UEFI" != drivers64UEFI ]]; then
+      rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI
+      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI
+    fi
+
+    # Be sure that all needed directories exists
+    mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_LEGACY
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_UEFI
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileVault2
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileVault2
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/MemoryFix
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileSystem
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/HID
+    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/Other
+
+    # Install CloverEFI file
+    echo "Copy CloverEFI:"
+    copyBin "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+    # For GENPAGE, the character "[TX]" is at offset 0x74 of Start64H[56].com, not offset 0xa9 - zenith432
+    if [[ "$GENPAGE" -eq 0 ]]; then
+      setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
+    fi
+    copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
+    copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
+
+    # Mandatory drivers
+    echo "Copy Mandatory drivers:"
+    binArray=( FSInject XhciDxe SMCHelper AudioDxe )
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_LEGACY/$efi.efi
+    done
+
+    binArray=( AppleImageCodec AppleKeyAggregator AppleUITheme FirmwareVolume )
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileVault2/$efi.efi
+    done
+
+    binArray=( ApfsDriverLoader )
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem/$efi.efi
+    done
+
+    if [[ $M_APPLEHFS -eq 1 ]]; then
+      copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem/HFSPlus.efi
+    fi
+
+
+    binArray=( FSInject DataHubDxe SMCHelper AudioDxe )
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_UEFI/$efi.efi
+    done
+
+    binArray=( AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume )
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileVault2/$efi.efi
+    done
+
+    if [[ $M_NOGRUB -eq 0 ]]; then
+      binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
+      for efi in "${binArray[@]}"
+      do
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem/$efi.efi
+      done
+    fi
+
+    # drivers64UEFI
+    binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe )
+
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/Other/$efi.efi
+    done
+
+    binArray=( Ps2MouseDxe UsbKbDxe UsbMouseDxe )
+
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/HID/$efi.efi
+    done
+
+    binArray=( ApfsDriverLoader Fat VBoxExt2 VBoxExt4 VBoxIso9600 VBoxHfs )
+
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileSystem/$efi.efi
+    done
+
+    if [[ $M_APPLEHFS -eq 1 ]]; then
+      copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileSystem/HFSPlus.efi
+    fi
+
+    # drivers64UEFI/FileVault2
+    binArray=( AppleKeyFeeder HashServiceFix )
+
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileVault2/$efi.efi
+    done
+
+    # drivers64UEFI/MemoryFix
+    binArray=( OsxAptioFixDrv OsxLowMemFixDrv OsxAptioFix3Drv )
+
+    for efi in "${binArray[@]}"
+    do
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/MemoryFix/$efi.efi
+    done
+
+    # Applications
+    echo "Copy Applications:"
+    copyBin "$BUILD_DIR_ARCH"/bdmesg.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/
+
+
+    if [[ "${EDK2SHELL:-}" == "MinimumShell" ]]; then
+      copyBin "${WORKSPACE}"/ShellBinPkg/MinUefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
+    elif [[ "${EDK2SHELL:-}" == "FullShell" ]]; then
+      copyBin "${WORKSPACE}"/ShellBinPkg/UefiShell/X64/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
+    else
+      copyBin "$BUILD_DIR_ARCH"/Shell.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/tools/Shell64U.efi
+    fi
+  fi
+
+  echo "Done!"
+
+  # Build and install Bootsectors
+  echo
+  echo "Generating BootSectors"
+  local BOOTHFS="$CLOVERROOT"/BootHFS
+  DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
+  echo "Done!"
 }
 
 # BUILD START #

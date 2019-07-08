@@ -18,10 +18,15 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 driver_dir="@DRIVER_DIR@"
 driver_name="@DRIVER_NAME@"
 
-if [[ -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/HFSPlus.efi    || \
-      -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/HFSPlus-32.efi || \
-      -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/HFSPlus-64.efi ]]; then
-    echo >> "$install_log"
-    echo "Removing $driver_dir/$driver_name driver because HFSPlus driver present" >> "$install_log"
-    rm -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir/$driver_name"
+if [[ -d "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir" ]]; then
+  cd "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"
+  for driver in *.efi
+  do
+    low=$(echo "${driver}" | tr '[:upper:]' '[:lower:]')
+    if [[ "$driver" != $driver_name ]] && \
+       [[ "$low" == *aptiofix* || "$low" == *memfix*  || "$low" == *memoryfix* ]]; then
+      echo "Removing ${driver_dir}/${driver} because $driver_name is installed" >> "$install_log"
+      rm -f "${driver}"
+    fi
+  done
 fi

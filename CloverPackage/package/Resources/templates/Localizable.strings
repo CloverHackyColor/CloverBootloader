@@ -46,14 +46,6 @@ Can also be use if you don't want to upgrade MBR or PBR sectors.";
 "AltBoot_description" = "Install alternative booting PBR with choice of boot with a key pressed.
 File to boot = boot{keypressed}";
 
-
-"boot32_title" = "Install & Start 32bit boot first";
-"boot32_description" = "Install boot files and set to start 32bit first.
-Default boot to boot = Clover EFI 32bit. You can..
-Press key 1 to boot1 = Chameleon boot,
-Press key 3 to boot3 = Clover EFI 32bit boot,
-Press key 6 to boot6 = Clover EFI 64bit boot.";
-
 "boot64_title" = "Install & Start 64bit boot first";
 "boot64_description" = "Install boot files and set to start 64bit first.
 Default boot to boot = Clover EFI 64bit. You can..
@@ -66,8 +58,6 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 // ----------------------------------------------------------------------------
 "CloverEFI_title" = "CloverEFI";
 "CloverEFI_description" = "Select the version of CloverEFI to install.";
-"cloverEFI.32_title" = "CloverEFI 32-bits";
-"cloverEFI.32_description" = "CloverEFI 32-bits";
 "cloverEFI.64.sata_title" = "CloverEFI 64-bits SATA";
 "cloverEFI.64.sata_description" = "CloverEFI 64-bits using SATA to access drives";
 "cloverEFI.64.blockio_title" = "CloverEFI 64-bits BiosBlockIO";
@@ -79,84 +69,97 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 // Drivers
 // ----------------------------------------------------------------------------
 
-"Ps2KeyboardDxe-32_description" = "PS/2 keyboard driver, 32bit";
-"Ps2MouseAbsolutePointerDxe-32_description" = "PS/2 trackpad driver, 32bit";
-"Ps2MouseDxe-32_description" = "PS/2 mouse driver, 32bit";
-"UsbMouseDxe-32_description" = "USB mouse driver, 32bit";
-"VBoxExt2-32_description" = "ext2/3 filesystem driver from virtualbox, 32bit";
-"VBoxExt4-32_description" = "ext4 filesystem driver from virtualbox, 32bit";
-"XhciDxe-32_description" = "USB 3.0 driver, 32bit";
-
 "Drivers64_title" = "BIOS Drivers, 64 bit";
 "Drivers64_description" = "Select drivers for BIOS-booting.";
+
+"Recommended64_title" = "Recommended drivers";
+"Recommended64_description" = "Recommended drivers, mostly mandatory.";
+
+"FileSystem64_title" = "File System drivers";
+"FileSystem64_description" = "A collection of file system drivers.";
 
 "Drivers64FV2_title" = "FileVault 2 BIOS Drivers, 64 bit";
 "Drivers64FV2_description" = "Select drivers for BIOS-booting with FileVault 2.";
 
-"ApfsDriverLoader-64_description" = "64bit driver to load APFS filesystem driver from container";
-"AppleImageCodec-64_description" = "For decode PNG and BMP images in boot UI";
-"AppleImageLoader-64_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
-"AppleKeyAggregator-64_description" = "Support for boot UI dialog for FileVault2";
-"AppleKeyFeeder-64_description" = "Support for PS/2 keyboard to use with FileVault2";
-"AppleUISupport-64_description" = "Set of protocols for support EfiLoginUi for FileVault.";
-"AppleUITheme-64_description" = "Create boot UI Themes support";
-"AptioInputFix-64_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
-"AptioMemoryFix-64_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
-"AudioDxe-64_description" = "HDA driver to play Startup Sound";
-"FirmwareVolume-64_description" = "Create FirmwareVolume with cursor images";
-"FSInject-64_description" = "Provide injection of kexts from Clover folder.";
-"GrubEXFAT-64_description" = "ExFAT filesystem driver from GRUB.";
-"GrubISO9660-64_description" = "ISO 9600 filesystem driver from GRUB.";
-"GrubNTFS-64_description" = "NTFS filesystem driver from GRUB.";
-"GrubUDF-64_description" = "UDF filesystem driver from GRUB.";
-"SMCHelper-64_description" = "Restore SMC keys left in nvram by FakeSMC";
-"XhciDxe-64_description" = "USB 3.0 driver, 64bit";
+"ApfsDriverLoader_description" = "64bit driver to load APFS filesystem driver from container";
+"AppleImageCodec_description" = "For decode PNG and BMP images in boot UI";
+"AppleImageLoader_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleKeyAggregator_description" = "Support for boot UI dialog for FileVault2";
+"AppleKeyFeeder_description" = "Support for PS/2 keyboard to use with FileVault2";
+"AppleUISupport_description" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUITheme_description" = "Create boot UI Themes support";
+"AptioInputFix_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioMemoryFix_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
+"AudioDxe_description" = "HDA driver to play Startup Sound";
+"FirmwareVolume_description" = "Create FirmwareVolume with cursor images";
+"FSInject_description" = "Provide injection of kexts from Clover folder.";
+"GrubEXFAT_description" = "ExFAT filesystem driver from GRUB.";
+"GrubISO9660_description" = "ISO 9600 filesystem driver from GRUB.";
+"GrubNTFS_description" = "NTFS filesystem driver from GRUB.";
+"GrubUDF_description" = "UDF filesystem driver from GRUB.";
+"SMCHelper_description" = "Restore SMC keys left in nvram by FakeSMC";
+"XhciDxe_description" = "USB 3.0 driver, 64bit";
 
 "Drivers64UEFI_title" = "UEFI Drivers, 64 bit";
 "Drivers64UEFI_description" = "Select drivers for UEFI-booting.";
 
+"Recommended64UEFI_title" = "Recommended drivers";
+"Recommended64UEFI_description" = "Recommended drivers, mostly mandatory.";
+
+"HID64UEFI_title" = "Human interface devices";
+"HID64UEFI_description" = "PS2/USB drivers for mouses and keyboards.";
+
+"FileSystem64UEFI_title" = "File System drivers";
+"FileSystem64UEFI_description" = "A collection of file system drivers.";
+
+"MemoryFix64UEFI_title" = "Memory fix drivers";
+"MemoryFix64UEFI_description" = "A collection of memory fix drivers.";
+
 "Drivers64UEFIFV2_title" = "FileVault 2 UEFI Drivers, 64 bit";
 "Drivers64UEFIFV2_description" = "Select drivers for UEFI-booting with FileVault 2.";
 
-"ApfsDriverLoader-64.UEFI_description" = "64bit driver to load APFS filesystem driver from container";
-"AppleEvent-64.UEFI_description" = "Create AppleEvent protocol for FileVault2";
-"AppleGraphicsConfig-64.UEFI_description" = "Create optional AppleGraphicsConfig protocol";
-"AppleImageCodec-64.UEFI_description" = "For decode PNG and BMP images in boot UI";
-"AppleImageLoader-64.UEFI_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
-"AppleKeyAggregator-64.UEFI_description" = "Support for boot UI dialog for FileVault2";
-"AppleKeyFeeder-64.UEFI_description" = "Support for PS/2 keyboard to use with FileVault2";
-"AppleUISupport-64.UEFI_description" = "Set of protocols for support EfiLoginUi for FileVault.";
-"AppleUITheme-64.UEFI_description" = "Create boot UI Themes support";
-"AptioInputFix-64.UEFI_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
-"AptioMemoryFix-64.UEFI_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
-"AudioDxe-64.UEFI_description" = "HDA driver to play Startup Sound at boot time";
-"CsmVideoDxe-64.UEFI_description" = "64bit video driver for Clover GUI allowing to choose more resolutions.
+"Other64UEFI_title" = "Additional drivers";
+"Other64UEFI_description" = "Some times a bios UEFI may lack support for a particular protocol or some functionality.";
+
+"ApfsDriverLoader.UEFI_description" = "64bit driver to load APFS filesystem driver from container";
+"AppleEvent.UEFI_description" = "Create AppleEvent protocol for FileVault2";
+"AppleGraphicsConfig.UEFI_description" = "Create optional AppleGraphicsConfig protocol";
+"AppleImageCodec.UEFI_description" = "For decode PNG and BMP images in boot UI";
+"AppleImageLoader.UEFI_description" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleKeyAggregator.UEFI_description" = "Support for boot UI dialog for FileVault2";
+"AppleKeyFeeder.UEFI_description" = "Support for PS/2 keyboard to use with FileVault2";
+"AppleUISupport.UEFI_description" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUITheme.UEFI_description" = "Create boot UI Themes support";
+"AptioInputFix.UEFI_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioMemoryFix.UEFI_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
+"AudioDxe.UEFI_description" = "HDA driver to play Startup Sound at boot time";
+"CsmVideoDxe.UEFI_description" = "64bit video driver for Clover GUI allowing to choose more resolutions.
 It is based on CSM module in UEFI BIOS and required CSM will be enabled.
 Clover may not started with it and you may have wake problem in system.
 Use with precautions.";
-"DataHubDxe-64.UEFI_description" = "This is DataHub protocol support mandatory for MacOSX.
+"DataHubDxe.UEFI_description" = "This is DataHub protocol support mandatory for MacOSX.
 Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
-"EmuVariableUefi-64.UEFI_description" = "Workaround for store UEFI variables without UEFI.";
-"EnglishDxe-64.UEFI_description" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
-"Fat-64.UEFI_description" = "FAT filesystem driver.";
-"FirmwareVolume-64.UEFI_description" = "Create FirmwareVolume with cursor images";
-"FSInject-64.UEFI_description" = "Provide injection of kexts from Clover folder.";
-"HashServiceFix-64.UEFI_description" = "Fix Hash support if absent in native UEFI BIOS";
+"EmuVariableUefi.UEFI_description" = "Workaround for store UEFI variables without UEFI.";
+"EnglishDxe.UEFI_description" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"Fat.UEFI_description" = "FAT filesystem driver.";
+"FirmwareVolume.UEFI_description" = "Create FirmwareVolume with cursor images";
+"FSInject.UEFI_description" = "Provide injection of kexts from Clover folder.";
+"HashServiceFix.UEFI_description" = "Fix Hash support if absent in native UEFI BIOS";
 "HFSPlus.UEFI_description" = "Alternate HFS+ filesystem driver.";
-"NvmExpressDxe-64.UEFI_description" = "Driver for support NVM Express devices.";
-"OsxAptioFix3Drv-64.UEFI_description" = "Alternate driver (v3) to fix Memory problems on UEFI firmware.";
-"OsxAptioFixDrv-64.UEFI_description" = "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
-"OsxFatBinaryDrv-64.UEFI_description" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
-"OsxLowMemFixDrv-64.UEFI_description" = "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)";
-"PartitionDxe-64.UEFI_description" = "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
-"Ps2MouseDxe-64.UEFI_description" = "PS/2 mouse driver, 64bit";
-"SMCHelper-64.UEFI_description" = "Restore SMC keys left in nvram by FakeSMC";
-"UsbKbDxe-64.UEFI_description" = "Keyboard driver for boot UI support";
-"UsbMouseDxe-64.UEFI_description" = "USB mouse driver, 64bit";
-"VBoxExt2-64.UEFI_description" = "ext2/3 filesystem driver from virtualbox, 64bit";
-"VBoxExt4-64.UEFI_description" = "ext4 filesystem driver from virtualbox, 64bit";
-"VBoxHfs-64.UEFI_description" = "HFS+ filesystem driver.";
-"VBoxIso9600-64.UEFI_description" = "ISO 9600 filesystem driver.";
+"NvmExpressDxe.UEFI_description" = "Driver for support NVM Express devices.";
+"OsxAptioFix3Drv.UEFI_description" = "Alternate driver (v3) to fix Memory problems on UEFI firmware.";
+"OsxAptioFixDrv.UEFI_description" = "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
+"OsxFatBinaryDrv.UEFI_description" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxLowMemFixDrv.UEFI_description" = "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)";
+"PartitionDxe.UEFI_description" = "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"Ps2MouseDxe.UEFI_description" = "PS/2 mouse driver, 64bit";
+"SMCHelper.UEFI_description" = "Restore SMC keys left in nvram by FakeSMC";
+"UsbKbDxe.UEFI_description" = "Keyboard driver for boot UI support";
+"UsbMouseDxe.UEFI_description" = "USB mouse driver, 64bit";
+"VBoxExt2.UEFI_description" = "ext2/3 filesystem driver from virtualbox, 64bit";
+"VBoxExt4.UEFI_description" = "ext4 filesystem driver from virtualbox, 64bit";
+"VBoxHfs.UEFI_description" = "HFS+ filesystem driver.";
+"VBoxIso9600.UEFI_description" = "ISO 9600 filesystem driver.";
 
 // ============================================================================
 // Themes
