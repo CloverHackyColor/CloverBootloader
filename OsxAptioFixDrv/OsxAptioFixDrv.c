@@ -286,7 +286,7 @@ MOAllocatePages (
     // but also implies memory is 'stacked', which it is not.
     if (UpperAddr >= EFI_PAGES_TO_SIZE(gRelocSizePages)) {
 			// no - exceeds our block - signal error
-			Print(L"OsxAptipFixDrv: Error - requested memory exceeds our allocated relocation block\n");
+			Print(L"OsxAptioFixDrv: Error - requested memory exceeds our allocated relocation block\n");
 			Print(L"Requested mem: %lx - %lx, Pages: %x, Size: %lx\n",
 				  *Memory, UpperAddr - 1,
 				  NumberOfPages, EFI_PAGES_TO_SIZE(NumberOfPages)

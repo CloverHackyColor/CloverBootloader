@@ -378,15 +378,15 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.9", "W88GG136DHJQ", "iMac-Aluminum",
     { 0x01, 0x72, 0x0f, 0, 0, 0x02 },  "k62", "k62", 0x75005 },
   //iMac13,1 / iMac (21.5-inch, Late 2012)
-  { "iMac13,1", "IM131.88Z.F000.B00.1905251201", "286.0.0.0.0", "Mac-00BE6ED71E35EB86", // Intel Core i7-3770S @ 3.10 GHz
+  { "iMac13,1", "IM131.88Z.F000.B00.1906132045", "287.0.0.0.0", "Mac-00BE6ED71E35EB86", // Intel Core i7-3770S @ 3.10 GHz
     "iMac", "1.0", "C02JA041DNCT", "iMac-Aluminum",
     { 0x02, 0x09, 0x0f, 0, 0, 0x05 },  "d8", "d8", 0x78006 },
   //iMac13,2 / iMac (27-inch, Late 2012)
-  { "iMac13,2", "IM131.88Z.F000.B00.1904161750", "285.0.0.0.0", "Mac-FC02E91DDD3FA6A4", // Intel Core i5-3470 @ 3.20 GHz
+  { "iMac13,2", "IM131.88Z.F000.B00.1906132045", "287.0.0.0.0", "Mac-FC02E91DDD3FA6A4", // Intel Core i5-3470 @ 3.20 GHz
     "iMac", "1.0", "C02JB041DNCW", "iMac-Aluminum",
     { 0x02, 0x11, 0x0f, 0, 0, 0x16 },  "d8", "d8", 0x79006 },
   //iMac13,3 / iMac (21.5-inch, Early 2013) - not exists in server
-  { "iMac13,3", "IM131.88Z.F000.B00.1904161750", "285.0.0.0.0", "Mac-7DF2A3B5E5D671ED", // Intel Core i3-3225 @ 3.30 GHz
+  { "iMac13,3", "IM131.88Z.F000.B00.1906132045", "287.0.0.0.0", "Mac-7DF2A3B5E5D671ED", // Intel Core i3-3225 @ 3.30 GHz
     "iMac", "1.0", "C02KVHACFFYV", "iMac-Aluminum",
     { 0x02, 0x13, 0x0f, 0, 0, 0x15 },  "d8", "d8", 0x79006 }, // need EPCI
   //iMac14,1 / iMac (21.5-inch, Late 2013)
