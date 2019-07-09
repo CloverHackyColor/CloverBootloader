@@ -1,0 +1,21 @@
+## Sample template: script config tpl
+## As a template, for reference only
+## This file should keep untouched and served from repo for any update / more samples
+## Purpose is to store any predefined script option / other things
+## Script should read (final) config.txt first & be overwritten by any matched user arguments
+
+VBIOSPATCHCLOVEREFI=1
+ONLYSATA0PATCH=1
+USE_LOW_EBDA=0
+GENPAGE=1
+
+TOOLCHAIN_DIR=
+CONF_PATH=
+
+## OSX
+
+## LINUX
+
+## Windows
+CYGWIN_HOME=
+PYTHONPATH=
