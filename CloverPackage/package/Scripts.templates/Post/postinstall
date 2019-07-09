@@ -59,7 +59,7 @@ while read -r -u3 theme_plist; do
     [[ -n "config_theme" && "$config_theme" == "$theme" ]] && theme_found=1
     themes_installed+=("$theme")
     index=$((index + 1))
-done 3< <(find "${EFI_ROOT_DIR}"/EFI/CLOVER/themes -iname 'theme.plist' 2>/dev/null)
+done 3< <(find "${EFI_ROOT_DIR}"/EFI/CLOVER/themes \( -iname 'theme.plist' -or -iname 'theme.svg' \) 2>/dev/null)
 
 # Replace theme if theme directory not found
 if [[ "$theme_found" -eq 0 ]]; then

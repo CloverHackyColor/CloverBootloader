@@ -106,7 +106,7 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "Recommended64UEFI_title" = "Recommended drivers";
 "Recommended64UEFI_description" = "Recommended drivers, mostly mandatory.";
 
-"HID64UEFI_title" = "Human interface devices";
+"HID64UEFI_title" = "Human Interface Devices";
 "HID64UEFI_description" = "PS2/USB drivers for mouses and keyboards.";
 
 "FileSystem64UEFI_title" = "File System drivers";

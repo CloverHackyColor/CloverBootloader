@@ -18,8 +18,8 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 driver_dir="@DRIVER_DIR@"
 driver_name="@DRIVER_NAME@"
 
-if [[ -d "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir" ]]; then
-  cd "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"
+if [[ -d "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir" ]]; then
+  cd "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir"
   if [[ $driver_name == VBoxHfs.efi ]]; then
     for driver in *.efi
     do

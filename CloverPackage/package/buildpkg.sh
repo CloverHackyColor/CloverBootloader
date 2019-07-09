@@ -103,8 +103,9 @@ else
 fi
 
 # ====== GLOBAL VARIABLES ======
-declare -r DRIVERS_LEGACY="BiosDrivers" # same in ebuild.sh
-declare -r DRIVERS_UEFI="UEFIDrivers" # same in ebuild.sh
+declare -r DRIVERS_LEGACY="BIOS" # same in ebuild.sh/makeiso
+declare -r DRIVERS_UEFI="UEFI"   # same in ebuild.sh/makeiso
+declare -r DRIVERS_OFF="off"     # same in ebuild.sh/makeiso
 declare -r LOG_FILENAME="Clover_Installer_Log.txt"
 declare -r CLOVER_INSTALLER_PLIST="/Library/Preferences/com.projectosx.clover.installer.plist"
 
@@ -620,6 +621,21 @@ fi
      ${SRCROOT}/CloverV2/EFI/BOOT ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
      ${SRCROOT}/CloverV2/EFI/CLOVER ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
+
+    # Regroup off drivers
+    driversKinds=( FileVault2 MemoryFix FileSystem HID Other )
+    for d in "${SRCROOT}"/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/*; do
+      if [ -d "$d" ]; then
+        for k in "${driversKinds[@]}"; do
+          kind="${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/drivers/$DRIVERS_OFF/$k"
+          if [ -d "${d}/${k}" ]; then
+            mkdir -p "${kind}"
+            find "${d}/${k}" -type f -name '*.efi' -exec cp -R {} "${kind}"/ \;
+          fi
+        done
+      fi
+    done
+
     # config.plist
     rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/config.plist &>/dev/null
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
@@ -770,7 +786,7 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
 fi
 
 # build mandatory drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/$DRIVERS_LEGACY" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_LEGACY" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "================= drivers64 mandatory =================="
     addGroupChoices --title="Drivers64" --description="Drivers64"  \
       --enabled="!choices['UEFI.only'].selected"     \
@@ -784,8 +800,8 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/$DRIVERS_LEGACY" && ${NOEXTRAS} != *"Cl
       "Recommended64"
 
     packagesidentity="${clover_package_identity}".drivers64.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/$DRIVERS_LEGACY" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_LEGACY"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_LEGACY" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -822,11 +838,11 @@ fi
 # End mandatory drivers-x64 packages
 
 # build drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "===================== drivers64 ========================"
     packagesidentity="${clover_package_identity}".drivers64
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_LEGACY"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -850,12 +866,12 @@ fi
 # End build drivers-x64 packages
 
 # build FileSystem drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileSystem"  && ${NOEXTRAS} != *"CloverEFI"* ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem"  && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "=============== drivers64 FileSystem ==================="
     addGroupChoices --title="FileSystem64" --description="FileSystem64" --parent=Drivers64 "FileSystem64"
     packagesidentity="${clover_package_identity}".drivers64
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileSystem" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_LEGACY"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -877,8 +893,8 @@ if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileSystem"  && ${NOEX
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
 
         if [[ $driver == VBoxHfs* || $driver == HFSPlus* ]] && \
-           [[ -f "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileSystem/VBoxHfs.efi" ]] && \
-           [[ -f "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileSystem/HFSPlus.efi" ]]; then
+           [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/VBoxHfs.efi" ]] && \
+           [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/HFSPlus.efi" ]]; then
 
           if [[ $driver == VBoxHfs* ]]; then
             addChoice --group="FileSystem64"  --title="$driverName"                \
@@ -906,7 +922,7 @@ fi
 # End build FileSystem drivers-x64 packages
 
 # build FileVault drivers-x64 packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileVault2" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2" && ${NOEXTRAS} != *"CloverEFI"* ]]; then
     echo "=============== drivers64 FileVault2 ==================="
       addGroupChoices --title="Drivers64FV2" --description="Drivers64FV2"  \
       --enabled="!choices['UEFI.only'].selected"     \
@@ -914,8 +930,8 @@ if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileVault2" && ${NOEXT
        --parent=Drivers64 \
       "Drivers64FV2"
     packagesidentity="${clover_package_identity}".fv2.drivers64
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_LEGACY/FileVault2" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_LEGACY"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -948,13 +964,13 @@ fi
 # End build FileVault drivers-x64 packages
 
 # build mandatory drivers-x64UEFI packages
-if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/$DRIVERS_UEFI" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_UEFI" ]]; then
     echo "=============== drivers64 UEFI mandatory ==============="
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     addGroupChoices --title="Recommended64UEFI" --description="Recommended64UEFI" --parent=Drivers64UEFI "Recommended64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/$DRIVERS_UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -987,11 +1003,11 @@ fi
 # End mandatory drivers-x64UEFI packages
 
 # build drivers-x64UEFI packages 
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI" ]]; then
     echo "=================== drivers64 UEFI ====================="
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1013,12 +1029,12 @@ fi
 # End build drivers-x64UEFI packages
 
 # build HID drivers-x64UEFI packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/HID" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID" ]]; then
     echo "============= drivers64 UEFI HID ========================"
     addGroupChoices --title="HID64UEFI" --description="HID64UEFI" --parent=Drivers64UEFI "HID64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/HID" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1043,12 +1059,12 @@ fi
 # End build HID drivers-x64UEFI packages
 
 # build FileSystem drivers-x64UEFI packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileSystem" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem" ]]; then
     echo "============= drivers64 UEFI FileSystem ================="
     addGroupChoices --title="FileSystem64UEFI" --description="FileSystem64UEFI" --parent=Drivers64UEFI "FileSystem64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileSystem" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1070,8 +1086,8 @@ if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileSystem" ]]; then
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
 
         if [[ $driver == VBoxHfs* || $driver == HFSPlus* ]] && \
-           [[ -f "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi" ]] && \
-           [[ -f "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileSystem/HFSPlus.efi" ]]; then
+           [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi" ]] && \
+           [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/HFSPlus.efi" ]]; then
 
           if [[ $driver == VBoxHfs* ]]; then
             addChoice --group="FileSystem64UEFI"  --title="$driverName"                \
@@ -1099,12 +1115,12 @@ fi
 # End build FileSystem drivers-x64UEFI packages
 
 # build MemoryFix drivers-x64UEFI packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/MemoryFix" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix" ]]; then
     echo "============= drivers64 UEFI MemoryFix ================="
     addGroupChoices --title="MemoryFix64UEFI" --description="MemoryFix64UEFI" --parent=Drivers64UEFI --exclusive_zero_or_one_choice "MemoryFix64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/MemoryFix" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1134,12 +1150,12 @@ fi
 # End build FileVault drivers-x64UEFI packages
 
 # build FileVault drivers-x64UEFI packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileVault2" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2" ]]; then
     echo "============= drivers64 UEFI FileVault2 ================"
     addGroupChoices --title="Drivers64UEFIFV2" --description="Drivers64UEFIFV2"  --parent=Drivers64UEFI "Drivers64UEFIFV2"
     packagesidentity="${clover_package_identity}".fv2.drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/FileVault2" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1169,12 +1185,12 @@ fi
 # End build FileVault drivers-x64UEFI packages
 
 # build 'Other' drivers-x64UEFI packages
-if [[ -d "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/Other" ]]; then
+if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Other" ]]; then
     echo "============= drivers64 UEFI Other ======================"
     addGroupChoices --title="Other64UEFI" --description="Other64UEFI" --parent=Drivers64UEFI "Other64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/$DRIVERS_UEFI/Other" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/$DRIVERS_UEFI"
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Other" -type f -name '*.efi' -depth 1 | sort -f ))
+    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"

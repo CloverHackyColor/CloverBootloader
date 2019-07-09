@@ -18,9 +18,9 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 driver_dir="@DRIVER_DIR@"
 driver_name="@DRIVER_NAME@"
 
-if [[ -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/AppleUiSupport.efi || \
-      -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir"/AppleUiSupport-64.efi ]]; then
+if [[ -f "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir"/AppleUiSupport.efi || \
+      -f "$EFI_ROOT_DIR/EFI/CLOVER//drivers/$driver_dir"/AppleUiSupport-64.efi ]]; then
     echo >> "$install_log"
     echo "Removing $driver_dir/$driver_name driver because AppleUiSupport driver present" >> "$install_log"
-    rm -f "$EFI_ROOT_DIR/EFI/CLOVER/$driver_dir/$driver_name"
+    rm -f "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir/$driver_name"
 fi

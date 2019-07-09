@@ -176,24 +176,26 @@ done
 
 # Move old drivers64 to drivers and drivers64UEFI to driversUEFI
 if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" && \
-    ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_LEGACY@" ]]; then
-  mv "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_LEGACY@"
+    ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@" ]]; then
+  mkdir -p "${EFI_ROOT_DIR}/EFI/CLOVER/drivers"
+  cp "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
 fi
 
 if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" && \
-    ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_UEFI@" ]]; then
-  mv "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_UEFI@"
+    ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@" ]]; then
+  mkdir -p "${EFI_ROOT_DIR}/EFI/CLOVER/drivers"
+  cp "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@"
 fi
 
 # Rename drivers to not use the -x64 suffix (DataHubDxe-64.efi -> DataHubDxe.efi).
 # This is needed to let this package overwrite newer drivers w/o leaving duplicates with '-64'
-if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_LEGACY@" ]]; then
-  cd "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_LEGACY@"
+if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@" ]]; then
+  cd "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
   for driver in *.efi; do mv "${driver}" "${driver/-64.efi/.efi}"; done
 fi
 
-if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_UEFI@" ]]; then
-  cd "${EFI_ROOT_DIR}/EFI/CLOVER/@CLOVER_DRIVERS_UEFI@"
+if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@" ]]; then
+  cd "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@"
   for driver in *.efi; do mv "${driver}" "${driver/-64.efi/.efi}"; done
 fi
 

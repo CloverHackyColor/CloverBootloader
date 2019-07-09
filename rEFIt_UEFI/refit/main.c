@@ -1507,14 +1507,14 @@ static VOID LoadDrivers(VOID)
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
   if (gFirmwareClover) {
-    if (FileExists(SelfRootDir, L"\\EFI\\CLOVER\\BiosDrivers")) {
-      ScanDriverDir(L"\\EFI\\CLOVER\\BiosDrivers", &DriversToConnect, &DriversToConnectNum);
+    if (FileExists(SelfRootDir, L"\\EFI\\CLOVER\\drivers\\BIOS")) {
+      ScanDriverDir(L"\\EFI\\CLOVER\\drivers\\BIOS", &DriversToConnect, &DriversToConnectNum);
     } else {
       ScanDriverDir(L"\\EFI\\CLOVER\\drivers64", &DriversToConnect, &DriversToConnectNum);
     }
   } else
-  if (FileExists(SelfRootDir, L"\\EFI\\CLOVER\\UEFIDrivers")) {
-    ScanDriverDir(L"\\EFI\\CLOVER\\UEFIDrivers", &DriversToConnect, &DriversToConnectNum);
+  if (FileExists(SelfRootDir, L"\\EFI\\CLOVER\\drivers\\UEFI")) {
+    ScanDriverDir(L"\\EFI\\CLOVER\\drivers\\UEFI", &DriversToConnect, &DriversToConnectNum);
   } else {
     ScanDriverDir(L"\\EFI\\CLOVER\\drivers64UEFI", &DriversToConnect, &DriversToConnectNum);
   }

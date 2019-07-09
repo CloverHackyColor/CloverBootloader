@@ -3,6 +3,11 @@
 # Reset default charset for GNUsed problems...
 export LC_ALL=C
 
+# ====== GLOBAL VARIABLES ======
+declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/ebuild.sh
+declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/ebuild.sh
+declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/ebuild.sh
+
 # Check that the caller is make
 caller=$(ps -p $PPID -o comm=)
 if [[ "$caller" != "make" ]]; then
@@ -25,18 +30,12 @@ PKG_BUILD_DIR=${SYMROOT}/package
 IMGROOT=${SYMROOT}/CloverCD
 IMGSKELROOT=${SRCROOT}/imgskel
 CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
-#CDBOOT32=${IMGROOT}/usr/standalone/i386/cdboot32
 EFIROOT=${SRCROOT}/CloverV2/EFI
 
 REVISION=$(cat ../vers.txt)
 PRODUCT=Clover-v2.4k-${REVISION}
 CDLABEL=${PRODUCT}-X64
-#CDLABEL32=${PRODUCT}-IA32
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
-#ISOIMAGE32=${SYMROOT}/${CDLABEL32}.iso
-
-IMAGE_WITH_IA32=0
-#[[ -f ${CLOVERROOT}/Bootloaders/ia32/boot3 ]] && IMAGE_WITH_IA32=1
 
 rm -rf sym/CloverCD
 rm -rf sym/CloverISO
@@ -61,26 +60,12 @@ stat "$STAT_PARAM" ${CLOVERROOT}/Bootloaders/x64/boot6 \
  | dd of=${SYMROOT}/i386/cdboot bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
 
 
-#if [[ $IMAGE_WITH_IA32 -eq 1 ]];then
-#    echo "===================== Creating cdboot32 ===================="
-#    mkdir -p ${SYMROOT}/i386
-#    cp -f ${CLOVERROOT}/BootSectors/cdboot ${SYMROOT}/i386/cdboot32
-#    dd if=${CLOVERROOT}/Bootloaders/ia32/boot3 of=${SYMROOT}/i386/cdboot32 conv=sync bs=2k seek=1 &> /dev/null
-
-#    echo "Update cdboot32 with boot file size info"
-#    stat "$STAT_PARAM" ${CLOVERROOT}/Bootloaders/ia32/boot3 \
-#     | perl -ane "print pack('V',@F[0]);" \
-#     | dd of=${SYMROOT}/i386/cdboot32 bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
-#fi
-
-
 echo "======================= Creating ISO ======================="
 echo "[RM] ${IMGROOT}"
 rm -rf ${IMGROOT}
 echo "[MKDIR] ${IMGROOT}/usr/standalone/i386"
 mkdir -p ${IMGROOT}/usr/standalone/i386
 mkdir -p ${IMGROOT}/usr/standalone/i386/x64
-#mkdir -p ${IMGROOT}/usr/standalone/i386/ia32
 echo "[MKDIR] ${IMGROOT}/EFI/BOOT"
 mkdir -p ${IMGROOT}/EFI/BOOT
 echo "[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
@@ -99,52 +84,51 @@ mkdir -p "${IMGROOT}/Library/PreferencePanes"
 cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
-#if [[ ${IMAGE_WITH_IA32} -eq 1 ]]; then
-#    echo "[CP] cdboot32"
-#    cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
-#fi
 echo "[CP] Clovy"
 cp -r -f ${CLOVERROOT}/themespkg/Clovy ${IMGROOT}/EFI/CLOVER/themes/
 echo "[CP] BOOTX64"
 cp -f ${CLOVERROOT}/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
 echo "[CP] CLOVERX64"
 cp -f ${CLOVERROOT}/EFI/CLOVER/CLOVERX64.efi ${IMGROOT}/EFI/CLOVER/
-#if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
-#    echo "[CP] BOOTIA32"
-#    cp -f ${CLOVERROOT}/EFI/BOOT/BOOTIA32.efi ${IMGROOT}/EFI/BOOT/
-#    echo "[CP] CLOVERIA32"
-#    cp -f ${CLOVERROOT}/EFI/CLOVER/CLOVERIA32.efi ${IMGROOT}/EFI/CLOVER/
-#fi
+
 # echo "CP font"
 # cp -r -f ${CLOVERROOT}/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
 # echo "CP config.plist"
 cp -f ${CLOVERROOT}/EFI/CLOVER/config-sample.plist ${IMGROOT}/EFI/CLOVER/config.plist
-echo "[CP] drivers64"
-cp -r -f ${CLOVERROOT}/EFI/CLOVER/BiosDrivers ${IMGROOT}/EFI/CLOVER/
-cp -r -f ${CLOVERROOT}/EFI/CLOVER/UEFIdrivers ${IMGROOT}/EFI/CLOVER/
+echo "[CP] drivers/$DRIVERS_LEGACY"
+mkdir -p ${IMGROOT}/EFI/CLOVER/drivers
+cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY ${IMGROOT}/EFI/CLOVER/drivers/
+echo "[CP] drivers/$DRIVERS_UEFI"
+cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI ${IMGROOT}/EFI/CLOVER/drivers/
 echo "[CP] kexts and OEM"
 cp -r -f ${CLOVERROOT}/ThirdParty/* ${IMGROOT}/EFI/CLOVER/
 echo "[CP] tools"
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
 echo "[CP] doc"
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
-#if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
-#    echo "[CP] drivers32"
-#    cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers32 ${IMGROOT}/EFI/CLOVER/
-#    cp -f ${CLOVERROOT}/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/
-#    cp -f ${CLOVERROOT}/drivers-Off/drivers32/Ps2MouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/
-#fi
 echo "[CP] drivers-off"
-cp -f ${CLOVERROOT}/drivers-Off/drivers64UEFI/UsbMouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
-cp -f ${CLOVERROOT}/drivers-Off/drivers64UEFI/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
-#if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
-#    rsync -r ${CLOVERROOT}/drivers-Off ${IMGROOT}/EFI/CLOVER/
-#else
-#    rsync -r ${CLOVERROOT}/drivers-Off --exclude='drivers32*' ${IMGROOT}/EFI/CLOVER/
-#fi
+
+# Regroup off drivers
+driversKinds=( FileVault2 MemoryFix FileSystem HID Other )
+for d in ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/*; do
+ if [ -d "$d" ]; then
+  for k in "${driversKinds[@]}"; do
+    kind="${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$k"
+    if [ -d "${d}/${k}" ]; then
+      mkdir -p "${kind}"
+      find "${d}/${k}" -type f -name '*.efi' -exec cp -R {} "${kind}"/ \;
+    fi
+  done
+  fi
+done
+
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/UsbMouseDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/Ps2MouseDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
 echo "[CP] boot"
 cp -f ${CLOVERROOT}/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/
-[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f ${CLOVERROOT}/Bootloaders/ia32/boot? ${IMGROOT}/usr/standalone/i386/ia32/
+
 cp -f ${CLOVERROOT}/BootSectors/boot0af  ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot0ss  ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot0md  ${IMGROOT}/usr/standalone/i386
@@ -164,6 +148,7 @@ rm -rf ${IMGROOT}/*/*/*/.s*
 rm -rf ${IMGROOT}/*/*/*/*/.s*
 echo "[HDIUTIL] ${ISOIMAGE}"
 mkdir -p ${SYMROOT}/CloverISO-${REVISION}
+
 if [[ "$SYSNAME" == Linux ]]; then
 genisoimage -J -hfs -hfs-volid ${CDLABEL} -D -b usr/standalone/i386/cdboot -no-emul-boot -quiet -o "${ISOIMAGE}" ${IMGROOT}
 else
@@ -172,20 +157,10 @@ hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name ${CDLABEL}  \
  ${IMGROOT} -quiet
 fi
 mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO-${REVISION}/
-if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
-    echo "[HDIUTIL] ${ISOIMAGE32}"
-    if [[ "$SYSNAME" == Linux ]]; then
-    genisoimage -J -hfs -hfs-volid ${CDLABEL32} -D -b usr/standalone/i386/cdboot32 -no-emul-boot -quiet -o "${ISOIMAGE32}" ${IMGROOT}
-    else
-    hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name ${CDLABEL32}  \
-     -eltorito-boot ${CDBOOT32} -no-emul-boot -ov -o "${ISOIMAGE32}"    \
-     ${IMGROOT} -quiet
-    fi
-    mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO-${REVISION}/
-fi
 echo "[TAR] CloverISO-${REVISION}"
 tar -cv -f ${SYMROOT}/CloverISO-${REVISION}.tar -C ${SYMROOT}/CloverISO-${REVISION} .
 echo "[LZMA] CloverISO-${REVISION}"
+
 if [[ "$SYSNAME" == Linux ]]; then
 xz -f -S .lzma ${SYMROOT}/CloverISO-${REVISION}.tar
 else

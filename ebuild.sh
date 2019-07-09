@@ -17,8 +17,9 @@ cd "$(dirname $0)"
 declare -r SELF="${0##*/}"
 declare -r CLOVERROOT="$PWD"
 declare -r SYSNAME="$(uname)"
-declare -r DRIVERS_LEGACY="BiosDrivers" # same in buildpkg.sh
-declare -r DRIVERS_UEFI="UEFIDrivers" # same in buildpkg.sh
+declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/makeiso
+declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/makeiso
+declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/makeiso
 
 if [[ "$SYSNAME" == Linux ]]; then
   declare -r NUMBER_OF_CPUS=$(nproc)
@@ -638,7 +639,7 @@ MainBuildScript() {
                 rmdir "$dir" &>/dev/null
             done
             find  "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
-            for dir in "$CLOVER_PKG_DIR"/drivers-Off/drivers*; do
+            for dir in "$CLOVER_PKG_DIR"/drivers/$DRIVERS_OFF/*; do
                 find  "$dir" -mindepth 1 -not -path "**/.svn*" -delete
             done
         )
@@ -828,32 +829,32 @@ MainPostBuildScript() {
       dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
     fi
 
-    rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers6* 2> /dev/null
-    rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers6* 2> /dev/null
+    rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers 2> /dev/null
 
     # clean old drivers directories
     if [[ "$DRIVERS_LEGACY" != drivers64 ]]; then
       rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64
-      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers64
     fi
 
     if [[ "$DRIVERS_UEFI" != drivers64UEFI ]]; then
       rm -rf "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI
-      rm -rf "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI
     fi
+
+    rm -rf "$CLOVER_PKG_DIR"/CloverV2/drivers-Off
 
     # Be sure that all needed directories exists
     mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
     mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
-    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_LEGACY
-    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_UEFI
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileVault2
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileVault2
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/MemoryFix
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileSystem
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/HID
-    mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/Other
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_LEGACY
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI
+    # off drivers
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID
+    mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Other
 
     # Install CloverEFI file
     echo "Copy CloverEFI:"
@@ -870,43 +871,43 @@ MainPostBuildScript() {
     binArray=( FSInject XhciDxe SMCHelper AudioDxe )
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_LEGACY/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_LEGACY/$efi.efi
     done
 
     binArray=( AppleImageCodec AppleKeyAggregator AppleUITheme FirmwareVolume )
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileVault2/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2/$efi.efi
     done
 
     binArray=( ApfsDriverLoader )
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/$efi.efi
     done
 
     if [[ $M_APPLEHFS -eq 1 ]]; then
-      copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem/HFSPlus.efi
+      copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/HFSPlus.efi
     fi
 
 
     binArray=( FSInject DataHubDxe SMCHelper AudioDxe )
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/$DRIVERS_UEFI/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi
     done
 
     binArray=( AppleImageCodec AppleUITheme AppleKeyAggregator FirmwareVolume )
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileVault2/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2/$efi.efi
     done
 
     if [[ $M_NOGRUB -eq 0 ]]; then
       binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
       for efi in "${binArray[@]}"
       do
-        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_LEGACY/FileSystem/$efi.efi
+        copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/$efi.efi
       done
     fi
 
@@ -915,25 +916,25 @@ MainPostBuildScript() {
 
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/Other/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Other/$efi.efi
     done
 
     binArray=( Ps2MouseDxe UsbKbDxe UsbMouseDxe )
 
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/HID/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/$efi.efi
     done
 
     binArray=( ApfsDriverLoader Fat VBoxExt2 VBoxExt4 VBoxIso9600 VBoxHfs )
 
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileSystem/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/$efi.efi
     done
 
     if [[ $M_APPLEHFS -eq 1 ]]; then
-      copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileSystem/HFSPlus.efi
+      copyBin "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/HFSPlus.efi
     fi
 
     # drivers64UEFI/FileVault2
@@ -941,7 +942,7 @@ MainPostBuildScript() {
 
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/FileVault2/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2/$efi.efi
     done
 
     # drivers64UEFI/MemoryFix
@@ -949,7 +950,7 @@ MainPostBuildScript() {
 
     for efi in "${binArray[@]}"
     do
-      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/drivers-Off/$DRIVERS_UEFI/MemoryFix/$efi.efi
+      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/$efi.efi
     done
 
     # Applications
