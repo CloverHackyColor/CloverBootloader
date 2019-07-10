@@ -68,6 +68,9 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 // ============================================================================
 // Drivers
 // ----------------------------------------------------------------------------
+"off_title" = "Drivers off";
+"off_description" = "Installs all available drivers in EFI/CLOVER/drivers/off/
+off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be.";
 
 "Drivers64_title" = "BIOS Drivers, 64 bit";
 "Drivers64_description" = "Select drivers for BIOS-booting.";

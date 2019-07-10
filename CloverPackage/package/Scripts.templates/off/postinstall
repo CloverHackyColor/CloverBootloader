@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+DEST_VOL="${3}"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+driver_dir="@DRIVER_DIR@"
+
+# clean some unused paths
+driversKinds=( FileVault2 MemoryFix FileSystem HID Other )
+for k in "${driversKinds[@]}"
+do
+    rm -rf "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir/$k"
+done

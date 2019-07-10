@@ -109,23 +109,36 @@ cp -r -f ${CLOVERROOT}/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
 echo "[CP] drivers-off"
 
 # Regroup off drivers
-driversKinds=( FileVault2 MemoryFix FileSystem HID Other )
-for d in ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/*; do
- if [ -d "$d" ]; then
-  for k in "${driversKinds[@]}"; do
-    kind="${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$k"
-    if [ -d "${d}/${k}" ]; then
-      mkdir -p "${kind}"
-      find "${d}/${k}" -type f -name '*.efi' -exec cp -R {} "${kind}"/ \;
-    fi
-  done
-  fi
-done
+isoOffPath=${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF
+mkdir -p ${isoOffPath}
+find ${CLOVERROOT}/EFI/CLOVER/drivers -type f -name '*.efi' -exec cp -R {} "${isoOffPath}"/ \;
 
+# Mandatory UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/DataHubDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/FSInject.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+
+# File System UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/ApfsDriverLoader.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/Fat.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+
+# Memory fix UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OsxAptioFix3Drv.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+
+# HID UEFI
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/UsbMouseDxe.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/Ps2MouseDxe.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+
 echo "[CP] boot"
 cp -f ${CLOVERROOT}/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/
 

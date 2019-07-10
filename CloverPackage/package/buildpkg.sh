@@ -622,20 +622,6 @@ fi
     rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
      ${SRCROOT}/CloverV2/EFI/CLOVER ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
 
-    # Regroup off drivers
-    driversKinds=( FileVault2 MemoryFix FileSystem HID Other )
-    for d in "${SRCROOT}"/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/*; do
-      if [ -d "$d" ]; then
-        for k in "${driversKinds[@]}"; do
-          kind="${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/drivers/$DRIVERS_OFF/$k"
-          if [ -d "${d}/${k}" ]; then
-            mkdir -p "${kind}"
-            find "${d}/${k}" -type f -name '*.efi' -exec cp -R {} "${kind}"/ \;
-          fi
-        done
-      fi
-    done
-
     # config.plist
     rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/config.plist &>/dev/null
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
@@ -644,6 +630,34 @@ fi
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
 # End build EFI folder package
+
+# build off drivers package
+    echo "===================== off drivers ======================"
+    packagesidentity="$clover_package_identity"
+    choiceId="off"
+    offPath="${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/drivers/$DRIVERS_OFF"
+    rm -rf   "${offPath}"
+    mkdir -p "${offPath}"
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
+    fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                           --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
+
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                           --subst="DRIVER_DIR=$DRIVERS_LEGACY" off
+
+
+    # Regroup off drivers
+    find "${SRCROOT}"/CloverV2/EFI/CLOVER/drivers -type f -name '*.efi' -exec cp -R {} "${offPath}"/ \;
+
+
+
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    addChoice --start-visible="true" \
+              --start-selected="choicePreviouslySelected('$packageRefId')" \
+              --pkg-refs="$packageRefId" "${choiceId}"
+# End build off drivers package
 
 # Create Bootloader Node
 if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
