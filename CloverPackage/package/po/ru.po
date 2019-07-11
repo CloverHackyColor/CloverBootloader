@@ -635,25 +635,25 @@ msgstr "Выберите драйверы для загрузки посредс
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Human Interface Devices"
-msgstr ""
+msgstr "Драйвера устройств ввода"
 
 #. type: "HID64UEFI_description"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "PS2/USB drivers for mouses and keyboards."
-msgstr ""
+msgstr "PS2/USB драйвера мыши и клавиатуры"
 
 #. type: "MemoryFix64UEFI_title"
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Memory fix drivers"
-msgstr ""
+msgstr "Драйвера исправляющие ошибки выделения памяти UEFI BIOS"
 
 #. type: "MemoryFix64UEFI_description"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "A collection of memory fix drivers."
-msgstr ""
+msgstr "Коллекция драйверов, исправляющих память"
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:121
@@ -665,19 +665,19 @@ msgstr "Драйверы для FileVault 2 UEFI-загрузки"
 #: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "Select drivers for UEFI-booting with FileVault 2."
-msgstr "Выберите драйверы для загрузки UEFI с помощью FileVault 2."
+msgstr "Выберите драйверы для загрузки UEFI при включенной FileVault 2."
 
 #. type: "Other64UEFI_title"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Additional drivers"
-msgstr ""
+msgstr "Дополнительные драйвера"
 
 #. type: "Other64UEFI_description"
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "Some times a bios UEFI may lack support for a particular protocol or some functionality."
-msgstr ""
+msgstr "В некоторых случаях UEFI BIOS может не иметь нужных протоколов или нужной функциональности"
 
 #. type: "AppleEvent.UEFI_description"
 #: Resources/templates/Localizable.strings:128
@@ -695,7 +695,7 @@ msgstr "Поддержка протокола AppleGraphicsConfig."
 #: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "HDA driver to play Startup Sound at boot time"
-msgstr ""
+msgstr "Звуковой драйвер для исполнения гимна при запуске Кловера"
 
 #. type: "CsmVideoDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:139
@@ -735,7 +735,7 @@ msgstr "Поддержка протокола UnicodeCollation для EFI Shell,
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "FAT filesystem driver."
-msgstr "Поддержка файловой системы FAT."
+msgstr "Поддержка файловой системы FAT32."
 
 #. type: "HashServiceFix.UEFI_description"
 #: Resources/templates/Localizable.strings:150
@@ -795,7 +795,7 @@ msgstr "Поддержка необычных схем разделов: гиб�
 #: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr "Драйвер для мыши PS/2."
+msgstr "Драйвер 64bit для мыши PS/2."
 
 #. type: "UsbKbDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:160
@@ -831,7 +831,7 @@ msgstr "Поддержка файловой системы HFS+."
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "ISO 9600 filesystem driver."
-msgstr "Поддержка файловой системы ISO 9600."
+msgstr "Поддержка файловой системы ISO 9600 (CD-ROM)."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:170
@@ -1079,7 +1079,7 @@ msgstr "Нет доступных обновлений."
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr "Ок"
+msgstr "Угу"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
