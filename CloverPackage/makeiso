@@ -121,22 +121,24 @@ cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/FSInject.efi \
 
 # File System UEFI
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/ApfsDriverLoader.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/Fat.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
-cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
-cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 
 # Memory fix UEFI
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OsxAptioFix3Drv.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 
 # HID UEFI
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/UsbMouseDxe.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/Ps2MouseDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+
+# File System BIOS
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/ApfsDriverLoader.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
 
 echo "[CP] boot"
