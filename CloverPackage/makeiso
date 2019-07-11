@@ -21,7 +21,7 @@ set -u
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-THEME=Clovy
+THEME=embedded
 
 SRCROOT="$PWD"
 SYMROOT=${SRCROOT}/sym
@@ -84,8 +84,8 @@ mkdir -p "${IMGROOT}/Library/PreferencePanes"
 cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
-echo "[CP] Clovy"
-cp -r -f ${CLOVERROOT}/themespkg/Clovy ${IMGROOT}/EFI/CLOVER/themes/
+echo "[CP] embedded"
+cp -r -f ${CLOVERROOT}/themespkg/embedded ${IMGROOT}/EFI/CLOVER/themes/
 echo "[CP] BOOTX64"
 cp -f ${CLOVERROOT}/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
 echo "[CP] CLOVERX64"
