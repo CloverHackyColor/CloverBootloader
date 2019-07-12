@@ -393,9 +393,9 @@ AddToBootOrder (
     )
 {
   EFI_STATUS          Status;
-  UINT16              *BootOrder;
-  UINT16              *BootOrderNew;
-  UINTN               BootOrderLen;
+  UINT16              *BootOrder = NULL;
+  UINT16              *BootOrderNew = NULL;
+  UINTN               BootOrderLen = 0;
   UINTN               Index;
 
 
@@ -416,6 +416,9 @@ AddToBootOrder (
   BootOrderNew = AllocateZeroPool ((BootOrderLen + 1) * sizeof(UINT16));
   if (BootOrderNew == NULL) {
     DBG("AddToBootOrder: EFI_OUT_OF_RESOURCES\n");
+	if (BootOrder) {
+		FreePool(BootOrder);
+	}
     return EFI_OUT_OF_RESOURCES;
   }
   BootOrderLen += 1;
@@ -469,8 +472,8 @@ DeleteFromBootOrder (
     )
 {
     EFI_STATUS          Status;
-    UINT16              *BootOrder;
-    UINTN               BootOrderLen;
+    UINT16              *BootOrder = NULL;
+    UINTN               BootOrderLen = 0;
     UINTN               Index;
     
     
@@ -491,7 +494,8 @@ DeleteFromBootOrder (
     }
     
     if (Index >= BootOrderLen) {
-        DBG("Not found\n");
+        DBG("Not found in BootOrder len=%d\n", BootOrderLen);
+		FreePool(BootOrder);
         return EFI_NOT_FOUND;
     }
     DBG(" found at index %d\n", Index);
@@ -586,10 +590,9 @@ ParseBootOption (
     UINT8               *VarEnd;
     
     
-    if (BootOption->Variable == NULL
-        || BootOption->VariableSize <= sizeof(BootOption->Attributes) + sizeof(BootOption->FilePathListLength)
-        )
-    {
+    if (BootOption->Variable == NULL ||
+        BootOption->VariableSize <= sizeof(BootOption->Attributes) + sizeof(BootOption->FilePathListLength)
+        ) {
         DBG("ParseBootOption: invalid input params\n");
         return EFI_INVALID_PARAMETER;
     }
@@ -649,12 +652,11 @@ CompileBootOption (
     UINT8               *Ptr8;
     
     
-    if (BootOption->Description == NULL
-        || BootOption->FilePathList == NULL
-        || BootOption->FilePathListLength == 0
-        || (BootOption->OptionalData != NULL && BootOption->OptionalDataSize == 0)
-        )
-    {
+    if (BootOption->Description == NULL ||
+        BootOption->FilePathList == NULL ||
+        BootOption->FilePathListLength == 0 ||
+        (BootOption->OptionalData != NULL && BootOption->OptionalDataSize == 0)
+        ) {
         DBG("CompileBootOption: invalid input params\n");
         return EFI_INVALID_PARAMETER;
     }
@@ -1109,11 +1111,11 @@ DeleteBootOption (
   // Update BootOrder - delete our boot option from the list
   //
   Status = DeleteFromBootOrder (BootNum);
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
+  //if (EFI_ERROR(Status)) {
+  //  return Status;
+  //}
 
-  return EFI_SUCCESS;
+  return Status;
 }
 
 //

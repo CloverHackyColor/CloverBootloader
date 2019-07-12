@@ -2792,11 +2792,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 
               PrintBootOptions(FALSE);
-   /*         } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE-ALL") != NULL) {
-              PrintBootOptions(FALSE);
-              DeleteBootOptionsContainingFile (L"CLOVERX64.efi");
-              DeleteBootOptionsContainingFile (L"CLOVERIA32.efi");
-              PrintBootOptions(FALSE); */
             } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE") != NULL) {
               PrintBootOptions(FALSE);
               Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,

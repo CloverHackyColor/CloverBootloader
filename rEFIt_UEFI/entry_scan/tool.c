@@ -148,28 +148,14 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
   }
-/*  Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
-                                  Entry->LoaderPath,
-                                  NULL,
-                                  NULL
-                                  );
 
-  if (Status == EFI_SUCCESS) {
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Remove Clover's UEFI boot options";
-      SubEntry->LoadOptions     = L"BO-REMOVE";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-  } else { */
 //always add and always remove menu entries
-    SubEntry = DuplicateLoaderEntry(Entry);
-    if (SubEntry) {
-      SubEntry->me.Title        = L"Add Clover boot options for all entries";
-      SubEntry->LoadOptions     = L"BO-ADD";
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    }
-//  }
+  SubEntry = DuplicateLoaderEntry(Entry);
+  if (SubEntry) {
+    SubEntry->me.Title        = L"Add Clover boot options for all entries";
+    SubEntry->LoadOptions     = L"BO-ADD";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  }
 
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
