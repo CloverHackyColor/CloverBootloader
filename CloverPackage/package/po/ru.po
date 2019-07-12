@@ -240,13 +240,14 @@ msgstr "Установка выполнена!"
 msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
-msgstr ""
+msgstr "Clover хочет дать корневой системи права на запись"
+"Изменение временное до следующей перезагрузки"
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
 #, no-wrap
 msgid "Cannot install without ensuring the file system is read-write"
-msgstr ""
+msgstr "Невозможно установить без права на запись в корень системы"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:10
@@ -447,7 +448,7 @@ msgstr "Clover EFI (64 бита) с драйвером Bios Block I/O досту
 #: Resources/templates/Localizable.strings:77
 #, no-wrap
 msgid "Drivers off"
-msgstr ""
+msgstr "Запасные драйвера"
 
 #. type: "off_description"
 #: Resources/templates/Localizable.strings:78
@@ -456,6 +457,8 @@ msgid ""
 "Installs all available drivers in EFI/CLOVER/drivers/off/\n"
 "off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be."
 msgstr ""
+"Положить все возможные драйвера в EFI/CLOVER/drivers/off/\n"
+"Эта папка не используется кловером, но может пригодиться для копирования драйверов вручную."
 
 #. type: "Drivers64_title"
 #: Resources/templates/Localizable.strings:81
@@ -474,14 +477,14 @@ msgstr "Выберите драйверы для режима загрузки �
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Recommended drivers"
-msgstr ""
+msgstr "Рекомендуемые драйвера"
 
 #. type: "Recommended64UEFI_description"
 #: Resources/templates/Localizable.strings:85
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "Recommended drivers, mostly mandatory."
-msgstr ""
+msgstr "Очень рекомендуемые, почти обязательные драйвера."
 
 #. type: "FileSystem64UEFI_title"
 #: Resources/templates/Localizable.strings:87
@@ -503,7 +506,7 @@ msgstr "Поддержка файловой системы HFS+ (альтерн�
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "FileVault 2 BIOS Drivers, 64 bit"
-msgstr "FileVault 2 BIOS Drivers, 64 bit"
+msgstr "FileVault драйвера для БИОС загрузки"
 
 #. type: "Drivers64FV2_description"
 #: Resources/templates/Localizable.strings:91
@@ -574,7 +577,7 @@ msgstr "Исправляет ошибки UEFI при работе с устро
 msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
 "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторымх других UEFI.\n"
-"Не использовать совместно с другими AptioFix."
+"Не рекомендуется ставить совместно с другими AptioFix."
 
 #. type: "AudioDxe_description"
 #: Resources/templates/Localizable.strings:102
@@ -625,13 +628,14 @@ msgstr "Поддержка файловой системы UDF."
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr "Восстанавливает значения переменных NVRAM для расширения FakeSMC при загрузке системы."
+msgstr "Восстанавливает значения SMC ключей, выставленных FakeSMC в NVRAM"
+" при перезагрузке системы."
 
 #. type: "XhciDxe_description"
 #: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "Поддержка USB 3.0, 64 бита."
+msgstr "Поддержка USB 3.0 для сторонних контроллеров"
 
 #. type: "Drivers64UEFI_title"
 #: Resources/templates/Localizable.strings:112
@@ -737,13 +741,13 @@ msgstr "Продержка протокола DataHub, который строг
 msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
 "Драйвер для поддержки переменных NVRAM, необходимых macOS.\n"
-"Современные системы обычно имеют встроенный NVRAM. Используйте драйвер только если вы уверены, что встроенный NVRAM отсутствует или не работает."
+"Современные системы обычно имеют встроенный NVRAM. Используйте драйвер если вы уверены, что встроенный NVRAM отсутствует или не работает. Либо встроенный, либо эмулируемый NVRAM строго необходимы для системы."
 
 #. type: "EnglishDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
-msgstr "Поддержка протокола UnicodeCollation для EFI Shell, если он отсутствует в UEFI."
+msgstr "Поддержка протокола UnicodeCollation, необходимого для EFI Shell, если он отсутствует в UEFI BIOS."
 
 #. type: "Fat.UEFI_description"
 #: Resources/templates/Localizable.strings:153
@@ -783,7 +787,7 @@ msgstr ""
 msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
 "Старый вариант коррекции ошибок памяти для AMI Aptio и некоторымх других UEFI.\n"
-"Не использовать совместно с другими AptioFix."
+"Не использовать совместно с другими AptioFix. Не поддерживает работу встроенного NVRAM."
 
 #. type: "OsxFatBinaryDrv.UEFI_description"
 #: Resources/templates/Localizable.strings:161
@@ -815,7 +819,7 @@ msgstr "Драйвер 64bit для мыши PS/2."
 #: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr "Драйвер клавиатуры USB."
+msgstr "Драйвер клавиатуры USB поддержкой протокла шифрования, нужен для FileVault2, если у вас USB клавиатура."
 
 #. type: "UsbMouseDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:167
