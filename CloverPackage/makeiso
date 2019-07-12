@@ -21,8 +21,7 @@ set -u
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-THEME=embedded
-
+plistbuddy='/usr/libexec/PlistBuddy'
 SRCROOT="$PWD"
 SYMROOT=${SRCROOT}/sym
 CLOVERROOT=${SRCROOT}/CloverV2
@@ -36,6 +35,8 @@ REVISION=$(cat ../vers.txt)
 PRODUCT=Clover-v2.4k-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
+
+THEME=embedded
 
 rm -rf sym/CloverCD
 rm -rf sym/CloverISO
@@ -84,8 +85,12 @@ mkdir -p "${IMGROOT}/Library/PreferencePanes"
 cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
-echo "[CP] embedded"
-cp -r -f ${CLOVERROOT}/themespkg/embedded ${IMGROOT}/EFI/CLOVER/themes/
+echo "[CP] $THEME"
+if [[ -d "${CLOVERROOT}/themespkg/$THEME" ]]; then
+cp -r -f ${CLOVERROOT}/themespkg/$THEME ${IMGROOT}/EFI/CLOVER/themes/
+fi
+
+
 echo "[CP] BOOTX64"
 cp -f ${CLOVERROOT}/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
 echo "[CP] CLOVERX64"
@@ -95,6 +100,8 @@ cp -f ${CLOVERROOT}/EFI/CLOVER/CLOVERX64.efi ${IMGROOT}/EFI/CLOVER/
 # cp -r -f ${CLOVERROOT}/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
 # echo "CP config.plist"
 cp -f ${CLOVERROOT}/EFI/CLOVER/config-sample.plist ${IMGROOT}/EFI/CLOVER/config.plist
+$plistbuddy -c "Delete :GUI:Theme" "${IMGROOT}/EFI/CLOVER/config.plist" &>/dev/null
+$plistbuddy -c "Add :GUI:Theme string $THEME" "${IMGROOT}/EFI/CLOVER/config.plist" &>/dev/null
 echo "[CP] drivers/$DRIVERS_LEGACY"
 mkdir -p ${IMGROOT}/EFI/CLOVER/drivers
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY ${IMGROOT}/EFI/CLOVER/drivers/

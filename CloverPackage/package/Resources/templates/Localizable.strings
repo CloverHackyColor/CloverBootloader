@@ -1,4 +1,10 @@
 // ============================================================================
+// package
+// ----------------------------------------------------------------------------
+"MakingRootRW" = "Clover wants to make the root file system read-write.
+The change is temporary until the next reboot";
+"GoToFailRootRW" = "Cannot install without ensuring the file system is read-write";
+// ============================================================================
 // Installation
 // ----------------------------------------------------------------------------
 "UEFI.only_title" = "Install for UEFI booting only";

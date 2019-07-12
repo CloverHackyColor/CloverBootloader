@@ -15,7 +15,34 @@
 	<title>Clover %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader</title>
 
 	<script>
-
+    
+  function checkFileSystemIsWritable()
+	{
+    var result = true;
+    if (-1 == system.numericalCompare('10.14.9', system.version.ProductVersion)) {
+        result = false;
+        var cmd = '/usr/bin/osascript -e\''
+        cmd += 'do shell script "mount -uw /" with prompt '
+        cmd += '"' + system.localizedString('MakingRootRW') + '"'
+        cmd += ' with administrator privileges\''
+        try
+        {
+           cmd = system.runOnce('/bin/sh', '-c', cmd);
+           result = (cmd == 0);
+           } catch (e) {
+            system.log('mount -uw / returned with error: ' + e);
+            result = false;
+         }
+         
+         if (result == false) {
+          my.result.message = system.localizedString('GoToFailRootRW');
+          my.result.type = 'Fatal';
+         }
+    }
+		system.log("checkFileSystemIsWritable() returned: " + result);
+    return result;
+	}
+  
 	function installCheckScript()
 	{
 		var obj = system.ioregistry.matchingClass("AppleSMC");
@@ -94,3 +121,4 @@
 	}
 
 	</script>
+  <installation-check script="checkFileSystemIsWritable()"/>

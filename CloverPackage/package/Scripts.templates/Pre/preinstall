@@ -20,11 +20,6 @@ DEST_VOL="${3}"
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 CLOVER_INSTALLER_PLIST_NEW_DIR=$(dirname "$CLOVER_INSTALLER_PLIST_NEW")
 
-if [ "${DEST_VOL}" == "/" ]; then
-  # Check if the root file system is writable. In 10.15+ isn't
-  if [ ! -w / ]; then mount -uw /﻿ ; fi
-fi
-
 [[ ! -d "$CLOVER_INSTALLER_PLIST_NEW_DIR" ]] && mkdir -p "$CLOVER_INSTALLER_PLIST_NEW_DIR"
 rm -f "$CLOVER_INSTALLER_PLIST_NEW"
 
