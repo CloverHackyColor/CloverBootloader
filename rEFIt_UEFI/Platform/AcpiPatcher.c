@@ -433,6 +433,11 @@ VOID PatchAllTables()
       if (gSettings.PatchDsdtNum > 0) {
         //DBG("Patching SSDT:\n");
         UINT32 i;
+		CHAR8  OTID[9];
+		OTID[8] = 0;
+		CopyMem(OTID, &NewTable->OemTableId, 8);
+		DBG("Patching SSDT %a Length=%d\n",  OTID, (INT32)Len);
+
         for (i = 0; i < gSettings.PatchDsdtNum; i++) {
           if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
             continue;

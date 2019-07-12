@@ -950,7 +950,7 @@ ApfsDriverLoaderStart (
       MediaId,
       EfiFileCurrentExtentOffset,
       EfiFileCurrentExtentSize,
-      EfiFileBuffer + CurPos
+      (CHAR8*)EfiFileBuffer + CurPos
       );
 
     if (EFI_ERROR (Status)) {
@@ -973,7 +973,7 @@ ApfsDriverLoaderStart (
     // Zero tail
     //
     ZeroMem (
-      EfiFileBuffer + EfiBootRecordBlock->EfiFileLen,
+      (CHAR8*)EfiFileBuffer + EfiBootRecordBlock->EfiFileLen,
       CurPos - EfiBootRecordBlock->EfiFileLen
       );
     //
