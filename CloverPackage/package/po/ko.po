@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 11:21+0300\n"
+"POT-Creation-Date: 2019-07-13 22:16+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -62,7 +62,9 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-msgid "Supports Fat32, HFS+, ESP."
+#, fuzzy
+#| msgid "Supports Fat32, HFS+, ESP."
+msgid "Supports Fat32, HFS+, APFS, ExFAT."
 msgstr "Fat32, HFS+, APFS, ESP를 지원합니다."
 
 #. type: Content of: <html><body><p>
@@ -233,7 +235,8 @@ msgstr "설치가 완료되었습니다!"
 msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
-msgstr "Clover는 루트파일 시스템을 읽기-쓰기로 바꾸길 원합니다.\n"
+msgstr ""
+"Clover는 루트파일 시스템을 읽기-쓰기로 바꾸길 원합니다.\n"
 "이 변경은 다음 재부팅하기전까지 일시적으로 유지됩니다."
 
 #. type: "GoToFailRootRW"

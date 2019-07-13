@@ -31,7 +31,7 @@ done
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-version=v2.4k
+version=v2.5k
 if [[ -d ../.git ]]; then
   revision=$(git svn info | grep Revision | tr -cd [:digit:])
 else

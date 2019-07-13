@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 08:58+0300\n"
+"POT-Creation-Date: 2019-07-13 22:16+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: en <en@li.org>\n"
@@ -62,7 +62,9 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-msgid "Supports Fat32, HFS+, ESP."
+#, fuzzy
+#| msgid "Supports Fat32, HFS+, ESP."
+msgid "Supports Fat32, HFS+, APFS, ExFAT."
 msgstr "Supports Fat32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>

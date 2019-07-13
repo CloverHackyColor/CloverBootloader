@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.4k-r5000\n"
-"POT-Creation-Date: 2019-07-13 13:38+0200\n"
+"Project-Id-Version: Clover v2.5k-r5004\n"
+"POT-Creation-Date: 2019-07-13 22:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgstr ""
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-msgid "Supports Fat32, HFS+, ESP."
+msgid "Supports Fat32, HFS+, APFS, ExFAT."
 msgstr ""
 
 #. type: Content of: <html><body><p>

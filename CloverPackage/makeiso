@@ -32,7 +32,7 @@ CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
 EFIROOT=${SRCROOT}/CloverV2/EFI
 
 REVISION=$(cat ../vers.txt)
-PRODUCT=Clover-v2.4k-${REVISION}
+PRODUCT=Clover-v2.5k-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
 

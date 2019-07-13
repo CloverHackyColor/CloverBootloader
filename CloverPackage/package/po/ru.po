@@ -4,9 +4,9 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover 2.0\n"
+"Project-Id-Version: Clover 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 08:58+0300\n"
+"POT-Creation-Date: 2019-07-13 22:16+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -63,7 +63,9 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-msgid "Supports Fat32, HFS+, ESP."
+#, fuzzy
+#| msgid "Supports Fat32, HFS+, ESP."
+msgid "Supports Fat32, HFS+, APFS, ExFAT."
 msgstr "Поддержка FAT32, HFS+, APFS, ESP."
 
 #. type: Content of: <html><body><p>
@@ -74,7 +76,7 @@ msgstr "Copyright © %CPRYEAR%"
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "Clover v2"
-msgstr "Clover v2.4k"
+msgstr "Clover v2.5k"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
@@ -488,18 +490,16 @@ msgstr "Очень рекомендуемые, почти обязательны
 #. type: "FileSystem64UEFI_title"
 #: Resources/templates/Localizable.strings:87
 #: Resources/templates/Localizable.strings:121
-#, fuzzy, no-wrap
-#| msgid "FAT filesystem driver."
+#, no-wrap
 msgid "File System drivers"
-msgstr "Поддержка файловой системы FAT."
+msgstr "Драйвера файловых систем"
 
 #. type: "FileSystem64UEFI_description"
 #: Resources/templates/Localizable.strings:88
 #: Resources/templates/Localizable.strings:122
-#, fuzzy, no-wrap
-#| msgid "Alternate HFS+ filesystem driver."
+#, no-wrap
 msgid "A collection of file system drivers."
-msgstr "Поддержка файловой системы HFS+ (альтернативный драйвер)."
+msgstr "Коллекция драйверов файловых систем"
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:90
@@ -920,10 +920,7 @@ msgstr "cesium"
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:192
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Vector SVG theme from Clovy,\n"
-#| "Install to /EFI/CLOVER/themes/Clovy"
+#, no-wrap
 msgid ""
 "Vector theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
