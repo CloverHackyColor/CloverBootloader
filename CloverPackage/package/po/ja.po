@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-12 16:00+0200\n"
+"POT-Creation-Date: 2019-07-13 08:58+0300\n"
 "PO-Revision-Date: 2018-10-02 11:41+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: \n"
@@ -893,15 +893,34 @@ msgstr ""
 "Slice制作のオリジナルテーマ『metal』を、\n"
 "/EFI/CLOVER/themes/metalにインストール"
 
-#. type: "clovy_title"
+#. type: "cesium_title"
 #: Resources/templates/Localizable.strings:191
+#, no-wrap
+msgid "cesium"
+msgstr ""
+
+#. type: "cesium_description"
+#: Resources/templates/Localizable.strings:192
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal"
+msgid ""
+"Vector theme from Slice,\n"
+"Install to /EFI/CLOVER/themes/cesium"
+msgstr ""
+"Slice制作のオリジナルテーマ『metal』を、\n"
+"/EFI/CLOVER/themes/metalにインストール"
+
+#. type: "clovy_title"
+#: Resources/templates/Localizable.strings:195
 #, fuzzy, no-wrap
 #| msgid "Clover"
 msgid "Clovy"
 msgstr "Clover"
 
 #. type: "clovy_description"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:196
 #, fuzzy, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
@@ -914,13 +933,13 @@ msgstr ""
 "/EFI/CLOVER/themes/metalにインストール"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:195
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "random"
 msgstr "Random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:200
 #, fuzzy, no-wrap
 #| msgid ""
 #| "random theme from Slice,\n"
@@ -933,13 +952,13 @@ msgstr ""
 "/EFI/CLOVER/themes/orangeにインストール"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:203
 #, no-wrap
 msgid "steampunkblack"
 msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:204
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -949,13 +968,13 @@ msgstr ""
 "/EFI/CLOVER/themes/bootcampにインストール"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:203
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover テーマ"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -966,13 +985,13 @@ msgstr ""
 "Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:210
+#: Resources/templates/Localizable.strings:214
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RCスクリプトをターゲットボリュームにインストール"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -982,43 +1001,43 @@ msgstr ""
 "ターゲットボリュームは起動可能なOSXシステムボリュームであることが必要。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:213
+#: Resources/templates/Localizable.strings:217
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RCスクリプトを他のすべてのOSXボリュームにインストール"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:214
+#: Resources/templates/Localizable.strings:218
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "オプションのRCスクリプト"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:216
+#: Resources/templates/Localizable.strings:220
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disable sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:217
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:222
+#: Resources/templates/Localizable.strings:226
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover環境設定をインストール"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:227
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1274,7 +1293,8 @@ msgstr "nvramコンテンツの保存場所"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "Number of history boot log lines to keep:"
 msgid "Number of history boot log lines to keep:"
 msgstr "ブートログで保持する履歴の行数:"
 

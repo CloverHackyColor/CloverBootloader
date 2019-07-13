@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-12 16:00+0200\n"
+"POT-Creation-Date: 2019-07-13 08:58+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -903,15 +903,34 @@ msgstr ""
 "Slice의 The original metal 테마.\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
-#. type: "clovy_title"
+#. type: "cesium_title"
 #: Resources/templates/Localizable.strings:191
+#, no-wrap
+msgid "cesium"
+msgstr ""
+
+#. type: "cesium_description"
+#: Resources/templates/Localizable.strings:192
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal"
+msgid ""
+"Vector theme from Slice,\n"
+"Install to /EFI/CLOVER/themes/cesium"
+msgstr ""
+"Slice의 The original metal 테마.\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/metal"
+
+#. type: "clovy_title"
+#: Resources/templates/Localizable.strings:195
 #, fuzzy, no-wrap
 #| msgid "Clover"
 msgid "Clovy"
 msgstr "Clover"
 
 #. type: "clovy_description"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:196
 #, fuzzy, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
@@ -924,13 +943,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:195
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "random"
 msgstr "랜덤"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:200
 #, fuzzy, no-wrap
 #| msgid ""
 #| "random theme from Slice,\n"
@@ -943,13 +962,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:203
 #, no-wrap
 msgid "steampunkblack"
 msgstr "스팀펑크 블랙"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:204
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -959,13 +978,13 @@ msgstr ""
 "다음에 설치합니다: /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:203
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover 테마"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -976,13 +995,13 @@ msgstr ""
 "다음에 설치합니다: /응용 프로그램"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:210
+#: Resources/templates/Localizable.strings:214
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "선택한 볼륨에 RC 스크립트 설치"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -992,43 +1011,43 @@ msgstr ""
 "선택한 볼륨은 반드시 macOS 시스템 볼륨이어야 합니다."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:213
+#: Resources/templates/Localizable.strings:217
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "부팅 가능한 모든 macOS 볼륨에 RC 스크립트 설치"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:214
+#: Resources/templates/Localizable.strings:218
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "선택한 볼륨을 제외한 모든 내장 macOS 볼륨에 모든 RC 스크립트를 설치합니다."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "선택적 RC 스크립트"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:216
+#: Resources/templates/Localizable.strings:220
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "잠자기 프록시 클라이언트 비활성화"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:217
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:222
+#: Resources/templates/Localizable.strings:226
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:227
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1284,7 +1303,8 @@ msgstr "nvram 내용을 저장할 곳"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "Number of history boot log lines to keep:"
 msgid "Number of history boot log lines to keep:"
 msgstr "부트 로그에 저장할 줄 수:"
 

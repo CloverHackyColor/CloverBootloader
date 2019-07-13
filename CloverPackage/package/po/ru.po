@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-12 16:00+0200\n"
+"POT-Creation-Date: 2019-07-13 08:58+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -240,8 +240,7 @@ msgstr "Установка выполнена!"
 msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
-msgstr "Clover хочет дать корневой системи права на запись"
-"Изменение временное до следующей перезагрузки"
+msgstr "Clover дает корневой системе права на записьИзменение временное до следующей перезагрузки"
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
@@ -576,7 +575,7 @@ msgstr "Исправляет ошибки UEFI при работе с устро
 #, no-wrap
 msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
-"Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторымх других UEFI.\n"
+"Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторых других UEFI.\n"
 "Не рекомендуется ставить совместно с другими AptioFix."
 
 #. type: "AudioDxe_description"
@@ -628,8 +627,7 @@ msgstr "Поддержка файловой системы UDF."
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
-msgstr "Восстанавливает значения SMC ключей, выставленных FakeSMC в NVRAM"
-" при перезагрузке системы."
+msgstr "Восстанавливает значения SMC ключей, выставленных FakeSMC в NVRAM при перезагрузке системы."
 
 #. type: "XhciDxe_description"
 #: Resources/templates/Localizable.strings:110
@@ -733,7 +731,7 @@ msgstr ""
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
-msgstr "Продержка протокола DataHub, который строго необходим для запуска macOS. Обычно он присутствует (если нет, на экран будет выведено сообщение)."
+msgstr "Поддержка протокола DataHub, который строго необходим для запуска macOS. Обычно он присутствует (если нет, на экран будет выведено сообщение)."
 
 #. type: "EmuVariableUefi.UEFI_description"
 #: Resources/templates/Localizable.strings:151
@@ -914,14 +912,33 @@ msgstr ""
 "Нержавейка от Slice.\n"
 "Установка будет выполнена в /EFI/CLOVER/themes/metal"
 
-#. type: "clovy_title"
+#. type: "cesium_title"
 #: Resources/templates/Localizable.strings:191
+#, no-wrap
+msgid "cesium"
+msgstr "cesium"
+
+#. type: "cesium_description"
+#: Resources/templates/Localizable.strings:192
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Vector SVG theme from Clovy,\n"
+#| "Install to /EFI/CLOVER/themes/Clovy"
+msgid ""
+"Vector theme from Slice,\n"
+"Install to /EFI/CLOVER/themes/cesium"
+msgstr ""
+"Векторная тема от Slice.\n"
+"Установка будет выполнена в /EFI/CLOVER/themes/cesium"
+
+#. type: "clovy_title"
+#: Resources/templates/Localizable.strings:195
 #, no-wrap
 msgid "Clovy"
 msgstr "Clovy"
 
 #. type: "clovy_description"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:196
 #, no-wrap
 msgid ""
 "Vector SVG theme from Clovy,\n"
@@ -931,13 +948,13 @@ msgstr ""
 "Установка будет выполнена в /EFI/CLOVER/themes/Clovy"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:195
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid "random"
 msgstr "Случайная"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:200
 #, no-wrap
 msgid ""
 "random theme,\n"
@@ -947,13 +964,13 @@ msgstr ""
 "Установка будет выполнена в /EFI/CLOVER/themes/random."
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:203
 #, no-wrap
 msgid "steampunkblack"
 msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:204
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -963,13 +980,13 @@ msgstr ""
 "Установка будет выполнена в /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:203
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "CloverThemeManager"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -980,13 +997,13 @@ msgstr ""
 "Установка будет выполнена в папку Программы."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:210
+#: Resources/templates/Localizable.strings:214
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Системные RC-скрипты целевого раздела"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -994,43 +1011,43 @@ msgid ""
 msgstr "Устанавливает системные скрипты на целевой раздел. Этот раздел должен быть загрузочным для macOS."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:213
+#: Resources/templates/Localizable.strings:217
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Системные RC-скрипты других разделов"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:214
+#: Resources/templates/Localizable.strings:218
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Устанавливает RC-скрипты на все внутренние загрузочные разделы macOS, кроме целевого."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Дополнительные RC-скрипты"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:216
+#: Resources/templates/Localizable.strings:220
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Отключение Sleep Proxy Client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:217
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Отключает сервис Sleep Proxy Client для предотвращаения периодического пробуждения системы во время сна."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:222
+#: Resources/templates/Localizable.strings:226
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Панель Настроек Clover"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:227
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1284,7 +1301,8 @@ msgstr "Сохранять содержимое NVRAM на раздел"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "Number of history boot log lines to keep:"
 msgid "Number of history boot log lines to keep:"
 msgstr "Число дополнительных строк в CloverEFI/system.log:"
 

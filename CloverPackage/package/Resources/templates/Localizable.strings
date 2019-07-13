@@ -1,4 +1,4 @@
-// ============================================================================
+// =============================================================================
 // package
 // ----------------------------------------------------------------------------
 "MakingRootRW" = "Clover wants to make the root file system read-write.
@@ -187,6 +187,10 @@ Install to /EFI/CLOVER/themes/embedded";
 "metal_title" = "metal";
 "metal_description" = "The original metal theme from Slice,
 Install to /EFI/CLOVER/themes/metal";
+
+"cesium_title" = "cesium";
+"cesium_description" = "Vector theme from Slice,
+Install to /EFI/CLOVER/themes/cesium";
 
 "clovy_title" = "Clovy";
 "clovy_description" = "Vector SVG theme from Clovy,
