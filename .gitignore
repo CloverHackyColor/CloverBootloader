@@ -23,6 +23,7 @@
 /CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
 /CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi
 /CloverPackage/CloverV2/EFI/CLOVER/CLOVERIA32.efi
+/CloverPackage/CloverV2/EFI/CLOVER/drivers/
 /CloverPackage/CloverV2/EFI/CLOVER/drivers32/
 /CloverPackage/CloverV2/EFI/CLOVER/drivers32UEFI/
 /CloverPackage/CloverV2/EFI/CLOVER/drivers64/
