@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-13 08:58+0300\n"
-"PO-Revision-Date: 2019-01-19 20:37+0200\n"
+"PO-Revision-Date: 2019-07-13 14:53+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ro <ro@li.org>\n"
 "Language: ro\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.3\n"
 "X-POOTLE-MTIME: 1392385717.0\n"
 
 #. type: Content of: <html><body><div><p>
@@ -75,11 +75,8 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"este un software open-source bazat pe diferite proiecte: Clover, rEFIt, XNU, "
-"VirtualBox."
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "este un software open-source bazat pe diferite proiecte: Clover, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -103,34 +100,23 @@ msgstr "boot pentru: macOS 10.xx, Windows EFI si Linux EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid ""
-"It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"Bootloader-ul sau EFI ofera RuntimeServices pentru sistemul de operare, "
-"lucru imposibil pentru bootloader-ele traditionale de tip Legacy"
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "Bootloader-ul sau EFI ofera RuntimeServices pentru sistemul de operare, lucru imposibil pentru bootloader-ele traditionale de tip Legacy"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid ""
-"mostly Clover do automatic detection of hardware and set all properties by "
-"default. But user can change them by config.plist"
-msgstr ""
-"in general, Clover ofera detectie hardware automata si setarea implicita a "
-"tuturor proprietatilor. Uilizatorul le poate insa modifica din config.plist"
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "in general, Clover ofera detectie hardware automata si setarea implicita a tuturor proprietatilor. Uilizatorul le poate insa modifica din config.plist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"cu Clover, puteti alege sa initiati alt sistem de operare, folosind Startup "
-"Disk prefPane"
+msgstr "cu Clover, puteti alege sa initiati alt sistem de operare, folosind Startup Disk prefPane"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
 msgid "UUID written into config.plist will be the same as in OS"
-msgstr ""
-"UUID-ul folosit in config.plist va fi acelasi si in sistemul de operare"
+msgstr "UUID-ul folosit in config.plist va fi acelasi si in sistemul de operare"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
@@ -145,8 +131,7 @@ msgstr "ACPI va fi corectat pentru standardul 4.0."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"Un DSDT modificat va fi incarcat de pe partitia de boot sau din folderul EFI"
+msgstr "Un DSDT modificat va fi incarcat de pe partitia de boot sau din folderul EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -156,17 +141,12 @@ msgstr "Corectie DSDT on-the-fly folosind fix-uri si modele predefinite"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
-"restartFix configurabil, fix-uri pentru sleep/wake si valoare PCIRootUID"
+msgstr "restartFix configurabil, fix-uri pentru sleep/wake si valoare PCIRootUID"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid ""
-"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards. Also customizable."
-msgstr ""
-"Injector de Proprietati Grafice pentru ATI, NVidia si Intel pentru o arie "
-"larga de placi video suportate. De asemenea customizabile."
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "Injector de Proprietati Grafice pentru ATI, NVidia si Intel pentru o arie larga de placi video suportate. De asemenea customizabile."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -186,8 +166,7 @@ msgstr "CPU turbo si generator de stadii P si C"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"Incarcarea tabelelor ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "Incarcarea tabelelor ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -206,19 +185,13 @@ msgstr "seteaza variabile in NVRAM pentru diverse scopuri"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid ""
-"default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"initiere implicita dupa timeout, interfata configurabila, si salvarea de "
-"screenshot-uri din interfata, apasand F10"
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "initiere implicita dupa timeout, interfata configurabila, si salvarea de screenshot-uri din interfata, apasand F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr ""
-"salvarea boot.log si preboot.log in sistemul de operare, din interfata "
-"grafica, apasand F2"
+msgstr "salvarea boot.log si preboot.log in sistemul de operare, din interfata grafica, apasand F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -232,12 +205,14 @@ msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
 msgstr ""
+"Clover doreste sa faca sistemul read-write.\n"
+"Modificarea este temporara pana la urmatorul reboot"
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
 #, no-wrap
 msgid "Cannot install without ensuring the file system is read-write"
-msgstr ""
+msgstr "Nu se poate instala fara a se asigura ca sistemul este read-write"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:10
@@ -443,7 +418,7 @@ msgstr "CloverEFI 64-bit folosind Bios Block I/O pentru accesarea HDD/SSD"
 #: Resources/templates/Localizable.strings:77
 #, no-wrap
 msgid "Drivers off"
-msgstr ""
+msgstr "Drivere inactive"
 
 #. type: "off_description"
 #: Resources/templates/Localizable.strings:78
@@ -452,6 +427,8 @@ msgid ""
 "Installs all available drivers in EFI/CLOVER/drivers/off/\n"
 "off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be."
 msgstr ""
+"Instaleaza toate driverele disponibile in EFI/CLOVER/drivers/off/\n"
+"Folderul “Off” nu este incarcat de catre Clover, dar este folositor daca folositi EFI shell ca sa copiati un driver lipsa, sau pentru a inlocui un driver problematic in cursul procesului de boot, daca e nevoie."
 
 #. type: "Drivers64_title"
 #: Resources/templates/Localizable.strings:81
@@ -470,30 +447,28 @@ msgstr "Selecteaza driverele pentru boot de tip BIOS."
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Recommended drivers"
-msgstr ""
+msgstr "Drivere recomandate"
 
 #. type: "Recommended64UEFI_description"
 #: Resources/templates/Localizable.strings:85
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "Recommended drivers, mostly mandatory."
-msgstr ""
+msgstr "Drivere recomandate, in mare parte obligatorii."
 
 #. type: "FileSystem64UEFI_title"
 #: Resources/templates/Localizable.strings:87
 #: Resources/templates/Localizable.strings:121
-#, fuzzy, no-wrap
-#| msgid "FAT filesystem driver."
+#, no-wrap
 msgid "File System drivers"
-msgstr "Driver pentru FAT."
+msgstr "Drivere File System"
 
 #. type: "FileSystem64UEFI_description"
 #: Resources/templates/Localizable.strings:88
 #: Resources/templates/Localizable.strings:122
-#, fuzzy, no-wrap
-#| msgid "Alternate HFS+ filesystem driver."
+#, no-wrap
 msgid "A collection of file system drivers."
-msgstr "Driver HFS+ alternativ."
+msgstr "Colectie de drivere pentru File System."
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:90
@@ -643,25 +618,25 @@ msgstr "Selecteaza driverele pentru boot UEFI."
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Human Interface Devices"
-msgstr ""
+msgstr "Device-uri de control ale interfectei (HID)"
 
 #. type: "HID64UEFI_description"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "PS2/USB drivers for mouses and keyboards."
-msgstr ""
+msgstr "Drivere PS2/USB pentru mouse si tastatura."
 
 #. type: "MemoryFix64UEFI_title"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Memory fix drivers"
-msgstr ""
+msgstr "Drivere pentru rezolvarea problemelor de memorie"
 
 #. type: "MemoryFix64UEFI_description"
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "A collection of memory fix drivers."
-msgstr ""
+msgstr "Colectie de drivere pentru rezolvarea problemelor de memorie."
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:127
@@ -679,13 +654,13 @@ msgstr "Selecteaza driverele pentru boot UEFI cu FileVault 2."
 #: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Additional drivers"
-msgstr ""
+msgstr "Drivere aditionale"
 
 #. type: "Other64UEFI_description"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Some times a bios UEFI may lack support for a particular protocol or some functionality."
-msgstr ""
+msgstr "Uneori, unui Bios UEFI ii poate lipsi suportul pentru un protocol anume sau o functionalitate anume."
 
 #. type: "AppleEvent.UEFI_description"
 #: Resources/templates/Localizable.strings:134
@@ -903,20 +878,17 @@ msgstr ""
 #: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "cesium"
-msgstr ""
+msgstr "cesium"
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:192
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Vector SVG theme from Clovy,\n"
-#| "Install to /EFI/CLOVER/themes/Clovy"
+#, no-wrap
 msgid ""
 "Vector theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
-"Tema SVG vectoriala de la Clovy,\n"
-"Se instaleaza in /EFI/CLOVER/themes/Clovy"
+"Tema SVG vectoriala de la Slice,\n"
+"Se instaleaza in /EFI/CLOVER/themes/cesium"
 
 #. type: "clovy_title"
 #: Resources/templates/Localizable.strings:195
@@ -1293,8 +1265,7 @@ msgstr "Unde se salveaza continutul NVRAM"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, fuzzy, no-wrap
-#| msgid "Number of history boot log lines to keep:"
+#, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Numarul liniilor de log de pornire pastrat in istoric:"
 
@@ -1400,8 +1371,7 @@ msgstr "Necunoscut"
 #~ "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 #~ "Press key 6 to boot6 = Clover EFI 64bit boot."
 #~ msgstr ""
-#~ "Instaleaza fisierele de initiere si seteaza pornirea 32-bit ca "
-#~ "implicita.\n"
+#~ "Instaleaza fisierele de initiere si seteaza pornirea 32-bit ca implicita.\n"
 #~ "Pornire implicita = Clover EFI 32-bit. Puteti sa...\n"
 #~ "Apasati tasta 1 pentru boot1 = Initiati Chameleon,\n"
 #~ "Apasati tasta 3 pentru boot3 = Initiati EFI 32-bit,\n"
@@ -1432,6 +1402,4 @@ msgstr "Necunoscut"
 #~ msgstr "Driver USB 3.0, 32-bit"
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr ""
-#~ "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use "
-#~ "with other AptioFix together."
+#~ msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
