@@ -26,10 +26,18 @@
 
 [Sources.common]
         fsw_ext2.c
+        fsw_ext2.h
         fsw_core.c
+        fsw_core.h
         fsw_efi_lib.c
         fsw_efi.c
+        fsw_efi.h
         fsw_lib.c
+        fsw_base.h
+        fsw_efi_base.h
+        fsw_ext2_disk.h
+        fsw_strfunc.h
+        VBoxFswParam.h
 
 [Packages]
    MdePkg/MdePkg.dec

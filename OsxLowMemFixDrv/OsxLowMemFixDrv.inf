@@ -40,6 +40,7 @@
   OsxLowMemFixDrv.c
   Lib.h
   Lib.c
+  NVRAMDebug.h
 
 [Guids]
   gEfiFileInfoGuid								## CONSUMES

@@ -28,10 +28,18 @@
 
 [Sources.common]
         fsw_reiserfs.c
+        fsw_reiserfs.h
         fsw_core.c
+        fsw_core.h
         fsw_efi_lib.c
         fsw_efi.c
+        fsw_efi.h
         fsw_lib.c
+        fsw_base.h
+        fsw_efi_base.h
+        fsw_reiserfs_disk.h
+        fsw_strfunc.h
+        VBoxFswParam.h
 
 [Packages]
         MdePkg/MdePkg.dec

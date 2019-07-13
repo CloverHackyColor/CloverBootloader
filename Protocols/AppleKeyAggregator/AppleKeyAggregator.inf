@@ -44,3 +44,4 @@
 
 [Sources]
   AppleKeyAggregator.c
+  AppleKeyAggregator.h

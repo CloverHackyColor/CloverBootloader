@@ -26,10 +26,17 @@
 
 [Sources.common]
         fsw_iso9660.c
+        fsw_iso9660.h
         fsw_core.c
+        fsw_core.h
         fsw_efi_lib.c
         fsw_efi.c
+        fsw_efi.h
         fsw_lib.c
+        fsw_base.h
+        fsw_efi_base.h
+        fsw_strfunc.h
+        VBoxFswParam.h
 
 [Packages]
     Clover/CloverPkg.dec

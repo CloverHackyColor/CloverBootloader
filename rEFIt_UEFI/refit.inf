@@ -38,9 +38,11 @@
   refit/main.c
   refit/icns.c
   refit/lib.c
+  refit/lib.h
   refit/menu.c
   refit/screen.c
   refit/IO.c
+  refit/IO.h
   entry_scan/common.c
   entry_scan/legacy.c
   entry_scan/loader.c
@@ -51,6 +53,14 @@
   entry_scan/securevars.c
   entry_scan/bootscreen.c
   entry_scan/lockedgraphics.c
+  entry_scan/CanonicalDB.h
+  entry_scan/CloverDB.h
+  entry_scan/CloverKEK.h
+  entry_scan/MSKEK.h
+  entry_scan/MSPCADB.h
+  entry_scan/MSUEFICADB.h
+  entry_scan/entry_scan.h
+  entry_scan/securebootkeys.h
   libeg/egemb_icons.c
   libeg/egemb_icons_dark.c
   libeg/egemb_font.c
@@ -61,15 +71,22 @@
   libeg/load_icns.c
   libeg/libscreen.c
   libeg/lodepng.c
+  libeg/lodepng.h
   libeg/text.c
   libeg/FloatLib.c
+  libeg/FloatLib.h
   libeg/nanosvg.c
+  libeg/nanosvg.h
   libeg/nanosvgrast.c
   libeg/VectorGraphics.c
+  libeg/libeg.h
+  libeg/libegint.h
   Platform/AcpiPatcher.c
 	Platform/ati_reg.h
 	Platform/AmlGenerator.c
+	Platform/AmlGenerator.h
 	Platform/ati.c
+	Platform/ati.h
 #	Platform/BiosVideo.h
 #	Platform/Bmp.h
 #	Platform/boot.h
@@ -88,6 +105,7 @@
 	Platform/hda.c
 #	Platform/hda.h
     Platform/HdaCodecDump.c
+    Platform/HdaCodecDump.h
 	Platform/gma.c
 #	Platform/gma.h
 	Platform/guid.c
@@ -129,6 +147,7 @@
 	Platform/kernel_patcher.c
 	Platform/kext_patcher.c
 	Platform/kext_inject.c
+	Platform/kext_inject.h
 	Platform/Nvram.c
   Platform/card_vlist.c
   Platform/PlatformDriverOverride.c
@@ -136,6 +155,9 @@
   Platform/Net.c
   Platform/sound.c
   Platform/StartupSound.c
+  Platform/sse3_patcher.h
+  Platform/sse3_5_patcher.h
+  Version.h
 
 [Sources.IA32]
   libeg/ftol.asm | MSFT

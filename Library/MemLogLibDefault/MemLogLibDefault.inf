@@ -17,6 +17,7 @@
 
 [Sources]
   MemLogLib.c
+  GenericIch.h
 
 [Packages]
   MdePkg/MdePkg.dec

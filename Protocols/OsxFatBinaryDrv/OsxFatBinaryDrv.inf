@@ -24,6 +24,7 @@
 
 [Sources]
   OsxFatBinaryDrv.c
+  OsxFatBinaryDrv.h
 
 [Packages]
   MdePkg/MdePkg.dec

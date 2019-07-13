@@ -43,8 +43,11 @@
 [Sources]
   AppleKeyFeeder.c
   AppleKeyMapUtils.c
+  AppleKeyMapUtils.h
   SimpleTextProxy.c
+  SimpleTextProxy.h
   SimpleTextExProxy.c
+  SimpleTextExProxy.h
 
 [Guids]
 

@@ -52,6 +52,7 @@
   Mach-O/Mach-O.h
   Mach-O/Mach-O.c
   Hibernate.h
+  RTShims.h
 
 [Sources.X64]
   X64/AsmFuncsX64.asm | INTEL

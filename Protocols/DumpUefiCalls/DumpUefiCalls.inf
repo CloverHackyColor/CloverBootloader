@@ -84,6 +84,8 @@
   Fs.h
   Fs.c
   AppleProtocols.c
+  AppleProtocols.h
+  Common.h
 
 
 [Guids]
