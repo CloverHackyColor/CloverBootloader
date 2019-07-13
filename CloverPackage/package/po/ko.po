@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 08:58+0300\n"
+"POT-Creation-Date: 2019-07-13 11:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -233,13 +233,14 @@ msgstr "설치가 완료되었습니다!"
 msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
-msgstr ""
+msgstr "Clover는 루트파일 시스템을 읽기-쓰기로 바꾸길 원합니다.\n"
+"이 변경은 다음 재부팅하기전까지 일시적으로 유지됩니다."
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
 #, no-wrap
 msgid "Cannot install without ensuring the file system is read-write"
-msgstr ""
+msgstr "파일 시스템이 읽기-쓰기인지 확인하지 않고 설치할 수 없습니다."
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:10
@@ -277,7 +278,7 @@ msgstr ""
 "\n"
 "FAT32를 위해 다음과 같은 명령어를 사용합니다:\n"
 "diskutil list\n"
-"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
+"newfs_msdos -v EFI -F 32 /dev/rdisk0s1"
 
 #. type: "Bootloader_title"
 #: Resources/templates/Localizable.strings:29
@@ -446,7 +447,7 @@ msgstr "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)"
 #: Resources/templates/Localizable.strings:77
 #, no-wrap
 msgid "Drivers off"
-msgstr ""
+msgstr "예비 드라이버"
 
 #. type: "off_description"
 #: Resources/templates/Localizable.strings:78
@@ -455,6 +456,8 @@ msgid ""
 "Installs all available drivers in EFI/CLOVER/drivers/off/\n"
 "off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be."
 msgstr ""
+"사용 가능한 모든 드라이버를 EFI/CLOVER/drivers/off/에 설치합니다.\n"
+"off 디렉토리는 Clover에 의해 로드되지 않습니다. 이것은 필요한 경우 EFI 셸을 사용하여 누락된 드라이버를 복사하거나 부팅 중에 잘못된 파일을 교체해야하는 경우에만 유용합니다."
 
 #. type: "Drivers64_title"
 #: Resources/templates/Localizable.strings:81
@@ -473,30 +476,28 @@ msgstr "BIOS 부팅을 위한 드라이버를 선택하십시오."
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Recommended drivers"
-msgstr ""
+msgstr "권장 드라이버"
 
 #. type: "Recommended64UEFI_description"
 #: Resources/templates/Localizable.strings:85
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "Recommended drivers, mostly mandatory."
-msgstr ""
+msgstr "권장 드라이버, 대부분 필수"
 
 #. type: "FileSystem64UEFI_title"
 #: Resources/templates/Localizable.strings:87
 #: Resources/templates/Localizable.strings:121
-#, fuzzy, no-wrap
-#| msgid "FAT filesystem driver."
+#, no-wrap
 msgid "File System drivers"
-msgstr "FAT 파일 시스템 드라이버"
+msgstr "파일 시스템 드라이버"
 
 #. type: "FileSystem64UEFI_description"
 #: Resources/templates/Localizable.strings:88
 #: Resources/templates/Localizable.strings:122
-#, fuzzy, no-wrap
-#| msgid "Alternate HFS+ filesystem driver."
+#, no-wrap
 msgid "A collection of file system drivers."
-msgstr "순정 HFS+ 파일 시스템 드라이버"
+msgstr "파일 시스템 드라이버 콜렉션"
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:90
@@ -646,25 +647,25 @@ msgstr "UEFI 부팅을 위한 드라이버를 선택하십시오."
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Human Interface Devices"
-msgstr ""
+msgstr "휴먼 인터페이스 장치"
 
 #. type: "HID64UEFI_description"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "PS2/USB drivers for mouses and keyboards."
-msgstr ""
+msgstr "마우스 및 키보드 용 PS2/USB 드라이버"
 
 #. type: "MemoryFix64UEFI_title"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Memory fix drivers"
-msgstr ""
+msgstr "메모리 오류 수정 드라이버"
 
 #. type: "MemoryFix64UEFI_description"
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "A collection of memory fix drivers."
-msgstr ""
+msgstr "메모리 오류 수정 드라이버 콜렉션"
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:127
@@ -682,13 +683,13 @@ msgstr "FileVault 2 UEFI 부팅을 위한 드라이버를 선택하십시오."
 #: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Additional drivers"
-msgstr ""
+msgstr "추가 드라이버"
 
 #. type: "Other64UEFI_description"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Some times a bios UEFI may lack support for a particular protocol or some functionality."
-msgstr ""
+msgstr "경우에 따라 UEFI BIOS에 필요한 프로토콜이나 필요한 기능이 없을 수도 있습니다."
 
 #. type: "AppleEvent.UEFI_description"
 #: Resources/templates/Localizable.strings:134
@@ -907,40 +908,33 @@ msgstr ""
 #: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "cesium"
-msgstr ""
+msgstr "cesium"
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:192
-#, fuzzy, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal"
+#, no-wrap
 msgid ""
 "Vector theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
-"Slice의 The original metal 테마.\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/metal"
+"Slice의 벡터 cesium 테마.\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/cesium"
 
 #. type: "clovy_title"
 #: Resources/templates/Localizable.strings:195
-#, fuzzy, no-wrap
-#| msgid "Clover"
+#, no-wrap
 msgid "Clovy"
-msgstr "Clover"
+msgstr "Clovy"
 
 #. type: "clovy_description"
 #: Resources/templates/Localizable.strings:196
-#, fuzzy, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal"
+#, no-wrap
 msgid ""
 "Vector SVG theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/Clovy"
 msgstr ""
-"Slice의 The original metal 테마.\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/metal"
+"Clovy의 벡터 SVG 테마.\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/Clovy"
 
 #. type: "random_title"
 #: Resources/templates/Localizable.strings:199
@@ -950,10 +944,7 @@ msgstr "랜덤"
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:200
-#, fuzzy, no-wrap
-#| msgid ""
-#| "random theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/random choose a theme from others"
+#, no-wrap
 msgid ""
 "random theme,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
@@ -981,7 +972,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "CloverThemeManager.app"
-msgstr "Clover 테마"
+msgstr "Clover 테마 매니저"
 
 #. type: "CloverThemeManager_description"
 #: Resources/templates/Localizable.strings:208
@@ -1303,8 +1294,7 @@ msgstr "nvram 내용을 저장할 곳"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, fuzzy, no-wrap
-#| msgid "Number of history boot log lines to keep:"
+#, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "부트 로그에 저장할 줄 수:"
 

@@ -688,8 +688,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       if (patchLocation1) {
         DBG_RT(Entry, "==> patched EXT (10.8 - recent macOS)\n");
         for (i = 5; i < 7; i++) {
-          // E8 XX 00 00 00 EB XX
-          // E8 XX 00 00 00 90 90
+          // E8 XX 00 00 00 EB XX XX
+          // E8 XX 00 00 00 90 90 XX
           Kernel[patchLocation1 + i] = 0x90;
         }
       }
@@ -795,12 +795,12 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     }
   } else {
     // i386
-    if (NumLion_i386_EXT == 1) {
-      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-      DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
-    } else if (NumSnow_i386_EXT == 1) {
+    if (NumSnow_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
       DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
+    } else if (NumLion_i386_EXT == 1) {
+      Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
+      DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
     } else {
       DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
     }

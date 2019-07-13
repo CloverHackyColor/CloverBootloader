@@ -736,7 +736,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         
       // Already patched? May be running a non-vanilla kernel already?
       if (bytes[patchLocation2 + 5] == 0x31 && bytes[patchLocation2 + 6] == 0xC0) {
-        DBG("Lapic panic master already patched, kernel file (10.6 - 10.9) manually patched?\n");
+        DBG("Lapic panic master already patched, kernel file (10.10 - recent macOS) manually patched?\n");
         return FALSE;
       } else {
         DBG("Patched Lapic panic master (10.10 - recent macOS)\n");
