@@ -1718,9 +1718,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
+        AddMenuInfo(&HelpMenu, L"F7  - 检查选中输出设备的声音");
+        AddMenuInfo(&HelpMenu, L"F8  - 生成声卡输出转储到 EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - 调整屏幕分辨率为下一个可用的模式");
         AddMenuInfo(&HelpMenu, L"F10 - 保存截图到 EFI/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - 重置 NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - 推出选中的卷 (DVD)");
