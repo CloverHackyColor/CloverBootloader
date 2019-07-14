@@ -1410,15 +1410,19 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Проверить звук на выбранном выходе");
+        AddMenuInfo(&HelpMenu, L"F8  - Сделать дамп звуковых устройств в EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Изменить разрешение экрана на одно из возможных");
         AddMenuInfo(&HelpMenu, L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Извлечь указанный DVD");
-        AddMenuInfo(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
+        AddMenuInfo(&HelpMenu, L"Пробел - Дополнительное меню запуска выбранного тома");
         AddMenuInfo(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
-        AddMenuInfo(&HelpMenu, L"A - О загрузчике");
-        AddMenuInfo(&HelpMenu, L"O - Дополнительные настройки");
-        AddMenuInfo(&HelpMenu, L"R - Теплый перезапуск");
-        AddMenuInfo(&HelpMenu, L"U - Завершить работу в Кловере");
+        AddMenuInfo(&HelpMenu, L"A (About) - О загрузчике");
+        AddMenuInfo(&HelpMenu, L"O (Options) - Дополнительные настройки");
+        AddMenuInfo(&HelpMenu, L"R (Reset) - Теплый перезапуск");
+        AddMenuInfo(&HelpMenu, L"U (go oUt) - Завершить работу в Кловере");
+        AddMenuInfo(&HelpMenu, L"S (Shell) - Переход в режим командной строки");
         break;
       case ukrainian:
         AddMenuInfo(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
@@ -1427,6 +1431,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F3  - Відображати приховані розділи");
         AddMenuInfo(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1437,6 +1444,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Опції меню");
         AddMenuInfo(&HelpMenu, L"R - Перезавантаження");
         AddMenuInfo(&HelpMenu, L"U - Відключити ПК");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case spanish:
         AddMenuInfo(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
@@ -1446,6 +1454,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
@@ -1455,6 +1466,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Menu Optiones");
         AddMenuInfo(&HelpMenu, L"R - Reiniciar Equipo");
         AddMenuInfo(&HelpMenu, L"U - Apagar");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case portuguese:
       case brasil:
@@ -1465,6 +1477,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
@@ -1474,6 +1489,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Opcoes do Menu");
         AddMenuInfo(&HelpMenu, L"R - Reiniciar");
         AddMenuInfo(&HelpMenu, L"U - Desligar");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case italian:
         AddMenuInfo(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
@@ -1483,6 +1499,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
@@ -1492,6 +1511,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Menu Opzioni");
         AddMenuInfo(&HelpMenu, L"R - Riavvio");
         AddMenuInfo(&HelpMenu, L"U - Spegnimento");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case german:
         AddMenuInfo(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
@@ -1501,6 +1521,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
@@ -1510,6 +1533,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Menue Optionen");
         AddMenuInfo(&HelpMenu, L"R - Neustart");
         AddMenuInfo(&HelpMenu, L"U - Ausschalten");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case dutch:
         AddMenuInfo(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
@@ -1519,6 +1543,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
@@ -1528,6 +1555,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Menu Opties");
         AddMenuInfo(&HelpMenu, L"R - Soft Reset");
         AddMenuInfo(&HelpMenu, L"U - Verlaten");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case french:
         AddMenuInfo(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
@@ -1537,6 +1565,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
@@ -1546,6 +1577,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Options Menu");
         AddMenuInfo(&HelpMenu, L"R - Redémarrer");
         AddMenuInfo(&HelpMenu, L"U - Eteindre");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case indonesian:
         AddMenuInfo(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
@@ -1555,6 +1587,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Eject volume (DVD)");
@@ -1564,6 +1599,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Opsi");
         AddMenuInfo(&HelpMenu, L"R - Soft Reset");
         AddMenuInfo(&HelpMenu, L"U - Shutdown");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case polish:
         AddMenuInfo(&HelpMenu, L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
@@ -1573,6 +1609,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
@@ -1582,6 +1621,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Menu Opcje");
         AddMenuInfo(&HelpMenu, L"R - Restart komputera");
         AddMenuInfo(&HelpMenu, L"U - Wylaczenie komputera");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case croatian:
         AddMenuInfo(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
@@ -1591,6 +1631,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
@@ -1600,6 +1643,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Izbornik opcije");
         AddMenuInfo(&HelpMenu, L"R - Restart računala");
         AddMenuInfo(&HelpMenu, L"U - Isključivanje računala");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case czech:
         AddMenuInfo(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
@@ -1609,6 +1653,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
@@ -1618,6 +1665,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Menu Možnosti");
         AddMenuInfo(&HelpMenu, L"R - Částečný restart");
         AddMenuInfo(&HelpMenu, L"U - Odejít");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case korean:
         AddMenuInfo(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
@@ -1627,6 +1675,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - NVRAM 초기화");
         AddMenuInfo(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
@@ -1636,6 +1687,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - 단축키 - 부트 옵션");
         AddMenuInfo(&HelpMenu, L"R - 단축키 - 리셋");
         AddMenuInfo(&HelpMenu, L"U - 단축키 - 시스템 종료");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case romanian:
         AddMenuInfo(&HelpMenu, L"ESC - Iesire din sub-meniu, Refresh meniul principal");
@@ -1644,6 +1696,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
@@ -1653,6 +1708,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - Optiuni");
         AddMenuInfo(&HelpMenu, L"R - Soft Reset");
         AddMenuInfo(&HelpMenu, L"U - Inchidere");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case chinese:
         AddMenuInfo(&HelpMenu, L"ESC - 离开子菜单， 刷新主菜单");
@@ -1662,6 +1718,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - 保存截图到 EFI/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - 重置 NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - 推出选中的卷 (DVD)");
@@ -1671,6 +1730,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"O - 选项");
         AddMenuInfo(&HelpMenu, L"R - 软复位");
         AddMenuInfo(&HelpMenu, L"U - 退出");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case english:
       default:
@@ -1681,6 +1741,9 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Eject selected volume (DVD)");
@@ -1689,7 +1752,8 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"A - Menu About");
         AddMenuInfo(&HelpMenu, L"O - Menu Options");
         AddMenuInfo(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfo(&HelpMenu, L"U - Exit");
+        AddMenuInfo(&HelpMenu, L"U - Exit from Clover");
+        AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
     }
     HelpMenu.AnimeRun = GetAnime(&HelpMenu);
