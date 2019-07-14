@@ -38,7 +38,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/ApfsEfiBootRecordInfo.h>
 #include <Protocol/NullTextOutput.h>
 
-#define APPLE_SUPPORT_VERSION  L"2.0.6"
+#define APPLE_SUPPORT_VERSION  L"2.0.9"
 #include "ApfsDriverLoader.h"
 #include "EfiComponentName.h"
 
@@ -986,13 +986,12 @@ ApfsDriverLoaderStart (
                       );
   }
 
-  FreePool (ApfsBlock);
-
   //
   // Fill public AppleFileSystemEfiBootRecordInfo protocol interface
   //
   Private = AllocatePool (sizeof (APFS_DRIVER_INFO_PRIVATE_DATA));
   if (Private == NULL) {
+    FreePool (ApfsBlock);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1020,6 +1019,8 @@ ApfsDriverLoaderStart (
     if (Private != NULL) {
       FreePool (Private);
     }
+    FreePool (ApfsBlock);
+
     return Status;
   }
 
@@ -1028,6 +1029,8 @@ ApfsDriverLoaderStart (
     EfiFileBuffer,
     EfiBootRecordBlock->EfiFileLen
     );
+
+  FreePool (ApfsBlock);
 
   if (EFI_ERROR (Status)) {
     gBS->UninstallProtocolInterface (

@@ -17,7 +17,7 @@ msgstr ""
 "PO-Creation-Date: 2015-12-30 23:27+0000\n"
 "POT-Revision-Date: 2018-08-03 12:00+0500\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2.3\n"
 "X-POOTLE-MTIME: 1451518021.0\n"
 
 #. type: Content of: <html><body><div><p>
@@ -62,8 +62,6 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-#, fuzzy
-#| msgid "Supports Fat32, HFS+, ESP."
 msgid "Supports Fat32, HFS+, APFS, ExFAT."
 msgstr "Fat32, HFS+, APFS, ESP를 지원합니다."
 
@@ -79,10 +77,8 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -106,28 +102,18 @@ msgstr "macOS 10.xx, Windows EFI, 그리고 Linux EFI로 부팅할 수 있습니
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid ""
-"It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더"
-"입니다."
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid ""
-"mostly Clover do automatic detection of hardware and set all properties by "
-"default. But user can change them by config.plist"
-msgstr ""
-"대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다. 물"
-"론 사용자가 직접 config.plist를 수정할 수도 있습니다."
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다. 물론 사용자가 직접 config.plist를 수정할 수도 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니"
-"다."
+msgstr "Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -147,9 +133,7 @@ msgstr "ACPI는 standard 4.0으로 정정될 것입니다."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더"
-"입니다."
+msgstr "이전 세대의 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -159,25 +143,17 @@ msgstr "수정과 패턴으로 즉시 DSDT 패치할 수 있습니다."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
-"사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정"
-"할 수 있습니다."
+msgstr "사용자 환경에 맞게 재부팅 오류, 잠자기/깨어나기 오류, PCIRootUID 값 등을 수정할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid ""
-"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards. Also customizable."
-msgstr ""
-"ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 "
-"있습니다. 이 역시 사용자 환경에 맞게 조절할 수 있습니다."
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "ATI, NVidia, Intel 등 폭넓은 그래픽카드를 지원하도록 그래픽 속성을 입력할 수 있습니다. 이 역시 사용자 환경에 맞게 조절할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
 msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
-"USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)"
-"할 수 있습니다."
+msgstr "USB 3.0까지 지원되는 USB 속성 수정(LegacyOff, Ownership, BuiltIn, clock-id)할 수 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
@@ -192,8 +168,7 @@ msgstr "CPU 터보 기능 구현과 P-state, C-state 생성 가능합니다."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)합니다."
+msgstr "ACPI 테이블 로딩(SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)합니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -212,12 +187,8 @@ msgstr "다른 용도로 NVRAM 변수 설정합니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid ""
-"default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 "
-"스크린샷 기능(F10키) 등이 있습니다."
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "사용자가 설정한 대기시간 이후 기본 값으로 부팅, 수정 가능한 GUI, GUI 화면의 스크린샷 기능(F10키) 등이 있습니다."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -1435,6 +1406,4 @@ msgstr "알 수 없음"
 #~ msgstr "USB 3.0 드라이버, 32비트"
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr ""
-#~ "대체 드라이버 (v2)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다"
-#~ "른 AptioFix와 함께 사용하지 마십시오."
+#~ msgstr "대체 드라이버 (v2)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오."

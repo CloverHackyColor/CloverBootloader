@@ -1675,8 +1675,8 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F7  - 선택한 출력에서 사운드 확인");
+        AddMenuInfo(&HelpMenu, L"F8  - 오디오 코덱덤프를 EFI/CLOVER/misc/에 저장합니다.");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - NVRAM 초기화");
