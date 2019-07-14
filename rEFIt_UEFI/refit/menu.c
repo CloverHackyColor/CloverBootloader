@@ -1536,16 +1536,16 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"S - Shell");
         break;
       case dutch:
-        AddMenuInfo(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
+        AddMenuInfo(&HelpMenu, L"ESC - Verlaat submenu, Vernieuw hoofdmenu");
         AddMenuInfo(&HelpMenu, L"F1  - Onderdeel hulp");
-        AddMenuInfo(&HelpMenu, L"F2  - preboot.log opslaan (FAT32 only)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
+        AddMenuInfo(&HelpMenu, L"F2  - preboot.log opslaan (Alleen FAT32)");
+        AddMenuInfo(&HelpMenu, L"F3  - Verborgen opties weergeven");
         AddMenuInfo(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
+        AddMenuInfo(&HelpMenu, L"F7  - Controleer geluid op geselecteerde uitgang");
+        AddMenuInfo(&HelpMenu, L"F8  - Opslaan audio uitgangen in EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F9  - Wijzig schermresolutie naar eerstvolgende mogelijke modus");
         AddMenuInfo(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
         AddMenuInfo(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
