@@ -1432,7 +1432,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
@@ -1455,7 +1455,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1478,7 +1478,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1522,7 +1522,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1566,7 +1566,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1588,7 +1588,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1610,7 +1610,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1632,7 +1632,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1654,7 +1654,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1697,7 +1697,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
@@ -1742,7 +1742,7 @@ VOID HelpRefit(VOID)
         AddMenuInfo(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outpups dump into EFI/CLOVER/misc/");
+        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
         AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
         AddMenuInfo(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
         AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
