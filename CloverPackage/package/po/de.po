@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-13 08:58+0300\n"
-"PO-Revision-Date: 2019-07-13 17:20+0200\n"
+"PO-Revision-Date: 2019-07-14 17:40+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
@@ -1041,7 +1041,7 @@ msgstr "CloverUpdater beenden"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr "Aktuell installierte Clover Version:"
+msgstr "Aktuell installierte Version:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
@@ -1166,7 +1166,7 @@ msgstr "Allgemein"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "Revisions"
-msgstr "Versionen"
+msgstr "Clover Versionen"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
@@ -1226,7 +1226,7 @@ msgstr "Clover Thema"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Author:"
-msgstr "Autor:"
+msgstr "Author:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
@@ -1268,19 +1268,19 @@ msgstr "Sicherungsort des Inhalts des NVRAM"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr "Zu behaltende Zeilenanzahl des Boot Logs:"
+msgstr "Zu behaltende Zeilenanzahl des Bootlogs:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr "Bei jedem Rechnerstart eine CloverEFI/boot.log Zeitstempeldatei erstellen"
+msgstr "Neustart legt eine CloverEFI/boot.log Zeitstempeldatei an:"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr "Anzahl der zu behaltenden Boot.log Zeitstempeldateien:"
+msgstr "Anzahl der zu behaltenden Bootlog Zeitstempeldateien:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1292,7 +1292,7 @@ msgstr "Sicherungskopie"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr "Beim installieren eine Sicherungskopie des EFI Ordners auf der Ziel Partition erstellen"
+msgstr "Bei Installation Backup des EFI Ordners auf dem Ziellaufwerk:"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
