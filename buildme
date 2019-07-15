@@ -1,0 +1,240 @@
+#!/bin/bash
+# created by vector sigma on July 15 2019
+if [[ "$(uname)" != Darwin ]]; then
+  echo "Sorry, works on macOS only"
+  exit 1
+fi
+
+cd "$(dirname $0)"
+declare -r CLOVERROOT="$PWD"
+declare -r EDK2ROOT=$(dirname $CLOVERROOT)
+declare -r TOOLCHAIN=XCODE8
+declare -r PATCHES=Patches_for_UDK2018
+
+
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $EDK2ROOT)/opt/local}
+
+if [[ $PATCHES == Patches_for_UDK2018 ]]; then
+  declare -r edk2Rel=vUDK2018
+  edk2Link=https://codeload.github.com/tianocore/edk2/zip/vUDK2018 # UDK2018
+else
+  declare -r edk2Rel=edk2-stable201905
+  edk2Link=https://github.com/tianocore/edk2/archive/${edk2Rel}.zip # edk2-stable201905
+fi
+
+# Functions
+pathmunge() {
+if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
+  if [[ "${2:-}" = "after" ]]; then
+    export PATH=$PATH:$1
+  else
+    export PATH=$1:$PATH
+  fi
+fi
+}
+
+checkSRCName() {
+local srcName=$(basename $(dirname $EDK2ROOT))
+if [[ $srcName != src ]] && [[ ! -d "${EDK2ROOT}"/BaseTools ]]; then
+  echo "Usually Clover is inside a folder called src (../src/edk2/), but yours is called $srcName"
+  echo "is:"
+  echo "${EDK2ROOT}/"
+  echo "the right path where all edk2 files will be decompressed?"
+  read -p "Are you sure? " -n 1 -r
+  echo    # (optional) move to a new line
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "ok, proceeding.."
+  else
+    echo "Is advised that Clover will stay inside this path:"
+    echo "$HOME/src/edk2/"
+    exit 1
+  fi
+fi
+}
+
+checkXCODE() {
+echo "[CHECK XCODE]"
+if [[ ! -x /usr/bin/xcodebuild ]]; then
+  echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
+fi
+}
+
+isNASMGood() {
+# nasm should be greater or equal to 2.12.02 to be good building Clover.
+# There was a bad macho relocation in outmacho.c, fixed by Zenith432
+# and accepted by nasm devel during 2.12.rcxx (release candidate)
+
+result=1
+local nasmver=$( "${1}" -v | grep 'NASM version' | awk '{print $3}' )
+
+case "$nasmver" in
+2.12.0[2-9]* | 2.12.[1-9]* | 2.1[3-9]* | 2.[2-9]* | [3-9]* | [1-9][1-9]*)
+result=0;;
+*)
+printf "\n\e[1;33mUnknown or unsupported NASM version found at:\n${1}\n\n\e[0m";;
+esac
+
+return $result
+}
+
+checkNASM() {
+local nasmArray=( $(which -a nasm) )
+local found=0
+
+if [ ${#nasmArray[@]} -ge "1" ]; then
+
+  for i in "${nasmArray[@]}"
+  do
+    echo "found nasm v$(${i} -v | grep 'NASM version' | awk '{print $3}') at $(dirname ${i})"
+  done
+
+  # we have a good nasm?
+  for i in "${nasmArray[@]}"
+  do
+    if isNASMGood "${i}"; then
+      found=1
+      export NASM_PREFIX="$(dirname ${i})/"
+      break
+    fi
+  done
+fi
+
+if [[ "$found" -eq 0 ]]; then
+  echo "installing nasm.."
+  NASM_PREFIX="$(dirname ${i})/"
+  "${CLOVERROOT}"/buildnasm.sh
+fi
+}
+
+checkGETTEXT() {
+if [[ ! -x $(which gettext) ]]; then
+  "${CLOVERROOT}"/buildgettext.sh
+fi
+}
+
+exportPaths() {
+pathmunge "$(xcode-select --print-path)"/usr/bin
+pathmunge "$TOOLCHAIN_DIR"/bin
+export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
+export DIR_MAIN=${DIR_MAIN:-$(dirname $EDK2ROOT)}
+export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
+export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
+export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
+export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
+}
+
+checkTools() {
+checkXCODE
+exportPaths
+checkNASM
+checkGETTEXT
+}
+
+updateEDK2() {
+echo "[UPDATE EDKII]"
+checkSRCName
+checkXCODE
+exportPaths
+rm -f "${DIR_DOWNLOADS}/${edk2Rel}.zip"
+curl -o "${DIR_DOWNLOADS}/${edk2Rel}.zip" $edk2Link || exit 1
+cd "${EDK2ROOT}"
+find . -maxdepth 1 ! -name $(basename $CLOVERROOT) -delete
+echo "extracting files from edk2 archive:"
+bsdtar -vxf "${DIR_DOWNLOADS}/${edk2Rel}.zip"  -s'|[^/]*/||'
+rm -f "${DIR_DOWNLOADS}/${edk2Rel}.zip"
+}
+
+patchEDK2() {
+echo "[$PATCHES]"
+cp -R "${CLOVERROOT}"/$PATCHES/* "${EDK2ROOT}"/
+}
+
+updateClover() {
+echo "[UPDATE CLOVER]"
+cd "${CLOVERROOT}"
+svn up
+}
+
+buildClover() {
+checkTools
+if [[ ! -d "${EDK2ROOT}"/BaseTools ]];then
+  updateEDK2
+fi
+
+if [[ -f "${EDK2ROOT}"/BaseTools/Conf/tools_def.txt ]]; then
+    # tools_def.txt exist, but is patched?
+  if ! grep -q XCODE8 "${EDK2ROOT}"/Conf/tools_def.txt; then
+    # no, patch it!
+    patchEDK2
+  fi
+else
+  # tools_def.txt didn't exists. BaseTool is vanilla..
+  patchEDK2
+fi
+
+cd "${CLOVERROOT}"
+echo "[BUILD CLOVER]"
+./ebuild.sh -fr
+./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED
+}
+
+buildPkg() {
+cd "${CLOVERROOT}"/CloverPackage
+echo "[BUILD PKG]"
+make pkg
+}
+
+buildIso() {
+cd "${CLOVERROOT}"/CloverPackage
+echo "[BUILD ISO]"
+make iso
+}
+
+menu() {
+echo
+echo '----------------------------------------------------------'
+cd "${CLOVERROOT}"
+echo "buildme Beta, Clover v2.5k r$(svn info | grep "Revision" | tr -cd [:digit:])"
+echo "EDKII in use: $edk2Rel"
+echo "Patches in use: $PATCHES"
+echo
+PS3='Please enter your choice: '
+options=('build Clover' 'make pkg' 'make iso' 'update Clover' 'update edk2' 'Quit')
+select opt in "${options[@]}"
+do
+  case $opt in
+    "build Clover")
+      buildClover
+      break
+    ;;
+    "make pkg")
+      buildPkg
+      break
+    ;;
+    "make iso")
+      buildIso
+      break
+    ;;
+    "update Clover")
+      updateClover
+      break
+    ;;
+    "update edk2")
+      updateEDK2
+      break
+    ;;
+    "Quit")
+      exit 0
+    ;;
+    *)
+      echo "invalid option $REPLY"
+      break
+    ;;
+  esac
+done
+menu
+}
+
+# Main
+set -e
+menu
