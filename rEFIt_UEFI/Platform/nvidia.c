@@ -2478,10 +2478,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
 
   //there are default or calculated properties, can be skipped
-  if (gSettings.NoDefaultProperties) {
-    DBG("Nvidia: no default properties injected\n");
-    goto done;
-  }
+  //if (gSettings.NoDefaultProperties) {
+  //  DBG("Nvidia: no default properties injected\n");
+ //   goto done;
+  //}
 
   if (gSettings.BootDisplay < 0) {
     // if not set this is default property
@@ -2496,13 +2496,15 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
 
-  if (videoRam != 0) {
-    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 8);
-  } else {
-    DBG("Warning! VideoRAM is not detected and not set\n");
+  if (!gSettings.NoDefaultProperties) {
+	  if (videoRam != 0) {
+		  devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 8);
+	  }
+	  else {
+		  DBG("Warning! VideoRAM is not detected and not set\n");
+	  }
+	  devprop_add_nvidia_template(device, n_ports);
   }
-
-  devprop_add_nvidia_template(device, n_ports);
 
   //add HDMI Audio back to nvidia
   //http://forge.voodooprojects.org/p/chameleon/issues/67/
@@ -2531,16 +2533,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, "@0,pwm-info", pwm_info, PWM_LEN);
   }
 
-
-  if (gSettings.NVCAP[0] == 0) {
-    devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
-    DBG("default NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
-        default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
-        default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
-        default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],
-        default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
-        default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
-  }
 
 done:
   devices_number++;
