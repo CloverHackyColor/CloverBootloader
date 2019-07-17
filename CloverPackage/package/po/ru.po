@@ -932,7 +932,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:195
 #, no-wrap
 msgid "Clovy"
-msgstr "Clovy"
+msgstr "Clovy SVG"
 
 #. type: "clovy_description"
 #: Resources/templates/Localizable.strings:196

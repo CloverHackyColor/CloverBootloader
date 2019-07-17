@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 08:58+0300\n"
-"PO-Revision-Date: 2019-07-14 15:29+0700\n"
-"Last-Translator: vector sigma\n"
+"POT-Creation-Date: 2019-07-13 22:16+0300\n"
+"PO-Revision-Date: 2019-07-17 14:02+0700\n"
+"Last-Translator: Badruzeus\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
@@ -41,7 +41,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:37
 msgid "Source code credits to:"
-msgstr "Source code dikembangkan oleh:"
+msgstr "Source code oleh:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:38
@@ -61,7 +61,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
 msgid "Supports Fat32, HFS+, ESP."
-msgstr "Mendukung FAT32, HFS+, ESP."
+msgstr "Mendukung FAT32, HFS+, APFS, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
@@ -98,12 +98,12 @@ msgstr "Fitur-fitur Utama:"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:27
 msgid "boot into 10.xx macOS, Windows EFI and Linux EFI"
-msgstr "Boot ke macOS 10.xx, Windows dan Linux (EFI)"
+msgstr "Boot macOS 10.xx, Windows dan Linux (EFI)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
 msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Clover menyediakan RuntimeServices EFI untuk OS yang mustahil bagi firmware Legacy"
+msgstr "Clover menyediakan RuntimeServices EFI untuk OS yang mustahil bagi Bootloder Legacy"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
@@ -113,7 +113,7 @@ msgstr "Clover mendeteksi Perangkat Keras secara otomatis dan mengatur Propertie
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Dengan Clover, Anda dapat Restart menuju OS lain dari Startup Disk prefPane"
+msgstr "Dengan Clover, Anda dapat Restart menuju OS lain dari preferensi Startup Disk"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -148,7 +148,7 @@ msgstr "RestartFix dan pembenahan untuk fitur Sleep/Wake, serta nilai PCIRootUID
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
 msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Injektor Properties ATI, NVidia dan Intel dimana lebih banyak Kartu Grafis yang didukung. Juga bisa diatur."
+msgstr "Injektor Properties ATI, NVidia dan Intel yang mendukung berbagai jenis Kartu Grafis. Bisa diatur kemudian."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -183,12 +183,12 @@ msgstr "Patch Kernel dan Kext secara On The Fly"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:44
 msgid "set NVRAM variables for different purpose"
-msgstr "Mengatur variabel NVRAM untuk tujuan berbeda"
+msgstr "Mengatur variabel NVRAM untuk berbagai tujuan"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
 msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Boot setelah timeout, GUI yang bisa diatur, serta menyimpan screenshots GUI melalui tombol F10"
+msgstr "Boot setelah timeout, GUI yang bisa diubah, dan simpan screenshots GUI dengan tombol F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -248,8 +248,7 @@ msgid ""
 msgstr ""
 "Install Clover pada ESP (EFI System Partition) dari volume tujuan\n"
 "\n"
-"Format ESP dengan FAT32 di Mac.\n"
-"Untuk FAT32 gunakan perintah seperti:\n"
+"Format ESP dengan FAT32 di Mac menggunakan perintah seperti:\n"
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 
@@ -257,7 +256,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Bootloader"
-msgstr "Bootloader (Legacy)"
+msgstr "Boot Sectors (Legacy)"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:30
@@ -371,49 +370,49 @@ msgstr ""
 #: Resources/templates/Localizable.strings:65
 #, no-wrap
 msgid "CloverEFI"
-msgstr "CloverEFI (Legacy)"
+msgstr "Clover boot BIOS (Legacy)"
 
 #. type: "CloverEFI_description"
 #: Resources/templates/Localizable.strings:66
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr "Pilih versi CloverEFI yang akan diinstall."
+msgstr "Pilih varian Clover boot untuk diinstall di BIOS Legacy."
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:67
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
-msgstr "CloverEFI 64-bits SATA"
+msgstr "Clover boot 64-bits SATA"
 
 #. type: "cloverEFI.64.sata_description"
 #: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bits melalui SATA untuk akses Drives"
+msgstr "Clover boot 64-bits melalui SATA untuk akses Drives"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:69
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
-msgstr "CloverEFI 64-bits BiosBlockIO"
+msgstr "Clover boot 64-bits BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
 #: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64-bits melalui Bios Block I/O untuk akses Drives"
+msgstr "Clover boot 64-bits melalui Bios Block I/O untuk akses Drives"
 
 #. type: "cloverEFI.64.blockio2_title"
 #: Resources/templates/Localizable.strings:71
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
-msgstr "CloverEFI 64-bits BiosBlockIO untuk NVIDIA NForce MCP79"
+msgstr "Clover boot 64-bits BiosBlockIO untuk NVIDIA NForce MCP79"
 
 #. type: "cloverEFI.64.blockio2_description"
 #: Resources/templates/Localizable.strings:72
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
-msgstr "CloverEFI 64-bits melalui Bios Block I/O untuk akses drives di chipset NVIDIA NForce MCP79"
+msgstr "Clover boot 64-bits melalui Bios Block I/O untuk akses drives di chipset NVIDIA NForce MCP79"
 
 #. type: "off_title"
 #: Resources/templates/Localizable.strings:77
@@ -449,7 +448,7 @@ msgstr "Pilih drivers untuk BIOS-booting (Legacy)."
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Recommended drivers"
-msgstr "Drivers yang dianjurkan"
+msgstr "Drivers Rekomendasi"
 
 #. type: "Recommended64UEFI_description"
 #: Resources/templates/Localizable.strings:85
@@ -476,7 +475,7 @@ msgstr "Koleksi drivers untuk File System."
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "FileVault 2 BIOS Drivers, 64 bit"
-msgstr "Drivers FileVault 2 (BIOS)"
+msgstr "Drivers FileVault 2"
 
 #. type: "Drivers64FV2_description"
 #: Resources/templates/Localizable.strings:91
@@ -524,7 +523,7 @@ msgstr "Dukungan PS/2 Keyboard untuk digunakan dengan FileVault 2"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
-msgstr "Seperangkat protokol untuk mendukung EfiLoginUi bagi FileVault."
+msgstr "Rangkaian protokol untuk mendukung EfiLoginUi bagi FileVault."
 
 #. type: "AppleUITheme.UEFI_description"
 #: Resources/templates/Localizable.strings:99
@@ -644,7 +643,7 @@ msgstr "Koleksi drivers Memory Fix untuk UEFI"
 #: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "FileVault 2 UEFI Drivers, 64 bit"
-msgstr "Drivers FileVault 2 (UEFI)"
+msgstr "Drivers FileVault 2"
 
 #. type: "Drivers64UEFIFV2_description"
 #: Resources/templates/Localizable.strings:128
@@ -656,7 +655,7 @@ msgstr "Pilih drivers untuk UEFI-booting dengan FileVault 2."
 #: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Additional drivers"
-msgstr "Drivers tambahan"
+msgstr "Drivers Tambahan"
 
 #. type: "Other64UEFI_description"
 #: Resources/templates/Localizable.strings:131
@@ -826,7 +825,7 @@ msgstr "Themes"
 #: Resources/templates/Localizable.strings:177
 #, no-wrap
 msgid "Select to install themes."
-msgstr "Pilih Themes yang akan diinstall."
+msgstr "Pilih Themes untuk diinstall."
 
 #. type: "BGM_title"
 #: Resources/templates/Localizable.strings:179
@@ -889,8 +888,8 @@ msgid ""
 "Vector theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
-"Theme metal kreasi Slice,\n"
-"Pasang ke /EFI/CLOVER/themes/metal"
+"Theme Vector kreasi Slice,\n"
+"Pasang ke /EFI/CLOVER/themes/cesium"
 
 #. type: "clovy_title"
 #: Resources/templates/Localizable.strings:195
@@ -1019,7 +1018,7 @@ msgid ""
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
 "Install Panel Preferensi Clover di Volume tujuan.\n"
-"Memuat Clover Updater yang memberitahu Anda tentang pembaruan."
+"Memuat CloverUpdater yang memberitahu Anda tentang pembaruan."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -1027,19 +1026,19 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
-msgstr "Clover Updater"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
 #, no-wrap
 msgid "About CloverUpdater"
-msgstr "Tentang Clover Updater"
+msgstr "Tentang CloverUpdater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
 #, no-wrap
 msgid "Quit CloverUpdater"
-msgstr "Keluar Clover Updater"
+msgstr "Keluar dari CloverUpdater"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
@@ -1051,13 +1050,13 @@ msgstr "Revisi Clover lokal saat ini:"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr "Revisi permbaruan terkini:"
+msgstr "Revisi update terkini:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr "Anda ingin memperbarui?"
+msgstr "Anda ingin update?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
@@ -1069,13 +1068,13 @@ msgstr "Nanti"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr "Perbarui"
+msgstr "Update"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
 #, no-wrap
 msgid "No update available !"
-msgstr "Tiada pembaruan tersedia !"
+msgstr "Sudah up to Date !"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
@@ -1124,13 +1123,13 @@ msgstr "Bulanan"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Check for Updates"
-msgstr "Check Pembaruan"
+msgstr "Check Update"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr "Jadwal Check Pembaruan tiap:"
+msgstr "Check Update Setiap:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
@@ -1210,7 +1209,7 @@ msgstr "Mount paksa ESP terpilih saat Startup:"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Save NVRAM contents to disk:"
-msgstr "Mode Simpan isi NVRAM ke Disk:"
+msgstr "Simpan konten NVRAM ke Disk:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1252,7 +1251,7 @@ msgstr "Theme:"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "No Preview Available"
-msgstr "Pratinjau tidak tersedia."
+msgstr "Preview tidak tersedia"
 
 #. type: "431.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
@@ -1264,7 +1263,7 @@ msgstr "Mount partisi ESP pada saat boot"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr "Tempat simpan isi NVRAM"
+msgstr "Tempat simpan konten NVRAM"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
@@ -1288,19 +1287,19 @@ msgstr "Jumlah berkas TimeStamp boot log tersimpan:"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Backup"
-msgstr "Cadangan"
+msgstr "Backup"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr "Ketika install, cadangkan folder EFI di Volume tujuan"
+msgstr "Ketika install, backup folder EFI di Volume tujuan"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Number of backups to keep:"
-msgstr "Jumlah cadangan tersimpan:"
+msgstr "Jumlah backup tersimpan:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
@@ -1344,7 +1343,7 @@ msgstr "ESP pada [%1$@] %2$@"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "No description available"
-msgstr "Tidak ada keterangan"
+msgstr "Tanpa keterangan"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
