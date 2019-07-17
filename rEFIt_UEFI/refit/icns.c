@@ -114,8 +114,8 @@ MISC_ICONS OSIconsTable[] = {
   {NULL, "radio_button_selected"},
   {NULL, "checkbox"},
   {NULL, "checkbox_checked"},
-  {NULL, "scrollbar-background"}, //24
-  {NULL, "scrollbar-holder"},
+  {NULL, "scrollbar_background"}, //24
+  {NULL, "scrollbar_holder"},
 //  {NULL, "selection_indicator"},
   {NULL, NULL}
 };

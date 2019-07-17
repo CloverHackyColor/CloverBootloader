@@ -703,6 +703,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
+	CheckEmptyFB();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume, Entry->OSVersion);

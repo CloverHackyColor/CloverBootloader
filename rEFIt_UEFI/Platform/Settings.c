@@ -1012,7 +1012,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
   }
 
-  Prop = GetProperty (DictPointer, "ForceKextsToLoad");
+  Prop = GetProperty (DictPointer, "");
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     if (Count > 0) {
@@ -4276,6 +4276,21 @@ finish:
   }
   PrepareFont();
   return Status;
+}
+
+VOID CheckEmptyFB()
+{
+	BOOLEAN EmptyFB = (gSettings.IgPlatform == 0x00050000) ||
+		(gSettings.IgPlatform == 0x01620007) ||
+		(gSettings.IgPlatform == 0x04120004) ||
+		(gSettings.IgPlatform == 0x19120001) ||
+		(gSettings.IgPlatform == 0x59120003) ||
+		(gSettings.IgPlatform == 0x3E910003);
+	if (EmptyFB) {
+		gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
+	} else {
+		gPlatformFeature &= ~PT_FEATURE_HAS_HEADLESS_GPU;
+	}
 }
 
 VOID
