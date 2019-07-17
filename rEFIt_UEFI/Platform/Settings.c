@@ -1012,7 +1012,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
   }
 
-  Prop = GetProperty (DictPointer, "");
+  Prop = GetProperty (DictPointer, "ForceKextsToLoad");
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     if (Count > 0) {
