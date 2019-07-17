@@ -47,7 +47,7 @@ Headers collection for procedures
 #include <IndustryStandard/Atapi.h>
 #include <IndustryStandard/AppleHid.h>
 #include <IndustryStandard/AppleSmBios.h>
-#include <IndustryStandard/AppleFeature.h>
+#include <IndustryStandard/AppleFeatures.h>
 #include <IndustryStandard/Bmp.h>
 #include <IndustryStandard/HdaCodec.h>
 
