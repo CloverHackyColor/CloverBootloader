@@ -829,7 +829,6 @@
 		12C874D01DE42A4900BF4974 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
 		12E301581D5A413A00EED426 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		12E301591D5A413A00EED426 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
-		12E94D31213EEA4100D1F644 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Clover; path = /Volumes/MacHD/Users/sergey/src/UDK2018/Clover/Xcode/Clover/build/Debug/Clover; sourceTree = "<absolute>"; };
 		12E94D32213EF04A00D1F644 /* AppleKeyFeeder */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppleKeyFeeder; sourceTree = "<group>"; };
 		12EA7C221E65FC3D00085A48 /* HashServiceFix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HashServiceFix.c; sourceTree = "<group>"; };
 		12EA7C231E65FC3D00085A48 /* HashServiceFix.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HashServiceFix.inf; sourceTree = "<group>"; };
@@ -930,6 +929,11 @@
 		A51C784721E0981C001385A7 /* HdaControllerMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerMem.c; sourceTree = "<group>"; };
 		A51C784821E0981C001385A7 /* HdaModels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaModels.c; sourceTree = "<group>"; };
 		A51C784921E0C280001385A7 /* HdaCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodec.h; sourceTree = "<group>"; };
+		A51F63C122DFA8C900086DB7 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
+		A51F63C822DFB7E300086DB7 /* AppleFeatures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleFeatures.h; sourceTree = "<group>"; };
+		A51F63C922DFB81700086DB7 /* AppleApfsInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleApfsInfo.h; sourceTree = "<group>"; };
+		A51F63CA22DFB84500086DB7 /* ApfsEfiBootRecordInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsEfiBootRecordInfo.h; sourceTree = "<group>"; };
+		A51F63CB22DFB86F00086DB7 /* ApplePartitionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePartitionInfo.h; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
 		A5603D0321F04ECE005F400E /* sound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
 		A5611B2A21DCB97F008FDB96 /* Riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Riff.h; sourceTree = "<group>"; };
@@ -2753,6 +2757,7 @@
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
 				12FEB9EE212F3278002B6CE2 /* Patches_for_UDK2018 */,
 				A511943C1F74B380005B0121 /* Patches_for_EDK2 */,
+				A51F63C122DFA8C900086DB7 /* Clover */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2760,6 +2765,7 @@
 			isa = PBXGroup;
 			children = (
 				2C794ABA1A0AA85900D845B0 /* AcpiDescription.h */,
+				A51F63C922DFB81700086DB7 /* AppleApfsInfo.h */,
 				12C86CC81DE428E200BF4974 /* ApplePlatformInfo.h */,
 				2C794ABB1A0AA85900D845B0 /* ConsoleOutConfig.h */,
 				2C794ABC1A0AA85900D845B0 /* DxeCoreFileName.h */,
@@ -2774,6 +2780,7 @@
 		2C794AC91A0AA85900D845B0 /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
+				A51F63C822DFB7E300086DB7 /* AppleFeatures.h */,
 				12AAF55C1DBE447200A52B12 /* AppleHid.h */,
 				12344F581CAB9A5700318A6E /* AppleSmBios.h */,
 				2C794AC21A0AA85900D845B0 /* AtomBios.h */,
@@ -2810,6 +2817,7 @@
 		2C794ADC1A0AA85900D845B0 /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
+				A51F63CA22DFB84500086DB7 /* ApfsEfiBootRecordInfo.h */,
 				2C794AD21A0AA85900D845B0 /* AppleDeviceControl.h */,
 				2C794AD31A0AA85900D845B0 /* AppleDiskIo.h */,
 				12AAF5171DBE28B800A52B12 /* AppleEvent.h */,
@@ -2817,6 +2825,7 @@
 				2C794AD41A0AA85900D845B0 /* AppleImageCodecProtocol.h */,
 				1261CBB51DB17AC200E26E00 /* AppleKeyState.h */,
 				12AAF55F1DBE44A300A52B12 /* AppleKeyMapDatabase.h */,
+				A51F63CB22DFB86F00086DB7 /* ApplePartitionInfo.h */,
 				12AAF5601DBE44AD00A52B12 /* ApplePlatformInfoDatabase.h */,
 				2C794AD51A0AA85900D845B0 /* AppleSMC.h */,
 				A5611B2F21DCB9BA008FDB96 /* AudioIo.h */,
@@ -3081,7 +3090,7 @@
 			);
 			name = Clover;
 			productName = Clover;
-			productReference = 12E94D31213EEA4100D1F644 /* Clover */;
+			productReference = A51F63C122DFA8C900086DB7 /* Clover */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

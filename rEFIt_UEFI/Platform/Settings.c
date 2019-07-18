@@ -7276,7 +7276,7 @@ SetDevices (LOADER_ENTRY *Entry)
                                              1,
                                              &LEVL
                                              );
-                // Read P0BL
+                // Read P0BL -- what is the sense to read if not used?
                 /*Status = */PciIo->Mem.Read(
                                              PciIo,
                                              EfiPciIoWidthUint32,

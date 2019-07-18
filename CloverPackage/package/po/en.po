@@ -62,10 +62,8 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-#, fuzzy
-#| msgid "Supports Fat32, HFS+, ESP."
 msgid "Supports Fat32, HFS+, APFS, ExFAT."
-msgstr "Supports Fat32, HFS+, ESP."
+msgstr "Supports Fat32, HFS+, APFS, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
@@ -75,14 +73,12 @@ msgstr "Copyright © %CPRYEAR%"
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "Clover v2"
-msgstr "Clover v2.4k"
+msgstr "Clover v2.5k"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -106,28 +102,18 @@ msgstr "Boot into macOS 10.xx, Windows EFI and Linux EFI;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid ""
-"It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders"
-msgstr ""
-"It's EFI bootloader provides RuntimeServices for OS that impossible for "
-"Legacy Bootloaders;"
+msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgstr "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid ""
-"mostly Clover do automatic detection of hardware and set all properties by "
-"default. But user can change them by config.plist"
-msgstr ""
-"Mostly Clover do automatic detection of hardware and set all properties by "
-"default. But user can change them by editing config.plist;"
+msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
+msgstr "Mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by editing config.plist;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
-"With Clover you may restart into other OS from Startup Disk pane in System "
-"preferences;"
+msgstr "With Clover you may restart into other OS from Startup Disk pane in System preferences;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -161,12 +147,8 @@ msgstr "Customizable RestartFix and Sleep/Wake fixes and PCIRootUID value;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid ""
-"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards. Also customizable."
-msgstr ""
-"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
-"supported cards. Also customizable;"
+msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
+msgstr "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -205,12 +187,8 @@ msgstr "Set NVRAM variables for different purpose;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid ""
-"default boot after timeout, customizable GUI , and saving screenshots from "
-"GUI typing F10"
-msgstr ""
-"Default boot after timeout, customizable GUI, saving screenshots from GUI "
-"typing F10;"
+msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
+msgstr "Default boot after timeout, customizable GUI, saving screenshots from GUI typing F10;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -229,12 +207,14 @@ msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
 msgstr ""
+"Clover wants to make the root file system read-write.\n"
+"The change is temporary until the next reboot"
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
 #, no-wrap
 msgid "Cannot install without ensuring the file system is read-write"
-msgstr ""
+msgstr "Cannot install without ensuring the file system is read-write"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:10
@@ -440,7 +420,7 @@ msgstr "Clover EFI 64-bits using Bios Block I/O to access drives for chipset NVI
 #: Resources/templates/Localizable.strings:77
 #, no-wrap
 msgid "Drivers off"
-msgstr ""
+msgstr "Drivers off"
 
 #. type: "off_description"
 #: Resources/templates/Localizable.strings:78
@@ -449,6 +429,8 @@ msgid ""
 "Installs all available drivers in EFI/CLOVER/drivers/off/\n"
 "off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be."
 msgstr ""
+"Installs all available drivers in EFI/CLOVER/drivers/off/\n"
+"off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be."
 
 #. type: "Drivers64_title"
 #: Resources/templates/Localizable.strings:81
@@ -467,30 +449,28 @@ msgstr "Select drivers for BIOS-booting."
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Recommended drivers"
-msgstr ""
+msgstr "Recommended drivers"
 
 #. type: "Recommended64UEFI_description"
 #: Resources/templates/Localizable.strings:85
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "Recommended drivers, mostly mandatory."
-msgstr ""
+msgstr "Recommended drivers, mostly mandatory."
 
 #. type: "FileSystem64UEFI_title"
 #: Resources/templates/Localizable.strings:87
 #: Resources/templates/Localizable.strings:121
-#, fuzzy, no-wrap
-#| msgid "FAT filesystem driver."
+#, no-wrap
 msgid "File System drivers"
-msgstr "FAT filesystem driver."
+msgstr "File System drivers"
 
 #. type: "FileSystem64UEFI_description"
 #: Resources/templates/Localizable.strings:88
 #: Resources/templates/Localizable.strings:122
-#, fuzzy, no-wrap
-#| msgid "Alternate HFS+ filesystem driver."
+#, no-wrap
 msgid "A collection of file system drivers."
-msgstr "Alternate HFS+ filesystem driver."
+msgstr "A collection of file system drivers."
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:90
@@ -509,7 +489,7 @@ msgstr "Select drivers for BIOS-booting with FileVault 2."
 #: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
-msgstr "Supports APFS filesystem driver from container for macOS 10.13."
+msgstr "Supports APFS filesystem driver from container for macOS 10.13 and newers"
 
 #. type: "AppleImageCodec.UEFI_description"
 #: Resources/templates/Localizable.strings:94
@@ -572,6 +552,9 @@ msgstr "Preferred 64bit driver to fix Memory problems on UEFI firmware such as A
 #, no-wrap
 msgid "HDA driver to play Startup Sound"
 msgstr ""
+"HDA driver to play Startup Sound during Clover boot.\n"
+"Configure it via Startup sound output from Option menu, including:\n"
+"Volume and Audio device (for supported IOAudio devices only)."
 
 #. type: "FirmwareVolume.UEFI_description"
 #: Resources/templates/Localizable.strings:103
@@ -640,25 +623,25 @@ msgstr "Select drivers for UEFI-booting."
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Human Interface Devices"
-msgstr ""
+msgstr "Human Interface Devices"
 
 #. type: "HID64UEFI_description"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "PS2/USB drivers for mouses and keyboards."
-msgstr ""
+msgstr "PS2/USB drivers for mouses and keyboards."
 
 #. type: "MemoryFix64UEFI_title"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "Memory fix drivers"
-msgstr ""
+msgstr "Memory fix drivers"
 
 #. type: "MemoryFix64UEFI_description"
 #: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid "A collection of memory fix drivers."
-msgstr ""
+msgstr "A collection of memory fix drivers."
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:127
@@ -676,13 +659,13 @@ msgstr "Select drivers for UEFI-booting with FileVault 2."
 #: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Additional drivers"
-msgstr ""
+msgstr "Additional drivers"
 
 #. type: "Other64UEFI_description"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Some times a bios UEFI may lack support for a particular protocol or some functionality."
-msgstr ""
+msgstr "Sometimes a bios UEFI may lack support for a particular protocol or some functionality."
 
 #. type: "AppleEvent.UEFI_description"
 #: Resources/templates/Localizable.strings:134
@@ -701,6 +684,9 @@ msgstr "Create optional AppleGraphicsConfig protocol."
 #, no-wrap
 msgid "HDA driver to play Startup Sound at boot time"
 msgstr ""
+"HDA driver to play Startup Sound during Clover boot.\n"
+"Configure it via Startup sound output from Option menu, including:\n"
+"Volume and Audio device (for supported IOAudio devices only)."
 
 #. type: "CsmVideoDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:145
@@ -898,40 +884,33 @@ msgstr ""
 #: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid "cesium"
-msgstr ""
+msgstr "cesium"
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:192
-#, fuzzy, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal"
+#, no-wrap
 msgid ""
 "Vector theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
-"The original metal theme from Slice.\n"
-"Install to /EFI/CLOVER/themes/metal"
+"Vector theme from Slice.\n"
+"Install to /EFI/CLOVER/themes/cesium"
 
 #. type: "clovy_title"
 #: Resources/templates/Localizable.strings:195
-#, fuzzy, no-wrap
-#| msgid "Clover"
+#, no-wrap
 msgid "Clovy"
-msgstr "Clover"
+msgstr "Clovy"
 
 #. type: "clovy_description"
 #: Resources/templates/Localizable.strings:196
-#, fuzzy, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal"
+#, no-wrap
 msgid ""
 "Vector SVG theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/Clovy"
 msgstr ""
-"The original metal theme from Slice.\n"
-"Install to /EFI/CLOVER/themes/metal"
+"Vector SVG theme from Clovy,\n"
+"Install to /EFI/CLOVER/themes/Clovy"
 
 #. type: "random_title"
 #: Resources/templates/Localizable.strings:199
@@ -941,16 +920,14 @@ msgstr "Random"
 
 #. type: "random_description"
 #: Resources/templates/Localizable.strings:200
-#, fuzzy, no-wrap
-#| msgid ""
-#| "random theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/random choose a theme from others"
+#, no-wrap
 msgid ""
 "random theme,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
 "Random theme from Slice.\n"
-"Install to /EFI/CLOVER/themes/random choose a theme from others"
+"If you have more than one theme installed, it will randomize them.\n"
+"Install to /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
 #: Resources/templates/Localizable.strings:203
@@ -1101,13 +1078,13 @@ msgstr "Update"
 #: ../CloverUpdater/CloverUpdater.strings:11
 #, no-wrap
 msgid "No update available !"
-msgstr "No updates available."
+msgstr "No updates available !"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr "Ок"
+msgstr "ОK"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
@@ -1294,8 +1271,7 @@ msgstr "Where to save the nvram content"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, fuzzy, no-wrap
-#| msgid "Number of history boot log lines to keep:"
+#, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Number of history boot log lines to keep:"
 
@@ -1432,6 +1408,4 @@ msgstr "Unknown"
 #~ msgstr "USB 3.0 driver, 32 bit."
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr ""
-#~ "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use "
-#~ "with other AptioFix together."
+#~ msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
