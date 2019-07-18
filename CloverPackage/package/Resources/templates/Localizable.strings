@@ -181,7 +181,7 @@ Usually it is already present but sometime it may be missed. In this case you sh
 Install to /EFI/CLOVER/themes/BGM";
 
 "embedded_title" = "embedded";
-"embedded_description" = "embedded theme from Blackosx,
+"embedded_description" = "embedded theme from Clovy,
 Install to /EFI/CLOVER/themes/embedded";
 
 "metal_title" = "metal";
@@ -189,7 +189,7 @@ Install to /EFI/CLOVER/themes/embedded";
 Install to /EFI/CLOVER/themes/metal";
 
 "cesium_title" = "cesium";
-"cesium_description" = "Vector theme from Slice,
+"cesium_description" = "Vector SVG theme from Slice,
 Install to /EFI/CLOVER/themes/cesium";
 
 "clovy_title" = "Clovy";

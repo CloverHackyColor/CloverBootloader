@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 22:16+0300\n"
+"POT-Creation-Date: 2019-07-18 20:56+0300\n"
 "PO-Revision-Date: 2019-07-13 10:25+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: it <it@li.org>\n"
@@ -878,9 +878,12 @@ msgstr "Embedded"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:184
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "embedded theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/embedded"
 msgid ""
-"embedded theme from Blackosx,\n"
+"embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
 "Tema Embedded di Blackosx,\n"
@@ -910,9 +913,12 @@ msgstr ""
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:192
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Vector theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/cesium"
 msgid ""
-"Vector theme from Slice,\n"
+"Vector SVG theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
 "Tema originale metal di Slice,\n"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 22:16+0300\n"
+"POT-Creation-Date: 2019-07-18 20:56+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: en <en@li.org>\n"
@@ -77,8 +77,10 @@ msgstr "Clover v2.5k"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -102,18 +104,28 @@ msgstr "Boot into macOS 10.xx, Windows EFI and Linux EFI;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders;"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by editing config.plist;"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by editing config.plist;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "With Clover you may restart into other OS from Startup Disk pane in System preferences;"
+msgstr ""
+"With Clover you may restart into other OS from Startup Disk pane in System "
+"preferences;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -147,8 +159,12 @@ msgstr "Customizable RestartFix and Sleep/Wake fixes and PCIRootUID value;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable;"
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -187,8 +203,12 @@ msgstr "Set NVRAM variables for different purpose;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Default boot after timeout, customizable GUI, saving screenshots from GUI typing F10;"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Default boot after timeout, customizable GUI, saving screenshots from GUI "
+"typing F10;"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -858,10 +878,10 @@ msgstr "Embedded"
 #: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid ""
-"embedded theme from Blackosx,\n"
+"embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
-"embedded theme from Blackosx.\n"
+"embedded theme from Clovy.\n"
 "Install to /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
@@ -890,10 +910,10 @@ msgstr "cesium"
 #: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid ""
-"Vector theme from Slice,\n"
+"Vector SVG theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
-"Vector theme from Slice.\n"
+"Vector SVG theme from Slice.\n"
 "Install to /EFI/CLOVER/themes/cesium"
 
 #. type: "clovy_title"
@@ -1408,4 +1428,6 @@ msgstr "Unknown"
 #~ msgstr "USB 3.0 driver, 32 bit."
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+#~ msgstr ""
+#~ "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use "
+#~ "with other AptioFix together."

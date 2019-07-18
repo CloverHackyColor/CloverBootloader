@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 22:16+0300\n"
+"POT-Creation-Date: 2019-07-18 20:42+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -63,10 +63,8 @@ msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:43
-#, fuzzy
-#| msgid "Supports Fat32, HFS+, ESP."
 msgid "Supports Fat32, HFS+, APFS, ExFAT."
-msgstr "Поддержка FAT32, HFS+, APFS, ESP."
+msgstr "Поддержка FAT32, HFS+, APFS, ExFAT."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:44 Resources/templates/Conclusion.html:25
@@ -242,7 +240,7 @@ msgstr "Установка выполнена!"
 msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
-msgstr "Clover дает корневой системе права на записьИзменение временное до следующей перезагрузки"
+msgstr "Clover дает корневой системе права на запись. Изменение временное до следующей перезагрузки"
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
@@ -505,7 +503,7 @@ msgstr "Коллекция драйверов файловых систем"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "FileVault 2 BIOS Drivers, 64 bit"
-msgstr "FileVault драйвера для БИОС загрузки"
+msgstr "FileVault2 драйвера для БИОС загрузки"
 
 #. type: "Drivers64FV2_description"
 #: Resources/templates/Localizable.strings:91
@@ -885,12 +883,8 @@ msgstr "Встроенная"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:184
-#, fuzzy, no-wrap
-#| msgid ""
-#| "embedded theme from Clovy,\n"
-#| "Install to /EFI/CLOVER/themes/embedded"
 msgid ""
-"embedded theme from Blackosx,\n"
+"embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
 "Встроенная тема от Clovy.\n"
@@ -922,7 +916,7 @@ msgstr "cesium"
 #: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid ""
-"Vector theme from Slice,\n"
+"Vector SVG theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
 "Векторная тема от Slice.\n"
@@ -1298,8 +1292,7 @@ msgstr "Сохранять содержимое NVRAM на раздел"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, fuzzy, no-wrap
-#| msgid "Number of history boot log lines to keep:"
+#, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Число дополнительных строк в CloverEFI/system.log:"
 

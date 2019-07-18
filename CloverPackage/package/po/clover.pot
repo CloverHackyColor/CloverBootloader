@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.5k-r5004\n"
-"POT-Creation-Date: 2019-07-13 22:16+0300\n"
+"Project-Id-Version: Clover v2.5k-r5022\n"
+"POT-Creation-Date: 2019-07-18 20:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -823,7 +823,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid ""
-"embedded theme from Blackosx,\n"
+"embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
 
@@ -851,7 +851,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid ""
-"Vector theme from Slice,\n"
+"Vector SVG theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
 

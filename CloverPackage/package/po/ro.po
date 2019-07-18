@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 22:16+0300\n"
+"POT-Creation-Date: 2019-07-18 20:56+0300\n"
 "PO-Revision-Date: 2019-07-14 21:16+0300\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ro <ro@li.org>\n"
@@ -75,8 +75,11 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "este un software open-source bazat pe diferite proiecte: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"este un software open-source bazat pe diferite proiecte: Clover, rEFIt, XNU, "
+"VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -100,23 +103,34 @@ msgstr "boot pentru: macOS 10.xx, Windows EFI si Linux EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Bootloader-ul sau EFI ofera RuntimeServices pentru sistemul de operare, lucru imposibil pentru bootloader-ele traditionale de tip Legacy"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Bootloader-ul sau EFI ofera RuntimeServices pentru sistemul de operare, "
+"lucru imposibil pentru bootloader-ele traditionale de tip Legacy"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "in general, Clover ofera detectie hardware automata si setarea implicita a tuturor proprietatilor. Uilizatorul le poate insa modifica din config.plist"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"in general, Clover ofera detectie hardware automata si setarea implicita a "
+"tuturor proprietatilor. Uilizatorul le poate insa modifica din config.plist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "cu Clover, puteti alege sa initiati alt sistem de operare, folosind Startup Disk prefPane"
+msgstr ""
+"cu Clover, puteti alege sa initiati alt sistem de operare, folosind Startup "
+"Disk prefPane"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
 msgid "UUID written into config.plist will be the same as in OS"
-msgstr "UUID-ul folosit in config.plist va fi acelasi si in sistemul de operare"
+msgstr ""
+"UUID-ul folosit in config.plist va fi acelasi si in sistemul de operare"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:32
@@ -131,7 +145,8 @@ msgstr "ACPI va fi corectat pentru standardul 4.0."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Un DSDT modificat va fi incarcat de pe partitia de boot sau din folderul EFI"
+msgstr ""
+"Un DSDT modificat va fi incarcat de pe partitia de boot sau din folderul EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -141,12 +156,17 @@ msgstr "Corectie DSDT on-the-fly folosind fix-uri si modele predefinite"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "restartFix configurabil, fix-uri pentru sleep/wake si valoare PCIRootUID"
+msgstr ""
+"restartFix configurabil, fix-uri pentru sleep/wake si valoare PCIRootUID"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Injector de Proprietati Grafice pentru ATI, NVidia si Intel pentru o arie larga de placi video suportate. De asemenea customizabile."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Injector de Proprietati Grafice pentru ATI, NVidia si Intel pentru o arie "
+"larga de placi video suportate. De asemenea customizabile."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -166,7 +186,8 @@ msgstr "CPU turbo si generator de stadii P si C"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "Incarcarea tabelelor ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr ""
+"Incarcarea tabelelor ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -185,13 +206,19 @@ msgstr "seteaza variabile in NVRAM pentru diverse scopuri"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "initiere implicita dupa timeout, interfata configurabila, si salvarea de screenshot-uri din interfata, apasand F10"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"initiere implicita dupa timeout, interfata configurabila, si salvarea de "
+"screenshot-uri din interfata, apasand F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "salvarea boot.log si preboot.log in sistemul de operare, din interfata grafica, apasand F2"
+msgstr ""
+"salvarea boot.log si preboot.log in sistemul de operare, din interfata "
+"grafica, apasand F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -850,9 +877,12 @@ msgstr "incorporata"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:184
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "embedded theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/embedded"
 msgid ""
-"embedded theme from Blackosx,\n"
+"embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
 msgstr ""
 "tema incorporata de la Blackosx,\n"
@@ -882,9 +912,12 @@ msgstr "cesium"
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:192
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Vector theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/cesium"
 msgid ""
-"Vector theme from Slice,\n"
+"Vector SVG theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
 "Tema SVG vectoriala de la Slice,\n"
@@ -1371,7 +1404,8 @@ msgstr "Necunoscut"
 #~ "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 #~ "Press key 6 to boot6 = Clover EFI 64bit boot."
 #~ msgstr ""
-#~ "Instaleaza fisierele de initiere si seteaza pornirea 32-bit ca implicita.\n"
+#~ "Instaleaza fisierele de initiere si seteaza pornirea 32-bit ca "
+#~ "implicita.\n"
 #~ "Pornire implicita = Clover EFI 32-bit. Puteti sa...\n"
 #~ "Apasati tasta 1 pentru boot1 = Initiati Chameleon,\n"
 #~ "Apasati tasta 3 pentru boot3 = Initiati EFI 32-bit,\n"
@@ -1402,4 +1436,6 @@ msgstr "Necunoscut"
 #~ msgstr "Driver USB 3.0, 32-bit"
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+#~ msgstr ""
+#~ "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use "
+#~ "with other AptioFix together."
