@@ -2174,17 +2174,20 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         CopyMem(&ApicTable->CreatorId, creatorID, 4);
 
         SubTable = (UINT8*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
-        Index = CPUBase;
+        Index = 0;
         while (*SubTable != EFI_ACPI_4_0_LOCAL_APIC_NMI) {
           DBG("Found subtable in MADT: type=%d\n", *SubTable);
-          //xxx - OSX paniced
-          /*
-           if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
-           ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
-           ProcLocalApic->AcpiProcessorId = Index;
-           Index++;
-           }
-           */
+          if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
+            ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
+            if (Index == 0) {
+              DBG("ProcLocalApic: old=%d\n", ProcLocalApic->AcpiProcessorId);
+              ProcLocalApic->AcpiProcessorId = 0;
+              DBG("ProcLocalApic: new=%d\n", ProcLocalApic->AcpiProcessorId);
+            } else {
+              DBG("ProcLocalApic: %d\n", ProcLocalApic->AcpiProcessorId);
+            }
+            Index++;
+          }
           bufferLen = (UINTN)SubTable[1];
           SubTable += bufferLen;
           if (((UINTN)SubTable - (UINTN)BufferPtr) >= ApicTable->Length) {
