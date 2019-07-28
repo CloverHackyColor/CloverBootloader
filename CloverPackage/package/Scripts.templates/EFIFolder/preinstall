@@ -17,7 +17,7 @@ echo "preinstall: Root of system folder... $4"
 changes="Changes:\n\
 Mount ESP Beta (r5030): use of a new command line called espfinder to find the ESP that belong with the target volume\n\
 using the installer. espfinder is able to find the ESP for standard hfs fylesystem, APFS, CoreStorage, RAID with or without APFS,\n\
-Fusion drives... or combined. Is in beta stage and is not used by default, in fact to activate it you have to create a file in \"\\\"\n\
+Fusion drives... or combined. Is in beta stage and is not used by default, in fact to activate it you have to create a file in \"/\"\n\
 called useespfinder just before running the installer:\nsudo touch /useespfinder\n\n\
 - New Drivers directories (r4986): drivers64 and drivers64UEFI are deprecated and now Clover load drivers from\n\
 EFI/CLOVER/drivers/BIOS and EFI/CLOVER/drivers/UEFI. The Installer takes the step for the migration without, however,\n\
