@@ -55,7 +55,15 @@ fi
 checkXCODE() {
 echo "[CHECK XCODE]"
 if [[ ! -x /usr/bin/xcodebuild ]]; then
-  echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
+  echo "ERROR: Install Xcode Tools from Apple before using this script."
+  exit 1
+fi
+
+if [[ ! -d "$(xcode-select --print-path)" ]]; then
+  echo "ERROR: Xcode Command Line Tools not selected:"
+  echo "       open Xcode.app and go in Preferences->Locations,"
+  echo "       and select the Command Line Tools"
+  exit 1
 fi
 }
 
@@ -190,6 +198,21 @@ echo "[BUILD ISO]"
 make iso
 }
 
+checkChanges() {
+cd "${CLOVERROOT}"
+svn log -r BASE:HEAD -v
+}
+
+checkStatus() {
+cd "${CLOVERROOT}"
+svn status
+}
+
+showdiff() {
+cd "${CLOVERROOT}"
+svn diff -r head
+}
+
 menu() {
 echo
 echo '----------------------------------------------------------'
@@ -199,7 +222,7 @@ echo "EDKII in use: $edk2Rel"
 echo "Patches in use: $PATCHES"
 echo
 PS3='Please enter your choice: '
-options=('build Clover' 'make pkg' 'make iso' 'update Clover' 'update edk2' 'Quit')
+options=('build Clover' 'make pkg' 'make iso' 'build all' 'update Clover' 'update edk2' 'status' 'check remote changes' 'show diff' 'quit')
 select opt in "${options[@]}"
 do
   case $opt in
@@ -215,6 +238,12 @@ do
       buildIso
       break
     ;;
+    "build all")
+      buildClover
+      buildPkg
+      buildIso
+      break
+    ;;
     "update Clover")
       updateClover
       break
@@ -223,7 +252,19 @@ do
       updateEDK2
       break
     ;;
-    "Quit")
+    "status")
+      checkStatus
+      break
+    ;;
+    "check remote changes")
+      checkChanges
+      break
+    ;;
+    "show diff")
+      showdiff
+      break
+    ;;
+    "quit")
       exit 0
     ;;
     *)
