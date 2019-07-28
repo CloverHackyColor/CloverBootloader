@@ -95,8 +95,8 @@ rm -f "${DEST_VOL}/boottype"
 rm -rf "${DEST_VOL}"/EFIROOTDIR
 
 # show the log as html immediately
-cp -R "${EFI_ROOT_DIR}/EFI/Clover_Install_Log.txt" /tmp/
-rm -f /tmp/Clover_Install_Log.html
-textutil -cat html -output /tmp/Clover_Install_Log.html /tmp/Clover_Install_Log.txt
-open /tmp/Clover_Install_Log.html
+# cp -R "${EFI_ROOT_DIR}/EFI/Clover_Install_Log.txt" /tmp/
+# rm -f /tmp/Clover_Install_Log.html
+# textutil -cat html -output /tmp/Clover_Install_Log.html /tmp/Clover_Install_Log.txt
+# open /tmp/Clover_Install_Log.html
 
