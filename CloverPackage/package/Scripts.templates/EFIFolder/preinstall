@@ -14,6 +14,28 @@ echo "preinstall: Path to destination..... $2"
 echo "preinstall: Path to dest volume..... $3"
 echo "preinstall: Root of system folder... $4"
 
+changes="Changes:\n\
+Mount ESP Beta (r5030): use of a new command line called espfinder to find the ESP that belong with the target volume\n\
+using the installer. espfinder is able to find the ESP for standard hfs fylesystem, APFS, CoreStorage, RAID with or without APFS,\n\
+Fusion drives... or combined. Is in beta stage and is not used by default, in fact to activate it you have to create a file in \"\\\"\n\
+called useespfinder just before running the installer:\nsudo touch /useespfinder\n\n\
+- New Drivers directories (r4986): drivers64 and drivers64UEFI are deprecated and now Clover load drivers from\n\
+EFI/CLOVER/drivers/BIOS and EFI/CLOVER/drivers/UEFI. The Installer takes the step for the migration without, however,\n\
+deleting old directories. Anyway the installers now only update EFI/CLOVER/drivers/ leaving old path untouched.\n\
+For retro compatibility new Clover loads drivers from drivers64/drivers64UEFI only if EFI/CLOVER/drivers/(BIOS or UEFI)\n\
+are not present. You can safely remove drivers64 and drivers64UEFI using newer revisions.\n\
+Additionally, during the migration each driver with the \"-64\" suffix will be renamed without it.. as Clover is for some\n\
+time 64-bit only. None of the mentioned changes affect any functionality\n\n\
+- Conflicting drivers:\n\
+VirtualSMC.efi is removed if SMCHelper.efi is selected.\n\
+HFSPlus.efi is removed if VBoxHfs.efi is selected or vicevera.\n\
+ApfsDriverLoader.efi is removed if apfs.efi is selected or vicevera.\n\
+Only one of OsxAptioFixDrv.efi, OsxAptioFix3Drv.efi, AptioMemoryFix.efi, OsxLowMemFixDrv.efi is allowed\n\
+and any driver that match with \"aptiofix\", \"memfix\" or \"memoryfix\" will be deleted.\n\n\
+- Drivers off (r4987): installs all drivers available in EFI/CLOVER/drivers/off. This path is ignored by Clover and is only\n\
+used as a reposytory, e.g., if you want move a driver using the EFI Shell or the Finder.\n\n\
+A backup is always made to the root of the target volume.\n\n"
+
 # Check target exists
 if [ ! -e "$3" ]; then
     echo "$3 volume does not exist!"
@@ -58,6 +80,8 @@ export -f GetNVRamKey
 echo "" > "$install_log"
 echo "Clover EFI installer log - $( date )" >> "$install_log"
 echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader" >> "$install_log"
+echo "======================================================" >> "$install_log"
+echo -e "$changes" >> "$install_log"
 echo "======================================================" >> "$install_log"
 diskutil list >> "$install_log"
 
@@ -174,21 +198,38 @@ for pkg in $pkgs; do
     rm -f "$DEST_VOL"/var/db/receipts/"$pkg".{plist,bom}
 done
 
-# Move old drivers64 to drivers and drivers64UEFI to driversUEFI
+# Copy old drivers64 to drivers/BIOS and drivers64UEFI to drivers/UEFI
 if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" && \
     ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@" ]]; then
   mkdir -p "${EFI_ROOT_DIR}/EFI/CLOVER/drivers"
-  cp "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
+  cp -R "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
 fi
 
 if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" && \
     ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@" ]]; then
   mkdir -p "${EFI_ROOT_DIR}/EFI/CLOVER/drivers"
-  cp "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@"
+  cp -R "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@"
+fi
+
+# make user aware that Clover now uses new directories loading drivers
+if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" ]]; then
+message="EFI/CLOVER/drivers64 has been replaced by EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@ and You can remove it safely.\n\
+Starting from Clover r4983 Clovers loads drivers from new directories, however for retro compatibility search for the old drivers64 if the new path is missing.\n\
+Anyway only EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@ is updated by the package installer."
+
+echo -e "$message" > "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64/README.txt"
+fi
+
+if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" ]]; then
+message="EFI/CLOVER/drivers64UEFI has been replaced by EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@ and You can remove it safely.\n\
+Starting from Clover r4983 Clovers loads drivers from new directories, however for retro compatibility search for the old drivers64UEFI if the new path is missing.\n\
+Anyway only EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@ is updated by the package installer."
+echo -e "$message" > "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI/README.txt"
 fi
 
 # Rename drivers to not use the -x64 suffix (DataHubDxe-64.efi -> DataHubDxe.efi).
 # This is needed to let this package overwrite newer drivers w/o leaving duplicates with '-64'
+
 if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@" ]]; then
   cd "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
   for driver in *.efi; do mv "${driver}" "${driver/-64.efi/.efi}"; done

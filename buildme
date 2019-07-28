@@ -215,7 +215,7 @@ svn diff -r head
 
 menu() {
 echo
-echo '----------------------------------------------------------'
+echo '------------------------------------------------------------------------'
 cd "${CLOVERROOT}"
 echo "buildme Beta, Clover v2.5k r$(svn info | grep "Revision" | tr -cd [:digit:])"
 echo "EDKII in use: $edk2Rel"

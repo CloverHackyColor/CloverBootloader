@@ -593,6 +593,7 @@ fi
     ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder         ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,clover-genconfig,partutil}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -611,6 +612,8 @@ fi
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
     # Add the partutil binary as a helper to mount ESP
     ditto --noextattr --noqtn ${SYMROOT}/utils/partutil  ${PKG_BUILD_DIR}/${choiceId}/Scripts/
+    # Add the espfinder binary as a helper to mount ESP when target is apfs, corestorage, Fusion or RAID
+    ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder  ${PKG_BUILD_DIR}/${choiceId}/Scripts/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"                     \
                        --subst="CLOVER_PACKAGE_IDENTITY=$clover_package_identity"       \
                        --subst="INSTALLER_TARGET_ESP_REFID=$installer_target_esp_refid" \
@@ -909,7 +912,6 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/Fi
         if [[ $driver == VBoxHfs* || $driver == HFSPlus* ]] && \
            [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/VBoxHfs.efi" ]] && \
            [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/HFSPlus.efi" ]]; then
-
           if [[ $driver == VBoxHfs* ]]; then
             addChoice --group="FileSystem64"  --title="$driverName"                \
                       --start-selected="choicePreviouslySelected('$packageRefId')"  \
@@ -1102,6 +1104,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/File
         if [[ $driver == VBoxHfs* || $driver == HFSPlus* ]] && \
            [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi" ]] && \
            [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/HFSPlus.efi" ]]; then
+
 
           if [[ $driver == VBoxHfs* ]]; then
             addChoice --group="FileSystem64UEFI"  --title="$driverName"                \

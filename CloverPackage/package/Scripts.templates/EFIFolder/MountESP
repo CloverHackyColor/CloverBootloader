@@ -3,7 +3,63 @@
 DEST_VOL="${1}"
 EFI_ROOT_DIR="${2:-${DEST_VOL%*/}/EFIROOTDIR}"
 partutil="./partutil"
+espfinder="./espfinder"
+ESPMountPoint=""
 
+mountESP() {
+    # Get the ESP mount point if the partition is currently mounted
+    local disk="${1}"
+    ESPMountPoint=$("$partutil" --show-mountpoint "$disk")
+    local result=0
+
+    echo "ESP BSD Name is $disk"
+    if [[ -n "$ESPMountPoint" ]]; then
+        # If already mounted it's okay
+        result=0
+    else
+        # Else try to mount the ESP partition
+        ESPMountPoint="/Volumes/ESP"
+        result=1
+        fstype=$($partutil --show-fstype $1)
+        if [[ -n "$fstype" ]]; then
+            [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+            mount -t $fstype /dev/$1 "${ESPMountPoint}" 2>&1
+            result=$?
+        fi
+    fi
+
+    if [[ $result -ne 0 ]]; then
+        echo
+        echo "ERROR: can't mount ESP partition ($1) !"
+        echo "Check that the partition is well formated in Fat32."
+        echo
+        echo "To format as Fat32 use command like:"
+        echo "sudo newfs_msdos -v EFI -F 32 /dev/r$ESPDevice"
+    else
+        ln -sf "$ESPMountPoint" "$EFI_ROOT_DIR"
+    fi
+}
+
+# try firstly with espfinder beta
+# only activated if /useespfinder is present
+# this restriction will be removed when enough tests will be made
+if [[ -e /useespfinder ]]; then
+    echo "using espfinder" > /useespfinder
+    ESPDevice=$("$espfinder" -t "${DEST_VOL}")
+    if [[ "$ESPDevice" == disk* ]]; then
+        echo "ESP is $ESPDevice" > /useespfinder
+        mountESP $ESPDevice
+    fi
+
+    if [[ -d "$ESPMountPoint" ]]; then
+        exit 0
+    else
+        ESPDevice=""
+    fi
+fi
+
+# try old method
+echo "using old scripting mode"
 DiskDevice=$(LC_ALL=C diskutil info "${DEST_VOL}" 2>/dev/null | \
                               sed -n 's/.*Part [oO]f Whole: *//p')
 
@@ -77,41 +133,13 @@ if [[ "$disk_partition_scheme" = "GUID_partition_scheme" ]]; then
     # Define the ESPDevice
     ESPDevice="${DiskDevice}s${index}"
 
-    # Get the ESP mount point if the partition is currently mounted
-    ESPMountPoint=$("$partutil" --show-mountpoint "$ESPDevice")
-
-    if [[ -n "$ESPMountPoint" ]]; then
-        # If already mounted it's okay
-        exitcode=0
-    else
-        # Else try to mount the ESP partition
-        ESPMountPoint="/Volumes/ESP"
-        exitcode=1
-        fstype=$($partutil --show-fstype $ESPDevice)
-        if [[ -n "$fstype" ]]; then
-            [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
-            mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
-            exitcode=$?
-        fi
-    fi
-
-    if [[ $exitcode -ne 0 ]]; then
-        echo
-        echo "ERROR: can't mount ESP partition ($ESPDevice) !"
-        echo "Check that the partition is well formated in HFS or Fat32."
-        echo
-        echo "To format as HFS use command like:"
-        echo "sudo newfs_hfs -v EFI /dev/r$ESPDevice"
-        echo
-        echo "For format as Fat32 use command like:"
-        echo "sudo newfs_msdos -v EFI -F 32 /dev/r$ESPDevice"
-    else
-        ln -sf "$ESPMountPoint" "$EFI_ROOT_DIR"
-    fi
-else
-    # Disk is not GPT use the DEST_VOL as EFI_ROOT_DIR
-    ln -sf "${DEST_VOL}" "$EFI_ROOT_DIR"
-    exitcode=0
+    mountESP $ESPDevice
 fi
 
-exit $exitcode
+if [[ -d "$ESPMountPoint" ]]; then
+    # success!
+    exit 0
+fi
+
+# Failure, abort the installation
+exit 1
