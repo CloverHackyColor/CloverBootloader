@@ -198,11 +198,11 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02SLHACGVC1", "MacBook-Aluminum",
     { 0x02, 0x36, 0x0f, 0, 0, 0x97 },  "2016mb", "j130", 0xf02009 }, // need EPCI
   //MacBookPro13,2 / MacBook Pro (13-inch, 2016, Four Thunderbolt 3 Ports)
-  { "MacBookPro13,2", "MBP132.88Z.F000.B00.1906171451", "259.0.0.0.0", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
+  { "MacBookPro13,2", "MBP132.88Z.F000.B00.1907242326", "259.71.1.0.0", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
     "MacBook Pro", "1.0", "C02SLHACGYFH", "MacBook-Aluminum",
     { 0x02, 0x37, 0x0f, 0, 0, 0x20 },  "2016mb", "j79", 0xf02009 },
   //MacBookPro13,3 / MacBook Pro (15-inch, 2016)
-  { "MacBookPro13,3", "MBP133.88Z.F000.B00.1906171450", "259.0.0.0.0", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
+  { "MacBookPro13,3", "MBP133.88Z.F000.B00.1907242326", "259.71.1.0.0", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
     "MacBook Pro", "1.0", "C02SLHACGTFN", "MacBook-Aluminum",
     { 0x02, 0x38, 0x0f, 0, 0, 0x07 },  "2016mb", "j80g", 0xf04009 },
   //MacBookPro14,1 / MacBook Pro (13-inch, 2017, Two Thunderbolt 3 ports)
@@ -218,13 +218,21 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02TQHACHTD5", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2017mbp", "j80ga", 0xf0a009 },
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
-  { "MacBookPro15,1", "MBP151.88Z.F000.B00.1904222000", "220.270.99.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
+  { "MacBookPro15,1", "MBP151.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j680", 0 },
   //MacBookPro15,2 / MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
-  { "MacBookPro15,2", "MBP152.88Z.F000.B00.1904222000", "220.270.99.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
+  { "MacBookPro15,2", "MBP152.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j132", 0 },
+  //MacBookPro15,3 / MacBook Pro (15-inch, 2019)
+  { "MacBookPro15,3", "MBP153.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-1E7E29AD0135F9BC", // Intel Core i9-9980HK @ 2.40 GHz
+    "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j780", 0 }, // need serial
+  //MacBookPro15,4 / MacBook Pro (13-inch, 2019, Two Thunderbolt 3 ports)
+  { "MacBookPro15,4", "MBP154.88Z.F000.B00.1907262034", "1037.0.39.151.1", "Mac-53FDB3D8DB8CA971", // Intel Core i7-8557U @ 1.70 GHz
+    "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j213", 0 }, // need serial
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", NULL, "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
@@ -274,9 +282,13 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Air", "1.0", "C02Q1HACG940", "Air-Enclosure",
     { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0xf0a008 },
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
-  { "MacBookAir8,1", "MBA81.88Z.F000.B00.1904222000", "220.270.99.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
+  { "MacBookAir8,1", "MBA81.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j140k", 0 },
+  //MacBookAir8,2 / MacBook Air (Retina, 13-inch, 2019)
+  { "MacBookAir8,2", "MBA82.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-226CB3C6A851A671", // Intel Core i5-8210Y @ 1.60 GHz
+    "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j140a", 0 }, //need serial
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1", "MM11.88Z.0055.B08.0610121326", NULL, "Mac-F4208EC8", // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini", "1.0", "W8702N1JU35", "Mini-Aluminum",
@@ -318,7 +330,7 @@ PLATFORMDATA ApplePlatformData[] =
     "Mac mini", "1.0", "C02NN7NHG1J0", "Mini-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 },
   //Macmini8,1 / Mac mini (2018)
-  { "Macmini8,1", "MM81.88Z.F000.B00.1904232231", "220.270.99.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
+  { "Macmini8,1", "MM81.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j174", 0 },
   //iMac4,1 / iMac (20-inch, Early 2006)
@@ -442,7 +454,7 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
     { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12 },  "j138_9", "j138", 0xf0d009 },
   //iMacPro1,1 /iMac Pro (2017)
-  { "iMacPro1,1", "IMP11.88Z.F000.B00.1904222000", "220.270.99.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
+  { "iMacPro1,1", "IMP11.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j137", 0 },
   //MacPro1,1 / Mac Pro
@@ -469,6 +481,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "MacPro6,1", "MP61.88Z.F000.B00.1906132222", "132.0.0.0.0", "Mac-F60DEB81FF30ACF6", // Intel Xeon E5-1650 v2 @ 3.50 GHz
     "MacPro", "1.0", "F5KLA770F9VM", "Pro-Enclosure",
     { 0x02, 0x20, 0x0f, 0, 0, 0x18 },  "j90", "j90", 0xf0f006 },
+  //MacPro7,1 / Mac Pro (Late 2019)
+  { "MacPro7,1", "MP71.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-27AD2F918AE68F61", // Intel Xeon W-3245M CPU @ 3.20 GHz
+    "MacPro", "1.0", "C02VVHACF9VM", "Pro-Enclosure",
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j16O", 0 }, // need serial
   //Xserve1,1 / Xserve (Late 2006)
   { "Xserve1,1", "XS11.88Z.0080.B01.0706271533", NULL, "Mac-F4208AC8", // Intel Xeon E5345 @ 2.33 GHz x2
     "Xserve", "1.0", "CK703E1EV2Q", "Xserve",
@@ -696,7 +712,10 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro121:
     case MacBookPro151:
     case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
     case MacBookAir81:
+    case MacBookAir82:
     case iMac161:
     case iMac162:
       gFwFeatures             = 0xFC0FE137;
@@ -705,6 +724,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBook71:
     case MacBook81:
       gFwFeatures             = 0xFC0FE13F;
+      break;
+    case MacPro71:
+      gFwFeatures             = 0xFD8FF53F;
       break;
 
     default:
@@ -780,11 +802,14 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro121:
     case MacBookPro151:
     case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
     case MacBookAir31:
     case MacBookAir32:
     case MacBookAir71:
     case MacBookAir72:
     case MacBookAir81:
+    case MacBookAir82:
     case MacMini41:
     case MacMini71:
     case iMac101:
@@ -799,6 +824,10 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       gFwFeaturesMask         = 0xFF1FFF3F;
       break;
 
+    case MacPro71:
+      gFwFeaturesMask         = 0xFF9FFF3F;
+      break;
+
     default:
       gFwFeaturesMask         = 0xFFFFFFFF; //unknown - use oem SMBIOS value to be default
       break;
@@ -808,6 +837,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
   // the memory tab in About This Mac
   // by TheRacerMaster
   switch (Model) {
+    // Verified list from Firmware
     case iMac171:
     case iMac181:
     case iMac182:
@@ -834,7 +864,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacBookPro121:
-    case MacMini81:
       gPlatformFeature        = 0x02;   //soldered RAM - memory tab disappearing
       break;
     case MacMini71:
@@ -852,9 +881,25 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
+      gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
+      break;
+
+    // Verified list from Users
+    case MacPro71:
+    case iMacPro11:
+      gPlatformFeature        = 0x00;   //not soldered RAM - memory tab appearing
+      break;
+
+    case MacMini81:
+      gPlatformFeature        = 0x02;   //soldered RAM - memory tab disappearing
+      break;
+
     case MacBookPro151:
     case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
     case MacBookAir81:
+    case MacBookAir82:
       gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
       break;
 
@@ -926,9 +971,12 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro143:
     case MacBookPro151:
     case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
     case MacBookAir71:
     case MacBookAir72:
     case MacBookAir81:
+    case MacBookAir82:
     case MacMini81:
     case iMac161:
     case iMac162:
@@ -939,6 +987,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac191:
     case iMac192:
     case iMacPro11:
+    case MacPro71:
       gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
         case MacMini81:
@@ -951,6 +1000,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
         case iMac191:
         case iMac192:
         case iMacPro11:
+        case MacPro71:
           gSettings.Mobile      = FALSE;
           break;
         default:
