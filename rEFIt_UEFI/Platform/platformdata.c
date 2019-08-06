@@ -231,8 +231,8 @@ PLATFORMDATA ApplePlatformData[] =
     { 0, 0, 0, 0, 0, 0 }, NULL, "j780", 0 }, // need serial
   //MacBookPro15,4 / MacBook Pro (13-inch, 2019, Two Thunderbolt 3 ports)
   { "MacBookPro15,4", "MBP154.88Z.F000.B00.1907262034", "1037.0.39.151.1", "Mac-53FDB3D8DB8CA971", // Intel Core i7-8557U @ 1.70 GHz
-    "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
-    { 0, 0, 0, 0, 0, 0 }, NULL, "j213", 0 }, // need serial
+    "MacBook Pro", "1.0", "FVFYXHACL411", "MacBook-Aluminum",
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j213", 0 },
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", NULL, "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
@@ -288,7 +288,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir8,2 / MacBook Air (Retina, 13-inch, 2019)
   { "MacBookAir8,2", "MBA82.88Z.F000.B00.1907261958", "1037.0.39.151.1", "Mac-226CB3C6A851A671", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
-    { 0, 0, 0, 0, 0, 0 }, NULL, "j140a", 0 }, //need serial
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j140a", 0 }, // need serial
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1", "MM11.88Z.0055.B08.0610121326", NULL, "Mac-F4208EC8", // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini", "1.0", "W8702N1JU35", "Mini-Aluminum",
@@ -837,14 +837,13 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
   // the memory tab in About This Mac
   // by TheRacerMaster
   switch (Model) {
-    // Verified list from Firmware
+    // Verified list from ioreg
     case iMac171:
     case iMac181:
     case iMac182:
     case iMac183:
-    case iMac191:
-    case iMac192:
-      gPlatformFeature        = 0x00;   //not soldered RAM - memory tab appearing
+    case iMacPro11: // ' '
+      gPlatformFeature        = 0x00;
       break;
     case MacMini61:
     case MacMini62:
@@ -856,7 +855,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
     case iMac144:
     case iMac151:
-      gPlatformFeature        = 0x01;   //not soldered RAM - memory tab appearing
+      gPlatformFeature        = 0x01;
       break;
     case MacBookPro111:
     case MacBookPro112:
@@ -864,13 +863,17 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacBookPro121:
-      gPlatformFeature        = 0x02;   //soldered RAM - memory tab disappearing
+    case MacBookPro151: // '2'
+    case MacBookPro152: // '2'
+      gPlatformFeature        = 0x02;
       break;
     case MacMini71:
-      gPlatformFeature        = 0x03;   //soldered RAM - memory tab disappearing
+    case iMac161:
+    case iMac162:
+      gPlatformFeature        = 0x03;
       break;
     case MacPro61:
-      gPlatformFeature        = 0x04;   //not soldered RAM - memory tab appearing
+      gPlatformFeature        = 0x04;
       break;
     case MacBook81:
     case MacBook91:
@@ -881,30 +884,31 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
-      gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
+      gPlatformFeature        = 0x1A;
       break;
-
-    // Verified list from Users
-    case MacPro71:
-    case iMacPro11:
-      gPlatformFeature        = 0x00;   //not soldered RAM - memory tab appearing
-      break;
-
     case MacMini81:
-      gPlatformFeature        = 0x02;   //soldered RAM - memory tab disappearing
+      gPlatformFeature        = 0x20;
       break;
-
-    case MacBookPro151:
-    case MacBookPro152:
-    case MacBookPro153:
-    case MacBookPro154:
+    case iMac191:
+    case iMac192:
+      gPlatformFeature        = 0x22;
+      break;
     case MacBookAir81:
     case MacBookAir82:
-      gPlatformFeature        = 0x1A;   //soldered RAM - memory tab disappearing. 0x18 - restoring the memory tab
+      gPlatformFeature        = 0x3A;
+      break;
+          
+    // Verified list from Users
+    case MacBookPro153:
+    case MacBookPro154:
+      gPlatformFeature        = 0x02;
+      break;
+    case MacPro71:
+      gPlatformFeature        = 0x22;
       break;
 
     default:
-      gPlatformFeature        = 0xFFFF; //disabled - memory tab appearing
+      gPlatformFeature        = 0xFFFF; // disabled
       break;
   }
 
