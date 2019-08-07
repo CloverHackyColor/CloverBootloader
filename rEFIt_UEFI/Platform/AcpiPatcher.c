@@ -2138,13 +2138,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     //determine first ID of CPU. This must be 0 for Mac and for good Hack
     // but = 1 for stupid ASUS
     //
-    if (ProcLocalApic->Type == 0) {
+    if (ProcLocalApic->Type == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
       ApicCPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
     }
 
-    while ((ProcLocalApic->Type == 0) && (ProcLocalApic->Length == 8)) {
-      ProcLocalApic++;
-      ApicCPUNum++;
+    while ((ProcLocalApic->Type == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) && (ProcLocalApic->Length == 8)) {
+	  if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
+        ProcLocalApic++;
+        ApicCPUNum++;
+	  }
       if (ApicCPUNum > 16) {
         DBG("Out of control with CPU numbers\n");
         break;
@@ -2179,14 +2181,16 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
           DBG("Found subtable in MADT: type=%d\n", *SubTable);
           if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
             ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
-            if (Index == 0) {
-              DBG("ProcLocalApic: old=%d\n", ProcLocalApic->AcpiProcessorId);
-              ProcLocalApic->AcpiProcessorId = 0;
-              DBG("ProcLocalApic: new=%d\n", ProcLocalApic->AcpiProcessorId);
-            } else {
-              DBG("ProcLocalApic: %d\n", ProcLocalApic->AcpiProcessorId);
-            }
-            Index++;
+			if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
+              if (Index == 0 && ProcLocalApic->AcpiProcessorId > 1) {
+                DBG("ProcLocalApic changed: %d to %d\n", ProcLocalApic->AcpiProcessorId, 0);
+                ProcLocalApic->AcpiProcessorId = 0;
+                ApicCPUBase = 0;
+              } else {
+                DBG("ProcLocalApic: %d\n", ProcLocalApic->AcpiProcessorId);
+              }
+              Index++;
+			}
           }
           bufferLen = (UINTN)SubTable[1];
           SubTable += bufferLen;
