@@ -2143,10 +2143,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     }
 
     while ((ProcLocalApic->Type == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) && (ProcLocalApic->Length == 8)) {
-	  if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
-        ProcLocalApic++;
+      if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
         ApicCPUNum++;
-	  }
+      }
+      ProcLocalApic++;
       if (ApicCPUNum > 16) {
         DBG("Out of control with CPU numbers\n");
         break;
@@ -2181,7 +2181,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
           DBG("Found subtable in MADT: type=%d\n", *SubTable);
           if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
             ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
-			if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
+            if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
               if (Index == 0 && ProcLocalApic->AcpiProcessorId > 1) {
                 DBG("ProcLocalApic changed: %d to %d\n", ProcLocalApic->AcpiProcessorId, 0);
                 ProcLocalApic->AcpiProcessorId = 0;
@@ -2190,7 +2190,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
                 DBG("ProcLocalApic: %d\n", ProcLocalApic->AcpiProcessorId);
               }
               Index++;
-			}
+            }
           }
           bufferLen = (UINTN)SubTable[1];
           SubTable += bufferLen;
