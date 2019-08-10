@@ -1696,7 +1696,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   UINTN                   bufferLen = 0;
   CHAR16*                 PathPatched   = L"\\EFI\\CLOVER\\ACPI\\patched";
   CHAR16*                 PathDsdt;    //  = L"\\DSDT.aml";
-  CHAR16*                 PatchedAPIC = L"\\EFI\\CLOVER\\ACPI\\origin\\APIC-p.aml";
+//  CHAR16*                 PatchedAPIC = L"\\EFI\\CLOVER\\ACPI\\origin\\APIC-p.aml";
   UINT32*                 rf = NULL;
   UINT64*                 xf = NULL;
   UINT64                  XDsdt; //save values if present
