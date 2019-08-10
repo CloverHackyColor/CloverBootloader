@@ -28,11 +28,14 @@
 #define kContent                          "Content"                           /* ( NSString ) */
 #define kEFIContent                       "EFI"                               /* ( NSString ) */
 
+#define kFusion                           "Fusion"                            /* ( BOOL     ) */
+
 #define kContainers                       "Containers"                        /* ( NSArray  ) */
 #define kContainerReference               "ContainerReference"                /* ( NSString ) */
 #define kDesignatedPhysicalStore          "DesignatedPhysicalStore"           /* ( NSString ) */
 
 #define kRAIDSetMembers                   "RAIDSetMembers"                    /* ( NSArray  ) */
+#define kPhysicalStores                   "PhysicalStores"                    /* ( NSArray  ) */
 
 #define kAPFSPhysicalStores               "APFSPhysicalStores"                /* ( NSArray  ) */
 

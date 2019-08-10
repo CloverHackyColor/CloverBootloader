@@ -53,9 +53,9 @@
 		95B010A922E8F42E008608E5 = {
 			isa = PBXGroup;
 			children = (
+				953158D222EB6D070017AAB6 /* Frameworks */,
 				95B010B422E8F42E008608E5 /* espfinder */,
 				95B010B322E8F42E008608E5 /* Products */,
-				953158D222EB6D070017AAB6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};

@@ -206,11 +206,11 @@ int main (int argc, char **argv)/*main(int argc, const char * argv[])*/ {
               }
             }
           }
-          // APFS Fusion?
+          // Is a Fusion between APFS containers?
           if (ESP == nil) {
             NSArray *APFSPhysicalStores = [item objectForKey:@kAPFSPhysicalStores]; // apfs Fusion
             if (APFSPhysicalStores != nil && [APFSPhysicalStores count] > 0) {
-              // Is a Fusion between apfs containers. Keep APFS Physical Store at index 0 as main disk object
+              // Keep APFS Physical Store at index 0 as main disk object
               NSDictionary *aps = [APFSPhysicalStores objectAtIndex:0];
               NSString *DeviceIdentifier = [aps objectForKey:@kDeviceIdentifier];
               if (DeviceIdentifier != nil) {
@@ -238,10 +238,9 @@ int main (int argc, char **argv)/*main(int argc, const char * argv[])*/ {
             }
           }
           
-          // just APFS?
+          // just APFS, APFS Fusion (real disks + containers) or RAID ?
           if (ESP == nil) {
-            // ok, our disk is inside a contenitor, or isn't under GUID_partition_scheme.
-            // apfs?
+            // ok, our disk is inside a contenitor?
             NSDictionary *apfslist = getAllAPFSDisks();
             if (apfslist != nil) {
               if (debug) {
@@ -292,10 +291,26 @@ int main (int argc, char **argv)/*main(int argc, const char * argv[])*/ {
                         }
                       }
                     } else {
-                      
                       // We have a physical store :-), extract the parent!
                       NSString *PhysicalStore = [NSString stringWithFormat:@"dis%@",
                                                  [[DesignatedPhysicalStore componentsSeparatedByString:@"s"] objectAtIndex:1]];
+                      
+                      // Ticket 519: if PhysicalStores exist keep physical disk at index 0
+                      // instead of DesignatedPhysicalStore.
+                      // This in case of a Fusion drive
+                      BOOL isFusion = ([apItem objectForKey:@kFusion] != nil)
+                      ? [[apItem objectForKey:@kFusion] boolValue]
+                      : false;
+                      
+                      NSArray *PSs = [apItem objectForKey:@kPhysicalStores];
+                      if (isFusion && PSs != nil && [PSs count] > 0) {
+                        // Yep, is Fusion Apfs
+                        NSDictionary *first = [PSs objectAtIndex:0];
+                        if (first != nil && [first objectForKey:@kDeviceIdentifier]  != nil) {
+                          PhysicalStore = [NSString stringWithFormat:@"dis%@",
+                                           [[[first objectForKey:@kDeviceIdentifier] componentsSeparatedByString:@"s"] objectAtIndex:1]];
+                        }
+                      }
                       
                       // looks for the ESP in AllDisksAndPartitions
                       for (int idx = 0; idx < [AllDisksAndPartitions count]; idx++) {
