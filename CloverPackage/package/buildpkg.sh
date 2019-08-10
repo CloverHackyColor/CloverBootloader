@@ -595,7 +595,7 @@ fi
     ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder         ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,clover-genconfig,partutil}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,clover-genconfig,partutil,espfinder}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageUtilsRefId=$packageRefId
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
