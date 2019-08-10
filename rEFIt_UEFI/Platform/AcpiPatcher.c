@@ -2220,6 +2220,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         if (!EFI_ERROR(Status)) {
           DBG("New APIC table successfully inserted\n");
         }
+        /*
         Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
         if (EFI_ERROR(Status)) {
           Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
@@ -2227,6 +2228,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         if (!EFI_ERROR(Status)) {
           DBG("Patched APIC table saved into efi/clover/acpi/origin/APIC-p.aml \n");
         }
+         */
       }
     }
   }
