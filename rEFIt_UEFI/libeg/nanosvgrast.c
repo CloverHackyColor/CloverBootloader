@@ -1482,13 +1482,15 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
   float opacity = shape->opacity;
 
   cache->type = paint->type;
-  cache->coarse = grad->ditherCoarse;
-
+  
   //  DBG("shape=%a, paint-type=%d\n", shape->id, cache->type);
 
   if (cache->type == NSVG_PAINT_COLOR) {
     cache->colors[0] = nsvg__applyOpacity(paint->paint.color, opacity);
     return;
+  }
+  if (grad) {
+    cache->coarse = grad->ditherCoarse;
   }
   if (cache->type == NSVG_PAINT_PATTERN) {
     cache->colors[0] = nsvg__applyOpacity(0, opacity);
