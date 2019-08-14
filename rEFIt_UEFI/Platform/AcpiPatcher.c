@@ -433,10 +433,10 @@ VOID PatchAllTables()
       if (gSettings.PatchDsdtNum > 0) {
         //DBG("Patching SSDT:\n");
         UINT32 i;
-		CHAR8  OTID[9];
-		OTID[8] = 0;
-		CopyMem(OTID, &NewTable->OemTableId, 8);
-		DBG("Patching SSDT %a Length=%d\n",  OTID, (INT32)Len);
+    CHAR8  OTID[9];
+    OTID[8] = 0;
+    CopyMem(OTID, &NewTable->OemTableId, 8);
+    DBG("Patching SSDT %a Length=%d\n",  OTID, (INT32)Len);
 
         for (i = 0; i < gSettings.PatchDsdtNum; i++) {
           if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
@@ -2160,11 +2160,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     DBG("CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
     //reallocate table
     if (gSettings.PatchNMI) {
-
       BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
       Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
-      if(!EFI_ERROR(Status))
-      {
+      if(!EFI_ERROR(Status)) {
         //save old table and drop it from XSDT
         CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
         DropTableFromXSDT(APIC_SIGN, 0, 0);
