@@ -4883,8 +4883,19 @@ GetUserSettings(
                 if ((Prop2 != NULL) && (Prop2->type == kTagTypeKey)) {
                   CHAR16* DevicePathStr = PoolPrint(L"%a", Prop2->string);
                   //         DBG("Device: %s\n", DevicePathStr);
-                  DevicePath = ConvertTextToDevicePath(DevicePathStr); //TODO
+
+                  // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
+                  if (StriCmp(DevicePathStr, L"PrimaryGPU") == 0) {
+                    DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
+                  } else if (StriCmp(DevicePathStr, L"SecondaryGPU") == 0 && NGFX > 1) {
+                    DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
+                  } else {
+                    DevicePath = ConvertTextToDevicePath(DevicePathStr); //TODO
+                  }
                   FreePool(DevicePathStr);
+                  if (DevicePath == NULL) {
+                    continue;
+                  }
                 }
                 else continue;
                 //Create Device node
@@ -6751,8 +6762,17 @@ GetDevices ()
   NHDA = 0;
   AudioNum = 0;
   //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
+  CHAR16 *GopDevicePathStr = NULL;
+  CHAR16 *DevicePathStr = NULL;
 
   DbgHeader("GetDevices");
+
+  // Get GOP handle, in order to check to which GPU the monitor is currently connected
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &HandleCount, &HandleArray);
+  if (!EFI_ERROR(Status)) {
+    GopDevicePathStr = DevicePathToStr(DevicePathFromHandle(HandleArray[0]));
+    DBG("GOP found at: %s\n", GopDevicePathStr);
+  }
 
   // Scan PCI handles
   Status = gBS->LocateHandleBuffer (
@@ -6801,6 +6821,24 @@ GetDevices ()
           CHAR8 *CardFamily = "";
           UINT16 UFamily;
           GFX_PROPERTIES *gfx = &gGraphics[NGFX];
+
+          // GOP device path should contain the device path of the GPU to which the monitor is connected
+          DevicePathStr = DevicePathToStr(DevicePathFromHandle(HandleArray[Index]));
+          if (StrStr(GopDevicePathStr, DevicePathStr)) {
+            DBG (" - GOP: Provided by device\n");            
+            if (NGFX != 0) {
+               // we found GOP on a GPU scanned later, make space for this GPU at first position
+               for (i=NGFX; i>0; i--) {
+                 CopyMem (&gGraphics[i], &gGraphics[i-1], sizeof(GFX_PROPERTIES));
+               }
+               ZeroMem(&gGraphics[0], sizeof(GFX_PROPERTIES));
+               gfx = &gGraphics[0]; // GPU with active GOP will be added at the first position
+            }
+          }
+          if (DevicePathStr != NULL) {
+            FreePool(DevicePathStr);
+          }
+
           gfx->DeviceID       = Pci.Hdr.DeviceId;
           gfx->Segment        = Segment;
           gfx->Bus            = Bus;
@@ -6882,7 +6920,7 @@ GetDevices ()
               else if ((UFamily >= NV_ARCH_TESLA) && (UFamily < 0xB0)) { //not sure if 0xB0 is Tesla or Fermi
                 CardFamily = "Tesla";
               } else {
-                CardFamily = "unknown";
+                CardFamily = "NVidia unknown";
               }
 
               AsciiSPrint (
@@ -7061,6 +7099,9 @@ GetDevices ()
         } // if Audio device
       }
     }
+  }
+  if (GopDevicePathStr != NULL) {
+    FreePool(GopDevicePathStr);
   }
 }
 

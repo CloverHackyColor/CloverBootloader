@@ -715,6 +715,11 @@
 				<key>AAPL,current-available</key>
 				<data>sAQ=</data>
 			</dict>
+			<key>SecondaryGPU</key>
+			<dict>
+				<key>device-id</key>
+				<data>/////w==</data>
+			</dict>
 		</dict>
 		<key>Audio</key>
 		<dict>
