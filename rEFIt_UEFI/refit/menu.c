@@ -2675,9 +2675,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
       case SCAN_F8:
- //       testSVG();
-		  SaveHdaDumpBin();
-          SaveHdaDumpTxt();
+        testSVG();
+        SaveHdaDumpBin();
+        SaveHdaDumpTxt();
         break;
 
       case SCAN_F9:
@@ -4684,18 +4684,19 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
       AddMenuEntry(SubScreen, SubMenuKextBlockInjection(UniSysVer));
       FreePool(kextDir);
     }
-    if ((kextDir = GetOtherKextsDir()) != NULL) {
-      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
-      FreePool(kextDir);
-    }
     FreePool(UniSysVer);
   } else {
     AddMenuInfoLine(SubScreen, PoolPrint(L"Block injected kexts for target version of macOS: %a", ChosenOS));
-    if ((kextDir = GetOtherKextsDir()) != NULL) {
-      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
-      FreePool(kextDir);
-    }
   }
+  if ((kextDir = GetOtherKextsDir(TRUE)) != NULL) {
+    AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+    FreePool(kextDir);
+  }
+  if ((kextDir = GetOtherKextsDir(FALSE)) != NULL) {
+    AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Off"));
+    FreePool(kextDir);
+  }
+
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   return SubEntry;
 }

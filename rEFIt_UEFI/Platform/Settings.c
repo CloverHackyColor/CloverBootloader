@@ -3311,6 +3311,11 @@ CHAR16* GetBundleVersion(CHAR16 *FullName)
 
   InfoPlistPath = PoolPrint(L"%s\\%s", FullName, L"Contents\\Info.plist");
   Status = egLoadFile (SelfRootDir, InfoPlistPath, (UINT8**)&InfoPlistPtr, &Size);
+  if (EFI_ERROR(Status)) {
+    FreePool(InfoPlistPath);
+    InfoPlistPath = PoolPrint(L"%s", FullName, L"Info.plist"); //special kexts like IOGraphics
+    Status = egLoadFile (SelfRootDir, InfoPlistPath, (UINT8**)&InfoPlistPtr, &Size);
+  }
   if(!EFI_ERROR(Status)) {
     Status = ParseXML ((const CHAR8*)InfoPlistPtr, &InfoPlistDict, (UINT32)Size);
     if(!EFI_ERROR(Status)) {
@@ -3340,6 +3345,10 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
   EFI_FILE_INFO   *PlugInEntry;
   CHAR16*         PlugInsPath;
   CHAR16*         PlugInsName;
+  BOOLEAN         Blocked = FALSE;
+  if (StrCmp(KextPath, L"Off") == 0) {
+    Blocked = TRUE;
+  }
 
   DirIterOpen(SelfRootDir, FullPath, &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
@@ -3354,7 +3363,7 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
 
     mKext = AllocateZeroPool (sizeof(SIDELOAD_KEXT));
     mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
-    mKext->MenuItem.BValue = FALSE;
+    mKext->MenuItem.BValue = Blocked;
     mKext->MatchOS = PoolPrint(L"%s", KextPath);
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
@@ -3373,7 +3382,7 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
       PlugInsName = PoolPrint(L"%s\\%s", PlugInsPath, PlugInEntry->FileName);
       mPlugInKext = AllocateZeroPool(sizeof(SIDELOAD_KEXT));
       mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
-      mPlugInKext->MenuItem.BValue = FALSE;
+      mPlugInKext->MenuItem.BValue = Blocked;
       mPlugInKext->MatchOS = PoolPrint(L"%s", KextPath);
       mPlugInKext->Next    = mKext->PlugInList;
       mPlugInKext->Version = GetBundleVersion(PlugInsName);
@@ -8077,14 +8086,14 @@ SaveSettings ()
 }
 
 CHAR16
-*GetOtherKextsDir ()
+*GetOtherKextsDir (BOOLEAN On)
 {
   CHAR16 *SrcDir         = NULL;
 
-  SrcDir     = PoolPrint (L"%s\\kexts\\Other", OEMPath);
+  SrcDir     = PoolPrint (L"%s\\kexts\\%a", OEMPath, On?"Other":"Off");
   if (!FileExists (SelfVolume->RootDir, SrcDir)) {
     FreePool (SrcDir);
-    SrcDir = PoolPrint (L"\\EFI\\CLOVER\\kexts\\Other");
+    SrcDir = PoolPrint (L"\\EFI\\CLOVER\\kexts\\%a", On?"Other":"Off");
     if (!FileExists (SelfVolume->RootDir, SrcDir)) {
       FreePool (SrcDir);
       SrcDir = NULL;
@@ -8256,7 +8265,7 @@ SetFSInjection (
   // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
   //SrcDir = NULL;
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-    SrcDir = GetOtherKextsDir();
+    SrcDir = GetOtherKextsDir(TRUE);
     Status = FSInject->Install (
                                 Volume->DeviceHandle,
                                 L"\\System\\Library\\Extensions",

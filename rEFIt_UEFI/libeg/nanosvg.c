@@ -4305,12 +4305,13 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
   }
   nsvg__assignGradients(p, p->image->shapes);
   nsvg__imageBounds(p, bounds);
+#if 1
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
   DumpFloat2("image real bounds", bounds, 4);
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
-
+#endif
    DBG("scaled width=%s height=%s\n", PoolPrintFloat(p->image->width),
         PoolPrintFloat(p->image->height));
   return p;

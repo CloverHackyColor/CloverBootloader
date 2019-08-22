@@ -1879,7 +1879,7 @@ SetFSInjection (
   );
 
 CHAR16*
-GetOtherKextsDir (VOID);
+GetOtherKextsDir (BOOLEAN On);
 
 CHAR16*
 GetOSVersionKextsDir (
