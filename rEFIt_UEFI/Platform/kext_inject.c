@@ -234,35 +234,33 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
   SIDELOAD_KEXT           *CurrentKext;
   SIDELOAD_KEXT           *CurrentPlugInKext;
 
-  DBG("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+  MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
   CurrentKext = InjectKextList;
   while (CurrentKext) {
     DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
     if (StrStr(CurrentKext->MatchOS, Path) != NULL) {
-      BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
       UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
-      if (kextNeedInject) {
+      if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
-        DBG("Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+        MsgLog("Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
         AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
 
         // decide which plugins to inject
         CurrentPlugInKext = CurrentKext->PlugInList;
         while (CurrentPlugInKext) {
-          BOOLEAN plugInNeedInject = !(CurrentPlugInKext->MenuItem.BValue);
           UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
-          if (plugInNeedInject) {
+          if (!(CurrentPlugInKext->MenuItem.BValue)) {
             // inject PlugIn require
-            DBG("  |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
+            MsgLog("  |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
             AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
           } else {
-            DBG("  |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
+            MsgLog("  |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
           }
           CurrentPlugInKext = CurrentPlugInKext->Next;
         } // end of plug-in kext injection
       } else {
         // disable current kext injection
-        DBG("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+        MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
       }
     }
     CurrentKext = CurrentKext->Next;
