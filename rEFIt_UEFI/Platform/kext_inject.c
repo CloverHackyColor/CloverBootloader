@@ -227,13 +227,12 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
    DirIterClose(&PlugInIter);
 }
 
-VOID AddKexts(IN LOADER_ENTRY *Entry, SIDELOAD_KEXT *CurrentKext, cpu_type_t archCpuType)
+VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, SIDELOAD_KEXT *CurrentKext, cpu_type_t archCpuType)
 {
   CHAR16                  FileName[256];
 //  CHAR16                  PlugIns[256];
   CHAR16                  PlugInName[256];
   SIDELOAD_KEXT           *CurrentPlugInKext;
-  CHAR16                  *SrcDir = NULL;
 
   BOOLEAN kextNeedInject = !(CurrentKext->MenuItem.BValue);
   UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
@@ -264,31 +263,26 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, SIDELOAD_KEXT *CurrentKext, cpu_type_t arc
 
 EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 {
-  //	EFI_STATUS              Status;
-  //	REFIT_VOLUME            *Volume;
   CHAR16                  *SrcDir = NULL;
-  //REFIT_DIR_ITER          KextIter;
-  //EFI_FILE_INFO           *KextFile;
   REFIT_DIR_ITER          PlugInIter;
   EFI_FILE_INFO           *PlugInFile;
   CHAR16                  FileName[256];
   CHAR16                  PlugIns[256];
-//  CHAR16                  PlugInName[256];
-  CHAR16			*Arch = NULL;
-  CHAR16			*Ptr = NULL;
+  CHAR16			            *Arch = NULL;
+  CHAR16			            *Ptr = NULL;
 #if defined(MDE_CPU_X64)
-  cpu_type_t archCpuType=CPU_TYPE_X86_64;
+  cpu_type_t              archCpuType=CPU_TYPE_X86_64;
 #else
-  cpu_type_t archCpuType=CPU_TYPE_I386;
+  cpu_type_t              archCpuType=CPU_TYPE_I386;
 #endif
-  UINTN					mm_extra_size;
-  VOID					*mm_extra;
-  UINTN					extra_size;
-  VOID					*extra;
+  UINTN					          mm_extra_size;
+  VOID					          *mm_extra;
+  UINTN					          extra_size;
+  VOID					          *extra;
 
-  SIDELOAD_KEXT *CurrentKext = NULL;
-  SIDELOAD_KEXT *CurrentPlugInKext = NULL;
-  SIDELOAD_KEXT *Next = NULL;
+  SIDELOAD_KEXT           *CurrentKext = NULL;
+  SIDELOAD_KEXT           *CurrentPlugInKext = NULL;
+  SIDELOAD_KEXT           *Next = NULL;
 
   if (Entry == 0)/* || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS) */ {
   	return EFI_NOT_STARTED;
@@ -352,7 +346,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     while (CurrentKext) {
       DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
       if (StrStr(CurrentKext->MatchOS, L"Other") != NULL) {
-        AddKexts(Entry, CurrentKext, archCpuType);
+        AddKexts(Entry, SrcDir, CurrentKext, archCpuType);
       }
       CurrentKext = CurrentKext->Next;
     }
@@ -365,7 +359,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     while (CurrentKext) {
       DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
       if (StrStr(CurrentKext->MatchOS, L"Off") != NULL) {
-        AddKexts(Entry, CurrentKext, archCpuType);
+        AddKexts(Entry, SrcDir, CurrentKext, archCpuType);
       }
       CurrentKext = CurrentKext->Next;
     }
@@ -389,7 +383,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     while (CurrentKext) {
       DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
       if (StrStr(CurrentKext->MatchOS, UniSysVers) != NULL) {
-        AddKexts(Entry, CurrentKext, archCpuType);
+        AddKexts(Entry, SrcDir, CurrentKext, archCpuType);
         // match current version of macOS
       }
       CurrentKext = CurrentKext->Next;
