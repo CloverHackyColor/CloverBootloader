@@ -99,6 +99,7 @@ typedef enum {
   CHIP_FAMILY_BAFFIN,   /* Polaris 11 */
   CHIP_FAMILY_GREENLAND, /* Polaris 12 */
   CHIP_FAMILY_VEGA10,   /* Vega 10 */
+  CHIP_FAMILY_VEGA20,   /* Vega 20 */
   CHIP_FAMILY_NAVI10,
   CHIP_FAMILY_LAST
 } ati_chip_family_t;

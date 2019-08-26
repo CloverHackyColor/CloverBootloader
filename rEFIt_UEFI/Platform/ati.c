@@ -209,6 +209,10 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6667,  CHIP_FAMILY_HAINAN,  "AMD Radeon R5 M230",       kNull       }, // Mobile
   { 0x666F,  CHIP_FAMILY_HAINAN,  "AMD Radeon HD 8550M",      kNull       }, // Mobile R5 M230 in Lenovo
 
+	/* Vega 20 */
+  { 0x66AF,  CHIP_FAMILY_VEGA20, "AMD Radeon VII",        kNull },
+
+
   /* Northen Islands */
   //0x67681002 0x67701002 0x67791002 0x67601002 0x67611002 0x67501002 0x67581002 0x67591002
   //0x67401002 0x67411002 0x67451002 0x67381002 0x67391002 0x67201002 0x67221002 0x67181002
