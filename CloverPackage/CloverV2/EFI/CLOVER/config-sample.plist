@@ -511,6 +511,8 @@
 		</array>
 		<key>KernelXCPM</key>
 		<false/>
+		<key>PanicNoKextDump</key>
+		<true/>
 		<key>DellSMBIOSPatch</key>
 		<false/>
 		<key>#BootPatches</key>

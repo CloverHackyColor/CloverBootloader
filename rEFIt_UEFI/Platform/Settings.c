@@ -757,6 +757,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   Dst->KPAppleRTC        = Src->KPAppleRTC;
   Dst->KPDELLSMBIOS      = Src->KPDELLSMBIOS;
   Dst->FakeCPUID         = Src->FakeCPUID;
+  Dst->KPPanicNoKextDump = Src->KPPanicNoKextDump;
 
   if (Src->KPATIConnectorsController != NULL) {
     Dst->KPATIConnectorsController = EfiStrDuplicate (Src->KPATIConnectorsController);
@@ -946,6 +947,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty (DictPointer, "KernelPm");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelPm = IsPropertyTrue (Prop);
+  }
+  
+  Prop = GetProperty (DictPointer, "PanicNoKextDump");
+  if (Prop != NULL || gBootChanged) {
+    Patches->KPPanicNoKextDump = IsPropertyTrue (Prop);
   }
 
   Prop = GetProperty (DictPointer, "AppleIntelCPUPM");

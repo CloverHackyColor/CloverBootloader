@@ -716,6 +716,10 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", DefaultAudioVolume);
+  
+  InputItems[InputItemsCount].ItemType = BoolValue; //121
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
+
 
 
 
@@ -1318,6 +1322,11 @@ VOID ApplyInputs(VOID)
     SetNvramVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid,
                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                      1, &DefaultAudioVolume);
+  }
+  i++; //121
+  if (InputItems[i].Valid) {
+    gSettings.KernelAndKextPatches.KPPanicNoKextDump = InputItems[i].BValue;
+    gBootChanged = TRUE;
   }
 
 
@@ -4772,7 +4781,8 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItem(SubScreen, 45,  "Kernel Support CPU", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 91,  "Kernel Lapic", TAG_INPUT, FALSE);
   AddMenuItem(SubScreen, 105, "Kernel XCPM", TAG_INPUT, FALSE);
-  AddMenuItem(SubScreen, 48,  "Kernel PM", TAG_INPUT, FALSE);
+  AddMenuItem(SubScreen, 48,  "Kernel PM", TAG_INPUT, FALSE); 
+  AddMenuItem(SubScreen, 121,  "Panic No Kext Dump", TAG_INPUT, FALSE);
   AddMenuEntry(SubScreen, SubMenuKernelPatches());
   AddMenuInfo(SubScreen, L"----------------------");
   AddMenuItem(SubScreen, 46,  "AppleIntelCPUPM Patch", TAG_INPUT, FALSE);

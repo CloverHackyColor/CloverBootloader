@@ -319,7 +319,7 @@ static CHAR8 *SearchString (
   }
   return NULL;
 }
-
+#ifdef DUMP_KERNEL_KEXT_PATCHES
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 {
   if (!Patches) {
@@ -359,7 +359,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
     }
   }
 }
-
+#endif
 VOID FilterKextPatches(IN LOADER_ENTRY *Entry) //zzzz
 {
   if (gSettings.KextPatchesAllowed && (Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {

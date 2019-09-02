@@ -627,6 +627,21 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
   return FALSE;
 }
 
+STATIC UINT8 PanicNoKextDumpFind[6]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
+//STATIC UINT8 PanicNoKextDumpReplace[6] = {0x00, 0x00, 0x2E, 0x2A, 0x73, 0x00};
+
+BOOLEAN KernelPanicNoKextDump(VOID *kernelData)
+{
+  UINT8      *bytes = (UINT8*)kernelData;
+  INT32      patchLocation;
+  patchLocation = FindBin(bytes, 0xF00000, PanicNoKextDumpFind, 6);
+  if (patchLocation > 0) {
+    bytes[patchLocation + 1] = 0;
+    return TRUE;
+  }
+  return FALSE;
+}
+
 BOOLEAN KernelLapicPatch_64(VOID *kernelData)
 {
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
@@ -1907,6 +1922,19 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
+  
+  // Patch to not dump kext at panic (c)vit9696
+  DBG_RT(Entry, "\nPanicNoKextDump patch: ");
+  if (Entry->KernelAndKextPatches->KPPanicNoKextDump) {
+    DBG_RT(Entry, "Enabled: ");
+    KernelAndKextPatcherInit(Entry);
+    if (KernelData == NULL) goto NoKernelData;
+    patchedOk = KernelPanicNoKextDump(KernelData);
+    DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
+  } else {
+    DBG_RT(Entry, "Disabled\n");
+  }
+
 
   // Lapic Panic Kernel Patch
   DBG_RT(Entry, "\nKernelLapic patch: ");

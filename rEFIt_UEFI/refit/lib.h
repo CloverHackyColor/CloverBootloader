@@ -571,9 +571,10 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   BOOLEAN KPAppleIntelCPUPM;
   BOOLEAN KPAppleRTC;
   BOOLEAN KPDELLSMBIOS;  // Dell SMBIOS patch
-//  UINT8   pad[1];
+  BOOLEAN KPPanicNoKextDump;
+  UINT8   pad[3];
   UINT32  FakeCPUID;
-  UINT32  align0;
+//  UINT32  align0;
   CHAR16  *KPATIConnectorsController;
 #if defined(MDE_CPU_IA32)
   UINT32  align1;
@@ -1001,10 +1002,10 @@ TimeCompare (
              );
 
 extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
-
+#ifdef DUMP_KERNEL_KEXT_PATCHES
 // Utils functions
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
-
+#endif
 //VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 
