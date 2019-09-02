@@ -1592,10 +1592,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because filesystem is not readable\n");
       continue;
     }
+    /*
     if (StriCmp(CustomPath, MACOSX_LOADER_PATH) == 0 && FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
       DBG("skipped standard macOS path because volume is 2nd stage Install Media\n");
       continue;
-    }
+    } */
     Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
     // Open the boot directory to search for kernels
     if (FindCustomPath) {

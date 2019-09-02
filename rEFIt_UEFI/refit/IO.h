@@ -178,7 +178,7 @@ APrint (
   IN CHAR8                            *fmt,
   ...
   );
-*/
+
 VOID
 LibEnablePageBreak (
   IN INT32      StartRow,
@@ -189,7 +189,7 @@ BOOLEAN
 LibGetPageBreak (
   VOID
   );
-
+*/
 EFI_STATUS
 WaitForSingleEvent (
 					IN EFI_EVENT        Event,

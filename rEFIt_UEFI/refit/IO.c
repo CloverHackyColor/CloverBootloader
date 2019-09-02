@@ -1796,7 +1796,7 @@ SetCursorPosition (
 }
 //
 // //
-//
+/*
 BOOLEAN
 LibGetPrintOmit (
   VOID
@@ -1848,6 +1848,7 @@ LibGetPageBreak (
 {
   return mPrintMode.PageBreak;
 }
+*/
 //
 VOID LowCase (IN OUT CHAR8 *Str)
 {

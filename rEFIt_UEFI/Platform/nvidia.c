@@ -999,7 +999,7 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
   // 0F00 - 0F0F
   { 0x10DE0F00,  "GeForce GT 630" },
   { 0x10DE0F01,  "GeForce GT 620" },
-  { 0x10DE0F02,  "GeForce GT 730" },
+  { 0x10DE0F02,  "GeForce GT 730" },  //GF108
   // 0F10 - 0F1F
   // 0F20 - 0F2F
   // 0F30 - 0F3F
