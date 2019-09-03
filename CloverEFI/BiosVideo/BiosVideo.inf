@@ -26,7 +26,7 @@
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 #  DuetPkg/DuetPkg.dec
-  Clover/CloverPkg.dec
+  CloverPkg.dec
 
 [LibraryClasses]
   UefiLib

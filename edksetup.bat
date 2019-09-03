@@ -29,7 +29,7 @@
 @REM Set the WORKSPACE to the current working directory
 @REM
 pushd .
-cd %~dp0
+@REM cd %~dp0
 
 if not defined WORKSPACE (
   goto SetWorkSpace

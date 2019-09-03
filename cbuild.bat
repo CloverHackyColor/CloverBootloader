@@ -31,7 +31,8 @@ set DEVSTAGE=
 set DEFAULT_CYGWIN_HOME=c:\cygwin
 set DEFAULT_PYTHONHOME=c:\Python27
 set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
-set DEFAULT_NASM_PREFIX=%DEFAULT_CYGWIN_HOME%\bin
+set DEFAULT_NASM_PREFIX=
+rem # %DEFAULT_CYGWIN_HOME%\bin
 set DEFAULT_TOOLCHAIN=VS2013x86
 set DEFAULT_BUILDTARGET=RELEASE
 set DEFAULT_TARGETARCH=X64
@@ -125,11 +126,11 @@ rem # search edk path
      @echo off
      goto prebuild
    )
-   if ["%CD%"] == ["%~d0%\"] (
-     popd
-     echo ==^> EDK2 not found ^<==
-     goto failscript
-   )
+rem #   if ["%CD%"] == ["%~d0%\"] (
+rem #     popd
+rem #     echo ==^> EDK2 not found ^<==
+rem #     goto failscript
+rem #   )
 rem #   cd ..
    goto searchforedk
 

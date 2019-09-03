@@ -42,7 +42,7 @@ extern  MESSAGE_LOG_PROTOCOL *Msg;
  }
 @inf
  [Packages]
-   Clover/CloverPkg.dec
+   CloverPkg.dec
  
  [LibraryClasses]
     PrintLib

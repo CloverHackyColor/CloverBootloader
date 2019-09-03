@@ -29,7 +29,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 

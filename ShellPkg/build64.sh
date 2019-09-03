@@ -95,7 +95,7 @@ do
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/Clover/ShellPkg/ShellPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/ShellPkg/ShellPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
@@ -105,6 +105,6 @@ done
 # Build the edk2 ShellPkg
 #
 echo Running edk2 build for ShellPkg$PROCESSOR
-build -p $WORKSPACE/Clover/ShellPkg/ShellPkg$PROCESSOR.dsc -a $PROCESSOR -b $BUILDTARGET -t $TARGET_TOOLS -n 3 $*
+build -p $WORKSPACE/ShellPkg/ShellPkg$PROCESSOR.dsc -a $PROCESSOR -b $BUILDTARGET -t $TARGET_TOOLS -n 3 $*
 exit $?
 

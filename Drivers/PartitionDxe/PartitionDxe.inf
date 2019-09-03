@@ -51,7 +51,7 @@
   Partition.h
 
 [Packages]
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   MdePkg/MdePkg.dec
 
 

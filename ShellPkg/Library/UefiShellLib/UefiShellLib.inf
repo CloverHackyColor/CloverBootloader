@@ -35,7 +35,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Clover/ShellPkg/ShellPkg.dec
+  ShellPkg/ShellPkg.dec
 
 [LibraryClasses]
   UefiBootServicesTableLib

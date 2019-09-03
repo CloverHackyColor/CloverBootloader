@@ -26,6 +26,7 @@
   8259.h
 
 [Packages]
+  CloverPkg.dec
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   PcAtChipsetPkg/PcAtChipsetPkg.dec

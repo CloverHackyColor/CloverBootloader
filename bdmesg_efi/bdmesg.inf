@@ -19,9 +19,9 @@
   bdmesg.c
 
 [Packages]
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   MdePkg/MdePkg.dec
-  Clover/ShellPkg/ShellPkg.dec
+  ShellPkg/ShellPkg.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint

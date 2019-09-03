@@ -42,6 +42,7 @@
   ComponentName.h
 
 [Packages]
+  CloverPkg.dec
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec

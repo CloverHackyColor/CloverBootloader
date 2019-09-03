@@ -25,7 +25,7 @@
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-#  Clover/CloverPkg.dec
+#  CloverPkg.dec
 #  DuetPkg/DuetPkg.dec
 
 [LibraryClasses]

@@ -43,7 +43,7 @@
 #  VesaBiosExtensions.h
 
 [Packages]
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec

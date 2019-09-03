@@ -1,4 +1,5 @@
 # OS X temporary files that should never be committed
+.vs
 .DS_Store
 *.swp
 *.lock
