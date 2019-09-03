@@ -1,9 +1,0 @@
-Currently, 01.02.2016 it is possible to compile full Clover package only
-with gcc-4.9.
-
-gcc-4.8 is possible but it is required reverted some changes in build scripts and settings. They are deep in history and I see no reason to do this.
-
-Since April 2016 the best compilation is possible with XCODE5 toolset, so no more gcc-4.x needed.
-Tested on Xcode 4.4.1 and Xcode 7.3.1
-
-Slice.

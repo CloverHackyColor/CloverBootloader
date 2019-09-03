@@ -118,20 +118,20 @@ rem # initialize
 
 rem # search edk path
 :searchforedk
-  if exist edksetup.bat (
+   if exist edksetup.bat (
     echo ==^> Found EDK2 ^<==
-    echo.
-    call edksetup.bat
-    @echo off
-    goto prebuild
-  )
-  if ["%CD%"] == ["%~d0%\"] (
-    popd
-    echo ==^> EDK2 not found ^<==
-    goto failscript
-  )
-  cd ..
-  goto searchforedk
+     echo.
+     call edksetup.bat
+     @echo off
+     goto prebuild
+   )
+   if ["%CD%"] == ["%~d0%\"] (
+     popd
+     echo ==^> EDK2 not found ^<==
+     goto failscript
+   )
+rem #   cd ..
+   goto searchforedk
 
 rem # setup build
 :prebuild
@@ -156,7 +156,7 @@ rem # setup build
   rem # Read target.txt. Dont look TARGET_ARCH, we build multi ARCH if undefined
 
   set F_TMP_TXT=tmp.txt
-  set EDK_CONF_TARGET_TXT=%CONF_PATH%\target.txt
+  set EDK_CONF_TARGET_TXT=Conf\target.txt
   findstr /v /r /c:"^#" /c:"^$" "%EDK_CONF_TARGET_TXT%">%F_TMP_TXT%
   for /f "tokens=1*" %%i in ('type %F_TMP_TXT% ^| findstr /i "TOOL_CHAIN_TAG"') do set SCAN_TOOLCHAIN%%j
   for /f "tokens=1*" %%i in ('type %F_TMP_TXT% ^| findstr /i "TARGET_ARCH"') do set SCAN_TARGETARCH%%j

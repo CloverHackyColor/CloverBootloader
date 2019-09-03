@@ -1,0 +1,106 @@
+## @file
+#  Capsule Runtime Driver produces two UEFI capsule runtime services: (UpdateCapsule, QueryCapsuleCapabilities).
+#
+#  It installs the Capsule Architectural Protocol defined in PI1.0a to signify
+#  the capsule runtime services are ready.
+#
+#  Copyright (c) 2006 - 2019, Intel Corporation. All rights reserved.<BR>
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = CapsuleRuntimeDxe
+  MODULE_UNI_FILE                = CapsuleRuntimeDxe.uni
+  FILE_GUID                      = 42857F0A-13F2-4B21-8A23-53D3F714B840
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = CapsuleServiceInitialize
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC ARM AARCH64
+#
+
+[Sources]
+  CapsuleService.c
+  CapsuleService.h
+
+[Sources.Ia32, Sources.EBC, Sources.ARM, Sources.AARCH64]
+  SaveLongModeContext.c
+
+[Sources.Ia32, Sources.X64, Sources.ARM, Sources.AARCH64]
+  CapsuleCache.c
+
+[Sources.Ia32, Sources.X64, Sources.EBC]
+  CapsuleReset.c
+
+[Sources.ARM, Sources.AARCH64]
+  Arm/CapsuleReset.c
+
+[Sources.EBC]
+  CapsuleCacheNull.c
+
+[Sources.X64]
+  X64/SaveLongModeContext.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  PcdLib
+  DebugLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  CapsuleLib
+  UefiRuntimeLib
+  BaseLib
+  PrintLib
+  BaseMemoryLib
+  CacheMaintenanceLib
+
+[LibraryClasses.X64]
+  UefiLib
+  BaseMemoryLib
+
+[Guids]
+  ## SOMETIMES_PRODUCES   ## Variable:L"CapsuleUpdateData" # (Process across reset capsule image) for capsule updated data
+  ## SOMETIMES_PRODUCES   ## Variable:L"CapsuleLongModeBuffer" # The long mode buffer used by IA32 Capsule PEIM to call X64 CapsuleCoalesce code to handle >4GB capsule blocks
+  gEfiCapsuleVendorGuid
+  gEfiFmpCapsuleGuid                            ## SOMETIMES_CONSUMES   ## GUID # FMP capsule GUID
+
+[Protocols]
+  gEfiCapsuleArchProtocolGuid                   ## PRODUCES
+
+[Protocols.X64]
+  ## UNDEFINED ## NOTIFY
+  ## SOMETIMES_CONSUMES
+  gEdkiiVariableLockProtocolGuid
+
+[FeaturePcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset   ## CONSUMES
+
+[FeaturePcd.X64]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode      ## CONSUMES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxSizeNonPopulateCapsule   ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxSizePopulateCapsule      ## SOMETIMES_CONSUMES # Populate Image requires reset support.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdCapsuleInRamSupport         ## CONSUMES
+
+[Pcd.X64]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdCapsulePeiLongModeStackSize   ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable                ## SOMETIMES_CONSUMES
+
+[Depex]
+  gEfiVariableWriteArchProtocolGuid             # Depends on variable write functionality to produce capsule data variable
+
+# [Hob.X64]
+# UNDEFINED                 ## SOMETIMES_CONSUMES # CPU
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  CapsuleRuntimeDxeExtra.uni

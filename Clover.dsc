@@ -39,53 +39,53 @@
   #
   # Entry point
   #
-  PeimEntryPoint|MdePkg/Library/PeimEntryPoint/PeimEntryPoint.inf
-  DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
-  UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
-  UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
+  PeimEntryPoint|Clover/MdePkg/Library/PeimEntryPoint/PeimEntryPoint.inf
+  DxeCoreEntryPoint|Clover/MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
+  UefiDriverEntryPoint|Clover/MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
+  UefiApplicationEntryPoint|Clover/MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
   #
   # Basic
   #
-  BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
-  SynchronizationLib|MdePkg/Library/BaseSynchronizationLib/BaseSynchronizationLib.inf
-  BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
-  #BaseMemoryLib|MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
-  #BaseMemoryLib|MdePkg/Library/BaseMemoryLibSse2/BaseMemoryLibSse2.inf
-  PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
-  CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
-  IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
-  PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
-  PciCf8Lib|MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
-  PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
-  #PciLib|MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress.inf
-  #PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
-  CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
-  #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
+  BaseLib|Clover/MdePkg/Library/BaseLib/BaseLib.inf
+  SynchronizationLib|Clover/MdePkg/Library/BaseSynchronizationLib/BaseSynchronizationLib.inf
+  BaseMemoryLib|Clover/MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  #BaseMemoryLib|Clover/MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
+  #BaseMemoryLib|Clover/MdePkg/Library/BaseMemoryLibSse2/BaseMemoryLibSse2.inf
+  PrintLib|Clover/MdePkg/Library/BasePrintLib/BasePrintLib.inf
+  CpuLib|Clover/MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
+  IoLib|Clover/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
+  PciLib|Clover/MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
+  PciCf8Lib|Clover/MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
+  PciExpressLib|Clover/MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
+  #PciLib|Clover/MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress.inf
+  #PciExpressLib|Clover/MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
+  CacheMaintenanceLib|Clover/MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
+  #PeCoffLib|Clover/MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
-  PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
-  PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-  CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
+  PeCoffExtraActionLib|Clover/MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
+  PeCoffGetEntryPointLib|Clover/MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+  CustomizedDisplayLib|Clover/MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
   #
   # UEFI & PI
   #
-  UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
-  UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
-  UefiRuntimeLib|MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
-  UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
-  #UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  UefiBootServicesTableLib|Clover/MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
+  UefiRuntimeServicesTableLib|Clover/MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
+  UefiRuntimeLib|Clover/MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
+  UefiLib|Clover/MdePkg/Library/UefiLib/UefiLib.inf
+  #UefiHiiServicesLib|Clover/MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
   UefiHiiServicesLib|Clover/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
-  HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
-  DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
-  UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
-  DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
-  DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
-  UefiBootManagerLib|MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
+  HiiLib|Clover/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
+  DevicePathLib|Clover/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
+  UefiDecompressLib|Clover/MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
+  DxeServicesLib|Clover/MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
+  DxeServicesTableLib|Clover/MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
+  UefiBootManagerLib|Clover/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
   #EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   #EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
   #EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf
-  FileHandleLib|MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
-  SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
-  UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
+  FileHandleLib|Clover/MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
+  SortLib|Clover/MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
+  UefiCpuLib|Clover/CloverEFI/UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
 !ifdef ENABLE_SECURE_BOOT
   OpensslLib|Clover/Library/OpensslLib/openssl-$(OPENSSL_VERSION)/OpensslLib.inf
   IntrinsicLib|Clover/Library/IntrinsicLib/IntrinsicLib.inf
@@ -96,15 +96,15 @@
   #
   # Generic Modules
   #
-  UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
-  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
-  OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
+  UefiUsbLib|Clover/MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
+  UefiScsiLib|Clover/MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  OemHookStatusCodeLib|Clover/MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
   GenericBdsLib|Clover/Library/GenericBdsLib/GenericBdsLib.inf
-  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
-  CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
-  #PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
-  NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
+  SecurityManagementLib|Clover/MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
+  CapsuleLib|Clover/MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
+  #PeCoffExtraActionLib|Clover/MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
+  NetLib|Clover/MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
   #
   # Platform
   #
@@ -115,38 +115,38 @@
   #
   # Misc
   #
-  PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
-  DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
-  PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
-#  PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  PeiServicesLib|MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
-  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
-  HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
-  LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxDxeLib.inf
-  CpuExceptionHandlerLib|MdeModulePkg/Library/CpuExceptionHandlerLibNull/CpuExceptionHandlerLibNull.inf
-  SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
-  S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
-  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
-  PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+  PerformanceLib|Clover/MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
+  DebugAgentLib|Clover/MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+  PcdLib|Clover/MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+#  PcdLib|Clover/MdePkg/Library/DxePcdLib/DxePcdLib.inf
+  PeiServicesLib|Clover/MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
+  MemoryAllocationLib|Clover/MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  HobLib|Clover/MdePkg/Library/DxeHobLib/DxeHobLib.inf
+  LockBoxLib|Clover/MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxDxeLib.inf
+  CpuExceptionHandlerLib|Clover/MdeModulePkg/Library/CpuExceptionHandlerLibNull/CpuExceptionHandlerLibNull.inf
+  SmbusLib|Clover/MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
+  S3BootScriptLib|Clover/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
+  ExtractGuidedSectionLib|Clover/MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  PlatformHookLib|Clover/MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
-  SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
-  MtrrLib|UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
-  IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
-  LocalApicLib|UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
-  #LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
+  SerialPortLib|Clover/MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
+  MtrrLib|Clover/CloverEFI/UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
+  IoApicLib|Clover/PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
+  LocalApicLib|Clover/CloverEFI/UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
+  #LocalApicLib|Clover/CloverEFI/UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
 
   #
   # To save size, use NULL library for DebugLib and ReportStatusCodeLib.
   # If need status code output, do library instance overriden as below DxeMain.inf does
   #
-  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
-  ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+  DebugLib|Clover/MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  DebugPrintErrorLevelLib|Clover/MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+  ReportStatusCodeLib|Clover/MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
 
-  TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
-  AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
-  VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
+  TpmMeasurementLib|Clover/MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
+  AuthVariableLib|Clover/MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
+  VarCheckLib|Clover/MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
 
   #
   # Our libs
@@ -165,24 +165,24 @@
 !endif
 
 [LibraryClasses.common.DXE_CORE]
-  HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
-  BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
-  MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
+  HobLib|Clover/MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
+  BaseMemoryLib|Clover/MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  MemoryAllocationLib|Clover/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
 
 [LibraryClasses.common.PEIM]
-  MemoryAllocationLib|MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
-  HobLib|MdePkg/Library/PeiHobLib/PeiHobLib.inf
-  LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxPeiLib.inf
+  MemoryAllocationLib|Clover/MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
+  HobLib|Clover/MdePkg/Library/PeiHobLib/PeiHobLib.inf
+  LockBoxLib|Clover/MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxPeiLib.inf
 
 [LibraryClasses.IA32.PEIM, LibraryClasses.X64.PEIM]
-  PeiServicesTablePointerLib|MdePkg/Library/PeiServicesTablePointerLibIdt/PeiServicesTablePointerLibIdt.inf
+  PeiServicesTablePointerLib|Clover/MdePkg/Library/PeiServicesTablePointerLibIdt/PeiServicesTablePointerLibIdt.inf
 
 [LibraryClasses.common.DXE_DRIVER]
-  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  MemoryAllocationLib|Clover/MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
 
 [LibraryClasses.common.DXE_SMM_DRIVER]
-  SmmServicesTableLib|MdePkg/Library/SmmServicesTableLib/SmmServicesTableLib.inf
-  MemoryAllocationLib|MdePkg/Library/SmmMemoryAllocationLib/SmmMemoryAllocationLib.inf
+  SmmServicesTableLib|Clover/MdePkg/Library/SmmServicesTableLib/SmmServicesTableLib.inf
+  MemoryAllocationLib|Clover/MdePkg/Library/SmmMemoryAllocationLib/SmmMemoryAllocationLib.inf
 
 
 
@@ -215,10 +215,10 @@
       # All other module can *not* output debug information even they are use not NULL library
       # instance for DebugLib and ReportStatusCodeLib
       #
-      #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
-      ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+      #ReportStatusCodeLib|Clover/MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
+      ReportStatusCodeLib|Clover/MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
- #MdeModulePkg/Core/Dxe/DxeMain.inf {
+ #Clover/MdeModulePkg/Core/Dxe/DxeMain.inf {
  Clover/CloverEFI/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
@@ -232,62 +232,62 @@
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
       #0x80000042
     <LibraryClasses>
-      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
-      MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
+      BaseMemoryLib|Clover/MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+      MemoryAllocationLib|Clover/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
      # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
-     DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
- 	 ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+     DebugLib|Clover/MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+ 	 ReportStatusCodeLib|Clover/MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
  	 PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
 
   }
 
-  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
-  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
-  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
-  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
+  Clover/MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+  Clover/MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
+  Clover/MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  Clover/MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
 !ifndef REAL_NVRAM
 !ifdef HAVE_LEGACY_EMURUNTIMEDXE
-  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+  Clover/MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
 !else
-  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
+  Clover/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
     <PcdsFixedAtBuild>
       gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
     <LibraryClasses>
-      AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
-      TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
-      VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
+      AuthVariableLib|Clover/MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
+      TpmMeasurementLib|Clover/MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
+      VarCheckLib|Clover/MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
   }
 !endif
 !else
-  MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
-  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
+  Clover/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
+  Clover/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
     <LibraryClasses>
-      NULL|MdeModulePkg/Library/VarCheckUefiLib/VarCheckUefiLib.inf
+      NULL|Clover/MdeModulePkg/Library/VarCheckUefiLib/VarCheckUefiLib.inf
   }
 !endif
 
-  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
-  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
-  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
-  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
+  Clover/MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
+  Clover/MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
+  Clover/MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
+  Clover/MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  Clover/MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
     <LibraryClasses>
-      PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+      PcdLib|Clover/MdePkg/Library/DxePcdLib/DxePcdLib.inf
     <PcdsPatchableInModule>
       gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
       gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
   }
-  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
-  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
-  #MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  Clover/MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  Clover/MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+  Clover/MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+  #Clover/MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   Clover/CloverEFI/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-  #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  #Clover/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+  Clover/MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+  Clover/MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
   #DuetPkg/SmbiosGenDxe/SmbiosGen.inf
   #Clover/OsxSmbiosDxe/SmbiosDxe.inf
   Clover/CloverEFI/OsxSmbiosGenDxe/SmbiosGen.inf
@@ -295,8 +295,8 @@
   #DuetPkg/EfiLdr/EfiLdr.inf {
   Clover/CloverEFI/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+      DebugLib|Clover/MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      BaseMemoryLib|Clover/MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
 
       #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
       NULL|Clover/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
@@ -304,42 +304,43 @@
   #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   Clover/CloverEFI/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
-      PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+      PcdLib|Clover/MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
-  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+  Clover/MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CloverEFI/CpuDxe/Cpu.inf
-  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
+  Clover/PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>
       gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
   }
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/CloverEFI/AcpiReset/Reset.inf
   #DuetPkg/LegacyMetronome/Metronome.inf
-  MdeModulePkg/Universal/Metronome/Metronome.inf
+  Clover/MdeModulePkg/Universal/Metronome/Metronome.inf
 # EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
   #Chipset
   #PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   Clover/CloverEFI/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
-  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
+  Clover/PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   #PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
   #PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
   #DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   Clover/CloverEFI/PciRootBridgeDxe/PciRootBridge.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/CloverEFI/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  #Clover/MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   #Clover/PciBusDxe/PciBusDxe.inf
-  MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
+  Clover/MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
 
   #DataHub
   #Clover/VBoxAppleSim/VBoxAppleSim.inf
-  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-  #IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+  #IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+  Clover/Protocols/DataHubDxe/DataHubDxe.inf
+  #Clover/Protocols/DataHubStdErrDxe/DataHubStdErrDxe.inf
 
   # foreign file system support
   Clover/Protocols/DriverOverride/DriverOverride.inf
@@ -386,63 +387,63 @@
   #Clover/Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   #DuetPkg/SataControllerDxe/SataControllerDxe.inf
   Clover/Drivers/SataControllerDxe/SataControllerDxe.inf
-  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  #Clover/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   Clover/Drivers/AtaAtapi/AtaAtapiPassThru.inf
-  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #Clover/MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   Clover/Drivers/AtaBus/AtaBusDxe.inf
-  #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  #Clover/MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   Clover/Drivers/DVDBus/ScsiBusDxe.inf
-  #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  #Clover/MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   Clover/Drivers/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 !endif
 
   # Usb Support
-  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+  Clover/MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
   Clover/Drivers/OhciDxe/OhciDxe.inf
-  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
-#  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  Clover/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+#  Clover/MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
   Clover/Drivers/XhciDxe/XhciDxe.inf
-#  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+#  Clover/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
   Clover/Drivers/UsbBusDxe/UsbBusDxe.inf
-#  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+#  Clover/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
   Clover/Drivers/UsbKbDxe/UsbKbDxe.inf
-  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
-  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+  Clover/MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+  Clover/MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
   #Clover/Drivers/UsbMouseDxe/UsbMouseDxe.inf
 
   # ISA Support
-  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
-  IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
+  Clover/PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
+  Clover/Drivers/Isa/IsaBusDxe/IsaBusDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
-  IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
+  Clover/Drivers/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
-  IntelFrameworkModulePkg/Bus/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
+  Clover/Drivers/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
-  Clover/Drivers/Ps2MouseDxe/Ps2MouseDxe.inf
+  Clover/Drivers/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
 
   # ACPI Support
-  #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  #Clover/MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   Clover/CloverEFI/OsxAcpiTableDxe/AcpiTableDxe.inf
-  #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+  #Clover/MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
   #Clover/CloverEFI/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
-  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
-  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf {
+  Clover/MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+  Clover/MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf {
     <LibraryClasses>
-      PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+      PcdLib|Clover/MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
-  #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  #Clover/MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   Clover/Drivers/PartitionDxe/PartitionDxe.inf
 
   #FD
   #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   #Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
-  #MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
-  #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
-  #MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+  #Clover/MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
+  #Clover/MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
+  #Clover/MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
   #Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
-  #UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
+  #Clover/CloverEFI/UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
   # Bios Thunk
   #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
@@ -451,7 +452,7 @@
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
   Clover/CloverEFI/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
-  #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
+  #Clover/MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
@@ -473,8 +474,8 @@
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
     <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-      SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+      DebugLib|Clover/MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+      SerialPortLib|Clover/MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
   }
 
 !else
@@ -507,8 +508,8 @@
   #
   # Sample Application
   #
-  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
-  #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  #Clover/MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  #Clover/MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #Clover/Sample/Application/Sample.inf
   #Clover/gptsync/gptsync.inf
   Clover/bdmesg_efi/bdmesg.inf
@@ -528,9 +529,9 @@
 	!endif #$(NO_SHELL_PROFILES)
 
     <LibraryClasses>
-      PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-      PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-      UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+      PcdLib|Clover/MdePkg/Library/DxePcdLib/DxePcdLib.inf
+      PeCoffGetEntryPointLib|Clover/MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+      UefiHiiServicesLib|Clover/MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
       NULL|Clover/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.inf
       NULL|Clover/ShellPkg/Library/UefiShellLevel1CommandsLib/UefiShellLevel1CommandsLib.inf
       NULL|Clover/ShellPkg/Library/UefiShellLevel3CommandsLib/UefiShellLevel3CommandsLib.inf
@@ -560,14 +561,14 @@
 		gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 		gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 	<LibraryClasses>
-		SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-		DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-	DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+		SerialPortLib|Clover/MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+		DebugLib|Clover/MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+	DebugPrintErrorLevelLib|Clover/MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
 	}
 !else
 	Clover/rEFIt_UEFI/refit.inf {
     <LibraryClasses>
-      BaseMemoryLib|MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
+      BaseMemoryLib|Clover/MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
   }
 !endif
 
@@ -585,9 +586,9 @@
    #   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
    #   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
    # <LibraryClasses>
-   #   SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-   #   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-   #   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+   #   SerialPortLib|Clover/MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+   #   DebugLib|Clover/MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+   #   DebugPrintErrorLevelLib|Clover/MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   #}
 
 ###################################################################################################
