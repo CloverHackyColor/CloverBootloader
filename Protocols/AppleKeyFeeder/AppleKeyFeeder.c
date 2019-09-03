@@ -59,7 +59,7 @@ EFI_SIMPLE_TEXT_INPUT_PROTOCOL AppleKeyFeederProxy;
  ***************************************************************/
 
 /**
- * SMCHelper entry point. Installs AppleSMCProtocol.
+ * AppleKeyFeeder entry point. Installs gEfiSimpleTextInProtocolGuid.
  */
 EFI_STATUS
 EFIAPI
@@ -159,12 +159,10 @@ DBG("AppleKeyFeederEntrypoint\n");
 					);
 	}
 	if (EFI_ERROR (Status)) {
-		DBG("SimpleTextProxyInit: SetTimer2 failed, Status=%x\n", Status);
+		DBG("SimpleTextProxyInit: InstallMultipleProtocol failed, Status=%x\n", Status);
 	}
 
-
-
-DBG("AppleKeyFeederEntrypoint returns %x\n", Status);
+  DBG("AppleKeyFeederEntrypoint returns %x\n", Status);
   return Status;
 }
 

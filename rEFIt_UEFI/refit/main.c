@@ -85,6 +85,10 @@ DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variabl
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
+EFI_HANDLE ConsoleInHandle;
+EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
+
+
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
 extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
@@ -2001,6 +2005,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gBS       = SystemTable->BootServices;
   gRS       = SystemTable->RuntimeServices;
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
+  
+  ConsoleInHandle = SystemTable->ConsoleInHandle;
+  
 
   gRS->GetTime(&Now, NULL);
 
@@ -2069,6 +2076,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status)) {
     DBG("UnicodeCollation Status=%r\n", Status);
   }
+  
+  Status = gBS->HandleProtocol(ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (VOID **)&SimpleTextEx);
+  if ( EFI_ERROR (Status) ) {
+    SimpleTextEx = NULL;
+  }
+  DBG("SimpleTextEx Status=%x\n", Status);
 
   PrepatchSmbios();
 
@@ -2151,7 +2164,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeSecureBoot();
 #endif // ENABLE_SECURE_BOOT
 
-#if 1 //HIBERNATE_DUMP_DATA
+
   {
 //    UINT32                    machineSignature    = 0;
     EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
@@ -2170,16 +2183,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
        */
       machineSignature = Facs->HardwareSignature;
     }
-/*------------------------------------------------------
-    //DoHibernateWake = DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
+#if HIBERNATE_DUMP_DATA
+//------------------------------------------------------
+    DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
     DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-signature",   &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid, -1);
     DumpVariable(L"boot-image",       &gEfiAppleBootGuid, 0);
 //-----------------------------------------------------------
- */
-  }
+ 
 #endif //
+  }
+
 #if 0
   //testing place
   {
@@ -2194,10 +2209,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
-      Status = GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
-      if (EFI_ERROR(Status)) {
+ /*     Status = */GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
+ //     if (EFI_ERROR(Status)) {
  //       DBG("Error in Early settings%d: %r\n", i, Status);
-      }
+ //     }
     }
   }
 
@@ -2308,7 +2323,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
     case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
     case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo -1, kilo);
+      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo);
       //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
       break;
     default:
@@ -2632,6 +2647,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       switch (ChosenEntry->Tag) {
 
         case TAG_RESET:    // Restart
+          if (SimpleTextEx) {
+            EFI_KEY_DATA KeyData = 0;
+            SimpleTextEx->ReadKeyStrokeEx (SimpleTextEx, &KeyData);
+            if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
+              //do clear cmos
+              break; //to test
+            }
+          }
+          
           // Attempt warm reboot
           gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
           // Warm reboot may not be supported attempt cold reboot
