@@ -1,0 +1,69 @@
+# OS X temporary files that should never be committed
+.DS_Store
+*.swp
+*.lock
+*~
+
+# /CloverPackage/
+/CloverPackage/sym/
+/CloverPackage/CloverV2/BootSectors/boot0af
+/CloverPackage/CloverV2/BootSectors/boot0ss
+/CloverPackage/CloverV2/BootSectors/boot0md
+/CloverPackage/CloverV2/BootSectors/boot1h
+/CloverPackage/CloverV2/BootSectors/boot1h2
+/CloverPackage/CloverV2/BootSectors/boot1f32alt
+/CloverPackage/CloverV2/BootSectors/boot1f32
+/CloverPackage/CloverV2/BootSectors/boot1x
+/CloverPackage/CloverV2/BootSectors/boot1xalt
+/CloverPackage/CloverV2/BootSectors/Description.txt
+/CloverPackage/CloverV2/BootSectors/Installation.txt
+/CloverPackage/CloverV2/Bootloaders/ia32/
+/CloverPackage/CloverV2/Bootloaders/x64/
+/CloverPackage/CloverV2/EFI/BOOT/BOOTIA32.efi
+/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
+/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi
+/CloverPackage/CloverV2/EFI/CLOVER/CLOVERIA32.efi
+/CloverPackage/CloverV2/EFI/CLOVER/drivers/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers32/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers32UEFI/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers64/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers64UEFI/
+/CloverPackage/CloverV2/EFI/CLOVER/tools/bdmesg.efi
+/CloverPackage/CloverV2/EFI/CLOVER/tools/bdmesg-32.efi
+/CloverPackage/CloverV2/EFI/CLOVER/tools/Shell64U.efi
+/CloverPackage/CloverV2/drivers-Off/drivers32/
+/CloverPackage/CloverV2/drivers-Off/drivers32UEFI/
+/CloverPackage/CloverV2/drivers-Off/drivers64/
+/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/
+
+# /FileSystems/HFSPlus/
+/FileSystems/HFSPlus/Ia32/
+/FileSystems/HFSPlus/X64/
+
+# /
+/Version.h
+/vers.txt
+
+# /rEFIt_UEFI/
+/rEFIt_UEFI/Version.h
+
+# XCode files/directories
+*~.nib
+DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+xcuserdata/
+
+# Translation files
+CloverUpdater.strings
+CloverPackage/CloverUpdater/src/*.lproj
+CloverPrefpane.strings
+CloverPackage/CloverPrefpane/src/*.lproj
+

@@ -1,0 +1,55 @@
+## @file
+#
+#  Module Name:
+#
+#    MsgLog.inf
+#
+#  Abstract:
+#
+#	MsgLog driver installs MsgLog protocol that can be used in all modules
+#	to keep a log that can be output to file later, at the finish of work.
+#
+#	Slice 2012, initial idea comes from Kabyl
+#
+#   have no idea about licenses. Keep copyright and use with any modifications.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = MsgLog
+  FILE_GUID                      = 511CE6CE-F27F-16EF-866C-FDF1019550B7
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = MsgLogEntrypoint
+  
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+  
+[Sources]
+  MsgLog.c
+
+[Guids]
+
+[Protocols]
+  gMsgLogProtocolGuid			## PRODUCES and CONSUMES
+  
+[BuildOptions]
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -O0
+
+

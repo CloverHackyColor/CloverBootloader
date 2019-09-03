@@ -1,0 +1,2 @@
+cd Clover
+DumpUefiCalls/build.sh -x64

@@ -1,0 +1,281 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A3DA39BF17832543008B64B2 /* clover-genconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = A3DA39BE17832543008B64B2 /* clover-genconfig.c */; };
+		A3DA39C117832591008B64B2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3DA39C017832591008B64B2 /* CoreFoundation.framework */; };
+		A3DA39C317832599008B64B2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3DA39C217832599008B64B2 /* IOKit.framework */; };
+		A5DF2D1520BB17F000353EB3 /* efidevp.c in Sources */ = {isa = PBXBuildFile; fileRef = 1262608E20B896790096178F /* efidevp.c */; };
+		A5DF2D1620BB17F400353EB3 /* gfxutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1262608B20B891C00096178F /* gfxutil.c */; };
+		A5DF2D1920BB20AD00353EB3 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A5DF2D1720BB20AC00353EB3 /* utils.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A3DA39B0178324D7008B64B2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1211013C1F61D6CE002C8330 /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = ../../../rEFIt_UEFI/Platform/Platform.h; sourceTree = "<group>"; };
+		1211013D1F61DD0D002C8330 /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
+		1262608B20B891C00096178F /* gfxutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gfxutil.c; sourceTree = "<group>"; };
+		1262608D20B891C80096178F /* gfxutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfxutil.h; sourceTree = "<group>"; };
+		1262608E20B896790096178F /* efidevp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = efidevp.c; sourceTree = "<group>"; };
+		1262608F20B896790096178F /* efidevp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidevp.h; sourceTree = "<group>"; };
+		A3DA39B2178324D7008B64B2 /* clover-genconfig */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "clover-genconfig"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3DA39BE17832543008B64B2 /* clover-genconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = "clover-genconfig.c"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		A3DA39C017832591008B64B2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		A3DA39C217832599008B64B2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		A5DF2D1720BB20AC00353EB3 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		A5DF2D1820BB20AD00353EB3 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A3DA39AF178324D7008B64B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3DA39C317832599008B64B2 /* IOKit.framework in Frameworks */,
+				A3DA39C117832591008B64B2 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A3DA39A9178324D7008B64B2 = {
+			isa = PBXGroup;
+			children = (
+				A3DA39C217832599008B64B2 /* IOKit.framework */,
+				A3DA39C017832591008B64B2 /* CoreFoundation.framework */,
+				A3DA39BE17832543008B64B2 /* clover-genconfig.c */,
+				1262608E20B896790096178F /* efidevp.c */,
+				1262608F20B896790096178F /* efidevp.h */,
+				1262608B20B891C00096178F /* gfxutil.c */,
+				1262608D20B891C80096178F /* gfxutil.h */,
+				1211013C1F61D6CE002C8330 /* Platform.h */,
+				A5DF2D1720BB20AC00353EB3 /* utils.c */,
+				A5DF2D1820BB20AD00353EB3 /* utils.h */,
+				1211013D1F61DD0D002C8330 /* config-sample.plist */,
+				A3DA39B3178324D7008B64B2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A3DA39B3178324D7008B64B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3DA39B2178324D7008B64B2 /* clover-genconfig */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A3DA39B1178324D7008B64B2 /* clover-genconfig */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3DA39BB178324D7008B64B2 /* Build configuration list for PBXNativeTarget "clover-genconfig" */;
+			buildPhases = (
+				A3DA39AE178324D7008B64B2 /* Sources */,
+				A3DA39AF178324D7008B64B2 /* Frameworks */,
+				A3DA39B0178324D7008B64B2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "clover-genconfig";
+			productName = "clover-genconfig";
+			productReference = A3DA39B2178324D7008B64B2 /* clover-genconfig */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A3DA39AA178324D7008B64B2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = ProjectOSX;
+			};
+			buildConfigurationList = A3DA39AD178324D7008B64B2 /* Build configuration list for PBXProject "clover-genconfig" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A3DA39A9178324D7008B64B2;
+			productRefGroup = A3DA39B3178324D7008B64B2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A3DA39B1178324D7008B64B2 /* clover-genconfig */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A3DA39AE178324D7008B64B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3DA39BF17832543008B64B2 /* clover-genconfig.c in Sources */,
+				A5DF2D1920BB20AD00353EB3 /* utils.c in Sources */,
+				A5DF2D1620BB17F400353EB3 /* gfxutil.c in Sources */,
+				A5DF2D1520BB17F000353EB3 /* efidevp.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A3DA39B9178324D7008B64B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					USING_LTO,
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Debug;
+		};
+		A3DA39BA178324D7008B64B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = USING_LTO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Release;
+		};
+		A3DA39BC178324D7008B64B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				"HEADER_SEARCH_PATHS[arch=i386]" = (
+					../../../../MdePkg/Include/Ia32,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../Include,
+				);
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
+					../../../../MdePkg/Include/X64,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../Include,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+			};
+			name = Debug;
+		};
+		A3DA39BD178324D7008B64B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				"HEADER_SEARCH_PATHS[arch=i386]" = (
+					../../../../MdePkg/Include/Ia32,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../Include,
+				);
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
+					../../../../MdePkg/Include/X64,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../Include,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A3DA39AD178324D7008B64B2 /* Build configuration list for PBXProject "clover-genconfig" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3DA39B9178324D7008B64B2 /* Debug */,
+				A3DA39BA178324D7008B64B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A3DA39BB178324D7008B64B2 /* Build configuration list for PBXNativeTarget "clover-genconfig" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3DA39BC178324D7008B64B2 /* Debug */,
+				A3DA39BD178324D7008B64B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A3DA39AA178324D7008B64B2 /* Project object */;
+}

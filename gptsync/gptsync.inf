@@ -1,0 +1,78 @@
+## @file
+#  Sample UEFI Application Reference EDKII Module
+#
+#
+#  Copyright (c) 2009 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x00010005
+  BASE_NAME                     = gptsync
+  FILE_GUID                     = 4C08D521-7DDB-49C4-AA0E-264FDDB73B6F
+  MODULE_TYPE                   = UEFI_APPLICATION
+  EDK_RELEASE_VERSION		= 0x00020000
+  EFI_SPECIFICATION_VERSION	= 0x00010000
+  VERSION_STRING                = 1.0
+  ENTRY_POINT                   = GptSyncMain
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+
+  gptsync.c
+
+  os_efi.c
+
+  showpart.c
+
+  lib.c
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  DevicePathLib
+  DebugLib
+  DxeServicesLib
+  DxeServicesTableLib
+  HobLib
+  IoLib
+# HiiLib
+#  EfiFileLib
+  PeCoffLib
+# GenericBdsLib
+  MemLogLib
+  VideoBiosPatchLib
+  OpensslLib
+
+[Protocols]
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os 
+  GCC:*_*_*_CC_FLAGS = -Os
+  MSFT:*_*_*_CC_FLAGS = /Os

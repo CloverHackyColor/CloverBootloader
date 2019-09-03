@@ -1,0 +1,60 @@
+## @file
+#
+#  Module Name:
+#
+#    FSInject.inf
+#
+#  Abstract:
+#
+#    FSInject driver - Replaces EFI_SIMPLE_FILE_SYSTEM_PROTOCOL on target volume
+#    and injects content of specified source folder on source (injection) volume
+#    into target folder in target volume.
+#
+#    initial version - dmazar
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FSInject
+  FILE_GUID                      = FE089410-6D31-11E1-8D6E-96C24824019B
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FSInjectEntrypoint
+
+[Packages]
+  Clover/FSInject/FSInject.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+  MemLogLib
+  
+[Sources]
+  FSInject.h
+  FSInject.c
+  Test.h
+  Test.c
+
+[Guids]
+  gEfiGlobalVariableGuid						## PRODUCES var FSInject.KextsInjected
+  gEfiFileInfoGuid								## CONSUMES
+  gEfiFileSystemInfoGuid						## CONSUMES
+  gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid				## CONSUMES
+  gFSInjectProtocolGuid							## PRODUCES and CONSUMES
+
+[BuildOptions]
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+

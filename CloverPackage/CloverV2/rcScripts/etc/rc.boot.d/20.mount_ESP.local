@@ -1,0 +1,159 @@
+#!/bin/bash
+
+#
+# Mount ESP script for Clover
+#
+# © JrCs 2013
+
+#
+# Mount ESP (EFI System Partition)
+#
+# NVRam keys used:
+#    Clover.MountEFI: Yes|diskX|GUID|VolName [default No]
+
+# Check that all variable are bound
+set -u
+
+#
+# Source clover rc library if needed
+#
+if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
+    selfDir=$(cd $(dirname "$0") && pwd -P)
+    source "${selfDir}"/../rc.clover.lib
+fi
+
+# Variables
+ESPMountPoint=/Volumes/ESP
+declare -r plistbuddy='/usr/libexec/PlistBuddy'
+
+# Debug mode ?
+[[ "$DEBUG" -ne 0 ]] && set -x
+
+# Turn on a case-insensitive matching
+shopt -s nocasematch
+
+function mountESP {
+    local arg="$1"
+    local exitcode=1
+    local guidRegExp='[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+'
+    local ESPDevice=
+
+    if [[ "$arg" == Yes ]]; then
+        ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
+         sed -n 's/.*PV UUID (disk): .*(//p' | \
+         sed -n 's/s[0-9])//p')
+
+        if [[ "$ESPDevice" == "" ]]; then
+            ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
+             sed -n 's/.*Part [Oo]f Whole: *//p')
+        fi
+		# When ${ESPDevice} is an "Apple_APFS Container" on expected "Boot Volume" (ie. "Volume de démarrage")
+        # at "Force mount selected ESP at startup:"(ie. "Forcer le montage de l'ESP sélectionné au démarrage")
+        if [[ $(diskutil info / | sed -n 's/.*File System Personality: *//p' | tr "[:upper:]" "[:lower:]") = "apfs" ]] ; then
+            ESPDevice=$(diskutil list | grep "Apple_APFS Container ${ESPDevice}" | \
+             awk '{ print $NF}' | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+        fi
+    elif [[ "$arg" =~ $guidRegExp ]]; then
+        ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
+         sed -n 's/.*Part [Oo]f Whole: *//p')
+        if [[ -z "$ESPDevice" ]]; then
+            echo "Can't find partition with UUID $arg"
+            return 1
+        fi
+    elif [[ ! "$arg" =~ ^(/dev/)?disk[0-9]+ ]]; then
+        ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
+         sed -n 's/.*Part [Oo]f Whole: *//p')
+        if [[ -z "$ESPDevice" ]]; then
+            echo "Can't find volume with the name $arg"
+            return 1
+        fi
+    else
+        ESPDevice="$arg"
+    fi
+
+    # keep only the device name (remove /dev/ and partition (aka s1))
+    ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+
+    if [[ "$ESPDevice" =~ ^disk[0-9]+$ ]]; then
+        local ESP="${ESPDevice}s1"
+
+        # Umount previously mount partition
+        /usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
+        umount /dev/${ESP} &>/dev/null
+        exitcode=1
+
+        local tmpfile=$(mktemp -t fstyp)
+        LC_ALL=C diskutil info -plist /dev/$ESP > "$tmpfile"
+        local fstype=$($plistbuddy -c "Print FilesystemType" \
+         "$tmpfile" 2>/dev/null)
+        rm -f "$tmpfile"
+        [[ -z "$fstype" ]] && fstype=$(/sbin/fstyp /dev/$ESP)
+        if [[ -n "$fstype" ]]; then
+            [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+            mount -t "$fstype" /dev/$ESP "${ESPMountPoint}" &>/dev/null
+            exitcode=$?
+        fi
+        if [[ $exitcode -ne 0 ]]; then
+            echo "Failed to mount $ESP at $ESPMountPoint"
+        else
+            echo "EFI partition ($ESP) mount at $ESPMountPoint"
+        fi
+    else
+        echo "Invalid device '$ESPDevice'"
+    fi
+    return $exitcode
+}
+
+# Clover.MountEFI=Yes|diskX|GUID|VolName [default No]
+mountEFIValue=$(GetNVRamKey 'Clover.MountEFI' || echo 'No')
+if [[ "$mountEFIValue" == "No" ]]; then
+    echo "Not auto mounting EFI partition"
+else
+    mountESP "$mountEFIValue"
+    [[ $? -ne 0 ]] && rmdir "$ESPMountPoint" &>/dev/null
+fi
+
+#
+# 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks
+#
+gScriptVersion=1.16.2
+gEmuVariableName=emuvariable
+gLogoutHookf="/Library/Application Support/Clover/CloverDaemon-stopservice"
+gNVRAMbuf=$(nvram -x -p)
+
+gEfiEmuVariableIsPresent="false"
+gLegacyEmuVariableIsPresent="false"
+if [[ `printf "${gNVRAMbuf}" |tr '[:upper:]' '[:lower:]'` == *"${gEmuVariableName}"* ]];
+then
+    gEfiEmuVariableIsPresent="true"
+else
+    gEFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p | tr '[:upper:]' '[:lower:]')
+    case "${gEFIFirmwareVendor}" in
+        *"clover"* | *"edk ii"* ) gLegacyEmuVariableIsPresent="true"
+                                  ;;
+        *                       )
+                                  ;;
+    esac
+fi
+
+# set LogoutHook
+if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}" == "true" ]]; 
+then
+    if [ -f "${gLogoutHookf}" ]; 
+    then
+    #
+    # file exist, need to logoutHook
+    #
+        echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou, tluck, Sherlocks"
+        echo "Registering LogoutHook as ${gLogoutHookf}"
+        defaults write com.apple.loginwindow LogoutHook "${gLogoutHookf}"
+    fi
+fi
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #

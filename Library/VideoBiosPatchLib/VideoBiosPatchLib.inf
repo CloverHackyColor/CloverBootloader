@@ -1,0 +1,51 @@
+## @file
+#  Default instance of VideoBiosPatchLib library for video bios patches.
+#
+#  Ported from Chameleon's Resolution module (created by Evan Lojewski)
+#  which is a version of 915resolution (created by steve tomljenovic).
+#
+#  Ported to UEFI by usr-sse2, tweaked and added as VideoBiosPatchLib by dmazar.
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = VideoBiosPatchLib
+  FILE_GUID                      = 8F1AEE20-2F0C-11E2-A566-6CCD6188709B
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = VideoBiosPatchLib 
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  VideoBiosPatchLibInternal.h
+  VideoBiosPatchLib.c
+  915resolution.h
+  915resolution.c
+  edid.h
+  edid.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Clover/CloverPkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  PrintLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  MemLogLib
+
+[Protocols]
+  gEfiLegacyRegionProtocolGuid
+  gEfiLegacyRegion2ProtocolGuid
+  gEfiEdidActiveProtocolGuid
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG

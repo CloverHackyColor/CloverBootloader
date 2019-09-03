@@ -1,0 +1,51 @@
+## @file
+#
+#  Module Name:
+#
+#    DriverOverride.inf
+#
+#  Abstract:
+#
+#	DriverOverride driver installs PlatformDriverOverride protocol 
+# that will be replace later
+#
+#	Slice 2014, initial idea comes from dmazar
+#
+#   have no idea about licenses. Keep copyright and use with any modifications.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DriverOverride
+  FILE_GUID                      = 511CE6DD-F27F-16EF-866C-FDF2014550B7
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = DriverOverrideEntrypoint
+  
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  
+[Sources]
+  DriverOverride.c
+
+[Guids]
+
+[Protocols]
+  gEfiPlatformDriverOverrideProtocolGuid			## PRODUCES and CONSUMES
+  
+[BuildOptions]
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -Os
+
+

@@ -1,0 +1,82 @@
+## @file
+# USB Mouse Driver that manages USB mouse and produces Simple Pointer Protocol.
+#
+# USB Mouse Driver consumes USB I/O Protocol and Device Path Protocol, and produces
+# Simple Pointer Protocol on USB mouse devices.
+# It manages the USB mouse device via Asynchronous Interrupt Transfer of USB I/O Protocol,
+# and parses the data according to USB HID Specification.
+# This module refers to following specifications:
+# 1. Universal Serial Bus HID Firmware Specification, ver 1.11
+# 2. UEFI Specification, v2.1
+#
+# Copyright (c) 2006 - 2014, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UsbMouseDxe
+  MODULE_UNI_FILE                = UsbMouseDxe.uni
+  FILE_GUID                      = 2D2E62AA-9ECF-43b7-8219-94E7FC713DFE
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = USBMouseDriverBindingEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#  DRIVER_BINDING                =  gUsbMouseDriverBinding                        
+#  COMPONENT_NAME                =  gUsbMouseComponentName
+#  COMPONENT_NAME2               =  gUsbMouseComponentName2
+#
+
+[Sources]
+  ComponentName.c
+  MouseHid.c
+  UsbMouse.c
+  UsbMouse.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+    Clover/CloverPkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  ReportStatusCodeLib
+  UefiUsbLib
+    MemLogLib
+
+[Protocols]
+  gEfiUsbIoProtocolGuid                         ## TO_START
+  gEfiDevicePathProtocolGuid                    ## TO_START
+  gEfiSimplePointerProtocolGuid                 ## BY_START
+
+# [Event]
+#   ##
+#   # Periodic timer event for delayed recovery, which deals with device error.
+#   #
+#   EVENT_TYPE_PERIODIC_TIMER                   ## PRODUCES
+#   ##
+#   # Event for EFI_SIMPLE_POINTER_PROTOCOL.WaitForInput
+#   #
+#   EVENT_TYPE_NOTIFY_WAIT                      ## PRODUCES
+#
+#
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  UsbMouseDxeExtra.uni

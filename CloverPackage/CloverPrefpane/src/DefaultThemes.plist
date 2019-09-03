@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Default Themes</key>
+	<array>
+		<string>AppleStyle</string>
+		<string>BGM</string>
+		<string>Black_Green</string>
+		<string>bluemac</string>
+		<string>bootcamp</string>
+		<string>BGM256</string>
+		<string>chrome</string>
+		<string>CloverX</string>
+		<string>dawn</string>
+		<string>embedded</string>
+		<string>gold_clover</string>
+		<string>iClover</string>
+		<string>ios7</string>
+		<string>Magnifico</string>
+		<string>metal</string>
+		<string>mrengles</string>
+		<string>Orange</string>
+		<string>OS Box</string>
+		<string>OS One</string>
+		<string>random</string>
+		<string>ThinkPad</string>
+		<string>buttons</string>
+		<string>hellfire</string>
+		<string>simple_gray</string>
+		<string>Shield</string>
+		<string>wooden</string>
+		<string>sketched</string>
+		<string>Space</string>
+		<string>steampunkblack</string>
+		<string>Clovy</string>
+		<string>cesium</string>
+	</array>
+</dict>
+</plist>

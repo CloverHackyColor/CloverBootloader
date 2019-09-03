@@ -1,0 +1,86 @@
+#!/bin/bash
+
+#
+# save nvram.plist script for CLOVER
+#
+# © JrCs 2013
+
+#
+# Save boot.log and rotate the system.log file
+#
+# NVRam keys used:
+#    Clover.LogLineCount: number of line to keep in system.log file
+#    Clover.LogEveryBoot: create a new boot.log file for every boot
+
+# Check that all variable are bound
+set -u
+
+#
+# Source clover rc library if needed
+#
+if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
+    selfDir=$(cd $(dirname "$0") && pwd -P)
+    source "${selfDir}"/../rc.clover.lib
+fi
+
+# Variables
+currentDate=$(date "+%Y-%m-%d")
+currentTime=$(date "+%H:%M:%S")
+bootLogPath="${CLOVER_LOG_LOCATION}/boot.log"
+systemLogPath="${CLOVER_LOG_LOCATION}/system.log"
+
+# Debug mode ?
+[[ "$DEBUG" -ne 0 ]] && set -x
+
+# Turn on a case-insensitive matching
+shopt -s nocasematch
+
+#
+# Print the current timestamp
+#
+echo "-------------------------------" > ${bootLogPath}
+echo "DATE: ${currentDate} TIME: ${currentTime}" >> ${bootLogPath}
+echo "-------------------------------" >> ${bootLogPath}
+
+#
+# Save the current boot log
+#
+LC_ALL=C /usr/sbin/ioreg -l -pIODeviceTree | \
+ sed -nE 's@.*boot-log.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p >> ${bootLogPath}
+echo "Clover boot messages saved in $bootLogPath"
+
+# Clover.LogLineCount=0/N [default 3000]
+logLineCount=$(GetNVRamKey 'Clover.LogLineCount')
+[[ "$logLineCount" =~ ^[0-9]+$ ]] || logLineCount=3000
+# If the logLineCount > 0 trim the system log to line count before adding
+# boot.log content
+if [[ "$logLineCount" -gt 0 ]]; then
+    tail -n $logLineCount "$systemLogPath" 2>/dev/null > "${systemLogPath}.tmp"
+    cat "$bootLogPath" >> "${systemLogPath}.tmp"
+    mv "${systemLogPath}.tmp" "$systemLogPath"
+fi
+
+# Clover.LogEveryBoot=No|Yes|Number [default No]
+logEveryBoot=$(GetNVRamKey 'Clover.LogEveryBoot')
+# If logEveryBoot == Yes then save a copy of boot.log with a timestamp boot.log
+# file
+if [[ -n "$logEveryBoot" && "$logEveryBoot" != 'No' ]];then
+    # If logEveryBoot is a number keep this number of boot logs
+    if [[ "$logEveryBoot" =~ [[:digit:]]+ ]]; then
+        # Keep only logEveryBoot logs
+        ls -t "${CLOVER_LOG_LOCATION}"/boot-*.log | tail -n +$logEveryBoot | xargs rm -f
+    fi
+    # Extract clover revision from the boot log file
+    cloverRevision=$(sed -nE 's/^.*Clover revision: *([0-9]+).*$/\1/p' "$bootLogPath")
+    timeStampBootLogFilename=boot-r$cloverRevision-${currentDate}-$(echo ${currentTime//:/.}).log
+    cp "$bootLogPath" "${CLOVER_LOG_LOCATION}/${timeStampBootLogFilename}"
+fi
+
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #

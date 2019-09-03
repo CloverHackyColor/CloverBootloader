@@ -1,0 +1,45 @@
+## @file
+# Copyright (c) 2007 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+# This program and the accompanying materials have not been licensed.
+# Neither is its usage, its redistribution, in source or binary form,
+# licensed, nor implicitely or explicitely permitted, except when
+# required by applicable law.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+# OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#  
+##
+
+[Defines]
+  BASE_NAME   = FirmwareVolume
+  FILE_GUID   = 511CE682-2892-4397-BB31-813243E4CAD3
+  MODULE_TYPE = UEFI_DRIVER
+  ENTRY_POINT = FVEntrypoint
+  INF_VERSION = 0x00010005
+  VERSION_STRING  = 1.0
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+
+[Protocols]
+  gEfiFirmwareVolumeProtocolGuid  ## PRODUCES
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+
+[Sources]
+  FirmwareVolume.c

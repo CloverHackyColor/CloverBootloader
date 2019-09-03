@@ -1,0 +1,1266 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		129261BE1A305A8F005F1426 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 129261661A305A8F005F1426 /* bdmesg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1261512C1A151CCF00903E7B;
+			remoteInfo = bdmesg;
+		};
+		129261C11A305A8F005F1426 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 129261771A305A8F005F1426 /* clover-genconfig.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A3DA39B2178324D7008B64B2;
+			remoteInfo = "clover-genconfig";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		129260BC1A305A3E005F1426 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1210F28E1A51EF0A00461427 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		1210F2941A51EF0A00461427 /* CoreFoundation-2F9UZAQGRJX2F.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoreFoundation-2F9UZAQGRJX2F.pcm"; sourceTree = "<group>"; };
+		1210F2951A51EF0A00461427 /* Darwin-1X6DCOAHVUA1I.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Darwin-1X6DCOAHVUA1I.pcm"; sourceTree = "<group>"; };
+		1210F2961A51EF0A00461427 /* DiskArbitration-3UG471J3HYX3N.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DiskArbitration-3UG471J3HYX3N.pcm"; sourceTree = "<group>"; };
+		1210F2971A51EF0A00461427 /* Dispatch-2V15OGNTZIFP9.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Dispatch-2V15OGNTZIFP9.pcm"; sourceTree = "<group>"; };
+		1210F2981A51EF0A00461427 /* IOKit-36UG0SGXPXPHQ.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IOKit-36UG0SGXPXPHQ.pcm"; sourceTree = "<group>"; };
+		1210F2991A51EF0A00461427 /* libkern-1X6DCOAHVUA1I.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "libkern-1X6DCOAHVUA1I.pcm"; sourceTree = "<group>"; };
+		1210F29A1A51EF0A00461427 /* modules.idx */ = {isa = PBXFileReference; lastKnownFileType = file; path = modules.idx; sourceTree = "<group>"; };
+		1210F29B1A51EF0A00461427 /* os-1X6DCOAHVUA1I.pcm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "os-1X6DCOAHVUA1I.pcm"; sourceTree = "<group>"; };
+		1210F29C1A51EF0A00461427 /* modules.timestamp */ = {isa = PBXFileReference; lastKnownFileType = text; path = modules.timestamp; sourceTree = "<group>"; };
+		1210F29E1A51EF0A00461427 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
+		1210F2A11A51EF0A00461427 /* 30410935-FCE7-44F7-9187-9C9A555CEF0C.xcactivitylog */ = {isa = PBXFileReference; lastKnownFileType = file; path = "30410935-FCE7-44F7-9187-9C9A555CEF0C.xcactivitylog"; sourceTree = "<group>"; };
+		1210F2A21A51EF0A00461427 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		1210F2A31A51EF0A00461427 /* partutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = partutil.c; sourceTree = "<group>"; };
+		1210F2A41A51EF0A00461427 /* partutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = partutil.h; sourceTree = "<group>"; };
+		129260BE1A305A3E005F1426 /* Package */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Package; sourceTree = BUILT_PRODUCTS_DIR; };
+		129260CD1A305A67005F1426 /* clean_po_headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = clean_po_headers.sh; sourceTree = "<group>"; };
+		129260CF1A305A67005F1426 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		129260D31A305A67005F1426 /* AsciiDoc.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = AsciiDoc.pm; sourceTree = "<group>"; };
+		129260D41A305A67005F1426 /* BibTeX.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = BibTeX.pm; sourceTree = "<group>"; };
+		129260D51A305A67005F1426 /* Chooser.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Chooser.pm; sourceTree = "<group>"; };
+		129260D61A305A67005F1426 /* Common.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Common.pm; sourceTree = "<group>"; };
+		129260D71A305A67005F1426 /* Dia.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Dia.pm; sourceTree = "<group>"; };
+		129260D81A305A67005F1426 /* Docbook.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Docbook.pm; sourceTree = "<group>"; };
+		129260D91A305A67005F1426 /* Guide.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Guide.pm; sourceTree = "<group>"; };
+		129260DA1A305A67005F1426 /* Halibut.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Halibut.pm; sourceTree = "<group>"; };
+		129260DB1A305A67005F1426 /* Ini.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Ini.pm; sourceTree = "<group>"; };
+		129260DC1A305A67005F1426 /* KernelHelp.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = KernelHelp.pm; sourceTree = "<group>"; };
+		129260DD1A305A67005F1426 /* LaTeX.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = LaTeX.pm; sourceTree = "<group>"; };
+		129260DE1A305A67005F1426 /* Man.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Man.pm; sourceTree = "<group>"; };
+		129260DF1A305A67005F1426 /* Po.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Po.pm; sourceTree = "<group>"; };
+		129260E01A305A67005F1426 /* Pod.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Pod.pm; sourceTree = "<group>"; };
+		129260E11A305A67005F1426 /* Prop.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Prop.pm; sourceTree = "<group>"; };
+		129260E21A305A67005F1426 /* Sgml.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Sgml.pm; sourceTree = "<group>"; };
+		129260E31A305A67005F1426 /* TeX.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = TeX.pm; sourceTree = "<group>"; };
+		129260E41A305A67005F1426 /* Texinfo.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Texinfo.pm; sourceTree = "<group>"; };
+		129260E51A305A67005F1426 /* Text.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Text.pm; sourceTree = "<group>"; };
+		129260E61A305A67005F1426 /* TransTractor.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = TransTractor.pm; sourceTree = "<group>"; };
+		129260E71A305A67005F1426 /* Wml.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Wml.pm; sourceTree = "<group>"; };
+		129260E81A305A67005F1426 /* Xhtml.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Xhtml.pm; sourceTree = "<group>"; };
+		129260E91A305A67005F1426 /* Xml.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Xml.pm; sourceTree = "<group>"; };
+		129260EA1A305A67005F1426 /* NEWS */ = {isa = PBXFileReference; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; };
+		129260EB1A305A67005F1426 /* po4a */ = {isa = PBXFileReference; lastKnownFileType = text; path = po4a; sourceTree = "<group>"; };
+		129260EC1A305A67005F1426 /* po4a-gettextize */ = {isa = PBXFileReference; lastKnownFileType = text; path = "po4a-gettextize"; sourceTree = "<group>"; };
+		129260ED1A305A67005F1426 /* po4a-normalize */ = {isa = PBXFileReference; lastKnownFileType = text; path = "po4a-normalize"; sourceTree = "<group>"; };
+		129260EE1A305A67005F1426 /* po4a-translate */ = {isa = PBXFileReference; lastKnownFileType = text; path = "po4a-translate"; sourceTree = "<group>"; };
+		129260EF1A305A67005F1426 /* po4a-updatepo */ = {isa = PBXFileReference; lastKnownFileType = text; path = "po4a-updatepo"; sourceTree = "<group>"; };
+		129260F01A305A67005F1426 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		129260F11A305A67005F1426 /* README.maintainers */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.maintainers; sourceTree = "<group>"; };
+		129260F21A305A67005F1426 /* README.tests */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.tests; sourceTree = "<group>"; };
+		129260F31A305A67005F1426 /* README.translators */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.translators; sourceTree = "<group>"; };
+		129260F41A305A67005F1426 /* buildpkg.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = buildpkg.sh; sourceTree = "<group>"; };
+		129260F51A305A67005F1426 /* Distribution */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Distribution; sourceTree = "<group>"; };
+		1292610D1A305A67005F1426 /* po4a-clover.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "po4a-clover.cfg"; sourceTree = "<group>"; };
+		129261111A305A67005F1426 /* Conclusion.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Conclusion.html; sourceTree = "<group>"; };
+		129261121A305A67005F1426 /* Description.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Description.html; sourceTree = "<group>"; };
+		129261131A305A67005F1426 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		129261141A305A67005F1426 /* Welcome.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Welcome.html; sourceTree = "<group>"; };
+		129261201A305A67005F1426 /* rc_scripts.lib */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = rc_scripts.lib; sourceTree = "<group>"; };
+		129261231A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		129261291A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		1292612B1A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		1292612D1A305A67005F1426 /* MountESP */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MountESP; sourceTree = "<group>"; };
+		1292612E1A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		1292612F1A305A67005F1426 /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		129261311A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		129261331A305A67005F1426 /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		129261351A305A67005F1426 /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		129261371A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		129261391A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		1292613B1A305A67005F1426 /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		1292613E1A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		129261401A305A67005F1426 /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		129261411A305A67005F1426 /* translate.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = translate.sh; sourceTree = "<group>"; };
+		129261651A305A8F005F1426 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		129261661A305A8F005F1426 /* bdmesg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = bdmesg.xcodeproj; sourceTree = "<group>"; };
+		1292616B1A305A8F005F1426 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
+		1292616C1A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		1292616E1A305A8F005F1426 /* boot1-install.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "boot1-install.c"; sourceTree = "<group>"; };
+		1292616F1A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		129261761A305A8F005F1426 /* clover-genconfig.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "clover-genconfig.c"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		129261771A305A8F005F1426 /* clover-genconfig.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "clover-genconfig.xcodeproj"; sourceTree = "<group>"; };
+		1292617A1A305A8F005F1426 /* config-sample-pre2000.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "config-sample-pre2000.plist"; sourceTree = "<group>"; };
+		1292617B1A305A8F005F1426 /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "config-sample.plist"; sourceTree = "<group>"; };
+		1292617F1A305A8F005F1426 /* clover-genconfig.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "clover-genconfig.hmap"; sourceTree = "<group>"; };
+		129261831A305A8F005F1426 /* db.xcindexdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = db.xcindexdb; sourceTree = "<group>"; };
+		129261841A305A8F005F1426 /* db.xcindexdb.strings-cmp */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-cmp"; sourceTree = "<group>"; };
+		129261851A305A8F005F1426 /* db.xcindexdb.strings-dir */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-dir"; sourceTree = "<group>"; };
+		129261861A305A8F005F1426 /* db.xcindexdb.strings-file */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-file"; sourceTree = "<group>"; };
+		129261871A305A8F005F1426 /* db.xcindexdb.strings-res */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-res"; sourceTree = "<group>"; };
+		129261881A305A8F005F1426 /* db.xcindexdb.strings-sym */ = {isa = PBXFileReference; lastKnownFileType = file; path = "db.xcindexdb.strings-sym"; sourceTree = "<group>"; };
+		129261891A305A8F005F1426 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
+		1292618C1A305A8F005F1426 /* 239B74E0-DDAF-498A-9D5E-4499B959E117.xcactivitylog */ = {isa = PBXFileReference; lastKnownFileType = file; path = "239B74E0-DDAF-498A-9D5E-4499B959E117.xcactivitylog"; sourceTree = "<group>"; };
+		1292618D1A305A8F005F1426 /* Cache.db */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Cache.db; sourceTree = "<group>"; };
+		1292618F1A305A8F005F1426 /* 73F0E689-04B1-400A-90F3-FEBD0709673E.xcactivitylog */ = {isa = PBXFileReference; lastKnownFileType = file; path = "73F0E689-04B1-400A-90F3-FEBD0709673E.xcactivitylog"; sourceTree = "<group>"; };
+		129261901A305A8F005F1426 /* Cache.db */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Cache.db; sourceTree = "<group>"; };
+		129261911A305A8F005F1426 /* scm.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = scm.plist; sourceTree = "<group>"; };
+		129261931A305A8F005F1426 /* text-index.idx */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "text-index.idx"; sourceTree = "<group>"; };
+		129261941A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		129261951A305A8F005F1426 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		129261AC1A305A8F005F1426 /* Make.rules */ = {isa = PBXFileReference; lastKnownFileType = text; path = Make.rules; sourceTree = "<group>"; };
+		129261AE1A305A8F005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		129261FB1A305AA6005F1426 /* CloverPrefpane.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = CloverPrefpane.strings; sourceTree = "<group>"; };
+		129262131A305AA6005F1426 /* install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		129262151A305AA6005F1426 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		129262171A305AA6005F1426 /* CloverLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverLogo.png; sourceTree = "<group>"; };
+		129262181A305AA6005F1426 /* CloverPrefpane-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CloverPrefpane-Info.plist"; sourceTree = "<group>"; };
+		129262191A305AA6005F1426 /* CloverPrefpane-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CloverPrefpane-Prefix.pch"; sourceTree = "<group>"; };
+		1292621A1A305AA6005F1426 /* CloverPrefpane.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CloverPrefpane.h; sourceTree = "<group>"; };
+		1292621B1A305AA6005F1426 /* CloverPrefpane.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CloverPrefpane.m; sourceTree = "<group>"; };
+		1292621C1A305AA6005F1426 /* CloverPrefpane.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = CloverPrefpane.tiff; sourceTree = "<group>"; };
+		1292621D1A305AA6005F1426 /* CloverTitle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverTitle.png; sourceTree = "<group>"; };
+		129262241A305AA6005F1426 /* DefaultThemes.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = DefaultThemes.plist; sourceTree = "<group>"; };
+		129262281A305AA6005F1426 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		129262451A305AA6005F1426 /* NoPreview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoPreview.png; sourceTree = "<group>"; };
+		129262601A305AA6005F1426 /* translate_source.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = translate_source.sh; sourceTree = "<group>"; };
+		129262611A305AA6005F1426 /* translate_xib.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = translate_xib.sh; sourceTree = "<group>"; };
+		129262651A305AA6005F1426 /* CloverUpdater.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = CloverUpdater.strings; sourceTree = "<group>"; };
+		129262691A305AA6005F1426 /* CloverUpdaterUtility */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CloverUpdaterUtility; sourceTree = "<group>"; };
+		1292626A1A305AA6005F1426 /* CloverUpdaterUtility.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = CloverUpdaterUtility.plist; sourceTree = "<group>"; };
+		1292626B1A305AA6005F1426 /* install-updater.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-updater.sh"; sourceTree = "<group>"; };
+		1292626C1A305AA6005F1426 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		1292626E1A305AA6005F1426 /* Arguments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Arguments.h; sourceTree = "<group>"; };
+		1292628F1A305AA6005F1426 /* clover.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = clover.iconset; sourceTree = "<group>"; };
+		129262901A305AA6005F1426 /* CloverLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverLogo.png; sourceTree = "<group>"; };
+		129262911A305AA6005F1426 /* CloverTitle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverTitle.png; sourceTree = "<group>"; };
+		129262921A305AA6005F1426 /* CloverUpdater-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CloverUpdater-Info.plist"; sourceTree = "<group>"; };
+		129262961A305AA6005F1426 /* CloverUpdater_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CloverUpdater_Prefix.pch; sourceTree = "<group>"; };
+		129262971A305AA6005F1426 /* CloverUpdaterAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CloverUpdaterAppDelegate.h; sourceTree = "<group>"; };
+		129262981A305AA6005F1426 /* CloverUpdaterAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CloverUpdaterAppDelegate.m; sourceTree = "<group>"; };
+		129262A21A305AA6005F1426 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		129262B41A305AA6005F1426 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		129262B91A305AA6005F1426 /* project.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = project.xcworkspace; sourceTree = "<group>"; };
+		129262C91A305AA6005F1426 /* translate_xib.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = translate_xib.sh; sourceTree = "<group>"; };
+		129262E01A305AB6005F1426 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../CloverPackage/Makefile; sourceTree = "<group>"; };
+		129262E11A305AB6005F1426 /* makeiso */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = makeiso; path = ../../CloverPackage/makeiso; sourceTree = "<group>"; };
+		129262E21A305AB6005F1426 /* makepkg */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = makepkg; path = ../../CloverPackage/makepkg; sourceTree = "<group>"; };
+		129262E61A305AEB005F1426 /* 10.save_and_rotate_boot_log.local */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 10.save_and_rotate_boot_log.local; sourceTree = "<group>"; };
+		129262E71A305AEB005F1426 /* 20.mount_ESP.local */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 20.mount_ESP.local; sourceTree = "<group>"; };
+		129262E81A305AEB005F1426 /* 70.disable_sleep_proxy_client.local.disabled */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 70.disable_sleep_proxy_client.local.disabled; sourceTree = "<group>"; };
+		129262E91A305AEB005F1426 /* rc.clover.lib */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = rc.clover.lib; sourceTree = "<group>"; };
+		129262EB1A305AEB005F1426 /* 80.save_nvram_plist.local */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 80.save_nvram_plist.local; sourceTree = "<group>"; };
+		129262EF1A305AEB005F1426 /* CloverDaemon */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CloverDaemon; sourceTree = "<group>"; };
+		129262F11A305AEB005F1426 /* CloverDaemon-stopservice */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "CloverDaemon-stopservice"; sourceTree = "<group>"; };
+		129262F21A305AEB005F1426 /* com.projectosx.clover.daemon.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = com.projectosx.clover.daemon.plist; sourceTree = "<group>"; };
+		129262F31A305B0E005F1426 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
+		A547126A22D6E5E700FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		A547126E22D6E5F300FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		A547127022D6E60000FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		A547127222D6E61E00FD2D2D /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		129260BB1A305A3E005F1426 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1210F28D1A51EF0A00461427 /* partutil */ = {
+			isa = PBXGroup;
+			children = (
+				1210F28E1A51EF0A00461427 /* .gitignore */,
+				1210F28F1A51EF0A00461427 /* Build */,
+				1210F2911A51EF0A00461427 /* DerivedData */,
+				1210F2A21A51EF0A00461427 /* Makefile */,
+				1210F2A31A51EF0A00461427 /* partutil.c */,
+				1210F2A41A51EF0A00461427 /* partutil.h */,
+			);
+			path = partutil;
+			sourceTree = "<group>";
+		};
+		1210F28F1A51EF0A00461427 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2901A51EF0A00461427 /* Products */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
+		1210F2901A51EF0A00461427 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Products;
+			sourceTree = "<group>";
+		};
+		1210F2911A51EF0A00461427 /* DerivedData */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2921A51EF0A00461427 /* ModuleCache */,
+				1210F29D1A51EF0A00461427 /* partutil */,
+			);
+			path = DerivedData;
+			sourceTree = "<group>";
+		};
+		1210F2921A51EF0A00461427 /* ModuleCache */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2931A51EF0A00461427 /* 2W9X1FKTZA71Z */,
+				1210F29C1A51EF0A00461427 /* modules.timestamp */,
+			);
+			path = ModuleCache;
+			sourceTree = "<group>";
+		};
+		1210F2931A51EF0A00461427 /* 2W9X1FKTZA71Z */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2941A51EF0A00461427 /* CoreFoundation-2F9UZAQGRJX2F.pcm */,
+				1210F2951A51EF0A00461427 /* Darwin-1X6DCOAHVUA1I.pcm */,
+				1210F2961A51EF0A00461427 /* DiskArbitration-3UG471J3HYX3N.pcm */,
+				1210F2971A51EF0A00461427 /* Dispatch-2V15OGNTZIFP9.pcm */,
+				1210F2981A51EF0A00461427 /* IOKit-36UG0SGXPXPHQ.pcm */,
+				1210F2991A51EF0A00461427 /* libkern-1X6DCOAHVUA1I.pcm */,
+				1210F29A1A51EF0A00461427 /* modules.idx */,
+				1210F29B1A51EF0A00461427 /* os-1X6DCOAHVUA1I.pcm */,
+			);
+			path = 2W9X1FKTZA71Z;
+			sourceTree = "<group>";
+		};
+		1210F29D1A51EF0A00461427 /* partutil */ = {
+			isa = PBXGroup;
+			children = (
+				1210F29E1A51EF0A00461427 /* info.plist */,
+				1210F29F1A51EF0A00461427 /* Logs */,
+			);
+			path = partutil;
+			sourceTree = "<group>";
+		};
+		1210F29F1A51EF0A00461427 /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2A01A51EF0A00461427 /* Build */,
+			);
+			path = Logs;
+			sourceTree = "<group>";
+		};
+		1210F2A01A51EF0A00461427 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				1210F2A11A51EF0A00461427 /* 30410935-FCE7-44F7-9187-9C9A555CEF0C.xcactivitylog */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
+		129260B31A305A3D005F1426 = {
+			isa = PBXGroup;
+			children = (
+				129260CB1A305A67005F1426 /* package */,
+				129261621A305A8F005F1426 /* utils */,
+				129261C41A305AA5005F1426 /* CloverPrefpane */,
+				129262621A305AA6005F1426 /* CloverUpdater */,
+				129262E01A305AB6005F1426 /* Makefile */,
+				129262E11A305AB6005F1426 /* makeiso */,
+				129262E21A305AB6005F1426 /* makepkg */,
+				129262F31A305B0E005F1426 /* ebuild.sh */,
+				129262E31A305AEB005F1426 /* rcScripts */,
+				129260BF1A305A3E005F1426 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		129260BF1A305A3E005F1426 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				129260BE1A305A3E005F1426 /* Package */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		129260CB1A305A67005F1426 /* package */ = {
+			isa = PBXGroup;
+			children = (
+				129260CC1A305A67005F1426 /* bin */,
+				129260F41A305A67005F1426 /* buildpkg.sh */,
+				129260F51A305A67005F1426 /* Distribution */,
+				1292610D1A305A67005F1426 /* po4a-clover.cfg */,
+				1292610E1A305A67005F1426 /* Resources */,
+				129261151A305A67005F1426 /* Scripts */,
+				1292611F1A305A67005F1426 /* Scripts.libraries */,
+				129261211A305A67005F1426 /* Scripts.templates */,
+				129261411A305A67005F1426 /* translate.sh */,
+			);
+			name = package;
+			path = ../../CloverPackage/package;
+			sourceTree = "<group>";
+		};
+		129260CC1A305A67005F1426 /* bin */ = {
+			isa = PBXGroup;
+			children = (
+				129260CD1A305A67005F1426 /* clean_po_headers.sh */,
+				129260CE1A305A67005F1426 /* po4a */,
+			);
+			path = bin;
+			sourceTree = "<group>";
+		};
+		129260CE1A305A67005F1426 /* po4a */ = {
+			isa = PBXGroup;
+			children = (
+				129260CF1A305A67005F1426 /* COPYING */,
+				129260D01A305A67005F1426 /* lib */,
+				129260EA1A305A67005F1426 /* NEWS */,
+				129260EB1A305A67005F1426 /* po4a */,
+				129260EC1A305A67005F1426 /* po4a-gettextize */,
+				129260ED1A305A67005F1426 /* po4a-normalize */,
+				129260EE1A305A67005F1426 /* po4a-translate */,
+				129260EF1A305A67005F1426 /* po4a-updatepo */,
+				129260F01A305A67005F1426 /* README */,
+				129260F11A305A67005F1426 /* README.maintainers */,
+				129260F21A305A67005F1426 /* README.tests */,
+				129260F31A305A67005F1426 /* README.translators */,
+			);
+			path = po4a;
+			sourceTree = "<group>";
+		};
+		129260D01A305A67005F1426 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				129260D11A305A67005F1426 /* Locale */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		129260D11A305A67005F1426 /* Locale */ = {
+			isa = PBXGroup;
+			children = (
+				129260D21A305A67005F1426 /* Po4a */,
+			);
+			path = Locale;
+			sourceTree = "<group>";
+		};
+		129260D21A305A67005F1426 /* Po4a */ = {
+			isa = PBXGroup;
+			children = (
+				129260D31A305A67005F1426 /* AsciiDoc.pm */,
+				129260D41A305A67005F1426 /* BibTeX.pm */,
+				129260D51A305A67005F1426 /* Chooser.pm */,
+				129260D61A305A67005F1426 /* Common.pm */,
+				129260D71A305A67005F1426 /* Dia.pm */,
+				129260D81A305A67005F1426 /* Docbook.pm */,
+				129260D91A305A67005F1426 /* Guide.pm */,
+				129260DA1A305A67005F1426 /* Halibut.pm */,
+				129260DB1A305A67005F1426 /* Ini.pm */,
+				129260DC1A305A67005F1426 /* KernelHelp.pm */,
+				129260DD1A305A67005F1426 /* LaTeX.pm */,
+				129260DE1A305A67005F1426 /* Man.pm */,
+				129260DF1A305A67005F1426 /* Po.pm */,
+				129260E01A305A67005F1426 /* Pod.pm */,
+				129260E11A305A67005F1426 /* Prop.pm */,
+				129260E21A305A67005F1426 /* Sgml.pm */,
+				129260E31A305A67005F1426 /* TeX.pm */,
+				129260E41A305A67005F1426 /* Texinfo.pm */,
+				129260E51A305A67005F1426 /* Text.pm */,
+				129260E61A305A67005F1426 /* TransTractor.pm */,
+				129260E71A305A67005F1426 /* Wml.pm */,
+				129260E81A305A67005F1426 /* Xhtml.pm */,
+				129260E91A305A67005F1426 /* Xml.pm */,
+			);
+			path = Po4a;
+			sourceTree = "<group>";
+		};
+		1292610E1A305A67005F1426 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				129261101A305A67005F1426 /* templates */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		129261101A305A67005F1426 /* templates */ = {
+			isa = PBXGroup;
+			children = (
+				129261111A305A67005F1426 /* Conclusion.html */,
+				129261121A305A67005F1426 /* Description.html */,
+				129261131A305A67005F1426 /* Localizable.strings */,
+				129261141A305A67005F1426 /* Welcome.html */,
+			);
+			path = templates;
+			sourceTree = "<group>";
+		};
+		129261151A305A67005F1426 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				129261161A305A67005F1426 /* boot0 */,
+				129261171A305A67005F1426 /* boot0EFI */,
+				129261181A305A67005F1426 /* boot0hfs */,
+				129261191A305A67005F1426 /* boot1no */,
+				1292611A1A305A67005F1426 /* boot1UEFI */,
+				1292611B1A305A67005F1426 /* boot32 */,
+				1292611C1A305A67005F1426 /* boot64 */,
+				1292611D1A305A67005F1426 /* post */,
+				1292611E1A305A67005F1426 /* preinstall */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		129261161A305A67005F1426 /* boot0 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot0;
+			sourceTree = "<group>";
+		};
+		129261171A305A67005F1426 /* boot0EFI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot0EFI;
+			sourceTree = "<group>";
+		};
+		129261181A305A67005F1426 /* boot0hfs */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot0hfs;
+			sourceTree = "<group>";
+		};
+		129261191A305A67005F1426 /* boot1no */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot1no;
+			sourceTree = "<group>";
+		};
+		1292611A1A305A67005F1426 /* boot1UEFI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot1UEFI;
+			sourceTree = "<group>";
+		};
+		1292611B1A305A67005F1426 /* boot32 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot32;
+			sourceTree = "<group>";
+		};
+		1292611C1A305A67005F1426 /* boot64 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot64;
+			sourceTree = "<group>";
+		};
+		1292611D1A305A67005F1426 /* post */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = post;
+			sourceTree = "<group>";
+		};
+		1292611E1A305A67005F1426 /* preinstall */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = preinstall;
+			sourceTree = "<group>";
+		};
+		1292611F1A305A67005F1426 /* Scripts.libraries */ = {
+			isa = PBXGroup;
+			children = (
+				129261201A305A67005F1426 /* rc_scripts.lib */,
+			);
+			path = Scripts.libraries;
+			sourceTree = "<group>";
+		};
+		129261211A305A67005F1426 /* Scripts.templates */ = {
+			isa = PBXGroup;
+			children = (
+				129261221A305A67005F1426 /* AltBoot */,
+				129261241A305A67005F1426 /* boot1no */,
+				129261251A305A67005F1426 /* boot1UEFI */,
+				129261261A305A67005F1426 /* boot32 */,
+				129261271A305A67005F1426 /* boot64 */,
+				129261281A305A67005F1426 /* bootNo */,
+				1292612A1A305A67005F1426 /* CloverEFI */,
+				A547127122D6E61E00FD2D2D /* CloverThemeManager */,
+				1292612C1A305A67005F1426 /* EFIFolder */,
+				129261301A305A67005F1426 /* InstallBootsectors */,
+				129261321A305A67005F1426 /* InstallTheme */,
+				A547126D22D6E5F300FD2D2D /* MemoryFix */,
+				129261341A305A67005F1426 /* MarkChoice */,
+				A547126922D6E5E700FD2D2D /* off */,
+				129261361A305A67005F1426 /* OptRcScripts */,
+				129261381A305A67005F1426 /* Post */,
+				1292613A1A305A67005F1426 /* Pre */,
+				1292613C1A305A67005F1426 /* PreInstall */,
+				1292613D1A305A67005F1426 /* RcScripts */,
+				A547126F22D6E5FF00FD2D2D /* VirtualSMC */,
+				1292613F1A305A67005F1426 /* VboxHfs */,
+			);
+			path = Scripts.templates;
+			sourceTree = "<group>";
+		};
+		129261221A305A67005F1426 /* AltBoot */ = {
+			isa = PBXGroup;
+			children = (
+				129261231A305A67005F1426 /* postinstall */,
+			);
+			path = AltBoot;
+			sourceTree = "<group>";
+		};
+		129261241A305A67005F1426 /* boot1no */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot1no;
+			sourceTree = "<group>";
+		};
+		129261251A305A67005F1426 /* boot1UEFI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot1UEFI;
+			sourceTree = "<group>";
+		};
+		129261261A305A67005F1426 /* boot32 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot32;
+			sourceTree = "<group>";
+		};
+		129261271A305A67005F1426 /* boot64 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = boot64;
+			sourceTree = "<group>";
+		};
+		129261281A305A67005F1426 /* bootNo */ = {
+			isa = PBXGroup;
+			children = (
+				129261291A305A67005F1426 /* postinstall */,
+			);
+			path = bootNo;
+			sourceTree = "<group>";
+		};
+		1292612A1A305A67005F1426 /* CloverEFI */ = {
+			isa = PBXGroup;
+			children = (
+				1292612B1A305A67005F1426 /* postinstall */,
+			);
+			path = CloverEFI;
+			sourceTree = "<group>";
+		};
+		1292612C1A305A67005F1426 /* EFIFolder */ = {
+			isa = PBXGroup;
+			children = (
+				1292612D1A305A67005F1426 /* MountESP */,
+				1292612E1A305A67005F1426 /* postinstall */,
+				1292612F1A305A67005F1426 /* preinstall */,
+			);
+			path = EFIFolder;
+			sourceTree = "<group>";
+		};
+		129261301A305A67005F1426 /* InstallBootsectors */ = {
+			isa = PBXGroup;
+			children = (
+				129261311A305A67005F1426 /* postinstall */,
+			);
+			path = InstallBootsectors;
+			sourceTree = "<group>";
+		};
+		129261321A305A67005F1426 /* InstallTheme */ = {
+			isa = PBXGroup;
+			children = (
+				129261331A305A67005F1426 /* preinstall */,
+			);
+			path = InstallTheme;
+			sourceTree = "<group>";
+		};
+		129261341A305A67005F1426 /* MarkChoice */ = {
+			isa = PBXGroup;
+			children = (
+				129261351A305A67005F1426 /* preinstall */,
+			);
+			path = MarkChoice;
+			sourceTree = "<group>";
+		};
+		129261361A305A67005F1426 /* OptRcScripts */ = {
+			isa = PBXGroup;
+			children = (
+				129261371A305A67005F1426 /* postinstall */,
+			);
+			path = OptRcScripts;
+			sourceTree = "<group>";
+		};
+		129261381A305A67005F1426 /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				129261391A305A67005F1426 /* postinstall */,
+			);
+			path = Post;
+			sourceTree = "<group>";
+		};
+		1292613A1A305A67005F1426 /* Pre */ = {
+			isa = PBXGroup;
+			children = (
+				1292613B1A305A67005F1426 /* preinstall */,
+			);
+			path = Pre;
+			sourceTree = "<group>";
+		};
+		1292613C1A305A67005F1426 /* PreInstall */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = PreInstall;
+			sourceTree = "<group>";
+		};
+		1292613D1A305A67005F1426 /* RcScripts */ = {
+			isa = PBXGroup;
+			children = (
+				1292613E1A305A67005F1426 /* postinstall */,
+			);
+			path = RcScripts;
+			sourceTree = "<group>";
+		};
+		1292613F1A305A67005F1426 /* VboxHfs */ = {
+			isa = PBXGroup;
+			children = (
+				129261401A305A67005F1426 /* postinstall */,
+			);
+			path = VboxHfs;
+			sourceTree = "<group>";
+		};
+		129261621A305A8F005F1426 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				129261631A305A8F005F1426 /* bdmesg */,
+				1292616D1A305A8F005F1426 /* boot1-install */,
+				129261701A305A8F005F1426 /* clover-genconfig */,
+				1210F28D1A51EF0A00461427 /* partutil */,
+				129261AC1A305A8F005F1426 /* Make.rules */,
+				129261AE1A305A8F005F1426 /* Makefile */,
+			);
+			name = utils;
+			path = ../../CloverPackage/utils;
+			sourceTree = "<group>";
+		};
+		129261631A305A8F005F1426 /* bdmesg */ = {
+			isa = PBXGroup;
+			children = (
+				129261641A305A8F005F1426 /* bdmesg */,
+				129261661A305A8F005F1426 /* bdmesg.xcodeproj */,
+				129261691A305A8F005F1426 /* DerivedData */,
+				1292616C1A305A8F005F1426 /* Makefile */,
+			);
+			path = bdmesg;
+			sourceTree = "<group>";
+		};
+		129261641A305A8F005F1426 /* bdmesg */ = {
+			isa = PBXGroup;
+			children = (
+				129261651A305A8F005F1426 /* main.c */,
+			);
+			path = bdmesg;
+			sourceTree = "<group>";
+		};
+		129261671A305A8F005F1426 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				129261BF1A305A8F005F1426 /* bdmesg */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		129261691A305A8F005F1426 /* DerivedData */ = {
+			isa = PBXGroup;
+			children = (
+				1292616A1A305A8F005F1426 /* bdmesg */,
+			);
+			path = DerivedData;
+			sourceTree = "<group>";
+		};
+		1292616A1A305A8F005F1426 /* bdmesg */ = {
+			isa = PBXGroup;
+			children = (
+				1292616B1A305A8F005F1426 /* info.plist */,
+			);
+			path = bdmesg;
+			sourceTree = "<group>";
+		};
+		1292616D1A305A8F005F1426 /* boot1-install */ = {
+			isa = PBXGroup;
+			children = (
+				1292616E1A305A8F005F1426 /* boot1-install.c */,
+				1292616F1A305A8F005F1426 /* Makefile */,
+			);
+			path = "boot1-install";
+			sourceTree = "<group>";
+		};
+		129261701A305A8F005F1426 /* clover-genconfig */ = {
+			isa = PBXGroup;
+			children = (
+				129261711A305A8F005F1426 /* Build */,
+				129261761A305A8F005F1426 /* clover-genconfig.c */,
+				129261771A305A8F005F1426 /* clover-genconfig.xcodeproj */,
+				1292617A1A305A8F005F1426 /* config-sample-pre2000.plist */,
+				1292617B1A305A8F005F1426 /* config-sample.plist */,
+				1292617C1A305A8F005F1426 /* DerivedData */,
+				129261941A305A8F005F1426 /* Makefile */,
+				129261951A305A8F005F1426 /* Readme.txt */,
+			);
+			path = "clover-genconfig";
+			sourceTree = "<group>";
+		};
+		129261711A305A8F005F1426 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				129261721A305A8F005F1426 /* Intermediates */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
+		129261721A305A8F005F1426 /* Intermediates */ = {
+			isa = PBXGroup;
+			children = (
+				129261731A305A8F005F1426 /* ArchiveIntermediates */,
+			);
+			path = Intermediates;
+			sourceTree = "<group>";
+		};
+		129261731A305A8F005F1426 /* ArchiveIntermediates */ = {
+			isa = PBXGroup;
+			children = (
+				129261741A305A8F005F1426 /* clover-genconfig */,
+			);
+			path = ArchiveIntermediates;
+			sourceTree = "<group>";
+		};
+		129261741A305A8F005F1426 /* clover-genconfig */ = {
+			isa = PBXGroup;
+			children = (
+				129261751A305A8F005F1426 /* BuildProductsPath */,
+			);
+			path = "clover-genconfig";
+			sourceTree = "<group>";
+		};
+		129261751A305A8F005F1426 /* BuildProductsPath */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = BuildProductsPath;
+			sourceTree = "<group>";
+		};
+		129261781A305A8F005F1426 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				129261C21A305A8F005F1426 /* clover-genconfig */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1292617C1A305A8F005F1426 /* DerivedData */ = {
+			isa = PBXGroup;
+			children = (
+				1292617D1A305A8F005F1426 /* clover-genconfig */,
+			);
+			path = DerivedData;
+			sourceTree = "<group>";
+		};
+		1292617D1A305A8F005F1426 /* clover-genconfig */ = {
+			isa = PBXGroup;
+			children = (
+				1292617E1A305A8F005F1426 /* Index */,
+				129261891A305A8F005F1426 /* info.plist */,
+				1292618A1A305A8F005F1426 /* Logs */,
+				129261911A305A8F005F1426 /* scm.plist */,
+				129261921A305A8F005F1426 /* TextIndex */,
+			);
+			path = "clover-genconfig";
+			sourceTree = "<group>";
+		};
+		1292617E1A305A8F005F1426 /* Index */ = {
+			isa = PBXGroup;
+			children = (
+				1292617F1A305A8F005F1426 /* clover-genconfig.hmap */,
+				129261801A305A8F005F1426 /* Debug */,
+			);
+			path = Index;
+			sourceTree = "<group>";
+		};
+		129261801A305A8F005F1426 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				129261811A305A8F005F1426 /* macosx10.8-x86_64 */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
+		129261811A305A8F005F1426 /* macosx10.8-x86_64 */ = {
+			isa = PBXGroup;
+			children = (
+				129261821A305A8F005F1426 /* clover-genconfig.xcindex */,
+			);
+			path = "macosx10.8-x86_64";
+			sourceTree = "<group>";
+		};
+		129261821A305A8F005F1426 /* clover-genconfig.xcindex */ = {
+			isa = PBXGroup;
+			children = (
+				129261831A305A8F005F1426 /* db.xcindexdb */,
+				129261841A305A8F005F1426 /* db.xcindexdb.strings-cmp */,
+				129261851A305A8F005F1426 /* db.xcindexdb.strings-dir */,
+				129261861A305A8F005F1426 /* db.xcindexdb.strings-file */,
+				129261871A305A8F005F1426 /* db.xcindexdb.strings-res */,
+				129261881A305A8F005F1426 /* db.xcindexdb.strings-sym */,
+			);
+			path = "clover-genconfig.xcindex";
+			sourceTree = "<group>";
+		};
+		1292618A1A305A8F005F1426 /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				1292618B1A305A8F005F1426 /* Build */,
+				1292618E1A305A8F005F1426 /* Issues */,
+			);
+			path = Logs;
+			sourceTree = "<group>";
+		};
+		1292618B1A305A8F005F1426 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				1292618C1A305A8F005F1426 /* 239B74E0-DDAF-498A-9D5E-4499B959E117.xcactivitylog */,
+				1292618D1A305A8F005F1426 /* Cache.db */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
+		1292618E1A305A8F005F1426 /* Issues */ = {
+			isa = PBXGroup;
+			children = (
+				1292618F1A305A8F005F1426 /* 73F0E689-04B1-400A-90F3-FEBD0709673E.xcactivitylog */,
+				129261901A305A8F005F1426 /* Cache.db */,
+			);
+			path = Issues;
+			sourceTree = "<group>";
+		};
+		129261921A305A8F005F1426 /* TextIndex */ = {
+			isa = PBXGroup;
+			children = (
+				129261931A305A8F005F1426 /* text-index.idx */,
+			);
+			path = TextIndex;
+			sourceTree = "<group>";
+		};
+		129261C41A305AA5005F1426 /* CloverPrefpane */ = {
+			isa = PBXGroup;
+			children = (
+				129261FB1A305AA6005F1426 /* CloverPrefpane.strings */,
+				129262131A305AA6005F1426 /* install.sh */,
+				129262151A305AA6005F1426 /* makefile */,
+				129262161A305AA6005F1426 /* src */,
+				129262601A305AA6005F1426 /* translate_source.sh */,
+				129262611A305AA6005F1426 /* translate_xib.sh */,
+			);
+			name = CloverPrefpane;
+			path = ../../CloverPackage/CloverPrefpane;
+			sourceTree = "<group>";
+		};
+		129262161A305AA6005F1426 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				129262171A305AA6005F1426 /* CloverLogo.png */,
+				129262181A305AA6005F1426 /* CloverPrefpane-Info.plist */,
+				129262191A305AA6005F1426 /* CloverPrefpane-Prefix.pch */,
+				1292621A1A305AA6005F1426 /* CloverPrefpane.h */,
+				1292621B1A305AA6005F1426 /* CloverPrefpane.m */,
+				1292621C1A305AA6005F1426 /* CloverPrefpane.tiff */,
+				1292621D1A305AA6005F1426 /* CloverTitle.png */,
+				129262241A305AA6005F1426 /* DefaultThemes.plist */,
+				129262271A305AA6005F1426 /* InfoPlist.strings */,
+				129262451A305AA6005F1426 /* NoPreview.png */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		129262621A305AA6005F1426 /* CloverUpdater */ = {
+			isa = PBXGroup;
+			children = (
+				129262651A305AA6005F1426 /* CloverUpdater.strings */,
+				129262691A305AA6005F1426 /* CloverUpdaterUtility */,
+				1292626A1A305AA6005F1426 /* CloverUpdaterUtility.plist */,
+				1292626B1A305AA6005F1426 /* install-updater.sh */,
+				1292626C1A305AA6005F1426 /* makefile */,
+				1292626D1A305AA6005F1426 /* src */,
+				129262C91A305AA6005F1426 /* translate_xib.sh */,
+			);
+			name = CloverUpdater;
+			path = ../../CloverPackage/CloverUpdater;
+			sourceTree = "<group>";
+		};
+		1292626D1A305AA6005F1426 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				1292626E1A305AA6005F1426 /* Arguments.h */,
+				1292628F1A305AA6005F1426 /* clover.iconset */,
+				129262901A305AA6005F1426 /* CloverLogo.png */,
+				129262911A305AA6005F1426 /* CloverTitle.png */,
+				129262921A305AA6005F1426 /* CloverUpdater-Info.plist */,
+				129262961A305AA6005F1426 /* CloverUpdater_Prefix.pch */,
+				129262971A305AA6005F1426 /* CloverUpdaterAppDelegate.h */,
+				129262981A305AA6005F1426 /* CloverUpdaterAppDelegate.m */,
+				129262A11A305AA6005F1426 /* InfoPlist.strings */,
+				129262B41A305AA6005F1426 /* main.m */,
+				129262B91A305AA6005F1426 /* project.xcworkspace */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		129262E31A305AEB005F1426 /* rcScripts */ = {
+			isa = PBXGroup;
+			children = (
+				129262E41A305AEB005F1426 /* etc */,
+				129262EC1A305AEB005F1426 /* Library */,
+			);
+			name = rcScripts;
+			path = ../../CloverPackage/CloverV2/rcScripts;
+			sourceTree = "<group>";
+		};
+		129262E41A305AEB005F1426 /* etc */ = {
+			isa = PBXGroup;
+			children = (
+				129262E51A305AEB005F1426 /* rc.boot.d */,
+				129262E91A305AEB005F1426 /* rc.clover.lib */,
+				129262EA1A305AEB005F1426 /* rc.shutdown.d */,
+			);
+			path = etc;
+			sourceTree = "<group>";
+		};
+		129262E51A305AEB005F1426 /* rc.boot.d */ = {
+			isa = PBXGroup;
+			children = (
+				129262E61A305AEB005F1426 /* 10.save_and_rotate_boot_log.local */,
+				129262E71A305AEB005F1426 /* 20.mount_ESP.local */,
+				129262E81A305AEB005F1426 /* 70.disable_sleep_proxy_client.local.disabled */,
+			);
+			path = rc.boot.d;
+			sourceTree = "<group>";
+		};
+		129262EA1A305AEB005F1426 /* rc.shutdown.d */ = {
+			isa = PBXGroup;
+			children = (
+				129262EB1A305AEB005F1426 /* 80.save_nvram_plist.local */,
+			);
+			path = rc.shutdown.d;
+			sourceTree = "<group>";
+		};
+		129262EC1A305AEB005F1426 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				129262ED1A305AEB005F1426 /* Application Support */,
+				129262F01A305AEB005F1426 /* LaunchDaemons */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		129262ED1A305AEB005F1426 /* Application Support */ = {
+			isa = PBXGroup;
+			children = (
+				129262EE1A305AEB005F1426 /* Clover */,
+			);
+			path = "Application Support";
+			sourceTree = "<group>";
+		};
+		129262EE1A305AEB005F1426 /* Clover */ = {
+			isa = PBXGroup;
+			children = (
+				129262EF1A305AEB005F1426 /* CloverDaemon */,
+				129262F11A305AEB005F1426 /* CloverDaemon-stopservice */,
+			);
+			path = Clover;
+			sourceTree = "<group>";
+		};
+		129262F01A305AEB005F1426 /* LaunchDaemons */ = {
+			isa = PBXGroup;
+			children = (
+				129262F21A305AEB005F1426 /* com.projectosx.clover.daemon.plist */,
+			);
+			path = LaunchDaemons;
+			sourceTree = "<group>";
+		};
+		A547126922D6E5E700FD2D2D /* off */ = {
+			isa = PBXGroup;
+			children = (
+				A547126A22D6E5E700FD2D2D /* postinstall */,
+			);
+			path = off;
+			sourceTree = "<group>";
+		};
+		A547126D22D6E5F300FD2D2D /* MemoryFix */ = {
+			isa = PBXGroup;
+			children = (
+				A547126E22D6E5F300FD2D2D /* postinstall */,
+			);
+			path = MemoryFix;
+			sourceTree = "<group>";
+		};
+		A547126F22D6E5FF00FD2D2D /* VirtualSMC */ = {
+			isa = PBXGroup;
+			children = (
+				A547127022D6E60000FD2D2D /* postinstall */,
+			);
+			path = VirtualSMC;
+			sourceTree = "<group>";
+		};
+		A547127122D6E61E00FD2D2D /* CloverThemeManager */ = {
+			isa = PBXGroup;
+			children = (
+				A547127222D6E61E00FD2D2D /* preinstall */,
+			);
+			path = CloverThemeManager;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		129260BD1A305A3E005F1426 /* Package */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 129260C81A305A3E005F1426 /* Build configuration list for PBXNativeTarget "Package" */;
+			buildPhases = (
+				129260BA1A305A3E005F1426 /* Sources */,
+				129260BB1A305A3E005F1426 /* Frameworks */,
+				129260BC1A305A3E005F1426 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Package;
+			productName = Package;
+			productReference = 129260BE1A305A3E005F1426 /* Package */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		129260B51A305A3D005F1426 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Slice inc.";
+			};
+			buildConfigurationList = 129260B81A305A3D005F1426 /* Build configuration list for PBXProject "Package" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				de,
+				es,
+				fr,
+				hr,
+				id,
+				it,
+				ja,
+				ko,
+				lv,
+				nl,
+				pl,
+				"pt-BR",
+				pt,
+				ru,
+				sv,
+				tr,
+				uk,
+				zh_CN,
+				zh_TW,
+			);
+			mainGroup = 129260B31A305A3D005F1426;
+			productRefGroup = 129260BF1A305A3E005F1426 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 129261671A305A8F005F1426 /* Products */;
+					ProjectRef = 129261661A305A8F005F1426 /* bdmesg.xcodeproj */;
+				},
+				{
+					ProductGroup = 129261781A305A8F005F1426 /* Products */;
+					ProjectRef = 129261771A305A8F005F1426 /* clover-genconfig.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				129260BD1A305A3E005F1426 /* Package */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		129261BF1A305A8F005F1426 /* bdmesg */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = bdmesg;
+			remoteRef = 129261BE1A305A8F005F1426 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		129261C21A305A8F005F1426 /* clover-genconfig */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "clover-genconfig";
+			remoteRef = 129261C11A305A8F005F1426 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		129260BA1A305A3E005F1426 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		129262271A305AA6005F1426 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				129262281A305AA6005F1426 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		129262A11A305AA6005F1426 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				129262A21A305AA6005F1426 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		129260C61A305A3E005F1426 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		129260C71A305A3E005F1426 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		129260C91A305A3E005F1426 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		129260CA1A305A3E005F1426 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		129260B81A305A3D005F1426 /* Build configuration list for PBXProject "Package" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				129260C61A305A3E005F1426 /* Debug */,
+				129260C71A305A3E005F1426 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		129260C81A305A3E005F1426 /* Build configuration list for PBXNativeTarget "Package" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				129260C91A305A3E005F1426 /* Debug */,
+				129260CA1A305A3E005F1426 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 129260B51A305A3D005F1426 /* Project object */;
+}

@@ -1,0 +1,74 @@
+# $Id: VBoxFsDxe.inf 29125 2010-05-06 09:43:05Z vboxsync $
+## @file
+# VBoxFsDxe - VBox filesystem wrapper.
+#
+# This layer encorporates generic layer for filesystem implementations.
+# Here we put filesystem implementations needed by VirtualBox,
+# but not (yet) included into EDK2.
+#
+
+#
+# Copyright (C) 2010 Oracle Corporation
+#
+# This file is part of VirtualBox Open Source Edition (OSE), as
+# available from http://www.virtualbox.org. This file is free software;
+# you can redistribute it and/or modify it under the terms of the GNU
+# General Public License (GPL) as published by the Free Software
+# Foundation, in version 2 as it comes in the "COPYING" file of the
+# VirtualBox OSE distribution. VirtualBox OSE is distributed in the
+# hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+#
+
+[Defines]
+        INF_VERSION                = 0x00010005
+        BASE_NAME                  = VBoxFsDxe
+        FILE_GUID                  = 0C842421-5699-4E97-BB6B-17B28696DB6E
+        MODULE_TYPE                = UEFI_DRIVER
+        VERSION_STRING             = 1.0
+#        SUPPORTED_ARCHITECTURES    = IA32|X64|IPF|EBC
+        EDK_RELEASE_VERSION        = 0x00020000
+        EFI_SPECIFICATION_VERSION  = 0x00020000
+        ENTRY_POINT                = DxeInitializeVBoxFs
+        UNLOAD_IMAGE               = DxeUninitializeVBoxFs
+
+[Sources.common]
+        VBoxFsDxe.c
+
+[Packages]
+        MdePkg/MdePkg.dec
+        IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+#        VBoxPkg/VBoxPkg.dec
+
+[LibraryClasses]
+   UefiRuntimeServicesTableLib
+   UefiBootServicesTableLib
+   MemoryAllocationLib
+   BaseMemoryLib
+   BaseLib
+   UefiLib
+   UefiDriverEntryPoint
+   DebugLib
+   PcdLib
+
+[Guids]
+  gEfiFileInfoGuid
+  gEfiFileSystemInfoGuid
+  gEfiFileSystemVolumeLabelInfoIdGuid
+
+
+[Protocols]
+  gEfiDiskIoProtocolGuid
+  gEfiDiskIo2ProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiUnicodeCollationProtocolGuid
+  gEfiUnicodeCollation2ProtocolGuid
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -Os

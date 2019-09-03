@@ -1,0 +1,79 @@
+## @file
+# Ps2 Mouse Driver.
+#
+# This dirver directly uses IsaIo protocol service to support Ps2 mouse work.
+# Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
+#
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions of the BSD License
+# which accompanies this distribution.  The full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Ps2MouseDxe
+  FILE_GUID                      = 202A2B0E-9A31-4812-B291-8747DF152439
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializePs2Mouse
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#  DRIVER_BINDING                = gPS2MouseDriver;
+#  COMPONENT_NAME                = gPs2MouseComponentName;
+#  COMPONENT_NAME2               = gPs2MouseComponentName2;
+#
+
+[Sources]
+  ComponentName.c
+  CommPs2.h
+  CommPs2.c
+  Ps2Mouse.h
+  Ps2Mouse.c
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[LibraryClasses]
+  ReportStatusCodeLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  UefiLib
+  UefiDriverEntryPoint
+  DebugLib
+  PcdLib
+
+[Protocols]
+  gEfiIsaIoProtocolGuid                         ## TO_START
+  gEfiSimplePointerProtocolGuid                 ## BY_START
+  gEfiDevicePathProtocolGuid                    ## TO_START
+
+[FeaturePcd]
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2MouseExtendedVerification
+
+# [Event]
+#   ##
+#   # Event for EFI_SIMPLE_POINTER_PROTOCOL.WaitForInput.
+#   #
+#   EVENT_TYPE_NOTIFY_WAIT                             ## PRODUCES
+#
+#   # Periodic timer event to poll the Ps2 mouse device and get its packet data.
+#   #
+#   EVENT_TYPE_PERIODIC_TIMER                          ## PRODUCES
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -O0  -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
+  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
+

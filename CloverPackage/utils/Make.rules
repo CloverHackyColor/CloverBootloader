@@ -1,0 +1,151 @@
+ifneq "" "$(wildcard /bin/mkdirs)"
+  MKDIRS = /bin/mkdirs
+else
+  MKDIRS = /bin/mkdir -p
+endif
+
+AS = as
+LD = ld
+CC = clang
+CPP = c++
+
+PAX = /bin/pax
+NASM = $(shell which nasm) -p $(SRCROOT)/autoconf.inc
+
+CONFIG_OPTIMIZATION_LEVEL = -Oz
+
+CFLAGS	= $(CONFIG_OPTIMIZATION_LEVEL) -Wmost -Werror
+CPPFLAGS = $(MORECPP) -g -Wmost -Werror -fno-exceptions -fno-rtti
+DEFINES=
+
+DIST_SUBDIRS += $(SUBDIRS)
+
+#
+# Common makefile targets.
+#
+# Define these variables (if desired) in directory makefiles:
+#	DIRS_NEEDED
+#	INSTALLDIR
+#	SRCROOT
+#
+
+# Toggle this as to whether you want a frame pointer (%ebp) to be used. It is
+# invaluable for debugging the booter. For example using GDB attached to VMware.
+# In fact, it's so invaluable that it's now the default.  Not only that but the
+# compiler seems to generate slightly smaller code and the real<->prot code
+# clearly handles it appropriately so I have no idea why Apple omitted it.
+#OMIT_FRAME_POINTER_CFLAG=-fomit-frame-pointer
+OMIT_FRAME_POINTER_CFLAG=
+
+-include $(OBJROOT)/*.Makedep
+
+$(OBJROOT)/%.o32: %.c
+	@echo "\t[CC32] $<"
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) -arch i386 $< -MM -M -o $@.Makedep
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) -arch i386 $< -o $@ 
+
+$(OBJROOT)/%.o64: %.c
+	@echo "\t[CC64] $<"
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) -arch x86_64 $< -MM -M -o $@.Makedep
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) -arch x86_64 $< -o $@ 
+
+
+$(OBJROOT)/%.o: %.c
+	@echo "\t[CC] $<"
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) $< -MM -M -o $@.Makedep
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) $< -o $@ 
+
+$(OBJROOT)/%.o: %.m
+	@echo "\t[M] $<"
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) $< -MM -M -o $@.Makedep
+	@$(CC) $(CFLAGS) $(DEFINES) -c $(INC) $< -o $@ 
+
+$(OBJROOT)/%.o: %.cpp
+	@echo "\t[CPP] $<"
+	@$(CPP) $(CPPFLAGS) $(CFLAGS) -c "$<" $(INC) -MM -M -o $@.Makedep
+	@$(CPP) $(CPPFLAGS) $(CFLAGS) -c "$<" $(INC) -o $@ 
+
+$(OBJROOT)/%.o: %.s
+	@echo "\t[AS] $<"
+	@$(CC) $(CPPFLAGS) -c $(INC) -arch i386 $< -MM -M -o $@.Makedep
+	@$(CC) $(CPPFLAGS) -c $(INC) -arch i386 $< -o $@
+
+# This breaks make, must use make all (FIXME)
+$(DIRS_NEEDED):
+	@echo "\t[MKDIR] $@"
+	@$(MKDIRS) $@
+
+# Recursive rules
+RECURSIVE_TARGETS = all-recursive install-recursive
+RECURSIVE_CLEAN_TARGETS = distclean-recursive clean-recursive
+.PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS)
+
+$(RECURSIVE_TARGETS):
+				@failcom='exit 1'; \
+				target=`echo $@ | sed s/-recursive//`; \
+				list='$(SUBDIRS)'; for subdir in $$list; do \
+					echo ================= Making $$target in $$subdir =================; \
+					(cd $$subdir && $(MAKE) $$target)						\
+					|| eval $$failcom;					\
+				done;
+
+$(RECURSIVE_CLEAN_TARGETS):
+				@failcom='exit 1'; \
+				dot_seen=no; \
+				case "$@" in \
+					distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+					*) list='$(SUBDIRS)' ;; \
+				esac; \
+				rev=''; for subdir in $$list; do \
+					if test "$$subdir" = "."; then :; else \
+						rev="$$subdir $$rev"; \
+					fi; \
+				done; \
+				rev="$$rev ."; \
+				target=`echo $@ | sed s/-recursive//`; \
+				for subdir in $$rev; do \
+					echo "Making $$target in $$subdir"; \
+          if test "$$subdir" = "."; then \
+            local_target="$$target-local"; \
+          else \
+            local_target="$$target"; \
+          fi; \
+					(cd $$subdir && $(MAKE) $$local_target) \
+					|| eval $$failcom; \
+				done
+
+
+clean-dep:
+	@rm -f $(OBJROOT)/*.Makedep
+
+
+FIND_IGNORE := \( -name .git -o -name .svn \) -prune -o -name Cconfig -o
+
+# clean: remove almost everything (execpt auto.conf, autoconf.h, autoconf.inc)
+clean: clean-recursive clean-dep
+
+distclean: distclean-recursive clean-dep clean-local
+		@find . $(FIND_IGNORE) \
+				\( -name '*.orig' -o -name '*.rej' -o -name '*~' \
+				-o -name '*.bak' -o -name '#*#' -o -name '.*.orig' \
+				-o -name '.*.rej' -o -size 0 \
+				-o -name '*%' -o -name '.*.cmd' -o -name 'core' \) \
+				-type f -print | xargs rm -f
+
+install: install-recursive install-local
+
+clean-local:
+
+distclean-local:
+
+install-local:
+
+.DEFAULT_GOAL := all
+
+# Local Variables:      #
+# mode: Makefile        #
+# tab-width: 2          #
+# indent-tabs-mode: t 	#
+# End:                  #
+#
+# vi: set noexpandtab ts=2 sw=2 sts=2: #

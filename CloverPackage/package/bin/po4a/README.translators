@@ -1,0 +1,9 @@
+This package naturally propose to translate both its messages and its
+documentation. The relevant po[t] files are in po/bin and po/pod
+(respectively).
+
+In order to refresh them (sync them to the actual material to translate),
+run from the top level:
+
+ perl Build.PL
+ ./Build postats

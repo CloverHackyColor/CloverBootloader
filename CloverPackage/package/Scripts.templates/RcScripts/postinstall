@@ -1,0 +1,139 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "Post-Install RC Scripts"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+DEST_VOL="${3}"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+
+srcvolume="$DEST_VOL"
+destroot="$DEST_VOL"
+
+plistbuddy='/usr/libexec/PlistBuddy'
+installer_on_target_refid='@INSTALLER_ON_TARGET_REFID@'
+installer_on_all_volumes_refid='@INSTALLER_ON_ALL_VOLUMES_REFID@'
+
+echo "======================================================" >> "$install_log"
+echo "Installing RC Scripts" >> "$install_log"
+echo "" >> "$install_log"
+
+# Get the options
+install_on_target=$($plistbuddy -c "Print $installer_on_target_refid" \
+ "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
+install_on_all_volumes=$($plistbuddy -c "Print $installer_on_all_volumes_refid" \
+ "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
+
+# Source the rc scripts library
+source ./rc_scripts.lib
+
+# Installing the RC scripts on all internal OSX system Volumes
+if [[ "$install_on_all_volumes" == true ]]; then
+    IFS=$'\n' # ' fix xemacs fontification
+    for mountPoint in $(getInternalOSXSystemVolumes); do
+        [[ "$mountPoint" == $destroot ]] && continue
+        echo "Installing RC scripts in '$mountPoint' volume" >> "$install_log"
+        # Remove old rc.local and rc.shutdown.local scripts
+        [[ $(grep -ic Clover "${mountPoint}/etc/rc.local" 2>/dev/null) -gt 0 ]] && \
+         rm -f "${mountPoint}/etc/rc.local"
+        [[ $(grep -ic Clover "${mountPoint}/etc/rc.shutdown.local" 2>/dev/null) -gt 0 ]] && \
+         rm -f "${mountPoint}/etc/rc.shutdown.local"
+        while read -r -u3 file; do
+            srcfile=$(echo "${srcvolume}/$file"   | sed -E 's#[/]{2,}#/#g')
+            destfile=$(echo "${mountPoint}/$file" | sed -E 's#[/]{2,}#/#g')
+            destdir=$(dirname "$destfile")
+            if [[ ! -d "$destdir" ]]; then
+                mkdir -p "$destdir"
+                chown root:wheel "$destdir"
+                chmod 755 "$destdir"
+            fi
+            case "$file" in
+                *.d/*.local)
+                    if [[ -f "$destfile.disabled" ]]; then
+                        echo "Removing $destfile"
+                        rm -f "$destfile"
+                        destfile="$destfile.disabled"
+                    fi
+                    ;;
+                *.d/*.local.disabled)
+                    enabledfile="${file%.disabled}"
+                    echo "Removing $destroot/$enabledfile"
+                    rm -f  "$destroot/$enabledfile"
+                    ;;
+            esac
+
+            echo "Copying $srcfile to $destfile"
+            cp -pvf "$srcfile" "$destfile"
+            chown root:wheel "$destfile"
+            case "$file" in
+                *.plist) chmod 600 "$destfile" ;;
+                      *) chmod 755 "$destfile" ;;
+            esac
+        done 3< <(cat ./Tools/rc.files)
+    done
+fi
+
+# Installing the RC scripts on target volume
+if [[ "$install_on_target" == true ]]; then
+    echo "Installing RC scripts on target volume '$destroot'" >> "$install_log"
+    # Remove old rc.local and rc.shutdown.local scripts
+    [[ $(grep -ic Clover "${destroot}/etc/rc.local" 2>/dev/null) -gt 0 ]] && \
+     rm -f "${destroot}/etc/rc.local"
+    [[ $(grep -ic Clover "${destroot}/etc/rc.shutdown.local" 2>/dev/null) -gt 0 ]] && \
+     rm -f "${destroot}/etc/rc.shutdown.local"
+fi
+
+while read -r -u3 file; do
+    srcfile=$(echo "${srcvolume}/$file" | sed -E 's#[/]{2,}#/#g')
+    if [[ "$install_on_target" == true ]]; then
+        case "$file" in
+            *.d/*.local)
+                [[ -f "$destroot/$file.disabled" ]] && \
+                 mv -f "$srcfile" "$destroot/${file}.disabled"
+                ;;
+            *.d/*.local.disabled)
+                enabledfile="${file%.disabled}"
+                rm -fv "$destroot/$enabledfile"
+                ;;
+        esac
+    else
+        # Cleanup: remove file and dir
+        echo "Removing $srcfile"
+        rm -f "$srcfile"
+        localdir=$(dirname "$srcfile")
+        while [[ "$localdir" != '/' ]]; do
+            rmdir "$localdir" &>/dev/null
+            localdir=$(dirname "$localdir")
+        done
+    fi
+done 3< <(cat ./Tools/rc.files)
+
+# Compatibility with old custom scripts
+if [[ "$install_on_target" == true ]]; then
+    if [[ -x "${destroot}/etc/custom.rc.local" ]]; then
+        echo "Moving ${destroot}/etc/custom.rc.local to ${destroot}/etc/rc.boot.d/50.custom.local" \
+         >> "$install_log"
+        mv -f "${destroot}/etc/custom.rc.local" "${destroot}/etc/rc.boot.d/50.custom.local"
+    fi
+    if [[ -x "${destroot}/etc/custom.rc.shutdown.local" ]]; then
+        echo "Moving ${destroot}/etc/custom.rc.shutdown.local to ${destroot}/etc/rc.shutdown.d/50.custom.local" \
+         >> "$install_log"
+        mv -f "${destroot}/etc/custom.rc.shutdown.local" "${destroot}/etc/rc.shutdown.d/50.custom.local"
+    fi
+fi
+
+echo "" >> "$install_log"

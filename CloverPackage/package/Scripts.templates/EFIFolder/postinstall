@@ -1,0 +1,26 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "EFIFolder Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+# echo "preinstall: Path to installer....... $1"
+# echo "preinstall: Path to destination..... $2"
+# echo "preinstall: Path to dest volume..... $3"
+# echo "preinstall: Root of system folder... $4"
+
+DEST_VOL="$3"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+
+# config.plist
+customPlists=$(find "${EFI_ROOT_DIR}"/EFI/CLOVER/OEM -name *.plist | grep -Ev 'SystemProductName')
+if [[ ! -f "${EFI_ROOT_DIR}/EFI/CLOVER/config.plist" && "${customPlists}" == "" ]]; then
+    cp -fv "${EFI_ROOT_DIR}/EFI/CLOVER/config-sample.plist" "${EFI_ROOT_DIR}/EFI/CLOVER/config.plist"
+fi
+# Don't keep config-sample.plist
+rm -f "${EFI_ROOT_DIR}/EFI/CLOVER/config-sample.plist"

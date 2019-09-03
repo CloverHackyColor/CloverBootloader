@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+DEST_VOL="${3}"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+installer_choice="@INSTALLER_CHOICE@"
+
+echo "====================================================="
+echo " "
+echo "Don't install any of boot1f32, boot1h and boot1x,"
+echo "used for 4kb harddisk with manual install."
+echo " "
+echo "====================================================="
+
+# Mark that the option was selected
+/usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+
+echo "======================================================" >> "$install_log"
+echo "Installing BootSectors/BootLoader" >> "$install_log"
+echo "" >> "$install_log"
+echo "Stage 0 - Don't write any of boot0af, boot0md, boot0ss to ${DEST_VOL}" >> "$install_log"
+echo "Stage 1 - Don't write any of boot1h2, boot1f32alt, boot1xalt to ${DEST_VOL}"      >> "$install_log"

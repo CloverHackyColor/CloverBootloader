@@ -1,0 +1,69 @@
+# $Id: VBoxPeCoffLib.inf $
+## @file
+# VBoxPeCoffLib.inf
+#
+
+#
+# Copyright (C) 2010 Oracle Corporation
+#
+# This file is part of VirtualBox Open Source Edition (OSE), as
+# available from http://www.virtualbox.org. This file is free software;
+# you can redistribute it and/or modify it under the terms of the GNU
+# General Public License (GPL) as published by the Free Software
+# Foundation, in version 2 as it comes in the "COPYING" file of the
+# VirtualBox OSE distribution. VirtualBox OSE is distributed in the
+# hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+#
+
+# This code is based on:
+#
+#/** @file
+#  PE/COFF Loader Library implementation.
+#  The IPF version library supports loading IPF and EBC PE/COFF image.
+#  The IA32 version library support loading IA32, X64 and EBC PE/COFF images.
+#  The X64 version library support loading IA32, X64 and EBC PE/COFF images.
+#
+#  Copyright (c) 2006 - 2009, Intel Corporation.<BR>
+#  Portions copyright (c) 2008-2009 Apple Inc. All rights reserved.<BR>
+#
+#  All rights reserved. This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = VBoxPeCoffLib
+  FILE_GUID                      = 92e02078-d0ca-11de-a547-fb90b709a001
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PeCoffLib 
+
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC ARM
+#
+
+[Sources.common]
+  BasePeCoffLibInternals.h
+  BasePeCoff.c
+  PeCoffLoaderEx.c
+
+[Packages]
+#  VBoxPkg/VBoxPkg.dec
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  DebugLib
+  PeCoffExtraActionLib
+  BaseMemoryLib
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG

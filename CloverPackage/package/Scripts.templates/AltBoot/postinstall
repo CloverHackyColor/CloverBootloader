@@ -1,0 +1,34 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "AltBoot Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+DEST_VOL="$3"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+
+if [[ -d "${DEST_VOL}/usr/standalone/i386/ia32" ]]; then
+    while read -r -u3 file; do
+        cp -v "${DEST_VOL}/usr/standalone/i386/ia32/$file" "${EFI_ROOT_DIR}/"
+        chflags hidden "${EFI_ROOT_DIR}/$file"
+    done 3< <(ls "${DEST_VOL}/usr/standalone/i386/ia32/")
+fi
+
+if [[ -d "${DEST_VOL}/usr/standalone/i386/x64" ]]; then
+    while read -r -u3 file; do
+        cp -v "${DEST_VOL}/usr/standalone/i386/x64/$file" "${EFI_ROOT_DIR}/"
+        chflags hidden "${EFI_ROOT_DIR}/$file"
+    done 3< <(ls "${DEST_VOL}/usr/standalone/i386/x64/")
+fi
+
+exit 0

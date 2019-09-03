@@ -1,0 +1,295 @@
+#! /usr/bin/env perl
+eval 'exec perl -S $0 ${1+"$@"}'
+    if $running_under_some_shell;
+
+# pod-updatepo -- update the PO translation of POD data.
+#
+# Copyright 2002-2012 by SPI, inc.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of GPL (see COPYING).
+
+=encoding UTF-8
+
+=head1 NAME
+
+po4a-updatepo - update the translation (in PO format) of documentation
+
+=head1 SYNOPSIS
+
+B<po4a-updatepo> B<-f> I<fmt> (B<-m> I<master.docE>)+ (B<-p> I<XX.po>)+
+
+(I<XX.po> are the outputs, all others are inputs)
+
+=head1 DESCRIPTION
+
+The po4a (PO for anything) project goal is to ease translations (and more
+interestingly, the maintenance of translations) using gettext tools on
+areas where they were not expected like documentation.
+
+The B<po4a-updatepo> script is in charge of updating PO files to make
+them reflect the changes made to the original documentation file. For that,
+it converts the documentation file to a POT file, and call L<msgmerge(1)>
+on this new POT and on the provided PO files.
+
+It is possible to give more than one PO file (if you want to update several
+languages at once), and several documentation files (if you want to store
+the translations of several documents in the same PO file).
+
+If the master document has non-ASCII characters, it will convert the PO files
+to UTF-8 (if they weren't already), in order to allow non-standard characters
+in a culture independent way.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-f>, B<--format>
+
+Format of the documentation you want to handle. Use the B<--help-format>
+option to see the list of available formats.
+
+=item B<-m>, B<--master>
+
+File(s) containing the master document to translate.
+
+=item B<-M>, B<--master-charset>
+
+Charset of the files containing the document to translate. Note that all
+files must have the same charset.
+
+=item B<-p>, B<--po>
+
+PO file(s) to update. If these files do not exist, they are created by
+B<po4a-updatepo>.
+
+=item B<-o>, B<--option>
+
+Extra option(s) to pass to the format plugin and other po4a internal module.
+Specify each option in the 'I<name>B<=>I<value>' format. See the documentation of
+each plugin for more information about the valid options and their meanings.
+
+=item B<--no-previous>
+
+This option removes B<--previous> from the options passed to B<msgmerge>.
+This permits to support versions of B<gettext> earlier than 0.16.
+
+=item B<--previous>
+
+This option adds B<--previous> to the options passed to B<msgmerge>.
+It requires B<gettext> 0.16 or later, and is activated by default.
+
+=item B<--msgmerge-opt> I<options>
+
+Extra options for B<msgmerge>.
+
+=item B<-h>, B<--help>
+
+Show a short help message.
+
+=item B<--help-format>
+
+List the documentation formats understood by po4a.
+
+=item B<-V>, B<--version>
+
+Display the version of the script and exit.
+
+=item B<-v>, B<--verbose>
+
+Increase the verbosity of the program.
+
+=item B<-d>, B<--debug>
+
+Output some debugging information.
+
+=item B<porefs> I<type>[,B<wrap>|B<nowrap>]
+
+Specify the reference format. Argument I<type> can be one of B<none> to not
+produce any reference, B<noline> to not specify the line number (more
+accurately all line numbers are replaced by 1), B<counter> to replace line
+number by an increasing counter, and B<full> to include complete
+references.
+
+Argument can be followed by a comma and either B<wrap> or B<nowrap> keyword.
+References are written by default on a single line.  The B<wrap> option wraps
+references on several lines, to mimic B<gettext> tools (B<xgettext> and
+B<msgmerge>).  This option will become the default in a future release, because
+it is more sensible.  The B<nowrap> option is available so that users who want
+to keep the old behavior can do so.
+
+=item B<--msgid-bugs-address> I<email@address>
+
+Set the report address for msgid bugs. By default, the created POT files
+have no Report-Msgid-Bugs-To fields.
+
+=item B<--copyright-holder> I<string>
+
+Set the copyright holder in the POT header. The default value is
+"Free Software Foundation, Inc."
+
+=item B<--package-name> I<string>
+
+Set the package name for the POT header. The default is "PACKAGE".
+
+=item B<--package-version> I<string>
+
+Set the package version for the POT header. The default is "VERSION".
+
+=back
+
+=head1 SEE ALSO
+
+L<po4a-gettextize(1)>,
+L<po4a-normalize(1)>,
+L<po4a-translate(1)>,
+L<po4a(7)>
+
+=head1 AUTHORS
+
+ Denis Barbier <barbier@linuxfr.org>
+ Nicolas François <nicolas.francois@centraliens.net>
+ Martin Quinson (mquinson#debian.org)
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2002-2012 by SPI, inc.
+
+This program is free software; you may redistribute it and/or modify it
+under the terms of GPL (see the COPYING file).
+
+=cut
+
+use 5.006;
+use strict;
+use warnings;
+
+use Getopt::Long qw(GetOptions);
+use Locale::Po4a::Po;
+
+use Locale::Po4a::Chooser;
+use Locale::Po4a::TransTractor;
+use Locale::Po4a::Common;
+
+use Pod::Usage qw(pod2usage);
+
+use File::Temp;
+use File::Copy qw(copy);
+use Config;
+
+Locale::Po4a::Common::textdomain('po4a');
+
+sub show_version {
+    Locale::Po4a::Common::show_version("po4a-updatepo");
+    exit 0;
+}
+
+
+# init commandline parser
+Getopt::Long::config('bundling', 'no_getopt_compat', 'no_auto_abbrev');
+
+# Parse our options
+my (@masterfiles,@pofiles);
+my ($help,$help_fmt,$verbose,$debug,$format,@options);
+my ($copyright_holder, $msgid_bugs_address, $package_name, $package_version);
+my $mastchar;
+my $previous;
+my $noprevious;
+my $msgmerge_opt = "";
+GetOptions('help|h'      => \$help,
+           'help-format' => \$help_fmt,
+
+           'master|m=s'  => \@masterfiles,
+           'po|p=s'      => \@pofiles,
+           'format|f=s'  => \$format,
+
+           'master-charset|M=s' => \$mastchar,
+
+           'option|o=s'  => \@options,
+
+           'no-previous' => \$noprevious,
+           'previous'    => \$previous,
+           'msgmerge-opt=s'      => \$msgmerge_opt,
+           'copyright-holder=s'  => \$copyright_holder,
+           'msgid-bugs-address=s'=> \$msgid_bugs_address,
+           'package-name=s'      => \$package_name,
+           'package-version=s'   => \$package_version,
+
+           'verbose|v'   => \$verbose,
+           'debug|d'     => \$debug,
+           'version|V'   => \&show_version)
+    or pod2usage();
+
+$help && pod2usage (-verbose => 1, -exitval => 0);
+$help_fmt && Locale::Po4a::Chooser::list(0);
+pod2usage () if scalar @masterfiles < 1 || scalar @pofiles < 1;
+
+$msgmerge_opt .= " --previous" unless $noprevious;
+$msgmerge_opt =~ s/^\s+//;
+
+my %options = (
+    "verbose"            => $verbose,
+    "debug"              => $debug,
+    "copyright-holder"   => $copyright_holder,
+    "msgid-bugs-address" => $msgid_bugs_address,
+    "package-name"       => $package_name,
+    "package-version"    => $package_version);
+
+foreach (@options) {
+    if (m/^([^=]*)=(.*)$/) {
+        $options{$1}="$2";
+    } else {
+        $options{$_}=1;
+    }
+}
+
+# parser
+my ($doc)=Locale::Po4a::Chooser::new($format,%options);
+
+map { -e $_ || die wrap_msg(gettext("File %s does not exist."), $_) } @masterfiles;
+map { die wrap_msg(gettext("po4a-updatepo can't take the input PO from stdin."))
+        if $_ eq '-'  && !-e '-'} @pofiles;
+
+my ($pot_filename);
+(undef,$pot_filename)=File::Temp::tempfile("po4a-updatepoXXXX",
+                                           DIR    => $ENV{TMPDIR} || "/tmp",
+                                           SUFFIX => ".pot",
+                                           OPEN   => 0,
+                                           UNLINK => 0)
+    or die wrap_msg(gettext("Can't create a temporary POT file: %s"), $!);
+
+
+print STDERR wrap_msg(gettext("Parse input files... ")) if $verbose;
+
+$doc->{TT}{utf_mode} = 1;
+
+$doc->process('file_in_name'    => \@masterfiles,
+              'file_in_charset' => $mastchar,
+              'po_out_name'     => $pot_filename,
+              'debug'           => $debug,
+              'verbose'         => $verbose);
+
+print STDERR wrap_msg(gettext("done.")) if $verbose;
+
+
+while (my $po_filename=shift @pofiles) {
+    if (-e $po_filename) {
+        print STDERR wrap_msg(gettext("Updating %s:"), $po_filename)
+          if $verbose;
+        my @cmd = ("msgmerge".$Config{_exe});
+        push (@cmd, split(/\s+/, $msgmerge_opt)) if length($msgmerge_opt);
+        push @cmd, ("-U", $po_filename, $pot_filename);
+        system (@cmd) == 0
+          or die wrap_msg(gettext("Error while running msgmerge: %s"), $!);
+        @cmd = ("msgfmt".$Config{_exe}, "--statistics", "-v", "-o", File::Spec->devnull(), $po_filename);
+        system (@cmd)
+          if $verbose;
+    } else {
+        print STDERR wrap_msg(gettext("Creating %s:"), $po_filename)
+          if $verbose;
+        copy ($pot_filename,$po_filename)
+          or die wrap_msg(gettext("Error while copying the PO file: %s"), $!);
+    }
+}
+
+unlink($pot_filename);

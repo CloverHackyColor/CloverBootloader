@@ -1,0 +1,46 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "Post Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+# Check target exists
+if [ ! -e "$3" ]; then
+    echo "$3 volume does not exist!"
+    exit 1
+fi
+
+# If target volume root of current system then replace
+# / with volume name.
+if [ "$3" == "/" ]; then
+    DEST_VOL="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
+else
+    DEST_VOL="$3"
+fi
+
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+installer_choice="@INSTALLER_CHOICE@"
+
+# ---------------------------------------------
+# Delete old themes files
+# ---------------------------------------------
+
+if [[ -d "${EFIROOTDIR}/EFI/CLOVER/themes/@themeName@" ]];then
+	rm -rf "${EFIROOTDIR}/EFI/CLOVER/themes/@themeName@"
+fi
+
+# ---------------------------------------------
+# Mark that the option was selected
+/usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null

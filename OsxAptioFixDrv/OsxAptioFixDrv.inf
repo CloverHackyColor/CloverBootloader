@@ -1,0 +1,87 @@
+##
+#
+# UEFI driver for enabling loading of OSX by using memory relocation.
+#
+# by dmazar
+# 
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = OsxAptioFixDrv
+  FILE_GUID                      = 43C8CFCA-03C0-4AA8-8BEB-5AF6AB3570A1
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = OsxAptioFixDrvEntrypoint
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  BaseLib
+  CpuLib
+  DevicePathLib
+  
+[Sources]
+  OsxAptioFixDrv.c
+  AsmFuncs.h
+  BootFixes.c
+  BootFixes.h
+  DecodedKernelCheck.c
+  DecodedKernelCheck.h
+  BootArgs.c
+  BootArgs.h
+  VMem.c
+  VMem.h
+  Lib.c
+  Lib.h
+  FlatDevTree/device_tree.h
+  FlatDevTree/device_tree.c
+  NVRAMDebug.h
+  NVRAMDebug.c
+  Mach-O/UefiLoader.h
+  Mach-O/loader.h
+  Mach-O/Mach-O.h
+  Mach-O/Mach-O.c
+  Hibernate.h
+
+[Sources.X64]
+  X64/AsmFuncsX64.asm | INTEL
+  X64/AsmFuncsX64.asm | MSFT
+#  X64/AsmFuncsX64.S | GCC
+  X64/AsmFuncsX64.nasm | GCC
+
+[Guids]
+  gEfiFileInfoGuid								## CONSUMES
+  gEfiFileSystemInfoGuid						## CONSUMES
+  gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
+  gEfiGlobalVariableGuid
+
+[Protocols]
+  gEfiLoadedImageProtocolGuid
+  gEfiDevicePathProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiDiskIoProtocolGuid
+  gEfiDiskIo2ProtocolGuid
+  gEfiGraphicsOutputProtocolGuid
+
+
+# if built as runtime driver
+[Depex]
+  TRUE
+
+[BuildOptions]
+# To generate assembled listings
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+#  GCC:*_*_*_ASM_FLAGS = -Wa,-a=AsmList.txt
+#  GCC:*_*_*_NASM_FLAGS = -l NasmList.txt

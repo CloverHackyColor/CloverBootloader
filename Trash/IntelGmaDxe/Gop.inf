@@ -1,0 +1,93 @@
+#/*++
+#
+# Copyright (c)  2006 - 2010 Intel Corporation. All rights reserved
+#
+#    This program and the accompanying materials
+#    are licensed and made available under the terms and conditions of the BSD License
+#    which accompanies this distribution. The full text of the license may be found at
+#    http://opensource.org/licenses/bsd-license.php
+#
+#    THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#  Module Name:
+#
+#    Gop.inf
+#
+#  Abstract:
+#
+#    Component description file for GOP module
+#
+#--*/
+
+[defines]
+INF_VERSION                    = 0x00010005
+BASE_NAME            = IntelGop
+FILE_GUID            = 048B4BA8-3666-4fa7-A7ED-D75D9BA6358D
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = GraphicsOutputDriverEntryPoint
+#COMPONENT_TYPE       = BS_DRIVER
+
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+
+
+[Sources]
+  Gop.c
+#  Gop.h
+  GraphicsOutput.c
+  VideoModes.c
+  EDID.c
+#  EDID.h
+  ComponentName.c
+#  CpuSupport.h
+  Ia32/CpuSupport.c
+
+[Sources.IA32]
+#  Ia32/CpuSupport.c
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  UefiLib
+  UefiDriverEntryPoint
+
+[Protocols]
+  gEfiPciIoProtocolGuid
+#  gEfiVgaMiniPortProtocolGuid
+  gEfiEdidDiscoveredProtocolGuid
+  gEfiEdidActiveProtocolGuid
+
+[Depex]
+  TRUE
+
+
+#[libraries.common]
+#  EfiProtocolLib
+#  EfiDriverLib
+
+#[libraries.ia32,libraries.x64]
+#  CPUIa32Lib
+
+#[includes.common]
+# $(EDK_SOURCE)\Foundation\Efi
+#  $(EDK_SOURCE)\Foundation
+#  $(EDK_SOURCE)\Foundation\Framework
+#  .
+#  $(EDK_SOURCE)\Foundation\Include
+#  $(EDK_SOURCE)\Foundation\Efi\Include
+#  $(EDK_SOURCE)\Foundation\Framework\Include
+#  $(EDK_SOURCE)\Foundation\Cpu\Pentium\Include
+#  $(EDK_SOURCE)\Foundation\Include\IndustryStandard
+#  $(EDK_SOURCE)\Foundation\Core\Dxe
+#  $(EDK_SOURCE)\Foundation\Library\Dxe\Include
+  
+
+#[nmake.common]
+#  IMAGE_ENTRY_POINT=GraphicsOutputDriverEntryPoint
+

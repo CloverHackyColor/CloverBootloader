@@ -1,0 +1,58 @@
+## @file
+#
+#  Module Name:
+#
+#    SMCHelper.inf
+#
+#  Abstract:
+#
+#	SMCHelper driver installs AppleSMC protocol that can be used to store and
+#   retrieve SMC keys without SMC controller presence.
+#
+#	Slice 2016
+#
+#   have no idea about licenses. Keep copyright and use with any modifications.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SMCHelper
+  FILE_GUID                      = 511CE5CF-F27F-16EF-866C-FACE519550B7
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = SMCHelperEntrypoint
+  
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+  MemLogLib
+  
+[Sources]
+  SMCHelper.c
+
+[Guids]
+  gEfiAppleBootGuid         ## SOMETIMES CONSUMED
+
+[Protocols]
+  gAppleSMCProtocolGuid			  ## PRODUCES and CONSUMES
+  gAppleSMCStateProtocolGuid  ## PRODUCES and CONSUMES
+  
+[BuildOptions]
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -O0
+
+

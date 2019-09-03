@@ -1,0 +1,142 @@
+#!/bin/bash
+
+#
+# rc.local startup script for CLOVER
+#
+# this script run executable scripts in rc.boot.d folder having .local
+# extension
+#
+# Initial - fassl, slice, STLVNUB
+# Edited  - apianti 2013-01-13
+#         - JrCs    2013-02-01
+#!/bin/sh
+
+StartService() {
+    # Variables
+    currentDate=$(date "+%Y-%m-%d")
+    currentTime=$(date "+%H:%M:%S")
+
+    #
+    # Redirect all outputs to log file
+    #
+    exec &>"${CLOVER_LOG_LOCATION}"/rc.boot.log
+
+    #
+    # Print the current timestamp
+    #
+    echo "-------------------------------"
+    echo "DATE: ${currentDate} TIME: ${currentTime}"
+    echo "-------------------------------"
+
+    [[ "$DEBUG" -ne 0 ]] && set -x
+
+    # Launch some custom scripts if exists
+    rc_dir="${rcScriptsDir}/rc.boot.d"
+    if [[ -d "$rc_dir" ]]; then
+        # Remove space from IFS
+        IFS="$(printf '\n\t')"
+        for script in "$rc_dir"/*.local; do
+            if [[ ! -d "$script" && -x "$script" ]]; then
+                echo ">> Begin Script: ${script}"
+                $script
+                echo ">> End Script: ${script}"
+                echo
+            fi
+        done
+    fi
+
+    exec 1>&3 # Restore stdout to it's default value.
+    exec 2>&4 # Restore stderr to it's default value.
+
+    currentDate=$(date "+%Y-%m-%d")
+    currentTime=$(date "+%H:%M:%S")
+    echo "${currentDate} ${currentTime} - All clover startup scripts (locate in $rc_dir) have been started"
+}
+
+StopService() {
+    currentDate=$(date "+%Y-%m-%d")
+    currentTime=$(date "+%H:%M:%S")
+
+    #
+    # Redirect all outputs to log file
+    #
+    exec &>"${CLOVER_LOG_LOCATION}"/rc.shutdown.log
+
+    #
+    # Print the current timestamp
+    #
+    echo "-------------------------------"
+    echo "DATE: ${currentDate} TIME: ${currentTime}"
+    echo "-------------------------------"
+
+    [[ "$DEBUG" -ne 0 ]] && set -x
+
+    # Launch some custom scripts if exists
+    rc_dir="${rcScriptsDir}/rc.shutdown.d"
+    if [[ -d "$rc_dir" ]]; then
+        # Remove space from IFS
+        IFS="$(printf '\n\t')"
+        for script in "$rc_dir"/*.local; do
+            if [[ ! -d "$script" && -x "$script" ]]; then
+                echo ">> Begin Script: ${script}"
+                $script
+                echo ">> End Script: ${script}"
+                echo
+            fi
+        done
+    fi
+
+    exec 1>&3 # Restore stdout to it's default value.
+    exec 2>&4 # Restore stderr to it's default value.
+
+    currentDate=$(date "+%Y-%m-%d")
+    currentTime=$(date "+%H:%M:%S")
+
+    echo "${currentDate} ${currentTime} - All clover shutdown scripts (locate in $rc_dir) have been started"
+    echo "---------------------------------------------------"
+    echo "CloverDaemon stop at ${currentDate} ${currentTime}"
+    echo "---------------------------------------------------"
+
+    exit 0
+}
+
+# Main
+
+CLOVER_DAEMON_LOG="/Library/Logs/CloverEFI/clover.daemon.log"
+if [[ -f "$CLOVER_DAEMON_LOG" ]]; then
+    # Rotate the log (keep at least 80 lines)
+    tail -n 80 "$CLOVER_DAEMON_LOG" > "$CLOVER_DAEMON_LOG".tmp
+    cat "$CLOVER_DAEMON_LOG".tmp > "$CLOVER_DAEMON_LOG"
+    rm -f "$CLOVER_DAEMON_LOG".tmp
+fi
+
+exec 3>&1 # Save current "value" of stdout.
+exec 4>&2 # Save current "value" of stderr.
+
+currentDate=$(date "+%Y-%m-%d")
+currentTime=$(date "+%H:%M:%S")
+
+echo "---------------------------------------------------"
+echo "CloverDaemon start at ${currentDate} ${currentTime}"
+echo "---------------------------------------------------"
+
+selfDir=$(cd "$(dirname '$0')" && pwd -P)
+rcScriptsDir=/etc # Default directory for rc scripts
+
+[[ -f "$selfDir"/rc.clover.lib ]] && rcScriptsDir="$selfDir"
+
+#
+# Source clover rc library
+#
+source "$rcScriptsDir"/rc.clover.lib
+
+# Check that all variables are bound
+set -u
+
+StopService # Launch @ boot
+
+#trap StopService SIGTERM # SIGTERM @ shutdown
+#while true; do
+#    sleep 86400 &  # Start the sleep process in background
+#    wait $!        # and wait to finish
+#done

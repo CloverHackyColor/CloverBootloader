@@ -1,0 +1,87 @@
+Introduction to Po4a
+====================
+
+The po4a (PO for anything) project goal is to ease translations (and
+more interestingly, the maintenance of translations) using gettext
+tools on areas where they were not expected like documentation.
+
+In po4a each documentation format is handled by a module. For now, we have a
+module for the POD format (in which the perl documentation is written), the
+good old man pages, and the documentation of the kernel compilation options.
+Some other modules are underway, like for sgml, xml or texinfo.
+
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Build.PL
+   ./Build
+   ./Build install
+
+
+USE WITHOUT INSTALLATION
+
+If you want to use a version without installing it (such as the CVS one),
+use the PERLLIB environment variable is such construction:
+ 
+  PERLLIB=~/svn-checkouts/po4a/lib ~/svn-checkouts/po4a/po4a-gettextize [usual args]
+
+
+PO4A DEPENDENCIES
+
+  Locale::gettext (v1.01): 
+    This module being itself internationalized, it needs the Locale::gettext
+    library to translate its own messages.
+    If it is not present, then po4a's messages won't be translated, but
+    po4a will remain fully functional.
+
+  Text::WrapI18N:
+    This module is used to format po4a's warnings and error messages.  It
+    permits to wrap long error messages without splitting words.
+    If it is not present, the formatting of messages will be different,
+    but po4a will remain fully functional.
+
+  Term::ReadKey:
+    This module is used to retrieve the terminal's line width.  It is not
+    used if Text::WrapI18N is not available.
+    If it is not present, the line width can be specified with the COLUMN
+    environment variable.
+
+
+SGML MODULE SPECIFIC DEPENDENCIES
+
+  SGMLS (1.03ii):
+    This is a set of Perl5 routines for processing the output from the sgmls
+    and nsgmls SGML parsers.
+ 
+  sp (1.3.4): James Clark's SGML parsing tools
+    This is the parser we use.
+    http://www.jclark.com/sp/
+
+
+TEXT MODULE SPECIFIC DEPENDENCIES
+
+  Unicode::GCString:
+    This module is used to compute text width; it is needed by AsciiDoc to
+    determine two line titles in encodings different from ASCII.
+    http://hatuka.nezumi.nu/repos/Unicode-LineBreak/
+
+
+PROJECT WEB PAGE
+
+You can find more information and report bugs at the po4a project web page:
+
+  http://po4a.alioth.debian.org
+
+
+COPYRIGHT AND LICENSE
+
+This program is free software; you may redistribute it and/or modify it
+under the terms of GPL (see COPYING file).
+       
+Copyright (C) 2002-2O12 by SPI, inc.
+Authors:
+        Denis Barbier <barbier@linuxfr.org>
+        Martin Quinson (mquinson#debian.org)
+

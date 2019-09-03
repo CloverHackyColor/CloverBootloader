@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="Content-Style-Type" content="text/css"/>
+  <title></title>
+  <style type="text/css">
+	  body {font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif; text-align: left; font-size: 13px; margin-bottom: 0; padding-bottom: 0; font-weight: 400; color: #404040;}
+    p.p1 {margin: 0}
+    p.p2 {margin: 0.5em 0}
+    span.s1 {font-weight: 600 }
+    ul {font-weight: 600}
+    li {margin: 0 0 .4em 0; font-weight: 400}
+  </style>
+</head>
+<body>
+<p class="p1">
+	<span class="s1">Clover v2 </span>
+	is open source based on different projects: Clover, rEFIt, XNU, VirtualBox. 
+	<span>The main is EDK2 latest revision.</span>
+</p>
+
+<p class="p2"><a href="http://sourceforge.net/projects/cloverefiboot/">http://sourceforge.net/projects/cloverefiboot/</a></p>
+
+<p><b>Main features:</b></p>  
+<ul>
+<li>boot into 10.xx macOS, Windows EFI and Linux EFI</li>
+<li>It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders</li>
+<li>mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist</li>
+<li>with Clover you may restart into other OS from Startup Disk prefPane</li>
+<li>UUID written into config.plist will be the same as in OS</li>
+<li>SMBIOS will be corrected to standard 2.6</li>
+<li>ACPI will be corrected to standard 4.0.</li>
+<li>Custom DSDT will be loaded from booted partition or from EFI folder</li>
+<li>DSDT patching on the fly by fixes and by patterns</li>
+<li>customizable RestartFix and sleep/wake fixes and PCIRootUID value</li>
+<li>Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable.</li>
+<li>USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0</li>
+<li>HDA injector and Ethernet builtin injector</li>
+<li>CPU turbo and P- and C-states generator</li>
+<li>ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)</li>
+<li>extra kexts loading</li>
+<li>kernel and kext patching on the fly</li>
+<li>set NVRAM variables for different purpose</li>
+<li>default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10</li>
+<li>saving boot.log in OS and preboot.log from GUI by typing F2</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,292 @@
+#! /usr/bin/env perl
+eval 'exec perl -S $0 ${1+"$@"}'
+    if $running_under_some_shell;
+
+# po4a-translate -- translate doc files using a message catalog(ie, PO file)
+#
+# Copyright 2002-2012 by SPI, inc.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of GPL (see COPYING).
+
+=encoding UTF-8
+
+=head1 NAME
+
+po4a-translate - convert a PO file back to documentation format
+
+=head1 SYNOPSIS
+
+B<po4a-translate> B<-f> I<fmt> B<-m> I<master.doc> B<-p> I<XX.po> B<-l> I<XX.doc>
+
+(I<XX.doc> is the output, all others are inputs)
+
+=head1 DESCRIPTION
+
+The po4a (PO for anything) project goal is to ease translations (and more
+interestingly, the maintenance of translations) using gettext tools on
+areas where they were not expected like documentation.
+
+The B<po4a-translate> script is in charge of converting the translation
+(which was done in a PO file) back into the documentation format. The
+provided PO file should be the translation of the POT file which was
+produced by L<po4a-gettextize(1)>.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-f>, B<--format>
+
+Format of the documentation you want to handle. Use the B<--help-format>
+option to see the list of available formats.
+
+=item B<-a>, B<--addendum>
+
+Add a file to the resulting file (to put translator's name or a section
+"About this translation", for example). The first line of the file to insert
+should be a PO4A header indicating where it should be added (see section
+B<HOWTO add extra text to translations> in L<po4a(7)>).
+
+=item B<-A>, B<--addendum-charset>
+
+Charset of the addenda. Note that all the addenda should be in the same
+charset.
+
+=item B<-m>, B<--master>
+
+File containing the master document to translate.
+
+=item B<-M>, B<--master-charset>
+
+Charset of the file containing the document to translate.
+
+=item B<-l>, B<--localized>
+
+File where the localized (translated) document should be written.
+
+=item B<-L>, B<--localized-charset>
+
+Charset of the file containing the localized document.
+
+=item B<-p>, B<--po>
+
+File from which the message catalog should be read.
+
+=item B<-o>, B<--option>
+
+Extra option(s) to pass to the format plugin. Specify each option in the
+'I<name>B<=>I<value>' format. See the documentation of each plugin for more
+information about the valid options and their meanings.
+
+=item B<-k>, B<--keep>
+
+Minimal threshold for translation percentage to keep (i.e. write) the
+resulting file (default: 80). I.e. by default, files have to be translated
+at at least 80% to get written.
+
+=item B<-w>, B<--width>
+
+Column at which we should wrap the resulting file.
+
+=item B<-h>, B<--help>
+
+Show a short help message.
+
+=item B<--help-format>
+
+List the documentation formats understood by po4a.
+
+=item B<-V>, B<--version>
+
+Display the version of the script and exit.
+
+=item B<-v>, B<--verbose>
+
+Increase the verbosity of the program.
+
+=item B<-d>, B<--debug>
+
+Output some debugging information.
+
+=back
+
+=head1 Adding content (beside translations) to generated files
+
+To add some extra content to the generated document beside what you
+translated (like the name of the translator, or a "About this translation"
+section), you should use the B<--addendum> option. 
+
+The first line of the addendum must be a header indicating where to put
+it in the document (it can be before or after a given part of the
+document).  The rest of the file will be added verbatim to the resulting
+file without further processing.
+
+Note that if po4a-translate fails to add one of the given files, it discards
+the whole translation (because the missing file could be the one indicating
+the author, what would prevent the users to contact him to report bugs in
+the translation).
+
+The header has a pretty rigid syntax. For more information on how to use
+this feature and how it works, please refer to the L<po4a(7)> man page.
+
+=head1 SEE ALSO
+
+L<po4a-gettextize(1)>,
+L<po4a-normalize(1)>,
+L<po4a-updatepo(1)>,
+L<po4a(7)>
+
+=head1 AUTHORS
+
+ Denis Barbier <barbier@linuxfr.org>
+ Nicolas François <nicolas.francois@centraliens.net>
+ Martin Quinson (mquinson#debian.org)
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2002-2012 by SPI, inc.
+
+This program is free software; you may redistribute it and/or modify it
+under the terms of GPL (see the COPYING file).
+
+=cut
+
+use 5.006;
+use strict;
+use warnings;
+
+use Locale::Po4a::Chooser;
+use Locale::Po4a::TransTractor;
+use Locale::Po4a::Common;
+
+use Pod::Usage qw(pod2usage);
+use Getopt::Long qw(GetOptions);
+
+Locale::Po4a::Common::textdomain("po4a");
+
+sub show_version {
+    Locale::Po4a::Common::show_version("po4a-translate");
+    exit 0;
+}
+
+
+Getopt::Long::Configure('no_auto_abbrev','no_ignore_case');
+my ($outfile,$width,$threshold)=('-',80,80);
+my ($help,$help_fmt,@verbose,$debug,@addfiles,$format,@options);
+my ($master_filename,$po_filename);
+my ($mastchar,$locchar,$addchar);
+GetOptions(
+        'help|h'        => \$help,
+        'help-format'   => \$help_fmt,
+
+        'master|m=s'    => \$master_filename,
+        'localized|l=s' => \$outfile,
+        'po|p=s'        => \$po_filename,
+        'addendum|a=s'  => \@addfiles,
+        'format|f=s'    => \$format,
+
+        'master-charset|M=s'    => \$mastchar,
+        'localized-charset|L=s' => \$locchar,
+        'addendum-charset|A=s' => \$addchar,
+
+        'option|o=s'    => \@options,
+
+        'width|w=s'     => \$width,
+        'verbose|v'     => \@verbose,
+        'debug|d'       => \$debug,
+        'keep|k=s'      => \$threshold,
+
+        'version|V'     => \&show_version
+) or pod2usage();
+
+$help && pod2usage(-verbose => 1, -exitval => 0);
+$help_fmt && Locale::Po4a::Chooser::list(0);
+
+(defined($master_filename) && length($master_filename))||pod2usage();
+(defined($po_filename)     && length($po_filename))    ||pod2usage();
+-e $master_filename || die wrap_msg(gettext("File %s does not exist."), $master_filename);
+-e $po_filename || die wrap_msg(gettext("File %s does not exist."), $po_filename);
+
+my (@pos,@masters);
+push @pos,$po_filename;
+push @masters,$master_filename;
+
+my %options = (
+    "verbose" => scalar @verbose,
+    "debug" => $debug);
+
+foreach (@options) {
+    if (m/^([^=]*)=(.*)$/) {
+        $options{$1}="$2";
+    } else {
+        $options{$_}=1;
+    }
+}
+# parser
+my $doc=Locale::Po4a::Chooser::new($format,%options);
+
+
+# Prepare the document to be used as translator, but not parser
+$doc->process('po_in_name'       => \@pos,
+              'file_in_name'     => \@masters,
+              'file_in_charset'  => $mastchar,
+              'file_out_charset' => $locchar,
+              'addendum_charset' => $addchar);
+
+my ($percent,$hit,$queries) = $doc->stats();
+my $error=0;
+
+print STDERR wrap_msg(gettext("%s is %s%% translated (%s of %s strings)."),
+    $master_filename, $percent, $hit, $queries)
+  if (scalar @verbose) && ($percent>=$threshold);
+
+
+if ($percent<$threshold)  {
+    print STDERR wrap_msg(gettext("Discard the translation of %s (only %s%% translated; need %s%%)."),
+        $master_filename, $percent, $threshold);
+    unlink($outfile) if (-e $outfile);
+} else {
+    my %discarded = ();
+    my @files = ();
+    while (@addfiles) {
+        my $add = shift(@addfiles);
+        my $modifiers;
+        $add =~ s/^([@!?]+)// and $modifiers = $1;
+        next if defined($discarded{$add});
+        if (defined $modifiers) {
+            if ($modifiers =~ m/!/) {
+                $discarded{$add} = 1;
+                next;
+            }
+            next if ($modifiers =~ m/\?/ and not -e $add);
+            if ($modifiers =~ m/@/) {
+                open LIST,"<","$add" or die wrap_msg(gettext("Can't open %s: %s"), $add, $!);
+                my @new_list = ();
+                while(<LIST>) {
+                    chomp;
+                    s/\s+$//;
+                    next if length($_) == 0 or $_ =~ m/^\s*#/;
+                    push(@new_list, $_);
+                }
+                close LIST;
+                unshift(@addfiles, @new_list);
+            } else {
+                push @files,$add;
+            }
+        } else {
+            push @files,$add;
+        }
+    }
+    for my $add (@files) {
+        unless ($doc->addendum($add)) {
+            unlink($outfile) if (-e $outfile);
+            die wrap_msg(gettext("Discard the translation of %s (addendum %s does not apply)."),
+                $master_filename, $add);
+        }
+    }
+    $doc->write($outfile);
+}
+
+1;
+

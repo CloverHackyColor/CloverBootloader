@@ -1,0 +1,24 @@
+BootSectors:
+	boot0af
+	boot0ss
+	boot1altV3
+	boot1f32
+	boot1f32alt
+	boot1h
+	boot1h2
+	boot1x
+
+boot0af (boot0 Active First) - MBR sector that search for active partition in MBR table (then GPT table). Origin from Apple's boot132 project. This version of boot0af implements hybrid GUID/MBR partition scheme support. Written by Tamás Kosárszky on 2008-03-10
+
+boot0ss (boot0 Signature Scanning) - MBR sector that search for partition with valid PBR signature regardless if it's active or not. Good for Windows that wants to have its partition active. It share the same code as boot0af. Only scanning is done in different order. Written by JrCs on 2013-05-08.
+
+boot1h - PBR sector for HFS+ formatted partition. Search for file "boot" in the root of the partiton.  Origin from Apple's boot132 project. Written by Tamás Kosárszky on 2008-04-14. This is mod by Slice to support large boot file. Not 440kb as origin but 472k needed to boot Clover-64.
+
+boot1h2 - PBR sector for HFS+ formatted partition with alternative booting with choice of key pressed. File to boot = "boot{key}". Coded by dmazar based on boot1h.
+
+boot1f32 - PBR sector for FAT32 formatted partition. Search for file "boot" in the root of the partiton. Useful for EFI partition or USB stick. Written by mackerintel on 2009-01-26.
+
+boot1f32alt - PBR sector for FAT32 formatted partition with alternative booting with choice of key pressed. File to boot = "boot{key}". Modded by Slice based on 
+boot1f32 and boot1h2.
+
+boot1x - PBR sector for exFat formatted partition. Search for file "boot" in the root of the partiton. Useful for EFI partition or USB stick.  Written by Zenith432 on 2014-11-19.

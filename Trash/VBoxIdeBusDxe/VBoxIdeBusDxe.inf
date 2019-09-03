@@ -1,0 +1,104 @@
+# $Id: VBoxIdeBusDxe.inf 33027 2010-10-11 06:17:12Z vboxsync $
+## @file
+# VBoxIdeBusDxe.inf
+#
+
+#
+# Copyright (C) 2010 Oracle Corporation
+#
+# This file is part of VirtualBox Open Source Edition (OSE), as
+# available from http://www.virtualbox.org. This file is free software;
+# you can redistribute it and/or modify it under the terms of the GNU
+# General Public License (GPL) as published by the Free Software
+# Foundation, in version 2 as it comes in the "COPYING" file of the
+# VirtualBox OSE distribution. VirtualBox OSE is distributed in the
+# hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+#
+
+#/** @file
+# Component description file for IdeBus module.
+#
+# IDE bus driver. This driver will enumerate IDE device and export the blockIo
+#  protocol for every device.
+# Copyright (c) 2006 - 2009, Intel Corporation
+#
+#  All rights reserved. This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = IdeBusDxe
+  FILE_GUID                      = 2f709c46-d2e7-11df-ad38-080027a4ca0d
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  EFI_SPECIFICATION_VERSION      = 0x00020000
+  ENTRY_POINT                    = InitializeIdeBus
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#  DRIVER_BINDING                =  gIDEBusDriverBinding                         
+#  COMPONENT_NAME                =  gIDEBusComponentName
+#  COMPONENT_NAME2               =  gIDEBusComponentName2                         
+#  Variable Guid C Name: gConfigurationGuid Variable Name: L"Configuration"
+#
+#
+
+[Sources.common]
+  DriverDiagnostics.c
+  DriverConfiguration.c
+  ComponentName.h
+  ComponentName.c
+  Atapi.c
+  Ata.c
+  Ide.c
+  IdeBus.c
+  IdeData.h
+  Ide.h
+  IdeBus.h
+
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Clover/CloverPkg.dec
+#  VBoxPkg/VBoxPkg.dec
+   IntelFrameworkPkg/IntelFrameworkPkg.dec
+#  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec  
+
+
+[LibraryClasses]
+  DevicePathLib
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  PerformanceLib
+  MemoryAllocationLib
+  ReportStatusCodeLib
+  BaseMemoryLib
+  UefiLib
+  BaseLib
+  UefiDriverEntryPoint
+  DebugLib
+
+
+[Guids]
+  gEfiDiskInfoIdeInterfaceGuid                  # CONSUMES  ## GUID
+  gEfiEventExitBootServicesGuid                 # CONSUMES  ## Event
+
+
+[Protocols]
+  gEfiDiskInfoProtocolGuid                      # BY_START
+  gEfiBlockIoProtocolGuid                       # BY_START
+  gEfiIdeControllerInitProtocolGuid             # TO_START
+  gEfiPciIoProtocolGuid                         # TO_START
+  gEfiDevicePathProtocolGuid                    # TO_START
+
+

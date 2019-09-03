@@ -1,0 +1,205 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "EFIFolder Pre-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+# Check target exists
+if [ ! -e "$3" ]; then
+    echo "$3 volume does not exist!"
+    exit 1
+fi
+
+# If target volume root of current system then replace
+# / with volume name.
+if [ "$3" == "/" ]; then
+    DEST_VOL="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
+else
+    DEST_VOL="$3"
+fi
+
+EFI_ROOT_DIR="${DEST_VOL}"/EFIROOTDIR
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+plistbuddy='/usr/libexec/PlistBuddy'
+installer_target_esp_refid='@INSTALLER_TARGET_ESP_REFID@'
+
+#
+# get value of a nvram key
+#
+GetNVRamKey() {
+    # Arguments:
+    #    $1: nvram key to search (case insensitive)
+    # Return:
+    #    return the value of the nvram key
+    #    exit code is != 0 if the nvram key wasn't found
+    local keyvalue exitCode
+    local IFS=$(printf "\t")
+    keyvalue=( $(/usr/sbin/nvram -p | /usr/bin/grep -i "^${1}\t*" 2>/dev/null) )
+    exitCode=$?
+    [[ $exitCode -eq 0 ]] && echo "${keyvalue[1]}"
+    return $exitCode
+}
+export -f GetNVRamKey
+
+# ---------------------------------------------
+# Creating log file
+# ---------------------------------------------
+echo "" > "$install_log"
+echo "Clover EFI installer log - $( date )" >> "$install_log"
+echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader" >> "$install_log"
+echo "======================================================" >> "$install_log"
+diskutil list >> "$install_log"
+
+# ---------------------------------------------
+# Mount ESP partition if necessary
+# ---------------------------------------------
+# Get the options
+target_esp=$($plistbuddy -c "Print $installer_target_esp_refid" \
+ "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
+rm -f "$EFI_ROOT_DIR"
+if [[ "$target_esp" == true ]]; then
+    # Mount and create the link EFI_ROOT_DIR -> ESP_MOUNT_POINT
+    ./MountESP "$DEST_VOL" "$EFI_ROOT_DIR" >> "$install_log" || exit 1
+else
+    ln -sf "$DEST_VOL" "$EFI_ROOT_DIR"
+fi
+
+# ---------------------------------------------
+# Preparing Backing up of Clover files
+# ---------------------------------------------
+old_revision='r0000'
+for cloverfile in BOOT/BOOTX64.efi CLOVER/CLOVERX64.efi CLOVER/CLOVERIA32.efi; do
+    cloverpath="${EFI_ROOT_DIR}/EFI/$cloverfile"
+    if [[ -f "$cloverpath" ]]; then
+        old_revision=r$(grep --text 'Clover revision:' "$cloverpath" | sed -nE 's/Clover revision: *([0-9]+).*/\1/p')
+        break
+    fi
+done
+
+keepBackupLimit=$(GetNVRamKey 'Clover.KeepBackupLimit')
+backupDirOnDestVol=$(GetNVRamKey 'Clover.BackupDirOnDestVol')
+if [[ "$backupDirOnDestVol" =~ N|n ]]; then
+    backupRootDir="$EFI_ROOT_DIR/EFI-Backups"
+    [[ -z "$keepBackupLimit" ]] && keepBackupLimit=0
+else
+    backupRootDir="$DEST_VOL/EFI-Backups" # backup on destination volume (default)
+    [[ -z "$keepBackupLimit" ]] && keepBackupLimit=10
+fi
+backupDir="${backupRootDir}/$old_revision/"$( date -j "+%F-%Hh%M" )
+
+# Remove old backup directories if needed
+if [[ "$keepBackupLimit" =~ [[:digit:]]+ ]]; then
+    index=1
+    while IFS= read -r -u3 -d $'\n' dir ;do # 'fix xemacs fontification
+        if [[ "$index" -ge "$keepBackupLimit" ]]; then
+            rm -rf "$dir"
+        fi
+        (( index++ ))
+    done 3< <(find "$backupRootDir" -type d -depth 2 2>/dev/null | tail -r)
+fi
+
+if [[ -n "$keepBackupLimit" && "$keepBackupLimit" -ne 0 ]]; then
+    # ---------------------------------------------
+    # Backing up Clover files
+    # ---------------------------------------------
+
+    # Create the backup directory
+    mkdir -p "$backupDir"
+
+    echo "======================================================" >> "$install_log"
+    echo "Backing up EFI files" >> "$install_log"
+    echo "" >> "$install_log"
+
+    # Backup stage2
+    if [ -f "$EFI_ROOT_DIR/boot" ];then
+        echo "Backing up stage2 file $EFI_ROOT_DIR/boot  to ${backupDir}/boot" >> "$install_log"
+        cp -p "$EFI_ROOT_DIR/boot" "${backupDir}/boot"
+    fi
+    if [ -f "$EFI_ROOT_DIR/boot1" ];then
+        echo "Backing up stage2 file $EFI_ROOT_DIR/boot1 to ${backupDir}/boot1" >> "$install_log"
+        cp -p "$EFI_ROOT_DIR/boot1" "${backupDir}/boot1"
+    fi
+    if [ -f "$EFI_ROOT_DIR/boot3" ];then
+        echo "Backing up stage2 file $EFI_ROOT_DIR/boot3 to ${backupDir}/boot3" >> "$install_log"
+        cp -p "$EFI_ROOT_DIR/boot3" "${backupDir}/boot3"
+    fi
+    if [ -f "$EFI_ROOT_DIR/boot6" ];then
+        echo "Backing up stage2 file $EFI_ROOT_DIR/boot6 to ${backupDir}/boot6" >> "$install_log"
+        cp -p "$EFI_ROOT_DIR/boot6" "${backupDir}/boot6"
+    fi
+
+    # Backup /EFI directory
+    if [ -d "$EFI_ROOT_DIR/EFI" ];then
+        echo "Backing up $EFI_ROOT_DIR/EFI folder to ${backupDir}/EFI"   >> "$install_log"
+        cp -pR "$EFI_ROOT_DIR/EFI" "${backupDir}/EFI"
+    fi
+
+    chflags -R nohidden "$backupDir" # Remove the invisible flag of files in the backups
+
+fi
+
+# Remove empty directories
+find "$backupRootDir" -type d -maxdepth 2 -empty -print0 2>/dev/null | xargs -0 rmdir
+find "$backupRootDir" -type d -maxdepth 1 -empty -print0 2>/dev/null | xargs -0 rmdir
+
+# Remove old CloverPrefpane
+pkg='@CLOVER_PACKAGE_IDENTITY@.cloverprefpane'
+location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null | sed -n 's/^location: *//p')
+pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
+  xargs -I @@ echo "$DEST_VOL/$location/@@"            | \
+  /usr/bin/grep -iE 'CloverUpdater|Clover.prefPane'    | \
+  xargs -I @@ rm -rf '@@'
+
+# Remove files of old revision.
+pkgs=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkgs | /usr/bin/grep -iE '@CLOVER_PACKAGE_IDENTITY@.' | /usr/bin/grep -Ev 'ntfs|apfs|hfsplus')
+for pkg in $pkgs; do
+    # Get where the files where installed from volume destination
+    location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null | sed -n 's/^location: *//p')
+    pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
+     xargs -I @@ echo "$DEST_VOL/$location/@@"             | \
+     /usr/bin/grep -iE 'EFI/CLOVER/(drivers\w+)/'   | \
+     xargs -I @@ rm -rf '@@'
+    rm -f "$DEST_VOL"/Library/Receipts/"$pkg".{plist,bom}
+    rm -f "$DEST_VOL"/var/db/receipts/"$pkg".{plist,bom}
+done
+
+# Move old drivers64 to drivers and drivers64UEFI to driversUEFI
+if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" && \
+    ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@" ]]; then
+  mkdir -p "${EFI_ROOT_DIR}/EFI/CLOVER/drivers"
+  cp -R "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
+
+  # Rename drivers to not use the -x64 suffix (DataHubDxe-64.efi -> DataHubDxe.efi).
+  # This is needed to let this package overwrite newer drivers w/o leaving duplicates with '-64'
+  if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@" ]]; then
+    cd "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_LEGACY@"
+    for driver in *.efi; do mv "${driver}" "${driver/-64.efi/.efi}"; done
+  fi
+fi
+
+if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" && \
+    ! -d "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@" ]]; then
+  mkdir -p "${EFI_ROOT_DIR}/EFI/CLOVER/drivers"
+  cp -R "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@"
+
+  # Rename drivers for this directory as well
+  if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@" ]]; then
+    cd "${EFI_ROOT_DIR}/EFI/CLOVER/drivers/@CLOVER_DRIVERS_UEFI@"
+    for driver in *.efi; do mv "${driver}" "${driver/-64.efi/.efi}"; done
+  fi
+fi
+
+
+# Remove old CloverEFI files
+#rm -fv "$EFI_ROOT_DIR"/boot{3,6,7}

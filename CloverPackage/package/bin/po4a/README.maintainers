@@ -1,0 +1,140 @@
+This document provides some general rules to deploy a translation process
+that will ease the work of maintainers (upstream and distribution
+maintainers) and translators (or translation teams).
+
+
+Translators usually fetch a POT (for a new translation) or retrieve the current
+PO for their language, then they translate the untranslated strings and
+update the translation of the strings marked as fuzzy.
+
+
+Updating files
+--------------
+
+Translators need to know if a PO has to be updated:
+ * they can verify the POs in the version control system or in the
+   distributed archives/packages
+ * they can be informed by the translation teams, which automatically
+   check the status of the POs in various packages.
+We want to avoid translators to be notified by a user reporting that
+some strings are not translated even if the PO contains neither untranslated nor
+fuzzy string.
+
+
+Thus it is important to ensure that the POTs are up-to-date with the
+original documents and that the POs contain the same strings as the
+POTs.
+
+ 1. Upstream maintainers should update the POTs according to the original
+    documents and update the POs according to these up-to-date POTs when they
+    distribute an archive.
+
+ 2. If the switch to po4a was done in a distribution, the source package
+    should also contain up-to-date translation materials.
+
+ 3. If the documentation is patched by the distribution, the maintainer
+    must not forget to update the POTs and POs.
+
+It is important to ensure that the translation materials are updated
+automatically.
+
+
+Architecture
+------------
+
+A standardized architecture of the source tree will help the translation
+teams when they try to detect the POTs that need to be updated.
+
+Thus we recommend the following architecture:
+
+  /
+  /doc/
+  /doc/en/
+  /doc/en/
+  /doc/po4a/
+  /doc/po4a/add_<ll>/
+  /doc/po4a/po4a.cfg
+  /doc/po4a/po/
+  /doc/po4a/po/<pkg>.pot
+  /doc/po4a/po/<ll>.po
+  /doc/translated/<ll>/
+
+Or, if you want to avoid a big POT and split it according to the packages,
+documents, formats, or subjects, you can use the following architecture:
+
+  /
+  /doc/
+  /doc/en/
+  /doc/en/
+  /doc/po4a/
+  /doc/po4a/add_<ll>/
+  /doc/po4a/<pkg1>/po4a.cfg
+  /doc/po4a/<pkg1>/po/
+  /doc/po4a/<pkg1>/po/<pkg1>.pot
+  /doc/po4a/<pkg1>/po/<ll>.po
+  /doc/translated/<ll>/
+
+
+It is important to avoid a build failure if a generated
+translation cannot be generated (the PO is too outdated, an addendum
+cannot be applied, etc.). You should therefore use wildcards or test if the file
+was generated in the 'install' or 'dist' rules
+
+
+Examples
+========
+
+Using po4a upstream
+-------------------
+When po4a is used upstream, we recommend to run po4a in the 'dist' rule.
+This will update the POT and POs, and will generate the translated documents.
+These translated documents can be distributed in the source archive if the
+maintainer don't want to add a build dependency on po4a. You should then
+add an autoconf check on po4a. It will allow you to update the documentation
+if po4a is available on your system. If po4a is not available, documents
+will be distributed without being synced with the original version, but the
+build process won't fail.
+
+It is important to distribute the POT and POs in the source archive.
+
+A typical dist rule could then be:
+
+dist:
+	po4a <package>.cfg
+	...
+
+If automake is used, the following could also be used.
+
+dist-hook:
+	po4a <package>.cfg
+	...
+
+
+Using po4a in a distribution
+----------------------------
+(Debian packaging is taken as an example, you will have to adapt this to
+your distribution)
+To ensure that the source of a Debian package contains only up-to-date POT
+and POs, you should run po4a in the 'clean' rule
+of debian/rules. The translated documents can be generated in the 'build'
+(or 'build-indep') rule:
+
+clean:
+	# Update the POT and POs
+	cd <...>/po4a && po4a --no-translations <package>.cfg
+	# Delete translated documentation
+	rm -rf <...>/translated
+
+build:
+	# Generate the translations
+	cd <...>/po4a && po4a <package>.cfg
+
+However, you should try to avoid distribution-specific build systems, to
+ensure the portability of your software.
+
+Or, if using po4a-build:
+
+dist:
+	# Update the POT and POs
+	po4a-build --pot-only -f po4a-build.conf
+	$(MAKE) -C po pot

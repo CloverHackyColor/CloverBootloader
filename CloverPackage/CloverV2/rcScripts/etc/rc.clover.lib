@@ -1,0 +1,109 @@
+#!/bin/bash
+
+#
+# rc functions library for CLOVER
+#
+# © JrCs 2013-2015
+
+
+##################### VARIABLES #####################
+
+# Export variables that can be used in custom scripts
+export DEBUG=${DEBUG:-0}
+
+declare -r CLOVER_LOG_LOCATION=/Library/Logs/CloverEFI
+export CLOVER_LOG_LOCATION
+
+##################### FUNCTIONS #####################
+
+#
+# get value of a nvram key
+#
+GetNVRamKey() {
+    # Arguments:
+    #    $1: nvram key to search (case insensitive)
+    # Return:
+    #    return the value of the nvram key
+    #    exit code is != 0 if the nvram key wasn't found
+    local keyvalue exitCode
+    local IFS=$(printf "\t")
+    keyvalue=( $(/usr/sbin/nvram -p | /usr/bin/grep -i "^${1}\t*" 2>/dev/null) )
+    exitCode=$?
+    [[ $exitCode -eq 0 ]] && echo "${keyvalue[1]}"
+    return $exitCode
+}
+export -f GetNVRamKey
+
+#
+# get value of a boot flag
+#
+GetBootFlags() {
+    # Arguments:
+    #    $1: boot flag key to search (case insensitive)
+    # Return:
+    #    return the value of the boot flag
+    #    exit code is != 0 if the boot flag wasn't found
+    local searchKey="$1"
+    local exitCode=1
+    local bootFlagValue=
+
+    local bootFlags=$(GetNVRamKey 'boot-args')
+
+    # Turn case-insensitive matching temporarily on, if necessary.
+    local nocasematchWasOff=0
+    shopt nocasematch >/dev/null || nocasematchWasOff=1
+    (( nocasematchWasOff )) && shopt -s nocasematch
+
+    for bootFlag in $bootFlags ; do
+        #
+        # Split the key and value
+        #
+        local bootFlagKey="${bootFlag%%=*}"
+        if [[ "$bootFlagKey" == "$searchKey" ]]; then
+            bootFlagValue=
+            [[ $bootFlag == *=* ]] && bootFlagValue="${bootFlag#*=}"
+            exitCode=0
+            break;
+        fi
+    done
+
+    # Restore state of 'nocasematch' option, if necessary.
+    (( nocasematchWasOff )) && shopt -u nocasematch
+
+    echo "$bootFlagValue"
+    return $exitCode
+}
+export -f GetBootFlags
+
+GetDiskGUIDFromDevice() {
+    local arg="$1"
+    # keep only the device name (remove /dev/ and partition (aka s1))
+    local device=$(echo "$arg" | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+    # get the GPT table
+    gpt_table=$(dd if=/dev/$device iseek=512 count=72 bs=1 2>/dev/null | xxd -u -ps -c 72)
+    # Check if it is a GPT partition table (EFI PART signature)
+    [[ ! "${gpt_table:0:16}" == 4546492050415254 ]] && return 1
+    printf "%s-%s-%s-%s-%s\n" \
+     "${gpt_table:118:2}${gpt_table:116:2}${gpt_table:114:2}${gpt_table:112:2}" \
+     "${gpt_table:122:2}${gpt_table:120:2}"                                     \
+     "${gpt_table:126:2}${gpt_table:124:2}"                                     \
+     "${gpt_table:128:4}" "${gpt_table:132:16}"
+}
+export -f GetDiskGUIDFromDevice
+
+####################### MAIN #######################
+
+#
+# Ensure log directory exists
+#
+[[ ! -d "${CLOVER_LOG_LOCATION}" ]] && mkdir -p "${CLOVER_LOG_LOCATION}"
+
+
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #

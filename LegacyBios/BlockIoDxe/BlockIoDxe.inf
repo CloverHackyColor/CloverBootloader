@@ -1,0 +1,72 @@
+## @file
+#  Component description file for BIOS Block IO module.
+#
+# Copyright (c) 1999 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+# This program and the accompanying materials
+# are licensed and made available under the terms and conditions
+# of the BSD License which accompanies this distribution.  The
+# full text of the license may be found at
+# http://opensource.org/licenses/bsd-license.php
+#
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BiosBlockIoDxe
+  FILE_GUID                      = 4495E47E-42A9-4007-8c17-B6664F909D04
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = BiosBlockIoDriverEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  BiosBlkIo.h
+  Edd.h
+  BiosBlkIo.c
+  BiosInt13.c
+  ComponentName.c
+  LegacyBiosThunk.c
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  DebugLib
+  BaseMemoryLib
+  UefiBootServicesTableLib
+  UefiLib
+  DevicePathLib
+  MemoryAllocationLib
+  MemLogLib
+
+
+[Protocols]
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiDevicePathProtocolGuid
+  gEfiPciIoProtocolGuid
+//gEfiLegacyBiosProtocolGuid
+  gEfiLegacy8259ProtocolGuid					 # PROTOCOL TO_START
+
+
+[Guids]
+//gEfiLegacyBiosGuid
+  gBlockIoVendorGuid
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-builtin -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
+  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG

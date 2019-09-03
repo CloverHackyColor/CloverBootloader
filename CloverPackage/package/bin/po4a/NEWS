@@ -1,0 +1,642 @@
+po4a NEWS
+
+=======================================================================
+
+* Major changes in release 0.45 (2013-08-21)
+
+po4a:
+ * Fix usage of File::Temp::tempfile to allow using Perl >= 5.18.
+
+Asciidoc:
+ * Make it a standalone format.
+
+Docbook:
+ * Make <beginpage> inline.
+
+Ini:
+ * Add key parameter as an automatic comment.  This allows using
+   po4a-gettextize on ini files.
+
+LaTeX:
+ * Fix handling of optional parameters in newtheorem command.
+
+Po:
+ * Fix computation of timezone written into PO files.
+
+Sgml:
+ * Fix failing tests with recent Docbook DTD.
+
+=======================================================================
+
+* Major changes in release 0.44 (2012-10-21)
+
+translations:
+ * Start of Portuguese translation
+
+=======================================================================
+
+* Major changes in release 0.43 (2012-10-17)
+
+po4a:
+ * Add --porefs option to change how file locations are written into
+   the POT file (and thus into the PO files also).
+
+po4a-updatepo po4a Po:
+ * Extend the --porefs option, add a new 'counter' value to replace
+   line number by an increasing counter.
+   An optional ",nowrap" or ",wrap" specifier can be added to tell
+   whether file locations are written on a single line or wrapped on
+   several lines.  Default is ",nowrap", it will be changed to ",wrap"
+   in a future release.
+
+Man:
+ * Make .UR/.UE macros inline.
+ * Add macros used in several NetBSD man pages: %I %U Brc Bro Lp Lk
+
+Text:
+ * Fix two line titles in AsciiDoc format.
+ * Let AsciiDoc format handle many more styles.
+ * Add support for automatic comments in AsciiDoc format.
+
+=======================================================================
+
+* Major changes in release 0.42 (2012-05-16)
+
+po4a:
+ * Allow adding command-line options after config file.
+
+Text:
+ * Add support for control files.
+
+msguntypot:
+ * Do not remove obsolete entries from PO files.
+
+documentation translations:
+ * New German translations
+ * Updated Spanish translations
+ * Updated French translations
+ * Updated Japanese translations
+ * Updated Polish translations
+
+=======================================================================
+
+* Major changes in release 0.41 (2010-12-01)
+
+po4a-updatepo:
+ * --previous flag was not passed to msgmerge
+
+po4a:
+ * Do no more generate backups for PO files.
+ * Fix the --srcdir option, master file was not found.
+ * Expand variables when reading @-prefixed addenda files.
+
+Text:
+ * Remove trailing newline in titles from PO files
+
+Packaging:
+ * Remove Makefile, all processing is performed by Build.PL 
+
+=======================================================================
+
+* Major changes in release 0.40.2 (2010-11-30)
+
+documentation:
+ * Improve English style (following recommendations from man(7))
+
+translations:
+ * Start of Danish translation
+ * Removal of Arabic translation, only one string was translated
+ * Updated Vietnamese translation
+ * Updated Slovenian translation
+ * Updated Basque translation
+ * Updated French translation
+ * Updated Japanese translation
+ * Updated Czech translation
+ * Updated German translation
+ * Updated Ukrainian translation
+ * Updated Esperanto translation
+ * Updated Estonian translation
+ * Updated Russian translation
+
+documentation translations:
+ * Updated Spanish translations
+ * Updated French translations
+ * Updated Japanese translations
+ * Updated Polish translations
+
+=======================================================================
+
+* Major changes in release 0.40.1 (2010-08-25)
+
+Po:
+ * Change header entry to be consistent with xgettext when creating
+   POT files: replace Content-Transfer-Encoding: ENCODING" by
+   "Content-Transfer-Encoding: 8bit\n" and add a Language field.
+
+documentation:
+ * Improve English style (proper casing, replace cvs by VCS, etc).
+
+translations:
+ * Updated French translations
+ * Updated Spanish translations
+ * Updated Japanese translations
+ * Updated Esperanto translations
+ * Updated Swedish translations
+ * Updated Russian translations
+ * Updated Estonian translations
+ * Updated Ukrainian translations
+ * Updated Czech translations
+ * Updated Portuguese translations
+ * Updated German translations
+
+Project resources:
+ * We migrated from CVS to SVN.  All CVS history has been converted.
+   See http://svn.debian.org/viewsvn/po4a/
+   The standard SVN layout is used (with top-level /trunk, /branches
+   and /tags directories), and the files to generate the website
+   (html/, po/html.cfg and po/www) are moved into a new /web
+   top-level directory.
+
+=======================================================================
+
+* Major changes in release 0.40 (2010-07-27)
+
+po4a-gettextize:
+ * When it fails, recode msgstr into current charset before
+   printing it.
+
+Text:
+ * Fix failures "Unknown option: copyright-holder"
+
+Man:
+ * Support font modifiers in the form \f(XX and \f[FONT-NAME]
+
+=======================================================================
+
+* Major changes in release 0.39 (2010-02-02)
+
+po4a
+ * New syntax for addenda, path may be preceded by modifiers.
+
+=======================================================================
+
+* Major changes in release 0.38 (2010-01-14)
+
+po4a
+ * Exit with an error if master file specified in a po4a configuration
+   file does not exist.
+
+po4a, po4a-updatepo:
+ * --previous is activated by default.
+ * Use --no-previous to support versions of gettext earlier than 0.16.
+
+Xml:
+ * Fix handling of multi-lines placeholder tags.
+ * New option addlang.
+
+Pod:
+ * Detect the encoding based on the input's =encoding line.
+
+=======================================================================
+
+* Major changes in release 0.37.1 (2009-11-22)
+
+po4a-build:
+ * Fix UTF8 handling and names of perl modules for section 3.
+ * Fix bug that caused translated manpages to be overwritten.
+
+=======================================================================
+
+* Major changes in release 0.37.0 (2009-11-20)
+
+po4a-build:
+ * New script for one-stop generation of untranslated and translated
+ documentation from DocBook XML and POD sources.
+
+translations:
+ * Updated Spanish translations.
+
+===============================================================================
+* Major changes in release 0.36.6 (2009-11-07)
+
+Text:
+ * Added options breaks and tabs.
+
+po4aman-display-po
+  * Fixed bashism.
+
+translations:
+ * Added Vietnamese translation
+ * Updated Czech translation
+ * Updated Spanish translation of the documentation
+
+===============================================================================
+* Major changes in release 0.36.5 (2009-09-10)
+
+Sgml:
+  * Fix detection of entities in the prolog.
+
+translations:
+ * Updated German translation
+ * Updated Portuguese translation
+
+===============================================================================
+* Major changes in release 0.36.4 (2009-08-30)
+
+po4a
+ * Added options --srcdir and --destdir. They permit to strip the base
+   directory for the input and output documents (in the config file and in
+   the references generated in the PO files).
+
+po4a-updatepo
+ * Added options --msgid-bugs-address, --copyright-holder, --package-name,
+   --package-version to control the generation of the PO header.
+
+translations:
+ * Updated Basque translation
+ * Updated Czech translation
+ * Updated Esperanto translation
+ * Improved Estonian translation.
+ * Updated French translation
+ * Updated Russian translation
+ * Updated Spanish translation.
+ * Updated Swedish translation.
+
+===============================================================================
+* Major changes in release 0.36.3 (2009-07-22)
+
+Bug fix release.
+po4a-gettextize's new options were rejected by the modules.
+
+===============================================================================
+* Major changes in release 0.36.2 (2009-07-21)
+
+po4apod-display-po
+ * New script to display previews of POD translations.
+po4a-gettextize
+ * Added options --msgid-bugs-address, --copyright-holder, --package-name,
+   --package-version to control the generation of the PO header.
+
+Text:
+ * Avoid the translation of some markups: title and horizontal rules.
+ * Improved Markdown support.
+Xml:
+ * New option customtag for inline tags that should not be treated as a
+   tag (e.g. they do not need to be closed).
+Wml:
+ * Fix handling of non ASCII input documents.
+
+===============================================================================
+* Major changes in release 0.36.1 (2009-04-05)
+
+TeX:
+ * Fix support for inline customization of separators.
+ * Fix support for double escapes, which should not introduce commands.
+LaTeX:
+ * Added support for the tabularx environment.
+Xml:
+ * Do not include commented out external entities (when includeexternal is
+   used).
+Pod:
+ * Do not add an =encoding header if the encoding is empty.
+
+===============================================================================
+* Major changes in release 0.36 (2009-03-15)
+
+general:
+ * The "type:" comments in the PO files are now tagged as extracted
+   comments (starting with #.). This changes all the PO files generated by
+   po4a. Maintainers should just let these changes pass through.
+   Translator may want to remove the comment lines starting with '# type:'
+   as they will be duplicates with the '#. type:' comments.
+
+Xml:
+ * Placeholders are presented with a type and have a more valid XML
+   representation. This changes the PO files, but translations could be
+   updated automatically.
+ * Do not fail when the doctype does not match the expected one. Only
+   issue a warning.
+ * The tags and tagsonly options are deprecated. Use the
+   translated/untranslated and break/inline/placeholder options instead.
+ * Added foldattributes option. Useful to simplify strings and avoid typos
+   when attributes shall not be translated.
+Man:
+ * Better handling of spaces in command arguments.
+TeX:
+ * Included files are searched with kpsewhich instead of using TEXINPUTS
+   directly.
+
+===============================================================================
+* Major changes in release 0.35 (2009-02-10)
+
+po4a
+ * Added support for the [po_directory] command in the configuration file.
+   It permits to avoid listing the supported languages.  Simply dropping a
+   new PO file should be sufficient.  It should be preferred over the
+   po4a_langs and po4a_paths commands.
+po4a-normalize:
+ * Added option -b, --blank to check which parts of a document are not
+   translated.
+po4a-gettextize:
+ * Improved conflict handling: indicate the reference of the alternatives
+   when the same string has different translations.
+
+general:
+ * Added support for a nowrapi18n option in Locale::Po4a::Common in
+   order to use Locale::Po4a programatically.
+
+packaging:
+ * Manpages are generated in utf-8. This requires a recent Pod::Man with
+   support for the utf8 option.
+
+Docbook:
+ * Improved support for Docbook 5 and Docbook 4, based on the official
+   documentation of the Docbook tags.
+Pod:
+ * Announce the encoding in the POD header.
+Sgml:
+ * Add support for recursive inclusion.
+Text:
+ * Added option asciidoc
+Xhtml:
+ * Improvements for the <u> tag.
+xml:
+ * Fix the nodefault option. Derivative modules should use _default_tags
+   and _default_inline to define the default behavior of their
+   module-specific tags (instead of tags and inline).
+ * Speed improvements.
+ * Added support for placeholders.
+
+===============================================================================
+* Major changes in release 0.34 (2008-07-20)
+
+** New features
+general:
+ * Do not end re-wrapped lines with a space.
+halibut:
+ * Added support for the Halibut format.
+sgml:
+ * Fix failures with big sgml documents ("broken pipe" received from
+   nsgmls -p).
+text:
+ * Added support for the Markdown format, as used with Ikiwiki.
+ * Make sure files are not mixed together when gettextized at the same
+   time.
+packaging:
+ * Fix build failures with old versions of Module::Build.
+
+===============================================================================
+* Major changes in release 0.33.3 (2008-04-02)
+
+po4a:
+ * Add options --package-name and --package-version (similar to xgettext's
+   options).
+
+translations:
+ * Actually ship Japanese translations.
+
+===============================================================================
+* Major changes in release 0.33.2 (2008-04-01)
+
+text:
+ * Added support for the fortunes format.
+
+translations:
+ * New Japanese translation.
+ * The manpages are generated in UTF-8.
+
+===============================================================================
+* Major changes in release 0.33.1 (2008-03-16)
+
+This is a bug fix release.
+
+man:
+ * Do not translate - to \- inside \*[...], \(.., \H'...', or \Z'...'.
+
+xml:
+ * Do not translate SSI comments by default.
+
+packaging:
+ * Fix the installation path of manpages and .mo files.
+
+===============================================================================
+* Major changes in release 0.33 (2008-03-03)
+
+Notes to packagers: Since 0.31, some tests in the sgml testsuite require
+the docbook sgml DTD. If you run the testsuite at build time you must have
+these DTD in your build dependencies or you must disable these tests
+cases in the testsuite.
+
+** New features
+  general: Support for PO files with plural forms.
+           Po4a does not generate such PO files, but it can receive one in
+           input. In such case, po4a cannot choose between the (singular
+           and) plural forms. It will consider that msgstr[0] is the
+           translation of msgid and msgstr[1] is the translation of
+           msgid_plural, which may be wrong. Thus, a warning will be
+           issued if po4a is asked to translate the singular or plural
+           form of a message with plural forms.
+
+  texinfo: Major changes. Tested on the elisp documentation.
+
+  sgml: Fail if nsgmls cannot validate the input file. This can be turned
+        off with the "force" option.
+
+  xml: New option "cpp" to support C preprocessor directives (this avoids
+       re-wrapping lines with preprocessor directives).
+  xml: New options "translated" and "untranslated" that should allow an
+       easier configuration of Xml (and derivative module)
+  xml: Avoid duplicated newlines at the end of lines of multi-lines
+       comments.
+  xml: Paragraphs which only consist in an inline tag are now extracted.
+       This makes a lot of string to available for translation in the PO
+       file.
+  docbook: Tested on the Docbook testsuite. Lots of tag added.
+
+  po4a: Fix failures with perl 5.10. Thanks to Roderich Schupp
+        <roderich.schupp@googlemail.com>
+
+  msguntypot: Fix handling of the comment of the PO header.
+
+===============================================================================
+* Major changes in release 0.32 (2007-08-15)
+
+** Security fix
+  Fix a symlink attack caused by the /tmp/gettextization.failed.po
+  temporary file.
+  (CVE-2007-4462)
+
+** Bug fixes
+
+  sgml: The handling of newlines was broken in no-wrap sections in 0.31
+
+  xhtml: The module is now distributed as the other modules.
+
+  texinfo: Fix infinite loop when a command parameter ends with \
+           (as in @samp{\})
+
+** New features
+
+  xml: New option includeexternal to support external entities.
+
+  texinfo: Added support for many commands and environment (see
+           changelog).
+
+  xhtml: New option includessi, which adds supports for Server Side
+         Includes include element (<!--#include virtual="/foo/bar.html" -->).
+
+  xml: New option ontagerror to control the behavior of the module in case
+       of error. This permits to support files that the module would
+       consider invalid otherwise.
+
+** Translations
+
+  New translations (Bengali, Estonian, Croatian, Indonesian, Kannada,
+  Korean, Occitan, Uzbek, Simplified Chinese, Chinese from Hong Kong) and
+  many updates.
+
+===============================================================================
+* Major changes in release 0.31 (2007-05-07)
+
+** Dependencies
+
+  po4a,
+  po4a-updatepo: New option --previous requires gettext 0.16.
+
+** Bug fixes
+
+  general: Don't hang when running in background with redirected stdout.
+           Thanks to Jim Meyering.
+
+** New features
+
+  general: po4a now uses timestamps to avoid re-generating a translation
+           if no changes are expected: if a translation is more recent
+           than its associated PO, master document, addenda or
+           configuration file, then there is no need to update it. For the
+           documents which do not pass the translation threshold, a
+           --stamp option was added to tell po4a to create files with a
+           .po4a-stamp extension (you can also create them manually).
+           This can save a lot of time when po4a knows that the
+           translation will not be generated because there were no changes
+           since the last po4a run.
+
+  general: Beginning of a C extension. This provides speedup. Testers are
+           welcomed.
+
+  po4a: New options: --msgid-bugs-address and --copyright-holder.
+
+  po4a: Add new tag: [options] to set global options (i.e. for every
+        documents in the configuration file).
+
+  po4a: Update translations based on modification times. Use timestamp to
+        avoid retrying generate uncompleted translations.
+
+  man: New 'unknown_macros' option to specify the behavior of po4a with
+       unknown groff macros.
+
+  man: Reset the configuration between two runs. This permits to define
+       different options for different files in a config file with the
+       opt:"..." parameters.
+
+===============================================================================
+* Major changes in release 0.30 (2007-01-05)
+
+** Bug fixes
+
+  man: Recode the text which is skipped, like comments.
+       This kind of issue may also appear on other modules.
+       A better solution would be to always use UTF-8 internally.
+
+  distribution: Some unit tests were missing.
+                Also, the dependencies have been simplified.
+                Locale::gettext, Text::WrapI18N, Term::ReadKey and SGMLS
+                are still recommended, but no more required.
+                The BibTex module is now distributed.
+
+  sgml: The module should be more friendly with XML files.
+
+  po4a: When po4a creates a new PO file, it now uses msginit. This may
+        change the header of created PO files.
+
+  guide: Major update of the tag definitions. Thanks to Azamat H.
+         Hackimov.
+
+  Po: use strftime instead of date because date is not available on
+      every platform.
+
+  tests: rename the XML testsuite to SGML, since it was testing the Sgml
+         module, and add a new testsuite for the Xml module (it currently
+         tests the Guide module).
+
+** Translations
+
+  Updated Russian translation.
+
+===============================================================================
+* Major changes in release 0.29 (2006-10-15)
+
+** New features
+
+** Bug fixes
+
+  sgml: Remove the tags from the default categories when they are defined
+  by the user.  This changes the behavior of the Sgml module's options.
+
+  sgml: Better line references in the generated PO.
+
+  sgml: Support for '/>' (empty XML tag closure) when an xml prologue is
+  found (<?xml ...?>).
+
+  po4a: When po4a create new PO files, it now uses msginit instead of
+  copying the POT file.
+
+===============================================================================
+* Major changes in release 0.29 (2006-10-15)
+
+** New features
+
+  New module for .INI files. Thanks to Costin Stroie.
+
+  New module for BibTeX bibliographies.
+
+  man: New mdoc option for stricter support of mdoc pages (NAME section
+  not translated).
+
+  text: Support for underlined text.
+
+  text: Support for bulleted paragraphs (can be deactivated with
+  -o nobullets).
+
+** Bug fixes
+
+  man: Keep empty commented lines.
+
+  man: Do not add spaces at the end of lines.
+
+  man: Languages without non breaking space could not use question marks.
+
+  sgml: Better support for verbatim sections, and consider <cmdsynopsis>
+  as verbatim. <arg> and <option> are now in the ignore category.
+
+  general: Length calculation algorithm changed for wrapping lines in the
+  output document or in the PO. This should improve output when files are
+  encoded in UTF-8.
+
+===============================================================================
+* Major changes in release 0.28 (2006-08-17)
+
+** Bug fixes
+
+  man: Fix for .I " " and other minor bug fixes.
+
+  tex/latex: Documentation and usability improvements.
+
+** Speed improvement
+
+  po4a: The POs are now only read once. This will speed the processing
+  when many documents are specified in a configuration file.
+
+** Translations
+
+  Updated French translation.

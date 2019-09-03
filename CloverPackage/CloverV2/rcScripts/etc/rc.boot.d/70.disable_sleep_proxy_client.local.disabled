@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#
+# disable mDNSResponder sleep proxy client
+# this will prevent the system waking from sleep every hours
+#
+# © JrCs 2013
+
+
+# Check that all variable are bound
+set -u
+
+#
+# Source clover rc library if needed
+#
+if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
+    selfDir=$(cd $(dirname "$0") && pwd -P)
+    source "${selfDir}"/../rc.clover.lib
+fi
+
+# Variables
+mDNSResponderPList=/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
+pListBuddy=/usr/libexec/PlistBuddy
+disableOption='-DisableSleepProxyClient'
+
+# Debug mode ?
+[[ "$DEBUG" -ne 0 ]] && set -x
+
+[[ ! -f "$mDNSResponderPList" ]] && exit 0
+
+# Check if sleep proxy is not already disabled
+already_disabled=$($pListBuddy -c 'Print ProgramArguments:' \
+ "$mDNSResponderPList" | grep -c -- "$disableOption")
+
+if [[ $already_disabled -eq 0 ]]; then
+    echo "Disabling mDNS responder sleep proxy"
+    $pListBuddy -c "Add ProgramArguments: string $disableOption" \
+     "$mDNSResponderPList"
+else
+    echo "mDNS responder sleep proxy already disabled"
+fi
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #

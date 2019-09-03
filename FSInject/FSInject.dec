@@ -1,0 +1,19 @@
+## @file
+#
+#  FSInject driver - Injecting folder into file system
+#
+##
+
+[Defines]
+  DEC_VERSION     = 0x00010005
+  PACKAGE_NAME    = FSInject
+  PACKAGE_GUID    = 49f0f393-7d52-49c0-8fa6-4304f73c0d42
+  PACKAGE_VERSION = 0.1
+
+[Includes]
+  ../Include
+  Include
+
+[Protocols]
+  ## Include/Protocol/FSInjectProtocol.h
+  gFSInjectProtocolGuid        = { 0x3F048284, 0x6D4C, 0x11E1, {0xA4, 0xD7, 0x37, 0xE3, 0x48, 0x24, 0x01, 0x9B } }

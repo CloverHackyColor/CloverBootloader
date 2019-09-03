@@ -1,0 +1,3 @@
+partutil
+build/
+**/xcshareddata/*.xccheckout

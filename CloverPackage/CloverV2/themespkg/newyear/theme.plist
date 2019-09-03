@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Slice</string>
+	<key>Description</key>
+	<string>Happy New Year</string>
+	<key>Theme</key>
+	<dict>
+		<key>Anime</key>
+		<array>
+			<dict>
+				<key>FrameTime</key>
+				<integer>200</integer>
+				<key>Frames</key>
+				<integer>27</integer>
+				<key>ID</key>
+				<integer>1</integer>
+				<key>Path</key>
+				<string>elka_1</string>
+			</dict>
+		</array>
+		<key>Background</key>
+		<dict>
+			<key>Path</key>
+			<string>snow.png</string>
+			<key>Type</key>
+			<string>Scale</string>
+		</dict>
+		<key>Badges</key>
+		<dict>
+			<key>Inline</key>
+			<false/>
+			<key>Show</key>
+			<false/>
+			<key>Swap</key>
+			<true/>
+		</dict>
+		<key>Banner</key>
+		<string>happy.png</string>
+		<key>Font</key>
+		<dict>
+			<key>CharWidth</key>
+			<integer>10</integer>
+			<key>Path</key>
+			<string>dark-wide.png</string>
+			<key>Type</key>
+			<string>Load</string>
+		</dict>
+		<key>Layout</key>
+		<dict>
+			<key>BannerOffset</key>
+			<integer>80</integer>
+		</dict>
+		<key>Selection</key>
+		<dict>
+			<key>Big</key>
+			<string>arrow-144.png</string>
+			<key>Color</key>
+			<string>0x1D7BEE80</string>
+			<key>OnTop</key>
+			<true/>
+			<key>Small</key>
+			<string>arrow-64.png</string>
+		</dict>
+	</dict>
+	<key>Year</key>
+	<string>2014</string>
+</dict>
+</plist>

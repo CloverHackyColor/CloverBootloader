@@ -1,0 +1,35 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "52d7a1c0-eba5-4e63-a9d7-e3186cd7c462",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "6f19259b-4bc3-4df7-8a09-765794883524++6387" : {
+
+    },
+    "52d7a1c0-eba5-4e63-a9d7-e3186cd7c462" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "6f19259b-4bc3-4df7-8a09-765794883524++6387" : 0,
+    "52d7a1c0-eba5-4e63-a9d7-e3186cd7c462" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "A1D65AEA-1949-405A-8D19-951F001B1757",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "6f19259b-4bc3-4df7-8a09-765794883524++6387" : "",
+    "52d7a1c0-eba5-4e63-a9d7-e3186cd7c462" : "Clover\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "EDK2",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Xcode\/EDK2\/EDK2.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn+ssh:\/\/svn.code.sf.net\/p\/cloverefiboot\/code",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "52d7a1c0-eba5-4e63-a9d7-e3186cd7c462"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/svn.code.sf.net\/p\/edk2\/code",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "6f19259b-4bc3-4df7-8a09-765794883524++6387"
+    }
+  ]
+}

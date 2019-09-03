@@ -1,0 +1,38 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "CloverEFI Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+DEST_VOL="${3}"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+installer_choice="@INSTALLER_CHOICE@"
+
+boottype='@CLOVER_EFI_ARCH@'
+cloverEFIFile='@CLOVER_BOOT_FILE@'
+
+echo "$boottype" > "${DEST_VOL}/boottype"
+
+if [[ -f "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
+    cp -v "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" "${EFI_ROOT_DIR}/boot"
+    #chflags hidden "${EFI_ROOT_DIR}/boot"
+    echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${EFI_ROOT_DIR}/boot" >> "$install_log"
+fi
+
+# Mark that the option was selected
+/usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null

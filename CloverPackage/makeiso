@@ -1,0 +1,199 @@
+#!/bin/bash
+#
+# Reset default charset for GNUsed problems...
+export LC_ALL=C
+
+# ====== GLOBAL VARIABLES ======
+declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/ebuild.sh
+declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/ebuild.sh
+declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/ebuild.sh
+
+# Check that the caller is make
+caller=$(ps -p $PPID -o comm=)
+if [[ "$caller" != "make" ]]; then
+    echo "Error: don't call the '$0' script directly !" >&2
+    echo "Use the 'make iso' command instead" >&2
+#    exit 1
+fi
+
+set -u
+
+# Go to the script directory to create the package
+cd "$(dirname $0)"
+
+plistbuddy='/usr/libexec/PlistBuddy'
+SRCROOT="$PWD"
+SYMROOT=${SRCROOT}/sym
+CLOVERROOT=${SRCROOT}/CloverV2
+PKG_BUILD_DIR=${SYMROOT}/package
+IMGROOT=${SYMROOT}/CloverCD
+IMGSKELROOT=${SRCROOT}/imgskel
+CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
+EFIROOT=${SRCROOT}/CloverV2/EFI
+
+REVISION=$(cat ../vers.txt)
+PRODUCT=Clover-v2.5k-${REVISION}
+CDLABEL=${PRODUCT}-X64
+ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
+
+THEME=embedded
+
+rm -rf sym/CloverCD
+rm -rf sym/CloverISO
+
+# Create a new sym directory
+[[ ! -d sym ]] && mkdir sym
+
+echo "====================== Creating cdboot ====================="
+mkdir -p ${SYMROOT}/i386
+cp -f ${CLOVERROOT}/BootSectors/cdboot ${SYMROOT}/i386/
+dd if=${CLOVERROOT}/Bootloaders/x64/boot6 of=${SYMROOT}/i386/cdboot conv=sync bs=2k seek=1 &> /dev/null
+
+echo Update cdboot with boot file size info
+declare -r SYSNAME="$(uname)"
+if [[ "$SYSNAME" == Linux ]]; then
+declare -r STAT_PARAM='-c%s'
+else
+declare -r STAT_PARAM='-f%z'
+fi
+stat "$STAT_PARAM" ${CLOVERROOT}/Bootloaders/x64/boot6 \
+ | perl -ane "print pack('V',@F[0]);" \
+ | dd of=${SYMROOT}/i386/cdboot bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
+
+
+echo "======================= Creating ISO ======================="
+echo "[RM] ${IMGROOT}"
+rm -rf ${IMGROOT}
+echo "[MKDIR] ${IMGROOT}/usr/standalone/i386"
+mkdir -p ${IMGROOT}/usr/standalone/i386
+mkdir -p ${IMGROOT}/usr/standalone/i386/x64
+echo "[MKDIR] ${IMGROOT}/EFI/BOOT"
+mkdir -p ${IMGROOT}/EFI/BOOT
+echo "[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
+mkdir -p ${IMGROOT}/EFI/CLOVER/themes/
+echo "[MKDIR] ${IMGROOT}/usr/bin"
+mkdir -p ${IMGROOT}/usr/bin
+echo "[MKDIR] ${IMGROOT}/usr/local/bin"
+mkdir -p "${IMGROOT}"/usr/local/bin
+cp -p "${SYMROOT}"/utils/* "${IMGROOT}"/usr/local/bin
+echo "[MKDIR] ${IMGROOT}/Library/Application Support/Clover"
+mkdir -p "${IMGROOT}/Library/Application Support/Clover"
+cp -p "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${IMGROOT}/Library/Application Support/Clover/"
+cp -pr "${SRCROOT}"/CloverUpdater/build/CloverUpdater.app "${IMGROOT}/Library/Application Support/Clover/"
+echo "[MKDIR] ${IMGROOT}/Library/PreferencePanes"
+mkdir -p "${IMGROOT}/Library/PreferencePanes"
+cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
+echo "[CP] cdboot"
+cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
+echo "[CP] $THEME"
+if [[ -d "${CLOVERROOT}/themespkg/$THEME" ]]; then
+cp -r -f ${CLOVERROOT}/themespkg/$THEME ${IMGROOT}/EFI/CLOVER/themes/
+fi
+
+
+echo "[CP] BOOTX64"
+cp -f ${CLOVERROOT}/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
+echo "[CP] CLOVERX64"
+cp -f ${CLOVERROOT}/EFI/CLOVER/CLOVERX64.efi ${IMGROOT}/EFI/CLOVER/
+
+# echo "CP font"
+# cp -r -f ${CLOVERROOT}/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
+# echo "CP config.plist"
+cp -f ${CLOVERROOT}/EFI/CLOVER/config-sample.plist ${IMGROOT}/EFI/CLOVER/config.plist
+$plistbuddy -c "Delete :GUI:Theme" "${IMGROOT}/EFI/CLOVER/config.plist" &>/dev/null
+$plistbuddy -c "Add :GUI:Theme string $THEME" "${IMGROOT}/EFI/CLOVER/config.plist" &>/dev/null
+echo "[CP] drivers/$DRIVERS_LEGACY"
+mkdir -p ${IMGROOT}/EFI/CLOVER/drivers
+cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY ${IMGROOT}/EFI/CLOVER/drivers/
+echo "[CP] drivers/$DRIVERS_UEFI"
+cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI ${IMGROOT}/EFI/CLOVER/drivers/
+echo "[CP] kexts and OEM"
+cp -r -f ${CLOVERROOT}/ThirdParty/* ${IMGROOT}/EFI/CLOVER/
+echo "[CP] tools"
+cp -r -f ${CLOVERROOT}/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
+echo "[CP] doc"
+cp -r -f ${CLOVERROOT}/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
+echo "[CP] drivers-off"
+
+# Regroup off drivers
+isoOffPath=${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF
+mkdir -p ${isoOffPath}
+find ${CLOVERROOT}/EFI/CLOVER/drivers -type f -name '*.efi' -exec cp -R {} "${isoOffPath}"/ \;
+
+# Mandatory UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/DataHubDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/FSInject.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+
+# File System UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/ApfsDriverLoader.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBoxHfs.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/Fat.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+
+# Memory fix UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OsxAptioFix3Drv.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+
+# HID UEFI
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/UsbMouseDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/Ps2MouseDxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+
+# File System BIOS
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/ApfsDriverLoader.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_LEGACY/
+
+echo "[CP] boot"
+cp -f ${CLOVERROOT}/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/
+
+cp -f ${CLOVERROOT}/BootSectors/boot0af  ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot0ss  ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot0md  ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1h   ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1h2  ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1f32 ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1f32alt ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1x    ${IMGROOT}/usr/standalone/i386
+cp -f ${CLOVERROOT}/BootSectors/boot1xalt ${IMGROOT}/usr/standalone/i386
+# #ifdef CONFIG_FDISK440
+# 	cp -f ${CLOVERROOT}/BootSectors/fdisk440 ${IMGROOT}/usr/bin
+# #endif
+rm -rf ${IMGROOT}/.s*
+rm -rf ${IMGROOT}/*/.s*
+rm -rf ${IMGROOT}/*/*/.s*
+rm -rf ${IMGROOT}/*/*/*/.s*
+rm -rf ${IMGROOT}/*/*/*/*/.s*
+echo "[HDIUTIL] ${ISOIMAGE}"
+mkdir -p ${SYMROOT}/CloverISO-${REVISION}
+
+if [[ "$SYSNAME" == Linux ]]; then
+genisoimage -J -hfs -hfs-volid ${CDLABEL} -D -b usr/standalone/i386/cdboot -no-emul-boot -quiet -o "${ISOIMAGE}" ${IMGROOT}
+else
+hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name ${CDLABEL}  \
+ -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o "${ISOIMAGE}"      \
+ ${IMGROOT} -quiet
+fi
+mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO-${REVISION}/
+echo "[TAR] CloverISO-${REVISION}"
+tar -cv -f ${SYMROOT}/CloverISO-${REVISION}.tar -C ${SYMROOT}/CloverISO-${REVISION} .
+echo "[LZMA] CloverISO-${REVISION}"
+
+if [[ "$SYSNAME" == Linux ]]; then
+xz -f -S .lzma ${SYMROOT}/CloverISO-${REVISION}.tar
+else
+${CLOVERROOT}/BootSectors/lzma e ${SYMROOT}/CloverISO-${REVISION}.tar ${SYMROOT}/CloverISO-${REVISION}.tar.lzma
+fi
+rm -rf ${SYMROOT}/CloverISO-${REVISION}.tar
+
+# Open the final folder.
+if [[ "${1:-}" == "" ]]; then
+    ls -la sym
+    [[ "$SYSNAME" != Linux ]] && open sym
+fi
+
+exit 0

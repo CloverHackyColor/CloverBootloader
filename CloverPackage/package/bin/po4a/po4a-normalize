@@ -1,0 +1,181 @@
+#! /usr/bin/env perl
+eval 'exec perl -S $0 ${1+"$@"}'
+    if $running_under_some_shell;
+
+# po4a-normalize -- normalize documentation files
+#
+# Copyright 2002-2012 by SPI, inc.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of GPL (see COPYING).
+
+=encoding UTF-8
+
+=head1 NAME
+
+po4a-normalize - normalize a documentation file by parsing it in po4a, and writing it back
+
+=head1 SYNOPSIS
+
+B<po4a-normalize> B<-f> I<fmt> I<master.doc>
+
+=head1 DESCRIPTION
+
+The po4a (PO for anything) project goal is to ease translations (and more
+interestingly, the maintenance of translations) using gettext tools on
+areas where they were not expected like documentation.
+
+The B<po4a-normalize> script is a debugging tool used to make sure that
+po4a don't change the document when it's not supposed to. Only use it if
+you're developing a new module, or if you doubt the sanity of the tools.
+
+The generated document will be written to F<po4a-normalize.output> while the
+generated PO file will be written to F<po4a-normalize.po>. No way to change
+that ;)
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-o>, B<--option>
+
+Extra option(s) to pass to the format plugin. Specify each option in the
+'I<name>B<=>I<value>' format. See the documentation of each plugin for more
+information about the valid options and their meanings.
+
+=item B<-b>, B<--blank>
+
+Create an blank translated document.
+The generated translated document will be generated assuming all messages
+are translated by a space or new line.
+
+This is useful to check what parts of the document cannot be translated.
+
+=item B<-h>, B<--help>
+
+Show a short help message.
+
+=item B<--help-format>
+
+List the documentation formats understood by po4a.
+
+=item B<-f>, B<--format>
+
+Format of the documentation you want to handle. Use the B<--help-format>
+option to see the list of available formats.
+
+=item B<-M>, B<--master-charset>
+
+Charset of the file containing the document to translate.
+
+=item B<-V>, B<--version>
+
+Display the version of the script and exit.
+
+=back
+
+=head1 SEE ALSO
+
+L<po4a-gettextize(1)>,
+L<po4a-translate(1)>,
+L<po4a-updatepo(1)>,
+L<po4a(7)>
+
+=head1 AUTHORS
+
+ Denis Barbier <barbier@linuxfr.org>
+ Nicolas François <nicolas.francois@centraliens.net>
+ Martin Quinson (mquinson#debian.org)
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2002-2012 by SPI, inc.
+
+This program is free software; you may redistribute it and/or modify it
+under the terms of GPL (see the COPYING file).
+
+=cut
+
+use 5.006;
+use strict;
+use warnings;
+
+use Locale::Po4a::Chooser;
+use Locale::Po4a::TransTractor;
+use Locale::Po4a::Common;
+
+use Getopt::Long qw(GetOptions);
+
+use Pod::Usage qw(pod2usage);
+
+Locale::Po4a::Common::textdomain('po4a');
+
+sub show_version {
+    Locale::Po4a::Common::show_version("po4a-normalize");
+    exit 0;
+}
+
+my ($blank,$help_fmt,$help,$type,$debug,$verbose,@options);
+my ($mastchar);
+Getopt::Long::Configure('no_auto_abbrev','no_ignore_case');
+GetOptions(
+        'help|h'       => \$help,
+        'help-format'  => \$help_fmt,
+        'format|f=s'   => \$type,
+
+        'blank|b'      => \$blank,
+
+        'master-charset|M=s'    => \$mastchar,
+
+        'option|o=s'   => \@options,
+
+        'verbose|v'    => \$verbose,
+        'debug|d'      => \$debug,
+        'version|V'    => \&show_version
+) or pod2usage();
+
+$help && pod2usage (-verbose => 1, -exitval => 0);
+$help_fmt && Locale::Po4a::Chooser::list(0);
+pod2usage () unless scalar @ARGV == 1;
+
+my %options = (
+    "verbose" => $verbose,
+    "debug" => $debug);
+foreach (@options) {
+    if (m/^([^=]*)=(.*)$/) {
+        $options{$1}="$2";
+    } else {
+        $options{$_}=1;
+    }
+}
+
+my $parser=Locale::Po4a::Chooser::new($type,%options);
+
+my $filename = shift || pod2usage(1);
+$filename eq '-' || -e $filename || die wrap_msg(gettext("File %s does not exist."), $filename);
+
+$parser->read($filename);
+$parser->{TT}{utf_mode} = 1;
+$parser->{TT}{file_in_charset} = $mastchar;
+$parser->parse();
+if ($blank) {
+    foreach my $msgid (keys %{$parser->{TT}{po_out}{po}}) {
+        if ($msgid =~ m/\n$/s) {
+            $parser->{TT}{po_out}{po}{$msgid}{'msgstr'} = "\n";
+        } else {
+            $parser->{TT}{po_out}{po}{$msgid}{'msgstr'} = " ";
+        }
+    }
+    my $empty_po = $parser->{TT}{po_out};
+    $parser = Locale::Po4a::Chooser::new($type,%options);
+    $parser->{TT}{po_in} = $empty_po;
+    $parser->read($filename);
+    $parser->{TT}{utf_mode} = 1;
+    $parser->{TT}{file_in_charset} = $mastchar;
+    $parser->parse();
+}
+$parser->write('po4a-normalize.output');
+$parser->writepo('po4a-normalize.po');
+
+__END__
+

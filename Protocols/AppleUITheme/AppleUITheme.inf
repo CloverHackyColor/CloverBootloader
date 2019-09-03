@@ -1,0 +1,47 @@
+## @file
+# Copyright (C) 2005 - 2015, Apple Inc.  All rights reserved.<BR>
+#
+# This program and the accompanying materials have not been licensed.
+# Neither is its usage, its redistribution, in source or binary form,
+# licensed, nor implicitely or explicitely permitted, except when
+# required by applicable law.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+# OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#  
+##
+
+[Defines]
+  BASE_NAME   = AppleUITheme
+  FILE_GUID   = 511CE688-2893-4398-BB31-813243E49696
+  MODULE_TYPE = UEFI_DRIVER
+  ENTRY_POINT = UserInterfaceThemeEntryPoint
+  INF_VERSION = 0x00010005
+  VERSION_STRING  = 1.0
+
+[Packages]
+  Clover/CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[Protocols]
+  gAppleUserInterfaceThemeProtocolGuid  ## PRODUCES
+  
+[Guids]
+  gEfiAppleNvramGuid
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+
+[Sources]
+  AppleUITheme.c
