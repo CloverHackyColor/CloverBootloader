@@ -22,7 +22,7 @@
   VERSION_STRING  = 1.0
 
 [Packages]
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
 

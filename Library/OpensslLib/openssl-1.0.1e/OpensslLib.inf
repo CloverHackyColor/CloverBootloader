@@ -24,7 +24,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   #CryptoPkg/CryptoPkg.dec
 
 #

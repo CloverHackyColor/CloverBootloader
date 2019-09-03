@@ -24,7 +24,7 @@
   ENTRY_POINT                    = DriverOverrideEntrypoint
   
 [Packages]
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
 

@@ -22,7 +22,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  Clover/CloverPkg.dec
+  CloverPkg.dec
 
 [LibraryClasses]
   DebugLib

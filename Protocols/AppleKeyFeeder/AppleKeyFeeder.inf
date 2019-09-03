@@ -24,7 +24,7 @@
   ENTRY_POINT                    = AppleKeyFeederEntrypoint
   
 [Packages]
-  Clover/CloverPkg.dec
+  CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
 

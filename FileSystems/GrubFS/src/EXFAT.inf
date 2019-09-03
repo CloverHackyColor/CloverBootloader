@@ -34,9 +34,9 @@
 
 [Packages]
         MdePkg/MdePkg.dec
-        Clover/ShellPkg/ShellPkg.dec
+        ShellPkg/ShellPkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-        Clover/CloverPkg.dec
+        CloverPkg.dec
         Clover/FileSystems/GrubFS/efifs.dec
 
 [LibraryClasses]

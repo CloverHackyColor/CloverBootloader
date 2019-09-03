@@ -23,7 +23,7 @@
   ENTRY_POINT                    = FSInjectEntrypoint
 
 [Packages]
-  Clover/FSInject/FSInject.dec
+  FSInject/FSInject.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
 

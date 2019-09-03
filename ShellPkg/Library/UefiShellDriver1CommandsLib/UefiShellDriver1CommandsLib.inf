@@ -40,7 +40,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  Clover/ShellPkg/ShellPkg.dec
+  ShellPkg/ShellPkg.dec
   MdeModulePkg/MdeModulePkg.dec
 
 [LibraryClasses]
