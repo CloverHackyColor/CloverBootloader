@@ -84,6 +84,9 @@ Headers collection for procedures
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
+#define PCAT_RTC_ADDRESS_REGISTER 0x70
+#define PCAT_RTC_DATA_REGISTER    0x71
+
 
 /* XML Tags */
 #define kXMLTagPList     "plist"

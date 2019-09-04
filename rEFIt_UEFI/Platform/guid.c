@@ -71,6 +71,12 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 // 56 10 8C BD 36 9F EC 44 92 A8 A6 33 7F 81 79 86 ==
 // BD8C1056-9F36-44EC-92A8-A6337F817986 gEfiEdidActiveProtocolGuid
 // 26baccba-6f42-11d4-bce7-008081883cc7
+// 63FAECF2-E7EE-4CB9-8A0C-11CE5E89E33C protocol at FinalizeBootStruct or DrawBootGraphics
+// 03B99B90-ECCF-451D-809E-8341FCB830AC RestartData protocol
+// 24B73556-2197-4702-82A8-3E1337DAFBF2 before Firmware password
+// 24B73556-2197-4702-82A8-3E1337DAFBF3
+// 1BAD711C-D451-4241-B1F3-8537812E0C70 GUID for MeBiosExtensionSetup variable
+// 36C28AB5-6566-4C50-9EBD-CBB920F83843:preferred-networks gAppleWirelessNetworkVariableGuid
 
 /*
  * Copyright (c) 2007 Apple Inc. All rights reserved.
