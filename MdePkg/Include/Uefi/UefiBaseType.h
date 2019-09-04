@@ -4,7 +4,13 @@
 Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
 Portions copyright (c) 2011 - 2016, ARM Ltd. All rights reserved.<BR>
 
-SPDX-License-Identifier: BSD-2-Clause-Patent
+This program and the accompanying materials are licensed and made available under
+the terms and conditions of the BSD License that accompanies this distribution.
+The full text of the license may be found at
+http://opensource.org/licenses/bsd-license.php.
+
+THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
@@ -244,14 +250,14 @@ typedef union {
 #if   defined (MDE_CPU_IA32)
 
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED(Machine) \
-  (((Machine) == EFI_IMAGE_MACHINE_IA32) || ((Machine) == EFI_IMAGE_MACHINE_EBC))
+  ((Machine) == EFI_IMAGE_MACHINE_IA32)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine) ((Machine) == EFI_IMAGE_MACHINE_X64)
 
 #elif defined (MDE_CPU_X64)
 
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED(Machine) \
-  (((Machine) == EFI_IMAGE_MACHINE_X64) || ((Machine) == EFI_IMAGE_MACHINE_EBC))
+  ((Machine) == EFI_IMAGE_MACHINE_X64)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine) ((Machine) == EFI_IMAGE_MACHINE_IA32)
 
@@ -264,7 +270,7 @@ typedef union {
 #elif defined (MDE_CPU_AARCH64)
 
 #define EFI_IMAGE_MACHINE_TYPE_SUPPORTED(Machine) \
-  (((Machine) == EFI_IMAGE_MACHINE_AARCH64) || ((Machine) == EFI_IMAGE_MACHINE_EBC))
+  ((Machine) == EFI_IMAGE_MACHINE_AARCH64)
 
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine) (FALSE)
 

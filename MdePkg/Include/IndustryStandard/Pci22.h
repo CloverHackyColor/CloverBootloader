@@ -9,13 +9,7 @@
 
   Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
   Copyright (c) 2014 - 2015, Hewlett-Packard Development Company, L.P.<BR>
-  This program and the accompanying materials
-  are licensed and made available under the terms and conditions of the BSD License
-  which accompanies this distribution.  The full text of the license may be found at
-  http://opensource.org/licenses/bsd-license.php
-
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+  SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
@@ -33,74 +27,74 @@
 /// Section 6.1, PCI Local Bus Specification, 2.2
 ///
 typedef struct {
-  UINT16  VendorId;   //0
-  UINT16  DeviceId;   //2
-  UINT16  Command;    //4
-  UINT16  Status;     //6
-  UINT8   RevisionID; //8
-  UINT8   ClassCode[3];   //9
-  UINT8   CacheLineSize;  //c
-  UINT8   LatencyTimer;   //d
-  UINT8   HeaderType;     //e
-  UINT8   BIST;           //f
-} PCI_DEVICE_INDEPENDENT_REGION; //len=0x10
+  UINT16  VendorId;
+  UINT16  DeviceId;
+  UINT16  Command;
+  UINT16  Status;
+  UINT8   RevisionID;
+  UINT8   ClassCode[3];
+  UINT8   CacheLineSize;
+  UINT8   LatencyTimer;
+  UINT8   HeaderType;
+  UINT8   BIST;
+} PCI_DEVICE_INDEPENDENT_REGION;
 
 ///
 /// PCI Device header region in PCI Configuration Space
 /// Section 6.1, PCI Local Bus Specification, 2.2
 ///
 typedef struct {
-  UINT32  Bar[6];             //0
-  UINT32  CISPtr;             //18
-  UINT16  SubsystemVendorID;  //1c
-  UINT16  SubsystemID;        //1e
-  UINT32  ExpansionRomBar;    //20
-  UINT8   CapabilityPtr;      //24
-  UINT8   Reserved1[3];       //25
-  UINT32  Reserved2;          //28
-  UINT8   InterruptLine;      //2c
-  UINT8   InterruptPin;       //2d
-  UINT8   MinGnt;             //2e
-  UINT8   MaxLat;             //2f
-} PCI_DEVICE_HEADER_TYPE_REGION; //len=0x30
+  UINT32  Bar[6];
+  UINT32  CISPtr;
+  UINT16  SubsystemVendorID;
+  UINT16  SubsystemID;
+  UINT32  ExpansionRomBar;
+  UINT8   CapabilityPtr;
+  UINT8   Reserved1[3];
+  UINT32  Reserved2;
+  UINT8   InterruptLine;
+  UINT8   InterruptPin;
+  UINT8   MinGnt;
+  UINT8   MaxLat;
+} PCI_DEVICE_HEADER_TYPE_REGION;
 
 ///
 /// PCI Device Configuration Space
 /// Section 6.1, PCI Local Bus Specification, 2.2
 ///
 typedef struct {
-  PCI_DEVICE_INDEPENDENT_REGION Hdr;    //0
-  PCI_DEVICE_HEADER_TYPE_REGION Device; //10
-} PCI_TYPE00;  //len=0x40
+  PCI_DEVICE_INDEPENDENT_REGION Hdr;
+  PCI_DEVICE_HEADER_TYPE_REGION Device;
+} PCI_TYPE00;
 
 ///
 /// PCI-PCI Bridge header region in PCI Configuration Space
 /// Section 3.2, PCI-PCI Bridge Architecture, Version 1.2
 ///
 typedef struct {
-  UINT32  Bar[2];                   //0
-  UINT8   PrimaryBus;               //8
-  UINT8   SecondaryBus;             //9
-  UINT8   SubordinateBus;           //a
-  UINT8   SecondaryLatencyTimer;    //b
-  UINT8   IoBase;                   //c
-  UINT8   IoLimit;                  //d
-  UINT16  SecondaryStatus;          //e
-  UINT16  MemoryBase;               //10
-  UINT16  MemoryLimit;              //12
-  UINT16  PrefetchableMemoryBase;   //14
-  UINT16  PrefetchableMemoryLimit;  //16
-  UINT32  PrefetchableBaseUpper32;  //18
-  UINT32  PrefetchableLimitUpper32; //1c
-  UINT16  IoBaseUpper16;            //20
-  UINT16  IoLimitUpper16;           //22
-  UINT8   CapabilityPtr;            //24
-  UINT8   Reserved[3];              //25
-  UINT32  ExpansionRomBAR;          //28
-  UINT8   InterruptLine;            //2c
-  UINT8   InterruptPin;             //2d
-  UINT16  BridgeControl;            //2e
-} PCI_BRIDGE_CONTROL_REGISTER;      //len=0x30
+  UINT32  Bar[2];
+  UINT8   PrimaryBus;
+  UINT8   SecondaryBus;
+  UINT8   SubordinateBus;
+  UINT8   SecondaryLatencyTimer;
+  UINT8   IoBase;
+  UINT8   IoLimit;
+  UINT16  SecondaryStatus;
+  UINT16  MemoryBase;
+  UINT16  MemoryLimit;
+  UINT16  PrefetchableMemoryBase;
+  UINT16  PrefetchableMemoryLimit;
+  UINT32  PrefetchableBaseUpper32;
+  UINT32  PrefetchableLimitUpper32;
+  UINT16  IoBaseUpper16;
+  UINT16  IoLimitUpper16;
+  UINT8   CapabilityPtr;
+  UINT8   Reserved[3];
+  UINT32  ExpansionRomBAR;
+  UINT8   InterruptLine;
+  UINT8   InterruptPin;
+  UINT16  BridgeControl;
+} PCI_BRIDGE_CONTROL_REGISTER;
 
 ///
 /// PCI-to-PCI Bridge Configuration Space
@@ -121,26 +115,26 @@ typedef union {
 /// Section 4.5.1, PC Card Standard. 8.0
 ///
 typedef struct {
-  UINT32  CardBusSocketReg;     ///< Cardus Socket/ExCA Base  //0
-  UINT8   Cap_Ptr;                                            //4
+  UINT32  CardBusSocketReg;     ///< Cardus Socket/ExCA Base
+  UINT8   Cap_Ptr;
   UINT8   Reserved;
-  UINT16  SecondaryStatus;      ///< Secondary Status         //6
-  UINT8   PciBusNumber;         ///< PCI Bus Number           //8
-  UINT8   CardBusBusNumber;     ///< CardBus Bus Number       //9
-  UINT8   SubordinateBusNumber; ///< Subordinate Bus Number   //a
-  UINT8   CardBusLatencyTimer;  ///< CardBus Latency Timer    //b
-  UINT32  MemoryBase0;          ///< Memory Base Register 0   //c
-  UINT32  MemoryLimit0;         ///< Memory Limit Register 0  //10
-  UINT32  MemoryBase1;                                        //14
-  UINT32  MemoryLimit1;                                       //18
-  UINT32  IoBase0;                                            //1c
-  UINT32  IoLimit0;             ///< I/O Base Register 0      //20
-  UINT32  IoBase1;              ///< I/O Limit Register 0     //24
-  UINT32  IoLimit1;                                           //28
-  UINT8   InterruptLine;        ///< Interrupt Line           //2c
-  UINT8   InterruptPin;         ///< Interrupt Pin            //2d
-  UINT16  BridgeControl;        ///< Bridge Control           //2e
-} PCI_CARDBUS_CONTROL_REGISTER;   //len=0x30
+  UINT16  SecondaryStatus;      ///< Secondary Status
+  UINT8   PciBusNumber;         ///< PCI Bus Number
+  UINT8   CardBusBusNumber;     ///< CardBus Bus Number
+  UINT8   SubordinateBusNumber; ///< Subordinate Bus Number
+  UINT8   CardBusLatencyTimer;  ///< CardBus Latency Timer
+  UINT32  MemoryBase0;          ///< Memory Base Register 0
+  UINT32  MemoryLimit0;         ///< Memory Limit Register 0
+  UINT32  MemoryBase1;
+  UINT32  MemoryLimit1;
+  UINT32  IoBase0;
+  UINT32  IoLimit0;             ///< I/O Base Register 0
+  UINT32  IoBase1;              ///< I/O Limit Register 0
+  UINT32  IoLimit1;
+  UINT8   InterruptLine;        ///< Interrupt Line
+  UINT8   InterruptPin;         ///< Interrupt Pin
+  UINT16  BridgeControl;        ///< Bridge Control
+} PCI_CARDBUS_CONTROL_REGISTER;
 
 //
 // Definitions of PCI class bytes and manipulation macros.

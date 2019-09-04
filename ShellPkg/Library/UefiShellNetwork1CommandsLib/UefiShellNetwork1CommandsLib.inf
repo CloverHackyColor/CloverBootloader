@@ -34,6 +34,7 @@
   MdePkg/MdePkg.dec
   ShellPkg/ShellPkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  NetworkPkg/NetworkPkg.dec
 
 [LibraryClasses]
   MemoryAllocationLib

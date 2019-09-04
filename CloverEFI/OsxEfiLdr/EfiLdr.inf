@@ -26,8 +26,8 @@
 [Packages]
 	CloverPkg.dec
   MdePkg/MdePkg.dec
-#  MdeModulePkg/MdeModulePkg.dec
-  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+#  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 
 [LibraryClasses]
   BaseLib

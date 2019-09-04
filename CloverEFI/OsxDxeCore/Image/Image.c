@@ -190,7 +190,7 @@ CoreInitializeImageServices (
   mDxeCoreImageMachineType = PeCoffLoaderGetMachineType (Image->Info.ImageBase);
   gDxeCoreImageHandle = Image->Handle;
   gDxeCoreLoadedImage = &Image->Info;
-
+/*
   if (FeaturePcdGet (PcdFrameworkCompatibilitySupport)) {
     //
     // Export DXE Core PE Loader functionality for backward compatibility.
@@ -202,7 +202,7 @@ CoreInitializeImageServices (
                &mLoadPe32PrivateData.Pe32Image
                );
   }
-
+*/
   return Status;
 }
 
