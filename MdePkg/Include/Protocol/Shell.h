@@ -1262,7 +1262,7 @@ extern EFI_GUID gEfiShellProtocolGuid;
 
 enum ShellVersion {
   SHELL_MAJOR_VERSION = 2,
-  SHELL_MINOR_VERSION = 204
+  SHELL_MINOR_VERSION = 205
 };
 
 #endif

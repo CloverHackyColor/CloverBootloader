@@ -48,9 +48,9 @@ rem # get the current revision number
 :getrevision
   rem  get svn revision number
   set F_VER_TXT=vers.txt
-  svnversion -n>%F_VER_TXT%
+rem #  svnversion -n>%F_VER_TXT%
   set /P s=<%F_VER_TXT%
-  del %F_VER_TXT%
+rem #  del %F_VER_TXT%
   set SVNREVISION=
 
 rem # get the current revision number
@@ -143,6 +143,7 @@ rem # setup build
   if defined EDK_TOOLS_BIN (
     set "BASETOOLS_DIR=%EDK_TOOLS_BIN%"
   )
+  set "NASM_INC=-I%WORKSPACE%\MdePkg\Include\X64"
 
   rem # pass 1-call param
   if defined EDK_BUILDINFOS goto getEDKBuildInfos

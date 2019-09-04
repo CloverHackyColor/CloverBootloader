@@ -166,6 +166,7 @@
 	CloverPkg.dec
     MdePkg/MdePkg.dec
     MdeModulePkg/MdeModulePkg.dec
+	NetworkPkg/NetworkPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 
