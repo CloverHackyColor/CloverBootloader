@@ -143,7 +143,7 @@ rem # setup build
   if defined EDK_TOOLS_BIN (
     set "BASETOOLS_DIR=%EDK_TOOLS_BIN%"
   )
-  set "NASM_INC=-I%WORKSPACE%\MdePkg\Include\X64"
+  set NASM_INC=
 
   rem # pass 1-call param
   if defined EDK_BUILDINFOS goto getEDKBuildInfos
