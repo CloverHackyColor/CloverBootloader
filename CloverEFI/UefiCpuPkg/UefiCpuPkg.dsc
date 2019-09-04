@@ -35,7 +35,7 @@
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
-  MtrrLib|UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
+  MtrrLib|CloverEFI/UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
@@ -48,7 +48,7 @@
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   TimerLib|MdePkg/Library/BaseTimerLibNullTemplate/BaseTimerLibNullTemplate.inf
   DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
-  LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
+  LocalApicLib|CloverEFI/UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf  
 
 [LibraryClasses.common.PEIM]
@@ -74,16 +74,16 @@
 #
 
 [Components]
-  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  UefiCpuPkg/CpuIoPei/CpuIoPei.inf
-  UefiCpuPkg/Library/SecPeiDxeTimerLibUefiCpu/SecPeiDxeTimerLibUefiCpu.inf
+  CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+  CloverEFI/UefiCpuPkg/CpuIoPei/CpuIoPei.inf
+  CloverEFI/UefiCpuPkg/Library/SecPeiDxeTimerLibUefiCpu/SecPeiDxeTimerLibUefiCpu.inf
 
 [Components.IA32, Components.X64]
-  UefiCpuPkg/CpuDxe/CpuDxe.inf
-  UefiCpuPkg/CpuIo2Smm/CpuIo2Smm.inf
-  UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
-  UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
-  UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
-  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
+  CloverEFI/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  CloverEFI/UefiCpuPkg/CpuIo2Smm/CpuIo2Smm.inf
+  CloverEFI/UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
+  CloverEFI/UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
+  CloverEFI/UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
+  CloverEFI/UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
+  CloverEFI/UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 

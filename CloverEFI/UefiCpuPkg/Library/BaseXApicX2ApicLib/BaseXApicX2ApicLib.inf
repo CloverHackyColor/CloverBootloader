@@ -34,7 +34,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  UefiCpuPkg/UefiCpuPkg.dec
+  CloverEFI/UefiCpuPkg/UefiCpuPkg.dec
 
 [LibraryClasses]
   BaseLib
