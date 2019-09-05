@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-18 20:56+0300\n"
+"POT-Creation-Date: 2019-09-05 20:35+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: en <en@li.org>\n"
-"Language: en\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -77,8 +77,11 @@ msgstr "Clover v2.5k"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "est un programme open source basé sur différents projets : Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"est un programme open source basé sur différents projets : Clover, rEFIt, "
+"XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -102,18 +105,29 @@ msgstr "Démarrer macOS 10.xx, Windows UEFI et Linux UEFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Clover est un gestionnaire EFI qui fournit un environnement pour différents Systèmes d’Exploitation lorsque c’est impossible avec d’autres chargeurs de démarrage plus anciens"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Clover est un gestionnaire EFI qui fournit un environnement pour différents "
+"Systèmes d’Exploitation lorsque c’est impossible avec d’autres chargeurs de "
+"démarrage plus anciens"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Clover détecte automatiquement votre matériel et le configure par défaut. Libre à vous de modifier les paramètres en éditant le fichier config.plist."
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Clover détecte automatiquement votre matériel et le configure par défaut. "
+"Libre à vous de modifier les paramètres en éditant le fichier config.plist."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Avec Clover vous pouvez changer d’OS à partir du disque de démarrage dans les Préférences Système"
+msgstr ""
+"Avec Clover vous pouvez changer d’OS à partir du disque de démarrage dans "
+"les Préférences Système"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -133,7 +147,9 @@ msgstr "La gestion ACPI sera actualisée au standard 4.0"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Votre propre DSDT peut être prise en charge à partir de la partition active ou depuis le dossier EFI"
+msgstr ""
+"Votre propre DSDT peut être prise en charge à partir de la partition active "
+"ou depuis le dossier EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -147,13 +163,19 @@ msgstr "RestartFix, sleep/wake et valeur PCIRootUID personnalisable"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Injection de propriétés graphiques pour ATI, Nvidia et Intel pour un large choix de cartes. Également paramétrable"
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Injection de propriétés graphiques pour ATI, Nvidia et Intel pour un large "
+"choix de cartes. Également paramétrable"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
 msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "Corrections pour l’USB (LegacyOff, Ownership, Builtin, clock-id) jusqu’à l’USB 3.0"
+msgstr ""
+"Corrections pour l’USB (LegacyOff, Ownership, Builtin, clock-id) jusqu’à "
+"l’USB 3.0"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
@@ -168,7 +190,8 @@ msgstr "Générateur pour le mode Turbo du CPU et des états P et C"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "Chargement des tables ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI…)"
+msgstr ""
+"Chargement des tables ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI…)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -187,13 +210,19 @@ msgstr "Définition de variables NVRAM pour différentes situations"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Démarrage par défaut après compte à rebours, interface graphique modifiable, sauvegarde de captures d’écran dans l’interface avec la touche F10"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Démarrage par défaut après compte à rebours, interface graphique modifiable, "
+"sauvegarde de captures d’écran dans l’interface avec la touche F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "Sauvegarde du fichier boot.log dans l’OS et preboot.log dans l’interface avec la touche F2"
+msgstr ""
+"Sauvegarde du fichier boot.log dans l’OS et preboot.log dans l’interface "
+"avec la touche F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -1418,4 +1447,6 @@ msgstr "Inconnu"
 #~ msgstr "USB 3.0 driver, 32 bit."
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+#~ msgstr ""
+#~ "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use "
+#~ "with other AptioFix together."

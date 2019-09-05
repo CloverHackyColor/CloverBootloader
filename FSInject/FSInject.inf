@@ -42,6 +42,7 @@
 [Sources]
   FSInject.h
   FSInject.c
+  ../Include/Protocol/FSInjectProtocol.h
   Test.h
   Test.c
 
