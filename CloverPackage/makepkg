@@ -67,6 +67,7 @@ if [[ -n "$xcode_path" ]]; then
   # Make CloverUpdater
   "${SRCROOT}"/CloverUpdater/translate_xib.sh # workaround for a bug in Xcode 10 Beta
   make -C "${SRCROOT}"/CloverUpdater || exit $?
+echo alive
   # Make CloverPrefpane
   "${SRCROOT}"/CloverPrefpane/translate_xib.sh # workaround for a bug in Xcode 10 Beta
   "${SRCROOT}"/CloverPrefpane/translate_source.sh # workaround for a bug in Xcode 10 Beta
