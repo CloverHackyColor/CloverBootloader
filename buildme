@@ -7,20 +7,9 @@ fi
 
 cd "$(dirname $0)"
 declare -r CLOVERROOT="$PWD"
-declare -r EDK2ROOT=$(dirname $CLOVERROOT)
 declare -r TOOLCHAIN=XCODE8
-declare -r PATCHES=Patches_for_UDK2018
 
-
-TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $EDK2ROOT)/opt/local}
-
-if [[ $PATCHES == Patches_for_UDK2018 ]]; then
-  declare -r edk2Rel=vUDK2018
-  edk2Link=https://codeload.github.com/tianocore/edk2/zip/vUDK2018 # UDK2018
-else
-  declare -r edk2Rel=edk2-stable201905
-  edk2Link=https://github.com/tianocore/edk2/archive/${edk2Rel}.zip # edk2-stable201905
-fi
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
 
 # Functions
 pathmunge() {
@@ -33,24 +22,6 @@ if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
 fi
 }
 
-checkSRCName() {
-local srcName=$(basename $(dirname $EDK2ROOT))
-if [[ $srcName != src ]] && [[ ! -d "${EDK2ROOT}"/BaseTools ]]; then
-  echo "Usually Clover is inside a folder called src (../src/edk2/), but yours is called $srcName"
-  echo "is:"
-  echo "${EDK2ROOT}/"
-  echo "the right path where all edk2 files will be decompressed?"
-  read -p "Are you sure? " -n 1 -r
-  echo    # (optional) move to a new line
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "ok, proceeding.."
-  else
-    echo "Is advised that Clover will stay inside this path:"
-    echo "$HOME/src/edk2/"
-    exit 1
-  fi
-fi
-}
 
 checkXCODE() {
 echo "[CHECK XCODE]"
@@ -124,7 +95,7 @@ exportPaths() {
 pathmunge "$(xcode-select --print-path)"/usr/bin
 pathmunge "$TOOLCHAIN_DIR"/bin
 export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
-export DIR_MAIN=${DIR_MAIN:-$(dirname $EDK2ROOT)}
+export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
 export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
 export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
@@ -138,47 +109,25 @@ checkNASM
 checkGETTEXT
 }
 
-updateEDK2() {
-echo "[UPDATE EDKII]"
-checkSRCName
-checkXCODE
-exportPaths
-rm -f "${DIR_DOWNLOADS}/${edk2Rel}.zip"
-curl -o "${DIR_DOWNLOADS}/${edk2Rel}.zip" $edk2Link || exit 1
-cd "${EDK2ROOT}"
-find . -maxdepth 1 ! -name $(basename $CLOVERROOT) -delete
-echo "extracting files from edk2 archive:"
-bsdtar -vxf "${DIR_DOWNLOADS}/${edk2Rel}.zip"  -s'|[^/]*/||'
-rm -f "${DIR_DOWNLOADS}/${edk2Rel}.zip"
-}
 
-patchEDK2() {
-echo "[$PATCHES]"
-cp -R "${CLOVERROOT}"/$PATCHES/* "${EDK2ROOT}"/
-}
-
-updateClover() {
+updateCloverTakeTheirs() {
 echo "[UPDATE CLOVER]"
 cd "${CLOVERROOT}"
-svn up
+git fetch --all
+git reset --hard origin/master
+git pull origin master
+}
+
+updateCloverTakeYours() {
+echo "[UPDATE CLOVER]"
+cd "${CLOVERROOT}"
+git stash
+git pull origin master
+git stash apply
 }
 
 buildClover() {
 checkTools
-if [[ ! -d "${EDK2ROOT}"/BaseTools ]];then
-  updateEDK2
-fi
-
-if [[ -f "${EDK2ROOT}"/BaseTools/Conf/tools_def.txt ]]; then
-    # tools_def.txt exist, but is patched?
-  if ! grep -q XCODE8 "${EDK2ROOT}"/Conf/tools_def.txt; then
-    # no, patch it!
-    patchEDK2
-  fi
-else
-  # tools_def.txt didn't exists. BaseTool is vanilla..
-  patchEDK2
-fi
 
 cd "${CLOVERROOT}"
 echo "[BUILD CLOVER]"
@@ -198,31 +147,27 @@ echo "[BUILD ISO]"
 make iso
 }
 
-checkChanges() {
-cd "${CLOVERROOT}"
-svn log -r BASE:HEAD -v
-}
-
 checkStatus() {
 cd "${CLOVERROOT}"
-svn status
+git fetch origin
+git status
 }
 
 showdiff() {
 cd "${CLOVERROOT}"
-svn diff -r head
+git fetch origin
+git diff
 }
 
 menu() {
 echo
 echo '------------------------------------------------------------------------'
 cd "${CLOVERROOT}"
-echo "buildme Beta, Clover v2.5k r$(svn info | grep "Revision" | tr -cd [:digit:])"
-echo "EDKII in use: $edk2Rel"
-echo "Patches in use: $PATCHES"
+echo "buildme Beta, Clover v2.5k r$(cat Version.h | grep REVISION_STR | awk '{print $NF}' | tr -cd '[[:digit:]]') (SHA: $(git rev-parse --short HEAD))"
+echo "Remote SHA: $(git rev-parse  --short origin/master)"
 echo
 PS3='Please enter your choice: '
-options=('build Clover' 'make pkg' 'make iso' 'build all' 'update Clover' 'update edk2' 'status' 'check remote changes' 'show diff' 'quit')
+options=('build Clover' 'make pkg' 'make iso' 'build all' 'update Clover (discard local changes)' 'update Clover (stash local changes)' 'status' 'show diff' 'quit')
 select opt in "${options[@]}"
 do
   case $opt in
@@ -244,20 +189,16 @@ do
       buildIso
       break
     ;;
-    "update Clover")
-      updateClover
+    "update Clover (discard changes)")
+      updateCloverTakeTheirs
       break
     ;;
-    "update edk2")
-      updateEDK2
+    "update Clover (stash local changes)")
+      updateCloverTakeYours
       break
     ;;
     "status")
       checkStatus
-      break
-    ;;
-    "check remote changes")
-      checkChanges
       break
     ;;
     "show diff")

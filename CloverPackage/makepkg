@@ -32,12 +32,7 @@ done
 cd "$(dirname $0)"
 
 version=v2.5k
-if [[ -d ../.git ]]; then
-  revision=$(git svn info | grep Revision | tr -cd [:digit:])
-else
-#  revision=$(svnversion -n | tr -d [:alpha:])
-  revision=$(svn info | grep "Revision" | tr -cd [:digit:])
-fi
+revision=$(cat ../Version.h | grep REVISION_STR | awk '{print $NF}' | tr -cd '[[:digit:]]')
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
@@ -50,7 +45,7 @@ echo "${revision}" > revision
 
 cp -f ../BootHFS/boot1f32-install.sh  CloverV2/EFI/CLOVER/doc/boot1f32-install.sh
 
-# Workspace = edk2/Clover/CloverPackage
+# Workspace = Clover/CloverPackage
 # Prepare i386 for building package installer.
 
 if [[ -d "$PKG_BUILD_DIR" && $(stat -f '%u' "$PKG_BUILD_DIR") -eq 0 ]]; then
