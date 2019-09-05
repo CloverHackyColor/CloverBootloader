@@ -163,7 +163,7 @@ menu() {
 echo
 echo '------------------------------------------------------------------------'
 cd "${CLOVERROOT}"
-echo "buildme Beta, Clover v2.5k r$(cat Version.h | grep REVISION_STR | awk '{print $NF}' | tr -cd '[[:digit:]]') (SHA: $(git rev-parse --short HEAD))"
+echo "buildme Beta, Clover v2.5k r$(cat vers.txt) (SHA: $(git rev-parse --short HEAD))"
 echo "Remote SHA: $(git rev-parse  --short origin/master)"
 echo
 PS3='Please enter your choice: '

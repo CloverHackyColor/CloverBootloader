@@ -32,7 +32,7 @@ done
 cd "$(dirname $0)"
 
 version=v2.5k
-revision=$(cat ../Version.h | grep REVISION_STR | awk '{print $NF}' | tr -cd '[[:digit:]]')
+revision=$(cat ../vers.txt)
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
