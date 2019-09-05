@@ -28,12 +28,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1211013C1F61D6CE002C8330 /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = ../../../rEFIt_UEFI/Platform/Platform.h; sourceTree = "<group>"; };
 		1211013D1F61DD0D002C8330 /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../CloverV2/EFI/CLOVER/config-sample.plist"; sourceTree = "<group>"; };
 		1262608B20B891C00096178F /* gfxutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gfxutil.c; sourceTree = "<group>"; };
 		1262608D20B891C80096178F /* gfxutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfxutil.h; sourceTree = "<group>"; };
 		1262608E20B896790096178F /* efidevp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = efidevp.c; sourceTree = "<group>"; };
 		1262608F20B896790096178F /* efidevp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidevp.h; sourceTree = "<group>"; };
+		952829C7232144E600D1A47B /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = ../../../rEFIt_UEFI/Platform/Platform.h; sourceTree = "<group>"; };
 		A3DA39B2178324D7008B64B2 /* clover-genconfig */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "clover-genconfig"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3DA39BE17832543008B64B2 /* clover-genconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = "clover-genconfig.c"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		A3DA39C017832591008B64B2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -60,12 +60,12 @@
 			children = (
 				A3DA39C217832599008B64B2 /* IOKit.framework */,
 				A3DA39C017832591008B64B2 /* CoreFoundation.framework */,
+				952829C7232144E600D1A47B /* Platform.h */,
 				A3DA39BE17832543008B64B2 /* clover-genconfig.c */,
 				1262608E20B896790096178F /* efidevp.c */,
 				1262608F20B896790096178F /* efidevp.h */,
 				1262608B20B891C00096178F /* gfxutil.c */,
 				1262608D20B891C80096178F /* gfxutil.h */,
-				1211013C1F61D6CE002C8330 /* Platform.h */,
 				A5DF2D1720BB20AC00353EB3 /* utils.c */,
 				A5DF2D1820BB20AD00353EB3 /* utils.h */,
 				1211013D1F61DD0D002C8330 /* config-sample.plist */,
@@ -115,6 +115,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = A3DA39A9178324D7008B64B2;
@@ -205,19 +206,19 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				"HEADER_SEARCH_PATHS[arch=i386]" = (
-					../../../../MdePkg/Include/Ia32,
-					"../../../../MdePkg/**",
-					../../../../MdeModulePkg/Include,
-					../../../../IntelFrameworkPkg/Include,
+					../../../MdePkg/Include/Ia32,
+					"../../../MdePkg/**",
+					../../../MdeModulePkg/Include,
+					../../../IntelFrameworkPkg/Include,
 					../../../rEFIt_UEFI/refit,
 					../../../rEFIt_UEFI/libeg,
 					../../../Include,
 				);
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
-					../../../../MdePkg/Include/X64,
-					"../../../../MdePkg/**",
-					../../../../MdeModulePkg/Include,
-					../../../../IntelFrameworkPkg/Include,
+					../../../MdePkg/Include/X64,
+					"../../../MdePkg/**",
+					../../../MdeModulePkg/Include,
+					../../../IntelFrameworkPkg/Include,
 					../../../rEFIt_UEFI/refit,
 					../../../rEFIt_UEFI/libeg,
 					../../../Include,
@@ -232,19 +233,19 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				"HEADER_SEARCH_PATHS[arch=i386]" = (
-					../../../../MdePkg/Include/Ia32,
-					"../../../../MdePkg/**",
-					../../../../MdeModulePkg/Include,
-					../../../../IntelFrameworkPkg/Include,
+					../../../MdePkg/Include/Ia32,
+					"../../../MdePkg/**",
+					../../../MdeModulePkg/Include,
+					../../../IntelFrameworkPkg/Include,
 					../../../rEFIt_UEFI/refit,
 					../../../rEFIt_UEFI/libeg,
 					../../../Include,
 				);
 				"HEADER_SEARCH_PATHS[arch=x86_64]" = (
-					../../../../MdePkg/Include/X64,
-					"../../../../MdePkg/**",
-					../../../../MdeModulePkg/Include,
-					../../../../IntelFrameworkPkg/Include,
+					../../../MdePkg/Include/X64,
+					"../../../MdePkg/**",
+					../../../MdeModulePkg/Include,
+					../../../IntelFrameworkPkg/Include,
 					../../../rEFIt_UEFI/refit,
 					../../../rEFIt_UEFI/libeg,
 					../../../Include,
