@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="CloverPrefpane">
+            <connections>
+                <outlet property="LastRunDate" destination="249" id="252"/>
+                <outlet property="_EFIPathControl" destination="376" id="378"/>
+                <outlet property="_cloverThemeComboBox" destination="395" id="410"/>
+                <outlet property="_themeWarning" destination="422" id="424"/>
+                <outlet property="_window" destination="12" id="163"/>
+                <outlet property="authView" destination="280" id="286"/>
+                <outlet property="checkNowButton" destination="257" id="259"/>
+                <outlet property="lastBootedRevision" destination="303" id="360"/>
+                <outlet property="lastInstalledRevision" destination="305" id="361"/>
+                <outlet property="popUpCheckInterval" destination="201" id="207"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Clover" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" deferred="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="12" userLabel="PrefPane">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="176" y="715" width="668" height="371"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1600" height="877"/>
+            <view key="contentView" id="6">
+                <rect key="frame" x="0.0" y="0.0" width="668" height="371"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <tabView initialItem="295" id="293">
+                        <rect key="frame" x="13" y="9" width="642" height="356"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <tabViewItems>
+                            <tabViewItem label="General" identifier="1" id="295">
+                                <view key="view" id="296">
+                                    <rect key="frame" x="10" y="33" width="622" height="310"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <imageView misplaced="YES" id="101">
+                                            <rect key="frame" x="23" y="95" width="134" height="134"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="CloverLogo" id="102"/>
+                                        </imageView>
+                                        <box autoresizesSubviews="NO" borderType="line" title="Revisions" id="298">
+                                            <rect key="frame" x="186" y="191" width="430" height="114"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="mkA-hf-G93">
+                                                <rect key="frame" x="1" y="1" width="428" height="98"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="301">
+                                                        <rect key="frame" x="15" y="30" width="233" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Last installed revision:" id="302">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="299">
+                                                        <rect key="frame" x="15" y="62" width="233" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Current booted revision:" id="300">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="303">
+                                                        <rect key="frame" x="259" y="62" width="71" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="304">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="305">
+                                                        <rect key="frame" x="259" y="30" width="71" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="306">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <box autoresizesSubviews="NO" borderType="bezel" title="Check for Updates" id="241">
+                                            <rect key="frame" x="187" y="5" width="430" height="182"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="kfu-TJ-R2z">
+                                                <rect key="frame" x="3" y="3" width="424" height="164"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="247">
+                                                        <rect key="frame" x="18" y="130" width="186" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Last check:" id="248">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="249">
+                                                        <rect key="frame" x="208" y="130" width="203" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" id="250">
+                                                            <dateFormatter key="formatter" dateStyle="long" timeStyle="medium" id="251"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button verticalHuggingPriority="750" misplaced="YES" id="257">
+                                                        <rect key="frame" x="129" y="83" width="167" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="push" title="Check Now" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="258">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="checkNow:" target="-2" id="260"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="242">
+                                                        <rect key="frame" x="13" y="52" width="230" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Schedule Check Updates Every:" id="243">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <popUpButton verticalHuggingPriority="750" misplaced="YES" id="201">
+                                                        <rect key="frame" x="247" y="46" width="160" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="202">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="menu"/>
+                                                            <menu key="menu" id="203">
+                                                                <items>
+                                                                    <menuItem title="Never" id="204">
+                                                                        <connections>
+                                                                            <action selector="configureAutomaticUpdates:" target="-2" id="235"/>
+                                                                        </connections>
+                                                                    </menuItem>
+                                                                    <menuItem isSeparatorItem="YES" id="221"/>
+                                                                    <menuItem title="Hourly" tag="3600" id="217">
+                                                                        <connections>
+                                                                            <action selector="configureAutomaticUpdates:" target="-2" id="236"/>
+                                                                        </connections>
+                                                                    </menuItem>
+                                                                    <menuItem title="Daily" tag="86400" id="205">
+                                                                        <connections>
+                                                                            <action selector="configureAutomaticUpdates:" target="-2" id="237"/>
+                                                                        </connections>
+                                                                    </menuItem>
+                                                                    <menuItem title="Weekly" tag="604800" id="206">
+                                                                        <connections>
+                                                                            <action selector="configureAutomaticUpdates:" target="-2" id="238"/>
+                                                                        </connections>
+                                                                    </menuItem>
+                                                                    <menuItem title="Monthly" tag="18144000" id="239">
+                                                                        <connections>
+                                                                            <action selector="configureAutomaticUpdates:" target="-2" id="240"/>
+                                                                        </connections>
+                                                                    </menuItem>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <imageView misplaced="YES" id="569">
+                                            <rect key="frame" x="23" y="241" width="134" height="46"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="CloverTitle" id="570"/>
+                                        </imageView>
+                                        <textField verticalHuggingPriority="750" id="261">
+                                            <rect key="frame" x="15" y="50" width="152" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="262">
+                                                <font key="font" metaFont="miniSystem"/>
+                                                <string key="title">Copyright (c) 2013 JrCs, kozlek
+All Rights Reserved</string>
+                                                <color key="textColor" red="0.49803921579999999" green="0.49803921579999999" blue="0.49803921579999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Theme" identifier="2" id="374">
+                                <view key="view" id="375">
+                                    <rect key="frame" x="10" y="33" width="622" height="310"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <box autoresizesSubviews="NO" borderType="line" title="EFI Folder path" id="567">
+                                            <rect key="frame" x="6" y="254" width="610" height="56"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="wkJ-MN-fgR">
+                                                <rect key="frame" x="1" y="1" width="608" height="40"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="376">
+                                                        <rect key="frame" x="20" y="12" width="568" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <pathCell key="cell" controlSize="small" selectable="YES" alignment="left" id="377">
+                                                            <font key="font" metaFont="system"/>
+                                                            <url key="url" string="file:///"/>
+                                                        </pathCell>
+                                                        <connections>
+                                                            <action selector="showPathOpenPanel:" target="-2" id="386"/>
+                                                        </connections>
+                                                    </pathControl>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <box autoresizesSubviews="NO" borderType="line" title="Clover Theme" id="392">
+                                            <rect key="frame" x="6" y="6" width="714" height="244"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="Ma9-dv-5a4">
+                                                <rect key="frame" x="1" y="1" width="712" height="228"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <box autoresizesSubviews="NO" borderType="line" titlePosition="noTitle" id="391">
+                                                        <rect key="frame" x="380" y="13" width="228" height="144"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <view key="contentView" id="PI3-cr-GNt">
+                                                            <rect key="frame" x="1" y="1" width="226" height="142"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="402">
+                                                                    <rect key="frame" x="15" y="8" width="197" height="77"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="403">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <connections>
+                                                                        <binding destination="-2" name="value" keyPath="self.themeInfo.Description" id="586"/>
+                                                                    </connections>
+                                                                </textField>
+                                                                <textField verticalHuggingPriority="750" id="398">
+                                                                    <rect key="frame" x="13" y="112" width="59" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Author:" id="399">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                                <textField verticalHuggingPriority="750" id="412">
+                                                                    <rect key="frame" x="84" y="112" width="128" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="413">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <connections>
+                                                                        <binding destination="-2" name="value" keyPath="self.themeInfo.Author" id="580"/>
+                                                                    </connections>
+                                                                </textField>
+                                                                <textField verticalHuggingPriority="750" id="400">
+                                                                    <rect key="frame" x="13" y="93" width="58" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Year:" id="401">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                                <textField verticalHuggingPriority="750" id="415">
+                                                                    <rect key="frame" x="84" y="93" width="128" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="416">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <connections>
+                                                                        <binding destination="-2" name="value" keyPath="self.themeInfo.Year" id="583"/>
+                                                                    </connections>
+                                                                </textField>
+                                                            </subviews>
+                                                        </view>
+                                                    </box>
+                                                    <imageView id="393">
+                                                        <rect key="frame" x="10" y="14" width="368" height="207"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" imageFrameStyle="groove" image="NoPreview" id="394"/>
+                                                        <connections>
+                                                            <binding destination="-2" name="value" keyPath="self.themeInfo.Preview" id="598"/>
+                                                        </connections>
+                                                    </imageView>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="428">
+                                                        <rect key="frame" x="17" y="20" width="354" height="180"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="No Preview Available" id="429">
+                                                            <font key="font" metaFont="systemBold" size="20"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <binding destination="-2" name="hidden" keyPath="self.themeInfo.PreviewAvailable" id="595"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <box autoresizesSubviews="NO" borderType="line" titlePosition="noTitle" id="568">
+                                                        <rect key="frame" x="380" y="159" width="228" height="61"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <view key="contentView" id="Lk1-gZ-zeY">
+                                                            <rect key="frame" x="1" y="1" width="226" height="59"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <comboBox verticalHuggingPriority="750" id="395">
+                                                                    <rect key="frame" x="18" y="7" width="190" height="26"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" numberOfVisibleItems="5" id="396">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </comboBoxCell>
+                                                                    <connections>
+                                                                        <action selector="themeComboBox:" target="-2" id="397"/>
+                                                                    </connections>
+                                                                </comboBox>
+                                                                <textField verticalHuggingPriority="750" id="425">
+                                                                    <rect key="frame" x="15" y="35" width="60" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Theme:" id="426">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                        </view>
+                                                    </box>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="422">
+                                                        <rect key="frame" x="18" y="81" width="353" height="90"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="To see previews of themes you must select the path to the EFI folder." id="423">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="NVRam Variables" identifier="3" id="294">
+                                <view key="view" id="297">
+                                    <rect key="frame" x="10" y="33" width="622" height="310"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <box autoresizesSubviews="NO" borderType="line" title="Log Files" id="309">
+                                            <rect key="frame" x="6" y="189" width="610" height="121"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="72D-iP-RL6">
+                                                <rect key="frame" x="1" y="1" width="608" height="105"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField toolTip="Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents" verticalHuggingPriority="750" id="314">
+                                                        <rect key="frame" x="409" y="75" width="97" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="315">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <action selector="updateCloverNVRamVariables:" target="-2" id="618"/>
+                                                            <binding destination="-2" name="value" keyPath="self.nvram.LogLineCount" id="627"/>
+                                                            <outlet property="formatter" destination="474" id="515"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" id="484">
+                                                        <rect key="frame" x="506" y="74" width="15" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <stepperCell key="cell" controlSize="small" continuous="YES" alignment="left" increment="100" maxValue="100000000000000" id="485">
+                                                            <connections>
+                                                                <action selector="updateCloverNVRamVariables:" target="-2" id="632"/>
+                                                                <binding destination="-2" name="value" keyPath="self.nvram.LogLineCount" id="631"/>
+                                                            </connections>
+                                                        </stepperCell>
+                                                        <connections>
+                                                            <binding destination="-2" name="value" keyPath="self.nvram.LogLineCount" id="628"/>
+                                                        </connections>
+                                                    </stepper>
+                                                    <textField verticalHuggingPriority="750" id="480">
+                                                        <rect key="frame" x="18" y="78" width="384" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Number of history boot log lines to keep:" id="483">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" id="519">
+                                                        <rect key="frame" x="506" y="14" width="15" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <stepperCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100000000000000" id="524"/>
+                                                        <connections>
+                                                            <action selector="updateCloverLogEveryBoot:" target="-2" id="640"/>
+                                                            <binding destination="-2" name="enabled" keyPath="self.cloverLogEveryBootEnabled" id="539"/>
+                                                            <binding destination="-2" name="value" keyPath="self.cloverLogEveryBootLimit" id="537"/>
+                                                        </connections>
+                                                    </stepper>
+                                                    <textField verticalHuggingPriority="750" id="323">
+                                                        <rect key="frame" x="409" y="15" width="97" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="324">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <action selector="updateCloverLogEveryBoot:" target="-2" id="639"/>
+                                                            <binding destination="-2" name="enabled" keyPath="self.cloverLogEveryBootEnabled" id="534"/>
+                                                            <binding destination="-2" name="value" keyPath="self.cloverLogEveryBootLimit" id="532"/>
+                                                            <outlet property="formatter" destination="475" id="526"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <button id="521">
+                                                        <rect key="frame" x="18" y="41" width="407" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Create timestamp CloverEFI/boot.log file on every boot" bezelStyle="regularSquare" imagePosition="right" alignment="right" state="on" inset="2" id="522">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="updateCloverLogEveryBoot:" target="-2" id="638"/>
+                                                            <binding destination="-2" name="value" keyPath="self.cloverLogEveryBootEnabled" id="529"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" misplaced="YES" id="518">
+                                                        <rect key="frame" x="18" y="14" width="384" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Number of timestamp boot.log files to keep:" id="525">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <box autoresizesSubviews="NO" borderType="line" title="Backup" id="555">
+                                            <rect key="frame" x="6" y="103" width="610" height="82"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="R1z-GG-3JF">
+                                                <rect key="frame" x="1" y="1" width="608" height="66"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button misplaced="YES" id="556">
+                                                        <rect key="frame" x="15" y="38" width="408" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="On install backup EFI folder to destination volume" bezelStyle="regularSquare" imagePosition="right" alignment="right" inset="2" id="557">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="updateCloverNVRamVariables:" target="-2" id="605"/>
+                                                            <binding destination="-2" name="value" keyPath="self.nvram.BackupDirOnDestVol" id="603"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="558">
+                                                        <rect key="frame" x="408" y="14" width="99" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="561">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <action selector="updateCloverNVRamVariables:" target="-2" id="606"/>
+                                                            <binding destination="-2" name="value" keyPath="self.nvram.KeepBackupLimit" id="609"/>
+                                                            <outlet property="formatter" destination="474" id="563"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="559">
+                                                        <rect key="frame" x="15" y="17" width="387" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Number of backups to keep:" id="560">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" id="564">
+                                                        <rect key="frame" x="507" y="14" width="15" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <stepperCell key="cell" controlSize="small" continuous="YES" alignment="left" increment="100" maxValue="100000000000000" id="565"/>
+                                                        <connections>
+                                                            <action selector="updateCloverNVRamVariables:" target="-2" id="616"/>
+                                                            <binding destination="-2" name="value" keyPath="self.nvram.KeepBackupLimit" id="615"/>
+                                                        </connections>
+                                                    </stepper>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <box autoresizesSubviews="NO" borderType="line" title="Advanced Configurations" id="327">
+                                            <rect key="frame" x="6" y="11" width="610" height="88"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="j5Q-bB-Wky">
+                                                <rect key="frame" x="1" y="1" width="608" height="72"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" id="331">
+                                                        <rect key="frame" x="15" y="46" width="385" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Force mount selected ESP at startup:" id="332">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="336">
+                                                        <rect key="frame" x="15" y="14" width="385" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Save NVRAM contents to disk:" id="339">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <popUpButton toolTip="Mounting the ESP partition on boot" verticalHuggingPriority="750" misplaced="YES" id="431">
+                                                        <rect key="frame" x="404" y="41" width="189" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="432">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <menu key="menu" id="433"/>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="updateCloverNVRamVariables:" target="-2" id="634"/>
+                                                            <binding destination="-2" name="content" keyPath="self.efiPartitions" id="833">
+                                                                <dictionary key="options">
+                                                                    <string key="NSNullPlaceholder">No</string>
+                                                                </dictionary>
+                                                            </binding>
+                                                            <binding destination="-2" name="contentValues" keyPath="self.efiPartitions.Title" previousBinding="834" id="835"/>
+                                                            <binding destination="-2" name="contentObjects" keyPath="self.efiPartitions.Value" previousBinding="833" id="834"/>
+                                                            <binding destination="-2" name="selectedObject" keyPath="self.nvram.MountEFI" previousBinding="835" id="836"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <popUpButton toolTip="Where to save the nvram contents" verticalHuggingPriority="750" id="452">
+                                                        <rect key="frame" x="404" y="9" width="189" height="26"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="453">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <menu key="menu" id="454"/>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="updateCloverNVRamVariables:" target="-2" id="636"/>
+                                                            <binding destination="-2" name="content" keyPath="self.nvRamPartitions" id="829">
+                                                                <dictionary key="options">
+                                                                    <string key="NSNullPlaceholder">Auto</string>
+                                                                </dictionary>
+                                                            </binding>
+                                                            <binding destination="-2" name="contentValues" keyPath="self.nvRamPartitions.Title" previousBinding="830" id="831"/>
+                                                            <binding destination="-2" name="contentObjects" keyPath="self.nvRamPartitions.Value" previousBinding="829" id="830"/>
+                                                            <binding destination="-2" name="selectedObject" keyPath="self.nvram.NVRamDisk" previousBinding="831" id="832">
+                                                                <dictionary key="options">
+                                                                    <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                                </dictionary>
+                                                            </binding>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                        </tabViewItems>
+                    </tabView>
+                    <customView hidden="YES" id="280" customClass="SFAuthorizationView">
+                        <rect key="frame" x="698" y="326" width="0.0" height="33"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </customView>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="186" y="174.5"/>
+        </window>
+        <userDefaultsController representsSharedInstance="YES" id="227"/>
+        <numberFormatter formatterBehavior="custom10_4" positiveFormat="#0.###" negativeFormat="#0.###" localizesFormat="NO" numberStyle="decimal" allowsFloats="NO" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" zeroSymbol="None" nilSymbol="None" notANumberSymbol="None" id="474" userLabel="&quot;None&quot; Zero Symbol Formatter">
+            <integer key="roundingIncrement" value="1"/>
+            <real key="minimum" value="0.0"/>
+        </numberFormatter>
+        <numberFormatter formatterBehavior="custom10_4" positiveFormat="#0.###" negativeFormat="#0.###" localizesFormat="NO" numberStyle="decimal" allowsFloats="NO" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" zeroSymbol="Unlimited" nilSymbol="Nil" negativePrefix="-" id="475" userLabel="&quot;Unlimited&quot; Zero Symbol Formatter">
+            <real key="roundingIncrement" value="1"/>
+            <real key="minimum" value="0.0"/>
+        </numberFormatter>
+    </objects>
+    <resources>
+        <image name="CloverLogo" width="133" height="159"/>
+        <image name="CloverTitle" width="105" height="27"/>
+        <image name="NoPreview" width="368" height="207"/>
+    </resources>
+</document>

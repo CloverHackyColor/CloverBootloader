@@ -39,6 +39,7 @@
   BdsConsole.c
   BdsBoot.c
   InternalBdsLib.h
+  ../../Include/Library/GenericBdsLib.h
   String.h
   String.c
   GenericBdsStrings.uni

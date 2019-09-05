@@ -22,6 +22,7 @@
 [Sources]
   VideoBiosPatchLibInternal.h
   VideoBiosPatchLib.c
+  ../../Include/Library/VideoBiosPatchLib.h
   915resolution.h
   915resolution.c
   edid.h

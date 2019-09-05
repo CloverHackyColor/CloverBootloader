@@ -68,7 +68,7 @@ xcuserdata/
 
 # Translation files
 CloverUpdater.strings
-CloverPackage/CloverUpdater/src/*.lproj
+#CloverPackage/CloverUpdater/src/*.lproj
 CloverPrefpane.strings
-CloverPackage/CloverPrefpane/src/*.lproj
+#CloverPackage/CloverPrefpane/src/*.lproj
 
