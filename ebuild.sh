@@ -82,94 +82,12 @@ elif [[ -x "/usr/bin/lsb_release" ]]; then
   # ..otherwise Clover fail because Version.h will have a line with no null terminated char.
   declare -r OSVER="$(lsb_release -sir | sed -e ':a;N;$!ba;s/\n/ /g')"
 fi
-PATCH_FILE=
 
 # Bash options
 set -e # errexit
 set -u # Blow on unbound variable
 
 ## FUNCTIONS ##
-
-function exitTrap() {
-    if [[ -n "$PATCH_FILE" && -n "$WORKSPACE" ]]; then
-        echo -n "Unpatching edk2..."
-        ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0 -R" &>/dev/null )
-        if [[ $? -eq 0 ]]; then
-            echo " done"
-        else
-            echo " failed"
-        fi
-    fi
-}
-
-# Check if we need to patch the sources
-checkPatch() {
-  #if [[ -x /usr/bin/git ]]; then
-  #    PATCH_CMD="/usr/bin/git apply --whitespace=nowarn"
-  if [[ -n "${GIT}" ]]; then
-      PATCH_CMD="${GIT} apply --whitespace=nowarn"
-  else
-      PATCH_CMD="/usr/bin/patch"
-  fi
-
-  checkToolchain
-
-  if [[ "$SYSNAME" == Linux ]]; then
-    export GCC53_BIN="$TOOLCHAIN_DIR/bin/"
-    if [[ ! -x "${GCC53_BIN}gcc" ]]; then
-        echo "No clover toolchain found !" >&2
-        echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
-        exit 1
-    fi
-  else
-    if [[ -n "${XCODE_BUILD:-}" ]]; then
-      #declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
-      XCODE_VERSION="$(echo `$XCODE_BUILD -version` | sed -nE 's/^Xcode ([0-9.]+).*/\1/p')"
-      declare -r XCODE_MAJOR_VERSION="$(echo $XCODE_VERSION | cut -d. -f1)"
-
-      case "$XCODE_MAJOR_VERSION" in
-          5) PATCH_FILE=;;
-      esac
-    fi
-
-    export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
-    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
-      echo "No clover toolchain found !" >&2
-      echo "Build it with the build_gcc8.sh script or define the TOOLCHAIN_DIR variable." >&2
-      exit 1
-    fi
-  fi
-
-# Linux does not come with nasm installed!
-
-#  if [[ ! -x "$TOOLCHAIN_DIR"/bin/nasm ]]; then
-#      echo "No nasm binary found in toolchain directory !" >&2
-#      if [[ "$SYSNAME" != Linux ]]; then
-#        echo "Build it with the buildnasm.sh script." >&2
-#      fi
-#      exit 1
-#  fi
-
-  if [[ -f "/opt/local/bin/nasm" ]]; then
-    export NASM_PREFIX="/opt/local/bin/"
-  elif [[ -f "${TOOLCHAIN_DIR}/bin/nasm" ]]; then
-    # using $TOOLCHAIN_DIR here should allow Clover source to be
-    # inside any sub folder instead of only in ~/
-    export NASM_PREFIX="${TOOLCHAIN_DIR}/bin/"
-  else
-    export NASM_PREFIX=""
-  fi
-
-  echo "NASM_PREFIX: $NASM_PREFIX"
-
-  #NASM_VER=`nasm -v | awk '/version/ {print $3}'`
-  NASM_VER=`${NASM_PREFIX}nasm -v | sed -nE 's/^.*version.([0-9\.]+).*$/\1/p'`
-
-  echo "NASM_VER: $NASM_VER"
-  if [[ "$SYSNAME" == Darwin ]]; then
-    if ! isNASMGood "${NASM_PREFIX}nasm"; then echo "your nasm is not good to build Clover!" && exit 1; fi
-  fi
-}
 
 print_option_help () {
   if [[ x$print_option_help_wc = x ]]; then
@@ -327,25 +245,20 @@ isNASMGood() {
 checkXcode () {
     XCODE_BUILD="/usr/bin/xcodebuild"
     local LOCALBIN="/usr/local/bin"
-    local CLOVERBIN="${CLOVERROOT}/BuildTools/usr/local/bin"
 
     if [[ ! -x "${XCODE_BUILD}" ]]; then
        echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
     fi
 
-  if [[ -f "/opt/local/bin/mtoc.NEW" ]]; then
+  if [[ -x "/opt/local/bin/mtoc.NEW" ]]; then
     export MTOC_PREFIX="/opt/local/bin/"
-  elif [[ -f "${LOCALBIN}/mtoc.NEW" ]]; then
+  elif [[ -x "${LOCALBIN}/mtoc.NEW" ]]; then
     export MTOC_PREFIX="${LOCALBIN}/"
-  elif [[ -f "${TOOLCHAIN_DIR}/bin/mtoc.NEW" ]]; then
+  elif [[ -x "${TOOLCHAIN_DIR}/bin/mtoc.NEW" ]]; then
     export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
-  elif [[ -f "${CLOVERBIN}/mtoc.NEW" ]]; then
-    # using $TOOLCHAIN_DIR here should allow Clover source to be
-    # inside any sub folder instead of only in ~/
-    export MTOC_PREFIX="${CLOVERBIN}/"
   else
-    ./buildmtoc.sh
     export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
+    ./buildmtoc.sh
   fi
   echo "MTOC_PREFIX: $MTOC_PREFIX"
 }
@@ -537,25 +450,43 @@ checkToolchain() {
     case "$TOOLCHAIN" in
         XCLANG|XCODE*) checkXcode ;;
     esac
+
+  if [[ "$SYSNAME" == Linux ]]; then
+    export GCC53_BIN="$TOOLCHAIN_DIR/bin/"
+    if [[ ! -x "${GCC53_BIN}gcc" ]]; then
+        echo "No clover toolchain found !" >&2
+        echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
+        exit 1
+    fi
+  fi
+
+  if [[ -x "/opt/local/bin/nasm" ]]; then
+    export NASM_PREFIX="/opt/local/bin/"
+  elif [[ -f "${TOOLCHAIN_DIR}/bin/nasm" ]]; then
+    # using $TOOLCHAIN_DIR here should allow Clover source to be
+    # inside any sub folder instead of only in ~/
+    export NASM_PREFIX="${TOOLCHAIN_DIR}/bin/"
+  else
+    export NASM_PREFIX=""
+  fi
+
+  echo "NASM_PREFIX: $NASM_PREFIX"
+
+  #NASM_VER=`nasm -v | awk '/version/ {print $3}'`
+  NASM_VER=`${NASM_PREFIX}nasm -v | sed -nE 's/^.*version.([0-9\.]+).*$/\1/p'`
+
+  echo "NASM_VER: $NASM_VER"
+  if [[ "$SYSNAME" == Darwin ]]; then
+    if ! isNASMGood "${NASM_PREFIX}nasm"; then echo "your nasm is not good to build Clover!" && exit 1; fi
+  fi
 }
 
 # Main build script
 MainBuildScript() {
     checkCmdlineArguments $@
-#    checkToolchain
-#    checkPatch
+    checkToolchain
 
-#    echo "NASM_PREFIX: ${NASM_PREFIX}"
-
-    local repoRev="0000"
-    if [[ -d .svn ]]; then
-#        repoRev=$(svnversion -n | tr -d [:alpha:])
-		repoRev=$(svn info | grep "Revision" | tr -cd [:digit:])
-#    elif [[ -d .git ]]; then
-#        repoRev=$(git svn find-rev git-svn | tr -cd [:digit:])
-    fi
-
-    echo -n "${repoRev}" > "${VERSTXT}"
+    local repoRev=$(cat vers.txt)
 
     #
     # we are building the same rev as before?
@@ -587,17 +518,6 @@ MainBuildScript() {
     else
         echo "Building from: $WORKSPACE"
     fi
-
-    # Trying to patch edk2
-#    if [[ -n "$PATCH_FILE" ]]; then
-#        echo -n "Patching edk2..."
-#        ( cd "$WORKSPACE" && cat "$CLOVERROOT"/Patches_for_EDK2/$PATCH_FILE | eval "$PATCH_CMD -p0" &>/dev/null )
-#        if [[ $? -eq 0 ]]; then
-#            echo " done"
-#        else
-#            echo " failed"
-#        fi
-#    fi
 
     export CLOVER_PKG_DIR="$CLOVERROOT"/CloverPackage/CloverV2
 
@@ -971,7 +891,6 @@ MainPostBuildScript() {
 }
 
 # BUILD START #
-#trap 'exitTrap' EXIT
 
 # Default locale
 export LC_ALL=POSIX
