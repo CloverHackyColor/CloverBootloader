@@ -45,11 +45,9 @@
   ComponentName.c
   VesaBiosExtensions.h
   LegacyBiosThunk.c
-
   #Resolution.c
   915resolution.c
   edid.c
-
   #MsgLog.c
   
 [Protocols]

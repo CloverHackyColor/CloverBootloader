@@ -45,13 +45,13 @@
   DxeIpl.h
   DxeInit.c
   LegacyTable.c
-#  LegacyTable.h
+  LegacyTable.h
 #  PpisNeededByDxeCore.c
-#  PpisNeededByDxeCore.h
+  PpisNeededByDxeCore.h
   HobGeneration.c
-#  HobGeneration.h
+  HobGeneration.h
 #  SerialStatusCode.c
-#  SerialStatusCode.h
+  SerialStatusCode.h
   Debug.c
   Debug.h
   

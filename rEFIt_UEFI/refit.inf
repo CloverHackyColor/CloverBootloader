@@ -89,7 +89,7 @@
 	Platform/ati.h
 #	Platform/BiosVideo.h
 #	Platform/Bmp.h
-#	Platform/boot.h
+	Platform/boot.h
 	Platform/BootLog.c
 	Platform/BootOptions.c
 	Platform/Console.c
@@ -97,25 +97,25 @@
 	Platform/DataHubCpu.c
 #	Platform/DataHubRecords.h
 	Platform/device_inject.c
-#	Platform/device_inject.h
+	Platform/device_inject.h
 	Platform/device_tree.c
-#	Platform/device_tree.h
+	Platform/device_tree.h
 	Platform/Edid.c
 	Platform/Events.c
 	Platform/hda.c
-#	Platform/hda.h
+	Platform/hda.h
     Platform/HdaCodecDump.c
     Platform/HdaCodecDump.h
 	Platform/gma.c
-#	Platform/gma.h
+	Platform/gma.h
 	Platform/guid.c
 	Platform/Injectors.c
 	Platform/LegacyBiosThunk.c
-#	Platform/LegacyBiosThunk.h
+	Platform/LegacyBiosThunk.h
 	Platform/LegacyBoot.c
-#	Platform/memvendors.h
+	Platform/memvendors.h
 	Platform/nvidia.c
-#	Platform/nvidia.h
+	Platform/nvidia.h
 #	Platform/pci.c
 #	Platform/picopng.c
 #	Platform/picopng.h
@@ -127,11 +127,11 @@
 	Platform/smbios.c
 #	Platform/SmBios.h
 	Platform/spd.c
-#	Platform/spd.h
+	Platform/spd.h
 	Platform/string.c
-#	Platform/string.h
+	Platform/string.h
 	Platform/StateGenerator.c
-#	Platform/StateGenerator.h
+	Platform/StateGenerator.h
 #	Platform/stringTable.c
 	Platform/usbfix.c
 #	Platform/UsbMass.h

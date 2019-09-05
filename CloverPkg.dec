@@ -40,6 +40,7 @@
   gEfiPciExpressBaseAddressGuid = {0x3677d529, 0x326f, 0x4603, {0xa9, 0x26, 0xea, 0xac, 0xe0, 0x1d, 0xcb, 0xb0 }}
   gEfiAcpiDescriptionGuid       = {0x3c699197, 0x093c, 0x4c69, {0xb0, 0x6b, 0x12, 0x8a, 0xe3, 0x48, 0x1d, 0xc9 }}
   gEfiFlashMapHobGuid           = {0xb091e7d2, 0x05a0, 0x4198, {0x94, 0xf0, 0x74, 0xb7, 0xb8, 0xc5, 0x54, 0x59 }}
+  gPcAtChipsetPkgTokenSpaceGuid = {0x326ae723, 0xae32, 0x4589, {0x98, 0xb8, 0xca, 0xc2, 0x3c, 0xdc, 0xc1, 0xb1 }}
   
   ## Include/Guid/PciOptionRomTable.h
   gEfiPciOptionRomTableGuid     = {0x7462660F, 0x1CBD, 0x48DA, {0xAD, 0x11, 0x91, 0x71, 0x79, 0x13, 0x83, 0x1C }}
@@ -126,6 +127,14 @@ gEfiAudioIoProtocolGuid = { 0xF05B559C, 0x1971, 0x4AF5, { 0xB2, 0xAE, 0xD6, 0x08
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|FALSE|BOOLEAN|0x10010010
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|FALSE|BOOLEAN|0x10010011
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE|BOOLEAN|0x10010012
+#  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFF|UINT16|0x00000001
+  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeEdgeLevel|0x0000|UINT16|0x00000002
+# gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|TRUE|BOOLEAN|0x00000003
+# gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|TRUE|BOOLEAN|0x00000004
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiPs2KeyboardEnable|TRUE|BOOLEAN|0x00000005
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiPs2MouseEnable|TRUE|BOOLEAN|0x00000006
+# gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyAEnable|TRUE|BOOLEAN|0x00000007
+# gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|TRUE|BOOLEAN|0x00000008
   
 [PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
 #  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0204|UINT32|0x10010001

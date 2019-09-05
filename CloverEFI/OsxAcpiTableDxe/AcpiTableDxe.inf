@@ -31,7 +31,7 @@
   AcpiTableProtocol.c
   AcpiTable.h
   AcpiTable.c
-#  AcpiSdt.h
+  AcpiSdt.h
 #  AcpiSdt.c
 #  Aml.c
 #  AmlString.c
