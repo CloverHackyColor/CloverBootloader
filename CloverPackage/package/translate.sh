@@ -9,7 +9,7 @@ packagename="Clover"
 cd "$(dirname $0)"
 
 declare -r PKGROOT="$PWD"
-declare -r SRCROOT="$PWD"/../../../..
+declare -r SRCROOT="$PWD"/../../..
 declare -r SYMROOT=../sym
 declare -r PKG_RESOURCES_DIR="${SYMROOT}"/Resources
 

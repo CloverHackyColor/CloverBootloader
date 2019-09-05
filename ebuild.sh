@@ -519,7 +519,7 @@ checkCmdlineArguments() {
     done
 
     # Update variables
-    PLATFORMFILE="${PLATFORMFILE:-Clover/Clover.dsc}"
+    PLATFORMFILE="${PLATFORMFILE:-Clover.dsc}"
     if [ ! -z "${MODULEFILE}" ]; then
         MODULEFILE=" -m Clover/$MODULEFILE"
     fi
@@ -542,8 +542,8 @@ checkToolchain() {
 # Main build script
 MainBuildScript() {
     checkCmdlineArguments $@
-    #checkToolchain
-    checkPatch
+#    checkToolchain
+#    checkPatch
 
 #    echo "NASM_PREFIX: ${NASM_PREFIX}"
 
@@ -551,8 +551,8 @@ MainBuildScript() {
     if [[ -d .svn ]]; then
 #        repoRev=$(svnversion -n | tr -d [:alpha:])
 		repoRev=$(svn info | grep "Revision" | tr -cd [:digit:])
-    elif [[ -d .git ]]; then
-        repoRev=$(git svn find-rev git-svn | tr -cd [:digit:])
+#    elif [[ -d .git ]]; then
+#        repoRev=$(git svn find-rev git-svn | tr -cd [:digit:])
     fi
 
     echo -n "${repoRev}" > "${VERSTXT}"
@@ -573,24 +573,17 @@ MainBuildScript() {
     #
     # Setup workspace if it is not set
     #
-    local EDK2DIR=$(cd "$CLOVERROOT"/.. && echo "$PWD")
     if [[ -z "$WORKSPACE" ]]; then
         echo "Initializing workspace"
-        if [[ ! -x "${EDK2DIR}"/edksetup.sh ]]; then
-            echo "Error: Can't find edksetup.sh script !" >&2
-            exit 1
-        fi
-
         # This version is for the tools in the BaseTools project.
         # this assumes svn pulls have the same root dir
         #  export EDK_TOOLS_PATH=`pwd`/../BaseTools
         # This version is for the tools source in edk2
-        cd "$EDK2DIR"
+        cd "$CLOVERROOT"
         export EDK_TOOLS_PATH="${PWD}"/BaseTools
         set +u
         source ./edksetup.sh BaseTools
         set -u
-        cd "$CLOVERROOT"
     else
         echo "Building from: $WORKSPACE"
     fi
