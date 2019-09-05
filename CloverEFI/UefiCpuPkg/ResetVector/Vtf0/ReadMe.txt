@@ -2,7 +2,7 @@
 === HOW TO USE VTF0 ===
 
 Add this line to your FDF FV section:
-INF  RuleOverride=RESET_VECTOR USE = IA32 UefiCpuPkg/ResetVector/Vtf0/Bin/ResetVector.inf
+INF  RuleOverride=RESET_VECTOR USE = IA32 CloverEFI/UefiCpuPkg/ResetVector/Vtf0/Bin/ResetVector.inf
 (For X64 SEC/PEI change IA32 to X64 => 'USE = X64')
 
 In your FDF FFS file rules sections add:
