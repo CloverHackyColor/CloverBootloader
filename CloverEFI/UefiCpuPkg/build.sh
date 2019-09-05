@@ -68,6 +68,6 @@ BUILD_ROOT_ARCH=$WORKSPACE/Build/Shell/DEBUG_"$TARGET_TOOLS"/IA32
 echo $PATH
 echo `which build`
 #build -p $WORKSPACE/UnixPkg/UnixPkg.dsc         -a IA32 -t $TARGET_TOOLS $NETWORK_SUPPORT -n 3 $1 $2 $3 $4 $5 $6 $7 $8
-build -p $WORKSPACE/UefiCpuPkg/UefiCpuPkg.dsc -a IA32 -t $TARGET_TOOLS -n 3 $*
+build -p $WORKSPACE/CloverEFI/UefiCpuPkg/UefiCpuPkg.dsc -a IA32 -t $TARGET_TOOLS -n 3 $*
 exit $?
 

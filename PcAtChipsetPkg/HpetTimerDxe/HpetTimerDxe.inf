@@ -27,7 +27,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  UefiCpuPkg/UefiCpuPkg.dec
+  CloverEFI/UefiCpuPkg/UefiCpuPkg.dec
   PcAtChipsetPkg/PcAtChipsetPkg.dec
 
 [LibraryClasses]
