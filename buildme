@@ -192,7 +192,7 @@ do
       buildIso
       break
     ;;
-    "update Clover (discard changes)")
+    "update Clover (discard local changes)")
       updateCloverTakeTheirs
       break
     ;;
