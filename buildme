@@ -1,9 +1,13 @@
 #!/bin/bash
 # created by vector sigma on July 15 2019
-if [[ "$(uname)" != Darwin ]]; then
-  echo "Sorry, works on macOS only"
-  exit 1
-fi
+
+
+# Linux users should be able to use this wrapper, although the following are needed:
+# gcc         (check for ./build_gcc8.sh or newer)
+# python      (sudo apt-get install python)
+# uuid-dev    (sudo apt-get install uuid-dev)
+# git         (sudo apt-get install git)
+
 
 cd "$(dirname $0)"
 declare -r CLOVERROOT="$PWD"
@@ -45,7 +49,10 @@ fi
 }
 
 exportPaths() {
-pathmunge "$(xcode-select --print-path)"/usr/bin
+if [[ "$(uname)" == Darwin ]]; then
+  pathmunge "$(xcode-select --print-path)"/usr/bin
+fi
+
 pathmunge "$TOOLCHAIN_DIR"/bin
 export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
 export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
@@ -56,26 +63,39 @@ export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 }
 
 checkTools() {
-checkXCODE
-exportPaths
-checkGETTEXT
-}
+if [[ "$(uname)" == Darwin ]]; then
+  checkXCODE
+fi
 
+exportPaths
+
+if [[ "$(uname)" == Darwin ]]; then
+  checkGETTEXT
+fi
+}
 
 updateCloverTakeTheirs() {
 echo "[UPDATE CLOVER]"
 cd "${CLOVERROOT}"
-git fetch --all
-git reset --hard origin/master
-git pull origin master
+if [[ -d .git ]]; then
+  git fetch --all
+  git reset --hard origin/master
+  git pull origin master
+else
+  echo "Error: this is not a git repository, can't update!"
+fi
 }
 
 updateCloverTakeYours() {
 echo "[UPDATE CLOVER]"
 cd "${CLOVERROOT}"
-git stash
-git pull origin master
-git stash apply
+if [[ -d .git ]]; then
+  git stash
+  git pull origin master
+  git stash apply
+else
+  echo "Error: this is not a git repository, can't update!"
+fi
 }
 
 buildClover() {
@@ -101,25 +121,56 @@ make iso
 
 checkStatus() {
 cd "${CLOVERROOT}"
-git fetch origin
-git status
+cd "${CLOVERROOT}"
+if [[ -d .git ]]; then
+  git fetch origin
+  git status
+else
+  echo "Error: this is not a git repository, can't get info!"
+fi
 }
 
 showdiff() {
 cd "${CLOVERROOT}"
-git fetch origin
-git diff
+if [[ -d .git ]]; then
+  git fetch origin
+  git diff
+else
+  echo "Error: this is not a git repository, can't get info!"
+fi
+}
+
+cleanBaseTools() {
+cd "${CLOVERROOT}"/BaseTools
+make clean
 }
 
 menu() {
 echo
 echo '------------------------------------------------------------------------'
 cd "${CLOVERROOT}"
-echo "buildme Beta, Clover v2.5k r$(cat vers.txt) (SHA: $(git rev-parse --short HEAD))"
-echo "Remote SHA: $(git rev-parse  --short origin/master)"
+
+local lsha1="not a git repo"
+
+if [[ -d .git ]]; then
+  lsha1=$(git rev-parse --short HEAD)
+fi
+
+echo "buildme, Clover v2.5k r$(cat vers.txt) (SHA: $lsha1)"
 echo
 PS3='Please enter your choice: '
-options=('build Clover' 'make pkg' 'make iso' 'build all' 'update Clover (discard local changes)' 'update Clover (stash local changes)' 'status' 'show diff' 'quit')
+options=( 'build Clover'
+          'make pkg'
+          'make iso'
+          'build all'
+          'status'
+          'update Clover (discard local changes)'
+          'update Clover (stash local changes)'
+          'show diff'
+          'open drivers directory'
+          'clean BaseTools'
+          'quit')
+
 select opt in "${options[@]}"
 do
   case $opt in
@@ -155,6 +206,19 @@ do
     ;;
     "show diff")
       showdiff
+      break
+    ;;
+    "open drivers directory")
+      if [[ -d "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/drivers ]]; then
+        open "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/drivers
+      else
+        echo && echo "Directory not found. Compile Clover first!!"
+        sleep 2
+      fi
+      break
+    ;;
+    "clean BaseTools")
+      cleanBaseTools
       break
     ;;
     "quit")

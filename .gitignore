@@ -7,7 +7,6 @@
 *~
 .cache
 Conf/.cache
-Conf/BuildEnv.sh
 Conf/target.txt
 
 # /CloverPackage/
@@ -72,3 +71,5 @@ CloverUpdater.strings
 CloverPrefpane.strings
 #CloverPackage/CloverPrefpane/src/*.lproj
 
+BaseTools/Source/Python/build/BuildReport.pyc
+Conf/BuildEnv.sh
