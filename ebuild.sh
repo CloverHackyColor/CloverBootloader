@@ -558,12 +558,21 @@ MainBuildScript() {
 
     # Build Clover version
     if (( $SkipAutoGen == 0 )) || (( $FORCEREBUILD == 1 )); then
+
       local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")
+
       local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
       #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
+
       echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" > "$CLOVERROOT"/Version.h
       echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> "$CLOVERROOT"/Version.h
-      echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
+
+      local sha1="(github unknown)"
+      if [[ -d "${CLOVERROOT}"/.git ]]; then
+        sha1="($(git rev-parse --abbrev-ref HEAD), commit $(git rev-parse --short HEAD))"
+      fi
+      echo "#define REVISION_STR \"Clover revision: ${clover_revision} $sha1\"" >> "$CLOVERROOT"/Version.h
+#      echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
 
       local clover_build_info="Args: "
       if [[ -n "$@" ]]; then
