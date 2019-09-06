@@ -38,53 +38,6 @@ if [[ ! -d "$(xcode-select --print-path)" ]]; then
 fi
 }
 
-isNASMGood() {
-# nasm should be greater or equal to 2.12.02 to be good building Clover.
-# There was a bad macho relocation in outmacho.c, fixed by Zenith432
-# and accepted by nasm devel during 2.12.rcxx (release candidate)
-
-result=1
-local nasmver=$( "${1}" -v | grep 'NASM version' | awk '{print $3}' )
-
-case "$nasmver" in
-2.12.0[2-9]* | 2.12.[1-9]* | 2.1[3-9]* | 2.[2-9]* | [3-9]* | [1-9][1-9]*)
-result=0;;
-*)
-printf "\n\e[1;33mUnknown or unsupported NASM version found at:\n${1}\n\n\e[0m";;
-esac
-
-return $result
-}
-
-checkNASM() {
-local nasmArray=( $(which -a nasm) )
-local found=0
-
-if [ ${#nasmArray[@]} -ge "1" ]; then
-
-  for i in "${nasmArray[@]}"
-  do
-    echo "found nasm v$(${i} -v | grep 'NASM version' | awk '{print $3}') at $(dirname ${i})"
-  done
-
-  # we have a good nasm?
-  for i in "${nasmArray[@]}"
-  do
-    if isNASMGood "${i}"; then
-      found=1
-      export NASM_PREFIX="$(dirname ${i})/"
-      break
-    fi
-  done
-fi
-
-if [[ "$found" -eq 0 ]]; then
-  echo "installing nasm.."
-  NASM_PREFIX="$(dirname ${i})/"
-  "${CLOVERROOT}"/buildnasm.sh
-fi
-}
-
 checkGETTEXT() {
 if [[ ! -x $(which gettext) ]]; then
   "${CLOVERROOT}"/buildgettext.sh
@@ -105,7 +58,6 @@ export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 checkTools() {
 checkXCODE
 exportPaths
-checkNASM
 checkGETTEXT
 }
 
