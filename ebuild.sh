@@ -33,7 +33,7 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
-SCRIPT_VERS="2018-06-18"
+SCRIPT_VERS="2019-09-06"
 
 # Macro
 M_NOGRUB=0
@@ -57,7 +57,7 @@ else
   TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
 fi
 if [[ ! -d $TOOLCHAIN_DIR ]]; then
-  TOOLCHAIN_DIR="${PWD}"/../../opt/local
+  TOOLCHAIN_DIR="${PWD}"/../opt/local
 fi
 export TOOLCHAIN_DIR
 echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
@@ -180,47 +180,6 @@ IsNumericOnly() {
   else
     return 1 # yes is an integer (no matter for bash if there are zeroes at the beginning comparing it as integer)
   fi
-}
-needNASM() {
-  local nasmPath=""
-  local nasmArray=( $(which -a nasm) )
-  local needInstall=1
-  local good=""
-
-  if [ ${#nasmArray[@]} -ge "1" ]; then
-
-    for i in "${nasmArray[@]}"
-    do
-      echo "found nasm v$(${i} -v | grep 'NASM version' | awk '{print $3}') at $(dirname ${i})"
-    done
-
-    # we have a good nasm?
-    for i in "${nasmArray[@]}"
-    do
-      if isNASMGood "${i}"; then
-        good="${i}"
-        break
-      fi
-    done
-
-    if [[ -x "${good}" ]] ; then
-      # only nasm at index 0 is used!
-      if [[ "${good}" == "${nasmArray[0]}" ]]; then
-        echo "${good} is ok.."
-      else
-        echo "this one is good:"
-        echo "${good}"
-      fi
-    else
-      # no nasm versions suitable for Clover
-      echo "nasm found, but is not good to build Clover.."
-      needInstall=0
-    fi
-  else
-    needInstall=0
-    echo "nasm not found.."
-  fi
-  return $needInstall
 }
 
 isNASMGood() {
@@ -462,12 +421,13 @@ checkToolchain() {
 
   if [[ -x "/opt/local/bin/nasm" ]]; then
     export NASM_PREFIX="/opt/local/bin/"
-  elif [[ -f "${TOOLCHAIN_DIR}/bin/nasm" ]]; then
+  elif [[ -x "${TOOLCHAIN_DIR}/bin/nasm" ]]; then
     # using $TOOLCHAIN_DIR here should allow Clover source to be
     # inside any sub folder instead of only in ~/
     export NASM_PREFIX="${TOOLCHAIN_DIR}/bin/"
   else
-    export NASM_PREFIX=""
+    export NASM_PREFIX="${TOOLCHAIN_DIR}/bin/"
+    ./buildnasm.sh
   fi
 
   echo "NASM_PREFIX: $NASM_PREFIX"
