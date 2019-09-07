@@ -417,6 +417,13 @@ checkToolchain() {
         echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
         exit 1
     fi
+  else
+    export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
+    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
+      echo "No clover toolchain found !" >&2
+      echo "Build it with the build_gcc8.sh script or define the TOOLCHAIN_DIR variable." >&2
+      exit 1
+    fi
   fi
 
   if [[ -x "/opt/local/bin/nasm" ]]; then
