@@ -1,6 +1,7 @@
 #!/bin/bash
-# created by vector sigma on July 15 2019
 
+# created by vector sigma on July 15 2019
+# github version
 
 # Linux users should be able to use this wrapper, although the following are needed:
 # gcc         (check for ./build_gcc8.sh or newer)
@@ -8,10 +9,11 @@
 # uuid-dev    (sudo apt-get install uuid-dev)
 # git         (sudo apt-get install git)
 
+# $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
 
 cd "$(dirname $0)"
 declare -r CLOVERROOT="$PWD"
-declare -r TOOLCHAIN=XCODE8
+declare -r MYTOOLCHAIN=${1:-XCODE8}
 
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
 
@@ -63,7 +65,7 @@ export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 }
 
 checkTools() {
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$(uname)" == Darwin && $TOOLCHAIN != GCC* ]]; then
   checkXCODE
 fi
 
@@ -103,8 +105,8 @@ checkTools
 
 cd "${CLOVERROOT}"
 echo "[BUILD CLOVER]"
-./ebuild.sh -fr
-./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED
+./ebuild.sh -fr -t $MYTOOLCHAIN
+./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
 }
 
 buildPkg() {
@@ -157,6 +159,7 @@ if [[ -d .git ]]; then
 fi
 
 echo "buildme, Clover v2.5k r$(cat vers.txt) (SHA: $lsha1)"
+echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme GCC53')"
 echo
 PS3='Please enter your choice: '
 options=( 'build Clover'
