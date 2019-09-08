@@ -44,7 +44,7 @@ export TOOLCHAIN=XCODE8
 export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
-export WORKSPACE=${WORKSPACE:-}
+export WORKSPACE="$PWD"
 export CONF_PATH=${CONF_PATH:-}
 #export NASM_PREFIX=
 
@@ -471,17 +471,24 @@ MainBuildScript() {
     #
     # Setup workspace if it is not set
     #
+    local EDK2DIR=$(cd "$CLOVERROOT" && echo "$PWD")
     if [[ -z "$WORKSPACE" ]]; then
         echo "Initializing workspace"
+        if [[ ! -x "${EDK2DIR}"/edksetup.sh ]]; then
+            echo "Error: Can't find edksetup.sh script !" >&2
+            exit 1
+        fi
+
         # This version is for the tools in the BaseTools project.
         # this assumes svn pulls have the same root dir
         #  export EDK_TOOLS_PATH=`pwd`/../BaseTools
         # This version is for the tools source in edk2
-        cd "$CLOVERROOT"
+  #      cd "$EDK2DIR"
         export EDK_TOOLS_PATH="${PWD}"/BaseTools
         set +u
         source ./edksetup.sh BaseTools
         set -u
+        cd "$CLOVERROOT"
     else
         echo "Building from: $WORKSPACE"
     fi
@@ -663,11 +670,11 @@ setInitBootMsg(){
 
 # Deploy Clover files for packaging
 MainPostBuildScript() {
-  if [[ -z "$EDK_TOOLS_PATH" ]]; then
+#  if [[ -z "$EDK_TOOLS_PATH" ]]; then
     export BASETOOLS_DIR="$WORKSPACE"/BaseTools/Source/C/bin
-  else
-    export BASETOOLS_DIR="$EDK_TOOLS_PATH"/Source/C/bin
-  fi
+#  else
+#    export BASETOOLS_DIR="$EDK_TOOLS_PATH"/Source/C/bin
+#  fi
   export BOOTSECTOR_BIN_DIR="$CLOVERROOT"/CloverEFI/BootSector/bin
 	if (( $NOBOOTFILES == 0 )); then
     echo Compressing DUETEFIMainFv.FV ...
