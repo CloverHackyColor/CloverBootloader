@@ -59,13 +59,12 @@ pathmunge "$TOOLCHAIN_DIR"/bin
 export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
 export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
 export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
-export DIR_BUILD=${DIR_BUILD:-$RAMDISK_MNT_PT}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
 }
 
 checkTools() {
-if [[ "$(uname)" == Darwin && $TOOLCHAIN != GCC* ]]; then
+if [[ "$(uname)" == Darwin && $MYTOOLCHAIN != GCC* ]]; then
   checkXCODE
 fi
 
@@ -76,8 +75,19 @@ if [[ "$(uname)" == Darwin ]]; then
 fi
 }
 
-updateCloverTakeTheirs() {
+updateClover() {
 echo "[UPDATE CLOVER]"
+cd "${CLOVERROOT}"
+if [[ -d .git ]]; then
+  git fetch --all
+  git pull origin master
+else
+  echo "Error: this is not a git repository, can't update!"
+fi
+}
+
+updateResetClover() {
+echo "[UPDATE RESET CLOVER]"
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
   git fetch --all
@@ -88,25 +98,36 @@ else
 fi
 }
 
-updateCloverTakeYours() {
-echo "[UPDATE CLOVER]"
-cd "${CLOVERROOT}"
-if [[ -d .git ]]; then
-  git stash
-  git pull origin master
-  git stash apply
-else
-  echo "Error: this is not a git repository, can't update!"
-fi
-}
-
 buildClover() {
 checkTools
 
 cd "${CLOVERROOT}"
+
+if [[ -z "$WORKSPACE" ]]; then
+  export EDK_TOOLS_PATH="${PWD}"/BaseTools
+  set +u
+  source ./edksetup.sh BaseTools
+  set -u
+  cd "$CLOVERROOT"
+  WORKSPACE="${PWD}"
+fi
+
 echo "[BUILD CLOVER]"
-./ebuild.sh -fr -t $MYTOOLCHAIN
-./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+# Run a custom build script if exist (~/src/tools/Scripts/build.sh)
+# This allow the user to run ebuild.sh with own parameters
+if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
+  echo "Running custom build script"
+  "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
+else
+  ./ebuild.sh -fr -t $MYTOOLCHAIN
+  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+fi
+
+# Run a post build script if exist (~/src/tools/Scripts/postbuild.sh)
+if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
+  echo "Running postbuild script"
+  "${DIR_TOOLS}"/Scripts/postbuild.sh
+fi
 }
 
 buildPkg() {
@@ -122,7 +143,6 @@ make iso
 }
 
 checkStatus() {
-cd "${CLOVERROOT}"
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
   git fetch origin
@@ -167,8 +187,8 @@ options=( 'build Clover'
           'make iso'
           'build all'
           'status'
-          'update Clover (discard local changes)'
-          'update Clover (stash local changes)'
+          'update Clover'
+          'update Clover (reset changes)'
           'show diff'
           'open drivers directory'
           'clean BaseTools'
@@ -195,12 +215,12 @@ do
       buildIso
       break
     ;;
-    "update Clover (discard local changes)")
-      updateCloverTakeTheirs
+    "update Clover")
+      updateClover
       break
     ;;
-    "update Clover (stash local changes)")
-      updateCloverTakeYours
+    "update Clover (reset changes)")
+      updateResetClover
       break
     ;;
     "status")
