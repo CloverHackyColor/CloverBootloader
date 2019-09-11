@@ -11,6 +11,6 @@ if sys.platform == "darwin":
   DefaultLocal = locale.getdefaultlocale()[1]
   if DefaultLocal is None:
     DefaultLocal = 'UTF8'
-if sys.version_info[0] < 3:
-  sys.setdefaultencoding(DefaultLocal)
+  if sys.version_info[0] < 3:
+    sys.setdefaultencoding(DefaultLocal)
 

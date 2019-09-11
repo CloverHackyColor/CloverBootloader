@@ -17,7 +17,7 @@
 #                                               build. This line is required if and only if the current
 #                                               working directory does not contain one or more description
 #                                               files.
-ACTIVE_PLATFORM       = Clover.dsc
+ACTIVE_PLATFORM       = EmulatorPkg/EmulatorPkg.dsc
 
 #  TARGET                List       Optional    Zero or more of the following: DEBUG, RELEASE, NOOPT
 #                                               UserDefined; separated by a space character.
@@ -60,7 +60,7 @@ TOOL_CHAIN_TAG        = VS2015x86
 #                                                 means disable multi-thread build, value set to more than 1,
 #                                                 means user specify the thread number to build. Not specify
 #                                                 the default value in this file.
-# MAX_CONCURRENT_THREAD_NUMBER = 5
+# MAX_CONCURRENT_THREAD_NUMBER = 1
 
 
 # BUILD_RULE_CONF  Filename Optional  Specify the file name to use for the build rules that are followed
