@@ -1,13 +1,7 @@
 #
 #  Copyright (c) 2007 - 2018, Intel Corporation. All rights reserved.<BR>
 #  Portions copyright (c) 2008 - 2010, Apple Inc. All rights reserved.<BR>
-#  This program and the accompanying materials
-#  are licensed and made available under the terms and conditions of the BSD License
-#  which accompanies this distribution.  The full text of the license may be found at
-#  http://opensource.org/licenses/bsd-license.php
-
-#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 
 ## Syntax
@@ -230,7 +224,7 @@
     <Command>
         @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --trim-long --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
-        "$(NASM)" -I${s_path}(+) $(NASM_INC) $(NASM_FLAGS) -o $dst ${d_path}(+)${s_base}.iii
+        @"$(NASM)" -I${s_path}(+) $(NASM_INC) $(NASM_FLAGS) -o $dst ${d_path}(+)${s_base}.iii
         @"echo" [NASM] ${s_base}
 
 [Device-Tree-Source-File]
@@ -393,7 +387,7 @@
 
         @"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
         @$(CP) ${dst} $(OUTPUT_DIR)
-        @$(CP) ${dst} $(BIN_DIR)
+        @$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).efi
         @-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
         @"echo" [GENFW] $(MODULE_NAME)
         

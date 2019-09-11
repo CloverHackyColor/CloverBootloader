@@ -373,7 +373,7 @@ rem # drop compiled files to EFI folder
     echo "ENABLE_SECURE_BOOT" doesnt work ATM ...
     echo.
   )
-
+  goto noboot
   call:createDir %DEST_BOOTLOADERS%\%TARGETARCH%
 
   echo Compressing DUETEFIMainFv.FV ^(%TARGETARCH%^) ...
@@ -435,7 +435,7 @@ rem # drop compiled files to EFI folder
 
   set /A "cloverEFIFile=(%TARGETARCH_INT:~0,1% + %USE_BIOS_BLOCKIO%)"
   set cloverEFIFile=boot%cloverEFIFile%
-
+:noboot
   echo.
   echo Start copying:
 

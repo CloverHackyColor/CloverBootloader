@@ -25,7 +25,7 @@ ACTIVE_PLATFORM       = EmulatorPkg/EmulatorPkg.dsc
 #                                               valid targets specified in the platform description file 
 #                                               will attempt to be built. The following line will build 
 #                                               DEBUG platform target.
-TARGET                = DEBUG
+TARGET                = RELEASE
 
 #  TARGET_ARCH           List       Optional    What kind of architecture is the binary being target for.
 #                                               One, or more, of the following, IA32, IPF, X64, EBC, ARM
@@ -41,7 +41,7 @@ TARGET                = DEBUG
 #                                               If not specified, then all valid architectures specified
 #                                               in the platform file, for which tools are available, will be
 #                                               built.
-TARGET_ARCH           = IA32
+TARGET_ARCH           = X64
 
 #  TOOL_DEFINITION_FILE  Filename  Optional   Specify the name of the filename to use for specifying
 #                                             the tools to use for the build.  If not specified,
