@@ -43,7 +43,7 @@
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
 
 [Components]
-  Clover/DumpUefiCalls/DumpUefiCalls.inf
+  Protocols/DumpUefiCalls/DumpUefiCalls.inf
 
 
 [PcdsFixedAtBuild]

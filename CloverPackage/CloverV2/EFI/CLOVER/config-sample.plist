@@ -271,6 +271,19 @@
 		<string>0x3E7</string>
 		<key>MLB</key>
 		<string>C02032109R5DC771H</string>
+		<key>Block</key>
+		<array>
+			<dict>
+				<key>Disabled</key>
+				<false/>
+				<key>Comment</key>
+				<string>Dell variables</string>
+				<key>UUID</key>
+				<string>FF2E9FC7-D16F-434A-A24E-C99519B7EB93</string>
+				<key>Name</key>
+				<string>*</string>
+			</dict>
+		</array>
 	</dict>
 	<key>CPU</key>
 	<dict>
