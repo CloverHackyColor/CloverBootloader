@@ -281,4 +281,11 @@ menu
 
 # Main
 set -e
-menu
+if [[ "$2" == travis ]]; then
+  buildClover
+  buildPkg
+  buildIso
+else
+  menu
+fi
+
