@@ -100,7 +100,7 @@ EFI_STATUS MouseBirth()
   EFI_STATUS Status = EFI_UNSUPPORTED;
 
   if (!gSettings.PointerEnabled) {
-    return EFI_UNSUPPORTED;
+    return EFI_SUCCESS;
   }
   
   if (gPointer.SimplePointerProtocol) { //do not double
