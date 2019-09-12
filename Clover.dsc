@@ -24,7 +24,9 @@
   SUPPORTED_ARCHITECTURES        = X64|IA32
   BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
+!ifndef SKIP_FLASH
   FLASH_DEFINITION               = Clover.fdf
+!endif
 
   !ifndef OPENSSL_VERSION
     DEFINE OPENSSL_VERSION       = 1.0.1e
