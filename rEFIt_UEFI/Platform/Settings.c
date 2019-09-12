@@ -6184,7 +6184,7 @@ GetUserSettings(
       if (Prop != NULL) {
         INTN   i, Count = GetTagCount (Prop);
         for (i = 0; i < Count; i++) {
-          EFI_STATUS Status = GetElement (Prop, i, &Dict);
+          Status = GetElement (Prop, i, &Dict);
           if (!EFI_ERROR(Status)) {
             Prop2 = GetProperty (Dict, "Comment");
           }

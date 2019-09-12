@@ -765,6 +765,12 @@ struct ACPI_NAME_LIST {
 	CHAR8          *Name;
 };
 
+typedef struct RT_VARIABLES RT_VARIABLES;
+struct RT_VARIABLES {
+  BOOLEAN Disabled;
+  CHAR8   *Name;
+  EFI_GUID VarGuid;
+};
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {

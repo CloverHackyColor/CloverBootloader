@@ -139,11 +139,13 @@ FreePages (
   IN UINTN  Pages
   )
 {
-  EFI_STATUS  Status;
+//  EFI_STATUS  Status;
 
-  ASSERT (Pages != 0);
-  Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT (Pages != 0);
+  if (Pages != 0) {
+    gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, Pages);
+  }
+//  ASSERT_EFI_ERROR (Status);
 }
 
 /**
@@ -216,8 +218,8 @@ InternalAllocateAlignedPages (
       //
       // Free last unaligned page(s).
       //
-      Status = gBS->FreePages (Memory, UnalignedPages);
-      ASSERT_EFI_ERROR (Status);
+     /* Status = */ gBS->FreePages (Memory, UnalignedPages);
+//      ASSERT_EFI_ERROR (Status);
     }
   } else {
     //
@@ -340,11 +342,12 @@ FreeAlignedPages (
   IN UINTN  Pages
   )
 {
-  EFI_STATUS  Status;
+//  EFI_STATUS  Status;
 
-  ASSERT (Pages != 0);
-  Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
-  ASSERT_EFI_ERROR (Status);
+  if (Pages != 0) {
+  /*  Status = */ gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, Pages);
+  }
+//  ASSERT_EFI_ERROR (Status);
 }
 
 /**
@@ -367,7 +370,12 @@ InternalAllocatePool (
   )
 {
   EFI_STATUS  Status;
-  VOID        *Memory;
+  VOID        *Memory = NULL;
+
+  if (AllocationSize == 0)
+  {
+    return NULL;
+  }
 
   Status = gBS->AllocatePool (MemoryType, AllocationSize, &Memory);
   if (EFI_ERROR (Status)) {
@@ -559,9 +567,13 @@ InternalAllocateCopyPool (
   )
 {
   VOID  *Memory;
+  if (!Buffer || (AllocationSize > (MAX_ADDRESS - (UINTN)Buffer + 1)))
+  {
+    return NULL;
+  }
 
-  ASSERT (Buffer != NULL);
-  ASSERT (AllocationSize <= (MAX_ADDRESS - (UINTN) Buffer + 1));
+//  ASSERT (Buffer != NULL);
+//  ASSERT (AllocationSize <= (MAX_ADDRESS - (UINTN) Buffer + 1));
 
   Memory = InternalAllocatePool (PoolType, AllocationSize);
   if (Memory != NULL) {
@@ -807,9 +819,11 @@ FreePool (
   IN VOID   *Buffer
   )
 {
-  EFI_STATUS    Status;
-
-  Status = gBS->FreePool (Buffer);
-  ASSERT_EFI_ERROR (Status);
+//  EFI_STATUS    Status;
+  if (Buffer) {
+    gBS->FreePool(Buffer);
+  }
+//  Status = gBS->FreePool (Buffer);
+//  ASSERT_EFI_ERROR (Status);
 }
 
