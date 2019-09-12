@@ -126,7 +126,7 @@ fi
 # Run a post build script if exist (~/src/tools/Scripts/postbuild.sh)
 if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
   echo "Running postbuild script"
-  "${DIR_TOOLS}"/Scripts/postbuild.sh
+  "${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
 fi
 }
 
