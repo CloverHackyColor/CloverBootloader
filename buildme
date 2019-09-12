@@ -130,6 +130,24 @@ if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
 fi
 }
 
+buildCloverTest() {
+checkTools
+
+cd "${CLOVERROOT}"
+
+if [[ -z "$WORKSPACE" ]]; then
+  export EDK_TOOLS_PATH="${PWD}"/BaseTools
+  set +u
+  source ./edksetup.sh BaseTools
+  set -u
+  cd "$CLOVERROOT"
+  WORKSPACE="${PWD}"
+fi
+
+echo "[BUILD CLOVER TEST]"
+./ebuild.sh -nb -t $MYTOOLCHAIN
+}
+
 buildPkg() {
 cd "${CLOVERROOT}"/CloverPackage
 echo "[BUILD PKG]"
@@ -186,6 +204,7 @@ options=( 'build Clover'
           'make pkg'
           'make iso'
           'build all'
+          'test build (no autogen, no boot files)'
           'status'
           'update Clover'
           'update Clover (reset changes)'
@@ -213,6 +232,10 @@ do
       buildClover
       buildPkg
       buildIso
+      break
+    ;;
+    "test build (no autogen, no boot files)")
+      buildCloverTest
       break
     ;;
     "update Clover")
