@@ -29,6 +29,7 @@ EFI_EVENT   ExitBootServiceEvent = NULL;
 EFI_EVENT   mSimpleFileSystemChangeEvent = NULL;
 EFI_HANDLE  mHandle = NULL;
 
+extern EFI_RUNTIME_SERVICES gOrgRS;
 
 /*
 VOID WaitForCR()
@@ -192,6 +193,7 @@ VOID
 EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
+  /*
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
       (gCPUStructure.Family == 0x06 && gCPUStructure.Model >= CPU_MODEL_SANDY_BRIDGE)
        ) {
@@ -200,7 +202,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
     msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
     //  AsciiPrint("MSR 0xE2 on Exit BS %08x\n", msr);
 
-  }
+  } */
 /*
 //  EFI_STATUS Status;
   {
@@ -223,7 +225,6 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
     }
   }
 */  
-
 
   gST->ConOut->OutputString (gST->ConOut, L"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 	//
@@ -324,7 +325,7 @@ OnReadyToBoot (
                IN      VOID        *Context
                )
 {
-//
+/*
   if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
        (gCPUStructure.Family == 0x06 && gCPUStructure.Model >= CPU_MODEL_SANDY_BRIDGE)
        )) {
@@ -334,7 +335,7 @@ OnReadyToBoot (
 
   }
 //  AsciiPrint("MSR 0xE2 on ReadyToBoot %08x\n", msr);
-
+*/
 }
 
 VOID

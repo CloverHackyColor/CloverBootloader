@@ -393,7 +393,7 @@ checkCmdlineArguments() {
     # Update variables
     PLATFORMFILE="${PLATFORMFILE:-Clover.dsc}"
     if [ ! -z "${MODULEFILE}" ]; then
-        MODULEFILE=" -m Clover/$MODULEFILE"
+        MODULEFILE=" -m $MODULEFILE"
     fi
 
     # Allow custom config path
