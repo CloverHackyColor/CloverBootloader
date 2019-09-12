@@ -62,8 +62,11 @@ EFI_GUID gDataHubPlatformGuid = {
   0x64517cc8, 0x6561, 0x4051, { 0xb0, 0x3c, 0x59, 0x64, 0xb6, 0x0f, 0x4c, 0x7a }
 };
 
-extern EFI_GUID gDataHubPlatformGuid;
+extern EFI_GUID                     gDataHubPlatformGuid;
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
+extern UINTN                        RtVariablesNum;
+extern RT_VARIABLES                 *RtVariables;
+
 
 typedef union {
   EFI_CPU_DATA_RECORD *DataRecord;
@@ -135,6 +138,45 @@ LogDataHub(IN  EFI_GUID *TypeGuid,
 }
 
 // SetVariablesForOSX
+/** Installs our runtime services overrides. */
+/** Original runtime services. */
+EFI_RUNTIME_SERVICES gOrgRS;
+
+EFI_STATUS EFIAPI
+OvrSetVariable(
+  IN CHAR16			*VariableName,
+  IN EFI_GUID		*VendorGuid,
+  IN UINT32			Attributes,
+  IN UINTN			DataSize,
+  IN VOID				*Data
+)
+{
+  EFI_STATUS			Status;
+  UINTN i;
+
+  for (i = 0; i < RtVariablesNum; i++) {
+    if (!CompareGuid(&RtVariables[i].VarGuid, VendorGuid)) {
+      continue;
+    }
+    if (!RtVariables[i].Name || RtVariables[i].Name[0] == L'*' || StrCmp(VariableName, RtVariables[i].Name) == 0) {
+      return EFI_SUCCESS;
+    }
+  }
+  Status = gOrgRS.SetVariable(VariableName, VendorGuid, Attributes, DataSize, Data);
+  return Status;
+}
+
+EFI_STATUS EFIAPI
+OvrRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
+{
+  EFI_STATUS Status;
+  CopyMem(&gOrgRS, RS, sizeof(EFI_RUNTIME_SERVICES));
+  RS->SetVariable = OvrSetVariable;
+  RS->Hdr.CRC32 = 0;
+  Status = gBS->CalculateCrc32(RS, RS->Hdr.HeaderSize, &RS->Hdr.CRC32);
+  return Status;
+}
+
 /// Sets the volatile and non-volatile variables used by OS X
 EFI_STATUS EFIAPI
 SetVariablesForOSX(LOADER_ENTRY *Entry)
@@ -156,7 +198,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   //
   // firmware Variables
   //
-
+  if (RtVariablesNum > 0) {
+    OvrRuntimeServices(gRS);
+  }
+  
   // As found on a real Mac, the system-id variable solely has the BS flag
   SetNvramVariable(L"system-id",
                    &gEfiAppleNvramGuid,

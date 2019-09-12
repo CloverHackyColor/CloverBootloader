@@ -767,8 +767,8 @@ struct ACPI_NAME_LIST {
 
 typedef struct RT_VARIABLES RT_VARIABLES;
 struct RT_VARIABLES {
-  BOOLEAN Disabled;
-  CHAR8   *Name;
+//  BOOLEAN  Disabled;
+  CHAR16   *Name;
   EFI_GUID VarGuid;
 };
 
