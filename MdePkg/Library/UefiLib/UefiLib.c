@@ -158,7 +158,10 @@ EfiCreateProtocolNotifyEvent(
                   NotifyContext,
                   &Event
                   );
-  ASSERT_EFI_ERROR (Status);
+ // ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return NULL;
+  }
 
   //
   // Register for protocol notifications on this event
@@ -170,7 +173,10 @@ EfiCreateProtocolNotifyEvent(
                   Registration
                   );
 
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return NULL;
+  }
 
   //
   // Kick the event so we will perform an initial pass of
@@ -229,7 +235,10 @@ EfiNamedEventListen (
                   (VOID *) NotifyContext,
                   &Event
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   //
   // The Registration is not optional to RegisterProtocolNotify().
@@ -286,7 +295,10 @@ EfiNamedEventSignal (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+// ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   Status = gBS->UninstallProtocolInterface (
                   Handle,
@@ -409,8 +421,11 @@ EfiInitializeLock (
   IN EFI_TPL        Priority
   )
 {
-  ASSERT (Lock != NULL);
+//  ASSERT (Lock != NULL);
   ASSERT (Priority <= TPL_HIGH_LEVEL);
+  if (!Lock) {
+    return NULL;
+  }
 
   Lock->Tpl       = Priority;
   Lock->OwnerTpl  = TPL_APPLICATION;
@@ -438,6 +453,9 @@ EfiAcquireLock (
   )
 {
   ASSERT (Lock != NULL);
+  if (!Lock) {
+    return;
+  }
   ASSERT (Lock->Lock == EfiLockReleased);
 
   Lock->OwnerTpl = gBS->RaiseTPL (Lock->Tpl);
@@ -468,6 +486,9 @@ EfiAcquireLockOrFail (
 {
 
   ASSERT (Lock != NULL);
+  if (!Lock) {
+    return EFI_ACCESS_DENIED;
+  }
   ASSERT (Lock->Lock != EfiLockUninitialized);
 
   if (Lock->Lock == EfiLockAcquired) {
@@ -506,6 +527,9 @@ EfiReleaseLock (
   EFI_TPL Tpl;
 
   ASSERT (Lock != NULL);
+  if (!Lock) {
+    return;
+  }
   ASSERT (Lock->Lock == EfiLockAcquired);
 
   Tpl = Lock->OwnerTpl;
@@ -550,7 +574,9 @@ EfiTestManagedDevice (
   VOID           *ManagedInterface;
 
   ASSERT (ProtocolGuid != NULL);
-
+  if (!ProtocolGuid) {
+    return EFI_UNSUPPORTED;
+  }
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   (EFI_GUID *) ProtocolGuid,
@@ -604,11 +630,14 @@ EfiTestChildHandle (
   )
 {
   EFI_STATUS                            Status;
-  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfoBuffer;
-  UINTN                                 EntryCount;
+  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfoBuffer = NULL;
+  UINTN                                 EntryCount = 0;
   UINTN                                 Index;
 
   ASSERT (ProtocolGuid != NULL);
+  if (!ProtocolGuid) {
+    return EFI_UNSUPPORTED;
+  }
 
   //
   // Retrieve the list of agents that are consuming the specific protocol
@@ -1301,6 +1330,9 @@ GetVariable (
 
   ASSERT (Name != NULL);
   ASSERT (Guid != NULL);
+  if (!Name || !Guid) {
+    return NULL;
+  }
 
   //
   // Try to get the variable size.
@@ -1393,6 +1425,9 @@ GetVariable2 (
   UINTN       BufferSize;
 
   ASSERT (Name != NULL && Guid != NULL && Value != NULL);
+  if (!Name || !Guid || !Value) {
+    return EFI_NOT_FOUND;
+  }
 
   //
   // Try to get the variable size.
@@ -1470,6 +1505,9 @@ GetVariable3(
   UINTN       BufferSize;
 
   ASSERT(Name != NULL && Guid != NULL && Value != NULL);
+  if (!Name || !Guid || !Value) {
+    return EFI_NOT_FOUND;
+  }
 
   //
   // Try to get the variable size.
@@ -1601,6 +1639,9 @@ GetBestLanguage (
   CHAR8        *BestLanguage;
 
   ASSERT (SupportedLanguages != NULL);
+  if (!SupportedLanguages) {
+    return NULL;
+  }
 
   VA_START (Args, Iso639Language);
   while ((Language = VA_ARG (Args, CHAR8 *)) != NULL) {
