@@ -64,6 +64,8 @@ UINTN                           DsdtsNum;
 CHAR16                          *DsdtsList[20];
 UINTN                           AudioNum;
 HDA_OUTPUTS                     AudioList[20];
+UINTN                           RtVariablesNum;
+RT_VARIABLES                    *RtVariables;
 
 // firmware
 BOOLEAN                         gFirmwareClover             = FALSE;
@@ -6169,7 +6171,7 @@ GetUserSettings(
       }
       // CsrActiveConfig
       Prop = GetProperty (DictPointer, "CsrActiveConfig");
-      gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x67); //the value 0xFFFF means not set
+      gSettings.CsrActiveConfig = (UINT32)GetPropertyInteger (Prop, 0x267); //the value 0xFFFF means not set
 
       //BooterConfig
       Prop = GetProperty (DictPointer, "BooterConfig");
@@ -6179,14 +6181,44 @@ GetUserSettings(
       if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
         AsciiStrCpyS (gSettings.BooterCfgStr, 64, Prop->string);
       }
-      
+      //Block external variables
       Prop = GetProperty (DictPointer, "Block");
       if (Prop != NULL) {
         INTN   i, Count = GetTagCount (Prop);
+        CHAR16 UStr[64];
+        RtVariablesNum = 0;
+        RtVariables = AllocateZeroPool(Count * sizeof(RT_VARIABLES));
         for (i = 0; i < Count; i++) {
           Status = GetElement (Prop, i, &Dict);
           if (!EFI_ERROR(Status)) {
             Prop2 = GetProperty (Dict, "Comment");
+            if (Prop2 && Prop2->string) {
+              DBG(" %a\n", Prop2->string);
+            }
+            Prop2 = GetProperty(Dict, "Disabled");
+            if (IsPropertyFalse(Prop2)) {
+              continue;
+            }
+            Prop2 = GetProperty(Dict, "Guid");
+            if (Prop2 != NULL && AsciiStrLen(Prop2->string) > 0) {             
+              ZeroMem(UStr, 64 * sizeof(CHAR16));
+              if (IsValidGuidAsciiString(Prop2->string)) {
+                AsciiStrToUnicodeStrS(Prop2->string, (CHAR16*)&UStr[0], 64);
+                StrToGuidLE((CHAR16*)&UStr[0], &RtVariables[RtVariablesNum].VarGuid);
+              }
+              else {
+                DBG("Error: invalid GUID for RT var '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
+              }
+            }
+
+            Prop2 = GetProperty(Dict, "Name");
+            RtVariables[RtVariablesNum].Name = NULL;
+            if (Prop2 != NULL && AsciiStrLen(Prop2->string) > 0) {
+              AsciiStrToUnicodeStrS(Prop2->string, (CHAR16*)&UStr[0], 64);
+        //      RtVariables[RtVariablesNum].Name =  AllocateCopyPool(128, UStr);
+              StrCpyS(RtVariables[RtVariablesNum].Name, 64, UStr);
+            }
+            RtVariablesNum++;
           }
         }
       }
