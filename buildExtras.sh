@@ -22,7 +22,7 @@ if [[ "$(uname)" == Darwin ]] && [[ ! -x "$TOOLCHAIN_DIR"/cross/bin/x86_64-clove
       echo -n b
   	fi
    	echo "uilding it"
- 	./build_gcc8.sh
+ 	./build_gcc9.sh
    	echo "Continuing..."
 fi
 

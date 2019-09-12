@@ -34,6 +34,10 @@
 
 GRUB_MOD_LICENSE ("GPLv3+");
 
+#if defined(__GNUC__) && __GNUC__ >= 9
+#pragma GCC diagnostic ignored "-Waddress-of-packed-member"
+#endif
+
 /* The type of node.  */
 enum grub_hfsplus_btnode_type
   {

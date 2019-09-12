@@ -54,6 +54,10 @@
 #define BP(msg)
 #endif
 
+#if defined(__GNUC__) && __GNUC__ >= 9
+#pragma GCC diagnostic ignored "-Waddress-of-packed-member"
+#endif
+
 static int hardlink = 0;
 
 static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol);
