@@ -267,7 +267,7 @@ HdaCodecDumpPrintWidgets(
 }
 
 EFI_STATUS SaveHdaDumpTxt() {
-    EFI_STATUS Status;
+    EFI_STATUS Status = EFI_NOT_FOUND;
 	AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
    	HDA_CODEC_DEV *HdaCodecDev;
     EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
