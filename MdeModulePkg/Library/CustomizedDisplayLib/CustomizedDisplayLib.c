@@ -536,8 +536,10 @@ CreateDialog (
 
   if (Key != NULL) {
     Status = WaitForKeyStroke (&KeyValue);
-    ASSERT_EFI_ERROR (Status);
-    CopyMem (Key, &KeyValue, sizeof (EFI_INPUT_KEY));
+//    ASSERT_EFI_ERROR (Status);
+    if (!EFI_ERROR(Status)) {
+      CopyMem(Key, &KeyValue, sizeof(EFI_INPUT_KEY));
+    }
   }
 
   gST->ConOut->SetAttribute (gST->ConOut, CurrentAttribute);
@@ -721,6 +723,9 @@ ClearLines (
   //
   Buffer = AllocateZeroPool (0x10000);
   ASSERT (Buffer != NULL);
+  if (!Buffer) {
+    return;
+  }
 
   //
   // Set foreground and background as defined
