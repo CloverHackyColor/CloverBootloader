@@ -59,17 +59,23 @@ InternalPrint (
   UINTN       BufferSize;
 
   ASSERT (Format != NULL);
+  if (!Format || !Console || !Console->OutputString) {
+    return 0;
+  }
   ASSERT (((UINTN) Format & BIT0) == 0);
-  ASSERT (Console != NULL);
+ // ASSERT (Console != NULL);
 
   BufferSize = (PcdGet32 (PcdUefiLibMaxPrintBufferSize) + 1) * sizeof (CHAR16);
 
   Buffer = (CHAR16 *) AllocatePool(BufferSize);
   ASSERT (Buffer != NULL);
+  if (!Buffer) {
+    return 0;
+  }
 
   Return = UnicodeVSPrint (Buffer, BufferSize, Format, Marker);
 
-  if (Console != NULL && Return > 0) {
+  if (/*Console != NULL && */ Return > 0) {
     //
     // To be extra safe make sure Console has been initialized
     //
@@ -196,15 +202,21 @@ AsciiInternalPrint (
 
   ASSERT (Format != NULL);
   ASSERT (Console != NULL);
+  if (!Format || !Console || !Console->OutputString) {
+    return 0;
+  }
 
   BufferSize = (PcdGet32 (PcdUefiLibMaxPrintBufferSize) + 1) * sizeof (CHAR16);
 
   Buffer = (CHAR16 *) AllocatePool(BufferSize);
   ASSERT (Buffer != NULL);
+  if (!Buffer) {
+    return 0;
+  }
 
   Return = UnicodeVSPrintAsciiFormat (Buffer, BufferSize, Format, Marker);
 
-  if (Console != NULL) {
+  if (Return > 0) {
     //
     // To be extra safe make sure Console has been initialized
     //
@@ -367,6 +379,9 @@ InternalPrintGraphic (
   ConsoleHandle = gST->ConsoleOutHandle;
 
   ASSERT( ConsoleHandle != NULL);
+  if (!ConsoleHandle) {
+    return 0;
+  }
 
   Status = gBS->HandleProtocol (
                   ConsoleHandle,
@@ -419,6 +434,9 @@ InternalPrintGraphic (
 
   Blt = (EFI_IMAGE_OUTPUT *) AllocateZeroPool (sizeof (EFI_IMAGE_OUTPUT));
   ASSERT (Blt != NULL);
+  if (!Blt) {
+    return 0;
+  }
 
   Blt->Width        = (UINT16) (HorizontalResolution);
   Blt->Height       = (UINT16) (VerticalResolution);
@@ -477,6 +495,9 @@ InternalPrintGraphic (
 
     Blt->Image.Bitmap = AllocateZeroPool ((UINT32) Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     ASSERT (Blt->Image.Bitmap != NULL);
+    if (!Blt->Image.Bitmap) {
+      return 0;
+    }
 
     //
     //  StringToImage only support blt'ing image to device using GOP protocol. If GOP is not supported in this platform,
@@ -499,6 +520,9 @@ InternalPrintGraphic (
 
     if (!EFI_ERROR (Status)) {
       ASSERT (RowInfoArray != NULL);
+      if (!RowInfoArray) {
+        goto Error;
+      }
       //
       // Explicit Line break characters are ignored, so the updated parameter RowInfoArraySize by StringToImage will
       // always be 1 or 0 (if there is no valid Unicode Char can be printed). ASSERT here to make sure.
@@ -613,7 +637,11 @@ PrintXY (
   UINTN                               ReturnNum;
 
   ASSERT (Format != NULL);
+  if (!Format) {
+    return 0;
+  }
   ASSERT (((UINTN) Format & BIT0) == 0);
+
 
   VA_START (Marker, Format);
 
@@ -621,6 +649,9 @@ PrintXY (
 
   Buffer = (CHAR16 *) AllocatePool (BufferSize);
   ASSERT (Buffer != NULL);
+  if (!Buffer) {
+    return 0;
+  }
 
   PrintNum = UnicodeVSPrint (Buffer, BufferSize, Format, Marker);
 
@@ -692,6 +723,9 @@ AsciiPrintXY (
   UINTN                               ReturnNum;
 
   ASSERT (Format != NULL);
+  if (!Format) {
+    return 0;
+  }
 
   VA_START (Marker, Format);
 
@@ -699,6 +733,9 @@ AsciiPrintXY (
 
   Buffer = (CHAR16 *) AllocatePool (BufferSize);
   ASSERT (Buffer != NULL);
+  if (!Buffer) {
+    return 0;
+  }
 
   PrintNum = UnicodeSPrintAsciiFormat (Buffer, BufferSize, Format, Marker);
 
