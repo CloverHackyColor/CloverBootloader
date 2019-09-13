@@ -50,7 +50,7 @@ CHAR8 plugin_type[] =
   0x65, 0x00,
 };
 
-SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
+SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 {
   CHAR8 name[31];
   CHAR8 name1[31];
@@ -450,7 +450,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   return NULL;
 }
 
-SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, UINT8 FirstID, UINTN Number)
+SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, UINTN Number)
 {
   BOOLEAN c2_enabled = gSettings.EnableC2;
   BOOLEAN c3_enabled;

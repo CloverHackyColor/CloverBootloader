@@ -1712,7 +1712,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE           *ProcLocalApic;
   EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE                 *LocalApicNMI;
   //  UINTN             ApicLen;
-  UINT8             CPUBase;
   UINTN             ApicCPUNum;
   UINT8             *SubTable;
   BOOLEAN           DsdtLoaded = FALSE;
@@ -2052,7 +2051,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
                         (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
   }
   //native DSDT or loaded we want to apply autoFix to this
-  //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and CPUBase and count(?)
+  //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
   DBG("Apply DsdtFixMask=0x%08x\n", gSettings.FixDsdt);
   DBG("   drop _DSM mask=0x%04x\n", dropDSM);
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer, OSVersion);
@@ -2120,13 +2119,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   //  DBG("Fool proof: size of APIC NMI  = %d\n", sizeof(EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE));
   //  DBG("----------- size of APIC DESC = %d\n", sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
   //  DBG("----------- size of APIC PROC = %d\n", sizeof(EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE));
-  //
-  // 1. For CPU base number 0 or 1.  codes from SunKi
-  CPUBase = acpi_cpu_name[0][3] - '0'; //"CPU0"
-  if ((UINT8)CPUBase > 11) {
-    DBG("Abnormal CPUBase=%x will set to 0\n", CPUBase);
-    CPUBase = 0;
-  }
 
   ApicCPUNum = 0;
   // 2. For absent NMI subtable
@@ -2157,7 +2149,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       ApicCPUNum = gCPUStructure.Threads;
     }
 
-    DBG("CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
+    DBG("ApicCPUBase=%d ApicCPUNum=%d\n", ApicCPUBase, ApicCPUNum);
     //reallocate table
     if (gSettings.PatchNMI) {
       BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
@@ -2253,7 +2245,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   if (gSettings.GeneratePStates || gSettings.GeneratePluginType) {
     Status = EFI_NOT_FOUND;
-    Ssdt = generate_pss_ssdt(CPUBase, ApicCPUNum);
+    Ssdt = generate_pss_ssdt(ApicCPUNum);
     if (Ssdt) {
       Status = InsertTable(Ssdt, Ssdt->Length);
     }
@@ -2264,7 +2256,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   if (gSettings.GenerateCStates) {
     Status = EFI_NOT_FOUND;
-    Ssdt = generate_cst_ssdt(FadtPointer, CPUBase, ApicCPUNum);
+    Ssdt = generate_cst_ssdt(FadtPointer, ApicCPUNum);
     if (Ssdt) {
       Status = InsertTable(Ssdt, Ssdt->Length);
     }
