@@ -78,6 +78,9 @@ EfiCreateEventLegacyBootEx (
   EFI_EVENT_NOTIFY  WorkerNotifyFunction;
 
   ASSERT (LegacyBootEvent != NULL);
+  if (!LegacyBootEvent) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   if (gST->Hdr.Revision < EFI_2_00_SYSTEM_TABLE_REVISION) {
     DEBUG ((EFI_D_ERROR, "EFI1.1 can't support LegacyBootEvent!"));
@@ -173,6 +176,9 @@ EfiCreateEventReadyToBootEx (
   EFI_EVENT_NOTIFY  WorkerNotifyFunction;
 
   ASSERT (ReadyToBootEvent != NULL);
+  if (!ReadyToBootEvent) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   if (gST->Hdr.Revision < EFI_2_00_SYSTEM_TABLE_REVISION) {
     DEBUG ((EFI_D_ERROR, "EFI1.1 can't support ReadyToBootEvent!"));
@@ -282,6 +288,9 @@ EfiGetNameGuidFromFwVolDevicePathNode (
   )
 {
   ASSERT (FvDevicePathNode != NULL);
+  if (!FvDevicePathNode) {
+    return NULL;
+  }
 
   if (DevicePathType (&FvDevicePathNode->Header) == MEDIA_DEVICE_PATH &&
       DevicePathSubType (&FvDevicePathNode->Header) == MEDIA_PIWG_FW_FILE_DP) {
@@ -317,6 +326,9 @@ EfiInitializeFwVolDevicepathNode (
 {
   ASSERT (FvDevicePathNode != NULL);
   ASSERT (NameGuid          != NULL);
+  if (!FvDevicePathNode || !NameGuid) {
+    return;
+  }
 
   //
   // Use the new Device path that does not conflict with the UEFI
