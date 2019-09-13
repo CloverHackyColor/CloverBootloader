@@ -133,6 +133,9 @@ InitializePcRtc (
 
   Status = PcRtcInit (&mModuleGlobal);
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
@@ -143,6 +146,9 @@ InitializePcRtc (
                   &Event
                   );
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
@@ -153,6 +159,9 @@ InitializePcRtc (
                   &Event
                   );
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   gRT->GetTime       = PcRtcEfiGetTime;
   gRT->SetTime       = PcRtcEfiSetTime;

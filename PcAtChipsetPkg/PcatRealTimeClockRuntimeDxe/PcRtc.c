@@ -66,8 +66,8 @@ RtcRead (
   IN  UINT8 Address
   )
 {
-  IoWrite8 (PcdGet8 (PcdRtcIndexRegister), (UINT8) (Address | (UINT8) (IoRead8 (PcdGet8 (PcdRtcIndexRegister)) & 0x80)));
-  return IoRead8 (PcdGet8 (PcdRtcTargetRegister));
+  IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, (UINT8) (Address | (UINT8) (IoRead8 (PCAT_RTC_ADDRESS_REGISTER) & 0x80)));
+  return IoRead8 (PCAT_RTC_DATA_REGISTER);
 }
 
 /**
@@ -84,8 +84,8 @@ RtcWrite (
   IN  UINT8   Data
   )
 {
-  IoWrite8 (PcdGet8 (PcdRtcIndexRegister), (UINT8) (Address | (UINT8) (IoRead8 (PcdGet8 (PcdRtcIndexRegister)) & 0x80)));
-  IoWrite8 (PcdGet8 (PcdRtcTargetRegister), Data);
+  IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, (UINT8) (Address | (UINT8) (IoRead8 (PCAT_RTC_ADDRESS_REGISTER) & 0x80)));
+  IoWrite8 (PCAT_RTC_DATA_REGISTER, Data);
 }
 
 /**
@@ -124,7 +124,7 @@ PcRtcInit (
   // Make sure Division Chain is properly configured,
   // or RTC clock won't "tick" -- time won't increment
   //
-  RegisterA.Data = FixedPcdGet8 (PcdInitialValueRtcRegisterA);
+  RegisterA.Data = RTC_INIT_REGISTER_A;
   RtcWrite (RTC_ADDRESS_REGISTER_A, RegisterA.Data);
 
   //
@@ -139,8 +139,16 @@ PcRtcInit (
 
   //
   // Clear RTC register D
+  //patch by nms42
+  // Modification of "read only" bit Vrt considered harmful.
+  // Peculiar RTC implementations have VRT bit writable.
+  // Writing 0 to Vrt bit produce a bunch of hardware
+  // events.
   //
-  RegisterD.Data = FixedPcdGet8 (PcdInitialValueRtcRegisterD);
+//  RegisterD.Data = RTC_INIT_REGISTER_D;
+  RegisterD.Data = RtcRead(RTC_ADDRESS_REGISTER_D) | RTC_INIT_REGISTER_D;
+//  RegisterD.Bits.Reserved = RTC_INIT_REGISTER_D;
+
   RtcWrite (RTC_ADDRESS_REGISTER_D, RegisterD.Data);
 
   //
@@ -172,7 +180,7 @@ PcRtcInit (
   // Set RTC configuration after get original time
   // The value of bit AIE should be reserved.
   //
-  RegisterB.Data = FixedPcdGet8 (PcdInitialValueRtcRegisterB) | (RegisterB.Data & BIT5);
+  RegisterB.Data = RTC_INIT_REGISTER_B | (RegisterB.Data & BIT5);
   RtcWrite (RTC_ADDRESS_REGISTER_B, RegisterB.Data);
 
   //
@@ -210,13 +218,6 @@ PcRtcInit (
     Status = RtcTimeFieldsValid (&Time);
   }
   if (EFI_ERROR (Status)) {
-    //
-    // Report Status Code to indicate that the RTC has bad date and time
-    //
-    REPORT_STATUS_CODE (
-      EFI_ERROR_CODE | EFI_ERROR_MINOR,
-      (EFI_SOFTWARE_DXE_RT_DRIVER | EFI_SW_EC_BAD_DATE_TIME)
-      );
     Time.Second = RTC_INIT_SECOND;
     Time.Minute = RTC_INIT_MINUTE;
     Time.Hour   = RTC_INIT_HOUR;
