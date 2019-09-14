@@ -1036,6 +1036,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
       if (add_name) {
         acpi_cpu_name[acpi_cpu_count] = AllocateZeroPool(5);
         CopyMem(acpi_cpu_name[acpi_cpu_count], dsdt+offset, 4);
+        acpi_cpu_processor_id[acpi_cpu_count] = dsdt[offset + 4];
         i = offset + 5;
 
                 //if (acpi_cpu_count == 0)
@@ -1046,7 +1047,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
         } else {
             DBG("| %a ", acpi_cpu_name[acpi_cpu_count]);
         }
-        if (++acpi_cpu_count == 32)
+        if (++acpi_cpu_count == acpi_cpu_max)
             break;
       }
     }
@@ -1057,6 +1058,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
     for (i=0; i<15; i++) {
       acpi_cpu_name[i] = AllocateZeroPool(5);
       AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1x", i);
+      acpi_cpu_processor_id[i] = i;
     }
   }
   return;

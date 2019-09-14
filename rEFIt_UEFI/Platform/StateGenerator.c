@@ -6,8 +6,6 @@
 #include "StateGenerator.h"
 
 
-//CHAR8* acpi_cpu_name[] = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
-
 CONST UINT8 pss_ssdt_header[] =
 {
   0x53, 0x53, 0x44, 0x54, 0x7E, 0x00, 0x00, 0x00, /* SSDT.... */
