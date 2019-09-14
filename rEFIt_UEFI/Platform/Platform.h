@@ -1674,8 +1674,10 @@ extern UINT8                            DefaultAudioVolume;
 //CHAR8*   orgBiosDsdt;
 extern UINT64                          BiosDsdt;
 extern UINT32                          BiosDsdtLen;
+#define                                acpi_cpu_max 128
 extern UINT8                           acpi_cpu_count;
 extern CHAR8                           *acpi_cpu_name[];
+extern UINT8                           acpi_cpu_processor_id[];
 extern CHAR8                           *acpi_cpu_score;
 extern BOOLEAN                         SSSE3;
 extern BOOLEAN                         defDSM;
