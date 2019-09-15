@@ -808,6 +808,9 @@ DriverEfiVersionProtocolDumpInformation(
     (VOID**)&DriverEfiVersion);
 
   ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
+    return NULL;
+  }
 
   RetVal = AllocateZeroPool(VersionStringSize);
   if (RetVal != NULL) {

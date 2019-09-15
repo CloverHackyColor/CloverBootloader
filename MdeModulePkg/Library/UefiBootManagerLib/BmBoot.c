@@ -1286,6 +1286,9 @@ BmGetRamDiskMemoryInfo (
   UINT64                      EndingAddr;
 
   ASSERT (RamDiskDevicePath != NULL);
+  if (!RamDiskDevicePath) {
+    return NULL;
+  }
 
   *RamDiskSizeInPages = 0;
 
@@ -1294,6 +1297,9 @@ BmGetRamDiskMemoryInfo (
   //
   Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &RamDiskDevicePath, &Handle);
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return NULL;
+  }
   ASSERT ((DevicePathType (RamDiskDevicePath) == MEDIA_DEVICE_PATH) &&
           (DevicePathSubType (RamDiskDevicePath) == MEDIA_RAM_DISK_DP));
   StartingAddr = ReadUnaligned64 ((UINT64 *) ((MEDIA_RAM_DISK_DEVICE_PATH *) RamDiskDevicePath)->StartingAddr);
@@ -1321,6 +1327,10 @@ BmDestroyRamDisk (
   UINTN                       RamDiskSizeInPages;
 
   ASSERT (RamDiskDevicePath != NULL);
+  if (!RamDiskDevicePath) {
+    return;
+  }
+
 
   RamDiskBuffer = BmGetRamDiskMemoryInfo (RamDiskDevicePath, &RamDiskSizeInPages);
 
@@ -1330,9 +1340,12 @@ BmDestroyRamDisk (
   if (mRamDisk == NULL) {
     Status = gBS->LocateProtocol (&gEfiRamDiskProtocolGuid, NULL, (VOID *) &mRamDisk);
     ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      return;
+    }
   }
-  Status = mRamDisk->Unregister (RamDiskDevicePath);
-  ASSERT_EFI_ERROR (Status);
+/*  Status = */mRamDisk->Unregister (RamDiskDevicePath);
+//  ASSERT_EFI_ERROR (Status);
   FreePages (RamDiskBuffer, RamDiskSizeInPages);
 }
 
@@ -1366,6 +1379,10 @@ BmExpandLoadFile (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return NULL;
+  }
+
 
   FileBuffer = NULL;
   BufferSize = 0;
@@ -1534,6 +1551,9 @@ BmGetNextLoadOptionDevicePath (
   EFI_STATUS                      Status;
 
   ASSERT (FilePath != NULL);
+  if (!FilePath) {
+    return NULL;
+  }
 
   //
   // Boot from media device by adding a default file name \EFI\BOOT\BOOT{machine type short-name}.EFI
@@ -2292,6 +2312,7 @@ EfiBootManagerRefreshAllBootOption (
         // Deleting variable with current variable implementation shouldn't fail.
         //
         ASSERT_EFI_ERROR (Status);
+        if (EFI_ERROR(Status)) break;
       }
     }
   }
@@ -2404,6 +2425,9 @@ BmRegisterBootManagerMenu (
                     (VOID **) &LoadedImage
                     );
     ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
     DevicePath = AppendDevicePathNode (
                    DevicePathFromHandle (LoadedImage->DeviceHandle),
                    (EFI_DEVICE_PATH_PROTOCOL *) &FileNode
@@ -2422,11 +2446,16 @@ BmRegisterBootManagerMenu (
              0
              );
   ASSERT_EFI_ERROR (Status);
-  FreePool (DevicePath);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+  if (DevicePath) {
+    FreePool (DevicePath);
+  }
   if (Description != NULL) {
     FreePool (Description);
   }
-
+/*
   DEBUG_CODE (
     EFI_BOOT_MANAGER_LOAD_OPTION    *BootOptions;
     UINTN                           BootOptionCount;
@@ -2435,7 +2464,7 @@ BmRegisterBootManagerMenu (
     ASSERT (EfiBootManagerFindLoadOption (BootOption, BootOptions, BootOptionCount) == -1);
     EfiBootManagerFreeLoadOptions (BootOptions, BootOptionCount);
     );
-
+*/
   return EfiBootManagerAddLoadOptionVariable (BootOption, 0);
 }
 
@@ -2457,7 +2486,7 @@ EfiBootManagerGetBootManagerMenu (
   EFI_BOOT_MANAGER_LOAD_OPTION *BootOption
   )
 {
-  EFI_STATUS                   Status;
+//  EFI_STATUS                   Status;
   UINTN                        BootOptionCount;
   EFI_BOOT_MANAGER_LOAD_OPTION *BootOptions;
   UINTN                        Index;
@@ -2466,7 +2495,7 @@ EfiBootManagerGetBootManagerMenu (
 
   for (Index = 0; Index < BootOptionCount; Index++) {
     if (BmIsBootManagerMenuFilePath (BootOptions[Index].FilePath)) {
-        Status = EfiBootManagerInitializeLoadOption (
+        /*Status = */EfiBootManagerInitializeLoadOption (
                    BootOption,
                    BootOptions[Index].OptionNumber,
                    BootOptions[Index].OptionType,
@@ -2476,7 +2505,8 @@ EfiBootManagerGetBootManagerMenu (
                    BootOptions[Index].OptionalData,
                    BootOptions[Index].OptionalDataSize
                    );
-        ASSERT_EFI_ERROR (Status);
+ //       ASSERT_EFI_ERROR (Status);
+      
         break;
     }
   }

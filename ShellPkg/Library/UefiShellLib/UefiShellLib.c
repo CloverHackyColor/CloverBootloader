@@ -380,7 +380,7 @@ EFIAPI
 ShellInitialize (
   )
 {
-  EFI_STATUS Status;
+//  EFI_STATUS Status;
 
   //
   // if auto initialize is not false then skip
@@ -392,8 +392,8 @@ ShellInitialize (
   //
   // deinit the current stuff
   //
-  Status = ShellLibDestructor (gImageHandle, gST);
-  ASSERT_EFI_ERROR (Status);
+/*  Status = */ShellLibDestructor (gImageHandle, gST);
+//  ASSERT_EFI_ERROR (Status);
 
   //
   // init the new stuff

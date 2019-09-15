@@ -43,13 +43,16 @@ StrCpy (
   )
 {
   CHAR16                            *ReturnValue;
-  INTN                              DestMax;
+//  INTN                              DestMax;
 
   //
   // Destination cannot be NULL
   //
   ASSERT (Destination != NULL);
   ASSERT (((UINTN) Destination & BIT0) == 0);
+  if (!Destination || !Source) {
+    return NULL;
+  }
 
   //
   // Destination and source cannot overlap
@@ -57,7 +60,7 @@ StrCpy (
   ASSERT ((UINTN)(Destination - Source) > StrLen (Source));
   ASSERT ((UINTN)(Source - Destination) > StrLen (Source));
 
-  DestMax = StrLen (Destination);
+//  DestMax = StrLen (Destination);
 
   ReturnValue = Destination;
   while (*Source != 0) {

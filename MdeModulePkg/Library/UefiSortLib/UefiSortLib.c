@@ -230,6 +230,16 @@ DevicePathCompare (
       (VOID**)&mUnicodeCollation);
 
     ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
+      return -1;
+    }
+/*    if (EFI_ERROR(Status)) {
+      Status = gBS->LocateProtocol(
+                                   &gEfiUnicodeCollationProtocolGuid,
+                                   NULL,
+                                   (VOID**)&mUnicodeCollation);
+
+    } */
   }
 
   TextPath1 = ConvertDevicePathToText(
@@ -247,10 +257,14 @@ DevicePathCompare (
   } else if (TextPath2 == NULL) {
     RetVal = 1;
   } else {
-    RetVal = mUnicodeCollation->StriColl(
-      mUnicodeCollation,
-      TextPath1,
-      TextPath2);
+    if (mUnicodeCollation) {
+      RetVal = mUnicodeCollation->StriColl(
+                                           mUnicodeCollation,
+                                           TextPath1,
+                                           TextPath2);
+    } else {
+      RetVal = 1;
+    }
   }
 
   USL_FREE_NON_NULL(TextPath1);
@@ -284,6 +298,9 @@ StringNoCaseCompare (
       (VOID**)&mUnicodeCollation);
 
     ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
+      return -1;
+    }
   }
 
   return (mUnicodeCollation->StriColl(

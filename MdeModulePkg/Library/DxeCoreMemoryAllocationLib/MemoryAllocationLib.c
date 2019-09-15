@@ -181,11 +181,13 @@ FreePages (
   IN UINTN  Pages
   )
 {
-  EFI_STATUS  Status;
+//  EFI_STATUS  Status;
 
   ASSERT (Pages != 0);
-  Status = CoreFreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
-  ASSERT_EFI_ERROR (Status);
+  if (Pages != 0) {
+/*  Status = */CoreFreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
+  }
+//  ASSERT_EFI_ERROR (Status);
 }
 
 /**
@@ -421,11 +423,13 @@ FreeAlignedPages (
   IN UINTN  Pages
   )
 {
-  EFI_STATUS  Status;
+//  EFI_STATUS  Status;
 
   ASSERT (Pages != 0);
-  Status = CoreFreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
-  ASSERT_EFI_ERROR (Status);
+  if (Pages != 0) {
+/*  Status = */ CoreFreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
+  }
+//  ASSERT_EFI_ERROR (Status);
 }
 
 /**
@@ -1046,9 +1050,9 @@ FreePool (
   IN VOID   *Buffer
   )
 {
-  EFI_STATUS    Status;
+//  EFI_STATUS    Status;
 
-  Status = CoreFreePool (Buffer);
-  ASSERT_EFI_ERROR (Status);
+/*  Status = */ CoreFreePool (Buffer);
+//  ASSERT_EFI_ERROR (Status);
 }
 
