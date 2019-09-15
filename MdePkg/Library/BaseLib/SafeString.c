@@ -231,7 +231,7 @@ StrCpyS (
   IN  CONST CHAR16 *Source
   )
 {
-  UINTN            SourceLen;
+//  UINTN            SourceLen;
 
   ASSERT (((UINTN) Destination & BIT0) == 0);
   ASSERT (((UINTN) Source & BIT0) == 0);
@@ -257,7 +257,7 @@ StrCpyS (
   //
   // 4. DestMax shall be greater than StrnLenS(Source, DestMax).
   //
-  SourceLen = StrnLenS (Source, DestMax);
+//  SourceLen = StrnLenS (Source, DestMax);
 //  SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
 //Slice: nonsense because of StrnLenS result always <= DestMax
 
@@ -413,7 +413,7 @@ StrCatS (
 {
   UINTN               DestLen;
   UINTN               CopyLen;
-  UINTN               SourceLen;
+//  UINTN               SourceLen;
 
   ASSERT (((UINTN) Destination & BIT0) == 0);
   ASSERT (((UINTN) Source & BIT0) == 0);
@@ -453,7 +453,7 @@ StrCatS (
   //
   // 5. CopyLen shall be greater than StrnLenS(Source, CopyLen).
   //
-  SourceLen = StrnLenS (Source, CopyLen);  //Slice:  SourceLen <= CopyLen
+//  SourceLen = StrnLenS (Source, CopyLen);  //Slice:  SourceLen <= CopyLen
 //  SAFE_STRING_CONSTRAINT_CHECK ((CopyLen > SourceLen), RETURN_BUFFER_TOO_SMALL);
 
   //
@@ -1822,7 +1822,7 @@ AsciiStrCpyS (
   IN  CONST CHAR8  *Source
   )
 {
-  UINTN            SourceLen;
+//  UINTN            SourceLen;
 
   //
   // 1. Neither Destination nor Source shall be a null pointer.
@@ -1845,7 +1845,7 @@ AsciiStrCpyS (
   //
   // 4. DestMax shall be greater than AsciiStrnLenS(Source, DestMax).
   //
-  SourceLen = AsciiStrnLenS (Source, DestMax);
+//  SourceLen = AsciiStrnLenS (Source, DestMax);
 //  SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
 
   //
@@ -1992,7 +1992,7 @@ AsciiStrCatS (
 {
   UINTN               DestLen;
   UINTN               CopyLen;
-  UINTN               SourceLen;
+//  UINTN               SourceLen;
 
   //
   // Let CopyLen denote the value DestMax - AsciiStrnLenS(Destination, DestMax) upon entry to AsciiStrCatS.
@@ -2026,7 +2026,7 @@ AsciiStrCatS (
   //
   // 5. CopyLen shall be greater than AsciiStrnLenS(Source, CopyLen).
   //
-  SourceLen = AsciiStrnLenS (Source, CopyLen);
+//  SourceLen = AsciiStrnLenS (Source, CopyLen);
 //  SAFE_STRING_CONSTRAINT_CHECK ((CopyLen > SourceLen), RETURN_BUFFER_TOO_SMALL);
 
   //
@@ -2686,7 +2686,7 @@ UnicodeStrToAsciiStrS (
   IN      UINTN                     DestMax
   )
 {
-  UINTN            SourceLen;
+//  UINTN            SourceLen;
 
   ASSERT (((UINTN) Source & BIT0) == 0);
 
@@ -2714,7 +2714,7 @@ UnicodeStrToAsciiStrS (
   //
   // 4. DestMax shall be greater than StrnLenS (Source, DestMax).
   //
-  SourceLen = StrnLenS (Source, DestMax);
+//  SourceLen = StrnLenS (Source, DestMax);
 //  SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
 
   //
@@ -2906,7 +2906,7 @@ AsciiStrToUnicodeStrS (
   IN      UINTN                     DestMax
   )
 {
-  UINTN            SourceLen;
+//  UINTN            SourceLen;
 
   ASSERT (((UINTN) Destination & BIT0) == 0);
 
@@ -2934,7 +2934,7 @@ AsciiStrToUnicodeStrS (
   //
   // 4. DestMax shall be greater than AsciiStrnLenS(Source, DestMax).
   //
-  SourceLen = AsciiStrnLenS (Source, DestMax);
+//  SourceLen = AsciiStrnLenS (Source, DestMax);
 //  SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
 
   //
