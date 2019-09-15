@@ -146,11 +146,17 @@ RegisterSecurityHandler (
   EFI_STATUS  Status;
 
   ASSERT (SecurityHandler != NULL);
+  if (!SecurityHandler) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Make sure AuthenticationOperation is valid in the register order.
   //
   ASSERT (CheckAuthenticationOperation (mCurrentAuthOperation, AuthenticationOperation));
+  if (!CheckAuthenticationOperation (mCurrentAuthOperation, AuthenticationOperation)) {
+    return EFI_INVALID_PARAMETER;
+  }
   mCurrentAuthOperation = mCurrentAuthOperation | AuthenticationOperation;
 
   //
@@ -162,6 +168,9 @@ RegisterSecurityHandler (
     //
     Status = ReallocateSecurityHandlerTable();
     ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
   }
 
   //
@@ -399,11 +408,17 @@ RegisterSecurity2Handler (
   EFI_STATUS  Status;
 
   ASSERT (Security2Handler != NULL);
+  if (!Security2Handler) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Make sure AuthenticationOperation is valid in the register order.
   //
   ASSERT (CheckAuthentication2Operation (mCurrentAuthOperation2, AuthenticationOperation));
+  if (!CheckAuthentication2Operation (mCurrentAuthOperation2, AuthenticationOperation)) {
+    return EFI_INVALID_PARAMETER;
+  }
   mCurrentAuthOperation2 = mCurrentAuthOperation2 | AuthenticationOperation;
 
   //
@@ -415,6 +430,9 @@ RegisterSecurity2Handler (
     //
     Status = ReallocateSecurity2HandlerTable();
     ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
   }
 
   //

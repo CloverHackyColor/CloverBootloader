@@ -73,6 +73,9 @@ ShellCommandRunEndFor (
 
   Status = CommandInit();
   ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   if (!gEfiShellProtocol->BatchIsActive()) {
     ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_NO_SCRIPT), gShellLevel1HiiHandle, L"endfor");

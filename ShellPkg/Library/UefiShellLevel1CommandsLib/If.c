@@ -1002,6 +1002,9 @@ ShellCommandRunElse (
 
   Status = CommandInit ();
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 
   if (gEfiShellParametersProtocol->Argc > 1) {
     ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel1HiiHandle, L"if");  
@@ -1080,6 +1083,10 @@ ShellCommandRunEndIf (
 
   Status = CommandInit ();
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+
 
   if (gEfiShellParametersProtocol->Argc > 1) {
     ShellPrintHiiEx(-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel1HiiHandle, L"if");  

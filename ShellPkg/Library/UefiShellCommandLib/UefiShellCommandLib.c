@@ -1399,8 +1399,10 @@ ShellCommandCreateInitialMappingsAndPaths(
       //
       NewDefaultName = ShellCommandCreateNewMappingName(MappingTypeFileSystem);
       ASSERT(NewDefaultName != NULL);
+      if (!NewDefaultName) break;
       Status = ShellCommandAddMapItemAndUpdatePath(NewDefaultName, DevicePathList[Count], 0, TRUE);
       ASSERT_EFI_ERROR(Status);
+      if (EFI_ERROR(Status)) break;
       FreePool(NewDefaultName);
 
       //
@@ -1411,6 +1413,7 @@ ShellCommandCreateInitialMappingsAndPaths(
         Status = ShellCommandAddMapItemAndUpdatePath(NewConsistName, DevicePathList[Count], 0, FALSE);
         ASSERT_EFI_ERROR(Status);
         FreePool(NewConsistName);
+        if (EFI_ERROR(Status)) break;
       }
     }
 

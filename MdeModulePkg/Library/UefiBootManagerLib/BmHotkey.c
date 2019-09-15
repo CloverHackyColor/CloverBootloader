@@ -683,6 +683,7 @@ BmProcessKeyOption (
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
       Status = gBS->HandleProtocol (Handles[HandleIndex], &gEfiSimpleTextInputExProtocolGuid, (VOID **) &TxtInEx);
       ASSERT_EFI_ERROR (Status);
+      if (EFI_ERROR(Status)) continue;
       BmRegisterHotkeyNotify (TxtInEx, Hotkey);
     }
   }

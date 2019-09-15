@@ -154,7 +154,8 @@ AcquireSpinLock (
         Delta += Cycle;
       }
       Total += Delta;
-      ASSERT (Total < Timeout);
+ //     ASSERT (Total < Timeout);
+      if (Total >= Timeout) break;
     }
   }
   return SpinLock;
@@ -187,9 +188,15 @@ AcquireSpinLockOrFail (
   VOID        *Result;
 
   ASSERT (SpinLock != NULL);
+  if (!SpinLock) {
+    return FALSE;
+  }
 
   LockValue = *SpinLock;
   ASSERT (LockValue == SPIN_LOCK_ACQUIRED || LockValue == SPIN_LOCK_RELEASED);
+  if (!(LockValue == SPIN_LOCK_ACQUIRED || LockValue == SPIN_LOCK_RELEASED)) {
+    return FALSE;
+  }
 
   _ReadWriteBarrier ();
   Result = InterlockedCompareExchangePointer (
@@ -225,9 +232,15 @@ ReleaseSpinLock (
   SPIN_LOCK    LockValue;
 
   ASSERT (SpinLock != NULL);
+  if (!SpinLock) {
+    return NULL;
+  }
 
   LockValue = *SpinLock;
   ASSERT (LockValue == SPIN_LOCK_ACQUIRED || LockValue == SPIN_LOCK_RELEASED);
+  if (!(LockValue == SPIN_LOCK_ACQUIRED || LockValue == SPIN_LOCK_RELEASED)) {
+    return NULL;
+  }
 
   _ReadWriteBarrier ();
   *SpinLock = SPIN_LOCK_RELEASED;

@@ -152,6 +152,9 @@ HiiAddPackages (
   UINT8                        *Data;
 
   ASSERT (PackageListGuid != NULL);
+  if (!PackageListGuid) {
+    return NULL;
+  }
 
   //
   // Calculate the length of all the packages in the variable argument list
@@ -251,11 +254,14 @@ HiiRemovePackages (
   IN      EFI_HII_HANDLE      HiiHandle
   )
 {
-  EFI_STATUS Status;
+//  EFI_STATUS Status;
 
   ASSERT (HiiHandle != NULL);
-  Status = gHiiDatabase->RemovePackageList (gHiiDatabase, HiiHandle);
-  ASSERT_EFI_ERROR (Status);
+  if (!HiiHandle) {
+    return;
+  }
+/*  Status = */gHiiDatabase->RemovePackageList (gHiiDatabase, HiiHandle);
+//  ASSERT_EFI_ERROR (Status);
 }
 
 
