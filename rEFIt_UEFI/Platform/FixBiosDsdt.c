@@ -1055,10 +1055,10 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
   DBG(", within the score: %a\n", acpi_cpu_score);
 
   if (!acpi_cpu_count) {
-    for (i=0; i<15; i++) {
+    for (i=0; i < acpi_cpu_max; i++) {
       acpi_cpu_name[i] = AllocateZeroPool(5);
       AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1x", i);
-      acpi_cpu_processor_id[i] = i;
+      acpi_cpu_processor_id[i] = (UINT8)(i & 0x7F);
     }
   }
   return;
