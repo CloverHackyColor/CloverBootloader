@@ -767,6 +767,7 @@ ApfsDriverLoaderStart (
   DEBUG ((DEBUG_VERBOSE, "ObjectType: %04x\n", ContainerSuperBlock->BlockHeader.ObjectType ));
   if (ContainerSuperBlock->BlockHeader.ObjectOid != 1
       || ContainerSuperBlock->BlockHeader.ObjectType != 0x80000001) {
+    FreePool(ApfsBlock);
     return EFI_UNSUPPORTED;
   }
 
@@ -810,6 +811,7 @@ ApfsDriverLoaderStart (
 
   //
   // Free ApfsBlock and allocate one of a correct size.
+  // ContainerSuperBlock & EfiBootRecordBlockPtr will not valid now
   //
   FreePool (ApfsBlock);
   ApfsBlock = AllocateZeroPool (ApfsBlockSize);
@@ -954,6 +956,7 @@ ApfsDriverLoaderStart (
       );
 
     if (EFI_ERROR (Status)) {
+      FreePool(EfiFileBuffer);
       return EFI_DEVICE_ERROR;
     }
     //
@@ -992,6 +995,9 @@ ApfsDriverLoaderStart (
   Private = AllocatePool (sizeof (APFS_DRIVER_INFO_PRIVATE_DATA));
   if (Private == NULL) {
     FreePool (ApfsBlock);
+    if (EfiFileBuffer) {
+      FreePool(EfiFileBuffer);
+    }
     return EFI_OUT_OF_RESOURCES;
   }
 
