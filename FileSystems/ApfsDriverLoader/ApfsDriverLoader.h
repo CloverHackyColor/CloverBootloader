@@ -39,6 +39,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/ApplePartitionInfo.h>
 #include <Protocol/ApfsEfiBootRecordInfo.h>
 #include <Protocol/NullTextOutput.h>
+#include <Guid/AppleApfsInfo.h>
 
 
 #define APFS_DRIVER_INFO_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('A', 'F', 'J', 'S')
