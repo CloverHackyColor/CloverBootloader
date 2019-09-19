@@ -59,6 +59,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 // Volume Superblock definitions
 //
 #define APFS_VSB_SIGNATURE  SIGNATURE_32 ('A', 'P', 'S', 'B')
+#define APFS_VSB_MAX_HIST 8
+#define APFS_VSB_VOLNAME_LEN 256
+#define APFS_VSB_MODIFIED_NAMELEN 32
 
 //
 // EfiBootRecord block definitions
@@ -201,7 +204,7 @@ typedef struct APFS_CSB_
   //
   // Pointer to JSDR block (EfiBootRecordBlock)
   //
-  UINT64             EfiBootRecordBlock;
+  INT64              EfiBootRecordBlock;
   EFI_GUID           FusionUuid;
   PhysicalRange      KeyLocker;
   UINT64             EphermalInfo[APFS_CSB_EPH_INFO_COUNT];
@@ -211,6 +214,29 @@ typedef struct APFS_CSB_
   PhysicalRange      FusionWbc;
 } APFS_CSB;
 #pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct APFS_WRAPPED_META_CRYPTO_STATE_
+{
+  UINT16             MajorVersion;
+  UINT16             MinorVersion;
+  UINT32             Cpflags;
+  UINT32             PersistentClass;
+  UINT32             KeyOsVersion;
+  UINT16             KeyRevision;
+  UINT16             Unused;
+} /* __attribute__((aligned(2))) */ APFS_WRAPPED_META_CRYPTO_STATE;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct APFS_MODIFIED_BY_
+{
+  UINT8              Id[APFS_VSB_MODIFIED_NAMELEN];
+  UINT64             Timestamp;
+  UINT64             LastXid;
+} APFS_MODIFIED_BY;
+#pragma pack(pop)
+
 
 //
 // APSB volume header structure
@@ -228,47 +254,40 @@ typedef struct APFS_APSB_
   // Volume#. First volume start with 0, (0x00)
   //
   UINT32             VolumeNumber;
-  UINT8              Reserved_1[20];
+  
+  UINT64             Features;
+  UINT64             ReadonlyCompatibleFeatures;
   //
-  // Case setting of the volume.
-  // 1 = Not case sensitive
-  // 8 = Case sensitive (0x01, Not C.S)
+  // #define APFS_INCOMPAT_CASE_INSENSITIVE 0x00000001LL
+  // #define APFS_INCOMPAT_DATALESS_SNAPS 0x00000002LL
+  // #define APFS_INCOMPAT_ENC_ROLLED 0x00000004LL
+  // #define APFS_INCOMPAT_NORMALIZATION_INSENSITIVE 0x00000008LL
   //
-  UINT32             CaseSetting;
-  UINT8              Reserved_2[12];
-  //
-  // Size of volume in Blocks. Last volume has no
-  // size set and has available the rest of the blocks
-  //
-  UINT64             VolumeSize;
-  UINT64             Reserved_3;
-  //
-  // Blocks in use in this volumes
-  //
-  UINT64             BlocksInUseCount;
-  UINT8              Reserved_4[32];
-  //
-  // Block# to initial block of catalog B-Tree Object
-  // Map (BTOM)
-  //
-  UINT64             BlockNumberToInitialBTOM;
-  //
-  // Node Id of root-node
-  //
-  UINT64             RootNodeId;
-  //
-  // Block# to Extents B-Tree,block#
-  //
-  UINT64             BlockNumberToEBTBlockNumber;
-  //
-  // Block# to list of Snapshots
-  //
-  UINT64             BlockNumberToListOfSnapshots;
-  UINT8              Reserved_5[16];
+  UINT64             IncompatibleFeatures;
+  
+  UINT64             UnmountTime;
+  
+  UINT64             ReserveBlockCount;
+  UINT64             QuotaBlockCount;
+  UINT64             AllocCount;
+  
+  APFS_WRAPPED_META_CRYPTO_STATE MetaCrypto;
+  
+  UINT32             RootTreeType;
+  UINT32             ExtentrefTreeType;
+  UINT32             SnapMetaTreeType;
+  
+  UINT64             OmapOid;
+  UINT64             RootTreeOid;
+  UINT64             ExtentrefTreeOid;
+  UINT64             SnapMetaTreeOid;
+  
+  UINT64             RevertToXid;
+  UINT64             RevertToSblockOid;
   //
   // Next CNID
   //
-  UINT64             NextCnid;
+  UINT64             NextObjId;
   //
   // Number of files on the volume
   //
@@ -276,8 +295,13 @@ typedef struct APFS_APSB_
   //
   // Number of folders on the volume
   //
-  UINT64             NumberOfFolder;
-  UINT8              Reserved_6[40];
+  UINT64             NumberOfDirectories;
+  UINT64             NumberOfSymLinks;
+  UINT64             NumberOfOtherFsobjects;
+  UINT64             NumberOfSnapshots;
+  
+  UINT64             TotalBlocksAlloced;
+  UINT64             TotalBlocksFreed;
   //
   // Volume UUID
   //
@@ -285,19 +309,24 @@ typedef struct APFS_APSB_
   //
   // Time Volume last written/modified
   //
-  UINT64             ModificationTimestamp;
-  UINT64             Reserved_7;
+  UINT64             LastModTime;
+  
+  UINT64             FsFlags;
   //
   // Creator/APFS-version
   // Ex. (hfs_convert (apfs- 687.0.0.1.7))
   //
-  UINT8              CreatorVersionInfo[32];
-  //
-  // Time Volume created
-  //
-  UINT64             CreationTimestamp;
-  //
-  // ???
+  APFS_MODIFIED_BY   FormattedBy;
+  APFS_MODIFIED_BY   ModifiedBy[APFS_VSB_MAX_HIST];
+  
+  UINT8              VolName[APFS_VSB_VOLNAME_LEN];
+  UINT32             NextDocId;
+  
+  UINT16             Role;
+  UINT16             Reserved;
+  
+  UINT64             RootToXid;
+  UINT64             ErStateOid;
   //
 } APFS_APSB;
 #pragma pack(pop)

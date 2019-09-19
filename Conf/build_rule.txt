@@ -496,7 +496,7 @@
         @"echo" [MTOC-ACPI] $(MODULE_NAME)
         #@"$(STRIP)" ${src}
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi
-        @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi $(GENFW_FLAGS)
+        @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.pecoff $(GENFW_FLAGS)
         @"echo" [GENFW-ACPI] $(MODULE_NAME)
       
       

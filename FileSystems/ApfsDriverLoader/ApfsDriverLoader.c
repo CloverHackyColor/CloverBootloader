@@ -124,8 +124,9 @@ StartApfsDriver (
 
   DEBUG ((DEBUG_WARN, "New ImageSize after verification: %lu\n", EfiFileSize));
 
-*/
+
   if (!EFI_ERROR (Status)) {
+*/
     Status = gBS->LoadImage (
       FALSE,
       gImageHandle,
@@ -138,8 +139,9 @@ StartApfsDriver (
         DEBUG ((DEBUG_WARN, "Load image failed with Status: %r\n", Status));
         return Status;
       }
+  /*
   }
-  /* else {
+   else {
       DEBUG ((DEBUG_WARN, "SECURITY VIOLATION!!! Binary modified!\n"));
       return Status;
     }
@@ -153,6 +155,7 @@ StartApfsDriver (
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "Failed to Handle LoadedImage Protool with Status: %r\n", Status));
+    gBS->UnloadImage (ImageHandle);
     return Status;
   }
 
@@ -162,7 +165,8 @@ StartApfsDriver (
   NewSystemTable = (EFI_SYSTEM_TABLE *) AllocateZeroPool (gST->Hdr.HeaderSize);
 
   if (NewSystemTable == NULL) {
-      return EFI_OUT_OF_RESOURCES;
+    gBS->UnloadImage (ImageHandle);
+    return EFI_OUT_OF_RESOURCES;
   }
 
   CopyMem ((VOID *) NewSystemTable, gST, gST->Hdr.HeaderSize);
@@ -177,6 +181,8 @@ StartApfsDriver (
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "Failed to calculated new system table CRC32 with Status: %r\n", Status));
+    FreePool (NewSystemTable);
+    gBS->UnloadImage (ImageHandle);
     return Status;
   }
 
@@ -195,6 +201,7 @@ StartApfsDriver (
     // Unload ApfsDriver image from memory
     //
     gBS->UnloadImage (ImageHandle);
+    FreePool (NewSystemTable);
     return Status;
   }
 
@@ -256,7 +263,7 @@ LegacyApfsContainerScan (
   EFI_STATUS                  Status;
   UINTN                       Index               = 0;
   UINT8                       *Block              = NULL;
-  UINTN                       Lba                 = 0;
+  EFI_LBA                     Lba                 = 0;
   UINT32                      PartitionNumber     = 0;
   UINT32                      PartitionEntrySize  = 0;
   EFI_PARTITION_TABLE_HEADER  *GptHeader          = NULL;
@@ -374,7 +381,7 @@ LegacyApfsContainerScan (
     // Reallocate Block size to contain all of partition entries.
     //
     FreePool (Block);
-    Block = AllocateZeroPool (PartitionNumber * PartitionEntrySize);
+    Block = AllocateZeroPool ((UINTN)PartitionNumber * PartitionEntrySize);
     if (Block == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -388,7 +395,7 @@ LegacyApfsContainerScan (
     DiskIo2,
     MediaId,
     MultU64x32 (Lba, BlockSize),
-    PartitionNumber * PartitionEntrySize,
+    (UINTN)PartitionNumber * PartitionEntrySize,
     Block
     );
 
@@ -400,7 +407,7 @@ LegacyApfsContainerScan (
   //
   // Analyze partition entries.
   //
-  for (Index = 0; Index < PartitionEntrySize * PartitionNumber; Index += PartitionEntrySize) {
+  for (Index = 0; Index < (UINTN)PartitionEntrySize * PartitionNumber; Index += PartitionEntrySize) {
     EFI_PARTITION_ENTRY *CurrentEntry = (EFI_PARTITION_ENTRY *) (Block + Index);
     if (CompareGuid (&CurrentEntry->PartitionTypeGUID, &gAppleApfsPartitionTypeGuid)) {
       ApfsGptEntry = CurrentEntry;
@@ -567,7 +574,7 @@ ApfsDriverLoaderSupported (
         //
         // Verify GPT entry GUID
         //
-        if (CompareGuid ((EFI_GUID *) ApplePartitionInfo->PartitionType,
+        if (!CompareGuid ((EFI_GUID *) ApplePartitionInfo->PartitionType,
                          &gAppleApfsPartitionTypeGuid)) {
           return EFI_UNSUPPORTED;
         }
@@ -584,7 +591,7 @@ ApfsDriverLoaderSupported (
       //
       // Verify GPT entry GUID
       //
-      if (CompareGuid (&Edk2PartitionInfo->Info.Gpt.PartitionTypeGUID,
+      if (!CompareGuid (&Edk2PartitionInfo->Info.Gpt.PartitionTypeGUID,
                        &gAppleApfsPartitionTypeGuid)) {
         return EFI_UNSUPPORTED;
       }
@@ -634,7 +641,7 @@ ApfsDriverLoaderStart (
   UINT8                             *ApfsBlock                   = NULL;
   EFI_GUID                          ContainerUuid;
   UINT64                            EfiBootRecordBlockOffset     = 0;
-  UINT64                            EfiBootRecordBlockPtr        = 0;
+  INT64                             EfiBootRecordBlockPtr        = 0;
   APFS_EFI_BOOT_RECORD              *EfiBootRecordBlock          = NULL;
   APFS_CSB                          *ContainerSuperBlock         = NULL;
   UINT64                            EfiFileCurrentExtentOffset   = 0;
@@ -745,8 +752,8 @@ ApfsDriverLoaderStart (
   //
   // Verify ObjectOid and ObjectType
   //
-  DEBUG ((DEBUG_VERBOSE, "ObjectId: %04x\n", ContainerSuperBlock->BlockHeader.ObjectOid ));
-  DEBUG ((DEBUG_VERBOSE, "ObjectType: %04x\n", ContainerSuperBlock->BlockHeader.ObjectType ));
+  DEBUG ((DEBUG_VERBOSE, "ObjectId: %016llx\n", ContainerSuperBlock->BlockHeader.ObjectOid ));
+  DEBUG ((DEBUG_VERBOSE, "ObjectType: %08x\n", ContainerSuperBlock->BlockHeader.ObjectType ));
   if (ContainerSuperBlock->BlockHeader.ObjectOid != 1
       || ContainerSuperBlock->BlockHeader.ObjectType != 0x80000001) {
     FreePool(ApfsBlock);
@@ -756,8 +763,8 @@ ApfsDriverLoaderStart (
   //
   // Verify ContainerSuperblock magic.
   //
-  DEBUG ((DEBUG_VERBOSE, "CsbMagic: %04x\n", ContainerSuperBlock->Magic));
-  DEBUG ((DEBUG_VERBOSE, "Should be: %04x\n", APFS_CSB_SIGNATURE));
+  DEBUG ((DEBUG_VERBOSE, "CsbMagic: %08x\n", ContainerSuperBlock->Magic));
+  DEBUG ((DEBUG_VERBOSE, "Should be: %08x\n", APFS_CSB_SIGNATURE));
 
   if (ContainerSuperBlock->Magic != APFS_CSB_SIGNATURE) {
     FreePool (ApfsBlock);
@@ -776,7 +783,7 @@ ApfsDriverLoaderStart (
     ));
   DEBUG ((
     DEBUG_VERBOSE,
-    "ContainerSuperblock checksum: %08llx \n",
+    "ContainerSuperblock checksum: %016llx \n",
     ContainerSuperBlock->BlockHeader.Checksum
     ));
 
@@ -836,12 +843,12 @@ ApfsDriverLoaderStart (
   //
   // Calculate Offset of EfiBootRecordBlock
   //
-  EfiBootRecordBlockOffset = MultU64x32 (EfiBootRecordBlockPtr, ApfsBlockSize)
+  EfiBootRecordBlockOffset = MultU64x32 ((UINT64)EfiBootRecordBlockPtr, ApfsBlockSize)
                               + LegacyBaseOffset;
 
   DEBUG ((
     DEBUG_VERBOSE,
-    "EfiBootRecordBlock offset: %08llx \n",
+    "EfiBootRecordBlock offset: %016llx \n",
      EfiBootRecordBlockOffset
      ));
 
@@ -878,7 +885,7 @@ ApfsDriverLoaderStart (
 
   DEBUG ((
     DEBUG_VERBOSE,
-    "EfiBootRecordBlock checksum: %08llx\n",
+    "EfiBootRecordBlock checksum: %016llx\n",
     EfiBootRecordBlock->BlockHeader.Checksum
     ));
 
@@ -888,7 +895,7 @@ ApfsDriverLoaderStart (
   //
   DEBUG ((
     DEBUG_VERBOSE,
-    "EFI embedded driver extents number %llu\n",
+    "EFI embedded driver extents number %u\n",
     EfiBootRecordBlock->NumOfExtents
     ));
 
@@ -898,21 +905,24 @@ ApfsDriverLoaderStart (
   for (Index = 0; Index < EfiBootRecordBlock->NumOfExtents; Index++) {
     DEBUG ((
         DEBUG_VERBOSE,
-        "EFI embedded driver extent located at: %llu block\n with size %llu\n",
+        "EFI embedded driver extent located at: %lld block\n with size %llu\n",
         EfiBootRecordBlock->RecordExtents[Index].StartPhysicalAddr,
         EfiBootRecordBlock->RecordExtents[Index].BlockCount
         ));
 
     EfiFileCurrentExtentOffset = MultU64x32 (
-                                EfiBootRecordBlock->RecordExtents[Index].StartPhysicalAddr,
+                                (UINT64)EfiBootRecordBlock->RecordExtents[Index].StartPhysicalAddr,
                                 ApfsBlockSize
                                 )  + LegacyBaseOffset;
 
-    EfiFileCurrentExtentSize = MultU64x32 (
+    EfiFileCurrentExtentSize = (UINTN)MultU64x32 (
                                 EfiBootRecordBlock->RecordExtents[Index].BlockCount,
                                 ApfsBlockSize
                                 );
 
+    if (EfiFileCurrentExtentSize == 0) {
+      continue;
+    }
     //
     // Adjust buffer size
     //
@@ -923,6 +933,7 @@ ApfsDriverLoaderStart (
                       );
 
     if (EfiFileBuffer == NULL) {
+      FreePool (ApfsBlock);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -940,6 +951,7 @@ ApfsDriverLoaderStart (
 
     if (EFI_ERROR (Status)) {
       FreePool(EfiFileBuffer);
+      FreePool (ApfsBlock);
       return EFI_DEVICE_ERROR;
     }
     //
