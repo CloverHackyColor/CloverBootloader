@@ -60,39 +60,43 @@
 
 EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
 {
-    EG_IMAGE        *NewImage;
-
-    NewImage = (EG_IMAGE *) AllocatePool(sizeof(EG_IMAGE));
-    if (NewImage == NULL)
-        return NULL;
-    NewImage->PixelData = (EG_PIXEL *) AllocatePool((UINTN)(Width * Height * sizeof(EG_PIXEL)));
-    if (NewImage->PixelData == NULL) {
-        FreePool(NewImage);
-        return NULL;
-    }
-
-    NewImage->Width = Width;
-    NewImage->Height = Height;
-    NewImage->HasAlpha = HasAlpha;
-    return NewImage;
+  EG_IMAGE        *NewImage;
+  
+  NewImage = (EG_IMAGE *) AllocatePool(sizeof(EG_IMAGE));
+  if (NewImage == NULL)
+    return NULL;
+  if (Width * Height == 0) {
+    FreePool(NewImage);
+    return NULL;
+  }
+  NewImage->PixelData = (EG_PIXEL *) AllocatePool((UINTN)(Width * Height * sizeof(EG_PIXEL)));
+  if (NewImage->PixelData == NULL) {
+    FreePool(NewImage);
+    return NULL;
+  }
+  
+  NewImage->Width = Width;
+  NewImage->Height = Height;
+  NewImage->HasAlpha = HasAlpha;
+  return NewImage;
 }
 
 EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color)
 {
-    EG_IMAGE        *NewImage;
-
-    NewImage = egCreateImage(Width, Height, HasAlpha);
-    if (NewImage == NULL)
-        return NULL;
-
-    egFillImage(NewImage, Color);
-    return NewImage;
+  EG_IMAGE        *NewImage;
+  
+  NewImage = egCreateImage(Width, Height, HasAlpha);
+  if (NewImage == NULL)
+    return NULL;
+  
+  egFillImage(NewImage, Color);
+  return NewImage;
 }
 
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
 {
   EG_IMAGE        *NewImage;
-  if (!Image) {
+  if (!Image || (Image->Width * Image->Height) == 0) {
     return NULL;
   }
 

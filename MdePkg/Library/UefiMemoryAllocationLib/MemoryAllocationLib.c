@@ -388,8 +388,12 @@ InternalAllocatePool (
   )
 {
   EFI_STATUS  Status;
-  VOID        *Memory;
-
+  VOID        *Memory = NULL;
+/*
+  if (AllocationSize == 0) {
+    return NULL;
+  }
+*/
   Status = gBS->AllocatePool (MemoryType, AllocationSize, &Memory);
   if (EFI_ERROR (Status)) {
     Memory = NULL;

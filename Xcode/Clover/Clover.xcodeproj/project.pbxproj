@@ -834,7 +834,6 @@
 		12EA7C231E65FC3D00085A48 /* HashServiceFix.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HashServiceFix.inf; sourceTree = "<group>"; };
 		12EA7C241E65FC3D00085A48 /* sha1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
 		12EA7C251E65FC3D00085A48 /* sha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
-		12FEB9EE212F3278002B6CE2 /* Patches_for_UDK2018 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_UDK2018; path = ../../Patches_for_UDK2018; sourceTree = "<group>"; };
 		2C794AB71A0AA85900D845B0 /* EfiFlashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
 		2C794AB81A0AA85900D845B0 /* EfiLdrHandoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiLdrHandoff.h; sourceTree = "<group>"; };
 		2C794AB91A0AA85900D845B0 /* FlashLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlashLayout.h; sourceTree = "<group>"; };
@@ -909,7 +908,6 @@
 		2C794D1B1A0AA85900D845B0 /* NVRAMDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
 		2C794D1C1A0AA85900D845B0 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
 		2C794D1D1A0AA85900D845B0 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
-		A511943C1F74B380005B0121 /* Patches_for_EDK2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Patches_for_EDK2; path = ../../Patches_for_EDK2; sourceTree = "<group>"; };
 		A51C783321E00504001385A7 /* WaveLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = WaveLib.c; sourceTree = "<group>"; };
 		A51C783421E00504001385A7 /* WaveLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = WaveLib.inf; sourceTree = "<group>"; };
 		A51C783621E0981C001385A7 /* AudioDxe.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AudioDxe.c; sourceTree = "<group>"; };
@@ -929,7 +927,7 @@
 		A51C784721E0981C001385A7 /* HdaControllerMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerMem.c; sourceTree = "<group>"; };
 		A51C784821E0981C001385A7 /* HdaModels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaModels.c; sourceTree = "<group>"; };
 		A51C784921E0C280001385A7 /* HdaCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodec.h; sourceTree = "<group>"; };
-		A51F63C122DFA8C900086DB7 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
+		A51F63C122DFA8C900086DB7 /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Clover; path = /Users/sergey/src/CloverHackyColor/Xcode/Clover/build/Debug/Clover; sourceTree = "<absolute>"; };
 		A51F63C822DFB7E300086DB7 /* AppleFeatures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleFeatures.h; sourceTree = "<group>"; };
 		A51F63C922DFB81700086DB7 /* AppleApfsInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleApfsInfo.h; sourceTree = "<group>"; };
 		A51F63CA22DFB84500086DB7 /* ApfsEfiBootRecordInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsEfiBootRecordInfo.h; sourceTree = "<group>"; };
@@ -6563,9 +6561,6 @@
 				12C874CF1DE42A4200BF4974 /* CloverPkg.dec */,
 				1283F7EB1DF1D3900005BFF2 /* config-sample.plist */,
 				12C874D01DE42A4900BF4974 /* ebuild.sh */,
-				12FEB9EE212F3278002B6CE2 /* Patches_for_UDK2018 */,
-				A511943C1F74B380005B0121 /* Patches_for_EDK2 */,
-				A51F63C122DFA8C900086DB7 /* Clover */,
 			);
 			sourceTree = "<group>";
 		};
