@@ -8,7 +8,7 @@ declare -r SED="/usr/bin/sed"
 declare -r IOREG="/usr/sbin/ioreg"
 declare -r OPEN="/usr/bin/open"
 declare -r PLISTBUDDY="/usr/libexec/PlistBuddy"
-declare -r CLOVER_LAST_VERSION_URL="https://sourceforge.net/projects/cloverefiboot/files/latest/download"
+declare -r CLOVER_LAST_VERSION_URL="https://github.com/CloverHackyColor/CloverBootloader/releases"
 declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
 declare -r CLOVER_INSTALLER_PLIST=/Library/Preferences/com.projectosx.clover.installer.plist
 declare -r CLOVER_UPDATER_PLIST="$HOME"/Library/Preferences/com.projectosx.clover.updater.plist
@@ -29,11 +29,12 @@ if [[ "$mode" == startup ]]; then
     [[ $(($last_check_timestamp + $scheduled_check_interval)) -gt "$now" ]] && exit 0
 fi
 
-last_revision=$(LC_ALL=C $CURL --silent --fail --connect-timeout 30 \
- --max-time 60 "$CLOVER_LAST_VERSION_URL" 2>&1 |                    \
- $SED -nE 's#^.*Installer/Clover_v[2-9].[4-9]k?_r([0-9]+).*#\1#p')
+releases=($(LC_ALL=C $CURL --silent --fail --connect-timeout 30 \
+              --max-time 60 "$CLOVER_LAST_VERSION_URL" 2>&1 | \
+              grep /CloverBootloader/releases/tag/ | sed -E 's/.*"([^"]+)".*/\1/'))
 
-[[ -z "$last_revision" ]] && exit 1
+last_revision=$(basename ${releases[0]}) # first element in releases, last tagged revision at github
+
 
 current_revision=$(LC_ALL=C $IOREG -l -pIODeviceTree | \
  $SED -nE 's@.*boot-log.*<([0-9a-fA-F]*)>.*@\1@p'    | \
@@ -60,7 +61,7 @@ choice=$("$CLOVER_APP_SUPPORT"/CloverUpdater.app/Contents/MacOS/CloverUpdater \
 case "$choice" in
     -1) "$PLISTBUDDY" -c "Add AllowUpdate bool false" "$CLOVER_UPDATER_PLIST" &>/dev/null
         ;;
-     1) open http://sourceforge.net/projects/cloverefiboot/files/Installer/Clover_v2.5k_r${last_revision}.zip/download
+     1) open https://github.com/CloverHackyColor/CloverBootloader/releases/download/${last_revision}/Clover_v2.5k_r${last_revision}.pkg
         ;;
 esac
 
