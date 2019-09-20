@@ -205,10 +205,12 @@ class BuildFile(object):
     def GetRemoveDirectoryCommand(self, DirList):
         return [self._RD_TEMPLATE_[self._FileType] % {'dir':Dir} for Dir in DirList]
 
-    def PlaceMacro(self, Path, MacroDefinitions={}):
+    def PlaceMacro(self, Path, MacroDefinitions=None):
         if Path.startswith("$("):
             return Path
         else:
+            if MacroDefinitions is None:
+                MacroDefinitions = {}
             PathLength = len(Path)
             for MacroName in MacroDefinitions:
                 MacroValue = MacroDefinitions[MacroName]
@@ -634,11 +636,13 @@ cleanlib:
         while not found and os.sep in package_rel_dir:
             index = package_rel_dir.index(os.sep)
             current_dir = mws.join(current_dir, package_rel_dir[:index])
-            if os.path.exists(current_dir):
+            try:
                 for fl in os.listdir(current_dir):
                     if fl.endswith('.dec'):
                         found = True
                         break
+            except:
+                EdkLogger.error('build', FILE_NOT_FOUND, "WORKSPACE does not exist.")
             package_rel_dir = package_rel_dir[index + 1:]
 
         MakefileTemplateDict = {
@@ -1580,8 +1584,8 @@ class TopLevelMakefile(BuildFile):
 
         if GlobalData.gCaseInsensitive:
             ExtraOption += " -c"
-        if GlobalData.gEnableGenfdsMultiThread:
-            ExtraOption += " --genfds-multi-thread"
+        if not GlobalData.gEnableGenfdsMultiThread:
+            ExtraOption += " --no-genfds-multi-thread"
         if GlobalData.gIgnoreSource:
             ExtraOption += " --ignore-sources"
 
@@ -1692,22 +1696,25 @@ def GetDependencyList(AutoGenObject, FileCache, File, ForceList, SearchPathList)
             CurrentFileDependencyList = DepDb[F]
         else:
             try:
-                Fd = open(F.Path, 'rb')
-                FileContent = Fd.read()
-                Fd.close()
+                with open(F.Path, 'rb') as Fd:
+                    FileContent = Fd.read(1)
+                    Fd.seek(0)
+                    if not FileContent:
+                        continue
+                    if FileContent[0] == 0xff or FileContent[0] == 0xfe:
+                        FileContent2 = Fd.read()
+                        FileContent2 = FileContent2.decode('utf-16')
+                        IncludedFileList = gIncludePattern.findall(FileContent2)
+                    else:
+                        FileLines = Fd.readlines()
+                        FileContent2 = [line for line in FileLines if str(line).lstrip("#\t ")[:8] == "include "]
+                        simpleFileContent="".join(FileContent2)
+
+                        IncludedFileList = gIncludePattern.findall(simpleFileContent)
             except BaseException as X:
                 EdkLogger.error("build", FILE_OPEN_FAILURE, ExtraData=F.Path + "\n\t" + str(X))
-            if len(FileContent) == 0:
+            if not FileContent:
                 continue
-            try:
-                if FileContent[0] == 0xff or FileContent[0] == 0xfe:
-                    FileContent = FileContent.decode('utf-16')
-                else:
-                    FileContent = FileContent.decode()
-            except:
-                # The file is not txt file. for example .mcb file
-                continue
-            IncludedFileList = gIncludePattern.findall(FileContent)
 
             for Inc in IncludedFileList:
                 Inc = Inc.strip()
@@ -1762,4 +1769,4 @@ def GetDependencyList(AutoGenObject, FileCache, File, ForceList, SearchPathList)
 
 # This acts like the main() function for the script, unless it is 'import'ed into another script.
 if __name__ == '__main__':
-    pass
+    pass
