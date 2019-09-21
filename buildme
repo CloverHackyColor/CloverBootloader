@@ -24,7 +24,12 @@ local GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-gcc"
 # in Linux ebuild.sh force to use the CGG toolchain
 if [[ "$(uname)" == Darwin ]]; then
   if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}" ]]; then
-    MYTOOLCHAIN=XCODE8
+    if [[ $MYTOOLCHAIN == GCC53 ]]; then
+      cd "${CLOVERROOT}"
+      ./build_gcc9.sh
+    else
+      MYTOOLCHAIN=XCODE8
+    fi
   fi
 fi
 }
