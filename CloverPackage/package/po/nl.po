@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-05 20:35+0300\n"
+"POT-Creation-Date: 2019-09-21 17:34+0200\n"
 "PO-Revision-Date: 2019-07-14 12:37+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: \n"
@@ -24,8 +24,10 @@ msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#: Resources/templates/Welcome.html:31
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -216,6 +218,11 @@ msgstr ""
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
 "Opslaan van boot.log in OS en preboot.log vanaf de GUI d.m.v. de F2-toets"
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Conclusion.html:20
+msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22

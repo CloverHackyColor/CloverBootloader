@@ -57,7 +57,9 @@ fi
 
 checkGETTEXT() {
 if [[ ! -x $(which gettext) ]]; then
-  "${CLOVERROOT}"/buildgettext.sh
+  if [[ ! -x "${TOOLCHAIN_DIR}"/bin/gettext ]]; then
+    "${CLOVERROOT}"/buildgettext.sh
+  fi
 fi
 }
 

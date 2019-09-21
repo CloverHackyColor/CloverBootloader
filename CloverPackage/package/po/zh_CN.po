@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-18 20:56+0300\n"
+"POT-Creation-Date: 2019-09-21 17:34+0200\n"
 "PO-Revision-Date: 2019-08-09 19:03-0400\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
@@ -24,8 +24,10 @@ msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#: Resources/templates/Welcome.html:31
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -75,7 +77,8 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr "是基于 Clover, rEFIt, XNU, VirtualBox 等不同项目的开放源码。"
 
 #. type: Content of: <html><body><p><span>
@@ -100,13 +103,18 @@ msgstr "支持 引导 10.xx macOS, Windows EFI 及 Linux EFI"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
 msgstr "它是 EFI 引导器, 给操作系统提供 RuntimeServices (传统引导器无法提供)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "默认 自动侦测大部份的硬件并设置所有属性 但是用户也可以在 config.plist 中修改"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"默认 自动侦测大部份的硬件并设置所有属性 但是用户也可以在 config.plist 中修改"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
@@ -145,8 +153,11 @@ msgstr "支持 可定制的 RestartFix 和 睡眠/唤醒 修复 并 支持 PCIRo
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "支持大部分 ATI, NVidia 及 Intel 显卡 的 属性注入, 并支持定制化参数设置。"
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"支持大部分 ATI, NVidia 及 Intel 显卡 的 属性注入, 并支持定制化参数设置。"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -185,13 +196,21 @@ msgstr "支持 设置 NVRAM 变量来实现不同的需求"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "可按 F10 储存 图形界面 GUI 的截图，可设定默认启动区及定制化 GUI 图形界面"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"可按 F10 储存 图形界面 GUI 的截图，可设定默认启动区及定制化 GUI 图形界面"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr "可按 F2 储存操作系统的日志 boot.log 及 GUI 的日志 preboot.log"
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Conclusion.html:20
+msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22

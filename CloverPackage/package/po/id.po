@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-18 20:56+0300\n"
+"POT-Creation-Date: 2019-09-21 17:34+0200\n"
 "PO-Revision-Date: 2019-07-20 10:15+0700\n"
 "Last-Translator: Badruzeus\n"
 "Language-Team: id <id@li.org>\n"
@@ -24,8 +24,10 @@ msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#: Resources/templates/Welcome.html:31
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -77,7 +79,8 @@ msgstr "Clover v2.5k"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
 "adalah proyek Open Source berdasarkan:\n"
 "Clover, rEFIt, XNU dan VirtualBox."
@@ -104,18 +107,27 @@ msgstr "Boot macOS 10.xx, Windows dan Linux (EFI)"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Clover menyediakan RuntimeServices EFI untuk OS yang mustahil bagi Bootloder Legacy"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Clover menyediakan RuntimeServices EFI untuk OS yang mustahil bagi Bootloder "
+"Legacy"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Clover mendeteksi Perangkat Keras secara otomatis dan menyetel Properties. Namun pengguna dapat mengubahnya lewat config.plist"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Clover mendeteksi Perangkat Keras secara otomatis dan menyetel Properties. "
+"Namun pengguna dapat mengubahnya lewat config.plist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Dengan Clover, Anda dapat Restart menuju OS lain dari preferensi Startup Disk"
+msgstr ""
+"Dengan Clover, Anda dapat Restart menuju OS lain dari preferensi Startup Disk"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -149,13 +161,18 @@ msgstr "RestartFix dan membenahi Sleep/Wake, serta nilai PCIRootUID"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Injektor Properties ATI, NVidia dan Intel untuk berbagai jenis Kartu Grafis yang didukung. Bisa diatur kemudian."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Injektor Properties ATI, NVidia dan Intel untuk berbagai jenis Kartu Grafis "
+"yang didukung. Bisa diatur kemudian."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
 msgid "USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "Pembenahan USB (LegacyOff, Ownership, Built-in, clock-id) hingga USB 3.0"
+msgstr ""
+"Pembenahan USB (LegacyOff, Ownership, Built-in, clock-id) hingga USB 3.0"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:39
@@ -189,13 +206,22 @@ msgstr "Menyetel variabel NVRAM untuk berbagai tujuan"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Boot setelah Timeout, GUI yang bisa diubah, dan simpan screenshots GUI dengan tombol F10"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Boot setelah Timeout, GUI yang bisa diubah, dan simpan screenshots GUI "
+"dengan tombol F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr "Simpan boot.log di OS dan preboot.log dari GUI dengan tombol F2"
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Conclusion.html:20
+msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -1429,4 +1455,6 @@ msgstr "Tidak diketahui"
 #~ msgstr "driver USB 3.0, 32bit"
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
+#~ msgstr ""
+#~ "Alternate driver (v2) to fix Memory problems on UEFI firmware. Do not use "
+#~ "with other AptioFix together."

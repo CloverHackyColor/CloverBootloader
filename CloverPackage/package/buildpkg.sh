@@ -87,6 +87,12 @@ CLOVER_STAGE=${CLOVER_STAGE/RC/Release Candidate }
 CLOVER_STAGE=${CLOVER_STAGE/FINAL/2.2 Final}
 declare -r CLOVER_STAGE
 declare -r CLOVER_REVISION=$( cat revision )
+if [[ -d "$(dirname ${SRCROOT})"/.git ]];then
+  declare -r CLOVER_SHA1=$( git -C $(dirname "${SRCROOT}") rev-parse --short HEAD )
+else
+  declare -r CLOVER_SHA1="N/A"
+fi
+
 declare -r CLOVER_BUILDDATE=$( sed -n 's/.*FIRMWARE_BUILDDATE *\"\(.*\)\".*/\1/p' "${PKGROOT}/../../Version.h" )
 declare -r CLOVER_TIMESTAMP=$( date -j -f "%Y-%m-%d %H:%M:%S" "${CLOVER_BUILDDATE}" "+%s" )
 
@@ -197,6 +203,7 @@ function makeSubstitutions () {
     local cloverSubsts="
 s&%CLOVERVERSION%&${CLOVER_VERSION%%-*}&g
 s&%CLOVERREVISION%&${CLOVER_REVISION}&g
+s&%CLOVERSHA1%&${CLOVER_SHA1}&g
 s&%CLOVERSTAGE%&${CLOVER_STAGE}&g
 s&%DEVELOP%&${CLOVER_DEVELOP}&g
 s&%CREDITS%&${CLOVER_CREDITS}&g

@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.5k-r0000\n"
-"POT-Creation-Date: 2019-09-05 20:35+0300\n"
+"Project-Id-Version: Clover v2.5k-r5089\n"
+"POT-Creation-Date: 2019-09-21 17:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,8 @@ msgid "Clover EFI"
 msgstr ""
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#: Resources/templates/Welcome.html:31
+msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr ""
 
 #. type: Content of: <html><body><p>
@@ -197,6 +197,11 @@ msgstr ""
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
 msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr ""
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Conclusion.html:20
+msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgstr ""
 
 #. type: Content of: <html><body><div><p>

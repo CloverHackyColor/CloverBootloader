@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-18 20:42+0300\n"
+"POT-Creation-Date: 2019-09-21 17:34+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -27,8 +27,10 @@ msgid "Clover EFI"
 msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
-#: Resources/templates/Welcome.html:31 Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#: Resources/templates/Welcome.html:31
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -228,6 +230,11 @@ msgid "saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
 "Сохранение пред- (клавишей F2) и постзагрузочных отчётов для диагностики и "
 "отладки."
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Conclusion.html:20
+msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -883,6 +890,7 @@ msgstr "Встроенная"
 
 #. type: "embedded_description"
 #: Resources/templates/Localizable.strings:184
+#, no-wrap
 msgid ""
 "embedded theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/embedded"
