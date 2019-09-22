@@ -210,6 +210,9 @@ fnGettext ()
 
 ### Main ###
 
+# use default PATH (..as build can fail with brew libtool, gnu gcc etc. for example..)
+export PATH=$(getconf PATH)
+
 # Add XCode bin directory for the command line tools to the PATH
 pathmunge "$(xcode-select --print-path)"/usr/bin
 

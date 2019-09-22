@@ -117,3 +117,5 @@ CloverPrefpane.strings
 BaseTools/Source/Python/build/BuildReport.pyc
 Conf/BuildEnv.sh
 Conf/.AutoGenIdFile.txt
+CloverPackage/revision
+CloverPackage/version
