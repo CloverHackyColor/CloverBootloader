@@ -18,22 +18,6 @@ MYTOOLCHAIN=${1:-GCC53}
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
 
 # Functions
-checkToolchain() {
-local GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-gcc"
-
-# in Linux ebuild.sh force to use the CGG toolchain
-if [[ "$(uname)" == Darwin ]]; then
-  if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}" ]]; then
-    if [[ $MYTOOLCHAIN == GCC53 ]]; then
-      cd "${CLOVERROOT}"
-      ./build_gcc9.sh
-    else
-      MYTOOLCHAIN=XCODE8
-    fi
-  fi
-fi
-}
-
 pathmunge() {
 if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
   if [[ "${2:-}" = "after" ]]; then
@@ -61,10 +45,15 @@ fi
 }
 
 checkGETTEXT() {
-if [[ ! -x $(which gettext) ]]; then
-  if [[ ! -x "${TOOLCHAIN_DIR}"/bin/gettext ]]; then
-    "${CLOVERROOT}"/buildgettext.sh
-  fi
+exportPaths
+local locations=($(which msgmerge))
+if [ "${#locations[@]}" -eq 0 ]; then
+  export GETTEXT_PREFIX="${TOOLCHAIN_DIR}"
+  "${CLOVERROOT}"/buildgettext.sh
+else
+  # export gettex prefix to ensure buildpkg.sh will use it
+  # without the need to install it again
+  export GETTEXT_PREFIX="$(dirname "${locations[0]}")"
 fi
 }
 
@@ -79,14 +68,26 @@ export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
 export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
+export PREFIX=${TOOLCHAIN_DIR}
 }
 
 checkTools() {
-if [[ "$MYTOOLCHAIN" == XCODE* ]]; then
+# export any env vars before building anything
+if [[ "$(uname)" == Darwin ]]; then
   checkXCODE
+  exportPaths
+  local GCC53_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
+  if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}" ]]; then
+    if [[ $MYTOOLCHAIN == GCC53 ]]; then
+      cd "${CLOVERROOT}"
+      ./build_gcc9.sh
+    else
+      MYTOOLCHAIN=XCODE8
+    fi
+  fi
+else
+  exportPaths
 fi
-
-exportPaths
 }
 
 updateClover() {
@@ -217,7 +218,7 @@ if [[ -d .git ]]; then
 fi
 
 echo "buildme, Clover v2.5k r$(cat vers.txt) (SHA: $lsha1)"
-echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme GCC53')"
+echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
 echo
 PS3='Please enter your choice: '
 options=( 'build Clover'
@@ -301,7 +302,6 @@ menu
 
 # Main
 set -e
-checkToolchain
 if [[ "$2" == travis ]]; then
   buildClover
   buildPkg
