@@ -167,6 +167,12 @@ fnCompileGettext ()
     rm -rf "$BUILD_GETTEXT_DIR"
     mkdir -p "$BUILD_GETTEXT_DIR" && cd "$BUILD_GETTEXT_DIR"
     echo "-  ${GETTEXT_VERSION} configure..."
+
+    # With Xcode11, some bug with 'putc' causes a test to fail and makes compilation impossible. Until this is fixed, use 'fwrite' for that test.
+    # As we already patch configure, also disable the multiple java prompts which pop up.
+    sed -i '' 's/if (!(putc ('\''!'\'', fp) == '\''!'\''))/if (fwrite (\"!\", 1, 1, fp) < 1)/g; s/java -version/java-disable -version/g; s/javac -version/javac-disable -version/g' "${GETTEXT_DIR}/gettext-tools/configure"
+    sed -i '' 's/javac -version/javac-disable -version/g' "${GETTEXT_DIR}/gettext-runtime/configure"
+
     cmd="'${GETTEXT_DIR}/configure' $GETTEXT_CONFIG"
     logfile="$DIR_LOGS/gettext.configure.log.txt"
     echo "$cmd" > "$logfile"
