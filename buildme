@@ -11,7 +11,7 @@
 
 # $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
 
-cd "$(dirname $0)"
+cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
 MYTOOLCHAIN=${1:-GCC53}
 
@@ -27,7 +27,6 @@ if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
   fi
 fi
 }
-
 
 checkXCODE() {
 echo "[CHECK XCODE]"
