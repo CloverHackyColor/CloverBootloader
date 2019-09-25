@@ -449,7 +449,7 @@ cleanlib:
         self.GenFfsList                 = ModuleAutoGen.GenFfsList
         self.MacroList = ['FFS_OUTPUT_DIR', 'MODULE_GUID', 'OUTPUT_DIR']
         self.FfsOutputFileList = []
-		self.DependencyHeaderFileSet = set()
+        self.DependencyHeaderFileSet = set()
 
     # Compose a dict object containing information used to do replacement in template
     @property
