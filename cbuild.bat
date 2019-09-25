@@ -30,12 +30,14 @@ set DEVSTAGE=
 set IASL_PREFIX=c:\ASL\
 
 set DEFAULT_CYGWIN_HOME=c:\cygwin
-set DEFAULT_PYTHONHOME="d:\Program File\Python37"
+set DEFAULT_PYTHONHOME=
+rem d:\Program File\Python37"
 set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
-set PYTHON3_ENABLE="TRUE"
+set PYTHON3_ENABLE=TRUE
 set DEFAULT_NASM_PREFIX=
+rem C:\Program Files (x86)\NASM"
 rem # %DEFAULT_CYGWIN_HOME%\bin
-set DEFAULT_TOOLCHAIN=VS2015x86
+set DEFAULT_TOOLCHAIN=VS2017
 set DEFAULT_BUILDTARGET=RELEASE
 set DEFAULT_TARGETARCH=X64
 set DEFAULT_THREADNUMBER=%NUMBER_OF_PROCESSORS%
@@ -267,12 +269,12 @@ rem # setup build
 
   set "CMD_BUILD=%CMD_BUILD% -p %DSCFILE% %EDK2_BUILD_OPTIONS%"
 
-  set clover_build_info=%CMD_BUILD%
+  set clover_build_info="cbuild.bat"
   set clover_build_info=%clover_build_info:\=\\%
   set clover_build_info=%clover_build_info:"=\"%
   for /f "tokens=* delims= " %%A in ('echo %clover_build_info% ') do set clover_build_info=%%A
   set clover_build_info=%clover_build_info:~0,-1%
-  set clover_build_info="Args: %~nx0 %* | Command: %clover_build_info% | OS: Win %WINVER%"
+  set clover_build_info="Command: %clover_build_info% | OS: Win %WINVER%"
 
   rem # generate build date and time
   set BUILDDATE=%date:~10,4%-%date:~4,2%-%date:~7,2% %time:~0,-3%
