@@ -2829,7 +2829,7 @@ RELEASE_RVCTCYGWIN_ARM_CC_FLAGS  = "$(CCPATH_FLAG)" $(ARCHCC_FLAGS) $(PLATFORM_F
 ##################
 # NASM tool definitions
 ##################
-*_*_*_NASM_PATH                = ENV(NASM_PREFIX)nasm
+*_*_*_NASM_PATH                = ENV(NASM_PREFIX)\nasm
 # NASMB uses NASM produce a .bin from a .nasmb NASM source file
 *_*_*_NASMB_FLAGS              = -f bin
 
