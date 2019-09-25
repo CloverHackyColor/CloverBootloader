@@ -1244,7 +1244,7 @@ ${BEGIN}\t-@${create_directory_command}\n${END}\
         BuildFile.__init__(self, ModuleAutoGen)
         self.PlatformInfo = self._AutoGenObject.PlatformInfo
         self.IntermediateDirectoryList = ["$(DEBUG_DIR)", "$(OUTPUT_DIR)"]
-		self.DependencyHeaderFileSet = set()
+        self.DependencyHeaderFileSet = set()
 
     # Compose a dict object containing information used to do replacement in template
     @property
@@ -1435,7 +1435,7 @@ cleanlib:
         self.ModuleBuildDirectoryList = []
         self.LibraryBuildDirectoryList = []
         self.LibraryMakeCommandList = []
-		self.DependencyHeaderFileSet = set()
+        self.DependencyHeaderFileSet = set()
 
     # Compose a dict object containing information used to do replacement in template
     @property
@@ -1541,7 +1541,7 @@ class TopLevelMakefile(BuildFile):
     def __init__(self, Workspace):
         BuildFile.__init__(self, Workspace)
         self.IntermediateDirectoryList = []
-		self.DependencyHeaderFileSet = set()
+        self.DependencyHeaderFileSet = set()
 
     # Compose a dict object containing information used to do replacement in template
     @property

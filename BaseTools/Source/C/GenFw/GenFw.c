@@ -1250,7 +1250,7 @@ Returns:
 
     if ((stricmp (argv[0], "-z") == 0) || (stricmp (argv[0], "--zero") == 0)) {
       if (mOutImageType == FW_DUMMY_IMAGE) {
-      mOutImageType = FW_ZERO_DEBUG_IMAGE;
+        mOutImageType = FW_ZERO_DEBUG_IMAGE;
       }
       if (mOutImageType == FW_TE_IMAGE || mOutImageType == FW_EFI_IMAGE) {
         ZeroDebugFlag = TRUE;
