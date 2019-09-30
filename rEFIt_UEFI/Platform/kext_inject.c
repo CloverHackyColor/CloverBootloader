@@ -75,6 +75,48 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
   return EFI_SUCCESS;
 }
 
+void toLowerStr(CHAR8 *tstr, CHAR8 *str) {
+    UINT16 cnt = 0;
+    
+    for (cnt = 0; *str != '\0' && cnt <= 0xFF; cnt++, str++, tstr++) {
+        if (*str >= 'A' && *str <= 'Z')
+            *tstr = 'a' + (*str - 'A');
+        else
+            *tstr = *str;
+    }
+    *tstr = '\0';
+}
+
+BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
+{
+    BOOLEAN inject = TRUE;
+    TagPtr  osBundleRequired;
+    CHAR8   osbundlerequired[256];
+    
+    osBundleRequired = GetProperty(dict,"OSBundleRequired");
+    if (osBundleRequired)
+        toLowerStr(osbundlerequired, osBundleRequired->string);
+    else
+        osbundlerequired[0] = '\0';
+
+    if (OSTYPE_IS_OSX_RECOVERY(loaderType)) {
+        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
+            AsciiStrnCmp(osbundlerequired, "local", 5) &&
+            AsciiStrnCmp(osbundlerequired, "console", 7) &&
+            AsciiStrnCmp(osbundlerequired, "network", 7)) {
+            inject = FALSE;
+        }
+    } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
+        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
+            AsciiStrnCmp(osbundlerequired, "local", 5) &&
+            AsciiStrnCmp(osbundlerequired, "console", 7)) {
+            inject = FALSE;
+        }
+    }
+    
+    return inject;
+}
+
 extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
 extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
@@ -93,6 +135,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
   TagPtr      dict = NULL;
   TagPtr      prop = NULL;
   BOOLEAN     NoContents = FALSE;
+  BOOLEAN     inject = FALSE;
   _BooterKextFileInfo *infoAddr = NULL;
 
   UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Contents\\Info.plist");
@@ -112,6 +155,13 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     MsgLog("Failed to load extra kext (failed to parse Info.plist): %s\n", FileName);
     return EFI_NOT_FOUND;
   }
+    
+  inject = checkOSBundleRequired(Entry->LoaderType, dict);
+  if(!inject) {
+      MsgLog("Skipping kext injection by OSBundleRequired : %s\n", FileName);
+      return EFI_UNSUPPORTED;
+  }
+    
   prop = GetProperty(dict,"CFBundleExecutable");
   if(prop!=0) {
     AsciiStrToUnicodeStrS(prop->string, Executable, 256);
@@ -233,6 +283,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
   CHAR16                  PlugInName[256];
   SIDELOAD_KEXT           *CurrentKext;
   SIDELOAD_KEXT           *CurrentPlugInKext;
+  EFI_STATUS              Status;
 
   MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
   CurrentKext = InjectKextList;
@@ -243,8 +294,8 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
         MsgLog("Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
-        AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
-
+        Status = AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
+        if(!EFI_ERROR(Status)) {
         // decide which plugins to inject
         CurrentPlugInKext = CurrentKext->PlugInList;
         while (CurrentPlugInKext) {
@@ -258,6 +309,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
           }
           CurrentPlugInKext = CurrentPlugInKext->Next;
         } // end of plug-in kext injection
+        }
       } else {
         // disable current kext injection
         MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
