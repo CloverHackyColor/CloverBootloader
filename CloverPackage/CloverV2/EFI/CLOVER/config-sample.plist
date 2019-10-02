@@ -554,7 +554,7 @@
 		<key>Debug</key>
 		<false/>
 		<key>AppleIntelCPUPM</key>
-		<false/>
+		<true/>
 	</dict>
 	<key>Devices</key>
 	<dict>
