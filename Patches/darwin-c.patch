@@ -1,0 +1,18 @@
+diff --git a/gcc/config/darwin-c.c b/gcc/config/darwin-c.c
+index aa5d2f2..9440b30 100644
+--- a/gcc/config/darwin-c.c
++++ b/gcc/config/darwin-c.c
+@@ -731,6 +731,13 @@ darwin_cpp_builtins (cpp_reader *pfile)
+   builtin_define_with_value ("__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__",
+                             macosx_version_as_macro(), false);
+ 
++  /* Until we implement __has-builtin, __has_feature, __has_extension it's
++     better to jam them to 0 than to fight the cases where system headers
++     have not been tested with GCC.  */
++  builtin_define_with_value ("__has_builtin(X)", "0", false);
++  builtin_define_with_value ("__has_feature(X)", "0", false);
++  builtin_define_with_value ("__has_extension(X)", "0", false);
++
+   /* Since we do not (at 4.6) support ObjC gc for the NeXT runtime, the
+      following will cause a syntax error if one tries to compile gc attributed
+      items.  However, without this, NeXT system headers cannot be parsed 
