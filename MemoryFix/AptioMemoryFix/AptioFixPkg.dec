@@ -1,0 +1,28 @@
+## @file
+# Copyright (C) 2017, vit9696.  All rights reserved.<BR>
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+# 
+# 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+##
+
+[Defines]
+  PACKAGE_NAME      = AptioFixPkg
+  PACKAGE_GUID      = 5B8C291B-EE2D-427B-9226-77DDDA0FA222
+  PACKAGE_VERSION   = 1.0
+  DEC_SPECIFICATION = 0x00010005
+
+[Includes]
+  Include
+
+[Protocols]
+  gAptioMemoryFixProtocolGuid = { 0xC7CBA84E, 0xCC77, 0x461D, { 0x9E, 0x3C, 0x6B, 0xE0, 0xCB, 0x79, 0xA7, 0xC1 } }
+  gAmiEfiPointerProtocolGuid  = { 0x15A10CE7, 0xEAB5, 0x43BF, { 0x90, 0x42, 0x74, 0x43, 0x2E, 0x69, 0x63, 0x77 } }
+  gAmiEfiKeycodeProtocolGuid  = { 0x0ADFB62D, 0xFF74, 0x484C, { 0x89, 0x44, 0xF8, 0x5C, 0x4B, 0xEA, 0x87, 0xA8 } }

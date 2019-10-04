@@ -1,0 +1,105 @@
+##
+#
+# UEFI driver for enabling loading of macOS without memory relocation.
+#
+# by dmazar
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AptioMemoryFix
+  FILE_GUID                      = 43C8CFCA-03C0-4AA8-8BEB-5AF6AB3570A2
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = AptioMemoryFixEntrypoint
+
+[Packages]
+#  MemoryFix/AptioFixPkg/AptioFixPkg.dec
+#  EfiPkg/EfiPkg.dec
+  CloverPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+#  OcSupportPkg/OcSupportPkg.dec
+  CloverEFI/UefiCpuPkg/UefiCpuPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  BaseRngLib
+  CpuLib
+  DevicePathLib
+  MemoryAllocationLib
+#  OcDeviceTreeLib
+#  OcDevicePathLib
+  MachoLib
+#  OcStringLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
+
+[Sources]
+  AptioMemoryFix.c
+  AsmFuncs.h
+  BootArgs.c
+  BootArgs.h
+  BootFixes.c
+  BootFixes.h
+  Config.h
+  CustomSlide.c
+  CustomSlide.h
+  MemoryMap.c
+  MemoryMap.h
+  RtShims.c
+  RtShims.h
+  ServiceOverrides.c
+  ServiceOverrides.h
+  VMem.c
+  VMem.h
+  UmmMalloc/UmmMalloc.h
+  UmmMalloc/UmmMalloc.c
+
+[Sources.X64]
+  X64/AsmFuncs.nasm
+  X64/AsmRtShims.nasm
+
+[Guids]
+  gEfiFileInfoGuid                            ## CONSUMES
+  gEfiFileSystemInfoGuid                      ## CONSUMES
+  gEfiFileSystemVolumeLabelInfoIdGuid         ## CONSUMES
+  gEfiGlobalVariableGuid                      ## CONSUMES
+  gOcReadOnlyVariableGuid                     ## CONSUMES
+  gOcWriteOnlyVariableGuid                    ## CONSUMES
+  gOcVendorVariableGuid                       ## CONSUMES
+  gAppleBootVariableGuid                      ## SOMETIMES_CONSUMES
+  gAppleVendorVariableGuid                    ## SOMETIMES_CONSUMES
+  gEfiMiscSubClassGuid                        ## SOMETIMES_CONSUMES
+  gEfiProcessorSubClassGuid                   ## SOMETIMES_CONSUMES
+  gEfiMemorySubClassGuid                      ## SOMETIMES_CONSUMES
+
+[Protocols]
+  gAptioMemoryFixProtocolGuid                 ## PRODUCES
+  gEfiLoadedImageProtocolGuid                 ## CONSUMES
+  gEfiDevicePathProtocolGuid                  ## CONSUMES
+  gEfiGraphicsOutputProtocolGuid              ## CONSUMES
+  gEfiSimpleFileSystemProtocolGuid            ## CONSUMES
+  gEfiBlockIoProtocolGuid                     ## CONSUMES
+  gEfiBlockIo2ProtocolGuid                    ## CONSUMES
+  gEfiDiskIoProtocolGuid                      ## CONSUMES
+  gEfiDiskIo2ProtocolGuid                     ## CONSUMES
+  gEfiConsoleControlProtocolGuid              ## SOMETIMES_CONSUMES
+  gAppleFirmwarePasswordProtocolGuid          ## SOMETIMES_CONSUMES
+  gEfiDevicePathPropertyDatabaseProtocolGuid  ## SOMETIMES_CONSUMES
+  gAppleFramebufferInfoProtocolGuid           ## SOMETIMES_CONSUMES
+  gAppleKeyMapAggregatorProtocolGuid          ## SOMETIMES_CONSUMES
+  gAppleNetBootProtocolGuid                   ## SOMETIMES_CONSUMES
+  gAppleImageConversionProtocolGuid           ## SOMETIMES_CONSUMES
+  gEfiDataHubProtocolGuid                     ## SOMETIMES_CONSUMES
+
+[BuildOptions]
+# To generate assembled listings
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+#  GCC:*_*_*_ASM_FLAGS = -Wa,-a=AsmList.txt
+#  GCC:*_*_*_NASM_FLAGS = -l NasmList.txt
