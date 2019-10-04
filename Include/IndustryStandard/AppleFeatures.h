@@ -16,7 +16,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //
 // OEM Firmware Volume Information - Firmware Feature Bits.
 // These bits are exposed via APPLE_SMBIOS_TABLE_TYPE128 FirmwareFeatures,
-// and UEFI variables under gAppleVendorVariableGuid (4D1EDE05-38C7-4A6A-9CC6-4BCCA8B38C14):
+// and UEFI variables under gEfiAppleNvramGuid (4D1EDE05-38C7-4A6A-9CC6-4BCCA8B38C14):
 // UINT32 FirmwareFeatures / FirmwareFeaturesMask.
 // UINT64 ExtendedFirmwareFeatures / ExtendedFirmwareFeaturesMask.
 //
@@ -57,11 +57,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //     Features |= 0x1000000U;
 //   }
 //   Features = ((*(UINT64 *)(0xFFFFFF80) != 0x4E15E2F599858AC6ULL) << 12U) | Features & 0xFFFFFFFFFFFFEFFFULL;
-//   if (!EFI_ERROR (gRT->SetVariable(L"FirmwareFeaturesMask", &gAppleVendorVariableGuid, 6, sizeof (UINT32), &Mask)))
-//     gRT->SetVariable(L"FirmwareFeatures", &gAppleVendorVariableGuid, 6, sizeof (UINT32), &Features);
+//   if (!EFI_ERROR (gRT->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, 6, sizeof (UINT32), &Mask)))
+//     gRT->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid, 6, sizeof (UINT32), &Features);
 //   if ((Features & 0x2000000U)
-//     && !EFI_ERROR (gRT->SetVariable(L"ExtendedFirmwareFeaturesMask", &gAppleVendorVariableGuid, 6, sizeof (UINT64), &Mask)))
-//     gRT->SetVariable(L"ExtendedFirmwareFeatures", &gAppleVendorVariableGuid, 6, sizeof (UINT64), &Features);
+//     && !EFI_ERROR (gRT->SetVariable(L"ExtendedFirmwareFeaturesMask", &gEfiAppleNvramGuid, 6, sizeof (UINT64), &Mask)))
+//     gRT->SetVariable(L"ExtendedFirmwareFeatures", &gEfiAppleNvramGuid, 6, sizeof (UINT64), &Features);
 // }
 //
 

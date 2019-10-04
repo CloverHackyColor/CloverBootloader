@@ -38,8 +38,9 @@
   Ubsan.h
 
 [Packages]
+  CloverPkg.dec
   MdePkg/MdePkg.dec
-  OcSupportPkg/OcSupportPkg.dec
+#  OcSupportPkg/OcSupportPkg.dec
 
 [LibraryClasses]
   BaseLib

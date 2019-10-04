@@ -10,9 +10,8 @@
 
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/OcDebugLogLib.h>
-#include <Library/OcDevicePathLib.h>
-#include <Library/OcMachoLib.h>
+#include <Library/DebugLib.h>
+#include <Library/MachoLib.h>
 #include <Library/OcMiscLib.h>
 #include <Library/OcStringLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -27,6 +26,23 @@
 #include "MemoryMap.h"
 #include "RtShims.h"
 #include "VMem.h"
+
+// DBG_TO: 0=no debug, 1=serial, 2=console
+// serial requires
+// [PcdsFixedAtBuild]
+//  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+//  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+// in package DSC file
+#define DBG_TO 0
+
+#if DBG_TO == 2
+#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+#define DBG(...) DebugPrint(1, __VA_ARGS__);
+#else
+#define DBG(...)
+#endif
+
 
 EFI_PHYSICAL_ADDRESS         gSysTableRtArea;
 EFI_PHYSICAL_ADDRESS         gRelocatedSysTableRtArea;
@@ -207,7 +223,7 @@ ReadBooterArguments (
   //
   Status = OrgGetVariable (
     L"boot-args",
-    &gAppleBootVariableGuid,
+    &gEfiAppleBootGuid,
     NULL, &BootArgsVarLen,
     &BootArgsVar[0]
     );
@@ -262,7 +278,7 @@ PrepareJumpFromKernel (
   HigherMem = BASE_4GB;
   Status = AllocatePagesFromTop (EfiBootServicesCode, 1, &HigherMem, FALSE);
   if (Status != EFI_SUCCESS) {
-    OcPrintScreen (L"AMF: Failed to allocate JumpToKernel memory - %r\n", Status);
+    Print (L"AMF: Failed to allocate JumpToKernel memory - %r\n", Status);
     return Status;
   }
 
@@ -274,7 +290,7 @@ PrepareJumpFromKernel (
 
   Size = (UINT8 *)&JumpToKernelEnd - (UINT8 *)&JumpToKernel;
   if (Size > EFI_PAGES_TO_SIZE (1)) {
-    OcPrintScreen (L"AMF: JumpToKernel32 size is too big - %ld\n", Size);
+    Print (L"AMF: JumpToKernel32 size is too big - %ld\n", Size);
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -295,7 +311,7 @@ PrepareJumpFromKernel (
   gSysTableRtArea = BASE_4GB;
   Status = AllocatePagesFromTop (EfiRuntimeServicesData, 1, &gSysTableRtArea, FALSE);
   if (Status != EFI_SUCCESS) {
-    OcPrintScreen (L"AMF: Failed to allocate system table memory - %r\n", Status);
+    Print (L"AMF: Failed to allocate system table memory - %r\n", Status);
     return Status;
   }
 
@@ -519,6 +535,39 @@ CopyEfiSysTableToRtArea (
   *EfiSystemTable = (UINT32)(UINTN)Dest;
 }
 
+/**
+ Returns the length of PathName.
+
+ @param[in] FilePath  The file Device Path node to inspect.
+
+ **/
+UINTN
+FileDevicePathNameLen (IN CONST FILEPATH_DEVICE_PATH  *FilePath)
+{
+  UINTN Size;
+  UINTN Len;
+
+  if (!FilePath) {
+    return 0;
+  }
+
+  if (!IsDevicePathValid (&FilePath->Header, 0)) {
+    return 0;
+  }
+
+  Size = DevicePathNodeLength (FilePath) - SIZE_OF_FILEPATH_DEVICE_PATH;
+  //
+  // Account for more than one termination character.
+  //
+  Len = (Size / sizeof (*FilePath->PathName)) - 1;
+  while (Len > 0 && FilePath->PathName[Len - 1] == L'\0') {
+    --Len;
+  }
+
+  return Len;
+}
+
+
 EFI_LOADED_IMAGE_PROTOCOL *
 GetAppleBootLoadedImage (
   EFI_HANDLE  ImageHandle
@@ -546,7 +595,7 @@ GetAppleBootLoadedImage (
       //
       // Detect macOS by boot.efi in the bootloader name.
       //
-      PathLen = OcFileDevicePathNameLen (LastNode);
+      PathLen = FileDevicePathNameLen (LastNode);
       if (PathLen >= BootPathLen) {
         Index = PathLen - BootPathLen;
         IsMacOS = (Index == 0 || LastNode->PathName[Index - 1] == L'\\')

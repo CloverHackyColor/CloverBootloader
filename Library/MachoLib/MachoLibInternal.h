@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <IndustryStandard/AppleMachoImage.h>
 
-#include <Library/OcMachoLib.h>
+#include <Library/MachoLib.h>
 
 /**
   Retrieves the SYMTAB command.

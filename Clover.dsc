@@ -151,15 +151,17 @@
   AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
   VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
 
-  OcGuardLib|Library/OcGuardLib/OcGuardLib.inf
-  MachoLib|Library/MachoLib/MachoLib.inf
-
   #
   # Our libs
   #
   MemLogLib|Library/MemLogLibDefault/MemLogLibDefault.inf
   VideoBiosPatchLib|Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
   WaveLib|Library/WaveLib/WaveLib.inf
+
+  OcGuardLib|Library/OcGuardLib/OcGuardLib.inf
+  MachoLib|Library/MachoLib/MachoLib.inf
+  DeviceTreeLib|Library/DeviceTreeLib/DeviceTreeLib.inf
+
     
   ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
 !ifndef NO_CLOVER_SHELL
@@ -471,7 +473,7 @@
   Protocols/HashServiceFix/HashServiceFix.inf
   Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
   Protocols/AppleKeyFeeder/AppleKeyFeeder.inf
-#  Protocols/AptioInputFix/AptioInputFix.inf
+  Protocols/AptioInputFix/AptioInputFix.inf
   
 
 !ifdef DEBUG_ON_SERIAL_PORT
@@ -585,7 +587,7 @@
 #  MemoryFix/OsxAptioFixDrv/OsxAptioFix2Drv.inf
   MemoryFix/OsxAptioFixDrv/OsxAptioFix3Drv.inf
   MemoryFix/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
-#  MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
+  MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
 !ifdef DEBUG_ON_SERIAL_PORT
   MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #

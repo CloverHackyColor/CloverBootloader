@@ -17,9 +17,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <IndustryStandard/AppleMachoImage.h>
 
 #include <Library/DebugLib.h>
-#include <Library/OcMachoLib.h>
+#include <Library/MachoLib.h>
 
-#include "OcMachoLibInternal.h"
+#include "MachoLibInternal.h"
 
 /**
   Returns whether the Relocation's type indicates a Pair for the Intel 64

@@ -745,6 +745,7 @@ INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN U
 
 CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
+//UINTN   FileDevicePathNameLen(IN CONST FILEPATH_DEVICE_PATH  *FilePath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 
@@ -760,15 +761,12 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define ATTR_SCROLLARROW (EFI_LIGHTGREEN | EFI_BACKGROUND_BLACK)
 
 #define LAYOUT_TEXT_WIDTH (500)
-#define LAYOUT_TOTAL_HEIGHT (376) //376
+#define LAYOUT_TOTAL_HEIGHT (376)
 #define LAYOUT_BANNER_HEIGHT (32)
 #define LAYOUT_BANNER_YOFFSET (LAYOUT_BANNER_HEIGHT + 32)
 #define LAYOUT_Y_EDGE    (20)
 #define LAYOUT_X_EDGE    (20)
 #define BAR_WIDTH         (16)
-
-//#define FONT_CELL_WIDTH (7)
-//#define FONT_CELL_HEIGHT (12)
 
 extern INTN FontWidth;
 extern INTN FontHeight;

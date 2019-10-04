@@ -26,7 +26,7 @@ EFI_GUID gDevicePropertiesGuid = {
   0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
 };
 /*
-EFI_GUID gAppleScreenInfoProtocolGuid = {
+EFI_GUID gAppleFramebufferInfoProtocolGuid = {
 	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
 }; */
 // gEfiKeyboardInfoProtocolGuid
@@ -35,7 +35,7 @@ EFI_GUID gAppleScreenInfoProtocolGuid = {
 // C5C5DA95-7D5C-45E6-B2F1-3FD52BB10077 - EfiOSInfo
 // 03622D6D-362A-4E47-9710-C238B23755C1 - GraphConfig
 
-extern EFI_GUID gAppleScreenInfoProtocolGuid;
+extern EFI_GUID gAppleFramebufferInfoProtocolGuid;
 
 UINT32 mPropSize = 0;
 UINT8* mProperties = NULL;
@@ -337,7 +337,7 @@ SetPrivateVarProto(VOID)
   //This must be independent install
   // optional protocols
   /*Status = */gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
-                                                       &gAppleScreenInfoProtocolGuid,
+                                                       &gAppleFramebufferInfoProtocolGuid,
                                                        &mScreenInfo, 
                                                        &gEfiOSInfoProtocolGuid,
                                                        &mEfiOSInfo,

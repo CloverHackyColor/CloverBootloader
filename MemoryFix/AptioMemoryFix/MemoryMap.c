@@ -11,7 +11,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/OcDebugLogLib.h>
+#include <Library/DebugLib.h>
 #include <Library/OcMiscLib.h>
 #include <Library/PrintLib.h>
 #include <Library/DevicePathLib.h>
@@ -180,15 +180,15 @@ PrintMemMap (
 
   Desc = MemoryMap;
   NumEntries = MemoryMapSize / DescriptorSize;
-  OcPrintScreen (L"--- Dump Memory Map (%s) start ---\n", Name);
-  OcPrintScreen (L"MEMMAP: Size=%d, Addr=%p, DescSize=%d, Shims=%08lX, ST=%08lX\n",
+  Print (L"--- Dump Memory Map (%s) start ---\n", Name);
+  Print (L"MEMMAP: Size=%d, Addr=%p, DescSize=%d, Shims=%08lX, ST=%08lX\n",
     MemoryMapSize, MemoryMap, DescriptorSize, (UINTN)Shims, (UINTN)SysTable);
-  OcPrintScreen (L"Type      Start      End        Virtual          # Pages    Attributes\n");
+  Print (L"Type      Start      End        Virtual          # Pages    Attributes\n");
   for (Index = 0; Index < NumEntries; Index++) {
 
     Bytes = EFI_PAGES_TO_SIZE (Desc->NumberOfPages);
 
-    OcPrintScreen (L"%-9s %010lX %010lX %016lX %010lX %016lX\n",
+    Print (L"%-9s %010lX %010lX %016lX %010lX %016lX\n",
       mEfiMemoryTypeDesc[Desc->Type],
       Desc->PhysicalStart,
       Desc->PhysicalStart + Bytes - 1,
@@ -206,7 +206,7 @@ PrintMemMap (
       gBS->Stall (SECONDS_TO_MICROSECONDS (5));
   }
 
-  OcPrintScreen (L"--- Dump Memory Map (%s) end ---\n", Name);
+  Print (L"--- Dump Memory Map (%s) end ---\n", Name);
   gBS->Stall (SECONDS_TO_MICROSECONDS (5));
 
   EnableDynamicPoolAllocations ();

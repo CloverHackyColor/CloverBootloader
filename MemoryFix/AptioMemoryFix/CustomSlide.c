@@ -9,8 +9,8 @@
 
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/OcDebugLogLib.h>
-#include <Library/OcDeviceTreeLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DeviceTreeLib.h>
 #include <Library/OcMiscLib.h>
 #include <Library/PrintLib.h>
 #include <Library/RngLib.h>
@@ -212,7 +212,7 @@ DecideOnCustomSlideImplementation (
     );
 
   if (Status != EFI_SUCCESS) {
-    OcPrintScreen (L"AMF: Failed to obtain memory map for KASLR - %r\n", Status);
+    Print (L"AMF: Failed to obtain memory map for KASLR - %r\n", Status);
     return;
   }
 
@@ -302,28 +302,28 @@ DecideOnCustomSlideImplementation (
 
   if (mValidSlidesNum != TOTAL_SLIDE_NUM) {
     if (mValidSlidesNum == 0) {
-      OcPrintScreen (L"AMF: No slide values are usable! Falling back to %d with 0x%08X bytes!\n", FallbackSlide, MaxAvailableSize);
+      Print (L"AMF: No slide values are usable! Falling back to %d with 0x%08X bytes!\n", FallbackSlide, MaxAvailableSize);
       mValidSlides[mValidSlidesNum++] = (UINT8)FallbackSlide;
     } else {
       //
       // Pretty-print valid slides as ranges.
       // For example, 1, 2, 3, 4, 5 will become 1-5.
       //
-      OcPrintScreen (L"AMF: Only %d/%d slide values are usable!\n", mValidSlidesNum, TOTAL_SLIDE_NUM);
+      Print (L"AMF: Only %d/%d slide values are usable!\n", mValidSlidesNum, TOTAL_SLIDE_NUM);
       NumEntries = 0;
       for (Index = 0; Index <= mValidSlidesNum; Index++) {
         if (Index == 0) {
-          OcPrintScreen (L"Valid slides: %d", mValidSlides[Index]);
+          Print (L"Valid slides: %d", mValidSlides[Index]);
         } else if (Index == mValidSlidesNum || mValidSlides[Index - 1] + 1 != mValidSlides[Index]) {
           if (NumEntries == 1) {
-            OcPrintScreen (L", %d", mValidSlides[Index - 1]);
+            Print (L", %d", mValidSlides[Index - 1]);
           } else if (NumEntries > 1) {
-            OcPrintScreen (L"-%d", mValidSlides[Index - 1]);
+            Print (L"-%d", mValidSlides[Index - 1]);
           }
           if (Index == mValidSlidesNum) {
-            OcPrintScreen (L"\n");
+            Print (L"\n");
           } else {
-            OcPrintScreen (L", %d", mValidSlides[Index]);
+            Print (L", %d", mValidSlides[Index]);
           }
           NumEntries = 0;
         } else {
@@ -586,7 +586,7 @@ GetVariableCustomSlide (
   )
 {
   if (gMacOSBootNestedCount > 0 && VariableName && VendorGuid && DataSize &&
-    CompareGuid (VendorGuid, &gAppleBootVariableGuid)) {
+    CompareGuid (VendorGuid, &gEfiAppleBootGuid)) {
     //
     // We override csr-active-config with CSR_ALLOW_UNRESTRICTED_NVRAM bit set
     // to allow one to pass a custom slide value even when SIP is on.

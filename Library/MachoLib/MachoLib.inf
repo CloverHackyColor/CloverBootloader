@@ -12,16 +12,15 @@
 ##
 
 [Defines]
-  BASE_NAME       = OcMachoLib
-  LIBRARY_CLASS   = OcMachoLib
+  BASE_NAME       = MachoLib
+  LIBRARY_CLASS   = MachoLib
   MODULE_TYPE     = BASE
    VERSION_STRING = 1.0
   INF_VERSION     = 0x00010005
 
 [Packages]
+  CloverPkg.dec
   MdePkg/MdePkg.dec
-  EfiPkg/EfiPkg.dec
-  OcSupportPkg/OcSupportPkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -32,6 +31,6 @@
 [Sources]
   CxxSymbols.c
   Header.c
-  OcMachoLibInternal.h
+  MachoLibInternal.h
   Relocations.c
   Symbols.c

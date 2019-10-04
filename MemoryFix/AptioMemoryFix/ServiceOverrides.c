@@ -11,7 +11,7 @@
 
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/OcDebugLogLib.h>
+#include <Library/DebugLib.h>
 #include <Library/OcMiscLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -110,7 +110,7 @@ InstallBsOverrides (
       // This is undesired, but technically less fatal than attempting to reduce the number
       // of slides available when no memory map dumping is necessary, for example.
       //
-      OcPrintScreen (L"AMF: Not using custom memory pool - %r\n", Status);
+      Print (L"AMF: Not using custom memory pool - %r\n", Status);
     }
   }
 #endif
@@ -243,14 +243,14 @@ MOStartImage (
     // Starting with 10.13.6 boot-switch-vars is no longer supported.
     //
     ValueSize = 0;
-    if (gRT->GetVariable (L"boot-signature", &gAppleBootVariableGuid, NULL, &ValueSize, NULL) == EFI_BUFFER_TOO_SMALL) {
+    if (gRT->GetVariable (L"boot-signature", &gEfiAppleBootGuid, NULL, &ValueSize, NULL) == EFI_BUFFER_TOO_SMALL) {
       ValueSize = 0;
-      if (gRT->GetVariable (L"boot-image-key", &gAppleBootVariableGuid, NULL, &ValueSize, NULL) == EFI_BUFFER_TOO_SMALL) {
+      if (gRT->GetVariable (L"boot-image-key", &gEfiAppleBootGuid, NULL, &ValueSize, NULL) == EFI_BUFFER_TOO_SMALL) {
         gHibernateWake = TRUE;
       }
     } else {
       ValueSize = 0;
-      if (gRT->GetVariable (L"boot-switch-vars", &gAppleBootVariableGuid, NULL, &ValueSize, NULL) == EFI_BUFFER_TOO_SMALL) {
+      if (gRT->GetVariable (L"boot-switch-vars", &gEfiAppleBootGuid, NULL, &ValueSize, NULL) == EFI_BUFFER_TOO_SMALL) {
         gHibernateWake = TRUE;
       }
     }
@@ -348,7 +348,7 @@ MOAllocatePages (
 
 /** gBS->AllocatePool override:
  * Allows us to use a custom allocator that uses a preallocated memory pool
- * for certain types of memory. See details in OcPrintScreen function.
+ * for certain types of memory. See details in Print function.
  */
 EFI_STATUS
 EFIAPI
@@ -481,7 +481,7 @@ MOExitBootServices (
   // We need hibernate image address for wake
   //
   if (gHibernateWake && mHibernateImageAddress == 0) {
-    OcPrintScreen (L"AMF: Failed to find hibernate image address\n");
+    Print (L"AMF: Failed to find hibernate image address\n");
     gBS->Stall (SECONDS_TO_MICROSECONDS (5));
     return EFI_INVALID_PARAMETER;
   }
@@ -542,7 +542,7 @@ ForceExitBootServices (
     // Just report error as var in nvram to be visible from macOS with "nvram -p"
     //
     gRT->SetVariable (L"aptiomemfix-exitbs",
-      &gAppleBootVariableGuid,
+      &gEfiAppleBootGuid,
       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
       4,
       "fail"
@@ -561,14 +561,14 @@ ForceExitBootServices (
       //
       Status = ExitBs (ImageHandle, MapKey);
       if (EFI_ERROR (Status))
-        OcPrintScreen (L"AMF: ExitBootServices failed twice - %r\n", Status);
+        Print (L"AMF: ExitBootServices failed twice - %r\n", Status);
     } else {
-      OcPrintScreen (L"AMF: Failed to get MapKey for ExitBootServices - %r\n", Status);
+      Print (L"AMF: Failed to get MapKey for ExitBootServices - %r\n", Status);
       Status = EFI_INVALID_PARAMETER;
     }
 
     if (EFI_ERROR (Status)) {
-      OcPrintScreen (L"Waiting 10 secs...\n");
+      Print (L"Waiting 10 secs...\n");
       gBS->Stall (SECONDS_TO_MICROSECONDS (10));
     }
   }

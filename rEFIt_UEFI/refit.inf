@@ -272,8 +272,8 @@
   gEfiSecurityArchProtocolGuid
   gEfiSecurity2ArchProtocolGuid
 
-  AppleDevicePropertyProtocolGuid
-  gAppleScreenInfoProtocolGuid
+  gAppleDevicePropertyProtocolGuid
+  gAppleFramebufferInfoProtocolGuid
   gEfiConsoleControlProtocolGuid
   gAppleGraphConfigProtocolGuid
   gEfiLegacyBiosProtocolGuid

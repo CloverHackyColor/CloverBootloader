@@ -20,7 +20,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/OcGuardLib.h>
-#include <Library/OcMachoLib.h>
+#include <Library/MachoLib.h>
 #include <Library/OcStringLib.h>
 
 #define CXX_PREFIX               "__Z"

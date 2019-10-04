@@ -19,9 +19,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/OcGuardLib.h>
-#include <Library/OcMachoLib.h>
+#include <Library/MachoLib.h>
 
-#include "OcMachoLibInternal.h"
+#include "MachoLibInternal.h"
 
 BOOLEAN
 InternalSymbolIsSane (

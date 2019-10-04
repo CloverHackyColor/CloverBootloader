@@ -24,6 +24,7 @@
 
 // USB_HID_PAGE_USAGE
 #define USB_HID_USAGE(UsageId, PageId) (((PageId) << 16) | (UsageId))
+#define BIT(n)                         (1u << (n))
 
 // USB_HID_PAGES
 enum {
@@ -90,14 +91,14 @@ typedef UINT32 USB_HID_USAGE;
 
 // USB HID Modifier Map
 
-#define USB_HID_KB_KP_MODIFIER_LEFT_CONTROL   BIT (0)
-#define USB_HID_KB_KP_MODIFIER_LEFT_SHIFT     BIT (1)
-#define USB_HID_KB_KP_MODIFIER_LEFT_ALT       BIT (2)
-#define USB_HID_KB_KP_MODIFIER_LEFT_GUI       BIT (3)
-#define USB_HID_KB_KP_MODIFIER_RIGHT_CONTROL  BIT (4)
-#define USB_HID_KB_KP_MODIFIER_RIGHT_SHIFT    BIT (5)
-#define USB_HID_KB_KP_MODIFIER_RIGHT_ALT      BIT (6)
-#define USB_HID_KB_KP_MODIFIER_RIGHT_GUI      BIT (7)
+#define USB_HID_KB_KP_MODIFIER_LEFT_CONTROL   BIT(0)
+#define USB_HID_KB_KP_MODIFIER_LEFT_SHIFT     BIT(1)
+#define USB_HID_KB_KP_MODIFIER_LEFT_ALT       BIT(2)
+#define USB_HID_KB_KP_MODIFIER_LEFT_GUI       BIT(3)
+#define USB_HID_KB_KP_MODIFIER_RIGHT_CONTROL  BIT(4)
+#define USB_HID_KB_KP_MODIFIER_RIGHT_SHIFT    BIT(5)
+#define USB_HID_KB_KP_MODIFIER_RIGHT_ALT      BIT(6)
+#define USB_HID_KB_KP_MODIFIER_RIGHT_GUI      BIT(7)
 
 // Shortcuts for multiple modifers
 

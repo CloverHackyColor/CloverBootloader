@@ -8,7 +8,7 @@
 
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/OcDebugLogLib.h>
+#include <Library/DebugLib.h>
 
 #include "Config.h"
 #include "VMem.h"
@@ -293,7 +293,7 @@ VmAllocateMemoryPool (
 
   Status = AllocatePagesFromTop (EfiBootServicesData, VmMemoryPoolFreePages, &Addr, FALSE);
   if (EFI_ERROR (Status)) {
-    OcPrintScreen (L"AMF: vm memory pool allocation failure - %r\n", Status);
+    Print (L"AMF: vm memory pool allocation failure - %r\n", Status);
   } else {
     VmMemoryPool = (UINT8*)Addr;
     DEBUG ((DEBUG_VERBOSE, "VmMemoryPool = %lx - %lx\n", VmMemoryPool, VmMemoryPool + EFI_PAGES_TO_SIZE(VmMemoryPoolFreePages) - 1));
