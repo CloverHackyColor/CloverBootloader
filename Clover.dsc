@@ -152,6 +152,7 @@
   VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
 
   OcGuardLib|Library/OcGuardLib/OcGuardLib.inf
+  MachoLib|Library/MachoLib/MachoLib.inf
 
   #
   # Our libs

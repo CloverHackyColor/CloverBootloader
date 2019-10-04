@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef AIK_TARGET_H
 #define AIK_TARGET_H
 
+#include <Library/UefiLib.h>
 #include <IndustryStandard/AppleHid.h>
 #include <Protocol/AppleKeyMapDatabase.h>
 #include <Protocol/AmiKeycode.h>

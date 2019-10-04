@@ -43,8 +43,9 @@
 # Fixme
 
 [Packages]
-  AptioFixPkg/AptioFixPkg.dec
-  EfiPkg/EfiPkg.dec
+#  AptioFixPkg/AptioFixPkg.dec
+#  EfiPkg/EfiPkg.dec
+  CloverPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
 

@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef AIK_DATA_H
 #define AIK_DATA_H
 
+#include <Library/UefiLib.h>
 #include <Protocol/AmiKeycode.h>
 
 //

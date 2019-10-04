@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef AIK_SHIM_H
 #define AIK_SHIM_H
 
+#include <Library/UefiLib.h>
 #include <Protocol/AmiKeycode.h>
 #include <Protocol/SimpleTextIn.h>
 #include <Protocol/SimpleTextInEx.h>
