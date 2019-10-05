@@ -133,8 +133,8 @@ if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
   echo "Running custom build script"
   "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
 else
-  ./ebuild.sh -fr -t $MYTOOLCHAIN
   ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+  ./ebuild.sh  -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
 fi
 
 # Run a post build script if exist (~/src/tools/Scripts/postbuild.sh)
