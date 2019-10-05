@@ -815,7 +815,7 @@ MainPostBuildScript() {
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Other/$efi.efi
     done
 
-    binArray=( Ps2MouseDxe UsbKbDxe UsbMouseDxe )
+    binArray=( Ps2MouseDxe UsbKbDxe UsbMouseDxe AptioInputFix )
 
     for efi in "${binArray[@]}"
     do
@@ -842,7 +842,7 @@ MainPostBuildScript() {
     done
 
     # drivers64UEFI/MemoryFix
-    binArray=( OsxAptioFixDrv OsxLowMemFixDrv OsxAptioFix3Drv )
+    binArray=( OsxAptioFixDrv OsxLowMemFixDrv OsxAptioFix3Drv AptioMemoryFix )
 
     for efi in "${binArray[@]}"
     do
