@@ -71,4 +71,4 @@
   INTEL:*_*_*_CC_FLAGS                    =  /Oi-
 
   XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -fno-builtin -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -Os -fno-builtin -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -fno-builtin -DMDEPKG_NDEBUG
