@@ -574,7 +574,7 @@ MainBuildScript() {
     if (( $SkipAutoGen == 0 )) || (( $FORCEREBUILD == 1 )); then
 
  #     local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")     
-	  local clover_revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿)
+      local clover_revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
       local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
       #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
 
