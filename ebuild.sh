@@ -74,7 +74,7 @@ NOBOOTFILES=0
 
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
-declare -r VERSTXT="vers.txt"
+#declare -r VERSTXT="vers.txt"
 if [[ -x "/usr/bin/sw_vers" ]]; then
   declare -r OSVER="$(sw_vers -productVersion | sed -e 's/\.0$//g')"
 elif [[ -x "/usr/bin/lsb_release" ]]; then
@@ -573,8 +573,8 @@ MainBuildScript() {
     # Build Clover version
     if (( $SkipAutoGen == 0 )) || (( $FORCEREBUILD == 1 )); then
 
-      local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")
-
+ #     local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")     
+	  local clover_revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿)
       local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
       #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
 
