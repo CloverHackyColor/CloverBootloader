@@ -420,10 +420,14 @@
 				<true/>
 				<key>Find</key>
 				<data>igKEwHRC</data>
+				<key>MaskFind</key>
+				<data>////////</data>
 				<key>MatchOS</key>
 				<string>10.14</string>
 				<key>Replace</key>
 				<data>igKEwOtC</data>
+				<key>MaskReplace</key>
+				<data>AAAAAP8A</data>
 			</dict>
 			<dict>
 				<key>Comment</key>
@@ -460,6 +464,8 @@
 				<string>VoodooHDA</string>
 				<key>Replace</key>
 				<data>VGVsZXBob25lcwA=</data>
+				<key>MaskReplace</key>
+				<data>/////wAAAAAAAAA=</data>
 			</dict>
 			<dict>
 				<key>Find</key>

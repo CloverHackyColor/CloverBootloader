@@ -69,6 +69,62 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Se
   return NumReplaces;
 }
 
+BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSize)
+{
+  UINT8 M;
+  UINTN Ind;
+  if (!Mask) {
+    return !CompareMem(Source, Search, SearchSize);
+  }
+  for (Ind = 0; Ind < SearchSize; Ind++) {
+    M = *Mask++;
+    if ((*Source++ & M) != (*Search++ & M)) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+VOID CopyMemMask(UINT8 *Dest, UINT8 *Replace, UINT8 *Mask, UINTN SearchSize)
+{
+  UINT8 M, D;
+  UINTN Ind;
+  if (!Mask) {
+    CopyMem(Dest, Replace, SearchSize);
+    return;
+  }
+  for (Ind = 0; Ind < SearchSize; Ind++) {
+    M = *Mask++;
+    D = *Dest;
+    *Dest++ = (((D ^ *Replace++) & M) ^ D) ^ M;
+  }
+}
+
+UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT8 *MaskSearch, UINTN SearchSize,
+                       UINT8 *Replace, UINT8 *MaskReplace, INTN MaxReplaces)
+{
+  UINTN     NumReplaces = 0;
+  BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
+  UINT8     *End = Source + SourceSize;
+  if (!Source || !Search || !Replace || !SearchSize) {
+    return 0;
+  }
+  while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) {
+    if (CompareMemMask(Source, Search, MaskSearch, SearchSize)) {
+      CopyMemMask(Source, Replace, MaskReplace, SearchSize);
+      NumReplaces++;
+      MaxReplaces--;
+      Source += SearchSize;
+    } else {
+      Source++;
+    }
+
+  }
+
+  return NumReplaces;
+}
+
+
 UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
 {
   UINTN     NumReplaces = 0;
@@ -449,7 +505,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   
   if (NumLion_X64 + NumLion_i386 + NumML + NumMavMoj3 + NumMoj4 > 1) {
     // more then one pattern found - we do not know what to do with it
-    // and we'll skipp it
+    // and we'll skip it
     Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d, MavMoj3: %d, Moj4: %d) - skipping patching!\n",
           NumLion_X64, NumLion_i386, NumML, NumMavMoj3, NumMoj4);
     gBS->Stall(5000000);
@@ -916,12 +972,14 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   if (!Entry->KernelAndKextPatches->KextPatches[N].IsPlistPatch) {
     // kext binary patch
     DBG_RT(Entry, "Binary patch\n");
-    Num = SearchAndReplace(Driver,
-                           DriverSize,
-                           Entry->KernelAndKextPatches->KextPatches[N].Data,
-                           Entry->KernelAndKextPatches->KextPatches[N].DataLen,
-                           Entry->KernelAndKextPatches->KextPatches[N].Patch,
-                           -1);
+    Num = SearchAndReplaceMask(Driver,
+                               DriverSize,
+                               Entry->KernelAndKextPatches->KextPatches[N].Data,
+                               Entry->KernelAndKextPatches->KextPatches[N].MaskFind,
+                               Entry->KernelAndKextPatches->KextPatches[N].DataLen,
+                               Entry->KernelAndKextPatches->KextPatches[N].Patch,
+                               Entry->KernelAndKextPatches->KextPatches[N].MaskReplace,
+                               -1);
   } else {
     // Info plist patch
     DBG_RT(Entry, "Info.plist data : '");

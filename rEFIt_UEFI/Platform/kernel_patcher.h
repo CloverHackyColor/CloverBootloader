@@ -149,5 +149,6 @@ UINTN SearchAndCount(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Sear
 //
 UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces);
 
+UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT8 *MaskSearch, UINTN SearchSize, UINT8 *Replace, UINT8 *MaskReplace, INTN MaxReplaces);
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */

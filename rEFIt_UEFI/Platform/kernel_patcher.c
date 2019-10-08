@@ -1732,28 +1732,16 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
       continue;
     }
 
-#if 0 //!defined(FKERNELPATCH)
-    Num = SearchAndCount(
-      UKernelData,
-      KERNEL_MAX_SIZE,
-      Entry->KernelAndKextPatches->KernelPatches[i].Data,
-      Entry->KernelAndKextPatches->KernelPatches[i].DataLen
-    );
-
-    if (!Num) {
-      DBG_RT(Entry, "==> pattern(s) not found.\n");
-      continue;
-    }
-#endif //FKERNELPATCH
-
-    Num = SearchAndReplace(
-      UKernelData,
-      KERNEL_MAX_SIZE,
-      Entry->KernelAndKextPatches->KernelPatches[i].Data,
-      Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
-      Entry->KernelAndKextPatches->KernelPatches[i].Patch,
-      Entry->KernelAndKextPatches->KernelPatches[i].Count
-    );
+    Num = SearchAndReplaceMask(
+                               UKernelData,
+                               KERNEL_MAX_SIZE,
+                               Entry->KernelAndKextPatches->KernelPatches[i].Data,
+                               Entry->KernelAndKextPatches->KernelPatches[i].MaskFind,
+                               Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
+                               Entry->KernelAndKextPatches->KernelPatches[i].Patch,
+                               Entry->KernelAndKextPatches->KernelPatches[i].MaskReplace,
+                               Entry->KernelAndKextPatches->KernelPatches[i].Count
+                               );
 
     if (Num) {
       y++;
@@ -1779,14 +1767,16 @@ BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry)
       continue;
     }
     
-    Num = SearchAndReplace(
-                           BooterData,
-                           BooterSize,
-                           Entry->KernelAndKextPatches->BootPatches[i].Data,
-                           Entry->KernelAndKextPatches->BootPatches[i].DataLen,
-                           Entry->KernelAndKextPatches->BootPatches[i].Patch,
-                           Entry->KernelAndKextPatches->BootPatches[i].Count
-                           );
+    Num = SearchAndReplaceMask(
+                               BooterData,
+                               BooterSize,
+                               Entry->KernelAndKextPatches->BootPatches[i].Data,
+                               Entry->KernelAndKextPatches->BootPatches[i].MaskFind,
+                               Entry->KernelAndKextPatches->BootPatches[i].DataLen,
+                               Entry->KernelAndKextPatches->BootPatches[i].Patch,
+                               Entry->KernelAndKextPatches->BootPatches[i].MaskReplace,
+                               Entry->KernelAndKextPatches->BootPatches[i].Count
+                               );
     
     if (Num) {
       y++;

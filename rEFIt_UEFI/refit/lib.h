@@ -541,12 +541,11 @@ struct KEXT_PATCH
 #endif
   UINT8       *Data;
   UINT8       *Patch;
+  UINT8       *MaskFind;
+  UINT8       *MaskReplace;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
-//  KEXT_PATCH  *Next;
-//  UINT64      Index;
-  INPUT_ITEM  MenuItem;   //zzzz
-//  BOOLEAN     Disabled;
+  INPUT_ITEM  MenuItem;
 };
 
 typedef struct {
@@ -554,11 +553,12 @@ typedef struct {
   INTN        DataLen;
   UINT8       *Data;
   UINT8       *Patch;
+  UINT8       *MaskFind;
+  UINT8       *MaskReplace;
   INTN        Count;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
-//  BOOLEAN     Disabled;
 } KERNEL_PATCH;
 
 typedef struct KERNEL_AND_KEXT_PATCHES
