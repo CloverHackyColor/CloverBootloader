@@ -1148,7 +1148,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KextPatches[Patches->NrKexts].MaskFind = NULL;
         } else {
-          Patches->KextPatches[Patches->NrKexts].MaskFind       = AllocateZeroPool (FindLen);
+          Patches->KextPatches[Patches->NrKexts].MaskFind       = AllocatePool (FindLen);
+          SetMem(Patches->KextPatches[Patches->NrKexts].MaskFind, 0xFF, FindLen);
           CopyMem(Patches->KextPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -1264,7 +1265,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KernelPatches[Patches->NrKexts].MaskFind = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKexts].MaskFind       = AllocateZeroPool (FindLen);
+          Patches->KernelPatches[Patches->NrKexts].MaskFind       = AllocatePool (FindLen);
+          SetMem(Patches->KernelPatches[Patches->NrKexts].MaskFind, 0xFF, FindLen);
           CopyMem(Patches->KernelPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -1365,7 +1367,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->BootPatches[Patches->NrKexts].MaskFind = NULL;
         } else {
-          Patches->BootPatches[Patches->NrKexts].MaskFind       = AllocateZeroPool (FindLen);
+          Patches->BootPatches[Patches->NrKexts].MaskFind       = AllocatePool (FindLen);
+          SetMem(Patches->BootPatches[Patches->NrKexts].MaskFind, 0xFF, FindLen);
           CopyMem(Patches->BootPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
