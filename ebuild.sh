@@ -453,7 +453,7 @@ MainBuildScript() {
     checkCmdlineArguments $@
     checkToolchain
 
-    local repoRev=$(cat vers.txt)
+    local repoRev=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 
     #
     # we are building the same rev as before?

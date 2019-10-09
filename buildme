@@ -216,7 +216,7 @@ if [[ -d .git ]]; then
   lsha1=$(git rev-parse --short HEAD)
 fi
 
-echo "buildme, Clover v2.5k r$(cat vers.txt) (SHA: $lsha1)"
+echo "buildme, Clover v2.5k r$(git describe --tags $(git rev-list --tags --max-count=1﻿)) (SHA: $lsha1)"
 echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
 echo
 PS3='Please enter your choice: '
