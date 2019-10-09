@@ -103,7 +103,7 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
         if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
             AsciiStrnCmp(osbundlerequired, "local", 5) &&
             AsciiStrnCmp(osbundlerequired, "console", 7) &&
-            AsciiStrnCmp(osbundlerequired, "network", 7)) {
+            AsciiStrnCmp(osbundlerequired, "network-root", 7)) {
             inject = FALSE;
         }
     } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
