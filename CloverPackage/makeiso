@@ -31,7 +31,7 @@ IMGSKELROOT=${SRCROOT}/imgskel
 CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
 EFIROOT=${SRCROOT}/CloverV2/EFI
 
-REVISION=$((git describe --tags $(git rev-list --tags --max-count=1﻿)))
+REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 PRODUCT=Clover-v2.5k-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso

@@ -32,7 +32,7 @@ done
 cd "$(dirname $0)"
 
 version=v2.5k
-revision=$((git describe --tags $(git rev-list --tags --max-count=1﻿)))
+revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
