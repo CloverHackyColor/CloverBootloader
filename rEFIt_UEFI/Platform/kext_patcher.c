@@ -96,7 +96,7 @@ VOID CopyMemMask(UINT8 *Dest, UINT8 *Replace, UINT8 *Mask, UINTN SearchSize)
   for (Ind = 0; Ind < SearchSize; Ind++) {
     M = *Mask++;
     D = *Dest;
-    *Dest++ = (((D ^ *Replace++) & M) ^ D) ^ M;
+    *Dest++ = ((D ^ *Replace++) & M) ^ D;
   }
 }
 
