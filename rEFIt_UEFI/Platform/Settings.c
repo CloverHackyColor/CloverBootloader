@@ -7697,7 +7697,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x5917: // "Intel UHD Graphics 620"
                   case 0x591C: // "Intel UHD Graphics 615"
                   case 0x87C0: // "Intel UHD Graphics 617"
-                  case 0x87CA: // "Intel UHD Graphics 617"
+                  case 0x87CA: // "Intel UHD Graphics 615"
                     FBLEVX = 0x056C;
                     break;
 

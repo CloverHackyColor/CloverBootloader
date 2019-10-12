@@ -80,11 +80,11 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBook9,1 / MacBook (Retina, 12-inch, Early 2016)
   { "MacBook9,1", "MB91.88Z.F000.B00.1909131902", "187.0.0.0.0", "Mac-9AE82516C7C6B903", // Intel Core m5-6Y54 @ 1.20 GHz
     "MacBook", "1.0", "C02RM408HDNK", "MacBook-Aluminum",
-    { 0x02, 0x35, 0x0f, 0, 1, 0x05 },  "j93", "j93", 0xf0e007 }, // need EPCI
+    { 0x02, 0x35, 0x0f, 0, 1, 0x06 },  "j93", "j93", 0xf0e007 }, // need EPCI
   //MacBook10,1 / MacBook (Retina, 12-inch, 2017)
   { "MacBook10,1", "MB101.88Z.F000.B00.1909131925", "182.0.0.0.0", "Mac-EE2EBD4B90B839A8", // Intel Core i5-7Y54 @ 1.30 GHz
     "MacBook", "1.0", "C02TQHACHH27", "MacBook-Aluminum",
-    { 0x02, 0x24, 0x0f, 0, 0, 0x10 },  "j122", "j122", 0xf08009 }, // need EPCI
+    { 0x02, 0x42, 0x0f, 0, 0, 0x12 },  "j122", "j122", 0xf08009 }, // need EPCI
   //MacBookPro1,1 / MacBook Pro (15-inch Glossy)
   { "MacBookPro1,1", "MBP11.88Z.0055.B08.0610121325", NULL, "Mac-F425BEC8", // Intel Core Duo T2500 @ 2.00 GHz
     "MacBook Pro", "1.0", "W8634HACVWZ", "MacBook-Aluminum",
@@ -196,27 +196,27 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro13,1 / MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)
   { "MacBookPro13,1", "MBP131.88Z.F000.B00.1909131924", "240.0.0.0.0", "Mac-473D31EABEB93F9B", // Intel Core i5-6360U @ 2.00 GHz
     "MacBook Pro", "1.0", "C02SLHACGVC1", "MacBook-Aluminum",
-    { 0x02, 0x36, 0x0f, 0, 0, 0x97 },  "2016mb", "j130", 0xf02009 }, // need EPCI
+    { 0x02, 0x36, 0x0f, 0, 0, 0x98 },  "2016mb", "j130", 0xf02009 }, // need EPCI
   //MacBookPro13,2 / MacBook Pro (13-inch, 2016, Four Thunderbolt 3 Ports)
   { "MacBookPro13,2", "MBP132.88Z.F000.B00.1909131802", "262.0.0.0.0", "Mac-66E35819EE2D0D05", // Intel Core i5-6287U @ 3.10 GHz
     "MacBook Pro", "1.0", "C02SLHACGYFH", "MacBook-Aluminum",
-    { 0x02, 0x37, 0x0f, 0, 0, 0x20 },  "2016mb", "j79", 0xf02009 },
+    { 0x02, 0x37, 0x0f, 0, 0, 0x21 },  "2016mb", "j79", 0xf02009 },
   //MacBookPro13,3 / MacBook Pro (15-inch, 2016)
   { "MacBookPro13,3", "MBP133.88Z.F000.B00.1909131802", "262.0.0.0.0", "Mac-A5C67F76ED83108C", // Intel Core i7-6920HQ @ 2.90 GHz
     "MacBook Pro", "1.0", "C02SLHACGTFN", "MacBook-Aluminum",
-    { 0x02, 0x38, 0x0f, 0, 0, 0x07 },  "2016mb", "j80g", 0xf04009 },
+    { 0x02, 0x38, 0x0f, 0, 0, 0x08 },  "2016mb", "j80g", 0xf04009 },
   //MacBookPro14,1 / MacBook Pro (13-inch, 2017, Two Thunderbolt 3 ports)
   { "MacBookPro14,1", "MBP141.88Z.F000.B00.1909131925", "202.0.0.0.0", "Mac-B4831CEBD52A0C4C", // Intel Core i5-7360U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02TNHACHV29", "MacBook-Aluminum",
-    { 0x02, 0x43, 0x0f, 0, 0, 0x06 },  "2017mbp", "j130a", 0xf0b009 },
+    { 0x02, 0x43, 0x0f, 0, 0, 0x07 },  "2017mbp", "j130a", 0xf0b009 },
   //MacBookPro14,2 / MacBook Pro (13-inch, 2017, Four Thunderbolt 3 Ports)
   { "MacBookPro14,2", "MBP142.88Z.F000.B00.1909131802", "202.0.0.0.0", "Mac-CAD6701F7CEA0921", // Intel Core i5-7267U @ 3.09 GHz
     "MacBook Pro", "1.0", "C02TQHACHV2N", "MacBook-Aluminum",
-    { 0x02, 0x44, 0x0f, 0, 0, 0x01 },  "2017mbp", "j79a", 0xf09009 },
+    { 0x02, 0x44, 0x0f, 0, 0, 0x02 },  "2017mbp", "j79a", 0xf09009 },
   //MacBookPro14,3 / MacBook Pro (15-inch, 2017)
   { "MacBookPro14,3", "MBP143.88Z.F000.B00.1909131925", "202.0.0.0.0", "Mac-551B86E5744E2388", // Intel Core i7-7700HQ @ 2.80 GHz
     "MacBook Pro", "1.0", "C02TQHACHTD5", "MacBook-Aluminum",
-    { 0x02, 0x45, 0x0f, 0, 0, 0x00 },  "2017mbp", "j80ga", 0xf0a009 },
+    { 0x02, 0x45, 0x0f, 0, 0, 0x01 },  "2017mbp", "j80ga", 0xf0a009 },
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
   { "MacBookPro15,1", "MBP151.88Z.F000.B00.1909172039", "1037.0.78.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
@@ -419,40 +419,40 @@ PLATFORMDATA ApplePlatformData[] =
     { 0x02, 0x21, 0x0f, 0, 0, 0x92 },  "j70", "j70", 0x7a007 }, // need EPCI
   //iMac15,1 / iMac (Retina 5K, 27-inch, Mid 2015)
   { "iMac15,1", "IM151.88Z.F000.B00.1907241312", "231.0.0.0.0", "Mac-42FD25EABCABB274", // Intel Core i5-4690 @ 3.50 GHz
-    "iMac", "1.0", "C02Q6HACFY10", "iMac-Aluminum",
-    { 0x02, 0x22, 0x0f, 0, 0, 0x16 },  "j78j78am", "j78", 0xf00008 },
+    "iMac", "1.0", "C02Q6HACFY10", "iMac-Aluminum", // i5: Mac-42FD25EABCABB274, i7: Mac-FA842E06C61E91C5
+    { 0x02, 0x22, 0x0f, 0, 0, 0x16 },  "j78j78am", "j78", 0xf00008 }, // i5: 2.22f16, i7: 2.23f11
   //iMac16,1 / iMac (21.5-inch, Late 2015)
   { "iMac16,1", "IM161.88Z.F000.B00.1907231133", "231.0.0.0.0", "Mac-A369DDC4E67F1C45", // Intel Core i5-5250U @ 1.60 GHz
     "iMac", "1.0", "C02QQHACGF1J", "iMac-Aluminum",
-    { 0x02, 0x31, 0x0f, 0, 0, 0x36 },  "j117", "j117", 0xf00008 }, // need EPCI
+    { 0x02, 0x31, 0x0f, 0, 0, 0x37 },  "j117", "j117", 0xf00008 }, // need EPCI
   //iMac16,2 / iMac (Retina 4K, 21.5-inch, Late 2015)
   { "iMac16,2", "IM162.88Z.F000.B00.1907231132", "231.0.0.0.0", "Mac-FFE5EF870D7BA81A", // Intel Core i5-5575R @ 2.80 GHz
     "iMac", "1.0", "C02PNHACGG78", "iMac-Aluminum",
-    { 0x02, 0x32, 0x0f, 0, 0, 0x20 },  "j94", "j94", 0xf00008 }, // need EPCI
+    { 0x02, 0x32, 0x0f, 0, 0, 0x21 },  "j94", "j94", 0xf00008 }, // need EPCI
   //iMac17,1 / iMac (Retina 5K, 27-inch, Late 2015)
   { "iMac17,1", "IM171.88Z.F000.B00.1909131902", "173.0.0.0.0", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
-    "iMac17,1", "1.0", "C02QFHACGG7L", "iMac-Aluminum",
-    { 0x02, 0x33, 0x0f, 0, 0, 0x10 },  "j95j95am", "j95", 0xf0c008 }, //Note: i5 but for i7 { 0x02, 0x34, 0x0F, 0, 0, 0x02 }
+    "iMac17,1", "1.0", "C02QFHACGG7L", "iMac-Aluminum", // i5: Mac-65CE76090165799A/Mac-DB15BD556843C820, i7: Mac-B809C3757DA9BB8D
+    { 0x02, 0x33, 0x0f, 0, 0, 0x12 },  "j95j95am", "j95", 0xf0c008 }, //Note: why? i5: 2.33f12 but for i7: 2.34f3
   //iMac18,1 / iMac (21.5-inch, 2017)
   { "iMac18,1", "IM181.88Z.F000.B00.1909131925", "178.0.0.0.0", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",
-    { 0x02, 0x39, 0x0f, 0, 0, 0x06 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
+    { 0x02, 0x39, 0x0f, 0, 0, 0x40 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
   //iMac18,2 / iMac (Retina 4K, 21.5-inch, 2017)
   { "iMac18,2", "IM183.88Z.F000.B00.1909131926", "176.0.0.0.0", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
     "iMac", "1.0", "C02TDHACJ1G5", "iMac-Aluminum",
-    { 0x02, 0x40, 0x0f, 0, 0, 0x00 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
   //iMac18,3 / iMac (Retina 5K, 27-inch, 2017)
   { "iMac18,3", "IM183.88Z.F000.B00.1909131926", "178.0.0.0.0", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
-    { 0x02, 0x41, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 },
+    { 0x02, 0x41, 0x0f, 0, 0, 0x02 },  "j133_4_5", "j135", 0xf07009 },
   //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
   { "iMac19,1", "IM191.88Z.F000.B00.1908302134", "1037.0.73.0.0", "Mac-AA95B1DDAB278B95", // Intel Core i9-9900K @ 3.60 GHz
     "iMac", "1.0", "C02Y9HACJV3P", "iMac-Aluminum",
-    { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12 },  "j138_9", "j138", 0xf0d009 },
+    { 0x02, 0x46, 0x0f, 0, 0, 0x12 },  "j138_9", "j138", 0xf0d009 },
   //iMac19,2 / iMac (Retina 4K, 21.5-inch, 2019)
   { "iMac19,2", "IM191.88Z.F000.B00.1908302134", "1037.0.73.0.0", "Mac-63001698E7A34814", // Intel Core i7-8700B @ 3.20 GHz
     "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
-    { 0x02, 0x46, 0x0f, 0x00, 0x00, 0x12 },  "j138_9", "j138", 0xf0d009 },
+    { 0x02, 0x47, 0x0f, 0, 0, 0x03 },  "j138_9", "j138", 0xf0d009 },
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1", "IMP11.88Z.F000.B00.1909172024", "1037.0.78.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
@@ -640,7 +640,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       gFwFeatures             = 0xE00FE137;
       break;
     case MacPro61:
-      gFwFeatures             = 0xE80FE137;
+      gFwFeatures             = 0xE80FE176;
       break;
     case MacBookPro111:
     case MacBookPro112:
@@ -650,10 +650,10 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       gFwFeatures             = 0xE80FE137;
       break;
     case iMac144:
-      gFwFeatures             = 0xF00FE137;
+      gFwFeatures             = 0xF00FE177;
       break;
     case iMac151:
-      gFwFeatures             = 0xF80FE137;
+      gFwFeatures             = 0xF80FE177;
       break;
     case MacBookPro131:
     case MacBookPro132:
@@ -663,13 +663,13 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
-      gFwFeatures             = 0xFC0FE137;
+      gFwFeatures             = 0xFC0FE176;
       break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
     case MacBookPro143:
-      gFwFeatures             = 0xFC0FE13F;
+      gFwFeatures             = 0xFC0FE17E;
       break;
     case iMacPro11:
       gFwFeatures             = 0xFD8FF53F;
@@ -737,8 +737,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
   // FirmwareFeaturesMask
   switch (Model) {
     // Verified list from Firmware
-    case MacBook91:
-    case MacBook101:
     case MacBookPro91:
     case MacBookPro92:
     case MacBookPro101:
@@ -748,12 +746,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro113:
     case MacBookPro114:
     case MacBookPro115:
-    case MacBookPro131:
-    case MacBookPro132:
-    case MacBookPro133:
-    case MacBookPro141:
-    case MacBookPro142:
-    case MacBookPro143:
     case MacBookAir41:
     case MacBookAir42:
     case MacBookAir51:
@@ -771,6 +763,17 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac141:
     case iMac142:
     case iMac143:
+      gFwFeaturesMask         = 0xFF1FFF3F;
+      break;
+          
+    case MacBook91:
+    case MacBook101:
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro133:
+    case MacBookPro141:
+    case MacBookPro142:
+    case MacBookPro143:
     case iMac144:
     case iMac151:
     case iMac171:
@@ -778,7 +781,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac182:
     case iMac183:
     case MacPro61:
-      gFwFeaturesMask         = 0xFF1FFF3F;
+      gFwFeaturesMask         = 0xFF1FFF7F;
       break;
     case iMacPro11:
       gFwFeaturesMask         = 0xFF9FFF3F;
