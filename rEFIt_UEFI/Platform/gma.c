@@ -833,7 +833,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   //GT2
   { 0x591C, "Intel UHD Graphics 615"         }, // Kaby Lake
   { 0x87C0, "Intel UHD Graphics 617"         }, // Kaby Lake - Mobile - MacBookAir8,1
-  { 0x87CA, "Intel Amber Lake GT2"           }, // Coffee Lake
+  { 0x87CA, "Intel UHD Graphics 615"         }, // Comet Lake
 
   //----------------Coffee Lake---------------
   //GT1
@@ -864,6 +864,28 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x3EA3, "Intel Whiskey Lake GT2"         }, //
   //GT3
   { 0x3EA2, "Intel Whiskey Lake GT3"         }, //
+
+  //----------------Comet Lake----------------
+  //GT1
+  { 0x9B21, "Intel Comet Lake GT1"           }, //
+  { 0x9BA0, "Intel Comet Lake GT1"           }, //
+  { 0x9BA2, "Intel Comet Lake GT1"           }, //
+  { 0x9BA4, "Intel Comet Lake GT1"           }, //
+  { 0x9BA5, "Intel Comet Lake GT1"           }, //
+  { 0x9BA8, "Intel Comet Lake GT1"           }, //
+  { 0x9BAA, "Intel Comet Lake GT1"           }, //
+  { 0x9BAB, "Intel Comet Lake GT1"           }, //
+  { 0x9BAC, "Intel Comet Lake GT1"           }, //
+  //GT2
+  { 0x9B41, "Intel UHD Graphics 620"         }, // Mobile
+  { 0x9BC0, "Intel Comet Lake GT2"           }, //
+  { 0x9BC2, "Intel Comet Lake GT2"           }, //
+  { 0x9BC4, "Intel Comet Lake GT2"           }, //
+  { 0x9BC5, "Intel Comet Lake GT2"           }, //
+  { 0x9BC8, "Intel Comet Lake GT2"           }, //
+  { 0x9BCA, "Intel UHD Graphics 620"         }, // Mobile
+  { 0x9BCB, "Intel Comet Lake GT2"           }, //
+  { 0x9BCC, "Intel Comet Lake GT2"           }, //
 
   //----------------Gemini Lake---------------
   { 0x3184, "Intel UHD Graphics 605"         }, //
@@ -2615,7 +2637,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       //GT2
     case 0x591C: // "Intel UHD Graphics 615"          // Kaby Lake
     case 0x87C0: // "Intel UHD Graphics 617"          // Kaby Lake - Mobile - MacBookAir8,1
-    case 0x87CA: // "Intel Amber Lake GT2"            // Coffee Lake
+    case 0x87CA: // "Intel UHD Graphics 615"          // Comet Lake
       switch (gma_dev->device_id) {
         case 0x5902:
         case 0x5906:
@@ -2839,6 +2861,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x87C0:
+        case 0x87CA:
           if (os_version < AsciiOSVersionToUint64("10.12.6")) {
             if (!SetFake) {
               FakeID = 0x191E8086 >> 16;
@@ -2956,6 +2979,28 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x3EA3: // "Intel Whiskey Lake GT2"          //
       //GT3
     case 0x3EA2: // "Intel Whiskey Lake GT3"          //
+
+      //----------------Comet Lake----------------
+      //GT1
+    case 0x9B21: // "Intel Comet Lake GT1"            //
+    case 0x9BA0: // "Intel Comet Lake GT1"            //
+    case 0x9BA2: // "Intel Comet Lake GT1"            //
+    case 0x9BA4: // "Intel Comet Lake GT1"            //
+    case 0x9BA5: // "Intel Comet Lake GT1"            //
+    case 0x9BA8: // "Intel Comet Lake GT1"            //
+    case 0x9BAA: // "Intel Comet Lake GT1"            //
+    case 0x9BAB: // "Intel Comet Lake GT1"            //
+    case 0x9BAC: // "Intel Comet Lake GT1"            //
+      //GT2
+    case 0x9B41: // "Intel UHD Graphics 620"          // Mobile
+    case 0x9BC0: // "Intel Comet Lake GT2"            //
+    case 0x9BC2: // "Intel Comet Lake GT2"            //
+    case 0x9BC4: // "Intel Comet Lake GT2"            //
+    case 0x9BC5: // "Intel Comet Lake GT2"            //
+    case 0x9BC8: // "Intel Comet Lake GT2"            //
+    case 0x9BCA: // "Intel UHD Graphics 620"          // Mobile
+    case 0x9BCB: // "Intel Comet Lake GT2"            //
+    case 0x9BCC: // "Intel Comet Lake GT2"            //
       switch (gma_dev->device_id) {
         case 0x3E90:
         case 0x3E93:
@@ -3045,6 +3090,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E9B:
         case 0x3EA0:
+        case 0x9B41:
+        case 0x9BCA:
           if ((os_version >= AsciiOSVersionToUint64("10.14")) || ((os_version == AsciiOSVersionToUint64("10.13.6")) &&
               (AsciiStrStr(Entry->BuildVersion, "17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
