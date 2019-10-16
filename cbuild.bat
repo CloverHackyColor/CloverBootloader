@@ -33,7 +33,7 @@ set DEFAULT_CYGWIN_HOME=c:\cygwin
 set DEFAULT_PYTHONHOME=
 rem d:\Program File\Python37"
 set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
-rem set PYTHON3_ENABLE=TRUE
+set PYTHON3_ENABLE=FALSE
 set DEFAULT_NASM_PREFIX=
 rem C:\Program Files (x86)\NASM"
 rem # %DEFAULT_CYGWIN_HOME%\bin
@@ -53,10 +53,17 @@ if errorlevel 1 (
 rem # get the current revision number
 :getrevision
   rem  get svn revision number
-  set F_VER_TXT=vers.txt
+rem  set F_VER_TXT=vers.txt
 rem #  svnversion -n>%F_VER_TXT%
-  set /P s=<%F_VER_TXT%
+rem  set /P s=<%F_VER_TXT%
 rem #  del %F_VER_TXT%
+  git rev-list --tags --max-count=1 > revs.txt
+  set /p c=< revs.txt
+  del revs.txt
+  git describe --tags %c% > vers.txt
+  set /P s=< vers.txt
+  del vers.txt
+  
   set SVNREVISION=
 
 rem # get the current revision number

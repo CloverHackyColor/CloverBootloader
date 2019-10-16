@@ -14,6 +14,18 @@
 
 #define APTIOMEMORYFIX_PROTOCOL_REVISION  27
 
+#include <Library/UefiLib.h>
+
+//#ifndef EFIAPI
+//#if _MSC_EXTENSIONS
+///
+/// Define the standard calling convention regardless of optimization level.
+/// __cdecl is Microsoft* specific C extension.
+///
+//#define EFIAPI __cdecl
+//#endif
+//#endif
+
 //
 // APTIOMEMORYFIX_PROTOCOL_GUID
 // C7CBA84E-CC77-461D-9E3C-6BE0CB79A7C1
@@ -26,8 +38,7 @@
 //
 typedef
 BOOLEAN
-EFIAPI
-(*AMF_SET_NVRAM_REDIRECT) (
+(EFIAPI *AMF_SET_NVRAM_REDIRECT) (
   IN BOOLEAN  NewValue
   );
 
