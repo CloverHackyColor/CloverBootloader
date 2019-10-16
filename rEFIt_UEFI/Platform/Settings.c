@@ -1077,6 +1077,32 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new
     if (Patches->KextPatches) {
+      for (i = 0; i < Patches->NrKexts; i++) {
+        if (Patches->KextPatches[i].Name) {
+          FreePool(Patches->KextPatches[i].Name);
+        }
+        if (Patches->KextPatches[i].Label) {
+          FreePool(Patches->KextPatches[i].Label);
+        }
+        if (Patches->KextPatches[i].Data) {
+          FreePool(Patches->KextPatches[i].Data);
+        }
+        if (Patches->KextPatches[i].Patch) {
+          FreePool(Patches->KextPatches[i].Patch);
+        }
+        if (Patches->KextPatches[i].MaskFind) {
+          FreePool(Patches->KextPatches[i].MaskFind);
+        }
+        if (Patches->KextPatches[i].MaskReplace) {
+          FreePool(Patches->KextPatches[i].MaskReplace);
+        }
+        if (Patches->KextPatches[i].MatchOS) {
+          FreePool(Patches->KextPatches[i].MatchOS);
+        }
+        if (Patches->KextPatches[i].MatchBuild) {
+          FreePool(Patches->KextPatches[i].MatchBuild);
+        }
+      }
       Patches->NrKexts = 0;
       FreePool (Patches->KextPatches);
       Patches->KextPatches = NULL;
@@ -1209,13 +1235,39 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     // but I am not sure
   }
 
+
   Prop = GetProperty (DictPointer, "KernelToPatch");
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new
     if (Patches->KernelPatches) {
+      // free all subarrays
+      for (i = 0; i < Patches->NrKernels; i++) {
+        if (Patches->KernelPatches[i].Label) {
+          FreePool(Patches->KernelPatches[i].Label);
+        }
+        if (Patches->KernelPatches[i].Data) {
+          FreePool(Patches->KernelPatches[i].Data);
+        }
+        if (Patches->KernelPatches[i].Patch) {
+          FreePool(Patches->KernelPatches[i].Patch);
+        }
+        if (Patches->KernelPatches[i].MaskFind) {
+          FreePool(Patches->KernelPatches[i].MaskFind);
+        }
+        if (Patches->KernelPatches[i].MaskReplace) {
+          FreePool(Patches->KernelPatches[i].MaskReplace);
+        }
+        if (Patches->KernelPatches[i].MatchOS) {
+          FreePool(Patches->KernelPatches[i].MatchOS);
+        }
+        if (Patches->KernelPatches[i].MatchBuild) {
+          FreePool(Patches->KernelPatches[i].MatchBuild);
+        }
+      }
       Patches->NrKernels = 0;
       FreePool (Patches->KernelPatches);
+      Patches->KernelPatches = NULL;
     }
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
@@ -1315,7 +1367,30 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new
     if (Patches->BootPatches) {
-      //TODO - free all subtree
+      // free all subtree
+      for (i = 0; i < Patches->NrBoots; i++) {
+        if (Patches->BootPatches[i].Label) {
+          FreePool(Patches->BootPatches[i].Label);
+        }
+        if (Patches->BootPatches[i].Data) {
+          FreePool(Patches->BootPatches[i].Data);
+        }
+        if (Patches->BootPatches[i].Patch) {
+          FreePool(Patches->BootPatches[i].Patch);
+        }
+        if (Patches->BootPatches[i].MaskFind) {
+          FreePool(Patches->BootPatches[i].MaskFind);
+        }
+        if (Patches->BootPatches[i].MaskReplace) {
+          FreePool(Patches->BootPatches[i].MaskReplace);
+        }
+        if (Patches->BootPatches[i].MatchOS) {
+          FreePool(Patches->BootPatches[i].MatchOS);
+        }
+        if (Patches->BootPatches[i].MatchBuild) {
+          FreePool(Patches->BootPatches[i].MatchBuild);
+        }
+      }
       Patches->NrBoots = 0;
       FreePool (Patches->BootPatches);
     }
