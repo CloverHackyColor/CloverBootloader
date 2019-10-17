@@ -399,7 +399,7 @@ VOID GetCPUProperties (VOID)
     if (Num && Denom) {
       gCPUStructure.ARTFrequency = DivU64x32(MultU64x32(gCPUStructure.TSCCalibr, Denom), Num);
       DBG(" Calibrated ARTFrequency: %lld\n", gCPUStructure.ARTFrequency);
-      UINT64 Stokg = DivU64x32(gCPUStructure.ARTFrequency + 99999, 100000);
+      UINT64 Stokg = DivU64x32(gCPUStructure.ARTFrequency + 49999, 100000);
       gCPUStructure.ARTFrequency = MultU64x32(Stokg, 100000);
       DBG(" Rounded ARTFrequency: %lld\n", gCPUStructure.ARTFrequency);
     }
