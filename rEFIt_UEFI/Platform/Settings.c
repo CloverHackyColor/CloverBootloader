@@ -7082,7 +7082,7 @@ GetDevices ()
               //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
               gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x3ff;
-              UFamily = gfx->Family & 0x3F0;
+              UFamily = gfx->Family & 0x1F0;
               if ((UFamily == NV_ARCH_KEPLER1) ||
                   (UFamily == NV_ARCH_KEPLER2) ||
                   (UFamily == NV_ARCH_KEPLER3)) {
