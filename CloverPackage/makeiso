@@ -30,6 +30,7 @@ IMGROOT=${SYMROOT}/CloverCD
 IMGSKELROOT=${SRCROOT}/imgskel
 CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
 EFIROOT=${SRCROOT}/CloverV2/EFI
+BASETOOLS_DIR=${SRCROOT}/../BaseTools/Source/C/bin
 
 REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 PRODUCT=Clover-v2.5k-${REVISION}
@@ -188,7 +189,7 @@ echo "[LZMA] CloverISO-${REVISION}"
 if [[ "$SYSNAME" == Linux ]]; then
 xz -f -S .lzma ${SYMROOT}/CloverISO-${REVISION}.tar
 else
-${CLOVERROOT}/BootSectors/lzma e ${SYMROOT}/CloverISO-${REVISION}.tar ${SYMROOT}/CloverISO-${REVISION}.tar.lzma
+"$BASETOOLS_DIR"/LzmaCompress -e -o ${SYMROOT}/CloverISO-${REVISION}.tar.lzma ${SYMROOT}/CloverISO-${REVISION}.tar 
 fi
 rm -rf ${SYMROOT}/CloverISO-${REVISION}.tar
 
