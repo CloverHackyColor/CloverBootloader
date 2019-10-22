@@ -79,3 +79,7 @@
 
 [UserExtensions.TianoCore."ExtraFiles"]
   DataHubDxeExtra.uni
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG

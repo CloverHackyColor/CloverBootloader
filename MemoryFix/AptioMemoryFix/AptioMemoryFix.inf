@@ -74,8 +74,8 @@
   gOcReadOnlyVariableGuid                     ## CONSUMES
   gOcWriteOnlyVariableGuid                    ## CONSUMES
   gOcVendorVariableGuid                       ## CONSUMES
-  gEfiAppleBootGuid                      ## SOMETIMES_CONSUMES
-  gEfiAppleNvramGuid                    ## SOMETIMES_CONSUMES
+  gEfiAppleBootGuid                           ## SOMETIMES_CONSUMES
+  gEfiAppleNvramGuid                          ## SOMETIMES_CONSUMES
   gEfiMiscSubClassGuid                        ## SOMETIMES_CONSUMES
   gEfiProcessorSubClassGuid                   ## SOMETIMES_CONSUMES
   gEfiMemorySubClassGuid                      ## SOMETIMES_CONSUMES
@@ -104,3 +104,7 @@
 #  MSFT:*_*_*_ASM_FLAGS = /Fl
 #  GCC:*_*_*_ASM_FLAGS = -Wa,-a=AsmList.txt
 #  GCC:*_*_*_NASM_FLAGS = -l NasmList.txt
+
+  XCODE:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
+
