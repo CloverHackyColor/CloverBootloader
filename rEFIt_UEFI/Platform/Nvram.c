@@ -54,6 +54,16 @@ EFI_GUID    mOzmosisProprietary2Guid    = { 0x9480E8A1, 0x1793, 0x46C9, { 0x91, 
 // BootChime
 extern EFI_GUID gBootChimeVendorVariableGuid;
 
+//Apple variables
+extern EFI_GUID gAppleCoreStorageVariableGuid;
+extern EFI_GUID gAppleTamperResistantBootVariableGuid;
+extern EFI_GUID gAppleWirelessNetworkVariableGuid;
+extern EFI_GUID gApplePersonalizationVariableGuid;
+extern EFI_GUID gAppleNetbootVariableGuid;
+extern EFI_GUID gAppleSecureBootVariableGuid;
+extern EFI_GUID gAppleTamperResistantBootSecureVariableGuid;
+extern EFI_GUID gAppleTamperResistantBootEfiUserVariableGuid;
+
 APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
 
 typedef struct NVRAM_DATA
@@ -316,8 +326,16 @@ IsDeletableVariable (
   )
 {
   // Apple GUIDs
-  if (CompareGuid (Guid, &gEfiAppleVendorGuid) ||
-      CompareGuid (Guid, &gEfiAppleBootGuid)) {
+  if (CompareGuid(Guid, &gEfiAppleVendorGuid) ||
+      CompareGuid(Guid, &gEfiAppleBootGuid) ||
+      CompareGuid(Guid, &gAppleCoreStorageVariableGuid) ||
+      CompareGuid(Guid, &gAppleTamperResistantBootVariableGuid) ||
+      CompareGuid(Guid, &gAppleWirelessNetworkVariableGuid) ||
+      CompareGuid(Guid, &gApplePersonalizationVariableGuid) ||
+      CompareGuid(Guid, &gAppleNetbootVariableGuid) ||
+      CompareGuid(Guid, &gAppleSecureBootVariableGuid) ||
+      CompareGuid(Guid, &gAppleTamperResistantBootSecureVariableGuid) ||
+      CompareGuid(Guid, &gAppleTamperResistantBootEfiUserVariableGuid)) {
     return TRUE;
 
   // Disable Clover Boot Options from being deleted
@@ -332,13 +350,13 @@ IsDeletableVariable (
 
   // Lilu / OpenCore extensions
   } else if (CompareGuid (Guid, &gOcVendorVariableGuid) ||
-      CompareGuid (Guid, &gOcReadOnlyVariableGuid) ||
-      CompareGuid (Guid, &gOcWriteOnlyVariableGuid)) {
+             CompareGuid(Guid, &gOcReadOnlyVariableGuid) ||
+             CompareGuid(Guid, &gOcWriteOnlyVariableGuid)) {
     return TRUE;
 
   // Ozmozis extensions
   } else if (CompareGuid (Guid, &mOzmosisProprietary1Guid) ||
-      CompareGuid (Guid, &mOzmosisProprietary2Guid)) {
+             CompareGuid (Guid, &mOzmosisProprietary2Guid)) {
     return TRUE;
 
   // BootChime

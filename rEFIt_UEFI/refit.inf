@@ -200,6 +200,14 @@
   gEfiAppleBootGuid
   gEfiAppleNvramGuid
   gEfiAppleVendorGuid
+  gAppleCoreStorageVariableGuid
+  gAppleTamperResistantBootVariableGuid
+  gAppleWirelessNetworkVariableGuid
+  gApplePersonalizationVariableGuid
+  gAppleNetbootVariableGuid
+  gAppleSecureBootVariableGuid
+  gAppleTamperResistantBootSecureVariableGuid
+  gAppleTamperResistantBootEfiUserVariableGuid
   gEfiDxeServicesTableGuid
   gEfiEventReadyToBootGuid
   gEfiEventVirtualAddressChangeGuid
