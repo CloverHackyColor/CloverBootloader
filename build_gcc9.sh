@@ -76,6 +76,7 @@ CheckXCode () {
     local OSXVER="`/usr/bin/sw_vers -productVersion | cut -d '.' -f1,2`"
     local OSXARCH="`/usr/bin/uname -m`"
     local OSXREV="`/usr/bin/uname -r`"
+    export BUILDVER="$OSXVER"
     export BUILDARCH="$OSXARCH"
     export BUILDREV="$OSXREV"
     echo "  Running on Mac OS X ${OSXVER}, with ${OSXARCH} architecture."
@@ -238,6 +239,13 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-gmp"
         mkdir -p "${DIR_BUILD}/$ARCH-gmp" && cd "${DIR_BUILD}/$ARCH-gmp"
+
+        # building gmp on Catalina currently requires no-stack-check flag
+        if [[ "${BUILDVER}" == "10.15" ]]; then
+          echo "- ${GMP_VERSION} applying Catalina flag..."
+          export CPPFLAGS="-fno-stack-check"
+        fi
+
         echo "- ${GMP_VERSION} configure..."
         "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2>&1
         echo "- ${GMP_VERSION} make..."
@@ -246,6 +254,11 @@ CompileLibs () {
         rm -rf "${DIR_BUILD}/$ARCH-gmp" "$GMP_DIR"
 
         echo "- ${GMP_VERSION} installed in $PREFIX"
+
+        # unset flag which was set for Catalina
+        if [[ "${BUILDVER}" == "10.15" ]]; then
+          unset CPPFLAGS
+        fi
     fi
 
     if [[ ! -f $PREFIX/include/mpfr.h ]]; then
@@ -451,6 +464,12 @@ CompileCrossGCC () {
     # Extract the tarball
     local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.xz")
 
+    if [[ "${BUILDVER}" == "10.15" ]]; then
+      echo "- gcc-${GCC_VERSION} applying Catalina patch and path..."
+      curl -L https://raw.githubusercontent.com/Homebrew/formula-patches/b8b8e65e/gcc/9.2.0-catalina.patch | patch -N -Z -p1 --directory="${GCC_DIR}"
+      export CPATH=$SDK/usr/include
+    fi
+
     local BUILD_DIR="${DIR_BUILD}/$ARCH-gcc-cross"
     rm -rf "$BUILD_DIR"
     mkdir -p "$BUILD_DIR" && cd "$BUILD_DIR"
@@ -477,6 +496,11 @@ CompileCrossGCC () {
     unset LDFLAGS
     unset BOOT_CFLAGS
     unset BOOT_CPPFLAGS
+
+    # unset path which was set for Catalina
+    if [[ "${BUILDVER}" == "10.15" ]]; then
+      unset CPATH
+    fi
 
     [[ ! -x $PREFIX/cross/bin/$TARGET-gcc ]] && \
      echo "Error: gcc-${GCC_VERSION} not installed, check logs in $DIR_LOGS" && exit 1
