@@ -585,6 +585,8 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 #    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install}
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/boot1-install
+    
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageBiosBootRefId=$packageRefId

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+if [ "$3" == "/" ]; then
+    DEST_VOL="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
+else
+    DEST_VOL="$3"
+fi
+
+boots=(boot5 boot6 boot7)
+
+sect=(boot0af
+      boot0ss
+      boot1f32
+      boot1f32alt
+      boot1h
+      boot1h2
+      boot1x
+      boot1xalt
+      Description.txt
+      Installation.txt)
+
+
+for i in "${boots[@]}"
+do
+   rm -f "${DEST_VOL}"/usr/standalone/i386/x64/$i
+done
+
+
+for i in "${sect[@]}"
+do
+   rm -f "${DEST_VOL}"/usr/standalone/i386/$i
+done
