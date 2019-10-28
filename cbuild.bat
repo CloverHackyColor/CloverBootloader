@@ -57,10 +57,11 @@ rem  set F_VER_TXT=vers.txt
 rem #  svnversion -n>%F_VER_TXT%
 rem  set /P s=<%F_VER_TXT%
 rem #  del %F_VER_TXT%
-  git rev-list --tags --max-count=1 > revs.txt
-  set /p c=< revs.txt
-  del revs.txt
-  git describe --tags %c% > vers.txt
+rem   git rev-list --tags --max-count=1 > revs.txt
+rem   set /p c=< revs.txt
+rem  del revs.txt
+rem  git describe --tags %c% > vers.txt
+  git describe --tags --abbrev=0 > vers.txt
   set /P s=< vers.txt
   del vers.txt
   

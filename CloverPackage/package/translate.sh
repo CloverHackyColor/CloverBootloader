@@ -20,7 +20,8 @@ export LC_CTYPE='C'
 
 # ====== REVISION/VERSION ======
 declare -r CLOVER_VERSION='v2.5k'
-declare -r CLOVER_REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+# declare -r CLOVER_REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+declare -r CLOVER_REVISION=$(git describe --tags --abbrev=0)
 
 # ==== CHECK ENVIRONEMENT ====
 
