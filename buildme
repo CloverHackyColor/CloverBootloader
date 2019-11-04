@@ -13,9 +13,8 @@
 
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
+declare -r SYSNAME="$(uname)"
 MYTOOLCHAIN=${1:-GCC53}
-
-TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
 
 # Functions
 pathmunge() {
@@ -57,13 +56,16 @@ fi
 }
 
 exportPaths() {
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Linux ]]; then
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
+elif [[ "$SYSNAME" == Darwin ]]; then
   pathmunge "$(xcode-select --print-path)"/usr/bin
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
 fi
 
 pathmunge "$TOOLCHAIN_DIR"/bin
 export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
-export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
+export DIR_MAIN=${DIR_MAIN:-"$CLOVERROOT"/toolchain}
 export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
@@ -72,7 +74,7 @@ export PREFIX=${TOOLCHAIN_DIR}
 
 checkTools() {
 # export any env vars before building anything
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Darwin ]]; then
   checkXCODE
   exportPaths
   local GCC53_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
@@ -163,7 +165,7 @@ echo "[BUILD CLOVER TEST]"
 }
 
 buildPkg() {
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Darwin ]]; then
   cd "${CLOVERROOT}"/CloverPackage
   echo "[BUILD PKG]"
   checkXCODE
@@ -175,7 +177,7 @@ fi
 }
 
 buildApp() {
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Darwin ]]; then
   if [[ -f "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi ]]; then
     cd "${CLOVERROOT}"/CloverApp
     echo "[BUILD APP]"

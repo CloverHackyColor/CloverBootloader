@@ -8,6 +8,7 @@
 .cache
 Conf/.cache
 Conf/target.txt
+toolchain/
 
 # /CloverPackage/
 /CloverPackage/sym/
