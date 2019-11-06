@@ -1,0 +1,183 @@
+#!/bin/bash
+
+#  Created by vector sigma on 04/11/2019.
+#  Copyright © 2019 CloverHackyColor. All rights reserved.
+
+cd /tmp
+
+journaled=0
+
+disk="${1}"
+filesystem="${2}"
+partition_scheme="${3}"
+boot0="/tmp/${4}"
+boot1="/tmp/${5}"
+
+bootdev="/dev/${disk}"
+bootrdev=${bootdev/disk/rdisk}
+
+bootdisk="${bootdev%s*}"
+bootrdisk="${bootdisk/disk/rdisk}"
+bootslice="${bootdev#*disk*s}"
+
+boot1install="/tmp/boot1-install"
+
+echo
+echo "Installing boot sectors (version of Wed 6 2019, 12:03)"
+echo
+echo "disk:       ${disk}"
+echo "bootdev:    ${bootdev}"
+echo "bootrdev:   ${bootrdev}"
+echo "bootdisk:   ${bootdisk}"
+echo "bootrdisk:  ${bootrdisk}"
+echo "bootslice:  ${bootslice}"
+echo "filesystem: ${filesystem}"
+echo "partition_scheme: ${partition_scheme}"
+echo
+
+if [[ "$disk" != disk* ]]; then
+  echo "Error: target disk not specified."
+  exit 1
+fi
+
+if [ "${partition_scheme}" != FDisk_partition_scheme ] && \
+   [ "${partition_scheme}" != GUID_partition_scheme ]; then
+  echo "Error: unsupported Partition Scheme Map \"${partition_scheme}\"."
+  exit 1
+fi
+
+
+if [ "${filesystem}" != fat32 ] && \
+   [ "${filesystem}" != hfs ]   && \
+   [ "${filesystem}" != exfat ]; then
+  echo "Error: unsupported filesystem \"${filesystem}\""
+  exit 1
+fi
+
+if [[ ! -f "${boot0}" ]] || [[ ! -f "${boot1}" ]]; then
+  echo "Error: cannot found boot sectors."
+  exit 1
+fi
+
+if [[ ! -f "${boot1install}" ]]; then
+  echo "Error: cannot found boot1-install."
+  exit 1
+fi
+
+chmod +x "${boot1install}"
+
+echo
+diskutil list
+echo
+
+# hfs can cause a panic writing boot sectors if journaled
+# panic(cpu 0 caller 0xffffff7fa32683ad): "jnl: end_tr: !!!DANGER!!! bp 0xffffff8134a09650 flags (0x101) not LOCKED & DELWRI\n"@/
+
+# code:
+# panic("jnl: end_tr: !!!DANGER!!! bp %p flags (0x%x) not LOCKED & DELWRI\n", bp, buf_flags(bp));
+
+# fix? disable the journal (will be reactivated later)
+if [[ $(LC_ALL=C diskutil info "${disk}" | grep 'File System Personality:') == *ournaled* ]]; then
+  diskutil disableJournal "${disk}"
+  journaled=1
+fi
+
+# Try to unmount the partition first
+mnt_pt=$(LC_ALL=C mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
+if [[ -n "$mnt_pt" ]]; then
+    # Try to umount the partition with umount
+    umount $bootdev 2>/dev/null
+    if [[ $? -ne 0 ]]; then
+        # If it doesn't work try with diskutil
+        diskutil unmount $bootdev 2>/dev/null
+        [[ $? -ne 0 ]] && mnt_pt=''
+    fi
+fi
+
+### Stage 0 ###
+echo "Stage 0 - Writing ${boot0} to ${bootrdisk}"
+echo "Executing: dd if=${bootrdisk} count=1 bs=512 of=/tmp/CloverOrigMBR"
+dd if="${bootrdisk}" count=1 bs=512 of=/tmp/CloverOrigMBR
+echo "Executing: cp /tmp/CloverOrigMBR /tmp/CloverNewMBR"
+cp /tmp/CloverOrigMBR /tmp/CloverNewMBR
+echo "Executing: dd if=${boot0} of=/tmp/CloverNewMBR bs=440 count=1 conv=notrunc"
+dd if="${boot0}" of=/tmp/CloverNewMBR bs=440 count=1 conv=notrunc
+echo "Executing: fdisk -f /tmp/CloverNewMBR -u -y ${bootrdisk}"
+fdisk -f /tmp/CloverNewMBR -u -y "${bootrdisk}"
+
+
+if [[ ${filesystem} = "hfs" ]]; then
+    echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
+    echo "File system is HFS."
+    echo "Executing: dd if=${boot1} of=${bootrdev}"
+    dd if="${boot1}" of="${bootrdev}"
+
+elif [[ ${filesystem} = "fat32" ]]; then
+    echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
+
+    # copy partition boot sector to CloverOrigPBR
+    echo "Executing: dd if=${bootrdev} count=1 bs=512 of=/tmp/CloverOrigPBR"
+    dd if="${bootrdev}" count=1 bs=512 of=/tmp/CloverOrigPBR
+
+    if [[ -n $(cat /tmp/CloverOrigPBR | grep FAT16) ]]; then
+      echo "boot volume format is FAT16"
+      echo "No Stage1 was written"
+    else
+      echo "boot volume format is FAT32"
+      # copy boot1f32 to CloverNewPBR
+      echo "Executing: cp ${boot1} /tmp/CloverNewPBR"
+      cp -f "${boot1}" /tmp/CloverNewPBR
+
+      # "merge" CloverOrigPBR into CloverNewPBR
+      echo "Executing: dd if=/tmp/CloverOrigPBR of=/tmp/CloverNewPBR skip=3 seek=3 bs=1 count=87 conv=notrunc"
+      dd if=/tmp/CloverOrigPBR of=/tmp/CloverNewPBR skip=3 seek=3 bs=1 count=87 conv=notrunc
+
+      # write CloverNewPBR to the partition boot sector
+      echo "Executing: dd if=/tmp/CloverNewPBR of=${bootrdev}"
+      dd if=/tmp/CloverNewPBR count=1 bs=512 of="${bootrdev}"
+    fi
+elif [[ ${filesystem} = "exfat" ]]; then
+    echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
+    echo "File system is ExFat."
+    echo "Executing: $boot1install -y -f ${boot1} ${bootrdev}"
+    "$boot1install" -y -f "${boot1}" "${bootrdev}"
+else
+    echo "Unknown boot volume format: $filesystem"
+    echo "No Stage1 was written"
+fi
+
+
+# Now try to remount the partition
+if [[ -n "$mnt_pt" ]]; then
+    [[ ! -d "$mnt_pt" ]] && mkdir -p "$mnt_pt"
+    # First try to mount with the mount command
+    mount -t "$filesystem" "$bootdev" "$mnt_pt"
+    # If failed try with diskutil
+    [[ $? -ne 0 ]] && diskutil mount -mountPoint "$mnt_pt" "$bootdev"
+fi
+
+if [[ "${partition_scheme}" == FDisk_partition_scheme && "$boot0" == "/tmp/boot0af" ]]; then
+    echo "Setup Active Partition to be: ${bootslice}"
+    fdisk -e "${bootrdisk}" <<-MAKEACTIVE
+print
+flag "${bootslice}"
+write
+y
+quit
+MAKEACTIVE
+
+    partitionactive=$( fdisk -d "${bootrdisk}" | grep -n "*" | awk -F: '{print $1}')
+    echo "New Active Partition: ${partitionactive}"
+    echo ""
+fi
+
+if [[ $journaled -ne 0 ]]; then
+  diskutil enableJournal "${disk}"
+fi
+
+rm -rf /tmp/Clover*
+rm -rf /tmp/boot1*
+rm -rf /tmp/boot2*
+rm -rf /tmp/bootsec*
+
+exit 0
