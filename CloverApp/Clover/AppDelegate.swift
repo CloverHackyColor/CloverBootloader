@@ -35,13 +35,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   }
 
   func applicationWillFinishLaunching(_ notification: Notification) {
+    
+    
     /*
      do not activate the following code: is for debug only
      .. it delete stored preferences in the User Default dictionary
+     
     if let domain = Bundle.main.bundleIdentifier {
       UDs.removePersistentDomain(forName: domain)
       UDs.synchronize()
     }
+     the following is to dump info about all disk in the System
+     let diskLog = "- getAlldisks() -----------------\n\(getAlldisks())\n- getAllESPs() ------------------\n\(getAllESPs())\n---------------------------------"
+     try? diskLog.write(toFile: NSHomeDirectory().addPath("Desktop/diskLog.txt"), atomically: true, encoding: .utf8)
     */
    
     let pi = NSRunningApplication.current.processIdentifier
@@ -125,7 +131,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   }
   
   @objc func reFreshDisksList() {
-    //print("reFreshDisksList")
     (self.settingsWC?.contentViewController as? SettingsViewController)?.searchESPDisks()
     (self.installerWC?.contentViewController as? InstallerViewController)?.populateTargets()
   }

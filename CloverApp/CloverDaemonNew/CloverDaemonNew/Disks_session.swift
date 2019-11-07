@@ -105,6 +105,19 @@ func getMountPoint(from diskOrMtp: String) -> String? {
   return mountPoint
 }
 
+/// get and array of currently mounted volumes
+func getVolumes() -> [String] {
+  var  mounted : [String] = [String]()
+  let all = getAlldisks().allKeys
+  for b in all {
+    let bsd : String = b as! String
+    if let mp = getMountPoint(from: bsd) {
+      mounted.append(mp)
+    }
+  }
+  return mounted
+}
+
 /// Find the Volume name: be aware that this is not the mount point name.
 func getVolumeName(from diskOrMtp: String) -> String? {
   // kDADiskDescriptionVolumeNameKey

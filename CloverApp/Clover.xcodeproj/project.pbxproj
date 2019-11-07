@@ -245,7 +245,6 @@
 		95E68ADD235B86A1002B37A5 /* Disks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disks.swift; sourceTree = "<group>"; };
 		95E68ADE235B86A1002B37A5 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = bdmesg.swift; sourceTree = "<group>"; };
 		95E68AE4235B89D9002B37A5 /* Installer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Installer.swift; sourceTree = "<group>"; };
-		95E68AEC235CC1F5002B37A5 /* CloverV2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CloverV2; path = ../../CloverPackage/CloverV2; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -291,7 +290,6 @@
 				95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */,
 				9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */,
 				95C5C0A22365D2250049940D /* Lang.bundle */,
-				95E68AEC235CC1F5002B37A5 /* CloverV2 */,
 				95E68AC7235B862F002B37A5 /* Products */,
 			);
 			sourceTree = "<group>";

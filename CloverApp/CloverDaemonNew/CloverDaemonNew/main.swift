@@ -24,6 +24,10 @@ let gSession3 = DASessionCreate(kCFAllocatorDefault)
 let gSession4 = DASessionCreate(kCFAllocatorDefault)
 let gSession5 = DASessionCreate(kCFAllocatorDefault)
 
+var BootDeviceUUID : String? = nil
+var BootDeviceFS   : String? = nil
+var BootDevice     : String? = nil
+
 func execAttr() -> [FileAttributeKey : Any] {
   var attributes = [FileAttributeKey : Any]()
   attributes[.posixPermissions] = NSNumber(value: 755) //NSNumber object. Use the int16Value method to retrieve the integer value for the permissions.
@@ -65,15 +69,28 @@ func doJob() {
   if !fm.isWritableFile(atPath: "/") {
     run(cmd: "mount -uw /")
   }
+  
+ 
   if let nvram = getNVRAM() {
     // first time is to dump nvram (time is running out..)
- 
-    if fm.isWritableFile(atPath: "/") {
-      saveNVRAM(volume: "/", nvram: nvram)
-    } else {
-      if let bootDevice = findBootPartitionDevice() {
-        print("Boot Device is \(bootDevice).")
-        mountSaveNVRAM(disk: bootDevice, at: nil, nvram: nvram)
+    if (nvram.object(forKey: "EmuVariableUefiPresent") != nil ||
+      nvram.object(forKey: "TestEmuVariableUefiPresent") != nil) {
+      // mount -t "$filesystem" "$bootdev" "$mnt_pt"
+      if let bootDevice = BootDevice, let fs = BootDeviceFS {
+        let uuid = (BootDeviceUUID != nil) ? "\(BootDeviceUUID!)" : "NO UUID"
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        let mp = "/Volumes/\(String((0..<10).map{ _ in letters.randomElement()! }))"
+        let type : String = (fs.hasPrefix("fat") || fs.hasPrefix("exf")) ? "msdos" : fs
+        
+        let cmd = "if [[ $(LC_ALL=C mount | egrep \"^/dev/\(bootDevice) on\" | sed 's/^.* on *//;s/ ([^(]*//') == \"/\"* ]]; then nvram -x -p > $(LC_ALL=C mount | egrep \"^/dev/\(bootDevice) on\" | sed 's/^.* on *//;s/ ([^(]*//')/nvram.plist; echo 'nvram saved to am disk with UUID \(uuid)'; else mkdir -p \(mp); mount -t \(type) /dev/\(bootDevice) \(mp); nvram -x -p > \(mp)/nvram.plist; echo 'nvram saved to u disk with UUID \(uuid)'; fi"
+        
+        let task = Process()
+        task.launchPath = "/bin/bash"
+        task.arguments = ["-c", cmd]
+        
+        task.launch()
+      } else {
+        saveNVRAM(volume: "/", nvram: nvram)
       }
     }
     
@@ -247,6 +264,15 @@ func main() {
     }
   }
   
+  
+  // get the boot device UUID, will be of help later
+  if let bootDevice = findBootPartitionDevice() {
+    BootDevice     = bootDevice
+    BootDeviceUUID = getVolumeUUID(from: bootDevice)
+    BootDeviceFS   = getFS(from: bootDevice)?.lowercased()
+  }
+  
+  
   if let nvram = getNVRAM() {
     if let nvdata = nvram.object(forKey: "Clover.RootRW") as? Data {
       let value = String(decoding: nvdata, as: UTF8.self)
@@ -256,6 +282,23 @@ func main() {
       }
     }
     checkSleepProxyClient(nvram: nvram)
+  }
+  
+  // Clean old nvram.plist user may have
+  for v in getVolumes() {
+    let nvramtPath = v.addPath("nvram.plist")
+    if fm.fileExists(atPath: nvramtPath) {
+      if fm.isDeletableFile(atPath: nvramtPath) {
+        do {
+          try fm.removeItem(atPath: nvramtPath)
+          print("old '\(nvramtPath)' removed.")
+        } catch {
+          print("Error: can't remove '\(nvramtPath)'.")
+        }
+      } else {
+        print("Error: '\(nvramtPath)' is not deletable.")
+      }
+    }
   }
   
   // SIGTERM? This is a daemon so we are shutting down
@@ -318,6 +361,7 @@ if CommandLine.arguments.contains("--install") {
                          ofItemAtPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
     
     run(cmd: "launchctl load /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
+    run(cmd: "launchctl start /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
     exit(EXIT_SUCCESS)
   } catch {
     print(error)

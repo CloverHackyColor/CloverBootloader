@@ -11,7 +11,7 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available
+"N/A" = "Н/Д"; // not available
 "Install Clover" = "Install Clover";
 "Current Clover revision" = "Current Clover revision";
 "Boot device" = "Boot Device";
@@ -19,145 +19,146 @@
 
 "Clover wants to mount %@" = "Clover wants to mount %@";
 "Clover wants to umount %@" = "Clover wants to umount %@";
-"Mount" = "Mount";
-"umount" = "umount";
-"mount point" = "mount point";
+"Mount" = "Смонтировать";
+"umount" = "размонтирования";
+"mount point" = "точка крепления";
 
-"true" = "true";
-"false" = "false";
+"true" = "реальный";
+"false" = "фальшивый";
 
-"Theme:" = "Theme:";
-"Sound:" = "Sound:";
+"Theme:" = "Тема:";
+"Sound:" = "Звук:";
 "*Make filesystem read-write" = "*Make filesystem read-write";
-"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
-"*Require CloverDaemon" = "*Require CloverDaemon";
+"*Disable Sleep Proxy Client" = "*Отключение Sleep Proxy Client";
+"*Require CloverDaemon" = "*Требуется CloverDaemon";
 "Read daemon log" = "Read daemon log";
 "Read bdmesg" = "Read boot log";
 
-"Install CloverDaemonNew" = "Install CloverDaemonNew";
-"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+"Install CloverDaemonNew" = "Установить CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "Удалить CloverDaemonNew";
 
-"Update" = "Update";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
-"Check update:" = "Check update:";
-"Check now" = "Check now";
+"Update" = "Oбновление";
+"Update to r%d" = "Обновление до r%d"; // "Update to r5101"
+"Check update:" = "Проверить обновления:";
+"Check now" = "Проверь сейчас";
 
-"never" = "never";
+"never" = "никогда";
 "daily" = "daily";
 "weekly" = "weekly";
 "monthly" = "monthly";
 "last checked:" = "last checked:"; // last date update was checked. Please be short.
 
-"Run at login" = "Run at login";
+"Run at login" = "Запустить Clover.app при входе в систему";
 "Close" = "Close"; // Close the Clover.app
 
 /* Installer */
 "Clover Installer" = "Clover Installer";
 "Select a disk.." = "Select a disk..";
-"Install" = "Install";
-"Uninstall" = "Uninstall";
-"AltBoot" = "Alternative boot";
+"Install" = "Установить";
+"Uninstall" = "Удаление";
+"AltBoot" = "PBR с выбором";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI mandatory";
-"BIOS mandatory" = "BIOS mandatory";
-"UEFI/Other" = "UEFI/Other";
-"BIOS/Other" = "BIOS/Other";
+"UEFI mandatory" = "UEFI, Рекомендуемые драйвера";
+"BIOS mandatory" = "BIOS, Рекомендуемые драйвера";
+"UEFI/Other" = "UEFI/Other, Дополнительные драйвера";
+"BIOS/Other" = "BIOS/Other, Дополнительные драйвера";
 "UEFI, but not from this installer" = "UEFI, but not from this installer";
 "BIOS, but not from this installer" = "BIOS, but not from this installer";
 
-"UEFI/FileSystem" = "UEFI, filesystem drivers";
-"BIOS/FileSystem" = "BIOS, filesystem drivers";
+"UEFI/FileSystem" = "UEFI, Драйвера файловых систем";
+"BIOS/FileSystem" = "BIOS, Драйвера файловых систем";
 
-"UEFI/HID" = "UEFI, Human Interface Devices";
-"BIOS/HID" = "BIOS, Human Interface Devices";
+"UEFI/HID" = "UEFI, Драйвера устройств ввода";
+"BIOS/HID" = "BIOS, Драйвера устройств ввода";
 
-"UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
-"BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
+"UEFI/FileVault2" = "UEFI, Драйверы для FileVault 2 UEFI-загрузки";
+"BIOS/FileVault2" = "BIOS, Драйверы для FileVault 2 UEFI-загрузки";
 
-"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+"UEFI/MemoryFix" = "UEFI, Драйвера исправляющие ошибки выделения памяти";
 
-"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+"ApfsDriverLoader.efi" = "Поддержка загрузки оригинального драйвера файловой системы APFS из контейнера. Необходим для macOS 10.13 и выше.";
 
-"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+"AppleImageCodec.efi" = "Декодер изображений в форматах PNG и BMP. Необходим для работы FileVault 2.";
 
-"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleImageLoader.efi" = "Драйвер, реализующий поддержку протокола AppleLoadImage с верификацией исполняемых бинарных модулей Apple.";
 
-"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+"AppleKeyAggregator.efi" = "Поддержка протокола авторизации пользователя для FileVault 2.";
 
-"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+"AppleKeyFeeder.efi" = "Поддержка клавиатур PS/2 для использования с FileVault 2.";
 
-"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUISupport.efi" = "Поддержка EFI Login UI для FileVault. Функционально заменяет собой драйверы AppleKeyMapAggregator, AppleEvent, AppleUITheme, FirmwareVolume и AppleImageCodec.";
 
-"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+"AppleUITheme.efi" = "Поддержка протокола для отображения фонового изображения при использовании FileVault 2.";
 
-"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioInputFix.efi" = "Исправляет ошибки UEFI при работе с устройствами ввода.";
 
-"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"AptioMemoryFix.efi" = "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторых других UEFI.
+Не рекомендуется ставить совместно с другими AptioFix.";
 
-"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
-Configure it via Startup sound output from Option menu, including:
-Volume and Audio device (for supported IOAudio devices only).";
+"AudioDxe.efi" = "Звуковой драйвер для исполнения гимна при запуске Кловера";
 
-"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+"FirmwareVolume.efi" = "Поддержка протокола FirmwareVolume для FileVault 2.";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "Поддержка загрузки расширений ядра из папок, расположенных внутри папки EFI.";
 
-"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+"GrubEXFAT.efi" = "Поддержка файловой системы ExFAT.";
 
-"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+"GrubISO9660.efi" = "Поддержка файловой системы ISO 9600.";
 
-"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+"GrubNTFS.efi" = "Поддержка файловой системы NTFS.";
 
-"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+"GrubUDF.efi" = "Поддержка файловой системы UDF.";
 
-"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+"SMCHelper.efi" = "Восстанавливает значения SMC ключей, выставленных FakeSMC в NVRAM при перезагрузке системы.";
 
-"XhciDxe.efi" = "USB 3.0 driver";
+"XhciDxe.efi" = "Поддержка USB 3.0 для сторонних контроллеров";
 
-"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+"AppleEvent.uefi" = "Поддержка протокола AppleEvent для FileVault 2.";
 
-"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+"AppleGraphicsConfig.uefi" = "Поддержка протокола AppleGraphicsConfig.";
 
-"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
-Clover may not started with it and you may have wake problem in system. Use with precautions.";
+"CsmVideoDxe.efi" = "Позволяет использовать большие разрешения экрана в графическом интерфейсе Clover-а.
+Драйвер основан на модуле CSM в BIOS и требует, чтобы CSM был включен. На некоторых конфигурациях Clover может не запуститься с этим драйвером или система не будет пробуждаться после сна, поэтому используйте с осторожностью.";
 
-"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
-Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"DataHubDxe.efi" = "Поддержка протокола DataHub, который строго необходим для запуска macOS. Обычно он присутствует (если нет, на экран будет выведено сообщение).";
 
-"EmuVariableUefi.UEFI_description" = "Workaround for store NVRAM variables for systems without UEFI hardware.
-Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+"EmuVariableUefi.efi" = "Драйвер для поддержки переменных NVRAM, необходимых macOS.
+Современные системы обычно имеют встроенный NVRAM. Используйте драйвер если вы уверены, что встроенный NVRAM отсутствует или не работает. Либо встроенный, либо эмулируемый NVRAM строго необходимы для системы.";
 
-"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"EnglishDxe.efi" = "Поддержка протокола UnicodeCollation, необходимого для EFI Shell, если он отсутствует в UEFI BIOS.";
 
-"Fat.efi" = "FAT filesystem driver.";
+"Fat.efi" = "Поддержка файловой системы FAT32.";
 
-"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+"HashServiceFix.efi" = "Функционал хеширования для тех UEFI-систем, где он отсутствует";
 
-"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+"HFSPlus.efi" = "Поддержка файловой системы HFS+ (альтернативный драйвер).";
 
-"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+"NvmExpressDxe.efi" = "Поддержка протоколов NVM Express для твердотельных накопителей.";
 
-"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+"OsxAptioFix3Drv.efi" = "Альтернативный драйвер (3) коррекции ошибок памяти UEFI.
+Исправляет работу с NVRAM.";
 
-"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"OsxAptioFixDrv.efi" = "Старый вариант коррекции ошибок памяти для AMI Aptio и некоторымх других UEFI.
+Не использовать совместно с другими AptioFix. Не поддерживает работу встроенного NVRAM.";
 
-"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxFatBinaryDrv.efi" = "Поддержка формата FAT Binary для систем 10.9 и более ранних.";
 
-"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+"OsxLowMemFixDrv.efi" = "Упрощенный вариант драйвера OsxAptioFix.
+Не использовать совместно с другими AptioFix.";
 
-"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"PartitionDxe.efi" = "Поддержка необычных схем разделов: гибрид GPT/MBR, Apple Partition Map и др.";
 
-"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+"Ps2MouseDxe.efi" = "Драйвер для мыши PS/2.";
 
-"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+"UsbKbDxe.efi" = "Драйвер клавиатуры USB поддержкой протокла шифрования, нужен для FileVault2, если у вас USB клавиатура.";
 
-"UsbMouseDxe.efi" = "USB mouse driver";
+"UsbMouseDxe.efi" = "Драйвер для мыши USB.";
 
-"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+"VBoxExt2.efi" = "Поддержка файловых систем EXT2 и EXT3 (Linux).";
 
-"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+"VBoxExt4.efi" = "Поддержка файловой системы EXT4 (Linux).";
 
-"VBoxHfs.efi" = "HFS+ filesystem driver.";
+"VBoxHfs.efi" = "Поддержка файловой системы HFS+.";
 
-"VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+"VBoxIso9600.efi" = "Поддержка файловой системы ISO 9600 (CD-ROM).";
