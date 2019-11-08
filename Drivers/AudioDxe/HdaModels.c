@@ -101,6 +101,7 @@ HDA_CONTROLLER_LIST_ENTRY gHdaControllerList[] = {
     { HDA_CONTROLLER_GP104,         L"NVIDIA GP104 HD Audio Controller" },
     { HDA_CONTROLLER_GP106,         L"NVIDIA GP106 HD Audio Controller" },
     { HDA_CONTROLLER_TU102,         L"NVIDIA TU102 HD Audio Controller" },
+    { HDA_CONTROLLER_TU106,         L"NVIDIA TU106 HD Audio Controller" },
     { HDA_CONTROLLER_NVIDIAXXXX,    L"NVIDIA HD Audio Controller" },
 
     // End.
