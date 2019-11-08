@@ -11,153 +11,152 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot device" = "Boot Device";
-"config path:" = "config path:";
+"N/A" = "N/A"; // not available
+"Install Clover" = "安装 Clover";
+"Current Clover revision" = "目前 Clover 版本";
+"Boot device" = "引导设备";
+"config path:" = "config 路径:";
 
-"Clover wants to mount %@" = "Clover wants to mount %@";
-"Clover wants to umount %@" = "Clover wants to umount %@";
-"Mount" = "Mount";
-"umount" = "umount";
-"mount point" = "mount point";
+"Clover wants to mount %@" = "Clover 想要挂载 %@";
+"Clover wants to umount %@" = "Clover 想要解除挂载 %@";
+"Mount" = "挂载";
+"umount" = "解除挂载";
+"mount point" = "挂载点";
 
-"true" = "true";
-"false" = "false";
+"true" = "是";
+"false" = "否";
 
-"Theme:" = "Theme:";
-"Sound:" = "Sound:";
-"*Make filesystem read-write" = "*Make filesystem read-write";
-"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
-"*Require CloverDaemon" = "*Require CloverDaemon";
-"Read daemon log" = "Read daemon log";
-"Read bdmesg" = "Read boot log";
+"Theme:" = "主题:";
+"Sound:" = "声音:";
+"*Make filesystem read-write" = "*让文件系统可读写";
+"*Disable Sleep Proxy Client" = "*禁用 Sleep Proxy Client";
+"*Require CloverDaemon" = "*需要 CloverDaemon";
+"Read daemon log" = "读取 daemon 日志";
+"Read bdmesg" = "读取引导日志";
 
-"Install CloverDaemonNew" = "Install CloverDaemonNew";
-"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+"Install CloverDaemonNew" = "安装 CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "卸载 CloverDaemonNew";
 
-"Update" = "Update";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
-"Check update:" = "Check update:";
-"Check now" = "Check now";
+"Update" = "更新";
+"Update to r%d" = "更新到 r%d"; // "Update to r5101"
+"Check update:" = "检查更新:";
+"Check now" = "现在检查";
 
-"never" = "never";
-"daily" = "daily";
-"weekly" = "weekly";
-"monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"never" = "从不";
+"daily" = "每日";
+"weekly" = "每周";
+"monthly" = "每月";
+"last checked:" = "最近检查:"; // last date update was checked. Please be short.
 
-"Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Run at login" = "登录时启动";
+"Close" = "退出"; // Close the Clover.app
 
 /* Installer */
-"Clover Installer" = "Clover Installer";
-"Select a disk.." = "Select a disk..";
-"Install" = "Install";
-"Uninstall" = "Uninstall";
+"Clover Installer" = "Clover 安装器";
+"Select a disk.." = "选择一个磁盘..";
+"Install" = "安装";
+"Uninstall" = "卸载";
 "AltBoot" = "Alternative boot";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI mandatory";
-"BIOS mandatory" = "BIOS mandatory";
+"UEFI mandatory" = "强制 UEFI 模式";
+"BIOS mandatory" = "强制 BIOS 模式";
 "UEFI/Other" = "UEFI/Other";
 "BIOS/Other" = "BIOS/Other";
-"UEFI, but not from this installer" = "UEFI, but not from this installer";
-"BIOS, but not from this installer" = "BIOS, but not from this installer";
+"UEFI, but not from this installer" = "UEFI, 但不来自此安装器";
+"BIOS, but not from this installer" = "BIOS, 但不来自此安装器";
 
-"UEFI/FileSystem" = "UEFI, filesystem drivers";
-"BIOS/FileSystem" = "BIOS, filesystem drivers";
+"UEFI/FileSystem" = "UEFI, 文件系统驱动";
+"BIOS/FileSystem" = "BIOS, 文件系统驱动";
 
-"UEFI/HID" = "UEFI, Human Interface Devices";
-"BIOS/HID" = "BIOS, Human Interface Devices";
+"UEFI/HID" = "UEFI, 人机接口设备";
+"BIOS/HID" = "BIOS, 人机接口设备";
 
-"UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
-"BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
+"UEFI/FileVault2" = "UEFI, 文件保险箱驱动";
 
-"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+"UEFI/MemoryFix" = "UEFI, 内存修正驱动";
 
-"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+"ApfsDriverLoader.efi" = "支持 macOS 10.13 或更新版本的 APFS 文件系统";
 
-"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+"AppleImageCodec.efi" = "解码 文件保险箱 中的 PNG 和 BMP。";
 
-"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleImageLoader.efi" = "安全 AppleEfiFat 二进制驱动, 实施 AppleLoadImage 协议并携有 EfiBinary 签名验证。";
 
-"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+"AppleKeyAggregator.efi" = "支持 文件保险箱 开机界面的 对话框。";
 
-"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+"AppleKeyFeeder.efi" = "支持 使用 文件保险箱 时的 PS/2 键盘。";
 
-"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUISupport.efi" = "支持 文件保险箱 中 EfiLoginUi 的协议集。";
 
-"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+"AppleUITheme.efi" = "支持 文件保险箱 的启动界面主题。";
 
-"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioInputFix.efi" = "修正 UEFI 固件 输入问题, 例如 AMI Aptio。";
 
-"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"AptioMemoryFix.efi" = "提供 UEFI 固件的 内存问题修正, 例如 AMI Aptio。不要与其他 内存修正驱动 共同使用。";
 
-"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
-Configure it via Startup sound output from Option menu, including:
-Volume and Audio device (for supported IOAudio devices only).";
+"AudioDxe.efi" = "HDA 驱动, 在使用 Clover 引导时播放 启动音。
+在 Option 菜单中 Startup sound output 进行配置, 包括:
+音量 和 输出设备 (仅限 受支持的 IOAudio 设备)。";
 
-"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+"FirmwareVolume.efi" = "新建 文件保险箱 中含光标图像的 固件宗卷。";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "提供 Clover文件夹中 内核扩展 的注入。";
 
-"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+"GrubEXFAT.efi" = "ExFAT 文件系统 驱动, 来自 GRUB。";
 
-"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+"GrubISO9660.efi" = "ISO 9600 文件系统 驱动, 来自 GRUB。";
 
-"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+"GrubNTFS.efi" = "NTFS 文件系统 驱动, 来自 GRUB。";
 
-"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+"GrubUDF.efi" = "UDF 文件系统 驱动, 来自 GRUB。";
 
-"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+"SMCHelper.efi" = "恢复 FakeSMC 在 nvram 遗留的 SMC 键值。";
 
-"XhciDxe.efi" = "USB 3.0 driver";
+"XhciDxe.efi" = "USB 3.0 驱动";
 
-"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+"AppleEvent.uefi" = "新建 文件保险箱 的 AppleEvent 协议。";
 
-"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+"AppleGraphicsConfig.uefi" = "新建 可选的 AppleGraphicsConfig 协议。";
 
-"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
-Clover may not started with it and you may have wake problem in system. Use with precautions.";
+"CsmVideoDxe.efi" = "视频驱动, 允许 Clover 图形界面 支持更多分辨率。它基于 UEFI BIOS 的 CSM 模块, 并且 CSM 必须启动。
+可能导致 Clover 无法启动, 也可能会发生 系统唤醒 相关问题。请谨慎使用。";
 
-"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
-Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"DataHubDxe.efi" = "此驱动 提供 DataHub 协议支持, macOS 强制启用。
+通常已启用, 但有时可能遗漏。可在屏幕 warning 中查看。";
 
-"EmuVariableUefi.UEFI_description" = "Workaround for store NVRAM variables for systems without UEFI hardware.
-Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+"EmuVariableUefi.UEFI_description" = "存储 非 UEFI-引导 中 UEFI 变量 的替代方法。
+绝大多数 UEFI 引导使用的是 硬件 NVRAM 但在一些特殊情况下需要这个驱动。如果缺少这个驱动会遇到问题, 请使用它。";
 
-"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"EnglishDxe.efi" = "支持 EFI Shell 使用的 UnicodeCollation 协议, 如果 UEFI 遗漏了它。";
 
-"Fat.efi" = "FAT filesystem driver.";
+"Fat.efi" = "FAT 文件系统 驱动。";
 
-"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+"HashServiceFix.efi" = "修正 Hash 的支持, 如果原生 UEFI BIOS 缺失了它。";
 
-"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+"HFSPlus.efi" = "另外的 HFS+ 文件系统 驱动。";
 
-"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+"NvmExpressDxe.efi" = "支持 NVM Express 设备 驱动。";
 
-"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+"OsxAptioFix3Drv.efi" = "另外的 修正 UEFI 固件 内存问题 驱动 (v3)。不要与其他 内存修正驱动 共同使用。";
 
-"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"OsxAptioFixDrv.efi" = "老版修正 UEFI 固件 内存问题 驱动, 例如 AMI Aptio。不要与其他 内存修正驱动 共同使用。";
 
-"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxFatBinaryDrv.efi" = "支持 OSX 10.9 及更新版本的 FAT 二进制 可执行文件。";
 
-"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+"OsxLowMemFixDrv.efi" = "OsxAptioFixDrv 的简化版本。不要与其他 内存修正驱动 共同使用。";
 
-"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"PartitionDxe.efi" = "支持 非常态的分区图, 例如 混合 GPT/MBR 或 Apple 分区图。";
 
-"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+"Ps2MouseDxe.efi" = "PS/2 鼠标 驱动";
 
-"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+"UsbKbDxe.efi" = "键盘驱动, 支持 启动界面。";
 
-"UsbMouseDxe.efi" = "USB mouse driver";
+"UsbMouseDxe.efi" = "USB 鼠标 驱动";
 
-"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+"VBoxExt2.efi" = "EXT2/3 文件系统驱动, 来自 VirtualBox。";
 
-"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+"VBoxExt4.efi" = "EXT4 文件系统驱动, 来自 VirtualBox。";
 
-"VBoxHfs.efi" = "HFS+ filesystem driver.";
+"VBoxHfs.efi" = "HFS+ 文件系统驱动。";
 
-"VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+"VBoxIso9600.efi" = "ISO 9600 文件系统驱动。";
