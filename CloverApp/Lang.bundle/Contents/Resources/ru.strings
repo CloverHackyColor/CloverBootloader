@@ -11,7 +11,7 @@
  */
 
 /* top bar menu */
-"N/A" = "Н/Д"; // not available
+"N/A" = "Н/Д"; // not available (please be short)
 "Install Clover" = "Install Clover";
 "Current Clover revision" = "Current Clover revision";
 "Boot device" = "Boot Device";
