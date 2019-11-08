@@ -520,7 +520,7 @@ msgstr "解码 启动界面 的 PNG 和 BMP 图像"
 #: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
-msgstr "安全 AppleEfiFat 二进制驱动, 实施 AppleLoadImage 协议 并有 EfiBinary 签名验证。"
+msgstr "安全 AppleEfiFat 二进制驱动, 实施 AppleLoadImage 协议 并携有 EfiBinary 签名验证。"
 
 #. type: "AppleKeyAggregator.UEFI_description"
 #: Resources/templates/Localizable.strings:96
@@ -575,7 +575,7 @@ msgstr "HDA 驱动, 播放 启动音"
 #: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
-msgstr "新建 含有光标图像的 固件宗卷"
+msgstr "新建 含光标图像的 固件宗卷"
 
 #. type: "FSInject.UEFI_description"
 #: Resources/templates/Localizable.strings:104
@@ -720,7 +720,7 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
-"此驱动 提供 DataHub 协定支持, MacOSX 强制启用。\n"
+"此驱动 提供 DataHub 协议支持, MacOSX 强制启用。\n"
 "通常已启用, 但有时可能遗漏。可在屏幕 warning 中查看。"
 
 #. type: "EmuVariableUefi.UEFI_description"
@@ -789,7 +789,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr "64位版本驱动, 支持非常态的分区图, 例如 混合 GPT/MBR 或 Apple 分区图。"
+msgstr "64位版本驱动, 支持 非常态的分区图, 例如 混合 GPT/MBR 或 Apple 分区图。"
 
 #. type: "Ps2MouseDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:164
