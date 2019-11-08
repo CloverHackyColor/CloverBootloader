@@ -183,7 +183,7 @@ if [[ "$(uname)" == Darwin ]]; then
     checkXCODE
     make
     if [[ -d "${CLOVERROOT}"/.git ]];then
-      local aname="Clover.app-$( git -C "${CLOVER}" describe --tags --abbrev=0 ).zip"
+      local aname="Clover.app-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
     else
       local aname=Clover.app.zip
     fi
