@@ -11,16 +11,16 @@
  */
 
 /* top bar menu */
-"N/A" = "N/A"; // not available
+"N/A" = "N/D"; // not available (please be short)
 "Install Clover" = "安装 Clover";
 "Current Clover revision" = "目前 Clover 版本";
 "Boot device" = "引导设备";
 "config path:" = "config 路径:";
 
 "Clover wants to mount %@" = "Clover 想要挂载 %@";
-"Clover wants to umount %@" = "Clover 想要解除挂载 %@";
+"Clover wants to umount %@" = "Clover 想要卸载 %@";
 "Mount" = "挂载";
-"umount" = "解除挂载";
+"umount" = "卸载";
 "mount point" = "挂载点";
 
 "true" = "是";
@@ -73,6 +73,7 @@
 "BIOS/HID" = "BIOS, 人机接口设备";
 
 "UEFI/FileVault2" = "UEFI, 文件保险箱驱动";
+"BIOS/FileVault2" = "BIOS, 文件保险箱驱动";
 
 "UEFI/MemoryFix" = "UEFI, 内存修正驱动";
 
@@ -124,7 +125,7 @@
 "DataHubDxe.efi" = "此驱动 提供 DataHub 协议支持, macOS 强制启用。
 通常已启用, 但有时可能遗漏。可在屏幕 warning 中查看。";
 
-"EmuVariableUefi.UEFI_description" = "存储 非 UEFI-引导 中 UEFI 变量 的替代方法。
+"EmuVariableUefi.efi" = "存储 非 UEFI-引导 中 UEFI 变量 的替代方法。
 绝大多数 UEFI 引导使用的是 硬件 NVRAM 但在一些特殊情况下需要这个驱动。如果缺少这个驱动会遇到问题, 请使用它。";
 
 "EnglishDxe.efi" = "支持 EFI Shell 使用的 UnicodeCollation 协议, 如果 UEFI 遗漏了它。";

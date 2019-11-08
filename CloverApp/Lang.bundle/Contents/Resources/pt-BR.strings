@@ -11,7 +11,7 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available
+"N/A" = "N/D"; // not available (please be short)
 "Install Clover" = "Install Clover";
 "Current Clover revision" = "Current Clover revision";
 "Boot device" = "Boot Device";
@@ -125,7 +125,7 @@ Clover may not started with it and you may have wake problem in system. Use with
 "DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
 Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
 
-"EmuVariableUefi.UEFI_description" = "Workaround for store NVRAM variables for systems without UEFI hardware.
+"EmuVariableUefi.efi" = "Workaround for store NVRAM variables for systems without UEFI hardware.
 Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
 
 "EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";

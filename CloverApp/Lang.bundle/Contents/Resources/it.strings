@@ -11,7 +11,7 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available
+"N/A" = "N/D"; // not available (please be short)
 "Install Clover" = "Installa Clover";
 "Current Clover revision" = "Revisione corrente";
 "Boot device" = "Boot Device";
@@ -127,7 +127,7 @@ Usare con cautela!";
 "DataHubDxe.efi" = "Aggiunge supporto al protocollo DataHub necessario per MacOSX.
 Questo protocollo è già presente nella maggior parte dei casi, ma può mancare in determinate configurazioni. In questo caso si dovrebbe ricevere un avviso sullo schermo.";
 
-"EmuVariableUefi.UEFI_description" = "Driver per il supporto delle variabili NVRAM necessarie per MacOSX.
+"EmuVariableUefi.efi" = "Driver per il supporto delle variabili NVRAM necessarie per MacOSX.
 La maggior parte dei firmware UEFI utilizzano hardware NVRAM, ma in rari casi è necessario il driver.
 Usare solo se si ha un problema senza di questo driver.";
 
