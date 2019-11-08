@@ -7096,8 +7096,14 @@ GetDevices ()
                        (UFamily == NV_ARCH_MAXWELL2)) {
                 CardFamily = "Maxwell";
               }
-              else if (UFamily == NV_ARCH_PASCAL){
+              else if (UFamily == NV_ARCH_PASCAL) {
                 CardFamily = "Pascal";
+              }
+              else if (UFamily == NV_ARCH_VOLTA) {
+                CardFamily = "Volta";
+              }
+              else if (UFamily == NV_ARCH_TURING) {
+                CardFamily = "Turing";
               }
               else if ((UFamily >= NV_ARCH_TESLA) && (UFamily < 0xB0)) { //not sure if 0xB0 is Tesla or Fermi
                 CardFamily = "Tesla";

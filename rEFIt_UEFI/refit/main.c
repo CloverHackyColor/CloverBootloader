@@ -2023,10 +2023,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   DBG("\n");
   if (Now.TimeZone < -1440 || Now.TimeZone > 1440) {
-    MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT)\n",
+    MsgLog("Now is %02d.%02d.%d,  %02d:%02d:%02d (GMT)\n",
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
   } else {
-    MsgLog("Now is %d.%d.%d,  %d:%d:%d (GMT+%d)\n",
+    MsgLog("Now is %02d.%02d.%d,  %02d:%02d:%02d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
   }
   //MsgLog("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
