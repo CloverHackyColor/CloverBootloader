@@ -726,7 +726,7 @@ class InstallerViewController: NSViewController {
         let psm : String = getPartitionSchemeMap(from: disk) ?? kNotAvailable.locale
         let name : String = getVolumeName(from: disk) ?? kNotAvailable.locale
         let mp : String = getMountPoint(from: disk) ?? kNotAvailable.locale
-        if fs == "fat32" || fs == "exfat" || fs == "hfs" {
+        if fs == "msdos" || fs == "fat32" || fs == "exfat" || fs == "hfs" {
           self.targetPop.addItem(withTitle: "\(disk)\t\(name), mount point: \(mp), \(fs.uppercased()), \(psm)")
           self.targetPop.invalidateIntrinsicContentSize()
           // get the image
