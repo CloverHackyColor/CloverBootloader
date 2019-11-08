@@ -1066,6 +1066,7 @@ VOID PatchTableType11()
   // System Information
   //
   CHAR8 OEMString[MAX_OEM_STRING];
+  CHAR8 TempRev[MAX_OEM_STRING];
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_OEM_STRINGS, 0);
   if (SmbiosTable.Raw != NULL) {
     MsgLog("Table 11 present, but rewritten for us\n");
@@ -1085,7 +1086,11 @@ VOID PatchTableType11()
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.RomVersion, iStrLen(gSettings.RomVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
-  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Built by:     Clover\n");
+  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Board-ID       : ");
+  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
+  AsciiSPrint(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover v2.5k %s\n", gFirmwareRevision);
+  AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
+
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
 
   LogSmbiosTable(newSmbiosTable);
