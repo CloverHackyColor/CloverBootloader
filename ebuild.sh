@@ -33,7 +33,7 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
-SCRIPT_VERS="2019-09-06"
+SCRIPT_VERS="2019-11-09"
 
 # Macro
 M_NOGRUB=0
@@ -54,10 +54,12 @@ if [[ "$SYSNAME" == Linux ]]; then
   export TOOLCHAIN=GCC53
   TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
 else
-  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/../../toolchain}
-fi
-if [[ ! -d $TOOLCHAIN_DIR ]]; then
-  TOOLCHAIN_DIR="${PWD}"/../opt/local
+  if [[ -d ~/src/opt/local ]]; then
+    TOOLCHAIN_DIR=~/src/opt/local
+  else
+    TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
+  fi
+  export DIR_MAIN=${DIR_MAIN:-"$CLOVERROOT"/toolchain}
 fi
 export TOOLCHAIN_DIR
 echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
