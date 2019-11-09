@@ -12,27 +12,27 @@
 
 /* top bar menu */
 "N/A" = "Н/Д"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot device" = "Boot Device";
-"config path:" = "config path:";
+"Install Clover" = "Установить Clover";
+"Current Clover revision" = "Текущая ревизия Clover";
+"Boot device" = "Загрузочное устройство";
+"config path:" = "путь к файлу config:";
 
-"Clover wants to mount %@" = "Clover wants to mount %@";
-"Clover wants to umount %@" = "Clover wants to umount %@";
+"Clover wants to mount %@" = "Clover желает смонтировать %@";
+"Clover wants to umount %@" = "Clover желает размонтировать %@";
 "Mount" = "Смонтировать";
-"umount" = "размонтирования";
-"mount point" = "точка крепления";
+"umount" = "Размонтировать";
+"mount point" = "название тома";
 
-"true" = "реальный";
-"false" = "фальшивый";
+"true" = "истина";
+"false" = "ложь";
 
 "Theme:" = "Тема:";
 "Sound:" = "Звук:";
-"*Make filesystem read-write" = "*Make filesystem read-write";
+"*Make filesystem read-write" = "*Открыть файловую систему на запись";
 "*Disable Sleep Proxy Client" = "*Отключение Sleep Proxy Client";
 "*Require CloverDaemon" = "*Требуется CloverDaemon";
-"Read daemon log" = "Read daemon log";
-"Read bdmesg" = "Read boot log";
+"Read daemon log" = "Прочитать служебный лог";
+"Read bdmesg" = "Прочитать лог загрузчика";
 
 "Install CloverDaemonNew" = "Установить CloverDaemonNew";
 "Uninstall CloverDaemonNew" = "Удалить CloverDaemonNew";
@@ -43,17 +43,17 @@
 "Check now" = "Проверь сейчас";
 
 "never" = "никогда";
-"daily" = "daily";
-"weekly" = "weekly";
-"monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"daily" = "ежедневно";
+"weekly" = "еженедельно";
+"monthly" = "ежемесячно";
+"last checked:" = "последняя проверка:"; // last date update was checked. Please be short.
 
 "Run at login" = "Запустить Clover.app при входе в систему";
-"Close" = "Close"; // Close the Clover.app
+"Close" = "Закрыть"; // Close the Clover.app
 
 /* Installer */
-"Clover Installer" = "Clover Installer";
-"Select a disk.." = "Select a disk..";
+"Clover Installer" = "Clover установщик";
+"Select a disk.." = "Выбор диска..";
 "Install" = "Установить";
 "Uninstall" = "Удаление";
 "AltBoot" = "PBR с выбором";
@@ -63,8 +63,8 @@
 "BIOS mandatory" = "BIOS, Рекомендуемые драйвера";
 "UEFI/Other" = "UEFI/Other, Дополнительные драйвера";
 "BIOS/Other" = "BIOS/Other, Дополнительные драйвера";
-"UEFI, but not from this installer" = "UEFI, but not from this installer";
-"BIOS, but not from this installer" = "BIOS, but not from this installer";
+"UEFI, but not from this installer" = "UEFI, но не из этого пакета";
+"BIOS, but not from this installer" = "BIOS, но не из этого пакета";
 
 "UEFI/FileSystem" = "UEFI, Драйвера файловых систем";
 "BIOS/FileSystem" = "BIOS, Драйвера файловых систем";
@@ -94,7 +94,7 @@
 "AptioInputFix.efi" = "Исправляет ошибки UEFI при работе с устройствами ввода.";
 
 "AptioMemoryFix.efi" = "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторых других UEFI.
-Не рекомендуется ставить совместно с другими AptioFix.";
+Можно ставить совместно с другими AptioFix, работает более приоритетный";
 
 "AudioDxe.efi" = "Звуковой драйвер для исполнения гимна при запуске Кловера";
 
@@ -151,7 +151,7 @@
 
 "Ps2MouseDxe.efi" = "Драйвер для мыши PS/2.";
 
-"UsbKbDxe.efi" = "Драйвер клавиатуры USB поддержкой протокла шифрования, нужен для FileVault2, если у вас USB клавиатура.";
+"UsbKbDxe.efi" = "Драйвер клавиатуры USB поддержкой протокола шифрования, нужен для FileVault2, если у вас USB клавиатура.";
 
 "UsbMouseDxe.efi" = "Драйвер для мыши USB.";
 
