@@ -709,6 +709,20 @@
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qro-3I-AzH">
+                                <rect key="frame" x="187" y="127" width="107" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Main RunAtLogin" id="97q-mb-A90">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="qro-3I-AzH" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="Jex-1e-kgM"/>
+                            <constraint firstItem="qro-3I-AzH" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="kGh-7H-EFR"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

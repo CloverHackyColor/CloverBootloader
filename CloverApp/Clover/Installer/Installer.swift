@@ -90,6 +90,9 @@ class ItemTextField: NSTextField {
   }
   
   private func showDescription() {
+    if AppSD.isInstalling {
+      return
+    }
     if let info = self.cell?.representedObject as? String {
       if let ivc = self.target as? InstallerViewController {
         ivc.post(text: info, add: false, color: nil, scroll: false)
@@ -966,10 +969,12 @@ class InstallerViewController: NSViewController {
         if driver.state == .off {
           toDelete.add(fullDest as NSString)
         } else if driver.state == .on {
-          if driver.kind == .uefi {
-            UEFI.add(driver.src as NSString)
-          } else {
-            BIOS.add(driver.src as NSString)
+          if driver.isFromClover {
+            if driver.kind == .uefi {
+              UEFI.add(driver.src as NSString)
+            } else {
+              BIOS.add(driver.src as NSString)
+            }
           }
         }
       }

@@ -709,6 +709,20 @@
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bin-KD-gd6">
+                                <rect key="frame" x="189" y="136" width="102" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Main Clover.app" id="wA3-rG-VSC">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="bin-KD-gd6" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="118" id="Gq7-iF-XhI"/>
+                            <constraint firstItem="bin-KD-gd6" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="QvJ-BT-zsH"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

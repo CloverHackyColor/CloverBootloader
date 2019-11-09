@@ -30,27 +30,6 @@ void cleanUp() {
   [task setArguments:@[ @"-c", @"rm -f /tmp/Clover* && rm -f /tmp/boot0* && rm -f /tmp/boot1*" ]];
 
   [task launch];
-  /*
-  NSArray *files = [kfm contentsOfDirectoryAtPath:@"/tmp" error:nil];
-  if (files != nil) {
-    for (int i = 0; i < [files count]; i++) {
-      NSString *file = [files objectAtIndex:i];
-      NSString *fullPath = [@"/tmp" stringByAppendingPathComponent:file];
-      if ([file hasPrefix:@"Clover"]
-          || [file hasPrefix:@"boo0"]
-          || [file hasPrefix:@"boo1"]
-          || [file hasPrefix:@"boosec"]) {
-        if ([kfm fileExistsAtPath:fullPath]) {
-          printf("cleanUp %s\n", [fullPath UTF8String]);
-          NSError *err = nil;
-          [kfm removeItemAtPath:fullPath error:&err];
-          if (err != nil) {
-            printf("%s\n", [err.localizedFailureReason UTF8String]);
-          }
-        }
-      }
-    }
-  }*/
 }
 
 void exitWithMessage(const char *format, ...)
@@ -147,7 +126,10 @@ int main(int argc, char * const * argv) {
       }
     }
     
-    printf("bootSectorsInstallSrc = %s\n", [bootSectorsInstallSrc UTF8String]);
+    if (bootSectorsInstallSrc != nil) {
+      printf("bootSectorsInstallSrc = %s\n", [bootSectorsInstallSrc UTF8String]);
+    }
+    
     BOOL alt = NO;
     if ([CloverappDict objectForKey:@"alt"] != nil) {
       alt = [[CloverappDict objectForKey:@"alt"] boolValue];

@@ -46,7 +46,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   // MARK: View customization
   override func viewDidLoad() {
     super.viewDidLoad()
-    let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String + " (Alpha)"
+    let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String + " Beta"
     self.appVersionField.stringValue = "v\(appVersion)"
     localize(view: self.view)
     self.view.wantsLayer = true

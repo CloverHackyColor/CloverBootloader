@@ -283,13 +283,13 @@
 		95E68ABD235B862F002B37A5 = {
 			isa = PBXGroup;
 			children = (
-				9542ABC12373786700DC03E6 /* CloverV2 */,
 				95E68AC8235B862F002B37A5 /* Clover */,
 				9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */,
 				958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */,
 				95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */,
 				9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */,
 				95C5C0A22365D2250049940D /* Lang.bundle */,
+				9542ABC12373786700DC03E6 /* CloverV2 */,
 				95E68AC7235B862F002B37A5 /* Products */,
 			);
 			sourceTree = "<group>";

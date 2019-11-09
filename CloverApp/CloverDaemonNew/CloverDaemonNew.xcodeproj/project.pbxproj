@@ -10,8 +10,9 @@
 		953B8DEE2370BB1A007E36E3 /* bdmesg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953B8DED2370BB1A007E36E3 /* bdmesg.swift */; };
 		953B8DF02370BB5D007E36E3 /* NVRAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953B8DEF2370BB5C007E36E3 /* NVRAM.swift */; };
 		953B8DF22370BF5B007E36E3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953B8DF12370BF5A007E36E3 /* Extensions.swift */; };
+		953D98872377094A003B369E /* Disks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953D98862377094A003B369E /* Disks.swift */; };
 		953DBFDF236F037400B0C4FB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DBFDE236F037400B0C4FB /* main.swift */; };
-		954277B9237118B6007857FF /* Disks_session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954277B8237118B5007857FF /* Disks_session.swift */; };
+		9546F0EB2376F94100A3D053 /* PowerObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 9546F0EA2376F94100A3D053 /* PowerObserver.m */; };
 		954FF20E2371B13C00C3D94C /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20D2371B13C00C3D94C /* DiskArbitration.framework */; };
 		954FF2102371B16300C3D94C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20F2371B16300C3D94C /* IOKit.framework */; };
 /* End PBXBuildFile section */
@@ -32,9 +33,12 @@
 		953B8DED2370BB1A007E36E3 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = bdmesg.swift; path = ../../Clover/bdmesg.swift; sourceTree = "<group>"; };
 		953B8DEF2370BB5C007E36E3 /* NVRAM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NVRAM.swift; path = ../../Clover/NVRAM.swift; sourceTree = "<group>"; };
 		953B8DF12370BF5A007E36E3 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = ../../Clover/Extensions.swift; sourceTree = "<group>"; };
+		953D98862377094A003B369E /* Disks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Disks.swift; path = ../../Clover/Disks.swift; sourceTree = "<group>"; };
 		953DBFDB236F037400B0C4FB /* CloverDaemonNew */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverDaemonNew; sourceTree = BUILT_PRODUCTS_DIR; };
 		953DBFDE236F037400B0C4FB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		954277B8237118B5007857FF /* Disks_session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disks_session.swift; sourceTree = "<group>"; };
+		9546F0E82376F94100A3D053 /* CloverDaemonNew-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CloverDaemonNew-Bridging-Header.h"; sourceTree = "<group>"; };
+		9546F0E92376F94100A3D053 /* PowerObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PowerObserver.h; sourceTree = "<group>"; };
+		9546F0EA2376F94100A3D053 /* PowerObserver.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerObserver.m; sourceTree = "<group>"; };
 		954FF20D2371B13C00C3D94C /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		954FF20F2371B16300C3D94C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -73,10 +77,13 @@
 			isa = PBXGroup;
 			children = (
 				953DBFDE236F037400B0C4FB /* main.swift */,
-				954277B8237118B5007857FF /* Disks_session.swift */,
+				953D98862377094A003B369E /* Disks.swift */,
 				953B8DEF2370BB5C007E36E3 /* NVRAM.swift */,
 				953B8DED2370BB1A007E36E3 /* bdmesg.swift */,
 				953B8DF12370BF5A007E36E3 /* Extensions.swift */,
+				9546F0E92376F94100A3D053 /* PowerObserver.h */,
+				9546F0EA2376F94100A3D053 /* PowerObserver.m */,
+				9546F0E82376F94100A3D053 /* CloverDaemonNew-Bridging-Header.h */,
 			);
 			path = CloverDaemonNew;
 			sourceTree = "<group>";
@@ -122,6 +129,7 @@
 				TargetAttributes = {
 					953DBFDA236F037400B0C4FB = {
 						CreatedOnToolsVersion = 11.2;
+						LastSwiftMigration = 1120;
 					};
 				};
 			};
@@ -149,10 +157,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				953B8DF22370BF5B007E36E3 /* Extensions.swift in Sources */,
+				9546F0EB2376F94100A3D053 /* PowerObserver.m in Sources */,
+				953D98872377094A003B369E /* Disks.swift in Sources */,
 				953DBFDF236F037400B0C4FB /* main.swift in Sources */,
 				953B8DF02370BB5D007E36E3 /* NVRAM.swift in Sources */,
 				953B8DEE2370BB1A007E36E3 /* bdmesg.swift in Sources */,
-				954277B9237118B6007857FF /* Disks_session.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,9 +284,17 @@
 		953DBFE3236F037400B0C4FB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CloverDaemonNew/CloverDaemonNew-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -285,9 +302,16 @@
 		953DBFE4236F037400B0C4FB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CloverDaemonNew/CloverDaemonNew-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

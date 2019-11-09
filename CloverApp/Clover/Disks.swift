@@ -141,8 +141,8 @@ func getDiskUUID(from diskOrMtp: String) -> String? {
 }
 
 /// Get Media Name (kDADiskDescriptionMediaNameKey).
-func getMediaName(from diskOrMtp: String) -> String {
-  var name : String = kNotAvailable
+func getMediaName(from diskOrMtp: String) -> String? {
+  var name : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
     if (dict.object(forKey: kDADiskDescriptionMediaNameKey) != nil) {
       name = (dict.object(forKey: kDADiskDescriptionMediaNameKey) as? String)!
@@ -151,7 +151,6 @@ func getMediaName(from diskOrMtp: String) -> String {
   
   return name
 }
-
 /// Get Media Name (kDADiskDescriptionDeviceProtocolKey).
 func getDeviceProtocol(from diskOrMtp: String) -> String {
   var prot : String = kNotAvailable
@@ -255,6 +254,19 @@ func getListOfMountedEsp() -> [String] {
     }
   }
 
+  return mounted
+}
+
+/// get and array of currently mounted volumes
+func getVolumes() -> [String] {
+  var  mounted : [String] = [String]()
+  let all = getAlldisks().allKeys
+  for b in all {
+    let bsd : String = b as! String
+    if let mp = getMountPoint(from: bsd) {
+      mounted.append(mp)
+    }
+  }
   return mounted
 }
 

@@ -35,8 +35,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   }
 
   func applicationWillFinishLaunching(_ notification: Notification) {
-    
-    
     /*
      do not activate the following code: is for debug only
      .. it delete stored preferences in the User Default dictionary

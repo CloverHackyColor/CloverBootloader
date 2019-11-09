@@ -10,23 +10,17 @@ import Foundation
 import CoreFoundation
 
 let fm = FileManager.default
-//let runLoop = CFRunLoopGetCurrent()
 
 /*
  Store a session reference to contact Disk Arbitration,
  ..it will be usefull during the shut down.
  this is weird, but make some chances for the last stand (SIGTERM)
  */
-let gSession  = DASessionCreate(kCFAllocatorDefault)
-let gSession1 = DASessionCreate(kCFAllocatorDefault)
-let gSession2 = DASessionCreate(kCFAllocatorDefault)
-let gSession3 = DASessionCreate(kCFAllocatorDefault)
-let gSession4 = DASessionCreate(kCFAllocatorDefault)
-let gSession5 = DASessionCreate(kCFAllocatorDefault)
 
 var BootDeviceUUID : String? = nil
 var BootDeviceFS   : String? = nil
 var BootDevice     : String? = nil
+
 
 func execAttr() -> [FileAttributeKey : Any] {
   var attributes = [FileAttributeKey : Any]()
@@ -77,20 +71,7 @@ func doJob() {
       nvram.object(forKey: "TestEmuVariableUefiPresent") != nil) {
       // mount -t "$filesystem" "$bootdev" "$mnt_pt"
       if let bootDevice = BootDevice, let fs = BootDeviceFS {
-        let uuid = (BootDeviceUUID != nil) ? "\(BootDeviceUUID!)" : "NO UUID"
-        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let mp = "/Volumes/\(String((0..<10).map{ _ in letters.randomElement()! }))"
-        let type : String = (fs.hasPrefix("fat") || fs.hasPrefix("exf")) ? "msdos" : fs
-        
-        let cmd = "if [[ $(LC_ALL=C mount | egrep \"^/dev/\(bootDevice) on\" | sed 's/^.* on *//;s/ ([^(]*//') == \"/\"* ]]; then nvram -x -p > $(LC_ALL=C mount | egrep \"^/dev/\(bootDevice) on\" | sed 's/^.* on *//;s/ ([^(]*//')/nvram.plist; echo 'nvram saved to am disk with UUID \(uuid)'; else mkdir -p \(mp); mount -t \(type) /dev/\(bootDevice) \(mp); nvram -x -p > \(mp)/nvram.plist; echo 'nvram saved to u disk with UUID \(uuid)'; fi"
-        
-        let task = Process()
-        task.launchPath = "/bin/bash"
-        task.arguments = ["-c", cmd]
-        
-        task.launch()
-      } else {
-        saveNVRAM(volume: "/", nvram: nvram)
+        saveNVRAM(bootDevice: bootDevice, filesystem: fs, nvram: nvram)
       }
     }
     
@@ -101,80 +82,50 @@ func doJob() {
   exit(EXIT_SUCCESS)
 }
 
-func mountSaveNVRAM(disk bsdName: String, at path: String?, nvram: NSDictionary) {
-  print("mount called for \(bsdName)")
-  var disk : String = bsdName
-  if disk.hasPrefix("disk") || disk.hasPrefix("/dev/disk") {
-    if disk.hasPrefix("/dev/disk") {
-      disk = disk.components(separatedBy: "dev/")[1]
-    }
-
-    let allocator = kCFAllocatorDefault 
-    let newsession = DASessionCreate(allocator)
-    if let session = ((newsession == nil) ? gSession5 : newsession) {
-      if let bsd = DADiskCreateFromBSDName(allocator, session, disk) {
-        var url : CFURL? = nil
-        if (path != nil) {
-          url = CFURLCreateFromFileSystemRepresentation(allocator, path?.toPointer(), (path?.count)!, true)
-        }
-        var context = UnsafeMutablePointer<Int>.allocate(capacity: 1)
-        context.initialize(repeating: 0, count: 1)
-        context.pointee = 0
-        
-        DASessionScheduleWithRunLoop(session, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue)
-        
-        DADiskMountWithArguments(bsd, url, DADiskMountOptions(kDADiskMountOptionDefault), { (o, dis, ctx) in
-          if (dis != nil) && (ctx != nil) {
-            print("mount failure: " + printDAReturn(r: DADissenterGetStatus(dis!)))
-          }
-        }, &context, nil)
-        //CFRunLoopRun()
-        let result : Bool = (context.pointee == 0)
-        print("\(bsdName) mounted: \(result)")
-        if result {
-          let mountpoint = getMountPoint(from: disk)
-          if ((mountpoint != nil)) {
-            // already mounted
-            saveNVRAM(volume: mountpoint!, nvram: nvram)
-          }
-        } else {
-          saveNVRAM(volume: "/", nvram: nvram)
-        }
-        
-        DASessionUnscheduleFromRunLoop(session,
-                                       CFRunLoopGetCurrent(),
-                                       CFRunLoopMode.defaultMode.rawValue)
-        
-        context.deallocate()
-      } else {
-        print("DADiskCreateFromBSDName() is null.")
-        saveNVRAM(volume: "/", nvram: nvram)
-      }
-    } else {
-      print("gSession in null.")
-      saveNVRAM(volume: "/", nvram: nvram)
-    }
-    
-  }
+func saveNVRAM(bootDevice: String, filesystem: String, nvram: NSMutableDictionary) {
+  nvram.removeObject(forKey: "efi-backup-boot-device")
+  nvram.removeObject(forKey: "efi-backup-boot-device-data")
+  nvram.removeObject(forKey: "install-product-url")
+  nvram.removeObject(forKey: "previous-system-uuid")
+  nvram.write(toFile: "/tmp/nvramsaved.plist", atomically: false)
+  
+  let uuid = (BootDeviceUUID != nil) ? "\(BootDeviceUUID!)" : "NO UUID"
+  let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  let mp = "/Volumes/\(String((0..<10).map{ _ in letters.randomElement()! }))"
+  let type : String = (filesystem.hasPrefix("fat") || filesystem.hasPrefix("exf")) ? "msdos" : filesystem
+  
+  let cmd = """
+  if [[ ! -f /tmp/nvramsaved.plist ]]; then
+    echo "Error: nvram not found to a temporary location."
+    exit 0
+  fi
+  mp=$(LC_ALL=C mount | egrep "^/dev/\(bootDevice) on" | sed 's/^.* on *//;s/ ([^(]*//')
+  if [[ "${mp}" == "/"* ]]; then
+    cat /tmp/nvramsaved.plist > "${mp}"/nvram.plist
+    echo 'nvram saved to disk with UUID \(uuid)'
+  else
+    mkdir -p '\(mp)'
+    mount -t \(type) /dev/\(bootDevice) '\(mp)'
+    if [ $? -eq 0 ]; then
+      cat /tmp/nvramsaved.plist > '\(mp)/nvram.plist'
+      echo 'nvram saved to disk with UUID \(uuid)'
+      umount -f \(bootDevice) 2>/dev/null
+      if [[ $? -eq 0 ]]; then
+        rm -rf '\(mp)'
+      fi
+    else
+      echo "Error: \(bootDevice) doesn't want to mount, try to save in /."
+      cat /tmp/nvramsaved.plist > /nvram.plist
+    fi
+  fi
+  """
+  let task = Process()
+  task.launchPath = "/bin/bash"
+  task.arguments = ["-c", cmd]
+  
+  task.launch()
 }
 
-
-func saveNVRAM(volume: String, nvram: NSDictionary) {
-  let withSlash = (volume == "/") ? volume : "\(volume)/"
-  if !fm.isWritableFile(atPath: withSlash) {
-    print("saveNVRAM(): '\(volume)' is read-only..\n")
-    run(cmd: "mount -uw /")
-  }
-  if (nvram.object(forKey: "EmuVariableUefiPresent") != nil ||
-    nvram.object(forKey: "TestEmuVariableUefiPresent") != nil) {
-    if nvram.write(toFile: volume.addPath("nvram.plist"), atomically: true) {
-      print("nvram saved correctly at '\(volume.addPath("nvram.plist"))'.")
-      run(cmd: "chmod 644 \(volume.addPath("nvram.plist"))")
-    } else {
-      print("nvram not saved.")
-    }
-  }
-}
 
 func checkSleepProxyClient(nvram: NSDictionary) {
   let mDNSResponderPath = "/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist"
@@ -182,7 +133,12 @@ func checkSleepProxyClient(nvram: NSDictionary) {
   
   if let nvdata = nvram.object(forKey: "Clover.DisableSleepProxyClient") as? Data {
     let value = String(decoding: nvdata, as: UTF8.self)
+    
     if value == "true" {
+      if !fm.fileExists(atPath: mDNSResponderPath) {
+        print("Error: cannot found \(mDNSResponderPath)")
+        return
+      }
       if !fm.isWritableFile(atPath: "/") {
         print("try to making '/' writable as Clover.DisableSleepProxyClient=true.")
         run(cmd: "mount -uw /")
@@ -220,6 +176,7 @@ func main() {
   print("--------------------------------------------")
   print("- System start at \(now)")
   print("--------------------------------------------")
+  var powerObserver : PowerObserver? = PowerObserver()
   if let volname = getMediaName(from: "/") {
     print("root mount point is '/Volumes/\(volname)'")
   }
@@ -238,7 +195,7 @@ func main() {
   }
   
   /*
-   Clean some lines fro clover.daemon.log.
+   Clean some lines from clover.daemon.log.
    This is not going to go into the System log and is not
    controllable by the nvram.
    */
@@ -284,19 +241,26 @@ func main() {
     checkSleepProxyClient(nvram: nvram)
   }
   
-  // Clean old nvram.plist user may have
+  /*
+   Clean old nvram.plist user may have in other volumes,
+   but not if it is our boot device
+   */
   for v in getVolumes() {
     let nvramtPath = v.addPath("nvram.plist")
-    if fm.fileExists(atPath: nvramtPath) {
-      if fm.isDeletableFile(atPath: nvramtPath) {
-        do {
-          try fm.removeItem(atPath: nvramtPath)
-          print("old '\(nvramtPath)' removed.")
-        } catch {
-          print("Error: can't remove '\(nvramtPath)'.")
+    let bootDevice = findBootPartitionDevice()
+    let vbsd = getBSDName(of: v)
+    if vbsd != bootDevice {
+      if fm.fileExists(atPath: nvramtPath) {
+        if fm.isDeletableFile(atPath: nvramtPath) {
+          do {
+            try fm.removeItem(atPath: nvramtPath)
+            print("old '\(nvramtPath)' removed.")
+          } catch {
+            print("Error: can't remove '\(nvramtPath)'.")
+          }
+        } else {
+          print("Error: '\(nvramtPath)' is not deletable.")
         }
-      } else {
-        print("Error: '\(nvramtPath)' is not deletable.")
       }
     }
   }
@@ -308,11 +272,12 @@ func main() {
     now = df.string(from: Date())
     print("")
     print("- System power off at \(now)")
+    powerObserver = nil // no longer needed
     doJob()
   }
   termSource.resume()
-  //CFRunLoopRun()
-  dispatchMain()
+  RunLoop.current.run()
+  //dispatchMain()
 }
 
 let myPath = CommandLine.arguments[0]

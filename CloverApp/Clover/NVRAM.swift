@@ -12,7 +12,7 @@ import Cocoa
 let nvram_cmd = "/usr/sbin/nvram"
 
 // MARK: Get NVRAM
-func getNVRAM() -> NSDictionary? {
+func getNVRAM() -> NSMutableDictionary? {
   var ref: io_registry_entry_t
   var masterPort = mach_port_t()
   var oResult: kern_return_t
@@ -38,6 +38,7 @@ func getNVRAM() -> NSDictionary? {
 }
 
 // MARK: set NVRAM key
+@available(OSX 10.10, *)
 func setNVRAM(key: String, stringValue: String) {
   var cmd : String = "do shell script \""
   cmd += "sudo \(nvram_cmd) \(key)=\(stringValue)" // sudo required otherwise wont work!
@@ -54,6 +55,7 @@ func setNVRAM(key: String, stringValue: String) {
 }
 
 // MARK: delete NVRAM key
+@available(OSX 10.10, *)
 func deleteNVRAM(key: String) {
   var cmd : String = "do shell script \""
   cmd += "sudo \(nvram_cmd) -d \(key)" // sudo required otherwise wont work!

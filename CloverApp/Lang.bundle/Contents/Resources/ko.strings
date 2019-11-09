@@ -11,153 +11,153 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot device" = "Boot Device";
-"config path:" = "config path:";
+"N/A" = "알수없음"; // not available (please be short)
+"Install Clover" = "클로버 설치하기";
+"Current Clover revision" = "현재 클로버 리비전";
+"Boot device" = "부트 장치";
+"config path:" = "config 경로:";
 
-"Clover wants to mount %@" = "Clover wants to mount %@";
-"Clover wants to umount %@" = "Clover wants to umount %@";
-"Mount" = "Mount";
-"umount" = "umount";
-"mount point" = "mount point";
+"Clover wants to mount %@" = "클로버는 다음 디스크를 마운트: %@";
+"Clover wants to umount %@" = "클로버는 다음 디스크를 언마운트: %@";
+"Mount" = "마운트";
+"umount" = "언마운트";
+"mount point" = "마운트 포인트";
 
-"true" = "true";
-"false" = "false";
+"true" = "예";
+"false" = "아니오";
 
-"Theme:" = "Theme:";
-"Sound:" = "Sound:";
-"*Make filesystem read-write" = "*Make filesystem read-write";
-"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
-"*Require CloverDaemon" = "*Require CloverDaemon";
-"Read daemon log" = "Read daemon log";
-"Read bdmesg" = "Read boot log";
+"Theme:" = "테마:";
+"Sound:" = "사운드:";
+"*Make filesystem read-write" = "*파일시스템을 읽기-쓰기로 변경;
+"*Disable Sleep Proxy Client" = "*잠자기 프록시 클라이언트 비활성화";
+"*Require CloverDaemon" = "*클로버데몬 필요";
+"Read daemon log" = "데몬 로그 읽기";
+"Read bdmesg" = "부트 로그 읽기";
 
-"Install CloverDaemonNew" = "Install CloverDaemonNew";
-"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+"Install CloverDaemonNew" = "새로운 클로버데몬 설치";
+"Uninstall CloverDaemonNew" = "새로운 클로버데몬 제거";
 
-"Update" = "Update";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
-"Check update:" = "Check update:";
-"Check now" = "Check now";
+"Update" = "업데이트";
+"Update to r%d" = "r%d로 업데이트"; // "Update to r5101"
+"Check update:" = "업데이트 체크:";
+"Check now" = "지금 체크하기";
 
-"never" = "never";
-"daily" = "daily";
-"weekly" = "weekly";
-"monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"never" = "사용 안 함";
+"daily" = "매일";
+"weekly" = "매주";
+"monthly" = "매달";
+"last checked:" = "마지막 체크:"; // last date update was checked. Please be short.
 
-"Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Run at login" = "로그인 시 실행";
+"Close" = "닫기"; // Close the Clover.app
 
 /* Installer */
-"Clover Installer" = "Clover Installer";
-"Select a disk.." = "Select a disk..";
-"Install" = "Install";
-"Uninstall" = "Uninstall";
-"AltBoot" = "Alternative boot";
+"Clover Installer" = "클로버 설치";
+"Select a disk.." = "디스크 선택하기..";
+"Install" = "설치";
+"Uninstall" = "제거";
+"AltBoot" = "대체 부팅";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI mandatory";
-"BIOS mandatory" = "BIOS mandatory";
-"UEFI/Other" = "UEFI/Other";
-"BIOS/Other" = "BIOS/Other";
-"UEFI, but not from this installer" = "UEFI, but not from this installer";
-"BIOS, but not from this installer" = "BIOS, but not from this installer";
+"UEFI mandatory" = "UEFI 필수";
+"BIOS mandatory" = "BIOS 필수";
+"UEFI/Other" = "UEFI/추가";
+"BIOS/Other" = "BIOS/추가";
+"UEFI, but not from this installer" = "이 설치 프로그램이 아닌 UEFI";
+"BIOS, but not from this installer" = "이 설치 프로그램이 아닌 BIOS";
 
-"UEFI/FileSystem" = "UEFI, filesystem drivers";
-"BIOS/FileSystem" = "BIOS, filesystem drivers";
+"UEFI/FileSystem" = "UEFI, 파일시스템 드라이버";
+"BIOS/FileSystem" = "BIOS, 파일시스템 드라이버";
 
-"UEFI/HID" = "UEFI, Human Interface Devices";
-"BIOS/HID" = "BIOS, Human Interface Devices";
+"UEFI/HID" = "UEFI, 휴먼 인터페이스 장치";
+"BIOS/HID" = "BIOS, 휴먼 인터페이스 장치";
 
-"UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
-"BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
+"UEFI/FileVault2" = "UEFI, FileVault 2 드라이버";
+"BIOS/FileVault2" = "BIOS, FileVault 2 드라이버";
 
-"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+"UEFI/MemoryFix" = "UEFI, 메모리 오류 수정 드라이버";
 
-"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+"ApfsDriverLoader.efi" = "10.13 이상의 macOS에서 컨테이너으로부터 APFS 파일 시스템을 로드하기 위한 드라이버";
 
-"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+"AppleImageCodec.efi" = "FileVault 2 용 PNG 및 BMP 디코딩 지원";
 
-"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleImageLoader.efi" = "EfiBinary 서명 확인을 사용하여 AppleLoadImage 프로토콜을 구현한 보안 AppleEfiFat 바이너리 드라이버";
 
-"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+"AppleKeyAggregator.efi" = "FileVault 2 용 부팅 UI 대화 상자 지원";
 
-"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+"AppleKeyFeeder.efi" = "FileVault 2 용 PS/2 키보드 사용을 지원";
 
-"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUISupport.efi" = "FileVault 용 EfiLoginUi 지원을 위한 프로토콜 설정";
 
-"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+"AppleUITheme.efi" = "FileVault 2 용 부팅 UI 테마를 지원";
 
-"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioInputFix.efi" = "AMI Aptio와 같은 UEFI 펌웨어의 입력 문제를 해결하는 드라이버";
 
-"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"AptioMemoryFix.efi" = "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버";
 
-"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
-Configure it via Startup sound output from Option menu, including:
-Volume and Audio device (for supported IOAudio devices only).";
+"AudioDxe.efi" = "시동시 시동 음을 재생하는 HDA 드라이버.
+옵션 메뉴에서 시동 음의 출력 설정:
+볼륨 및 오디오 장치 (IOAudio를 지원하는 장치만 해당).";
 
-"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+"FirmwareVolume.efi" = "FileVault 2 용 커서 이미지와 함께 FirmwareVolume을 만듭니다.";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "Clover 폴더로부터 kexts의 인젝션을 제공";
 
-"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+"GrubEXFAT.efi" = "GRUB의 ExFAT 파일 시스템 드라이버";
 
-"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+"GrubISO9660.efi" = "GRUB의 ISO 9600 파일 시스템 드라이버";
 
-"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+"GrubNTFS.efi" = "GRUB의 NTFS 파일 시스템 드라이버";
 
-"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+"GrubUDF.efi" = "GRUB의 UDF 파일 시스템 드라이버";
 
-"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+"SMCHelper.efi" = "FakeSMC가 NVRAM에 남긴 SMC 키를 복원";
 
-"XhciDxe.efi" = "USB 3.0 driver";
+"XhciDxe.efi" = "USB 3.0 드라이버";
 
-"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+"AppleEvent.uefi" = "FileVault 2 용 AppleEvent 프로토콜을 만듭니다.";
 
-"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+"AppleGraphicsConfig.uefi" = "선택적 AppleGraphicsConfig 프로토콜을 만듭니다.";
 
-"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
-Clover may not started with it and you may have wake problem in system. Use with precautions.";
+"CsmVideoDxe.efi" = "Clover GUI를 위한 비디오 드라이버는 더 다양한 해상도 설정을 가능하게 합니다. UEFI BIOS의 CSM모듈에 기반해있으므로 CSM이 활성화 되어야 합니다.
+Clover는 깨어나기에 문제가 있는 시스템에서는 정상적으로 시작하지 않을 수 있습니다. 주의해서 사용해주시기 바랍니다.";
 
-"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
-Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"DataHubDxe.efi" = "macOS에 필수적인 DataHub 프로토콜 지원합니다.
+대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다.";
 
-"EmuVariableUefi.efi" = "Workaround for store NVRAM variables for systems without UEFI hardware.
-Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+"EmuVariableUefi.efi" = "UEFI 하드웨어가 없는 시스템의 NVRAM 변수 저장에 대한 해결 방법.
+대체로 UEFI 부트는 하드웨어 NVRAM을 이용하지만 간혹 이 드라이버가 필요할 수 있습니다. 본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오.";
 
-"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"EnglishDxe.efi" = "EFI 셸이 UEFI에서 누락 된 경우 사용되는 유니코드 조합 프로토콜 지원";
 
-"Fat.efi" = "FAT filesystem driver.";
+"Fat.efi" = "FAT 파일 시스템 드라이버";
 
-"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+"HashServiceFix.efi" = "기본 UEFI BIOS에 해시가 없으면 지원되도록 고칩니다.";
 
-"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+"HFSPlus.efi" = "순정 HFS+ 파일 시스템 드라이버";
 
-"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+"NvmExpressDxe.efi" = "NVM Express 장치 지원용 드라이버";
 
-"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+"OsxAptioFix3Drv.efi" = "대체 드라이버 (v3)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오.";
 
-"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"OsxAptioFixDrv.efi" = "이전 64 비트 드라이버로 AMI Aptio와 같은 UEFI 펌웨어의 메모리 문제를 해결할 수 있습니다. 다른 AptioFix와 함께 사용하지 마십시오.";
 
-"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxFatBinaryDrv.efi" = "10.9 이하의 OS X를 위한 FAT 바이너리 실행 드라이버";
 
-"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+"OsxLowMemFixDrv.efi" = "OsxAptioFixDrv의 간소화 형태. 간소화되지 않는 버전과 함께 사용하지 마십시오.";
 
-"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"PartitionDxe.efi" = "GPT/MBR 또는 Apple 파티션 맵과 같은 희귀 파티션맵을 지원하기 위한 드라이버";
 
-"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+"Ps2MouseDxe.efi" = "PS/2 마우스 드라이버";
 
-"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+"UsbKbDxe.efi" = "부팅 UI 지원을 위한 키보드 드라이버";
 
-"UsbMouseDxe.efi" = "USB mouse driver";
+"UsbMouseDxe.efi" = "USB 마우스 드라이버";
 
-"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+"VBoxExt2.efi" = "Virtualbox 용 Ext2/3 파일 시스템 드라이버";
 
-"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+"VBoxExt4.efi" = "Virtualbox 용 Ext4 파일 시스템 드라이버";
 
-"VBoxHfs.efi" = "HFS+ filesystem driver.";
+"VBoxHfs.efi" = "오픈소스 HFS+ 파일 시스템 드라이버";
 
-"VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+"VBoxIso9600.efi" = "ISO 9600 파일 시스템 드라이버";
