@@ -61,14 +61,19 @@ void powerCallback(void *refCon, io_service_t service, natural_t type, void *arg
 
 - (void)removeNVRAMPlist {
   if ([[NSFileManager defaultManager] fileExistsAtPath:@"/nvram.plist"]) {
-    printf("Found /nvram.plist after waking from sleep, removing it:\n");
-    NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtPath:@"/nvram.plist" error:&error];
-    if (error == nil) {
-      printf("/nvram.plist correctly removed.\n");
-    } else {
-      printf("%s\n", [[error localizedFailureReason] UTF8String]);
+    printf("Found /nvram.plist after waking from sleep, checking fro Apple GUIDs..\n");
+    NSDictionary *nvram = [NSDictionary dictionaryWithContentsOfFile:@"/nvram.plist"];
+    if (nvram != nil) {
+      NSArray *keys = [nvram allKeys];
+      for (int i = 0; i < [keys count]; i++) {
+        NSString *key = [keys objectAtIndex:i];
+        if ([key hasPrefix:@"8BE4DF61-93CA-11D2-AA0D-00E098032B8C:"]) {
+          printf("/nvram.plist contains %s\n", [key UTF8String]);
+        }
+      }
     }
+    
+    
   }
 }
 @end

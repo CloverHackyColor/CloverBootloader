@@ -9,6 +9,7 @@
 import Foundation
 import CoreFoundation
 
+let daemonVersion = "1.01"
 let fm = FileManager.default
 
 /*
@@ -99,24 +100,36 @@ func saveNVRAM(bootDevice: String, filesystem: String, nvram: NSMutableDictionar
     echo "Error: nvram not found to a temporary location."
     exit 0
   fi
+  launchctl load -F /System/Library/LaunchDaemons/com.apple.diskarbitrationd.plist > /dev/null 2>&1
+  launchctl load -F /System/Library/LaunchDaemons/com.apple.diskmanagementd.plist > /dev/null 2>&1
+  diskutil mount \(bootDevice) > /dev/null 2>&1
   mp=$(LC_ALL=C mount | egrep "^/dev/\(bootDevice) on" | sed 's/^.* on *//;s/ ([^(]*//')
   if [[ "${mp}" == "/"* ]]; then
     cat /tmp/nvramsaved.plist > "${mp}"/nvram.plist
     echo 'nvram saved to disk with UUID \(uuid)'
   else
     mkdir -p '\(mp)'
-    mount -t \(type) /dev/\(bootDevice) '\(mp)'
-    if [ $? -eq 0 ]; then
-      cat /tmp/nvramsaved.plist > '\(mp)/nvram.plist'
-      echo 'nvram saved to disk with UUID \(uuid)'
-      umount -f \(bootDevice) 2>/dev/null
-      if [[ $? -eq 0 ]]; then
-        rm -rf '\(mp)'
+    attempts=1
+    until [ $attempts -ge 11 ]
+    do
+      launchctl load -F /System/Library/LaunchDaemons/com.apple.diskarbitrationd.plist > /dev/null 2>&1
+      launchctl load -F /System/Library/LaunchDaemons/com.apple.diskmanagementd.plist > /dev/null 2>&1
+      sleep 0.2
+      mount -t \(type) /dev/\(bootDevice) '\(mp)' > /dev/null 2>&1
+      sleep 0.3
+      if [ $? -eq 0 ]; then
+        cat /tmp/nvramsaved.plist > '\(mp)/nvram.plist'
+        echo 'nvram saved to disk with UUID \(uuid)'
+        echo "$attempts attempts required."
+        break
+      else
+        attempts=$[$attempts+1]
+        if [ $attempts -eq 11 ]; then
+          echo "Error: \(bootDevice) doesn't want to mount after $attempts attempts, try to save in /."
+          cat /tmp/nvramsaved.plist > /nvram.plist
+        fi
       fi
-    else
-      echo "Error: \(bootDevice) doesn't want to mount, try to save in /."
-      cat /tmp/nvramsaved.plist > /nvram.plist
-    fi
+    done
   fi
   """
   let task = Process()
@@ -174,9 +187,10 @@ func main() {
   df.dateFormat = "yyyy-MM-dd hh:mm:ss"
   var now = df.string(from: Date())
   print("--------------------------------------------")
+  print("- CloverDaemonNew v\(daemonVersion)")
   print("- System start at \(now)")
   print("--------------------------------------------")
-  var powerObserver : PowerObserver? = PowerObserver()
+  var powerObserver : PowerObserver? = PowerObserver() // I want it to be var
   if let volname = getMediaName(from: "/") {
     print("root mount point is '/Volumes/\(volname)'")
   }
@@ -272,6 +286,7 @@ func main() {
     now = df.string(from: Date())
     print("")
     print("- System power off at \(now)")
+    print("- CloverDaemonNew v\(daemonVersion)")
     powerObserver = nil // no longer needed
     doJob()
   }
@@ -324,7 +339,9 @@ if CommandLine.arguments.contains("--install") {
     
     try fm.setAttributes(launchAttr(),
                          ofItemAtPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
-    
+    if fm.fileExists(atPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist") {
+      run(cmd: "launchctl unload /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
+    }
     run(cmd: "launchctl load /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
     run(cmd: "launchctl start /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
     exit(EXIT_SUCCESS)

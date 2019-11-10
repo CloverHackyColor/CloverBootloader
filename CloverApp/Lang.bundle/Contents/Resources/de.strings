@@ -15,7 +15,7 @@
 "Install Clover" = "Clover installieren";
 "Current Clover revision" = "Aktuelle Clover revision";
 "Boot device" = "Boot Device";
-"config path:" = "Config-Pfad:";
+"config path:" = "Config.plist Pfad:";
 
 "Clover wants to mount %@" = "Clover möchte %@ mounten";
 "Clover wants to umount %@" = "Clover möchte %@ unmounten";
@@ -97,7 +97,7 @@
 
 "AudioDxe.efi" = "HDA Treiber zur Unterstützung eines Startup Ton.
 Startup Ton über das Option Menü konfigurieren, inklusiv:
-Lutstärke und Adio Gerät (nur für unterstützte Audio-Geräte).";
+Lautstärke und Audio Gerät (nur für unterstützte Audio-Geräte).";
 
 "FirmwareVolume.efi" = "Erstellt ein FirmwareVolume mit cursor images für FileVault2.";
 
