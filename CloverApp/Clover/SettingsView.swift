@@ -161,7 +161,8 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       if isWritable(diskOrMtp: e) {
         let fs = getFS(from: e) ?? kNotAvailable.locale
         let mp = getMountPoint(from: e) ?? kNotAvailable.locale
-        let title : String = "\(e), \(fs), \("mount point".locale): \(mp)"
+        let parentDiskName : String = getMediaName(from: getBSDParent(of: e) ?? "") ?? kNotAvailable.locale
+        let title : String = "\(e), \(fs), \("mount point".locale): \(mp), \(parentDiskName)"
         self.disksPopUp.addItem(withTitle: title)
         self.disksPopUp.lastItem?.representedObject = e
         if e == self.bootDevice {
@@ -499,7 +500,8 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         DispatchQueue.main.async {
           let ll = UDs.string(forKey: kLastUpdateLink)
           let lr = UDs.string(forKey: kLastUpdateRevision)
-          if (ll != nil && lr != nil) {
+          let lrnum : Int = Int(lr ?? "0") ?? 0
+          if ((ll != nil && lr != nil) && lrnum > currRevNum) {
             self.lastReleaseLink = ll
             self.lastReleaseRev = lr
             AppSD.statusItem.button?.title = "\(lastRevNum)"

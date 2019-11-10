@@ -21,7 +21,7 @@
 "Clover wants to umount %@" = "Clover vuole smontare %@";
 "Mount" = "Monta";
 "umount" = "smonta";
-"mount point" = "mount point";
+"mount point" = "punto di montaggio";
 
 "true" = "vero";
 "false" = "falso";
