@@ -28,7 +28,7 @@
 
 "Theme:" = "테마:";
 "Sound:" = "사운드:";
-"*Make filesystem read-write" = "*파일시스템을 읽기-쓰기로 변경;
+"*Make filesystem read-write" = "*파일시스템을 읽기-쓰기로 변경";
 "*Disable Sleep Proxy Client" = "*잠자기 프록시 클라이언트 비활성화";
 "*Require CloverDaemon" = "*클로버데몬 필요";
 "Read daemon log" = "데몬 로그 읽기";
