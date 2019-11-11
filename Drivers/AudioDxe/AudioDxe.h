@@ -64,26 +64,4 @@
 extern EFI_DRIVER_BINDING_PROTOCOL gHdaControllerDriverBinding;
 extern EFI_DRIVER_BINDING_PROTOCOL gHdaCodecDriverBinding;
 
-#define GET_PCI_VENDOR_ID(a)    (a & 0xFFFF)
-#define GET_PCI_DEVICE_ID(a)    ((a >> 16) & 0xFFFF)
-#define GET_PCI_GENERIC_ID(a)   ((0xFFFF << 16) | a)
-#define GET_CODEC_VENDOR_ID(a)  ((a >> 16) & 0xFFFF)
-#define GET_CODEC_DEVICE_ID(a)  (a & 0xFFFF)
-#define GET_CODEC_GENERIC_ID(a) (a | 0xFFFF)
-
-// Controller name strings.
-typedef struct {
-    UINT32 Id;
-    CHAR16 *Name;
-} HDA_CONTROLLER_LIST_ENTRY;
-extern HDA_CONTROLLER_LIST_ENTRY gHdaControllerList[];
-
-// Codec name strings.
-typedef struct {
-    UINT32 Id;
-    UINT16 Rev;
-    CHAR16 *Name;
-} HDA_CODEC_LIST_ENTRY;
-extern HDA_CODEC_LIST_ENTRY gHdaCodecList[];
-
 #endif
