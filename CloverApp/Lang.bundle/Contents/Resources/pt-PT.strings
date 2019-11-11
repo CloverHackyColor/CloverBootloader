@@ -12,151 +12,151 @@
 
 /* top bar menu */
 "N/A" = "N/D"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot device" = "Boot Device";
-"config path:" = "config path:";
+"Install Clover" = "Instalar Clover";
+"Current Clover revision" = "Clover atual revisão";
+"Boot device" = "Dispositivo de Boot";
+"config path:" = "configurar caminho:";
 
-"Clover wants to mount %@" = "Clover wants to mount %@";
-"Clover wants to umount %@" = "Clover wants to umount %@";
-"Mount" = "Mount";
-"umount" = "umount";
-"mount point" = "mount point";
+"Clover wants to mount %@" = "Clover pretende montar %@";
+"Clover wants to umount %@" = "Clover pretende desmontar %@";
+"Mount" = "Montar";
+"umount" = "desmontar";
+"mount point" = "ponto de montagem";
 
-"true" = "true";
-"false" = "false";
+"true" = "verdadeiro";
+"false" = "falso";
 
-"Theme:" = "Theme:";
-"Sound:" = "Sound:";
-"*Make filesystem read-write" = "*Make filesystem read-write";
-"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
-"*Require CloverDaemon" = "*Require CloverDaemon";
-"Read daemon log" = "Read daemon log";
-"Read bdmesg" = "Read boot log";
+"Theme:" = "Tema:";
+"Sound:" = "Som:";
+"*Make filesystem read-write" = "*Fazer filesystem leitura-escrita";
+"*Disable Sleep Proxy Client" = "*Disabilitar Sleep Proxy Client";
+"*Require CloverDaemon" = "*Necessita CloverDaemon";
+"Read daemon log" = "Ler daemon log";
+"Read bdmesg" = "Ler boot log";
 
-"Install CloverDaemonNew" = "Install CloverDaemonNew";
-"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+"Install CloverDaemonNew" = "Instalar CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "Desinstalar CloverDaemonNew";
 
-"Update" = "Update";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
-"Check update:" = "Check update:";
-"Check now" = "Check now";
+"Update" = "Atualizar";
+"Update to r%d" = "Atualizar para r%d"; // "Update to r5101"
+"Check update:" = "Verificar Atualizações:";
+"Check now" = "Verificar agora";
 
-"never" = "never";
-"daily" = "daily";
-"weekly" = "weekly";
-"monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"never" = "nunca";
+"daily" = "diária";
+"weekly" = "semanalmente";
+"monthly" = "mensal";
+"last checked:" = "ultima verificação:"; // last date update was checked. Please be short.
 
-"Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Run at login" = "Correr no login";
+"Close" = "Fechar"; // Close the Clover.app
 
 /* Installer */
-"Clover Installer" = "Clover Installer";
-"Select a disk.." = "Select a disk..";
-"Install" = "Install";
-"Uninstall" = "Uninstall";
-"AltBoot" = "Alternative boot";
+"Clover Installer" = "Clover Instalador";
+"Select a disk.." = "Selecionar disco..";
+"Install" = "Instalar";
+"Uninstall" = "Desinstalar";
+"AltBoot" = "Boot alternativo";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI mandatory";
-"BIOS mandatory" = "BIOS mandatory";
-"UEFI/Other" = "UEFI/Other";
-"BIOS/Other" = "BIOS/Other";
-"UEFI, but not from this installer" = "UEFI, but not from this installer";
-"BIOS, but not from this installer" = "BIOS, but not from this installer";
+"UEFI mandatory" = "UEFI obrigatório";
+"BIOS mandatory" = "BIOS obrigatório";
+"UEFI/Other" = "UEFI/Outro";
+"BIOS/Other" = "BIOS/Outro";
+"UEFI, but not from this installer" = "UEFI, mas não deste instalador";
+"BIOS, but not from this installer" = "BIOS, mas não deste instalador";
 
 "UEFI/FileSystem" = "UEFI, filesystem drivers";
 "BIOS/FileSystem" = "BIOS, filesystem drivers";
 
-"UEFI/HID" = "UEFI, Human Interface Devices";
-"BIOS/HID" = "BIOS, Human Interface Devices";
+"UEFI/HID" = "UEFI, Dispositivos interface humanos";
+"BIOS/HID" = "BIOS, Dispositivos interface humanos";
 
 "UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
 "BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
 
-"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+"UEFI/MemoryFix" = "UEFI, memoria fix drivers";
 
-"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+"ApfsDriverLoader.efi" = "Suporta APFS filesystem driver do recipiente para macOS 10.13 e superiores";
 
-"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+"AppleImageCodec.efi" = "Descodifica PNG e BMP para FileVault2.";
 
-"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleImageLoader.efi" = "Driver binário AppleEfiFat seguro com implementação do protocolo AppleLoadImage com verificação de assinatura EfiBinary";
 
-"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+"AppleKeyAggregator.efi" = "Suporte para boot UI dialogo para FileVault2.";
 
-"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+"AppleKeyFeeder.efi" = "Suporte para PS/2 teclado para uso com FileVault 2.";
 
-"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUISupport.efi" = "Conjunto de protocolos para suporte EfiLoginUi para FileVault.";
 
-"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+"AppleUITheme.efi" = "Cria boot UI Temas com suporte para FileVault2.";
 
-"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioInputFix.efi" = "Driver para corrigir problemas de entrada no firmware UEFI, como o AMI Aptio.";
 
-"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"AptioMemoryFix.efi" = "Driver preferido para corrigir problemas de memória no firmware UEFI, como o AMI Aptio. Não use com outro AptioFix.";
 
-"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
-Configure it via Startup sound output from Option menu, including:
-Volume and Audio device (for supported IOAudio devices only).";
+"AudioDxe.efi" = "Driver HDA para reproduzir o som durante a inicialização do Clover.
+Configure-o através da saída de som de inicialização no menu Opções, incluindo: Dispositivo de volume e áudio (apenas para dispositivos IOAudio suportados).";
 
-"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+"FirmwareVolume.efi" = "Cria FirmwareVolume com imagens de cursor para FileVault2.";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "Permite a injeção de kernel extensions (Kext) de Clover directorio.";
 
-"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+"GrubEXFAT.efi" = "ExFAT filesystem driver de GRUB.";
 
-"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+"GrubISO9660.efi" = "ISO 9600 filesystem driver de GRUB.";
 
-"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+"GrubNTFS.efi" = "NTFS filesystem driver de GRUB.";
 
-"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+"GrubUDF.efi" = "UDF filesystem driver de GRUB.";
 
-"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+"SMCHelper.efi" = "Restaura SMC chaves deixadas na NVRAM por FakeSMC.";
 
 "XhciDxe.efi" = "USB 3.0 driver";
 
-"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+"AppleEvent.uefi" = "Cria AppleEvent protocolo para FileVault2.";
 
-"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+"AppleGraphicsConfig.uefi" = "Cria AppleGraphicsConfig protocolo opcional.";
 
-"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
-Clover may not started with it and you may have wake problem in system. Use with precautions.";
+"CsmVideoDxe.efi" = "Driver de vídeo para Clover GUI, permitindo escolher mais resoluções. Ele é baseado no módulo CSM no UEFI BIOS e o CSM necessário será ativado.
+O Clover pode não começar com ele e você pode ter um problema de ativação no sistema. Use com precauções.";
 
-"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
-Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"DataHubDxe.efi" = "DataHub protocolo suporte necessario para macOS.
 
-"EmuVariableUefi.efi" = "Workaround for store NVRAM variables for systems without UEFI hardware.
-Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+Geralmente, ele já está presente, mas às vezes pode ser esquecido. Nesse caso, você verá um aviso no ecran.";
 
-"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"EmuVariableUefi.efi" = "Solução alternativa para armazenar variáveis ​​NVRAM para sistemas sem hardware UEFI.
+Principalmente, a inicialização UEFI usa NVRAM de hardware, mas em alguns casos raros esse driver é necessário. Use-o apenas se você tiver um problema sem ele";
+
+"EnglishDxe.efi" = "Suporte para o protocolo UnicodeCollation usado pelo EFI Shell se ele falhou no UEFI.";
 
 "Fat.efi" = "FAT filesystem driver.";
 
-"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+"HashServiceFix.efi" = "Corrije o suporte a Hash se ausente no UEFI BIOS nativo";
 
-"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+"HFSPlus.efi" = "HFS+ filesystem driver alternativo.";
 
-"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+"NvmExpressDxe.efi" = "Driver para suporte a dispositos NVM Express.";
 
-"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+"OsxAptioFix3Drv.efi" = "Driver alternativo (v3) para corrigir problemas de memória no firmware UEFI. Não use com outro AptioFix junto.";
 
-"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"OsxAptioFixDrv.efi" = "Driver antigo para corrigir problemas de memória no firmware UEFI, como o AMI Aptio. Não use com outro AptioFix junto.";
 
-"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxFatBinaryDrv.efi" = "Driver para suporte executáveis ​​binários FAT para OS X 10.9 e anteriores.";
 
-"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+"OsxLowMemFixDrv.efi" = "Variante simplificada do OsxAptioFixDrv. Não use com outro AptioFix junto.";
 
-"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"PartitionDxe.efi" = "Driver para suportar mapas de partição não usuais, como: híbrido GPT / MBR ou Apple Partition Mapa.";
 
-"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+"Ps2MouseDxe.efi" = "PS/2 rato driver";
 
-"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+"UsbKbDxe.efi" = "Teclado driver para boot UI suporte.";
 
-"UsbMouseDxe.efi" = "USB mouse driver";
+"UsbMouseDxe.efi" = "USB rato driver";
 
-"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+"VBoxExt2.efi" = "EXT2/3 filesystem driver para VirtualBox.";
 
-"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+"VBoxExt4.efi" = "EXT4 filesystem driver para VirtualBox.";
 
 "VBoxHfs.efi" = "HFS+ filesystem driver.";
 
