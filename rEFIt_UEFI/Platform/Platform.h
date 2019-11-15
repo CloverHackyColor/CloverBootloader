@@ -922,8 +922,9 @@ typedef struct {
   BOOLEAN                 UserChange;
   BOOLEAN                 QEMU;
   // SMBIOS TYPE17
+  UINT16                  SmbiosVersion;
   INT8                    Attribute;
-  INT8                    Pad17[3];
+  INT8                    Pad17[1];
   CHAR8                   MemoryManufacturer[64];
   CHAR8                   MemorySerialNumber[64];
   CHAR8                   MemoryPartNumber[64];

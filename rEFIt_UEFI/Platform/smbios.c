@@ -1086,7 +1086,7 @@ VOID PatchTableType11()
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.RomVersion, iStrLen(gSettings.RomVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
-  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Board-ID       : ");
+  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
   AsciiSPrint(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover v2.5k %s\n", gFirmwareRevision);
   AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
@@ -1156,7 +1156,7 @@ VOID PatchTableType16()
   ZeroMem((VOID*)newSmbiosTable.Type16, MAX_TABLE_SIZE);
   CopyMem((VOID*)newSmbiosTable.Type16, (VOID*)SmbiosTable.Type16, TableSize);
   newSmbiosTable.Type16->Hdr.Handle = mHandle16;
-  // Slice - I am not sure I want these values
+  // Slice - I am not sure if I want these values
   // newSmbiosTable.Type16->Location = MemoryArrayLocationProprietaryAddonCard;
   // newSmbiosTable.Type16->Use = MemoryArrayUseSystemMemory;
   // newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
@@ -1992,9 +1992,17 @@ EFI_STATUS PrepatchSmbios()
   Current = (UINT8*)Smbios; //begin fill tables from here
   SmbiosEpsNew->TableAddress = (UINT32)(UINTN)Current;
   SmbiosEpsNew->EntryPointLength = sizeof(SMBIOS_TABLE_ENTRY_POINT); // no matter on other versions
-  SmbiosEpsNew->MajorVersion = 2;
-  SmbiosEpsNew->MinorVersion = 4;
-  SmbiosEpsNew->SmbiosBcdRevision = 0x24; //Slice - we want to have v2.6 but Apple still uses 2.4
+  if (gSettings.SmbiosVersion != 0) {
+    SmbiosEpsNew->MajorVersion = (UINT8)(gSettings.SmbiosVersion >> 8);
+    SmbiosEpsNew->MinorVersion = (UINT8)(gSettings.SmbiosVersion & 0xFF);
+    SmbiosEpsNew->SmbiosBcdRevision = (SmbiosEpsNew->MajorVersion << 4) + SmbiosEpsNew->MinorVersion;
+  }
+  else {
+    //old behavior
+    SmbiosEpsNew->MajorVersion = 2;
+    SmbiosEpsNew->MinorVersion = 4;
+    SmbiosEpsNew->SmbiosBcdRevision = 0x24; //Slice - we want to have v2.6 but Apple still uses 2.4, let it be default value
+  }
 
   //Create space for SPD
   //gRAM = AllocateZeroPool(sizeof(MEM_STRUCTURE));

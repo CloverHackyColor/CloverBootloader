@@ -932,6 +932,8 @@
 	</array>
 	<key>SMBIOS</key>
 	<dict>
+    <key>#SmbiosVersion</key>
+    <integer>0x0206</integer>
 		<key>#Slots</key>
 		<array>
 			<dict>

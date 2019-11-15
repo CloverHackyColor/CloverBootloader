@@ -4464,6 +4464,9 @@ ParseSMBIOSSettings(
     DBG ("Using ProductName from clover: %a\n", gSettings.ProductName);
   }
 
+  Prop = GetProperty(DictPointer, "SmbiosVersion");
+  gSettings.SmbiosVersion = (UINT16)GetPropertyInteger(Prop, 0x204);
+
   // Check for BiosVersion and BiosReleaseDate by Sherlocks
   Prop = GetProperty (DictPointer, "BiosVersion");
   if (Prop != NULL) {
