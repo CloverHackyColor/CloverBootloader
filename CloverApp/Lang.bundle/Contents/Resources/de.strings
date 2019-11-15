@@ -1,0 +1,163 @@
+/* 
+  Clover.app
+
+  Created by vector sigma on 27/10/2019.
+  Copyright © 2019 CloverHackyColor. All rights reserved.
+*/
+
+/*
+ Hi, some of the views are set to have a fixed width, but other may automatically
+ enlarge the affecting view, so please consider to translate this file keeping in mind this.
+ */
+
+/* top bar menu */
+"N/A" = "N/V"; // not available (please be short)
+"Install Clover" = "Clover installieren";
+"Current Clover revision" = "Aktuelle Clover revision";
+"Boot device" = "Boot Device";
+"config path:" = "Config.plist Pfad:";
+
+"Clover wants to mount %@" = "Clover möchte %@ mounten";
+"Clover wants to umount %@" = "Clover möchte %@ unmounten";
+"Mount" = "Mount";
+"umount" = "Unmount";
+"mount point" = "mount point";
+
+"true" = "Wahr";
+"false" = "Falsch";
+
+"Theme:" = "Thema:";
+"Sound:" = "Sound:";
+"*Make filesystem read-write" = "*Filesystem schreib-/lesbar machen";
+"*Disable Sleep Proxy Client" = "*Sleep Proxy Client deaktivieren";
+"*Require CloverDaemon" = "*Benötigt CloverDaemon";
+"Read daemon log" = "Daemon log lesen";
+"Read bdmesg" = "Boot log lesen";
+
+"Install CloverDaemonNew" = "CloverDaemonNew installieren";
+"Uninstall CloverDaemonNew" = "CloverDaemonNew deinstallieren";
+
+"Update" = "Update";
+"Update to r%d" = "Auf Version r%d aktualisieren"; // "Update to r5101"
+"Check update:" = "Auf Update prüfen:";
+"Check now" = "Jetzt prüfen";
+
+"never" = "niemals";
+"daily" = "täglich";
+"weekly" = "wöchentlich";
+"monthly" = "monatlich";
+"last checked:" = "Zuletzt geprüft:"; // last date update was checked. Please be short.
+
+"Run at login" = "Nach Login starten";
+"Close" = "Schliessen"; // Close the Clover.app
+
+/* Installer */
+"Clover Installer" = "Clover Installer";
+"Select a disk.." = "Laufwerk wählen..";
+"Install" = "Installieren";
+"Uninstall" = "Deinstallieren";
+"AltBoot" = "Alternativer Start";
+
+/* Drivers */
+"UEFI mandatory" = "UEFI mandatory";
+"BIOS mandatory" = "BIOS mandatory";
+"UEFI/Other" = "UEFI/Andere";
+"BIOS/Other" = "BIOS/Andere";
+"UEFI, but not from this installer" = "UEFI, aber nicht von diesem Installer";
+"BIOS, but not from this installer" = "BIOS, aber nicht von diesem Installer";
+
+"UEFI/FileSystem" = "UEFI, Filesystem Treiber";
+"BIOS/FileSystem" = "BIOS, Filesystem Treiber";
+
+"UEFI/HID" = "UEFI, Human Interface Gerät";
+"BIOS/HID" = "BIOS, Human Interface Gerät";
+
+"UEFI/FileVault2" = "UEFI, FileVault 2 Treiber";
+"BIOS/FileVault2" = "BIOS, FileVault 2 Treiber";
+
+"UEFI/MemoryFix" = "UEFI, Speicher Fix Treiber";
+
+"ApfsDriverLoader.efi" = "Unterstützt APFS Filesystem von =>macOS 10.13 Containern";
+
+"AppleImageCodec.efi" = "Dekodiere PNG und BMP für FileVault2.";
+
+"AppleImageLoader.efi" = "Sicherer AppleEfiFat binary Treiber mit AppleLoadImage Protokoll-Implementierung und EfiBinary Signaturüberprüfung.";
+
+"AppleKeyAggregator.efi" = "Unterstützung für boot UI dialog für FileVault2.";
+
+"AppleKeyFeeder.efi" = "PS/2 Tastatur Unterstützung unter Nutzung von FileVault 2.";
+
+"AppleUISupport.efi" = "Unterstützung der Protokolle EfiLoginUi für FileVault.";
+
+"AppleUITheme.efi" = "Erstelle UI Themes Bootunterstützung für FileVault2.";
+
+"AptioInputFix.efi" = "Treiber zur Unterstützung bei Problemen mit UEFI firmware wie AMI Aptio.";
+
+"AptioMemoryFix.efi" = "Aktuell empfohlener 64Bit-Treiber um Speicherprobleme in der UEFI-Firmware von AMI Aptio zu beheben. Dieser Treiber sollte NICHT mit anderen AptioFix Treibern verwendet werden.";
+
+"AudioDxe.efi" = "HDA Treiber zur Unterstützung eines Startup Ton.
+Startup Ton über das Option Menü konfigurieren, inklusiv:
+Lautstärke und Audio Gerät (nur für unterstützte Audio-Geräte).";
+
+"FirmwareVolume.efi" = "Erstellt ein FirmwareVolume mit cursor images für FileVault2.";
+
+"FSInject.efi" = "Ermöglicht die Einbindung von im Clover Ordner hinterlegten Kernel Erweiterungen.";
+
+"GrubEXFAT.efi" = "Treiber für das ExFAT Dateisystem.";
+
+"GrubISO9660.efi" = "Treiber für das ISO9600 Dateisystem.";
+
+"GrubNTFS.efi" = "Treiber für das NTFS Dateisystem.";
+
+"GrubUDF.efi" = "Treiber für das UDF Dateisystem.";
+
+"SMCHelper.efi" = "Wiederherstellen der NVRAM SMC Schlüssel durch FakeSMC.";
+
+"XhciDxe.efi" = "USB 3.0 Treiber";
+
+"AppleEvent.uefi" = "Erstellt ein AppleEvent Protokoll für FileVault2.";
+
+"AppleGraphicsConfig.uefi" = "Erstellt ein optionales AppleGraphicsConfig Protokoll.";
+
+"CsmVideoDxe.efi" = "64Bit Video-Treiber für Clovers GUI, erlaubt die Auswahl von mehr Auflösungen. Basierend auf dem CSM-Modul des UEFI-Bios, CSM muss dort aktiviert werden. Eventuell startet Clover nicht, es kann auch Probleme beim Aufwachen des Systems geben.
+Bitte Vorsichtsmaßnahmen treffen.";
+
+"DataHubDxe.efi" = "Essentielle DataHub Protokoll Unterstützung für macOS.
+Normalerweise schon vorhanden, kann aber trotzdem manchmal fehlen. In diesem Fall solltest Du eine Fehlermeldung sehen.";
+
+"EmuVariableUefi.efi" = "Umgehung zum speichern der UEFI Variablen ohne ein vorhandenes UEFI. 64Bit-Treiber zur Unterstützung der von macOS benötigten NVRAM Variablen. Meistens wird beim UEFI booten der Hardware NVRAM genutzt, aber in einigen wenigen Fällen wird dieser Treiber benötigt.
+Diesen Treiber nur benutzen, wenn es ohne ihn Probleme gibt.";
+
+"EnglishDxe.efi" = "Unterstützung eines UnicodeCollation Protokolls für die EFI Shell, sollte im UEFI keines vorhanden sein.";
+
+"Fat.efi" = "Treiber für das FAT Dateisystem.";
+
+"HashServiceFix.efi" = "Stellt die Hash Unterstützung bereit, wenn im nativen UEFI BIOS keine solche vorhanden ist.";
+
+"HFSPlus.efi" = "Alternativer Treiber für das HFS+ Dateisystem.";
+
+"NvmExpressDxe.efi" = "Treiber zur Unterstützung von NVM Express Geräten.";
+
+"OsxAptioFix3Drv.efi" = "Alternativer Treiber (v3) um Speicherproblem in der UEFI Firmware zu beheben. Dieser Treiber sollte NICHT mit anderen AptioFix Treibern zusammen verwendet werden.";
+
+"OsxAptioFixDrv.efi" = "Alter Treiber zur Behebung von UEFI Firmware Speicherproblem, wie z.B. in AMI Aptio. Dieser Treiber sollte NICHT mit anderen AptioFix Treibern zusammen verwendet werden.";
+
+"OsxFatBinaryDrv.efi" = "Treiber für die Unterstützung von FAT Binary executables für macOS 10.9 und älter.";
+
+"OsxLowMemFixDrv.efi" = "Einfache Variante des OsxAptioFixDrv, 64bit. ! Diesen Treiber niemals mit anderen AptioFix Treibern verwenden !";
+
+"PartitionDxe.efi" = "64Bit-Treiber zur Unterstützung unüblicher Partitionstabellen, wie z.B. GPT/MBR oder der Apple Partition Map.";
+
+"Ps2MouseDxe.efi" = "Treiber für PS/2 Maus, 64bit";
+
+"UsbKbDxe.efi" = "Tastaturtreiber für die UI Unterstützung während des Bootvorgangs.";
+
+"UsbMouseDxe.efi" = "Treiber für USB Maus, 64bit";
+
+"VBoxExt2.efi" = "Treiber für das ext2/3 Dateisystem aus VirtualBox, 64bit";
+
+"VBoxExt4.efi" = "Treiber für das ext4 Dateisystem aus VirtualBox, 64bit";
+
+"VBoxHfs.efi" = "Treiber für das HFS+ Dateisystem.";
+
+"VBoxIso9600.efi" = "Treiber für das ISO 9600 Dateisystem.";

@@ -1,0 +1,163 @@
+/* 
+  Clover.app
+
+  Created by vector sigma on 27/10/2019.
+  Copyright © 2019 CloverHackyColor. All rights reserved.
+*/
+
+/*
+ Hi, some of the views are set to have a fixed width, but other may automatically
+ enlarge the affecting view, so please consider to translate this file keeping in mind this.
+ */
+
+/* top bar menu */
+"N/A" = "알수없음"; // not available (please be short)
+"Install Clover" = "클로버 설치하기";
+"Current Clover revision" = "현재 클로버 리비전";
+"Boot device" = "부트 장치";
+"config path:" = "config 경로:";
+
+"Clover wants to mount %@" = "클로버는 다음 디스크를 마운트: %@";
+"Clover wants to umount %@" = "클로버는 다음 디스크를 언마운트: %@";
+"Mount" = "마운트";
+"umount" = "언마운트";
+"mount point" = "마운트 포인트";
+
+"true" = "예";
+"false" = "아니오";
+
+"Theme:" = "테마:";
+"Sound:" = "사운드:";
+"*Make filesystem read-write" = "*파일시스템을 읽기-쓰기로 변경";
+"*Disable Sleep Proxy Client" = "*잠자기 프록시 클라이언트 비활성화";
+"*Require CloverDaemon" = "*클로버데몬 필요";
+"Read daemon log" = "데몬 로그 읽기";
+"Read bdmesg" = "부트 로그 읽기";
+
+"Install CloverDaemonNew" = "새로운 클로버데몬 설치";
+"Uninstall CloverDaemonNew" = "새로운 클로버데몬 제거";
+
+"Update" = "업데이트";
+"Update to r%d" = "r%d로 업데이트"; // "Update to r5101"
+"Check update:" = "업데이트 체크:";
+"Check now" = "지금 체크하기";
+
+"never" = "사용 안 함";
+"daily" = "매일";
+"weekly" = "매주";
+"monthly" = "매달";
+"last checked:" = "마지막 체크:"; // last date update was checked. Please be short.
+
+"Run at login" = "로그인 시 실행";
+"Close" = "닫기"; // Close the Clover.app
+
+/* Installer */
+"Clover Installer" = "클로버 설치";
+"Select a disk.." = "디스크 선택하기..";
+"Install" = "설치";
+"Uninstall" = "제거";
+"AltBoot" = "대체 부팅";
+
+/* Drivers */
+"UEFI mandatory" = "UEFI 필수";
+"BIOS mandatory" = "BIOS 필수";
+"UEFI/Other" = "UEFI/추가";
+"BIOS/Other" = "BIOS/추가";
+"UEFI, but not from this installer" = "이 설치 프로그램이 아닌 UEFI";
+"BIOS, but not from this installer" = "이 설치 프로그램이 아닌 BIOS";
+
+"UEFI/FileSystem" = "UEFI, 파일시스템 드라이버";
+"BIOS/FileSystem" = "BIOS, 파일시스템 드라이버";
+
+"UEFI/HID" = "UEFI, 휴먼 인터페이스 장치";
+"BIOS/HID" = "BIOS, 휴먼 인터페이스 장치";
+
+"UEFI/FileVault2" = "UEFI, FileVault 2 드라이버";
+"BIOS/FileVault2" = "BIOS, FileVault 2 드라이버";
+
+"UEFI/MemoryFix" = "UEFI, 메모리 오류 수정 드라이버";
+
+"ApfsDriverLoader.efi" = "10.13 이상의 macOS에서 컨테이너으로부터 APFS 파일 시스템을 로드하기 위한 드라이버";
+
+"AppleImageCodec.efi" = "FileVault 2 용 PNG 및 BMP 디코딩 지원";
+
+"AppleImageLoader.efi" = "EfiBinary 서명 확인을 사용하여 AppleLoadImage 프로토콜을 구현한 보안 AppleEfiFat 바이너리 드라이버";
+
+"AppleKeyAggregator.efi" = "FileVault 2 용 부팅 UI 대화 상자 지원";
+
+"AppleKeyFeeder.efi" = "FileVault 2 용 PS/2 키보드 사용을 지원";
+
+"AppleUISupport.efi" = "FileVault 용 EfiLoginUi 지원을 위한 프로토콜 설정";
+
+"AppleUITheme.efi" = "FileVault 2 용 부팅 UI 테마를 지원";
+
+"AptioInputFix.efi" = "AMI Aptio와 같은 UEFI 펌웨어의 입력 문제를 해결하는 드라이버";
+
+"AptioMemoryFix.efi" = "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버";
+
+"AudioDxe.efi" = "시동시 시동 음을 재생하는 HDA 드라이버.
+옵션 메뉴에서 시동 음의 출력 설정:
+볼륨 및 오디오 장치 (IOAudio를 지원하는 장치만 해당).";
+
+"FirmwareVolume.efi" = "FileVault 2 용 커서 이미지와 함께 FirmwareVolume을 만듭니다.";
+
+"FSInject.efi" = "Clover 폴더로부터 kexts의 인젝션을 제공";
+
+"GrubEXFAT.efi" = "GRUB의 ExFAT 파일 시스템 드라이버";
+
+"GrubISO9660.efi" = "GRUB의 ISO 9600 파일 시스템 드라이버";
+
+"GrubNTFS.efi" = "GRUB의 NTFS 파일 시스템 드라이버";
+
+"GrubUDF.efi" = "GRUB의 UDF 파일 시스템 드라이버";
+
+"SMCHelper.efi" = "FakeSMC가 NVRAM에 남긴 SMC 키를 복원";
+
+"XhciDxe.efi" = "USB 3.0 드라이버";
+
+"AppleEvent.uefi" = "FileVault 2 용 AppleEvent 프로토콜을 만듭니다.";
+
+"AppleGraphicsConfig.uefi" = "선택적 AppleGraphicsConfig 프로토콜을 만듭니다.";
+
+"CsmVideoDxe.efi" = "Clover GUI를 위한 비디오 드라이버는 더 다양한 해상도 설정을 가능하게 합니다. UEFI BIOS의 CSM모듈에 기반해있으므로 CSM이 활성화 되어야 합니다.
+Clover는 깨어나기에 문제가 있는 시스템에서는 정상적으로 시작하지 않을 수 있습니다. 주의해서 사용해주시기 바랍니다.";
+
+"DataHubDxe.efi" = "macOS에 필수적인 DataHub 프로토콜 지원합니다.
+대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다.";
+
+"EmuVariableUefi.efi" = "UEFI 하드웨어가 없는 시스템의 NVRAM 변수 저장에 대한 해결 방법.
+대체로 UEFI 부트는 하드웨어 NVRAM을 이용하지만 간혹 이 드라이버가 필요할 수 있습니다. 본 드라이버 없이는 문제가 있는 경우에 한해서 사용하십시오.";
+
+"EnglishDxe.efi" = "EFI 셸이 UEFI에서 누락 된 경우 사용되는 유니코드 조합 프로토콜 지원";
+
+"Fat.efi" = "FAT 파일 시스템 드라이버";
+
+"HashServiceFix.efi" = "기본 UEFI BIOS에 해시가 없으면 지원되도록 고칩니다.";
+
+"HFSPlus.efi" = "순정 HFS+ 파일 시스템 드라이버";
+
+"NvmExpressDxe.efi" = "NVM Express 장치 지원용 드라이버";
+
+"OsxAptioFix3Drv.efi" = "대체 드라이버 (v3)를 사용하여 UEFI 펌웨어의 메모리 문제를 해결하십시오. 다른 AptioFix와 함께 사용하지 마십시오.";
+
+"OsxAptioFixDrv.efi" = "이전 64 비트 드라이버로 AMI Aptio와 같은 UEFI 펌웨어의 메모리 문제를 해결할 수 있습니다. 다른 AptioFix와 함께 사용하지 마십시오.";
+
+"OsxFatBinaryDrv.efi" = "10.9 이하의 OS X를 위한 FAT 바이너리 실행 드라이버";
+
+"OsxLowMemFixDrv.efi" = "OsxAptioFixDrv의 간소화 형태. 간소화되지 않는 버전과 함께 사용하지 마십시오.";
+
+"PartitionDxe.efi" = "GPT/MBR 또는 Apple 파티션 맵과 같은 희귀 파티션맵을 지원하기 위한 드라이버";
+
+"Ps2MouseDxe.efi" = "PS/2 마우스 드라이버";
+
+"UsbKbDxe.efi" = "부팅 UI 지원을 위한 키보드 드라이버";
+
+"UsbMouseDxe.efi" = "USB 마우스 드라이버";
+
+"VBoxExt2.efi" = "Virtualbox 용 Ext2/3 파일 시스템 드라이버";
+
+"VBoxExt4.efi" = "Virtualbox 용 Ext4 파일 시스템 드라이버";
+
+"VBoxHfs.efi" = "오픈소스 HFS+ 파일 시스템 드라이버";
+
+"VBoxIso9600.efi" = "ISO 9600 파일 시스템 드라이버";

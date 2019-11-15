@@ -8,6 +8,7 @@
 .cache
 Conf/.cache
 Conf/target.txt
+toolchain/
 
 # /CloverPackage/
 /CloverPackage/sym/
@@ -119,3 +120,4 @@ Conf/BuildEnv.sh
 Conf/.AutoGenIdFile.txt
 CloverPackage/revision
 CloverPackage/version
+tools

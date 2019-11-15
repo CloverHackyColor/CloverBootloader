@@ -1,0 +1,163 @@
+/* 
+  Clover.app
+
+  Created by vector sigma on 27/10/2019.
+  Copyright © 2019 CloverHackyColor. All rights reserved.
+*/
+
+/*
+ Hi, some of the views are set to have a fixed width, but other may automatically
+ enlarge the affecting view, so please consider to translate this file keeping in mind this.
+ */
+
+/* top bar menu */
+"N/A" = "N/D"; // not available (please be short)
+"Install Clover" = "安装 Clover";
+"Current Clover revision" = "目前 Clover 版本";
+"Boot device" = "引导设备";
+"config path:" = "config 路径:";
+
+"Clover wants to mount %@" = "Clover 想要挂载 %@";
+"Clover wants to umount %@" = "Clover 想要卸载 %@";
+"Mount" = "挂载";
+"umount" = "卸载";
+"mount point" = "挂载点";
+
+"true" = "是";
+"false" = "否";
+
+"Theme:" = "主题:";
+"Sound:" = "声音:";
+"*Make filesystem read-write" = "*让文件系统可读写";
+"*Disable Sleep Proxy Client" = "*禁用 Sleep Proxy Client";
+"*Require CloverDaemon" = "*需要 CloverDaemon";
+"Read daemon log" = "读取 daemon 日志";
+"Read bdmesg" = "读取引导日志";
+
+"Install CloverDaemonNew" = "安装 CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "卸载 CloverDaemonNew";
+
+"Update" = "更新";
+"Update to r%d" = "更新到 r%d"; // "Update to r5101"
+"Check update:" = "检查更新:";
+"Check now" = "现在检查";
+
+"never" = "从不";
+"daily" = "每日";
+"weekly" = "每周";
+"monthly" = "每月";
+"last checked:" = "最近检查:"; // last date update was checked. Please be short.
+
+"Run at login" = "登录时启动";
+"Close" = "退出"; // Close the Clover.app
+
+/* Installer */
+"Clover Installer" = "Clover 安装器";
+"Select a disk.." = "选择一个磁盘..";
+"Install" = "安装";
+"Uninstall" = "卸载";
+"AltBoot" = "Alternative boot";
+
+/* Drivers */
+"UEFI mandatory" = "强制 UEFI 模式";
+"BIOS mandatory" = "强制 BIOS 模式";
+"UEFI/Other" = "UEFI/Other";
+"BIOS/Other" = "BIOS/Other";
+"UEFI, but not from this installer" = "UEFI, 但不来自此安装器";
+"BIOS, but not from this installer" = "BIOS, 但不来自此安装器";
+
+"UEFI/FileSystem" = "UEFI, 文件系统驱动";
+"BIOS/FileSystem" = "BIOS, 文件系统驱动";
+
+"UEFI/HID" = "UEFI, 人机接口设备";
+"BIOS/HID" = "BIOS, 人机接口设备";
+
+"UEFI/FileVault2" = "UEFI, 文件保险箱驱动";
+"BIOS/FileVault2" = "BIOS, 文件保险箱驱动";
+
+"UEFI/MemoryFix" = "UEFI, 内存修正驱动";
+
+"ApfsDriverLoader.efi" = "支持 macOS 10.13 或更新版本的 APFS 文件系统";
+
+"AppleImageCodec.efi" = "解码 文件保险箱 中的 PNG 和 BMP。";
+
+"AppleImageLoader.efi" = "安全 AppleEfiFat 二进制驱动, 实施 AppleLoadImage 协议并携有 EfiBinary 签名验证。";
+
+"AppleKeyAggregator.efi" = "支持 文件保险箱 开机界面的 对话框。";
+
+"AppleKeyFeeder.efi" = "支持 使用 文件保险箱 时的 PS/2 键盘。";
+
+"AppleUISupport.efi" = "支持 文件保险箱 中 EfiLoginUi 的协议集。";
+
+"AppleUITheme.efi" = "支持 文件保险箱 的启动界面主题。";
+
+"AptioInputFix.efi" = "修正 UEFI 固件 输入问题, 例如 AMI Aptio。";
+
+"AptioMemoryFix.efi" = "提供 UEFI 固件的 内存问题修正, 例如 AMI Aptio。不要与其他 内存修正驱动 共同使用。";
+
+"AudioDxe.efi" = "HDA 驱动, 在使用 Clover 引导时播放 启动音。
+在 Option 菜单中 Startup sound output 进行配置, 包括:
+音量 和 输出设备 (仅限 受支持的 IOAudio 设备)。";
+
+"FirmwareVolume.efi" = "新建 文件保险箱 中含光标图像的 固件宗卷。";
+
+"FSInject.efi" = "提供 Clover文件夹中 内核扩展 的注入。";
+
+"GrubEXFAT.efi" = "ExFAT 文件系统 驱动, 来自 GRUB。";
+
+"GrubISO9660.efi" = "ISO 9600 文件系统 驱动, 来自 GRUB。";
+
+"GrubNTFS.efi" = "NTFS 文件系统 驱动, 来自 GRUB。";
+
+"GrubUDF.efi" = "UDF 文件系统 驱动, 来自 GRUB。";
+
+"SMCHelper.efi" = "恢复 FakeSMC 在 nvram 遗留的 SMC 键值。";
+
+"XhciDxe.efi" = "USB 3.0 驱动";
+
+"AppleEvent.uefi" = "新建 文件保险箱 的 AppleEvent 协议。";
+
+"AppleGraphicsConfig.uefi" = "新建 可选的 AppleGraphicsConfig 协议。";
+
+"CsmVideoDxe.efi" = "视频驱动, 允许 Clover 图形界面 支持更多分辨率。它基于 UEFI BIOS 的 CSM 模块, 并且 CSM 必须启动。
+可能导致 Clover 无法启动, 也可能会发生 系统唤醒 相关问题。请谨慎使用。";
+
+"DataHubDxe.efi" = "此驱动 提供 DataHub 协议支持, macOS 强制启用。
+通常已启用, 但有时可能遗漏。可在屏幕 warning 中查看。";
+
+"EmuVariableUefi.efi" = "存储 非 UEFI-引导 中 UEFI 变量 的替代方法。
+绝大多数 UEFI 引导使用的是 硬件 NVRAM 但在一些特殊情况下需要这个驱动。如果缺少这个驱动会遇到问题, 请使用它。";
+
+"EnglishDxe.efi" = "支持 EFI Shell 使用的 UnicodeCollation 协议, 如果 UEFI 遗漏了它。";
+
+"Fat.efi" = "FAT 文件系统 驱动。";
+
+"HashServiceFix.efi" = "修正 Hash 的支持, 如果原生 UEFI BIOS 缺失了它。";
+
+"HFSPlus.efi" = "另外的 HFS+ 文件系统 驱动。";
+
+"NvmExpressDxe.efi" = "支持 NVM Express 设备 驱动。";
+
+"OsxAptioFix3Drv.efi" = "另外的 修正 UEFI 固件 内存问题 驱动 (v3)。不要与其他 内存修正驱动 共同使用。";
+
+"OsxAptioFixDrv.efi" = "老版修正 UEFI 固件 内存问题 驱动, 例如 AMI Aptio。不要与其他 内存修正驱动 共同使用。";
+
+"OsxFatBinaryDrv.efi" = "支持 OSX 10.9 及更新版本的 FAT 二进制 可执行文件。";
+
+"OsxLowMemFixDrv.efi" = "OsxAptioFixDrv 的简化版本。不要与其他 内存修正驱动 共同使用。";
+
+"PartitionDxe.efi" = "支持 非常态的分区图, 例如 混合 GPT/MBR 或 Apple 分区图。";
+
+"Ps2MouseDxe.efi" = "PS/2 鼠标 驱动";
+
+"UsbKbDxe.efi" = "键盘驱动, 支持 启动界面。";
+
+"UsbMouseDxe.efi" = "USB 鼠标 驱动";
+
+"VBoxExt2.efi" = "EXT2/3 文件系统驱动, 来自 VirtualBox。";
+
+"VBoxExt4.efi" = "EXT4 文件系统驱动, 来自 VirtualBox。";
+
+"VBoxHfs.efi" = "HFS+ 文件系统驱动。";
+
+"VBoxIso9600.efi" = "ISO 9600 文件系统驱动。";

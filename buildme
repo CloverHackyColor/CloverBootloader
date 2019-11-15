@@ -13,9 +13,8 @@
 
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
+declare -r SYSNAME="$(uname)"
 MYTOOLCHAIN=${1:-GCC53}
-
-TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
 
 # Functions
 pathmunge() {
@@ -57,13 +56,16 @@ fi
 }
 
 exportPaths() {
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Linux ]]; then
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
+elif [[ "$SYSNAME" == Darwin ]]; then
   pathmunge "$(xcode-select --print-path)"/usr/bin
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
 fi
 
 pathmunge "$TOOLCHAIN_DIR"/bin
 export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
-export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
+export DIR_MAIN=${DIR_MAIN:-"$CLOVERROOT"/toolchain}
 export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
 export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
 export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
@@ -72,7 +74,7 @@ export PREFIX=${TOOLCHAIN_DIR}
 
 checkTools() {
 # export any env vars before building anything
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Darwin ]]; then
   checkXCODE
   exportPaths
   local GCC53_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
@@ -163,12 +165,40 @@ echo "[BUILD CLOVER TEST]"
 }
 
 buildPkg() {
-if [[ "$(uname)" == Darwin ]]; then
+if [[ "$SYSNAME" == Darwin ]]; then
   cd "${CLOVERROOT}"/CloverPackage
   echo "[BUILD PKG]"
   checkXCODE
   checkGETTEXT
   make pkg
+else
+  echo && echo "can't build pkg on a non Darwin OS!"
+fi
+}
+
+buildApp() {
+if [[ "$SYSNAME" == Darwin ]]; then
+  if [[ -f "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi ]]; then
+    cd "${CLOVERROOT}"/CloverApp
+    echo "[BUILD APP]"
+    echo "(Require Xcode 11 or greater)"
+    checkXCODE
+    make
+    if [[ -d "${CLOVERROOT}"/.git ]];then
+      local aname="Clover.app-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
+    else
+      local aname=Clover.app.zip
+    fi
+    rm -f "${CLOVERROOT}"/CloverPackage/sym/Clover.app*.zip
+    mkdir -p "${CLOVERROOT}"/CloverPackage/sym
+
+    cd "${CLOVERROOT}"/CloverApp/build
+    zip -qq -r -y "${CLOVERROOT}"/CloverPackage/sym/${aname} Clover.app/
+    open "${CLOVERROOT}"/CloverPackage/sym
+  else
+    echo && echo "please, build Clover first!"
+    sleep 3
+  fi
 else
   echo && echo "can't build pkg on a non Darwin OS!"
 fi
@@ -222,6 +252,7 @@ echo
 PS3='Please enter your choice: '
 options=( 'build Clover'
           'make pkg'
+          'make app'
           'make iso'
           'build all'
           'test build (no autogen, no boot files)'
@@ -244,6 +275,10 @@ do
       buildPkg
       break
     ;;
+    "make app")
+      buildApp
+      break
+    ;;
     "make iso")
       buildIso
       break
@@ -252,6 +287,7 @@ do
       buildClover
       buildPkg
       buildIso
+      buildApp
       break
     ;;
     "test build (no autogen, no boot files)")

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15504"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="qBz-zk-Tqd">
+            <objects>
+                <windowController storyboardIdentifier="InstallerWindow" id="3bA-Bs-KDY" customClass="InstallerWindowController" customModule="Clover" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Clover Installer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" id="ysg-ml-Ysp">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="229" y="240" width="680" height="470"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1600" height="877"/>
+                        <value key="minSize" type="size" width="680" height="470"/>
+                        <connections>
+                            <outlet property="delegate" destination="3bA-Bs-KDY" id="O5J-Xe-Rhf"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="nXe-XS-4J0" kind="relationship" relationship="window.shadowedContentViewController" id="7T8-eH-E2n"/>
+                    </connections>
+                </windowController>
+                <customObject id="drO-nS-RaY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-98" y="51"/>
+        </scene>
+        <!--Installer View Controller-->
+        <scene sceneID="apM-Ko-zXb">
+            <objects>
+                <viewController storyboardIdentifier="InstallerView" id="nXe-XS-4J0" customClass="InstallerViewController" customModule="Clover" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="MgP-28-KzA">
+                        <rect key="frame" x="0.0" y="0.0" width="680" height="405"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cd4-BN-85D">
+                                <rect key="frame" x="12" y="176" width="80" height="18"/>
+                                <buttonCell key="cell" type="check" title="CloverEFI" bezelStyle="regularSquare" imagePosition="left" focusRingType="none" inset="2" id="cO6-AP-j0b">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="cloverEFIPressed:" target="nXe-XS-4J0" id="FgG-sG-7v1"/>
+                                </connections>
+                            </button>
+                            <scrollView wantsLayer="YES" focusRingType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fda-eU-aq8">
+                                <rect key="frame" x="192" y="150" width="468" height="243"/>
+                                <clipView key="contentView" id="EXq-bD-4Vl">
+                                    <rect key="frame" x="1" y="1" width="466" height="241"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <collectionView selectable="YES" id="vA2-FJ-jih">
+                                            <rect key="frame" x="0.0" y="0.0" width="466" height="241"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="j1n-I3-Cz4">
+                                                <size key="itemSize" width="50" height="50"/>
+                                            </collectionViewFlowLayout>
+                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </collectionView>
+                                    </subviews>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="fwV-5k-ctC">
+                                    <rect key="frame" x="-100" y="-100" width="233" height="15"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="IDL-tZ-9Ad">
+                                    <rect key="frame" x="234" y="1" width="15" height="143"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="PD6-mW-VtD">
+                                <rect key="frame" x="176" y="20" width="5" height="373"/>
+                            </box>
+                            <popUpButton focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AVt-3S-p3r">
+                                <rect key="frame" x="12" y="107" width="88" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="boot0af" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" focusRingType="none" imageScaling="proportionallyDown" inset="2" selectedItem="v1t-y6-CSK" id="7zo-zX-Jl9">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="D8O-Dy-RtK">
+                                        <items>
+                                            <menuItem title="boot0af" state="on" id="v1t-y6-CSK"/>
+                                            <menuItem title="boot0ss" id="xP1-AF-6KH"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Mf-nc-9Pn">
+                                <rect key="frame" x="12" y="141" width="87" height="18"/>
+                                <buttonCell key="cell" type="check" title="MBR/PBR" bezelStyle="regularSquare" imagePosition="left" focusRingType="none" inset="2" id="itH-zW-i1Y">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="bootSectPressed:" target="nXe-XS-4J0" id="LX5-eS-eGO"/>
+                                </connections>
+                            </button>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="24J-OS-i5T">
+                                <rect key="frame" x="14" y="209" width="156" height="184"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSApplicationIcon" id="Bef-n1-kQ3"/>
+                            </imageView>
+                            <textField focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ccr-sG-KVJ">
+                                <rect key="frame" x="81" y="87" width="91" height="15"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" focusRingType="none" alignment="left" title="boot1" id="DSK-8g-GVR">
+                                    <font key="font" metaFont="label" size="13"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7X1-9z-6MF">
+                                <rect key="frame" x="99" y="57" width="74" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="boot6" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" focusRingType="none" imageScaling="proportionallyDown" inset="2" selectedItem="v2m-Hs-R3O" id="VwT-y2-7ny">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="keQ-8o-AiU">
+                                        <items>
+                                            <menuItem title="boot6" state="on" id="v2m-Hs-R3O"/>
+                                            <menuItem title="boot7" id="oOc-2T-rwc"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <imageView focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8sv-QN-08c">
+                                <rect key="frame" x="57" y="86" width="18" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="Dv2-W3-yLg"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" focusRingType="none" alignment="left" imageScaling="proportionallyDown" image="NSGoRightTemplate" id="ogH-JX-afV"/>
+                            </imageView>
+                            <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YVM-Rq-d7o">
+                                <rect key="frame" x="18" y="18" width="117" height="18"/>
+                                <buttonCell key="cell" type="check" title="AltBoot" bezelStyle="regularSquare" imagePosition="left" focusRingType="none" inset="2" id="rc0-N7-2xy">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="altBootPressed:" target="nXe-XS-4J0" id="9RM-4o-qWG"/>
+                                </connections>
+                            </button>
+                            <popUpButton focusRingType="none" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5aW-1v-mN2" customClass="FWPopUpButton" customModule="Clover" customModuleProvider="target">
+                                <rect key="frame" x="190" y="17" width="373" height="24"/>
+                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" focusRingType="none" imageScaling="proportionallyDown" inset="2" selectedItem="0Jk-9o-xwr" id="O9J-Cw-n1E">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="7w6-P9-EUu">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="0Jk-9o-xwr"/>
+                                            <menuItem title="Item 2" id="4pt-DA-Vl6"/>
+                                            <menuItem title="Item 3" id="sCy-bb-OOm"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="fixedWidth">
+                                        <real key="value" value="373"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="targetSelected:" target="nXe-XS-4J0" id="ESp-QR-KvM"/>
+                                </connections>
+                            </popUpButton>
+                            <imageView focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="btq-Z5-aMA">
+                                <rect key="frame" x="83" y="63" width="14" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="T06-ou-7G5"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" focusRingType="none" alignment="left" imageAlignment="top" imageScaling="proportionallyDown" image="NSGoRightTemplate" id="lrD-W0-5Dy"/>
+                            </imageView>
+                            <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uj1-kY-SjZ">
+                                <rect key="frame" x="590" y="13" width="76" height="29"/>
+                                <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="HOQ-B0-pLp">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="installPressed:" target="nXe-XS-4J0" id="EWS-5P-8Z5"/>
+                                </connections>
+                            </button>
+                            <scrollView focusRingType="none" borderType="line" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79D-mq-1Q0">
+                                <rect key="frame" x="192" y="45" width="468" height="97"/>
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="8sm-KK-eZG">
+                                    <rect key="frame" x="1" y="1" width="466" height="95"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="YES" allowsDocumentBackgroundColorChange="YES" smartInsertDelete="YES" id="Bqg-eK-Kf3">
+                                            <rect key="frame" x="0.0" y="0.0" width="466" height="95"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <size key="minSize" width="466" height="95"/>
+                                            <size key="maxSize" width="468" height="10000000"/>
+                                            <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        </textView>
+                                    </subviews>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Oja-xm-T1n">
+                                    <rect key="frame" x="-100" y="-100" width="225" height="15"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Twd-gm-jkD">
+                                    <rect key="frame" x="-100" y="-100" width="15" height="115"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                            <progressIndicator wantsLayer="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="utY-t0-82K">
+                                <rect key="frame" x="572" y="22" width="16" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="28n-Xb-apj"/>
+                                </constraints>
+                            </progressIndicator>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="uj1-kY-SjZ" firstAttribute="leading" secondItem="utY-t0-82K" secondAttribute="trailing" constant="8" symbolic="YES" id="0hX-eh-10D"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="bottom" secondItem="5aW-1v-mN2" secondAttribute="bottom" id="4bA-ef-7cG"/>
+                            <constraint firstItem="8sv-QN-08c" firstAttribute="top" secondItem="AVt-3S-p3r" secondAttribute="bottom" constant="9" id="5X5-m7-xEF"/>
+                            <constraint firstItem="btq-Z5-aMA" firstAttribute="top" secondItem="Ccr-sG-KVJ" secondAttribute="bottom" constant="9" id="79z-lG-snY"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="24J-OS-i5T" secondAttribute="trailing" constant="8" symbolic="YES" id="8Ov-BD-gVo"/>
+                            <constraint firstItem="uj1-kY-SjZ" firstAttribute="leading" secondItem="5aW-1v-mN2" secondAttribute="trailing" constant="36" id="9P5-DX-Drj"/>
+                            <constraint firstItem="AVt-3S-p3r" firstAttribute="trailing" secondItem="btq-Z5-aMA" secondAttribute="trailing" id="A7i-ZU-d4V"/>
+                            <constraint firstItem="6Mf-nc-9Pn" firstAttribute="trailing" secondItem="AVt-3S-p3r" secondAttribute="trailing" id="AR9-WP-pmb"/>
+                            <constraint firstItem="5aW-1v-mN2" firstAttribute="baseline" secondItem="uj1-kY-SjZ" secondAttribute="baseline" id="CLA-6V-44y"/>
+                            <constraint firstItem="79D-mq-1Q0" firstAttribute="leading" secondItem="5aW-1v-mN2" secondAttribute="leading" id="CYI-Gt-WVH"/>
+                            <constraint firstItem="AVt-3S-p3r" firstAttribute="top" secondItem="6Mf-nc-9Pn" secondAttribute="bottom" constant="12" id="Dqo-4M-e2L"/>
+                            <constraint firstItem="5aW-1v-mN2" firstAttribute="top" secondItem="79D-mq-1Q0" secondAttribute="bottom" constant="5" id="EGf-tZ-kAH"/>
+                            <constraint firstItem="Fda-eU-aq8" firstAttribute="trailing" secondItem="79D-mq-1Q0" secondAttribute="trailing" id="EVu-av-ZaU"/>
+                            <constraint firstItem="utY-t0-82K" firstAttribute="top" secondItem="79D-mq-1Q0" secondAttribute="bottom" constant="7" id="Fmv-e8-MAK"/>
+                            <constraint firstItem="YVM-Rq-d7o" firstAttribute="leading" secondItem="MgP-28-KzA" secondAttribute="leading" constant="20" symbolic="YES" id="HCc-tu-IGn"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="top" secondItem="Fda-eU-aq8" secondAttribute="top" id="Ix7-K0-6RD"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cd4-BN-85D" secondAttribute="trailing" constant="8" symbolic="YES" id="JHc-pQ-qkC"/>
+                            <constraint firstItem="8sv-QN-08c" firstAttribute="centerY" secondItem="79D-mq-1Q0" secondAttribute="centerY" id="Opf-D5-7Mt"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="7X1-9z-6MF" secondAttribute="trailing" constant="8" symbolic="YES" id="PPW-rH-7g3"/>
+                            <constraint firstItem="7X1-9z-6MF" firstAttribute="leading" secondItem="btq-Z5-aMA" secondAttribute="trailing" constant="4" id="QP9-KG-1Vm"/>
+                            <constraint firstItem="6Mf-nc-9Pn" firstAttribute="leading" secondItem="AVt-3S-p3r" secondAttribute="leading" id="Qew-dF-jYr"/>
+                            <constraint firstItem="utY-t0-82K" firstAttribute="centerY" secondItem="uj1-kY-SjZ" secondAttribute="centerY" constant="-1" id="Qey-Ze-8M0"/>
+                            <constraint firstItem="utY-t0-82K" firstAttribute="centerY" secondItem="5aW-1v-mN2" secondAttribute="centerY" id="RfE-AI-Ns9"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="Ccr-sG-KVJ" secondAttribute="trailing" constant="8" symbolic="YES" id="Vql-GP-C2h"/>
+                            <constraint firstItem="24J-OS-i5T" firstAttribute="leading" secondItem="MgP-28-KzA" secondAttribute="leading" constant="14" id="YoX-3Q-Hhg"/>
+                            <constraint firstItem="btq-Z5-aMA" firstAttribute="leading" secondItem="MgP-28-KzA" secondAttribute="leading" constant="83" id="Z2z-3q-k2j"/>
+                            <constraint firstItem="Fda-eU-aq8" firstAttribute="leading" secondItem="PD6-mW-VtD" secondAttribute="trailing" constant="13" id="aDu-vj-ofm"/>
+                            <constraint firstItem="YVM-Rq-d7o" firstAttribute="top" secondItem="7X1-9z-6MF" secondAttribute="bottom" constant="26" id="cBd-8y-Ltl"/>
+                            <constraint firstItem="24J-OS-i5T" firstAttribute="top" secondItem="PD6-mW-VtD" secondAttribute="top" id="cS3-aM-Gf5"/>
+                            <constraint firstItem="YVM-Rq-d7o" firstAttribute="bottom" secondItem="PD6-mW-VtD" secondAttribute="bottom" id="eI9-vv-DFe"/>
+                            <constraint firstItem="79D-mq-1Q0" firstAttribute="trailing" secondItem="uj1-kY-SjZ" secondAttribute="trailing" id="eLC-0t-5lr"/>
+                            <constraint firstItem="YVM-Rq-d7o" firstAttribute="top" secondItem="8sv-QN-08c" secondAttribute="bottom" constant="52" id="fTx-bC-egj"/>
+                            <constraint firstItem="Fda-eU-aq8" firstAttribute="leading" secondItem="79D-mq-1Q0" secondAttribute="leading" id="frU-vg-Amx"/>
+                            <constraint firstItem="79D-mq-1Q0" firstAttribute="top" secondItem="Fda-eU-aq8" secondAttribute="bottom" constant="8" symbolic="YES" id="jDU-Iw-tL2"/>
+                            <constraint firstAttribute="trailing" secondItem="Fda-eU-aq8" secondAttribute="trailing" constant="20" symbolic="YES" id="kCT-UQ-jdd"/>
+                            <constraint firstItem="6Mf-nc-9Pn" firstAttribute="top" secondItem="cd4-BN-85D" secondAttribute="bottom" constant="21" id="kZC-qu-hBO"/>
+                            <constraint firstItem="cd4-BN-85D" firstAttribute="top" secondItem="24J-OS-i5T" secondAttribute="bottom" constant="17" id="lNu-Mo-Mge"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="YVM-Rq-d7o" secondAttribute="trailing" constant="45" id="ora-L3-TSy"/>
+                            <constraint firstItem="cd4-BN-85D" firstAttribute="leading" secondItem="6Mf-nc-9Pn" secondAttribute="leading" id="pYV-pQ-Bj6"/>
+                            <constraint firstItem="8sv-QN-08c" firstAttribute="leading" secondItem="MgP-28-KzA" secondAttribute="leading" constant="57" id="q71-1M-ERT"/>
+                            <constraint firstItem="Ccr-sG-KVJ" firstAttribute="leading" secondItem="btq-Z5-aMA" secondAttribute="leading" id="rQe-qk-lKB"/>
+                            <constraint firstAttribute="bottom" secondItem="YVM-Rq-d7o" secondAttribute="bottom" constant="20" symbolic="YES" id="rcV-Gd-V2A"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="top" secondItem="MgP-28-KzA" secondAttribute="top" constant="12" symbolic="YES" id="sUW-5Z-cVV"/>
+                            <constraint firstItem="24J-OS-i5T" firstAttribute="leading" secondItem="cd4-BN-85D" secondAttribute="leading" id="uMe-dR-766"/>
+                            <constraint firstItem="Ccr-sG-KVJ" firstAttribute="leading" secondItem="8sv-QN-08c" secondAttribute="trailing" constant="8" symbolic="YES" id="x20-gq-RH4"/>
+                            <constraint firstItem="Ccr-sG-KVJ" firstAttribute="top" secondItem="AVt-3S-p3r" secondAttribute="bottom" constant="8" symbolic="YES" id="xH9-OH-t5Y"/>
+                            <constraint firstItem="btq-Z5-aMA" firstAttribute="centerY" secondItem="7X1-9z-6MF" secondAttribute="centerY" id="xQ0-gR-Sxd"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="altBootCheck" destination="YVM-Rq-d7o" id="5oJ-4B-MSX"/>
+                        <outlet property="boot0Pop" destination="AVt-3S-p3r" id="aW4-YZ-Nfd"/>
+                        <outlet property="boot1Field" destination="Ccr-sG-KVJ" id="RO1-7D-Cdm"/>
+                        <outlet property="boot2Pop" destination="7X1-9z-6MF" id="3on-R9-HMm"/>
+                        <outlet property="bootSectCheck" destination="6Mf-nc-9Pn" id="QUs-70-mV7"/>
+                        <outlet property="cloverEFICheck" destination="cd4-BN-85D" id="3ou-4p-r1j"/>
+                        <outlet property="driversCollection" destination="vA2-FJ-jih" id="GOH-vu-GEn"/>
+                        <outlet property="infoText" destination="Bqg-eK-Kf3" id="H56-Z0-K20"/>
+                        <outlet property="installButton" destination="uj1-kY-SjZ" id="dCe-Tp-xEk"/>
+                        <outlet property="spinner" destination="utY-t0-82K" id="uY2-Vz-eq0"/>
+                        <outlet property="targetPop" destination="5aW-1v-mN2" id="GkL-2F-dS1"/>
+                    </connections>
+                </viewController>
+                <customObject id="6NX-aT-dCH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-98" y="722.5"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="NSApplicationIcon" width="32" height="32"/>
+        <image name="NSGoRightTemplate" width="9" height="12"/>
+    </resources>
+</document>

@@ -1,0 +1,344 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		953B8DEE2370BB1A007E36E3 /* bdmesg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953B8DED2370BB1A007E36E3 /* bdmesg.swift */; };
+		953B8DF02370BB5D007E36E3 /* NVRAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953B8DEF2370BB5C007E36E3 /* NVRAM.swift */; };
+		953B8DF22370BF5B007E36E3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953B8DF12370BF5A007E36E3 /* Extensions.swift */; };
+		953D98872377094A003B369E /* Disks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953D98862377094A003B369E /* Disks.swift */; };
+		953DBFDF236F037400B0C4FB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DBFDE236F037400B0C4FB /* main.swift */; };
+		9546F0EB2376F94100A3D053 /* PowerObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 9546F0EA2376F94100A3D053 /* PowerObserver.m */; };
+		954FF20E2371B13C00C3D94C /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20D2371B13C00C3D94C /* DiskArbitration.framework */; };
+		954FF2102371B16300C3D94C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20F2371B16300C3D94C /* IOKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		953DBFD9236F037400B0C4FB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		953B8DED2370BB1A007E36E3 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = bdmesg.swift; path = ../../Clover/bdmesg.swift; sourceTree = "<group>"; };
+		953B8DEF2370BB5C007E36E3 /* NVRAM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NVRAM.swift; path = ../../Clover/NVRAM.swift; sourceTree = "<group>"; };
+		953B8DF12370BF5A007E36E3 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = ../../Clover/Extensions.swift; sourceTree = "<group>"; };
+		953D98862377094A003B369E /* Disks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Disks.swift; path = ../../Clover/Disks.swift; sourceTree = "<group>"; };
+		953DBFDB236F037400B0C4FB /* CloverDaemonNew */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverDaemonNew; sourceTree = BUILT_PRODUCTS_DIR; };
+		953DBFDE236F037400B0C4FB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		9546F0E82376F94100A3D053 /* CloverDaemonNew-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CloverDaemonNew-Bridging-Header.h"; sourceTree = "<group>"; };
+		9546F0E92376F94100A3D053 /* PowerObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PowerObserver.h; sourceTree = "<group>"; };
+		9546F0EA2376F94100A3D053 /* PowerObserver.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PowerObserver.m; sourceTree = "<group>"; };
+		954FF20D2371B13C00C3D94C /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		954FF20F2371B16300C3D94C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		953DBFD8236F037400B0C4FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				954FF20E2371B13C00C3D94C /* DiskArbitration.framework in Frameworks */,
+				954FF2102371B16300C3D94C /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		953DBFD2236F037400B0C4FB = {
+			isa = PBXGroup;
+			children = (
+				953DBFDD236F037400B0C4FB /* CloverDaemonNew */,
+				953DBFDC236F037400B0C4FB /* Products */,
+				954FF20C2371B13C00C3D94C /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		953DBFDC236F037400B0C4FB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				953DBFDB236F037400B0C4FB /* CloverDaemonNew */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		953DBFDD236F037400B0C4FB /* CloverDaemonNew */ = {
+			isa = PBXGroup;
+			children = (
+				953DBFDE236F037400B0C4FB /* main.swift */,
+				953D98862377094A003B369E /* Disks.swift */,
+				953B8DEF2370BB5C007E36E3 /* NVRAM.swift */,
+				953B8DED2370BB1A007E36E3 /* bdmesg.swift */,
+				953B8DF12370BF5A007E36E3 /* Extensions.swift */,
+				9546F0E92376F94100A3D053 /* PowerObserver.h */,
+				9546F0EA2376F94100A3D053 /* PowerObserver.m */,
+				9546F0E82376F94100A3D053 /* CloverDaemonNew-Bridging-Header.h */,
+			);
+			path = CloverDaemonNew;
+			sourceTree = "<group>";
+		};
+		954FF20C2371B13C00C3D94C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				954FF20F2371B16300C3D94C /* IOKit.framework */,
+				954FF20D2371B13C00C3D94C /* DiskArbitration.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		953DBFDA236F037400B0C4FB /* CloverDaemonNew */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 953DBFE2236F037400B0C4FB /* Build configuration list for PBXNativeTarget "CloverDaemonNew" */;
+			buildPhases = (
+				953DBFD7236F037400B0C4FB /* Sources */,
+				953DBFD8236F037400B0C4FB /* Frameworks */,
+				953DBFD9236F037400B0C4FB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CloverDaemonNew;
+			productName = cloverDaemonSwift;
+			productReference = 953DBFDB236F037400B0C4FB /* CloverDaemonNew */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		953DBFD3236F037400B0C4FB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1120;
+				LastUpgradeCheck = 1120;
+				ORGANIZATIONNAME = CloverHackyColor;
+				TargetAttributes = {
+					953DBFDA236F037400B0C4FB = {
+						CreatedOnToolsVersion = 11.2;
+						LastSwiftMigration = 1120;
+					};
+				};
+			};
+			buildConfigurationList = 953DBFD6236F037400B0C4FB /* Build configuration list for PBXProject "CloverDaemonNew" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 953DBFD2236F037400B0C4FB;
+			productRefGroup = 953DBFDC236F037400B0C4FB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				953DBFDA236F037400B0C4FB /* CloverDaemonNew */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		953DBFD7236F037400B0C4FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				953B8DF22370BF5B007E36E3 /* Extensions.swift in Sources */,
+				9546F0EB2376F94100A3D053 /* PowerObserver.m in Sources */,
+				953D98872377094A003B369E /* Disks.swift in Sources */,
+				953DBFDF236F037400B0C4FB /* main.swift in Sources */,
+				953B8DF02370BB5D007E36E3 /* NVRAM.swift in Sources */,
+				953B8DEE2370BB1A007E36E3 /* bdmesg.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		953DBFE0236F037400B0C4FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		953DBFE1236F037400B0C4FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		953DBFE3236F037400B0C4FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CloverDaemonNew/CloverDaemonNew-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		953DBFE4236F037400B0C4FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CloverDaemonNew/CloverDaemonNew-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		953DBFD6236F037400B0C4FB /* Build configuration list for PBXProject "CloverDaemonNew" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				953DBFE0236F037400B0C4FB /* Debug */,
+				953DBFE1236F037400B0C4FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		953DBFE2236F037400B0C4FB /* Build configuration list for PBXNativeTarget "CloverDaemonNew" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				953DBFE3236F037400B0C4FB /* Debug */,
+				953DBFE4236F037400B0C4FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 953DBFD3236F037400B0C4FB /* Project object */;
+}
