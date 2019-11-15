@@ -111,23 +111,25 @@ static hda_controller_devices know_hda_controller[] = {
   { HDA_NVIDIA_MCP89_2,  "MCP89" /*, 0, 0 */ },
   { HDA_NVIDIA_MCP89_3,  "MCP89" /*, 0, 0 */ },
   { HDA_NVIDIA_MCP89_4,  "MCP89" /*, 0, 0 */ },
-  { HDA_NVIDIA_0BE2,  "(0x0be2)" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_0BE3,  "(0x0be3)" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_0BE4,  "(0x0be4)" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_GT100,  "GT100" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_GT104,  "GT104" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_GT106,  "GT106" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_GT108,  "GT108" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_GT116,  "GT116" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GT216,  "GT216" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GT218,  "GT218" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GT215,  "GT215" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF100,  "GF100" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF104,  "GF104" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF106,  "GF106" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF108,  "GF108" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF116,  "GF116" /*, 0, HDAC_QUIRK_MSI */ },
   { HDA_NVIDIA_GF119,  "GF119" /*, 0, 0 */ },
-  { HDA_NVIDIA_GF110_1,  "GF110" /*, 0, HDAC_QUIRK_MSI */ },
-  { HDA_NVIDIA_GF110_2,  "GF110" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF110,  "GF110" /*, 0, HDAC_QUIRK_MSI */ },
+  { HDA_NVIDIA_GF114,  "GF114" /*, 0, HDAC_QUIRK_MSI */ },
   { HDA_NVIDIA_GK110,  "GK110" /*, 0, ? */ },
   { HDA_NVIDIA_GK106,  "GK106" /*, 0, ? */ },
   { HDA_NVIDIA_GK107,  "GK107" /*, 0, ? */ },
   { HDA_NVIDIA_GK104,  "GK104" /*, 0, ? */ },
-  { HDA_NVIDIA_GP104_2, "Pascal GP104-200" /*, 0, ? */ },
-  { HDA_NVIDIA_GM204_2, "Maxwell GP204-200" /*, 0, ? */ },
+  { HDA_NVIDIA_GK208,  "GK208" /*, 0, ? */ },
+  { HDA_NVIDIA_GP104,  "GP104" /*, 0, ? */ },
+  { HDA_NVIDIA_GM204,  "GM204" /*, 0, ? */ },
+  { HDA_NVIDIA_TU106,  "TU106" /*, 0, ? */ },
 
   //1002  Advanced Micro Devices [AMD] nee ATI Technologies Inc
   { HDA_ATI_SB450,  "SB4x0" /*, 0, 0 */ },
@@ -572,13 +574,13 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
   switch (controller_vendor_id)
   {
     case VEN_ATI_ID:
-      name_format = "ATI %a HDA Controller (HDMi)"; break;
+      name_format = "ATI %a HDA Controller (HDMi/DP)"; break;
 
     case VEN_INTEL_ID:
       name_format = "Intel %a HDA Controller"; break;
 
     case VEN_NVIDIA_ID:
-      name_format = "Nvidia %a HDA Controller (HDMi)"; break;
+      name_format = "Nvidia %a HDA Controller (HDMi/DP)"; break;
 
     case VEN_RDC_ID:
       name_format = "RDC %a HDA Controller"; break;

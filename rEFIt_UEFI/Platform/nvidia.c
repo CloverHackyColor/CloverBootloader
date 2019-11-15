@@ -1434,10 +1434,10 @@ static nvidia_pci_info_t nvidia_card_generic[] = {
   //  { 0x10DE1C80,  "Graphics Device" }, // GP107
   { 0x10DE1C81,  "GeForce GTX 1050" }, // GP107
   { 0x10DE1C82,  "GeForce GTX 1050 Ti"}, // GP107
-  // 1D00 - 1EFFF
   { 0x10DE1D01,  "GeForce GTX 1030"}, // family 138
   { 0x10DE1D10,  "GeForce MX150"},
-
+  { 0x10DE1F06,  "GeForce RTX 2060 SUPER" }, // TU106
+  // 2000 - 1EFFF
 };
 
 static nvidia_card_info_t nvidia_card_exceptions[] = {

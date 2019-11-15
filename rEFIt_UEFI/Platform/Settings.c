@@ -7087,7 +7087,7 @@ GetDevices ()
               gfx->Mmio   = (UINT8*)(UINTN)(Bar0 & ~0x0f);
               //DBG ("BAR: 0x%p\n", Mmio);
               // get card type
-              gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x3ff;
+              gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x1ff;
               UFamily = gfx->Family & 0x1F0;
               if ((UFamily == NV_ARCH_KEPLER1) ||
                   (UFamily == NV_ARCH_KEPLER2) ||
@@ -7102,8 +7102,14 @@ GetDevices ()
                        (UFamily == NV_ARCH_MAXWELL2)) {
                 CardFamily = "Maxwell";
               }
-              else if (UFamily == NV_ARCH_PASCAL){
+              else if (UFamily == NV_ARCH_PASCAL) {
                 CardFamily = "Pascal";
+              }
+              else if (UFamily == NV_ARCH_VOLTA) {
+                CardFamily = "Volta";
+              }
+              else if (UFamily == NV_ARCH_TURING) {
+                CardFamily = "Turing";
               }
               else if ((UFamily >= NV_ARCH_TESLA) && (UFamily < 0xB0)) { //not sure if 0xB0 is Tesla or Fermi
                 CardFamily = "Tesla";
