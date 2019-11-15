@@ -5985,6 +5985,9 @@ GetUserSettings(
           gSettings.TrustSMBIOS = TRUE;
         }
       }
+      Prop = GetProperty(DictPointer, "MemoryRank");
+      gSettings.Attribute = GetPropertyInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
+
       // Inject memory tables into SMBIOS
       Prop = GetProperty (DictPointer, "Memory");
       if (Prop != NULL){

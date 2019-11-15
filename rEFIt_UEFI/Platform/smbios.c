@@ -1227,6 +1227,9 @@ VOID GetTableType17()
     if (SmbiosTable.Type17->Size > 0) {
       gRAM.SMBIOS[Index].InUse = TRUE;
       gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
+      if (SmbiosTable.Type17->Size == 0x7FFF) {
+        gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->ExtendedSize;
+      }
     }
     // Determine if module frequency is sane value
     if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
@@ -1668,6 +1671,9 @@ VOID PatchTableType17()
       //      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
+    if (gSettings.Attribute != -1) {
+      newSmbiosTable.Type17->Attributes = gSettings.Attribute;
+    }
     mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
   }
   if (mTotalSystemMemory > 0) {

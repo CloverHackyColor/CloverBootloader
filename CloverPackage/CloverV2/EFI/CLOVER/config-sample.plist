@@ -989,6 +989,8 @@
 		<string>MacBook1,1</string>
 		<key>#LocationInChassis</key>
 		<string>MLB</string>
+    <key>#MemoryRank</key>
+    <integer>2</integer>
 		<key>#Memory</key>
 		<dict>
 			<key>Modules</key>
