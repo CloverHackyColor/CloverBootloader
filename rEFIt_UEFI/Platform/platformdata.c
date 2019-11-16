@@ -39,6 +39,41 @@ typedef struct
   UINT32 smcConfig;
 } PLATFORMDATA;
 
+//--------------------------
+/* AppleGraphicsDevicePolicy.kext in 10.14.6 contains follow board-id to choose from graphics config
+ none:
+ Mac-00BE6ED71E35EB86 iMac13,1
+ Mac-27ADBB7B4CEE8E61 iMac14,2
+ Mac-4B7AC7E43945597E MacBookPro9,1
+ Mac-77EB7D7DAF985301 iMac14,3
+ Mac-C3EC7CD22292981F MacBookPro10,1
+ Mac-C9CF552659EA9913
+ Mac-FC02E91DDD3FA6A4 iMac13,2
+ 
+ GFX1 only
+ Mac-F60DEB81FF30ACF6 MacPro6,1
+ 
+ GFX0 only
+ Mac-031B6874CF7F642A iMac14,1
+ Mac-42FD25EABCABB274 iMac15,1
+ Mac-65CE76090165799A iMac17,1
+ Mac-81E3E92DD6088272 iMac14,4
+ Mac-B809C3757DA9BB8D iMac17,1
+ Mac-DB15BD556843C820 iMac17,1
+ Mac-FA842E06C61E91C5 iMac15,1
+ 
+ GFX0+IGPU
+ Mac-63001698E7A34814 iMac19,2
+ Mac-77F17D7DA9285301 iMac18,2
+ Mac-AA95B1DDAB278B95 iMac19,1
+ Mac-BE088AF8C5EB4FA2 iMac18,3
+ 
+ GFX0+IGPU+display
+ Mac-7BA5B2D9E42DDD94 iMacPro1,1
+ 
+ */
+//--------------------------
+
 PLATFORMDATA ApplePlatformData[] =
 {
   //MacBook1,1 / MacBook (13-inch)
