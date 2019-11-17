@@ -1,0 +1,163 @@
+/*
+  Clover.app
+
+  Created by vector sigma on 27/10/2019.
+  Copyright © 2019 CloverHackyColor. All rights reserved.
+*/
+
+/*
+ Hi, some of the views are set to have a fixed width, but other may automatically
+ enlarge the affecting view, so please consider to translate this file keeping in mind this.
+ */
+
+/* top bar menu */
+"N/A" = "N/V"; // not available (please be short)
+"Install Clover" = "Instalirajte Clover";
+"Current Clover revision" = "Trenutna verzija Clover-a";
+"Boot device" = "Uređaj za podizanje sastava";
+"config path:" = "Putanja za konfiguraciju:";
+
+"Clover wants to mount %@" = "Clover želi %@ mount";
+"Clover wants to umount %@" = "Clover želi %@ unmount";
+"Mount" = "Mount";
+"umount" = "Unmount";
+"mount point" = "mount point";
+
+"true" = "tačno";
+"false" = "Lažno";
+
+"Theme:" = "Tema:";
+"Sound:" = "Zvuk:";
+"*Make filesystem read-write" = "*Filesystem čine čitanje-Pisanje";
+"*Disable Sleep Proxy Client" = "*Sleep Proxy Client deaktiviran";
+"*Require CloverDaemon" = "*Tražiti CloverDaemon";
+"Read daemon log" = " Čitanje Daemon log";
+"Read bdmesg" = " Čitanje Boot log";
+
+"Install CloverDaemonNew" = "Instalirati CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "Deinstalirati CloverDaemonNew";
+
+"Update" = "Ažuriranje";
+"Update to r%d" = "Ažurirati Verziju r%d Aktuelnu"; // "Update to r5101"
+"Check update:" = "Proveriti trenutnu verziju:";
+"Check now" = "Proveriti sada";
+
+"never" = "Nikada";
+"daily" = "Dnevno";
+"weekly" = "Nedeljno";
+"monthly" = "Mesečno";
+"last checked:" = "Poslednja proverat:"; // last date update was checked. Please be short.
+
+"Run at login" = "Pokrenuti pri prijavi";
+"Close" = "Zatvoriti"; // Close the Clover.app
+
+/* Installer */
+"Clover Installer" = "Clover Instalacija";
+"Select a disk.." = "Selektuj disk..";
+"Install" = "Instaliraj";
+"Uninstall" = "Deinstaliraj";
+"AltBoot" = "AltBoot";
+
+/* Drivers */
+"UEFI mandatory" = "UEFI mandatory";
+"BIOS mandatory" = "BIOS mandatory";
+"UEFI/Other" = "UEFI/Other";
+"BIOS/Other" = "BIOS/Other";
+"UEFI, but not from this installer" = "UEFI, ali ne sa ovog instalera";
+"BIOS, but not from this installer" = "BIOS, ali ne sa ovog instalera";
+
+"UEFI/FileSystem" = "UEFI, Filesystem";
+"BIOS/FileSystem" = "BIOS, Filesystem";
+
+"UEFI/HID" = "UEFI, Human Interface Uređaj";
+"BIOS/HID" = "BIOS, Human Interface Uređaj";
+
+"UEFI/FileVault2" = "UEFI, FileVault 2 Uređaj";
+"BIOS/FileVault2" = "BIOS, FileVault 2 Uređaj";
+
+"UEFI/MemoryFix" = "UEFI, Popravka Memorijskog Uređaj";
+
+"ApfsDriverLoader.efi" = "Podržava APFS Filesystem za =>macOS 10.13 Containern";
+
+"AppleImageCodec.efi" = "Dekodira PNG und BMP za FileVault2.";
+
+"AppleImageLoader.efi" = "Osigurajte AppleEfiFat binarni upravljački program s implementacijom AppleLoadImage protokola i provjerom potpisa EfiBinary.";
+
+"AppleKeyAggregator.efi" = "Podrška za boot UI dijalog za FileVault2.";
+
+"AppleKeyFeeder.efi" = "PS/2 Tastatura Podrška za korišćenje FileVault 2.";
+
+"AppleUISupport.efi" = "Podrška za protokol EfiLoginUi za FileVault.";
+
+"AppleUITheme.efi" = "Stvaranje UI Themes Boot podrške za FileVault2.";
+
+"AptioInputFix.efi" = "Drajver za pomoć kod problema sa UEFI firmware kod AMI Aptio.";
+
+"AptioMemoryFix.efi" = "Trenutno se preporučuje 64-bitni upravljački program za rešavanje problema s memorijom u UEFI firmware-u AMI Aptio. Ovaj upravljački program NE sme da se koristiti s drugim upravljačkim programima AptioFix.";
+
+"AudioDxe.efi" = "HDA Dajver koji podržava zvuki pri pokretanju.
+Konfigurisanje zvuka pokretanja putem izbornika Option, uključujući:
+Glasnoća i audio uređaj (samo za podržane audio uređaje).";
+
+"FirmwareVolume.efi" = "Stvara volumen firmvera sa slikama kursora za FileVault2.";
+
+"FSInject.efi" = "Omogućuje integraciju proširenja kernela spremljenih u mapi Clover.";
+
+"GrubEXFAT.efi" = "Upravljački program za datotečni sistem ExFAT.";
+
+"GrubISO9660.efi" = "Upravljački program za datoteku sistema ISO9600.";
+
+"GrubNTFS.efi" = "Upravljački program za NTFS datoteku sistema.";
+
+"GrubUDF.efi" = "Upravljački program za UDF datoteku sistema.";
+
+"SMCHelper.efi" = "Vraćanje NVRAM SMC ključa pomoću FakeSMC.";
+
+"XhciDxe.efi" = "USB 3.0 Podrška";
+
+"AppleEvent.uefi" = "Stvara AppleEvent Protokol za FileVault2.";
+
+"AppleGraphicsConfig.uefi" = "Stvaranje opcionalnog AppleGraphicsConfig Protokola.";
+
+"CsmVideoDxe.efi" = "64-bitni upravljački program za Clovers GUI omogućava vam više rezolucija. Na osnovu CSM modula UEFI biosa, CSM se tamo mora aktivirati. Clover se možda neće pokrenuti, mogu nastati i problemi s buđenjem sistema..
+Molimo vas poduzmite mere predostrožnosti.";
+
+"DataHubDxe.efi" = "Podrška za protokol Essential DataHub za macOS.
+Obično su već dostupni, ali ponekad nedostaju. U tom slučaju trebali biste vidjeti poruku o pogrešci.";
+
+"EmuVariableUefi.efi" = "Zaustavljanje za pripremu UEFI varijabli bez postojećeg UEFI. 64-bitni upravljački program za podršku NVRAM varijabli koje zahtijeva macOS. Većinu vremena UEFI dizanje koristi hardverski NVRAM, ali u nekoliko slučajeva je ovaj driajver potreban.
+Ovaj upravljački program koristite samo ako postoje problemi bez njega.";
+
+"EnglishDxe.efi" = "Podrška za Unicode Collation protokol za EFI Shell ne bi trebala postojati u UEFI.";
+
+"Fat.efi" = "Upravljački program za FAT datoteku sistema.";
+
+"HashServiceFix.efi" = "Pruža hash podršku ako nijedna nije prisutna u rodnom UEFI BIOS-u.";
+
+"HFSPlus.efi" = "Alternativni drajver za HFS + datoteka sistema.";
+
+"NvmExpressDxe.efi" = "Drajver za podršku NVM Express uređaje.";
+
+"OsxAptioFix3Drv.efi" = "Alternativni drajver (v3) za rešavanje problema s memorijom u UEFI firmveru. Ovaj upravljački program NE sme se koristiti s drugim upravljačkim programima AptioFix.";
+
+"OsxAptioFixDrv.efi" = "Stari upravljački program za ispravljanje problema s memorijom softvera UEFI, kao što je u AMI Aptio. Ovaj upravljački program NE sme se koristiti s drugim upravljačkim programima AptioFix.";
+
+"OsxFatBinaryDrv.efi" = "Upravljački program za podršku FAT Binary izvršnih datoteka za macOS 10.9 i starije verzije.";
+
+"OsxLowMemFixDrv.efi" = "Jednostavna verzija OsxAptioFixDrv, 64bit. ! Nikada ne koristite ovaj upravljački program s drugim AptioFix upravljačkim programima !";
+
+"PartitionDxe.efi" = "64-bitni upravljački program koji podržava neobične tablice particija, kao što su GPT / MBR ili Apple particijska mapa.";
+
+"Ps2MouseDxe.efi" = "Podrška PS/2 Maus, 64bit";
+
+"UsbKbDxe.efi" = "Upravljački program za podršku tastature u korisničko sučelje tokom pokretanja.";
+
+"UsbMouseDxe.efi" = "Drajver za USB miš, 64bit";
+
+"VBoxExt2.efi" = "Upravljački program za datoteku sistema ext2 / 3 iz VirtualBox-a, 64bit";
+
+"VBoxExt4.efi" = "Upravljački program za datoteku sistema ext4 iz VirtualBoxa, 64bit";
+
+"VBoxHfs.efi" = "Upravljački program za HFS + datoteku sistema.";
+
+"VBoxIso9600.efi" = "Upravljački program za ISO 9600 datoteku sistema.";

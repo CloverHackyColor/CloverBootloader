@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerPowerNotifications;
 - (void)powerDidReceiveMessage:(natural_t)type argument:(void *)argument;
 
-- (void)removeNVRAMPlist;
+- (void)readAndCleanConflictingsKeys;
 @end
 
 NS_ASSUME_NONNULL_END

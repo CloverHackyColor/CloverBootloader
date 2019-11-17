@@ -962,6 +962,7 @@ class InstallerViewController: NSViewController {
     Cloverapp.setValue(Cloverv2Path, forKey: "CloverV2")
     let filesystem = (getFS(from: disk)?.lowercased()) ?? kNotAvailable
     Cloverapp.setValue(filesystem, forKey: "filesystem")
+ 
     
     // drivers
     for sect in self.driversUEFI {

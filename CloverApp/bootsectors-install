@@ -5,25 +5,26 @@
 
 cd /tmp
 
-journaled=0
+boot1install="/tmp/boot1-install" # must be there
 
-disk="${1}"
-filesystem="${2}"
-partition_scheme="${3}"
-boot0="/tmp/${4}"
-boot1="/tmp/${5}"
+# arguments
+disk="${1}"             # disk0s1
+filesystem="${2}"       # fat32, hfs, exfat
+partition_scheme="${3}" # FDisk_partition_scheme, GUID_partition_scheme
+boot0="/tmp/${4}"       # /tmp/boot0af, /tmp/boot0ss
+boot1="/tmp/${5}"       # /tmp/boot1h, /tmp/boot1f32, /tmp/boot1x etc.
 
 bootdev="/dev/${disk}"
 bootrdev=${bootdev/disk/rdisk}
-
 bootdisk="${bootdev%s*}"
 bootrdisk="${bootdisk/disk/rdisk}"
 bootslice="${bootdev#*disk*s}"
 
-boot1install="/tmp/boot1-install"
+keepmounted=0
+journaled=0
 
 echo
-echo "Installing boot sectors (version of Wed 6 2019, 12:03)"
+echo "Installing boot sectors (version of Sun 17 2019, 12:14)"
 echo
 echo "disk:       ${disk}"
 echo "bootdev:    ${bootdev}"
@@ -35,8 +36,8 @@ echo "filesystem: ${filesystem}"
 echo "partition_scheme: ${partition_scheme}"
 echo
 
-if [[ "$disk" != disk* ]]; then
-  echo "Error: target disk not specified."
+if [[ "$disk" != disk*s* ]]; then
+  echo "Error: target disk not specified or not in the correct format as diskXsY."
   exit 1
 fi
 
@@ -54,20 +55,31 @@ if [ "${filesystem}" != fat32 ] && \
   exit 1
 fi
 
-if [[ ! -f "${boot0}" ]] || [[ ! -f "${boot1}" ]]; then
-  echo "Error: cannot found boot sectors."
+if [[ ! -f "${boot0}" ]]; then
+  echo "Error: cannot found /tmp/boot0[af-ss] sector."
+  exit 1
+fi
+
+if [[ ! -f "${boot1}" ]]; then
+  echo "Error: cannot found /tmp/boot1[1f32-h-x] sector."
   exit 1
 fi
 
 if [[ ! -f "${boot1install}" ]]; then
-  echo "Error: cannot found boot1-install."
+  echo "Error: cannot found /tmp/boot1-install."
   exit 1
 fi
 
 chmod +x "${boot1install}"
 
+rootdisk=$(LC_ALL=C diskutil info / | grep -i 'device identifier:' | awk '{print $NF}')
+
+if [[ "${rootdisk}" == "${disk}" ]]; then
+  keepmounted=1
+fi
+
 echo
-diskutil list
+LC_ALL=C diskutil list
 echo
 
 # hfs can cause a panic writing boot sectors if journaled
@@ -77,14 +89,15 @@ echo
 # panic("jnl: end_tr: !!!DANGER!!! bp %p flags (0x%x) not LOCKED & DELWRI\n", bp, buf_flags(bp));
 
 # fix? disable the journal (will be reactivated later)
-if [[ $(LC_ALL=C diskutil info "${disk}" | grep 'File System Personality:') == *ournaled* ]]; then
+if [[ $(LC_ALL=C diskutil info "${disk}" | grep -i 'file system personality:') == *ournaled* ]]; then
   diskutil disableJournal "${disk}"
   journaled=1
 fi
 
 # Try to unmount the partition first
 mnt_pt=$(LC_ALL=C mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
-if [[ -n "$mnt_pt" ]]; then
+if [[ $keepmounted -eq 0 ]]; then
+  if [[ -n "$mnt_pt" ]]; then
     # Try to umount the partition with umount
     umount $bootdev 2>/dev/null
     if [[ $? -ne 0 ]]; then
@@ -92,6 +105,7 @@ if [[ -n "$mnt_pt" ]]; then
         diskutil unmount $bootdev 2>/dev/null
         [[ $? -ne 0 ]] && mnt_pt=''
     fi
+  fi
 fi
 
 ### Stage 0 ###
@@ -105,47 +119,15 @@ dd if="${boot0}" of=/tmp/CloverNewMBR bs=440 count=1 conv=notrunc
 echo "Executing: fdisk -f /tmp/CloverNewMBR -u -y ${bootrdisk}"
 fdisk -f /tmp/CloverNewMBR -u -y "${bootrdisk}"
 
-
-if [[ ${filesystem} = "hfs" ]]; then
-    echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
-    echo "File system is HFS."
-    echo "Executing: dd if=${boot1} of=${bootrdev}"
-    dd if="${boot1}" of="${bootrdev}"
-
-elif [[ ${filesystem} = "fat32" ]]; then
-    echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
-
-    # copy partition boot sector to CloverOrigPBR
-    echo "Executing: dd if=${bootrdev} count=1 bs=512 of=/tmp/CloverOrigPBR"
-    dd if="${bootrdev}" count=1 bs=512 of=/tmp/CloverOrigPBR
-
-    if [[ -n $(cat /tmp/CloverOrigPBR | grep FAT16) ]]; then
-      echo "boot volume format is FAT16"
-      echo "No Stage1 was written"
-    else
-      echo "boot volume format is FAT32"
-      # copy boot1f32 to CloverNewPBR
-      echo "Executing: cp ${boot1} /tmp/CloverNewPBR"
-      cp -f "${boot1}" /tmp/CloverNewPBR
-
-      # "merge" CloverOrigPBR into CloverNewPBR
-      echo "Executing: dd if=/tmp/CloverOrigPBR of=/tmp/CloverNewPBR skip=3 seek=3 bs=1 count=87 conv=notrunc"
-      dd if=/tmp/CloverOrigPBR of=/tmp/CloverNewPBR skip=3 seek=3 bs=1 count=87 conv=notrunc
-
-      # write CloverNewPBR to the partition boot sector
-      echo "Executing: dd if=/tmp/CloverNewPBR of=${bootrdev}"
-      dd if=/tmp/CloverNewPBR count=1 bs=512 of="${bootrdev}"
-    fi
-elif [[ ${filesystem} = "exfat" ]]; then
-    echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
-    echo "File system is ExFat."
-    echo "Executing: $boot1install -y -f ${boot1} ${bootrdev}"
-    "$boot1install" -y -f "${boot1}" "${bootrdev}"
+### Stage 1 ###
+echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
+if [[ $keepmounted -eq 0 ]]; then
+  echo "Executing: boot1-install -y -f -M "${boot1}" "${bootrdev}"
+  "$boot1install" -y -f -M "${boot1}" "${bootrdev}"
 else
-    echo "Unknown boot volume format: $filesystem"
-    echo "No Stage1 was written"
+  echo "Executing: boot1-install -y -f "${boot1}" "${bootrdev}"
+  "$boot1install" -y -f "${boot1}" "${bootrdev}"
 fi
-
 
 # Now try to remount the partition
 if [[ -n "$mnt_pt" ]]; then

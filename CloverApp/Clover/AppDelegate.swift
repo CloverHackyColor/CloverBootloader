@@ -8,6 +8,8 @@
 
 import Cocoa
 
+// MARK: NSApplication shared delegate
+let AppSD = NSApplication.shared.delegate as! AppDelegate
 let localeBundle = Bundle(path: Bundle.main.sharedSupportPath! + "/Lang.bundle")
 
 @NSApplicationMain

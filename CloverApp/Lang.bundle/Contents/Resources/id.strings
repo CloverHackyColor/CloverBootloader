@@ -12,13 +12,13 @@
 
 /* top bar menu */
 "N/A" = "N/D"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot device" = "Boot Device";
-"config path:" = "config path:";
+"Install Clover" = "Pasang Clover";
+"Current Clover revision" = "Revisi Clover Terkini";
+"Boot device" = "Device Boot";
+"config path:" = "Lokasi config:";
 
-"Clover wants to mount %@" = "Clover wants to mount %@";
-"Clover wants to umount %@" = "Clover wants to umount %@";
+"Clover wants to mount %@" = "Clover ingin mount %@";
+"Clover wants to umount %@" = "Clover ingin umount %@";
 "Mount" = "Mount";
 "umount" = "umount";
 "mount point" = "mount point";
@@ -28,136 +28,131 @@
 
 "Theme:" = "Theme:";
 "Sound:" = "Sound:";
-"*Make filesystem read-write" = "*Make filesystem read-write";
-"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
-"*Require CloverDaemon" = "*Require CloverDaemon";
-"Read daemon log" = "Read daemon log";
-"Read bdmesg" = "Read boot log";
+"*Make filesystem read-write" = "*Jadikan FileSystem Read-Write";
+"*Disable Sleep Proxy Client" = "*Tiadakan Sleep Proxy Client";
+"*Require CloverDaemon" = "*Butuh CloverDaemon";
+"Read daemon log" = "Baca daemon log";
+"Read bdmesg" = "Baca boot log";
 
-"Install CloverDaemonNew" = "Install CloverDaemonNew";
-"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+"Install CloverDaemonNew" = "Pasang CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "Copot CloverDaemonNew";
 
-"Update" = "Update";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
-"Check update:" = "Check update:";
-"Check now" = "Check now";
+"Update" = "Perbarui";
+"Update to r%d" = "Perbarui ke r%d"; // "Update to r5101"
+"Check update:" = "Periksa Pembaruan:";
+"Check now" = "Periksa Sekarang";
 
-"never" = "never";
-"daily" = "daily";
-"weekly" = "weekly";
-"monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"never" = "Tak Pernah";
+"daily" = "Harian";
+"weekly" = "Mingguan";
+"monthly" = "Bulanan";
+"last checked:" = "Terakhir Periksa:"; // last date update was checked. Please be short.
 
-"Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Run at login" = "Jalankan saat Login";
+"Close" = "Tutup"; // Close the Clover.app
 
 /* Installer */
-"Clover Installer" = "Clover Installer";
-"Select a disk.." = "Select a disk..";
-"Install" = "Install";
-"Uninstall" = "Uninstall";
-"AltBoot" = "Alternative boot";
+"Clover Installer" = "Installer Clover";
+"Select a disk.." = "Pilih Disk..";
+"Install" = "Pasang";
+"Uninstall" = "Copot";
+"AltBoot" = "Boot Alternatif";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI mandatory";
-"BIOS mandatory" = "BIOS mandatory";
-"UEFI/Other" = "UEFI/Other";
-"BIOS/Other" = "BIOS/Other";
-"UEFI, but not from this installer" = "UEFI, but not from this installer";
-"BIOS, but not from this installer" = "BIOS, but not from this installer";
+"UEFI mandatory" = "Penting bagi UEFI";
+"BIOS mandatory" = "Penting bagi BIOS";
+"UEFI/Other" = "UEFI (Tambahan)";
+"BIOS/Other" = "BIOS (Tambahan)";
+"UEFI, but not from this installer" = "UEFI, dari sumber lain";
+"BIOS, but not from this installer" = "BIOS, dari sumber lain";
 
-"UEFI/FileSystem" = "UEFI, filesystem drivers";
-"BIOS/FileSystem" = "BIOS, filesystem drivers";
+"UEFI/FileSystem" = "UEFI, drivers File System";
+"BIOS/FileSystem" = "BIOS, drivers File System";
 
-"UEFI/HID" = "UEFI, Human Interface Devices";
-"BIOS/HID" = "BIOS, Human Interface Devices";
+"UEFI/HID" = "UEFI, drivers Perangkat HID";
+"BIOS/HID" = "BIOS, drivers Perangkat HID";
 
-"UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
-"BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
+"UEFI/FileVault2" = "UEFI, drivers FileVault2";
+"BIOS/FileVault2" = "BIOS, drivers FileVault2";
 
-"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+"UEFI/MemoryFix" = "UEFI, drivers Memory Fix";
 
-"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+"ApfsDriverLoader.efi" = "Driver untuk memuat File System APFS dari Container bagi macOS 10.13 atau yang lebih baru.";
 
-"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+"AppleImageCodec.efi" = "Untuk decode gambar PNG dan BMP pada UI Boot.";
 
-"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleImageLoader.efi" = "Mengamankan binary driver AppleEfiFat menggunakan implementasi protokol AppleLoadImage dengan verifikasi signature EfiBinary.";
 
-"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+"AppleKeyAggregator.efi" = "Dukungan bagi Dialog UI Boot untuk FileVault2.";
 
-"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+"AppleKeyFeeder.efi" = "Dukungan Keyboard PS/2 untuk digunakan dengan FileVault2.";
 
-"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUISupport.efi" = "Rangkaian protokol untuk mendukung EfiLoginUi bagi FileVault2.";
 
-"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+"AppleUITheme.efi" = "Mendukung Themes UI saat boot.";
 
-"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioInputFix.efi" = "Driver untuk membenahi masalah Input pada firmware UEFI, misalnya AMI Aptio.";
 
-"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"AptioMemoryFix.efi" = "Driver pilihan untuk membenahi masalah Memori pada firmware UEFI, misalnya AMI Aptio. Firmware lainnya mungkin juga kompatibel.";
 
-"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
-Configure it via Startup sound output from Option menu, including:
-Volume and Audio device (for supported IOAudio devices only).";
+"AudioDxe.efi" = "Driver HDA untuk memainkan Startup Sound ketika Boot. Atur terlebih dahulu perangkat dan Volume Audio melalui Startup sound output yang ada di menu Options. Tidak semua perangkat IOAudio didukung, butuh NVRAM aktif.";
 
-"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+"FirmwareVolume.efi" = "Membuat FirmwareVolume dengan gambar cursor untuk FileVault2.";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "Menyediakan injeksi kexts dari folder CLOVER.";
 
-"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+"GrubEXFAT.efi" = "Driver File System ExFAT dari GRUB.";
 
-"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+"GrubISO9660.efi" = "Driver File System ISO9600 dari GRUB.";
 
-"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+"GrubNTFS.efi" = "Driver File System NTFS dari GRUB.";
 
-"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+"GrubUDF.efi" = "Driver File System UDF dari GRUB.";
 
-"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+"SMCHelper.efi" = "Memulihkan keys FakeSMC dari NVRAM";
 
-"XhciDxe.efi" = "USB 3.0 driver";
+"XhciDxe.efi" = "Driver USB 3.0";
 
-"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+"AppleEvent.uefi" = "Membuat protokol AppleEvent untuk FileVault2.";
 
-"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+"AppleGraphicsConfig.uefi" = "Membuat protokol AppleGraphicsConfig opsional.";
 
-"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
-Clover may not started with it and you may have wake problem in system. Use with precautions.";
+"CsmVideoDxe.efi" = "Driver video untuk GUI Clover yang mendukung lebih banyak resolusi. Bergantung modul CSM di UEFI BIOS, sehingga ia menjadi enabled. Ini bisa berakibat Clover gagal Boot dan Wake di sistem bermasalah. Gunakan dengan hati-hati.";
 
-"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
-Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"DataHubDxe.efi" = "Dukungan protokol DataHub yang dibutuhkan oleh MacOS. Biasanya sudah tersedia namun kadang-kadang hilang. Jika terlewatkan, maka akan muncul peringatan di layar.";
 
-"EmuVariableUefi.efi" = "Workaround for store NVRAM variables for systems without UEFI hardware.
-Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+"EmuVariableUefi.efi" = "Solusi masalah penyimpanan variabel NVRAM di Sistem tanpa perangkat UEFI. Biasanya UEFI boot memakai NVRAM dari perangkat, namun dalam kasus tertentu driver ini tetap dibutuhkan. Gunakan (hanya) jika tanpa memakainya, Anda menemui kendala.";
 
-"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"EnglishDxe.efi" = "Dukungan protokol UnicodeCollation bagi EFI Shell jika firmware UEFI tidak menyediakan.";
 
-"Fat.efi" = "FAT filesystem driver.";
+"Fat.efi" = "Driver File System FAT.";
 
-"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+"HashServiceFix.efi" = "Mendukung Hash jika firmware UEFI native tidak menyediakan.";
 
-"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+"HFSPlus.efi" = "Driver File System HFS+ (versi alternatif).";
 
-"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+"NvmExpressDxe.efi" = "Driver untuk mendukung perangkat NVMExpress.";
 
-"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+"OsxAptioFix3Drv.efi" = "Driver alternatif (v3) untuk membenahi masalah Memory di firmware UEFI.";
 
-"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"OsxAptioFixDrv.efi" = "Driver lawas untuk membenahi masalah Memory pada firmware UEFI misalnya AMI Aptio.";
 
-"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxFatBinaryDrv.efi" = "Driver untuk mendukung FAT Binary executables bagi OS X 10.9 atau versi sebelumnya.";
 
-"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+"OsxLowMemFixDrv.efi" = "Varian sederhana driver OsxAptioFixDrv (jangan pakai bersamaan).";
 
-"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"PartitionDxe.efi" = "Driver untuk dukungan Skema Partisi yang tidak biasa, semisal: Hybrid GPT/MBR atau Apple Partition Map.";
 
-"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+"Ps2MouseDxe.efi" = "Driver Mouse PS/2";
 
-"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+"UsbKbDxe.efi" = "Driver Keyboard USB, untuk dukungan UI boot";
 
-"UsbMouseDxe.efi" = "USB mouse driver";
+"UsbMouseDxe.efi" = "Driver Mouse USB";
 
-"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+"VBoxExt2.efi" = "Driver File System EXT2/3 dari VirtualBox.";
 
-"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+"VBoxExt4.efi" = "Driver File System EXT4 dari VirtualBox.";
 
-"VBoxHfs.efi" = "HFS+ filesystem driver.";
+"VBoxHfs.efi" = "Driver File System HFS+ dari VirtualBox.";
 
-"VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+"VBoxIso9600.efi" = "Driver File System ISO 9600.";

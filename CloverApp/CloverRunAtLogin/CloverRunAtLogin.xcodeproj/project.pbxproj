@@ -15,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9540AED62379F43E001AD0C8 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Main.strings; sourceTree = "<group>"; };
 		95C51560236B211200E4A3A8 /* CloverRunAtLogin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloverRunAtLogin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95C51563236B211200E4A3A8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		95C51564236B211200E4A3A8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -111,6 +112,7 @@
 			knownRegions = (
 				en,
 				Base,
+				sr,
 			);
 			mainGroup = 95C51557236B211100E4A3A8;
 			productRefGroup = 95C51561236B211200E4A3A8 /* Products */;
@@ -152,6 +154,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				95C5156C236B211400E4A3A8 /* Base */,
+				9540AED62379F43E001AD0C8 /* sr */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

@@ -17,18 +17,6 @@
 		954FF2102371B16300C3D94C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20F2371B16300C3D94C /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		953DBFD9236F037400B0C4FB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		953B8DED2370BB1A007E36E3 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = bdmesg.swift; path = ../../Clover/bdmesg.swift; sourceTree = "<group>"; };
 		953B8DEF2370BB5C007E36E3 /* NVRAM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NVRAM.swift; path = ../../Clover/NVRAM.swift; sourceTree = "<group>"; };
@@ -106,7 +94,6 @@
 			buildPhases = (
 				953DBFD7236F037400B0C4FB /* Sources */,
 				953DBFD8236F037400B0C4FB /* Frameworks */,
-				953DBFD9236F037400B0C4FB /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -292,6 +279,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CloverDaemonNew/CloverDaemonNew-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -311,6 +299,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CloverDaemonNew/CloverDaemonNew-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

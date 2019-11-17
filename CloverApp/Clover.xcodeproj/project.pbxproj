@@ -13,6 +13,8 @@
 		953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953BC20223720C0A0039755D /* FixedWidthViews.swift */; };
 		9542ABC02373783400DC03E6 /* boot1-install in Copy tools */ = {isa = PBXBuildFile; fileRef = 9542ABBD2373780C00DC03E6 /* boot1-install */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9542ABC22373786700DC03E6 /* CloverV2 in Copy CloverV2 */ = {isa = PBXBuildFile; fileRef = 9542ABC12373786700DC03E6 /* CloverV2 */; };
+		9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */ = {isa = PBXBuildFile; fileRef = 95524B88238051F4005F6425 /* CloverLogOut */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		954BBE99238196EE0032425F /* Locale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954BBE98238196EE0032425F /* Locale.swift */; };
 		9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */ = {isa = PBXBuildFile; fileRef = 9552D745236F33A700C93377 /* CloverDaemonNew */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		958861DA235F75FB00B64173 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958861D9235F75FB00B64173 /* Driver.swift */; };
 		95ACABCA236B7463008F80A4 /* Unzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ACABC9236B7463008F80A4 /* Unzip.swift */; };
@@ -64,6 +66,20 @@
 			remoteGlobalIDString = 12F2E5461A30F7E70058A333;
 			remoteInfo = "boot1-install";
 		};
+		9546AE1823806286007155A6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 95524B78238051AC005F6425;
+			remoteInfo = CloverLogOut;
+		};
+		95524B87238051F4005F6425 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 95524B79238051AC005F6425;
+			remoteInfo = CloverLogOut;
+		};
 		9552D744236F33A700C93377 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */;
@@ -101,6 +117,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */,
 				9542ABC02373783400DC03E6 /* boot1-install in Copy tools */,
 				95337172237070CD003F1AF4 /* Cloverhelper in Copy tools */,
 				9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */,
@@ -147,8 +164,13 @@
 /* Begin PBXFileReference section */
 		9533718223709517003F1AF4 /* bootsectors-install */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bootsectors-install"; sourceTree = SOURCE_ROOT; };
 		953BC20223720C0A0039755D /* FixedWidthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthViews.swift; sourceTree = "<group>"; };
+		9540AED42379F43D001AD0C8 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Main.strings; sourceTree = "<group>"; };
+		9540AED52379F43E001AD0C8 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Installer.strings; sourceTree = "<group>"; };
 		9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "boot1-inst.xcodeproj"; path = "../CloverPackage/utils/boot1-install/boot1-inst.xcodeproj"; sourceTree = "<group>"; };
 		9542ABC12373786700DC03E6 /* CloverV2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CloverV2; path = ../CloverPackage/CloverV2; sourceTree = "<group>"; };
+		954BBE98238196EE0032425F /* Locale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locale.swift; sourceTree = "<group>"; };
+		954C3DF0237DF0250059C698 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverLogOut.xcodeproj; path = CloverLogOut/CloverLogOut.xcodeproj; sourceTree = "<group>"; };
 		9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverDaemonNew.xcodeproj; path = CloverDaemonNew/CloverDaemonNew.xcodeproj; sourceTree = "<group>"; };
 		958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cloverhelper.xcodeproj; path = cloverhelper/Cloverhelper.xcodeproj; sourceTree = "<group>"; };
 		958861D9235F75FB00B64173 /* Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
@@ -247,6 +269,16 @@
 		95E68AE4235B89D9002B37A5 /* Installer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Installer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		954C3DEE237DF0130059C698 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		9533716B237070B3003F1AF4 /* Products */ = {
 			isa = PBXGroup;
@@ -260,6 +292,22 @@
 			isa = PBXGroup;
 			children = (
 				9542ABBD2373780C00DC03E6 /* boot1-install */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		954C3DEF237DF0250059C698 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				954C3DF0237DF0250059C698 /* ServiceManagement.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		95524B84238051F3005F6425 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				95524B88238051F4005F6425 /* CloverLogOut */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -284,6 +332,7 @@
 			isa = PBXGroup;
 			children = (
 				95E68AC8235B862F002B37A5 /* Clover */,
+				95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */,
 				9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */,
 				958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */,
 				95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */,
@@ -291,6 +340,7 @@
 				95C5C0A22365D2250049940D /* Lang.bundle */,
 				9542ABC12373786700DC03E6 /* CloverV2 */,
 				95E68AC7235B862F002B37A5 /* Products */,
+				954C3DEF237DF0250059C698 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -312,6 +362,7 @@
 				95E68ADE235B86A1002B37A5 /* bdmesg.swift */,
 				95E68ADD235B86A1002B37A5 /* Disks.swift */,
 				95E68ADB235B86A1002B37A5 /* Extensions.swift */,
+				954BBE98238196EE0032425F /* Locale.swift */,
 				95E68ADA235B86A0002B37A5 /* Release.swift */,
 				95E68ADC235B86A1002B37A5 /* Shared.swift */,
 				95C515212369BAF500E4A3A8 /* NVRAM.swift */,
@@ -352,10 +403,12 @@
 				95850588236439D500BCB4A3 /* Copy tools */,
 				95C5C0A12365D1FB0049940D /* Copy Languages */,
 				95C51581236B224800E4A3A8 /* Copy CloverRunAtLogin */,
+				954C3DEE237DF0130059C698 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				9546AE1923806286007155A6 /* PBXTargetDependency */,
 				95337171237070BB003F1AF4 /* PBXTargetDependency */,
 				9552D747236F33B900C93377 /* PBXTargetDependency */,
 				9542ABBF2373781300DC03E6 /* PBXTargetDependency */,
@@ -424,6 +477,7 @@
 				"bg-BG",
 				lv,
 				lt,
+				sr,
 			);
 			mainGroup = 95E68ABD235B862F002B37A5;
 			productRefGroup = 95E68AC7235B862F002B37A5 /* Products */;
@@ -440,6 +494,10 @@
 				{
 					ProductGroup = 9533716B237070B3003F1AF4 /* Products */;
 					ProjectRef = 958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */;
+				},
+				{
+					ProductGroup = 95524B84238051F3005F6425 /* Products */;
+					ProjectRef = 95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */;
 				},
 				{
 					ProductGroup = 95C51578236B21AE00E4A3A8 /* Products */;
@@ -466,6 +524,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = "boot1-install";
 			remoteRef = 9542ABBC2373780C00DC03E6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		95524B88238051F4005F6425 /* CloverLogOut */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = CloverLogOut;
+			remoteRef = 95524B87238051F4005F6425 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		9552D745236F33A700C93377 /* CloverDaemonNew */ = {
@@ -530,6 +595,7 @@
 				95E68ACC235B862F002B37A5 /* ViewController.swift in Sources */,
 				95E68AE2235B86A1002B37A5 /* Disks.swift in Sources */,
 				95E68ADF235B86A1002B37A5 /* Release.swift in Sources */,
+				954BBE99238196EE0032425F /* Locale.swift in Sources */,
 				95E68ACA235B862F002B37A5 /* AppDelegate.swift in Sources */,
 				958861DA235F75FB00B64173 /* Driver.swift in Sources */,
 				95E68AE3235B86A1002B37A5 /* bdmesg.swift in Sources */,
@@ -554,6 +620,11 @@
 			isa = PBXTargetDependency;
 			name = "boot1-install";
 			targetProxy = 9542ABBE2373781300DC03E6 /* PBXContainerItemProxy */;
+		};
+		9546AE1923806286007155A6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CloverLogOut;
+			targetProxy = 9546AE1823806286007155A6 /* PBXContainerItemProxy */;
 		};
 		9552D747236F33B900C93377 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -608,6 +679,7 @@
 				95C5151B2368D76800E4A3A8 /* bg-BG */,
 				95C5151D2368D7AD00E4A3A8 /* lv */,
 				95C5151F2368D7C300E4A3A8 /* lt */,
+				9540AED42379F43D001AD0C8 /* sr */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -652,6 +724,7 @@
 				95C5151C2368D76800E4A3A8 /* bg-BG */,
 				95C5151E2368D7AD00E4A3A8 /* lv */,
 				95C515202368D7C300E4A3A8 /* lt */,
+				9540AED52379F43E001AD0C8 /* sr */,
 			);
 			name = Installer.storyboard;
 			sourceTree = "<group>";
@@ -782,7 +855,7 @@
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.04;
+				CURRENT_PROJECT_VERSION = 1.05;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -796,7 +869,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.04;
+				MARKETING_VERSION = 1.05;
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -811,7 +884,7 @@
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.04;
+				CURRENT_PROJECT_VERSION = 1.05;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -825,7 +898,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.04;
+				MARKETING_VERSION = 1.05;
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

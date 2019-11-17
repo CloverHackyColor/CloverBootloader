@@ -1,0 +1,39 @@
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "0Jk-9o-xwr"; */
+"0Jk-9o-xwr.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "4pt-DA-Vl6"; */
+"4pt-DA-Vl6.title" = "Item 2";
+
+/* Class = "NSTextFieldCell"; title = "boot1"; ObjectID = "DSK-8g-GVR"; */
+"DSK-8g-GVR.title" = "boot1";
+
+/* Class = "NSButtonCell"; title = "Install"; ObjectID = "HOQ-B0-pLp"; */
+"HOQ-B0-pLp.title" = "Install";
+
+/* Class = "NSButtonCell"; title = "CloverEFI"; ObjectID = "cO6-AP-j0b"; */
+"cO6-AP-j0b.title" = "CloverEFI";
+
+/* Class = "NSButtonCell"; title = "MBR/PBR"; ObjectID = "itH-zW-i1Y"; */
+"itH-zW-i1Y.title" = "MBR/PBR";
+
+/* Class = "NSMenuItem"; title = "boot7"; ObjectID = "oOc-2T-rwc"; */
+"oOc-2T-rwc.title" = "boot7";
+
+/* Class = "NSButtonCell"; title = "AltBoot"; ObjectID = "rc0-N7-2xy"; */
+"rc0-N7-2xy.title" = "AltBoot";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "sCy-bb-OOm"; */
+"sCy-bb-OOm.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "boot0af"; ObjectID = "v1t-y6-CSK"; */
+"v1t-y6-CSK.title" = "boot0af";
+
+/* Class = "NSMenuItem"; title = "boot6"; ObjectID = "v2m-Hs-R3O"; */
+"v2m-Hs-R3O.title" = "boot6";
+
+/* Class = "NSMenuItem"; title = "boot0ss"; ObjectID = "xP1-AF-6KH"; */
+"xP1-AF-6KH.title" = "boot0ss";
+
+/* Class = "NSWindow"; title = "Clover Installer"; ObjectID = "ysg-ml-Ysp"; */
+"ysg-ml-Ysp.title" = "Clover Installer";

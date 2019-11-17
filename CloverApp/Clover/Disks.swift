@@ -80,7 +80,6 @@ func getPartitionSchemeMap(from diskOrMtp: String) -> String? {
 
 /// Find the mountpoint for the given disk object. You can pass also a mount point to se if it is valid.
 func getMountPoint(from diskOrMtp: String) -> String? {
-  // kDADiskDescriptionVolumePathKey
   var mountPoint : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
     if (dict.object(forKey: kDADiskDescriptionVolumePathKey) != nil) {
@@ -98,7 +97,6 @@ func getMountPoint(from diskOrMtp: String) -> String? {
 
 /// Find the Volume name: be aware that this is not the mount point name.
 func getVolumeName(from diskOrMtp: String) -> String? {
-  // kDADiskDescriptionVolumeNameKey
   var name : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
     if (dict.object(forKey: kDADiskDescriptionVolumeNameKey) != nil) {
@@ -110,7 +108,6 @@ func getVolumeName(from diskOrMtp: String) -> String? {
 
 /// Get partition UUID for the given volume:  This is not a disk UUID.
 func getVolumeUUID(from diskOrMtp: String) -> String? {
-  // kDADiskDescriptionVolumeUUIDKey
   var uuid : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
     if (dict.object(forKey: kDADiskDescriptionVolumeUUIDKey) != nil) {
@@ -125,9 +122,9 @@ func getVolumeUUID(from diskOrMtp: String) -> String? {
 
 /// Get disk uuid for the given diskx. This is not a Volume UUID but a media UUID.
 func getDiskUUID(from diskOrMtp: String) -> String? {
-  // kDADiskDescriptionVolumeUUIDKey
   var uuid : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: getBSDParent(of: diskOrMtp)!) {
+    print(dict)
     if (dict.object(forKey: kDADiskDescriptionMediaUUIDKey) != nil) {
       let temp : AnyObject = dict.object(forKey: kDADiskDescriptionMediaUUIDKey) as AnyObject
       if temp is NSUUID {
@@ -169,8 +166,6 @@ func getAlldisks() -> NSDictionary {
   var entry_iterator: io_iterator_t = 0
   let allDisks = NSMutableDictionary()
   if IOServiceGetMatchingServices(kIOMasterPortDefault, match_dictionary, &entry_iterator) == kIOReturnSuccess {
-    //let serviceObject: io_registry_entry_t
-    //var serviceObject : UnsafeMutablePointer<io_registry_entry_t>
     var serviceObject : io_registry_entry_t = 0
     
     repeat {
@@ -282,7 +277,6 @@ func getBSDName(of mountpoint: String) -> String? {
 
 /// Find the BSDName of the given parent disk.
 func getBSDParent(of mountpointORDevDisk: String) -> String? {
-  // DAMediaBSDUnit
   if let dict : NSDictionary = getDAdiskDescription(from: mountpointORDevDisk) {
     if (dict.object(forKey: kDADiskDescriptionMediaBSDUnitKey) != nil) {
       return "disk" + ((dict.object(forKey: kDADiskDescriptionMediaBSDUnitKey) as? NSNumber)?.stringValue)!
@@ -325,7 +319,6 @@ func getIconFor(volume mountpointORDevDisk: String) -> NSImage? {
       let identifier =  iconDict.object(forKey: kCFBundleIdentifierKey as String) as! CFString
       
       let url : CFURL = Unmanaged.takeRetainedValue(KextManagerCreateURLForBundleIdentifier(kCFAllocatorDefault, identifier))()
-      //print(url)
       if let kb = Bundle(url: url as URL) {
         image = NSImage(byReferencingFile:
           kb.path(forResource: iconName.deletingFileExtension, ofType: iconName.fileExtension) ?? "")
@@ -349,4 +342,267 @@ func isInternalDevice(diskOrMtp: String) -> Bool {
 func isMountPoint(path: String) -> Bool {
   let mtp : String? = getMountPoint(from: path)
   return (mtp != nil)
+}
+
+func mount(disk bsdName: String, at path: String?) {
+  var disk : String = bsdName
+  if disk.hasPrefix("disk") || disk.hasPrefix("/dev/disk") {
+    if disk.hasPrefix("/dev/disk") {
+      disk = disk.components(separatedBy: "dev/")[1]
+    }
+    
+    var isLeaf : Bool = false
+    let dict : NSDictionary? = getAlldisks().object(forKey: disk) as? NSDictionary
+    isLeaf = (dict?.object(forKey: "Leaf") != nil) && (dict?.object(forKey: "Leaf") as! NSNumber).boolValue
+    
+    if disk.components(separatedBy: "s").count == 3 && isLeaf { /* di s k0 s 1 */
+      let mountpoint : String? = getMountPoint(from: disk)
+      if ((mountpoint != nil) && FileManager.default.fileExists(atPath: mountpoint!)) {
+        // already mounted
+        return
+      }
+      
+      if let session = DASessionCreate(kCFAllocatorDefault) {
+        if let bsd = DADiskCreateFromBSDName(kCFAllocatorDefault, session, disk) {
+          var url : CFURL? = nil
+          if (path != nil) {
+            url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault,
+                                                          path?.toPointer(),
+                                                          (path?.count)!,
+                                                          true)
+          }
+          
+          var context = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+          context.initialize(repeating: 0, count: 1)
+          context.pointee = 0
+          
+          DASessionScheduleWithRunLoop(session,
+                                       CFRunLoopGetCurrent(),
+                                       CFRunLoopMode.defaultMode.rawValue)
+          
+          DADiskMountWithArguments(bsd,
+                                   url,
+                                   DADiskMountOptions(kDADiskMountOptionDefault), {
+                                    (o, dis, ctx) in
+                                    if (dis != nil) && (ctx != nil) {
+                                      print("mount failure: " + printDAReturn(r: DADissenterGetStatus(dis!)))
+                                    }
+                                    CFRunLoopStop(CFRunLoopGetCurrent())
+          }, &context, nil)
+          
+          CFRunLoopRun()
+          
+          DASessionUnscheduleFromRunLoop(session,
+                                         CFRunLoopGetCurrent(),
+                                         CFRunLoopMode.defaultMode.rawValue)
+          context.deallocate()
+        }
+      }
+    }
+  }
+}
+
+func mount(disk bsdName: String,
+           at path: String?,
+           reply: @escaping (Bool) -> ()) {
+  var disk : String = bsdName
+  if disk.hasPrefix("disk") || disk.hasPrefix("/dev/disk") {
+    if disk.hasPrefix("/dev/disk") {
+      disk = disk.components(separatedBy: "dev/")[1]
+    }
+    
+    var isLeaf : Bool = false
+    let dict : NSDictionary? = getAlldisks().object(forKey: disk) as? NSDictionary
+    isLeaf = (dict?.object(forKey: "Leaf") != nil) && (dict?.object(forKey: "Leaf") as! NSNumber).boolValue
+    
+    
+    if disk.components(separatedBy: "s").count == 3 && isLeaf { /* di s k0 s 1 (is a partition?)*/
+      let mountpoint : String? = getMountPoint(from: disk)
+      if ((mountpoint != nil) && FileManager.default.fileExists(atPath: mountpoint!)) {
+        // already mounted
+        reply(true)
+        return
+      }
+      
+      if let session = DASessionCreate(kCFAllocatorDefault) {
+        if let bsd = DADiskCreateFromBSDName(kCFAllocatorDefault, session, disk) {
+          var url : CFURL? = nil
+          if (path != nil) {
+            url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault,
+                                                          path?.toPointer(),
+                                                          (path?.count)!,
+                                                          true)
+          }
+          var context = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+          context.initialize(repeating: 0, count: 1)
+          context.pointee = 0
+          
+          DASessionScheduleWithRunLoop(session,
+                                       CFRunLoopGetCurrent(),
+                                       CFRunLoopMode.defaultMode.rawValue)
+          
+          DADiskMountWithArguments(bsd, url, DADiskMountOptions(kDADiskMountOptionDefault), {
+            (o, dis, ctx) in
+            if (dis != nil) && (ctx != nil) {
+              print("mount failure: " + printDAReturn(r: DADissenterGetStatus(dis!)))
+            }
+            CFRunLoopStop(CFRunLoopGetCurrent())
+          }, &context, nil)
+          
+          let result : Bool = (context.pointee == 0)
+          
+          CFRunLoopRun()
+          
+          DASessionUnscheduleFromRunLoop(session,
+                                         CFRunLoopGetCurrent(),
+                                         CFRunLoopMode.defaultMode.rawValue)
+          context.deallocate()
+          
+          reply(result)
+          return
+        }
+      }
+      
+    }
+  }
+  reply(false)
+}
+
+func umount(disk diskOrMtp: String, force: Bool) {
+  let disk : String = diskOrMtp
+  let mtp : String? = getMountPoint(from: diskOrMtp)
+  if mtp != nil {
+    return
+  }
+
+  if disk.hasPrefix("disk") {
+    var isLeaf : Bool = false
+    let dict : NSDictionary? = getAlldisks().object(forKey: disk) as? NSDictionary
+    isLeaf = (dict?.object(forKey: "Leaf") != nil) && (dict?.object(forKey: "Leaf") as! NSNumber).boolValue
+    
+    if disk.components(separatedBy: "s").count == 3 && isLeaf { /* di s k0 s 1 */
+      let mountpoint : String? = getMountPoint(from: disk)
+      if (mountpoint == nil) {
+        return
+      }
+      
+      if let session = DASessionCreate(kCFAllocatorDefault) {
+        if let bsd = DADiskCreateFromBSDName(kCFAllocatorDefault, session, disk) {
+          var context = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+          context.initialize(repeating: 0, count: 1)
+          context.pointee = 0
+          
+          DASessionScheduleWithRunLoop(session,
+                                       CFRunLoopGetCurrent(),
+                                       CFRunLoopMode.defaultMode.rawValue)
+          
+          DADiskUnmount(bsd,
+                        DADiskUnmountOptions(force ? kDADiskUnmountOptionForce : kDADiskUnmountOptionDefault),
+                        { (dadisk, dissenter, ctx) in
+                          if (dissenter != nil) && (ctx != nil) {
+                            print("un mount failure: " + printDAReturn(r: DADissenterGetStatus(dissenter!)))
+                          }
+                          CFRunLoopStop(CFRunLoopGetCurrent())
+          }, &context)
+          
+          CFRunLoopRun()
+          DASessionUnscheduleFromRunLoop(session,
+                                         CFRunLoopGetCurrent(),
+                                         CFRunLoopMode.defaultMode.rawValue)
+          
+          
+          context.deallocate()
+        }
+      }
+    }
+  }
+}
+
+func umount(disk diskOrMtp: String,
+            force: Bool,
+            reply: @escaping (Bool) -> ()) {
+  let disk : String = diskOrMtp
+  let mtp : String? = getMountPoint(from: diskOrMtp)
+  if (mtp == nil) || (mtp == "/private/var/vm" || mtp == "/") {
+    reply(false)
+    return
+  }
+  if disk.hasPrefix("disk") {
+    var isLeaf : Bool = false
+    let dict : NSDictionary? = getAlldisks().object(forKey: disk) as? NSDictionary
+    isLeaf = (dict?.object(forKey: "Leaf") != nil) && (dict?.object(forKey: "Leaf") as! NSNumber).boolValue
+    
+    if disk.components(separatedBy: "s").count == 3 && isLeaf { /* di s k0 s 1 */
+      let mountpoint : String? = getMountPoint(from: disk)
+      if (mountpoint == nil) {
+        reply(true)
+        return
+      }
+      
+      if let session = DASessionCreate(kCFAllocatorDefault) {
+        if let bsd = DADiskCreateFromBSDName(kCFAllocatorDefault, session, disk) {
+          var context = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+          context.initialize(repeating: 0, count: 1)
+          context.pointee = 0
+          
+          DASessionScheduleWithRunLoop(session,
+                                       CFRunLoopGetCurrent(),
+                                       CFRunLoopMode.defaultMode.rawValue)
+          
+          DADiskUnmount(bsd,
+                        DADiskUnmountOptions(force ? kDADiskUnmountOptionForce : kDADiskUnmountOptionDefault),
+                        { (dadisk, dissenter, ctx) in
+                          if (dissenter != nil) && (ctx != nil) {
+                            print("un mount failure: " + printDAReturn(r: DADissenterGetStatus(dissenter!)))
+                          }
+                          CFRunLoopStop(CFRunLoopGetCurrent())
+          }, &context)
+          
+          let result : Bool = (context.pointee == 0)
+          CFRunLoopRun()
+          
+          DASessionUnscheduleFromRunLoop(session,
+                                         CFRunLoopGetCurrent(),
+                                         CFRunLoopMode.defaultMode.rawValue)
+          
+          
+          context.deallocate()
+          reply(result)
+        }
+      }
+    }
+  }
+  reply(false)
+}
+
+fileprivate func printDAReturn(r: DAReturn) -> String {
+  switch Int(r) {
+  case kDAReturnError:
+    return "Error"
+  case kDAReturnBusy:
+    return "Busy"
+  case kDAReturnBadArgument:
+    return "Bad Argument"
+  case kDAReturnExclusiveAccess:
+    return "Exclusive Access"
+  case kDAReturnNoResources:
+    return "No Resources"
+  case kDAReturnNotFound:
+    return "Not Found"
+  case kDAReturnNotMounted:
+    return "Not Mounted"
+  case kDAReturnNotPermitted:
+    return "Not Permitted"
+  case kDAReturnNotPrivileged:
+    return "Not Privileged"
+  case kDAReturnNotReady:
+    return "Not Ready"
+  case kDAReturnNotWritable:
+    return "Not Writable"
+  case kDAReturnUnsupported:
+    return "Unsupported"
+  default:
+    return "Unknown"
+  }
+  
 }
