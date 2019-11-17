@@ -268,6 +268,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "MacBookPro15,4", "MBP154.88Z.F000.B00.1911080307", "1037.60.55.0.0", "Mac-53FDB3D8DB8CA971", // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro", "1.0", "FVFYXHACL411", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j213", 0 },
+  //MacBookPro16,1 / MacBook Pro (16-inch, 2019)
+  { "MacBookPro16,1", "MBP161.88Z.F000.B00.1910242213", "1037.40.127.0.0", "Mac-E1008331FDC96864", // Intel Core i9-9980HK @ 2.40 GHz
+    "MacBook Pro", "1.0", "C02ZPHACPG8W", "MacBook-Aluminum",
+    { 0, 0, 0, 0, 0, 0 }, NULL, "j152f", 0 },
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1", "MBA11.88Z.00BB.B03.0803171226", NULL, "Mac-F42C8CC8", // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air", "1.0", "W864947A18X", "Air-Enclosure",
@@ -749,6 +753,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro152:
     case MacBookPro153:
     case MacBookPro154:
+    case MacBookPro161:
     case MacBookAir81:
     case MacBookAir82:
     case iMac161:
@@ -842,6 +847,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro152:
     case MacBookPro153:
     case MacBookPro154:
+    case MacBookPro161:
     case MacBookAir31:
     case MacBookAir32:
     case MacBookAir71:
@@ -939,6 +945,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     // Verified list from Users
     case MacBookPro153:
     case MacBookPro154:
+    case MacBookPro161:
       gPlatformFeature        = 0x02;
       break;
     case MacPro71:
@@ -1015,6 +1022,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro152:
     case MacBookPro153:
     case MacBookPro154:
+    case MacBookPro161:
     case MacBookAir71:
     case MacBookAir72:
     case MacBookAir81:
