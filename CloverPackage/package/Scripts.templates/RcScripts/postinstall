@@ -46,6 +46,11 @@ if [[ "$install_on_all_volumes" == true ]]; then
     IFS=$'\n' # ' fix xemacs fontification
     for mountPoint in $(getInternalOSXSystemVolumes); do
         [[ "$mountPoint" == $destroot ]] && continue
+        rm -f "${mountPoint}/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist"
+        rm -f "${mountPoint}/Library/Application Support/Clover/CloverDaemonNew"
+        rm -f "${mountPoint}/Library/Application Support/Clover/CloverLogOut"
+        rm -f "${mountPoint}/Library/Application Support/Clover/CloverWrapper.sh"
+        
         echo "Installing RC scripts in '$mountPoint' volume" >> "$install_log"
         # Remove old rc.local and rc.shutdown.local scripts
         [[ $(grep -ic Clover "${mountPoint}/etc/rc.local" 2>/dev/null) -gt 0 ]] && \
@@ -95,6 +100,13 @@ if [[ "$install_on_target" == true ]]; then
      rm -f "${destroot}/etc/rc.local"
     [[ $(grep -ic Clover "${destroot}/etc/rc.shutdown.local" 2>/dev/null) -gt 0 ]] && \
      rm -f "${destroot}/etc/rc.shutdown.local"
+     if [[ -f '/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist' ]]; then
+        launchctl unload '/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist'
+        rm -f '/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist'
+     fi
+     rm -f '/Library/Application Support/Clover/CloverDaemonNew'
+     rm -f '/Library/Application Support/Clover/CloverLogOut'
+     rm -f '/Library/Application Support/Clover/CloverWrapper.sh'
 fi
 
 while read -r -u3 file; do
