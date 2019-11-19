@@ -45,11 +45,6 @@
 	<string>Copyright © 2019 CloverHackyColor. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
-	<key>SMPrivilegedExecutables</key>
-	<dict>
-		<key>org.slice.CloverDaemonNew</key>
-		<string>identifier &quot;org.slice.CloverDaemonNew&quot;</string>
-	</dict>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticTermination</key>

@@ -368,10 +368,10 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       deleteNVRAM(key: key)
     }
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
       var value = ""
       if let nvram = getNVRAM() {
-        let nvdata = nvram.object(forKey: "Clover.DisableSleepProxyClient") as? Data
+        let nvdata = nvram.object(forKey: key) as? Data
         value = String(decoding: nvdata ?? Data(), as: UTF8.self)
       }
       self.disbaleSleepProxyButton.state = (value == "true") ? .on : .off
@@ -386,10 +386,10 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       deleteNVRAM(key: key)
     }
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
       var value = ""
       if let nvram = getNVRAM() {
-        let nvdata = nvram.object(forKey: "Clover.RootRW") as? Data
+        let nvdata = nvram.object(forKey: key) as? Data
         value = String(decoding: nvdata ?? Data(), as: UTF8.self)
       }
       self.disbaleSleepProxyButton.state = (value == "true") ? .on : .off

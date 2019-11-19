@@ -730,7 +730,7 @@ class InstallerViewController: NSViewController {
         let name : String = getVolumeName(from: disk) ?? kNotAvailable.locale
         let mp : String = getMountPoint(from: disk) ?? kNotAvailable.locale
         let parentDiskName : String = getMediaName(from: getBSDParent(of: disk) ?? "") ?? kNotAvailable.locale
-        if fs == "msdos" || fs == "fat32" || fs == "exfat" || fs == "hfs" {
+        if fs == "fat32" || fs == "exfat" || fs == "hfs" {
           self.targetPop.addItem(withTitle: "\(disk)\t\(name), \("mount point".locale): \(mp), \(fs.uppercased()), \(psm): (\(parentDiskName))")
           self.targetPop.invalidateIntrinsicContentSize()
           // get the image

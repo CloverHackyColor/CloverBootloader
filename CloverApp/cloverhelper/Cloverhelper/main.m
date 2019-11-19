@@ -431,6 +431,12 @@ int main(int argc, char * const * argv) {
        /tmp/bootsectors-install disk4s1 hfs FDisk_partition_scheme boot0af boot1h
        */
       NSTask *task = [[NSTask alloc] init];
+      NSPipe *pipe = [NSPipe new];
+      
+      task.standardOutput = pipe;
+      task.standardError = pipe;
+      
+      NSFileHandle * fh = [pipe fileHandleForReading];
       
       [task setEnvironment:[[NSProcessInfo new] environment]];
       [task setLaunchPath:bootSectorsInstall];
@@ -442,6 +448,14 @@ int main(int argc, char * const * argv) {
         }
       };
       [task launch];
+      //[task waitUntilExit];
+      NSData *data = [fh readDataToEndOfFile];
+      if (data) {
+        NSString *output = [[NSString alloc] initWithData:data
+                                                 encoding:NSUTF8StringEncoding];
+        printf("%s\n", [output UTF8String]);
+      }
+      
     }
     cleanUp();
     exit(EXIT_SUCCESS);

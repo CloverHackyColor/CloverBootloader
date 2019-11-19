@@ -59,6 +59,4 @@ extension String {
     
     return UnsafePointer<UInt8>(buffer)
   }
-  
-  
 }

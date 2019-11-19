@@ -49,8 +49,8 @@ fi
 
 
 if [ "${filesystem}" != fat32 ] && \
-   [ "${filesystem}" != hfs ]   && \
-   [ "${filesystem}" != exfat ]; then
+   [ "${filesystem}" != exfat ] && \
+   [ "${filesystem}" !=  hfs ]; then
   echo "Error: unsupported filesystem \"${filesystem}\""
   exit 1
 fi
@@ -70,16 +70,16 @@ if [[ ! -f "${boot1install}" ]]; then
   exit 1
 fi
 
-chmod +x "${boot1install}"
+# chmod +x "${boot1install}"
 
-rootdisk=$(LC_ALL=C diskutil info / | grep -i 'device identifier:' | awk '{print $NF}')
+rootdisk=$(LC_ALL=C /usr/sbin/diskutil info / | grep -i 'device identifier:' | awk '{print $NF}')
 
 if [[ "${rootdisk}" == "${disk}" ]]; then
   keepmounted=1
 fi
 
 echo
-LC_ALL=C diskutil list
+LC_ALL=C /usr/sbin/diskutil list
 echo
 
 # hfs can cause a panic writing boot sectors if journaled
@@ -89,58 +89,51 @@ echo
 # panic("jnl: end_tr: !!!DANGER!!! bp %p flags (0x%x) not LOCKED & DELWRI\n", bp, buf_flags(bp));
 
 # fix? disable the journal (will be reactivated later)
-if [[ $(LC_ALL=C diskutil info "${disk}" | grep -i 'file system personality:') == *ournaled* ]]; then
-  diskutil disableJournal "${disk}"
+if [[ $(LC_ALL=C /usr/sbin/diskutil info "${disk}" | grep -i 'file system personality:') == *ournaled* ]]; then
+  /usr/sbin/diskutil disableJournal "${disk}"
   journaled=1
 fi
 
 # Try to unmount the partition first
-mnt_pt=$(LC_ALL=C mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
+mnt_pt=$(LC_ALL=C /sbin/mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
 if [[ $keepmounted -eq 0 ]]; then
   if [[ -n "$mnt_pt" ]]; then
     # Try to umount the partition with umount
-    umount $bootdev 2>/dev/null
+    /sbin/umount $bootdev 2>/dev/null
     if [[ $? -ne 0 ]]; then
         # If it doesn't work try with diskutil
-        diskutil unmount $bootdev 2>/dev/null
+        /usr/sbin/diskutil unmount $bootdev 2>/dev/null
         [[ $? -ne 0 ]] && mnt_pt=''
     fi
   fi
 fi
 
 ### Stage 0 ###
+echo
 echo "Stage 0 - Writing ${boot0} to ${bootrdisk}"
 echo "Executing: dd if=${bootrdisk} count=1 bs=512 of=/tmp/CloverOrigMBR"
-dd if="${bootrdisk}" count=1 bs=512 of=/tmp/CloverOrigMBR
+/bin/dd if="${bootrdisk}" count=1 bs=512 of=/tmp/CloverOrigMBR
 echo "Executing: cp /tmp/CloverOrigMBR /tmp/CloverNewMBR"
-cp /tmp/CloverOrigMBR /tmp/CloverNewMBR
+/bin/cp -R /tmp/CloverOrigMBR /tmp/CloverNewMBR
 echo "Executing: dd if=${boot0} of=/tmp/CloverNewMBR bs=440 count=1 conv=notrunc"
-dd if="${boot0}" of=/tmp/CloverNewMBR bs=440 count=1 conv=notrunc
+/bin/dd if="${boot0}" of=/tmp/CloverNewMBR bs=440 count=1 conv=notrunc
 echo "Executing: fdisk -f /tmp/CloverNewMBR -u -y ${bootrdisk}"
-fdisk -f /tmp/CloverNewMBR -u -y "${bootrdisk}"
+/usr/sbin/fdisk -f /tmp/CloverNewMBR -u -y "${bootrdisk}"
 
 ### Stage 1 ###
+echo
 echo "Stage 1 - Writing ${boot1} to ${bootrdev}"
-if [[ $keepmounted -eq 0 ]]; then
-  echo "Executing: boot1-install -y -f -M "${boot1}" "${bootrdev}"
+if [[ $keepmounted -eq 1 ]]; then
+  echo "Executing: boot1-install -y -f -M ${boot1} ${bootrdev}"
   "$boot1install" -y -f -M "${boot1}" "${bootrdev}"
 else
-  echo "Executing: boot1-install -y -f "${boot1}" "${bootrdev}"
+  echo "Executing: boot1-install -y -f ${boot1} ${bootrdev}"
   "$boot1install" -y -f "${boot1}" "${bootrdev}"
-fi
-
-# Now try to remount the partition
-if [[ -n "$mnt_pt" ]]; then
-    [[ ! -d "$mnt_pt" ]] && mkdir -p "$mnt_pt"
-    # First try to mount with the mount command
-    mount -t "$filesystem" "$bootdev" "$mnt_pt"
-    # If failed try with diskutil
-    [[ $? -ne 0 ]] && diskutil mount -mountPoint "$mnt_pt" "$bootdev"
 fi
 
 if [[ "${partition_scheme}" == FDisk_partition_scheme && "$boot0" == "/tmp/boot0af" ]]; then
     echo "Setup Active Partition to be: ${bootslice}"
-    fdisk -e "${bootrdisk}" <<-MAKEACTIVE
+    /usr/sbin/fdisk -e "${bootrdisk}" <<-MAKEACTIVE
 print
 flag "${bootslice}"
 write
@@ -148,18 +141,26 @@ y
 quit
 MAKEACTIVE
 
-    partitionactive=$( fdisk -d "${bootrdisk}" | grep -n "*" | awk -F: '{print $1}')
+    partitionactive=$( /usr/sbin/fdisk -d "${bootrdisk}" | grep -n "*" | awk -F: '{print $1}')
     echo "New Active Partition: ${partitionactive}"
     echo ""
 fi
 
-if [[ $journaled -ne 0 ]]; then
-  diskutil enableJournal "${disk}"
+sleep 2
+# Now try to remount the partition
+if [[ -n "$mnt_pt" ]]; then
+    /usr/sbin/diskutil mount "$bootdev"
 fi
 
-rm -rf /tmp/Clover*
-rm -rf /tmp/boot1*
-rm -rf /tmp/boot2*
-rm -rf /tmp/bootsec*
+if [[ $journaled -ne 0 ]]; then
+  /usr/sbin/diskutil enableJournal "${disk}"
+fi
+
+
+
+/bin/rm -rf /tmp/Clover*
+/bin/rm -rf /tmp/boot1*
+/bin/rm -rf /tmp/boot2*
+/bin/rm -rf /tmp/bootsec*
 
 exit 0

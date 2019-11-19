@@ -124,7 +124,6 @@ func getVolumeUUID(from diskOrMtp: String) -> String? {
 func getDiskUUID(from diskOrMtp: String) -> String? {
   var uuid : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: getBSDParent(of: diskOrMtp)!) {
-    print(dict)
     if (dict.object(forKey: kDADiskDescriptionMediaUUIDKey) != nil) {
       let temp : AnyObject = dict.object(forKey: kDADiskDescriptionMediaUUIDKey) as AnyObject
       if temp is NSUUID {

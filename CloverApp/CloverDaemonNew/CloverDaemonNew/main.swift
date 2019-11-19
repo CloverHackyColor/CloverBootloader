@@ -9,7 +9,7 @@
 import Foundation
 
 let fm = FileManager.default
-let daemonVersion = "1.0.3"
+let daemonVersion = "1.0.4"
 
 let wrapperPath = "/Library/Application Support/Clover/CloverWrapper.sh"
 let loginwindow = "/var/root/Library/Preferences/com.apple.loginwindow.plist"
@@ -114,6 +114,7 @@ func getLogOutHook() -> String? {
 
 func main() {
   let df = DateFormatter()
+  df.locale = Locale(identifier: "en_US")
   df.dateFormat = "yyyy-MM-dd hh:mm:ss"
   var now = df.string(from: Date())
 
@@ -123,7 +124,6 @@ func main() {
   print("- System start at \(now)")
   print("------")
   run(cmd: "kextunload /System/Library/Extensions/msdosfs.kext 2>/dev/null")
-  let _ : PowerObserver? = PowerObserver()
   if let volname = getMediaName(from: "/") {
     print("root mount point is '/Volumes/\(volname)'")
   }
@@ -135,12 +135,39 @@ func main() {
   }
   
   // check if old daemon exist
-  let myDir = (CommandLine.arguments[0] as NSString).deletingLastPathComponent
-  if fm.fileExists(atPath: "\(myDir)/CloverDaemon") {
+  let oldLaunchDaemon = "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist"
+  if fm.fileExists(atPath: oldLaunchDaemon) {
     print("unloading old CloverDaemon")
-    run(cmd: "launchctl unload /Library/LaunchDaemons/com.projectosx.clover.daemon.plist")
+    run(cmd: "launchctl unload \(oldLaunchDaemon)")
+    try? fm.removeItem(atPath: oldLaunchDaemon)
+    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemon") {
+      try? fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemon")
+    }
+    
+    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemon-stopservice") {
+      try? fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemon-stopservice")
+    }
   }
   
+  let oldRCScripts : [String] = ["/Library/Application Support/Clover/CloverDaemon-stopservice",
+                                 "/etc/rc.boot.d/10.save_and_rotate_boot_log.local",
+                                 "/etc/rc.boot.d/20.mount_ESP.local",
+                                 "/etc/rc.boot.d/70.disable_sleep_proxy_client.local.disabled",
+                                 "/etc/rc.boot.d/70.disable_sleep_proxy_client.local",
+                                 "/etc/rc.clover.lib",
+                                 "/etc/rc.shutdown.d/80.save_nvram_plist.local"];
+  
+  if fm.fileExists(atPath: "/etc/rc.clover.lib") {
+    for rc in oldRCScripts {
+      print("Removing old rc scripts..")
+      run(cmd: "mount -uw /")
+      sleep(2)
+      if fm.fileExists(atPath: rc) {
+        try? fm.removeItem(atPath: rc)
+      }
+    }
+  }
+
   /*
    Clean some lines from clover.daemon.log.
    This is not going to go into the System log and is not
@@ -272,27 +299,33 @@ func main() {
           sleep(2)
         }
       }
-      checkSleepProxyClient(nvram: nvram)
     }
     
+    checkSleepProxyClient(nvram: nvram)
     /*
      Clean old nvram.plist user may have in all volumes
+     Note: never delete in / as this will be done at shut down/restart
+     if the nvram is correctly saved somewhere else (e.g. in the ESP)
      */
+    /*
     for v in getVolumes() {
       let nvramtPath = v.addPath("nvram.plist")
-      if fm.fileExists(atPath: nvramtPath) {
-        if fm.isDeletableFile(atPath: nvramtPath) {
-          do {
-            try fm.removeItem(atPath: nvramtPath)
-            print("old '\(nvramtPath)' removed.")
-          } catch {
-            print("Error: can't remove '\(nvramtPath)'.")
+      if v != "/" {
+        if fm.fileExists(atPath: nvramtPath) {
+          if fm.isDeletableFile(atPath: nvramtPath) {
+            do {
+              try fm.removeItem(atPath: nvramtPath)
+              print("old '\(nvramtPath)' removed.")
+            } catch {
+              print("Error: can't remove '\(nvramtPath)'.")
+            }
+          } else {
+            print("Error: '\(nvramtPath)' is not deletable.")
           }
-        } else {
-          print("Error: '\(nvramtPath)' is not deletable.")
         }
       }
     }
+    */
   } else {
     print("Error: nvram not present in this System.")
   }
@@ -304,7 +337,6 @@ func main() {
     now = df.string(from: Date())
     print("")
     print("SIGTERM received at \(now)")
-    //print("- CloverDaemonNew v\(daemonVersion)")
     doJob()
   }
   sigtermSource.resume()
