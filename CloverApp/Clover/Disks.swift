@@ -147,6 +147,7 @@ func getMediaName(from diskOrMtp: String) -> String? {
   
   return name
 }
+
 /// Get Media Name (kDADiskDescriptionDeviceProtocolKey).
 func getDeviceProtocol(from diskOrMtp: String) -> String {
   var prot : String = kNotAvailable
@@ -343,6 +344,7 @@ func isMountPoint(path: String) -> Bool {
   return (mtp != nil)
 }
 
+/// mount the given disk object. The path for the mount point is optional.
 func mount(disk bsdName: String, at path: String?) {
   var disk : String = bsdName
   if disk.hasPrefix("disk") || disk.hasPrefix("/dev/disk") {
@@ -401,6 +403,7 @@ func mount(disk bsdName: String, at path: String?) {
   }
 }
 
+/// mount the given disk object. The path for the mount point is optional. Code executed in a closure that return a boolean value.
 func mount(disk bsdName: String,
            at path: String?,
            reply: @escaping (Bool) -> ()) {
@@ -467,6 +470,7 @@ func mount(disk bsdName: String,
   reply(false)
 }
 
+/// unmount the given disk object or mount point. force used to kill any pid is using the disk.
 func umount(disk diskOrMtp: String, force: Bool) {
   let disk : String = diskOrMtp
   let mtp : String? = getMountPoint(from: diskOrMtp)
@@ -517,6 +521,7 @@ func umount(disk diskOrMtp: String, force: Bool) {
   }
 }
 
+/// unmount the given disk object or mount point. force used to kill any pid is using the disk. Code executed in a closure that return a boolean value.
 func umount(disk diskOrMtp: String,
             force: Bool,
             reply: @escaping (Bool) -> ()) {
@@ -574,6 +579,7 @@ func umount(disk diskOrMtp: String,
   reply(false)
 }
 
+/// Helper function for the mount/umout call back
 fileprivate func printDAReturn(r: DAReturn) -> String {
   switch Int(r) {
   case kDAReturnError:
@@ -603,5 +609,4 @@ fileprivate func printDAReturn(r: DAReturn) -> String {
   default:
     return "Unknown"
   }
-  
 }

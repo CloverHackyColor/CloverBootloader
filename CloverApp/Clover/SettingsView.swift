@@ -392,7 +392,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         let nvdata = nvram.object(forKey: key) as? Data
         value = String(decoding: nvdata ?? Data(), as: UTF8.self)
       }
-      self.disbaleSleepProxyButton.state = (value == "true") ? .on : .off
+      self.makeRootRWButton.state = (value == "true") ? .on : .off
     }
   }
   

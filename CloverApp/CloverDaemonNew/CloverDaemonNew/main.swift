@@ -9,11 +9,16 @@
 import Foundation
 
 let fm = FileManager.default
-let daemonVersion = "1.0.4"
+let daemonVersion = "1.0.7"
 
 let wrapperPath = "/Library/Application Support/Clover/CloverWrapper.sh"
-let loginwindow = "/var/root/Library/Preferences/com.apple.loginwindow.plist"
-let lh = "/Library/Application Support/Clover/CloverLogOut"
+let loginWindowPath = "/var/root/Library/Preferences/com.apple.loginwindow.plist"
+let cloverLogOut = "/Library/Application Support/Clover/CloverLogOut"
+let cloverDaemonNewPath = "/Library/Application Support/Clover/CloverDaemonNew"
+let launchPlistPath = "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist"
+
+let oldLaunchPlistPath = "/Library/LaunchDaemons/com.projectosx.clover.daemon.plist"
+
 
 func execAttr() -> [FileAttributeKey : Any] {
   var attributes = [FileAttributeKey : Any]()
@@ -62,46 +67,59 @@ func checkSleepProxyClient(nvram: NSDictionary) {
   let mDNSResponderPath = "/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist"
   let disableOption = "-DisableSleepProxyClient"
   
+  var value = "false"
+  
   if let nvdata = nvram.object(forKey: "Clover.DisableSleepProxyClient") as? Data {
-    let value = String(decoding: nvdata, as: UTF8.self)
+    value = String(decoding: nvdata, as: UTF8.self)
     print("Clover.DisableSleepProxyClient=\(value)")
-    if !fm.fileExists(atPath: mDNSResponderPath) {
-      print("Error: cannot found \(mDNSResponderPath)")
-      return
-    }
-    if !fm.isWritableFile(atPath: "/") {
-      print("Cannot go ahead as / is still read-only at this moment, will try again at power off.")
-      return
-    }
-    // check if enabled or disabled
-    if let mDNSResponder = NSDictionary(contentsOfFile: mDNSResponderPath) {
-      if let ProgramArguments = mDNSResponder.object(forKey: "ProgramArguments") as? NSArray {
-        var index : Int = -1
-        var serviceDisabled = false
-        for i in 0..<ProgramArguments.count {
-          if let arg = ProgramArguments.object(at: i) as? String {
-            if arg == disableOption {
-              index = i
-              serviceDisabled = true
-              break
-            }
+  } else {
+    print("Clover.DisableSleepProxyClient is not set.")
+  }
+  
+  if !fm.fileExists(atPath: mDNSResponderPath) {
+    print("Error: cannot found \(mDNSResponderPath)")
+    return
+  }
+  if !fm.isWritableFile(atPath: "/") {
+    print("Cannot go ahead as / is read-only")
+    return
+  }
+  
+  let toDisable : Bool = value == "true"
+  // check if enabled or disabled
+  if let mDNSResponder = NSDictionary(contentsOfFile: mDNSResponderPath) {
+    if let ProgramArguments = mDNSResponder.object(forKey: "ProgramArguments") as? NSArray {
+      var index : Int = -1
+      var serviceIsDisabled = false
+      for i in 0..<ProgramArguments.count {
+        if let arg = ProgramArguments.object(at: i) as? String {
+          if arg == disableOption {
+            index = i
+            serviceIsDisabled = true
+            break
           }
         }
-        
-        if value == "true" && !serviceDisabled {
-          print("Trying to disable Sleep Proxy Client service as requested.")
-          let cmd = "/usr/libexec/PlistBuddy -c \"Add ProgramArguments: string \(disableOption)\" \(mDNSResponderPath)"
+      }
+      
+      // no need to do anything if already as user wants.
+      if toDisable && serviceIsDisabled {
+        print("Sleep Proxy Client is already disabled.")
+        return
+      } else if !toDisable && !serviceIsDisabled {
+        print("Sleep Proxy Client is already enabled as default.")
+        return
+      }
+      
+      
+      if toDisable {
+        print("Trying to disable Sleep Proxy Client service.")
+        let cmd = "/usr/libexec/PlistBuddy -c \"Add ProgramArguments: string \(disableOption)\" \(mDNSResponderPath)"
+        run(cmd: cmd)
+      } else {
+        print("Trying to enable Sleep Proxy Client service as default.")
+        if index >= 0 {
+          let cmd = "/usr/libexec/PlistBuddy -c \"delete :ProgramArguments:\(index)\" \(mDNSResponderPath)"
           run(cmd: cmd)
-        } else if value != "true" && serviceDisabled {
-          print("Trying to enable Sleep Proxy Client service as requested.")
-          if index >= 0 {
-            let cmd = "/usr/libexec/PlistBuddy -c \"delete :ProgramArguments:\(index)\" \(mDNSResponderPath)"
-            run(cmd: cmd)
-          } else {
-            print("Bug: cant find the index of '\(disableOption)'.\n")
-          }
-        } else {
-          print("Sleep Proxy Client \(serviceDisabled ? "disabled" : "enabled") as requested.")
         }
       }
     }
@@ -109,7 +127,44 @@ func checkSleepProxyClient(nvram: NSDictionary) {
 }
 
 func getLogOutHook() -> String? {
-  return NSDictionary(contentsOfFile: loginwindow)?.object(forKey: "LogoutHook") as? String
+  return NSDictionary(contentsOfFile: loginWindowPath)?.object(forKey: "LogoutHook") as? String
+}
+
+func removeCloverRCScripts() {
+  if fm.fileExists(atPath: oldLaunchPlistPath) {
+    print("unloading old CloverDaemon..")
+    run(cmd: "launchctl unload \(oldLaunchPlistPath)")
+    try? fm.removeItem(atPath: oldLaunchPlistPath)
+    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemon") {
+      try? fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemon")
+    }
+    
+    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemon-stopservice") {
+      try? fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemon-stopservice")
+    }
+  }
+  
+  let oldRCScripts : [String] = ["/etc/rc.boot.d/10.save_and_rotate_boot_log.local",
+                                 "/etc/rc.boot.d/20.mount_ESP.local",
+                                 "/etc/rc.boot.d/70.disable_sleep_proxy_client.local.disabled",
+                                 "/etc/rc.boot.d/70.disable_sleep_proxy_client.local",
+                                 "/etc/rc.clover.lib",
+                                 "/etc/rc.shutdown.d/80.save_nvram_plist.local"];
+  
+  for rc in oldRCScripts {
+    if fm.fileExists(atPath: rc) {
+      if !fm.isWritableFile(atPath: "/") {
+        run(cmd: "mount -uw /")
+        sleep(2)
+      }
+      print("Removing \(rc).")
+      do {
+        try fm.removeItem(atPath: rc)
+      } catch {
+        print(error)
+      }
+    }
+  }
 }
 
 func main() {
@@ -135,38 +190,7 @@ func main() {
   }
   
   // check if old daemon exist
-  let oldLaunchDaemon = "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist"
-  if fm.fileExists(atPath: oldLaunchDaemon) {
-    print("unloading old CloverDaemon")
-    run(cmd: "launchctl unload \(oldLaunchDaemon)")
-    try? fm.removeItem(atPath: oldLaunchDaemon)
-    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemon") {
-      try? fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemon")
-    }
-    
-    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemon-stopservice") {
-      try? fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemon-stopservice")
-    }
-  }
-  
-  let oldRCScripts : [String] = ["/Library/Application Support/Clover/CloverDaemon-stopservice",
-                                 "/etc/rc.boot.d/10.save_and_rotate_boot_log.local",
-                                 "/etc/rc.boot.d/20.mount_ESP.local",
-                                 "/etc/rc.boot.d/70.disable_sleep_proxy_client.local.disabled",
-                                 "/etc/rc.boot.d/70.disable_sleep_proxy_client.local",
-                                 "/etc/rc.clover.lib",
-                                 "/etc/rc.shutdown.d/80.save_nvram_plist.local"];
-  
-  if fm.fileExists(atPath: "/etc/rc.clover.lib") {
-    for rc in oldRCScripts {
-      print("Removing old rc scripts..")
-      run(cmd: "mount -uw /")
-      sleep(2)
-      if fm.fileExists(atPath: rc) {
-        try? fm.removeItem(atPath: rc)
-      }
-    }
-  }
+  removeCloverRCScripts()
 
   /*
    Clean some lines from clover.daemon.log.
@@ -210,8 +234,7 @@ func main() {
         }
       }
     }
-    
-    
+
     // using the logout Hook only if EmuVariableUefiPresent
     let loh = getLogOutHook()
     
@@ -220,12 +243,12 @@ func main() {
       
       // if a hook exist and is not our one, then add a wrapper
       if (loh != nil) {
-        if loh! != lh && fm.fileExists(atPath: loh!) {
+        if loh! != cloverLogOut && fm.fileExists(atPath: loh!) {
           let wrapper =
           """
 #!/bin/sh
 
-'\(lh)'
+'\(cloverLogOut)'
           
 # This file is automatically generated by CloverDaemonNew because
 # it has detected you added a logout script somewhere else.
@@ -248,10 +271,10 @@ func main() {
             print(error)
           }
         } else {
-          run(cmd: "defaults write com.apple.loginwindow LogoutHook '\(lh)'")
+          run(cmd: "defaults write com.apple.loginwindow LogoutHook '\(cloverLogOut)'")
         }
       } else {
-        run(cmd: "defaults write com.apple.loginwindow LogoutHook '\(lh)'")
+        run(cmd: "defaults write com.apple.loginwindow LogoutHook '\(cloverLogOut)'")
       }
       
       if !fm.isWritableFile(atPath: "/") {
@@ -263,7 +286,7 @@ func main() {
     } else {
       // what to do? remove the logout hook if it's our
       if (loh != nil) {
-        if loh! == lh {
+        if loh! == cloverLogOut {
           // it is CloverLogOut
           print("Removing CloverLogOut hook as EmuVariable is no longer present.")
           run(cmd: "defaults delete com.apple.loginwindow LogoutHook")
@@ -305,12 +328,15 @@ func main() {
     /*
      Clean old nvram.plist user may have in all volumes
      Note: never delete in / as this will be done at shut down/restart
-     if the nvram is correctly saved somewhere else (e.g. in the ESP)
+     if the nvram is correctly saved somewhere else (e.g. in the ESP).
+     
+     Also don't delete nvram.plist from external devices as this is not or
+     shouldn't be our business.
      */
-    /*
+    
     for v in getVolumes() {
       let nvramtPath = v.addPath("nvram.plist")
-      if v != "/" {
+      if v != "/" && isInternalDevice(diskOrMtp: v) {
         if fm.fileExists(atPath: nvramtPath) {
           if fm.isDeletableFile(atPath: nvramtPath) {
             do {
@@ -325,7 +351,7 @@ func main() {
         }
       }
     }
-    */
+    
   } else {
     print("Error: nvram not present in this System.")
   }
@@ -359,10 +385,11 @@ if CommandLine.arguments.contains("--install") {
   launch.setValue("/Library/Logs/CloverEFI/clover.daemon.log", forKey: "StandardErrorPath")
   launch.setValue("/Library/Logs/CloverEFI/clover.daemon.log", forKey: "StandardOutPath")
   
-  let ProgramArguments = NSArray(object: "/Library/Application Support/Clover/CloverDaemonNew")
+  let ProgramArguments = NSArray(object: cloverDaemonNewPath)
   
   launch.setValue(ProgramArguments, forKey: "ProgramArguments")
   
+  removeCloverRCScripts()
   do {
     if !fm.fileExists(atPath: "/Library/Application Support/Clover") {
       try fm.createDirectory(atPath: "/Library/Application Support/Clover",
@@ -370,41 +397,39 @@ if CommandLine.arguments.contains("--install") {
                              attributes: nil)
     }
     
-    if fm.fileExists(atPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist") {
-      try fm.removeItem(atPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
+    if fm.fileExists(atPath: launchPlistPath) {
+      try fm.removeItem(atPath: launchPlistPath)
     }
     
-    if fm.fileExists(atPath: "/Library/Application Support/Clover/\(myName)") {
-      try fm.removeItem(atPath: "/Library/Application Support/Clover/\(myName)")
+    if fm.fileExists(atPath: cloverDaemonNewPath) {
+      try fm.removeItem(atPath: cloverDaemonNewPath)
     }
     
-    launch.write(toFile: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist",
-                 atomically: true)
+    launch.write(toFile: launchPlistPath, atomically: true)
     
-    try fm.copyItem(atPath: myPath, toPath: "/Library/Application Support/Clover/\(myName)")
+    try fm.copyItem(atPath: myPath, toPath: cloverDaemonNewPath)
     
     try fm.setAttributes(execAttr(),
-                         ofItemAtPath: "/Library/Application Support/Clover/\(myName)")
+                         ofItemAtPath: cloverDaemonNewPath)
     
     
     let logouthookSrc = myPath.deletingLastPath.addPath("CloverLogOut")
-    if fm.fileExists(atPath: lh) {
-      try fm.removeItem(atPath: lh)
+    if fm.fileExists(atPath: cloverLogOut) {
+      try fm.removeItem(atPath: cloverLogOut)
     }
     if fm.fileExists(atPath: logouthookSrc) {
       try fm.copyItem(atPath: logouthookSrc,
-                      toPath: lh)
+                      toPath: cloverLogOut)
       try fm.setAttributes(execAttr(),
-                           ofItemAtPath: lh)
+                           ofItemAtPath: cloverLogOut)
     }
     
-    try fm.setAttributes(launchAttr(),
-                         ofItemAtPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
-    if fm.fileExists(atPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist") {
-      run(cmd: "launchctl unload /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
+    try fm.setAttributes(launchAttr(), ofItemAtPath: launchPlistPath)
+    if fm.fileExists(atPath: launchPlistPath) {
+      run(cmd: "launchctl unload \(launchPlistPath)")
     }
-    run(cmd: "launchctl load /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
-    run(cmd: "launchctl start /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
+    run(cmd: "launchctl load \(launchPlistPath)")
+    run(cmd: "launchctl start \(launchPlistPath)")
     exit(EXIT_SUCCESS)
   } catch {
     print(error)
@@ -412,13 +437,21 @@ if CommandLine.arguments.contains("--install") {
 } else if CommandLine.arguments.contains("--uninstall") {
   print("uninstalling daemon...")
   do {
-    if fm.fileExists(atPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist") {
-      run(cmd: "launchctl unload /Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
-      try fm.removeItem(atPath: "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist")
+    if fm.fileExists(atPath: launchPlistPath) {
+      run(cmd: "launchctl unload \(launchPlistPath)")
+      try fm.removeItem(atPath: launchPlistPath)
     }
     
-    if fm.fileExists(atPath: "/Library/Application Support/Clover/CloverDaemonNew") {
-      try fm.removeItem(atPath: "/Library/Application Support/Clover/CloverDaemonNew")
+    if fm.fileExists(atPath: cloverDaemonNewPath) {
+      try fm.removeItem(atPath: cloverDaemonNewPath)
+    }
+    
+    if fm.fileExists(atPath: cloverLogOut) {
+      try fm.removeItem(atPath: cloverLogOut)
+    }
+    
+    if fm.fileExists(atPath: wrapperPath) {
+      try fm.removeItem(atPath: wrapperPath)
     }
     exit(EXIT_SUCCESS)
   } catch {

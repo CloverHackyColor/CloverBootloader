@@ -10,6 +10,7 @@ import Foundation
 
 let cmdVersion = "1.0.2"
 let savedNVRAMPath = "/tmp/NVRAM_saved"
+let NVRAMSavedToRoot = "/tmp/NVRAM_savedToRoot"
 
 func log(_ str: String) {
   let logUrl = URL(fileURLWithPath: "/Library/Logs/CloverEFI/clover.daemon.log")
@@ -75,6 +76,16 @@ func saveNVRAM(nvram: NSMutableDictionary, volume: String) {
           log("\(error)")
         }
       }
+      
+      if fm.fileExists(atPath: NVRAMSavedToRoot) {
+        do {
+          try fm.removeItem(atPath: NVRAMSavedToRoot)
+        } catch {
+          log("\(error)")
+        }
+      }
+    } else {
+      try? "".write(toFile: NVRAMSavedToRoot, atomically: false, encoding: .utf8)
     }
   } else {
     log("Error: nvram cannot be saved to \(volume) with UUID: \(uuid).")
@@ -110,7 +121,20 @@ func main() {
       if fm.fileExists(atPath: savedNVRAMPath) {
         if let old = NSDictionary(contentsOfFile: savedNVRAMPath) {
           if nvram.isEqual(to: old)  {
-            log("nvram not changed, nothing to do.")
+            /*
+             We are going to exit but if the nvram is already saved
+             and is saved in the ESP, then remove /.nvram.plist
+            */
+            if !fm.fileExists(atPath: NVRAMSavedToRoot) {
+              if fm.fileExists(atPath: "/nvram.plist") {
+                do {
+                  try fm.removeItem(atPath: "/nvram.plist")
+                } catch {
+                  log("\(error)")
+                }
+              }
+            }
+            log("nvram not changed, nothing to do.") // hope user didn't delete it :-)
             log("- CloverLogOut: end at \(now)")
             exit(EXIT_SUCCESS)
           }
