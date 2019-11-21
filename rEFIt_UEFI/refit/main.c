@@ -1752,11 +1752,11 @@ VOID ResetNvram ()
       ResetNativeNvram ();
     }
     // Attempt warm reboot
-    gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+//    gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
     // Warm reboot may not be supported attempt cold reboot
-    gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+//    gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
     // Terminate the screen and just exit
-    TerminateScreen();
+//    TerminateScreen();
 }
 
 VOID SetOEMPath(CHAR16 *ConfName)
