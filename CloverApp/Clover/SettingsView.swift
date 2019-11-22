@@ -123,6 +123,9 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
                                             selector: #selector(self.setUpdateTimer),
                                             userInfo: nil,
                                             repeats: true)
+    
+    let clickVersion = NSClickGestureRecognizer(target: self, action: #selector(goToWebSite))
+    self.appVersionField.addGestureRecognizer(clickVersion)
   }
   
   func setUpdateInformations() {
@@ -148,6 +151,12 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     didSet {
       // Update the view, if already loaded.
     }
+  }
+  
+  // MARK: Go to Website
+  @objc func goToWebSite() {
+    let link = "https://github.com/CloverHackyColor/CloverBootloader"
+    NSWorkspace.shared.open(URL(string: link)!)
   }
   
   // MARK: Disks
@@ -565,16 +574,21 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       
       let lastPath = downloadTask.originalRequest!.url!.lastPathComponent
       let data = try Data(contentsOf: location)
-      
+
       if lastPath.fileExtension == "zip" && lastPath.hasPrefix("CloverV2") {
         // ok, We have the download completed: replace CloverV2 inside SharedSupport directory!
         
         // Decompress the zip archive
-        let tempDir = NSTemporaryDirectory().addPath("CloverXXXXX")
+        // NSUserName() ensure the user have read write permissions
+        let tempDir = "/tmp/CloverXXXXX\(NSUserName())Update"
         if fm.fileExists(atPath: tempDir) {
           try fm.removeItem(atPath: tempDir)
-          try fm.createDirectory(atPath: tempDir, withIntermediateDirectories: true, attributes: nil)
+          
         }
+        try fm.createDirectory(atPath: tempDir,
+                               withIntermediateDirectories: false,
+                               attributes: nil)
+        
         let file = tempDir.addPath(lastPath)
         try data.write(to: URL(fileURLWithPath: file))
         unzip(file: file, destination: tempDir) { (success) in
@@ -582,9 +596,6 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
             self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
           }
         }
-      } else {
-        try data.write(to: URL(fileURLWithPath: NSHomeDirectory().addPath("Downloads/\(lastPath)")))
-        replaceCloverV2(with: "/Users/vectorsigma/src/CloverBootloader/CloverPackage/CloverV2")
       }
       
     } catch {
@@ -632,7 +643,6 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         do {
           try fm.removeItem(atPath: Cloverv2Path)
           try fm.copyItem(atPath: newOne, toPath: Cloverv2Path)
-          print("CloverV2 Replaced!")
           DispatchQueue.main.async {
             self.lastReleaseRev = nil
             self.lastReleaseLink = nil

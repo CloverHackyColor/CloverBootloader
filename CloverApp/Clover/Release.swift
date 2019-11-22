@@ -34,7 +34,7 @@ func getLatestRelease(reply: @escaping (String?, String?) -> Void) {
       if (line.range(of: "href=\"/CloverHackyColor/CloverBootloader/releases/download/") != nil) {
         link = line.components(separatedBy: "href=\"")[1]
         link = "https://github.com\(link.components(separatedBy: "\"")[0])"
-        print(link)
+        //print(link)
         if link.lastPath.hasPrefix("CloverV2") && link.hasSuffix(".zip") {
           vers = link.components(separatedBy: "/releases/download/")[1]
           vers = vers.components(separatedBy: "/")[0]
