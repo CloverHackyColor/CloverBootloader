@@ -78,7 +78,7 @@
                                 <rect key="frame" x="12" y="107" width="88" height="25"/>
                                 <popUpButtonCell key="cell" type="push" title="boot0af" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" focusRingType="none" imageScaling="proportionallyDown" inset="2" selectedItem="v1t-y6-CSK" id="7zo-zX-Jl9">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
+                                    <font key="font" metaFont="system"/>
                                     <menu key="menu" id="D8O-Dy-RtK">
                                         <items>
                                             <menuItem title="boot0af" state="on" id="v1t-y6-CSK"/>
@@ -104,7 +104,7 @@
                             <textField focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ccr-sG-KVJ">
                                 <rect key="frame" x="81" y="87" width="91" height="15"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" focusRingType="none" alignment="left" title="boot1" id="DSK-8g-GVR">
-                                    <font key="font" metaFont="label" size="13"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -113,7 +113,7 @@
                                 <rect key="frame" x="99" y="57" width="74" height="25"/>
                                 <popUpButtonCell key="cell" type="push" title="boot6" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" focusRingType="none" imageScaling="proportionallyDown" inset="2" selectedItem="v2m-Hs-R3O" id="VwT-y2-7ny">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
+                                    <font key="font" metaFont="system"/>
                                     <menu key="menu" id="keQ-8o-AiU">
                                         <items>
                                             <menuItem title="boot6" state="on" id="v2m-Hs-R3O"/>
@@ -143,7 +143,7 @@
                                 <rect key="frame" x="190" y="17" width="373" height="24"/>
                                 <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" focusRingType="none" imageScaling="proportionallyDown" inset="2" selectedItem="0Jk-9o-xwr" id="O9J-Cw-n1E">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
+                                    <font key="font" metaFont="system"/>
                                     <menu key="menu" id="7w6-P9-EUu">
                                         <items>
                                             <menuItem title="Item 1" state="on" id="0Jk-9o-xwr"/>
@@ -178,7 +178,7 @@
                                     <action selector="installPressed:" target="nXe-XS-4J0" id="EWS-5P-8Z5"/>
                                 </connections>
                             </button>
-                            <scrollView focusRingType="none" borderType="line" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79D-mq-1Q0">
+                            <scrollView focusRingType="none" borderType="line" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79D-mq-1Q0">
                                 <rect key="frame" x="192" y="45" width="468" height="97"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="8sm-KK-eZG">
                                     <rect key="frame" x="1" y="1" width="466" height="95"/>
@@ -196,11 +196,11 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Oja-xm-T1n">
-                                    <rect key="frame" x="-100" y="-100" width="225" height="15"/>
+                                    <rect key="frame" x="-100" y="-100" width="466" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Twd-gm-jkD">
-                                    <rect key="frame" x="-100" y="-100" width="15" height="115"/>
+                                    <rect key="frame" x="452" y="1" width="15" height="95"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
