@@ -66,54 +66,6 @@ extern EFI_GUID gAppleTamperResistantBootEfiUserVariableGuid;
 
 APPLE_SMC_IO_PROTOCOL        *gAppleSmc = NULL;
 
-typedef struct NVRAM_DATA
-{
-  CHAR16      *VariableName;
-  EFI_GUID    *Guid;
-} NVRAM_DATA;
-
-CONST NVRAM_DATA ResetNvramData[] = {
-  // Hibernationfixup variables
-  //{ L"Boot0082",           &gEfiGlobalVariableGuid }, { L"BootNext",       &gEfiGlobalVariableGuid },
-  //{ L"IOHibernateRTCVariables", &gEfiAppleBootGuid }, { L"boot-image",     &gEfiAppleBootGuid },
-  //{ L"boot-image-key",          &gEfiAppleBootGuid }, { L"boot-signature", &gEfiAppleBootGuid },
-  //{ L"boot-switch-vars",        &gEfiAppleBootGuid },
-
-  // Clover variables stored in macOS
-  //{ L"Clover.BackupDirOnDestVol", &gEfiAppleBootGuid }, { L"Clover.KeepBackupLimit", &gEfiAppleBootGuid },
-  //{ L"Clover.LogEveryBoot",       &gEfiAppleBootGuid }, { L"Clover.LogLineCount",    &gEfiAppleBootGuid },
-  //{ L"Clover.MountEFI",           &gEfiAppleBootGuid }, { L"Clover.NVRamDisk",       &gEfiAppleBootGuid },
-  //{ L"Clover.Theme",              &gEfiAppleBootGuid },
-
-  // Non-volatile variables
-  //{ L"fmm-computer-name",    &gEfiAppleBootGuid }, { L"bluetoothActiveControllerInfo", &gEfiAppleBootGuid },
-  //{ L"backlight-level",      &gEfiAppleBootGuid }, { L"bootercfg",               &gEfiAppleBootGuid },
-  //{ L"csr-active-config",    &gEfiAppleBootGuid }, { L"platform-uuid",           &gEfiAppleBootGuid },
-  //{ L"prev-lang:kbd",        &gEfiAppleBootGuid }, { L"security-mode",           &gEfiAppleBootGuid },
-  //{ L"UIScale",              &gEfiAppleBootGuid }, { L"nvda_drv",                &gEfiAppleBootGuid },
-  //{ L"SystemAudioVolumeDB",  &gEfiAppleBootGuid }, { L"SystemAudioVolume",       &gEfiAppleBootGuid },
-  //{ L"install-product-url",  &gEfiAppleBootGuid }, { L"previous-system-uuid",    &gEfiAppleBootGuid },
-  //{ L"AAPL,PanicInfoLog",    &gEfiAppleBootGuid }, { L"AAPL,PathProperties0000", &gEfiAppleBootGuid },
-  //{ L"boot-args",            &gEfiAppleBootGuid },
-
-  // FakeSMC variables
-  //{ L"fakesmc-key-$Num-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-$Adr-ui32", &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-RMde-char", &gEfiAppleBootGuid }, { L"fakesmc-key-RPlt-ch8*", &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-RBr -ch8*", &gEfiAppleBootGuid }, { L"fakesmc-key-EPCI-ui32", &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-REV -ch8*", &gEfiAppleBootGuid }, { L"fakesmc-key-BEMB-flag", &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-BATP-flag", &gEfiAppleBootGuid }, { L"fakesmc-key-BNum-ui8",  &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-BBIN-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSTc-ui8",  &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-MSAc-ui16", &gEfiAppleBootGuid }, { L"fakesmc-key-MSWr-ui8",  &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-MSFW-ui8",  &gEfiAppleBootGuid }, { L"fakesmc-key-MSPS-ui16", &gEfiAppleBootGuid },
-  //{ L"fakesmc-key-#KEY-ui32", &gEfiAppleBootGuid },
-
-  // BootChime variables stored in Clover GUI
-  { L"Clover.SoundDevice", &gEfiAppleBootGuid }, { L"Clover.SoundVolume", &gEfiAppleBootGuid },
-  { L"Clover.SoundIndex",  &gEfiAppleBootGuid },
-  { L"Device",  &gBootChimeVendorVariableGuid }, { L"Volume", &gBootChimeVendorVariableGuid },
-  { L"Index",   &gBootChimeVendorVariableGuid }
-};
-
 /** returns given time as miliseconds.
  *  assumes 31 days per month, so it's not correct,
  *  but is enough for basic checks.
@@ -268,57 +220,6 @@ DeleteNvramVariable (
   return Status;
 }
 
-// Reset EmuVariable NVRAM, implemented by Sherlocks
-EFI_STATUS
-ResetEmuNvram ()
-{
-  EFI_STATUS      Status = EFI_NOT_FOUND;
-  UINTN           VolumeIndex;
-  UINTN           Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
-  REFIT_VOLUME    *Volume;
-  EFI_FILE_HANDLE FileHandle;
-
-  //DbgHeader("ResetEmuNvram: cleanup NVRAM variables");
-
-  //DBG("searching volumes for nvram.plist\n");
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
-     Volume = Volumes[VolumeIndex];
-        
-     if (!Volume->RootDir) {
-       continue;
-     }
-
-     Status = Volume->RootDir->Open (Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
-     if (EFI_ERROR(Status)) {
-       //DBG("- [%02d]: '%s' - no nvram.plist - skipping!\n", VolumeIndex, Volume->VolName);
-       continue;
-     }
-     
-     // find the partition where nvram.plist can be deleted and delete it
-     if (Volume != NULL) {
-       if (StriStr(Volume->VolName, L"EFI") != NULL) {
-         //DBG("- [%02d]: '%s' - found nvram.plist and deleted it\n", VolumeIndex, Volume->VolName);
-         Status = DeleteFile (Volume->RootDir, L"nvram.plist");
-       } else {
-         //DBG("- [%02d]: '%s' - found nvram.plist but can't delete it\n", VolumeIndex, Volume->VolName);
-       }
-     }
-  }
-
-  //DBG("ResetEmuNvram: cleanup NVRAM variables\n");
-    
-  for (Index = 0; Index < ResetNvramDataCount; Index++) {
-    Status = DeleteNvramVariable(ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);
-    if (EFI_ERROR(Status)) {
-      //DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
-    } else {
-      //DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
-    }
-  }
-
-  return Status;
-}
-
 BOOLEAN
 IsDeletableVariable (
   IN CHAR16    *Name,
@@ -371,13 +272,15 @@ IsDeletableVariable (
 EFI_STATUS
 ResetNativeNvram ()
 {
-  EFI_STATUS    Status = EFI_NOT_FOUND;
-  EFI_GUID      Guid;
-  CHAR16        *Name;
-  UINTN         NameSize;
-  UINTN         NewNameSize;
-  //UINTN         Index, ResetNvramDataCount = ARRAY_SIZE (ResetNvramData);
-  BOOLEAN       Restart = TRUE;
+  EFI_STATUS      Status = EFI_NOT_FOUND;
+  EFI_GUID        Guid;
+  CHAR16          *Name;
+  UINTN           NameSize;
+  UINTN           NewNameSize;
+  BOOLEAN         Restart = TRUE;
+  UINTN           VolumeIndex;
+  REFIT_VOLUME    *Volume;
+  EFI_FILE_HANDLE FileHandle;
 
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
@@ -429,17 +332,32 @@ ResetNativeNvram ()
     FreePool (Name);
   }
 
-  // Leave for the future
-  //DBG("ResetNativeNvram: cleanup NVRAM variables\n");
+  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+    //DBG("Searching volumes for nvram.plist\n");
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+      Volume = Volumes[VolumeIndex];
+          
+      if (!Volume->RootDir) {
+        continue;
+      }
 
-  /*for (Index = 0; Index < ResetNvramDataCount; Index++) {
-    Status = DeleteNvramVariable(ResetNvramData[Index].VariableName, ResetNvramData[Index].Guid);
-    if (EFI_ERROR(Status)) {
-      //DBG("- [%02d]: '%s' - not exists\n", Index, ResetNvramData[Index].VariableName);
-    } else {
-      //DBG("- [%02d]: '%s' - deleted it\n", Index, ResetNvramData[Index].VariableName);
+      Status = Volume->RootDir->Open (Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
+      if (EFI_ERROR(Status)) {
+        //DBG("- [%02d]: '%s' - no nvram.plist - skipping!\n", VolumeIndex, Volume->VolName);
+        continue;
+      }
+       
+      // find the partition where nvram.plist can be deleted and delete it
+      if (Volume != NULL) {
+        if (StriStr(Volume->VolName, L"EFI") != NULL) {
+          //DBG("- [%02d]: '%s' - found nvram.plist and deleted it\n", VolumeIndex, Volume->VolName);
+          Status = DeleteFile (Volume->RootDir, L"nvram.plist");
+        } else {
+          //DBG("- [%02d]: '%s' - found nvram.plist but can't delete it\n", VolumeIndex, Volume->VolName);
+        }
+      }
     }
-  }*/
+  }
 
   return Status;
 }

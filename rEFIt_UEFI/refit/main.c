@@ -1741,16 +1741,19 @@ VOID SetVariablesFromNvram()
 VOID ResetNvram () 
   {
     if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
-      //if (gEmuVariableControl != NULL) {
-      //  gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-      //}
-      ResetEmuNvram ();
-      //if (gEmuVariableControl != NULL) {
-      //  gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
-      //}
-    } else {
-      ResetNativeNvram ();
+      if (gEmuVariableControl != NULL) {
+        gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+      }
     }
+
+    ResetNativeNvram ();
+
+    if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+      if (gEmuVariableControl != NULL) {
+        gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+      }
+    }
+
     // Attempt warm reboot
 //    gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
     // Warm reboot may not be supported attempt cold reboot

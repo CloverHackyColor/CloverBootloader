@@ -1962,9 +1962,6 @@ DeleteNvramVariable (
 VOID
 ResetNvram (VOID);
 
-EFI_STATUS
-ResetEmuNvram (VOID);
-
 BOOLEAN
 IsDeletableVariable (
   IN CHAR16    *Name,
