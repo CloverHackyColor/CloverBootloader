@@ -12,9 +12,9 @@
 
 /* top bar menu */
 "N/A" = "알수없음"; // not available (please be short)
-"Install Clover" = "클로버 설치하기";
+"Install Clover" = "클로버 설치";
 "Current Clover revision" = "현재 클로버 리비전";
-"Boot device" = "부트 장치";
+"Boot device" = "부트 디스크";
 "config path:" = "config 경로:";
 
 "Clover wants to mount %@" = "클로버는 다음 디스크를 마운트: %@";
@@ -39,14 +39,14 @@
 
 "Update" = "업데이트";
 "Update to r%d" = "r%d로 업데이트"; // "Update to r5101"
-"Check update:" = "업데이트 체크:";
-"Check now" = "지금 체크하기";
+"Check update:" = "업데이트 확인:";
+"Check now" = "지금 확인";
 
 "never" = "사용 안 함";
 "daily" = "매일";
 "weekly" = "매주";
 "monthly" = "매달";
-"last checked:" = "마지막 체크:"; // last date update was checked. Please be short.
+"last checked:" = "마지막 검사:"; // last date update was checked. Please be short.
 
 "Run at login" = "로그인 시 실행";
 "Close" = "닫기"; // Close the Clover.app
@@ -59,12 +59,12 @@
 "AltBoot" = "대체 부팅";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI 필수";
-"BIOS mandatory" = "BIOS 필수";
-"UEFI/Other" = "UEFI/추가";
-"BIOS/Other" = "BIOS/추가";
-"UEFI, but not from this installer" = "이 설치 프로그램이 아닌 UEFI";
-"BIOS, but not from this installer" = "이 설치 프로그램이 아닌 BIOS";
+"UEFI mandatory" = "UEFI, 필수 드라이버";
+"BIOS mandatory" = "BIOS, 필수 드라이버";
+"UEFI/Other" = "UEFI, 추가 드라이버";
+"BIOS/Other" = "BIOS, 추가 드라이버";
+"UEFI, but not from this installer" = "UEFI, 현재 사용자가 가지고 있는 드라이버";
+"BIOS, but not from this installer" = "BIOS, 현재 사용자가 가지고 있는 드라이버";
 
 "UEFI/FileSystem" = "UEFI, 파일시스템 드라이버";
 "BIOS/FileSystem" = "BIOS, 파일시스템 드라이버";
