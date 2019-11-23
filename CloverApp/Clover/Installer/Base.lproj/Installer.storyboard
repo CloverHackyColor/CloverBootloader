@@ -37,8 +37,8 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cd4-BN-85D">
-                                <rect key="frame" x="12" y="176" width="80" height="18"/>
-                                <buttonCell key="cell" type="check" title="CloverEFI" bezelStyle="regularSquare" imagePosition="left" focusRingType="none" inset="2" id="cO6-AP-j0b">
+                                <rect key="frame" x="12" y="176" width="53" height="18"/>
+                                <buttonCell key="cell" type="check" title="BIOS" bezelStyle="regularSquare" imagePosition="left" focusRingType="none" inset="2" id="cO6-AP-j0b">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
