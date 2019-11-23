@@ -32,6 +32,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   @IBOutlet var progressBar : NSProgressIndicator!
   
   @IBOutlet var appVersionField : NSTextField!
+  @IBOutlet var infoImageView : NSImageView!
   
   var lastReleaseRev : String? = nil
   var lastReleaseLink : String? = nil
@@ -126,6 +127,9 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     
     let clickVersion = NSClickGestureRecognizer(target: self, action: #selector(goToWebSite))
     self.appVersionField.addGestureRecognizer(clickVersion)
+    
+    let topic = NSClickGestureRecognizer(target: self, action: #selector(goToTopic))
+    self.infoImageView.addGestureRecognizer(topic)
   }
   
   func setUpdateInformations() {
@@ -156,6 +160,11 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   // MARK: Go to Website
   @objc func goToWebSite() {
     let link = "https://github.com/CloverHackyColor/CloverBootloader"
+    NSWorkspace.shared.open(URL(string: link)!)
+  }
+  
+  @objc func goToTopic() {
+    let link = "https://www.insanelymac.com/forum/topic/341047-cloverapp-testing/"
     NSWorkspace.shared.open(URL(string: link)!)
   }
   
