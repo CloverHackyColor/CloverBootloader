@@ -58,6 +58,33 @@
 "Uninstall" = "Disinstalla";
 "AltBoot" = "boot alternativo";
 
+"UEFI only" = "Installazione specifica di Clover solo per schede madri con UEFI.";
+
+"Install alternative booting PBR" = "Consente di selezionare il file di avvio premendo un tasto.
+File di avvio = boot{tasto premuto}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "Non installare nessun bootloader (boot0X, boot1X).
+Utile per schede madri con bios UEFI che non hanno bisogno dei file per il bootloader.
+Può essere usato anche se non si desidera aggiornare i settori MBR o PBR.";
+
+"Clover legacy BIOS boot sectors" = "Clover EFI richiede tre file essenziali. (in semplici termini)
+boot0 (Sul disco MBR) responsabile del caricamento del boot1.
+boot1 (Settore di avvio della partizione) per trovare il boot2.
+boot2 (Nella cartella principale della partizione) per caricare /EFI/CLOVER/CLOVERIA32.efi o CLOVERX64.efi, e il kernel etc.";
+
+"boot0af" = "Necessario per l'avvio da schede madri con BIOS.
+boot0af (boot0 active first) bootloader cerca di avviare la partizione attiva definita nella MBR. Se non vi è alcuna partizione attiva, tenterà di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida.
+Se questo è selezionato la partizione HFS e Fat32 saranno attivate.";
+
+"boot0ss" = "Necessario per l'avvio da schede madri con BIOS.
+boot0ss (boot0 signature scanning) bootloader cerca di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida. Se nessuna partizione è stata trovata, cercherà di avviare la partizione attiva definita nella MBR.
+Questa è una buona scelta quando si ha Windows installato sullo stesso disco perché Windows richiede che la partizione sia attiva.
+Questa scelta non attiverà alcuna partizione nella MBR.";
+
+"boot6" = "CloverEFI 64-bit che utilizza interfaccia SATA per accedere alle unità";
+"boot7" = "CloverEFI 64-bit che utilizza Bios Block I/O per accedere alle unità.
+Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti.";
+
 /* Drivers */
 "UEFI mandatory" = "UEFI, drivers raccomandati";
 "BIOS mandatory" = "BIOS, drivers raccomandati";

@@ -58,6 +58,27 @@
 "Uninstall" = "Desinstalar";
 "AltBoot" = "Boot alternativo";
 
+"UEFI only" = "Instala o Clover para ser usado somente em Placas Mãe UEFI.";
+
+"Install alternative booting PBR" = "Instala uma opção de boot (PBR) com escolha de boot quando pressionada uma tecla.
+Arquivo para iniciar = boot{teclapressionada}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "Não instala nenhum arquivo de boot (boot0X, boot1X).
+Utilizado por Placas-Mãe UEFI que não necessitam dos arquivos de boot.
+Também pode ser utilizado se você não quiser atualizar os setores de boot (MBR e PBR).";
+
+"Clover legacy BIOS boot sectors" = "Clover EFI necessita de três arquivos essênciais. (em termos simples)
+boot0 (No MBR do disco) responsável por carregar o boot1.
+boot1 (No setor de boot da partição) para encontrar o boot2.
+boot2 (Na raiz da partição) para carregar /EFI/CLOVER/CLOVERIA32.efi ou CLOVERX64.efi, e kernel etc.";
+
+"boot0af" = "Usado para o arranque em placas-mãe BIOS.  Nboot0af (boot0 ativo primeiro) bootloader tenta arrancar a partição ativa definida no MBR. Se não houver nenhuma partição ativa, ele vai tentar arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida.  NEsta escolha irá configurar partição HFS/Fat32 selecionada para ser ativa. ";
+
+"boot0ss" = "Usado para o arranque em placas-mãe BIOS.  Nboot0ss (boot0 assinatura Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se nenhuma partição for encontrada, ele tentará inicializar a partição ativa definida no MBR.  NEsse bootloader é uma boa opção quando você tiver o Windows instalado no mesmo disco, pois o Windows quer ter sua partição ativa.  NEsta opção não irá ativar qualquer partição no MBR. ";
+
+"boot6" = "CloverEFI 64-bits usando SATA para acessar os discos";
+"boot7" = "CloverEFI 64-bits usando Bios Block I/O para acessar os discos";
+
 /* Drivers */
 "UEFI mandatory" = "UEFI obrigatório";
 "BIOS mandatory" = "BIOS obrigatório";

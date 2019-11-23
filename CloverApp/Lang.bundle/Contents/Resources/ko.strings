@@ -58,6 +58,32 @@
 "Uninstall" = "제거";
 "AltBoot" = "대체 부팅";
 
+"UEFI only" = "UEFI 메인보드 전용 Clover를 설치합니다.";
+
+"Install alternative booting PBR" = "키를 누름으로써 대체 PBR로 부팅합니다.
+부팅 할 파일 = boot{누른키}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "어느 부트로더도 설치하지 않습니다(boot0X, boot1X).
+어떠한 부트로더 파일도 필요하지 않은 UEFI 메인보드에 유용합니다.
+만약 MBR 또는 PBR섹터를 업그레이드하고 싶지 않은 경우에도 사용 가능합니다.";
+
+"Clover legacy BIOS boot sectors" = "간단히 설명하자면, Clover EFI는 3개의 필수 파일이 필요합니다.
+boot0(드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.
+boot1(파티션의 boot-sector에 위치)은 boot2를 찾습니다.
+boot2(파티션의 root directory에 위치)는 /EFI/CLOVER/CLOVERIA32.efi 또는 CLOVERX64.efi, 그리고 kernel 등을 읽어 들입니다.";
+
+"boot0af" = "BIOS 메인보드에서 BIOS 부팅을 위해 사용됩니다.
+boot0af (boot0 첫번째 활성) 부트로더는 MBR의 활성화된 파티션으로 부트 시도합니다. 만약 활성 파티션이 없는 경우에는 첫번째 EFI/FAT32/HFS 파티션으로 유효한 PBR 시그니쳐로 부트 시도합니다. (먼저 MBR 그리고 GPT에 정의된 파티션)
+이 설정은 선택한 HFS/Fat32 파티션이 활성화 되게 설정합니다.";
+
+"boot0ss" = "BIOS 메인보드에서 BIOS 부팅을 위해 사용됩니다.
+boot0ss (boot0 시그내쳐 스캐닝) 부트로더는 EFI/FAT32/HFS의 첫번째 파티션으로 유효 PBR 시그니쳐를 통해 부트 시도합니다(먼저 MBR, 다음에 GPT에 정의된 파티션). 만약 활성 파티션이 없는 경우에는 MBR의 활성화된 파티션으로 부트시도 합니다.
+이 설정은 Windows가 대체로 자신의 파티션이 활성화 되어야 하므로, Windows와 같은 디스크에 설치될 경우에 좋은 선택입니다.
+이 선택은 MBR의 어떤 파티션도 활성 상태로 바꾸지 않습니다.";
+
+"boot6" = "CloverEFI 64비트 (드라이브 액세스에 SATA 사용)";
+"boot7" = "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)";
+
 /* Drivers */
 "UEFI mandatory" = "UEFI, 필수 드라이버";
 "BIOS mandatory" = "BIOS, 필수 드라이버";

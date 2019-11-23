@@ -58,6 +58,32 @@
 "Uninstall" = "卸载";
 "AltBoot" = "Alternative boot";
 
+"UEFI only" = "仅安装 UEFI 主板专用的 Clover 版本。";
+
+"Install alternative booting PBR" = "安装 PBR 的多重开机选项，boot1=变色龙 引导，boot6=64位 Clover 引导。
+可设定 开机 boot = boot{按键} 进行多重开机设置。";
+
+"Don't install any bootloader (boot0X, boot1X)" = "不安装任何引导文件 (boot0X, boot1X)。
+适用于不需要任何引导文件的 UEFI 主板。
+适用于不需要更新 MBR 及 PBR 磁区。";
+
+"Clover legacy BIOS boot sectors" = "简而言之，Clover EFI 需要三个必要的文件。
+boot0 (在硬盘的 MBR) 负责载入 boot1。
+boot1 (在分区的开机磁区 boot-sector) 搜寻 boot2。
+boot2 (在分区的根目录) 载入 /EFI/CLOVER/CLOVERIA32.efi 或 CLOVERX64.efi 及系统核心等等。";
+
+"boot0af" = "BIOS 主板 之 BIOS 启动 专用。
+boot0af (优先激活 boot0) 优先引导 MBR 的 激活分区, 如果没有激活分区, 将引导第一个含 有效 PBR 签名 的 EFI/FAT32/HFS 分区 (优先引导MBR，其次引导GPT)。
+本安装将 会 设置 HFS 及 Fat32 安装分区为激活分区。";
+
+"boot0ss" = "BIOS 主板 之 BIOS 启动 专用。
+boot0ss (boot0 签名扫描) 引导器 优先引导第一个含 有效 PBR 签名 的 EFI/FAT32/HFS 分区(优先引导MBR, 其次引导GPT), 如果没有找到分区，将引导 MBR 的 激活分区。
+本引导器 是推荐选择, 当你已经安装了 Windows 在相同磁盘。因为 Windows 想让它的分区成为 激活分区。
+本安装将 不会 设置 任何 MBR 里的分区为激活分区。";
+
+"boot6" = "CloverEFI 64位版本, 使用 SATA 模式存取硬盘";
+"boot7" = "CloverEFI 64位版本, 使用 Bios Block I/O 模式存取硬盘";
+
 /* Drivers */
 "UEFI mandatory" = "强制 UEFI 模式";
 "BIOS mandatory" = "强制 BIOS 模式";

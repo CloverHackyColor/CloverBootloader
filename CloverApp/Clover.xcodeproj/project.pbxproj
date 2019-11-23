@@ -859,7 +859,7 @@
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.09;
+				CURRENT_PROJECT_VERSION = 1.10;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -873,7 +873,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.09;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -888,7 +888,7 @@
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.09;
+				CURRENT_PROJECT_VERSION = 1.10;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -902,7 +902,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.09;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

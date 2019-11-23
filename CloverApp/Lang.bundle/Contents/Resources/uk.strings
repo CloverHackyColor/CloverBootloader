@@ -58,6 +58,32 @@
 "Uninstall" = "Uninstall";
 "AltBoot" = "Alternative boot";
 
+"UEFI only" = "Install Clover to be used with UEFI motherboards only.";
+
+"Install alternative booting PBR" = "Install alternative booting PBR with choice of boot with a key pressed.
+File to boot = boot{keypressed}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "Don't install any bootloader (boot0X, boot1X).
+Usefull for UEFI motherboards that don't need bootloader files.
+Can also be use if you don't want to upgrade MBR or PBR sectors.";
+
+"Clover legacy BIOS boot sectors" = "Clover EFI requires three essential files. (in simple terms)
+boot0 (On the drive's MBR) responsible for loading boot1.
+boot1 (On the partition's boot-sector) to finding boot2.
+boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc.";
+
+"boot0af" = "Used for BIOS booting on BIOS motherboards.
+boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.
+This choice will setup selected HFS/Fat32 partition to be active.";
+
+"boot0ss" = "Used for BIOS booting on BIOS motherboards.
+boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.
+This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.
+This choice will not activate any partition in MBR.";
+
+"boot6" = "Clover EFI 64-bits using SATA to access drives.";
+"boot7" = "Clover EFI 64-bits BiosBlockIO";
+
 /* Drivers */
 "UEFI mandatory" = "UEFI mandatory";
 "BIOS mandatory" = "BIOS mandatory";

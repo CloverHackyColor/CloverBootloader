@@ -58,6 +58,32 @@
 "Uninstall" = "Deinstallieren";
 "AltBoot" = "Alternativer Start";
 
+"UEFI only" = "Installiert Clover zur alleinigen Nutzung mit einem UEFI-BIOS.";
+
+"Install alternative booting PBR" = "Installiert alternatives PBR booten mit der Möglichkeit, zwischen mehreren boot Dateien zu wählen.
+Boot Datei = boot{gedrückte Taste}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "Keine Installation der bootloader (boot0X, boot1X).
+Nützlich für UEFI Computer, die keine bootloader Dateien benötigen.
+Kann auch benutzt werden, wenn keine Updates für MBR und PBR gewünscht werden.";
+
+"Clover legacy BIOS boot sectors" = "Clover EFI benötigt 3 wichtige Dateien.
+boot0 (Für MBR der Festplatte) lädt boot1.
+boot1 (Für den Startbereich der Partition) sucht nach boot2.
+boot2 (Für das Root Verzeichniss der Partition) lädt /EFI/BOOT/CLOVERIA32.efi oder CLOVERX64.efi, und den Kernel etc.";
+
+"boot0af" = "Zum booten von Computern, die nur über ein LEGACY BIOS verfügen.
+boot0af (boot0 Aktiv zuerst) versucht die erste als MBR definierte & aktivierte Partition zu booten. Ist keine aktive Partition vorhanden, versucht er die erste EFI/FAT32/HFS Partition mit gültiger PBR Signatur (in als MBR und dann in als GPT definierten) zu booten.
+Diese Auswahl wird die gewählte HFS/FAT32 Partition als aktiv setzen.";
+
+"boot0ss" = "Zum booten von Computern, die nur über ein LEGACY BIOS verfügen.
+boot0ss (boot0 Signatur scannen) versucht die erste /EFI/FAT32/HFS Partition mit gültiger PBR Signatur (in als MBR und dann in als GPT definierten) zu booten. Wird keine Partition gefunden, wird versucht die aktive, im MBR definierte, Partition zu booten.
+Dies ist eine gute Wahl wenn Windows auf der selben Festplatte installiert ist, da Windows seine Partition aktiv haben möchte.
+Diese Auswahl wird keine Partition im MBR aktivieren.";
+
+"boot6" = "CloverEFI 64Bit nutzt SATA um auf die Festplatten zuzugreifen";
+"boot7" = "CloverEFI 64-bits nutzt Bios Block I/O um auf die Festplatten zuzugreifen";
+
 /* Drivers */
 "UEFI mandatory" = "UEFI mandatory";
 "BIOS mandatory" = "BIOS mandatory";

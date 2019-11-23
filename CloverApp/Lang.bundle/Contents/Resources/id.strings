@@ -58,6 +58,37 @@
 "Uninstall" = "Copot";
 "AltBoot" = "Boot Alternatif";
 
+"UEFI only" = "Install Clover untuk digunakan pada motherboard yang hanya mendukung UEFI.";
+
+"Install alternative booting PBR" = "Install alternatif boot PBR dengan memilih boot melalui sebuah tombol.
+File to boot = boot{keypressed}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "Tanpa install bootloader apapun (boot0X, boot1X).
+Berguna untuk motherboard UEFI yang tidak membutuhkan file boot.
+Juga bermanfaat saat Anda tidak ingin upgrade sektor MBR atau PBR.";
+
+"Clover legacy BIOS boot sectors" = "Clover EFI membutuhkan 3 files esensial:
+boot0 (pada sektor MBR) berfungsi untuk memuat boot1.
+boot1 (di bootsector Partisi) berfungsi untuk mencari boot2.
+boot2 (di direktori root pada Partisi), memuat /EFI/CLOVER/CLOVERX64.efi, kernel & dsb.";
+
+"boot0af" = "Untuk BIOS-booting pada BIOS motherboard (Legacy).
+boot0af (boot0 Active First) mencoba boot partisi aktif di MBR.
+Jika tidak ada partisi aktif, ia akan boot partisi pertama EFI/FAT32/HFS
+(yang ada di MBR dan kemudian GPT) dengan signature PBR yang valid.
+Opsi ini akan menjadikan partisi HFS/FAT32 terpilih menjadi aktif.";
+
+"boot0ss" = "Untuk BIOS-booting pada BIOS motherboard (Legacy).
+boot0ss (boot0 Signature Scanning) mencoba boot partisi pertama
+EFI/FAT32/HFS+ (di MBR lalu GPT) dengan signature PBR valid.
+Jika partisi tidak ditemukan, ia akan boot partisi aktif di MBR.
+Ini dianjurkan ketika Windows terinstall pada Disk yang sama
+karena partisinya butuh dalam keadaan aktif.
+Opsi ini tidak membuat partisi di MBR menjadi aktif.";
+
+"boot6" = "Clover boot 64-bits melalui SATA untuk akses Drives";
+"boot7" = "Clover boot 64-bits melalui Bios Block I/O untuk akses Drives";
+
 /* Drivers */
 "UEFI mandatory" = "Penting bagi UEFI";
 "BIOS mandatory" = "Penting bagi BIOS";
