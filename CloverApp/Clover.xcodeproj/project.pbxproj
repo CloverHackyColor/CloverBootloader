@@ -15,6 +15,7 @@
 		9542ABC22373786700DC03E6 /* CloverV2 in Copy CloverV2 */ = {isa = PBXBuildFile; fileRef = 9542ABC12373786700DC03E6 /* CloverV2 */; };
 		9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */ = {isa = PBXBuildFile; fileRef = 95524B88238051F4005F6425 /* CloverLogOut */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		954BBE99238196EE0032425F /* Locale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954BBE98238196EE0032425F /* Locale.swift */; };
+		954DECD523899F5F006A9876 /* Bootmanager.png in Resources */ = {isa = PBXBuildFile; fileRef = 954DECD423899F5F006A9876 /* Bootmanager.png */; };
 		9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */ = {isa = PBXBuildFile; fileRef = 9552D745236F33A700C93377 /* CloverDaemonNew */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		958861DA235F75FB00B64173 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958861D9235F75FB00B64173 /* Driver.swift */; };
 		95ACABCA236B7463008F80A4 /* Unzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ACABC9236B7463008F80A4 /* Unzip.swift */; };
@@ -170,6 +171,7 @@
 		9542ABC12373786700DC03E6 /* CloverV2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CloverV2; path = ../CloverPackage/CloverV2; sourceTree = "<group>"; };
 		954BBE98238196EE0032425F /* Locale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locale.swift; sourceTree = "<group>"; };
 		954C3DF0237DF0250059C698 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		954DECD423899F5F006A9876 /* Bootmanager.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Bootmanager.png; sourceTree = "<group>"; };
 		95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverLogOut.xcodeproj; path = CloverLogOut/CloverLogOut.xcodeproj; sourceTree = "<group>"; };
 		9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverDaemonNew.xcodeproj; path = CloverDaemonNew/CloverDaemonNew.xcodeproj; sourceTree = "<group>"; };
 		958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cloverhelper.xcodeproj; path = cloverhelper/Cloverhelper.xcodeproj; sourceTree = "<group>"; };
@@ -373,6 +375,7 @@
 				95C514D62368D40A00E4A3A8 /* Main.storyboard */,
 				95E68AD9235B8666002B37A5 /* Installer */,
 				95E68ACD235B8632002B37A5 /* Assets.xcassets */,
+				954DECD423899F5F006A9876 /* Bootmanager.png */,
 				95E68AD2235B8632002B37A5 /* Info.plist */,
 				95E68AD3235B8632002B37A5 /* Clover.entitlements */,
 			);
@@ -555,6 +558,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				95C514D82368D40A00E4A3A8 /* Main.storyboard in Resources */,
+				954DECD523899F5F006A9876 /* Bootmanager.png in Resources */,
 				95C5C02D236598B00049940D /* Installer.storyboard in Resources */,
 				95E68ACE235B8632002B37A5 /* Assets.xcassets in Resources */,
 				9533718323709517003F1AF4 /* bootsectors-install in Resources */,

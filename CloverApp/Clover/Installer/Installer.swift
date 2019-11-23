@@ -35,7 +35,12 @@ class InstallerWindowController: NSWindowController, NSWindowDelegate {
     let wc = NSStoryboard(name: "Installer",
                           bundle: nil).instantiateController(withIdentifier: "InstallerWindow") as! InstallerWindowController
     let rev = findCloverRevision(at: Cloverv2Path.addPath("EFI")) ?? "0000"
-    wc.window?.title = "\("Clover Installer".locale) r\(rev)"
+    
+    var title = "\("Clover Installer".locale) r\(rev)"
+    if let hash = findCloverHashCommit(at: Cloverv2Path.addPath("EFI")) {
+      title = "\(title) (\(hash))"
+    }
+    wc.window?.title = title
     return wc
   }
 }

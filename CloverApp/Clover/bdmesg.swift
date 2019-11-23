@@ -57,6 +57,22 @@ func findCloverRevision() -> String? {
   return rev
 }
 
+func findCloverHash() -> String? {
+  let bdmesg = dumpBootlog()
+  var rev : String? = nil
+  if (bdmesg != nil) {
+    for line in bdmesg!.components(separatedBy: .newlines) {
+      if (line.range(of: "Starting Clover revision: ") != nil
+        && (line.range(of: ", commit ") != nil)) {
+        rev = line.components(separatedBy: ", commit")[1]
+        rev = rev!.components(separatedBy: ")")[0]
+        break
+      }
+    }
+  }
+  return rev
+}
+
 func findBootPartitionDevice() -> String? {
     var bsd :String? = nil
     if let bdmesg : String = dumpBootlog() {

@@ -57,8 +57,42 @@ func findCloverRevision(at EFIdir: String) -> String? {
         scanner.scanUpTo(terminatingCharacter, into: &rev)
         
         if (rev != nil), let revision = String(cString: (rev?.utf8String)!,
-                                               encoding: String.Encoding.utf8)/*&& rev?.length == 4 */{
+                                               encoding: String.Encoding.utf8) {
           if revision.count == 4 {
+            return revision
+          }
+        }
+      } catch  {
+        print(error.localizedDescription)
+      }
+    }
+    
+  }
+  return nil
+}
+
+// MARK: find Clover gihub commit
+func findCloverHashCommit(at EFIdir: String) -> String? {
+  
+  let bootfiles : [String] = ["/BOOT/BOOTX64.efi",
+                              "/CLOVER/CLOVERX64.efi",
+                              "/BOOT/BOOTXIA32.efi",
+                              "/CLOVER/CLOVERIA32.efi"]
+  let preMatchString = ", commit "
+  let terminatingCharacter = ")"
+  for b in bootfiles {
+    if fm.fileExists(atPath: EFIdir + b) {
+      do {
+        var rev : NSString? = nil
+        let stringToSearch : String = try String(contentsOfFile: EFIdir + b, encoding: String.Encoding.ascii)
+        let scanner : Scanner = Scanner(string: stringToSearch)
+        scanner.scanUpTo(preMatchString, into: nil)
+        scanner.scanString(preMatchString, into: nil)
+        scanner.scanUpTo(terminatingCharacter, into: &rev)
+        
+        if (rev != nil), let revision = String(cString: (rev?.utf8String)!,
+                                               encoding: String.Encoding.utf8) {
+          if revision.count == 8 {
             return revision
           }
         }

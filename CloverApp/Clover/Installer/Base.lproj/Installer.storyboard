@@ -37,7 +37,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cd4-BN-85D">
-                                <rect key="frame" x="12" y="176" width="53" height="18"/>
+                                <rect key="frame" x="12" y="165" width="53" height="18"/>
                                 <buttonCell key="cell" type="check" title="BIOS" bezelStyle="regularSquare" imagePosition="left" focusRingType="none" inset="2" id="cO6-AP-j0b">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -97,9 +97,9 @@
                                     <action selector="bootSectPressed:" target="nXe-XS-4J0" id="LX5-eS-eGO"/>
                                 </connections>
                             </button>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="24J-OS-i5T">
-                                <rect key="frame" x="14" y="209" width="156" height="184"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSApplicationIcon" id="Bef-n1-kQ3"/>
+                            <imageView focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="24J-OS-i5T">
+                                <rect key="frame" x="14" y="196" width="156" height="197"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" focusRingType="none" alignment="left" imageScaling="proportionallyDown" image="Bootmanager" id="Bef-n1-kQ3"/>
                             </imageView>
                             <textField focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ccr-sG-KVJ">
                                 <rect key="frame" x="81" y="87" width="91" height="15"/>
@@ -216,7 +216,7 @@
                             <constraint firstItem="PD6-mW-VtD" firstAttribute="bottom" secondItem="5aW-1v-mN2" secondAttribute="bottom" id="4bA-ef-7cG"/>
                             <constraint firstItem="8sv-QN-08c" firstAttribute="top" secondItem="AVt-3S-p3r" secondAttribute="bottom" constant="9" id="5X5-m7-xEF"/>
                             <constraint firstItem="btq-Z5-aMA" firstAttribute="top" secondItem="Ccr-sG-KVJ" secondAttribute="bottom" constant="9" id="79z-lG-snY"/>
-                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="24J-OS-i5T" secondAttribute="trailing" constant="8" symbolic="YES" id="8Ov-BD-gVo"/>
+                            <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="24J-OS-i5T" secondAttribute="trailing" constant="8" id="8Ov-BD-gVo"/>
                             <constraint firstItem="uj1-kY-SjZ" firstAttribute="leading" secondItem="5aW-1v-mN2" secondAttribute="trailing" constant="36" id="9P5-DX-Drj"/>
                             <constraint firstItem="AVt-3S-p3r" firstAttribute="trailing" secondItem="btq-Z5-aMA" secondAttribute="trailing" id="A7i-ZU-d4V"/>
                             <constraint firstItem="6Mf-nc-9Pn" firstAttribute="trailing" secondItem="AVt-3S-p3r" secondAttribute="trailing" id="AR9-WP-pmb"/>
@@ -247,8 +247,8 @@
                             <constraint firstItem="Fda-eU-aq8" firstAttribute="leading" secondItem="79D-mq-1Q0" secondAttribute="leading" id="frU-vg-Amx"/>
                             <constraint firstItem="79D-mq-1Q0" firstAttribute="top" secondItem="Fda-eU-aq8" secondAttribute="bottom" constant="8" symbolic="YES" id="jDU-Iw-tL2"/>
                             <constraint firstAttribute="trailing" secondItem="Fda-eU-aq8" secondAttribute="trailing" constant="20" symbolic="YES" id="kCT-UQ-jdd"/>
-                            <constraint firstItem="6Mf-nc-9Pn" firstAttribute="top" secondItem="cd4-BN-85D" secondAttribute="bottom" constant="21" id="kZC-qu-hBO"/>
-                            <constraint firstItem="cd4-BN-85D" firstAttribute="top" secondItem="24J-OS-i5T" secondAttribute="bottom" constant="17" id="lNu-Mo-Mge"/>
+                            <constraint firstItem="6Mf-nc-9Pn" firstAttribute="top" secondItem="cd4-BN-85D" secondAttribute="bottom" constant="10" id="kZC-qu-hBO"/>
+                            <constraint firstItem="cd4-BN-85D" firstAttribute="top" secondItem="24J-OS-i5T" secondAttribute="bottom" constant="15" id="lNu-Mo-Mge"/>
                             <constraint firstItem="PD6-mW-VtD" firstAttribute="leading" secondItem="YVM-Rq-d7o" secondAttribute="trailing" constant="45" id="ora-L3-TSy"/>
                             <constraint firstItem="cd4-BN-85D" firstAttribute="leading" secondItem="6Mf-nc-9Pn" secondAttribute="leading" id="pYV-pQ-Bj6"/>
                             <constraint firstItem="8sv-QN-08c" firstAttribute="leading" secondItem="MgP-28-KzA" secondAttribute="leading" constant="57" id="q71-1M-ERT"/>
@@ -281,7 +281,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="NSApplicationIcon" width="32" height="32"/>
+        <image name="Bootmanager" width="156" height="197"/>
         <image name="NSGoRightTemplate" width="9" height="12"/>
     </resources>
 </document>
