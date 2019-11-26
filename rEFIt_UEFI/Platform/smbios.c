@@ -1361,14 +1361,20 @@ VOID PatchTableType17()
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, "unknown");
         }
         newSmbiosTable.Type17->Speed = (UINT16)gRAM.User[UserIndex].Frequency;
-        newSmbiosTable.Type17->Size = (UINT16)gRAM.User[UserIndex].ModuleSize;
+        if (gRAM.User[UserIndex].ModuleSize > 0x7FFF) {
+          newSmbiosTable.Type17->Size = 0x7FFF;
+          newSmbiosTable.Type17->ExtendedSize = gRAM.User[UserIndex].ModuleSize;
+        } else {
+          newSmbiosTable.Type17->Size = (UINT16)gRAM.User[UserIndex].ModuleSize;
+        }
         newSmbiosTable.Type17->MemoryType = gRAM.User[UserIndex].Type;
         if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr4) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
           newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
         }
-        DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
+        DBG("%a %a %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
+          newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
         mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
         mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
         //        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
