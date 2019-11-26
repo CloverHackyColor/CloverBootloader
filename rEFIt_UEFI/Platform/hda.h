@@ -22,35 +22,6 @@
 #define __LIBSAIO_HDA_H
 #include "device_inject.h"
 
-//extern CHAR8 *gDeviceProperties;
-
-//BOOLEAN setup_hda_devprop(pci_dt_t *hda_dev, CHAR8 *OSVersion);
-
-struct hda_controller_devices;
-typedef struct
-{
-    UINT32      model;
-    CHAR8		*desc;
-} hda_controller_devices;
-
-struct hdacc_codecs;
-typedef struct
-{
-    UINT32      id;
-    UINT32      rev;
-    CHAR8       *name;
-} hdacc_codecs;
-
-
-#define UNKNOWN "Unknown "
-
-/****************************************************************************
- * Miscellanious defines
- ****************************************************************************/
-
-/* Controller models */
-#define HDA_MODEL_CONSTRUCT(vendor, model) (((UINT32)(model) << 16) | ((vendor##_VENDORID) & 0xffff))
-
 #if 0 //already defined
 /* Intel */
 
