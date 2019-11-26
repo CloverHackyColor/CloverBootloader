@@ -90,7 +90,7 @@ typedef struct {
 //
 // Controller models.
 //
-static HDA_CONTROLLER_LIST_ENTRY gHdaControllerList[] = {
+static const HDA_CONTROLLER_LIST_ENTRY gHdaControllerList[] = {
     //1002  Advanced Micro Devices [AMD] nee ATI Technologies Inc
     { HDA_CONTROLLER(AMD, 0x437b),  L"AMD SB4x0 HD Audio Controller" },
     { HDA_CONTROLLER(AMD, 0x4383),  L"AMD SB600 HD Audio Controller" },
@@ -243,7 +243,7 @@ static HDA_CONTROLLER_LIST_ENTRY gHdaControllerList[] = {
 //
 // Codec models.
 //
-static HDA_CODEC_LIST_ENTRY gHdaCodecList[] = {
+static const HDA_CODEC_LIST_ENTRY gHdaCodecList[] = {
     // AMD.
     { HDA_CODEC(AMD, 0xFFFF),  0x0000, L"AMD (Unknown)" },
 

@@ -79,7 +79,7 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
   static char desc[128];
   UINT32 controller_model = ((controller_device_id << 16) | controller_vendor_id);
 
-  HDA_CONTROLLER_LIST_ENTRY *controller;
+  const HDA_CONTROLLER_LIST_ENTRY *controller;
   for (controller = gHdaControllerList; controller->Id != 0; controller++) {
       // Check ID and revision against array element.
       if (controller->Id == controller_model) {
