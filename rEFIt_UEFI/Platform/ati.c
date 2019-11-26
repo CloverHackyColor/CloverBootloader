@@ -323,7 +323,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x67E8,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E9,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EB,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
-  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",             kAcre },
+  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",             kAcre },  //fb=Caroni in 10.13.6
   { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        kNull },
 
   // PITCAIRN

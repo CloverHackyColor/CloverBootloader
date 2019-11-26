@@ -64,7 +64,7 @@ typedef struct
  
  GFX0+IGPU
  Mac-63001698E7A34814 iMac19,2
- Mac-77F17D7DA9285301 iMac18,2
+ Mac-77F17D7DA9285301 iMac18,2 Radeon Pro 555  devID=67ef
  Mac-AA95B1DDAB278B95 iMac19,1 Radeon Pro 570X devID=67df
  Mac-BE088AF8C5EB4FA2 iMac18,3 Radeon Pro 575 == RX480/580 devID=67df
  
@@ -477,9 +477,9 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",
     { 0x02, 0x39, 0x0f, 0, 0, 0x40 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
   //iMac18,2 / iMac (Retina 4K, 21.5-inch, 2017)
-  { "iMac18,2", "IM183.88Z.F000.B00.1910301943", "179.0.0.0.0", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz
+  { "iMac18,2", "IM183.88Z.F000.B00.1910301943", "179.0.0.0.0", "Mac-77F17D7DA9285301", // Intel Core i5-7500 @ 3.40 GHz/i5-7400 @ 3.00GHz
     "iMac", "1.0", "C02TDHACJ1G5", "iMac-Aluminum",
-    { 0x02, 0x40, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j135", 0xf07009 }, // need RPlt EPCI
+    { 0x02, 0x40, 0x0f, 0, 0, 0x01 },  "j133_4_5", "j134", 0xf06009 }, 
   //iMac18,3 / iMac (Retina 5K, 27-inch, 2017)
   { "iMac18,3", "IM183.88Z.F000.B00.1910301943", "179.0.0.0.0", "Mac-BE088AF8C5EB4FA2", // Intel Core i7-7700K @ 4.20 GHz
     "iMac", "1.0", "C02TDHACJ1GJ", "iMac-Aluminum",
