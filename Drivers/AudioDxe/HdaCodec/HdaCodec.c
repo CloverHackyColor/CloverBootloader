@@ -25,8 +25,6 @@
 //#include "HdaCodec.h"
 #include "HdaCodecComponentName.h"
 //#include <IndustryStandard/HdaCodec.h>
-#include <Library/HdaModels.h>
-
 
 EFI_STATUS
 EFIAPI
@@ -467,9 +465,6 @@ HdaCodecProbeCodec(
     if (EFI_ERROR(Status))
         return Status;
 
-#if 1
-  HdaCodecGetName(HdaCodecDev);
-#else
     // Try to match codec name.
     HdaCodecDev->Name = NULL;
     UINTN CodecIndex = 0;
@@ -495,7 +490,7 @@ HdaCodecProbeCodec(
     if (HdaCodecDev->Name == NULL)
         HdaCodecDev->Name = HDA_CODEC_MODEL_GENERIC;
     DEBUG((DEBUG_INFO, "Codec name: %s\n", HdaCodecDev->Name));
-#endif
+
     // Get function group count.
     Status = HdaIo->SendCommand(HdaIo, HDA_NID_ROOT,
         HDA_CODEC_VERB(HDA_VERB_GET_PARAMETER, HDA_PARAMETER_SUBNODE_COUNT), &Response);

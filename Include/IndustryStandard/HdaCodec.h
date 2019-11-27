@@ -26,7 +26,7 @@
 #define _EFI_HDA_CODEC_H_
 
 //#include "AudioDxe.h"
-//#include <Library/HdaModels.h>
+#include <Library/HdaModels.h>
 #include <Protocol/AudioIo.h>
 #include <Protocol/HdaIo.h>
 #include <Protocol/HdaCodecInfo.h>
