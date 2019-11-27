@@ -2302,6 +2302,8 @@
 		A51F63CA22DFB84500086DB7 /* ApfsEfiBootRecordInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsEfiBootRecordInfo.h; sourceTree = "<group>"; };
 		A51F63CB22DFB86F00086DB7 /* ApplePartitionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePartitionInfo.h; sourceTree = "<group>"; };
 		A5429219233538250001F42A /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5494B1E238E2A810010471E /* HdaDevicesLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaDevicesLib.c; sourceTree = "<group>"; };
+		A5494B1F238E2A810010471E /* HdaDevicesLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HdaDevicesLib.inf; sourceTree = "<group>"; };
 		A5582AFC21019EA6002CFB6E /* VectorGraphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VectorGraphics.c; sourceTree = "<group>"; };
 		A5603D0321F04ECE005F400E /* sound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
 		A5611B2A21DCB97F008FDB96 /* Riff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Riff.h; sourceTree = "<group>"; };
@@ -6243,6 +6245,7 @@
 				A5E284512347DB780068ED34 /* DeviceTreeLib */,
 				12C865551DE426F600BF4974 /* DuetTimerLib */,
 				12C865581DE426F600BF4974 /* GenericBdsLib */,
+				A5494B1D238E2A810010471E /* HdaDevicesLib */,
 				12C865641DE426F600BF4974 /* IntrinsicLib */,
 				12C865681DE426F600BF4974 /* LzmaCustomDecompressLib */,
 				A5E284382347AEDF0068ED34 /* MachoLib */,
@@ -7907,6 +7910,15 @@
 				A51C784721E0981C001385A7 /* HdaControllerMem.c */,
 			);
 			path = HdaController;
+			sourceTree = "<group>";
+		};
+		A5494B1D238E2A810010471E /* HdaDevicesLib */ = {
+			isa = PBXGroup;
+			children = (
+				A5494B1E238E2A810010471E /* HdaDevicesLib.c */,
+				A5494B1F238E2A810010471E /* HdaDevicesLib.inf */,
+			);
+			path = HdaDevicesLib;
 			sourceTree = "<group>";
 		};
 		A5716FD3235A1576000CEC60 /* Isa */ = {

@@ -19,6 +19,7 @@
  */
 
 #include "Platform.h"
+#include <Library/HdaModels.h>
 
 #ifndef DEBUG_HDA
 #ifndef DEBUG_ALL
@@ -74,6 +75,7 @@
  *****************/
 
 /* get HDA device name */
+#if 0
 CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_vendor_id)
 {
   static char desc[128];
@@ -103,7 +105,6 @@ CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_ve
   return desc;
 }
 
-#if 0
 // executing HDA verb command using Immediate Command Input and Output Registers
 UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb)
 {

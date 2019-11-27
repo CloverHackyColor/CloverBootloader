@@ -22,8 +22,10 @@
  * SOFTWARE.
  */
 
+#include <Library/HdaModels.h>
 #include "HdaController.h"
 #include "HdaControllerComponentName.h"
+
 
 VOID
 EFIAPI

@@ -24,7 +24,7 @@ Headers collection for procedures
 #include <Library/DevicePathLib.h>
 #include <Library/GenericBdsLib.h>
 #include <Library/HiiLib.h>
-#include <Library/HdaModels.h>
+//#include <Library/HdaModels.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PerformanceLib.h>
