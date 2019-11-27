@@ -4518,7 +4518,7 @@ REFIT_MENU_ENTRY  *SubMenuAudio()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the HDA devices"));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of Audio Controller%a=%d", ((NHDA!=1)?"s":""), NHDA));
   for (i = 0; i < NHDA; i++) {
-      AddMenuInfoLine(SubScreen, PoolPrint(L"%d) %a [%04x][%04x]",
+      AddMenuInfoLine(SubScreen, PoolPrint(L"%d) %s [%04x][%04x]",
                                            (i+1),
                                            gAudios[i].controller_name,
                                            gAudios[i].controller_vendor_id,

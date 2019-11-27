@@ -23,7 +23,7 @@
  */
 
 #include "HdaCodecComponentName.h"
-#include <Library/HdaModels.h>
+//#include <Library/HdaModels.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE gHdaCodecDriverNameTable[] = {

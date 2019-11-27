@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <Library/HdaModels.h>
 #include "HdaController.h"
 #include "HdaControllerComponentName.h"
 
@@ -209,39 +210,6 @@ HdaControllerInitPciHw(
     return EFI_SUCCESS;
 }
 
-VOID
-EFIAPI
-HdaControllerGetName(
-    IN HDA_CONTROLLER_DEV *HdaControllerDev)
-{
-//    DEBUG((DEBUG_INFO, "HdaControllerGetName(): start\n"));
-
-    // Try to match controller name.
-    HdaControllerDev->Name = NULL;
-    UINTN ControllerIndex = 0;
-    while (gHdaControllerList[ControllerIndex].Id != 0) {
-        // Check ID and revision against array element.
-        if (gHdaControllerList[ControllerIndex].Id == HdaControllerDev->VendorId)
-            HdaControllerDev->Name = gHdaControllerList[ControllerIndex].Name;
-        ControllerIndex++;
-    }
-
-    // If match wasn't found, try again with a generic device ID.
-    if (HdaControllerDev->Name == NULL) {
-        ControllerIndex = 0;
-        while (gHdaControllerList[ControllerIndex].Id != 0) {
-            // Check ID and revision against array element.
-            if (gHdaControllerList[ControllerIndex].Id == GET_PCI_GENERIC_ID(HdaControllerDev->VendorId))
-                HdaControllerDev->Name = gHdaControllerList[ControllerIndex].Name;
-            ControllerIndex++;
-        }
-    }
-
-    // If match still wasn't found, controller is unknown.
-    if (HdaControllerDev->Name == NULL)
-        HdaControllerDev->Name = HDA_CONTROLLER_MODEL_GENERIC;
-//    DEBUG((DEBUG_INFO, "HdaControllerGetName(): controller is %s\n", HdaControllerDev->Name));
-}
 
 EFI_STATUS
 EFIAPI
@@ -764,58 +732,60 @@ HdaControllerDriverBindingStart(
     InitializeSpinLock(&HdaControllerDev->SpinLock);
 
     // Setup PCI hardware.
-    Status = HdaControllerInitPciHw(HdaControllerDev);
-    if (EFI_ERROR (Status))
-        goto FREE_CONTROLLER;
+    do {
+      Status = HdaControllerInitPciHw(HdaControllerDev);
+      if (EFI_ERROR(Status))
+        break;
 
-    // Get controller name.
-    HdaControllerGetName(HdaControllerDev);
+      // Get controller name.
+      HdaControllerGetName(HdaControllerDev->VendorId, &HdaControllerDev->Name);
 
-    // Reset controller.
-    Status = HdaControllerReset(HdaControllerDev);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
+      // Reset controller.
+      Status = HdaControllerReset(HdaControllerDev);
+      if (EFI_ERROR(Status))
+        break;
 
-    // Install info protocol.
-    Status = HdaControllerInstallProtocols(HdaControllerDev);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
+      // Install info protocol.
+      Status = HdaControllerInstallProtocols(HdaControllerDev);
+      if (EFI_ERROR(Status))
+        break;
 
-    // Initialize CORB and RIRB.
-    Status = HdaControllerInitCorb(HdaControllerDev);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
-    Status = HdaControllerInitRirb(HdaControllerDev);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
+      // Initialize CORB and RIRB.
+      Status = HdaControllerInitCorb(HdaControllerDev);
+      if (EFI_ERROR(Status))
+        break;
+      Status = HdaControllerInitRirb(HdaControllerDev);
+      if (EFI_ERROR(Status))
+        break;
 
-    // needed for QEMU.
+      // needed for QEMU.
 #ifdef QEMU
-     UINT16 dd = 0xFF;
-     PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_RINTCNT, 1, &dd);
+      UINT16 dd = 0xFF;
+      PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_RINTCNT, 1, &dd);
 #endif
 
-    // Start CORB and RIRB
-    Status = HdaControllerSetCorb(HdaControllerDev, TRUE);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
-    Status = HdaControllerSetRirb(HdaControllerDev, TRUE);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
+      // Start CORB and RIRB
+      Status = HdaControllerSetCorb(HdaControllerDev, TRUE);
+      if (EFI_ERROR(Status))
+        break;
+      Status = HdaControllerSetRirb(HdaControllerDev, TRUE);
+      if (EFI_ERROR(Status))
+        break;
 
-    // Init streams.
-    Status = HdaControllerInitStreams(HdaControllerDev);
-    if (EFI_ERROR(Status))
-        goto FREE_CONTROLLER;
+      // Init streams.
+      Status = HdaControllerInitStreams(HdaControllerDev);
+      if (EFI_ERROR(Status))
+        break;
 
-    // Scan for codecs.
-    Status = HdaControllerScanCodecs(HdaControllerDev);
-    ASSERT_EFI_ERROR(Status);
+      // Scan for codecs.
+      Status = HdaControllerScanCodecs(HdaControllerDev);
+//      ASSERT_EFI_ERROR(Status);
 
-//    DEBUG((DEBUG_INFO, "HdaControllerDriverBindingStart(): done\n"));
-    return Status;
+      //    DEBUG((DEBUG_INFO, "HdaControllerDriverBindingStart(): done\n"));
+      return Status;
+    } while (FALSE);
 
-FREE_CONTROLLER:
+//FREE_CONTROLLER:
     // Restore PCI attributes if needed.
     if (HdaControllerDev->OriginalPciAttributesSaved)
         PciIo->Attributes(PciIo, EfiPciIoAttributeOperationSet, HdaControllerDev->OriginalPciAttributes, NULL);

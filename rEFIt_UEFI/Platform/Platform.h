@@ -1504,7 +1504,7 @@ typedef struct {
     HRDW_MANUFACTERER  Vendor;
     UINT16            controller_vendor_id;
     UINT16            controller_device_id;
-    CHAR8             controller_name[32];
+    CHAR16            *controller_name;
 // -- Codec Info -- //
     UINT16            codec_vendor_id;
     UINT16            codec_device_id;
@@ -1513,7 +1513,7 @@ typedef struct {
     UINT8             codec_maj_rev;
     UINT8             codec_min_rev;
     UINT8             codec_num_function_groups;
-    CHAR8             codec_name[32];
+    CHAR16            *codec_name;
 } HDA_PROPERTIES;
 
 typedef struct {
@@ -2068,20 +2068,7 @@ setup_hda_devprop (
   CHAR8 *OSVersion
   );
 
-CHAR8
-*get_hda_controller_name (
-  UINT16 controller_device_id,
-  UINT16 controller_vendor_id
-  );
-/*
-CHAR8
-*get_hda_codec_name (
-  UINT16 codec_vendor_id,
-  UINT16 codec_device_id,
-  UINT8 codec_revision_id,
-  UINT8 codec_stepping_id
-  );
-*/
+
 BOOLEAN
 setup_nvidia_devprop (
   pci_dt_t *nvda_dev
@@ -2095,7 +2082,7 @@ CHAR8
   );
 
 UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
-EFI_STATUS AddAudioOutput(EFI_HANDLE PciDevHandle);
+//EFI_STATUS AddAudioOutput(EFI_HANDLE PciDevHandle);
 
 VOID
 FillCardList (

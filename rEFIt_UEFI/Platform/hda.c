@@ -19,6 +19,7 @@
  */
 
 #include "Platform.h"
+//#include <Library/HdaModels.h>
 
 #ifndef DEBUG_HDA
 #ifndef DEBUG_ALL
@@ -35,12 +36,6 @@
 #endif
 
 // HDA layout-id device injection by dmazar
-
-#define HDA_VMIN  0x02 // Minor, Major Version
-#define HDA_GCTL  0x08 // Global Control Register
-#define HDA_ICO    0x60 // Immediate Command Output Interface
-#define HDA_IRI    0x64 // Immediate Response Input Interface
-#define HDA_ICS    0x68 // Immediate Command Status
 
 /* CODECs */
 /*
@@ -73,37 +68,9 @@
  * Device Methods
  *****************/
 
-/* get HDA device name */
-CHAR8 *get_hda_controller_name(UINT16 controller_device_id, UINT16 controller_vendor_id)
-{
-  static char desc[128];
-  UINT32 controller_model = ((controller_device_id << 16) | controller_vendor_id);
-
-  HDA_CONTROLLER_LIST_ENTRY *controller;
-  for (controller = gHdaControllerList; controller->Id != 0; controller++) {
-      // Check ID and revision against array element.
-      if (controller->Id == controller_model) {
-          AsciiSPrint(desc, sizeof(desc), "%s", controller->Name);
-          return desc;
-      }
-  }
-
-  // If match wasn't found, try again with a generic device ID.
-  for (controller = gHdaControllerList; controller->Id != 0; controller++) {
-      // Check ID and revision against array element.
-      if (controller->Id == GET_PCI_GENERIC_ID(controller_model)) {
-          AsciiSPrint(desc, sizeof(desc), "%s", controller->Name);
-          return desc;
-      }
-  }
-
-  /* Not in table */
-  AsciiSPrint(desc, sizeof(desc), "Unknown HDA device, vendor %04x, model %04x",
-              controller_vendor_id, controller_device_id);
-  return desc;
-}
-
 #if 0
+
+
 // executing HDA verb command using Immediate Command Input and Output Registers
 UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb)
 {

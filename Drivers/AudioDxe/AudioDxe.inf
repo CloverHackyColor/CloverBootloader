@@ -39,6 +39,7 @@
     SynchronizationLib
     DebugLib
     DevicePathLib
+	HdaDevicesLib
     MemoryAllocationLib
     PcdLib
     UefiBootServicesTableLib
@@ -67,7 +68,7 @@
     HdaController/HdaControllerHdaIo.c
     HdaController/HdaController.h
     HdaController/HdaController.c
-    HdaModels.c
+#    HdaModels.c
     AudioDxe.h
     AudioDxe.c
 

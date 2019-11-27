@@ -5989,7 +5989,7 @@ GetUserSettings(
         }
       }
       Prop = GetProperty(DictPointer, "MemoryRank");
-      gSettings.Attribute = GetPropertyInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
+      gSettings.Attribute = (INT8)GetPropertyInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
 
       // Inject memory tables into SMBIOS
       Prop = GetProperty (DictPointer, "Memory");
@@ -7251,7 +7251,6 @@ GetDevices ()
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO)) &&
                  (NHDA < 4)) {
-
           HDA_PROPERTIES *hda = &gAudios[NHDA];
 
           // Populate Controllers IDs
@@ -7259,10 +7258,8 @@ GetDevices ()
           hda->controller_device_id       = Pci.Hdr.DeviceId;
 
           // HDA Controller Info
-          AsciiSPrint ( hda->controller_name,64, "%a",
-                       get_hda_controller_name ( Pci.Hdr.DeviceId, Pci.Hdr.VendorId )
-                       );
-
+          HdaControllerGetName(((hda->controller_device_id << 16) | hda->controller_vendor_id), &hda->controller_name);
+ 
 
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");

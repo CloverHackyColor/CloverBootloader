@@ -35,6 +35,9 @@
   ##  @libraryclass
   WaveLib|Include/Library/WaveLib.h
 
+   ##  @libraryclass
+  HdaDevicesLib|Include/Library/HdaModels.h
+
   ##  @libraryclass
   DeviceTreeLib|Include/Library/DeviceTreeLib.h
 
