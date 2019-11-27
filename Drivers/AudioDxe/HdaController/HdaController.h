@@ -27,7 +27,7 @@
 
 #include "AudioDxe.h"
 #include <Library/HdaRegisters.h>
-#include <Library/HdaModels.h>
+//#include <Library/HdaModels.h>
 
 //
 // Consumed protocols.

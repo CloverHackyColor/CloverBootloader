@@ -26,7 +26,7 @@
 #define _EFI_HDA_CODEC_H_
 
 //#include "AudioDxe.h"
-#include <Library/HdaModels.h>
+//#include <Library/HdaModels.h>
 #include <Protocol/AudioIo.h>
 #include <Protocol/HdaIo.h>
 #include <Protocol/HdaCodecInfo.h>
@@ -121,7 +121,7 @@ struct _HDA_CODEC_DEV {
     // Codec information.
     UINT32 VendorId;
     UINT32 RevisionId;
-    CHAR16 *Name;
+    CHAR16  *Name;
 
     HDA_FUNC_GROUP *FuncGroups;
     UINTN FuncGroupsCount;

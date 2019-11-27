@@ -1,0 +1,31 @@
+## file HdaDevicesLib.inf
+# Copyrights???
+##
+
+[Defines]
+    INF_VERSION    = 0x00010005
+    BASE_NAME      = HdaDevicesLib
+    FILE_GUID      = C10BE401-2B49-11E2-8DA0-CFED6188709B
+    MODULE_TYPE    = BASE
+    VERSION_STRING = 1.0
+    LIBRARY_CLASS  = HdaDevicesLib
+
+[Packages]
+    MdePkg/MdePkg.dec
+    CloverPkg.dec
+
+[LibraryClasses]
+    BaseLib
+    BaseMemoryLib
+    PrintLib
+    MemoryAllocationLib
+    UefiBootServicesTableLib
+    DebugLib
+    PciLib
+
+[Sources]
+  HdaDevicesLib.c
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
