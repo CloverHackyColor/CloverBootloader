@@ -139,19 +139,19 @@ DownloadSource () {
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.xz || exit 1
+        curl -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.xz || exit 1
         mv download.tmp ${GMP_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.xz ]]; then
         echo "Status: ${MPFR_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.xz || exit 1
+        curl -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.xz || exit 1
         mv download.tmp ${MPFR_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ]]; then
         echo "Status: ${MPC_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/mpc/${MPC_VERSION}.tar.gz || exit 1
+        curl -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpc/${MPC_VERSION}.tar.gz || exit 1
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
 
@@ -163,13 +163,13 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.xz || exit 1
+        curl -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.xz || exit 1
         mv download.tmp ${BINUTILS_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
-        curl -f -o download.tmp --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        curl -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
         mv download.tmp gcc-${GCC_VERSION}.tar.xz
     fi
 }
