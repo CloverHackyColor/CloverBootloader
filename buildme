@@ -206,7 +206,6 @@ if [[ "$SYSNAME" == Darwin ]]; then
     checkXCODE
     make
     local infoPlist=${CLOVERROOT}"/CloverApp/build/Clover.app/Contents/Info.plist"
-    echo $infoPlist
     local caVer=$(defaults read "${infoPlist}" CFBundleShortVersionString)
     if [[ -d "${CLOVERROOT}"/.git ]];then
       local aname="Clover.app-v${caVer}-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
