@@ -60,7 +60,11 @@ if [[ "$SYSNAME" == Linux ]]; then
   TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
 elif [[ "$SYSNAME" == Darwin ]]; then
   pathmunge "$(xcode-select --print-path)"/usr/bin
-  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
+  if [[ -d ~/src/opt/local ]]; then
+    TOOLCHAIN_DIR=~/src/opt/local
+  else
+    TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
+  fi
 fi
 
 pathmunge "$TOOLCHAIN_DIR"/bin
@@ -114,6 +118,17 @@ else
 fi
 }
 
+buildCloverHFSPlus() {
+if [[ -f "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi ]]; then
+  echo "building Clover with HFSPlus"
+  buildClover HFSPlus
+else
+  echo "${CLOVERROOT}/FileSystems/HFSPlus/X64/HFSPlus.efi: no such file!"
+  sleep 3
+  menu
+fi
+}
+
 buildClover() {
 checkTools
 
@@ -135,8 +150,13 @@ if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
   echo "Running custom build script"
   "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
 else
-  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
-  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+  if [[ "${1}" == HFSPlus ]]; then
+    ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
+    ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
+  else
+    ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+    ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+  fi
 fi
 
 # Run a post build script if exist (~/src/tools/Scripts/postbuild.sh)
@@ -254,6 +274,7 @@ echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
 echo
 PS3='Please enter your choice: '
 options=( 'build Clover'
+          'build Clover with HFSPlus'
           'make pkg'
           'make app'
           'make iso'
@@ -272,6 +293,10 @@ do
   case $opt in
     "build Clover")
       buildClover
+      break
+    ;;
+    "build Clover with HFSPlus")
+      buildCloverHFSPlus
       break
     ;;
     "make pkg")
