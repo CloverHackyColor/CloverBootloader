@@ -2,7 +2,7 @@
 //  AppDelegate.h
 //  CloverRunAtLogin
 //
-//  Created by vector sigma on 31/10/2019.
+//  Created by vector sigma on 26/11/2019.
 //  Copyright © 2019 CloverHackyColor. All rights reserved.
 //
 

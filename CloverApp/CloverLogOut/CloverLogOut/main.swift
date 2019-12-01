@@ -8,7 +8,7 @@
 
 import Foundation
 
-let cmdVersion = "1.0.2"
+let cmdVersion = "1.0.3"
 let savedNVRAMPath = "/tmp/NVRAM_saved"
 let NVRAMSavedToRoot = "/tmp/NVRAM_savedToRoot"
 

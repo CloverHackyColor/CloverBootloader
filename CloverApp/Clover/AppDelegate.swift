@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   
   var settingsWC: SettingsWindowController? = nil
   var installerWC : InstallerWindowController? = nil
+  var installerOutWC : InstallerOutWindowController? = nil
   
   var daSession : DASession? = nil
   var daContext : UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
@@ -65,16 +66,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   
   func applicationDidFinishLaunching(_ aNotification: Notification) {
     let appImage = NSImage(named: "NSApplicationIcon")
-    let size = self.statusItem.button!.frame.height - 3
-    appImage?.size = NSMakeSize(size, size)
-    self.statusItem.button?.image = appImage
-    
-    if let button = self.statusItem.button {
-      button.target = self
-      button.action = #selector(self.showPopover(_:))
-      button.sendAction(on: [.leftMouseUp, .rightMouseUp])
-      button.imagePosition = .imageLeft
+    if #available(OSX 10.10, *) {
+      let size = self.statusItem.button!.frame.height - 3
+      appImage?.size = NSMakeSize(size, size)
+      self.statusItem.button?.image = appImage?.copy() as? NSImage
+      self.statusItem.button?.image?.isTemplate = true
+      
+      if let button = self.statusItem.button {
+        button.target = self
+        button.action = #selector(self.showPopover(_:))
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        button.imagePosition = .imageLeft
+      }
+    } else {
+      appImage?.size = NSMakeSize(18.0, 18.0);
+      self.statusItem.image = appImage?.copy() as? NSImage
+      self.statusItem.target = self
+      self.statusItem.action = #selector(self.showPopover(_:))
+      self.statusItem.sendAction(on: [.leftMouseUp, .rightMouseUp])
     }
+    
+    
+    
     
     self.settingsWC = SettingsWindowController.loadFromNib()
     
@@ -117,7 +130,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     CFRunLoopRun()
   }
 
-  @objc func showPopover(_ sender: NSStatusBarButton?) {
+  @objc func showPopover(_ sender: Any?) {
     if (self.popover == nil) {
       self.popover = NSPopover()
       self.popover?.animates = true
@@ -126,13 +139,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
       self.popover?.delegate = self
     }
     
-    self.popover?.show(relativeTo: (sender?.bounds)!, of: sender!, preferredEdge: NSRectEdge.maxY)
+    if #available(OSX 10.10, *) {
+      if let button = sender as? NSStatusBarButton {
+        self.popover?.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.maxY)
+      }
+    } else {
+      if let v = sender as? NSView {
+        self.popover?.show(relativeTo: v.bounds, of: v, preferredEdge: NSRectEdge.maxY)
+      }
+    }
+    
     NSApp.activate(ignoringOtherApps: true)
+  }
+  
+  func popoverShouldDetach(_ popover: NSPopover) -> Bool {
+    return true
   }
   
   @objc func reFreshDisksList() {
     (self.settingsWC?.contentViewController as? SettingsViewController)?.searchESPDisks()
     (self.installerWC?.contentViewController as? InstallerViewController)?.populateTargets()
+    (self.installerOutWC?.contentViewController as? InstallerOutViewController)?.populateTargets()
   }
   
   

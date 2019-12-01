@@ -22,6 +22,7 @@
 "Mount" = "마운트";
 "umount" = "언마운트";
 "mount point" = "마운트 포인트";
+"auto mount" = "auto mount";
 
 "true" = "예";
 "false" = "아니오";

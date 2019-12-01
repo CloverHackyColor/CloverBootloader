@@ -11,7 +11,15 @@ import Cocoa
 
 // MARK: Installer Window controller
 class InstallerWindowController: NSWindowController, NSWindowDelegate {
-
+  var viewController : NSViewController? = nil
+  override var contentViewController: NSViewController? {
+    get {
+      self.viewController
+    }
+    set {
+      self.viewController = newValue
+    }
+  }
   func windowShouldClose(_ sender: NSWindow) -> Bool {
     if AppSD.isInstalling  {
       return false
@@ -30,7 +38,7 @@ class InstallerWindowController: NSWindowController, NSWindowDelegate {
   func windowWillClose(_ notification: Notification) {
     
   }
-  
+  /*
   class func loadFromNib() -> InstallerWindowController {
     let wc = NSStoryboard(name: "Installer",
                           bundle: nil).instantiateController(withIdentifier: "InstallerWindow") as! InstallerWindowController
@@ -43,315 +51,38 @@ class InstallerWindowController: NSWindowController, NSWindowDelegate {
     wc.window?.title = title
     return wc
   }
-}
-
-let collectionItemWith : Int = 155
-
-// MARK: ItemTextFieldCell (NSTextFieldCell sub class)
-class ItemTextFieldCell: NSTextFieldCell {
-  override func drawingRect(forBounds rect: NSRect) -> NSRect {
-    var nr = super.drawingRect(forBounds: rect)
-    let size = self.cellSize(forBounds: rect)
-    let diff = nr.size.height - size.height
-    if diff > 0 {
-      nr.size.height -= diff
-      nr.origin.y += (diff / 2)
-    }
-    return nr
-  }
-}
-
-// MARK: ItemTextField (NSTextfield sub class)
-class ItemTextField: NSTextField {
-  var trackingArea: NSTrackingArea? = nil
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    self.cell = ItemTextFieldCell()
-    
-    self.trackingArea = NSTrackingArea(rect: self.bounds,
-                                       options: [NSTrackingArea.Options.activeAlways, NSTrackingArea.Options.mouseEnteredAndExited],
-                                       owner: self, userInfo: nil)
-  }
-  
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  override func mouseDown(with event: NSEvent) {
-    self.showDescription()
-  }
-  
-  override func updateTrackingAreas() {
-    if self.trackingArea != nil {
-      self.removeTrackingArea(self.trackingArea!)
-    }
-    
-    self.trackingArea = NSTrackingArea(rect: self.bounds,
-                                       options: [NSTrackingArea.Options.activeAlways, NSTrackingArea.Options.mouseEnteredAndExited],
-                                       owner: self, userInfo: nil)
-    
-    self.addTrackingArea(self.trackingArea!)
-  }
-  
-  private func showDescription() {
-    if AppSD.isInstalling {
-      return
-    }
-    if let info = self.cell?.representedObject as? String {
-      if let ivc = self.target as? InstallerViewController {
-        ivc.post(text: info, add: false, color: nil, scroll: false)
-      }
-    }
-  }
-}
-
-// MARK: CollectionViewItem (NSCollectionViewItem sub class)
-class CollectionViewItem: NSCollectionViewItem {
-  var driver : EFIDriver? = nil
-  var installerController : InstallerViewController? = nil
-  
-  public func setState(_ state: NSControl.StateValue) {
-    self.driver?.state = state
-    self.checkBox.state = state
-  }
-  
-  public let checkBox: NSButton = {
-    let butt = NSButton()
-    butt.controlSize = .regular
-    butt.imagePosition = .noImage
-    butt.frame = NSRect(x: 0, y: 0, width: 18, height: 18)
-    butt.setButtonType(NSButton.ButtonType.switch)
-    butt.state = .off
-    return butt
-  } ()
-  
-  public let field: ItemTextField = {
-    let f = ItemTextField(frame: NSRect(x: 18, y: 0, width: collectionItemWith - 18, height: 18))
-    f.controlSize = .mini
-    f.drawsBackground = false
-    f.isEditable = false
-    f.isSelectable = false
-    return f
-  } ()
-  
-  @objc func checkBoxPressed(_ sender: NSButton?) {
-    if (sender != nil) {
-      self.driver?.state = sender!.state
-      if let sectionName = self.driver?.sectionName, let installer = self.installerController {
-        let kind = self.driver!.kind
-        let currDriverName = self.driver!.src.lastPath
-        let sections = installer.sectionsUEFI
-        // MemoryFix drivers allow only one choice
-        if sectionName.hasSuffix("MemoryFix") && sections.contains(sectionName) {
-          allowOnly(driver: self.driver!, kind: kind, in: sectionName, installer: installer)
-        } else if sectionName.hasSuffix("FileSystem") && sections.contains(sectionName) {
-          if self.driver!.state == .on {
-            var exclude : [String] = [String]()
-            let currLower = currDriverName.deletingFileExtension.lowercased()
-            if currLower == "vboxhfs" {
-              exclude = ["hfsplus"]
-            } else if currLower == "hfsplus" {
-              exclude = ["vboxhfs"]
-            } else if currLower == "apfsdriverloader" {
-              exclude = ["apfs"]
-            } else if currLower == "apfs" {
-              exclude = ["apfsdriverloader"]
-            } else if currLower == "ntfs" {
-              exclude = ["grubntfs"]
-            } else if currLower == "grubntfs" {
-              exclude = ["ntfs"]
-            }
-            uncheck(list: exclude,
-                    current: currDriverName,
-                    kind: kind,
-                    sectionName: sectionName,
-                    installer: installer)
-          }
-        } else if sectionName.hasSuffix("mandatory") && sections.contains(sectionName) {
-          if self.driver!.state == .on {
-            var exclude : [String] = [String]()
-            let currLower = currDriverName.deletingFileExtension.lowercased()
-            if currLower == "smchelper" {
-              exclude = ["virtualsmc"]
-            } else if currLower == "virtualsmc" {
-              exclude = ["smchelper"]
-            }
-            uncheck(list: exclude,
-                    current: currDriverName,
-                    kind: kind,
-                    sectionName: sectionName,
-                    installer: installer)
-          }
-        } else if sectionName.hasSuffix("FileVault2") && sections.contains(sectionName) {
-          /*
-           AppleImageCodec.efi, AppleKeyAggregator.efi, AppleKeyMapAggregator.efi, AppleEvent.efi, AppleUITheme.efi, EnglishDxe-64.efi, FirmwareVolume.efi, HashServiceFix.efi﻿
-           
-           vs
-           
-           AppleUiSupport
-          */
-          if self.driver!.state == .on {
-            var exclude : [String] = [String]()
-            let currLower = currDriverName.deletingFileExtension.lowercased()
-            if currLower == "appleimagecodec" ||
-              currLower == "applekeyaggregator" ||
-              currLower == "applekeymapaggregator" ||
-              currLower == "appleevent" ||
-              currLower == "appleuitheme" ||
-              currLower == "englishdxe" ||
-              currLower == "firmwarevolume" ||
-              currLower == "hashservicefix" {
-              exclude = ["appleuisupport"]
-            } else if currLower == "appleuisupport" {
-              exclude = ["appleimagecodec",
-                         "applekeyaggregator",
-                         "applekeymapaggregator",
-                         "appleevent",
-                         "appleuitheme",
-                         "englishdxe",
-                         "firmwarevolume",
-                         "hashservicefix"]
-            }
-            uncheck(list: exclude,
-                    current: currDriverName,
-                    kind: kind,
-                    sectionName: sectionName,
-                    installer: installer)
-          }
+  */
+  class func loadFromNib() -> InstallerWindowController? {
+    var topLevel: NSArray? = nil
+    Bundle.main.loadNibNamed("Installer", owner: self, topLevelObjects: &topLevel)
+    if (topLevel != nil) {
+      var wc : InstallerWindowController? = nil
+      for o in topLevel! {
+        if o is InstallerWindowController {
+          wc = o as? InstallerWindowController
         }
       }
-    }
-  }
-  
-  private func allowOnly(driver: EFIDriver,
-                         kind: EFIkind,
-                         in sectionName: String,
-                         installer: InstallerViewController) {
-    let sections = installer.sectionsUEFI
-    let sectIndex : Int = sections.firstIndex(of: sectionName)!
-    let drivers = installer.driversUEFI[sectIndex]
-    let driverName = driver.src.lastPath
-    
-    for (index, drv) in drivers.enumerated() {
-      if drv.src.lastPath != driverName {
-        installer.driversUEFI[sectIndex][index].state = .off
-      } else {
-        installer.driversUEFI[sectIndex][index].state = self.driver!.state
-        self.driver = installer.driversUEFI[sectIndex][index]
-      }
-    }
-    
-    let unknownSection = kind == .uefi ? kUnknownUEFISection : kUnknownBIOSSection
-    if driver.state == .on && installer.sectionsUEFI.contains(unknownSection) {
-      if sectionName == "UEFI/MemoryFix" {
-        uncheck(list: ["aptiomemory", "osxlowmem", "osxaptiofix"],
-                current: driverName,
-                kind: kind,
-                sectionName: unknownSection,
-                installer: installer)
-      }
-    }
-  }
-  
-  private func uncheck(list: [String],
-                       current: String,
-                       kind: EFIkind,
-                       sectionName: String,
-                       installer: InstallerViewController) {
-    let sections = installer.sectionsUEFI
-    let sectIndex : Int = sections.firstIndex(of: sectionName)!
-    let drivers = installer.driversUEFI[sectIndex]
-    
-    for (index, drv) in drivers.enumerated() {
-      if drv.src.lastPath != current {
-        for d in list {
-          if drv.src.lastPath.lowercased().hasPrefix(d) {
-            if installer.driversUEFI[sectIndex][index].state != .off {
-              installer.driversUEFI[sectIndex][index].state = .off
-            }
-          }
-        }
-      } else {
-        if installer.driversUEFI[sectIndex][index].state != self.driver!.state {
-          installer.driversUEFI[sectIndex][index].state = self.driver!.state
+      
+      for o in topLevel! {
+        if o is InstallerViewController {
+          wc?.contentViewController = o as! InstallerViewController
         }
       }
-    }
-    
-    // Since we are excluding drivers by prefix.. then looks for the same in unknown drivers
-    let unknownSection = kind == .uefi ? kUnknownUEFISection : kUnknownBIOSSection
-    if installer.sectionsUEFI.contains(unknownSection) {
-      let usections = installer.sectionsUEFI
-      let usectIndex : Int = usections.firstIndex(of: unknownSection)!
-      let udrivers = installer.driversUEFI[usectIndex]
-      for (index, drv) in udrivers.enumerated() {
-        for d in list {
-          if drv.src.lastPath.lowercased().hasPrefix(d) {
-            installer.driversUEFI[usectIndex][index].state = .off
-          }
-        }
+      
+      let rev = findCloverRevision(at: Cloverv2Path.addPath("EFI")) ?? "0000"
+      
+      var title = "\("Clover Installer".locale) r\(rev)"
+      if let hash = findCloverHashCommit(at: Cloverv2Path.addPath("EFI")) {
+        title = "\(title) (\(hash))"
       }
+      wc?.window?.title = title
+      return wc
     }
-  }
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    self.view.wantsLayer = true
-    self.view.layer?.backgroundColor = NSColor.clear.cgColor
-    self.checkBox.target = self
-    self.checkBox.action = #selector(self.checkBoxPressed(_:))
-  }
-  
-  override func viewDidAppear() {
-    super.viewDidAppear()
-  }
-  
-  override func loadView() {
-    self.view = NSView(frame: NSRect(x: 0, y: 0, width: collectionItemWith, height: 18))
-    self.view.addSubview(self.checkBox)
-    self.checkBox.target = self
-    self.view.addSubview(self.field)
+    return nil
   }
 }
-
-// MARK: HeaderView (NSView sub class)
-class HeaderView: NSView {
-  public let field: NSTextField = {
-    let f = NSTextField()
-    f.controlSize = .regular
-    f.isEditable = false
-    f.isBordered = false
-    f.drawsBackground = false
-    f.textColor = .white
-    f.frame = NSRect(x: 0, y: 0, width: 250, height: 18)
-    return f
-  } ()
-  
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    self.wantsLayer = true
-    self.layer?.backgroundColor = NSColor.gray.cgColor
-    self.addSubview(self.field)
-    self.field.stringValue = "header"
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-}
-
 
 // MARK: InstallerViewController (NSViewController sub class)
-let kUEFIRelativeOptionDir : String = /* CloverV2 + */ "EFI/CLOVER/drivers/off/UEFI"
-let kBIOSRelativeOptionDir : String = /* CloverV2 + */ "EFI/CLOVER/drivers/off/BIOS"
-
-let kBIOSRelativeDir : String = /* target volume + */ "EFI/CLOVER/drivers/BIOS"
-let kUEFIRelativeDir : String = /* target volume + */ "EFI/CLOVER/drivers/UEFI"
-
-let kUnknownUEFISection = "UEFI, but not from this installer"
-let kUnknownBIOSSection = "BIOS, but not from this installer"
-
 class InstallerViewController: NSViewController {
   // MARK: variables
   var targetVol : String = ""
@@ -374,8 +105,22 @@ class InstallerViewController: NSViewController {
   @IBOutlet var spinner : NSProgressIndicator!
   @IBOutlet var installButton : NSButton!
   
+  var loaded : Bool = false
+  
+  override func awakeFromNib() {
+    super.awakeFromNib()
+    if !self.loaded {
+      if #available(OSX 10.10, *) {} else {
+        self.viewDidLoad()
+      }
+      self.loaded = true
+    }
+  }
+
   override func viewDidLoad() {
-    super.viewDidLoad()
+    if #available(OSX 10.10, *) {
+      super.viewDidLoad()
+    }
     AppSD.isInstallerOpen = true
     let settingVC = AppSD.settingsWC?.contentViewController as? SettingsViewController
     settingVC?.disksPopUp.isEnabled = false
@@ -385,11 +130,27 @@ class InstallerViewController: NSViewController {
     // MARK: localize view and subviews
     localize(view: self.view)
     
+    // MARK: Appearance
+    if #available(OSX 10.14, *) { } else {
+      let appearance = NSAppearance(named: .aqua)
+      self.view.window?.appearance = appearance
+      self.driversCollection.enclosingScrollView?.contentView.drawsBackground = false
+      self.driversCollection.enclosingScrollView?.drawsBackground = false
+      //self.driversCollection.enclosingScrollView?.backgroundColor = .white
+      self.driversCollection.enclosingScrollView?.contentView.appearance = appearance
+      self.driversCollection.enclosingScrollView?.appearance = appearance
+      self.driversCollection.appearance = appearance
+      self.driversCollection.wantsLayer = true
+      self.driversCollection.layer?.backgroundColor = .white
+    }
+    
     // MARK: controls setup
     self.boot0Pop.removeAllItems()
     self.boot2Pop.removeAllItems()
     self.boot1Field.stringValue = ""
-    self.boot1Field.placeholderString = "?"
+    if #available(OSX 10.10, *) {
+      self.boot1Field.placeholderString = "?"
+    }
     self.installButton.isEnabled = false
     self.spinner.stopAnimation(nil)
     
@@ -428,27 +189,29 @@ class InstallerViewController: NSViewController {
       self.cloverEFICheck.isEnabled = false
     }
     
-    self.driversCollection.delegate = self
-    self.driversCollection.dataSource = self
+    // self.driversCollection.delegate = self // already set in Interface Builder
+    if #available(OSX 10.11, *) {
+      let fl = NSCollectionViewFlowLayout()
+      fl.itemSize = NSSize(width: Double(collectionItemWith), height: 18.0)
+      fl.sectionInset = NSEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0)
+      fl.minimumInteritemSpacing = 5.0
+      fl.minimumLineSpacing = 5.0
+      fl.headerReferenceSize = CGSize(width: self.driversCollection.frame.width - 30, height: 18)
+      self.driversCollection.collectionViewLayout = fl
+    }
+    
     self.cloverEFICheck.isEnabled = false
-    
-    
-    /*
-     let fl = NSCollectionViewFlowLayout()
-     fl.itemSize = NSSize(width: Double(collectionItemWith), height: 18.0)
-     fl.sectionInset = NSEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0)
-     fl.minimumInteritemSpacing = 5.0
-     fl.minimumLineSpacing = 5.0
-     fl.headerReferenceSize = CGSize(width: self.driversCollection.frame.width - 30, height: 18)
-     self.driversCollection.collectionViewLayout = fl*/
     
     self.driversCollection.isSelectable = true
     
-    self.driversCollection.register(CollectionViewItem.self,
-                                    forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CollectionViewItem"))
-    
-    self.driversCollection.register(HeaderView.self, forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader, withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CollectionViewHeader"))
-    
+    if #available(OSX 10.11, *) {
+      self.driversCollection.register(CollectionViewItem.self,
+                                      forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CollectionViewItem"))
+      
+      self.driversCollection.register(HeaderView.self,
+                                      forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
+                                      withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CollectionViewHeader"))
+    }
     self.targetPop.removeAllItems()
     self.populateTargets()
   }
@@ -713,7 +476,9 @@ class InstallerViewController: NSViewController {
       self.sectionsUEFI.append(sectionName)
     }
     
-    self.driversCollection.reloadData()
+    if #available(OSX 10.11, *) {
+      self.driversCollection.reloadData()
+    }
   }
   
   // MARK: find suitable disks
@@ -721,6 +486,7 @@ class InstallerViewController: NSViewController {
     if AppSD.isInstalling {
       return
     }
+    
     let selected : String? = self.targetPop.selectedItem?.representedObject as? String
     self.targetPop.removeAllItems()
     self.targetPop.addItem(withTitle: "Select a disk..".locale)
@@ -729,13 +495,16 @@ class InstallerViewController: NSViewController {
     let diskSorted : [String] = (disks.allKeys as! [String]).sorted()
     for d in diskSorted {
       let disk : String = d
-      if isWritable(diskOrMtp: disk) {
+      if isWritable(diskOrMtp: disk) && !kBannedMedia.contains(getVolumeName(from: disk) ?? "") {
         let fs : String = getFS(from: disk)?.lowercased() ?? kNotAvailable.locale
         let psm : String = getPartitionSchemeMap(from: disk) ?? kNotAvailable.locale
         let name : String = getVolumeName(from: disk) ?? kNotAvailable.locale
         let mp : String = getMountPoint(from: disk) ?? kNotAvailable.locale
         let parentDiskName : String = getMediaName(from: getBSDParent(of: disk) ?? "") ?? kNotAvailable.locale
-        if fs == "fat32" || fs == "exfat" || fs == "hfs" {
+        
+        let supportedFS = ["msdos", "fat32", "exfat", "hfs"]
+        
+        if supportedFS.contains(fs) {
           self.targetPop.addItem(withTitle: "\(disk)\t\(name), \("mount point".locale): \(mp), \(fs.uppercased()), \(psm): (\(parentDiskName))")
           self.targetPop.invalidateIntrinsicContentSize()
           // get the image
@@ -771,7 +540,9 @@ class InstallerViewController: NSViewController {
     self.driversUEFI = [[EFIDriver]]()
     self.sectionsUEFI = [String]()
     self.boot1Field.stringValue = ""
-    self.boot1Field.placeholderString = "?"
+    if #available(OSX 10.10, *) {
+      self.boot1Field.placeholderString = "?"
+    }
     self.cloverEFICheck.isEnabled = false
     self.cloverEFICheck.state = .off
     self.bootSectCheck.isEnabled = false
@@ -782,14 +553,20 @@ class InstallerViewController: NSViewController {
     self.altBootCheck.state = .off
     if let disk = sender?.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
-        DispatchQueue.global(qos: .background).async {
+        //DispatchQueue.global(qos: .background).async {
           let cmd = "diskutil mount \(disk)"
           let msg = String(format: "Clover wants to mount %@", disk)
           let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
           
           let task = Process()
-          task.launchPath = "/usr/bin/osascript"
-          task.arguments = ["-e", script]
+        
+          if #available(OSX 10.12, *) {
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", script]
+          } else {
+            task.launchPath = "/usr/sbin/diskutil"
+            task.arguments = ["mount", disk]
+          }
           
           task.terminationHandler = { t in
             if t.terminationStatus == 0 {
@@ -803,11 +580,15 @@ class InstallerViewController: NSViewController {
               DispatchQueue.main.async { self.view.window?.makeKeyAndOrderFront(nil) }
             } else {
               NSSound.beep()
-              DispatchQueue.main.async { self.driversCollection.reloadData() }
+              DispatchQueue.main.async {
+                if #available(OSX 10.11, *) {
+                  self.driversCollection.reloadData()
+                }
+              }
             }
           }
           task.launch()
-        }
+        //}
       } else {
         self.targetVol = getMountPoint(from: disk) ?? ""
         self.populateTargets()
@@ -816,7 +597,9 @@ class InstallerViewController: NSViewController {
     } else {
       self.driversUEFI = [[EFIDriver]]()
       self.sectionsUEFI = [String]()
-      self.driversCollection.reloadData()
+      if #available(OSX 10.11, *) {
+        self.driversCollection.reloadData()
+      }
     }
   }
   
@@ -912,7 +695,9 @@ class InstallerViewController: NSViewController {
   
   @IBAction func altBootPressed(_ sender: NSButton?) {
     self.boot1Field.stringValue = getBoot1() ?? "?"
-    self.boot1Field.placeholderString = self.boot1Field.stringValue
+    if #available(OSX 10.10, *) {
+      self.boot1Field.placeholderString = self.boot1Field.stringValue
+    }
     if self.cloverEFICheck.state == .off || self.bootSectCheck.state == .off {
       self.boot1Field.stringValue = ""
     }
@@ -957,7 +742,7 @@ class InstallerViewController: NSViewController {
     let attributes = [/*NSAttributedString.Key.font: font,*/ NSAttributedString.Key.foregroundColor: textColor]
     
     let astr = NSAttributedString(string: text, attributes: attributes)
-    DispatchQueue.global(qos: .background).async {
+    //DispatchQueue.global(qos: .background).async {
       DispatchQueue.main.async {
         if add {
           self.infoText.textStorage?.append(astr)
@@ -974,7 +759,7 @@ class InstallerViewController: NSViewController {
           self.infoText.scroll(NSPoint.zero)
         }
       }
-    }
+    //}
   }
   
   // MARK: Installation
@@ -1008,8 +793,15 @@ class InstallerViewController: NSViewController {
     Cloverapp.setValue(Cloverv2Path, forKey: "CloverV2")
     let filesystem = (getFS(from: disk)?.lowercased()) ?? kNotAvailable
     Cloverapp.setValue(filesystem, forKey: "filesystem")
+    Cloverapp.setValue(getAllESPs().contains(disk), forKey: "isESP")
  
-    
+    let supportedFS = ["exfat", "fat32", "hfs"]
+    if !supportedFS.contains(filesystem) {
+      NSSound.beep()
+      post(text: "Error: can't install on \(filesystem.uppercased()) filesystem.", add: false, color: nil, scroll: false)
+      return
+    }
+      
     // drivers
     for sect in self.driversUEFI {
       for driver in sect {
@@ -1105,12 +897,12 @@ class InstallerViewController: NSViewController {
       DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
         self.view.window?.level = .normal
       }
-      DispatchQueue.global(qos: .background).async {
+      //DispatchQueue.global(qos: .background).async {
         let task = Process()
         let msg = "Install Clover".locale
         let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("Cloverhelper")
         
-        let script = "do shell script \"\" & quoted form of \"\(helperPath)\" with prompt \"\(msg)\" with administrator privileges"
+        let script = "do shell script \"'\(helperPath)'\" with prompt \"\(msg)\" with administrator privileges"
         
         task.launchPath = "/usr/bin/osascript"
         task.arguments = ["-e", script]
@@ -1155,8 +947,7 @@ class InstallerViewController: NSViewController {
           }
         }
         task.launch()
-        //task.waitUntilExit()
-      }
+      //}
       
     } else {
       NSSound.beep()
@@ -1170,21 +961,23 @@ extension InstallerViewController: NSCollectionViewDataSource {
   
   func collectionView(_ collectionView: NSCollectionView,
                       itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-    let item = collectionView.makeItem(withIdentifier:
-      NSUserInterfaceItemIdentifier(rawValue: "CollectionViewItem"), for: indexPath)
-    
-    if let ci : CollectionViewItem = item as? CollectionViewItem {
-      ci.installerController = self
-      let drv = self.driversUEFI[indexPath.section][indexPath.item]
-      ci.field.target = self
-      ci.field.stringValue = drv.src.lastPath
-      ci.field.cell?.representedObject = drv.src.lastPath.locale
-      ci.driver = drv
-      ci.checkBox.state = drv.state
-      drv.itemView = ci
+    if #available(OSX 10.11, *) {
+      let item = collectionView.makeItem(withIdentifier:
+        NSUserInterfaceItemIdentifier(rawValue: "CollectionViewItem"), for: indexPath)
+      if let ci : CollectionViewItem = item as? CollectionViewItem {
+        ci.installerController = self
+        let drv = self.driversUEFI[indexPath.section][indexPath.item]
+        ci.field.target = self
+        ci.field.stringValue = drv.src.lastPath
+        ci.field.cell?.representedObject = drv.src.lastPath.locale
+        ci.driver = drv
+        ci.checkBox.state = drv.state
+        drv.itemView = ci
+      }
+      return item
     }
-    
-    return item
+    // that will not happen as this class is only used in 10.11+
+    return CollectionViewItem()
   }
   
   func numberOfSections(in collectionView: NSCollectionView) -> Int {
@@ -1199,22 +992,27 @@ extension InstallerViewController: NSCollectionViewDataSource {
   func collectionView(_ collectionView: NSCollectionView,
                       viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind,
                       at indexPath: IndexPath) -> NSView {
-    let h = collectionView.makeSupplementaryView(ofKind: kind,
-                                                 withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CollectionViewHeader"),
-                                                 for: indexPath)
-    if let hv : HeaderView = h as? HeaderView {
-      let str : String = self.sectionsUEFI[indexPath.section]
-      hv.field.stringValue = str.locale
-      if str.hasPrefix("BIOS") {
-        hv.layer?.backgroundColor = NSColor.gray.cgColor
-      } else {
-        hv.layer?.backgroundColor = NSColor.darkGray.cgColor
+    var h : NSView? = nil
+    if #available(OSX 10.11, *) {
+      h = collectionView.makeSupplementaryView(ofKind: kind,
+                                                   withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CollectionViewHeader"),
+                                                   for: indexPath)
+      
+      if let hv : HeaderView = h as? HeaderView {
+        let str : String = self.sectionsUEFI[indexPath.section]
+        hv.field.stringValue = str.locale
+        if str.hasPrefix("BIOS") {
+          hv.layer?.backgroundColor = NSColor.gray.cgColor
+        } else {
+          hv.layer?.backgroundColor = NSColor.darkGray.cgColor
+        }
       }
     }
-    return h
+    return h!
   }
 }
 
+/*
 // MARK: InstallerViewController extension with NSCollectionViewDelegateFlowLayout
 extension InstallerViewController: NSCollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: NSCollectionView,
@@ -1247,4 +1045,4 @@ extension InstallerViewController: NSCollectionViewDelegateFlowLayout {
     return 5.0
   }
 }
-
+*/

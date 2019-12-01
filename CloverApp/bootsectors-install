@@ -13,6 +13,7 @@ filesystem="${2}"       # fat32, hfs, exfat
 partition_scheme="${3}" # FDisk_partition_scheme, GUID_partition_scheme
 boot0="/tmp/${4}"       # /tmp/boot0af, /tmp/boot0ss
 boot1="/tmp/${5}"       # /tmp/boot1h, /tmp/boot1f32, /tmp/boot1x etc.
+ESP="${6}"              # ESP, OTHER
 
 bootdev="/dev/${disk}"
 bootrdev=${bootdev/disk/rdisk}
@@ -24,7 +25,7 @@ keepmounted=0
 journaled=0
 
 echo
-echo "Installing boot sectors (version of Sun 17 2019, 12:14)"
+echo "Installing boot sectors (version of Wed 27 Nov 2019, 22:16)"
 echo
 echo "disk:       ${disk}"
 echo "bootdev:    ${bootdev}"
@@ -148,15 +149,15 @@ fi
 
 sleep 2
 # Now try to remount the partition
-if [[ -n "$mnt_pt" ]]; then
+if [[ "${ESP}" != ESP ]]; then
+  if [[ -n "$mnt_pt" ]]; then
     /usr/sbin/diskutil mount "$bootdev"
+  fi
 fi
 
 if [[ $journaled -ne 0 ]]; then
   /usr/sbin/diskutil enableJournal "${disk}"
 fi
-
-
 
 /bin/rm -rf /tmp/Clover*
 /bin/rm -rf /tmp/boot1*

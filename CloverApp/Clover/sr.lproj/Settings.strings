@@ -1,0 +1,81 @@
+
+/* Class = "NSTextFieldCell"; title = "Update"; ObjectID = "58l-pb-zEc"; */
+"58l-pb-zEc.title" = "Update";
+
+/* Class = "NSTextFieldCell"; title = "Theme:"; ObjectID = "7yo-8b-ZHc"; */
+"7yo-8b-ZHc.title" = "Theme:";
+
+/* Class = "NSTextFieldCell"; title = "NVRAM/bdmesg"; ObjectID = "8j2-3s-fjm"; */
+"8j2-3s-fjm.title" = "NVRAM/bdmesg";
+
+/* Class = "NSButtonCell"; title = "Button"; ObjectID = "EJg-qm-L18"; */
+"EJg-qm-L18.title" = "Button";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "EX6-6q-G8U"; */
+"EX6-6q-G8U.title" = "N/A";
+
+/* Class = "NSButtonCell"; title = "Run at login"; ObjectID = "J8R-ej-fRl"; */
+"J8R-ej-fRl.title" = "Run at login";
+
+/* Class = "NSWindow"; title = "Clover"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Clover";
+
+/* Class = "NSTextFieldCell"; title = "Current revision"; ObjectID = "Re2-vf-XQ6"; */
+"Re2-vf-XQ6.title" = "Current revision";
+
+/* Class = "NSTextFieldCell"; title = "(ESP)"; ObjectID = "TTH-hz-cX2"; */
+"TTH-hz-cX2.title" = "(ESP)";
+
+/* Class = "NSTextFieldCell"; title = "Sound:"; ObjectID = "UHz-ZM-JLi"; */
+"UHz-ZM-JLi.title" = "Sound:";
+
+/* Class = "NSButtonCell"; title = "Read daemon log"; ObjectID = "UZY-ie-enb"; */
+"UZY-ie-enb.title" = "Read daemon log";
+
+/* Class = "NSButtonCell"; title = "Check now"; ObjectID = "UyZ-5I-L9X"; */
+"UyZ-5I-L9X.title" = "Check now";
+
+/* Class = "NSButtonCell"; title = "Read bdmesg"; ObjectID = "bhg-iF-USh"; */
+"bhg-iF-USh.title" = "Read bdmesg";
+
+/* Class = "NSButtonCell"; title = "umount"; ObjectID = "bhl-e0-nVD"; */
+"bhl-e0-nVD.title" = "umount";
+
+/* Class = "NSTextFieldCell"; title = "Check update:"; ObjectID = "fMZ-r2-dlm"; */
+"fMZ-r2-dlm.title" = "Check update:";
+
+/* Class = "NSTextFieldCell"; title = "CloverDaemon"; ObjectID = "gez-2n-CkL"; */
+"gez-2n-CkL.title" = "CloverDaemon";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "goU-fD-Ng6"; */
+"goU-fD-Ng6.title" = "Label";
+
+/* Class = "NSTextFieldCell"; title = "config path:"; ObjectID = "iii-3P-wo8"; */
+"iii-3P-wo8.title" = "config path:";
+
+/* Class = "NSButtonCell"; title = "*Disable Sleep Proxy Client"; ObjectID = "kZm-NL-hOA"; */
+"kZm-NL-hOA.title" = "*Disable Sleep Proxy Client";
+
+/* Class = "NSTextFieldCell"; title = "Boot Device:"; ObjectID = "omZ-xs-Wjn"; */
+"omZ-xs-Wjn.title" = "Boot Device:";
+
+/* Class = "NSButtonCell"; title = "Install"; ObjectID = "omz-9K-nb4"; */
+"omz-9K-nb4.title" = "Install";
+
+/* Class = "NSTextFieldCell"; title = "Mount"; ObjectID = "s5K-bS-gZa"; */
+"s5K-bS-gZa.title" = "Mount";
+
+/* Class = "NSButtonCell"; title = "*auto mount"; ObjectID = "tdl-nw-YFd"; */
+"tdl-nw-YFd.title" = "*auto mount";
+
+/* Class = "NSButtonCell"; title = "*Make filesystem read-write"; ObjectID = "v3W-6S-CK6"; */
+"v3W-6S-CK6.title" = "*Make filesystem read-write";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "v3d-HG-AeW"; */
+"v3d-HG-AeW.title" = "Label";
+
+/* Class = "NSButtonCell"; title = "Uninstall"; ObjectID = "w6z-A1-CZt"; */
+"w6z-A1-CZt.title" = "Uninstall";
+
+/* Class = "NSTextFieldCell"; title = "*Require CloverDaemon"; ObjectID = "yQ9-cU-wtc"; */
+"yQ9-cU-wtc.title" = "*Require CloverDaemon";

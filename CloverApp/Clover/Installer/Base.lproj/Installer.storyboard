@@ -13,9 +13,9 @@
                     <window key="window" title="Clover Installer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" id="ysg-ml-Ysp">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="229" y="240" width="680" height="470"/>
+                        <rect key="contentRect" x="229" y="240" width="680" height="405"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1600" height="877"/>
-                        <value key="minSize" type="size" width="680" height="470"/>
+                        <value key="minSize" type="size" width="680" height="405"/>
                         <connections>
                             <outlet property="delegate" destination="3bA-Bs-KDY" id="O5J-Xe-Rhf"/>
                         </connections>

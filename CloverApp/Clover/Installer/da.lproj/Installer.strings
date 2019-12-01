@@ -1,1 +1,39 @@
 
+/* Class = "NSTextFieldCell"; title = "boot1"; ObjectID = "1mQ-8l-huL"; */
+"1mQ-8l-huL.title" = "boot1";
+
+/* Class = "NSMenuItem"; title = "boot0ss"; ObjectID = "9T3-wC-JhK"; */
+"9T3-wC-JhK.title" = "boot0ss";
+
+/* Class = "NSMenuItem"; title = "boot0af"; ObjectID = "DCd-hp-yXw"; */
+"DCd-hp-yXw.title" = "boot0af";
+
+/* Class = "NSButtonCell"; title = "MBR/PBR"; ObjectID = "I6w-qd-wVH"; */
+"I6w-qd-wVH.title" = "MBR/PBR";
+
+/* Class = "NSButtonCell"; title = "BIOS"; ObjectID = "JQc-Bd-LSL"; */
+"JQc-Bd-LSL.title" = "BIOS";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "LkZ-aw-B4I"; */
+"LkZ-aw-B4I.title" = "Item 1";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Window";
+
+/* Class = "NSMenuItem"; title = "boot7"; ObjectID = "TcT-4A-GK6"; */
+"TcT-4A-GK6.title" = "boot7";
+
+/* Class = "NSButtonCell"; title = "Install"; ObjectID = "bS0-jA-vyD"; */
+"bS0-jA-vyD.title" = "Install";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "csK-ZW-WUr"; */
+"csK-ZW-WUr.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "gXR-Jl-YFp"; */
+"gXR-Jl-YFp.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "boot6"; ObjectID = "jTJ-j4-deU"; */
+"jTJ-j4-deU.title" = "boot6";
+
+/* Class = "NSButtonCell"; title = "AltBoot"; ObjectID = "zsc-8o-K5e"; */
+"zsc-8o-K5e.title" = "AltBoot";

@@ -7,29 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		95C51565236B211200E4A3A8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 95C51564236B211200E4A3A8 /* AppDelegate.m */; };
-		95C51568236B211200E4A3A8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95C51567236B211200E4A3A8 /* ViewController.m */; };
-		95C5156A236B211400E4A3A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95C51569236B211400E4A3A8 /* Assets.xcassets */; };
-		95C5156D236B211400E4A3A8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95C5156B236B211400E4A3A8 /* Main.storyboard */; };
-		95C51570236B211400E4A3A8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 95C5156F236B211400E4A3A8 /* main.m */; };
+		956A7AB4238DAD700012F6B0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 956A7AB3238DAD700012F6B0 /* AppDelegate.m */; };
+		956A7AB6238DAD720012F6B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956A7AB5238DAD720012F6B0 /* Assets.xcassets */; };
+		956A7AB9238DAD720012F6B0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956A7AB7238DAD720012F6B0 /* MainMenu.xib */; };
+		956A7ABC238DAD720012F6B0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 956A7ABB238DAD720012F6B0 /* main.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9540AED62379F43E001AD0C8 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Main.strings; sourceTree = "<group>"; };
-		95C51560236B211200E4A3A8 /* CloverRunAtLogin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloverRunAtLogin.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		95C51563236B211200E4A3A8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		95C51564236B211200E4A3A8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		95C51566236B211200E4A3A8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		95C51567236B211200E4A3A8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		95C51569236B211400E4A3A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		95C5156C236B211400E4A3A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		95C5156E236B211400E4A3A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		95C5156F236B211400E4A3A8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		95C51571236B211400E4A3A8 /* CloverRunAtLogin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CloverRunAtLogin.entitlements; sourceTree = "<group>"; };
+		956A7AAF238DAD700012F6B0 /* CloverRunAtLogin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloverRunAtLogin.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		956A7AB2238DAD700012F6B0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		956A7AB3238DAD700012F6B0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		956A7AB5238DAD720012F6B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		956A7AB8238DAD720012F6B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		956A7ABA238DAD720012F6B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		956A7ABB238DAD720012F6B0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		956A7ABD238DAD720012F6B0 /* CloverRunAtLogin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CloverRunAtLogin.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		95C5155D236B211200E4A3A8 /* Frameworks */ = {
+		956A7AAC238DAD700012F6B0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -39,34 +35,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		95C51557236B211100E4A3A8 = {
+		956A7AA6238DAD700012F6B0 = {
 			isa = PBXGroup;
 			children = (
-				95C51562236B211200E4A3A8 /* CloverRunAtLogin */,
-				95C51561236B211200E4A3A8 /* Products */,
+				956A7AB1238DAD700012F6B0 /* CloverRunAtLogin */,
+				956A7AB0238DAD700012F6B0 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		95C51561236B211200E4A3A8 /* Products */ = {
+		956A7AB0238DAD700012F6B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				95C51560236B211200E4A3A8 /* CloverRunAtLogin.app */,
+				956A7AAF238DAD700012F6B0 /* CloverRunAtLogin.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		95C51562236B211200E4A3A8 /* CloverRunAtLogin */ = {
+		956A7AB1238DAD700012F6B0 /* CloverRunAtLogin */ = {
 			isa = PBXGroup;
 			children = (
-				95C51563236B211200E4A3A8 /* AppDelegate.h */,
-				95C51564236B211200E4A3A8 /* AppDelegate.m */,
-				95C51566236B211200E4A3A8 /* ViewController.h */,
-				95C51567236B211200E4A3A8 /* ViewController.m */,
-				95C51569236B211400E4A3A8 /* Assets.xcassets */,
-				95C5156B236B211400E4A3A8 /* Main.storyboard */,
-				95C5156E236B211400E4A3A8 /* Info.plist */,
-				95C5156F236B211400E4A3A8 /* main.m */,
-				95C51571236B211400E4A3A8 /* CloverRunAtLogin.entitlements */,
+				956A7AB2238DAD700012F6B0 /* AppDelegate.h */,
+				956A7AB3238DAD700012F6B0 /* AppDelegate.m */,
+				956A7AB5238DAD720012F6B0 /* Assets.xcassets */,
+				956A7AB7238DAD720012F6B0 /* MainMenu.xib */,
+				956A7ABA238DAD720012F6B0 /* Info.plist */,
+				956A7ABB238DAD720012F6B0 /* main.m */,
+				956A7ABD238DAD720012F6B0 /* CloverRunAtLogin.entitlements */,
 			);
 			path = CloverRunAtLogin;
 			sourceTree = "<group>";
@@ -74,13 +68,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		95C5155F236B211200E4A3A8 /* CloverRunAtLogin */ = {
+		956A7AAE238DAD700012F6B0 /* CloverRunAtLogin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 95C51574236B211400E4A3A8 /* Build configuration list for PBXNativeTarget "CloverRunAtLogin" */;
+			buildConfigurationList = 956A7AC0238DAD720012F6B0 /* Build configuration list for PBXNativeTarget "CloverRunAtLogin" */;
 			buildPhases = (
-				95C5155C236B211200E4A3A8 /* Sources */,
-				95C5155D236B211200E4A3A8 /* Frameworks */,
-				95C5155E236B211200E4A3A8 /* Resources */,
+				956A7AAB238DAD700012F6B0 /* Sources */,
+				956A7AAC238DAD700012F6B0 /* Frameworks */,
+				956A7AAD238DAD700012F6B0 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -88,81 +82,78 @@
 			);
 			name = CloverRunAtLogin;
 			productName = CloverRunAtLogin;
-			productReference = 95C51560236B211200E4A3A8 /* CloverRunAtLogin.app */;
+			productReference = 956A7AAF238DAD700012F6B0 /* CloverRunAtLogin.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		95C51558236B211100E4A3A8 /* Project object */ = {
+		956A7AA7238DAD700012F6B0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = CloverHackyColor;
 				TargetAttributes = {
-					95C5155F236B211200E4A3A8 = {
+					956A7AAE238DAD700012F6B0 = {
 						CreatedOnToolsVersion = 11.2;
 					};
 				};
 			};
-			buildConfigurationList = 95C5155B236B211100E4A3A8 /* Build configuration list for PBXProject "CloverRunAtLogin" */;
+			buildConfigurationList = 956A7AAA238DAD700012F6B0 /* Build configuration list for PBXProject "CloverRunAtLogin" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
-				sr,
 			);
-			mainGroup = 95C51557236B211100E4A3A8;
-			productRefGroup = 95C51561236B211200E4A3A8 /* Products */;
+			mainGroup = 956A7AA6238DAD700012F6B0;
+			productRefGroup = 956A7AB0238DAD700012F6B0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				95C5155F236B211200E4A3A8 /* CloverRunAtLogin */,
+				956A7AAE238DAD700012F6B0 /* CloverRunAtLogin */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		95C5155E236B211200E4A3A8 /* Resources */ = {
+		956A7AAD238DAD700012F6B0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C5156A236B211400E4A3A8 /* Assets.xcassets in Resources */,
-				95C5156D236B211400E4A3A8 /* Main.storyboard in Resources */,
+				956A7AB6238DAD720012F6B0 /* Assets.xcassets in Resources */,
+				956A7AB9238DAD720012F6B0 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		95C5155C236B211200E4A3A8 /* Sources */ = {
+		956A7AAB238DAD700012F6B0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C51568236B211200E4A3A8 /* ViewController.m in Sources */,
-				95C51570236B211400E4A3A8 /* main.m in Sources */,
-				95C51565236B211200E4A3A8 /* AppDelegate.m in Sources */,
+				956A7ABC238DAD720012F6B0 /* main.m in Sources */,
+				956A7AB4238DAD700012F6B0 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		95C5156B236B211400E4A3A8 /* Main.storyboard */ = {
+		956A7AB7238DAD720012F6B0 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				95C5156C236B211400E4A3A8 /* Base */,
-				9540AED62379F43E001AD0C8 /* sr */,
+				956A7AB8238DAD720012F6B0 /* Base */,
 			);
-			name = Main.storyboard;
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		95C51572236B211400E4A3A8 /* Debug */ = {
+		956A7ABE238DAD720012F6B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -212,7 +203,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -220,7 +211,7 @@
 			};
 			name = Debug;
 		};
-		95C51573236B211400E4A3A8 /* Release */ = {
+		956A7ABF238DAD720012F6B0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -264,14 +255,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;
 		};
-		95C51575236B211400E4A3A8 /* Debug */ = {
+		956A7AC1238DAD720012F6B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -283,13 +274,12 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.CloverRunAtLogin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		95C51576236B211400E4A3A8 /* Release */ = {
+		956A7AC2238DAD720012F6B0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -301,7 +291,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.CloverRunAtLogin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -310,25 +299,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		95C5155B236B211100E4A3A8 /* Build configuration list for PBXProject "CloverRunAtLogin" */ = {
+		956A7AAA238DAD700012F6B0 /* Build configuration list for PBXProject "CloverRunAtLogin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				95C51572236B211400E4A3A8 /* Debug */,
-				95C51573236B211400E4A3A8 /* Release */,
+				956A7ABE238DAD720012F6B0 /* Debug */,
+				956A7ABF238DAD720012F6B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		95C51574236B211400E4A3A8 /* Build configuration list for PBXNativeTarget "CloverRunAtLogin" */ = {
+		956A7AC0238DAD720012F6B0 /* Build configuration list for PBXNativeTarget "CloverRunAtLogin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				95C51575236B211400E4A3A8 /* Debug */,
-				95C51576236B211400E4A3A8 /* Release */,
+				956A7AC1238DAD720012F6B0 /* Debug */,
+				956A7AC2238DAD720012F6B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 95C51558236B211100E4A3A8 /* Project object */;
+	rootObject = 956A7AA7238DAD700012F6B0 /* Project object */;
 }

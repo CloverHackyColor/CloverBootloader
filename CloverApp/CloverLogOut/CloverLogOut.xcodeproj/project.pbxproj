@@ -13,6 +13,7 @@
 		95524B8C2380521D005F6425 /* Disks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95524B8B2380521D005F6425 /* Disks.swift */; };
 		95524B8E2380522A005F6425 /* bdmesg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95524B8D2380522A005F6425 /* bdmesg.swift */; };
 		95524B9023805233005F6425 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95524B8F23805232005F6425 /* Extensions.swift */; };
+		955F7C70238DCD440019D088 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F7C6F238DCD440019D088 /* DiskArbitration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +36,7 @@
 		95524B8B2380521D005F6425 /* Disks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Disks.swift; path = ../../Clover/Disks.swift; sourceTree = "<group>"; };
 		95524B8D2380522A005F6425 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = bdmesg.swift; path = ../../Clover/bdmesg.swift; sourceTree = "<group>"; };
 		95524B8F23805232005F6425 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = ../../Clover/Extensions.swift; sourceTree = "<group>"; };
+		955F7C6F238DCD440019D088 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				955F7C70238DCD440019D088 /* DiskArbitration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,6 +56,7 @@
 			children = (
 				95524B7B238051AC005F6425 /* CloverLogOut */,
 				95524B7A238051AC005F6425 /* Products */,
+				955F7C6E238DCD440019D088 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -75,6 +79,14 @@
 				95524B8F23805232005F6425 /* Extensions.swift */,
 			);
 			path = CloverLogOut;
+			sourceTree = "<group>";
+		};
+		955F7C6E238DCD440019D088 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				955F7C6F238DCD440019D088 /* DiskArbitration.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,7 +275,15 @@
 		95524B81238051AC005F6425 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"/Library/Application\\ Support/Clover/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -273,7 +293,15 @@
 		95524B82238051AC005F6425 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"/Library/Application\\ Support/Clover/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

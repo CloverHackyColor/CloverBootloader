@@ -22,6 +22,7 @@
 "Mount" = "Mount";
 "umount" = "umount";
 "mount point" = "mount point";
+"auto mount" = "auto mount";
 
 "true" = "true";
 "false" = "false";

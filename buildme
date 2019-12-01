@@ -184,10 +184,12 @@ if [[ "$SYSNAME" == Darwin ]]; then
     echo "(Require Xcode 11 or greater)"
     checkXCODE
     make
+    local infoPlist=${CLOVERROOT}"/CloverPackage/sym/Clover.app/Contents/Info.plist"
+    local caVer=$(defaults read "${infoPlist}" CFBundleShortVersionString)
     if [[ -d "${CLOVERROOT}"/.git ]];then
-      local aname="Clover.app-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
+      local aname="Clover.app-v${caVer}-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
     else
-      local aname=Clover.app.zip
+      local aname="Clover.app-v${caVer}.zip"
     fi
     rm -f "${CLOVERROOT}"/CloverPackage/sym/Clover.app*.zip
     mkdir -p "${CLOVERROOT}"/CloverPackage/sym
@@ -344,4 +346,3 @@ if [[ "$2" == travis ]]; then
 else
   menu
 fi
-
