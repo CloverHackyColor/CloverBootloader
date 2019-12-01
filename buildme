@@ -184,7 +184,8 @@ if [[ "$SYSNAME" == Darwin ]]; then
     echo "(Require Xcode 11 or greater)"
     checkXCODE
     make
-    local infoPlist=${CLOVERROOT}"/CloverPackage/sym/Clover.app/Contents/Info.plist"
+    local infoPlist=${CLOVERROOT}"/CloverApp/build/Clover.app/Contents/Info.plist"
+    echo $infoPlist
     local caVer=$(defaults read "${infoPlist}" CFBundleShortVersionString)
     if [[ -d "${CLOVERROOT}"/.git ]];then
       local aname="Clover.app-v${caVer}-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
