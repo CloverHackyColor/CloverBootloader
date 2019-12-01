@@ -150,7 +150,8 @@ if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
   echo "Running custom build script"
   "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
 else
-  if [[ "${1}" == HFSPlus ]]; then
+  local parameter=${1:-none}
+  if [[ "${parameter}" == HFSPlus ]]; then
     ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
     ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
   else
