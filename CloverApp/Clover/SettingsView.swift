@@ -611,7 +611,6 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     }
     
     
-    
     // Time interval is what user defines less time elapsed
     if ti > 0 {
       let lastCheckDate : Date = (UDs.object(forKey: kLastSearchUpdateDateKey) as? Date) ?? Date()
@@ -643,7 +642,9 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       self.lastReleaseRev = bootvers
       let currRevNum : Int = Int(self.currentRev) ?? 0
       let lastRevNum : Int = Int(self.lastReleaseRev ?? "0") ?? 0
-      
+      let installerRev = findCloverRevision(at: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI"))
+      let installerRevNum = Int(installerRev ?? "0") ?? 0
+    
       if (self.lastReleaseLink != nil && self.lastReleaseRev != nil)
         && lastRevNum > 0
         && (lastRevNum > currRevNum) {
@@ -656,9 +657,13 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
           } else {
             AppSD.statusItem.title = "\(lastRevNum)"
           }
-          
-          self.updateCloverButton.isEnabled = true
-          self.updateCloverButton.title = String(format: "Update to r%d".locale, lastRevNum)
+          if installerRevNum > lastRevNum {
+            self.updateCloverButton.isEnabled = true
+            self.updateCloverButton.title = String(format: "Update to r%d".locale, lastRevNum)
+          } else {
+            self.updateCloverButton.isEnabled = false
+            self.updateCloverButton.title = kNotAvailable.locale
+          }
         }
       } else {
         DispatchQueue.main.async {
@@ -768,7 +773,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
 
       if lastPath.fileExtension == "zip" && lastPath.hasPrefix("CloverV2") {
         // ok, We have the download completed: replace CloverV2 inside SharedSupport directory!
-        
+
         // Decompress the zip archive
         // NSUserName() ensure the user have read write permissions
         let tempDir = "/tmp/CloverXXXXX\(NSUserName())Update"
@@ -782,10 +787,27 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         
         let file = tempDir.addPath(lastPath)
         try data.write(to: URL(fileURLWithPath: file))
-        unzip(file: file, destination: tempDir) { (success) in
-          if success {
-            self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+        
+        DispatchQueue.main.async {
+          let task : Process = Process()
+          task.environment = ProcessInfo().environment
+          let bash = "/bin/bash"
+          // unzip -d output_dir/ zipfiles.zip
+          let cmd = "/usr/bin/unzip -qq -d \(tempDir) \(file)"
+          if #available(OSX 10.13, *) {
+            task.executableURL = URL(fileURLWithPath: bash)
+          } else {
+            task.launchPath = bash
           }
+          
+          task.arguments = ["-c", cmd]
+          task.terminationHandler = { t in
+            if t.terminationStatus == 0 {
+              self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+            }
+          }
+          
+          task.launch()
         }
       }
       

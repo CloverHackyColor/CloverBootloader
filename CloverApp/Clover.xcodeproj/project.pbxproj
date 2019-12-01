@@ -27,7 +27,6 @@
 		956090B7238C890600ACD7F7 /* Installer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956090B9238C890600ACD7F7 /* Installer.xib */; };
 		9569EC42238DD772003AD72C /* Settings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9569EC44238DD772003AD72C /* Settings.xib */; };
 		958861DA235F75FB00B64173 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958861D9235F75FB00B64173 /* Driver.swift */; };
-		95ACABCA236B7463008F80A4 /* Unzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ACABC9236B7463008F80A4 /* Unzip.swift */; };
 		95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C515212369BAF500E4A3A8 /* NVRAM.swift */; };
 		95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C5152E236A0A7400E4A3A8 /* SettingsView.swift */; };
 		95C51536236B1F7700E4A3A8 /* RunAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */; };
@@ -321,7 +320,6 @@
 		9569EC90238DD7CA003AD72C /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Settings.strings; sourceTree = "<group>"; };
 		958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cloverhelper.xcodeproj; path = cloverhelper/Cloverhelper.xcodeproj; sourceTree = "<group>"; };
 		958861D9235F75FB00B64173 /* Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
-		95ACABC9236B7463008F80A4 /* Unzip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unzip.swift; sourceTree = "<group>"; };
 		95C515212369BAF500E4A3A8 /* NVRAM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NVRAM.swift; sourceTree = "<group>"; };
 		95C5152E236A0A7400E4A3A8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RunAtLogin.swift; sourceTree = "<group>"; };
@@ -450,7 +448,6 @@
 				95E68ADA235B86A0002B37A5 /* Releases.swift */,
 				95E68ADC235B86A1002B37A5 /* Shared.swift */,
 				95C515212369BAF500E4A3A8 /* NVRAM.swift */,
-				95ACABC9236B7463008F80A4 /* Unzip.swift */,
 				95E50075238ABA56002F3869 /* Tasks.swift */,
 				953BC20223720C0A0039755D /* FixedWidthViews.swift */,
 				9533718223709517003F1AF4 /* bootsectors-install */,
@@ -727,7 +724,6 @@
 				958861DA235F75FB00B64173 /* Driver.swift in Sources */,
 				95E68AE3235B86A1002B37A5 /* bdmesg.swift in Sources */,
 				95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */,
-				95ACABCA236B7463008F80A4 /* Unzip.swift in Sources */,
 				9555AF28238EFDAD00108C33 /* DriversCollection.swift in Sources */,
 				953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */,
 				95E50076238ABA56002F3869 /* Tasks.swift in Sources */,
