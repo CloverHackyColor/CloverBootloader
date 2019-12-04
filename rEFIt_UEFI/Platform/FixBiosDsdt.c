@@ -1387,11 +1387,16 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   i = adr; //usually adr = @5B - 1 = sizefield - 3
   while (i > 0x20) {  //find devices that previous to adr
     //check device
-    k = i + 2;
+    k = 0;
     if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, TRUE)) { //device candidate
+      k = i + 2;
+    } else if ((dsdt[i] == 0x10) && !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
+      k = i + 1;
+    }
+    if ( k != 0) {
       size = get_size(dsdt, k);
       if (size) {
-        if ((k+size) > adr+4) {  //Yes - it is outer
+        if ((k + size) > adr+4) {  //Yes - it is outer
     //          DBG("found outer device begin=%x end=%x\n", k, k+size);
           offset = write_size(k, dsdt, len, shift);  //size corrected to sizeoffset at address j
           shift += offset;
@@ -1399,7 +1404,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
         }  //else not an outer device
       } //else wrong size field - not a device
     } //else not a device
-// check scope
+// check scope _SB_
 // a problem 45 43 4F 4E 08   10 84 10 05 5F 53 42 5F
     SBSIZE = 0;
     if (dsdt[i] == '_' && dsdt[i+1] == 'S' && dsdt[i+2] == 'B' && dsdt[i+3] == '_') {
