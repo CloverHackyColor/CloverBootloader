@@ -38,12 +38,11 @@ func getNVRAM() -> NSMutableDictionary? {
 }
 
 // MARK: set NVRAM key
-@available(OSX 10.10, *)
 func setNVRAM(key: String, stringValue: String) {
   var cmd : String = "do shell script \""
   cmd += "sudo \(nvram_cmd) \(key)=\(stringValue)" // sudo required otherwise wont work!
   cmd += "\" with administrator privileges"
-  DispatchQueue.global(qos: .background).async {
+  //DispatchQueue.global(qos: .background).async {
     let script: NSAppleScript? = NSAppleScript(source: cmd)
     var error : NSDictionary? = nil
     script?.executeAndReturnError(&error)
@@ -51,16 +50,15 @@ func setNVRAM(key: String, stringValue: String) {
       NSSound.beep()
       print(error!.description)
     }
-  }
+  //}
 }
 
 // MARK: delete NVRAM key
-@available(OSX 10.10, *)
 func deleteNVRAM(key: String) {
   var cmd : String = "do shell script \""
   cmd += "sudo \(nvram_cmd) -d \(key)" // sudo required otherwise wont work!
   cmd += "\" with administrator privileges"
-  DispatchQueue.global(qos: .background).async {
+  //DispatchQueue.global(qos: .background).async {
     var error : NSDictionary? = nil
     let script: NSAppleScript? = NSAppleScript(source: cmd)
     script?.executeAndReturnError(&error)
@@ -68,7 +66,7 @@ func deleteNVRAM(key: String) {
       NSSound.beep()
       print(error!.description)
     }
-  }
+  //}
 }
 
 

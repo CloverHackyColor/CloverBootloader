@@ -16,21 +16,27 @@
 		9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */ = {isa = PBXBuildFile; fileRef = 95524B88238051F4005F6425 /* CloverLogOut */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		954BBE99238196EE0032425F /* Locale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954BBE98238196EE0032425F /* Locale.swift */; };
 		954DECD523899F5F006A9876 /* Bootmanager.png in Resources */ = {isa = PBXBuildFile; fileRef = 954DECD423899F5F006A9876 /* Bootmanager.png */; };
+		954FCFD92391818300C9273C /* NSWindowFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 954FCFD82391818300C9273C /* NSWindowFix.m */; };
+		95509171238B1E3A00933A7E /* daemonInstaller in Copy tools */ = {isa = PBXBuildFile; fileRef = 9550916E238B1DFA00933A7E /* daemonInstaller */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */ = {isa = PBXBuildFile; fileRef = 9552D745236F33A700C93377 /* CloverDaemonNew */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9555AF26238EE53300108C33 /* InstallerOutline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9555AF25238EE53300108C33 /* InstallerOutline.swift */; };
+		9555AF28238EFDAD00108C33 /* DriversCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9555AF27238EFDAD00108C33 /* DriversCollection.swift */; };
+		9556CAF5238DF75600082671 /* InstallerOutline.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9556CAF3238DF75600082671 /* InstallerOutline.xib */; };
+		955F7C6D238DCD170019D088 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F7C6C238DCD160019D088 /* DiskArbitration.framework */; };
+		9560906A238C61E200ACD7F7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95609068238C61E200ACD7F7 /* MainMenu.xib */; };
+		956090B7238C890600ACD7F7 /* Installer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956090B9238C890600ACD7F7 /* Installer.xib */; };
+		9569EC42238DD772003AD72C /* Settings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9569EC44238DD772003AD72C /* Settings.xib */; };
 		958861DA235F75FB00B64173 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958861D9235F75FB00B64173 /* Driver.swift */; };
-		95ACABCA236B7463008F80A4 /* Unzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ACABC9236B7463008F80A4 /* Unzip.swift */; };
-		95C514D82368D40A00E4A3A8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95C514D62368D40A00E4A3A8 /* Main.storyboard */; };
 		95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C515212369BAF500E4A3A8 /* NVRAM.swift */; };
 		95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C5152E236A0A7400E4A3A8 /* SettingsView.swift */; };
-		95C51531236A0EE800E4A3A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95C51530236A0EE800E4A3A8 /* Settings.storyboard */; };
 		95C51536236B1F7700E4A3A8 /* RunAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */; };
 		95C51582236B226500E4A3A8 /* CloverRunAtLogin.app in Copy CloverRunAtLogin */ = {isa = PBXBuildFile; fileRef = 95C5157C236B21AF00E4A3A8 /* CloverRunAtLogin.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		95C5C02D236598B00049940D /* Installer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95C5C02F236598B00049940D /* Installer.storyboard */; };
 		95C5C0A32365D2250049940D /* Lang.bundle in Copy Languages */ = {isa = PBXBuildFile; fileRef = 95C5C0A22365D2250049940D /* Lang.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		95E50076238ABA56002F3869 /* Tasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E50075238ABA56002F3869 /* Tasks.swift */; };
 		95E68ACA235B862F002B37A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68AC9235B862F002B37A5 /* AppDelegate.swift */; };
 		95E68ACC235B862F002B37A5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68ACB235B862F002B37A5 /* ViewController.swift */; };
 		95E68ACE235B8632002B37A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95E68ACD235B8632002B37A5 /* Assets.xcassets */; };
-		95E68ADF235B86A1002B37A5 /* Release.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68ADA235B86A0002B37A5 /* Release.swift */; };
+		95E68ADF235B86A1002B37A5 /* Releases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68ADA235B86A0002B37A5 /* Releases.swift */; };
 		95E68AE0235B86A1002B37A5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68ADB235B86A1002B37A5 /* Extensions.swift */; };
 		95E68AE1235B86A1002B37A5 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68ADC235B86A1002B37A5 /* Shared.swift */; };
 		95E68AE2235B86A1002B37A5 /* Disks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E68ADD235B86A1002B37A5 /* Disks.swift */; };
@@ -74,6 +80,20 @@
 			remoteGlobalIDString = 95524B78238051AC005F6425;
 			remoteInfo = CloverLogOut;
 		};
+		9550916D238B1DFA00933A7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9550915F238B132100933A7E;
+			remoteInfo = daemonInstaller;
+		};
+		9550916F238B1E1C00933A7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9550915E238B132100933A7E;
+			remoteInfo = daemonInstaller;
+		};
 		95524B87238051F4005F6425 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */;
@@ -106,7 +126,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 95C5155F236B211200E4A3A8;
+			remoteGlobalIDString = 956A7AAE238DAD700012F6B0;
 			remoteInfo = CloverRunAtLogin;
 		};
 /* End PBXContainerItemProxy section */
@@ -118,6 +138,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				95509171238B1E3A00933A7E /* daemonInstaller in Copy tools */,
 				9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */,
 				9542ABC02373783400DC03E6 /* boot1-install in Copy tools */,
 				95337172237070CD003F1AF4 /* Cloverhelper in Copy tools */,
@@ -165,105 +186,153 @@
 /* Begin PBXFileReference section */
 		9533718223709517003F1AF4 /* bootsectors-install */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bootsectors-install"; sourceTree = SOURCE_ROOT; };
 		953BC20223720C0A0039755D /* FixedWidthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthViews.swift; sourceTree = "<group>"; };
-		9540AED42379F43D001AD0C8 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Main.strings; sourceTree = "<group>"; };
-		9540AED52379F43E001AD0C8 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Installer.strings; sourceTree = "<group>"; };
 		9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "boot1-inst.xcodeproj"; path = "../CloverPackage/utils/boot1-install/boot1-inst.xcodeproj"; sourceTree = "<group>"; };
 		9542ABC12373786700DC03E6 /* CloverV2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CloverV2; path = ../CloverPackage/CloverV2; sourceTree = "<group>"; };
 		954BBE98238196EE0032425F /* Locale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locale.swift; sourceTree = "<group>"; };
 		954C3DF0237DF0250059C698 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		954DECD423899F5F006A9876 /* Bootmanager.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Bootmanager.png; sourceTree = "<group>"; };
+		954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clover-Bridging-Header.h"; sourceTree = "<group>"; };
+		954FCFD72391818300C9273C /* NSWindowFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSWindowFix.h; sourceTree = "<group>"; };
+		954FCFD82391818300C9273C /* NSWindowFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSWindowFix.m; sourceTree = "<group>"; };
+		95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = daemonInstaller.xcodeproj; path = daemonInstaller/daemonInstaller.xcodeproj; sourceTree = "<group>"; };
 		95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverLogOut.xcodeproj; path = CloverLogOut/CloverLogOut.xcodeproj; sourceTree = "<group>"; };
 		9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverDaemonNew.xcodeproj; path = CloverDaemonNew/CloverDaemonNew.xcodeproj; sourceTree = "<group>"; };
+		9555AF25238EE53300108C33 /* InstallerOutline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstallerOutline.swift; sourceTree = "<group>"; };
+		9555AF27238EFDAD00108C33 /* DriversCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriversCollection.swift; sourceTree = "<group>"; };
+		9556CAF4238DF75600082671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InstallerOutline.xib; sourceTree = "<group>"; };
+		955F7C6C238DCD160019D088 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		95609069238C61E200ACD7F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		9560906C238C624200ACD7F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560906E238C624D00ACD7F7 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609070238C625000ACD7F7 /* bg-BG */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "bg-BG"; path = "bg-BG.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		95609072238C625100ACD7F7 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609074238C625300ACD7F7 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		95609076238C625400ACD7F7 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		95609078238C625600ACD7F7 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		9560907A238C625800ACD7F7 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560907C238C625A00ACD7F7 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560907E238C625C00ACD7F7 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609080238C625D00ACD7F7 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609082238C625F00ACD7F7 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		95609084238C626000ACD7F7 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609086238C626100ACD7F7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609088238C626600ACD7F7 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560908A238C626700ACD7F7 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560908C238C626900ACD7F7 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560908E238C626B00ACD7F7 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609090238C626D00ACD7F7 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609092238C626E00ACD7F7 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609094238C627000ACD7F7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609096238C627200ACD7F7 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		95609098238C627300ACD7F7 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560909A238C627500ACD7F7 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560909C238C627700ACD7F7 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		9560909E238C627800ACD7F7 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090A0238C627A00ACD7F7 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090A2238C627C00ACD7F7 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		956090A4238C627D00ACD7F7 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		956090A6238C627F00ACD7F7 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090A8238C628100ACD7F7 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090AA238C628200ACD7F7 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090AC238C628400ACD7F7 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090AE238C628600ACD7F7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090B0238C628800ACD7F7 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090B2238C628900ACD7F7 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090B4238C628C00ACD7F7 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090B6238C628F00ACD7F7 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		956090B8238C890600ACD7F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Installer.xib; sourceTree = "<group>"; };
+		956090BB238C891000ACD7F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090BD238C892400ACD7F7 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090BF238C892900ACD7F7 /* bg-BG */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "bg-BG"; path = "bg-BG.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090C1238C892D00ACD7F7 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090C3238C893300ACD7F7 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090C5238C893600ACD7F7 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090C7238C893C00ACD7F7 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090C9238C894000ACD7F7 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090CB238C894600ACD7F7 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090CD238C894900ACD7F7 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090CF238C894C00ACD7F7 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090D1238C895300ACD7F7 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090D3238C895800ACD7F7 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090D5238C895C00ACD7F7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090D7238C895F00ACD7F7 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090D9238C896500ACD7F7 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090DB238C896B00ACD7F7 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090DD238C897000ACD7F7 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090DF238C897500ACD7F7 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090E1238C897B00ACD7F7 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090E3238C897F00ACD7F7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090E5238C898400ACD7F7 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090E7238C898A00ACD7F7 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090E9238C899000ACD7F7 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090EB238C899500ACD7F7 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090ED238C899900ACD7F7 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090EF238C899C00ACD7F7 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090F1238C89A000ACD7F7 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090F3238C89A500ACD7F7 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Installer.strings"; sourceTree = "<group>"; };
+		956090F5238C89A900ACD7F7 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090F7238C89AC00ACD7F7 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090F9238C89B100ACD7F7 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090FB238C89B600ACD7F7 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090FD238C89BA00ACD7F7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Installer.strings; sourceTree = "<group>"; };
+		956090FF238C89BE00ACD7F7 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Installer.strings; sourceTree = "<group>"; };
+		95609101238C89C300ACD7F7 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Installer.strings; sourceTree = "<group>"; };
+		95609103238C89C600ACD7F7 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Installer.strings; sourceTree = "<group>"; };
+		95609105238C89C900ACD7F7 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Installer.strings; sourceTree = "<group>"; };
+		9569EC43238DD772003AD72C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Settings.xib; sourceTree = "<group>"; };
+		9569EC46238DD77A003AD72C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC48238DD77C003AD72C /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC4A238DD77F003AD72C /* bg-BG */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "bg-BG"; path = "bg-BG.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC4C238DD781003AD72C /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC4E238DD783003AD72C /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC50238DD786003AD72C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC52238DD788003AD72C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC54238DD78B003AD72C /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC56238DD78D003AD72C /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC58238DD78F003AD72C /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC5A238DD791003AD72C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC5C238DD793003AD72C /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC5E238DD795003AD72C /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC60238DD797003AD72C /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC62238DD799003AD72C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC64238DD79B003AD72C /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC66238DD79D003AD72C /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC68238DD79F003AD72C /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC6A238DD7A1003AD72C /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC6C238DD7A4003AD72C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC6E238DD7A7003AD72C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC70238DD7A9003AD72C /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC72238DD7AB003AD72C /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC74238DD7AD003AD72C /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC76238DD7AF003AD72C /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC78238DD7B1003AD72C /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC7A238DD7B3003AD72C /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC7C238DD7B5003AD72C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC7E238DD7B7003AD72C /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Settings.strings"; sourceTree = "<group>"; };
+		9569EC80238DD7B9003AD72C /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC82238DD7BB003AD72C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC84238DD7BD003AD72C /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC86238DD7C0003AD72C /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC88238DD7C2003AD72C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC8A238DD7C4003AD72C /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC8C238DD7C6003AD72C /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC8E238DD7C8003AD72C /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Settings.strings; sourceTree = "<group>"; };
+		9569EC90238DD7CA003AD72C /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Settings.strings; sourceTree = "<group>"; };
 		958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cloverhelper.xcodeproj; path = cloverhelper/Cloverhelper.xcodeproj; sourceTree = "<group>"; };
 		958861D9235F75FB00B64173 /* Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
-		95ACABC9236B7463008F80A4 /* Unzip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unzip.swift; sourceTree = "<group>"; };
-		95C514D52368D38000E4A3A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Installer.storyboard; sourceTree = "<group>"; };
-		95C514D72368D40A00E4A3A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		95C514D92368D42E00E4A3A8 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C514DA2368D42F00E4A3A8 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C514DB2368D43B00E4A3A8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C514DC2368D43B00E4A3A8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C514DD2368D44400E4A3A8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514DE2368D44400E4A3A8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514DF2368D44C00E4A3A8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514E02368D44D00E4A3A8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514E12368D45900E4A3A8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514E22368D45900E4A3A8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514E32368D46400E4A3A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514E42368D46400E4A3A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514E52368D46B00E4A3A8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514E62368D46B00E4A3A8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514E72368D47300E4A3A8 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C514E82368D47300E4A3A8 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C514E92368D48300E4A3A8 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C514EA2368D48400E4A3A8 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C514EB2368D48C00E4A3A8 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514EC2368D48C00E4A3A8 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514ED2368D65D00E4A3A8 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C514EE2368D65E00E4A3A8 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C514EF2368D66D00E4A3A8 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C514F02368D66D00E4A3A8 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C514F12368D67600E4A3A8 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514F22368D67700E4A3A8 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514F32368D67D00E4A3A8 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514F42368D67D00E4A3A8 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514F52368D68500E4A3A8 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514F62368D68500E4A3A8 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514F72368D68E00E4A3A8 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514F82368D68F00E4A3A8 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514F92368D69800E4A3A8 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514FA2368D69900E4A3A8 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514FB2368D6A000E4A3A8 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514FC2368D6A000E4A3A8 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514FD2368D6AA00E4A3A8 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Main.strings; sourceTree = "<group>"; };
-		95C514FE2368D6AB00E4A3A8 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C514FF2368D6B500E4A3A8 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515002368D6B500E4A3A8 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515012368D6C100E4A3A8 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515022368D6C100E4A3A8 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515032368D6CC00E4A3A8 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515042368D6CD00E4A3A8 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515052368D6D300E4A3A8 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515062368D6D300E4A3A8 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515072368D6DA00E4A3A8 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515082368D6DA00E4A3A8 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515092368D6E400E4A3A8 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Main.strings; sourceTree = "<group>"; };
-		95C5150A2368D6E400E4A3A8 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C5150B2368D6EC00E4A3A8 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Main.strings; sourceTree = "<group>"; };
-		95C5150C2368D6EC00E4A3A8 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C5150D2368D6F400E4A3A8 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Main.strings; sourceTree = "<group>"; };
-		95C5150E2368D6F500E4A3A8 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C5150F2368D6FB00E4A3A8 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515102368D6FC00E4A3A8 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515112368D70D00E4A3A8 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515122368D70D00E4A3A8 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515132368D71400E4A3A8 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515142368D71400E4A3A8 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515152368D71C00E4A3A8 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515162368D71D00E4A3A8 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515172368D72600E4A3A8 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515182368D72600E4A3A8 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C515192368D74E00E4A3A8 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Main.strings; sourceTree = "<group>"; };
-		95C5151A2368D74F00E4A3A8 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C5151B2368D76800E4A3A8 /* bg-BG */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "bg-BG"; path = "bg-BG.lproj/Main.strings"; sourceTree = "<group>"; };
-		95C5151C2368D76800E4A3A8 /* bg-BG */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "bg-BG"; path = "bg-BG.lproj/Installer.strings"; sourceTree = "<group>"; };
-		95C5151D2368D7AD00E4A3A8 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/Main.strings; sourceTree = "<group>"; };
-		95C5151E2368D7AD00E4A3A8 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/Installer.strings; sourceTree = "<group>"; };
-		95C5151F2368D7C300E4A3A8 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Main.strings; sourceTree = "<group>"; };
-		95C515202368D7C300E4A3A8 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Installer.strings; sourceTree = "<group>"; };
 		95C515212369BAF500E4A3A8 /* NVRAM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NVRAM.swift; sourceTree = "<group>"; };
 		95C5152E236A0A7400E4A3A8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		95C51530236A0EE800E4A3A8 /* Settings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RunAtLogin.swift; sourceTree = "<group>"; };
 		95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverRunAtLogin.xcodeproj; path = CloverRunAtLogin/CloverRunAtLogin.xcodeproj; sourceTree = "<group>"; };
 		95C5C0A22365D2250049940D /* Lang.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Lang.bundle; sourceTree = "<group>"; };
+		95E50075238ABA56002F3869 /* Tasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
 		95E68AC6235B862F002B37A5 /* Clover.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clover.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95E68AC9235B862F002B37A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		95E68ACB235B862F002B37A5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		95E68ACD235B8632002B37A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		95E68AD2235B8632002B37A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95E68AD3235B8632002B37A5 /* Clover.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clover.entitlements; sourceTree = "<group>"; };
-		95E68ADA235B86A0002B37A5 /* Release.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Release.swift; sourceTree = "<group>"; };
+		95E68ADA235B86A0002B37A5 /* Releases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Releases.swift; sourceTree = "<group>"; };
 		95E68ADB235B86A1002B37A5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		95E68ADC235B86A1002B37A5 /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		95E68ADD235B86A1002B37A5 /* Disks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disks.swift; sourceTree = "<group>"; };
@@ -276,6 +345,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				955F7C6D238DCD170019D088 /* DiskArbitration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,9 +371,18 @@
 		954C3DEF237DF0250059C698 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				955F7C6C238DCD160019D088 /* DiskArbitration.framework */,
 				954C3DF0237DF0250059C698 /* ServiceManagement.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9550916A238B1DFA00933A7E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9550916E238B1DFA00933A7E /* daemonInstaller */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		95524B84238051F3005F6425 /* Products */ = {
@@ -333,16 +412,17 @@
 		95E68ABD235B862F002B37A5 = {
 			isa = PBXGroup;
 			children = (
+				954C3DEF237DF0250059C698 /* Frameworks */,
 				95E68AC8235B862F002B37A5 /* Clover */,
 				95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */,
 				9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */,
 				958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */,
 				95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */,
 				9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */,
+				95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */,
 				95C5C0A22365D2250049940D /* Lang.bundle */,
 				9542ABC12373786700DC03E6 /* CloverV2 */,
 				95E68AC7235B862F002B37A5 /* Products */,
-				954C3DEF237DF0250059C698 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -365,19 +445,22 @@
 				95E68ADD235B86A1002B37A5 /* Disks.swift */,
 				95E68ADB235B86A1002B37A5 /* Extensions.swift */,
 				954BBE98238196EE0032425F /* Locale.swift */,
-				95E68ADA235B86A0002B37A5 /* Release.swift */,
+				95E68ADA235B86A0002B37A5 /* Releases.swift */,
 				95E68ADC235B86A1002B37A5 /* Shared.swift */,
 				95C515212369BAF500E4A3A8 /* NVRAM.swift */,
-				95ACABC9236B7463008F80A4 /* Unzip.swift */,
+				95E50075238ABA56002F3869 /* Tasks.swift */,
 				953BC20223720C0A0039755D /* FixedWidthViews.swift */,
 				9533718223709517003F1AF4 /* bootsectors-install */,
-				95C51530236A0EE800E4A3A8 /* Settings.storyboard */,
-				95C514D62368D40A00E4A3A8 /* Main.storyboard */,
+				9569EC44238DD772003AD72C /* Settings.xib */,
+				95609068238C61E200ACD7F7 /* MainMenu.xib */,
 				95E68AD9235B8666002B37A5 /* Installer */,
 				95E68ACD235B8632002B37A5 /* Assets.xcassets */,
 				954DECD423899F5F006A9876 /* Bootmanager.png */,
 				95E68AD2235B8632002B37A5 /* Info.plist */,
 				95E68AD3235B8632002B37A5 /* Clover.entitlements */,
+				954FCFD72391818300C9273C /* NSWindowFix.h */,
+				954FCFD82391818300C9273C /* NSWindowFix.m */,
+				954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */,
 			);
 			path = Clover;
 			sourceTree = "<group>";
@@ -386,8 +469,11 @@
 			isa = PBXGroup;
 			children = (
 				958861D9235F75FB00B64173 /* Driver.swift */,
+				9555AF27238EFDAD00108C33 /* DriversCollection.swift */,
 				95E68AE4235B89D9002B37A5 /* Installer.swift */,
-				95C5C02F236598B00049940D /* Installer.storyboard */,
+				956090B9238C890600ACD7F7 /* Installer.xib */,
+				9555AF25238EE53300108C33 /* InstallerOutline.swift */,
+				9556CAF3238DF75600082671 /* InstallerOutline.xib */,
 			);
 			path = Installer;
 			sourceTree = "<group>";
@@ -403,6 +489,7 @@
 				95E68AC2235B862F002B37A5 /* Sources */,
 				95E68AC4235B862F002B37A5 /* Resources */,
 				95E68AE9235C70BE002B37A5 /* Copy CloverV2 */,
+				954DEB6F2391AA8300F7B60C /* Remove unused */,
 				95850588236439D500BCB4A3 /* Copy tools */,
 				95C5C0A12365D1FB0049940D /* Copy Languages */,
 				95C51581236B224800E4A3A8 /* Copy CloverRunAtLogin */,
@@ -411,6 +498,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				95509170238B1E1C00933A7E /* PBXTargetDependency */,
 				9546AE1923806286007155A6 /* PBXTargetDependency */,
 				95337171237070BB003F1AF4 /* PBXTargetDependency */,
 				9552D747236F33B900C93377 /* PBXTargetDependency */,
@@ -434,6 +522,7 @@
 				TargetAttributes = {
 					95E68AC5235B862F002B37A5 = {
 						CreatedOnToolsVersion = 11.2;
+						LastSwiftMigration = 1120;
 					};
 				};
 			};
@@ -506,6 +595,10 @@
 					ProductGroup = 95C51578236B21AE00E4A3A8 /* Products */;
 					ProjectRef = 95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */;
 				},
+				{
+					ProductGroup = 9550916A238B1DFA00933A7E /* Products */;
+					ProjectRef = 95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -527,6 +620,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = "boot1-install";
 			remoteRef = 9542ABBC2373780C00DC03E6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9550916E238B1DFA00933A7E /* daemonInstaller */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = daemonInstaller;
+			remoteRef = 9550916D238B1DFA00933A7E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		95524B88238051F4005F6425 /* CloverLogOut */ = {
@@ -557,12 +657,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95C514D82368D40A00E4A3A8 /* Main.storyboard in Resources */,
+				9556CAF5238DF75600082671 /* InstallerOutline.xib in Resources */,
+				956090B7238C890600ACD7F7 /* Installer.xib in Resources */,
 				954DECD523899F5F006A9876 /* Bootmanager.png in Resources */,
-				95C5C02D236598B00049940D /* Installer.storyboard in Resources */,
 				95E68ACE235B8632002B37A5 /* Assets.xcassets in Resources */,
+				9569EC42238DD772003AD72C /* Settings.xib in Resources */,
+				9560906A238C61E200ACD7F7 /* MainMenu.xib in Resources */,
 				9533718323709517003F1AF4 /* bootsectors-install in Resources */,
-				95C51531236A0EE800E4A3A8 /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +688,24 @@
 			shellPath = /bin/sh;
 			shellScript = "cd ..\n\nif [[ ! -d \"${PWD}\"/CloverPackage ]]; then\necho \"Error. Cannot found CloverPackage directory.\"\nexit 1\nfi\n\nCLOVER=\"${PWD}\"\nif [[ -d \"${CLOVER}\"/.git ]];then\n  declare -r aname=\"CloverV2-$( git -C \"${CLOVER}\" describe --tags --abbrev=0 )\"\nelse\n  declare -r aname=CloverV2.zip\nfi\n\nfind \"${CLOVER}\"/CloverPackage/CloverV2 -name \".DS_Store\" -delete\n\nrm -f \"${CLOVER}\"/CloverPackage/sym/CloverV2*.zip\nmkdir -p \"${CLOVER}\"/CloverPackage/sym\n\ncd \"${CLOVER}\"/CloverPackage\nzip -qq -r -y \"${CLOVER}\"/CloverPackage/sym/${aname} CloverV2/ -x *.empty\n\n";
 		};
+		954DEB6F2391AA8300F7B60C /* Remove unused */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Remove unused";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -rf \"${TARGET_BUILD_DIR}\"/Clover.app/Contents/SharedSupport/CloverV2/rcScripts\nrm -rf \"${TARGET_BUILD_DIR}\"/Clover.app/Contents/SharedSupport/CloverV2/ThirdParty\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -598,17 +717,20 @@
 				95E68AE1235B86A1002B37A5 /* Shared.swift in Sources */,
 				95E68ACC235B862F002B37A5 /* ViewController.swift in Sources */,
 				95E68AE2235B86A1002B37A5 /* Disks.swift in Sources */,
-				95E68ADF235B86A1002B37A5 /* Release.swift in Sources */,
+				954FCFD92391818300C9273C /* NSWindowFix.m in Sources */,
+				95E68ADF235B86A1002B37A5 /* Releases.swift in Sources */,
 				954BBE99238196EE0032425F /* Locale.swift in Sources */,
 				95E68ACA235B862F002B37A5 /* AppDelegate.swift in Sources */,
 				958861DA235F75FB00B64173 /* Driver.swift in Sources */,
 				95E68AE3235B86A1002B37A5 /* bdmesg.swift in Sources */,
 				95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */,
-				95ACABCA236B7463008F80A4 /* Unzip.swift in Sources */,
+				9555AF28238EFDAD00108C33 /* DriversCollection.swift in Sources */,
 				953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */,
+				95E50076238ABA56002F3869 /* Tasks.swift in Sources */,
 				95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */,
 				95C51536236B1F7700E4A3A8 /* RunAtLogin.swift in Sources */,
 				95E68AE0235B86A1002B37A5 /* Extensions.swift in Sources */,
+				9555AF26238EE53300108C33 /* InstallerOutline.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,6 +752,11 @@
 			name = CloverLogOut;
 			targetProxy = 9546AE1823806286007155A6 /* PBXContainerItemProxy */;
 		};
+		95509170238B1E1C00933A7E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = daemonInstaller;
+			targetProxy = 9550916F238B1E1C00933A7E /* PBXContainerItemProxy */;
+		};
 		9552D747236F33B900C93377 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CloverDaemonNew;
@@ -643,94 +770,150 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		95C514D62368D40A00E4A3A8 /* Main.storyboard */ = {
+		9556CAF3238DF75600082671 /* InstallerOutline.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				95C514D72368D40A00E4A3A8 /* Base */,
-				95C514D92368D42E00E4A3A8 /* zh-Hans */,
-				95C514DB2368D43B00E4A3A8 /* zh-Hant */,
-				95C514DD2368D44400E4A3A8 /* es */,
-				95C514DF2368D44C00E4A3A8 /* ja */,
-				95C514E12368D45900E4A3A8 /* fr */,
-				95C514E32368D46400E4A3A8 /* de */,
-				95C514E52368D46B00E4A3A8 /* ru */,
-				95C514E72368D47300E4A3A8 /* pt-BR */,
-				95C514E92368D48300E4A3A8 /* pt-PT */,
-				95C514EB2368D48C00E4A3A8 /* it */,
-				95C514ED2368D65D00E4A3A8 /* en-GB */,
-				95C514EF2368D66D00E4A3A8 /* zh-HK */,
-				95C514F12368D67600E4A3A8 /* ko */,
-				95C514F32368D67D00E4A3A8 /* tr */,
-				95C514F52368D68500E4A3A8 /* nl */,
-				95C514F72368D68E00E4A3A8 /* sv */,
-				95C514F92368D69800E4A3A8 /* da */,
-				95C514FB2368D6A000E4A3A8 /* vi */,
-				95C514FD2368D6AA00E4A3A8 /* nb */,
-				95C514FF2368D6B500E4A3A8 /* pl */,
-				95C515012368D6C100E4A3A8 /* fi */,
-				95C515032368D6CC00E4A3A8 /* id */,
-				95C515052368D6D300E4A3A8 /* el */,
-				95C515072368D6DA00E4A3A8 /* ro */,
-				95C515092368D6E400E4A3A8 /* hu */,
-				95C5150B2368D6EC00E4A3A8 /* cs */,
-				95C5150D2368D6F400E4A3A8 /* ca */,
-				95C5150F2368D6FB00E4A3A8 /* sk */,
-				95C515112368D70D00E4A3A8 /* uk */,
-				95C515132368D71400E4A3A8 /* hr */,
-				95C515152368D71C00E4A3A8 /* ms */,
-				95C515172368D72600E4A3A8 /* hi */,
-				95C515192368D74E00E4A3A8 /* bg */,
-				95C5151B2368D76800E4A3A8 /* bg-BG */,
-				95C5151D2368D7AD00E4A3A8 /* lv */,
-				95C5151F2368D7C300E4A3A8 /* lt */,
-				9540AED42379F43D001AD0C8 /* sr */,
+				9556CAF4238DF75600082671 /* Base */,
 			);
-			name = Main.storyboard;
+			name = InstallerOutline.xib;
 			sourceTree = "<group>";
 		};
-		95C5C02F236598B00049940D /* Installer.storyboard */ = {
+		95609068238C61E200ACD7F7 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				95C514D52368D38000E4A3A8 /* Base */,
-				95C514DA2368D42F00E4A3A8 /* zh-Hans */,
-				95C514DC2368D43B00E4A3A8 /* zh-Hant */,
-				95C514DE2368D44400E4A3A8 /* es */,
-				95C514E02368D44D00E4A3A8 /* ja */,
-				95C514E22368D45900E4A3A8 /* fr */,
-				95C514E42368D46400E4A3A8 /* de */,
-				95C514E62368D46B00E4A3A8 /* ru */,
-				95C514E82368D47300E4A3A8 /* pt-BR */,
-				95C514EA2368D48400E4A3A8 /* pt-PT */,
-				95C514EC2368D48C00E4A3A8 /* it */,
-				95C514EE2368D65E00E4A3A8 /* en-GB */,
-				95C514F02368D66D00E4A3A8 /* zh-HK */,
-				95C514F22368D67700E4A3A8 /* ko */,
-				95C514F42368D67D00E4A3A8 /* tr */,
-				95C514F62368D68500E4A3A8 /* nl */,
-				95C514F82368D68F00E4A3A8 /* sv */,
-				95C514FA2368D69900E4A3A8 /* da */,
-				95C514FC2368D6A000E4A3A8 /* vi */,
-				95C514FE2368D6AB00E4A3A8 /* nb */,
-				95C515002368D6B500E4A3A8 /* pl */,
-				95C515022368D6C100E4A3A8 /* fi */,
-				95C515042368D6CD00E4A3A8 /* id */,
-				95C515062368D6D300E4A3A8 /* el */,
-				95C515082368D6DA00E4A3A8 /* ro */,
-				95C5150A2368D6E400E4A3A8 /* hu */,
-				95C5150C2368D6EC00E4A3A8 /* cs */,
-				95C5150E2368D6F500E4A3A8 /* ca */,
-				95C515102368D6FC00E4A3A8 /* sk */,
-				95C515122368D70D00E4A3A8 /* uk */,
-				95C515142368D71400E4A3A8 /* hr */,
-				95C515162368D71D00E4A3A8 /* ms */,
-				95C515182368D72600E4A3A8 /* hi */,
-				95C5151A2368D74F00E4A3A8 /* bg */,
-				95C5151C2368D76800E4A3A8 /* bg-BG */,
-				95C5151E2368D7AD00E4A3A8 /* lv */,
-				95C515202368D7C300E4A3A8 /* lt */,
-				9540AED52379F43E001AD0C8 /* sr */,
+				95609069238C61E200ACD7F7 /* Base */,
+				9560906C238C624200ACD7F7 /* en */,
+				9560906E238C624D00ACD7F7 /* bg */,
+				95609070238C625000ACD7F7 /* bg-BG */,
+				95609072238C625100ACD7F7 /* ca */,
+				95609074238C625300ACD7F7 /* zh-HK */,
+				95609076238C625400ACD7F7 /* zh-Hans */,
+				95609078238C625600ACD7F7 /* zh-Hant */,
+				9560907A238C625800ACD7F7 /* hr */,
+				9560907C238C625A00ACD7F7 /* cs */,
+				9560907E238C625C00ACD7F7 /* da */,
+				95609080238C625D00ACD7F7 /* nl */,
+				95609082238C625F00ACD7F7 /* en-GB */,
+				95609084238C626000ACD7F7 /* fi */,
+				95609086238C626100ACD7F7 /* fr */,
+				95609088238C626600ACD7F7 /* de */,
+				9560908A238C626700ACD7F7 /* el */,
+				9560908C238C626900ACD7F7 /* hi */,
+				9560908E238C626B00ACD7F7 /* hu */,
+				95609090238C626D00ACD7F7 /* id */,
+				95609092238C626E00ACD7F7 /* it */,
+				95609094238C627000ACD7F7 /* ja */,
+				95609096238C627200ACD7F7 /* ko */,
+				95609098238C627300ACD7F7 /* lv */,
+				9560909A238C627500ACD7F7 /* lt */,
+				9560909C238C627700ACD7F7 /* ms */,
+				9560909E238C627800ACD7F7 /* nb */,
+				956090A0238C627A00ACD7F7 /* pl */,
+				956090A2238C627C00ACD7F7 /* pt-BR */,
+				956090A4238C627D00ACD7F7 /* pt-PT */,
+				956090A6238C627F00ACD7F7 /* ro */,
+				956090A8238C628100ACD7F7 /* ru */,
+				956090AA238C628200ACD7F7 /* sr */,
+				956090AC238C628400ACD7F7 /* sk */,
+				956090AE238C628600ACD7F7 /* es */,
+				956090B0238C628800ACD7F7 /* sv */,
+				956090B2238C628900ACD7F7 /* tr */,
+				956090B4238C628C00ACD7F7 /* vi */,
+				956090B6238C628F00ACD7F7 /* uk */,
 			);
-			name = Installer.storyboard;
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		956090B9238C890600ACD7F7 /* Installer.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				956090B8238C890600ACD7F7 /* Base */,
+				956090BB238C891000ACD7F7 /* en */,
+				956090BD238C892400ACD7F7 /* bg */,
+				956090BF238C892900ACD7F7 /* bg-BG */,
+				956090C1238C892D00ACD7F7 /* ca */,
+				956090C3238C893300ACD7F7 /* zh-HK */,
+				956090C5238C893600ACD7F7 /* zh-Hans */,
+				956090C7238C893C00ACD7F7 /* zh-Hant */,
+				956090C9238C894000ACD7F7 /* hr */,
+				956090CB238C894600ACD7F7 /* cs */,
+				956090CD238C894900ACD7F7 /* da */,
+				956090CF238C894C00ACD7F7 /* nl */,
+				956090D1238C895300ACD7F7 /* en-GB */,
+				956090D3238C895800ACD7F7 /* fi */,
+				956090D5238C895C00ACD7F7 /* fr */,
+				956090D7238C895F00ACD7F7 /* de */,
+				956090D9238C896500ACD7F7 /* el */,
+				956090DB238C896B00ACD7F7 /* hi */,
+				956090DD238C897000ACD7F7 /* hu */,
+				956090DF238C897500ACD7F7 /* id */,
+				956090E1238C897B00ACD7F7 /* it */,
+				956090E3238C897F00ACD7F7 /* ja */,
+				956090E5238C898400ACD7F7 /* ko */,
+				956090E7238C898A00ACD7F7 /* lv */,
+				956090E9238C899000ACD7F7 /* lt */,
+				956090EB238C899500ACD7F7 /* ms */,
+				956090ED238C899900ACD7F7 /* nb */,
+				956090EF238C899C00ACD7F7 /* pl */,
+				956090F1238C89A000ACD7F7 /* pt-BR */,
+				956090F3238C89A500ACD7F7 /* pt-PT */,
+				956090F5238C89A900ACD7F7 /* ro */,
+				956090F7238C89AC00ACD7F7 /* ru */,
+				956090F9238C89B100ACD7F7 /* sr */,
+				956090FB238C89B600ACD7F7 /* sk */,
+				956090FD238C89BA00ACD7F7 /* es */,
+				956090FF238C89BE00ACD7F7 /* sv */,
+				95609101238C89C300ACD7F7 /* tr */,
+				95609103238C89C600ACD7F7 /* uk */,
+				95609105238C89C900ACD7F7 /* vi */,
+			);
+			name = Installer.xib;
+			sourceTree = "<group>";
+		};
+		9569EC44238DD772003AD72C /* Settings.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9569EC43238DD772003AD72C /* Base */,
+				9569EC46238DD77A003AD72C /* en */,
+				9569EC48238DD77C003AD72C /* bg */,
+				9569EC4A238DD77F003AD72C /* bg-BG */,
+				9569EC4C238DD781003AD72C /* ca */,
+				9569EC4E238DD783003AD72C /* zh-HK */,
+				9569EC50238DD786003AD72C /* zh-Hans */,
+				9569EC52238DD788003AD72C /* zh-Hant */,
+				9569EC54238DD78B003AD72C /* hr */,
+				9569EC56238DD78D003AD72C /* cs */,
+				9569EC58238DD78F003AD72C /* da */,
+				9569EC5A238DD791003AD72C /* nl */,
+				9569EC5C238DD793003AD72C /* en-GB */,
+				9569EC5E238DD795003AD72C /* fi */,
+				9569EC60238DD797003AD72C /* fr */,
+				9569EC62238DD799003AD72C /* de */,
+				9569EC64238DD79B003AD72C /* el */,
+				9569EC66238DD79D003AD72C /* hi */,
+				9569EC68238DD79F003AD72C /* hu */,
+				9569EC6A238DD7A1003AD72C /* id */,
+				9569EC6C238DD7A4003AD72C /* it */,
+				9569EC6E238DD7A7003AD72C /* ja */,
+				9569EC70238DD7A9003AD72C /* ko */,
+				9569EC72238DD7AB003AD72C /* lv */,
+				9569EC74238DD7AD003AD72C /* lt */,
+				9569EC76238DD7AF003AD72C /* ms */,
+				9569EC78238DD7B1003AD72C /* nb */,
+				9569EC7A238DD7B3003AD72C /* pl */,
+				9569EC7C238DD7B5003AD72C /* pt-BR */,
+				9569EC7E238DD7B7003AD72C /* pt-PT */,
+				9569EC80238DD7B9003AD72C /* ro */,
+				9569EC82238DD7BB003AD72C /* ru */,
+				9569EC84238DD7BD003AD72C /* sr */,
+				9569EC86238DD7C0003AD72C /* sk */,
+				9569EC88238DD7C2003AD72C /* es */,
+				9569EC8A238DD7C4003AD72C /* sv */,
+				9569EC8C238DD7C6003AD72C /* tr */,
+				9569EC8E238DD7C8003AD72C /* uk */,
+				9569EC90238DD7CA003AD72C /* vi */,
+			);
+			name = Settings.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -787,10 +970,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -842,9 +1026,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -856,14 +1041,17 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.10;
+				CURRENT_PROJECT_VERSION = 1.11;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
+				IBC_WARNINGS = YES;
 				INFOPLIST_FILE = Clover/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -873,9 +1061,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.10;
+				MARKETING_VERSION = 1.11;
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Clover/Clover-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -885,10 +1076,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.10;
+				CURRENT_PROJECT_VERSION = 1.11;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -902,9 +1095,11 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.10;
+				MARKETING_VERSION = 1.11;
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Clover/Clover-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

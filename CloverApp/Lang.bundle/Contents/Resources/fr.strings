@@ -11,179 +11,180 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot device" = "Boot Device";
-"config path:" = "config path:";
+"N/A" = "N/A"; // not available (please be short)
+"Install Clover" = "Installer Clover";
+"Current Clover revision" = "Version actuelle de Clover";
+"Boot device" = "Périphérique De Démarrage";
+"config path:" = "voie d'acces vers config:";
 
-"Clover wants to mount %@" = "Clover wants to mount %@";
-"Clover wants to umount %@" = "Clover wants to umount %@";
-"Mount" = "Mount";
-"umount" = "umount";
-"mount point" = "mount point";
+"Clover wants to mount %@" = "Clover desire monter %@";
+"Clover wants to umount %@" = "Clover desire démonter %@";
+"Mount" = "Monter";
+"umount" = "demonter";
+"mount point" = "point d'acces";
+"auto mount" = "montage automatique";
 
-"true" = "true";
-"false" = "false";
+"true" = "vrai";
+"false" = "faux";
 
-"Theme:" = "Theme:";
-"Sound:" = "Sound:";
-"*Make filesystem read-write" = "*Make filesystem read-write";
-"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
-"*Require CloverDaemon" = "*Require CloverDaemon";
-"Read daemon log" = "Read daemon log";
-"Read bdmesg" = "Read boot log";
+"Theme:" = "Thème:";
+"Sound:" = "Son:";
+"*Make filesystem read-write" = "*Transformer le système de fichiers en lecture-écriture";
+"*Disable Sleep Proxy Client" = "*Désactiver Mise en veille du Proxy Client";
+"*Require CloverDaemon" = "*Necessite CloverDaemon";
+"Read daemon log" = "Lire log daemon";
+"Read bdmesg" = "Lire log démarrage";
 
-"Install CloverDaemonNew" = "Install CloverDaemonNew";
-"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+"Install CloverDaemonNew" = "Installation de CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "Desinstaller CloverDaemonNew";
 
-"Update" = "Update";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
-"Check update:" = "Check update:";
-"Check now" = "Check now";
+"Update" = "Mise à jour";
+"Update to r%d" = "Mise à jour de r%d"; // "Update to r5101"
+"Check update:" = "Verifier mise à jour:";
+"Check now" = "Verifier maintenant";
 
-"never" = "never";
-"daily" = "daily";
-"weekly" = "weekly";
-"monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"never" = "Jamais";
+"daily" = "Journalière";
+"weekly" = "Hebdomadaire";
+"monthly" = "Mensuelle";
+"last checked:" = "dernière vérification:"; // last date update was checked. Please be short.
 
-"Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Run at login" = "Executer au demarrage";
+"Close" = "Fermer"; // Close the Clover.app
 
 /* Installer */
-"Clover Installer" = "Clover Installer";
-"Select a disk.." = "Select a disk..";
-"Install" = "Install";
-"Uninstall" = "Uninstall";
-"AltBoot" = "Alternative boot";
+"Clover Installer" = "Installateur de Clover";
+"Select a disk.." = "Sélectionnez un disque..";
+"Install" = "Installer";
+"Uninstall" = "Desinstaller";
+"AltBoot" = "Alternative de démarrage";
 
-"UEFI only" = "Install Clover to be used with UEFI motherboards only.";
+"UEFI only" = "Installe Clover pour l'utilisation exclusive de cartes mères UEFI.";
 
-"Install alternative booting PBR" = "Install alternative booting PBR with choice of boot with a key pressed.
-File to boot = boot{keypressed}";
+"Install alternative booting PBR" = "Installer alternative de démarrage du PBR avec choix de démarrage avec l'appui d'une touche.
+Fichier de démarrage = boot{touche_appuyée}";
 
-"Don't install any bootloader (boot0X, boot1X)" = "Don't install any bootloader (boot0X, boot1X).
-Usefull for UEFI motherboards that don't need bootloader files.
-Can also be use if you don't want to upgrade MBR or PBR sectors.";
+"Don't install any bootloader (boot0X, boot1X)" = "Ne pas installer de chargeur de démarrage (boot0X, boot1X).
+Utile pour les cartes mères avec UEFI qui ne necessitent pas de fichiers de chargeur de démarrage.
+Peut etre aussi utilisé si vous ne desirez pas actualiser le MBR ou les secteurs PBR.";
 
-"Clover legacy BIOS boot sectors" = "Clover EFI requires three essential files. (in simple terms)
-boot0 (On the drive's MBR) responsible for loading boot1.
-boot1 (On the partition's boot-sector) to finding boot2.
-boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc.";
+"Clover legacy BIOS boot sectors" = "Clover EFI requiert trois fichiers essentiels. (En termes simples)
+boot0 (Sur le disque de MBR) responsable de charger boot1.
+boot1 (Dans le secteur de demarrage de la partition) pour localiser boot2.
+boot2 (Dans le répertoire racine de la partition) pour charger /EFI/CLOVER/CLOVERIA32.efi ou CLOVERX64.efi, ainsi que kernel etc.";
 
-"boot0af" = "Used for BIOS booting on BIOS motherboards.
-boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.
-This choice will setup selected HFS/Fat32 partition to be active.";
+"boot0af" = "Utilisé pour demarrer le BIOS sur cartes mères avec BIOS.
+boot0af (boot0 Premier Actif) le chargeur de demarrage tente de demarrer la partition active definie dans le MBR. S'il n'existe aucune partition active, une tentative de demarrage de la premiere partition EFI/FAT32/HFS sera engagée (definie par le MBR et ensuite le GPT) avec une signature valide du PBR.
+Ce choix activera la partition HFS/Fat32 partition selectionnée.";
 
 "boot0ss" = "Used for BIOS booting on BIOS motherboards.
-boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.
-This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.
-This choice will not activate any partition in MBR.";
+boot0ss (boot0 Analyse Signature) Le chargeur de demarrage tente de demarrer la premiere partition EFI/FAT32/HFS (definie par le MBR et ensuite le GPT) avec une signature PBR valide. Si aucune partition n'est trouvée il essaiera de demarrer la partition active definie par le MBR.
+Cette option est le choix approprié si vous avez Windows installé sur le meme disque, puisque Windows desire avoir sa propre partition active.
+Ce choix n'activera aucune partition dans le MBR.";
 
-"boot6" = "Clover EFI 64-bits using SATA to access drives.";
+"boot6" = "Clover EFI 64-bits pour utilisation de disques durs SATA.";
 "boot7" = "Clover EFI 64-bits BiosBlockIO";
 
 /* Drivers */
-"UEFI mandatory" = "UEFI mandatory";
-"BIOS mandatory" = "BIOS mandatory";
-"UEFI/Other" = "UEFI/Other";
-"BIOS/Other" = "BIOS/Other";
-"UEFI, but not from this installer" = "UEFI, but not from this installer";
-"BIOS, but not from this installer" = "BIOS, but not from this installer";
+"UEFI mandatory" = "UEFI obligatoire";
+"BIOS mandatory" = "BIOS obligatoire";
+"UEFI/Other" = "UEFI/Autre";
+"BIOS/Other" = "BIOS/Autre";
+"UEFI, but not from this installer" = "UEFI, mais pas de ce programme d'installation";
+"BIOS, but not from this installer" = "BIOS, mais pas de ce programme d'installation";
 
-"UEFI/FileSystem" = "UEFI, filesystem drivers";
-"BIOS/FileSystem" = "BIOS, filesystem drivers";
+"UEFI/FileSystem" = "UEFI, fichier_systeme pilote";
+"BIOS/FileSystem" = "BIOS, fichier_systeme pilote";
 
-"UEFI/HID" = "UEFI, Human Interface Devices";
-"BIOS/HID" = "BIOS, Human Interface Devices";
+"UEFI/HID" = "UEFI, périphériques d’Interface humaine";
+"BIOS/HID" = "BIOS, périphériques d’Interface humaine";
 
-"UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
-"BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
+"UEFI/FileVault2" = "UEFI, FileVault 2 pilotes";
+"BIOS/FileVault2" = "BIOS, FileVault 2 pilotes";
 
-"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+"UEFI/MemoryFix" = "UEFI, corrige pilote de mémoire";
 
-"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+"ApfsDriverLoader.efi" = "Prise en charge du fichier_systeme pilote APFS pour conteneurs de macOS 10.13 et plus recents";
 
-"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+"AppleImageCodec.efi" = "Decode PNG et BMP pour FileVault2.";
 
-"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+"AppleImageLoader.efi" = "Securise le pilote binaire de AppleEfiFat avec l'implementation du protocole AppleLoadImage avec verification de signature du EfiBinary.";
 
-"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+"AppleKeyAggregator.efi" = "Prise en charge du dialogue du boot UI pour FileVault2.";
 
-"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+"AppleKeyFeeder.efi" = "Prise en charge du clavier PS/2 pour utilisation avec FileVault 2.";
 
-"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+"AppleUISupport.efi" = "Series de protocoles pour prise en charge du EfiLoginUi avec FileVault.";
 
-"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+"AppleUITheme.efi" = "Creation du boot UI pour support de Thèmes avec FileVault2.";
 
-"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+"AptioInputFix.efi" = "Pilote pour corriger les problemes d'entrées du firmware UEFI comme AMI Aptio.";
 
-"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"AptioMemoryFix.efi" = "Pilote recommandé pour corriger les problemes memoires sur firmware UEFI comme AMI Aptio. Ne pas utiliser en assocication avec d'autres AptioFix.";
 
-"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
-Configure it via Startup sound output from Option menu, including:
-Volume and Audio device (for supported IOAudio devices only).";
+"AudioDxe.efi" = "Pilote HDA pour le son de depart durant le demarrage de Clover.
+A configurer via son de Démarrage de sortie dans le menu des options, y compris:
+Volume et périphériques Audio (seulement pour les appareils compatible IOAudio).";
 
-"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+"FirmwareVolume.efi" = "Creation de FirmwareVolume avec images de curseur pour FileVault2.";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "Fournit l'injection d'extensions de noyau du dossier Clover.";
 
-"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+"GrubEXFAT.efi" = "Fichier_systeme ExFAT a partir de GRUB.";
 
-"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+"GrubISO9660.efi" = "Fichier_systeme ISO 9600 a partir de GRUB.";
 
-"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+"GrubNTFS.efi" = "Fichier_systeme NTFS a partir de GRUB.";
 
-"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+"GrubUDF.efi" = "Fichier_systeme UDF a partir de GRUB.";
 
-"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+"SMCHelper.efi" = "Restaurer les clés SMC laissées dans la mémoire NVRAM par FakeSMC.";
 
-"XhciDxe.efi" = "USB 3.0 driver";
+"XhciDxe.efi" = "Pilote pour USB 3.0";
 
-"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+"AppleEvent.uefi" = "Creation de protocole AppleEvent pour FileVault2.";
 
-"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+"AppleGraphicsConfig.uefi" = "Option de creation du protocole AppleGraphicsConfig.";
 
-"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
-Clover may not started with it and you may have wake problem in system. Use with precautions.";
+"CsmVideoDxe.efi" = "Pilote vidéo pour l'interface graphique de Clover qui permet de choisir plus de résolutions. Il est basé sur le module CSM dans l'interface BIOS UEFI et il nécessaire que CSM soit activé.
+Le bon fonctionnement de Clover n'est pas garanti et il peut engendrer des problemes de mise en veille et reveil avec votre systeme. A n'utiliser qu'avec precautions.";
 
-"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
-Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"DataHubDxe.efi" = "Ceci est le protocole support pour DataHub, indispensable pour macOS.
+il est generalement présent, mais parfois absent. Dans ce dernier cas, vous devriez obtenir un avertissement sur votre écran.";
 
-"EmuVariableUefi.efi" = "Workaround for store NVRAM variables for systems without UEFI hardware.
-Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+"EmuVariableUefi.efi" = "Solution externe pour stocker des variables NVRAM pour les systèmes sans UEFI .
+La majorité des demarrages via UEFI utilisent le hardware NVRAM, mais dans certains cas rares, ce pilote est nécessaire. A n'utiliser que si vous encontrez des problèmes sans son utilisation";
 
-"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+"EnglishDxe.efi" = "Prise en charge du protocole UnicodeCollation utilisé par le Shell EFI si ineffectif via UEFI.";
 
-"Fat.efi" = "FAT filesystem driver.";
+"Fat.efi" = "fichier_systeme pilote pour FAT.";
 
-"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+"HashServiceFix.efi" = "Corrige le soutien Hash si absent dans le UEFI natif du Bios.";
 
-"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+"HFSPlus.efi" = "Alternative de fichier_systeme pilote pour HFS+.";
 
-"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+"NvmExpressDxe.efi" = "Pilote pour la prise en charge des elements NVM Express.";
 
-"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+"OsxAptioFix3Drv.efi" = "Alternative de pilote (v3) pour reparer les problemes de memoires lies au firmware UEFI. Ne pas utiliser en aassociation avec d'autres AptioFix.";
 
-"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+"OsxAptioFixDrv.efi" = "Ancient pilote pour reparer les problemes de memoires lies au firmware UEFI comme AMI Aptio. Ne pas utiliser en association avec d'autres AptioFix.";
 
-"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+"OsxFatBinaryDrv.efi" = "Pilote pour soutien des FAT Binary executables pour OS X 10.9 et plus anciens.";
 
-"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+"OsxLowMemFixDrv.efi" = "Version simple de OsxAptioFixDrv. Ne pas utiliser en association avec d'autres AptioFix .";
 
-"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+"PartitionDxe.efi" = "Pilote de support pour partition de cartes non conventionelles telles que: hybrid GPT/MBR ou Apple Partition Map.";
 
-"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+"Ps2MouseDxe.efi" = "Pilote de souris PS/2";
 
-"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+"UsbKbDxe.efi" = "Pilote clavier pour prise en charge du boot UI.";
 
-"UsbMouseDxe.efi" = "USB mouse driver";
+"UsbMouseDxe.efi" = "Pilote de souris USB";
 
-"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+"VBoxExt2.efi" = "Fichier_systeme pilote pour EXT2/3 de VirtualBox.";
 
-"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+"VBoxExt4.efi" = "Fichier_systeme pilote pour EXT4 de VirtualBox.";
 
-"VBoxHfs.efi" = "HFS+ filesystem driver.";
+"VBoxHfs.efi" = "Fichier_systeme pilote pour HFS+.";
 
-"VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+"VBoxIso9600.efi" = "Fichier_systeme pilote pour ISO 9600.";

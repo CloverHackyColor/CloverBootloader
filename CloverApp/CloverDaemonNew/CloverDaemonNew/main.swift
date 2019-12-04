@@ -9,9 +9,10 @@
 import Foundation
 
 let fm = FileManager.default
-let daemonVersion = "1.0.7"
+let daemonVersion = "1.0.8"
 
 let wrapperPath = "/Library/Application Support/Clover/CloverWrapper.sh"
+let frameworksPath = "/Library/Application Support/Clover/Frameworks"
 let loginWindowPath = "/var/root/Library/Preferences/com.apple.loginwindow.plist"
 let cloverLogOut = "/Library/Application Support/Clover/CloverLogOut"
 let cloverDaemonNewPath = "/Library/Application Support/Clover/CloverDaemonNew"
@@ -352,6 +353,59 @@ func main() {
       }
     }
     
+    /*
+     Mount ESP if required
+     Clover.MountEFI=Yes|diskX|GUID [default No]
+     */
+    if let nvdata = nvram.object(forKey: "Clover.MountEFI") as? Data {
+      let value = String(decoding: nvdata, as: UTF8.self)
+      print("Clover.MountEFI=\(value)")
+      var disk : String? = nil
+      let allEsps = getAllESPs()
+      if value == "Yes" {
+        // mount the boot device
+        disk = findBootPartitionDevice()
+      } else if value.hasPrefix("disk") {
+        disk = value
+      } else if value.hasPrefix("/dev/") {
+        // mount desired ESP /dev/disk-rdisk
+        var tmpdisk = value
+        if tmpdisk.hasPrefix("/dev/disk") {
+          tmpdisk = value.replacingOccurrences(of: "/dev/", with: "")
+        } else if tmpdisk.hasPrefix("/dev/rdisk") {
+          tmpdisk = value.replacingOccurrences(of: "/dev/r", with: "")
+        }
+        if tmpdisk.hasPrefix("disk") {
+          disk = tmpdisk
+        }
+      } else if value.count == 36 && ((value .range(of: "-") != nil)) {
+        // mount desired ESP by Volume UUID
+        for d in allEsps {
+          if let uuid = getMediaUUID(from: d) {
+            if uuid == value {
+              disk = d
+              break
+            }
+          }
+        }
+      }
+      
+      if (disk != nil) {
+        if (getBSDName(of: disk!) != nil) {
+          if allEsps.contains(disk!) {
+            print("try to mount \(disk!) as requested.")
+            mount(disk: disk!, at: nil)
+          } else {
+            print("\(disk!) is not an EFI System Partition.")
+          }
+        } else {
+          print("\(disk!) is not a valid disk object or is unavailable at the moment.")
+        }
+      } else {
+        print("Nothing to mount.")
+      }
+    }
+    
   } else {
     print("Error: nvram not present in this System.")
   }
@@ -452,6 +506,10 @@ if CommandLine.arguments.contains("--install") {
     
     if fm.fileExists(atPath: wrapperPath) {
       try fm.removeItem(atPath: wrapperPath)
+    }
+    
+    if fm.fileExists(atPath: frameworksPath) {
+      try fm.removeItem(atPath: frameworksPath)
     }
     exit(EXIT_SUCCESS)
   } catch {

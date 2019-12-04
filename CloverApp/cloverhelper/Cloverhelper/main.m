@@ -118,6 +118,7 @@ int main(int argc, char * const * argv) {
     NSString *boot1installPath      = [CloverappDict objectForKey:@"boot1install"];
     NSString *bootSectorsInstallSrc = [CloverappDict objectForKey:@"bootsectors-install"];
     NSString *bootSectorsInstall    = @"/tmp/bootsectors-install";
+    BOOL isESP                      = [[CloverappDict objectForKey:@"isESP"] boolValue];
     
     if ([kfm fileExistsAtPath:bootSectorsInstall]) {
       printf("Note: found old bootsectors-install..removing it..\n");
@@ -440,7 +441,9 @@ int main(int argc, char * const * argv) {
       
       [task setEnvironment:[[NSProcessInfo new] environment]];
       [task setLaunchPath:bootSectorsInstall];
-      [task setArguments:@[ disk, filesystem, shemeMap, boot0, boot1 ]];
+      
+      NSString *esp = isESP ? @"ESP" : @"OTHER";
+      [task setArguments:@[ disk, filesystem, shemeMap, boot0, boot1, esp ]];
       
       task.terminationHandler = ^(NSTask *theTask) {
         if (theTask.terminationStatus != 0) {
@@ -456,6 +459,14 @@ int main(int argc, char * const * argv) {
         printf("%s\n", [output UTF8String]);
       }
       
+    } else {
+      if (isESP) {
+        NSTask *task = [[NSTask alloc] init];
+        [task setEnvironment:[[NSProcessInfo new] environment]];
+        [task setLaunchPath:@"/usr/sbin/diskutil"];
+        [task setArguments:@[ @"umount", @"force", disk ]];
+        [task launch];
+      }
     }
     cleanUp();
     exit(EXIT_SUCCESS);

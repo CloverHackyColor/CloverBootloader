@@ -15,6 +15,7 @@ import DiskArbitration
 import SystemConfiguration
 
 let kNotAvailable : String = "N/A"
+let kBannedMedia = ["Recovery HD", "Recovery", "VM", "Preboot"]
 
 /// Get DADisk dictionary from DiskArbitration from the given disk name or mount point.
 func getDAdiskDescription(from diskOrMtp: String) -> NSDictionary? {
@@ -38,16 +39,15 @@ func getDAdiskDescription(from diskOrMtp: String) -> NSDictionary? {
       }
     }
   }
+
   return dict
 }
 
 /// Check disk or mount point is writable (kDADiskDescriptionMediaWritableKey).
 func isWritable(diskOrMtp: String) -> Bool {
   var isWritable : Bool = false
-  if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
-    if let val = dict.object(forKey: kDADiskDescriptionMediaWritableKey) as? NSNumber {
-      isWritable = val.boolValue
-    }
+  if let val = getDAdiskDescription(from: diskOrMtp)?.object(forKey: kDADiskDescriptionMediaWritableKey) as? NSNumber {
+    isWritable = val.boolValue
   }
   
   return isWritable
@@ -55,27 +55,21 @@ func isWritable(diskOrMtp: String) -> Bool {
 
 /// Get the media content name (kDADiskDescriptionMediaContentKey).
 func getMediaContent(from diskOrMtp: String) -> String? {
-  var content : String? = nil
-  if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
-    if (dict.object(forKey: kDADiskDescriptionMediaContentKey) != nil) {
-      content = dict.object(forKey: kDADiskDescriptionMediaContentKey) as? String
-    }
+  if let content = getDAdiskDescription(from: diskOrMtp)?.object(forKey: kDADiskDescriptionMediaContentKey) as? String {
+    return content
   }
   
-  return content
+  return nil
 }
 
 /// get the Partition Scheme Map from the parent disk (kDADiskDescriptionMediaContentKey).
 func getPartitionSchemeMap(from diskOrMtp: String) -> String? {
-  var sheme : String? = nil
   if let dadisk = getBSDParent(of: diskOrMtp) {
-    if let dict : NSDictionary = getDAdiskDescription(from: dadisk) {
-      if (dict.object(forKey: kDADiskDescriptionMediaContentKey) != nil) {
-        sheme = dict.object(forKey: kDADiskDescriptionMediaContentKey) as? String
-      }
+    if let scheme = getDAdiskDescription(from: dadisk)?.object(forKey: kDADiskDescriptionMediaContentKey) as? String {
+      return scheme
     }
   }
-  return sheme
+  return nil
 }
 
 /// Find the mountpoint for the given disk object. You can pass also a mount point to se if it is valid.
@@ -97,13 +91,11 @@ func getMountPoint(from diskOrMtp: String) -> String? {
 
 /// Find the Volume name: be aware that this is not the mount point name.
 func getVolumeName(from diskOrMtp: String) -> String? {
-  var name : String? = nil
-  if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
-    if (dict.object(forKey: kDADiskDescriptionVolumeNameKey) != nil) {
-      name = dict.object(forKey: kDADiskDescriptionVolumeNameKey) as? String
-    }
+  if let name = getDAdiskDescription(from: diskOrMtp)?.object(forKey: kDADiskDescriptionVolumeNameKey) as? String {
+    return name
   }
-  return name
+  
+  return nil
 }
 
 /// Get partition UUID for the given volume:  This is not a disk UUID.
@@ -114,13 +106,12 @@ func getVolumeUUID(from diskOrMtp: String) -> String? {
       
       let cfuuid :CFUUID = dict.object(forKey: kDADiskDescriptionVolumeUUIDKey) as! CFUUID
       uuid = CFUUIDCreateString(kCFAllocatorDefault, cfuuid)! as String
-      //print(uuid!)
     }
   }
   return uuid
 }
 
-/// Get disk uuid for the given diskx. This is not a Volume UUID but a media UUID.
+/// Get disk uuid for the given hole diskx. This is not a Volume UUID but a media UUID.
 func getDiskUUID(from diskOrMtp: String) -> String? {
   var uuid : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: getBSDParent(of: diskOrMtp)!) {
@@ -136,28 +127,35 @@ func getDiskUUID(from diskOrMtp: String) -> String? {
   return uuid
 }
 
-/// Get Media Name (kDADiskDescriptionMediaNameKey).
-func getMediaName(from diskOrMtp: String) -> String? {
-  var name : String? = nil
+/// Get media uuid for the given hole diskx or slice.
+func getMediaUUID(from diskOrMtp: String) -> String? {
+  var uuid : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
-    if (dict.object(forKey: kDADiskDescriptionMediaNameKey) != nil) {
-      name = (dict.object(forKey: kDADiskDescriptionMediaNameKey) as? String)!
+    if let temp  = dict.object(forKey: kDADiskDescriptionMediaUUIDKey) {
+      let cu : CFUUID = temp as! CFUUID
+      let cus : CFString = CFUUIDCreateString(kCFAllocatorDefault, cu)
+      uuid = "\(cus)"
     }
   }
+  return uuid
+}
+
+/// Get Media Name (kDADiskDescriptionMediaNameKey).
+func getMediaName(from diskOrMtp: String) -> String? {
+  if let name = getDAdiskDescription(from: diskOrMtp)?.object(forKey: kDADiskDescriptionMediaNameKey) as? String {
+    return name
+  }
   
-  return name
+  return nil
 }
 
 /// Get Media Name (kDADiskDescriptionDeviceProtocolKey).
-func getDeviceProtocol(from diskOrMtp: String) -> String {
-  var prot : String = kNotAvailable
-  if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
-    if (dict.object(forKey: kDADiskDescriptionDeviceProtocolKey) != nil) {
-      prot = (dict.object(forKey: kDADiskDescriptionDeviceProtocolKey) as? String)!
-    }
+func getDeviceProtocol(from diskOrMtp: String) -> String? {
+  if let prot = getDAdiskDescription(from: diskOrMtp)?.object(forKey: kDADiskDescriptionDeviceProtocolKey) as? String {
+    return prot
   }
   
-  return prot
+  return nil
 }
 
 /// Get all BSDName in the System.
@@ -198,31 +196,59 @@ func getFS(from diskOrMtp: String) -> String? {
   var fs : String? = nil
   if let dict : NSDictionary = getDAdiskDescription(from: diskOrMtp) {
     var temp : String = ""
+    
     if (dict.object(forKey: kDADiskDescriptionVolumeKindKey) != nil) {
       temp = dict.object(forKey: kDADiskDescriptionVolumeKindKey) as! String
-      
       // if msdos we would know if is fat32, exfat etc..
       if temp.lowercased() == "msdos" {
-        // Since last few OSes (..on 10.13) the DAVolumeType
-        // contains a string like ""MS-DOS (FAT32)" so that we can identify the real fs
-        // w/o using statfs.
-        if (dict.object(forKey: kDADiskDescriptionVolumeTypeKey) != nil) {
-          let volType : String = dict.object(forKey: kDADiskDescriptionVolumeTypeKey) as! String
-          
-          if (volType.lowercased().range(of: "exfat") != nil) {
-            temp = "exFAT"
-          } else if (volType.lowercased().range(of: "fat16") != nil) {
-            temp = "FAT16"
-          } else if (volType.lowercased().range(of: "fat32") != nil) {
-            temp = "FAT32"
+        if #available(OSX 10.11, *) {
+          /*
+           Since last few OSes (..on 10.11) the DAVolumeType
+           contains a string like ""MS-DOS (FAT32)" so that we can identify the real fs
+           w/o using statfs (which require root privileges).
+           
+           BUT,
+           
+           kDADiskDescriptionVolumeTypeKey is not present before 10.11:
+           dyld: Symbol not found: _kDADiskDescriptionVolumeTypeKey
+           */
+          let DAVolumeType : CFString = "DAVolumeType" as CFString
+          if let volType = dict.object(forKey: DAVolumeType) as? String {
+            if (volType.lowercased().range(of: "exfat") != nil) {
+              temp = "exfat"
+            } else if (volType.lowercased().range(of: "fat16") != nil) {
+              temp = "fat16"
+            } else if (volType.lowercased().range(of: "fat32") != nil) {
+              temp = "fat32"
+            }
+          }
+        } else {
+          /*
+           An old OS, the filesystem personality can only be read when the volume is up and mounted,
+           but while the app will show "msdos" as filesystem, the installer will read the correct one just
+           before going to install Clover because you can only install if the chosen volume has a mount point.
+           */
+          if let disk = getBSDName(of: diskOrMtp) {
+            let cmd = "diskutil info \(disk) | grep -i 'file system personality:'"
+            var output : String? = nil
+            checkBashOutput(cmd: cmd, output: &output)
+            
+            if (output != nil) {
+              if (output!.lowercased().range(of: "exfat") != nil) {
+                temp = "exfat"
+              } else if (output!.lowercased().range(of: "fat16") != nil) {
+                temp = "fat16"
+              } else if (output!.lowercased().range(of: "fat32") != nil) {
+                temp = "fat32"
+              }
+            }
           }
         }
       }
-      
       fs = temp
     }
   }
-  return fs
+  return fs?.uppercased()
 }
 
 /// Get all ESP (EFI System Partition) in the System.
@@ -267,10 +293,8 @@ func getVolumes() -> [String] {
 
 /// Find the BSDName of the given mount point.
 func getBSDName(of mountpoint: String) -> String? {
-  if let dict : NSDictionary = getDAdiskDescription(from: mountpoint) {
-    if (dict.object(forKey: kDADiskDescriptionMediaBSDNameKey) != nil) {
-      return dict.object(forKey: kDADiskDescriptionMediaBSDNameKey) as? String
-    }
+  if let name = getDAdiskDescription(from: mountpoint)?.object(forKey: kDADiskDescriptionMediaBSDNameKey) as? String {
+    return name
   }
   return nil
 }
@@ -609,4 +633,27 @@ fileprivate func printDAReturn(r: DAReturn) -> String {
   default:
     return "Unknown"
   }
+}
+
+fileprivate func checkBashOutput(cmd: String, output: inout String?) {
+  let task : Process = Process()
+  if #available(OSX 10.13, *) {
+    task.executableURL = URL(fileURLWithPath: "/bin/bash")
+  } else {
+    task.launchPath = "/bin/bash"
+  }
+  task.arguments = ["-c", cmd]
+  
+  task.environment = ProcessInfo.init().environment
+  
+  let pipe: Pipe = Pipe()
+  task.standardOutput = pipe
+  task.standardError = pipe
+  task.launch()
+  task.waitUntilExit()
+  let handle = pipe.fileHandleForReading
+  let data = handle.readDataToEndOfFile()
+  
+  
+  output = String(data: data, encoding: .utf8)
 }

@@ -14,6 +14,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   @IBOutlet var bootDeviceField : NSTextField!
   @IBOutlet var configPathField : FWTextField!
   @IBOutlet var disksPopUp : NSPopUpButton!
+  @IBOutlet var autoMountButton : NSButton!
   @IBOutlet var unmountButton : NSButton!
   @IBOutlet var themeField : FWTextField!
   @IBOutlet var soundField : FWTextField!
@@ -32,7 +33,10 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   @IBOutlet var progressBar : NSProgressIndicator!
   
   @IBOutlet var appVersionField : NSTextField!
-  @IBOutlet var infoImageView : NSImageView!
+  
+  @IBOutlet var infoButton : NSButton!
+  @IBOutlet var closeButton : NSButton!
+  
   
   var lastReleaseRev : String? = nil
   var lastReleaseLink : String? = nil
@@ -44,9 +48,29 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   
   var downloadTask : URLSessionDownloadTask? = nil
   
+  var loaded : Bool = false
+  
+  override func awakeFromNib() {
+    super.awakeFromNib()
+    if !self.loaded {
+      if #available(OSX 10.10, *) {} else {
+        self.viewDidLoad()
+      }
+      self.loaded = true
+    }
+  }
+  
   // MARK: View customization
   override func viewDidLoad() {
-    super.viewDidLoad()
+    if #available(OSX 10.10, *) {
+      super.viewDidLoad()
+    }
+    
+    var osminorVersion : Int = 9
+    if #available(OSX 10.10, *) {
+      osminorVersion = ProcessInfo().operatingSystemVersion.minorVersion
+    }
+
     let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String + " Beta"
     self.appVersionField.stringValue = "v\(appVersion)"
     localize(view: self.view)
@@ -60,24 +84,36 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     
     self.runAtLoginButton.state = UDs.bool(forKey: kRunAtLogin) ? .on : .off
     self.unmountButton.isEnabled = false
+    self.autoMountButton.isEnabled = false
+    self.autoMountButton.isHidden = true
     
     self.setUpdateInformations()
     
     let nvram = getNVRAM()
     var nvdata = nvram?.object(forKey: "Clover.Theme") as? Data
     
-    self.themeField.placeholderString = kNotAvailable.locale
+    if #available(OSX 10.10, *) {
+      self.themeField.placeholderString = kNotAvailable.locale
+    }
     self.themeField.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
     self.themeField.cell?.representedObject = self.themeField.stringValue
     
     nvdata = nvram?.object(forKey: "Clover.Sound") as? Data
-    self.soundField.placeholderString = kNotAvailable.locale
+    if #available(OSX 10.10, *) {
+      self.soundField.placeholderString = kNotAvailable.locale
+    }
     self.soundField.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
     self.soundField.cell?.representedObject = self.soundField.stringValue
     
     nvdata = nvram?.object(forKey: "Clover.RootRW") as? Data
     var value : String = String(decoding: nvdata ?? Data(), as: UTF8.self)
     self.makeRootRWButton.state = (value == "true") ? .on : .off
+    
+    // copy the Swift Framenworks for oldest OSes
+    if osminorVersion < 15 {
+      self.makeRootRWButton.isEnabled = false
+      self.makeRootRWButton.isHidden = true
+    }
     
     nvdata = nvram?.object(forKey: "Clover.DisableSleepProxyClient") as? Data
     value = String(decoding: nvdata ?? Data(), as: UTF8.self)
@@ -125,11 +161,10 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
                                             userInfo: nil,
                                             repeats: true)
     
-    let clickVersion = NSClickGestureRecognizer(target: self, action: #selector(goToWebSite))
-    self.appVersionField.addGestureRecognizer(clickVersion)
-    
-    let topic = NSClickGestureRecognizer(target: self, action: #selector(goToTopic))
-    self.infoImageView.addGestureRecognizer(topic)
+    if #available(OSX 10.10, *) {
+      let clickVersion = NSClickGestureRecognizer(target: self, action: #selector(goToWebSite))
+      self.appVersionField.addGestureRecognizer(clickVersion)
+    }
   }
   
   func setUpdateInformations() {
@@ -138,7 +173,16 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     self.installCloverButton.title = title
     
     self.bootDevice = findBootPartitionDevice()
-    title = "\("Boot device".locale): \(self.bootDevice ?? kNotAvailable.locale)"
+    if (self.bootDevice != nil) {
+      let bootDeviceUUID = getMediaUUID(from: self.bootDevice ?? "")
+      title = "\(self.bootDevice!)"
+      if (bootDeviceUUID != nil) {
+        title += " \(bootDeviceUUID!)"
+      }
+    } else {
+      title = kNotAvailable.locale
+    }
+    
     self.bootDeviceField.stringValue = title
     
     self.configPathField.stringValue = findConfigPath() ?? kNotAvailable.locale
@@ -163,7 +207,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     NSWorkspace.shared.open(URL(string: link)!)
   }
   
-  @objc func goToTopic() {
+  @IBAction func goToTopic(_ sender: NSButton?) {
     let link = "https://www.insanelymac.com/forum/topic/341047-cloverapp-testing/"
     NSWorkspace.shared.open(URL(string: link)!)
   }
@@ -211,17 +255,24 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   // MARK: Mount ESPs
   @IBAction func mountESP(_ sender: NSPopUpButton!) {
     self.unmountButton.isEnabled = false
+    self.autoMountButton.isEnabled = false
+    self.autoMountButton.animator().isHidden = true
     if let disk = sender.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
-        DispatchQueue.global(qos: .background).async {
+        //DispatchQueue.global(qos: .background).async {
+          let task = Process()
           let cmd = "diskutil mount \(disk)"
           let msg = String(format: "Clover wants to mount %@", disk)
           let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
           
-          let task = Process()
-          task.launchPath = "/usr/bin/osascript"
-          task.arguments = ["-e", script]
-          
+          if #available(OSX 10.12, *) {
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", script]
+          } else {
+            task.launchPath = "/usr/sbin/diskutil"
+            task.arguments = ["mount", disk]
+          }
+        
           task.terminationHandler = { t in
             if t.terminationStatus == 0 {
               DispatchQueue.main.async {
@@ -231,28 +282,84 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
             } else {
               NSSound.beep()
             }
+            DispatchQueue.main.async {
+              self.autoMountButton.isEnabled = true
+              self.autoMountButton.animator().isHidden = false
+              self.autoMount(nil)
+            }
           }
           task.launch()
-        }
+        //}
       } else {
         self.unmountButton.isEnabled = true
+        self.autoMountButton.isEnabled = true
+        self.autoMountButton.animator().isHidden = false
+        self.autoMount(nil)
         NSWorkspace.shared.openFile(getMountPoint(from: disk) ?? "")
       }
     }
+  }
+  
+  // MARK: Auto mount
+  @IBAction func autoMount(_ sender: NSButton?) {
+    if self.disksPopUp.indexOfSelectedItem > 0 {
+      let key = "Clover.MountEFI"
+      if let disk = self.disksPopUp.selectedItem?.representedObject as? String {
+        // find the uuid
+        let uuid = getMediaUUID(from: disk)
+        var deadline : DispatchTime = .now() + 4.0
+        if (sender != nil) {
+          if sender!.state == .on {
+            if (uuid != nil) {
+              setNVRAM(key: key, stringValue: uuid!)
+            }
+          } else {
+            deleteNVRAM(key: key)
+          }
+        } else {
+          deadline = .now() + 0.2
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: deadline) {
+          var value = ""
+          if let nvram = getNVRAM() {
+            let nvdata = nvram.object(forKey: key) as? Data
+            value = String(decoding: nvdata ?? Data(), as: UTF8.self)
+          }
+         
+          var enabled = (value == uuid)
+          if !enabled {
+            enabled = (value == "Yes" && disk == findBootPartitionDevice())
+          }
+          if !enabled {
+            enabled = (value == disk || value == "/dev/\(disk)" || value == "/dev/r\(disk)" )
+          }
+          self.autoMountButton.state = enabled ? .on : .off
+        }
+        
+      }
+    }
+    
   }
   
   // MARK: Umount
   @IBAction func umount(_ sender: NSButton!) {
     if let disk = self.disksPopUp.selectedItem?.representedObject as? String {
       if isMountPoint(path: disk) {
-        DispatchQueue.global(qos: .background).async {
+        //DispatchQueue.global(qos: .background).async {
           let cmd = "diskutil umount \(disk)"
           let msg = String(format: "Clover wants to umount %@", disk)
           let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
           
           let task = Process()
-          task.launchPath = "/usr/bin/osascript"
-          task.arguments = ["-e", script]
+        
+          if #available(OSX 10.12, *) {
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", script]
+          } else {
+            task.launchPath = "/usr/sbin/diskutil"
+            task.arguments = ["umount", "force", disk]
+          }
           
           task.terminationHandler = { t in
             if t.terminationStatus != 0 {
@@ -263,29 +370,36 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
             }
           }
           task.launch()
-        }
+        //}
       }
     }
   }
 
   // MARK: Controls actions
   @IBAction func installClover(_ sender: NSButton!) {
-    if (AppSD.installerWC == nil) {
-      AppSD.installerWC = InstallerWindowController.loadFromNib()
+    if #available(OSX 10.11, *) {
+      if (AppSD.installerWC == nil) {
+        AppSD.installerWC = InstallerWindowController.loadFromNib()
+      }
+      
+      AppSD.installerWC?.showWindow(self)
+    } else {
+      if (AppSD.installerOutWC == nil) {
+        AppSD.installerOutWC = InstallerOutWindowController.loadFromNib()
+      }
+      
+      AppSD.installerOutWC?.showWindow(self)
     }
-    
-    AppSD.installerWC?.showWindow(self)
     NSApp.activate(ignoringOtherApps: true)
   }
   
   @IBAction func installDaemon(_ sender: NSButton!) {
-    let daemonPath = Bundle.main.executablePath!.deletingLastPath.addPath("CloverDaemonNew")
-    
-    DispatchQueue.global(qos: .background).async {
+    let daemonInstallerPath = Bundle.main.executablePath!.deletingLastPath.addPath("daemonInstaller")
+  
+    if #available(OSX 10.11, *) {
       let task = Process()
       let msg = "Install CloverDaemonNew".locale
-      
-      let script = "do shell script \"\" & quoted form of \"\(daemonPath)\" & \" --install\" with prompt \"\(msg)\" with administrator privileges"
+      let script = "do shell script \"'\(daemonInstallerPath)'\" with prompt \"\(msg)\" with administrator privileges"
       
       task.launchPath = "/usr/bin/osascript"
       task.arguments = ["-e", script]
@@ -302,17 +416,26 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         }
       }
       task.launch()
+    } else {
+      let script = "do shell script \"'\(daemonInstallerPath)'\" with administrator privileges"
+      var err : NSDictionary? = nil
+      let result : NSAppleEventDescriptor = NSAppleScript(source: script)!.executeAndReturnError(&err)
+      if (err != nil) {
+        NSSound.beep()
+        print(result.stringValue ?? "")
+      }
+      let daemonExist = fm.fileExists(atPath: kDaemonPath) && fm.fileExists(atPath: kLaunchPlistPath)
+      self.unInstallDaemonButton.isEnabled = daemonExist
     }
   }
   
   @IBAction func unInstallDaemon(_ sender: NSButton!) {
     let daemonPath = Bundle.main.executablePath!.deletingLastPath.addPath("CloverDaemonNew")
-    
-    DispatchQueue.global(qos: .background).async {
+    if #available(OSX 10.11, *) {
       let task = Process()
-      let msg = "Install CloverDaemonNew".locale
+      let msg = "Uninstall CloverDaemonNew".locale
       
-      let script = "do shell script \"\" & quoted form of \"\(daemonPath)\" & \" --uninstall\" with prompt \"\(msg)\" with administrator privileges"
+      let script = "do shell script \"'\(daemonPath)' --uninstall\" with prompt \"\(msg)\" with administrator privileges"
       
       task.launchPath = "/usr/bin/osascript"
       task.arguments = ["-e", script]
@@ -329,6 +452,16 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         }
       }
       task.launch()
+    } else {
+      let script = "do shell script \"'\(daemonPath)' --uninstall\" with administrator privileges"
+      var err : NSDictionary? = nil
+      let result : NSAppleEventDescriptor = NSAppleScript(source: script)!.executeAndReturnError(&err)
+      if (err != nil) {
+        NSSound.beep()
+        print(result.stringValue ?? "")
+      }
+      let daemonExist = fm.fileExists(atPath: kDaemonPath) && fm.fileExists(atPath: kLaunchPlistPath)
+      self.unInstallDaemonButton.isEnabled = daemonExist
     }
   }
   
@@ -415,26 +548,33 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   }
   
   @IBAction func readDaemonLog(_ sender: NSButton!) {
-    DispatchQueue.global(qos: .background).async {
-      let cmd = "cat /Library/Logs/CloverEFI/clover.daemon.log > /tmp/clover.daemon.log && open /tmp/clover.daemon.log"
+    let cmd = "cat /Library/Logs/CloverEFI/clover.daemon.log > /tmp/clover.daemon.log && open /tmp/clover.daemon.log"
+    if #available(OSX 10.11, *) {
+      let task = Process()
+      
       let msg = "CloverDaemon log"
       let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
       
-      let task = Process()
       task.launchPath = "/usr/bin/osascript"
       task.arguments = ["-e", script]
       
       task.terminationHandler = { t in
         if t.terminationStatus == 0 {
-          DispatchQueue.main.async {
-            self.unmountButton.isEnabled = true
-          }
           NSWorkspace.shared.openFile("/tmp/clover.daemon.log")
         } else {
           NSSound.beep()
         }
       }
       task.launch()
+    } else {
+      let script = "do shell script \"\(cmd)\" with administrator privileges"
+      var err : NSDictionary? = nil
+      let _ : NSAppleEventDescriptor = NSAppleScript(source: script)!.executeAndReturnError(&err)
+      if (err != nil) {
+        NSSound.beep()
+      } else {
+        NSWorkspace.shared.openFile("/tmp/clover.daemon.log")
+      }
     }
   }
   
@@ -471,7 +611,6 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     }
     
     
-    
     // Time interval is what user defines less time elapsed
     if ti > 0 {
       let lastCheckDate : Date = (UDs.object(forKey: kLastSearchUpdateDateKey) as? Date) ?? Date()
@@ -497,22 +636,34 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   }
   
   @objc func searchUpdate() {
-    getLatestRelease { (l, v) in
-      self.lastReleaseLink = l
-      self.lastReleaseRev = v
+    getLatestReleases { (bootlink, bootvers, applink, appvers) in
+      // Clover Bootloader
+      self.lastReleaseLink = bootlink
+      self.lastReleaseRev = bootvers
       let currRevNum : Int = Int(self.currentRev) ?? 0
       let lastRevNum : Int = Int(self.lastReleaseRev ?? "0") ?? 0
-      
+      let installerRev = findCloverRevision(at: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI"))
+      let installerRevNum = Int(installerRev ?? "0") ?? 0
+    
       if (self.lastReleaseLink != nil && self.lastReleaseRev != nil)
         && lastRevNum > 0
         && (lastRevNum > currRevNum) {
         UDs.set(self.lastReleaseLink!, forKey: kLastUpdateLink)
         UDs.set(self.lastReleaseRev!, forKey: kLastUpdateRevision)
         DispatchQueue.main.async {
-          AppSD.statusItem.button?.title = "\(lastRevNum)"
-          AppSD.statusItem.button?.imagePosition = .imageLeft
-          self.updateCloverButton.isEnabled = true
-          self.updateCloverButton.title = String(format: "Update to r%d".locale, lastRevNum)
+          if #available(OSX 10.10, *) {
+            AppSD.statusItem.button?.title = "\(lastRevNum)"
+            AppSD.statusItem.button?.imagePosition = .imageLeft
+          } else {
+            AppSD.statusItem.title = "\(lastRevNum)"
+          }
+          if installerRevNum > lastRevNum {
+            self.updateCloverButton.isEnabled = true
+            self.updateCloverButton.title = String(format: "Update to r%d".locale, lastRevNum)
+          } else {
+            self.updateCloverButton.isEnabled = false
+            self.updateCloverButton.title = kNotAvailable.locale
+          }
         }
       } else {
         DispatchQueue.main.async {
@@ -522,13 +673,22 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
           if ((ll != nil && lr != nil) && lrnum > currRevNum) {
             self.lastReleaseLink = ll
             self.lastReleaseRev = lr
-            AppSD.statusItem.button?.title = "\(lastRevNum)"
-            AppSD.statusItem.button?.imagePosition = .imageLeft
+            if #available(OSX 10.10, *) {
+              AppSD.statusItem.button?.title = "\(lastRevNum)"
+              AppSD.statusItem.button?.imagePosition = .imageLeft
+            } else {
+              AppSD.statusItem.title = "\(lastRevNum)"
+            }
             self.updateCloverButton.isEnabled = true
             self.updateCloverButton.title = String(format: "Update to r%d".locale, lastRevNum)
           } else {
-            AppSD.statusItem.button?.title = ""
-            AppSD.statusItem.button?.imagePosition = .imageOnly
+            if #available(OSX 10.10, *) {
+              AppSD.statusItem.button?.title = ""
+              AppSD.statusItem.button?.imagePosition = .imageOnly
+            } else {
+              AppSD.statusItem.title = ""
+            }
+            
             self.updateCloverButton.isEnabled = false
             self.updateCloverButton.title = kNotAvailable.locale
           }
@@ -542,6 +702,33 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       }
       UDs.set(date, forKey: kLastSearchUpdateDateKey)
       UDs.synchronize()
+      
+      // Clover.app
+      if appvers != nil && applink != nil {
+        let currVerS = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
+        
+        if appvers!.count > 0 && applink!.count > 0 {
+          let currVer : Int = Int(currVerS.replacingOccurrences(of: ".", with: "")) ?? 0
+          let newVer : Int = Int(appvers!.replacingOccurrences(of: ".", with: "")) ?? 0
+          
+          if newVer > currVer {
+            if let url = URL(string: applink!) {
+              // setup an alert
+              DispatchQueue.main.async {
+                let alert = NSAlert()
+                alert.messageText = "Clover.app v\(appvers!)"
+                alert.informativeText = "\(currVerS) => \(appvers!)"
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "Update".locale)
+                alert.addButton(withTitle: "Close".locale)
+                if alert.runModal() == .alertFirstButtonReturn {
+                  NSWorkspace.shared.open(url)
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
   
@@ -586,7 +773,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
 
       if lastPath.fileExtension == "zip" && lastPath.hasPrefix("CloverV2") {
         // ok, We have the download completed: replace CloverV2 inside SharedSupport directory!
-        
+
         // Decompress the zip archive
         // NSUserName() ensure the user have read write permissions
         let tempDir = "/tmp/CloverXXXXX\(NSUserName())Update"
@@ -600,10 +787,27 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
         
         let file = tempDir.addPath(lastPath)
         try data.write(to: URL(fileURLWithPath: file))
-        unzip(file: file, destination: tempDir) { (success) in
-          if success {
-            self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+        
+        DispatchQueue.main.async {
+          let task : Process = Process()
+          task.environment = ProcessInfo().environment
+          let bash = "/bin/bash"
+          // unzip -d output_dir/ zipfiles.zip
+          let cmd = "/usr/bin/unzip -qq -d \(tempDir) \(file)"
+          if #available(OSX 10.13, *) {
+            task.executableURL = URL(fileURLWithPath: bash)
+          } else {
+            task.launchPath = bash
           }
+          
+          task.arguments = ["-c", cmd]
+          task.terminationHandler = { t in
+            if t.terminationStatus == 0 {
+              self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+            }
+          }
+          
+          task.launch()
         }
       }
       
@@ -666,7 +870,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   }
   
   // MARK: Close
-  @IBAction func close(_ sender: NSButton!) {
+  @IBAction func closeApp(_ sender: NSButton?) {
     NSApp.terminate(nil)
   }
   
@@ -676,9 +880,41 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
 
 // MARK: Settings Window controller
 class SettingsWindowController: NSWindowController, NSWindowDelegate {
-  class func loadFromNib() -> SettingsWindowController {
+  var viewController : NSViewController? = nil
+  override var contentViewController: NSViewController? {
+    get {
+      self.viewController
+    }
+    set {
+      self.viewController = newValue
+    }
+  }
+  /*
+  class func loadFromStoryBoard() -> SettingsWindowController {
     let wc = NSStoryboard(name: "Settings",
                           bundle: nil).instantiateController(withIdentifier: "SettingsWindowController") as! SettingsWindowController
     return wc
   }
+  */
+  class func loadFromNib() -> SettingsWindowController? {
+    var topLevel: NSArray? = nil
+    Bundle.main.loadNibNamed("Settings", owner: self, topLevelObjects: &topLevel)
+    if (topLevel != nil) {
+      var wc : SettingsWindowController? = nil
+      for o in topLevel! {
+        if o is SettingsWindowController {
+          wc = o as? SettingsWindowController
+        }
+      }
+      
+      for o in topLevel! {
+        if o is SettingsViewController {
+          wc?.contentViewController = o as! SettingsViewController
+        }
+      }
+      return wc
+    }
+    return nil
+  }
 }
+

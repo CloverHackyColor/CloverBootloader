@@ -22,6 +22,7 @@
 "Mount" = "Mount";
 "umount" = "Unmount";
 "mount point" = "mount point";
+"auto mount" = "auto mount";
 
 "true" = "tačno";
 "false" = "Lažno";

@@ -22,6 +22,7 @@
 "Mount" = "挂载";
 "umount" = "卸载";
 "mount point" = "挂载点";
+"auto mount" = "auto mount";
 
 "true" = "是";
 "false" = "否";
