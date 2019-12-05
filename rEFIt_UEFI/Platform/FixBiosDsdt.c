@@ -1374,11 +1374,12 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 //return final length of dsdt
 UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 {
-  INT32    i, j, k;
+  INT32    i, k;
+//  INT32    j;
   UINT32   size = 0;
   INT32  offset = 0;
-  UINT32   SBSIZE = 0, SBADR = 0;
-  BOOLEAN SBFound = FALSE;
+//  UINT32   SBSIZE = 0, SBADR = 0;
+//  BOOLEAN SBFound = FALSE;
 
   if (shift == 0) {
     return len;
@@ -1406,7 +1407,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
     } //else not a device
 // check scope _SB_
 // a problem 45 43 4F 4E 08   10 84 10 05 5F 53 42 5F
-    SBSIZE = 0;
+/*    SBSIZE = 0;
     if (dsdt[i] == '_' && dsdt[i+1] == 'S' && dsdt[i+2] == 'B' && dsdt[i+3] == '_') {
       for (j=0; j<10; j++) {
         if (dsdt[i-j] != 0x10) {
@@ -1433,8 +1434,12 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
     } //else not a scope
     if (SBFound) {
       break;
+    } */
+    if (k == 0) {
+      i--;
+    } else {
+      i = k - 3;    //if found then search again from found
     }
-    i = k - 3;    //if found then search again from found
   }
   return len;
 }
