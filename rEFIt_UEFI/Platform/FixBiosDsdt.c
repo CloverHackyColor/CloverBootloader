@@ -1392,7 +1392,10 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
     if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, TRUE)) { //device candidate
       k = i + 2;
     } else if ((dsdt[i] == 0x10) && !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
-      k = i + 1;
+      //additional check for Field
+      if (!((dsdt[i - 2] == 0x5B) && (dsdt[i - 1] == 0x81))) {
+        k = i + 1;
+      }
     }
     if ( k != 0) {
       size = get_size(dsdt, k);

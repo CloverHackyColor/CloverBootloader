@@ -342,7 +342,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6819,  CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7850 Series", kFutomaki }, //R7 265
 
   // VERDE
-  { 0x6820,  CHIP_FAMILY_VERDE, "AMD Radeon HD 7700 Series",    kBuri }, // Mobile
+  { 0x6820,  CHIP_FAMILY_VERDE, "AMD Radeon R9 m370x",    kBuri }, // Mobile
   { 0x6821,  CHIP_FAMILY_VERDE, "AMD Radeon HD 7700 Series",    kBuri }, // Mobile
   { 0x6822,  CHIP_FAMILY_VERDE, "AMD Radeon E8860",             kBuri }, // Mobile
   { 0x6823,  CHIP_FAMILY_VERDE, "AMD Radeon HD 8800M Series",   kBuri }, // Mobile
