@@ -11,10 +11,10 @@
  */
 
 /* top bar menu */
-"N/A" = "N/A"; // not available (please be short)
+"N/A" = "N/D"; // not available (please be short)
 "Install Clover" = "Instalar Clover";
 "Current Clover revision" = "Clover atual revisão";
-"Boot Device:" = "Dispositivo de Boot:";
+"Boot device" = "Dispositivo de Boot";
 "config path:" = "configurar caminho:";
 
 "Clover wants to mount %@" = "Clover pretende montar %@";
@@ -22,7 +22,7 @@
 "Mount" = "Montar";
 "umount" = "desmontar";
 "mount point" = "ponto de montagem";
-"*auto mount" = "*auto mount";
+"auto mount" = "Montagem Auto";
 
 "true" = "verdadeiro";
 "false" = "falso";
