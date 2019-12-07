@@ -14,7 +14,7 @@
 "N/A" = "N/D"; // not available (please be short)
 "Install Clover" = "Installa Clover";
 "Current Clover revision" = "Revisione corrente";
-"Boot device" = "Boot Device";
+"Boot Device:" = "Disco di avvio:";
 "config path:" = "percorso config:";
 
 "Clover wants to mount %@" = "Clover vuole montare %@";
@@ -22,7 +22,7 @@
 "Mount" = "Monta";
 "umount" = "smonta";
 "mount point" = "punto di montaggio";
-"auto mount" = "auto monta";
+"*auto mount" = "*auto monta";
 
 "true" = "vero";
 "false" = "falso";

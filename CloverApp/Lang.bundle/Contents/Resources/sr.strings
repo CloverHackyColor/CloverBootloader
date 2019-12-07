@@ -14,7 +14,7 @@
 "N/A" = "N/V"; // not available (please be short)
 "Install Clover" = "Instalirajte Clover";
 "Current Clover revision" = "Trenutna verzija Clover-a";
-"Boot device" = "Uređaj za podizanje sastava";
+"Boot Device:" = "Uređaj za podizanje sastava:";
 "config path:" = "Putanja za konfiguraciju:";
 
 "Clover wants to mount %@" = "Clover želi %@ mount";
@@ -22,7 +22,7 @@
 "Mount" = "Mount";
 "umount" = "Unmount";
 "mount point" = "mount point";
-"auto mount" = "auto mount";
+"*auto mount" = "*auto mount";
 
 "true" = "tačno";
 "false" = "Lažno";

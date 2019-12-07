@@ -32,7 +32,7 @@
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="G6z-Xp-lnm">
                         <rect key="frame" x="21" y="580" width="303" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Boot device:" id="omZ-xs-Wjn">
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Boot Device:" id="omZ-xs-Wjn">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
