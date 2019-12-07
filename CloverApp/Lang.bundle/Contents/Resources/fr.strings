@@ -22,7 +22,7 @@
 "Mount" = "Monter";
 "umount" = "demonter";
 "mount point" = "point d'acces";
-"*auto mount" = "*auto mount";
+"*auto mount" = "*monter automatiquement";
 
 "true" = "vrai";
 "false" = "faux";
