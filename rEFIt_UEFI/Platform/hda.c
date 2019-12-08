@@ -113,7 +113,7 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 #endif
 
 
-BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
+BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
 {
   EFI_STATUS          Status;
   EFI_PCI_IO_PROTOCOL *PciIo;
