@@ -14,7 +14,7 @@
 "N/A" = "Н/Д"; // not available (please be short)
 "Install Clover" = "Установить Clover";
 "Current Clover revision" = "Текущая ревизия Clover";
-"Boot device" = "Загрузочное устройство";
+"Boot Device:" = "Загрузочное устройство:";
 "config path:" = "путь к файлу config:";
 
 "Clover wants to mount %@" = "Clover желает смонтировать %@";
@@ -22,7 +22,7 @@
 "Mount" = "Смонтировать";
 "umount" = "Размонтировать";
 "mount point" = "название тома";
-"auto mount" = "auto mount";
+"*auto mount" = "*auto mount";
 
 "true" = "истина";
 "false" = "ложь";

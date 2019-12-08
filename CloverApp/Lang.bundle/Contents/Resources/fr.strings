@@ -14,7 +14,7 @@
 "N/A" = "N/A"; // not available (please be short)
 "Install Clover" = "Installer Clover";
 "Current Clover revision" = "Version actuelle de Clover";
-"Boot device" = "Périphérique De Démarrage";
+"Boot Device:" = "Périphérique De Démarrage:";
 "config path:" = "voie d'acces vers config:";
 
 "Clover wants to mount %@" = "Clover desire monter %@";
@@ -22,14 +22,14 @@
 "Mount" = "Monter";
 "umount" = "demonter";
 "mount point" = "point d'acces";
-"auto mount" = "montage automatique";
+"*auto mount" = "*monter automatiquement";
 
 "true" = "vrai";
 "false" = "faux";
 
 "Theme:" = "Thème:";
 "Sound:" = "Son:";
-"*Make filesystem read-write" = "*Transformer le système de fichiers en lecture-écriture";
+"*Make filesystem read-write" = "*Changer système fichiers en lecture-écriture";
 "*Disable Sleep Proxy Client" = "*Désactiver Mise en veille du Proxy Client";
 "*Require CloverDaemon" = "*Necessite CloverDaemon";
 "Read daemon log" = "Lire log daemon";

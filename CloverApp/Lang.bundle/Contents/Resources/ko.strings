@@ -14,7 +14,7 @@
 "N/A" = "알수없음"; // not available (please be short)
 "Install Clover" = "클로버 설치";
 "Current Clover revision" = "현재 클로버 리비전";
-"Boot device" = "부트 디스크";
+"Boot Device:" = "부트 디스크:";
 "config path:" = "config 경로:";
 
 "Clover wants to mount %@" = "클로버는 다음 디스크를 마운트: %@";
@@ -22,7 +22,7 @@
 "Mount" = "마운트";
 "umount" = "언마운트";
 "mount point" = "마운트 포인트";
-"auto mount" = "auto mount";
+"*auto mount" = "*자동 마운트";
 
 "true" = "예";
 "false" = "아니오";

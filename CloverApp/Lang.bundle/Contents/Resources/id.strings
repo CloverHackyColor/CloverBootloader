@@ -14,7 +14,7 @@
 "N/A" = "N/D"; // not available (please be short)
 "Install Clover" = "Pasang Clover";
 "Current Clover revision" = "Revisi Clover Terkini";
-"Boot device" = "Device Boot";
+"Boot Device:" = "Device Boot:";
 "config path:" = "Lokasi config:";
 
 "Clover wants to mount %@" = "Clover ingin mount %@";
@@ -22,7 +22,7 @@
 "Mount" = "Mount";
 "umount" = "umount";
 "mount point" = "mount point";
-"auto mount" = "auto mount";
+"*auto mount" = "*auto mount";
 
 "true" = "true";
 "false" = "false";

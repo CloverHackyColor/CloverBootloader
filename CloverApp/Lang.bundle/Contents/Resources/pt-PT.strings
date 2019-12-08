@@ -22,7 +22,7 @@
 "Mount" = "Montar";
 "umount" = "desmontar";
 "mount point" = "ponto de montagem";
-"auto mount" = "auto mount";
+"auto mount" = "Montagem Auto";
 
 "true" = "verdadeiro";
 "false" = "falso";

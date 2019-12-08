@@ -11,10 +11,10 @@
  */
 
 /* top bar menu */
-"N/A" = "N/D"; // not available (please be short)
+"N/A" = "N/A"; // not available (please be short)
 "Install Clover" = "安装 Clover";
 "Current Clover revision" = "目前 Clover 版本";
-"Boot device" = "引导设备";
+"Boot Device:" = "引导设备:";
 "config path:" = "config 路径:";
 
 "Clover wants to mount %@" = "Clover 想要挂载 %@";
@@ -22,7 +22,7 @@
 "Mount" = "挂载";
 "umount" = "卸载";
 "mount point" = "挂载点";
-"auto mount" = "auto mount";
+"*auto mount" = "*auto mount";
 
 "true" = "是";
 "false" = "否";
