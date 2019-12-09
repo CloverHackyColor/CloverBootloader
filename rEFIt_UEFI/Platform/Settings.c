@@ -3463,7 +3463,7 @@ CHAR16* GetBundleVersion(CHAR16 *FullName)
   return CFBundleVersion;
 }
 
-VOID GetListOfInjectKext(CHAR16 *KextPath)
+VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
 {
 
   REFIT_DIR_ITER  DirIter;
@@ -3471,13 +3471,13 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
   SIDELOAD_KEXT*  mKext;
   SIDELOAD_KEXT*  mPlugInKext;
   CHAR16*         FullName;
-  CHAR16*         FullPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, KextPath);
+  CHAR16*         FullPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, KextDirNameUnderOEMPath);
   REFIT_DIR_ITER  PlugInsIter;
   EFI_FILE_INFO   *PlugInEntry;
   CHAR16*         PlugInsPath;
   CHAR16*         PlugInsName;
   BOOLEAN         Blocked = FALSE;
-  if (StrCmp(KextPath, L"Off") == 0) {
+  if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
     Blocked = TRUE;
   }
 
@@ -3495,7 +3495,7 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
     mKext = AllocateZeroPool (sizeof(SIDELOAD_KEXT));
     mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
-    mKext->MatchOS = PoolPrint(L"%s", KextPath);
+    mKext->KextDirNameUnderOEMPath = PoolPrint(L"%s", KextDirNameUnderOEMPath);
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
@@ -3514,7 +3514,7 @@ VOID GetListOfInjectKext(CHAR16 *KextPath)
       mPlugInKext = AllocateZeroPool(sizeof(SIDELOAD_KEXT));
       mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
       mPlugInKext->MenuItem.BValue = Blocked;
-      mPlugInKext->MatchOS = PoolPrint(L"%s", KextPath);
+      mPlugInKext->KextDirNameUnderOEMPath = PoolPrint(L"%s", KextDirNameUnderOEMPath);
       mPlugInKext->Next    = mKext->PlugInList;
       mPlugInKext->Version = GetBundleVersion(PlugInsName);
       mKext->PlugInList    = mPlugInKext;

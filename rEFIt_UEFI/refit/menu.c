@@ -4631,7 +4631,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
   while (Kext) {
-    if (StrStr(Kext->MatchOS, UniSysVer) != NULL) {
+    if (StrStr(Kext->KextDirNameUnderOEMPath, UniSysVer) != NULL) {
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs->Entry.Title = PoolPrint(L"%s, v.%s", Kext->FileName, Kext->Version);
       InputBootArgs->Entry.Tag = TAG_INPUT;
