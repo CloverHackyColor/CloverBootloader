@@ -1768,7 +1768,7 @@ extern UINT8                           *gLanMmio[4];     // their MMIO regions
 extern UINT8                           gLanMac[4][6];    // their MAC addresses
 extern UINTN                           nLanPaths;        // number of LAN pathes
 
-BOOLEAN CheckOEMPathExists(IN EFI_FILE *Root, IN CHAR16 *path, CHAR16 *ConfName)
+BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CHAR16 *ConfName)
 {
 	BOOLEAN res = FileExists(Root, path);
 	if ( res ) {
@@ -1795,15 +1795,15 @@ VOID SetOEMPath(CHAR16 *ConfName)
     if (ConfName == NULL) {
       OEMPath = L"EFI\\CLOVER";
       DBG ("set OEMPath (ConfName == NULL): %s\n", OEMPath);
-    } else if ( nLanCards > 0   &&  CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
-    } else if ( nLanCards > 1   &&  CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
-    } else if ( nLanCards > 2   &&  CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
-    } else if ( nLanCards > 3   &&  CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
-    } else if (!gFirmwareClover && CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI", gSettings.OEMBoard), ConfName)) {
-    } else if (CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMProduct), ConfName)) {
-    } else if (CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
-    } else if (CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard), ConfName)) {
-    } else if (CheckOEMPathExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
+    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
+    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
+    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
+    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
+    } else if (!gFirmwareClover && SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI", gSettings.OEMBoard), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMProduct), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
     } else {
       OEMPath = L"EFI\\CLOVER";
       DBG ("set OEMPath by default: %s\n", OEMPath);
