@@ -4716,39 +4716,38 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
 		}
 
-		// Add kext from 10.{version}.x
+		// Add kext from 10.{version}
 		{
 			CHAR16 DirName[256];
-			UnicodeSPrint(DirName, sizeof(DirName), L"%a.x", ShortOSVersion);
+			UnicodeSPrint(DirName, sizeof(DirName), L"%a", ShortOSVersion);
 			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
 
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-				UnicodeSPrint(DirName, sizeof(DirName), L"%a.x_install",
-				        ShortOSVersion);
+				UnicodeSPrint(DirName, sizeof(DirName), L"%a_install", ShortOSVersion);
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-					UnicodeSPrint(DirName, sizeof(DirName), L"%a.x_recovery",
-					        ShortOSVersion);
+					UnicodeSPrint(DirName, sizeof(DirName), L"%a_recovery", ShortOSVersion);
 				}
 				else {
-					UnicodeSPrint(DirName, sizeof(DirName), L"%a.x_normal",
-					        ShortOSVersion);
+					UnicodeSPrint(DirName, sizeof(DirName), L"%a_normal", ShortOSVersion);
 				}
 			}
 			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
 		}
 
 		// Add kext from :
-		// 10.{version} if NO minor version
+		// 10.{version}.0 if NO minor version
 		// 10.{version}.{minor version} if minor version is > 0
 		{
 			{
 				CHAR16 OSVersionKextsDirName[256];
-				UnicodeSPrint(OSVersionKextsDirName,
-				        sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
-				AddMenuEntry(SubScreen,
-				        SubMenuKextBlockInjection(OSVersionKextsDirName));
+				if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
+					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
+				}else{
+					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
+				}
+				AddMenuEntry(SubScreen, SubMenuKextBlockInjection(OSVersionKextsDirName));
 			}
 
 			CHAR16 DirName[256];
