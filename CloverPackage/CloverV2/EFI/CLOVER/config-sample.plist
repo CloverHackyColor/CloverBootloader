@@ -932,8 +932,8 @@
 	</array>
 	<key>SMBIOS</key>
 	<dict>
-    <key>#SmbiosVersion</key>
-    <integer>0x0206</integer>
+		<key>#SmbiosVersion</key>
+		<string>0x0300</string>
 		<key>#Slots</key>
 		<array>
 			<dict>
@@ -958,15 +958,15 @@
 			</dict>
 		</array>
 		<key>#BiosVersion</key>
-		<string>MB11.88Z.0061.B03.0809221748</string>
+		<string>IM131.88Z.F000.B00.1907241303</string>
 		<key>#EfiVersion</key>
-		<string>220.200.252.0.0</string>
+		<string>288.0.0.0.0</string>
 		<key>#SerialNumber</key>
-		<string>4H629LYAU9C</string>
+		<string>C02JBSAMDNCW</string>
 		<key>#Family</key>
-		<string>MacBook</string>
+		<string>iMac</string>
 		<key>#ChassisAssetTag</key>
-		<string>LatitudeD420</string>
+		<string>Desktop</string>
 		<key>#BiosReleaseDate</key>
 		<string>05/03/10</string>
 		<key>Manufacturer</key>
@@ -974,11 +974,11 @@
 		<key>#FirmwareFeatures</key>
 		<string>0xC0001403</string>
 		<key>#PlatformFeature</key>
-		<string>0x03</string>
+		<string>0x00</string>
 		<key>#Trust</key>
 		<true/>
 		<key>#BoardSerialNumber</key>
-		<string>C02032101R5DC771H</string>
+		<string>C0225060SAMF651AX</string>
 		<key>#BiosVendor</key>
 		<string>Apple Inc.</string>
 		<key>#FirmwareFeaturesMask</key>
@@ -988,11 +988,11 @@
 		<key>#BoardType</key>
 		<integer>10</integer>
 		<key>#ProductName</key>
-		<string>MacBook1,1</string>
+		<string>iMac13,2</string>
 		<key>#LocationInChassis</key>
 		<string>MLB</string>
-    <key>#MemoryRank</key>
-    <integer>2</integer>
+		<key>#MemoryRank</key>
+		<integer>2</integer>
 		<key>#Memory</key>
 		<dict>
 			<key>Modules</key>
@@ -1040,7 +1040,7 @@
 		<key>#Version</key>
 		<string>1.0</string>
 		<key>#Board-ID</key>
-		<string>Mac-F4208CC8</string>
+		<string>Mac-FC02E91DDD3FA6A4</string>
 		<key>#BoardVersion</key>
 		<string>Proto1</string>
 		<key>#Mobile</key>

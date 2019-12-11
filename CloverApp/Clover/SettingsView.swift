@@ -657,7 +657,8 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
           } else {
             AppSD.statusItem.title = "\(lastRevNum)"
           }
-          if installerRevNum > lastRevNum {
+          
+          if installerRevNum < lastRevNum {
             self.updateCloverButton.isEnabled = true
             self.updateCloverButton.title = String(format: "Update to r%d".locale, lastRevNum)
           } else {
