@@ -67,13 +67,15 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
   CHAR8*		tmp;
   CHAR16*		devpathstr = NULL;
   EFI_DEVICE_PATH_PROTOCOL*	DevicePath = NULL;
+  UINTN Size;
 
   DevicePath = DevicePathFromHandle (PciDt->DeviceHandle);
   if (!DevicePath)
     return NULL;
   devpathstr = FileDevicePathToStr(DevicePath);
-  tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR16));
-  UnicodeStrToAsciiStrS(devpathstr, tmp, (StrLen(devpathstr)+1));
+  Size = StrLen(devpathstr) + 1;
+  tmp = AllocateZeroPool(Size);
+  UnicodeStrToAsciiStrS(devpathstr, tmp, Size);
   return tmp;
 
 }
