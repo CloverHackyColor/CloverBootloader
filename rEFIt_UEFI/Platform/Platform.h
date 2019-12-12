@@ -940,6 +940,9 @@ typedef struct {
   BOOLEAN                 UseARTFreq;
   // SMBIOS TYPE133
   UINT64                  PlatformFeature;
+    
+  // PatchTableType11
+  BOOLEAN                 NoRomInfo;
 
   // OS parameters
   CHAR8                   Language[16];

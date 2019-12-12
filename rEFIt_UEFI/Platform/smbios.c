@@ -2042,7 +2042,9 @@ VOID PatchSmbios(VOID) //continue
   PatchTableType4();
   //  PatchTableType6();
   PatchTableType9();
-  PatchTableType11();
+  if (!gSettings.NoRomInfo) {
+    PatchTableType11();
+  }
   PatchTableTypeSome();
   PatchTableType17();
   PatchTableType16();

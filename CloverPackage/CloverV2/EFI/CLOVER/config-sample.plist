@@ -961,6 +961,8 @@
 		<string>IM131.88Z.F000.B00.1907241303</string>
 		<key>#EfiVersion</key>
 		<string>288.0.0.0.0</string>
+		<key>#NoRomInfo</key>
+		<true/>
 		<key>#SerialNumber</key>
 		<string>C02JBSAMDNCW</string>
 		<key>#Family</key>

@@ -4821,6 +4821,11 @@ ParseSMBIOSSettings(
     gSettings.ChassisType = (UINT8)GetPropertyInteger (Prop, gSettings.ChassisType);
     DBG ("ChassisType: 0x%x\n", gSettings.ChassisType);
   }
+
+  Prop = GetProperty (DictPointer, "NoRomInfo");
+  if (Prop != NULL) {
+    gSettings.NoRomInfo = IsPropertyTrue (Prop);
+  }
 }
 
 EFI_STATUS
