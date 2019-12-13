@@ -2155,6 +2155,8 @@ VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine)
 
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry)
 {
+	if ( !Screen ) return;
+	if ( !Entry ) return;
   AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->EntryCount), Entry);
 }
 
@@ -4611,27 +4613,30 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
 
 REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
 {
-  REFIT_MENU_ENTRY     *Entry;
-  REFIT_MENU_SCREEN    *SubScreen;
+  REFIT_MENU_ENTRY     *Entry = NULL;
+  REFIT_MENU_SCREEN    *SubScreen = NULL;
   REFIT_INPUT_DIALOG   *InputBootArgs;
   UINTN i = 0;
   SIDELOAD_KEXT        *Kext = NULL;
-  CHAR8                sysVer[17]; //RehabMan: logic below uses max index of 16, so buffer must be 17
+  CHAR8                sysVer[256];
 
-  UnicodeStrToAsciiStrS(UniSysVer, sysVer, 16);
-  for (i = 0; i < 16; i++) {
+  UnicodeStrToAsciiStrS(UniSysVer, sysVer, sizeof(sysVer));
+  for (i = 0; i < sizeof(sysVer)-2; i++) {
     if (sysVer[i] == '\0') {
       sysVer[i+0] = '-';
       sysVer[i+1] = '>';
+      sysVer[i+2] = '\0';
       break;
     }
   }
 
   Kext = InjectKextList;
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
   while (Kext) {
-    if (StrStr(Kext->MatchOS, UniSysVer) != NULL) {
+    if (StrCmp(Kext->KextDirNameUnderOEMPath, UniSysVer) == 0) {
+    	if ( SubScreen == NULL ) {
+    		NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
+    		AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
+    	}
       InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs->Entry.Title = PoolPrint(L"%s, v.%s", Kext->FileName, Kext->Version);
       InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -4657,57 +4662,129 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
     Kext = Kext->Next;
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  if ( SubScreen != NULL ) AddMenuEntry(SubScreen, &MenuEntryReturn);
   return Entry;
 }
 
 LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 {
-  LOADER_ENTRY       *SubEntry;
-  REFIT_MENU_SCREEN  *SubScreen;
-  CHAR16             *kextDir = NULL;
-  UINTN              i;
-  CHAR8              ShortOSVersion[8];
-  CHAR16            *UniSysVer = NULL;
-  CHAR8             *ChosenOS =Entry->OSVersion;
+	LOADER_ENTRY       *SubEntry;
+	REFIT_MENU_SCREEN  *SubScreen;
+	CHAR16             *kextDir = NULL;
+	UINTN               i;
+	CHAR8               ShortOSVersion[8];
+	CHAR16             *UniSysVer = NULL;
+	CHAR8              *ChosenOS = Entry->OSVersion;
 
-  NewEntry((REFIT_MENU_ENTRY**)&SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
-  SubEntry->Flags = Entry->Flags;
-  if (ChosenOS) {
+	NewEntry((REFIT_MENU_ENTRY**) &SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
+	SubEntry->Flags = Entry->Flags;
+	if (ChosenOS) {
 //    DBG("chosen os %a\n", ChosenOS);
-    //shorten os version 10.11.6 -> 10.11
-    for (i = 0; i < 8; i++) {
-      ShortOSVersion[i] = ChosenOS[i];
-      if (ShortOSVersion[i] == '\0') {
-        break;
-      }
-      if (((i > 2) && (ShortOSVersion[i] == '.')) || (i ==  5)) {
-        ShortOSVersion[i] = '\0';
-        break;
-      }
-    }
-    UniSysVer = PoolPrint(L"%a", ShortOSVersion);
+		//shorten os version 10.11.6 -> 10.11
+		for (i = 0; i < 8; i++) {
+			ShortOSVersion[i] = ChosenOS[i];
+			if (ShortOSVersion[i] == '\0') {
+				break;
+			}
+			if (((i > 2) && (ShortOSVersion[i] == '.')) || (i == 5)) {
+				ShortOSVersion[i] = '\0';
+				break;
+			}
+		}
 
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Block injected kexts for target version of macOS: %a", ShortOSVersion));
-    if ((kextDir = GetOSVersionKextsDir(ShortOSVersion)) != NULL) {
-      AddMenuEntry(SubScreen, SubMenuKextBlockInjection(UniSysVer));
-      FreePool(kextDir);
-    }
-    FreePool(UniSysVer);
-  } else {
-    AddMenuInfoLine(SubScreen, PoolPrint(L"Block injected kexts for target version of macOS: %a", ChosenOS));
-  }
-  if ((kextDir = GetOtherKextsDir(TRUE)) != NULL) {
-    AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
-    FreePool(kextDir);
-  }
-  if ((kextDir = GetOtherKextsDir(FALSE)) != NULL) {
-    AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Off"));
-    FreePool(kextDir);
-  }
+		AddMenuInfoLine(SubScreen,
+		        PoolPrint(
+		                L"Block injected kexts for target version of macOS: %a",
+		                ShortOSVersion));
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  return SubEntry;
+		// Add kext from 10.x
+		{
+			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"10.x"));
+
+			CHAR16 DirName[256];
+			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+				UnicodeSPrint(DirName, sizeof(DirName), L"10.x_install");
+			}
+			else {
+				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+					UnicodeSPrint(DirName, sizeof(DirName), L"10.x_recovery");
+				}
+				else {
+					UnicodeSPrint(DirName, sizeof(DirName), L"10.x_normal");
+				}
+			}
+			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
+		}
+
+		// Add kext from 10.{version}
+		{
+			CHAR16 DirName[256];
+			UnicodeSPrint(DirName, sizeof(DirName), L"%a", ShortOSVersion);
+			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
+
+			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+				UnicodeSPrint(DirName, sizeof(DirName), L"%a_install", ShortOSVersion);
+			}
+			else {
+				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+					UnicodeSPrint(DirName, sizeof(DirName), L"%a_recovery", ShortOSVersion);
+				}
+				else {
+					UnicodeSPrint(DirName, sizeof(DirName), L"%a_normal", ShortOSVersion);
+				}
+			}
+			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
+		}
+
+		// Add kext from :
+		// 10.{version}.0 if NO minor version
+		// 10.{version}.{minor version} if minor version is > 0
+		{
+			{
+				CHAR16 OSVersionKextsDirName[256];
+				if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
+					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
+				}else{
+					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
+				}
+				AddMenuEntry(SubScreen, SubMenuKextBlockInjection(OSVersionKextsDirName));
+			}
+
+			CHAR16 DirName[256];
+			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+				UnicodeSPrint(DirName, sizeof(DirName), L"%a_install",
+				        Entry->OSVersion);
+			}
+			else {
+				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+					UnicodeSPrint(DirName, sizeof(DirName), L"%a_recovery",
+					        Entry->OSVersion);
+				}
+				else {
+					UnicodeSPrint(DirName, sizeof(DirName), L"%a_normal",
+					        Entry->OSVersion);
+				}
+			}
+			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
+		}
+	}
+	else {
+		AddMenuInfoLine(SubScreen,
+		        PoolPrint(
+		                L"Block injected kexts for target version of macOS: %a",
+		                ChosenOS));
+	}
+	if ((kextDir = GetOtherKextsDir(TRUE)) != NULL) {
+		AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"));
+		FreePool(kextDir);
+	}
+	if ((kextDir = GetOtherKextsDir(FALSE)) != NULL) {
+		AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Off"));
+		FreePool(kextDir);
+	}
+
+	AddMenuEntry(SubScreen, &MenuEntryReturn);
+	return SubEntry;
 }
 
 

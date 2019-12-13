@@ -1,6 +1,6 @@
 #include "Platform.h"
 
-#define KEXT_INJECT_DEBUG 0
+#define KEXT_INJECT_DEBUG 2
 
 #if KEXT_INJECT_DEBUG == 2
 #define DBG(...) MsgLog(__VA_ARGS__)
@@ -99,20 +99,20 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
     else
         osbundlerequired[0] = '\0';
 
-    if (OSTYPE_IS_OSX_RECOVERY(loaderType)) {
-        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
-            AsciiStrnCmp(osbundlerequired, "local", 5) &&
-            AsciiStrnCmp(osbundlerequired, "console", 7) &&
-            AsciiStrnCmp(osbundlerequired, "network-root", 12)) {
-            inject = FALSE;
-        }
-    } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
-        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
-            AsciiStrnCmp(osbundlerequired, "local", 5) &&
-            AsciiStrnCmp(osbundlerequired, "console", 7)) {
-            inject = FALSE;
-        }
-    }
+//    if (OSTYPE_IS_OSX_RECOVERY(loaderType)) {
+//        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
+//            AsciiStrnCmp(osbundlerequired, "local", 5) &&
+//            AsciiStrnCmp(osbundlerequired, "console", 7) &&
+//            AsciiStrnCmp(osbundlerequired, "network-root", 12)) {
+//            inject = FALSE;
+//        }
+//    } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
+//        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
+//            AsciiStrnCmp(osbundlerequired, "local", 5) &&
+//            AsciiStrnCmp(osbundlerequired, "console", 7)) {
+//            inject = FALSE;
+//        }
+//    }
     
     return inject;
 }
@@ -277,7 +277,7 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
    DirIterClose(&PlugInIter);
 }
 
-VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniSysVers, cpu_type_t archCpuType)
+VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path/*, CHAR16 *UniSysVers*/, cpu_type_t archCpuType)
 {
   CHAR16                  FileName[256];
   CHAR16                  PlugInName[256];
@@ -288,12 +288,12 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
   MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
   CurrentKext = InjectKextList;
   while (CurrentKext) {
-    DBG("current kext name %s Match %s, while sysver: %s\n", CurrentKext->FileName, CurrentKext->MatchOS, UniSysVers);
-    if (StrStr(CurrentKext->MatchOS, Path) != NULL) {
+    DBG("  current kext name=%s path=%s, match against=%s\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
+    if (StrCmp(CurrentKext->KextDirNameUnderOEMPath, Path) == 0) {
       UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
-        MsgLog("Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+        MsgLog("->Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
         Status = AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
         if(!EFI_ERROR(Status)) {
         // decide which plugins to inject
@@ -302,10 +302,10 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
           UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
           if (!(CurrentPlugInKext->MenuItem.BValue)) {
             // inject PlugIn require
-            MsgLog("  |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
+            MsgLog("    |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
             AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
           } else {
-            MsgLog("  |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
+            MsgLog("    |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
           }
           CurrentPlugInKext = CurrentPlugInKext->Next;
         } // end of plug-in kext injection
@@ -319,6 +319,21 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path, CHAR16 *UniS
   } // end of kext injection
 
 }
+//
+//CHAR16* tryKextDir(CHAR16* FormatString, ...)
+//{
+//   VA_LIST Marker;
+//   CHAR16 Dir[1024];
+//
+//   // Make sure the buffer is intact for writing
+//   if (FormatString == NULL) return NULL;
+//
+//   // Print message to log buffer
+//   VA_START(Marker, FormatString);
+//   UnicodeVSPrint(Dir, sizeof(Dir), FormatString, Marker);
+//   VA_END(Marker);
+//
+//}
 
 EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 {
@@ -397,33 +412,111 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     }
   }
 
-  CHAR16 UniSysVers[6];
+  CHAR16 UniOSVersion[16];
+  AsciiStrToUnicodeStrS(Entry->OSVersion, UniOSVersion, 16);
+	DBG("UniOSVersion == %s\n", UniOSVersion);
+
+  CHAR16 UniShortOSVersion[6];
   CHAR8  ShortOSVersion[6];
   if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
     // OSVersion that are earlier than 10.10(form: 10.x.y)
     AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 4);
-    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 5);
+    AsciiStrToUnicodeStrS(Entry->OSVersion, UniShortOSVersion, 5);
   } else {
     AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 5);
-    AsciiStrToUnicodeStrS(Entry->OSVersion, UniSysVers, 6);
+    AsciiStrToUnicodeStrS(Entry->OSVersion, UniShortOSVersion, 6);
   }
+	DBG("ShortOSVersion == %a\n", ShortOSVersion);
+	DBG("UniShortOSVersion == %s\n", UniShortOSVersion);
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
   if ((SrcDir = GetOtherKextsDir(TRUE)) != NULL) {
-    AddKexts(Entry, SrcDir, L"Other", UniSysVers, archCpuType);
+    AddKexts(Entry, SrcDir, L"Other", archCpuType);
     FreePool(SrcDir);
+  }else{
+  	DBG("GetOtherKextsDir(TRUE) return NULL\n");
   }
     // slice: CLOVER/kexts/Off keep disabled kext which can be allowed
   if ((SrcDir = GetOtherKextsDir(FALSE)) != NULL) {
-    AddKexts(Entry, SrcDir, L"Off", UniSysVers, archCpuType);
+    AddKexts(Entry, SrcDir, L"Off", archCpuType);
     FreePool(SrcDir);
+  }else{
+  	DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
-  if ((SrcDir = GetOSVersionKextsDir(ShortOSVersion)) != NULL) {
-    AddKexts(Entry, SrcDir, UniSysVers, UniSysVers, archCpuType);
-    FreePool(SrcDir);
-  }
+  // Add kext from 10.x
+	{
+		CHAR16 OSAllVersionKextsDir[1024];
+		UnicodeSPrint(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), L"%s\\kexts\\10.x", OEMPath);
+		AddKexts(Entry, OSAllVersionKextsDir, L"10.x", archCpuType);
+
+		CHAR16 DirName[256];
+		if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+			UnicodeSPrint(DirName, sizeof(DirName), L"10.x_install");
+		} else {
+			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+				UnicodeSPrint(DirName, sizeof(DirName), L"10.x_recovery");
+			}else{
+				UnicodeSPrint(DirName, sizeof(DirName), L"10.x_normal");
+			}
+		}
+		CHAR16 DirPath[1024];
+		UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+		AddKexts(Entry, DirPath, DirName, archCpuType);
+	}
+
+
+  // Add kext from 10.{version}
+	{
+		CHAR16 OSShortVersionKextsDir[1024];
+		UnicodeSPrint(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
+		AddKexts(Entry, OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
+
+		CHAR16 DirName[256];
+		if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+			UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", UniShortOSVersion);
+		} else {
+			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+				UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", UniShortOSVersion);
+			}else{
+				UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", UniShortOSVersion);
+			}
+		}
+		CHAR16 DirPath[1024];
+		UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+		AddKexts(Entry, DirPath, DirName, archCpuType);
+	}
+
+		// Add kext from :
+		// 10.{version}.0 if NO minor version
+		// 10.{version}.{minor version} if minor version is > 0
+	{
+		CHAR16 OSVersionKextsDirName[256];
+		if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
+			UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
+		}else{
+			UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
+		}
+
+		CHAR16 DirPath[1024];
+		UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
+		AddKexts(Entry, DirPath, OSVersionKextsDirName, archCpuType);
+
+		CHAR16 DirName[256];
+		if ( OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+			UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", OSVersionKextsDirName);
+		}else{
+			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+				UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", OSVersionKextsDirName);
+			}else{
+				UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", OSVersionKextsDirName);
+			}
+		}
+		UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+		AddKexts(Entry, DirPath, DirName, archCpuType);
+	}
+
 
   // reserve space in the device tree
   if (GetKextCount() > 0) {
@@ -449,13 +542,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     while (CurrentPlugInKext) {
       Next = CurrentPlugInKext->Next;
       FreePool(CurrentPlugInKext->FileName);
-      FreePool(CurrentPlugInKext->MatchOS);
+      FreePool(CurrentPlugInKext->KextDirNameUnderOEMPath);
       FreePool(CurrentPlugInKext->Version);
       FreePool(CurrentPlugInKext);
       CurrentPlugInKext = Next;
     }
     FreePool(InjectKextList->FileName);
-    FreePool(InjectKextList->MatchOS);
+    FreePool(InjectKextList->KextDirNameUnderOEMPath);
     FreePool(InjectKextList->Version);
     FreePool(InjectKextList);
     InjectKextList = CurrentKext;
