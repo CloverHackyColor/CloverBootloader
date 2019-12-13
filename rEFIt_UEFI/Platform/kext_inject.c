@@ -445,20 +445,20 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   	DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
-  // Add kext from 10.x
+  // Add kext from 10
 	{
 		CHAR16 OSAllVersionKextsDir[1024];
-		UnicodeSPrint(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), L"%s\\kexts\\10.x", OEMPath);
-		AddKexts(Entry, OSAllVersionKextsDir, L"10.x", archCpuType);
+		UnicodeSPrint(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), L"%s\\kexts\\10", OEMPath);
+		AddKexts(Entry, OSAllVersionKextsDir, L"10", archCpuType);
 
 		CHAR16 DirName[256];
 		if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-			UnicodeSPrint(DirName, sizeof(DirName), L"10.x_install");
+			UnicodeSPrint(DirName, sizeof(DirName), L"10_install");
 		} else {
 			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-				UnicodeSPrint(DirName, sizeof(DirName), L"10.x_recovery");
+				UnicodeSPrint(DirName, sizeof(DirName), L"10_recovery");
 			}else{
-				UnicodeSPrint(DirName, sizeof(DirName), L"10.x_normal");
+				UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
 			}
 		}
 		CHAR16 DirPath[1024];
