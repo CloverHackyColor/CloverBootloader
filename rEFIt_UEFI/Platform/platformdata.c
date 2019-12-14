@@ -253,23 +253,23 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro", "1.0", "C02TQHACHTD5", "MacBook-Aluminum",
     { 0x02, 0x45, 0x0f, 0, 0, 0x01 },  "2017mbp", "j80ga", 0xf0a009 },
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
-  { "MacBookPro15,1", "MBP151.88Z.F000.B00.1911080423", "1037.60.55.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
+  { "MacBookPro15,1", "MBP151.88Z.F000.B00.1911142308", "1037.60.58.0.0", "Mac-937A206F2EE63C01", // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro", "1.0", "C02X1HACKGYG", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j680", 0 },
   //MacBookPro15,2 / MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
-  { "MacBookPro15,2", "MBP152.88Z.F000.B00.1911080134", "1037.60.55.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
+  { "MacBookPro15,2", "MBP152.88Z.F000.B00.1911142159", "1037.60.58.0.0", "Mac-827FB448E656EC26", // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro", "1.0", "C02X1HACJHCD", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j132", 0 },
   //MacBookPro15,3 / MacBook Pro (15-inch, 2019)
-  { "MacBookPro15,3", "MBP153.88Z.F000.B00.1911080327", "1037.60.55.0.0", "Mac-1E7E29AD0135F9BC", // Intel Core i9-9980HK @ 2.40 GHz
+  { "MacBookPro15,3", "MBP153.88Z.F000.B00.1911142110", "1037.60.58.0.0", "Mac-1E7E29AD0135F9BC", // Intel Core i9-9980HK @ 2.40 GHz
     "MacBook Pro", "1.0", "C02X1HACLVCG", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j780", 0 },
   //MacBookPro15,4 / MacBook Pro (13-inch, 2019, Two Thunderbolt 3 ports)
-  { "MacBookPro15,4", "MBP154.88Z.F000.B00.1911080307", "1037.60.55.0.0", "Mac-53FDB3D8DB8CA971", // Intel Core i7-8557U @ 1.70 GHz
+  { "MacBookPro15,4", "MBP154.88Z.F000.B00.1911142257", "1037.60.58.0.0", "Mac-53FDB3D8DB8CA971", // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro", "1.0", "FVFYXHACL411", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j213", 0 },
   //MacBookPro16,1 / MacBook Pro (16-inch, 2019)
-  { "MacBookPro16,1", "MBP161.88Z.F000.B00.1910242213", "1037.40.127.0.0", "Mac-E1008331FDC96864", // Intel Core i9-9980HK @ 2.40 GHz
+  { "MacBookPro16,1", "MBP161.88Z.F000.B00.1911142228", "1037.60.58.0.0", "Mac-E1008331FDC96864", // Intel Core i9-9980HK @ 2.40 GHz
     "MacBook Pro", "1.0", "C02ZPHACPG8W", "MacBook-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j152f", 0 },
   //MacBookAir1,1 / MacBook Air (Original)
@@ -321,11 +321,11 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Air", "1.0", "C02Q1HACG940", "Air-Enclosure",
     { 0x02, 0x27, 0x0f, 0, 0, 0x02 },  "j113", "j113", 0xf0a008 },
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
-  { "MacBookAir8,1", "MBA81.88Z.F000.B00.1911080343", "1037.60.55.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
+  { "MacBookAir8,1", "MBA81.88Z.F000.B00.1911142244", "1037.60.58.0.0", "Mac-827FAC58A8FDFA22", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACJK77", "Air-Enclosure",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j140k", 0 },
   //MacBookAir8,2 / MacBook Air (Retina, 13-inch, 2019)
-  { "MacBookAir8,2", "MBA82.88Z.F000.B00.1911080135", "1037.60.55.0.0", "Mac-226CB3C6A851A671", // Intel Core i5-8210Y @ 1.60 GHz
+  { "MacBookAir8,2", "MBA82.88Z.F000.B00.1911142159", "1037.60.58.0.0", "Mac-226CB3C6A851A671", // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air", "1.0", "FVFXJHACLYWM", "Air-Enclosure",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j140a", 0 },
   //Macmini1,1 / Mac mini (Early 2006)
@@ -369,7 +369,7 @@ PLATFORMDATA ApplePlatformData[] =
     "Mac mini", "1.0", "C02NN7NHG1J0", "Mini-Aluminum",
     { 0x02, 0x24, 0x0f, 0, 0, 0x32 },  "j64", "j64", 0xf04008 },
   //Macmini8,1 / Mac mini (2018)
-  { "Macmini8,1", "MM81.88Z.F000.B00.1911080321", "1037.60.55.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
+  { "Macmini8,1", "MM81.88Z.F000.B00.1911142109", "1037.60.58.0.0", "Mac-7BA5B2DFE22DDD8C", // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini", "1.0", "C07XL9WEJYVX", "Mini-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j174", 0 },
   //iMac4,1 / iMac (20-inch, Early 2006)
@@ -493,7 +493,7 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac", "1.0", "C02Y9HACJWDW", "iMac-Aluminum",
     { 0x02, 0x47, 0x0f, 0, 0, 0x03 },  "j138_9", "j138", 0xf0d009 },
   //iMacPro1,1 /iMac Pro (2017)
-  { "iMacPro1,1", "IMP11.88Z.F000.B00.1911080422", "1037.60.55.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
+  { "iMacPro1,1", "IMP11.88Z.F000.B00.1911142110", "1037.60.58.0.0", "Mac-7BA5B2D9E42DDD94", // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro", "1.0", "C02VVHACHX87", "iMacPro-Aluminum",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j137", 0 },
   //MacPro1,1 / Mac Pro
@@ -521,8 +521,8 @@ PLATFORMDATA ApplePlatformData[] =
     "MacPro", "1.0", "F5KLA770F9VM", "Pro-Enclosure",
     { 0x02, 0x20, 0x0f, 0, 0, 0x18 },  "j90", "j90", 0xf0f006 },
   //MacPro7,1 / Mac Pro (Late 2019)
-  { "MacPro7,1", "MP71.88Z.F000.B00.1911080248", "1037.60.55.0.0", "Mac-27AD2F918AE68F61", // Intel Xeon W-3245M CPU @ 3.20 GHz
-    "MacPro", "1.0", "C02VVHACF9VM", "Pro-Enclosure",
+  { "MacPro7,1", "MP71.88Z.F000.B00.1911142137", "1037.60.58.0.0", "Mac-27AD2F918AE68F61", // Intel Xeon W-3245M CPU @ 3.20 GHz
+    "MacPro", "1.0", "F5KZNHACP7QM", "Pro-Enclosure",
     { 0, 0, 0, 0, 0, 0 }, NULL, "j16O", 0 }, // need serial
   //Xserve1,1 / Xserve (Late 2006)
   { "Xserve1,1", "XS11.88Z.0080.B01.0706271533", NULL, "Mac-F4208AC8", // Intel Xeon E5345 @ 2.33 GHz x2
