@@ -4214,6 +4214,12 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
+    {
+        // Display Clover boot volume
+	CHAR16 line[256];
+	UnicodeSPrint(line, 255, L"Clover booted from %s", SelfVolume->VolName);
+	DrawTextXY(line, 100, 50, X_IS_LEFT);
+    }
       for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {

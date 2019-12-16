@@ -643,9 +643,28 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       break;
   }
 
+  Entry->me.Title = NULL;
+    
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
-  } else if ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) {
+  }
+  if ( Entry->me.Title == NULL  &&  FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
+      EFI_STATUS          Status;
+      EFI_FILE_HANDLE     FileHandle;
+      Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"\\.VolumeLabel.txt", EFI_FILE_MODE_READ, 0);
+      if (!EFI_ERROR(Status)) {
+          CHAR8 Buffer[32+1];
+          UINTN BufferSize = sizeof(Buffer)-sizeof(CHAR8);
+          SetMem(Buffer, BufferSize+sizeof(CHAR8), 0);
+          Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
+          FileHandle->Close(FileHandle);
+          if (!EFI_ERROR(Status)) {
+              Entry->me.Title = PoolPrint(L"Boot %s from %a", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Buffer);
+          }
+      }
+  }
+  
+  if ( Entry->me.Title == NULL  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
     //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     if (GlobalConfig.BootCampStyle) {
       Entry->me.Title = PoolPrint(L"%s", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
@@ -653,7 +672,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
       Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Basename(Volume->DevicePathString));
     }
-  } else {
+  }
+  if ( Entry->me.Title == NULL ) {
     //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
     if (GlobalConfig.BootCampStyle) {
       if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
