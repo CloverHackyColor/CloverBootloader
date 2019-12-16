@@ -4673,6 +4673,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 	CHAR16             *kextDir = NULL;
 	UINTN               i;
 	CHAR8               ShortOSVersion[8];
+//	CHAR16             *UniSysVer = NULL;
 	CHAR8              *ChosenOS = Entry->OSVersion;
 
 	NewEntry((REFIT_MENU_ENTRY**) &SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
