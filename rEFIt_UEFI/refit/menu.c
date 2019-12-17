@@ -4697,20 +4697,20 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 		                L"Block injected kexts for target version of macOS: %a",
 		                ShortOSVersion));
 
-		// Add kext from 10.x
+		// Add kext from 10
 		{
-			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"10.x"));
+			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"10"));
 
 			CHAR16 DirName[256];
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-				UnicodeSPrint(DirName, sizeof(DirName), L"10.x_install");
+				UnicodeSPrint(DirName, sizeof(DirName), L"10_install");
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-					UnicodeSPrint(DirName, sizeof(DirName), L"10.x_recovery");
+					UnicodeSPrint(DirName, sizeof(DirName), L"10_recovery");
 				}
 				else {
-					UnicodeSPrint(DirName, sizeof(DirName), L"10.x_normal");
+					UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
 				}
 			}
 			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName));
