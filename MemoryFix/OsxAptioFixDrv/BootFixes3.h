@@ -31,13 +31,13 @@ typedef struct _BooterKextFileInfo {
 	UINT32  bundlePathPhysAddr;
 	UINT32	bundlePathLength;
 } BooterKextFileInfo;
-
+/*
 struct DTMemMapEntry {
   UINT32	Address;
   UINT32	Length;
 };
 typedef struct DTMemMapEntry DTMemMapEntry;
-
+*/
 typedef struct {
   EFI_PHYSICAL_ADDRESS  PhysicalStart;
   EFI_MEMORY_TYPE       Type;

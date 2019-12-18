@@ -5,7 +5,7 @@
 
 #include "Platform.h"
 #include "LoaderUefi.h"
-#include "device_tree.h"
+//#include "device_tree.h"
 
 #include "kernel_patcher.h"
 
@@ -1377,7 +1377,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
   _DeviceTreeBuffer   *PropEntry;
   CHAR8               SavedValue;
   CHAR8               *InfoPlist;
-  struct OpaqueDTPropertyIterator OPropIter;
+  OpaqueDTPropertyIterator OPropIter;
   DTPropertyIterator	PropIter = &OPropIter;
   //UINTN               DbgCount = 0;
   
@@ -1396,7 +1396,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
         //DBG(L"Prop: %a\n", PropName);
         if (AsciiStrStr(PropName,"Driver-")) {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
-          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->currentProperty) + sizeof(DeviceTreeNodeProperty));
+          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
           //if (DbgCount < 3) DBG(L"%a: paddr = %x, length = %x\n", PropName, PropEntry->paddr, PropEntry->length);
           
           // PropEntry->paddr points to _BooterKextFileInfo

@@ -63,6 +63,9 @@ typedef OpaqueDTEntryIterator             *DTEntryIterator;
 typedef struct OpaqueDTPropertyIterator_  OpaqueDTPropertyIterator;
 typedef OpaqueDTPropertyIterator          *DTPropertyIterator;
 
+//Old compatibility
+typedef DTProperty DeviceTreeNodeProperty;
+
 //
 // Structures for a Flattened Device Tree.
 //

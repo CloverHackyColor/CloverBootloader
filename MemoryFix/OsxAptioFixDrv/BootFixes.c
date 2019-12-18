@@ -11,13 +11,14 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/DeviceTreeLib.h>
 
 #include "BootFixes.h"
 #include "AsmFuncs.h"
 #include "BootArgs.h"
 #include "VMem.h"
 #include "Lib.h"
-#include "FlatDevTree/device_tree.h"
+//#include "FlatDevTree/device_tree.h"
 #include "Mach-O/Mach-O.h"
 #include "Hibernate.h"
 #include "NVRAMDebug.h"
@@ -599,12 +600,12 @@ DevTreeFix(BootArgs *BA)
 {
 	DTEntry				DevTree;
 	DTEntry				MemMap;
-	struct OpaqueDTPropertyIterator OPropIter;
-	DTPropertyIterator	PropIter = &OPropIter;
 	CHAR8				*PropName;
 	DTMemMapEntry		*PropValue;
 	BooterKextFileInfo	*KextInfo;
 
+  OpaqueDTPropertyIterator OPropIter;
+  DTPropertyIterator	PropIter = &OPropIter;
 
 	DevTree = (DTEntry)(UINTN)(*BA->deviceTreeP);
 	
@@ -613,22 +614,22 @@ DevTreeFix(BootArgs *BA)
 	DTInit(DevTree, BA->deviceTreeLength);
 	if (!EFI_ERROR(DTLookupEntry(NULL, "/chosen/memory-map", &MemMap))) {
 		DBG("Found /chosen/memory-map\n");
-		if (!EFI_ERROR(DTCreatePropertyIterator(MemMap, PropIter))) {
+		if (!EFI_ERROR(DTCreatePropertyIterator(MemMap, &OPropIter))) {
 			DBG("DTCreatePropertyIterator OK\n");
 			while (!EFI_ERROR(DTIterateProperties(PropIter, &PropName))) {
-				DBG("= %a, val len=%d: ", PropName, PropIter->currentProperty->length);
+				DBG("= %a, val len=%d: ", PropName, PropIter->CurrentProperty->Length);
 				// all /chosen/memory-map props have DTMemMapEntry (address, length)
 				// values. we need to correct the address
 				
 				// basic check that value is 2 * UINT32
-				if (PropIter->currentProperty->length != 2 * sizeof(UINT32)) {
+				if (PropIter->CurrentProperty->Length != 2 * sizeof(UINT32)) {
 					// not DTMemMapEntry, usually "name" property
 					DBG("NOT DTMemMapEntry\n");
 					continue;
 				}
 				
 				// get value (Address and Length)
-				PropValue = (DTMemMapEntry*)(((UINT8*)PropIter->currentProperty) + sizeof(DeviceTreeNodeProperty));
+				PropValue = (DTMemMapEntry*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
 				DBG("MM Addr = %x, Len = %x ", PropValue->Address, PropValue->Length);
 				
 				// second check - Address is in our reloc block

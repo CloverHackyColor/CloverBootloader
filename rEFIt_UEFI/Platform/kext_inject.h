@@ -6,7 +6,7 @@ kext injection
 #define __KEXT_INJECT_H__
 
 #include "LoaderUefi.h"
-#include "device_tree.h"
+//#include "device_tree.h"
 #include "kernel_patcher.h"
 
 ////////////////////

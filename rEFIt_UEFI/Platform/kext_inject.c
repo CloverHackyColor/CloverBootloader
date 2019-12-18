@@ -562,29 +562,29 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 ////////////////////
 EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength, LOADER_ENTRY *Entry)
 {
-  UINT8                              *dtEntry = (UINT8*)(UINTN) deviceTreeP;
-  UINTN                              dtLen = (UINTN) *deviceTreeLength;
+  UINT8                             *dtEntry = (UINT8*)(UINTN) deviceTreeP;
+  UINTN                             dtLen = (UINTN) *deviceTreeLength;
 
-  DTEntry                            platformEntry;
-  DTEntry                            memmapEntry;
+  DTEntry                           platformEntry;
+  DTEntry                           memmapEntry;
   CHAR8                             *ptr;
-  struct OpaqueDTPropertyIterator   OPropIter;
+  OpaqueDTPropertyIterator          OPropIter;
   DTPropertyIterator                iter = &OPropIter;
   DeviceTreeNodeProperty            *prop = NULL;
 
-  UINT8                              *infoPtr = 0;
-  UINT8                              *extraPtr = 0;
-  UINT8                              *drvPtr = 0;
-  UINTN                              offset = 0;
+  UINT8                             *infoPtr = 0;
+  UINT8                             *extraPtr = 0;
+  UINT8                             *drvPtr = 0;
+  UINTN                             offset = 0;
 
   LIST_ENTRY                        *Link;
   KEXT_ENTRY                        *KextEntry;
-  UINTN                              KextBase = 0;
-  _DeviceTreeBuffer                  *mm;
-  _BooterKextFileInfo                *drvinfo;
+  UINTN                             KextBase = 0;
+  _DeviceTreeBuffer                 *mm;
+  _BooterKextFileInfo               *drvinfo;
 
   UINT32                            KextCount;
-  UINTN                              Index;
+  UINTN                             Index;
 
 
   DBG_RT(Entry, "\nInjectKexts: ");
@@ -610,27 +610,27 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
   // drvinfo->bundlePathPhysAddr += (UINT32)kextsBase;
 
   DTInit(dtEntry, deviceTreeLength);
-  if(!EFI_ERROR(DTLookupEntry(NULL,"/chosen/memory-map",&memmapEntry))) {
-    if(!EFI_ERROR(DTCreatePropertyIterator(memmapEntry,iter))) {
-      while(!EFI_ERROR(DTIterateProperties(iter,&ptr))) {
-        prop = iter->currentProperty;
+  if(!EFI_ERROR(DTLookupEntry(NULL,"/chosen/memory-map", &memmapEntry))) {
+    if(!EFI_ERROR(DTCreatePropertyIterator(memmapEntry, iter))) {
+      while(!EFI_ERROR(DTIterateProperties(iter, &ptr))) {
+        prop = iter->CurrentProperty;
         drvPtr = (UINT8*) prop;
-        if(AsciiStrnCmp(prop->name, "Driver-", 7)==0 || AsciiStrnCmp(prop->name, "DriversPackage-", 15)==0) {
+        if(AsciiStrnCmp(prop->Name, "Driver-", 7)==0 || AsciiStrnCmp(prop->Name, "DriversPackage-", 15)==0) {
           break;
         }
       }
     }
   }
 
-  if(!EFI_ERROR(DTLookupEntry(NULL,"/efi/platform",&platformEntry))) {
-    if(!EFI_ERROR(DTCreatePropertyIterator(platformEntry,iter))) {
-      while(!EFI_ERROR(DTIterateProperties(iter,&ptr))) {
-        prop = iter->currentProperty;
-        if(AsciiStrnCmp(prop->name, "mm_extra", 8)==0) {
-          infoPtr = (UINT8*) prop;
+  if(!EFI_ERROR(DTLookupEntry(NULL, "/efi/platform", &platformEntry))) {
+    if(!EFI_ERROR(DTCreatePropertyIterator(platformEntry, iter))) {
+      while(!EFI_ERROR(DTIterateProperties(iter, &ptr))) {
+        prop = iter->CurrentProperty;
+        if(AsciiStrnCmp(prop->Name, "mm_extra", 8)==0) {
+          infoPtr = (UINT8*)prop;
         }
-        if(AsciiStrnCmp(prop->name, "extra", 5)==0) {
-          extraPtr = (UINT8*) prop;
+        if(AsciiStrnCmp(prop->Name, "extra", 5)==0) {
+          extraPtr = (UINT8*)prop;
         }
       }
     }
@@ -643,13 +643,13 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
   }
 
   // make space for memory map entries
-  platformEntry->nProperties -= 2;
-  offset = sizeof(DeviceTreeNodeProperty) + ((DeviceTreeNodeProperty*) infoPtr)->length;
+  platformEntry->NumProperties -= 2;
+  offset = sizeof(DeviceTreeNodeProperty) + ((DeviceTreeNodeProperty*) infoPtr)->Length;
   CopyMem(drvPtr+offset, drvPtr, infoPtr-drvPtr);
 
   // make space behind device tree
   // platformEntry->nProperties--;
-  offset = sizeof(DeviceTreeNodeProperty)+((DeviceTreeNodeProperty*) extraPtr)->length;
+  offset = sizeof(DeviceTreeNodeProperty)+((DeviceTreeNodeProperty*) extraPtr)->Length;
   CopyMem(extraPtr, extraPtr+offset, dtLen-(UINTN)(extraPtr-dtEntry)-offset);
   *deviceTreeLength -= (UINT32)offset;
 
@@ -665,13 +665,13 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
       drvinfo->executablePhysAddr += (UINT32) KextBase;
       drvinfo->bundlePathPhysAddr += (UINT32) KextBase;
 
-      memmapEntry->nProperties++;
+      memmapEntry->NumProperties++;
       prop = ((DeviceTreeNodeProperty*) drvPtr);
-      prop->length = sizeof(_DeviceTreeBuffer);
+      prop->Length = sizeof(_DeviceTreeBuffer);
       mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DeviceTreeNodeProperty));
       mm->paddr = (UINT32)KextBase;
       mm->length = KextEntry->kext.length;
-      AsciiSPrint(prop->name, 31, "Driver-%x", KextBase);
+      AsciiSPrint(prop->Name, 31, "Driver-%x", KextBase);
 
       drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
       KextBase = RoundPage(KextBase + KextEntry->kext.length);

@@ -32,21 +32,22 @@ typedef struct _BooterKextFileInfo {
 	UINT32	bundlePathLength;
 } BooterKextFileInfo;
 
+/*
 struct DTMemMapEntry {
   UINT32	Address;
   UINT32	Length;
 };
 typedef struct DTMemMapEntry DTMemMapEntry;
+*/
 
 
-
-extern EFI_PHYSICAL_ADDRESS gRelocBase;
-extern EFI_PHYSICAL_ADDRESS	gSysTableRtArea;
-extern BOOLEAN gHibernateWake;
-extern UINTN					gLastMemoryMapSize;
+extern EFI_PHYSICAL_ADDRESS   gRelocBase;
+extern EFI_PHYSICAL_ADDRESS   gSysTableRtArea;
+extern BOOLEAN                gHibernateWake;
+extern UINTN                  gLastMemoryMapSize;
 extern EFI_MEMORY_DESCRIPTOR	*gLastMemoryMap;
-extern UINTN					gLastDescriptorSize;
-extern UINT32					gLastDescriptorVersion;
+extern UINTN                  gLastDescriptorSize;
+extern UINT32                 gLastDescriptorVersion;
 
 EFI_STATUS PrepareJumpFromKernel(VOID);
 EFI_STATUS KernelEntryPatchJump(UINT32 KernelEntry);

@@ -8,7 +8,7 @@
 
 #include "Platform.h"
 #include "LoaderUefi.h"
-#include "device_tree.h"
+//#include "device_tree.h"
 
 #include "kernel_patcher.h"
 #include "sse3_patcher.h"
@@ -1678,7 +1678,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
         ) {
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-      dtLength = bootArgs2->deviceTreeLength;
+      dtLength = &bootArgs2->deviceTreeLength;
       KernelSlide = bootArgs2->kslide;
 
       DBG_RT(Entry, "Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
@@ -1708,7 +1708,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
         ) {
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-      dtLength = bootArgs1->deviceTreeLength;
+      dtLength = &bootArgs1->deviceTreeLength;
 
       DBG_RT(Entry, "Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
