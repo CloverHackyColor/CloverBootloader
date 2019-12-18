@@ -30,6 +30,7 @@ EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
 BootArgs1   *bootArgs1 = NULL;
 BootArgs2   *bootArgs2 = NULL;
 CHAR8       *dtRoot = NULL;
+UINT32      *dtLength;
 VOID        *KernelData = NULL;
 UINT32      KernelSlide = 0;
 BOOLEAN     isKernelcache = FALSE;
@@ -1677,6 +1678,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
         ) {
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
+      dtLength = bootArgs2->deviceTreeLength;
       KernelSlide = bootArgs2->kslide;
 
       DBG_RT(Entry, "Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
@@ -1706,6 +1708,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
         ) {
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
+      dtLength = bootArgs1->deviceTreeLength;
 
       DBG_RT(Entry, "Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);

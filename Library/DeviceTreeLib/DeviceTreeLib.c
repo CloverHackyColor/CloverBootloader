@@ -468,7 +468,7 @@ DumpDeviceTreeNodeRecusively (
   if (!EFI_ERROR (Status)) {
     PropertyParent = "/";
 
-    while ((Status = DTIterateProperties (PropIter, &PropertyName)) == EFI_SUCCESS) {
+    while (!EFI_ERROR(DTIterateProperties (PropIter, &PropertyName))) {
       if ((Status = DTGetProperty (Entry, (CHAR8 *)PropertyName, (void *)&PropertyValue, &PropertySize)) != EFI_SUCCESS) {
         DEBUG ((DEBUG_WARN, "DeviceTree is probably invalid - %r\n", Status));
         break;
@@ -553,7 +553,7 @@ DumpDeviceTree (
 ///
 ///
 /// @param[in] Base      Pointer to the Device Tree
-/// @param[in] Length    Pointer to location containg the Device Tree length
+/// @param[in] Length    Pointer to location containing the Device Tree length
 ///
 
 VOID

@@ -76,6 +76,7 @@ extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
 extern BootArgs1    *bootArgs1;
 extern BootArgs2    *bootArgs2;
 extern CHAR8        *dtRoot;
+extern UINT32       *dtLength;
 extern VOID         *KernelData;
 extern UINT32       KernelSlide;
 extern BOOLEAN      isKernelcache;

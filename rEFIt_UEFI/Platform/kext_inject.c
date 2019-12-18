@@ -563,7 +563,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength, LOADER_ENTRY *Entry)
 {
   UINT8                              *dtEntry = (UINT8*)(UINTN) deviceTreeP;
-  UINTN                              dtLength = (UINTN) *deviceTreeLength;
+  UINTN                              dtLen = (UINTN) *deviceTreeLength;
 
   DTEntry                            platformEntry;
   DTEntry                            memmapEntry;
@@ -609,10 +609,10 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
   // drvinfo->executablePhysAddr += (UINT32)kextsBase;
   // drvinfo->bundlePathPhysAddr += (UINT32)kextsBase;
 
-  DTInit(dtEntry);
-  if(DTLookupEntry(NULL,"/chosen/memory-map",&memmapEntry)==kSuccess) {
-    if(DTCreatePropertyIteratorNoAlloc(memmapEntry,iter)==kSuccess) {
-      while(DTIterateProperties(iter,&ptr)==kSuccess) {
+  DTInit(dtEntry, deviceTreeLength);
+  if(!EFI_ERROR(DTLookupEntry(NULL,"/chosen/memory-map",&memmapEntry))) {
+    if(!EFI_ERROR(DTCreatePropertyIterator(memmapEntry,iter))) {
+      while(!EFI_ERROR(DTIterateProperties(iter,&ptr))) {
         prop = iter->currentProperty;
         drvPtr = (UINT8*) prop;
         if(AsciiStrnCmp(prop->name, "Driver-", 7)==0 || AsciiStrnCmp(prop->name, "DriversPackage-", 15)==0) {
@@ -622,14 +622,14 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
     }
   }
 
-  if(DTLookupEntry(NULL,"/efi/platform",&platformEntry)==kSuccess) {
-    if(DTCreatePropertyIteratorNoAlloc(platformEntry,iter)==kSuccess) {
-      while(DTIterateProperties(iter,&ptr)==kSuccess) {
+  if(!EFI_ERROR(DTLookupEntry(NULL,"/efi/platform",&platformEntry))) {
+    if(!EFI_ERROR(DTCreatePropertyIterator(platformEntry,iter))) {
+      while(!EFI_ERROR(DTIterateProperties(iter,&ptr))) {
         prop = iter->currentProperty;
-        if(AsciiStrCmp(prop->name,"mm_extra")==0) {
+        if(AsciiStrnCmp(prop->name, "mm_extra", 8)==0) {
           infoPtr = (UINT8*) prop;
         }
-        if(AsciiStrCmp(prop->name,"extra")==0) {
+        if(AsciiStrnCmp(prop->name, "extra", 5)==0) {
           extraPtr = (UINT8*) prop;
         }
       }
@@ -650,7 +650,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
   // make space behind device tree
   // platformEntry->nProperties--;
   offset = sizeof(DeviceTreeNodeProperty)+((DeviceTreeNodeProperty*) extraPtr)->length;
-  CopyMem(extraPtr, extraPtr+offset, dtLength-(UINTN)(extraPtr-dtEntry)-offset);
+  CopyMem(extraPtr, extraPtr+offset, dtLen-(UINTN)(extraPtr-dtEntry)-offset);
   *deviceTreeLength -= (UINT32)offset;
 
   KextBase = RoundPage(dtEntry + *deviceTreeLength);

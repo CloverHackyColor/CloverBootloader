@@ -22,6 +22,7 @@ Headers collection for procedures
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/DeviceTreeLib.h>
 #include <Library/GenericBdsLib.h>
 #include <Library/HiiLib.h>
 #include <Library/HdaModels.h>

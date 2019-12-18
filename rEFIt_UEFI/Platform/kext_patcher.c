@@ -1384,15 +1384,15 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
   
   DBG(L"\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
   
-  if (!dtRoot) {
+  if (!dtRoot || !dtLength) {
     return;
   }
   
-  DTInit(dtRoot);
+  DTInit(dtRoot, dtLength);
   
-  if (DTLookupEntry(NULL,"/chosen/memory-map", &MMEntry) == kSuccess) {
-    if (DTCreatePropertyIteratorNoAlloc(MMEntry, PropIter) == kSuccess) {
-      while (DTIterateProperties(PropIter, &PropName) == kSuccess) {
+  if (!EFI_ERROR(DTLookupEntry(NULL,"/chosen/memory-map", &MMEntry))) {
+    if (!EFI_ERROR(DTCreatePropertyIterator(MMEntry, PropIter))) {
+      while (!EFI_ERROR(DTIterateProperties(PropIter, &PropName))) {
         //DBG(L"Prop: %a\n", PropName);
         if (AsciiStrStr(PropName,"Driver-")) {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
@@ -1415,11 +1415,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
                     Entry
                     );
 
-          // Check for FakeSMC here
-        //  CheckForFakeSMC(InfoPlist, Entry);  //Slice - no reason to check loaded kext to disable load kexts
-
           InfoPlist[KextFileInfo->infoDictLength] = SavedValue;
-          //DbgCount++;
         }
         //if(AsciiStrStr(PropName,"DriversPackage-")!=0)
         //{

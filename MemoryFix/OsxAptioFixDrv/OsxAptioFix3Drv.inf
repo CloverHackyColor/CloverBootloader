@@ -29,6 +29,7 @@
   BaseLib
   CpuLib
   DevicePathLib
+  DeviceTreeLib
   
 [Sources]
   OsxAptioFix3Drv.c
@@ -43,8 +44,8 @@
   VMem.h
   Lib.c
   Lib.h
-  FlatDevTree/device_tree.h
-  FlatDevTree/device_tree.c
+#  FlatDevTree/device_tree.h
+#  FlatDevTree/device_tree.c
   NVRAMDebug.h
   NVRAMDebug.c
   Mach-O/UefiLoader.h

@@ -191,7 +191,9 @@ INTN find_entry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 	}
 	return(kError);
 }
+
 //if(DTLookupEntry(NULL,"/",&efiPlatform)==kSuccess)
+
 INTN
 DTLookupEntry(CONST DTEntry searchPoint, CONST CHAR8 *pathName, DTEntry *foundEntry)
 {

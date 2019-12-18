@@ -610,12 +610,12 @@ DevTreeFix(BootArgs *BA)
 	
 	DBG("Fixing DevTree at %p\n", DevTree);
 	DBGnvr("Fixing DevTree at %p\n", DevTree);
-	DTInit(DevTree);
-	if (DTLookupEntry(NULL, "/chosen/memory-map", &MemMap) == kSuccess) {
+	DTInit(DevTree, BA->deviceTreeLength);
+	if (!EFI_ERROR(DTLookupEntry(NULL, "/chosen/memory-map", &MemMap))) {
 		DBG("Found /chosen/memory-map\n");
-		if (DTCreatePropertyIteratorNoAlloc(MemMap, PropIter) == kSuccess) {
+		if (!EFI_ERROR(DTCreatePropertyIterator(MemMap, PropIter))) {
 			DBG("DTCreatePropertyIterator OK\n");
-			while (DTIterateProperties(PropIter, &PropName) == kSuccess) {
+			while (!EFI_ERROR(DTIterateProperties(PropIter, &PropName))) {
 				DBG("= %a, val len=%d: ", PropName, PropIter->currentProperty->length);
 				// all /chosen/memory-map props have DTMemMapEntry (address, length)
 				// values. we need to correct the address

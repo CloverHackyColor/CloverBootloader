@@ -98,8 +98,8 @@
 #	Platform/DataHubRecords.h
 	Platform/device_inject.c
 	Platform/device_inject.h
-	Platform/device_tree.c
-	Platform/device_tree.h
+#	Platform/device_tree.c
+#	Platform/device_tree.h
 	Platform/Edid.c
 	Platform/Events.c
 	Platform/hda.c
@@ -178,6 +178,7 @@
   BaseMemoryLib
   BaseLib
   DevicePathLib
+  DeviceTreeLib
   DebugLib
   DxeServicesLib
   DxeServicesTableLib

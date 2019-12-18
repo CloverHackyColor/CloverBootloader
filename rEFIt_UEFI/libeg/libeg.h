@@ -102,6 +102,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/DeviceTreeLib.h>
 #include <Library/DxeServicesLib.h>
 #include <Library/DxeServicesTableLib.h>
 //#include <Library/EblCmdLib.h>
