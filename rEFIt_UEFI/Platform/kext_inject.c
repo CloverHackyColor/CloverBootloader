@@ -1,6 +1,6 @@
 #include "Platform.h"
 
-#define KEXT_INJECT_DEBUG 2
+#define KEXT_INJECT_DEBUG 0
 
 #if KEXT_INJECT_DEBUG == 2
 #define DBG(...) MsgLog(__VA_ARGS__)
@@ -99,20 +99,20 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
     else
         osbundlerequired[0] = '\0';
 
-//    if (OSTYPE_IS_OSX_RECOVERY(loaderType)) {
-//        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
-//            AsciiStrnCmp(osbundlerequired, "local", 5) &&
-//            AsciiStrnCmp(osbundlerequired, "console", 7) &&
-//            AsciiStrnCmp(osbundlerequired, "network-root", 12)) {
-//            inject = FALSE;
-//        }
-//    } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
-//        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
-//            AsciiStrnCmp(osbundlerequired, "local", 5) &&
-//            AsciiStrnCmp(osbundlerequired, "console", 7)) {
-//            inject = FALSE;
-//        }
-//    }
+    if (OSTYPE_IS_OSX_RECOVERY(loaderType)) {
+        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
+            AsciiStrnCmp(osbundlerequired, "local", 5) &&
+            AsciiStrnCmp(osbundlerequired, "console", 7) &&
+            AsciiStrnCmp(osbundlerequired, "network-root", 12)) {
+            inject = FALSE;
+        }
+    } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
+        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
+            AsciiStrnCmp(osbundlerequired, "local", 5) &&
+            AsciiStrnCmp(osbundlerequired, "console", 7)) {
+            inject = FALSE;
+        }
+    }
     
     return inject;
 }
@@ -319,21 +319,6 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CHAR16 *SrcDir, CHAR16 *Path/*, CHAR16 *Un
   } // end of kext injection
 
 }
-//
-//CHAR16* tryKextDir(CHAR16* FormatString, ...)
-//{
-//   VA_LIST Marker;
-//   CHAR16 Dir[1024];
-//
-//   // Make sure the buffer is intact for writing
-//   if (FormatString == NULL) return NULL;
-//
-//   // Print message to log buffer
-//   VA_START(Marker, FormatString);
-//   UnicodeVSPrint(Dir, sizeof(Dir), FormatString, Marker);
-//   VA_END(Marker);
-//
-//}
 
 EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 {
