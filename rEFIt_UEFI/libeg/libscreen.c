@@ -199,12 +199,12 @@ VOID egDumpSetConsoleVideoModes(VOID)
     // Mode is valid
     if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
       Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
-      MsgLog("  Setting mode (%d): %r\n",BestMode, Status);
+      MsgLog("  Setting mode (%d): %r\n", BestMode, Status);
     } else {
-      MsgLog("  Selected mode (%d) is already set\n",BestMode);
+      MsgLog("  Selected mode (%d) is already set\n", BestMode);
     }
   } else if (BestMode != 0) {
-    MsgLog("  Selected mode (%d) is not valid\n",BestMode);
+    MsgLog("  Selected mode (%d) is not valid\n", BestMode);
   }
 }
 
@@ -216,8 +216,8 @@ EFI_STATUS egSetMaxResolution()
   UINT32      BestMode = 0;
   UINT32      MaxMode;
   UINT32      Mode;
-  UINTN       SizeOfInfo;
-  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+  UINTN       SizeOfInfo = 0;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info = NULL;
   
   if (GraphicsOutput == NULL) {
     return EFI_UNSUPPORTED;
@@ -252,7 +252,7 @@ EFI_STATUS egSetMaxResolution()
     if (Status == EFI_SUCCESS) {
       egScreenWidth = Width;
       egScreenHeight = Height;
-      MsgLog(" - set\n", Status);
+      MsgLog(" - set\n");
     } else {
       // we can not set BestMode - search for first one that we can
       MsgLog(" - %r\n", Status);
@@ -267,8 +267,8 @@ EFI_STATUS egSetMode(INT32 Next)
 {
   EFI_STATUS  Status = EFI_UNSUPPORTED;
   UINT32      MaxMode;
-  UINTN       SizeOfInfo;
-  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+  UINTN       SizeOfInfo = 0;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info = NULL;
   INT32      Mode;
   UINT32     Index = 0;
   
@@ -734,9 +734,9 @@ EFI_STATUS egScreenShot(VOID)
 
 static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
 {
-    UINTN       HandleCount;
+    UINTN       HandleCount = 0;
     UINTN       Index;
-    EFI_HANDLE  *HandleBuffer;
+    EFI_HANDLE  *HandleBuffer = NULL;
     EFI_STATUS  Status;
 
     if (GraphicsOutput == NULL) {

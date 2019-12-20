@@ -3830,7 +3830,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     if (Entry->Row == 0) {
       BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
                     XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-                    row0PosY + row0TileSize + TextHeight + (BCSMargin * 2),
+                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
                     &MenuBackgroundPixel, Scale);
     }
   }
@@ -4159,7 +4159,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       row1PosX = (UGAWidth + 8 - (row1TileSize + (INTN)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        row1PosY = row0PosY + row0TileSize + (BCSMargin * 2) + TextHeight +
+        row1PosY = row0PosY + row0TileSize + (INTN)((BCSMargin * 2) * GlobalConfig.Scale) + TextHeight +
             (INTN)(INDICATOR_SIZE * GlobalConfig.Scale) +
             (INTN)((LayoutButtonOffset + GlobalConfig.TileYSpace) * GlobalConfig.Scale);
       } else {
@@ -4174,7 +4174,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
         }
 
       if (GlobalConfig.BootCampStyle) {
-        textPosY = row0PosY + row0TileSize + TEXT_YMARGIN + BCSMargin;
+        textPosY = row0PosY + row0TileSize + (INTN)((TEXT_YMARGIN + BCSMargin) * GlobalConfig.Scale);
       }
 
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
@@ -4214,12 +4214,14 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-    {
+    
         // Display Clover boot volume
-	CHAR16 line[256];
-	UnicodeSPrint(line, 255, L"Clover booted from %s", SelfVolume->VolName);
-	DrawTextXY(line, 100, 50, X_IS_LEFT);
-    }
+      if (SelfVolume->VolName[0] != L"#") {
+        CHAR16 *line = PoolPrint(L"Clover booted from %s", SelfVolume->VolName);
+        DrawTextXY(line, (INTN)(100 * GlobalConfig.Scale), (INTN)(50 * GlobalConfig.Scale), X_IS_LEFT);
+        FreePool(line);
+      }
+    
       for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
