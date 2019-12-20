@@ -386,7 +386,7 @@
   CloverEFI/BiosVideo/BiosVideo.inf
   #BiosVideoAuto/BiosVideo.inf
   LegacyBios/VideoDxe/VideoDxe.inf
-  #LegacyBios/VideoDxe/VideoDxe2.inf
+  LegacyBios/VideoDxe/VideoDxe2.inf
 
   # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO

@@ -213,7 +213,8 @@ BiosVideoDriverBindingSupported (
   }
 
   Status = EFI_UNSUPPORTED;
-  if (Pci.Hdr.ClassCode[2] == 0x03 || (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) {
+  if ((Pci.Hdr.ClassCode[2] == 0x03 || (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) &&
+       Pci.Hdr.VendorId != 0x8086) {
 
     Status = EFI_SUCCESS;
     //
@@ -2298,7 +2299,7 @@ BiosVideoGraphicsOutputSetMode (
   
   //
   // Boot speedup: Check if RT var "BiosVideoBlockSwitchMode" is set.
-  // If yes, then do not swicth mode.
+  // If yes, then do not switch mode.
   //
   DataSize = 0;
   if (gBiosVideoBlockSwitchMode) {

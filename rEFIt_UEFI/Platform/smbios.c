@@ -1084,8 +1084,8 @@ VOID PatchTableType11()
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "Apple ROM Version.\n");
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "  BIOS ID:");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.RomVersion, iStrLen(gSettings.RomVersion, 64));
-  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
-  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
+  //  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
+  //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
   AsciiSPrint(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover v2.5k %s\n", gFirmwareRevision);

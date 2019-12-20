@@ -2653,6 +2653,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 Skip_DSM:
 
   //add _sun
+/*
   switch (DisplayVendor[VCard]) {
     case 0x10DE:
     case 0x1002:
@@ -2675,6 +2676,7 @@ Skip_DSM:
       }
       break;
   }
+*/
 
   if (!NonUsable) {
     //now insert video
@@ -3042,6 +3044,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
       }
     }
   }
+
   // add Method(_DSM,4,NotSerialized) for network
   if (gSettings.FakeLAN || !gSettings.NoDefaultProperties) {
     met = aml_add_method(dev, "_DSM", 4);
