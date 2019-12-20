@@ -3934,16 +3934,21 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
 
   switch (TextC) {
     case TEXT_CORNER_REVISION:
-      Text = gFirmwareRevision;
+      // Display Clover boot volume
+      if (SelfVolume->VolName[0] != L'#') {
+      	Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolName);
+      }else{
+      	Text = PoolPrint(L"%s", gFirmwareRevision, SelfVolume->VolName);
+      }
       break;
     case TEXT_CORNER_HELP:
-      Text = L"F1:Help";
+      Text = PoolPrint(L"F1:Help");
       break;
     case TEXT_CORNER_OPTIMUS:
       if (gGraphics[0].Vendor != Intel) {
-        Text = L"Discrete";
+        Text = PoolPrint(L"Discrete");
       } else {
-        Text = L"Intel";
+        Text = PoolPrint(L"Intel");
       }
 //      Text = (NGFX == 2)?L"Intel":L"Discrete";
       break;
@@ -3962,11 +3967,13 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       Xpos = UGAWidth >> 1;
       break;
     default:
+    	if ( Text ) FreePool(Text);
       return;
   }
   //  DBG("draw text %s at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
 // clovy  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
   DrawTextXY(Text, Xpos, UGAHeight - (INTN)(TextHeight * 1.5f), Align);
+  if ( Text ) FreePool(Text);
 }
 
 VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
@@ -4214,13 +4221,6 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-    
-        // Display Clover boot volume
-      if (SelfVolume->VolName[0] != L'#') {
-        CHAR16 *line = PoolPrint(L"Clover booted from %s", SelfVolume->VolName);
-        DrawTextXY(line, (INTN)(100 * GlobalConfig.Scale), (INTN)(50 * GlobalConfig.Scale), X_IS_LEFT);
-        FreePool(line);
-      }
     
       for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
