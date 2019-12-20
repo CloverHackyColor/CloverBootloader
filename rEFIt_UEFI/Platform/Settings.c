@@ -5111,7 +5111,7 @@ GetUserSettings(
                       else if (Prop3 && (Prop3->type == kTagTypeData)) {
                         UINTN Size = Prop3->dataLen;
                         //     (*Child)->Value = GetDataSetting(Prop3, "Value", &Size);  //TODO
-                        CHAR8* Data = AllocateZeroPool(Size);
+                        UINT8* Data = AllocateZeroPool(Size);
                         CopyMem(Data, Prop3->data, Size);
                         (*Child)->Value = Data;
                         (*Child)->ValueLen = Size;

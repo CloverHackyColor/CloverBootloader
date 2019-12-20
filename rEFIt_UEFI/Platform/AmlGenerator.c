@@ -83,7 +83,7 @@ void aml_destroy_node(AML_CHUNK* node)
 	FreePool(node);
 }
 
-AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* buffer, UINT32 size)
+AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, /* CONST*/ UINT8* buffer, UINT32 size)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
@@ -376,7 +376,7 @@ AML_CHUNK* aml_add_store(AML_CHUNK* parent)
 	return node;
 }
 
-AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* data, UINT32 size)
+AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, /* CONST*/ UINT8* data, UINT32 size)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	

@@ -16,7 +16,7 @@ CONST UINT8 pss_ssdt_header[] =
 };
 
 
-CHAR8 cst_ssdt_header[] =
+UINT8 cst_ssdt_header[] =
 {
   0x53, 0x53, 0x44, 0x54, 0xE7, 0x00, 0x00, 0x00, /* SSDT.... */
   0x01, 0x17, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x41, /* ..PmRefA */
@@ -25,21 +25,21 @@ CHAR8 cst_ssdt_header[] =
   0x20, 0x03, 0x12, 0x20                          /* 1.._		*/
 };
 
-CHAR8 resource_template_register_fixedhw[] =
+UINT8 resource_template_register_fixedhw[] =
 {
   0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x7F,
   0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x01, 0x79, 0x00
 };
 
-CHAR8 resource_template_register_systemio[] =
+UINT8 resource_template_register_systemio[] =
 {
   0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x01,
   0x08, 0x00, 0x00, 0x15, 0x04, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x79, 0x00,
 };
 
-CHAR8 plugin_type[] =
+UINT8 plugin_type[] =
 {
   0x14, 0x22, 0x5F, 0x44, 0x53, 0x4D, 0x04, 0xA0, 
   0x09, 0x93, 0x6A, 0x00, 0xA4, 0x11, 0x03, 0x01,
@@ -333,7 +333,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
       AML_CHUNK* packPCT;
       AML_CHUNK* metPCT;
       AML_CHUNK* root = aml_create_node(NULL);
-      aml_add_buffer(root, (CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
+      aml_add_buffer(root, (UINT8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
       AsciiSPrint(name, 31, "%a%4a", acpi_cpu_score, acpi_cpu_name[0]);
       AsciiSPrint(name1, 31, "%a%4aPSS_", acpi_cpu_score, acpi_cpu_name[0]);
       AsciiSPrint(name2, 31, "%a%4aPCT_", acpi_cpu_score, acpi_cpu_name[0]);
