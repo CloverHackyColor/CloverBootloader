@@ -4216,7 +4216,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
     case MENU_FUNCTION_PAINT_ALL:
     
         // Display Clover boot volume
-      if (SelfVolume->VolName[0] != L"#") {
+      if (SelfVolume->VolName[0] != L'#') {
         CHAR16 *line = PoolPrint(L"Clover booted from %s", SelfVolume->VolName);
         DrawTextXY(line, (INTN)(100 * GlobalConfig.Scale), (INTN)(50 * GlobalConfig.Scale), X_IS_LEFT);
         FreePool(line);

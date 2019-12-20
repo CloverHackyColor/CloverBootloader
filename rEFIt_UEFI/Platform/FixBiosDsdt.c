@@ -1376,8 +1376,8 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
 {
   INT32    i, k;
   INT32    j;
-  UINT32   size = 0;
-  INT32  offset = 0;
+  INT32   size = 0;
+  INT32   offset = 0;
 //  UINT32   SBSIZE = 0, SBADR = 0;
   BOOLEAN SBFound = FALSE;
 
@@ -1402,7 +1402,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       while (j > 0x20) {
         if (((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x81)) || 
             ((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x86))) { //we found a Field() or IndexField before the 0x10 will check what is it
-          size = get_size(dsdt, j + 1); // if it is not a size then size = 0
+          size = (INT32)get_size(dsdt, j + 1); // if it is not a size then size = 0
           if (j + size >= i) {
             // it is inside a Field, skip it
             SBFound = FALSE;
@@ -1416,9 +1416,9 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       }
     }
     if ( k != 0) {
-      size = get_size(dsdt, k);
+      size = (INT32)get_size(dsdt, k);
       if (size) {
-        if ((k + size) > adr+4) {  //Yes - it is outer
+        if ((k + size) > (INT32)adr+4) {  //Yes - it is outer
     //          DBG("found outer device begin=%x end=%x\n", k, k+size);
           offset = write_size(k, dsdt, len, shift);  //size corrected to sizeoffset at address j
           shift += offset;
