@@ -64,7 +64,7 @@ static EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentForcedConsoleMode = EfiConsoleCont
 static EFI_CONSOLE_CONTROL_PROTOCOL_GET_MODE ConsoleControlGetMode = NULL;
 static EFI_CONSOLE_CONTROL_PROTOCOL_SET_MODE ConsoleControlSetMode = NULL;
 
-static EFI_STATUS GopSetModeAndReconnectTextOut();
+static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber);
 
 //
 // Wrapped ConsoleControl GetMode() implementation - for blocking resolution switch when changing modes
