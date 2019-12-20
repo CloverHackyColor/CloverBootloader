@@ -118,7 +118,7 @@ VSPrint (
 CHAR16                                *
 EFIAPI
 PoolPrint (
-  IN CHAR16                           *fmt,
+  IN CONST CHAR16                     *fmt,
   ...
   );
 /*

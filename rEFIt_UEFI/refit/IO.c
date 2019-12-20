@@ -32,7 +32,7 @@ typedef struct {
   BOOLEAN Ascii;
   UINTN   Index;
   union {
-    CHAR16  *pw;
+    CONST CHAR16  *pw;
     CHAR8   *pc;
   } u;
 } POINTER;
@@ -127,7 +127,7 @@ _IPrint (
 VOID
 EFIAPI
 _PoolCatPrint (
-  IN CHAR16               *fmt,
+  IN CONST CHAR16         *fmt,
   IN VA_LIST              args,
   IN OUT POOL_PRINT       *spc,
   IN EFI_STATUS
@@ -261,7 +261,7 @@ Returns:
 VOID
 EFIAPI
 _PoolCatPrint (
-  IN CHAR16               *fmt,
+  IN CONST CHAR16         *fmt,
   IN VA_LIST              args,
   IN OUT POOL_PRINT       *spc,
   IN EFI_STATUS
@@ -303,7 +303,7 @@ Returns:
 CHAR16 *
 EFIAPI
 PoolPrint (
-  IN CHAR16             *fmt,
+  IN CONST CHAR16             *fmt,
   ...
   )
 /*++
@@ -770,7 +770,7 @@ Returns:
     return 0;
   }
 
-  Item.Scratch = AllocateZeroPool (sizeof (CHAR16) * PRINT_ITEM_BUFFER_LEN);
+  Item.Scratch = (__typeof__(Item.Scratch))AllocateZeroPool (sizeof (CHAR16) * PRINT_ITEM_BUFFER_LEN);
   if (NULL == Item.Scratch) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -820,9 +820,9 @@ Returns:
         //
         // %% -> %
         //
+        Item.Scratch[0] = '%';
+        Item.Scratch[1] = 0;
         Item.Item.u.pw    = Item.Scratch;
-        Item.Item.u.pw[0] = '%';
-        Item.Item.u.pw[1] = 0;
         break;
 
       case '0':
@@ -882,9 +882,9 @@ Returns:
         break;
 
       case 'c':
+        Item.Scratch[0] = (CHAR16) VA_ARG (ps->args, UINTN);
+        Item.Scratch[1] = 0;
         Item.Item.u.pw    = Item.Scratch;
-        Item.Item.u.pw[0] = (CHAR16) VA_ARG (ps->args, UINTN);
-        Item.Item.u.pw[1] = 0;
         break;
 
       case 'l':
@@ -896,13 +896,13 @@ Returns:
         Item.Pad    = '0';
 
       case 'x':
-        Item.Item.u.pw = Item.Scratch;
 			  //SPrint(Buffer, 64, L"EFI Error №%r", (UINTN)Status);
      //   ValueToHex (
 		UnicodeSPrint(
-          Item.Item.u.pw, 64, L"%x",
+          Item.Scratch, 64, L"%x",
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, UINTN)
           );
+        Item.Item.u.pw = Item.Scratch;
 
         break;
 /*
@@ -915,13 +915,13 @@ Returns:
         break;
 */
       case 'd':
-        Item.Item.u.pw = Item.Scratch;
       //  ValueToString (
 		UnicodeSPrint(
-          Item.Item.u.pw, 64, L"%d",
+          Item.Scratch, 64, L"%d",
        //   Item.Comma,
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, INTN)
           );
+        Item.Item.u.pw = Item.Scratch;
         break;
 /*
       case 't':
@@ -930,9 +930,9 @@ Returns:
         break;
 */
       case 'r':
-        Item.Item.u.pw = Item.Scratch;
    //     StatusToString
-		UnicodeSPrint(Item.Item.u.pw, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
+		UnicodeSPrint(Item.Scratch, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
+        Item.Item.u.pw = Item.Scratch;
         break;
 
       case 'n':
@@ -976,9 +976,9 @@ Returns:
         break;
 
       default:
+        Item.Scratch[0] = '?';
+        Item.Scratch[1] = 0;
         Item.Item.u.pw    = Item.Scratch;
-        Item.Item.u.pw[0] = '?';
-        Item.Item.u.pw[1] = 0;
         break;
       }
       //
