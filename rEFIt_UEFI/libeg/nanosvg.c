@@ -1879,13 +1879,13 @@ static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
   return *link;
 }
 
-static int substr(const char* class, char* style)
+static int substr(const char* aClass, char* style)
 {
   const char *p;
 
-  while (*class) {
+  while (*aClass) {
     char *s = style;
-    p = class++;
+    p = aClass++;
     while (*p++ == *s++) {
       if (*s == '\0') {
         if ((*p == '\0') || (*p == ' ')) {
