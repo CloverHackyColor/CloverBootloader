@@ -666,7 +666,7 @@ STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
   SectionPtr = (EFI_IMAGE_SECTION_HEADER *)(ImageBase + PeHeaderOffset + sizeof(EFI_IMAGE_FILE_HEADER) +
                                             sizeof(UINT32) + PeHeader.Pe32->FileHeader.SizeOfOptionalHeader);
   // Allocate a new array for the image section headers
-  Sections = AllocateZeroPool(sizeof(EFI_IMAGE_SECTION_HEADER) * PeHeader.Pe32->FileHeader.NumberOfSections);
+  Sections = (__typeof__(Sections))AllocateZeroPool(sizeof(EFI_IMAGE_SECTION_HEADER) * PeHeader.Pe32->FileHeader.NumberOfSections);
   if (Sections == NULL) {
     goto Failed;
   }
@@ -711,7 +711,7 @@ STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
   }
   // Create the signature list
   Size = (sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID) + 256);
-  Database = AllocateZeroPool(Size);
+  Database = (__typeof__(Database))AllocateZeroPool(Size);
   if (Database == NULL) {
     goto Failed;
   }

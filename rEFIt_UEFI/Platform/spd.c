@@ -540,7 +540,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
 CHAR8* getDDRSerial(UINT8* spd)
 {
   CHAR8* asciiSerial; //[16];
-  asciiSerial = AllocatePool(17);
+  asciiSerial = (__typeof__(asciiSerial))AllocatePool(17);
   if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR4) { // DDR4
     AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
@@ -560,7 +560,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 {
   UINT16 i, start=0, index = 0;
   CHAR8 c;
-  CHAR8* asciiPartNo = AllocatePool(32); //[32];
+  CHAR8* asciiPartNo = (__typeof__(asciiPartNo))AllocatePool(32); //[32];
 
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
     start = 329;
@@ -671,7 +671,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
   // needed at least for laptops
   //fullBanks = (gDMI->MemoryModules == gDMI->CntMemorySlots);
 
-  spdbuf = AllocateZeroPool(MAX_SPD_SIZE);
+  spdbuf = (__typeof__(spdbuf))AllocateZeroPool(MAX_SPD_SIZE);
 
   // Search MAX_RAM_SLOTS slots
   //==>

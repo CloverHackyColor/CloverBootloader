@@ -94,7 +94,7 @@ XMLDecode(CHAR8* src)
   len = AsciiStrLen(src);
 
 #if 0
-  out = AllocateZeroPool(len+1);
+  out = (__typeof__(out))AllocateZeroPool(len+1);
   if (!out)
     return 0;
 #else // unsafe
@@ -213,7 +213,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     return EFI_INVALID_PARAMETER;
   }
 
-  configBuffer = AllocateZeroPool(bufferSize+1);
+  configBuffer = (__typeof__(configBuffer))AllocateZeroPool(bufferSize+1);
   if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

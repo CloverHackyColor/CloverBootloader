@@ -115,7 +115,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
     VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
 
   // prepare the menu entry
-  Entry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   } else {
@@ -156,13 +156,13 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
   
   // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->AnimeRun = GetAnime(SubScreen);
   
   // default entry
-  SubEntry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
+  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
   SubEntry->me.Title         = PoolPrint(L"Boot %s", LoaderTitle);
   SubEntry->me.Tag           = TAG_LEGACY;
   SubEntry->Volume           = Entry->Volume;

@@ -112,7 +112,7 @@ VOID *GetNvramVariable (
     //
     // Allocate the buffer to return
     //
-    Data = AllocateZeroPool (IntDataSize + 1);
+    Data = (__typeof__(Data))AllocateZeroPool (IntDataSize + 1);
     if (Data != NULL) {
       //
       // Read variable into the allocated buffer.
@@ -285,7 +285,7 @@ ResetNativeNvram ()
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
   NameSize = sizeof (CHAR16);
-  Name     = AllocateZeroPool (NameSize);
+  Name = (__typeof__(Name))AllocateZeroPool (NameSize);
   if (Name == NULL) {
     return Status;
   }
@@ -300,7 +300,7 @@ ResetNativeNvram ()
     NewNameSize = NameSize;
     Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
     if (Status == EFI_BUFFER_TOO_SMALL) {
-      Name = ReallocatePool (NameSize, NewNameSize, Name);
+      Name = (__typeof__(Name))ReallocatePool (NameSize, NewNameSize, Name);
       if (Name == NULL) {
         return Status;
       }
@@ -414,7 +414,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   
 
   NameSize = sizeof (CHAR16);
-  Name     = AllocateZeroPool (NameSize);
+  Name = (__typeof__(Name))AllocateZeroPool (NameSize);
   if (Name == NULL) {
     return;
   }
@@ -431,7 +431,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
     NewNameSize = NameSize;
     Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
     if (Status == EFI_BUFFER_TOO_SMALL) {
-      Name = ReallocatePool (NameSize, NewNameSize, Name);
+      Name = (__typeof__(Name))ReallocatePool (NameSize, NewNameSize, Name);
       if (Name == NULL) {
         return; //if something wrong then just do nothing
       }
@@ -782,7 +782,7 @@ GetEfiBootDeviceFromNvram ()
   gEfiBootLoaderPath = NULL;
   FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
   if (FileDevPath != NULL) {
-    gEfiBootLoaderPath = AllocateCopyPool (StrSize(FileDevPath->PathName), FileDevPath->PathName);
+    gEfiBootLoaderPath = (__typeof__(gEfiBootLoaderPath))AllocateCopyPool (StrSize(FileDevPath->PathName), FileDevPath->PathName);
     // copy DevPath and write end of path node after in place of file path node
     gEfiBootVolume = DuplicateDevicePath (gEfiBootVolume);
     FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
@@ -799,7 +799,7 @@ GetEfiBootDeviceFromNvram ()
   //
   Guid = FindGPTPartitionGuidInDevicePath (gEfiBootVolume);
   if (Guid != NULL) {
-    gEfiBootDeviceGuid = AllocatePool (sizeof(EFI_GUID));
+    gEfiBootDeviceGuid = (__typeof__(gEfiBootDeviceGuid))AllocatePool (sizeof(EFI_GUID));
     if (gEfiBootDeviceGuid != NULL) {
       CopyMem (gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
       DBG ("  - Guid = %g\n", gEfiBootDeviceGuid);
@@ -1377,7 +1377,7 @@ EFI_STATUS SetStartupDiskVolume (
 	    "</dict></array>";
 
     Size          = AsciiStrLen (EfiBootDeviceTmpl) + 36;
-    EfiBootDevice = AllocateZeroPool(AsciiStrLen (EfiBootDeviceTmpl) + 36);
+    EfiBootDevice = (__typeof__(EfiBootDevice))AllocateZeroPool(AsciiStrLen (EfiBootDeviceTmpl) + 36);
     AsciiSPrint (EfiBootDevice, Size, EfiBootDeviceTmpl, Guid);
     Size          = AsciiStrLen (EfiBootDevice);
     DBG ("  * efi-boot-device: %a\n", EfiBootDevice);

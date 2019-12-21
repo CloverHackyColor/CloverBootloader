@@ -884,7 +884,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
   if (acpi_cpu_score) {
     FreePool(acpi_cpu_score);
   }
-  acpi_cpu_score = AllocateZeroPool(128);
+  acpi_cpu_score = (__typeof__(acpi_cpu_score))AllocateZeroPool(128);
   acpi_cpu_count = 0;
 //  5B 83 41 0C 5C 2E 5F 50 52 5F 43 50 55 30 01 10
 //  10 00 00 06
@@ -1034,7 +1034,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
       }
 
       if (add_name) {
-        acpi_cpu_name[acpi_cpu_count] = AllocateZeroPool(5);
+        acpi_cpu_name[acpi_cpu_count] = (__typeof__(acpi_cpu_name[acpi_cpu_count]))AllocateZeroPool(5);
         CopyMem(acpi_cpu_name[acpi_cpu_count], dsdt+offset, 4);
         acpi_cpu_processor_id[acpi_cpu_count] = dsdt[offset + 4];
         i = offset + 5;
@@ -1056,7 +1056,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 
   if (!acpi_cpu_count) {
     for (i=0; i < acpi_cpu_max; i++) {
-      acpi_cpu_name[i] = AllocateZeroPool(5);
+      acpi_cpu_name[i] = (__typeof__(acpi_cpu_name[i]))AllocateZeroPool(5);
       AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1x", i);
       acpi_cpu_processor_id[i] = (UINT8)(i & 0x7F);
     }
@@ -2370,7 +2370,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
         continue;
       }
       LPCBSIZE = get_size(dsdt, LPCBADR);
-      device_name[3] = AllocateZeroPool(5);
+      device_name[3] = (__typeof__(device_name[3]))AllocateZeroPool(5);
       CopyMem(device_name[3], dsdt + j, 4);
       MsgLog("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
           device_name[3]);
@@ -2424,7 +2424,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  lpcb = AllocateZeroPool(root->Size);
+  lpcb = (__typeof__(lpcb))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, lpcb, 0);
   aml_destroy_node(root);
@@ -2683,7 +2683,7 @@ Skip_DSM:
     //now insert video
     DBG("now inserting Video device\n");
     aml_calculate_size(root);
-    display = AllocateZeroPool(root->Size);
+    display = (__typeof__(display))AllocateZeroPool(root->Size);
     sizeoffset = root->Size;
     aml_write_node(root, display, 0);
     aml_destroy_node(root);
@@ -2791,7 +2791,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
             if (!devadr1) {
               continue;
             }
-            device_name[11] = AllocateZeroPool(5);
+            device_name[11] = (__typeof__(device_name[11]))AllocateZeroPool(5);
             CopyMem(device_name[11], dsdt+k, 4);
             DBG("found HDMI device [0x%08x:%x] at %x and Name is %a\n",
                 HDMIADR1, HDMIADR2, devadr1, device_name[11]);
@@ -2884,7 +2884,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  hdmi = AllocateZeroPool(root->Size);
+  hdmi = (__typeof__(hdmi))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, hdmi, 0);
   aml_destroy_node(root);
@@ -2966,7 +2966,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
               continue;
             }
 
-            device_name[1] = AllocateZeroPool(5);
+            device_name[1] = (__typeof__(device_name[1]))AllocateZeroPool(5);
             CopyMem(device_name[1], dsdt+k, 4);
             DBG("found NetWork device [0x%08x:%x] at %x and Name is %a\n",
                 NetworkADR1[card], NetworkADR2[card], NetworkADR, device_name[1]);
@@ -3083,7 +3083,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   }
   // finish Method(_DSM,4,NotSerialized)
   aml_calculate_size(root);
-  network = AllocateZeroPool(root->Size);
+  network = (__typeof__(network))AllocateZeroPool(root->Size);
   if (!network) {
     return len;
   }
@@ -3166,7 +3166,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
             if (!ArptADR) {
               continue;
             }
-            device_name[9] = AllocateZeroPool(5);
+            device_name[9] = (__typeof__(device_name[9]))AllocateZeroPool(5);
             CopyMem(device_name[9], dsdt+k, 4);
             DBG("found Airport device [%08x:%x] at %x And Name is %a\n",
                 ArptADR1, ArptADR2, ArptADR, device_name[9]);
@@ -3280,7 +3280,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  network = AllocateZeroPool(root->Size);
+  network = (__typeof__(network))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, network, 0);
   aml_destroy_node(root);
@@ -3466,7 +3466,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 */
   aml_calculate_size(root);
-  mchc = AllocateZeroPool(root->Size);
+  mchc = (__typeof__(mchc))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, mchc, 0);
   aml_destroy_node(root);
@@ -3553,7 +3553,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   }
 
   aml_calculate_size(root);
-  imei = AllocateZeroPool(root->Size);
+  imei = (__typeof__(imei))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, imei, 0);
   aml_destroy_node(root);
@@ -3611,7 +3611,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
               continue;
             }
 
-            device_name[2] = AllocateZeroPool(5);
+            device_name[2] = (__typeof__(device_name[2]))AllocateZeroPool(5);
             CopyMem(device_name[2], dsdt+k, 4);
             DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n",
                 FirewireADR2, k, device_name[2]);
@@ -3701,7 +3701,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  firewire = AllocateZeroPool(root->Size);
+  firewire = (__typeof__(firewire))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, firewire, 0);
   aml_destroy_node(root);
@@ -3754,7 +3754,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
       }
 
  //     BridgeSize = get_size(dsdt, HDAADR);
-      device_name[4] = AllocateZeroPool(5);
+      device_name[4] = (__typeof__(device_name[4]))AllocateZeroPool(5);
       CopyMem(device_name[4], dsdt+i, 4);
       DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a\n",
           HDAADR1, device_name[4]);
@@ -3822,7 +3822,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
         */
   }
   aml_calculate_size(root);
-  hdef = AllocateZeroPool(root->Size);
+  hdef = (__typeof__(hdef))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, hdef, 0);
   aml_destroy_node(root);
@@ -3895,7 +3895,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
   aml_calculate_size(root);
 
-  USBDATA1 = AllocateZeroPool(root->Size);
+  USBDATA1 = (__typeof__(USBDATA1))AllocateZeroPool(root->Size);
   size1 = root->Size;
 //  DBG("USB1 code size = 0x%08x\n", size1);
   aml_write_node(root, USBDATA1, 0);
@@ -3968,7 +3968,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root1);
-  USBDATA2 = AllocateZeroPool(root1->Size);
+  USBDATA2 = (__typeof__(USBDATA2))AllocateZeroPool(root1->Size);
   size2 = root1->Size;
 //  DBG("USB2 code size = 0x%08x\n", size2);
   aml_write_node(root1, USBDATA2, 0);
@@ -3976,7 +3976,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
   //NFORCE_USB_START -- already done Intel or NForce same USBDATA2
 /*  aml_calculate_size(root1);
-  USBDATA4 = AllocateZeroPool(root1->Size);
+  USBDATA4 = (__typeof__(USBDATA4))AllocateZeroPool(root1->Size);
   size4 = root1->Size;
   DBG("USB OHCI code size = 0x%08x\n", size4);
   aml_write_node(root1, USBDATA4, 0);
@@ -4017,7 +4017,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root1);
-  USBDATA3 = AllocateZeroPool(root1->Size);
+  USBDATA3 = (__typeof__(USBDATA3))AllocateZeroPool(root1->Size);
   size3 = root1->Size;
 //  DBG("USB3 code size = 0x%08x\n", size3);
   aml_write_node(root1, USBDATA3, 0);
@@ -4032,7 +4032,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       for (j = 0x20; len >= 4 && j < len - 4; j++) {
         if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
           XhciName = FALSE;
-          UsbName[i] = AllocateZeroPool(5);
+          UsbName[i] = (__typeof__(UsbName[i]))AllocateZeroPool(5);
   //        DBG("found USB at 0x%x\n", j);
           adr1 = devFind(dsdt, j + 2);
           if (!adr1) {
@@ -4049,7 +4049,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                   continue;
                 }
 
-                device_name[10] = AllocateZeroPool(5);
+                device_name[10] = (__typeof__(device_name[10]))AllocateZeroPool(5);
                 CopyMem(device_name[10], dsdt+k, 4);
                 DBG("found USB device [%08x:%x] at %x and Name was %a ->",
                     USBADR[i], USBADR2[i], k, device_name[10]);
@@ -4169,7 +4169,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
         }
           //NFORCE_USB_START
         else if (CmpAdr(dsdt, j, USBADR3[i])) {
-            UsbName[i] = AllocateZeroPool(5);
+            UsbName[i] = (__typeof__(UsbName[i]))AllocateZeroPool(5);
             CopyMem(UsbName[i], dsdt+j, 4);
 
             adr1 = devFind(dsdt, j);
@@ -4374,7 +4374,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  ide = AllocateZeroPool(root->Size);
+  ide = (__typeof__(ide))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, ide, 0);
   aml_destroy_node(root);
@@ -4484,7 +4484,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  sata = AllocateZeroPool(root->Size);
+  sata = (__typeof__(sata))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, sata, 0);
   aml_destroy_node(root);
@@ -4580,7 +4580,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
 
   aml_calculate_size(root);
-  sata = AllocateZeroPool(root->Size);
+  sata = (__typeof__(sata))AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, sata, 0);
   aml_destroy_node(root);
@@ -4923,7 +4923,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
     for (i=0; i<len-5; i++) {
       if (CmpAdr(dsdt, i, USBADR[j])) {
           // get USB name
-          UsbName[j] = AllocateZeroPool(5);
+          UsbName[j] = (__typeof__(UsbName[j]))AllocateZeroPool(5);
           CopyMem(UsbName[j], dsdt+i, 4);
           DBG("found USB device NAME(_ADR,0x%08x) And Name is %a\n",
               USBADR[j], UsbName[j]);
@@ -5144,7 +5144,7 @@ VOID GetBiosRegions(UINT8  *buffer)
           }
         }
         if (tmp.Address) {
-          OPER_REGION *newRegion = AllocateZeroPool(sizeof(OPER_REGION));
+          OPER_REGION *newRegion = (__typeof__(newRegion))AllocateZeroPool(sizeof(OPER_REGION));
           MsgLog("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
           *newRegion = tmp;
           newRegion->next = gRegions;
@@ -5234,7 +5234,7 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
   if (NameLen < 4) {
     return FALSE;
   }
-  Name = AllocateCopyPool(NameLen + 1, Table);
+  Name = (__typeof__(Name))AllocateCopyPool(NameLen + 1, Table);
   Name[NameLen] = '\0';
   i = NameLen - 4;
   while (Bridge && (i >= 0)) {

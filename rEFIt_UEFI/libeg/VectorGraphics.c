@@ -327,7 +327,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     }
  //   DBG("next icon=%s Len=%d\n", ptr, StrLen(ptr));
     UINTN Size = StrLen(ptr)+1;
-    IconName = AllocateZeroPool(Size);
+    IconName = (__typeof__(IconName))AllocateZeroPool(Size);
     UnicodeStrToAsciiStrS(ptr, IconName, Size);
 //    DBG("search for icon name %a\n", IconName);
     CHAR8 IconNight[64];
@@ -396,7 +396,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
   }
 
   //banner animation
-  GUI_ANIME *Anime = AllocateZeroPool (sizeof(GUI_ANIME));
+  GUI_ANIME *Anime = (__typeof__(Anime))AllocateZeroPool (sizeof(GUI_ANIME));
   Anime->ID = 1; //main screen
   //there is no Anime->Path in vectors
   Anime->Frames = NumFrames;
@@ -410,7 +410,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
   nsvgDeleteRasterizer(rast);
 
-  *dict = AllocateZeroPool(sizeof(TagStruct));
+  *dict = (__typeof__(*dict))AllocateZeroPool(sizeof(TagStruct));
   (*dict)->type = kTagTypeNone;
   GlobalConfig.TypeSVG = TRUE;
   GlobalConfig.ThemeDesignHeight = (int)SVGimage->height;

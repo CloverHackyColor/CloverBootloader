@@ -459,7 +459,7 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
-  CHAR16 *csrLog = AllocateZeroPool(SVALUE_MAX_SIZE);
+  CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");
@@ -648,7 +648,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
             if (Entry->OSVersion != NULL) {
               FreePool(Entry->OSVersion);
             }
-            Entry->OSVersion = AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
+            Entry->OSVersion = (__typeof__(Entry->OSVersion))AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
             Entry->OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
 //            DBG("Corrected OSVersion: %a\n", Entry->OSVersion);
           }
@@ -1202,10 +1202,10 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
         if (DriversArrSize == 0) {
           // new array
           DriversArrSize = 16;
-          DriversArr = AllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
+          DriversArr = (__typeof__(DriversArr))AllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
         } else if (DriversArrNum + 1 == DriversArrSize) {
           // extend array
-          DriversArr = ReallocatePool(DriversArrSize, DriversArrSize + 16, DriversArr);
+          DriversArr = (__typeof__(DriversArr))ReallocatePool(DriversArrSize, DriversArrSize + 16, DriversArr);
           DriversArrSize += 16;
         }
         DriversArr[DriversArrNum] = DriverHandle;
@@ -1672,7 +1672,7 @@ VOID SetVariablesFromNvram()
     // use and forget old one
 //    DeleteNvramVariable(L"boot-args", &gEfiAppleBootGuid);
     Size = AsciiStrLen(tmpString); // some EFI implementations include '\0' in Size, and others don't, so update Size to string length
-    arg = AllocatePool(Size+1);
+    arg = (__typeof__(arg))AllocatePool(Size+1);
     
 /*    if (AsciiStrStr(tmpString, "nvda_drv=1")) { //found substring
       gSettings.NvidiaWeb = TRUE;
@@ -1869,7 +1869,7 @@ UINT8 *APFSContainer_Support(VOID) {
   EFI_GUID                 *TmpUUID    = NULL;
 
   //Fill APFSUUIDBank
-  APFSUUIDBank = AllocateZeroPool(0x10*VolumesCount);
+  APFSUUIDBank = (__typeof__(APFSUUIDBank))AllocateZeroPool(0x10*VolumesCount);
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
     //Check that current volume - apfs partition
@@ -1945,13 +1945,13 @@ VOID SystemVersionInit(VOID)
   /*Allocate Memory for systemplists, installplists and recoveryplists********************/
   //Check apfs support
   if (APFSSupport == TRUE) {
-    SystemPlists = AllocateZeroPool((2*APFSUUIDBankCounter+3)*sizeof(CHAR16 *));//array of pointers
-    InstallPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
-    RecoveryPlists = AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
+    SystemPlists = (__typeof__(SystemPlists))AllocateZeroPool((2*APFSUUIDBankCounter+3)*sizeof(CHAR16 *));//array of pointers
+    InstallPlists = (__typeof__(InstallPlists))AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
+    RecoveryPlists = (__typeof__(RecoveryPlists))AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
   } else {
-    SystemPlists = AllocateZeroPool(sizeof(CHAR16 *)*3);
-    InstallPlists = AllocateZeroPool(sizeof(CHAR16 *)*2);
-    RecoveryPlists = AllocateZeroPool(sizeof(CHAR16 *)*2);
+    SystemPlists = (__typeof__(SystemPlists))AllocateZeroPool(sizeof(CHAR16 *)*3);
+    InstallPlists = (__typeof__(InstallPlists))AllocateZeroPool(sizeof(CHAR16 *)*2);
+    RecoveryPlists = (__typeof__(RecoveryPlists))AllocateZeroPool(sizeof(CHAR16 *)*2);
   }
   /* Fill it with standard paths*******************************************/
   SystemPlists[0] = SystemVersionPlist;
@@ -1967,10 +1967,10 @@ VOID SystemVersionInit(VOID)
     //Store UUID from bank
     CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
     //Init temp string with system/install/recovery APFS path
-    CHAR16 *TmpSysPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
-    CHAR16 *TmpServerPlistPath = AllocateZeroPool(86*sizeof(CHAR16));
-    CHAR16 *TmpInsPlistPath = AllocateZeroPool(79*sizeof(CHAR16));
-    CHAR16 *TmpRecPlistPath = AllocateZeroPool(58*sizeof(CHAR16));
+    CHAR16 *TmpSysPlistPath = (__typeof__(TmpSysPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
+    CHAR16 *TmpServerPlistPath = (__typeof__(TmpServerPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
+    CHAR16 *TmpInsPlistPath = (__typeof__(TmpInsPlistPath))AllocateZeroPool(79*sizeof(CHAR16));
+    CHAR16 *TmpRecPlistPath = (__typeof__(TmpRecPlistPath))AllocateZeroPool(58*sizeof(CHAR16));
     StrnCpy(TmpSysPlistPath, APFSSysPlistPath, 85);
     StrnCpy(TmpServerPlistPath, APFSServerPlistPath, 85);
     StrnCpy(TmpInsPlistPath, APFSInstallPlistPath, 78);
@@ -2828,7 +2828,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
                 Description = PoolPrint(L"Clover start %s at %s", (LoaderName != NULL)?LoaderName:L"legacy", VolName);
                 OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
-                OptionalData = AllocateZeroPool(OptionalDataSize);
+                OptionalData = (__typeof__(OptionalData))AllocateZeroPool(OptionalDataSize);
                 if (OptionalData == NULL) {
                   break;
                 }

@@ -81,7 +81,7 @@ STATIC BOOLEAN AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *FullTitle, IN CHAR
     return FALSE;
   }
   // Allocate the entry
-  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (Entry == NULL) {
     return FALSE;
   }
@@ -117,7 +117,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
 //  EFI_STATUS        Status;
 
   // prepare the menu entry
-  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   Entry->me.Title          = LoaderTitle;
   Entry->me.Tag            = TAG_CLOVER;
   Entry->me.Row            = 1;
@@ -138,7 +138,7 @@ STATIC VOID AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REF
   Entry->me.AtRightClick = ActionDetails;
 
   // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->ID = SCREEN_BOOT;

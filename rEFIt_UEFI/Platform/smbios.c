@@ -2022,8 +2022,8 @@ EFI_STATUS PrepatchSmbios()
   }
 
   //Create space for SPD
-  //gRAM = AllocateZeroPool(sizeof(MEM_STRUCTURE));
-  //gDMI = AllocateZeroPool(sizeof(DMI));
+  //gRAM = (__typeof__(gRAM))AllocateZeroPool(sizeof(MEM_STRUCTURE));
+  //gDMI = (__typeof__(gDMI))AllocateZeroPool(sizeof(DMI));
 
   //Collect information for use in menu
   GetTableType1();

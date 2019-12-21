@@ -165,7 +165,7 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
       DBG("not found wave data\n");
       goto DONE_ERROR;
     }
-    TempData = AllocateZeroPool(Len * sizeof(INT16));
+    TempData = (__typeof__(TempData))AllocateZeroPool(Len * sizeof(INT16));
     Tmp = *(Ptr++);
     for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
       Next = *(Ptr++);

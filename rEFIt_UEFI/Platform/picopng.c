@@ -86,7 +86,7 @@ void png_alloc_add_node(void *addr, UINT32 size)
 	png_alloc_node_t *node;
 	if (png_alloc_find_node(addr, size))
 		return;
-	node = AllocateZeroPool(sizeof (png_alloc_node_t));
+	node = (__typeof__(node))AllocateZeroPool(sizeof (png_alloc_node_t));
 	node->addr = addr;
 	node->size = size;
 	node->prev = png_alloc_tail;
@@ -114,7 +114,7 @@ void png_alloc_remove_node(png_alloc_node_t *node)
 
 void *png_alloc_malloc(UINT32 size)
 {
-	void *addr = AllocateZeroPool(size);
+	void *addr = (__typeof__(addr))AllocateZeroPool(size);
 	png_alloc_add_node(addr, size);
 	return addr;
 }
@@ -127,7 +127,7 @@ void *png_alloc_realloc(void *addr, UINT32 oldSize, UINT32 newSize)
   if ( newSize > oldSize ) {
   	png_alloc_node_t *old_node = png_alloc_find_node(addr, oldSize);
   if (old_node) {
-    void *new_addr = ReallocatePool(oldSize, newSize, addr);
+    void *new_addr = (__typeof__(new_addr))ReallocatePool(oldSize, newSize, addr);
     old_node->addr = new_addr;
     old_node->size = newSize;
     return new_addr;

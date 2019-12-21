@@ -464,10 +464,10 @@ SetupDataForOSX(BOOLEAN Hibernate)
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
   if (!EFI_ERROR(Status)) {
-    ProductName         = AllocateZeroPool(128);
+    ProductName = (__typeof__(ProductName))AllocateZeroPool(128);
     AsciiStrToUnicodeStrS(gSettings.ProductName, ProductName, 64);
 
-    SerialNumber        = AllocateZeroPool(128);
+    SerialNumber = (__typeof__(SerialNumber))AllocateZeroPool(128);
     AsciiStrToUnicodeStrS(gSettings.SerialNr,    SerialNumber, 64);
 
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));

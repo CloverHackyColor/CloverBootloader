@@ -775,7 +775,7 @@ Returns:
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Buffer = AllocateZeroPool (sizeof (CHAR16) * PRINT_STRING_LEN);
+  Buffer = (__typeof__(Buffer))AllocateZeroPool (sizeof (CHAR16) * PRINT_STRING_LEN);
   if (NULL == Buffer) {
     FreePool (Item.Scratch);
     return EFI_OUT_OF_RESOURCES;
@@ -1303,7 +1303,7 @@ Returns:
     //
     newlen += PRINT_STRING_LEN;
     spc->Maxlen = newlen;
-    spc->Str = EfiReallocatePool (
+    spc->Str = (__typeof__(spc->Str))EfiReallocatePool (
                 spc->Str,
                 spc->Len * sizeof (CHAR16),
                 spc->Maxlen * sizeof (CHAR16)
@@ -1926,7 +1926,7 @@ CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
 {
   UINTN i, j, b = 0;
   CHAR8 *result = (CHAR8*)AllocateZeroPool((len*2)+1);
-  //CHAR8 *buf = AllocateZeroPool(2);
+  //CHAR8 *buf = (__typeof__(buf))AllocateZeroPool(2);
 
   for (i = j = 0; i < len; i++) {
     b = data[i] >> 4;

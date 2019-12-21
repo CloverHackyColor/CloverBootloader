@@ -564,7 +564,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
     }
     CHAR16 *ptr2 = StrStr(ptr, L".");
     Size = ptr2 - ptr + 2;
-    IconName = AllocateZeroPool(Size);
+    IconName = (__typeof__(IconName))AllocateZeroPool(Size);
     UnicodeStrToAsciiStrS(ptr, IconName, Size - 1);
 
     while (OSIconsTable[i].name) {

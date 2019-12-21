@@ -198,7 +198,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
   SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
   TmpDevicePath = DevicePathFromHandle (SelfDeviceHandle);
   DevicePathSize = GetDevicePathSize (TmpDevicePath);
-  SelfDevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
+  SelfDevicePath = (__typeof__(SelfDevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
   
   DBG("SelfDevicePath=%s @%x\n", FileDevicePathToStr(SelfDevicePath), SelfDeviceHandle);
@@ -215,7 +215,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
       FilePathAsString[1] = 0;
     }
   } else {
-    FilePathAsString = AllocateCopyPool(StrSize(L"\\"), L"\\");
+    FilePathAsString = (__typeof__(FilePathAsString))AllocateCopyPool(StrSize(L"\\"), L"\\");
   }
   SelfDirPath = FilePathAsString;
   
@@ -342,7 +342,7 @@ VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialEl
   *ElementCount = InitialElementCount;
   if (*ElementCount > 0) {
     AllocateCount = (*ElementCount + 7) & ~7;   // next multiple of 8
-    *ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
+    *ListPtr = (__typeof__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
   } else {
     *ListPtr = NULL;
   }
@@ -355,9 +355,9 @@ VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID 
   if ((*ElementCount & 7) == 0) {
     AllocateCount = *ElementCount + 8;
     if (*ElementCount == 0)
-      *ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
+      *ListPtr = (__typeof__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
     else
-      *ListPtr =  EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
+      *ListPtr = (__typeof__(*ListPtr))EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
   }
   (*ListPtr)[*ElementCount] = NewElement;
   (*ElementCount)++;
@@ -484,7 +484,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   BlockSize = Volume->BlockIO->Media->BlockSize;
   if (BlockSize > 2048)
     return;   // our buffer is too small... the bred of thieve of cable
-  SectorBuffer = AllocateAlignedPages(EFI_SIZE_TO_PAGES (2048), 16); //align to 16 byte?! Poher
+  SectorBuffer = (__typeof__(SectorBuffer))AllocateAlignedPages(EFI_SIZE_TO_PAGES (2048), 16); //align to 16 byte?! Poher
   ZeroMem((CHAR8*)&SectorBuffer[0], 2048);
   // look at the boot sector (this is used for both hard disks and El Torito images!)
   Status = Volume->BlockIO->ReadBlocks(Volume->BlockIO, Volume->BlockIO->Media->MediaId,
@@ -720,7 +720,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
      if (MbrTable[i].Flags != 0x00 && MbrTable[i].Flags != 0x80)
      MbrTableFound = FALSE;
      if (MbrTableFound) {
-     Volume->MbrPartitionTable = AllocatePool(4 * 16);
+     Volume->MbrPartitionTable = (__typeof__(Volume->MbrPartitionTable))AllocatePool(4 * 16);
      CopyMem(Volume->MbrPartitionTable, MbrTable, 4 * 16);
      Volume->BootType = BOOTING_BY_MBR;
      }
@@ -751,7 +751,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   // get device path
   DiskDevicePath = DevicePathFromHandle(Volume->DeviceHandle);
   DevicePathSize = GetDevicePathSize (DiskDevicePath);
-  Volume->DevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
+  Volume->DevicePath = (__typeof__(Volume->DevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
   Volume->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
   
@@ -1034,7 +1034,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
   MBR_PARTITION_INFO      *EMbrTable;
   
   ExtBase = MbrEntry->StartLBA;
-  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);
+  SectorBuffer = (__typeof__(SectorBuffer))AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);
   
   for (ExtCurrent = ExtBase; ExtCurrent; ExtCurrent = NextExtCurrent) {
     // read current EMBR
@@ -1060,7 +1060,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
       } else {
         
         // found a logical partition
-        Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
+        Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(REFIT_VOLUME));
         Volume->DiskKind = WholeDiskVolume->DiskKind;
         Volume->IsMbrPartition = TRUE;
         Volume->MbrPartitionIndex = LogicalPartitionIndex++;
@@ -1110,8 +1110,8 @@ VOID ScanVolumes(VOID)
   // first pass: collect information about all handles
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
-    Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
-    Volume->LegacyOS = AllocateZeroPool(sizeof(LEGACY_OS));
+    Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(REFIT_VOLUME));
+    Volume->LegacyOS = (__typeof__(Volume->LegacyOS))AllocateZeroPool(sizeof(LEGACY_OS));
     Volume->DeviceHandle = Handles[HandleIndex];
     if (Volume->DeviceHandle == SelfDeviceHandle) {
       SelfVolume = Volume;
@@ -1155,7 +1155,7 @@ VOID ScanVolumes(VOID)
   //  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("        WARNING: SelfVolume not found"); //Slice - and what?
-    SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));
+    SelfVolume = (__typeof__(SelfVolume))AllocateZeroPool(sizeof(REFIT_VOLUME));
     SelfVolume->DeviceHandle = SelfDeviceHandle;
     SelfVolume->DevicePath = SelfDevicePath;
     SelfVolume->RootDir = SelfRootDir;
@@ -1198,8 +1198,8 @@ VOID ScanVolumes(VOID)
     if (WholeDiskVolume != NULL && WholeDiskVolume->MbrPartitionTable != NULL) {
       // check if this volume is one of the partitions in the table
       MbrTable = WholeDiskVolume->MbrPartitionTable;
-      SectorBuffer1 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
-      SectorBuffer2 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
+      SectorBuffer1 = (__typeof__(SectorBuffer1))AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
+      SectorBuffer2 = (__typeof__(SectorBuffer2))AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
       
       for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
         // check size
@@ -1419,7 +1419,7 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
     
     // read next directory entry
     LastBufferSize = BufferSize = 256;
-    Buffer = AllocateZeroPool (BufferSize);
+    Buffer = (__typeof__(Buffer))AllocateZeroPool (BufferSize);
     for (IterCount = 0; ; IterCount++) {
       Status = Directory->Read(Directory, &BufferSize, Buffer);
       if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)
@@ -1432,7 +1432,7 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
         DBG("Reallocating buffer from %d to %d\n", LastBufferSize, BufferSize);
 #endif
       }
-      Buffer = EfiReallocatePool(Buffer, LastBufferSize, BufferSize);
+      Buffer = (__typeof__(Buffer))EfiReallocatePool(Buffer, LastBufferSize, BufferSize);
       LastBufferSize = BufferSize;
     }
     if (EFI_ERROR(Status)) {
@@ -1693,7 +1693,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
   
   Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    data = AllocateZeroPool(dataSize);
+    data = (__typeof__(data))AllocateZeroPool(dataSize);
     Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
     if (EFI_ERROR(Status)) {
       DBG("Can't get %s, size=%d\n", Name, dataSize);

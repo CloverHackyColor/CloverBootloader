@@ -310,7 +310,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	IA32_REGISTER_SET           Regs;
    //UINTN         LogSize;
 	
-  sectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (2048), 64);
+  sectorBuffer = (__typeof__(sectorBuffer))AllocateAlignedPages (EFI_SIZE_TO_PAGES (2048), 64);
 	krnMemoryTop = addrRealFromSegOfs(0xA000, 0x0000);
 	addrEnablePaging(0);
 	
@@ -650,7 +650,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 		return Status;
 	}
 
-  mBootSector = AllocateAlignedPages(1, 16);  
+  mBootSector = (__typeof__(mBootSector))AllocateAlignedPages(1, 16);  
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 2*512, mBootSector);
   CopyMem(pBootSector, mBootSector, 1024);
   DBG("PBR after readDisk:\n");
@@ -900,7 +900,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   //
   // read partition boot record and copy it to BIOS boot area 0000:07C00
   //
-  mBootSector = AllocatePages(1);
+  mBootSector = (__typeof__(mBootSector))AllocatePages(1);
   Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 1*512, mBootSector);
   CopyMem(pBootSector, mBootSector, 1*512);
   DBG("PBR:\n");

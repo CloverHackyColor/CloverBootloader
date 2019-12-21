@@ -42,7 +42,7 @@ CatPrint (
   VA_LIST Args;
   UINTN   StringSize;
 
-  AppendStr = AllocateZeroPool (0x1000);
+  AppendStr = (__typeof__(AppendStr))AllocateZeroPool (0x1000);
   if (AppendStr == NULL) {
     return Str->Str;
   }
@@ -52,13 +52,13 @@ CatPrint (
   VA_END (Args);
   if (NULL == Str->Str) {
     StringSize   = StrSize (AppendStr);
-    Str->Str  = AllocateZeroPool (StringSize);
+    Str->Str = (__typeof__(Str->Str))AllocateZeroPool (StringSize);
 //    ASSERT (Str->Str != NULL);
   } else {
     StringSize = StrSize (AppendStr);
     StringSize += (StrSize (Str->Str) - sizeof (UINT16));
 
-    Str->Str = ReallocatePool (
+    Str->Str = (__typeof__(Str->Str))ReallocatePool (
                 StrSize (Str->Str),
                 StringSize,
                 Str->Str
@@ -1610,7 +1610,7 @@ DevicePathToStr (
 
 Done:
   NewSize = (Str.Len + 1) * sizeof (CHAR16);
-  Str.Str = ReallocatePool (NewSize, NewSize, Str.Str);
+  Str.Str = (__typeof__(Str.Str))ReallocatePool (NewSize, NewSize, Str.Str);
 //  ASSERT (Str.Str != NULL);
   if (!Str.Str) {
     return NULL;

@@ -250,7 +250,7 @@ OSInfoOSNameImpl (
   // for future developers
   // this variable can be used at OnExitBoootServices,
   // as it will be set by boot.efi
-  BootOSName = AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
+  BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
 
   EfiNamedEventSignal (&gAppleOsLoadedNamedEventGuid);
 }
