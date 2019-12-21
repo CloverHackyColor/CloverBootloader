@@ -4438,7 +4438,9 @@ ParseSMBIOSSettings(
                     TagPtr DictPointer
                     )
 {
-  CHAR8  *i, *j, *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
+  CHAR8  *i, *j;
+  CHAR8  *Res1 = AllocateZeroPool(9);
+  CHAR8  *Res2 = AllocateZeroPool(11);
   CHAR16 UStr[64];
   TagPtr Prop, Prop1;
   BOOLEAN Default = FALSE;
@@ -6674,7 +6676,10 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // Implemented by Sherlocks
     if (OSVersion == NULL) {
       CHAR8  *s, *fileBuffer, *targetString;
-      CHAR8  *Res5 = AllocateZeroPool(5), *Res6 = AllocateZeroPool(6), *Res7 = AllocateZeroPool(7), *Res8 = AllocateZeroPool(8);
+      CHAR8  *Res5 = AllocateZeroPool(5);
+      CHAR8  *Res6 = AllocateZeroPool(6);
+      CHAR8  *Res7 = AllocateZeroPool(7);
+      CHAR8  *Res8 = AllocateZeroPool(8);
       UINTN  fileLen = 0;
       CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log"; // 10.7
       if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {

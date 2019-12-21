@@ -541,7 +541,8 @@ PLATFORMDATA ApplePlatformData[] =
 VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 {
   const CHAR8  *i;
-  CHAR8 *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
+  CHAR8 *Res1 = AllocateZeroPool(9);
+  CHAR8 *Res2 = AllocateZeroPool(11);
 
   AsciiStrCpyS (gSettings.VendorName, 64,      BiosVendor);
   AsciiStrCpyS (gSettings.RomVersion, 64,      ApplePlatformData[Model].firmwareVersion);
