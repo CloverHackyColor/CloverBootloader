@@ -1295,7 +1295,7 @@ VOID PatchTableType17()
       return;
     }
     // Check channels
-    if ((gRAM.UserChannels == 0) || (gRAM.UserChannels > 4)) {
+    if ((gRAM.UserChannels == 0) || (gRAM.UserChannels > 8)) {
       gRAM.UserChannels = 1;
     }
     if (gRAM.UserInUse >= MAX_RAM_SLOTS) {

@@ -5996,6 +5996,16 @@ GetUserSettings(
       Prop = GetProperty(DictPointer, "MemoryRank");
       gSettings.Attribute = (INT8)GetPropertyInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
 
+      // Delete the user memory when a new config is selected
+      INTN i = 0;
+      for (i = 0; i < gRAM.UserInUse && i < MAX_RAM_SLOTS; i++) {
+        gRAM.User[i].ModuleSize = 0;
+        gRAM.User[i].InUse = 0;
+      }
+      gRAM.UserInUse = 0;
+      gRAM.UserChannels = 0;
+      gSettings.InjectMemoryTables = FALSE;
+
       // Inject memory tables into SMBIOS
       Prop = GetProperty (DictPointer, "Memory");
       if (Prop != NULL){

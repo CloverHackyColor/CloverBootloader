@@ -1818,8 +1818,8 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
 
   // Find kernel Mach-O header:
   // for ML: bootArgs2->kslide + 0x00200000
-  // for older versions: just 0x200000
-  // for AptioFix booting - it's always at KernelRelocBase + 0x200000
+  // for older versions: just 0x00200000
+  // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
   KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
 
   // check that it is Mach-O header and detect architecture
