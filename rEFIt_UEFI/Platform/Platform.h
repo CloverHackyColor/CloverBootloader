@@ -1013,8 +1013,8 @@ typedef struct {
 //  BOOLEAN                 DropMCFG;
   BOOLEAN                 FixMCFG;
 
-  UINT32				DeviceRenameCount;
-  ACPI_NAME_LIST		*DeviceRename;
+  UINT32                  DeviceRenameCount;
+  ACPI_NAME_LIST          *DeviceRename;
   //Injections
   BOOLEAN                 StringInjector;
   BOOLEAN                 InjectSystemID;
