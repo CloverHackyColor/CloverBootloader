@@ -417,7 +417,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
   CHAR16 UniOSVersion[16];
   AsciiStrToUnicodeStrS(Entry->OSVersion, UniOSVersion, 16);
-	DBG("UniOSVersion == %s\n", UniOSVersion);
+  DBG("UniOSVersion == %s\n", UniOSVersion);
 
   CHAR16 UniShortOSVersion[6];
   CHAR8  ShortOSVersion[6];
@@ -429,120 +429,112 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 5);
     AsciiStrToUnicodeStrS(Entry->OSVersion, UniShortOSVersion, 6);
   }
-	DBG("ShortOSVersion == %a\n", ShortOSVersion);
-	DBG("UniShortOSVersion == %s\n", UniShortOSVersion);
+  DBG("ShortOSVersion == %a\n", ShortOSVersion);
+  DBG("UniShortOSVersion == %s\n", UniShortOSVersion);
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
   if ((SrcDir = GetOtherKextsDir(TRUE)) != NULL) {
     AddKexts(Entry, SrcDir, L"Other", archCpuType);
     FreePool(SrcDir);
-  }else{
-  	DBG("GetOtherKextsDir(TRUE) return NULL\n");
+  } else {
+    DBG("GetOtherKextsDir(TRUE) return NULL\n");
   }
     // slice: CLOVER/kexts/Off keep disabled kext which can be allowed
   if ((SrcDir = GetOtherKextsDir(FALSE)) != NULL) {
     AddKexts(Entry, SrcDir, L"Off", archCpuType);
     FreePool(SrcDir);
-  }else{
-  	DBG("GetOtherKextsDir(FALSE) return NULL\n");
+  } else {
+    DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
   // Add kext from 10
-	{
+  {
     CHAR16 *OSAllVersionKextsDir;
     CHAR16 *OSShortVersionKextsDir;
     CHAR16 *OSVersionKextsDirName;
     CHAR16 *DirName;
     CHAR16 *DirPath;
     OSAllVersionKextsDir = PoolPrint(L"%s\\kexts\\10", OEMPath);
-    //	UnicodeSPrint(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), L"%s\\kexts\\10", OEMPath);
-		AddKexts(Entry, OSAllVersionKextsDir, L"10", archCpuType);
+    // UnicodeSPrint(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), L"%s\\kexts\\10", OEMPath);
+    AddKexts(Entry, OSAllVersionKextsDir, L"10", archCpuType);
     FreePool(OSAllVersionKextsDir);
 
     if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       DirName = PoolPrint(L"10_install");
-      //		UnicodeSPrint(DirName, sizeof(DirName), L"10_install");
-		} else {
-			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-        DirName = PoolPrint(L"10_recovery");
-        //		UnicodeSPrint(DirName, sizeof(DirName), L"10_recovery");
-			}else{
-        DirName = PoolPrint(L"10_normal");
-        //			UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
-			}
-		}
-
+      // UnicodeSPrint(DirName, sizeof(DirName), L"10_install");
+    } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+      DirName = PoolPrint(L"10_recovery");
+      // UnicodeSPrint(DirName, sizeof(DirName), L"10_recovery");
+    } else {
+      DirName = PoolPrint(L"10_normal");
+      // UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
+    }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
-    //		UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
-		AddKexts(Entry, DirPath, DirName, archCpuType);
+    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+    AddKexts(Entry, DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
 
 
-  // Add kext from 10.{version}
+    // Add kext from 10.{version}
 
     OSShortVersionKextsDir = PoolPrint(L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
-    //	UnicodeSPrint(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
-		AddKexts(Entry, OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
+    // UnicodeSPrint(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
+    AddKexts(Entry, OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
     FreePool(OSShortVersionKextsDir);
 
-		if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       DirName = PoolPrint(L"%s_install", UniShortOSVersion);
-      //		UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", UniShortOSVersion);
-		} else {
-			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-        DirName = PoolPrint(L"%s_recovery", UniShortOSVersion);
-        //			UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", UniShortOSVersion);
-			}else{
-        DirName = PoolPrint(L"%s_normal", UniShortOSVersion);
-        //			UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", UniShortOSVersion);
-			}
-		}
-
+      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", UniShortOSVersion);
+    } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+      DirName = PoolPrint(L"%s_recovery", UniShortOSVersion);
+      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", UniShortOSVersion);
+    } else {
+      DirName = PoolPrint(L"%s_normal", UniShortOSVersion);
+      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", UniShortOSVersion);
+    }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
-    //	UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
-		AddKexts(Entry, DirPath, DirName, archCpuType);
+    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+    AddKexts(Entry, DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
 
-		// Add kext from :
-		// 10.{version}.0 if NO minor version
-		// 10.{version}.{minor version} if minor version is > 0
 
+    // Add kext from :
+    // 10.{version}.0 if NO minor version
+    // 10.{version}.{minor version} if minor version is > 0
 
-		if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
+    if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
       OSVersionKextsDirName = PoolPrint(L"%a.0", Entry->OSVersion);
-      //		UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
-		}else{
-      OSVersionKextsDirName = PoolPrint(L"%a.0", Entry->OSVersion);
-      //		UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
-		}
+      // UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
+    } else {
+      OSVersionKextsDirName = PoolPrint(L"%a", Entry->OSVersion);
+      // UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
+    }
 
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
-    //		UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
-		AddKexts(Entry, DirPath, OSVersionKextsDirName, archCpuType);
+    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
+    AddKexts(Entry, DirPath, OSVersionKextsDirName, archCpuType);
     FreePool(DirPath);
-    FreePool(OSVersionKextsDirName);
 
-		if ( OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    if ( OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       DirName = PoolPrint(L"%s_install", OSVersionKextsDirName);
-      //			UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", OSVersionKextsDirName);
-		}else{
-			if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-        DirName = PoolPrint(L"%s_recovery", OSVersionKextsDirName);
-        //		UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", OSVersionKextsDirName);
-			}else{
-        DirName = PoolPrint(L"%s_normal", OSVersionKextsDirName);
-        //		UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", OSVersionKextsDirName);
-			}
-		}
+      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", OSVersionKextsDirName);
+    } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+      DirName = PoolPrint(L"%s_recovery", OSVersionKextsDirName);
+      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", OSVersionKextsDirName);
+    } else {
+      DirName = PoolPrint(L"%s_normal", OSVersionKextsDirName);
+      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", OSVersionKextsDirName);
+    }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
-    //	UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
-		AddKexts(Entry, DirPath, DirName, archCpuType);
+    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+    AddKexts(Entry, DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
-	}
+    FreePool(OSVersionKextsDirName);
+  }
 
 
   // reserve space in the device tree
