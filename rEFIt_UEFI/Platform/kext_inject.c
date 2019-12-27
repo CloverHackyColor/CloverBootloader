@@ -645,7 +645,7 @@ void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr) {
       UINTN mkext_insert = (UINTN)mkext_ptr + 0x20/*header*/ + mkext_numKexts * 0x20/*kext*/;
 
       // free some space
-      CopyMem((VOID*) mkext_insert + 0x20,
+      CopyMem((VOID*)(mkext_insert + 0x20),
               (VOID*) mkext_insert,
               mkext_len - (0x20/*header*/ + mkext_numKexts * 0x20));
       mkext_len += 0x20;
@@ -660,8 +660,8 @@ void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr) {
       }
 
       // copy kext data (plist+binary)
-      CopyMem((VOID*) mkext_ptr + mkext_len,
-              (VOID*)(UINTN) KextEntry->kext.paddr + sizeof(_BooterKextFileInfo),
+      CopyMem((VOID*)(mkext_ptr + mkext_len),
+              (VOID*)(UINTN)(KextEntry->kext.paddr + sizeof(_BooterKextFileInfo)),
               (UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength
                + (UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength);
 
