@@ -394,7 +394,7 @@ AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, /* CONST*/ UINT8* data, UINT32
 	return node;
 }
 
-AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, /* CONST*/ CHAR8* StringBuf)
+AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* StringBuf)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	

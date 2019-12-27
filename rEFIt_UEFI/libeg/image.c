@@ -318,7 +318,7 @@ VOID egFreeImage(IN EG_IMAGE *Image)
 //
 // Basic file operations
 //
-EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
+EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength)
 {
   EFI_STATUS          Status = EFI_NOT_FOUND;
@@ -332,7 +332,7 @@ EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
     goto Error;
   }
 
-  Status = BaseDir->Open(BaseDir, &FileHandle, FileName, EFI_FILE_MODE_READ, 0);
+  Status = BaseDir->Open(BaseDir, &FileHandle, (CHAR16*)FileName, EFI_FILE_MODE_READ, 0); // const missing in EFI_FILE_HANDLE->Open
   if (EFI_ERROR(Status) || !FileHandle) {
     goto Error;
   }
@@ -398,7 +398,7 @@ EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
 }
 //if (NULL, ...) then save to EFI partition
 EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
-                      IN UINT8 *FileData, IN UINTN FileDataLength)
+                      IN CONST VOID *FileData, IN UINTN FileDataLength)
 {
   EFI_STATUS          Status;
   EFI_FILE_HANDLE     FileHandle;
@@ -473,7 +473,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
   }
 
   BufferSize = FileDataLength;
-  Status = FileHandle->Write(FileHandle, &BufferSize, FileData);
+  Status = FileHandle->Write(FileHandle, &BufferSize, (VOID*)FileData); // CONST missing in EFI_FILE_HANDLE->write
   FileHandle->Close(FileHandle);
 //  DBG("not written %r\n", Status);
   return Status;
@@ -510,7 +510,7 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 }
 
 //caller is responsible for free image
-EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha)
+EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN BOOLEAN WantAlpha)
 {
   EFI_STATUS      Status;
   UINT8           *FileData = NULL;

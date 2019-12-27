@@ -1619,12 +1619,12 @@ CHAR16 * egFindExtension(IN CHAR16 *FileName)
 // memory string search
 //
 
-INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength)
+INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength)
 {
-  UINT8 *BufferPtr;
+  CONST UINT8 *BufferPtr;
   UINTN Offset;
   
-  BufferPtr = Buffer;
+  BufferPtr = (CONST UINT8 *)Buffer;
   BufferLength -= SearchStringLength;
   for (Offset = 0; Offset < BufferLength; Offset++, BufferPtr++) {
     if (CompareMem(BufferPtr, SearchString, SearchStringLength) == 0)

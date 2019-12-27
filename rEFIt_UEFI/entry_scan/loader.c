@@ -403,7 +403,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
-                                       IN CHAR16 *LoaderOptions,
+                                       IN CONST CHAR16 *LoaderOptions,
                                        IN CHAR16 *FullTitle,
                                        IN CHAR16 *LoaderTitle,
                                        IN REFIT_VOLUME *Volume,
@@ -976,7 +976,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->me.Title, Entry->LoaderType, Entry->OSVersion);
 }
 
-STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
+STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderOptions,
                               IN CHAR16 *LoaderTitle,
                               IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
                               IN UINT8 OSType, IN UINT8 Flags)

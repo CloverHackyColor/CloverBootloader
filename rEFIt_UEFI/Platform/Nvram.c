@@ -135,11 +135,11 @@ VOID *GetNvramVariable (
 /** Sets NVRAM variable. Does nothing if variable with the same data and attributes already exists. */
 EFI_STATUS
 SetNvramVariable (
-    IN  CHAR16   *VariableName,
-    IN  EFI_GUID *VendorGuid,
-    IN  UINT32   Attributes,
-    IN  UINTN    DataSize,
-    IN  VOID     *Data
+    IN  CHAR16     *VariableName,
+    IN  EFI_GUID   *VendorGuid,
+    IN  UINT32      Attributes,
+    IN  UINTN       DataSize,
+    IN  CONST VOID *Data
   )
 {
   //EFI_STATUS Status;
@@ -174,7 +174,7 @@ SetNvramVariable (
   //DBG (" -> writing new (%r)\n", Status);
   //return Status;
  
-  return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
+  return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
   
 }
 
@@ -1034,7 +1034,7 @@ PutNvramPlistToRtVars ()
       
       // <string> element
       Value = ValTag->string;
-      Size  = AsciiStrLen (Value);
+      Size  = AsciiStrLen((CONST CHAR8*)Value);
       if (!GlobalConfig.DebugLog) {
         DBG ("String: Size = %d, Val = '%a'\n", Size, Value);
       }

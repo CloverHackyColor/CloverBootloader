@@ -638,7 +638,7 @@ typedef struct {
   REFIT_MENU_ENTRY  me;
   REFIT_VOLUME     *Volume;
   CHAR16           *DevicePathString;
-  CHAR16           *LoadOptions;
+  CONST CHAR16     *LoadOptions;
   UINTN             BootNum;
   CHAR16           *LoaderPath; //will be set to NULL
 } LEGACY_ENTRY;
@@ -741,7 +741,7 @@ CHAR16 * Basename(IN CHAR16 *Path);
 VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 CHAR16 * egFindExtension(IN CHAR16 *FileName);
 
-INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
+INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength);
 
 CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
@@ -952,7 +952,7 @@ EfiLibFileSystemVolumeLabelInfo (
                                  );
 extern CHAR16 *
 EfiStrDuplicate (
-                 IN CHAR16   *Src
+                 IN CONST CHAR16   *Src
                  );
 
 extern INTN StriCmp (

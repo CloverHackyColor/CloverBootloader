@@ -148,7 +148,7 @@ EfiLibFileSystemVolumeLabelInfo (
 **/
 CHAR16 *
 EfiStrDuplicate (
-  IN CHAR16   *Src
+  IN CONST CHAR16   *Src
 				 )
 {
   CHAR16  *Dest;

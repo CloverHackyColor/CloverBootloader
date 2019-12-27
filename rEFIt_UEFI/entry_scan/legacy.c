@@ -52,7 +52,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
-  CHAR16            *VolDesc;
+  CONST CHAR16      *VolDesc;
   CHAR16             ShortcutLetter = 0;
   INTN               i;
   

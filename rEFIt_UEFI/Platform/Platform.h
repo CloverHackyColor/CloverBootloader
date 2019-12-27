@@ -1950,11 +1950,11 @@ AddNvramVariable (
 
 EFI_STATUS
 SetNvramVariable (
-  IN  CHAR16   *VariableName,
-  IN  EFI_GUID *VendorGuid,
-  IN  UINT32   Attributes,
-  IN  UINTN    DataSize,
-  IN  VOID     *Data
+  IN  CHAR16      *VariableName,
+  IN  EFI_GUID    *VendorGuid,
+  IN  UINT32       Attributes,
+  IN  UINTN        DataSize,
+  IN  CONST VOID  *Data
   );
 
 EFI_STATUS
