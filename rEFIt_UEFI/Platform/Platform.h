@@ -757,7 +757,7 @@ struct DEV_PROPERTY {
   UINT32        Device;
   EFI_DEVICE_PATH_PROTOCOL* DevicePath;
   CHAR8         *Key;
-  CHAR8         *Value;
+  UINT8         *Value;
   UINTN         ValueLen;
   DEV_PROPERTY  *Next;   //next device or next property
   DEV_PROPERTY  *Child;  // property list of the device
@@ -1013,8 +1013,8 @@ typedef struct {
 //  BOOLEAN                 DropMCFG;
   BOOLEAN                 FixMCFG;
 
-  UINT32				DeviceRenameCount;
-  ACPI_NAME_LIST		*DeviceRename;
+  UINT32                  DeviceRenameCount;
+  ACPI_NAME_LIST          *DeviceRename;
   //Injections
   BOOLEAN                 StringInjector;
   BOOLEAN                 InjectSystemID;

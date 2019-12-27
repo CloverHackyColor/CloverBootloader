@@ -417,12 +417,11 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
 //Slice - FakeCPUID substitution, (c)2014
 
 //procedure location
-STATIC UINT8 StrCpuid1[] = {
-  0xb8, 0x01, 0x00, 0x00, 0x00, 0x31, 0xdb, 0x89, 0xd9, 0x89, 0xda, 0x0f, 0xa2};
+STATIC UINT8 StrCpuid1_tigLeo[]  = {0xb9, 0x01, 0x00, 0x00, 0x00, 0x89, 0xc8, 0x0f, 0xa2};
+STATIC UINT8 StrCpuid1_snowLeo[] = {0xb8, 0x01, 0x00, 0x00, 0x00, 0x31, 0xdb, 0x89, 0xd9, 0x89, 0xda, 0x0f, 0xa2};
+STATIC UINT8 StrMsr8b[]          = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
 
-STATIC UINT8 StrMsr8b[]       = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
-
-// Snow Leopard
+// Tiger/Leopard/Snow Leopard
 /*
  This patch searches
   and eax, 0xf0   ||    and eax, 0x0f0000
@@ -430,9 +429,9 @@ STATIC UINT8 StrMsr8b[]       = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
  and replaces to
   mov eax, FakeModel  | mov eax, FakeExt
  */
-STATIC UINT8 SnowSearchModel[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
-STATIC UINT8 SnowSearchExt[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
-STATIC UINT8 SnowReplaceModel[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
+STATIC UINT8 TigLeoSLSearchModel[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
+STATIC UINT8 TigLeoSLSearchExt[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
+STATIC UINT8 TigLeoSLReplaceModel[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
 
 // Lion
 /*
@@ -530,11 +529,19 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
 
 VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
 {
+// Tiger/Leopard patterns
+  DBG_RT(Entry, "CPUID: try Tiger/Leopard patch...\n");
+  if (PatchCPUID(kernelData, &StrCpuid1_tigLeo[0], sizeof(StrCpuid1_tigLeo), &TigLeoSLSearchModel[0],
+                 &TigLeoSLSearchExt[0], &TigLeoSLReplaceModel[0], &TigLeoSLReplaceModel[0],
+                 sizeof(TigLeoSLSearchModel), Entry)) {
+    DBG_RT(Entry, "...done!\n");
+    return;
+  }
 // Snow Leopard patterns
   DBG_RT(Entry, "CPUID: try Snow Leopard patch...\n");
-  if (PatchCPUID(kernelData, &StrCpuid1[0], sizeof(StrCpuid1), &SnowSearchModel[0],
-                 &SnowSearchExt[0], &SnowReplaceModel[0], &SnowReplaceModel[0],
-                 sizeof(SnowSearchModel), Entry)) {
+  if (PatchCPUID(kernelData, &StrCpuid1_snowLeo[0], sizeof(StrCpuid1_snowLeo), &TigLeoSLSearchModel[0],
+                 &TigLeoSLSearchExt[0], &TigLeoSLReplaceModel[0], &TigLeoSLReplaceModel[0],
+                 sizeof(TigLeoSLSearchModel), Entry)) {
     DBG_RT(Entry, "...done!\n");
     return;
   }
@@ -1817,10 +1824,17 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
   }
 
   // Find kernel Mach-O header:
+  // for 10.4 - 10.5: 0x00111000
+  // for 10.6 - 10.7: 0x00200000
   // for ML: bootArgs2->kslide + 0x00200000
-  // for older versions: just 0x200000
-  // for AptioFix booting - it's always at KernelRelocBase + 0x200000
-  KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+  // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
+
+  UINT64 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  if (os_version < AsciiOSVersionToUint64("10.6")) {
+    KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
+  } else {
+    KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+  }
 
   // check that it is Mach-O header and detect architecture
   if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {

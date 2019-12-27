@@ -1295,7 +1295,7 @@ VOID PatchTableType17()
       return;
     }
     // Check channels
-    if ((gRAM.UserChannels == 0) || (gRAM.UserChannels > 4)) {
+    if ((gRAM.UserChannels == 0) || (gRAM.UserChannels > 8)) {
       gRAM.UserChannels = 1;
     }
     if (gRAM.UserInUse >= MAX_RAM_SLOTS) {
@@ -1364,8 +1364,10 @@ VOID PatchTableType17()
         if (gRAM.User[UserIndex].ModuleSize > 0x7FFF) {
           newSmbiosTable.Type17->Size = 0x7FFF;
           newSmbiosTable.Type17->ExtendedSize = gRAM.User[UserIndex].ModuleSize;
+          mTotalSystemMemory += newSmbiosTable.Type17->ExtendedSize; //Mb
         } else {
           newSmbiosTable.Type17->Size = (UINT16)gRAM.User[UserIndex].ModuleSize;
+          mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
         }
         newSmbiosTable.Type17->MemoryType = gRAM.User[UserIndex].Type;
         if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
@@ -1375,7 +1377,6 @@ VOID PatchTableType17()
         }
         DBG("%a %a %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
           newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
-        mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
         mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
         //        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
       } else {
@@ -1632,7 +1633,12 @@ VOID PatchTableType17()
       } else {
         newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
       }
-      newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
+      if (gRAM.SPD[SPDIndex].ModuleSize > 0x7FFF) {
+        newSmbiosTable.Type17->Size = 0x7FFF;
+        newSmbiosTable.Type17->ExtendedSize = gRAM.SPD[SPDIndex].ModuleSize;
+      } else {
+        newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
+      }
       newSmbiosTable.Type17->MemoryType = gRAM.SPD[SPDIndex].Type;
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
@@ -1676,8 +1682,13 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->MemoryType = 0; //MemoryTypeUnknown;
     } else {
       insertingEmpty = FALSE;
-      DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
-      mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
+      DBG("%a %a %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
+          newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
+      if (newSmbiosTable.Type17->Size == 0x7FFF) {
+        mTotalSystemMemory += newSmbiosTable.Type17->ExtendedSize; //Mb
+      } else {
+        mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
+      }
       mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
       //      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }

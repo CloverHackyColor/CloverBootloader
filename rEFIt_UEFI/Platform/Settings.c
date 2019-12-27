@@ -5111,7 +5111,7 @@ GetUserSettings(
                       else if (Prop3 && (Prop3->type == kTagTypeData)) {
                         UINTN Size = Prop3->dataLen;
                         //     (*Child)->Value = GetDataSetting(Prop3, "Value", &Size);  //TODO
-                        CHAR8* Data = AllocateZeroPool(Size);
+                        UINT8* Data = AllocateZeroPool(Size);
                         CopyMem(Data, Prop3->data, Size);
                         (*Child)->Value = Data;
                         (*Child)->ValueLen = Size;
@@ -5995,6 +5995,16 @@ GetUserSettings(
       }
       Prop = GetProperty(DictPointer, "MemoryRank");
       gSettings.Attribute = (INT8)GetPropertyInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
+
+      // Delete the user memory when a new config is selected
+      INTN i = 0;
+      for (i = 0; i < gRAM.UserInUse && i < MAX_RAM_SLOTS; i++) {
+        gRAM.User[i].ModuleSize = 0;
+        gRAM.User[i].InUse = 0;
+      }
+      gRAM.UserInUse = 0;
+      gRAM.UserChannels = 0;
+      gSettings.InjectMemoryTables = FALSE;
 
       // Inject memory tables into SMBIOS
       Prop = GetProperty (DictPointer, "Memory");

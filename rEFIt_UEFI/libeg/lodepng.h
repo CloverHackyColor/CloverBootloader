@@ -46,8 +46,8 @@ freely, subject to the following restrictions:
 //MODSNI ^
 
 #ifdef __cplusplus
-#include <vector>
-#include <string>
+//#include <vector>
+//#include <string>
 #endif /*__cplusplus*/
 
 extern const char* LODEPNG_VERSION_STRING;

@@ -110,9 +110,9 @@ struct lpc_device_t
 };
 
 //static
-CHAR8 dataBuiltin[] = {0x00};
+UINT8 dataBuiltin[] = {0x00};
 //static
-CHAR8 dataBuiltin1[] = {0x01};
+UINT8 dataBuiltin1[] = {0x01};
 
 static struct lpc_device_t lpc_chipset[] =
 {
@@ -381,57 +381,57 @@ UINT8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
     0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01
 };
 */
-CHAR8 wakret[]  = { 0xA4, 0x12, 0x04, 0x02, 0x00, 0x00 };
-CHAR8 wakslp1[] = { 0x5B, 0x80, 0x50, 0x4D, 0x33, 0x30, 0x01 };
-CHAR8 wakslp2[] = { 0x0A, 0x08, 0x5B, 0x81, 0x0D, 0x50, 0x4D, 0x33, 0x30, 0x01,
+UINT8 wakret[]  = { 0xA4, 0x12, 0x04, 0x02, 0x00, 0x00 };
+UINT8 wakslp1[] = { 0x5B, 0x80, 0x50, 0x4D, 0x33, 0x30, 0x01 };
+UINT8 wakslp2[] = { 0x0A, 0x08, 0x5B, 0x81, 0x0D, 0x50, 0x4D, 0x33, 0x30, 0x01,
   0x00, 0x04, 0x53, 0x4C, 0x4D, 0x45, 0x01, 0x70, 0x00, 0x53, 0x4C, 0x4D, 0x45 };
 
-CHAR8 waksecur[] = {0xA0, 0x0D, 0x91, 0x95, 0x68, 0x01, 0x94, 0x68, 0x0A, 0x05,
+UINT8 waksecur[] = {0xA0, 0x0D, 0x91, 0x95, 0x68, 0x01, 0x94, 0x68, 0x0A, 0x05,
                     0x70, 0x0A, 0x03, 0x68};
 
-CHAR8 pwrb[] = { //? \_SB_PWRB, 0x02
+UINT8 pwrb[] = { //? \_SB_PWRB, 0x02
   0x86, 0x5C, 0x2E, 0x5F, 0x53, 0x42, 0x5F, 0x50, 0x57, 0x52, 0x42, 0x0A, 0x02
 };
 
 
-CHAR8 acpi3[] = {  //Name(_HID, "ACPI003")
+UINT8 acpi3[] = {  //Name(_HID, "ACPI003")
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0D,
   0x41, 0x43, 0x50, 0x49, 0x30, 0x30, 0x30, 0x33, 0x00
 };
 
   //Name (_PRW, Package (0x02){0x1C, 0x03}
-CHAR8 prw1c[] = {
+UINT8 prw1c[] = {
   0x08, 0x5F, 0x50, 0x52, 0x57, 0x12, 0x06, 0x02, 0x0A, 0x1C, 0x0A, 0x03
 };
 
 
-CHAR8 dtgp_1[] = {  // DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
+UINT8 dtgp_1[] = {  // DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
                     // Return (Local0)
    0x44, 0x54, 0x47, 0x50, 0x68, 0x69, 0x6A, 0x6B,
    0x71, 0x60, 0xA4, 0x60
 };
 
-CHAR8 pwrbcid[] = {
+UINT8 pwrbcid[] = {
     0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x0E, 0x14,
     0x0E, 0x5F, 0x50, 0x52, 0x57, 0x00, 0xA4, 0x12, 0x06, 0x02, 0x0A,
     0x0B, 0x0A, 0x04
 };
 
-CHAR8 pwrbprw[] = {
+UINT8 pwrbprw[] = {
   0x14, 0x0E, 0x5F, 0x50, 0x52, 0x57, 0x00, 0xA4, 0x12, 0x06, 0x02,
   0x0A, 0x0B, 0x0A, 0x04
 };
 
-CHAR8 shutdown0[] = {
+UINT8 shutdown0[] = {
     0xA0, 0x05, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
 };
 
-CHAR8 shutdown1[] = {
+UINT8 shutdown1[] = {
   0xA0, 0x0F, 0x91, 0x91, 0x93, 0x68, 0x0A, 0x03, 0x93, 0x68, 0x0A, 0x04, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
 };
 
 
-CHAR8 pnlf[] = {
+UINT8 pnlf[] = {
   0x5B, 0x82, 0x2D, 0x50, 0x4E, 0x4C, 0x46,                         //Device (PNLF)
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x06, 0x10, 0x00, 0x02,       //  Name (_HID, EisaId ("APP0002"))
   0x08, 0x5F, 0x43, 0x49, 0x44,                                     //  Name (_CID,
@@ -440,11 +440,11 @@ CHAR8 pnlf[] = {
   0x08, 0x5F, 0x53, 0x54, 0x41, 0x0A, 0x0B                          //  Name (_STA, 0x0B)
 };
 
-CHAR8 app2[] = { //Name (_HID, EisaId("APP0002"))
+UINT8 app2[] = { //Name (_HID, EisaId("APP0002"))
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x06, 0x10, 0x00, 0x02
 };
 
-CHAR8 darwin[] =
+UINT8 darwin[] =
 {  //addresses shifted by 0x24
   0x08, 0x56, 0x45, 0x52, // 00000020    " .. .VER"
   0x30, 0x0D, 0x43, 0x6C, 0x6F, 0x76, 0x65, 0x72, // 00000028    "0.Clover"
@@ -471,7 +471,7 @@ CHAR8 darwin[] =
 
 };
 
-CHAR8 ClassFix[] =  { 0x00, 0x00, 0x03, 0x00 };
+UINT8 ClassFix[] =  { 0x00, 0x00, 0x03, 0x00 };
 
 BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
 {
@@ -2345,7 +2345,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   return len;
 }
 
-CHAR8 dataLPC[] = {0x18, 0x3A, 0x00, 0x00};
+UINT8 dataLPC[] = {0x18, 0x3A, 0x00, 0x00};
 
 UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 {
@@ -2440,9 +2440,9 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 }
 
 //CONST
-CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
-CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
-CHAR8 VenATI[] = {0x02, 0x10};
+UINT8 Yes[] = {0x01,0x00,0x00,0x00};
+UINT8 data2[] = {0xe0,0x00,0x56,0x28};
+UINT8 VenATI[] = {0x02, 0x10};
 
 UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 {
@@ -2613,34 +2613,34 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       if (gSettings.FakeIntel) {
         FakeID = gSettings.FakeIntel >> 16;
         aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
         FakeVen = gSettings.FakeIntel & 0xFFFF;
         aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
       }
       break;
     case 0x10DE:
       if (gSettings.FakeNVidia) {
         FakeID = gSettings.FakeNVidia >> 16;
         aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
         FakeVen = gSettings.FakeNVidia & 0xFFFF;
         aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
       }
       break;
     case 0x1002:
       if (gSettings.FakeATI) {
         FakeID = gSettings.FakeATI >> 16;
         aml_add_string(pack, "device-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
         aml_add_string(pack, "ATY,DeviceID");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 2);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeID, 2);
         FakeVen = gSettings.FakeATI & 0xFFFF;
         aml_add_string(pack, "vendor-id");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
         aml_add_string(pack, "ATY,VendorID");
-        aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 2);
+        aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 2);
       }/* else {
         aml_add_string(pack, "ATY,VendorID");
         aml_add_byte_buffer(pack, VenATI, 2);
@@ -3062,9 +3062,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
       //    aml_add_string(pack, "model");
       //    aml_add_string_buffer(pack, "Apple LAN card");
       aml_add_string(pack, "device-id");
-      aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
+      aml_add_byte_buffer(pack, (UINT8 *)&FakeID, 4);
       aml_add_string(pack, "vendor-id");
-      aml_add_byte_buffer(pack, (CHAR8 *)&FakeVen, 4);
+      aml_add_byte_buffer(pack, (UINT8 *)&FakeVen, 4);
       aml_add_string(pack, "name");
       aml_add_string_buffer(pack, &NameCard[0]);
       aml_add_string(pack, "compatible");
@@ -3543,9 +3543,9 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
     pack = aml_add_package(met2);
 
     aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+    aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+    aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
 
     aml_add_local0(met2);
     aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -3569,7 +3569,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-CHAR8 dataFW[] = {0x00,0x00,0x00,0x00};
+UINT8 dataFW[] = {0x00,0x00,0x00,0x00};
 
 UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 {
@@ -3875,7 +3875,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met2);
   if (!CustProperties(pack, DEV_USB)) {
     aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, (/* CONST*/ CHAR8*)&USBID[0], 4);
+    aml_add_byte_buffer(pack, (/* CONST*/ UINT8*)&USBID[0], 4);
     aml_add_string(pack, "built-in");
     aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack, "device_type");
@@ -3907,7 +3907,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   pack1 = aml_add_package(met2);
   if (!CustProperties(pack, DEV_USB)) {
     aml_add_string(pack1, "device-id");
-    aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
+    aml_add_byte_buffer(pack1, (/* CONST*/ UINT8*)&USBID[0], 4);
     aml_add_string(pack1, "built-in");
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack1, "device_type");
@@ -3990,7 +3990,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   pack1 = aml_add_package(met2);
   if (!CustProperties(pack, DEV_USB)) {
     aml_add_string(pack1, "device-id");
-    aml_add_byte_buffer(pack1, (/* CONST*/ CHAR8*)&USBID[0], 4);
+    aml_add_byte_buffer(pack1, (/* CONST*/ UINT8*)&USBID[0], 4);
     aml_add_string(pack1, "built-in");
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack1, "device_type");
@@ -4241,8 +4241,8 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 }
 
 
-CHAR8 DevIDE[] = {0x9E,0x26,0x00,0x00};
-CHAR8 VenIDE[] = {0x86,0x80,0x00,0x00};
+UINT8 DevIDE[] = {0x9E,0x26,0x00,0x00};
+UINT8 VenIDE[] = {0x86,0x80,0x00,0x00};
 
 UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 {
@@ -4468,9 +4468,9 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met2);
   if (gSettings.FakeSATA) {
     aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+    aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+    aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
   }
   if (!CustProperties(pack, DEV_SATA) &&
         !gSettings.NoDefaultProperties &&
@@ -4564,9 +4564,9 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met2);
   if (gSettings.FakeSATA) {
     aml_add_string(pack, "device-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&FakeID, 4);
+    aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
-    aml_add_byte_buffer(pack, (CHAR8*)&FakeVen, 4);
+    aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
   }
   if (!CustProperties(pack, DEV_SATA) &&
         !gSettings.NoDefaultProperties &&
@@ -4866,7 +4866,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, sizeoffset = 0;
   UINT32 adr, adr1 = 0, adr2, size, shift = 0;
-  CHAR8 *shutdown = NULL;
+  UINT8 *shutdown = NULL;
 
   DBG("Start SHUTDOWN Fix len=%x\n", len);
   adr = FindMethod(dsdt, len, "_PTS");
