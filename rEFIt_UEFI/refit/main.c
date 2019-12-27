@@ -1666,7 +1666,7 @@ VOID SetVariablesFromNvram()
 
 //  DbgHeader("SetVariablesFromNvram");
 
-  tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
+  tmpString = (__typeof__(tmpString))GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
     DBG("found boot-args in NVRAM:%a, size=%d\n", tmpString, Size);
     // use and forget old one
@@ -1728,7 +1728,7 @@ VOID SetVariablesFromNvram()
     FreePool(tmpString);
   }
   
-  tmpString = GetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, NULL, NULL);
+  tmpString = (__typeof__(tmpString))GetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, NULL, NULL);
   if (tmpString && AsciiStrCmp(tmpString, "1") == 0) {
     gSettings.NvidiaWeb = TRUE;
   }

@@ -148,7 +148,7 @@ SetNvramVariable (
   UINT32 OldAttributes = 0;
   
   //DBG ("SetNvramVariable (%s, guid, 0x%x, %d):", VariableName, Attributes, DataSize);
-  OldData = GetNvramVariable (VariableName, VendorGuid, &OldAttributes, &OldDataSize);
+  OldData = (__typeof__(OldData))GetNvramVariable (VariableName, VendorGuid, &OldAttributes, &OldDataSize);
   if (OldData != NULL) {
     // var already exists - check if it equal to new value
     //DBG (" exists(0x%x, %d)", OldAttributes, OldDataSize);
@@ -191,7 +191,7 @@ AddNvramVariable (
   VOID       *OldData;
 
   //DBG ("SetNvramVariable (%s, guid, 0x%x, %d):\n", VariableName, Attributes, DataSize);
-  OldData = GetNvramVariable (VariableName, VendorGuid, NULL, NULL);
+  OldData = (__typeof__(OldData))GetNvramVariable (VariableName, VendorGuid, NULL, NULL);
   if (OldData == NULL)
   {
     // set new value
@@ -448,7 +448,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       continue; //the variable is not interesting for us
     }
 
-    Data = GetNvramVariable (Name, &Guid, NULL, &DataSize);
+    Data = (__typeof__(Data))GetNvramVariable (Name, &Guid, NULL, &DataSize);
     if (Data) {
  /*     UINTN                       Index;
       DBG("   %s:", Name);
@@ -712,7 +712,7 @@ GetEfiBootDeviceFromNvram ()
     return EFI_SUCCESS;
   }
 
-  gEfiBootDeviceData = GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
+  gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
   if (gEfiBootDeviceData != NULL) {
 //    DBG("Got efi-boot-next-data size=%d\n", Size);
     if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
@@ -729,9 +729,9 @@ GetEfiBootDeviceFromNvram ()
     EFI_STATUS Status;
     Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
     if (EFI_ERROR(Status)) {
-      gEfiBootDeviceData = GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
+      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
     } else {
-      gEfiBootDeviceData = GetNvramVariable (L"specialbootdevice", &gEfiAppleBootGuid, NULL, &Size);
+      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable (L"specialbootdevice", &gEfiAppleBootGuid, NULL, &Size);
     }
     
     if (gEfiBootDeviceData != NULL) {
@@ -758,7 +758,7 @@ GetEfiBootDeviceFromNvram ()
   // then Startup Disk sets BootCampHD to Win disk dev path.
   //
   if (DevicePathType(gEfiBootDeviceData) == HARDWARE_DEVICE_PATH && DevicePathSubType (gEfiBootDeviceData) == HW_MEMMAP_DP) {
-    gBootCampHD = GetNvramVariable (L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
+    gBootCampHD = (__typeof__(gBootCampHD))GetNvramVariable (L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
     gEfiBootVolume = gBootCampHD;
 
     if (gBootCampHD == NULL) {

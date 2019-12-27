@@ -513,7 +513,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
     DBG("Can't save BootCurrent, status=%r\n", Status);
   }
   //Next step is rotate BootOrder to set BootNum to first place
-  BootOrder = GetNvramVariable (L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  BootOrder = (__typeof__(BootOrder))GetNvramVariable (L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
   if (BootOrder == NULL) {
     return;
   }
@@ -4302,7 +4302,7 @@ InitTheme(
     }
     // Try theme from nvram
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
-      ChosenTheme   = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
+      ChosenTheme = (__typeof__(ChosenTheme))GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (ChosenTheme != NULL) {
         if (AsciiStrCmp (ChosenTheme, "embedded") == 0) {
           goto finish;
