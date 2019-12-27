@@ -616,14 +616,39 @@ static unsigned long Adler32(unsigned char *buf, long len)
   return result;
 }
 
+typedef struct {
+  UINT32  Magic;
+  UINT32  Signature;
+  UINT32  Length;
+  UINT32  Adler32;
+  UINT32  Version;
+  UINT32  NumKexts;
+  UINT32  CpuType;
+  UINT32  CpuSubtype;
+} MKextHeader;
+
+typedef struct {
+  UINT32  PlistOffset;
+  UINT32  PlistCompressedSize;
+  UINT32  PlistFullSize;
+  UINT32  PlistModifiedSeconds;
+  UINT32  BinaryOffset;
+  UINT32  BinaryCompressedSize;
+  UINT32  BinaryFullSize;
+  UINT32  BinaryModifiedSeconds;
+} MKextFile;
+
+#define MKEXT_MAGIC     0x54584b4d
+#define MKEXT_SIGNATURE 0x58534f4d
+#define MKEXT_VERSION_1 0x00800001
+
 int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr) {
   _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
-  UINT8* mkext_ptr = (UINT8*)(UINTN)(dtb->paddr);
+  MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)(dtb->paddr);
 
-  UINT32 signature1 = *(UINT32*)(mkext_ptr + 0x00);
-  UINT32 signature2 = *(UINT32*)(mkext_ptr + 0x04);
-  UINT32 version    = *(UINT32*)(mkext_ptr + 0x10);
-  if (signature1 == 0x54584b4d && signature2 == 0x58534f4d && version == 0x00800001) {
+  if (mkext_ptr->Magic == MKEXT_MAGIC
+   && mkext_ptr->Signature == MKEXT_SIGNATURE
+   && mkext_ptr->Version == MKEXT_VERSION_1) {
     DBG_RT(Entry, "MKext_v1 found at paddr=0x%08x, length=0x%08x\n", dtb->paddr, dtb->length);
     return 1;
   }
@@ -632,60 +657,60 @@ int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr) {
 
 void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr) {
   _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
-  UINT8* mkext_ptr = (UINT8*)(UINTN)(dtb->paddr);
+  MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)dtb->paddr;
 
-  UINT32 mkext_len = SwapBytes32(*(UINT32*)(mkext_ptr + 0x08));
-  UINT32 mkext_numKexts = SwapBytes32(*(UINT32*)(mkext_ptr + 0x14));
+  UINT32 mkext_len      = SwapBytes32(mkext_ptr->Length);
+  UINT32 mkext_numKexts = SwapBytes32(mkext_ptr->NumKexts);
 
   LIST_ENTRY    *Link;
   KEXT_ENTRY    *KextEntry;
   if(!IsListEmpty(&gKextList)) {
     for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
       KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
-      UINTN mkext_insert = (UINTN)mkext_ptr + 0x20/*header*/ + mkext_numKexts * 0x20/*kext*/;
+      MKextFile *mkext_insert = (MKextFile*)((UINT8*)mkext_ptr + sizeof(MKextHeader) + mkext_numKexts * sizeof(MKextFile));
 
       // free some space
-      CopyMem((VOID*)(mkext_insert + 0x20),
-              (VOID*) mkext_insert,
-              mkext_len - (0x20/*header*/ + mkext_numKexts * 0x20));
-      mkext_len += 0x20;
+      CopyMem((UINT8*)mkext_insert + sizeof(MKextFile),
+              (UINT8*)mkext_insert,
+              mkext_len - (sizeof(MKextHeader) + mkext_numKexts * sizeof(MKextFile)));
+      mkext_len += sizeof(MKextFile);
 
       // update the offsets to reflect 0x20 bytes moved above
-      for (UINT16 i = 0; i < mkext_numKexts; i++) {
-        UINTN kext_base = (UINTN)mkext_ptr + 0x20/*header*/ + i * 0x20/*kext*/;
-        UINT32 plist_offset = SwapBytes32(*(UINT32*)(kext_base + 0x00/*plist  offset*/));
-        UINT32 binry_offset = SwapBytes32(*(UINT32*)(kext_base + 0x10/*binary offset*/));
-        *((UINT32*)(kext_base + 0x00/*plist  offset*/)) = SwapBytes32(plist_offset + 0x20/*shifted*/);
-        *((UINT32*)(kext_base + 0x10/*binary offset*/)) = SwapBytes32(binry_offset + 0x20/*shifted*/);
+      for (UINT32 i = 0; i < mkext_numKexts; i++) {
+        MKextFile *kext_base = (MKextFile*)((UINT8*)mkext_ptr + sizeof(MKextHeader) + i * sizeof(MKextFile));
+        UINT32 plist_offset  = SwapBytes32(kext_base->PlistOffset)  + sizeof(MKextFile);
+        UINT32 binary_offset = SwapBytes32(kext_base->BinaryOffset) + sizeof(MKextFile);
+        kext_base->PlistOffset  = SwapBytes32(plist_offset);
+        kext_base->BinaryOffset = SwapBytes32(binary_offset);
       }
 
       // copy kext data (plist+binary)
-      CopyMem((VOID*)(mkext_ptr + mkext_len),
-              (VOID*)(UINTN)(KextEntry->kext.paddr + sizeof(_BooterKextFileInfo)),
+      CopyMem((UINT8*)mkext_ptr + mkext_len,
+              (UINT8*)(KextEntry->kext.paddr + sizeof(_BooterKextFileInfo)),
               (UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength
                + (UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength);
 
       // insert kext offsets
-      *((UINT32*)(mkext_insert + 0x00)) = SwapBytes32(mkext_len);
+      mkext_insert->PlistOffset           = SwapBytes32(mkext_len);
       mkext_len += ((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength;
-      *((UINT32*)(mkext_insert + 0x04)) = (UINT32)0;
-      *((UINT32*)(mkext_insert + 0x08)) = SwapBytes32((UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength);
-      *((UINT32*)(mkext_insert + 0x0c)) = (UINT32)0;
-      *((UINT32*)(mkext_insert + 0x10)) = SwapBytes32(mkext_len);
+      mkext_insert->PlistCompressedSize   = 0;
+      mkext_insert->PlistFullSize         = SwapBytes32((UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength);
+      mkext_insert->PlistModifiedSeconds  = 0;
+      mkext_insert->BinaryOffset          = SwapBytes32(mkext_len);
       mkext_len += ((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength;
-      *((UINT32*)(mkext_insert + 0x14)) = (UINT32)0;
-      *((UINT32*)(mkext_insert + 0x18)) = SwapBytes32((UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength);
-      *((UINT32*)(mkext_insert + 0x1c)) = (UINT32)0;
+      mkext_insert->BinaryCompressedSize  = 0;
+      mkext_insert->BinaryFullSize        = SwapBytes32((UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength);
+      mkext_insert->BinaryModifiedSeconds = 0;
       mkext_numKexts ++;
 
       // update the header
-      *((UINT32*)(mkext_ptr + 0x14)) = SwapBytes32(mkext_numKexts);
-      *((UINT32*)(mkext_ptr + 0x08)) = SwapBytes32(mkext_len);
+      mkext_ptr->Length   = SwapBytes32(mkext_len);
+      mkext_ptr->NumKexts = SwapBytes32(mkext_numKexts);
 
-      // fix checksum
-      *((UINT32*)(mkext_ptr + 0x0c)) = SwapBytes32(Adler32(mkext_ptr + 0x10, mkext_len - 0x10));
+      // update the checksum
+      mkext_ptr->Adler32 = SwapBytes32(Adler32((UINT8*)mkext_ptr + 0x10, mkext_len - 0x10));
 
-      // update the reference
+      // update the memory-map reference
       dtb->length = mkext_len;
     }
   }
