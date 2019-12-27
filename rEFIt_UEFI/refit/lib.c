@@ -1308,7 +1308,7 @@ VOID ReinitVolumes(VOID)
       Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
       
       if (!EFI_ERROR(Status)) {
-        Volume->WholeDiskBlockIO = WholeDiskHandle;
+        Volume->WholeDiskBlockIO = (__typeof__(Volume->WholeDiskBlockIO))WholeDiskHandle;
         // get the BlockIO protocol
         Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
         if (EFI_ERROR(Status)) {

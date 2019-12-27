@@ -459,7 +459,7 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
       
 			if (!Parent) {
 				if (HandleType[Index] & EFI_HANDLE_TYPE_DEVICE_HANDLE) {
-					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID*)&PciIo);
+					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID**)&PciIo);
 					if (!EFI_ERROR (Status)) {
 						Status = PciIo->Pci.Read (PciIo,EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
 						if (!EFI_ERROR (Status)) {

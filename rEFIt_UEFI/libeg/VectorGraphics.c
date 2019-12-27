@@ -39,7 +39,6 @@ extern void DumpFloat2 (char* s, float* t, int N);
 extern EG_IMAGE *BackgroundImage;
 extern EG_IMAGE *Banner;
 extern EG_IMAGE *BigBack;
-extern VOID *fontsDB;
 extern INTN BanHeight;
 extern INTN row0TileSize;
 extern INTN row1TileSize;

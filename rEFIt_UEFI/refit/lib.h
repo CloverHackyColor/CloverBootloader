@@ -882,7 +882,7 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 // menu module
 //
 
-#define MENU_EXIT_ENTER       (1)
+#define MENU_EXIT_ENTER       ((ACTION)(1))
 #define MENU_EXIT_ESCAPE      (2)
 #define MENU_EXIT_DETAILS     (3)
 #define MENU_EXIT_TIMEOUT     (4)

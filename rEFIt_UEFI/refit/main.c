@@ -628,7 +628,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         /*
           Start OSName Mac OS X 10.12 End OSName Start OSVendor Apple Inc. End
         */
-        InstallerVersion = SearchString(LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
+        InstallerVersion = SearchString((CHAR8*)LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
 
         if (InstallerVersion != NULL) { // string was found
           InstallerVersion += 9; // advance to version location
@@ -678,7 +678,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     FilterKextPatches(Entry);
     FilterKernelPatches(Entry);
     FilterBootPatches(Entry);
-    if (LoadedImage && !BooterPatch(LoadedImage->ImageBase, LoadedImage->ImageSize, Entry)) {
+    if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize, Entry)) {
       DBG("Will not patch boot.efi\n");
     }
 

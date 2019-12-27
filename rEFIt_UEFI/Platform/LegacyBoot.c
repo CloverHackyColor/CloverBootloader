@@ -238,7 +238,7 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 	// read first 2 sectors
 	Status = BiosReadSectorsFromDrive(DriveNum, 0, 2, Dap, Buffer);
 	if (!EFI_ERROR(Status)) {
-    *DriveCRC32 = GetCrc32(Buffer, 2 * 512);
+    *DriveCRC32 = GetCrc32((UINT8*)Buffer, 2 * 512);
 		//gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
 		DBG("Bios drive CRC32 = 0x%x\n", *DriveCRC32);
 	}

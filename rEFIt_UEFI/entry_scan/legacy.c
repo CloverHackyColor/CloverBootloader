@@ -152,8 +152,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *FullTitle, IN CHAR16 *LoaderTitl
   
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
-  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
-  ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
+  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
   
   // create the submenu
   SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));

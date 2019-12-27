@@ -713,15 +713,15 @@ struct Symbol {
 
 typedef struct Symbol Symbol, *SymbolPtr;
 
-typedef struct {
+typedef struct TagStruct {
 
   UINTN  type;
   CHAR8  *string;
   UINT8  *data;
   UINTN  dataLen;
   UINTN  offset;
-  VOID   *tag;
-  VOID   *tagNext;
+  struct TagStruct *tag;
+  struct TagStruct *tagNext;
 
 } TagStruct, *TagPtr;
 

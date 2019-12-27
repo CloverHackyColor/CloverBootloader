@@ -51,7 +51,6 @@
 #endif
 
 typedef UINTN size_t;
-extern VOID *fontsDB;
 
 #define NSVG_PI (3.14159265358979323846264338327f)
 #define NSVG_PI_DEG (0.01745329251994f)

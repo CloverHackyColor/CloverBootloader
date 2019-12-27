@@ -109,8 +109,8 @@ _PPrint (
 EFI_STATUS
 EFIAPI
 _SPrint (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
+  IN POOL_PRINT  *Context,
+  IN CHAR16      *Buffer
   );
 
 UINTN
@@ -134,7 +134,7 @@ _PoolCatPrint (
     (EFIAPI
   *Output)
     (
-      VOID *context,
+      POOL_PRINT *context,
       CHAR16 *str
     )
   );
@@ -142,8 +142,8 @@ _PoolCatPrint (
 EFI_STATUS
 EFIAPI
 _PoolPrint (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
+  IN POOL_PRINT     *Context,
+  IN CHAR16         *Buffer
   );
 
 VOID
@@ -205,7 +205,7 @@ _DbgOut (
 EFI_STATUS
 EFIAPI
 _SPrint (
-  IN VOID     *Context,
+  IN POOL_PRINT     *Context,
   IN CHAR16   *Buffer
   )
 /*++
@@ -268,7 +268,7 @@ _PoolCatPrint (
     (EFIAPI
   *Output)
     (
-      VOID *context,
+      POOL_PRINT *context,
       CHAR16 *str
     )
   )
@@ -291,7 +291,7 @@ Returns:
   PRINT_STATE ps;
 
   SetMem (&ps, sizeof (ps), 0);
-  ps.Output   = Output;
+  ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CHAR16 *str))Output;
   ps.Context  = spc;
   ps.fmt.u.pw = fmt;
   //ps.args     = args;
@@ -1266,8 +1266,8 @@ SetOutputPause (
 EFI_STATUS
 EFIAPI
 _PoolPrint (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
+  IN POOL_PRINT     *Context,
+  IN CHAR16         *Buffer
   )
 /*++
 

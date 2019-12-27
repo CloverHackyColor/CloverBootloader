@@ -36,6 +36,7 @@
 //Slice 2011 - 2016 numerous improvements
 
 #include "libegint.h"
+#include "nanosvg.h"
 
 //#include "egemb_font.h"
 //#define FONT_CELL_WIDTH (7)
@@ -58,7 +59,7 @@ EG_IMAGE *FontImage = NULL;
 INTN FontWidth = 9;
 INTN FontHeight = 18;
 INTN TextHeight = 19;
-VOID *fontsDB = NULL;
+NSVGfont *fontsDB = NULL;
 
 
 CONST EG_PIXEL SemiWhitePixel = {255, 255, 255, 210}; //semitransparent

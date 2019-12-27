@@ -1302,9 +1302,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 {
-  UINTN i;
+  MACHINE_TYPES i;
 
-  for (i = 0; i < MaxMachineType; ++i) {
+  for (i = (MACHINE_TYPES)(0); i < MaxMachineType; i = (MACHINE_TYPES)(i + 1)) {
     if (AsciiStrCmp (ApplePlatformData[i].productName, ProductName) == 0) {
       return i;
     }

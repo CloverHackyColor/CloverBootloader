@@ -421,7 +421,7 @@ ParseLoadOptions (
 VOID
 GetBootFromOption(VOID)
 {
-  UINT8  *Data = SelfLoadedImage->LoadOptions;
+  UINT8  *Data = (UINT8*)SelfLoadedImage->LoadOptions;
   UINTN  Len = SelfLoadedImage->LoadOptionsSize;
   UINTN  NameSize, Name2Size;
 
@@ -557,7 +557,7 @@ SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry)
 // data can be specified in <data></data> base64 encoded
 // or in <string></string> hex encoded
 //
-VOID
+UINT8
 *GetDataSetting (
                  IN      TagPtr Dict,
                  IN      CHAR8  *PropName,
@@ -5656,7 +5656,7 @@ GetUserSettings(
               gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
               DBG (", lenToReplace: %d", Size);
               gSettings.LenToReplace[i]     = (UINT32)Size;
-              gSettings.PatchDsdtTgt[i]     = GetDataSetting (Prop2, "TgtBridge", &Size);
+              gSettings.PatchDsdtTgt[i]     = (CHAR8*)GetDataSetting (Prop2, "TgtBridge", &Size);
               DBG (", Target Bridge: %a\n", gSettings.PatchDsdtTgt[i]);
               if (!gSettings.PatchDsdtMenuItem[i].BValue) {
                 DBG("  patch disabled at config\n");
@@ -8160,7 +8160,7 @@ SetDevices (LOADER_ENTRY *Entry)
 
     if (!EFI_ERROR (Status)) {
       mProperties       = (UINT8*)(UINTN)BufferPtr;
-      gDeviceProperties = (VOID*)devprop_generate_string (device_inject_string);
+      gDeviceProperties = devprop_generate_string (device_inject_string);
       gDeviceProperties[device_inject_stringlength] = 0;
       //     DBG (gDeviceProperties);
       //     DBG ("\n");
