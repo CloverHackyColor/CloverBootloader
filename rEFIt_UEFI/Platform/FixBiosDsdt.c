@@ -1391,7 +1391,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
     k = 0;
     if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, TRUE)) { //device candidate
       k = i + 2;
-    } else if ((dsdt[i] == 0x10) && !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
+    } else if ((dsdt[i] == 0x10) && (dsdt[i-1] != 0x0A) && !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
       //additional check for Field
       // a problem with fields 52 4D 53 33 10 41 4D 45 4D
       // 1. Search outer filed
@@ -1401,6 +1401,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       SBFound = TRUE;
       while (j > 0x20) {
         if (((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x81)) || 
+            ((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x82)) ||
             ((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x86))) { //we found a Field() or IndexField before the 0x10 will check what is it
           size = (INT32)get_size(dsdt, j + 1); // if it is not a size then size = 0
           if (j + size >= i) {
