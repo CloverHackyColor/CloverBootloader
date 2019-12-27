@@ -576,6 +576,122 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 }
 
 
+/*
+ * Adler32 from Chameleon
+ */
+#define BASE 65521L /* largest prime smaller than 65536 */
+#define NMAX 5000
+// NMAX (was 5521) the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1
+
+#define DO1(buf,i)  {s1 += buf[i]; s2 += s1;}
+#define DO2(buf,i)  DO1(buf,i); DO1(buf,i+1);
+#define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
+#define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
+#define DO16(buf)   DO8(buf,0); DO8(buf,8);
+
+static unsigned long Adler32(unsigned char *buf, long len)
+{
+  unsigned long s1 = 1; // adler & 0xffff;
+  unsigned long s2 = 0; // (adler >> 16) & 0xffff;
+  unsigned long result;
+  int k;
+
+  while (len > 0) {
+    k = len < NMAX ? len : NMAX;
+    len -= k;
+    while (k >= 16) {
+      DO16(buf);
+      buf += 16;
+      k -= 16;
+    }
+    if (k != 0) do {
+      s1 += *buf++;
+      s2 += s1;
+    } while (--k);
+    s1 %= BASE;
+    s2 %= BASE;
+  }
+  result = (s2 << 16) | s1;
+  // result is in big endian
+  return result;
+}
+
+int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr) {
+  _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
+  UINT8* mkext_ptr = (UINT8*)(UINTN)(dtb->paddr);
+
+  UINT32 signature1 = *(UINT32*)(mkext_ptr + 0x00);
+  UINT32 signature2 = *(UINT32*)(mkext_ptr + 0x04);
+  UINT32 version    = *(UINT32*)(mkext_ptr + 0x10);
+  if (signature1 == 0x54584b4d && signature2 == 0x58534f4d && version == 0x00800001) {
+    DBG_RT(Entry, "MKext_v1 found at paddr=0x%08x, length=0x%08x\n", dtb->paddr, dtb->length);
+    return 1;
+  }
+  return 0;
+}
+
+void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr) {
+  _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
+  UINT8* mkext_ptr = (UINT8*)(UINTN)(dtb->paddr);
+
+  UINT32 mkext_len = SwapBytes32(*(UINT32*)(mkext_ptr + 0x08));
+  UINT32 mkext_numKexts = SwapBytes32(*(UINT32*)(mkext_ptr + 0x14));
+
+  LIST_ENTRY    *Link;
+  KEXT_ENTRY    *KextEntry;
+  if(!IsListEmpty(&gKextList)) {
+    for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
+      KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
+      UINTN mkext_insert = (UINTN)mkext_ptr + 0x20/*header*/ + mkext_numKexts * 0x20/*kext*/;
+
+      // free some space
+      CopyMem((VOID*) mkext_insert + 0x20,
+              (VOID*) mkext_insert,
+              mkext_len - (0x20/*header*/ + mkext_numKexts * 0x20));
+      mkext_len += 0x20;
+
+      // update the offsets to reflect 0x20 bytes moved above
+      for (UINT16 i = 0; i < mkext_numKexts; i++) {
+        UINTN kext_base = (UINTN)mkext_ptr + 0x20/*header*/ + i * 0x20/*kext*/;
+        UINT32 plist_offset = SwapBytes32(*(UINT32*)(kext_base + 0x00/*plist  offset*/));
+        UINT32 binry_offset = SwapBytes32(*(UINT32*)(kext_base + 0x10/*binary offset*/));
+        *((UINT32*)(kext_base + 0x00/*plist  offset*/)) = SwapBytes32(plist_offset + 0x20/*shifted*/);
+        *((UINT32*)(kext_base + 0x10/*binary offset*/)) = SwapBytes32(binry_offset + 0x20/*shifted*/);
+      }
+
+      // copy kext data (plist+binary)
+      CopyMem((VOID*) mkext_ptr + mkext_len,
+              (VOID*)(UINTN) KextEntry->kext.paddr + sizeof(_BooterKextFileInfo),
+              (UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength
+               + (UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength);
+
+      // insert kext offsets
+      *((UINT32*)(mkext_insert + 0x00)) = SwapBytes32(mkext_len);
+      mkext_len += ((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength;
+      *((UINT32*)(mkext_insert + 0x04)) = (UINT32)0;
+      *((UINT32*)(mkext_insert + 0x08)) = SwapBytes32((UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->infoDictLength);
+      *((UINT32*)(mkext_insert + 0x0c)) = (UINT32)0;
+      *((UINT32*)(mkext_insert + 0x10)) = SwapBytes32(mkext_len);
+      mkext_len += ((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength;
+      *((UINT32*)(mkext_insert + 0x14)) = (UINT32)0;
+      *((UINT32*)(mkext_insert + 0x18)) = SwapBytes32((UINT32)((_BooterKextFileInfo*)(UINTN)(KextEntry->kext.paddr))->executableLength);
+      *((UINT32*)(mkext_insert + 0x1c)) = (UINT32)0;
+      mkext_numKexts ++;
+
+      // update the header
+      *((UINT32*)(mkext_ptr + 0x14)) = SwapBytes32(mkext_numKexts);
+      *((UINT32*)(mkext_ptr + 0x08)) = SwapBytes32(mkext_len);
+
+      // fix checksum
+      *((UINT32*)(mkext_ptr + 0x0c)) = SwapBytes32(Adler32(mkext_ptr + 0x10, mkext_len - 0x10));
+
+      // update the reference
+      dtb->length = mkext_len;
+    }
+  }
+}
+
+
 ////////////////////
 // OnExitBootServices
 ////////////////////
@@ -661,6 +777,17 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
     return EFI_INVALID_PARAMETER;
   }
 
+
+  UINT64 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  if (os_version < AsciiOSVersionToUint64("10.6")) {
+    DBG_RT(Entry, "no kernel patch for Tiger/Leopard; try to patch mkext\n");
+    if (is_mkext_v1(Entry, drvPtr)) {
+      patch_mkext_v1(Entry, drvPtr);
+      return EFI_SUCCESS;
+    }
+  }
+
+
   // make space for memory map entries
   platformEntry->NumProperties -= 2;
   offset = sizeof(DeviceTreeNodeProperty) + ((DeviceTreeNodeProperty*) infoPtr)->Length;
@@ -721,7 +848,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
     }
   }
 
-   if (Entry->KernelAndKextPatches->KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "Done.\n");
     gBS->Stall(5000000);
   }
