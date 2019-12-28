@@ -89,6 +89,16 @@ EFI_HANDLE ConsoleInHandle;
 EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
 EFI_KEY_DATA KeyData;
 
+CHAR8* AudioOutputNames[] = {
+  "LineOut",
+  "Speaker",
+  "Headphones",
+  "SPDIF",
+  "Garniture",
+  "HDMI",
+  "Other"
+};
+
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
 extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
@@ -101,6 +111,7 @@ extern UINTN                 DsdtsNum;
 extern CHAR16                *DsdtsList[];
 extern UINTN                 AudioNum;
 extern HDA_OUTPUTS           AudioList[20];
+extern CHAR8                 *AudioOutputNames[];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 
@@ -2485,11 +2496,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         PutNvramPlistToRtVars();
       }
     }
-
+    
+    // log Audio devices in boot-log. Thisis for clients like Clover.app
+    GetOutputs();
+    for (i = 0; i < AudioNum; i++) {
+      if (AudioList[i].Name) {
+        // Never change this log, otherwise clients will stop interprete the output.
+        MsgLog("Found Audio Device %s (%a) at index %d\n", AudioList[i].Name, AudioOutputNames[AudioList[i].Device], i);
+      }
+    }
+    
     if (!GlobalConfig.FastBoot) {
-
       CHAR16 *TmpArgs;
-      GetOutputs();
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;

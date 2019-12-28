@@ -74,6 +74,7 @@ extern UINTN            DsdtsNum;
 extern CHAR16           *DsdtsList[];
 extern UINTN            AudioNum;
 extern HDA_OUTPUTS      AudioList[20];
+extern CHAR8            *AudioOutputNames[];
 extern CHAR8            *NonDetected;
 extern BOOLEAN          GetLegacyLanAddress;
 extern UINT8            gLanMac[4][6]; // their MAC addresses
@@ -235,16 +236,6 @@ CHAR16* ArgOptional[NUM_OPT] = {
   L"-alcoff",         //17
   L"-shikioff",       //18
   L"nvda_drv=1"       //19
-};
-
-CHAR8* OutputNames[] = {
-  "LineOut",
-  "Speaker",
-  "Headphones",
-  "SPDIF",
-  "Garniture",
-  "HDMI",
-  "Other"
 };
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
@@ -1298,7 +1289,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
     UINT8 TmpIndex = OldChosenAudio & 0xFF;
-    DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, OutputNames[OldChosenAudio]);
+    DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, AudioOutputNames[OldChosenAudio]);
 
     DevicePath = DevicePathFromHandle(AudioList[OldChosenAudio].Handle);
     if (DevicePath != NULL) {
@@ -5148,7 +5139,7 @@ REFIT_MENU_ENTRY  *SubMenuAudioPort()
 
   for (i = 0; i < AudioNum; i++) {
     InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"%s_%a", AudioList[i].Name, OutputNames[AudioList[i].Device]);
+    InputBootArgs->Entry.Title = PoolPrint(L"%s_%a", AudioList[i].Name, AudioOutputNames[AudioList[i].Device]);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i;
     InputBootArgs->Item = &InputItems[119];
