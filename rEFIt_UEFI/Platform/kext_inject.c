@@ -642,7 +642,8 @@ typedef struct {
 #define MKEXT_SIGNATURE 0x58534f4d
 #define MKEXT_VERSION_1 0x00800001
 
-int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr) {
+int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr)
+{
   _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
   MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)(dtb->paddr);
 
@@ -655,7 +656,8 @@ int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr) {
   return 0;
 }
 
-void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr) {
+void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr)
+{
   _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
   MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)dtb->paddr;
 
