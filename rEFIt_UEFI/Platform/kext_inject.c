@@ -576,6 +576,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 }
 
 
+
 /*
  * Adler32 from Chameleon
  */
@@ -803,17 +804,6 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
     gBS->Stall(5000000);
     return EFI_INVALID_PARAMETER;
   }
-
-
-  UINT64 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
-  if (os_version < AsciiOSVersionToUint64("10.6")) {
-    DBG_RT(Entry, "no kernel patch for Tiger/Leopard; try to patch mkext\n");
-    if (is_mkext_v1(Entry, drvPtr)) {
-      patch_mkext_v1(Entry, drvPtr);
-      return EFI_SUCCESS;
-    }
-  }
-
 
   // make space for memory map entries
   platformEntry->NumProperties -= 2;
