@@ -46,49 +46,49 @@ EFI_BOOT_SERVICES mBootServices = {
     0,                                                                                    // CRC32
     0                                                                                     // Reserved
   },
-  (EFI_RAISE_TPL)                               CoreRaiseTpl,                             // RaiseTPL
-  (EFI_RESTORE_TPL)                             CoreRestoreTpl,                           // RestoreTPL
-  (EFI_ALLOCATE_PAGES)                          CoreAllocatePages,                        // AllocatePages
-  (EFI_FREE_PAGES)                              CoreFreePages,                            // FreePages
+  (EFI_RAISE_TPL)                               CoreRaiseTpl,                             // RaiseTPL 18
+  (EFI_RESTORE_TPL)                             CoreRestoreTpl,                           // RestoreTPL 20
+  (EFI_ALLOCATE_PAGES)                          CoreAllocatePages,                        // AllocatePages 28
+  (EFI_FREE_PAGES)                              CoreFreePages,                            // FreePages  30
   (EFI_GET_MEMORY_MAP)                          CoreGetMemoryMap,                         // GetMemoryMap
-  (EFI_ALLOCATE_POOL)                           CoreAllocatePool,                         // AllocatePool
-  (EFI_FREE_POOL)                               CoreFreePool,                             // FreePool
-  (EFI_CREATE_EVENT)                            CoreCreateEvent,                          // CreateEvent
-  (EFI_SET_TIMER)                               CoreSetTimer,                             // SetTimer
-  (EFI_WAIT_FOR_EVENT)                          CoreWaitForEvent,                         // WaitForEvent
+  (EFI_ALLOCATE_POOL)                           CoreAllocatePool,                         // AllocatePool 40
+  (EFI_FREE_POOL)                               CoreFreePool,                             // FreePool 48
+  (EFI_CREATE_EVENT)                            CoreCreateEvent,                          // CreateEvent 50
+  (EFI_SET_TIMER)                               CoreSetTimer,                             // SetTimer 58
+  (EFI_WAIT_FOR_EVENT)                          CoreWaitForEvent,                         // WaitForEvent 60
   (EFI_SIGNAL_EVENT)                            CoreSignalEvent,                          // SignalEvent
-  (EFI_CLOSE_EVENT)                             CoreCloseEvent,                           // CloseEvent
+  (EFI_CLOSE_EVENT)                             CoreCloseEvent,                           // CloseEvent 70
   (EFI_CHECK_EVENT)                             CoreCheckEvent,                           // CheckEvent
-  (EFI_INSTALL_PROTOCOL_INTERFACE)              CoreInstallProtocolInterface,             // InstallProtocolInterface
+  (EFI_INSTALL_PROTOCOL_INTERFACE)              CoreInstallProtocolInterface,             // InstallProtocolInterface  80
   (EFI_REINSTALL_PROTOCOL_INTERFACE)            CoreReinstallProtocolInterface,           // ReinstallProtocolInterface
-  (EFI_UNINSTALL_PROTOCOL_INTERFACE)            CoreUninstallProtocolInterface,           // UninstallProtocolInterface
-  (EFI_HANDLE_PROTOCOL)                         CoreHandleProtocol,                       // HandleProtocol
+  (EFI_UNINSTALL_PROTOCOL_INTERFACE)            CoreUninstallProtocolInterface,           // UninstallProtocolInterface 90
+  (EFI_HANDLE_PROTOCOL)                         CoreHandleProtocol,                       // HandleProtocol 98
   (VOID *)                                      NULL,                                     // Reserved
   (EFI_REGISTER_PROTOCOL_NOTIFY)                CoreRegisterProtocolNotify,               // RegisterProtocolNotify
-  (EFI_LOCATE_HANDLE)                           CoreLocateHandle,                         // LocateHandle
+  (EFI_LOCATE_HANDLE)                           CoreLocateHandle,                         // LocateHandle  B0
   (EFI_LOCATE_DEVICE_PATH)                      CoreLocateDevicePath,                     // LocateDevicePath
-  (EFI_INSTALL_CONFIGURATION_TABLE)             CoreInstallConfigurationTable,            // InstallConfigurationTable
+  (EFI_INSTALL_CONFIGURATION_TABLE)             CoreInstallConfigurationTable,            // InstallConfigurationTable C0
   (EFI_IMAGE_LOAD)                              CoreLoadImage,                            // LoadImage
-  (EFI_IMAGE_START)                             CoreStartImage,                           // StartImage
+  (EFI_IMAGE_START)                             CoreStartImage,                           // StartImage  D0
   (EFI_EXIT)                                    CoreExit,                                 // Exit
-  (EFI_IMAGE_UNLOAD)                            CoreUnloadImage,                          // UnloadImage
+  (EFI_IMAGE_UNLOAD)                            CoreUnloadImage,                          // UnloadImage  E0
   (EFI_EXIT_BOOT_SERVICES)                      CoreExitBootServices,                     // ExitBootServices
-  (EFI_GET_NEXT_MONOTONIC_COUNT)                CoreEfiNotAvailableYetArg1,               // GetNextMonotonicCount
+  (EFI_GET_NEXT_MONOTONIC_COUNT)                CoreEfiNotAvailableYetArg1,               // GetNextMonotonicCount F0
   (EFI_STALL)                                   CoreStall,                                // Stall
-  (EFI_SET_WATCHDOG_TIMER)                      CoreSetWatchdogTimer,                     // SetWatchdogTimer
+  (EFI_SET_WATCHDOG_TIMER)                      CoreSetWatchdogTimer,                     // SetWatchdogTimer 100
   (EFI_CONNECT_CONTROLLER)                      CoreConnectController,                    // ConnectController
-  (EFI_DISCONNECT_CONTROLLER)                   CoreDisconnectController,                 // DisconnectController
+  (EFI_DISCONNECT_CONTROLLER)                   CoreDisconnectController,                 // DisconnectController 110
   (EFI_OPEN_PROTOCOL)                           CoreOpenProtocol,                         // OpenProtocol
-  (EFI_CLOSE_PROTOCOL)                          CoreCloseProtocol,                        // CloseProtocol
+  (EFI_CLOSE_PROTOCOL)                          CoreCloseProtocol,                        // CloseProtocol 120
   (EFI_OPEN_PROTOCOL_INFORMATION)               CoreOpenProtocolInformation,              // OpenProtocolInformation
-  (EFI_PROTOCOLS_PER_HANDLE)                    CoreProtocolsPerHandle,                   // ProtocolsPerHandle
+  (EFI_PROTOCOLS_PER_HANDLE)                    CoreProtocolsPerHandle,                   // ProtocolsPerHandle 130
   (EFI_LOCATE_HANDLE_BUFFER)                    CoreLocateHandleBuffer,                   // LocateHandleBuffer
-  (EFI_LOCATE_PROTOCOL)                         CoreLocateProtocol,                       // LocateProtocol
+  (EFI_LOCATE_PROTOCOL)                         CoreLocateProtocol,                       // LocateProtocol   140
   (EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES)    CoreInstallMultipleProtocolInterfaces,    // InstallMultipleProtocolInterfaces
-  (EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)  CoreUninstallMultipleProtocolInterfaces,  // UninstallMultipleProtocolInterfaces
+  (EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)  CoreUninstallMultipleProtocolInterfaces,  // UninstallMultipleProtocolInterfaces 150
   (EFI_CALCULATE_CRC32)                         CoreEfiNotAvailableYetArg3,               // CalculateCrc32
-  (EFI_COPY_MEM)                                CopyMem,                                  // CopyMem
-  (EFI_SET_MEM)                                 SetMem,                                   // SetMem
+  (EFI_COPY_MEM)                                CopyMem,                                  // CopyMem 160
+  (EFI_SET_MEM)                                 SetMem,                                   // SetMem  168
   (EFI_CREATE_EVENT_EX)                         CoreCreateEventEx                         // CreateEventEx
 };
 
