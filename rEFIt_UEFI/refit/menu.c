@@ -74,6 +74,7 @@ extern UINTN            DsdtsNum;
 extern CHAR16           *DsdtsList[];
 extern UINTN            AudioNum;
 extern HDA_OUTPUTS      AudioList[20];
+extern CHAR8            *AudioOutputNames[];
 extern CHAR8            *NonDetected;
 extern BOOLEAN          GetLegacyLanAddress;
 extern UINT8            gLanMac[4][6]; // their MAC addresses
@@ -237,16 +238,6 @@ CHAR16* ArgOptional[NUM_OPT] = {
   L"nvda_drv=1"       //19
 };
 
-CHAR8* OutputNames[] = {
-  "LineOut",
-  "Speaker",
-  "Headphones",
-  "SPDIF",
-  "Garniture",
-  "HDMI",
-  "Other"
-};
-
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
 
 
@@ -260,23 +251,23 @@ VOID FillInputs(BOOLEAN New)
 
   InputItemsCount = 0;
   if (New) {
-    InputItems = AllocateZeroPool(130 * sizeof(INPUT_ITEM)); //XXX
+    InputItems = (__typeof__(InputItems))AllocateZeroPool(130 * sizeof(INPUT_ITEM)); //XXX
   }
 
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(SVALUE_MAX_SIZE);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(32);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(32);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 32, L"%s", gSettings.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(63);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
 
@@ -291,12 +282,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.SlpSmiEnable;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.UnderVoltStep);
   InputItems[InputItemsCount].ItemType = BoolValue; //9
@@ -311,7 +302,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.EnableISS;
   InputItems[InputItemsCount].ItemType = Decimal;  //14
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
@@ -320,17 +311,17 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount].ItemType = Decimal;  //17
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%x", gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(36);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   if (gSettings.BusSpeed > 20000) {
     UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.BusSpeed);
@@ -341,7 +332,7 @@ VOID FillInputs(BOOLEAN New)
   for (i=0; i<NGFX; i++) {
     InputItems[InputItemsCount].ItemType = ASString;  //20+i*6
     if (New) {
-      InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+      InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
     }
     UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gGraphics[i].Model);
 
@@ -350,7 +341,7 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].BValue = gSettings.InjectATI;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       if (New) {
-        InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+        InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
       if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
         UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
@@ -365,7 +356,7 @@ VOID FillInputs(BOOLEAN New)
         AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
       }
       if (New) {
-        InputItems[InputItemsCount].SValue = AllocateZeroPool(40);
+        InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(40);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
 
@@ -375,7 +366,7 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].BValue = gSettings.InjectIntel;
       InputItems[InputItemsCount].ItemType = Hex; //22+6i
       if (New) {
-        InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+        InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.IgPlatform);
  //     InputItemsCount += 3;
@@ -384,7 +375,7 @@ VOID FillInputs(BOOLEAN New)
 
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
     if (New) {
-      InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+      InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
     }
     if (gSettings.VideoPorts > 0) {
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.VideoPorts);
@@ -398,13 +389,13 @@ VOID FillInputs(BOOLEAN New)
         AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
       }
       if (New) {
-        InputItems[InputItemsCount].SValue = AllocateZeroPool(84);
+        InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(84);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
     } else { //ATI and others there will be connectors
       InputItems[InputItemsCount].ItemType = Hex; //24+6i
       if (New) {
-        InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+        InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
       UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gGraphics[i].Connectors);
     }
@@ -430,13 +421,13 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Decimal;  //50
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.RefCLK);
 
   InputItems[InputItemsCount].ItemType = ASString;  //51 OS version if non-detected
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(SVALUE_MAX_SIZE);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", NonDetected);
 
@@ -446,12 +437,12 @@ VOID FillInputs(BOOLEAN New)
   //VendorEDID & ProductEDID 53, 54
   InputItems[InputItemsCount].ItemType = Decimal;  //53
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.VendorEDID);
   InputItems[InputItemsCount].ItemType = Decimal;  //54
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.ProductEDID);
 
@@ -468,7 +459,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.HDAInjection;
   InputItems[InputItemsCount].ItemType = Decimal;  // 60
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.HDALayoutId);
 
@@ -479,13 +470,13 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Hex;  //62
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(24);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(24);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeatures);
 
   InputItems[InputItemsCount].ItemType = Hex;  //63
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(24);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(24);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeaturesMask);
 
@@ -510,12 +501,12 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Decimal;  //70
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(8);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", gSettings.DoubleClickTime);
   InputItems[InputItemsCount].ItemType = BoolValue; //72
@@ -529,68 +520,68 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Hex;  //75
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%02d", gSettings.EnabledCores);
   InputItems[InputItemsCount].ItemType = Decimal;  //77
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%02d", gSettings.SavingMode);
 
   InputItems[InputItemsCount].ItemType = ASString;  //78
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
   InputItems[InputItemsCount].ItemType = ASString;  //79
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.VersionNr);
   InputItems[InputItemsCount].ItemType = ASString;  //80
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.SerialNr);
   InputItems[InputItemsCount].ItemType = ASString;  //81
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardNumber);
   InputItems[InputItemsCount].ItemType = ASString;  //82
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardSerialNumber);
   InputItems[InputItemsCount].ItemType = Decimal;  //83
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.BoardType);
   InputItems[InputItemsCount].ItemType = ASString;  //84
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardVersion);
   InputItems[InputItemsCount].ItemType = Decimal;  //85
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.ChassisType);
   InputItems[InputItemsCount].ItemType = ASString;  //86
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.RomVersion);
   InputItems[InputItemsCount].ItemType = ASString;  //87
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
 
@@ -611,38 +602,38 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Hex;  //94
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
   InputItems[InputItemsCount].ItemType = Hex;  //95
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
   InputItems[InputItemsCount].ItemType = Hex;  //96
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
 
   InputItems[InputItemsCount].ItemType = Hex;  //97
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
   InputItems[InputItemsCount].ItemType = Hex;  //98
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
   InputItems[InputItemsCount].ItemType = Hex;  //99
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
   InputItems[InputItemsCount].ItemType = Hex;  //100
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = CheckBit;  //101
@@ -652,12 +643,12 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;
   InputItems[InputItemsCount].ItemType = Hex;  //103
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
   InputItems[InputItemsCount].ItemType = Hex;  //104
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(26);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
 
@@ -674,7 +665,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Hex; //109
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%01x", gSettings.DualLink);
 
@@ -685,7 +676,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Hex;  //112
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.IntelMaxValue);
 
@@ -700,12 +691,12 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = ASString;  //117
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.EfiVersion);
   InputItems[InputItemsCount].ItemType = ASString;  //118
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BooterCfgStr);
 
@@ -713,7 +704,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = 119;
   InputItems[InputItemsCount].ItemType = Decimal;  //120
   if (New) {
-    InputItems[InputItemsCount].SValue = AllocateZeroPool(16);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", DefaultAudioVolume);
   
@@ -1298,7 +1289,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
     UINT8 TmpIndex = OldChosenAudio & 0xFF;
-    DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, OutputNames[OldChosenAudio]);
+    DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, AudioOutputNames[OldChosenAudio]);
 
     DevicePath = DevicePathFromHandle(AudioList[OldChosenAudio].Handle);
     if (DevicePath != NULL) {
@@ -1339,7 +1330,7 @@ VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CHAR16 *Line)
 {
   REFIT_INPUT_DIALOG *InputBootArgs;
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"%s", Line);
   InputBootArgs->Entry.Tag = TAG_INFO;
   InputBootArgs->Item = NULL;
@@ -2262,7 +2253,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       (Item->ItemType != RadioSwitch) &&
       (Item->ItemType != CheckBit)) {
     // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
-    Item->SValue = EfiReallocatePool(Item->SValue, StrSize(Item->SValue), SVALUE_MAX_SIZE);
+    Item->SValue = (__typeof__(Item->SValue))EfiReallocatePool(Item->SValue, StrSize(Item->SValue), SVALUE_MAX_SIZE);
   }
 
   Buffer = Item->SValue;
@@ -3098,7 +3089,7 @@ VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 
   // if the text exceeds the given limit
   if (TextLen > MaxTextLen) {
-    BCSText = AllocatePool((sizeof(CHAR16) * MaxTextLen) + 1);
+    BCSText = (__typeof__(BCSText))AllocatePool((sizeof(CHAR16) * MaxTextLen) + 1);
 
     // error check, not enough memory
     if (!BCSText) {
@@ -4014,8 +4005,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - MessageHeight; //message text
       row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
-        itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
-        itemPosY = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
+        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Screen->EntryCount);
+        itemPosY = (__typeof__(itemPosY))AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
       row0PosYRunning = row0PosY;
       row1PosXRunning = row1PosX;
@@ -4187,7 +4178,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
       
       if (!itemPosX) {
-        itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
+        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
 
       row0PosXRunning = row0PosX;
@@ -4356,18 +4347,18 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-  *Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  *Entry = (__typeof__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (Title) {
     (*Entry)->Title = PoolPrint(L"%a", Title);
   } else {
-    (*Entry)->Title = AllocateZeroPool(128);
+    (*Entry)->Title = (__typeof__((*Entry)->Title))AllocateZeroPool(128);
   }
 
   (*Entry)->Image =  OptionMenu.TitleImage;
   (*Entry)->Tag = TAG_OPTIONS;
   (*Entry)->AtClick = AtClick;
   // create the submenu
-  *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  *SubScreen = (__typeof__(*SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   (*SubScreen)->Title = (*Entry)->Title;
   (*SubScreen)->TitleImage = (*Entry)->Image;
   (*SubScreen)->ID = ID;
@@ -4379,7 +4370,7 @@ VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, IN
 {
   REFIT_INPUT_DIALOG *InputBootArgs;
 
-  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"%a", Text);
   InputBootArgs->Entry.Tag = TAG_CHECKBIT;
   InputBootArgs->Entry.Row = Bit;
@@ -4412,7 +4403,7 @@ VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
 
 VOID AddMenuItem(REFIT_MENU_SCREEN  *SubScreen, INTN Inx, CONST CHAR8 *Title, UINTN Tag, BOOLEAN Cursor)
 {
-  REFIT_INPUT_DIALOG *InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  REFIT_INPUT_DIALOG *InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 
   InputBootArgs->Entry.Title          = PoolPrint(L"%a", Title);
   InputBootArgs->Entry.Tag            = Tag;
@@ -4605,7 +4596,7 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS, "Custom kexts patches->");
 
   for (Index = 0; Index < NrKexts; Index++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%30a", KextPatchesMenu[Index].Label);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -4645,7 +4636,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
     		NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
     		AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
     	}
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs->Entry.Title = PoolPrint(L"%s, v.%s", Kext->FileName, Kext->Version);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -4656,7 +4647,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
 
       SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
       while (plugInKext) {
-        InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+        InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
         InputBootArgs->Entry.Title = PoolPrint(L"  |-- %s, v.%s", plugInKext->FileName, plugInKext->Version);
         InputBootArgs->Entry.Tag = TAG_INPUT;
         InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -4809,7 +4800,7 @@ REFIT_MENU_ENTRY  *SubMenuKernelPatches()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KERNELS, "Custom kernel patches->");
 
   for (Index = 0; Index < NrKernels; Index++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%30a", KernelPatchesMenu[Index].Label);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -4835,7 +4826,7 @@ REFIT_MENU_ENTRY  *SubMenuBootPatches()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BOOTER, "Custom booter patches->");
 
   for (Index = 0; Index < NrBoots; Index++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%30a", BootPatchesMenu[Index].Label);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -4906,7 +4897,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       //       sign, DropTable->Signature,
       //       OTID, DropTable->TableId,
       //       DropTable->Length, DropTable->Length);
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs->Entry.Title = PoolPrint(L"Drop \"%4.4a\" \"%8.8a\" %d", sign, OTID, DropTable->Length);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -4926,7 +4917,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   if (ACPIPatchedAML) {
     ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
     while (ACPIPatchedAMLTmp) {
-      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs->Entry.Title = PoolPrint(L"Drop \"%s\"", ACPIPatchedAMLTmp->FileName);
       InputBootArgs->Entry.Tag = TAG_INPUT;
       InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -5068,7 +5059,7 @@ REFIT_MENU_ENTRY  *SubMenuDSDTPatches()  //yyyy
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->");
 
   for (Index = 0; Index < PatchDsdtNum; Index++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%a", gSettings.PatchDsdtLabel[Index]);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -5095,7 +5086,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdts()
   AddMenuItem(SubScreen, 116,  "BIOS.aml", TAG_SWITCH, FALSE);
 
   for (i = 0; i < DsdtsNum; i++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%s", DsdtsList[i]);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i + 1;
@@ -5147,8 +5138,8 @@ REFIT_MENU_ENTRY  *SubMenuAudioPort()
   AddMenuItem(SubScreen, 120, "Volume:", TAG_INPUT, TRUE);
 
   for (i = 0; i < AudioNum; i++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"%s_%a", AudioList[i].Name, OutputNames[AudioList[i].Device]);
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"%s_%a", AudioList[i].Name, AudioOutputNames[AudioList[i].Device]);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i;
     InputBootArgs->Item = &InputItems[119];
@@ -5165,7 +5156,7 @@ VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 {
 	REFIT_INPUT_DIALOG  *InputBootArgs;
 
-	InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+	InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
 	InputBootArgs->Entry.Title = PoolPrint(L"  key: %a", Prop->Key);
 	InputBootArgs->Entry.Tag = TAG_INPUT;
 	InputBootArgs->Entry.Row = 0xFFFF; //cursor
@@ -5277,7 +5268,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   AddMenuItem(SubScreen, 3,  "embedded", TAG_SWITCH, FALSE);
 
   for (i = 0; i < ThemesNum; i++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%s", ThemesList[i]);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i + 1;
@@ -5412,7 +5403,7 @@ REFIT_MENU_ENTRY  *SubMenuConfigs()
   AddMenuInfoLine(SubScreen, L"Select a config file:");
 
   for (i = 0; i < ConfigsNum; i++) {
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"%s", ConfigsList[i]);
     InputBootArgs->Entry.Tag = TAG_SWITCH;
     InputBootArgs->Entry.Row = i;

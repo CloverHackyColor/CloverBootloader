@@ -403,7 +403,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
-                                       IN CHAR16 *LoaderOptions,
+                                       IN CONST CHAR16 *LoaderOptions,
                                        IN CHAR16 *FullTitle,
                                        IN CHAR16 *LoaderTitle,
                                        IN REFIT_VOLUME *Volume,
@@ -554,7 +554,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   }
 
   // prepare the menu entry
-  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   Entry->me.Tag = TAG_LOADER;
   Entry->me.Row = 0;
   Entry->Volume = Volume;
@@ -758,7 +758,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   FileName = Basename(Entry->LoaderPath);
 
   // create the submenu
-  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Options for %s", Entry->me.Title, Entry->VolName);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->ID = Entry->LoaderType + 20;
@@ -769,7 +769,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   AddMenuInfoLine(SubScreen, FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
-    CHAR8 *GuidStr = AllocateZeroPool(50);
+    CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
     AsciiSPrint(GuidStr, 50, "%g", Guid);
     AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
     FreePool(GuidStr);
@@ -976,7 +976,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->me.Title, Entry->LoaderType, Entry->OSVersion);
 }
 
-STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderOptions,
+STATIC BOOLEAN AddLoaderEntry(IN CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderOptions,
                               IN CHAR16 *LoaderTitle,
                               IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
                               IN UINT8 OSType, IN UINT8 Flags)
@@ -1970,7 +1970,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         } else if (Custom->SubEntries != NULL) {
           UINTN CustomSubIndex = 0;
           // Add subscreen
-          REFIT_MENU_SCREEN *SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           if (SubScreen) {
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
             SubScreen->TitleImage = Entry->me.Image;
@@ -1980,7 +1980,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
             AddMenuInfoLine(SubScreen, FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
-              CHAR8 *GuidStr = AllocateZeroPool(50);
+              CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
               AsciiSPrint(GuidStr, 50, "%g", Guid);
               AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
               FreePool(GuidStr);

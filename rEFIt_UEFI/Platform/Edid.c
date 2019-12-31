@@ -42,7 +42,7 @@ InitializeEdidOverride ()
   EFI_STATUS              Status;
   EFI_EDID_OVERRIDE_PROTOCOL *EdidOverride;
 
-  EdidOverride = AllocateCopyPool(sizeof(EFI_EDID_OVERRIDE_PROTOCOL), &gEdidOverride);
+  EdidOverride = (__typeof__(EdidOverride))AllocateCopyPool(sizeof(EFI_EDID_OVERRIDE_PROTOCOL), &gEdidOverride);
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                                                    &gImageHandle,
@@ -69,7 +69,7 @@ UINT8* getCurrentEdid (VOID)
   if (!EFI_ERROR (Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
-      Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
+      Edid = (__typeof__(Edid))AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
     }
   }
   DBG(" %a\n", Edid != NULL ? "found" : "not found");
@@ -119,7 +119,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
       if (N == 0) {
         return EFI_NOT_FOUND;
       }
-      gSettings.CustomEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
+      gSettings.CustomEDID = (__typeof__(gSettings.CustomEDID))AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
       CopyMem(gSettings.CustomEDID, EdidDiscovered->Edid, N);
       DebugDumpEDID("--- Discovered EDID Table", N);
     }

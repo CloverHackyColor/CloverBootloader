@@ -259,7 +259,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     // using AddNvramVariable content instead of calling the function to do LangLen calculation only when necessary
     // Do not mess with prev-lang:kbd on UEFI systems without NVRAM emulation; it's OS X's business
     KbdPrevLang = L"prev-lang:kbd";
-    OldData     = GetNvramVariable(KbdPrevLang, &gEfiAppleBootGuid, NULL, NULL);
+    OldData = (__typeof__(OldData))GetNvramVariable(KbdPrevLang, &gEfiAppleBootGuid, NULL, NULL);
     if (OldData == NULL) {
       LangLen     = 16;
       VariablePtr = &gSettings.Language[15];
@@ -276,7 +276,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
 
 //#define EFI_PLATFORM_LANG_VARIABLE_NAME             L"PlatformLang"
-  PlatformLang = GetNvramVariable(EFI_PLATFORM_LANG_VARIABLE_NAME, &gEfiGlobalVariableGuid, NULL, NULL);
+  PlatformLang = (__typeof__(PlatformLang))GetNvramVariable(EFI_PLATFORM_LANG_VARIABLE_NAME, &gEfiGlobalVariableGuid, NULL, NULL);
   //
   // On some platforms with missing gEfiUnicodeCollation2ProtocolGuid EFI_PLATFORM_LANG_VARIABLE_NAME is set
   // to the value different from "en-...". This is not going to work with our driver UEFI Shell load failures.
@@ -464,10 +464,10 @@ SetupDataForOSX(BOOLEAN Hibernate)
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
   if (!EFI_ERROR(Status)) {
-    ProductName         = AllocateZeroPool(128);
+    ProductName = (__typeof__(ProductName))AllocateZeroPool(128);
     AsciiStrToUnicodeStrS(gSettings.ProductName, ProductName, 64);
 
-    SerialNumber        = AllocateZeroPool(128);
+    SerialNumber = (__typeof__(SerialNumber))AllocateZeroPool(128);
     AsciiStrToUnicodeStrS(gSettings.SerialNr,    SerialNumber, 64);
 
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));

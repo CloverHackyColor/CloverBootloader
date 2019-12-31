@@ -64,7 +64,7 @@ VOID AddSecureBootTool(VOID)
   if (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode) {
     return;
   }
-  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (gSettings.SecureBoot) {
     Entry->me.Title = PoolPrint(L"Clover Secure Boot Configuration");
     Entry->me.Tag = TAG_SECURE_BOOT_CONFIG;

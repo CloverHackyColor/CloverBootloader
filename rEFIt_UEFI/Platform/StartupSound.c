@@ -165,7 +165,7 @@ StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile)
       DBG("not found wave data\n");
       goto DONE_ERROR;
     }
-    TempData = AllocateZeroPool(Len * sizeof(INT16));
+    TempData = (__typeof__(TempData))AllocateZeroPool(Len * sizeof(INT16));
     Tmp = *(Ptr++);
     for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
       Next = *(Ptr++);
@@ -260,10 +260,10 @@ GetStoredOutput()
   }
   DBG("found %d handles with audio\n", AudioIoHandleCount);
   // Get stored device path size. First from AppleBootGuid
-  StoredDevicePath = GetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid, NULL, &StoredDevicePathSize);
+  StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid, NULL, &StoredDevicePathSize);
   if (!StoredDevicePath) {
     // second attempt with BootChimeGuid
-    StoredDevicePath = GetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid, NULL, &StoredDevicePathSize);
+    StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid, NULL, &StoredDevicePathSize);
     if (!StoredDevicePath) {
       MsgLog("No AudioIoDevice stored\n");
       Status = EFI_NOT_FOUND;

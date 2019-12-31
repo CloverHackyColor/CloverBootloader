@@ -54,7 +54,7 @@ extern void qsort(void *a, size_t n, size_t es, int (*cmp)(const void *, const v
 // rewrite by RehabMan
 void* lodepng_malloc(size_t size)
 {
-  size_t* p = AllocateZeroPool(size+sizeof(size_t));
+  size_t* p = (__typeof__(p))AllocateZeroPool(size+sizeof(size_t));
   if (!p) {
     return NULL;
   }
@@ -75,7 +75,7 @@ void* lodepng_realloc(void* ptr, size_t new_size)
     return lodepng_malloc(new_size);
   }
   size_t* old_p = (size_t*)ptr-1;
-  size_t* new_p = ReallocatePool(*old_p, new_size+sizeof(size_t), old_p);
+  size_t* new_p = (__typeof__(new_p))ReallocatePool(*old_p, new_size+sizeof(size_t), old_p);
   if (!new_p) {
     return NULL;
   }

@@ -2289,7 +2289,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
 
   if (EFI_ERROR(Status)) {
-    rom = AllocateZeroPool(NVIDIA_ROM_SIZE+1);
+    rom = (__typeof__(rom))AllocateZeroPool(NVIDIA_ROM_SIZE+1);
     // PRAMIN first
     read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
 
@@ -2316,7 +2316,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
           if (buffer[i] == 0x55 && buffer[i+1] == 0xaa) {
             DBG(" header found at: %d\n", i);
             bufferLen -= i;
-            rom = AllocateZeroPool(bufferLen);
+            rom = (__typeof__(rom))AllocateZeroPool(bufferLen);
             for (j = 0; j < bufferLen; j++) {
               rom[j] = buffer[i+j];
             }

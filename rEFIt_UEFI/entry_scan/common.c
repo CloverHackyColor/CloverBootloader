@@ -147,7 +147,7 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
   if(Entry == NULL) {
     return NULL;
   }
-  DuplicateEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (DuplicateEntry) {
     DuplicateEntry->me.Tag          = Entry->me.Tag;
     DuplicateEntry->me.AtClick      = ActionEnter;
@@ -226,7 +226,7 @@ CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
     NewLoadOptions = EfiStrDuplicate(LoadOptions + OptionLength);
   } else {
     // The rest of LoadOptions is Length - OptionLength, but we may need additional space and ending 0
-    NewLoadOptions = AllocateZeroPool((Length - OptionLength + 2) * sizeof(CHAR16));
+    NewLoadOptions = (__typeof__(NewLoadOptions))AllocateZeroPool((Length - OptionLength + 2) * sizeof(CHAR16));
     // Copy preceeding substring
     CopyMem(NewLoadOptions, LoadOptions, Offset * sizeof(CHAR16));
     if ((Offset + OptionLength) < Length) {

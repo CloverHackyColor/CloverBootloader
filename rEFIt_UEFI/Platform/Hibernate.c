@@ -423,7 +423,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
                 if (VolNameEnd) {
                   VolNameSize = (VolNameEnd - VolNameStart + 1) * sizeof(CHAR16);
                   if (VolNameSize > 0) {
-                    VolName = AllocateZeroPool(VolNameSize);
+                    VolName = (__typeof__(VolName))AllocateZeroPool(VolNameSize);
                   }
                 }
               }
@@ -523,7 +523,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   
   // We want to read the first 512 bytes from sleepimage
   BufferSize = 512;
-  Buffer = AllocatePool(BufferSize);
+  Buffer = (__typeof__(Buffer))AllocatePool(BufferSize);
   if (Buffer == NULL) {
     DBG("    could not allocate buffer for sleepimage\n");
     return 0;
@@ -611,7 +611,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   // use 4KB aligned page to avoid possible issues with BlockIo buffer alignment
   BlockIo = Volume->BlockIO;
   Pages = EFI_SIZE_TO_PAGES(BlockIo->Media->BlockSize);
-  Buffer = AllocatePages(Pages);
+  Buffer = (__typeof__(Buffer))AllocatePages(Pages);
   if (Buffer == NULL) {
     return FALSE;
   }

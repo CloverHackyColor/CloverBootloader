@@ -320,7 +320,7 @@ VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
   INTN i = Low, j = High;
   VOID *Med, *Temp;
   Med = Array + ((Low + High) / 2) * Size; // Central element, just pointer
-  Temp = AllocatePool(Size);
+  Temp = (__typeof__(Temp))AllocatePool(Size);
   // Sort around center
   while (i <= j)
   {

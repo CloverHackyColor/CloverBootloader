@@ -230,7 +230,7 @@ void AddDropTable(EFI_ACPI_DESCRIPTION_HEADER* Table, UINT32 Index)
   CopyMem(&OTID[0], &Table->OemTableId, 8);
   //DBG(" Found table: %a  %a len=%d\n", sign, OTID, (INT32)Table->Length);
   DBG(" - [%02d]: %a  %a len=%d\n", Index, sign, OTID, (INT32)Table->Length);
-  ACPI_DROP_TABLE* DropTable = AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
+  ACPI_DROP_TABLE* DropTable = (__typeof__(DropTable))AllocateZeroPool(sizeof(ACPI_DROP_TABLE));
   DropTable->Signature = Table->Signature;
   DropTable->TableId = Table->OemTableId;
   DropTable->Length = Table->Length;
@@ -782,7 +782,7 @@ VOID MarkTableAsSaved(VOID *TableEntry)
     //DBG(" Allocaing mSavedTables");
     mSavedTablesEntries = SAVED_TABLES_ALLOC_ENTRIES;
     mSavedTablesNum = 0;
-    mSavedTables = AllocateZeroPool(sizeof(*mSavedTables) * mSavedTablesEntries);
+    mSavedTables = (__typeof__(mSavedTables))AllocateZeroPool(sizeof(*mSavedTables) * mSavedTablesEntries);
     if (mSavedTables == NULL) {
       return;
     }
@@ -804,7 +804,7 @@ VOID MarkTableAsSaved(VOID *TableEntry)
   if (mSavedTablesNum + 1 >= mSavedTablesEntries) {
     // not enough space
     //DBG(" - extending mSavedTables from %d", mSavedTablesEntries);
-    mSavedTables = ReallocatePool(
+    mSavedTables = (__typeof__(mSavedTables))ReallocatePool(
                                   sizeof(*mSavedTables) * mSavedTablesEntries,
                                   sizeof(*mSavedTables) * (mSavedTablesEntries + SAVED_TABLES_ALLOC_ENTRIES),
                                   mSavedTables
@@ -1186,7 +1186,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
 
   //  EFI_STATUS      Status;
 
-  RsdPtr = FindAcpiRsdPtr();
+  RsdPtr = (__typeof(RsdPtr))FindAcpiRsdPtr();
   if (RsdPtr == NULL) {
     /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **)&RsdPtr);
     if (RsdPtr == NULL) {
@@ -2078,7 +2078,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
 
   // XsdtReplaceSizes array is used to keep track of allocations for the merged tables,
   //  as those tables may need to be freed if patched later.
-  XsdtReplaceSizes = AllocateZeroPool(XsdtTableCount() * sizeof(*XsdtReplaceSizes));
+  XsdtReplaceSizes = (__typeof__(XsdtReplaceSizes))AllocateZeroPool(XsdtTableCount() * sizeof(*XsdtReplaceSizes));
 
   // Load merged ACPI files from ACPI/patched
   LoadAllPatchedAML(AcpiOemPath, AUTOMERGE_PASS1);

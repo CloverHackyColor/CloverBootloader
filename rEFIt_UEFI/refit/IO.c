@@ -32,7 +32,7 @@ typedef struct {
   BOOLEAN Ascii;
   UINTN   Index;
   union {
-    CHAR16  *pw;
+    CONST CHAR16  *pw;
     CHAR8   *pc;
   } u;
 } POINTER;
@@ -109,8 +109,8 @@ _PPrint (
 EFI_STATUS
 EFIAPI
 _SPrint (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
+  IN POOL_PRINT  *Context,
+  IN CHAR16      *Buffer
   );
 
 UINTN
@@ -127,14 +127,14 @@ _IPrint (
 VOID
 EFIAPI
 _PoolCatPrint (
-  IN CHAR16               *fmt,
+  IN CONST CHAR16         *fmt,
   IN VA_LIST              args,
   IN OUT POOL_PRINT       *spc,
   IN EFI_STATUS
     (EFIAPI
   *Output)
     (
-      VOID *context,
+      POOL_PRINT *context,
       CHAR16 *str
     )
   );
@@ -142,8 +142,8 @@ _PoolCatPrint (
 EFI_STATUS
 EFIAPI
 _PoolPrint (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
+  IN POOL_PRINT     *Context,
+  IN CHAR16         *Buffer
   );
 
 VOID
@@ -205,7 +205,7 @@ _DbgOut (
 EFI_STATUS
 EFIAPI
 _SPrint (
-  IN VOID     *Context,
+  IN POOL_PRINT     *Context,
   IN CHAR16   *Buffer
   )
 /*++
@@ -261,14 +261,14 @@ Returns:
 VOID
 EFIAPI
 _PoolCatPrint (
-  IN CHAR16               *fmt,
+  IN CONST CHAR16         *fmt,
   IN VA_LIST              args,
   IN OUT POOL_PRINT       *spc,
   IN EFI_STATUS
     (EFIAPI
   *Output)
     (
-      VOID *context,
+      POOL_PRINT *context,
       CHAR16 *str
     )
   )
@@ -291,7 +291,7 @@ Returns:
   PRINT_STATE ps;
 
   SetMem (&ps, sizeof (ps), 0);
-  ps.Output   = Output;
+  ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CHAR16 *str))Output;
   ps.Context  = spc;
   ps.fmt.u.pw = fmt;
   //ps.args     = args;
@@ -303,7 +303,7 @@ Returns:
 CHAR16 *
 EFIAPI
 PoolPrint (
-  IN CHAR16             *fmt,
+  IN CONST CHAR16             *fmt,
   ...
   )
 /*++
@@ -770,12 +770,12 @@ Returns:
     return 0;
   }
 
-  Item.Scratch = AllocateZeroPool (sizeof (CHAR16) * PRINT_ITEM_BUFFER_LEN);
+  Item.Scratch = (__typeof__(Item.Scratch))AllocateZeroPool (sizeof (CHAR16) * PRINT_ITEM_BUFFER_LEN);
   if (NULL == Item.Scratch) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Buffer = AllocateZeroPool (sizeof (CHAR16) * PRINT_STRING_LEN);
+  Buffer = (__typeof__(Buffer))AllocateZeroPool (sizeof (CHAR16) * PRINT_STRING_LEN);
   if (NULL == Buffer) {
     FreePool (Item.Scratch);
     return EFI_OUT_OF_RESOURCES;
@@ -820,9 +820,9 @@ Returns:
         //
         // %% -> %
         //
+        Item.Scratch[0] = '%';
+        Item.Scratch[1] = 0;
         Item.Item.u.pw    = Item.Scratch;
-        Item.Item.u.pw[0] = '%';
-        Item.Item.u.pw[1] = 0;
         break;
 
       case '0':
@@ -882,9 +882,9 @@ Returns:
         break;
 
       case 'c':
+        Item.Scratch[0] = (CHAR16) VA_ARG (ps->args, UINTN);
+        Item.Scratch[1] = 0;
         Item.Item.u.pw    = Item.Scratch;
-        Item.Item.u.pw[0] = (CHAR16) VA_ARG (ps->args, UINTN);
-        Item.Item.u.pw[1] = 0;
         break;
 
       case 'l':
@@ -896,13 +896,13 @@ Returns:
         Item.Pad    = '0';
 
       case 'x':
-        Item.Item.u.pw = Item.Scratch;
 			  //SPrint(Buffer, 64, L"EFI Error №%r", (UINTN)Status);
      //   ValueToHex (
 		UnicodeSPrint(
-          Item.Item.u.pw, 64, L"%x",
+          Item.Scratch, 64, L"%x",
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, UINTN)
           );
+        Item.Item.u.pw = Item.Scratch;
 
         break;
 /*
@@ -915,13 +915,13 @@ Returns:
         break;
 */
       case 'd':
-        Item.Item.u.pw = Item.Scratch;
       //  ValueToString (
 		UnicodeSPrint(
-          Item.Item.u.pw, 64, L"%d",
+          Item.Scratch, 64, L"%d",
        //   Item.Comma,
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, INTN)
           );
+        Item.Item.u.pw = Item.Scratch;
         break;
 /*
       case 't':
@@ -930,9 +930,9 @@ Returns:
         break;
 */
       case 'r':
-        Item.Item.u.pw = Item.Scratch;
    //     StatusToString
-		UnicodeSPrint(Item.Item.u.pw, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
+		UnicodeSPrint(Item.Scratch, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
+        Item.Item.u.pw = Item.Scratch;
         break;
 
       case 'n':
@@ -976,9 +976,9 @@ Returns:
         break;
 
       default:
+        Item.Scratch[0] = '?';
+        Item.Scratch[1] = 0;
         Item.Item.u.pw    = Item.Scratch;
-        Item.Item.u.pw[0] = '?';
-        Item.Item.u.pw[1] = 0;
         break;
       }
       //
@@ -1266,8 +1266,8 @@ SetOutputPause (
 EFI_STATUS
 EFIAPI
 _PoolPrint (
-  IN VOID     *Context,
-  IN CHAR16   *Buffer
+  IN POOL_PRINT     *Context,
+  IN CHAR16         *Buffer
   )
 /*++
 
@@ -1303,7 +1303,7 @@ Returns:
     //
     newlen += PRINT_STRING_LEN;
     spc->Maxlen = newlen;
-    spc->Str = EfiReallocatePool (
+    spc->Str = (__typeof__(spc->Str))EfiReallocatePool (
                 spc->Str,
                 spc->Len * sizeof (CHAR16),
                 spc->Maxlen * sizeof (CHAR16)
@@ -1926,7 +1926,7 @@ CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
 {
   UINTN i, j, b = 0;
   CHAR8 *result = (CHAR8*)AllocateZeroPool((len*2)+1);
-  //CHAR8 *buf = AllocateZeroPool(2);
+  //CHAR8 *buf = (__typeof__(buf))AllocateZeroPool(2);
 
   for (i = j = 0; i < len; i++) {
     b = data[i] >> 4;

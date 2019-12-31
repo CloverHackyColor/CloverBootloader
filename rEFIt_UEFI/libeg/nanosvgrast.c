@@ -92,7 +92,7 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
   int Imed;
   Imed = (Low + High) / 2; // Central element, just pointer
   float med = Array[Imed].y0;
-  //  Temp = AllocatePool(sizeof(NSVGedge));
+  //  Temp = (__typeof__(Temp))AllocatePool(sizeof(NSVGedge));
   // Sort around center
   while (i <= j) {
     while (Array[i].y0 < med) i++;

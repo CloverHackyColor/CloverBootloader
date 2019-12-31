@@ -1226,7 +1226,7 @@ BOOLEAN get_bootdisplay_val(value_t *val, INTN index, BOOLEAN Sier)
   v = 1;
   val->type = kCst;
   val->size = 4;
-  val->data = AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocatePool(4);
   *(val->data) = (UINT8)v;
   return TRUE;
 }
@@ -1248,7 +1248,7 @@ BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier)
 
   val->type = kCst;
   val->size = 4;
-  val->data = AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocatePool(4);
   *(val->data) = (UINT8)v;
   return TRUE;
 }
@@ -1276,7 +1276,7 @@ BOOLEAN get_edid_val(value_t *val, INTN index, BOOLEAN Sier)
   v = 1;
   val->type = kPtr;
   val->size = 128;
-  val->data = AllocateCopyPool(val->size, gSettings.CustomEDID);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, gSettings.CustomEDID);
   return TRUE;
 }
 
@@ -1292,7 +1292,7 @@ BOOLEAN get_display_type(value_t *val, INTN index, BOOLEAN Sier)
   }
   val->type = kStr;
   val->size = (UINT32)AsciiStrSize(dtyp[dti]);
-  val->data = AllocateCopyPool(val->size, (UINT8 *)dtyp[dti]);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)dtyp[dti]);
   return TRUE;
 }
 
@@ -1301,7 +1301,7 @@ BOOLEAN get_name_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = aty_name.type;
   val->size = aty_name.size;
-  val->data = AllocateCopyPool(aty_name.size, (UINT8 *)aty_name.data);
+  val->data = (__typeof__(val->data))AllocateCopyPool(aty_name.size, (UINT8 *)aty_name.data);
   return TRUE;
 }
 
@@ -1309,14 +1309,14 @@ BOOLEAN get_nameparent_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = aty_nameparent.type;
   val->size = aty_nameparent.size;
-  val->data = AllocateCopyPool(aty_nameparent.size, (UINT8 *)aty_nameparent.data);
+  val->data = (__typeof__(val->data))AllocateCopyPool(aty_nameparent.size, (UINT8 *)aty_nameparent.data);
   return TRUE;
 }
 
 //static CHAR8 pciName[15];
 BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
 {
-  CHAR8* pciName = AllocateZeroPool(15);
+  CHAR8* pciName = (__typeof__(pciName))AllocateZeroPool(15);
 
   if (!card->info->model_name || !gSettings.FakeATI) {
     return FALSE;
@@ -1333,14 +1333,14 @@ BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
 CONST CHAR8* NamePolaris = "AMD Radeon %a";
 BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier)
 {
-  CHAR8 *ModelName = AllocateZeroPool(35);
+  CHAR8 *ModelName = (__typeof__(ModelName))AllocateZeroPool(35);
   if (!card->info->model_name) {
     return FALSE;
   }
   val->type = kStr;
   if (card->pci_dev->device_id != 0x67DF) {
     val->size = (UINT32)AsciiStrLen(card->info->model_name);
-    val->data = AllocateCopyPool(val->size, (UINT8 *)card->info->model_name);
+    val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)card->info->model_name);
   } else {
     switch (card->pci_dev->revision) {
       case 0xC4:
@@ -1366,7 +1366,7 @@ BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier)
         break;
     }
     val->size = (UINT32)AsciiStrLen(ModelName);
-    val->data = AllocateCopyPool(val->size, ModelName);
+    val->data = (__typeof__(val->data))AllocateCopyPool(val->size, ModelName);
   }
   FreePool(ModelName);
   return TRUE;
@@ -1403,7 +1403,7 @@ BOOLEAN get_conntype_val(value_t *val, INTN index, BOOLEAN Sier)
 
   val->type = kCst;
   val->size = 4;
-  val->data = AllocateCopyPool(val->size, (UINT8 *)&ct[index * Len]);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&ct[index * Len]);
 
   //  cti++;
   //  if(cti > 3) cti = 0;
@@ -1423,7 +1423,7 @@ BOOLEAN get_vrammemsize_val(value_t *val, INTN index, BOOLEAN Sier)
   }
   val->type = kCst;
   val->size = 8;
-  val->data = AllocateCopyPool(val->size, (UINT8 *)&memsize);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&memsize);
   return TRUE;
 }
 
@@ -1434,7 +1434,7 @@ BOOLEAN get_binimage_val(value_t *val, INTN index, BOOLEAN Sier)
   }
   val->type = kPtr;
   val->size = card->rom_size;
-  val->data = AllocateCopyPool(val->size, (UINT8 *)card->rom);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)card->rom);
   return TRUE;
 }
 
@@ -1445,7 +1445,7 @@ BOOLEAN get_binimage_owr(value_t *val, INTN index, BOOLEAN Sier)
   }
   val->type = kCst;
   val->size = 4;
-  val->data = AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocatePool(4);
   *(val->data) = 1;
   return TRUE;
 }
@@ -1457,7 +1457,7 @@ BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier)
   if (!card->rom){
     val->type = kPtr;
     val->size = 13;
-    val->data = AllocateCopyPool(val->size, cRev);
+    val->data = (__typeof__(val->data))AllocateCopyPool(val->size, cRev);
     return TRUE;
   }
 
@@ -1469,7 +1469,7 @@ BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier)
     rev = (UINT8 *)cRev;
     val->size = 13;
   }
-  val->data = AllocateCopyPool(val->size, rev);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, rev);
   return TRUE;
 }
 
@@ -1477,7 +1477,7 @@ BOOLEAN get_deviceid_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   val->type = kCst;
   val->size = 2;
-  val->data = AllocateCopyPool(val->size, (UINT8 *)&card->pci_dev->device_id);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&card->pci_dev->device_id);
   return TRUE;
 }
 
@@ -1499,13 +1499,13 @@ BOOLEAN get_refclk_val(value_t *val, INTN index, BOOLEAN Sier)
   //
   val->type = kCst;
   val->size = 4;
-  val->data = AllocateCopyPool(val->size, (UINT8 *)&gSettings.RefCLK);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&gSettings.RefCLK);
   return TRUE;
 }
 
 BOOLEAN get_platforminfo_val(value_t *val, INTN index, BOOLEAN Sier)
 {
-  val->data = AllocateZeroPool(0x80);
+  val->data = (__typeof__(val->data))AllocateZeroPool(0x80);
   if (!val->data)
     return FALSE;
 
@@ -1522,7 +1522,7 @@ BOOLEAN get_vramtotalsize_val(value_t *val, INTN index, BOOLEAN Sier)
 
   val->type = kCst;
   val->size = 4;
-  val->data = AllocateCopyPool(val->size, (UINT8 *)&card->vram_size);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&card->vram_size);
   return TRUE;
 }
 
@@ -1548,7 +1548,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
 {
   INTN i, pnum;
   BOOLEAN Sier;
-  value_t *val = AllocateZeroPool(sizeof(value_t));
+  value_t *val = (__typeof__(val))AllocateZeroPool(sizeof(value_t));
 
   Sier = (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.12"));
 
@@ -1647,7 +1647,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   }
   DBG("Loaded ROM len=%d\n", bufferLen);
   card->rom_size = (UINT32)bufferLen;
-  card->rom = AllocateZeroPool(bufferLen);
+  card->rom = (__typeof__(card->rom))AllocateZeroPool(bufferLen);
   if (!card->rom) {
     return FALSE;
   }
@@ -1728,7 +1728,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
     return FALSE;
   }
 
-  card->rom = AllocateZeroPool(card->rom_size);
+  card->rom = (__typeof__(card->rom))AllocateZeroPool(card->rom_size);
   if (!card->rom) {
     return FALSE;
   }
@@ -1897,7 +1897,7 @@ BOOLEAN devprop_add_pci_config_space(VOID)
 {
   int offset;
 
-  UINT8 *config_space = AllocateZeroPool(0x100);
+  UINT8 *config_space = (__typeof__(config_space))AllocateZeroPool(0x100);
   if (!config_space)
     return FALSE;
 
@@ -1924,7 +1924,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   UINTN   ExpansionRom = 0;
   UINTN Reg1, Reg3, Reg5;
 
-  card = AllocateZeroPool(sizeof(card_t));
+  card = (__typeof__(card))AllocateZeroPool(sizeof(card_t));
   if (!card) {
     return FALSE;
   }
@@ -1934,7 +1934,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     if (radeon_cards[i].device_id != pci_dev->device_id) {
       continue;
     }
-    card->info = AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
+    card->info = (__typeof__(card->info))AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
     if (!card->info->cfg_name) {
       card->info->cfg_name = kRadeon;
     }
@@ -1957,7 +1957,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     DBG("search for brothers family\n");
     for (i = 0; radeon_cards[i].device_id ; i++) {
       if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf)) {
-        card->info = AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
+        card->info = (__typeof__(card->info))AllocateCopyPool(sizeof(radeon_card_info_t), &radeon_cards[i]);
         break;
       }
     }
@@ -2019,7 +2019,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 
   NameLen = StrLen(gSettings.FBName);
   if (NameLen > 2) {  //fool proof: cfg_name is 3 character or more.
-    CfgName = AllocateZeroPool(NameLen);
+    CfgName = (__typeof__(CfgName))AllocateZeroPool(NameLen);
     UnicodeStrToAsciiStrS((CHAR16*)&gSettings.FBName[0], CfgName, 16);
     DBG("Users config name %a\n", CfgName);
     card->cfg_name = CfgName;
@@ -2057,13 +2057,13 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     DBG("Nr of ports set to min: %d\n", card->ports);
   }
   //
-  name = AllocateZeroPool(24);
+  name = (__typeof__(name))AllocateZeroPool(24);
   AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
   aty_name.type = kStr;
   aty_name.size = (UINT32)AsciiStrLen(name);
   aty_name.data = (UINT8 *)name;
 
-  name_parent = AllocateZeroPool(24);
+  name_parent = (__typeof__(name_parent))AllocateZeroPool(24);
   AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
   aty_nameparent.type = kStr;
   aty_nameparent.size = (UINT32)AsciiStrLen(name_parent);

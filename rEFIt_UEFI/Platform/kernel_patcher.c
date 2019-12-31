@@ -31,7 +31,7 @@ BootArgs1   *bootArgs1 = NULL;
 BootArgs2   *bootArgs2 = NULL;
 CHAR8       *dtRoot = NULL;
 UINT32      *dtLength;
-VOID        *KernelData = NULL;
+UINT8       *KernelData = NULL;
 UINT32      KernelSlide = 0;
 BOOLEAN     isKernelcache = FALSE;
 BOOLEAN     is64BitKernel = FALSE;
@@ -1831,9 +1831,9 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
 
   UINT64 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   if (os_version < AsciiOSVersionToUint64("10.6")) {
-    KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
+    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
   } else {
-    KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
   }
 
   // check that it is Mach-O header and detect architecture

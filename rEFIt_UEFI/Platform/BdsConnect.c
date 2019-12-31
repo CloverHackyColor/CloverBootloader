@@ -311,7 +311,7 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
   Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, HandleCount, HandleBuffer);
   if (EFI_ERROR (Status)) goto Error;
   
-  *HandleType = AllocatePool (*HandleCount * sizeof (UINT32));
+  *HandleType = (__typeof__(*HandleType))AllocatePool (*HandleCount * sizeof (UINT32));
   if (*HandleType == NULL) goto Error;
     
   for (HandleIndex = 0; HandleIndex < *HandleCount; HandleIndex++) {
@@ -459,7 +459,7 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
       
 			if (!Parent) {
 				if (HandleType[Index] & EFI_HANDLE_TYPE_DEVICE_HANDLE) {
-					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID*)&PciIo);
+					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID**)&PciIo);
 					if (!EFI_ERROR (Status)) {
 						Status = PciIo->Pci.Read (PciIo,EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
 						if (!EFI_ERROR (Status)) {

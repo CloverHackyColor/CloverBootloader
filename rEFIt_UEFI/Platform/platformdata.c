@@ -541,7 +541,8 @@ PLATFORMDATA ApplePlatformData[] =
 VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 {
   const CHAR8  *i;
-  CHAR8 *Res1 = AllocateZeroPool(9), *Res2 = AllocateZeroPool(11);
+  CHAR8 *Res1 = (__typeof__(Res1))AllocateZeroPool(9);
+  CHAR8 *Res2 = (__typeof__(Res2))AllocateZeroPool(11);
 
   AsciiStrCpyS (gSettings.VendorName, 64,      BiosVendor);
   AsciiStrCpyS (gSettings.RomVersion, 64,      ApplePlatformData[Model].firmwareVersion);
@@ -1301,9 +1302,9 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 {
-  UINTN i;
+  MACHINE_TYPES i;
 
-  for (i = 0; i < MaxMachineType; ++i) {
+  for (i = (MACHINE_TYPES)(0); i < MaxMachineType; i = (MACHINE_TYPES)(i + 1)) {
     if (AsciiStrCmp (ApplePlatformData[i].productName, ProductName) == 0) {
       return i;
     }
@@ -1358,7 +1359,7 @@ VOID GetDefaultSettings()
   gSettings.BooterConfig         = 0;
 //  MemSet(gSettings.BooterCfgStr, 64, 0);
 //  AsciiStrCpyS(gSettings.BooterCfgStr, 64, "log=0");
-  CHAR8 *OldCfgStr = GetNvramVariable (L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
+  CHAR8 *OldCfgStr = (__typeof__(OldCfgStr))GetNvramVariable (L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
   if (OldCfgStr) {
     AsciiStrCpyS(gSettings.BooterCfgStr, 64, OldCfgStr);
     FreePool(OldCfgStr);

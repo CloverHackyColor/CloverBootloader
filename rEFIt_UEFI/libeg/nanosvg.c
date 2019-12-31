@@ -51,7 +51,6 @@
 #endif
 
 typedef UINTN size_t;
-extern VOID *fontsDB;
 
 #define NSVG_PI (3.14159265358979323846264338327f)
 #define NSVG_PI_DEG (0.01745329251994f)
@@ -2861,7 +2860,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       if (!p1) {
         DBG("font %a not parsed\n", text->fontFace->fontFamily);
       } else {
-        fontSVG = AllocateCopyPool(sizeof(NSVGfont), p1->font);
+        fontSVG = (__typeof__(fontSVG))AllocateCopyPool(sizeof(NSVGfont), p1->font);
   //                DBG("font family %a parsed\n", fontSVG->fontFamily);
         fontSVG->next = fontsDB;
         fontsDB = fontSVG;
@@ -3202,7 +3201,7 @@ static void parsePattern(NSVGparser* p, const char** dict)
     }
   }
 
-  pt = AllocateZeroPool(sizeof(NSVGpattern));
+  pt = (__typeof__(pt))AllocateZeroPool(sizeof(NSVGpattern));
   AsciiStrCpyS(pt->id, 64, attr->id);
   pt->width = w;
   pt->height = h;

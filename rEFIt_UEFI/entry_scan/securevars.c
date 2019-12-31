@@ -250,7 +250,7 @@ VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
     return NULL;
   }
   // Allocate a buffer large enough to hold the database
-  Database = AllocateZeroPool(Size);
+  Database = (__typeof__(Database))AllocateZeroPool(Size);
   if (Database == NULL) {
     return NULL;
   }
@@ -453,7 +453,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
     EVP_PKEY_free(PrivateKey);
 
     DataSize = i2d_PKCS7(p7, NULL);
-    Data = AllocateZeroPool(DataSize);
+    Data = (__typeof__(Data))AllocateZeroPool(DataSize);
 
     i2d_PKCS7(p7, (unsigned char **)&Data);
 

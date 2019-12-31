@@ -229,7 +229,7 @@ VOID TerminateScreen(VOID)
 static VOID DrawScreenHeader(IN CHAR16 *Title)
 {
   UINTN i;
-	CHAR16* BannerLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
+	CHAR16* BannerLine = (__typeof__(BannerLine))AllocatePool((ConWidth + 1) * sizeof(CHAR16));
   BannerLine[ConWidth] = 0;
 
   // clear to black background
@@ -1051,7 +1051,7 @@ VOID InitAnime(REFIT_MENU_SCREEN *Screen)
         // Copy some settings from Anime into Screen
         Screen->FrameTime = Anime->FrameTime;
         Screen->Once = Anime->Once;
-        Screen->Theme = AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
+        Screen->Theme = (__typeof__(Screen->Theme))AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
       } /*else {
         DBG("Film[0] == NULL\n");
       } */
@@ -1146,7 +1146,7 @@ static VOID UpdateConsoleVars()
     }
 
     // make a buffer for a whole text line
-    BlankLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
+    BlankLine = (__typeof__(BlankLine))AllocatePool((ConWidth + 1) * sizeof(CHAR16));
 	
 	for (i = 0; i < ConWidth; i++) {
         BlankLine[i] = ' ';

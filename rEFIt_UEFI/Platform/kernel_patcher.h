@@ -77,7 +77,7 @@ extern BootArgs1    *bootArgs1;
 extern BootArgs2    *bootArgs2;
 extern CHAR8        *dtRoot;
 extern UINT32       *dtLength;
-extern VOID         *KernelData;
+extern UINT8        *KernelData;
 extern UINT32       KernelSlide;
 extern BOOLEAN      isKernelcache;
 extern BOOLEAN      is64BitKernel;

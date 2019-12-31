@@ -194,7 +194,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     }
   }
   bundlePathBufferLength = StrLen(FileName) + 1;
-  bundlePathBuffer = AllocateZeroPool(bundlePathBufferLength);
+  bundlePathBuffer = (__typeof__(bundlePathBuffer))AllocateZeroPool(bundlePathBufferLength);
   UnicodeStrToAsciiStrS(FileName, bundlePathBuffer, bundlePathBufferLength);
 
   kext->length = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength);
@@ -221,7 +221,7 @@ EFI_STATUS EFIAPI AddKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR1
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
 
-  KextEntry = AllocatePool (sizeof(KEXT_ENTRY));
+  KextEntry = (__typeof__(KextEntry))AllocatePool (sizeof(KEXT_ENTRY));
   KextEntry->Signature = KEXT_SIGNATURE;
   Status = LoadKext(Entry, RootDir, FileName, archCpuType, &KextEntry->kext);
   if(EFI_ERROR(Status)) {
@@ -540,10 +540,10 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   // reserve space in the device tree
   if (GetKextCount() > 0) {
     mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
-    mm_extra = AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
+    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
     /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
     extra_size = GetKextsSize();
-    extra = AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
     /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE));
     // MsgLog("count: %d    \n", GetKextCount());
     // MsgLog("mm_extra_size: %d    \n", mm_extra_size);
@@ -721,7 +721,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
     }
   }
 
-   if (Entry->KernelAndKextPatches->KPDebug) {
+  if (Entry->KernelAndKextPatches->KPDebug) {
     DBG_RT(Entry, "Done.\n");
     gBS->Stall(5000000);
   }

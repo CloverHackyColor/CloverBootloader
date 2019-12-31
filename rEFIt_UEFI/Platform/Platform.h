@@ -713,15 +713,15 @@ struct Symbol {
 
 typedef struct Symbol Symbol, *SymbolPtr;
 
-typedef struct {
+typedef struct TagStruct {
 
   UINTN  type;
   CHAR8  *string;
   UINT8  *data;
   UINTN  dataLen;
   UINTN  offset;
-  VOID   *tag;
-  VOID   *tagNext;
+  struct TagStruct *tag;
+  struct TagStruct *tagNext;
 
 } TagStruct, *TagPtr;
 
@@ -1950,11 +1950,11 @@ AddNvramVariable (
 
 EFI_STATUS
 SetNvramVariable (
-  IN  CHAR16   *VariableName,
-  IN  EFI_GUID *VendorGuid,
-  IN  UINT32   Attributes,
-  IN  UINTN    DataSize,
-  IN  VOID     *Data
+  IN  CHAR16      *VariableName,
+  IN  EFI_GUID    *VendorGuid,
+  IN  UINT32       Attributes,
+  IN  UINTN        DataSize,
+  IN  CONST VOID  *Data
   );
 
 EFI_STATUS

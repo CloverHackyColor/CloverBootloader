@@ -74,7 +74,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
     return NULL;
   devpathstr = FileDevicePathToStr(DevicePath);
   Size = StrLen(devpathstr) + 1;
-  tmp = AllocateZeroPool(Size);
+  tmp = (__typeof__(tmp))AllocateZeroPool(Size);
   UnicodeStrToAsciiStrS(devpathstr, tmp, Size);
   return tmp;
 
@@ -137,7 +137,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   if (!DevicePath)
     return NULL;
 
-  device = AllocateZeroPool(sizeof(DevPropDevice));
+  device = (__typeof__(device))AllocateZeroPool(sizeof(DevPropDevice));
   if (!device) {
     return NULL;
   }

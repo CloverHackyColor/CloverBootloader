@@ -222,15 +222,15 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio);
 VOID       egFreeImage(IN EG_IMAGE *Image);
 VOID      ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage);
 
-EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);
+EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN BOOLEAN WantAlpha);
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN IconSize);
 
 EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
 
-EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
+EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
-                      IN UINT8 *FileData, IN UINTN FileDataLength);
+                      IN CONST VOID *FileData, IN UINTN FileDataLength);
 EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName);
 EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir);
 

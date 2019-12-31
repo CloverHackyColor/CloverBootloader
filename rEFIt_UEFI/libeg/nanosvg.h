@@ -58,9 +58,6 @@
 #define strlen(s) AsciiStrLen(s)
 #define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
 
-extern VOID *fontsDB;
-extern struct NSVGparser *mainParser;
-
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,
   NSVG_PAINT_COLOR = 1,
@@ -570,5 +567,8 @@ struct NSVGrasterizer
   unsigned char* bitmap;
   int width, height, stride;
 };
+
+extern NSVGfont *fontsDB;
+extern struct NSVGparser *mainParser;
 
 #endif
