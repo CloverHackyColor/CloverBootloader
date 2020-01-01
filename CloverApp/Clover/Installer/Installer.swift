@@ -20,6 +20,7 @@ class InstallerWindowController: NSWindowController, NSWindowDelegate {
       self.viewController = newValue
     }
   }
+  
   func windowShouldClose(_ sender: NSWindow) -> Bool {
     if AppSD.isInstalling  {
       return false
@@ -742,28 +743,28 @@ class InstallerViewController: NSViewController {
     let attributes = [/*NSAttributedString.Key.font: font,*/ NSAttributedString.Key.foregroundColor: textColor]
     
     let astr = NSAttributedString(string: text, attributes: attributes)
-    //DispatchQueue.global(qos: .background).async {
-      DispatchQueue.main.async {
-        if add {
-          self.infoText.textStorage?.append(astr)
-        } else {
-          self.infoText.string = ""
-          self.infoText.textStorage?.append(astr)
-        }
-        
-        if scroll {
-          let loc = self.infoText.string.lengthOfBytes(using: String.Encoding.utf8)
-          let range = NSRange(location: loc, length: 0)
-          self.infoText.scrollRangeToVisible(range)
-        } else {
-          self.infoText.scroll(NSPoint.zero)
-        }
-      }
-    //}
+    if add {
+      self.infoText.textStorage?.append(astr)
+    } else {
+      self.infoText.string = ""
+      self.infoText.textStorage?.append(astr)
+    }
+    
+    if scroll {
+      let loc = self.infoText.string.lengthOfBytes(using: String.Encoding.utf8)
+      let range = NSRange(location: loc, length: 0)
+      self.infoText.scrollRangeToVisible(range)
+    } else {
+      self.infoText.scroll(NSPoint.zero)
+    }
   }
   
   // MARK: Installation
   @IBAction func installPressed(_ sender: NSButton!) {
+    if AppSD.isInstalling {
+      NSSound.beep()
+      return
+    }
     
     /*
      NSString *targetVol             = [CloverappDict objectForKey:@"targetVol"];
@@ -776,6 +777,9 @@ class InstallerViewController: NSViewController {
      NSString *cloverv2              = [CloverappDict objectForKey:@"CloverV2"];
      NSString *boot1installPath      = [CloverappDict objectForKey:@"boot1install"];
      NSString *bootSectorsInstallSrc = [CloverappDict objectForKey:@"bootsectors-install"];
+     NSString *backUpPath            = [CloverappDict objectForKey:@"BackUpPath"];
+     NSString *version               = [CloverappDict objectForKey:@"version"];
+     BOOL isESP                      = [[CloverappDict objectForKey:@"isESP"] boolValue];
     */
     
     let Cloverapp = NSMutableDictionary()
@@ -785,6 +789,7 @@ class InstallerViewController: NSViewController {
     
     // minimum required arguments
     Cloverapp.setValue(self.targetVol, forKey: "targetVol")
+    Cloverapp.setValue(self.view.window!.title, forKey: "version")
     
     let  disk = getBSDName(of: self.targetVol) ?? ""
     Cloverapp.setValue(disk, forKey: "disk")
@@ -801,6 +806,9 @@ class InstallerViewController: NSViewController {
       post(text: "Error: can't install on \(filesystem.uppercased()) filesystem.", add: false, color: nil, scroll: false)
       return
     }
+    AppSD.isInstalling = true
+    self.installButton.isEnabled = false
+    self.spinner.startAnimation(nil)
       
     // drivers
     for sect in self.driversUEFI {
@@ -845,35 +853,58 @@ class InstallerViewController: NSViewController {
     }
     
     // backup in ~/Desktop/EFI_Backup_date
+    self.post(text: "Checking files...\n", add: false, color: nil, scroll: false)
     if fm.fileExists(atPath: self.targetVol.addPath("EFI/CLOVER")) {
+      self.post(text: "doing the backup...\n", add: false, color: nil, scroll: false)
+      
       let df = DateFormatter()
-      df.dateFormat = "yyyy-MM-dd hh:mm:ss"
+      df.dateFormat = "yyyy-MM-dd_hh-mm-ss"
       let now = df.string(from: Date())
       let revIn = findCloverRevision(at: self.targetVol.addPath("EFI")) ?? "0000"
-      let backUpPath = NSHomeDirectory().addPath("Desktop/CloverBackUp/EFI_r\(revIn)_\(now)")
-      do {
-        if !fm.fileExists(atPath: backUpPath.deletingLastPath) {
-          try fm.createDirectory(atPath: backUpPath.deletingLastPath,
-                                 withIntermediateDirectories: false,
-                                 attributes: nil)
+      let mediaName = getMediaName(from: getBSDParent(of: disk) ?? "") ?? "NoName"
+      let backUpPath = NSHomeDirectory().addPath("Desktop/CloverBackUp/\(mediaName)/r\(revIn)_\(now)/EFI")
+      if #available(OSX 10.10, *) {
+        DispatchQueue.global(qos: .userInteractive).async {
+          do {
+            if !fm.fileExists(atPath: backUpPath.deletingLastPath) {
+              try fm.createDirectory(atPath: backUpPath.deletingLastPath,
+                                     withIntermediateDirectories: true,
+                                     attributes: nil)
+            }
+            try fm.copyItem(atPath: self.targetVol.addPath("EFI"),
+                            toPath: backUpPath)
+            //post(text: "backup made at '\(backUpPath)'.\n", add: true, color: nil, scroll: false)
+            Cloverapp.setValue(backUpPath, forKey: "BackUpPath")
+            self.installClover(disk: disk, settingDict: Cloverapp)
+          } catch {
+            DispatchQueue.main.async {
+              self.post(text: "The backup failed:\n", add: true, color: nil, scroll: false)
+              self.post(text: error.localizedDescription, add: false, color: nil, scroll: false)
+              AppSD.isInstalling = false
+              self.installButton.isEnabled = true
+              self.spinner.stopAnimation(nil)
+            }
+          }
         }
-        try fm.copyItem(atPath: self.targetVol.addPath("EFI"),
-                        toPath: backUpPath)
-        
-        self.installClover(disk: disk, settingDict: Cloverapp)
-      } catch {
-        post(text: error.localizedDescription, add: false, color: nil, scroll: false)
       }
+      
     } else {
-      self.installClover(disk: disk, settingDict: Cloverapp)
+      if #available(OSX 10.10, *) {
+        DispatchQueue.global(qos: .userInteractive).async {
+          self.installClover(disk: disk, settingDict: Cloverapp)
+        }
+      }
     }
   }
   
   func installClover(disk: String, settingDict : NSDictionary) {
-    self.post(text: "Installation begin..", add: false, color: nil, scroll: false)
+    self.post(text: "Installation begin..\n", add: true, color: nil, scroll: false)
     if !isMountPoint(path: self.targetVol) {
-      NSSound.beep()
-      self.post(text: "Can't find target volume, installation aborted.", add: true, color: nil, scroll: false)
+      DispatchQueue.main.async {
+        NSSound.beep()
+        self.post(text: "Can't find target volume, installation aborted.", add: true, color: nil, scroll: false)
+      }
+      
       return
     }
     
@@ -889,70 +920,97 @@ class InstallerViewController: NSViewController {
     try? fm.removeItem(atPath: "/tmp/Cloverapp")
     
     if settingDict.write(toFile: "/tmp/Cloverapp", atomically: false) {
-      self.installButton.isEnabled = false
       AppSD.isInstalling = true
-      self.spinner.startAnimation(nil)
       
-      self.view.window?.level = .floating // just a hack to keep window in front momentarily
+      
+      DispatchQueue.main.async {
+        self.spinner.startAnimation(nil)
+        self.installButton.isEnabled = false
+        self.view.window?.level = .floating // just a hack to keep window in front momentarily
+      }
+      
       DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
         self.view.window?.level = .normal
       }
-      //DispatchQueue.global(qos: .background).async {
-        let task = Process()
-        let msg = "Install Clover".locale
-        let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("Cloverhelper")
-        
-        let script = "do shell script \"'\(helperPath)'\" with prompt \"\(msg)\" with administrator privileges"
-        
-        task.launchPath = "/usr/bin/osascript"
-        task.arguments = ["-e", script]
-        let pipe: Pipe = Pipe()
-        
-        let stdOutHandler =  { (file: FileHandle!) -> Void in
-          let data = file.availableData
-          //file.closeFile()
-          let output = String(decoding: data, as: UTF8.self)
-          DispatchQueue.main.async {
-            self.view.window?.level = .normal // restore window level to normal
-            self.post(text: "\n" + output, add: true, color: nil, scroll: true)
-          }
-        }
-        
-        task.standardOutput = pipe
-        task.standardError  = pipe
-        pipe.fileHandleForReading.readabilityHandler = stdOutHandler
-        
-        task.terminationHandler = { t in
-          
-          if t.terminationStatus == 0 {
-            DispatchQueue.main.async {
-              self.post(text: "\nInstallation succeded.", add: true, color: nil, scroll: true)
-            }
-          } else {
-            NSSound.beep()
-            DispatchQueue.main.async {
-              self.post(text: "\nInstallation failed.", add: true, color: nil, scroll: true)
-            }
-          }
-          
-          DispatchQueue.main.async {
-            AppSD.isInstalling = false
-            self.installButton.isEnabled = true
-            self.spinner.stopAnimation(nil)
-            if isMountPoint(path: self.targetVol) {
-              self.targetVol = getMountPoint(from: disk) ?? ""
-            }
-            AppSD.reFreshDisksList()
-            self.setPreferences(for: self.targetVol)
-          }
-        }
-        task.launch()
-      //}
+      
+      let task = Process()
+      let msg = "Install Clover".locale
+      let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("Cloverhelper")
+      let script = "do shell script \"'\(helperPath)'\" with prompt \"\(msg)\" with administrator privileges"
+      task.launchPath = "/usr/bin/osascript"
+      task.arguments = ["-e", script]
+      let pipe: Pipe = Pipe()
+      
+      task.standardOutput = pipe
+      task.standardError  = pipe
+      let fh = pipe.fileHandleForReading
+      fh.waitForDataInBackgroundAndNotify()
+      
+      var op1 : NSObjectProtocol!
+      op1 = NotificationCenter.default.addObserver(forName: NSNotification.Name.NSFileHandleDataAvailable,
+                                                    object: fh, queue: nil) {
+                                                      notification -> Void in
+                                                      let data = fh.availableData
+                                                      if data.count > 0 {
+                                                        let output = String(decoding: data, as: UTF8.self)
+                                                        DispatchQueue.main.async {
+                                                          if self.view.window?.level != .normal {
+                                                            self.view.window?.level = .normal
+                                                          }
+                                                          
+                                                          self.post(text: "\n" + output,
+                                                                    add: true,
+                                                                    color: nil,
+                                                                    scroll: true)
+                                                        }
+                                                        fh.waitForDataInBackgroundAndNotify()
+                                                      } else {
+                                                        NotificationCenter.default.removeObserver(op1 as Any)
+                                                      }
+      }
+      
+      var op2 : NSObjectProtocol!
+      op2 = NotificationCenter.default.addObserver(forName: Process.didTerminateNotification,
+                                                    object: task, queue: nil) {
+                                                      notification -> Void in
+                                                      NotificationCenter.default.removeObserver(op2 as Any)
+                                                      let success = (task.terminationStatus == 0)
+                                                      DispatchQueue.main.async {
+                                                        let message = success ? "Installation succeded".locale : "Installation failed".locale
+                                                        self.post(text: "\n\(message).", add: true, color: nil, scroll: true)
+                                                        
+                                                        
+                                                        NSSound(named: success ? "Glass" : "Basso")?.play()
+                                                        let alert = NSAlert()
+                                                        alert.messageText = message
+                                                        alert.informativeText = success ? "😀" : "😱"
+                                                        alert.alertStyle = success ? .informational : .critical
+                                                        alert.addButton(withTitle: "Ok".locale)
+                                                        
+                                                        alert.beginSheetModal(for: self.view.window!) { (reponse) in
+                                                          AppSD.isInstalling = false
+                                                          self.installButton.isEnabled = true
+                                                          self.spinner.stopAnimation(nil)
+                                                          if isMountPoint(path: self.targetVol) {
+                                                            self.targetVol = getMountPoint(from: disk) ?? ""
+                                                          }
+                                                          AppSD.reFreshDisksList()
+                                                          self.setPreferences(for: self.targetVol)
+                                                        }
+                                                      }
+      }
+      
+      task.launch()
+      task.waitUntilExit()
       
     } else {
-      NSSound.beep()
-      self.post(text: "Can't write temporary files, installation aborted.", add: true, color: nil, scroll: false)
+      DispatchQueue.main.async {
+        NSSound.beep()
+        self.post(text: "Can't write temporary files, installation aborted.", add: true, color: nil, scroll: false)
+      }
     }
+    
+    
   }
 }
 

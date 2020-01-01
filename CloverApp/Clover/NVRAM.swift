@@ -42,6 +42,7 @@ func setNVRAM(key: String, stringValue: String) {
   var cmd : String = "do shell script \""
   cmd += "sudo \(nvram_cmd) \(key)=\(stringValue)" // sudo required otherwise wont work!
   cmd += "\" with administrator privileges"
+  
   //DispatchQueue.global(qos: .background).async {
     let script: NSAppleScript? = NSAppleScript(source: cmd)
     var error : NSDictionary? = nil

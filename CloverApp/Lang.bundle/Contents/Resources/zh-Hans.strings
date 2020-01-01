@@ -16,6 +16,8 @@
 "Current Clover revision" = "目前 Clover 版本";
 "Boot Device:" = "引导设备:";
 "config path:" = "config 路径:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 
 "Clover wants to mount %@" = "Clover 想要挂载 %@";
 "Clover wants to umount %@" = "Clover 想要卸载 %@";
@@ -23,6 +25,26 @@
 "umount" = "卸载";
 "mount point" = "挂载点";
 "*auto mount" = "*auto mount";
+
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes";
+"No" = "No";
+
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
 
 "true" = "是";
 "false" = "否";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "卸载 CloverDaemonNew";
 
 "Update" = "更新";
+"Download" = "Download";
 "Update to r%d" = "更新到 r%d"; // "Update to r5101"
 "Check update:" = "检查更新:";
 "Check now" = "现在检查";

@@ -16,6 +16,8 @@
 "Current Clover revision" = "Revisi Clover Terkini";
 "Boot Device:" = "Device Boot:";
 "config path:" = "Lokasi config:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 
 "Clover wants to mount %@" = "Clover ingin mount %@";
 "Clover wants to umount %@" = "Clover ingin umount %@";
@@ -23,6 +25,26 @@
 "umount" = "umount";
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
+
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes";
+"No" = "No";
+
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
 
 "true" = "true";
 "false" = "false";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "Copot CloverDaemonNew";
 
 "Update" = "Perbarui";
+"Download" = "Download";
 "Update to r%d" = "Perbarui ke r%d"; // "Update to r5101"
 "Check update:" = "Periksa Pembaruan:";
 "Check now" = "Periksa Sekarang";

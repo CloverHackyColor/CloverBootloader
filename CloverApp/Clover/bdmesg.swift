@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Get Clover boot-log (or compatible)
 func dumpBootlog() -> String? {
   var root: io_registry_entry_t
   var bootLog: CFTypeRef? = nil
@@ -45,6 +46,7 @@ func dumpBootlog() -> String? {
   return log
 }
 
+/// Get Find the Clover Revision from the boot-log
 func findCloverRevision() -> String? {
   let bdmesg = dumpBootlog()
   var rev : String? = nil
@@ -60,6 +62,20 @@ func findCloverRevision() -> String? {
   return rev
 }
 
+/// Determine if We're booted with Clover (legay or UEFI)
+func bootByClover() -> Bool {
+  let bdmesg = dumpBootlog()
+  if (bdmesg != nil) {
+    for line in bdmesg!.components(separatedBy: .newlines) {
+      if (line.range(of: "Starting Clover revision: ") != nil) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+/// Find the Clover hash commit (from the boot-log)
 func findCloverHash() -> String? {
   let bdmesg = dumpBootlog()
   var rev : String? = nil
@@ -76,6 +92,7 @@ func findCloverHash() -> String? {
   return rev
 }
 
+/// Find the UUID of the partition boot device Clover starts from.
 func findBootPartitionDevice() -> String? {
   var bsd :String? = nil
   if let bdmesg : String = dumpBootlog() {
@@ -115,6 +132,7 @@ func findBootPartitionDevice() -> String? {
   return bsd
 }
 
+/// Find the relative path of the config.plist  loaded by Clover.
 func findConfigPath() -> String? {
   var path : String? = nil
   if let log : String = dumpBootlog() {
@@ -139,4 +157,44 @@ func findConfigPath() -> String? {
     }
   }
   return path
+}
+
+/// Struct for Start up Sound (name, output, index).
+struct SoundDevice {
+  var name: String
+  var output: String
+  var index: Int
+}
+
+/// Return an array of SoundDevice detected by Clover
+func getSoundDevices() -> [SoundDevice] {
+  var devices = [SoundDevice]()
+  if let bdmesg = dumpBootlog() {
+    for line in bdmesg.components(separatedBy: .newlines) {
+      // Found Audio Device IDT 92HD91BXX (Headphones) at index 0
+      if (line.range(of: "Found Audio Device ") != nil && line.range(of: " at index ") != nil) {
+        var name = line.components(separatedBy: "Found Audio Device ")[1].components(separatedBy: " at index")[0]
+        let output = name.components(separatedBy: "(")[1].components(separatedBy: ")")[0]
+        name = name.components(separatedBy: " (")[0]
+        let index  = line.components(separatedBy: " at index ")[1]
+        if let i : Int = Int(index) {
+          // print("\(name) at index \(i) (\(output))")
+          if i >= 0 {
+            var found = false // avoid duplicates
+            for d in devices {
+              if d.name == name && d.output == output && d.index == i {
+                found = true
+                break
+              }
+            }
+            if !found {
+              let sd = SoundDevice(name: name, output: output, index: i)
+              devices.append(sd)
+            }
+          }
+        }
+      }
+    }
+  }
+  return devices
 }

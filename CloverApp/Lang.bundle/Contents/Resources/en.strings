@@ -16,6 +16,8 @@
 "Current Clover revision" = "Current Clover revision";
 "Boot Device:" = "Boot Device:";
 "config path:" = "config path:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 
 "Clover wants to mount %@" = "Clover wants to mount %@";
 "Clover wants to umount %@" = "Clover wants to umount %@";
@@ -23,6 +25,26 @@
 "umount" = "umount";
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
+
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes";
+"No" = "No";
+
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
 
 "true" = "true";
 "false" = "false";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
 
 "Update" = "Update";
+"Download" = "Download";
 "Update to r%d" = "Update to r%d"; // "Update to r5101"
 "Check update:" = "Check update:";
 "Check now" = "Check now";
@@ -71,7 +94,7 @@ Can also be use if you don't want to upgrade MBR or PBR sectors.";
 "Clover legacy BIOS boot sectors" = "Clover EFI requires three essential files. (in simple terms)
 boot0 (On the drive's MBR) responsible for loading boot1.
 boot1 (On the partition's boot-sector) to finding boot2.
-boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc.";
+boot2 (On the partition's root directory) for loading CLOVERX64.efi, and kernel etc.";
 
 "boot0af" = "Used for BIOS booting on BIOS motherboards.
 boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.
@@ -128,7 +151,7 @@ Volume and Audio device (for supported IOAudio devices only).";
 
 "FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
 
-"FSInject.efi" = "Provide injection of kernel extensions from Clover folder.";
+"FSInject.efi" = "Provide injection of kernel extensions from Clover folder and allow to force load them from both /System/Library/Extensions and /Library/Extensions.";
 
 "GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
 

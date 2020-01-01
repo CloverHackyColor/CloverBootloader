@@ -16,6 +16,8 @@
 "Current Clover revision" = "Revisione corrente";
 "Boot Device:" = "Disco di avvio:";
 "config path:" = "percorso config:";
+"Installation succeded" = "Installazione riuscita";
+"Installation failed" = "Installazione fallita";
 
 "Clover wants to mount %@" = "Clover vuole montare %@";
 "Clover wants to umount %@" = "Clover vuole smontare %@";
@@ -23,6 +25,26 @@
 "umount" = "smonta";
 "mount point" = "punto di montaggio";
 "*auto mount" = "*auto monta";
+
+"System Serial Number:" = "Numero Seriale di Sistema:";
+"Model:" = "Modello:";
+"board-id:" = "Identificativo Scheda:";
+"OEM Vendor:" = "Venditore OEM:";
+"OEM Product:" = "Prodotto OEM:";
+"OEM Board:" = "Scheda OEM:";
+"NVRAM is native:" = "NVRAM è nativa:";
+"unknown" = "sconosciuto";
+"Yes" = "Si";
+"No" = "No";
+
+"Startup Sound" = "Suono all'avvio";
+"Device:" = "Dispositivo:";
+"Volume level:" = "Volume:";
+"LineOut" = "Line Out";
+"Speaker" = "Altoparlanti";
+"Headphones" = "Cuffie";
+"Garniture" = "Accessori";
+"Other" = "Altro";
 
 "true" = "vero";
 "false" = "falso";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "Disinstalla il demone CloverDaemonNew";
 
 "Update" = "Aggiorna";
+"Download" = "Scarica";
 "Update to r%d" = "Aggiorna a r%d"; // "Update to r5101"
 "Check update:" = "Controlla:";
 "Check now" = "Controlla adesso";
@@ -71,7 +94,7 @@ Può essere usato anche se non si desidera aggiornare i settori MBR o PBR.";
 "Clover legacy BIOS boot sectors" = "Clover EFI richiede tre file essenziali. (in semplici termini)
 boot0 (Sul disco MBR) responsabile del caricamento del boot1.
 boot1 (Settore di avvio della partizione) per trovare il boot2.
-boot2 (Nella cartella principale della partizione) per caricare /EFI/CLOVER/CLOVERIA32.efi o CLOVERX64.efi, e il kernel etc.";
+boot2 (Nella cartella principale della partizione) per caricare CLOVERX64.efi, e il kernel etc.";
 
 "boot0af" = "Necessario per l'avvio da schede madri con BIOS.
 boot0af (boot0 active first) bootloader cerca di avviare la partizione attiva definita nella MBR. Se non vi è alcuna partizione attiva, tenterà di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida.
@@ -129,7 +152,7 @@ Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron,
 
 "FirmwareVolume.efi" = "Crea il FirmwareVolume con ‘cursor images’ per FileVault2.";
 
-"FSInject.efi" = "Abilita l’iniezione di estensioni del kernel dalle cartelle di Clover.";
+"FSInject.efi" = "Abilita l’iniezione di estensioni del kernel dalle cartelle di Clover e consente di forzare il caricamento da /System/Library/Extensions e /Library/Extensions.";
 
 "GrubEXFAT.efi" = "Driver GRUB per il filesystem ExFAT.";
 

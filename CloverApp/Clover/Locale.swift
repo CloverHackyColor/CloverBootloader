@@ -49,10 +49,20 @@ func localize(view: NSView) {
       if x.title.count > 0 {
         x.title = x.title.locale
       }
+    } else if o is NSTabView {
+      let x = (o as! NSTabView)
+      for i in x.tabViewItems {
+        i.label = i.label.locale
+        if let v = i.view {
+          localize(view: v)
+        }
+      }
     }
     
     if o.subviews.count > 0 {
-      localize(view: o)
+      for v in o.subviews {
+        localize(view: v)
+      }
     }
   }
 }

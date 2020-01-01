@@ -1,5 +1,7 @@
 #!/bin/bash
 
+logPath="/tmp/cltmplog"
+exec > >(tee -a $logPath) 2>&1
 #  Created by vector sigma on 04/11/2019.
 #  Copyright © 2019 CloverHackyColor. All rights reserved.
 
@@ -24,8 +26,20 @@ bootslice="${bootdev#*disk*s}"
 keepmounted=0
 journaled=0
 
+saveLog() {
+/usr/sbin/diskutil mount "$bootdev" > /dev/null 2>&1
+local mp=$(LC_ALL=C /sbin/mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')
+
+if [[ -n "$mp" ]]; then
+  if [[ -d "${mp}"/EFI/CLOVER ]] && [[ -f "${logPath}" ]]; then
+    cat "${logPath}" > "${mp}"/EFI/CLOVER/Clover.app_install.log
+    chmod 777 "${mp}"/EFI/CLOVER/Clover.app_install.log
+  fi
+fi
+}
+
 echo
-echo "Installing boot sectors (version of Wed 27 Nov 2019, 22:16)"
+echo "Installing boot sectors (version of Wed 30 Dec 2019, 20:01)"
 echo
 echo "disk:       ${disk}"
 echo "bootdev:    ${bootdev}"
@@ -45,7 +59,7 @@ fi
 if [ "${partition_scheme}" != FDisk_partition_scheme ] && \
    [ "${partition_scheme}" != GUID_partition_scheme ]; then
   echo "Error: unsupported Partition Scheme Map \"${partition_scheme}\"."
-  exit 1
+  saveLog && exit 1
 fi
 
 
@@ -53,22 +67,22 @@ if [ "${filesystem}" != fat32 ] && \
    [ "${filesystem}" != exfat ] && \
    [ "${filesystem}" !=  hfs ]; then
   echo "Error: unsupported filesystem \"${filesystem}\""
-  exit 1
+  saveLog && exit 1
 fi
 
 if [[ ! -f "${boot0}" ]]; then
   echo "Error: cannot found /tmp/boot0[af-ss] sector."
-  exit 1
+  saveLog && exit 1
 fi
 
 if [[ ! -f "${boot1}" ]]; then
   echo "Error: cannot found /tmp/boot1[1f32-h-x] sector."
-  exit 1
+  saveLog && exit 1
 fi
 
 if [[ ! -f "${boot1install}" ]]; then
   echo "Error: cannot found /tmp/boot1-install."
-  exit 1
+  saveLog && exit 1
 fi
 
 # chmod +x "${boot1install}"
@@ -148,15 +162,17 @@ MAKEACTIVE
 fi
 
 sleep 2
-# Now try to remount the partition
-if [[ "${ESP}" != ESP ]]; then
-  if [[ -n "$mnt_pt" ]]; then
-    /usr/sbin/diskutil mount "$bootdev"
-  fi
-fi
+saveLog
 
 if [[ $journaled -ne 0 ]]; then
   /usr/sbin/diskutil enableJournal "${disk}"
+fi
+
+# Now try to remount the partition
+if [[ "${ESP}" == ESP ]]; then
+  /usr/sbin/diskutil unmount force $bootdev > /dev/null 2>&1
+else
+  /usr/sbin/diskutil mount "$bootdev"  > /dev/null 2>&1
 fi
 
 /bin/rm -rf /tmp/Clover*

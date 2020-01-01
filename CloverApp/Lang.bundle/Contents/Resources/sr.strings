@@ -16,6 +16,8 @@
 "Current Clover revision" = "Trenutna verzija Clover-a";
 "Boot Device:" = "Uređaj za podizanje sastava:";
 "config path:" = "Putanja za konfiguraciju:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 
 "Clover wants to mount %@" = "Clover želi %@ mount";
 "Clover wants to umount %@" = "Clover želi %@ unmount";
@@ -23,6 +25,26 @@
 "umount" = "Unmount";
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
+
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes";
+"No" = "No";
+
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
 
 "true" = "tačno";
 "false" = "Lažno";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "Deinstalirati CloverDaemonNew";
 
 "Update" = "Ažuriranje";
+"Download" = "Download";
 "Update to r%d" = "Ažurirati Verziju r%d Aktuelnu"; // "Update to r5101"
 "Check update:" = "Proveriti trenutnu verziju:";
 "Check now" = "Proveriti sada";

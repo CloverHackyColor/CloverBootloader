@@ -16,6 +16,8 @@
 "Current Clover revision" = "Version actuelle de Clover";
 "Boot Device:" = "Périphérique De Démarrage:";
 "config path:" = "voie d'acces vers config:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 
 "Clover wants to mount %@" = "Clover desire monter %@";
 "Clover wants to umount %@" = "Clover desire démonter %@";
@@ -23,6 +25,26 @@
 "umount" = "demonter";
 "mount point" = "point d'acces";
 "*auto mount" = "*monter automatiquement";
+
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes";
+"No" = "No";
+
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
 
 "true" = "vrai";
 "false" = "faux";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "Desinstaller CloverDaemonNew";
 
 "Update" = "Mise à jour";
+"Download" = "Download";
 "Update to r%d" = "Mise à jour de r%d"; // "Update to r5101"
 "Check update:" = "Verifier mise à jour:";
 "Check now" = "Verifier maintenant";

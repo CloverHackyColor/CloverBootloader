@@ -8,16 +8,55 @@
 
 import Cocoa
 
+class LITabView: NSTabView {
+  var tabIndex: Int = 0
+  var lastTabIndex: Int {
+    get {
+      return self.tabIndex
+    } set {
+      self.tabIndex = newValue
+    }
+  }
+}
+
+
+class SoundSlider : NSSlider {
+  var field : NSTextField?
+}
+
 class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionDownloadDelegate {
   // MARK: Variables
+  @IBOutlet var tabViewInfo : LITabView!
+  // tab 0
   @IBOutlet var currentRevField : NSTextField!
   @IBOutlet var bootDeviceField : NSTextField!
   @IBOutlet var configPathField : FWTextField!
+  // tab 1
+  @IBOutlet var snField : NSTextField!
+  @IBOutlet var modelField : NSTextField!
+  @IBOutlet var boardIdField : NSTextField!
+  // tab 2
+  @IBOutlet var oemVendorField : NSTextField!
+  @IBOutlet var oemProductField : NSTextField!
+  @IBOutlet var oemBoardIdField : NSTextField!
+  // tab 3
+  @IBOutlet var nativeNVRAMField : NSTextField!
+  @IBOutlet var bootTypeField : NSTextField!
+  @IBOutlet var firmwareVendorfield : NSTextField!
+  
+  @IBOutlet var tabViewFunc : LITabView!
+  @IBOutlet var tabViewFuncSelector : NSSegmentedControl!
+  // tab 0
   @IBOutlet var disksPopUp : NSPopUpButton!
   @IBOutlet var autoMountButton : NSButton!
   @IBOutlet var unmountButton : NSButton!
+  // tab 1
   @IBOutlet var themeField : FWTextField!
-  @IBOutlet var soundField : FWTextField!
+  // tab 2
+  @IBOutlet var soundDevicePopUp : NSPopUpButton!
+  @IBOutlet var soundVolumeSlider : SoundSlider!
+  @IBOutlet var soundVolumeField : NSTextField!
+  
   @IBOutlet var disbaleSleepProxyButton : NSButton!
   @IBOutlet var makeRootRWButton : NSButton!
   @IBOutlet var installDaemonButton : NSButton!
@@ -50,6 +89,8 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   
   var loaded : Bool = false
   
+
+  
   override func awakeFromNib() {
     super.awakeFromNib()
     if !self.loaded {
@@ -65,20 +106,33 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     if #available(OSX 10.10, *) {
       super.viewDidLoad()
     }
-    
-    var osminorVersion : Int = 9
-    if #available(OSX 10.10, *) {
-      osminorVersion = ProcessInfo().operatingSystemVersion.minorVersion
-    }
 
     let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String + " Beta"
     self.appVersionField.stringValue = "v\(appVersion)"
     localize(view: self.view)
+    
     self.view.wantsLayer = true
     self.view.layer?.backgroundColor = NSColor.clear.cgColor
+   
+    self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarInternalDisk", isTemplate: true), forSegment: 0)
+    self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMoviesFolder", isTemplate: true), forSegment: 1)
+    self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMusicFolder", isTemplate: true), forSegment: 2)
     
     self.themeField.delegate = self
-    self.soundField.delegate = self
+    
+    self.soundVolumeSlider.field = self.soundVolumeField
+    self.soundVolumeField.stringValue = kNotAvailable.locale
+    self.soundDevicePopUp.removeAllItems()
+    self.soundDevicePopUp.addItem(withTitle: "...")
+  
+    let soundDevices = getSoundDevices()
+    if soundDevices.count > 0 {
+      for sd in soundDevices {
+        self.soundDevicePopUp.addItem(withTitle: "\(sd.name) (\(sd.output.locale))")
+        self.soundDevicePopUp.lastItem?.representedObject = sd
+      }
+    }
+    self.soundVolumeSlider.doubleValue = 0
     
     self.progressBar.isHidden = true
     
@@ -86,6 +140,26 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     self.unmountButton.isEnabled = false
     self.autoMountButton.isEnabled = false
     self.autoMountButton.isHidden = true
+    
+    
+    // tab 1
+    self.snField.stringValue = getSystemSerialNumber() ?? kNotAvailable.locale
+    self.modelField.stringValue = getEFIModel() ?? kNotAvailable.locale
+    self.boardIdField.stringValue = getEFIBoardID() ?? kNotAvailable.locale
+    // tab 2
+    self.oemVendorField.stringValue = getOEMVendor() ?? kNotAvailable.locale
+    self.oemProductField.stringValue = getOEMProduct() ?? kNotAvailable.locale
+    self.oemBoardIdField.stringValue = getOEMBoard() ?? kNotAvailable.locale
+    
+    self.setUpInfo()
+    self.setUpdateButton()
+  }
+  
+  func setUpInfo() {
+    var osminorVersion : Int = 9
+    if #available(OSX 10.10, *) {
+      osminorVersion = ProcessInfo().operatingSystemVersion.minorVersion
+    }
     
     self.setUpdateInformations()
     
@@ -98,16 +172,33 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     self.themeField.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
     self.themeField.cell?.representedObject = self.themeField.stringValue
     
-    nvdata = nvram?.object(forKey: "Clover.Sound") as? Data
-    if #available(OSX 10.10, *) {
-      self.soundField.placeholderString = kNotAvailable.locale
-    }
-    self.soundField.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
-    self.soundField.cell?.representedObject = self.soundField.stringValue
-    
     nvdata = nvram?.object(forKey: "Clover.RootRW") as? Data
     var value : String = String(decoding: nvdata ?? Data(), as: UTF8.self)
     self.makeRootRWButton.state = (value == "true") ? .on : .off
+    
+    nvdata = nvram?.object(forKey: "Clover.SoundIndex") as? Data
+    if (nvdata != nil) {
+      let soundIndex = nvdata!.reversed().reduce(0) { $0 << 8 + UInt64($1) }
+      if soundIndex >= 0 && soundIndex <= 20 {
+        for item in self.soundDevicePopUp.itemArray {
+          if let sd = item.representedObject as? SoundDevice {
+            if sd.index == Int(soundIndex) {
+              self.soundDevicePopUp.select(item)
+              break
+            }
+          }
+        }
+      }
+    }
+
+    nvdata = nvram?.object(forKey: "Clover.SoundVolume") as? Data
+    if (nvdata != nil) {
+      let volume = nvdata!.reversed().reduce(0) { $0 << 8 + UInt64($1) }
+      if volume >= 0 && volume <= 100 {
+        self.soundVolumeSlider.field?.stringValue = "\(volume)%"
+        self.soundVolumeSlider.doubleValue = Double(volume)
+      }
+    }
     
     // copy the Swift Framenworks for oldest OSes
     if osminorVersion < 15 {
@@ -118,14 +209,31 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     nvdata = nvram?.object(forKey: "Clover.DisableSleepProxyClient") as? Data
     value = String(decoding: nvdata ?? Data(), as: UTF8.self)
     self.disbaleSleepProxyButton.state = (value == "true") ? .on : .off
-
+    
+    
+    // tab 3
+    let fwname = getFirmawareVendor()
+    self.firmwareVendorfield.stringValue = "Firmware: \(fwname ?? kNotAvailable.locale)"
+    
+    let emuvarPresent = nvram?.object(forKey: "EmuVariableUefiPresent") != nil
+    var nvramIsNative : String? = nil
+    let isUEFI : String = isLegacyFirmware() ? "No".locale.lowercased() : "Yes".locale.lowercased()
+    
+    
+    if isUEFI == "Yes".locale.lowercased() {
+      nvramIsNative = emuvarPresent ? "No".locale.lowercased() : "Yes".locale.lowercased()
+    }
+    
+    self.nativeNVRAMField.stringValue =  "\("NVRAM is native:".locale) " + (nvramIsNative ?? "unknown".locale)
+    
+    self.bootTypeField.stringValue = "UEFI: \(isUEFI)"
+    
     
     let daemonExist = fm.fileExists(atPath: kDaemonPath) && fm.fileExists(atPath: kLaunchPlistPath)
     self.unInstallDaemonButton.isEnabled = daemonExist
     
-    self.setUpdateButton()
     self.searchESPDisks()
-
+    
     let itervals = ["never", "daily", "weekly", "monthly"]
     self.timeIntervalPopUp.removeAllItems()
     for i in itervals {
@@ -154,7 +262,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     } else {
       self.lastUpdateCheckField.stringValue = "\("last checked:".locale) \("never".locale)"
     }
-
+    
     self.timerUpdate = Timer.scheduledTimer(timeInterval: 60 * 60,
                                             target: self,
                                             selector: #selector(self.setUpdateTimer),
@@ -377,20 +485,55 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
 
   // MARK: Controls actions
   @IBAction func installClover(_ sender: NSButton!) {
-    if #available(OSX 10.11, *) {
-      if (AppSD.installerWC == nil) {
-        AppSD.installerWC = InstallerWindowController.loadFromNib()
-      }
-      
-      AppSD.installerWC?.showWindow(self)
-    } else {
-      if (AppSD.installerOutWC == nil) {
-        AppSD.installerOutWC = InstallerOutWindowController.loadFromNib()
-      }
-      
-      AppSD.installerOutWC?.showWindow(self)
+    
+    let myPath = Bundle.main.bundlePath.lowercased()
+    var isXcode = false
+    var showAlert = false
+    if (myPath.range(of: "/deriveddata/") != nil) {
+      showAlert = true
+      isXcode = true
+    } else if (myPath.range(of: "/apptranslocation/") != nil) {
+      showAlert = true
     }
-    NSApp.activate(ignoringOtherApps: true)
+    
+    if showAlert {
+      let alert = NSAlert()
+      alert.alertStyle = .critical
+      let path = isXcode ? "Xcode" : "App Trans Location"
+      alert.messageText = "Running from \(path)"
+      
+      if isXcode {
+        alert.informativeText = "The Installer should not run from \(path) because it can reuse old resources like old built dependencies (in the DerivedData directory) instead ones from the app bundle in which you may had made changes.\nThis appear to be a bug in the Xcode build system, so please move Clover.app somewhere else for real installations, unless you are a Developer and you're just testing."
+      } else {
+        alert.informativeText = "The Installer cannot run from the \(path) and surely it will fail the installation.\nPlease move Clover.app somewhere else or use\n\nsudo spctl --master-disable\n\nThanks.\n\nP.S. Clover.app is not code signed because this require a paid Apple Developer certificate We cannot effort. If you have doubs, officiale releases are here:\n\n https://github.com/CloverHackyColor/CloverBootloader/releases\n\n..and you can build the app by your self if you prefear as this project is completely open source!"
+      }
+      
+      if isXcode {
+        alert.addButton(withTitle: "OK".locale)
+        alert.runModal()
+      } else {
+        alert.addButton(withTitle: "Close".locale)
+        alert.runModal()
+        return
+      }
+      
+    }
+    DispatchQueue.main.async {
+      if #available(OSX 10.11, *) {
+        if (AppSD.installerWC == nil) {
+          AppSD.installerWC = InstallerWindowController.loadFromNib()
+        }
+        
+        AppSD.installerWC?.showWindow(self)
+      } else {
+        if (AppSD.installerOutWC == nil) {
+          AppSD.installerOutWC = InstallerOutWindowController.loadFromNib()
+        }
+        
+        AppSD.installerOutWC?.showWindow(self)
+      }
+      NSApp.activate(ignoringOtherApps: true)
+    }
   }
   
   @IBAction func installDaemon(_ sender: NSButton!) {
@@ -492,9 +635,9 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   func controlTextDidEndEditing(_ obj: Notification) {
     if let field = obj.object as? NSTextField {
       let delete : Bool = field.stringValue.count == 0
-      if field == self.themeField || field == soundField {
+      if field == self.themeField {
         if let old = field.cell?.representedObject as? String {
-          let key = (field == self.themeField) ? "Clover.Theme" : "Clover.Sound"
+          let key = "Clover.Theme"
           if old != field.stringValue {
             if delete {
               deleteNVRAM(key: key)
@@ -507,6 +650,62 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
             field.cell?.representedObject = field.stringValue
           }
         }
+      }
+    }
+  }
+  
+  @IBAction func soundSliderDidMove(_ sender: SoundSlider!) {
+    sender.field?.stringValue = "\(Int(sender.doubleValue))%"
+    
+    let key = "Clover.SoundVolume"
+    var num = Int(sender.doubleValue)
+    let value = String(format: "%%%02x", UInt8(num))
+    setNVRAM(key: key, stringValue: value)
+    num = 0
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+      if let nvram = getNVRAM() {
+        if let nvdata = nvram.object(forKey: key) as? Data {
+          let volume = nvdata.reversed().reduce(0) { $0 << 8 + UInt64($1) }
+          num = (volume >= 0 && volume <= 100) ? Int(num) : 0
+        }
+      }
+      sender.field?.stringValue = "\(num)%"
+      sender.doubleValue = Double(num)
+    }
+  }
+  
+  @IBAction func soundDeviceSelected(_ sender: NSPopUpButton!) {
+    let key = "Clover.SoundIndex"
+    if let sd = sender.selectedItem?.representedObject as? SoundDevice {
+      let value = String(format: "%%%02x", UInt8(sd.index))
+      setNVRAM(key: key, stringValue: value)
+    }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+      var index : Int = -1
+      if let nvram = getNVRAM() {
+        if let nvdata = nvram.object(forKey: key) as? Data {
+          let val = nvdata.reversed().reduce(0) { $0 << 8 + UInt64($1) }
+          index = (val >= 0 && val < self.soundDevicePopUp.numberOfItems) ? Int(val) : -1
+        }
+      }
+      
+      if index >= 0 {
+        var found = false
+        for item in self.soundDevicePopUp.itemArray {
+          if let sd = item.representedObject as? SoundDevice {
+            if sd.index == index {
+              found = true
+              self.soundDevicePopUp.select(item)
+              break
+            }
+          }
+        }
+        if !found {
+          self.soundDevicePopUp.selectItem(at: 0)
+        }
+      } else {
+        self.soundDevicePopUp.selectItem(at: 0)
       }
     }
   }
@@ -532,7 +731,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   @IBAction func makeRootRW(_ sender: NSButton!) {
     let key = "Clover.RootRW"
     if sender.state == .on {
-      setNVRAM(key: key, stringValue: "true"/*, error: &error*/)
+      setNVRAM(key: key, stringValue: "true")
     } else {
       deleteNVRAM(key: key)
     }
@@ -617,7 +816,6 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
       let secElapsed = Date().timeIntervalSinceReferenceDate - lastCheckDate.timeIntervalSinceReferenceDate
       
       if secElapsed >= ti {
-        print(secElapsed)
         self.searchUpdate()
       }
     }
@@ -720,7 +918,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
                 alert.messageText = "Clover.app v\(appvers!)"
                 alert.informativeText = "\(currVerS) => \(appvers!)"
                 alert.alertStyle = .informational
-                alert.addButton(withTitle: "Update".locale)
+                alert.addButton(withTitle: "Download".locale)
                 alert.addButton(withTitle: "Close".locale)
                 if alert.runModal() == .alertFirstButtonReturn {
                   NSWorkspace.shared.open(url)
@@ -877,7 +1075,55 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   
 }
 
-
+// MARK: - Tab animation
+extension SettingsViewController: NSTabViewDelegate {
+  @IBAction func selectTabInfo(_ sender: NSSegmentedControl!) {
+    let count = self.tabViewInfo.tabViewItems.count
+    
+    let index = self.tabViewInfo.indexOfTabViewItem(self.tabViewInfo.selectedTabViewItem!)
+    
+    if sender.selectedSegment == 1 {
+      if index >= (count - 1) {
+        NSSound.beep()
+        return
+      }
+      self.tabViewInfo.selectNextTabViewItem(nil)
+    } else {
+      if index <= 0 {
+        NSSound.beep()
+        return
+      }
+      self.tabViewInfo.selectPreviousTabViewItem(nil)
+    }
+  }
+  
+  @IBAction func selectFuncTab(_ sender: NSSegmentedControl!) {
+    self.tabViewFunc.selectTabViewItem(at: sender.indexOfSelectedItem)
+  }
+  
+  func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
+    if (tabViewItem != nil) {
+      if let t = tabView as? LITabView {
+        let position = CABasicAnimation(keyPath: "position")
+        
+        if t.lastTabIndex > t.indexOfTabViewItem(tabViewItem!) {
+          position.fromValue = NSValue(point: CGPoint(x: CGFloat(tabViewItem!.view!.frame.origin.x - 520), y: CGFloat(tabViewItem!.view!.frame.origin.y)))
+        } else {
+          position.fromValue = NSValue(point: CGPoint(x: CGFloat(tabViewItem!.view!.frame.origin.x + 520), y: CGFloat(tabViewItem!.view!.frame.origin.y)))
+        }
+        position.toValue = NSValue(point: CGPoint(x: CGFloat(tabViewItem!.view!.frame.origin.x), y: CGFloat(tabViewItem!.view!.frame.origin.y)))
+        tabViewItem?.view?.layer?.add(position, forKey: "controlViewPosition")
+        tabViewItem?.view?.animations = [
+          "frameOrigin" : position
+        ]
+        
+        tabViewItem?.view?.animator().frame.origin = CGPoint(x: CGFloat(tabViewItem!.view!.frame.origin.x), y: CGFloat(tabViewItem!.view!.frame.origin.y))
+        t.lastTabIndex = t.indexOfTabViewItem(tabViewItem!)
+      }
+      
+    }
+  }
+}
 
 // MARK: Settings Window controller
 class SettingsWindowController: NSWindowController, NSWindowDelegate {
@@ -918,4 +1164,5 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     return nil
   }
 }
+
 

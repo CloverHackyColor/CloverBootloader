@@ -14,6 +14,8 @@
 		953DBFDF236F037400B0C4FB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DBFDE236F037400B0C4FB /* main.swift */; };
 		954FF20E2371B13C00C3D94C /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20D2371B13C00C3D94C /* DiskArbitration.framework */; };
 		954FF2102371B16300C3D94C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20F2371B16300C3D94C /* IOKit.framework */; };
+		956034F623B7185B00E138D9 /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956034F523B7185A00E138D9 /* IO.swift */; };
+		95A9A87E23B63F570060F1CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A9A87D23B63F570060F1CA /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		953DBFDE236F037400B0C4FB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		954FF20D2371B13C00C3D94C /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		954FF20F2371B16300C3D94C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		956034F523B7185A00E138D9 /* IO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IO.swift; path = ../../Clover/IO.swift; sourceTree = "<group>"; };
+		95A9A87D23B63F570060F1CA /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,8 @@
 			isa = PBXGroup;
 			children = (
 				953DBFDE236F037400B0C4FB /* main.swift */,
+				956034F523B7185A00E138D9 /* IO.swift */,
+				95A9A87D23B63F570060F1CA /* Constants.swift */,
 				953D98862377094A003B369E /* Disks.swift */,
 				953B8DEF2370BB5C007E36E3 /* NVRAM.swift */,
 				953B8DED2370BB1A007E36E3 /* bdmesg.swift */,
@@ -104,7 +110,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1120;
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = CloverHackyColor;
 				TargetAttributes = {
 					953DBFDA236F037400B0C4FB = {
@@ -141,6 +147,8 @@
 				953DBFDF236F037400B0C4FB /* main.swift in Sources */,
 				953B8DF02370BB5D007E36E3 /* NVRAM.swift in Sources */,
 				953B8DEE2370BB1A007E36E3 /* bdmesg.swift in Sources */,
+				956034F623B7185B00E138D9 /* IO.swift in Sources */,
+				95A9A87E23B63F570060F1CA /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +273,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -287,6 +296,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				LD_RUNPATH_SEARCH_PATHS = (

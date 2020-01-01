@@ -14,6 +14,7 @@
 		95524B8E2380522A005F6425 /* bdmesg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95524B8D2380522A005F6425 /* bdmesg.swift */; };
 		95524B9023805233005F6425 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95524B8F23805232005F6425 /* Extensions.swift */; };
 		955F7C70238DCD440019D088 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F7C6F238DCD440019D088 /* DiskArbitration.framework */; };
+		95CD16DF23B7A01500303BDB /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD16DE23B7A01500303BDB /* IO.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,7 @@
 		95524B8D2380522A005F6425 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = bdmesg.swift; path = ../../Clover/bdmesg.swift; sourceTree = "<group>"; };
 		95524B8F23805232005F6425 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = ../../Clover/Extensions.swift; sourceTree = "<group>"; };
 		955F7C6F238DCD440019D088 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		95CD16DE23B7A01500303BDB /* IO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IO.swift; path = ../../Clover/IO.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				95524B7C238051AC005F6425 /* main.swift */,
+				95CD16DE23B7A01500303BDB /* IO.swift */,
 				954BBE962381964F0032425F /* Shared.swift */,
 				95524B8923805210005F6425 /* NVRAM.swift */,
 				95524B8B2380521D005F6425 /* Disks.swift */,
@@ -152,6 +155,7 @@
 				95524B8A23805210005F6425 /* NVRAM.swift in Sources */,
 				95524B8E2380522A005F6425 /* bdmesg.swift in Sources */,
 				95524B7D238051AC005F6425 /* main.swift in Sources */,
+				95CD16DF23B7A01500303BDB /* IO.swift in Sources */,
 				95524B8C2380521D005F6425 /* Disks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

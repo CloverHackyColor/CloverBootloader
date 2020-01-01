@@ -74,7 +74,7 @@ func getLatestReleases(reply: @escaping (String?, String?, String?, String?) -> 
     print("appvers:  \(appvers)")
     */
     reply(bootlink, bootvers, applink, appvers)
-  });
+  })
   
   task.resume()
 }

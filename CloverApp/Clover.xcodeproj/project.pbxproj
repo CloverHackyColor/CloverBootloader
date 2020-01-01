@@ -21,7 +21,9 @@
 		9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */ = {isa = PBXBuildFile; fileRef = 9552D745236F33A700C93377 /* CloverDaemonNew */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9555AF26238EE53300108C33 /* InstallerOutline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9555AF25238EE53300108C33 /* InstallerOutline.swift */; };
 		9555AF28238EFDAD00108C33 /* DriversCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9555AF27238EFDAD00108C33 /* DriversCollection.swift */; };
+		955689DB23A2728000AD323C /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955689DA23A2728000AD323C /* IO.swift */; };
 		9556CAF5238DF75600082671 /* InstallerOutline.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9556CAF3238DF75600082671 /* InstallerOutline.xib */; };
+		9558518E23BA3486002CB3D8 /* Speaker.png in Resources */ = {isa = PBXBuildFile; fileRef = 9558518D23BA3485002CB3D8 /* Speaker.png */; };
 		955F7C6D238DCD170019D088 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F7C6C238DCD160019D088 /* DiskArbitration.framework */; };
 		9560906A238C61E200ACD7F7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95609068238C61E200ACD7F7 /* MainMenu.xib */; };
 		956090B7238C890600ACD7F7 /* Installer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956090B9238C890600ACD7F7 /* Installer.xib */; };
@@ -199,7 +201,9 @@
 		9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CloverDaemonNew.xcodeproj; path = CloverDaemonNew/CloverDaemonNew.xcodeproj; sourceTree = "<group>"; };
 		9555AF25238EE53300108C33 /* InstallerOutline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstallerOutline.swift; sourceTree = "<group>"; };
 		9555AF27238EFDAD00108C33 /* DriversCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriversCollection.swift; sourceTree = "<group>"; };
+		955689DA23A2728000AD323C /* IO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IO.swift; sourceTree = "<group>"; };
 		9556CAF4238DF75600082671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InstallerOutline.xib; sourceTree = "<group>"; };
+		9558518D23BA3485002CB3D8 /* Speaker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Speaker.png; sourceTree = "<group>"; };
 		955F7C6C238DCD160019D088 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		95609069238C61E200ACD7F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		9560906C238C624200ACD7F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
@@ -401,6 +405,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		9558518C23BA3472002CB3D8 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				9558518D23BA3485002CB3D8 /* Speaker.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
 		95C51578236B21AE00E4A3A8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -442,6 +454,7 @@
 				95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */,
 				95E68ACB235B862F002B37A5 /* ViewController.swift */,
 				95E68ADE235B86A1002B37A5 /* bdmesg.swift */,
+				955689DA23A2728000AD323C /* IO.swift */,
 				95E68ADD235B86A1002B37A5 /* Disks.swift */,
 				95E68ADB235B86A1002B37A5 /* Extensions.swift */,
 				954BBE98238196EE0032425F /* Locale.swift */,
@@ -455,6 +468,7 @@
 				95609068238C61E200ACD7F7 /* MainMenu.xib */,
 				95E68AD9235B8666002B37A5 /* Installer */,
 				95E68ACD235B8632002B37A5 /* Assets.xcassets */,
+				9558518C23BA3472002CB3D8 /* images */,
 				954DECD423899F5F006A9876 /* Bootmanager.png */,
 				95E68AD2235B8632002B37A5 /* Info.plist */,
 				95E68AD3235B8632002B37A5 /* Clover.entitlements */,
@@ -517,7 +531,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1120;
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = CloverHackyColor;
 				TargetAttributes = {
 					95E68AC5235B862F002B37A5 = {
@@ -658,6 +672,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9556CAF5238DF75600082671 /* InstallerOutline.xib in Resources */,
+				9558518E23BA3486002CB3D8 /* Speaker.png in Resources */,
 				956090B7238C890600ACD7F7 /* Installer.xib in Resources */,
 				954DECD523899F5F006A9876 /* Bootmanager.png in Resources */,
 				95E68ACE235B8632002B37A5 /* Assets.xcassets in Resources */,
@@ -730,6 +745,7 @@
 				95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */,
 				95C51536236B1F7700E4A3A8 /* RunAtLogin.swift in Sources */,
 				95E68AE0235B86A1002B37A5 /* Extensions.swift in Sources */,
+				955689DB23A2728000AD323C /* IO.swift in Sources */,
 				9555AF26238EE53300108C33 /* InstallerOutline.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -970,6 +986,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IBC_WARNINGS = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1026,6 +1043,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IBC_WARNINGS = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1039,18 +1057,19 @@
 		95E68AD7235B8632002B37A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.12;
+				CURRENT_PROJECT_VERSION = 1.13;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Frameworks/ObjectiveGit.framework/Headers/";
 				IBC_WARNINGS = YES;
 				INFOPLIST_FILE = Clover/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1061,7 +1080,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.12;
+				MARKETING_VERSION = 1.13;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1074,18 +1093,19 @@
 		95E68AD8235B8632002B37A5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Clover/Clover.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.12;
+				CURRENT_PROJECT_VERSION = 1.13;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Frameworks/ObjectiveGit.framework/Headers/";
 				INFOPLIST_FILE = Clover/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1095,7 +1115,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.12;
+				MARKETING_VERSION = 1.13;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";

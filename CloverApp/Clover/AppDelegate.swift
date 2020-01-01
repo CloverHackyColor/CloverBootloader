@@ -95,6 +95,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                                            selector: #selector(self.reFreshDisksList),
                                            name: Notification.Name("DiskDisappeared"),
                                            object: nil)
+    
     NSWorkspace.shared.notificationCenter.addObserver(self,
                                                       selector: #selector(self.reFreshDisksList),
                                                       name: NSWorkspace.didMountNotification,
@@ -139,17 +140,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
       self.popover?.delegate = self
     }
     
-    if #available(OSX 10.10, *) {
-      if let button = sender as? NSStatusBarButton {
-        self.popover?.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.maxY)
-      }
-    } else {
-      if let v = sender as? NSView {
-        self.popover?.show(relativeTo: v.bounds, of: v, preferredEdge: NSRectEdge.maxY)
-      }
+    DispatchQueue.main.async {
+      (self.popover?.contentViewController as? SettingsViewController)?.setUpInfo()
     }
     
-    NSApp.activate(ignoringOtherApps: true)
+    DispatchQueue.main.async {
+      if #available(OSX 10.10, *) {
+        if let button = sender as? NSStatusBarButton {
+          self.popover?.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.maxY)
+        }
+      } else {
+        if let v = sender as? NSView {
+          self.popover?.show(relativeTo: v.bounds, of: v, preferredEdge: NSRectEdge.maxY)
+        }
+      }
+      NSApp.activate(ignoringOtherApps: true)
+    }
   }
   
   func popoverShouldDetach(_ popover: NSPopover) -> Bool {

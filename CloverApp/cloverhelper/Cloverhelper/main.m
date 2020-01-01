@@ -15,7 +15,7 @@
 // TODO: redone in swift as swift command line are now small in size, with no hurry...
 #import <Foundation/Foundation.h>
 
-#define ktempLogPath @"/tmp/cloverapp.txt"
+#define ktempLogPath "/tmp/cltmplog"
 #define kfm [NSFileManager defaultManager]
 
 #pragma mark -
@@ -32,31 +32,70 @@ void cleanUp() {
   [task launch];
 }
 
-void exitWithMessage(const char *format, ...)
-{
-  va_list arg;
-  va_start (arg, format);
-  vfprintf (stdout, format, arg);
-  va_end (arg);
+NSString *gTargetVolume;
+
+void saveLog() {
+  if (gTargetVolume != nil
+      && [kfm fileExistsAtPath:gTargetVolume]
+      && [kfm fileExistsAtPath:@ktempLogPath]) {
+    NSString *finalLogPath =
+    [gTargetVolume stringByAppendingPathComponent:@"EFI/CLOVER/Clover.app_install.log"];
+    if ([kfm fileExistsAtPath: finalLogPath]) {
+      [kfm removeItemAtPath:finalLogPath error:nil];
+    }
+    NSData *log = [NSData dataWithContentsOfFile:@ktempLogPath];
+    if (log != nil) {
+      [log writeToFile:finalLogPath atomically:NO];
+    }
+  }
+}
+
+void addToLog(NSString *str) {
+  if (![kfm fileExistsAtPath:@ktempLogPath]) {
+    system([[NSString stringWithFormat:@"echo > %s", ktempLogPath] UTF8String]);
+  }
+  NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath:@ktempLogPath];
+  [fh seekToEndOfFile];
+  [fh writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
+  [fh closeFile];
+}
+
+void post(NSString *format, ...) {
+  va_list arguments;
+  va_start(arguments, format);
+  NSString *str = [[NSString alloc] initWithFormat:format arguments:arguments];
+  addToLog(str);
+  va_end(arguments);
+  printf("%s", [str UTF8String]);
+  
+}
+
+void exitWithMessage(NSString *format, ...) {
+  va_list arguments;
+  va_start(arguments, format);
+  NSString *str = [[NSString alloc] initWithFormat:format arguments:arguments];
+  
+  va_end(arguments);
+  printf("%s", [str UTF8String]);
+  addToLog(str);
+  saveLog();
   cleanUp();
   exit(EXIT_FAILURE);
 }
-
 
 BOOL copyReplace(NSString *source, NSString *dest, NSDictionary *attributes) {
   NSError *err = nil;
   NSString *upperDir = [dest stringByDeletingLastPathComponent];
   
   if ([upperDir isEqualToString:@"/"]) {
-    printf("+ ../%s\n", [dest lastPathComponent].UTF8String);
+    post(@"+ ../%@\n", [dest lastPathComponent]);
   } else {
-    printf("+ ../%s/%s\n",
-           [[dest stringByDeletingLastPathComponent] lastPathComponent].UTF8String,
-           [dest lastPathComponent].UTF8String);
+    post(@"+ ../%@/%@\n",
+           [[dest stringByDeletingLastPathComponent] lastPathComponent], [dest lastPathComponent]);
   }
   
   if (![kfm fileExistsAtPath:source]) {
-    printf("Error: %s doesn't exist\n", source.UTF8String);
+    post(@"Error: %@ doesn't exist\n", source);
     return NO;
   }
   // remove destination if already exist
@@ -83,7 +122,7 @@ BOOL copyReplace(NSString *source, NSString *dest, NSDictionary *attributes) {
   
   // print any errors if any
   if (err != nil) {
-    printf("%s\n", err.description.UTF8String);
+    post(@"%@\n", err.description);
   }
   
   return (err == nil);
@@ -95,18 +134,29 @@ BOOL copyReplace(NSString *source, NSString *dest, NSDictionary *attributes) {
 
 int main(int argc, char * const * argv) {
   @autoreleasepool {
+    if ([kfm fileExistsAtPath:@ktempLogPath]) {
+      [kfm removeItemAtPath:@ktempLogPath error:nil];
+    }
     
-    printf("My Path = %s\n", [[NSString stringWithFormat:@"%s", argv[0]] UTF8String]);
+    NSDateFormatter * df =  [NSDateFormatter new];
+    [df setDateFormat:@"yyyy-MMM-dd HH:mm:ss"];
+    NSLocale *locale = [[NSLocale alloc]
+                        initWithLocaleIdentifier:@"en_US"];
+    [df setLocale:locale];
+    NSString *dateString = [df stringFromDate:[NSDate new]];
+
     if (geteuid() != 0) {
-      exitWithMessage("Error: you don't have root permissions\n");
+      exitWithMessage(@"Error: you don't have root permissions\n");
     }
     
     NSDictionary *CloverappDict = [NSDictionary dictionaryWithContentsOfFile:@"/tmp/Cloverapp"];
     if (CloverappDict == nil) {
-      exitWithMessage("Error: can't load Cloverapp dictionary\n");
+      exitWithMessage(@"Error: can't load Cloverapp dictionary\n");
     }
     cleanUp();
-   
+    
+    NSString *bootSectorsInstall    = @"/tmp/bootsectors-install";
+    
     NSString *targetVol             = [CloverappDict objectForKey:@"targetVol"];
     NSString *disk                  = [CloverappDict objectForKey:@"disk"];
     NSString *filesystem            = [CloverappDict objectForKey:@"filesystem"];
@@ -117,18 +167,25 @@ int main(int argc, char * const * argv) {
     NSString *cloverv2              = [CloverappDict objectForKey:@"CloverV2"];
     NSString *boot1installPath      = [CloverappDict objectForKey:@"boot1install"];
     NSString *bootSectorsInstallSrc = [CloverappDict objectForKey:@"bootsectors-install"];
-    NSString *bootSectorsInstall    = @"/tmp/bootsectors-install";
+    NSString *backUpPath            = [CloverappDict objectForKey:@"BackUpPath"];
+    NSString *version               = [CloverappDict objectForKey:@"version"];
     BOOL isESP                      = [[CloverappDict objectForKey:@"isESP"] boolValue];
+
+    post(@"%@, %@\n\n", version, dateString);
+    post(@"My Path = %s\n", argv[0]);
+    if (backUpPath != nil) {
+      post(@"Backup made at:\n%@.\n", backUpPath);
+    }
     
     if ([kfm fileExistsAtPath:bootSectorsInstall]) {
-      printf("Note: found old bootsectors-install..removing it..\n");
+      post(@"Note: found old bootsectors-install..removing it..\n");
       if (![kfm removeItemAtPath:bootSectorsInstall error:nil]) {
-        exitWithMessage("Error: can't remove old bootsectors-install.");
+        exitWithMessage(@"Error: can't remove old bootsectors-install.");
       }
     }
     
     if (bootSectorsInstallSrc != nil) {
-      printf("bootSectorsInstallSrc = %s\n", [bootSectorsInstallSrc UTF8String]);
+      post(@"bootSectorsInstallSrc = %@\n", bootSectorsInstallSrc);
     }
     
     BOOL alt = NO;
@@ -146,19 +203,20 @@ int main(int argc, char * const * argv) {
     BOOL isDir = NO;
     
     if (targetVol == nil) {
-      exitWithMessage("Error: option targetVol [path to volume]  not specified\n");
+      exitWithMessage(@"Error: option targetVol [path to volume]  not specified\n");
     }
+    gTargetVolume = targetVol;
     
     if (![kfm fileExistsAtPath:targetVol]) {
-      exitWithMessage("Error: target volume \"%s\" doesn't exist.\n", targetVol.UTF8String);
+      exitWithMessage(@"Error: target volume \"%@\" doesn't exist.\n", targetVol);
     }
     
     if (cloverv2 == nil || ![kfm fileExistsAtPath:cloverv2]) {
-      exitWithMessage("Error: cannot found CloverV2 directory\n");
+      exitWithMessage(@"Error: cannot found CloverV2 directory\n");
     }
     
-    printf("Target volume: %s\n", targetVol.UTF8String);
-    
+    post(@"Target volume: %@\n", targetVol);
+    /*
     // check if target volume is writable
     NSString *volEnds = targetVol;
     if (![volEnds hasSuffix:@"/"]) {
@@ -167,35 +225,35 @@ int main(int argc, char * const * argv) {
     
     
     if (![kfm isWritableFileAtPath:volEnds]) {
-      exitWithMessage("Error: target volume \"%s\" is not writable.\n", targetVol.UTF8String);
+      exitWithMessage(@"Error: target volume \"%@\" is not writable.\n", targetVol);
     }
-    
+    */
 #pragma mark Check paths
     // check other options before proceed
     NSString *boot0Path = nil, *boot1Path = nil, *boot2Path = nil;
     if (boot0 != nil) {
-      printf("boot0: %s\n", boot0.UTF8String);
+      post(@"boot0: %@\n", boot0);
       [preferences setValue:boot0 forKey:@"boot0"];
       boot0Path = [[cloverv2 stringByAppendingPathComponent:@"BootSectors"] stringByAppendingPathComponent:boot0];
       if (![kfm fileExistsAtPath:boot0Path]) {
-        exitWithMessage("Error: cannot found \"%s\".\n", boot0.UTF8String);
+        exitWithMessage(@"Error: cannot found \"%@\".\n", boot0);
       }
     }
     
     if (boot1 != nil) {
-      printf("boot1: %s\n", boot1.UTF8String);
+      post(@"boot1: %@\n", boot1);
       boot1Path = [[cloverv2 stringByAppendingPathComponent:@"BootSectors"] stringByAppendingPathComponent:boot1];
       if (![kfm fileExistsAtPath:boot1Path]) {
-        exitWithMessage("Error: cannot found \"%s\".\n", boot1.UTF8String);
+        exitWithMessage(@"Error: cannot found \"%@\".\n", boot1);
       }
     }
     
     if (boot2 != nil) {
-      printf("boot2: %s\n", boot2.UTF8String);
+      post(@"boot2: %@\n", boot2);
       [preferences setValue:boot2 forKey:@"boot2"];
       boot2Path = [[cloverv2 stringByAppendingPathComponent:@"Bootloaders/x64"] stringByAppendingPathComponent:boot2];
       if (![kfm fileExistsAtPath:boot2Path]) {
-        exitWithMessage("Error: cannot found \"%s\".\n", boot2.UTF8String);
+        exitWithMessage(@"Error: cannot found \"%@\".\n", boot2);
       }
     }
     
@@ -216,7 +274,7 @@ int main(int argc, char * const * argv) {
     }
     
     if (err != nil) {
-      exitWithMessage("%s\n", err.description.UTF8String);
+      exitWithMessage(@"%@\n", err.description);
     }
     
 #pragma mark Create directories
@@ -225,6 +283,9 @@ int main(int argc, char * const * argv) {
                     @"EFI/CLOVER/ACPI/origin",
                     @"EFI/CLOVER/ACPI/patched",
                     @"EFI/CLOVER/ACPI/WINDOWS",
+                    @"EFI/CLOVER/kexts/10",
+                    @"EFI/CLOVER/kexts/10_recovery",
+                    @"EFI/CLOVER/kexts/10_installer",
                     @"EFI/CLOVER/kexts/10.11",
                     @"EFI/CLOVER/kexts/10.12",
                     @"EFI/CLOVER/kexts/10.13",
@@ -241,26 +302,26 @@ int main(int argc, char * const * argv) {
       if (![kfm fileExistsAtPath:fp]) {
         [kfm createDirectoryAtPath:fp withIntermediateDirectories:YES attributes:attributes error:&err];
         if (err != nil) {
-          exitWithMessage("%s\n", err.description.UTF8String);
+          exitWithMessage(@"%@\n", err.description);
         }
       }
     }
     
 #pragma mark Install Clover and drivers
-    printf("\nInstalling/Updating Clover:\n");
+    post(@"\nInstalling/Updating Clover:\n");
     if (!copyReplace([cloverv2 stringByAppendingPathComponent:@"EFI/BOOT/BOOTX64.efi"],
                      [targetVol stringByAppendingPathComponent:@"EFI/BOOT/BOOTX64.efi"],
                      attributes)) {
-      exitWithMessage("Error: cannot copy BOOTX64.efi to destination.\n");
+      exitWithMessage(@"Error: cannot copy BOOTX64.efi to destination.\n");
     }
     
     if (!copyReplace([cloverv2 stringByAppendingPathComponent:@"EFI/CLOVER/CLOVERX64.efi"],
                      [targetVol stringByAppendingPathComponent:@"EFI/CLOVER/CLOVERX64.efi"],
                      attributes)) {
-      exitWithMessage("Error: cannot copy CLOVERX64.efi to destination.\n");
+      exitWithMessage(@"Error: cannot copy CLOVERX64.efi to destination.\n");
     }
     
-    printf("\nInstalling/Updating drivers:\n");
+    post(@"\nInstalling/Updating drivers:\n");
     NSArray * toDelete = [CloverappDict objectForKey:@"toDelete"];
     NSArray * UEFI = [CloverappDict objectForKey:@"UEFI"];
     NSArray * BIOS = [CloverappDict objectForKey:@"BIOS"];
@@ -272,7 +333,7 @@ int main(int argc, char * const * argv) {
         NSString *dpath = [UEFI objectAtIndex:i];
         NSString *dname = [dpath lastPathComponent];
         if (!copyReplace(dpath, [UEFIdest stringByAppendingPathComponent:dname], attributes)) {
-          exitWithMessage("Error: cannot copy %s to destination.\n", dpath.UTF8String);
+          exitWithMessage(@"Error: cannot copy %@ to destination.\n", dpath);
         }
       }
     }
@@ -282,7 +343,7 @@ int main(int argc, char * const * argv) {
         NSString *dpath = [BIOS objectAtIndex:i];
         NSString *dname = [dpath lastPathComponent];
         if (!copyReplace(dpath, [BIOSdest stringByAppendingPathComponent:dname], attributes)) {
-          exitWithMessage("Error: cannot copy %s to destination.\n");
+          exitWithMessage(@"Error: cannot copy %@ to destination.\n", dpath);
         }
       }
     }
@@ -292,12 +353,12 @@ int main(int argc, char * const * argv) {
         NSString *dpath = [toDelete objectAtIndex:i];
         err = nil;
         if ([kfm fileExistsAtPath:dpath]) {
-          printf("- ../%s/%s\n",
-                 [[dpath stringByDeletingLastPathComponent] lastPathComponent].UTF8String,
-                 [dpath lastPathComponent].UTF8String);
+          post(@"- ../%@/%@\n",
+                 [[dpath stringByDeletingLastPathComponent] lastPathComponent],
+                 [dpath lastPathComponent]);
           [kfm removeItemAtPath:dpath error:&err];
           if (err != nil) {
-            exitWithMessage("%s\n", err.description.UTF8String);
+            exitWithMessage(@"%@\n", err.description);
           }
         }
       }
@@ -306,7 +367,7 @@ int main(int argc, char * const * argv) {
 #pragma mark Install tools
     NSString *cv2tools = [cloverv2 stringByAppendingPathComponent:@"EFI/CLOVER/tools"];
     if ([kfm fileExistsAtPath:cv2tools]) {
-      printf("\nInstalling/Updating tools:\n");
+      post(@"\nInstalling/Updating tools:\n");
       err = nil;
       NSArray *tools = [kfm contentsOfDirectoryAtPath:cv2tools error:&err];
       if (err == nil && tools != nil) {
@@ -317,7 +378,7 @@ int main(int argc, char * const * argv) {
                              [[targetVol stringByAppendingPathComponent:@"EFI/CLOVER/tools"]
                               stringByAppendingPathComponent:t],
                              attributes)) {
-              exitWithMessage("Error: cannot copy %s to destination.\n", t.UTF8String);
+              exitWithMessage(@"Error: cannot copy %@ to destination.\n", t);
             }
           }
         }
@@ -328,7 +389,7 @@ int main(int argc, char * const * argv) {
 #pragma mark Install docs
     NSString *cv2docs = [cloverv2 stringByAppendingPathComponent:@"EFI/CLOVER/doc"];
     if ([kfm fileExistsAtPath:cv2tools]) {
-      printf("\nInstalling/Updating doc:\n");
+      post(@"\nInstalling/Updating doc:\n");
       err = nil;
       NSArray *docs = [kfm contentsOfDirectoryAtPath:cv2docs error:&err];
       if (err == nil && docs != nil) {
@@ -342,9 +403,9 @@ int main(int argc, char * const * argv) {
                               stringByAppendingPathComponent:d],
                              docattr)) {
               
-              //exitWithMessage("Error: cannot copy %s to destination.\n", d.UTF8String);
+              //exitWithMessage(@"Error: cannot copy %@ to destination.\n", d);
               // ... will not fail for a doc..
-              printf("Error: cannot copy %s to destination.\n", d.UTF8String);
+              post(@"Error: cannot copy %@ to destination.\n", d);
             }
           }
         }
@@ -356,7 +417,7 @@ int main(int argc, char * const * argv) {
     NSString *configPath = [targetVol stringByAppendingPathComponent:@"EFI/CLOVER/config.plist"];
     NSString *configSamplePath = [cloverv2 stringByAppendingPathComponent:@"EFI/CLOVER/config-sample.plist"];
     if (![kfm fileExistsAtPath:configPath]) {
-      printf("\nInstalling  config.plist:\n");
+      post(@"\nInstalling  config.plist:\n");
       copyReplace(configSamplePath, configPath, attributes);
     }
     
@@ -376,7 +437,7 @@ int main(int argc, char * const * argv) {
       // don't overwrite the theme if already exist as one from CTM can be newer
       if (theme != nil && ![kfm fileExistsAtPath:
                             [themesDestDir stringByAppendingPathComponent:theme]]) {
-        printf("\nInstalling Theme \"%s\":\n", theme.UTF8String);
+        post(@"\nInstalling Theme \"%@\":\n", theme);
         copyReplace([themesSourceDir stringByAppendingPathComponent:theme],
                     [themesDestDir stringByAppendingPathComponent:theme],
                     attributes);
@@ -385,9 +446,9 @@ int main(int argc, char * const * argv) {
     
 #pragma mark Stage 2 installation
     if (boot2Path != nil) {
-      printf("\nInstalling stage 2..\n");
+      post(@"\nInstalling stage 2..\n");
       if (!copyReplace(boot2Path, [targetVol stringByAppendingPathComponent:@"boot"], attributes)) {
-        exitWithMessage("Error: cannot copy bootloader to detination.\n");
+        exitWithMessage(@"Error: cannot copy bootloader to detination.\n");
       }
       
       if (alt) {
@@ -398,7 +459,7 @@ int main(int argc, char * const * argv) {
           for (int i = 0; i < [files count]; i++) {
             NSString *f = [files objectAtIndex:i];
             if ([f hasPrefix:@"boot"]) {
-              printf("\nInstalling stage 2 \"%s (alt)\".\n", f.UTF8String);
+              post(@"\nInstalling stage 2 \"%@ (alt)\".\n", f);
               copyReplace([altPath stringByAppendingPathComponent: f],
                           [targetVol stringByAppendingPathComponent:f],
                           attributes);
@@ -414,6 +475,7 @@ int main(int argc, char * const * argv) {
       [kfm setAttributes:attributes ofItemAtPath:prefPath error:nil];
     }
     
+    saveLog();
 #pragma mark Boot sectors installation
     if (boot0Path != nil && boot1Path != nil && bootSectorsInstallSrc != nil) {
       // copy bootsectors-install
@@ -447,7 +509,7 @@ int main(int argc, char * const * argv) {
       
       task.terminationHandler = ^(NSTask *theTask) {
         if (theTask.terminationStatus != 0) {
-          exitWithMessage("Error: failed installing boot sectors.");
+          exitWithMessage(@"Error: failed installing boot sectors.\n");
         }
       };
       [task launch];
@@ -456,10 +518,11 @@ int main(int argc, char * const * argv) {
       if (data) {
         NSString *output = [[NSString alloc] initWithData:data
                                                  encoding:NSUTF8StringEncoding];
-        printf("%s\n", [output UTF8String]);
+        post(@"%@\n", output);
       }
       
     } else {
+      saveLog();
       if (isESP) {
         NSTask *task = [[NSTask alloc] init];
         [task setEnvironment:[[NSProcessInfo new] environment]];

@@ -16,6 +16,8 @@
 "Current Clover revision" = "Текущая ревизия Clover";
 "Boot Device:" = "Загрузочное устройство:";
 "config path:" = "путь к файлу config:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 
 "Clover wants to mount %@" = "Clover желает смонтировать %@";
 "Clover wants to umount %@" = "Clover желает размонтировать %@";
@@ -23,6 +25,26 @@
 "umount" = "Размонтировать";
 "mount point" = "название тома";
 "*auto mount" = "*auto mount";
+
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes";
+"No" = "No";
+
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
 
 "true" = "истина";
 "false" = "ложь";
@@ -39,6 +61,7 @@
 "Uninstall CloverDaemonNew" = "Удалить CloverDaemonNew";
 
 "Update" = "Oбновление";
+"Download" = "Download";
 "Update to r%d" = "Обновление до r%d"; // "Update to r5101"
 "Check update:" = "Проверить обновления:";
 "Check now" = "Проверь сейчас";

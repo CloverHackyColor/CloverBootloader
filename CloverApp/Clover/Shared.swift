@@ -104,3 +104,13 @@ func findCloverHashCommit(at EFIdir: String) -> String? {
   }
   return nil
 }
+
+// MARK: get image from CoreType.bundle
+func getCoreTypeImage(named: String, isTemplate: Bool) -> NSImage? {
+  var image : NSImage? = nil
+  if let ctb = Bundle.init(path: "/System/Library/CoreServices/CoreTypes.bundle") {
+    image = NSImage(byReferencingFile: ctb.path(forResource: named, ofType: "icns", inDirectory: nil) ?? "")
+  }
+  image?.isTemplate = isTemplate
+  return image
+}

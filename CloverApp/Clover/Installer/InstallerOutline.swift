@@ -720,6 +720,9 @@ class InstallerOutViewController: NSViewController {
      NSString *cloverv2              = [CloverappDict objectForKey:@"CloverV2"];
      NSString *boot1installPath      = [CloverappDict objectForKey:@"boot1install"];
      NSString *bootSectorsInstallSrc = [CloverappDict objectForKey:@"bootsectors-install"];
+     NSString *backUpPath            = [CloverappDict objectForKey:@"BackUpPath"];
+     NSString *version               = [CloverappDict objectForKey:@"version"];
+     BOOL isESP                      = [[CloverappDict objectForKey:@"isESP"] boolValue];
     */
     
     let Cloverapp = NSMutableDictionary()
@@ -729,6 +732,7 @@ class InstallerOutViewController: NSViewController {
     
     // minimum required arguments
     Cloverapp.setValue(self.targetVol, forKey: "targetVol")
+    Cloverapp.setValue(self.view.window!.title, forKey: "version")
     
     let  disk = getBSDName(of: self.targetVol) ?? ""
     Cloverapp.setValue(disk, forKey: "disk")
@@ -789,23 +793,28 @@ class InstallerOutViewController: NSViewController {
     }
     
     // backup in ~/Desktop/EFI_Backup_date
+    post(text: "Checking files...\n", add: false, color: nil, scroll: false)
     if fm.fileExists(atPath: self.targetVol.addPath("EFI/CLOVER")) {
       let df = DateFormatter()
-      df.dateFormat = "yyyy-MM-dd hh:mm:ss"
+      df.dateFormat = "yyyy-MM-dd_hh-mm-ss"
       let now = df.string(from: Date())
       let revIn = findCloverRevision(at: self.targetVol.addPath("EFI")) ?? "0000"
-      let backUpPath = NSHomeDirectory().addPath("Desktop/CloverBackUp/EFI_r\(revIn)_\(now)")
+      let mediaName = getMediaName(from: getBSDParent(of: disk) ?? "") ?? "NoName"
+      let backUpPath = NSHomeDirectory().addPath("Desktop/CloverBackUp/\(mediaName)/r\(revIn)_\(now)/EFI")
+      
       do {
         if !fm.fileExists(atPath: backUpPath.deletingLastPath) {
           try fm.createDirectory(atPath: backUpPath.deletingLastPath,
-                                 withIntermediateDirectories: false,
+                                 withIntermediateDirectories: true,
                                  attributes: nil)
         }
         try fm.copyItem(atPath: self.targetVol.addPath("EFI"),
                         toPath: backUpPath)
-        
+        //post(text: "backup made at '\(backUpPath)'.\n", add: true, color: nil, scroll: false)
+        Cloverapp.setValue(backUpPath, forKey: "BackUpPath")
         self.installClover(disk: disk, settingDict: Cloverapp)
       } catch {
+        post(text: "The backup failed:\n", add: true, color: nil, scroll: false)
         post(text: error.localizedDescription, add: false, color: nil, scroll: false)
       }
     } else {
@@ -814,7 +823,7 @@ class InstallerOutViewController: NSViewController {
   }
   
   func installClover(disk: String, settingDict : NSDictionary) {
-    self.post(text: "Installation begin..", add: false, color: nil, scroll: false)
+    self.post(text: "Installation begin..\n", add: true, color: nil, scroll: false)
     if !isMountPoint(path: self.targetVol) {
       NSSound.beep()
       self.post(text: "Can't find target volume, installation aborted.", add: true, color: nil, scroll: false)
@@ -847,30 +856,29 @@ class InstallerOutViewController: NSViewController {
       var err : NSDictionary? = nil
       let result : NSAppleEventDescriptor = NSAppleScript(source: script)!.executeAndReturnError(&err)
       
-      if (err != nil) {
-        NSSound.beep()
-        self.post(text: result.stringValue ?? "", add: false, color: nil, scroll: true)
-        self.post(text: "\nInstallation failed.", add: true, color: nil, scroll: true)
-        AppSD.isInstalling = false
-        self.spinner.stopAnimation(nil)
-        AppSD.reFreshDisksList()
-        if isMountPoint(path: self.targetVol) {
-          self.targetVol = getMountPoint(from: disk) ?? ""
-          self.installButton.isEnabled = true
-          self.setPreferences(for: self.targetVol)
-        }
-      } else {
-        self.post(text: result.stringValue ?? "", add: false, color: nil, scroll: true)
-        self.post(text: "\nInstallation succeded.", add: true, color: nil, scroll: true)
-        AppSD.isInstalling = false
-        self.spinner.stopAnimation(nil)
-        AppSD.reFreshDisksList()
-        if isMountPoint(path: self.targetVol) {
-          self.targetVol = getMountPoint(from: disk) ?? ""
-          self.installButton.isEnabled = true
-          self.setPreferences(for: self.targetVol)
-        }
+      self.post(text: result.stringValue ?? "", add: false, color: nil, scroll: true)
+      self.spinner.stopAnimation(nil)
+      let message = (err == nil) ? "Installation succeded".locale : "Installation failed".locale
+      self.post(text: "\n\(message).", add: true, color: nil, scroll: true)
+      
+      let alert = NSAlert()
+      alert.messageText = message
+      if #available(OSX 10.10, *) {
+        alert.informativeText = (err == nil) ? "😀" : "😱"
       }
+      alert.alertStyle = (err == nil) ? .informational : .critical
+      alert.addButton(withTitle: "Close".locale)
+      alert.beginSheetModal(for: self.view.window!) { (reponse) in
+        
+      }
+      AppSD.isInstalling = false
+      self.installButton.isEnabled = true
+      self.spinner.stopAnimation(nil)
+      if isMountPoint(path: self.targetVol) {
+        self.targetVol = getMountPoint(from: disk) ?? ""
+      }
+      AppSD.reFreshDisksList()
+      self.setPreferences(for: self.targetVol)
     } else {
       NSSound.beep()
       self.post(text: "Can't write temporary files, installation aborted.", add: true, color: nil, scroll: false)
