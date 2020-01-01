@@ -117,6 +117,9 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarInternalDisk", isTemplate: true), forSegment: 0)
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMoviesFolder", isTemplate: true), forSegment: 1)
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMusicFolder", isTemplate: true), forSegment: 2)
+    // sync
+    self.tabViewFuncSelector.selectSegment(withTag: 0)
+    self.tabViewFunc.selectTabViewItem(at: 0)
     
     self.themeField.delegate = self
     
