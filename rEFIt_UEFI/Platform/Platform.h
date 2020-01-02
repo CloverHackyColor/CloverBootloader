@@ -1173,6 +1173,7 @@ typedef struct {
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
+  UINT8                   PNLF_UID;
 //  UINT8                   pad83[4];
 
 

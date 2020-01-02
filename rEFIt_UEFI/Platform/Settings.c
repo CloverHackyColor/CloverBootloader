@@ -5582,6 +5582,9 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "Rtc8Allowed");
         gSettings.Rtc8Allowed = IsPropertyTrue (Prop);
 
+        Prop = GetProperty (Dict2, "PNLF_UID");
+        gSettings.PNLF_UID = (UINT8)GetPropertyInteger (Prop, 0x0A);
+
         Prop = GetProperty (Dict2, "FixMask");
         gSettings.FixDsdt = (UINT32)GetPropertyInteger (Prop, gSettings.FixDsdt);
 

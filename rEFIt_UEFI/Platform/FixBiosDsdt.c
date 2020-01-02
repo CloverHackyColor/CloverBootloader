@@ -1909,7 +1909,14 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
     return len;
   }
 
+  //Slice - add custom UID
+  if (gSettings.PNLF_UID != 0xFF) {
+    ((CHAR8*)pnlf)[39] = gSettings.PNLF_UID;
+  }
+
   // _UID reworked by Sherlocks. 2018.10.08
+  //Slice - it can't depends on video DeviceID. It is hardware ID of LCD screen.
+#if 0
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,
                                     &gEfiPciIoProtocolGuid,
@@ -2024,6 +2031,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
       }
     }
   }
+#endif
 
   i = adr - 2;
   len = move_data(i, dsdt, len, sizeof(pnlf));

@@ -245,6 +245,8 @@
 			</dict>
 			<key>#SuspendOverride</key>
 			<false/>
+			<key>PNLF_UID</key>
+			<string>0x0A</string>
 			<key>Name</key>
 			<string>DSDT.aml</string>
 			<key>ReuseFFFF</key>
@@ -527,21 +529,21 @@
 				<key>Replace</key>
 				<data>SEQgNjQ1MA==</data>
 			</dict>
-            <dict>
-                <key>Comment</key>
-                <string>Patch 8 apples</string>
-                <key>Disabled</key>
-                <true/>
-                <key>Find</key>
-                <data>AQAAdSI=</data>
-                <key>MatchOS</key>
-                <string>10.13</string>
-                <key>Name</key>
-                <string>IOGraphicsFamily</string>
-                <key>Replace</key>
-                <data>AQAA6yI=</data>
-            </dict>
-        </array>
+			<dict>
+				<key>Comment</key>
+				<string>Patch 8 apples</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>AQAAdSI=</data>
+				<key>MatchOS</key>
+				<string>10.13</string>
+				<key>Name</key>
+				<string>IOGraphicsFamily</string>
+				<key>Replace</key>
+				<data>AQAA6yI=</data>
+			</dict>
+		</array>
 		<key>KernelXCPM</key>
 		<false/>
 		<key>PanicNoKextDump</key>
