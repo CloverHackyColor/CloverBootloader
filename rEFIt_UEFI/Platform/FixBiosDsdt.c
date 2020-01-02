@@ -1868,6 +1868,7 @@ VOID FixS3D (UINT8* dsdt, UINT32 len)
 
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
+#if AUTO_PNLF
   EFI_STATUS          Status;
   EFI_HANDLE          *HandleBuffer = NULL;
   EFI_HANDLE          Handle;
@@ -1879,6 +1880,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   UINTN               Bus;
   UINTN               Device;
   UINTN               Function;
+#endif
   UINT32              i; //, j, size;
   UINT32              adr = 0;
   DBG("Start PNLF Fix\n");
@@ -1916,7 +1918,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 
   // _UID reworked by Sherlocks. 2018.10.08
   //Slice - it can't depends on video DeviceID. It is hardware ID of LCD screen.
-#if 0
+#if AUTO_PNLF
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,
                                     &gEfiPciIoProtocolGuid,
