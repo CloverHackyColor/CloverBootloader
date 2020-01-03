@@ -803,7 +803,10 @@ class InstallerViewController: NSViewController {
     let supportedFS = ["exfat", "fat32", "hfs"]
     if !supportedFS.contains(filesystem) {
       NSSound.beep()
-      post(text: "Error: can't install on \(filesystem.uppercased()) filesystem.", add: false, color: nil, scroll: false)
+      post(text: "Error: can't install on \(filesystem.uppercased()) filesystem.",
+        add: false,
+        color: nil,
+        scroll: false)
       return
     }
     AppSD.isInstalling = true
@@ -922,7 +925,6 @@ class InstallerViewController: NSViewController {
     if settingDict.write(toFile: "/tmp/Cloverapp", atomically: false) {
       AppSD.isInstalling = true
       
-      
       DispatchQueue.main.async {
         self.spinner.startAnimation(nil)
         self.installButton.isEnabled = false
@@ -935,8 +937,8 @@ class InstallerViewController: NSViewController {
       
       let task = Process()
       let msg = "Install Clover".locale
-      let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("Cloverhelper")
-      let script = "do shell script \"'\(helperPath)'\" with prompt \"\(msg)\" with administrator privileges"
+      let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("CloverDaemonNew")
+      let script = "do shell script \"'\(helperPath)' --CLOVER\" with prompt \"\(msg)\" with administrator privileges"
       task.launchPath = "/usr/bin/osascript"
       task.arguments = ["-e", script]
       let pipe: Pipe = Pipe()

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		95337172237070CD003F1AF4 /* Cloverhelper in Copy tools */ = {isa = PBXBuildFile; fileRef = 9533716F237070B3003F1AF4 /* Cloverhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9533718323709517003F1AF4 /* bootsectors-install in Resources */ = {isa = PBXBuildFile; fileRef = 9533718223709517003F1AF4 /* bootsectors-install */; };
 		9533718523709A36003F1AF4 /* bootsectors-install in Copy CloverV2 */ = {isa = PBXBuildFile; fileRef = 9533718223709517003F1AF4 /* bootsectors-install */; };
 		953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953BC20223720C0A0039755D /* FixedWidthViews.swift */; };
@@ -47,20 +46,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9533716E237070B3003F1AF4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 958505A92364D36400BCB4A3;
-			remoteInfo = Cloverhelper;
-		};
-		95337170237070BB003F1AF4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 958505A82364D36400BCB4A3;
-			remoteInfo = Cloverhelper;
-		};
 		9542ABBC2373780C00DC03E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */;
@@ -143,7 +128,6 @@
 				95509171238B1E3A00933A7E /* daemonInstaller in Copy tools */,
 				9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */,
 				9542ABC02373783400DC03E6 /* boot1-install in Copy tools */,
-				95337172237070CD003F1AF4 /* Cloverhelper in Copy tools */,
 				9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */,
 			);
 			name = "Copy tools";
@@ -322,7 +306,6 @@
 		9569EC8C238DD7C6003AD72C /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Settings.strings; sourceTree = "<group>"; };
 		9569EC8E238DD7C8003AD72C /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Settings.strings; sourceTree = "<group>"; };
 		9569EC90238DD7CA003AD72C /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Settings.strings; sourceTree = "<group>"; };
-		958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cloverhelper.xcodeproj; path = cloverhelper/Cloverhelper.xcodeproj; sourceTree = "<group>"; };
 		958861D9235F75FB00B64173 /* Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
 		95C515212369BAF500E4A3A8 /* NVRAM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NVRAM.swift; sourceTree = "<group>"; };
 		95C5152E236A0A7400E4A3A8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -356,14 +339,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9533716B237070B3003F1AF4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				9533716F237070B3003F1AF4 /* Cloverhelper */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		9542ABB92373780C00DC03E6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -428,7 +403,6 @@
 				95E68AC8235B862F002B37A5 /* Clover */,
 				95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */,
 				9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */,
-				958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */,
 				95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */,
 				9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */,
 				95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */,
@@ -514,7 +488,6 @@
 			dependencies = (
 				95509170238B1E1C00933A7E /* PBXTargetDependency */,
 				9546AE1923806286007155A6 /* PBXTargetDependency */,
-				95337171237070BB003F1AF4 /* PBXTargetDependency */,
 				9552D747236F33B900C93377 /* PBXTargetDependency */,
 				9542ABBF2373781300DC03E6 /* PBXTargetDependency */,
 				95C5157E236B21D400E4A3A8 /* PBXTargetDependency */,
@@ -598,10 +571,6 @@
 					ProjectRef = 9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */;
 				},
 				{
-					ProductGroup = 9533716B237070B3003F1AF4 /* Products */;
-					ProjectRef = 958505B4236594C000BCB4A3 /* Cloverhelper.xcodeproj */;
-				},
-				{
 					ProductGroup = 95524B84238051F3005F6425 /* Products */;
 					ProjectRef = 95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */;
 				},
@@ -622,13 +591,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		9533716F237070B3003F1AF4 /* Cloverhelper */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = Cloverhelper;
-			remoteRef = 9533716E237070B3003F1AF4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		9542ABBD2373780C00DC03E6 /* boot1-install */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -753,11 +715,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		95337171237070BB003F1AF4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Cloverhelper;
-			targetProxy = 95337170237070BB003F1AF4 /* PBXContainerItemProxy */;
-		};
 		9542ABBF2373781300DC03E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "boot1-install";
@@ -1064,7 +1021,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.13;
+				CURRENT_PROJECT_VERSION = 1.14;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1080,7 +1037,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.13;
+				MARKETING_VERSION = 1.14;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1100,7 +1057,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.13;
+				CURRENT_PROJECT_VERSION = 1.14;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1115,7 +1072,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.13;
+				MARKETING_VERSION = 1.14;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
