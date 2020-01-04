@@ -41,7 +41,7 @@ class Installer: NSObject {
       && fm.fileExists(atPath: ktempLogPath) {
       let finalLogPath = self.gTargetVolume!.addPath("EFI/CLOVER/Clover.app_install.log")
       do {
-        let data = try Data(contentsOf: URL(fileURLWithPath: finalLogPath))
+        let data = try Data(contentsOf: URL(fileURLWithPath: ktempLogPath))
         (data as NSData).write(toFile: finalLogPath, atomically: false)
       } catch {
         print(error)
