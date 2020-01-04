@@ -95,7 +95,7 @@
                         </textFieldCell>
                     </textField>
                     <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="bsQ-GS-duU">
-                        <rect key="frame" x="70" y="497" width="213" height="5"/>
+                        <rect key="frame" x="123" y="497" width="133" height="5"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </box>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zDK-XE-o2Z">
