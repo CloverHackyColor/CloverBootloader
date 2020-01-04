@@ -950,7 +950,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       gPlatformFeature        = 0x02;
       break;
     case MacPro71:
-      gPlatformFeature        = 0x22;
+      gPlatformFeature        = 0x20;
       break;
 
     default:
