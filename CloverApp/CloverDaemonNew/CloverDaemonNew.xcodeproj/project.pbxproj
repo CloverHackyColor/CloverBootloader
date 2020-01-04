@@ -15,6 +15,7 @@
 		954FF20E2371B13C00C3D94C /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20D2371B13C00C3D94C /* DiskArbitration.framework */; };
 		954FF2102371B16300C3D94C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 954FF20F2371B16300C3D94C /* IOKit.framework */; };
 		956034F623B7185B00E138D9 /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956034F523B7185A00E138D9 /* IO.swift */; };
+		95620BCD23BF71A500CCBFB2 /* BootInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95620BCC23BF71A500CCBFB2 /* BootInstaller.swift */; };
 		95A9A87E23B63F570060F1CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A9A87D23B63F570060F1CA /* Constants.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		954FF20D2371B13C00C3D94C /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		954FF20F2371B16300C3D94C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		956034F523B7185A00E138D9 /* IO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IO.swift; path = ../../Clover/IO.swift; sourceTree = "<group>"; };
+		95620BCC23BF71A500CCBFB2 /* BootInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootInstaller.swift; sourceTree = "<group>"; };
 		95A9A87D23B63F570060F1CA /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,6 +73,7 @@
 				953B8DEF2370BB5C007E36E3 /* NVRAM.swift */,
 				953B8DED2370BB1A007E36E3 /* bdmesg.swift */,
 				953B8DF12370BF5A007E36E3 /* Extensions.swift */,
+				95620BCC23BF71A500CCBFB2 /* BootInstaller.swift */,
 			);
 			path = CloverDaemonNew;
 			sourceTree = "<group>";
@@ -142,6 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95620BCD23BF71A500CCBFB2 /* BootInstaller.swift in Sources */,
 				953B8DF22370BF5B007E36E3 /* Extensions.swift in Sources */,
 				953D98872377094A003B369E /* Disks.swift in Sources */,
 				953DBFDF236F037400B0C4FB /* main.swift in Sources */,

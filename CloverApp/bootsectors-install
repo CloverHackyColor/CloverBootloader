@@ -1,9 +1,10 @@
 #!/bin/bash
 
-logPath="/tmp/cltmplog"
-exec > >(tee -a $logPath) 2>&1
 #  Created by vector sigma on 04/11/2019.
 #  Copyright © 2019 CloverHackyColor. All rights reserved.
+
+logPath="/tmp/cltmplog"
+exec > >(tee -a $logPath) 2>&1
 
 cd /tmp
 

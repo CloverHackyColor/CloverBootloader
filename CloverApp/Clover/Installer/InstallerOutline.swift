@@ -850,9 +850,9 @@ class InstallerOutViewController: NSViewController {
       DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
         self.view.window?.level = .normal
       }
-      let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("Cloverhelper")
+      let helperPath = Bundle.main.executablePath!.deletingLastPath.addPath("CloverDaemonNew")
       
-      let script = "do shell script \"'\(helperPath)'\" with administrator privileges"
+      let script = "do shell script \"'\(helperPath)' --CLOVER\" with administrator privileges"
       var err : NSDictionary? = nil
       let result : NSAppleEventDescriptor = NSAppleScript(source: script)!.executeAndReturnError(&err)
       

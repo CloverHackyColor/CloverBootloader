@@ -8,7 +8,7 @@
 
 import Foundation
 
-let daemonVersion = "1.0.9"
+let daemonVersion = "1.1.0"
 
 let fm = FileManager.default
 
@@ -435,7 +435,7 @@ func main() {
     exit(EXIT_SUCCESS)
   }
   sigtermSource.resume()
-  
+ 
   RunLoop.current.run()
   //dispatchMain()
 }
@@ -443,7 +443,7 @@ func main() {
 let myPath = CommandLine.arguments[0]
 let myName = (myPath as NSString).lastPathComponent
 
-if CommandLine.arguments.contains("--install") {
+if CommandLine.arguments[1] == "--install" {
   print("Installing daemon...")
   // build the launch daemon
   let launch = NSMutableDictionary()
@@ -520,7 +520,7 @@ if CommandLine.arguments.contains("--install") {
   } catch {
     print(error)
   }
-} else if CommandLine.arguments.contains("--uninstall") {
+} else if CommandLine.arguments[1] == "--uninstall" {
   print("uninstalling daemon...")
   do {
     if fm.fileExists(atPath: launchPlistPath) {
@@ -549,6 +549,11 @@ if CommandLine.arguments.contains("--install") {
   } catch {
     print(error)
   }
+} else if CommandLine.arguments[1] == "--CLOVER" {
+  let installer = Installer()
+  installer.realTimeOutPut = true
+  installer.install()
+  RunLoop.current.run()
 } else {
   main()
 }

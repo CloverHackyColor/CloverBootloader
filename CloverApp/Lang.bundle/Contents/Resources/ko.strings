@@ -16,8 +16,8 @@
 "Current Clover revision" = "현재 클로버 리비전";
 "Boot Device:" = "부트 디스크:";
 "config path:" = "config 경로:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
+"Installation succeded" = "설치 성공";
+"Installation failed" = "설치 실패";
 
 "Clover wants to mount %@" = "클로버는 다음 디스크를 마운트: %@";
 "Clover wants to umount %@" = "클로버는 다음 디스크를 언마운트: %@";
@@ -26,25 +26,25 @@
 "mount point" = "마운트 포인트";
 "*auto mount" = "*자동 마운트";
 
-"System Serial Number:" = "System Serial Number:";
-"Model:" = "Model:";
-"board-id:" = "board-id:";
-"OEM Vendor:" = "OEM Vendor:";
-"OEM Product:" = "OEM Product:";
-"OEM Board:" = "OEM Board:";
-"NVRAM is native:" = "NVRAM is native:";
-"unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
-"Startup Sound" = "Startup Sound";
-"Device:" = "Device:";
-"Volume level:" = "Volume level:";
+"System Serial Number:" = "시스템 시리얼 번호:";
+"Model:" = "모델:";
+"board-id:" = "보드-ID:";
+"OEM Vendor:" = "OEM 제조사:";
+"OEM Product:" = "OEM 제품:";
+"OEM Board:" = "OEM 보드:";
+"NVRAM is native:" = "네이티브 NVRAM:";
+"unknown" = "알수없음";
+"Yes" = "예";
+"No" = "아니오";
+"Startup Sound" = "시작음";
+"Device:" = "장치:";
+"Volume level:" = "볼륨 크기:";
 
-"LineOut" = "Line Out";
-"Speaker" = "Speaker";
-"Headphones" = "Headphones";
-"Garniture" = "Garniture";
-"Other" = "Other";
+"LineOut" = "라인아웃";
+"Speaker" = "스피커";
+"Headphones" = "해드폰";
+"Garniture" = "포장";
+"Other" = "추가";
 
 "true" = "예";
 "false" = "아니오";
@@ -61,7 +61,7 @@
 "Uninstall CloverDaemonNew" = "새로운 클로버데몬 제거";
 
 "Update" = "업데이트";
-"Download" = "Download";
+"Download" = "다운로드";
 "Update to r%d" = "r%d로 업데이트"; // "Update to r5101"
 "Check update:" = "업데이트 확인:";
 "Check now" = "지금 확인";
