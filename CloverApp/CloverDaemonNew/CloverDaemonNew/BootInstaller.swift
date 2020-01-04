@@ -193,6 +193,7 @@ class Installer: NSObject {
     let alt : Bool            = (CloverappDict["alt"] as? NSNumber)?.boolValue ?? false
 
     log("\(version) (v\(daemonVersion)), \(now)")
+    log("- macOS \(ProcessInfo().operatingSystemVersionString)")
     log("SELF = \(CommandLine.arguments[0])")
     if geteuid() != 0 {
       exit("Error: you don't have root permissions.")
@@ -232,6 +233,11 @@ class Installer: NSObject {
     }
     
     log("Target volume: \(targetVol)")
+    // get additional info about the target volume
+    log("BSD Name:      \(getBSDName(of: targetVol) ?? kNotAvailable)")
+    log("Filesystem:    \(getFS(from: targetVol) ?? kNotAvailable)")
+    log("Is internal:   \(isInternalDevice(diskOrMtp: targetVol))")
+    log("Is writable:   \(isWritable(diskOrMtp: targetVol))")
     
     if !fm.isWritableFile(atPath: targetVol) {
       exit("Error: target volume \"\(targetVol)\" is not writable.")
