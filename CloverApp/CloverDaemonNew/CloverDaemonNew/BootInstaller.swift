@@ -198,7 +198,6 @@ class Installer: NSObject {
       exit("Error: you don't have root permissions.")
     }
     
-    
     if (backUpPath != nil) {
       log("Backup made at:\n\(backUpPath!).")
     }

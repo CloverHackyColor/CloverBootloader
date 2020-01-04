@@ -249,7 +249,7 @@
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Tab" identifier="" id="BAk-3x-mLp">
-                                <view key="view" id="ENG-5U-eLE">
+                                <view key="view" ambiguous="YES" id="ENG-5U-eLE">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="120"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -307,7 +307,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="View" identifier="" id="0yV-f2-RVT">
-                                <view key="view" ambiguous="YES" id="P12-rN-3e4">
+                                <view key="view" id="P12-rN-3e4">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="120"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -490,7 +490,7 @@
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem identifier="Mount" id="F4n-I1-4Gq">
-                                <view key="view" ambiguous="YES" id="E05-QZ-1bf">
+                                <view key="view" id="E05-QZ-1bf">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="113"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -586,7 +586,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem identifier="Sound" id="T2L-eV-Vwg">
-                                <view key="view" id="0ws-um-xJI">
+                                <view key="view" ambiguous="YES" id="0ws-um-xJI">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="113"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -617,7 +617,7 @@
                                             </connections>
                                         </slider>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ok2-So-CvK">
-                                            <rect key="frame" x="15" y="91" width="292" height="14"/>
+                                            <rect key="frame" x="18" y="94" width="306" height="14"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="Startup Sound" id="Vif-FP-OaO">
                                                 <font key="font" metaFont="menu" size="11"/>
@@ -649,10 +649,19 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D50-Ay-tcj">
-                                            <rect key="frame" x="18" y="79" width="292" height="14"/>
+                                            <rect key="frame" x="18" y="79" width="241" height="14"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="Device:" id="sIi-by-bNC">
                                                 <font key="font" metaFont="menu" size="11"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gTt-3E-huL">
+                                            <rect key="frame" x="263" y="80" width="61" height="11"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" alignment="right" title="r5102 +" id="JZg-ju-g1k">
+                                                <font key="font" metaFont="label" size="9"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>

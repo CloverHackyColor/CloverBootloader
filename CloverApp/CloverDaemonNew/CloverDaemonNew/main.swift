@@ -8,7 +8,7 @@
 
 import Foundation
 
-let daemonVersion = "1.1.0"
+let daemonVersion = "1.1.1"
 
 let fm = FileManager.default
 
@@ -443,118 +443,123 @@ func main() {
 let myPath = CommandLine.arguments[0]
 let myName = (myPath as NSString).lastPathComponent
 
-if CommandLine.arguments[1] == "--install" {
-  print("Installing daemon...")
-  // build the launch daemon
-  let launch = NSMutableDictionary()
-  launch.setValue(true, forKey: "KeepAlive")
-  launch.setValue(true, forKey: "RunAtLoad")
-  launch.setValue("com.slice.CloverDaemonNew", forKey: "Label")
-  
-  launch.setValue("/Library/Logs/CloverEFI/clover.daemon.log", forKey: "StandardErrorPath")
-  launch.setValue("/Library/Logs/CloverEFI/clover.daemon.log", forKey: "StandardOutPath")
-  
-  let ProgramArguments = NSArray(object: cloverDaemonNewPath)
-  
-  launch.setValue(ProgramArguments, forKey: "ProgramArguments")
-  
-  removeCloverRCScripts()
-  do {
-    if !fm.fileExists(atPath: "/Library/Application Support/Clover") {
-      try fm.createDirectory(atPath: "/Library/Application Support/Clover",
-                             withIntermediateDirectories: false,
-                             attributes: nil)
-    }
+if CommandLine.arguments.count > 1 {
+  if CommandLine.arguments[1] == "--install" {
+    print("Installing daemon...")
+    // build the launch daemon
+    let launch = NSMutableDictionary()
+    launch.setValue(true, forKey: "KeepAlive")
+    launch.setValue(true, forKey: "RunAtLoad")
+    launch.setValue("com.slice.CloverDaemonNew", forKey: "Label")
     
-    if fm.fileExists(atPath: launchPlistPath) {
-      try fm.removeItem(atPath: launchPlistPath)
-    }
+    launch.setValue("/Library/Logs/CloverEFI/clover.daemon.log", forKey: "StandardErrorPath")
+    launch.setValue("/Library/Logs/CloverEFI/clover.daemon.log", forKey: "StandardOutPath")
     
-    if fm.fileExists(atPath: cloverDaemonNewPath) {
-      try fm.removeItem(atPath: cloverDaemonNewPath)
-    }
+    let ProgramArguments = NSArray(object: cloverDaemonNewPath)
     
-    launch.write(toFile: launchPlistPath, atomically: true)
+    launch.setValue(ProgramArguments, forKey: "ProgramArguments")
     
-    try fm.copyItem(atPath: myPath, toPath: cloverDaemonNewPath)
-    
-    try fm.setAttributes(execAttr(),
-                         ofItemAtPath: cloverDaemonNewPath)
-    
-    
-    let logouthookSrc = myPath.deletingLastPath.addPath(cloverLogOut.lastPath)
-    if fm.fileExists(atPath: cloverLogOut) {
-      try fm.removeItem(atPath: cloverLogOut)
-    }
-    
-    if fm.fileExists(atPath: logouthookSrc) {
-      try fm.copyItem(atPath: logouthookSrc,
-                      toPath: cloverLogOut)
+    removeCloverRCScripts()
+    do {
+      if !fm.fileExists(atPath: "/Library/Application Support/Clover") {
+        try fm.createDirectory(atPath: "/Library/Application Support/Clover",
+                               withIntermediateDirectories: false,
+                               attributes: nil)
+      }
+      
+      if fm.fileExists(atPath: launchPlistPath) {
+        try fm.removeItem(atPath: launchPlistPath)
+      }
+      
+      if fm.fileExists(atPath: cloverDaemonNewPath) {
+        try fm.removeItem(atPath: cloverDaemonNewPath)
+      }
+      
+      launch.write(toFile: launchPlistPath, atomically: true)
+      
+      try fm.copyItem(atPath: myPath, toPath: cloverDaemonNewPath)
+      
       try fm.setAttributes(execAttr(),
-                           ofItemAtPath: cloverLogOut)
-    }
-    
-    var needsLogoutHook = isLegacyFirmware()
-    if !needsLogoutHook {
-      if let nvram = getNVRAM() {
-        if (nvram.object(forKey: "EmuVariableUefiPresent") != nil ||
-          nvram.object(forKey: "TestEmuVariableUefiPresent") != nil) {
-          needsLogoutHook = true
+                           ofItemAtPath: cloverDaemonNewPath)
+      
+      
+      let logouthookSrc = myPath.deletingLastPath.addPath(cloverLogOut.lastPath)
+      if fm.fileExists(atPath: cloverLogOut) {
+        try fm.removeItem(atPath: cloverLogOut)
+      }
+      
+      if fm.fileExists(atPath: logouthookSrc) {
+        try fm.copyItem(atPath: logouthookSrc,
+                        toPath: cloverLogOut)
+        try fm.setAttributes(execAttr(),
+                             ofItemAtPath: cloverLogOut)
+      }
+      
+      var needsLogoutHook = isLegacyFirmware()
+      if !needsLogoutHook {
+        if let nvram = getNVRAM() {
+          if (nvram.object(forKey: "EmuVariableUefiPresent") != nil ||
+            nvram.object(forKey: "TestEmuVariableUefiPresent") != nil) {
+            needsLogoutHook = true
+          }
         }
       }
+      
+      if needsLogoutHook {
+        installHook()
+      } else {
+        unInstallHook()
+      }
+      
+      try fm.setAttributes(launchAttr(), ofItemAtPath: launchPlistPath)
+      if fm.fileExists(atPath: launchPlistPath) {
+        run(cmd: "launchctl unload \(launchPlistPath)")
+      }
+      run(cmd: "launchctl load \(launchPlistPath)")
+      run(cmd: "launchctl start \(launchPlistPath)")
+      exit(EXIT_SUCCESS)
+    } catch {
+      print(error)
     }
-    
-    if needsLogoutHook {
-      installHook()
-    } else {
+  } else if CommandLine.arguments[1] == "--uninstall" {
+    print("uninstalling daemon...")
+    do {
+      if fm.fileExists(atPath: launchPlistPath) {
+        run(cmd: "launchctl unload \(launchPlistPath)")
+        try fm.removeItem(atPath: launchPlistPath)
+      }
+      
+      if fm.fileExists(atPath: cloverDaemonNewPath) {
+        try fm.removeItem(atPath: cloverDaemonNewPath)
+      }
+      
+      if fm.fileExists(atPath: cloverLogOut) {
+        try fm.removeItem(atPath: cloverLogOut)
+      }
+      
+      if fm.fileExists(atPath: wrapperPath) {
+        try fm.removeItem(atPath: wrapperPath)
+      }
+      
+      if fm.fileExists(atPath: frameworksPath) {
+        try fm.removeItem(atPath: frameworksPath)
+      }
+      
       unInstallHook()
+      exit(EXIT_SUCCESS)
+    } catch {
+      print(error)
     }
-    
-    try fm.setAttributes(launchAttr(), ofItemAtPath: launchPlistPath)
-    if fm.fileExists(atPath: launchPlistPath) {
-      run(cmd: "launchctl unload \(launchPlistPath)")
-    }
-    run(cmd: "launchctl load \(launchPlistPath)")
-    run(cmd: "launchctl start \(launchPlistPath)")
-    exit(EXIT_SUCCESS)
-  } catch {
-    print(error)
+  } else if CommandLine.arguments[1] == "--CLOVER" {
+    let installer = Installer()
+    installer.realTimeOutPut = true
+    installer.install()
+    RunLoop.current.run()
+  } else {
+    print("Nothing to do bro'")
   }
-} else if CommandLine.arguments[1] == "--uninstall" {
-  print("uninstalling daemon...")
-  do {
-    if fm.fileExists(atPath: launchPlistPath) {
-      run(cmd: "launchctl unload \(launchPlistPath)")
-      try fm.removeItem(atPath: launchPlistPath)
-    }
-    
-    if fm.fileExists(atPath: cloverDaemonNewPath) {
-      try fm.removeItem(atPath: cloverDaemonNewPath)
-    }
-    
-    if fm.fileExists(atPath: cloverLogOut) {
-      try fm.removeItem(atPath: cloverLogOut)
-    }
-    
-    if fm.fileExists(atPath: wrapperPath) {
-      try fm.removeItem(atPath: wrapperPath)
-    }
-    
-    if fm.fileExists(atPath: frameworksPath) {
-      try fm.removeItem(atPath: frameworksPath)
-    }
-    
-    unInstallHook()
-    exit(EXIT_SUCCESS)
-  } catch {
-    print(error)
-  }
-} else if CommandLine.arguments[1] == "--CLOVER" {
-  let installer = Installer()
-  installer.realTimeOutPut = true
-  installer.install()
-  RunLoop.current.run()
 } else {
+  // be the Daemon
   main()
 }
 
