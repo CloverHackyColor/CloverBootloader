@@ -193,7 +193,7 @@ class Installer: NSObject {
     let alt : Bool            = (CloverappDict["alt"] as? NSNumber)?.boolValue ?? false
 
     log("\(version) (v\(daemonVersion)), \(now)")
-    log("- macOS \(ProcessInfo().operatingSystemVersionString)")
+    log("macOS \(ProcessInfo().operatingSystemVersionString)")
     log("SELF = \(CommandLine.arguments[0])")
     if geteuid() != 0 {
       exit("Error: you don't have root permissions.")

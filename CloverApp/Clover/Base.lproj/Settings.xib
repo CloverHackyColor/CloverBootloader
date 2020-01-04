@@ -490,7 +490,7 @@
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem identifier="Mount" id="F4n-I1-4Gq">
-                                <view key="view" id="E05-QZ-1bf">
+                                <view key="view" ambiguous="YES" id="E05-QZ-1bf">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="113"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -586,7 +586,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem identifier="Sound" id="T2L-eV-Vwg">
-                                <view key="view" ambiguous="YES" id="0ws-um-xJI">
+                                <view key="view" id="0ws-um-xJI">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="113"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
