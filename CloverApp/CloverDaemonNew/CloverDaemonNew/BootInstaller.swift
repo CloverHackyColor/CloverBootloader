@@ -240,7 +240,29 @@ class Installer: NSObject {
     log("Is writable:   \(isWritable(diskOrMtp: targetVol))")
     
     if !fm.isWritableFile(atPath: targetVol) {
-      exit("Error: target volume \"\(targetVol)\" is not writable.")
+      self.log("o_Ops: '\(targetVol)' appear to be not writable, remounting read/write.")
+      /*
+       https://github.com/CloverHackyColor/CloverBootloader/issues/50
+       if we are here is because DiskArbitration tell Us this disk is writable,
+       but now FileManager just say the opposite.
+       This can be the result of mount????
+       
+       So try to umount the disk and re mount it read write!
+       */
+      let task = Process()
+      task.environment = ProcessInfo().environment
+      task.launchPath = "/sbin/mount"
+      task.arguments = ["-uw", targetVol]
+      task.launch()
+      task.waitUntilExit()
+      
+      self.log("sleeping 6 seconds..")
+      sleep(6)
+      if !fm.isWritableFile(atPath: targetVol) {
+        exit("Error: target volume \"\(targetVol)\" is not writable.")
+      } else {
+        self.log("'\(targetVol)' is now read/write.")
+      }
     }
     
     // MARK: Check paths
