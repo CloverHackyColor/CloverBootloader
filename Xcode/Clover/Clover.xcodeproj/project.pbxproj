@@ -1465,6 +1465,7 @@
 		A5BF392720D9F17B004340E1 /* FloatLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392620D9F17B004340E1 /* FloatLib.c */; };
 		A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392920D9F18C004340E1 /* nanosvgrast.c */; };
 		A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392A20D9F18C004340E1 /* nanosvg.c */; };
+		A5DEBF3323BF685800C41734 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5DEBF3223BF685800C41734 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -5792,6 +5793,11 @@
 		A5BF392820D9F18C004340E1 /* nanosvg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nanosvg.h; sourceTree = "<group>"; };
 		A5BF392920D9F18C004340E1 /* nanosvgrast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nanosvgrast.c; sourceTree = "<group>"; };
 		A5BF392A20D9F18C004340E1 /* nanosvg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nanosvg.c; sourceTree = "<group>"; };
+		A5DEBF3223BF685800C41734 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A5DEBF3523BF687D00C41734 /* lowlevel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lowlevel.cpp; sourceTree = "<group>"; };
+		A5DEBF3623BF687D00C41734 /* lowlevel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lowlevel.h; sourceTree = "<group>"; };
+		A5DEBF3723BF687D00C41734 /* XStringW.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringW.cpp; sourceTree = "<group>"; };
+		A5DEBF3823BF687D00C41734 /* XStringW.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringW.h; sourceTree = "<group>"; };
 		A5E283D12347AE550068ED34 /* MemoryMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryMap.c; sourceTree = "<group>"; };
 		A5E283D22347AE550068ED34 /* ServiceOverrides.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceOverrides.h; sourceTree = "<group>"; };
 		A5E283D32347AE550068ED34 /* BootFixes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootFixes.c; sourceTree = "<group>"; };
@@ -5940,6 +5946,7 @@
 				1261514B1A15BBB000903E7B /* libeg */,
 				126151561A15BBB000903E7B /* Platform */,
 				126151941A15BBB000903E7B /* refit */,
+				A5DEBF3423BF687D00C41734 /* cpp_util */,
 				1261519F1A15BBB000903E7B /* refit.inf */,
 				126151A01A15BBB000903E7B /* Version.h */,
 			);
@@ -6087,6 +6094,7 @@
 				1261519A1A15BBB000903E7B /* list.c */,
 				1261519B1A15BBB000903E7B /* list.h */,
 				1261519C1A15BBB000903E7B /* main.c */,
+				A5DEBF3223BF685800C41734 /* main.cpp */,
 				1261519D1A15BBB000903E7B /* menu.c */,
 				1261519E1A15BBB000903E7B /* screen.c */,
 			);
@@ -15251,6 +15259,17 @@
 			path = Ebc;
 			sourceTree = "<group>";
 		};
+		A5DEBF3423BF687D00C41734 /* cpp_util */ = {
+			isa = PBXGroup;
+			children = (
+				A5DEBF3523BF687D00C41734 /* lowlevel.cpp */,
+				A5DEBF3623BF687D00C41734 /* lowlevel.h */,
+				A5DEBF3723BF687D00C41734 /* XStringW.cpp */,
+				A5DEBF3823BF687D00C41734 /* XStringW.h */,
+			);
+			path = cpp_util;
+			sourceTree = "<group>";
+		};
 		A5E283CF2347AE550068ED34 /* MemoryFix */ = {
 			isa = PBXGroup;
 			children = (
@@ -15948,6 +15967,7 @@
 				A5AAFD2A237F13B4009CD413 /* CustomizedDisplayLibInternal.c in Sources */,
 				12B8EBC21DDCEA2A00AC0A2C /* scroll_images.c in Sources */,
 				A5AAFB52237F13B3009CD413 /* DxeLoadFunc.c in Sources */,
+				A5DEBF3323BF685800C41734 /* main.cpp in Sources */,
 				A5AA04C5237F13C1009CD413 /* ReadMm7.nasm in Sources */,
 				A5AA0753237F13C3009CD413 /* CopyMem.nasm in Sources */,
 				A5AA0723237F13C2009CD413 /* SetMem16.nasm in Sources */,
