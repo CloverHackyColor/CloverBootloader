@@ -1391,7 +1391,11 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
     k = 0;
     if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, TRUE)) { //device candidate
       k = i + 2;
-    } else if ((dsdt[i] == 0x10) && (dsdt[i-1] != 0x0A) && !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
+    } else if ((dsdt[i] == 0x10) && //looks like Scope
+               (dsdt[i-1] != 0xA0) && //this is If()
+               (dsdt[i-1] != 0xA1) && //this is Else()
+               (dsdt[i-1] != 0xA2) && //this is While()
+               !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
       //additional check for Field
       // a problem with fields 52 4D 53 33 10 41 4D 45 4D
       // 1. Search outer filed
