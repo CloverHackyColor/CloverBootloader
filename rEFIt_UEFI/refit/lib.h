@@ -224,6 +224,7 @@ typedef struct {
   EFI_FILE            *RootDir;
   CHAR16              *DevicePathString;
   CHAR16              *VolName;
+  CHAR16              *VolLabel;
   UINT8               DiskKind;
   LEGACY_OS           *LegacyOS;
   BOOLEAN             Hidden;

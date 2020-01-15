@@ -3926,9 +3926,10 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
   switch (TextC) {
     case TEXT_CORNER_REVISION:
       // Display Clover boot volume
-      if (SelfVolume->VolName[0] != L'#') {
-      	Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolName);
-      }else{
+      if (SelfVolume->VolLabel && SelfVolume->VolLabel[0] != L'#') {
+        Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolLabel);
+      }
+      if ( !Text ) {
       	Text = PoolPrint(L"%s", gFirmwareRevision, SelfVolume->VolName);
       }
       break;

@@ -648,20 +648,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CHAR16 *LoaderPath,
   if (FullTitle) {
     Entry->me.Title = EfiStrDuplicate(FullTitle);
   }
-  if ( Entry->me.Title == NULL  &&  FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
-      EFI_STATUS          Status;
-      EFI_FILE_HANDLE     FileHandle;
-      Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"\\.VolumeLabel.txt", EFI_FILE_MODE_READ, 0);
-      if (!EFI_ERROR(Status)) {
-          CHAR8 Buffer[32+1];
-          UINTN BufferSize = sizeof(Buffer)-sizeof(CHAR8);
-          SetMem(Buffer, BufferSize+sizeof(CHAR8), 0);
-          Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
-          FileHandle->Close(FileHandle);
-          if (!EFI_ERROR(Status)) {
-              Entry->me.Title = PoolPrint(L"Boot %s from %a", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Buffer);
-          }
-      }
+  if ( Entry->me.Title == NULL  &&  Volume->VolLabel != NULL ) {
+    if ( Volume->VolLabel[0] == L'#' ) {
+    	Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
+    }else{
+    	Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
+    }
   }
   
   if ( Entry->me.Title == NULL  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {

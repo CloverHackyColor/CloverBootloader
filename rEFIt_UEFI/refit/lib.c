@@ -963,6 +963,22 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     return EFI_SUCCESS;
   }
   
+  if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
+      EFI_STATUS          Status;
+      EFI_FILE_HANDLE     FileHandle;
+      Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"\\.VolumeLabel.txt", EFI_FILE_MODE_READ, 0);
+      if (!EFI_ERROR(Status)) {
+          CHAR8 Buffer[32+1];
+          UINTN BufferSize = sizeof(Buffer)-sizeof(CHAR8);
+          SetMem(Buffer, BufferSize+sizeof(CHAR8), 0);
+          Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
+          FileHandle->Close(FileHandle);
+          if (!EFI_ERROR(Status)) {
+          	Volume->VolLabel = PoolPrint(L"%a", Buffer);
+          }
+      }
+  }
+  
   // get volume name
   if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
