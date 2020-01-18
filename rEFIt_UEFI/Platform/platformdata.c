@@ -1035,7 +1035,6 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac191:
     case iMac192:
     case iMacPro11:
-    case MacPro71:
       gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
         case MacMini81:
