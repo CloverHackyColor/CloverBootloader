@@ -43,9 +43,9 @@ func getFirmawareVendor() -> String? {
         cleanedData.append(data[i])
       }
     }
-    cleanedData.append(0x00)
     return String(bytes: cleanedData, encoding: .utf8)
   }
+  
   return nil
 }
 
@@ -80,7 +80,9 @@ func getOEMVendor() -> String? {
   if let data = getEFIPlatform()?.object(forKey: "OEMVendor") as? Data {
     return String(bytes: data, encoding: .utf8)
   }
-  return nil
+  
+  let ockey = "4D1FDA02-38C7-4A6A-9CC6-4BCCA8B30102:oem-vendor"
+  return getNVRAM(variable: ockey)
 }
 
 /// Get OEMProduct string.
@@ -88,13 +90,72 @@ func getOEMProduct() -> String? {
   if let data = getEFIPlatform()?.object(forKey: "OEMProduct") as? Data {
     return String(bytes: data, encoding: .utf8)
   }
-  return nil
+  
+  let ockey = "4D1FDA02-38C7-4A6A-9CC6-4BCCA8B30102:oem-product"
+  return getNVRAM(variable: ockey)
 }
 
 /// Get OEMBoard string.
 func getOEMBoard() -> String? {
   if let data = getEFIPlatform()?.object(forKey: "OEMBoard") as? Data {
     return String(bytes: data, encoding: .utf8)
+  }
+  
+  let ockey = "4D1FDA02-38C7-4A6A-9CC6-4BCCA8B30102:oem-board"
+  return getNVRAM(variable: ockey)
+}
+
+/// Get OEMVendor Short string.
+func getOEMVendorShort() -> String? {
+  if let vendor = getOEMVendor() {
+    switch vendor {
+    case "ASRock": fallthrough
+    case "Alienware": fallthrough
+    case "ECS": fallthrough
+    case "EVGA": fallthrough
+    case "FUJITSU": fallthrough
+    case "IBM": fallthrough
+    case "Intel": fallthrough
+    case "Shuttle": fallthrough
+    case "TOSHIBA": fallthrough
+    case "XFX":
+      return vendor
+    case "Apple Inc.":
+      return "Apple"
+    case "ASUSTeK Computer INC.": fallthrough
+    case "ASUSTeK COMPUTER INC.":
+      return "ASUS"
+    case "Dell Inc.":
+      return "Dell"
+    case "DFI": fallthrough
+    case "DFI Inc.":
+      return "DFI"
+    case "EPoX COMPUTER CO., LTD":
+      return "EPoX"
+    case "First International Computer, Inc.":
+      return "FIC"
+    case "FUJITSU SIEMENS":
+      return "FUJITSU"
+    case "Gigabyte Technology Co., Ltd.":
+      return "Gigabyte"
+    case "Hewlett-Packard":
+      return "HP"
+    case "Intel Corp.": fallthrough
+    case "Intel Corporation": fallthrough
+    case "INTEL Corporation":
+      return "Intel"
+    case "Lenovo": fallthrough
+    case "LENOVO":
+      return "Lenovo"
+    case "Micro-Star International": fallthrough
+    case "MICRO-STAR INTERNATIONAL CO., LTD": fallthrough
+    case "MICRO-STAR INTERNATIONAL CO.,LTD": fallthrough
+    case "MSI":
+      return "MSI"
+      case "To be filled by O.E.M.": break
+    default:
+      return vendor
+    }
   }
   return nil
 }
@@ -108,7 +169,6 @@ func getSystemSerialNumber() -> String? {
         cleanedData.append(data[i])
       }
     }
-    cleanedData.append(0x00)
     return String(bytes: cleanedData, encoding: .utf8)
   }
   return nil
@@ -123,7 +183,6 @@ func getEFIModel() -> String? {
         cleanedData.append(data[i])
       }
     }
-    cleanedData.append(0x00)
     return String(bytes: cleanedData, encoding: .utf8)
   }
   return nil
@@ -138,7 +197,6 @@ func getEFIBoardID() -> String? {
         cleanedData.append(data[i])
       }
     }
-    cleanedData.append(0x00)
     return String(bytes: cleanedData, encoding: .utf8)
   }
   return nil
@@ -158,4 +216,50 @@ func isLegacyFirmware() -> Bool {
   }
   
   return !isUEFI
+}
+
+/// Get the  property value from the given IOService dictionary. You’re responsible for releasing the result (if not transferred to Swift objects).
+func IOServiceGetPropertyFrom(matching name: String, property: String) -> Any? {
+  var obj : Any? = nil
+  var iter : io_iterator_t = 0
+  var rl : uint32 = 0
+  
+  var result : kern_return_t = IORegistryCreateIterator(kIOMasterPortDefault,
+                                                        kIOServicePlane,
+                                                        0,
+                                                        &iter)
+  
+  if result == KERN_SUCCESS && iter != 0 {
+    var entry : io_object_t
+    repeat {
+      
+      entry = IOIteratorNext(iter)
+      if entry != IO_OBJECT_NULL {
+        if entry.name() == name {
+          let ref = IORegistryEntryCreateCFProperty(entry,
+                                                    property as CFString,
+                                                    kCFAllocatorDefault,
+                                                    0)
+          if ref != nil {
+            obj = ref!.takeRetainedValue()
+            IOObjectRelease(entry)
+            break
+          }
+        }
+        
+        rl += 1
+        result = IORegistryIteratorEnterEntry(iter)
+      } else {
+        if rl == 0 {
+          IOObjectRelease(entry)
+          break
+        }
+        result = IORegistryIteratorExitEntry(iter)
+        rl -= 1
+      }
+    } while (true)
+    IOObjectRelease(iter)
+  }
+  
+  return obj
 }

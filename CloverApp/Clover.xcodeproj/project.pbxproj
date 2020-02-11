@@ -23,6 +23,11 @@
 		955689DB23A2728000AD323C /* IO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955689DA23A2728000AD323C /* IO.swift */; };
 		9556CAF5238DF75600082671 /* InstallerOutline.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9556CAF3238DF75600082671 /* InstallerOutline.xib */; };
 		9558518E23BA3486002CB3D8 /* Speaker.png in Resources */ = {isa = PBXBuildFile; fileRef = 9558518D23BA3485002CB3D8 /* Speaker.png */; };
+		955BEE1523C6B49C00425AB0 /* ThemeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BEE1223C6B49C00425AB0 /* ThemeView.swift */; };
+		955BEE1623C6B49C00425AB0 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BEE1323C6B49C00425AB0 /* ThemeManager.swift */; };
+		955BEE1723C6B49C00425AB0 /* ThemeManagerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BEE1423C6B49C00425AB0 /* ThemeManagerVC.swift */; };
+		955BEE1923C6B4B300425AB0 /* ThemeManager.xib in Resources */ = {isa = PBXBuildFile; fileRef = 955BEE1823C6B4B300425AB0 /* ThemeManager.xib */; };
+		955BEE1B23C7171100425AB0 /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 955BEE1A23C7171000425AB0 /* check.png */; };
 		955F7C6D238DCD170019D088 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F7C6C238DCD160019D088 /* DiskArbitration.framework */; };
 		9560906A238C61E200ACD7F7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95609068238C61E200ACD7F7 /* MainMenu.xib */; };
 		956090B7238C890600ACD7F7 /* Installer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956090B9238C890600ACD7F7 /* Installer.xib */; };
@@ -188,6 +193,11 @@
 		955689DA23A2728000AD323C /* IO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IO.swift; sourceTree = "<group>"; };
 		9556CAF4238DF75600082671 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InstallerOutline.xib; sourceTree = "<group>"; };
 		9558518D23BA3485002CB3D8 /* Speaker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Speaker.png; sourceTree = "<group>"; };
+		955BEE1223C6B49C00425AB0 /* ThemeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeView.swift; sourceTree = "<group>"; };
+		955BEE1323C6B49C00425AB0 /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		955BEE1423C6B49C00425AB0 /* ThemeManagerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManagerVC.swift; sourceTree = "<group>"; };
+		955BEE1823C6B4B300425AB0 /* ThemeManager.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThemeManager.xib; sourceTree = "<group>"; };
+		955BEE1A23C7171000425AB0 /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check.png; sourceTree = "<group>"; };
 		955F7C6C238DCD160019D088 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		95609069238C61E200ACD7F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		9560906C238C624200ACD7F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
@@ -388,6 +398,17 @@
 			path = images;
 			sourceTree = "<group>";
 		};
+		955BEE1123C6B43C00425AB0 /* ThemeManager */ = {
+			isa = PBXGroup;
+			children = (
+				955BEE1323C6B49C00425AB0 /* ThemeManager.swift */,
+				955BEE1423C6B49C00425AB0 /* ThemeManagerVC.swift */,
+				955BEE1223C6B49C00425AB0 /* ThemeView.swift */,
+				955BEE1823C6B4B300425AB0 /* ThemeManager.xib */,
+			);
+			path = ThemeManager;
+			sourceTree = "<group>";
+		};
 		95C51578236B21AE00E4A3A8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -423,6 +444,7 @@
 		95E68AC8235B862F002B37A5 /* Clover */ = {
 			isa = PBXGroup;
 			children = (
+				955BEE1123C6B43C00425AB0 /* ThemeManager */,
 				95E68AC9235B862F002B37A5 /* AppDelegate.swift */,
 				95C5152E236A0A7400E4A3A8 /* SettingsView.swift */,
 				95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */,
@@ -438,6 +460,7 @@
 				95E50075238ABA56002F3869 /* Tasks.swift */,
 				953BC20223720C0A0039755D /* FixedWidthViews.swift */,
 				9533718223709517003F1AF4 /* bootsectors-install */,
+				955BEE1A23C7171000425AB0 /* check.png */,
 				9569EC44238DD772003AD72C /* Settings.xib */,
 				95609068238C61E200ACD7F7 /* MainMenu.xib */,
 				95E68AD9235B8666002B37A5 /* Installer */,
@@ -639,8 +662,10 @@
 				954DECD523899F5F006A9876 /* Bootmanager.png in Resources */,
 				95E68ACE235B8632002B37A5 /* Assets.xcassets in Resources */,
 				9569EC42238DD772003AD72C /* Settings.xib in Resources */,
+				955BEE1B23C7171100425AB0 /* check.png in Resources */,
 				9560906A238C61E200ACD7F7 /* MainMenu.xib in Resources */,
 				9533718323709517003F1AF4 /* bootsectors-install in Resources */,
+				955BEE1923C6B4B300425AB0 /* ThemeManager.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,6 +723,7 @@
 				95E68ADF235B86A1002B37A5 /* Releases.swift in Sources */,
 				954BBE99238196EE0032425F /* Locale.swift in Sources */,
 				95E68ACA235B862F002B37A5 /* AppDelegate.swift in Sources */,
+				955BEE1523C6B49C00425AB0 /* ThemeView.swift in Sources */,
 				958861DA235F75FB00B64173 /* Driver.swift in Sources */,
 				95E68AE3235B86A1002B37A5 /* bdmesg.swift in Sources */,
 				95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */,
@@ -709,6 +735,8 @@
 				95E68AE0235B86A1002B37A5 /* Extensions.swift in Sources */,
 				955689DB23A2728000AD323C /* IO.swift in Sources */,
 				9555AF26238EE53300108C33 /* InstallerOutline.swift in Sources */,
+				955BEE1723C6B49C00425AB0 /* ThemeManagerVC.swift in Sources */,
+				955BEE1623C6B49C00425AB0 /* ThemeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1021,7 +1049,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.14;
+				CURRENT_PROJECT_VERSION = 1.15;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1037,7 +1065,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.14;
+				MARKETING_VERSION = 1.15;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1057,7 +1085,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.14;
+				CURRENT_PROJECT_VERSION = 1.15;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1072,7 +1100,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.14;
+				MARKETING_VERSION = 1.15;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";

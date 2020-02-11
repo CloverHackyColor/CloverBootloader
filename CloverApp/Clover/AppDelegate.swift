@@ -16,6 +16,11 @@ let localeBundle = Bundle(path: Bundle.main.sharedSupportPath! + "/Lang.bundle")
 class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   var isInstalling : Bool = false
   var isInstallerOpen : Bool = false
+  var themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
+  var themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
+  
+  var themes : [String] = [String]()
+  var installedThemes : [String] = [String]()
   var popover : NSPopover?
   
   let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -23,6 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   var settingsWC: SettingsWindowController? = nil
   var installerWC : InstallerWindowController? = nil
   var installerOutWC : InstallerOutWindowController? = nil
+  var themeManagerWC : ThemeManagerWC?
   
   var daSession : DASession? = nil
   var daContext : UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
@@ -85,8 +91,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
       self.statusItem.action = #selector(self.showPopover(_:))
       self.statusItem.sendAction(on: [.leftMouseUp, .rightMouseUp])
     }
-    
-    
     
     
     self.settingsWC = SettingsWindowController.loadFromNib()

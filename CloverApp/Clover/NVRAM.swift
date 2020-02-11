@@ -37,6 +37,43 @@ func getNVRAM() -> NSMutableDictionary? {
   return dict?.takeRetainedValue()
 }
 
+/// Get a single nvram variable
+func getNVRAM(variable name: String) -> String? {
+  var value : String? = nil
+  var ref: io_registry_entry_t
+  var masterPort = mach_port_t()
+  var oResult: kern_return_t
+  oResult = IOMasterPort(bootstrap_port, &masterPort)
+  
+  if oResult != KERN_SUCCESS {
+    return nil
+  }
+  
+  ref = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options")
+  if ref == 0 {
+    return nil
+  }
+  
+  let vref = IORegistryEntryCreateCFProperty(ref,
+                                             name as CFString,
+                                             kCFAllocatorDefault, 0)
+  if (vref != nil) {
+    let data = vref?.takeRetainedValue() as! Data
+    var cleanedData = Data()
+    for i in 0..<data.count {
+      if data[i] != 0x00 {
+        cleanedData.append(data[i])
+      }
+    }
+    
+    value = String(bytes: cleanedData, encoding: .utf8)
+  }
+  
+  IOObjectRelease(ref)
+  
+  return value
+}
+
 // MARK: set NVRAM key
 func setNVRAM(key: String, stringValue: String) {
   var cmd : String = "do shell script \""

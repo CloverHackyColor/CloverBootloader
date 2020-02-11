@@ -50,6 +50,11 @@
 "false" = "falso";
 
 "Theme:" = "Tema:";
+"Themes" = "Themes"; // window title
+"No themes found" = "No themes found";
+"Manager" = "Manager"; // Theme manager
+"Can't remove the theme" = "Can't remove the theme";
+"Show installed" = "Show installed";
 "Sound:" = "Som:";
 "*Make filesystem read-write" = "*Fazer filesystem leitura-escrita";
 "*Disable Sleep Proxy Client" = "*Disabilitar Sleep Proxy Client";
