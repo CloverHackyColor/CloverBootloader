@@ -9,12 +9,25 @@
 import Cocoa
 
 class LITabView: NSTabView {
+  private var drawBack : Bool = false
   var tabIndex: Int = 0
   var lastTabIndex: Int {
     get {
       return self.tabIndex
     } set {
       self.tabIndex = newValue
+    }
+  }
+  
+  override var allowsVibrancy: Bool {
+    return false
+  }
+  
+  override var drawsBackground: Bool {
+    get {
+      return false
+    } set {
+      self.drawBack = false
     }
   }
 }
