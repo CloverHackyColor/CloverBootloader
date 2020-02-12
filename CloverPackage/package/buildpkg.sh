@@ -1591,10 +1591,9 @@ buildpackage ()
                 header+="\t\t<${script##*/} file=\"./${script##*/}\"/>\n"
             done
             header+="\t</scripts>\n"
-            # Create the Script archive file (cpio format)
-            (cd "${packagePath}/Scripts" && find . -print |                                    \
-                cpio -o -z -R root:wheel --format cpio > "${packagePath}/Temp/Scripts") 2>&1 | \
-                grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
+            # Copy Scripts with out compression as We are going to use pkgutil
+            # ..that will do it for Us .. and with the correct compression format :-)
+            cp -R "${packagePath}/Scripts" "${packagePath}/Temp/"
         fi
 
         header+="</pkg-info>"
@@ -1606,7 +1605,8 @@ buildpackage ()
             grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 
         # Create the package
-        (cd "${packagePath}/Temp" && xar -c -f "${packagePath}/../${packageName}.pkg" --compression none .)
+        # (cd "${packagePath}/Temp" && xar -c -f "${packagePath}/../${packageName}.pkg" --compression none .)
+        (pkgutil --flatten "${packagePath}/Temp" "${packagePath}/../${packageName}.pkg")
 
         # Add the package to the list of build packages
         pkgrefs[${#pkgrefs[*]}]="\t<pkg-ref id=\"${packageRefId}\" installKBytes='${installedsize}' version='${CLOVER_VERSION}.0.0.${CLOVER_TIMESTAMP}'>#${packageName}.pkg</pkg-ref>"
