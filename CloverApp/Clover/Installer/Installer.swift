@@ -503,7 +503,7 @@ class InstallerViewController: NSViewController {
         let mp : String = getMountPoint(from: disk) ?? kNotAvailable.locale
         let parentDiskName : String = getMediaName(from: getBSDParent(of: disk) ?? "") ?? kNotAvailable.locale
         
-        let supportedFS = ["msdos", "fat32", "exfat", "hfs"]
+        let supportedFS = ["msdos", "fat16", "fat32", "exfat", "hfs"]
         
         if supportedFS.contains(fs) {
           self.targetPop.addItem(withTitle: "\(disk)\t\(name), \("mount point".locale): \(mp), \(fs.uppercased()), \(psm): (\(parentDiskName))")
@@ -605,15 +605,24 @@ class InstallerViewController: NSViewController {
   }
   
   private func setPreferences(for volume: String) {
+    let fs = getFS(from: volume)?.lowercased()
+    let legacyAllowed : Bool = (fs != "fat16")
     self.installButton.isEnabled = true
-    self.cloverEFICheck.isEnabled = true
+    self.cloverEFICheck.isEnabled = legacyAllowed
     self.cloverEFICheck.state = .off
-    self.bootSectCheck.isEnabled = false
+    self.bootSectCheck.isEnabled = legacyAllowed
     self.bootSectCheck.state = .off
     self.boot0Pop.isEnabled = false
     self.boot2Pop.isEnabled = false
     self.altBootCheck.isEnabled = false
     self.altBootCheck.state = .off
+    
+    if !legacyAllowed {
+      self.cloverEFIPressed(nil)
+      self.populateDrivers()
+      return
+    }
+    
     /*
      boot0    String
      boot2    String
@@ -800,7 +809,7 @@ class InstallerViewController: NSViewController {
     Cloverapp.setValue(filesystem, forKey: "filesystem")
     Cloverapp.setValue(getAllESPs().contains(disk), forKey: "isESP")
  
-    let supportedFS = ["exfat", "fat32", "hfs"]
+    let supportedFS = ["exfat", "fat16", "fat32", "hfs"]
     if !supportedFS.contains(filesystem) {
       NSSound.beep()
       post(text: "Error: can't install on \(filesystem.uppercased()) filesystem.",
