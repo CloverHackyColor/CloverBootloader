@@ -9,6 +9,7 @@
 
 #include <Protocol/MsgLog.h>
 #include <Library/PrintLib.h>
+#include <Library/BaseMemoryLib.h>
 
 MESSAGE_LOG_PROTOCOL MsgLogProtocol;
 EFI_HANDLE              mHandle = NULL;
@@ -86,7 +87,7 @@ MsgLogEntrypoint (
 		return Status;
 	}
 //  Print(L"MsgLogProtocol installed!\n");
-  gBS->SetMem (tmp, BOOTER_LOG_SIZE, 0);
+  SetMem(tmp, BOOTER_LOG_SIZE, 0);
   MsgLogProtocol.Log = tmp;	
   MsgLogProtocol.Cursor = tmp;
   MsgLogProtocol.SizeOfLog = 0;

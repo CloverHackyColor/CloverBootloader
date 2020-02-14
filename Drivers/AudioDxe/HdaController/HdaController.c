@@ -96,10 +96,10 @@ HdaControllerStreamPollTimerHandler(
             // Copy data to DMA buffer.
             if (HdaSourceLength < HDA_BDL_BLOCKSIZE)
                 gBS->SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
-            gBS->CopyMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaSourceLength);
+            CopyMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaSourceLength);
         } else { // Input stream (copy data from).
             // Copy data from DMA buffer.
-            gBS->CopyMem(HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaSourceLength);
+            CopyMem(HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaSourceLength);
         }
 
         // Increase source position.
@@ -367,7 +367,7 @@ HdaControllerScanCodecs(
             HdaIoDevicePathNode.Header.Length[0] = (UINT8)(sizeof(EFI_HDA_IO_DEVICE_PATH));
             HdaIoDevicePathNode.Header.Length[1] = (UINT8)((sizeof(EFI_HDA_IO_DEVICE_PATH)) >> 8);
           HdaIoDevicePathNode.Guid = gEfiHdaIoDevicePathGuid;
-//            gBS->CopyMem((VOID*)&HdaIoDevicePathNode.Guid, (VOID*)&gEfiHdaIoDevicePathGuid, sizeof(EFI_GUID));
+//            CopyMem((VOID*)&HdaIoDevicePathNode.Guid, (VOID*)&gEfiHdaIoDevicePathGuid, sizeof(EFI_GUID));
             HdaIoDevicePathNode.Address = i;
             HdaControllerDev->HdaIoChildren[i].DevicePath = AppendDevicePathNode(HdaControllerDev->DevicePath, (EFI_DEVICE_PATH_PROTOCOL*)&HdaIoDevicePathNode);
             if (HdaControllerDev->HdaIoChildren[i].DevicePath == NULL) {

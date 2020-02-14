@@ -964,7 +964,7 @@ Return
   // AH = status 00h successful
   // BX = video mode (see #0082,#0083)
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
   Regs.X.AX = 0x4F03;
   LegacyBiosInt86 (0x10, &Regs);
   if (Regs.X.AX == 0x004F) {
@@ -977,7 +977,7 @@ Return
     // AL = display mode (see #0009 at AH=00h)
     // BH = active page (see AH=05h)
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.H.AH = 0x0F;
     LegacyBiosInt86 (0x10, &Regs);
     OriginalVideoMode = Regs.H.AL;
@@ -1000,7 +1000,7 @@ Return
     // 3Fh mode 6
     // AL = CRT controller mode byte (Phoenix 386 BIOS v1.10)
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.H.AH = 0x00;
     Regs.H.AL = (UINT8) NewVideoMode;
     LegacyBiosInt86 (0x10, &Regs);
@@ -1011,7 +1011,7 @@ Return
     // BL = block to load
     // Return:Nothing
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.H.AH = 0x11;
     Regs.H.AL = 0x14;
     Regs.H.BL = 0;
@@ -1028,7 +1028,7 @@ Return
     //    00h successful
     //    01h failed
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.X.AX = 0x4F02;
     Regs.X.BX = NewVideoMode;
     LegacyBiosInt86 (0x10, &Regs);
@@ -1359,7 +1359,7 @@ VOID BiosPutC(CHAR8 ch)
 {
 	EFI_IA32_REGISTER_SET           Regs;
 	
-	gBS->SetMem (&Regs, sizeof (Regs), 0);
+	SetMem(&Regs, sizeof (Regs), 0);
     Regs.H.AH = 0x0e;
     Regs.H.AL = ch;
     Regs.H.BL = 0x0F;	/* foreground white */

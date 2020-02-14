@@ -156,7 +156,7 @@ LegacyBiosInt86 (
   BOOLEAN               Ret;
   UINT16                *Stack16;
   
-  gBS->SetMem (&ThunkRegSet, sizeof (ThunkRegSet), 0);
+  SetMem(&ThunkRegSet, sizeof (ThunkRegSet), 0);
   ThunkRegSet.E.EFLAGS.Bits.Reserved_0 = 1;
   ThunkRegSet.E.EFLAGS.Bits.Reserved_1 = 0;
   ThunkRegSet.E.EFLAGS.Bits.Reserved_2 = 0;
@@ -226,7 +226,7 @@ LegacyBiosInt86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-  gBS->CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+  CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
   Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
 

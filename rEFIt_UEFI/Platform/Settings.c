@@ -320,7 +320,7 @@ ParseACPIName(CHAR8 *String)
       }
       // extend by '_' up to 4 symbols
       if (j < 4) {
-        gBS->SetMem(List->Name + j, 4 - j, '_');
+        SetMem(List->Name + j, 4 - j, '_');
       }
       List->Name[4] = '\0';
       //    }

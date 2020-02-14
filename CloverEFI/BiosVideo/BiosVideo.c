@@ -681,7 +681,7 @@ BiosVideoChildHandleUninstall (
     return Status;
   }
 
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
 
   //
   // Set the 80x25 Text VGA Mode
@@ -916,7 +916,7 @@ ParseEdidData (
   }
 
   ValidNumber = 0;
-  gBS->SetMem (ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
+  SetMem(ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
 
   if ((EdidDataBlock->EstablishedTimings[0] != 0) ||
       (EdidDataBlock->EstablishedTimings[1] != 0) ||
@@ -1169,9 +1169,9 @@ BiosVideoCheckForVbe (
   // Desc:  determine whether VESA BIOS extensions are present and the capabilities
   //    supported by the display adapter
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
   Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_CONTROLLER_INFORMATION;
-  gBS->SetMem (BiosVideoPrivate->VbeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK), 0);
+  SetMem(BiosVideoPrivate->VbeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK), 0);
   BiosVideoPrivate->VbeInformationBlock->VESASignature  = VESA_BIOS_EXTENSIONS_VBE2_SIGNATURE;
   Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeInformationBlock);
   Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeInformationBlock);
@@ -1215,7 +1215,7 @@ BiosVideoCheckForVbe (
   //    ES:DI buffer filled
   //    01h failed (e.g. non-DDC monitor)
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
   Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
   Regs.X.BX = 1;
   Regs.X.CX = 0;
@@ -1245,7 +1245,7 @@ BiosVideoCheckForVbe (
       if (EFI_ERROR (Status)) {
         goto Done;
       }
-      gBS->CopyMem (
+      CopyMem (
              BiosVideoPrivate->EdidDiscovered.Edid,
              BiosVideoPrivate->VbeEdidDataBlock,
              VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
@@ -1260,7 +1260,7 @@ BiosVideoCheckForVbe (
       if (EFI_ERROR (Status)) {
         goto Done;
       }
-      gBS->CopyMem (
+      CopyMem (
              BiosVideoPrivate->EdidActive.Edid,
              BiosVideoPrivate->VbeEdidDataBlock,
              VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
@@ -1308,10 +1308,10 @@ BiosVideoCheckForVbe (
     //      01h failed
     // Desc:  determine the attributes of the specified video mode
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_MODE_INFORMATION;
     Regs.X.CX = *ModeNumberPtr;
-    gBS->SetMem (BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK), 0);
+    SetMem(BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK), 0);
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
 
@@ -1771,7 +1771,7 @@ BiosVideoGraphicsOutputSetMode (
   //
   // Clear all registers
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
 
   if (ModeData->VbeModeNumber < 0x100) {
     //
@@ -1810,7 +1810,7 @@ BiosVideoGraphicsOutputSetMode (
     //
     Regs.X.AX = VESA_BIOS_EXTENSIONS_SET_MODE;
     Regs.X.BX = (UINT16) (ModeData->VbeModeNumber | VESA_BIOS_EXTENSIONS_MODE_NUMBER_LINEAR_FRAME_BUFFER);
-    gBS->SetMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK), 0);
+    SetMem(BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK), 0);
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     
@@ -2852,7 +2852,7 @@ BiosVideoVgaMiniPortSetMode (
   //
   BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_VGA_MINI_PORT_THIS (This);
   
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
 
   switch (ModeNumber) {
   case 0:

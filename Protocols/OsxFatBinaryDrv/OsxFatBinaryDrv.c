@@ -291,7 +291,7 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
       if (SrcBuffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
-      gBS->CopyMem(SrcBuffer, (UINT8 *)SourceBuffer + FatArch->Offset, SourceSize);
+      CopyMem(SrcBuffer, (UINT8 *)SourceBuffer + FatArch->Offset, SourceSize);
 
       FreeSrcBuffer = TRUE;
     } else {

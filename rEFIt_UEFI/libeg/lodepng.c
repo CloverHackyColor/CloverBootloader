@@ -83,8 +83,12 @@ void* lodepng_realloc(void* ptr, size_t new_size)
   return new_p+1;
 }
 
-#define memcpy(dest,source,count) gBS->CopyMem(dest,source,(UINTN)(count))
-#define memset(dest,ch,count)     gBS->SetMem(dest,(UINTN)(count),(UINT8)(ch))
+//#define memcpy(dest,source,count) gBS->CopyMem(dest,source,(UINTN)(count))
+//#define memset(dest,ch,count)     gBS->SetMem(dest,(UINTN)(count),(UINT8)(ch))
+
+#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
+#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
+
 
 
 //MODSNI ^
@@ -2668,7 +2672,8 @@ unsigned lodepng_color_mode_copy(LodePNGColorMode* dest, const LodePNGColorMode*
 {
   size_t i;
   lodepng_color_mode_cleanup(dest);
-  *dest = *source;
+//  *dest = *source;
+  CopyMem(dest, source, sizeof (LodePNGColorMode));
   if(source->palette)
   {
     dest->palette = (unsigned char*)lodepng_malloc(1024);
@@ -3023,7 +3028,8 @@ void lodepng_info_cleanup(LodePNGInfo* info)
 unsigned lodepng_info_copy(LodePNGInfo* dest, const LodePNGInfo* source)
 {
   lodepng_info_cleanup(dest);
-  *dest = *source;
+//  *dest = *source;
+  CopyMem(dest, source, sizeof (LodePNGInfo));
   lodepng_color_mode_init(&dest->color);
   CERROR_TRY_RETURN(lodepng_color_mode_copy(&dest->color, &source->color));
 
@@ -4907,7 +4913,8 @@ void lodepng_state_cleanup(LodePNGState* state)
 void lodepng_state_copy(LodePNGState* dest, const LodePNGState* source)
 {
   lodepng_state_cleanup(dest);
-  *dest = *source;
+//  *dest = *source;
+  CopyMem(dest, source, sizeof (LodePNGState));
   lodepng_color_mode_init(&dest->info_raw);
   lodepng_info_init(&dest->info_png);
   dest->error = lodepng_color_mode_copy(&dest->info_raw, &source->info_raw); if(dest->error) return;

@@ -1325,7 +1325,7 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
   int xmin, xmax;
 
   for (y = 0; y < r->height; y++) {
-    gBS->SetMem(r->scanline, r->width, 0);
+    SetMem(r->scanline, r->width, 0);
     xmin = r->width;
     xmax = 0;
     for (s = 0; s < NSVG__SUBSAMPLES; ++s) {
@@ -1516,7 +1516,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
     //for (i = 0; i < 256; i++) {
     //  cache->colors[i] = 0;
     //}
-    gBS->SetMem(cache->colors, sizeof(cache->colors), 0);
+    SetMem(cache->colors, sizeof(cache->colors), 0);
   } else if (grad->nstops == 1) {
     for (i = 0; i < 256; i++) {
       cache->colors[i] = nsvg__applyOpacity(grad->stops[i].color, opacity);
@@ -1677,7 +1677,7 @@ static void renderShape(NSVGrasterizer* r,
   NSVGedge *e = NULL;
   NSVGcachedPaint cache;
   int i;
-  gBS->SetMem(&cache, sizeof(NSVGcachedPaint), 0);
+  SetMem(&cache, sizeof(NSVGcachedPaint), 0);
 
   if (shape->fill.type != NSVG_PAINT_NONE) {
     nsvg__resetPool(r);
@@ -1749,7 +1749,7 @@ void nsvg__rasterizeClipPaths(
   } else {
     r->stencil = (unsigned char*)ReallocatePool(oldSize, r->stencilSize * clipPathCount, r->stencil);
     if (r->stencil == NULL) return;
-    gBS->SetMem(r->stencil, r->stencilSize * clipPathCount, 0);
+    SetMem(r->stencil, r->stencilSize * clipPathCount, 0);
   }
 
   clipPath = image->clipPaths;

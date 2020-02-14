@@ -613,7 +613,7 @@ LegacyBiosInstall (
   // Initialize region from 0x0000 to 4k. This initializes interrupt vector
   // range.
   //
-//  gBS->SetMem ((VOID *) ClearPtr, 0x400, INITIAL_VALUE_BELOW_1K);
+//  SetMem((VOID *) ClearPtr, 0x400, INITIAL_VALUE_BELOW_1K);
 //  ZeroMem ((VOID *) ((UINTN)ClearPtr + 0x400), 0xC00);
 
   //
