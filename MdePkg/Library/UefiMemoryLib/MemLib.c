@@ -52,6 +52,6 @@ InternalMemSetMem (
   IN      UINT8                     Value
   )
 {
-  SetMem(Buffer, Size, Value);
+  gBS->SetMem(Buffer, Size, Value);
   return Buffer;
 }
