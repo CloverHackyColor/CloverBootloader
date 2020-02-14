@@ -9,7 +9,7 @@
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
-//#include <Library/MemoryAllocationLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
@@ -147,10 +147,10 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   UINT32         *RawImageDataSize
   )
 {
-//  EFI_STATUS    Status;
+  EFI_STATUS    Status;
   EG_IMAGE      *Image;
   INTN          Index;
-  UINT32        ImageDataSize;
+//  UINT32        ImageDataSize;
 
   //automatic choose format
   if (!RawImageData || !RawImageDataSize) {
@@ -163,19 +163,12 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
   }
-
-  ImageDataSize = (UINT32)(Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL));
-  if (*RawImageDataSize < ImageDataSize) {
-    *RawImageDataSize = ImageDataSize;
-    egFreeImage(Image);
-    return EFI_BUFFER_TOO_SMALL;
+ 
+  *RawImageDataSize = (UINT32)(Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL));
+  Status = gBS->AllocatePool(EfiBootServicesData, *RawImageDataSize, (VOID **)RawImageData);
+  if (!EFI_ERROR(Status)) {
+    CopyMem(*RawImageData, (VOID*)Image->PixelData, *RawImageDataSize);
   }
-  
-//  *RawImageDataSize = (UINT32)(Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL));
-//  Status = gBS->AllocatePool(EfiBootServicesData, *RawImageDataSize, (VOID **)RawImageData);
-//  if (!EFI_ERROR(Status)) {
-  CopyMem(*RawImageData, (VOID*)Image->PixelData, ImageDataSize);
-//  }
   
   DBG("EFI_SUCCESS, RawImageDataSize=%d\n", *RawImageDataSize);
   DBG("ImageBuffer=%p, ImageSize=%d\n", ImageBuffer, ImageSize);
