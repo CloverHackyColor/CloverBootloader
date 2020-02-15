@@ -1,0 +1,323 @@
+## @file
+#  Sample UEFI Application Reference EDKII Module
+#
+#
+#  Copyright (c) 2009 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x00010005
+  BASE_NAME                     = CLOVER
+  FILE_GUID                     = 8F7D7B1E-0E1C-4C98-B12E-4EC99C4081AC
+  MODULE_TYPE                   = UEFI_APPLICATION
+  EDK_RELEASE_VERSION			= 0x00020000
+  EFI_SPECIFICATION_VERSION		= 0x00010000
+  VERSION_STRING                = 1.0
+  ENTRY_POINT                   = RefitMain
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+#  EfiLib/GenericBdsLib.h
+#  EfiLib/BmLib.c
+#  Platform/DevicePath.c #included into GenericBdsLib
+  Platform/BdsConnect.c #included into GenericBdsLib
+  refit/main.cpp
+  refit/icns.c
+  refit/lib.c
+  refit/lib.h
+  refit/menu.c
+  refit/screen.c
+  refit/IO.c
+  refit/IO.h
+  entry_scan/common.c
+  entry_scan/legacy.c
+  entry_scan/loader.c
+  entry_scan/tool.c
+  entry_scan/secureboot.c
+  entry_scan/securehash.c
+  entry_scan/securemenu.c
+  entry_scan/securevars.c
+  entry_scan/bootscreen.c
+  entry_scan/lockedgraphics.c
+  entry_scan/CanonicalDB.h
+  entry_scan/CloverDB.h
+  entry_scan/CloverKEK.h
+  entry_scan/MSKEK.h
+  entry_scan/MSPCADB.h
+  entry_scan/MSUEFICADB.h
+  entry_scan/entry_scan.h
+  entry_scan/securebootkeys.h
+  libeg/egemb_icons.c
+  libeg/egemb_icons_dark.c
+  libeg/egemb_font.c
+  libeg/scroll_images.c
+  libeg/BmLib.c
+  libeg/image.c
+#  libeg/load_bmp.c
+  libeg/load_icns.c
+  libeg/libscreen.c
+  libeg/lodepng.c
+  libeg/lodepng.h
+  libeg/text.c
+  libeg/FloatLib.c
+  libeg/FloatLib.h
+  libeg/nanosvg.c
+  libeg/nanosvg.h
+  libeg/nanosvgrast.c
+  libeg/VectorGraphics.c
+  libeg/libeg.h
+  libeg/libegint.h
+  Platform/AcpiPatcher.c
+	Platform/ati_reg.h
+	Platform/AmlGenerator.c
+	Platform/AmlGenerator.h
+	Platform/ati.c
+	Platform/ati.h
+#	Platform/BiosVideo.h
+#	Platform/Bmp.h
+	Platform/boot.h
+	Platform/BootLog.c
+	Platform/BootOptions.c
+	Platform/Console.c
+	Platform/cpu.c
+	Platform/DataHubCpu.c
+#	Platform/DataHubRecords.h
+	Platform/device_inject.c
+	Platform/device_inject.h
+#	Platform/device_tree.c
+#	Platform/device_tree.h
+	Platform/Edid.c
+	Platform/Events.c
+	Platform/hda.c
+	Platform/hda.h
+    Platform/HdaCodecDump.c
+    Platform/HdaCodecDump.h
+	Platform/gma.c
+	Platform/gma.h
+	Platform/guid.c
+	Platform/Injectors.c
+	Platform/LegacyBiosThunk.c
+	Platform/LegacyBiosThunk.h
+	Platform/LegacyBoot.c
+	Platform/memvendors.h
+	Platform/nvidia.c
+	Platform/nvidia.h
+#	Platform/pci.c
+#	Platform/picopng.c
+#	Platform/picopng.h
+	Platform/Platform.h
+	Platform/platformdata.c
+	Platform/plist.c
+	Platform/Pointer.c
+	Platform/Settings.c
+	Platform/smbios.c
+#	Platform/SmBios.h
+	Platform/spd.c
+	Platform/spd.h
+	Platform/string.c
+	Platform/string.h
+	Platform/StateGenerator.c
+	Platform/StateGenerator.h
+#	Platform/stringTable.c
+	Platform/usbfix.c
+#	Platform/UsbMass.h
+#	Platform/UsbMassBoot.h
+#	Platform/UsbMassImpl.h
+#	Platform/VesaBiosExtensions.h
+	Platform/b64cdecode.h
+	Platform/b64cdecode.c
+	Platform/FixBiosDsdt.c
+	Platform/loader.h
+	Platform/LoaderUefi.h
+	Platform/kernel_patcher.h
+	Platform/kernel_patcher.c
+	Platform/kext_patcher.c
+	Platform/kext_inject.c
+	Platform/kext_inject.h
+	Platform/Nvram.c
+  Platform/card_vlist.c
+  Platform/PlatformDriverOverride.c
+	Platform/Hibernate.c
+  Platform/Net.c
+  Platform/sound.c
+  Platform/StartupSound.c
+  Platform/sse3_patcher.h
+  Platform/sse3_5_patcher.h
+  Version.h
+  cpp_util/XStringW.h
+  cpp_util/XStringW.cpp
+  cpp_util/global1.cpp
+  cpp_util/global2.cpp
+  cpp_util/globals_ctor.cpp
+  cpp_util/globals_ctor.h
+  cpp_util/globals_dtor.cpp
+  cpp_util/globals_dtor.h
+  cpp_util/operatorNewDelete.cpp
+  cpp_util/operatorNewDelete.h
+  
+[Sources.IA32]
+  libeg/ftol.asm | MSFT
+
+[Packages]
+  CloverPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  NetworkPkg/NetworkPkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  DevicePathLib
+  DeviceTreeLib
+  DebugLib
+  DxeServicesLib
+  DxeServicesTableLib
+  HdaDevicesLib
+  HobLib
+  IoLib
+#  HiiLib
+#  EfiFileLib
+  PeCoffLib
+#  GenericBdsLib
+  MemLogLib
+  VideoBiosPatchLib
+  OpensslLib
+  NetLib
+  WaveLib
+
+[Guids]
+  gEfiAcpiTableGuid
+  gEfiAcpi10TableGuid
+  gEfiAcpi20TableGuid
+  gEfiAppleBootGuid
+  gEfiAppleNvramGuid
+  gEfiAppleVendorGuid
+  gAppleCoreStorageVariableGuid
+  gAppleTamperResistantBootVariableGuid
+  gAppleWirelessNetworkVariableGuid
+  gApplePersonalizationVariableGuid
+  gAppleNetbootVariableGuid
+  gAppleSecureBootVariableGuid
+  gAppleTamperResistantBootSecureVariableGuid
+  gAppleTamperResistantBootEfiUserVariableGuid
+  gEfiDxeServicesTableGuid
+  gEfiEventReadyToBootGuid
+  gEfiEventVirtualAddressChangeGuid
+  gEfiEventExitBootServicesGuid
+  gEfiFileInfoGuid                              ## CONSUMES ## GUID
+  gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
+  gEfiFileSystemVolumeLabelInfoIdGuid
+  gEfiGlobalVariableGuid
+  gEfiPartTypeLegacyMbrGuid
+  gEfiPartTypeSystemPartGuid
+  gEfiSmbiosTableGuid
+  gEfiSmbios3TableGuid
+  gEfiSasDevicePathGuid
+  gEfiImageSecurityDatabaseGuid
+  gEfiCertX509Guid
+  gEfiCertSha1Guid
+  gEfiCertSha256Guid
+  gEfiCertPkcs7Guid
+  gEfiCertRsa2048Guid
+  gEfiCertRsa2048Sha256Guid
+  gEfiCertTypeRsa2048Sha256Guid
+
+  gAppleOsLoadedNamedEventGuid
+  gBootChimeVendorVariableGuid
+
+
+[Ppis]
+
+[Protocols]
+  gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
+  gEfiDevicePathToTextProtocolGuid                        # ALWAYS_CONSUMED
+  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
+  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
+  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
+  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
+  gEfiUnicodeCollationProtocolGuid                       # ALWAYS_CONSUMED
+  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED
+
+  gEfiAcpiS3SaveProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
+  gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
+  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
+  gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
+  gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiLegacy8259ProtocolGuid					## PROTOCOL SOMETIMES_CONSUMES
+  gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
+  gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES
+  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
+  gEfiStatusCodeRuntimeProtocolGuid				# PROTOCOL CONSUMES
+  gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
+  gEfiManagedNetworkServiceBindingProtocolGuid
+
+  gEfiAbsolutePointerProtocolGuid
+  gEfiAcpiTableProtocolGuid
+  gEfiEdidActiveProtocolGuid
+  gEfiEdidDiscoveredProtocolGuid
+  gEfiEdidOverrideProtocolGuid
+  gEfiHiiDatabaseProtocolGuid
+  gEfiHiiImageProtocolGuid
+  gEfiHiiProtocolGuid
+  gEfiSimplePointerProtocolGuid
+  gEfiSmbiosProtocolGuid
+  gEfiSecurityArchProtocolGuid
+  gEfiSecurity2ArchProtocolGuid
+
+  gAppleDevicePropertyProtocolGuid
+  gAppleFramebufferInfoProtocolGuid
+  gEfiConsoleControlProtocolGuid
+  gAppleGraphConfigProtocolGuid
+  gEfiLegacyBiosProtocolGuid
+  gEfiTimerArchProtocolGuid
+  gAppleImageCodecProtocolGuid
+  gAppleEventProtocolGuid
+  gEfiOSInfoProtocolGuid
+  gEfiKeyboardInfoProtocolGuid
+
+  gFSInjectProtocolGuid
+  gMsgLogProtocolGuid
+  gEfiPlatformDriverOverrideProtocolGuid
+  gEmuVariableControlProtocolGuid
+  gEfiAudioIoProtocolGuid # CONSUMES
+
+[FeaturePcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
+
+[Pcd]
+
+[BuildOptions]
+#  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-common
+  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable
+  XCODE:*_*_*_DLINK_FLAGS = -order_file $(EDK_TOOLS_PATH)/Scripts/ClangLinkOrder.txt
+  GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
+  GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable
+   MSFT:*_*_*_CC_FLAGS = /Os /wd4201

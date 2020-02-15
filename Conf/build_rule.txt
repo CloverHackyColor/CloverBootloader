@@ -124,11 +124,11 @@
     <Command.GCC, Command.RVCT>
         # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
         @"$(CC)" $(CXX_FLAGS) -c -o ${dst} $(INC) ${src}
-        @"echo" [CC] ${s_base}
+        @"echo" [CPP] ${s_base}
 
     <Command.XCODE>
         @"$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
-        @"echo" [CC] ${s_base}
+        @"echo" [CPP] ${s_base}
 
 [C-Code-File]
     <InputFile>
