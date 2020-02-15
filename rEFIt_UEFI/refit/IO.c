@@ -28,61 +28,6 @@ Revision History
 #define PRINT_ITEM_BUFFER_LEN   100
 #define PRINT_JOINT_BUFFER_LEN  4
 
-typedef struct {
-  BOOLEAN Ascii;
-  UINTN   Index;
-  union {
-    CONST CHAR16  *pw;
-    CHAR8   *pc;
-  } u;
-} POINTER;
-
-typedef struct _pitem {
-
-  POINTER Item;
-  CHAR16  *Scratch;
-  UINTN   Width;
-  UINTN   FieldWidth;
-  UINTN   *WidthParse;
-  CHAR16  Pad;
-  BOOLEAN PadBefore;
-  BOOLEAN Comma;
-  BOOLEAN Long;
-} PRINT_ITEM;
-
-typedef struct _pstate {
-  //
-  // Input
-  //
-  POINTER fmt;
-  VA_LIST args;
-
-  //
-  // Output
-  //
-  CHAR16  *Buffer;
-  CHAR16  *End;
-  CHAR16  *Pos;
-  UINTN   Len;
-
-  UINTN   Attr;
-  UINTN   RestoreAttr;
-
-  UINTN   AttrNorm;
-  UINTN   AttrHighlight;
-  UINTN   AttrError;
-  UINTN   AttrBlueColor;
-  UINTN   AttrGreenColor;
-
-  EFI_STATUS (EFIAPI *Output) (VOID *context, CHAR16 *str);
-  EFI_STATUS (EFIAPI *SetAttr) (VOID *context, UINTN attr);
-  VOID          *Context;
-
-  //
-  // Current item being formatted
-  //
-  struct _pitem *Item;
-} PRINT_STATE;
 
 typedef struct {
   BOOLEAN PageBreak;

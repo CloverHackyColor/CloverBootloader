@@ -200,7 +200,11 @@
   /// 2-byte Character.  Unless otherwise specified all strings are stored in the
   /// UTF-16 encoding format as defined by Unicode 2.1 and ISO/IEC 10646 standards.
   ///
+#ifdef __cplusplus
+  #define CHAR16 wchar_t
+#else
   typedef unsigned short      CHAR16;
+#endif
   ///
   /// 2-byte signed value
   ///

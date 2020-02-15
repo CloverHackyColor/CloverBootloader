@@ -370,7 +370,11 @@ struct _LIST_ENTRY {
 ///
 /// NULL pointer (VOID *)
 ///
+#ifdef __cplusplus
+#define NULL  nullptr
+#else
 #define NULL  ((VOID *) 0)
+#endif
 
 //
 // Null character

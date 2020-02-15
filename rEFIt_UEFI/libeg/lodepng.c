@@ -90,7 +90,6 @@ void* lodepng_realloc(void* ptr, size_t new_size)
 #define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
 
 
-
 //MODSNI ^
 
 

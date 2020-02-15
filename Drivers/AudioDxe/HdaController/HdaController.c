@@ -77,7 +77,7 @@ HdaControllerStreamPollTimerHandler(
         // Have we reached the end of the source buffer? If so the stream will stop on the next block.
         if (HdaStream->BufferSourcePosition >= HdaStream->BufferSourceLength) {
             // Zero out next block.
-            gBS->SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
+            SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
 
             // Set flag to stop stream on the next block.
             HdaStream->BufferSourceDone = TRUE;
@@ -95,7 +95,7 @@ HdaControllerStreamPollTimerHandler(
         if (HdaStream->Output) {
             // Copy data to DMA buffer.
             if (HdaSourceLength < HDA_BDL_BLOCKSIZE)
-                gBS->SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
+                SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
             CopyMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaSourceLength);
         } else { // Input stream (copy data from).
             // Copy data from DMA buffer.
@@ -294,7 +294,7 @@ HdaControllerScanCodecs(
 
     // Create verb list with single item.
     VendorVerb = HDA_CODEC_VERB(HDA_VERB_GET_PARAMETER, HDA_PARAMETER_VENDOR_ID);
-    gBS->SetMem(&HdaCodecVerbList, sizeof(EFI_HDA_IO_VERB_LIST), 0);
+    SetMem(&HdaCodecVerbList, sizeof(EFI_HDA_IO_VERB_LIST), 0);
     HdaCodecVerbList.Count = 1;
     HdaCodecVerbList.Verbs = &VendorVerb;
     HdaCodecVerbList.Responses = &VendorResponse;

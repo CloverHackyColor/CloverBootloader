@@ -400,7 +400,7 @@ HdaControllerHdaIoStartStream(
     HdaStream->CallbackContext3 = Context3;
 
     // Zero out buffer.
-    gBS->SetMem(HdaStream->BufferData, HDA_STREAM_BUF_SIZE, 0);
+    SetMem(HdaStream->BufferData, HDA_STREAM_BUF_SIZE, 0);
 
     // Fill rest of current block.
     HdaStreamDmaRemainingLength = HDA_BDL_BLOCKSIZE - (HdaStreamDmaPos - (HdaStreamCurrentBlock * HDA_BDL_BLOCKSIZE));

@@ -18,9 +18,9 @@
 
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/BaseMemoryLib.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/LoadFile.h>
 #include <Protocol/SimpleFileSystem.h>
@@ -308,6 +308,10 @@ OvrLoadImage(IN      BOOLEAN                  BootPolicy,
 
   if (FreeSourceBuffer && SourceBuffer) {
     gBS->FreePool(SourceBuffer);
+  }
+
+  if (FileInfo) {
+    gBS->FreePool(FileInfo);
   }
 
   //

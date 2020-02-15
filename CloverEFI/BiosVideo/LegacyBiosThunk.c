@@ -107,7 +107,7 @@ InitializeInterruptRedirection (
   //
   // Copy code to legacy region
   //
-  gBS->CopyMem ((VOID *)(UINTN)LegacyRegionBase, (VOID *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
+  CopyMem ((VOID *)(UINTN)LegacyRegionBase, (VOID *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
 
   //
   // Get VectorBase, it should be 0x68

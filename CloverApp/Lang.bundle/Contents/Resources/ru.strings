@@ -50,11 +50,11 @@
 "false" = "ложь";
 
 "Theme:" = "Тема:";
-"Themes" = "Themes"; // window title
-"No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
-"Can't remove the theme" = "Can't remove the theme";
-"Show installed" = "Show installed";
+"Themes" = "Темы"; // window title
+"No themes found" = "Темы не найдены";
+"Manager" = "Менеджер"; // Theme manager
+"Can't remove the theme" = "Не возможно удалить тему";
+"Show installed" = "Показать установленные";
 "Sound:" = "Звук:";
 "*Make filesystem read-write" = "*Открыть файловую систему на запись";
 "*Disable Sleep Proxy Client" = "*Отключение Sleep Proxy Client";

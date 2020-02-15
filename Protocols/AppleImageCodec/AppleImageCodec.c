@@ -150,8 +150,6 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   EFI_STATUS    Status;
   EG_IMAGE      *Image;
   INTN          Index;
-//  UINT32        ImageDataSize;
-
   //automatic choose format
   if (!RawImageData || !RawImageDataSize) {
     return EFI_INVALID_PARAMETER;

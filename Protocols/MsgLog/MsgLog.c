@@ -8,8 +8,13 @@
  */
 
 #include <Protocol/MsgLog.h>
-#include <Library/PrintLib.h>
+#include <Library/BaseLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PrintLib.h>
 
 MESSAGE_LOG_PROTOCOL MsgLogProtocol;
 EFI_HANDLE              mHandle = NULL;

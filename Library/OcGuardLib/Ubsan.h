@@ -197,7 +197,7 @@ int EFIAPI tfp_sprintf(char *str, const char *fmt, ...) __printflike(2, 3);
   do { vprintf (f, v); do { } while (1); } while (0)
 
 // Avoid implementing memcpy as a function to avoid LTO conflicts.
-#define memcpy(Dst, Src, Size) do { gBS->CopyMem(Dst, Src, Size); } while (0)
+#define memcpy(Dst, Src, Size) do { CopyMem(Dst, Src, Size); } while (0)
 
 // Forcing VOID for those as the return types actually differ.
 #define strlcpy(Dst, Src, Size) do { AsciiStrnCpyS (Dst, Size, Src, AsciiStrLen (Src)); } while (0)
