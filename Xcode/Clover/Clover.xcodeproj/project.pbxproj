@@ -1466,6 +1466,7 @@
 		A5BF392B20D9F18C004340E1 /* nanosvgrast.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392920D9F18C004340E1 /* nanosvgrast.c */; };
 		A5BF392C20D9F18C004340E1 /* nanosvg.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF392A20D9F18C004340E1 /* nanosvg.c */; };
 		A5DEBF3323BF685800C41734 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5DEBF3223BF685800C41734 /* main.cpp */; };
+		A5F6FBFC23F9208B003454EC /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F6FBFB23F9208A003454EC /* menu.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -5917,6 +5918,7 @@
 		A5E284562347DC1C0068ED34 /* OcStringLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcStringLib.h; sourceTree = "<group>"; };
 		A5E284572347DC1D0068ED34 /* OcMiscLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcMiscLib.h; sourceTree = "<group>"; };
 		A5E284582347E1FE0068ED34 /* OcVariables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcVariables.h; sourceTree = "<group>"; };
+		A5F6FBFB23F9208A003454EC /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6096,6 +6098,7 @@
 				1261519C1A15BBB000903E7B /* main.c */,
 				A5DEBF3223BF685800C41734 /* main.cpp */,
 				1261519D1A15BBB000903E7B /* menu.c */,
+				A5F6FBFB23F9208A003454EC /* menu.cpp */,
 				1261519E1A15BBB000903E7B /* screen.c */,
 			);
 			path = refit;
@@ -16444,6 +16447,7 @@
 				A5AA04A7237F13C1009CD413 /* ReadMm0.nasm in Sources */,
 				A5AA055B237F13C1009CD413 /* ReadFs.c in Sources */,
 				A5AAFB41237F13B3009CD413 /* Pool.c in Sources */,
+				A5F6FBFC23F9208B003454EC /* menu.cpp in Sources */,
 				A5AA068F237F13C2009CD413 /* DxeExtractGuidedSectionLib.c in Sources */,
 				A5AAFD47237F13B4009CD413 /* ResetUtility.c in Sources */,
 				A5AA06CC237F13C2009CD413 /* SetMem16Wrapper.c in Sources */,

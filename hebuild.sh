@@ -393,7 +393,7 @@ checkCmdlineArguments() {
     done
 
     # Update variables
-    PLATFORMFILE="${PLATFORMFILE:-Clover_cpp.dsc}"
+    PLATFORMFILE="${PLATFORMFILE:-Clover.dsc}"
     if [ ! -z "${MODULEFILE}" ]; then
         MODULEFILE=" -m $MODULEFILE"
     fi
