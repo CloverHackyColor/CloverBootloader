@@ -39,7 +39,7 @@
   refit/icns.c
   refit/lib.c
   refit/lib.h
-  refit/menu.c
+  refit/menu.cpp
   refit/screen.c
   refit/IO.c
   refit/IO.h

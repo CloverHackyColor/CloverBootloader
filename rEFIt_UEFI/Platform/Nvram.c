@@ -1063,7 +1063,7 @@ PutNvramPlistToRtVars ()
     }
     
     // set RT var: all vars visible in nvram.plist are gEfiAppleBootGuid
-/*   Status = gRS->SetVariable (
+/*   Status = gRT->SetVariable (
                     KeyBuf,
                     VendorGuid,
                     EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

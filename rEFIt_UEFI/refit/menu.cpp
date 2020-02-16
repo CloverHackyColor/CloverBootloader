@@ -37,6 +37,16 @@
 //#include "Platform.h"
 #include "libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
+
+//#include "../Platform/Platform.h"
+#include "../cpp_util/XStringW.h"
+#include "../cpp_util/globals_ctor.h"
+#include "../cpp_util/globals_dtor.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Version.h"
 //#include "colors.h"
 
@@ -5704,3 +5714,8 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   }
   return MenuExit;
 }
+
+#ifdef __cplusplus
+}
+#endif
+

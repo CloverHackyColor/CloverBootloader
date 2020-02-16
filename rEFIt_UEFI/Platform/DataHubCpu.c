@@ -199,7 +199,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   // firmware Variables
   //
   if (RtVariablesNum > 0) {
-    OvrRuntimeServices(gRS);
+    OvrRuntimeServices(gRT);
   }
   
   // As found on a real Mac, the system-id variable solely has the BS flag

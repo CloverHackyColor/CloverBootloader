@@ -76,7 +76,7 @@
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS;
-extern EFI_RUNTIME_SERVICES*	gRS;
+extern EFI_RUNTIME_SERVICES*	gRT;
 
 #define TAG_ABOUT              (1)
 #define TAG_RESET              (2)

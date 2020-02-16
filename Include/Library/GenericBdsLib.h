@@ -352,7 +352,7 @@ BdsLibVariableToOption (
 
   @retval EFI_SUCCESS           The boot#### or driver#### have been successfully
                                 registered.
-  @retval EFI_STATUS            Return the status of gRS->SetVariable ().
+  @retval EFI_STATUS            Return the status of gRT->SetVariable ().
 
 **/
 EFI_STATUS

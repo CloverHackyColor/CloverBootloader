@@ -230,7 +230,7 @@ VOID UpdatePointer()
   INTN                      ScreenRelX;
   INTN                      ScreenRelY;
   
-//  Now = gRS->GetTime(&Now, NULL);
+//  Now = gRT->GetTime(&Now, NULL);
   Now = AsmReadTsc();
   Status = gPointer.SimplePointerProtocol->GetState(gPointer.SimplePointerProtocol, &tmpState);
   if (!EFI_ERROR(Status)) {

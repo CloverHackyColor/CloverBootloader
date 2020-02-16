@@ -701,7 +701,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
   Facs->FirmwareWakingVector = 0x7F00;
   
-  gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+  gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
   
   
 /*  
@@ -731,7 +731,7 @@ if (FadtPointer == NULL) {
 Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
 Facs->FirmwareWakingVector = 0x7F00;
 
-gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
  */
 
 #define EFI_CPU_EFLAGS_IF 0x200

@@ -86,7 +86,7 @@ BOOLEAN                 APFSSupport     = FALSE;
 //extern EFI_SYSTEM_TABLE*       gST;
 //extern EFI_BOOT_SERVICES*      gBS;
 //extern EFI_DXE_SERVICES*       gDS;
-EFI_RUNTIME_SERVICES*   gRS;
+//EFI_RUNTIME_SERVICES*   gRS;
 
 DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variables
 
@@ -121,7 +121,9 @@ extern HDA_OUTPUTS           AudioList[20];
 extern CHAR8                 *AudioOutputNames[];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
+#ifdef __cplusplus
 }
+#endif
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *ImageTitle,
@@ -1774,9 +1776,9 @@ VOID ResetNvram ()
     }
 
     // Attempt warm reboot
-//    gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+//    gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
     // Warm reboot may not be supported attempt cold reboot
-//    gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+//    gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
     // Terminate the screen and just exit
 //    TerminateScreen();
 }
@@ -2071,13 +2073,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gST       = SystemTable;
   gImageHandle  = ImageHandle;
   gBS       = SystemTable->BootServices;
-  gRS       = SystemTable->RuntimeServices;
+  gRT       = SystemTable->RuntimeServices;
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
   
   ConsoleInHandle = SystemTable->ConsoleInHandle;
   
 
-  gRS->GetTime(&Now, NULL);
+  gRT->GetTime(&Now, NULL);
 
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
@@ -2782,9 +2784,9 @@ destruct_globals_objects(NULL); // That should be done just before quitting clov
 //          }
           }
           // Attempt warm reboot
-          gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+          gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
           // Warm reboot may not be supported attempt cold reboot
-          gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+          gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
           // Terminate the screen and just exit
           TerminateScreen();
           MainLoopRunning = FALSE;
@@ -2794,7 +2796,7 @@ destruct_globals_objects(NULL); // That should be done just before quitting clov
 
         case TAG_SHUTDOWN: // It is not Shut Down, it is Exit from Clover
           TerminateScreen();
-          //         gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+          //         gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
           ReinitDesktop = FALSE;
           AfterTool = TRUE;
@@ -2983,7 +2985,7 @@ destruct_globals_objects(NULL); // That should be done just before quitting clov
   // If we end up here, things have gone wrong. Try to reboot, and if that
   // fails, go into an endless loop.
   //Slice - NO!!! Return to EFI GUI
-  //   gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+  //   gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
   //   EndlessIdleLoop();
 
 #ifdef ENABLE_SECURE_BOOT
@@ -2997,3 +2999,5 @@ destruct_globals_objects(NULL); // That should be done just before quitting clov
   }
   return EFI_SUCCESS;
 }
+
+
