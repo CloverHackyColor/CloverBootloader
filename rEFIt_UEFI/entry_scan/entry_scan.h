@@ -45,7 +45,7 @@ extern REFIT_MENU_ENTRY MenuEntryExit;
 extern REFIT_MENU_SCREEN MainMenu;
 
 // common
-EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
+EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName);
 LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
 //CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
 //CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
@@ -84,7 +84,7 @@ VOID ScanTool(VOID);
 VOID AddCustomTool(VOID);
 
 // locked graphics
-CHAR16 *CustomBootModeToStr(IN UINT8 Mode);
+CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode);
 EFI_STATUS LockBootScreen(VOID);
 EFI_STATUS UnlockBootScreen(VOID);
 

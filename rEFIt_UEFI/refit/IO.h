@@ -54,7 +54,7 @@ typedef struct {
   UINTN   Index;
   union {
     CONST CHAR16  *pw;
-    CHAR8   *pc;
+    CONST CHAR8   *pc;
   } u;
 } POINTER;
 
@@ -95,7 +95,7 @@ typedef struct _pstate {
   UINTN   AttrBlueColor;
   UINTN   AttrGreenColor;
 
-  EFI_STATUS (EFIAPI *Output) (VOID *context, CHAR16 *str);
+  EFI_STATUS (EFIAPI *Output) (void *context, CONST CHAR16 *str);
   EFI_STATUS (EFIAPI *SetAttr) (VOID *context, UINTN attr);
   VOID          *Context;
 

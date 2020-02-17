@@ -37,6 +37,7 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
+extern "C" {
 #include <PiDxe.h>
 #include <Base.h>
 #include <Uefi.h>
@@ -132,6 +133,8 @@
 #include <IndustryStandard/Atapi.h>
 #include <IndustryStandard/AppleSmBios.h>
 
+} // extern "C"
+
 /* types */
 
 typedef enum {
@@ -191,8 +194,8 @@ typedef struct {
 
 typedef struct {
   EG_IMAGE    *Image;
-  CHAR16      *Path;
-  CHAR16      *Format;
+  CONST CHAR16      *Path;
+  CONST CHAR16      *Format;
   UINTN       PixelSize;
 } BUILTIN_ICON;
 
@@ -206,7 +209,7 @@ EFI_STATUS egSetMaxResolution(VOID);
 EFI_STATUS egSetMode(INT32 Next);
 
 VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
-CHAR16* egScreenDescription(VOID);
+CONST CHAR16* egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);
 BOOLEAN egIsGraphicsModeEnabled(VOID);
 VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
@@ -223,15 +226,15 @@ VOID       egFreeImage(IN EG_IMAGE *Image);
 VOID      ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN BOOLEAN WantAlpha);
-EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN IconSize);
+EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN IconSize);
 
 EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
 
 EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength);
-EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
+EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
                       IN CONST VOID *FileData, IN UINTN FileDataLength);
-EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName);
+EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *DirName);
 EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir);
 
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color);
@@ -241,8 +244,8 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN EG_PIXEL *Color);
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
 VOID PrepareFont(VOID);
-VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
-INTN egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
+VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
+INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
 //VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY);
@@ -255,7 +258,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 EFI_STATUS egScreenShot(VOID);
 
-INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, const CHAR16* text, UINTN Cursor);
+INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* text, UINTN Cursor);
 VOID testSVG(VOID);
 
 #endif /* __LIBEG_LIBEG_H__ */

@@ -43,10 +43,6 @@
 #include "../cpp_util/globals_ctor.h"
 #include "../cpp_util/globals_dtor.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "Version.h"
 //#include "colors.h"
 
@@ -84,8 +80,8 @@ extern UINTN            DsdtsNum;
 extern CHAR16           *DsdtsList[];
 extern UINTN            AudioNum;
 extern HDA_OUTPUTS      AudioList[20];
-extern CHAR8            *AudioOutputNames[];
-extern CHAR8            *NonDetected;
+extern CONST CHAR8            *AudioOutputNames[];
+extern CHAR8            NonDetected[];
 extern BOOLEAN          GetLegacyLanAddress;
 extern UINT8            gLanMac[4][6]; // their MAC addresses
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
@@ -123,7 +119,7 @@ BOOLEAN SavePreBootLog = FALSE;
 #define MENU_FUNCTION_PAINT_SELECTION (3)
 #define MENU_FUNCTION_PAINT_TIMEOUT   (4)
 
-typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText);
+typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText);
 
 static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
@@ -225,7 +221,7 @@ REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"A
 REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 
-CHAR16* ArgOptional[NUM_OPT] = {
+CONST CHAR16* ArgOptional[NUM_OPT] = {
   L"arch=i386",       //0
   L"arch=x86_64",     //1
   L"-v ",             //2
@@ -1336,7 +1332,7 @@ VOID ApplyInputs(VOID)
   }
 }
 
-VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CHAR16 *Line)
+VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CONST CHAR16 *Line)
 {
   REFIT_INPUT_DIALOG *InputBootArgs;
 
@@ -2149,9 +2145,9 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 // menu helper functions
 //
 
-VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine)
+VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine)
 {
-  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLineCount), InfoLine);
+  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLineCount), (CHAR16*)InfoLine); // TODO jief : cast to fix
 }
 
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry)
@@ -2760,7 +2756,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 /**
  * Text Mode menu.
  */
-static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
+static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i = 0, j = 0;
   static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
@@ -3006,7 +3002,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 /**
  * Draw text with specific coordinates.
  */
-INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
   INTN      XText = 0;
@@ -3065,7 +3061,7 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
  * Helper function to draw text for Boot Camp Style.
  * @author: Needy
  */
-VOID DrawBCSText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   // check if text was provided
   if (!Text) {
@@ -3178,7 +3174,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
 }
 */
 
-VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
+VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   //use Text=null to reinit the buffer
   if (!Text) {
@@ -3429,7 +3425,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 /**
  * Graphical menu.
  */
-VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
+VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i;
   INTN j = 0;
@@ -3863,7 +3859,7 @@ VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Hei
   egFreeImage(TmpBuffer);
 }
 
-VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
+VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
 {
   INTN TextWidth;
   INTN BadgeDim = (INTN)(BADGE_DIMENSION * GlobalConfig.Scale);
@@ -3978,7 +3974,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
   if ( Text ) FreePool(Text);
 }
 
-VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
+VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i;
   INTN row0PosYRunning;
@@ -4128,7 +4124,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 /**
  * Main screen text.
  */
-VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
+VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   EFI_STATUS Status = EFI_SUCCESS;
   INTN i = 0;
@@ -4394,11 +4390,11 @@ VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, IN
 VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
     //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
-    UnicodeSPrint(ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
+    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
     // check for the right booter flag to allow the application
     // of the new System Integrity Protection configuration.
     if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
@@ -4406,9 +4402,9 @@ VOID ModifyTitles(REFIT_MENU_ENTRY *ChosenEntry)
     }
 
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig);
+    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
   } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-    UnicodeSPrint(ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM);
+    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
   }
 }
 
@@ -4621,7 +4617,7 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CHAR16* UniSysVer)
+REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
 {
   REFIT_MENU_ENTRY     *Entry = NULL;
   REFIT_MENU_SCREEN    *SubScreen = NULL;
@@ -5536,7 +5532,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
   ApplyInputs();
 }
 
-UINT32 EncodeOptions(CHAR16 *Options)
+UINT32 EncodeOptions(CONST CHAR16 *Options)
 {
   UINT32 OptionsBits = 0;
   INTN Index;
@@ -5714,8 +5710,4 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   }
   return MenuExit;
 }
-
-#ifdef __cplusplus
-}
-#endif
 

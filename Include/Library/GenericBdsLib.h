@@ -589,7 +589,7 @@ typedef struct {
 
 typedef
 VOID
-(*DEV_PATH_FUNCTION) (
+(*DEV_PATH_FUNCTION_VOID) (
   IN OUT POOL_PRINT       *Str,
   IN VOID                 *DevPath
   );
@@ -597,7 +597,7 @@ VOID
 typedef struct {
   UINT8             Type;
   UINT8             SubType;
-  DEV_PATH_FUNCTION Function;
+  DEV_PATH_FUNCTION_VOID Function;
 } DEVICE_PATH_STRING_TABLE;
 
 typedef struct {
@@ -1067,7 +1067,7 @@ CHAR16 *
 EFIAPI
 CatPrint (
   IN OUT POOL_PRINT   *Str,
-  IN CHAR16           *Fmt,
+  IN CONST CHAR16           *Fmt,
   ...
   );
 

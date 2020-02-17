@@ -34,25 +34,25 @@
 #  EfiLib/GenericBdsLib.h
 #  EfiLib/BmLib.c
 #  Platform/DevicePath.c #included into GenericBdsLib
-  Platform/BdsConnect.c #included into GenericBdsLib
+  Platform/BdsConnect.cpp #included into GenericBdsLib
   refit/main.cpp
-  refit/icns.c
-  refit/lib.c
+  refit/icns.cpp
+  refit/lib.cpp
   refit/lib.h
   refit/menu.cpp
-  refit/screen.c
-  refit/IO.c
+  refit/screen.cpp
+  refit/IO.cpp
   refit/IO.h
-  entry_scan/common.c
-  entry_scan/legacy.c
-  entry_scan/loader.c
-  entry_scan/tool.c
-  entry_scan/secureboot.c
-  entry_scan/securehash.c
-  entry_scan/securemenu.c
-  entry_scan/securevars.c
-  entry_scan/bootscreen.c
-  entry_scan/lockedgraphics.c
+  entry_scan/common.cpp
+  entry_scan/legacy.cpp
+  entry_scan/loader.cpp
+  entry_scan/tool.cpp
+  entry_scan/secureboot.cpp
+  entry_scan/securehash.cpp
+  entry_scan/securemenu.cpp
+  entry_scan/securevars.cpp
+  entry_scan/bootscreen.cpp
+  entry_scan/lockedgraphics.cpp
   entry_scan/CanonicalDB.h
   entry_scan/CloverDB.h
   entry_scan/CloverKEK.h
@@ -61,105 +61,106 @@
   entry_scan/MSUEFICADB.h
   entry_scan/entry_scan.h
   entry_scan/securebootkeys.h
-  libeg/egemb_icons.c
-  libeg/egemb_icons_dark.c
-  libeg/egemb_font.c
-  libeg/scroll_images.c
-  libeg/BmLib.c
-  libeg/image.c
-#  libeg/load_bmp.c
-  libeg/load_icns.c
-  libeg/libscreen.c
-  libeg/lodepng.c
+  libeg/egemb_icons.cpp
+  libeg/egemb_icons_dark.cpp
+  libeg/egemb_font.cpp
+  libeg/scroll_images.cpp
+  libeg/BmLib.cpp
+  libeg/image.cpp
+#  libeg/load_bmp.cpp
+  libeg/load_icns.cpp
+  libeg/libscreen.cpp
+  libeg/lodepng.cpp
   libeg/lodepng.h
-  libeg/text.c
-  libeg/FloatLib.c
+  libeg/text.cpp
+  libeg/FloatLib.cpp
   libeg/FloatLib.h
-  libeg/nanosvg.c
+  libeg/nanosvg.cpp
   libeg/nanosvg.h
-  libeg/nanosvgrast.c
-  libeg/VectorGraphics.c
+  libeg/nanosvgrast.cpp
+  libeg/VectorGraphics.cpp
   libeg/libeg.h
   libeg/libegint.h
-  Platform/AcpiPatcher.c
+  Platform/AcpiPatcher.cpp
 	Platform/ati_reg.h
-	Platform/AmlGenerator.c
+	Platform/AmlGenerator.cpp
 	Platform/AmlGenerator.h
-	Platform/ati.c
+	Platform/ati.cpp
 	Platform/ati.h
 #	Platform/BiosVideo.h
 #	Platform/Bmp.h
 	Platform/boot.h
-	Platform/BootLog.c
-	Platform/BootOptions.c
-	Platform/Console.c
-	Platform/cpu.c
-	Platform/DataHubCpu.c
+	Platform/BootLog.cpp
+	Platform/BootOptions.cpp
+	Platform/Console.cpp
+	Platform/cpu.cpp
+	Platform/DataHubCpu.cpp
 #	Platform/DataHubRecords.h
-	Platform/device_inject.c
+	Platform/device_inject.cpp
 	Platform/device_inject.h
-#	Platform/device_tree.c
+#	Platform/device_tree.cpp
 #	Platform/device_tree.h
-	Platform/Edid.c
-	Platform/Events.c
-	Platform/hda.c
+	Platform/Edid.cpp
+	Platform/Events.cpp
+	Platform/hda.cpp
 	Platform/hda.h
-    Platform/HdaCodecDump.c
+    Platform/HdaCodecDump.cpp
     Platform/HdaCodecDump.h
-	Platform/gma.c
+	Platform/gma.cpp
 	Platform/gma.h
-	Platform/guid.c
-	Platform/Injectors.c
-	Platform/LegacyBiosThunk.c
+	Platform/guid.cpp
+	Platform/Injectors.cpp
+	Platform/LegacyBiosThunk.cpp
 	Platform/LegacyBiosThunk.h
-	Platform/LegacyBoot.c
+	Platform/LegacyBoot.cpp
 	Platform/memvendors.h
-	Platform/nvidia.c
+	Platform/nvidia.cpp
 	Platform/nvidia.h
-#	Platform/pci.c
-#	Platform/picopng.c
+#	Platform/pci.cpp
+#	Platform/picopng.cpp
 #	Platform/picopng.h
 	Platform/Platform.h
-	Platform/platformdata.c
-	Platform/plist.c
-	Platform/Pointer.c
-	Platform/Settings.c
-	Platform/smbios.c
+	Platform/platformdata.cpp
+	Platform/plist.cpp
+	Platform/Pointer.cpp
+	Platform/Settings.cpp
+	Platform/smbios.cpp
 #	Platform/SmBios.h
-	Platform/spd.c
+	Platform/spd.cpp
 	Platform/spd.h
-	Platform/string.c
+	Platform/string.cpp
 	Platform/string.h
-	Platform/StateGenerator.c
+	Platform/StateGenerator.cpp
 	Platform/StateGenerator.h
-#	Platform/stringTable.c
-	Platform/usbfix.c
+#	Platform/stringTable.cpp
+	Platform/usbfix.cpp
 #	Platform/UsbMass.h
 #	Platform/UsbMassBoot.h
 #	Platform/UsbMassImpl.h
 #	Platform/VesaBiosExtensions.h
 	Platform/b64cdecode.h
-	Platform/b64cdecode.c
-	Platform/FixBiosDsdt.c
+	Platform/b64cdecode.cpp
+	Platform/FixBiosDsdt.cpp
 	Platform/loader.h
 	Platform/LoaderUefi.h
 	Platform/kernel_patcher.h
-	Platform/kernel_patcher.c
-	Platform/kext_patcher.c
-	Platform/kext_inject.c
+	Platform/kernel_patcher.cpp
+	Platform/kext_patcher.cpp
+	Platform/kext_inject.cpp
 	Platform/kext_inject.h
-	Platform/Nvram.c
-  Platform/card_vlist.c
-  Platform/PlatformDriverOverride.c
-	Platform/Hibernate.c
-  Platform/Net.c
-  Platform/sound.c
-  Platform/StartupSound.c
+	Platform/Nvram.cpp
+  Platform/card_vlist.cpp
+  Platform/PlatformDriverOverride.cpp
+	Platform/Hibernate.cpp
+  Platform/Net.cpp
+  Platform/sound.cpp
+  Platform/StartupSound.cpp
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
   Version.h
   cpp_util/XStringW.h
   cpp_util/XStringW.cpp
+  cpp_util/memory.cpp
   cpp_util/global1.cpp
   cpp_util/global2.cpp
   cpp_util/globals_ctor.cpp
@@ -315,9 +316,7 @@
 [Pcd]
 
 [BuildOptions]
-#  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-common
-  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable
-#  XCODE:*_*_*_DLINK_FLAGS = -order_file $(EDK_TOOLS_PATH)/Scripts/ClangLinkOrder.txt
+  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=const
   GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
-  GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable
-   MSFT:*_*_*_CC_FLAGS = /Os /wd4201
+  GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable -DJCONST=const
+  MSFT:*_*_*_CC_FLAGS = /Os /wd4201

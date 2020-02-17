@@ -39,10 +39,6 @@
 #include "../cpp_util/globals_ctor.h"
 #include "../cpp_util/globals_dtor.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "entry_scan.h"
 #include "nanosvg.h"
 
@@ -72,9 +68,9 @@ extern "C" {
 
 // variables
 #ifdef FIRMWARE_REVISION
-CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
+CONST CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
 #else
-CHAR16 *gFirmwareRevision = NULL;
+CONST CHAR16 *gFirmwareRevision = NULL;
 #endif
 
 BOOLEAN                 gGuiIsReady     = FALSE;
@@ -96,7 +92,7 @@ EFI_HANDLE ConsoleInHandle;
 EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
 EFI_KEY_DATA KeyData;
 
-CHAR8* AudioOutputNames[] = {
+CONST CHAR8* AudioOutputNames[] = {
   "LineOut",
   "Speaker",
   "Headphones",
@@ -118,15 +114,10 @@ extern UINTN                 DsdtsNum;
 extern CHAR16                *DsdtsList[];
 extern UINTN                 AudioNum;
 extern HDA_OUTPUTS           AudioList[20];
-extern CHAR8                 *AudioOutputNames[];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
-#ifdef __cplusplus
-}
-#endif
-
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
-                                    IN CHAR16 *ImageTitle,
+                                    IN CONST CHAR16 *ImageTitle,
                                     OUT UINTN *ErrorInStep,
                                     OUT EFI_HANDLE *NewImageHandle)
 {
@@ -175,8 +166,8 @@ bailout:
 
 
 static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
-                                    IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
-                                    IN CHAR16 *ImageTitle,
+                                    IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                    IN CONST CHAR16 *ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
   EFI_STATUS              Status, ReturnStatus;
@@ -260,7 +251,7 @@ bailout:
 
 
 static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CHAR16 *ImageTitle,
+                                IN CONST CHAR16 *ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
@@ -285,8 +276,8 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
-                                IN CHAR16 *ImageTitle,
+                                IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                IN CONST CHAR16 *ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
@@ -326,14 +317,14 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 }
 */
 
-static CHAR8 *SearchString (
-  IN  CHAR8       *Source,
+static CONST CHAR8 *SearchString (
+  IN  CONST CHAR8       *Source,
   IN  UINT64      SourceSize,
-  IN  CHAR8       *Search,
+  IN  CONST CHAR8       *Search,
   IN  UINTN       SearchSize
   )
 {
-  CHAR8 *End = Source + SourceSize;
+  CONST CHAR8 *End = Source + SourceSize;
 
   while (Source < End) {
     if (CompareMem(Source, Search, SearchSize) == 0) {
@@ -515,7 +506,7 @@ VOID ReadSIPCfg()
 // text output from boot.efi when booting in graphics mode
 //
 EFI_STATUS EFIAPI
-NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
+NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CONST CHAR16 *String) {
   return EFI_SUCCESS;
 }
 
@@ -530,7 +521,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   EFI_TEXT_STRING         ConOutOutputString = 0;
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage = NULL;
-  CHAR8                   *InstallerVersion;
+  CONST CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
   UINTN                   i;
   NSVGfont                *font, *nextFont;
@@ -706,7 +697,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) &&
         (StriStr(Entry->LoadOptions, L"Kernel=") == NULL)) {
-      CHAR16 *KernelLocation = NULL;
+      CONST CHAR16 *KernelLocation = NULL;
       CHAR16 *TempOptions;
 
       if (Entry->OSVersion && AsciiOSVersionToUint64(Entry->OSVersion) <= AsciiOSVersionToUint64("10.9")) {
@@ -1119,7 +1110,7 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
 // pre-boot driver functions
 //
 
-static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OUT UINTN *DriversToConnectNum)
+static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OUT UINTN *DriversToConnectNum)
 {
   EFI_STATUS              Status;
   REFIT_DIR_ITER          DirIter;
@@ -1789,7 +1780,7 @@ extern UINT8                           *gLanMmio[4];     // their MMIO regions
 extern UINT8                           gLanMac[4][6];    // their MAC addresses
 extern UINTN                           nLanPaths;        // number of LAN pathes
 
-BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CHAR16 *ConfName)
+BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CONST CHAR16 *path, CONST CHAR16 *ConfName)
 {
 	BOOLEAN res = FileExists(Root, path);
 	if ( res ) {
@@ -1811,7 +1802,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CHAR16 *ConfName)
 	return 0;
 }
 
-VOID SetOEMPath(CHAR16 *ConfName)
+VOID SetOEMPath(CONST CHAR16 *ConfName)
   {
     if (ConfName == NULL) {
       OEMPath = L"EFI\\CLOVER";
@@ -1903,14 +1894,14 @@ UINT8 *APFSContainer_Support(VOID) {
 }
 
 //System / Install / Recovery version filler
-CHAR16 *SystemVersionPlist       = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
-CHAR16 *ServerVersionPlist       = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
-CHAR16 *InstallVersionPlist      = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
-CHAR16 *RecoveryVersionPlist     = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-CHAR16  APFSSysPlistPath[86]     = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
-CHAR16  APFSServerPlistPath[86]  = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
-CHAR16  APFSInstallPlistPath[79] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\SystemVersion.plist";
-CHAR16  APFSRecPlistPath[58]     = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
+CONST CHAR16 *SystemVersionPlist       = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+CONST CHAR16 *ServerVersionPlist       = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
+CONST CHAR16 *InstallVersionPlist      = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
+CONST CHAR16 *RecoveryVersionPlist     = L"\\com.apple.recovery.boot\\SystemVersion.plist";
+CONST CHAR16  APFSSysPlistPath[86]     = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
+CONST CHAR16  APFSServerPlistPath[86]  = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
+CONST CHAR16  APFSInstallPlistPath[79] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\SystemVersion.plist";
+CONST CHAR16  APFSRecPlistPath[58]     = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
   
 
 VOID SystemVersionInit(VOID)
@@ -2880,8 +2871,8 @@ PauseForKey(L"press");
         */
             if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
               CHAR16 *Description;
-              CHAR16 *VolName;
-              CHAR16 *LoaderName;
+              CONST CHAR16 *VolName;
+              CONST CHAR16 *LoaderName;
               INTN EntryIndex, NameSize, Name2Size;
               LOADER_ENTRY *Entry;
               UINT8 *OptionalData;

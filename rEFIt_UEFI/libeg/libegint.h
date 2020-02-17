@@ -43,9 +43,6 @@
 
 #include "Platform.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #if defined(_MSC_VER)
 # define ALIGN_64 __declspec(align(8))
@@ -184,9 +181,6 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
 
 //VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 
-#ifdef __cplusplus
-}
-#endif
 
 
 #endif /* __LIBEG_LIBEGINT_H__ */

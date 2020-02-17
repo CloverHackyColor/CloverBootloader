@@ -117,8 +117,8 @@ CloverPrefpane.strings
 #CloverPackage/CloverPrefpane/src/*.lproj
 
 BaseTools/Source/Python/build/BuildReport.pyc
-Conf/BuildEnv.sh
-Conf/.AutoGenIdFile.txt
+
 CloverPackage/revision
 CloverPackage/version
 tools
+/Conf/

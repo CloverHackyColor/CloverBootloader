@@ -277,7 +277,7 @@ typedef struct {
 typedef struct {
   UINT32    flags;
   BOOLEAN   all_ports;
-  CHAR8     *name;
+  CONST CHAR8     *name;
   BOOLEAN   (*get_value)(value_t *val, INTN index, BOOLEAN Sier);
   value_t   default_val;
 } AtiDevProp;

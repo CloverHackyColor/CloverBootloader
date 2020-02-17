@@ -191,7 +191,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_STRING)(
   IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL        *This,
-  IN CHAR16                                 *String
+  IN JCONST CHAR16                                 *String
   );
 
 /**

@@ -162,7 +162,7 @@ extern UINT32 device_inject_stringlength;
 DevPropString	*devprop_create_string(void);
 //DevPropDevice	*devprop_add_device(DevPropString *string, char *path);
 DevPropDevice	*devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt, EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-BOOLEAN			devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINTN len);
+BOOLEAN			devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UINTN len);
 CHAR8			*devprop_generate_string(DevPropString *string);
 VOID			devprop_free_string(DevPropString *string);
 

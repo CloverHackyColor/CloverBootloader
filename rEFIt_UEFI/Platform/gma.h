@@ -6,7 +6,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev);
 
 struct gma_gpu_t {
 	UINT32 device;
-	CHAR8 *name;
+	CONST CHAR8 *name;
 };
 
 /*

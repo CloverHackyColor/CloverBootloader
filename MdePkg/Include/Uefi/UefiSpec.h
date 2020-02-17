@@ -645,7 +645,7 @@ VOID
 typedef
 EFI_STATUS
 (EFIAPI *EFI_GET_VARIABLE)(
-  IN     CHAR16                      *VariableName,
+  IN     JCONST CHAR16                      *VariableName,
   IN     EFI_GUID                    *VendorGuid,
   OUT    UINT32                      *Attributes,    OPTIONAL
   IN OUT UINTN                       *DataSize,
@@ -723,7 +723,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_SET_VARIABLE)(
-  IN  CHAR16                       *VariableName,
+  IN  JCONST CHAR16                       *VariableName,
   IN  EFI_GUID                     *VendorGuid,
   IN  UINT32                       Attributes,
   IN  UINTN                        DataSize,

@@ -223,7 +223,7 @@ void XStringW::vSPrintf(const wchar_t *format, VA_LIST va)
   spc.Len = 0;
   spc.Maxlen = m_size;
   ZeroMem(&ps, sizeof (ps));
-  ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CHAR16 *str))_PoolPrint;
+  ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CONST CHAR16 *str))_PoolPrint;
   ps.Context  = (void*)&spc;
   ps.fmt.u.pw = format;
 

@@ -318,6 +318,9 @@ struct _LIST_ENTRY {
 /// Datum is read-only.
 ///
 #define CONST     const
+#ifndef JCONST
+#define JCONST
+#endif
 
 ///
 /// Datum is scoped to the current file or function.

@@ -42,6 +42,9 @@
 #ifndef NANOSVG_H
 #define NANOSVG_H
 
+extern "C" {
+#include <Library/BaseMemoryLib.h>
+}
 #include "Platform.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
@@ -49,7 +52,7 @@
 
 
 //There are defines for compilation as first step. Must be revised
-#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
+#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
 #define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define strcmp(a,b) AsciiStrCmp(a,b)
 #define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
