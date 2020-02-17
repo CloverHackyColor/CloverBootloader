@@ -49,7 +49,7 @@ extern "C" {
 #include "Version.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_MAIN 1
+#define DEBUG_MAIN 2
 #else
 #define DEBUG_MAIN DEBUG_ALL
 #endif
@@ -2146,8 +2146,8 @@ DBG("global_str2 = %s\n", global_str2.data());
 }
 //
 destruct_globals_objects(NULL); // That should be done just before quitting clover module. Now, it's just for test.
-//DBG("press");
-//PauseForKey(L"press");
+DBG("press");
+PauseForKey(L"press");
 
 
 
