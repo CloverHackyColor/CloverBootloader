@@ -215,11 +215,11 @@ checkXcode () {
        echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
     fi
 
-  if [[ -x "/opt/local/bin/mtoc.NEW" ]]; then
+  if [[ -x "/opt/local/bin/mtoc.NEW_jief" ]]; then
     export MTOC_PREFIX="/opt/local/bin/"
-  elif [[ -x "${LOCALBIN}/mtoc.NEW" ]]; then
+  elif [[ -x "${LOCALBIN}/mtoc.NEW_jief" ]]; then
     export MTOC_PREFIX="${LOCALBIN}/"
-  elif [[ -x "${TOOLCHAIN_DIR}/bin/mtoc.NEW" ]]; then
+  elif [[ -x "${TOOLCHAIN_DIR}/bin/mtoc.NEW_jief" ]]; then
     export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
   else
     export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
