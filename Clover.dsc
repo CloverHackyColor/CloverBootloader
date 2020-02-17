@@ -563,7 +563,7 @@
 
 
 !ifdef DEBUG_ON_SERIAL_PORT
-	rEFIt_UEFI/refit_cpp.inf {
+	rEFIt_UEFI/refit.inf {
 	#
      # Enable debug output.
      #
@@ -576,7 +576,7 @@
 	DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
 	}
 !else
-	rEFIt_UEFI/refit_cpp.inf {
+	rEFIt_UEFI/refit.inf {
     <LibraryClasses>
       BaseMemoryLib|MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
   }

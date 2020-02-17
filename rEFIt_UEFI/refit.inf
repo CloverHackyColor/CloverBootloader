@@ -35,11 +35,11 @@
 #  EfiLib/BmLib.c
 #  Platform/DevicePath.c #included into GenericBdsLib
   Platform/BdsConnect.c #included into GenericBdsLib
-  refit/main.c
+  refit/main.cpp
   refit/icns.c
   refit/lib.c
   refit/lib.h
-  refit/menu.c
+  refit/menu.cpp
   refit/screen.c
   refit/IO.c
   refit/IO.h
@@ -158,7 +158,17 @@
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
   Version.h
-
+  cpp_util/XStringW.h
+  cpp_util/XStringW.cpp
+  cpp_util/global1.cpp
+  cpp_util/global2.cpp
+  cpp_util/globals_ctor.cpp
+  cpp_util/globals_ctor.h
+  cpp_util/globals_dtor.cpp
+  cpp_util/globals_dtor.h
+  cpp_util/operatorNewDelete.cpp
+  cpp_util/operatorNewDelete.h
+  
 [Sources.IA32]
   libeg/ftol.asm | MSFT
 
@@ -306,6 +316,8 @@
 
 [BuildOptions]
 #  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-common
-  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer
+  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable
+#  XCODE:*_*_*_DLINK_FLAGS = -order_file $(EDK_TOOLS_PATH)/Scripts/ClangLinkOrder.txt
   GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
-  MSFT:*_*_*_CC_FLAGS = /Os /wd4201
+  GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable
+   MSFT:*_*_*_CC_FLAGS = /Os /wd4201
