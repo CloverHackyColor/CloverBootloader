@@ -1,6 +1,6 @@
 #include <Platform/Platform.h>
 
-#if 0
+#if 1
 #define DBG(...) DebugLog(2, __VA_ARGS__)
 #else
 #define DBG(...)

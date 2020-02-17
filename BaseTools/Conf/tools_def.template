@@ -2424,7 +2424,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 *_XCODE5_*_*_BUILDRULEFAMILY   = XCODE
 *_XCODE5_*_*_BUILDRULEORDER    = S s nasm
 
-*_XCODE5_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW
+*_XCODE5_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW_jief
 
 *_XCODE5_*_MAKE_PATH        = make
 *_XCODE5_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
@@ -2453,9 +2453,9 @@ RELEASE_XCODE5_*_DLINK_PATH   = clang
 ####################
 # IA-32 definitions
 ####################
-  DEBUG_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-  NOOPT_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-RELEASE_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x240,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x260 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  NOOPT_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x260 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASE_XCODE5_IA32_DLINK_FLAGS      = -arch i386 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
 *_XCODE5_IA32_SLINK_FLAGS      = -static -o
   DEBUG_XCODE5_IA32_ASM_FLAGS  = -arch i386 -g
@@ -2486,9 +2486,9 @@ RELEASE_XCODE5_IA32_CC_FLAGS   = -arch i386 -c    -Os       -Wall -Werror -inclu
 ##################
 # X64 definitions
 ##################
-  DEBUG_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-  NOOPT_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-RELEASE_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x240,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x260 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  NOOPT_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x260 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASE_XCODE5_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
 *_XCODE5_X64_SLINK_FLAGS      = -static -o
   DEBUG_XCODE5_X64_ASM_FLAGS  = -arch x86_64 -g
@@ -2520,7 +2520,7 @@ RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os       -W
 
 *_XCODE5_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h 
 # -mdynamic-no-pic
-*_XCODE5_*_ASLDLINK_FLAGS   = -e _ReferenceAcpiTable -preload -segalign 0x20  -pie -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+*_XCODE5_*_ASLDLINK_FLAGS   = -e _ReferenceAcpiTable -preload -segalign 0x20  -pie -seg1addr 0x260 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCODE5_*_ASLPP_FLAGS      = DEF(GCC_ASLPP_FLAGS)
 *_XCODE5_*_ASL_FLAGS        =
 # -ta
@@ -2536,7 +2536,7 @@ RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c    -Os       -W
 *_XCODE8_*_*_BUILDRULEFAMILY   = XCODE
 *_XCODE8_*_*_BUILDRULEORDER    = nasm S s
 
-*_XCODE8_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW
+*_XCODE8_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW_jief
 
 *_XCODE8_*_MAKE_PATH        = make
 *_XCODE8_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
@@ -2563,8 +2563,8 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
 ##################
 # X64 definitions
 ##################
-  DEBUG_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x240,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
-RELEASE_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x240,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASE_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
 *_XCODE8_X64_SLINK_FLAGS      = -static -o
   DEBUG_XCODE8_X64_ASM_FLAGS  = -c -x assembler -arch x86_64 -g
@@ -2580,7 +2580,7 @@ RELEASE_XCODE8_X64_CC_FLAGS   = -c    -Os       -Wall -Werror -Wextra -include A
 # -Wno-unused-const-variable
 
 *_XCODE8_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h
-*_XCODE8_*_ASLDLINK_FLAGS   = -nostdlib -Wl,-e,_ReferenceAcpiTable,-preload,-segalign,0x20,-pie,-seg1addr,0x240,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+*_XCODE8_*_ASLDLINK_FLAGS   = -nostdlib -Wl,-e,_ReferenceAcpiTable,-preload,-segalign,0x20,-pie,-seg1addr,0x260,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCODE8_*_ASLPP_FLAGS      = DEF(GCC_ASLPP_FLAGS)
 *_XCODE8_*_ASL_FLAGS        =
 *_XCODE8_*_ASL_OUTFLAGS     = DEF(IASL_OUTFLAGS)

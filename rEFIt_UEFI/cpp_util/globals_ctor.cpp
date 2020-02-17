@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
-#if 0
+#if 1
 #define DBG(...) DebugLog(2, __VA_ARGS__)
 #else
 #define DBG(...)
@@ -25,22 +25,9 @@ typedef ctor* ctor_ptr;
 
 #if defined(__clang__)
 
-extern "C" {
-  /*
-   * This symbol will be placed at the beginning of the section following the __mod_init_func section.
-   * This way, will know the size of the __mod_init_func section.
-   * In the efi file, __mod_init_func section has been merged with the following section. That's why we need this trick.
-   */
-  void __attribute__((section ("__DATA,__const"))) __attribute__((optnone)) beginning_of_section_next_to_mod_init_func() {};
-}
 
 void construct_globals_objects()
 {
-
-//	beginning_of_section_next_to_mod_init_func(); // to not be optimized out
-
-	ctor_ptr* beginning_of_section_next_to_mod_init_func_ptr = (ctor_ptr*)&beginning_of_section_next_to_mod_init_func;
-DBG("beginning_of_section_next_to_mod_init_func_ptr=%08x\n", (UINTN)beginning_of_section_next_to_mod_init_func_ptr);
 
   UINT32 PeCoffHeaderOffset = 0;
   EFI_IMAGE_DOS_HEADER* DosHdr = (EFI_IMAGE_DOS_HEADER*)SelfLoadedImage->ImageBase;
@@ -56,18 +43,21 @@ DBG("beginning_of_section_next_to_mod_init_func_ptr=%08x\n", (UINTN)beginning_of
 
 	for (int Index = 0; Index < ImgHdr->Pe32.FileHeader.NumberOfSections; Index++, SectionHeader++)
 	{
-		DBG("name=%a\n", SectionHeader->Name);
-		if (AsciiStrCmp((CONST CHAR8*) SectionHeader->Name, ".data") == 0)
+		DBG("SectionHeader->Name=%a\n", SectionHeader->Name);
+//		DBG("SectionHeader->PointerToRawData=%8x\n", SectionHeader->PointerToRawData);
+//		DBG("SectionHeader->SizeOfRawData=%8x\n", SectionHeader->SizeOfRawData);
+		DBG("SectionHeader->VirtualSize=%8x\n", SectionHeader->Misc.VirtualSize);
+		if (AsciiStrCmp((CONST CHAR8*) SectionHeader->Name, ".ctorss") == 0)
 		{
-			DBG("SectionHeader->PointerToRawData=%8x\n", SectionHeader->PointerToRawData);
 
-			ctor_ptr* myctor = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
-			while (myctor < beginning_of_section_next_to_mod_init_func_ptr)
+			ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
+			ctor_ptr* ctorend = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
+			while (currentCtor < ctorend)
 			{
-				DBG("&myctor %x %d\n", (UINTN) (myctor), (UINTN) (myctor));
-				DBG("myctor %x %d\n", (UINTN) (*myctor), (UINTN) (*myctor));
-				if (*myctor != NULL) (*myctor)();
-				myctor++;
+				DBG("&currentCtor %x %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
+				DBG("currentCtor %x %d\n", (UINTN) (*currentCtor), (UINTN) (*currentCtor));
+				if (*currentCtor != NULL) (*currentCtor)();
+				currentCtor++;
 			}
 		}
 	}

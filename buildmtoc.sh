@@ -3,6 +3,12 @@
 # Script for building MTOC
 #
 
+if [ -z "$WORKSPACE" ]
+then
+  echo WORKSPACE must be defined to Clover root path
+  exit 1
+fi
+
 # Ctools source version
 # here we can change source versions of tools
 #
@@ -134,6 +140,9 @@ fnExtract ()
         echo "-  ${package} extract..."
         rm -rf "${DIR_BUILD}/$top_level_dir" # Remove old directory if exists
         tar -C "$DIR_BUILD" -x "$tar_filter_option" -f "${tarball}" && touch "${DIR_BUILD}/$package.extracted"
+        
+        #jief copy the modified version that keeps __mod_init_func section
+        cp "$WORKSPACE"/BaseTools/Source/C/mtoc/mtoc-v921_jief.c "$DIR_BUILD/$top_level_dir"/efitools/mtoc.c
     fi
 
     # Restore stdout for the result and close file desciptor 3
@@ -170,7 +179,7 @@ fnCompileMtoc ()
         exit 1
     fi
     echo "-  cctools-${CCTOOLS_VERSION} installing mtoc..."
-    cmd="install -c -s -m 555 efitools/mtoc.NEW ${PREFIX}/bin"
+    cmd="install -c -s -m 555 efitools/mtoc.NEW ${PREFIX}/bin/mtoc.NEW_jief"
     logfile="$DIR_LOGS/mtoc.install.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
