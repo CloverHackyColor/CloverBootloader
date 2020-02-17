@@ -133,6 +133,15 @@ buildClover() {
 checkTools
 
 cd "${CLOVERROOT}"
+mkdir -p Conf
+if [[ -f "${CLOVERROOT}"/Conf/tools_def.txt ]]; then
+  if ! grep -q mtoc.NEW_jief "${CLOVERROOT}"/Conf/tools_def.txt; then
+    rm -f "${CLOVERROOT}"/Conf/*
+    rm -rf "${CLOVERROOT}"/Build/*
+    cleanBaseTools
+  fi
+fi
+cd "${CLOVERROOT}"
 
 if [[ -z "$WORKSPACE" ]]; then
   export EDK_TOOLS_PATH="${PWD}"/BaseTools
