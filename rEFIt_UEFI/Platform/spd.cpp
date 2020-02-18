@@ -336,7 +336,7 @@ CONST CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 s
     code = spd[SPD_DDR4_MANUFACTURER_ID_CODE];
     parity = bank;
     testbit = bank;
-    for (UINTN i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
+    for (INTN i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
     if ( (parity & 0x80) == 0 ) {
       DBG("Bad parity bank=0x%2X code=0x%2X\n", bank, code);
     }
@@ -352,7 +352,7 @@ CONST CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 s
     code = spd[SPD_DDR3_MEMORY_CODE];
     parity = bank;
     testbit = bank;
-    for (UINTN i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
+    for (INTN i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
     if ( (parity & 0x80) == 0 ) {
       DBG("Bad parity bank=0x%2X code=0x%2X\n", bank, code);
     }
