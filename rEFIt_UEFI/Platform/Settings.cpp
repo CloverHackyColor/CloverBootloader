@@ -4418,21 +4418,6 @@ finish:
   return Status;
 }
 
-VOID CheckEmptyFB()
-{
-	BOOLEAN EmptyFB = (gSettings.IgPlatform == 0x00050000) ||
-		(gSettings.IgPlatform == 0x01620007) ||
-		(gSettings.IgPlatform == 0x04120004) ||
-		(gSettings.IgPlatform == 0x19120001) ||
-		(gSettings.IgPlatform == 0x59120003) ||
-		(gSettings.IgPlatform == 0x3E910003);
-	if (EmptyFB) {
-		gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
-	} else {
-		gPlatformFeature &= ~PT_FEATURE_HAS_HEADLESS_GPU;
-	}
-}
-
 VOID
 ParseSMBIOSSettings(
                     TagPtr DictPointer
@@ -6507,8 +6492,8 @@ GetUserSettings(
   //DBG ("config.plist read and return %r\n", Status);
   return EFI_SUCCESS;
 }
-
-static CONST CHAR8 *SearchString (
+/*
+static CONST CHAR8 *SearchString(
                             IN  CONST CHAR8       *Source,
                             IN  UINT64      SourceSize,
                             IN  CONST CHAR8       *Search,
@@ -6526,7 +6511,7 @@ static CONST CHAR8 *SearchString (
   }
   return NULL;
 }
-
+*/
 CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 {
   CHAR8      *OSVersion  = NULL;
@@ -6696,7 +6681,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR (Status)) {
           targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
           CopyMem((VOID*)targetString, (VOID*)fileBuffer, fileLen);
-          s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
+      //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
+          s = AsciiStrStr(targetString, "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {
             AsciiSPrint (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res5), Res5);

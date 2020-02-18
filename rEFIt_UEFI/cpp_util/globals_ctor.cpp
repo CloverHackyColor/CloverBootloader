@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
-#if 1
+#if 0
 #define DBG(...) DebugLog(2, __VA_ARGS__)
 #else
 #define DBG(...)

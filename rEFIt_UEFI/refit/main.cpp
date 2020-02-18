@@ -45,7 +45,7 @@
 #include "Version.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_MAIN 2
+#define DEBUG_MAIN 1
 #else
 #define DEBUG_MAIN DEBUG_ALL
 #endif
@@ -324,8 +324,8 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   return Status;
 }
 */
-
-static CONST CHAR8 *SearchString (
+/*
+static CONST CHAR8 *SearchString(
   IN  CONST CHAR8       *Source,
   IN  UINT64      SourceSize,
   IN  CONST CHAR8       *Search,
@@ -343,6 +343,7 @@ static CONST CHAR8 *SearchString (
   }
   return NULL;
 }
+ */
 #ifdef DUMP_KERNEL_KEXT_PATCHES
 VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 {
@@ -523,6 +524,21 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CONST CHAR16
 //
 EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0xFF };
 
+VOID CheckEmptyFB()
+{
+  BOOLEAN EmptyFB = (gSettings.IgPlatform == 0x00050000) ||
+  (gSettings.IgPlatform == 0x01620007) ||
+  (gSettings.IgPlatform == 0x04120004) ||
+  (gSettings.IgPlatform == 0x19120001) ||
+  (gSettings.IgPlatform == 0x59120003) ||
+  (gSettings.IgPlatform == 0x3E910003);
+  if (EmptyFB) {
+    gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
+  } else {
+    gPlatformFeature &= ~PT_FEATURE_HAS_HEADLESS_GPU;
+  }
+}
+
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
@@ -602,7 +618,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     font = nextFont;
   }
   nsvg__deleteParser(mainParser);
-
+  destruct_globals_objects(NULL);
   
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
@@ -648,8 +664,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         /*
           Start OSName Mac OS X 10.12 End OSName Start OSVendor Apple Inc. End
         */
-        InstallerVersion = SearchString((CHAR8*)LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
-
+  //      InstallerVersion = SearchString((CHAR8*)LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
+        InstallerVersion = AsciiStrStr((CHAR8*)LoadedImage->ImageBase, "Mac OS X ");
         if (InstallerVersion != NULL) { // string was found
           InstallerVersion += 9; // advance to version location
 
@@ -727,7 +743,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
-	CheckEmptyFB();
+	  CheckEmptyFB();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume, Entry->OSVersion);
@@ -797,7 +813,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       FreePool(Entry->LoadOptions);
       Entry->LoadOptions = tmpArgv;
     }
-    
+
+    if (AudioIo) {
+      AudioIo->StopPlayback(AudioIo);
+    }
 
 //    DBG("Set FakeCPUID: 0x%x\n", gSettings.FakeCPUID);
 //    DBG("LoadKexts\n");
@@ -961,61 +980,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   FinishExternalScreen();
 //  PauseForKey(L"System started?!");
 }
-/*
-// early 2006 Core Duo / Core Solo models
-static UINT8 LegacyLoaderDevicePath1Data[] = {
-    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0xFF, 0xFF, 0xF9, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
-    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
-    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
-};
-// mid-2006 Mac Pro (and probably other Core 2 models)
-static UINT8 LegacyLoaderDevicePath2Data[] = {
-    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0xFF, 0xFF, 0xF7, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
-    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
-    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
-};
-// mid-2007 MBP ("Santa Rosa" based models)
-static UINT8 LegacyLoaderDevicePath3Data[] = {
-    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0xFF, 0xFF, 0xF8, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
-    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
-    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
-};
-// early-2008 MBA
-static UINT8 LegacyLoaderDevicePath4Data[] = {
-    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0xC0, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0xFF, 0xFF, 0xF8, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
-    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
-    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
-};
-// late-2008 MB/MBP (NVidia chipset)
-static UINT8 LegacyLoaderDevicePath5Data[] = {
-    0x01, 0x03, 0x18, 0x00, 0x0B, 0x00, 0x00, 0x00,
-    0x00, 0x40, 0xCB, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0xFF, 0xBF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
-    0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
-    0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
-    0x01, 0xAE, 0xF2, 0xB7, 0x7F, 0xFF, 0x04, 0x00,
-};
-static EFI_DEVICE_PATH *LegacyLoaderList[] = {
-    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath1Data,
-    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath2Data,
-    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath3Data,
-    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath4Data,
-    (EFI_DEVICE_PATH *)LegacyLoaderDevicePath5Data,
-    NULL
-};
-*/
+
 #define MAX_DISCOVERED_PATHS (16)
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 
@@ -1046,13 +1011,12 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
 
     BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
-    if (BootLogoImage != NULL)
+  if (BootLogoImage != NULL) {
         BltImageAlpha(BootLogoImage,
                       (UGAWidth  - BootLogoImage->Width) >> 1,
                       (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel, 16);
-
- //   if (StrCmp(gSettings.LegacyBoot, L"Apple") != 0) { // not Apple-style LegacyBoot
+  }
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
         case BOOTING_BY_CD:
@@ -1077,25 +1041,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
           break;
       }
       CheckError(Status, L"while LegacyBoot");
-/*    } else { // Apple-style LegacyBoot
-//      if (0 && Entry->Volume->IsMbrPartition && !Entry->Volume->HasBootCode)
-//         ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
 
-      Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
-      if (!EFI_ERROR(Status)) {
-        Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep, NULL);
-      }
-      if (Status == EFI_NOT_FOUND) {
-        if (ErrorInStep == 1) {
-          Print(L"\nPlease make sure that you have the latest firmware update installed.\n");
-        } else if (ErrorInStep == 3) {
-          Print(L"\nThe firmware refused to boot from the selected volume. Note that external\n"
-                L"hard drives are not well-supported by Apple's firmware for legacy OS booting.\n");
-        }
-      }
-    }
- */
-    FinishExternalScreen();
+  FinishExternalScreen();
 }
 
 //
@@ -1416,8 +1363,8 @@ VOID DisconnectSomeDevices(VOID)
   }
 
   if ((gDriversFlags.HFSLoaded) || (gDriversFlags.APFSLoaded)) {
-  if (gDriversFlags.HFSLoaded) {
-    DBG("HFS+ driver loaded\n");
+    if (gDriversFlags.HFSLoaded) {
+      DBG("HFS+ driver loaded\n");
     }
     if (gDriversFlags.APFSLoaded) {
       DBG("APFS driver loaded\n");
@@ -1758,28 +1705,28 @@ VOID SetVariablesFromNvram()
 
 }
 
-VOID ResetNvram () 
-  {
-    if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
-      if (gEmuVariableControl != NULL) {
-        gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-      }
+VOID ResetNvram ()
+{
+  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
     }
+  }
 
-    ResetNativeNvram ();
+  ResetNativeNvram ();
 
-    if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
-      if (gEmuVariableControl != NULL) {
-        gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
-      }
+  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
+  }
 
-    // Attempt warm reboot
-//    gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
-    // Warm reboot may not be supported attempt cold reboot
-//    gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-    // Terminate the screen and just exit
-//    TerminateScreen();
+  // Attempt warm reboot
+  //    gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+  // Warm reboot may not be supported attempt cold reboot
+  //    gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+  // Terminate the screen and just exit
+  //    TerminateScreen();
 }
 
 extern UINTN                           nLanCards;        // number of LAN cards
@@ -2013,6 +1960,7 @@ VOID SystemVersionInit(VOID)
   }
 }
 
+#ifdef DEBUG_CLOVER
 XStringW g_str(L"g_str:foobar");
 XStringW g_str2(L"g_str:foobar2");
 //XStringW g_str3(L"g_str:foobar2");
@@ -2025,7 +1973,7 @@ XStringW g_str2(L"g_str:foobar2");
 //XStringW g_str10(L"g_str:foobar2");
 //XStringW g_str11(L"g_str:foobar2");
 //XStringW g_str12(L"g_str:foobar2");
-
+#endif
 
 
 //
@@ -2114,7 +2062,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 
   construct_globals_objects(); // do this after SelfLoadedImage is initialized
-
+#ifdef DEBUG_CLOVER
 DBG("g_str = %s\n", g_str.data());
 DBG("g_str2 = %s\n", g_str2.data());
 extern XStringW global_str1;
@@ -2147,7 +2095,7 @@ DBG("global_str2 = %s\n", global_str2.data());
 destruct_globals_objects(NULL); // That should be done just before quitting clover module. Now, it's just for test.
 DBG("press");
 PauseForKey(L"press");
-
+#endif
 
 
   //dumping SETTING structure

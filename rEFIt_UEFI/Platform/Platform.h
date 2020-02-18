@@ -2289,7 +2289,7 @@ iStrLen(
   UINTN  MaxLen
   );
 
-VOID CheckEmptyFB();
+//VOID CheckEmptyFB(); //not needed to be global
 
 EFI_STATUS
 PrepatchSmbios (VOID);
