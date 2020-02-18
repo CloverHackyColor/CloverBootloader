@@ -73,14 +73,20 @@
 #define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
 //#include "GenericBdsLib.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS;
 extern EFI_RUNTIME_SERVICES*	gRT;
 
+#include <Protocol/SimpleFileSystem.h>
+
+#ifdef __cplusplus
 }
+#endif
 
 #define TAG_ABOUT              (1)
 #define TAG_RESET              (2)

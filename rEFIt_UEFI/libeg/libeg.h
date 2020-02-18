@@ -37,7 +37,10 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
+#ifdef __cplusplus
 extern "C" {
+#endif
+
 #include <PiDxe.h>
 #include <Base.h>
 #include <Uefi.h>
@@ -133,7 +136,9 @@ extern "C" {
 #include <IndustryStandard/Atapi.h>
 #include <IndustryStandard/AppleSmBios.h>
 
+#ifdef __cplusplus
 } // extern "C"
+#endif
 
 /* types */
 

@@ -55,11 +55,13 @@ extern "C" {
 #include <IndustryStandard/Bmp.h>
 #include <IndustryStandard/HdaCodec.h>
 
+#include <Protocol/PciIo.h>
 #include <Protocol/AudioIo.h>
 #include <Protocol/Cpu.h>
 #include <Protocol/CpuIo.h>
 #include <Protocol/DataHub.h>
 #include <Protocol/DevicePathToText.h>
+#include <Protocol/EdidDiscovered.h>
 #include <Protocol/EdidOverride.h>
 #include <Protocol/FrameworkHii.h>
 #include <Protocol/HdaIo.h>
@@ -76,7 +78,9 @@ extern "C" {
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
 
+#ifdef __cplusplus
 }
+#endif
 
 #include "../refit/lib.h"
 #include "string.h"
