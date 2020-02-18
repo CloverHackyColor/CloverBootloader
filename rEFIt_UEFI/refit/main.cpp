@@ -154,6 +154,14 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     if (NewImageHandle != NULL) {
       *NewImageHandle = ChildImageHandle;
     }
+#ifdef CLOVER_DEBUG
+    EFI_LOADED_IMAGE_PROTOCOL* loadedBootImage = NULL;
+    if (!EFI_ERROR(Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (void**)(&loadedBootImage)))) {
+        DBG("%S : Image base = 0x%lx", ImageTitle, loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
+    }else{
+      DBG("Can't get loaded image protocol");
+    }
+#endif
     goto bailout;
   }
 
