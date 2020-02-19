@@ -318,5 +318,5 @@
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=const
   GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
-  GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable -DJCONST=const
+  GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable -Wno-pointer-arith -DJCONST=const
   MSFT:*_*_*_CC_FLAGS = /Os /wd4201

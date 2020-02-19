@@ -52,6 +52,39 @@ extern "C" {
 // External qsort implementation used
 extern void qsort(void *a, size_t n, size_t es, int (*cmp)(const void *, const void *));
 */
+VOID QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int (*compare)(CONST VOID* a, CONST VOID* b), VOID* Temp)
+{
+  INTN i = Low, j = High;
+  UINT8 *Med;
+  Med = Array + ((Low + High) / 2) * Size; // Central element, just pointer
+//  Temp = (__typeof__(Temp))AllocatePool(Size);
+  // Sort around center
+  while (i <= j)
+  {
+    while (compare((const void*)(Array+i*Size), (const void*)Med) == -1) i++;
+    while (compare((const void*)(Array+j*Size), (const void*)Med) == 1) j--;
+    // Change
+    if (i <= j) {
+      CopyMem(Temp, Array+i*Size, Size);
+      CopyMem(Array+i*Size, Array+j*Size, Size);
+      CopyMem(Array+j*Size, Temp, Size);
+      i++;
+      j--;
+    }
+  }
+//  FreePool(Temp);
+  // Recursion
+  if (j > Low)    QuickSortWorker(Array, Low, j, Size, compare, Temp);
+  if (High > i)   QuickSortWorker(Array, i, High, Size, compare, Temp);
+}
+
+VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, int (*compare)(CONST VOID* a, CONST VOID* b))
+{
+  VOID* Buffer = (__typeof__(Buffer))AllocatePool(Size);
+  QuickSortWorker((UINT8*)Array, Low, High, Size, compare, Buffer);
+  FreePool(Buffer);
+}
+
 // Custom internal allocators for UEFI
 // rewrite by RehabMan
 void* lodepng_malloc(size_t size)
@@ -783,17 +816,18 @@ static BPMNode* bpmnode_create(BPMLists* lists, int weight, unsigned index, BPMN
   return result;
 }
 
-//static int bpmnode_compare(const void* a, const void* b)
-//{
-//  int wa = ((const BPMNode*)a)->weight;
-//  int wb = ((const BPMNode*)b)->weight;
-//  if(wa < wb) return -1;
-//  if(wa > wb) return 1;
-//  /*make the qsort a stable sort*/
-//  return ((const BPMNode*)a)->index < ((const BPMNode*)b)->index ? 1 : -1;
-//}
+static int bpmnode_compare(const void* a, const void* b)
+{
+  int wa = ((const BPMNode*)a)->weight;
+  int wb = ((const BPMNode*)b)->weight;
+  if(wa < wb) return -1;
+  if(wa > wb) return 1;
+  /*make the qsort a stable sort*/
+  return ((const BPMNode*)a)->index < ((const BPMNode*)b)->index ? 1 : -1;
+}
 
 /*sort the leaves with stable mergesort*/
+/*
 static void bpmnode_sort(BPMNode* leaves, size_t num)
 {
   BPMNode* mem = (BPMNode*)lodepng_malloc(sizeof(*leaves) * num);
@@ -819,7 +853,7 @@ static void bpmnode_sort(BPMNode* leaves, size_t num)
   if(counter & 1) memcpy(leaves, mem, sizeof(*leaves) * num);
   lodepng_free(mem);
 }
-
+*/
 
 /*Boundary Package Merge step, numpresent is the amount of leaves, and c is the current chain.*/
 static void boundaryPM(BPMLists* lists, BPMNode* leaves, size_t numpresent, int c, int num)
@@ -900,8 +934,9 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
     BPMNode* node;
 
     //qsort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
+    QuickSort(leaves, 0, numpresent, sizeof(BPMNode), bpmnode_compare);
 
-    bpmnode_sort(leaves, numpresent);
+    //bpmnode_sort(leaves, numpresent);
 
     lists.listsize = maxbitlen;
     lists.memsize = 2 * maxbitlen * (maxbitlen + 1);
