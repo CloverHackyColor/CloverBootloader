@@ -78,10 +78,10 @@ MsgLogEntrypoint (
                     )
 {
   EFI_STATUS					Status; // = EFI_SUCCESS;
-  EFI_BOOT_SERVICES*			gBS; 
+ // EFI_BOOT_SERVICES*			gBS; 
   CHAR8    *tmp;
   
-  gBS				= SystemTable->BootServices;
+//  gBS				= SystemTable->BootServices;
   mHandle = NULL;
   Status = gBS->AllocatePool (
                  EfiBootServicesData,

@@ -79,7 +79,8 @@
   typedef unsigned __int32    UINT32;
   typedef __int32             INT32;
   typedef unsigned short      UINT16;
-  typedef unsigned short      CHAR16;
+//  typedef unsigned short      CHAR16; 
+  typedef wchar_t             CHAR16;
   typedef short               INT16;
   typedef unsigned char       BOOLEAN;
   typedef unsigned char       UINT8;

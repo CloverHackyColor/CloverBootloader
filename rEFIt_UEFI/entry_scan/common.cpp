@@ -147,6 +147,7 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
   if(Entry == NULL) {
     return NULL;
   }
+  
   DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (DuplicateEntry) {
     DuplicateEntry->me.Tag          = Entry->me.Tag;

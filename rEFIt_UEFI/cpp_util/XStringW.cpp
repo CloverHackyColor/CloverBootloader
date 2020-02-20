@@ -51,13 +51,13 @@ XStringW::XStringW(const XStringW &aString)
 {
 DBG("Constructor(const XStringW &aString) : %s\n", aString.data());
 	Init(aString.length());
-	StrnCpy(aString.data(), aString.length());
+	StrnCpy((const CHAR16*)aString.data(), (const CHAR16*)aString.length());
 }
 
 XStringW::XStringW(const wchar_t *S)
 {
 DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
-	Init(StrLen(S));
+	Init(StrLen((const CHAR16*)S));
 	if ( S ) StrCpy(S);
 }
 

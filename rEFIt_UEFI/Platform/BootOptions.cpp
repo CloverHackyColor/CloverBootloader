@@ -371,7 +371,7 @@ GetBootOrder (
   //
   // Get gEfiGlobalVariableGuid:BootOrder and it's length
   //
-  *BootOrder = (__typeof__(*BootOrder))GetNvramVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  *BootOrder = (UINT16*)GetNvramVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
   if (*BootOrder == NULL) {
     DBG(" EFI_NOT_FOUND\n");
     return EFI_NOT_FOUND;

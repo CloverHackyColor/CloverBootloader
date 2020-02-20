@@ -29,6 +29,10 @@ The manual and changelog are in the header file "lodepng.h"
 Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for C.
 */
 
+#ifdef _MSC_VER
+#define __typeof__(x) decltype(x)
+#endif
+
 #include "lodepng.h"
 
 //MODSNI v

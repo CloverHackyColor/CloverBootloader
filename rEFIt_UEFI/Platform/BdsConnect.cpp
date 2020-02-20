@@ -310,8 +310,11 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
   //
   Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, HandleCount, HandleBuffer);
   if (EFI_ERROR (Status)) goto Error;
-  
+#ifdef _MSC_VER
+  *HandleType = static_cast<UINT32*>(AllocatePool(*HandleCount * sizeof(UINT32)));
+#else
   *HandleType = (__typeof__(*HandleType))AllocatePool (*HandleCount * sizeof (UINT32));
+#endif
   if (*HandleType == NULL) goto Error;
     
   for (HandleIndex = 0; HandleIndex < *HandleCount; HandleIndex++) {

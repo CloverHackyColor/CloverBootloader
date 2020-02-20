@@ -267,7 +267,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
         --VariablePtr;
       }
 
-      gRT->SetVariable(KbdPrevLang, &gEfiAppleBootGuid, Attributes, LangLen, &gSettings.Language);
+      gRT->SetVariable((CHAR16*)KbdPrevLang, &gEfiAppleBootGuid, Attributes, LangLen, &gSettings.Language);
     } else {
       FreePool(OldData);
     }

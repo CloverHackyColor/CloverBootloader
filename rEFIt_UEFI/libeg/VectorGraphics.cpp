@@ -409,7 +409,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 
   nsvgDeleteRasterizer(rast);
 
-  *dict = (__typeof__(*dict))AllocateZeroPool(sizeof(TagStruct));
+  *dict = (TagPtr)AllocateZeroPool(sizeof(TagStruct));
   (*dict)->type = kTagTypeNone;
   GlobalConfig.TypeSVG = TRUE;
   GlobalConfig.ThemeDesignHeight = (int)SVGimage->height;

@@ -686,7 +686,7 @@ extern EFI_DEVICE_PATH  *SelfFullDevicePath;
 extern EFI_FILE         *ThemeDir;
 extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
-extern CONST CHAR16           *OEMPath;
+extern CHAR16           *OEMPath;
 extern EFI_FILE         *OemThemeDir;
 
 extern BOOLEAN          MainAnime;

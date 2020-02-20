@@ -30,11 +30,11 @@ set DEVSTAGE=
 set IASL_PREFIX=c:\ASL\
 
 set DEFAULT_CYGWIN_HOME=c:\cygwin
-rem set DEFAULT_PYTHONHOME=
-rem d:\Program File\Python37"
-rem set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
-set "PYTHONHOME=d:\Program File\Python37"
-set "PYTHON_FREEZER_PATH=%PYTHONHOME%\Scripts"
+set DEFAULT_PYTHONHOME=d:\Program File\Python38
+set DEFAULT_PYTHONPATH=d:\Program File\Python38\Lib
+set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
+rem set "PYTHONHOME=d:\Program File\Python37"
+rem set "PYTHON_FREEZER_PATH=%PYTHONHOME%\Scripts"
 set PYTHON3_ENABLE=TRUE
 set DEFAULT_NASM_PREFIX=
 rem C:\Program Files (x86)\NASM"
