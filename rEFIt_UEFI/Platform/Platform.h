@@ -1732,7 +1732,7 @@ extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass arg
 
 
 //-----------------------------------
-void FreePool(const wchar_t * A);
+//void FreePool(const wchar_t * A);
 
 VOID
 FixBiosDsdt (

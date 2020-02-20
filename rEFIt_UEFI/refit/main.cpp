@@ -118,10 +118,12 @@ extern UINTN                 AudioNum;
 extern HDA_OUTPUTS           AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
+#ifdef _cplusplus
 void FreePool(const wchar_t * A)
 {
   FreePool((VOID*)A);
 }
+#endif
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CONST CHAR16 *ImageTitle,
@@ -526,7 +528,7 @@ VOID ReadSIPCfg()
 // text output from boot.efi when booting in graphics mode
 //
 EFI_STATUS EFIAPI
-NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
+NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CONST CHAR16 *String) {
   return EFI_SUCCESS;
 }
 
@@ -1770,8 +1772,8 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CONST CHAR16 *path, CONST CHAR1
 
 VOID SetOEMPath(CONST CHAR16 *ConfName)
   {
+    OEMPath = L"EFI\\CLOVER";
     if (ConfName == NULL) {
-      OEMPath = L"EFI\\CLOVER";
       DBG ("set OEMPath (ConfName == NULL): %s\n", OEMPath);
     } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
     } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
@@ -1783,7 +1785,6 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
     } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard), ConfName)) {
     } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
     } else {
-      OEMPath = L"EFI\\CLOVER";
       DBG ("set OEMPath by default: %s\n", OEMPath);
     }
   }

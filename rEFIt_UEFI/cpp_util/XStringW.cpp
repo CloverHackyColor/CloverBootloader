@@ -51,7 +51,7 @@ XStringW::XStringW(const XStringW &aString)
 {
 DBG("Constructor(const XStringW &aString) : %s\n", aString.data());
 	Init(aString.length());
-	StrnCpy((const CHAR16*)aString.data(), (const CHAR16*)aString.length());
+	XStringW::StrnCpy((const CHAR16*)aString.data(), aString.length());
 }
 
 XStringW::XStringW(const wchar_t *S)
@@ -65,14 +65,14 @@ XStringW::XStringW(const wchar_t *S, UINTN count)
 {
 DBG("Constructor(const wchar_t *S, UINTN count) : %s, %d\n", S, count);
 	Init(count);
-	StrnCpy(S, count);
+	XStringW::StrnCpy(S, count);
 }
 
 XStringW::XStringW(const wchar_t aChar)
 {
 DBG("Constructor(const wchar_t aChar)\n");
 	Init(1);
-	StrnCpy(&aChar, 1);
+	XStringW::StrnCpy(&aChar, 1);
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -132,7 +132,7 @@ void XStringW::StrnCpy(const wchar_t *buf, UINTN len)
 void XStringW::StrCpy(const wchar_t *buf)
 {
 	if ( buf && *buf ) {
-		StrnCpy(buf, StrLen(buf));
+		XStringW::StrnCpy(buf, StrLen(buf));
 	}else{
 		SetLength(0); /* data()[0]=0 done in SetLength */
 	}
@@ -154,13 +154,13 @@ void XStringW::StrnCat(const wchar_t *buf, UINTN len)
 inline void XStringW::StrCat(const wchar_t *buf)
 {
 	if ( buf && *buf ) {
-		StrnCat(buf, StrLen(buf));
+		XStringW::StrnCat(buf, StrLen(buf));
 	}
 }
 
 void XStringW::StrCat(const XStringW &uneXStringWW)
 {
-	StrnCat(uneXStringWW.data(), uneXStringWW.length());
+	XStringW::StrnCat(uneXStringWW.data(), uneXStringWW.length());
 }
 
 void XStringW::Delete(UINTN pos, UINTN count)
@@ -183,7 +183,7 @@ void XStringW::Insert(UINTN pos, const XStringW& Str)
 		CopyMem(data(pos), Str.data(), Str.length()*sizeof(wchar_t));
 		SetLength(length()+Str.length());
 	}else{
-		StrCat(Str);
+		XStringW::StrCat(Str);
 	}
 }
 
@@ -245,14 +245,14 @@ XStringW XStringW::basename() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
 	if ( idx == MAX_UINTN ) return XStringW();
-	return SubString(idx+1, length()-idx-1);
+	return XStringW::SubString(idx+1, length()-idx-1);
 }
 
 XStringW XStringW::dirname() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
 	if ( idx == MAX_UINTN ) return XStringW();
-	return SubString(0, idx);
+	return XStringW::SubString(0, idx);
 }
 
 XStringW XStringW::SubString(UINTN pos, UINTN count) const
