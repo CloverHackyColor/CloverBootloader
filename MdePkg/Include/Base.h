@@ -26,6 +26,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Disable warning when last field of data structure is a zero sized array.
 //
 #pragma warning ( disable : 4200 )
+#pragma warning ( disable : 4804 )
 #endif
 
 /**
@@ -39,7 +40,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   @param  Size  The expected size for the TYPE.
 
 **/
-#define VERIFY_SIZE_OF(TYPE, Size) extern UINT8 _VerifySizeof##TYPE[(sizeof(TYPE) == (Size)) / (sizeof(TYPE) == (Size))]
+#define VERIFY_SIZE_OF(TYPE, Size) extern UINT8 _VerifySizeof##TYPE[(sizeof(TYPE) == (Size))?1:0 / (sizeof(TYPE) == (Size))?1:0]
 
 //
 // Verify that ProcessorBind.h produced UEFI Data Types that are compliant with
