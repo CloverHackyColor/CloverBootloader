@@ -1561,11 +1561,12 @@ VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
         if (devprop_list[i].all_ports) {
           for (pnum = 1; pnum < card->ports; pnum++) {
             if (devprop_list[i].get_value(val, pnum, Sier)) {
-              char newname[AsciiStrLen(devprop_list[i].name)+1];
+              char* newname = (char*)AllocatePool(AsciiStrLen(devprop_list[i].name)+1);
               AsciiStrCpy(newname, devprop_list[i].name);
               newname[1] = (CHAR8)(0x30 + pnum); // convert to ascii
               devprop_add_value(card->device, newname, val->data, val->size);
               free_val(val);
+              FreePool((VOID*)newname);
             }
           }
 //          devprop_list[i].name[1] = 0x30; // write back our "@0," for a next possible card
@@ -1581,12 +1582,13 @@ VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
         if (devprop_list[i].all_ports) {
           for (pnum = 1; pnum < card->ports; pnum++) {
             if (devprop_list[i].default_val.type != kNul) {
-              char newname[AsciiStrLen(devprop_list[i].name)+1];
+              char* newname = (char*)AllocatePool(AsciiStrLen(devprop_list[i].name)+1);
               newname[1] = (CHAR8)(0x30 + pnum); // convert to ascii
               devprop_add_value(card->device, newname,
                                 devprop_list[i].default_val.type == kCst ?
                                 (UINT8 *)&(devprop_list[i].default_val.data) : devprop_list[i].default_val.data,
                                 devprop_list[i].default_val.size);
+              FreePool((VOID*)newname);
             }
           }
 //          devprop_list[i].name[1] = 0x30; // write back our "@0," for a next possible card

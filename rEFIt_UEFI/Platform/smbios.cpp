@@ -180,16 +180,16 @@ VOID* GetSmbiosTablesFromHob (VOID)
   EFI_PHYSICAL_ADDRESS       *Table;
   EFI_PEI_HOB_POINTERS       GuidHob;
 
-  GuidHob.Raw = (__typeof(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbiosTableGuid);
+  GuidHob.Raw = (__typeof__(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbiosTableGuid);
   if (GuidHob.Raw != NULL) {
-    Table = (__typeof(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
+    Table = (__typeof__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
     if (Table != NULL) {
       return (VOID *)(UINTN)*Table;
     }
   }
-  GuidHob.Raw = (__typeof(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbios3TableGuid);
+  GuidHob.Raw = (__typeof__(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbios3TableGuid);
   if (GuidHob.Raw != NULL) {
-    Table = (__typeof(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
+    Table = (__typeof__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
     if (Table != NULL) {
       return (VOID *)(UINTN)*Table;
     }
@@ -2107,14 +2107,14 @@ VOID FinalizeSmbios() //continue
   BOOLEAN FoundTable3 = FALSE;
 
   // Get Hob List
-  HobStart.Raw = (__typeof(HobStart.Raw))GetHobList();
+  HobStart.Raw = (__typeof__(HobStart.Raw))GetHobList();
 
   if (HobStart.Raw != NULL) {
     // find SMBIOS in hob
     for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
-      GuidHob.Raw = (__typeof(HobStart.Raw))GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
+      GuidHob.Raw = (__typeof__(HobStart.Raw))GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
       if (GuidHob.Raw != NULL) {
-        Table = (__typeof(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
+        Table = (__typeof__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
         //TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
         if (Table != NULL) {
           if (Index != 0) {

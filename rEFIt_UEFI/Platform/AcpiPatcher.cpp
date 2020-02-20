@@ -1186,7 +1186,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
 
   //  EFI_STATUS      Status;
 
-  RsdPtr = (__typeof(RsdPtr))FindAcpiRsdPtr();
+  RsdPtr = (__typeof__(RsdPtr))FindAcpiRsdPtr();
   if (RsdPtr == NULL) {
     /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **)&RsdPtr);
     if (RsdPtr == NULL) {

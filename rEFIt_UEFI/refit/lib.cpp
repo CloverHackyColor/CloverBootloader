@@ -342,7 +342,7 @@ VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialEl
   *ElementCount = InitialElementCount;
   if (*ElementCount > 0) {
     AllocateCount = (*ElementCount + 7) & ~7;   // next multiple of 8
-    *ListPtr = (__typeof__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
+    **ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
   } else {
     *ListPtr = NULL;
   }
@@ -355,9 +355,9 @@ VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID 
   if ((*ElementCount & 7) == 0) {
     AllocateCount = *ElementCount + 8;
     if (*ElementCount == 0)
-      *ListPtr = (__typeof__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
+      **ListPtr = AllocatePool(sizeof(VOID *) * AllocateCount);
     else
-      *ListPtr = (__typeof__(*ListPtr))EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
+      **ListPtr = EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
   }
   (*ListPtr)[*ElementCount] = NewElement;
   (*ElementCount)++;
@@ -1369,7 +1369,7 @@ BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
   EFI_STATUS  Status;
   EFI_FILE    *TestFile = NULL;
   
-  Status = Root->Open(Root, &TestFile, RelativePath, EFI_FILE_MODE_READ, 0);
+  Status = Root->Open((EFI_FILE_PROTOCOL*)Root, &TestFile, (CHAR16*)RelativePath, EFI_FILE_MODE_READ, 0);
   if (Status == EFI_SUCCESS) {
     if (TestFile && TestFile->Close) {
       TestFile->Close(TestFile);
@@ -1387,7 +1387,7 @@ BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
   
   //DBG("DeleteFile: %s\n", RelativePath);
   // open file for read/write to see if it exists, need write for delete
-  Status = Root->Open(Root, &File, RelativePath, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  Status = Root->Open(Root, &File, (CHAR16*)RelativePath, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
   //DBG(" Open: %r\n", Status);
   if (Status == EFI_SUCCESS) {
     // exists - check if it is a file
@@ -1485,7 +1485,7 @@ VOID DirIterOpen(IN EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL, O
     DirIter->DirHandle = BaseDir;
     DirIter->CloseDirHandle = FALSE;
   } else {
-    DirIter->LastStatus = BaseDir->Open(BaseDir, &(DirIter->DirHandle), RelativePath, EFI_FILE_MODE_READ, 0);
+    DirIter->LastStatus = BaseDir->Open(BaseDir, &(DirIter->DirHandle), (CHAR16*)RelativePath, EFI_FILE_MODE_READ, 0);
     DirIter->CloseDirHandle = EFI_ERROR(DirIter->LastStatus) ? FALSE : TRUE;
   }
   DirIter->LastFileInfo = NULL;
@@ -1547,7 +1547,7 @@ MetaiMatch (
 		//return FALSE;
 		return TRUE;
 	}
-	return mUnicodeCollation->MetaiMatch (mUnicodeCollation, String, Pattern);
+	return mUnicodeCollation->MetaiMatch (mUnicodeCollation, (CHAR16*)String, (CHAR16*)Pattern);
 }
 
 

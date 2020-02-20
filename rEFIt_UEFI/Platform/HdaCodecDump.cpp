@@ -58,7 +58,7 @@ CONST CHAR8  hdcID[4]       = HDC_ID;
 extern UINTN					AudioNum;
 extern HDA_OUTPUTS				AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL	*AudioIo;
-extern CONST CHAR16           		*OEMPath;
+extern CHAR16           		*OEMPath;
 
 VOID
 EFIAPI
