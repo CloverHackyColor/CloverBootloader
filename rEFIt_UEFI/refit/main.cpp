@@ -44,6 +44,7 @@
 
 #include "Version.h"
 
+
 #ifndef DEBUG_ALL
 #define DEBUG_MAIN 1
 #else
@@ -68,7 +69,8 @@
 
 // variables
 #ifdef FIRMWARE_REVISION
-CONST CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
+CONST CHAR16 gFirmwareRevisionM[] = FIRMWARE_REVISION;
+CONST CHAR16 *gFirmwareRevision = &gFirmwareRevisionM[0];
 #else
 CONST CHAR16 *gFirmwareRevision = NULL;
 #endif
@@ -115,6 +117,11 @@ extern CHAR16                *DsdtsList[];
 extern UINTN                 AudioNum;
 extern HDA_OUTPUTS           AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
+
+void FreePool(const wchar_t * A)
+{
+  FreePool((VOID*)A);
+}
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CONST CHAR16 *ImageTitle,
@@ -480,7 +487,11 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
+#ifdef _MSC_VER
+  CHAR16 *csrLog = (decltype(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
+#else
   CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
+#endif  
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");
@@ -515,7 +526,7 @@ VOID ReadSIPCfg()
 // text output from boot.efi when booting in graphics mode
 //
 EFI_STATUS EFIAPI
-NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CONST CHAR16 *String) {
+NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
   return EFI_SUCCESS;
 }
 
@@ -1743,7 +1754,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CONST CHAR16 *path, CONST CHAR1
 	  UnicodeSPrint(ConfigPath, sizeof(ConfigPath), L"%s\\%s.plist", path, ConfName);
 	  BOOLEAN res2 = FileExists(Root, ConfigPath);
 	  if ( res2 ) {
-	  	OEMPath = path;
+	  	OEMPath = (CHAR16*)path;
 	  	DBG ("CheckOEMPathExists: set OEMPath: %s\n", OEMPath);
 	  	return 1;
 	  }else{

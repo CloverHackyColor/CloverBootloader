@@ -66,7 +66,7 @@ BOOLEAN          gBootChanged = FALSE;
 BOOLEAN          gThemeOptionsChanged = FALSE;
 
 EFI_FILE         *OEMDir;
-CONST CHAR16           *OEMPath = L"EFI\\CLOVER";
+CHAR16           *OEMPath = L"EFI\\CLOVER";
 EFI_FILE         *OemThemeDir = NULL;
 
 
@@ -964,7 +964,6 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
   
   if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
-      EFI_STATUS          Status;
       EFI_FILE_HANDLE     FileHandle;
       Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"\\.VolumeLabel.txt", EFI_FILE_MODE_READ, 0);
       if (!EFI_ERROR(Status)) {

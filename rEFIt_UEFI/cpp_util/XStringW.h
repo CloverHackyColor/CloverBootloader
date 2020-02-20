@@ -115,11 +115,11 @@ public:
 	void Replace(wchar_t c1, wchar_t c2);
 	XStringW SubStringReplace(wchar_t c1, wchar_t c2);
 
-	INTN Compare(const wchar_t* S) const { return StrCmp(data(), S) ; }
+	INTN Compare(const wchar_t* S) const { return StrCmp((const CHAR16*)data(), (const CHAR16*)S) ; }
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
-	bool BeginingEqual(const wchar_t* S) const { return StrnCmp(data(), S, StrLen(S)); }
-	bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return StrCmp(data(Pos), S); }
+	bool BeginingEqual(const wchar_t* S) const { return StrnCmp((const CHAR16*)data(), (const CHAR16*)S, StrLen((const CHAR16*)S)); }
+	bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return StrCmp((const CHAR16*)data(Pos), (const CHAR16*)S); }
 
 	XStringW basename() const;
 	XStringW dirname() const;
