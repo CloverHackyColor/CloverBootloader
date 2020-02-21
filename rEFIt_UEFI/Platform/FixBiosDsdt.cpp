@@ -1046,8 +1046,8 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
       }
 
       if (add_name) {
-        acpi_cpu_name[acpi_cpu_count] = (__typeof__(acpi_cpu_name[acpi_cpu_count]))AllocateZeroPool(5);
-        CopyMem(acpi_cpu_name[acpi_cpu_count], dsdt+offset, 4);
+		  acpi_cpu_name[acpi_cpu_count] = (__typeof_am__(acpi_cpu_name[acpi_cpu_count]))AllocateZeroPool(5);
+		  CopyMem(acpi_cpu_name[acpi_cpu_count], dsdt+offset, 4);
         acpi_cpu_processor_id[acpi_cpu_count] = dsdt[offset + 4];
         i = offset + 5;
 
@@ -1068,7 +1068,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 
   if (!acpi_cpu_count) {
     for (i=0; i < acpi_cpu_max; i++) {
-      acpi_cpu_name[i] = (__typeof__(acpi_cpu_name[i]))AllocateZeroPool(5);
+      acpi_cpu_name[i] = (__typeof_am__(acpi_cpu_name[i]))AllocateZeroPool(5);
       AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1x", i);
       acpi_cpu_processor_id[i] = (UINT8)(i & 0x7F);
     }
@@ -2396,7 +2396,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
         continue;
       }
       LPCBSIZE = get_size(dsdt, LPCBADR);
-      device_name[3] = (__typeof__(device_name[3]))AllocateZeroPool(5);
+      device_name[3] = (__typeof_am__(device_name[3]))AllocateZeroPool(5);
       CopyMem(device_name[3], dsdt + j, 4);
       MsgLog("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
           device_name[3]);
@@ -2817,7 +2817,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
             if (!devadr1) {
               continue;
             }
-            device_name[11] = (__typeof__(device_name[11]))AllocateZeroPool(5);
+            device_name[11] = (__typeof_am__(device_name[11]))AllocateZeroPool(5);
             CopyMem(device_name[11], dsdt+k, 4);
             DBG("found HDMI device [0x%08x:%x] at %x and Name is %a\n",
                 HDMIADR1, HDMIADR2, devadr1, device_name[11]);
@@ -2992,7 +2992,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
               continue;
             }
 
-            device_name[1] = (__typeof__(device_name[1]))AllocateZeroPool(5);
+            device_name[1] = (__typeof_am__(device_name[1]))AllocateZeroPool(5);
             CopyMem(device_name[1], dsdt+k, 4);
             DBG("found NetWork device [0x%08x:%x] at %x and Name is %a\n",
                 NetworkADR1[card], NetworkADR2[card], NetworkADR, device_name[1]);
@@ -3192,7 +3192,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
             if (!ArptADR) {
               continue;
             }
-            device_name[9] = (__typeof__(device_name[9]))AllocateZeroPool(5);
+            device_name[9] = (__typeof_am__(device_name[9]))AllocateZeroPool(5);
             CopyMem(device_name[9], dsdt+k, 4);
             DBG("found Airport device [%08x:%x] at %x And Name is %a\n",
                 ArptADR1, ArptADR2, ArptADR, device_name[9]);
@@ -3637,7 +3637,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
               continue;
             }
 
-            device_name[2] = (__typeof__(device_name[2]))AllocateZeroPool(5);
+            device_name[2] = (__typeof_am__(device_name[2]))AllocateZeroPool(5);
             CopyMem(device_name[2], dsdt+k, 4);
             DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n",
                 FirewireADR2, k, device_name[2]);
@@ -3780,7 +3780,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
       }
 
  //     BridgeSize = get_size(dsdt, HDAADR);
-      device_name[4] = (__typeof__(device_name[4]))AllocateZeroPool(5);
+      device_name[4] = (__typeof_am__(device_name[4]))AllocateZeroPool(5);
       CopyMem(device_name[4], dsdt+i, 4);
       DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a\n",
           HDAADR1, device_name[4]);
@@ -4058,7 +4058,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       for (j = 0x20; len >= 4 && j < len - 4; j++) {
         if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
           XhciName = FALSE;
-          UsbName[i] = (__typeof__(UsbName[i]))AllocateZeroPool(5);
+          UsbName[i] = (__typeof_am__(UsbName[i]))AllocateZeroPool(5);
   //        DBG("found USB at 0x%x\n", j);
           adr1 = devFind(dsdt, j + 2);
           if (!adr1) {
@@ -4075,7 +4075,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                   continue;
                 }
 
-                device_name[10] = (__typeof__(device_name[10]))AllocateZeroPool(5);
+                device_name[10] = (__typeof_am__(device_name[10]))AllocateZeroPool(5);
                 CopyMem(device_name[10], dsdt+k, 4);
                 DBG("found USB device [%08x:%x] at %x and Name was %a ->",
                     USBADR[i], USBADR2[i], k, device_name[10]);
@@ -4195,7 +4195,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
         }
           //NFORCE_USB_START
         else if (CmpAdr(dsdt, j, USBADR3[i])) {
-            UsbName[i] = (__typeof__(UsbName[i]))AllocateZeroPool(5);
+            UsbName[i] = (__typeof_am__(UsbName[i]))AllocateZeroPool(5);
             CopyMem(UsbName[i], dsdt+j, 4);
 
             adr1 = devFind(dsdt, j);

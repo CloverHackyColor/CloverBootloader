@@ -97,9 +97,11 @@ extern "C" {
 #define PCAT_RTC_ADDRESS_REGISTER 0x70
 #define PCAT_RTC_DATA_REGISTER    0x71
 
+#include "../cpp_util/remove_ref.h"
 #ifdef _MSC_VER
 #define __typeof__(x) decltype(x)
 #endif
+#define __typeof_am__(x) remove_ref<decltype(x)>::type
 
 
 /* XML Tags */
