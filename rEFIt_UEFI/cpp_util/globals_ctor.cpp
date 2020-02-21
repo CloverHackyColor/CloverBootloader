@@ -15,7 +15,7 @@
 extern "C" {
   #include <stddef.h>
 }
-
+#include "globals_ctor.h"
 #include <Platform/Platform.h>
 
 
@@ -92,5 +92,11 @@ void construct_globals_objects() {
 }
 
 #elif defined(_MSC_VER)
+
+void construct_globals_objects()
+{
+    DBG("Work in progress\n");
+}
+
 
 #endif

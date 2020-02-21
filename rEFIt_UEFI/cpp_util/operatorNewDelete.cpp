@@ -6,8 +6,11 @@
 #define DBG(...)
 #endif
 
-
-void* operator new  ( unsigned long count )
+#if defined(_MSC_VER)
+void* operator new  (size_t count)
+#else
+void* operator new  (unsigned long count)
+#endif
 {
 	void* ptr = AllocatePool(count);
 	if ( !ptr ) {

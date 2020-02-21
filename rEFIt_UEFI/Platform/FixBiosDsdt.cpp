@@ -483,7 +483,6 @@ UINT8 darwin[] =
 
 };
 
-UINT8 ClassFix[] =  { 0x00, 0x00, 0x03, 0x00 };
 
 BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
 {

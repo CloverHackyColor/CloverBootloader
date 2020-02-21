@@ -81,7 +81,7 @@
 CONST CHAR16  *CFLFBPath  = L"/System/Library/Extensions/AppleIntelCFLGraphicsFramebuffer.kext";
 
 extern CHAR8*    gDeviceProperties;
-extern CHAR8     ClassFix[];
+CONST UINT8 ClassFix[] =  { 0x00, 0x00, 0x03, 0x00 };
 
 
 UINT8 common_vals[3][4] = {

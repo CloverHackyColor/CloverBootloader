@@ -40,8 +40,6 @@
 
 //#include "../Platform/Platform.h"
 #include "../cpp_util/XStringW.h"
-#include "../cpp_util/globals_ctor.h"
-#include "../cpp_util/globals_dtor.h"
 
 #include "Version.h"
 //#include "colors.h"

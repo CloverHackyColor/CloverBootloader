@@ -16,9 +16,9 @@
 extern "C" {
   #include <Library/MemoryAllocationLib.h>
   #include <Library/BaseMemoryLib.h>
-	#include "Platform/Platform.h"
-  #include "refit/IO.h"
 }
+#include "Platform/Platform.h"
+#include "refit/IO.h"
 
 UINTN XStringWGrowByDefault = 1024;
 //const XStringW NullXStringW;
@@ -51,13 +51,13 @@ XStringW::XStringW(const XStringW &aString)
 {
 DBG("Constructor(const XStringW &aString) : %s\n", aString.data());
 	Init(aString.length());
-	XStringW::StrnCpy((const CHAR16*)aString.data(), aString.length());
+	StrnCpy(aString.data(), aString.length());
 }
 
 XStringW::XStringW(const wchar_t *S)
 {
 DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
-	Init(StrLen((const CHAR16*)S));
+	Init(StrLen(S));
 	if ( S ) StrCpy(S);
 }
 
@@ -65,7 +65,7 @@ XStringW::XStringW(const wchar_t *S, UINTN count)
 {
 DBG("Constructor(const wchar_t *S, UINTN count) : %s, %d\n", S, count);
 	Init(count);
-	XStringW::StrnCpy(S, count);
+	StrnCpy(S, count);
 }
 
 XStringW::XStringW(const wchar_t aChar)

@@ -12,6 +12,9 @@
   typedef void (destructor_func_t)();
 #elif defined(__GNUC__)
   typedef void (destructor_func_t)(void*);
+#elif defined(_MSC_VER)
+typedef void (__cdecl destructor_func_t)(void);
+extern "C" int _fltused = 0; // it should be a single underscore since the double one is the mangled name
 #else
 # error compiler not supported
 #endif
@@ -46,8 +49,14 @@ extern "C" int __cxa_atexit(destructor_func_ptr_t destructor_func, void *objptr,
 {
 DBG("atexit(%p, %p, %p, %d)\n", destructor_func, objptr, dso, sizeof(atexit_func_entry_t));
 
-#endif
+#elif defined(_MSC_VER)
 
+extern "C" int atexit(void(__cdecl *)(void));
+extern "C" int atexit(void(__cdecl *destructor_func)(void))
+{
+	DBG("atexit(%p, %p, %p, %d)\n", destructor_func, objptr, dso, sizeof(atexit_func_entry_t));
+
+#endif
 	if ( !atexit_func_entry_array )
 	{
 DBG("atexit : allocate\n");
