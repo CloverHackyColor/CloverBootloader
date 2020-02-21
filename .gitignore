@@ -6,8 +6,7 @@
 *.bak
 *~
 .cache
-Conf/.cache
-Conf/target.txt
+/Conf
 toolchain/
 
 # /CloverPackage/
@@ -122,4 +121,6 @@ BaseTools/Source/Python/build/BuildReport.pyc
 CloverPackage/revision
 CloverPackage/version
 tools
-/Conf/
+
+#VC project
+/VC
