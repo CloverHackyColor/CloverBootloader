@@ -30,9 +30,9 @@ set DEVSTAGE=
 set IASL_PREFIX=c:\ASL\
 
 set DEFAULT_CYGWIN_HOME=c:\cygwin
-set DEFAULT_PYTHONHOME=d:\Program File\Python38
-set DEFAULT_PYTHONPATH=d:\Program File\Python38\Lib
-set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
+rem set DEFAULT_PYTHONHOME=d:\Program File\Python38
+rem set DEFAULT_PYTHONPATH=d:\Program File\Python38\Lib
+rem set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
 rem set "PYTHONHOME=d:\Program File\Python37"
 rem set "PYTHON_FREEZER_PATH=%PYTHONHOME%\Scripts"
 set PYTHON3_ENABLE=TRUE
@@ -113,18 +113,18 @@ rem # initialize
   if not defined CYGWIN_HOME (
     set CYGWIN_HOME=%DEFAULT_CYGWIN_HOME%
   )
-  if not defined PYTHONHOME (
-    set PYTHONHOME=%DEFAULT_PYTHONHOME%
-  )
-  if not defined PYTHON_HOME (
-    set PYTHON_HOME=%PYTHONHOME%
-  )
-  if not defined PYTHON_PATH (
-    set PYTHON_PATH=%PYTHON_HOME%
-  )
-  if not defined PYTHON_FREEZER_PATH (
-    set PYTHON_FREEZER_PATH=%DEFAULT_PYTHON_FREEZER_PATH%
-  )
+ rem  if not defined PYTHONHOME (
+rem     set PYTHONHOME=%DEFAULT_PYTHONHOME%
+rem   )
+rem   if not defined PYTHON_HOME (
+rem     set PYTHON_HOME=%PYTHONHOME%
+rem   )
+rem   if not defined PYTHON_PATH (
+rem     set PYTHON_PATH=%PYTHON_HOME%
+rem   )
+rem   if not defined PYTHON_FREEZER_PATH (
+rem     set PYTHON_FREEZER_PATH=%DEFAULT_PYTHON_FREEZER_PATH%
+rem   )
   if not defined NASM_PREFIX (
     set NASM_PREFIX=%DEFAULT_NASM_PREFIX%
   )

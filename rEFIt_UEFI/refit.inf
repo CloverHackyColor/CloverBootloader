@@ -157,7 +157,7 @@
   Platform/StartupSound.cpp
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
-  Version.h
+  ../Version.h
   cpp_util/XStringW.h
   cpp_util/XStringW.cpp
   cpp_util/memory.cpp
