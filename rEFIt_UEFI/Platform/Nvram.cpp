@@ -818,10 +818,10 @@ LoadNvramPlist (
   )
 {
     EFI_STATUS Status;
-    CHAR8      *NvramPtr;
-    UINTN      Size;
+    CHAR8      *NvramPtr = NULL;
+    UINTN      Size = 0;
     
-    
+  DBG("  begin load gNvramDict=0x%x\n", gNvramDict);
     //
     // skip loading if already loaded
     //
@@ -834,7 +834,7 @@ LoadNvramPlist (
     //
     Status = egLoadFile (RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
     if(EFI_ERROR(Status)) {
-//        DBG (" not present\n");
+        DBG (" not present\n");
         return Status;
     }
 
@@ -848,7 +848,7 @@ LoadNvramPlist (
 //        DBG (" parsing error\n");
 //    }
     
-    FreePool (NvramPtr);
+    FreePool ((VOID*)NvramPtr);
     // we will leave nvram.plist loaded and parsed for later processing
     //FreeTag(gNvramDict);
     
@@ -861,36 +861,35 @@ EFI_STATUS
 LoadLatestNvramPlist ()
 {
   EFI_STATUS      Status;
-  UINTN           Index;
+//  UINTN           Index;
   REFIT_VOLUME    *Volume;
 //  EFI_GUID        *Guid;
-  EFI_FILE_HANDLE FileHandle;
-  EFI_FILE_INFO   *FileInfo;
+  EFI_FILE_HANDLE FileHandle = NULL;
+  EFI_FILE_INFO   *FileInfo = NULL;
   UINT64          LastModifTimeMs;
   UINT64          ModifTimeMs;
-  REFIT_VOLUME    *VolumeWithLatestNvramPlist;
+  REFIT_VOLUME    *VolumeWithLatestNvramPlist = NULL;
   
 //there are debug messages not needed for users
-//  DBG ("Searching volumes for latest nvram.plist ...");
+  DBG ("Searching volumes for latest nvram.plist ...");
   
   //
   // skip loading if already loaded
   //
   if (gNvramDict != NULL) {
- //   DBG (" already loaded\n");
+    DBG (" already loaded\n");
     return EFI_SUCCESS;
   }
-//  DBG ("\n");
+  DBG ("\n");
   
   //
   // find latest nvram.plist
   //
   
   LastModifTimeMs = 0;
-  VolumeWithLatestNvramPlist = NULL;
-  
+
   // search all volumes
-  for (Index = 0; Index < VolumesCount; ++Index) {
+  for (UINTN Index = 0; Index < VolumesCount; ++Index) {
     Volume = Volumes[Index];
     
     if (!Volume->RootDir) {
@@ -904,14 +903,14 @@ LoadLatestNvramPlist ()
       // not a GUID partition
       DBG (" - not GPT");
     } */
-    
+//    DBG("Volume[%d]\n", Index);
     // check if nvram.plist exists
     Status = Volume->RootDir->Open (Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
 //      DBG (" - no nvram.plist - skipping!\n");
       continue;
     }
-    
+//    DBG(" Status=%r\n", Status);
     if (GlobalConfig.FastBoot) {
       VolumeWithLatestNvramPlist = Volume;
       break;
@@ -919,6 +918,7 @@ LoadLatestNvramPlist ()
     
     // get nvram.plist modification date
     FileInfo = EfiLibFileInfo(FileHandle);
+//    DBG("got FileInfo=0x%x\n", FileInfo);
     if (FileInfo == NULL) {
 //      DBG (" - no nvram.plist file info - skipping!\n");
       FileHandle->Close(FileHandle);
@@ -926,8 +926,8 @@ LoadLatestNvramPlist ()
     }
     
 //    DBG (" Modified = ");
-    ModifTimeMs = GetEfiTimeInMs (&FileInfo->ModificationTime);
-/*    DBG ("%d-%d-%d %d:%d:%d (%ld ms)",
+    ModifTimeMs = GetEfiTimeInMs (&(FileInfo->ModificationTime));
+/*    DBG ("%d-%d-%d %d:%d:%d (%ld ms)\n",
         FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
         FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
         ModifTimeMs); */
@@ -956,7 +956,7 @@ LoadLatestNvramPlist ()
   } else {
  //   DBG (" nvram.plist not found!\n");
   }
-  
+  DBG("loaded Status=%r\n", Status);
   return Status;
 }
 
