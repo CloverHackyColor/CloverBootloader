@@ -51,7 +51,6 @@ DBG("atexit(%p, %p, %p, %d)\n", destructor_func, objptr, dso, sizeof(atexit_func
 
 #elif defined(_MSC_VER)
 
-extern "C" int atexit(void(__cdecl *)(void));
 extern "C" int atexit(void(__cdecl *destructor_func)(void))
 {
 	DBG("atexit(%p, %p, %p, %d)\n", destructor_func, objptr, dso, sizeof(atexit_func_entry_t));

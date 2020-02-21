@@ -169,6 +169,7 @@
   cpp_util/globals_dtor.h
   cpp_util/operatorNewDelete.cpp
   cpp_util/operatorNewDelete.h
+  cpp_util/remove_ref.h
   
 [Sources.IA32]
   libeg/ftol.asm | MSFT

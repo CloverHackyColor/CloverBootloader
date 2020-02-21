@@ -436,7 +436,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
   // end of folder checking
 
   // Delete existing file if it exists
-  Status = BaseDir->Open(BaseDir, &FileHandle, (CHAR16*)FileName,
+  Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
   if (!EFI_ERROR(Status)) {
     Status = FileHandle->Delete(FileHandle);
@@ -449,7 +449,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
 
   if (CreateNew) {
     // Write new file
-    Status = BaseDir->Open(BaseDir, &FileHandle, (CHAR16*)FileName,
+    Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
     if (EFI_ERROR(Status)) {
 //      DBG("no write %r\n", Status);

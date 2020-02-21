@@ -408,7 +408,7 @@ ParseLoadOptions (
   AsciiConf = (__typeof__(AsciiConf))AllocateCopyPool (TailSize + 1, Start);
   if (AsciiConf != NULL) {
     *(AsciiConf + TailSize) = '\0';
-    *Conf = (CHAR16*)AllocateZeroPool ((TailSize + 1) * sizeof (CHAR16));
+    *Conf = (__typeof_am__(*Conf))AllocateZeroPool ((TailSize + 1) * sizeof (CHAR16));
     AsciiStrToUnicodeStrS (AsciiConf, *Conf, TailSize);
     FreePool (AsciiConf);
   }
@@ -1062,7 +1062,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           }
 
           if (AsciiStrSize(Prop2->string) > 1) {
-            Patches->ForceKexts[Patches->NrForceKexts] = (CHAR16*)AllocateZeroPool (AsciiStrSize(Prop2->string) * sizeof(CHAR16));
+            Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))AllocateZeroPool (AsciiStrSize(Prop2->string) * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
             DBG (" - [%d]: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
@@ -1588,7 +1588,7 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
       /*     comp = (CHAR8 *) AllocatePool(newLen);
        AsciiStrnCpy(comp, str + startLocation, newLen);
        comp[newLen] = '\0'; */
-      mo->array[i] = (CHAR8*)AllocateCopyPool(newLen, str + startLocation);
+      mo->array[i] = (__typeof_am__(mo->array[i]))AllocateCopyPool(newLen, str + startLocation);
       mo->array[i][newLen - 1] = '\0';
     }
 
@@ -1596,7 +1596,7 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
   }
   else {
     //    DBG("str contains only one component and it is our string %s!\n", str);
-    mo->array[0] = (CHAR8*)AllocateCopyPool(AsciiStrLen(str)+1, str);
+    mo->array[0] = (__typeof_am__(mo->array[0]))AllocateCopyPool(AsciiStrLen(str)+1, str);
   }
   return mo;
 }
@@ -5051,7 +5051,7 @@ GetUserSettings(
                   for (j = 0; j < PropCount; j++) {
                     Prop3 = NULL;
                     DevProps = *Child;
-                    *Child = (DEV_PROPERTY *)AllocateZeroPool(sizeof(DEV_PROPERTY));
+                    *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(__typeof_am__(*Child)));
                     (*Child)->Next = DevProps;
 
                     if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>
@@ -5628,7 +5628,7 @@ GetUserSettings(
               } else {
                 AsciiSPrint(DSDTPatchesLabel, 255, " (NoLabel)");
               }
-              gSettings.PatchDsdtLabel[i] = (CHAR8*)AllocateZeroPool(256);
+              gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
               AsciiSPrint(gSettings.PatchDsdtLabel[i], 255, "%a", DSDTPatchesLabel);
               DBG(" (%a)", gSettings.PatchDsdtLabel[i]);
 
@@ -6730,8 +6730,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           }
-          FreePool((VOID*)fileBuffer);
-          FreePool((VOID*)targetString);
+          FreePool(fileBuffer);
+          FreePool(targetString);
         }
       }
     }

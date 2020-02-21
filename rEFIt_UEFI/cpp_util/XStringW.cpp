@@ -72,7 +72,7 @@ XStringW::XStringW(const wchar_t aChar)
 {
 DBG("Constructor(const wchar_t aChar)\n");
 	Init(1);
-	XStringW::StrnCpy(&aChar, 1);
+	StrnCpy(&aChar, 1);
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -132,7 +132,7 @@ void XStringW::StrnCpy(const wchar_t *buf, UINTN len)
 void XStringW::StrCpy(const wchar_t *buf)
 {
 	if ( buf && *buf ) {
-		XStringW::StrnCpy(buf, StrLen(buf));
+		StrnCpy(buf, StrLen(buf));
 	}else{
 		SetLength(0); /* data()[0]=0 done in SetLength */
 	}
@@ -154,13 +154,13 @@ void XStringW::StrnCat(const wchar_t *buf, UINTN len)
 inline void XStringW::StrCat(const wchar_t *buf)
 {
 	if ( buf && *buf ) {
-		XStringW::StrnCat(buf, StrLen(buf));
+		StrnCat(buf, StrLen(buf));
 	}
 }
 
 void XStringW::StrCat(const XStringW &uneXStringWW)
 {
-	XStringW::StrnCat(uneXStringWW.data(), uneXStringWW.length());
+	StrnCat(uneXStringWW.data(), uneXStringWW.length());
 }
 
 void XStringW::Delete(UINTN pos, UINTN count)
@@ -183,7 +183,7 @@ void XStringW::Insert(UINTN pos, const XStringW& Str)
 		CopyMem(data(pos), Str.data(), Str.length()*sizeof(wchar_t));
 		SetLength(length()+Str.length());
 	}else{
-		XStringW::StrCat(Str);
+		StrCat(Str);
 	}
 }
 
@@ -245,14 +245,14 @@ XStringW XStringW::basename() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
 	if ( idx == MAX_UINTN ) return XStringW();
-	return XStringW::SubString(idx+1, length()-idx-1);
+	return SubString(idx+1, length()-idx-1);
 }
 
 XStringW XStringW::dirname() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
 	if ( idx == MAX_UINTN ) return XStringW();
-	return XStringW::SubString(0, idx);
+	return SubString(0, idx);
 }
 
 XStringW XStringW::SubString(UINTN pos, UINTN count) const

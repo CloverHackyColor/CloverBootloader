@@ -69,8 +69,10 @@
 
 // variables
 #ifdef FIRMWARE_REVISION
-CONST CHAR16 gFirmwareRevisionM[] = FIRMWARE_REVISION;
-CONST CHAR16 *gFirmwareRevision = &gFirmwareRevisionM[0];
+//CONST CHAR16 gFirmwareRevisionM[] = FIRMWARE_REVISION;
+//CONST CHAR16 *gFirmwareRevision = &gFirmwareRevisionM[0];
+CONST CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
+
 #else
 CONST CHAR16 *gFirmwareRevision = NULL;
 #endif
@@ -118,12 +120,12 @@ extern UINTN                 AudioNum;
 extern HDA_OUTPUTS           AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
-#ifdef _cplusplus
-void FreePool(const wchar_t * A)
-{
-  FreePool((VOID*)A);
-}
-#endif
+//#ifdef _cplusplus
+//void FreePool(const wchar_t * A)
+//{
+//  FreePool((VOID*)A);
+//}
+//#endif
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CONST CHAR16 *ImageTitle,
@@ -489,11 +491,7 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
-#ifdef _MSC_VER
-  CHAR16 *csrLog = (decltype(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
-#else
   CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
-#endif  
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");

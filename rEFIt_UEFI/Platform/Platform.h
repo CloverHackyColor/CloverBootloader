@@ -1736,7 +1736,6 @@ extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass arg
 
 
 //-----------------------------------
-//void FreePool(const wchar_t * A);
 
 VOID
 FixBiosDsdt (
@@ -2297,8 +2296,6 @@ iStrLen(
   CONST CHAR8* String,
   UINTN  MaxLen
   );
-
-//VOID CheckEmptyFB(); //not needed to be global
 
 EFI_STATUS
 PrepatchSmbios (VOID);

@@ -2829,7 +2829,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
           gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-          gST->ConOut->OutputString (gST->ConOut, (CHAR16*)Screen->InfoLines[i]);
+          gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
         }
       }
 
@@ -4352,7 +4352,7 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-  *Entry = (REFIT_MENU_ENTRY*) AllocateZeroPool(sizeof(LOADER_ENTRY));
+  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (Title) {
     (*Entry)->Title = PoolPrint(L"%a", Title);
   } else {
@@ -4363,7 +4363,7 @@ VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION At
   (*Entry)->Tag = TAG_OPTIONS;
   (*Entry)->AtClick = AtClick;
   // create the submenu
-  *SubScreen = (REFIT_MENU_SCREEN*)AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  *SubScreen = (__typeof_am__(*SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   (*SubScreen)->Title = (*Entry)->Title;
   (*SubScreen)->TitleImage = (*Entry)->Image;
   (*SubScreen)->ID = ID;

@@ -848,7 +848,7 @@ LoadNvramPlist (
 //        DBG (" parsing error\n");
 //    }
     
-    FreePool ((VOID*)NvramPtr);
+    FreePool (NvramPtr);
     // we will leave nvram.plist loaded and parsed for later processing
     //FreeTag(gNvramDict);
     
