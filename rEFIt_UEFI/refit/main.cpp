@@ -1748,7 +1748,7 @@ extern UINT8                           *gLanMmio[4];     // their MMIO regions
 extern UINT8                           gLanMac[4][6];    // their MAC addresses
 extern UINTN                           nLanPaths;        // number of LAN pathes
 
-BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CONST CHAR16 *path, CONST CHAR16 *ConfName)
+BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CONST CHAR16 *ConfName)
 {
 	BOOLEAN res = FileExists(Root, path);
 	if ( res ) {
@@ -1756,7 +1756,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CONST CHAR16 *path, CONST CHAR1
 	  UnicodeSPrint(ConfigPath, sizeof(ConfigPath), L"%s\\%s.plist", path, ConfName);
 	  BOOLEAN res2 = FileExists(Root, ConfigPath);
 	  if ( res2 ) {
-	  	OEMPath = (CHAR16*)path;
+	  	OEMPath = path;
 	  	DBG ("CheckOEMPathExists: set OEMPath: %s\n", OEMPath);
 	  	return 1;
 	  }else{
@@ -1772,7 +1772,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CONST CHAR16 *path, CONST CHAR1
 
 VOID SetOEMPath(CONST CHAR16 *ConfName)
   {
-    OEMPath = L"EFI\\CLOVER";
+    OEMPath = PoolPrint(L"%s", L"EFI\\CLOVER");
     if (ConfName == NULL) {
       DBG ("set OEMPath (ConfName == NULL): %s\n", OEMPath);
     } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {

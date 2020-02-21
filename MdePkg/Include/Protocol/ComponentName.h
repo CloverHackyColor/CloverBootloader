@@ -48,7 +48,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_COMPONENT_NAME_GET_DRIVER_NAME)(
   IN EFI_COMPONENT_NAME_PROTOCOL           *This,
-  IN  CHAR8                                *Language,
+  IN JCONST CHAR8                                *Language,
   OUT CHAR16                               **DriverName
   );
 
