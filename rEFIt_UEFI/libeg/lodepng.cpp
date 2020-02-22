@@ -33,19 +33,33 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 #define __typeof__(x) decltype(x)
 #endif
 
+#include "libegint.h"
 #include "lodepng.h"
 
 //MODSNI v
 //#include <stdio.h>
 //#include <stdlib.h>
 
-extern "C" {
-#include <Uefi.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/BaseLib.h>
-#include <Library/MemoryAllocationLib.h>
-}
+//extern "C" {
+//#include <Uefi.h>
+//#include <Library/UefiBootServicesTableLib.h>
+//#include <Library/BaseMemoryLib.h>
+//#include <Library/BaseLib.h>
+//#include <Library/MemoryAllocationLib.h>
+
+#ifndef DEBUG_ALL
+#define DEBUG_PNG 0
+#else
+#define DEBUG_PNG DEBUG_ALL
+#endif
+
+#if DEBUG_PNG == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_PNG, __VA_ARGS__)
+#endif
+
+//}
 
 // Floating point operations are used here, this must be defined to prevent linker error
 #ifndef ENABLE_SECURE_BOOT
@@ -65,8 +79,8 @@ VOID QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int (*compare
   // Sort around center
   while (i <= j)
   {
-    while (compare((const void*)(Array+i*Size), (const void*)Med) == -1) i++;
-    while (compare((const void*)(Array+j*Size), (const void*)Med) == 1) j--;
+    while (compare((const void*)(Array+i*Size), (const void*)Med) == -1) ++i;
+    while (compare((const void*)(Array+j*Size), (const void*)Med) == 1) --j;
     // Change
     if (i <= j) {
       CopyMem(Temp, Array+i*Size, Size);
@@ -82,15 +96,16 @@ VOID QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int (*compare
   if (High > i)   QuickSortWorker(Array, i, High, Size, compare, Temp);
 }
 
-VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, int (*compare)(CONST VOID* a, CONST VOID* b))
+VOID QuickSort(VOID* Array, INTN Number, INTN Size, int (*compare)(CONST VOID* a, CONST VOID* b))
 {
   VOID* Buffer = (__typeof__(Buffer))AllocatePool(Size);
-  QuickSortWorker((UINT8*)Array, Low, High, Size, compare, Buffer);
+  QuickSortWorker((UINT8*)Array, 0, Number - 1, Size, compare, Buffer);
   FreePool(Buffer);
 }
 
 // Custom internal allocators for UEFI
 // rewrite by RehabMan
+
 void* lodepng_malloc(size_t size)
 {
   size_t* p = (__typeof__(p))AllocateZeroPool(size+sizeof(size_t));
@@ -132,7 +147,7 @@ void* lodepng_realloc(void* ptr, size_t new_size)
 //MODSNI ^
 
 
-#ifdef LODEPNG_COMPILE_CPP
+#ifdef LODEPNG_COMPILE_DISK
 #include <fstream>
 #endif /*LODEPNG_COMPILE_CPP*/
 
@@ -819,7 +834,7 @@ static BPMNode* bpmnode_create(BPMLists* lists, int weight, unsigned index, BPMN
   result->tail = tail;
   return result;
 }
-
+//qsort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
 static int bpmnode_compare(const void* a, const void* b)
 {
   int wa = ((const BPMNode*)a)->weight;
@@ -827,7 +842,7 @@ static int bpmnode_compare(const void* a, const void* b)
   if(wa < wb) return -1;
   if(wa > wb) return 1;
   /*make the qsort a stable sort*/
-  return ((const BPMNode*)a)->index < ((const BPMNode*)b)->index ? 1 : -1;
+  return 0; //(((const BPMNode*)a)->index < ((const BPMNode*)b)->index) ? 1 : -1;
 }
 
 /*sort the leaves with stable mergesort*/
@@ -895,17 +910,15 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
                                       size_t numcodes, unsigned maxbitlen)
 {
   unsigned error = 0;
-  unsigned i;
+//  unsigned i;
   size_t numpresent = 0; /*number of symbols with non-zero frequency*/
   BPMNode* leaves; /*the symbols, only those with > 0 frequency*/
-
   if(numcodes == 0) return 80; /*error: a tree of 0 symbols is not supposed to be made*/
   if(LShiftU64(1ULL, maxbitlen) < numcodes) return 80; /*error: represent all symbols*/
-
   leaves = (BPMNode*)lodepng_malloc(numcodes * sizeof(*leaves));
   if(!leaves) return 83; /*alloc fail*/
 
-  for(i = 0; i != numcodes; ++i)
+  for(int i = 0; i != numcodes; ++i)
   {
     if(frequencies[i] > 0)
     {
@@ -914,10 +927,8 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
       ++numpresent;
     }
   }
-
   //for(i = 0; i != numcodes; ++i) lengths[i] = 0;
   ZeroMem(lengths, sizeof(unsigned) * numcodes);
-
   /*ensure at least two present symbols. There should be at least one symbol
   according to RFC 1951 section 3.2.7. Some decoders incorrectly require two. To
   make these work as well ensure there are at least two symbols. The
@@ -936,10 +947,8 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
   {
     BPMLists lists;
     BPMNode* node;
-
     //qsort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
-    QuickSort(leaves, 0, numpresent, sizeof(BPMNode), bpmnode_compare);
-
+    QuickSort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
     //bpmnode_sort(leaves, numpresent);
 
     lists.listsize = maxbitlen;
@@ -954,23 +963,19 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
 
     if(!error)
     {
-      for(i = 0; i != lists.memsize; ++i) lists.freelist[i] = &lists.memory[i];
-
+      for(int i = 0; i != lists.memsize; ++i) lists.freelist[i] = &lists.memory[i];
       bpmnode_create(&lists, leaves[0].weight, 1, 0);
       bpmnode_create(&lists, leaves[1].weight, 2, 0);
-
-      for(i = 0; i != lists.listsize; ++i)
+      for(int i = 0; i != lists.listsize; ++i)
       {
         lists.chains0[i] = &lists.memory[0];
         lists.chains1[i] = &lists.memory[1];
       }
-
       /*each boundaryPM call adds one chain to the last list, and we need 2 * numpresent - 2 chains.*/
-      for(i = 2; i != 2 * numpresent - 2; ++i) boundaryPM(&lists, leaves, numpresent, (int)maxbitlen - 1, (int)i);
-
+      for(int i = 2; i != 2 * numpresent - 2; ++i) boundaryPM(&lists, leaves, numpresent, (int)maxbitlen - 1, i);
       for(node = lists.chains1[maxbitlen - 1]; node; node = node->tail)
       {
-        for(i = 0; i != node->index; ++i) ++lengths[leaves[i].index];
+        for(int i = 0; i != node->index; ++i) ++lengths[leaves[i].index];
       }
     }
 
@@ -996,7 +1001,6 @@ static unsigned HuffmanTree_makeFromFrequencies(HuffmanTree* tree, const unsigne
   if(!tree->lengths) return 83; /*alloc fail*/
   /*initialize all lengths to 0*/
   SetMem(tree->lengths, 0, numcodes * sizeof(unsigned));
-
   error = lodepng_huffman_code_lengths(tree->lengths, frequencies, numcodes, maxbitlen);
   if(!error) error = HuffmanTree_makeFromLengths2(tree);
   return error;
@@ -1035,12 +1039,12 @@ static unsigned generateFixedLitLenTree(HuffmanTree* tree)
 /*get the distance code tree of a deflated block with fixed tree, as specified in the deflate specification*/
 static unsigned generateFixedDistanceTree(HuffmanTree* tree)
 {
-  unsigned i, error = 0;
+  unsigned error = 0;
   unsigned* bitlen = (unsigned*)lodepng_malloc(NUM_DISTANCE_SYMBOLS * sizeof(unsigned));
   if(!bitlen) return 83; /*alloc fail*/
 
   /*there are 32 distance codes, but 30-31 are unused*/
-  for(i = 0; i != NUM_DISTANCE_SYMBOLS; ++i) bitlen[i] = 5;
+  for(int i = 0; i != NUM_DISTANCE_SYMBOLS; ++i) bitlen[i] = 5;
 
   error = HuffmanTree_makeFromLengths(tree, bitlen, NUM_DISTANCE_SYMBOLS, 15);
 
@@ -1878,7 +1882,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
   unsigned BFINAL = final;
   size_t numcodes_ll, numcodes_d, i;
   unsigned HLIT, HDIST, HCLEN;
-
   uivector_init(&lz77_encoded);
   HuffmanTree_init(&tree_ll);
   HuffmanTree_init(&tree_d);
@@ -1889,7 +1892,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
   uivector_init(&bitlen_lld);
   uivector_init(&bitlen_lld_e);
   uivector_init(&bitlen_cl);
-
   /*This while loop never loops due to a break at the end, it is here to
   allow breaking out of it to the cleanup phase on error conditions.*/
   while(!error)
@@ -1904,11 +1906,10 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
     {
       if(!uivector_resize(&lz77_encoded, datasize)) ERROR_BREAK(83 /*alloc fail*/);
       for(i = datapos; i < dataend; ++i) lz77_encoded.data[i] = data[i]; /*no LZ77, but still will be Huffman compressed*/
-    }
+     }
 
     if(!uivector_resizev(&frequencies_ll, 286, 0)) ERROR_BREAK(83 /*alloc fail*/);
     if(!uivector_resizev(&frequencies_d, 30, 0)) ERROR_BREAK(83 /*alloc fail*/);
-
     /*Count the frequencies of lit, len and dist codes*/
     for(i = 0; i != lz77_encoded.size; ++i)
     {
@@ -1922,7 +1923,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
       }
     }
     frequencies_ll.data[256] = 1; /*there will be exactly 1 end code, at the end of the block*/
-
     /*Make both huffman trees, one for the lit and len codes, one for the dist codes*/
     error = HuffmanTree_makeFromFrequencies(&tree_ll, frequencies_ll.data, 257, frequencies_ll.size, 15);
     if(error) break;
@@ -1934,8 +1934,7 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
     numcodes_d = tree_d.numcodes; if(numcodes_d > 30) numcodes_d = 30;
     /*store the code lengths of both generated trees in bitlen_lld*/
     for(i = 0; i != numcodes_ll; ++i) uivector_push_back(&bitlen_lld, HuffmanTree_getLength(&tree_ll, (unsigned)i));
-    for(i = 0; i != numcodes_d; ++i) uivector_push_back(&bitlen_lld, HuffmanTree_getLength(&tree_d, (unsigned)i));
-
+     for(i = 0; i != numcodes_d; ++i) uivector_push_back(&bitlen_lld, HuffmanTree_getLength(&tree_d, (unsigned)i));
     /*run-length compress bitlen_ldd into bitlen_lld_e by using repeat codes 16 (copy length 3-6 times),
     17 (3-10 zeroes), 18 (11-138 zeroes)*/
     for(i = 0; i != (unsigned)bitlen_lld.size; ++i)
@@ -1982,7 +1981,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
         uivector_push_back(&bitlen_lld_e, bitlen_lld.data[i]);
       }
     }
-
     /*generate tree_cl, the huffmantree of huffmantrees*/
 
     if(!uivector_resizev(&frequencies_cl, NUM_CODE_LENGTH_CODES, 0)) ERROR_BREAK(83 /*alloc fail*/);
@@ -1997,7 +1995,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
     error = HuffmanTree_makeFromFrequencies(&tree_cl, frequencies_cl.data,
                                             frequencies_cl.size, frequencies_cl.size, 7);
     if(error) break;
-
     if(!uivector_resize(&bitlen_cl, tree_cl.numcodes)) ERROR_BREAK(83 /*alloc fail*/);
     for(i = 0; i != tree_cl.numcodes; ++i)
     {
@@ -2010,7 +2007,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
       if(!uivector_resize(&bitlen_cl, bitlen_cl.size - 1)) ERROR_BREAK(83 /*alloc fail*/);
     }
     if(error) break;
-
     /*
     Write everything into the output
 
@@ -2029,7 +2025,6 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
     addBitToStream(bp, out, BFINAL);
     addBitToStream(bp, out, 0); /*first bit of BTYPE "dynamic"*/
     addBitToStream(bp, out, 1); /*second bit of BTYPE "dynamic"*/
-
     /*write the HLIT, HDIST and HCLEN values*/
     HLIT = (unsigned)(numcodes_ll - 257);
     HDIST = (unsigned)(numcodes_d - 1);
@@ -2039,10 +2034,8 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
     addBitsToStream(bp, out, HLIT, 5);
     addBitsToStream(bp, out, HDIST, 5);
     addBitsToStream(bp, out, HCLEN, 4);
-
     /*write the code lenghts of the code length alphabet*/
     for(i = 0; i != HCLEN + 4; ++i) addBitsToStream(bp, out, bitlen_cl.data[i], 3);
-
     /*write the lenghts of the lit/len AND the dist alphabet*/
     for(i = 0; i != bitlen_lld_e.size; ++i)
     {
@@ -2053,15 +2046,12 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
       else if(bitlen_lld_e.data[i] == 17) addBitsToStream(bp, out, bitlen_lld_e.data[++i], 3);
       else if(bitlen_lld_e.data[i] == 18) addBitsToStream(bp, out, bitlen_lld_e.data[++i], 7);
     }
-
     /*write the compressed data symbols*/
     writeLZ77data(bp, out, &lz77_encoded, &tree_ll, &tree_d);
     /*error: the length of the end code 256 must be larger than 0*/
     if(HuffmanTree_getLength(&tree_ll, 256) == 0) ERROR_BREAK(64);
-
     /*write the end code*/
     addHuffmanSymbol(bp, out, HuffmanTree_getCode(&tree_ll, 256), HuffmanTree_getLength(&tree_ll, 256));
-
     break; /*end of error-while*/
   }
 
@@ -2091,17 +2081,13 @@ static unsigned deflateFixed(ucvector* out, size_t* bp, Hash* hash,
   unsigned BFINAL = final;
   unsigned error = 0;
   size_t i;
-
   HuffmanTree_init(&tree_ll);
   HuffmanTree_init(&tree_d);
-
   generateFixedLitLenTree(&tree_ll);
   generateFixedDistanceTree(&tree_d);
-
   addBitToStream(bp, out, BFINAL);
   addBitToStream(bp, out, 1); /*first bit of BTYPE*/
   addBitToStream(bp, out, 0); /*second bit of BTYPE*/
-
   if(settings->use_lz77) /*LZ77 encoded*/
   {
     uivector lz77_encoded;
@@ -2110,7 +2096,7 @@ static unsigned deflateFixed(ucvector* out, size_t* bp, Hash* hash,
                        settings->minmatch, settings->nicematch, settings->lazymatching);
     if(!error) writeLZ77data(bp, out, &lz77_encoded, &tree_ll, &tree_d);
     uivector_cleanup(&lz77_encoded);
-  }
+   }
   else /*no LZ77, but still will be Huffman compressed*/
   {
     for(i = datapos; i < dataend; ++i)
@@ -2124,7 +2110,6 @@ static unsigned deflateFixed(ucvector* out, size_t* bp, Hash* hash,
   /*cleanup*/
   HuffmanTree_cleanup(&tree_ll);
   HuffmanTree_cleanup(&tree_d);
-
   return error;
 }
 
@@ -2146,7 +2131,6 @@ static unsigned lodepng_deflatev(ucvector* out, const unsigned char* in, size_t 
     if(blocksize < 65536) blocksize = 65536;
     if(blocksize > 262144) blocksize = 262144;
   }
-
   numdeflateblocks = (insize + blocksize - 1) / blocksize;
   if(numdeflateblocks == 0) numdeflateblocks = 1;
 
@@ -2158,14 +2142,12 @@ static unsigned lodepng_deflatev(ucvector* out, const unsigned char* in, size_t 
     unsigned final = (i == numdeflateblocks - 1);
     size_t start = i * blocksize;
     size_t end = start + blocksize;
-    if(end > insize) end = insize;
-
+     if(end > insize) end = insize;
     if(settings->btype == 1) error = deflateFixed(out, &bp, &hash, in, start, end, settings, final);
     else if(settings->btype == 2) error = deflateDynamic(out, &bp, &hash, in, start, end, settings, final);
-  }
+   }
 
   hash_cleanup(&hash);
-
   return error;
 }
 
@@ -2305,7 +2287,7 @@ unsigned lodepng_zlib_compress(unsigned char** out, size_t* outsize, const unsig
   /*initially, *out must be NULL and outsize 0, if you just give some random *out
   that's pointing to a non allocated buffer, this'll crash*/
   ucvector outv;
-  size_t i;
+//  size_t i;
   unsigned error;
   unsigned char* deflatedata = 0;
   size_t deflatesize = 0;
@@ -2317,26 +2299,21 @@ unsigned lodepng_zlib_compress(unsigned char** out, size_t* outsize, const unsig
   unsigned CMFFLG = 256 * CMF + FDICT * 32 + FLEVEL * 64;
   unsigned FCHECK = 31 - CMFFLG % 31;
   CMFFLG += FCHECK;
-
   /*ucvector-controlled version of the output buffer, for dynamic array*/
   ucvector_init_buffer(&outv, *out, *outsize);
-
   ucvector_push_back(&outv, (unsigned char)(CMFFLG >> 8));
   ucvector_push_back(&outv, (unsigned char)(CMFFLG & 255));
-
   error = deflate(&deflatedata, &deflatesize, in, insize, settings);
-
   if(!error)
   {
     unsigned ADLER32 = adler32(in, (unsigned)insize);
-    for(i = 0; i != deflatesize; ++i) ucvector_push_back(&outv, deflatedata[i]);
+    for(size_t i = 0; i != deflatesize; ++i) ucvector_push_back(&outv, deflatedata[i]);
     lodepng_free(deflatedata);
     lodepng_add32bitInt(&outv, ADLER32);
   }
 
   *out = outv.data;
   *outsize = outv.size;
-
   return error;
 }
 
@@ -5079,13 +5056,11 @@ static unsigned addChunk_IDAT(ucvector* out, const unsigned char* data, size_t d
 {
   ucvector zlibdata;
   unsigned error = 0;
-
   /*compress with the Zlib compressor*/
   ucvector_init(&zlibdata);
   error = zlib_compress(&zlibdata.data, &zlibdata.size, data, datasize, zlibsettings);
   if(!error) error = addChunk(out, "IDAT", zlibdata.data, zlibdata.size);
   ucvector_cleanup(&zlibdata);
-
   return error;
 }
 
@@ -5751,7 +5726,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
   ucvector outv;
   unsigned char* data = 0; /*uncompressed version of the IDAT chunk data*/
   size_t datasize = 0;
-
   /*provide some proper output values if error will happen*/
   *out = 0;
   *outsize = 0;
@@ -5759,7 +5733,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
 
   lodepng_info_init(&info);
   lodepng_info_copy(&info, &state->info_png);
-
   if((info.color.colortype == LCT_PALETTE || state->encoder.force_palette)
       && (info.color.palettesize == 0 || info.color.palettesize > 256))
   {
@@ -5781,7 +5754,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
   {
     CERROR_RETURN_ERROR(state->error, 71); /*error: unexisting interlace mode*/
   }
-
   state->error = checkColorValidity(info.color.colortype, info.color.bitdepth);
   if(state->error) return state->error; /*error: unexisting color type given*/
   state->error = checkColorValidity(state->info_raw.colortype, state->info_raw.bitdepth);
@@ -5791,7 +5763,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
   {
     unsigned char* converted;
     size_t size = (w * h * (size_t)lodepng_get_bpp(&info.color) + 7) / 8;
-
     converted = (unsigned char*)lodepng_malloc(size);
     if(!converted && size) state->error = 83; /*alloc fail*/
     if(!state->error)
@@ -5914,7 +5885,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
                     info.itext_keys[i], info.itext_langtags[i], info.itext_transkeys[i], info.itext_strings[i],
                     &state->encoder.zlibsettings);
     }
-
     /*unknown chunks between IDAT and IEND*/
     if(info.unknown_chunks_data[2])
     {
@@ -5923,7 +5893,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
     }
 #endif /*LODEPNG_COMPILE_ANCILLARY_CHUNKS*/
     addChunk_IEND(&outv);
-
     break; /*this isn't really a while loop; no error happened so break out now!*/
   }
 
@@ -5932,7 +5901,6 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
   /*instead of cleaning the vector up, give it to the output*/
   *out = outv.data;
   *outsize = outv.size;
-
   return state->error;
 }
 

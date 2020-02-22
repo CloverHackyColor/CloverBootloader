@@ -627,6 +627,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 //
 // Make a screenshot
 //
+CONST CHAR8 ScreenShotName[] = "EFI\\CLOVER\\misc\\screenshot";
 
 EFI_STATUS egScreenShot(VOID)
 {
@@ -634,19 +635,20 @@ EFI_STATUS egScreenShot(VOID)
     EG_IMAGE        *Image;
     UINT8           *FileData = NULL;
     UINTN           FileDataLength = 0U;
-    UINTN           Index;
-    CHAR16          ScreenshotName[128];
+//    UINTN           Index;
+//    CHAR16          ScreenshotName[128];
+  CHAR16          *ScreenshotName;
       
     if (!egHasGraphics)
         return EFI_NOT_READY;
-    
+  MsgLog("Make screenshot W=%d H=%d\n", egScreenWidth, egScreenHeight);
     // allocate a buffer for the whole screen
     Image = egCreateImage(egScreenWidth, egScreenHeight, FALSE);
     if (Image == NULL) {
-        Print(L"Error egCreateImage returned NULL\n");
+        MsgLog("Error egCreateImage returned NULL\n");
         return EFI_NO_MEDIA;
     }
-    
+  MsgLog("take screen\n");
     // get full screen image
     if (GraphicsOutput != NULL) {
         GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
@@ -655,27 +657,30 @@ EFI_STATUS egScreenShot(VOID)
     } else if (UgaDraw != NULL) {
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaVideoToBltBuffer,
                      0, 0, 0, 0, (UINTN)Image->Width, (UINTN)Image->Height, 0);
+    } else {
+      MsgLog("Error no GOP\n");
+      return EFI_NOT_READY;
     }
 // yyyyy
 #if defined(LODEPNG)
     {
       EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)Image->PixelData;
       UINTN   ImageSize = Image->Width * Image->Height;
-      UINTN   i;
+  //    UINTN   i;
       unsigned lode_return;
-
+//MsgLog("convert BGR\n");
       // Convert BGR to RGBA with Alpha set to 0xFF
-      for (i = 0; i < ImageSize; i++) {
+      for (UINTN i = 0; i < ImageSize; i++) {
           UINT8 Temp = ImagePNG[i].Blue;
           ImagePNG[i].Blue = ImagePNG[i].Red;
           ImagePNG[i].Red = Temp;
           ImagePNG[i].Reserved = 0xFF;
       }
-
+//MsgLog("eglodepng_encode\n");
       // Encode raw RGB image to PNG format
       lode_return = eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)Image->Width, (UINTN)Image->Height);
       if (lode_return) {
-        DebugLog(1, "egScreenShot(): eglodepng_encode failed on ImagePNG %p, Width %ld, Height %ld with error %u\n",
+        MsgLog("egScreenShot(): eglodepng_encode failed on ImagePNG %p, Width %ld, Height %ld with error %u\n",
                  ImagePNG, Image->Width, Image->Height, lode_return);
       }
     }
@@ -683,36 +688,46 @@ EFI_STATUS egScreenShot(VOID)
     // encode as BMP
     egEncodeBMP(Image, &FileData, &FileDataLength);
 #endif //LODEPNG
-    
+//MsgLog("egFreeImage\n");
     egFreeImage(Image);
     if (FileData == NULL) {
-        Print(L"Error egEncode returned NULL\n");
+        MsgLog("Error egEncode returned NULL\n");
         return EFI_NO_MEDIA;
     }
   
-  for (Index=0; Index < 60; Index++) {
+  for (UINTN Index=0; Index < 60; Index++) {
+//    MsgLog("create name [%d]\n", Index);
 #if defined(LODEPNG)
-    UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.png", Index);
+//    UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.png", Index);
+    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
 #else //LODEPNG
-    UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
+    ScreenshotName = PoolPrint(L"%a%d.bmp", ScreenShotName, Index);
+//    UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
 #endif //LODEPNG
     if(!FileExists(SelfRootDir, ScreenshotName)){
       Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
+      FreePool(ScreenshotName);
+      ScreenshotName = NULL;
       if (!EFI_ERROR(Status)) {
         break;
       }		
+    } else {
+      FreePool(ScreenshotName);
     }
   }
   // else save to file on the ESP
   if (EFI_ERROR(Status)) {
-    for (Index=0; Index < 60; Index++) {
+    for (UINTN Index=0; Index < 60; Index++) {
 #if defined(LODEPNG)
-        UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.png", Index);
+//        UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.png", Index);
+      ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
 #else //LODEPNG
-        UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
+      ScreenshotName = PoolPrint(L"%a%d.bmp", ScreenShotName, Index);
+//        UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
 #endif //LODEPNG
 //     if(!FileExists(NULL, ScreenshotName)){
         Status = egSaveFile(NULL, ScreenshotName, FileData, FileDataLength);
+      FreePool(ScreenshotName);
         if (!EFI_ERROR(Status)) {
           break;
         }		
@@ -725,6 +740,7 @@ EFI_STATUS egScreenShot(VOID)
 #else //LODEPNG
   FreePool(FileData);
 #endif //LODEPNG
+
   return Status;
 }
 
@@ -735,7 +751,7 @@ EFI_STATUS egScreenShot(VOID)
 static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
 {
     UINTN       HandleCount = 0;
-    UINTN       Index;
+//    UINTN       Index;
     EFI_HANDLE  *HandleBuffer = NULL;
     EFI_STATUS  Status;
 
@@ -757,10 +773,10 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
             &HandleBuffer
             );
         if (!EFI_ERROR (Status)) {
-            for (Index = 0; Index < HandleCount; Index++) {
+            for (UINTN Index = 0; Index < HandleCount; Index++) {
                 gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
             }
-            for (Index = 0; Index < HandleCount; Index++) {
+            for (UINTN Index = 0; Index < HandleCount; Index++) {
                 gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
             }
             if (HandleBuffer != NULL) {

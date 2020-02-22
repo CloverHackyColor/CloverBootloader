@@ -440,7 +440,8 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner) //ShowBanner always TRUE
           // Banner was changed, so copy into BlueBackgroundBixel first pixel of banner
           CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
         } else {
-          DBG("banner file not read\n");
+          DBG("banner file not read use embedded\n");
+          Banner = BuiltinIcon(BUILTIN_ICON_BANNER);
         }
       }
     }

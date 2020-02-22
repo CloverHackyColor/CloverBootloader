@@ -31,10 +31,11 @@ freely, subject to the following restrictions:
 #include <Uefi.h>
 
 //#define LODEPNG_NO_COMPILE_DECODER
-//#define LODEPNG_NO_COMPILE_DISK
+#define LODEPNG_NO_COMPILE_DISK
 //#define LODEPNG_NO_COMPILE_ALLOCATORS
 //#define LODEPNG_NO_COMPILE_ERROR_TEXT
-//#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
+#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
+#define LODEPNG_NO_COMPILE_CPP
 
 // Microsoft compiler has built-in size_t
 //#if !defined(_MSC_VER)
@@ -83,9 +84,9 @@ the custom_zlib field of the compress and decompress settings*/
 //#define LODEPNG_COMPILE_DISK
 //#endif
 ///*support for chunks other than IHDR, IDAT, PLTE, tRNS, IEND: ancillary and unknown chunks*/
-//#ifndef LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
-//#define LODEPNG_COMPILE_ANCILLARY_CHUNKS
-//#endif
+#ifndef LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
+#define LODEPNG_COMPILE_ANCILLARY_CHUNKS
+#endif
 ///*ability to convert error numerical codes to English text string*/
 //#ifndef LODEPNG_NO_COMPILE_ERROR_TEXT
 //#define LODEPNG_COMPILE_ERROR_TEXT
@@ -97,11 +98,11 @@ the custom_zlib field of the compress and decompress settings*/
 //#define LODEPNG_COMPILE_ALLOCATORS
 //#endif
 ///*compile the C++ version (you can disable the C++ wrapper here even when compiling for C++)*/
-//#ifdef __cplusplus
-//#ifndef LODEPNG_NO_COMPILE_CPP
-//#define LODEPNG_COMPILE_CPP
-//#endif
-//#endif
+#ifdef __cplusplus
+#ifndef LODEPNG_NO_COMPILE_CPP
+#define LODEPNG_COMPILE_CPP
+#endif
+#endif
 
 //#ifdef LODEPNG_NO_COMPILE_ALLOCATORS
 //void* lodepng_malloc(size_t size);
