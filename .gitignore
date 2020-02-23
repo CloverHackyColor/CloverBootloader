@@ -108,7 +108,6 @@ build/
 !default.mode2v3
 !default.perspectivev3
 xcuserdata/
-xcshareddata/
 
 # Translation files
 CloverUpdater.strings
