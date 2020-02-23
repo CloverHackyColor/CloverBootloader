@@ -1,6 +1,8 @@
 #ifndef __XTOOLSCOMMON_H__
 #define __XTOOLSCOMMON_H__
 
+#include <Platform.h>
+
 #define xsize UINTN
 #define MAX_XSIZE MAX_UINTN
 
@@ -15,5 +17,5 @@ extern xsize XBufferGrowByDefault;
 #define Xalloc(AllocationSize) AllocatePool(AllocationSize)
 #define Xrealloc(OldSize, NewSize, OldBuffer) ReallocatePool(OldSize, NewSize, OldBuffer)
 #define Xfree(Buffer) FreePool(Buffer)
-#define Xmemcpy(dest,source,count) CopyMem(dest, (void*)(source), count)
+#define Xmemmove(dest,source,count) CopyMem(dest, (void*)(source), count) // that has to handle overlapping memory (prefer memmove to memcpy).
 #endif

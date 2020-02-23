@@ -1,6 +1,6 @@
 #include "../cpp_foundation/XObjArray.h"
 
-#include "../Platform/Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 class TestObjInt
 {

@@ -11,13 +11,13 @@
 #if !defined(__XOBJARRAY_H__)
 #define __XOBJARRAY_H__
 
-//#include "../Platform/Platform.h" // for DebugLog
-VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
-extern "C" {
-  #include <Library/MemoryAllocationLib.h>
-  #include <Library/BaseMemoryLib.h>
-  #include <Library/BaseLib.h> // for CpuDeadLoop();
-}
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
+//VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
+//extern "C" {
+//  #include <Library/MemoryAllocationLib.h>
+//  #include <Library/BaseMemoryLib.h>
+//  #include <Library/BaseLib.h> // for CpuDeadLoop();
+//}
 #include "XToolsCommon.h"
 
 
@@ -137,7 +137,7 @@ class XObjArray : public XObjArrayNC<TYPE>
 template<class TYPE>
 void XObjArrayNC<TYPE>::Init()
 {
-	_Data = NULL;
+	_Data = nullptr;
 	_Size = 0;
 	_Len = 0;
 	// THis was useful for realtime debugging with a debugger that do not recognise references.
@@ -443,7 +443,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 		TmpObject = (TYPE *)(_Data[nIndex].Object);
 		delete TmpObject;
 	}
-	if ( nIndex<XObjArrayNC<TYPE>::_Len-1 ) Xmemcpy(&_Data[nIndex], &_Data[nIndex+1], (_Len-nIndex-1)*sizeof(XObjArrayEntry<TYPE>));
+	if ( nIndex<XObjArrayNC<TYPE>::_Len-1 ) Xmemmove(&_Data[nIndex], &_Data[nIndex+1], (_Len-nIndex-1)*sizeof(XObjArrayEntry<TYPE>));
 	_Len -= 1;
 	return;
 }

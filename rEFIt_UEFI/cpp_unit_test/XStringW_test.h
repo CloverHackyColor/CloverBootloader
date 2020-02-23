@@ -1,0 +1,1 @@
+int XStringW_tests();

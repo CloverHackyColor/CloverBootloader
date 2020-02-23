@@ -21,12 +21,12 @@
 #include "XToolsCommon.h"
 #include "XStringW.h"
 
-extern "C" {
-  #include <Library/MemoryAllocationLib.h>
-  #include <Library/BaseMemoryLib.h>
-}
-#include "Platform/Platform.h"
-#include "refit/IO.h"
+//extern "C" {
+//  #include <Library/MemoryAllocationLib.h>
+//  #include <Library/BaseMemoryLib.h>
+//}
+#include <Platform.h>
+//#include "refit/IO.h"
 
 UINTN XStringWGrowByDefault = 1024;
 const XStringW NullXStringW;
@@ -132,7 +132,7 @@ void XStringW::StrnCpy(const wchar_t *buf, UINTN len)
 {
 	if ( buf && *buf && len > 0 ) {
 		CheckSize(len, 0);
-		CopyMem(data(), buf, len*sizeof(wchar_t));
+		Xmemmove(data(), buf, len*sizeof(wchar_t));
 	}
 	SetLength(len); /* data()[len]=0 done in SetLength */
 }
@@ -154,7 +154,7 @@ void XStringW::StrnCat(const wchar_t *buf, UINTN len)
 	if ( buf && *buf && len > 0 ) {
 		NewLen = length()+len;
 		CheckSize(NewLen, 0);
-		CopyMem(data(length()), buf, len*sizeof(wchar_t));
+		Xmemmove(data(length()), buf, len*sizeof(wchar_t));
 		SetLength(NewLen); /* data()[NewLen]=0 done in SetLength */
 	}
 }
@@ -174,8 +174,8 @@ void XStringW::StrCat(const XStringW &uneXStringWW)
 void XStringW::Delete(UINTN pos, UINTN count)
 {
 	if ( pos < length() ) {
-		if ( count != MAX_UINTN  &&  pos + count < length() ) {
-			CopyMem( data(pos), data(pos+count), (length()-pos-count)*sizeof(wchar_t)); // CopyMem handles overlapping memory move
+		if ( count != MAX_XSIZE  &&  pos + count < length() ) {
+			Xmemmove( data(pos), data(pos+count), (length()-pos-count)*sizeof(wchar_t)); // Xmemmove handles overlapping memory move
 			SetLength(length()-count);/* data()[length()-count]=0 done in SetLength */
 		}else{
 			SetLength(pos);/* data()[pos]=0 done in SetLength */
@@ -187,8 +187,8 @@ void XStringW::Insert(UINTN pos, const XStringW& Str)
 {
 	if ( pos < length() ) {
 		CheckSize(length()+Str.length());
-		CopyMem(data(pos + Str.length()),  data(pos),  (length()-pos)*sizeof(wchar_t));
-		CopyMem(data(pos), Str.data(), Str.length()*sizeof(wchar_t));
+		Xmemmove(data(pos + Str.length()),  data(pos),  (length()-pos)*sizeof(wchar_t));
+		Xmemmove(data(pos), Str.data(), Str.length()*sizeof(wchar_t));
 		SetLength(length()+Str.length());
 	}else{
 		StrCat(Str);
@@ -222,22 +222,22 @@ XStringW XStringW::SubStringReplace(wchar_t c1, wchar_t c2)
 
 void XStringW::vSPrintf(const wchar_t *format, VA_LIST va)
 {
-  POOL_PRINT  spc;
-  PRINT_STATE ps;
-
-  ZeroMem(&spc, sizeof (spc));
-  spc.Str = data();
-  SetLength(0);
-  spc.Len = 0;
-  spc.Maxlen = m_size;
-  ZeroMem(&ps, sizeof (ps));
-  ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CONST CHAR16 *str))_PoolPrint;
-  ps.Context  = (void*)&spc;
-  ps.fmt.u.pw = format;
-
-  VA_COPY(ps.args, va);
-  _PPrint (&ps);
-  VA_END(ps.args);
+//  POOL_PRINT  spc;
+//  PRINT_STATE ps;
+//
+//  ZeroMem(&spc, sizeof (spc));
+//  spc.Str = data();
+//  SetLength(0);
+//  spc.Len = 0;
+//  spc.Maxlen = m_size;
+//  ZeroMem(&ps, sizeof (ps));
+//  ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CONST CHAR16 *str))_PoolPrint;
+//  ps.Context  = (void*)&spc;
+//  ps.fmt.u.pw = format;
+//
+//  VA_COPY(ps.args, va);
+//  _PPrint (&ps);
+//  VA_END(ps.args);
 }
 
 void XStringW::SPrintf(const wchar_t *format, ...)
@@ -252,14 +252,14 @@ void XStringW::SPrintf(const wchar_t *format, ...)
 XStringW XStringW::basename() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
-	if ( idx == MAX_UINTN ) return NullXStringW;
+	if ( idx == MAX_XSIZE ) return NullXStringW;
 	return SubString(idx+1, length()-idx-1);
 }
 
 XStringW XStringW::dirname() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
-	if ( idx == MAX_UINTN ) return NullXStringW;
+	if ( idx == MAX_XSIZE ) return NullXStringW;
 	return SubString(0, idx);
 }
 
@@ -276,7 +276,7 @@ UINTN XStringW::IdxOf(wchar_t aChar, UINTN Pos) const
 	for ( Idx=Pos ; Idx<length() ; Idx+=1 ) {
         if ( data()[Idx] == aChar ) return Idx;
 	}
-	return MAX_UINTN;
+	return MAX_XSIZE;
 }
 
 UINTN XStringW::IdxOf(const XStringW &S, UINTN Pos) const
@@ -284,13 +284,13 @@ UINTN XStringW::IdxOf(const XStringW &S, UINTN Pos) const
   UINTN i;
   UINTN Idx;
 
-	if ( length() < S.length() ) return MAX_UINTN;
+	if ( length() < S.length() ) return MAX_XSIZE;
 	for ( Idx=Pos ; Idx<=length()-S.length() ; Idx+=1 ) {
 		i = 0;
 	    while( i<S.length()  &&  ( data()[Idx+i] - S[i] ) == 0 ) i += 1;
 		if ( i == S.length() ) return Idx;
 	}
-	return MAX_UINTN;
+	return MAX_XSIZE;
 }
 
 UINTN XStringW::RIdxOf(const wchar_t charToSearch, UINTN Pos) const
@@ -298,11 +298,11 @@ UINTN XStringW::RIdxOf(const wchar_t charToSearch, UINTN Pos) const
   UINTN Idx;
 
 	if ( Pos > length() ) Pos = length();
-	if ( Pos < 1 ) return MAX_UINTN;
+	if ( Pos < 1 ) return MAX_XSIZE;
 	for ( Idx=Pos ; Idx-- > 0 ; ) {
 		if ( m_data[Idx] == charToSearch ) return Idx;
 	}
-	return MAX_UINTN;
+	return MAX_XSIZE;
 }
 
 UINTN XStringW::RIdxOf(const XStringW &S, UINTN Pos) const
@@ -310,16 +310,16 @@ UINTN XStringW::RIdxOf(const XStringW &S, UINTN Pos) const
   UINTN i;
   UINTN Idx;
 
-	if ( S.length() == 0 ) return MAX_UINTN;
+	if ( S.length() == 0 ) return MAX_XSIZE;
 	if ( Pos > length() ) Pos = length();
-	if ( Pos < S.length() ) return MAX_UINTN;
+	if ( Pos < S.length() ) return MAX_XSIZE;
 	Pos -= S.length();
 	for ( Idx=Pos+1 ; Idx-- > 0 ; ) {
 		i = 0;
 		while( i<S.length()  &&  data()[Idx+i] == S[i] ) i += 1;
 		if ( i == S.length() ) return Idx;
 	}
-	return MAX_UINTN;
+	return MAX_XSIZE;
 }
 
 

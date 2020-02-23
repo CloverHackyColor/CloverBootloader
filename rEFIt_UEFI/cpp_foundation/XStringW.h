@@ -9,12 +9,13 @@
 #if !defined(__XSTRINGW_H__)
 #define __XSTRINGW_H__
 
-//#include "XToolsCommon.h"
+#include "XToolsCommon.h"
+#include <Platform.h>
 //#include "XConstStringW.h"
 
-extern "C" {
-  #include <Library/BaseLib.h>
-}
+//extern "C" {
+//  #include <Library/BaseLib.h>
+//}
 
 #define LPATH_SEPARATOR L'\\'
 
@@ -42,8 +43,8 @@ protected:
 	wchar_t *CheckSize(UINTN nNewSize, UINTN nGrowBy = XStringWGrowByDefault);
 
 public:
-	const wchar_t *data(UINTN ui=0) const { return m_data+ui; }
-	wchar_t *data(UINTN ui=0) { return m_data+ui; }
+	const wchar_t *data(UINTN ui=0) const { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+	wchar_t *data(UINTN ui=0) { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
 	wchar_t *dataWithSizeMin(UINTN pos, UINTN sizeMin, UINTN nGrowBy=XStringWGrowByDefault) { CheckSize(sizeMin, nGrowBy); return data(pos); }
 
 	UINTN length() const { return m_len; }
@@ -102,8 +103,8 @@ public:
 	XStringW SubString(UINTN pos, UINTN count) const;
   UINTN IdxOf(wchar_t c, UINTN Pos = 0) const;
 	UINTN IdxOf(const XStringW& S, UINTN Pos = 0) const;
-	UINTN RIdxOf(const wchar_t c, UINTN Pos = MAX_UINTN) const;
-	UINTN RIdxOf(const XStringW& S, UINTN Pos = MAX_UINTN) const;
+	UINTN RIdxOf(const wchar_t c, UINTN Pos = MAX_XSIZE) const;
+	UINTN RIdxOf(const XStringW& S, UINTN Pos = MAX_XSIZE) const;
 
 	void ToLower(bool FirstCharIsCap = false);
 	bool IsLetters() const;
@@ -111,11 +112,11 @@ public:
 	bool IsDigits() const;
 	bool IsDigits(UINTN pos, UINTN count) const;
 
-	bool ExistIn(const XStringW &S) const { return IdxOf(S) != MAX_UINTN; }
+	bool ExistIn(const XStringW &S) const { return IdxOf(S) != MAX_XSIZE; }
 	void Replace(wchar_t c1, wchar_t c2);
 	XStringW SubStringReplace(wchar_t c1, wchar_t c2);
 
-	INTN Compare(const wchar_t* S) const { return StrCmp(data(), S) ; }
+	int Compare(const wchar_t* S) const { return StrCmp(data(), S) ; }
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
 	bool BeginingEqual(const wchar_t* S) const { return StrnCmp(data(), S, StrLen(S)); }

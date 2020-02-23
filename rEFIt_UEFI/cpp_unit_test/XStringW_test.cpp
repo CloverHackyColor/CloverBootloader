@@ -1,35 +1,35 @@
-#ifdef DEBUG_CLOVER
-DBG("g_str = %s\n", g_str.data());
-DBG("g_str2 = %s\n", g_str2.data());
-extern XStringW global_str1;
-DBG("global_str1 = %s\n", global_str1.data());
-extern XStringW global_str2;
-DBG("global_str2 = %s\n", global_str2.data());
+#include "../cpp_foundation/XStringW.h"
+#include "global1.h"
+#include "global2.h"
+
+
+int XStringW_tests()
 {
-//	XStringW str(L"local str value");
-//	DBG("str = %s\n", str.data());
-//	str.StrCat(L" appended text");
-//	DBG("str = %s, len=%d\n", str.data(), str.length());
-//
-//	XStringW str2(str);
-//	DBG("str2 = %s\n", str2.data());
-//	str2.StrnCpy(str.data(), 2);
-//	DBG("str2 = %s\n", str2.data());
-//	str2.StrnCat(L"2ndtext", 2);
-//	DBG("str2 = %s\n", str2.data());
-//	str2.Insert(1, str);
-//	DBG("str2 = %s\n", str2.data());
-//	str2 += L"3rdtext";
-//	DBG("str2 = %s\n", str2.data());
-//
-//	XStringW* str3 = new XStringW();
-//	*str3 = L"str3data";
-//	DBG("str3 = %s\n", str3->data());
-//	delete str3;
-}
-//
-destruct_globals_objects(NULL); // That should be done just before quitting clover module. Now, it's just for test.
-DBG("press");
-PauseForKey(L"press");
+
+#ifdef JIEF_DEBUG
+	DebugLog(2, "XStringW_tests -> Enter\n");
 #endif
 
+	if ( global_str1 != L"global_str1" ) return 1;
+	if ( global_str2 != L"global_str2" ) return 1;
+
+	{
+		XStringW str(L"1");
+		if ( str != L"1" ) return 1;
+		str.StrCat(L"2");
+		if ( str != L"12" ) return 1;
+
+		XStringW str2;
+		if ( str2.NotNull() ) return 10;
+		str2.StrnCpy(str.data(), 2);
+		if ( str2 != L"12" ) return 11;
+		str2.StrnCat(L"345", 2);
+		if ( str2 != L"1234" ) return 12;
+		str2.Insert(1, str);
+		if ( str2 != L"112234" ) return 13;
+		str2 += L"6";
+		if ( str2 != L"1122346" ) return 14;
+	}
+	
+	return 0;
+}

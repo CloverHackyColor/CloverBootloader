@@ -4,8 +4,10 @@
 
 #include "XArray_tests.h"
 #include "XObjArray_tests.h"
+#include "XStringWArray_test.h"
+#include "XStringW_test.h"
 
-#include "../Platform/Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 bool all_tests()
 {
@@ -22,9 +24,19 @@ bool all_tests()
 		DebugLog(2, "XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+	ret = XStringW_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "XStringW_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = XStringWArray_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "XStringWArray_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
 
 	if ( !all_ok ) {
-		DebugLog(2, "A test failed, module %d, test %d \n");
+		DebugLog(2, "A test failed\n");
 		PauseForKey(L"press");
 	}else{
 #ifdef JIEF_DEBUG

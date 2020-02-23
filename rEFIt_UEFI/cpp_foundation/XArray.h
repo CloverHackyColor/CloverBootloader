@@ -11,13 +11,13 @@
 #if !defined(__XARRAY_H__)
 #define __XARRAY_H__
 
-//#include "../Platform/Platform.h" // for DebugLog
-VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
-extern "C" {
-  #include <Library/MemoryAllocationLib.h>
-  #include <Library/BaseMemoryLib.h>
-  #include <Library/BaseLib.h> // for CpuDeadLoop();
-}
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
+//VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
+//extern "C" {
+//  #include <Library/MemoryAllocationLib.h>
+//  #include <Library/BaseMemoryLib.h>
+//  #include <Library/BaseLib.h> // for CpuDeadLoop();
+//}
 #include "XToolsCommon.h"
 
 
@@ -118,7 +118,7 @@ xsize XArray<TYPE>::IdxOf(TYPE& e) const
 template<class TYPE>
 void XArray<TYPE>::Init()
 {
-	m_data = NULL;
+	m_data = nullptr;
 	m_size = 0;
 	m_len = 0;
 	_GrowBy = XArrayGrowByDefault;
@@ -277,7 +277,7 @@ template<class TYPE>
 void XArray<TYPE>::RemoveAtIndex(xsize nIndex)
 {
 	if ( nIndex  < m_len ) {
-		if ( nIndex<m_len-1 ) Xmemcpy(&m_data[nIndex], &m_data[nIndex+1], (m_len-nIndex-1)*sizeof(TYPE));
+		if ( nIndex<m_len-1 ) Xmemmove(&m_data[nIndex], &m_data[nIndex+1], (m_len-nIndex-1)*sizeof(TYPE));
 		m_len -= 1;
 		return;
 	}
