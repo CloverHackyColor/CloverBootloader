@@ -221,9 +221,12 @@ VOID PrepareFont()
 static inline BOOLEAN EmptyPix(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel)
 {
   //compare with first pixel of the array top-left point [0][0]
-   return ((Ptr->r >= FirstPixel->r - (FirstPixel->r >> 2)) && (Ptr->r <= FirstPixel->r + (FirstPixel->r >> 2)) &&
-           (Ptr->g >= FirstPixel->g - (FirstPixel->g >> 2)) && (Ptr->g <= FirstPixel->g + (FirstPixel->g >> 2)) &&
-           (Ptr->b >= FirstPixel->b - (FirstPixel->b >> 2)) && (Ptr->b <= FirstPixel->b + (FirstPixel->b >> 2)) &&
+   return ((Ptr->r >= FirstPixel->r - (FirstPixel->r >> 2)) &&
+           (Ptr->r <= FirstPixel->r + (FirstPixel->r >> 2)) &&
+           (Ptr->g >= FirstPixel->g - (FirstPixel->g >> 2)) &&
+           (Ptr->g <= FirstPixel->g + (FirstPixel->g >> 2)) &&
+           (Ptr->b >= FirstPixel->b - (FirstPixel->b >> 2)) &&
+           (Ptr->b <= FirstPixel->b + (FirstPixel->b >> 2)) &&
            (Ptr->a == FirstPixel->a)); //hack for transparent fonts
 }
 

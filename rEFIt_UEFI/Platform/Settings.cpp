@@ -214,6 +214,7 @@ static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bi
  while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }
  }
  */
+#if 0
 UINT32
 GetCrc32 (
           UINT8 *Buffer,
@@ -239,6 +240,21 @@ GetCrc32 (
 
   return x;
 }
+#else //nice programming
+UINT32
+GetCrc32 (
+          UINT8 *Buffer,
+          UINTN Size
+          )
+{
+  UINT32 x = 0;
+  UINT32 *Fake = (UINT32*)Buffer;
+  if (!Fake) return 0;
+  Size >>= 2;
+  while (Size--) x+= *Fake++;
+  return x;
+}
+#endif
 
 /*
  return TRUE if the property present && value = TRUE
@@ -270,6 +286,13 @@ IsPropertyFalse (
     ((Prop->string[0] == 'N') || (Prop->string[0] == 'n'))));
 }
 
+/*
+ Possible values
+ <integer>1234</integer>
+ <integer>+1234</integer>
+ <integer>-1234</integer>
+ <string>0x12abd</string>
+ */
 INTN
 GetPropertyInteger (
                     TagPtr Prop,
@@ -281,7 +304,7 @@ GetPropertyInteger (
   }
 
   if (Prop->type == kTagTypeInteger) {
-    return (INTN)Prop->string;
+    return (INTN)Prop->string; //this is union char* or size_t
   } else if ((Prop->type == kTagTypeString) && Prop->string) {
     if ((Prop->string[1] == 'x') || (Prop->string[1] == 'X')) {
       return (INTN)AsciiStrHexToUintn (Prop->string);

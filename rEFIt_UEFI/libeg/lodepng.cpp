@@ -293,11 +293,11 @@ static unsigned uivector_resize(uivector* p, size_t size)
 /*resize and give all new elements the value*/
 static unsigned uivector_resizev(uivector* p, size_t size, unsigned value)
 {
-  size_t oldsize = p->size, i;
+  size_t oldsize = p->size;
   // Prevent memset from being emitted by making this volatile
   volatile uivector *tmp = p;
   if(!uivector_resize(p, size)) return 0;
-  for(i = oldsize; i < size; ++i) tmp->data[i] = value;
+  for(size_t i = oldsize; i < size; ++i) tmp->data[i] = value;
   return 1;
 }
 
@@ -372,9 +372,9 @@ static void ucvector_init(ucvector* p)
 /*resize and give all new elements the value*/
 static unsigned ucvector_resizev(ucvector* p, size_t size, unsigned char value)
 {
-  size_t oldsize = p->size, i;
+  size_t oldsize = p->size;
   if(!ucvector_resize(p, size)) return 0;
-  for(i = oldsize; i < size; ++i) p->data[i] = value;
+  for(size_t i = oldsize; i < size; ++i) p->data[i] = value;
   return 1;
 }
 #endif /*LODEPNG_COMPILE_DECODER*/
@@ -433,10 +433,10 @@ static void string_cleanup(char** out)
 
 static void string_set(char** out, const char* in)
 {
-  size_t insize = AsciiStrLen(in), i;
+  size_t insize = AsciiStrLen(in);
   if(string_resize(out, insize))
   {
-    for(i = 0; i != insize; ++i)
+    for(size_t i = 0; i != insize; ++i)
     {
       (*out)[i] = in[i];
     }
@@ -537,14 +537,12 @@ unsigned lodepng_save_file(const unsigned char* buffer, size_t buffersize, const
 
 static void addBitsToStream(size_t* bitpointer, ucvector* bitstream, unsigned value, size_t nbits)
 {
-  size_t i;
-  for(i = 0; i != nbits; ++i) addBitToStream(bitpointer, bitstream, (unsigned char)((value >> i) & 1));
+  for(size_t i = 0; i != nbits; ++i) addBitToStream(bitpointer, bitstream, (unsigned char)((value >> i) & 1));
 }
 
 static void addBitsToStreamReversed(size_t* bitpointer, ucvector* bitstream, unsigned value, size_t nbits)
 {
-  size_t i;
-  for(i = 0; i != nbits; ++i) addBitToStream(bitpointer, bitstream, (unsigned char)((value >> (nbits - 1 - i)) & 1));
+  for(size_t i = 0; i != nbits; ++i) addBitToStream(bitpointer, bitstream, (unsigned char)((value >> (nbits - 1 - i)) & 1));
 }
 #endif /*LODEPNG_COMPILE_ENCODER*/
 
@@ -561,8 +559,8 @@ static unsigned char readBitFromStream(size_t* bitpointer, const unsigned char* 
 
 static unsigned readBitsFromStream(size_t* bitpointer, const unsigned char* bitstream, size_t nbits)
 {
-  unsigned result = 0, i;
-  for(i = 0; i != nbits; ++i)
+  unsigned result = 0;
+  for(size_t i = 0; i != nbits; ++i)
   {
     result += ((unsigned)READBIT(*bitpointer, bitstream)) << i;
     ++(*bitpointer);
@@ -918,12 +916,12 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
   leaves = (BPMNode*)lodepng_malloc(numcodes * sizeof(*leaves));
   if(!leaves) return 83; /*alloc fail*/
 
-  for(int i = 0; i != numcodes; ++i)
+  for(size_t i = 0; i != numcodes; ++i)
   {
     if(frequencies[i] > 0)
     {
       leaves[numpresent].weight = (int)frequencies[i];
-      leaves[numpresent].index = i;
+      leaves[numpresent].index = (unsigned)i;
       ++numpresent;
     }
   }
@@ -963,19 +961,19 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
 
     if(!error)
     {
-      for(int i = 0; i != lists.memsize; ++i) lists.freelist[i] = &lists.memory[i];
+      for(unsigned i = 0; i != lists.memsize; ++i) lists.freelist[i] = &lists.memory[i];
       bpmnode_create(&lists, leaves[0].weight, 1, 0);
       bpmnode_create(&lists, leaves[1].weight, 2, 0);
-      for(int i = 0; i != lists.listsize; ++i)
+      for(unsigned i = 0; i != lists.listsize; ++i)
       {
         lists.chains0[i] = &lists.memory[0];
         lists.chains1[i] = &lists.memory[1];
       }
       /*each boundaryPM call adds one chain to the last list, and we need 2 * numpresent - 2 chains.*/
-      for(int i = 2; i != 2 * numpresent - 2; ++i) boundaryPM(&lists, leaves, numpresent, (int)maxbitlen - 1, i);
+      for(unsigned i = 2; i != 2 * numpresent - 2; ++i) boundaryPM(&lists, leaves, numpresent, (int)maxbitlen - 1, (int)i);
       for(node = lists.chains1[maxbitlen - 1]; node; node = node->tail)
       {
-        for(int i = 0; i != node->index; ++i) ++lengths[leaves[i].index];
+        for(unsigned i = 0; i != node->index; ++i) ++lengths[leaves[i].index];
       }
     }
 

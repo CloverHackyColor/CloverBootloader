@@ -15,7 +15,6 @@
 		12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 12AAF3A41DB75DC800A52B12 /* FirmwareVolume.c */; };
 		2C794E3F1A0AA85900D845B0 /* FSInject.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CEA1A0AA85900D845B0 /* FSInject.c */; };
 		2C794E401A0AA85900D845B0 /* Test.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794CF11A0AA85900D845B0 /* Test.c */; };
-		A5456CD723FC5A88000BF18C /* uefibootoption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456CC523FC5A81000BF18C /* uefibootoption.cpp */; };
 		A5456CD823FC5A88000BF18C /* securemenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456CC623FC5A81000BF18C /* securemenu.cpp */; };
 		A5456CD923FC5A88000BF18C /* securehash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456CC723FC5A82000BF18C /* securehash.cpp */; };
 		A5456CDA23FC5A88000BF18C /* securevars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456CC823FC5A82000BF18C /* securevars.cpp */; };
@@ -2272,7 +2271,6 @@
 		A51F63CB22DFB86F00086DB7 /* ApplePartitionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePartitionInfo.h; sourceTree = "<group>"; };
 		A5429219233538250001F42A /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5456CC423FC5A81000BF18C /* CanonicalDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonicalDB.h; sourceTree = "<group>"; };
-		A5456CC523FC5A81000BF18C /* uefibootoption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uefibootoption.cpp; sourceTree = "<group>"; };
 		A5456CC623FC5A81000BF18C /* securemenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = securemenu.cpp; sourceTree = "<group>"; };
 		A5456CC723FC5A82000BF18C /* securehash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = securehash.cpp; sourceTree = "<group>"; };
 		A5456CC823FC5A82000BF18C /* securevars.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = securevars.cpp; sourceTree = "<group>"; };
@@ -6058,7 +6056,6 @@
 				A5456CC623FC5A81000BF18C /* securemenu.cpp */,
 				A5456CC823FC5A82000BF18C /* securevars.cpp */,
 				A5456CCE23FC5A84000BF18C /* tool.cpp */,
-				A5456CC523FC5A81000BF18C /* uefibootoption.cpp */,
 			);
 			path = entry_scan;
 			sourceTree = "<group>";
@@ -16553,7 +16550,6 @@
 				A5AAFC0B237F13B3009CD413 /* NullMemoryTest.c in Sources */,
 				A5AA06E3237F13C2009CD413 /* DevicePathToText.c in Sources */,
 				A5AAFBF7237F13B3009CD413 /* DiskIo.c in Sources */,
-				A5456CD723FC5A88000BF18C /* uefibootoption.cpp in Sources */,
 				A5AAFCC3237F13B4009CD413 /* UsbHub.c in Sources */,
 				A5AAFC7D237F13B4009CD413 /* NvmExpressPeiStorageSecurity.c in Sources */,
 				A5AAFCE9237F13B4009CD413 /* DxeCapsuleProcessLib.c in Sources */,

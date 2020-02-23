@@ -62,7 +62,8 @@
 #endif
 
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
-#define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
+//#define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
+CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 
 //#define LSTR(s) L##s
 
