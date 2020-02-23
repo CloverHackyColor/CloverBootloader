@@ -1,6 +1,13 @@
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//*************************************************************************************************
+//*************************************************************************************************
+//
 //                                      STRING
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//
+// Developed by jief666, from 1997.
+//
+//*************************************************************************************************
+//*************************************************************************************************
+
 
 #if !defined(__XStringW_CPP__)
 #define __XStringW_CPP__
@@ -11,6 +18,7 @@
 #define DBG(...)
 #endif
 
+#include "XToolsCommon.h"
 #include "XStringW.h"
 
 extern "C" {
@@ -21,15 +29,15 @@ extern "C" {
 #include "refit/IO.h"
 
 UINTN XStringWGrowByDefault = 1024;
-//const XStringW NullXStringW;
+const XStringW NullXStringW;
 
 
 void XStringW::Init(UINTN aSize)
 {
 //DBG("Init aSize=%d\n", aSize);
-	m_data = (wchar_t*)AllocatePool( (aSize+1)*sizeof(wchar_t) ); /* le 0 terminal n'est pas compté dans mSize */
+	m_data = (wchar_t*)Xalloc( (aSize+1)*sizeof(wchar_t) ); /* le 0 terminal n'est pas compté dans mSize */
 	if ( !m_data ) {
-		DBG("XStringW::Init(%d) : AllocatePool returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
+		DBG("XStringW::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
 		CpuDeadLoop();
 	}
 	m_size = aSize;
@@ -110,9 +118,9 @@ wchar_t *XStringW::CheckSize(UINTN nNewSize, UINTN nGrowBy)
 	if ( m_size < nNewSize )
 	{
 		nNewSize += nGrowBy;
-		m_data = (wchar_t*)ReallocatePool(m_size*sizeof(wchar_t), (nNewSize+1)*sizeof(wchar_t), m_data);
+		m_data = (wchar_t*)Xrealloc(m_size*sizeof(wchar_t), (nNewSize+1)*sizeof(wchar_t), m_data);
 		if ( !m_data ) {
-  		DBG("XStringW::CheckSize(%d, %d) : ReallocatePool(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, (nNewSize+1)*sizeof(wchar_t), m_data);
+  		DBG("XStringW::CheckSize(%d, %d) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, (nNewSize+1)*sizeof(wchar_t), m_data);
 	  	CpuDeadLoop();
 		}
 		m_size = nNewSize;
@@ -244,14 +252,14 @@ void XStringW::SPrintf(const wchar_t *format, ...)
 XStringW XStringW::basename() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
-	if ( idx == MAX_UINTN ) return XStringW();
+	if ( idx == MAX_UINTN ) return NullXStringW;
 	return SubString(idx+1, length()-idx-1);
 }
 
 XStringW XStringW::dirname() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
-	if ( idx == MAX_UINTN ) return XStringW();
+	if ( idx == MAX_UINTN ) return NullXStringW;
 	return SubString(0, idx);
 }
 

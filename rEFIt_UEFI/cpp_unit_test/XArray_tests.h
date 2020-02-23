@@ -1,0 +1,3 @@
+
+
+int XArray_tests();

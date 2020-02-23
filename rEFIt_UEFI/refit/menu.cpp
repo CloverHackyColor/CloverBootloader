@@ -39,7 +39,7 @@
 //#include "../include/scroll_images.h"
 
 //#include "../Platform/Platform.h"
-#include "../cpp_util/XStringW.h"
+//#include "../cpp_foundation/XStringW.h"
 
 #include "Version.h"
 //#include "colors.h"

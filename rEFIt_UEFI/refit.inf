@@ -158,8 +158,6 @@
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
   ../Version.h
-  cpp_util/XStringW.h
-  cpp_util/XStringW.cpp
   cpp_util/memory.cpp
   cpp_util/global1.cpp
   cpp_util/global2.cpp
@@ -170,7 +168,11 @@
   cpp_util/operatorNewDelete.cpp
   cpp_util/operatorNewDelete.h
   cpp_util/remove_ref.h
-  
+  cpp_foundation/XStringW.h
+  cpp_foundation/XStringW.cpp
+  cpp_foundation/XArray.h
+  cpp_foundation/XObjArray.h
+    
 [Sources.IA32]
   libeg/ftol.asm | MSFT
 
@@ -317,7 +319,7 @@
 [Pcd]
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=const
+  XCODE:*_*_*_CC_FLAGS = -fsigned-char -O2 -fno-omit-frame-pointer      -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=const -Wno-incompatible-ms-struct
   GCC:*_*_*_CC_FLAGS = -std=c99 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
   GCC:*_*_*_CXX_FLAGS = -std=c++11 -Os -fno-omit-frame-pointer -maccumulate-outgoing-args   -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable -Wno-pointer-arith -DJCONST=const
   MSFT:*_*_*_CC_FLAGS = /Os /wd4201 /D JCONST=const
