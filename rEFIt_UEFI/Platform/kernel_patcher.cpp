@@ -689,11 +689,12 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
                bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
       for (y = i; y < 0x1000000; y++) {
         // Lapic panic patch, by vit9696
-        // mov eax, gs:1Ch
+        // mov eax, gs:XX
         // cmp eax, cs:_master_cpu
-        // 65 8B 04 25 1C 00 00 00 3B 05 XX XX XX 00
+        // 65 8B 04 25 XX 00 00 00 3B 05 XX XX XX 00
         if (bytes[y+0] == 0x65 && bytes[y+1] == 0x8B && bytes[y+2] == 0x04 && bytes[y+3] == 0x25 &&
-            bytes[y+4] == 0x1C && bytes[y+5] == 0x00 && bytes[y+6] == 0x00 && bytes[y+7] == 0x00 &&
+            //(bytes[y+4] == 0x1C || bytes[y+4] == 0x18) && // 1C:10.10-10.15.3/18:10.15.4+
+            bytes[y+5] == 0x00 && bytes[y+6] == 0x00 && bytes[y+7] == 0x00 &&
             bytes[y+8] == 0x3B && bytes[y+9] == 0x05 && bytes[y+13] == 0x00) {
           patchLocation1 = y;
           DBG("Found Lapic panic (10.10 - recent macOS) at 0x%08x\n", patchLocation1);
