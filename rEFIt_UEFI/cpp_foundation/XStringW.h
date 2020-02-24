@@ -11,11 +11,7 @@
 
 #include "XToolsCommon.h"
 #include <Platform.h>
-//#include "XConstStringW.h"
-
-//extern "C" {
-//  #include <Library/BaseLib.h>
-//}
+#include "utf8Conversion.h"
 
 #define LPATH_SEPARATOR L'\\'
 
@@ -36,6 +32,8 @@ public:
 	XStringW(const wchar_t *);
 	XStringW(const wchar_t* S, UINTN count);
 	XStringW(const wchar_t);
+
+	XStringW(const char*);
 
 	~XStringW();
 
@@ -89,8 +87,8 @@ public:
 	void Insert(UINTN pos, const XStringW& Str);
 
 
-	void vSPrintf(const wchar_t *format, VA_LIST va);
-	void SPrintf(const wchar_t *format, ...);
+	void vSPrintf(const char* format, VA_LIST va);
+	void SPrintf(const char* format, ...) __attribute__ ((__format__ (__printf__, 2, 3)));
 
 	const XStringW &operator =(const XStringW &aString);
 	const XStringW &operator =(const wchar_t* S);
@@ -101,7 +99,7 @@ public:
 	const XStringW &operator += (wchar_t);
 
 	XStringW SubString(UINTN pos, UINTN count) const;
-  UINTN IdxOf(wchar_t c, UINTN Pos = 0) const;
+	UINTN IdxOf(wchar_t c, UINTN Pos = 0) const;
 	UINTN IdxOf(const XStringW& S, UINTN Pos = 0) const;
 	UINTN RIdxOf(const wchar_t c, UINTN Pos = MAX_XSIZE) const;
 	UINTN RIdxOf(const XStringW& S, UINTN Pos = MAX_XSIZE) const;
@@ -116,7 +114,7 @@ public:
 	void Replace(wchar_t c1, wchar_t c2);
 	XStringW SubStringReplace(wchar_t c1, wchar_t c2);
 
-	int Compare(const wchar_t* S) const { return StrCmp(data(), S) ; }
+	int Compare(const wchar_t* S) const { return (int)StrCmp(data(), S) ; }
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
 	bool BeginingEqual(const wchar_t* S) const { return StrnCmp(data(), S, StrLen(S)); }
@@ -174,7 +172,7 @@ public:
 
 //extern const XStringW NullXStringW;
 
-XStringW SPrintf(const wchar_t *format, ...);
+XStringW SPrintf(const char* format, ...) __attribute__ ((__format__ (__printf__, 1, 2)));
 XStringW SubString(const wchar_t *S, UINTN pos, UINTN count);
 
 XStringW CleanCtrl(const XStringW &S);

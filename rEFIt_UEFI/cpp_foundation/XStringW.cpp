@@ -21,12 +21,8 @@
 #include "XToolsCommon.h"
 #include "XStringW.h"
 
-//extern "C" {
-//  #include <Library/MemoryAllocationLib.h>
-//  #include <Library/BaseMemoryLib.h>
-//}
 #include <Platform.h>
-//#include "refit/IO.h"
+#include "printf_lite.h"
 
 UINTN XStringWGrowByDefault = 1024;
 const XStringW NullXStringW;
@@ -81,6 +77,14 @@ XStringW::XStringW(const wchar_t aChar)
 DBG("Constructor(const wchar_t aChar)\n");
 	Init(1);
 	StrnCpy(&aChar, 1);
+}
+
+XStringW::XStringW(const char* S)
+{
+DBG("Constructor(const char* S)\n");
+	xsize newLen = StrLenInWChar(S, AsciiStrLen(S));
+	Init(newLen);
+	utf8ToWChar(m_data, m_size+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -220,8 +224,21 @@ XStringW XStringW::SubStringReplace(wchar_t c1, wchar_t c2)
 	return Result;
 }
 
-void XStringW::vSPrintf(const wchar_t *format, VA_LIST va)
+static XStringW* sprintfBuf;
+
+void transmitSprintf(const wchar_t* buf, size_t nbyte)
 {
+	(*sprintfBuf).StrnCat(buf, nbyte);
+}
+
+void XStringW::vSPrintf(const char* format, VA_LIST va)
+{
+	SetLength(0);
+
+	sprintfBuf = this;
+	vprintf_with_callback(format, va, transmitSprintf);
+	
+	// This is an attempt to use _PPrint from IO.c. Problem is : you have to allocate the memory BEFORE calling it.
 //  POOL_PRINT  spc;
 //  PRINT_STATE ps;
 //
@@ -240,11 +257,11 @@ void XStringW::vSPrintf(const wchar_t *format, VA_LIST va)
 //  VA_END(ps.args);
 }
 
-void XStringW::SPrintf(const wchar_t *format, ...)
+void XStringW::SPrintf(const char* format, ...)
 {
   VA_LIST     va;
 
-  VA_START (va, format);
+	VA_START (va, format);
 	vSPrintf(format, va);
 	VA_END(va);
 }
@@ -464,7 +481,7 @@ const XStringW &XStringW::operator +=(const wchar_t *S)
 //                                 Functions
 //-----------------------------------------------------------------------------
 
-XStringW SPrintf(const wchar_t *format, ...)
+XStringW SPrintf(const char* format, ...)
 {
   VA_LIST     va;
   XStringW str;

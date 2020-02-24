@@ -51,8 +51,8 @@ class XObjArrayNC
 	virtual ~XObjArrayNC();
 
   protected:
-	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) { throw "Intentionally not defined"; }
-	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) { throw "Intentionally not defined"; }
+	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) { DebugLog(2, "Intentionally not defined"); CpuDeadLoop(); }
+	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) { DebugLog(2, "Intentionally not defined"); CpuDeadLoop(); }
 	xsize _getLen() const { return _Len; }
 
   public:
