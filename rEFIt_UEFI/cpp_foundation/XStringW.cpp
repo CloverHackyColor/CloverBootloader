@@ -150,7 +150,6 @@ void XStringW::StrCpy(const wchar_t *buf)
 	}
 }
 
-//inline
 void XStringW::StrnCat(const wchar_t *buf, UINTN len)
 {
   UINTN NewLen;
@@ -163,7 +162,7 @@ void XStringW::StrnCat(const wchar_t *buf, UINTN len)
 	}
 }
 
-inline void XStringW::StrCat(const wchar_t *buf)
+void XStringW::StrCat(const wchar_t *buf)
 {
 	if ( buf && *buf ) {
 		StrnCat(buf, StrLen(buf));
