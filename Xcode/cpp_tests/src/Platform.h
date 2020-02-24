@@ -16,6 +16,7 @@
 #define MAX_UINTN ULONG_MAX
 #define BOOLEAN bool
 #define INTN int
+#define CHAR16 char16_t
 
 #define IN
 
@@ -35,7 +36,10 @@ void CopyMem(void *Destination, void *Source, UINTN Length);
 void PauseForKey(const wchar_t* msg);
 int StrCmp(const wchar_t* FirstString, const wchar_t* SecondString);
 int StrnCmp(const wchar_t* FirstString, const wchar_t* SecondString, UINTN Length);
-int StrLen(const wchar_t* String);
+unsigned int StrLen(const wchar_t* String);
+int AsciiStrLen(const char* String);
+
+
 
 
 #endif /* Platform_h_h */

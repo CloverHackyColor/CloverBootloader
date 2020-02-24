@@ -1,0 +1,10 @@
+prefix=$1
+#>&2 echo prefix="$prefix"
+
+
+echo "
+
+" | awk '$0!=""{ printf " -I'"${prefix}"'%s", $0; }'
+
+
+#../StdLib/Include

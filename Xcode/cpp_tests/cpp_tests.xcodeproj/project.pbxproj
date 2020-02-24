@@ -18,10 +18,35 @@
 		9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08482402FE9300E2B470 /* XStringW.cpp */; };
 		9A0B08662403144C00E2B470 /* global1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global1.cpp */; };
 		9A0B08672403144C00E2B470 /* global2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08652403144C00E2B470 /* global2.cpp */; };
+		9A0B086D24039FE700E2B470 /* printf_lite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086B24039FE700E2B470 /* printf_lite.cpp */; };
+		9A0B08702403A95800E2B470 /* utf816Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */; };
+		9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
+		9A0B08742403B08400E2B470 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9A0B08752403B08400E2B470 /* printf_lite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086B24039FE700E2B470 /* printf_lite.cpp */; };
+		9A0B08762403B08400E2B470 /* utf816Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */; };
+		9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
+		9A0B08782403B08400E2B470 /* global2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08652403144C00E2B470 /* global2.cpp */; };
+		9A0B08792403B08400E2B470 /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08482402FE9300E2B470 /* XStringW.cpp */; };
+		9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08512402FE9B00E2B470 /* all_tests.cpp */; };
+		9A0B087B2403B08400E2B470 /* global1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global1.cpp */; };
+		9A0B087C2403B08400E2B470 /* XToolsCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08492402FE9300E2B470 /* XToolsCommon.cpp */; };
+		9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */; };
+		9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
+		9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
+		9A0B08802403B08400E2B470 /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08552402FE9B00E2B470 /* XStringW_test.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		9A0B08822403B08400E2B470 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		9A92232B2402FD1000483CBA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,12 +80,24 @@
 		9A0B08632403132300E2B470 /* XStringW_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringW_test.h; sourceTree = "<group>"; };
 		9A0B08642403144C00E2B470 /* global1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global1.cpp; sourceTree = "<group>"; };
 		9A0B08652403144C00E2B470 /* global2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global2.cpp; sourceTree = "<group>"; };
-		9A92232D2402FD1000483CBA /* cpp_tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cpp_tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A0B086B24039FE700E2B470 /* printf_lite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printf_lite.cpp; path = "../../../../../Embedded/Shared/printf_lite-master/printf_lite.cpp"; sourceTree = "<group>"; };
+		9A0B086C24039FE700E2B470 /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printf_lite.h; path = "../../../../../Embedded/Shared/printf_lite-master/printf_lite.h"; sourceTree = "<group>"; };
+		9A0B086E2403A95800E2B470 /* utf816Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utf816Conversion.h; sourceTree = "<group>"; };
+		9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utf816Conversion.cpp; sourceTree = "<group>"; };
+		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A92232D2402FD1000483CBA /* cpp_tests UTF16 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		9A0B08812403B08400E2B470 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9A92232A2402FD1000483CBA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -82,6 +119,10 @@
 				9A0B08482402FE9300E2B470 /* XStringW.cpp */,
 				9A0B084A2402FE9300E2B470 /* XArray.h */,
 				9A0B084B2402FE9300E2B470 /* XObjArray.h */,
+				9A0B086B24039FE700E2B470 /* printf_lite.cpp */,
+				9A0B086C24039FE700E2B470 /* printf_lite.h */,
+				9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */,
+				9A0B086E2403A95800E2B470 /* utf816Conversion.h */,
 			);
 			name = cpp_foundation;
 			path = ../../rEFIt_UEFI/cpp_foundation;
@@ -120,7 +161,8 @@
 		9A92232E2402FD1000483CBA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9A92232D2402FD1000483CBA /* cpp_tests */,
+				9A92232D2402FD1000483CBA /* cpp_tests UTF16 */,
+				9A0B08862403B08400E2B470 /* cpp_tests UTF32 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -132,15 +174,33 @@
 				9A92234D2402FD9500483CBA /* Platform.h */,
 				9A0B085D240300E000E2B470 /* Platform.cpp */,
 			);
-			path = cpp_tests;
+			name = cpp_tests;
+			path = src;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9A92232C2402FD1000483CBA /* cpp_tests */ = {
+		9A0B08712403B08400E2B470 /* cpp_tests UTF32 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A9223342402FD1000483CBA /* Build configuration list for PBXNativeTarget "cpp_tests" */;
+			buildConfigurationList = 9A0B08832403B08400E2B470 /* Build configuration list for PBXNativeTarget "cpp_tests UTF32" */;
+			buildPhases = (
+				9A0B08722403B08400E2B470 /* Sources */,
+				9A0B08812403B08400E2B470 /* Frameworks */,
+				9A0B08822403B08400E2B470 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cpp_tests UTF32";
+			productName = cpp_tests;
+			productReference = 9A0B08862403B08400E2B470 /* cpp_tests UTF32 */;
+			productType = "com.apple.product-type.tool";
+		};
+		9A92232C2402FD1000483CBA /* cpp_tests UTF16 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A9223342402FD1000483CBA /* Build configuration list for PBXNativeTarget "cpp_tests UTF16" */;
 			buildPhases = (
 				9A9223292402FD1000483CBA /* Sources */,
 				9A92232A2402FD1000483CBA /* Frameworks */,
@@ -150,9 +210,9 @@
 			);
 			dependencies = (
 			);
-			name = cpp_tests;
+			name = "cpp_tests UTF16";
 			productName = cpp_tests;
-			productReference = 9A92232D2402FD1000483CBA /* cpp_tests */;
+			productReference = 9A92232D2402FD1000483CBA /* cpp_tests UTF16 */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -181,18 +241,42 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9A92232C2402FD1000483CBA /* cpp_tests */,
+				9A92232C2402FD1000483CBA /* cpp_tests UTF16 */,
+				9A0B08712403B08400E2B470 /* cpp_tests UTF32 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		9A0B08722403B08400E2B470 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */,
+				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
+				9A0B08752403B08400E2B470 /* printf_lite.cpp in Sources */,
+				9A0B08762403B08400E2B470 /* utf816Conversion.cpp in Sources */,
+				9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */,
+				9A0B08782403B08400E2B470 /* global2.cpp in Sources */,
+				9A0B08792403B08400E2B470 /* XStringW.cpp in Sources */,
+				9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */,
+				9A0B087B2403B08400E2B470 /* global1.cpp in Sources */,
+				9A0B087C2403B08400E2B470 /* XToolsCommon.cpp in Sources */,
+				9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */,
+				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
+				9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */,
+				9A0B08802403B08400E2B470 /* XStringW_test.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9A9223292402FD1000483CBA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
+				9A0B086D24039FE700E2B470 /* printf_lite.cpp in Sources */,
+				9A0B08702403A95800E2B470 /* utf816Conversion.cpp in Sources */,
 				9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */,
 				9A0B08672403144C00E2B470 /* global2.cpp in Sources */,
 				9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */,
@@ -209,6 +293,22 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		9A0B08842403B08400E2B470 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9A0B08852403B08400E2B470 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		9A9223322402FD1000483CBA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -260,11 +360,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/cpp_tests";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -314,10 +415,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/cpp_tests";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -326,6 +428,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				OTHER_CFLAGS = "-fshort-wchar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -334,6 +437,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				OTHER_CFLAGS = "-fshort-wchar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -341,6 +445,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9A0B08832403B08400E2B470 /* Build configuration list for PBXNativeTarget "cpp_tests UTF32" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A0B08842403B08400E2B470 /* Debug */,
+				9A0B08852403B08400E2B470 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9A9223282402FD1000483CBA /* Build configuration list for PBXProject "cpp_tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -350,7 +463,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9A9223342402FD1000483CBA /* Build configuration list for PBXNativeTarget "cpp_tests" */ = {
+		9A9223342402FD1000483CBA /* Build configuration list for PBXNativeTarget "cpp_tests UTF16" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A9223352402FD1000483CBA /* Debug */,
