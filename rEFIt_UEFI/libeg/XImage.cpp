@@ -21,22 +21,22 @@ XImage::~XImage()
   Xfree(PixelData);
 }
 
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    XImage::GetData()
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    XImage::GetData() const
 {
   return PixelData;
 }
 
-UINTN      XImage::GetWidth()
+UINTN      XImage::GetWidth() const
 {
   return Width;
 }
 
-UINTN      XImage::GetHeight()
+UINTN      XImage::GetHeight() const
 {
   return Height;
 }
 
-UINTN XImage::GetSize()
+UINTN XImage::GetSize() const
 {
   return Width * Height * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
 }
@@ -59,13 +59,14 @@ void XImage::FillArea(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color, const EgRect& Rect)
 
 
 
-void XImage::Compose(int PosX, int PosY, XImage& TopImage, bool Lowest) //lowest image is opaque
+void XImage::Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest) //lowest image is opaque
 {
   UINT32      TopAlpha;
   UINT32      RevAlpha;
   UINT32      FinalAlpha;
   UINT32      Temp;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *TopPtr, *CompPtr;
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *TopPtr;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *CompPtr;
 
   for (UINTN y = PosY; y < Height && (y - PosY) < TopImage.GetHeight(); y++) {
     TopPtr = TopImage.GetData();

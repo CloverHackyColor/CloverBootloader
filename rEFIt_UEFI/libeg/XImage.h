@@ -5,7 +5,7 @@ This class will replace EG_IMAGE structure and methods
 #if !defined(__XSTRINGW_H__)
 #define __XSTRINGW_H__
 
-#include "XToolsCommon.h"
+#include "../cpp_foundation/XToolsCommon.h"
 #include <Platform.h>
 
 /*
@@ -44,17 +44,17 @@ public:
   ~XImage();
 
 protected:
-  UINTN GetSize();  //in bytes
+  UINTN GetSize() const;  //in bytes
 
 public:
 
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    GetData();
-  UINTN      GetWidth();
-  UINTN      GetHeight();
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    GetData() const;
+  UINTN      GetWidth() const;
+  UINTN      GetHeight() const;
 
   void Fill(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color = { 0, 0, 0, 0 });
   void FillArea(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color, const EgRect& Rect);
-  void Compose(int PosX, int PosY, XImage& TopImage, bool Lowest);
+  void Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest);
 };
 
 #endif //__XSTRINGW_H__
