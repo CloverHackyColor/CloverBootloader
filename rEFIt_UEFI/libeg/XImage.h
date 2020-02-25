@@ -6,6 +6,7 @@ This class will replace EG_IMAGE structure and methods
 #define __XSTRINGW_H__
 
 #include "../cpp_foundation/XToolsCommon.h"
+#include "../cpp_foundation/XArray.h"
 #include <Platform.h>
 
 /*
@@ -34,7 +35,7 @@ class XImage
 protected:
   UINTN      Width;
   UINTN      Height;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *PixelData;
+  XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL> PixelData;
   bool       HasAlpha;   
 public:
   XImage();
@@ -48,7 +49,10 @@ protected:
 
 public:
 
-  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    GetData() const;
+  const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& GetData() const;
+
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& GetPixel(UINTN x, UINTN y) const;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y);
   UINTN      GetWidth() const;
   UINTN      GetHeight() const;
 

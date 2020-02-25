@@ -4,7 +4,6 @@ XImage::XImage()
 {
   Width = 0;
   Height = 0;
-  PixelData = nullptr;
   HasAlpha = true;
 }
 
@@ -13,18 +12,28 @@ XImage::XImage(UINTN W, UINTN H, bool A)
   Width = W;
   Height = H;
   HasAlpha = A;
-  PixelData = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL*)Xalloc(GetSize());
+  PixelData.CheckSize(GetWidth()*GetHeight());
 }
 
 XImage::~XImage()
 {
-  Xfree(PixelData);
 }
 
-const EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    XImage::GetData() const
+const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& XImage::GetData() const
 {
   return PixelData;
 }
+
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL* XImage::GetPixelPtr(UINTN x, UINTN y)
+{
+	return &PixelData[x + y * Width];
+}
+
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& XImage::GetPixel(UINTN x, UINTN y) const
+{
+	return PixelData[x + y * Width];
+}
+
 
 UINTN      XImage::GetWidth() const
 {
@@ -45,7 +54,7 @@ void XImage::Fill(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color)
 {
   for (UINTN i = 0; i < Height; ++i)
     for (UINTN j = 0; j < Width; ++j)
-      *PixelData++ = Color;
+      PixelData[i*j] = Color;
 }
 
 void XImage::FillArea(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color, const EgRect& Rect)
@@ -65,34 +74,29 @@ void XImage::Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest) //
   UINT32      RevAlpha;
   UINT32      FinalAlpha;
   UINT32      Temp;
-  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *TopPtr;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *CompPtr;
 
   for (UINTN y = PosY; y < Height && (y - PosY) < TopImage.GetHeight(); y++) {
-    TopPtr = TopImage.GetData();
-    CompPtr = PixelData + y * Width + PosX;
+    EFI_GRAPHICS_OUTPUT_BLT_PIXEL& CompPtr = *GetPixelPtr(PosX, y); // I assign a ref to avoid the operator ->. Compiler will produce the same anyway.
     for (UINTN x = PosX; x < Width && (x - PosX) < TopImage.GetWidth(); x++) {
-      TopAlpha = TopPtr->Reserved;
+      TopAlpha = TopImage.GetPixel(x-PosX, y-PosY).Reserved;
       RevAlpha = 255 - TopAlpha;
-      FinalAlpha = (255*255 - RevAlpha*(255 - CompPtr->Reserved)) / 255;
+      FinalAlpha = (255*255 - RevAlpha*(255 - CompPtr.Reserved)) / 255;
 
 //final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255
-      Temp = ((UINT8)CompPtr->Blue * RevAlpha) + ((UINT8)TopPtr->Blue * TopAlpha);
-      CompPtr->Blue = (UINT8)(Temp / 255);
+      Temp = (CompPtr.Blue * RevAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Blue * TopAlpha);
+      CompPtr.Blue = (UINT8)(Temp / 255);
 
-      Temp = ((UINT8)CompPtr->Green * RevAlpha) + ((UINT8)TopPtr->Green * TopAlpha);
-      CompPtr->Green = (UINT8)(Temp / 255);
+      Temp = (CompPtr.Green * RevAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Green * TopAlpha);
+      CompPtr.Green = (UINT8)(Temp / 255);
 
-      Temp = ((UINT8)CompPtr->Red * RevAlpha) + ((UINT8)TopPtr->Red * TopAlpha);
-      CompPtr->Red = (UINT8)(Temp / 255);
+      Temp = (CompPtr.Red * RevAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Red * TopAlpha);
+      CompPtr.Red = (UINT8)(Temp / 255);
 
       if (Lowest) {
-        CompPtr->Reserved = (UINT8)(255);
+        CompPtr.Reserved = 255;
       } else {
-        CompPtr->Reserved = (UINT8)FinalAlpha;
+        CompPtr.Reserved = (UINT8)FinalAlpha;
       }
-
-      TopPtr++, CompPtr++;
 
     }
   }
