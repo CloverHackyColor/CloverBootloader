@@ -20,7 +20,9 @@ void* operator new  (unsigned long count)
 	return ptr;
 }
 
+#ifdef _MSC_VER
 #pragma warning(disable : 4577)
+#endif
 void operator delete  ( void* ptr ) noexcept
 {
 	return FreePool(ptr);
