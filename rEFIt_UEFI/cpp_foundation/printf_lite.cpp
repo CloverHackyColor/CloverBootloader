@@ -202,7 +202,7 @@ static void print_string(const unsigned char* s, PrintfParams* printfParams)
 		print_char(c, printfParams);
 #else
 		if ( c <= 0xFFFF) {
-				print_char(c, printfParams);
+				print_char((wchar_t)c, printfParams);
 		} else {
 				c -= halfBase;
 				print_char((wchar_t)((c >> halfShift) + UNI_SUR_HIGH_START), printfParams);
@@ -692,8 +692,8 @@ static void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfPa
 			case 'c':
 #if PRINTF_OUTPUT_FORMAT_UNICODE == 1  &&  PRINTF_UTF8_SUPPORT == 1
 				if ( printfParams->l_modifier == 0 ) {
-					char c = (char)va_arg(VALIST_ACCESS(valist), int);
-					print_char(c, printfParams); // 'char' is promoted to 'int' when passed through '...'
+					char c1 = (char)va_arg(VALIST_ACCESS(valist), int);
+					print_char((wchar_t)c1, printfParams); // 'char' is promoted to 'int' when passed through '...'
 					printfParams->inDirective = 0;
 				}else
 #endif

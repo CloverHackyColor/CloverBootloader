@@ -167,7 +167,7 @@ void utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s, size_t src_le
 		if ( dst_len == dst_max_len ) goto exit;
 #else
 		if ( c <= 0xFFFF) {
-				dst[dst_len++] = c;
+				dst[dst_len++] = (wchar_t)c;
 		if ( dst_len == dst_max_len ) goto exit;
 		} else {
 				c -= halfBase;

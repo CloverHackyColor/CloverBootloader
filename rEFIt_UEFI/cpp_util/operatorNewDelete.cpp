@@ -20,9 +20,15 @@ void* operator new  (unsigned long count)
 	return ptr;
 }
 
+#pragma warning(disable : 4577)
 void operator delete  ( void* ptr ) noexcept
 {
 	return FreePool(ptr);
+}
+
+void __cdecl operator delete(void * ptr, unsigned __int64 count)
+{
+  return FreePool(ptr);
 }
 
 

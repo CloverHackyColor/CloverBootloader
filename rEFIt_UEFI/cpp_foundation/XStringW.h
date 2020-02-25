@@ -88,7 +88,12 @@ public:
 
 
 	void vSPrintf(const char* format, VA_LIST va);
-	void SPrintf(const char* format, ...) __attribute__ ((__format__ (__printf__, 2, 3)));
+#ifndef _MSC_VER
+  void SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
+#else
+  void SPrintf(const char* format, ...);
+#endif // !__MSC_VER
+
 
 	const XStringW &operator =(const XStringW &aString);
 	const XStringW &operator =(const wchar_t* S);
@@ -117,8 +122,8 @@ public:
 	int Compare(const wchar_t* S) const { return (int)StrCmp(data(), S) ; }
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
-	bool BeginingEqual(const wchar_t* S) const { return StrnCmp(data(), S, StrLen(S)); }
-	bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return StrCmp(data(Pos), S); }
+  bool BeginingEqual(const wchar_t* S) const { return (StrnCmp(data(), S, StrLen(S)) == 0); }
+  bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return (StrCmp(data(Pos), S) == 0); }
 
 	XStringW basename() const;
 	XStringW dirname() const;
@@ -171,8 +176,13 @@ public:
 };
 
 //extern const XStringW NullXStringW;
+#ifndef _MSC_VER
+XStringW SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+#else
+XStringW SPrintf(const char* format, ...);
+#endif // !__MSC_VER
 
-XStringW SPrintf(const char* format, ...) __attribute__ ((__format__ (__printf__, 1, 2)));
+
 XStringW SubString(const wchar_t *S, UINTN pos, UINTN count);
 
 XStringW CleanCtrl(const XStringW &S);
