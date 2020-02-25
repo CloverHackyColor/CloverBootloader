@@ -41,7 +41,9 @@ int XStringW_tests()
 	if ( str2 != L"a" ) return 20;
 	str2.SPrintf("%ls", L"ab"); // UTF16(32) string containing ascii char
 	if ( str2 != L"ab" ) return 21;
+#ifdef _MSC_VER
 #pragma warning(disable : 4066)
+#endif
 	str2.SPrintf("%lc", L'Ň'); // signe UTF16(32) char. (2 bytes in total if UTF16)
 	if ( str2 != L"Ň" ) return 22;
 	str2.SPrintf("%s", "Ň"); // this is a UTF8 string 2 bytes long
