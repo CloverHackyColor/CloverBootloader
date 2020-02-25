@@ -23,10 +23,10 @@ typedef union {
 */
 
 typedef struct {
-  int Xpos;
-  int Ypos;
-  int Width;
-  int Height;
+  UINTN Xpos;
+  UINTN Ypos;
+  UINTN Width;
+  UINTN Height;
 } EgRect;
 
 class XImage
@@ -43,15 +43,18 @@ public:
 //  XImage(VOID *Data); 
   ~XImage();
 
+protected:
+  UINTN GetSize();  //in bytes
+
 public:
-  size_t GetSize();  //in bytes
+
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL*    GetData();
   UINTN      GetWidth();
   UINTN      GetHeight();
 
   void Fill(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color = { 0, 0, 0, 0 });
   void FillArea(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color, const EgRect& Rect);
-  void Compose(XImage& LowImage, XImage& TopImage, int PosX, int PosY, bool Lowest);
+  void Compose(int PosX, int PosY, XImage& TopImage, bool Lowest);
 };
 
 #endif //__XSTRINGW_H__

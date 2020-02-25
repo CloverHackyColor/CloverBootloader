@@ -36,41 +36,65 @@ UINTN      XImage::GetHeight()
   return Height;
 }
 
-size_t XImage::GetSize()
+UINTN XImage::GetSize()
 {
   return Width * Height * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
 }
 
 void XImage::Fill(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color)
 {
-  for (int i = 0; i < Height; ++i)
-    for (int j = 0; j < Width; ++j)
+  for (UINTN i = 0; i < Height; ++i)
+    for (UINTN j = 0; j < Width; ++j)
       *PixelData++ = Color;
 }
 
 void XImage::FillArea(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color, const EgRect& Rect)
 {
-  for (int y = Rect.Ypos; y < Rect.Height && y < Height; ++y) {
+  for (UINTN y = Rect.Ypos; y < Rect.Height && y < Height; ++y) {
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL* Ptr = PixelData + y * Width + Rect.Xpos;
-    for (int x = Rect.Xpos; x < Rect.Width && x < Width; ++x)
-      *PixelData++ = Color;
+    for (UINTN x = Rect.Xpos; x < Rect.Width && x < Width; ++x)
+      *Ptr++ = Color;
   }
 }
 
 
 
-void XImage::Compose(XImage& LowImage, XImage& TopImage, int PosX, int PosY, bool Lowest) //lowest image is opaque
+void XImage::Compose(int PosX, int PosY, XImage& TopImage, bool Lowest) //lowest image is opaque
 {
   UINT32      TopAlpha;
   UINT32      RevAlpha;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL    *TopPtr, *CompPtr;
+  UINT32      FinalAlpha;
+  UINT32      Temp;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  *TopPtr, *CompPtr;
 
-  for (int y = PosY; y < LowImage.GetHeight() && (y - PosY) < TopImage.GetHeight(); y++) {
+  for (UINTN y = PosY; y < Height && (y - PosY) < TopImage.GetHeight(); y++) {
     TopPtr = TopImage.GetData();
-    CompPtr = LowImage.GetData() + y * LowImage.GetWidth() + PosX;
-    for (int x = PosX; x < LowImage.GetWidth() && (x - PosX) < TopImage.GetWidth(); x++) {
+    CompPtr = PixelData + y * Width + PosX;
+    for (UINTN x = PosX; x < Width && (x - PosX) < TopImage.GetWidth(); x++) {
       TopAlpha = TopPtr->Reserved;
       RevAlpha = 255 - TopAlpha;
+      FinalAlpha = (255*255 - RevAlpha*(255 - CompPtr->Reserved)) / 255;
+
+//final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255
+      Temp = ((UINT8)CompPtr->Blue * RevAlpha) + ((UINT8)TopPtr->Blue * TopAlpha);
+      CompPtr->Blue = (UINT8)(Temp / 255);
+
+      Temp = ((UINT8)CompPtr->Green * RevAlpha) + ((UINT8)TopPtr->Green * TopAlpha);
+      CompPtr->Green = (UINT8)(Temp / 255);
+
+      Temp = ((UINT8)CompPtr->Red * RevAlpha) + ((UINT8)TopPtr->Red * TopAlpha);
+      CompPtr->Red = (UINT8)(Temp / 255);
+
+      if (Lowest) {
+        CompPtr->Reserved = (UINT8)(255);
+      } else {
+        CompPtr->Reserved = (UINT8)FinalAlpha;
+      }
+
+      TopPtr++, CompPtr++;
+
     }
   }
 }
+
+
