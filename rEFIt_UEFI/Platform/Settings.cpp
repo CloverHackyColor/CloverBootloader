@@ -8166,7 +8166,7 @@ SetDevices (LOADER_ENTRY *Entry)
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
                                  EfiACPIReclaimMemory,
-                                 EFI_SIZE_TO_PAGES (device_inject_stringlength + 1),
+                                 EFI_SIZE_TO_PAGES ((UINTN)device_inject_stringlength + 1),
                                  &BufferPtr
                                  );
 
