@@ -159,7 +159,7 @@
   Platform/StartupSound.cpp
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
-  ../Version.h
+  Version.h
   cpp_util/memory.cpp
   cpp_util/globals_ctor.cpp
   cpp_util/globals_ctor.h
