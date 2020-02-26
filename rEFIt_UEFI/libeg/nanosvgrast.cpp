@@ -64,7 +64,6 @@
 //#define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define fabsf(x) FabsF(x)
 
-#define MALCOLM 1
 
 static void renderShape(NSVGrasterizer* r,
                         NSVGshape* shape, float *xform, float min_scale);
@@ -199,7 +198,7 @@ static int nsvg__ptEquals(NSVGpoint* pt1, NSVGpoint* pt2, float tol)
 {
   float dx = pt2->x - pt1->x;
   float dy = pt2->y - pt1->y;
-  return dx*dx + dy*dy < tol*tol;
+  return SqrF(dx) + SqrF(dy) < SqrF(tol);
 }
 
 // t is a matrix xform
@@ -313,7 +312,8 @@ static void nsvg__addEdge(NSVGrasterizer* r, float x0, float y0, float x1, float
 
 static float nsvg__normalize(float *x, float* y)
 {
-  float d = sqrtf((*x)*(*x) + (*y)*(*y));
+//  float d = sqrtf((*x)*(*x) + (*y)*(*y));
+  float d = SqrtF(SqrF(*x) + SqrF(*x));
   if (d > 1e-6f) {
     float id = 1.0f / d;
     *x *= id;
@@ -322,8 +322,11 @@ static float nsvg__normalize(float *x, float* y)
   return d;
 }
 
-static float nsvg__absf(float x) { return x < 0 ? -x : x; }
-static float nsvg__sqr(float x) { return x*x; }
+//static float nsvg__absf(float x) { return x < 0 ? -x : x; }
+#define nsvg__absf(x) FabsF(x)
+//static float nsvg__sqr(float x) { return x*x; }
+#define nsvg__sqr(x) SqrF(x)
+
                     //                   0         1         2         3         4         5         6         7
 static float nsvg__controlPathLength(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 {

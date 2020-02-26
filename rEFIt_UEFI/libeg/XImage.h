@@ -7,16 +7,18 @@ This class will replace EG_IMAGE structure and methods
 
 #include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XArray.h"
+#include "lodepng.h"
 #include <Platform.h>
 
-/*
+#if 0 //ndef EFI_GRAPHICS_OUTPUT_BLT_PIXEL
 typedef struct {
   UINT8 Blue;
   UINT8 Green;
   UINT8 Red;
   UINT8 Reserved;  //this is Alpha. 0 means full transparent, 0xFF means opaque
 } EFI_GRAPHICS_OUTPUT_BLT_PIXEL;
-
+#endif
+/*
 typedef union {
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL Pixel;
   UINT32                        Raw;
@@ -59,6 +61,9 @@ public:
   void Fill(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color = { 0, 0, 0, 0 });
   void FillArea(EFI_GRAPHICS_OUTPUT_BLT_PIXEL Color, const EgRect& Rect);
   void Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest);
+  void FlipRB(bool WantAlpha);
+  unsigned FromPNG(const uint8_t * Data, UINTN Lenght, bool WantAlpha); //WantAlpha always true?
+  unsigned ToPNG(uint8_t** Data, UINTN& OutSize);
 };
 
 #endif //__XSTRINGW_H__

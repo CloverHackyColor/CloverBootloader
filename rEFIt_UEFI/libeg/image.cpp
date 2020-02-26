@@ -844,7 +844,7 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
 //
 // misc internal functions
 //
-
+//these functions used for icns, not with png
 VOID egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount)
 {
     UINTN i;

@@ -6312,8 +6312,8 @@ unsigned eglodepng_encode(unsigned char** out, size_t* outsize, const unsigned c
 #ifdef LODEPNG_COMPILE_DECODER
 unsigned eglodepng_decode(unsigned char** out, size_t* w, size_t* h, const unsigned char* in, size_t insize)
 {
-  unsigned _w, _h, _r;
-  _r = lodepng_decode32(out, &_w, &_h, in, insize);
+  unsigned _w = 0, _h = 0, _r;
+  _r = lodepng_decode_memory(out, &_w, &_h, in, insize, LCT_RGBA, 8);
   if (!_r) {
     if (w) *w = (size_t) _w;
     if (h) *h = (size_t) _h;

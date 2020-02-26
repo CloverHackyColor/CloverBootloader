@@ -39,6 +39,14 @@ float rndf(void);  //random number from 0 to 1.0f
 int dither(float x, int level);
 float nsvg__vmag(float x, float y); //sqrt(x*x+y*y)
 
+inline float FabsF(float x) {
+  if (x < 0.f) return -x;
+  return x;
+}
+
+inline float SqrF(float x) { return x*x; }
+
+
 RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,
                 OUT       CHAR8              **EndPointer,  OPTIONAL

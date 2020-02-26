@@ -13,12 +13,6 @@
 //#define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define fabsf(x) FabsF(x)
 
-float FabsF(float x)
-{
-  if (x < 0.f) return -x;
-  return x;
-}
-
 //we will assume sqrt(abs(x))
 float SqrtF(float X)
 {
