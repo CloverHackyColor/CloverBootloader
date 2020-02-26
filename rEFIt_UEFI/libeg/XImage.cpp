@@ -116,24 +116,32 @@ void XImage::FlipRB(bool WantAlpha)
   }
 }
 
+/*
+ * The function converted plain array into XImage object
+ */
 unsigned XImage::FromPNG(const uint8_t * Data, UINTN Length, bool WantAlpha)
 {
-  unsigned Error = 0;
   uint8_t * PixelPtr = (uint8_t *)&PixelData[0];
-  Error = eglodepng_decode(&PixelPtr, &Width, &Height, Data, Length);
+  unsigned Error = eglodepng_decode(&PixelPtr, &Width, &Height, Data, Length);
 
   FlipRB(WantAlpha);
   return Error;
 }
+
+/*
+ * The function creates new array Data and inform about it size to be saved
+ * as a file.
+ * The caller is responsible to free the array.
+ */
 
 unsigned XImage::ToPNG(uint8_t** Data, UINTN& OutSize)
 {
   size_t           FileDataLength = 0;
   FlipRB(false);
   uint8_t * PixelPtr = (uint8_t *)&PixelData[0];
-  unsigned lode_return = eglodepng_encode(Data, &FileDataLength, PixelPtr, Width, Height);
+  unsigned Error = eglodepng_encode(Data, &FileDataLength, PixelPtr, Width, Height);
   OutSize = FileDataLength;
-  return lode_return;
+  return Error;
 }
 
 
