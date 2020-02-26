@@ -313,7 +313,7 @@ static void nsvg__addEdge(NSVGrasterizer* r, float x0, float y0, float x1, float
 static float nsvg__normalize(float *x, float* y)
 {
 //  float d = sqrtf((*x)*(*x) + (*y)*(*y));
-  float d = SqrtF(SqrF(*x) + SqrF(*x));
+  float d = SqrtF(SqrF(*x) + SqrF(*y));
   if (d > 1e-6f) {
     float id = 1.0f / d;
     *x *= id;
