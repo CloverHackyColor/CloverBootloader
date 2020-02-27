@@ -185,8 +185,8 @@ VOID ScanLegacy(VOID)
   
   DBG("Scanning legacy ...\n");
   
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume = &Volumes[VolumeIndex];
     if ((Volume->BootType != BOOTING_BY_PBR) &&
         (Volume->BootType != BOOTING_BY_MBR) &&
         (Volume->BootType != BOOTING_BY_CD)) {
@@ -232,10 +232,10 @@ VOID ScanLegacy(VOID)
     if (HideIfOthersFound) {
       // check for other bootable entries on the same disk
       //if PBR exists then Hide MBR
-      for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
+      for (VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
         if (VolumeIndex2 != VolumeIndex &&
-            Volumes[VolumeIndex2]->HasBootCode &&
-            Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->BlockIO){
+            Volumes[VolumeIndex2].HasBootCode &&
+            Volumes[VolumeIndex2].WholeDiskBlockIO == Volume->BlockIO){
           ShowVolume = FALSE;
           //             DBG("PBR volume at index %d\n", VolumeIndex2);
           break;
@@ -280,8 +280,8 @@ VOID AddCustomLegacy(VOID)
     if (Custom->Volume) {
       DBG("Custom legacy %d matching \"%s\" ...\n", i, Custom->Volume);
     }
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
-      Volume = Volumes[VolumeIndex];
+    for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
+      Volume = &Volumes[VolumeIndex];
       
       DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
       
@@ -327,10 +327,10 @@ VOID AddCustomLegacy(VOID)
       if (HideIfOthersFound) {
         // check for other bootable entries on the same disk
         //if PBR exists then Hide MBR
-        for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
+        for (VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
           if (VolumeIndex2 != VolumeIndex &&
-              Volumes[VolumeIndex2]->HasBootCode &&
-              Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->BlockIO) {
+              Volumes[VolumeIndex2].HasBootCode &&
+              Volumes[VolumeIndex2].WholeDiskBlockIO == Volume->BlockIO) {
             ShowVolume = FALSE;
             break;
           }

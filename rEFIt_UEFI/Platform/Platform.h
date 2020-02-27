@@ -82,6 +82,10 @@ extern "C" {
 }
 #endif
 
+#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XArray.h"
+#include "../cpp_foundation/XObjArray.h"
+
 #include "../refit/lib.h"
 #include "string.h"
 #include "boot.h"

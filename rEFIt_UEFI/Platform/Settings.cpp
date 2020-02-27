@@ -431,7 +431,7 @@ ParseLoadOptions (
   AsciiConf = (__typeof__(AsciiConf))AllocateCopyPool (TailSize + 1, Start);
   if (AsciiConf != NULL) {
     *(AsciiConf + TailSize) = '\0';
-    *Conf = (__typeof_am__(*Conf))AllocateZeroPool ((TailSize + 1) * sizeof (CHAR16));
+    *Conf = (__typeof_am__(*Conf))AllocateZeroPool ((TailSize + 1) * sizeof(**Conf));
     AsciiStrToUnicodeStrS (AsciiConf, *Conf, TailSize);
     FreePool (AsciiConf);
   }
@@ -5074,7 +5074,8 @@ GetUserSettings(
                   for (j = 0; j < PropCount; j++) {
                     Prop3 = NULL;
                     DevProps = *Child;
-                    *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(DEV_PROPERTY));
+//                    *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(**Child));
+                    *Child = new (__typeof_am__(**Child));
                     (*Child)->Next = DevProps;
 
                     if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>

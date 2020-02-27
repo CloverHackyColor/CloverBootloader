@@ -54,13 +54,13 @@ int XStringWArray_tests()
 	if ( !array1.Same(array2) ) return 41; // Arrays are the same
 	
 	array1.AddNoNull(L"3");
-	if ( array1.Length() != 3 ) return 50;
+	if ( array1.size() != 3 ) return 50;
 	array1.AddNoNull(L"");
-	if ( array1.Length() != 3 ) return 51;
+	if ( array1.size() != 3 ) return 51;
 	array1.AddEvenNull(XStringW());
-	if ( array1.Length() != 4 ) return 52;
+	if ( array1.size() != 4 ) return 52;
 	array1.AddID(L"2");
-	if ( array1.Length() != 4 ) return 53;
+	if ( array1.size() != 4 ) return 53;
 
 
   return 0;

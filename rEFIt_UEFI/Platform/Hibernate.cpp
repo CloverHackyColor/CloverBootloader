@@ -698,8 +698,8 @@ REFIT_VOLUME *FoundParentVolume(REFIT_VOLUME *Volume)
     return NULL; //don't search!
   }
   
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume1 = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume1 = &Volumes[VolumeIndex];
     if (Volume1 != Volume &&
         Volume1->WholeDiskBlockIO == Volume->WholeDiskBlockIO) {
       if (PartNumForVolume(Volume1) == SearchPartNum - 1) {

@@ -29,13 +29,16 @@ freely, subject to the following restrictions:
 
 //MODSNI v
 #include <Uefi.h>
+#include "../cpp_foundation/XToolsCommon.h"
+#include "../cpp_foundation/XArray.h"
+
 
 //#define LODEPNG_NO_COMPILE_DECODER
 #define LODEPNG_NO_COMPILE_DISK
 //#define LODEPNG_NO_COMPILE_ALLOCATORS
 //#define LODEPNG_NO_COMPILE_ERROR_TEXT
-#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
-#define LODEPNG_NO_COMPILE_CPP
+//#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
+//#define LODEPNG_NO_COMPILE_CPP
 
 // Microsoft compiler has built-in size_t
 //#if !defined(_MSC_VER)
@@ -224,33 +227,33 @@ unsigned lodepng_encode24_file(const char* filename,
 namespace lodepng
 {
 #ifdef LODEPNG_COMPILE_DECODER
-/*Same as lodepng_decode_memory, but decodes to an std::vector. The colortype
+/*Same as lodepng_decode_memory, but decodes to an XArray. The colortype
 is the format to output the pixels to. Default is RGBA 8-bit per channel.*/
-unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
+unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
                 const unsigned char* in, size_t insize,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
-unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
-                const std::vector<unsigned char>& in,
+unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
+                const XArray<unsigned char>& in,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
 #ifdef LODEPNG_COMPILE_DISK
 /*
 Converts PNG file from disk to raw pixel data in memory.
 Same as the other decode functions, but instead takes a filename as input.
 */
-unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
+unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
                 const std::string& filename,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
 #endif /* LODEPNG_COMPILE_DISK */
 #endif /* LODEPNG_COMPILE_DECODER */
 
 #ifdef LODEPNG_COMPILE_ENCODER
-/*Same as lodepng_encode_memory, but encodes to an std::vector. colortype
+/*Same as lodepng_encode_memory, but encodes to an XArray. colortype
 is that of the raw input data. The output PNG color type will be auto chosen.*/
-unsigned encode(std::vector<unsigned char>& out,
+unsigned encode(XArray<unsigned char>& out,
                 const unsigned char* in, unsigned w, unsigned h,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
-unsigned encode(std::vector<unsigned char>& out,
-                const std::vector<unsigned char>& in, unsigned w, unsigned h,
+unsigned encode(XArray<unsigned char>& out,
+                const XArray<unsigned char>& in, unsigned w, unsigned h,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
 #ifdef LODEPNG_COMPILE_DISK
 /*
@@ -262,7 +265,7 @@ unsigned encode(const std::string& filename,
                 const unsigned char* in, unsigned w, unsigned h,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
 unsigned encode(const std::string& filename,
-                const std::vector<unsigned char>& in, unsigned w, unsigned h,
+                const XArray<unsigned char>& in, unsigned w, unsigned h,
                 LodePNGColorType colortype = LCT_RGBA, unsigned bitdepth = 8);
 #endif /* LODEPNG_COMPILE_DISK */
 #endif /* LODEPNG_COMPILE_ENCODER */
@@ -838,7 +841,7 @@ unsigned lodepng_save_file(const unsigned char* buffer, size_t buffersize, const
 #endif /*LODEPNG_COMPILE_DISK*/
 
 #ifdef LODEPNG_COMPILE_CPP
-/* The LodePNG C++ wrapper uses std::vectors instead of manually allocated memory buffers. */
+/* The LodePNG C++ wrapper uses XArrays instead of manually allocated memory buffers. */
 namespace lodepng
 {
 #ifdef LODEPNG_COMPILE_PNG
@@ -853,57 +856,57 @@ class State : public LodePNGState
 
 #ifdef LODEPNG_COMPILE_DECODER
 /* Same as other lodepng::decode, but using a State for more settings and information. */
-unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
+unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
                 State& state,
                 const unsigned char* in, size_t insize);
-unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
+unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
                 State& state,
-                const std::vector<unsigned char>& in);
+                const XArray<unsigned char>& in);
 #endif /*LODEPNG_COMPILE_DECODER*/
 
 #ifdef LODEPNG_COMPILE_ENCODER
 /* Same as other lodepng::encode, but using a State for more settings and information. */
-unsigned encode(std::vector<unsigned char>& out,
+unsigned encode(XArray<unsigned char>& out,
                 const unsigned char* in, unsigned w, unsigned h,
                 State& state);
-unsigned encode(std::vector<unsigned char>& out,
-                const std::vector<unsigned char>& in, unsigned w, unsigned h,
+unsigned encode(XArray<unsigned char>& out,
+                const XArray<unsigned char>& in, unsigned w, unsigned h,
                 State& state);
 #endif /*LODEPNG_COMPILE_ENCODER*/
 
 #ifdef LODEPNG_COMPILE_DISK
 /*
-Load a file from disk into an std::vector.
+Load a file from disk into an XArray.
 return value: error code (0 means ok)
 */
-unsigned load_file(std::vector<unsigned char>& buffer, const std::string& filename);
+unsigned load_file(XArray<unsigned char>& buffer, const std::string& filename);
 
 /*
-Save the binary data in an std::vector to a file on disk. The file is overwritten
+Save the binary data in an XArray to a file on disk. The file is overwritten
 without warning.
 */
-unsigned save_file(const std::vector<unsigned char>& buffer, const std::string& filename);
+unsigned save_file(const XArray<unsigned char>& buffer, const std::string& filename);
 #endif /* LODEPNG_COMPILE_DISK */
 #endif /* LODEPNG_COMPILE_PNG */
 
 #ifdef LODEPNG_COMPILE_ZLIB
 #ifdef LODEPNG_COMPILE_DECODER
 /* Zlib-decompress an unsigned char buffer */
-unsigned decompress(std::vector<unsigned char>& out, const unsigned char* in, size_t insize,
+unsigned decompress(XArray<unsigned char>& out, const unsigned char* in, size_t insize,
                     const LodePNGDecompressSettings& settings = lodepng_default_decompress_settings);
 
-/* Zlib-decompress an std::vector */
-unsigned decompress(std::vector<unsigned char>& out, const std::vector<unsigned char>& in,
+/* Zlib-decompress an XArray */
+unsigned decompress(XArray<unsigned char>& out, const XArray<unsigned char>& in,
                     const LodePNGDecompressSettings& settings = lodepng_default_decompress_settings);
 #endif /* LODEPNG_COMPILE_DECODER */
 
 #ifdef LODEPNG_COMPILE_ENCODER
 /* Zlib-compress an unsigned char buffer */
-unsigned compress(std::vector<unsigned char>& out, const unsigned char* in, size_t insize,
+unsigned compress(XArray<unsigned char>& out, const unsigned char* in, size_t insize,
                   const LodePNGCompressSettings& settings = lodepng_default_compress_settings);
 
-/* Zlib-compress an std::vector */
-unsigned compress(std::vector<unsigned char>& out, const std::vector<unsigned char>& in,
+/* Zlib-compress an XArray */
+unsigned compress(XArray<unsigned char>& out, const XArray<unsigned char>& in,
                   const LodePNGCompressSettings& settings = lodepng_default_compress_settings);
 #endif /* LODEPNG_COMPILE_ENCODER */
 #endif /* LODEPNG_COMPILE_ZLIB */
@@ -1058,7 +1061,7 @@ The C version uses buffers allocated with alloc that you need to free()
 yourself. You need to use init and cleanup functions for each struct whenever
 using a struct from the C version to avoid exploits and memory leaks.
 
-The C++ version has extra functions with std::vectors in the interface and the
+The C++ version has extra functions with XArrays in the interface and the
 lodepng::State class which is a LodePNGState with constructor and destructor.
 
 These files work without modification for both C and C++ compilers because all
@@ -1492,7 +1495,7 @@ encoder and decoder, this makes a large difference.
 
 Make sure that LodePNG is compiled with the same compiler of the same version
 and with the same settings as the rest of the program, or the interfaces with
-std::vectors and std::strings in C++ can be incompatible.
+XArrays and std::strings in C++ can be incompatible.
 
 CHAR_BITS must be 8 or higher, because LodePNG uses unsigned chars for octets.
 
@@ -1555,7 +1558,7 @@ int main(int argc, char *argv[])
   const char* filename = argc > 1 ? argv[1] : "test.png";
 
   //load and decode
-  std::vector<unsigned char> image;
+  XArray<unsigned char> image;
   unsigned width, height;
   unsigned error = lodepng::decode(image, width, height, filename);
 
@@ -1672,7 +1675,7 @@ symbol.
 *) 21 jul 2007: deflate code placed in new namespace separate from zlib code
 *) 08 jun 2007: fixed bug with 2- and 4-bit color, and small interlaced images
 *) 04 jun 2007: improved support for Visual Studio 2005: crash with accessing
-    invalid std::vector element [0] fixed, and level 3 and 4 warnings removed
+    invalid XArray element [0] fixed, and level 3 and 4 warnings removed
 *) 02 jun 2007: made the encoder add a tag with version by default
 *) 27 may 2007: zlib and png code separated (but still in the same file),
     simple encoder/decoder functions added for more simple usage cases
@@ -1726,7 +1729,7 @@ symbol.
     in LodePNG namespace. Changed the order of the parameters. Rewrote the
     documentation in the header. Renamed files to lodepng.cpp and lodepng.h
 *) 22 apr 2006: Optimized and improved some code
-*) 07 sep 2005: (!) Changed to std::vector interface
+*) 07 sep 2005: (!) Changed to XArray interface
 *) 12 aug 2005: Initial release (C++, decoder only)
 
 

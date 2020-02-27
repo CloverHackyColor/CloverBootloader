@@ -42,10 +42,10 @@ XStringW XStringWArray::ConcatAll(XStringW Separator, XStringW Prefix, XStringW 
   xsize i;
   XStringW s;
 
-	if ( Length() > 0 ) {
+	if ( size() > 0 ) {
 		s = Prefix;
 		s += ElementAt(0);
-		for ( i=1 ; i<Length() ; i+=1 ) {
+		for ( i=1 ; i<size() ; i+=1 ) {
 			s += Separator;
 			s += ElementAt(i);
 		}
@@ -58,8 +58,8 @@ bool XStringWArray::Equal(const XStringWArray &aStrings) const
 {
   xsize ui;
 
-	if ( Length() != aStrings.Length() ) return false;
-	for ( ui=0 ; ui<Length() ; ui+=1 ) {
+	if ( size() != aStrings.size() ) return false;
+	for ( ui=0 ; ui<size() ; ui+=1 ) {
 		if ( ElementAt(ui) != aStrings[ui] ) return false;
 	}
 	return true;
@@ -69,10 +69,10 @@ bool XStringWArray::Same(const XStringWArray &aStrings) const
 {
   xsize i;
 
-	for ( i=0 ; i<Length() ; i+=1 ) {
+	for ( i=0 ; i<size() ; i+=1 ) {
 		if ( !aStrings.Contains(ElementAt(i)) ) return false;
 	}
-	for ( i=0 ; i<aStrings.Length() ; i+=1 ) {
+	for ( i=0 ; i<aStrings.size() ; i+=1 ) {
 		if ( !Contains(aStrings.ElementAt(i)) ) return false;
 	}
 	return true;
@@ -82,7 +82,7 @@ bool XStringWArray::Contains(const XStringW &S) const
 {
   xsize i;
 
-	for ( i=0 ; i<Length() ; i+=1 ) {
+	for ( i=0 ; i<size() ; i+=1 ) {
 		if ( ElementAt(i) == S ) return true;
 	}
 	return false;
@@ -95,7 +95,7 @@ void XStringWArray::Add(const XStringWArray &aStrings)
 {
   xsize i;
 
-	for ( i=0 ; i<aStrings.Length() ; i+=1 ) {
+	for ( i=0 ; i<aStrings.size() ; i+=1 ) {
 		AddCopy(aStrings[i]);
 	}
 }
@@ -109,7 +109,7 @@ void XStringWArray::AddID(const XStringWArray &aStrings)
 {
   xsize i;
 
-	for ( i=0 ; i<aStrings.Length() ; i+=1 ) {
+	for ( i=0 ; i<aStrings.size() ; i+=1 ) {
 		if ( !Contains(aStrings[i]) ) AddCopy(aStrings[i]);
 	}
 }

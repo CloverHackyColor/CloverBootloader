@@ -11,7 +11,7 @@
 #if !defined(__XARRAY_H__)
 #define __XARRAY_H__
 
-#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
+//#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
 //VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
 //extern "C" {
 //  #include <Library/MemoryAllocationLib.h>
@@ -52,13 +52,25 @@ class XArray
 	xsize Length() const { return m_len; }
 	void SetLength(xsize l);
 
+  //low case functions like in std::vector
+  xsize size() const { return m_len; }
+  const TYPE& begin() const { return ElementAt(0); }
+        TYPE& begin()       { return ElementAt(0); }
+
+  const TYPE& end() const { return ElementAt(m_len - 1); }
+        TYPE& end()       { return ElementAt(m_len - 1); }
+
+  xsize insert(const TYPE newElement, xsize pos, xsize count = 1) { return Insert(newElement, pos, count); }
+ 
+//--------------------------------------------------
+
 	const TYPE& ElementAt(xsize nIndex) const;
 	TYPE& ElementAt(xsize nIndex);
 
 	const TYPE& operator[](xsize nIndex) const { return ElementAt(nIndex); }
 	      TYPE& operator[](xsize nIndex)       { return ElementAt(nIndex); }
-	const TYPE&  operator[]( int nIndex) const { return ElementAt(nIndex); }
-	      TYPE& operator[]( int nIndex)       { return ElementAt(nIndex); }
+	const TYPE& operator[]( int nIndex)  const { return ElementAt(nIndex); }
+	      TYPE& operator[]( int nIndex)        { return ElementAt(nIndex); }
 
 	operator const void *() const { return m_data; };
 	operator       void *()       { return m_data; };
@@ -91,9 +103,10 @@ class XArray
 	void RemoveAtIndex(xsize nIndex);
 	void RemoveAtIndex(int nIndex);
 
-	void Empty();
+	void setEmpty();
+  bool isEmpty() const { return size() == 0; }
     
-    xsize IdxOf(TYPE& e) const;
+  xsize IdxOf(TYPE& e) const;
 	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; }
 };
 
@@ -138,7 +151,7 @@ const XArray<TYPE> &XArray<TYPE>::operator =(const XArray<TYPE> &anArray)
 {
   xsize ui;
 
-	Empty();
+	setEmpty();
 	for ( ui=0 ; ui<anArray.Length() ; ui+=1 ) AddCopy(anArray.Data() );
 	return *this;
 }
@@ -327,7 +340,7 @@ void XArray<TYPE>::Remove(const TYPE *Element)
 
 /* Empty() */
 template<class TYPE>
-void XArray<TYPE>::Empty()
+void XArray<TYPE>::setEmpty()
 {
 //printf("XArray Empty\n");
 	m_len = 0;

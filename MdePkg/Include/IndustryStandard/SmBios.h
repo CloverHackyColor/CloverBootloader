@@ -1765,7 +1765,7 @@ typedef struct {
   UINT16                                    TotalWidth;
   UINT16                                    DataWidth;
   UINT16                                    Size;
-  MEMORY_FORM_FACTOR                                     FormFactor;         ///< The enumeration value from MEMORY_FORM_FACTOR.
+  UINT8                                     FormFactor;         ///< The enumeration value from MEMORY_FORM_FACTOR.
   UINT8                                     DeviceSet;
   SMBIOS_TABLE_STRING                       DeviceLocator;
   SMBIOS_TABLE_STRING                       BankLocator;

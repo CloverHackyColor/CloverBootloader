@@ -630,7 +630,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     font = nextFont;
   }
   nsvg__deleteParser(mainParser);
-  destruct_globals_objects(NULL);
+  //destruct_globals_objects(NULL); //we can't destruct our globals here. We need, for example, Volumes.
   
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 
@@ -1847,9 +1847,9 @@ UINT8 *APFSContainer_Support(VOID) {
   EFI_GUID                 *TmpUUID    = NULL;
 
   //Fill APFSUUIDBank
-  APFSUUIDBank = (__typeof__(APFSUUIDBank))AllocateZeroPool(0x10*VolumesCount);
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  APFSUUIDBank = (__typeof__(APFSUUIDBank))AllocateZeroPool(0x10*Volumes.size());
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume = &Volumes[VolumeIndex];
     //Check that current volume - apfs partition
     if ((TmpUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL){
       CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,(UINT8 *)TmpUUID,0x10);

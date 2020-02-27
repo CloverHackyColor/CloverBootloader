@@ -441,15 +441,15 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
     return FALSE;
   }
   // Allocate entries
-  Entries = (REFIT_MENU_ENTRY **)AllocateZeroPool(sizeof(REFIT_MENU_ENTRY *) + ((sizeof(REFIT_MENU_ENTRY *) + sizeof(REFIT_MENU_ENTRY)) * VolumesCount));
+  Entries = (REFIT_MENU_ENTRY **)AllocateZeroPool(sizeof(REFIT_MENU_ENTRY *) + ((sizeof(REFIT_MENU_ENTRY *) + sizeof(REFIT_MENU_ENTRY)) * Volumes.size()));
   if (Entries == NULL) {
     return FALSE;
   }
-  EntryPtr = (REFIT_MENU_ENTRY *)(Entries + (VolumesCount + 1));
+  EntryPtr = (REFIT_MENU_ENTRY *)(Entries + (Volumes.size() + 1));
   // Create volume entries
-  for (Index = 0; Index < VolumesCount; ++Index) {
+  for (Index = 0; Index < Volumes.size(); ++Index) {
     REFIT_MENU_ENTRY *Entry;
-    REFIT_VOLUME     *Volume = Volumes[Index];
+    REFIT_VOLUME     *Volume = &Volumes[Index];
     if ((Volume == NULL) || (Volume->RootDir == NULL) ||
         ((Volume->DevicePathString == NULL) && (Volume->VolName == NULL))) {
       continue;
@@ -474,9 +474,9 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
       if (ChosenEntry->Tag >= TAG_OFFSET) {
         Index = (ChosenEntry->Tag - TAG_OFFSET);
-        if (Index < VolumesCount) {
+        if (Index < Volumes.size()) {
           // Run directory chooser menu
-          if (!AskUserForFilePathFromDir(Title, Volumes[Index], NULL, Volumes[Index]->RootDir, Result)) {
+          if (!AskUserForFilePathFromDir(Title, &Volumes[Index], NULL, Volumes[Index].RootDir, Result)) {
             continue;
           }
           Responded = TRUE;
@@ -502,8 +502,8 @@ BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCO
     if (DevicePathStr != NULL) {
       UINTN Index = 0;
       // Check the volumes for a match
-      for (Index = 0; Index < VolumesCount; ++Index) {
-        REFIT_VOLUME *Volume = Volumes[Index];
+      for (Index = 0; Index < Volumes.size(); ++Index) {
+        REFIT_VOLUME *Volume = &Volumes[Index];
         UINTN         Length;
         if ((Volume == NULL) || (Volume->RootDir == NULL) ||
             (Volume->DevicePathString == NULL)) {

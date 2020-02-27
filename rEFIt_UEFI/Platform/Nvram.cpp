@@ -334,8 +334,8 @@ ResetNativeNvram ()
 
   if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
     //DBG("Searching volumes for nvram.plist\n");
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
-      Volume = Volumes[VolumeIndex];
+    for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
+      Volume = &Volumes[VolumeIndex];
           
       if (!Volume->RootDir) {
         continue;
@@ -889,8 +889,8 @@ LoadLatestNvramPlist ()
   LastModifTimeMs = 0;
 
   // search all volumes
-  for (UINTN Index = 0; Index < VolumesCount; ++Index) {
-    Volume = Volumes[Index];
+  for (UINTN Index = 0; Index < Volumes.size(); ++Index) {
+    Volume = &Volumes[Index];
     
     if (!Volume->RootDir) {
       continue;
@@ -1224,8 +1224,8 @@ FindStartupDiskVolume (
   //
   DiskVolume = NULL;
   DBG ("   - searching for that disk\n");
-  for (Index = 0; Index < (INTN)VolumesCount; ++Index) {
-    Volume = Volumes[Index];
+  for (UINTN Index = 0; Index < Volumes.size(); ++Index) {
+    Volume = &Volumes[Index];
     if (BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
       // that's the one
       DiskVolume = Volume;
