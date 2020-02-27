@@ -61,8 +61,7 @@ class XArray
         TYPE& end()       { return ElementAt(m_len - 1); }
 
   xsize insert(const TYPE newElement, xsize pos, xsize count = 1) { return Insert(newElement, pos, count); }
-  const bool empty() const;
-
+ 
 //--------------------------------------------------
 
 	const TYPE& ElementAt(xsize nIndex) const;
@@ -152,7 +151,7 @@ const XArray<TYPE> &XArray<TYPE>::operator =(const XArray<TYPE> &anArray)
 {
   xsize ui;
 
-	Empty();
+	setEmpty();
 	for ( ui=0 ; ui<anArray.Length() ; ui+=1 ) AddCopy(anArray.Data() );
 	return *this;
 }
