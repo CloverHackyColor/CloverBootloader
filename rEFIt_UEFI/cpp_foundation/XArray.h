@@ -52,13 +52,26 @@ class XArray
 	xsize Length() const { return m_len; }
 	void SetLength(xsize l);
 
+  //low case functions like in std::vector
+  xsize size() const { return m_len; }
+  const TYPE& begin() const { return ElementAt(0); }
+        TYPE& begin()       { return ElementAt(0); }
+
+  const TYPE& end() const { return ElementAt(m_len - 1); }
+        TYPE& end()       { return ElementAt(m_len - 1); }
+
+  xsize insert(const TYPE newElement, xsize pos, xsize count = 1) { return Insert(newElement, pos, count); }
+  const bool empty() const;
+
+//--------------------------------------------------
+
 	const TYPE& ElementAt(xsize nIndex) const;
 	TYPE& ElementAt(xsize nIndex);
 
 	const TYPE& operator[](xsize nIndex) const { return ElementAt(nIndex); }
 	      TYPE& operator[](xsize nIndex)       { return ElementAt(nIndex); }
-	const TYPE&  operator[]( int nIndex) const { return ElementAt(nIndex); }
-	      TYPE& operator[]( int nIndex)       { return ElementAt(nIndex); }
+	const TYPE& operator[]( int nIndex)  const { return ElementAt(nIndex); }
+	      TYPE& operator[]( int nIndex)        { return ElementAt(nIndex); }
 
 	operator const void *() const { return m_data; };
 	operator       void *()       { return m_data; };
@@ -333,4 +346,10 @@ void XArray<TYPE>::Empty()
 	m_len = 0;
 }
 
+template<class TYPE>
+const bool XArray<TYPE>::empty() const
+{
+  //printf("XArray Empty\n");
+  return m_len == 0;
+}
 #endif

@@ -6114,7 +6114,8 @@ unsigned decompress(XArray<unsigned char>& out, const unsigned char* in, size_t 
   unsigned error = zlib_decompress(&buffer, &buffersize, in, insize, &settings);
   if(buffer)
   {
-    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+//    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+    out.AddArray(buffer, buffersize);
     lodepng_free(buffer);
   }
   return error;
@@ -6136,7 +6137,8 @@ unsigned compress(XArray<unsigned char>& out, const unsigned char* in, size_t in
   unsigned error = zlib_compress(&buffer, &buffersize, in, insize, &settings);
   if(buffer)
   {
-    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+//    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+    out.AddArray(buffer, buffersize);
     lodepng_free(buffer);
   }
   return error;
@@ -6188,7 +6190,8 @@ unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h, const unsi
     state.info_raw.colortype = colortype;
     state.info_raw.bitdepth = bitdepth;
     size_t buffersize = lodepng_get_raw_size(w, h, &state.info_raw);
-    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+//    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+    out.AddArray(buffer, buffersize);
     lodepng_free(buffer);
   }
   return error;
@@ -6209,7 +6212,8 @@ unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
   if(buffer && !error)
   {
     size_t buffersize = lodepng_get_raw_size(w, h, &state.info_raw);
-    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+//    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+    out.AddArray(buffer, buffersize);
   }
   lodepng_free(buffer);
   return error;
@@ -6243,7 +6247,8 @@ unsigned encode(XArray<unsigned char>& out, const unsigned char* in, unsigned w,
   unsigned error = lodepng_encode_memory(&buffer, &buffersize, in, w, h, colortype, bitdepth);
   if(buffer)
   {
-    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+//    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+    out.AddArray(buffer, buffersize);
     lodepng_free(buffer);
   }
   return error;
@@ -6266,7 +6271,8 @@ unsigned encode(XArray<unsigned char>& out,
   unsigned error = lodepng_encode(&buffer, &buffersize, in, w, h, &state);
   if(buffer)
   {
-    out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+ //   out.insert(out.end(), &buffer[0], &buffer[buffersize]);
+    out.AddArray(buffer, buffersize);
     lodepng_free(buffer);
   }
   return error;

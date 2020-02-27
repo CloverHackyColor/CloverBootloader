@@ -260,7 +260,7 @@ void XImage::GetArea(UINTN x, UINTN y, UINTN W, UINTN H)
     UINT32 ScreenHeight = 0;
     UINT32 Depth = 0;
     UINT32 RefreshRate = 60;
-    EFI_STATUS Status = UgaDraw->GetMode(UgaDraw, &LineWidth, &ScreenHeight, &Depth, &RefreshRate);
+    Status = UgaDraw->GetMode(UgaDraw, &LineWidth, &ScreenHeight, &Depth, &RefreshRate);
     if (EFI_ERROR(Status)) {
       return;   // graphics not available
     }
@@ -277,10 +277,10 @@ void XImage::GetArea(UINTN x, UINTN y, UINTN W, UINTN H)
 void XImage::Draw(int x, int y, float scale)
 {
   //prepare images
-  INTN UGAWidth = 0;
-  INTN UGAHeight = 0;
-  egGetScreenSize(&UGAWidth, &UGAHeight);
-  XImage Background(UGAWidth, UGAHeight);
+  INTN ScreenWidth = 0;
+  INTN ScreenHeight = 0;
+  egGetScreenSize(&ScreenWidth, &ScreenHeight);
+  XImage Background(ScreenWidth, ScreenHeight);
   Background.GetArea(x, y, Width, Height);
   XImage Top(*this, scale);
   Background.Compose(x, y, Top, true);
