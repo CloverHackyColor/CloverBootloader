@@ -37,8 +37,8 @@ freely, subject to the following restrictions:
 #define LODEPNG_NO_COMPILE_DISK
 //#define LODEPNG_NO_COMPILE_ALLOCATORS
 //#define LODEPNG_NO_COMPILE_ERROR_TEXT
-#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
-#define LODEPNG_NO_COMPILE_CPP
+//#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
+//#define LODEPNG_NO_COMPILE_CPP
 
 // Microsoft compiler has built-in size_t
 //#if !defined(_MSC_VER)

@@ -5858,7 +5858,7 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
       unsigned alread_added_id_text = 0;
       for(i = 0; i != info.text_num; ++i)
       {
-        if(!strcmp(info.text_keys[i], "LodePNG"))
+        if(!AsciiStrCmp(info.text_keys[i], "LodePNG"))
         {
           alread_added_id_text = 1;
           break;
