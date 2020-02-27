@@ -5075,9 +5075,7 @@ GetUserSettings(
                     Prop3 = NULL;
                     DevProps = *Child;
                     *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(**Child));
-                    DBG("created *Child sizeof %d\n", sizeof(**Child));
-                    
-            //        *Child = new (__typeof_am__(**Child));
+                    //*Child = new (__typeof_am__(**Child));
                     (*Child)->Next = DevProps;
 
                     if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>
