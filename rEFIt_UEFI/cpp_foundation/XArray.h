@@ -346,10 +346,4 @@ void XArray<TYPE>::Empty()
 	m_len = 0;
 }
 
-template<class TYPE>
-const bool XArray<TYPE>::empty() const
-{
-  //printf("XArray Empty\n");
-  return m_len == 0;
-}
 #endif
