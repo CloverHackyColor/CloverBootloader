@@ -919,10 +919,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   //
   DBG("Looking for parent disk of %s\n", FileDevicePathToStr(volume->DevicePath));
   BiosDriveNum = 0;
-  for (i = 0; i < VolumesCount; i++) {
-    if (Volumes[i] != volume && Volumes[i]->BlockIO == volume->WholeDiskBlockIO)
+  for (i = 0; i < Volumes.size(); i++) {
+    if (&Volumes[i] != volume && Volumes[i].BlockIO == volume->WholeDiskBlockIO)
     {
-      BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
+      BiosDriveNum = GetBiosDriveNumForVolume(&Volumes[i]);
       break;
     }
   }

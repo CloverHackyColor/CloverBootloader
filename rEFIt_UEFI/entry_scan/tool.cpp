@@ -205,8 +205,8 @@ VOID ScanTool(VOID)
   }
 
 //  if (!gFirmwareClover) { //Slice: I wish to extend functionality on emulated nvram
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-      Volume = Volumes[VolumeIndex];
+    for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+      Volume = &Volumes[VolumeIndex];
       if (!Volume->RootDir || !Volume->DeviceHandle) {
         continue;
       }
@@ -258,8 +258,8 @@ VOID AddCustomTool(VOID)
     if (Custom->Volume) {
       DBG("Custom tool %d matching \"%s\" ...\n", i, Custom->Volume);
     }
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
-      Volume = Volumes[VolumeIndex];
+    for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
+      Volume = &Volumes[VolumeIndex];
 
       DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
 

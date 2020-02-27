@@ -23,8 +23,8 @@ class XStringWArray : public XStringWArraySuper
 
 
 	void SetNull() { Empty(); }
-	bool IsNull() const { return Length() == 0 ; }
-	bool NotNull() const { return Length() > 0 ; }
+	bool IsNull() const { return size() == 0 ; }
+	bool NotNull() const { return size() > 0 ; }
 
 	XStringW ConcatAll(XStringW Separator = L", ", XStringW Prefix = L"", XStringW Suffix = L"") const;
 

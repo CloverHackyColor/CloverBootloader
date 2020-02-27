@@ -431,7 +431,7 @@ ParseLoadOptions (
   AsciiConf = (__typeof__(AsciiConf))AllocateCopyPool (TailSize + 1, Start);
   if (AsciiConf != NULL) {
     *(AsciiConf + TailSize) = '\0';
-    *Conf = (__typeof_am__(*Conf))AllocateZeroPool ((TailSize + 1) * sizeof (CHAR16));
+    *Conf = (__typeof_am__(*Conf))AllocateZeroPool ((TailSize + 1) * sizeof(**Conf));
     AsciiStrToUnicodeStrS (AsciiConf, *Conf, TailSize);
     FreePool (AsciiConf);
   }

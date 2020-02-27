@@ -342,8 +342,8 @@ STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
   UINTN         VolumeIndex;
   REFIT_VOLUME *scanedVolume;
 
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    scanedVolume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    scanedVolume = &Volumes[VolumeIndex];
 
     if (scanedVolume == Volume)
       return TRUE;
@@ -1075,8 +1075,8 @@ VOID ScanLoader(VOID)
   //DBG("Scanning loaders...\n");
   DbgHeader("ScanLoader");
    
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume = &Volumes[VolumeIndex];
     if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
       //DBG(", no file system\n", VolumeIndex);
       continue;
@@ -1541,14 +1541,14 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DBG("all volumes\n");
   }
 
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; ++VolumeIndex) {
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
     EG_IMAGE            *Image, *DriveImage;
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
 
-    Volume = Volumes[VolumeIndex];
+    Volume = &Volumes[VolumeIndex];
     if ((Volume == NULL) || (Volume->RootDir == NULL)) {
       continue;
     }

@@ -11,7 +11,7 @@
 #if !defined(__XARRAY_H__)
 #define __XARRAY_H__
 
-#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
+//#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
 //VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
 //extern "C" {
 //  #include <Library/MemoryAllocationLib.h>
@@ -104,9 +104,9 @@ class XArray
 	void RemoveAtIndex(int nIndex);
 
 	void setEmpty();
-  const bool isEmpty() const { return size() == 0; }
+  bool isEmpty() const { return size() == 0; }
     
-    xsize IdxOf(TYPE& e) const;
+  xsize IdxOf(TYPE& e) const;
 	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; }
 };
 

@@ -4353,7 +4353,7 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
   if (Title) {
     (*Entry)->Title = PoolPrint(L"%a", Title);
   } else {
@@ -4364,7 +4364,7 @@ VOID NewEntry(REFIT_MENU_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION At
   (*Entry)->Tag = TAG_OPTIONS;
   (*Entry)->AtClick = AtClick;
   // create the submenu
-  *SubScreen = (__typeof_am__(*SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  *SubScreen = (__typeof_am__(*SubScreen))AllocateZeroPool(sizeof(**SubScreen));
   (*SubScreen)->Title = (*Entry)->Title;
   (*SubScreen)->TitleImage = (*Entry)->Image;
   (*SubScreen)->ID = ID;

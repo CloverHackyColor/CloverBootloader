@@ -11,7 +11,7 @@
 #if !defined(__XOBJARRAY_H__)
 #define __XOBJARRAY_H__
 
-#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
+//#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
 //VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
 //extern "C" {
 //  #include <Library/MemoryAllocationLib.h>
@@ -56,11 +56,12 @@ class XObjArrayNC
 	xsize _getLen() const { return _Len; }
 
   public:
-	xsize Size() const { return _Size; }
-	xsize Length() const { return _Len; }
+	xsize AllocatedSize() const { return _Size; }
+	xsize size() const { return _Len; }
+	xsize length() const { return _Len; }
 
-	bool NotNull() const { return Length() > 0; }
-	bool IsNull() const { return Length() == 0; }
+	bool NotNull() const { return size() > 0; }
+	bool IsNull() const { return size() == 0; }
 
 	const TYPE &ElementAt(xsize nIndex) const;
 	TYPE &ElementAt(xsize nIndex);
@@ -156,8 +157,8 @@ XObjArray<TYPE>::XObjArray(const XObjArray<TYPE> &anObjArray)
   xsize ui;
 
   	XObjArrayNC<TYPE>::Init();
-	this->CheckSize(anObjArray.Length(), (xsize)0);
-	for ( ui=0 ; ui<anObjArray.Length() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
+	this->CheckSize(anObjArray.size(), (xsize)0);
+	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
 }
 
 /* operator = */
@@ -168,7 +169,7 @@ const XObjArray<TYPE> &XObjArray<TYPE>::operator =(const XObjArray<TYPE> &anObjA
 
   	XObjArrayNC<TYPE>::Empty();
 	CheckSize(anObjArray.Length(), 0);
-	for ( ui=0 ; ui<anObjArray.Length() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
+	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
 	return *this;
 }
 
@@ -212,7 +213,7 @@ template<class TYPE>
 const TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index) const
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%d) greater than length (%d)\n", index, _Len);
+			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%d) greater than length (%d)\n", index, _Len);
 			CpuDeadLoop();
 		}
 		return  *((TYPE *)(_Data[index].Object));

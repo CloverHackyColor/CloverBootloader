@@ -71,8 +71,9 @@ EFI_FILE         *OemThemeDir = NULL;
 
 
 REFIT_VOLUME     *SelfVolume = NULL;
-REFIT_VOLUME     **Volumes = NULL;
-UINTN            VolumesCount = 0;
+//REFIT_VOLUME     **Volumes = NULL;
+//UINTN            VolumesCount = 0;
+XObjArray<REFIT_VOLUME> Volumes;
 //
 // Unicode collation protocol interface
 //
@@ -334,19 +335,19 @@ BOOLEAN IsEmbeddedTheme()
 //
 // list functions
 //
-
-VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount)
-{
-  UINTN AllocateCount;
-  
-  *ElementCount = InitialElementCount;
-  if (*ElementCount > 0) {
-    AllocateCount = (*ElementCount + 7) & ~7;   // next multiple of 8
-    *ListPtr = (__typeof_am__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
-  } else {
-    *ListPtr = NULL;
-  }
-}
+//
+//VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount)
+//{
+//  UINTN AllocateCount;
+//
+//  *ElementCount = InitialElementCount;
+//  if (*ElementCount > 0) {
+//    AllocateCount = (*ElementCount + 7) & ~7;   // next multiple of 8
+//    *ListPtr = (__typeof_am__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
+//  } else {
+//    *ListPtr = NULL;
+//  }
+//}
 
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement)
 {
@@ -1077,7 +1078,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
       } else {
         
         // found a logical partition
-        Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(REFIT_VOLUME));
+        Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(*Volume));
         Volume->DiskKind = WholeDiskVolume->DiskKind;
         Volume->IsMbrPartition = TRUE;
         Volume->MbrPartitionIndex = LogicalPartitionIndex++;
@@ -1092,7 +1093,8 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
         if (!Bootable)
           Volume->HasBootCode = FALSE;
         
-        AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
+        Volumes.AddReference(Volume, true);
+//        AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       }
     }
   }
@@ -1105,7 +1107,7 @@ VOID ScanVolumes(VOID)
   UINTN                   HandleCount = 0;
   UINTN                   HandleIndex;
   EFI_HANDLE              *Handles = NULL;
-  REFIT_VOLUME            *Volume, *WholeDiskVolume;
+  REFIT_VOLUME            *WholeDiskVolume;
   UINTN                   VolumeIndex, VolumeIndex2;
   MBR_PARTITION_INFO      *MbrTable;
   UINTN                   PartitionIndex;
@@ -1127,7 +1129,7 @@ VOID ScanVolumes(VOID)
   // first pass: collect information about all handles
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
-    Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(REFIT_VOLUME));
+    REFIT_VOLUME* Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(*Volume));
     Volume->LegacyOS = (__typeof__(Volume->LegacyOS))AllocateZeroPool(sizeof(LEGACY_OS));
     Volume->DeviceHandle = Handles[HandleIndex];
     if (Volume->DeviceHandle == SelfDeviceHandle) {
@@ -1140,8 +1142,8 @@ VOID ScanVolumes(VOID)
     
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
-      
-      AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
+      Volumes.AddReference(Volume, true);
+//      AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       if (!gSettings.ShowHiddenEntries) {
         for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
           if (StriStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
@@ -1186,8 +1188,8 @@ VOID ScanVolumes(VOID)
   }
   
   // second pass: relate partitions and whole disk devices
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    REFIT_VOLUME* Volume = &Volumes[VolumeIndex];
     
     // check MBR partition table for extended partitions
     if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
@@ -1206,10 +1208,10 @@ VOID ScanVolumes(VOID)
     WholeDiskVolume = NULL;
     if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
         Volume->BlockIO != Volume->WholeDiskBlockIO) {
-      for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
-        if (Volumes[VolumeIndex2]->BlockIO == Volume->WholeDiskBlockIO &&
-            Volumes[VolumeIndex2]->BlockIOOffset == 0)
-          WholeDiskVolume = Volumes[VolumeIndex2];
+      for (VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
+        if (Volumes[VolumeIndex2].BlockIO == Volume->WholeDiskBlockIO &&
+            Volumes[VolumeIndex2].BlockIOOffset == 0)
+          WholeDiskVolume = &Volumes[VolumeIndex2];
       }
     }
     if (WholeDiskVolume != NULL && WholeDiskVolume->MbrPartitionTable != NULL) {
@@ -1263,8 +1265,8 @@ static VOID UninitVolumes(VOID)
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
   
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume = &Volumes[VolumeIndex];
     
     if (Volume->RootDir != NULL) {
       Volume->RootDir->Close(Volume->RootDir);
@@ -1277,13 +1279,7 @@ static VOID UninitVolumes(VOID)
     Volume->WholeDiskDeviceHandle = NULL;
     FreePool(Volume);
   }
-  
-  if (Volumes != NULL) {
-    FreePool(Volumes);
-    Volumes = NULL;
-  }
-  VolumesCount = 0;
-  
+  Volumes.Empty();
 }
 
 VOID ReinitVolumes(VOID)
@@ -1295,8 +1291,8 @@ VOID ReinitVolumes(VOID)
   EFI_DEVICE_PATH         *RemainingDevicePath;
   EFI_HANDLE              DeviceHandle, WholeDiskHandle;
   
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume = &Volumes[VolumeIndex];
     if (!Volume) {
       continue;
     }
@@ -1337,7 +1333,10 @@ VOID ReinitVolumes(VOID)
       //  CheckError(Status, L"from LocateDevicePath");
     }
   }
-  VolumesCount = VolumesFound;
+// Jief : I'm not sure to understand the next line. Why would we change the count when we didn't change the array.
+// This code is not currently not used.
+// Beware if you want to reuse this.
+//  VolumesCount = VolumesFound;
 }
 
 REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
@@ -1349,8 +1348,8 @@ REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
     return NULL;
   }
   
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
+    Volume = &Volumes[VolumeIndex];
     if (!Volume) {
       continue;
     }
