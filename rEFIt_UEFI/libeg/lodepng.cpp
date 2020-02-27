@@ -6100,7 +6100,7 @@ unsigned load_file(XArray<unsigned char>& buffer, const std::string& filename)
 /*write given buffer to the file, overwriting the file, it doesn't append to it.*/
 unsigned save_file(const XArray<unsigned char>& buffer, const std::string& filename)
 {
-  return lodepng_save_file(buffer.empty() ? 0 : &buffer[0], buffer.size(), filename.c_str());
+  return lodepng_save_file(buffer.isEmpty() ? 0 : &buffer[0], buffer.size(), filename.c_str());
 }
 #endif /* LODEPNG_COMPILE_DISK */
 
@@ -6124,7 +6124,7 @@ unsigned decompress(XArray<unsigned char>& out, const unsigned char* in, size_t 
 unsigned decompress(XArray<unsigned char>& out, const XArray<unsigned char>& in,
                     const LodePNGDecompressSettings& settings)
 {
-  return decompress(out, in.empty() ? 0 : &in[0], in.size(), settings);
+  return decompress(out, in.isEmpty() ? 0 : &in[0], in.size(), settings);
 }
 #endif /* LODEPNG_COMPILE_DECODER */
 
@@ -6147,7 +6147,7 @@ unsigned compress(XArray<unsigned char>& out, const unsigned char* in, size_t in
 unsigned compress(XArray<unsigned char>& out, const XArray<unsigned char>& in,
                   const LodePNGCompressSettings& settings)
 {
-  return compress(out, in.empty() ? 0 : &in[0], in.size(), settings);
+  return compress(out, in.isEmpty() ? 0 : &in[0], in.size(), settings);
 }
 #endif /* LODEPNG_COMPILE_ENCODER */
 #endif /* LODEPNG_COMPILE_ZLIB */
@@ -6200,7 +6200,7 @@ unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h, const unsi
 unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
                 const XArray<unsigned char>& in, LodePNGColorType colortype, unsigned bitdepth)
 {
-  return decode(out, w, h, in.empty() ? 0 : &in[0], (unsigned)in.size(), colortype, bitdepth);
+  return decode(out, w, h, in.isEmpty() ? 0 : &in[0], (unsigned)in.size(), colortype, bitdepth);
 }
 
 unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
@@ -6223,7 +6223,7 @@ unsigned decode(XArray<unsigned char>& out, unsigned& w, unsigned& h,
                 State& state,
                 const XArray<unsigned char>& in)
 {
-  return decode(out, w, h, state, in.empty() ? 0 : &in[0], in.size());
+  return decode(out, w, h, state, in.isEmpty() ? 0 : &in[0], in.size());
 }
 
 #ifdef LODEPNG_COMPILE_DISK
@@ -6259,7 +6259,7 @@ unsigned encode(XArray<unsigned char>& out,
                 LodePNGColorType colortype, unsigned bitdepth)
 {
   if(lodepng_get_raw_size_lct(w, h, colortype, bitdepth) > in.size()) return 84;
-  return encode(out, in.empty() ? 0 : &in[0], w, h, colortype, bitdepth);
+  return encode(out, in.isEmpty() ? 0 : &in[0], w, h, colortype, bitdepth);
 }
 
 unsigned encode(XArray<unsigned char>& out,
@@ -6283,7 +6283,7 @@ unsigned encode(XArray<unsigned char>& out,
                 State& state)
 {
   if(lodepng_get_raw_size(w, h, &state.info_raw) > in.size()) return 84;
-  return encode(out, in.empty() ? 0 : &in[0], w, h, state);
+  return encode(out, in.isEmpty() ? 0 : &in[0], w, h, state);
 }
 
 #ifdef LODEPNG_COMPILE_DISK
@@ -6302,7 +6302,7 @@ unsigned encode(const std::string& filename,
                 LodePNGColorType colortype, unsigned bitdepth)
 {
   if(lodepng_get_raw_size_lct(w, h, colortype, bitdepth) > in.size()) return 84;
-  return encode(filename, in.empty() ? 0 : &in[0], w, h, colortype, bitdepth);
+  return encode(filename, in.isEmpty() ? 0 : &in[0], w, h, colortype, bitdepth);
 }
 #endif /* LODEPNG_COMPILE_DISK */
 #endif /* LODEPNG_COMPILE_ENCODER */

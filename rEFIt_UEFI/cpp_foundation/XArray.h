@@ -104,7 +104,8 @@ class XArray
 	void RemoveAtIndex(xsize nIndex);
 	void RemoveAtIndex(int nIndex);
 
-	void Empty();
+	void setEmpty();
+  const bool isEmpty() const { return size() == 0; }
     
     xsize IdxOf(TYPE& e) const;
 	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; }
@@ -340,7 +341,7 @@ void XArray<TYPE>::Remove(const TYPE *Element)
 
 /* Empty() */
 template<class TYPE>
-void XArray<TYPE>::Empty()
+void XArray<TYPE>::setEmpty()
 {
 //printf("XArray Empty\n");
 	m_len = 0;
