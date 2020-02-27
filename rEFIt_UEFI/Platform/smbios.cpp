@@ -1326,14 +1326,14 @@ VOID PatchTableType17()
     // Inject tables
     for (Index = 0; Index < gRAM.UserInUse; Index++) {
       UINTN UserIndex = channelMap[Index];
-      UINT8 bank = (UINT8)Index / gRAM.UserChannels;
+      UINT8 bank = (UINT8)(Index / gRAM.UserChannels);
       ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
       newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
       newSmbiosTable.Type17->TotalWidth = 0xFFFF;
       newSmbiosTable.Type17->DataWidth = 0xFFFF;
       newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1100 + UserIndex);
-      newSmbiosTable.Type17->FormFactor = gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm;
+      newSmbiosTable.Type17->FormFactor = (UINT8)(gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm);
       newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
       newSmbiosTable.Type17->DeviceSet = bank + 1;
       newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
@@ -1347,7 +1347,7 @@ VOID PatchTableType17()
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
       if ((gRAM.User[UserIndex].InUse) && (gRAM.User[UserIndex].ModuleSize > 0)) {
         if (iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
-          CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.User[UserIndex].Vendor)+1); // this will never be freed. WIll be solved when using a string object.
+          CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.User[UserIndex].Vendor)+1); // this will never be freed. Will be solved when using a string object.
           AsciiStrCpy(vendor, gRAM.User[UserIndex].Vendor);
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
           gRAM.User[UserIndex].Vendor = vendor;
@@ -1617,7 +1617,7 @@ VOID PatchTableType17()
     }
     Once = TRUE;
     newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1100 + Index);
-    newSmbiosTable.Type17->FormFactor = gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm;
+    newSmbiosTable.Type17->FormFactor = (UINT8)(gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm);
     newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
     newSmbiosTable.Type17->DeviceSet = bank + 1;
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
