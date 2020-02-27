@@ -13,19 +13,49 @@ XImage::XImage(UINTN W, UINTN H)
   Height = H;
   PixelData.CheckSize(GetWidth()*GetHeight());
 }
-#if 0
-UINT8 Smooth(UINT8* P, int a01, int a10, int a11, int a21, int a12,  int dx, int dy, float scale)
+#if 1
+UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
 {
-  return (UINT8)((*(p + a01) * (scale - dx) * 3 + *(p + a10) * (scale - dy) * 3 + *(p + a21) * dx * 3 +
-    *(p + a12) * dy * 3 + *(p + a11) * 2 *scale) / (scale * 8));
+  return (UINT8)((*(p + a01) * (scale - dx) * 3.f + *(p + a10) * (scale - dy) * 3.f + *(p + a21) * dx * 3.f +
+    *(p + a12) * dy * 3.f + *(p) * 2.f *scale) / (scale * 8.f));
 }
 #endif
 
 XImage::XImage(const XImage& Image, float scale)
 {
-  Width = (UINTN)(Image.GetWidth() * scale);
-  Height = (UINTN)(Image.GetHeight() * scale);
+  int SrcWidth = Image.GetWidth();
+  int SrcHeight = Image.GetHeight();
+  Width = (UINTN)(SrcWidth * scale);
+  Height = (UINTN)(SrcHeight * scale);
   PixelData.CheckSize(GetWidth()*GetHeight());
+  if (scale < 1.e-4) return;
+
+  int Pixel = sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+  int Row = SrcWidth * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+
+  const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
+
+  for (size_t y = 0; y < Height; y++)
+  {
+    int ly = (int)(y / scale);
+    int dy = (int)(y - ly * scale);
+    for (size_t x = 0; x < Width; x++)
+    {
+      int lx = (int)(x / scale);
+      int dx = (int)(x - lx * scale);
+      int a01 = (x == 0) ? 0 : -Pixel;
+      int a10 = (y == 0) ? 0 : -Row;
+      int a21 = (x == Width - 1) ? 0 : Pixel;
+      int a12 = (y == Height - 1) ? 0 : Row;
+      EFI_GRAPHICS_OUTPUT_BLT_PIXEL& dst = *GetPixelPtr(x, y);
+      dst.Blue = Smooth(&Source[lx + ly * SrcWidth].Blue, a01, a10, a21, a12, dx, dy, scale);
+      dst.Green = Smooth(&Source[lx + ly * SrcWidth].Green, a01, a10, a21, a12, dx, dy, scale);
+      dst.Red = Smooth(&Source[lx + ly * SrcWidth].Red, a01, a10, a21, a12, dx, dy, scale);
+    }
+
+  }
+}
+
 #if 0
   UINTN Offset = OFFSET_OF(EFI_GRAPHICS_OUTPUT_BLT_PIXEL, Blue);
 
@@ -86,7 +116,7 @@ do { \
       }
     }
 #endif
-}
+
 
 XImage::~XImage()
 {
