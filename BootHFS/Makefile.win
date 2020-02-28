@@ -2,11 +2,11 @@
 !error Variable DESTDIR must be defined!
 !endif
 
-!ifdef NASM_PREFIX
-NASM=$(NASM_PREFIX)nasm
-!else
+# !ifdef NASM_PREFIX
+# NASM=$(NASM_PREFIX)\nasm
+# !else
 NASM=nasm
-!endif
+# !endif
 
 all: boot0 boot0af boot0ss boot0md boot1h boot1h2 boot1f32 boot1f32alt boot1x boot1xalt
 

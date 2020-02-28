@@ -1224,7 +1224,7 @@ FindStartupDiskVolume (
   //
   DiskVolume = NULL;
   DBG ("   - searching for that disk\n");
-  for (UINTN Index = 0; Index < Volumes.size(); ++Index) {
+  for (Index = 0; Index < (INTN)Volumes.size(); ++Index) {
     Volume = &Volumes[Index];
     if (BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
       // that's the one

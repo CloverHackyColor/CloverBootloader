@@ -82,10 +82,6 @@ extern "C" {
 }
 #endif
 
-#include "../cpp_foundation/XStringW.h"
-#include "../cpp_foundation/XArray.h"
-#include "../cpp_foundation/XObjArray.h"
-
 #include "../refit/lib.h"
 #include "string.h"
 #include "boot.h"
@@ -102,6 +98,9 @@ extern "C" {
 #define PCAT_RTC_DATA_REGISTER    0x71
 
 #ifdef __cplusplus
+#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XArray.h"
+#include "../cpp_foundation/XObjArray.h"
 #include "../cpp_util/remove_ref.h"
 #endif
 #ifdef _MSC_VER
