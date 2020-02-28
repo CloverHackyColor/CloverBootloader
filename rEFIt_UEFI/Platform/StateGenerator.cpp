@@ -58,7 +58,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
   UINT8 p_states_count = 0;
   UINT8 cpu_dynamic_fsb = 0;
   UINT8 cpu_noninteger_bus_ratio = 0;
-  UINT32 i, j;
+//  UINT32 i, j;
   UINT16 realMax, realMin = 6, realTurbo = 0, Apsn = 0, Aplf = 0;
   
   if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
@@ -173,7 +173,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                 vidstep = ((maximum.Control.VID_FID.VID << 2) - (minimum.Control.VID_FID.VID << 2)) / (p_states_count - 1);
 							
                 for (u = 0; u < p_states_count; u++) {
-                  i = u - invalid;
+                  UINT8 i = u - invalid;
 								
                   p_states[i].CID = maximum.CID - u;
                   p_states[i].Control.VID_FID.FID = (UINT8)(p_states[i].CID >> 1);
@@ -270,8 +270,13 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
             } else {
               p_states_count = 0;
 							
-              for (i = maximum.Control.Control; i >= minimum.Control.Control; i--) {
-                j = i;
+							/*
+							 * Careful with downward loop, with UINT as index !
+							 * This is wrong :
+							 *   for (i = maximum.Control.Control; i >= minimum.Control.Control; i--) {
+							 */
+              for (UINTN i = maximum.Control.Control+1; i-- > minimum.Control.Control; ) {
+                UINTN j = i;
                 if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN) ||
                     (gCPUStructure.Model == CPU_MODEL_ATOM_3700) ||
@@ -351,7 +356,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
           TDPdiv = 8;
         }
         
-        for (i = gSettings.PLimitDict; i < p_states_count; i++) {
+        for (decltype(p_states_count) i = gSettings.PLimitDict; i < p_states_count; i++) {
           AML_CHUNK* pstt = aml_add_package(pack);
 
           aml_add_dword(pstt, p_states[i].Frequency);
@@ -400,7 +405,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
         }
 
         // Add CPUs
-        for (i = 1; i < Number; i++) {
+        for (decltype(Number) i = 1; i < Number; i++) {
           AsciiSPrint(name, 31, "%a%4a", acpi_cpu_score, acpi_cpu_name[i]);
           scop = aml_add_scope(root, name);
           metPSS = aml_add_method(scop, "_PSS", 0);
