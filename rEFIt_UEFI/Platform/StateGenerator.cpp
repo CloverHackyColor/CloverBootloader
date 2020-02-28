@@ -301,17 +301,17 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     j = i << 8;
                     p_states[p_states_count].Frequency = (UINT32)(100 * i);
                 } else {
-                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, i), Mega));
+                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, (UINT32)i), Mega));
                 }
                 p_states[p_states_count].Control.Control = (UINT16)j;
-                p_states[p_states_count].CID = j;
+                p_states[p_states_count].CID = (UINT32)j;
                 
                 if (!p_states_count && gSettings.DoubleFirstState) {
                   //double first state
                   p_states_count++;
                   p_states[p_states_count].Control.Control = (UINT16)j;
-                  p_states[p_states_count].CID = j;
-                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, i), Mega)) - 1;
+                  p_states[p_states_count].CID = (UINT32)j;
+                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, (UINT32)i), Mega)) - 1;
                 }
                 p_states_count++;
               }

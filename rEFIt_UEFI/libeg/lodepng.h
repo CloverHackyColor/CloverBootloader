@@ -1054,7 +1054,8 @@ unsigned compress(XArray<unsigned char>& out, const XArray<unsigned char>& in,
 #endif /* LODEPNG_COMPILE_ZLIB */
 } /* namespace lodepng */
 #endif /*LODEPNG_COMPILE_CPP*/
-
+unsigned eglodepng_encode(unsigned char** out, size_t* outsize, const unsigned char* image, size_t w, size_t h);
+unsigned eglodepng_decode(unsigned char** out, size_t* w, size_t* h, const unsigned char* in, size_t insize);
 /*
 TODO:
 [.] test if there are no memory leaks or security exploits - done a lot but needs to be checked often
