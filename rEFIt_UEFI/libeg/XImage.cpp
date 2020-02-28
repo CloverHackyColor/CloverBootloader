@@ -1,5 +1,17 @@
 #include "XImage.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_XIMAGE 1
+#else
+#define DEBUG_XIMAGE DEBUG_ALL
+#endif
+
+#if DEBUG_XIMAGE == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_XIMAGE, __VA_ARGS__)
+#endif
+
 
 XImage::XImage()
 {
@@ -13,13 +25,12 @@ XImage::XImage(UINTN W, UINTN H)
   Height = H;
   PixelData.CheckSize(GetWidth()*GetHeight());
 }
-#if 1
+
 UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
 {
   return (UINT8)((*(p + a01) * (scale - dx) * 3.f + *(p + a10) * (scale - dy) * 3.f + *(p + a21) * dx * 3.f +
     *(p + a12) * dy * 3.f + *(p) * 2.f *scale) / (scale * 8.f));
 }
-#endif
 
 XImage::XImage(const XImage& Image, float scale)
 {
@@ -51,6 +62,7 @@ XImage::XImage(const XImage& Image, float scale)
       dst.Blue = Smooth(&Source[lx + ly * SrcWidth].Blue, a01, a10, a21, a12, dx, dy, scale);
       dst.Green = Smooth(&Source[lx + ly * SrcWidth].Green, a01, a10, a21, a12, dx, dy, scale);
       dst.Red = Smooth(&Source[lx + ly * SrcWidth].Red, a01, a10, a21, a12, dx, dy, scale);
+      dst.Reserved = Source[lx + ly * SrcWidth].Reserved;
     }
 
   }
@@ -243,6 +255,41 @@ unsigned XImage::ToPNG(uint8_t** Data, UINTN& OutSize)
   unsigned Error = eglodepng_encode(Data, &FileDataLength, PixelPtr, Width, Height);
   OutSize = FileDataLength;
   return Error;
+}
+
+/*
+ * fill XImage object by rater data described in SVG
+ * caller should create the object with Width and Height and calculate scale
+ * scale = 1 correspond to fill the rect with the image
+ * scale = 0.5 will reduce image 
+ */
+unsigned XImage::FromSVG(const CHAR8 *SVGData, UINTN FileDataLength, float scale)
+{
+  NSVGimage       *SVGimage;
+  NSVGparser* p;
+  EFI_STATUS      Status;
+
+  NSVGrasterizer* rast = nsvgCreateRasterizer();
+  if (!rast) return 1;
+  char *input = AsciiStrCpy(SVGData); 
+  if (!input) return 2;
+
+  p = nsvgParse(input, 72, 1.f); //the parse will change input contents
+  SVGimage = p->image;
+  if (SVGimage) {
+    float ScaleX = Width / SVGimage->width;
+    float ScaleY = Height / SVGimage->height;
+    float Scale = (ScaleX > ScaleY) ? ScaleY : ScaleX;
+    Scale *= scale;
+
+    DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
+    nsvgRasterize(rast, SVGimage, 0.f, 0.f, Scale, Scale, (UINT8*)&PixelData[0], (int)Width, (int)Height, (int)Width * sizeof(PixelData[0]));
+    FreePool(SVGimage);
+  }
+  nsvg__deleteParser(p);
+  nsvgDeleteRasterizer(rast);
+  FreePool(input);
+  return 0;
 }
 
 // Screen operations

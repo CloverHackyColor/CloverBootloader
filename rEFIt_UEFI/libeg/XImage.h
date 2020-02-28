@@ -8,7 +8,10 @@ This class will replace EG_IMAGE structure and methods
 #include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XArray.h"
 #include "lodepng.h"
+
+#include "nanosvg.h"
 #include "FloatLib.h"
+
 #include <Platform.h>
 
 #if 0 //ndef EFI_GRAPHICS_OUTPUT_BLT_PIXEL
@@ -64,6 +67,7 @@ public:
   void FlipRB(bool WantAlpha);
   unsigned FromPNG(const uint8_t * Data, UINTN Lenght);
   unsigned ToPNG(uint8_t** Data, UINTN& OutSize);
+  unsigned FromSVG(const CHAR8 *SVGData, UINTN SVGDataLength, float scale);
   void GetArea(const EgRect& Rect);
   void GetArea(UINTN x, UINTN y, UINTN W, UINTN H);
   void Draw(int x, int y, float scale);

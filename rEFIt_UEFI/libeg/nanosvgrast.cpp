@@ -117,7 +117,7 @@ void qsort(void* Array, int Num, INTN Size,
   nsvg_qsort((NSVGedge*)Array, 0, Num - 1);
 }
 
-
+//caller is responsible for free memory
 NSVGrasterizer* nsvgCreateRasterizer()
 {
   NSVGrasterizer* r = (NSVGrasterizer*)AllocateZeroPool(sizeof(NSVGrasterizer));
