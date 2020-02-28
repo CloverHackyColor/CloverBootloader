@@ -74,55 +74,58 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
                             IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
                             IN CHAR16 ShortcutLetter, IN CONST CHAR16 *Options)
 {
-  LOADER_ENTRY *Entry;
+  REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
   if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) ||
       !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
   // Allocate the entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
   if (Entry == NULL) {
     return FALSE;
   }
 
   if (FullTitle) {
-    Entry->me.Title = EfiStrDuplicate(FullTitle);
+    Entry->Title = EfiStrDuplicate(FullTitle);
   } else {
-    Entry->me.Title = PoolPrint(L"Start %s", LoaderTitle);
+    Entry->Title = PoolPrint(L"Start %s", LoaderTitle);
   }
-  Entry->me.Tag = TAG_TOOL;
-  Entry->me.Row = 1;
-  Entry->me.ShortcutLetter = ShortcutLetter;
-  Entry->me.Image = Image;
-//  Entry->me.ImageHover = ImageHover;
+//  Entry->Tag = TAG_TOOL;
+  Entry->Row = 1;
+  Entry->ShortcutLetter = ShortcutLetter;
+  Entry->Image = Image;
+//  Entry->ImageHover = ImageHover;
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->LoadOptions = Options ? Options : NULL;
   //actions
-  Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionHelp;
+  Entry->AtClick = ActionSelect;
+  Entry->AtDoubleClick = ActionEnter;
+  Entry->AtRightClick = ActionHelp;
 
   DBG("found tool %s\n", LoaderPath);
-  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  AddMenuEntry(&MainMenu, Entry, true);
   return TRUE;
 }
 
 STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
-  LOADER_ENTRY      *Entry, *SubEntry;
+  REFIT_MENU_ENTRY_CLOVER      *Entry;
+  LOADER_ENTRY      *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
 //  EFI_STATUS        Status;
 
   // prepare the menu entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry->me.Title          = LoaderTitle;
-  Entry->me.Tag            = TAG_CLOVER;
-  Entry->me.Row            = 1;
-  Entry->me.ShortcutLetter = 'C';
-  Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = new REFIT_MENU_ENTRY_CLOVER();
+  Entry->Title          = LoaderTitle;
+//  Entry->Tag            = TAG_CLOVER;
+  Entry->Row            = 1;
+  Entry->ShortcutLetter = 'C';
+  Entry->Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
   Entry->Volume = Volume;
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
@@ -133,14 +136,14 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   Entry->LoaderType      = OSTYPE_OTHER;
 
   //actions
-  Entry->me.AtClick = ActionEnter;
-  Entry->me.AtDoubleClick = ActionDetails;
-  Entry->me.AtRightClick = ActionDetails;
+  Entry->AtClick = ActionEnter;
+  Entry->AtDoubleClick = ActionDetails;
+  Entry->AtRightClick = ActionDetails;
 
   // create the submenu
   SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
-  SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, FileDevicePathToStr(Volume->DevicePath));
@@ -152,28 +155,28 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
 //always add and always remove menu entries
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
-    SubEntry->me.Title        = L"Add Clover boot options for all entries";
+    SubEntry->Title        = L"Add Clover boot options for all entries";
     SubEntry->LoadOptions     = L"BO-ADD";
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, SubEntry, true);
   }
 
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
-    SubEntry->me.Title        = L"Remove all Clover boot options";
+    SubEntry->Title        = L"Remove all Clover boot options";
     SubEntry->LoadOptions     = L"BO-REMOVE";
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, SubEntry, true);
   }
 
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
-    SubEntry->me.Title        = L"Print all UEFI boot options to log";
+    SubEntry->Title        = L"Print all UEFI boot options to log";
     SubEntry->LoadOptions     = L"BO-PRINT";
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, SubEntry, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->me.SubScreen = SubScreen;
-  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  Entry->SubScreen = SubScreen;
+  AddMenuEntry(&MainMenu, Entry, true);
 }
 
 VOID ScanTool(VOID)

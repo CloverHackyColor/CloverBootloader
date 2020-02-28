@@ -82,6 +82,15 @@ extern "C" {
 }
 #endif
 
+
+// cpp_fundation objects has to be included before lib.h
+#ifdef __cplusplus
+#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XArray.h"
+#include "../cpp_foundation/XObjArray.h"
+#include "../cpp_util/remove_ref.h"
+#endif
+
 #include "../refit/lib.h"
 #include "string.h"
 #include "boot.h"
@@ -96,13 +105,6 @@ extern "C" {
 
 #define PCAT_RTC_ADDRESS_REGISTER 0x70
 #define PCAT_RTC_DATA_REGISTER    0x71
-
-#ifdef __cplusplus
-#include "../cpp_foundation/XStringW.h"
-#include "../cpp_foundation/XArray.h"
-#include "../cpp_foundation/XObjArray.h"
-#include "../cpp_util/remove_ref.h"
-#endif
 
 #ifdef _MSC_VER
 #define __typeof__(x) decltype(x)
@@ -2473,7 +2475,7 @@ VOID GetBootFromOption(VOID);
 // check if this entry corresponds to Boot# variable and then set BootCurrent
 //
 VOID
-SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry);
+SetBootCurrent(REFIT_MENU_ENTRY_LOADER *LoadedEntry);
 
 VOID
 InitKextList(VOID);

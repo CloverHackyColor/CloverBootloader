@@ -147,11 +147,12 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
   if(Entry == NULL) {
     return NULL;
   }
-  
-  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+
+//  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+  DuplicateEntry = new LOADER_ENTRY();
   if (DuplicateEntry) {
-    DuplicateEntry->me.Tag          = Entry->me.Tag;
-    DuplicateEntry->me.AtClick      = ActionEnter;
+//    DuplicateEntry->Tag          = Entry->Tag;
+    DuplicateEntry->AtClick      = ActionEnter;
     DuplicateEntry->Volume          = Entry->Volume;
     DuplicateEntry->DevicePathString = EfiStrDuplicate(Entry->DevicePathString);
     DuplicateEntry->LoadOptions     = EfiStrDuplicate(Entry->LoadOptions);
@@ -307,15 +308,16 @@ VOID StrToLower(IN CHAR16 *Str)
    }
 }
 
-STATIC CHAR16 **CreateInfoLines(IN CONST CHAR16 *Message, OUT UINTN *Count)
+// TODO remove that and AlertMessage with a printf-like format
+STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Information)
 {
   CONST CHAR16 *Ptr;
-  CHAR16 **Information;
+//  CHAR16 **Information;
   UINTN   Index = 0, Total = 0;
   UINTN   Length = ((Message == NULL) ? 0 : StrLen(Message));
   // Check parameters
   if (Length == 0) {
-    return NULL;
+    return;
   }
   // Count how many new lines
   Ptr = Message - 1;
@@ -323,61 +325,68 @@ STATIC CHAR16 **CreateInfoLines(IN CONST CHAR16 *Message, OUT UINTN *Count)
     ++Total;
     Ptr = StrStr(++Ptr, L"\n");
   }
-  // Create information
-  Information = (CHAR16 **)AllocatePool((Total * sizeof(CHAR16 *)) + ((Length + 1) * sizeof(CHAR16)));
-  if (Information == NULL) {
-    return NULL;
-  }
+//  // Create information
+//  Information = (CHAR16 **)AllocatePool((Total * sizeof(CHAR16 *)) + ((Length + 1) * sizeof(CHAR16)));
+//  if (Information == NULL) {
+//    return NULL;
+//  }
+  Information->Empty();
   // Copy strings
-  CHAR16* Ptr2 = Information[Index++] = (CHAR16 *)(Information + Total);
-  StrCpyS(Ptr2, Length + 1, Message);
+  CHAR16* Ptr2;
+//  CHAR16* Ptr2 = Information[Index++] = (CHAR16 *)(Information + Total);
+//  StrCpyS(Ptr2, Length + 1, Message);
   while ((Index < Total) &&
          ((Ptr2 = (CHAR16*)StrStr(Ptr2, L"\n")) != NULL)) { // cast is ok because FilePath is not const, and we know that StrStr returns a pointer in FilePath. Will disappear when using a string object instead of CHAR16*
     *Ptr2++ = 0;
-    Information[Index++] = Ptr2;
+    Information->Add(XStringW(Ptr2));
+//    Information[Index++] = Ptr2;
   }
-  // Return the info lines
-  if (Count != NULL) {
-    *Count = Total;
-  }
-  return Information;
+//  // Return the info lines
+//  if (Count != NULL) {
+//    *Count = Total;
+//  }
+//  return Information;
 }
 
-extern REFIT_MENU_ENTRY MenuEntryReturn;
+extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 
-STATIC REFIT_MENU_ENTRY  *AlertMessageEntries[] = { &MenuEntryReturn };
-STATIC REFIT_MENU_SCREEN  AlertMessageMenu = {0, NULL, NULL, 0, NULL, 1, AlertMessageEntries,
+//STATIC REFIT_MENU_ENTRY  *AlertMessageEntries[] = { &MenuEntryReturn };
+STATIC REFIT_MENU_SCREEN  AlertMessageMenu = {0, NULL, NULL, &MenuEntryReturn,
                                               0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
                                               { 0, 0, 0, 0 } , NULL };
 
 // Display an alert message
 VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
 {
-  UINTN              Count = 0;
+//  UINTN              Count = 0;
   // Break message into info lines
-  CHAR16           **Information = CreateInfoLines(Message, &Count);
-  // Check parameters
-  if (Information != NULL) {
-    if (Count > 0) {
-      // Display the alert message
-      AlertMessageMenu.InfoLineCount = Count;
-      AlertMessageMenu.InfoLines = (CONST CHAR16**)Information;
-      AlertMessageMenu.Title = Title;
-      RunMenu(&AlertMessageMenu, NULL);
-    }
-    FreePool(Information);
-  }
+//  CHAR16           **Information = CreateInfoLines(Message, &Count);
+  CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
+    AlertMessageMenu.Title = Title;
+    RunMenu(&AlertMessageMenu, NULL);
+//  // Check parameters
+//  if (Information != NULL) {
+//    if (Count > 0) {
+//      // Display the alert message
+//      AlertMessageMenu.InfoLineCount = Count;
+//      AlertMessageMenu.InfoLines = (CONST CHAR16**)Information;
+//      AlertMessageMenu.Title = Title;
+//      RunMenu(&AlertMessageMenu, NULL);
+//    }
+//    FreePool(Information);
+//  }
+  AlertMessageMenu.InfoLines.Empty();
 }
 
 #define TAG_YES 1
 #define TAG_NO  2
 
-STATIC REFIT_MENU_ENTRY   YesMessageEntry = { L"Yes", TAG_YES, 0, 0, 0,  NULL, NULL, NULL,
-  { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY   NoMessageEntry = { L"No", TAG_NO, 0, 0, 0, NULL, NULL, NULL,
-  { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
-STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = {0, NULL, NULL, 0, NULL, 2, YesNoMessageEntries,
+//STATIC REFIT_MENU_ENTRY_OTHER   YesMessageEntry = { L"Yes", TAG_YES, 0, 0, 0,  NULL, NULL, NULL,
+//                                              { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { L"Yes", TAG_YES, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { L"No", TAG_NO, ActionEnter };
+//STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
+STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = {0, NULL, NULL, &YesMessageEntry, &NoMessageEntry,
                                               0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
                                               { 0, 0, 0, 0 } , NULL };
 
@@ -385,26 +394,28 @@ STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = {0, NULL, NULL, 0, NULL, 2, YesNoMe
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
 {
   BOOLEAN            Result = FALSE;
-  UINTN              Count = 0, MenuExit;
+  UINTN              /*Count = 0,*/ MenuExit;
   // Break message into info lines
-  CHAR16           **Information = CreateInfoLines(Message, &Count);
+//  CHAR16           **Information = CreateInfoLines(Message, &Count);
+  CreateInfoLines(Message, &YesNoMessageMenu.InfoLines);
   // Display the yes/no message
-  YesNoMessageMenu.InfoLineCount = Count;
-  YesNoMessageMenu.InfoLines = (CONST CHAR16**)Information;
+//  YesNoMessageMenu.InfoLineCount = Count;
+//  YesNoMessageMenu.InfoLines = (CONST CHAR16**)Information;
   YesNoMessageMenu.Title = Title;
   do
   {
-     REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+     REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
      MenuExit = RunMenu(&YesNoMessageMenu, &ChosenEntry);
-     if ((ChosenEntry != NULL) && (ChosenEntry->Tag == TAG_YES) &&
+     if ( ChosenEntry != NULL  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag == TAG_YES  &&
          ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
        Result = TRUE;
        MenuExit = MENU_EXIT_ENTER;
      }
   } while (MenuExit != MENU_EXIT_ENTER);
-  if (Information != NULL) {
-    FreePool(Information);
-  }
+  YesNoMessageMenu.InfoLines.Empty();
+//  if (Information != NULL) {
+//    FreePool(Information);
+//  }
   return Result;
 }
 
@@ -425,55 +436,57 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
 
 #define TAG_OFFSET 1000
 
-STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL, 0, NULL,
+STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL,
   0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
   { 0, 0, 0, 0 }, NULL};
 
 // Ask user for file path from volumes menu
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
-  REFIT_MENU_SCREEN   Menu;
-  REFIT_MENU_ENTRY  **Entries;
-  REFIT_MENU_ENTRY   *EntryPtr;
-  UINTN               Index = 0, Count = 0, MenuExit;
+  REFIT_MENU_SCREEN   Menu = InitialMenu;
+//  REFIT_MENU_ENTRY  **Entries;
+//  REFIT_MENU_ENTRY   *EntryPtr;
+  UINTN               Index = 0, /*Count = 0,*/ MenuExit;
   BOOLEAN             Responded = FALSE;
   if (Result == NULL) {
     return FALSE;
   }
   // Allocate entries
-  Entries = (REFIT_MENU_ENTRY **)AllocateZeroPool(sizeof(REFIT_MENU_ENTRY *) + ((sizeof(REFIT_MENU_ENTRY *) + sizeof(REFIT_MENU_ENTRY)) * Volumes.size()));
-  if (Entries == NULL) {
-    return FALSE;
-  }
-  EntryPtr = (REFIT_MENU_ENTRY *)(Entries + (Volumes.size() + 1));
+//  Entries = (REFIT_MENU_ENTRY **)AllocateZeroPool(sizeof(REFIT_MENU_ENTRY *) + ((sizeof(REFIT_MENU_ENTRY *) + sizeof(REFIT_MENU_ENTRY)) * Volumes.size()));
+//  if (Entries == NULL) {
+//    return FALSE;
+//  }
+//  EntryPtr = (REFIT_MENU_ENTRY *)(Entries + (Volumes.size() + 1));
   // Create volume entries
   for (Index = 0; Index < Volumes.size(); ++Index) {
-    REFIT_MENU_ENTRY *Entry;
     REFIT_VOLUME     *Volume = &Volumes[Index];
     if ((Volume == NULL) || (Volume->RootDir == NULL) ||
         ((Volume->DevicePathString == NULL) && (Volume->VolName == NULL))) {
       continue;
     }
-    Entry = Entries[Count++] = EntryPtr++;
-    Entry->Title = (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName;
-    Entry->Tag = TAG_OFFSET + Index;
-    Entry->AtClick = MENU_EXIT_ENTER;
+    REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG((Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName, TAG_OFFSET + Index, MENU_EXIT_ENTER);
+//    Entry = Entries[Count++] = EntryPtr++;
+//    Entry->Title = (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName;
+//    Entry->Tag = TAG_OFFSET + Index;
+//    Entry->AtClick = MENU_EXIT_ENTER;
+    Menu.Entries.AddReference(Entry, true);
   }
   // Setup menu
-  CopyMem(&Menu, &InitialMenu, sizeof(REFIT_MENU_SCREEN));
-  Entries[Count++] = &MenuEntryReturn;
-  Menu.EntryCount = Count;
-  Menu.Entries = Entries;
+//  CopyMem(&Menu, &InitialMenu, sizeof(REFIT_MENU_SCREEN));
+//  Entries[Count++] = &MenuEntryReturn;
+  Menu.Entries.AddReference(&MenuEntryReturn, false);
+//  Menu.Entries.size() = Count;
+//  Menu.Entries = Entries;
   Menu.Title = Title;
   do
   {
-    REFIT_MENU_ENTRY *ChosenEntry = NULL;
+    REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry = NULL;
     // Run the volume chooser menu
     MenuExit = RunMenu(&Menu, &ChosenEntry);
-    if ((ChosenEntry != NULL) &&
+    if ((ChosenEntry != NULL) && ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG() &&
         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
-      if (ChosenEntry->Tag >= TAG_OFFSET) {
-        Index = (ChosenEntry->Tag - TAG_OFFSET);
+      if (ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag >= TAG_OFFSET) {
+        Index = (ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag - TAG_OFFSET);
         if (Index < Volumes.size()) {
           // Run directory chooser menu
           if (!AskUserForFilePathFromDir(Title, &Volumes[Index], NULL, Volumes[Index].RootDir, Result)) {
@@ -485,7 +498,7 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
       break;
     }
   } while (MenuExit != MENU_EXIT_ESCAPE);
-  FreePool(Entries);
+//  FreePool(Entries);
   return Responded;
 }
 

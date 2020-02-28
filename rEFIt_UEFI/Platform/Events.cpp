@@ -230,7 +230,11 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	//
 	// Patch kernel and kexts if needed
 	//
-	KernelAndKextsPatcherStart((LOADER_ENTRY *)Context);
+	if ( !((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY() ) {
+		DebugLog(2, "Bug : Context must be a LOADER_ENTRY\n");
+		// what to do ?
+	}
+	KernelAndKextsPatcherStart(((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY());
 	
 #if 0
 //    gBS->Stall(2000000);

@@ -54,25 +54,25 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16
   REFIT_MENU_SCREEN *SubScreen;
   CONST CHAR16      *VolDesc;
   CHAR16             ShortcutLetter = 0;
-  INTN               i;
+//  INTN               i;
   
   if (Volume == NULL) {
     return NULL;
   }
   
   // Ignore this loader if it's device path is already present in another loader
-  if (MainMenu.Entries) {
-    for (i = 0; i < MainMenu.EntryCount; ++i) {
-      REFIT_MENU_ENTRY *MainEntry = MainMenu.Entries[i];
+//  if (MainMenu.Entries) {
+    for (UINTN i = 0; i < MainMenu.Entries.size(); ++i) {
+      REFIT_ABSTRACT_MENU_ENTRY& MainEntry = MainMenu.Entries[i];
       // Only want legacy
-      if (MainEntry && (MainEntry->Tag == TAG_LEGACY)) {
-        LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
-        if (StriCmp(Loader->DevicePathString, Volume->DevicePathString) == 0) {
+//      if (MainEntry && (MainEntry->getLEGACY_ENTRY())) {
+      if (MainEntry.getLEGACY_ENTRY()) {
+        if (StriCmp(MainEntry.getLEGACY_ENTRY()->DevicePathString, Volume->DevicePathString) == 0) {
           return NULL;
         }
       }
     }
-  }
+//  }
   
   // If this isn't a custom entry make sure it's not hidden by a custom entry
   if (!CustomEntry) {
@@ -115,38 +115,39 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16
     VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
 
   // prepare the menu entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
+  Entry = new LEGACY_ENTRY;
   if (FullTitle) {
-    Entry->me.Title = EfiStrDuplicate(FullTitle);
+    Entry->Title = EfiStrDuplicate(FullTitle);
   } else {
     if (GlobalConfig.BootCampStyle) {
-      Entry->me.Title = PoolPrint(L"%s", LoaderTitle);
+      Entry->Title = PoolPrint(L"%s", LoaderTitle);
     } else {
-      Entry->me.Title = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
+      Entry->Title = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
     }
   }
-  Entry->me.Tag          = TAG_LEGACY;
-  Entry->me.Row          = 0;
-  Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
+//  Entry->Tag          = TAG_LEGACY;
+  Entry->Row          = 0;
+  Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
   if (Image) {
-    Entry->me.Image = Image;
+    Entry->Image = Image;
   } else {
-    Entry->me.Image = LoadOSIcon(Volume->LegacyOS->IconName, L"legacy", 128, FALSE, TRUE);
+    Entry->Image = LoadOSIcon(Volume->LegacyOS->IconName, L"legacy", 128, FALSE, TRUE);
   }
-  Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type, Volume->DevicePath);
+  Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type, Volume->DevicePath);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
   
   //actions
-  Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionDetails;
+  Entry->AtClick = ActionSelect;
+  Entry->AtDoubleClick = ActionEnter;
+  Entry->AtRightClick = ActionDetails;
   
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, GlobalConfig.BadgeScale);
+      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, GlobalConfig.BadgeScale);
     } else {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
+      Entry->BadgeImage = egCopyScaledImage(Entry->Image, GlobalConfig.BadgeScale);
       }
     }
   
@@ -157,23 +158,24 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16
   // create the submenu
   SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
-  SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->TitleImage = Entry->Image;
   SubScreen->AnimeRun = GetAnime(SubScreen);
   
   // default entry
-  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
-  SubEntry->me.Title         = PoolPrint(L"Boot %s", LoaderTitle);
-  SubEntry->me.Tag           = TAG_LEGACY;
+//  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
+  SubEntry =  new LEGACY_ENTRY;
+  SubEntry->Title         = PoolPrint(L"Boot %s", LoaderTitle);
+//  SubEntry->Tag           = TAG_LEGACY;
   SubEntry->Volume           = Entry->Volume;
   SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->LoadOptions      = Entry->LoadOptions;
-  SubEntry->me.AtClick       = ActionEnter;
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  SubEntry->AtClick       = ActionEnter;
+  AddMenuEntry(SubScreen, SubEntry, true);
   
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->me.SubScreen = SubScreen;
-  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-  DBG(" added '%s' OSType=%d Icon=%s\n", Entry->me.Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
+  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  Entry->SubScreen = SubScreen;
+  AddMenuEntry(&MainMenu, Entry, true);
+  DBG(" added '%s' OSType=%d Icon=%s\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
   return Entry;
 }
 

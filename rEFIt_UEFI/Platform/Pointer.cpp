@@ -306,7 +306,7 @@ BOOLEAN MouseInRect(EG_RECT *Place)
 EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 {
   EFI_STATUS Status = EFI_TIMEOUT;
-  INTN EntryId;
+//  INTN EntryId;
   
   gAction = ActionNone;
   
@@ -347,18 +347,18 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
                gPointer.MouseEvent == ScrollUp) {
       gAction = ActionScrollUp;
     } else {
-      for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
-        if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {
+      for (UINTN EntryId = 0; EntryId < Screen->Entries.size(); EntryId++) {
+        if (MouseInRect(&(Screen->Entries[EntryId].Place))) {
           switch (gPointer.MouseEvent) {
             case LeftClick:
-              gAction = Screen->Entries[EntryId]->AtClick;
+              gAction = Screen->Entries[EntryId].AtClick;
               //          DBG("Click\n");
               break;
             case RightClick:
-              gAction = Screen->Entries[EntryId]->AtRightClick;
+              gAction = Screen->Entries[EntryId].AtRightClick;
               break;
             case DoubleClick:
-              gAction = Screen->Entries[EntryId]->AtDoubleClick;
+              gAction = Screen->Entries[EntryId].AtDoubleClick;
               break;
             case ScrollDown:
               gAction = ActionScrollDown;
@@ -367,7 +367,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
               gAction = ActionScrollUp;
               break;
             case MouseMove:
-              gAction = Screen->Entries[EntryId]->AtMouseOver;
+              gAction = Screen->Entries[EntryId].AtMouseOver;
               //how to do the action once?
               break;
             default:
@@ -428,8 +428,8 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
     if (gSettings.PlayAsync) {
       CheckSyncSound();
     }
-/*    if ((INTN)gItemID < Screen->EntryCount) {
-      UpdateAnime(Screen->Entries[gItemID]->SubScreen, &(Screen->Entries[gItemID]->Place));
+/*    if ((INTN)gItemID < Screen->Entries.size()) {
+      UpdateAnime(Screen->Entries[gItemID].SubScreen, &(Screen->Entries[gItemID].Place));
     } */
     TimeoutRemain--;
     if (gPointer.SimplePointerProtocol) {

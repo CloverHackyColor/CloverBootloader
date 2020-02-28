@@ -64,22 +64,24 @@ VOID AddSecureBootTool(VOID)
   if (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode) {
     return;
   }
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (gSettings.SecureBoot) {
-    Entry->me.Title = PoolPrint(L"Clover Secure Boot Configuration");
-    Entry->me.Tag = TAG_SECURE_BOOT_CONFIG;
-    Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
+    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
+    Entry->Title = PoolPrint(L"Clover Secure Boot Configuration");
+//    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
+    Entry->Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
   } else {
-    Entry->me.Title = PoolPrint(L"Enable Clover Secure Boot");
-    Entry->me.Tag = TAG_SECURE_BOOT;
-    Entry->me.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
+    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG();
+    Entry->Title = PoolPrint(L"Enable Clover Secure Boot");
+//    Entry->Tag = TAG_SECURE_BOOT;
+    Entry->Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
   }
-  Entry->me.Row = 1;
+  Entry->Row = 1;
   //actions
-  Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionHelp;
-  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  Entry->AtClick = ActionSelect;
+  Entry->AtDoubleClick = ActionEnter;
+  Entry->AtRightClick = ActionHelp;
+  AddMenuEntry(&MainMenu, Entry);
 }
 /*
  typedef struct _refit_menu_entry {
@@ -129,7 +131,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         UINTN              MenuExit;
         // Update the menu
         QueryUserMenu.InfoLines = Information;
-        QueryUserMenu.EntryCount = gSettings.SecureBootSetupMode ? 2 : 3;
+        QueryUserMenu.Entries.size() = gSettings.SecureBootSetupMode ? 2 : 3;
         // Debug message
         DBG("VerifySecureBootImage: Query user for authentication action for %s\n", Information[1]);
         // Because we may
@@ -385,7 +387,7 @@ EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *
   return Status;
 }
 
-extern REFIT_MENU_ENTRY MenuEntryReturn;
+extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 
 #define TAG_POLICY  1
 #define TAG_INSERT  2
@@ -453,7 +455,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
       SecureBootMenu.Entries[Index++] = &DisableSecureBootEntry;
     }
     SecureBootMenu.Entries[Index++] = &MenuEntryReturn;
-    SecureBootMenu.EntryCount = Index;
+    SecureBootMenu.Entries.size() = Index;
     // Run the configuration menu
     MenuExit = RunMenu(&SecureBootMenu, &ChosenEntry);
     if ((ChosenEntry != NULL) &&

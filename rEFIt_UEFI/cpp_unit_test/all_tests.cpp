@@ -1,3 +1,4 @@
+#include <Platform.h>
 #include "../cpp_foundation/XStringW.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
@@ -41,7 +42,7 @@ bool all_tests()
 	}else{
 #ifdef JIEF_DEBUG
 		DebugLog(2, "All tests are ok\n");
-		PauseForKey(L"press");
+//		PauseForKey(L"press");
 #endif
 	}
 	return all_ok;

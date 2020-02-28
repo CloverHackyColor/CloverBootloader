@@ -1,4 +1,6 @@
 #include "XImage.h"
+#include "lodepng.h"
+#include "nanosvg.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_XIMAGE 1
@@ -46,11 +48,11 @@ XImage::XImage(const XImage& Image, float scale)
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
 
-  for (size_t y = 0; y < Height; y++)
+  for (UINTN y = 0; y < Height; y++)
   {
     int ly = (int)(y / scale);
     int dy = (int)(y - ly * scale);
-    for (size_t x = 0; x < Width; x++)
+    for (UINTN x = 0; x < Width; x++)
     {
       int lx = (int)(x / scale);
       int dx = (int)(x - lx * scale);

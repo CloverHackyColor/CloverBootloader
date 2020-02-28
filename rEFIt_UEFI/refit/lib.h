@@ -68,8 +68,10 @@
 // Experimental <--
 
 #include "libeg.h"
-#ifdef _cplusplus
+#ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
+#include "../cpp_foundation/XStringWArray.h"
+#include "../cpp_foundation/XStringW.h"
 #endif
 
 #define REFIT_DEBUG (2)
@@ -90,24 +92,6 @@ extern EFI_RUNTIME_SERVICES*	gRT;
 #ifdef __cplusplus
 }
 #endif
-
-#define TAG_ABOUT              (1)
-#define TAG_RESET              (2)
-#define TAG_SHUTDOWN           (3)
-#define TAG_TOOL               (4)
-#define TAG_LOADER             (5)
-#define TAG_LEGACY             (6)
-#define TAG_INFO               (7)
-#define TAG_OPTIONS            (8)
-#define TAG_INPUT              (9)
-#define TAG_HELP               (10)
-#define TAG_SWITCH             (11)
-#define TAG_CHECKBIT           (12)
-#define TAG_SECURE_BOOT        (13)
-#define TAG_SECURE_BOOT_CONFIG (14)
-#define TAG_CLOVER             (100)
-#define TAG_EXIT               (101)
-#define TAG_RETURN             ((UINTN)(-1))
 
 //
 // lib module
@@ -392,11 +376,52 @@ extern INTN ScrollbarYMovement;
 
 #define MAX_ANIME  41
 
-typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
 
-typedef struct _refit_menu_entry {
-  CONST CHAR16            *Title;
-  UINTN              Tag;
+
+
+
+//#define TAG_ABOUT_OLD              (1)
+//#define TAG_RESET_OLD              (2)
+//#define TAG_SHUTDOWN_OLD           (3)
+//#define TAG_TOOL_OLD               (4)
+////#define TAG_LOADER             (5)
+////#define TAG_LEGACY             (6)
+//#define TAG_INFO_OLD               (7)
+//#define TAG_OPTIONS            (8)
+//#define TAG_INPUT_OLD              (9)
+//#define TAG_HELP_OLD               (10) // wasn't used ?
+//#define TAG_SWITCH_OLD             (11)
+//#define TAG_CHECKBIT_OLD           (12)
+//#define TAG_SECURE_BOOT_OLD        (13)
+//#define TAG_SECURE_BOOT_CONFIG_OLD (14)
+//#define TAG_CLOVER_OLD             (100)
+//#define TAG_EXIT_OLD               (101)
+//#define TAG_RETURN_OLD             ((UINTN)(-1))
+
+//typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
+class REFIT_MENU_SCREEN;
+class REFIT_MENU_SWITCH;
+class REFIT_MENU_CHECKBIT;
+class REFIT_MENU_ENTRY_CLOVER;
+class REFIT_MENU_ITEM_RETURN;
+class REFIT_INPUT_DIALOG;
+class REFIT_INFO_DIALOG;
+class REFIT_MENU_ENTRY_LOADER_TOOL;
+class REFIT_MENU_ITEM_SHUTDOWN;
+class REFIT_MENU_ITEM_RESET;
+class REFIT_MENU_ITEM_ABOUT;
+class REFIT_MENU_ITEM_OPTIONS;
+class REFIT_MENU_ENTRY_LOADER;
+class LOADER_ENTRY;
+class LEGACY_ENTRY;
+class REFIT_MENU_ENTRY_OTHER;
+class REFIT_SIMPLE_MENU_ENTRY_TAG;
+class REFIT_MENU_ITEM_IEM_ABSTRACT;
+
+class REFIT_ABSTRACT_MENU_ENTRY
+{
+  public:
+  CONST CHAR16       *Title;
   UINTN              Row;
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
@@ -409,12 +434,239 @@ typedef struct _refit_menu_entry {
   ACTION             AtRightClick;
   ACTION             AtMouseOver;
   REFIT_MENU_SCREEN *SubScreen;
-} REFIT_MENU_ENTRY;
 
-typedef struct _refit_input_dialog {
-  REFIT_MENU_ENTRY  Entry;
+
+  virtual REFIT_SIMPLE_MENU_ENTRY_TAG* getREFIT_SIMPLE_MENU_ENTRY_TAG() { return nullptr; };
+
+  virtual REFIT_MENU_SWITCH* getREFIT_MENU_SWITCH() { return nullptr; };
+  virtual REFIT_MENU_CHECKBIT* getREFIT_MENU_CHECKBIT() { return nullptr; };
+  virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return nullptr; };
+  virtual REFIT_MENU_ITEM_RETURN* getREFIT_MENU_ITEM_RETURN() { return nullptr; };
+  virtual REFIT_INPUT_DIALOG* getREFIT_INPUT_DIALOG() { return nullptr; };
+  virtual REFIT_INFO_DIALOG* getREFIT_INFO_DIALOG() { return nullptr; };
+  virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return nullptr; };
+  virtual REFIT_MENU_ITEM_SHUTDOWN* getREFIT_MENU_ITEM_SHUTDOWN() { return nullptr; };
+  virtual REFIT_MENU_ITEM_RESET* getREFIT_MENU_ITEM_RESET() { return nullptr; };
+  virtual REFIT_MENU_ITEM_ABOUT* getREFIT_MENU_ITEM_ABOUT() { return nullptr; };
+  virtual REFIT_MENU_ITEM_OPTIONS* getREFIT_MENU_ITEM_OPTIONS() { return nullptr; };
+  virtual REFIT_MENU_ENTRY_LOADER* getREFIT_MENU_ENTRY_LOADER() { return nullptr; };
+  virtual LOADER_ENTRY* getLOADER_ENTRY() { return nullptr; };
+  virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return nullptr; };
+  virtual REFIT_MENU_ENTRY_OTHER* getREFIT_MENU_ENTRY_OTHER() { return nullptr; };
+  virtual REFIT_MENU_ITEM_IEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
+
+  REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), DriveImage(NULL), BadgeImage(NULL), Place({0,0,0,0}), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL) {};
+  REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_, UINTN Row_,
+                            CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, EG_IMAGE* Image_, EG_IMAGE *DriveImage_, EG_IMAGE *BadgeImage_,
+                            EG_RECT Place_, ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+                            REFIT_MENU_SCREEN *SubScreen_)
+                          : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_),
+                          Image(Image_), DriveImage(DriveImage_), BadgeImage(BadgeImage_), Place(Place_),
+                          AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
+                          SubScreen(SubScreen_) {};
+  virtual ~REFIT_ABSTRACT_MENU_ENTRY() {}; // virtual destructor : this is vital
+};
+
+class REFIT_SIMPLE_MENU_ENTRY_TAG : public REFIT_ABSTRACT_MENU_ENTRY
+{
+public:
+  UINTN              Tag;
+  ACTION             AtClick;
+
+  REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
+             : REFIT_ABSTRACT_MENU_ENTRY(Title_), Tag(Tag_), AtClick(AtClick_)
+             {};
+
+  virtual REFIT_SIMPLE_MENU_ENTRY_TAG* getREFIT_SIMPLE_MENU_ENTRY_TAG() { return this; };
+};
+
+class REFIT_MENU_ENTRY : public REFIT_ABSTRACT_MENU_ENTRY
+{
+public:
+//  CONST CHAR16       *Title;
+//  UINTN              Tag;
+//  UINTN              Row;
+//  CHAR16             ShortcutDigit;
+//  CHAR16             ShortcutLetter;
+//  EG_IMAGE          *Image;
+//  EG_IMAGE          *DriveImage;
+//  EG_IMAGE          *BadgeImage;
+//  EG_RECT            Place;
+//  ACTION             AtClick;
+//  ACTION             AtDoubleClick;
+//  ACTION             AtRightClick;
+//  ACTION             AtMouseOver;
+//  REFIT_MENU_SCREEN *SubScreen;
+
+  REFIT_MENU_ENTRY() : REFIT_ABSTRACT_MENU_ENTRY(NULL) {};
+  REFIT_MENU_ENTRY(  CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE *Image_, EG_IMAGE *DriveImage_, EG_IMAGE *BadgeImage_, EG_RECT Place_,
+                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_,  ACTION AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+};
+
+class REFIT_MENU_ENTRY_OTHER : public REFIT_MENU_ENTRY
+{
+public:
+//  UINTN              Tag;
+
+  REFIT_MENU_ENTRY_OTHER() : REFIT_MENU_ENTRY() {};
+  REFIT_MENU_ENTRY_OTHER(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE          *Image_, EG_IMAGE          *DriveImage_, EG_IMAGE          *BadgeImage_, EG_RECT            Place_,
+                     ACTION             AtClick_, ACTION             AtDoubleClick_, ACTION             AtRightClick_,  ACTION             AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+
+  virtual REFIT_MENU_ENTRY_OTHER* getREFIT_MENU_ENTRY_OTHER() { return this; };
+};
+
+class REFIT_MENU_ITEM_RETURN : public REFIT_MENU_ENTRY_OTHER
+{
+public:
+  REFIT_MENU_ITEM_RETURN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE          *Image_, EG_IMAGE          *DriveImage_, EG_IMAGE          *BadgeImage_, EG_RECT            Place_,
+                     ACTION             AtClick_, ACTION             AtDoubleClick_, ACTION             AtRightClick_,  ACTION             AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+  virtual REFIT_MENU_ITEM_RETURN* getREFIT_MENU_ITEM_RETURN() { return this; };
+};
+
+class REFIT_MENU_ITEM_SHUTDOWN : public REFIT_MENU_ENTRY_OTHER
+{
+public:
+  REFIT_MENU_ITEM_SHUTDOWN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE          *Image_, EG_IMAGE          *DriveImage_, EG_IMAGE          *BadgeImage_, EG_RECT            Place_,
+                     ACTION             AtClick_, ACTION             AtDoubleClick_, ACTION             AtRightClick_,  ACTION             AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+  virtual REFIT_MENU_ITEM_SHUTDOWN* getREFIT_MENU_ITEM_SHUTDOWN() { return this; };
+};
+
+class REFIT_MENU_ITEM_RESET : public REFIT_MENU_ENTRY_OTHER {
+public:
+  REFIT_MENU_ITEM_RESET(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE          *Image_, EG_IMAGE          *DriveImage_, EG_IMAGE          *BadgeImage_, EG_RECT            Place_,
+                     ACTION             AtClick_, ACTION             AtDoubleClick_, ACTION             AtRightClick_,  ACTION             AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+  virtual REFIT_MENU_ITEM_RESET* getREFIT_MENU_ITEM_RESET() { return this; };
+};
+
+class REFIT_MENU_ITEM_ABOUT : public REFIT_MENU_ENTRY_OTHER
+{
+public:
+  REFIT_MENU_ITEM_ABOUT(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE          *Image_, EG_IMAGE          *DriveImage_, EG_IMAGE          *BadgeImage_, EG_RECT            Place_,
+                     ACTION             AtClick_, ACTION             AtDoubleClick_, ACTION             AtRightClick_,  ACTION             AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+  virtual REFIT_MENU_ITEM_ABOUT* getREFIT_MENU_ITEM_ABOUT() { return this; };
+};
+
+class REFIT_MENU_ITEM_OPTIONS : public REFIT_MENU_ENTRY_OTHER {
+public:
+  REFIT_MENU_ITEM_OPTIONS() : REFIT_MENU_ENTRY_OTHER() {};
+  REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+                     EG_IMAGE          *Image_, EG_IMAGE          *DriveImage_, EG_IMAGE          *BadgeImage_, EG_RECT            Place_,
+                     ACTION             AtClick_, ACTION             AtDoubleClick_, ACTION             AtRightClick_,  ACTION             AtMouseOver_,
+                     REFIT_MENU_SCREEN *SubScreen_)
+             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, DriveImage_, BadgeImage_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+             {};
+  virtual REFIT_MENU_ITEM_OPTIONS* getREFIT_MENU_ITEM_OPTIONS() { return this; };
+};
+
+class REFIT_MENU_ITEM_IEM_ABSTRACT : public REFIT_MENU_ENTRY_OTHER {
+public:
   INPUT_ITEM        *Item;
-} REFIT_INPUT_DIALOG;
+  virtual REFIT_MENU_ITEM_IEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return this; };
+};
+
+class REFIT_INPUT_DIALOG : public REFIT_MENU_ITEM_IEM_ABSTRACT {
+public:
+  virtual REFIT_INPUT_DIALOG* getREFIT_INPUT_DIALOG() { return this; };
+};
+
+class REFIT_INFO_DIALOG : public REFIT_MENU_ENTRY_OTHER {
+public:
+  virtual REFIT_INFO_DIALOG* getREFIT_INFO_DIALOG() { return this; };
+};
+
+class REFIT_MENU_SWITCH : public REFIT_MENU_ITEM_IEM_ABSTRACT {
+public:
+  virtual REFIT_MENU_SWITCH* getREFIT_MENU_SWITCH() { return this; };
+};
+
+class REFIT_MENU_CHECKBIT : public REFIT_MENU_ITEM_IEM_ABSTRACT {
+public:
+  virtual REFIT_MENU_CHECKBIT* getREFIT_MENU_CHECKBIT() { return this; };
+};
+
+/*
+ * SUper class of LOADER_ENTRY & LEGACY_ENTRY
+ */
+class REFIT_MENU_ENTRY_LOADER : public REFIT_MENU_ENTRY
+{
+public:
+  REFIT_VOLUME     *Volume;
+  CONST CHAR16     *DevicePathString;
+  CONST CHAR16     *LoadOptions; //moved here for compatibility with legacy
+  UINTN             BootNum;
+  CONST CHAR16     *LoaderPath;
+
+  virtual REFIT_MENU_ENTRY_LOADER* getREFIT_MENU_ENTRY_LOADER() { return this; };
+};
+
+struct KERNEL_AND_KEXT_PATCHES;
+
+class LOADER_ENTRY : public REFIT_MENU_ENTRY_LOADER
+{
+public:
+  CONST CHAR16     *VolName;
+  EFI_DEVICE_PATH  *DevicePath;
+  UINT16            Flags;
+  UINT8             LoaderType;
+  CHAR8            *OSVersion;
+  CHAR8            *BuildVersion;
+  EG_PIXEL         *BootBgColor;
+  UINT8             CustomBoot;
+  EG_IMAGE         *CustomLogo;
+  KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
+  CONST CHAR16            *Settings;
+
+  virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
+} ;
+
+class REFIT_MENU_ENTRY_LOADER_TOOL : public LOADER_ENTRY
+{
+public:
+  virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return this; };
+};
+
+class LEGACY_ENTRY : public REFIT_MENU_ENTRY_LOADER
+{
+public:
+//  REFIT_VOLUME     *Volume;
+//  CONST CHAR16     *DevicePathString;
+//  CONST CHAR16     *LoadOptions;
+//  UINTN             BootNum;
+//  CONST CHAR16     *LoaderPath; //will be set to NULL
+
+  virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return this; };
+};
+
+class REFIT_MENU_ENTRY_CLOVER : public LOADER_ENTRY
+{
+public:
+  virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return this; };
+};
+
 
 //some unreal values
 #define FILM_CENTRE   40000
@@ -425,17 +677,21 @@ typedef struct _refit_input_dialog {
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
 
-struct _refit_menu_screen {
+class REFIT_MENU_SCREEN
+{
+public:
   UINTN             ID;
-  CONST CHAR16            *Title;
+  CONST CHAR16      *Title;
   EG_IMAGE          *TitleImage;
-  INTN              InfoLineCount;
-  CONST CHAR16            **InfoLines;
-  INTN              EntryCount;
-  REFIT_MENU_ENTRY  **Entries;
+//  INTN              InfoLineCount;
+//  CONST CHAR16    **InfoLines;
+  XStringWArray     InfoLines;
+//  INTN              EntryCount;
+//  REFIT_MENU_ENTRY  **Entries;
+  XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
   INTN              TimeoutSeconds;
-  CONST CHAR16            *TimeoutText;
-  CONST CHAR16            *Theme;
+  CONST CHAR16     *TimeoutText;
+  CONST CHAR16     *Theme;
   BOOLEAN           AnimeRun;
   BOOLEAN           Once;
   UINT64            LastDraw;
@@ -443,7 +699,95 @@ struct _refit_menu_screen {
   INTN              Frames;
   UINTN             FrameTime; //ms
   EG_RECT           FilmPlace;
-  EG_IMAGE          **Film;
+  EG_IMAGE        **Film;
+
+  REFIT_MENU_SCREEN()
+						: ID(0), Title(0), TitleImage(0),
+						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
+						  Once(0), LastDraw(0), CurrentFrame(0),
+						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
+						  Film(0)
+						{};
+
+  REFIT_MENU_SCREEN(  UINTN             ID_,
+											CONST CHAR16      *Title_,
+											EG_IMAGE          *TitleImage_,
+//											INTN              InfoLineCount_,
+//											CONST CHAR16    **InfoLines_,
+											INTN              TimeoutSeconds_,
+											CONST CHAR16     *TimeoutText_,
+											CONST CHAR16     *Theme_,
+											BOOLEAN           AnimeRun_,
+											BOOLEAN           Once_,
+											UINT64            LastDraw_,
+											INTN              CurrentFrame_,
+											INTN              Frames_,
+											UINTN             FrameTime_,
+											EG_RECT           FilmPlace_,
+											EG_IMAGE        **Film_)
+						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
+						  /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
+						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
+						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
+						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
+						  Film(Film_)
+						{};
+
+  REFIT_MENU_SCREEN(  UINTN             ID_,
+											CONST CHAR16      *Title_,
+											EG_IMAGE          *TitleImage_,
+//											INTN              InfoLineCount_,
+//											CONST CHAR16    **InfoLines_,
+											REFIT_ABSTRACT_MENU_ENTRY* entry,
+											INTN              TimeoutSeconds_,
+											CONST CHAR16     *TimeoutText_,
+											CONST CHAR16     *Theme_,
+											BOOLEAN           AnimeRun_,
+											BOOLEAN           Once_,
+											UINT64            LastDraw_,
+											INTN              CurrentFrame_,
+											INTN              Frames_,
+											UINTN             FrameTime_,
+											EG_RECT           FilmPlace_,
+											EG_IMAGE        **Film_)
+						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
+              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
+						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
+						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
+						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
+						  Film(Film_)
+						{
+							Entries.AddReference(entry, false);
+						};
+
+  REFIT_MENU_SCREEN(  UINTN             ID_,
+											CONST CHAR16      *Title_,
+											EG_IMAGE          *TitleImage_,
+//											INTN              InfoLineCount_,
+//											CONST CHAR16    **InfoLines_,
+											REFIT_ABSTRACT_MENU_ENTRY* entry1,
+											REFIT_ABSTRACT_MENU_ENTRY* entry2,
+											INTN              TimeoutSeconds_,
+											CONST CHAR16     *TimeoutText_,
+											CONST CHAR16     *Theme_,
+											BOOLEAN           AnimeRun_,
+											BOOLEAN           Once_,
+											UINT64            LastDraw_,
+											INTN              CurrentFrame_,
+											INTN              Frames_,
+											UINTN             FrameTime_,
+											EG_RECT           FilmPlace_,
+											EG_IMAGE        **Film_)
+						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
+              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
+						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
+						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
+						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
+						  Film(Film_)
+						{
+							Entries.AddReference(entry1, false);
+							Entries.AddReference(entry2, false);
+						};
 };
 
 #define VOLTYPE_OPTICAL    (0x0001)
@@ -628,35 +972,6 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   
 } KERNEL_AND_KEXT_PATCHES;
 
-typedef struct {
-  REFIT_MENU_ENTRY  me;
-  REFIT_VOLUME     *Volume;
-  CONST CHAR16           *DevicePathString;
-  CONST CHAR16           *LoadOptions; //moved here for compatibility with legacy
-  UINTN             BootNum;
-  CONST CHAR16           *LoaderPath;
-  CONST CHAR16           *VolName;
-  EFI_DEVICE_PATH  *DevicePath;
-  UINT16            Flags;
-  UINT8             LoaderType;
-  CHAR8            *OSVersion;
-  CHAR8            *BuildVersion;
-  EG_PIXEL         *BootBgColor;
-  UINT8             CustomBoot;
-  EG_IMAGE         *CustomLogo;
-  KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
-  CONST CHAR16            *Settings;
-} LOADER_ENTRY;
-
-typedef struct {
-  REFIT_MENU_ENTRY  me;
-  REFIT_VOLUME     *Volume;
-  CONST CHAR16           *DevicePathString;
-  CONST CHAR16     *LoadOptions;
-  UINTN             BootNum;
-  CONST CHAR16           *LoaderPath; //will be set to NULL
-} LEGACY_ENTRY;
-
 #define ANIME_INFINITE ((UINTN)-1)
 //some unreal values
 #define SCREEN_EDGE_LEFT    50000
@@ -696,6 +1011,9 @@ extern BOOLEAN          MainAnime;
 extern GUI_ANIME        *GuiAnime;
 
 extern REFIT_VOLUME     *SelfVolume;
+#ifdef __cplusplus
+extern XObjArray<REFIT_VOLUME> Volumes;
+#endif
 //extern UINTN            VolumesCount;
 
 extern EG_IMAGE         *Banner;
@@ -722,8 +1040,8 @@ VOID        PauseForKey(IN CONST CHAR16 *Msg);
 BOOLEAN     IsEmbeddedTheme(VOID);
 UINT8       GetOSTypeFromPath (IN CONST CHAR16 *Path);
 
-VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
-VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
+//VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
+//VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
 //VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback*/);
 
 VOID GetListOfThemes(VOID);
@@ -916,15 +1234,15 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine);
 VOID AddMenuInfo(IN REFIT_MENU_SCREEN  *SubScreen, IN CONST CHAR16 *Line);
-VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
+VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry, bool freeIt);
 VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
-UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
-UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);
+UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
+UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
 VOID ReinitVolumes(VOID);
 BOOLEAN ReadAllKeyStrokes(VOID);
-VOID OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS);
+VOID OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS);
 VOID FreeScrollBar(VOID);
 INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);

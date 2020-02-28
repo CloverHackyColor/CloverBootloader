@@ -2,17 +2,18 @@
 This class will replace EG_IMAGE structure and methods
 */
 
-#if !defined(__XSTRINGW_H__)
-#define __XSTRINGW_H__
-
-#include "../cpp_foundation/XToolsCommon.h"
-#include "../cpp_foundation/XArray.h"
-#include "lodepng.h"
-
-#include "nanosvg.h"
-#include "FloatLib.h"
+#if !defined(__XIMAGE_H__)
+#define __XIMAGE_H__
 
 #include <Platform.h>
+//
+//#include "../cpp_foundation/XToolsCommon.h"
+//#include "../cpp_foundation/XArray.h"
+//#include "lodepng.h"
+//
+//#include "nanosvg.h"
+//#include "FloatLib.h"
+
 
 #if 0 //ndef EFI_GRAPHICS_OUTPUT_BLT_PIXEL
 typedef struct {

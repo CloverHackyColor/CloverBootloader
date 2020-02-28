@@ -425,7 +425,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   //CHAR16           IconFileName[256]; Sothor - Unused?
   CHAR16           ShortcutLetter;
   LOADER_ENTRY    *Entry;
-  INTN             i;
   CONST CHAR8           *indent = "    ";
 
   // Check parameters are valid
@@ -461,20 +460,19 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     UINTN                CustomIndex = 0;
 
     // Ignore this loader if it's device path is already present in another loader
-    if (MainMenu.Entries) {
-      for (i = 0; i < MainMenu.EntryCount; ++i) {
-        REFIT_MENU_ENTRY *MainEntry = MainMenu.Entries[i];
+//    if (MainMenu.Entries) {
+      for (UINTN i = 0; i < MainMenu.Entries.size(); ++i) {
+        REFIT_ABSTRACT_MENU_ENTRY& MainEntry = MainMenu.Entries[i];
         // Only want loaders
-        if (MainEntry && (MainEntry->Tag == TAG_LOADER)) {
-          LOADER_ENTRY *Loader = (LOADER_ENTRY *)MainEntry;
-          if (StriCmp(Loader->DevicePathString, LoaderDevicePathString) == 0) {
+        if (MainEntry.getLOADER_ENTRY()) {
+          if (StriCmp(MainEntry.getLOADER_ENTRY()->DevicePathString, LoaderDevicePathString) == 0) {
             DBG("%a skipped because path `%s` already exists for another entry!\n", indent, LoaderDevicePathString);
             FreePool(LoaderDevicePathString);
             return NULL;
           }
         }
       }
-    }
+//    }
     // If this isn't a custom entry make sure it's not hidden by a custom entry
     Custom = gSettings.CustomEntries;
     while (Custom) {
@@ -554,9 +552,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
 
   // prepare the menu entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry->me.Tag = TAG_LOADER;
-  Entry->me.Row = 0;
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry = new LOADER_ENTRY();
+//  Entry->Tag = TAG_LOADER;
+  Entry->Row = 0;
   Entry->Volume = Volume;
 
   Entry->LoaderPath       = EfiStrDuplicate(LoaderPath);
@@ -577,9 +576,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   // locate a custom icon for the loader
   //StrCpy(IconFileName, Volume->OSIconName); Sothor - Unused?
   //actions
-  Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionDetails;
+  Entry->AtClick = ActionSelect;
+  Entry->AtDoubleClick = ActionEnter;
+  Entry->AtRightClick = ActionDetails;
   Entry->CustomBoot = CustomBoot;
   Entry->CustomLogo = CustomLogo;
   Entry->LoaderType = OSType;
@@ -643,70 +642,70 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       break;
   }
 
-  Entry->me.Title = NULL;
+  Entry->Title = NULL;
     
   if (FullTitle) {
-    Entry->me.Title = EfiStrDuplicate(FullTitle);
+    Entry->Title = EfiStrDuplicate(FullTitle);
   }
-  if ( Entry->me.Title == NULL  &&  Volume->VolLabel != NULL ) {
+  if ( Entry->Title == NULL  &&  Volume->VolLabel != NULL ) {
     if ( Volume->VolLabel[0] == L'#' ) {
-    	Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
+    	Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
     }else{
-    	Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
+    	Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
     }
   }
   
-  if ( Entry->me.Title == NULL  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
+  if ( Entry->Title == NULL  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
     //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     if (GlobalConfig.BootCampStyle) {
-      Entry->me.Title = PoolPrint(L"%s", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
+      Entry->Title = PoolPrint(L"%s", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
-      Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+      Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Basename(Volume->DevicePathString));
     }
   }
-  if ( Entry->me.Title == NULL ) {
+  if ( Entry->Title == NULL ) {
     //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
     if (GlobalConfig.BootCampStyle) {
       if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
-        Entry->me.Title = PoolPrint(L"%s", Entry->VolName);
+        Entry->Title = PoolPrint(L"%s", Entry->VolName);
       } else {
-        Entry->me.Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+        Entry->Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
       }
     } else {
-      Entry->me.Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+      Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Entry->VolName);
     }
   }
-  //DBG("Entry->me.Title =%s\n", Entry->me.Title);
+  //DBG("Entry->Title =%s\n", Entry->Title);
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-    Entry->me.Title = PoolPrint(L"%s (hibernated)", Entry->me.Title);
+    Entry->Title = PoolPrint(L"%s (hibernated)", Entry->Title);
   }
 
-  Entry->me.ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
+  Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
   // get custom volume icon if present
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
-    Entry->me.Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
+    Entry->Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     DBG("using VolumeIcon.icns image from Volume\n");
   } else if (Image) {
-      Entry->me.Image = Image;
+      Entry->Image = Image;
   } else {
-      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
+      Entry->Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
   }
 
   // Load DriveImage
-  Entry->me.DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
+  Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
 
   // DBG("HideBadges=%d Volume=%s ", GlobalConfig.HideBadges, Volume->VolName);
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, GlobalConfig.BadgeScale);
+      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, GlobalConfig.BadgeScale);
       // DBG(" Show badge as Drive.");
     } else {
-      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, GlobalConfig.BadgeScale);
+      Entry->BadgeImage = egCopyScaledImage(Entry->Image, GlobalConfig.BadgeScale);
         // DBG(" Show badge as OSImage.");
     }
   }
@@ -752,8 +751,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
   // create the submenu
   SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = PoolPrint(L"Options for %s", Entry->me.Title, Entry->VolName);
-  SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->Title = PoolPrint(L"Options for %s", Entry->Title, Entry->VolName);
+  SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20;
   //  DBG("get anime for os=%d\n", SubScreen->ID);
   SubScreen->AnimeRun = GetAnime(SubScreen);
@@ -783,52 +782,52 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
       SubEntry = DuplicateLoaderEntry(Entry);
       if (SubEntry) {
-        SubEntry->me.Title  = L"Cancel hibernate wake";
+        SubEntry->Title  = L"Cancel hibernate wake";
         SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        AddMenuEntry(SubScreen, SubEntry, true);
       }
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
-        SubEntry->me.Title  = L"Boot Mac OS X with selected options";
+        SubEntry->Title  = L"Boot Mac OS X with selected options";
       } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubEntry->me.Title  = L"Boot OS X with selected options";
+        SubEntry->Title  = L"Boot OS X with selected options";
       } else {
-        SubEntry->me.Title  = L"Boot macOS with selected options";
+        SubEntry->Title  = L"Boot macOS with selected options";
       }
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      AddMenuEntry(SubScreen, SubEntry, true);
     }
     
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
-        SubEntry->me.Title  = L"Boot Mac OS X with injected kexts";
+        SubEntry->Title  = L"Boot Mac OS X with injected kexts";
       } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubEntry->me.Title  = L"Boot OS X with injected kexts";
+        SubEntry->Title  = L"Boot OS X with injected kexts";
       } else {
-        SubEntry->me.Title  = L"Boot macOS with injected kexts";
+        SubEntry->Title  = L"Boot macOS with injected kexts";
       }
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      AddMenuEntry(SubScreen, SubEntry, true);
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
-        SubEntry->me.Title  = L"Boot Mac OS X without injected kexts";
+        SubEntry->Title  = L"Boot Mac OS X without injected kexts";
       } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubEntry->me.Title  = L"Boot OS X without injected kexts";
+        SubEntry->Title  = L"Boot OS X without injected kexts";
       } else {
-        SubEntry->me.Title  = L"Boot macOS without injected kexts";
+        SubEntry->Title  = L"Boot macOS without injected kexts";
       }
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubMenuKextInjectMgmt(Entry));
+    AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(Entry), true);
     AddMenuInfo(SubScreen, L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
@@ -875,60 +874,60 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     // default entry
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title = PoolPrint(L"Run %s", FileName);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry->Title = PoolPrint(L"Run %s", FileName);
+      AddMenuEntry(SubScreen, SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (Quiet) {
-        SubEntry->me.Title    = PoolPrint(L"%s verbose", Entry->me.Title);
+        SubEntry->Title    = PoolPrint(L"%s verbose", Entry->Title);
         SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
       } else {
-        SubEntry->me.Title    = PoolPrint(L"%s quiet", Entry->me.Title);
+        SubEntry->Title    = PoolPrint(L"%s quiet", Entry->Title);
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
       }
     }
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, SubEntry, true);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
-        SubEntry->me.Title    = PoolPrint(L"%s without splash", Entry->me.Title);
+        SubEntry->Title    = PoolPrint(L"%s without splash", Entry->Title);
         SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
       } else {
-        SubEntry->me.Title    = PoolPrint(L"%s with splash", Entry->me.Title);
+        SubEntry->Title    = PoolPrint(L"%s with splash", Entry->Title);
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
       }
     }
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, SubEntry, true);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
         if (Quiet) {
           TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
-          SubEntry->me.Title    = PoolPrint(L"%s verbose without splash", Entry->me.Title);
+          SubEntry->Title    = PoolPrint(L"%s verbose without splash", Entry->Title);
           SubEntry->LoadOptions = RemoveLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         } else {
           TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
-          SubEntry->me.Title    = PoolPrint(L"%s quiet without splash", Entry->me.Title);
+          SubEntry->Title    = PoolPrint(L"%s quiet without splash", Entry->Title);
           SubEntry->LoadOptions = AddLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         }
       } else if (Quiet) {
         TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
-        SubEntry->me.Title    = PoolPrint(L"%s verbose with splash", Entry->me.Title);
+        SubEntry->Title    = PoolPrint(L"%s verbose with splash", Entry->Title);
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
         FreePool(TempOptions);
       } else {
-        SubEntry->me.Title    = PoolPrint(L"%s quiet with splash", Entry->me.Title);
+        SubEntry->Title    = PoolPrint(L"%s quiet with splash", Entry->Title);
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
       }
     }
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = PoolPrint(L"-s -h");
@@ -936,37 +935,37 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     // default entry
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title = PoolPrint(L"Run %s", FileName);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry->Title = PoolPrint(L"Run %s", FileName);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = PoolPrint(L"Boot Windows from Hard Disk");
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry->Title        = PoolPrint(L"Boot Windows from Hard Disk");
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = PoolPrint(L"Boot Windows from CD-ROM");
+      SubEntry->Title        = PoolPrint(L"Boot Windows from CD-ROM");
       SubEntry->LoadOptions     = PoolPrint(L"-s -c");
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
-      SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
+      SubEntry->Title        = PoolPrint(L"Run %s in text mode", FileName);
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = PoolPrint(L"-v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn);
-  Entry->me.SubScreen = SubScreen;
-  // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->me.Title, Entry->LoaderType, Entry->OSVersion);
+  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  Entry->SubScreen = SubScreen;
+  // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
 
 STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderOptions,
@@ -1019,7 +1018,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *Load
     //TODO there is a problem that Entry->Flags is unique while InputItems are global ;(
 //    InputItems[69].IValue = Entry->Flags;
     AddDefaultMenu(Entry);
-    AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+    AddMenuEntry(&MainMenu, Entry, true);
     return TRUE;
   }
   return FALSE;
@@ -1966,7 +1965,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           if (SubScreen) {
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
-            SubScreen->TitleImage = Entry->me.Image;
+            SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->AnimeRun = GetAnime(SubScreen);
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
@@ -1986,11 +1985,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               }
               AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
             }
-            AddMenuEntry(SubScreen, &MenuEntryReturn);
-            Entry->me.SubScreen = SubScreen;
+            AddMenuEntry(SubScreen, &MenuEntryReturn, true);
+            Entry->SubScreen = SubScreen;
           }
         }
-        AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, (REFIT_MENU_ENTRY *)Entry);
+        AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, Entry, true);
       }
       // cleanup custom
       if (FindCustomPath) {

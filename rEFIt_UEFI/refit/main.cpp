@@ -1066,9 +1066,8 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
   DBG("Start Tool: %s\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);
 	// assumes "Start <title>" as assigned below
-	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);
-    StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
-                  Basename(Entry->LoaderPath), NULL, NULL);
+	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->Title + 6);
+    StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
 	//ReinitSelfLib();
 }
@@ -1561,7 +1560,6 @@ INTN FindDefaultEntry(VOID)
 {
   INTN                Index = -1;
   REFIT_VOLUME        *Volume;
-  LOADER_ENTRY        *Entry;
   BOOLEAN             SearchForLoader;
 
 //  DBG("FindDefaultEntry ...\n");
@@ -1578,7 +1576,7 @@ INTN FindDefaultEntry(VOID)
   Index = FindStartupDiskVolume(&MainMenu);
 
   if (Index >= 0) {
-    DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index]->Title);
+    DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index].Title);
     // we got boot-device-data, no need to keep emulating anymore
     if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1601,24 +1599,25 @@ INTN FindDefaultEntry(VOID)
       DBG("Searching for DefaultVolume '%s' ...\n", gSettings.DefaultVolume);
     }
 */
-    for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
+    for (Index = 0; Index < (INTN)MainMenu.Entries.size()  &&  MainMenu.Entries[Index].getLOADER_ENTRY()  &&  MainMenu.Entries[Index].getLOADER_ENTRY()->Row == 0 ; Index++) {
 
-      Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-      if (!Entry->Volume) {
+      LOADER_ENTRY& Entry = *MainMenu.Entries[Index].getLOADER_ENTRY();
+      if (!Entry.Volume) {
         continue;
       }
 
-      Volume = Entry->Volume;
+      Volume = Entry.Volume;
       if ((Volume->VolName == NULL || StrCmp(Volume->VolName, gSettings.DefaultVolume) != 0) &&
           !StrStr(Volume->DevicePathString, gSettings.DefaultVolume)) {
         continue;
       }
 
-      if (SearchForLoader && (Entry->me.Tag != TAG_LOADER || !StriStr(Entry->LoaderPath, gSettings.DefaultLoader))) {
+      //                       we alreday know that Entry.isLoader
+      if (SearchForLoader && (/*Entry.Tag != TAG_LOADER ||*/ !StriStr(Entry.LoaderPath, gSettings.DefaultLoader))) {
         continue;
       }
 
-      DBG(" - found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry->me.Title, Volume->VolName, Entry->DevicePathString);
+      DBG(" - found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry.Title, Volume->VolName, Entry.DevicePathString);
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1999,15 +1998,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           MainLoopRunning = TRUE;
   BOOLEAN           ReinitDesktop = TRUE;
   BOOLEAN           AfterTool = FALSE;
-  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
-  REFIT_MENU_ENTRY  *DefaultEntry = NULL;
-  REFIT_MENU_ENTRY  *OptionEntry = NULL;
+  REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
+  REFIT_ABSTRACT_MENU_ENTRY  *DefaultEntry = NULL;
+  REFIT_ABSTRACT_MENU_ENTRY  *OptionEntry = NULL;
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
 	//UINT64            TscDiv;
 	//UINT64            TscRemainder = 0;
-  LOADER_ENTRY      *LoaderEntry;
+//  LOADER_ENTRY      *LoaderEntry;
   CHAR16            *ConfName = NULL;
   TagPtr            smbiosTags = NULL;
   TagPtr            UniteTag = NULL;
@@ -2457,8 +2456,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
   do {
-    MainMenu.EntryCount = 0;
-    OptionMenu.EntryCount = 0;
+    MainMenu.Entries.Empty();
+    OptionMenu.Entries.Empty();
     InitKextList();
     ScanVolumes();
 
@@ -2567,22 +2566,22 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
       if (gSettings.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
-      AddMenuEntry(&MainMenu, &MenuEntryOptions);
+      AddMenuEntry(&MainMenu, &MenuEntryOptions, false);
       MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
       if (gSettings.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
-      AddMenuEntry(&MainMenu, &MenuEntryAbout);
+      AddMenuEntry(&MainMenu, &MenuEntryAbout, false);
 
 
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
         if (gSettings.DisableCloverHotkeys)
           MenuEntryReset.ShortcutLetter = 0x00;
         MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-        AddMenuEntry(&MainMenu, &MenuEntryReset);
+        AddMenuEntry(&MainMenu, &MenuEntryReset, false);
         if (gSettings.DisableCloverHotkeys)
           MenuEntryShutdown.ShortcutLetter = 0x00;
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_EXIT);
-        AddMenuEntry(&MainMenu, &MenuEntryShutdown);
+        AddMenuEntry(&MainMenu, &MenuEntryShutdown, false);
       }
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
@@ -2596,9 +2595,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
     DefaultIndex = FindDefaultEntry();
-    DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
-    if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
-      DefaultEntry = MainMenu.Entries[DefaultIndex];
+    DBG("DefaultIndex=%d and MainMenu.Entries.size()=%d\n", DefaultIndex, MainMenu.Entries.size());
+    if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.Entries.size())) {
+      DefaultEntry = &MainMenu.Entries[DefaultIndex];
     } else {
       DefaultEntry = NULL;
     }
@@ -2607,11 +2606,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
     if (DefaultEntry && (GlobalConfig.FastBoot ||
                          (gSettings.SkipHibernateTimeout &&
-                          OSFLAG_ISSET(((LOADER_ENTRY *)DefaultEntry)->Flags, OSFLAG_HIBERNATED)))) {
-      if (DefaultEntry->Tag == TAG_LOADER) {
-        StartLoader((LOADER_ENTRY *)DefaultEntry);
-      } else if (DefaultEntry->Tag == TAG_LEGACY){
-        StartLegacy((LEGACY_ENTRY *)DefaultEntry);
+                           DefaultEntry->getLOADER_ENTRY()
+                           && OSFLAG_ISSET(DefaultEntry->getLOADER_ENTRY()->Flags, OSFLAG_HIBERNATED)
+                         )
+             )
+        )
+    {
+      if (DefaultEntry->getLOADER_ENTRY()) {
+        StartLoader(DefaultEntry->getLOADER_ENTRY());
+      } else if (DefaultEntry->getLEGACY_ENTRY()){
+        StartLegacy(DefaultEntry->getLEGACY_ENTRY());
       }
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
@@ -2633,14 +2637,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       GlobalConfig.Timeout = -1;
       //remember OS before go to second row
       if (ChosenEntry->Row == 0) {
-        LastChosenOS = ((LOADER_ENTRY *)ChosenEntry)->OSVersion;
+        if (ChosenEntry->getLOADER_ENTRY()) {
+        	LastChosenOS = ChosenEntry->getLOADER_ENTRY()->OSVersion;
+        }else{
+        	// Jief : what to do ?
+        }
       }
 
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
-        if (DefaultEntry->Tag == TAG_LOADER) {
-          StartLoader((LOADER_ENTRY *)DefaultEntry);
-        } else if (DefaultEntry->Tag == TAG_LEGACY){
-          StartLegacy((LEGACY_ENTRY *)DefaultEntry);
+        if (DefaultEntry->getLOADER_ENTRY()) {
+          StartLoader(DefaultEntry->getLOADER_ENTRY());
+        } else if (DefaultEntry->getLEGACY_ENTRY()){
+          StartLegacy(DefaultEntry->getLEGACY_ENTRY());
         }
         // if something goes wrong - break main loop to reinit volumes
         break;
@@ -2664,12 +2672,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       // EjectVolume
       if (MenuExit == MENU_EXIT_EJECT){
-        if ((ChosenEntry->Tag == TAG_LOADER) ||
-            (ChosenEntry->Tag == TAG_LEGACY)) {
-          Status = EjectVolume(((LOADER_ENTRY *)ChosenEntry)->Volume);
-          if (!EFI_ERROR(Status)) {
-            break; //main loop is broken so Reinit all
-          }
+        Status = EFI_SUCCESS;
+        if (ChosenEntry->getLOADER_ENTRY() ) {
+          Status = EjectVolume(ChosenEntry->getLOADER_ENTRY()->Volume);
+        }
+        if ( ChosenEntry->getLEGACY_ENTRY() ) {
+          Status = EjectVolume(ChosenEntry->getLEGACY_ENTRY()->Volume);
+        }
+        if (!EFI_ERROR(Status)) {
+          break; //main loop is broken so Reinit all
         }
         continue;
       }
@@ -2687,203 +2698,200 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         //           continue;
       }
 
-      switch (ChosenEntry->Tag) {
-
-        case TAG_RESET:    // Restart
-          if (MenuExit == MENU_EXIT_DETAILS) {
+      if ( ChosenEntry->getREFIT_MENU_ITEM_RESET() ) {    // Restart
+        if (MenuExit == MENU_EXIT_DETAILS) {
 //            EFI_KEY_DATA KeyData;
 //            ZeroMem(&KeyData, sizeof KeyData);
 //            SimpleTextEx->ReadKeyStrokeEx (SimpleTextEx, &KeyData);
 //            if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
-            //do clear cmos as for AMI BIOS
-            // not sure for more robust method
-            IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, 0x10);
-            IoWrite8 (PCAT_RTC_DATA_REGISTER, 0x0);
-            IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, 0x11);
-            IoWrite8 (PCAT_RTC_DATA_REGISTER, 0x0);
+          //do clear cmos as for AMI BIOS
+          // not sure for more robust method
+          IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, 0x10);
+          IoWrite8 (PCAT_RTC_DATA_REGISTER, 0x0);
+          IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, 0x11);
+          IoWrite8 (PCAT_RTC_DATA_REGISTER, 0x0);
 // or may be
 //           IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, 0x17);
 //           IoWrite8 (PCAT_RTC_DATA_REGISTER, 0x17);
 
 //          }
-          }
-          // Attempt warm reboot
-          gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
-          // Warm reboot may not be supported attempt cold reboot
-          gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-          // Terminate the screen and just exit
+        }
+        // Attempt warm reboot
+        gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+        // Warm reboot may not be supported attempt cold reboot
+        gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+        // Terminate the screen and just exit
+        TerminateScreen();
+        MainLoopRunning = FALSE;
+        ReinitDesktop = FALSE;
+        AfterTool = TRUE;
+      }
+
+      if ( ChosenEntry->getREFIT_MENU_ITEM_SHUTDOWN() ) { // It is not Shut Down, it is Exit from Clover
+        TerminateScreen();
+        //         gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+        MainLoopRunning = FALSE;   // just in case we get this far
+        ReinitDesktop = FALSE;
+        AfterTool = TRUE;
+      }
+      if ( ChosenEntry->getREFIT_MENU_ITEM_OPTIONS() ) {    // Options like KernelFlags, DSDTname etc.
+        gBootChanged = FALSE;
+        OptionsMenu(&OptionEntry, LastChosenOS);
+        if (gBootChanged)
+          AfterTool = TRUE;
+        if (gBootChanged || gThemeChanged) // If theme has changed reinit the desktop
+          MainLoopRunning = FALSE;
+      }
+      if ( ChosenEntry->getREFIT_MENU_ITEM_ABOUT() ) {    // About rEFIt
+        AboutRefit();
+      }
+
+  /* -- not passed here
+//  case TAG_HELP:
+      HelpRefit();
+      break;
+  */
+      if ( ChosenEntry->getLOADER_ENTRY() ) {   // Boot OS via .EFI loader
+        SetBootCurrent(ChosenEntry->getLOADER_ENTRY());
+        StartLoader(ChosenEntry->getLOADER_ENTRY());
+        //if boot.efi failed we should somehow exit from the loop
+        TerminateScreen();
+        MainLoopRunning = FALSE;
+        ReinitDesktop = FALSE;
+        AfterTool = TRUE;
+      }
+      if ( ChosenEntry->getLEGACY_ENTRY() ) {   // Boot legacy OS
+        if (StrCmp(gST->FirmwareVendor, L"Phoenix Technologies Ltd.") == 0 &&
+            gST->Hdr.Revision >> 16 == 2 && (gST->Hdr.Revision & ((1 << 16) - 1)) == 0){
+          // Phoenix SecureCore Tiano 2.0 can't properly initiate LegacyBios protocol when called externally
+          // which results in "Operating System not found" message coming from BIOS
+          // in this case just quit Clover to enter BIOS again
           TerminateScreen();
           MainLoopRunning = FALSE;
           ReinitDesktop = FALSE;
           AfterTool = TRUE;
-          break;
+        } else {
+          SetBootCurrent(ChosenEntry->getLEGACY_ENTRY());
+          StartLegacy(ChosenEntry->getLEGACY_ENTRY());
+        }
+      }
 
-        case TAG_SHUTDOWN: // It is not Shut Down, it is Exit from Clover
-          TerminateScreen();
-          //         gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
-          MainLoopRunning = FALSE;   // just in case we get this far
-          ReinitDesktop = FALSE;
-          AfterTool = TRUE;
-          break;
+      if ( ChosenEntry->getREFIT_MENU_ENTRY_LOADER_TOOL() ) {     // Start a EFI tool
+        StartTool(ChosenEntry->getREFIT_MENU_ENTRY_LOADER_TOOL());
+        TerminateScreen(); //does not happen
+        //   return EFI_SUCCESS;
+        //  BdsLibConnectAllDriversToAllControllers();
+        //    PauseForKey(L"Returned from StartTool\n");
+        MainLoopRunning = FALSE;
+        AfterTool = TRUE;
+      }
 
-        case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
-          gBootChanged = FALSE;
-          OptionsMenu(&OptionEntry, LastChosenOS);
-          if (gBootChanged)
-            AfterTool = TRUE;
-          if (gBootChanged || gThemeChanged) // If theme has changed reinit the desktop
+  #ifdef ENABLE_SECURE_BOOT
+      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
+            EnableSecureBoot();
             MainLoopRunning = FALSE;
-          break;
-
-        case TAG_ABOUT:    // About rEFIt
-          AboutRefit();
-          break;
-/* -- not passed here
-        case TAG_HELP:
-          HelpRefit();
-          break;
-*/
-        case TAG_LOADER:   // Boot OS via .EFI loader
-          SetBootCurrent(ChosenEntry);
-          StartLoader((LOADER_ENTRY *)ChosenEntry);
-          //if boot.efi failed we should somehow exit from the loop
-          TerminateScreen();
-          MainLoopRunning = FALSE;
-          ReinitDesktop = FALSE;
-          AfterTool = TRUE;
-          break;
-
-        case TAG_LEGACY:   // Boot legacy OS
-          if (StrCmp(gST->FirmwareVendor, L"Phoenix Technologies Ltd.") == 0 &&
-              gST->Hdr.Revision >> 16 == 2 && (gST->Hdr.Revision & ((1 << 16) - 1)) == 0){
-            // Phoenix SecureCore Tiano 2.0 can't properly initiate LegacyBios protocol when called externally
-            // which results in "Operating System not found" message coming from BIOS
-            // in this case just quit Clover to enter BIOS again
-            TerminateScreen();
-            MainLoopRunning = FALSE;
-            ReinitDesktop = FALSE;
             AfterTool = TRUE;
-          } else {
-            SetBootCurrent(ChosenEntry);
-            StartLegacy((LEGACY_ENTRY *)ChosenEntry);
+      }
+
+      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT_CONFIG() ) { // Configure secure boot
+            MainLoopRunning = !ConfigureSecureBoot();
+            AfterTool = TRUE;
+      }
+  #endif // ENABLE_SECURE_BOOT
+
+      if ( ChosenEntry->getREFIT_MENU_ENTRY_CLOVER() ) {     // Clover options
+        REFIT_MENU_ENTRY_CLOVER* LoaderEntry = ChosenEntry->getREFIT_MENU_ENTRY_CLOVER();
+        if (LoaderEntry->LoadOptions != NULL) {
+          // we are uninstalling in case user selected Clover Options and EmuVar is installed
+          // because adding bios boot option requires access to real nvram
+          //Slice: sure?
+     /*     if (gEmuVariableControl != NULL) {
+            gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
           }
-          break;
+      */
+          if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
+            CHAR16 *Description;
+            CONST CHAR16 *VolName;
+            CONST CHAR16 *LoaderName;
+            INTN EntryIndex, NameSize, Name2Size;
+            LOADER_ENTRY *Entry;
+            UINT8 *OptionalData;
+            UINTN OptionalDataSize;
+            UINTN BootNum;
 
-        case TAG_TOOL:     // Start a EFI tool
-          StartTool((LOADER_ENTRY *)ChosenEntry);
-          TerminateScreen(); //does not happen
-          //   return EFI_SUCCESS;
-          //  BdsLibConnectAllDriversToAllControllers();
-          //    PauseForKey(L"Returned from StartTool\n");
-          MainLoopRunning = FALSE;
-          AfterTool = TRUE;
-          break;
+            PrintBootOptions(FALSE);
 
-#ifdef ENABLE_SECURE_BOOT
-        case TAG_SECURE_BOOT: // Try to enable secure boot
-          EnableSecureBoot();
-          MainLoopRunning = FALSE;
-          AfterTool = TRUE;
-          break;
+            for (EntryIndex = 0; EntryIndex < (INTN)MainMenu.Entries.size(); EntryIndex++) {
+              if (MainMenu.Entries[EntryIndex].Row != 0) {
+                continue;
+              }
+              if (!MainMenu.Entries[EntryIndex].getLOADER_ENTRY()) {
+                continue;
+              }
 
-        case TAG_SECURE_BOOT_CONFIG: // Configure secure boot
-          MainLoopRunning = !ConfigureSecureBoot();
-          AfterTool = TRUE;
-          break;
-#endif // ENABLE_SECURE_BOOT
+              Entry = (LOADER_ENTRY *)MainMenu.Entries[EntryIndex].getLOADER_ENTRY();
+              VolName = Entry->Volume->VolName;
+              if (VolName == NULL) {
+                VolName = L"";
+              }
+              NameSize = StrSize(VolName); //can't use StrSize with NULL! Stupid UEFI!!!
+              Name2Size = 0;
+              if (Entry->LoaderPath != NULL) {
+                LoaderName = Basename(Entry->LoaderPath);
+              } else {
+                LoaderName = NULL;  //legacy boot
+              }
+              if (LoaderName != NULL) {
+                Name2Size = StrSize(LoaderName);
+              }
 
-        case TAG_CLOVER:     // Clover options
-          LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
-          if (LoaderEntry->LoadOptions != NULL) {
-            // we are uninstalling in case user selected Clover Options and EmuVar is installed
-            // because adding bios boot option requires access to real nvram
-            //Slice: sure?
-       /*     if (gEmuVariableControl != NULL) {
-              gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
-            }
-        */
-            if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
-              CHAR16 *Description;
-              CONST CHAR16 *VolName;
-              CONST CHAR16 *LoaderName;
-              INTN EntryIndex, NameSize, Name2Size;
-              LOADER_ENTRY *Entry;
-              UINT8 *OptionalData;
-              UINTN OptionalDataSize;
-              UINTN BootNum;
+              Description = PoolPrint(L"Clover start %s at %s", (LoaderName != NULL)?LoaderName:L"legacy", VolName);
+              OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
+              OptionalData = (__typeof__(OptionalData))AllocateZeroPool(OptionalDataSize);
+              if (OptionalData == NULL) {
+                break;
+              }
+              CopyMem(OptionalData, "Clvr", 4); //signature = 0x72766c43
+              CopyMem(OptionalData + 4, &NameSize, 2);
+              CopyMem(OptionalData + 6, VolName, NameSize);
+              if (Name2Size != 0) {
+                CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
+              }
 
-              PrintBootOptions(FALSE);
-
-              for (EntryIndex = 0; EntryIndex < (INTN)MainMenu.EntryCount; EntryIndex++) {
-                if (MainMenu.Entries[EntryIndex]->Row != 0) {
-                  continue;
-                }
-
-                Entry = (LOADER_ENTRY *)MainMenu.Entries[EntryIndex];
-                VolName = Entry->Volume->VolName;
-                if (VolName == NULL) {
-                  VolName = L"";
-                }
-                NameSize = StrSize(VolName); //can't use StrSize with NULL! Stupid UEFI!!!
-                Name2Size = 0;
-                if (Entry->LoaderPath != NULL) {
-                  LoaderName = Basename(Entry->LoaderPath);
-                } else {
-                  LoaderName = NULL;  //legacy boot
-                }
-                if (LoaderName != NULL) {
-                  Name2Size = StrSize(LoaderName);
-                }
-
-                Description = PoolPrint(L"Clover start %s at %s", (LoaderName != NULL)?LoaderName:L"legacy", VolName);
-                OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
-                OptionalData = (__typeof__(OptionalData))AllocateZeroPool(OptionalDataSize);
-                if (OptionalData == NULL) {
-                  break;
-                }
-                CopyMem(OptionalData, "Clvr", 4); //signature = 0x72766c43
-                CopyMem(OptionalData + 4, &NameSize, 2);
-                CopyMem(OptionalData + 6, VolName, NameSize);
-                if (Name2Size != 0) {
-                  CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
-                }
-
-                Status = AddBootOptionForFile (
-                                      LoaderEntry->Volume->DeviceHandle,
-                                      LoaderEntry->LoaderPath,
-                                      TRUE,
-                                      Description,
-                                      OptionalData,
-                                      OptionalDataSize,
-                                      EntryIndex,
-                                      (UINT16*)&BootNum
-                                      );
-                if (!EFI_ERROR(Status)) {
-                  DBG("Entry %d assigned option %04x\n", EntryIndex, BootNum);
-                  Entry->BootNum = BootNum;
-                }
-                FreePool(OptionalData);
-                FreePool(Description);
-              } //for (EntryIndex
+              Status = AddBootOptionForFile (
+                                    LoaderEntry->Volume->DeviceHandle,
+                                    LoaderEntry->LoaderPath,
+                                    TRUE,
+                                    Description,
+                                    OptionalData,
+                                    OptionalDataSize,
+                                    EntryIndex,
+                                    (UINT16*)&BootNum
+                                    );
+              if (!EFI_ERROR(Status)) {
+                DBG("Entry %d assigned option %04x\n", EntryIndex, BootNum);
+                Entry->BootNum = BootNum;
+              }
+              FreePool(OptionalData);
+              FreePool(Description);
+            } //for (EntryIndex
 
 
-              PrintBootOptions(FALSE);
-            } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE") != NULL) {
-              PrintBootOptions(FALSE);
-              Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
-                                                LoaderEntry->LoaderPath
-                                                );
-              PrintBootOptions(FALSE);
-            } else if (StrStr(LoaderEntry->LoadOptions, L"BO-PRINT") != NULL) {
-              PrintBootOptions(TRUE);
-            }
-
+            PrintBootOptions(FALSE);
+          } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE") != NULL) {
+            PrintBootOptions(FALSE);
+            Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
+                                              LoaderEntry->LoaderPath
+                                              );
+            PrintBootOptions(FALSE);
+          } else if (StrStr(LoaderEntry->LoadOptions, L"BO-PRINT") != NULL) {
+            PrintBootOptions(TRUE);
           }
-          MainLoopRunning = FALSE;
-          AfterTool = TRUE;
-          break;
 
-      } //switch
+        }
+        MainLoopRunning = FALSE;
+        AfterTool = TRUE;
+      }
     } //MainLoopRunning
     UninitRefitLib();
     if (!AfterTool) {

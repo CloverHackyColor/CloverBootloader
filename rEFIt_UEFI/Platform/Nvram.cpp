@@ -1093,8 +1093,8 @@ FindStartupDiskVolume (
   )
 {
   INTN         Index;
-  LEGACY_ENTRY *LegacyEntry;
-  LOADER_ENTRY *LoaderEntry;
+//  LEGACY_ENTRY *LegacyEntry;
+//  LOADER_ENTRY *LoaderEntry;
   REFIT_VOLUME *Volume;
   REFIT_VOLUME *DiskVolume;
   BOOLEAN      IsPartitionVolume;
@@ -1131,18 +1131,18 @@ FindStartupDiskVolume (
   //
   if (gEfiBootLoaderPath != NULL) {
     DBG ("   - searching for that partition and loader '%s'\n", gEfiBootLoaderPath);
-    for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
-      if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
-        LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
-        Volume = LoaderEntry->Volume;
-        LoaderPath = LoaderEntry->LoaderPath;
+    for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
+      if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
+        LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
+        Volume = LoaderEntry.Volume;
+        LoaderPath = LoaderEntry.LoaderPath;
         if (Volume != NULL && BootVolumeDevicePathEqual(gEfiBootVolume, Volume->DevicePath)) {
           //DBG ("  checking '%s'\n", DevicePathToStr (Volume->DevicePath));
           //DBG ("   '%s'\n", LoaderPath);
           // case insensitive cmp
           if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-            DBG ("    - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
+            DBG ("    - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderPath);
             return Index;
           }
         }
@@ -1154,18 +1154,18 @@ FindStartupDiskVolume (
     // (in case of some dev path differences we do not cover)
     //
     DBG ("   - searching again, but comparing Media dev path nodes\n");
-    for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
-      if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
-        LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
-        Volume = LoaderEntry->Volume;
-        LoaderPath = LoaderEntry->LoaderPath;
+    for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
+      if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
+        LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
+        Volume = LoaderEntry.Volume;
+        LoaderPath = LoaderEntry.LoaderPath;
         if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
           //DBG ("  checking '%s'\n", DevicePathToStr (Volume->DevicePath));
           //DBG ("   '%s'\n", LoaderPath);
           // case insensitive cmp
           if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-            DBG ("   - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderPath);
+            DBG ("   - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderPath);
             return Index;
           }
         }
@@ -1180,17 +1180,15 @@ FindStartupDiskVolume (
   //
   if (IsPartitionVolume) {
     DBG ("   - searching for that partition\n");
-    for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
+    for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       Volume = NULL;
-      if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
-        LegacyEntry = (LEGACY_ENTRY *)MainMenu->Entries[Index];
-        Volume = LegacyEntry->Volume;
-      } else if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
-        LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
-        Volume = LoaderEntry->Volume;
+      if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
+        Volume = MainMenu->Entries[Index].getLEGACY_ENTRY()->Volume;
+      } else if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
+        Volume = MainMenu->Entries[Index].getLOADER_ENTRY()->Volume;
       }
       if (Volume != NULL && BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
-        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index]->Title, Volume->VolName);
+        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index].Title, Volume->VolName);
         return Index;
       }
     }
@@ -1199,17 +1197,15 @@ FindStartupDiskVolume (
     // search again, but compare only Media dev path nodes
     //
     DBG ("   - searching again, but comparing Media dev path nodes\n");
-    for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
+    for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       Volume = NULL;
-      if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
-        LegacyEntry = (LEGACY_ENTRY *)MainMenu->Entries[Index];
-        Volume = LegacyEntry->Volume;
-      } else if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
-        LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
-        Volume = LoaderEntry->Volume;
+      if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
+        Volume = MainMenu->Entries[Index].getLEGACY_ENTRY()->Volume;
+      } else if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
+        Volume = MainMenu->Entries[Index].getLOADER_ENTRY()->Volume;
       }
       if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
-        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index]->Title, Volume->VolName);
+        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index].Title, Volume->VolName);
         return Index;
       }
     }
@@ -1225,7 +1221,7 @@ FindStartupDiskVolume (
   //
   DiskVolume = NULL;
   DBG ("   - searching for that disk\n");
-  for (Index = 0; Index < (INTN)Volumes.size(); ++Index) {
+  for (UINTN Index = 0; Index < Volumes.size(); ++Index) {
     Volume = &Volumes[Index];
     if (BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
       // that's the one
@@ -1244,33 +1240,33 @@ FindStartupDiskVolume (
   // search for first entry with win loader or win partition on that disk
   //
   DBG ("   - searching for first entry with win loader or win partition on that disk\n");
-  for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
-    if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
-      LegacyEntry = (LEGACY_ENTRY *)MainMenu->Entries[Index];
-      Volume = LegacyEntry->Volume;
+  for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
+    if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
+      LEGACY_ENTRY& LegacyEntry = (LEGACY_ENTRY&)MainMenu->Entries[Index];
+      Volume = LegacyEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // check for Win
-        //DBG ("  checking legacy entry %d. %s\n", Index, LegacyEntry->me.Title);
+        //DBG ("  checking legacy entry %d. %s\n", Index, LegacyEntry.Title);
         //DBG ("   %s\n", DevicePathToStr (Volume->DevicePath));
         //DBG ("   OSType = %d\n", Volume->OSType);
         if (Volume->LegacyOS->Type == OSTYPE_WIN) {
           // that's the one - legacy win partition
-          DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
+          DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry.Title, Volume->VolName);
           return Index;
         }
       }
-    } else if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
-      LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
-      Volume = LoaderEntry->Volume;
+    } else if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
+      LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
+      Volume = LoaderEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // check for Win
-        //DBG ("  checking loader entry %d. %s\n", Index, LoaderEntry->me.Title);
+        //DBG ("  checking loader entry %d. %s\n", Index, LoaderEntry.Title);
         //DBG ("   %s\n", DevicePathToStr (Volume->DevicePath));
-        //DBG ("   LoaderPath = %s\n", LoaderEntry->LoaderPath);
-        //DBG ("   LoaderType = %d\n", LoaderEntry->LoaderType);
-        if (LoaderEntry->LoaderType == OSTYPE_WINEFI) {
+        //DBG ("   LoaderPath = %s\n", LoaderEntry.LoaderPath);
+        //DBG ("   LoaderType = %d\n", LoaderEntry.LoaderType);
+        if (LoaderEntry.LoaderType == OSTYPE_WINEFI) {
           // that's the one - win loader entry
-          DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderEntry->LoaderPath);
+          DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderEntry.LoaderPath);
           return Index;
         }
       }
@@ -1284,22 +1280,22 @@ FindStartupDiskVolume (
   // just find first menu entry on that disk?
   //
   DBG ("   - searching for any entry from disk '%s'\n", DiskVolume->VolName);
-  for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); ++Index) {
-    if (MainMenu->Entries[Index]->Tag == TAG_LEGACY) {
-      LegacyEntry = (LEGACY_ENTRY *)MainMenu->Entries[Index];
-      Volume = LegacyEntry->Volume;
+  for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
+    if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
+      LEGACY_ENTRY& LegacyEntry = (LEGACY_ENTRY&)MainMenu->Entries[Index];
+      Volume = LegacyEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-        DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry->me.Title, Volume->VolName);
+        DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry.Title, Volume->VolName);
 
         return Index;
       }
-    } else if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
-      LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];
-      Volume = LoaderEntry->Volume;
+    } else if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
+      LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
+      Volume = LoaderEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-        DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry->me.Title, Volume->VolName, LoaderEntry->LoaderPath);
+        DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderEntry.LoaderPath);
 
         return Index;
       }

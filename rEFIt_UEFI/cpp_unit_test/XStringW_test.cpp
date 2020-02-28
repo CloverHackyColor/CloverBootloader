@@ -1,3 +1,4 @@
+#include <Platform.h>
 #include "../cpp_foundation/XStringW.h"
 #include "global1.h"
 #include "global2.h"

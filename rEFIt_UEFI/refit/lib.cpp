@@ -348,21 +348,21 @@ BOOLEAN IsEmbeddedTheme()
 //    *ListPtr = NULL;
 //  }
 //}
-
-VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement)
-{
-  UINTN AllocateCount;
-  
-  if ((*ElementCount & 7) == 0) {
-    AllocateCount = *ElementCount + 8;
-    if (*ElementCount == 0)
-      *ListPtr = (__typeof_am__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
-    else
-      *ListPtr = (__typeof_am__(*ListPtr))EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
-  }
-  (*ListPtr)[*ElementCount] = NewElement;
-  (*ElementCount)++;
-}
+//
+//VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement)
+//{
+//  UINTN AllocateCount;
+//
+//  if ((*ElementCount & 7) == 0) {
+//    AllocateCount = *ElementCount + 8;
+//    if (*ElementCount == 0)
+//      *ListPtr = (__typeof_am__(*ListPtr))AllocatePool(sizeof(VOID *) * AllocateCount);
+//    else
+//      *ListPtr = (__typeof_am__(*ListPtr))EfiReallocatePool((VOID *)*ListPtr, sizeof(VOID *) * (*ElementCount), sizeof(VOID *) * AllocateCount);
+//  }
+//  (*ListPtr)[*ElementCount] = NewElement;
+//  (*ElementCount)++;
+//}
 /*
 VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount)
 {

@@ -1,3 +1,4 @@
+#include <Platform.h>
 #include "../cpp_foundation/XStringWArray.h"
 
 int XStringWArray_tests()
