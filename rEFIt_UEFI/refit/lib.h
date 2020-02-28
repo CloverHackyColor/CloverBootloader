@@ -696,9 +696,6 @@ extern BOOLEAN          MainAnime;
 extern GUI_ANIME        *GuiAnime;
 
 extern REFIT_VOLUME     *SelfVolume;
-#ifdef _cplusplus
-extern XObjArray<REFIT_VOLUME> Volumes;
-#endif
 //extern UINTN            VolumesCount;
 
 extern EG_IMAGE         *Banner;

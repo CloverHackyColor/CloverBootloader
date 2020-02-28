@@ -44,6 +44,7 @@ extern REFIT_MENU_ENTRY MenuEntryShutdown;
 extern REFIT_MENU_ENTRY MenuEntryExit;
 extern REFIT_MENU_SCREEN MainMenu;
 
+extern XObjArray<REFIT_VOLUME> Volumes;
 // common
 EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName);
 LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);

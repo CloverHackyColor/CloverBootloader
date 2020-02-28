@@ -1738,6 +1738,9 @@ extern CONST CHAR16                   *gFirmwareRevision;
 extern BOOLEAN                        ResumeFromCoreStorage;
 extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
 
+#ifdef _cplusplus
+extern XObjArray<REFIT_VOLUME> Volumes;
+#endif
 
 //-----------------------------------
 

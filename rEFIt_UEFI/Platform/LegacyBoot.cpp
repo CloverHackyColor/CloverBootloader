@@ -26,6 +26,8 @@ Copyright (c) 2006 JLA
 #define DBG(...) DebugLog(0, __VA_ARGS__) // until a better solution is found, force DebugLog(0, ...) to prevent saving to DebugLog, which may cause legacy boot to fail
 #endif
 
+extern XObjArray<REFIT_VOLUME> Volumes;
+
 #pragma pack(push)
 #pragma pack(1)
 

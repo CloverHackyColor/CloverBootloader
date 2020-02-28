@@ -8,7 +8,7 @@
  */
 
 
-#include "Platform.h"
+#include <Platform.h>
 
 
 #ifndef DEBUG_ALL
@@ -25,6 +25,8 @@
 #endif
 
 #define CREATE_NEW_BOOT_IMAGE 1
+
+extern XObjArray<REFIT_VOLUME> Volumes;
 
 #pragma pack(push, 1)
 
