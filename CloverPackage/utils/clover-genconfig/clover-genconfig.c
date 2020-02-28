@@ -38,6 +38,7 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 #define __DEBUG_LIB_H__
 #define  _STRUCT_X86_THREAD_STATE32
 #define  _STRUCT_X86_THREAD_STATE64
+
 #include "../../../rEFIt_UEFI/Platform/Platform.h"
 
 #include <IOKit/IOKitLib.h>

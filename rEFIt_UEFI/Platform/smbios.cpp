@@ -1347,7 +1347,7 @@ VOID PatchTableType17()
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
       if ((gRAM.User[UserIndex].InUse) && (gRAM.User[UserIndex].ModuleSize > 0)) {
         if (iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
-          CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.User[UserIndex].Vendor)+1); // this will never be freed. Will be solved when using a string object.
+          CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.User[UserIndex].Vendor)+1); 
           AsciiStrCpy(vendor, gRAM.User[UserIndex].Vendor);
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
           gRAM.User[UserIndex].Vendor = vendor;
@@ -1670,7 +1670,7 @@ VOID PatchTableType17()
         (AsciiStrnCmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
       DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %a\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor)+1); // this will never be freed. WIll be solved when using a string object.
-      AsciiStrCpy(vendor, gRAM.SMBIOS[SMBIOSIndex].Vendor);
+      AsciiStrCpyS(vendor, 64, gRAM.SMBIOS[SMBIOSIndex].Vendor);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
       gRAM.SMBIOS[SMBIOSIndex].Vendor = vendor;
     }

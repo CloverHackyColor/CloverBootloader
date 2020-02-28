@@ -68,7 +68,9 @@
 // Experimental <--
 
 #include "libeg.h"
+#ifdef _cplusplus
 #include "../cpp_foundation/XObjArray.h"
+#endif
 
 #define REFIT_DEBUG (2)
 #define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
@@ -694,7 +696,9 @@ extern BOOLEAN          MainAnime;
 extern GUI_ANIME        *GuiAnime;
 
 extern REFIT_VOLUME     *SelfVolume;
+#ifdef _cplusplus
 extern XObjArray<REFIT_VOLUME> Volumes;
+#endif
 //extern UINTN            VolumesCount;
 
 extern EG_IMAGE         *Banner;

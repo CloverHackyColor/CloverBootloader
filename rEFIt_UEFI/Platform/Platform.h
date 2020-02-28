@@ -103,6 +103,7 @@ extern "C" {
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_util/remove_ref.h"
 #endif
+
 #ifdef _MSC_VER
 #define __typeof__(x) decltype(x)
 #endif

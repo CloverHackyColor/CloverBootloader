@@ -5068,14 +5068,14 @@ GetUserSettings(
 
                 Prop2 = Prop2->tag; //take a <dict> for this device
                 if ((Prop2 != NULL) && (Prop2->type == kTagTypeDict)) {
-                  INTN j, PropCount = 0;
+                  INTN PropCount = 0;
                   PropCount = GetTagCount(Prop2);  //properties count for this device
                   //         DBG("Add %d properties:\n", PropCount);
-                  for (j = 0; j < PropCount; j++) {
+                  for (INTN j = 0; j < PropCount; j++) {
                     Prop3 = NULL;
                     DevProps = *Child;
                     *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(**Child));
-                    //*Child = new (__typeof_am__(**Child));
+                  //  *Child = new (__typeof_am__(**Child));
                     (*Child)->Next = DevProps;
 
                     if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>
@@ -8222,6 +8222,7 @@ SetDevices (LOADER_ENTRY *Entry)
             }
             Next = Props->Next;
             FreePool(Props);
+            //delete Props;
             Props = Next;
           }
           Next = Prop->Next;

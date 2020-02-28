@@ -267,11 +267,10 @@ unsigned XImage::FromSVG(const CHAR8 *SVGData, UINTN FileDataLength, float scale
 {
   NSVGimage       *SVGimage;
   NSVGparser* p;
-  EFI_STATUS      Status;
 
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   if (!rast) return 1;
-  char *input = AsciiStrCpy(SVGData); 
+  char *input = (__typeof__(input))AllocateCopyPool(AsciiStrSize(SVGData), SVGData);
   if (!input) return 2;
 
   p = nsvgParse(input, 72, 1.f); //the parse will change input contents
