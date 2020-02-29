@@ -1,6 +1,7 @@
 
 include $(CURDIR)/Make.rules
 #fdisk440 out
-SUBDIRS = boot1-install partutil bdmesg clover-genconfig espfinder
+#clover-genconfig temporary out
+SUBDIRS = boot1-install partutil bdmesg espfinder
 
 all: all-recursive
