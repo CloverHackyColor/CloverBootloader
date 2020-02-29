@@ -472,7 +472,7 @@ GetBootFromOption(VOID)
 // check if this entry corresponds to Boot# variable and then set BootCurrent
 //
 VOID
-SetBootCurrent(REFIT_MENU_ENTRY_LOADER *Entry)
+SetBootCurrent(REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER *Entry)
 {
   EFI_STATUS      Status;
   BO_BOOT_OPTION  BootOption;

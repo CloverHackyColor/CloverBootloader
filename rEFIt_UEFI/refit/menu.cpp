@@ -217,16 +217,11 @@ BOOLEAN mGuiReady = FALSE;
 //  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
 
 
-REFIT_MENU_ITEM_OPTIONS MenuEntryOptions  = { L"Options", 1, '\0', 'O',  NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone, NULL };
-REFIT_MENU_ITEM_ABOUT MenuEntryAbout    = { L"About Clover", 1, 0, 'A', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ITEM_RESET MenuEntryReset    = { L"Restart Computer", 1, 0, 'R', NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown = { L"Exit Clover", 1, 0, 'U',  NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-REFIT_MENU_ITEM_RETURN MenuEntryReturn   = { L"Return", 0, 0, 0,  NULL, NULL, NULL,
-  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
+REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options", 1, '\0', 'O', ActionEnter);
+REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover", 1, 0, 'A', ActionEnter);
+REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer", 1, 0, 'R', ActionSelect);
+REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover", 1, 0, 'U', ActionSelect);
+REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return", 0, 0, 0, ActionEnter);
 
 
 
@@ -3806,10 +3801,8 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
 {
   INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
 
-  if (((Entry->getLOADER_ENTRY()) || (Entry->getLEGACY_ENTRY())) &&
-      !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
-      (Entry->Row == 0)) {
-    MainImage = Entry->DriveImage;
+  if ( Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP) /*&& Entry->Row == 0*/) {
+    MainImage = Entry->getDriveImage();
   } else {
     MainImage = Entry->Image;
   }
@@ -3832,15 +3825,15 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
     //MainImage->HasAlpha = TRUE;
-    BltImageCompositeBadge(MainImage,
-                           SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-                           XPos, YPos, Scale);
-
+      BltImageCompositeBadge(MainImage,
+                             SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                             Entry->getBadgeImage(),
+                             XPos, YPos, Scale);
   } else {
-    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL,
-      XPos, YPos, Scale);
+      BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                             MainImage,
+                             Entry->getBadgeImage(),
+                             XPos, YPos, Scale);
   }
 
   // draw BCS indicator
@@ -5620,7 +5613,7 @@ UINT32 EncodeOptions(CONST CHAR16 *Options)
   return OptionsBits;
 }
 
-VOID DecodeOptions(REFIT_MENU_ENTRY_LOADER *Entry)
+VOID DecodeOptions(REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER *Entry)
 {
   //set checked option
   INTN Index;
@@ -5694,9 +5687,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("main OptionsBits = 0x%x\n", gSettings.OptionsBits);
-      if ( MainChosenEntry->getREFIT_MENU_ENTRY_LOADER() ) gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getREFIT_MENU_ENTRY_LOADER()->LoadOptions);
+      if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()->LoadOptions);
 //      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
-      if ( MainChosenEntry->getREFIT_MENU_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ENTRY_LOADER());
+      if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER());
       //      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
       if (MainChosenEntry->getLOADER_ENTRY()) {
         // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
@@ -5712,7 +5705,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       while (!SubMenuExit) {
         //running details menu
         SubMenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
-        if ( MainChosenEntry->getREFIT_MENU_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ENTRY_LOADER());
+        if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER());
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
 //        DBG(" TempChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
         if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
