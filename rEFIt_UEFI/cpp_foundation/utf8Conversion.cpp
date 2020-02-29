@@ -6,9 +6,6 @@
 
 #include "utf8Conversion.h"
 
-#include <Platform.h>
-
-
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif

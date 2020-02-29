@@ -34,6 +34,8 @@
  */
 
 #include "entry_scan.h"
+#include "../refit/menu.h"
+#include "../refit/screen.h"
 
 //
 // Clover File location to boot from on removable media devices

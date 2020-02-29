@@ -308,3 +308,10 @@ extern radeon_card_info_t radeon_cards[];
 extern AtiDevProp ati_devprop_list[];
 extern const CHAR8 *chip_family_name[];
 
+
+BOOLEAN
+setup_ati_devprop (
+  LOADER_ENTRY *Entry,
+  pci_dt_t     *ati_dev
+  );
+

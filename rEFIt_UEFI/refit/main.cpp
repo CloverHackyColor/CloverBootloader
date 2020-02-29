@@ -37,14 +37,19 @@
 #include "../Platform/Platform.h"
 #include "../cpp_util/globals_ctor.h"
 #include "../cpp_util/globals_dtor.h"
-#include "../cpp_foundation/XStringW.h"
 #include "../cpp_unit_test/all_tests.h"
 
+#include "Version.h"
 #include "entry_scan.h"
 #include "nanosvg.h"
-
-#include "Version.h"
-
+#include "../gui/menu_items/menu_globals.h"
+#include "menu.h"
+#include "../Platform/Settings.h"
+#include "../Platform/DataHubCpu.h"
+#include "../Platform/Events.h"
+#include "screen.h"
+#include "../entry_scan/bootscreen.h"
+#include "../Platform/Nvram.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MAIN 1

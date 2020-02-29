@@ -10,7 +10,6 @@
 #define __XSTRINGW_H__
 
 #include "XToolsCommon.h"
-#include <Platform.h>
 #include "utf8Conversion.h"
 
 #define LPATH_SEPARATOR L'\\'

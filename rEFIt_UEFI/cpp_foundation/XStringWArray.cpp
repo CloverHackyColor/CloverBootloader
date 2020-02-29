@@ -7,7 +7,6 @@
 #if !defined(__XSTRINGWS_CPP__)
 #define __XSTRINGWS_CPP__
 
-#include <Platform.h>
 #include "XToolsCommon.h"
 #include "XStringWArray.h"
 

@@ -34,6 +34,8 @@
  */
 
 #include "entry_scan.h"
+#include "../refit/screen.h"
+#include "../refit/menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LEGACY 1

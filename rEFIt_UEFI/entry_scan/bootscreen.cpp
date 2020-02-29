@@ -33,6 +33,7 @@
 */
 
 #include "entry_scan.h"
+#include "../refit/screen.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_BOOT_SCREEN 1

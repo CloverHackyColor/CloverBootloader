@@ -38,16 +38,15 @@
 #include "libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
 
-//#include "../Platform/Platform.h"
-//#include "../cpp_foundation/XStringW.h"
-
 #include "Version.h"
 //#include "colors.h"
 
 #include "nanosvg.h"
 #include "FloatLib.h"
 #include "HdaCodecDump.h"
-
+#include "menu.h"
+#include "screen.h"
+#include "../Platform/Pointer.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1

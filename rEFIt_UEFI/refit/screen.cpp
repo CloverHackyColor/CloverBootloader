@@ -34,6 +34,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "../Platform/Platform.h"
+#include "screen.h"
 #include "libegint.h"
 
 #ifndef DEBUG_ALL

@@ -7,6 +7,9 @@
 #include "ati.h"
 #include "nanosvg.h"
 #include "nvidia.h"
+#include "../refit/screen.h"
+#include "../refit/menu.h"
+#include "gma.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1

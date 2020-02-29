@@ -34,6 +34,10 @@
  */
 
 #include "entry_scan.h"
+#include "../Platform/Settings.h"
+#include "../Platform/Hibernate.h"
+#include "../refit/screen.h"
+#include "../refit/menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LOADER 1

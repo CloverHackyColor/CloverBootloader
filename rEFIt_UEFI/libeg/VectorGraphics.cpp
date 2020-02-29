@@ -8,8 +8,8 @@
 
 #include "nanosvg.h"
 #include "FloatLib.h"
-
 #include "lodepng.h"
+#include "../refit/screen.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1

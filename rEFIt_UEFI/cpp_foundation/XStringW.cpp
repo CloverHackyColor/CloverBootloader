@@ -18,7 +18,6 @@
 #define DBG(...)
 #endif
 
-#include <Platform.h>
 #include "XToolsCommon.h"
 #include "XStringW.h"
 

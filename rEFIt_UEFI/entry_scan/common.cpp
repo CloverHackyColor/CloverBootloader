@@ -34,6 +34,7 @@
  */
 
 #include "entry_scan.h"
+#include "../refit/menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_COMMON_MENU 1

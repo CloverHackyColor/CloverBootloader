@@ -11,13 +11,6 @@
 #if !defined(__XOBJARRAY_H__)
 #define __XOBJARRAY_H__
 
-//#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile // for DebugLog
-//VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...); // To avoid include Platform just for this
-//extern "C" {
-//  #include <Library/MemoryAllocationLib.h>
-//  #include <Library/BaseMemoryLib.h>
-//  #include <Library/BaseLib.h> // for CpuDeadLoop();
-//}
 #include "XToolsCommon.h"
 
 
