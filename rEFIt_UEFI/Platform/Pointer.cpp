@@ -34,7 +34,7 @@ extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 // make them theme dependent? No, 32 is good value for all.
 #define POINTER_WIDTH  32
 #define POINTER_HEIGHT 32
-
+//have to be moved to menu class
 ACTION gAction;
 UINTN  gItemID;
 
@@ -407,40 +407,4 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   return Status;
 }
 
-#define ONE_SECOND  10000000
-#define ONE_MSECOND    10000
-
-// TimeoutDefault for a wait in seconds
-// return EFI_TIMEOUT if no inputs
-EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
-{
-  EFI_STATUS Status = EFI_SUCCESS;
-  UINTN TimeoutRemain = TimeoutDefault * 100;
-
-  while (TimeoutRemain != 0) {
-    
-//    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
-    Status = WaitFor2EventWithTsc (gST->ConIn->WaitForKey, NULL, 10);
-    
-    if (Status != EFI_TIMEOUT) {
-      break;
-    }
-    UpdateAnime(Screen, &(Screen->FilmPlace));
-    if (gSettings.PlayAsync) {
-      CheckSyncSound();
-    }
-/*    if ((INTN)gItemID < Screen->Entries.size()) {
-      UpdateAnime(Screen->Entries[gItemID].SubScreen, &(Screen->Entries[gItemID].Place));
-    } */
-    TimeoutRemain--;
-    if (gPointer.SimplePointerProtocol) {
-      UpdatePointer();
-      Status = CheckMouseEvent(Screen); //out: gItemID, gAction
-      if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
-        break;
-      }
-    }
-  }
-  return Status;
-}
 

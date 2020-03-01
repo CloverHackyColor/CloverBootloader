@@ -1023,6 +1023,7 @@ WaitFor2EventWithTsc (
 	UINTN             Index;
 	EFI_EVENT					WaitList[2];
   UINT64            t0, t1;
+  //all arguments are UINT64, we can use native divide and multiply
   UINT64            Delta = DivU64x64Remainder(MultU64x64(Timeout, gCPUStructure.TSCFrequency), 1000, NULL);
 
   if (Timeout != 0)
@@ -1053,6 +1054,46 @@ WaitFor2EventWithTsc (
 	}
 	return Status;
 }
+
+#define ONE_SECOND  10000000
+#define ONE_MSECOND    10000
+
+// TimeoutDefault for a wait in seconds
+// return EFI_TIMEOUT if no inputs
+//the function must be in menu class
+//so UpdatePointer(); => Pointer.Update(&gItemID, &gAction);
+EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
+{
+  EFI_STATUS Status = EFI_SUCCESS;
+  UINTN TimeoutRemain = TimeoutDefault * 100;
+
+  while (TimeoutRemain != 0) {
+
+    //    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
+    Status = WaitFor2EventWithTsc (gST->ConIn->WaitForKey, NULL, 10);
+
+    if (Status != EFI_TIMEOUT) {
+      break;
+    }
+    UpdateAnime(Screen, &(Screen->FilmPlace));
+    if (gSettings.PlayAsync) {
+      CheckSyncSound();
+    }
+    /*    if ((INTN)gItemID < Screen->Entries.size()) {
+     UpdateAnime(Screen->Entries[gItemID].SubScreen, &(Screen->Entries[gItemID].Place));
+     } */
+    TimeoutRemain--;
+    if (gPointer.SimplePointerProtocol) {
+      UpdatePointer();
+      Status = CheckMouseEvent(Screen); //out: gItemID, gAction
+      if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
+        break;
+      }
+    }
+  }
+  return Status;
+}
+
 
 BOOLEAN
 SetPageBreak (

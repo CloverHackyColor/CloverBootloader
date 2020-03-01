@@ -2400,6 +2400,10 @@
 		A5611B3021DCB9CD008FDB96 /* HdaCodecInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodecInfo.h; sourceTree = "<group>"; };
 		A5611B3121DCB9CD008FDB96 /* HdaControllerInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaControllerInfo.h; sourceTree = "<group>"; };
 		A5611B3221DCB9CE008FDB96 /* HdaIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaIo.h; sourceTree = "<group>"; };
+		A570FAFE240BA4D00057F26D /* menu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu.h; sourceTree = "<group>"; };
+		A570FAFF240BA4DB0057F26D /* screen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = screen.h; sourceTree = "<group>"; };
+		A570FB02240BA5340057F26D /* menu_items.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu_items.h; sourceTree = "<group>"; };
+		A570FB03240BA5340057F26D /* menu_globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu_globals.h; sourceTree = "<group>"; };
 		A5716F82235968BE000CEC60 /* Nasm.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = Nasm.inc; path = ../../Nasm.inc; sourceTree = "<group>"; };
 		A5716FD5235A1576000CEC60 /* InternalIsaBus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalIsaBus.h; sourceTree = "<group>"; };
 		A5716FD6235A1576000CEC60 /* IsaBusDxeExtra.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = IsaBusDxeExtra.uni; sourceTree = "<group>"; };
@@ -6049,6 +6053,7 @@
 				A571C27B240574A100B6A2C5 /* cpp_unit_test */,
 				A5DEBF3423BF687D00C41734 /* cpp_util */,
 				126151391A15BBAF00903E7B /* entry_scan */,
+				A570FB00240BA5340057F26D /* gui */,
 				126151471A15BBB000903E7B /* include */,
 				1261514B1A15BBB000903E7B /* libeg */,
 				126151561A15BBB000903E7B /* Platform */,
@@ -6208,8 +6213,10 @@
 				A5456D7C23FC5B40000BF18C /* list.cpp */,
 				A5456D7523FC5B3D000BF18C /* list.h */,
 				A5456D7823FC5B3E000BF18C /* main.cpp */,
+				A570FAFE240BA4D00057F26D /* menu.h */,
 				A5456D7A23FC5B3F000BF18C /* menu.cpp */,
 				A5456D7B23FC5B3F000BF18C /* screen.cpp */,
+				A570FAFF240BA4DB0057F26D /* screen.h */,
 			);
 			path = refit;
 			sourceTree = "<group>";
@@ -8027,6 +8034,23 @@
 				A51C784721E0981C001385A7 /* HdaControllerMem.c */,
 			);
 			path = HdaController;
+			sourceTree = "<group>";
+		};
+		A570FB00240BA5340057F26D /* gui */ = {
+			isa = PBXGroup;
+			children = (
+				A570FB01240BA5340057F26D /* menu_items */,
+			);
+			path = gui;
+			sourceTree = "<group>";
+		};
+		A570FB01240BA5340057F26D /* menu_items */ = {
+			isa = PBXGroup;
+			children = (
+				A570FB02240BA5340057F26D /* menu_items.h */,
+				A570FB03240BA5340057F26D /* menu_globals.h */,
+			);
+			path = menu_items;
 			sourceTree = "<group>";
 		};
 		A5716FD3235A1576000CEC60 /* Isa */ = {
