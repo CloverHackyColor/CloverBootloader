@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class FWPopUpButton: NSPopUpButton {
+final class FWPopUpButton: NSPopUpButton {
   private var pfixedWidth : CGFloat = 50
   @IBInspectable var fixedWidth: CGFloat {
     get {
@@ -22,7 +22,7 @@ class FWPopUpButton: NSPopUpButton {
   }
 }
 
-class FWButton: NSButton {
+final class FWButton: NSButton {
   private var pfixedWidth : CGFloat = 50
   @IBInspectable var fixedWidth: CGFloat {
     get {
@@ -36,7 +36,7 @@ class FWButton: NSButton {
   }
 }
 
-class FWTextField: NSTextField {
+final class FWTextField: NSTextField {
   private var pfixedWidth : CGFloat = 50
   @IBInspectable var fixedWidth: CGFloat {
     get {

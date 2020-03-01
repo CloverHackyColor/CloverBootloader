@@ -1,0 +1,5 @@
+#!/bin/bash
+
+xattr -rc /Applications/Clover.app
+sleep 3
+open /Applications/Clover.app

@@ -13,7 +13,7 @@ enum EFIkind: String {
   case bios = "BIOS"
 }
 
-class EFIDriver {
+final class EFIDriver {
   private var internalState : NSControl.StateValue = .off
   var dest  : String
   var src   : String

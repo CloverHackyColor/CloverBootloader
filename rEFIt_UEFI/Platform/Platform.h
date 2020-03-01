@@ -95,7 +95,10 @@ extern "C" {
 #include "string.h"
 #include "boot.h"
 //#include "PiBootMode.h"
+#ifndef CLOVERAPPLICATION
 #include "../refit/IO.h"
+#endif
+
 #include "device_inject.h"
 
 #ifdef __cplusplus

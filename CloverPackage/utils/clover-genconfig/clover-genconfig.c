@@ -35,6 +35,10 @@ cc -o genconfig clover-genconfig.c gfxutil.c -framework CoreFoundation -framewor
 // EDK2 includes
 //#include <base.h>
 
+#ifndef CLOVERAPPLICATION
+#define CLOVERAPPLICATION 1
+#endif
+
 #define __DEBUG_LIB_H__
 #define  _STRUCT_X86_THREAD_STATE32
 #define  _STRUCT_X86_THREAD_STATE64

@@ -205,22 +205,8 @@ if [[ "$SYSNAME" == Darwin ]]; then
   if [[ -f "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi ]]; then
     cd "${CLOVERROOT}"/CloverApp
     echo "[BUILD APP]"
-    echo "(Require Xcode 11 or greater)"
     checkXCODE
     make
-    local infoPlist=${CLOVERROOT}"/CloverApp/build/Clover.app/Contents/Info.plist"
-    local caVer=$(defaults read "${infoPlist}" CFBundleShortVersionString)
-    if [[ -d "${CLOVERROOT}"/.git ]];then
-      local aname="Clover.app-v${caVer}-$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).zip"
-    else
-      local aname="Clover.app-v${caVer}.zip"
-    fi
-    rm -f "${CLOVERROOT}"/CloverPackage/sym/Clover.app*.zip
-    mkdir -p "${CLOVERROOT}"/CloverPackage/sym
-
-    cd "${CLOVERROOT}"/CloverApp/build
-    zip -qq -r -y "${CLOVERROOT}"/CloverPackage/sym/${aname} Clover.app/
-    open "${CLOVERROOT}"/CloverPackage/sym
   else
     echo && echo "please, build Clover first!"
     sleep 3

@@ -9,7 +9,7 @@
 import Cocoa
 import WebKit
 
-class GradientView : NSView {
+final class GradientView : NSView {
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
     /*
@@ -20,7 +20,7 @@ class GradientView : NSView {
   }
 }
 
-class ThemeManagerVC: NSViewController,
+final class ThemeManagerVC: NSViewController,
 NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate {
   var targetVolume : String? = nil
   
@@ -655,7 +655,7 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
 }
 
 // MARK: ThemeManager Window controller
-class ThemeManagerWC: NSWindowController, NSWindowDelegate {
+final class ThemeManagerWC: NSWindowController, NSWindowDelegate {
   var viewController : NSViewController? = nil
   override var contentViewController: NSViewController? {
     get {
@@ -705,7 +705,7 @@ class ThemeManagerWC: NSWindowController, NSWindowDelegate {
   }
 }
 
-class ThemeTableRowView: NSTableRowView {
+final class ThemeTableRowView: NSTableRowView {
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
     self.wantsLayer = true

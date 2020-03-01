@@ -9,7 +9,7 @@
 import Cocoa
 
 // MARK: Installer Window controller
-class InstallerOutWindowController: NSWindowController, NSWindowDelegate {
+final class InstallerOutWindowController: NSWindowController, NSWindowDelegate {
   var viewController : NSViewController? = nil
   override var contentViewController: NSViewController? {
     get {
@@ -68,7 +68,7 @@ class InstallerOutWindowController: NSWindowController, NSWindowDelegate {
   }
 }
 
-class InstallerOutViewController: NSViewController {
+final class InstallerOutViewController: NSViewController {
   // MARK: variables
   var targetVol : String = ""
   

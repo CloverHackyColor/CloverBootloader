@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class LITabView: NSTabView {
+final class LITabView: NSTabView {
   private var drawBack : Bool = false
   var tabIndex: Int = 0
   var lastTabIndex: Int {
@@ -32,11 +32,11 @@ class LITabView: NSTabView {
   }
 }
 
-class SoundSlider : NSSlider {
+final class SoundSlider : NSSlider {
   var field : NSTextField?
 }
 
-class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionDownloadDelegate {
+final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionDownloadDelegate {
   // MARK: Variables
   @IBOutlet var tabViewInfo : LITabView!
   // tab 0
@@ -130,6 +130,7 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarInternalDisk", isTemplate: true), forSegment: 0)
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMoviesFolder", isTemplate: true), forSegment: 1)
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMusicFolder", isTemplate: true), forSegment: 2)
+    self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarDocumentsFolder", isTemplate: true), forSegment: 3)
     // sync
     self.tabViewFuncSelector.selectSegment(withTag: 0)
     self.tabViewFunc.selectTabViewItem(at: 0)
@@ -574,6 +575,38 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     if updateThemeRepo {
       AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
       AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
+    }
+  }
+  
+  @IBAction func generateConfig(_ sender: NSButton!) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+      if var conf = CloverConfig().generateCloverConfig() {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+        conf["GenTool"] = "Clover r\(AppSD.CloverRevision) by Clover.app v\(appVersion)"
+        let configName : String = (conf["ConfigName"] as? String ?? "config")
+        let dir = NSHomeDirectory().addPath("Desktop/Clover_config")
+        let fullPath = dir.addPath("\(configName).plist")
+        var isDir : ObjCBool = false
+        if fm.fileExists(atPath: dir, isDirectory: &isDir) {
+          if !isDir.boolValue {
+            try? fm.removeItem(atPath: dir)
+          }
+        }
+        
+        if !fm.fileExists(atPath: dir) {
+          try? fm.createDirectory(atPath: dir,
+                                  withIntermediateDirectories: false,
+                                  attributes: nil)
+        }
+        if NSDictionary(dictionary: conf).write(toFile: fullPath,
+                                                atomically: false) {
+          NSWorkspace.shared.openFile(dir)
+        } else {
+          NSSound.beep()
+        }
+      } else {
+        NSSound.beep()
+      }
     }
   }
   
@@ -1193,7 +1226,7 @@ extension SettingsViewController: NSTabViewDelegate {
   }
   
   @IBAction func selectFuncTab(_ sender: NSSegmentedControl!) {
-    self.tabViewFunc.selectTabViewItem(at: sender.indexOfSelectedItem)
+    self.tabViewFunc.animator().selectTabViewItem(at: sender.indexOfSelectedItem)
   }
   
   func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
@@ -1221,7 +1254,7 @@ extension SettingsViewController: NSTabViewDelegate {
 }
 
 // MARK: Settings Window controller
-class SettingsWindowController: NSWindowController, NSWindowDelegate {
+final class SettingsWindowController: NSWindowController, NSWindowDelegate {
   var viewController : NSViewController? = nil
   override var contentViewController: NSViewController? {
     get {

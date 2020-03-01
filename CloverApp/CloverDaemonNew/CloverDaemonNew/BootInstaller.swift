@@ -9,7 +9,7 @@
 import Foundation
 
 
-class Installer: NSObject {
+final class Installer: NSObject {
   let ktempLogPath = "/tmp/cltmplog"
   private var realTime : Bool = true
   private var gTargetVolume : String? = nil

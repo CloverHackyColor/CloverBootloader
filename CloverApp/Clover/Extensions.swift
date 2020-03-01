@@ -61,6 +61,64 @@ extension String {
   }
 }
 
+extension NSNumber {
+  var hexString: String {
+    if (self.intValue > 0xFFFF) {
+      return String(format: "0x%08llx", self.intValue)
+    } else {
+      return String(format: "0x%04llx", self.intValue)
+    }
+  }
+}
+
+extension Int {
+  var data: Data {
+    var num = self
+    return Data(bytes: &num, count: MemoryLayout<Int>.size)
+  }
+}
+
+extension UInt8 {
+  var data: Data {
+    var num = self
+    return Data(bytes: &num, count: MemoryLayout<UInt8>.size)
+  }
+}
+extension UInt16 {
+  var data: Data {
+    var num = self
+    return Data(bytes: &num, count: MemoryLayout<UInt16>.size)
+  }
+}
+
+extension UInt32 {
+  var data: Data {
+    var num = self
+    return Data(bytes: &num, count: MemoryLayout<UInt32>.size)
+  }
+}
+
+extension Data {
+  func toPointer() -> UnsafePointer<UInt8>? {
+    
+    let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: self.count)
+    let stream = OutputStream(toBuffer: buffer, capacity: self.count)
+    
+    stream.open()
+    let value = self.withUnsafeBytes {
+      $0.baseAddress?.assumingMemoryBound(to: UInt8.self)
+    }
+    guard let val = value else {
+      return nil
+    }
+    
+    stream.write(val, maxLength: self.count)
+    
+    stream.close()
+    
+    return UnsafePointer<UInt8>(buffer)
+  }
+}
 
 extension URL {
   // https://stackoverflow.com/questions/38343186/write-extend-file-attributes-swift-example?answertab=active#tab-top

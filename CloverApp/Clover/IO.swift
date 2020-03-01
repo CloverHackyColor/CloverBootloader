@@ -49,6 +49,22 @@ func getFirmawareVendor() -> String? {
   return nil
 }
 
+/// Get device-properties data.
+func getDevicePropertiesData() -> Data? {
+  if let data = getEFItree()?.object(forKey: "device-properties") as? Data {
+    return data
+  }
+  return nil
+}
+
+/// Get Clover Settings data.
+func getCloverSettingsData() -> Data? {
+  if let data = getEFIPlatform()?.object(forKey: "Settings") as? Data {
+    return data
+  }
+  return nil
+}
+
 /// Get IODeviceTree:/efi/platform Dictionary.
 fileprivate func getEFIPlatform() -> NSDictionary? {
   var ref: io_registry_entry_t

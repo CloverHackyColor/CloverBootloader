@@ -13,7 +13,8 @@ let AppSD = NSApplication.shared.delegate as! AppDelegate
 let localeBundle = Bundle(path: Bundle.main.sharedSupportPath! + "/Lang.bundle")
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+  let CloverRevision : Int = Int(findCloverRevision() ?? "0") ?? 0
   var isInstalling : Bool = false
   var isInstallerOpen : Bool = false
   var themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser

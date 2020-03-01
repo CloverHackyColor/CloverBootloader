@@ -22,7 +22,7 @@ enum ThemeDownload {
 
 let kCloverThemeAttributeKey = "org.cloverTheme.sha"
 
-class ThemeManager: NSObject, URLSessionDataDelegate {
+final class ThemeManager: NSObject, URLSessionDataDelegate {
   var delegate : ThemeManagerVC?
   private var user : String
   private var repo : String
@@ -53,10 +53,10 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
     var themes = [String]()
     if self.getSha() != nil {
       let themesIndexPath = self.themeManagerIndexDir.addPath("Themes")
-      if let files = try? fm.contentsOfDirectory(atPath: themesIndexPath) {
+      if let files : [String] = try? fm.contentsOfDirectory(atPath: themesIndexPath) {
         for f in files {
-          let theme = f.deletingFileExtension
-          let ext = f.fileExtension
+          let theme : String = f.deletingFileExtension
+          let ext : String = f.fileExtension
           if ext == "plist" {
             themes.append(theme)
           }
@@ -67,16 +67,16 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
   }
   
   public func getThemes(completion: @escaping ([String]) -> ()) {
-    var themes = [String]()
-    let themesIndexPath = self.themeManagerIndexDir.addPath("Themes")
+    var themes : [String] = [String]()
+    let themesIndexPath : String = self.themeManagerIndexDir.addPath("Themes")
     
     self.getInfo(urlString: urlBaseStr) { (success) in
      
       do {
-        let files = try fm.contentsOfDirectory(atPath: themesIndexPath)
+        let files : [String] = try fm.contentsOfDirectory(atPath: themesIndexPath)
         for f in files {
-          let theme = f.deletingFileExtension
-          let ext = f.fileExtension
+          let theme : String = f.deletingFileExtension
+          let ext : String = f.fileExtension
           if ext == "plist" {
             themes.append(theme)
           }
@@ -92,11 +92,11 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
   /// Return the sha string only if the sha exist, and only if Themes directory exists.
   func getSha() -> String? {
     var sha : String? = nil
-    let themesPath = "\(self.themeManagerIndexDir)/Themes"
-    let shaPath = "\(self.themeManagerIndexDir)/sha"
+    let themesPath : String = "\(self.themeManagerIndexDir)/Themes"
+    let shaPath : String = "\(self.themeManagerIndexDir)/sha"
     
     if fm.fileExists(atPath: themesPath) && fm.fileExists(atPath: shaPath) {
-      if let data = try? Data(contentsOf: URL(fileURLWithPath: shaPath)) {
+      if let data : Data = try? Data(contentsOf: URL(fileURLWithPath: shaPath)) {
         sha = String(data: data, encoding: .utf8)
         if ((sha != nil) && (sha!.count < 40)) {
           sha = nil
@@ -116,8 +116,8 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
   
   private func downloadloadFile(at url: String, dst: String,
                                 completion: @escaping (Bool) -> ()) {
-    if let validURL = URL(string: self.normalize(url)) {
-      let upperDir = dst.deletingLastPath
+    if let validURL : URL = URL(string: self.normalize(url)) {
+      let upperDir : String = dst.deletingLastPath
       if !fm.fileExists(atPath: upperDir) {
         do {
           try fm.createDirectory(atPath: upperDir,
@@ -129,7 +129,7 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
           return
         }
       }
-      var request = URLRequest(url: validURL)
+      var request : URLRequest = URLRequest(url: validURL)
       request.httpMethod = "GET"
       request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
       
@@ -166,7 +166,7 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
 
   private func getInfo(urlString: String, completion: @escaping (Bool) -> ()) {
     if let url = URL(string: self.normalize(urlString)) {
-      var request = URLRequest(url: url)
+      var request : URLRequest = URLRequest(url: url)
       request.httpMethod = "GET"
       request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
       request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
@@ -226,7 +226,7 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
               return
             }
             
-            let shaPath = "\(self.themeManagerIndexDir)/\(sha)"
+            let shaPath : String = "\(self.themeManagerIndexDir)/\(sha)"
             
             do {
               if !fm.fileExists(atPath: shaPath) {
@@ -258,9 +258,9 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
               if let path = obj["path"] as? String {
                 
                 if !path.hasPrefix(".") && type == "blob" { // .gitignore, .DS_Store
-                  let themeName = path.components(separatedBy: "/")[0]
-                  let plistPath = "\(self.themeManagerIndexDir)/\(sha)/\(themeName).plist"
-                  let theme = NSMutableArray(contentsOfFile: plistPath) ?? NSMutableArray()
+                  let themeName : String = path.components(separatedBy: "/")[0]
+                  let plistPath : String = "\(self.themeManagerIndexDir)/\(sha)/\(themeName).plist"
+                  let theme : NSMutableArray = NSMutableArray(contentsOfFile: plistPath) ?? NSMutableArray()
                   if !theme.contains(path) {
                     theme.add(path)
                   }
@@ -328,8 +328,8 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
   /// Return the path for a given theme, if the download succeded
   public func download(theme: String, down: ThemeDownload, completion: @escaping (String?) -> ()) {
     if let sha = getSha() {
-      let shaPath = self.basePath.addPath(sha)
-      let themeDest = (down == .complete)
+      let shaPath : String = self.basePath.addPath(sha)
+      let themeDest : String = (down == .complete)
         ? self.themeManagerIndexDir.addPath("Downloads").addPath(theme)
         :  shaPath.addPath(theme)
 
@@ -344,12 +344,12 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
           } catch {}
         }
  
-        let plistPath = "\(themeManagerIndexDir)/Themes/\(theme).plist"
+        let plistPath : String = "\(themeManagerIndexDir)/Themes/\(theme).plist"
 
-        if let files = NSArray(contentsOfFile: plistPath) as? [String] {
-          let fc = files.count
+        if let files : [String] = NSArray(contentsOfFile: plistPath) as? [String] {
+          let fc : Int = files.count
           if fc > 0 {
-            var broken = false
+            var broken : Bool = false
             let dg = DispatchGroup()
             for i in 0..<fc {
               dg.enter()
@@ -357,9 +357,9 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
                 dg.leave()
                 break
               } else {
-                let file = files[i]
+                let file : String = files[i]
                 // build the url
-                let furl = "https://github.com/\(self.user)/\(self.repo)/raw/master/\(file)"
+                let furl : String = "https://github.com/\(self.user)/\(self.repo)/raw/master/\(file)"
                 
                 if down == .thumbnail {
                   if file != theme.addPath("screenshot.png")
@@ -370,7 +370,7 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
                   }
                 }
                 
-                let filedest = (down == .complete)
+                let filedest : String = (down == .complete)
                   ? themeDest.deletingLastPath.addPath(file)
                   : shaPath.addPath(file)
                 
@@ -412,10 +412,10 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
      so no matter if the url will be a file on the local
      filesystem (downloaded theme) or just on the online repository.
      */
-    if let sha = self.getSha() {
-      let localTheme = "\(basePath)/\(sha)/\(theme)"
-      let png = "\(localTheme)/screenshot.png"
-      let svg = "\(localTheme)/theme.svg"
+    if let sha : String = self.getSha() {
+      let localTheme : String = "\(basePath)/\(sha)/\(theme)"
+      let png : String = "\(localTheme)/screenshot.png"
+      let svg : String = "\(localTheme)/theme.svg"
       if fm.fileExists(atPath: png) {
         completion(png)
         return
@@ -428,9 +428,9 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
     
     // theme not found?? Downloading...
     self.download(theme: theme, down: .thumbnail) { (path) in
-      if let localTheme = path {
-        let png = "\(localTheme)/screenshot.png"
-        let svg = "\(localTheme)/theme.svg"
+      if let localTheme : String = path {
+        let png : String = "\(localTheme)/screenshot.png"
+        let svg : String = "\(localTheme)/theme.svg"
         if fm.fileExists(atPath: png) {
           completion(png)
         } else if fm.fileExists(atPath: svg) {
@@ -443,9 +443,9 @@ class ThemeManager: NSObject, URLSessionDataDelegate {
   }
   
   public func signTheme(at path: String) {
-    if let sha = getSha() {
-      let fileURL = URL(fileURLWithPath: path)
-      let data = sha.data(using: .utf8)
+    if let sha : String = getSha() {
+      let fileURL : URL = URL(fileURLWithPath: path)
+      let data : Data? = sha.data(using: .utf8)
       
       // remove all attributes
       do {

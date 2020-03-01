@@ -174,7 +174,7 @@
                         <rect key="frame" x="21" y="265" width="304" height="11"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" title="*Require CloverDaemon" id="yQ9-cU-wtc">
-                            <font key="font" metaFont="menu" size="9"/>
+                            <font key="font" metaFont="label" size="9"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -524,7 +524,7 @@
                                             <rect key="frame" x="21" y="58" width="52" height="11"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" title="(ESP)" id="TTH-hz-cX2">
-                                                <font key="font" metaFont="menu" size="9"/>
+                                                <font key="font" metaFont="label" size="9"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -555,7 +555,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem identifier="Theme" id="Th2-UC-6Hh">
-                                <view key="view" ambiguous="YES" id="hLu-g7-21T">
+                                <view key="view" id="hLu-g7-21T">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="113"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -618,7 +618,7 @@
                                             <rect key="frame" x="102" y="1" width="220" height="16"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" id="dmw-9Z-gN5">
-                                                <font key="font" metaFont="menu" size="9"/>
+                                                <font key="font" metaFont="label" size="9"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -630,7 +630,7 @@
                                             <rect key="frame" x="102" y="19" width="220" height="16"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" id="glm-s6-df6">
-                                                <font key="font" metaFont="menu" size="9"/>
+                                                <font key="font" metaFont="label" size="9"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -690,7 +690,7 @@
                                             <rect key="frame" x="42" y="4" width="37" height="11"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" title="0%" id="vRT-SW-j4L">
-                                                <font key="font" metaFont="menu" size="9"/>
+                                                <font key="font" metaFont="label" size="9"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -717,7 +717,7 @@
                                             <rect key="frame" x="263" y="80" width="61" height="11"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" alignment="right" title="r5102 +" id="JZg-ju-g1k">
-                                                <font key="font" metaFont="menu" size="9"/>
+                                                <font key="font" metaFont="label" size="9"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -725,16 +725,37 @@
                                     </subviews>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem identifier="clover-genconfig" id="kc7-iD-ZPw">
+                                <nil key="label"/>
+                                <view key="view" ambiguous="YES" id="Lp8-6t-ak1">
+                                    <rect key="frame" x="0.0" y="0.0" width="342" height="113"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5qs-Bm-r0y">
+                                            <rect key="frame" x="18" y="53" width="143" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="clover-genconfig" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="135-sE-mfh">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="label" size="13"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="generateConfig:" target="tSJ-3G-dnL" id="5ip-Lq-aa3"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
                         </tabViewItems>
                     </tabView>
                     <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4ox-0p-Q9L">
-                        <rect key="frame" x="18" y="477" width="104" height="24"/>
+                        <rect key="frame" x="14" y="477" width="137" height="24"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="dvq-Ib-bsz">
                             <font key="font" metaFont="label" size="13"/>
                             <segments>
                                 <segment width="32"/>
                                 <segment width="32" selected="YES" tag="1"/>
+                                <segment width="32"/>
                                 <segment width="32"/>
                             </segments>
                         </segmentedCell>

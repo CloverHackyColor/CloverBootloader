@@ -51,13 +51,14 @@ func getLatestReleases(reply: @escaping (String?, String?, String?, String?) -> 
     for line in reponse.components(separatedBy: .newlines) {
       if (line.range(of: "href=\"/CloverHackyColor/CloverBootloader/releases/download/") != nil) {
         applink = line.components(separatedBy: "href=\"")[1]
-        //applink = "/CloverHackyColor/CloverBootloader/releases/download/5099/Clover.app-v1.15-5099.zip\" rel=\"nofollow\" class=\"d-flex flex-items-center min-width-0\">"
+        //applink = "/CloverHackyColor/CloverBootloader/releases/download/5099/Clover.app_v1.17_r5104.pkg.zip\" rel=\"nofollow\" class=\"d-flex flex-items-center min-width-0\">"
         applink = "https://github.com\(applink!.components(separatedBy: "\"")[0])"
-        
-        if applink!.lastPath.hasPrefix("Clover.app-v") && applink!.hasSuffix(".zip") {
-          // Clover.app-v1.15-5099.zip
-          appvers = applink!.components(separatedBy: "Clover.app-v")[1]
-          appvers = appvers!.components(separatedBy: "-")[0]
+   
+        if applink!.lastPath.hasPrefix("Clover.app_v") && applink!.hasSuffix(".zip") {
+          // Clover.app_v1.17_r5104.pkg.zip
+          appvers = applink!.components(separatedBy: "Clover.app_v")[1]
+          //print(appvers)
+          appvers = appvers!.components(separatedBy: "_r")[0]
           break
         }
       }

@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ViewController: NSViewController {
+final class ViewController: NSViewController {
 
   override func viewDidLoad() {
     if #available(OSX 10.10, *) {

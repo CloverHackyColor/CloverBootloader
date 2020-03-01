@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		952EB6AF24018B4500BEB0F8 /* gfxutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 952EB6A924018B4400BEB0F8 /* gfxutil.c */; };
+		952EB6B024018B4500BEB0F8 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 952EB6AA24018B4400BEB0F8 /* utils.c */; };
+		952EB6B124018B4500BEB0F8 /* efidevp.c in Sources */ = {isa = PBXBuildFile; fileRef = 952EB6AE24018B4500BEB0F8 /* efidevp.c */; };
 		9533718323709517003F1AF4 /* bootsectors-install in Resources */ = {isa = PBXBuildFile; fileRef = 9533718223709517003F1AF4 /* bootsectors-install */; };
 		9533718523709A36003F1AF4 /* bootsectors-install in Copy CloverV2 */ = {isa = PBXBuildFile; fileRef = 9533718223709517003F1AF4 /* bootsectors-install */; };
 		953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953BC20223720C0A0039755D /* FixedWidthViews.swift */; };
@@ -31,6 +34,7 @@
 		955F7C6D238DCD170019D088 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955F7C6C238DCD160019D088 /* DiskArbitration.framework */; };
 		9560906A238C61E200ACD7F7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95609068238C61E200ACD7F7 /* MainMenu.xib */; };
 		956090B7238C890600ACD7F7 /* Installer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956090B9238C890600ACD7F7 /* Installer.xib */; };
+		95696B7B2401829800AFAD37 /* GengConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95696B7A2401829800AFAD37 /* GengConfig.swift */; };
 		9569EC42238DD772003AD72C /* Settings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9569EC44238DD772003AD72C /* Settings.xib */; };
 		958861DA235F75FB00B64173 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958861D9235F75FB00B64173 /* Driver.swift */; };
 		95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C515212369BAF500E4A3A8 /* NVRAM.swift */; };
@@ -175,6 +179,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		952EB6A924018B4400BEB0F8 /* gfxutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gfxutil.c; sourceTree = "<group>"; };
+		952EB6AA24018B4400BEB0F8 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		952EB6AB24018B4500BEB0F8 /* gfxutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gfxutil.h; sourceTree = "<group>"; };
+		952EB6AC24018B4500BEB0F8 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		952EB6AD24018B4500BEB0F8 /* efidevp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidevp.h; sourceTree = "<group>"; };
+		952EB6AE24018B4500BEB0F8 /* efidevp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = efidevp.c; sourceTree = "<group>"; };
 		9533718223709517003F1AF4 /* bootsectors-install */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bootsectors-install"; sourceTree = SOURCE_ROOT; };
 		953BC20223720C0A0039755D /* FixedWidthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthViews.swift; sourceTree = "<group>"; };
 		9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "boot1-inst.xcodeproj"; path = "../CloverPackage/utils/boot1-install/boot1-inst.xcodeproj"; sourceTree = "<group>"; };
@@ -277,6 +287,7 @@
 		95609101238C89C300ACD7F7 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Installer.strings; sourceTree = "<group>"; };
 		95609103238C89C600ACD7F7 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Installer.strings; sourceTree = "<group>"; };
 		95609105238C89C900ACD7F7 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Installer.strings; sourceTree = "<group>"; };
+		95696B7A2401829800AFAD37 /* GengConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GengConfig.swift; sourceTree = "<group>"; };
 		9569EC43238DD772003AD72C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Settings.xib; sourceTree = "<group>"; };
 		9569EC46238DD77A003AD72C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Settings.strings; sourceTree = "<group>"; };
 		9569EC48238DD77C003AD72C /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Settings.strings; sourceTree = "<group>"; };
@@ -349,6 +360,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		952EB6A824018B2400BEB0F8 /* GfxUtil */ = {
+			isa = PBXGroup;
+			children = (
+				952EB6AE24018B4500BEB0F8 /* efidevp.c */,
+				952EB6AD24018B4500BEB0F8 /* efidevp.h */,
+				952EB6A924018B4400BEB0F8 /* gfxutil.c */,
+				952EB6AB24018B4500BEB0F8 /* gfxutil.h */,
+				952EB6AA24018B4400BEB0F8 /* utils.c */,
+				952EB6AC24018B4500BEB0F8 /* utils.h */,
+			);
+			path = GfxUtil;
+			sourceTree = "<group>";
+		};
 		9542ABB92373780C00DC03E6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -444,9 +468,11 @@
 		95E68AC8235B862F002B37A5 /* Clover */ = {
 			isa = PBXGroup;
 			children = (
+				952EB6A824018B2400BEB0F8 /* GfxUtil */,
 				955BEE1123C6B43C00425AB0 /* ThemeManager */,
 				95E68AC9235B862F002B37A5 /* AppDelegate.swift */,
 				95C5152E236A0A7400E4A3A8 /* SettingsView.swift */,
+				95696B7A2401829800AFAD37 /* GengConfig.swift */,
 				95C51535236B1F7700E4A3A8 /* RunAtLogin.swift */,
 				95E68ACB235B862F002B37A5 /* ViewController.swift */,
 				95E68ADE235B86A1002B37A5 /* bdmesg.swift */,
@@ -716,6 +742,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				95E68AE5235B89D9002B37A5 /* Installer.swift in Sources */,
+				952EB6B124018B4500BEB0F8 /* efidevp.c in Sources */,
 				95E68AE1235B86A1002B37A5 /* Shared.swift in Sources */,
 				95E68ACC235B862F002B37A5 /* ViewController.swift in Sources */,
 				95E68AE2235B86A1002B37A5 /* Disks.swift in Sources */,
@@ -728,11 +755,14 @@
 				95E68AE3235B86A1002B37A5 /* bdmesg.swift in Sources */,
 				95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */,
 				9555AF28238EFDAD00108C33 /* DriversCollection.swift in Sources */,
+				952EB6AF24018B4500BEB0F8 /* gfxutil.c in Sources */,
 				953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */,
+				95696B7B2401829800AFAD37 /* GengConfig.swift in Sources */,
 				95E50076238ABA56002F3869 /* Tasks.swift in Sources */,
 				95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */,
 				95C51536236B1F7700E4A3A8 /* RunAtLogin.swift in Sources */,
 				95E68AE0235B86A1002B37A5 /* Extensions.swift in Sources */,
+				952EB6B024018B4500BEB0F8 /* utils.c in Sources */,
 				955689DB23A2728000AD323C /* IO.swift in Sources */,
 				9555AF26238EE53300108C33 /* InstallerOutline.swift in Sources */,
 				955BEE1723C6B49C00425AB0 /* ThemeManagerVC.swift in Sources */,
@@ -1049,12 +1079,21 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.15;
+				CURRENT_PROJECT_VERSION = 1.16;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/Frameworks/ObjectiveGit.framework/Headers/";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks/ObjectiveGit.framework/Headers/",
+					../MdePkg/Include/X64,
+					"../MdePkg/**",
+					../MdeModulePkg/Include,
+					../IntelFrameworkPkg/Include,
+					../rEFIt_UEFI/refit,
+					../rEFIt_UEFI/libeg,
+					../Include,
+				);
 				IBC_WARNINGS = YES;
 				INFOPLIST_FILE = Clover/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1065,7 +1104,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.15;
+				MARKETING_VERSION = 1.16;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1085,12 +1124,21 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.15;
+				CURRENT_PROJECT_VERSION = 1.16;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/Frameworks/ObjectiveGit.framework/Headers/";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks/ObjectiveGit.framework/Headers/",
+					../MdePkg/Include/X64,
+					"../MdePkg/**",
+					../MdeModulePkg/Include,
+					../IntelFrameworkPkg/Include,
+					../rEFIt_UEFI/refit,
+					../rEFIt_UEFI/libeg,
+					../Include,
+				);
 				INFOPLIST_FILE = Clover/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1100,7 +1148,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
 				);
-				MARKETING_VERSION = 1.15;
+				MARKETING_VERSION = 1.16;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
