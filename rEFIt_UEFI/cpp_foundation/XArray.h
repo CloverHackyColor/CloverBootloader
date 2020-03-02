@@ -145,7 +145,7 @@ const XArray<TYPE> &XArray<TYPE>::operator =(const XArray<TYPE> &anArray)
   xsize ui;
 
 	setEmpty();
-	for ( ui=0 ; ui<anArray.Length() ; ui+=1 ) AddCopy(anArray.Data() );
+	for ( ui=0 ; ui<anArray.Length() ; ui+=1 ) Add(anArray[ui] );
 	return *this;
 }
 
