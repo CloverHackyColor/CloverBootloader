@@ -5,10 +5,15 @@ This class will replace EG_IMAGE structure and methods
 #if !defined(__XIMAGE_H__)
 #define __XIMAGE_H__
 
-#include <Platform.h>
+//#include <Platform.h>
 //
-//#include "../cpp_foundation/XToolsCommon.h"
-//#include "../cpp_foundation/XArray.h"
+
+extern "C" {
+#include <Protocol/GraphicsOutput.h>
+}
+#include "../cpp_foundation/XToolsCommon.h"
+#include "../cpp_foundation/XArray.h"
+#include "../libeg/libeg.h"
 //#include "lodepng.h"
 //
 //#include "nanosvg.h"
@@ -62,6 +67,10 @@ public:
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y);
   UINTN      GetWidth() const;
   UINTN      GetHeight() const;
+
+  void setEmpty() { PixelData.setEmpty(); }
+  bool isEmpty() const { return PixelData.size() == 0; }
+
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect);
