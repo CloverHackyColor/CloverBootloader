@@ -126,7 +126,7 @@
 	Platform/Platform.h
 	Platform/platformdata.cpp
 	Platform/plist.cpp
-	Platform/Pointer.cpp
+# Platform/Pointer.cpp
 	Platform/Settings.cpp
 	Platform/smbios.cpp
 #	Platform/SmBios.h

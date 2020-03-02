@@ -199,8 +199,8 @@ VOID XPointer::UpdatePointer()
     if (newPlace.YPos < 0) newPlace.YPos = 0;
     if (newPlace.YPos > UGAHeight - 1) newPlace.YPos = UGAHeight - 1;
 
-    HidePointer();
-    DrawPointer();
+    Hide();
+    Draw();
   }
 }
 

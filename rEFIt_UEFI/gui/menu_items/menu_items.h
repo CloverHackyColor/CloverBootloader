@@ -395,7 +395,7 @@ public:
   ACTION      mAction;
   UINTN       mItemID;
   XPointer    *mPointer;
-  bool        PointerLive;
+  SCROLL_STATE *ScrollState, 
 
   REFIT_MENU_SCREEN()
 						: ID(0), Title(0), TitleImage(0),
@@ -484,6 +484,12 @@ public:
 							Entries.AddReference(entry1, false);
 							Entries.AddReference(entry2, false);
 						};
+  //Scroll functions
+  VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
+                  IN UINTN VisibleSpace, IN INTN Selected);
+  VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement);
+  VOID HidePointer();
+  EFI_STATUS MouseBirth();
 };
 
 #endif

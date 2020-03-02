@@ -35,6 +35,6 @@ public:
   EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen);
 
 protected:
-  VOID DrawPointer();
+  VOID Draw();
 
 };

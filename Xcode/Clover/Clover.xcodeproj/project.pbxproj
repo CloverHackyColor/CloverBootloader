@@ -94,6 +94,7 @@
 		A5456D9123FC5B72000BF18C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8523FC5B6E000BF18C /* globals_ctor.cpp */; };
 		A5456D9323FC5B72000BF18C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8A23FC5B70000BF18C /* memory.cpp */; };
 		A5456D9623FC5B72000BF18C /* operatorNewDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8E23FC5B71000BF18C /* operatorNewDelete.cpp */; };
+		A570FB0D240D626D0057F26D /* XPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A570FB0B240D626C0057F26D /* XPointer.cpp */; };
 		A5716F83235968BE000CEC60 /* Nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = A5716F82235968BE000CEC60 /* Nasm.inc */; };
 		A571C28D240574DA00B6A2C5 /* XImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571C28B240574D900B6A2C5 /* XImage.cpp */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
@@ -2404,6 +2405,8 @@
 		A570FAFF240BA4DB0057F26D /* screen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = screen.h; sourceTree = "<group>"; };
 		A570FB02240BA5340057F26D /* menu_items.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu_items.h; sourceTree = "<group>"; };
 		A570FB03240BA5340057F26D /* menu_globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu_globals.h; sourceTree = "<group>"; };
+		A570FB0B240D626C0057F26D /* XPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPointer.cpp; sourceTree = "<group>"; };
+		A570FB0C240D626D0057F26D /* XPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPointer.h; sourceTree = "<group>"; };
 		A5716F82235968BE000CEC60 /* Nasm.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = Nasm.inc; path = ../../Nasm.inc; sourceTree = "<group>"; };
 		A5716FD5235A1576000CEC60 /* InternalIsaBus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalIsaBus.h; sourceTree = "<group>"; };
 		A5716FD6235A1576000CEC60 /* IsaBusDxeExtra.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = IsaBusDxeExtra.uni; sourceTree = "<group>"; };
@@ -6125,6 +6128,8 @@
 				A5456CF523FC5AB7000BF18C /* VectorGraphics.cpp */,
 				A571C28B240574D900B6A2C5 /* XImage.cpp */,
 				A571C28C240574D900B6A2C5 /* XImage.h */,
+				A570FB0B240D626C0057F26D /* XPointer.cpp */,
+				A570FB0C240D626D0057F26D /* XPointer.h */,
 			);
 			path = libeg;
 			sourceTree = "<group>";
@@ -17119,6 +17124,7 @@
 				A5AA060E237F13C1009CD413 /* GccInline.c in Sources */,
 				A5AAFB8E237F13B3009CD413 /* EdbCmdBranch.c in Sources */,
 				A5AAFB9A237F13B3009CD413 /* SmbiosDxe.c in Sources */,
+				A570FB0D240D626D0057F26D /* XPointer.cpp in Sources */,
 				A5AAFD11237F13B4009CD413 /* SmmLockBoxDxeLib.c in Sources */,
 				A5AA04E0237F13C1009CD413 /* Unaligned.c in Sources */,
 				A5AAFB28237F13B3009CD413 /* DxeMain.c in Sources */,

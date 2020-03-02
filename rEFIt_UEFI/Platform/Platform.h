@@ -1708,8 +1708,8 @@ extern UINTN                           gEvent;
 extern UINT16                          gBacklightLevel;
 extern UINT32                          devices_number;
 //mouse
-extern ACTION                          gAction;
-extern UINTN                           gItemID;
+//extern ACTION                          gAction;
+//extern UINTN                           gItemID;
 extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
@@ -1774,7 +1774,7 @@ FindBin (
   UINT8  *Pattern,
   UINT32 PatternLen
   );
-
+/*
 EFI_STATUS
 MouseBirth (VOID);
 
@@ -1783,7 +1783,7 @@ KillMouse (VOID);
 
 VOID
 HidePointer (VOID);
-
+*/
 VOID
 InitBooterLog (VOID);
 

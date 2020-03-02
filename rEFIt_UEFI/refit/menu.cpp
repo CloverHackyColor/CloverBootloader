@@ -46,7 +46,7 @@
 #include "HdaCodecDump.h"
 #include "menu.h"
 #include "screen.h"
-#include "../Platform/Pointer.h"
+//#include "../Platform/Pointer.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -117,7 +117,7 @@ BOOLEAN SavePreBootLog = FALSE;
 #define MENU_FUNCTION_PAINT_SELECTION (3)
 #define MENU_FUNCTION_PAINT_TIMEOUT   (4)
 
-typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText);
+typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText);
 
 static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
@@ -1948,178 +1948,178 @@ VOID InitSelection(VOID)
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
 #define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxCount,
+VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                        IN UINTN VisibleSpace, IN INTN Selected)
 {
   //ItemCount - a number to scroll (Row0)
   //MaxCount - total number (Row0 + Row1)
   //VisibleSpace - a number to fit
 
-  State->LastSelection = State->CurrentSelection = Selected;
+  ScrollState->LastSelection = ScrollState->CurrentSelection = Selected;
   //MaxIndex, MaxScroll, MaxVisible are indexes, 0..N-1
-  State->MaxIndex = (INTN)MaxCount - 1;
-  State->MaxScroll = ItemCount - 1;
+  ScrollState->MaxIndex = (INTN)MaxCount - 1;
+  ScrollState->MaxScroll = ItemCount - 1;
 
   if (VisibleSpace == 0) {
-    State->MaxVisible = State->MaxScroll;
+    ScrollState->MaxVisible = ScrollState->MaxScroll;
   } else {
-    State->MaxVisible = (INTN)VisibleSpace - 1;
+    ScrollState->MaxVisible = (INTN)VisibleSpace - 1;
   }
 
-  if (State->MaxVisible >= ItemCount) {
-      State->MaxVisible = ItemCount - 1;
+  if (ScrollState->MaxVisible >= ItemCount) {
+      ScrollState->MaxVisible = ItemCount - 1;
   }
 
-  State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
-  CONSTRAIN_MIN(State->MaxFirstVisible, 0);
-  State->FirstVisible = MIN(Selected, State->MaxFirstVisible);
+  ScrollState->MaxFirstVisible = ScrollState->MaxScroll - ScrollState->MaxVisible;
+  CONSTRAIN_MIN(ScrollState->MaxFirstVisible, 0);
+  ScrollState->FirstVisible = MIN(Selected, ScrollState->MaxFirstVisible);
 
 
-  State->IsScrolling = (State->MaxFirstVisible > 0);
-  State->PaintAll = TRUE;
-  State->PaintSelection = FALSE;
+  ScrollState->IsScrolling = (ScrollState->MaxFirstVisible > 0);
+  ScrollState->PaintAll = TRUE;
+  ScrollState->PaintSelection = FALSE;
 
-  State->LastVisible = State->FirstVisible + State->MaxVisible;
+  ScrollState->LastVisible = ScrollState->FirstVisible + ScrollState->MaxVisible;
 }
 
-static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
+VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
 {
   INTN Lines;
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
   INTN i;
-  State->LastSelection = State->CurrentSelection;
+  ScrollState->LastSelection = ScrollState->CurrentSelection;
 
   switch (Movement) {
     case SCROLL_SCROLLBAR_MOVE:
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
       ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos;
       ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos;
-      Lines = ScrollbarYMovement * State->MaxIndex / ScrollbarBackground.Height;
-      ScrollbarYMovement = ScrollbarYMovement - Lines * (State->MaxVisible * TextHeight - 16 - 1) / State->MaxIndex;
+      Lines = ScrollbarYMovement * ScrollState->MaxIndex / ScrollbarBackground.Height;
+      ScrollbarYMovement = ScrollbarYMovement - Lines * (ScrollState->MaxVisible * TextHeight - 16 - 1) / ScrollState->MaxIndex;
       if (Lines < 0) {
         Lines = -Lines;
         ScrollMovement = SCROLL_SCROLL_UP;
       }
       for (i = 0; i < Lines; i++)
-        UpdateScroll(State, ScrollMovement);
+        UpdateScroll(ScrollMovement);
       break;
 
     case SCROLL_LINE_UP: //of left = decrement
-      if (State->CurrentSelection > 0) {
-        State->CurrentSelection --;
-        if (State->CurrentSelection < State->FirstVisible) {
-          State->PaintAll = TRUE;
-          State->FirstVisible = State->CurrentSelection;
+      if (ScrollState->CurrentSelection > 0) {
+        ScrollState->CurrentSelection --;
+        if (ScrollState->CurrentSelection < ScrollState->FirstVisible) {
+          ScrollState->PaintAll = TRUE;
+          ScrollState->FirstVisible = ScrollState->CurrentSelection;
         }
-        if (State->CurrentSelection == State->MaxScroll) {
-          State->PaintAll = TRUE;
+        if (ScrollState->CurrentSelection == ScrollState->MaxScroll) {
+          ScrollState->PaintAll = TRUE;
         }
-        if ((State->CurrentSelection < State->MaxScroll) &&
-             (State->CurrentSelection > State->LastVisible)) {
-          State->PaintAll = TRUE;
-          State->LastVisible = State->CurrentSelection;
-          State->FirstVisible = State->LastVisible - State->MaxVisible;
+        if ((ScrollState->CurrentSelection < ScrollState->MaxScroll) &&
+             (ScrollState->CurrentSelection > ScrollState->LastVisible)) {
+          ScrollState->PaintAll = TRUE;
+          ScrollState->LastVisible = ScrollState->CurrentSelection;
+          ScrollState->FirstVisible = ScrollState->LastVisible - ScrollState->MaxVisible;
         }
       }
       break;
 
     case SCROLL_LINE_DOWN: //or right -- increment
-      if (State->CurrentSelection < State->MaxIndex) {
-        State->CurrentSelection++;
-        if ((State->CurrentSelection > State->LastVisible) &&
-            (State->CurrentSelection <= State->MaxScroll)){
-          State->PaintAll = TRUE;
-          State->FirstVisible++;
-          CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+      if (ScrollState->CurrentSelection < ScrollState->MaxIndex) {
+        ScrollState->CurrentSelection++;
+        if ((ScrollState->CurrentSelection > ScrollState->LastVisible) &&
+            (ScrollState->CurrentSelection <= ScrollState->MaxScroll)){
+          ScrollState->PaintAll = TRUE;
+          ScrollState->FirstVisible++;
+          CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
         }
-        if (State->CurrentSelection == State->MaxScroll + 1) {
-          State->PaintAll = TRUE;
+        if (ScrollState->CurrentSelection == ScrollState->MaxScroll + 1) {
+          ScrollState->PaintAll = TRUE;
         }
       }
       break;
 
     case SCROLL_SCROLL_DOWN:
-      if (State->FirstVisible < State->MaxFirstVisible) {
-        if (State->CurrentSelection == State->FirstVisible)
-          State->CurrentSelection++;
-        State->FirstVisible++;
-        State->LastVisible++;
-        State->PaintAll = TRUE;
+      if (ScrollState->FirstVisible < ScrollState->MaxFirstVisible) {
+        if (ScrollState->CurrentSelection == ScrollState->FirstVisible)
+          ScrollState->CurrentSelection++;
+        ScrollState->FirstVisible++;
+        ScrollState->LastVisible++;
+        ScrollState->PaintAll = TRUE;
       }
       break;
 
     case SCROLL_SCROLL_UP:
-      if (State->FirstVisible > 0) {
-        if (State->CurrentSelection == State->LastVisible)
-          State->CurrentSelection--;
-        State->FirstVisible--;
-        State->LastVisible--;
-        State->PaintAll = TRUE;
+      if (ScrollState->FirstVisible > 0) {
+        if (ScrollState->CurrentSelection == ScrollState->LastVisible)
+          ScrollState->CurrentSelection--;
+        ScrollState->FirstVisible--;
+        ScrollState->LastVisible--;
+        ScrollState->PaintAll = TRUE;
       }
       break;
 
     case SCROLL_PAGE_UP:
-      if (State->CurrentSelection > 0) {
-        if (State->CurrentSelection == State->MaxIndex) {   // currently at last entry, special treatment
-          if (State->IsScrolling)
-            State->CurrentSelection -= State->MaxVisible - 1;  // move to second line without scrolling
+      if (ScrollState->CurrentSelection > 0) {
+        if (ScrollState->CurrentSelection == ScrollState->MaxIndex) {   // currently at last entry, special treatment
+          if (ScrollState->IsScrolling)
+            ScrollState->CurrentSelection -= ScrollState->MaxVisible - 1;  // move to second line without scrolling
           else
-            State->CurrentSelection = 0;                // move to first entry
+            ScrollState->CurrentSelection = 0;                // move to first entry
         } else {
-          if (State->FirstVisible > 0)
-            State->PaintAll = TRUE;
-          State->CurrentSelection -= State->MaxVisible;          // move one page and scroll synchronously
-          State->FirstVisible -= State->MaxVisible;
+          if (ScrollState->FirstVisible > 0)
+            ScrollState->PaintAll = TRUE;
+          ScrollState->CurrentSelection -= ScrollState->MaxVisible;          // move one page and scroll synchronously
+          ScrollState->FirstVisible -= ScrollState->MaxVisible;
         }
-        CONSTRAIN_MIN(State->CurrentSelection, 0);
-        CONSTRAIN_MIN(State->FirstVisible, 0);
-        if (State->CurrentSelection < State->FirstVisible) {
-          State->PaintAll = TRUE;
-          State->FirstVisible = State->CurrentSelection;
+        CONSTRAIN_MIN(ScrollState->CurrentSelection, 0);
+        CONSTRAIN_MIN(ScrollState->FirstVisible, 0);
+        if (ScrollState->CurrentSelection < ScrollState->FirstVisible) {
+          ScrollState->PaintAll = TRUE;
+          ScrollState->FirstVisible = ScrollState->CurrentSelection;
         }
       }
       break;
 
     case SCROLL_PAGE_DOWN:
-      if (State->CurrentSelection < State->MaxIndex) {
-        if (State->CurrentSelection == 0) {   // currently at first entry, special treatment
-          if (State->IsScrolling)
-            State->CurrentSelection += State->MaxVisible - 1;  // move to second-to-last line without scrolling
+      if (ScrollState->CurrentSelection < ScrollState->MaxIndex) {
+        if (ScrollState->CurrentSelection == 0) {   // currently at first entry, special treatment
+          if (ScrollState->IsScrolling)
+            ScrollState->CurrentSelection += ScrollState->MaxVisible - 1;  // move to second-to-last line without scrolling
           else
-            State->CurrentSelection = State->MaxIndex;         // move to last entry
+            ScrollState->CurrentSelection = ScrollState->MaxIndex;         // move to last entry
         } else {
-          if (State->FirstVisible < State->MaxFirstVisible)
-            State->PaintAll = TRUE;
-          State->CurrentSelection += State->MaxVisible;          // move one page and scroll synchronously
-          State->FirstVisible += State->MaxVisible;
+          if (ScrollState->FirstVisible < ScrollState->MaxFirstVisible)
+            ScrollState->PaintAll = TRUE;
+          ScrollState->CurrentSelection += ScrollState->MaxVisible;          // move one page and scroll synchronously
+          ScrollState->FirstVisible += ScrollState->MaxVisible;
         }
-        CONSTRAIN_MAX(State->CurrentSelection, State->MaxIndex);
-        CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
-        if ((State->CurrentSelection > State->LastVisible) &&
-            (State->CurrentSelection <= State->MaxScroll)){
-          State->PaintAll = TRUE;
-          State->FirstVisible+= State->MaxVisible;
-          CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+        CONSTRAIN_MAX(ScrollState->CurrentSelection, ScrollState->MaxIndex);
+        CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
+        if ((ScrollState->CurrentSelection > ScrollState->LastVisible) &&
+            (ScrollState->CurrentSelection <= ScrollState->MaxScroll)){
+          ScrollState->PaintAll = TRUE;
+          ScrollState->FirstVisible+= ScrollState->MaxVisible;
+          CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
         }
       }
       break;
 
     case SCROLL_FIRST:
-      if (State->CurrentSelection > 0) {
-        State->CurrentSelection = 0;
-        if (State->FirstVisible > 0) {
-          State->PaintAll = TRUE;
-          State->FirstVisible = 0;
+      if (ScrollState->CurrentSelection > 0) {
+        ScrollState->CurrentSelection = 0;
+        if (ScrollState->FirstVisible > 0) {
+          ScrollState->PaintAll = TRUE;
+          ScrollState->FirstVisible = 0;
         }
       }
       break;
 
     case SCROLL_LAST:
-      if (State->CurrentSelection < State->MaxIndex) {
-        State->CurrentSelection = State->MaxIndex;
-        if (State->FirstVisible < State->MaxFirstVisible) {
-          State->PaintAll = TRUE;
-          State->FirstVisible = State->MaxFirstVisible;
+      if (ScrollState->CurrentSelection < ScrollState->MaxIndex) {
+        ScrollState->CurrentSelection = ScrollState->MaxIndex;
+        if (ScrollState->FirstVisible < ScrollState->MaxFirstVisible) {
+          ScrollState->PaintAll = TRUE;
+          ScrollState->FirstVisible = ScrollState->MaxFirstVisible;
         }
       }
       break;
@@ -2127,29 +2127,43 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
     case SCROLL_NONE:
       // The caller has already updated CurrentSelection, but we may
       // have to scroll to make it visible.
-      if (State->CurrentSelection < State->FirstVisible) {
-        State->PaintAll = TRUE;
-        State->FirstVisible = State->CurrentSelection; // - (State->MaxVisible >> 1);
-        CONSTRAIN_MIN(State->FirstVisible, 0);
-      } else if ((State->CurrentSelection > State->LastVisible) &&
-                 (State->CurrentSelection <= State->MaxScroll)) {
-        State->PaintAll = TRUE;
-        State->FirstVisible = State->CurrentSelection - State->MaxVisible;
-        CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+      if (ScrollState->CurrentSelection < ScrollState->FirstVisible) {
+        ScrollState->PaintAll = TRUE;
+        ScrollState->FirstVisible = ScrollState->CurrentSelection; // - (ScrollState->MaxVisible >> 1);
+        CONSTRAIN_MIN(ScrollState->FirstVisible, 0);
+      } else if ((ScrollState->CurrentSelection > ScrollState->LastVisible) &&
+                 (ScrollState->CurrentSelection <= ScrollState->MaxScroll)) {
+        ScrollState->PaintAll = TRUE;
+        ScrollState->FirstVisible = ScrollState->CurrentSelection - ScrollState->MaxVisible;
+        CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
       }
       break;
 
   }
 
-  if (!State->PaintAll && State->CurrentSelection != State->LastSelection)
-    State->PaintSelection = TRUE;
-  State->LastVisible = State->FirstVisible + State->MaxVisible;
+  if (!ScrollState->PaintAll && ScrollState->CurrentSelection != ScrollState->LastSelection)
+    ScrollState->PaintSelection = TRUE;
+  ScrollState->LastVisible = ScrollState->FirstVisible + ScrollState->MaxVisible;
 
   //ycr.ru
-  if ((State->PaintAll) && (Movement != SCROLL_NONE))
+  if ((ScrollState->PaintAll) && (Movement != SCROLL_NONE))
     HidePointer();
 }
 
+VOID REFIT_MENU_SCREEN::HidePointer()
+{
+  mPointer->Hide();
+}
+
+EFI_STATUS REFIT_MENU_SCREEN::MouseBirth();
+{
+  return mPointer->MouseBirth();
+}
+
+VOID REFIT_MENU_SCREEN::KillMouse()
+{
+  mPointer->KillMouse();
+}
 //
 // menu helper functions
 //
@@ -2229,7 +2243,7 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 // generic input menu function
 // usr-sse2
 //
-static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  StyleFunc, IN SCROLL_STATE *State)
+static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  StyleFunc)
 {
 	if ( !Screen->Entries[State->CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
 		DebugLog(2, "BUG : InputDialog called with !Screen->Entries[State->CurrentSelection].REFIT_MENU_ITEM_IEM_ABSTRACT()\n");
@@ -2405,8 +2419,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       }
     }
     // Redraw the field
-    (Screen->Entries[State->CurrentSelection]).Row = Pos;
-    StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+    (Screen->Entries[Screen->ScrollState->CurrentSelection]).Row = Pos;
+    StyleFunc(Screen, MENU_FUNCTION_PAINT_SELECTION, NULL);
   } while (!MenuExit);
 
   switch (MenuExit) {
@@ -2420,9 +2434,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
         if (Item->ItemType != BoolValue) {
           Item->LineShift = BackupShift;
-          (Screen->Entries[State->CurrentSelection]).Row = BackupPos;
+          (Screen->Entries[Screen->ScrollState->CurrentSelection]).Row = BackupPos;
         }
-        StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+        StyleFunc(Screen, MENU_FUNCTION_PAINT_SELECTION, NULL);
       }
       break;
   }
@@ -2437,7 +2451,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
-  SCROLL_STATE  State;
+//  SCROLL_STATE  State;
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
   //    UINTN         Index;
@@ -2481,12 +2495,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   }
   MenuExit = 0;
 
-  StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
+  StyleFunc(Screen, MENU_FUNCTION_INIT, NULL);
   //  DBG("scroll inited\n");
   // override the starting selection with the default index, if any
-  if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= State.MaxIndex) {
-    State.CurrentSelection = *DefaultEntryIndex;
-    UpdateScroll(&State, SCROLL_NONE);
+  if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= Screen->ScrollState.MaxIndex) {
+    Screen->ScrollState.CurrentSelection = *DefaultEntryIndex;
+    Screen->UpdateScroll(SCROLL_NONE);
   }
   //  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
   //      State.CurrentSelection, MenuExit);
@@ -2496,23 +2510,23 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
   while (!MenuExit) {
     // update the screen
-    if (State.PaintAll) {
-      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_ALL, NULL);
-      State.PaintAll = FALSE;
-    } else if (State.PaintSelection) {
-      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-      State.PaintSelection = FALSE;
+    if (Screen->ScrollState.PaintAll) {
+      StyleFunc(Screen, MENU_FUNCTION_PAINT_ALL, NULL);
+      Screen->ScrollState.PaintAll = FALSE;
+    } else if (Screen->ScrollState.PaintSelection) {
+      StyleFunc(Screen, MENU_FUNCTION_PAINT_SELECTION, NULL);
+      Screen->ScrollState.PaintSelection = FALSE;
     }
 
     if (HaveTimeout) {
       TimeoutMessage = PoolPrint(L"%s in %d seconds", Screen->TimeoutText, TimeoutCountdown);
-      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
+      StyleFunc(Screen, MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
       FreePool(TimeoutMessage);
     }
 
     if (gEvent) { //for now used at CD eject.
       MenuExit = MENU_EXIT_ESCAPE;
-      State.PaintAll = TRUE;
+      Screen->ScrollState.PaintAll = TRUE;
       gEvent = 0; //to prevent looping
       break;
     }
@@ -2537,23 +2551,23 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       continue;
     }
 
-    switch (gAction) {
+    switch (Screen->mAction) {
       case ActionSelect:
-        State.LastSelection = State.CurrentSelection;
-        State.CurrentSelection = gItemID;
-        State.PaintAll = TRUE;
-        HidePointer();
+        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
+        Screen->ScrollState.CurrentSelection = Screen->mItemID;
+        Screen->ScrollState.PaintAll = TRUE;
+        Screen->HidePointer();
         break;
       case ActionEnter:
-        State.LastSelection = State.CurrentSelection;
-        State.CurrentSelection = gItemID;
-        if ( Screen->Entries[gItemID].getREFIT_INPUT_DIALOG() ||  Screen->Entries[gItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
-        } else if (Screen->Entries[gItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
-          State.PaintAll = TRUE;
-          HidePointer();
-        } else if (!Screen->Entries[gItemID].getREFIT_INFO_DIALOG()) {
+        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
+        Screen->ScrollState.CurrentSelection = Screen->mItemID;
+        if ( Screen->Entries[Screen->mItemID].getREFIT_INPUT_DIALOG() ||  Screen->Entries[Screen->mItemID].getREFIT_MENU_CHECKBIT() ) {
+          MenuExit = InputDialog(Screen, StyleFunc);
+        } else if (Screen->Entries[Screen->mItemID].getREFIT_MENU_SWITCH()) {
+          MenuExit = InputDialog(Screen, StyleFunc);
+          Screen->ScrollState.PaintAll = TRUE;
+          Screen->HidePointer();
+        } else if (!Screen->Entries[Screen->mItemID].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
@@ -2561,41 +2575,41 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_HELP;
         break;
       case ActionOptions:
-        State.LastSelection = State.CurrentSelection;
-        State.CurrentSelection = gItemID;
+        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
+        Screen->ScrollState.CurrentSelection = Screen->mItemID;
         MenuExit = MENU_EXIT_OPTIONS;
         break;
       case ActionDetails:
-        State.LastSelection = State.CurrentSelection;
+        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
         // Index = State.CurrentSelection;
-        State.CurrentSelection = gItemID;
-        if ((Screen->Entries[gItemID].getREFIT_INPUT_DIALOG()) ||
-            (Screen->Entries[gItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
-        } else if (Screen->Entries[gItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
-          State.PaintAll = TRUE;
-          HidePointer();
-        } else if (!Screen->Entries[gItemID].getREFIT_INFO_DIALOG()) {
+        Screen->ScrollState.CurrentSelection = Screen->mItemID;
+        if ((Screen->Entries[Screen->mItemID].getREFIT_INPUT_DIALOG()) ||
+            (Screen->Entries[Screen->mItemID].getREFIT_MENU_CHECKBIT())) {
+          MenuExit = InputDialog(Screen, StyleFunc);
+        } else if (Screen->Entries[Screen->mItemID].getREFIT_MENU_SWITCH()) {
+          MenuExit = InputDialog(Screen, StyleFunc);
+          Screen->ScrollState.PaintAll = TRUE;
+          Screen->HidePointer();
+        } else if (!Screen->Entries[Screen->mItemID].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
       case ActionDeselect:
-        State.LastSelection = State.CurrentSelection;
-        State.PaintAll = TRUE;
-        HidePointer();
+        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
+        Screen->ScrollState.PaintAll = TRUE;
+        Screen->HidePointer();
         break;
       case ActionFinish:
         MenuExit = MENU_EXIT_ESCAPE;
         break;
       case ActionScrollDown:
-        UpdateScroll(&State, SCROLL_SCROLL_DOWN);
+        Screen->UpdateScroll(SCROLL_SCROLL_DOWN);
         break;
       case ActionScrollUp:
-        UpdateScroll(&State, SCROLL_SCROLL_UP);
+        Screen->UpdateScroll(SCROLL_SCROLL_UP);
         break;
       case ActionMoveScrollbar:
-        UpdateScroll(&State, SCROLL_SCROLLBAR_MOVE);
+        Screen->UpdateScroll(SCROLL_SCROLLBAR_MOVE);
         break;
       default:
         break;
@@ -2604,45 +2618,45 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 
     // read key press (and wait for it if applicable)
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-    if ((Status == EFI_NOT_READY) && (gAction == ActionNone)) {
+    if ((Status == EFI_NOT_READY) && (Screen->mAction == ActionNone)) {
       continue;
     }
-    if (gAction == ActionNone) {
+    if (Screen->mAction == ActionNone) {
       ReadAllKeyStrokes(); //clean to avoid doubles
     }
     if (HaveTimeout) {
       // the user pressed a key, cancel the timeout
-      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, L"");
-      HidePointer(); //ycr.ru
+      StyleFunc(Screen, MENU_FUNCTION_PAINT_TIMEOUT, L"");
+      Screen->HidePointer(); //ycr.ru
       HaveTimeout = FALSE;
     }
 
-    gAction = ActionNone; //do action once
+    Screen->mAction = ActionNone; //do action once
     // react to key press
     switch (key.ScanCode) {
       case SCAN_UP:
       case SCAN_LEFT:
-        UpdateScroll(&State, SCROLL_LINE_UP);
+        Screen->UpdateScroll(SCROLL_LINE_UP);
         break;
       case SCAN_DOWN:
       case SCAN_RIGHT:
-        UpdateScroll(&State, SCROLL_LINE_DOWN);
+        Screen->UpdateScroll(SCROLL_LINE_DOWN);
         break;
       case SCAN_HOME:
-        UpdateScroll(&State, SCROLL_FIRST);
+        Screen->UpdateScroll(SCROLL_FIRST);
         break;
       case SCAN_END:
-        UpdateScroll(&State, SCROLL_LAST);
+        Screen->UpdateScroll(SCROLL_LAST);
         break;
       case SCAN_PAGE_UP:
-        UpdateScroll(&State, SCROLL_PAGE_UP);
+        Screen->UpdateScroll(SCROLL_PAGE_UP);
     //    SetNextScreenMode(1);
-        StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
+        StyleFunc(Screen, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
-        UpdateScroll(&State, SCROLL_PAGE_DOWN);
+        Screen->UpdateScroll(&State, SCROLL_PAGE_DOWN);
      //   SetNextScreenMode(-1);
-        StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
+        StyleFunc(Screen, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:
         MenuExit = MENU_EXIT_ESCAPE;
@@ -2722,27 +2736,27 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     switch (key.UnicodeChar) {
       case CHAR_LINEFEED:
       case CHAR_CARRIAGE_RETURN:
-        if ((Screen->Entries[State.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
-            (Screen->Entries[State.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
-        } else if (Screen->Entries[State.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
+        if ((Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
+            (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
+          MenuExit = InputDialog(Screen, StyleFunc);
+        } else if (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
+          MenuExit = InputDialog(Screen, StyleFunc);
           State.PaintAll = TRUE;
-        } else if (Screen->Entries[State.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
+        } else if (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
-        } else if (!Screen->Entries[State.CurrentSelection].getREFIT_INFO_DIALOG()) {
+        } else if (!Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
       case ' ': //CHAR_SPACE
-        if ((Screen->Entries[State.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
-            (Screen->Entries[State.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
+        if ((Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
+            (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
+          MenuExit = InputDialog(Screen, StyleFunc);
         } else if (Screen->Entries[State.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(Screen, StyleFunc, &State);
-          State.PaintAll = TRUE;
-          HidePointer();
-        } else if (!Screen->Entries[State.CurrentSelection].getREFIT_INFO_DIALOG()) {
+          MenuExit = InputDialog(Screen, StyleFunc);
+          Screen->ScrollState.PaintAll = TRUE;
+          Screen->HidePointer();
+        } else if (!Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
@@ -2750,20 +2764,20 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       default:
         ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
         if (ShortcutEntry >= 0) {
-          State.CurrentSelection = ShortcutEntry;
+          Screen->ScrollState.CurrentSelection = ShortcutEntry;
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
     }
   }
 
-  StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
+  StyleFunc(Screen, MENU_FUNCTION_CLEANUP, NULL);
 
 	if (ChosenEntry) {
-    *ChosenEntry = &Screen->Entries[State.CurrentSelection];
+    *ChosenEntry = &Screen->Entries[Screen->ScrollState.CurrentSelection];
 	}
 
-  *DefaultEntryIndex = State.CurrentSelection;
+  *DefaultEntryIndex = Screen->ScrollState.CurrentSelection;
 
   return MenuExit;
 }
@@ -2771,7 +2785,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 /**
  * Text Mode menu.
  */
-static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
+static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i = 0, j = 0;
   static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
@@ -2797,11 +2811,11 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         MenuHeight -= 2;
 	  }
 
-      InitScroll(State, Screen->Entries.size(), Screen->Entries.size(), MenuHeight, 0);
+      InitScroll(Screen->ScrollState, Screen->Entries.size(), Screen->Entries.size(), MenuHeight, 0);
 
       // determine width of the menu
       TextMenuWidth = 50;  // minimum
-      for (i = 0; i <= State->MaxIndex; i++) {
+      for (i = 0; i <= Screen->ScrollState->MaxIndex; i++) {
         ItemWidth = StrLen(Screen->Entries[i].Title);
 
 		if (TextMenuWidth < ItemWidth) {
@@ -2853,7 +2867,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
       gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
 
-      if (i == State->CurrentSelection) {
+      if (i == Screen->ScrollState->CurrentSelection) {
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
       } else {
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
@@ -3441,7 +3455,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 /**
  * Graphical menu.
  */
-VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
+VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i;
   INTN j = 0;
@@ -3457,7 +3471,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
 // clovy
 	INTN ctrlX, ctrlY, ctrlTextX;
 
-  HidePointer();
+  Screen->HidePointer();
 
   switch (Function) {
 
@@ -3536,7 +3550,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN 
       break;
 
     case MENU_FUNCTION_CLEANUP:
-      HidePointer();
+      Screen->HidePointer();
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
@@ -4065,7 +4079,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       itemPosX = NULL;
       FreePool(itemPosY);
       itemPosY = NULL;
-      HidePointer();
+      Screen->HidePointer();
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
@@ -4094,7 +4108,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
-      HidePointer();
+      Screen->HidePointer();
       if (Screen->Entries[State->LastSelection].Row == 0) {
         DrawMainMenuEntry(&Screen->Entries[State->LastSelection], FALSE,
                           itemPosX[State->LastSelection - State->FirstVisible],
@@ -4127,7 +4141,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
-      HidePointer();
+      Screen->HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), textPosY + MessageHeight * i,
                              OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
@@ -4142,7 +4156,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 /**
  * Main screen text.
  */
-VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
+VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   EFI_STATUS Status = EFI_SUCCESS;
   INTN i = 0;
@@ -4233,7 +4247,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
     case MENU_FUNCTION_CLEANUP:
       FreePool(itemPosX);
       itemPosX = NULL;
-      HidePointer();
+      Screen->HidePointer();
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
@@ -4294,7 +4308,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
-      HidePointer();
+      Screen->HidePointer();
       if (Screen->Entries[State->LastSelection].Row == 0) {
         DrawMainMenuEntry(&Screen->Entries[State->LastSelection], FALSE,
                       itemPosX[State->LastSelection - State->FirstVisible], row0PosY);
@@ -4335,7 +4349,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
-      HidePointer();
+      Screen->HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
                            OldTimeoutTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
