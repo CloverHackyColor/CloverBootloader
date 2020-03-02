@@ -197,7 +197,7 @@ void XImage::CopyScaled(const XImage& Image, float scale)
   }
 }
 
-void XImage::Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest) //lowest image is opaque
+void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest) //lowest image is opaque
 {
   UINT32      TopAlpha;
   UINT32      RevAlpha;
@@ -365,7 +365,7 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   Height = AreaHeight;
 }
 
-void XImage::Draw(int x, int y, float scale)
+void XImage::Draw(INTN x, INTN y, float scale)
 {
   //prepare images
   INTN ScreenWidth = 0;

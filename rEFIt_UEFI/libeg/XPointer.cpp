@@ -1,8 +1,13 @@
 /*
  * a class for mouse support
  */
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "Library/BaseLib.h"
+#ifdef __cplusplus
+}
+#endif
 #include "XPointer.h"
 #include "libegint.h"   //this includes platform.h 
 #include "../refit/screen.h"
@@ -79,7 +84,7 @@ EFI_STATUS XPointer::MouseBirth()
     return Status;
   }
 
-  PointerImage = BuiltinIcon(BUILTIN_ICON_POINTER);
+  PointerImage = new XImage(BuiltinIcon(BUILTIN_ICON_POINTER));
   if (!PointerImage) {
     //this is impossible after BuiltinIcon
     DBG("No pointer image!\n");

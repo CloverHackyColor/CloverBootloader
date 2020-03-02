@@ -5076,8 +5076,8 @@ GetUserSettings(
                   for (INTN j = 0; j < PropCount; j++) {
                     Prop3 = NULL;
                     DevProps = *Child;
-                  //  *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(**Child));
-                    *Child = new (__typeof_am__(**Child))();
+                    *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(**Child));
+                  //  *Child = new (__typeof_am__(**Child))();
                     (*Child)->Next = DevProps;
 
                     if (EFI_ERROR(GetElement(Prop2, j, &Prop3))) {  // Prop3 -> <key>

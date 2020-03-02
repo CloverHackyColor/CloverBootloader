@@ -149,8 +149,8 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
     return NULL;
   }
 
-//  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-  DuplicateEntry = new LOADER_ENTRY();
+  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+//  DuplicateEntry = new LOADER_ENTRY();
   if (DuplicateEntry) {
 //    DuplicateEntry->Tag          = Entry->Tag;
     DuplicateEntry->AtClick      = ActionEnter;

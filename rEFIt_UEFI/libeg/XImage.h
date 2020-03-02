@@ -66,14 +66,14 @@ public:
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect);
   void CopyScaled(const XImage& Image, float scale);
-  void Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest); //instead of compose we can Back.Draw(...) + Top.Draw(...)
+  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we can Back.Draw(...) + Top.Draw(...)
   void FlipRB(bool WantAlpha);
   unsigned FromPNG(const UINT8 * Data, UINTN Lenght);
   unsigned ToPNG(UINT8** Data, UINTN& OutSize);
   unsigned FromSVG(const CHAR8 *SVGData, UINTN SVGDataLength, float scale);
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
-  void Draw(int x, int y, float scale);
+  void Draw(INTN x, INTN y, float scale);
 };
 
 #endif //__XSTRINGW_H__

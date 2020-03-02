@@ -23,6 +23,7 @@ Revision History
 
 //#include "EfiShellLib.h"
 #include "Platform.h"
+#include "screen.h"
 
 #define PRINT_STRING_LEN        1024
 #define PRINT_ITEM_BUFFER_LEN   100
@@ -1061,7 +1062,7 @@ WaitFor2EventWithTsc (
 // TimeoutDefault for a wait in seconds
 // return EFI_TIMEOUT if no inputs
 //the function must be in menu class
-//so UpdatePointer(); => Pointer.Update(&gItemID, &gAction);
+//so UpdatePointer(); => mPointer.Update(&gItemID, &gAction);
 EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
 {
   EFI_STATUS Status = EFI_SUCCESS;
@@ -1075,7 +1076,7 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
     if (Status != EFI_TIMEOUT) {
       break;
     }
-    UpdateAnime(Screen, &(Screen->FilmPlace));
+    UpdateAnime(Screen, &(Screen->FilmPlace)); //should be moved to REFIT_MENU_SCREEN class
     if (gSettings.PlayAsync) {
       CheckSyncSound();
     }
@@ -1083,9 +1084,9 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
      UpdateAnime(Screen->Entries[gItemID].SubScreen, &(Screen->Entries[gItemID].Place));
      } */
     TimeoutRemain--;
-    if (gPointer.SimplePointerProtocol) {
-      UpdatePointer();
-      Status = CheckMouseEvent(Screen); //out: gItemID, gAction
+    if (Screen->PointerLive) {
+      Screen->mPointer->UpdatePointer();
+      Status = Screen->mPointer->CheckMouseEvent(Screen); //out: gItemID, gAction
       if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
         break;
       }

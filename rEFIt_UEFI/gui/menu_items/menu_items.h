@@ -395,13 +395,14 @@ public:
   ACTION      mAction;
   UINTN       mItemID;
   XPointer    *mPointer;
+  bool        PointerLive;
 
   REFIT_MENU_SCREEN()
 						: ID(0), Title(0), TitleImage(0),
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0)
+						  Film(0), PointerLive(false)
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
@@ -425,7 +426,7 @@ public:
 						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
 						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
 						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_)
+						  Film(Film_), PointerLive(false)
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
@@ -450,7 +451,7 @@ public:
 						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
 						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
 						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_)
+						  Film(Film_), PointerLive(false)
 						{
 							Entries.AddReference(entry, false);
 						};
@@ -478,7 +479,7 @@ public:
 						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
 						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
 						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_)
+						  Film(Film_), PointerLive(false)
 						{
 							Entries.AddReference(entry1, false);
 							Entries.AddReference(entry2, false);
