@@ -28,6 +28,14 @@ XImage::XImage(UINTN W, UINTN H)
   PixelData.CheckSize(GetWidth()*GetHeight());
 }
 
+XImage::XImage(EG_IMAGE* egImage)
+{
+  Width = egImage->Width;
+  Height = egImage->Height;
+  PixelData.CheckSize(GetWidth()*GetHeight());
+  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size());
+}
+
 UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
 {
   return (UINT8)((*(p + a01) * (scale - dx) * 3.f + *(p + a10) * (scale - dy) * 3.f + *(p + a21) * dx * 3.f +
@@ -36,38 +44,13 @@ UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy
 
 XImage::XImage(const XImage& Image, float scale)
 {
-  int SrcWidth = Image.GetWidth();
-  int SrcHeight = Image.GetHeight();
+  UINTN SrcWidth = Image.GetWidth();
+  UINTN SrcHeight = Image.GetHeight();
   Width = (UINTN)(SrcWidth * scale);
   Height = (UINTN)(SrcHeight * scale);
   PixelData.CheckSize(GetWidth()*GetHeight());
   if (scale < 1.e-4) return;
-
-  int Pixel = sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-  int Row = SrcWidth * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-
-  const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
-
-  for (UINTN y = 0; y < Height; y++)
-  {
-    int ly = (int)(y / scale);
-    int dy = (int)(y - ly * scale);
-    for (UINTN x = 0; x < Width; x++)
-    {
-      int lx = (int)(x / scale);
-      int dx = (int)(x - lx * scale);
-      int a01 = (x == 0) ? 0 : -Pixel;
-      int a10 = (y == 0) ? 0 : -Row;
-      int a21 = (x == Width - 1) ? 0 : Pixel;
-      int a12 = (y == Height - 1) ? 0 : Row;
-      EFI_GRAPHICS_OUTPUT_BLT_PIXEL& dst = *GetPixelPtr(x, y);
-      dst.Blue = Smooth(&Source[lx + ly * SrcWidth].Blue, a01, a10, a21, a12, dx, dy, scale);
-      dst.Green = Smooth(&Source[lx + ly * SrcWidth].Green, a01, a10, a21, a12, dx, dy, scale);
-      dst.Red = Smooth(&Source[lx + ly * SrcWidth].Red, a01, a10, a21, a12, dx, dy, scale);
-      dst.Reserved = Source[lx + ly * SrcWidth].Reserved;
-    }
-
-  }
+  CopyScaled(Image, scale);
 }
 
 #if 0
@@ -184,6 +167,36 @@ void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& 
   }
 }
 
+void XImage::CopyScaled(const XImage& Image, float scale)
+{
+  UINTN SrcWidth = Image.GetWidth();
+
+  int Pixel = sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+  int Row = (int)SrcWidth * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+
+  const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
+
+  for (UINTN y = 0; y < Height; y++)
+  {
+    int ly = (int)(y / scale);
+    int dy = (int)(y - ly * scale);
+    for (UINTN x = 0; x < Width; x++)
+    {
+      int lx = (int)(x / scale);
+      int dx = (int)(x - lx * scale);
+      int a01 = (x == 0) ? 0 : -Pixel;
+      int a10 = (y == 0) ? 0 : -Row;
+      int a21 = (x == Width - 1) ? 0 : Pixel;
+      int a12 = (y == Height - 1) ? 0 : Row;
+      EFI_GRAPHICS_OUTPUT_BLT_PIXEL& dst = *GetPixelPtr(x, y);
+      dst.Blue = Smooth(&Source[lx + ly * SrcWidth].Blue, a01, a10, a21, a12, dx, dy, scale);
+      dst.Green = Smooth(&Source[lx + ly * SrcWidth].Green, a01, a10, a21, a12, dx, dy, scale);
+      dst.Red = Smooth(&Source[lx + ly * SrcWidth].Red, a01, a10, a21, a12, dx, dy, scale);
+      dst.Reserved = Source[lx + ly * SrcWidth].Reserved;
+    }
+  }
+}
+
 void XImage::Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest) //lowest image is opaque
 {
   UINT32      TopAlpha;
@@ -234,9 +247,9 @@ void XImage::FlipRB(bool WantAlpha)
 /*
  * The function converted plain array into XImage object
  */
-unsigned XImage::FromPNG(const uint8_t * Data, UINTN Length)
+unsigned XImage::FromPNG(const UINT8 * Data, UINTN Length)
 {
-  uint8_t * PixelPtr = (uint8_t *)&PixelData[0];
+  UINT8 * PixelPtr = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_decode(&PixelPtr, &Width, &Height, Data, Length);
 
   FlipRB(true);
@@ -249,11 +262,11 @@ unsigned XImage::FromPNG(const uint8_t * Data, UINTN Length)
  * The caller is responsible to free the array.
  */
 
-unsigned XImage::ToPNG(uint8_t** Data, UINTN& OutSize)
+unsigned XImage::ToPNG(UINT8** Data, UINTN& OutSize)
 {
   size_t           FileDataLength = 0;
   FlipRB(false);
-  uint8_t * PixelPtr = (uint8_t *)&PixelData[0];
+  UINT8 * PixelPtr = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_encode(Data, &FileDataLength, PixelPtr, Width, Height);
   OutSize = FileDataLength;
   return Error;
@@ -302,12 +315,12 @@ unsigned XImage::FromSVG(const CHAR8 *SVGData, UINTN FileDataLength, float scale
  *
  * be careful about alpha. This procedure can produce alpha = 0 which means full transparent
  */
-void XImage::GetArea(const EgRect& Rect)
+void XImage::GetArea(const EG_RECT& Rect)
 {
-  GetArea(Rect.Xpos, Rect.Ypos, Rect.Width, Rect.Height);
+  GetArea(Rect.XPos, Rect.YPos, Rect.Width, Rect.Height);
 }
 
-void XImage::GetArea(UINTN x, UINTN y, UINTN W, UINTN H)
+void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 {
   EFI_STATUS Status;
   EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;

@@ -47,6 +47,7 @@ protected:
 public:
   XImage();
   XImage(UINTN W, UINTN H);
+  XImage(EG_IMAGE* egImage);
   XImage(const XImage& Image, float scale);
   ~XImage();
 
@@ -64,13 +65,14 @@ public:
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect);
+  void CopyScaled(const XImage& Image, float scale);
   void Compose(int PosX, int PosY, const XImage& TopImage, bool Lowest); //instead of compose we can Back.Draw(...) + Top.Draw(...)
   void FlipRB(bool WantAlpha);
-  unsigned FromPNG(const uint8_t * Data, UINTN Lenght);
-  unsigned ToPNG(uint8_t** Data, UINTN& OutSize);
+  unsigned FromPNG(const UINT8 * Data, UINTN Lenght);
+  unsigned ToPNG(UINT8** Data, UINTN& OutSize);
   unsigned FromSVG(const CHAR8 *SVGData, UINTN SVGDataLength, float scale);
-  void GetArea(const EgRect& Rect);
-  void GetArea(UINTN x, UINTN y, UINTN W, UINTN H);
+  void GetArea(const EG_RECT& Rect);
+  void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(int x, int y, float scale);
 };
 

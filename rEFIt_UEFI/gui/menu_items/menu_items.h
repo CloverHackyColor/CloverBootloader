@@ -37,10 +37,12 @@
 
 
 #include "libeg.h"
+#include "../../refit/lib.h"
 #ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XStringWArray.h"
 #include "../cpp_foundation/XStringW.h"
+#include "../../libeg/XPointer.h"
 #endif
 //
 //#define REFIT_DEBUG (2)
@@ -85,6 +87,7 @@ class LEGACY_ENTRY;
 class REFIT_MENU_ENTRY_OTHER;
 class REFIT_SIMPLE_MENU_ENTRY_TAG;
 class REFIT_MENU_ITEM_IEM_ABSTRACT;
+class XPointer;
 
 class REFIT_ABSTRACT_MENU_ENTRY
 {
@@ -389,6 +392,9 @@ public:
   UINTN             FrameTime; //ms
   EG_RECT           FilmPlace;
   EG_IMAGE        **Film;
+  ACTION      mAction;
+  UINTN       mItemID;
+  XPointer    *mPointer;
 
   REFIT_MENU_SCREEN()
 						: ID(0), Title(0), TitleImage(0),

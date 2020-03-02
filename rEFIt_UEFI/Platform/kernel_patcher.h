@@ -111,7 +111,7 @@ VOID Patcher_SSE3_6(VOID* kernelData);
 VOID Patcher_SSE3_7(VOID* kernelData);
 
 #include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
-
+class LOADER_ENTRY;
 VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 
 //VOID register_kernel_symbol(CONST CHAR8* name);

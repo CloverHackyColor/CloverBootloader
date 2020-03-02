@@ -25,6 +25,7 @@ Revision History
 #define _SHELL_I_O_H
 
 #include <Library/GenericBdsLib.h>
+#include "../gui/menu_items/menu_items.h" // for REFIT_MENU_SCREEN
 
 #define EFI_TPL_APPLICATION 4
 #define EFI_TPL_CALLBACK    8
