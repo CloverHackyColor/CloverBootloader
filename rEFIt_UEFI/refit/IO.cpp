@@ -1063,7 +1063,7 @@ WaitFor2EventWithTsc (
 // return EFI_TIMEOUT if no inputs
 //the function must be in menu class
 //so UpdatePointer(); => mPointer.Update(&gItemID, &Screen->mAction);
-EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
+EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN& Screen, UINTN TimeoutDefault)
 {
   EFI_STATUS Status = EFI_SUCCESS;
   UINTN TimeoutRemain = TimeoutDefault * 100;
@@ -1073,14 +1073,14 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
     if (Status != EFI_TIMEOUT) {
       break;
     }
-    UpdateAnime(Screen, &(Screen->FilmPlace)); //should be moved to REFIT_MENU_SCREEN class
+    UpdateAnime(Screen, &(Screen.FilmPlace)); //should be moved to REFIT_MENU_SCREEN class
     if (gSettings.PlayAsync) {
       CheckSyncSound();
     }
     TimeoutRemain--;
-    if (Screen->mPointer) {
-      Screen->mPointer->UpdatePointer();
-      Status = Screen->mPointer->CheckMouseEvent(Screen); //out: gItemID, gAction
+    if (!Screen.mPointer.isEmpty()) {
+      Screen.mPointer->UpdatePointer();
+      Status = Screen.mPointer->CheckMouseEvent(Screen); //out: gItemID, gAction
       if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
         break;
       }
