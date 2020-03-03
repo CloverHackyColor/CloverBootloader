@@ -506,7 +506,6 @@ public:
   VOID AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   VOID FreeMenu();
   INTN FindMenuShortcutEntry(IN CHAR16 Shortcut);
-  UINTN InputDialog(IN MENU_STYLE_FUNC  StyleFunc);
   UINTN RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
@@ -516,6 +515,7 @@ public:
   VOID InitAnime();
   BOOLEAN GetAnime();
   VOID UpdateAnime();
+  UINTN InputDialog();
 
   //Style functions
   virtual VOID MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);

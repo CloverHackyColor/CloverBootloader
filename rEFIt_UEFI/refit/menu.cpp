@@ -1374,7 +1374,7 @@ VOID AboutRefit(VOID)
 #ifdef FIRMWARE_BUILDDATE
     AboutMenu.AddMenuInfo(PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
-    AboutMenu.AboutMenu.AddMenuInfo(L" Build: unknown");
+    AboutMenu.AddMenuInfo(L" Build: unknown");
 #endif
     AboutMenu.AddMenuInfo(L"");
     AboutMenu.AddMenuInfo(L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
@@ -2189,6 +2189,7 @@ VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_MENU_ENTRY *Entry, bool freeIt)
 //  AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->Entries.size()), Entry);
 }
 
+// This is supposed to be a destructor ?
 VOID REFIT_MENU_SCREEN::FreeMenu()
 {
 //  INTN i;
@@ -2570,9 +2571,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.LastSelection = ScrollState.CurrentSelection;
         ScrollState.CurrentSelection = mItemID;
         if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2593,9 +2594,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.CurrentSelection = mItemID;
         if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
             (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2746,9 +2747,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case CHAR_CARRIAGE_RETURN:
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
@@ -2759,9 +2760,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case ' ': //CHAR_SPACE
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
@@ -4423,6 +4424,7 @@ VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs
   InputBootArgs->AtClick        = Cursor?ActionSelect:ActionEnter;
   InputBootArgs->AtRightClick   = Cursor?ActionNone:ActionDetails;
   InputBootArgs->AtDoubleClick  = Cursor?ActionEnter:ActionNone;
+
   AddMenuEntry(InputBootArgs, true);
 }
 //
@@ -4589,6 +4591,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
      nya(gCPUStructure.MinRatio), nya(gCPUStructure.MaxRatio),
      nya(gCPUStructure.Turbo4), nya(gCPUStructure.Turbo3), nya(gCPUStructure.Turbo2), nya(gCPUStructure.Turbo1)));
 
+
   SubScreen->AddMenuItemInput(76, "Cores enabled:", TRUE);
   SubScreen->AddMenuItemInput(6,  "Halt Enabler", FALSE);
   SubScreen->AddMenuItemInput(7,  "PLimitDict:", TRUE);
@@ -4721,8 +4724,8 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			}
 		}
 
-		SubScreen->AddMenuInfoLine(
-		        PoolPrint(
+
+		SubScreen->AddMenuInfoLine(PoolPrint(
 		                L"Block injected kexts for target version of macOS: %a",
 		                ShortOSVersion));
 
@@ -4798,8 +4801,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 		}
 	}
 	else {
-		SubScreen->AddMenuInfoLine(
-		        PoolPrint(
+		SubScreen->AddMenuInfoLine(PoolPrint(
 		                L"Block injected kexts for target version of macOS: %a",
 		                ChosenOS));
 	}
@@ -4881,6 +4883,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 
   SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
   SubScreen->AddMenuInfoLine(PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
+
 
   SubScreen->AddMenuItemInput(64,  "Debug", FALSE);
   SubScreen->AddMenuInfo(L"----------------------");
@@ -5072,7 +5075,6 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   SubScreen->AddMenuCheck("Fix Regions",  FIX_REGIONS, 67);
   SubScreen->AddMenuCheck("Fix Headers",  FIX_HEADERS, 67);
   SubScreen->AddMenuCheck("Fix Mutex",    FIX_MUTEX, 67);
-
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);

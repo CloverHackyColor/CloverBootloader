@@ -1997,7 +1997,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           SubMenu->AddMenuEntry(Entry, true);
         else
           MainMenu.AddMenuEntry(Entry, true);
-//        AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, Entry, true);
       }
       // cleanup custom
       if (FindCustomPath) {
