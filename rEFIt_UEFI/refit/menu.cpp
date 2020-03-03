@@ -117,7 +117,7 @@ BOOLEAN SavePreBootLog = FALSE;
 #define MENU_FUNCTION_PAINT_SELECTION (3)
 #define MENU_FUNCTION_PAINT_TIMEOUT   (4)
 
-typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText);
+
 
 static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
@@ -252,7 +252,7 @@ CONST CHAR16* ArgOptional[NUM_OPT] = {
   L"nvda_drv=1"       //19
 };
 
-UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
+//UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 
 
 VOID FillInputs(BOOLEAN New)
@@ -1340,7 +1340,7 @@ VOID ApplyInputs(VOID)
   }
 }
 
-VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CONST CHAR16 *Line)
+VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST CHAR16 *Line)
 {
   REFIT_INFO_DIALOG *InputBootArgs;
 
@@ -1350,7 +1350,7 @@ VOID AddMenuInfo(REFIT_MENU_SCREEN *SubScreen, CONST CHAR16 *Line)
 //  InputBootArgs->Tag = TAG_INFO;
 //  InputBootArgs->Item = NULL;
   InputBootArgs->AtClick = ActionLight;
-  AddMenuEntry(SubScreen, InputBootArgs, true);
+  AddMenuEntry(InputBootArgs, true);
 }
 
 VOID AboutRefit(VOID)
@@ -1955,31 +1955,31 @@ VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
   //MaxCount - total number (Row0 + Row1)
   //VisibleSpace - a number to fit
 
-  ScrollState->LastSelection = ScrollState->CurrentSelection = Selected;
+  ScrollState.LastSelection = ScrollState.CurrentSelection = Selected;
   //MaxIndex, MaxScroll, MaxVisible are indexes, 0..N-1
-  ScrollState->MaxIndex = (INTN)MaxCount - 1;
-  ScrollState->MaxScroll = ItemCount - 1;
+  ScrollState.MaxIndex = (INTN)MaxCount - 1;
+  ScrollState.MaxScroll = ItemCount - 1;
 
   if (VisibleSpace == 0) {
-    ScrollState->MaxVisible = ScrollState->MaxScroll;
+    ScrollState.MaxVisible = ScrollState.MaxScroll;
   } else {
-    ScrollState->MaxVisible = (INTN)VisibleSpace - 1;
+    ScrollState.MaxVisible = (INTN)VisibleSpace - 1;
   }
 
-  if (ScrollState->MaxVisible >= ItemCount) {
-      ScrollState->MaxVisible = ItemCount - 1;
+  if (ScrollState.MaxVisible >= ItemCount) {
+      ScrollState.MaxVisible = ItemCount - 1;
   }
 
-  ScrollState->MaxFirstVisible = ScrollState->MaxScroll - ScrollState->MaxVisible;
-  CONSTRAIN_MIN(ScrollState->MaxFirstVisible, 0);
-  ScrollState->FirstVisible = MIN(Selected, ScrollState->MaxFirstVisible);
+  ScrollState.MaxFirstVisible = ScrollState.MaxScroll - ScrollState.MaxVisible;
+  CONSTRAIN_MIN(ScrollState.MaxFirstVisible, 0);
+  ScrollState.FirstVisible = MIN(Selected, ScrollState.MaxFirstVisible);
 
 
-  ScrollState->IsScrolling = (ScrollState->MaxFirstVisible > 0);
-  ScrollState->PaintAll = TRUE;
-  ScrollState->PaintSelection = FALSE;
+  ScrollState.IsScrolling = (ScrollState.MaxFirstVisible > 0);
+  ScrollState.PaintAll = TRUE;
+  ScrollState.PaintSelection = FALSE;
 
-  ScrollState->LastVisible = ScrollState->FirstVisible + ScrollState->MaxVisible;
+  ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
 }
 
 VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
@@ -1987,15 +1987,15 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
   INTN Lines;
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
   INTN i;
-  ScrollState->LastSelection = ScrollState->CurrentSelection;
+  ScrollState.LastSelection = ScrollState.CurrentSelection;
 
   switch (Movement) {
     case SCROLL_SCROLLBAR_MOVE:
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
       ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos;
       ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos;
-      Lines = ScrollbarYMovement * ScrollState->MaxIndex / ScrollbarBackground.Height;
-      ScrollbarYMovement = ScrollbarYMovement - Lines * (ScrollState->MaxVisible * TextHeight - 16 - 1) / ScrollState->MaxIndex;
+      Lines = ScrollbarYMovement * ScrollState.MaxIndex / ScrollbarBackground.Height;
+      ScrollbarYMovement = ScrollbarYMovement - Lines * (ScrollState.MaxVisible * TextHeight - 16 - 1) / ScrollState.MaxIndex;
       if (Lines < 0) {
         Lines = -Lines;
         ScrollMovement = SCROLL_SCROLL_UP;
@@ -2005,121 +2005,121 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
       break;
 
     case SCROLL_LINE_UP: //of left = decrement
-      if (ScrollState->CurrentSelection > 0) {
-        ScrollState->CurrentSelection --;
-        if (ScrollState->CurrentSelection < ScrollState->FirstVisible) {
-          ScrollState->PaintAll = TRUE;
-          ScrollState->FirstVisible = ScrollState->CurrentSelection;
+      if (ScrollState.CurrentSelection > 0) {
+        ScrollState.CurrentSelection --;
+        if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
+          ScrollState.PaintAll = TRUE;
+          ScrollState.FirstVisible = ScrollState.CurrentSelection;
         }
-        if (ScrollState->CurrentSelection == ScrollState->MaxScroll) {
-          ScrollState->PaintAll = TRUE;
+        if (ScrollState.CurrentSelection == ScrollState.MaxScroll) {
+          ScrollState.PaintAll = TRUE;
         }
-        if ((ScrollState->CurrentSelection < ScrollState->MaxScroll) &&
-             (ScrollState->CurrentSelection > ScrollState->LastVisible)) {
-          ScrollState->PaintAll = TRUE;
-          ScrollState->LastVisible = ScrollState->CurrentSelection;
-          ScrollState->FirstVisible = ScrollState->LastVisible - ScrollState->MaxVisible;
+        if ((ScrollState.CurrentSelection < ScrollState.MaxScroll) &&
+             (ScrollState.CurrentSelection > ScrollState.LastVisible)) {
+          ScrollState.PaintAll = TRUE;
+          ScrollState.LastVisible = ScrollState.CurrentSelection;
+          ScrollState.FirstVisible = ScrollState.LastVisible - ScrollState.MaxVisible;
         }
       }
       break;
 
     case SCROLL_LINE_DOWN: //or right -- increment
-      if (ScrollState->CurrentSelection < ScrollState->MaxIndex) {
-        ScrollState->CurrentSelection++;
-        if ((ScrollState->CurrentSelection > ScrollState->LastVisible) &&
-            (ScrollState->CurrentSelection <= ScrollState->MaxScroll)){
-          ScrollState->PaintAll = TRUE;
-          ScrollState->FirstVisible++;
-          CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
+      if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
+        ScrollState.CurrentSelection++;
+        if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
+            (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
+          ScrollState.PaintAll = TRUE;
+          ScrollState.FirstVisible++;
+          CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         }
-        if (ScrollState->CurrentSelection == ScrollState->MaxScroll + 1) {
-          ScrollState->PaintAll = TRUE;
+        if (ScrollState.CurrentSelection == ScrollState.MaxScroll + 1) {
+          ScrollState.PaintAll = TRUE;
         }
       }
       break;
 
     case SCROLL_SCROLL_DOWN:
-      if (ScrollState->FirstVisible < ScrollState->MaxFirstVisible) {
-        if (ScrollState->CurrentSelection == ScrollState->FirstVisible)
-          ScrollState->CurrentSelection++;
-        ScrollState->FirstVisible++;
-        ScrollState->LastVisible++;
-        ScrollState->PaintAll = TRUE;
+      if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible) {
+        if (ScrollState.CurrentSelection == ScrollState.FirstVisible)
+          ScrollState.CurrentSelection++;
+        ScrollState.FirstVisible++;
+        ScrollState.LastVisible++;
+        ScrollState.PaintAll = TRUE;
       }
       break;
 
     case SCROLL_SCROLL_UP:
-      if (ScrollState->FirstVisible > 0) {
-        if (ScrollState->CurrentSelection == ScrollState->LastVisible)
-          ScrollState->CurrentSelection--;
-        ScrollState->FirstVisible--;
-        ScrollState->LastVisible--;
-        ScrollState->PaintAll = TRUE;
+      if (ScrollState.FirstVisible > 0) {
+        if (ScrollState.CurrentSelection == ScrollState.LastVisible)
+          ScrollState.CurrentSelection--;
+        ScrollState.FirstVisible--;
+        ScrollState.LastVisible--;
+        ScrollState.PaintAll = TRUE;
       }
       break;
 
     case SCROLL_PAGE_UP:
-      if (ScrollState->CurrentSelection > 0) {
-        if (ScrollState->CurrentSelection == ScrollState->MaxIndex) {   // currently at last entry, special treatment
-          if (ScrollState->IsScrolling)
-            ScrollState->CurrentSelection -= ScrollState->MaxVisible - 1;  // move to second line without scrolling
+      if (ScrollState.CurrentSelection > 0) {
+        if (ScrollState.CurrentSelection == ScrollState.MaxIndex) {   // currently at last entry, special treatment
+          if (ScrollState.IsScrolling)
+            ScrollState.CurrentSelection -= ScrollState.MaxVisible - 1;  // move to second line without scrolling
           else
-            ScrollState->CurrentSelection = 0;                // move to first entry
+            ScrollState.CurrentSelection = 0;                // move to first entry
         } else {
-          if (ScrollState->FirstVisible > 0)
-            ScrollState->PaintAll = TRUE;
-          ScrollState->CurrentSelection -= ScrollState->MaxVisible;          // move one page and scroll synchronously
-          ScrollState->FirstVisible -= ScrollState->MaxVisible;
+          if (ScrollState.FirstVisible > 0)
+            ScrollState.PaintAll = TRUE;
+          ScrollState.CurrentSelection -= ScrollState.MaxVisible;          // move one page and scroll synchronously
+          ScrollState.FirstVisible -= ScrollState.MaxVisible;
         }
-        CONSTRAIN_MIN(ScrollState->CurrentSelection, 0);
-        CONSTRAIN_MIN(ScrollState->FirstVisible, 0);
-        if (ScrollState->CurrentSelection < ScrollState->FirstVisible) {
-          ScrollState->PaintAll = TRUE;
-          ScrollState->FirstVisible = ScrollState->CurrentSelection;
+        CONSTRAIN_MIN(ScrollState.CurrentSelection, 0);
+        CONSTRAIN_MIN(ScrollState.FirstVisible, 0);
+        if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
+          ScrollState.PaintAll = TRUE;
+          ScrollState.FirstVisible = ScrollState.CurrentSelection;
         }
       }
       break;
 
     case SCROLL_PAGE_DOWN:
-      if (ScrollState->CurrentSelection < ScrollState->MaxIndex) {
-        if (ScrollState->CurrentSelection == 0) {   // currently at first entry, special treatment
-          if (ScrollState->IsScrolling)
-            ScrollState->CurrentSelection += ScrollState->MaxVisible - 1;  // move to second-to-last line without scrolling
+      if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
+        if (ScrollState.CurrentSelection == 0) {   // currently at first entry, special treatment
+          if (ScrollState.IsScrolling)
+            ScrollState.CurrentSelection += ScrollState.MaxVisible - 1;  // move to second-to-last line without scrolling
           else
-            ScrollState->CurrentSelection = ScrollState->MaxIndex;         // move to last entry
+            ScrollState.CurrentSelection = ScrollState.MaxIndex;         // move to last entry
         } else {
-          if (ScrollState->FirstVisible < ScrollState->MaxFirstVisible)
-            ScrollState->PaintAll = TRUE;
-          ScrollState->CurrentSelection += ScrollState->MaxVisible;          // move one page and scroll synchronously
-          ScrollState->FirstVisible += ScrollState->MaxVisible;
+          if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible)
+            ScrollState.PaintAll = TRUE;
+          ScrollState.CurrentSelection += ScrollState.MaxVisible;          // move one page and scroll synchronously
+          ScrollState.FirstVisible += ScrollState.MaxVisible;
         }
-        CONSTRAIN_MAX(ScrollState->CurrentSelection, ScrollState->MaxIndex);
-        CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
-        if ((ScrollState->CurrentSelection > ScrollState->LastVisible) &&
-            (ScrollState->CurrentSelection <= ScrollState->MaxScroll)){
-          ScrollState->PaintAll = TRUE;
-          ScrollState->FirstVisible+= ScrollState->MaxVisible;
-          CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
+        CONSTRAIN_MAX(ScrollState.CurrentSelection, ScrollState.MaxIndex);
+        CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
+        if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
+            (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
+          ScrollState.PaintAll = TRUE;
+          ScrollState.FirstVisible+= ScrollState.MaxVisible;
+          CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         }
       }
       break;
 
     case SCROLL_FIRST:
-      if (ScrollState->CurrentSelection > 0) {
-        ScrollState->CurrentSelection = 0;
-        if (ScrollState->FirstVisible > 0) {
-          ScrollState->PaintAll = TRUE;
-          ScrollState->FirstVisible = 0;
+      if (ScrollState.CurrentSelection > 0) {
+        ScrollState.CurrentSelection = 0;
+        if (ScrollState.FirstVisible > 0) {
+          ScrollState.PaintAll = TRUE;
+          ScrollState.FirstVisible = 0;
         }
       }
       break;
 
     case SCROLL_LAST:
-      if (ScrollState->CurrentSelection < ScrollState->MaxIndex) {
-        ScrollState->CurrentSelection = ScrollState->MaxIndex;
-        if (ScrollState->FirstVisible < ScrollState->MaxFirstVisible) {
-          ScrollState->PaintAll = TRUE;
-          ScrollState->FirstVisible = ScrollState->MaxFirstVisible;
+      if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
+        ScrollState.CurrentSelection = ScrollState.MaxIndex;
+        if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible) {
+          ScrollState.PaintAll = TRUE;
+          ScrollState.FirstVisible = ScrollState.MaxFirstVisible;
         }
       }
       break;
@@ -2127,26 +2127,26 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
     case SCROLL_NONE:
       // The caller has already updated CurrentSelection, but we may
       // have to scroll to make it visible.
-      if (ScrollState->CurrentSelection < ScrollState->FirstVisible) {
-        ScrollState->PaintAll = TRUE;
-        ScrollState->FirstVisible = ScrollState->CurrentSelection; // - (ScrollState->MaxVisible >> 1);
-        CONSTRAIN_MIN(ScrollState->FirstVisible, 0);
-      } else if ((ScrollState->CurrentSelection > ScrollState->LastVisible) &&
-                 (ScrollState->CurrentSelection <= ScrollState->MaxScroll)) {
-        ScrollState->PaintAll = TRUE;
-        ScrollState->FirstVisible = ScrollState->CurrentSelection - ScrollState->MaxVisible;
-        CONSTRAIN_MAX(ScrollState->FirstVisible, ScrollState->MaxFirstVisible);
+      if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
+        ScrollState.PaintAll = TRUE;
+        ScrollState.FirstVisible = ScrollState.CurrentSelection; // - (ScrollState.MaxVisible >> 1);
+        CONSTRAIN_MIN(ScrollState.FirstVisible, 0);
+      } else if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
+                 (ScrollState.CurrentSelection <= ScrollState.MaxScroll)) {
+        ScrollState.PaintAll = TRUE;
+        ScrollState.FirstVisible = ScrollState.CurrentSelection - ScrollState.MaxVisible;
+        CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
       }
       break;
 
   }
 
-  if (!ScrollState->PaintAll && ScrollState->CurrentSelection != ScrollState->LastSelection)
-    ScrollState->PaintSelection = TRUE;
-  ScrollState->LastVisible = ScrollState->FirstVisible + ScrollState->MaxVisible;
+  if (!ScrollState.PaintAll && ScrollState.CurrentSelection != ScrollState.LastSelection)
+    ScrollState.PaintSelection = TRUE;
+  ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
 
   //ycr.ru
-  if ((ScrollState->PaintAll) && (Movement != SCROLL_NONE))
+  if ((ScrollState.PaintAll) && (Movement != SCROLL_NONE))
     HidePointer();
 }
 
@@ -2155,7 +2155,7 @@ VOID REFIT_MENU_SCREEN::HidePointer()
   mPointer->Hide();
 }
 
-EFI_STATUS REFIT_MENU_SCREEN::MouseBirth();
+EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
 {
   return mPointer->MouseBirth();
 }
@@ -2168,35 +2168,35 @@ VOID REFIT_MENU_SCREEN::KillMouse()
 // menu helper functions
 //
 
-VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine)
+VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN CONST CHAR16 *InfoLine)
 {
-  Screen->InfoLines.Add(InfoLine);
+  InfoLines.Add(InfoLine);
 //  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLines.size()), (CHAR16*)InfoLine); // TODO jief : cast to fix
 }
 
-VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry, bool freeIt)
+VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_MENU_ENTRY *Entry, bool freeIt)
 {
-	if ( !Screen ) return;
 	if ( !Entry ) return;
-	Screen->Entries.AddReference(Entry, freeIt);
+	Entries.AddReference(Entry, freeIt);
 //  AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->Entries.size()), Entry);
 }
 
-VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
+VOID REFIT_MENU_SCREEN::FreeMenu()
 {
 //  INTN i;
   REFIT_ABSTRACT_MENU_ENTRY *Tentry = NULL;
 //TODO - here we must FreePool for a list of Entries, Screens, InputBootArgs
-  if ((Screen != NULL) && (Screen->Entries.size() > 0)) {
-    for (UINTN i = 0; i < Screen->Entries.size(); i++) {
-      Tentry = &Screen->Entries[i];
+  if (Entries.size() > 0) {
+    for (UINTN i = 0; i < Entries.size(); i++) {
+      Tentry = &Entries[i];
       if (Tentry->SubScreen) {
         if (Tentry->SubScreen->Title) {
           FreePool(Tentry->SubScreen->Title);
           Tentry->SubScreen->Title = NULL;
         }
         // don't free image because of reusing them
-        FreeMenu(Tentry->SubScreen);
+     //   FreeMenu(Tentry->SubScreen);
+        Tentry->SubScreen->FreeMenu();
         Tentry->SubScreen = NULL;
       }
       if (Tentry->getREFIT_MENU_ITEM_RETURN()) { //can't free constants
@@ -2207,16 +2207,16 @@ VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
       }
       FreePool(Tentry);
     }
-    Screen->Entries.Empty();
+    Entries.Empty();
 //    FreePool(Screen->Entries);
 //    Screen->Entries = NULL;
   }
-  if ((Screen != NULL) && (Screen->InfoLines.size() > 0)) {
-    for (UINTN i = 0; i < Screen->InfoLines.size(); i++) {
+  if (InfoLines.size() > 0) {
+    for (UINTN i = 0; i < InfoLines.size(); i++) {
       // TODO: call a user-provided routine for each element here
-      FreePool(Screen->InfoLines[i]);
+      FreePool(InfoLines[i]);
     }
-    Screen->InfoLines.Empty();
+    InfoLines.Empty();
 //    Screen->InfoLines.size() = 0;
 //    FreePool(Screen->InfoLines);
 //    Screen->InfoLines = NULL;
@@ -2224,14 +2224,14 @@ VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
 
 }
 
-static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortcut)
+INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN CHAR16 Shortcut)
 {
   if (Shortcut >= 'a' && Shortcut <= 'z')
     Shortcut -= ('a' - 'A');
   if (Shortcut) {
-    for (UINTN i = 0; i < Screen->Entries.size(); i++) {
-      if (Screen->Entries[i].ShortcutDigit == Shortcut ||
-          Screen->Entries[i].ShortcutLetter == Shortcut) {
+    for (UINTN i = 0; i < Entries.size(); i++) {
+      if (Entries[i].ShortcutDigit == Shortcut ||
+          Entries[i].ShortcutLetter == Shortcut) {
         return i;
       }
     }
@@ -2243,10 +2243,10 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 // generic input menu function
 // usr-sse2
 //
-static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  StyleFunc)
+UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 {
-	if ( !Screen->Entries[State->CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
-		DebugLog(2, "BUG : InputDialog called with !Screen->Entries[State->CurrentSelection].REFIT_MENU_ITEM_IEM_ABSTRACT()\n");
+	if ( !Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
+		DebugLog(2, "BUG : InputDialog called with !Entries[ScrollState.CurrentSelection].REFIT_MENU_ITEM_IEM_ABSTRACT()\n");
 		return 0; // is it the best thing to do ? CpuDeadLog ?
 	}
 
@@ -2256,8 +2256,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   UINTN         i = 0;
   UINTN         MenuExit = 0;
   //UINTN         LogSize;
-  UINTN         Pos = (Screen->Entries[State->CurrentSelection]).Row;
-  REFIT_MENU_ITEM_IEM_ABSTRACT& selectedEntry = *Screen->Entries[State->CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT();
+  UINTN         Pos = (Entries[ScrollState.CurrentSelection]).Row;
+  REFIT_MENU_ITEM_IEM_ABSTRACT& selectedEntry = *Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT();
   INPUT_ITEM    *Item = selectedEntry.Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
   UINTN         BackupPos, BackupShift;
@@ -2289,7 +2289,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       (Item->ItemType != RadioSwitch) &&
       (Item->ItemType != CheckBit)) {
     // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
-    Item->SValue = (__typeof__(Item->SValue))EfiReallocatePool(Item->SValue, StrSize(Item->SValue), SVALUE_MAX_SIZE);
+    Item->SValue = (__typeof__(Item->SValue))ReallocatePool(StrSize(Item->SValue), SVALUE_MAX_SIZE, Item->SValue);
   }
 
   Buffer = Item->SValue;
@@ -2358,12 +2358,13 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         case SCAN_F2:
           SavePreBootLog = TRUE;
           break;
-        case SCAN_F6:
+          //not used here
+/*        case SCAN_F6:
           Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
           if (EFI_ERROR(Status)) {
             Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
           }
-          break;
+          break; */
         case SCAN_F10:
           egScreenShot();
           break;
@@ -2419,8 +2420,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       }
     }
     // Redraw the field
-    (Screen->Entries[Screen->ScrollState->CurrentSelection]).Row = Pos;
-    StyleFunc(Screen, MENU_FUNCTION_PAINT_SELECTION, NULL);
+    (Entries[ScrollState.CurrentSelection]).Row = Pos;
+    StyleFunc(MENU_FUNCTION_PAINT_SELECTION, NULL);
   } while (!MenuExit);
 
   switch (MenuExit) {
@@ -2434,9 +2435,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
         if (Item->ItemType != BoolValue) {
           Item->LineShift = BackupShift;
-          (Screen->Entries[Screen->ScrollState->CurrentSelection]).Row = BackupPos;
+          (Entries[ScrollState.CurrentSelection]).Row = BackupPos;
         }
-        StyleFunc(Screen, MENU_FUNCTION_PAINT_SELECTION, NULL);
+        StyleFunc( MENU_FUNCTION_PAINT_SELECTION, NULL);
       }
       break;
   }
@@ -2449,9 +2450,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 }
 
 
-UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
-//  SCROLL_STATE  State;
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
   //    UINTN         Index;
@@ -2488,19 +2488,19 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   }
 
   //no default - no timeout!
-  if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
+  if ((*DefaultEntryIndex != -1) && (TimeoutSeconds > 0)) {
     //      DBG("have timeout\n");
     HaveTimeout = TRUE;
-    TimeoutCountdown = Screen->TimeoutSeconds;
+    TimeoutCountdown =  TimeoutSeconds;
   }
   MenuExit = 0;
 
-  StyleFunc(Screen, MENU_FUNCTION_INIT, NULL);
+  StyleFunc(MENU_FUNCTION_INIT, NULL);
   //  DBG("scroll inited\n");
   // override the starting selection with the default index, if any
-  if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= Screen->ScrollState.MaxIndex) {
-    Screen->ScrollState.CurrentSelection = *DefaultEntryIndex;
-    Screen->UpdateScroll(SCROLL_NONE);
+  if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <=  ScrollState.MaxIndex) {
+     ScrollState.CurrentSelection = *DefaultEntryIndex;
+     UpdateScroll(SCROLL_NONE);
   }
   //  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
   //      State.CurrentSelection, MenuExit);
@@ -2510,23 +2510,23 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
   while (!MenuExit) {
     // update the screen
-    if (Screen->ScrollState.PaintAll) {
-      StyleFunc(Screen, MENU_FUNCTION_PAINT_ALL, NULL);
-      Screen->ScrollState.PaintAll = FALSE;
-    } else if (Screen->ScrollState.PaintSelection) {
-      StyleFunc(Screen, MENU_FUNCTION_PAINT_SELECTION, NULL);
-      Screen->ScrollState.PaintSelection = FALSE;
+    if (ScrollState.PaintAll) {
+      StyleFunc(MENU_FUNCTION_PAINT_ALL, NULL);
+      ScrollState.PaintAll = FALSE;
+    } else if (ScrollState.PaintSelection) {
+      StyleFunc(MENU_FUNCTION_PAINT_SELECTION, NULL);
+      ScrollState.PaintSelection = FALSE;
     }
 
     if (HaveTimeout) {
-      TimeoutMessage = PoolPrint(L"%s in %d seconds", Screen->TimeoutText, TimeoutCountdown);
-      StyleFunc(Screen, MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
+      TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText, TimeoutCountdown);
+      StyleFunc(MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
       FreePool(TimeoutMessage);
     }
 
     if (gEvent) { //for now used at CD eject.
       MenuExit = MENU_EXIT_ESCAPE;
-      Screen->ScrollState.PaintAll = TRUE;
+      ScrollState.PaintAll = TRUE;
       gEvent = 0; //to prevent looping
       break;
     }
@@ -2536,7 +2536,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       mGuiReady = TRUE;
       DBG("GUI ready\n");
     }
-    Status = WaitForInputEventPoll(Screen, 1); //wait for 1 seconds.
+    Status = WaitForInputEventPoll(this, 1); //wait for 1 seconds.
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
         if (TimeoutCountdown <= 0) {
@@ -2551,23 +2551,23 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       continue;
     }
 
-    switch (Screen->mAction) {
+    switch (mAction) {
       case ActionSelect:
-        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
-        Screen->ScrollState.CurrentSelection = Screen->mItemID;
-        Screen->ScrollState.PaintAll = TRUE;
-        Screen->HidePointer();
+        ScrollState.LastSelection = ScrollState.CurrentSelection;
+        ScrollState.CurrentSelection = mItemID;
+        ScrollState.PaintAll = TRUE;
+        HidePointer();
         break;
       case ActionEnter:
-        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
-        Screen->ScrollState.CurrentSelection = Screen->mItemID;
-        if ( Screen->Entries[Screen->mItemID].getREFIT_INPUT_DIALOG() ||  Screen->Entries[Screen->mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog(Screen, StyleFunc);
-        } else if (Screen->Entries[Screen->mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(Screen, StyleFunc);
-          Screen->ScrollState.PaintAll = TRUE;
-          Screen->HidePointer();
-        } else if (!Screen->Entries[Screen->mItemID].getREFIT_INFO_DIALOG()) {
+        ScrollState.LastSelection = ScrollState.CurrentSelection;
+        ScrollState.CurrentSelection = mItemID;
+        if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
+          MenuExit = InputDialog(StyleFunc);
+        } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
+          MenuExit = InputDialog(StyleFunc);
+          ScrollState.PaintAll = TRUE;
+          HidePointer();
+        } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
@@ -2575,41 +2575,41 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_HELP;
         break;
       case ActionOptions:
-        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
-        Screen->ScrollState.CurrentSelection = Screen->mItemID;
+        ScrollState.LastSelection = ScrollState.CurrentSelection;
+        ScrollState.CurrentSelection = mItemID;
         MenuExit = MENU_EXIT_OPTIONS;
         break;
       case ActionDetails:
-        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
+        ScrollState.LastSelection = ScrollState.CurrentSelection;
         // Index = State.CurrentSelection;
-        Screen->ScrollState.CurrentSelection = Screen->mItemID;
-        if ((Screen->Entries[Screen->mItemID].getREFIT_INPUT_DIALOG()) ||
-            (Screen->Entries[Screen->mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(Screen, StyleFunc);
-        } else if (Screen->Entries[Screen->mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(Screen, StyleFunc);
-          Screen->ScrollState.PaintAll = TRUE;
-          Screen->HidePointer();
-        } else if (!Screen->Entries[Screen->mItemID].getREFIT_INFO_DIALOG()) {
+        ScrollState.CurrentSelection = mItemID;
+        if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
+            (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
+          MenuExit = InputDialog(StyleFunc);
+        } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
+          MenuExit = InputDialog(StyleFunc);
+          ScrollState.PaintAll = TRUE;
+          HidePointer();
+        } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
       case ActionDeselect:
-        Screen->ScrollState.LastSelection = Screen->ScrollState.CurrentSelection;
-        Screen->ScrollState.PaintAll = TRUE;
-        Screen->HidePointer();
+        ScrollState.LastSelection = ScrollState.CurrentSelection;
+        ScrollState.PaintAll = TRUE;
+        HidePointer();
         break;
       case ActionFinish:
         MenuExit = MENU_EXIT_ESCAPE;
         break;
       case ActionScrollDown:
-        Screen->UpdateScroll(SCROLL_SCROLL_DOWN);
+        UpdateScroll(SCROLL_SCROLL_DOWN);
         break;
       case ActionScrollUp:
-        Screen->UpdateScroll(SCROLL_SCROLL_UP);
+        UpdateScroll(SCROLL_SCROLL_UP);
         break;
       case ActionMoveScrollbar:
-        Screen->UpdateScroll(SCROLL_SCROLLBAR_MOVE);
+        UpdateScroll(SCROLL_SCROLLBAR_MOVE);
         break;
       default:
         break;
@@ -2618,45 +2618,45 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 
     // read key press (and wait for it if applicable)
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-    if ((Status == EFI_NOT_READY) && (Screen->mAction == ActionNone)) {
+    if ((Status == EFI_NOT_READY) && (mAction == ActionNone)) {
       continue;
     }
-    if (Screen->mAction == ActionNone) {
+    if (mAction == ActionNone) {
       ReadAllKeyStrokes(); //clean to avoid doubles
     }
     if (HaveTimeout) {
       // the user pressed a key, cancel the timeout
-      StyleFunc(Screen, MENU_FUNCTION_PAINT_TIMEOUT, L"");
-      Screen->HidePointer(); //ycr.ru
+      StyleFunc(MENU_FUNCTION_PAINT_TIMEOUT, L"");
+      HidePointer(); //ycr.ru
       HaveTimeout = FALSE;
     }
 
-    Screen->mAction = ActionNone; //do action once
+    mAction = ActionNone; //do action once
     // react to key press
     switch (key.ScanCode) {
       case SCAN_UP:
       case SCAN_LEFT:
-        Screen->UpdateScroll(SCROLL_LINE_UP);
+        UpdateScroll(SCROLL_LINE_UP);
         break;
       case SCAN_DOWN:
       case SCAN_RIGHT:
-        Screen->UpdateScroll(SCROLL_LINE_DOWN);
+        UpdateScroll(SCROLL_LINE_DOWN);
         break;
       case SCAN_HOME:
-        Screen->UpdateScroll(SCROLL_FIRST);
+        UpdateScroll(SCROLL_FIRST);
         break;
       case SCAN_END:
-        Screen->UpdateScroll(SCROLL_LAST);
+        UpdateScroll(SCROLL_LAST);
         break;
       case SCAN_PAGE_UP:
-        Screen->UpdateScroll(SCROLL_PAGE_UP);
+        UpdateScroll(SCROLL_PAGE_UP);
     //    SetNextScreenMode(1);
-        StyleFunc(Screen, MENU_FUNCTION_INIT, NULL);
+        StyleFunc(MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
-        Screen->UpdateScroll(&State, SCROLL_PAGE_DOWN);
+        UpdateScroll(SCROLL_PAGE_DOWN);
      //   SetNextScreenMode(-1);
-        StyleFunc(Screen, MENU_FUNCTION_INIT, NULL);
+        StyleFunc(MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:
         MenuExit = MENU_EXIT_ESCAPE;
@@ -2729,55 +2729,55 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_F12:
         MenuExit = MENU_EXIT_EJECT;
-        State.PaintAll = TRUE;
+        ScrollState.PaintAll = TRUE;
         break;
 
     }
     switch (key.UnicodeChar) {
       case CHAR_LINEFEED:
       case CHAR_CARRIAGE_RETURN:
-        if ((Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
-            (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(Screen, StyleFunc);
-        } else if (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(Screen, StyleFunc);
-          State.PaintAll = TRUE;
-        } else if (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
+        if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
+            (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
+          MenuExit = InputDialog(StyleFunc);
+        } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
+          MenuExit = InputDialog(StyleFunc);
+          ScrollState.PaintAll = TRUE;
+        } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
-        } else if (!Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
+        } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
       case ' ': //CHAR_SPACE
-        if ((Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
-            (Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(Screen, StyleFunc);
-        } else if (Screen->Entries[State.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(Screen, StyleFunc);
-          Screen->ScrollState.PaintAll = TRUE;
-          Screen->HidePointer();
-        } else if (!Screen->Entries[Screen->ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
+        if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
+            (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
+          MenuExit = InputDialog(StyleFunc);
+        } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
+          MenuExit = InputDialog(StyleFunc);
+          ScrollState.PaintAll = TRUE;
+          HidePointer();
+        } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
 
       default:
-        ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
+        ShortcutEntry = FindMenuShortcutEntry(key.UnicodeChar);
         if (ShortcutEntry >= 0) {
-          Screen->ScrollState.CurrentSelection = ShortcutEntry;
+          ScrollState.CurrentSelection = ShortcutEntry;
           MenuExit = MENU_EXIT_ENTER;
         }
         break;
     }
   }
 
-  StyleFunc(Screen, MENU_FUNCTION_CLEANUP, NULL);
+  StyleFunc(MENU_FUNCTION_CLEANUP, NULL);
 
 	if (ChosenEntry) {
-    *ChosenEntry = &Screen->Entries[Screen->ScrollState.CurrentSelection];
+    *ChosenEntry = &Entries[ScrollState.CurrentSelection];
 	}
 
-  *DefaultEntryIndex = Screen->ScrollState.CurrentSelection;
+  *DefaultEntryIndex = ScrollState.CurrentSelection;
 
   return MenuExit;
 }
@@ -2785,7 +2785,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 /**
  * Text Mode menu.
  */
-static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText)
+VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i = 0, j = 0;
   static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
@@ -2801,22 +2801,22 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
       // vertical layout
       MenuPosY = 4;
 
-	  if (Screen->InfoLines.size() > 0) {
-        MenuPosY += Screen->InfoLines.size() + 1;
+	  if (InfoLines.size() > 0) {
+        MenuPosY += InfoLines.size() + 1;
 	  }
 
       MenuHeight = ConHeight - MenuPosY;
 
-	  if (Screen->TimeoutSeconds > 0) {
+	  if (TimeoutSeconds > 0) {
         MenuHeight -= 2;
 	  }
 
-      InitScroll(Screen->ScrollState, Screen->Entries.size(), Screen->Entries.size(), MenuHeight, 0);
+      InitScroll(Entries.size(), Entries.size(), MenuHeight, 0);
 
       // determine width of the menu
       TextMenuWidth = 50;  // minimum
-      for (i = 0; i <= Screen->ScrollState->MaxIndex; i++) {
-        ItemWidth = StrLen(Screen->Entries[i].Title);
+      for (i = 0; i <= ScrollState.MaxIndex; i++) {
+        ItemWidth = StrLen(Entries[i].Title);
 
 		if (TextMenuWidth < ItemWidth) {
           TextMenuWidth = ItemWidth;
@@ -2827,11 +2827,11 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
         TextMenuWidth = ConWidth - 6;
 	  }
 
-    if (Screen->Entries[0].getREFIT_MENU_SWITCH() && Screen->Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 90) {
+    if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 90) {
       j = OldChosenConfig;
-    } else if (Screen->Entries[0].getREFIT_MENU_SWITCH() && Screen->Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 116) {
+    } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 116) {
       j = OldChosenDsdt;
-    } else if (Screen->Entries[0].getREFIT_MENU_SWITCH() && Screen->Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 119) {
+    } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 119) {
       j = OldChosenAudio;
     }
 
@@ -2849,34 +2849,34 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
         // paint the whole screen (initially and after scrolling)
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
       for (i = 0; i < (INTN)ConHeight - 4; i++) {
-      gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4 + i);
-      gST->ConOut->OutputString (gST->ConOut, BlankLine);
+        gST->ConOut->SetCursorPosition(gST->ConOut, 0, 4 + i);
+        gST->ConOut->OutputString(gST->ConOut, BlankLine);
       }
 
-        BeginTextScreen(Screen->Title);
+        BeginTextScreen(Title);
 
-        if (Screen->InfoLines.size() > 0) {
+        if (InfoLines.size() > 0) {
           gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
 
-          for (i = 0; i < (INTN)Screen->InfoLines.size(); i++) {
+          for (i = 0; i < (INTN)InfoLines.size(); i++) {
             gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-            gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
+            gST->ConOut->OutputString (gST->ConOut, InfoLines[i].data());
           }
         }
 
-        for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
+        for (i = ScrollState.FirstVisible; i <= ScrollState.LastVisible && i <= ScrollState.MaxIndex; i++) {
+      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - ScrollState.FirstVisible));
 
-      if (i == Screen->ScrollState->CurrentSelection) {
+      if (i == ScrollState.CurrentSelection) {
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
       } else {
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
       }
 
-      StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[i].Title);
+      StrCpyS(ResultString, TITLE_MAX_LEN, Entries[i].Title);
 
-      if (Screen->Entries[i].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Screen->Entries[i];
+      if (Entries[i].getREFIT_INPUT_DIALOG()) {
+        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[i];
         if (entry.getREFIT_INPUT_DIALOG()) {
           if ((entry).Item->ItemType == BoolValue) {
             StrCatS(ResultString, TITLE_MAX_LEN, (entry).Item->BValue ? L": [+]" : L": [ ]");
@@ -2914,15 +2914,15 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
       gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY);
 
-      if (State->FirstVisible > 0) {
+      if (ScrollState.FirstVisible > 0) {
           gST->ConOut->OutputString (gST->ConOut, ArrowUp);
       } else {
           gST->ConOut->OutputString (gST->ConOut, L" ");
       }
 
-      gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + State->MaxVisible);
+      gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + ScrollState.MaxVisible);
 
-      if (State->LastVisible < State->MaxIndex) {
+      if (ScrollState.LastVisible < ScrollState.MaxIndex) {
           gST->ConOut->OutputString (gST->ConOut, ArrowDown);
       } else {
           gST->ConOut->OutputString (gST->ConOut, L" ");
@@ -2933,12 +2933,12 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
     case MENU_FUNCTION_PAINT_SELECTION:
 			// last selection
       // redraw selection cursor
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->LastSelection - State->FirstVisible));
+      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (ScrollState.LastSelection - ScrollState.FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-      //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->LastSelection]);
-			StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[State->LastSelection].Title);
-      if (Screen->Entries[State->LastSelection].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Screen->Entries[State->LastSelection];
+      //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[ScrollState.LastSelection]);
+			StrCpyS(ResultString, TITLE_MAX_LEN, Entries[ScrollState.LastSelection].Title);
+      if (Entries[ScrollState.LastSelection].getREFIT_INPUT_DIALOG()) {
+        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[ScrollState.LastSelection];
         if (entry.getREFIT_INPUT_DIALOG()) {
           if (entry.Item->ItemType == BoolValue) {
             StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->BValue ? L": [+]" : L": [ ]");
@@ -2971,11 +2971,11 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
       gST->ConOut->OutputString (gST->ConOut, ResultString);
 
         // current selection
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
+      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-      StrCpyS(ResultString, TITLE_MAX_LEN, Screen->Entries[State->CurrentSelection].Title);
-      if (Screen->Entries[State->CurrentSelection].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Screen->Entries[State->CurrentSelection];
+      StrCpyS(ResultString, TITLE_MAX_LEN, Entries[ScrollState.CurrentSelection].Title);
+      if (Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) {
+        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[ScrollState.CurrentSelection];
         if (entry.getREFIT_INPUT_DIALOG()) {
           if (entry.Item->ItemType == BoolValue) {
             StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->BValue ? L": [+]" : L": [ ]");
@@ -3006,7 +3006,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CO
 
       ResultString[j] = 0;
       gST->ConOut->OutputString (gST->ConOut, ResultString);
-        //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
+        //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[ScrollState.CurrentSelection]);
 
       break;
 
@@ -3149,60 +3149,7 @@ VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAl
   }
 }
 
-/**
- * Draw menu text.
- */
 
-/* clovy
-VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
-{
-  INTN Height;
-  //use Text=null to reinit the buffer
-  if (!Text) {
-    if (TextBuffer) {
-      egFreeImage(TextBuffer);
-      TextBuffer = NULL;
-    }
-    return;
-  }
-
-  if (GlobalConfig.TypeSVG) {
-    Height = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
-  } else {
-    Height = TextHeight;
-  }
-
-  if (TextBuffer && (TextBuffer->Height != Height)) {
-    egFreeImage(TextBuffer);
-    TextBuffer = NULL;
-  }
-
-  if (TextBuffer == NULL) {
-    TextBuffer = egCreateImage(UGAWidth-XPos, Height, TRUE);
-  }
-
-  if (Cursor != 0xFFFF) {
-    egFillImage(TextBuffer, &MenuBackgroundPixel);
-  } else {
-    egFillImage(TextBuffer, &InputBackgroundPixel);
-  }
-
-
-  if (SelectedWidth > 0) {
-    // draw selection bar background
-    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, Height,
-                    &SelectionBackgroundPixel);
-  }
-
-  // render the text
-  if (GlobalConfig.TypeSVG) {
-    egRenderText(Text, TextBuffer, 0, 0, Cursor, TextStyle);
-  } else {
-    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
-  }
-  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
-}
-*/
 
 VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
@@ -3455,7 +3402,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
 /**
  * Graphical menu.
  */
-VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText)
+VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i;
   INTN j = 0;
@@ -3471,21 +3418,21 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
 // clovy
 	INTN ctrlX, ctrlY, ctrlTextX;
 
-  Screen->HidePointer();
+  HidePointer();
 
   switch (Function) {
 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime(Screen);
+      InitAnime();
 			SwitchToGraphicsAndClear();
 
       EntriesPosY = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + (int)(LayoutBannerOffset * GlobalConfig.Scale) + (TextHeight << 1);
 
-      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - Screen->InfoLines.size() - 2;/* - GlobalConfig.PruneScrollRows; */
+      VisibleHeight = ((UGAHeight - EntriesPosY) / TextHeight) - InfoLines.size() - 2;/* - GlobalConfig.PruneScrollRows; */
       //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
-      if ( Screen->Entries[0].getREFIT_INPUT_DIALOG() ) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&)Screen->Entries[0];
+      if ( Entries[0].getREFIT_INPUT_DIALOG() ) {
+        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&)Entries[0];
         if (entry.getREFIT_MENU_SWITCH()) {
           if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 3) {
             j = (OldChosenTheme == 0xFFFF) ? 0: (OldChosenTheme + 1);
@@ -3498,49 +3445,49 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
           }
         }
       }
-      InitScroll(State, Screen->Entries.size(), Screen->Entries.size(), VisibleHeight, j);
+      InitScroll(Entries.size(), Entries.size(), VisibleHeight, j);
       // determine width of the menu - not working
       //MenuWidth = 80;  // minimum
       MenuWidth = (int)(LAYOUT_TEXT_WIDTH * GlobalConfig.Scale); //500
       DrawMenuText(NULL, 0, 0, 0, 0);
 
-      if (Screen->TitleImage) {
-        if (MenuWidth > (INTN)(UGAWidth - (int)(TITLEICON_SPACING * GlobalConfig.Scale) - Screen->TitleImage->Width)) {
-          MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * GlobalConfig.Scale) - Screen->TitleImage->Width - 2;
+      if (TitleImage) {
+        if (MenuWidth > (INTN)(UGAWidth - (int)(TITLEICON_SPACING * GlobalConfig.Scale) - TitleImage->Width)) {
+          MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * GlobalConfig.Scale) - TitleImage->Width - 2;
         }
-        EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + (int)(TITLEICON_SPACING * GlobalConfig.Scale) + MenuWidth)) >> 1;
+        EntriesPosX = (UGAWidth - (TitleImage->Width + (int)(TITLEICON_SPACING * GlobalConfig.Scale) + MenuWidth)) >> 1;
         //DBG("UGAWIdth=%d TitleImage=%d MenuWidth=%d\n", UGAWidth,
-        //Screen->TitleImage->Width, MenuWidth);
-        MenuWidth += Screen->TitleImage->Width;
+        //TitleImage->Width, MenuWidth);
+        MenuWidth += TitleImage->Width;
       } else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       }
-      TimeoutPosY = EntriesPosY + (Screen->Entries.size() + 1) * TextHeight;
+      TimeoutPosY = EntriesPosY + (Entries.size() + 1) * TextHeight;
 
       // initial painting
-      egMeasureText(Screen->Title, &ItemWidth, NULL);
+      egMeasureText(Title, &ItemWidth, NULL);
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE)) {
-        DrawTextXY(Screen->Title, (UGAWidth >> 1), EntriesPosY - TextHeight * 2, X_IS_CENTER);
+        DrawTextXY(Title, (UGAWidth >> 1), EntriesPosY - TextHeight * 2, X_IS_CENTER);
       }
 
-      if (Screen->TitleImage) {
-        INTN FilmXPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + (int)(TITLEICON_SPACING * GlobalConfig.Scale)));
+      if (TitleImage) {
+        INTN FilmXPos = (INTN)(EntriesPosX - (TitleImage->Width + (int)(TITLEICON_SPACING * GlobalConfig.Scale)));
         INTN FilmYPos = (INTN)EntriesPosY;
-        BltImageAlpha(Screen->TitleImage, FilmXPos, FilmYPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(TitleImage, FilmXPos, FilmYPos, &MenuBackgroundPixel, 16);
 
         // update FilmPlace only if not set by InitAnime
-        if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
-          Screen->FilmPlace.XPos = FilmXPos;
-          Screen->FilmPlace.YPos = FilmYPos;
-          Screen->FilmPlace.Width = Screen->TitleImage->Width;
-          Screen->FilmPlace.Height = Screen->TitleImage->Height;
+        if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
+          FilmPlace.XPos = FilmXPos;
+          FilmPlace.YPos = FilmYPos;
+          FilmPlace.Width = TitleImage->Width;
+          FilmPlace.Height = TitleImage->Height;
         }
       }
 
-      if (Screen->InfoLines.size() > 0) {
+      if (InfoLines.size() > 0) {
         DrawMenuText(NULL, 0, 0, 0, 0);
-        for (i = 0; i < (INTN)Screen->InfoLines.size(); i++) {
-          DrawMenuText(Screen->InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
+        for (i = 0; i < (INTN)InfoLines.size(); i++) {
+          DrawMenuText(InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
           EntriesPosY += TextHeight;
         }
         EntriesPosY += TextHeight;  // also add a blank line
@@ -3550,22 +3497,22 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
       break;
 
     case MENU_FUNCTION_CLEANUP:
-      Screen->HidePointer();
+      HidePointer();
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
       DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
-	//		DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, State->MaxVisible);
+	//		DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, ScrollState.MaxVisible);
 	//		DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
-      t2 = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
+      t2 = EntriesPosY + (ScrollState.MaxVisible + 1) * TextHeight - DownButton.Height;
       t1 = EntriesPosX + TextHeight + MenuWidth  + (INTN)((TEXT_XMARGIN + 16) * GlobalConfig.Scale);
 	//		DBG("PAINT_ALL: %d %d\n", t1, t2);
-      SetBar(t1, EntriesPosY, t2, State); //823 302 554
+      SetBar(t1, EntriesPosY, t2, &ScrollState); //823 302 554
 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
 
-      for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
-        REFIT_ABSTRACT_MENU_ENTRY *Entry = &Screen->Entries[i];
+      for (i = ScrollState.FirstVisible, j = 0; i <= ScrollState.LastVisible; i++, j++) {
+        REFIT_ABSTRACT_MENU_ENTRY *Entry = &Entries[i];
         TitleLen = StrLen(Entry->Title);
 
         Entry->Place.XPos = EntriesPosX;
@@ -3590,7 +3537,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
           if (inputDialogEntry->Item->ItemType == BoolValue) {
             Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
             DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
-            DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
+            DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
 // clovy                    EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                          ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
@@ -3606,13 +3553,13 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
             StrCatS(ResultString, TITLE_MAX_LEN, L" ");
             Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
             // Slice - suppose to use Row as Cursor in text
-            DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
+            DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                          EntriesPosX,
                          Entry->Place.YPos, TitleLen + Entry->Row);
           }
         } else if (Entry->getREFIT_MENU_CHECKBIT()) {
           DrawMenuText(L" ", 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
-          DrawMenuText(ResultString, (i == State->CurrentSelection) ? (MenuWidth) : 0,
+          DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
 // clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                        ctrlTextX,
                        Entry->Place.YPos, 0xFFFF);
@@ -3634,7 +3581,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
           }
 
           DrawMenuText(ResultString,
-                       (i == State->CurrentSelection) ? MenuWidth : 0,
+                       (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
 // clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                        ctrlTextX,
                        Entry->Place.YPos, 0xFFFF);
@@ -3643,22 +3590,22 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
                         ctrlY,
                         &MenuBackgroundPixel, 16);
         } else {
-					//DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
+					//DBG("paint entry %d title=%s\n", i, Entries[i]->Title);
           DrawMenuText(ResultString,
-                       (i == State->CurrentSelection) ? MenuWidth : 0,
+                       (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX, Entry->Place.YPos, 0xFFFF);
         }
       }
 
-      ScrollingBar(State);
+      ScrollingBar(&ScrollState);
       //MouseBirth();
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
     {
 			// last selection
-      REFIT_ABSTRACT_MENU_ENTRY *EntryL = &Screen->Entries[State->LastSelection];
-      REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Screen->Entries[State->CurrentSelection];
+      REFIT_ABSTRACT_MENU_ENTRY *EntryL = &Entries[ScrollState.LastSelection];
+      REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Entries[ScrollState.CurrentSelection];
       TitleLen = StrLen(EntryL->Title);
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryL->Title);
       //clovy//PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
@@ -3695,7 +3642,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
                  ((REFIT_INPUT_DIALOG*)(EntryL))->Item->LineShift);
           StrCatS(ResultString, TITLE_MAX_LEN, L" ");
           DrawMenuText(ResultString, 0, EntriesPosX,
-                       EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
+                       EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight,
                        TitleLen + EntryL->Row);
         }
       } else if (EntryL->getREFIT_MENU_SWITCH()) {
@@ -3712,9 +3659,9 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
 
 // clovy
 //         DrawMenuText(ResultString, 0, EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
-//                      EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+//                      EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight, 0xFFFF);
         DrawMenuText(ResultString, 0, ctrlTextX,
-                     EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+                     EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight, 0xFFFF);
         BltImageAlpha((EntryL->Row == OldChosenItem) ? Buttons[1] : Buttons[0],
                      ctrlX,
                       EntryL->Place.YPos + PlaceCentre1,
@@ -3733,7 +3680,7 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
 //            EntryL->Place.YPos, EntryL->Place.YPos + PlaceCentre);
       } else {
         DrawMenuText(EntryL->Title, 0, EntriesPosX,
-                     EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
+                     EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight, 0xFFFF);
       }
 
       // current selection
@@ -3764,14 +3711,14 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
                                inputDialogEntry->Item->LineShift);
           StrCatS(ResultString, TITLE_MAX_LEN, L" ");
           DrawMenuText(ResultString, MenuWidth, EntriesPosX,
-                       EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
+                       EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * TextHeight,
                        TitleLen + inputDialogEntry->Row);
         }
       } else if (EntryC->getREFIT_MENU_SWITCH()) {
         StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
         DrawMenuText(ResultString, MenuWidth,
                      ctrlTextX,
-                     EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
+                     EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * TextHeight,
                      0xFFFF);
         BltImageAlpha((EntryC->Row == OldChosenItem) ? Buttons[1]:Buttons[0],
                       ctrlX,
@@ -3787,14 +3734,14 @@ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST
                       &MenuBackgroundPixel, 16);
       }else{
         DrawMenuText(EntryC->Title, MenuWidth, EntriesPosX,
-                     EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
+                     EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * TextHeight,
                      0xFFFF);
       }
 
-      ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / (State->MaxIndex + 1);
+      ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * ScrollState.FirstVisible / (ScrollState.MaxIndex + 1);
       Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
       ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height; // ScrollEnd.Height is already subtracted
-      ScrollingBar(State);
+      ScrollingBar(ScrollState);
 
       break;
     }
@@ -3891,7 +3838,7 @@ VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Hei
   egFreeImage(TmpBuffer);
 }
 
-VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
+VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos)
 {
   INTN TextWidth;
   INTN BadgeDim = (INTN)(BADGE_DIMENSION * GlobalConfig.Scale);
@@ -3915,9 +3862,9 @@ VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REF
   //show inline badge
   if (!(GlobalConfig.BootCampStyle) &&
        (GlobalConfig.HideBadges & HDBADGES_INLINE) &&
-       (Screen->Entries[State->CurrentSelection].Row == 0)) {
+       (Entries[ScrollState.CurrentSelection].Row == 0)) {
     // Display Inline Badge: small icon before the text
-    BltImageAlpha(Screen->Entries[State->CurrentSelection].Image,
+    BltImageAlpha(Entries[ScrollState.CurrentSelection].Image,
                   (XPos - (TextWidth >> 1) - (BadgeDim + 16)),
                   (YPos - ((BadgeDim - TextHeight) >> 1)), &MenuBackgroundPixel, BadgeDim >> 3);
   }
@@ -3925,19 +3872,19 @@ VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REF
   OldX = XPos;
   OldY = YPos;
   OldTextWidth = TextWidth;
-  OldRow = Screen->Entries[State->CurrentSelection].Row;
+  OldRow = Entries[ScrollState.CurrentSelection].Row;
 }
 
-VOID CountItems(IN REFIT_MENU_SCREEN *Screen)
+VOID REFIT_MENU_SCREEN::CountItems()
 {
   INTN i;
   row0PosX = 0;
-  row1PosX = Screen->Entries.size();
+  row1PosX = Entries.size();
   // layout
   row0Count = 0; //Nr items in row0
   row1Count = 0;
-  for (i = 0; i < (INTN)Screen->Entries.size(); i++) {
-    if (Screen->Entries[i].Row == 0) {
+  for (i = 0; i < (INTN)Entries.size(); i++) {
+    if (Entries[i].Row == 0) {
       row0Count++;
       CONSTRAIN_MIN(row0PosX, i);
     } else {
@@ -4006,7 +3953,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
   if ( Text ) FreePool(Text);
 }
 
-VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CONST CHAR16 *ParamText)
+VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i;
   INTN row0PosYRunning;
@@ -4023,7 +3970,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime(Screen);
+      InitAnime();
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
       //adjustable by theme.plist?
@@ -4036,23 +3983,23 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       EntriesPosX = UGAWidth - EntriesWidth - (int)((BAR_WIDTH + LAYOUT_X_EDGE) * GlobalConfig.Scale);
       TimeoutPosY = UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale) - MessageHeight * 2; //optimus + timeout texts
 
-      CountItems(Screen);
-      InitScroll(State, row0Count, Screen->Entries.size(), VisibleHeight, 0);
+      CountItems();
+      InitScroll(row0Count, Entries.size(), VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
       row1PosX = (UGAWidth + EntriesGap - (row1TileSize + (int)(TILE1_XSPACING * GlobalConfig.Scale)) * row1Count) >> 1;
       textPosY = TimeoutPosY - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - MessageHeight; //message text
       row1PosY = textPosY - row1TileSize - (int)(GlobalConfig.TileYSpace * GlobalConfig.Scale) - LayoutTextOffset;
       if (!itemPosX) {
-        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Screen->Entries.size());
-        itemPosY = (__typeof__(itemPosY))AllocatePool(sizeof(UINT64) * Screen->Entries.size());
+        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
+        itemPosY = (__typeof__(itemPosY))AllocatePool(sizeof(UINT64) * Entries.size());
       }
       row0PosYRunning = row0PosY;
       row1PosXRunning = row1PosX;
 
-      //     DBG("EntryCount =%d\n", Screen->Entries.size());
-      for (i = 0; i < (INTN)Screen->Entries.size(); i++) {
-        if (Screen->Entries[i].Row == 0) {
+      //     DBG("EntryCount =%d\n", Entries.size());
+      for (i = 0; i < (INTN)Entries.size(); i++) {
+        if (Entries[i].Row == 0) {
           itemPosX[i] = row0PosX;
           itemPosY[i] = row0PosYRunning;
           row0PosYRunning += EntriesHeight + EntriesGap;
@@ -4067,8 +4014,8 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       InitSelection();
 
       // Update FilmPlace only if not set by InitAnime
-      if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
-        CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace));
+      if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
+        CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
       }
 
       InitBar();
@@ -4079,61 +4026,61 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
       itemPosX = NULL;
       FreePool(itemPosY);
       itemPosY = NULL;
-      Screen->HidePointer();
+      HidePointer();
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
       SetBar(EntriesPosX + EntriesWidth + (int)(10 * GlobalConfig.Scale),
-             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale), State);
-      for (i = 0; i <= State->MaxIndex; i++) {
-        if (Screen->Entries[i].Row == 0) {
-          if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
-            DrawMainMenuEntry(&Screen->Entries[i], (i == State->CurrentSelection)?1:0,
-                              itemPosX[i - State->FirstVisible], itemPosY[i - State->FirstVisible]);
+             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale), ScrollState);
+      for (i = 0; i <= ScrollState.MaxIndex; i++) {
+        if (Entries[i].Row == 0) {
+          if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
+            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+                              itemPosX[i - ScrollState.FirstVisible], itemPosY[i - ScrollState.FirstVisible]);
           }
         } else { //row1
-          DrawMainMenuEntry(&Screen->Entries[i], (i == State->CurrentSelection)?1:0,
+          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
                             itemPosX[i], itemPosY[i]);
         }
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        DrawMainMenuLabel(Screen->Entries[State->CurrentSelection].Title,
-                          (UGAWidth >> 1), textPosY, Screen, State);
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), textPosY);
       }
 
-      ScrollingBar(State);
+      ScrollingBar(&ScrollState);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       MouseBirth();
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
-      Screen->HidePointer();
-      if (Screen->Entries[State->LastSelection].Row == 0) {
-        DrawMainMenuEntry(&Screen->Entries[State->LastSelection], FALSE,
-                          itemPosX[State->LastSelection - State->FirstVisible],
-                          itemPosY[State->LastSelection - State->FirstVisible]);
+      HidePointer();
+      if (Entries[ScrollState.LastSelection].Row == 0) {
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+                          itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible],
+                          itemPosY[ScrollState.LastSelection - ScrollState.FirstVisible]);
       } else {
-        DrawMainMenuEntry(&Screen->Entries[State->LastSelection], FALSE,
-                          itemPosX[State->LastSelection],
-                          itemPosY[State->LastSelection]);
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+                          itemPosX[ScrollState.LastSelection],
+                          itemPosY[ScrollState.LastSelection]);
       }
 
-      if (Screen->Entries[State->CurrentSelection].Row == 0) {
-        DrawMainMenuEntry(&Screen->Entries[State->CurrentSelection], TRUE,
-                          itemPosX[State->CurrentSelection - State->FirstVisible],
-                          itemPosY[State->CurrentSelection - State->FirstVisible]);
+      if (Entries[ScrollState.CurrentSelection].Row == 0) {
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+                          itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible],
+                          itemPosY[ScrollState.CurrentSelection - ScrollState.FirstVisible]);
       } else {
-        DrawMainMenuEntry(&Screen->Entries[State->CurrentSelection], TRUE,
-                          itemPosX[State->CurrentSelection],
-                          itemPosY[State->CurrentSelection]);
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+                          itemPosX[ScrollState.CurrentSelection],
+                          itemPosY[ScrollState.CurrentSelection]);
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        DrawMainMenuLabel(Screen->Entries[State->CurrentSelection].Title,
-                          (UGAWidth >> 1), textPosY, Screen, State);
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), textPosY);
       }
 
-      ScrollingBar(State);
+      ScrollingBar(&ScrollState);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       MouseBirth();
@@ -4141,7 +4088,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
-      Screen->HidePointer();
+      HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), textPosY + MessageHeight * i,
                              OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
@@ -4156,7 +4103,7 @@ VOID MainMenuVerticalStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State,
 /**
  * Main screen text.
  */
-VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHAR16 *ParamText)
+VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   EFI_STATUS Status = EFI_SUCCESS;
   INTN i = 0;
@@ -4172,7 +4119,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime(Screen);
+      InitAnime();
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
 
@@ -4181,8 +4128,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
       EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16.f * GlobalConfig.Scale);
 
       MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* GlobalConfig.Scale)) / (EntriesWidth + EntriesGap); //8
-      CountItems(Screen);
-      InitScroll(State, row0Count, Screen->Entries.size(), MaxItemOnScreen, 0);
+      CountItems();
+      InitScroll(row0Count, Entries.size(), MaxItemOnScreen, 0);
 
       row0PosX = EntriesWidth + EntriesGap;
       row0PosX = row0PosX * ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count);
@@ -4217,14 +4164,14 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
       
       if (!itemPosX) {
-        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Screen->Entries.size());
+        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
       }
 
       row0PosXRunning = row0PosX;
       row1PosXRunning = row1PosX;
-      //DBG("EntryCount =%d\n", Screen->Entries.size());
-      for (i = 0; i < (INTN)Screen->Entries.size(); i++) {
-        if (Screen->Entries[i].Row == 0) {
+      //DBG("EntryCount =%d\n", Entries.size());
+      for (i = 0; i < (INTN)Entries.size(); i++) {
+        if (Entries[i].Row == 0) {
           itemPosX[i] = row0PosXRunning;
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
@@ -4237,8 +4184,8 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
       InitSelection();
 
       // Update FilmPlace only if not set by InitAnime
-      if (Screen->FilmPlace.Width == 0 || Screen->FilmPlace.Height == 0) {
-        CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace));
+      if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
+        CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
       }
 
       //DBG("main menu inited\n");
@@ -4247,55 +4194,55 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
     case MENU_FUNCTION_CLEANUP:
       FreePool(itemPosX);
       itemPosX = NULL;
-      Screen->HidePointer();
+      HidePointer();
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
     
-      for (i = 0; i <= State->MaxIndex; i++) {
-        if (Screen->Entries[i].Row == 0) {
-          if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
-            DrawMainMenuEntry(&Screen->Entries[i], (i == State->CurrentSelection)?1:0,
-                              itemPosX[i - State->FirstVisible], row0PosY);
+      for (i = 0; i <= ScrollState.MaxIndex; i++) {
+        if (Entries[i].Row == 0) {
+          if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
+            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+                              itemPosX[i - ScrollState.FirstVisible], row0PosY);
             // draw static text for the boot options, BootCampStyle
             if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-              INTN textPosX = itemPosX[i - State->FirstVisible] + (row0TileSize / 2);
+              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (row0TileSize / 2);
               // clear the screen
               FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
                                    MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
               // draw the text
-              DrawBCSText(Screen->Entries[i].Title, textPosX, textPosY, X_IS_CENTER);
+              DrawBCSText(Entries[i].Title, textPosX, textPosY, X_IS_CENTER);
             }
           }
         } else {
-          DrawMainMenuEntry(&Screen->Entries[i], (i == State->CurrentSelection)?1:0,
+          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
                             itemPosX[i], row1PosY);
         }
       }
 
       // clear the text from the second row, required by the BootCampStyle
-      if ((GlobalConfig.BootCampStyle) && (Screen->Entries[State->LastSelection].Row == 1)
-          && (Screen->Entries[State->CurrentSelection].Row == 0) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+      if ((GlobalConfig.BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
+          && (Entries[ScrollState.CurrentSelection].Row == 0) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
           FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
 // clovy                               OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
                                OldTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
       }
 
-      // something is wrong with the DrawMainMenuLabel or Screen->Entries[State->CurrentSelection]
+      // something is wrong with the DrawMainMenuLabel or Entries[ScrollState.CurrentSelection]
       // and it's required to create the first selection text from here
       // used for the second row entries, when BootCampStyle is used
-      if ((Screen->Entries[State->LastSelection].Row == 0) && (Screen->Entries[State->CurrentSelection].Row == 1)
+      if ((Entries[ScrollState.LastSelection].Row == 0) && (Entries[ScrollState.CurrentSelection].Row == 1)
           && GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection].Title,
-                            (UGAWidth >> 1), FunctextPosY, Screen, State);
+          DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                            (UGAWidth >> 1), FunctextPosY);
       }
 
-      // something is wrong with the DrawMainMenuLabel or Screen->Entries[State->CurrentSelection]
+      // something is wrong with the DrawMainMenuLabel or Entries[ScrollState.CurrentSelection]
       // and it's required to create the first selection text from here
       // used for all the entries
       if (!(GlobalConfig.BootCampStyle) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        DrawMainMenuLabel(Screen->Entries[State->CurrentSelection].Title,
-                            (UGAWidth >> 1), textPosY, Screen, State);
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                            (UGAWidth >> 1), textPosY);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
@@ -4308,34 +4255,34 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
       break;
 
     case MENU_FUNCTION_PAINT_SELECTION:
-      Screen->HidePointer();
-      if (Screen->Entries[State->LastSelection].Row == 0) {
-        DrawMainMenuEntry(&Screen->Entries[State->LastSelection], FALSE,
-                      itemPosX[State->LastSelection - State->FirstVisible], row0PosY);
+      HidePointer();
+      if (Entries[ScrollState.LastSelection].Row == 0) {
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+                      itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible], row0PosY);
       } else {
-        DrawMainMenuEntry(&Screen->Entries[State->LastSelection], FALSE,
-                          itemPosX[State->LastSelection], row1PosY);
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+                          itemPosX[ScrollState.LastSelection], row1PosY);
       }
 
-      if (Screen->Entries[State->CurrentSelection].Row == 0) {
-        DrawMainMenuEntry(&Screen->Entries[State->CurrentSelection], TRUE,
-                      itemPosX[State->CurrentSelection - State->FirstVisible], row0PosY);
+      if (Entries[ScrollState.CurrentSelection].Row == 0) {
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+                      itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible], row0PosY);
       } else {
-        DrawMainMenuEntry(&Screen->Entries[State->CurrentSelection], TRUE,
-                          itemPosX[State->CurrentSelection], row1PosY);
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+                          itemPosX[ScrollState.CurrentSelection], row1PosY);
       }
 
       // create dynamic text for the second row if BootCampStyle is used
       if ((GlobalConfig.BootCampStyle) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-          && Screen->Entries[State->CurrentSelection].Row == 1) {
-          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection].Title,
-                            (UGAWidth >> 1), FunctextPosY, Screen, State);
+          && Entries[ScrollState.CurrentSelection].Row == 1) {
+          DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                            (UGAWidth >> 1), FunctextPosY);
       }
 
       // create dynamic text for all the entries
       if ((!(GlobalConfig.BootCampStyle)) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))) {
-          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection].Title,
-                            (UGAWidth >> 1), textPosY, Screen, State);
+          DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                            (UGAWidth >> 1), textPosY);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
@@ -4349,7 +4296,7 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
       i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
-      Screen->HidePointer();
+      HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
                            OldTimeoutTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
@@ -4372,15 +4319,14 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN UINTN Function, IN CONST CHA
 // user-callable dispatcher functions
 //
 
-UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   INTN Index = -1;
-  MENU_STYLE_FUNC Style = TextMenuStyle;
 
   if (AllowGraphicsMode)
-    Style = GraphicsMenuStyle;
-
-  return RunGenericMenu(Screen, Style, &Index, ChosenEntry);
+    return RunGenericMenu(GraphicsMenuStyle, &Index, ChosenEntry);
+  else
+    return RunGenericMenu(TextMenuStyle, &Index, ChosenEntry);
 }
 
 VOID NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
@@ -5667,7 +5613,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER *Entry)
 }
 
 
-UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   MENU_STYLE_FUNC     Style             = TextMenuStyle;
   MENU_STYLE_FUNC     MainStyle         = TextMenuStyle;
@@ -5688,9 +5634,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
   }
 
   while (!MenuExit) {
-    Screen->AnimeRun = MainAnime;
+    AnimeRun = MainAnime;
     MenuExit = RunGenericMenu(Screen, MainStyle, &DefaultEntryIndex, &MainChosenEntry);
-    Screen->TimeoutSeconds = 0;
+    TimeoutSeconds = 0;
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
       CHAR16 *TmpArgs = NULL;

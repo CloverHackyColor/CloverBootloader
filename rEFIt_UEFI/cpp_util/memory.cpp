@@ -7,10 +7,14 @@ extern "C" {
  * memset and memcpy has to be provided for clang
  */
 
-#if !defined(_MSC_VER)
-
+#if 1 //!defined(_MSC_VER)
+#ifdef __GNUC__
 void* memset(void* dst, int ch, UINT64 count) __attribute__ ((used));
 void* memcpy(void* dst, const void* src, UINT64 count) __attribute__ ((used));
+#else
+  void* memset(void* dst, int ch, UINT64 count);
+  void* memcpy(void* dst, const void* src, UINT64 count);
+#endif
 
 void* memset(void* dst, int ch, UINT64 count)
 {
