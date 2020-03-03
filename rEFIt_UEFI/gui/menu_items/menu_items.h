@@ -68,17 +68,6 @@
 //#define TAG_EXIT_OLD               (101)
 //#define TAG_RETURN_OLD             ((UINTN)(-1))
 
-
-//typedef VOID(*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
-enum MENU_STYLE_VALUE {
-  Text,
-  Options,
-  Refit,
-  Vertical,
-  BootCamp
-};
-
-
 //typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
 class REFIT_MENU_SCREEN;
 class REFIT_MENU_SWITCH;
@@ -409,7 +398,7 @@ public:
   UINTN       mItemID;
   XPointer    *mPointer;
   SCROLL_STATE ScrollState;
-  MENU_STYLE_VALUE StyleValue;
+  MENU_STYLE_FUNC StyleFunc;
 
 
   REFIT_MENU_SCREEN()
@@ -417,7 +406,7 @@ public:
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), StyleValue(Text)
+						  Film(0)
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
@@ -441,7 +430,7 @@ public:
 						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
 						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
 						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_), StyleValue(Text)
+						  Film(Film_)
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
@@ -466,7 +455,7 @@ public:
 						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
 						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
 						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_), StyleValue(Text)
+						  Film(Film_)
 						{
 							Entries.AddReference(entry, false);
 						};
@@ -494,7 +483,7 @@ public:
 						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
 						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
 						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_), StyleValue(Text)
+						  Film(Film_)
 						{
 							Entries.AddReference(entry1, false);
 							Entries.AddReference(entry2, false);
@@ -511,8 +500,8 @@ public:
   VOID AddMenuEntry(IN REFIT_MENU_ENTRY *Entry, bool freeIt);
   VOID FreeMenu();
   INTN FindMenuShortcutEntry(IN CHAR16 Shortcut);
-  UINTN InputDialog();
-  UINTN RunGenericMenu(IN MENU_STYLE_VALUE StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
+  UINTN InputDialog(IN MENU_STYLE_FUNC  StyleFunc);
+  UINTN RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 
@@ -522,8 +511,9 @@ public:
   BOOLEAN GetAnime();
   VOID UpdateAnime(const EG_RECT *Place);
 
+  UINTN InputDialog();
+
   //Style functions
-  VOID StyleFunc(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);

@@ -645,7 +645,7 @@ EFI_STATUS egScreenShot(VOID)
   XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
   for (UINTN Index = 0; Index < 60; Index++) {
 //    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
-    XStringW Name = CommonName + SPrintf("%d", Index) + L".png";
+    XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";
     if (!FileExists(SelfRootDir, Name.data())) {
       Status = egSaveFile(SelfRootDir, Name.data(), FileData, FileDataLength);
       if (!EFI_ERROR(Status)) {

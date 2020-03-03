@@ -207,9 +207,9 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
         // pixel data is compressed, RGB planar
         CompData = DataPtr;
         CompLen  = DataLen;
-        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, r), PixelCount);
-        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, g), PixelCount);
-        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, b), PixelCount);
+        egDecompressIcnsRLE(&CompData, &CompLen, &NewImage->PixelData->r, PixelCount);
+        egDecompressIcnsRLE(&CompData, &CompLen, &NewImage->PixelData->g, PixelCount);
+        egDecompressIcnsRLE(&CompData, &CompLen, &NewImage->PixelData->b, PixelCount);
         // possible assertion: CompLen == 0
         if (CompLen > 0) {
             DBG(" egLoadICNSIcon: %d bytes of compressed data left\n", CompLen);
@@ -227,12 +227,16 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
         }
         
     }
+
+    // Jief : not sure where they should define TODO !
+    extern VOID egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount);
+    extern VOID egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount);
     
     // add/set alpha plane
     if (MaskPtr != NULL && MaskLen >= PixelCount && WantAlpha)
-        egInsertPlane(MaskPtr, PLPTR(NewImage, a), PixelCount);
+        egInsertPlane(MaskPtr, &NewImage->PixelData->a, PixelCount);
     else
-        egSetPlane(PLPTR(NewImage, a), WantAlpha ? 255 : 0, PixelCount);
+        egSetPlane(&NewImage->PixelData->a, WantAlpha ? 255 : 0, PixelCount);
     
     // FUTURE: scale to originally requested size if we had to load another size
     

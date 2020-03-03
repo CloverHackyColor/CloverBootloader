@@ -68,7 +68,7 @@ int XStringW_tests()
 
   XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
   for (UINTN Index = 0; Index < 20; Index++) {
-    XStringW Name = CommonName + SPrintf("%d", Index) + L".png";
+    XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";
     DebugLog(2, "XStringW_test shot: %s\n", Name.data());
   }
 	return 0;

@@ -2450,7 +2450,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
 }
 
 
-UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_VALUE StyleValue, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
@@ -2562,9 +2562,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_VALUE StyleValue, IN OUT I
         ScrollState.LastSelection = ScrollState.CurrentSelection;
         ScrollState.CurrentSelection = mItemID;
         if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2585,7 +2585,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_VALUE StyleValue, IN OUT I
         ScrollState.CurrentSelection = mItemID;
         if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
             (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
           MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
@@ -2738,9 +2738,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_VALUE StyleValue, IN OUT I
       case CHAR_CARRIAGE_RETURN:
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
@@ -2751,9 +2751,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_VALUE StyleValue, IN OUT I
       case ' ': //CHAR_SPACE
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
@@ -3424,7 +3424,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime(this); // Should InitAnime be a method of REFIT_MENU_SCREEN ? If yes, parameter will not be needed anymore.
+      InitAnime();
 			SwitchToGraphicsAndClear();
 
       EntriesPosY = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1) + (int)(LayoutBannerOffset * GlobalConfig.Scale) + (TextHeight << 1);
@@ -3970,7 +3970,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime(this); // Should InitAnime be a method of REFIT_MENU_SCREEN ? If yes, parameter will not be needed anymore.
+      InitAnime();
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
       //adjustable by theme.plist?
@@ -4119,7 +4119,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
     case MENU_FUNCTION_INIT:
       egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime(this); // Should InitAnime be a method of REFIT_MENU_SCREEN ? If yes, parameter will not be needed anymore.
+      InitAnime();
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
 
