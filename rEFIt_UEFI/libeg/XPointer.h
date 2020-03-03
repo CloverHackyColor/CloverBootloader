@@ -34,7 +34,9 @@ public:
   bool MouseInRect(EG_RECT *Place);
   EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen);
 
+  bool isEmpty() const { return PointerImage.isEmpty(); }
+
 protected:
   VOID Draw();
-
+  VOID DrawPointer();
 };

@@ -68,8 +68,6 @@
 //#define TAG_EXIT_OLD               (101)
 //#define TAG_RETURN_OLD             ((UINTN)(-1))
 
-typedef VOID(*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
-
 //typedef struct _refit_menu_screen REFIT_MENU_SCREEN;
 class REFIT_MENU_SCREEN;
 class REFIT_MENU_SWITCH;
@@ -370,6 +368,8 @@ public:
 //#define FILM_BOTTOM   60000
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
+
+typedef VOID(REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
 
 class REFIT_MENU_SCREEN
 {
