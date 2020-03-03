@@ -2243,7 +2243,7 @@ INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN CHAR16 Shortcut)
 // generic input menu function
 // usr-sse2
 //
-UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
+UINTN REFIT_MENU_SCREEN::InputDialog()
 {
 	if ( !Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
 		DebugLog(2, "BUG : InputDialog called with !Entries[ScrollState.CurrentSelection].REFIT_MENU_ITEM_IEM_ABSTRACT()\n");
@@ -2450,7 +2450,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 }
 
 
-UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_VALUE StyleValue, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
@@ -2562,9 +2562,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.LastSelection = ScrollState.CurrentSelection;
         ScrollState.CurrentSelection = mItemID;
         if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2585,7 +2585,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.CurrentSelection = mItemID;
         if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
             (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
           MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
@@ -2738,9 +2738,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case CHAR_CARRIAGE_RETURN:
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
@@ -2751,9 +2751,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case ' ': //CHAR_SPACE
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
@@ -3741,7 +3741,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * ScrollState.FirstVisible / (ScrollState.MaxIndex + 1);
       Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
       ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height; // ScrollEnd.Height is already subtracted
-      ScrollingBar(ScrollState);
+      ScrollingBar(&ScrollState);
 
       break;
     }
@@ -4031,7 +4031,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
 
     case MENU_FUNCTION_PAINT_ALL:
       SetBar(EntriesPosX + EntriesWidth + (int)(10 * GlobalConfig.Scale),
-             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale), ScrollState);
+             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * GlobalConfig.Scale), &ScrollState);
       for (i = 0; i <= ScrollState.MaxIndex; i++) {
         if (Entries[i].Row == 0) {
           if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
@@ -4324,9 +4324,32 @@ UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   INTN Index = -1;
 
   if (AllowGraphicsMode)
-    return RunGenericMenu(GraphicsMenuStyle, &Index, ChosenEntry);
+    StyleValue = Options;
   else
-    return RunGenericMenu(TextMenuStyle, &Index, ChosenEntry);
+    StyleValue = Text;
+
+  return RunGenericMenu(StyleValue, &Index, ChosenEntry);
+}
+
+VOID REFIT_MENU_SCREEN::StyleFunc(IN UINTN Function, IN CONST CHAR16 *ParamText)
+{
+  switch (StyleValue) { 
+    case Text:
+      TextMenuStyle(Function, ParamText);
+      break;
+    case Options:
+      GraphicsMenuStyle(Function, ParamText);
+      break;
+    case Refit:
+      MainMenuStyle(Function, ParamText);
+      break;
+    case Vertical:
+      MainMenuVerticalStyle(Function, ParamText);
+      break;
+    default:
+      GraphicsMenuStyle(Function, ParamText);
+      break;
+  }
 }
 
 VOID NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
@@ -5454,7 +5477,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastCho
   UINTN               SubMenuExit;
   UINTN               NextMenuExit;
   //CHAR16*           Flags;
-  MENU_STYLE_FUNC     Style = TextMenuStyle;
+  MENU_STYLE_VALUE    Style = Text;
   INTN                EntryIndex = 0;
   INTN                SubEntryIndex = -1; //value -1 means old position to remember
   INTN                NextEntryIndex = -1;
@@ -5465,7 +5488,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastCho
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
 
   if (AllowGraphicsMode) {
-    Style = GraphicsMenuStyle;
+    Style = Options;
   }
 
   // remember, if you extended this menu then change procedures
@@ -5507,7 +5530,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastCho
   }
 
   while (!MenuExit) {
-    MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
+    MenuExit = OptionMenu.RunGenericMenu(Style, &EntryIndex, ChosenEntry);
     //    MenuExit = RunMenu(&OptionMenu, ChosenEntry);
     if (  MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->getREFIT_MENU_ITEM_RETURN()  )
       break;
@@ -5516,7 +5539,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastCho
       if ((*ChosenEntry)->SubScreen != NULL) {
         SubMenuExit = 0;
         while (!SubMenuExit) {
-          SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, Style, &SubEntryIndex, &TmpChosenEntry);
+          SubMenuExit = (*ChosenEntry)->SubScreen.RunGenericMenu(Style, &SubEntryIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
             ApplyInputs();
             ModifyTitles(*ChosenEntry);
@@ -5526,7 +5549,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastCho
             if (TmpChosenEntry->SubScreen != NULL) {
               NextMenuExit = 0;
               while (!NextMenuExit) {
-                NextMenuExit = RunGenericMenu(TmpChosenEntry->SubScreen, Style, &NextEntryIndex, &NextChosenEntry);
+                NextMenuExit = TmpChosenEntry->SubScreen.RunGenericMenu(Style, &NextEntryIndex, &NextChosenEntry);
                 if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);
@@ -5615,8 +5638,8 @@ VOID DecodeOptions(REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER *Entry)
 
 UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
-  MENU_STYLE_FUNC     Style             = TextMenuStyle;
-  MENU_STYLE_FUNC     MainStyle         = TextMenuStyle;
+  MENU_STYLE_VALUE     Style             = Text;
+  MENU_STYLE_VALUE     MainStyle         = Text;
   REFIT_ABSTRACT_MENU_ENTRY    *TempChosenEntry  = 0;
   REFIT_ABSTRACT_MENU_ENTRY    *MainChosenEntry  = 0;
   REFIT_ABSTRACT_MENU_ENTRY    *NextChosenEntry  = NULL;
@@ -5625,17 +5648,17 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
   INTN                SubMenuIndex;
 
   if (AllowGraphicsMode) {
-    Style = GraphicsMenuStyle;
+    Style = Options;
     if (GlobalConfig.VerticalLayout) {
-      MainStyle = MainMenuVerticalStyle;
+      MainStyle = Vertical;
     } else {
-      MainStyle = MainMenuStyle;
+      MainStyle = Refit;
     }
   }
 
   while (!MenuExit) {
     AnimeRun = MainAnime;
-    MenuExit = RunGenericMenu(Screen, MainStyle, &DefaultEntryIndex, &MainChosenEntry);
+    MenuExit = RunGenericMenu(MainStyle, &DefaultEntryIndex, &MainChosenEntry);
     TimeoutSeconds = 0;
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
@@ -5664,7 +5687,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
       SubMenuExit = 0;
       while (!SubMenuExit) {
         //running details menu
-        SubMenuExit = RunGenericMenu(MainChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
+        SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(Style, &SubMenuIndex, &TempChosenEntry);
         if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER());
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
 //        DBG(" TempChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
@@ -5696,7 +5719,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
             UINTN NextMenuExit = 0;
             INTN NextEntryIndex = -1;
             while (!NextMenuExit) {
-              NextMenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &NextEntryIndex, &NextChosenEntry);
+              NextMenuExit = TempChosenEntry->SubScreen->RunGenericMenu(Style, &NextEntryIndex, &NextChosenEntry);
               if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
                 SubMenuExit = 0;
                 NextMenuExit = MENU_EXIT_ENTER;
@@ -5710,7 +5733,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
                   INTN DeepEntryIndex = -1;
                   REFIT_ABSTRACT_MENU_ENTRY    *DeepChosenEntry  = NULL;
                   while (!DeepMenuExit) {
-                    DeepMenuExit = RunGenericMenu(NextChosenEntry->SubScreen, Style, &DeepEntryIndex, &DeepChosenEntry);
+                    DeepMenuExit = NextChosenEntry->SubScreen->RunGenericMenu(Style, &DeepEntryIndex, &DeepChosenEntry);
                     if (DeepMenuExit == MENU_EXIT_ESCAPE || DeepChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
                       DeepMenuExit = MENU_EXIT_ENTER;
                       NextMenuExit = 0;

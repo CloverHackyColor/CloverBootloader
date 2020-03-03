@@ -628,7 +628,35 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 // Make a screenshot
 //
 CONST CHAR8 ScreenShotName[] = "EFI\\CLOVER\\misc\\screenshot";
-
+#define USE_XIMAGE 1
+#if USE_XIMAGE
+EFI_STATUS egScreenShot(VOID)
+{
+  EFI_STATUS      Status = EFI_NOT_READY;
+  //take screen
+  XImage Screen(egScreenWidth, egScreenHeight);
+  MsgLog("Make screenshot W=%d H=%d\n", egScreenWidth, egScreenHeight);
+  Screen.GetArea(0, 0, egScreenWidth, egScreenHeight);
+  //convert to PNG
+  UINT8           *FileData = NULL;
+  UINTN           FileDataLength = 0U;
+  Screen.ToPNG(&FileData, FileDataLength);
+  //save file with a first unoccupied name
+  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
+  for (UINTN Index = 0; Index < 60; Index++) {
+//    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
+    XStringW Name = CommonName + SPrintf("%d", Index) + L".png";
+    if (!FileExists(SelfRootDir, Name.data())) {
+      Status = egSaveFile(SelfRootDir, Name.data(), FileData, FileDataLength);
+      if (!EFI_ERROR(Status)) {
+        break;
+      }
+    }
+  }
+  FreePool(FileData);
+  return Status;
+}
+#else
 EFI_STATUS egScreenShot(VOID)
 {
     EFI_STATUS      Status = EFI_NOT_READY;
@@ -743,7 +771,7 @@ EFI_STATUS egScreenShot(VOID)
 
   return Status;
 }
-
+#endif
 //
 // Sets mode via GOP protocol, and reconnects simple text out drivers
 //

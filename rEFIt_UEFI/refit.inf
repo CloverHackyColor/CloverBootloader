@@ -68,7 +68,7 @@
   libeg/BmLib.cpp
   libeg/image.cpp
 #  libeg/load_bmp.cpp
-  libeg/load_icns.cpp
+#  libeg/load_icns.cpp
   libeg/libscreen.cpp
   libeg/lodepng.cpp
   libeg/lodepng.h

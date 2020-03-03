@@ -336,6 +336,9 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
       UgaDraw = NULL;
   }
 
+  if (W == 0) W = Width;
+  if (H == 0) H = Height;
+
   INTN AreaWidth = (x + W > Width) ? (Width - x) : W;
   INTN AreaHeight = (y + H > Height) ? (Height - y) : H;
   

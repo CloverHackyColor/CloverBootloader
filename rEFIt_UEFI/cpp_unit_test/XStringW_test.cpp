@@ -65,5 +65,11 @@ int XStringW_tests()
 		XStringW str4("aŇ𐌾");
 		if ( str4 != L"aŇ𐌾" ) return 41;
 	}
+
+  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
+  for (UINTN Index = 0; Index < 20; Index++) {
+    XStringW Name = CommonName + SPrintf("%d", Index) + L".png";
+    DebugLog(2, "XStringW_test shot: %s\n", Name.data());
+  }
 	return 0;
 }

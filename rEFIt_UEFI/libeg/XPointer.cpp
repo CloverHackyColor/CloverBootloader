@@ -1,13 +1,9 @@
 /*
  * a class for mouse support
  */
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "Library/BaseLib.h"
-#ifdef __cplusplus
-}
-#endif
+
+#include <Platform.h>
+
 #include "XPointer.h"
 #include "libegint.h"   //this includes platform.h 
 #include "../refit/screen.h"
@@ -49,6 +45,11 @@ void XPointer::Hide()
   }
 }
 
+bool XPointer::isAlive()
+{
+  return Alive;
+}
+
 EFI_STATUS XPointer::MouseBirth()
 {
   EFI_STATUS Status = EFI_UNSUPPORTED;
@@ -59,7 +60,7 @@ EFI_STATUS XPointer::MouseBirth()
 
   if (SimplePointerProtocol) { //do not double
 //    DBG("DrawPointer\n");
-    DrawPointer();
+    Draw();
     return EFI_SUCCESS;
   }
 
@@ -84,6 +85,7 @@ EFI_STATUS XPointer::MouseBirth()
     //this is impossible after BuiltinIcon
     DBG("No pointer image!\n");
     SimplePointerProtocol = NULL;
+    Alive = false;
     return EFI_NOT_FOUND;
   }
   LastClickTime = 0; //AsmReadTsc();
@@ -96,12 +98,13 @@ EFI_STATUS XPointer::MouseBirth()
   //newImage->Fill(&MenuBackgroundPixel),
   //  egTakeImage(oldImage, oldPlace.XPos, oldPlace.YPos,
   //              POINTER_WIDTH, POINTER_HEIGHT); // DrawPointer repeats it
-  DrawPointer();
+  Draw();
   MouseEvent = NoEvents;
+  Alive = true;
   return Status;
 }
 
-VOID XPointer::DrawPointer()
+VOID XPointer::Draw()
 {
 
 // take background image
@@ -118,6 +121,7 @@ VOID XPointer::DrawPointer()
 VOID XPointer::KillMouse()
 {
   //  EG_PIXEL pi;
+  Alive = false;
   if (!SimplePointerProtocol) {
     return;
   }

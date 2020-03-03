@@ -4281,7 +4281,7 @@ InitTheme(
   }
 
   // Kill mouse before we invalidate builtin pointer image
-  KillMouse();
+//  KillMouse();
 
   // Invalidate BuiltinIcons
 //    DBG ("Invalidating BuiltinIcons...\n");
