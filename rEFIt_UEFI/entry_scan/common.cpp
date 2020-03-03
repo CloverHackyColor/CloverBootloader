@@ -364,8 +364,8 @@ VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
   // Break message into info lines
 //  CHAR16           **Information = CreateInfoLines(Message, &Count);
   CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
-    AlertMessageMenu.Title = Title;
-    RunMenu(&AlertMessageMenu, NULL);
+    AlertMessageMenu.Title = EfiStrDuplicate(Title);
+    AlertMessageMenu.RunMenu(NULL);
 //  // Check parameters
 //  if (Information != NULL) {
 //    if (Count > 0) {
@@ -407,7 +407,7 @@ BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
   do
   {
      REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
-     MenuExit = RunMenu(&YesNoMessageMenu, &ChosenEntry);
+     MenuExit = YesNoMessageMenu.RunMenu(&ChosenEntry);
      if ( ChosenEntry != NULL  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag == TAG_YES  &&
          ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
        Result = TRUE;
@@ -484,7 +484,7 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
   {
     REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry = NULL;
     // Run the volume chooser menu
-    MenuExit = RunMenu(&Menu, &ChosenEntry);
+    MenuExit = Menu.RunMenu(&ChosenEntry);
     if ((ChosenEntry != NULL) && ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG() &&
         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
       if (ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag >= TAG_OFFSET) {

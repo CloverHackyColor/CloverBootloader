@@ -50,7 +50,7 @@
 #endif
 
 
-static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -109,7 +109,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16
       if (LoaderTitle[0] == 'W' || LoaderTitle[0] == 'L')
         ShortcutLetter = LoaderTitle[0];
     } else
-      LoaderTitle = L"Legacy OS";
+      LoaderTitle = EfiStrDuplicate( L"Legacy OS");
   }
   if (Volume->VolName != NULL)
     VolDesc = Volume->VolName;
@@ -158,10 +158,11 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16
   Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
   
   // create the submenu
-  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+//  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen = new REFIT_MENU_SCREEN();
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
   SubScreen->TitleImage = Entry->Image;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  SubScreen->AnimeRun = SubScreen->GetAnime();
   
   // default entry
 //  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
@@ -172,11 +173,11 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16
   SubEntry->DevicePathString = Entry->DevicePathString;
   SubEntry->LoadOptions      = Entry->LoadOptions;
   SubEntry->AtClick       = ActionEnter;
-  AddMenuEntry(SubScreen, SubEntry, true);
+  SubScreen->AddMenuEntry(SubEntry, true);
   
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
-  AddMenuEntry(&MainMenu, Entry, true);
+  MainMenu.AddMenuEntry(Entry, true);
   DBG(" added '%s' OSType=%d Icon=%s\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
   return Entry;
 }

@@ -31,7 +31,6 @@ public:
   bool isAlive();
   EFI_STATUS MouseBirth();
   VOID KillMouse();
-  UINT64 TimeDiff(UINT64 t0, UINT64 t1);
   VOID UpdatePointer();
   bool MouseInRect(EG_RECT *Place);
   EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen);

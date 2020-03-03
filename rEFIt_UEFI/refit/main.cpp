@@ -622,7 +622,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       DsdtsList[i] = NULL;
     }
   }
-  FreeMenu(&OptionMenu);
+  OptionMenu.FreeMenu();
   //there is a place to free memory
   // GuiAnime
   // mainParser
@@ -2509,7 +2509,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else if (gThemeChanged) {
         DBG("change theme\n");
         InitTheme(FALSE, NULL);
-        FreeMenu(&OptionMenu);
+        OptionMenu.FreeMenu();
       }
       DBG("theme inited\n");
       gThemeChanged = FALSE;
@@ -2571,22 +2571,22 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
       if (gSettings.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
-      AddMenuEntry(&MainMenu, &MenuEntryOptions, false);
+      MainMenu.AddMenuEntry(&MenuEntryOptions, false);
       MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
       if (gSettings.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
-      AddMenuEntry(&MainMenu, &MenuEntryAbout, false);
+      MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
         if (gSettings.DisableCloverHotkeys)
           MenuEntryReset.ShortcutLetter = 0x00;
         MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-        AddMenuEntry(&MainMenu, &MenuEntryReset, false);
+        MainMenu.AddMenuEntry(&MenuEntryReset, false);
         if (gSettings.DisableCloverHotkeys)
           MenuEntryShutdown.ShortcutLetter = 0x00;
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_EXIT);
-        AddMenuEntry(&MainMenu, &MenuEntryShutdown, false);
+        MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
       }
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
@@ -2624,7 +2624,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
-    MainAnime = GetAnime(&MainMenu);
+    MainAnime = MainMenu.GetAnime();
 //    DBG("MainAnime=%d\n", MainAnime);
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
@@ -2635,7 +2635,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         MainMenu.AnimeRun = MainAnime;
-        MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
+        MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
       DBG("exit from MainMenu %d\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run

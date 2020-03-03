@@ -759,28 +759,28 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20;
   //  DBG("get anime for os=%d\n", SubScreen->ID);
-  SubScreen->AnimeRun = GetAnime(SubScreen);
+  SubScreen->AnimeRun = SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-  AddMenuInfoLine(SubScreen, FileDevicePathToStr(Entry->DevicePath));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Volume size: %dMb", VolumeSize));
+  SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
     CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
     AsciiSPrint(GuidStr, 50, "%g", Guid);
-    AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
+    SubScreen->AddMenuInfoLine(PoolPrint(L"UUID: %a", GuidStr));
     FreePool(GuidStr);
   }
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX ||
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
       Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     if (os_version < AsciiOSVersionToUint64("10.8")) {
-      AddMenuInfoLine(SubScreen, PoolPrint(L"Mac OS X: %a", Entry->OSVersion));
+      SubScreen->AddMenuInfoLine(PoolPrint(L"Mac OS X: %a", Entry->OSVersion));
     } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-      AddMenuInfoLine(SubScreen, PoolPrint(L"OS X: %a", Entry->OSVersion));
+      SubScreen->AddMenuInfoLine(PoolPrint(L"OS X: %a", Entry->OSVersion));
     } else {
-      AddMenuInfoLine(SubScreen, PoolPrint(L"macOS: %a", Entry->OSVersion));
+      SubScreen->AddMenuInfoLine(PoolPrint(L"macOS: %a", Entry->OSVersion));
     }
 
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -788,7 +788,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (SubEntry) {
         SubEntry->Title  = L"Cancel hibernate wake";
         SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
-        AddMenuEntry(SubScreen, SubEntry, true);
+        SubScreen->AddMenuEntry(SubEntry, true);
       }
     }
 
@@ -801,7 +801,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       } else {
         SubEntry->Title  = L"Boot macOS with selected options";
       }
-      AddMenuEntry(SubScreen, SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
     
     SubEntry = DuplicateLoaderEntry(Entry);
@@ -815,7 +815,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      AddMenuEntry(SubScreen, SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
@@ -828,47 +828,47 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
-    AddMenuEntry(SubScreen, SubMenuKextInjectMgmt(Entry), true);
-    AddMenuInfo(SubScreen, L"=== boot-args ===");
+    SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(Entry), true);
+    SubScreen->AddMenuInfo(L"=== boot-args ===");
     if (!KernelIs64BitOnly) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
-        AddMenuCheck(SubScreen, "Mac OS X 32bit",   OPT_I386, 68);
-        AddMenuCheck(SubScreen, "Mac OS X 64bit",   OPT_X64,  68);
+        SubScreen->AddMenuCheck("Mac OS X 32bit",   OPT_I386, 68);
+        SubScreen->AddMenuCheck("Mac OS X 64bit",   OPT_X64,  68);
       } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        AddMenuCheck(SubScreen, "OS X 32bit",       OPT_I386, 68);
-        AddMenuCheck(SubScreen, "OS X 64bit",       OPT_X64,  68);
+        SubScreen->AddMenuCheck("OS X 32bit",       OPT_I386, 68);
+        SubScreen->AddMenuCheck("OS X 64bit",       OPT_X64,  68);
       } else {
-        AddMenuCheck(SubScreen, "macOS 32bit",      OPT_I386, 68);
-        AddMenuCheck(SubScreen, "macOS 64bit",      OPT_X64,  68);
+        SubScreen->AddMenuCheck("macOS 32bit",      OPT_I386, 68);
+        SubScreen->AddMenuCheck("macOS 64bit",      OPT_X64,  68);
       }
     }
-    AddMenuCheck(SubScreen, "Verbose (-v)",                               OPT_VERBOSE, 68);
+    SubScreen->AddMenuCheck("Verbose (-v)",                               OPT_VERBOSE, 68);
     // No Caches option works on 10.6 - 10.9
     if (os_version < AsciiOSVersionToUint64("10.10")) {
-      AddMenuCheck(SubScreen, "Without caches (-f)",                        OPT_NOCACHES, 68);
+      SubScreen->AddMenuCheck("Without caches (-f)",                        OPT_NOCACHES, 68);
     }
-    AddMenuCheck(SubScreen, "Single User (-s)",                           OPT_SINGLE_USER, 68);
-    AddMenuCheck(SubScreen, "Safe Mode (-x)",                             OPT_SAFE, 68);
-    AddMenuCheck(SubScreen, "Disable KASLR (slide=0)",                    OPT_SLIDE, 68);
-    AddMenuCheck(SubScreen, "Set Nvidia to VESA (nv_disable=1)",          OPT_NVDISABLE, 68);
-    AddMenuCheck(SubScreen, "Use Nvidia WEB drivers (nvda_drv=1)",        OPT_NVWEBON, 68);
-    AddMenuCheck(SubScreen, "Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
-    AddMenuCheck(SubScreen, "Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
-//    AddMenuCheck(SubScreen, "Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
-//    AddMenuCheck(SubScreen, "Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
-//    AddMenuCheck(SubScreen, "Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
-//    AddMenuCheck(SubScreen, "EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
-    AddMenuCheck(SubScreen, "Keep symbols on panic (keepsyms=1)",         OPT_KEEPSYMS, 68);
-    AddMenuCheck(SubScreen, "Don't reboot on panic (debug=0x100)",        OPT_DEBUG, 68);
-    AddMenuCheck(SubScreen, "Debug kexts (kextlog=0xffff)",               OPT_KEXTLOG, 68);
-//    AddMenuCheck(SubScreen, "Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
-//    AddMenuCheck(SubScreen, "Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
+    SubScreen->AddMenuCheck("Single User (-s)",                           OPT_SINGLE_USER, 68);
+    SubScreen->AddMenuCheck("Safe Mode (-x)",                             OPT_SAFE, 68);
+    SubScreen->AddMenuCheck("Disable KASLR (slide=0)",                    OPT_SLIDE, 68);
+    SubScreen->AddMenuCheck("Set Nvidia to VESA (nv_disable=1)",          OPT_NVDISABLE, 68);
+    SubScreen->AddMenuCheck("Use Nvidia WEB drivers (nvda_drv=1)",        OPT_NVWEBON, 68);
+    SubScreen->AddMenuCheck("Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
+    SubScreen->AddMenuCheck("Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
+//    SubScreen->AddMenuCheck("Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
+//    SubScreen->AddMenuCheck("Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
+//    SubScreen->AddMenuCheck("Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
+//    SubScreen->AddMenuCheck("EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
+    SubScreen->AddMenuCheck("Keep symbols on panic (keepsyms=1)",         OPT_KEEPSYMS, 68);
+    SubScreen->AddMenuCheck("Don't reboot on panic (debug=0x100)",        OPT_DEBUG, 68);
+    SubScreen->AddMenuCheck("Debug kexts (kextlog=0xffff)",               OPT_KEXTLOG, 68);
+//    SubScreen->AddMenuCheck("Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
+//    SubScreen->AddMenuCheck("Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
 
     if (gSettings.CsrActiveConfig == 0) {
-      AddMenuCheck(SubScreen, "No SIP", OSFLAG_NOSIP, 69);
+      SubScreen->AddMenuCheck("No SIP", OSFLAG_NOSIP, 69);
     }
     
   } else if (Entry->LoaderType == OSTYPE_LINEFI) {
@@ -879,7 +879,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->Title = PoolPrint(L"Run %s", FileName);
-      AddMenuEntry(SubScreen, SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
@@ -893,7 +893,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
       }
     }
-    AddMenuEntry(SubScreen, SubEntry, true);
+    SubScreen->AddMenuEntry(SubEntry, true);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
@@ -905,7 +905,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
       }
     }
-    AddMenuEntry(SubScreen, SubEntry, true);
+    SubScreen->AddMenuEntry(SubEntry, true);
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
@@ -931,7 +931,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
       }
     }
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
+    SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = PoolPrint(L"-s -h");
@@ -940,20 +940,20 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->Title = PoolPrint(L"Run %s", FileName);
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->Title        = PoolPrint(L"Boot Windows from Hard Disk");
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
     if (SubEntry) {
       SubEntry->Title        = PoolPrint(L"Boot Windows from CD-ROM");
       SubEntry->LoadOptions     = PoolPrint(L"-s -c");
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
     SubEntry = DuplicateLoaderEntry(Entry);
@@ -962,12 +962,12 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = PoolPrint(L"-v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
     }
 
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
@@ -1022,7 +1022,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *Load
     //TODO there is a problem that Entry->Flags is unique while InputItems are global ;(
 //    InputItems[69].IValue = Entry->Flags;
     AddDefaultMenu(Entry);
-    AddMenuEntry(&MainMenu, Entry, true);
+    MainMenu.AddMenuEntry(Entry, true);
     return TRUE;
   }
   return FALSE;
@@ -1971,17 +1971,17 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
-            SubScreen->AnimeRun = GetAnime(SubScreen);
+            SubScreen->AnimeRun = SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-            AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-            AddMenuInfoLine(SubScreen, FileDevicePathToStr(Entry->DevicePath));
+            SubScreen->AddMenuInfoLine(PoolPrint(L"Volume size: %dMb", VolumeSize));
+            SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
               CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
               AsciiSPrint(GuidStr, 50, "%g", Guid);
-              AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
+              SubScreen->AddMenuInfoLine(PoolPrint(L"UUID: %a", GuidStr));
               FreePool(GuidStr);
             }
-            AddMenuInfoLine(SubScreen, PoolPrint(L"Options: %s", Entry->LoadOptions));
+            SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
             DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
               if (!CustomSubEntry->Settings) {
@@ -1989,11 +1989,15 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               }
               AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
             }
-            AddMenuEntry(SubScreen, &MenuEntryReturn, true);
+            SubScreen->AddMenuEntry(&MenuEntryReturn, true);
             Entry->SubScreen = SubScreen;
           }
         }
-        AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, Entry, true);
+        if (IsSubEntry)
+          SubMenu->AddMenuEntry(Entry, true);
+        else
+          MainMenu.AddMenuEntry(Entry, true);
+//        AddMenuEntry(IsSubEntry ? SubMenu : &MainMenu, Entry, true);
       }
       // cleanup custom
       if (FindCustomPath) {

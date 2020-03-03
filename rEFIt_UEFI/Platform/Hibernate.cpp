@@ -596,7 +596,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   EFI_BLOCK_IO_PROTOCOL   *BlockIo;
   HFSPlusVolumeHeaderMin  *HFSHeader;
   UINT32              HFSVolumeModifyDate;
-  INTN                TimeDiff;
+  INTN                TimeDelta;
   INTN                Pages; // = 1;
   //EFI_TIME            ImageModifyTime;
   //EFI_TIME            *TimePtr;
@@ -636,9 +636,9 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   // Check that sleepimage is not more then 5 secs older then volume modification date
   // Idea is from Chameleon
   //
-  TimeDiff = HFSVolumeModifyDate - (INTN)gSleepTime;
-  DBG("     image older then volume: %d sec\n", TimeDiff);
-  if (TimeDiff > 5 /*|| TimeDiff < -5 */) {
+  TimeDelta = HFSVolumeModifyDate - (INTN)gSleepTime;
+  DBG("     image older then volume: %d sec\n", TimeDelta);
+  if (TimeDelta > 5 /*|| TimeDelta < -5 */) {
     //Slice - if image newer then volume it should be OK
     DBG("     image too old\n");
     FreePages(Buffer, Pages);

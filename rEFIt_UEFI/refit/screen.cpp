@@ -915,7 +915,7 @@ static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN
 
 static EG_IMAGE *AnimeImage = NULL;
 
-VOID REFIT_MENU_SCREEN::UpdateAnime(const EG_RECT *Place)
+VOID REFIT_MENU_SCREEN::UpdateAnime()
 {
   UINT64      Now;
   INTN        x, y;
@@ -938,8 +938,8 @@ VOID REFIT_MENU_SCREEN::UpdateAnime(const EG_RECT *Place)
 //  DBG("anime size=[%d,%d]\n", AnimeImage->Width, AnimeImage->Height);
   
   // Retained for legacy themes without new anim placement options.
-  x = Place->XPos + (Place->Width - AnimeImage->Width) / 2;
-  y = Place->YPos + (Place->Height - AnimeImage->Height) / 2;
+  x = FilmPlace.XPos + (FilmPlace.Width - AnimeImage->Width) / 2;
+  y = FilmPlace.YPos + (FilmPlace.Height - AnimeImage->Height) / 2;
   
   if (!IsImageWithinScreenLimits(x, Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Film[0]->Height, UGAHeight)) {
  //   DBG(") This anime can't be displayed\n");

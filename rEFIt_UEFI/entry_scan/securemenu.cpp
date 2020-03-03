@@ -81,7 +81,7 @@ VOID AddSecureBootTool(VOID)
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionHelp;
-  AddMenuEntry(&MainMenu, Entry);
+  MainMenu.AddMenuEntry(Entry);
 }
 /*
  typedef struct _refit_menu_entry {
@@ -146,7 +146,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         // Run the query menu
         do
         {
-           MenuExit = RunMenu(&QueryUserMenu, &ChosenEntry);
+           MenuExit = QueryUserMenu.RunMenu(&ChosenEntry);
            if ((ChosenEntry != NULL) &&
                ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
              Response = (UINTN)ChosenEntry->Tag;
@@ -457,7 +457,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
     SecureBootMenu.Entries[Index++] = &MenuEntryReturn;
     SecureBootMenu.Entries.size() = Index;
     // Run the configuration menu
-    MenuExit = RunMenu(&SecureBootMenu, &ChosenEntry);
+    MenuExit = SecureBootMenu.RunMenu(&ChosenEntry);
     if ((ChosenEntry != NULL) &&
         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
       switch (ChosenEntry->Tag) {
@@ -466,7 +466,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
         do
         {
           ChosenEntry = NULL;
-          MenuExit = RunMenu(&SecureBootPolicyMenu, &ChosenEntry);
+          MenuExit = SecureBootPolicyMenu.RunMenu(&ChosenEntry);
           if ((ChosenEntry != NULL) &&
               ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
             switch (ChosenEntry->Tag) {
