@@ -915,7 +915,7 @@ static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN
 
 static EG_IMAGE *AnimeImage = NULL;
 
-VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
+VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, const EG_RECT *Place)
 {
   UINT64      Now;
   INTN        x, y;

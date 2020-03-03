@@ -397,7 +397,7 @@ public:
   ACTION      mAction;
   UINTN       mItemID;
   XPointer    *mPointer;
-  SCROLL_STATE ScrollState, 
+  SCROLL_STATE ScrollState;
 
   REFIT_MENU_SCREEN()
 						: ID(0), Title(0), TitleImage(0),
