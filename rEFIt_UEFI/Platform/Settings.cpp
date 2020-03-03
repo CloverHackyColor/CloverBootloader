@@ -10,6 +10,7 @@
 #include "../refit/screen.h"
 #include "../refit/menu.h"
 #include "gma.h"
+#include "Pointer.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
