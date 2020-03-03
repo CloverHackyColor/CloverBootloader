@@ -1362,40 +1362,40 @@ VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.Entries.size() == 0) {
-    AddMenuInfo(&AboutMenu, PoolPrint(L"Clover Version 2.5k rev %s", gFirmwareRevision)); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AboutMenu.AddMenuInfo(PoolPrint(L"Clover Version 2.5k rev %s", gFirmwareRevision)); // by Slice, dmazar, apianti, JrCs, pene and others");
 #ifdef FIRMWARE_BUILDDATE
-    AddMenuInfo(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
+    AboutMenu.AddMenuInfo(PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
-    AddMenuInfo(&AboutMenu, L" Build: unknown");
+    AboutMenu.AddMenuInfo(L" Build: unknown");
 #endif
-    AddMenuInfo(&AboutMenu, L"");
-    AddMenuInfo(&AboutMenu, L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
-    AddMenuInfo(&AboutMenu, L"Portions Copyright (c) Intel Corporation");
-    AddMenuInfo(&AboutMenu, L"Developers:");
-    AddMenuInfo(&AboutMenu, L"  Slice, dmazar, apianti, JrCs, pene, usrsse2");
-    AddMenuInfo(&AboutMenu, L"Credits also:");
-    AddMenuInfo(&AboutMenu, L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
-    AddMenuInfo(&AboutMenu, L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
-    AddMenuInfo(&AboutMenu, L"  cparm, rehabman, nms42, Sherlocks, Zenith432");
-    AddMenuInfo(&AboutMenu, L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
-    AddMenuInfo(&AboutMenu, L"  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
-    AddMenuInfo(&AboutMenu, L"  ath, savvas, syscl, goodwin_c, clovy, jief_machak");
-    AddMenuInfo(&AboutMenu, L"  projectosx.com, applelife.ru, insanelymac.com");
-    AddMenuInfo(&AboutMenu, L"");
-    AddMenuInfo(&AboutMenu, L"Running on:");
-    AddMenuInfo(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
+    AboutMenu.AddMenuInfo(L"");
+    AboutMenu.AddMenuInfo(L"Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
+    AboutMenu.AddMenuInfo(L"Portions Copyright (c) Intel Corporation");
+    AboutMenu.AddMenuInfo(L"Developers:");
+    AboutMenu.AddMenuInfo(L"  Slice, dmazar, apianti, JrCs, pene, usrsse2");
+    AboutMenu.AddMenuInfo(L"Credits also:");
+    AboutMenu.AddMenuInfo(L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
+    AboutMenu.AddMenuInfo(L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
+    AboutMenu.AddMenuInfo(L"  cparm, rehabman, nms42, Sherlocks, Zenith432");
+    AboutMenu.AddMenuInfo(L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
+    AboutMenu.AddMenuInfo(L"  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
+    AboutMenu.AddMenuInfo(L"  ath, savvas, syscl, goodwin_c, clovy, jief_machak");
+    AboutMenu.AddMenuInfo(L"  projectosx.com, applelife.ru, insanelymac.com");
+    AboutMenu.AddMenuInfo(L"");
+    AboutMenu.AddMenuInfo(L"Running on:");
+    AboutMenu.AddMenuInfo(PoolPrint(L" EFI Revision %d.%02d",
                                       gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
 #if defined(MDE_CPU_IA32)
-    AddMenuInfo(&AboutMenu, L" Platform: i386 (32 bit)");
+    AboutMenu.AddMenuInfo(L" Platform: i386 (32 bit)");
 #elif defined(MDE_CPU_X64)
-    AddMenuInfo(&AboutMenu, L" Platform: x86_64 (64 bit)");
+    AboutMenu.AddMenuInfo(L" Platform: x86_64 (64 bit)");
 #else
-    AddMenuInfo(&AboutMenu, L" Platform: unknown");
+    AboutMenu.AddMenuInfo(L" Platform: unknown");
 #endif
-    AddMenuInfo(&AboutMenu, PoolPrint(L" Firmware: %s rev %d.%d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
-    AddMenuInfo(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
-    AboutMenu.AnimeRun = GetAnime(&AboutMenu);
-    AddMenuEntry(&AboutMenu, &MenuEntryReturn, false);
+    AboutMenu.AddMenuInfo(PoolPrint(L" Firmware: %s rev %d.%d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
+    AboutMenu.AddMenuInfo(PoolPrint(L" Screen Output: %s", egScreenDescription()));
+    AboutMenu.AnimeRun = AboutMenu.GetAnime();
+    AboutMenu.AddMenuEntry(&MenuEntryReturn, false);
   } else if (AboutMenu.Entries.size() >= 2) {
     /*
       EntryCount instead of InfoLineCount. Lastline == return/back. Is necessary recheck screen res here?
@@ -1404,7 +1404,7 @@ VOID AboutRefit(VOID)
     AboutMenu.Entries[AboutMenu.Entries.size()-2].Title = PoolPrint(L" Screen Output: %s", egScreenDescription());
   }
 
-  RunMenu(&AboutMenu, NULL);
+  AboutMenu.RunMenu(NULL);
 }
 
 VOID HelpRefit(VOID)
@@ -1418,364 +1418,364 @@ VOID HelpRefit(VOID)
     switch (gLanguage)
     {
       case russian:
-        AddMenuInfo(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
-        AddMenuInfo(&HelpMenu, L"F1  - Помощь по горячим клавишам");
-        AddMenuInfo(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Показать скрытые значки в меню");
-        AddMenuInfo(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Проверить звук на выбранном выходе");
-        AddMenuInfo(&HelpMenu, L"F8  - Сделать дамп звуковых устройств в EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Изменить разрешение экрана на одно из возможных");
-        AddMenuInfo(&HelpMenu, L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Извлечь указанный DVD");
-        AddMenuInfo(&HelpMenu, L"Пробел - Дополнительное меню запуска выбранного тома");
-        AddMenuInfo(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
-        AddMenuInfo(&HelpMenu, L"A (About) - О загрузчике");
-        AddMenuInfo(&HelpMenu, L"O (Options) - Дополнительные настройки");
-        AddMenuInfo(&HelpMenu, L"R (Reset) - Теплый перезапуск");
-        AddMenuInfo(&HelpMenu, L"U (go oUt) - Завершить работу в Кловере");
-        AddMenuInfo(&HelpMenu, L"S (Shell) - Переход в режим командной строки");
+        HelpMenu.AddMenuInfo(L"ESC - Выход из подменю, обновление главного меню");
+        HelpMenu.AddMenuInfo(L"F1  - Помощь по горячим клавишам");
+        HelpMenu.AddMenuInfo(L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Показать скрытые значки в меню");
+        HelpMenu.AddMenuInfo(L"F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Проверить звук на выбранном выходе");
+        HelpMenu.AddMenuInfo(L"F8  - Сделать дамп звуковых устройств в EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Изменить разрешение экрана на одно из возможных");
+        HelpMenu.AddMenuInfo(L"F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Извлечь указанный DVD");
+        HelpMenu.AddMenuInfo(L"Пробел - Дополнительное меню запуска выбранного тома");
+        HelpMenu.AddMenuInfo(L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
+        HelpMenu.AddMenuInfo(L"A (About) - О загрузчике");
+        HelpMenu.AddMenuInfo(L"O (Options) - Дополнительные настройки");
+        HelpMenu.AddMenuInfo(L"R (Reset) - Теплый перезапуск");
+        HelpMenu.AddMenuInfo(L"U (go oUt) - Завершить работу в Кловере");
+        HelpMenu.AddMenuInfo(L"S (Shell) - Переход в режим командной строки");
         break;
       case ukrainian:
-        AddMenuInfo(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
-        AddMenuInfo(&HelpMenu, L"F1  - Ця довідка");
-        AddMenuInfo(&HelpMenu, L"F2  - Зберегти preboot.log (тiльки FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Відображати приховані розділи");
-        AddMenuInfo(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Відкрити обраний диск (DVD)");
-        AddMenuInfo(&HelpMenu, L"Пробіл - докладніше про обраний пункт меню");
-        AddMenuInfo(&HelpMenu, L"Клавіші 1-9 -  клавіші пунктів меню");
-        AddMenuInfo(&HelpMenu, L"A - Про систему");
-        AddMenuInfo(&HelpMenu, L"O - Опції меню");
-        AddMenuInfo(&HelpMenu, L"R - Перезавантаження");
-        AddMenuInfo(&HelpMenu, L"U - Відключити ПК");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Вийти з меню, оновити головне меню");
+        HelpMenu.AddMenuInfo(L"F1  - Ця довідка");
+        HelpMenu.AddMenuInfo(L"F2  - Зберегти preboot.log (тiльки FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Відображати приховані розділи");
+        HelpMenu.AddMenuInfo(L"F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Відкрити обраний диск (DVD)");
+        HelpMenu.AddMenuInfo(L"Пробіл - докладніше про обраний пункт меню");
+        HelpMenu.AddMenuInfo(L"Клавіші 1-9 -  клавіші пунктів меню");
+        HelpMenu.AddMenuInfo(L"A - Про систему");
+        HelpMenu.AddMenuInfo(L"O - Опції меню");
+        HelpMenu.AddMenuInfo(L"R - Перезавантаження");
+        HelpMenu.AddMenuInfo(L"U - Відключити ПК");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case spanish:
-        AddMenuInfo(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
-        AddMenuInfo(&HelpMenu, L"F1  - Esta Ayuda");
-        AddMenuInfo(&HelpMenu, L"F2  - Guardar preboot.log (Solo FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
-        AddMenuInfo(&HelpMenu, L"Espacio - Detalles acerca selected menu entry");
-        AddMenuInfo(&HelpMenu, L"Digitos 1-9 - Atajo a la entrada del menu");
-        AddMenuInfo(&HelpMenu, L"A - Menu Acerca de");
-        AddMenuInfo(&HelpMenu, L"O - Menu Optiones");
-        AddMenuInfo(&HelpMenu, L"R - Reiniciar Equipo");
-        AddMenuInfo(&HelpMenu, L"U - Apagar");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Salir de submenu o actualizar el menu principal");
+        HelpMenu.AddMenuInfo(L"F1  - Esta Ayuda");
+        HelpMenu.AddMenuInfo(L"F2  - Guardar preboot.log (Solo FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Expulsar volumen seleccionado (DVD)");
+        HelpMenu.AddMenuInfo(L"Espacio - Detalles acerca selected menu entry");
+        HelpMenu.AddMenuInfo(L"Digitos 1-9 - Atajo a la entrada del menu");
+        HelpMenu.AddMenuInfo(L"A - Menu Acerca de");
+        HelpMenu.AddMenuInfo(L"O - Menu Optiones");
+        HelpMenu.AddMenuInfo(L"R - Reiniciar Equipo");
+        HelpMenu.AddMenuInfo(L"U - Apagar");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case portuguese:
       case brasil:
-        AddMenuInfo(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
-        AddMenuInfo(&HelpMenu, L"F1  - Esta ajuda");
-        AddMenuInfo(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
-        AddMenuInfo(&HelpMenu, L"Espaco - Detalhes sobre a opcao do menu selecionada");
-        AddMenuInfo(&HelpMenu, L"Tecle 1-9 - Atalho para as entradas do menu");
-        AddMenuInfo(&HelpMenu, L"A - Sobre o Menu");
-        AddMenuInfo(&HelpMenu, L"O - Opcoes do Menu");
-        AddMenuInfo(&HelpMenu, L"R - Reiniciar");
-        AddMenuInfo(&HelpMenu, L"U - Desligar");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Sai do submenu, atualiza o menu principal");
+        HelpMenu.AddMenuInfo(L"F1  - Esta ajuda");
+        HelpMenu.AddMenuInfo(L"F2  - Salva preboot.log (somente FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Ejeta o volume selecionado (DVD)");
+        HelpMenu.AddMenuInfo(L"Espaco - Detalhes sobre a opcao do menu selecionada");
+        HelpMenu.AddMenuInfo(L"Tecle 1-9 - Atalho para as entradas do menu");
+        HelpMenu.AddMenuInfo(L"A - Sobre o Menu");
+        HelpMenu.AddMenuInfo(L"O - Opcoes do Menu");
+        HelpMenu.AddMenuInfo(L"R - Reiniciar");
+        HelpMenu.AddMenuInfo(L"U - Desligar");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case italian:
-        AddMenuInfo(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
-        AddMenuInfo(&HelpMenu, L"F1  - Aiuto");
-        AddMenuInfo(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Mostra volumi nascosti");
-        AddMenuInfo(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Controlla il suono sull'uscita selezionata");
-        AddMenuInfo(&HelpMenu, L"F8  - Scarica le uscite audio in EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Cambia la risoluzione dello schermo alla prossima disponibile");
-        AddMenuInfo(&HelpMenu, L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Resetta NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
-        AddMenuInfo(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
-        AddMenuInfo(&HelpMenu, L"Digita 1-9 - Abbreviazioni per il menu");
-        AddMenuInfo(&HelpMenu, L"A - Informazioni");
-        AddMenuInfo(&HelpMenu, L"O - Menu Opzioni");
-        AddMenuInfo(&HelpMenu, L"R - Riavvio");
-        AddMenuInfo(&HelpMenu, L"U - Spegnimento");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Esci dal submenu, Aggiorna menu principale");
+        HelpMenu.AddMenuInfo(L"F1  - Aiuto");
+        HelpMenu.AddMenuInfo(L"F2  - Salva il preboot.log (solo su FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Mostra volumi nascosti");
+        HelpMenu.AddMenuInfo(L"F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Controlla il suono sull'uscita selezionata");
+        HelpMenu.AddMenuInfo(L"F8  - Scarica le uscite audio in EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Cambia la risoluzione dello schermo alla prossima disponibile");
+        HelpMenu.AddMenuInfo(L"F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Resetta NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Espelli il volume selezionato (DVD)");
+        HelpMenu.AddMenuInfo(L"Spazio - Dettagli sul menu selezionato");
+        HelpMenu.AddMenuInfo(L"Digita 1-9 - Abbreviazioni per il menu");
+        HelpMenu.AddMenuInfo(L"A - Informazioni");
+        HelpMenu.AddMenuInfo(L"O - Menu Opzioni");
+        HelpMenu.AddMenuInfo(L"R - Riavvio");
+        HelpMenu.AddMenuInfo(L"U - Spegnimento");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case german:
-        AddMenuInfo(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
-        AddMenuInfo(&HelpMenu, L"F1  - Diese Hilfe");
-        AddMenuInfo(&HelpMenu, L"F2  - Sichere preboot.log (nur mit FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
-        AddMenuInfo(&HelpMenu, L"Leertaste - Details über den gewählten Menue Eintrag");
-        AddMenuInfo(&HelpMenu, L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
-        AddMenuInfo(&HelpMenu, L"A - Menue Informationen");
-        AddMenuInfo(&HelpMenu, L"O - Menue Optionen");
-        AddMenuInfo(&HelpMenu, L"R - Neustart");
-        AddMenuInfo(&HelpMenu, L"U - Ausschalten");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
+        HelpMenu.AddMenuInfo(L"F1  - Diese Hilfe");
+        HelpMenu.AddMenuInfo(L"F2  - Sichere preboot.log (nur mit FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Volume auswerfen (DVD)");
+        HelpMenu.AddMenuInfo(L"Leertaste - Details über den gewählten Menue Eintrag");
+        HelpMenu.AddMenuInfo(L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
+        HelpMenu.AddMenuInfo(L"A - Menue Informationen");
+        HelpMenu.AddMenuInfo(L"O - Menue Optionen");
+        HelpMenu.AddMenuInfo(L"R - Neustart");
+        HelpMenu.AddMenuInfo(L"U - Ausschalten");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case dutch:
-        AddMenuInfo(&HelpMenu, L"ESC - Verlaat submenu, Vernieuw hoofdmenu");
-        AddMenuInfo(&HelpMenu, L"F1  - Onderdeel hulp");
-        AddMenuInfo(&HelpMenu, L"F2  - preboot.log opslaan (Alleen FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Verborgen opties weergeven");
-        AddMenuInfo(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Controleer geluid op geselecteerde uitgang");
-        AddMenuInfo(&HelpMenu, L"F8  - Opslaan audio uitgangen in EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Wijzig schermresolutie naar eerstvolgende mogelijke modus");
-        AddMenuInfo(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
-        AddMenuInfo(&HelpMenu, L"Spatie - Details over geselecteerd menuoptie");
-        AddMenuInfo(&HelpMenu, L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
-        AddMenuInfo(&HelpMenu, L"A - Menu Over");
-        AddMenuInfo(&HelpMenu, L"O - Menu Opties");
-        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfo(&HelpMenu, L"U - Verlaten");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Verlaat submenu, Vernieuw hoofdmenu");
+        HelpMenu.AddMenuInfo(L"F1  - Onderdeel hulp");
+        HelpMenu.AddMenuInfo(L"F2  - preboot.log opslaan (Alleen FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Verborgen opties weergeven");
+        HelpMenu.AddMenuInfo(L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Controleer geluid op geselecteerde uitgang");
+        HelpMenu.AddMenuInfo(L"F8  - Opslaan audio uitgangen in EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Wijzig schermresolutie naar eerstvolgende mogelijke modus");
+        HelpMenu.AddMenuInfo(L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Uitwerpen geselecteerd volume (DVD)");
+        HelpMenu.AddMenuInfo(L"Spatie - Details over geselecteerd menuoptie");
+        HelpMenu.AddMenuInfo(L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
+        HelpMenu.AddMenuInfo(L"A - Menu Over");
+        HelpMenu.AddMenuInfo(L"O - Menu Opties");
+        HelpMenu.AddMenuInfo(L"R - Soft Reset");
+        HelpMenu.AddMenuInfo(L"U - Verlaten");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case french:
-        AddMenuInfo(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
-        AddMenuInfo(&HelpMenu, L"F1  - Aide");
-        AddMenuInfo(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
-        AddMenuInfo(&HelpMenu, L"Space - Détails a propos du menu selectionné");
-        AddMenuInfo(&HelpMenu, L"Digits 1-9 - Raccourci vers entrée menu");
-        AddMenuInfo(&HelpMenu, L"A - A propos");
-        AddMenuInfo(&HelpMenu, L"O - Options Menu");
-        AddMenuInfo(&HelpMenu, L"R - Redémarrer");
-        AddMenuInfo(&HelpMenu, L"U - Eteindre");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Quitter sous-menu, Retour menu principal");
+        HelpMenu.AddMenuInfo(L"F1  - Aide");
+        HelpMenu.AddMenuInfo(L"F2  - Enregistrer preboot.log (FAT32 only)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Ejecter le volume (DVD)");
+        HelpMenu.AddMenuInfo(L"Space - Détails a propos du menu selectionné");
+        HelpMenu.AddMenuInfo(L"Digits 1-9 - Raccourci vers entrée menu");
+        HelpMenu.AddMenuInfo(L"A - A propos");
+        HelpMenu.AddMenuInfo(L"O - Options Menu");
+        HelpMenu.AddMenuInfo(L"R - Redémarrer");
+        HelpMenu.AddMenuInfo(L"U - Eteindre");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case indonesian:
-        AddMenuInfo(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
-        AddMenuInfo(&HelpMenu, L"F1  - Help");
-        AddMenuInfo(&HelpMenu, L"F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Eject volume (DVD)");
-        AddMenuInfo(&HelpMenu, L"Spasi - Detail dari menu yang dipilih");
-        AddMenuInfo(&HelpMenu, L"Tombol 1-9 - Shortcut pilihan menu");
-        AddMenuInfo(&HelpMenu, L"A - About");
-        AddMenuInfo(&HelpMenu, L"O - Opsi");
-        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfo(&HelpMenu, L"U - Shutdown");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Keluar submenu, Refresh main menu");
+        HelpMenu.AddMenuInfo(L"F1  - Help");
+        HelpMenu.AddMenuInfo(L"F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Eject volume (DVD)");
+        HelpMenu.AddMenuInfo(L"Spasi - Detail dari menu yang dipilih");
+        HelpMenu.AddMenuInfo(L"Tombol 1-9 - Shortcut pilihan menu");
+        HelpMenu.AddMenuInfo(L"A - About");
+        HelpMenu.AddMenuInfo(L"O - Opsi");
+        HelpMenu.AddMenuInfo(L"R - Soft Reset");
+        HelpMenu.AddMenuInfo(L"U - Shutdown");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case polish:
-        AddMenuInfo(&HelpMenu, L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
-        AddMenuInfo(&HelpMenu, L"F1  - Pomoc");
-        AddMenuInfo(&HelpMenu, L"F2  - Zapis preboot.log (tylko FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
-        AddMenuInfo(&HelpMenu, L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
-        AddMenuInfo(&HelpMenu, L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
-        AddMenuInfo(&HelpMenu, L"A - Menu Informacyjne");
-        AddMenuInfo(&HelpMenu, L"O - Menu Opcje");
-        AddMenuInfo(&HelpMenu, L"R - Restart komputera");
-        AddMenuInfo(&HelpMenu, L"U - Wylaczenie komputera");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
+        HelpMenu.AddMenuInfo(L"F1  - Pomoc");
+        HelpMenu.AddMenuInfo(L"F2  - Zapis preboot.log (tylko FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
+        HelpMenu.AddMenuInfo(L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
+        HelpMenu.AddMenuInfo(L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
+        HelpMenu.AddMenuInfo(L"A - Menu Informacyjne");
+        HelpMenu.AddMenuInfo(L"O - Menu Opcje");
+        HelpMenu.AddMenuInfo(L"R - Restart komputera");
+        HelpMenu.AddMenuInfo(L"U - Wylaczenie komputera");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case croatian:
-        AddMenuInfo(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
-        AddMenuInfo(&HelpMenu, L"F1  - Ovaj izbornik");
-        AddMenuInfo(&HelpMenu, L"F2  - Spremi preboot.log (samo na FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
-        AddMenuInfo(&HelpMenu, L"Space - Detalji o odabranom sistemu");
-        AddMenuInfo(&HelpMenu, L"Brojevi 1 do 9 su prečac do izbora");
-        AddMenuInfo(&HelpMenu, L"A - Izbornik o meni");
-        AddMenuInfo(&HelpMenu, L"O - Izbornik opcije");
-        AddMenuInfo(&HelpMenu, L"R - Restart računala");
-        AddMenuInfo(&HelpMenu, L"U - Isključivanje računala");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
+        HelpMenu.AddMenuInfo(L"F1  - Ovaj izbornik");
+        HelpMenu.AddMenuInfo(L"F2  - Spremi preboot.log (samo na FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Izbaci izabrai (DVD)");
+        HelpMenu.AddMenuInfo(L"Space - Detalji o odabranom sistemu");
+        HelpMenu.AddMenuInfo(L"Brojevi 1 do 9 su prečac do izbora");
+        HelpMenu.AddMenuInfo(L"A - Izbornik o meni");
+        HelpMenu.AddMenuInfo(L"O - Izbornik opcije");
+        HelpMenu.AddMenuInfo(L"R - Restart računala");
+        HelpMenu.AddMenuInfo(L"U - Isključivanje računala");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case czech:
-        AddMenuInfo(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
-        AddMenuInfo(&HelpMenu, L"F1  - Tato Nápověda");
-        AddMenuInfo(&HelpMenu, L"F2  - Uložit preboot.log (FAT32 only)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
-        AddMenuInfo(&HelpMenu, L"Mezerník - Podrobnosti o vybraném disku");
-        AddMenuInfo(&HelpMenu, L"čísla 1-9 - Klávesové zkratky pro disky");
-        AddMenuInfo(&HelpMenu, L"A - Menu O Programu");
-        AddMenuInfo(&HelpMenu, L"O - Menu Možnosti");
-        AddMenuInfo(&HelpMenu, L"R - Částečný restart");
-        AddMenuInfo(&HelpMenu, L"U - Odejít");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Vrátit se do hlavní nabídky");
+        HelpMenu.AddMenuInfo(L"F1  - Tato Nápověda");
+        HelpMenu.AddMenuInfo(L"F2  - Uložit preboot.log (FAT32 only)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Vysunout vybranou mechaniku (DVD)");
+        HelpMenu.AddMenuInfo(L"Mezerník - Podrobnosti o vybraném disku");
+        HelpMenu.AddMenuInfo(L"čísla 1-9 - Klávesové zkratky pro disky");
+        HelpMenu.AddMenuInfo(L"A - Menu O Programu");
+        HelpMenu.AddMenuInfo(L"O - Menu Možnosti");
+        HelpMenu.AddMenuInfo(L"R - Částečný restart");
+        HelpMenu.AddMenuInfo(L"U - Odejít");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case korean:
-        AddMenuInfo(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
-        AddMenuInfo(&HelpMenu, L"F1  - 이 도움말");
-        AddMenuInfo(&HelpMenu, L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - 선택한 출력에서 사운드 확인");
-        AddMenuInfo(&HelpMenu, L"F8  - 오디오 코덱덤프를 EFI/CLOVER/misc/에 저장합니다.");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - NVRAM 초기화");
-        AddMenuInfo(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
-        AddMenuInfo(&HelpMenu, L"Space - 선택한 메뉴의 상세 설명");
-        AddMenuInfo(&HelpMenu, L"Digits 1-9 - 메뉴 단축 번호");
-        AddMenuInfo(&HelpMenu, L"A - 단축키 - 이 부트로더에 관하여");
-        AddMenuInfo(&HelpMenu, L"O - 단축키 - 부트 옵션");
-        AddMenuInfo(&HelpMenu, L"R - 단축키 - 리셋");
-        AddMenuInfo(&HelpMenu, L"U - 단축키 - 시스템 종료");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
+        HelpMenu.AddMenuInfo(L"F1  - 이 도움말");
+        HelpMenu.AddMenuInfo(L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - 선택한 출력에서 사운드 확인");
+        HelpMenu.AddMenuInfo(L"F8  - 오디오 코덱덤프를 EFI/CLOVER/misc/에 저장합니다.");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - NVRAM 초기화");
+        HelpMenu.AddMenuInfo(L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
+        HelpMenu.AddMenuInfo(L"Space - 선택한 메뉴의 상세 설명");
+        HelpMenu.AddMenuInfo(L"Digits 1-9 - 메뉴 단축 번호");
+        HelpMenu.AddMenuInfo(L"A - 단축키 - 이 부트로더에 관하여");
+        HelpMenu.AddMenuInfo(L"O - 단축키 - 부트 옵션");
+        HelpMenu.AddMenuInfo(L"R - 단축키 - 리셋");
+        HelpMenu.AddMenuInfo(L"U - 단축키 - 시스템 종료");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case romanian:
-        AddMenuInfo(&HelpMenu, L"ESC - Iesire din sub-meniu, Refresh meniul principal");
-        AddMenuInfo(&HelpMenu, L"F1  - Ajutor");
-        AddMenuInfo(&HelpMenu, L"F2  - Salvare preboot.log (doar pentru FAT32)");
-        AddMenuInfo(&HelpMenu, L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Scoatere volum selectat (DVD)");
-        AddMenuInfo(&HelpMenu, L"Space - Detalii despre item-ul selectat");
-        AddMenuInfo(&HelpMenu, L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
-        AddMenuInfo(&HelpMenu, L"A - Despre");
-        AddMenuInfo(&HelpMenu, L"O - Optiuni");
-        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfo(&HelpMenu, L"U - Inchidere");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Iesire din sub-meniu, Refresh meniul principal");
+        HelpMenu.AddMenuInfo(L"F1  - Ajutor");
+        HelpMenu.AddMenuInfo(L"F2  - Salvare preboot.log (doar pentru FAT32)");
+        HelpMenu.AddMenuInfo(L"F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Salvare screenshot in EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Scoatere volum selectat (DVD)");
+        HelpMenu.AddMenuInfo(L"Space - Detalii despre item-ul selectat");
+        HelpMenu.AddMenuInfo(L"Cifre 1-9 - Scurtaturi pentru itemele meniului");
+        HelpMenu.AddMenuInfo(L"A - Despre");
+        HelpMenu.AddMenuInfo(L"O - Optiuni");
+        HelpMenu.AddMenuInfo(L"R - Soft Reset");
+        HelpMenu.AddMenuInfo(L"U - Inchidere");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case chinese:
-        AddMenuInfo(&HelpMenu, L"ESC - 离开子菜单， 刷新主菜单");
-        AddMenuInfo(&HelpMenu, L"F1  - 帮助");
-        AddMenuInfo(&HelpMenu, L"F2  - 保存 preboot.log 到 EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - 显示隐藏的启动项");
-        AddMenuInfo(&HelpMenu, L"F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - 检查选中输出设备的声音");
-        AddMenuInfo(&HelpMenu, L"F8  - 生成声卡输出转储到 EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - 调整屏幕分辨率为下一个可用的模式");
-        AddMenuInfo(&HelpMenu, L"F10 - 保存截图到 EFI/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - 重置 NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - 推出选中的卷 (DVD)");
-        AddMenuInfo(&HelpMenu, L"空格 - 关于选中项的详情");
-        AddMenuInfo(&HelpMenu, L"数字 1-9 - 菜单快捷键");
-        AddMenuInfo(&HelpMenu, L"A - 关于");
-        AddMenuInfo(&HelpMenu, L"O - 选项");
-        AddMenuInfo(&HelpMenu, L"R - 软复位");
-        AddMenuInfo(&HelpMenu, L"U - 退出");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - 离开子菜单， 刷新主菜单");
+        HelpMenu.AddMenuInfo(L"F1  - 帮助");
+        HelpMenu.AddMenuInfo(L"F2  - 保存 preboot.log 到 EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - 显示隐藏的启动项");
+        HelpMenu.AddMenuInfo(L"F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - 检查选中输出设备的声音");
+        HelpMenu.AddMenuInfo(L"F8  - 生成声卡输出转储到 EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - 调整屏幕分辨率为下一个可用的模式");
+        HelpMenu.AddMenuInfo(L"F10 - 保存截图到 EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - 重置 NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - 推出选中的卷 (DVD)");
+        HelpMenu.AddMenuInfo(L"空格 - 关于选中项的详情");
+        HelpMenu.AddMenuInfo(L"数字 1-9 - 菜单快捷键");
+        HelpMenu.AddMenuInfo(L"A - 关于");
+        HelpMenu.AddMenuInfo(L"O - 选项");
+        HelpMenu.AddMenuInfo(L"R - 软复位");
+        HelpMenu.AddMenuInfo(L"U - 退出");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
       case english:
       default:
-        AddMenuInfo(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
-        AddMenuInfo(&HelpMenu, L"F1  - This help");
-        AddMenuInfo(&HelpMenu, L"F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F3  - Show hidden entries");
-        AddMenuInfo(&HelpMenu, L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F7  - Check sound on selected output");
-        AddMenuInfo(&HelpMenu, L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        AddMenuInfo(&HelpMenu, L"F9  - Switch screen resoluton to next possible mode");
-        AddMenuInfo(&HelpMenu, L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfo(&HelpMenu, L"F11 - Reset NVRAM");
-        AddMenuInfo(&HelpMenu, L"F12 - Eject selected volume (DVD)");
-        AddMenuInfo(&HelpMenu, L"Space - Details about selected menu entry");
-        AddMenuInfo(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
-        AddMenuInfo(&HelpMenu, L"A - Menu About");
-        AddMenuInfo(&HelpMenu, L"O - Menu Options");
-        AddMenuInfo(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfo(&HelpMenu, L"U - Exit from Clover");
-        AddMenuInfo(&HelpMenu, L"S - Shell");
+        HelpMenu.AddMenuInfo(L"ESC - Escape from submenu, Refresh main menu");
+        HelpMenu.AddMenuInfo(L"F1  - This help");
+        HelpMenu.AddMenuInfo(L"F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo(L"F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo(L"F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo(L"F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo(L"F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo(L"F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo(L"F12 - Eject selected volume (DVD)");
+        HelpMenu.AddMenuInfo(L"Space - Details about selected menu entry");
+        HelpMenu.AddMenuInfo(L"Digits 1-9 - Shortcut to menu entry");
+        HelpMenu.AddMenuInfo(L"A - Menu About");
+        HelpMenu.AddMenuInfo(L"O - Menu Options");
+        HelpMenu.AddMenuInfo(L"R - Soft Reset");
+        HelpMenu.AddMenuInfo(L"U - Exit from Clover");
+        HelpMenu.AddMenuInfo(L"S - Shell");
         break;
     }
-    HelpMenu.AnimeRun = GetAnime(&HelpMenu);
-    AddMenuEntry(&HelpMenu, &MenuEntryReturn, false);
+    HelpMenu.AnimeRun = HelpMenu.GetAnime();
+    HelpMenu.AddMenuEntry(&MenuEntryReturn, false);
   }
 
-  RunMenu(&HelpMenu, NULL);
+  HelpMenu.RunMenu(NULL);
 }
 
 //
@@ -2181,6 +2181,7 @@ VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_MENU_ENTRY *Entry, bool freeIt)
 //  AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->Entries.size()), Entry);
 }
 
+// This is supposed to be a destructor ?
 VOID REFIT_MENU_SCREEN::FreeMenu()
 {
 //  INTN i;
@@ -2562,9 +2563,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.LastSelection = ScrollState.CurrentSelection;
         ScrollState.CurrentSelection = mItemID;
         if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2585,9 +2586,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.CurrentSelection = mItemID;
         if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
             (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2738,9 +2739,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case CHAR_CARRIAGE_RETURN:
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
@@ -2751,9 +2752,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case ' ': //CHAR_SPACE
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
+          MenuExit = InputDialog();
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
@@ -4345,7 +4346,7 @@ VOID NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, 
   (*SubScreen)->Title = Entry->Title;
   (*SubScreen)->TitleImage = Entry->Image;
   (*SubScreen)->ID = ID;
-  (*SubScreen)->AnimeRun = GetAnime(*SubScreen);
+  (*SubScreen)->AnimeRun = (*SubScreen)->GetAnime();
   Entry->SubScreen = *SubScreen;
 }
 
@@ -4378,7 +4379,7 @@ VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, IN
   InputBootArgs->Item = &InputItems[ItemNum];
   InputBootArgs->AtClick = ActionEnter;
   InputBootArgs->AtRightClick = ActionDetails;
-  AddMenuEntry(SubScreen, InputBootArgs, true);
+  SubScreen->AddMenuEntry(InputBootArgs, true);
 }
 
 VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
@@ -4414,7 +4415,7 @@ VOID AddMenuItem_(REFIT_MENU_SCREEN  *SubScreen, REFIT_MENU_ITEM_IEM_ABSTRACT* I
   InputBootArgs->AtClick        = Cursor?ActionSelect:ActionEnter;
   InputBootArgs->AtRightClick   = Cursor?ActionNone:ActionDetails;
   InputBootArgs->AtDoubleClick  = Cursor?ActionEnter:ActionNone;
-  AddMenuEntry(SubScreen, InputBootArgs, true);
+  SubScreen->AddMenuEntry(InputBootArgs, true);
 }
 //
 //VOID AddMenuItem(REFIT_MENU_SCREEN  *SubScreen, INTN Inx, CONST CHAR8 *Title, UINTN Tag, BOOLEAN Cursor)
@@ -4444,7 +4445,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   REFIT_MENU_SCREEN  *SubScreen;
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCard%a=%d",((NGFX!=1)?"s":""), NGFX));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Number of VideoCard%a=%d",((NGFX!=1)?"s":""), NGFX));
 
   AddMenuItemInput(SubScreen, 52, "InjectEDID", FALSE);
   AddMenuItemInput(SubScreen, 53, "Fake Vendor EDID:", TRUE);
@@ -4454,8 +4455,8 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
 
 
   for (i = 0; i < NGFX; i++) {
-    AddMenuInfo(SubScreen, L"----------------------");
-    AddMenuInfo(SubScreen, PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
+    SubScreen->AddMenuInfo(L"----------------------");
+    SubScreen->AddMenuInfo(PoolPrint(L"Card DeviceID=%04x", gGraphics[i].DeviceID));
     N = 20 + i * 6;
     AddMenuItemInput(SubScreen, N, "Model:", TRUE);
 
@@ -4516,7 +4517,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     AddMenuItemInput(SubScreen, N+5, "Load Video Bios", FALSE);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4534,10 +4535,10 @@ REFIT_MENU_ENTRY  *SubMenuAudio()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->");
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the HDA devices"));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Number of Audio Controller%a=%d", ((NHDA!=1)?"s":""), NHDA));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to tune the HDA devices"));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Number of Audio Controller%a=%d", ((NHDA!=1)?"s":""), NHDA));
   for (i = 0; i < NHDA; i++) {
-      AddMenuInfoLine(SubScreen, PoolPrint(L"%d) %s [%04x][%04x]",
+      SubScreen->AddMenuInfoLine(PoolPrint(L"%d) %s [%04x][%04x]",
                                            (i+1),
                                            gAudios[i].controller_name,
                                            gAudios[i].controller_vendor_id,
@@ -4555,7 +4556,7 @@ REFIT_MENU_ENTRY  *SubMenuAudio()
   AddMenuItemInput(SubScreen, 58, "AFGLowPowerState", FALSE);
 
   // return
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4567,16 +4568,16 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   REFIT_MENU_SCREEN  *SubScreen;
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->");
-  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Model: %2x/%2x/%2x",
+  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Model: %2x/%2x/%2x",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Cores: %d Threads: %d",
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Cores: %d Threads: %d",
                   gCPUStructure.Cores, gCPUStructure.Threads));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"FSB speed MHz: %d",
+  SubScreen->AddMenuInfoLine(PoolPrint(L"FSB speed MHz: %d",
                   DivU64x32(gCPUStructure.FSBFrequency, Mega)));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"CPU speed MHz: %d",
+  SubScreen->AddMenuInfoLine(PoolPrint(L"CPU speed MHz: %d",
                   DivU64x32(gCPUStructure.CPUFrequency, Mega)));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio: Min=%d.%d Max=%d.%d Turbo=%d.%d/%d.%d/%d.%d/%d.%d",
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Ratio: Min=%d.%d Max=%d.%d Turbo=%d.%d/%d.%d/%d.%d/%d.%d",
      nya(gCPUStructure.MinRatio), nya(gCPUStructure.MaxRatio),
      nya(gCPUStructure.Turbo4), nya(gCPUStructure.Turbo3), nya(gCPUStructure.Turbo2), nya(gCPUStructure.Turbo1)));
 
@@ -4598,7 +4599,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuItemInput(SubScreen, 77, "Saving Mode:", TRUE);
   AddMenuItemInput(SubScreen, 15, "PatchAPIC", FALSE);  //-> move to ACPI?
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4622,10 +4623,10 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
     InputBootArgs->Item = &(KextPatchesMenu[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4653,7 +4654,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
     if (StrCmp(Kext->KextDirNameUnderOEMPath, UniSysVer) == 0) {
     	if ( SubScreen == NULL ) {
     		NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
-    		AddMenuInfoLine(SubScreen, PoolPrint(L"Choose/check kext to disable:"));
+    		SubScreen->AddMenuInfoLine(PoolPrint(L"Choose/check kext to disable:"));
     	}
 //      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs = new REFIT_INPUT_DIALOG;
@@ -4663,7 +4664,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
       InputBootArgs->Item = &(Kext->MenuItem);
       InputBootArgs->AtClick = ActionEnter;
       InputBootArgs->AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, InputBootArgs, true);
+      SubScreen->AddMenuEntry(InputBootArgs, true);
 
       SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
       while (plugInKext) {
@@ -4675,14 +4676,14 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
         InputBootArgs->Item = &(plugInKext->MenuItem);
         InputBootArgs->AtClick = ActionEnter;
         InputBootArgs->AtRightClick = ActionDetails;
-        AddMenuEntry(SubScreen, InputBootArgs, true);
+        SubScreen->AddMenuEntry(InputBootArgs, true);
         plugInKext = plugInKext->Next;
       }
     }
     Kext = Kext->Next;
   }
 
-  if ( SubScreen != NULL ) AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  if ( SubScreen != NULL ) SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4712,14 +4713,13 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			}
 		}
 
-		AddMenuInfoLine(SubScreen,
-		        PoolPrint(
+		SubScreen->AddMenuInfoLine(PoolPrint(
 		                L"Block injected kexts for target version of macOS: %a",
 		                ShortOSVersion));
 
 		// Add kext from 10
 		{
-			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"10"), true);
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"10"), true);
 
 			CHAR16 DirName[256];
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
@@ -4733,14 +4733,14 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 					UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
 				}
 			}
-			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName), true);
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 
 		// Add kext from 10.{version}
 		{
 			CHAR16 DirName[256];
 			UnicodeSPrint(DirName, sizeof(DirName), L"%a", ShortOSVersion);
-			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName), true);
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
 				UnicodeSPrint(DirName, sizeof(DirName), L"%a_install", ShortOSVersion);
@@ -4753,7 +4753,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 					UnicodeSPrint(DirName, sizeof(DirName), L"%a_normal", ShortOSVersion);
 				}
 			}
-			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName), true);
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 
 		// Add kext from :
@@ -4767,7 +4767,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 				}else{
 					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
 				}
-				AddMenuEntry(SubScreen, SubMenuKextBlockInjection(OSVersionKextsDirName), true);
+				SubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
 			}
 
 			CHAR16 DirName[256];
@@ -4785,25 +4785,24 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 					        Entry->OSVersion);
 				}
 			}
-			AddMenuEntry(SubScreen, SubMenuKextBlockInjection(DirName), true);
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 	}
 	else {
-		AddMenuInfoLine(SubScreen,
-		        PoolPrint(
+		SubScreen->AddMenuInfoLine(PoolPrint(
 		                L"Block injected kexts for target version of macOS: %a",
 		                ChosenOS));
 	}
 	if ((kextDir = GetOtherKextsDir(TRUE)) != NULL) {
-		AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Other"), true);
+		SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"Other"), true);
 		FreePool(kextDir);
 	}
 	if ((kextDir = GetOtherKextsDir(FALSE)) != NULL) {
-		AddMenuEntry(SubScreen, SubMenuKextBlockInjection(L"Off"), true);
+		SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"Off"), true);
 		FreePool(kextDir);
 	}
 
-	AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+	SubScreen->AddMenuEntry(&MenuEntryReturn, false);
 	return SubEntry;
 }
 
@@ -4829,10 +4828,10 @@ REFIT_MENU_ENTRY  *SubMenuKernelPatches()
     InputBootArgs->Item = &(KernelPatchesMenu[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4856,10 +4855,10 @@ REFIT_MENU_ENTRY  *SubMenuBootPatches()
     InputBootArgs->Item = &(BootPatchesMenu[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4870,11 +4869,11 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
 
-  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
 
   AddMenuItemInput(SubScreen, 64,  "Debug", FALSE);
-  AddMenuInfo(SubScreen, L"----------------------");
+  SubScreen->AddMenuInfo(L"----------------------");
   AddMenuItemInput(SubScreen, 104, "Fake CPUID:", TRUE);
 //  AddMenuItemInput(SubScreen, 108, "Kernel patching allowed", FALSE);
   AddMenuItemInput(SubScreen, 45,  "Kernel Support CPU", FALSE);
@@ -4882,19 +4881,19 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuItemInput(SubScreen, 105, "Kernel XCPM", FALSE);
   AddMenuItemInput(SubScreen, 48,  "Kernel PM", FALSE);
   AddMenuItemInput(SubScreen, 121,  "Panic No Kext Dump", FALSE);
-  AddMenuEntry(SubScreen, SubMenuKernelPatches(), true);
-  AddMenuInfo(SubScreen, L"----------------------");
+  SubScreen->AddMenuEntry(SubMenuKernelPatches(), true);
+  SubScreen->AddMenuInfo(L"----------------------");
   AddMenuItemInput(SubScreen, 46,  "AppleIntelCPUPM Patch", FALSE);
   AddMenuItemInput(SubScreen, 47,  "AppleRTC Patch", FALSE);
   AddMenuItemInput(SubScreen, 61,  "Dell SMBIOS Patch", FALSE);
 //  AddMenuItemInput(SubScreen, 115, "No Caches", FALSE);
 //  AddMenuItemInput(SubScreen, 44,  "Kext patching allowed", FALSE);
-  AddMenuEntry(SubScreen, SubMenuKextPatches(), true);
-  AddMenuInfo(SubScreen, L"----------------------");
-  AddMenuEntry(SubScreen, SubMenuBootPatches(), true);
+  SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
+  SubScreen->AddMenuInfo(L"----------------------");
+  SubScreen->AddMenuEntry(SubMenuBootPatches(), true);
 
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4928,7 +4927,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       InputBootArgs->Item = &(DropTable->MenuItem);
       InputBootArgs->AtClick = ActionEnter;
       InputBootArgs->AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, InputBootArgs, true);
+      SubScreen->AddMenuEntry(InputBootArgs, true);
 
       DropTable = DropTable->Next;
     }
@@ -4937,7 +4936,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   AddMenuItemInput(SubScreen, 4, "Drop all OEM SSDT", FALSE);
   AddMenuItemInput(SubScreen, 113, "Automatic smart merge", FALSE);
 
-  //AddMenuInfoLine(SubScreen, L"PATCHED AML:");
+  //SubScreen->AddMenuInfoLine(L"PATCHED AML:");
   if (ACPIPatchedAML) {
     ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
     while (ACPIPatchedAMLTmp) {
@@ -4949,12 +4948,12 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
       InputBootArgs->Item = &(ACPIPatchedAMLTmp->MenuItem);
       InputBootArgs->AtClick = ActionEnter;
       InputBootArgs->AtRightClick = ActionDetails;
-      AddMenuEntry(SubScreen, InputBootArgs, true);
+      SubScreen->AddMenuEntry(InputBootArgs, true);
       ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
     }
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4965,9 +4964,9 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->");
 
-  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gSettings.OEMProduct));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"with board %a", gSettings.OEMBoard));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gSettings.OEMProduct));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"with board %a", gSettings.OEMBoard));
 
   AddMenuItemInput(SubScreen, 78,  "Product Name:", TRUE);
   AddMenuItemInput(SubScreen, 79,  "Product Version:", TRUE);
@@ -4984,7 +4983,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   AddMenuItemInput(SubScreen, 17,  "PlatformFeature:", TRUE);
   AddMenuItemInput(SubScreen, 117, "EFI Version:", TRUE);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -4999,7 +4998,7 @@ REFIT_MENU_ENTRY *SubMenuDropDSM()
   //  Entry->Title = PoolPrint(L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose devices to drop OEM _DSM methods from DSDT"));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose devices to drop OEM _DSM methods from DSDT"));
 
   AddMenuCheck(SubScreen, "ATI/AMD Graphics",     DEV_ATI, 101);
   AddMenuCheck(SubScreen, "Nvidia Graphics",      DEV_NVIDIA, 101);
@@ -5016,7 +5015,7 @@ REFIT_MENU_ENTRY *SubMenuDropDSM()
   AddMenuCheck(SubScreen, "IMEI Device",          DEV_IMEI, 101);
   AddMenuCheck(SubScreen, "Firewire",             DEV_FIREWIRE, 101);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);
 
   return Entry;
@@ -5065,7 +5064,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   AddMenuCheck(SubScreen, "Fix Mutex",    FIX_MUTEX, 67);
 
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);
 
   return Entry;
@@ -5092,10 +5091,10 @@ REFIT_MENU_ENTRY  *SubMenuDSDTPatches()  //yyyy
     InputBootArgs->Item = &DSDTPatchesMenu[Index];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5108,7 +5107,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdts()
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->");
 
-  AddMenuInfoLine(SubScreen, L"Select a DSDT file:");
+  SubScreen->AddMenuInfoLine(L"Select a DSDT file:");
   AddMenuItemSwitch(SubScreen, 116,  "BIOS.aml", FALSE);
 
   for (i = 0; i < DsdtsNum; i++) {
@@ -5120,9 +5119,9 @@ REFIT_MENU_ENTRY  *SubMenuDsdts()
     InputBootArgs->Item = &InputItems[116];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5137,18 +5136,18 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->");
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to patch ACPI"));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to patch ACPI"));
 
   AddMenuItemInput(SubScreen, 102, "Debug DSDT", FALSE);
 
-  AddMenuEntry(SubScreen, SubMenuDsdts(), true);
-  AddMenuEntry(SubScreen, SubMenuDropTables(), true);
-  AddMenuEntry(SubScreen, SubMenuDropDSM(), true);
-  AddMenuEntry(SubScreen, SubMenuDsdtFix(), true);
-  AddMenuEntry(SubScreen, SubMenuDSDTPatches(), true);
+  SubScreen->AddMenuEntry(SubMenuDsdts(), true);
+  SubScreen->AddMenuEntry(SubMenuDropTables(), true);
+  SubScreen->AddMenuEntry(SubMenuDropDSM(), true);
+  SubScreen->AddMenuEntry(SubMenuDsdtFix(), true);
+  SubScreen->AddMenuEntry(SubMenuDSDTPatches(), true);
   AddMenuItemInput(SubScreen, 49, "Fix MCFG", FALSE);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5161,7 +5160,7 @@ REFIT_MENU_ENTRY  *SubMenuAudioPort()
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->");
 
-  AddMenuInfoLine(SubScreen, L"Select an audio output, press F7 to test");
+  SubScreen->AddMenuInfoLine(L"Select an audio output, press F7 to test");
   AddMenuItemInput(SubScreen, 120, "Volume:", TRUE);
 
   for (i = 0; i < AudioNum; i++) {
@@ -5173,10 +5172,10 @@ REFIT_MENU_ENTRY  *SubMenuAudioPort()
     InputBootArgs->Item = &InputItems[119];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5193,24 +5192,24 @@ VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 	InputBootArgs->Item = &Prop->MenuItem;
 	InputBootArgs->AtClick = ActionEnter;
 	InputBootArgs->AtRightClick = ActionDetails;
-	AddMenuEntry(SubScreen, InputBootArgs, true);
+	SubScreen->AddMenuEntry(InputBootArgs, true);
 	switch (Prop->ValueType) {
 	case kTagTypeInteger:
-		AddMenuInfo(SubScreen, PoolPrint(L"     value: 0x%08x", *(UINT64*)Prop->Value));
+		SubScreen->AddMenuInfo(PoolPrint(L"     value: 0x%08x", *(UINT64*)Prop->Value));
 		break;
 	case kTagTypeString:
-		AddMenuInfo(SubScreen, PoolPrint(L"     value: %30a", Prop->Value));
+		SubScreen->AddMenuInfo(PoolPrint(L"     value: %30a", Prop->Value));
 		break;
 	case   kTagTypeFalse:
-		AddMenuInfo(SubScreen, PoolPrint(L"     value: false"));
+		SubScreen->AddMenuInfo(PoolPrint(L"     value: false"));
 		break;
 	case   kTagTypeTrue:
-		AddMenuInfo(SubScreen, PoolPrint(L"     value: true"));
+		SubScreen->AddMenuInfo(PoolPrint(L"     value: true"));
 		break;
 
 	default: //type data, print first 24 bytes
 			 //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
-		AddMenuInfo(SubScreen, PoolPrint(L"     value[%d]: %24a", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen))));
+		SubScreen->AddMenuInfo(PoolPrint(L"     value[%d]: %24a", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen))));
 		break;
 	}
 
@@ -5231,8 +5230,8 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices()
 	{
 		DEV_PROPERTY *Props = NULL;
 		while (Prop) {
-			AddMenuInfo(SubScreen, L"------------");
-			AddMenuInfo(SubScreen, PoolPrint(L"%a", Prop->Label));
+			SubScreen->AddMenuInfo(L"------------");
+			SubScreen->AddMenuInfo(PoolPrint(L"%a", Prop->Label));
 			Props = Prop->Child;
 			while (Props) {
 				CreateMenuProps(SubScreen, Props);
@@ -5245,14 +5244,14 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices()
       DevAddr = Prop->Device;
       if (DevAddr != 0 && DevAddr != OldDevAddr) {
         OldDevAddr = DevAddr;
-        AddMenuInfo(SubScreen, L"------------");
-        AddMenuInfo(SubScreen, PoolPrint(L"%a", Prop->Label));
+        SubScreen->AddMenuInfo(L"------------");
+        SubScreen->AddMenuInfo(PoolPrint(L"%a", Prop->Label));
         CreateMenuProps(SubScreen, Prop);
       }
       Prop = Prop->Next;
     }
   }
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   return Entry;
 }
@@ -5275,9 +5274,9 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
   AddMenuItemInput(SubScreen, 99,  "FakeID SATA:", TRUE);
   AddMenuItemInput(SubScreen, 100, "FakeID XHCI:", TRUE);
   AddMenuItemInput(SubScreen, 103, "FakeID IMEI:", TRUE);
-  AddMenuEntry(SubScreen, SubMenuCustomDevices(), true);
+  SubScreen->AddMenuEntry(SubMenuCustomDevices(), true);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   return Entry;
 }
@@ -5292,7 +5291,7 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Themes->");
 
-  AddMenuInfoLine(SubScreen, L"Installed themes:");
+  SubScreen->AddMenuInfoLine(L"Installed themes:");
   //add embedded
   AddMenuItemSwitch(SubScreen, 3,  "embedded", FALSE);
 
@@ -5305,9 +5304,9 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
     InputBootArgs->Item = &InputItems[3];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5321,14 +5320,14 @@ REFIT_MENU_ENTRY *SubMenuGUI()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->");
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options to tune the Interface"));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to tune the Interface"));
 
   AddMenuItemInput(SubScreen, 70, "Pointer Speed:", TRUE);
   AddMenuItemInput(SubScreen, 72, "Mirror Move", FALSE);
 
-  AddMenuEntry(SubScreen, SubMenuThemes(), true);
+  SubScreen->AddMenuEntry(SubMenuThemes(), true);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5349,8 +5348,8 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_CSR, NULL);
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Modify the System Integrity Protection configuration."));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"All configuration changes apply to the entire machine."));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Modify the System Integrity Protection configuration."));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"All configuration changes apply to the entire machine."));
 
   // available configurations
   AddMenuCheck(SubScreen, "Allow Untrusted Kexts", CSR_ALLOW_UNTRUSTED_KEXTS, 66);
@@ -5365,7 +5364,7 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   AddMenuCheck(SubScreen, "Allow Unapproved Kexts", CSR_ALLOW_UNAPPROVED_KEXTS, 66);
 
   // return
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);
   return Entry;
 }
@@ -5381,7 +5380,7 @@ REFIT_MENU_ENTRY *SubMenuBLC()
 //  Entry->Title = PoolPrint(L"boot_args->flags [0x%02x]->", gSettings.BooterConfig);
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Modify flags for boot.efi"));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Modify flags for boot.efi"));
 
   AddMenuCheck(SubScreen, "Reboot On Panic",    kBootArgsFlagRebootOnPanic, 65);
   AddMenuCheck(SubScreen, "Hi DPI",             kBootArgsFlagHiDPI, 65);
@@ -5393,7 +5392,7 @@ REFIT_MENU_ENTRY *SubMenuBLC()
   AddMenuCheck(SubScreen, "Login UI",           kBootArgsFlagLoginUI, 65);
   AddMenuCheck(SubScreen, "Install UI",         kBootArgsFlagInstallUI, 65);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);
   return Entry;
 }
@@ -5408,16 +5407,16 @@ REFIT_MENU_ENTRY *SubMenuSystem()
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->");
 
   // submenu description
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Choose options for booted OS"));
+  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options for booted OS"));
 
   AddMenuItemInput(SubScreen, 2,  "Block kext:", TRUE);
   AddMenuItemInput(SubScreen, 51, "Set OS version if not:", TRUE);
   AddMenuItemInput(SubScreen, 118, "Booter Cfg Command:", TRUE);
 
-  AddMenuEntry(SubScreen, SubMenuCSR(), true);
-  AddMenuEntry(SubScreen, SubMenuBLC(), true);
+  SubScreen->AddMenuEntry(SubMenuCSR(), true);
+  SubScreen->AddMenuEntry(SubMenuBLC(), true);
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5430,7 +5429,7 @@ REFIT_MENU_ENTRY  *SubMenuConfigs()
 
   NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Configs->");
 
-  AddMenuInfoLine(SubScreen, L"Select a config file:");
+  SubScreen->AddMenuInfoLine(L"Select a config file:");
 
   for (i = 0; i < ConfigsNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -5441,9 +5440,9 @@ REFIT_MENU_ENTRY  *SubMenuConfigs()
     InputBootArgs->Item = &InputItems[90];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
-    AddMenuEntry(SubScreen, InputBootArgs, true);
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
 
@@ -5485,27 +5484,27 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastCho
   if (OptionMenu.Entries.size() == 0) {
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
-    OptionMenu.AnimeRun = GetAnime(&OptionMenu); //FALSE;
+    OptionMenu.AnimeRun = OptionMenu.GetAnime(); //FALSE;
 
     AddMenuItemInput(&OptionMenu, 0, "Boot Args:", TRUE);
 
 //    AddMenuItemInput(&OptionMenu, 90, "Config:", TRUE);
 //   InputBootArgs->ShortcutDigit = 0xF1;
-    AddMenuEntry(&OptionMenu, SubMenuConfigs(), true);
+    OptionMenu.AddMenuEntry(SubMenuConfigs(), true);
 
     if (AllowGraphicsMode) {
-      AddMenuEntry(&OptionMenu, SubMenuGUI(), true);
+      OptionMenu.AddMenuEntry(SubMenuGUI(), true);
     }
-    AddMenuEntry(&OptionMenu, SubMenuACPI(), true);
-    AddMenuEntry(&OptionMenu, SubMenuSmbios(), true);
-    AddMenuEntry(&OptionMenu, SubMenuPCI(), true);
-    AddMenuEntry(&OptionMenu, SubMenuSpeedStep(), true);
-    AddMenuEntry(&OptionMenu, SubMenuGraphics(), true);
-    AddMenuEntry(&OptionMenu, SubMenuAudio(), true);
-    AddMenuEntry(&OptionMenu, SubMenuAudioPort(), true);
-    AddMenuEntry(&OptionMenu, SubMenuBinaries(), true);
-    AddMenuEntry(&OptionMenu, SubMenuSystem(), true);
-    AddMenuEntry(&OptionMenu, &MenuEntryReturn, false);
+    OptionMenu.AddMenuEntry(SubMenuACPI(), true);
+    OptionMenu.AddMenuEntry(SubMenuSmbios(), true);
+    OptionMenu.AddMenuEntry(SubMenuPCI(), true);
+    OptionMenu.AddMenuEntry(SubMenuSpeedStep(), true);
+    OptionMenu.AddMenuEntry(SubMenuGraphics(), true);
+    OptionMenu.AddMenuEntry(SubMenuAudio(), true);
+    OptionMenu.AddMenuEntry(SubMenuAudioPort(), true);
+    OptionMenu.AddMenuEntry(SubMenuBinaries(), true);
+    OptionMenu.AddMenuEntry(SubMenuSystem(), true);
+    OptionMenu.AddMenuEntry(&MenuEntryReturn, false);
     //DBG("option menu created entries=%d\n", OptionMenu.Entries.size());
   }
 

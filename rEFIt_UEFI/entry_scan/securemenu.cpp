@@ -81,7 +81,7 @@ VOID AddSecureBootTool(VOID)
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionHelp;
-  AddMenuEntry(&MainMenu, Entry);
+  MainMenu->AddMenuEntry(Entry);
 }
 /*
  typedef struct _refit_menu_entry {

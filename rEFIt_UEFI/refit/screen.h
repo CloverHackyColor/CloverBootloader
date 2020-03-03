@@ -10,9 +10,9 @@ VOID TerminateScreen(VOID);
 VOID SetNextScreenMode(INT32);
 
 
-BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
-VOID    InitAnime(REFIT_MENU_SCREEN *Screen);
-VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, const EG_RECT *Place);
+//BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
+//VOID    InitAnime(REFIT_MENU_SCREEN *Screen);
+//VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, const EG_RECT *Place);
 VOID    FreeAnime(GUI_ANIME *Anime);
 
 

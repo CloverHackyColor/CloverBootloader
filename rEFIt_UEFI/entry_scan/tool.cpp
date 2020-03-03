@@ -109,7 +109,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
   Entry->AtRightClick = ActionHelp;
 
   DBG("found tool %s\n", LoaderPath);
-  AddMenuEntry(&MainMenu, Entry, true);
+  MainMenu.AddMenuEntry(Entry, true);
   return TRUE;
 }
 
@@ -147,8 +147,8 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
-  SubScreen->AnimeRun = GetAnime(SubScreen);
-  AddMenuInfoLine(SubScreen, FileDevicePathToStr(Volume->DevicePath));
+  SubScreen->AnimeRun = SubScreen->GetAnime();
+  SubScreen->AddMenuInfoLine(FileDevicePathToStr(Volume->DevicePath));
 
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -159,26 +159,26 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   if (SubEntry) {
     SubEntry->Title        = L"Add Clover boot options for all entries";
     SubEntry->LoadOptions     = L"BO-ADD";
-    AddMenuEntry(SubScreen, SubEntry, true);
+    SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
     SubEntry->Title        = L"Remove all Clover boot options";
     SubEntry->LoadOptions     = L"BO-REMOVE";
-    AddMenuEntry(SubScreen, SubEntry, true);
+    SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = DuplicateLoaderEntry(Entry);
   if (SubEntry) {
     SubEntry->Title        = L"Print all UEFI boot options to log";
     SubEntry->LoadOptions     = L"BO-PRINT";
-    AddMenuEntry(SubScreen, SubEntry, true);
+    SubScreen->AddMenuEntry(SubEntry, true);
   }
 
-  AddMenuEntry(SubScreen, &MenuEntryReturn, false);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
-  AddMenuEntry(&MainMenu, Entry, true);
+  MainMenu.AddMenuEntry(Entry, true);
 }
 
 VOID ScanTool(VOID)

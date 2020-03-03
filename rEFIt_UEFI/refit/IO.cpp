@@ -1074,7 +1074,7 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN* ScreenPtr, UINTN TimeoutDefa
     if (Status != EFI_TIMEOUT) {
       break;
     }
-    UpdateAnime(&Screen, &(Screen.FilmPlace)); //should be moved to REFIT_MENU_SCREEN class
+    Screen.UpdateAnime(&Screen.FilmPlace); //should be moved to REFIT_MENU_SCREEN class
     if (gSettings.PlayAsync) {
       CheckSyncSound();
     }
