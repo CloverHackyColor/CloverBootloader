@@ -83,8 +83,8 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
     return FALSE;
   }
   // Allocate the entry
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
+//  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
   if (Entry == NULL) {
     return FALSE;
   }
@@ -121,8 +121,8 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
 //  EFI_STATUS        Status;
 
   // prepare the menu entry
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry = new REFIT_MENU_ENTRY_CLOVER();
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
+//  Entry = new REFIT_MENU_ENTRY_CLOVER();
   Entry->Title          = LoaderTitle;
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;

@@ -4371,8 +4371,8 @@ VOID NewEntry(REFIT_MENU_ENTRY_OTHER **Entry, REFIT_MENU_SCREEN **SubScreen, ACT
 VOID NewEntry(LOADER_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-//  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
-  *Entry = new LOADER_ENTRY();
+  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
+//  *Entry = new LOADER_ENTRY();
   NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
 }
 
@@ -4412,9 +4412,9 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
   }
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor)
+VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
-  InputBootArgs->Title          = PoolPrint(L"%a", Title);
+  InputBootArgs->Title          = PoolPrint(L"%a", Line);
   if (Inx == 3 || Inx == 116) {
     InputBootArgs->Row          = 0;
   } else {
@@ -4435,17 +4435,17 @@ VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs
 //  AddMenuItem_(SubScreen, InputBootArgs, Inx, Title, Tag, Cursor);
 //}
 
-VOID REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor)
+VOID REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
 //  REFIT_INPUT_DIALOG *InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
-  AddMenuItem_(InputBootArgs, Inx, Title, Cursor);
+  AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor)
+VOID REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
   REFIT_MENU_SWITCH *InputBootArgs = new REFIT_MENU_SWITCH;
-  AddMenuItem_(InputBootArgs, Inx, Title, Cursor);
+  AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
 
 REFIT_MENU_ENTRY  *SubMenuGraphics()

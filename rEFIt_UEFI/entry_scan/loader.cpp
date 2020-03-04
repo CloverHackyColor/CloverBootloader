@@ -556,7 +556,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
 
   // prepare the menu entry
-  Entry = new LOADER_ENTRY();
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+ // Entry = new LOADER_ENTRY();
 //  Entry->Tag = TAG_LOADER;
   Entry->Row = 0;
   Entry->Volume = Volume;

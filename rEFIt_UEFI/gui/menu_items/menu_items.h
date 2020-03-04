@@ -399,7 +399,7 @@ public:
   UINTN       mItemID;
   XPointer    *mPointer;
   SCROLL_STATE ScrollState;
-  MENU_STYLE_FUNC StyleFunc;
+//  MENU_STYLE_FUNC StyleFunc;
 
 
   REFIT_MENU_SCREEN()
@@ -407,7 +407,7 @@ public:
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,

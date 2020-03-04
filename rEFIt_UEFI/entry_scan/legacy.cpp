@@ -118,8 +118,8 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
     VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
 //DBG("VolDesc=%s\n", VolDesc);
   // prepare the menu entry
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
-  Entry = new LEGACY_ENTRY();
+  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
+//  Entry = new LEGACY_ENTRY();
   if (FullTitle) {
     Entry->Title = EfiStrDuplicate(FullTitle);
   } else {
@@ -164,8 +164,8 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   SubScreen->TitleImage = Entry->Image;
   SubScreen->AnimeRun = SubScreen->GetAnime();
   // default entry
-//  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
-  SubEntry =  new LEGACY_ENTRY();
+  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
+//  SubEntry =  new LEGACY_ENTRY();
   SubEntry->Title         = PoolPrint(L"Boot %s", LoaderTitle);
 //  SubEntry->Tag           = TAG_LEGACY;
   SubEntry->Volume           = Entry->Volume;
