@@ -68,7 +68,8 @@ CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
-REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL, /*InfoLineCount*/0, NULL, 0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL );
+//REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL, /*InfoLineCount*/0, NULL, 0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL );
+REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL);
 extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CHAR16           *ThemesList[];
@@ -225,9 +226,12 @@ REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return", 0, 0, 0, ActionEnter);
 
 
 
-REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
-REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
-REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+//REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+//REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+//REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
+REFIT_MENU_SCREEN MainMenu(1, L"Main Menu", L"Automatic boot");
+REFIT_MENU_SCREEN AboutMenu(2, L"About", NULL);
+REFIT_MENU_SCREEN HelpMenu(3, L"Help", NULL);
 
 CONST CHAR16* ArgOptional[NUM_OPT] = {
   L"arch=i386",       //0
@@ -2160,7 +2164,7 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
 
 VOID REFIT_MENU_SCREEN::HidePointer()
 {
-  mPointer->Hide();
+  if ( mPointer ) mPointer->Hide();
 }
 
 EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
@@ -4371,8 +4375,8 @@ VOID NewEntry(REFIT_MENU_ENTRY_OTHER **Entry, REFIT_MENU_SCREEN **SubScreen, ACT
 VOID NewEntry(LOADER_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
-//  *Entry = new LOADER_ENTRY();
+//  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
+  *Entry = new LOADER_ENTRY();
   NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
 }
 

@@ -83,8 +83,8 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
     return FALSE;
   }
   // Allocate the entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
-//  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
+  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
   if (Entry == NULL) {
     return FALSE;
   }

@@ -407,88 +407,106 @@ public:
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0), mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
 
-  REFIT_MENU_SCREEN(  UINTN             ID_,
-											CONST  CHAR16      *Title_,
-											EG_IMAGE          *TitleImage_,
-//											INTN              InfoLineCount_,
-//											CONST CHAR16    **InfoLines_,
-											INTN              TimeoutSeconds_,
-											CONST CHAR16     *TimeoutText_,
-											CONST CHAR16     *Theme_,
-											BOOLEAN           AnimeRun_,
-											BOOLEAN           Once_,
-											UINT64            LastDraw_,
-											INTN              CurrentFrame_,
-											INTN              Frames_,
-											UINTN             FrameTime_,
-											EG_RECT           FilmPlace_,
-											EG_IMAGE        **Film_)
-						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
-						  /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
-						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
-						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
-						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_)
+  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText)
+						: ID(ID), Title(Title), TitleImage(0),
+						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
+						  Once(0), LastDraw(0), CurrentFrame(0),
+						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
+						  Film(0), mAction(ActionNone), mItemID(0), mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
-
-  REFIT_MENU_SCREEN(  UINTN             ID_,
-											  CONST   CHAR16      *Title_,
-											EG_IMAGE          *TitleImage_,
-//											INTN              InfoLineCount_,
-//											CONST CHAR16    **InfoLines_,
-											REFIT_ABSTRACT_MENU_ENTRY* entry,
-											INTN              TimeoutSeconds_,
-											CONST CHAR16     *TimeoutText_,
-											CONST CHAR16     *Theme_,
-											BOOLEAN           AnimeRun_,
-											BOOLEAN           Once_,
-											UINT64            LastDraw_,
-											INTN              CurrentFrame_,
-											INTN              Frames_,
-											UINTN             FrameTime_,
-											EG_RECT           FilmPlace_,
-											EG_IMAGE        **Film_)
-						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
-              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
-						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
-						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
-						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_)
+  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
+						: ID(ID), Title(Title), TitleImage(0),
+						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
+						  Once(0), LastDraw(0), CurrentFrame(0),
+						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
+						  Film(0), mAction(ActionNone), mItemID(0), mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{
-							Entries.AddReference(entry, false);
+	  	  	  	  	  	  	  Entries.AddReference(entry1, false);
+	  	  	  	  	  	  	  Entries.AddReference(entry2, false);
 						};
 
-  REFIT_MENU_SCREEN(  UINTN             ID_,
-											  CONST   CHAR16      *Title_,
-											EG_IMAGE          *TitleImage_,
-//											INTN              InfoLineCount_,
-//											CONST CHAR16    **InfoLines_,
-											REFIT_ABSTRACT_MENU_ENTRY* entry1,
-											REFIT_ABSTRACT_MENU_ENTRY* entry2,
-											INTN              TimeoutSeconds_,
-											CONST CHAR16     *TimeoutText_,
-											CONST CHAR16     *Theme_,
-											BOOLEAN           AnimeRun_,
-											BOOLEAN           Once_,
-											UINT64            LastDraw_,
-											INTN              CurrentFrame_,
-											INTN              Frames_,
-											UINTN             FrameTime_,
-											EG_RECT           FilmPlace_,
-											EG_IMAGE        **Film_)
-						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
-              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
-						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
-						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
-						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-						  Film(Film_)
-						{
-							Entries.AddReference(entry1, false);
-							Entries.AddReference(entry2, false);
-						};
+//  REFIT_MENU_SCREEN(  UINTN             ID_,
+//											CONST  CHAR16      *Title_,
+//											EG_IMAGE          *TitleImage_,
+////											INTN              InfoLineCount_,
+////											CONST CHAR16    **InfoLines_,
+//											INTN              TimeoutSeconds_,
+//											CONST CHAR16     *TimeoutText_,
+//											CONST CHAR16     *Theme_,
+//											BOOLEAN           AnimeRun_,
+//											BOOLEAN           Once_,
+//											UINT64            LastDraw_,
+//											INTN              CurrentFrame_,
+//											INTN              Frames_,
+//											UINTN             FrameTime_,
+//											EG_RECT           FilmPlace_,
+//											EG_IMAGE        **Film_)
+//						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
+//						  /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
+//						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
+//						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
+//						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
+//						  Film(Film_), mAction(ActionNone), mItemID(0), mPointer(NULL)
+//						{};
+//
+//  REFIT_MENU_SCREEN(  UINTN             ID_,
+//											  CONST   CHAR16      *Title_,
+//											EG_IMAGE          *TitleImage_,
+////											INTN              InfoLineCount_,
+////											CONST CHAR16    **InfoLines_,
+//											REFIT_ABSTRACT_MENU_ENTRY* entry,
+//											INTN              TimeoutSeconds_,
+//											CONST CHAR16     *TimeoutText_,
+//											CONST CHAR16     *Theme_,
+//											BOOLEAN           AnimeRun_,
+//											BOOLEAN           Once_,
+//											UINT64            LastDraw_,
+//											INTN              CurrentFrame_,
+//											INTN              Frames_,
+//											UINTN             FrameTime_,
+//											EG_RECT           FilmPlace_,
+//											EG_IMAGE        **Film_)
+//						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
+//              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
+//						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
+//						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
+//						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
+//						  Film(Film_), mAction(ActionNone), mItemID(0), mPointer(NULL)
+//						{
+//							Entries.AddReference(entry, false);
+//						};
+
+//  REFIT_MENU_SCREEN(  UINTN             ID_,
+//											  CONST   CHAR16      *Title_,
+//											EG_IMAGE          *TitleImage_,
+////											INTN              InfoLineCount_,
+////											CONST CHAR16    **InfoLines_,
+//											REFIT_ABSTRACT_MENU_ENTRY* entry1,
+//											REFIT_ABSTRACT_MENU_ENTRY* entry2,
+//											INTN              TimeoutSeconds_,
+//											CONST CHAR16     *TimeoutText_,
+//											CONST CHAR16     *Theme_,
+//											BOOLEAN           AnimeRun_,
+//											BOOLEAN           Once_,
+//											UINT64            LastDraw_,
+//											INTN              CurrentFrame_,
+//											INTN              Frames_,
+//											UINTN             FrameTime_,
+//											EG_RECT           FilmPlace_,
+//											EG_IMAGE        **Film_)
+//						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
+//              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
+//						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
+//						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
+//						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
+//						  Film(Film_), mAction(ActionNone), mItemID(0), mPointer(NULL)
+//						{
+//							Entries.AddReference(entry1, false);
+//							Entries.AddReference(entry2, false);
+//						};
   //Scroll functions
   VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                   IN UINTN VisibleSpace, IN INTN Selected);

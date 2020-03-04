@@ -149,8 +149,8 @@ LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
     return NULL;
   }
 
-  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-//  DuplicateEntry = new LOADER_ENTRY();
+//  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
+  DuplicateEntry = new LOADER_ENTRY();
   if (DuplicateEntry) {
 //    DuplicateEntry->Tag          = Entry->Tag;
     DuplicateEntry->AtClick      = ActionEnter;
@@ -353,9 +353,7 @@ STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Informa
 extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 
 //STATIC REFIT_MENU_ENTRY  *AlertMessageEntries[] = { &MenuEntryReturn };
-STATIC REFIT_MENU_SCREEN  AlertMessageMenu = {0, NULL, NULL, &MenuEntryReturn,
-                                              0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-                                              { 0, 0, 0, 0 } , NULL };
+STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, NULL, NULL, &MenuEntryReturn, NULL);
 
 // Display an alert message
 VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
@@ -388,9 +386,7 @@ VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { L"Yes", TAG_YES, ActionEnter };
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { L"No", TAG_NO, ActionEnter };
 //STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
-STATIC REFIT_MENU_SCREEN  YesNoMessageMenu = {0, NULL, NULL, &YesMessageEntry, &NoMessageEntry,
-                                              0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-                                              { 0, 0, 0, 0 } , NULL };
+STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, NULL, NULL, &YesMessageEntry, &NoMessageEntry);
 
 // Display a yes/no prompt
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
@@ -438,9 +434,10 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
 
 #define TAG_OFFSET 1000
 
-STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL,
-  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-  { 0, 0, 0, 0 }, NULL};
+//STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL,
+//  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//  { 0, 0, 0, 0 }, NULL};
+STATIC REFIT_MENU_SCREEN InitialMenu(0, L"Please Select File...", NULL);
 
 // Ask user for file path from volumes menu
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)

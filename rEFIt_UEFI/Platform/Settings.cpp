@@ -5035,7 +5035,7 @@ GetUserSettings(
           DEV_PROPERTY **Child;
 
           if (Count > 0) {
-            DBG("Add %d devices:\n", Count);
+            DBG("Add %d devices (kTagTypeDict):\n", Count);
 
             for (i = 0; i < Count; i++) {
               Prop2 = NULL;
@@ -5155,7 +5155,7 @@ GetUserSettings(
         DEV_PROPERTY *DevProp;
 
         if (Count > 0) {
-          DBG ("Add %d devices:\n", Count);
+          DBG ("Add %d devices (Arbitrary):\n", Count);
           for (Index = 0; Index < Count; Index++) {
             UINTN DeviceAddr = 0U;
             CHAR8 *Label;
