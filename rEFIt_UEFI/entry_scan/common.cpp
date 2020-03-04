@@ -334,7 +334,7 @@ STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Informa
 //  }
   Information->Empty();
   // Copy strings
-  CHAR16* Ptr2;
+  CHAR16* Ptr2 = NULL; // VS2017 complains about uninitialized var.
 //  CHAR16* Ptr2 = Information[Index++] = (CHAR16 *)(Information + Total);
 //  StrCpyS(Ptr2, Length + 1, Message);
   while ((Index < Total) &&
