@@ -13,11 +13,16 @@ extern xsize XBufferGrowByDefault;
  */
 #define __XTOOLS_INT_CHECK__
 
+#ifdef CLOVER_BUILD
+
 extern "C" {
 #include <Library/BaseLib.h> // for CpuDeadLoop
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h> // for CopyMen
 }
+
+#endif
+
 #define Xalloc(AllocationSize) AllocatePool(AllocationSize)
 #define Xrealloc(OldSize, NewSize, OldBuffer) ReallocatePool(OldSize, NewSize, OldBuffer)
 #define Xfree(Buffer) FreePool(Buffer)

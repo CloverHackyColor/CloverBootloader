@@ -19,6 +19,8 @@
 #include <codecvt>
 #include <vector>
 
+#include "../../../rEFIt_UEFI/cpp_foundation/utf8Conversion.h"
+
 void CpuDeadLoop(void)
 {
 
@@ -65,6 +67,10 @@ int AsciiStrLen(const char* String)
 	return (int)strlen(String);
 }
 
+#if __WCHAR_MAX__ <= 0xFFFFu
+
+#ifndef _MSC_VER
+
 std::string utf16_to_utf8(const wchar_t* ws)
 {
 	std::u16string s((const char16_t*)ws);
@@ -100,6 +106,9 @@ void convert_utf16_to_utf32(const char16_t* input, size_t input_size, std::vecto
     }
     (*output).push_back(0);
 }
+#endif
+
+#endif
 
 
 unsigned int StrLen(const wchar_t* String)
@@ -112,7 +121,7 @@ unsigned int StrLen(const wchar_t* String)
 
 int StrCmp(const wchar_t* FirstString, const wchar_t* SecondString)
 {
-#if __WCHAR_MAX__ > 0xFFFFu
+#if __WCHAR_MAX__ > 0xFFFFu || _MSC_VER
 	int ret = wcscmp(FirstString, SecondString);
 	return ret;
 #else
@@ -135,6 +144,10 @@ int StrnCmp(const wchar_t* FirstString, const wchar_t* SecondString, UINTN Lengt
 #if __WCHAR_MAX__ > 0xFFFFu
 	return wcsncmp(FirstString, SecondString, Length);
 #else
+
+#ifdef _MSC_VER
+	return wcsncmp(FirstString, SecondString, Length);
+#else
 	// Looks like wcscmp doesn't work with Utf16, even if compiled with -fshort-wchar.
 	// So conversion to Utf32 needed first.
 
@@ -147,5 +160,6 @@ int StrnCmp(const wchar_t* FirstString, const wchar_t* SecondString, UINTN Lengt
 	int ret = wcsncmp((const wchar_t*)FirstStringUtf32.data(), (const wchar_t*)SecondStringUtf32.data(), Length);
 //printf("wcsncmp=%d\n", ret);
 	return ret;
+#endif
 #endif
 }

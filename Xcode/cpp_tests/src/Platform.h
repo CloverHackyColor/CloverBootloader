@@ -12,10 +12,11 @@
 #include <limits.h>
 #include <stdarg.h>
 
-#define UINTN unsigned long
+#define UINTN unsigned long long
 #define MAX_UINTN ULONG_MAX
 #define BOOLEAN bool
 #define INTN int
+#define CHAR8 unsigned char
 #define CHAR16 char16_t
 
 #define IN
@@ -24,7 +25,9 @@
 #define VA_START va_start
 #define VA_END va_end
 #define VA_ARG va_arg
-
+#define VOID void
+#define EFIAPI
+#define CONST const
 
 void CpuDeadLoop(void);
 void DebugLog(int DebugMode, const char *FormatString, ...);

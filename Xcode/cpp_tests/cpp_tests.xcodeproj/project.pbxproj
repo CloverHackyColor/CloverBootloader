@@ -19,11 +19,9 @@
 		9A0B08662403144C00E2B470 /* global1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global1.cpp */; };
 		9A0B08672403144C00E2B470 /* global2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08652403144C00E2B470 /* global2.cpp */; };
 		9A0B086D24039FE700E2B470 /* printf_lite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086B24039FE700E2B470 /* printf_lite.cpp */; };
-		9A0B08702403A95800E2B470 /* utf816Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */; };
 		9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
 		9A0B08742403B08400E2B470 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A0B08752403B08400E2B470 /* printf_lite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086B24039FE700E2B470 /* printf_lite.cpp */; };
-		9A0B08762403B08400E2B470 /* utf816Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */; };
 		9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
 		9A0B08782403B08400E2B470 /* global2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08652403144C00E2B470 /* global2.cpp */; };
 		9A0B08792403B08400E2B470 /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08482402FE9300E2B470 /* XStringW.cpp */; };
@@ -35,6 +33,8 @@
 		9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A0B08802403B08400E2B470 /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08552402FE9B00E2B470 /* XStringW_test.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9AA05BB7240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */; };
+		9AA05BB8240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -82,12 +82,12 @@
 		9A0B08652403144C00E2B470 /* global2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global2.cpp; sourceTree = "<group>"; };
 		9A0B086B24039FE700E2B470 /* printf_lite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printf_lite.cpp; path = "../../../../../Embedded/Shared/printf_lite-master/printf_lite.cpp"; sourceTree = "<group>"; };
 		9A0B086C24039FE700E2B470 /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printf_lite.h; path = "../../../../../Embedded/Shared/printf_lite-master/printf_lite.h"; sourceTree = "<group>"; };
-		9A0B086E2403A95800E2B470 /* utf816Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utf816Conversion.h; sourceTree = "<group>"; };
-		9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utf816Conversion.cpp; sourceTree = "<group>"; };
 		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utf8Conversion.cpp; sourceTree = "<group>"; };
+		9AA05BB9240FC796008EA4F8 /* utf8Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utf8Conversion.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,8 +121,8 @@
 				9A0B084B2402FE9300E2B470 /* XObjArray.h */,
 				9A0B086B24039FE700E2B470 /* printf_lite.cpp */,
 				9A0B086C24039FE700E2B470 /* printf_lite.h */,
-				9A0B086F2403A95800E2B470 /* utf816Conversion.cpp */,
-				9A0B086E2403A95800E2B470 /* utf816Conversion.h */,
+				9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */,
+				9AA05BB9240FC796008EA4F8 /* utf8Conversion.h */,
 			);
 			name = cpp_foundation;
 			path = ../../rEFIt_UEFI/cpp_foundation;
@@ -255,8 +255,8 @@
 				9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
 				9A0B08752403B08400E2B470 /* printf_lite.cpp in Sources */,
-				9A0B08762403B08400E2B470 /* utf816Conversion.cpp in Sources */,
 				9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */,
+				9AA05BB8240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,
 				9A0B08782403B08400E2B470 /* global2.cpp in Sources */,
 				9A0B08792403B08400E2B470 /* XStringW.cpp in Sources */,
 				9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */,
@@ -276,8 +276,8 @@
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
 				9A0B086D24039FE700E2B470 /* printf_lite.cpp in Sources */,
-				9A0B08702403A95800E2B470 /* utf816Conversion.cpp in Sources */,
 				9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */,
+				9AA05BB7240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,
 				9A0B08672403144C00E2B470 /* global2.cpp in Sources */,
 				9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
@@ -365,7 +365,11 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-fshort-wchar",
+					"-include",
+					Platform.h,
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -419,7 +423,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-fshort-wchar",
+					"-include",
+					Platform.h,
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -428,7 +436,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				OTHER_CFLAGS = "-fshort-wchar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -437,7 +444,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				OTHER_CFLAGS = "-fshort-wchar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
