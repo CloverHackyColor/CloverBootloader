@@ -2571,9 +2571,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.LastSelection = ScrollState.CurrentSelection;
         ScrollState.CurrentSelection = mItemID;
         if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2594,9 +2594,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         ScrollState.CurrentSelection = mItemID;
         if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
             (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
@@ -2747,9 +2747,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case CHAR_CARRIAGE_RETURN:
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
@@ -2760,9 +2760,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case ' ': //CHAR_SPACE
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
             (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog();
+          MenuExit = InputDialog(StyleFunc);
           ScrollState.PaintAll = TRUE;
           HidePointer();
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {

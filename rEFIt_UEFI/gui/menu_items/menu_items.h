@@ -509,13 +509,14 @@ public:
   UINTN RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
+  UINTN InputDialog(IN MENU_STYLE_FUNC StyleFunc);
 
   VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos);
   VOID CountItems();
   VOID InitAnime();
   BOOLEAN GetAnime();
   VOID UpdateAnime();
-  UINTN InputDialog();
+
 
   //Style functions
   virtual VOID MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
