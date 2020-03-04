@@ -68,7 +68,7 @@ public:
   UINTN      GetWidth() const;
   UINTN      GetHeight() const;
 
-  void setEmpty() { PixelData.setEmpty(); }
+  void setEmpty() { Width=0; Height=0; PixelData.setEmpty(); }
   bool isEmpty() const { return PixelData.size() == 0; }
 
 

@@ -30,10 +30,18 @@ XImage::XImage(UINTN W, UINTN H)
 
 XImage::XImage(EG_IMAGE* egImage)
 {
-  Width = egImage->Width;
-  Height = egImage->Height;
-  PixelData.CheckSize(GetWidth()*GetHeight());
-  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size());
+  if ( egImage) {
+	  Width = egImage->Width;
+	  Height = egImage->Height;
+  }else{
+	  Width = 0;
+	  Height = 0;
+  }
+  PixelData.CheckSize(GetWidth()*GetHeight()); // change the allocated size, but not the size.
+  PixelData.setLength(GetWidth()*GetHeight()); // change the size, ie the number of element in the array
+  if ( GetWidth()*GetHeight() > 0 ) {
+	  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size());
+  }
 }
 
 UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
