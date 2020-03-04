@@ -376,8 +376,7 @@ class REFIT_MENU_SCREEN
 {
 public:
   UINTN             ID;
-/*  CONST */ CHAR16      *Title;  //Title is not const. It can be dynamically changed
-                                  // it will be better to make it XStringW
+  CONST  CHAR16      *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
   EG_IMAGE          *TitleImage;
 //  INTN              InfoLineCount;
 //  CONST CHAR16    **InfoLines;
@@ -408,11 +407,11 @@ public:
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0)
+						  Film(0), mAction(ActionNone), mItemID(0), StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
-										/*	CONST */ CHAR16      *Title_,
+											CONST  CHAR16      *Title_,
 											EG_IMAGE          *TitleImage_,
 //											INTN              InfoLineCount_,
 //											CONST CHAR16    **InfoLines_,
@@ -436,7 +435,7 @@ public:
 						{};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
-											/*  CONST */  CHAR16      *Title_,
+											  CONST   CHAR16      *Title_,
 											EG_IMAGE          *TitleImage_,
 //											INTN              InfoLineCount_,
 //											CONST CHAR16    **InfoLines_,
@@ -463,7 +462,7 @@ public:
 						};
 
   REFIT_MENU_SCREEN(  UINTN             ID_,
-											/*  CONST */  CHAR16      *Title_,
+											  CONST   CHAR16      *Title_,
 											EG_IMAGE          *TitleImage_,
 //											INTN              InfoLineCount_,
 //											CONST CHAR16    **InfoLines_,
@@ -523,6 +522,8 @@ public:
   virtual VOID MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
+
+  ~REFIT_MENU_SCREEN() {};
 };
 
 #endif
