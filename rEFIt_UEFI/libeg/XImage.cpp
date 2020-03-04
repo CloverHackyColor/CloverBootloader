@@ -38,7 +38,7 @@ XImage::XImage(EG_IMAGE* egImage)
 	  Height = 0;
   }
   PixelData.CheckSize(GetWidth()*GetHeight()); // change the allocated size, but not the size.
-  PixelData.setLength(GetWidth()*GetHeight()); // change the size, ie the number of element in the array
+  PixelData.SetLength(GetWidth()*GetHeight()); // change the size, ie the number of element in the array
   if ( GetWidth()*GetHeight() > 0 ) {
 	  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size());
   }
