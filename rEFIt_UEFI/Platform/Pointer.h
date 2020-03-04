@@ -1,2 +1,2 @@
-
-VOID KillMouse();
+//
+//VOID KillMouse();

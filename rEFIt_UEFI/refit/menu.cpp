@@ -4371,8 +4371,8 @@ VOID NewEntry(REFIT_MENU_ENTRY_OTHER **Entry, REFIT_MENU_SCREEN **SubScreen, ACT
 VOID NewEntry(LOADER_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
-  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
-//  *Entry = new LOADER_ENTRY();
+//  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
+  *Entry = new LOADER_ENTRY();
   NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
 }
 

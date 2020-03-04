@@ -556,8 +556,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
 
   // prepare the menu entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-//  Entry = new LOADER_ENTRY();
+  Entry = new LOADER_ENTRY();
 //  Entry->Tag = TAG_LOADER;
   Entry->Row = 0;
   Entry->Volume = Volume;
@@ -754,7 +753,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   FileName = Basename(Entry->LoaderPath);
 
   // create the submenu
-  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+//  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen = new REFIT_MENU_SCREEN;
   SubScreen->Title = PoolPrint(L"Options for %s", Entry->Title, Entry->VolName);
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20;
@@ -1966,7 +1966,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         } else if (Custom->SubEntries != NULL) {
           UINTN CustomSubIndex = 0;
           // Add subscreen
-          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+//          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+          REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
             SubScreen->TitleImage = Entry->Image;
