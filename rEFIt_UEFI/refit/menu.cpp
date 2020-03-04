@@ -2169,6 +2169,7 @@ VOID REFIT_MENU_SCREEN::HidePointer()
 
 EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
 {
+  if ( !mPointer ) return RETURN_INVALID_PARAMETER;
   return mPointer->MouseBirth();
 }
 

@@ -3940,17 +3940,17 @@ GetThemeTagSettings (
     GlobalConfig.SelectionColor = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.SelectionColor);
 
     Dict2 = GetProperty (Dict, "Small");
-    if ((Dict2->type == kTagTypeString) && Dict2->string) {
+    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string) {
       GlobalConfig.SelectionSmallFileName = PoolPrint (L"%a", Dict2->string);
     }
 
     Dict2 = GetProperty (Dict, "Big");
-    if ((Dict2->type == kTagTypeString) && Dict2->string) {
+    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string) {
       GlobalConfig.SelectionBigFileName = PoolPrint (L"%a", Dict2->string);
     }
 
     Dict2 = GetProperty (Dict, "Indicator");
-    if ((Dict2->type == kTagTypeString) && Dict2->string) {
+    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string) {
       GlobalConfig.SelectionIndicatorName = PoolPrint (L"%a", Dict2->string);
     }
 
