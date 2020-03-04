@@ -310,6 +310,9 @@ public:
   EG_IMAGE          *DriveImage;
   EG_IMAGE          *BadgeImage;
 
+  REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
+                : Volume(0), DevicePathString(0), LoadOptions(0), BootNum(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
+                {}
   virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
   virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };
 
@@ -332,6 +335,10 @@ public:
   EG_IMAGE         *CustomLogo;
   KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
   CONST CHAR16            *Settings;
+
+  LOADER_ENTRY()
+  			: REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0), BootBgColor(0), CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
+  			{};
 
   virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
 } ;
