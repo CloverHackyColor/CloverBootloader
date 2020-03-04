@@ -226,7 +226,7 @@ VOID ScanLegacy(VOID)
     } else if (Volume->HasBootCode) {
       ShowVolume = TRUE;
 //      DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
-        VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
+//        VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
       if ((Volume->WholeDiskBlockIO == 0) &&
           Volume->BlockIOOffset == 0 /* &&
                                       Volume->OSName == NULL */)
