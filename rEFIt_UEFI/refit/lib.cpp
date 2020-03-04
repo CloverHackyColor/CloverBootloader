@@ -708,6 +708,15 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     if (FindMem(SectorBuffer, 512, "Non-system disk", 15) >= 0)   // dummy FAT boot sector
       Volume->HasBootCode = FALSE;
 
+#ifdef JIEF_DEBUG
+*Bootable = TRUE;
+Volume->HasBootCode = TRUE;
+Volume->LegacyOS->IconName = L"win";
+Volume->LegacyOS->Name = L"Windows";
+Volume->LegacyOS->Type = OSTYPE_WIN;
+Volume->BootType = BOOTING_BY_PBR;
+#endif
+
     // check for MBR partition table
     /*
      // apianti - this is littered with bugs and probably not needed lol
