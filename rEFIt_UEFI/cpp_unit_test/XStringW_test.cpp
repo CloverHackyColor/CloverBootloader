@@ -66,10 +66,10 @@ int XStringW_tests()
 		if ( str4 != L"aŇ𐌾" ) return 41;
 	}
 
-  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
-  for (UINTN Index = 0; Index < 20; Index++) {
-    XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";
-    DebugLog(2, "XStringW_test shot: %s\n", Name.data());
-  }
+//  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
+//  for (UINTN Index = 0; Index < 20; Index++) {
+//   XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";
+//    DebugLog(2, "XStringW_test shot: %s\n", Name.data());
+//  }
 	return 0;
 }

@@ -49,8 +49,8 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_LEGACY, __VA_ARGS__)
 #endif
 
-
-LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+//the function is not in the class and deals always with MainMenu
+BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -59,18 +59,19 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
 //  INTN               i;
   
   if (Volume == NULL) {
-    return NULL;
+    return false;
   }
-  
   // Ignore this loader if it's device path is already present in another loader
 //  if (MainMenu.Entries) {
     for (UINTN i = 0; i < MainMenu.Entries.size(); ++i) {
       REFIT_ABSTRACT_MENU_ENTRY& MainEntry = MainMenu.Entries[i];
+//      DBG("entry %lld\n", i);
       // Only want legacy
 //      if (MainEntry && (MainEntry->getLEGACY_ENTRY())) {
       if (MainEntry.getLEGACY_ENTRY()) {
+//        DBG("a1\n");
         if (StriCmp(MainEntry.getLEGACY_ENTRY()->DevicePathString, Volume->DevicePathString) == 0) {
-          return NULL;
+          return  true;
         }
       }
     }
@@ -87,22 +88,21 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
               ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
             if (Custom->Type != 0) {
               if (Custom->Type == Volume->LegacyOS->Type) {
-                return NULL;
+                return  false;
               }
             } else {
-              return NULL;
+              return  false;
             }
           }
         } else if (Custom->Type != 0) {
           if (Custom->Type == Volume->LegacyOS->Type) {
-            return NULL;
+            return  false;
           }
         }
       }
       Custom = Custom->Next;
     }
   }
-  
   if (LoaderTitle == NULL) {
     if (Volume->LegacyOS->Name != NULL) {
       LoaderTitle = Volume->LegacyOS->Name;
@@ -110,15 +110,16 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
         ShortcutLetter = LoaderTitle[0];
     } else
       LoaderTitle = EfiStrDuplicate( L"Legacy OS");
+//    DBG("LoaderTitle=%s\n", LoaderTitle);
   }
   if (Volume->VolName != NULL)
     VolDesc = Volume->VolName;
   else
     VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
-
+//DBG("VolDesc=%s\n", VolDesc);
   // prepare the menu entry
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
-  Entry = new LEGACY_ENTRY;
+  Entry = new LEGACY_ENTRY();
   if (FullTitle) {
     Entry->Title = EfiStrDuplicate(FullTitle);
   } else {
@@ -128,6 +129,7 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
       Entry->Title = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
     }
   }
+//  DBG("Title=%s\n", Entry->Title);
 //  Entry->Tag          = TAG_LEGACY;
   Entry->Row          = 0;
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
@@ -136,10 +138,10 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
   } else {
     Entry->Image = LoadOSIcon(Volume->LegacyOS->IconName, L"legacy", 128, FALSE, TRUE);
   }
+//  DBG("IconName=%s\n", Volume->LegacyOS->IconName);
   Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type, Volume->DevicePath);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
-  
   //actions
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
@@ -152,21 +154,18 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
       Entry->BadgeImage = egCopyScaledImage(Entry->Image, GlobalConfig.BadgeScale);
       }
     }
-  
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
   Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
-  
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN();
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
   SubScreen->TitleImage = Entry->Image;
   SubScreen->AnimeRun = SubScreen->GetAnime();
-  
   // default entry
 //  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
-  SubEntry =  new LEGACY_ENTRY;
+  SubEntry =  new LEGACY_ENTRY();
   SubEntry->Title         = PoolPrint(L"Boot %s", LoaderTitle);
 //  SubEntry->Tag           = TAG_LEGACY;
   SubEntry->Volume           = Entry->Volume;
@@ -174,12 +173,11 @@ LEGACY_ENTRY * AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *Loade
   SubEntry->LoadOptions      = Entry->LoadOptions;
   SubEntry->AtClick       = ActionEnter;
   SubScreen->AddMenuEntry(SubEntry, true);
-  
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   MainMenu.AddMenuEntry(Entry, true);
-  DBG(" added '%s' OSType=%d Icon=%s\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
-  return Entry;
+//  DBG(" added '%s' OSType=%d Icon=%s\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
+  return true;
 }
 
 VOID ScanLegacy(VOID)
@@ -192,6 +190,7 @@ VOID ScanLegacy(VOID)
   
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
     Volume = &Volumes[VolumeIndex];
+//    DBG("test VI=%d\n", VolumeIndex);
     if ((Volume->BootType != BOOTING_BY_PBR) &&
         (Volume->BootType != BOOTING_BY_MBR) &&
         (Volume->BootType != BOOTING_BY_CD)) {
@@ -199,7 +198,7 @@ VOID ScanLegacy(VOID)
       continue;
     }
 
-    DBG("%2d: '%s' (%s)", VolumeIndex, Volume->VolName, Volume->LegacyOS->IconName);
+//    DBG("%2d: '%s' (%s)", VolumeIndex, Volume->VolName, Volume->LegacyOS->IconName);
     
 #if 0 // REFIT_DEBUG > 0
     DBG(" %d %s\n  %d %d %s %d %s\n",
@@ -215,10 +214,10 @@ VOID ScanLegacy(VOID)
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
     {
-      DBG(" hidden\n");
+//      DBG(" hidden\n");
       continue;
     }
-    
+//    DBG("not hidden\n");
     ShowVolume = FALSE;
     HideIfOthersFound = FALSE;
     if (Volume->IsAppleLegacy) {
@@ -226,31 +225,35 @@ VOID ScanLegacy(VOID)
       HideIfOthersFound = TRUE;
     } else if (Volume->HasBootCode) {
       ShowVolume = TRUE;
-      //DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
-      //  VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
+//      DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
+        VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
       if ((Volume->WholeDiskBlockIO == 0) &&
           Volume->BlockIOOffset == 0 /* &&
                                       Volume->OSName == NULL */)
         // this is a whole disk (MBR) entry; hide if we have entries for partitions
         HideIfOthersFound = TRUE;
+//      DBG("Hide it!\n");
     }
     if (HideIfOthersFound) {
       // check for other bootable entries on the same disk
       //if PBR exists then Hide MBR
       for (VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
+//        DBG("what to hide %d\n", VolumeIndex2);
         if (VolumeIndex2 != VolumeIndex &&
             Volumes[VolumeIndex2].HasBootCode &&
             Volumes[VolumeIndex2].WholeDiskBlockIO == Volume->BlockIO){
           ShowVolume = FALSE;
-          //             DBG("PBR volume at index %d\n", VolumeIndex2);
+//         DBG("PBR volume at index %d\n", VolumeIndex2);
           break;
         }
       }
     }
     
     if (ShowVolume && (!Volume->Hidden)){
-      DBG(" add legacy\n");
-      AddLegacyEntry(NULL, NULL, Volume, NULL, NULL, 0, FALSE);
+//      DBG(" add legacy\n");
+      if (!AddLegacyEntry(NULL, NULL, Volume, NULL, NULL, 0, FALSE)) {
+        DBG("...entry not added\n");
+      };
     } else {
       DBG(" hidden\n");
     }
@@ -398,8 +401,10 @@ VOID AddCustomLegacy(VOID)
         }
       }
       // Create a legacy entry for this volume
-      AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Hotkey, TRUE);
-      DBG("match!\n");
+      if (AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Hotkey, TRUE))
+      {
+        DBG("match!\n");
+      }
     }
   }
   //DBG("Custom legacy end\n");
