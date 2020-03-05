@@ -4432,7 +4432,7 @@ finish:
 
   }
   for (i = 0; i < ThemesNum; i++) {
-    if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
+    if (GlobalConfig.Theme && StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
       OldChosenTheme = i;
       break;
     }
