@@ -80,10 +80,8 @@ COL_BLUE="\x1b[34;01m"
 COL_RESET="\x1b[39;49;00m"
 
 # ====== REVISION/VERSION ======
-declare -r CLOVER_VERSION=$( cat version )
 # stage
-CLOVER_STAGE=${CLOVER_VERSION##*-}
-CLOVER_STAGE=${CLOVER_STAGE/RC/Release Candidate }
+CLOVER_STAGE=${RC/Release Candidate }
 CLOVER_STAGE=${CLOVER_STAGE/FINAL/2.2 Final}
 declare -r CLOVER_STAGE
 declare -r CLOVER_REVISION=$( cat revision )
@@ -201,7 +199,6 @@ function makeSubstitutions () {
     fi
 
     local cloverSubsts="
-s&%CLOVERVERSION%&${CLOVER_VERSION%%-*}&g
 s&%CLOVERREVISION%&${CLOVER_REVISION}&g
 s&%CLOVERSHA1%&${CLOVER_SHA1}&g
 s&%CLOVERSTAGE%&${CLOVER_STAGE}&g
@@ -1575,7 +1572,7 @@ buildpackage ()
         #[ "${3}" == "relocatable" ] && header+="relocatable=\"true\" "
 
         header+="identifier=\"${packageRefId}\" "
-        header+="version=\"${CLOVER_VERSION}\" "
+        header+="version=\"${CLOVER_REVISION}\" "
 
         [ "${targetPath}" != "relocatable" ] && header+="install-location=\"${targetPath}\" "
 
@@ -1610,7 +1607,7 @@ buildpackage ()
         (pkgutil --flatten "${packagePath}/Temp" "${packagePath}/../${packageName}.pkg")
 
         # Add the package to the list of build packages
-        pkgrefs[${#pkgrefs[*]}]="\t<pkg-ref id=\"${packageRefId}\" installKBytes='${installedsize}' version='${CLOVER_VERSION}.0.0.${CLOVER_TIMESTAMP}'>#${packageName}.pkg</pkg-ref>"
+        pkgrefs[${#pkgrefs[*]}]="\t<pkg-ref id=\"${packageRefId}\" installKBytes='${installedsize}' version='${CLOVER_REVISION}.0.0.${CLOVER_TIMESTAMP}'>#${packageName}.pkg</pkg-ref>"
 
         rm -rf "${packagePath}"
     fi
@@ -1708,7 +1705,7 @@ generateChoices() {
 makedistribution ()
 {
     declare -r distributionDestDir="${SYMROOT}"
-    declare -r distributionFilename="${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg"
+    declare -r distributionFilename="${packagename// /}_r${CLOVER_REVISION}.pkg"
     declare -r distributionFilePath="${distributionDestDir}/${distributionFilename}"
 
     rm -f "${distributionDestDir}/${packagename// /}"*.pkg
@@ -1777,7 +1774,7 @@ makedistribution ()
     echo -e $COL_GREEN" ==========="
     echo -e $COL_BLUE"  Package name: "$COL_RESET"${distributionFilename}"
     echo -e $COL_BLUE"  MD5:          "$COL_RESET"$md5"
-    echo -e $COL_BLUE"  Version:      "$COL_RESET"$CLOVER_VERSION"
+    echo -e $COL_BLUE"  Revision:     "$COL_RESET"$CLOVER_REVISION"
     echo -e $COL_BLUE"  Stage:        "$COL_RESET"$CLOVER_STAGE"
     echo -e $COL_BLUE"  Date/Time:    "$COL_RESET"$CLOVER_BUILDDATE"
     echo -e $COL_BLUE"  Built by:     "$COL_RESET"$CLOVER_WHOBUILD"
