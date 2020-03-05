@@ -163,7 +163,7 @@ static INTN row1Count, row1PosX, row1PosXRunning;
 static INTN *itemPosX = NULL;
 static INTN *itemPosY = NULL;
 static INTN row0PosY, row1PosY, textPosY, FunctextPosY;
-static EG_IMAGE* MainImage;
+//static EG_IMAGE* MainImage;
 static INTN OldX = 0, OldY = 0;
 static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
@@ -3774,9 +3774,12 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
  */
 VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
+  EG_IMAGE* MainImage = NULL;
+  EG_IMAGE* BadgeImage = NULL;
+  bool NewImageCreated = false;
   INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
 
-  if ( Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP) /*&& Entry->Row == 0*/) {
+  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP)) {
     MainImage = Entry->getDriveImage();
   } else {
     MainImage = Entry->Image;
@@ -3789,6 +3792,9 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     if (!MainImage) {
       MainImage = DummyImage(Scale << 3);
     }
+    if (MainImage) {
+      NewImageCreated = true;
+    }
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   if (GlobalConfig.TypeSVG) {
@@ -3796,18 +3802,21 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   } else {
     Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
   }
+  if (Entry->Row == 0) {
+    BadgeImage = Entry->getBadgeImage();
+  } //else null
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
     //MainImage->HasAlpha = TRUE;
       BltImageCompositeBadge(MainImage,
                              SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                             Entry->getBadgeImage(),
+                             BadgeImage,
                              XPos, YPos, Scale);
   } else {
       BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                              MainImage,
-                             Entry->getBadgeImage(),
+                             BadgeImage,
                              XPos, YPos, Scale);
   }
 
@@ -3829,6 +3838,11 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
   Entry->Place.Height = MainImage->Height;
+  //we can't free MainImage because it may be new image or it may be a link to entry image
+  // a workaround
+  if (NewImageCreated) {
+    egFreeImage(MainImage);
+  }
 }
 
 VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
@@ -5463,7 +5477,7 @@ REFIT_MENU_ENTRY  *SubMenuConfigs()
   return Entry;
 }
 
-VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry, IN CHAR8 *LastChosenOS)
+VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_ABSTRACT_MENU_ENTRY    *TmpChosenEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY    *NextChosenEntry = NULL;
