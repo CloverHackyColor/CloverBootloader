@@ -347,17 +347,25 @@ public:
 class REFIT_MENU_ENTRY_LOADER_TOOL : public LOADER_ENTRY
 {
 public:
+  UINT8 NoMemset;
+  REFIT_MENU_ENTRY_LOADER_TOOL()
+    : LOADER_ENTRY(), NoMemset(1)
+  {};
+
   virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return this; };
 };
 
 class LEGACY_ENTRY : public REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER
 {
 public:
-//  REFIT_VOLUME     *Volume;
-//  CONST CHAR16     *DevicePathString;
-//  CONST CHAR16     *LoadOptions;
-//  UINTN             BootNum;
-//  CONST CHAR16     *LoaderPath; //will be set to NULL
+  //  REFIT_VOLUME     *Volume;
+  //  CONST CHAR16     *DevicePathString;
+  //  CONST CHAR16     *LoadOptions;
+  //  UINTN             BootNum;
+  //  CONST CHAR16     *LoaderPath; //will be set to NULL
+  LEGACY_ENTRY()
+    : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
+  {};
 
   virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return this; };
 };
