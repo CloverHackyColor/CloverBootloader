@@ -42,7 +42,7 @@ bool all_tests()
 	}else{
 		DebugLog(2, "All tests are ok\n");
 #ifdef JIEF_DEBUG
-		PauseForKey(L"press");
+//		PauseForKey(L"press");
 #endif
 	}
 	return all_ok;
