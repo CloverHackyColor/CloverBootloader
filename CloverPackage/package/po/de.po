@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 22:25+0100\n"
+"POT-Creation-Date: 2020-03-05 22:38+0100\n"
 "PO-Revision-Date: 2019-07-14 17:40+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ge <ge@li.org>\n"
@@ -72,10 +72,12 @@ msgstr "Unterstützt Fat32, HFS+, ESP."
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
-#. type: Content of: <html><body><p><span>
+#. type: "12.title"
 #: Resources/templates/Description.html:18
-msgid "Clover v2"
-msgstr "Clover v2"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, no-wrap
+msgid "Clover"
+msgstr "Clover"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
@@ -92,8 +94,8 @@ msgstr "Der Haupbestandteil ist EDK2 in der aktuellen Revision."
 
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
-msgid "http://sourceforge.net/projects/cloverefiboot/"
-msgstr "http://sourceforge.net/projects/cloverefiboot/"
+msgid "https://github.com/CloverHackyColor/CloverBootloader"
+msgstr ""
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -1125,12 +1127,6 @@ msgstr "Keine Aktualisierung verfügbar !"
 msgid "Ok"
 msgstr "Ok"
 
-#. type: "12.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:1
-#, no-wrap
-msgid "Clover"
-msgstr "Clover"
-
 #. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
@@ -1408,6 +1404,12 @@ msgstr "Setze das EFI Verzeichnis"
 #, no-wrap
 msgid "Unknown"
 msgstr "Unbekannt"
+
+#~ msgid "Clover v2"
+#~ msgstr "Clover v2"
+
+#~ msgid "http://sourceforge.net/projects/cloverefiboot/"
+#~ msgstr "http://sourceforge.net/projects/cloverefiboot/"
 
 #~ msgid "Install & Start 32bit boot first"
 #~ msgstr "Installiere und boote 32Bit zuerst"
