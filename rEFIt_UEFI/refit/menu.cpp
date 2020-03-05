@@ -2175,7 +2175,7 @@ EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
 
 VOID REFIT_MENU_SCREEN::KillMouse()
 {
-  mPointer->KillMouse();
+  if ( mPointer ) mPointer->KillMouse();
 }
 //
 // menu helper functions
@@ -3700,14 +3700,16 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       // current selection
       StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
       TitleLen = StrLen(EntryC->Title);
-      if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
-        OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;;
-      } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 90) {
-        OldChosenItem = OldChosenConfig;
-      } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 116) {
-        OldChosenItem = (OldChosenDsdt == 0xFFFF) ? 0: OldChosenDsdt + 1;
-      } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 119) {
-        OldChosenItem = OldChosenAudio;
+      if ( EntryC->getREFIT_MENU_SWITCH() ) {
+		  if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
+			OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;;
+		  } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 90) {
+			OldChosenItem = OldChosenConfig;
+		  } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 116) {
+			OldChosenItem = (OldChosenDsdt == 0xFFFF) ? 0: OldChosenDsdt + 1;
+		  } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 119) {
+			OldChosenItem = OldChosenAudio;
+		  }
       }
 
       if ( EntryC->getREFIT_INPUT_DIALOG() ) {
