@@ -128,6 +128,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual REFIT_MENU_ITEM_IEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
 
   REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), Place({0,0,0,0}), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL) {};
+  REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_, ACTION AtClick_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), Place({0,0,0,0}), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL) {};
   REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_, UINTN Row_,
                             CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, EG_IMAGE* Image_,
                             EG_RECT Place_, ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
@@ -143,10 +144,9 @@ class REFIT_SIMPLE_MENU_ENTRY_TAG : public REFIT_ABSTRACT_MENU_ENTRY
 {
 public:
   UINTN              Tag;
-  ACTION             AtClick;
 
   REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
-             : REFIT_ABSTRACT_MENU_ENTRY(Title_), Tag(Tag_), AtClick(AtClick_)
+             : REFIT_ABSTRACT_MENU_ENTRY(Title_, AtClick_), Tag(Tag_)
              {};
 
   virtual REFIT_SIMPLE_MENU_ENTRY_TAG* getREFIT_SIMPLE_MENU_ENTRY_TAG() { return this; };
