@@ -46,7 +46,6 @@
 #include "HdaCodecDump.h"
 #include "menu.h"
 #include "screen.h"
-//#include "../Platform/Pointer.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
