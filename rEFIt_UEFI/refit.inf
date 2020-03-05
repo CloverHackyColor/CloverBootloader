@@ -40,7 +40,9 @@
   refit/lib.cpp
   refit/lib.h
   refit/menu.cpp
+  refit/menu.h
   refit/screen.cpp
+  refit/screen.h
   refit/IO.cpp
   refit/IO.h
   entry_scan/common.cpp
@@ -52,6 +54,7 @@
   entry_scan/securemenu.cpp
   entry_scan/securevars.cpp
   entry_scan/bootscreen.cpp
+  entry_scan/bootscreen.h
   entry_scan/lockedgraphics.cpp
   entry_scan/CanonicalDB.h
   entry_scan/CloverDB.h
@@ -61,6 +64,8 @@
   entry_scan/MSUEFICADB.h
   entry_scan/entry_scan.h
   entry_scan/securebootkeys.h
+  gui/menu_items/menu_items.h
+  gui/menu_items/menu_globals.h
   libeg/egemb_icons.cpp
   libeg/egemb_icons_dark.cpp
   libeg/egemb_font.cpp
@@ -99,6 +104,7 @@
 	Platform/Console.cpp
 	Platform/cpu.cpp
 	Platform/DataHubCpu.cpp
+	Platform/DataHubCpu.h
 #	Platform/DataHubRecords.h
 	Platform/device_inject.cpp
 	Platform/device_inject.h
@@ -106,6 +112,7 @@
 #	Platform/device_tree.h
 	Platform/Edid.cpp
 	Platform/Events.cpp
+	Platform/Events.h
 	Platform/hda.cpp
 	Platform/hda.h
     Platform/HdaCodecDump.cpp
@@ -120,14 +127,14 @@
 	Platform/memvendors.h
 	Platform/nvidia.cpp
 	Platform/nvidia.h
-#	Platform/pci.cpp
-#	Platform/picopng.cpp
-#	Platform/picopng.h
+	Platform/Nvram.cpp
+	Platform/Nvram.h
 	Platform/Platform.h
 	Platform/platformdata.cpp
 	Platform/plist.cpp
 # Platform/Pointer.cpp
 	Platform/Settings.cpp
+	Platform/Settings.h
 	Platform/smbios.cpp
 #	Platform/SmBios.h
 	Platform/spd.cpp
@@ -152,10 +159,10 @@
 	Platform/kext_patcher.cpp
 	Platform/kext_inject.cpp
 	Platform/kext_inject.h
-	Platform/Nvram.cpp
   Platform/card_vlist.cpp
   Platform/PlatformDriverOverride.cpp
 	Platform/Hibernate.cpp
+	Platform/Hibernate.h
   Platform/Net.cpp
   Platform/sound.cpp
   Platform/StartupSound.cpp

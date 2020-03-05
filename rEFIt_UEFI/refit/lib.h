@@ -37,22 +37,15 @@
 #ifndef __REFITLIB_STANDARD_H__
 #define __REFITLIB_STANDARD_H__
 
-// Experimental -->
 
 /*
-  - FKERNELPATCH: Sat Jul 30 19:13:21 2016
-
-    Since we're in bruteforce mode, no need to check the existence of given patterns before patching (except for debugging purposes). Just patch or leave it.
-    This will skip "SearchAndCount" to boost those operations. We hope this will be safe enough. The "SearchAndReplace" always do a CompareMem before CopyMem.
-    And dataLen (for search & replace) already sanitised while parsing user config & should be matched.
-
-  - ADVLOG: Thu Aug  4 18:14:19 2016
+   - ADVLOG: Thu Aug  4 18:14:19 2016
 
     Add log routine line separator.
 
   - LODEPNG: Thu Aug  4 18:14:19 2016
 
-    Size matter, screenshot as PNG instead of BMP. Inspired by mr. Coderush "CrScreenshotDxe". Maybe useful for other PNG encoding purposes. Activate by "-D LODEPNG".
+    Size matter, screenshot as PNG instead of BMP. 
 
   - ANDX86: Mon Aug  8 04:07:13 2016
 
@@ -62,7 +55,6 @@
     https://www.chromium.org/chromium-os
 */
 
-//#define FKERNELPATCH 1
 #define ADVLOG 1
 
 // Experimental <--
@@ -902,9 +894,7 @@ UINT32 EncodeOptions(CONST CHAR16 *Options);
 CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar);
 
 #define KERNEL_MAX_SIZE 40000000
-#if defined(FKERNELPATCH)
-#define FSearchReplace(Source, Search, Replace) SearchAndReplace(Source, KERNEL_MAX_SIZE, Search, sizeof(Search), Replace, 1)
-#endif //FKERNELPATCH
+
 
 VOID DbgHeader(CONST CHAR8 *str);
 

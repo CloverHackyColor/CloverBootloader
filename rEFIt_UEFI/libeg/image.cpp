@@ -35,10 +35,7 @@
  */
 
 #include "libegint.h"
-#if defined(LODEPNG)
 #include "lodepng.h"
-#endif //LODEPNG
-
 
 #define MAX_FILE_SIZE (1024*1024*1024)
 
@@ -884,7 +881,7 @@ VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCo
     }
 }
 
-#if defined(LODEPNG)
+
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
   EG_IMAGE *NewImage = NULL;
   UINTN Error, i, ImageSize, Width, Height;
@@ -933,6 +930,6 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   lodepng_free(PixelData);
   return NewImage;
 }
-#endif //LODEPNG
+
 
 /* EOF */

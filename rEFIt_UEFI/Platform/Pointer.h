@@ -1,2 +1,0 @@
-//
-//VOID KillMouse();
