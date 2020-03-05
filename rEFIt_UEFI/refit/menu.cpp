@@ -1373,7 +1373,12 @@ VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.Entries.size() == 0) {
-    AboutMenu.AddMenuInfo(PoolPrint(L"Clover Version 2.5k rev %s", gFirmwareRevision)); // by Slice, dmazar, apianti, JrCs, pene and others");
+    AboutMenu.AddMenuInfo(PoolPrint(L"Clover Version 5.0"));
+#ifdef REVISION_STR
+    AboutMenu.AddMenuInfo(PoolPrint(L" %a", REVISION_STR));
+#else
+    AboutMenu.AddMenuInfo(PoolPrint(L" Revision", gFirmwareRevision));
+#endif
 #ifdef FIRMWARE_BUILDDATE
     AboutMenu.AddMenuInfo(PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -2168,7 +2173,8 @@ VOID REFIT_MENU_SCREEN::HidePointer()
 
 EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
 {
-  if ( !mPointer ) return RETURN_INVALID_PARAMETER;
+
+  if ( !mPointer ) mPointer = new XPointer();
   return mPointer->MouseBirth();
 }
 

@@ -41,7 +41,7 @@ XPointer::~XPointer()
 
 void XPointer::Hide()
 {
-  if (SimplePointerProtocol) {
+  if (Alive) {
     oldImage.Draw(oldPlace.XPos, oldPlace.YPos, 1.f);
   }
 }
@@ -94,6 +94,7 @@ EFI_STATUS XPointer::MouseBirth()
   oldPlace.YPos = (INTN)(UGAHeight >> 2);
   oldPlace.Width = POINTER_WIDTH;
   oldPlace.Height = POINTER_HEIGHT;
+  DBG("init mouse at [%d, %d]\n", oldPlace.XPos, oldPlace.YPos);
   CopyMem(&newPlace, &oldPlace, sizeof(EG_RECT));
 
   //newImage->Fill(&MenuBackgroundPixel),

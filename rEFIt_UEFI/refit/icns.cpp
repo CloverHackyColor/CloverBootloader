@@ -135,17 +135,18 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   EG_IMAGE  *TextBuffer = NULL;
   CONST CHAR16    *p;
   CHAR16    *Text;
-
+//  DBG("Take image for %d\n", Id);
   if (Id >= BUILTIN_ICON_COUNT) {
     return NULL;
   }
 
   if (BuiltinIconTable[Id].Image != NULL) {
+//    DBG(" ... the image present\n");
     return BuiltinIconTable[Id].Image;
   }
 
   Size = BuiltinIconTable[Id].PixelSize;
-  //DBG("Load Icon [id:%d]");
+//  DBG("Load Icon [id:%d]");
 
   if (ThemeDir && !GlobalConfig.TypeSVG) {
     CHAR16    *Path;
