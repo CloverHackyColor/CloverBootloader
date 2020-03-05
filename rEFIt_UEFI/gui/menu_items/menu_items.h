@@ -272,6 +272,7 @@ public:
 class REFIT_MENU_ITEM_IEM_ABSTRACT : public REFIT_MENU_ENTRY_OTHER {
 public:
   INPUT_ITEM        *Item;
+  REFIT_MENU_ITEM_IEM_ABSTRACT() : Item(0) {}
   virtual REFIT_MENU_ITEM_IEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return this; };
 };
 
