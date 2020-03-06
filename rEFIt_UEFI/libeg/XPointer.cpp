@@ -28,7 +28,7 @@
 #define POINTER_HEIGHT 32
 
 XPointer::XPointer()
-            : PointerImage(BuiltinIcon(BUILTIN_ICON_POINTER)),
+            : PointerImage(NULL),
               newImage(POINTER_WIDTH, POINTER_HEIGHT),
               oldImage(POINTER_WIDTH, POINTER_HEIGHT)
 {
@@ -74,21 +74,26 @@ EFI_STATUS XPointer::MouseBirth()
   }
 
   if (EFI_ERROR(Status)) {
+    MsgLog("No mouse!\n");
+    delete PointerImage;
     PointerImage = NULL;
     MouseEvent = NoEvents;
     SimplePointerProtocol = NULL;
-    MsgLog("No mouse!\n");
     gSettings.PointerEnabled = FALSE;
     return Status;
   }
 
-  if ( PointerImage.isEmpty() ) {
+  if ( !PointerImage->isEmpty() ) {
     //this is impossible after BuiltinIcon
-    MsgLog("No pointer image!\n");
-    SimplePointerProtocol = NULL;
-    Alive = false;
-    return EFI_NOT_FOUND;
+    MsgLog(" pointer image! Renew it\n");
+    //SimplePointerProtocol = NULL;
+    //Alive = false;
+    //return EFI_NOT_FOUND;
+    delete PointerImage;
   }
+  DBG("Now update image because of other theme\n");
+  PointerImage = new XImage(BuiltinIcon(BUILTIN_ICON_POINTER));
+  DBG("new image created\n");
   LastClickTime = 0; //AsmReadTsc();
   oldPlace.XPos = (INTN)(UGAWidth >> 2);
   oldPlace.YPos = (INTN)(UGAHeight >> 2);
@@ -112,15 +117,15 @@ VOID XPointer::Draw()
 
 // take background image
   oldImage.GetArea(newPlace);
-//  DBG("got area\n");
+  DBG("got area\n");
   CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
 
 //  CopyMem(newImage->PixelData, oldImage->PixelData, (UINTN)(POINTER_WIDTH * POINTER_HEIGHT * sizeof(EG_PIXEL)));
 //  newImage.CopyScaled(oldImage, 1.f);
-
+  DBG("Draw pointer\n");
 //  newImage.Compose(0, 0, PointerImage, true);
 //  newImage.Draw(newPlace.XPos, newPlace.YPos, 1.f);
-  PointerImage.Draw(newPlace.XPos, newPlace.YPos, 1.f);
+  PointerImage->Draw(newPlace.XPos, newPlace.YPos, 1.f);
 }
 
 VOID XPointer::KillMouse()
@@ -130,11 +135,15 @@ VOID XPointer::KillMouse()
   if (!SimplePointerProtocol) {
     return;
   }
- 
+  DBG("KillMouse\n");
 //  newImage.setEmpty(); // Don't empty them, we'll need them at the next mouse birth
 //  oldImage.setEmpty();
 
-//  delete PointerImage;
+  if (PointerImage) {
+    delete PointerImage;
+    PointerImage = nullptr;
+  }
+
 
   MouseEvent = NoEvents;
   SimplePointerProtocol = NULL;

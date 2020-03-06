@@ -485,8 +485,8 @@ rem # drop compiled files to EFI folder
 
   call:copybin "%BUILD_DIR%\FV\boot%TARGETARCH_INT%" "%DEST_BOOTLOADERS%\%TARGETARCH%" "%cloverEFIFile%"
   call:copybin "%BUILD_DIR_ARCH%\bdmesg.efi" "%DEST_TOOLS%" "bdmesg-%TARGETARCH_INT%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVERX64.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVERX64.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
 
   if not defined CLOVER_EDK2SHELL goto donebuild
 

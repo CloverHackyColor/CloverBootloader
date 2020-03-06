@@ -14,7 +14,7 @@ public:
 
 protected:
   EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
-  XImage PointerImage;
+  XImage* PointerImage;
   XImage newImage;
   XImage oldImage;
 
@@ -35,7 +35,7 @@ public:
   bool MouseInRect(EG_RECT *Place);
   EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen);
 
-  bool isEmpty() const { return PointerImage.isEmpty(); }
+  bool isEmpty() const { return PointerImage->isEmpty(); }
 
 protected:
   VOID Draw();

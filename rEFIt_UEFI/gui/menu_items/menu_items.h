@@ -420,26 +420,26 @@ public:
 
 
   REFIT_MENU_SCREEN()
-						: ID(0), Title(0), TitleImage(0),
+						: mPointer(), ID(0), Title(0), TitleImage(0),
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), mPointer() //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0)  //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
 
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText)
-						: ID(ID), Title(Title), TitleImage(0),
+						: mPointer(), ID(ID), Title(Title), TitleImage(0),
 						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), mPointer() //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
-						: ID(ID), Title(Title), TitleImage(0),
+						: mPointer(), ID(ID), Title(Title), TitleImage(0),
 						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), mPointer() //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{
 	  	  	  	  	  	  	  Entries.AddReference(entry1, false);
 	  	  	  	  	  	  	  Entries.AddReference(entry2, false);

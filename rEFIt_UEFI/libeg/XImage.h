@@ -19,7 +19,7 @@ extern "C" {
 //#include "nanosvg.h"
 //#include "FloatLib.h"
 
-#define USE_ARRAY 1
+#define USE_ARRAY 0
 
 #if 0 //ndef EFI_GRAPHICS_OUTPUT_BLT_PIXEL
 typedef struct {
@@ -59,6 +59,7 @@ public:
   XImage(UINTN W, UINTN H);
   XImage(EG_IMAGE* egImage);
   XImage(const XImage& Image, float scale);
+  XImage(UINTN W, UINTN H, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* Data);
   ~XImage();
 
 protected:
