@@ -746,17 +746,25 @@ VOID testSVG()
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       //now show it!
+#if 1 //test XImage
+      XImage NewX(NewImage);
+      NewX.Draw((UGAWidth - Width) / 2,
+        (UGAHeight - Height) / 2, 1.f);
+#else
       BltImageAlpha(NewImage,
                     (UGAWidth - Width) / 2,
                     (UGAHeight - Height) / 2,
                     &MenuBackgroundPixel,
                     16);
+#endif //test XImage
       FreePool(FileData);
       FileData = NULL;
       egFreeImage(NewImage);
       nsvg__deleteParser(p);
       nsvgDeleteRasterizer(rast);
+
     }
+
 #endif
     //Test text
     Height = 80;

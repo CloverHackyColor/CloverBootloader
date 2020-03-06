@@ -391,7 +391,7 @@ typedef VOID (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST C
 class REFIT_MENU_SCREEN
 {
 public:
-  static   XPointer mPointer;
+  XPointer mPointer;
 
   UINTN             ID;
   CONST  CHAR16      *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
@@ -424,7 +424,7 @@ public:
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0), mPointer() //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
 
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText)
@@ -432,14 +432,14 @@ public:
 						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0), mPointer() //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
 						: ID(ID), Title(Title), TitleImage(0),
 						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0), mPointer() //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{
 	  	  	  	  	  	  	  Entries.AddReference(entry1, false);
 	  	  	  	  	  	  	  Entries.AddReference(entry2, false);

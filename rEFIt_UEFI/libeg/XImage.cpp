@@ -19,13 +19,19 @@ XImage::XImage()
 {
   Width = 0;
   Height = 0;
+  PixelData = nullptr;
 }
 
 XImage::XImage(UINTN W, UINTN H)
 {
   Width = W;
   Height = H;
+#if !USE_ARRAY
   PixelData.CheckSize(GetWidth()*GetHeight()); // change the allocated size, but not the size. size is still 0 here. PixelData[0] won't work.
+  PixelData.SetLength(GetWidth()*GetHeight());
+#else
+  PixelData = (__typeof__(PixelData))AllocatePool(W * H * sizeof(*PixelData));
+#endif
 }
 
 XImage::XImage(EG_IMAGE* egImage)
@@ -37,11 +43,15 @@ XImage::XImage(EG_IMAGE* egImage)
 	  Width = 0;
 	  Height = 0;
   }
+#if !USE_ARRAY
   PixelData.CheckSize(GetWidth()*GetHeight()); // change the allocated size, but not the size.
   PixelData.SetLength(GetWidth()*GetHeight()); // change the size, ie the number of element in the array
   if ( GetWidth()*GetHeight() > 0 ) {
-	  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size());
+	  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size() * sizeof(*egImage->PixelData));
   }
+#else
+  PixelData = (__typeof__(PixelData))AllocateCopyPool(Width * Height * sizeof(*egImage->PixelData), egImage->PixelData);
+#endif
 }
 
 UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
@@ -56,7 +66,10 @@ XImage::XImage(const XImage& Image, float scale)
   UINTN SrcHeight = Image.GetHeight();
   Width = (UINTN)(SrcWidth * scale);
   Height = (UINTN)(SrcHeight * scale);
+#if !USE_ARRAY
   PixelData.CheckSize(GetWidth()*GetHeight());
+  PixelData.SetLength(GetWidth()*GetHeight());
+#endif
   if (scale < 1.e-4) return;
   CopyScaled(Image, scale);
 }
@@ -125,12 +138,22 @@ do { \
 
 XImage::~XImage()
 {
+#if USE_ARRAY
+  FreePool(PixelData);
+#endif
 }
 
+#if !USE_ARRAY
 const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& XImage::GetData() const
 {
   return PixelData;
 }
+#else
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* XImage::GetData() const
+{
+  return &PixelData[0];
+}
+#endif
 
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL* XImage::GetPixelPtr(UINTN x, UINTN y)
 {
@@ -181,10 +204,15 @@ void XImage::CopyScaled(const XImage& Image, float scale)
 
   int Pixel = sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
   int Row = (int)SrcWidth * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-
+#if !USE_ARRAY
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
+#else
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* Source = Image.GetData();
+#endif
 
+#if !USE_ARRAY
   PixelData.SetLength(Width*Height); // setLength BEFORE, so GetPixelPtr(x, y)
+#endif
   for (UINTN y = 0; y < Height; y++)
   {
     int ly = (int)(y / scale);
@@ -282,7 +310,7 @@ unsigned XImage::ToPNG(UINT8** Data, UINTN& OutSize)
 }
 
 /*
- * fill XImage object by rater data described in SVG
+ * fill XImage object by raster data described in SVG
  * caller should create the object with Width and Height and calculate scale
  * scale = 1 correspond to fill the rect with the image
  * scale = 0.5 will reduce image 
@@ -345,16 +373,25 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
       UgaDraw = NULL;
   }
 
+  //this should be somewhere else
+  INTN ScreenWidth = 0;
+  INTN ScreenHeight = 0;
+  egGetScreenSize(&ScreenWidth, &ScreenHeight);
+
   if (W == 0) W = Width;
   if (H == 0) H = Height;
 
-//  INTN AreaWidth = (x + W > Width) ? (Width - x) : W;
-//  INTN AreaHeight = (y + H > Height) ? (Height - y) : H;
-  INTN AreaWidth = (W > Width) ? W : Width;
-  INTN AreaHeight = (H > Height) ? H : Height;
+  INTN AreaWidth = (x + W > (UINTN)ScreenWidth) ? ((UINTN)ScreenWidth - x) : W;
+  INTN AreaHeight = (y + H > (UINTN)ScreenHeight) ? ((UINTN)ScreenHeight - y) : H;
+//  INTN AreaWidth = (W > Width) ? W : Width;
+//  INTN AreaHeight = (H > Height) ? H : Height;
+  DBG("area is {%d, %d, %d, %d}\n", x, y, W, H);
+  DBG("own width %d and area %d\n", Width, AreaWidth);
   
   if (GraphicsOutput != NULL) {
+#if !USE_ARRAY
 	PixelData.SetLength(AreaWidth*AreaHeight); // setLength BEFORE, so &PixelData[0]
+#endif
     INTN LineBytes = GraphicsOutput->Mode->Info->HorizontalResolution * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
     GraphicsOutput->Blt(GraphicsOutput,
       (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)&PixelData[0],
@@ -363,14 +400,16 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   }
   else if (UgaDraw != NULL) {
     UINT32 LineWidth = 0;
-    UINT32 ScreenHeight = 0;
+    UINT32 UGAScreenHeight = 0;
     UINT32 Depth = 0;
     UINT32 RefreshRate = 60;
-    Status = UgaDraw->GetMode(UgaDraw, &LineWidth, &ScreenHeight, &Depth, &RefreshRate);
+    Status = UgaDraw->GetMode(UgaDraw, &LineWidth, &UGAScreenHeight, &Depth, &RefreshRate);
     if (EFI_ERROR(Status)) {
       return;   // graphics not available
     }
+#if !USE_ARRAY
 	PixelData.SetLength(AreaWidth*AreaHeight); // setLength BEFORE, so &PixelData[0]
+#endif
     UgaDraw->Blt(UgaDraw,
       (EFI_UGA_PIXEL *)&PixelData[0],
       EfiUgaVideoToBltBuffer,
@@ -383,16 +422,27 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 
 void XImage::Draw(INTN x, INTN y, float scale)
 {
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlueColor = { 200, 0, 0, 160 };
   //prepare images
   INTN ScreenWidth = 0;
   INTN ScreenHeight = 0;
   egGetScreenSize(&ScreenWidth, &ScreenHeight);
-  XImage Background(ScreenWidth, ScreenHeight);
-  Background.GetArea(x, y, Width, Height);
-  XImage Top(*this, scale);
-  Background.Compose(x, y, Top, true);
-  UINTN AreaWidth = (x + Width > Background.GetWidth()) ? (Background.GetWidth() - x) : Width;
-  UINTN AreaHeight = (y + Height > Background.GetHeight()) ? (Background.GetHeight() - y) : Height;
+//  DBG("1\n");
+//  XImage Background(ScreenWidth, ScreenHeight);
+//  DBG("2\n");
+//  Background.GetArea(x, y, Width, Height);
+//  DBG("3\n");
+ // XImage Top(*this, scale);
+//  XImage Top(Width, Height);
+//  DBG("4\n");
+//  Top.CopyScaled(*this, 1.f);
+//  Top.Fill(BlueColor);
+//  DBG("5\n");
+//  Background.Compose(x, y, Top, true);
+//  DBG("6\n");
+  UINTN AreaWidth = (x + Width > (UINTN)ScreenWidth) ? (ScreenWidth - x) : Width;
+  UINTN AreaHeight = (y + Height > (UINTN)ScreenHeight) ? (ScreenHeight - y) : Height;
+//  DBG("width: own=%d, Background=%d, Area=%d\n", Width, Background.GetWidth(), AreaWidth);
 
   // prepare protocols
   EFI_STATUS Status;
@@ -409,15 +459,17 @@ void XImage::Draw(INTN x, INTN y, float scale)
       UgaDraw = NULL;
   }
   //output combined image
+ // DBG("7\n");
   if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Background.GetPixelPtr(0, 0),
+    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)GetData(),
       EfiBltBufferToVideo,
-      0, 0, x, y,
-      AreaWidth, AreaHeight, Background.GetWidth() * 4);
+      0, 0, //source x,y
+      x, y, //destination x,y
+      AreaWidth, AreaHeight, ScreenWidth * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
-    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
+    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
       0, 0, x, y,
-      AreaWidth, AreaHeight, Background.GetWidth() * 4);
+      AreaWidth, AreaHeight, ScreenWidth * sizeof(EFI_UGA_PIXEL));
   }
 }

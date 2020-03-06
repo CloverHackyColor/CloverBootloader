@@ -16,7 +16,7 @@
 
 [Defines]
   INF_VERSION                   = 0x00010005
-  BASE_NAME                     = CLOVER
+  BASE_NAME                     = CLOVERX64
   FILE_GUID                     = 8F7D7B1E-0E1C-4C98-B12E-4EC99C4081AC
   MODULE_TYPE                   = UEFI_APPLICATION
   EDK_RELEASE_VERSION			= 0x00020000
@@ -66,6 +66,8 @@
   entry_scan/securebootkeys.h
   gui/menu_items/menu_items.h
   gui/menu_items/menu_globals.h
+ # gui/REFIT_MENU_SCREEN.cpp
+ # gui/REFIT_MENU_SCREEN.h
   libeg/egemb_icons.cpp
   libeg/egemb_icons_dark.cpp
   libeg/egemb_font.cpp

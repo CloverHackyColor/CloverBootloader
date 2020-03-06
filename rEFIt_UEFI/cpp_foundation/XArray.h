@@ -135,7 +135,7 @@ template<class TYPE>
 XArray<TYPE>::XArray(const XArray<TYPE> &anArray)
 {
 	Init();
-	Add(anArray.Data(), anArray.Length());
+	AddArray(anArray.Data(), anArray.Length());
 }
 
 /* operator = */

@@ -60,7 +60,7 @@ EFI_STATUS XPointer::MouseBirth()
   }
 
   if (SimplePointerProtocol) { //do not double
-//    DBG("DrawPointer\n");
+    DBG("Mouse is already here\n");
     Draw();
     return EFI_SUCCESS;
   }
@@ -84,7 +84,7 @@ EFI_STATUS XPointer::MouseBirth()
 
   if ( PointerImage.isEmpty() ) {
     //this is impossible after BuiltinIcon
-    DBG("No pointer image!\n");
+    MsgLog("No pointer image!\n");
     SimplePointerProtocol = NULL;
     Alive = false;
     return EFI_NOT_FOUND;
@@ -96,6 +96,7 @@ EFI_STATUS XPointer::MouseBirth()
   oldPlace.Height = POINTER_HEIGHT;
   DBG("init mouse at [%d, %d]\n", oldPlace.XPos, oldPlace.YPos);
   CopyMem(&newPlace, &oldPlace, sizeof(EG_RECT));
+//  DBG("newPlace={%d, %d, %d, %d}\n", newPlace.XPos, newPlace.YPos, newPlace.Width, newPlace.Height);
 
   //newImage->Fill(&MenuBackgroundPixel),
   //  egTakeImage(oldImage, oldPlace.XPos, oldPlace.YPos,
@@ -111,13 +112,15 @@ VOID XPointer::Draw()
 
 // take background image
   oldImage.GetArea(newPlace);
+//  DBG("got area\n");
   CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
 
 //  CopyMem(newImage->PixelData, oldImage->PixelData, (UINTN)(POINTER_WIDTH * POINTER_HEIGHT * sizeof(EG_PIXEL)));
-  newImage.CopyScaled(oldImage, 1.f);
+//  newImage.CopyScaled(oldImage, 1.f);
 
-  newImage.Compose(0, 0, PointerImage, true);
-  newImage.Draw(newPlace.XPos, newPlace.YPos, 1.f);
+//  newImage.Compose(0, 0, PointerImage, true);
+//  newImage.Draw(newPlace.XPos, newPlace.YPos, 1.f);
+  PointerImage.Draw(newPlace.XPos, newPlace.YPos, 1.f);
 }
 
 VOID XPointer::KillMouse()
