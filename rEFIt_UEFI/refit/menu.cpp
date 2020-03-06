@@ -2168,19 +2168,19 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
 
 VOID REFIT_MENU_SCREEN::HidePointer()
 {
-  if ( mPointer ) mPointer->Hide();
+  /*if ( mPointer )*/ mPointer.Hide();
 }
 
 EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
 {
 
-  if ( !mPointer ) mPointer = new XPointer();
-  return mPointer->MouseBirth();
+  //if ( !mPointer ) mPointer = new XPointer();
+  return mPointer.MouseBirth();
 }
 
 VOID REFIT_MENU_SCREEN::KillMouse()
 {
-  if ( mPointer ) mPointer->KillMouse();
+  /*if ( mPointer ) */mPointer.KillMouse();
 }
 //
 // menu helper functions

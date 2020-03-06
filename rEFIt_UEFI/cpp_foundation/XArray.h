@@ -135,7 +135,7 @@ template<class TYPE>
 XArray<TYPE>::XArray(const XArray<TYPE> &anArray)
 {
 	Init();
-	Add(anArray.Data(), anArray.Length());
+	AddArray(anArray.Data(), anArray.Length());
 }
 
 /* operator = */
@@ -185,6 +185,7 @@ void XArray<TYPE>::CheckSize(xsize nNewSize)
 template<class TYPE>
 void XArray<TYPE>::SetLength(xsize l)
 {
+	CheckSize(l, XArrayGrowByDefault); // be sure the size is allocated
 	m_len = l;
 	#ifdef DEBUG
 		if(m_len > m_size) {
@@ -199,12 +200,12 @@ void XArray<TYPE>::SetLength(xsize l)
 template<class TYPE>
 TYPE &XArray<TYPE>::ElementAt(xsize index)
 {
-	#ifdef _DEBUG
+//	#ifdef _DEBUG
 		if ( index >= m_len ) {
 			DebugLog(2, "XArray::ElementAt(xsize) -> Operator [] : index > m_len");
 			CpuDeadLoop();
 		}
-	#endif
+//	#endif
 	return  m_data[index];
 }
 
@@ -212,12 +213,12 @@ TYPE &XArray<TYPE>::ElementAt(xsize index)
 template<class TYPE>
 const TYPE& XArray<TYPE>::ElementAt(xsize index) const
 {
-	#ifdef _DEBUG
+//	#ifdef _DEBUG
 		if ( index >= m_len ) {
 			DebugLog(2, "XArray::ElementAt(xsize) const -> Operator [] : index > m_len");
 			CpuDeadLoop();
 		}
-	#endif
+//	#endif
 	return  m_data[index];
 }
 

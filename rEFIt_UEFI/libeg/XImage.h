@@ -19,6 +19,7 @@ extern "C" {
 //#include "nanosvg.h"
 //#include "FloatLib.h"
 
+#define USE_ARRAY 1
 
 #if 0 //ndef EFI_GRAPHICS_OUTPUT_BLT_PIXEL
 typedef struct {
@@ -47,7 +48,11 @@ class XImage
 protected:
   UINTN      Width;
   UINTN      Height;
+#if USE_ARRAY
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *PixelData;
+#else
   XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL> PixelData;
+#endif
  
 public:
   XImage();
@@ -60,17 +65,29 @@ protected:
   UINTN GetSize() const;  //in bytes
 
 public:
+#if !USE_ARRAY
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& GetData() const;
+#else
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetData() const;
+#endif
 
   const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& GetPixel(UINTN x, UINTN y) const;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y);
   UINTN      GetWidth() const;
   UINTN      GetHeight() const;
 
+#if USE_ARRAY
+  void setEmpty() {
+    Width = 0; Height = 0; if (PixelData) {
+      FreePool(PixelData); PixelData = nullptr;
+    }
+  }
+  bool isEmpty() const { return PixelData == nullptr; }
+#else
   void setEmpty() { Width=0; Height=0; PixelData.setEmpty(); }
   bool isEmpty() const { return PixelData.size() == 0; }
-
+#endif
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect);
