@@ -38,7 +38,7 @@
 #include "libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
 
-#include "Version.h"
+#include "../../Version.h"
 //#include "colors.h"
 
 #include "nanosvg.h"
@@ -1373,11 +1373,11 @@ VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.Entries.size() == 0) {
-    AboutMenu.AddMenuInfo(PoolPrint(L"Clover Version 5.0"));
+//    AboutMenu.AddMenuInfo(PoolPrint(L"Clover Version 5.0"));
 #ifdef REVISION_STR
-    AboutMenu.AddMenuInfo(PoolPrint(L" %a", REVISION_STR));
+    AboutMenu.AddMenuInfo(PoolPrint(L" %a ", REVISION_STR));
 #else
-    AboutMenu.AddMenuInfo(PoolPrint(L" Revision", gFirmwareRevision));
+    AboutMenu.AddMenuInfo(PoolPrint(L"Clover Revision %a", gFirmwareRevision));
 #endif
 #ifdef FIRMWARE_BUILDDATE
     AboutMenu.AddMenuInfo(PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
@@ -1389,13 +1389,13 @@ VOID AboutRefit(VOID)
     AboutMenu.AddMenuInfo(L"Portions Copyright (c) Intel Corporation");
     AboutMenu.AddMenuInfo(L"Developers:");
     AboutMenu.AddMenuInfo(L"  Slice, dmazar, apianti, JrCs, pene, usrsse2");
-    AboutMenu.AddMenuInfo(L"Credits also:");
     AboutMenu.AddMenuInfo(L"  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
     AboutMenu.AddMenuInfo(L"  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
     AboutMenu.AddMenuInfo(L"  cparm, rehabman, nms42, Sherlocks, Zenith432");
     AboutMenu.AddMenuInfo(L"  stinga11, TheRacerMaster, solstice, SoThOr, DF");
     AboutMenu.AddMenuInfo(L"  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
     AboutMenu.AddMenuInfo(L"  ath, savvas, syscl, goodwin_c, clovy, jief_machak");
+    AboutMenu.AddMenuInfo(L"Credits also:");
     AboutMenu.AddMenuInfo(L"  projectosx.com, applelife.ru, insanelymac.com");
     AboutMenu.AddMenuInfo(L"");
     AboutMenu.AddMenuInfo(L"Running on:");
