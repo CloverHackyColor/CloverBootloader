@@ -1,7 +1,7 @@
 #pragma once
 
 #include "XImage.h"
-#include "../refit/IO.h"
+//#include "../refit/IO.h"
 
 class REFIT_MENU_SCREEN;
 class XImage;

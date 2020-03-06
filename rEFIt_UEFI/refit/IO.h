@@ -26,6 +26,7 @@ Revision History
 
 #include <Library/GenericBdsLib.h>
 #include "../gui/menu_items/menu_items.h" // for REFIT_MENU_SCREEN
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 #define EFI_TPL_APPLICATION 4
 #define EFI_TPL_CALLBACK    8

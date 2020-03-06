@@ -25,7 +25,7 @@ XImage::XImage(UINTN W, UINTN H)
 {
   Width = W;
   Height = H;
-  PixelData.CheckSize(GetWidth()*GetHeight());
+  PixelData.CheckSize(GetWidth()*GetHeight()); // change the allocated size, but not the size. size is still 0 here. PixelData[0] won't work.
 }
 
 XImage::XImage(EG_IMAGE* egImage)
@@ -184,6 +184,7 @@ void XImage::CopyScaled(const XImage& Image, float scale)
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
 
+  PixelData.SetLength(Width*Height); // setLength BEFORE, so GetPixelPtr(x, y)
   for (UINTN y = 0; y < Height; y++)
   {
     int ly = (int)(y / scale);
@@ -347,10 +348,13 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   if (W == 0) W = Width;
   if (H == 0) H = Height;
 
-  INTN AreaWidth = (x + W > Width) ? (Width - x) : W;
-  INTN AreaHeight = (y + H > Height) ? (Height - y) : H;
+//  INTN AreaWidth = (x + W > Width) ? (Width - x) : W;
+//  INTN AreaHeight = (y + H > Height) ? (Height - y) : H;
+  INTN AreaWidth = (W > Width) ? W : Width;
+  INTN AreaHeight = (H > Height) ? H : Height;
   
   if (GraphicsOutput != NULL) {
+	PixelData.SetLength(AreaWidth*AreaHeight); // setLength BEFORE, so &PixelData[0]
     INTN LineBytes = GraphicsOutput->Mode->Info->HorizontalResolution * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
     GraphicsOutput->Blt(GraphicsOutput,
       (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)&PixelData[0],
@@ -366,6 +370,7 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
     if (EFI_ERROR(Status)) {
       return;   // graphics not available
     }
+	PixelData.SetLength(AreaWidth*AreaHeight); // setLength BEFORE, so &PixelData[0]
     UgaDraw->Blt(UgaDraw,
       (EFI_UGA_PIXEL *)&PixelData[0],
       EfiUgaVideoToBltBuffer,

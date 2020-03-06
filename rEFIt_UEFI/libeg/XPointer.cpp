@@ -128,8 +128,8 @@ VOID XPointer::KillMouse()
     return;
   }
  
-  newImage.setEmpty();
-  oldImage.setEmpty();
+//  newImage.setEmpty(); // Don't empty them, we'll need them at the next mouse birth
+//  oldImage.setEmpty();
 
 //  delete PointerImage;
 

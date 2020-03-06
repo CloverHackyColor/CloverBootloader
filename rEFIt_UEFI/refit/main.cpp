@@ -2074,7 +2074,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     return Status;
 
   DBG("Clover : Image base = 0x%x\n", SelfLoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
-
+#ifdef JIEF_DEBUG
+  gBS->Stall(1000000); // to give time to gdb to connect
+//  PauseForKey(L"press\n");
+#endif
 
   construct_globals_objects(); // do this after SelfLoadedImage is initialized
 	all_tests();

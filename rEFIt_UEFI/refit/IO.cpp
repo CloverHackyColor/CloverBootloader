@@ -1080,16 +1080,16 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN* ScreenPtr, UINTN TimeoutDefa
       CheckSyncSound();
     }
     TimeoutRemain--;
-    if ( Screen.mPointer ) {
-    	if (Screen.mPointer->isAlive()) {
-    		Screen.mPointer->UpdatePointer();
-    		Status = Screen.mPointer->CheckMouseEvent(&Screen); //out: gItemID, gAction
+//    if ( Screen.mPointer ) {
+    	if (Screen.mPointer.isAlive()) {
+    		Screen.mPointer.UpdatePointer();
+    		Status = Screen.mPointer.CheckMouseEvent(&Screen); //out: gItemID, gAction
     		if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
     			break;
 
     		}
     	}
-    }
+//    }
   }
   return Status;
 }
