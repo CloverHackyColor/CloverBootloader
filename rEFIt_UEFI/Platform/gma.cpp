@@ -2313,7 +2313,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           if (!SetIg) {
             devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[6], 4);
-            DBG("  Found ig-platform-id = 0x16160002\n");
+            DBG("  Found ig-platform-id = 0x16260006\n");
           }
           break;
         case 0x161E:

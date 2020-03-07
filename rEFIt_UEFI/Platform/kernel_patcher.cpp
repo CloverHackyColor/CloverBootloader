@@ -723,7 +723,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
   } else {
     if (bytes[patchLocation1 + 8] == 0x3B && bytes[patchLocation1 + 9] == 0x05 &&
         bytes[patchLocation1 + 13] == 0x00) {
-      // 65 8B 04 25 1C 00 00 00 3B XX XX XX XX 00
+      // 65 8B 04 25 XX 00 00 00 3B 05 XX XX XX 00
       // 31 C0 90 90 90 90 90 90 90 90 90 90 90 90
       DBG("Patched Lapic panic (10.10 - recent macOS)\n");
       bytes[patchLocation1 + 0] = 0x31;
