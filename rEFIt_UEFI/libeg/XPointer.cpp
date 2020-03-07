@@ -21,11 +21,9 @@
 #define DBG(...) DebugLog(DEBUG_MOUSE, __VA_ARGS__)
 #endif
 
-//extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
-
-// make them theme dependent? No, 32 is good value for all.
-#define POINTER_WIDTH  32
-#define POINTER_HEIGHT 32
+// Initial value, but later it will be theme dependent
+#define POINTER_WIDTH  64
+#define POINTER_HEIGHT 64
 
 XPointer::XPointer()
             : PointerImage(NULL),
@@ -75,37 +73,28 @@ EFI_STATUS XPointer::MouseBirth()
 
   if (EFI_ERROR(Status)) {
     MsgLog("No mouse!\n");
-    delete PointerImage;
-    PointerImage = NULL;
+    if (PointerImage) {
+      delete PointerImage;
+      PointerImage = NULL;
+    }
     MouseEvent = NoEvents;
     SimplePointerProtocol = NULL;
     gSettings.PointerEnabled = FALSE;
     return Status;
   }
 
-  if ( !PointerImage->isEmpty() ) {
-    //this is impossible after BuiltinIcon
-    MsgLog(" pointer image! Renew it\n");
-    //SimplePointerProtocol = NULL;
-    //Alive = false;
-    //return EFI_NOT_FOUND;
+  if (PointerImage && !PointerImage->isEmpty() ) {
     delete PointerImage;
+    PointerImage = nullptr;
   }
-  DBG("Now update image because of other theme\n");
+//  Now update image because of other theme has other image
   PointerImage = new XImage(BuiltinIcon(BUILTIN_ICON_POINTER));
-  DBG("new image created\n");
-  LastClickTime = 0; //AsmReadTsc();
+  LastClickTime = 0;
   oldPlace.XPos = (INTN)(UGAWidth >> 2);
   oldPlace.YPos = (INTN)(UGAHeight >> 2);
-  oldPlace.Width = POINTER_WIDTH;
-  oldPlace.Height = POINTER_HEIGHT;
-  DBG("init mouse at [%d, %d]\n", oldPlace.XPos, oldPlace.YPos);
+  oldPlace.Width = PointerImage->GetWidth();
+  oldPlace.Height = PointerImage->GetHeight();
   CopyMem(&newPlace, &oldPlace, sizeof(EG_RECT));
-//  DBG("newPlace={%d, %d, %d, %d}\n", newPlace.XPos, newPlace.YPos, newPlace.Width, newPlace.Height);
-
-  //newImage->Fill(&MenuBackgroundPixel),
-  //  egTakeImage(oldImage, oldPlace.XPos, oldPlace.YPos,
-  //              POINTER_WIDTH, POINTER_HEIGHT); // DrawPointer repeats it
   Draw();
   MouseEvent = NoEvents;
   Alive = true;
@@ -115,35 +104,25 @@ EFI_STATUS XPointer::MouseBirth()
 VOID XPointer::Draw()
 {
 
-// take background image
+// take background image for later to restore background
   oldImage.GetArea(newPlace);
-  DBG("got area\n");
   CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
-
-//  CopyMem(newImage->PixelData, oldImage->PixelData, (UINTN)(POINTER_WIDTH * POINTER_HEIGHT * sizeof(EG_PIXEL)));
-//  newImage.CopyScaled(oldImage, 1.f);
-  DBG("Draw pointer\n");
-//  newImage.Compose(0, 0, PointerImage, true);
-//  newImage.Draw(newPlace.XPos, newPlace.YPos, 1.f);
-  PointerImage->Draw(newPlace.XPos, newPlace.YPos, 1.f);
+  PointerImage->Draw(newPlace.XPos, newPlace.YPos, 0.f); //zero means no scale
 }
 
 VOID XPointer::KillMouse()
 {
-  //  EG_PIXEL pi;
+
   Alive = false;
   if (!SimplePointerProtocol) {
     return;
   }
-  DBG("KillMouse\n");
-//  newImage.setEmpty(); // Don't empty them, we'll need them at the next mouse birth
-//  oldImage.setEmpty();
+//  DBG("KillMouse\n");
 
   if (PointerImage) {
     delete PointerImage;
     PointerImage = nullptr;
   }
-
 
   MouseEvent = NoEvents;
   SimplePointerProtocol = NULL;
