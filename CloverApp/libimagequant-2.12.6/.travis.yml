@@ -1,0 +1,17 @@
+matrix:
+  include:
+    - os: linux
+      language: java
+      jdk: oraclejdk9
+      env: CFLAGS="-fPIC"
+      install: true
+      script: make java
+    - os: linux
+      language: rust
+      script: cargo build --verbose --all && cargo test --verbose --all
+    - os: linux
+      language: generic
+      script: make static
+    - os: linux
+      language: generic
+      script: ./configure --prefix=/tmp && make libimagequant.so && make install

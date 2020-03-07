@@ -37,7 +37,9 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
   @IBOutlet var spinner : NSProgressIndicator!
   @IBOutlet var installButton : NSButton!
   @IBOutlet var unistallButton : NSButton!
+  @IBOutlet var optimizeButton : NSButton!
   
+  var isPngTheme : Bool = false
   var loaded : Bool = false
   var showInstalled : Bool = false
   
@@ -210,6 +212,10 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
     }
   }
   
+  @IBAction func optimizeThemePressed(_ sender: NSButton!) {
+    UDs.set((sender.state == .on), forKey: kOptimizeTheme)
+  }
+  
   func showNoThemes() {
     self.webView.mainFrame.loadHTMLString(
       """
@@ -363,6 +369,9 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
                              completion: { (path) in
                               
                               if let themePath = path {
+                                if self.optimizeButton.state == .on {
+                                  self.manager?.optimizeTheme(at: themePath)
+                                }
                                 try? fm.removeItem(atPath: themeDest)
                                 do {
                                   try fm.moveItem(atPath: themePath, toPath: themeDest)
@@ -457,6 +466,9 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
   }
   
   func tableViewSelectionDidChange(_ notification: Notification) {
+    self.isPngTheme = false
+    self.optimizeButton.isEnabled = false
+    self.optimizeButton.state = .off
     let sr = self.sidebar.selectedRow
     if sr >= 0 {
       if let v = self.sidebar.view(atColumn: 0, row: sr, makeIfNecessary: false) as? ThemeView {
@@ -526,10 +538,13 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
           self.infoField.stringValue = "\(description ?? "?"), v\(version ?? "?")"
         } else {
           // get theme.plist
+          self.isPngTheme = true
           let plistPath = "\((path as NSString).deletingLastPathComponent)/theme.plist"
           let plist = NSDictionary(contentsOfFile: plistPath)
           self.authorField.stringValue = (plist?.object(forKey: "Author") as? String) ?? ""
           self.infoField.stringValue = (plist?.object(forKey: "Description") as? String) ?? ""
+          self.optimizeButton.isEnabled = self.installButton.isEnabled && self.isPngTheme
+          self.optimizeButton.state = UDs.bool(forKey: kOptimizeTheme) ? .on : .off
         }
       }
     }

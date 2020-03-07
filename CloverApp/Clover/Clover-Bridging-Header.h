@@ -19,5 +19,7 @@
 #endif
 
 #import "NSWindowFix.h"
+#import "PNG8Image.h"
 #import "gfxutil.h"
 #import "efidevp.h"
+

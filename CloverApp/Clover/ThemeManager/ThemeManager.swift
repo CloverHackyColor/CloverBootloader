@@ -473,5 +473,22 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
   public func exist(theme: String) -> Bool {
     return fm.fileExists(atPath: "\(self.themeManagerIndexDir)/Themes/\(theme).plist")
   }
+  
+  public func optimizeTheme(at path: String) {
+    let enumerator = fm.enumerator(atPath: path)
+    while let file = enumerator?.nextObject() as? String {
+      let fullPath = path.addPath(file)
+      if file.fileExtension == "png" || file.fileExtension == "icns" {
+        if let data = PNG8Image().png8ImageData(atPath: fullPath) {
+          //print(file)
+          do {
+            try data.write(to: URL(fileURLWithPath: fullPath))
+          } catch {
+            print(error)
+          }
+        }
+      }
+    }
+  }
 
 }

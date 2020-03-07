@@ -1,0 +1,65 @@
+version 2.12
+------------
+ - new liq_histogram_add_fixed_color()
+ - faster for large/complex images
+ - workarounds for Microsoft's outdated C compiler
+
+version 2.11
+------------
+ - new liq_image_set_background() for high-quality remapping of GIF frames
+ - new liq_image_set_importance_map() for controlling which parts of the image get more palette colors
+ - improved OpenMP support
+
+version 2.10
+-----------
+ - supports building with Rust/Cargo
+
+version 2.9
+-----------
+ - new liq_histogram_add_colors()
+
+version 2.8
+-----------
+ - standalone version
+ - added Java interface (JNI)
+ - new API for remapping multiple images to a single shared palette
+
+version 2.7
+-----------
+ - improved dithering of saturated and semitransparent colors
+ - libimagequant reports detailed progress and supports aborting of operations via callbacks
+ - fixed order of log output when using openmp
+
+version 2.5
+-----------
+ - replaced color search algorithm with vantage point tree, which is much faster and more reliable
+ - deprecated IE6 workaround
+ - warn when compiled without color profile support
+ - improved support for predefined colors in libimagequant
+
+version 2.4
+-----------
+ - fixed remapping of bright colors when dithering
+ - added libimagequant API to add fixed preset colors to the palette
+
+version 2.3
+-----------
+ - added ./configure script for better support of Intel C compiler and dependencies [thanks to pdknsk]
+ - tweaked quality metric to better estimate quality of images with large solid backgrounds [thanks to Rolf Timmermans]
+ - avoid applying quality setting to images that use palette already
+
+version 2.2
+-----------
+ - OpenMP acceleration
+ - improved support for Intel C Compiler, speedup in 32-bit GCC, and some workarounds for Visual Studio's incomplete C support
+
+version 2.1
+-----------
+ - option to generate posterized output (for use with 16-bit textures)
+
+version 2.0
+-----------
+ - refactored codebase into pngquant and standalone libimagequant
+ - reduced memory usage by further 30% (and more for very large images)
+ - less precise remapping improving speed by 25% in higher speed settings
+ - fixed regression in dithering of alpha channel

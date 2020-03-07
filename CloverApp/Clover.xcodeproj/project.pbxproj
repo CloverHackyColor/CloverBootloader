@@ -36,6 +36,15 @@
 		956090B7238C890600ACD7F7 /* Installer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 956090B9238C890600ACD7F7 /* Installer.xib */; };
 		95696B7B2401829800AFAD37 /* GengConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95696B7A2401829800AFAD37 /* GengConfig.swift */; };
 		9569EC42238DD772003AD72C /* Settings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9569EC44238DD772003AD72C /* Settings.xib */; };
+		9580402D2413F63700F09F2C /* kmeans.c in Sources */ = {isa = PBXBuildFile; fileRef = 9580400A2413F63400F09F2C /* kmeans.c */; };
+		9580402E2413F63700F09F2C /* blur.c in Sources */ = {isa = PBXBuildFile; fileRef = 9580400B2413F63400F09F2C /* blur.c */; };
+		958040302413F63700F09F2C /* nearest.c in Sources */ = {isa = PBXBuildFile; fileRef = 958040132413F63400F09F2C /* nearest.c */; };
+		958040312413F63700F09F2C /* libimagequant.c in Sources */ = {isa = PBXBuildFile; fileRef = 958040152413F63500F09F2C /* libimagequant.c */; };
+		958040332413F63700F09F2C /* pam.c in Sources */ = {isa = PBXBuildFile; fileRef = 958040172413F63500F09F2C /* pam.c */; };
+		958040372413F63700F09F2C /* mediancut.c in Sources */ = {isa = PBXBuildFile; fileRef = 9580401E2413F63600F09F2C /* mediancut.c */; };
+		958040392413F63700F09F2C /* mempool.c in Sources */ = {isa = PBXBuildFile; fileRef = 958040232413F63600F09F2C /* mempool.c */; };
+		9580403D2413F8CA00F09F2C /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9580403C2413F8C900F09F2C /* lodepng.c */; };
+		958040402414070F00F09F2C /* PNG8Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 9580403F2414070F00F09F2C /* PNG8Image.m */; };
 		958861DA235F75FB00B64173 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958861D9235F75FB00B64173 /* Driver.swift */; };
 		95C515222369BAF500E4A3A8 /* NVRAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C515212369BAF500E4A3A8 /* NVRAM.swift */; };
 		95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C5152E236A0A7400E4A3A8 /* SettingsView.swift */; };
@@ -327,6 +336,24 @@
 		9569EC8C238DD7C6003AD72C /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Settings.strings; sourceTree = "<group>"; };
 		9569EC8E238DD7C8003AD72C /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Settings.strings; sourceTree = "<group>"; };
 		9569EC90238DD7CA003AD72C /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Settings.strings; sourceTree = "<group>"; };
+		9580400A2413F63400F09F2C /* kmeans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kmeans.c; path = "libimagequant-2.12.6/kmeans.c"; sourceTree = SOURCE_ROOT; };
+		9580400B2413F63400F09F2C /* blur.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = blur.c; path = "libimagequant-2.12.6/blur.c"; sourceTree = SOURCE_ROOT; };
+		958040132413F63400F09F2C /* nearest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nearest.c; path = "libimagequant-2.12.6/nearest.c"; sourceTree = SOURCE_ROOT; };
+		958040142413F63400F09F2C /* nearest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nearest.h; path = "libimagequant-2.12.6/nearest.h"; sourceTree = SOURCE_ROOT; };
+		958040152413F63500F09F2C /* libimagequant.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libimagequant.c; path = "libimagequant-2.12.6/libimagequant.c"; sourceTree = SOURCE_ROOT; };
+		958040172413F63500F09F2C /* pam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pam.c; path = "libimagequant-2.12.6/pam.c"; sourceTree = SOURCE_ROOT; };
+		958040182413F63500F09F2C /* kmeans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kmeans.h; path = "libimagequant-2.12.6/kmeans.h"; sourceTree = SOURCE_ROOT; };
+		9580401A2413F63500F09F2C /* mediancut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mediancut.h; path = "libimagequant-2.12.6/mediancut.h"; sourceTree = SOURCE_ROOT; };
+		9580401D2413F63600F09F2C /* mempool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mempool.h; path = "libimagequant-2.12.6/mempool.h"; sourceTree = SOURCE_ROOT; };
+		9580401E2413F63600F09F2C /* mediancut.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mediancut.c; path = "libimagequant-2.12.6/mediancut.c"; sourceTree = SOURCE_ROOT; };
+		9580401F2413F63600F09F2C /* libimagequant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libimagequant.h; path = "libimagequant-2.12.6/libimagequant.h"; sourceTree = SOURCE_ROOT; };
+		958040202413F63600F09F2C /* blur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = blur.h; path = "libimagequant-2.12.6/blur.h"; sourceTree = SOURCE_ROOT; };
+		958040212413F63600F09F2C /* pam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pam.h; path = "libimagequant-2.12.6/pam.h"; sourceTree = SOURCE_ROOT; };
+		958040232413F63600F09F2C /* mempool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mempool.c; path = "libimagequant-2.12.6/mempool.c"; sourceTree = SOURCE_ROOT; };
+		9580403B2413F86A00F09F2C /* lodepng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
+		9580403C2413F8C900F09F2C /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
+		9580403E2414070F00F09F2C /* PNG8Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PNG8Image.h; sourceTree = "<group>"; };
+		9580403F2414070F00F09F2C /* PNG8Image.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PNG8Image.m; sourceTree = "<group>"; };
 		958861D9235F75FB00B64173 /* Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
 		95C515212369BAF500E4A3A8 /* NVRAM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NVRAM.swift; sourceTree = "<group>"; };
 		95C5152E236A0A7400E4A3A8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -433,6 +460,29 @@
 			path = ThemeManager;
 			sourceTree = "<group>";
 		};
+		95803FFB2413F58B00F09F2C /* libimagequant */ = {
+			isa = PBXGroup;
+			children = (
+				9580400B2413F63400F09F2C /* blur.c */,
+				958040202413F63600F09F2C /* blur.h */,
+				9580400A2413F63400F09F2C /* kmeans.c */,
+				958040182413F63500F09F2C /* kmeans.h */,
+				958040152413F63500F09F2C /* libimagequant.c */,
+				9580401F2413F63600F09F2C /* libimagequant.h */,
+				9580401E2413F63600F09F2C /* mediancut.c */,
+				9580401A2413F63500F09F2C /* mediancut.h */,
+				958040232413F63600F09F2C /* mempool.c */,
+				9580401D2413F63600F09F2C /* mempool.h */,
+				958040132413F63400F09F2C /* nearest.c */,
+				958040142413F63400F09F2C /* nearest.h */,
+				958040172413F63500F09F2C /* pam.c */,
+				958040212413F63600F09F2C /* pam.h */,
+				9580403B2413F86A00F09F2C /* lodepng.h */,
+				9580403C2413F8C900F09F2C /* lodepng.c */,
+			);
+			path = libimagequant;
+			sourceTree = "<group>";
+		};
 		95C51578236B21AE00E4A3A8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -468,6 +518,7 @@
 		95E68AC8235B862F002B37A5 /* Clover */ = {
 			isa = PBXGroup;
 			children = (
+				95803FFB2413F58B00F09F2C /* libimagequant */,
 				952EB6A824018B2400BEB0F8 /* GfxUtil */,
 				955BEE1123C6B43C00425AB0 /* ThemeManager */,
 				95E68AC9235B862F002B37A5 /* AppDelegate.swift */,
@@ -495,9 +546,11 @@
 				954DECD423899F5F006A9876 /* Bootmanager.png */,
 				95E68AD2235B8632002B37A5 /* Info.plist */,
 				95E68AD3235B8632002B37A5 /* Clover.entitlements */,
+				954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */,
 				954FCFD72391818300C9273C /* NSWindowFix.h */,
 				954FCFD82391818300C9273C /* NSWindowFix.m */,
-				954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */,
+				9580403E2414070F00F09F2C /* PNG8Image.h */,
+				9580403F2414070F00F09F2C /* PNG8Image.m */,
 			);
 			path = Clover;
 			sourceTree = "<group>";
@@ -743,19 +796,28 @@
 			files = (
 				95E68AE5235B89D9002B37A5 /* Installer.swift in Sources */,
 				952EB6B124018B4500BEB0F8 /* efidevp.c in Sources */,
+				958040312413F63700F09F2C /* libimagequant.c in Sources */,
 				95E68AE1235B86A1002B37A5 /* Shared.swift in Sources */,
 				95E68ACC235B862F002B37A5 /* ViewController.swift in Sources */,
 				95E68AE2235B86A1002B37A5 /* Disks.swift in Sources */,
 				954FCFD92391818300C9273C /* NSWindowFix.m in Sources */,
+				9580403D2413F8CA00F09F2C /* lodepng.c in Sources */,
+				958040302413F63700F09F2C /* nearest.c in Sources */,
+				958040372413F63700F09F2C /* mediancut.c in Sources */,
 				95E68ADF235B86A1002B37A5 /* Releases.swift in Sources */,
 				954BBE99238196EE0032425F /* Locale.swift in Sources */,
 				95E68ACA235B862F002B37A5 /* AppDelegate.swift in Sources */,
 				955BEE1523C6B49C00425AB0 /* ThemeView.swift in Sources */,
 				958861DA235F75FB00B64173 /* Driver.swift in Sources */,
+				958040402414070F00F09F2C /* PNG8Image.m in Sources */,
 				95E68AE3235B86A1002B37A5 /* bdmesg.swift in Sources */,
+				9580402E2413F63700F09F2C /* blur.c in Sources */,
 				95C5152F236A0A7400E4A3A8 /* SettingsView.swift in Sources */,
 				9555AF28238EFDAD00108C33 /* DriversCollection.swift in Sources */,
 				952EB6AF24018B4500BEB0F8 /* gfxutil.c in Sources */,
+				9580402D2413F63700F09F2C /* kmeans.c in Sources */,
+				958040392413F63700F09F2C /* mempool.c in Sources */,
+				958040332413F63700F09F2C /* pam.c in Sources */,
 				953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */,
 				95696B7B2401829800AFAD37 /* GengConfig.swift in Sources */,
 				95E50076238ABA56002F3869 /* Tasks.swift in Sources */,
@@ -1103,6 +1165,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
+					"$(PROJECT_DIR)/Clover/Library",
 				);
 				MARKETING_VERSION = 1.16;
 				OTHER_LDFLAGS = "";
@@ -1147,6 +1210,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
+					"$(PROJECT_DIR)/Clover/Library",
 				);
 				MARKETING_VERSION = 1.16;
 				OTHER_LDFLAGS = "";

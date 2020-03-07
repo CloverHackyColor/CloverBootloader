@@ -186,6 +186,17 @@
                             <action selector="unInstallPressed:" target="ClZ-60-myJ" id="tVl-6l-eul"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PtQ-Pf-Nip">
+                        <rect key="frame" x="162" y="22" width="202" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="optimize" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Sop-mp-zDW">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="optimizeThemePressed:" target="ClZ-60-myJ" id="eFv-na-WZg"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>
@@ -205,6 +216,7 @@
                 <outlet property="installButton" destination="11W-vh-mqt" id="uVA-cy-LtI"/>
                 <outlet property="installedThemesCheckBox" destination="qNn-1b-hdX" id="7cy-kq-gen"/>
                 <outlet property="nameBox" destination="1Be-Yl-lqT" id="STE-Aj-xum"/>
+                <outlet property="optimizeButton" destination="PtQ-Pf-Nip" id="4pd-Tf-UDz"/>
                 <outlet property="sidebar" destination="ydq-wg-aj2" id="dMd-2Y-AFt"/>
                 <outlet property="spinner" destination="tiZ-sK-mNx" id="jY2-rJ-ECs"/>
                 <outlet property="targetPop" destination="bLz-we-3A0" id="EcP-hC-Wbm"/>
