@@ -2312,7 +2312,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
           }
           if (!SetIg) {
-            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[6], 4);
+            devprop_add_value(device, "AAPL,ig-platform-id", broadwell_ig_vals[16], 4);
             DBG("  Found ig-platform-id = 0x16260006\n");
           }
           break;
