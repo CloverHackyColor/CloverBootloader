@@ -55,6 +55,7 @@
 "Manager" = "Manager"; // Theme manager
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
+"Optimize" = "Optimize";
 "Sound:" = "사운드:";
 "*Make filesystem read-write" = "*파일시스템을 읽기-쓰기로 변경";
 "*Disable Sleep Proxy Client" = "*잠자기 프록시 클라이언트 비활성화";

@@ -55,6 +55,7 @@
 "Manager" = "Gestore"; // Theme manager
 "Can't remove the theme" = "Non posso rimuovere il tema";
 "Show installed" = "Mostra installati";
+"Optimize" = "Ottimizza";
 "Sound:" = "Suono:";
 "*Make filesystem read-write" = "*Rendi il filesystem scrivibile";
 "*Disable Sleep Proxy Client" = "*Disabilita Sleep Proxy Client";

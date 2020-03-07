@@ -55,6 +55,7 @@
 "Manager" = "Менеджер"; // Theme manager
 "Can't remove the theme" = "Не возможно удалить тему";
 "Show installed" = "Показать установленные";
+"Optimize" = "Optimize";
 "Sound:" = "Звук:";
 "*Make filesystem read-write" = "*Открыть файловую систему на запись";
 "*Disable Sleep Proxy Client" = "*Отключение Sleep Proxy Client";
