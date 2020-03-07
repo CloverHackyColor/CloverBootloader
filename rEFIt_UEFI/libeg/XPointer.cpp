@@ -58,7 +58,7 @@ EFI_STATUS XPointer::MouseBirth()
   }
 
   if (SimplePointerProtocol) { //do not double
-    DBG("Mouse is already here\n");
+//    DBG("Mouse is already here\n");
     Draw();
     return EFI_SUCCESS;
   }
@@ -72,7 +72,7 @@ EFI_STATUS XPointer::MouseBirth()
   }
 
   if (EFI_ERROR(Status)) {
-    MsgLog("No mouse!\n");
+    MsgLog("No mouse driver found!\n");
     if (PointerImage) {
       delete PointerImage;
       PointerImage = NULL;

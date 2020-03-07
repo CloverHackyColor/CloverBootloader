@@ -366,8 +366,7 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 
   Width = (x + W > (UINTN)UGAWidth) ? (UGAWidth - x) : W;
   Height = (y + H > (UINTN)UGAHeight) ? ((UINTN)UGAHeight - y) : H;
-//  DBG("x=%d y=%d W=%d h=%d Width=%d Height=%d\n", x,y,W,H,Width,Height);
-//  INTN LineBytes = Width * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+
   PixelData.SetLength(Width * Height); // setLength BEFORE, so &PixelData[0]
 
   if (GraphicsOutput != NULL) {
@@ -387,18 +386,18 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 void XImage::Draw(INTN x, INTN y, float scale)
 {
   //prepare images
-  DBG("1\n");
+//  DBG("1\n");
   XImage Top(*this, scale);
-  DBG("2\n");
+//  DBG("2\n");
   XImage Background(Width, Height);
-  DBG("3\n");
+//  DBG("3\n");
   Background.GetArea(x, y, Width, Height);
-  DBG("4\n");
+//  DBG("4\n");
   Background.Compose(0, 0, Top, true);
-  DBG("5\n");
+//  DBG("5\n");
   UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
   UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
-  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
+//  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
   // prepare protocols
   EFI_STATUS Status;
   EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
@@ -418,11 +417,9 @@ void XImage::Draw(INTN x, INTN y, float scale)
     GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Background.GetPixelPtr(0, 0),
       EfiBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, 0);
-    //Background.GetWidth() * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, 0);
-   // Background.GetWidth()  * sizeof(EFI_UGA_PIXEL));
   }
 }
