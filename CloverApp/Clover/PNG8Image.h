@@ -13,7 +13,8 @@
 //NS_ASSUME_NONNULL_BEGIN
 
 @interface PNG8Image : NSImage
-- (nullable NSData *)png8ImageDataAtPath:(NSString *_Nonnull)imagePath;
+- (nullable NSData *)png8ImageDataAtPath:(NSString *_Nonnull)imagePath
+                                   error:(NSError *_Nullable*_Nullable)errorPtr;
 
 @end
 

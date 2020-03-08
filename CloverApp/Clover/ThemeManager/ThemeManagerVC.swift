@@ -213,7 +213,40 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
   }
   
   @IBAction func optimizeThemePressed(_ sender: NSButton!) {
-    UDs.set((sender.state == .on), forKey: kOptimizeTheme)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+      var success : Bool = false
+      let sr = self.sidebar.selectedRow
+      if sr >= 0 {
+        if let v = self.sidebar.view(atColumn: 0, row: sr, makeIfNecessary: false) as? ThemeView {
+          if v.isInstalled {
+            if self.targetPop.indexOfSelectedItem > 0
+              && self.targetVolume == nil
+              || fm.fileExists(atPath: self.targetVolume!) {
+              let themePath = self.targetVolume!.addPath("EFI/CLOVER/themes").addPath(v.name)
+              if fm.fileExists(atPath: themePath) {
+                var error : Error? = nil
+                self.manager?.optimizeTheme(at: themePath, err: &error)
+                if (error != nil) {
+                  NSSound(named: "Basso")?.play()
+                  let alert = NSAlert()
+                  alert.messageText = "😱"
+                  alert.informativeText = error!.localizedDescription
+                  alert.alertStyle = .critical
+                  alert.addButton(withTitle: "Ok".locale)
+                  
+                  alert.beginSheetModal(for: self.view.window!) { (reponse) in
+                  }
+                  return
+                }
+                success = true
+              }
+            }
+          }
+        }
+      }
+      // this sound is only when succeded and or it fail when theme is not found
+      NSSound(named: success ? "Glass" : "Basso")?.play()
+    }
   }
   
   func showNoThemes() {
@@ -369,9 +402,6 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
                              completion: { (path) in
                               
                               if let themePath = path {
-                                if self.optimizeButton.state == .on {
-                                  self.manager?.optimizeTheme(at: themePath)
-                                }
                                 try? fm.removeItem(atPath: themeDest)
                                 do {
                                   try fm.moveItem(atPath: themePath, toPath: themeDest)
@@ -485,66 +515,66 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
         } else {
           self.installButton.isEnabled = false
         }
+
         
-        guard let path = v.imagePath else {
-          return
-        }
-        
-        self.nameBox.stringValue = v.name
-        self.authorField.stringValue = v.author ?? ""
-        self.infoField.stringValue = v.info ?? ""
-        
-        self.webView.mainFrame.loadHTMLString("""
-          <html>
-          <body>
-          <div align="center" style="position:relative; height: 100%; width: 100%; top:0;left 0;">
-          <img src="\(URL(fileURLWithPath: path))" style="width: 100% ; max-width: 575px;top:0;"/>
-          </div>
-          </body>
-          </html>
-          """, baseURL: Bundle.main.bundleURL)
-        
-        if path.hasSuffix(".svg") {
-          let svgStr = try? String(contentsOfFile: path)
-          var author : String? = nil
-          var version : String? = nil
-          var description : String? = nil
-          if let lines = svgStr?.components(separatedBy: .newlines) {
-            /*
-             Version="0.87"
-             Year="2018-2019"
-             Author="Blackosx"
-             Description="Vector version of BGM (Based on Clovy theme file structure)"
-             */
-            
-            for line in lines {
-              if (line.range(of: "Version=\"") != nil) {
-                version = line.components(separatedBy: "Version=\"")[1].components(separatedBy: "\"")[0]
-              }
-            }
-            for line in lines {
-              if (line.range(of: "Author=\"") != nil) {
-                author = line.components(separatedBy: "Author=\"")[1].components(separatedBy: "\"")[0]
-              }
-            }
-            for line in lines {
-              if (line.range(of: "Description=\"") != nil) {
-                description = line.components(separatedBy: "Description=\"")[1].components(separatedBy: "\"")[0]
-              }
-            }
-          }
+        if let path = v.imagePath {
+          self.nameBox.stringValue = v.name
+          self.authorField.stringValue = v.author ?? ""
+          self.infoField.stringValue = v.info ?? ""
           
-          self.authorField.stringValue = author ?? ""
-          self.infoField.stringValue = "\(description ?? "?"), v\(version ?? "?")"
+          self.webView.mainFrame.loadHTMLString("""
+            <html>
+            <body>
+            <div align="center" style="position:relative; height: 100%; width: 100%; top:0;left 0;">
+            <img src="\(URL(fileURLWithPath: path))" style="width: 100% ; max-width: 575px;top:0;"/>
+            </div>
+            </body>
+            </html>
+            """, baseURL: Bundle.main.bundleURL)
+          
+          if path.hasSuffix(".svg") {
+            let svgStr = try? String(contentsOfFile: path)
+            var author : String? = nil
+            var version : String? = nil
+            var description : String? = nil
+            if let lines = svgStr?.components(separatedBy: .newlines) {
+              /*
+               Version="0.87"
+               Year="2018-2019"
+               Author="Blackosx"
+               Description="Vector version of BGM (Based on Clovy theme file structure)"
+               */
+              
+              for line in lines {
+                if (line.range(of: "Version=\"") != nil) {
+                  version = line.components(separatedBy: "Version=\"")[1].components(separatedBy: "\"")[0]
+                }
+              }
+              for line in lines {
+                if (line.range(of: "Author=\"") != nil) {
+                  author = line.components(separatedBy: "Author=\"")[1].components(separatedBy: "\"")[0]
+                }
+              }
+              for line in lines {
+                if (line.range(of: "Description=\"") != nil) {
+                  description = line.components(separatedBy: "Description=\"")[1].components(separatedBy: "\"")[0]
+                }
+              }
+            }
+            
+            self.authorField.stringValue = author ?? ""
+            self.infoField.stringValue = "\(description ?? "?"), v\(version ?? "?")"
+          } else if path.hasSuffix(".png") {
+            // get theme.plist
+            self.isPngTheme = true
+            let plistPath = "\((path as NSString).deletingLastPathComponent)/theme.plist"
+            let plist = NSDictionary(contentsOfFile: plistPath)
+            self.authorField.stringValue = (plist?.object(forKey: "Author") as? String) ?? ""
+            self.infoField.stringValue = (plist?.object(forKey: "Description") as? String) ?? ""
+            self.optimizeButton.isEnabled = v.isInstalled && self.isPngTheme
+          }
         } else {
-          // get theme.plist
-          self.isPngTheme = true
-          let plistPath = "\((path as NSString).deletingLastPathComponent)/theme.plist"
-          let plist = NSDictionary(contentsOfFile: plistPath)
-          self.authorField.stringValue = (plist?.object(forKey: "Author") as? String) ?? ""
-          self.infoField.stringValue = (plist?.object(forKey: "Description") as? String) ?? ""
-          self.optimizeButton.isEnabled = self.installButton.isEnabled && self.isPngTheme
-          self.optimizeButton.state = UDs.bool(forKey: kOptimizeTheme) ? .on : .off
+          v.load()
         }
       }
     }
@@ -553,6 +583,9 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
   func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
     if let identifier = tableColumn?.identifier {
       if identifier.rawValue == "column1" {
+        let count = self.dataSource().count
+        if count == 0 { return nil }
+        if row > (count - 1) { return nil }
         let tv = ThemeView(manager: self.manager!,
                            name: self.dataSource()[row],
                            row: row)

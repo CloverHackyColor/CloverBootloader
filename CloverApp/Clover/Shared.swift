@@ -17,8 +17,6 @@ let kLaunchPlistPath = "/Library/LaunchDaemons/com.slice.CloverDaemonNew.plist"
 let gHelperID : CFString = "org.slice.CloverRunAtLogin" as CFString
 let kRunAtLogin = "runAtLogin"
 
-let kOptimizeTheme = "OptimizeTheme"
-
 // MARK: File Manager
 let fm = FileManager.default
 

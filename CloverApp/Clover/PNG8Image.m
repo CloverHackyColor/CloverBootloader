@@ -9,7 +9,10 @@
 #import "PNG8Image.h"
 
 @implementation PNG8Image
-- (nullable NSData *)png8ImageDataAtPath:(NSString *_Nonnull)imagePath {
+- (nullable NSData *)png8ImageDataAtPath:(NSString *_Nonnull)imagePath
+                                   error:(NSError *_Nullable*_Nullable)errorPtr {
+  NSString *domain = @"org.slice.Clover.PNG8Image.Error";
+  
   // Load PNG file and decode it as raw RGBA pixels
   // This uses lodepng library for PNG reading (not part of libimagequant)
   const char *input_png_file_path = [imagePath UTF8String];
@@ -17,7 +20,14 @@
   unsigned char *raw_rgba_pixels;
   unsigned int status = lodepng_decode32_file(&raw_rgba_pixels, &width, &height, input_png_file_path);
   if (status) {
-    NSLog(@"Can't load %s: %s\n", input_png_file_path, lodepng_error_text(status));
+    NSString *desc = [NSString stringWithFormat:@"Can't load %s: %s\n",
+                      input_png_file_path,
+                      lodepng_error_text(status)];
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : desc };
+    *errorPtr  = [NSError errorWithDomain:domain
+                                     code:1
+                                 userInfo:userInfo];
+    
     return nil;
   }
   
@@ -28,7 +38,11 @@
   // You could set more options here, like liq_set_quality
   liq_result *quantization_result;
   if (liq_image_quantize(input_image, handle, &quantization_result) != LIQ_OK) {
-    NSLog(@"Quantization failed\n");
+    NSString *desc = @"Quantization failed\n";
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : desc };
+    *errorPtr  = [NSError errorWithDomain:domain
+                                     code:2
+                                 userInfo:userInfo];
     return nil;
   }
   
@@ -60,14 +74,23 @@
   size_t output_file_size;
   unsigned int out_status = lodepng_encode(&output_file_data, &output_file_size, raw_8bit_pixels, width, height, &state);
   if (out_status) {
-    NSLog(@"Can't encode image: %s\n", lodepng_error_text(out_status));
+    NSString *desc = [NSString stringWithFormat:@"Can't encode image: %s\n",
+                      lodepng_error_text(out_status)];
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : desc };
+    *errorPtr  = [NSError errorWithDomain:domain
+                                     code:3
+                                 userInfo:userInfo];
     return nil;
   }
   
   NSData *data = [NSData dataWithBytes: output_file_data length: output_file_size];
   NSImage *convertedImage = [[NSImage alloc] initWithData:data];
   if (convertedImage == nil) {
-    NSLog(@"Can't convert data to NSImage\n");
+    NSString *desc = @"Can't convert data to NSImage\n";
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : desc };
+    *errorPtr  = [NSError errorWithDomain:domain
+                                     code:4
+                                 userInfo:userInfo];
     return nil;
   }
   

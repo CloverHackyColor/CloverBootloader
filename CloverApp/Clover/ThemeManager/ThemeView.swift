@@ -89,11 +89,15 @@ class ThemeView: NSView, WebFrameLoadDelegate, WebUIDelegate {
     self.webView.frameLoadDelegate = self
   }
 
-  private func load() {
+  func load() {
     if self.manager.exist(theme: self.name) {
       self.manager.getImageUrl(for: self.name, completion: { (ipath) in
         if let path = ipath {
           self.imagePath = path
+        } else {
+          DispatchQueue.main.async { [weak self] in
+            self?.load()
+          }
         }
         self.setInstalledStatus()
       })

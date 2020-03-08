@@ -325,15 +325,25 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     } catch { }
   }
   
+  private func thumbnailExist(at path: String) -> Bool {
+    if fm.fileExists(atPath: path.addPath("theme.svg")) {
+      return true
+    } else {
+      if fm.fileExists(atPath: path.addPath("theme.plist")) &&
+        fm.fileExists(atPath: path.addPath("screenshot.png")){
+        return true
+      }
+    }
+    return false
+  }
   /// Return the path for a given theme, if the download succeded
   public func download(theme: String, down: ThemeDownload, completion: @escaping (String?) -> ()) {
-    if let sha = getSha() {
+    if let sha = self.getSha() {
       let shaPath : String = self.basePath.addPath(sha)
       let themeDest : String = (down == .complete)
         ? self.themeManagerIndexDir.addPath("Downloads").addPath(theme)
         :  shaPath.addPath(theme)
-
-      if (down != .complete) && fm.fileExists(atPath: themeDest) {
+      if (down != .complete) && self.thumbnailExist(at: themeDest) {
         completion(themeDest)
       } else {
         if !fm.fileExists(atPath: themeDest) {
@@ -425,7 +435,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       }
     }
     
-    
+    print("downloading thumbnail for \(theme)")
     // theme not found?? Downloading...
     self.download(theme: theme, down: .thumbnail) { (path) in
       if let localTheme : String = path {
@@ -443,7 +453,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
   }
   
   public func signTheme(at path: String) {
-    if let sha : String = getSha() {
+    if let sha : String = self.getSha() {
       let fileURL : URL = URL(fileURLWithPath: path)
       let data : Data? = sha.data(using: .utf8)
       
@@ -474,18 +484,16 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     return fm.fileExists(atPath: "\(self.themeManagerIndexDir)/Themes/\(theme).plist")
   }
   
-  public func optimizeTheme(at path: String) {
+  public func optimizeTheme(at path: String, err: inout Error?){
     let enumerator = fm.enumerator(atPath: path)
     while let file = enumerator?.nextObject() as? String {
       let fullPath = path.addPath(file)
       if file.fileExtension == "png" || file.fileExtension == "icns" {
-        if let data = PNG8Image().png8ImageData(atPath: fullPath) {
-          //print(file)
-          do {
-            try data.write(to: URL(fileURLWithPath: fullPath))
-          } catch {
-            print(error)
-          }
+        do {
+          let data = try PNG8Image().png8ImageData(atPath: fullPath)
+          try data.write(to: URL(fileURLWithPath: fullPath))
+        } catch {
+          err = error
         }
       }
     }
