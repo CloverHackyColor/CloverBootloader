@@ -224,6 +224,7 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
               || fm.fileExists(atPath: self.targetVolume!) {
               let themePath = self.targetVolume!.addPath("EFI/CLOVER/themes").addPath(v.name)
               if fm.fileExists(atPath: themePath) {
+                self.spinner.startAnimation(nil)
                 var error : Error? = nil
                 self.manager?.optimizeTheme(at: themePath, err: &error)
                 if (error != nil) {
@@ -238,6 +239,7 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
                   }
                   return
                 }
+                self.spinner.stopAnimation(nil)
                 success = true
               }
             }

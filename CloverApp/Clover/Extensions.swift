@@ -221,3 +221,7 @@ extension io_object_t {
     return nil
   }
 }
+
+extension NSBitmapImageRep {
+  var png: Data? { representation(using: .png, properties: [:]) }
+}

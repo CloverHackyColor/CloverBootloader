@@ -489,6 +489,19 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     while let file = enumerator?.nextObject() as? String {
       let fullPath = path.addPath(file)
       if file.fileExtension == "png" || file.fileExtension == "icns" {
+        if let data = try? Data(contentsOf: URL(fileURLWithPath: fullPath))  {
+          if data[0] != 0x89 || data[0] != 0x50 || data[0] != 0x4E || data[0] != 0x47 {
+            // convert it to png
+            if let png = NSBitmapImageRep(data: data)?.png {
+              do {
+                try png.write(to: URL(fileURLWithPath: fullPath))
+              } catch {
+                err = error
+                return
+              }
+            }
+          }
+        }
         do {
           let data = try PNG8Image().png8ImageData(atPath: fullPath)
           try data.write(to: URL(fileURLWithPath: fullPath))
@@ -500,3 +513,4 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
   }
 
 }
+
