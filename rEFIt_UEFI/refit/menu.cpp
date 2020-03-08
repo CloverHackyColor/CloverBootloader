@@ -2168,7 +2168,7 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
 
 VOID REFIT_MENU_SCREEN::HidePointer()
 {
-  /*if ( mPointer )*/ mPointer.Hide();
+  if ( mPointer.isAlive() ) mPointer.Hide();
 }
 
 EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
@@ -2633,7 +2633,6 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       default:
         break;
     }
-
 
     // read key press (and wait for it if applicable)
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
