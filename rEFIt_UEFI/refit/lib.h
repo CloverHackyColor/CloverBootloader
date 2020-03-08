@@ -482,10 +482,7 @@ struct KEXT_PATCH
   CHAR8       *Label;
   BOOLEAN     IsPlistPatch;
   CHAR8       align[7];
-  INTN        DataLen;
-#if defined(MDE_CPU_IA32)
-  UINT32      align1;
-#endif
+  INT64        DataLen;
   UINT8       *Data;
   UINT8       *Patch;
   UINT8       *MaskFind;
