@@ -26,7 +26,7 @@ class XArray
   protected:
 	TYPE *m_data;
 	xsize m_len;
-	xsize m_size;
+	xsize m_allocatedSize;
 	xsize _GrowBy;
 
   public:
@@ -41,12 +41,12 @@ class XArray
 	TYPE *Data() { return m_data; }
 
   public:
-	xsize Size() const { return m_size; }
-	xsize Length() const { return m_len; }
-	void SetLength(xsize l);
+	xsize AllocatedSize() const { return m_allocatedSize; }
+	xsize size() const { return m_len; }
+	void  setSize(xsize l);
 
   //low case functions like in std::vector
-  xsize size() const { return m_len; }
+
   const TYPE& begin() const { return ElementAt(0); }
         TYPE& begin()       { return ElementAt(0); }
 
@@ -114,7 +114,7 @@ xsize XArray<TYPE>::IdxOf(TYPE& e) const
 {
   xsize i;
 
-	for ( i=0 ; i<Length() ; i+=1 ) {
+	for ( i=0 ; i<size() ; i+=1 ) {
 		if ( ElementAt(i) == e ) return i;
 	}
 	return MAX_XSIZE;
@@ -125,7 +125,7 @@ template<class TYPE>
 void XArray<TYPE>::Init()
 {
 	m_data = nullptr;
-	m_size = 0;
+	m_allocatedSize = 0;
 	m_len = 0;
 	_GrowBy = XArrayGrowByDefault;
 }
@@ -135,7 +135,7 @@ template<class TYPE>
 XArray<TYPE>::XArray(const XArray<TYPE> &anArray)
 {
 	Init();
-	AddArray(anArray.Data(), anArray.Length());
+	AddArray(anArray.Data(), anArray.size());
 }
 
 /* operator = */
@@ -162,15 +162,15 @@ template<class TYPE>
 void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 {
 //XArray_DBG("CheckSize: m_len=%d, m_size=%d, nGrowBy=%d, nNewSize=%d\n", m_len, m_size, nGrowBy, nNewSize);
-	if ( nNewSize > m_size ) {
+	if ( nNewSize > m_allocatedSize ) {
 		nNewSize += nGrowBy;
-		m_data = (TYPE *)Xrealloc( m_size * sizeof(TYPE), nNewSize * sizeof(TYPE), (void *)m_data);
+		m_data = (TYPE *)Xrealloc( m_allocatedSize * sizeof(TYPE), nNewSize * sizeof(TYPE), (void *)m_data);
 		if ( !m_data ) {
-  		DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, nNewSize*sizeof(TYPE), m_data);
-	  	CpuDeadLoop();
+  		DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), m_data);
+	  	panic();
 		}
 //		memset(&_Data[_Size], 0, (nNewSize-_Size) * sizeof(TYPE)); // Could help for debugging, but zeroing in not needed.
-		m_size = nNewSize;
+		m_allocatedSize = nNewSize;
 	}
 }
 
@@ -183,14 +183,14 @@ void XArray<TYPE>::CheckSize(xsize nNewSize)
 
 /* SetLength (xsize i) */
 template<class TYPE>
-void XArray<TYPE>::SetLength(xsize l)
+void XArray<TYPE>::setSize(xsize l)
 {
 	CheckSize(l, XArrayGrowByDefault); // be sure the size is allocated
 	m_len = l;
 	#ifdef DEBUG
-		if(m_len > m_size) {
+		if(m_len > m_allocatedSize) {
 			DebugLog(2, "XArray::SetLength(xsize) -> _Len > _Size");
-			CpuDeadLoop();
+			panic();
 		}
 	#endif
 }
@@ -203,7 +203,7 @@ TYPE &XArray<TYPE>::ElementAt(xsize index)
 //	#ifdef _DEBUG
 		if ( index >= m_len ) {
 			DebugLog(2, "XArray::ElementAt(xsize) -> Operator [] : index > m_len");
-			CpuDeadLoop();
+			panic();
 		}
 //	#endif
 	return  m_data[index];
@@ -216,7 +216,7 @@ const TYPE& XArray<TYPE>::ElementAt(xsize index) const
 //	#ifdef _DEBUG
 		if ( index >= m_len ) {
 			DebugLog(2, "XArray::ElementAt(xsize) const -> Operator [] : index > m_len");
-			CpuDeadLoop();
+			panic();
 		}
 //	#endif
 	return  m_data[index];
@@ -300,7 +300,7 @@ void XArray<TYPE>::RemoveAtIndex(int nIndex)
   #if defined(__XTOOLS_INT_CHECK__)
   	if ( nIndex < 0 ) {
   	  DebugLog(2, "XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
-	  	CpuDeadLoop();
+	  	panic();
 	  }
 	#endif
 

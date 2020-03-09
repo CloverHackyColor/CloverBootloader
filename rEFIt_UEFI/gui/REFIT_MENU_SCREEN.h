@@ -32,8 +32,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __menu_items_H__
-#define __menu_items_H__
+#ifndef __REFIT_MENU_SCREEN_H__
+#define __REFIT_MENU_SCREEN_H__
 
 
 #include "libeg.h"
@@ -55,7 +55,6 @@
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
 
-class REFIT_ABSTRACT_MENU_ENTRY;
 class REFIT_MENU_ITEM_IEM_ABSTRACT;
 class REFIT_MENU_ENTRY;
 
@@ -69,11 +68,7 @@ public:
   UINTN             ID;
   CONST  CHAR16      *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
   EG_IMAGE          *TitleImage;
-//  INTN              InfoLineCount;
-//  CONST CHAR16    **InfoLines;
   XStringWArray     InfoLines;
-//  INTN              EntryCount;
-//  REFIT_MENU_ENTRY  **Entries;
   XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
   INTN              TimeoutSeconds;
   CONST CHAR16     *TimeoutText;
@@ -97,7 +92,7 @@ public:
 						  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
 
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText)
@@ -105,14 +100,14 @@ public:
 						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
 						: ID(ID), Title(Title), TitleImage(0),
 						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
 						  Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0), FilmPlace({0,0,0,0}),
-						  Film(0), mAction(ActionNone), mItemID(0), mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{
 	  	  	  	  	  	  	  Entries.AddReference(entry1, false);
 	  	  	  	  	  	  	  Entries.AddReference(entry2, false);

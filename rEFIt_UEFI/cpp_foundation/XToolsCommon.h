@@ -15,8 +15,10 @@ extern xsize XBufferGrowByDefault;
 
 #ifdef CLOVER_BUILD
 
+#include "../cpp_util/panic.h"
+
 extern "C" {
-#include <Library/BaseLib.h> // for CpuDeadLoop
+#include <Library/BaseLib.h> // for StrCmp
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h> // for CopyMen
 }

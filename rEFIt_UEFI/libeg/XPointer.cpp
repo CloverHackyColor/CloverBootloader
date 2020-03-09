@@ -40,7 +40,7 @@ XPointer::~XPointer()
 void XPointer::Hide()
 {
   if (Alive) {
-    oldImage.Draw(oldPlace.XPos, oldPlace.YPos, 1.f);
+    oldImage.Draw2(oldPlace.XPos, oldPlace.YPos, oldImage.GetWidth(), oldImage.GetHeight(), 1.f);
   }
 }
 
@@ -164,7 +164,7 @@ VOID XPointer::UpdatePointer()
     else
       MouseEvent = NoEvents;
 
-    CopyMem(&State, &tmpState, sizeof(EFI_SIMPLE_POINTER_STATE));
+    CopyMem(&State, &tmpState, sizeof(State));
     CurrentMode = SimplePointerProtocol->Mode;
 
     ScreenRelX = ((UGAWidth * State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
@@ -183,8 +183,10 @@ VOID XPointer::UpdatePointer()
     if (newPlace.YPos < 0) newPlace.YPos = 0;
     if (newPlace.YPos > UGAHeight - 1) newPlace.YPos = UGAHeight - 1;
 
-    Hide();
-    Draw();
+    if ( CompareMem(&oldPlace, &newPlace, sizeof(__typeof(oldPlace))) != 0 ) {
+      Hide();
+      Draw();
+    }
   }
 }
 

@@ -33,9 +33,9 @@ void XStringW::Init(UINTN aSize)
 	m_data = (wchar_t*)Xalloc( (aSize+1)*sizeof(wchar_t) ); /* le 0 terminal n'est pas compté dans mSize */
 	if ( !m_data ) {
 		DBG("XStringW::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
-		CpuDeadLoop();
+		panic();
 	}
-	m_size = aSize;
+	m_allocatedSize = aSize;
 	m_len = 0;
 	m_data[0] = 0;
 }
@@ -83,7 +83,7 @@ XStringW::XStringW(const char* S)
 DBG("Constructor(const char* S)\n");
 	xsize newLen = StrLenInWChar(S, AsciiStrLen(S));
 	Init(newLen);
-	utf8ToWChar(m_data, m_size+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
+	utf8ToWChar(m_data, m_allocatedSize+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -109,7 +109,7 @@ void XStringW::SetLength(UINTN len)
 
 	if ( StrLen(data()) != len ) {
 		DBG("XStringW::SetLength(UINTN len) : StrLen(data()) != len (%d != %d). System halted\n", StrLen(data()), len);
-		CpuDeadLoop();
+		panic();
 	}
 }
 
@@ -118,15 +118,15 @@ wchar_t *XStringW::CheckSize(UINTN nNewSize, UINTN nGrowBy)
 {
 //DBG("CheckSize: m_size=%d, nNewSize=%d\n", m_size, nNewSize);
 
-	if ( m_size < nNewSize )
+	if ( m_allocatedSize < nNewSize )
 	{
 		nNewSize += nGrowBy;
-		m_data = (wchar_t*)Xrealloc(m_size*sizeof(wchar_t), (nNewSize+1)*sizeof(wchar_t), m_data);
+		m_data = (wchar_t*)Xrealloc(m_allocatedSize*sizeof(wchar_t), (nNewSize+1)*sizeof(wchar_t), m_data);
 		if ( !m_data ) {
   		DBG("XStringW::CheckSize(%d, %d) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, (nNewSize+1)*sizeof(wchar_t), m_data);
-	  	CpuDeadLoop();
+	  	panic();
 		}
-		m_size = nNewSize;
+		m_allocatedSize = nNewSize;
 	}
 	return m_data;
 }

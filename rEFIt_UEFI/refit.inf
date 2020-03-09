@@ -66,8 +66,8 @@
   entry_scan/securebootkeys.h
   gui/menu_items/menu_items.h
   gui/menu_items/menu_globals.h
- # gui/REFIT_MENU_SCREEN.cpp
- # gui/REFIT_MENU_SCREEN.h
+  gui/REFIT_MENU_SCREEN.cpp
+  gui/REFIT_MENU_SCREEN.h
   libeg/egemb_icons.cpp
   libeg/egemb_icons_dark.cpp
   libeg/egemb_font.cpp
@@ -75,7 +75,7 @@
   libeg/BmLib.cpp
   libeg/image.cpp
 #  libeg/load_bmp.cpp
-  libeg/load_icns.cpp
+#  libeg/load_icns.cpp
   libeg/libscreen.cpp
   libeg/lodepng.cpp
   libeg/lodepng.h
@@ -171,6 +171,8 @@
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
   Version.h
+  cpp_util/panic.h
+  cpp_util/panic.cpp
   cpp_util/memory.cpp
   cpp_util/globals_ctor.cpp
   cpp_util/globals_ctor.h

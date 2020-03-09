@@ -25,7 +25,7 @@ XImage::XImage(UINTN W, UINTN H)
 {
   Width = W;
   Height = H;
-  PixelData.CheckSize(GetWidth()*GetHeight());
+  setSizeInPixels(W, H);
 }
 
 XImage::XImage(EG_IMAGE* egImage)
@@ -33,15 +33,22 @@ XImage::XImage(EG_IMAGE* egImage)
   if ( egImage) {
 	  Width = egImage->Width;
 	  Height = egImage->Height;
+	  setSizeInPixels(GetWidth(), GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
+	  CopyMem(&PixelData[0], egImage->PixelData, GetSizeInBytes());
   }else{
 	  Width = 0;
 	  Height = 0;
+	  setSizeInPixels(GetWidth(), GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
   }
-  PixelData.CheckSize(GetWidth()*GetHeight()); // change the allocated size, but not the size.
-  PixelData.SetLength(GetWidth()*GetHeight()); // change the size, ie the number of element in the array
-  if ( GetWidth()*GetHeight() > 0 ) {
-	  CopyMem(&PixelData[0], egImage->PixelData, PixelData.size() * sizeof(*egImage->PixelData));
-  }
+}
+
+XImage& XImage::operator= (const XImage& other)
+{
+	Width = other.GetWidth();
+	Height = other.GetHeight();
+	setSizeInPixels(GetWidth(), GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
+	CopyMem(&PixelData[0], &other.PixelData[0], GetSizeInBytes());
+	return *this;
 }
 
 UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
@@ -58,8 +65,7 @@ XImage::XImage(const XImage& Image, float scale)
   if (scale < 1.e-4) {
     Width = SrcWidth;
     Height = SrcHeight;
-    PixelData.CheckSize(GetWidth()*GetHeight());
-    PixelData.SetLength(GetWidth()*GetHeight());
+    setSizeInPixels(GetWidth(), GetHeight());
     for (UINTN y = 0; y < Height; ++y)
       for (UINTN x = 0; x < Width; ++x)
         PixelData[y * Width + x] = Image.GetPixel(x, y);
@@ -67,8 +73,7 @@ XImage::XImage(const XImage& Image, float scale)
   } else {
     Width = (UINTN)(SrcWidth * scale);
     Height = (UINTN)(SrcHeight * scale);
-    PixelData.CheckSize(Width * Height);
-    PixelData.SetLength(Width * Height);
+    setSizeInPixels(GetWidth(), GetHeight());
     CopyScaled(Image, scale);
   }
 }
@@ -165,9 +170,14 @@ UINTN      XImage::GetHeight() const
   return Height;
 }
 
-UINTN XImage::GetSize() const
+UINTN XImage::GetSizeInBytes() const
 {
-  return Width * Height * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+  return PixelData.size() * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+}
+
+void XImage::setSizeInPixels(UINTN W, UINTN H)
+{
+	PixelData.setSize(Width * Height);
 }
 
 void XImage::Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
@@ -367,19 +377,61 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   Width = (x + W > (UINTN)UGAWidth) ? (UGAWidth - x) : W;
   Height = (y + H > (UINTN)UGAHeight) ? ((UINTN)UGAHeight - y) : H;
 
-  PixelData.SetLength(Width * Height); // setLength BEFORE, so &PixelData[0]
+  setSizeInPixels(Width, Height); // setSizeInPixels BEFORE, so &PixelData[0]
+  if ( Width == 0 || Height == 0 ) return; // nothing to get, area is zero. &PixelData[0] would crash
 
   if (GraphicsOutput != NULL) {
     GraphicsOutput->Blt(GraphicsOutput,
-      (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)&PixelData[0],
+      &PixelData[0],
       EfiBltVideoToBltBuffer,
-      x, y, 0, 0, Width, Height, 0);
+      x, y, 0, 0, Width, Height, Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw,
       (EFI_UGA_PIXEL *)GetPixelPtr(0,0),
       EfiUgaVideoToBltBuffer,
-      x, y, 0, 0, Width, Height, 0);
+      x, y, 0, 0, Width, Height, Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+  }
+}
+
+void XImage::Draw2(INTN x, INTN y, UINTN width, UINTN height, float scale)
+{
+//  //prepare images
+////  DBG("1\n");
+//  XImage Top(*this, scale);
+////  DBG("2\n");
+//  XImage Background(Width, Height);
+////  DBG("3\n");
+//  Background.GetArea(x, y, Width, Height);
+////  DBG("4\n");
+//  Background.Compose(0, 0, Top, true);
+////  DBG("5\n");
+  UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
+  UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
+//  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
+  // prepare protocols
+  EFI_STATUS Status;
+  EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
+  EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
+  EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
+
+  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
+  if (EFI_ERROR(Status)) {
+    GraphicsOutput = NULL;
+    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (VOID **)&UgaDraw);
+    if (EFI_ERROR(Status))
+      UgaDraw = NULL;
+  }
+  //output combined image
+  if (GraphicsOutput != NULL) {
+    GraphicsOutput->Blt(GraphicsOutput, (*this).GetPixelPtr(0, 0),
+      EfiBltBufferToVideo,
+      0, 0, x, y, width, height, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+  }
+  else if (UgaDraw != NULL) {
+    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)(*this).GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
+      0, 0, x, y, AreaWidth, AreaHeight, 0);
   }
 }
 
@@ -414,9 +466,9 @@ void XImage::Draw(INTN x, INTN y, float scale)
   }
   //output combined image
   if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Background.GetPixelPtr(0, 0),
+    GraphicsOutput->Blt(GraphicsOutput, Background.GetPixelPtr(0, 0),
       EfiBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, 0);
+      0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,

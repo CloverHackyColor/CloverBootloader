@@ -36,7 +36,7 @@ class XObjArrayNC
   public:
 	XObjArrayEntry<TYPE> *_Data;
 	xsize _Len;
-	xsize _Size;
+	xsize m_allocatedSize;
 
   public:
 	void Init();
@@ -44,12 +44,12 @@ class XObjArrayNC
 	virtual ~XObjArrayNC();
 
   protected:
-	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) { DebugLog(2, "Intentionally not defined"); CpuDeadLoop(); }
-	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) { DebugLog(2, "Intentionally not defined"); CpuDeadLoop(); }
+	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) { DebugLog(2, "Intentionally not defined"); panic(); }
+	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) { DebugLog(2, "Intentionally not defined"); panic(); }
 	xsize _getLen() const { return _Len; }
 
   public:
-	xsize AllocatedSize() const { return _Size; }
+	xsize AllocatedSize() const { return m_allocatedSize; }
 	xsize size() const { return _Len; }
 	xsize length() const { return _Len; }
 
@@ -132,7 +132,7 @@ template<class TYPE>
 void XObjArrayNC<TYPE>::Init()
 {
 	_Data = nullptr;
-	_Size = 0;
+	m_allocatedSize = 0;
 	_Len = 0;
 	// THis was useful for realtime debugging with a debugger that do not recognise references.
 	#ifdef _DEBUG_iufasdfsfk
@@ -179,14 +179,14 @@ XObjArrayNC<TYPE>::~XObjArrayNC()
 template<class TYPE>
 void XObjArrayNC<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 {
-	if ( _Size < nNewSize ) {
+	if ( m_allocatedSize < nNewSize ) {
 		nNewSize += nGrowBy + 1;
-		_Data = (XObjArrayEntry<TYPE> *)Xrealloc(sizeof(XObjArrayEntry<TYPE>) * _Size, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (void *)_Data );
+		_Data = (XObjArrayEntry<TYPE> *)Xrealloc(sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (void *)_Data );
 		if ( !_Data ) {
-  		XObjArray_DBG("XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, _Size, sizeof(XObjArrayEntry<TYPE>) * nNewSize, _Data);
+  		XObjArray_DBG("XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, _Data);
 		}
-//		memset(&_Data[_Size], 0, (nNewSize-_Size) * sizeof(XObjArrayEntry<TYPE>));
-		_Size = nNewSize;
+//		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
+		m_allocatedSize = nNewSize;
 	}
 }
 
@@ -196,7 +196,7 @@ TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index)
 {
 		if ( index >= _Len ) {
 			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%d) greater than length (%d)\n", index, _Len);
-			CpuDeadLoop();
+			panic();
 		}
 		return  *((TYPE *)(_Data[index].Object));
 }
@@ -207,7 +207,7 @@ const TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index) const
 {
 		if ( index >= _Len ) {
 			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%d) greater than length (%d)\n", index, _Len);
-			CpuDeadLoop();
+			panic();
 		}
 		return  *((TYPE *)(_Data[index].Object));
 }
@@ -427,7 +427,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 	{
   	if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
   	  DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%d) is > Length(). System halted\n", nIndex);
-	  	CpuDeadLoop();
+	  	panic();
 	  }
 	}
 	if ( _Data[nIndex].FreeIt )
@@ -470,7 +470,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(int nIndex)
   #if defined(__XTOOLS_INT_CHECK__)
   	if ( nIndex < 0 ) {
   	  DebugLog(2, "XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
-	  	CpuDeadLoop();
+	  	panic();
 	  }
 	#endif
 	RemoveAtIndex( (xsize)nIndex ); // Remove(xsize) will check that index is < _Len

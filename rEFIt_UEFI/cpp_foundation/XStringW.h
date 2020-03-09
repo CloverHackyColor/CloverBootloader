@@ -22,7 +22,7 @@ class XStringW
 protected:
  	wchar_t *m_data;
 	UINTN m_len;
-	UINTN m_size;
+	UINTN m_allocatedSize;
 
 public:
 	void Init(UINTN aSize=0);
@@ -45,7 +45,8 @@ public:
 	wchar_t *dataWithSizeMin(UINTN pos, UINTN sizeMin, UINTN nGrowBy=XStringWGrowByDefault) { CheckSize(sizeMin, nGrowBy); return data(pos); }
 
 	UINTN length() const { return m_len; }
-	UINTN size() const { return m_size; }
+	UINTN size() const { return m_len; }
+	UINTN allocatedSize() const { return m_allocatedSize; }
 	void SetLength(UINTN len);
 
 	/* IsNull ? */

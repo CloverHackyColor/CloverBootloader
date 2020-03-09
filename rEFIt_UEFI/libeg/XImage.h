@@ -56,10 +56,14 @@ public:
   XImage(const XImage& Image, float scale);
   ~XImage();
 
+  XImage& operator= (const XImage& other);
+
 protected:
-  UINTN GetSize() const;  //in bytes
+  UINTN GetSizeInBytes() const;  //in bytes
 
 public:
+
+  void setSizeInPixels(UINTN W, UINTN H);
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& GetData() const;
 
@@ -67,6 +71,8 @@ public:
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y);
   UINTN      GetWidth() const;
   UINTN      GetHeight() const;
+
+  void setZero() { SetMem( (void*)GetPixelPtr(0, 0), GetSizeInBytes(), 0); }
 
   void setEmpty() { Width=0; Height=0; PixelData.setEmpty(); }
   bool isEmpty() const { return PixelData.size() == 0; }
@@ -83,6 +89,7 @@ public:
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
+  void Draw2(INTN x, INTN y, UINTN width, UINTN height, float scale);
 };
 
 #endif //__XSTRINGW_H__
