@@ -3,16 +3,37 @@ SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
 
 
 OSTYPE=`uname -s`
-echo $OSTYPE
+#echo $OSTYPE
 
 if [ -z "$1" ]
 then
-  echo "Usage: $SCRIPT_ABS_FILENAME [Clover debug file]" >&2
-  exit 1
+	if [ -f "$SCRIPT_DIR"/../Build/Clover/DEBUG_GCC53/X64/CLOVERX64.debug ]
+	then
+		clover_debug_file="$SCRIPT_DIR"/../Build/Clover/DEBUG_GCC53/X64/CLOVERX64.debug
+  		echo Using default file "$clover_debug_file"
+	else
+		echo "Usage: $SCRIPT_ABS_FILENAME [Clover debug file]"
+		exit 1
+	fi
+else
+	clover_debug_file="${1%.*}".debug
 fi
 
-clover_debug_file="$1"
+if ! [ -f "$clover_debug_file" ]
+then
+	echo Debug file "$clover_debug_file" doesn\'t exist
+	exit 1
+fi
+
+clover_efi_file="${clover_debug_file%.*}".efi
+if ! [ -f "$clover_efi_file" ]
+then
+	echo Efi file "$clover_efi_file" doesn\'t exist
+	exit 1
+fi
+
 echo clover_debug_file="$clover_debug_file"
+echo clover_efi_file="$clover_efi_file"
 
 set -x
 
@@ -36,7 +57,10 @@ then
 	> "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
 	hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
-	if [[ "$(basename "$clover_debug_file")" == "CloverX64"* ]]
+
+	shopt -s nocasematch
+
+	if [[ "$(basename "$clover_debug_file")" =~ "CloverX64"* ]]
 	then
 	  echo ditto "${clover_debug_file%.*}".efi /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
 		ditto "${clover_debug_file%.*}".efi /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
@@ -46,29 +70,33 @@ then
 	else
 	  : # TODO : if it's a module, has to be copied in Drivers
 	fi
+
+	shopt -u nocasematch
+
 	diskutil eject /Volumes/QEMU_EFI || exit 1
 	
-  sleep 1 # not 100% sure it's needed
+  	sleep 1 # not 100% sure it's needed
 
     set -m
 
-  /usr/local/bin/qemu-system-x86_64 \
-    -L "$SCRIPT_DIR" \
-    -m 2048 \
-    -cpu core2duo \
-    -bios "$SCRIPT_DIR"/bios.bin-1.13.0 \
-    -machine q35 \
-    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
-    -device ahci,id=ahi \
-    -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
-    -usb \
-    -device usb-mouse,bus=usb-bus.0,port=2 \
-    -device usb-kbd,bus=usb-bus.0,port=1 \
-	-serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
-    -gdb tcp::9000 &
-    [[ $? == 0 ]] || exit 1
+	/usr/local/bin/qemu-system-x86_64 \
+	    -L "$SCRIPT_DIR" \
+	    -m 2048 \
+	    -cpu core2duo \
+	    -bios "$SCRIPT_DIR"/bios.bin-1.13.0 \
+	    -machine q35 \
+	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
+	    -device ahci,id=ahi \
+	    -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
+	    -usb \
+	    -device usb-mouse,bus=usb-bus.0,port=2 \
+	    -device usb-kbd,bus=usb-bus.0,port=1 \
+		-serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
+	    -gdb tcp::9000 &
+	    [[ $? == 0 ]] || exit 1
 
-set +m
+	set +m
+
 	count=1
 	timeout=60
 	image_base_str="Clover : Image base = "
