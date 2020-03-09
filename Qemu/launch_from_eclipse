@@ -1,0 +1,106 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+OSTYPE=`uname -s`
+echo $OSTYPE
+
+#env
+#echo "$@"
+
+project_dir="$1"
+echo project_dir="$project_dir"
+executable="$2"
+echo executable="$executable"
+executable_name=$(basename "$executable")
+echo executable_name="$executable_name"
+
+cd "$SCRIPT_DIR"
+
+if [ "$OSTYPE" = "Linux" ]
+then
+  : # todo
+fi
+
+
+
+set -x
+
+
+
+if [ "$OSTYPE" = "Darwin" ]
+then
+
+	if pgrep qemu
+	then
+	  killall qemu-system-x86_64
+	fi
+	> "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
+
+	hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
+	if [[ "$executable_name" == "CloverX64"* ]]
+	then
+	    echo ditto "$project_dir"/"${executable%.*}".efi /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
+		ditto "$project_dir"/"${executable%.*}".efi /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
+
+		echo ditto "$project_dir"/"${executable%.*}".efi /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi
+		ditto "$project_dir"/"${executable%.*}".efi /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi || exit 1
+	else
+	  : # if it's a module, has to be copied in Drivers
+	fi
+	diskutil eject /Volumes/QEMU_EFI || exit 1
+/usr/local/bin/qemu-system-x86_64 \
+  -L "$SCRIPT_DIR" \
+  -m 2048 \
+  -cpu core2duo \
+  -bios bios.bin \
+  -machine q35 \
+  -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
+  -device ahci,id=ahi \
+  -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
+  -usb \
+  -device usb-mouse,bus=usb-bus.0,port=2 \
+  -device usb-kbd,bus=usb-bus.0,port=1 \
+  -serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
+  -gdb tcp::9000 &
+  [[ $? -eq 0 ]] || exit 1
+
+	count=1
+	timeout=60
+	image_base_str="Clover : Image base = "
+
+    getImageBase() {
+		[ -f "$SCRIPT_DIR"/serial0_qemu_out.log ] || return 1
+		grep "$image_base_str" "$SCRIPT_DIR"/serial0_qemu_out.log
+		return $?
+	}
+
+
+	while [ $count -le $timeout ] && ! getImageBase
+	do
+	  sleep 1
+	  count=$((count+1))
+	done
+
+	if [ $count -ge $timeout ]
+	then
+	  echo Cannot find "\"Clover : Image base = \"" in "$SCRIPT_DIR"/serial0_qemu_out.log after $timeout seconds
+	  exit 1
+	fi
+
+	adr="$(grep "$image_base_str" "$SCRIPT_DIR"/serial0_qemu_out.log | awk '{printf "0x%x",$8/NR}')"
+  echo adr="$adr"
+
+
+	echo ovh.knudsen.jf.launch.vmware.efi.adr="$adr"
+	exit 0
+
+
+
+fi
+
+# Windows ???
+#if [ "$OSTYPE" = "FreeBSD" ]
+#then
+#fi
+
