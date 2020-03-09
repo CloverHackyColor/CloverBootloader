@@ -179,9 +179,13 @@ ConvertElf (
   VerboseMsg ("Check Elf Image Header");
   EiClass = (*FileBuffer)[EI_CLASS];
   if (EiClass == ELFCLASS32) {
+#ifndef JIEF_DEBUG
+    // Some globals have the same name and that confuses the debugger.
+    // So it's better not to link with Elf32Convert.o when debugging x64
     if (!InitializeElf32 (*FileBuffer, &ElfFunctions)) {
       return FALSE;
     }
+#endif
   } else if (EiClass == ELFCLASS64) {
     if (!InitializeElf64 (*FileBuffer, &ElfFunctions)) {
       return FALSE;

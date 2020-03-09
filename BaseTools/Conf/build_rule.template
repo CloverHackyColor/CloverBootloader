@@ -396,15 +396,15 @@
         -$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
         -$(CP) $(DEBUG_DIR)(+)*.pdb $(OUTPUT_DIR) 
     <Command.GCC>
-        #$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-        @$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-        @$(OBJCOPY) --strip-unneeded -R .eh_frame ${src}
+        @$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
+        #@$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
+        #@$(OBJCOPY) --strip-unneeded -R .eh_frame ${src}
 
         #
         #The below 2 lines are only needed for UNIXGCC tool chain, which generates PE image directly
         #
         @-$(OBJCOPY) $(OBJCOPY_ADDDEBUGFLAG) ${src}
-        #-$(CP) $(DEBUG_DIR)(+)$(MODULE_NAME).debug $(BIN_DIR)(+)$(MODULE_NAME_GUID).debug
+        $(CP) $(DEBUG_DIR)(+)$(MODULE_NAME).debug $(BIN_DIR)(+)$(MODULE_NAME_GUID).debug
         @"echo" [OBJCOPY] $(MODULE_NAME)
 
         @"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
