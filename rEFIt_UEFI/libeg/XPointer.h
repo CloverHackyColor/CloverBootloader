@@ -15,7 +15,7 @@ public:
 protected:
   EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
   XImage* PointerImage;
-  XImage newImage;
+//  XImage newImage;
   XImage oldImage;
 
   EG_RECT  newPlace;

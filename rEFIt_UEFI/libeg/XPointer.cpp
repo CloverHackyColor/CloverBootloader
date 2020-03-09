@@ -26,9 +26,9 @@
 #define POINTER_HEIGHT 64
 
 XPointer::XPointer()
-            : PointerImage(NULL),
-              newImage(POINTER_WIDTH, POINTER_HEIGHT),
-              oldImage(POINTER_WIDTH, POINTER_HEIGHT)
+            : SimplePointerProtocol(NULL), PointerImage(NULL),
+//              newImage(POINTER_WIDTH, POINTER_HEIGHT),
+              oldImage(0, 0), Alive(false)
 {
 
 }
@@ -89,6 +89,7 @@ EFI_STATUS XPointer::MouseBirth()
   }
 //  Now update image because of other theme has other image
   PointerImage = new XImage(BuiltinIcon(BUILTIN_ICON_POINTER));
+  oldImage.setSizeInPixels(PointerImage->GetWidth(), PointerImage->GetHeight());
   LastClickTime = 0;
   oldPlace.XPos = (INTN)(UGAWidth >> 2);
   oldPlace.YPos = (INTN)(UGAHeight >> 2);
