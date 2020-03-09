@@ -40,7 +40,7 @@ XPointer::~XPointer()
 void XPointer::Hide()
 {
   if (Alive) {
-    oldImage.Draw2(oldPlace.XPos, oldPlace.YPos, oldImage.GetWidth(), oldImage.GetHeight(), 1.f);
+    oldImage.DrawWithoutCompose(oldPlace.XPos, oldPlace.YPos);
   }
 }
 

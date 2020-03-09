@@ -89,7 +89,7 @@ public:
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
-  void Draw2(INTN x, INTN y, UINTN width, UINTN height, float scale);
+  void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
 };
 
 #endif //__XSTRINGW_H__

@@ -394,7 +394,7 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   }
 }
 
-void XImage::Draw2(INTN x, INTN y, UINTN width, UINTN height, float scale)
+void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 {
 //  //prepare images
 ////  DBG("1\n");
@@ -406,8 +406,10 @@ void XImage::Draw2(INTN x, INTN y, UINTN width, UINTN height, float scale)
 ////  DBG("4\n");
 //  Background.Compose(0, 0, Top, true);
 ////  DBG("5\n");
-  UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
-  UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
+  if ( width == 0 ) width = Width;
+  if ( height == 0 ) height = Height;
+  UINTN AreaWidth = (x + width > (UINTN)UGAWidth) ? (UGAWidth - x) : width;
+  UINTN AreaHeight = (y + height > (UINTN)UGAHeight) ? (UGAHeight - y) : height;
 //  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
   // prepare protocols
   EFI_STATUS Status;
@@ -427,11 +429,11 @@ void XImage::Draw2(INTN x, INTN y, UINTN width, UINTN height, float scale)
   if (GraphicsOutput != NULL) {
     GraphicsOutput->Blt(GraphicsOutput, (*this).GetPixelPtr(0, 0),
       EfiBltBufferToVideo,
-      0, 0, x, y, width, height, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+      0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)(*this).GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, 0);
+      0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
 }
 
