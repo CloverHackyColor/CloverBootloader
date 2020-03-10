@@ -205,29 +205,16 @@ INTN TextStyle;
 BOOLEAN mGuiReady = FALSE;
 
 
-//REFIT_MENU_ENTRY_OTHER MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, '\0', 'O',  NULL, NULL, NULL,
-//  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone, NULL };
-//REFIT_MENU_ENTRY_OTHER MenuEntryAbout    = { L"About Clover", TAG_ABOUT_OLD, 1, 0, 'A', NULL, NULL, NULL,
-//  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
-//REFIT_MENU_ENTRY_OTHER MenuEntryReset    = { L"Restart Computer", TAG_RESET_OLD, 1, 0, 'R', NULL, NULL, NULL,
-//  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-//REFIT_MENU_ENTRY_OTHER MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN_OLD, 1, 0, 'U',  NULL, NULL, NULL,
-//  {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone, ActionNone,  NULL };
-//REFIT_MENU_ENTRY_OTHER MenuEntryReturn   = { L"Return", TAG_RETURN_OLD, 0, 0, 0,  NULL, NULL, NULL,
-//  {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, ActionNone,  NULL };
 
-
-REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options", 1, '\0', 'O', ActionEnter);
-REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover", 1, 0, 'A', ActionEnter);
+//REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options",          1, 0, 'O', ActionEnter);
+REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover",     1, 0, 'A', ActionEnter);
 REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer", 1, 0, 'R', ActionSelect);
-REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover", 1, 0, 'U', ActionSelect);
-REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return", 0, 0, 0, ActionEnter);
+REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover",      1, 0, 'U', ActionSelect);
+REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return",           0, 0,  0,  ActionEnter);
 
 
 
-//REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, L"Automatic boot", NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
-//REFIT_MENU_SCREEN AboutMenu   = {2, L"About",     NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
-//REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",      NULL, 0, NULL, 0, NULL,              NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL};
 REFIT_MENU_SCREEN MainMenu(1, L"Main Menu", L"Automatic boot");
 REFIT_MENU_SCREEN AboutMenu(2, L"About", NULL);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help", NULL);
@@ -2192,7 +2179,7 @@ VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN CONST CHAR16 *InfoLine)
 //  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLines.size()), (CHAR16*)InfoLine); // TODO jief : cast to fix
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_MENU_ENTRY *Entry, bool freeIt)
+VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt)
 {
 	if ( !Entry ) return;
 	Entries.AddReference(Entry, freeIt);
@@ -2265,7 +2252,7 @@ INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN CHAR16 Shortcut)
 UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 {
 	if ( !Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
-		DebugLog(2, "BUG : InputDialog called with !Entries[ScrollState.CurrentSelection].REFIT_MENU_ITEM_IEM_ABSTRACT()\n");
+		DebugLog(2, "BUG : InputDialog called with !Entries[ScrollState.CurrentSelection].REFIT_MENU_ENTRY_ITEM_ABSTRACT()\n");
 		return 0; // is it the best thing to do ? CpuDeadLog ?
 	}
 
@@ -2276,7 +2263,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
   UINTN         MenuExit = 0;
   //UINTN         LogSize;
   UINTN         Pos = (Entries[ScrollState.CurrentSelection]).Row;
-  REFIT_MENU_ITEM_IEM_ABSTRACT& selectedEntry = *Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT();
+  REFIT_MENU_ENTRY_ITEM_ABSTRACT& selectedEntry = *Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT();
   INPUT_ITEM    *Item = selectedEntry.Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
   UINTN         BackupPos, BackupShift;
@@ -4364,7 +4351,7 @@ UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     return RunGenericMenu(&REFIT_MENU_SCREEN::TextMenuStyle, &Index, ChosenEntry);
 }
 
-VOID NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
+REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   if (Title) {
     Entry->Title = PoolPrint(L"%a", Title);
@@ -4382,24 +4369,25 @@ VOID NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, 
   (*SubScreen)->ID = ID;
   (*SubScreen)->AnimeRun = (*SubScreen)->GetAnime();
   Entry->SubScreen = *SubScreen;
+  return Entry;
 }
 
-VOID NewEntry(REFIT_MENU_ENTRY_OTHER **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
+REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
   //create entry
 //  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
-  *Entry = new REFIT_MENU_ITEM_OPTIONS();
-  NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
+	REFIT_MENU_ITEM_OPTIONS* Entry = new REFIT_MENU_ITEM_OPTIONS();
+	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
 //  (*Entry)->Tag = TAG_OPTIONS;
 }
-
-VOID NewEntry(LOADER_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
-{
-  //create entry
-//  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
-  *Entry = new LOADER_ENTRY();
-  NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
-}
+//
+//VOID NewLoaderEntry(LOADER_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
+//{
+//  //create entry
+////  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
+//  *Entry = new LOADER_ENTRY();
+//  NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
+//}
 
 VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 {
@@ -4437,7 +4425,7 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
   }
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
   InputBootArgs->Title          = PoolPrint(L"%a", Line);
   if (Inx == 3 || Inx == 116) {
@@ -4445,7 +4433,7 @@ VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs
   } else {
     InputBootArgs->Row          = Cursor?StrLen(InputItems[Inx].SValue):0xFFFF;
   }
-  InputBootArgs->Item                 = &InputItems[Inx];
+  InputBootArgs->Item           = &InputItems[Inx];
   InputBootArgs->AtClick        = Cursor?ActionSelect:ActionEnter;
   InputBootArgs->AtRightClick   = Cursor?ActionNone:ActionDetails;
   InputBootArgs->AtDoubleClick  = Cursor?ActionEnter:ActionNone;
@@ -4473,13 +4461,13 @@ VOID REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, BOOLEAN C
   AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
 
-REFIT_MENU_ENTRY  *SubMenuGraphics()
+REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 {
   UINTN  i, N, Ven = 97;
-  REFIT_MENU_ENTRY_OTHER   *Entry; //, *SubEntry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
   SubScreen->AddMenuInfoLine(PoolPrint(L"Number of VideoCard%a=%d",((NGFX!=1)?"s":""), NGFX));
 
   SubScreen->AddMenuItemInput(52, "InjectEDID", FALSE);
@@ -4557,17 +4545,17 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
 }
 
 // ErmaC: Audio submenu
-REFIT_MENU_ENTRY  *SubMenuAudio()
+REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
 {
 
   UINTN  i;
 
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->");
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to tune the HDA devices"));
@@ -4597,12 +4585,12 @@ REFIT_MENU_ENTRY  *SubMenuAudio()
 
 #define nya(x) x/10,x%10
 
-REFIT_MENU_ENTRY  *SubMenuSpeedStep()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuSpeedStep()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry; //, *SubEntry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->");
   SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
   SubScreen->AddMenuInfoLine(PoolPrint(L"Model: %2x/%2x/%2x",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
@@ -4639,16 +4627,16 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuKextPatches()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextPatches()
 {
-  REFIT_MENU_ENTRY_OTHER     *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
   INTN                 NrKexts = gSettings.KernelAndKextPatches.NrKexts;
   KEXT_PATCH  *KextPatchesMenu = gSettings.KernelAndKextPatches.KextPatches; //zzzz
   INTN                 Index;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXTS, "Custom kexts patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXTS, "Custom kexts patches->");
 
   for (Index = 0; Index < NrKexts; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -4666,9 +4654,9 @@ REFIT_MENU_ENTRY  *SubMenuKextPatches()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
 {
-  REFIT_MENU_ENTRY_OTHER     *Entry = NULL;
+  REFIT_MENU_ITEM_OPTIONS     *Entry = NULL;
   REFIT_MENU_SCREEN    *SubScreen = NULL;
   REFIT_INPUT_DIALOG   *InputBootArgs;
   UINTN i = 0;
@@ -4689,7 +4677,7 @@ REFIT_MENU_ENTRY  *SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
   while (Kext) {
     if (StrCmp(Kext->KextDirNameUnderOEMPath, UniSysVer) == 0) {
     	if ( SubScreen == NULL ) {
-    		NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
+    		Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
     		SubScreen->AddMenuInfoLine(PoolPrint(L"Choose/check kext to disable:"));
     	}
 //      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -4733,7 +4721,8 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 //	CHAR16             *UniSysVer = NULL;
 	CHAR8              *ChosenOS = Entry->OSVersion;
 
-	NewEntry(&SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
+	SubEntry = new LOADER_ENTRY();
+	NewEntry_(SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
 	SubEntry->Flags = Entry->Flags;
 	if (ChosenOS) {
 //    DBG("chosen os %a\n", ChosenOS);
@@ -4845,16 +4834,16 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 
 
 
-REFIT_MENU_ENTRY  *SubMenuKernelPatches()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuKernelPatches()
 {
-  REFIT_MENU_ENTRY_OTHER     *Entry;
+  REFIT_MENU_ITEM_OPTIONS     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
   INTN                 NrKernels = gSettings.KernelAndKextPatches.NrKernels;
   KERNEL_PATCH  *KernelPatchesMenu = gSettings.KernelAndKextPatches.KernelPatches; //zzzz
   INTN                 Index;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_KERNELS, "Custom kernel patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KERNELS, "Custom kernel patches->");
 
   for (Index = 0; Index < NrKernels; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -4872,16 +4861,16 @@ REFIT_MENU_ENTRY  *SubMenuKernelPatches()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuBootPatches()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuBootPatches()
 {
-  REFIT_MENU_ENTRY_OTHER     *Entry;
+  REFIT_MENU_ITEM_OPTIONS     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
   INTN                 NrBoots = gSettings.KernelAndKextPatches.NrBoots;
   KERNEL_PATCH  *BootPatchesMenu = gSettings.KernelAndKextPatches.BootPatches; //zzzz
   INTN                 Index;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BOOTER, "Custom booter patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BOOTER, "Custom booter patches->");
 
   for (Index = 0; Index < NrBoots; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -4899,12 +4888,12 @@ REFIT_MENU_ENTRY  *SubMenuBootPatches()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuBinaries()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
 
   SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
   SubScreen->AddMenuInfoLine(PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
@@ -4935,18 +4924,18 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuDropTables()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
 {
   CHAR8               sign[5];
   CHAR8               OTID[9];
-  REFIT_MENU_ENTRY_OTHER    *Entry;
+  REFIT_MENU_ITEM_OPTIONS    *Entry;
   REFIT_MENU_SCREEN   *SubScreen;
   REFIT_INPUT_DIALOG  *InputBootArgs;
 
   sign[4] = 0;
   OTID[8] = 0;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->");
 
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -4995,12 +4984,12 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuSmbios()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->");
 
   SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
   SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gSettings.OEMProduct));
@@ -5025,14 +5014,14 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   return Entry;
 }
 
-REFIT_MENU_ENTRY *SubMenuDropDSM()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
 {
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSM, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSM, NULL);
   //  Entry->Title = PoolPrint(L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
 
   // submenu description
@@ -5059,13 +5048,13 @@ REFIT_MENU_ENTRY *SubMenuDropDSM()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuDsdtFix()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry; //, *SubEntry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
 //  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSDT, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NULL);
   //  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
 
   SubScreen->AddMenuCheck("Add DTGP",     FIX_DTGP, 67);
@@ -5107,9 +5096,9 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuDSDTPatches()  //yyyy
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()  //yyyy
 {
-  REFIT_MENU_ENTRY_OTHER     *Entry;
+  REFIT_MENU_ITEM_OPTIONS     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
 
@@ -5117,7 +5106,7 @@ REFIT_MENU_ENTRY  *SubMenuDSDTPatches()  //yyyy
   INPUT_ITEM   *DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
   INTN                 Index;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->");
 
   for (Index = 0; Index < PatchDsdtNum; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -5135,14 +5124,14 @@ REFIT_MENU_ENTRY  *SubMenuDSDTPatches()  //yyyy
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuDsdts()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->");
 
   SubScreen->AddMenuInfoLine(L"Select a DSDT file:");
   SubScreen->AddMenuItemSwitch(116,  "BIOS.aml", FALSE);
@@ -5163,14 +5152,14 @@ REFIT_MENU_ENTRY  *SubMenuDsdts()
 }
 
 
-REFIT_MENU_ENTRY *SubMenuACPI()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuACPI()
 {
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the options menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->");
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to patch ACPI"));
@@ -5188,14 +5177,14 @@ REFIT_MENU_ENTRY *SubMenuACPI()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuAudioPort()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->");
 
   SubScreen->AddMenuInfoLine(L"Select an audio output, press F7 to test");
   SubScreen->AddMenuItemInput(120, "Volume:", TRUE);
@@ -5252,14 +5241,14 @@ VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 
 }
 
-REFIT_MENU_ENTRY  *SubMenuCustomDevices()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
 {
-  REFIT_MENU_ENTRY_OTHER    *Entry;
+  REFIT_MENU_ITEM_OPTIONS    *Entry;
   REFIT_MENU_SCREEN   *SubScreen;
 
   UINT32              DevAddr, OldDevAddr = 0;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->");
 
   if (gSettings.ArbProperties) {
     DEV_PROPERTY *Prop = gSettings.ArbProperties;
@@ -5294,12 +5283,12 @@ REFIT_MENU_ENTRY  *SubMenuCustomDevices()
 }
 
 
-REFIT_MENU_ENTRY  *SubMenuPCI()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_USB, "PCI devices->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_USB, "PCI devices->");
 
   SubScreen->AddMenuItemInput(74,  "USB Ownership", FALSE);
   SubScreen->AddMenuItemInput(92,  "USB Injection", FALSE);
@@ -5319,14 +5308,14 @@ REFIT_MENU_ENTRY  *SubMenuPCI()
 }
 
 
-REFIT_MENU_ENTRY  *SubMenuThemes()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Themes->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Themes->");
 
   SubScreen->AddMenuInfoLine(L"Installed themes:");
   //add embedded
@@ -5347,14 +5336,14 @@ REFIT_MENU_ENTRY  *SubMenuThemes()
   return Entry;
 }
 
-REFIT_MENU_ENTRY *SubMenuGUI()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuGUI()
 {
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the options menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->");
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to tune the Interface"));
@@ -5375,14 +5364,14 @@ REFIT_MENU_ENTRY *SubMenuGUI()
  * Author: Needy.
  * The below function is based on the SubMenuDsdtFix function.
  */
-REFIT_MENU_ENTRY *SubMenuCSR()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuCSR()
 {
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_CSR, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CSR, NULL);
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Modify the System Integrity Protection configuration."));
@@ -5406,14 +5395,14 @@ REFIT_MENU_ENTRY *SubMenuCSR()
   return Entry;
 }
 
-REFIT_MENU_ENTRY *SubMenuBLC()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 {
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_BLC, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NULL);
 //  Entry->Title = PoolPrint(L"boot_args->flags [0x%02x]->", gSettings.BooterConfig);
 
   // submenu description
@@ -5434,14 +5423,14 @@ REFIT_MENU_ENTRY *SubMenuBLC()
   return Entry;
 }
 
-REFIT_MENU_ENTRY *SubMenuSystem()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuSystem()
 {
   // init
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the options menu
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->");
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options for booted OS"));
@@ -5457,14 +5446,14 @@ REFIT_MENU_ENTRY *SubMenuSystem()
   return Entry;
 }
 
-REFIT_MENU_ENTRY  *SubMenuConfigs()
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
 {
-  REFIT_MENU_ENTRY_OTHER   *Entry;
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  NewEntry(&Entry, &SubScreen, ActionEnter, SCREEN_THEME, "Configs->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Configs->");
 
   SubScreen->AddMenuInfoLine(L"Select a config file:");
 
@@ -5614,7 +5603,7 @@ UINT32 EncodeOptions(CONST CHAR16 *Options)
   return OptionsBits;
 }
 
-VOID DecodeOptions(REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER *Entry)
+VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
 {
   //set checked option
   INTN Index;
@@ -5690,9 +5679,9 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("main OptionsBits = 0x%x\n", gSettings.OptionsBits);
-      if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()->LoadOptions);
+      if ( MainChosenEntry->getLOADER_ENTRY() ) gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
 //      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
-      if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER());
+      if ( MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
       //      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
       if (MainChosenEntry->getLOADER_ENTRY()) {
         // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
@@ -5708,7 +5697,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
       while (!SubMenuExit) {
         //running details menu
         SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(Style, &SubMenuIndex, &TempChosenEntry);
-        if ( MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER());
+        if ( MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
 //        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
 //        DBG(" TempChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
         if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
@@ -5727,7 +5716,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions) {
-            AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions); // cast ok
+            AsciiSPrint(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

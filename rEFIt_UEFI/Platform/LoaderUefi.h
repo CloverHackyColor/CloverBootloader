@@ -10,7 +10,7 @@
 //
 // Base UEFI types
 //
-#include <Include/Base.h>
+#include <Base.h>
 
 //
 // From xnu/EXTERNAL_HEADERS/stdint.h:

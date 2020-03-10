@@ -1066,7 +1066,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 // pre-boot tool functions
 //
 
-static VOID StartTool(IN LOADER_ENTRY *Entry)
+static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
 {
   DBG("Start Tool: %s\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);

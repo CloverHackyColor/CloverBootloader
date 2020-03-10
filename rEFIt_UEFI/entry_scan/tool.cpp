@@ -116,7 +116,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
 STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
   REFIT_MENU_ENTRY_CLOVER      *Entry;
-  LOADER_ENTRY      *SubEntry;
+  REFIT_MENU_ENTRY_CLOVER      *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
 //  EFI_STATUS        Status;
 
@@ -135,7 +135,7 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->Flags           = 0;
   Entry->LoadOptions     = NULL;
-  Entry->LoaderType      = OSTYPE_OTHER;
+//  Entry->LoaderType      = OSTYPE_OTHER;
 
   //actions
   Entry->AtClick = ActionEnter;
@@ -156,21 +156,21 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   }
 
 //always add and always remove menu entries
-  SubEntry = DuplicateLoaderEntry(Entry);
+  SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title        = EfiStrDuplicate(L"Add Clover boot options for all entries");
     SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-ADD");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
-  SubEntry = DuplicateLoaderEntry(Entry);
+  SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title        = EfiStrDuplicate(L"Remove all Clover boot options");
     SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-REMOVE");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
-  SubEntry = DuplicateLoaderEntry(Entry);
+  SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title        = EfiStrDuplicate(L"Print all UEFI boot options to log");
     SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-PRINT");

@@ -404,8 +404,6 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   return Status;
 }
 
-extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
-
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                        IN CONST CHAR16 *LoaderOptions,
                                        IN CONST CHAR16 *FullTitle,
@@ -785,7 +783,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
 
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-      SubEntry = DuplicateLoaderEntry(Entry);
+      SubEntry = Entry->getPartiallyDuplicatedEntry();
       if (SubEntry) {
         SubEntry->Title  = L"Cancel hibernate wake";
         SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
@@ -793,7 +791,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
     }
 
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubEntry->Title  = L"Boot Mac OS X with selected options";
@@ -805,7 +803,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubScreen->AddMenuEntry(SubEntry, true);
     }
     
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubEntry->Title  = L"Boot Mac OS X with injected kexts";
@@ -818,7 +816,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubEntry->Title  = L"Boot Mac OS X without injected kexts";
@@ -829,7 +827,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
 
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(Entry), true);
@@ -877,13 +875,13 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     BOOLEAN WithSplash = (StrStr(Entry->LoadOptions, L"splash") != NULL);
     
     // default entry
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title = PoolPrint(L"Run %s", FileName);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (Quiet) {
@@ -895,7 +893,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
@@ -907,7 +905,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
@@ -932,38 +930,38 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
       }
     }
-    SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
+    SubScreen->AddMenuEntry(SubEntry, true);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions = PoolPrint(L"-s -h");
     
     // default entry
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title = PoolPrint(L"Run %s", FileName);
-      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title        = PoolPrint(L"Boot Windows from Hard Disk");
-      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title        = PoolPrint(L"Boot Windows from CD-ROM");
       SubEntry->LoadOptions     = PoolPrint(L"-s -c");
-      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = DuplicateLoaderEntry(Entry);
+    SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title        = PoolPrint(L"Run %s in text mode", FileName);
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = PoolPrint(L"-v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
-      SubScreen->AddMenuEntry((REFIT_MENU_ENTRY *)SubEntry, true);
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
 
   }

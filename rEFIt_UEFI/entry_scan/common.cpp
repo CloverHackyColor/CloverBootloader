@@ -140,34 +140,6 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DE
   return NULL;
 }
 
-extern BOOLEAN CopyKernelAndKextPatches(IN OUT KERNEL_AND_KEXT_PATCHES *Dst, IN KERNEL_AND_KEXT_PATCHES *Src);
-
-LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry)
-{
-  LOADER_ENTRY *DuplicateEntry;
-  if(Entry == NULL) {
-    return NULL;
-  }
-
-//  DuplicateEntry = (__typeof__(DuplicateEntry))AllocateZeroPool(sizeof(LOADER_ENTRY));
-  DuplicateEntry = new LOADER_ENTRY();
-  if (DuplicateEntry) {
-//    DuplicateEntry->Tag          = Entry->Tag;
-    DuplicateEntry->AtClick      = ActionEnter;
-    DuplicateEntry->Volume          = Entry->Volume;
-    DuplicateEntry->DevicePathString = EfiStrDuplicate(Entry->DevicePathString);
-    DuplicateEntry->LoadOptions     = EfiStrDuplicate(Entry->LoadOptions);
-    DuplicateEntry->LoaderPath      = EfiStrDuplicate(Entry->LoaderPath);
-    DuplicateEntry->VolName         = EfiStrDuplicate(Entry->VolName);
-    DuplicateEntry->DevicePath      = Entry->DevicePath;
-    DuplicateEntry->Flags           = Entry->Flags;
-    DuplicateEntry->LoaderType      = Entry->LoaderType;
-    DuplicateEntry->OSVersion       = Entry->OSVersion;
-    DuplicateEntry->BuildVersion    = Entry->BuildVersion;
-    DuplicateEntry->KernelAndKextPatches = Entry->KernelAndKextPatches;
-  }
-  return DuplicateEntry;
-}
 
 CHAR16 *AddLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption)
 {
@@ -381,11 +353,11 @@ VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
 #define TAG_YES 1
 #define TAG_NO  2
 
-//STATIC REFIT_MENU_ENTRY_OTHER   YesMessageEntry = { L"Yes", TAG_YES, 0, 0, 0,  NULL, NULL, NULL,
-//                                              { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
+//REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { L"Yes", TAG_YES, ActionEnter };
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { L"No", TAG_NO, ActionEnter };
-//STATIC REFIT_MENU_ENTRY  *YesNoMessageEntries[] = { &YesMessageEntry, &NoMessageEntry };
+
+//REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, NULL, NULL, &YesMessageEntry, &NoMessageEntry);
 
 // Display a yes/no prompt

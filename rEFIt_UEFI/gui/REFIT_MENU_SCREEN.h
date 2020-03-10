@@ -55,7 +55,7 @@
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
 
-class REFIT_MENU_ITEM_IEM_ABSTRACT;
+class REFIT_MENU_ENTRY_ITEM_ABSTRACT;
 class REFIT_MENU_ENTRY;
 
 typedef VOID (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
@@ -63,8 +63,8 @@ typedef VOID (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST C
 class REFIT_MENU_SCREEN
 {
 public:
-//  static   XPointer mPointer;
-  XPointer mPointer;
+  static   XPointer mPointer;
+//  XPointer mPointer;
   UINTN             ID;
   CONST  CHAR16      *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
   EG_IMAGE          *TitleImage;
@@ -113,85 +113,6 @@ public:
 	  	  	  	  	  	  	  Entries.AddReference(entry2, false);
 						};
 
-//  REFIT_MENU_SCREEN(  UINTN             ID_,
-//											CONST  CHAR16      *Title_,
-//											EG_IMAGE          *TitleImage_,
-////											INTN              InfoLineCount_,
-////											CONST CHAR16    **InfoLines_,
-//											INTN              TimeoutSeconds_,
-//											CONST CHAR16     *TimeoutText_,
-//											CONST CHAR16     *Theme_,
-//											BOOLEAN           AnimeRun_,
-//											BOOLEAN           Once_,
-//											UINT64            LastDraw_,
-//											INTN              CurrentFrame_,
-//											INTN              Frames_,
-//											UINTN             FrameTime_,
-//											EG_RECT           FilmPlace_,
-//											EG_IMAGE        **Film_)
-//						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
-//						  /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
-//						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
-//						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
-//						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-//						  Film(Film_), mAction(ActionNone), mItemID(0), mPointer(NULL)
-//						{};
-//
-//  REFIT_MENU_SCREEN(  UINTN             ID_,
-//											  CONST   CHAR16      *Title_,
-//											EG_IMAGE          *TitleImage_,
-////											INTN              InfoLineCount_,
-////											CONST CHAR16    **InfoLines_,
-//											REFIT_ABSTRACT_MENU_ENTRY* entry,
-//											INTN              TimeoutSeconds_,
-//											CONST CHAR16     *TimeoutText_,
-//											CONST CHAR16     *Theme_,
-//											BOOLEAN           AnimeRun_,
-//											BOOLEAN           Once_,
-//											UINT64            LastDraw_,
-//											INTN              CurrentFrame_,
-//											INTN              Frames_,
-//											UINTN             FrameTime_,
-//											EG_RECT           FilmPlace_,
-//											EG_IMAGE        **Film_)
-//						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
-//              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
-//						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
-//						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
-//						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-//						  Film(Film_), mAction(ActionNone), mItemID(0), mPointer(NULL)
-//						{
-//							Entries.AddReference(entry, false);
-//						};
-
-//  REFIT_MENU_SCREEN(  UINTN             ID_,
-//											  CONST   CHAR16      *Title_,
-//											EG_IMAGE          *TitleImage_,
-////											INTN              InfoLineCount_,
-////											CONST CHAR16    **InfoLines_,
-//											REFIT_ABSTRACT_MENU_ENTRY* entry1,
-//											REFIT_ABSTRACT_MENU_ENTRY* entry2,
-//											INTN              TimeoutSeconds_,
-//											CONST CHAR16     *TimeoutText_,
-//											CONST CHAR16     *Theme_,
-//											BOOLEAN           AnimeRun_,
-//											BOOLEAN           Once_,
-//											UINT64            LastDraw_,
-//											INTN              CurrentFrame_,
-//											INTN              Frames_,
-//											UINTN             FrameTime_,
-//											EG_RECT           FilmPlace_,
-//											EG_IMAGE        **Film_)
-//						: ID(ID_), Title(Title_), TitleImage(TitleImage_),
-//              /*InfoLineCount(InfoLineCount_), InfoLines(InfoLines_),*/ TimeoutSeconds(TimeoutSeconds_),
-//						  TimeoutText(TimeoutText_), Theme(Theme_), AnimeRun(AnimeRun_),
-//						  Once(Once_), LastDraw(LastDraw_), CurrentFrame(CurrentFrame_),
-//						  Frames(Frames_), FrameTime(FrameTime_), FilmPlace(FilmPlace_),
-//						  Film(Film_), mAction(ActionNone), mItemID(0), mPointer(NULL)
-//						{
-//							Entries.AddReference(entry1, false);
-//							Entries.AddReference(entry2, false);
-//						};
   //Scroll functions
   VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                   IN UINTN VisibleSpace, IN INTN Selected);
@@ -199,10 +120,10 @@ public:
   VOID HidePointer();
   EFI_STATUS MouseBirth();
   VOID KillMouse();
-  VOID AddMenuItem_(REFIT_MENU_ITEM_IEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  VOID AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   VOID AddMenuInfo(CONST CHAR16 *Line);
   VOID AddMenuInfoLine(IN CONST CHAR16 *InfoLine);
-  VOID AddMenuEntry(IN REFIT_MENU_ENTRY *Entry, bool freeIt);
+  VOID AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
   VOID AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   VOID AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
   VOID AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);

@@ -39,9 +39,9 @@
 #include "libeg.h"
 #include "../../refit/lib.h"
 #ifdef __cplusplus
-#include "../cpp_foundation/XObjArray.h"
-#include "../cpp_foundation/XStringWArray.h"
-#include "../cpp_foundation/XStringW.h"
+#include "../../cpp_foundation/XObjArray.h"
+#include "../../cpp_foundation/XStringWArray.h"
+#include "../../cpp_foundation/XStringW.h"
 #include "../../libeg/XPointer.h"
 #endif
 
@@ -87,8 +87,11 @@ class LOADER_ENTRY;
 class LEGACY_ENTRY;
 class REFIT_MENU_ENTRY_OTHER;
 class REFIT_SIMPLE_MENU_ENTRY_TAG;
-class REFIT_MENU_ITEM_IEM_ABSTRACT;
+class REFIT_MENU_ENTRY_ITEM_ABSTRACT;
+class REFIT_MENU_ITEM_BOOTNUM;
 class XPointer;
+
+/**********************************************************  REFIT_ABSTRACT_MENU_ENTRY  *************************************************************/
 
 class REFIT_ABSTRACT_MENU_ENTRY
 {
@@ -125,8 +128,10 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual LOADER_ENTRY* getLOADER_ENTRY() { return nullptr; };
   virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return nullptr; };
   virtual REFIT_MENU_ENTRY_OTHER* getREFIT_MENU_ENTRY_OTHER() { return nullptr; };
-  virtual REFIT_MENU_ITEM_IEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
+  virtual REFIT_MENU_ENTRY_ITEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
+  virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return nullptr; };
 
+  REFIT_ABSTRACT_MENU_ENTRY() : Title(NULL), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), Place({0,0,0,0}), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL) {};
   REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), Place({0,0,0,0}), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL) {};
   REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_, ACTION AtClick_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), Place({0,0,0,0}), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL) {};
   REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_, UINTN Row_,
@@ -137,244 +142,241 @@ class REFIT_ABSTRACT_MENU_ENTRY
                           Image(Image_), Place(Place_),
                           AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
                           SubScreen(SubScreen_) {};
+
   virtual ~REFIT_ABSTRACT_MENU_ENTRY() {}; // virtual destructor : this is vital
 };
 
-class REFIT_SIMPLE_MENU_ENTRY_TAG : public REFIT_ABSTRACT_MENU_ENTRY
-{
-public:
-  UINTN              Tag;
 
-  REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
-             : REFIT_ABSTRACT_MENU_ENTRY(Title_, AtClick_), Tag(Tag_)
-             {};
 
-  virtual REFIT_SIMPLE_MENU_ENTRY_TAG* getREFIT_SIMPLE_MENU_ENTRY_TAG() { return this; };
-};
+/**********************************************************  REFIT_ABSTRACT_MENU_ENTRY  *************************************************************/
 
-class REFIT_MENU_ENTRY : public REFIT_ABSTRACT_MENU_ENTRY
-{
-public:
-//  CONST CHAR16       *Title;
-//  UINTN              Tag;
-//  UINTN              Row;
-//  CHAR16             ShortcutDigit;
-//  CHAR16             ShortcutLetter;
-//  EG_IMAGE          *Image;
-//  EG_IMAGE          *DriveImage;
-//  EG_IMAGE          *BadgeImage;
-//  EG_RECT            Place;
-//  ACTION             AtClick;
-//  ACTION             AtDoubleClick;
-//  ACTION             AtRightClick;
-//  ACTION             AtMouseOver;
-//  REFIT_MENU_SCREEN *SubScreen;
+	class REFIT_SIMPLE_MENU_ENTRY_TAG : public REFIT_ABSTRACT_MENU_ENTRY
+	{
+	public:
+	  UINTN              Tag;
 
-  REFIT_MENU_ENTRY() : REFIT_ABSTRACT_MENU_ENTRY(NULL) {};
-  REFIT_MENU_ENTRY(  CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE *Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_,  ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
-};
+	  REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
+				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, AtClick_), Tag(Tag_)
+				 {};
 
-class REFIT_MENU_ENTRY_OTHER : public REFIT_MENU_ENTRY
-{
-public:
-//  UINTN              Tag;
+	  virtual REFIT_SIMPLE_MENU_ENTRY_TAG* getREFIT_SIMPLE_MENU_ENTRY_TAG() { return this; };
+	};
 
-  REFIT_MENU_ENTRY_OTHER() : REFIT_MENU_ENTRY() {};
-  REFIT_MENU_ENTRY_OTHER(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE* Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
 
-  virtual REFIT_MENU_ENTRY_OTHER* getREFIT_MENU_ENTRY_OTHER() { return this; };
-};
 
-class REFIT_MENU_ITEM_RETURN : public REFIT_MENU_ENTRY_OTHER
-{
-public:
-  REFIT_MENU_ITEM_RETURN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
-             {};
-  REFIT_MENU_ITEM_RETURN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE* Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
-  virtual REFIT_MENU_ITEM_RETURN* getREFIT_MENU_ITEM_RETURN() { return this; };
-};
+/**********************************************************  Simple entries. Inherit from REFIT_ABSTRACT_MENU_ENTRY  *************************************************************/
 
-class REFIT_MENU_ITEM_SHUTDOWN : public REFIT_MENU_ENTRY_OTHER
-{
-public:
-  REFIT_MENU_ITEM_SHUTDOWN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
-             {};
-  REFIT_MENU_ITEM_SHUTDOWN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE* Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
-  virtual REFIT_MENU_ITEM_SHUTDOWN* getREFIT_MENU_ITEM_SHUTDOWN() { return this; };
-};
+	class REFIT_MENU_ITEM_RETURN : public REFIT_ABSTRACT_MENU_ENTRY
+	{
+	public:
+	  REFIT_MENU_ITEM_RETURN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
+				 {};
+//	  REFIT_MENU_ITEM_RETURN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+//						 EG_IMAGE* Image_, EG_RECT Place_,
+//						 ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+//						 REFIT_MENU_SCREEN *SubScreen_)
+//				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+//				 {};
+	  virtual REFIT_MENU_ITEM_RETURN* getREFIT_MENU_ITEM_RETURN() { return this; };
+	};
 
-class REFIT_MENU_ITEM_RESET : public REFIT_MENU_ENTRY_OTHER {
-public:
-  REFIT_MENU_ITEM_RESET(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
-             {};
-  REFIT_MENU_ITEM_RESET(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE* Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
-  virtual REFIT_MENU_ITEM_RESET* getREFIT_MENU_ITEM_RESET() { return this; };
-};
+	class REFIT_MENU_ITEM_SHUTDOWN : public REFIT_ABSTRACT_MENU_ENTRY
+	{
+	public:
+	  REFIT_MENU_ITEM_SHUTDOWN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
+				 {};
+//	  REFIT_MENU_ITEM_SHUTDOWN(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+//						 EG_IMAGE* Image_, EG_RECT Place_,
+//						 ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+//						 REFIT_MENU_SCREEN *SubScreen_)
+//				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+//				 {};
+	  virtual REFIT_MENU_ITEM_SHUTDOWN* getREFIT_MENU_ITEM_SHUTDOWN() { return this; };
+	};
 
-class REFIT_MENU_ITEM_ABOUT : public REFIT_MENU_ENTRY_OTHER
-{
-public:
-  REFIT_MENU_ITEM_ABOUT(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
-             {};
-  REFIT_MENU_ITEM_ABOUT(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE* Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
-  virtual REFIT_MENU_ITEM_ABOUT* getREFIT_MENU_ITEM_ABOUT() { return this; };
-};
+	class REFIT_MENU_ITEM_RESET : public REFIT_ABSTRACT_MENU_ENTRY {
+	public:
+	  REFIT_MENU_ITEM_RESET(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
+				 {};
+//	  REFIT_MENU_ITEM_RESET(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+//						 EG_IMAGE* Image_, EG_RECT Place_,
+//						 ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+//						 REFIT_MENU_SCREEN *SubScreen_)
+//				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+//				 {};
+	  virtual REFIT_MENU_ITEM_RESET* getREFIT_MENU_ITEM_RESET() { return this; };
+	};
 
-class REFIT_MENU_ITEM_OPTIONS : public REFIT_MENU_ENTRY_OTHER {
-public:
-  REFIT_MENU_ITEM_OPTIONS() : REFIT_MENU_ENTRY_OTHER() {};
-  REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
-             {};
-  REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
-                     EG_IMAGE* Image_, EG_RECT Place_,
-                     ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                     REFIT_MENU_SCREEN *SubScreen_)
-             : REFIT_MENU_ENTRY_OTHER(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
-             {};
-  virtual REFIT_MENU_ITEM_OPTIONS* getREFIT_MENU_ITEM_OPTIONS() { return this; };
-};
+	class REFIT_MENU_ITEM_ABOUT : public REFIT_ABSTRACT_MENU_ENTRY
+	{
+	public:
+	  REFIT_MENU_ITEM_ABOUT(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
+				 {};
+//	  REFIT_MENU_ITEM_ABOUT(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+//						 EG_IMAGE* Image_, EG_RECT Place_,
+//						 ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+//						 REFIT_MENU_SCREEN *SubScreen_)
+//				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+//				 {};
+	  virtual REFIT_MENU_ITEM_ABOUT* getREFIT_MENU_ITEM_ABOUT() { return this; };
+	};
 
-class REFIT_MENU_ITEM_IEM_ABSTRACT : public REFIT_MENU_ENTRY_OTHER {
-public:
-  INPUT_ITEM        *Item;
-  REFIT_MENU_ITEM_IEM_ABSTRACT() : Item(0) {}
-  virtual REFIT_MENU_ITEM_IEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return this; };
-};
+	class REFIT_MENU_ITEM_OPTIONS : public REFIT_ABSTRACT_MENU_ENTRY {
+	public:
+	  REFIT_MENU_ITEM_OPTIONS() : REFIT_ABSTRACT_MENU_ENTRY() {};
+	  REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, NULL, {0, 0, 0, 0}, AtClick_, ActionEnter, ActionNone, ActionNone, NULL)
+				 {};
+//	  REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_,
+//						 EG_IMAGE* Image_, EG_RECT Place_,
+//						 ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+//						 REFIT_MENU_SCREEN *SubScreen_)
+//				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, Image_, Place_, AtClick_, AtDoubleClick_, AtRightClick_, AtMouseOver_, SubScreen_)
+//				 {};
+	  virtual REFIT_MENU_ITEM_OPTIONS* getREFIT_MENU_ITEM_OPTIONS() { return this; };
+	};
 
-class REFIT_INPUT_DIALOG : public REFIT_MENU_ITEM_IEM_ABSTRACT {
-public:
-  virtual REFIT_INPUT_DIALOG* getREFIT_INPUT_DIALOG() { return this; };
-};
 
-class REFIT_INFO_DIALOG : public REFIT_MENU_ENTRY_OTHER {
-public:
-  virtual REFIT_INFO_DIALOG* getREFIT_INFO_DIALOG() { return this; };
-};
+	class REFIT_INFO_DIALOG : public REFIT_ABSTRACT_MENU_ENTRY {
+	public:
+	  virtual REFIT_INFO_DIALOG* getREFIT_INFO_DIALOG() { return this; };
+	};
 
-class REFIT_MENU_SWITCH : public REFIT_MENU_ITEM_IEM_ABSTRACT {
-public:
-  virtual REFIT_MENU_SWITCH* getREFIT_MENU_SWITCH() { return this; };
-};
 
-class REFIT_MENU_CHECKBIT : public REFIT_MENU_ITEM_IEM_ABSTRACT {
-public:
-  virtual REFIT_MENU_CHECKBIT* getREFIT_MENU_CHECKBIT() { return this; };
-};
 
-/*
- * SUper class of LOADER_ENTRY & LEGACY_ENTRY
- */
-class REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER : public REFIT_MENU_ENTRY
-{
-public:
-  REFIT_VOLUME     *Volume;
-  CONST CHAR16     *DevicePathString;
-  CONST CHAR16     *LoadOptions; //moved here for compatibility with legacy
-  UINTN             BootNum;
-  CONST CHAR16     *LoaderPath;
+/**********************************************************    *************************************************************/
 
-  EG_IMAGE          *DriveImage;
-  EG_IMAGE          *BadgeImage;
+	class REFIT_MENU_ENTRY_ITEM_ABSTRACT : public REFIT_ABSTRACT_MENU_ENTRY {
+	public:
+	  INPUT_ITEM        *Item;
+	  REFIT_MENU_ENTRY_ITEM_ABSTRACT() : Item(0) {}
+	  virtual REFIT_MENU_ENTRY_ITEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return this; };
+	};
 
-  REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-                : Volume(0), DevicePathString(0), LoadOptions(0), BootNum(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
-                {}
-  virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
-  virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };
+		/* Classes that needs a Item member */
+		class REFIT_INPUT_DIALOG : public REFIT_MENU_ENTRY_ITEM_ABSTRACT {
+		public:
+		  virtual REFIT_INPUT_DIALOG* getREFIT_INPUT_DIALOG() { return this; };
+		};
 
-  virtual REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER* getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() { return this; };
-};
+		class REFIT_MENU_SWITCH : public REFIT_MENU_ENTRY_ITEM_ABSTRACT {
+		public:
+		  virtual REFIT_MENU_SWITCH* getREFIT_MENU_SWITCH() { return this; };
+		};
 
-struct KERNEL_AND_KEXT_PATCHES;
+		class REFIT_MENU_CHECKBIT : public REFIT_MENU_ENTRY_ITEM_ABSTRACT {
+		public:
+		  virtual REFIT_MENU_CHECKBIT* getREFIT_MENU_CHECKBIT() { return this; };
+		};
 
-class LOADER_ENTRY : public REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER
-{
-public:
-  CONST CHAR16     *VolName;
-  EFI_DEVICE_PATH  *DevicePath;
-  UINT16            Flags;
-  UINT8             LoaderType;
-  CHAR8            *OSVersion;
-  CHAR8            *BuildVersion;
-  EG_PIXEL         *BootBgColor;
-  UINT8             CustomBoot;
-  EG_IMAGE         *CustomLogo;
-  KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
-  CONST CHAR16            *Settings;
+/**********************************************************  Loader entries  *************************************************************/
+	/*
+	 * Super class of LOADER_ENTRY & LEGACY_ENTRY
+	 */
+	class REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER : public REFIT_ABSTRACT_MENU_ENTRY
+	{
+	public:
+	  CONST CHAR16     *DevicePathString;
+	  CONST CHAR16     *LoadOptions; //moved here for compatibility with legacy
+	  CONST CHAR16     *LoaderPath;
 
-  LOADER_ENTRY()
-  			: REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0), BootBgColor(0), CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
-  			{};
+	  EG_IMAGE          *DriveImage;
+	  EG_IMAGE          *BadgeImage;
+//
+//	  REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
+//					: REFIT_ABSTRACT_MENU_ENTRY(), Volume(0), DevicePathString(0), LoadOptions(0), LoaderPath(0), BootNum(0), DriveImage(0), BadgeImage(0)
+//					{}
+	  virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
+	  virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };
 
-  virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
-} ;
+	  virtual REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER* getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() { return this; };
+	};
 
-class REFIT_MENU_ENTRY_LOADER_TOOL : public LOADER_ENTRY
-{
-public:
-  UINT8 NoMemset;
-  REFIT_MENU_ENTRY_LOADER_TOOL()
-    : LOADER_ENTRY(), NoMemset(1)
-  {};
+		//---------------------------------------  REFIT_MENU_ENTRY_LOADER_TOOL  ---------------------------------------//
 
-  virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return this; };
-};
+		class REFIT_MENU_ENTRY_LOADER_TOOL : public REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER
+		{
+		  public:
+			UINT8 NoMemset;
+			UINT16            Flags;
+			EFI_DEVICE_PATH  *DevicePath;
 
-class LEGACY_ENTRY : public REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER
-{
-public:
-  //  REFIT_VOLUME     *Volume;
-  //  CONST CHAR16     *DevicePathString;
-  //  CONST CHAR16     *LoadOptions;
-  //  UINTN             BootNum;
-  //  CONST CHAR16     *LoaderPath; //will be set to NULL
-  LEGACY_ENTRY()
-    : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-  {};
+			REFIT_MENU_ENTRY_LOADER_TOOL() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), NoMemset(1) {};
 
-  virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return this; };
-};
+			virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return this; };
+		};
 
-class REFIT_MENU_ENTRY_CLOVER : public LOADER_ENTRY
-{
-public:
-  virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return this; };
-};
+
+		//---------------------------------------  REFIT_MENU_ENTRY_CLOVER  ---------------------------------------//
+
+		class REFIT_MENU_ENTRY_CLOVER : public REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER
+		{
+		  public:
+			REFIT_VOLUME     *Volume;
+			CONST CHAR16     *VolName;
+			EFI_DEVICE_PATH  *DevicePath;
+			UINT16            Flags;
+//			UINT8             LoaderType;
+
+			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() {};
+
+			REFIT_MENU_ENTRY_CLOVER* getPartiallyDuplicatedEntry() const;
+			virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return this; };
+		};
+
+
+		//---------------------------------------  REFIT_MENU_ITEM_BOOTNUM  ---------------------------------------//
+
+		class REFIT_MENU_ITEM_BOOTNUM : public REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER
+		{
+		  public:
+			REFIT_VOLUME     *Volume;
+			UINTN             BootNum;
+
+			virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return this; };
+		} ;
+
+
+			//---------------------------------------  LEGACY_ENTRY  ---------------------------------------//
+
+			class LEGACY_ENTRY : public REFIT_MENU_ITEM_BOOTNUM
+			{
+			  public:
+				LEGACY_ENTRY() : REFIT_MENU_ITEM_BOOTNUM() {};
+
+				virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return this; };
+			};
+
+
+			//---------------------------------------  LOADER_ENTRY  ---------------------------------------//
+
+			struct KERNEL_AND_KEXT_PATCHES;
+
+			class LOADER_ENTRY : public REFIT_MENU_ITEM_BOOTNUM
+			{
+			  public:
+				CONST CHAR16     *VolName;
+				EFI_DEVICE_PATH  *DevicePath;
+				UINT16            Flags;
+				UINT8             LoaderType;
+				CHAR8            *OSVersion;
+				CHAR8            *BuildVersion;
+				EG_PIXEL         *BootBgColor;
+				UINT8             CustomBoot;
+				EG_IMAGE         *CustomLogo;
+				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
+				CONST CHAR16            *Settings;
+
+	//			LOADER_ENTRY()
+	//					: REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0), BootBgColor(0), CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
+	//					{};
+				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
+				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
+			} ;
 
 
 #endif
