@@ -565,7 +565,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   CONST CHAR8                   *InstallerVersion;
   TagPtr                  dict = NULL;
   UINTN                   i;
-  NSVGfont                *font, *nextFont;
+  NSVGfont                *font; // , *nextFont;
 
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");

@@ -191,7 +191,7 @@ typedef struct NSVGshape
   float miterLimit;      // Miter limit
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
-  NSVGpath** pathsHandle;      // Linked list of paths in the image. One shape - one path.
+  NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
   NSVGgroup* group;      // Pointer to parent group or NULL
   NSVGclip clip;
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
