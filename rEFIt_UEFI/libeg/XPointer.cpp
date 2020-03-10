@@ -184,7 +184,7 @@ VOID XPointer::UpdatePointer()
     if (newPlace.YPos < 0) newPlace.YPos = 0;
     if (newPlace.YPos > UGAHeight - 1) newPlace.YPos = UGAHeight - 1;
 
-    if ( CompareMem(&oldPlace, &newPlace, sizeof(__typeof(oldPlace))) != 0 ) {
+    if ( CompareMem(&oldPlace, &newPlace, sizeof(__typeof__(oldPlace))) != 0 ) {
       Hide();
       Draw();
     }
