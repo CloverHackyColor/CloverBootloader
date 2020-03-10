@@ -13,9 +13,9 @@ extern xsize XBufferGrowByDefault;
  */
 #define __XTOOLS_INT_CHECK__
 
-#ifdef CLOVER_BUILD
-
 #include "../cpp_util/panic.h"
+
+#ifdef CLOVER_BUILD
 
 extern "C" {
 #include <Library/BaseLib.h> // for StrCmp

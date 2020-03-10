@@ -23,7 +23,7 @@
 
 void CpuDeadLoop(void)
 {
-
+	exit(1);
 }
 
 void DebugLog(int DebugMode, const char *FormatString, ...)

@@ -99,9 +99,9 @@ size_t StrLenInWChar(const char *s, size_t src_len)
 
 
 
-void utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s, size_t src_len)
+size_t utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s, size_t src_len)
 {
-	if ( dst_max_len == 0 ) return;
+	if ( dst_max_len == 0 ) return 0;
 	dst_max_len -= 1;
 
 	size_t dst_len = 0;
@@ -177,6 +177,7 @@ void utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s, size_t src_le
 	}
 exit:
 	dst[dst_len] = 0;
+	return dst_len;
 }
 
 

@@ -625,7 +625,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 //
 // Make a screenshot
 //
-CONST CHAR8 ScreenShotName[] = "EFI\\CLOVER\\misc\\screenshot";
+//CONST CHAR8 ScreenShotName[] = "EFI\\CLOVER\\misc\\screenshot";
 EFI_STATUS egScreenShot(VOID)
 {
   EFI_STATUS      Status = EFI_NOT_READY;
@@ -638,7 +638,7 @@ EFI_STATUS egScreenShot(VOID)
   UINTN           FileDataLength = 0U;
   Screen.ToPNG(&FileData, FileDataLength);
   //save file with a first unoccupied name
-  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
+  XStringWP CommonName(L"EFI\\CLOVER\\misc\\screenshot");
   for (UINTN Index = 0; Index < 60; Index++) {
 //    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
     XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";

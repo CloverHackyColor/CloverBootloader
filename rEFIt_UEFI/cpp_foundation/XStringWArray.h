@@ -12,11 +12,13 @@
 #include "XToolsCommon.h"
 #include "XObjArray.h"
 #include "XStringW.h"
+#include "XStringWP.h"
 
 
 #define XStringWArraySuper XObjArray<XStringW>
 class XStringWArray : public XStringWArraySuper
 {
+
   public:
 
 	XStringWArray();
@@ -26,7 +28,7 @@ class XStringWArray : public XStringWArraySuper
 	bool IsNull() const { return size() == 0 ; }
 	bool NotNull() const { return size() > 0 ; }
 
-	XStringW ConcatAll(XStringW Separator = L", ", XStringW Prefix = L"", XStringW Suffix = L"") const;
+	XStringW ConcatAll(XStringW Separator = XStringWP(L", "), XStringW Prefix = XStringWP(L""), XStringW Suffix = XStringWP(L"")) const;
 
 	bool Equal(const XStringWArray &aStrings) const;
 	bool operator ==(const XStringWArray &aXStrings) const { return Equal(aXStrings); }
@@ -48,6 +50,6 @@ class XStringWArray : public XStringWArraySuper
 };
 
 extern const XStringWArray NullXStringws;
-XStringWArray Split(const XStringW &S, const XStringW &Separator = L", ");
+XStringWArray Split(const XStringW &S, const XStringW &Separator = XStringWP(L", "));
 
 #endif

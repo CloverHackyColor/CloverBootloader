@@ -16,17 +16,15 @@
 		9A0B085C2402FF8B00E2B470 /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08552402FE9B00E2B470 /* XStringW_test.cpp */; };
 		9A0B085E240300E000E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08482402FE9300E2B470 /* XStringW.cpp */; };
-		9A0B08662403144C00E2B470 /* global1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global1.cpp */; };
-		9A0B08672403144C00E2B470 /* global2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08652403144C00E2B470 /* global2.cpp */; };
+		9A0B08662403144C00E2B470 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
 		9A0B086D24039FE700E2B470 /* printf_lite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086B24039FE700E2B470 /* printf_lite.cpp */; };
 		9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
 		9A0B08742403B08400E2B470 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A0B08752403B08400E2B470 /* printf_lite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B086B24039FE700E2B470 /* printf_lite.cpp */; };
 		9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
-		9A0B08782403B08400E2B470 /* global2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08652403144C00E2B470 /* global2.cpp */; };
 		9A0B08792403B08400E2B470 /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08482402FE9300E2B470 /* XStringW.cpp */; };
 		9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08512402FE9B00E2B470 /* all_tests.cpp */; };
-		9A0B087B2403B08400E2B470 /* global1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global1.cpp */; };
+		9A0B087B2403B08400E2B470 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
 		9A0B087C2403B08400E2B470 /* XToolsCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08492402FE9300E2B470 /* XToolsCommon.cpp */; };
 		9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */; };
 		9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
@@ -35,6 +33,8 @@
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9AA05BB7240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */; };
 		9AA05BB8240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */; };
+		9AC780AE2417DD2F005CDD5C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780A32417DD2F005CDD5C /* panic.cpp */; };
+		9AC780AF2417DD2F005CDD5C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780A32417DD2F005CDD5C /* panic.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -78,8 +78,7 @@
 		9A0B08552402FE9B00E2B470 /* XStringW_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringW_test.cpp; sourceTree = "<group>"; };
 		9A0B085D240300E000E2B470 /* Platform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9A0B08632403132300E2B470 /* XStringW_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringW_test.h; sourceTree = "<group>"; };
-		9A0B08642403144C00E2B470 /* global1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global1.cpp; sourceTree = "<group>"; };
-		9A0B08652403144C00E2B470 /* global2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global2.cpp; sourceTree = "<group>"; };
+		9A0B08642403144C00E2B470 /* global_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global_test.cpp; sourceTree = "<group>"; };
 		9A0B086B24039FE700E2B470 /* printf_lite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printf_lite.cpp; path = "../../../../../Embedded/Shared/printf_lite-master/printf_lite.cpp"; sourceTree = "<group>"; };
 		9A0B086C24039FE700E2B470 /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printf_lite.h; path = "../../../../../Embedded/Shared/printf_lite-master/printf_lite.h"; sourceTree = "<group>"; };
 		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +87,8 @@
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utf8Conversion.cpp; sourceTree = "<group>"; };
 		9AA05BB9240FC796008EA4F8 /* utf8Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utf8Conversion.h; sourceTree = "<group>"; };
+		9AC780A32417DD2F005CDD5C /* panic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = panic.cpp; sourceTree = "<group>"; };
+		9AC780A62417DD2F005CDD5C /* panic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = panic.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,8 +132,7 @@
 		9A0B084C2402FE9B00E2B470 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
-				9A0B08642403144C00E2B470 /* global1.cpp */,
-				9A0B08652403144C00E2B470 /* global2.cpp */,
+				9A0B08642403144C00E2B470 /* global_test.cpp */,
 				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
 				9A0B08632403132300E2B470 /* XStringW_test.h */,
@@ -154,6 +154,7 @@
 				9A0B08432402FE9300E2B470 /* cpp_foundation */,
 				9A0B084C2402FE9B00E2B470 /* cpp_unit_test */,
 				9A92232F2402FD1000483CBA /* cpp_tests */,
+				9AC7809C2417DD2F005CDD5C /* cpp_util */,
 				9A92232E2402FD1000483CBA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -176,6 +177,16 @@
 			);
 			name = cpp_tests;
 			path = src;
+			sourceTree = "<group>";
+		};
+		9AC7809C2417DD2F005CDD5C /* cpp_util */ = {
+			isa = PBXGroup;
+			children = (
+				9AC780A32417DD2F005CDD5C /* panic.cpp */,
+				9AC780A62417DD2F005CDD5C /* panic.h */,
+			);
+			name = cpp_util;
+			path = ../../rEFIt_UEFI/cpp_util;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,10 +268,10 @@
 				9A0B08752403B08400E2B470 /* printf_lite.cpp in Sources */,
 				9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */,
 				9AA05BB8240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,
-				9A0B08782403B08400E2B470 /* global2.cpp in Sources */,
+				9AC780AF2417DD2F005CDD5C /* panic.cpp in Sources */,
 				9A0B08792403B08400E2B470 /* XStringW.cpp in Sources */,
 				9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */,
-				9A0B087B2403B08400E2B470 /* global1.cpp in Sources */,
+				9A0B087B2403B08400E2B470 /* global_test.cpp in Sources */,
 				9A0B087C2403B08400E2B470 /* XToolsCommon.cpp in Sources */,
 				9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
@@ -278,10 +289,10 @@
 				9A0B086D24039FE700E2B470 /* printf_lite.cpp in Sources */,
 				9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */,
 				9AA05BB7240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,
-				9A0B08672403144C00E2B470 /* global2.cpp in Sources */,
+				9AC780AE2417DD2F005CDD5C /* panic.cpp in Sources */,
 				9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
-				9A0B08662403144C00E2B470 /* global1.cpp in Sources */,
+				9A0B08662403144C00E2B470 /* global_test.cpp in Sources */,
 				9A0B08572402FF7A00E2B470 /* XToolsCommon.cpp in Sources */,
 				9A0B08582402FF7F00E2B470 /* XStringWArray_test.cpp in Sources */,
 				9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */,
@@ -350,10 +361,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					JIEF_DEBUG,
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -413,6 +421,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -436,6 +445,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = JIEF_DEBUG;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;

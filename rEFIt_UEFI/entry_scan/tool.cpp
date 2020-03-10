@@ -90,7 +90,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
   }
 
   if (FullTitle) {
-    Entry->Title = EfiStrDuplicate(FullTitle);
+    Entry->Title.takeValueFrom(FullTitle);
   } else {
     Entry->Title.SPrintf("Start %ls", LoaderTitle);
   }
@@ -121,9 +121,9 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
 //  EFI_STATUS        Status;
 
   // prepare the menu entry
-  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
-//  Entry = new REFIT_MENU_ENTRY_CLOVER();
-  Entry->Title          = LoaderTitle;
+//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
+  Entry = new REFIT_MENU_ENTRY_CLOVER();
+  Entry->Title.takeValueFrom(LoaderTitle);
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;
   Entry->ShortcutLetter = 'C';
@@ -158,21 +158,21 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
 //always add and always remove menu entries
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
-    SubEntry->Title        = EfiStrDuplicate(L"Add Clover boot options for all entries");
+    SubEntry->Title.SPrintf("Add Clover boot options for all entries");
     SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-ADD");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
-    SubEntry->Title        = EfiStrDuplicate(L"Remove all Clover boot options");
+    SubEntry->Title.SPrintf("Remove all Clover boot options");
     SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-REMOVE");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
-    SubEntry->Title        = EfiStrDuplicate(L"Print all UEFI boot options to log");
+    SubEntry->Title.SPrintf("Print all UEFI boot options to log");
     SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-PRINT");
     SubScreen->AddMenuEntry(SubEntry, true);
   }

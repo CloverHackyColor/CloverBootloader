@@ -26,11 +26,17 @@ void XStringWArray::AddStrings(const wchar_t *Val1, ...)
   VA_LIST va;
   const wchar_t *p;
 
-	AddCopy(Val1);
+	{
+		XStringW* newS = new XStringW;
+		newS->takeValueFrom(Val1);
+		AddReference(newS, true);
+	}
 	VA_START(va, Val1);
 	p = VA_ARG(va, const wchar_t *);
 	while ( p != nullptr ) {
-		AddCopy(p);
+		XStringW* newS = new XStringW;
+		newS->takeValueFrom(Val1);
+		AddReference(newS, true);
 		p = VA_ARG(va, const wchar_t *);
 	}
 	VA_END(va);

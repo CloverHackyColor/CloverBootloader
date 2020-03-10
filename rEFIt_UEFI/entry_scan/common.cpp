@@ -312,7 +312,9 @@ STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Informa
   while ((Index < Total) &&
          ((Ptr2 = (CHAR16*)StrStr(Ptr2, L"\n")) != NULL)) { // cast is ok because FilePath is not const, and we know that StrStr returns a pointer in FilePath. Will disappear when using a string object instead of CHAR16*
     *Ptr2++ = 0;
-    Information->Add(XStringW(Ptr2));
+    XStringW* s = new XStringW;
+    s->takeValueFrom(Ptr2);
+    Information->AddReference(s, true);
 //    Information[Index++] = Ptr2;
   }
 //  // Return the info lines
@@ -354,8 +356,8 @@ VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
 #define TAG_NO  2
 
 //REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
-STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { L"Yes", TAG_YES, ActionEnter };
-STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { L"No", TAG_NO, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { XStringWP(L"Yes"), TAG_YES, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { XStringWP(L"No"), TAG_NO, ActionEnter };
 
 //REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, NULL, NULL, &YesMessageEntry, &NoMessageEntry);
@@ -435,7 +437,7 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
         ((Volume->DevicePathString == NULL) && (Volume->VolName == NULL))) {
       continue;
     }
-    REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG((Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName, TAG_OFFSET + Index, MENU_EXIT_ENTER);
+    REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG(XStringWP((Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName), TAG_OFFSET + Index, MENU_EXIT_ENTER);
 //    Entry = Entries[Count++] = EntryPtr++;
 //    Entry->Title = (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName;
 //    Entry->Tag = TAG_OFFSET + Index;

@@ -85,7 +85,7 @@ extern "C" {
 
 // cpp_foundation objects has to be included before lib.h
 #ifdef __cplusplus
-#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XStringWP.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_util/remove_ref.h"

@@ -28,11 +28,10 @@ public:
 	void Init(UINTN aSize=0);
 	XStringW();
 	XStringW(const XStringW &aString);
-	XStringW(const wchar_t *);
-	XStringW(const wchar_t* S, UINTN count);
-	XStringW(const wchar_t);
-
-	XStringW(const char*);
+//	XStringW(const wchar_t *);
+//	XStringW(const wchar_t* S, UINTN count);
+//	XStringW(const wchar_t);
+//	XStringW(const char*);
 
 	~XStringW();
 
@@ -99,8 +98,11 @@ public:
 
 
 	const XStringW &operator =(const XStringW &aString);
-	const XStringW &operator =(const wchar_t* S);
-	const XStringW &operator =(wchar_t);
+//	const XStringW &operator =(const wchar_t* S) {fdsf};
+//	const XStringW &operator =(wchar_t);
+
+	const XStringW& takeValueFrom(const wchar_t* S);
+	const XStringW& takeValueFrom(const char* S);
 
 	const XStringW &operator += (const XStringW &);
 	const XStringW &operator += (const wchar_t* S);
@@ -146,7 +148,7 @@ public:
 	friend XStringW operator + (const XStringW& p1, const XStringW& p2) { XStringW s; s=p1; s+=p2; return s; }
 	//    with const wchar_t
 	friend XStringW operator + (const XStringW& p1, const wchar_t *p2  ) { XStringW s; s=p1; s+=p2; return s; }
-	friend XStringW operator + (const wchar_t *p1,   const XStringW& p2) { XStringW s; s=p1; s+=p2; return s; }
+	friend XStringW operator + (const wchar_t *p1,   const XStringW& p2) { XStringW s; s.StrCat(p1); s.StrCat(p2); return s; }
 //	//    with wchar_t
 //	friend XStringW operator + (const XStringW& p1, wchar_t p2         ) { XStringW s; s=p1; s+=p2; return s; }
 //	friend XStringW operator + (wchar_t p1,   const XStringW& p2       ) { XStringW s; s=p1; s+=p2; return s; }

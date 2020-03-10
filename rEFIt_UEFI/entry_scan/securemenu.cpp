@@ -441,7 +441,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
     REFIT_MENU_ENTRY *ChosenEntry = NULL;
     EFI_DEVICE_PATH  *DevicePath = NULL;
     // Add the entry for secure boot policy
-    SecureBootPolicyEntry.Title = PoolPrint(L"Secure boot policy: %s", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+    SecureBootPolicyEntry.Title.SPrintf("Secure boot policy: %ls", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
     if (SecureBootPolicyEntry.Title.isEmpty()) {
       break;
     }

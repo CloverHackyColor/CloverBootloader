@@ -56,34 +56,60 @@ DBG("Constructor(const XStringW &aString) : %s\n", aString.data());
 	Init(aString.length());
 	StrnCpy(aString.data(), aString.length());
 }
+//
+//XStringW::XStringW(const wchar_t *S)
+//{
+//	if ( !S ) {
+//		DebugLog(2, "XStringW(const wchar_t *S) called with NULL. Use setEmpty()\n");
+//		panic();
+//	}
+//DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
+//	Init(StrLen(S));
+//	StrCpy(S);
+//}
+//
+//XStringW::XStringW(const wchar_t *S, UINTN count)
+//{
+//DBG("Constructor(const wchar_t *S, UINTN count) : %s, %d\n", S, count);
+//	Init(count);
+//	StrnCpy(S, count);
+//}
+//
+//XStringW::XStringW(const wchar_t aChar)
+//{
+//DBG("Constructor(const wchar_t aChar)\n");
+//	Init(1);
+//	StrnCpy(&aChar, 1);
+//}
+//
+//XStringW::XStringW(const char* S)
+//{
+//DBG("Constructor(const char* S)\n");
+//	xsize newLen = StrLenInWChar(S, AsciiStrLen(S));
+//	Init(newLen);
+//	utf8ToWChar(m_data, m_allocatedSize+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
+//	SetLength(newLen);
+//}
 
-XStringW::XStringW(const wchar_t *S)
+const XStringW& XStringW::takeValueFrom(const wchar_t* S)
 {
-DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
+	if ( !S ) {
+		DebugLog(2, "takeValueFrom(const wchar_t* S) called with NULL. Use setEmpty()\n");
+		panic();
+	}
 	Init(StrLen(S));
-	if ( S ) StrCpy(S);
+	StrCpy(S);
+	return *this;
 }
 
-XStringW::XStringW(const wchar_t *S, UINTN count)
+const XStringW& XStringW::takeValueFrom(const char* S)
 {
-DBG("Constructor(const wchar_t *S, UINTN count) : %s, %d\n", S, count);
-	Init(count);
-	StrnCpy(S, count);
-}
-
-XStringW::XStringW(const wchar_t aChar)
-{
-DBG("Constructor(const wchar_t aChar)\n");
-	Init(1);
-	StrnCpy(&aChar, 1);
-}
-
-XStringW::XStringW(const char* S)
-{
-DBG("Constructor(const char* S)\n");
-	xsize newLen = StrLenInWChar(S, AsciiStrLen(S));
+	UINTN asciiStrLen = AsciiStrLen(S);
+	xsize newLen = StrLenInWChar(S, asciiStrLen);
 	Init(newLen);
-	utf8ToWChar(m_data, m_allocatedSize+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
+	utf8ToWChar(m_data, m_allocatedSize+1, S, asciiStrLen); // m_size doesn't count the NULL terminator
+	SetLength(newLen);
+	return *this;
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -133,11 +159,15 @@ wchar_t *XStringW::CheckSize(UINTN nNewSize, UINTN nGrowBy)
 
 void XStringW::StrnCpy(const wchar_t *buf, UINTN len)
 {
+	UINTN newLen = 0;
 	if ( buf && *buf && len > 0 ) {
 		CheckSize(len, 0);
-		Xmemmove(data(), buf, len*sizeof(wchar_t));
+		while ( *buf && newLen < len ) {
+			m_data[newLen++] = *buf++;
+		}
+//		Xmemmove(data(), buf, len*sizeof(wchar_t));
 	}
-	SetLength(len); /* data()[len]=0 done in SetLength */
+	SetLength(newLen); /* data()[len]=0 done in SetLength */
 }
 
 void XStringW::StrCpy(const wchar_t *buf)
@@ -281,7 +311,9 @@ XStringW XStringW::dirname() const
 XStringW XStringW::SubString(UINTN pos, UINTN count) const
 {
 	if ( count > length()-pos ) count = length()-pos;
-	return XStringW( &(data()[pos]), count);
+	XStringW ret;
+	ret.StrnCat(&(data()[pos]), count);
+	return ret;
 }
 
 UINTN XStringW::IdxOf(wchar_t aChar, UINTN Pos) const
@@ -424,13 +456,6 @@ void XStringW::RemoveLastEspCtrl()
 //
 //*************************************************************************************************
 
-const XStringW &XStringW::operator =(wchar_t aChar)
-{
-//TRACE("Operator =wchar_t \n");
-	StrnCpy(&aChar, 1);
-	return *this;
-}
-
 const XStringW &XStringW::operator =(const XStringW &aString)
 {
 //TRACE("Operator =const XStringW&\n");
@@ -438,16 +463,24 @@ const XStringW &XStringW::operator =(const XStringW &aString)
 	return *this;
 }
 
-const XStringW &XStringW::operator =(const wchar_t *S)
-{
-//TRACE("Operator =const wchar_t *\n");
-	if ( S == NULL ) {
-		DBG("operator =(const wchar_t *S) called with NULL\n");
-		panic();
-	}
-	StrCpy(S);
-	return *this;
-}
+//
+//const XStringW &XStringW::operator =(wchar_t aChar)
+//{
+////TRACE("Operator =wchar_t \n");
+//	StrnCpy(&aChar, 1);
+//	return *this;
+//}
+
+//const XStringW &XStringW::operator =(const wchar_t *S)
+//{
+////TRACE("Operator =const wchar_t *\n");
+//	if ( S == NULL ) {
+//		DBG("operator =(const wchar_t *S) called with NULL\n");
+//		panic();
+//	}
+//	StrCpy(S);
+//	return *this;
+//}
 
 
 
@@ -498,7 +531,10 @@ XStringW SPrintf(const char* format, ...)
 XStringW SubString(const wchar_t *S, UINTN pos, UINTN count)
 {
 	if ( StrLen(S)-pos < count ) count = StrLen(S)-pos;
-	return ( XStringW(S+pos, count) );
+	XStringW ret;
+	ret.StrnCpy(S+pos, count);
+//	return ( XStringW(S+pos, count) );
+	return ret;
 }
 
 

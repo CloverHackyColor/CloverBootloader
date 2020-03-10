@@ -207,11 +207,11 @@ BOOLEAN mGuiReady = FALSE;
 
 
 //REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options",          1, 0, 'O', ActionEnter);
-REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover",     1, 0, 'A', ActionEnter);
-REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer", 1, 0, 'R', ActionSelect);
-REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover",      1, 0, 'U', ActionSelect);
-REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return",           0, 0,  0,  ActionEnter);
+REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (XStringWP("Options"),          1, 0, 'O', ActionEnter);
+REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (XStringWP("About Clover"),     1, 0, 'A', ActionEnter);
+REFIT_MENU_ITEM_RESET    MenuEntryReset   (XStringWP("Restart Computer"), 1, 0, 'R', ActionSelect);
+REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(XStringWP("Exit Clover"),      1, 0, 'U', ActionSelect);
+REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (XStringWP("Return"),           0, 0,  0,  ActionEnter);
 
 
 
@@ -1344,7 +1344,7 @@ VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST CHAR16 *Line)
 
 //  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs = new REFIT_INFO_DIALOG;
-  InputBootArgs->Title.SPrintf("%ls", Line);
+  InputBootArgs->Title.takeValueFrom(Line);
 //  InputBootArgs->Tag = TAG_INFO;
 //  InputBootArgs->Item = NULL;
   InputBootArgs->AtClick = ActionLight;
@@ -2175,7 +2175,9 @@ VOID REFIT_MENU_SCREEN::KillMouse()
 
 VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN CONST CHAR16 *InfoLine)
 {
-  InfoLines.Add(InfoLine);
+  XStringW* s = new XStringW();
+  s->takeValueFrom(InfoLine);
+   InfoLines.AddReference(s, true);
 //  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLines.size()), (CHAR16*)InfoLine); // TODO jief : cast to fix
 }
 
@@ -2205,28 +2207,31 @@ VOID REFIT_MENU_SCREEN::FreeMenu()
         Tentry->SubScreen->FreeMenu();
         Tentry->SubScreen = NULL;
       }
-      if (Tentry->getREFIT_MENU_ITEM_RETURN()) { //can't free constants
-        if (Tentry->Title) {
-          FreePool(Tentry->Title);
-          Tentry->Title = NULL;
-        }
-      }
-      FreePool(Tentry);
+// Title is a XStringW. It'll be destroyed in REFIT_MENU_SCREEN dtor
+//      if (Tentry->getREFIT_MENU_ITEM_RETURN()) { //can't free constants
+//        if (Tentry->Title) {
+//          FreePool(Tentry->Title);
+//          Tentry->Title = NULL;
+//        }
+//      }
+// Tentry is an object inserted in a XArray. It'll deleted at Entries.Empty()
+//      FreePool(Tentry);
     }
     Entries.Empty();
 //    FreePool(Screen->Entries);
 //    Screen->Entries = NULL;
   }
-  if (InfoLines.size() > 0) {
-    for (UINTN i = 0; i < InfoLines.size(); i++) {
-      // TODO: call a user-provided routine for each element here
-      FreePool(InfoLines[i]);
-    }
-    InfoLines.Empty();
+// Infolines will deleted at InfoLines.Empty()
+//  if (InfoLines.size() > 0) {
+//    for (UINTN i = 0; i < InfoLines.size(); i++) {
+//      // TODO: call a user-provided routine for each element here
+//      FreePool(InfoLines[i]);
+//    }
 //    Screen->InfoLines.size() = 0;
 //    FreePool(Screen->InfoLines);
 //    Screen->InfoLines = NULL;
-  }
+//  }
+    InfoLines.Empty();
 
 }
 
@@ -4353,7 +4358,7 @@ UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
 REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
-    Entry->Title.SPrintf("%s", Title);
+    Entry->Title.takeValueFrom(Title);
 //  if (Title) {
 //  } else {
 //    Entry->Title = (__typeof__(Entry->Title))AllocateZeroPool(128);
@@ -4395,7 +4400,7 @@ VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 
 //  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs = new REFIT_MENU_CHECKBIT;
-  InputBootArgs->Title.SPrintf("%s", Text);
+  InputBootArgs->Title.takeValueFrom(Text);
 //  InputBootArgs->Tag = TAG_CHECKBIT_OLD;
   InputBootArgs->Row = Bit;
   InputBootArgs->Item = &InputItems[ItemNum];
@@ -4431,7 +4436,7 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 
 VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
-  InputBootArgs->Title.SPrintf("%s", Line);
+  InputBootArgs->Title.takeValueFrom(Line);
   if (Inx == 3 || Inx == 116) {
     InputBootArgs->Row          = 0;
   } else {
@@ -5115,7 +5120,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()  //yyyy
   for (Index = 0; Index < PatchDsdtNum; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title.SPrintf("%s", gSettings.PatchDsdtLabel[Index]);
+    InputBootArgs->Title.takeValueFrom(gSettings.PatchDsdtLabel[Index]);
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &DSDTPatchesMenu[Index];
@@ -5143,7 +5148,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
   for (i = 0; i < DsdtsNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title.SPrintf("%ls", DsdtsList[i]);
+    InputBootArgs->Title.takeValueFrom(DsdtsList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[116];
@@ -5328,7 +5333,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
   for (i = 0; i < ThemesNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title.SPrintf("%ls", ThemesList[i]);
+    InputBootArgs->Title.takeValueFrom(ThemesList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[3];
@@ -5464,7 +5469,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
   for (i = 0; i < ConfigsNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title.SPrintf("%ls", ConfigsList[i]);
+    InputBootArgs->Title.takeValueFrom(ConfigsList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[90];

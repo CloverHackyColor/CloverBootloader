@@ -1,9 +1,9 @@
 #include "panic.h"
-#include "../Platform/Platform.h"
+#include <Platform.h>
 
-extern "C" {
-#include <Library/BaseLib.h> // for CpuDeadLoop
-}
+//extern "C" {
+//#include <Library/BaseLib.h> // for CpuDeadLoop
+//}
 
 /*
  *
