@@ -1,4 +1,4 @@
 #include "../cpp_foundation/XStringW.h"
 
-extern XStringW global_str1;
-extern XStringW global_str2;
+extern XStringWP global_str1;
+extern XStringWP global_str2;
