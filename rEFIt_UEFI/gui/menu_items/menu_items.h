@@ -96,7 +96,7 @@ class XPointer;
 class REFIT_ABSTRACT_MENU_ENTRY
 {
   public:
-  CONST CHAR16       *Title;
+  XStringW          Title;
   UINTN              Row;
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
@@ -131,7 +131,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual REFIT_MENU_ENTRY_ITEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
   virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return nullptr; };
 
-  REFIT_ABSTRACT_MENU_ENTRY() : Title(NULL), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+  REFIT_ABSTRACT_MENU_ENTRY() : Title(""), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
 	{};
   REFIT_ABSTRACT_MENU_ENTRY(CONST CHAR16 *Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
 	{};

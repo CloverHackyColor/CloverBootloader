@@ -441,6 +441,10 @@ const XStringW &XStringW::operator =(const XStringW &aString)
 const XStringW &XStringW::operator =(const wchar_t *S)
 {
 //TRACE("Operator =const wchar_t *\n");
+	if ( S == NULL ) {
+		DBG("operator =(const wchar_t *S) called with NULL\n");
+		panic();
+	}
 	StrCpy(S);
 	return *this;
 }

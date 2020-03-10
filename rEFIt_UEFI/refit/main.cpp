@@ -1071,7 +1071,7 @@ static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
   DBG("Start Tool: %s\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);
 	// assumes "Start <title>" as assigned below
-	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->Title + 6);
+	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), &Entry->Title[6]); // Shouldn't we check that length of Title is at least 6 ?
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
 	//ReinitSelfLib();
@@ -1581,7 +1581,7 @@ INTN FindDefaultEntry(VOID)
   Index = FindStartupDiskVolume(&MainMenu);
 
   if (Index >= 0) {
-    DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index].Title);
+    DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index].Title.s());
     // we got boot-device-data, no need to keep emulating anymore
     if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1622,7 +1622,7 @@ INTN FindDefaultEntry(VOID)
         continue;
       }
 
-      DBG(" - found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry.Title, Volume->VolName, Entry.DevicePathString);
+      DBG(" - found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry.Title.s(), Volume->VolName, Entry.DevicePathString);
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
