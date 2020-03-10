@@ -104,10 +104,10 @@ EFI_STATUS XPointer::MouseBirth()
 
 VOID XPointer::Draw()
 {
-
+  oldPlace = newPlace;
+//  CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
 // take background image for later to restore background
   oldImage.GetArea(newPlace);
-  CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
   PointerImage->Draw(newPlace.XPos, newPlace.YPos, 0.f); //zero means no scale
 }
 
@@ -184,7 +184,7 @@ VOID XPointer::UpdatePointer()
     if (newPlace.YPos < 0) newPlace.YPos = 0;
     if (newPlace.YPos > UGAHeight - 1) newPlace.YPos = UGAHeight - 1;
 
-    if ( CompareMem(&oldPlace, &newPlace, sizeof(__typeof__(oldPlace))) != 0 ) {
+    if ( oldPlace != newPlace ) {
       Hide();
       Draw();
     }

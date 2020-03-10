@@ -77,7 +77,7 @@ INTN   UGAWidth;
 INTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
 
-EG_RECT  BannerPlace = {0, 0, 0, 0};
+EG_RECT  BannerPlace; // default ctor called, so it's zero
 
 EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
