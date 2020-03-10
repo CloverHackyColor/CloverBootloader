@@ -288,7 +288,7 @@ EFI_STATUS ReinitSelfLib(VOID)
                                   &TmpDevicePath,
                                   &NewSelfHandle);
   CheckError(Status, L"while reopening our self handle");
- // DBG("new SelfHandle=%x\n", NewSelfHandle);
+  DBG("new SelfHandle=%x\n", NewSelfHandle);
   
   SelfRootDir = EfiLibOpenRoot(NewSelfHandle);
   if (SelfRootDir == NULL) {
