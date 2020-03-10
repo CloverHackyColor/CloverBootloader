@@ -1142,7 +1142,7 @@ FindStartupDiskVolume (
           // case insensitive cmp
           if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-            DBG ("    - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderPath);
+            DBG ("    - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
             return Index;
           }
         }
@@ -1165,7 +1165,7 @@ FindStartupDiskVolume (
           // case insensitive cmp
           if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-            DBG ("   - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderPath);
+            DBG ("   - found entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
             return Index;
           }
         }
@@ -1188,7 +1188,7 @@ FindStartupDiskVolume (
         Volume = MainMenu->Entries[Index].getLOADER_ENTRY()->Volume;
       }
       if (Volume != NULL && BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
-        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index].Title, Volume->VolName);
+        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index].Title.s(), Volume->VolName);
         return Index;
       }
     }
@@ -1205,7 +1205,7 @@ FindStartupDiskVolume (
         Volume = MainMenu->Entries[Index].getLOADER_ENTRY()->Volume;
       }
       if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
-        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index].Title, Volume->VolName);
+        DBG ("    - found entry %d. '%s', Volume '%s'\n", Index, MainMenu->Entries[Index].Title.s(), Volume->VolName);
         return Index;
       }
     }
@@ -1251,7 +1251,7 @@ FindStartupDiskVolume (
         //DBG ("   OSType = %d\n", Volume->OSType);
         if (Volume->LegacyOS->Type == OSTYPE_WIN) {
           // that's the one - legacy win partition
-          DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry.Title, Volume->VolName);
+          DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry.Title.s(), Volume->VolName);
           return Index;
         }
       }
@@ -1266,7 +1266,7 @@ FindStartupDiskVolume (
         //DBG ("   LoaderType = %d\n", LoaderEntry.LoaderType);
         if (LoaderEntry.LoaderType == OSTYPE_WINEFI) {
           // that's the one - win loader entry
-          DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderEntry.LoaderPath);
+          DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
           return Index;
         }
       }
@@ -1286,7 +1286,7 @@ FindStartupDiskVolume (
       Volume = LegacyEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-        DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry.Title, Volume->VolName);
+        DBG ("    - found legacy entry %d. '%s', Volume '%s'\n", Index, LegacyEntry.Title.s(), Volume->VolName);
 
         return Index;
       }
@@ -1295,7 +1295,7 @@ FindStartupDiskVolume (
       Volume = LoaderEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-        DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title, Volume->VolName, LoaderEntry.LoaderPath);
+        DBG ("    - found loader entry %d. '%s', Volume '%s', '%s'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
 
         return Index;
       }

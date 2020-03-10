@@ -92,7 +92,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
   if (FullTitle) {
     Entry->Title = EfiStrDuplicate(FullTitle);
   } else {
-    Entry->Title = PoolPrint(L"Start %s", LoaderTitle);
+    Entry->Title.SPrintf("Start %ls", LoaderTitle);
   }
 //  Entry->Tag = TAG_TOOL;
   Entry->Row = 1;

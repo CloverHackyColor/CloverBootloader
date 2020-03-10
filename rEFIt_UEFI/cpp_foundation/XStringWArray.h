@@ -37,7 +37,7 @@ class XStringWArray : public XStringWArraySuper
     // Add
     void AddStrings(const wchar_t *Val1, ...);
 
-	void AddNoNull(const XStringW &aString) { if ( aString.NotNull() ) AddCopy(aString); }
+	void AddNoNull(const XStringW &aString) { if ( !aString.isEmpty() ) AddCopy(aString); }
 	void AddEvenNull(const XStringW &aString) { AddCopy(aString); }
 
 	void Add(const XStringW &aString) { AddCopy(aString); }

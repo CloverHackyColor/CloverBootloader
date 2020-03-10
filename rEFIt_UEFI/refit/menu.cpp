@@ -1344,7 +1344,7 @@ VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST CHAR16 *Line)
 
 //  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs = new REFIT_INFO_DIALOG;
-  InputBootArgs->Title = PoolPrint(L"%s", Line);
+  InputBootArgs->Title.SPrintf("%ls", Line);
 //  InputBootArgs->Tag = TAG_INFO;
 //  InputBootArgs->Item = NULL;
   InputBootArgs->AtClick = ActionLight;
@@ -1404,7 +1404,7 @@ VOID AboutRefit(VOID)
       EntryCount instead of InfoLineCount. Lastline == return/back. Is necessary recheck screen res here?
     */
     FreePool(AboutMenu.Entries[AboutMenu.Entries.size()-2].Title);
-    AboutMenu.Entries[AboutMenu.Entries.size()-2].Title = PoolPrint(L" Screen Output: %s", egScreenDescription());
+    AboutMenu.Entries[AboutMenu.Entries.size()-2].Title.SPrintf(" Screen Output: %ls", egScreenDescription());
   }
 
   AboutMenu.RunMenu(NULL);
@@ -4353,11 +4353,11 @@ UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
 REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
-  if (Title) {
-    Entry->Title = PoolPrint(L"%a", Title);
-  } else {
-    Entry->Title = (__typeof__(Entry->Title))AllocateZeroPool(128);
-  }
+    Entry->Title.SPrintf("%s", Title);
+//  if (Title) {
+//  } else {
+//    Entry->Title = (__typeof__(Entry->Title))AllocateZeroPool(128);
+//  }
 
   Entry->Image =  OptionMenu.TitleImage;
   Entry->AtClick = AtClick;
@@ -4395,7 +4395,7 @@ VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 
 //  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs = new REFIT_MENU_CHECKBIT;
-  InputBootArgs->Title = PoolPrint(L"%a", Text);
+  InputBootArgs->Title.SPrintf("%s", Text);
 //  InputBootArgs->Tag = TAG_CHECKBIT_OLD;
   InputBootArgs->Row = Bit;
   InputBootArgs->Item = &InputItems[ItemNum];
@@ -4407,11 +4407,13 @@ VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
-    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
+//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
+    ChosenEntry->Title.SPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
     //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
-    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
+//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
+    ChosenEntry->Title.SPrintf("System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
     // check for the right booter flag to allow the application
     // of the new System Integrity Protection configuration.
     if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
@@ -4419,15 +4421,17 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     }
 
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
+//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
+    ChosenEntry->Title.SPrintf("boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
   } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
+//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
+    ChosenEntry->Title.SPrintf("Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
   }
 }
 
 VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
-  InputBootArgs->Title          = PoolPrint(L"%a", Line);
+  InputBootArgs->Title.SPrintf("%s", Line);
   if (Inx == 3 || Inx == 116) {
     InputBootArgs->Row          = 0;
   } else {
@@ -4641,7 +4645,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextPatches()
   for (Index = 0; Index < NrKexts; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title = PoolPrint(L"%30a", KextPatchesMenu[Index].Label);
+    InputBootArgs->Title.SPrintf("%30s", KextPatchesMenu[Index].Label);
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &(KextPatchesMenu[Index].MenuItem);
@@ -4682,7 +4686,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
     	}
 //      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title = PoolPrint(L"%s, v.%s", Kext->FileName, Kext->Version);
+      InputBootArgs->Title.SPrintf("%ls, v.%ls", Kext->FileName, Kext->Version);
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(Kext->MenuItem);
@@ -4694,7 +4698,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
       while (plugInKext) {
 //        InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
         InputBootArgs = new REFIT_INPUT_DIALOG;
-        InputBootArgs->Title = PoolPrint(L"  |-- %s, v.%s", plugInKext->FileName, plugInKext->Version);
+        InputBootArgs->Title.SPrintf("  |-- %ls, v.%ls", plugInKext->FileName, plugInKext->Version);
 //        InputBootArgs->Tag = TAG_INPUT;
         InputBootArgs->Row = 0xFFFF; //cursor
         InputBootArgs->Item = &(plugInKext->MenuItem);
@@ -4848,7 +4852,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKernelPatches()
   for (Index = 0; Index < NrKernels; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title = PoolPrint(L"%30a", KernelPatchesMenu[Index].Label);
+    InputBootArgs->Title.SPrintf("%30s", KernelPatchesMenu[Index].Label);
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &(KernelPatchesMenu[Index].MenuItem);
@@ -4875,7 +4879,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBootPatches()
   for (Index = 0; Index < NrBoots; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title = PoolPrint(L"%30a", BootPatchesMenu[Index].Label);
+    InputBootArgs->Title.SPrintf("%30s", BootPatchesMenu[Index].Label);
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &(BootPatchesMenu[Index].MenuItem);
@@ -4948,7 +4952,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
       //       DropTable->Length, DropTable->Length);
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title = PoolPrint(L"Drop \"%4.4a\" \"%8.8a\" %d", sign, OTID, DropTable->Length);
+      InputBootArgs->Title.SPrintf("Drop \"%4.4s\" \"%8.8s\" %d", sign, OTID, DropTable->Length);
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(DropTable->MenuItem);
@@ -4969,7 +4973,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
     while (ACPIPatchedAMLTmp) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title = PoolPrint(L"Drop \"%s\"", ACPIPatchedAMLTmp->FileName);
+      InputBootArgs->Title.SPrintf("Drop \"%ls\"", ACPIPatchedAMLTmp->FileName);
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(ACPIPatchedAMLTmp->MenuItem);
@@ -5022,7 +5026,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
 
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSM, NULL);
-  //  Entry->Title = PoolPrint(L"Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
+  //  Entry->Title.SPrintf("Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Choose devices to drop OEM _DSM methods from DSDT"));
@@ -5055,7 +5059,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 //  REFIT_INPUT_DIALOG *InputBootArgs;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NULL);
-  //  Entry->Title = PoolPrint(L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+  //  Entry->Title.SPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
 
   SubScreen->AddMenuCheck("Add DTGP",     FIX_DTGP, 67);
   SubScreen->AddMenuCheck("Fix Darwin as WinXP",   FIX_WARNING, 67);
@@ -5111,7 +5115,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()  //yyyy
   for (Index = 0; Index < PatchDsdtNum; Index++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title = PoolPrint(L"%a", gSettings.PatchDsdtLabel[Index]);
+    InputBootArgs->Title.SPrintf("%s", gSettings.PatchDsdtLabel[Index]);
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &DSDTPatchesMenu[Index];
@@ -5139,7 +5143,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
   for (i = 0; i < DsdtsNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title = PoolPrint(L"%s", DsdtsList[i]);
+    InputBootArgs->Title.SPrintf("%ls", DsdtsList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[116];
@@ -5192,7 +5196,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   for (i = 0; i < AudioNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title = PoolPrint(L"%s_%a", AudioList[i].Name, AudioOutputNames[AudioList[i].Device]);
+    InputBootArgs->Title.SPrintf("%ls_%s", AudioList[i].Name, AudioOutputNames[AudioList[i].Device]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[119];
@@ -5211,7 +5215,7 @@ VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_INPUT_DIALOG;
-	InputBootArgs->Title = PoolPrint(L"  key: %a", Prop->Key);
+	InputBootArgs->Title.SPrintf("  key: %s", Prop->Key);
 //	InputBootArgs->Tag = TAG_INPUT;
 	InputBootArgs->Row = 0xFFFF; //cursor
 									   //     InputBootArgs->Item = ADDRESS_OF(DEV_PROPERTY, Prop, INPUT_ITEM, MenuItem);
@@ -5324,7 +5328,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
   for (i = 0; i < ThemesNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title = PoolPrint(L"%s", ThemesList[i]);
+    InputBootArgs->Title.SPrintf("%ls", ThemesList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[3];
@@ -5403,7 +5407,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NULL);
-//  Entry->Title = PoolPrint(L"boot_args->flags [0x%02x]->", gSettings.BooterConfig);
+//  Entry->Title.SPrintf("boot_args->flags [0x%02x]->", gSettings.BooterConfig);
 
   // submenu description
   SubScreen->AddMenuInfoLine(PoolPrint(L"Modify flags for boot.efi"));
@@ -5460,7 +5464,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
   for (i = 0; i < ConfigsNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title = PoolPrint(L"%s", ConfigsList[i]);
+    InputBootArgs->Title.SPrintf("%ls", ConfigsList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[90];

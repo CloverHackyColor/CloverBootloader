@@ -48,10 +48,13 @@ public:
 	UINTN size() const { return m_len; }
 	UINTN allocatedSize() const { return m_allocatedSize; }
 	void SetLength(UINTN len);
+	const wchar_t* s() { return m_data; }
 
 	/* IsNull ? */
-	bool IsNull() const { return length() == 0 ; }
-	bool NotNull() const { return length() > 0 ; }
+	void setEmpty() { m_len = 0; }
+	bool isEmpty() const { return size() == 0; }
+//	bool IsNull() const { return size() == 0 ; }
+//	bool NotNull() const { return size() > 0 ; }
 
 	/* Cast */
 	operator const wchar_t *() const { return data(); }

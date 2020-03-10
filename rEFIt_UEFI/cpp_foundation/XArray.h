@@ -97,7 +97,7 @@ class XArray
 	void RemoveAtIndex(int nIndex);
 
 	void setEmpty();
-  bool isEmpty() const { return size() == 0; }
+	bool isEmpty() const { return size() == 0; }
     
   xsize IdxOf(TYPE& e) const;
 	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; }

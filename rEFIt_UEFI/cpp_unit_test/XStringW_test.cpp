@@ -24,7 +24,7 @@ int XStringW_tests()
 	if ( str != L"12" ) return 4;
 
 	XStringW str2;
-	if ( str2.NotNull() ) return 10;
+	if ( !str2.isEmpty() ) return 10;
 	str2.StrnCpy(str.data(), 2);
 	if ( str2 != L"12" ) return 11;
 	str2.StrnCat(L"345", 2);

@@ -124,9 +124,9 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
     Entry->Title = EfiStrDuplicate(FullTitle);
   } else {
     if (GlobalConfig.BootCampStyle) {
-      Entry->Title = PoolPrint(L"%s", LoaderTitle);
+      Entry->Title.SPrintf("%ls", LoaderTitle);
     } else {
-      Entry->Title = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
+		Entry->Title.SPrintf("Boot %ls from %ls", LoaderTitle, VolDesc);
     }
   }
 //  DBG("Title=%s\n", Entry->Title);

@@ -67,12 +67,12 @@ VOID AddSecureBootTool(VOID)
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (gSettings.SecureBoot) {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
-    Entry->Title = PoolPrint(L"Clover Secure Boot Configuration");
+    Entry->Title.SPrintf("Clover Secure Boot Configuration");
 //    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
     Entry->Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
   } else {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG();
-    Entry->Title = PoolPrint(L"Enable Clover Secure Boot");
+    Entry->Title.SPrintf("Enable Clover Secure Boot");
 //    Entry->Tag = TAG_SECURE_BOOT;
     Entry->Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
   }
@@ -442,7 +442,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
     EFI_DEVICE_PATH  *DevicePath = NULL;
     // Add the entry for secure boot policy
     SecureBootPolicyEntry.Title = PoolPrint(L"Secure boot policy: %s", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
-    if (SecureBootPolicyEntry.Title == NULL) {
+    if (SecureBootPolicyEntry.Title.isEmpty()) {
       break;
     }
     SecureBootPolicyMenu.Title = SecureBootPolicyEntry.Title;

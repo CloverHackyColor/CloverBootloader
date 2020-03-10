@@ -644,38 +644,37 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       break;
   }
 
-  Entry->Title = NULL;
-    
+
   if (FullTitle) {
-    Entry->Title = EfiStrDuplicate(FullTitle);
+    Entry->Title = FullTitle;
   }
-  if ( Entry->Title == NULL  &&  Volume->VolLabel != NULL ) {
+  if ( Entry->Title.isEmpty()  &&  Volume->VolLabel != NULL ) {
     if ( Volume->VolLabel[0] == L'#' ) {
-    	Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
+    	Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
     }else{
-    	Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
+    	Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
     }
   }
   
-  if ( Entry->Title == NULL  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
+  if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
     //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     if (GlobalConfig.BootCampStyle) {
-      Entry->Title = PoolPrint(L"%s", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
+      Entry->Title.SPrintf("%ls", ((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
-      Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+      Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Basename(Volume->DevicePathString));
     }
   }
-  if ( Entry->Title == NULL ) {
+  if ( Entry->Title.isEmpty() ) {
     //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
     if (GlobalConfig.BootCampStyle) {
       if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
-        Entry->Title = PoolPrint(L"%s", Entry->VolName);
+        Entry->Title.SPrintf("%ls", Entry->VolName);
       } else {
-        Entry->Title = PoolPrint(L"%s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
+        Entry->Title.SPrintf("%ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
       }
     } else {
-      Entry->Title = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+      Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Entry->VolName);
     }
   }
@@ -683,7 +682,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-    Entry->Title = PoolPrint(L"%s (hibernated)", Entry->Title);
+    Entry->Title.SPrintf("%ls (hibernated)", Entry->Title.s());
   }
 
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
@@ -754,7 +753,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
-  SubScreen->Title = PoolPrint(L"Options for %s", Entry->Title, Entry->VolName);
+  SubScreen->Title = PoolPrint(L"Options for %s", Entry->Title.s(), Entry->VolName);
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20;
   //  DBG("get anime for os=%d\n", SubScreen->ID);
@@ -885,10 +884,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (Quiet) {
-        SubEntry->Title    = PoolPrint(L"%s verbose", Entry->Title);
+        SubEntry->Title    = PoolPrint(L"%s verbose", Entry->Title.s());
         SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
       } else {
-        SubEntry->Title    = PoolPrint(L"%s quiet", Entry->Title);
+        SubEntry->Title    = PoolPrint(L"%s quiet", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
       }
     }
@@ -897,10 +896,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
-        SubEntry->Title    = PoolPrint(L"%s without splash", Entry->Title);
+        SubEntry->Title    = PoolPrint(L"%s without splash", Entry->Title.s());
         SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
       } else {
-        SubEntry->Title    = PoolPrint(L"%s with splash", Entry->Title);
+        SubEntry->Title    = PoolPrint(L"%s with splash", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
       }
     }
@@ -911,22 +910,22 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (WithSplash) {
         if (Quiet) {
           TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
-          SubEntry->Title    = PoolPrint(L"%s verbose without splash", Entry->Title);
+          SubEntry->Title    = PoolPrint(L"%s verbose without splash", Entry->Title.s());
           SubEntry->LoadOptions = RemoveLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         } else {
           TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
-          SubEntry->Title    = PoolPrint(L"%s quiet without splash", Entry->Title);
+          SubEntry->Title    = PoolPrint(L"%s quiet without splash", Entry->Title.s());
           SubEntry->LoadOptions = AddLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         }
       } else if (Quiet) {
         TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
-        SubEntry->Title    = PoolPrint(L"%s verbose with splash", Entry->Title);
+        SubEntry->Title    = PoolPrint(L"%s verbose with splash", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
         FreePool(TempOptions);
       } else {
-        SubEntry->Title    = PoolPrint(L"%s quiet with splash", Entry->Title);
+        SubEntry->Title    = PoolPrint(L"%s quiet with splash", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
       }
     }
