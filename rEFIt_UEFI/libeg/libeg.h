@@ -174,6 +174,7 @@ typedef struct {
     BOOLEAN     HasAlpha;   //moved here to avoid alignment issue
 } EG_IMAGE;
 
+#ifdef _cplusplus
 class EG_RECT {
 public:
   INTN     XPos;
@@ -187,7 +188,14 @@ public:
   bool operator == (const EG_RECT& other) { return XPos == other.XPos  &&  YPos == other.YPos  &&  Width == other.Width  &&  Height == other.Height; }
   bool operator != (const EG_RECT& other) { return !(*this == other); }
 };
-
+#else
+typedef struct EG_RECT {
+  INTN     XPos;
+  INTN     YPos;
+  INTN     Width;
+  INTN     Height;
+} EG_RECT;
+#endif
 
 #define TEXT_YMARGIN (2)
 #define TEXT_XMARGIN (8)
