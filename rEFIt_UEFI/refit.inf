@@ -65,6 +65,7 @@
   entry_scan/entry_scan.h
   entry_scan/securebootkeys.h
   gui/menu_items/menu_items.h
+  gui/menu_items/menu_items.cpp
   gui/menu_items/menu_globals.h
   gui/REFIT_MENU_SCREEN.cpp
   gui/REFIT_MENU_SCREEN.h

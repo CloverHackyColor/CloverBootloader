@@ -286,10 +286,10 @@ class REFIT_ABSTRACT_MENU_ENTRY
 
 	  EG_IMAGE          *DriveImage;
 	  EG_IMAGE          *BadgeImage;
-//
-//	  REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-//					: REFIT_ABSTRACT_MENU_ENTRY(), Volume(0), DevicePathString(0), LoadOptions(0), LoaderPath(0), BootNum(0), DriveImage(0), BadgeImage(0)
-//					{}
+
+	  REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
+					: REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
+					{}
 	  virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
 	  virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };
 
@@ -305,7 +305,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			UINT16            Flags;
 			EFI_DEVICE_PATH  *DevicePath;
 
-			REFIT_MENU_ENTRY_LOADER_TOOL() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), NoMemset(1) {};
+			REFIT_MENU_ENTRY_LOADER_TOOL() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), NoMemset(1), Flags(0), DevicePath(0) {};
 
 			virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return this; };
 		};
@@ -320,9 +320,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			CONST CHAR16     *VolName;
 			EFI_DEVICE_PATH  *DevicePath;
 			UINT16            Flags;
-//			UINT8             LoaderType;
 
-			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() {};
+			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), VolName(NULL), DevicePath(NULL), Flags(0)  {};
 
 			REFIT_MENU_ENTRY_CLOVER* getPartiallyDuplicatedEntry() const;
 			virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return this; };
@@ -337,6 +336,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			REFIT_VOLUME     *Volume;
 			UINTN             BootNum;
 
+			REFIT_MENU_ITEM_BOOTNUM() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), BootNum(0) {};
 			virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return this; };
 		} ;
 
@@ -371,9 +371,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
 				CONST CHAR16            *Settings;
 
-	//			LOADER_ENTRY()
-	//					: REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0), BootBgColor(0), CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
-	//					{};
+				LOADER_ENTRY()
+						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0), BootBgColor(0), CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
+						{};
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
 			} ;
