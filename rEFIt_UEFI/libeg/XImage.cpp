@@ -335,7 +335,7 @@ unsigned XImage::FromSVG(const CHAR8 *SVGData, UINTN FileDataLength, float scale
     nsvgRasterize(rast, SVGimage, 0.f, 0.f, Scale, Scale, (UINT8*)&PixelData[0], (int)Width, (int)Height, (int)Width * sizeof(PixelData[0]));
     FreePool(SVGimage);
   }
-  nsvg__deleteParser(p);
+//  nsvg__deleteParser(p); //can't delete raster until we make imageChain
   nsvgDeleteRasterizer(rast);
   FreePool(input);
   return 0;

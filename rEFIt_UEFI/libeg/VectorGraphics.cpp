@@ -760,7 +760,7 @@ VOID testSVG()
       FreePool(FileData);
       FileData = NULL;
       egFreeImage(NewImage);
-      nsvg__deleteParser(p);
+//      nsvg__deleteParser(p);
       nsvgDeleteRasterizer(rast);
 
     }

@@ -153,7 +153,7 @@ typedef struct NSVGclip
 typedef struct NSVGshape NSVGshape;
 
 typedef struct NSVGpattern {
-  char id[64];
+  char id[kMaxIDLength];
   int nx, ny;  //repeat
   float width;
   float height;
@@ -191,7 +191,7 @@ typedef struct NSVGshape
   float miterLimit;      // Miter limit
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
-  NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
+  NSVGpath** pathsHandle;      // Linked list of paths in the image. One shape - one path.
   NSVGgroup* group;      // Pointer to parent group or NULL
   NSVGclip clip;
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
@@ -216,6 +216,7 @@ typedef struct NSVGimage
   float realBounds[4];
   NSVGshape* shapes;      // Linked list of shapes in the image.
   NSVGgroup* groups;      // Linked list of all groups in the image
+  NSVGpath* paths;        // Linked list of paths in the image.
   BOOLEAN isFont;
   NSVGclipPath* clipPaths;
 } NSVGimage;
@@ -331,10 +332,10 @@ typedef struct NSVGglyph {
 } NSVGglyph;
 
 typedef struct NSVGfont {
-  char id[64];
+  char id[kMaxIDLength];
   int horizAdvX;
   // --- font-face
-  char fontFamily[64];
+  char fontFamily[kMaxIDLength];
   float fontWeight; //usually 400 like stroke-width
   float fontSize; // 8,9,12,14...
   float unitsPerEm; //usually 1000
@@ -354,8 +355,13 @@ typedef struct NSVGfont {
   // -- glyphs
   NSVGglyph* missingGlyph;
   NSVGglyph* glyphs; // a chain
-  struct NSVGfont* next;
+//  struct NSVGfont* next;
 } NSVGfont;
+
+typedef struct NSVGfontChain {
+  NSVGfont *font;
+  struct NSVGfontChain* next;
+} NSVGfontChain;
 
 typedef struct textFaces {
   NSVGfont *font;
@@ -367,7 +373,7 @@ typedef struct textFaces {
 extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
 
 typedef struct NSVGtext {
-  char id[64];
+  char id[kMaxIDLength];
 //  char class[64];
   float x,y;
   float xform[6];
@@ -383,17 +389,19 @@ typedef struct NSVGtext {
   float strokeWidth;
   NSVGstyles* style;
   NSVGshape* shapes;
+  NSVGpath* paths;  //the paths for shapes. Shapes will have only handles
   struct NSVGtext *next;
   NSVGgroup* group;
 } NSVGtext;
 
 typedef struct NSVGsymbol {
-  char id[64];
+  char id[kMaxIDLength];
 //  float xform[6];
   float bounds[4];
   float viewBox[4];
   NSVGshape* shapes;
   NSVGshape* shapesTail;
+  NSVGpath* paths;
   struct NSVGsymbol *next;
 } NSVGsymbol;
 
@@ -571,7 +579,7 @@ struct NSVGrasterizer
   int width, height, stride;
 };
 
-extern NSVGfont *fontsDB;
+extern NSVGfontChain *fontsDB;
 extern struct NSVGparser *mainParser;
 
 #endif

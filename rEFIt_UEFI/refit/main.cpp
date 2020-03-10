@@ -628,13 +628,16 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   // mainParser
   // BuiltinIcons
   // OSIcons
-  font = fontsDB;
-  while (font) {
-    nextFont = font->next;
-    nsvg__deleteFont(font);
-    font = nextFont;
+  NSVGfontChain *fontChain = fontsDB;
+  while (fontChain) {
+    font = fontChain->font;
+    if (font) {
+      nsvg__deleteFont(font);
+      fontChain->font = NULL;
+    }
+    fontChain = fontChain->next;
   }
-  nsvg__deleteParser(mainParser);
+//  nsvg__deleteParser(mainParser); //temporary disabled
   //destruct_globals_objects(NULL); //we can't destruct our globals here. We need, for example, Volumes.
   
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);

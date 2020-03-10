@@ -609,7 +609,7 @@ void nsvg__deleteParser(NSVGparser* p)
     nsvg__deletePaths(p->plist);
     nsvg__deleteGradientData(p->gradients);
     // do not delete font here, as we free all fonts later by following fontsdb
-    //nsvg__deleteFont(p->font);
+
     nsvgDelete(p->image);
     if (p->cpts > 0 && p->pts) {
       FreePool(p->pts);
@@ -2820,7 +2820,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   text->y = y;
   text->fontSize = attr->fontFace->fontSize;
   text->fontStyle = attr->fontFace->fontStyle;
-  memcpy(text->id, attr->id, 64);
+  memcpy(text->id, attr->id, kMaxIDLength);
   text->fontFace = attr->fontFace;
   if (attr->hasFill == 1) {
     text->fontColor = attr->fillColor | ((int)(attr->fillOpacity * 255.f) << 24);
@@ -2836,15 +2836,20 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   }
  // DBG("required font %a  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
-  NSVGfont        *fontSVG = fontsDB;
-  while (fontSVG) {
-//        DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
-    if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0)  &&
+  NSVGfont        *fontSVG = NULL;
+  NSVGfontChain   *fontChain = fontsDB;
+
+  while (fontChain) {
+    fontSVG = fontChain->font;
+    if (fontSVG) {
+      //        DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
+      if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0) &&
         (fontSVG->fontStyle == text->fontStyle)) {
-//            DBG("font %a found\n", fontSVG->fontFamily);
-      break;
+        //            DBG("font %a found\n", fontSVG->fontFamily);
+        break;
+      }
     }
-    fontSVG = fontSVG->next;
+    fontChain = fontChain->next;
   }
   if (!fontSVG) {  // font not found
     //then load it
@@ -2856,24 +2861,26 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
 //    DBG("font %a loaded status=%r\n", text->fontFace->fontFamily, Status);
     if (!EFI_ERROR(Status)) {
-      p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);
+      p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1
       if (!p1) {
         DBG("font %a not parsed\n", text->fontFace->fontFamily);
       } else {
         fontSVG = (__typeof__(fontSVG))AllocateCopyPool(sizeof(NSVGfont), p1->font);
   //                DBG("font family %a parsed\n", fontSVG->fontFamily);
-        fontSVG->next = fontsDB;
-        fontsDB = fontSVG;
-        text->font = fontSVG;
+        fontChain = (__typeof__(fontChain))AllocatePool(sizeof(*fontChain));
+        fontChain->font = fontSVG;
+        fontChain->next = fontsDB;
+        fontsDB = fontChain;
+        text->font = fontSVG; //this is the same pointer as in fontChain but we will never free text->font. We will free fontChain
       }
-      FreePool(FileData);
+      FreePool(FileData); //after load
       FileData = NULL;
     } else {
-      text->font = p->font; //else embedded if present
+      text->font = p->font; //else embedded if present which is also double fontChain
     }
   } else {
-//        DBG("set font for text %a\n", fontSVG->id);
-    text->font = fontSVG;
+    DBG("set found font %a\n", fontSVG->id);
+    text->font = fontSVG;  //the font found in fontChain
   }
 
   //instead of embedded
@@ -2939,9 +2946,9 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       group = group->next;
     }
   }
-  if (!text->font || !text->font->glyphs) {
-    text->font = fontsDB;
-  }
+//  if (!text->font || !text->font->glyphs) {
+//    text->font = fontsDB;
+//  }
 
   //add to head
   text->next = p->text;
