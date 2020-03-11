@@ -126,7 +126,7 @@ then
     gdb --eval-command="file "$clover_debug_file" -o $adr" \
       --eval-command="target remote localhost:9000" \
 	  --eval-command="rwatch *0" \
-	  --eval-command="br panic.cpp:18" \
+	  --eval-command="br panic_()" \
       --eval-command="continue"
 
 
