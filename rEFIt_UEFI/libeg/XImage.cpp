@@ -313,7 +313,7 @@ unsigned XImage::ToPNG(UINT8** Data, UINTN& OutSize)
  * scale = 1 correspond to fill the rect with the image
  * scale = 0.5 will reduce image 
  */
-unsigned XImage::FromSVG(const CHAR8 *SVGData, UINTN FileDataLength, float scale)
+unsigned XImage::FromSVG(const CHAR8 *SVGData, float scale)
 {
   NSVGimage       *SVGimage;
   NSVGparser* p;

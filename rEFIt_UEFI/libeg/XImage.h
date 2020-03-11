@@ -85,7 +85,7 @@ public:
   void FlipRB(bool WantAlpha);
   unsigned FromPNG(const UINT8 * Data, UINTN Lenght);
   unsigned ToPNG(UINT8** Data, UINTN& OutSize);
-  unsigned FromSVG(const CHAR8 *SVGData, UINTN SVGDataLength, float scale);
+  unsigned FromSVG(const CHAR8 *SVGData, float scale);
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
