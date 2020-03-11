@@ -17,6 +17,7 @@
 
 size_t StrLenInWChar(const char *s)
 {
+	if ( !s ) return 0;
 	size_t dst_len = 0;
 
 	while ( *s ) {
