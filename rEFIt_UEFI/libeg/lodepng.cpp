@@ -4730,7 +4730,7 @@ static unsigned readChunk_iCCP(LodePNGInfo* info, const LodePNGDecompressSetting
                           length, zlibsettings);
   if(!error) {
     if(decoded.size) {
-      info->iccp_profile_size = (__typeof(info->iccp_profile_size))decoded.size; // Unsafe cast
+      info->iccp_profile_size = (__typeof__(info->iccp_profile_size))decoded.size; // Unsafe cast
       if ( info->iccp_profile_size != decoded.size ) panic("info->iccp_profile_size != decoded.size"); // Check the cast
       info->iccp_profile = (unsigned char*)lodepng_malloc(decoded.size);
       if(info->iccp_profile) {
