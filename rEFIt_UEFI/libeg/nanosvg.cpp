@@ -622,8 +622,8 @@ void nsvg__deleteParser(NSVGparser* p)
       }
       while (attr->group) {
         NSVGgroup* group = attr->group;
-        attr->group = group->next;
-        FreePool(group);
+        FreePool(attr->group);
+        attr->group = group->next;       
       }
     }
     FreePool(p);
