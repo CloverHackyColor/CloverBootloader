@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4310)
+#endif
+
 #define CHECK_CTOR_FAIL(value, code) \
 { \
 	stop_at_panic = false; \
