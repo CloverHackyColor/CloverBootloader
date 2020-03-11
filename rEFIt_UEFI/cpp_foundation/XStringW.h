@@ -73,10 +73,10 @@ public:
 //	XString mbs() const;
 
 	/* [] */
-	wchar_t operator [](int i) const { return *data(i); }
+	wchar_t operator [](int i) const { return *data((INTN)i); }
 	wchar_t operator [](UINTN i) const { return *data(i); }
 
-	wchar_t& operator [](int i) { return *data(i); }
+	wchar_t& operator [](int i) { return *data((INTN)i); }
 	wchar_t& operator [](UINTN i) { return *data(i); }
 
 	wchar_t LastChar() const { if ( length() > 0 ) return data()[length()-1]; else return 0; }
