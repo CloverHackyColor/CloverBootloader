@@ -1,0 +1,84 @@
+SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+
+OSTYPE=`uname -s`
+#echo $OSTYPE
+
+if [ -z "$1" ]
+then
+	echo "Usage: $SCRIPT_ABS_FILENAME [Clover debug file]"
+	exit 1
+fi
+
+clover_efi_file="${1%.*}".efi
+if ! [ -f "$clover_efi_file" ]
+then
+	echo Efi file "$clover_efi_file" doesn\'t exist
+	exit 1
+fi
+
+echo clover_efi_file="$clover_efi_file"
+
+set -x
+
+if [ "$OSTYPE" = "Darwin" ]
+then
+	if ! [ -f /usr/local/bin/qemu-system-x86_64 ]
+	then
+		echo "You must install Qemu with \"brew install qemu\""
+		exit 1
+	fi
+	if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
+	then
+		unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip
+		rm -rf "$SCRIPT_DIR"/__MACOSX
+	fi
+
+	if pgrep qemu
+	then
+	  killall qemu-system-x86_64
+	fi
+	> "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
+
+	hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
+
+	shopt -s nocasematch
+
+	if [[ "$(basename "$clover_efi_file")" =~ "CloverX64"* ]]
+	then
+	  echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
+		ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
+
+		echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi
+		ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi || exit 1
+	else
+	  : # TODO : if it's a module, has to be copied in Drivers
+	fi
+
+	shopt -u nocasematch
+
+	diskutil eject /Volumes/QEMU_EFI || exit 1
+	
+  	sleep 1 # not 100% sure it's needed
+
+    set -m
+
+	/usr/local/bin/qemu-system-x86_64 \
+	    -L "$SCRIPT_DIR" \
+	    -m 2048 \
+	    -cpu core2duo \
+	    -bios "$SCRIPT_DIR"/bios.bin-1.13.0 \
+	    -machine q35 \
+	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
+	    -device ahci,id=ahi \
+	    -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
+	    -usb \
+	    -device usb-mouse,bus=usb-bus.0,port=2 \
+	    -device usb-kbd,bus=usb-bus.0,port=1 \
+		-serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
+	    -gdb tcp::9000
+
+
+fi
+
