@@ -8,7 +8,7 @@
 #define utf816Conversion_hpp
 
 
-UINTN StrLenInWChar(const char *src, UINTN src_len);
-UINTN utf8ToWChar(wchar_t* dst, UINTN dst_max_len,  const char *s, UINTN src_len);
+UINTN StrLenInWChar(const char *src);
+UINTN utf8ToWChar(wchar_t* dst, UINTN dst_max_len,  const char *s);
 
 #endif /* utf816Conversion_hpp */

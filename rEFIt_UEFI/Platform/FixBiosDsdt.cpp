@@ -5281,7 +5281,8 @@ VOID RenameDevices(UINT8* table)
   CHAR8 *Replace;
   CHAR8 *Find;
 
-  INTN i, k;
+  INTN i;
+  INTN k=0; // Cland complain about possible use uninitialised. Not true, but I don't like warnings.
   UINTN index;
   INTN size;
   UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;

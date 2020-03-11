@@ -101,7 +101,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   Status = PciIo->Pci.Read (
                             PciIo,
                             EfiPciIoWidthUint32,
-                            (UINT64)(reg & ~3),
+                            (UINT32)(reg & ~3),
                             1,
                             &res
                             );

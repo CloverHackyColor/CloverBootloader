@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9A92232C2402FD1000483CBA"
-               BuildableName = "cpp_tests UTF16"
-               BlueprintName = "cpp_tests UTF16"
+               BuildableName = "cpp_tests UTF16 signed char"
+               BlueprintName = "cpp_tests UTF16 signed char"
                ReferencedContainer = "container:cpp_tests.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9A92232C2402FD1000483CBA"
-            BuildableName = "cpp_tests UTF16"
-            BlueprintName = "cpp_tests UTF16"
+            BuildableName = "cpp_tests UTF16 signed char"
+            BlueprintName = "cpp_tests UTF16 signed char"
             ReferencedContainer = "container:cpp_tests.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -58,8 +58,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9A92232C2402FD1000483CBA"
-            BuildableName = "cpp_tests UTF16"
-            BlueprintName = "cpp_tests UTF16"
+            BuildableName = "cpp_tests UTF16 signed char"
+            BlueprintName = "cpp_tests UTF16 signed char"
             ReferencedContainer = "container:cpp_tests.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -102,8 +102,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9A92232C2402FD1000483CBA"
-            BuildableName = "cpp_tests UTF16"
-            BlueprintName = "cpp_tests UTF16"
+            BuildableName = "cpp_tests UTF16 signed char"
+            BlueprintName = "cpp_tests UTF16 signed char"
             ReferencedContainer = "container:cpp_tests.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

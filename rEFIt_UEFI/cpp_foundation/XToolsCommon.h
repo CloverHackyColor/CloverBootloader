@@ -18,6 +18,7 @@ extern xsize XBufferGrowByDefault;
 #ifdef CLOVER_BUILD
 
 extern "C" {
+#include <ProcessorBind.h>
 #include <Library/BaseLib.h> // for StrCmp
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h> // for CopyMen

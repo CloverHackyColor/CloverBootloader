@@ -28,6 +28,7 @@ void CpuDeadLoop(void)
 
 void DebugLog(int DebugMode, const char *FormatString, ...)
 {
+	(void)DebugMode;
 	va_list va;
 	va_start(va, FormatString);
 	vprintf(FormatString, va);
@@ -42,6 +43,7 @@ void* AllocatePool(UINTN  AllocationSize)
 }
 void* ReallocatePool(UINTN  OldSize, UINTN  NewSize, void* OldBuffer)
 {
+	(void)OldSize;
 	if ( !OldBuffer ) return AllocatePool(NewSize);
 	return realloc(OldBuffer, NewSize);
 }
@@ -62,9 +64,9 @@ void PauseForKey(const wchar_t* msg)
 	getchar();
 }
 
-int AsciiStrLen(const char* String)
+UINTN AsciiStrLen(const char* String)
 {
-	return (int)strlen(String);
+	return (UINTN)strlen(String);
 }
 
 #if __WCHAR_MAX__ <= 0xFFFFu
@@ -86,7 +88,7 @@ int is_high_surrogate(char16_t uc) { return (uc & 0xfffffc00) == 0xd800; }
 int is_low_surrogate(char16_t uc) { return (uc & 0xfffffc00) == 0xdc00; }
 
 char32_t surrogate_to_utf32(char16_t high, char16_t low) {
-    return (high << 10) + low - 0x35fdc00;
+    return char32_t((high << 10) + low - 0x35fdc00); // Safe cast, it fits in 32 bits
 }
 
 void convert_utf16_to_utf32(const char16_t* input, size_t input_size, std::vector<char32_t>* output)
@@ -111,12 +113,12 @@ void convert_utf16_to_utf32(const char16_t* input, size_t input_size, std::vecto
 #endif
 
 
-unsigned int StrLen(const wchar_t* String)
+UINTN StrLen(const wchar_t* String)
 {
 	// wcslen seems not to work if sizeof(wchar_t) == 2
 	const wchar_t* p;
 	for ( p = String ; *p ; p++ );
-	return (int)(p-String);
+	return (UINTN)(p-String);
 }
 
 int StrCmp(const wchar_t* FirstString, const wchar_t* SecondString)

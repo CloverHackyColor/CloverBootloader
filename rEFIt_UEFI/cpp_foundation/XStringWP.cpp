@@ -40,26 +40,12 @@ DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
 	StrCpy(S);
 }
 
-//XStringW::XStringW(const wchar_t *S, UINTN count)
-//{
-//DBG("Constructor(const wchar_t *S, UINTN count) : %s, %d\n", S, count);
-//	Init(count);
-//	StrnCpy(S, count);
-//}
-//
-//XStringW::XStringW(const wchar_t aChar)
-//{
-//DBG("Constructor(const wchar_t aChar)\n");
-//	Init(1);
-//	StrnCpy(&aChar, 1);
-//}
-
 XStringWP::XStringWP(const char* S)
 {
 DBG("Constructor(const char* S)\n");
-	xsize newLen = StrLenInWChar(S, AsciiStrLen(S));
+	xsize newLen = StrLenInWChar(S);
 	Init(newLen);
-	utf8ToWChar(m_data, m_allocatedSize+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
+	utf8ToWChar(m_data, m_allocatedSize+1, S); // m_size doesn't count the NULL terminator
 	SetLength(newLen);
 }
 

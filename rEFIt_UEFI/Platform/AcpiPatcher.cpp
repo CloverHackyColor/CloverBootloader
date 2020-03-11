@@ -622,7 +622,9 @@ void PreCleanupRSDT()
   // English: If the RSDT address of the XSDT address and the tail of the RSDT crawls onto the XSDT, then we
   // trim the RSDT tail before the XSDT starts
   if ((UINTN)Rsdt < (UINTN)Xsdt && (UINTN)Rsdt + Rsdt->Header.Length > (UINTN)Xsdt) {
-    Rsdt->Header.Length = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
+    UINTN v = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
+    if ( v > MAX_UINT32 ) panic("((UINTN)Xsdt - (UINTN)Rsdt) & ~3 > MAX_UINT32");
+    Rsdt->Header.Length = (UINT32)v;
     DBG("Cropped Rsdt->Header.Length=%d\n", (UINT32)Rsdt->Header.Length);
   }
 

@@ -683,7 +683,7 @@ VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
     EG_PIXEL    *CompPtr = CompBasePtr;
     for (x = 0; x < Width; x++) {
       *CompPtr = *TopPtr;
-      TopPtr++, CompPtr++;
+      TopPtr++; CompPtr++;
     }
     TopBasePtr += TopLineOffset;
     CompBasePtr += CompLineOffset;
@@ -736,7 +736,7 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
         CompPtr->r = (UINT8)((TopPtr->r * TopAlpha + CompPtr->r * TempAlpha) / Alpha);
         CompPtr->a = (UINT8)(Alpha / 255);
       }
-      TopPtr++, CompPtr++;
+      TopPtr++; CompPtr++;
     }
     TopBasePtr += TopLineOffset;
     CompBasePtr += CompLineOffset;
@@ -776,7 +776,7 @@ VOID egRawComposeOnFlat(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
 
       CompPtr->a = (UINT8)(255);
 
-      TopPtr++, CompPtr++;
+      TopPtr++; CompPtr++;
     }
     TopBasePtr += TopLineOffset;
     CompBasePtr += CompLineOffset;
@@ -877,7 +877,7 @@ VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCo
 
     for (i = 0; i < PixelCount; i++) {
         *DestPlanePtr = *SrcPlanePtr;
-        DestPlanePtr += 4, SrcPlanePtr += 4;
+        DestPlanePtr += 4; SrcPlanePtr += 4;
     }
 }
 

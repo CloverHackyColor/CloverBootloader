@@ -5,15 +5,34 @@
 //#include <Library/BaseLib.h> // for CpuDeadLoop
 //}
 
+bool stop_at_panic = true;
+bool i_have_panicked = false;
+
 /*
  *
- * If this modified, you may have to change the Qemu/gdb_launch script to adjust the breakpoint line.
- * gdb_launch put a breakpoint at CpuDeadLoop();
- * Currently line 18
+ * Function panic_ seems useless. It's same as panic(). It's to be able to put a breakpoint in gdb with br panic_(). This is done in gdb_launch script in Qemu
  */
+void panic_(const char* s)
+{
+	if ( stop_at_panic ) {
+		if ( s ) DebugLog(2, "%s\n", s);
+		DebugLog(2, "A fatal error happened. System halted\n");
+		CpuDeadLoop();
+	}else{
+		if ( s ) DebugLog(2, "%s\n", s);
+//		DebugLog(2, "A fatal error happened. Continue for testing\n");
+		i_have_panicked = true;
+	}
+}
+
+
+void panic(const char* s)
+{
+	panic_(s);
+}
+
 
 void panic(void)
 {
-	DebugLog(2, "A fatal error happened. System halted\n");
-	CpuDeadLoop();
+	panic_(nullptr);
 }

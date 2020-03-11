@@ -591,12 +591,12 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 #define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
 #define DO16(buf)   DO8(buf,0); DO8(buf,8);
 
-static unsigned long Adler32(unsigned char *buf, long len)
+static UINT32 Adler32(unsigned char *buf, long len)
 {
   unsigned long s1 = 1; // adler & 0xffff;
   unsigned long s2 = 0; // (adler >> 16) & 0xffff;
   unsigned long result;
-  int k;
+  long k;
 
   while (len > 0) {
     k = len < NMAX ? len : NMAX;
@@ -615,7 +615,7 @@ static unsigned long Adler32(unsigned char *buf, long len)
   }
   result = (s2 << 16) | s1;
   // result is in big endian
-  return result;
+  return (UINT32)result;
 }
 
 typedef struct {

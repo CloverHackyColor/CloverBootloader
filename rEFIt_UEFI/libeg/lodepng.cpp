@@ -34,6 +34,7 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 
 #include "libegint.h"
 #include "lodepng.h"
+#include "../cpp_util/panic.h"
 
 #ifdef LODEPNG_COMPILE_DISK
 #include <limits.h> /* LONG_MAX */
@@ -3725,7 +3726,7 @@ static unsigned getValueRequiredBits(unsigned char value) {
 unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
                                      const unsigned char* in, unsigned w, unsigned h,
                                      const LodePNGColorMode* mode_in) {
-  size_t i;
+//  size_t i;
   ColorTree tree;
   size_t numpixels = (size_t)w * (size_t)h;
   unsigned error = 0;
@@ -3756,7 +3757,7 @@ unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
   if(stats->numcolors >= maxnumcolors) numcolors_done = 1;
 
   if(!numcolors_done) {
-    for(i = 0; i < stats->numcolors; i++) {
+    for(__typeof__(stats->numcolors) i = 0; i < stats->numcolors; i++) {
       const unsigned char* color = &stats->palette[i * 4];
       error = color_tree_add(&tree, color[0], color[1], color[2], color[3], i);
       if(error) goto cleanup;
@@ -3766,7 +3767,7 @@ unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
   /*Check if the 16-bit input is truly 16-bit*/
   if(mode_in->bitdepth == 16 && !sixteen) {
     unsigned short r, g, b, a;
-    for(i = 0; i != numpixels; ++i) {
+    for(__typeof__(stats->numpixels) i = 0; i != numpixels; ++i) {
       getPixelColorRGBA16(&r, &g, &b, &a, in, i, mode_in);
       if((r & 255) != ((r >> 8) & 255) || (g & 255) != ((g >> 8) & 255) ||
          (b & 255) != ((b >> 8) & 255) || (a & 255) != ((a >> 8) & 255)) /*first and second byte differ*/ {
@@ -3782,7 +3783,7 @@ unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
   if(sixteen) {
     unsigned short r = 0, g = 0, b = 0, a = 0;
 
-    for(i = 0; i != numpixels; ++i) {
+    for(__typeof__(numpixels) i = 0; i != numpixels; ++i) {
       getPixelColorRGBA16(&r, &g, &b, &a, in, i, mode_in);
 
       if(!colored_done && (r != g || r != b)) {
@@ -3812,7 +3813,7 @@ unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
     }
 
     if(stats->key && !stats->alpha) {
-      for(i = 0; i != numpixels; ++i) {
+      for(__typeof__(numpixels) i = 0; i != numpixels; ++i) {
         getPixelColorRGBA16(&r, &g, &b, &a, in, i, mode_in);
         if(a != 0 && r == stats->key_r && g == stats->key_g && b == stats->key_b) {
           /* Color key cannot be used if an opaque pixel also has that RGB color. */
@@ -3824,7 +3825,7 @@ unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
     }
   } else /* < 16-bit */ {
     unsigned char r = 0, g = 0, b = 0, a = 0;
-    for(i = 0; i != numpixels; ++i) {
+    for(__typeof__(numpixels) i = 0; i != numpixels; ++i) {
       getPixelColorRGBA8(&r, &g, &b, &a, in, i, mode_in);
 
       if(!bits_done && stats->bits < 8) {
@@ -3882,7 +3883,7 @@ unsigned lodepng_compute_color_stats(LodePNGColorStats* stats,
     }
 
     if(stats->key && !stats->alpha) {
-      for(i = 0; i != numpixels; ++i) {
+      for(__typeof__(numpixels) i = 0; i != numpixels; ++i) {
         getPixelColorRGBA8(&r, &g, &b, &a, in, i, mode_in);
         if(a != 0 && r == stats->key_r && g == stats->key_g && b == stats->key_b) {
           /* Color key cannot be used if an opaque pixel also has that RGB color. */
@@ -4729,7 +4730,8 @@ static unsigned readChunk_iCCP(LodePNGInfo* info, const LodePNGDecompressSetting
                           length, zlibsettings);
   if(!error) {
     if(decoded.size) {
-      info->iccp_profile_size = decoded.size;
+      info->iccp_profile_size = (__typeof(info->iccp_profile_size))decoded.size; // Unsafe cast
+      if ( info->iccp_profile_size != decoded.size ) panic("info->iccp_profile_size != decoded.size"); // Check the cast
       info->iccp_profile = (unsigned char*)lodepng_malloc(decoded.size);
       if(info->iccp_profile) {
         lodepng_memcpy(info->iccp_profile, decoded.data, decoded.size);
@@ -4806,7 +4808,7 @@ static void decodeGeneric(unsigned char** out, unsigned* w, unsigned* h,
   size_t i;
   ucvector idat; /*the data from idat chunks*/
   unsigned char* scanlines = 0;
-  size_t scanlines_size = 0, expected_size = 0;
+  size_t scanlines_size = 0;
   size_t outsize = 0;
 
   /*for unknown chunk order*/
@@ -4952,14 +4954,14 @@ static void decodeGeneric(unsigned char** out, unsigned* w, unsigned* h,
   if(state->info_png.color.colortype == LCT_PALETTE && !state->info_png.color.palette) {
     state->error = 106; /* error: PNG file must have PLTE chunk if color type is palette */
   }
-
+  size_t expected_size = 0;
   /*predict output size, to allocate exact size for output buffer to avoid more dynamic allocation.
   If the decompressed size does not match the prediction, the image must be corrupt.*/
   if(state->info_png.interlace_method == 0) {
-    size_t bpp = lodepng_get_bpp(&state->info_png.color);
+    unsigned bpp = lodepng_get_bpp(&state->info_png.color);
     expected_size = lodepng_get_raw_size_idat(*w, *h, bpp);
   } else {
-    size_t bpp = lodepng_get_bpp(&state->info_png.color);
+    unsigned bpp = lodepng_get_bpp(&state->info_png.color);
     /*Adam-7 interlaced: expected size is the sum of the 7 sub-images sizes*/
     expected_size = 0;
     expected_size += lodepng_get_raw_size_idat((*w + 7) >> 3, (*h + 7) >> 3, bpp);

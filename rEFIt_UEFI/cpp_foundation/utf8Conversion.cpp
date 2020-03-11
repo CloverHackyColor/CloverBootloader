@@ -15,7 +15,7 @@
 #define size_t UINTN
 
 
-size_t StrLenInWChar(const char *s, size_t src_len)
+size_t StrLenInWChar(const char *s)
 {
 	size_t dst_len = 0;
 
@@ -49,27 +49,27 @@ size_t StrLenInWChar(const char *s, size_t src_len)
 						continue;
 					}
 					/* 4-byte code */
-					c = (*s & 0x7) << 18;
-					c |= (*(s+1) & 0x3f) << 12;
-					c |= (*(s+2) & 0x3f) << 6;
+					c = char32_t(((unsigned char)(*s) & 0x7) << 18); // & result type is int. We know it fits in 32 bits. Safe to cast to char32_t
+					c |= char32_t((*(s+1) & 0x3f) << 12);
+					c |= char32_t((*(s+2) & 0x3f) << 6);
 					c |= *(s+3) & 0x3f;
 					s += 4;
 				} else {
 					/* 3-byte code */
-					c = (*s & 0xf) << 12;
-					c |= (*(s+1) & 0x3f) << 6;
+					c = char32_t((*s & 0xf) << 12);
+					c |= char32_t((*(s+1) & 0x3f) << 6);
 					c |= *(s+2) & 0x3f;
 					s += 3;
 				}
 			} else {
 				/* 2-byte code */
-				c = (*s & 0x1f) << 6;
+				c = char32_t((*s & 0x1f) << 6);
 				c |= *(s+1) & 0x3f;
 				s += 2;
 			}
 		} else {
 			/* 1-byte code */
-			c = *s;
+			c = (unsigned char)(*s); // in case we compiled with signed char
 			s += 1;
 		}
 #if __WCHAR_MAX__ > 0xFFFFu
@@ -99,7 +99,7 @@ size_t StrLenInWChar(const char *s, size_t src_len)
 
 
 
-size_t utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s, size_t src_len)
+size_t utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s)
 {
 	if ( dst_max_len == 0 ) return 0;
 	dst_max_len -= 1;
@@ -136,27 +136,27 @@ size_t utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s, size_t src_
 						continue;
 					}
 					/* 4-byte code */
-					c = (*s & 0x7) << 18;
-					c |= (*(s+1) & 0x3f) << 12;
-					c |= (*(s+2) & 0x3f) << 6;
+					c = char32_t((*s & 0x7) << 18); // & result type is int. We know it fits in 32 bits. Safe to cast to char32_t
+					c |= char32_t((*(s+1) & 0x3f) << 12);
+					c |= char32_t((*(s+2) & 0x3f) << 6);
 					c |= *(s+3) & 0x3f;
 					s += 4;
 				} else {
 					/* 3-byte code */
-					c = (*s & 0xf) << 12;
-					c |= (*(s+1) & 0x3f) << 6;
+					c = char32_t((*s & 0xf) << 12);
+					c |= char32_t((*(s+1) & 0x3f) << 6);
 					c |= *(s+2) & 0x3f;
 					s += 3;
 				}
 			} else {
 				/* 2-byte code */
-				c = (*s & 0x1f) << 6;
+				c = char32_t((*s & 0x1f) << 6);
 				c |= *(s+1) & 0x3f;
 				s += 2;
 			}
 		} else {
 			/* 1-byte code */
-			c = *s;
+			c = (unsigned char)(*s); // in case we compiled with signed char
 			s += 1;
 		}
 #if __WCHAR_MAX__ > 0xFFFFu

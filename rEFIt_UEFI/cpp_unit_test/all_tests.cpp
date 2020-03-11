@@ -7,6 +7,7 @@
 #include "XObjArray_tests.h"
 #include "XStringWArray_test.h"
 #include "XStringW_test.h"
+#include "XUINTN_test.h"
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
@@ -33,6 +34,11 @@ bool all_tests()
 	ret = XStringWArray_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XStringWArray_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = XUINTN_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 

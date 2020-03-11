@@ -24,13 +24,8 @@ protected:
 public:
 	XStringWP() : XStringWP_super() {};
 	XStringWP(const wchar_t *);
-//	XStringWP(const wchar_t* S, UINTN count);
-//	XStringWP(const wchar_t);
 	XStringWP(const char*);
-
-//	~XStringWP();
-
-public:
+	/* XStringWP(const char*, ...); // Cannot define this ctor although it would be handy. Problem is confusion with XStringWP(const char*) as ... can mean 0 arg. */
 
 };
 

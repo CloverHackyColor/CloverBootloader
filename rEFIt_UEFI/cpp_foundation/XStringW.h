@@ -40,7 +40,12 @@ protected:
 
 public:
 	const wchar_t *data(UINTN ui=0) const { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+	const wchar_t *data(INTN i) const { if ( i<0 ) panic("const wchar_t *data(INTN i=0) const -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+//	const wchar_t *data(int i=0) const { if ( i<0 ) panic("const wchar_t *data(int i=0) const -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
 	wchar_t *data(UINTN ui=0) { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+	wchar_t *data(INTN i) { if ( i<0 ) panic("wchar_t *data(INTN i=0) -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+//	wchar_t *data(int i) { if ( i<0 ) panic("wchar_t *data(int i=0) -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+
 	wchar_t *dataWithSizeMin(UINTN pos, UINTN sizeMin, UINTN nGrowBy=XStringWGrowByDefault) { CheckSize(sizeMin, nGrowBy); return data(pos); }
 
 	UINTN length() const { return m_len; }
@@ -49,7 +54,7 @@ public:
 	void SetLength(UINTN len);
 	const wchar_t* s() { return m_data; }
 
-	/* IsNull ? */
+	/* Empty ? */
 	void setEmpty() { m_len = 0; }
 	bool isEmpty() const { return size() == 0; }
 //	bool IsNull() const { return size() == 0 ; }

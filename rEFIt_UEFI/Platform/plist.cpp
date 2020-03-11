@@ -870,7 +870,7 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag, UINT32* lenPtr)
   buffer[start + stop] = '\0';
   *lenPtr = start + length;
 
-  if (*lenPtr == (UINTN)-1) { // Why is this test. -1 is UINTN_MAX.
+  if (*lenPtr == (__typeof(*lenPtr))-1) { // Why is this test. -1 is UINTN_MAX.
     return EFI_UNSUPPORTED;
   }
 
