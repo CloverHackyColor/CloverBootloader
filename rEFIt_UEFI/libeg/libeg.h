@@ -174,7 +174,7 @@ typedef struct {
     BOOLEAN     HasAlpha;   //moved here to avoid alignment issue
 } EG_IMAGE;
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 class EG_RECT {
 public:
   INTN     XPos;
