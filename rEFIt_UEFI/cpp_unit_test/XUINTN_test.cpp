@@ -183,26 +183,6 @@
 
 int XUINTN_tests()
 {
-//#define value MAX_UINT64-27
-//{ \
-//	XUINTN xu(27); \
-//	XUINTN xu2(27); \
-//	UINT64 v = (UINT64)(value)-1;
-//	xu2 = xu + (UINT64)(value)-1; \
-//	if ( xu2.m_value != (UINTN)value + 27-1 ) return 0; \
-//}
-
-	{
-		XUINTN xu(72);
-		INT8 u = 72;
-		int code = 100000;
-		if ( !(xu == u) ) return code;
-		if ( !(xu.operator ==(u)) ) return code+1;
-		if ( xu != u ) return code+2;
-		if ( xu.operator !=(u) ) return code+3;
-		
-//		xu = (INT8)-10;
-	}
 
 	CHECK_CTOR_8_16_32_64_int_FAIL(200);
 
