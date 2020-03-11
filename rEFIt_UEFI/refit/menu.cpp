@@ -4358,7 +4358,8 @@ UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
 REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
-    Entry->Title.takeValueFrom(Title);
+    if ( Title ) Entry->Title.takeValueFrom(Title);
+    else Entry->Title.setEmpty();
 //  if (Title) {
 //  } else {
 //    Entry->Title = (__typeof__(Entry->Title))AllocateZeroPool(128);
