@@ -3023,12 +3023,12 @@ GetEarlyUserSettings (
         }
       }
 
-      if (gSettings.Language != NULL) {
+//      if (gSettings.Language != NULL) { // gSettings.Language != NULL cannot be false because gSettings.Language is dclared as CHAR8 Language[16]; Must we replace by gSettings.Language[0] != NULL
         Prop = GetProperty (DictPointer, "KbdPrevLang");
         if (Prop != NULL) {
           gSettings.KbdPrevLang = IsPropertyTrue (Prop);
         }
-      }
+//      }
 
       Prop = GetProperty (DictPointer, "Mouse");
       if (Prop != NULL) {
