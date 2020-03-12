@@ -161,7 +161,7 @@ const XObjArray<TYPE> &XObjArray<TYPE>::operator =(const XObjArray<TYPE> &anObjA
   xsize ui;
 
   	XObjArrayNC<TYPE>::Empty();
-	CheckSize(anObjArray.Length(), 0);
+	CheckSize(anObjArray.length(), 0);
 	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
 	return *this;
 }
@@ -426,7 +426,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 	if ( nIndex  < XObjArrayNC<TYPE>::_Len )
 	{
   	if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
-  	  DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%d) is > Length(). System halted\n", nIndex);
+  	  DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%d) is > length(). System halted\n", nIndex);
 	  	panic();
 	  }
 	}

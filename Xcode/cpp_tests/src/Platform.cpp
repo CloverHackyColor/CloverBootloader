@@ -69,6 +69,11 @@ UINTN AsciiStrLen(const char* String)
 	return (UINTN)strlen(String);
 }
 
+INTN AsciiStrCmp (const char *FirstString,const char *SecondString)
+{
+	return (INTN)strcmp(FirstString, SecondString);
+}
+
 #if __WCHAR_MAX__ <= 0xFFFFu
 
 #ifndef _MSC_VER

@@ -32,7 +32,7 @@ void XStringW::Init(UINTN aSize)
 //DBG("Init aSize=%d\n", aSize);
 	m_data = (wchar_t*)Xalloc( (aSize+1)*sizeof(wchar_t) ); /* le 0 terminal n'est pas compté dans mSize */
 	if ( !m_data ) {
-		DBG("XStringW::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
+		DebugLog(2, "XStringW::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
 		panic();
 	}
 	m_allocatedSize = aSize;
@@ -129,6 +129,8 @@ DBG("Destructor :%s\n", data());
 void XStringW::SetLength(UINTN len)
 {
 //DBG("SetLength(%d)\n", len);
+	CheckSize(len);
+
 	m_len = len;
 	m_data[len] = 0;
 
@@ -251,19 +253,19 @@ XStringW XStringW::SubStringReplace(wchar_t c1, wchar_t c2)
 	return Result;
 }
 
-static XStringW* sprintfBuf;
+static XStringW* XStringW_sprintfBuf;
 
-void transmitSprintf(const wchar_t* buf, size_t nbyte)
+static void XStringW_transmitSprintf(const wchar_t* buf, size_t nbyte)
 {
-	(*sprintfBuf).StrnCat(buf, nbyte);
+	(*XStringW_sprintfBuf).StrnCat(buf, nbyte);
 }
 
 void XStringW::vSPrintf(const char* format, VA_LIST va)
 {
 	SetLength(0);
 
-	sprintfBuf = this;
-	vprintf_with_callback(format, va, transmitSprintf);
+	XStringW_sprintfBuf = this;
+	vprintf_with_callback(format, va, XStringW_transmitSprintf);
 	
 	// This is an attempt to use _PPrint from IO.c. Problem is : you have to allocate the memory BEFORE calling it.
 //  POOL_PRINT  spc;
@@ -515,7 +517,7 @@ const XStringW &XStringW::operator +=(const wchar_t *S)
 //                                 Functions
 //-----------------------------------------------------------------------------
 
-XStringW SPrintf(const char* format, ...)
+XStringW WPrintf(const char* format, ...)
 {
   VA_LIST     va;
   XStringW str;

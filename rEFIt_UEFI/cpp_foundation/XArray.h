@@ -37,8 +37,8 @@ class XArray
 	virtual ~XArray();
 
   public:
-	const TYPE *Data() const { return m_data; }
-	TYPE *Data() { return m_data; }
+	const TYPE *data() const { return m_data; }
+	TYPE *data() { return m_data; }
 
   public:
 	xsize AllocatedSize() const { return m_allocatedSize; }
@@ -137,7 +137,7 @@ template<class TYPE>
 XArray<TYPE>::XArray(const XArray<TYPE> &anArray)
 {
 	Init();
-	AddArray(anArray.Data(), anArray.size());
+	AddArray(anArray.data(), anArray.size());
 }
 
 /* operator = */
@@ -147,7 +147,7 @@ const XArray<TYPE> &XArray<TYPE>::operator =(const XArray<TYPE> &anArray)
   xsize ui;
 
 	setEmpty();
-	for ( ui=0 ; ui<anArray.Length() ; ui+=1 ) Add(anArray[ui] );
+	for ( ui=0 ; ui<anArray.length() ; ui+=1 ) Add(anArray[ui] );
 	return *this;
 }
 

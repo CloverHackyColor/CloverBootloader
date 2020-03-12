@@ -15,7 +15,7 @@
 #define LPATH_SEPARATOR L'\\'
 
 extern UINTN XStringWGrowByDefault;
-extern void __GLOBAL__sub_I_XStringW();
+//extern void __GLOBAL__sub_I_XStringW();
 
 class XStringW
 {
@@ -187,9 +187,9 @@ public:
 
 //extern const XStringW NullXStringW;
 #ifndef _MSC_VER
-XStringW SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+XStringW WPrintf(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
 #else
-XStringW SPrintf(const char* format, ...);
+XStringW WPrintf(const char* format, ...);
 #endif // !__MSC_VER
 
 

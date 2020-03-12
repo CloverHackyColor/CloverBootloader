@@ -6,6 +6,7 @@
 #include "XArray_tests.h"
 #include "XObjArray_tests.h"
 #include "XStringWArray_test.h"
+#include "XString_test.h"
 #include "XStringW_test.h"
 #include "XUINTN_test.h"
 
@@ -24,6 +25,11 @@ bool all_tests()
 	ret = XObjArray_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XObjArray_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = XString_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "XString_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = XStringW_tests();
