@@ -621,9 +621,9 @@ void nsvg__deleteParser(NSVGparser* p)
         attr->fontFace = NULL;
       }
       while (attr->group) {
-        NSVGgroup* group = attr->group;
+        NSVGgroup* group = attr->group->next;
         FreePool(attr->group);
-        attr->group = group->next;       
+        attr->group = group;       
       }
     }
     FreePool(p);
