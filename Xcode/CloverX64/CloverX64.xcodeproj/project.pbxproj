@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A28CC93241AB33700F3D247 /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC91241AB33700F3D247 /* XString.cpp */; };
+		9A28CC94241AB33700F3D247 /* XString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC92241AB33700F3D247 /* XString.h */; };
+		9A28CC97241AB34800F3D247 /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC95241AB34800F3D247 /* XString_test.cpp */; };
+		9A28CC98241AB34800F3D247 /* XString_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC96241AB34800F3D247 /* XString_test.h */; };
 		9A57C25724192D650029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25524192D650029A39F /* XUINTN.cpp */; };
 		9A57C25824192D650029A39F /* XUINTN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25624192D650029A39F /* XUINTN.h */; };
 		9A57C25B24192D710029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25924192D710029A39F /* XUINTN_test.cpp */; };
@@ -184,6 +188,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9A28CC91241AB33700F3D247 /* XString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString.cpp; sourceTree = "<group>"; };
+		9A28CC92241AB33700F3D247 /* XString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString.h; sourceTree = "<group>"; };
+		9A28CC95241AB34800F3D247 /* XString_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString_test.cpp; sourceTree = "<group>"; };
+		9A28CC96241AB34800F3D247 /* XString_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString_test.h; sourceTree = "<group>"; };
 		9A57C25524192D650029A39F /* XUINTN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN.cpp; sourceTree = "<group>"; };
 		9A57C25624192D650029A39F /* XUINTN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XUINTN.h; sourceTree = "<group>"; };
 		9A57C25924192D710029A39F /* XUINTN_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN_test.cpp; sourceTree = "<group>"; };
@@ -270,7 +278,6 @@
 		9AC77F5824176C04005CDD5C /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		9AC77F5924176C04005CDD5C /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Settings.cpp; sourceTree = "<group>"; };
 		9AC77F5A24176C04005CDD5C /* string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = string.h; sourceTree = "<group>"; };
-		9AC77F5B24176C04005CDD5C /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		9AC77F5E24176C04005CDD5C /* egemb_icons_dark.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = egemb_icons_dark.cpp; sourceTree = "<group>"; };
 		9AC77F5F24176C04005CDD5C /* BmLib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BmLib.cpp; sourceTree = "<group>"; };
 		9AC77F6024176C04005CDD5C /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
@@ -385,10 +392,10 @@
 			isa = PBXGroup;
 			children = (
 				9AC77EC924176C04005CDD5C /* rEFIt_UEFI */,
-				9AC77F5B24176C04005CDD5C /* refit.inf */,
 			);
-			path = Clover;
-			sourceTree = "<group>";
+			name = Clover;
+			path = ../..;
+			sourceTree = SOURCE_ROOT;
 		};
 		9AC77EC524176BF2005CDD5C /* Products */ = {
 			isa = PBXGroup;
@@ -412,8 +419,7 @@
 				9AC77F9224176C04005CDD5C /* refit */,
 				9AC77F1224176C04005CDD5C /* Version.h */,
 			);
-			name = rEFIt_UEFI;
-			path = ../../../rEFIt_UEFI;
+			path = rEFIt_UEFI;
 			sourceTree = "<group>";
 		};
 		9AC77ECA24176C04005CDD5C /* cpp_unit_test */ = {
@@ -427,6 +433,8 @@
 				9AC77ECD24176C04005CDD5C /* XArray_tests.h */,
 				9AC77ED524176C04005CDD5C /* XObjArray_tests.cpp */,
 				9AC77ED324176C04005CDD5C /* XObjArray_tests.h */,
+				9A28CC95241AB34800F3D247 /* XString_test.cpp */,
+				9A28CC96241AB34800F3D247 /* XString_test.h */,
 				9AC77ED824176C04005CDD5C /* XStringW_test.cpp */,
 				9AC77ED224176C04005CDD5C /* XStringW_test.h */,
 				9AC77ECE24176C04005CDD5C /* XStringWArray_test.cpp */,
@@ -646,6 +654,8 @@
 				9AC77FB224176C04005CDD5C /* utf8Conversion.h */,
 				9AC77FB624176C04005CDD5C /* XArray.h */,
 				9AC77FB724176C04005CDD5C /* XObjArray.h */,
+				9A28CC91241AB33700F3D247 /* XString.cpp */,
+				9A28CC92241AB33700F3D247 /* XString.h */,
 				9AC77FB024176C04005CDD5C /* XStringW.cpp */,
 				9AC77FAE24176C04005CDD5C /* XStringW.h */,
 				9AC77FAF24176C04005CDD5C /* XStringWArray.cpp */,
@@ -740,11 +750,13 @@
 				9AC7800024176C04005CDD5C /* gma.h in Headers */,
 				9AC7802424176C04005CDD5C /* sse3_patcher.h in Headers */,
 				9AC77FFD24176C04005CDD5C /* Version.h in Headers */,
+				9A28CC98241AB34800F3D247 /* XString_test.h in Headers */,
 				9AC7807424176C04005CDD5C /* REFIT_MENU_SCREEN.h in Headers */,
 				9AC7804124176C04005CDD5C /* Platform.h in Headers */,
 				9AC7805824176C04005CDD5C /* XImage.h in Headers */,
 				9AC7808624176C04005CDD5C /* globals_ctor.h in Headers */,
 				9AC7806724176C04005CDD5C /* securebootkeys.h in Headers */,
+				9A28CC94241AB33700F3D247 /* XString.h in Headers */,
 				9AC7805A24176C04005CDD5C /* FloatLib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -881,6 +893,7 @@
 				9AC7802024176C04005CDD5C /* string.cpp in Sources */,
 				9AC7809124176C04005CDD5C /* XStringW.cpp in Sources */,
 				9AC7806924176C04005CDD5C /* lockedgraphics.cpp in Sources */,
+				9A28CC97241AB34800F3D247 /* XString_test.cpp in Sources */,
 				9AC7803724176C04005CDD5C /* device_inject.cpp in Sources */,
 				9AC7804224176C04005CDD5C /* Settings.cpp in Sources */,
 				9AC7805F24176C04005CDD5C /* legacy.cpp in Sources */,
@@ -900,6 +913,7 @@
 				9AC77FBB24176C04005CDD5C /* XStringWArray_test.cpp in Sources */,
 				9AC7808124176C04005CDD5C /* main.cpp in Sources */,
 				9AC7803924176C04005CDD5C /* nvidia.cpp in Sources */,
+				9A28CC93241AB33700F3D247 /* XString.cpp in Sources */,
 				9AC7802D24176C04005CDD5C /* plist.cpp in Sources */,
 				9AC7802524176C04005CDD5C /* kernel_patcher.cpp in Sources */,
 				9AC7805324176C04005CDD5C /* nanosvg.cpp in Sources */,
@@ -945,7 +959,7 @@
 					NO_MSABI_VA_FUNCS,
 				);
 				HEADER_SEARCH_PATHS = (
-					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE5/X64/rEFIt_UEFI/refit/DEBUG,
+					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
 					$PROJECT_DIR/../../MdePkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include/X64,
 					$PROJECT_DIR/../../Include,
@@ -986,7 +1000,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				HEADER_SEARCH_PATHS = (
-					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE5/X64/rEFIt_UEFI/refit/DEBUG,
+					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
 					$PROJECT_DIR/../../MdePkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include/X64,
 					$PROJECT_DIR/../../Include,
