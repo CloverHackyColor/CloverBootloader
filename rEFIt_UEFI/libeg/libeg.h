@@ -143,6 +143,14 @@ extern "C" {
 /* types */
 
 typedef enum {
+  imNone,
+  imScale,
+  imCrop,
+  imTile
+
+} SCALING;
+
+typedef enum {
   FONT_ALFA,
   FONT_GRAY,
   FONT_LOAD

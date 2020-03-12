@@ -402,13 +402,6 @@ extern INTN ScrollbarYMovement;
 #define HDBADGES_SHOW   (1<<1)
 #define HDBADGES_INLINE (1<<2)
 
-typedef enum {
-  imNone,
-  imScale,
-  imCrop,
-  imTile
-  
-} SCALING;
 
 typedef struct {
   INTN        Timeout;
