@@ -10,8 +10,14 @@
 class Icon
 {
 public:
-  CONST CHAR8 Name; //for example "os_moja", "vol_internal"
+  INTN Id;  //for example BUILTIN_ICON_POINTER
+  XStringW Name; //for example "os_moja", "vol_internal"
+  XImage ImageNight;
   XImage Image;
+
+  Icon();
+  ~Icon();
+
 };
 
 class XTheme
@@ -56,7 +62,7 @@ public:
   INTN        MainEntriesSize;
   INTN        TileXSpace;
   INTN        TileYSpace;
-  INTN        IconFormat;
+//  INTN        IconFormat;
   BOOLEAN     Proportional;
   BOOLEAN     ShowOptimus;
   BOOLEAN     DarkEmbedded;
@@ -65,6 +71,17 @@ public:
   INTN        CodepageSize;
   float       Scale;
   float       CentreShift;
+
+  XImage  Background; //Background and Banner will not be in array as they live own life
+  XImage  Banner;
+
+  XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name
+  XImage& GetIcon(INTN Id, BOOLEAN Night); //get by id
+
+  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
+
+  XTheme(); //default constructor 
+  ~XTheme();
 
 protected:
   //internal layout variables instead of globals in menu.cpp
