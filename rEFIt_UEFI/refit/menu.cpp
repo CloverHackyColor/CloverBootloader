@@ -1345,11 +1345,23 @@ VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST char *Line)
 //DBG("%a, %a : Line=%a\n", __FILE__, __LINE__, XString(Line).c);
   REFIT_INFO_DIALOG *InputBootArgs;
 
-//  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs = new REFIT_INFO_DIALOG;
   InputBootArgs->Title.takeValueFrom(Line);
-//  InputBootArgs->Tag = TAG_INFO;
-//  InputBootArgs->Item = NULL;
+  InputBootArgs->AtClick = ActionLight;
+  AddMenuEntry(InputBootArgs, true);
+}
+
+VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
+{
+
+//DBG("%a, %a : Line=%a\n", __FILE__, __LINE__, XString(Line).c);
+  REFIT_INFO_DIALOG *InputBootArgs;
+
+  InputBootArgs = new REFIT_INFO_DIALOG;
+  VA_LIST va;
+	VA_START(va, format);
+  InputBootArgs->Title.vSPrintf(format, va);
+  VA_END(va);
   InputBootArgs->AtClick = ActionLight;
   AddMenuEntry(InputBootArgs, true);
 }
@@ -1363,14 +1375,14 @@ VOID AboutRefit(VOID)
     AboutMenu.TitleImage = NULL;
   }
   if (AboutMenu.Entries.size() == 0) {
-//    AboutMenu.AddMenuInfo(SPrintf("Clover Version 5.0"));
+//    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
 #ifdef REVISION_STR
-    AboutMenu.AddMenuInfo(SPrintf(" %s ", REVISION_STR));
+    AboutMenu.AddMenuInfo_f(" %s ", REVISION_STR);
 #else
-    AboutMenu.AddMenuInfo(SPrintf(L"Clover Revision %s", gFirmwareRevision));
+    AboutMenu.AddMenuInfo_f((L"Clover Revision %s", gFirmwareRevision));
 #endif
 #ifdef FIRMWARE_BUILDDATE
-    AboutMenu.AddMenuInfo(SPrintf(" Build: %s", FIRMWARE_BUILDDATE));
+    AboutMenu.AddMenuInfo_f(" Build: %s", FIRMWARE_BUILDDATE);
 #else
     AboutMenu.AddMenuInfo(" Build: unknown");
 #endif
@@ -1389,8 +1401,8 @@ VOID AboutRefit(VOID)
     AboutMenu.AddMenuInfo("  projectosx.com, applelife.ru, insanelymac.com");
     AboutMenu.AddMenuInfo("");
     AboutMenu.AddMenuInfo("Running on:");
-    AboutMenu.AddMenuInfo(SPrintf(" EFI Revision %d.%02d",
-                                      gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
+    AboutMenu.AddMenuInfo_f(" EFI Revision %d.%02d",
+                                      gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1));
 #if defined(MDE_CPU_IA32)
     AboutMenu.AddMenuInfo(" Platform: i386 (32 bit)");
 #elif defined(MDE_CPU_X64)
@@ -1400,8 +1412,8 @@ VOID AboutRefit(VOID)
 #else
     AboutMenu.AddMenuInfo(" Platform: unknown");
 #endif
-	  AboutMenu.AddMenuInfo(SPrintf(" Firmware: %ls rev %d.%04d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
-	  AboutMenu.AddMenuInfo(SPrintf(" Screen Output: %ls", egScreenDescription()));
+	  AboutMenu.AddMenuInfo_f(" Firmware: %ls rev %d.%04d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1));
+	  AboutMenu.AddMenuInfo_f(" Screen Output: %ls", egScreenDescription());
     AboutMenu.AnimeRun = AboutMenu.GetAnime();
     AboutMenu.AddMenuEntry(&MenuEntryReturn, false);
   } else if (AboutMenu.Entries.size() >= 2) {
@@ -4502,7 +4514,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 
   for (i = 0; i < NGFX; i++) {
     SubScreen->AddMenuInfo("----------------------");
-    SubScreen->AddMenuInfo(SPrintf("Card DeviceID=%04x", gGraphics[i].DeviceID));
+    SubScreen->AddMenuInfo_f("Card DeviceID=%04x", gGraphics[i].DeviceID);
     N = 20 + i * 6;
     SubScreen->AddMenuItemInput(N, "Model:", TRUE);
 
@@ -5244,21 +5256,21 @@ VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 	SubScreen->AddMenuEntry(InputBootArgs, true);
 	switch (Prop->ValueType) {
 	case kTagTypeInteger:
-			SubScreen->AddMenuInfo(SPrintf("     value: 0x%08llx", *(UINT64*)Prop->Value));
+			SubScreen->AddMenuInfo_f("     value: 0x%08llx", *(UINT64*)Prop->Value);
 		break;
 	case kTagTypeString:
-			SubScreen->AddMenuInfo(SPrintf("     value: %30s", Prop->Value));
+			SubScreen->AddMenuInfo_f("     value: %30s", Prop->Value);
 		break;
 	case   kTagTypeFalse:
-		SubScreen->AddMenuInfo(SPrintf("     value: false"));
+		SubScreen->AddMenuInfo_f(("     value: false"));
 		break;
 	case   kTagTypeTrue:
-		SubScreen->AddMenuInfo(SPrintf("     value: true"));
+		SubScreen->AddMenuInfo_f(("     value: true"));
 		break;
 
 	default: //type data, print first 24 bytes
 			 //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
-			SubScreen->AddMenuInfo(SPrintf("     value[%llu]: %24s", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen))));
+			SubScreen->AddMenuInfo_f("     value[%llu]: %24s", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen)));
 		break;
 	}
 
@@ -5280,7 +5292,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
 		DEV_PROPERTY *Props = NULL;
 		while (Prop) {
 			SubScreen->AddMenuInfo("------------");
-			SubScreen->AddMenuInfo(SPrintf("%s", Prop->Label));
+			SubScreen->AddMenuInfo_f("%s", Prop->Label);
 			Props = Prop->Child;
 			while (Props) {
 				CreateMenuProps(SubScreen, Props);
@@ -5294,7 +5306,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
       if (DevAddr != 0 && DevAddr != OldDevAddr) {
         OldDevAddr = DevAddr;
         SubScreen->AddMenuInfo("------------");
-		  SubScreen->AddMenuInfo(SPrintf("%s", Prop->Label));
+		  SubScreen->AddMenuInfo_f("%s", Prop->Label);
         CreateMenuProps(SubScreen, Prop);
       }
       Prop = Prop->Next;
