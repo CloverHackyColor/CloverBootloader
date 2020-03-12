@@ -9,14 +9,7 @@
 #if !defined(__XSTRING_H__)
 #define __XSTRING_H__
 
-#if 0
-#define DBG(...) DebugLog(2, __VA_ARGS__)
-#else
-#define DBG(...)
-#endif
-
 #include "XToolsCommon.h"
-#include "utf8Conversion.h"
 
 #define PATH_SEPARATOR '\\'
 
