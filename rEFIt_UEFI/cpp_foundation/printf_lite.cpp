@@ -892,7 +892,7 @@ void printf_with_callback(const __FlashStringHelper* format, transmitBufCallBack
 printf_char_type* sprintfBuf;
 size_t sprintfBufLen;
 
-void transmitSprintf(const printf_char_type* buf, size_t nbyte)
+void transmitSPrintf(const printf_char_type* buf, size_t nbyte)
 {
 	size_t i=0;
 	for ( ; sprintfBufLen>0  &&  i<nbyte ; i++) {
@@ -905,7 +905,7 @@ int vsnprintf(printf_char_type* buf, size_t len, const char *__restrict format, 
 {
 	sprintfBuf = buf;
 	sprintfBufLen = len-1;
-	vprintf_with_callback(format, valist, transmitSprintf
+	vprintf_with_callback(format, valist, transmitSPrintf
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
 									, NULL, 0
   #endif
@@ -929,7 +929,7 @@ int vsnprintf(char *__restrict buf, size_t len, const __FlashStringHelper *__res
 {
 	sprintfBuf = buf;
 	sprintfBufLen = len-1;
-	vprintf_with_callback(format, valist, transmitSprintf
+	vprintf_with_callback(format, valist, transmitSPrintf
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
 									, NULL, 0
   #endif

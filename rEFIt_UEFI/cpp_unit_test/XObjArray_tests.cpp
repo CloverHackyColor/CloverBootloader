@@ -20,10 +20,10 @@ class TestObjInt
 
 int XObjArray_tests()
 {
-	bool m_destructor_called11;
-	bool m_destructor_called12;
-	bool m_destructor_called13;
-	bool m_destructor_called14;
+	bool m_destructor_called11 = false; // vs2017 warning
+	bool m_destructor_called12 = false; // vs2017 warning
+	bool m_destructor_called13 = false; // vs2017 warning
+	bool m_destructor_called14 = false; // vs2017 warning
 
 	TestObjInt* obj14 = new TestObjInt(14, &m_destructor_called14);
 	{

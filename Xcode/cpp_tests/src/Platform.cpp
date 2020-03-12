@@ -39,13 +39,13 @@ void DebugLog(int DebugMode, const char *FormatString, ...)
 
 void* AllocatePool(UINTN  AllocationSize)
 {
-	return malloc(AllocationSize);
+	return (void*)malloc((size_t)AllocationSize);
 }
 void* ReallocatePool(UINTN  OldSize, UINTN  NewSize, void* OldBuffer)
 {
 	(void)OldSize;
 	if ( !OldBuffer ) return AllocatePool(NewSize);
-	return realloc(OldBuffer, NewSize);
+	return (void*)realloc(OldBuffer, (size_t)NewSize);
 }
 
 void FreePool(const void* Buffer)
@@ -55,7 +55,7 @@ void FreePool(const void* Buffer)
 
 void CopyMem(void *Destination, void *Source, UINTN Length)
 {
-	memmove(Destination, Source, Length);
+	memmove(Destination, Source, (size_t)Length);
 }
 
 void PauseForKey(const wchar_t* msg)
@@ -153,7 +153,7 @@ int StrnCmp(const wchar_t* FirstString, const wchar_t* SecondString, UINTN Lengt
 #else
 
 #ifdef _MSC_VER
-	return wcsncmp(FirstString, SecondString, Length);
+	return wcsncmp(FirstString, SecondString, (size_t)Length);
 #else
 	// Looks like wcscmp doesn't work with Utf16, even if compiled with -fshort-wchar.
 	// So conversion to Utf32 needed first.

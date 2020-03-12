@@ -121,7 +121,7 @@ public:
   EFI_STATUS MouseBirth();
   VOID KillMouse();
   VOID AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
-  VOID AddMenuInfo(CONST CHAR16 *Line);
+  VOID AddMenuInfo(CONST char *Line);
   VOID AddMenuInfoLine(IN CONST CHAR16 *InfoLine);
   VOID AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
   VOID AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);

@@ -110,9 +110,17 @@ int XString_tests()
 #endif
 #endif
 
+/* Stil doesn't work as VS doesn't encode correctly litteral */
+#ifndef _MSC_VER
+
+//	int i1 = sizeof(wchar_t);
+//	int i2 = sizeof(char16_t);
+//	const wchar_t* ls = L"Выход";
+//	const char16_t* us = u"Выход";
+//	const char32_t* Us = U"Выход";
 	XString str3(L"Выход");
 	if ( str3 != "Выход" ) return 50;
-
+#endif
 
 //  XStringW CommonName("EFI\\CLOVER\\misc\\screenshot");
 //  for (UINTN Index = 0; Index < 20; Index++) {

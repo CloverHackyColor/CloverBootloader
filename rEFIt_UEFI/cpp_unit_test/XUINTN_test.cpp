@@ -6,6 +6,7 @@
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4310)
+#pragma warning(disable : 4127)
 #endif
 
 #define CHECK_CTOR_FAIL(value, code) \

@@ -24,8 +24,10 @@ printf("sizeof(size_t)=%lu\n", sizeof(size_t));
 printf("sizeof(long)=%lu\n", sizeof(long));
 printf("sizeof(long long)=%lu\n", sizeof(long long));
 printf("sizeof(size_t)=%lu\n", sizeof(size_t));
+#ifndef _MSC_VER
 printf("%zu\n", (size_t)MAX_UINT64);
 printf("%zd\n", (size_t)MAX_UINT64);
+#endif
 
 	return all_tests();
 }

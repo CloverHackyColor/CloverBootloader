@@ -830,7 +830,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
 
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(Entry), true);
-    SubScreen->AddMenuInfo(L"=== boot-args ===");
+    SubScreen->AddMenuInfo("=== boot-args ===");
     if (!KernelIs64BitOnly) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubScreen->AddMenuCheck("Mac OS X 32bit",   OPT_I386, 68);

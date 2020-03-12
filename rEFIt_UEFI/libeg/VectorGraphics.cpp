@@ -10,6 +10,7 @@
 #include "FloatLib.h"
 #include "lodepng.h"
 #include "../refit/screen.h"
+#include "../cpp_foundation/XString.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1
@@ -604,18 +605,11 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
-#ifdef _MSC_VER
-  CHAR8 *Str8 = (CHAR8*)string;
-#endif
 
+//DBG("drawSVGtext -> Enter. Text=%a\n", XString(string).c);
   for (i=0; i < len; i++) {
-    CHAR16 letter = 0;
-#ifdef _MSC_VER
-    Str8 = GetUnicodeChar(Str8, &letter);
-    Str8++;
-#else
-    letter = string[i]; //already UTF16 in clang
-#endif
+    CHAR16 letter = string[i];
+
     if (!letter) {
       break;
     }
@@ -786,7 +780,7 @@ VOID testSVG()
 //      DBG("font parsed family=%a\n", p->font->fontFamily);
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
-      drawSVGtext(TextBufferXY, 0, 0, 3, L"Clover Кловер", 1);
+      drawSVGtext(TextBufferXY, 0, 0, 3, XStringW().takeValueFrom("Clover Кловер"), 1);
 //      DBG("text ready to blit\n");
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,

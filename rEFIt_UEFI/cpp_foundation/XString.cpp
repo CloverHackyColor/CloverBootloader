@@ -196,7 +196,7 @@ static XString* XString_sprintfBuf;
 static xsize XString_sprintfBuf_len;
 static wchar_t XString_char_wait;
 
-static unsigned int XString_transmitSprintf_utf32(const wchar_t wchar1, const wchar_t wchar2)
+static unsigned int XString_transmitSPrintf_utf32(const wchar_t wchar1, const wchar_t wchar2)
 {
     unsigned int ret = 0;
 	UINTN utf32_char;
@@ -244,7 +244,7 @@ static unsigned int XString_transmitSprintf_utf32(const wchar_t wchar1, const wc
 }
 
 
-static void XString_transmitSprintf(const wchar_t* buf, size_t nbchar)
+static void XString_transmitSPrintf(const wchar_t* buf, size_t nbchar)
 {
 	
 	#if __WCHAR_MAX__ <= 0xFFFF
@@ -252,13 +252,13 @@ static void XString_transmitSprintf(const wchar_t* buf, size_t nbchar)
 	
 	unsigned int ret = 1;
 	if ( XString_char_wait ) {
-		ret = XString_transmitSprintf_utf32(XString_char_wait, buf[0]);
+		ret = XString_transmitSPrintf_utf32(XString_char_wait, buf[0]);
 		XString_char_wait = 0;
 	}
 	xsize i;
 	for ( i = ret-1 ; i < nbchar-1 ; ) // cast ok, ret >
 	{
-		ret = XString_transmitSprintf_utf32(buf[i], buf[i+1]);
+		ret = XString_transmitSPrintf_utf32(buf[i], buf[i+1]);
 		i += ret;
 	}
 	if ( i < nbchar ) XString_char_wait = buf[i];
@@ -274,8 +274,8 @@ void XString::vSPrintf(const char* format, VA_LIST va)
 	XString_sprintfBuf = this;
 	XString_sprintfBuf_len = 0;
 	XString_char_wait = 0;
-	vprintf_with_callback(format, va, XString_transmitSprintf);
-	if ( XString_char_wait ) XString_transmitSprintf_utf32(XString_char_wait, 0);
+	vprintf_with_callback(format, va, XString_transmitSPrintf);
+	if ( XString_char_wait ) XString_transmitSPrintf_utf32(XString_char_wait, 0);
 	
 	// This is an attempt to use _PPrint from IO.c. Problem is : you have to allocate the memory BEFORE calling it.
 //  POOL_PRINT  spc;

@@ -255,7 +255,7 @@ XStringW XStringW::SubStringReplace(wchar_t c1, wchar_t c2)
 
 static XStringW* XStringW_sprintfBuf;
 
-static void XStringW_transmitSprintf(const wchar_t* buf, size_t nbyte)
+static void XStringW_transmitSPrintf(const wchar_t* buf, size_t nbyte)
 {
 	(*XStringW_sprintfBuf).StrnCat(buf, nbyte);
 }
@@ -265,7 +265,7 @@ void XStringW::vSPrintf(const char* format, VA_LIST va)
 	SetLength(0);
 
 	XStringW_sprintfBuf = this;
-	vprintf_with_callback(format, va, XStringW_transmitSprintf);
+	vprintf_with_callback(format, va, XStringW_transmitSPrintf);
 	
 	// This is an attempt to use _PPrint from IO.c. Problem is : you have to allocate the memory BEFORE calling it.
 //  POOL_PRINT  spc;
