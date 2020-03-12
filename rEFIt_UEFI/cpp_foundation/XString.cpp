@@ -83,7 +83,7 @@ void XString::StrnCpy(const char *buf, xsize len)
 		CheckSize(len, 0);
 		xsize idx = 0;
 		char* p = data();
-		while ( idx++ < len  &&  (*p++ = *buf++));
+		while ( idx++ < len  &&  (*p++ = *buf++) != 0 );
 		SetLength(idx-1); /* SetLength fait _Data[len]=0 */
 	}else{
 		SetLength(0); /* SetLength fait _Data[len]=0 */

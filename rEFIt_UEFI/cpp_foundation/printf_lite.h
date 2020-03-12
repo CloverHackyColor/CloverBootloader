@@ -92,7 +92,7 @@
 #define PRINTF_LITE_USB_SUPPORT 0 //
 #endif
 #ifndef PRINTF_LITE_SNPRINTF_SUPPORT
-#define PRINTF_LITE_SNPRINTF_SUPPORT 1 //
+#define PRINTF_LITE_SNPRINTF_SUPPORT 0 //
 #endif
 #ifndef PRINTF_LITE_FLASHSTRING_SUPPORT
 #define PRINTF_LITE_FLASHSTRING_SUPPORT 0 //
@@ -117,10 +117,18 @@ extern "C"
 {
 #endif
 	#if PRINTF_LITE_SNPRINTF_SUPPORT == 1
-		int vsnprintf(char *__restrict, size_t, const char *__restrict, va_list valist) __attribute__ ((__format__ (__printf__, 3, 0))); // have to return int to conform stdio.h. Always return 1;
+		int vsnprintf(printf_char_type*, size_t, const char *__restrict, va_list valist)
+			#ifndef _MSC_VER
+			    __attribute__ ((__format__ (__printf__, 3, 0)))
+			#endif
+			; // have to return int to conform stdio.h. Always return 1;
 
 		// gcc-4.9.2-atmel3.5.4-arduino2 report snprintf to undefined. Change the name and it'll work. String isn't it ?
-		int snprintf(char *__restrict buf, size_t len, const char *__restrict format, ...) __attribute__((__format__ (__printf__, 3, 4))); // have to return int to conform stdio.h. Always return 1;
+		int snprintf(printf_char_type*, size_t len, const char *__restrict format, ...)
+			#ifndef _MSC_VER
+				__attribute__((__format__ (__printf__, 3, 4)))
+			#endif
+			; // have to return int to conform stdio.h. Always return 1;
 	#endif
 
 	#if PRINTF_LITE_UART_SUPPORT == 1

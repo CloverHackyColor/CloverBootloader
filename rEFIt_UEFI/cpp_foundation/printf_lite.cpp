@@ -914,7 +914,7 @@ int vsnprintf(printf_char_type* buf, size_t len, const char *__restrict format, 
 	return 1;
 }
 
-int snprintf(char *__restrict buf, size_t len, const char *__restrict format, ...)
+int snprintf(printf_char_type*, size_t len, const char *__restrict format, ...)
 {
 	va_list valist;
 	va_start(valist, format);

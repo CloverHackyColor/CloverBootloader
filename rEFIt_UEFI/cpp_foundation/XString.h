@@ -106,10 +106,15 @@ class XString
 	void Cat(const XString &uneXString);
 
 	void vSPrintf(const char *Format, VA_LIST va);
-	void SPrintf(const char *format, ...) __attribute__((format (printf, 2, 3))); // 3 and 4 because of hidden parameter.
+	void SPrintf(const char *format, ...)
+		#ifndef _MSC_VER
+			__attribute__((format (printf, 2, 3))) // 2 and 3 because of hidden parameter.
+		#endif
+		;
 
 
 	const XString& takeValueFrom(const char* S) { StrCpy(S); return *this; }
+	const XString& takeValueFrom(const wchar_t* S) { SPrintf("%ls", S); return *this; }
 
 	const XString &operator =(const XString &aString);
 //	const XString &operator =(const XConstString &aConstString);
@@ -265,7 +270,11 @@ class XString
 
 extern const XString NullXString;
 
-XString SPrintf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));;
+XString SPrintf(const char *format, ...)
+	#ifndef _MSC_VER
+		__attribute__((format(printf, 1, 2)))
+	#endif
+;
 XString SubString(const char *S, xsize pos, xsize count);
 #ifdef TODO_skqdjfhksqjhfksjqdf
 XString ToAlpha(const char *S);
