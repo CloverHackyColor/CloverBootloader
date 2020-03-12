@@ -190,6 +190,8 @@
   cpp_foundation/utf8Conversion.h
   cpp_foundation/XArray.h
   cpp_foundation/XObjArray.h
+  cpp_foundation/XString.cpp
+  cpp_foundation/XString.h
   cpp_foundation/XStringW.cpp
   cpp_foundation/XStringW.h
   cpp_foundation/XStringWP.cpp
@@ -208,6 +210,8 @@
   cpp_unit_test/XArray_tests.h
   cpp_unit_test/XObjArray_tests.cpp
   cpp_unit_test/XObjArray_tests.h
+  cpp_unit_test/XString_test.cpp
+  cpp_unit_test/XString_test.h
   cpp_unit_test/XStringW_test.cpp
   cpp_unit_test/XStringW_test.h
   cpp_unit_test/XStringWArray_test.cpp
