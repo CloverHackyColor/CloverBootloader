@@ -11,7 +11,7 @@ extern "C" UINTN EFIAPI AsciiStrLen (IN CONST CHAR8 *String);
 
 // Hope that unsigned long long is as big in bits sa a pointer difference.
 
-#define DOWN_CAST_TO_SIZE_T(a) (  (ptrdiff_t)(a) > (ptrdiff_t)(SIZE_T_MAX) ? abort(), 0 : (size_t)(a)  )
+#define DOWN_CAST_TO_SIZE_T(a) (  (uintptr_t)(a) > (uintptr_t)(SIZE_T_MAX) ? abort(), 0 : (size_t)(a)  )
 
 /* Return the length of the null-terminated string STR.  Scan for
    the null terminator quickly by testing four bytes at a time.  */
