@@ -40,8 +40,8 @@
 #include "../cpp_unit_test/all_tests.h"
 
 #include "Version.h"
-#include "entry_scan.h"
-#include "nanosvg.h"
+#include "../entry_scan/entry_scan.h"
+#include "../libeg/nanosvg.h"
 #include "../gui/menu_items/menu_globals.h"
 #include "menu.h"
 #include "../Platform/Settings.h"

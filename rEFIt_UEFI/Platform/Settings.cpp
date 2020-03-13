@@ -2,10 +2,10 @@
  Slice 2012
  */
 
-#include "entry_scan.h"
+#include "../entry_scan/entry_scan.h"
 #include "kernel_patcher.h"
 #include "ati.h"
-#include "nanosvg.h"
+#include "../libeg/nanosvg.h"
 #include "nvidia.h"
 #include "../refit/screen.h"
 #include "../refit/menu.h"

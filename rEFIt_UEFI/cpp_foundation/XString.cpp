@@ -17,15 +17,15 @@
 
 #include "printf_lite.h"
 
-#ifndef memcpy
-#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
-#endif
-#ifndef strlen
-#define strlen(str)               (xsize)(AsciiStrLen(str))
-#endif
-#ifndef memmove
-#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
-#endif
+//#ifndef memcpy
+//#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
+//#endif
+//#ifndef strlen
+//#define strlen(str)               (xsize)(AsciiStrLen(str))
+//#endif
+//#ifndef memmove
+//#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
+//#endif
 
 xsize XStringGrowByDefault = 1024;
 const XString NullXString;

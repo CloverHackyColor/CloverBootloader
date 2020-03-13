@@ -11,6 +11,17 @@
 		9A28CC94241AB33700F3D247 /* XString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC92241AB33700F3D247 /* XString.h */; };
 		9A28CC97241AB34800F3D247 /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC95241AB34800F3D247 /* XString_test.cpp */; };
 		9A28CC98241AB34800F3D247 /* XString_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC96241AB34800F3D247 /* XString_test.h */; };
+		9A28CCA3241B66EA00F3D247 /* stdlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9A241B66EA00F3D247 /* stdlib.h */; };
+		9A28CCA4241B66EA00F3D247 /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9B241B66EA00F3D247 /* limits.h */; };
+		9A28CCA5241B66EA00F3D247 /* stddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9C241B66EA00F3D247 /* stddef.h */; };
+		9A28CCA6241B66EA00F3D247 /* abort.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC9D241B66EA00F3D247 /* abort.c */; };
+		9A28CCA7241B66EA00F3D247 /* strlen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC9E241B66EA00F3D247 /* strlen.c */; };
+		9A28CCA8241B66EA00F3D247 /* strcmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC9F241B66EA00F3D247 /* strcmp.c */; };
+		9A28CCA9241B66EA00F3D247 /* posix.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA0241B66EA00F3D247 /* posix.h */; };
+		9A28CCAA241B66EA00F3D247 /* stdarg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA1241B66EA00F3D247 /* stdarg.h */; };
+		9A28CCAB241B66EA00F3D247 /* stdint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA2241B66EA00F3D247 /* stdint.h */; };
+		9A28CD03241B8CBA00F3D247 /* posix_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD01241B8CBA00F3D247 /* posix_test.cpp */; };
+		9A28CD04241B8CBA00F3D247 /* posix_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD02241B8CBA00F3D247 /* posix_test.h */; };
 		9A57C25724192D650029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25524192D650029A39F /* XUINTN.cpp */; };
 		9A57C25824192D650029A39F /* XUINTN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25624192D650029A39F /* XUINTN.h */; };
 		9A57C25B24192D710029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25924192D710029A39F /* XUINTN_test.cpp */; };
@@ -192,6 +203,17 @@
 		9A28CC92241AB33700F3D247 /* XString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString.h; sourceTree = "<group>"; };
 		9A28CC95241AB34800F3D247 /* XString_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString_test.cpp; sourceTree = "<group>"; };
 		9A28CC96241AB34800F3D247 /* XString_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString_test.h; sourceTree = "<group>"; };
+		9A28CC9A241B66EA00F3D247 /* stdlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdlib.h; sourceTree = "<group>"; };
+		9A28CC9B241B66EA00F3D247 /* limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = limits.h; sourceTree = "<group>"; };
+		9A28CC9C241B66EA00F3D247 /* stddef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stddef.h; sourceTree = "<group>"; };
+		9A28CC9D241B66EA00F3D247 /* abort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = abort.c; sourceTree = "<group>"; };
+		9A28CC9E241B66EA00F3D247 /* strlen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strlen.c; sourceTree = "<group>"; };
+		9A28CC9F241B66EA00F3D247 /* strcmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strcmp.c; sourceTree = "<group>"; };
+		9A28CCA0241B66EA00F3D247 /* posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
+		9A28CCA1241B66EA00F3D247 /* stdarg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdarg.h; sourceTree = "<group>"; };
+		9A28CCA2241B66EA00F3D247 /* stdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
+		9A28CD01241B8CBA00F3D247 /* posix_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = posix_test.cpp; sourceTree = "<group>"; };
+		9A28CD02241B8CBA00F3D247 /* posix_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix_test.h; sourceTree = "<group>"; };
 		9A57C25524192D650029A39F /* XUINTN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN.cpp; sourceTree = "<group>"; };
 		9A57C25624192D650029A39F /* XUINTN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XUINTN.h; sourceTree = "<group>"; };
 		9A57C25924192D710029A39F /* XUINTN_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN_test.cpp; sourceTree = "<group>"; };
@@ -380,6 +402,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A28CC99241B66EA00F3D247 /* Posix */ = {
+			isa = PBXGroup;
+			children = (
+				9A28CC9A241B66EA00F3D247 /* stdlib.h */,
+				9A28CC9B241B66EA00F3D247 /* limits.h */,
+				9A28CC9C241B66EA00F3D247 /* stddef.h */,
+				9A28CC9D241B66EA00F3D247 /* abort.c */,
+				9A28CC9E241B66EA00F3D247 /* strlen.c */,
+				9A28CC9F241B66EA00F3D247 /* strcmp.c */,
+				9A28CCA0241B66EA00F3D247 /* posix.h */,
+				9A28CCA1241B66EA00F3D247 /* stdarg.h */,
+				9A28CCA2241B66EA00F3D247 /* stdint.h */,
+			);
+			path = Posix;
+			sourceTree = "<group>";
+		};
 		9AC77EB824176B08005CDD5C = {
 			isa = PBXGroup;
 			children = (
@@ -429,6 +467,8 @@
 				9AC77ED724176C04005CDD5C /* all_tests.h */,
 				9AC780B22417EE4A005CDD5C /* global_test.cpp */,
 				9AC780B42417EE53005CDD5C /* global_test.h */,
+				9A28CD01241B8CBA00F3D247 /* posix_test.cpp */,
+				9A28CD02241B8CBA00F3D247 /* posix_test.h */,
 				9AC77ED624176C04005CDD5C /* XArray_tests.cpp */,
 				9AC77ECD24176C04005CDD5C /* XArray_tests.h */,
 				9AC77ED524176C04005CDD5C /* XObjArray_tests.cpp */,
@@ -457,6 +497,7 @@
 		9AC77F1624176C04005CDD5C /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A28CC99241B66EA00F3D247 /* Posix */,
 				9AC77F2024176C04005CDD5C /* AcpiPatcher.cpp */,
 				9AC77F2324176C04005CDD5C /* AmlGenerator.cpp */,
 				9AC77F1E24176C04005CDD5C /* AmlGenerator.h */,
@@ -696,7 +737,10 @@
 				9AC7808F24176C04005CDD5C /* XStringW.h in Headers */,
 				9AC7809624176C04005CDD5C /* printf_lite.h in Headers */,
 				9AC7809324176C04005CDD5C /* utf8Conversion.h in Headers */,
+				9A28CCAA241B66EA00F3D247 /* stdarg.h in Headers */,
+				9A28CCA9241B66EA00F3D247 /* posix.h in Headers */,
 				9AC7807B24176C04005CDD5C /* list.h in Headers */,
+				9A28CCA3241B66EA00F3D247 /* stdlib.h in Headers */,
 				9AC77FC024176C04005CDD5C /* XObjArray_tests.h in Headers */,
 				9AC7801D24176C04005CDD5C /* Events.h in Headers */,
 				9AC7808D24176C04005CDD5C /* XStringWArray.h in Headers */,
@@ -729,10 +773,12 @@
 				9AC7804A24176C04005CDD5C /* XPointer.h in Headers */,
 				9AC7808E24176C04005CDD5C /* XToolsCommon.h in Headers */,
 				9AC7806D24176C04005CDD5C /* bootscreen.h in Headers */,
+				9A28CCA4241B66EA00F3D247 /* limits.h in Headers */,
 				9AC7800E24176C04005CDD5C /* Settings.h in Headers */,
 				9AC77FBF24176C04005CDD5C /* XStringW_test.h in Headers */,
 				9AC7803824176C04005CDD5C /* ati_reg.h in Headers */,
 				9AC7804824176C04005CDD5C /* libegint.h in Headers */,
+				9A28CD04241B8CBA00F3D247 /* posix_test.h in Headers */,
 				9AC7800624176C04005CDD5C /* memvendors.h in Headers */,
 				9AC7800B24176C04005CDD5C /* kernel_patcher.h in Headers */,
 				9AC7808A24176C04005CDD5C /* memory.h in Headers */,
@@ -751,10 +797,12 @@
 				9AC7802424176C04005CDD5C /* sse3_patcher.h in Headers */,
 				9AC77FFD24176C04005CDD5C /* Version.h in Headers */,
 				9A28CC98241AB34800F3D247 /* XString_test.h in Headers */,
+				9A28CCAB241B66EA00F3D247 /* stdint.h in Headers */,
 				9AC7807424176C04005CDD5C /* REFIT_MENU_SCREEN.h in Headers */,
 				9AC7804124176C04005CDD5C /* Platform.h in Headers */,
 				9AC7805824176C04005CDD5C /* XImage.h in Headers */,
 				9AC7808624176C04005CDD5C /* globals_ctor.h in Headers */,
+				9A28CCA5241B66EA00F3D247 /* stddef.h in Headers */,
 				9AC7806724176C04005CDD5C /* securebootkeys.h in Headers */,
 				9A28CC94241AB33700F3D247 /* XString.h in Headers */,
 				9AC7805A24176C04005CDD5C /* FloatLib.h in Headers */,
@@ -849,6 +897,7 @@
 				9AC7802324176C04005CDD5C /* BootOptions.cpp in Sources */,
 				9AC7808924176C04005CDD5C /* operatorNewDelete.cpp in Sources */,
 				9AC7807124176C04005CDD5C /* securehash.cpp in Sources */,
+				9A28CCA6241B66EA00F3D247 /* abort.c in Sources */,
 				9AC7804B24176C04005CDD5C /* image.cpp in Sources */,
 				9AC7803624176C04005CDD5C /* Events.cpp in Sources */,
 				9AC7805B24176C04005CDD5C /* libscreen.cpp in Sources */,
@@ -876,6 +925,7 @@
 				9AC780B32417EE4B005CDD5C /* global_test.cpp in Sources */,
 				9AC7805624176C04005CDD5C /* load_icns.cpp in Sources */,
 				9AC7805124176C04005CDD5C /* egemb_font.cpp in Sources */,
+				9A28CD03241B8CBA00F3D247 /* posix_test.cpp in Sources */,
 				9AC7806424176C04005CDD5C /* securemenu.cpp in Sources */,
 				9AC7804D24176C04005CDD5C /* text.cpp in Sources */,
 				9AC7800C24176C04005CDD5C /* AmlGenerator.cpp in Sources */,
@@ -886,6 +936,7 @@
 				9AC780B92417F359005CDD5C /* XStringWP.cpp in Sources */,
 				9AC7808224176C04005CDD5C /* memory.cpp in Sources */,
 				9AC7803B24176C04005CDD5C /* cpu.cpp in Sources */,
+				9A28CCA8241B66EA00F3D247 /* strcmp.c in Sources */,
 				9AC7800124176C04005CDD5C /* LegacyBoot.cpp in Sources */,
 				9AC7807524176C04005CDD5C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AC7801F24176C04005CDD5C /* LegacyBiosThunk.cpp in Sources */,
@@ -925,6 +976,7 @@
 				9AC7806C24176C04005CDD5C /* bootscreen.cpp in Sources */,
 				9A57C25724192D650029A39F /* XUINTN.cpp in Sources */,
 				9AC7801424176C04005CDD5C /* Console.cpp in Sources */,
+				9A28CCA7241B66EA00F3D247 /* strlen.c in Sources */,
 				9AC7809224176C04005CDD5C /* utf8Conversion.cpp in Sources */,
 				9AC7802E24176C04005CDD5C /* StartupSound.cpp in Sources */,
 				9AC7808724176C04005CDD5C /* globals_ctor.cpp in Sources */,
@@ -959,15 +1011,16 @@
 					NO_MSABI_VA_FUNCS,
 				);
 				HEADER_SEARCH_PATHS = (
+					$PROJECT_DIR/../../rEFIt_UEFI/Platform/Posix,
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
+					$PROJECT_DIR/../../rEFIt_UEFI,
+					$PROJECT_DIR/../../rEFIt_UEFI/Platform,
+					$PROJECT_DIR/../../Include,
+					$PROJECT_DIR/../../IntelFrameworkModulePkg/Include,
+					$PROJECT_DIR/../../IntelFrameworkPkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include/X64,
-					$PROJECT_DIR/../../Include,
 					$PROJECT_DIR/../../MdeModulePkg/Include,
-					$PROJECT_DIR/../../IntelFrameworkPkg/Include,
-					$PROJECT_DIR/../../Library/OpensslLib/Include,
-					$PROJECT_DIR/../../rEFIt_UEFI,
-					$PROJECT_DIR/../../IntelFrameworkModulePkg/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -988,6 +1041,7 @@
 					"-Wno-incompatible-ms-struct",
 				);
 				SUPPORTED_PLATFORMS = macosx;
+				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
@@ -1000,15 +1054,16 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				HEADER_SEARCH_PATHS = (
+					$PROJECT_DIR/../../rEFIt_UEFI/Platform/Posix,
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
+					$PROJECT_DIR/../../rEFIt_UEFI,
+					$PROJECT_DIR/../../rEFIt_UEFI/Platform,
+					$PROJECT_DIR/../../Include,
+					$PROJECT_DIR/../../IntelFrameworkModulePkg/Include,
+					$PROJECT_DIR/../../IntelFrameworkPkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include/X64,
-					$PROJECT_DIR/../../Include,
 					$PROJECT_DIR/../../MdeModulePkg/Include,
-					$PROJECT_DIR/../../IntelFrameworkPkg/Include,
-					$PROJECT_DIR/../../Library/OpensslLib/Include,
-					$PROJECT_DIR/../../rEFIt_UEFI,
-					$PROJECT_DIR/../../IntelFrameworkModulePkg/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -1029,6 +1084,7 @@
 					"-Wno-incompatible-ms-struct",
 				);
 				SUPPORTED_PLATFORMS = macosx;
+				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
 			};
 			name = Release;

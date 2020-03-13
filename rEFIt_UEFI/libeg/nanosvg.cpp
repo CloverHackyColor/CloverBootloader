@@ -50,7 +50,7 @@
 #define DBG(...) DebugLog(DEBUG_SVG, __VA_ARGS__)
 #endif
 
-typedef UINTN size_t;
+//typedef UINTN size_t;
 
 #define NSVG_PI (3.14159265358979323846264338327f)
 #define NSVG_PI_DEG (0.01745329251994f)
@@ -2031,7 +2031,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
       attr->fontFace->fontStyle = 'n';
     }
   } else if (strcmp(name, "id") == 0) {
-    strncpy(attr->id, value, 63);
+    strncpy(attr->id, value, sizeof(attr->id)-1); // -1 or not -1, doesn't change a thing because of the next line.
     attr->id[63] = '\0';
   } else if (strcmp(name, "x") == 0) {
     nsvg__xformSetTranslation(xform, (float)nsvg__atof(value), 0);

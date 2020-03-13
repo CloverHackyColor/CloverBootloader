@@ -10,6 +10,8 @@ Headers collection for procedures
 // Comment to use source debug options
 //#define DEBUG_ALL 2
 
+#include "Posix/posix.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1784,25 +1786,8 @@ KillMouse (VOID);
 VOID
 HidePointer (VOID);
 */
-VOID
-InitBooterLog (VOID);
 
-EFI_STATUS
-SetupBooterLog (
-  BOOLEAN AllowGrownSize
-  );
-
-EFI_STATUS
-SaveBooterLog (
-  IN  EFI_FILE_HANDLE BaseDir  OPTIONAL,
-  IN  CONST CHAR16 *FileName
-  );
-
-VOID
-EFIAPI
-DebugLog (
-  IN        INTN  DebugMode,
-  IN  CONST CHAR8 *FormatString, ...);
+#include "BootLog.h"
 
 /** Prints series of bytes. */
 VOID

@@ -93,6 +93,10 @@
   libeg/XImage.h
   libeg/XPointer.cpp
   libeg/XPointer.h
+  Platform/Posix/posix.h
+  Platform/Posix/strcmp.cpp
+  Platform/Posix/strlen.cpp
+  Platform/Posix/abort.cpp
   Platform/AcpiPatcher.cpp
 	Platform/ati_reg.h
 	Platform/AmlGenerator.cpp
@@ -206,6 +210,12 @@
   cpp_unit_test/all_tests.cpp
   cpp_unit_test/global_test.cpp
   cpp_unit_test/global_test.h
+  cpp_unit_test/strlen_test.cpp
+  cpp_unit_test/strlen_test.h
+  cpp_unit_test/strcmp_test.cpp
+  cpp_unit_test/strcmp_test.h
+  cpp_unit_test/strncmp_test.cpp
+  cpp_unit_test/strncmp_test.h
   cpp_unit_test/XArray_tests.cpp
   cpp_unit_test/XArray_tests.h
   cpp_unit_test/XObjArray_tests.cpp

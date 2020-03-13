@@ -7,7 +7,7 @@
 #include "XPointer.h"
 #include "libegint.h"   //this includes platform.h 
 #include "../refit/screen.h"
-#include "menu.h"
+#include "../refit/menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MOUSE 1

@@ -6,10 +6,10 @@
 //
 
 #include "FloatLib.h"
-#include "IO.h"
+#include "../refit/IO.h"
 
 
-#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
+//#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
 //#define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define fabsf(x) FabsF(x)
 

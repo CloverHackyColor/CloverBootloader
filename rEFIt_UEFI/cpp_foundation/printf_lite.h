@@ -8,7 +8,7 @@
 #define __PRINTF_LITE_H__
 
 #include <stdarg.h>
-#include <stddef.h>
+#include <stddef.h> // for size_t
 #ifdef ARDUINO
 	#include <WString.h>
 	#ifdef HAS_LIQUID_CRYSTAL

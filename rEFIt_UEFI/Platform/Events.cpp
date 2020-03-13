@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 */
 
-#include "entry_scan.h"
+#include "../entry_scan/entry_scan.h"
 //#include "device_tree.h"
 #include "kernel_patcher.h"
 

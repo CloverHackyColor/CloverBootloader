@@ -52,14 +52,14 @@ extern "C" {
 
 
 //There are defines for compilation as first step. Must be revised
-#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
-#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
-#define strcmp(a,b) AsciiStrCmp(a,b)
-#define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
-#define strstr(a,b) AsciiStrStr(a,b)
+//#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
+//#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
+//#define strcmp(a,b) AsciiStrCmp(a,b)
+//#define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
+//#define strstr(a,b) AsciiStrStr(a,b)
 
-#define strlen(s) AsciiStrLen(s)
-#define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
+//#define strlen(s) AsciiStrLen(s)
+//#define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
 
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,

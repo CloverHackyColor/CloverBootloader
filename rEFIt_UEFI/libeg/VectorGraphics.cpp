@@ -5,7 +5,7 @@
  *
  */
 
-
+#include "../Platform/Platform.h"
 #include "nanosvg.h"
 #include "FloatLib.h"
 #include "lodepng.h"

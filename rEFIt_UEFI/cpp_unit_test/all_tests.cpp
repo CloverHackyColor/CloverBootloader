@@ -9,6 +9,9 @@
 #include "XString_test.h"
 #include "XStringW_test.h"
 #include "XUINTN_test.h"
+#include "strcmp_test.h"
+#include "strncmp_test.h"
+#include "strlen_test.h"
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
@@ -17,6 +20,21 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
+	ret = strlen_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "posix_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = strcmp_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "posix_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = strncmp_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "posix_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
 	ret = XArray_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XArray_tests() failed at test %d\n", ret);

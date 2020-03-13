@@ -59,7 +59,7 @@
 
 // Experimental <--
 
-#include "libeg.h"
+#include "../libeg/libeg.h"
 #ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XStringWArray.h"
