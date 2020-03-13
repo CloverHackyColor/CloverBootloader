@@ -73,6 +73,7 @@ public:
   float       CentreShift;
 
   XImage  Background; //Background and Banner will not be in array as they live own life
+  XImage  BigBack; //not sure is needed
   XImage  Banner;
 
   XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name

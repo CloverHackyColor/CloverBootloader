@@ -2023,9 +2023,12 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     if (strstr(value, "italic") != NULL)  {
       DBG("it is italic\n");
       attr->fontFace->fontStyle = 'i';
-    } else if (strstr(value, "bold") != NULL)  {
+    } else if (strstr(value, "bold") != NULL) {
       DBG("it is bold\n");
       attr->fontFace->fontStyle = 'b';
+    } else if (strstr(value, "light") != NULL) {
+      DBG("it is light\n");
+      attr->fontFace->fontStyle = 'l';
     } else {
       DBG("it is other\n");
       attr->fontFace->fontStyle = 'n';
@@ -2765,6 +2768,8 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
         text->fontStyle = 'i';
       } else if (strstr(dict[i+1], "bold") != NULL)  {
         text->fontStyle = 'b';
+      } else if (strstr(dict[i + 1], "light") != NULL) {
+        text->fontStyle = 'l';
       } else {
         text->fontStyle = 'n';
       }
@@ -3606,8 +3611,10 @@ static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
         font->fontStyle = 'i';
       } else if (strstr(dict[i+1], "bold") != NULL)  {
         font->fontStyle = 'b';
+      } else if (strstr(dict[i + 1], "light") != NULL) {
+        font->fontStyle = 'l';
       } else {
-        font->fontStyle = 'n';
+        font->fontStyle = 'n'; //normal
       }
     }
     else if (strcmp(dict[i], "units-per-em") == 0) {

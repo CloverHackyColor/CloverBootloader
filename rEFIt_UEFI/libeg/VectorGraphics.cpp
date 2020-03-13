@@ -5,6 +5,13 @@
  *
  */
 
+#define TEST_MATH 0
+#define TEST_SVG_IMAGE 1
+#define TEST_SIZEOF 0
+#define TEST_FONT 0
+#define TEST_DITHER 0
+#define USE_XTHEME 0
+
 
 #include "nanosvg.h"
 #include "FloatLib.h"
@@ -24,11 +31,11 @@
 #define DBG(...) DebugLog(DEBUG_VEC, __VA_ARGS__)
 #endif
 
-#define TEST_MATH 0
-#define TEST_SVG_IMAGE 1
-#define TEST_SIZEOF 0
-#define TEST_FONT 0
-#define TEST_DITHER 0
+#if USE_XTHEME
+#include "XTheme.h"
+XTheme Theme;  //later this definition will be global
+#endif
+
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
@@ -50,6 +57,13 @@ extern BOOLEAN DayLight;
 
 textFaces       textFace[4]; //0-help 1-message 2-menu 3-test
 NSVGparser      *mainParser = NULL;  //it must be global variable
+
+#if USE_XTHEME
+EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Scale, XImage&  Image)
+{
+  return EFI_SUCCESS;
+}
+#endif
 
 
 EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Scale, EG_IMAGE  **Image)
@@ -226,7 +240,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
   return EFI_SUCCESS;
 }
 
-EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
+EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
 {
   EFI_STATUS Status;
   NSVGimage       *SVGimage;
@@ -421,7 +435,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     GlobalConfig.MainEntriesSize = (INTN)(128.f * Scale);
   }
   DBG("parsing theme finish\n");
-#if 1 //dump fonts
+#if 0 //dump fonts
   {
     NSVGfont        *fontSVG = NULL;
     NSVGfontChain   *fontChain = fontsDB;
@@ -440,6 +454,60 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 #endif
   return EFI_SUCCESS;
 }
+
+#if USE_XTHEME
+EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
+{
+  EFI_STATUS Status;
+  NSVGimage       *SVGimage;
+  NSVGrasterizer  *rast = nsvgCreateRasterizer();
+
+  // --- Parse theme.svg --- low case
+  mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f);
+  SVGimage = mainParser->image;
+  if (!SVGimage) {
+    DBG("Theme not parsed!\n");
+    return EFI_NOT_STARTED;
+  }
+
+  // --- Get scale as theme design height vs screen height
+  float Scale;
+  // must be svg view-box
+  float vbx = mainParser->viewWidth;
+  float vby = mainParser->viewHeight;
+  DBG("Theme view-bounds: w=%d h=%d units=%a\n", (int)vbx, (int)vby, "px");
+  if (vby > 1.0f) {
+    SVGimage->height = vby;
+  }
+  else {
+    SVGimage->height = 768.f;  //default height
+  }
+  Scale = UGAHeight / SVGimage->height;
+  DBG("using scale %s\n", PoolPrintFloat(Scale));
+  Theme.Scale = Scale;
+  Theme.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
+
+  if (mainParser->font) {
+    DBG("theme contains font-family=%a\n", mainParser->font->fontFamily);
+  }
+
+  Theme.Background = XImage(UGAWidth, UGAHeight);
+  if (!Theme.BigBack.isEmpty()) {
+    Theme.BigBack.setEmpty:
+  }
+  Status = EFI_NOT_FOUND;
+  if (!DayLight) {
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &Theme.BigBack);
+  }
+  if (EFI_ERROR(Status)) {
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, &Theme.BigBack);
+  }
+  DBG("background parsed\n");
+
+
+
+}
+#endif
 
 EG_IMAGE * LoadSvgFrame(INTN i)
 {

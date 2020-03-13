@@ -4172,7 +4172,7 @@ LoadTheme (CHAR16 *TestTheme)
       if (!EFI_ERROR (Status)) {
         Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-          Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict, 0);
+          Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
           if (EFI_ERROR(Status)) {
             ThemeDict = NULL;
           }
@@ -4222,6 +4222,8 @@ InitTheme(
   GlobalConfig.TypeSVG = FALSE;
   GlobalConfig.BootCampStyle = FALSE;
   GlobalConfig.Scale = 1.0f;
+  GlobalConfig.BannerPosX = 0;
+  GlobalConfig.BannerPosY = 0;
 
   if (DayLight) {
     DBG("use daylight theme\n");
