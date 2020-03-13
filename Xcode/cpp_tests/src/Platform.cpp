@@ -28,7 +28,7 @@ void CpuDeadLoop(void)
 
 static char *dull_replace(const char *in, const char *pattern, const char *by, char* res)
 {
-    size_t outsize = strlen(in) + 1;
+//    size_t outsize = strlen(in) + 1;
     // TODO maybe avoid reallocing by counting the non-overlapping occurences of pattern
 //    char *res = malloc(outsize);
     // use this to iterate over the output
@@ -61,7 +61,7 @@ void DebugLog(int DebugMode, const char *FormatString, ...)
 {
 	(void)DebugMode;
 	
-	char NewFormat[strlen(FormatString)+1];
+	char* NewFormat = (char*)alloca(strlen(FormatString)+1);
 	dull_replace(FormatString, "%a", "%s", NewFormat);
 	
 	va_list va;
