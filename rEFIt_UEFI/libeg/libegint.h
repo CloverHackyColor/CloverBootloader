@@ -41,7 +41,7 @@
 //#include <efi.h>
 //#include <efilib.h>
 
-#include "Platform.h"
+#include "../Platform/Platform.h"
 
 
 #if defined(_MSC_VER)

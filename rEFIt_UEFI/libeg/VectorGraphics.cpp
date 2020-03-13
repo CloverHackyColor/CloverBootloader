@@ -5,6 +5,7 @@
  *
  */
 
+
 #define TEST_MATH 0
 #define TEST_SVG_IMAGE 1
 #define TEST_SIZEOF 0
@@ -12,6 +13,8 @@
 #define TEST_DITHER 0
 #define USE_XTHEME 0
 
+
+#include "../Platform/Platform.h"
 
 #include "nanosvg.h"
 #include "FloatLib.h"

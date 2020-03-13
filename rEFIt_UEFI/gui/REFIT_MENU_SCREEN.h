@@ -36,7 +36,7 @@
 #define __REFIT_MENU_SCREEN_H__
 
 
-#include "libeg.h"
+#include "../libeg/libeg.h"
 #include "../refit/lib.h"
 
 #include "../cpp_foundation/XObjArray.h"

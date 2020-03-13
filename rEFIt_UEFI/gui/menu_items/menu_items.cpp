@@ -35,7 +35,7 @@
 
 #include "menu_items.h"
 
-#include "libeg.h"
+#include "../../libeg/libeg.h"
 #include "../../refit/lib.h"
 #ifdef __cplusplus
 #include "../../cpp_foundation/XObjArray.h"

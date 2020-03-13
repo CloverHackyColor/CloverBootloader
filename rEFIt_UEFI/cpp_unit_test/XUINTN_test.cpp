@@ -2,7 +2,7 @@
 #include "../cpp_foundation/XUINTN.h"
 #include "../cpp_foundation/XStringWP.h"
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4310)

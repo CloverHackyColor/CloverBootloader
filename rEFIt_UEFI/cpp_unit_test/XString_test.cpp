@@ -122,10 +122,5 @@ int XString_tests()
 	if ( str3 != "Выход" ) return 50;
 #endif
 
-//  XStringW CommonName("EFI\\CLOVER\\misc\\screenshot");
-//  for (UINTN Index = 0; Index < 20; Index++) {
-//   XStringW Name = CommonName + SPrintf("%lld", Index) + ".png";
-//    DebugLog(2, "XStringW_test shot: %s\n", Name.data());
-//  }
 	return 0;
 }

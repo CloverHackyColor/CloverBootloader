@@ -17,6 +17,8 @@ extern xsize XBufferGrowByDefault;
 
 #ifdef CLOVER_BUILD
 
+#include <posix.h>
+
 extern "C" {
 #include <ProcessorBind.h>
 #include <Library/BaseLib.h> // for StrCmp
@@ -33,7 +35,7 @@ extern "C" {
 
 
 
-// Declare here instead of include to avoid circular dependancy.
+// Declare here instead of include to avoid circular dependency.
 VOID
 EFIAPI
 DebugLog (

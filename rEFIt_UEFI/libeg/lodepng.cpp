@@ -67,8 +67,8 @@ with the "LODEPNG_COMPILE_" #defines divide this up further in an intermixed way
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 
-#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
-#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
+//#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
+//#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
 
 //Slice my qsort implementation.It can be moved into common library
 VOID QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int(*compare)(CONST VOID* a, CONST VOID* b), VOID* Temp)

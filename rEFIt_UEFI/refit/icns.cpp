@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "libegint.h"
+#include "../libeg/libegint.h"
 //#include "../include/egemb_icons.h"
 
 #ifndef DEBUG_ALL

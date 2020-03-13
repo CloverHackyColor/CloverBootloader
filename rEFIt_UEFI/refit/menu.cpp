@@ -35,14 +35,14 @@
  */
 
 //#include "Platform.h"
-#include "libegint.h"   //this includes platform.h
+#include "../libeg/libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
 
 #include "../../Version.h"
 //#include "colors.h"
 
-#include "nanosvg.h"
-#include "FloatLib.h"
+#include "../libeg/nanosvg.h"
+#include "../libeg/FloatLib.h"
 #include "HdaCodecDump.h"
 #include "menu.h"
 #include "screen.h"

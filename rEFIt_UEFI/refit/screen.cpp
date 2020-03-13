@@ -36,7 +36,7 @@
 
 #include "../Platform/Platform.h"
 #include "screen.h"
-#include "libegint.h"
+#include "../libeg/libegint.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1
