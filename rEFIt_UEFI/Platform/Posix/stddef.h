@@ -10,7 +10,7 @@
 #else
 
 #define	SIZE_T_MAX MAX_UINTN
-typedef UINTN2 size_t;
+typedef UINTN size_t;
 
 #endif
 
