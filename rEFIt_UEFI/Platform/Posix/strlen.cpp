@@ -28,7 +28,7 @@ size_t strlen (const char *str)
                         & (sizeof (longword) - 1)) != 0;
        ++char_ptr)
     if (*char_ptr == '\0') {
-	  if ( char_ptr - str > SIZE_T_MAX ) abort();
+	  if ( (size_t)(char_ptr - str) > SIZE_T_MAX ) abort();
       return (size_t)(char_ptr - str);
 	}
 
