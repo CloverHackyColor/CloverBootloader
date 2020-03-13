@@ -296,6 +296,7 @@ rem # setup build
   echo #define FIRMWARE_REVISION L"%SVNREVISION%">>%F_VER_H%
   echo #define REVISION_STR "Clover revision: %SVNREVISION%">>%F_VER_H%
   echo #define BUILDINFOS_STR %clover_build_info%>>%F_VER_H%
+  copy %F_VER_H% rEFIt_UEFI\%F_VER_H%
 
 :callbuild
   rem # launch build

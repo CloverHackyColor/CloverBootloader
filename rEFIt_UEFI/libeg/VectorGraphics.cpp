@@ -421,6 +421,23 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     GlobalConfig.MainEntriesSize = (INTN)(128.f * Scale);
   }
   DBG("parsing theme finish\n");
+#if 1 //dump fonts
+  {
+    NSVGfont        *fontSVG = NULL;
+    NSVGfontChain   *fontChain = fontsDB;
+
+    while (fontChain) {
+      fontSVG = fontChain->font;
+      if (fontSVG) {
+        DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
+      }
+      else {
+        DBG("nextChain is empty\n");
+      }
+      fontChain = fontChain->next;
+    }
+  }
+#endif
   return EFI_SUCCESS;
 }
 

@@ -630,7 +630,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   // OSIcons
   NSVGfontChain *fontChain = fontsDB;
   while (fontChain) {
-    DBG("free fontChain \n");
     font = fontChain->font;
     NSVGfontChain *nextChain = fontChain->next;
     if (font) {
@@ -638,8 +637,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       fontChain->font = NULL;
     }
     FreePool(fontChain);
-    fontChain = nextChain->next;
+    fontChain = nextChain;
   }
+  fontsDB = NULL;
 //  nsvg__deleteParser(mainParser); //temporary disabled
   //destruct_globals_objects(NULL); //we can't destruct our globals here. We need, for example, Volumes.
   

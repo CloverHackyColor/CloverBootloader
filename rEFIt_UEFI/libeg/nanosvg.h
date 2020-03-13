@@ -108,7 +108,7 @@ typedef struct NSVGgradientStop {
   float offset;
 } NSVGgradientStop;
 
-typedef struct NSVGgradient {
+typedef struct NSVGgradient {  //undefined sizeof
   float xform[6];
 //  float position[6];
   float fx, fy;

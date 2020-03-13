@@ -547,12 +547,14 @@ void nsvg__deleteFont(NSVGfont* font)
     return;
   }
   if (font->missingGlyph) {
+//    DBG("missing glyph=%a\n", font->missingGlyph->name);
     nsvg__deletePaths(font->missingGlyph->path);
     FreePool(font->missingGlyph);
     font->missingGlyph = NULL;
   }
   glyphs = font->glyphs;
   while (glyphs) {
+//    DBG(" glyph=%a\n", glyphs->name);
     next = glyphs->next;
     nsvg__deletePaths(glyphs->path);
     FreePool(glyphs);
@@ -2838,18 +2840,25 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = NULL;
   NSVGfontChain   *fontChain = fontsDB;
-
+  NSVGfontChain   *fontChainSimilar = NULL;
   while (fontChain) {
     fontSVG = fontChain->font;
     if (fontSVG) {
-              DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
-      if ((strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0) &&
-        (fontSVG->fontStyle == text->fontStyle)) {
-                    DBG("font %a found\n", fontSVG->fontFamily);
-        break;
+      DBG("probe fontFamily=%a fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
+      if (strcmp(fontSVG->fontFamily, text->fontFace->fontFamily) == 0) {
+        fontChainSimilar = fontChain;
+        DBG("font %a found\n", fontSVG->fontFamily);
+        if (fontSVG->fontStyle == text->fontStyle) {
+          break;
+        }
       }
     }
     fontChain = fontChain->next;
+  }
+  if (!fontChain && fontChainSimilar) { //font with this style is not found but we have same font with other style
+    DBG("found similar font with style=%c\n", fontChainSimilar->font->fontStyle);
+    fontChain = fontChainSimilar;
+    fontSVG = fontChain->font;
   }
   if (!fontChain) {  // font not found in the chain
     //then load it
@@ -2865,24 +2874,27 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       if (!p1) {
         DBG("font %a not parsed\n", text->fontFace->fontFamily);
       } else {
-        fontSVG = (__typeof__(fontSVG))AllocateCopyPool(sizeof(NSVGfont), p1->font);
-                  DBG("font family %a parsed\n", fontSVG->fontFamily);
+ /*       fontSVG = (__typeof__(fontSVG))AllocateCopyPool(sizeof(NSVGfont), p1->font);
+        DBG("font family %a parsed\n", fontSVG->fontFamily);
         fontChain = (__typeof__(fontChain))AllocatePool(sizeof(*fontChain));
         fontChain->font = fontSVG;
         fontChain->next = fontsDB;
         fontsDB = fontChain;
+ */
+        fontSVG = fontsDB->font; //last added during parse file data
         text->font = fontSVG; //this is the same pointer as in fontChain but we will never free text->font. We will free fontChain
       }
       FreePool(FileData); //after load
       FileData = NULL;
     } else {
+      DBG("set embedded font\n");
       text->font = p->font; //else embedded if present which is also double fontChain
     }
   } else {
-    DBG("set found font %a\n", fontSVG->id);
+    DBG("set found font %a\n", fontSVG->fontFamily);
     text->font = fontSVG;  //the font found in fontChain
   }
-
+  
   //instead of embedded
   if (fontSVG && fontSVG->glyphs) {
     NSVGgroup* group = attr->group;
@@ -3557,7 +3569,7 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   if (!font->horizAdvX) {
     font->horizAdvX = 1000;
   }
-  DBG("found font id=%a\n", font->id);
+  DBG("found font id=%a family=%a\n", font->id, font->fontFamily);
 
   NSVGfontChain* fontChain = (__typeof__(fontChain))AllocatePool(sizeof(*fontChain));
   fontChain->font = font;
@@ -4303,7 +4315,12 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
   }
   p->dpi = dpi;
   p->opacity = opacity;
+//  DBG("fontDb=%x\n", (UINTN)fontsDB);
   nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
+//  DBG("fontDb after parse=%x\n", (UINTN)fontsDB);
+//  if (fontsDB && fontsDB->font) {
+//    DBG("added font=%a\n", fontsDB->font->fontFamily); //yes, fonts added here
+//  }
 //assign gradients
   clipPath = p->image->clipPaths;
   while (clipPath != NULL) {
