@@ -1901,6 +1901,15 @@ VOID InitSelection(VOID)
   */
 
   // Radio buttons
+  //it was a nonsense egLoadImage is just inluded into egLoadIcon.
+  // will be corrected with XTheme support
+  //the procedure loadIcon should also check embedded icons
+#if USE_XTHEME
+  Button[0] = Theme.loadIcon("radio_button.png");
+  Button[1] = Theme.loadIcon("radio_button_selected.png");
+  Button[2] = Theme.loadIcon("checkbox.png");
+  Button[3] = Theme.loadIcon("checkbox_checked.png");
+#else
   Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE); //memory leak
   Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
   if (!Buttons[0]) {
@@ -1938,8 +1947,21 @@ VOID InitSelection(VOID)
 //    DBG("embedded checkbox_checked\n");
     Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
   }
-
+#endif
   // non-selected background images
+#if USE_XTHEME
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel;
+  if (Theme.SelectionBigFileName != NULL) {
+    BackgroundPixel = &MenuBackgroundPixel;
+  } else if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
+    BackgroundPixel = &DarkEmbeddedBackgroundPixel;
+  } else {
+    BackgroundPixel = &StdBackgroundPixel;
+  }
+  SelectionImages[1] = XImage(row0TileSize, row0TileSize, BackgroundPixel);
+  SelectionImages[3] = XImage(row1TileSize, row1TileSize, BackgroundPixel);
+#else
+  //totally wrong
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                              TRUE, &MenuBackgroundPixel);
@@ -1954,7 +1976,7 @@ VOID InitSelection(VOID)
       BackgroundPixel = StdBackgroundPixel;
       BackgroundPixel.a = 0xff;
     }
-    if (GlobalConfig.DarkEmbedded) {
+    if (GlobalConfig.DarkEmbedded) { //nonsense then equal else
       SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
                                                TRUE, &BackgroundPixel);
       SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
@@ -1968,6 +1990,7 @@ VOID InitSelection(VOID)
     }
   }
 //  DBG("selections inited\n");
+#endif
 }
 
 //
