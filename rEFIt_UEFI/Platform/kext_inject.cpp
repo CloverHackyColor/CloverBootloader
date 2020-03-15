@@ -326,7 +326,9 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
         }
       } else {
         // disable current kext injection
-        MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+        if (!StriStr(SrcDir, L"Off")) {
+          MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+        }
       }
       FreePool(FileName);
     }
