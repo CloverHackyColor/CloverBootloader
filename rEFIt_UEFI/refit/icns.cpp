@@ -378,7 +378,23 @@ EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UI
   if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
     return NULL;
   if (BaseDir) {
-    return egLoadIcon(BaseDir, FileName, PixelSize);
+    EFI_STATUS  Status = EFI_NOT_FOUND;
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0;
+    EG_IMAGE        *NewImage;
+
+    // load file
+    Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
+    if (EFI_ERROR(Status)) {
+      return NULL;
+    }
+    
+    // decode it
+    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
+    
+    FreePool(FileData);
+    return NewImage;
+    
   }
   return DummyImage(PixelSize);
 }

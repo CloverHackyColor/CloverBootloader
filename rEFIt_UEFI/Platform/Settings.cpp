@@ -4222,6 +4222,8 @@ InitTheme(
   GlobalConfig.TypeSVG = FALSE;
   GlobalConfig.BootCampStyle = FALSE;
   GlobalConfig.Scale = 1.0f;
+  GlobalConfig.BannerPosX = 0;
+  GlobalConfig.BannerPosY = 0;
 
   if (DayLight) {
     DBG("use daylight theme\n");
