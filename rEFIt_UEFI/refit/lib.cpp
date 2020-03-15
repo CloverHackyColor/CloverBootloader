@@ -1745,22 +1745,14 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
 VOID DbgHeader(CONST CHAR8 *str)
 {
   CHAR8 strLog[50];
-//#if defined(ADVLOG)
   INTN len;
-//  DebugLog (1, "=== [ %a ] ", str);
   UINTN end = AsciiSPrint(strLog, 50, "=== [ %a ] ", str);
   len = 50 - end;
   for (INTN i = 0; i < len; i++) {
     strLog[i + end] = '=';
   }
-  strLog[50] = '\0';
+  strLog[49] = '\0';
   DebugLog (1, "%a\n", strLog);
-//  for (i = 0; i < len; i++) DebugLog (1, "=");
-//  DebugLog (1, "\n");
- 
-//#else //ADVLOG
-//  DebugLog (1, "%a:\n", str);
-//#endif //ADVLOG
 }
 
 // EOF
