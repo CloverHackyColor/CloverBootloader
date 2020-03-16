@@ -17,7 +17,7 @@ VOID    FreeAnime(GUI_ANIME *Anime);
 
 
 VOID SwitchToGraphicsAndClear(VOID);
-VOID BltClearScreen(IN BOOLEAN ShowBanner);
+VOID BltClearScreen();
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos);
 VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale);
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos);

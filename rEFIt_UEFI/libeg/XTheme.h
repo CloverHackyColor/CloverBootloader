@@ -73,6 +73,8 @@ public:
   float       CentreShift;
   INTN row0TileSize;
   INTN row1TileSize;
+  INTN BanHeight;
+  INTN LayoutHeight; //it was 376 before
 
   void Init();
   XImage  Background; //Background and Banner will not be in array as they live own life
@@ -85,6 +87,7 @@ public:
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
 
   void FillByEmbedded();
+  VOID ClearScreen();
 
   XTheme(); //default constructor 
   ~XTheme();
