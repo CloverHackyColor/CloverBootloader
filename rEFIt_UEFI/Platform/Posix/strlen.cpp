@@ -9,6 +9,10 @@
 extern "C" UINTN EFIAPI AsciiStrLen (IN CONST CHAR8 *String);
 #endif
 
+// Hope that unsigned long long is as big in bits sa a pointer difference.
+
+#define DOWN_CAST_TO_SIZE_T(a) (  (uintptr_t)(a) > (uintptr_t)(SIZE_T_MAX) ? abort(), 0 : (size_t)(a)  )
+
 /* Return the length of the null-terminated string STR.  Scan for
    the null terminator quickly by testing four bytes at a time.  */
 size_t strlen (const char *str)
@@ -23,12 +27,11 @@ size_t strlen (const char *str)
 
   /* Handle the first few characters by reading one character at a time.
      Do this until CHAR_PTR is aligned on a longword boundary.  */
-  for (char_ptr = str; ((unsigned long int) char_ptr
+  for (char_ptr = str; ((uintptr_t) char_ptr
                         & (sizeof (longword) - 1)) != 0;
        ++char_ptr)
     if (*char_ptr == '\0') {
-	  if ( char_ptr - str > SIZE_T_MAX ) abort();
-      return (size_t)(char_ptr - str);
+      return DOWN_CAST_TO_SIZE_T(char_ptr - str);
 	}
 
   /* All these elucidatory comments refer to 4-byte longwords,
@@ -72,23 +75,23 @@ size_t strlen (const char *str)
           const char *cp = (const char *) (longword_ptr - 1);
 
           if (cp[0] == 0)
-            return cp - str;
+            return DOWN_CAST_TO_SIZE_T(cp - str);
           if (cp[1] == 0)
-            return cp - str + 1;
+            return DOWN_CAST_TO_SIZE_T(cp - str + 1);
           if (cp[2] == 0)
-            return cp - str + 2;
+            return DOWN_CAST_TO_SIZE_T(cp - str + 2);
           if (cp[3] == 0)
-            return cp - str + 3;
+            return DOWN_CAST_TO_SIZE_T(cp - str + 3);
           if (sizeof (longword) > 4)
             {
               if (cp[4] == 0)
-                return cp - str + 4;
+                return DOWN_CAST_TO_SIZE_T(cp - str + 4);
               if (cp[5] == 0)
-                return cp - str + 5;
+                return DOWN_CAST_TO_SIZE_T(cp - str + 5);
               if (cp[6] == 0)
-                return cp - str + 6;
+                return DOWN_CAST_TO_SIZE_T(cp - str + 6);
               if (cp[7] == 0)
-                return cp - str + 7;
+                return DOWN_CAST_TO_SIZE_T(cp - str + 7);
             }
         }
     }

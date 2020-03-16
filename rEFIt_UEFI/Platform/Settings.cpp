@@ -1329,8 +1329,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
         TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
-
-        if (!FindLen || !ReplaceLen || (FindLen != ReplaceLen)) {
+//replace len can be smaller if mask using
+        if (!FindLen || !ReplaceLen /*|| (FindLen != ReplaceLen)*/) {
           DBG (" :: invalid Find/Replace data - skipping!\n");
           continue;
         }
@@ -1348,9 +1348,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           CopyMem(Patches->KernelPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
-        Patches->KernelPatches[Patches->NrKernels].Patch = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Patch))AllocateCopyPool (FindLen, TmpPatch);
+        // this is "Replace" string len of ReplaceLen
+        Patches->KernelPatches[Patches->NrKernels].Patch = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Patch))AllocateZeroPool(FindLen);
+        CopyMem(Patches->KernelPatches[Patches->NrKexts].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
-        TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen);
+        TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen); //reuse MaskLen
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KernelPatches[Patches->NrKexts].MaskReplace = NULL;

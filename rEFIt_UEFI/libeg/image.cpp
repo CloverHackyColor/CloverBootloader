@@ -841,46 +841,6 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
 //
 // misc internal functions
 //
-//these functions used for icns, not with png
-VOID egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount)
-{
-    UINTN i;
-  if (!SrcDataPtr || !DestPlanePtr) {
-    return;
-  }
-
-    for (i = 0; i < PixelCount; i++) {
-        *DestPlanePtr = *SrcDataPtr++;
-        DestPlanePtr += 4;
-    }
-}
-
-VOID egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount)
-{
-    UINT64 i;
-  if (!DestPlanePtr) {
-    return;
-  }
-
-    for (i = 0; i < PixelCount; i++) {
-        *DestPlanePtr = Value;
-        DestPlanePtr += 4;
-    }
-}
-
-VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount)
-{
-  UINTN i;
-  if (!SrcPlanePtr || !DestPlanePtr) {
-    return;
-  }
-
-    for (i = 0; i < PixelCount; i++) {
-        *DestPlanePtr = *SrcPlanePtr;
-        DestPlanePtr += 4; SrcPlanePtr += 4;
-    }
-}
-
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
   EG_IMAGE *NewImage = NULL;
