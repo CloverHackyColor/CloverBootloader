@@ -1735,6 +1735,8 @@ BOOLEAN
 KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 {
   INTN Num, i = 0, y = 0;
+  // old confuse
+
   for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
     DBG_RT(Entry, "Patch[%d]: %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
     if (!Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
@@ -1862,9 +1864,11 @@ VOID
 KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 {
   BOOLEAN KextPatchesNeeded, patchedOk;
-
+  // it was intended for custom entries but not work if no suctom entries used
+  // so set common until better solution invented
+  Entry->KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
   // we will call KernelAndKextPatcherInit() only if needed
-  if ((Entry == NULL) || (Entry->KernelAndKextPatches == NULL)) return;
+  if ((Entry == NULL) || (Entry->KernelAndKextPatches == NULL)) return; //entry is not null as double check
 
   KextPatchesNeeded = (
     Entry->KernelAndKextPatches->KPAppleIntelCPUPM ||
@@ -1875,12 +1879,14 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   );
 
   DBG_RT(Entry, "\nKernelToPatch: ");
+  DBG_RT(Entry, "Kernels patches: %d\n", Entry->KernelAndKextPatches->NrKernels);
   if (gSettings.KernelPatchesAllowed && (Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
     DBG_RT(Entry, "Enabled: ");
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     patchedOk = KernelUserPatch(KernelData, Entry);
     DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
+//    gBS->Stall(5000000);
   } else {
     DBG_RT(Entry, "Disabled\n");
   }
