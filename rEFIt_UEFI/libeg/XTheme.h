@@ -3,7 +3,7 @@
 
 #include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XObjArray.h"
-#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XString.h"
 #include "libeg.h"
 #include "XImage.h"
 
@@ -11,11 +11,11 @@ class Icon
 {
 public:
   INTN Id;  //for example BUILTIN_ICON_POINTER
-  XStringW Name; //for example "os_moja", "vol_internal"
+  XString Name; //for example "os_moja", "vol_internal"
   XImage ImageNight;
   XImage Image;
 
-  Icon();
+  Icon(INTN Id);
   ~Icon();
 
 };
@@ -71,15 +71,20 @@ public:
   INTN        CodepageSize;
   float       Scale;
   float       CentreShift;
+  INTN row0TileSize;
+  INTN row1TileSize;
 
+  void Init();
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //not sure is needed
-  XImage  Banner;
+  XImage  Banner; //same as logo in the array
 
   XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name
   XImage& GetIcon(INTN Id, BOOLEAN Night); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
+
+  void FillByEmbedded();
 
   XTheme(); //default constructor 
   ~XTheme();

@@ -66,8 +66,13 @@ public:
   static   XPointer mPointer;
 //  XPointer mPointer;
   UINTN             ID;
+#if USE_XTHEME
+  XStringW Title;
+  XImage TitleImage;
+#else
   CONST  CHAR16      *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
   EG_IMAGE          *TitleImage;
+#endif
   XStringWArray     InfoLines;
   XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
   INTN              TimeoutSeconds;

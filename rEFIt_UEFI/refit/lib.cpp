@@ -1748,10 +1748,7 @@ VOID DbgHeader(CONST CHAR8 *str)
   INTN len;
   UINTN end = AsciiSPrint(strLog, 50, "=== [ %a ] ", str);
   len = 50 - end;
-  // it causes memset generation ^(
-//  for (INTN i = 0; i < len; i++) {
-//    strLog[i + end] = '=';
-//  }
+
   SetMem(&strLog[end], len , '=');
   strLog[49] = '\0';
   DebugLog (1, "%a\n", strLog);

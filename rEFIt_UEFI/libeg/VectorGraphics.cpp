@@ -11,7 +11,7 @@
 #define TEST_SIZEOF 0
 #define TEST_FONT 0
 #define TEST_DITHER 0
-#define USE_XTHEME 0
+
 
 
 #include "../Platform/Platform.h"
@@ -64,6 +64,129 @@ NSVGparser      *mainParser = NULL;  //it must be global variable
 #if USE_XTHEME
 EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Scale, XImage&  Image)
 {
+  EFI_STATUS      Status = EFI_NOT_FOUND;
+  NSVGimage       *SVGimage;
+  NSVGrasterizer* rast = nsvgCreateRasterizer();
+  SVGimage = p->image;
+  NSVGshape   *shape;
+  NSVGgroup   *group;
+  NSVGimage *IconImage; 
+  NSVGshape *shapeNext, *shapesTail = NULL, *shapePrev;
+
+  NSVGparser* p2 = nsvg__createParser();
+  IconImage = p2->image;
+
+  shape = SVGimage->shapes;
+  shapePrev = NULL;
+  while (shape) {
+    group = shape->group;
+    shapeNext = shape->next;
+    while (group) {
+      if (strcmp(group->id, IconName) == 0) {
+        break;
+      }
+      group = group->next;
+    }
+
+    if (group) { //the shape is in the group
+      // keep this sample for debug purpose
+/*    DBG("found shape %a", shape->id);
+      DBG(" from group %a\n", group->id);
+      if ((Id == BUILTIN_SELECTION_BIG) ||
+          (Id == BUILTIN_ICON_BACKGROUND) ||
+          (Id == BUILTIN_ICON_BANNER)) {
+        shape->debug = TRUE;
+      } */
+      if (Theme.BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
+        shape->opacity = 0.f;
+      }
+      if (strstr(shape->id, "BoundingRect") != NULL) {
+        //there is bounds after nsvgParse()
+        IconImage->width = shape->bounds[2] - shape->bounds[0];
+        IconImage->height = shape->bounds[3] - shape->bounds[1];
+        if (!IconImage->height) {
+          IconImage->height = 200;
+        }
+
+        if ((strstr(IconName, "selection_big") != NULL) && (!Theme.SelectionOnTop)) {
+          Theme.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
+          Theme.row0TileSize = Theme.MainEntriesSize + (int)(16.f * Scale);
+          DBG("main entry size = %d\n", Theme.MainEntriesSize);
+        }
+        if ((strstr(IconName, "selection_small") != NULL) && (!Theme.SelectionOnTop)) {
+          Theme.row1TileSize = (int)(IconImage->width * Scale);
+        }
+
+        // not exclude BoundingRect from IconImage?
+        shape->flags = 0;  //invisible
+        if (shapePrev) {
+          shapePrev->next = shapeNext;
+        }
+        else {
+          SVGimage->shapes = shapeNext;
+        }
+        shape = shapeNext;
+        continue; //while(shape) it is BoundingRect shape
+
+//        shape->opacity = 0.3f;
+      }
+      shape->flags = NSVG_VIS_VISIBLE;
+      // Add to tail
+//      ClipCount += shape->clip.count;
+      if (IconImage->shapes == NULL)
+        IconImage->shapes = shape;
+      else
+        shapesTail->next = shape;
+      shapesTail = shape;
+      if (shapePrev) {
+        shapePrev->next = shapeNext;
+      }
+      else {
+        SVGimage->shapes = shapeNext;
+      }
+      shapePrev->next = shapeNext;
+    } //the shape in the group
+    else {
+      shapePrev = shape;
+    }
+    shape = shapeNext;
+  } //while shape
+  shapesTail->next = NULL;
+
+  //add clipPaths  //xxx
+  NSVGclipPath* clipPaths = SVGimage->clipPaths;
+  NSVGclipPath* clipNext = NULL;
+  while (clipPaths) {
+    //   ClipCount += clipPaths->shapes->clip.count;
+    group = clipPaths->shapes->group;
+    clipNext = clipPaths->next;
+    while (group) {
+      if (strcmp(group->id, IconName) == 0) {
+        break;
+      }
+      group = group->parent;
+    }
+    if (group) {
+      DBG("found clipPaths for %a\n", IconName);
+      IconImage->clipPaths = SVGimage->clipPaths;
+      break;
+    }
+    clipPaths = clipNext;
+  }
+  //  DBG("found %d clips for %a\n", ClipCount, IconName);
+  //  if (ClipCount) { //Id == BUILTIN_ICON_BANNER) {
+  //    IconImage->clipPaths = SVGimage->clipPaths;
+  //  }
+
+
+  float bounds[4];
+  bounds[0] = FLT_MAX;
+  bounds[1] = FLT_MAX;
+  bounds[2] = -FLT_MAX;
+  bounds[3] = -FLT_MAX;
+  nsvg__imageBounds(p2, bounds);
+  CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
+
   return EFI_SUCCESS;
 }
 #endif
