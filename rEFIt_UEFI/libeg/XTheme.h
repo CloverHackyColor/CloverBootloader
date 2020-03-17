@@ -78,16 +78,19 @@ public:
 
   void Init();
   XImage  Background; //Background and Banner will not be in array as they live own life
-  XImage  BigBack; //not sure is needed
-  XImage  Banner; //same as logo in the array
+  XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
+  XImage  Banner; //same as logo in the array, make a link?
 
+  //fill the theme
   XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name
   XImage& GetIcon(INTN Id, BOOLEAN Night); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
-
   void FillByEmbedded();
-  VOID ClearScreen();
+
+  //screen operations
+  void ClearScreen();
+  VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
 
   XTheme(); //default constructor 
   ~XTheme();

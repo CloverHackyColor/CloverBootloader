@@ -3830,7 +3830,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   } else {
     MainImage = Entry->Image;
   }
-
+//this should be inited by the Theme
   if (!MainImage) {
     if (!IsEmbeddedTheme()) {
       MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
@@ -3843,14 +3843,40 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     }
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+#if USE_XTHEME
+  float fScale;
+  if (TypeSVG) {
+    fScale = (selected ? 1.f : -1.f);
+  } else {
+    fScale = ((Entry->Row == 0) ? (MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
+  }
+
+#else
   if (GlobalConfig.TypeSVG) {
     Scale = 16 * (selected ? 1 : -1);
   } else {
     Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
   }
+#endif
+
   if (Entry->Row == 0) {
     BadgeImage = Entry->getBadgeImage();
   } //else null
+#if USE_XTHEME
+  INTN index = ((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1);
+  XImage& TopImage = *SelectionImages[index];
+
+  if(SelectionOnTop) {
+    BaseImage.Draw(XPos, YPos, fScale);
+    BadgeImage.Draw(XPos, YPos, fScale);
+    TopImage.Draw(XPos, YPos, fScale);
+  } else {
+    TopImage.Draw(XPos, YPos, fScale);
+    BaseImage.Draw(XPos, YPos, fScale);
+    BadgeImage.Draw(XPos, YPos, fScale);
+  }
+
+#else
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
@@ -3865,13 +3891,13 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
                              BadgeImage,
                              XPos, YPos, Scale);
   }
-
+#endif
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
   if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
     SelectionImages[4]->HasAlpha = TRUE;
 
-    // inidcator is for row 0, main entries, only
+    // indicator is for row 0, main entries, only
     if (Entry->Row == 0) {
       BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
                     XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
@@ -3890,7 +3916,16 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     egFreeImage(MainImage);
   }
 }
-
+//the purpose of the procedure is restore Background in rect
+//XAlign is always centre, Color is the Backgrounf fill
+#if USE_XTHEME
+VOID XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height)
+{
+  XImage TmpBuffer(Width, Height);
+  TmpBuffer.CopyScaled(Background, 1.f);
+  TmpBuffer.Draw(XPos, YPos);
+}
+#else
 VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
 {
   EG_IMAGE *TmpBuffer = NULL;
@@ -3911,6 +3946,7 @@ VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Hei
   BltImage(TmpBuffer, X, YPos);
   egFreeImage(TmpBuffer);
 }
+#endif
 
 VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos)
 {

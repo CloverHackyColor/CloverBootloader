@@ -396,9 +396,13 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 VOID SwitchToGraphicsAndClear(VOID) //called from MENU_FUNCTION_INIT
 {
   SwitchToGraphics();
-	if (GraphicsScreenDirty) {
+#if USE_XTHEME
+  Theme.ClearScreen();
+#else
+	if (GraphicsScreenDirty) { //Invented in rEFIt 15 years ago
     BltClearScreen();
 	}
+#endif
 }
 
 /*
@@ -408,10 +412,11 @@ typedef struct {
   INTN     Width;
   INTN     Height;
 } EG_RECT;
+ //same as EgRect but INTN <-> UINTN
 */
 
 #if USE_XTHEME
-VOID XTheme::BltClearScreen()
+VOID XTheme::ClearScreen()
 {
   if (BanHeight < 2) {
     BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
@@ -736,7 +741,8 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   egDrawImageArea(NewImage, 0, 0, 0, 0, XPos, YPos);
   egFreeImage(NewImage);
 }
-
+//not used
+/*
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
 {
   INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
@@ -768,7 +774,7 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
   egFreeImage(CompImage);
   GraphicsScreenDirty = TRUE;
 }
-
+*/
 /*
   --------------------------------------------------------------------
   Pos                           : Bottom    -> Mid        -> Top
@@ -780,6 +786,21 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
   BaseImage = MainImage, TopImage = Selection
 */
 
+#if USE_XTHEME
+/*
+// TopImage = SelectionImages[index]
+// The procedure will be replaced by
+if(SelectionOnTop) {
+  BaseImage.Draw(XPos, YPos, Scale/16.f);
+  BadgeImage.Draw(XPos, YPos, Scale/16.f);
+  TopImage.Draw(XPos, YPos, Scale/16.f);
+} else {
+  TopImage.Draw(XPos, YPos, Scale/16.f);
+  BaseImage.Draw(XPos, YPos, Scale/16.f);
+  BadgeImage.Draw(XPos, YPos, Scale/16.f);
+}
+ */
+#else
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
 {
   INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY, OffsetXTmp, OffsetYTmp;
@@ -901,7 +922,8 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
   egFreeImage(NewTopImage);
   GraphicsScreenDirty = TRUE;
 }
-    
+#endif
+
 #define MAX_SIZE_ANIME 256
 
 VOID FreeAnime(GUI_ANIME *Anime)
