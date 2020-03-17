@@ -111,7 +111,6 @@
 		A5816DED24180F4D003BA66C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DEC24180F4C003BA66C /* panic.cpp */; };
 		A5816DF024180F82003BA66C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DEE24180F81003BA66C /* global_test.cpp */; };
 		A5816DF22418101C003BA66C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF12418101C003BA66C /* XStringWP.cpp */; };
-		A5816DF424181023003BA66C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF324181023003BA66C /* XStringWP.cpp */; };
 		A5816DF62418103A003BA66C /* menu_items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF52418103A003BA66C /* menu_items.cpp */; };
 		A5816DF924181050003BA66C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF72418104F003BA66C /* REFIT_MENU_SCREEN.cpp */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
@@ -2537,7 +2536,6 @@
 		A5816DEE24180F81003BA66C /* global_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global_test.cpp; sourceTree = "<group>"; };
 		A5816DEF24180F82003BA66C /* global_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
 		A5816DF12418101C003BA66C /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
-		A5816DF324181023003BA66C /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
 		A5816DF52418103A003BA66C /* menu_items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu_items.cpp; sourceTree = "<group>"; };
 		A5816DF72418104F003BA66C /* REFIT_MENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MENU_SCREEN.cpp; sourceTree = "<group>"; };
 		A5816DF82418104F003BA66C /* REFIT_MENU_SCREEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFIT_MENU_SCREEN.h; sourceTree = "<group>"; };
@@ -8272,7 +8270,6 @@
 				A571C2722405749900B6A2C5 /* XStringWArray.cpp */,
 				A571C26F2405749900B6A2C5 /* XStringWArray.h */,
 				A5816DF12418101C003BA66C /* XStringWP.cpp */,
-				A5816DF324181023003BA66C /* XStringWP.cpp */,
 				A571C2772405749900B6A2C5 /* XToolsCommon.cpp */,
 				A571C2702405749900B6A2C5 /* XToolsCommon.h */,
 				A57CF7B32419F4F8006DE51E /* XUINTN.cpp */,
@@ -16668,7 +16665,6 @@
 				A5456CFC23FC5AB8000BF18C /* egemb_font.cpp in Sources */,
 				A5AAFB66237F13B3009CD413 /* AmlString.c in Sources */,
 				A5AA05F0237F13C1009CD413 /* SetMem.nasm in Sources */,
-				A5816DF424181023003BA66C /* XStringWP.cpp in Sources */,
 				A5AA06FE237F13C2009CD413 /* IoFifoSev.nasm in Sources */,
 				A5AA0547237F13C1009CD413 /* WriteDr1.c in Sources */,
 				A5AAFD4C237F13B4009CD413 /* SmmSmiHandlerProfileLib.c in Sources */,

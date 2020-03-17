@@ -24,6 +24,7 @@ class XTheme
 {
 public:
   XObjArray<Icon> Icons;
+  EFI_FILE    *ThemeDir;
 
   UINTN       DisableFlags;
   UINTN       HideBadges;
@@ -80,6 +81,7 @@ public:
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
   XImage  Banner; //same as logo in the array, make a link?
+  XImage SelectionImages[6];
 
   //fill the theme
   XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name
@@ -90,7 +92,8 @@ public:
 
   //screen operations
   void ClearScreen();
-  VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
+  void FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
+  void InitSelection();
 
   XTheme(); //default constructor 
   ~XTheme();

@@ -81,7 +81,7 @@ public:
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect);
   void CopyScaled(const XImage& Image, float scale);
-  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we can Back.Draw(...) + Top.Draw(...)
+  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB(bool WantAlpha);
   unsigned FromPNG(const UINT8 * Data, UINTN Lenght);
   unsigned ToPNG(UINT8** Data, UINTN& OutSize);
@@ -90,6 +90,8 @@ public:
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
+  
+  EFI_STATUS LoadImage(EFI_FILE *Dir, XStringW FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
 };
 
 #endif //__XSTRINGW_H__

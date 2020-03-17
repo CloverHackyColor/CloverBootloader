@@ -1950,7 +1950,7 @@ VOID InitSelection(VOID)
 #endif
   // non-selected background images
 #if USE_XTHEME
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel = StdBackgroundPixel;
   if (Theme.SelectionBigFileName != NULL) {
     BackgroundPixel = &MenuBackgroundPixel;
   } else if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
