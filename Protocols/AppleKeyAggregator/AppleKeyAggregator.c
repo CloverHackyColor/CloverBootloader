@@ -301,7 +301,7 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
   Status     = EFI_SUCCESS;
   
   if (Keys != NULL) {
-    gBS->CopyMem((VOID *)Keys, (VOID *)Aggregator->KeyBuffer, (DbNoKeyStrokes * sizeof(APPLE_KEY)));
+    CopyMem((VOID *)Keys, (VOID *)Aggregator->KeyBuffer, (DbNoKeyStrokes * sizeof(APPLE_KEY)));
   }
     
   return Status;

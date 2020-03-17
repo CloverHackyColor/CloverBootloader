@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+  <background file="background.png" alignment="topleft" scaling='proportional'/>
+  <background-darkAqua file="background.png" alignment="topleft" scaling="proportional"/>
+  <pkg-ref id="org.slice.Clover"/>
+  <options customize="never" require-scripts="false" rootVolumeOnly="true"/>
+  <choices-outline>
+    <line choice="default">
+      <line choice="org.slice.Clover"/>
+    </line>
+  </choices-outline>
+  <choice id="default"/>
+  <choice id="org.slice.Clover" visible="false">
+    <pkg-ref id="org.slice.Clover"/>
+  </choice>
+  <pkg-ref id="org.slice.Clover" version="VERSION" onConclusion="none">CloverApp.pkg</pkg-ref>
+</installer-gui-script>

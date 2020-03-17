@@ -20,7 +20,7 @@ let kUnknownUEFISection = "UEFI, but not from this installer"
 let kUnknownBIOSSection = "BIOS, but not from this installer"
 
 // MARK: ItemTextFieldCell (NSTextFieldCell sub class)
-class ItemTextFieldCell: NSTextFieldCell {
+final class ItemTextFieldCell: NSTextFieldCell {
   override func drawingRect(forBounds rect: NSRect) -> NSRect {
     var nr = super.drawingRect(forBounds: rect)
     let size = self.cellSize(forBounds: rect)
@@ -34,7 +34,7 @@ class ItemTextFieldCell: NSTextFieldCell {
 }
 
 // MARK: ItemTextField (NSTextfield sub class)
-class ItemTextField: NSTextField {
+final class ItemTextField: NSTextField {
   var trackingArea: NSTrackingArea? = nil
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
@@ -79,7 +79,7 @@ class ItemTextField: NSTextField {
 }
 
 // MARK: CollectionViewItem (NSCollectionViewItem sub class)
-class CollectionViewItem: NSCollectionViewItem {
+final class CollectionViewItem: NSCollectionViewItem {
   var driver : EFIDriver? = nil
   var installerController : InstallerViewController? = nil
   var installerOutController : InstallerOutViewController? = nil
@@ -442,7 +442,7 @@ class CollectionViewItem: NSCollectionViewItem {
 }
 
 // MARK: HeaderView (NSView sub class)
-class HeaderView: NSView {
+final class HeaderView: NSView {
   public let field: NSTextField = {
     let f = NSTextField()
     if #available(OSX 10.10, *) {

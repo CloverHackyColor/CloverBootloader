@@ -1,0 +1,2 @@
+
+int XStringWArray_tests();

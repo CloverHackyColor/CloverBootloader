@@ -8,7 +8,7 @@
 
 import Foundation
 
-let cmdVersion = "1.0.4"
+let cmdVersion = "1.0.5"
 let savedNVRAMPath = "/tmp/NVRAM_saved"
 let NVRAMSavedToRoot = "/tmp/NVRAM_savedToRoot"
 
@@ -82,7 +82,7 @@ func disableInsexing(for volume: String) {
     }
     
     file = volume.addPath(".Spotlight-V100")
-    if fm.fileExists(atPath: volume.addPath("")) {
+    if fm.fileExists(atPath: file) {
       try? fm.removeItem(atPath: file)
     }
   }

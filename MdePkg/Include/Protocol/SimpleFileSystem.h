@@ -113,9 +113,9 @@ struct _EFI_SIMPLE_FILE_SYSTEM_PROTOCOL {
 typedef
 EFI_STATUS
 (EFIAPI *EFI_FILE_OPEN)(
-  IN EFI_FILE_PROTOCOL        *This,
+  IN JCONST EFI_FILE_PROTOCOL        *This,
   OUT EFI_FILE_PROTOCOL       **NewHandle,
-  IN CHAR16                   *FileName,
+  IN JCONST CHAR16                   *FileName,
   IN UINT64                   OpenMode,
   IN UINT64                   Attributes
   );

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-21 17:34+0200\n"
+"POT-Creation-Date: 2020-03-05 22:38+0100\n"
 "PO-Revision-Date: 2018-10-02 11:48+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "Clover EFI"
 #: Resources/templates/Welcome.html:31
 #, fuzzy
 #| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
-msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
+msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -72,10 +72,12 @@ msgstr "支持 Fat32 , HFS+ , 及 GPT EFI 分割區。"
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
-#. type: Content of: <html><body><p><span>
+#. type: "12.title"
 #: Resources/templates/Description.html:18
-msgid "Clover v2"
-msgstr "Clover v2"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, no-wrap
+msgid "Clover"
+msgstr "Clover"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
@@ -90,8 +92,8 @@ msgstr "主要基於 EDK2 最新修正版。"
 
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
-msgid "http://sourceforge.net/projects/cloverefiboot/"
-msgstr "http://sourceforge.net/projects/cloverefiboot/"
+msgid "https://github.com/CloverHackyColor/CloverBootloader"
+msgstr ""
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -210,7 +212,9 @@ msgstr "可按 F2 儲存 OS 的紀錄 boot.log 及 GUI 的紀錄 preboot.log"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
@@ -1123,12 +1127,6 @@ msgstr "沒有可用的更新"
 msgid "Ok"
 msgstr "確定"
 
-#. type: "12.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:1
-#, no-wrap
-msgid "Clover"
-msgstr "Clover"
-
 #. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
@@ -1404,6 +1402,12 @@ msgstr "設定 EFI 資料夾"
 #, no-wrap
 msgid "Unknown"
 msgstr "未知"
+
+#~ msgid "Clover v2"
+#~ msgstr "Clover v2"
+
+#~ msgid "http://sourceforge.net/projects/cloverefiboot/"
+#~ msgstr "http://sourceforge.net/projects/cloverefiboot/"
 
 #~ msgid "Install & Start 32bit boot first"
 #~ msgstr "安裝 boot 32位 優先啟動"

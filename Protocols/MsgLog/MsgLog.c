@@ -8,6 +8,12 @@
  */
 
 #include <Protocol/MsgLog.h>
+#include <Library/BaseLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/PrintLib.h>
 
 MESSAGE_LOG_PROTOCOL MsgLogProtocol;
@@ -72,10 +78,10 @@ MsgLogEntrypoint (
                     )
 {
   EFI_STATUS					Status; // = EFI_SUCCESS;
-  EFI_BOOT_SERVICES*			gBS; 
+ // EFI_BOOT_SERVICES*			gBS; 
   CHAR8    *tmp;
   
-  gBS				= SystemTable->BootServices;
+//  gBS				= SystemTable->BootServices;
   mHandle = NULL;
   Status = gBS->AllocatePool (
                  EfiBootServicesData,
@@ -86,7 +92,7 @@ MsgLogEntrypoint (
 		return Status;
 	}
 //  Print(L"MsgLogProtocol installed!\n");
-  gBS->SetMem (tmp, BOOTER_LOG_SIZE, 0);
+  SetMem(tmp, BOOTER_LOG_SIZE, 0);
   MsgLogProtocol.Log = tmp;	
   MsgLogProtocol.Cursor = tmp;
   MsgLogProtocol.SizeOfLog = 0;

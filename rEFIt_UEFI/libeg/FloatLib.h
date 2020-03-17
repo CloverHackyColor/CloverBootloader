@@ -8,12 +8,14 @@
 #ifndef FloatLib_h
 #define FloatLib_h
 
+extern "C" {
 #include <Uefi.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PrintLib.h>
+}
 
 #define PI (3.1415926536f)
 #define PI2 (6.283185307179586f)
@@ -36,6 +38,14 @@ float FabsF(float X);
 float rndf(void);  //random number from 0 to 1.0f
 int dither(float x, int level);
 float nsvg__vmag(float x, float y); //sqrt(x*x+y*y)
+
+inline float FabsF(float x) {
+  if (x < 0.f) return -x;
+  return x;
+}
+
+inline float SqrF(float x) { return x*x; }
+
 
 RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,

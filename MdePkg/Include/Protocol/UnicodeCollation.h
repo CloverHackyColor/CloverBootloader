@@ -78,8 +78,8 @@ typedef
 BOOLEAN
 (EFIAPI *EFI_UNICODE_COLLATION_METAIMATCH)(
   IN EFI_UNICODE_COLLATION_PROTOCOL         *This,
-  IN CHAR16                                 *String,
-  IN CHAR16                                 *Pattern
+  IN JCONST CHAR16                                 *String,
+  IN JCONST CHAR16                                 *Pattern
   );
 
 /**

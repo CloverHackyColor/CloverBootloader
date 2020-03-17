@@ -5,6 +5,8 @@
 
 **/
 
+#include <Uefi.h>
+#include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
@@ -159,11 +161,11 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
     DBG("EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
   }
-  
+ 
   *RawImageDataSize = (UINT32)(Image->Width * Image->Height * sizeof(EFI_UGA_PIXEL));
   Status = gBS->AllocatePool(EfiBootServicesData, *RawImageDataSize, (VOID **)RawImageData);
   if (!EFI_ERROR(Status)) {
-    gBS->CopyMem(*RawImageData, (VOID*)Image->PixelData, *RawImageDataSize);
+    CopyMem(*RawImageData, (VOID*)Image->PixelData, *RawImageDataSize);
   }
   
   DBG("EFI_SUCCESS, RawImageDataSize=%d\n", *RawImageDataSize);

@@ -118,7 +118,7 @@ GetNextComponent (
   )
 {
   while (*Cp != 0) {
-    if (*Cp == DT_PATH_NAME_SEPERATOR) {
+    if (*Cp == DT_PATH_NAME_SEPARATOR) {
       Cp++;
       break;
     }
@@ -193,7 +193,7 @@ DTLookupEntry (
   }
 
   Cp = PathName;
-  if (*Cp == DT_PATH_NAME_SEPERATOR) {
+  if (*Cp == DT_PATH_NAME_SEPARATOR) {
     Cp++;
     if (*Cp == '\0') {
       *FoundEntry = Cur;

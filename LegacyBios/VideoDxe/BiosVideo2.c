@@ -733,7 +733,7 @@ BiosVideoChildHandleInstall (
   if ((RemainingDevicePath == NULL) || (!IsDevicePathEnd (RemainingDevicePath))) {
     if (RemainingDevicePath == NULL) {
 //      DBG("null RemainingDevicePath\n");
-      gBS->SetMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH), 0);
+      SetMem(&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH), 0);
       AcpiDeviceNode.Header.Type = ACPI_DEVICE_PATH;
       AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
       AcpiDeviceNode.ADR = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
@@ -1495,7 +1495,7 @@ BiosVideoCheckForVbe (
     return Status;
   }
 
-  gBS->SetMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
+  SetMem(&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
   
   //
   // Fill in the VBE related data structures
@@ -1526,9 +1526,9 @@ BiosVideoCheckForVbe (
   // Desc:  determine whether VESA BIOS extensions are present and the capabilities
   //    supported by the display adapter
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
   Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_CONTROLLER_INFORMATION;
-  gBS->SetMem (BiosVideoPrivate->VbeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK), 0);
+  SetMem(BiosVideoPrivate->VbeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK), 0);
   BiosVideoPrivate->VbeInformationBlock->VESASignature  = VESA_BIOS_EXTENSIONS_VBE2_SIGNATURE;
   Regs.X.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeInformationBlock);
   Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeInformationBlock);
@@ -1618,7 +1618,7 @@ BiosVideoCheckForVbe (
   //    01h failed (e.g. non-DDC monitor)
   //
 
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
     Regs.X.BX = 1;
     Regs.X.CX = 0;
@@ -1720,10 +1720,10 @@ BiosVideoCheckForVbe (
     //      01h failed
     // Desc:  determine the attributes of the specified video mode
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    SetMem(&Regs, sizeof (Regs), 0);
     Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_MODE_INFORMATION;
     Regs.X.CX = VbeModeNumber;
-    gBS->SetMem (BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK), 0);
+    SetMem(BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK), 0);
     Regs.X.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
 
@@ -2203,7 +2203,7 @@ BiosVideoSetModeWorker (
   //
   // Clear all registers
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
 
   if (ModeData->VbeModeNumber < 0x100) {
     //
@@ -2233,7 +2233,7 @@ BiosVideoSetModeWorker (
     //
     Regs.X.AX = VESA_BIOS_EXTENSIONS_SET_MODE;
     Regs.X.BX = (UINT16) (ModeData->VbeModeNumber | VESA_BIOS_EXTENSIONS_MODE_NUMBER_LINEAR_FRAME_BUFFER);
-    gBS->SetMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK), 0);
+    SetMem(BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK), 0);
     Regs.X.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     BiosVideoPrivate->LegacyBios->Int86 (BiosVideoPrivate->LegacyBios, 0x10, &Regs);
@@ -2634,7 +2634,7 @@ BiosVideoVbeBltWorker (
       VbeBuffer   = ((UINT8 *) VbeFrameBuffer + DstY * BytesPerScanLine + DestinationX * VbePixelWidth);
       VbeBuffer1  = ((UINT8 *) VbeFrameBuffer + SrcY * BytesPerScanLine + SourceX * VbePixelWidth);
 
-      gBS->CopyMem (
+      CopyMem (
             VbeBuffer,
             VbeBuffer1,
             TotalBytes
@@ -2681,7 +2681,7 @@ BiosVideoVbeBltWorker (
 
     VbeBuffer = (UINT8 *) ((UINTN) VbeFrameBuffer + (DestinationY * BytesPerScanLine) + DestinationX * VbePixelWidth);
     for (DstY = DestinationY + 1; DstY < (Height + DestinationY); DstY++) {
-      gBS->CopyMem (
+      CopyMem (
             (VOID *) ((UINTN) VbeFrameBuffer + (DstY * BytesPerScanLine) + DestinationX * VbePixelWidth),
             VbeBuffer,
             TotalBytes

@@ -1,0 +1,223 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5FF4F4CD23A04EF500A3FFB5 /* libimagequant.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF4F4C523A04EF500A3FFB5 /* libimagequant.h */; };
+		5FF4F4CE23A04EF500A3FFB5 /* libimagequant.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4C623A04EF500A3FFB5 /* libimagequant.c */; };
+		5FF4F4CF23A04EF500A3FFB5 /* kmeans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4C723A04EF500A3FFB5 /* kmeans.c */; };
+		5FF4F4D023A04EF500A3FFB5 /* blur.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4C823A04EF500A3FFB5 /* blur.c */; };
+		5FF4F4D123A04EF500A3FFB5 /* mempool.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4C923A04EF500A3FFB5 /* mempool.c */; };
+		5FF4F4D223A04EF500A3FFB5 /* nearest.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4CA23A04EF500A3FFB5 /* nearest.c */; };
+		5FF4F4D323A04EF500A3FFB5 /* pam.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4CB23A04EF500A3FFB5 /* pam.c */; };
+		5FF4F4D423A04EF500A3FFB5 /* mediancut.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4F4CC23A04EF500A3FFB5 /* mediancut.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5FF4F4BE23A04ED500A3FFB5 /* libimagequant.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libimagequant.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FF4F4C523A04EF500A3FFB5 /* libimagequant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libimagequant.h; path = ../../www/pngquant/lib/libimagequant.h; sourceTree = "<group>"; };
+		5FF4F4C623A04EF500A3FFB5 /* libimagequant.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libimagequant.c; path = ../../www/pngquant/lib/libimagequant.c; sourceTree = "<group>"; };
+		5FF4F4C723A04EF500A3FFB5 /* kmeans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kmeans.c; path = ../../www/pngquant/lib/kmeans.c; sourceTree = "<group>"; };
+		5FF4F4C823A04EF500A3FFB5 /* blur.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = blur.c; path = ../../www/pngquant/lib/blur.c; sourceTree = "<group>"; };
+		5FF4F4C923A04EF500A3FFB5 /* mempool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mempool.c; path = ../../www/pngquant/lib/mempool.c; sourceTree = "<group>"; };
+		5FF4F4CA23A04EF500A3FFB5 /* nearest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nearest.c; path = ../../www/pngquant/lib/nearest.c; sourceTree = "<group>"; };
+		5FF4F4CB23A04EF500A3FFB5 /* pam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pam.c; path = ../../www/pngquant/lib/pam.c; sourceTree = "<group>"; };
+		5FF4F4CC23A04EF500A3FFB5 /* mediancut.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mediancut.c; path = ../../www/pngquant/lib/mediancut.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5FF4F4BC23A04ED500A3FFB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5FF4F4B523A04ED500A3FFB5 = {
+			isa = PBXGroup;
+			children = (
+				5FF4F4C823A04EF500A3FFB5 /* blur.c */,
+				5FF4F4C723A04EF500A3FFB5 /* kmeans.c */,
+				5FF4F4C623A04EF500A3FFB5 /* libimagequant.c */,
+				5FF4F4C523A04EF500A3FFB5 /* libimagequant.h */,
+				5FF4F4CC23A04EF500A3FFB5 /* mediancut.c */,
+				5FF4F4C923A04EF500A3FFB5 /* mempool.c */,
+				5FF4F4CA23A04EF500A3FFB5 /* nearest.c */,
+				5FF4F4CB23A04EF500A3FFB5 /* pam.c */,
+				5FF4F4BF23A04ED500A3FFB5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5FF4F4BF23A04ED500A3FFB5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5FF4F4BE23A04ED500A3FFB5 /* libimagequant.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5FF4F4BA23A04ED500A3FFB5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FF4F4CD23A04EF500A3FFB5 /* libimagequant.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5FF4F4BD23A04ED500A3FFB5 /* imagequant */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FF4F4C223A04ED500A3FFB5 /* Build configuration list for PBXNativeTarget "imagequant" */;
+			buildPhases = (
+				5FF4F4BA23A04ED500A3FFB5 /* Headers */,
+				5FF4F4BB23A04ED500A3FFB5 /* Sources */,
+				5FF4F4BC23A04ED500A3FFB5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = imagequant;
+			productName = imagequant;
+			productReference = 5FF4F4BE23A04ED500A3FFB5 /* libimagequant.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5FF4F4B623A04ED500A3FFB5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1120;
+				ORGANIZATIONNAME = "ImageOptim Ltd.";
+				TargetAttributes = {
+					5FF4F4BD23A04ED500A3FFB5 = {
+						CreatedOnToolsVersion = 11.2;
+					};
+				};
+			};
+			buildConfigurationList = 5FF4F4B923A04ED500A3FFB5 /* Build configuration list for PBXProject "imagequant" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5FF4F4B523A04ED500A3FFB5;
+			productRefGroup = 5FF4F4BF23A04ED500A3FFB5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5FF4F4BD23A04ED500A3FFB5 /* imagequant */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5FF4F4BB23A04ED500A3FFB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FF4F4D323A04EF500A3FFB5 /* pam.c in Sources */,
+				5FF4F4D023A04EF500A3FFB5 /* blur.c in Sources */,
+				5FF4F4D223A04EF500A3FFB5 /* nearest.c in Sources */,
+				5FF4F4CF23A04EF500A3FFB5 /* kmeans.c in Sources */,
+				5FF4F4CE23A04EF500A3FFB5 /* libimagequant.c in Sources */,
+				5FF4F4D423A04EF500A3FFB5 /* mediancut.c in Sources */,
+				5FF4F4D123A04EF500A3FFB5 /* mempool.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5FF4F4C023A04ED500A3FFB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5FF4F4C123A04ED500A3FFB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5FF4F4C323A04ED500A3FFB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5FF4F4C423A04ED500A3FFB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5FF4F4B923A04ED500A3FFB5 /* Build configuration list for PBXProject "imagequant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FF4F4C023A04ED500A3FFB5 /* Debug */,
+				5FF4F4C123A04ED500A3FFB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5FF4F4C223A04ED500A3FFB5 /* Build configuration list for PBXNativeTarget "imagequant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FF4F4C323A04ED500A3FFB5 /* Debug */,
+				5FF4F4C423A04ED500A3FFB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5FF4F4B623A04ED500A3FFB5 /* Project object */;
+}

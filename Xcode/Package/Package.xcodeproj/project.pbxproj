@@ -186,6 +186,8 @@
 		A547126E22D6E5F300FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
 		A547127022D6E60000FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
 		A547127222D6E61E00FD2D2D /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		A5F9FDAC2412AA6C00A31474 /* cbuild.bat */ = {isa = PBXFileReference; lastKnownFileType = text; name = cbuild.bat; path = ../../cbuild.bat; sourceTree = "<group>"; };
+		A5F9FDAF2412AA7A00A31474 /* hebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = hebuild.sh; path = ../../hebuild.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +294,8 @@
 				129261621A305A8F005F1426 /* utils */,
 				129261C41A305AA5005F1426 /* CloverPrefpane */,
 				129262621A305AA6005F1426 /* CloverUpdater */,
+				A5F9FDAC2412AA6C00A31474 /* cbuild.bat */,
+				A5F9FDAF2412AA7A00A31474 /* hebuild.sh */,
 				129262E01A305AB6005F1426 /* Makefile */,
 				129262E11A305AB6005F1426 /* makeiso */,
 				129262E21A305AB6005F1426 /* makepkg */,
@@ -1090,6 +1094,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				de,
 				es,

@@ -19,8 +19,6 @@ export LC_COLLATE='C'
 export LC_CTYPE='C'
 
 # ====== REVISION/VERSION ======
-declare -r CLOVER_VERSION='v2.5k'
-# declare -r CLOVER_REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 declare -r CLOVER_REVISION=$(git describe --tags --abbrev=0)
 
 # ==== CHECK ENVIRONEMENT ====
@@ -97,7 +95,7 @@ fi
 PERLLIB=bin/po4a/lib                                                   \
  bin/po4a/po4a                                                         \
  --package-name 'Clover'                                               \
- --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"             \
+ --package-version "r${CLOVER_REVISION}"             \
  --msgmerge-opt '--lang=$lang --previous --width=79'                   \
  --variable PODIR="$PODIR"                                             \
  --variable TEMPLATES_DIR="$TEMPLATES_DIR"                             \

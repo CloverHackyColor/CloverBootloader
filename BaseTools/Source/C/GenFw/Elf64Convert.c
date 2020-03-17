@@ -534,12 +534,17 @@ ScanSections64 (
   SectionCount = 0;
   for (i = 0; i < mEhdr->e_shnum; i++) {
     Elf_Shdr *shdr = GetShdrByIndex(i);
+    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
+    CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
     if (IsTextShdr(shdr)) {
       if ((shdr->sh_addralign != 0) && (shdr->sh_addralign != 1)) {
         // the alignment field is valid
         if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
           // if the section address is aligned we must align PE/COFF
+          UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
+printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
+mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
         }
@@ -585,12 +590,17 @@ ScanSections64 (
   SectionCount = 0;
   for (i = 0; i < mEhdr->e_shnum; i++) {
     Elf_Shdr *shdr = GetShdrByIndex(i);
+    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
+    CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
     if (IsDataShdr(shdr)) {
       if ((shdr->sh_addralign != 0) && (shdr->sh_addralign != 1)) {
         // the alignment field is valid
         if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
           // if the section address is aligned we must align PE/COFF
+          UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
+printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
+mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
         }

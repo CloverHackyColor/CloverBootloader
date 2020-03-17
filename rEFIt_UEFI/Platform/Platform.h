@@ -10,6 +10,12 @@ Headers collection for procedures
 // Comment to use source debug options
 //#define DEBUG_ALL 2
 
+#include "Posix/posix.h"
+#define USE_XTHEME 0
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <Uefi.h>
 
@@ -52,11 +58,13 @@ Headers collection for procedures
 #include <IndustryStandard/Bmp.h>
 #include <IndustryStandard/HdaCodec.h>
 
+#include <Protocol/PciIo.h>
 #include <Protocol/AudioIo.h>
 #include <Protocol/Cpu.h>
 #include <Protocol/CpuIo.h>
 #include <Protocol/DataHub.h>
 #include <Protocol/DevicePathToText.h>
+#include <Protocol/EdidDiscovered.h>
 #include <Protocol/EdidOverride.h>
 #include <Protocol/FrameworkHii.h>
 #include <Protocol/HdaIo.h>
@@ -73,20 +81,44 @@ Headers collection for procedures
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
 
+#ifdef __cplusplus
+}
+#endif
+
+
+// cpp_foundation objects has to be included before lib.h
+#ifdef __cplusplus
+#include "../cpp_foundation/XStringWP.h"
+#include "../cpp_foundation/XArray.h"
+#include "../cpp_foundation/XObjArray.h"
+#include "../cpp_util/remove_ref.h"
+#endif
+
 #include "../refit/lib.h"
 #include "string.h"
 #include "boot.h"
 //#include "PiBootMode.h"
+#ifndef CLOVERAPPLICATION
 #include "../refit/IO.h"
+#endif
+
 #include "device_inject.h"
+
+#ifdef __cplusplus
 #include "kext_inject.h"
 //#include "entry_scan.h"
+#endif
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 #define PCAT_RTC_ADDRESS_REGISTER 0x70
 #define PCAT_RTC_DATA_REGISTER    0x71
+
+#ifdef _MSC_VER
+#define __typeof__(x) decltype(x)
+#endif
+#define __typeof_am__(x) remove_ref<decltype(x)>::type
 
 
 /* XML Tags */
@@ -786,14 +818,14 @@ struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY     *SubEntries;
   EG_IMAGE                *Image;
   EG_IMAGE                *DriveImage;
-  CHAR16                  *ImagePath;
-  CHAR16                  *DriveImagePath;
-  CHAR16                  *Volume;
-  CHAR16                  *Path;
-  CHAR16                  *Options;
-  CHAR16                  *FullTitle;
-  CHAR16                  *Title;
-  CHAR16                  *Settings;
+  CONST CHAR16                  *ImagePath;
+  CONST CHAR16                  *DriveImagePath;
+  CONST CHAR16                  *Volume;
+  CONST CHAR16                  *Path;
+  CONST CHAR16                  *Options;
+  CONST CHAR16                  *FullTitle;
+  CONST CHAR16                  *Title;
+  CONST CHAR16                  *Settings;
   CHAR16                  Hotkey;
   BOOLEAN                 CommonSettings;
   UINT8                   Flags;
@@ -811,11 +843,11 @@ struct CUSTOM_LEGACY_ENTRY {
   CUSTOM_LEGACY_ENTRY *Next;
   EG_IMAGE            *Image;
   EG_IMAGE            *DriveImage;
-  CHAR16              *ImagePath;
-  CHAR16              *DriveImagePath;
-  CHAR16              *Volume;
-  CHAR16              *FullTitle;
-  CHAR16              *Title;
+  CONST CHAR16              *ImagePath;
+  CONST CHAR16              *DriveImagePath;
+  CONST CHAR16              *Volume;
+  CONST CHAR16              *FullTitle;
+  CONST CHAR16              *Title;
   CHAR16              Hotkey;
   UINT8               Flags;
   UINT8               Type;
@@ -1411,7 +1443,7 @@ typedef struct {
   UINT32  pad1;
   UINT32  ModuleSize;
   UINT32  Frequency;
-  CHAR8*  Vendor;
+  CONST CHAR8*  Vendor;
   CHAR8*  PartNo;
   CHAR8*  SerialNo;
 } RAM_SLOT_INFO;
@@ -1576,7 +1608,7 @@ typedef struct {
     ///
     /// Null terminated BootOption Description (pointer to 6th byte of Variable).
     ///
-    CHAR16                   *Description;
+    CONST CHAR16                   *Description;
     ///
     /// Size in bytes of BootOption Description.
     ///
@@ -1611,29 +1643,29 @@ extern BOOLEAN                        DoHibernateWake;
 /* Switch for APFS support */
 extern UINTN 						  APFSUUIDBankCounter;
 extern UINT8 						 *APFSUUIDBank;
-extern CHAR16						 **SystemPlists;
-extern CHAR16                        **InstallPlists;
-extern CHAR16						 **RecoveryPlists;
+extern CONST CHAR16						 **SystemPlists;
+extern CONST CHAR16                        **InstallPlists;
+extern CONST CHAR16						 **RecoveryPlists;
 extern EFI_GUID                        APFSSignature;
 extern BOOLEAN                         APFSSupport;
 //extern UINT32                         gCpuSpeed;  //kHz
 //extern UINT16                         gCPUtype;
 extern UINT64                         TurboMsr;
-extern CHAR8                          *BiosVendor;
+extern CONST CHAR8                          *BiosVendor;
 extern EFI_GUID                       *gEfiBootDeviceGuid;
 extern EFI_DEVICE_PATH_PROTOCOL       *gEfiBootDeviceData;
 extern CHAR8                          *AppleSystemVersion[];
 extern CHAR8                          *AppleFirmwareVersion[];
 extern CHAR8                          *AppleReleaseDate[];
-extern CHAR8                          *AppleManufacturer;
+extern CONST CHAR8                          *AppleManufacturer;
 extern CHAR8                          *AppleProductName[];
 extern CHAR8                          *AppleSystemVersion[];
 extern CHAR8                          *AppleSerialNumber[];
 extern CHAR8                          *AppleFamilies[];
 extern CHAR8                          *AppleBoardID[];
 extern CHAR8                          *AppleChassisAsset[];
-extern CHAR8                          *AppleBoardSN;
-extern CHAR8                          *AppleBoardLocation;
+extern CONST CHAR8                          *AppleBoardSN;
+extern CONST CHAR8                          *AppleBoardLocation;
 extern EFI_SYSTEM_TABLE               *gST;
 extern EFI_BOOT_SERVICES              *gBS;
 extern SETTINGS_DATA                  gSettings;
@@ -1679,8 +1711,8 @@ extern UINTN                           gEvent;
 extern UINT16                          gBacklightLevel;
 extern UINT32                          devices_number;
 //mouse
-extern ACTION                          gAction;
-extern UINTN                           gItemID;
+//extern ACTION                          gAction;
+//extern UINTN                           gItemID;
 extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
@@ -1712,11 +1744,14 @@ extern SIDELOAD_KEXT                   *InjectKextList;
 
 // Hold theme fixed IconFormat / extension
 extern CHAR16                         *IconFormat;
-extern CHAR16                         *gFirmwareRevision;
+extern CONST CHAR16                   *gFirmwareRevision;
 
 extern BOOLEAN                        ResumeFromCoreStorage;
 extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
 
+#ifdef _cplusplus
+extern XObjArray<REFIT_VOLUME> Volumes;
+#endif
 
 //-----------------------------------
 
@@ -1742,7 +1777,7 @@ FindBin (
   UINT8  *Pattern,
   UINT32 PatternLen
   );
-
+/*
 EFI_STATUS
 MouseBirth (VOID);
 
@@ -1751,32 +1786,9 @@ KillMouse (VOID);
 
 VOID
 HidePointer (VOID);
+*/
 
-EFI_STATUS
-WaitForInputEventPoll (
-  REFIT_MENU_SCREEN *Screen,
-  UINTN             TimeoutDefault
-  );
-
-VOID
-InitBooterLog (VOID);
-
-EFI_STATUS
-SetupBooterLog (
-  BOOLEAN AllowGrownSize
-  );
-
-EFI_STATUS
-SaveBooterLog (
-  IN  EFI_FILE_HANDLE BaseDir  OPTIONAL,
-  IN  CHAR16 *FileName
-  );
-
-VOID
-EFIAPI
-DebugLog (
-  IN        INTN  DebugMode,
-  IN  CONST CHAR8 *FormatString, ...);
+#include "BootLog.h"
 
 /** Prints series of bytes. */
 VOID
@@ -1822,11 +1834,6 @@ CHAR16 * GuidBeToStr(EFI_GUID *Guid);
 CHAR16 * GuidLEToStr(EFI_GUID *Guid);
 
 EFI_STATUS
-InitBootScreen (
-  IN  LOADER_ENTRY *Entry
-  );
-
-EFI_STATUS
 InitializeConsoleSim (VOID);
 
 EFI_STATUS
@@ -1860,14 +1867,9 @@ GetDefaultModel (VOID);
 UINT16
 GetAdvancedCpuType (VOID);
 
-CHAR8
-*GetOSVersion (
-  IN  LOADER_ENTRY *Entry
-  );
-
-CHAR16
+CONST CHAR16
 *GetOSIconName (
-  IN  CHAR8 *OSVersion
+  IN  CONST CHAR8 *OSVersion
   );
 
 EFI_STATUS
@@ -1894,16 +1896,11 @@ InitTheme (
   );
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CHAR16* SoundFile);
+StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile);
 
 VOID GetOutputs();
 
 EFI_STATUS CheckSyncSound();
-
-EFI_STATUS
-SetFSInjection (
-  IN LOADER_ENTRY *Entry
-  );
 
 CHAR16*
 GetOtherKextsDir (BOOLEAN On);
@@ -1919,11 +1916,6 @@ InjectKextsFromDir (
   CHAR16 *SrcDir
   );
 
-EFI_STATUS
-LoadKexts (
-  IN  LOADER_ENTRY *Entry
-  );
-
 VOID
 ParseLoadOptions (
   OUT  CHAR16 **Conf,
@@ -1935,7 +1927,7 @@ ParseLoadOptions (
 //
 VOID
 *GetNvramVariable (
-  IN      CHAR16   *VariableName,
+  IN      CONST CHAR16   *VariableName,
   IN      EFI_GUID *VendorGuid,
      OUT  UINT32   *Attributes    OPTIONAL,
      OUT  UINTN    *DataSize      OPTIONAL
@@ -1943,7 +1935,7 @@ VOID
 
 EFI_STATUS
 AddNvramVariable (
-  IN  CHAR16   *VariableName,
+  IN  CONST CHAR16   *VariableName,
   IN  EFI_GUID *VendorGuid,
   IN  UINT32   Attributes,
   IN  UINTN    DataSize,
@@ -1952,7 +1944,7 @@ AddNvramVariable (
 
 EFI_STATUS
 SetNvramVariable (
-  IN  CHAR16      *VariableName,
+  IN  CONST CHAR16      *VariableName,
   IN  EFI_GUID    *VendorGuid,
   IN  UINT32       Attributes,
   IN  UINTN        DataSize,
@@ -1961,7 +1953,7 @@ SetNvramVariable (
 
 EFI_STATUS
 DeleteNvramVariable (
-  IN  CHAR16   *VariableName,
+  IN  CONST CHAR16   *VariableName,
   IN  EFI_GUID *VendorGuid
   );
 
@@ -1997,15 +1989,10 @@ GetSmcKeys(BOOLEAN WriteToSMC);
 VOID
 GetMacAddress(VOID);
 
-INTN
-FindStartupDiskVolume (
-  REFIT_MENU_SCREEN *MainMenu
-  );
-
 EFI_STATUS
 SetStartupDiskVolume (
   IN  REFIT_VOLUME *Volume,
-  IN  CHAR16       *LoaderPath
+  IN  CONST CHAR16       *LoaderPath
   );
 
 VOID
@@ -2019,14 +2006,10 @@ EFI_STATUS
 EFIAPI
 LogDataHub (
   EFI_GUID *TypeGuid,
-  CHAR16   *Name,
+  CONST CHAR16   *Name,
   VOID     *Data,
   UINT32   DataSize
   );
-
-EFI_STATUS
-EFIAPI
-SetVariablesForOSX (LOADER_ENTRY *Entry);
 
 VOID
 EFIAPI
@@ -2036,26 +2019,9 @@ EFI_STATUS
 SetPrivateVarProto (VOID);
 
 VOID
-SetDevices (
-  LOADER_ENTRY *Entry
-  );
-
-VOID
 ScanSPD (VOID);
 
-BOOLEAN
-setup_ati_devprop (
-  LOADER_ENTRY *Entry,
-  pci_dt_t     *ati_dev
-  );
-
-BOOLEAN
-setup_gma_devprop (
-  LOADER_ENTRY *Entry,
-  pci_dt_t *gma_dev
-  );
-
-CHAR8
+CONST CHAR8
 *get_gma_model (
   IN UINT16 DeviceID
   );
@@ -2080,7 +2046,7 @@ setup_nvidia_devprop (
   pci_dt_t *nvda_dev
   );
 
-CHAR8
+CONST CHAR8
 *get_nvidia_model (
   UINT32 device_id,
   UINT32 subsys_id,
@@ -2123,7 +2089,7 @@ EFI_STATUS
 PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion);
 
 EFI_STATUS
-PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT);
+PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT);
 
 UINT8
 Checksum8 (
@@ -2163,11 +2129,6 @@ FixAny (
 
 VOID
 GetAcpiTablesList (VOID);
-
-EFI_STATUS
-EventsInitialize (
-  IN LOADER_ENTRY *Entry
-  );
 
 EFI_STATUS
 EjectVolume (
@@ -2214,7 +2175,7 @@ ParseXML (
         UINT32 bufSize
   );
 
-EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict, UINT32 bufSize);
+EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict);
 //VOID RenderSVGfont(NSVGfont  *fontSVG);
 
 TagPtr
@@ -2276,11 +2237,9 @@ SaveSettings (VOID);
 
 UINTN
 iStrLen(
-  CHAR8* String,
+  CONST CHAR8* String,
   UINTN  MaxLen
   );
-
-VOID CheckEmptyFB();
 
 EFI_STATUS
 PrepatchSmbios (VOID);
@@ -2340,8 +2299,8 @@ INTN
 countOccurrences(CHAR8 *s, CHAR8 c);
 
 
-CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
+CHAR16 *AddLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption);
+CHAR16 *RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption);
 
 //
 // BootOptions.c
@@ -2416,9 +2375,9 @@ FindBootOptionForFile (
 EFI_STATUS
 AddBootOptionForFile (
                       IN  EFI_HANDLE FileDeviceHandle,
-                      IN  CHAR16     *FileName,
+                      IN  CONST CHAR16     *FileName,
                       IN  BOOLEAN    UseShortForm,
-                      IN  CHAR16     *Description,
+                      IN  CONST CHAR16     *Description,
                       IN  UINT8      *OptionalData,
                       IN  UINTN      OptionalDataSize,
                       IN  UINTN      BootIndex,
@@ -2436,7 +2395,7 @@ DeleteBootOption (
 EFI_STATUS
 DeleteBootOptionForFile (
   IN  EFI_HANDLE FileDeviceHandle,
-  IN  CHAR16     *FileName
+  IN  CONST CHAR16     *FileName
   );
 
 /** Deletes all boot option that points to a file which contains FileName in it's path. */
@@ -2447,12 +2406,6 @@ DeleteBootOptionsContainingFile (
 
 //get default boot
 VOID GetBootFromOption(VOID);
-//
-// check if this entry corresponds to Boot# variable and then set BootCurrent
-//
-VOID
-SetBootCurrent(REFIT_MENU_ENTRY *LoadedEntry);
-
 VOID
 InitKextList(VOID);
 
@@ -2471,7 +2424,7 @@ RegisterDriversToHighestPriority (
 EFI_STATUS
 LoadUserSettings (
   IN  EFI_FILE *RootDir,
-      CHAR16   *ConfName,
+      CONST CHAR16   *ConfName,
       TagPtr   *dict
   );
 
@@ -2491,17 +2444,6 @@ EFI_GUID *APFSPartitionUUIDExtract(
 UINTN
 NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type);
 
-//
-// Hibernate.c
-//
-/** Returns TRUE if given macOS on given volume is hibernated
- *  (/private/var/vm/sleepimage exists and it's modification time is close to volume modification time).
- */
-BOOLEAN
-IsOsxHibernated (
-  IN LOADER_ENTRY    *Entry
-  );
-
 /** Prepares nvram vars needed for boot.efi to wake from hibernation. */
 BOOLEAN
 PrepareHibernation (
@@ -2513,15 +2455,15 @@ PrepareHibernation (
 //
 INTN
 StrniCmp (
-  IN CHAR16 *Str1,
-  IN CHAR16 *Str2,
+  IN CONST CHAR16 *Str1,
+  IN CONST CHAR16 *Str2,
   IN UINTN  Count
   );
 
-CHAR16
+CONST CHAR16
 *StriStr(
-  IN CHAR16 *Str,
-  IN CHAR16 *SearchFor
+  IN CONST CHAR16 *Str,
+  IN CONST CHAR16 *SearchFor
   );
 
 VOID
@@ -2531,14 +2473,14 @@ StrToLower (
 
 VOID
 AlertMessage (
-  IN CHAR16 *Title,
-  IN CHAR16 *Message
+  IN CONST CHAR16 *Title,
+  IN CONST CHAR16 *Message
   );
 
 BOOLEAN
 YesNoMessage (
-  IN CHAR16 *Title,
-  IN CHAR16 *Message);
+  IN CONST CHAR16 *Title,
+  IN CONST CHAR16 *Message);
 
 
 #endif

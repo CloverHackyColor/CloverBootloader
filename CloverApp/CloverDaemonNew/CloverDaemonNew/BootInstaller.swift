@@ -9,7 +9,7 @@
 import Foundation
 
 
-class Installer: NSObject {
+final class Installer: NSObject {
   let ktempLogPath = "/tmp/cltmplog"
   private var realTime : Bool = true
   private var gTargetVolume : String? = nil
@@ -75,6 +75,33 @@ class Installer: NSObject {
     self.saveLog()
     self.cleanUp()
     Darwin.exit(EXIT_FAILURE)
+  }
+  
+  func disableInsexing(for volume: String) {
+    if fm.fileExists(atPath: volume) {
+      var file = volume.addPath(".metadata_never_index")
+      if !fm.fileExists(atPath: file) {
+        try? "".write(toFile: file, atomically: false, encoding: .utf8)
+      }
+      
+      file = volume.addPath(".Spotlight-V100")
+      if fm.fileExists(atPath: file) {
+        try? fm.removeItem(atPath: file)
+      }
+      
+      /*
+       Clean everythings that starts with "._"
+       This of course only for ESPs
+       */
+      
+      let enumerator = fm.enumerator(atPath: volume)
+      while let file = enumerator?.nextObject() as? String {
+        let fullPath = volume.addPath(file)
+        if file.hasPrefix("._") {
+          try? fm.removeItem(atPath: fullPath)
+        }
+      }
+    }
   }
   
   private func copyReplace(src: String, dst: String, attr: [FileAttributeKey: Any]?, log: Bool) -> Bool {
@@ -263,6 +290,10 @@ class Installer: NSObject {
       } else {
         self.log("'\(targetVol)' is now read/write.")
       }
+    }
+    
+    if isESP {
+      self.disableInsexing(for: targetVol)
     }
     
     // MARK: Check paths

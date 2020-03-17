@@ -1,0 +1,284 @@
+#!/bin/bash
+
+# created by vector sigma on July 15 2019
+# github version
+
+# Linux users should be able to use this wrapper, although the following are needed:
+# gcc         (check for ./build_gcc8.sh or newer)
+# python      (sudo apt-get install python)
+# uuid-dev    (sudo apt-get install uuid-dev)
+# git         (sudo apt-get install git)
+
+# $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
+
+cd "$(dirname $0)"
+declare -r CLOVERROOT="$PWD"
+declare -r MYTOOLCHAIN=${1:-GCC53}
+
+TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
+
+# Functions
+pathmunge() {
+if [[ ! $PATH =~ (^|:)$1(:|$) ]]; then
+  if [[ "${2:-}" = "after" ]]; then
+    export PATH=$PATH:$1
+  else
+    export PATH=$1:$PATH
+  fi
+fi
+}
+
+
+checkXCODE() {
+echo "[CHECK XCODE]"
+if [[ ! -x /usr/bin/xcodebuild ]]; then
+  echo "ERROR: Install Xcode Tools from Apple before using this script."
+  exit 1
+fi
+
+if [[ ! -d "$(xcode-select --print-path)" ]]; then
+  echo "ERROR: Xcode Command Line Tools not selected:"
+  echo "       open Xcode.app and go in Preferences->Locations,"
+  echo "       and select the Command Line Tools"
+  exit 1
+fi
+}
+
+checkGETTEXT() {
+if [[ ! -x $(which gettext) ]]; then
+  "${CLOVERROOT}"/buildgettext.sh
+fi
+}
+
+exportPaths() {
+if [[ "$(uname)" == Darwin ]]; then
+  pathmunge "$(xcode-select --print-path)"/usr/bin
+fi
+
+pathmunge "$TOOLCHAIN_DIR"/bin
+export TOOLCHAIN_DIR=$TOOLCHAIN_DIR
+export DIR_MAIN=${DIR_MAIN:-$(dirname $CLOVERROOT)}
+export DIR_TOOLS=${DIR_TOOLS:-$DIR_MAIN/tools}
+export DIR_DOWNLOADS=${DIR_DOWNLOADS:-$DIR_TOOLS/download}
+export DIR_LOGS=${DIR_LOGS:-$DIR_TOOLS/logs}
+}
+
+checkTools() {
+if [[ "$(uname)" == Darwin && $MYTOOLCHAIN != GCC* ]]; then
+  checkXCODE
+fi
+
+exportPaths
+
+if [[ "$(uname)" == Darwin ]]; then
+  checkGETTEXT
+fi
+}
+
+updateClover() {
+echo "[UPDATE CLOVER]"
+cd "${CLOVERROOT}"
+if [[ -d .git ]]; then
+  git fetch --all
+  git pull origin master
+else
+  echo "Error: this is not a git repository, can't update!"
+fi
+}
+
+updateResetClover() {
+echo "[UPDATE RESET CLOVER]"
+cd "${CLOVERROOT}"
+if [[ -d .git ]]; then
+  git fetch --all
+  git reset --hard origin/master
+  git pull origin master
+else
+  echo "Error: this is not a git repository, can't update!"
+fi
+}
+
+buildClover() {
+checkTools
+
+cd "${CLOVERROOT}"
+
+if [[ -z "$WORKSPACE" ]]; then
+  export EDK_TOOLS_PATH="${PWD}"/BaseTools
+  set +u
+  source ./edksetup.sh BaseTools
+  set -u
+  cd "$CLOVERROOT"
+  WORKSPACE="${PWD}"
+fi
+
+echo "[BUILD CLOVER]"
+# Run a custom build script if exist (~/src/tools/Scripts/build.sh)
+# This allow the user to run ebuild.sh with own parameters
+if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
+  echo "Running custom build script"
+  "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
+else
+  ./ebuild.sh -fr -t $MYTOOLCHAIN
+  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+fi
+
+# Run a post build script if exist (~/src/tools/Scripts/postbuild.sh)
+if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
+  echo "Running postbuild script"
+  "${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+fi
+}
+
+buildCloverTest() {
+checkTools
+
+cd "${CLOVERROOT}"
+
+if [[ -z "$WORKSPACE" ]]; then
+  export EDK_TOOLS_PATH="${PWD}"/BaseTools
+  set +u
+  source ./edksetup.sh BaseTools
+  set -u
+  cd "$CLOVERROOT"
+  WORKSPACE="${PWD}"
+fi
+
+echo "[BUILD CLOVER TEST]"
+./ebuild.sh -t $MYTOOLCHAIN
+}
+
+buildPkg() {
+cd "${CLOVERROOT}"/CloverPackage
+echo "[BUILD PKG]"
+make pkg
+}
+
+buildIso() {
+cd "${CLOVERROOT}"/CloverPackage
+echo "[BUILD ISO]"
+make iso
+}
+
+checkStatus() {
+cd "${CLOVERROOT}"
+if [[ -d .git ]]; then
+  git fetch origin
+  git status
+else
+  echo "Error: this is not a git repository, can't get info!"
+fi
+}
+
+showdiff() {
+cd "${CLOVERROOT}"
+if [[ -d .git ]]; then
+  git fetch origin
+  git diff
+else
+  echo "Error: this is not a git repository, can't get info!"
+fi
+}
+
+cleanBaseTools() {
+cd "${CLOVERROOT}"/BaseTools
+make clean
+}
+
+menu() {
+echo
+echo '------------------------------------------------------------------------'
+cd "${CLOVERROOT}"
+
+local lsha1="not a git repo"
+
+if [[ -d .git ]]; then
+  lsha1=$(git rev-parse --short HEAD)
+fi
+
+echo "buildme, Clover v2.5k r$(cat vers.txt) (SHA: $lsha1)"
+echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme GCC53')"
+echo
+PS3='Please enter your choice: '
+options=( 'build Clover'
+          'make pkg'
+          'make iso'
+          'build all'
+          'test build (no autogen, no boot files)'
+          'status'
+          'update Clover'
+          'update Clover (reset changes)'
+          'show diff'
+          'open drivers directory'
+          'clean BaseTools'
+          'quit')
+
+select opt in "${options[@]}"
+do
+  case $opt in
+    "build Clover")
+      buildClover
+      break
+    ;;
+    "make pkg")
+      buildPkg
+      break
+    ;;
+    "make iso")
+      buildIso
+      break
+    ;;
+    "build all")
+      buildClover
+      buildPkg
+      buildIso
+      break
+    ;;
+    "test build (no autogen, no boot files)")
+      buildCloverTest
+      break
+    ;;
+    "update Clover")
+      updateClover
+      break
+    ;;
+    "update Clover (reset changes)")
+      updateResetClover
+      break
+    ;;
+    "status")
+      checkStatus
+      break
+    ;;
+    "show diff")
+      showdiff
+      break
+    ;;
+    "open drivers directory")
+      if [[ -d "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/drivers ]]; then
+        open "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/drivers
+      else
+        echo && echo "Directory not found. Compile Clover first!!"
+        sleep 2
+      fi
+      break
+    ;;
+    "clean BaseTools")
+      cleanBaseTools
+      break
+    ;;
+    "quit")
+      exit 0
+    ;;
+    *)
+      echo "invalid option $REPLY"
+      break
+    ;;
+  esac
+done
+menu
+}
+
+# Main
+set -e
+menu

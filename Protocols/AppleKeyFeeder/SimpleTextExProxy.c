@@ -27,7 +27,7 @@
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
 
-#ifdef CLOVER_DEBUG
+#ifdef JIEF_DEBUG
 #define DBG_APPLEKEYFEEDER 0
 #endif
 

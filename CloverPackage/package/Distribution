@@ -12,7 +12,7 @@
 	<background file='background.tiff' alignment='topleft' scaling='proportional'/>
   <background-darkAqua file="background.tiff" alignment='topleft' scaling="proportional"/>
   
-	<title>Clover %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader</title>
+	<title>Clover r%CLOVERREVISION% EFI bootloader</title>
 
 	<script>
     

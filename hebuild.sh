@@ -763,8 +763,8 @@ MainPostBuildScript() {
     if [[ "$GENPAGE" -eq 0 ]]; then
       setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
     fi
-    copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
-    copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
+    copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
+    copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
 
     # Mandatory drivers
     echo "Copy Mandatory drivers:"
@@ -895,8 +895,8 @@ export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
 if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript
 else
- copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
- copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
+ copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
+ copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
 fi
 
 # Local Variables:      #

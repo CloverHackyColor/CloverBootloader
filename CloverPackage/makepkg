@@ -31,14 +31,12 @@ done
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-version=v2.5k
 revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
 PKG_BUILD_DIR="${SYMROOT}"/package
 
-echo "${version}"  > version
 echo "${revision}" > revision
 
 # Workspace = edk2/Clover/CloverPackage
@@ -82,14 +80,14 @@ fi
 
 package/buildpkg.sh --srcroot "$SRCROOT" --symroot "sym" --builddir "$PKG_BUILD_DIR" ${NOEXTRAS:1} || exit $?
 
-(cd sym ; zip Clover_${version}_r${revision}.zip \
- Clover_${version}_r${revision}.pkg              \
- Clover_${version}_r${revision}.pkg.md5 )
+(cd sym ; zip Clover_r${revision}.zip \
+ Clover_r${revision}.pkg              \
+ Clover_r${revision}.pkg.md5 )
 
 # Workspace = edk2/Clover/CloverPackage/
 # Remove temp files.
 
-rm -f  version
+rm -f  version # take this to clean old sources
 rm -f  revision
 
 # Workspace = edk2/Clover/CloverPackage

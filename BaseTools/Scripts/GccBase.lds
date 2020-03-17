@@ -51,6 +51,12 @@ SECTIONS {
     KEEP (*(.eh_frame))
   }
 
+  .ctorss ALIGN(CONSTANT(COMMONPAGESIZE)) : {
+    __beginning_of_section_ctors = .;  /* create symbol for start of section */
+    KEEP (*(.ctors))
+    __end_of_section_ctors = .; /* create symbol for end of section */
+  }
+
   .rela (INFO) : {
     *(.rela .rela.*)
   }

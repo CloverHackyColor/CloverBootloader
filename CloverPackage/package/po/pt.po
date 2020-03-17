@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-21 17:34+0200\n"
+"POT-Creation-Date: 2020-03-05 22:38+0100\n"
 "PO-Revision-Date: 2019-07-19 10:48+0100\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "Clover EFI"
 #: Resources/templates/Welcome.html:31
 #, fuzzy
 #| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
-msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
+msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -70,10 +70,12 @@ msgstr "Suporta Fat32, HFS+, APFS, ExFAT."
 msgid "Copyright © %CPRYEAR%"
 msgstr "Copyright © %CPRYEAR%"
 
-#. type: Content of: <html><body><p><span>
+#. type: "12.title"
 #: Resources/templates/Description.html:18
-msgid "Clover v2"
-msgstr "Clover v2"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, no-wrap
+msgid "Clover"
+msgstr "Clover"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
@@ -90,8 +92,8 @@ msgstr "O EDK2 principal em última versão."
 
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
-msgid "http://sourceforge.net/projects/cloverefiboot/"
-msgstr "http://sourceforge.net/projects/cloverefiboot/"
+msgid "https://github.com/CloverHackyColor/CloverBootloader"
+msgstr ""
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -220,7 +222,9 @@ msgstr "Salva boot.log no sistema e preboot.log pelo GUI apertando a tecla F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
@@ -1108,12 +1112,6 @@ msgstr "Sem actualizações disponíveis !"
 msgid "Ok"
 msgstr "Ok"
 
-#. type: "12.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:1
-#, no-wrap
-msgid "Clover"
-msgstr "Clover"
-
 #. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
@@ -1389,6 +1387,12 @@ msgstr "Defina directório EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Desconhecido"
+
+#~ msgid "Clover v2"
+#~ msgstr "Clover v2"
+
+#~ msgid "http://sourceforge.net/projects/cloverefiboot/"
+#~ msgstr "http://sourceforge.net/projects/cloverefiboot/"
 
 #~ msgid "Install & Start 32bit boot first"
 #~ msgstr "Instalar e Definir o boot padrão em 32bit"

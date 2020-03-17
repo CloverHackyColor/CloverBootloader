@@ -16,51 +16,57 @@
 "Current Clover revision" = "Aktuelle Clover revision";
 "Boot Device:" = "Boot Device:";
 "config path:" = "Config.plist Pfad:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
+"Installation succeded" = "Installation erfolgreich";
+"Installation failed" = "Installation fehlgeschlagen";
 
-"Clover wants to mount %@" = "Clover möchte %@ mounten";
-"Clover wants to umount %@" = "Clover möchte %@ unmounten";
-"Mount" = "Mount";
-"umount" = "Unmount";
+"Clover wants to mount %@" = "Clover möchte %@ anmelden";
+"Clover wants to umount %@" = "Clover möchte %@ abmelden";
+"Mount" = "Anmelden";
+"umount" = "Abmelden";
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
 
-"System Serial Number:" = "System Serial Number:";
+"System Serial Number:" = "Seriennummer des Systems:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
-"OEM Vendor:" = "OEM Vendor:";
-"OEM Product:" = "OEM Product:";
+"OEM Vendor:" = "OEM Hersteller:";
+"OEM Product:" = "OEM Produkt:";
 "OEM Board:" = "OEM Board:";
-"NVRAM is native:" = "NVRAM is native:";
-"unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"NVRAM is native:" = "NVRAM ist native:";
+"unknown" = "unbekannt";
+"Yes" = "Ja";
+"No" = "Nein";
 
-"Startup Sound" = "Startup Sound";
-"Device:" = "Device:";
-"Volume level:" = "Volume level:";
+"Startup Sound" = "Startton";
+"Device:" = "Gerät:";
+"Volume level:" = "Lautstärke:";
 "LineOut" = "Line Out";
-"Speaker" = "Speaker";
-"Headphones" = "Headphones";
+"Speaker" = "Lautsprecher";
+"Headphones" = "Kopfhörer";
 "Garniture" = "Garniture";
-"Other" = "Other";
+"Other" = "Anderer";
 
 "true" = "Wahr";
 "false" = "Falsch";
 
 "Theme:" = "Thema:";
-"Sound:" = "Sound:";
+"Themes" = "Themen"; // window title
+"No themes found" = "Kein Thema gefunden";
+"Manager" = "Manager"; // Theme manager
+"Can't remove the theme" = "Kann Thema nicht entfernen";
+"Show installed" = "Zeige installiertes Thema";
+"Optimize" = "Optimiiere";
+"Sound:" = "Ton:";
 "*Make filesystem read-write" = "*Filesystem schreib-/lesbar machen";
 "*Disable Sleep Proxy Client" = "*Sleep Proxy Client deaktivieren";
 "*Require CloverDaemon" = "*Benötigt CloverDaemon";
-"Read daemon log" = "Daemon log lesen";
-"Read bdmesg" = "Boot log lesen";
+"Read daemon log" = "Daemon-Log lesen";
+"Read bdmesg" = "Boot-Log lesen";
 
 "Install CloverDaemonNew" = "CloverDaemonNew installieren";
 "Uninstall CloverDaemonNew" = "CloverDaemonNew deinstallieren";
 
-"Update" = "Update";
+"Update" = "Aktualisieren";
 "Download" = "Download";
 "Update to r%d" = "Auf Version r%d aktualisieren"; // "Update to r5101"
 "Check update:" = "Auf Update prüfen:";
@@ -72,7 +78,7 @@
 "monthly" = "monatlich";
 "last checked:" = "Zuletzt geprüft:"; // last date update was checked. Please be short.
 
-"Run at login" = "Nach Login starten";
+"Run at login" = "Beim Login starten";
 "Close" = "Schliessen"; // Close the Clover.app
 
 /* Installer */

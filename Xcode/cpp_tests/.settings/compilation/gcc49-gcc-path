@@ -1,0 +1,7 @@
+#this is sourced.
+
+gcc_path="$SCRIPT_DIR"/../../../../toolchain.gcc49/cross
+gcc_prefix=x86_64-clover-linux-gnu-gcc-
+gcc_suffix=
+#only bin_path is used bt the caller
+bin_path="$gcc_path"/bin/"$gcc_prefix""$1""$gcc_suffix"

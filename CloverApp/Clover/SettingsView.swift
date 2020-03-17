@@ -8,7 +8,8 @@
 
 import Cocoa
 
-class LITabView: NSTabView {
+final class LITabView: NSTabView {
+  private var drawBack : Bool = false
   var tabIndex: Int = 0
   var lastTabIndex: Int {
     get {
@@ -17,14 +18,25 @@ class LITabView: NSTabView {
       self.tabIndex = newValue
     }
   }
+  
+  override var allowsVibrancy: Bool {
+    return false
+  }
+  
+  override var drawsBackground: Bool {
+    get {
+      return false
+    } set {
+      self.drawBack = false
+    }
+  }
 }
 
-
-class SoundSlider : NSSlider {
+final class SoundSlider : NSSlider {
   var field : NSTextField?
 }
 
-class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionDownloadDelegate {
+final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionDownloadDelegate {
   // MARK: Variables
   @IBOutlet var tabViewInfo : LITabView!
   // tab 0
@@ -51,7 +63,10 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   @IBOutlet var autoMountButton : NSButton!
   @IBOutlet var unmountButton : NSButton!
   // tab 1
-  @IBOutlet var themeField : FWTextField!
+  @IBOutlet var themeBox : NSComboBox!
+  @IBOutlet var openThemeButton : NSButton!
+  @IBOutlet var themeUserField : NSTextField!
+  @IBOutlet var themeRepoField : NSTextField!
   // tab 2
   @IBOutlet var soundDevicePopUp : NSPopUpButton!
   @IBOutlet var soundVolumeSlider : SoundSlider!
@@ -89,8 +104,6 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   
   var loaded : Bool = false
   
-
-  
   override func awakeFromNib() {
     super.awakeFromNib()
     if !self.loaded {
@@ -117,11 +130,43 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarInternalDisk", isTemplate: true), forSegment: 0)
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMoviesFolder", isTemplate: true), forSegment: 1)
     self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarMusicFolder", isTemplate: true), forSegment: 2)
+    self.tabViewFuncSelector.setImage(getCoreTypeImage(named: "SidebarDocumentsFolder", isTemplate: true), forSegment: 3)
     // sync
     self.tabViewFuncSelector.selectSegment(withTag: 0)
     self.tabViewFunc.selectTabViewItem(at: 0)
     
-    self.themeField.delegate = self
+    AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
+    AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
+    
+    self.themeUserField.stringValue = AppSD.themeUser
+    self.themeRepoField.stringValue = AppSD.themeRepo
+    
+    if #available(OSX 10.10, *) {
+      self.themeUserField.placeholderString = kDefaultThemeUser
+      self.themeRepoField.placeholderString = kDefaultThemeRepo
+    }
+    
+    self.themeBox.removeAllItems()
+    let themeManagerIndexDir = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex/\(AppSD.themeUser)_\(AppSD.themeRepo)")
+    
+    let tm = ThemeManager(user: AppSD.themeUser,
+                          repo: AppSD.themeRepo,
+                          basePath: themeManagerIndexDir,
+                          indexDir: themeManagerIndexDir,
+                          delegate: nil)
+
+    let indexedThemes = tm.getIndexedThemes()
+    self.themeBox.addItems(withObjectValues: indexedThemes)
+    
+    if indexedThemes.contains("embedded") {
+      self.themeBox.addItem(withObjectValue: "embedded")
+    }
+    
+    if indexedThemes.contains("random") {
+      self.themeBox.addItem(withObjectValue: "random")
+    }
+    
+    self.themeBox.completes = true
     
     self.soundVolumeSlider.field = self.soundVolumeField
     self.soundVolumeField.stringValue = kNotAvailable.locale
@@ -170,10 +215,10 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
     var nvdata = nvram?.object(forKey: "Clover.Theme") as? Data
     
     if #available(OSX 10.10, *) {
-      self.themeField.placeholderString = kNotAvailable.locale
+      self.themeBox.placeholderString = "NVRAM"
     }
-    self.themeField.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
-    self.themeField.cell?.representedObject = self.themeField.stringValue
+    self.themeBox.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
+    self.themeBox.cell?.representedObject = self.themeBox.stringValue
     
     nvdata = nvram?.object(forKey: "Clover.RootRW") as? Data
     var value : String = String(decoding: nvdata ?? Data(), as: UTF8.self)
@@ -487,6 +532,84 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   }
 
   // MARK: Controls actions
+  @IBAction func openThemeManager(_ sender: NSButton!) {
+    DispatchQueue.main.async {
+      if #available(OSX 10.11, *) {
+        if (AppSD.themeManagerWC == nil) {
+          AppSD.themeManagerWC = ThemeManagerWC.loadFromNib()
+        }
+        
+        AppSD.themeManagerWC?.showWindow(self)
+      } else {
+        if (AppSD.themeManagerWC == nil) {
+          AppSD.themeManagerWC = ThemeManagerWC.loadFromNib()
+        }
+        
+        AppSD.themeManagerWC?.showWindow(self)
+      }
+      NSApp.activate(ignoringOtherApps: true)
+    }
+  }
+  
+  func controlTextDidEndEditing(_ obj: Notification) {
+    var updateThemeRepo = false
+    if let field = obj.object as? NSTextField {
+      
+      if field == self.themeUserField {
+        if field.stringValue.count > 0 {
+          UDs.set(field.stringValue, forKey: kThemeUserKey)
+        } else {
+          UDs.set(kDefaultThemeUser, forKey: kThemeUserKey)
+        }
+        updateThemeRepo = true
+      } else if field == self.themeRepoField {
+        if field.stringValue.count > 0 {
+          UDs.set(field.stringValue, forKey: kThemeRepoKey)
+        } else {
+          UDs.set(kDefaultThemeRepo, forKey: kThemeRepoKey)
+        }
+        updateThemeRepo = true
+      }
+    }
+    
+    if updateThemeRepo {
+      AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
+      AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
+    }
+  }
+  
+  @IBAction func generateConfig(_ sender: NSButton!) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+      if var conf = CloverConfig().generateCloverConfig() {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+        conf["GenTool"] = "Clover r\(AppSD.CloverRevision) by Clover.app v\(appVersion)"
+        let configName : String = (conf["ConfigName"] as? String ?? "config")
+        let dir = NSHomeDirectory().addPath("Desktop/Clover_config")
+        let fullPath = dir.addPath("\(configName).plist")
+        var isDir : ObjCBool = false
+        if fm.fileExists(atPath: dir, isDirectory: &isDir) {
+          if !isDir.boolValue {
+            try? fm.removeItem(atPath: dir)
+          }
+        }
+        
+        if !fm.fileExists(atPath: dir) {
+          try? fm.createDirectory(atPath: dir,
+                                  withIntermediateDirectories: false,
+                                  attributes: nil)
+        }
+        if NSDictionary(dictionary: conf).write(toFile: fullPath,
+                                                atomically: false) {
+          NSWorkspace.shared.openFile(dir)
+        } else {
+          NSSound.beep()
+        }
+      } else {
+        NSSound.beep()
+      }
+    }
+  }
+  
   @IBAction func installClover(_ sender: NSButton!) {
     
     let myPath = Bundle.main.bundlePath.lowercased()
@@ -635,27 +758,29 @@ class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionD
   }
   
   // MARK: NVRAM editing
-  func controlTextDidEndEditing(_ obj: Notification) {
-    if let field = obj.object as? NSTextField {
-      let delete : Bool = field.stringValue.count == 0
-      if field == self.themeField {
-        if let old = field.cell?.representedObject as? String {
-          let key = "Clover.Theme"
-          if old != field.stringValue {
-            if delete {
-              deleteNVRAM(key: key)
-            } else {
-              setNVRAM(key: key, stringValue: field.stringValue/*, error: &error*/)
-            }
-            
-            let nvdata = getNVRAM()?.object(forKey: key) as? Data
-            field.stringValue = (nvdata != nil) ? String(decoding: nvdata!, as: UTF8.self) : ""
-            field.cell?.representedObject = field.stringValue
-          }
+  @IBAction func themeBoxSelected(_ sender: NSComboBox!) {
+    let key = "Clover.Theme"
+    if let old = sender.cell?.representedObject as? String {
+      let theme = sender.stringValue
+      if old != theme {
+        if theme.count == 0 {
+          deleteNVRAM(key: key)
+        } else {
+          setNVRAM(key: key, stringValue: theme)
         }
       }
     }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+      var value = ""
+      if let nvram = getNVRAM() {
+        let nvdata = nvram.object(forKey: key) as? Data
+        value = String(decoding: nvdata ?? Data(), as: UTF8.self)
+      }
+      sender.stringValue = value
+    }
   }
+  
   
   @IBAction func soundSliderDidMove(_ sender: SoundSlider!) {
     sender.field?.stringValue = "\(Int(sender.doubleValue))%"
@@ -1101,7 +1226,7 @@ extension SettingsViewController: NSTabViewDelegate {
   }
   
   @IBAction func selectFuncTab(_ sender: NSSegmentedControl!) {
-    self.tabViewFunc.selectTabViewItem(at: sender.indexOfSelectedItem)
+    self.tabViewFunc.animator().selectTabViewItem(at: sender.indexOfSelectedItem)
   }
   
   func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
@@ -1129,7 +1254,7 @@ extension SettingsViewController: NSTabViewDelegate {
 }
 
 // MARK: Settings Window controller
-class SettingsWindowController: NSWindowController, NSWindowDelegate {
+final class SettingsWindowController: NSWindowController, NSWindowDelegate {
   var viewController : NSViewController? = nil
   override var contentViewController: NSViewController? {
     get {
@@ -1139,13 +1264,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
       self.viewController = newValue
     }
   }
-  /*
-  class func loadFromStoryBoard() -> SettingsWindowController {
-    let wc = NSStoryboard(name: "Settings",
-                          bundle: nil).instantiateController(withIdentifier: "SettingsWindowController") as! SettingsWindowController
-    return wc
-  }
-  */
+
   class func loadFromNib() -> SettingsWindowController? {
     var topLevel: NSArray? = nil
     Bundle.main.loadNibNamed("Settings", owner: self, topLevelObjects: &topLevel)

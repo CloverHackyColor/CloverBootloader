@@ -77,7 +77,7 @@ HdaControllerStreamPollTimerHandler(
         // Have we reached the end of the source buffer? If so the stream will stop on the next block.
         if (HdaStream->BufferSourcePosition >= HdaStream->BufferSourceLength) {
             // Zero out next block.
-            gBS->SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
+            SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
 
             // Set flag to stop stream on the next block.
             HdaStream->BufferSourceDone = TRUE;
@@ -95,11 +95,11 @@ HdaControllerStreamPollTimerHandler(
         if (HdaStream->Output) {
             // Copy data to DMA buffer.
             if (HdaSourceLength < HDA_BDL_BLOCKSIZE)
-                gBS->SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
-            gBS->CopyMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaSourceLength);
+                SetMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HDA_BDL_BLOCKSIZE, 0);
+            CopyMem(HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaSourceLength);
         } else { // Input stream (copy data from).
             // Copy data from DMA buffer.
-            gBS->CopyMem(HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaSourceLength);
+            CopyMem(HdaStream->BufferSource + HdaStream->BufferSourcePosition, HdaStream->BufferData + (HdaNextBlock * HDA_BDL_BLOCKSIZE), HdaSourceLength);
         }
 
         // Increase source position.
@@ -294,7 +294,7 @@ HdaControllerScanCodecs(
 
     // Create verb list with single item.
     VendorVerb = HDA_CODEC_VERB(HDA_VERB_GET_PARAMETER, HDA_PARAMETER_VENDOR_ID);
-    gBS->SetMem(&HdaCodecVerbList, sizeof(EFI_HDA_IO_VERB_LIST), 0);
+    SetMem(&HdaCodecVerbList, sizeof(EFI_HDA_IO_VERB_LIST), 0);
     HdaCodecVerbList.Count = 1;
     HdaCodecVerbList.Verbs = &VendorVerb;
     HdaCodecVerbList.Responses = &VendorResponse;
@@ -367,7 +367,7 @@ HdaControllerScanCodecs(
             HdaIoDevicePathNode.Header.Length[0] = (UINT8)(sizeof(EFI_HDA_IO_DEVICE_PATH));
             HdaIoDevicePathNode.Header.Length[1] = (UINT8)((sizeof(EFI_HDA_IO_DEVICE_PATH)) >> 8);
           HdaIoDevicePathNode.Guid = gEfiHdaIoDevicePathGuid;
-//            gBS->CopyMem((VOID*)&HdaIoDevicePathNode.Guid, (VOID*)&gEfiHdaIoDevicePathGuid, sizeof(EFI_GUID));
+//            CopyMem((VOID*)&HdaIoDevicePathNode.Guid, (VOID*)&gEfiHdaIoDevicePathGuid, sizeof(EFI_GUID));
             HdaIoDevicePathNode.Address = i;
             HdaControllerDev->HdaIoChildren[i].DevicePath = AppendDevicePathNode(HdaControllerDev->DevicePath, (EFI_DEVICE_PATH_PROTOCOL*)&HdaIoDevicePathNode);
             if (HdaControllerDev->HdaIoChildren[i].DevicePath == NULL) {

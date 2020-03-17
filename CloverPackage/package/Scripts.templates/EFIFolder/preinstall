@@ -57,7 +57,7 @@ export -f GetNVRamKey
 # ---------------------------------------------
 echo "" > "$install_log"
 echo "Clover EFI installer log - $( date )" >> "$install_log"
-echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader" >> "$install_log"
+echo "Installer version: r%CLOVERREVISION% EFI bootloader" >> "$install_log"
 echo "======================================================" >> "$install_log"
 diskutil list >> "$install_log"
 

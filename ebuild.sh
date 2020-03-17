@@ -215,11 +215,11 @@ checkXcode () {
        echo "ERROR: Install Xcode Tools from Apple before using this script." >&2; exit 1
     fi
 
-  if [[ -x "/opt/local/bin/mtoc.NEW" ]]; then
+  if [[ -x "/opt/local/bin/mtoc.NEW_jief" ]]; then
     export MTOC_PREFIX="/opt/local/bin/"
-  elif [[ -x "${LOCALBIN}/mtoc.NEW" ]]; then
+  elif [[ -x "${LOCALBIN}/mtoc.NEW_jief" ]]; then
     export MTOC_PREFIX="${LOCALBIN}/"
-  elif [[ -x "${TOOLCHAIN_DIR}/bin/mtoc.NEW" ]]; then
+  elif [[ -x "${TOOLCHAIN_DIR}/bin/mtoc.NEW_jief" ]]; then
     export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
   else
     export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/"
@@ -479,12 +479,16 @@ MainBuildScript() {
     # Setup workspace if it is not set
     #
     local EDK2DIR=$(cd "$CLOVERROOT" && echo "$PWD")
-    if [[ -z "$WORKSPACE" ]]; then
+#    if [[ -z "$WORKSPACE" ]]; then
         echo "Initializing workspace"
         if [[ ! -x "${EDK2DIR}"/edksetup.sh ]]; then
             echo "Error: Can't find edksetup.sh script !" >&2
             exit 1
         fi
+
+        # to force recreation of the Conf folder. You can sill use a custom CONF_PATH if you don't want recreation.
+        rm -rf "$CLOVERROOT"/Conf
+        mkdir "$CLOVERROOT"/Conf
 
         # This version is for the tools in the BaseTools project.
         # this assumes svn pulls have the same root dir
@@ -496,9 +500,9 @@ MainBuildScript() {
         source ./edksetup.sh BaseTools
         set -u
         cd "$CLOVERROOT"
-    else
-        echo "Building from: $WORKSPACE"
-    fi
+ #   else
+ #       echo "Building from: $WORKSPACE"
+ #   fi
 
     export CLOVER_PKG_DIR="$CLOVERROOT"/CloverPackage/CloverV2
 
@@ -767,8 +771,8 @@ MainPostBuildScript() {
     if [[ "$GENPAGE" -eq 0 ]]; then
       setInitBootMsg "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
     fi
-    copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
-    copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
+    copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
+    copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
 
     # Mandatory drivers
     echo "Copy Mandatory drivers:"
@@ -902,8 +906,8 @@ export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
 if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript
 else
- copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
- copyBin "$BUILD_DIR_ARCH"/CLOVER.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
+ copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/CLOVERX64.efi
+ copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
 fi
 
 # Local Variables:      #

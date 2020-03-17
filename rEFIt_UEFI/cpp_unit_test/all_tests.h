@@ -1,0 +1,2 @@
+
+bool all_tests();

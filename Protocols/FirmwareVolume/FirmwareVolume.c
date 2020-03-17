@@ -323,7 +323,7 @@ FvReadSection (
     *BufferSize = sizeof(PointerImage1x);
     Status = gBS->AllocatePool(EfiBootServicesData, *BufferSize, (VOID **)Buffer);
     if (!EFI_ERROR(Status)) {
-      gBS->CopyMem(*Buffer, &PointerImage1x, *BufferSize);
+      CopyMem(*Buffer, &PointerImage1x, *BufferSize);
     }
     *AuthenticationStatus = 0;
     return Status;
@@ -331,7 +331,7 @@ FvReadSection (
     *BufferSize = sizeof(PointerImage2x);
     Status = gBS->AllocatePool(EfiBootServicesData, *BufferSize, (VOID **)Buffer);
     if (!EFI_ERROR(Status)) {
-      gBS->CopyMem(*Buffer, &PointerImage2x, *BufferSize);
+      CopyMem(*Buffer, &PointerImage2x, *BufferSize);
     }
     *AuthenticationStatus = 0;
     return Status;
@@ -339,7 +339,7 @@ FvReadSection (
     *BufferSize = sizeof(GuidList);
     Status = gBS->AllocatePool(EfiBootServicesData, *BufferSize, (VOID **)Buffer);
     if (!EFI_ERROR(Status)) {
-      gBS->CopyMem(*Buffer, &GuidList, *BufferSize);
+      CopyMem(*Buffer, &GuidList, *BufferSize);
     }
     *AuthenticationStatus = 0;
     return Status;

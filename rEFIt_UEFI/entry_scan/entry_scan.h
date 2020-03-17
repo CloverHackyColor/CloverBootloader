@@ -35,20 +35,18 @@
 
 #include "Platform.h"
 
-extern REFIT_MENU_ENTRY MenuEntryReturn;
-extern REFIT_MENU_ENTRY MenuEntryOptions;
-extern REFIT_MENU_ENTRY MenuEntryAbout;
-extern REFIT_MENU_ENTRY MenuEntryReset;
-extern REFIT_MENU_ENTRY MenuEntryShutdown;
+extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
+extern REFIT_MENU_ITEM_OPTIONS MenuEntryOptions;
+extern REFIT_MENU_ITEM_ABOUT MenuEntryAbout;
+extern REFIT_MENU_ITEM_RESET MenuEntryReset;
+extern REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown;
 //extern REFIT_MENU_ENTRY MenuEntryHelp;
-extern REFIT_MENU_ENTRY MenuEntryExit;
+//extern REFIT_MENU_ENTRY MenuEntryExit;
 extern REFIT_MENU_SCREEN MainMenu;
 
+extern XObjArray<REFIT_VOLUME> Volumes;
 // common
-EG_IMAGE *LoadBuiltinIcon(IN CHAR16 *IconName);
-LOADER_ENTRY * DuplicateLoaderEntry(IN LOADER_ENTRY *Entry);
-//CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
-//CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption);
+EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName);
 EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 /*
 INTN StrniCmp(IN CHAR16 *Str1,
@@ -84,7 +82,7 @@ VOID ScanTool(VOID);
 VOID AddCustomTool(VOID);
 
 // locked graphics
-CHAR16 *CustomBootModeToStr(IN UINT8 Mode);
+CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode);
 EFI_STATUS LockBootScreen(VOID);
 EFI_STATUS UnlockBootScreen(VOID);
 

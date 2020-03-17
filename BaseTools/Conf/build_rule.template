@@ -106,15 +106,36 @@
 #  build_rule_version=0.1
 #
 
+[Cxx-Code-File]
+    <InputFile>
+        ?.cpp
+        ?.Cpp
+        ?.CPP
+
+    <ExtraDependency>
+        $(MAKE_FILE)
+
+    <OutputFile>
+        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+
+    <Command.MSFT, Command.INTEL>
+        "$(CC)" /Fo${dst} $(CC_FLAGS) $(INC) ${src}
+
+    <Command.GCC, Command.RVCT>
+        # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
+        @"$(CC)" $(CXX_FLAGS) -c -o ${dst} $(INC) ${src}
+        @"echo" [CPP] ${s_base}
+
+    <Command.XCODE>
+        @"$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
+        @"echo" [CPP] ${s_base}
+
 [C-Code-File]
     <InputFile>
         ?.c
         ?.C
         ?.cc
         ?.CC
-        ?.cpp
-        ?.Cpp
-        ?.CPP
 
     <ExtraDependency>
         $(MAKE_FILE)
@@ -297,6 +318,7 @@
         $(DEBUG_DIR)(+)$(MODULE_NAME).dll
 
     <Command.MSFT, Command.INTEL>
+        "$(DLINK)" /OUT:${dst} $(DLINK_FLAGS) $(DLINK2_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST)
         "$(DLINK)" /OUT:${dst} $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST)
 
     <Command.GCC>
@@ -374,15 +396,15 @@
         -$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
         -$(CP) $(DEBUG_DIR)(+)*.pdb $(OUTPUT_DIR) 
     <Command.GCC>
-        #$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-        @$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-        @$(OBJCOPY) --strip-unneeded -R .eh_frame ${src}
+        @$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
+        #@$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
+        #@$(OBJCOPY) --strip-unneeded -R .eh_frame ${src}
 
         #
         #The below 2 lines are only needed for UNIXGCC tool chain, which generates PE image directly
         #
         @-$(OBJCOPY) $(OBJCOPY_ADDDEBUGFLAG) ${src}
-        #-$(CP) $(DEBUG_DIR)(+)$(MODULE_NAME).debug $(BIN_DIR)(+)$(MODULE_NAME_GUID).debug
+        $(CP) $(DEBUG_DIR)(+)$(MODULE_NAME).debug $(BIN_DIR)(+)$(MODULE_NAME_GUID).debug
         @"echo" [OBJCOPY] $(MODULE_NAME)
 
         @"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
@@ -496,7 +518,7 @@
         @"echo" [MTOC-ACPI] $(MODULE_NAME)
         #@"$(STRIP)" ${src}
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi
-        @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi $(GENFW_FLAGS)
+        @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.pecoff $(GENFW_FLAGS)
         @"echo" [GENFW-ACPI] $(MODULE_NAME)
       
       

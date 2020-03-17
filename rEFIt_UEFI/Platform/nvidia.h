@@ -59,14 +59,14 @@ extern CHAR8* gDeviceProperties;
 typedef struct nvidia_pci_info_t
 {
   UINT32    device; // VendorID + DeviceID
-  CHAR8     *name_model;
+  CONST CHAR8     *name_model;
 } nvidia_pci_info_t;
 
 typedef struct nvidia_card_info_t
 {
   UINT32 device; // VendorID + DeviceID
   UINT32 subdev; // SubdeviceID + SubvendorID
-  CHAR8  *name_model;
+  CONST CHAR8  *name_model;
   UINT8  *custom_NVCAP;
 } nvidia_card_info_t;
 

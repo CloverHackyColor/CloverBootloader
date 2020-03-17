@@ -97,7 +97,7 @@ InstallBsOverrides (
     //
     Status = AllocatePagesFromTop (EfiBootServicesData, PageNum, &UmmHeap, !gDumpMemArgPresent);
     if (!EFI_ERROR (Status)) {
-      gBS->SetMem ((VOID *)UmmHeap, APTIOFIX_CUSTOM_POOL_ALLOCATOR_SIZE, 0);
+      SetMem((VOID *)UmmHeap, APTIOFIX_CUSTOM_POOL_ALLOCATOR_SIZE, 0);
       UmmSetHeap ((VOID *)UmmHeap);
 
       mStoredAllocatePool   = gBS->AllocatePool;

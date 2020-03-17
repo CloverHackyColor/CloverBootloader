@@ -33,7 +33,7 @@ EFIROOT=${SRCROOT}/CloverV2/EFI
 BASETOOLS_DIR=${SRCROOT}/../BaseTools/Source/C/bin
 
 REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
-PRODUCT=Clover-v2.5k-${REVISION}
+PRODUCT=Clover-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
 

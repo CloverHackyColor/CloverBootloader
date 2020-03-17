@@ -42,6 +42,9 @@
 #ifndef NANOSVG_H
 #define NANOSVG_H
 
+extern "C" {
+#include <Library/BaseMemoryLib.h>
+}
 #include "Platform.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
@@ -49,14 +52,14 @@
 
 
 //There are defines for compilation as first step. Must be revised
-#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
-#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
-#define strcmp(a,b) AsciiStrCmp(a,b)
-#define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
-#define strstr(a,b) AsciiStrStr(a,b)
+//#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
+//#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
+//#define strcmp(a,b) AsciiStrCmp(a,b)
+//#define strncmp(a,b,n) AsciiStrnCmp(a,b,n)
+//#define strstr(a,b) AsciiStrStr(a,b)
 
-#define strlen(s) AsciiStrLen(s)
-#define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
+//#define strlen(s) AsciiStrLen(s)
+//#define strncpy(a,b,n) AsciiSPrint(a,n,"%a",b)
 
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,
@@ -105,7 +108,7 @@ typedef struct NSVGgradientStop {
   float offset;
 } NSVGgradientStop;
 
-typedef struct NSVGgradient {
+typedef struct NSVGgradient {  //undefined sizeof
   float xform[6];
 //  float position[6];
   float fx, fy;
@@ -150,7 +153,7 @@ typedef struct NSVGclip
 typedef struct NSVGshape NSVGshape;
 
 typedef struct NSVGpattern {
-  char id[64];
+  char id[kMaxIDLength];
   int nx, ny;  //repeat
   float width;
   float height;
@@ -213,6 +216,7 @@ typedef struct NSVGimage
   float realBounds[4];
   NSVGshape* shapes;      // Linked list of shapes in the image.
   NSVGgroup* groups;      // Linked list of all groups in the image
+  NSVGpath* paths;        // Linked list of paths in the image.
   BOOLEAN isFont;
   NSVGclipPath* clipPaths;
 } NSVGimage;
@@ -328,10 +332,10 @@ typedef struct NSVGglyph {
 } NSVGglyph;
 
 typedef struct NSVGfont {
-  char id[64];
+  char id[kMaxIDLength];
   int horizAdvX;
   // --- font-face
-  char fontFamily[64];
+  char fontFamily[kMaxIDLength];
   float fontWeight; //usually 400 like stroke-width
   float fontSize; // 8,9,12,14...
   float unitsPerEm; //usually 1000
@@ -351,8 +355,13 @@ typedef struct NSVGfont {
   // -- glyphs
   NSVGglyph* missingGlyph;
   NSVGglyph* glyphs; // a chain
-  struct NSVGfont* next;
+//  struct NSVGfont* next;
 } NSVGfont;
+
+typedef struct NSVGfontChain {
+  NSVGfont *font;
+  struct NSVGfontChain* next;
+} NSVGfontChain;
 
 typedef struct textFaces {
   NSVGfont *font;
@@ -364,7 +373,7 @@ typedef struct textFaces {
 extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
 
 typedef struct NSVGtext {
-  char id[64];
+  char id[kMaxIDLength];
 //  char class[64];
   float x,y;
   float xform[6];
@@ -380,17 +389,19 @@ typedef struct NSVGtext {
   float strokeWidth;
   NSVGstyles* style;
   NSVGshape* shapes;
+  NSVGpath* paths;  //the paths for shapes. Shapes will have only handles
   struct NSVGtext *next;
   NSVGgroup* group;
 } NSVGtext;
 
 typedef struct NSVGsymbol {
-  char id[64];
+  char id[kMaxIDLength];
 //  float xform[6];
   float bounds[4];
   float viewBox[4];
   NSVGshape* shapes;
   NSVGshape* shapesTail;
+  NSVGpath* paths;
   struct NSVGsymbol *next;
 } NSVGsymbol;
 
@@ -568,7 +579,7 @@ struct NSVGrasterizer
   int width, height, stride;
 };
 
-extern NSVGfont *fontsDB;
+extern NSVGfontChain *fontsDB;
 extern struct NSVGparser *mainParser;
 
 #endif

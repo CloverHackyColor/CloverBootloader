@@ -1,0 +1,39 @@
+# libimagequant is a pure C library.
+# Rust/Cargo is entirely optional. You can also use ./configure && make
+[package]
+version = "2.12.6"
+authors = ["Kornel Lesiński <kornel@pngquant.org>"]
+build = "rust-sys/build.rs"
+categories = ["external-ffi-bindings"]
+homepage = "https://pngquant.org/lib"
+include = ["COPYRIGHT", "rust-sys/*", "*.c", "*.h", "README.md", "Cargo.toml"]
+keywords = ["pngquant"]
+license = "GPL-3.0+"
+links = "imagequant"
+name = "imagequant-sys"
+readme = "README.md"
+repository = "https://github.com/ImageOptim/libimagequant"
+description = "Statically linked C part of imagequant library powering tools such as pngquant.\n\nThis library is dual-licensed like pngquant: either GPL or a commercial license. See website for details: https://pngquant.org"
+edition = "2018"
+
+[build-dependencies]
+cc = "1.0.38"
+
+[dependencies]
+rgb = "0.8.13"
+
+[dependencies.openmp-sys]
+optional = true
+version = "0.1.5"
+
+[features]
+default = ["sse"]
+openmp = ["openmp-sys"]
+openmp-static = ["openmp", "openmp-sys/static"]
+sse = []
+
+[lib]
+crate-type = ["cdylib", "staticlib", "lib"]
+name = "imagequant_sys"
+path = "rust-sys/libimagequant.rs"
+doctest = false

@@ -30,16 +30,16 @@ set DEVSTAGE=
 set IASL_PREFIX=c:\ASL\
 
 set DEFAULT_CYGWIN_HOME=c:\cygwin
-rem set DEFAULT_PYTHONHOME=
-rem d:\Program File\Python37"
+rem set DEFAULT_PYTHONHOME=d:\Program File\Python38
+rem set DEFAULT_PYTHONPATH=d:\Program File\Python38\Lib
 rem set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
-set "PYTHONHOME=d:\Program File\Python37"
-set "PYTHON_FREEZER_PATH=%PYTHONHOME%\Scripts"
+rem set "PYTHONHOME=d:\Program File\Python37"
+rem set "PYTHON_FREEZER_PATH=%PYTHONHOME%\Scripts"
 set PYTHON3_ENABLE=TRUE
 set DEFAULT_NASM_PREFIX=
 rem C:\Program Files (x86)\NASM"
 rem # %DEFAULT_CYGWIN_HOME%\bin
-set DEFAULT_TOOLCHAIN=VS2017
+set DEFAULT_TOOLCHAIN=VS2015x86
 set DEFAULT_BUILDTARGET=RELEASE
 set DEFAULT_TARGETARCH=X64
 set DEFAULT_THREADNUMBER=%NUMBER_OF_PROCESSORS%
@@ -113,18 +113,18 @@ rem # initialize
   if not defined CYGWIN_HOME (
     set CYGWIN_HOME=%DEFAULT_CYGWIN_HOME%
   )
-  if not defined PYTHONHOME (
-    set PYTHONHOME=%DEFAULT_PYTHONHOME%
-  )
-  if not defined PYTHON_HOME (
-    set PYTHON_HOME=%PYTHONHOME%
-  )
-  if not defined PYTHON_PATH (
-    set PYTHON_PATH=%PYTHON_HOME%
-  )
-  if not defined PYTHON_FREEZER_PATH (
-    set PYTHON_FREEZER_PATH=%DEFAULT_PYTHON_FREEZER_PATH%
-  )
+ rem  if not defined PYTHONHOME (
+rem     set PYTHONHOME=%DEFAULT_PYTHONHOME%
+rem   )
+rem   if not defined PYTHON_HOME (
+rem     set PYTHON_HOME=%PYTHONHOME%
+rem   )
+rem   if not defined PYTHON_PATH (
+rem     set PYTHON_PATH=%PYTHON_HOME%
+rem   )
+rem   if not defined PYTHON_FREEZER_PATH (
+rem     set PYTHON_FREEZER_PATH=%DEFAULT_PYTHON_FREEZER_PATH%
+rem   )
   if not defined NASM_PREFIX (
     set NASM_PREFIX=%DEFAULT_NASM_PREFIX%
   )
@@ -296,6 +296,7 @@ rem # setup build
   echo #define FIRMWARE_REVISION L"%SVNREVISION%">>%F_VER_H%
   echo #define REVISION_STR "Clover revision: %SVNREVISION%">>%F_VER_H%
   echo #define BUILDINFOS_STR %clover_build_info%>>%F_VER_H%
+  copy %F_VER_H% rEFIt_UEFI\%F_VER_H%
 
 :callbuild
   rem # launch build
@@ -485,8 +486,8 @@ rem # drop compiled files to EFI folder
 
   call:copybin "%BUILD_DIR%\FV\boot%TARGETARCH_INT%" "%DEST_BOOTLOADERS%\%TARGETARCH%" "%cloverEFIFile%"
   call:copybin "%BUILD_DIR_ARCH%\bdmesg.efi" "%DEST_TOOLS%" "bdmesg-%TARGETARCH_INT%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
-  call:copybin "%BUILD_DIR_ARCH%\CLOVER.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVERX64.efi" "%DEST_CLOVER%" "CLOVER%TARGETARCH%.efi"
+  call:copybin "%BUILD_DIR_ARCH%\CLOVERX64.efi" "%DEST_BOOT%" "BOOT%TARGETARCH%.efi"
 
   if not defined CLOVER_EDK2SHELL goto donebuild
 

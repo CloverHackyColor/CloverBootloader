@@ -75,7 +75,7 @@ HdaControllerInitCorb(
     Status = PciIo->AllocateBuffer(PciIo, AllocateAnyPages, EfiBootServicesData, EFI_SIZE_TO_PAGES(CorbLength), &CorbBuffer, 0);
     if (EFI_ERROR(Status))
         return Status;
-    gBS->SetMem(CorbBuffer, CorbLength, 0);
+    SetMem(CorbBuffer, CorbLength, 0);
 
     // Map outbound buffer.
     CorbLengthActual = CorbLength;
@@ -464,7 +464,7 @@ HdaControllerInitStreams(
             (VOID**)&HdaStream->BufferList, 0);
         if (EFI_ERROR(Status))
             goto FREE_BUFFER;
-        gBS->SetMem(HdaStream->BufferList, HDA_BDL_SIZE, 0);
+        SetMem(HdaStream->BufferList, HDA_BDL_SIZE, 0);
 
         // Map buffer descriptor list.
         BdlLengthActual = HDA_BDL_SIZE;
@@ -487,7 +487,7 @@ HdaControllerInitStreams(
             (VOID**)&HdaStream->BufferData, 0);
         if (EFI_ERROR(Status))
             goto FREE_BUFFER;
-        gBS->SetMem(HdaStream->BufferData, HDA_STREAM_BUF_SIZE, 0);
+        SetMem(HdaStream->BufferData, HDA_STREAM_BUF_SIZE, 0);
 
         // Map buffer descriptor list.
         DataLengthActual = HDA_STREAM_BUF_SIZE;
@@ -517,7 +517,7 @@ HdaControllerInitStreams(
         EFI_SIZE_TO_PAGES(HdaControllerDev->DmaPositionsSize), (VOID**)&HdaControllerDev->DmaPositions, 0);
     if (EFI_ERROR(Status))
         goto FREE_BUFFER;
-    gBS->SetMem(HdaControllerDev->DmaPositions, HdaControllerDev->DmaPositionsSize, 0);
+    SetMem(HdaControllerDev->DmaPositions, HdaControllerDev->DmaPositionsSize, 0);
 
     // Map buffer descriptor list.
     DmaPositionsLengthActual = HdaControllerDev->DmaPositionsSize;

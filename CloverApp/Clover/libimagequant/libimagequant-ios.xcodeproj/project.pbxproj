@@ -1,0 +1,232 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5F65D41723A04D7B003E3A5B /* nearest.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41023A04D7B003E3A5B /* nearest.c */; };
+		5F65D41823A04D7B003E3A5B /* pam.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41123A04D7B003E3A5B /* pam.c */; };
+		5F65D41923A04D7B003E3A5B /* mempool.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41223A04D7B003E3A5B /* mempool.c */; };
+		5F65D41A23A04D7B003E3A5B /* mediancut.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41323A04D7B003E3A5B /* mediancut.c */; };
+		5F65D41B23A04D7B003E3A5B /* kmeans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41423A04D7B003E3A5B /* kmeans.c */; };
+		5F65D41C23A04D7B003E3A5B /* libimagequant.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41523A04D7B003E3A5B /* libimagequant.c */; };
+		5F65D41D23A04D7B003E3A5B /* blur.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F65D41623A04D7B003E3A5B /* blur.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5FB37C7723A04C7300942532 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5F65D41023A04D7B003E3A5B /* nearest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nearest.c; sourceTree = SOURCE_ROOT; };
+		5F65D41123A04D7B003E3A5B /* pam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pam.c; sourceTree = SOURCE_ROOT; };
+		5F65D41223A04D7B003E3A5B /* mempool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mempool.c; sourceTree = SOURCE_ROOT; };
+		5F65D41323A04D7B003E3A5B /* mediancut.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mediancut.c; sourceTree = SOURCE_ROOT; };
+		5F65D41423A04D7B003E3A5B /* kmeans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kmeans.c; sourceTree = SOURCE_ROOT; };
+		5F65D41523A04D7B003E3A5B /* libimagequant.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libimagequant.c; sourceTree = SOURCE_ROOT; };
+		5F65D41623A04D7B003E3A5B /* blur.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blur.c; sourceTree = SOURCE_ROOT; };
+		5F65D41E23A04D93003E3A5B /* libimagequant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libimagequant.h; sourceTree = SOURCE_ROOT; };
+		5FB37C7923A04C7300942532 /* libimagequant.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libimagequant.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5FB37C7623A04C7300942532 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5FB37C7023A04C7300942532 = {
+			isa = PBXGroup;
+			children = (
+				5FB37C7B23A04C7300942532 /* imagequant */,
+				5FB37C7A23A04C7300942532 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5FB37C7A23A04C7300942532 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5FB37C7923A04C7300942532 /* libimagequant.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5FB37C7B23A04C7300942532 /* imagequant */ = {
+			isa = PBXGroup;
+			children = (
+				5F65D41E23A04D93003E3A5B /* libimagequant.h */,
+				5F65D41623A04D7B003E3A5B /* blur.c */,
+				5F65D41423A04D7B003E3A5B /* kmeans.c */,
+				5F65D41523A04D7B003E3A5B /* libimagequant.c */,
+				5F65D41323A04D7B003E3A5B /* mediancut.c */,
+				5F65D41223A04D7B003E3A5B /* mempool.c */,
+				5F65D41023A04D7B003E3A5B /* nearest.c */,
+				5F65D41123A04D7B003E3A5B /* pam.c */,
+			);
+			path = imagequant;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5FB37C7823A04C7300942532 /* imagequant */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FB37C8223A04C7300942532 /* Build configuration list for PBXNativeTarget "imagequant" */;
+			buildPhases = (
+				5FB37C7523A04C7300942532 /* Sources */,
+				5FB37C7623A04C7300942532 /* Frameworks */,
+				5FB37C7723A04C7300942532 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = imagequant;
+			productName = imagequant;
+			productReference = 5FB37C7923A04C7300942532 /* libimagequant.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5FB37C7123A04C7300942532 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1120;
+				ORGANIZATIONNAME = "ImageOptim Ltd.";
+				TargetAttributes = {
+					5FB37C7823A04C7300942532 = {
+						CreatedOnToolsVersion = 11.2;
+					};
+				};
+			};
+			buildConfigurationList = 5FB37C7423A04C7300942532 /* Build configuration list for PBXProject "libimagequant-ios" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5FB37C7023A04C7300942532;
+			productRefGroup = 5FB37C7A23A04C7300942532 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5FB37C7823A04C7300942532 /* imagequant */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5FB37C7523A04C7300942532 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F65D41B23A04D7B003E3A5B /* kmeans.c in Sources */,
+				5F65D41923A04D7B003E3A5B /* mempool.c in Sources */,
+				5F65D41823A04D7B003E3A5B /* pam.c in Sources */,
+				5F65D41C23A04D7B003E3A5B /* libimagequant.c in Sources */,
+				5F65D41A23A04D7B003E3A5B /* mediancut.c in Sources */,
+				5F65D41723A04D7B003E3A5B /* nearest.c in Sources */,
+				5F65D41D23A04D7B003E3A5B /* blur.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5FB37C8023A04C7300942532 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		5FB37C8123A04C7300942532 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5FB37C8323A04C7300942532 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5FB37C8423A04C7300942532 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5FB37C7423A04C7300942532 /* Build configuration list for PBXProject "libimagequant-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FB37C8023A04C7300942532 /* Debug */,
+				5FB37C8123A04C7300942532 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5FB37C8223A04C7300942532 /* Build configuration list for PBXNativeTarget "imagequant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FB37C8323A04C7300942532 /* Debug */,
+				5FB37C8423A04C7300942532 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5FB37C7123A04C7300942532 /* Project object */;
+}

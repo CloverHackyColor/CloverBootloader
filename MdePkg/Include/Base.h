@@ -39,7 +39,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   @param  Size  The expected size for the TYPE.
 
 **/
-#define VERIFY_SIZE_OF(TYPE, Size) extern UINT8 _VerifySizeof##TYPE[(sizeof(TYPE) == (Size)) / (sizeof(TYPE) == (Size))]
+#define VERIFY_SIZE_OF(TYPE, Size) extern UINT8 _VerifySizeof##TYPE[(unsigned char)((sizeof(TYPE) == (Size))) / (unsigned char)((sizeof(TYPE) == (Size)))]
 
 //
 // Verify that ProcessorBind.h produced UEFI Data Types that are compliant with
@@ -318,6 +318,9 @@ struct _LIST_ENTRY {
 /// Datum is read-only.
 ///
 #define CONST     const
+#ifndef JCONST
+#define JCONST
+#endif
 
 ///
 /// Datum is scoped to the current file or function.
@@ -370,7 +373,11 @@ struct _LIST_ENTRY {
 ///
 /// NULL pointer (VOID *)
 ///
+#ifdef __cplusplus
+#define NULL  nullptr
+#else
 #define NULL  ((VOID *) 0)
+#endif
 
 //
 // Null character

@@ -520,7 +520,7 @@ BiosVideoChildHandleInstall (
   BiosVideoPrivate->PciIo = ParentPciIo;
 //Slice
 //	IA32_REGISTER_SET        Regs;
-//	gBS->SetMem (&Regs, sizeof (Regs), 0);
+//	SetMem(&Regs, sizeof (Regs), 0);
 //	Regs.H.AH = 0x00;
 //	Regs.H.AL = 0x94; //0x83; bit 7      HiColor DAC
 	// 02h = T  80x25  8x8   640x200  16gray    4   B800 CGA,PCjr,Tandy

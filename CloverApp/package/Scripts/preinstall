@@ -1,0 +1,4 @@
+#!/bin/bash
+
+killall Clover || true
+rm -rf /Applications/Clover.app

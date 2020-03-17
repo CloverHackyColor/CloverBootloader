@@ -1,0 +1,4 @@
+
+EFI_STATUS
+EFIAPI
+SetVariablesForOSX (LOADER_ENTRY *Entry);

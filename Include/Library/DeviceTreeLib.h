@@ -41,7 +41,7 @@ typedef struct DTMemMapEntry_ {
 // Foundation Types.
 //
 
-#define DT_PATH_NAME_SEPERATOR      '/'    //< 0x2F
+#define DT_PATH_NAME_SEPARATOR      '/'    //< 0x2F
 
 #define DT_MAX_PROPERTY_NAME_LENGTH 31     //< Max length of Property Name (terminator not included)
 #define DT_MAX_ENTRY_NAME_LENGTH    31     //< Max length of a C-String Entry Name (terminator not included)

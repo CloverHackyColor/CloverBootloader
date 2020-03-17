@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-21 17:34+0200\n"
+"POT-Creation-Date: 2020-03-05 22:38+0100\n"
 "PO-Revision-Date: 2018-10-02 11:47+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -28,7 +28,7 @@ msgstr "Кловер EFI"
 #: Resources/templates/Welcome.html:31
 #, fuzzy
 #| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
-msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
+msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
@@ -73,10 +73,12 @@ msgstr "Підтримка FAT32, HFS+, ESP."
 msgid "Copyright © %CPRYEAR%"
 msgstr "Авторське Право © %CPRYEAR%"
 
-#. type: Content of: <html><body><p><span>
+#. type: "12.title"
 #: Resources/templates/Description.html:18
-msgid "Clover v2"
-msgstr "Кловер версія 2"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, no-wrap
+msgid "Clover"
+msgstr "iClover"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
@@ -94,8 +96,8 @@ msgstr "В основі EDK2, з урахуванням останніх оно�
 
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
-msgid "http://sourceforge.net/projects/cloverefiboot/"
-msgstr "http://sourceforge.net/projects/cloverefiboot/"
+msgid "https://github.com/CloverHackyColor/CloverBootloader"
+msgstr ""
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -229,7 +231,9 @@ msgstr ""
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+#, fuzzy
+#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "r%CLOVERREVISION%"
 msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
@@ -1135,12 +1139,6 @@ msgstr "Немає наявних оновлень!"
 msgid "Ok"
 msgstr "Добре"
 
-#. type: "12.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:1
-#, no-wrap
-msgid "Clover"
-msgstr "iClover"
-
 #. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #: ../CloverPrefpane/Localizable.strings:5
@@ -1416,6 +1414,12 @@ msgstr "Встановити EFI каталог"
 #, no-wrap
 msgid "Unknown"
 msgstr "Невідомо"
+
+#~ msgid "Clover v2"
+#~ msgstr "Кловер версія 2"
+
+#~ msgid "http://sourceforge.net/projects/cloverefiboot/"
+#~ msgstr "http://sourceforge.net/projects/cloverefiboot/"
 
 #~ msgid "Install & Start 32bit boot first"
 #~ msgstr "Встановити 32 бітний завантажувач першим"

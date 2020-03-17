@@ -50,6 +50,12 @@
 "false" = "否";
 
 "Theme:" = "主题:";
+"Themes" = "Themes"; // window title
+"No themes found" = "No themes found";
+"Manager" = "Manager"; // Theme manager
+"Can't remove the theme" = "Can't remove the theme";
+"Show installed" = "Show installed";
+"Optimize" = "Optimize";
 "Sound:" = "声音:";
 "*Make filesystem read-write" = "*让文件系统可读写";
 "*Disable Sleep Proxy Client" = "*禁用 Sleep Proxy Client";

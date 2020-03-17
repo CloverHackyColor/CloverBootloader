@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.5k-r5098\n"
-"POT-Creation-Date: 2019-11-06 23:33+0100\n"
+"Project-Id-Version: Clover r5104\n"
+"POT-Creation-Date: 2020-03-05 22:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:31
-msgid "%CLOVERVERSION% r%CLOVERREVISION% (%CLOVERSHA1%)"
+msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr ""
 
 #. type: Content of: <html><body><p>
@@ -66,9 +66,10 @@ msgstr ""
 msgid "Copyright © %CPRYEAR%"
 msgstr ""
 
-#. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:18
-msgid "Clover v2"
+#. type: "12.title"
+#: Resources/templates/Description.html:18 ../CloverPrefpane/CloverPrefpane.strings:1
+#, no-wrap
+msgid "Clover"
 msgstr ""
 
 #. type: Content of: <html><body><p>
@@ -83,7 +84,7 @@ msgstr ""
 
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
-msgid "http://sourceforge.net/projects/cloverefiboot/"
+msgid "https://github.com/CloverHackyColor/CloverBootloader"
 msgstr ""
 
 #. type: Content of: <html><body><p><b>
@@ -201,7 +202,7 @@ msgstr ""
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:20
-msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgid "r%CLOVERREVISION%"
 msgstr ""
 
 #. type: Content of: <html><body><div><p>
@@ -1038,12 +1039,6 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr ""
-
-#. type: "12.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:1
-#, no-wrap
-msgid "Clover"
 msgstr ""
 
 #. type: "Never"

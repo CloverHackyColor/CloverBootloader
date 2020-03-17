@@ -1264,14 +1264,14 @@ BdsLibGetImageHeader (
       break;
     }
     if (Status != EFI_BUFFER_TOO_SMALL) {
-      FreePool (Info);
+      gBS->FreePool (Info);
       goto Done;
     }
-    FreePool (Info);
+    gBS->FreePool (Info);
   } while (TRUE);
 
   FileSize = Info->FileSize;
-  FreePool (Info);
+  gBS->FreePool (Info);
 
   //
   // Read dos header

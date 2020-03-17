@@ -25,6 +25,8 @@ Revision History
 #define _SHELL_I_O_H
 
 #include <Library/GenericBdsLib.h>
+//#include "../gui/menu_items/menu_items.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 #define EFI_TPL_APPLICATION 4
 #define EFI_TPL_CALLBACK    8
@@ -45,6 +47,86 @@ Revision History
 #define IS_ALFA(x) (((x >= 'a') && (x <='z')) || ((x >= 'A') && (x <='Z')))
 #define IS_ASCII(x) ((x>=0x20) && (x<=0x7F))
 #define IS_PUNCT(x) ((x == '.') || (x == '-'))
+
+
+
+// jief move struct definition to here to be accessible from XStringW
+typedef struct {
+  BOOLEAN Ascii;
+  UINTN   Index;
+  union {
+    CONST CHAR16  *pw;
+    CONST CHAR8   *pc;
+  } u;
+} POINTER;
+
+typedef struct _pitem {
+
+  POINTER Item;
+  CHAR16  *Scratch;
+  UINTN   Width;
+  UINTN   FieldWidth;
+  UINTN   *WidthParse;
+  CHAR16  Pad;
+  BOOLEAN PadBefore;
+  BOOLEAN Comma;
+  BOOLEAN Long;
+} PRINT_ITEM;
+
+typedef struct _pstate {
+  //
+  // Input
+  //
+  POINTER fmt;
+  VA_LIST args;
+
+  //
+  // Output
+  //
+  CHAR16  *Buffer;
+  CHAR16  *End;
+  CHAR16  *Pos;
+  UINTN   Len;
+
+  UINTN   Attr;
+  UINTN   RestoreAttr;
+
+  UINTN   AttrNorm;
+  UINTN   AttrHighlight;
+  UINTN   AttrError;
+  UINTN   AttrBlueColor;
+  UINTN   AttrGreenColor;
+
+  EFI_STATUS (EFIAPI *Output) (void *context, CONST CHAR16 *str);
+  EFI_STATUS (EFIAPI *SetAttr) (VOID *context, UINTN attr);
+  VOID          *Context;
+
+  //
+  // Current item being formatted
+  //
+  struct _pitem *Item;
+} PRINT_STATE;
+
+
+extern
+EFI_STATUS
+EFIAPI
+_PoolPrint (
+  IN POOL_PRINT     *Context,
+  IN CHAR16         *Buffer
+  );
+
+extern
+UINTN
+_PPrint (
+  IN PRINT_STATE     *ps
+  );
+
+// jief
+
+
+
+
 
 
 /*
@@ -203,6 +285,9 @@ WaitFor2EventWithTsc (
                       IN EFI_EVENT        Event2,
                       IN UINT64           Timeout OPTIONAL
                     );
+
+EFI_STATUS
+WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
 VOID        LowCase (IN OUT CHAR8 *Str);
 UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
