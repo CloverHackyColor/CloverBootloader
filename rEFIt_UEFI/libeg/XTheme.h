@@ -89,6 +89,7 @@ public:
 
   //fill the theme
   XImage& GetIcon(XStringW& Name);  //get by name
+  XImage& GetIcon(const char* Name);
   XImage& GetIcon(INTN Id); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?

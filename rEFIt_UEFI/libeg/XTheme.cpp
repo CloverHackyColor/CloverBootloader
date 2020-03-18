@@ -37,7 +37,7 @@ CONST CHAR8* IconsNames[] = {
 // not used?
   "logo",
   "selection_small",
-  "selection_big",
+  "selection_big",  //BUILTIN_SELECTION_BIG=24 we keep this numeration
   //os icons
    "os_mac",  //0 + 25
    "os_tiger",
@@ -134,6 +134,10 @@ void XTheme::Init()
   Daylight = true;
 }
 
+XImage& XTheme::GetIcon(const char* Name)
+{
+  return GetIcon(XStringWP(Name));
+}
 
 XImage& XTheme::GetIcon(XStringW& Name)
 {
@@ -360,7 +364,7 @@ void XTheme::InitSelection()
   if (SelectionImages[2] == NULL) {
     return;
   } */
-  //TODO - to be continued
+
   // load big selection image
   if (!TypeSVG && !SelectionBigFileName.isEmpty()) {
     SelectionImages[0].LoadImage(ThemeDir, SelectionBigFileName);
@@ -424,10 +428,10 @@ void XTheme::InitSelection()
   // will be corrected with XTheme support
   //the procedure loadIcon should also check embedded icons
 
-  Button[0] = GetIcon(XStringWP("radio_button"));
-  Button[1] = GetIcon(XStringWP("radio_button_selected"));
-  Button[2] = GetIcon(XStringWP("checkbox"));
-  Button[3] = GetIcon(XStringWP("checkbox_checked"));
+  Button[0] = GetIcon("radio_button");
+  Button[1] = GetIcon("radio_button_selected"));
+  Button[2] = GetIcon("checkbox");
+  Button[3] = GetIcon("checkbox_checked");
 
   // non-selected background images
 
@@ -444,4 +448,15 @@ void XTheme::InitSelection()
   SelectionImages[3] = XImage(row1TileSize, row1TileSize);
   SelectionImages[3].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BackgroundPixel);
 
+}
+
+void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
+{
+  for (INTN i=0; i<BUILTIN_ICON_COUNT; ++i) {
+    Icon NewIcon(i);
+    NewIcon.Image.LoadImage(ThemeDir, XStringWP(IconsNames[i]));
+    NewIcon.ImageNight.LoadImage(ThemeDir, XStringWP(IconsNames[i]) + "_night");
+    Icons.AddCopy(NewIcon);
+  }
+  //to be continued
 }
