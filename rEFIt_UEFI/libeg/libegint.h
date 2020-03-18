@@ -108,7 +108,7 @@ DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_func_help)
 DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_logo)
 DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_selection_big)
 DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_selection_small)
-DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_selection_indicator)
+//DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_selection_indicator)
 
 // same volumes for both light and dark mode
 /*

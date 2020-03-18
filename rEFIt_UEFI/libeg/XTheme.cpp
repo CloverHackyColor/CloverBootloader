@@ -131,17 +131,18 @@ void XTheme::Init()
   CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
   Scale = 1.0f;
   CentreShift = 0.0f;
+  Daylight = true;
 }
 
 
-XImage& XTheme::GetIcon(XStringW& Name, BOOLEAN Night)
+XImage& XTheme::GetIcon(XStringW& Name)
 {
   XImage* TheIcon = NULL;
   for (size_t i = 0; i < Icons.size(); i++)
   {
     if (Icons[i].Name == Name)
     {
-      if (Night) {
+      if (!Daylight) {
         TheIcon = &Icons[i].ImageNight;
       }
       if (TheIcon == NULL || (*TheIcon).isEmpty()) { //if daylight or night icon absent
@@ -153,14 +154,14 @@ XImage& XTheme::GetIcon(XStringW& Name, BOOLEAN Night)
   return *TheIcon;
 }
 
-XImage& XTheme::GetIcon(INTN Id, BOOLEAN Night)
+XImage& XTheme::GetIcon(INTN Id)
 {
   XImage* TheIcon = NULL;
   for (size_t i = 0; i < Icons.size(); i++)
   {
     if (Icons[i].Id == Id)
     {
-      if (Night) {
+      if (!Daylight) {
         TheIcon = &Icons[i].ImageNight;
       }
       if (TheIcon == NULL || (*TheIcon).isEmpty()) { //if daylight or night icon absent
@@ -340,13 +341,17 @@ void XTheme::InitSelection()
     return;
   }
   // load small selection image
-  if (GlobalConfig.SelectionSmallFileName != NULL){
+  if (SelectionSmallFileName.isEmpty()){
     SelectionImages[2].LoadImage(ThemeDir, SelectionSmallFileName);
   }
   if (SelectionImages[2].isEmpty()){
 //    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
 //    SelectionImages[2]->HasAlpha = FALSE; // support transparensy for selection icons
-    SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_selection_small), ACCESS_EMB_SIZE(emb_selection_small));
+    if (Daylight) {
+      SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_selection_small), ACCESS_EMB_SIZE(emb_selection_small));
+    } else {
+      SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_small), ACCESS_EMB_SIZE(emb_dark_selection_small));
+    }
 //    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL)); //why???
   }
   //cut or extend the image by Compose
@@ -357,44 +362,54 @@ void XTheme::InitSelection()
   } */
   //TODO - to be continued
   // load big selection image
-  if (!GlobalConfig.TypeSVG && GlobalConfig.SelectionBigFileName != NULL) {
-    SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
-    SelectionImages[0].EnsureImageSize(row0TileSize, row0TileSize, &MenuBackgroundPixel);
+  if (!TypeSVG && !SelectionBigFileName.isEmpty()) {
+    SelectionImages[0].LoadImage(ThemeDir, SelectionBigFileName);
+ //   SelectionImages[0].EnsureImageSize(row0TileSize, row0TileSize, &MenuBackgroundPixel);
   }
   if (SelectionImages[0].isEmpty()) {
     // calculate big selection image from small one
-    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
+//    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
+    if (Daylight) {
+      SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_selection_big), ACCESS_EMB_SIZE(emb_selection_big));
+    } else {
+      SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_big), ACCESS_EMB_SIZE(emb_dark_selection_big));
+    }
 //    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
     if (SelectionImages[0].isEmpty()) {
       SelectionImages[2].setEmpty();
       return;
     }
-    if (GlobalConfig.SelectionOnTop) {
+//    if (SelectionOnTop) {
 //      SelectionImages[0]->HasAlpha = TRUE; // TODO ?
 //      SelectionImages[2]->HasAlpha = TRUE;
-    }
+//    }
   }
   
   // BootCampStyle indicator image
-  if (GlobalConfig.BootCampStyle) {
+  if (BootCampStyle) {
     // load indicator selection image
-    if (GlobalConfig.SelectionIndicatorName != NULL) {
-      SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, TRUE);
+    if (!SelectionIndicatorName.isEmpty()) {
+      SelectionImages[4].LoadImage(ThemeDir, SelectionIndicatorName);
     }
     if (!SelectionImages[4].isEmpty()) {
-      SelectionImages[4] = egDecodePNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator), TRUE);
-      
+      SelectionImages[4].FromPNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator));     
     }
-    INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * GlobalConfig.Scale);
-    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
+    INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
+//    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
     if (SelectionImages[4].isEmpty()) {
-      SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
-                                               TRUE, &StdBackgroundPixel);
-      
+//      SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
+//                                               TRUE, &StdBackgroundPixel);
+      SelectionImages[4] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
+      SelectionImages[4].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)StdBackgroundPixel);
+
+
     }
-    SelectionImages[5] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
-                                             TRUE, &MenuBackgroundPixel);
+ //   SelectionImages[5] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
+ //                                            TRUE, &MenuBackgroundPixel);
+    SelectionImages[5] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
+    SelectionImages[5].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)MenuBackgroundPixel);
+
   }
   
   /*
@@ -408,91 +423,25 @@ void XTheme::InitSelection()
   //it was a nonsense egLoadImage is just inluded into egLoadIcon.
   // will be corrected with XTheme support
   //the procedure loadIcon should also check embedded icons
-#if USE_XTHEME
-  Button[0] = Theme.loadIcon("radio_button.png");
-  Button[1] = Theme.loadIcon("radio_button_selected.png");
-  Button[2] = Theme.loadIcon("checkbox.png");
-  Button[3] = Theme.loadIcon("checkbox_checked.png");
-#else
-  Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE); //memory leak
-  Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
-  if (!Buttons[0]) {
-    Buttons[0] = egLoadIcon(ThemeDir, L"radio_button.png", 48);
-  }
-  if (!Buttons[0]) {
-    Buttons[0] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button), TRUE);
-  }
-  if (!Buttons[1]) {
-    Buttons[1] = egLoadIcon(ThemeDir, L"radio_button_selected.png", 48);
-  }
-  
-  if (!Buttons[1]) {
-    Buttons[1] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected), TRUE);
-  }
-  
-  // Checkbox
-  Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
-  Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
-  if (!Buttons[2]) {
-    //    DBG("egLoadIcon checkbox\n");
-    Buttons[2] = egLoadIcon(ThemeDir, L"checkbox.png", 48);
-  }
-  if (!Buttons[3]) {
-    //    DBG("egLoadIcon checkbox_checked\n");
-    Buttons[3] = egLoadIcon(ThemeDir, L"checkbox_checked.png", 48);
-  }
-  
-  if (!Buttons[2]) {
-    //    DBG("embedded checkbox\n");
-    Buttons[2] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox), TRUE);
-  }
-  
-  if (!Buttons[3]) {
-    //    DBG("embedded checkbox_checked\n");
-    Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
-  }
-#endif
+
+  Button[0] = GetIcon(XStringWP("radio_button"));
+  Button[1] = GetIcon(XStringWP("radio_button_selected"));
+  Button[2] = GetIcon(XStringWP("checkbox"));
+  Button[3] = GetIcon(XStringWP("checkbox_checked"));
+
   // non-selected background images
-#if USE_XTHEME
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel = StdBackgroundPixel;
-  if (Theme.SelectionBigFileName != NULL) {
-    BackgroundPixel = &MenuBackgroundPixel;
-  } else if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
-    BackgroundPixel = &DarkEmbeddedBackgroundPixel;
+
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
+  if (!SelectionBigFileName.isEmpty()) {
+    BackgroundPixel = { 0x00, 0x00, 0x00, 0x00 };
+  } else if (DarkEmbedded || TypeSVG) {
+    BackgroundPixel = { 0x33, 0x33, 0x33, 0xff };
   } else {
-    BackgroundPixel = &StdBackgroundPixel;
+    BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
   }
-  SelectionImages[1] = XImage(row0TileSize, row0TileSize, BackgroundPixel);
-  SelectionImages[3] = XImage(row1TileSize, row1TileSize, BackgroundPixel);
-#else
-  //totally wrong
-  if (GlobalConfig.SelectionBigFileName != NULL) {
-    SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                             TRUE, &MenuBackgroundPixel);
-    SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                             TRUE, &MenuBackgroundPixel);
-  } else { // using embedded theme (this is an assumption but a better check is required)
-    EG_PIXEL BackgroundPixel;
-    if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
-      BackgroundPixel = DarkEmbeddedBackgroundPixel;
-      BackgroundPixel.a = 0x00;
-    } else {
-      BackgroundPixel = StdBackgroundPixel;
-      BackgroundPixel.a = 0xff;
-    }
-    if (GlobalConfig.DarkEmbedded) { //nonsense then equal else
-      SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                               TRUE, &BackgroundPixel);
-      SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                               TRUE, &BackgroundPixel);
-      
-    } else {
-      SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                               TRUE, &BackgroundPixel); //&StdBackgroundPixel);
-      SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                               TRUE, &BackgroundPixel);
-    }
-  }
-  //  DBG("selections inited\n");
-#endif
+  SelectionImages[1] = XImage(row0TileSize, row0TileSize);
+  SelectionImages[1].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BackgroundPixel);
+  SelectionImages[3] = XImage(row1TileSize, row1TileSize);
+  SelectionImages[3].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BackgroundPixel);
+
 }

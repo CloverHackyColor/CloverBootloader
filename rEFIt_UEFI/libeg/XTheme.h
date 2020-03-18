@@ -78,16 +78,18 @@ public:
   INTN row1TileSize;
   UINTN BanHeight;
   INTN LayoutHeight; //it was 376 before
+  BOOLEAN Daylight;
 
   void Init();
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
   XImage  Banner; //same as logo in the array, make a link?
   XImage SelectionImages[6];
+  XImage Button[4];
 
   //fill the theme
-  XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name
-  XImage& GetIcon(INTN Id, BOOLEAN Night); //get by id
+  XImage& GetIcon(XStringW& Name);  //get by name
+  XImage& GetIcon(INTN Id); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();

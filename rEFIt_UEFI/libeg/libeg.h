@@ -140,6 +140,8 @@ extern "C" {
 } // extern "C"
 #endif
 
+#define USE_XTHEME 0
+
 /* types */
 
 typedef enum {
