@@ -7,13 +7,15 @@
 #include "libeg.h"
 #include "XImage.h"
 
+#define INDICATOR_SIZE (52)
+
 class Icon
 {
 public:
   INTN Id;  //for example BUILTIN_ICON_POINTER
-  XString Name; //for example "os_moja", "vol_internal"
-  XImage ImageNight;
+  XStringW Name; //for example "os_moja", "vol_internal"
   XImage Image;
+  XImage ImageNight;
 
   Icon(INTN Id);
   ~Icon();
@@ -74,7 +76,7 @@ public:
   float       CentreShift;
   INTN row0TileSize;
   INTN row1TileSize;
-  INTN BanHeight;
+  UINTN BanHeight;
   INTN LayoutHeight; //it was 376 before
 
   void Init();

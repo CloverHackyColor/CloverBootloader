@@ -7,6 +7,8 @@ extern "C" {
 }
 
 #include "libegint.h"
+#include "../refit/screen.h"
+
 #include "XTheme.h"
 
 CONST CHAR8* IconsNames[] = {
@@ -68,7 +70,7 @@ CONST CHAR8* IconsNames[] = {
 Icon::Icon(INTN Index) : Image(0), ImageNight(0)
 {
   Id = Index;
-  Name = XString(IconsNames[Index]);
+  Name.takeValueFrom(IconsNames[Index]);
 }
 
 Icon::~Icon() {}
@@ -225,8 +227,8 @@ void XTheme::ClearScreen() //and restore background and banner
   if (!(HideUIFlags & HIDEUI_FLAG_BANNER)) {
     //Banner image prepared before
     if (!Banner.isEmpty()) {
-      BannerPlace.Width = Banner->Width;
-      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
+      BannerPlace.Width = Banner.GetWidth();
+      BannerPlace.Height = (BanHeight >= Banner.GetHeight()) ? Banner.GetHeight() : BanHeight;
       BannerPlace.XPos = BannerPosX;
       BannerPlace.YPos = BannerPosY;
       if (!TypeSVG) {
@@ -239,13 +241,13 @@ void XTheme::ClearScreen() //and restore background and banner
           BannerPlace.XPos = HybridRepositioning(BannerEdgeHorizontal, BannerPosX, BannerPlace.Width,  UGAWidth,  ThemeDesignWidth );
           BannerPlace.YPos = HybridRepositioning(BannerEdgeVertical, BannerPosY, BannerPlace.Height, UGAHeight, ThemeDesignHeight);
           // Check if banner is required to be nudged.
-          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, BannerNudgeX, Banner->Width,  UGAWidth);
-          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, BannerNudgeY, Banner->Height, UGAHeight);
+          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, BannerNudgeX, Banner.GetWidth(),  UGAWidth);
+          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, BannerNudgeY, Banner.GetHeight(), UGAHeight);
           //         DBG("banner position new style\n");
         } else {
           // Use rEFIt default (no placement values speicifed)
-          BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-          BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+          BannerPlace.XPos = (UGAWidth - Banner.GetWidth()) >> 1;
+          BannerPlace.YPos = (BanHeight >= Banner.GetHeight()) ? (BanHeight - Banner.GetHeight()) : 0;
           //        DBG("banner position old style\n");
         }
       }
@@ -254,14 +256,14 @@ void XTheme::ClearScreen() //and restore background and banner
   }
   
   //Then prepare Background from BigBack
-  if (!Background.isEmpty() && (Background.GetWidth() != UGAWidth || Background.GetHeight() != UGAHeight)) {
+  if (!Background.isEmpty() && (Background.GetWidth() != (UINTN)UGAWidth || Background.GetHeight() != (UINTN)UGAHeight)) { // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
     // Resolution changed
     Background.setEmpty();
   }
   
   if (Background.isEmpty()) {
     Background = XImage(UGAWidth, UGAHeight);
-    Background.Fill(&BlueBackgroundPixel);
+    Background.Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BlueBackgroundPixel);
   }
   if (!BigBack.isEmpty()) {
     switch (BackgroundScale) {
@@ -269,6 +271,7 @@ void XTheme::ClearScreen() //and restore background and banner
       Background.CopyScaled(BigBack, Scale);
       break;
     case imCrop:
+    {
       INTN x = UGAWidth - BigBack.GetWidth();
       INTN x1, x2, y1, y2;
       if (x >= 0) {
@@ -296,16 +299,19 @@ void XTheme::ClearScreen() //and restore background and banner
                 x, y, Background.GetWidth(), BigBack.GetWidth()); */
       Background.Compose(x, y, BigBack, true);
       break;
+    }
     case imTile:
-      x = (BigBack.GetWidth() * ((UGAWidth - 1) / BigBack.GetWidth() + 1) - UGAWidth) >> 1;
-      y = (BigBack.GetHeight() * ((UGAHeight - 1) / BigBack.GetHeight() + 1) - UGAHeight) >> 1;
-      EFI_GRAPHICS_OUTPUT_BLT_PIXEL* p1 = Background.GetPixelPtr(0, 0)
-      for (j = 0; j < UGAHeight; j++) {
-        for (i = 0; i < UGAWidth; i++) {
+    {
+      INTN x = (BigBack.GetWidth() * ((UGAWidth - 1) / BigBack.GetWidth() + 1) - UGAWidth) >> 1;
+      INTN y = (BigBack.GetHeight() * ((UGAHeight - 1) / BigBack.GetHeight() + 1) - UGAHeight) >> 1;
+      EFI_GRAPHICS_OUTPUT_BLT_PIXEL* p1 = Background.GetPixelPtr(0, 0);
+      for (INTN j = 0; j < UGAHeight; j++) {
+        for (INTN i = 0; i < UGAWidth; i++) {
           *p1++ = BigBack.GetPixel((i + x) % BigBack.GetWidth(), (j + y) % BigBack.GetHeight());
         }
       }
       break;
+    }
     case imNone:
     default:
       // already scaled
@@ -314,7 +320,7 @@ void XTheme::ClearScreen() //and restore background and banner
   }
   Background.Draw(0, 0, 1.f);
   //then draw banner
-  if (Banner) {
+  if (!Banner.isEmpty()) {
     Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);
   }
   
@@ -335,7 +341,7 @@ void XTheme::InitSelection()
   }
   // load small selection image
   if (GlobalConfig.SelectionSmallFileName != NULL){
-    SelectionImages[2].LoadImage(ThemeDir, SelectionSmallFileName.data());
+    SelectionImages[2].LoadImage(ThemeDir, SelectionSmallFileName);
   }
   if (SelectionImages[2].isEmpty()){
 //    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
@@ -353,23 +359,20 @@ void XTheme::InitSelection()
   // load big selection image
   if (!GlobalConfig.TypeSVG && GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
-    SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                           row0TileSize, row0TileSize,
-                                           &MenuBackgroundPixel);
+    SelectionImages[0].EnsureImageSize(row0TileSize, row0TileSize, &MenuBackgroundPixel);
   }
-  if (SelectionImages[0] == NULL) {
+  if (SelectionImages[0].isEmpty()) {
     // calculate big selection image from small one
     SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
-    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
+//    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-    if (SelectionImages[0] == NULL) {
-      egFreeImage(SelectionImages[2]);
-      SelectionImages[2] = NULL;
+    if (SelectionImages[0].isEmpty()) {
+      SelectionImages[2].setEmpty();
       return;
     }
     if (GlobalConfig.SelectionOnTop) {
-      SelectionImages[0]->HasAlpha = TRUE;
-      SelectionImages[2]->HasAlpha = TRUE;
+//      SelectionImages[0]->HasAlpha = TRUE; // TODO ?
+//      SelectionImages[2]->HasAlpha = TRUE;
     }
   }
   
@@ -379,13 +382,13 @@ void XTheme::InitSelection()
     if (GlobalConfig.SelectionIndicatorName != NULL) {
       SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, TRUE);
     }
-    if (!SelectionImages[4]) {
+    if (!SelectionImages[4].isEmpty()) {
       SelectionImages[4] = egDecodePNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator), TRUE);
       
     }
     INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * GlobalConfig.Scale);
-    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
-    if (!SelectionImages[4]) {
+    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
+    if (SelectionImages[4].isEmpty()) {
       SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
                                                TRUE, &StdBackgroundPixel);
       

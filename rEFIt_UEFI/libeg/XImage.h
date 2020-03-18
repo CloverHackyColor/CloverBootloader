@@ -13,6 +13,7 @@ extern "C" {
 }
 #include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XArray.h"
+#include "../cpp_foundation/XStringW.h"
 #include "../libeg/libeg.h"
 //#include "lodepng.h"
 //
@@ -91,7 +92,9 @@ public:
   void Draw(INTN x, INTN y, float scale);
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
   
-  EFI_STATUS LoadImage(EFI_FILE *Dir, XStringW FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+  EFI_STATUS LoadImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+  void EnsureImageSize(IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
+
 };
 
 #endif //__XSTRINGW_H__

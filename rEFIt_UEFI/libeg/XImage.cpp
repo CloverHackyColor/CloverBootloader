@@ -475,15 +475,15 @@ void XImage::Draw(INTN x, INTN y, float scale)
   }
 }
 
-EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, XStringW& FileName)
+EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, const XStringW& FileName)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0;
 
-  if (TypeSVG) {
-    return EFI_SUCCESS;
-  }
+//  if (TypeSVG) {
+//    return EFI_SUCCESS;
+//  }
   
   if (BaseDir == NULL || FileName.isEmpty())
     return EFI_NOT_FOUND;
@@ -503,4 +503,22 @@ EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, XStringW& FileName)
   FreePool(FileData);
   return Status;
 
+}
+
+
+void XImage::EnsureImageSize(IN INTN Width, IN INTN Height, IN EG_PIXEL *Color)
+{
+    EG_IMAGE *NewImage;
+
+    if (isEmpty())
+        return;
+    if (GetWidth() == (UINTN)Width && GetHeight() == (UINTN)Height) // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
+        return;
+
+    NewImage = egCreateFilledImage(Width, Height, true, Color); // TODO : import that method to directly deal with XImage
+    if (NewImage == NULL) {
+        return; // panic instead ?
+    }
+    Compose(0, 0, NewImage, false);
+    egFreeImage(NewImage);
 }

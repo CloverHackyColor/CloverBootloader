@@ -63,12 +63,12 @@ static VOID SwitchToGraphics(VOID);
 static VOID DrawScreenHeader(IN CONST CHAR16 *Title);
 static VOID UpdateConsoleVars(VOID);
 static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension);
-static INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
+INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
 //INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
 static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension);
 static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension);
 static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
-static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
+INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 
 EG_IMAGE * LoadSvgFrame(INTN i);
 
@@ -889,7 +889,7 @@ static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPerce
   return 0xFFFF; // to indicate that wrong edge was specified.
 }
 
-static INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
+INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
 {
   INTN value=Position;
   
@@ -916,7 +916,7 @@ static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INT
   return (Value * (ScreenDimension - ImageDimension) / (DesignScreenDimension - ImageDimension));
 }
 
-static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension)
+INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension)
 {
   INTN pos, posThemeDesign;
   

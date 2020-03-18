@@ -386,7 +386,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     // if it not the first run, just restore resolution   
     if (egScreenWidth  != 0 && egScreenHeight != 0) {
  //       Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
-      XStringW Resolution = WPrintf("%lux%lu", egScreenWidth, egScreenHeight);
+      XStringW Resolution = WPrintf("%llux%llu", egScreenWidth, egScreenHeight);
         if (Resolution) {
             Status = egSetScreenResolution(Resolution.data());
  //           FreePool(Resolution);
