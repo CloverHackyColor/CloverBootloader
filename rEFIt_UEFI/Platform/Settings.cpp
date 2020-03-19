@@ -1341,24 +1341,24 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->KernelPatches[Patches->NrKexts].MaskFind = NULL;
+          Patches->KernelPatches[Patches->NrKernels].MaskFind = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKexts].MaskFind = (__typeof__(Patches->KernelPatches[Patches->NrKexts].MaskFind))AllocatePool (FindLen);
-          SetMem(Patches->KernelPatches[Patches->NrKexts].MaskFind, FindLen, 0xFF);
-          CopyMem(Patches->KernelPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
+          Patches->KernelPatches[Patches->NrKernels].MaskFind = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskFind))AllocatePool (FindLen);
+          SetMem(Patches->KernelPatches[Patches->NrKernels].MaskFind, FindLen, 0xFF);
+          CopyMem(Patches->KernelPatches[Patches->NrKernels].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
         // this is "Replace" string len of ReplaceLen
         Patches->KernelPatches[Patches->NrKernels].Patch = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Patch))AllocateZeroPool(FindLen);
-        CopyMem(Patches->KernelPatches[Patches->NrKexts].Patch, TmpPatch, ReplaceLen);
+        CopyMem(Patches->KernelPatches[Patches->NrKernels].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen); //reuse MaskLen
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->KernelPatches[Patches->NrKexts].MaskReplace = NULL;
+          Patches->KernelPatches[Patches->NrKernels].MaskReplace = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKexts].MaskReplace))AllocateZeroPool (FindLen);
-          CopyMem(Patches->KernelPatches[Patches->NrKexts].MaskReplace, TmpData, MaskLen);
+          Patches->KernelPatches[Patches->NrKernels].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskReplace))AllocateZeroPool (FindLen);
+          CopyMem(Patches->KernelPatches[Patches->NrKernels].MaskReplace, TmpData, MaskLen);
         }
         FreePool(TmpData);
         Patches->KernelPatches[Patches->NrKernels].Count        = 0;
@@ -1468,11 +1468,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->BootPatches[Patches->NrKexts].MaskFind = NULL;
+          Patches->BootPatches[Patches->NrBoots].MaskFind = NULL;
         } else {
-          Patches->BootPatches[Patches->NrKexts].MaskFind = (__typeof__(Patches->BootPatches[Patches->NrKexts].MaskFind))AllocatePool (FindLen);
-          SetMem(Patches->BootPatches[Patches->NrKexts].MaskFind, FindLen, 0xFF);
-          CopyMem(Patches->BootPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
+          Patches->BootPatches[Patches->NrBoots].MaskFind = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskFind))AllocatePool (FindLen);
+          SetMem(Patches->BootPatches[Patches->NrBoots].MaskFind, FindLen, 0xFF);
+          CopyMem(Patches->BootPatches[Patches->NrBoots].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
         Patches->BootPatches[Patches->NrBoots].Patch = (__typeof__(Patches->BootPatches[Patches->NrBoots].Patch))AllocateCopyPool (FindLen, TmpPatch);
@@ -1480,10 +1480,10 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->BootPatches[Patches->NrKexts].MaskReplace = NULL;
+          Patches->BootPatches[Patches->NrBoots].MaskReplace = NULL;
         } else {
-          Patches->BootPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrKexts].MaskReplace))AllocateZeroPool (FindLen);
-          CopyMem(Patches->BootPatches[Patches->NrKexts].MaskReplace, TmpData, MaskLen);
+          Patches->BootPatches[Patches->NrBoots].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskReplace))AllocateZeroPool (FindLen);
+          CopyMem(Patches->BootPatches[Patches->NrBoots].MaskReplace, TmpData, MaskLen);
         }
         FreePool(TmpData);
         Patches->BootPatches[Patches->NrBoots].Count        = 0;
