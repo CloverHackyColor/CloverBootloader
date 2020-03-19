@@ -91,8 +91,9 @@ public:
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
-  
-  EFI_STATUS LoadImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+//I changed the name because LoadImage is too widely used
+// will be used instead of old egLoadImage
+  EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
 
 };

@@ -23,30 +23,30 @@ XImage::XImage()
 
 XImage::XImage(UINTN W, UINTN H)
 {
-  Width = W;
-  Height = H;
+//  Width = W;
+//  Height = H; //included below
   setSizeInPixels(W, H);
 }
 
 XImage::XImage(EG_IMAGE* egImage)
 {
   if ( egImage) {
-	  Width = egImage->Width;
-	  Height = egImage->Height;
-	  setSizeInPixels(GetWidth(), GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
+//	  Width = egImage->Width;
+//	  Height = egImage->Height;
+	  setSizeInPixels(egImage->Width, egImage->Height); // change the size, ie the number of element in the array. Reaalocate buffer if needed
 	  CopyMem(&PixelData[0], egImage->PixelData, GetSizeInBytes());
   }else{
-	  Width = 0;
-	  Height = 0;
-	  setSizeInPixels(GetWidth(), GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
+//	  Width = 0;
+//	  Height = 0;
+	  setSizeInPixels(0, 0); // change the size, ie the number of element in the array. Reallocate buffer if needed
   }
 }
 
 XImage& XImage::operator= (const XImage& other)
 {
-	Width = other.GetWidth();
-	Height = other.GetHeight();
-	setSizeInPixels(GetWidth(), GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
+//	Width = other.GetWidth();
+//	Height = other.GetHeight();
+	setSizeInPixels(other.GetWidth(), other.GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
 	CopyMem(&PixelData[0], &other.PixelData[0], GetSizeInBytes());
 	return *this;
 }
@@ -63,17 +63,17 @@ XImage::XImage(const XImage& Image, float scale)
   UINTN SrcHeight = Image.GetHeight();
 
   if (scale < 1.e-4) {
-    Width = SrcWidth;
-    Height = SrcHeight;
-    setSizeInPixels(GetWidth(), GetHeight());
+//    Width = SrcWidth;
+//    Height = SrcHeight;
+    setSizeInPixels(SrcWidth, SrcHeight);
     for (UINTN y = 0; y < Height; ++y)
       for (UINTN x = 0; x < Width; ++x)
         PixelData[y * Width + x] = Image.GetPixel(x, y);
 
   } else {
-    Width = (UINTN)(SrcWidth * scale);
-    Height = (UINTN)(SrcHeight * scale);
-    setSizeInPixels(GetWidth(), GetHeight());
+//    Width = (UINTN)(SrcWidth * scale);
+//    Height = (UINTN)(SrcHeight * scale);
+    setSizeInPixels((UINTN)(SrcWidth * scale), (UINTN)(SrcHeight * scale));
     CopyScaled(Image, scale);
   }
 }
@@ -175,8 +175,10 @@ UINTN XImage::GetSizeInBytes() const
   return PixelData.size() * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
 }
 
-void XImage::setSizeInPixels(UINTN W, UINTN H)
+void XImage::setSizeInPixels(UINTN W, UINTN H) //unused arguments?
 {
+  Width = W;
+  Height = H;
 	PixelData.setSize(Width * Height);
 }
 
@@ -265,6 +267,14 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
     }
   }
 }
+
+/* Place this image over Back image at PosX,PosY
+ * and result will be in this image
+ * But pixels will be moved anyway so it's impossible without double copy
+ *
+ */
+//void XImage::ComposeOnBack(INTN PosX, INTN PosY, const XImage& BackImage, bool Lowest)
+
 
 void XImage::FlipRB(bool WantAlpha)
 {
@@ -381,18 +391,24 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 
   setSizeInPixels(Width, Height); // setSizeInPixels BEFORE, so &PixelData[0]
   if ( Width == 0 || Height == 0 ) return; // nothing to get, area is zero. &PixelData[0] would crash
-
+/*
+ * Blt(...Width, Height, Delta);
+ * if (Delta == 0) {
+ *   Delta = Width * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+ *  }
+ *
+ */
   if (GraphicsOutput != NULL) {
     GraphicsOutput->Blt(GraphicsOutput,
       &PixelData[0],
       EfiBltVideoToBltBuffer,
-      x, y, 0, 0, Width, Height, Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+      x, y, 0, 0, Width, Height, 0); // Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw,
       (EFI_UGA_PIXEL *)GetPixelPtr(0,0),
       EfiUgaVideoToBltBuffer,
-      x, y, 0, 0, Width, Height, Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+      x, y, 0, 0, Width, Height, 0); //Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
 }
 
@@ -471,11 +487,11 @@ void XImage::Draw(INTN x, INTN y, float scale)
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, 0);
+      0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
 }
 
-EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, const XStringW& FileName)
+EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& FileName)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
@@ -504,13 +520,14 @@ EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, const XStringW& FileName)
   return Status;
 }
 
-
+//EnsureImageSize should create new object with new sizes
+//while compose uses old object
 void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
 {
 //    EG_IMAGE *NewImage;
 
-  if (isEmpty())
-    return;
+//  if (isEmpty())
+//    return;
   if (NewWidth == Width && NewHeight == Height)
     return;
 
@@ -520,7 +537,11 @@ void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI
     } */
   XImage NewImage(NewWidth, NewHeight);
   NewImage.Fill(Color);
-
-  Compose(0, 0, NewImage, false);
+//  Compose(0, 0, NewImage, false);
 //    egFreeImage(NewImage);
+  NewImage.Compose(0, 0, (*this), false);
+  setSizeInPixels(NewWidth, NewHeight); //include reallocate but loose data
+//  CopyScaled(NewImage, 1.f);
+  CopyMem(&PixelData[0], &NewImage.PixelData[0], GetSizeInBytes());
+  //we have to copy pixels twice? because we can't return newimage instead of this
 }
