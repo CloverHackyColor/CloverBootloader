@@ -281,6 +281,8 @@ void XImage::FlipRB(bool WantAlpha)
 
 /*
  * The function converted plain array into XImage object
+ * Error = 0 - Success
+ * Error = 28 - invalid signature
  */
 unsigned XImage::FromPNG(const UINT8 * Data, UINTN Length)
 {
@@ -440,18 +442,13 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 void XImage::Draw(INTN x, INTN y, float scale)
 {
   //prepare images
-//  DBG("1\n");
   XImage Top(*this, scale);
-//  DBG("2\n");
   XImage Background(Width, Height);
-//  DBG("3\n");
   Background.GetArea(x, y, Width, Height);
-//  DBG("4\n");
   Background.Compose(0, 0, Top, true);
-//  DBG("5\n");
   UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
   UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
-//  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
+
   // prepare protocols
   EFI_STATUS Status;
   EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
@@ -476,4 +473,52 @@ void XImage::Draw(INTN x, INTN y, float scale)
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, 0);
   }
+}
+
+EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, const XStringW& FileName)
+{
+  EFI_STATUS      Status = EFI_NOT_FOUND;
+  UINT8           *FileData = NULL;
+  UINTN           FileDataLength = 0;
+
+//  if (TypeSVG) {
+//    return EFI_SUCCESS;
+//  }
+  
+  if (BaseDir == NULL || FileName.isEmpty())
+    return EFI_NOT_FOUND;
+  
+  // load file
+  Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // decode it
+  unsigned ret = FromPNG(FileData, FileDataLength);
+  
+  if (ret) {
+    DBG("%s not decoded\n", FileName);
+    Status = EFI_UNSUPPORTED;
+  }
+  FreePool(FileData);
+  return Status;
+
+}
+
+
+void XImage::EnsureImageSize(IN INTN Width, IN INTN Height, IN EG_PIXEL *Color)
+{
+    EG_IMAGE *NewImage;
+
+    if (isEmpty())
+        return;
+    if (GetWidth() == (UINTN)Width && GetHeight() == (UINTN)Height) // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
+        return;
+
+    NewImage = egCreateFilledImage(Width, Height, true, Color); // TODO : import that method to directly deal with XImage
+    if (NewImage == NULL) {
+        return; // panic instead ?
+    }
+    Compose(0, 0, NewImage, false);
+    egFreeImage(NewImage);
 }

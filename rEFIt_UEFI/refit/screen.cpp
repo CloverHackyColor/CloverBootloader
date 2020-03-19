@@ -63,12 +63,12 @@ static VOID SwitchToGraphics(VOID);
 static VOID DrawScreenHeader(IN CONST CHAR16 *Title);
 static VOID UpdateConsoleVars(VOID);
 static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension);
-static INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
+INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
 //INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
 static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension);
 static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension);
 static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
-static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
+INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 
 EG_IMAGE * LoadSvgFrame(INTN i);
 
@@ -415,109 +415,7 @@ typedef struct {
  //same as EgRect but INTN <-> UINTN
 */
 
-#if USE_XTHEME
-VOID XTheme::ClearScreen()
-{
-  if (BanHeight < 2) {
-    BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
-  }
-  if (!(HideUIFlags & HIDEUI_FLAG_BANNER)) {
-    //Banner image prepared before
-    if (!Banner.isEmpty()) {
-      BannerPlace.Width = Banner->Width;
-      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
-      BannerPlace.XPos = BannerPosX;
-      BannerPlace.YPos = BannerPosY;
-      if (!TypeSVG) {
-        // Check if new style placement value was used for banner in theme.plist
-        
-        if ((BannerPosX >=0 && BannerPosX <=1000) && (BannerPosY >=0 && BannerPosY <=1000)) {
-          // Check if screen size being used is different from theme origination size.
-          // If yes, then recalculate the placement % value.
-          // This is necessary because screen can be a different size, but banner is not scaled.
-          BannerPlace.XPos = HybridRepositioning(BannerEdgeHorizontal, BannerPosX, BannerPlace.Width,  UGAWidth,  ThemeDesignWidth );
-          BannerPlace.YPos = HybridRepositioning(BannerEdgeVertical, BannerPosY, BannerPlace.Height, UGAHeight, ThemeDesignHeight);
-          // Check if banner is required to be nudged.
-          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, BannerNudgeX, Banner->Width,  UGAWidth);
-          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, BannerNudgeY, Banner->Height, UGAHeight);
-          //         DBG("banner position new style\n");
-        } else {
-          // Use rEFIt default (no placement values speicifed)
-          BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-          BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
-          //        DBG("banner position old style\n");
-        }
-      }
 
-    }
-  }
-  
-  //Then prepare Background from BigBack
-  if (!Background.isEmpty() && (Background.GetWidth() != UGAWidth || Background.GetHeight() != UGAHeight)) {
-    // Resolution changed
-    Background.setEmpty();
-  }
-  
-  if (Background.isEmpty()) {
-    Background = XImage(UGAWidth, UGAHeight);
-    Background.Fill(&BlueBackgroundPixel);
-  }
-  if (!BigBack.isEmpty()) {
-    switch (BackgroundScale) {
-    case imScale:
-      Background.CopyScaled(BigBack, Scale);
-      break;
-    case imCrop:
-      x = UGAWidth - BigBack.GetWidth();
-      if (x >= 0) {
-        x1 = x >> 1;
-        x2 = 0;
-        x = BigBack.GetWidth();
-      } else {
-        x1 = 0;
-        x2 = (-x) >> 1;
-        x = UGAWidth;
-      }
-      y = UGAHeight - BigBack.GetHeight();
-      if (y >= 0) {
-        y1 = y >> 1;
-        y2 = 0;
-        y = BigBack.GetHeight();
-      } else {
-        y1 = 0;
-        y2 = (-y) >> 1;
-        y = UGAHeight;
-      }
-      //the function can be in XImage class
-      egRawCopy(Background.GetPixelPtr(x1, y1),
-                BigBack.GetPixelPtr(x2, y2),
-                x, y, Background.GetWidth(), BigBack.GetWidth());
-      break;
-    case imTile:
-      x = (BigBack.GetWidth() * ((UGAWidth - 1) / BigBack.GetWidth() + 1) - UGAWidth) >> 1;
-      y = (BigBack.GetHeight() * ((UGAHeight - 1) / BigBack.GetHeight() + 1) - UGAHeight) >> 1;
-      p1 = Background.GetPixelPtr(0, 0)
-      for (j = 0; j < UGAHeight; j++) {
- //       y2 = ((j + y) % BigBack.GetHeight()) * BigBack.GetWidth();
-        for (i = 0; i < UGAWidth; i++) {
-          *p1++ = BigBack.GetPixel((i + x) % BigBack.GetWidth(), (j + y) % BigBack.GetHeight());
-        }
-      }
-      break;
-    case imNone:
-    default:
-      // already scaled
-      break;
-    }
-  }
-  Background.Draw(0, 0, 1.f);
-//then draw banner
-  if (Banner) {
-    Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);
-  }
-
-}
-#else
 VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
 {
   EG_PIXEL *p1;
@@ -691,7 +589,7 @@ VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
   InputBackgroundPixel.a = (MenuBackgroundPixel.a + 0) & 0xFF;
   GraphicsScreenDirty = FALSE;
 }
-#endif
+
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
 {
   if (!Image) {
@@ -991,7 +889,7 @@ static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPerce
   return 0xFFFF; // to indicate that wrong edge was specified.
 }
 
-static INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
+INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension)
 {
   INTN value=Position;
   
@@ -1018,7 +916,7 @@ static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INT
   return (Value * (ScreenDimension - ImageDimension) / (DesignScreenDimension - ImageDimension));
 }
 
-static INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension)
+INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension)
 {
   INTN pos, posThemeDesign;
   

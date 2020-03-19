@@ -47,6 +47,7 @@
 #include "menu.h"
 #include "screen.h"
 #include "../cpp_foundation/XString.h"
+#include "../libeg/XTheme.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -147,7 +148,6 @@ INTN ScrollbarYMovement;
 #define TILE1_XSPACING (8)
 //#define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
-#define INDICATOR_SIZE (52)
 
 //EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
 //EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
@@ -1950,7 +1950,7 @@ VOID InitSelection(VOID)
 #endif
   // non-selected background images
 #if USE_XTHEME
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel = StdBackgroundPixel;
   if (Theme.SelectionBigFileName != NULL) {
     BackgroundPixel = &MenuBackgroundPixel;
   } else if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {

@@ -11,7 +11,7 @@ Headers collection for procedures
 //#define DEBUG_ALL 2
 
 #include "Posix/posix.h"
-#define USE_XTHEME 0
+
 
 #ifdef __cplusplus
 extern "C" {

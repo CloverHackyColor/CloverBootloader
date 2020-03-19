@@ -7,13 +7,15 @@
 #include "libeg.h"
 #include "XImage.h"
 
+#define INDICATOR_SIZE (52)
+
 class Icon
 {
 public:
   INTN Id;  //for example BUILTIN_ICON_POINTER
-  XString Name; //for example "os_moja", "vol_internal"
-  XImage ImageNight;
+  XStringW Name; //for example "os_moja", "vol_internal"
   XImage Image;
+  XImage ImageNight;
 
   Icon(INTN Id);
   ~Icon();
@@ -24,6 +26,7 @@ class XTheme
 {
 public:
   XObjArray<Icon> Icons;
+  EFI_FILE    *ThemeDir;
 
   UINTN       DisableFlags;
   UINTN       HideBadges;
@@ -73,24 +76,29 @@ public:
   float       CentreShift;
   INTN row0TileSize;
   INTN row1TileSize;
-  INTN BanHeight;
+  UINTN BanHeight;
   INTN LayoutHeight; //it was 376 before
+  BOOLEAN Daylight;
 
   void Init();
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
   XImage  Banner; //same as logo in the array, make a link?
+  XImage SelectionImages[6];
+  XImage Button[4];
 
   //fill the theme
-  XImage& GetIcon(XStringW& Name, BOOLEAN Night);  //get by name
-  XImage& GetIcon(INTN Id, BOOLEAN Night); //get by id
+  XImage& GetIcon(XStringW& Name);  //get by name
+  XImage& GetIcon(const char* Name);
+  XImage& GetIcon(INTN Id); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
 
   //screen operations
   void ClearScreen();
-  VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
+  void FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
+  void InitSelection();
 
   XTheme(); //default constructor 
   ~XTheme();

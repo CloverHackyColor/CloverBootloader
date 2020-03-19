@@ -360,7 +360,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
 {
     EFI_STATUS Status;
     UINT32 Width, Height, Depth, RefreshRate;
-    CHAR16 *Resolution;
+//    CHAR16 *Resolution;
 
     // get protocols
     Status = EfiLibLocateProtocol(&ConsoleControlProtocolGuid, (VOID **) &ConsoleControl);
@@ -385,10 +385,11 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
  
     // if it not the first run, just restore resolution   
     if (egScreenWidth  != 0 && egScreenHeight != 0) {
-        Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
+ //       Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
+      XStringW Resolution = WPrintf("%llux%llu", egScreenWidth, egScreenHeight);
         if (Resolution) {
-            Status = egSetScreenResolution(Resolution);
-            FreePool(Resolution);
+            Status = egSetScreenResolution(Resolution.data());
+ //           FreePool(Resolution);
             if (!EFI_ERROR(Status)) {
                 return;
             }
