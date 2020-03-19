@@ -93,7 +93,7 @@ public:
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
   
   EFI_STATUS LoadImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
-  void EnsureImageSize(IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
+  void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
 
 };
 

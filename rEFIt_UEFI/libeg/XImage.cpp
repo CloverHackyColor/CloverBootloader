@@ -497,28 +497,30 @@ EFI_STATUS XImage::LoadImage(EFI_FILE *BaseDir, const XStringW& FileName)
   unsigned ret = FromPNG(FileData, FileDataLength);
   
   if (ret) {
-    DBG("%s not decoded\n", FileName);
+    DBG("%s not decoded\n", FileName.data());
     Status = EFI_UNSUPPORTED;
   }
   FreePool(FileData);
   return Status;
-
 }
 
 
-void XImage::EnsureImageSize(IN INTN Width, IN INTN Height, IN EG_PIXEL *Color)
+void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
 {
-    EG_IMAGE *NewImage;
+//    EG_IMAGE *NewImage;
 
-    if (isEmpty())
-        return;
-    if (GetWidth() == (UINTN)Width && GetHeight() == (UINTN)Height) // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
-        return;
+  if (isEmpty())
+    return;
+  if (NewWidth == Width && NewHeight == Height)
+    return;
 
-    NewImage = egCreateFilledImage(Width, Height, true, Color); // TODO : import that method to directly deal with XImage
+/*    NewImage = egCreateFilledImage(Width, Height, true, Color); // TODO : import that method to directly deal with XImage
     if (NewImage == NULL) {
         return; // panic instead ?
-    }
-    Compose(0, 0, NewImage, false);
-    egFreeImage(NewImage);
+    } */
+  XImage NewImage(NewWidth, NewHeight);
+  NewImage.Fill(Color);
+
+  Compose(0, 0, NewImage, false);
+//    egFreeImage(NewImage);
 }
