@@ -93,7 +93,13 @@
   libeg/XImage.h
   libeg/XPointer.cpp
   libeg/XPointer.h
+  libeg/XTheme.h
+  Platform/Posix/limits.h
   Platform/Posix/posix.h
+  Platform/Posix/stdarg.h
+  Platform/Posix/stddef.h
+  Platform/Posix/stdint.h
+  Platform/Posix/stdlib.h
   Platform/Posix/strcmp.cpp
   Platform/Posix/strlen.cpp
   Platform/Posix/abort.cpp
@@ -107,6 +113,7 @@
 #	Platform/Bmp.h
 	Platform/boot.h
 	Platform/BootLog.cpp
+	Platform/BootLog.h
 	Platform/BootOptions.cpp
 	Platform/Console.cpp
 	Platform/cpu.cpp
