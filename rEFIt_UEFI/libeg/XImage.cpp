@@ -294,13 +294,16 @@ void XImage::FlipRB(bool WantAlpha)
  * Error = 0 - Success
  * Error = 28 - invalid signature
  */
-unsigned XImage::FromPNG(const UINT8 * Data, UINTN Length)
+EFI_STATUS XImage::FromPNG(const UINT8 * Data, UINTN Length)
 {
+  if (Data == NULL) return EFI_INVALID_PARAMETER;
   UINT8 * PixelPtr = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_decode(&PixelPtr, &Width, &Height, Data, Length);
-
+  if (Error != 0 && Error != 28) {
+    return EFI_NOT_FOUND;
+  }
   FlipRB(true);
-  return Error;
+  return EFI_SUCCESS;
 }
 
 /*
@@ -309,31 +312,33 @@ unsigned XImage::FromPNG(const UINT8 * Data, UINTN Length)
  * The caller is responsible to free the array.
  */
 
-unsigned XImage::ToPNG(UINT8** Data, UINTN& OutSize)
+EFI_STATUS XImage::ToPNG(UINT8** Data, UINTN& OutSize)
 {
   size_t           FileDataLength = 0;
   FlipRB(false);
   UINT8 * PixelPtr = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_encode(Data, &FileDataLength, PixelPtr, Width, Height);
   OutSize = FileDataLength;
-  return Error;
+  if (Error) return EFI_UNSUPPORTED;
+  return EFI_SUCCESS;
 }
 
 /*
- * fill XImage object by raster data described in SVG
+ * fill XImage object by raster data described in SVG file
  * caller should create the object with Width and Height and calculate scale
  * scale = 1 correspond to fill the rect with the image
- * scale = 0.5 will reduce image 
+ * scale = 0.5 will reduce image
+ * but this procedure is mostly for testing purpose. Real SVG theme can't be divided to separate SVG files
  */
-unsigned XImage::FromSVG(const CHAR8 *SVGData, float scale)
+EFI_STATUS XImage::FromSVG(const CHAR8 *SVGData, float scale)
 {
   NSVGimage       *SVGimage;
   NSVGparser* p;
 
   NSVGrasterizer* rast = nsvgCreateRasterizer();
-  if (!rast) return 1;
+  if (!rast) return EFI_UNSUPPORTED;
   char *input = (__typeof__(input))AllocateCopyPool(AsciiStrSize(SVGData), SVGData);
-  if (!input) return 2;
+  if (!input) return EFI_DEVICE_ERROR;
 
   p = nsvgParse(input, 72, 1.f); //the parse will change input contents
   SVGimage = p->image;
@@ -350,7 +355,7 @@ unsigned XImage::FromSVG(const CHAR8 *SVGData, float scale)
 //  nsvg__deleteParser(p); //can't delete raster until we make imageChain
   nsvgDeleteRasterizer(rast);
   FreePool(input);
-  return 0;
+  return EFI_SUCCESS;
 }
 
 // Screen operations
@@ -491,30 +496,59 @@ void XImage::Draw(INTN x, INTN y, float scale)
   }
 }
 
-EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& FileName)
+/*
+ * IconName is just func_about for example
+ * will search files
+ * icons/iconname.icns - existing themes
+ * icons/iconname.png - it will be more correct
+ * iconname.png - for example checkbox.png
+ * if not found use embedded. It should be decoded again after theme change
+ * SVG themes filled separately after ThemeName defined so the procedure just return EFI_SUCCESS
+ * The function always create new image and will not be used to get a link to existing image
+ */
+EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const char* IconName)
+{
+  return LoadXImage(BaseDir, XStringWP(IconName));
+}
+//dont call this procedure for SVG theme BaseDir == NULL?
+EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0;
 
-//  if (TypeSVG) {
+//  if (TypeSVG) { //make a copy of SVG image
+//    XImage NewImage = Theme.GetIcon(IconName);
+//    setSizeInPixels(NewImage.GetWidth(), NewImage.GetHeight());
+//    CopyMem(&PixelData[0], &NewImage.PixelData[0], GetSizeInBytes());
 //    return EFI_SUCCESS;
 //  }
   
-  if (BaseDir == NULL || FileName.isEmpty())
+  if (BaseDir == NULL || IconName.isEmpty())
     return EFI_NOT_FOUND;
   
   // load file
+  XStringW FileName = L"icons\\" + IconName + L".icns";
   Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
-  if (EFI_ERROR(Status))
-    return Status;
-  
+  if (EFI_ERROR(Status)) {
+    FileName = L"icons\\" + IconName + L".png";
+    Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+    if (EFI_ERROR(Status)) {
+      FileName = IconName + L".png";
+      if (EFI_ERROR(Status)) {
+        FileName = IconName; //may be it already contain extension, for example Logo.png
+        Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+        if (EFI_ERROR(Status)) {
+          return Status;
+        }
+      }
+    }
+  }
+
   // decode it
-  unsigned ret = FromPNG(FileData, FileDataLength);
-  
-  if (ret) {
-    DBG("%s not decoded\n", FileName.data());
-    Status = EFI_UNSUPPORTED;
+  Status = FromPNG(FileData, FileDataLength);  
+  if (EFI_ERROR(Status)) {
+    DBG("%s not decoded\n", IconName.data());
   }
   FreePool(FileData);
   return Status;

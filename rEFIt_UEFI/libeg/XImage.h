@@ -84,9 +84,9 @@ public:
   void CopyScaled(const XImage& Image, float scale);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB(bool WantAlpha);
-  unsigned FromPNG(const UINT8 * Data, UINTN Lenght);
-  unsigned ToPNG(UINT8** Data, UINTN& OutSize);
-  unsigned FromSVG(const CHAR8 *SVGData, float scale);
+  EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);
+  EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
+  EFI_STATUS FromSVG(const CHAR8 *SVGData, float scale);
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
@@ -94,6 +94,7 @@ public:
 //I changed the name because LoadImage is too widely used
 // will be used instead of old egLoadImage
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+  EFI_STATUS LoadXImage(EFI_FILE *BaseDir, const char* IconName);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
 
 };

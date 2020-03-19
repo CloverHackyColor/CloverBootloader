@@ -637,7 +637,16 @@ EFI_STATUS egScreenShot(VOID)
   //convert to PNG
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
-  Screen.ToPNG(&FileData, FileDataLength);
+  Status = Screen.ToPNG(&FileData, FileDataLength);
+  if (EFI_ERROR(Status)) {
+    if (FileData != NULL) {
+      FreePool(FileData);
+    }
+    return Status;
+  }
+  if (!FileData) {
+    return EFI_NOT_READY;
+  }
   //save file with a first unoccupied name
   XStringWP CommonName(L"EFI\\CLOVER\\misc\\screenshot");
   for (UINTN Index = 0; Index < 60; Index++) {
