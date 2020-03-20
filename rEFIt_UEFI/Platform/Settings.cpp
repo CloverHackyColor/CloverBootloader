@@ -4234,20 +4234,21 @@ InitTheme(
   }
 
   for (i = 0; i < 3; i++) {
- //   DBG("validate %d face\n", i);
+    DBG("validate %d face\n", i);
     textFace[i].valid = FALSE;
   }
-//  DBG("...done\n");
+  DBG("...done\n");
   NSVGfontChain *fontChain = fontsDB;
   while (fontChain) {
     NSVGfont *font = fontChain->font;
+    DBG("free font %a\n", font->fontFamily);
     NSVGfontChain *nextChain = fontChain->next;
     if (font) {
       nsvg__deleteFont(font);
       fontChain->font = NULL;
     }
     FreePool(fontChain);
-    fontChain = nextChain->next;
+    fontChain = nextChain;
   }
   //as all font freed then free the chain
   fontsDB = NULL;
@@ -4262,7 +4263,7 @@ InitTheme(
   row0TileSize = 144;
   row1TileSize = 64;
   if (FontImage != NULL) {
-//    DBG("free font image\n");  //raster font
+    DBG("free font image\n");  //raster font
     egFreeImage (FontImage);
     FontImage = NULL;
   }
@@ -4271,7 +4272,7 @@ InitTheme(
 
   // Free selection images which are not builtin icons
   for (i = 0; i < 6; i++) {
-//    DBG("free selection %d\n", i);
+    DBG("free selection %d\n", i);
     if (SelectionImages[i] != NULL) {
       if ((SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_SMALL].Image) &&
           (SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_BIG].Image)) {
@@ -4280,20 +4281,20 @@ InitTheme(
       SelectionImages[i] = NULL;
     }
   }
-//  DBG("...done\n");
+  DBG("...done\n");
   // Free banner which is not builtin icon
   if (Banner != NULL) {
     if (Banner != BuiltinIconTable[BUILTIN_ICON_BANNER].Image) {
-//      DBG("free banner\n");
+      DBG("free banner\n");
       egFreeImage (Banner);
     }
     Banner  = NULL;
   }
-//  DBG("...done\n");
+  DBG("...done\n");
   //Free buttons images
   for (i = 0; i < 4; i++) {
     if (Buttons[i] != NULL) {
-//      DBG("free button %d\n", i);
+      DBG("free button %d\n", i);
       egFreeImage(Buttons[i]);
       Buttons[i] = NULL;
     }
@@ -4304,22 +4305,22 @@ InitTheme(
   //here we have no access to Mouse
 
   // Invalidate BuiltinIcons
-//    DBG ("Invalidating BuiltinIcons...\n");
+    DBG ("Invalidating BuiltinIcons...\n");
   for (i = 0; i < BUILTIN_ICON_COUNT; i++) {
     if (BuiltinIconTable[i].Image != NULL) {
-//      DBG("free builtin image %d\n", i);
+      DBG("free builtin image %d\n", i);
       egFreeImage (BuiltinIconTable[i].Image);
       BuiltinIconTable[i].Image = NULL;
     }
   }
-//  DBG("...done\n");
+  DBG("...done\n");
   while (GuiAnime != NULL) {
     GUI_ANIME *NextAnime = GuiAnime->Next;
-//    DBG("free anime %d\n", GuiAnime->ID);
+    DBG("free anime %d\n", GuiAnime->ID);
     FreeAnime (GuiAnime);
     GuiAnime             = NextAnime;
   }
-//  DBG("...done\n");
+  DBG("...done\n");
   GetThemeTagSettings(NULL);
 
   if (ThemesNum > 0 &&
