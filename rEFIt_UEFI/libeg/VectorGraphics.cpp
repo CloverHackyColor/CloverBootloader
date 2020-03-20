@@ -36,7 +36,7 @@
 
 #if USE_XTHEME
 #include "XTheme.h"
-XTheme Theme;  //later this definition will be global
+//XTheme ThemeX;  //later this definition will be global
 #endif
 
 
@@ -640,6 +640,8 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   EG_IMAGE  *Frame = NULL;
   EFI_STATUS Status;
   CHAR8 FrameName[64];
+  //TODO if extend SVG syntax then we can use dynamic SVG with parameter Frame
+  // for example use variable instead of constant like javascript
   AsciiSPrint(FrameName, 63, "frame_%d", i+1);
   Status = ParseSVGIcon(mainParser, BUILTIN_ICON_ANIME, FrameName, GlobalConfig.Scale, &Frame);
   if (EFI_ERROR(Status)) {

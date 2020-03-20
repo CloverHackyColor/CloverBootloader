@@ -201,54 +201,52 @@ bool XPointer::MouseInRect(EG_RECT *Place)
 
 EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 {
-  EFI_STATUS Status = EFI_TIMEOUT;
-  //  INTN EntryId;
-
-  Screen->mAction = ActionNone;
-
   if (!Screen) {
     return EFI_TIMEOUT;
   }
+  EFI_STATUS Status = EFI_TIMEOUT;
+  Screen->mAction = ActionNone;
 
   if (!IsDragging && MouseEvent == MouseMove)
     MouseEvent = NoEvents;
 
-  // if (MouseEvent != NoEvents){
-  if (ScrollEnabled && MouseInRect(&UpButton) && MouseEvent == LeftClick)
-    Screen->mAction = ActionScrollUp;
-  else if (ScrollEnabled && MouseInRect(&DownButton) && MouseEvent == LeftClick)
-    Screen->mAction = ActionScrollDown;
-  else if (ScrollEnabled && MouseInRect(&Scrollbar) && MouseEvent == LeftMouseDown) {
-    IsDragging = TRUE;
-    ScrollbarYMovement = 0;
-    ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = newPlace.XPos;
-    ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = newPlace.YPos;
-  }
-  else if (ScrollEnabled && IsDragging && MouseEvent == LeftClick) {
-    IsDragging = FALSE;
-  }
-  else if (ScrollEnabled && IsDragging && MouseEvent == MouseMove) {
-    Screen->mAction = ActionMoveScrollbar;
-    ScrollbarNewPointerPlace.XPos = newPlace.XPos;
-    ScrollbarNewPointerPlace.YPos = newPlace.YPos;
-  }
-  else if (ScrollEnabled && MouseInRect(&ScrollbarBackground) &&
-    MouseEvent == LeftClick) {
-    if (newPlace.YPos < Scrollbar.YPos) // up
-      Screen->mAction = ActionPageUp;
-    else // down
-      Screen->mAction = ActionPageDown;
+  if (Screen->ScrollEnabled){
+    if (MouseInRect(&UpButton) && MouseEvent == LeftClick)
+      Screen->mAction = ActionScrollUp;
+    else if (MouseInRect(&DownButton) && MouseEvent == LeftClick)
+      Screen->mAction = ActionScrollDown;
+    else if (MouseInRect(&Scrollbar) && MouseEvent == LeftMouseDown) {
+      IsDragging = TRUE;
+      Screen->mAction = ActionMoveScrollbar;
+      ScrollbarYMovement = 0;
+      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = newPlace.XPos;
+      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = newPlace.YPos;
+    }
+    else if (IsDragging && MouseEvent == LeftClick) {
+      IsDragging = FALSE;
+      Screen->mAction = ActionMoveScrollbar;
+    }
+    else if (IsDragging && MouseEvent == MouseMove) {
+      Screen->mAction = ActionMoveScrollbar;
+      ScrollbarNewPointerPlace.XPos = newPlace.XPos;
+      ScrollbarNewPointerPlace.YPos = newPlace.YPos;
+    }
+    else if (MouseInRect(&ScrollbarBackground) &&
+             MouseEvent == LeftClick) {
+      if (newPlace.YPos < Scrollbar.YPos) // up
+        Screen->mAction = ActionPageUp;
+      else // down
+        Screen->mAction = ActionPageDown;
     // page up/down, like in OS X
-  }
-  else if (ScrollEnabled &&
-    MouseEvent == ScrollDown) {
-    Screen->mAction = ActionScrollDown;
-  }
-  else if (ScrollEnabled &&
-    MouseEvent == ScrollUp) {
-    Screen->mAction = ActionScrollUp;
-  }
-  else {
+    }
+    else if (MouseEvent == ScrollDown) {
+      Screen->mAction = ActionScrollDown;
+    }
+    else if (MouseEvent == ScrollUp) {
+      Screen->mAction = ActionScrollUp;
+    }
+  } //if scroll enabled
+  if (Screen->mAction != ActionNone) {
     for (UINTN EntryId = 0; EntryId < Screen->Entries.size(); EntryId++) {
       if (MouseInRect(&(Screen->Entries[EntryId].Place))) {
         switch (MouseEvent) {
@@ -301,7 +299,7 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
       }
     }
   }
-  // }
+
   if (Screen->mAction != ActionNone) {
     Status = EFI_SUCCESS;
     MouseEvent = NoEvents; //clear event as set action

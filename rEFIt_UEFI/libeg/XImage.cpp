@@ -2,6 +2,7 @@
 #include "lodepng.h"
 #include "nanosvg.h"
 
+
 #ifndef DEBUG_ALL
 #define DEBUG_XIMAGE 1
 #else
@@ -189,12 +190,11 @@ void XImage::Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
       PixelData[y * Width + x] = Color;
 }
 
-void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect)
+
+void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect)
 {
-  for (UINTN y = Rect.Ypos; y < Height && (y - Rect.Ypos) < Rect.Height; ++y) {
-//    EFI_GRAPHICS_OUTPUT_BLT_PIXEL* Ptr = PixelData + y * Width + Rect.Xpos;
-    for (UINTN x = Rect.Xpos; x < Width && (x - Rect.Xpos) < Rect.Width; ++x)
-//      *Ptr++ = Color;
+  for (INTN y = Rect.YPos; y < (INTN)Height && (y - Rect.YPos) < Rect.Height; ++y) {
+    for (INTN x = Rect.XPos; x < (INTN)Width && (x - Rect.XPos) < Rect.Width; ++x)
       PixelData[y * Width + x] = Color;
   }
 }
@@ -419,16 +419,10 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 
 void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 {
-//  //prepare images
-////  DBG("1\n");
-//  XImage Top(*this, scale);
-////  DBG("2\n");
-//  XImage Background(Width, Height);
-////  DBG("3\n");
-//  Background.GetArea(x, y, Width, Height);
-////  DBG("4\n");
-//  Background.Compose(0, 0, Top, true);
-////  DBG("5\n");
+  if (isEmpty()) {
+    return;
+  }
+
   if ( width == 0 ) width = Width;
   if ( height == 0 ) height = Height;
   UINTN AreaWidth = (x + width > (UINTN)UGAWidth) ? (UGAWidth - x) : width;
@@ -463,6 +457,10 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 void XImage::Draw(INTN x, INTN y, float scale)
 {
   //prepare images
+  if (isEmpty()) {
+    return;
+  }
+
   XImage Top(*this, scale);
   XImage Background(Width, Height);
   Background.GetArea(x, y, Width, Height);

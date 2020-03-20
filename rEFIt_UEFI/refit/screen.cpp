@@ -397,7 +397,7 @@ VOID SwitchToGraphicsAndClear(VOID) //called from MENU_FUNCTION_INIT
 {
   SwitchToGraphics();
 #if USE_XTHEME
-  Theme.ClearScreen();
+  ThemeX.ClearScreen();
 #else
 	if (GraphicsScreenDirty) { //Invented in rEFIt 15 years ago
     BltClearScreen();
@@ -412,6 +412,7 @@ typedef struct {
   INTN     Width;
   INTN     Height;
 } EG_RECT;
+ // moreover it is class EG_RECT;
  //same as EgRect but INTN <-> UINTN
 */
 

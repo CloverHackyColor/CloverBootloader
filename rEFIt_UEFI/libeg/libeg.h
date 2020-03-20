@@ -141,6 +141,9 @@ extern "C" {
 #endif
 
 #define USE_XTHEME 0
+#if USE_XTHEME
+extern XTheme ThemeX; //global variable defined in lib.cpp
+#endif
 
 /* types */
 

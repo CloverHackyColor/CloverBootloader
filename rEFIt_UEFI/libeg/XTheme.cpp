@@ -132,6 +132,7 @@ void XTheme::Init()
   Scale = 1.0f;
   CentreShift = 0.0f;
   Daylight = true;
+  LayoutHeight = 376;
 }
 
 XImage& XTheme::GetIcon(const char* Name)
@@ -494,8 +495,7 @@ void XTheme::InitSelection()
   //DECLARE_EMB_EXTERN_WITH_SIZE(emb_radio_button)
   //DECLARE_EMB_EXTERN_WITH_SIZE(emb_checkbox)
   //DECLARE_EMB_EXTERN_WITH_SIZE(emb_checkbox_checked)
-
-  DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_font_data)
+  //DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_font_data)
 
 
   Status = Button[0].LoadXImage(ThemeDir, "radio_button");
@@ -504,15 +504,15 @@ void XTheme::InitSelection()
   }
   Status = Button[1].LoadXImage(ThemeDir, "radio_button_selected"));
   if (EFI_ERROR(Status)) {
-    Button[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
+    Button[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
   }
   Status = Button[2].LoadXImage(ThemeDir, "checkbox");
   if (EFI_ERROR(Status)) {
-    Button[0].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
+    Button[2].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
   }
   Status = Button[3].LoadXImage(ThemeDir, "checkbox_checked");
   if (EFI_ERROR(Status)) {
-    Button[0].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
+    Button[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
   }
 
   // non-selected background images
@@ -550,7 +550,100 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 
   InitSelection(); //initialize selections, buttons
 
-  //load banner
+  //load banner and background
   Banner.LoadXImage(ThemeDir, BannerFileName); 
-
+  BigBack.LoadXImage(ThemeDir, BackgroundFileName);
 }
+
+
+void XTheme::InitBar()
+{
+  if (!TypeSVG) {
+    ScrollbarBackgroundImage.LoadXImage(ThemeDir, "scrollbar\\bar_fill");
+    BarStartImage.LoadXImage(ThemeDir, "scrollbar\\bar_start");
+    BarEndImage.LoadXImage(ThemeDir, "scrollbar\\bar_end");
+    ScrollbarImage.LoadXImage(ThemeDir, "scrollbar\\scroll_fill");
+    ScrollStartImage.LoadXImage(ThemeDir, "scrollbar\\scroll_start");
+    ScrollEndImage.LoadXImage(ThemeDir, "scrollbar\\scroll_end");
+    UpButtonImage.LoadXImage(ThemeDir, "scrollbar\\up_button");
+    DownButtonImage.LoadXImage(ThemeDir, "scrollbar\\down_button");
+  }
+
+  //some help with embedded scroll
+  if (BarStartImage.isEmpty()  && !TypeSVG) {
+    BarStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start));
+  }
+  if (BarEndImage.isEmpty() && !TypeSVG) {
+    BarEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end));
+  }
+  if (ScrollbarBackgroundImage.isEmpty()) {
+    if (TypeSVG) {
+      //return OSIconsTable[i].image;
+      ScrollbarBackgroundImage.GetIcon("scrollbar_background");
+    }
+    if (ScrollbarBackgroundImage.isEmpty()) {
+      ScrollbarBackgroundImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill));
+    }
+  }
+  if (ScrollbarImage.isEmpty()) {
+    if (TypeSVG) {
+      ScrollbarImage.GetIcon(ThemeDir, "scrollbar_holder"); //"_night" is already accounting
+    }
+    if (ScrollbarImage.isEmpty()) {
+      ScrollbarImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill));
+    }
+  }
+  if (ScrollStartImage.isEmpty()) {
+    if (TypeSVG) {
+      ScrollStartImage.GetIcon(ThemeDir, "scrollbar_start");
+    }
+    if (ScrollStartImage.isEmpty()) {
+      ScrollStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start));
+    }
+  }
+  if (ScrollEndImage.isEmpty()) {
+    if (TypeSVG) {
+      ScrollEndImage.GetIcon(ThemeDir, "scrollbar_end");
+    }
+    if (ScrollEndImage.isEmpty()) {
+      ScrollEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end));
+    }
+  }
+  if (UpButtonImage.isEmpty()) {
+    if (TypeSVG) {
+      UpButtonImage.GetIcon(ThemeDir, "scrollbar_up_button");
+    }
+    UpButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button));
+  }
+  if (DownButtonImage.isEmpty()) {
+    if (TypeSVG) {
+      DownButtonImage.GetIcon(ThemeDir, "scrollbar_down_button");
+    }
+    if (DownButtonImage.isEmpty()) {
+      DownButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button));
+    }
+  }
+  if (!TypeSVG) {
+    UpButton.Width      = ScrollWidth; // 16
+    UpButton.Height     = ScrollButtonsHeight; // 20
+    DownButton.Width    = UpButton.Width;
+    DownButton.Height   = ScrollButtonsHeight;
+    BarStart.Height     = ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ScrollBarDecorationsHeight;
+    ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
+    ScrollEnd.Height    = ScrollScrollDecorationsHeight;
+
+  } else {
+    UpButton.Width      = ScrollWidth; // 16
+    UpButton.Height     = 0; // 20
+    DownButton.Width    = UpButton.Width;
+    DownButton.Height   = 0;
+    BarStart.Height     = ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ScrollBarDecorationsHeight;
+    ScrollStart.Height  = 0; // 7
+    ScrollEnd.Height    = 0;
+
+  }
+}
+
+

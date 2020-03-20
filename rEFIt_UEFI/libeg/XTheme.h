@@ -74,18 +74,25 @@ public:
   INTN        CodepageSize;
   float       Scale;
   float       CentreShift;
-  INTN row0TileSize;
-  INTN row1TileSize;
-  UINTN BanHeight;
-  INTN LayoutHeight; //it was 376 before
-  BOOLEAN Daylight;
+  INTN        row0TileSize;
+  INTN        row1TileSize;
+  UINTN       BanHeight;
+  INTN        LayoutHeight; //it was 376 before
+  BOOLEAN     Daylight;
 
-  void Init();
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
   XImage  Banner; //same as logo in the array, make a link?
-  XImage SelectionImages[6];
-  XImage Button[4];
+  XImage  SelectionImages[6];
+  XImage  Button[4];
+  XImage  ScrollbarBackgroundImage;
+  XImage  BarStartImage;
+  XImage  BarEndImage;
+  XImage  ScrollbarImage;
+  XImage  ScrollStartImage;
+  XImage  ScrollEndImage;
+  XImage  UpButtonImage;
+  XImage  DownButtonImage;
 
   //fill the theme
   XImage& GetIcon(XStringW& Name);  //get by name
@@ -99,8 +106,10 @@ public:
   void ClearScreen();
   void FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
   void InitSelection();
+  void InitBar();
 
-  XTheme(); //default constructor 
+  void Init();
+  XTheme(); //default constructor
   ~XTheme();
 
 protected:

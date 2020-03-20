@@ -57,7 +57,6 @@
 		A5456D5623FC5B08000BF18C /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D1A23FC5AF5000BF18C /* platformdata.cpp */; };
 		A5456D5723FC5B08000BF18C /* usbfix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D1B23FC5AF5000BF18C /* usbfix.cpp */; };
 		A5456D5823FC5B08000BF18C /* kext_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D1C23FC5AF6000BF18C /* kext_inject.cpp */; };
-		A5456D5923FC5B08000BF18C /* picopng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D1D23FC5AF6000BF18C /* picopng.cpp */; };
 		A5456D5A23FC5B08000BF18C /* LegacyBoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D1E23FC5AF7000BF18C /* LegacyBoot.cpp */; };
 		A5456D5B23FC5B08000BF18C /* Edid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D1F23FC5AF7000BF18C /* Edid.cpp */; };
 		A5456D5C23FC5B08000BF18C /* AmlGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2123FC5AF8000BF18C /* AmlGenerator.cpp */; };
@@ -80,7 +79,6 @@
 		A5456D6D23FC5B08000BF18C /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D3E23FC5B04000BF18C /* guid.cpp */; };
 		A5456D6E23FC5B08000BF18C /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D3F23FC5B04000BF18C /* b64cdecode.cpp */; };
 		A5456D6F23FC5B08000BF18C /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4223FC5B05000BF18C /* DevicePath.cpp */; };
-		A5456D7023FC5B08000BF18C /* Pointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4323FC5B06000BF18C /* Pointer.cpp */; };
 		A5456D7123FC5B08000BF18C /* device_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4523FC5B07000BF18C /* device_inject.cpp */; };
 		A5456D7223FC5B08000BF18C /* DataHubCpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4623FC5B07000BF18C /* DataHubCpu.cpp */; };
 		A5456D7D23FC5B40000BF18C /* IO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7623FC5B3D000BF18C /* IO.cpp */; };
@@ -2347,14 +2345,12 @@
 		A5456D1A23FC5AF5000BF18C /* platformdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platformdata.cpp; sourceTree = "<group>"; };
 		A5456D1B23FC5AF5000BF18C /* usbfix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usbfix.cpp; sourceTree = "<group>"; };
 		A5456D1C23FC5AF6000BF18C /* kext_inject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kext_inject.cpp; sourceTree = "<group>"; };
-		A5456D1D23FC5AF6000BF18C /* picopng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = picopng.cpp; sourceTree = "<group>"; };
 		A5456D1E23FC5AF7000BF18C /* LegacyBoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyBoot.cpp; sourceTree = "<group>"; };
 		A5456D1F23FC5AF7000BF18C /* Edid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Edid.cpp; sourceTree = "<group>"; };
 		A5456D2023FC5AF7000BF18C /* device_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
 		A5456D2123FC5AF8000BF18C /* AmlGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AmlGenerator.cpp; sourceTree = "<group>"; };
 		A5456D2223FC5AF8000BF18C /* gma.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gma.cpp; sourceTree = "<group>"; };
 		A5456D2323FC5AF9000BF18C /* smbios.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smbios.cpp; sourceTree = "<group>"; };
-		A5456D2423FC5AF9000BF18C /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
 		A5456D2523FC5AF9000BF18C /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
 		A5456D2623FC5AFA000BF18C /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
 		A5456D2723FC5AFA000BF18C /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
@@ -2385,7 +2381,6 @@
 		A5456D4023FC5B05000BF18C /* kernel_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_patcher.h; sourceTree = "<group>"; };
 		A5456D4123FC5B05000BF18C /* memvendors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memvendors.h; sourceTree = "<group>"; };
 		A5456D4223FC5B05000BF18C /* DevicePath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DevicePath.cpp; sourceTree = "<group>"; };
-		A5456D4323FC5B06000BF18C /* Pointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pointer.cpp; sourceTree = "<group>"; };
 		A5456D4423FC5B06000BF18C /* HdaCodecDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HdaCodecDump.h; sourceTree = "<group>"; };
 		A5456D4523FC5B07000BF18C /* device_inject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device_inject.cpp; sourceTree = "<group>"; };
 		A5456D4623FC5B07000BF18C /* DataHubCpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHubCpu.cpp; sourceTree = "<group>"; };
@@ -6231,13 +6226,10 @@
 				A5456D2B23FC5AFC000BF18C /* nvidia.cpp */,
 				A5456D1023FC5AF1000BF18C /* nvidia.h */,
 				A5456D1823FC5AF4000BF18C /* Nvram.cpp */,
-				A5456D1D23FC5AF6000BF18C /* picopng.cpp */,
-				A5456D2423FC5AF9000BF18C /* picopng.h */,
 				A5456D3223FC5AFF000BF18C /* Platform.h */,
 				A5456D1A23FC5AF5000BF18C /* platformdata.cpp */,
 				A5456D0B23FC5AEE000BF18C /* PlatformDriverOverride.cpp */,
 				A5456D0723FC5AEC000BF18C /* plist.cpp */,
-				A5456D4323FC5B06000BF18C /* Pointer.cpp */,
 				A5456D2823FC5AFB000BF18C /* Settings.cpp */,
 				A5456D2323FC5AF9000BF18C /* smbios.cpp */,
 				A5456D3723FC5B01000BF18C /* sound.cpp */,
@@ -16551,7 +16543,6 @@
 				A5AAFC37237F13B3009CD413 /* Vtutf8.c in Sources */,
 				A5AAFD2D237F13B4009CD413 /* DebugAgentLibNull.c in Sources */,
 				A5816DED24180F4D003BA66C /* panic.cpp in Sources */,
-				A5456D7023FC5B08000BF18C /* Pointer.cpp in Sources */,
 				A5AA0597237F13C1009CD413 /* ReadPmc.nasm in Sources */,
 				A5AA0497237F13C1009CD413 /* ReadGs.nasm in Sources */,
 				A5AA0618237F13C2009CD413 /* Synchronization.asm in Sources */,
@@ -17330,7 +17321,6 @@
 				A5AAFC96237F13B4009CD413 /* NonDiscoverablePciDeviceIo.c in Sources */,
 				A5AAFB77237F13B3009CD413 /* FirmwarePerformanceDxe.c in Sources */,
 				A5AAFCC1237F13B4009CD413 /* ComponentName.c in Sources */,
-				A5456D5923FC5B08000BF18C /* picopng.cpp in Sources */,
 				A5AAFD65237F13B4009CD413 /* String.c in Sources */,
 				A5AA0754237F13C3009CD413 /* ScanMem8Wrapper.c in Sources */,
 				A5AAFD03237F13B4009CD413 /* BmBoot.c in Sources */,

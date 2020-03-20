@@ -58,6 +58,11 @@ EFI_FILE         *SelfDir;
 CHAR16           *SelfDirPath;
 EFI_DEVICE_PATH  *SelfDevicePath;
 EFI_DEVICE_PATH  *SelfFullDevicePath;
+
+#if USE_XTHEME
+XTheme ThemeX;
+#endif
+
 EFI_FILE         *ThemeDir = NULL;
 CHAR16           *ThemePath;
 BOOLEAN          gThemeChanged = FALSE;

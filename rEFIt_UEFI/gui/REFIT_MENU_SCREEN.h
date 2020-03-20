@@ -89,7 +89,24 @@ public:
   ACTION      mAction;
   UINTN       mItemID;
   SCROLL_STATE ScrollState;
+  BOOLEAN ScrollEnabled;
 //  MENU_STYLE_FUNC StyleFunc;
+
+  //scroll positions should depends on REFIT_SCREEN?
+  // Or it just currently calculated to be global variables?
+  /*
+  EG_RECT BarStart;
+  EG_RECT BarEnd;
+  EG_RECT ScrollStart;
+  EG_RECT ScrollEnd;
+  EG_RECT ScrollTotal;
+  EG_RECT UpButton;
+  EG_RECT DownButton;
+  EG_RECT ScrollbarBackground;
+  EG_RECT Scrollbar;
+  EG_RECT ScrollbarOldPointerPlace;
+  EG_RECT ScrollbarNewPointerPlace;
+*/
 
 
   REFIT_MENU_SCREEN()
@@ -122,6 +139,7 @@ public:
   VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                   IN UINTN VisibleSpace, IN INTN Selected);
   VOID UpdateScroll(IN UINTN Movement);
+  VOID ScrollingBar();
   VOID HidePointer();
   EFI_STATUS MouseBirth();
   VOID KillMouse();

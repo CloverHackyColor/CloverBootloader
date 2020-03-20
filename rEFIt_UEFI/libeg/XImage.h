@@ -35,14 +35,14 @@ typedef union {
   UINT32                        Raw;
 } EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION;
 #endif
-
+/*
 typedef struct {
   UINTN Xpos;
   UINTN Ypos;
   UINTN Width;
   UINTN Height;
 } EgRect;
-
+*/
 class XImage
 {
 protected:
@@ -80,7 +80,7 @@ public:
 
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
-  void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, const EgRect& Rect);
+  void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect);
   void CopyScaled(const XImage& Image, float scale);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB(bool WantAlpha);

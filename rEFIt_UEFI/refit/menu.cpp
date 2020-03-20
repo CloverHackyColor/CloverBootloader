@@ -61,6 +61,7 @@
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)
 #endif
 
+
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 //#define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
 CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
@@ -126,7 +127,7 @@ static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 
 BOOLEAN MainAnime = FALSE;
 
-BOOLEAN ScrollEnabled = FALSE;
+//BOOLEAN ScrollEnabled = FALSE;
 BOOLEAN IsDragging = FALSE;
 
 INTN ScrollWidth = 16;
@@ -1904,12 +1905,6 @@ VOID InitSelection(VOID)
   //it was a nonsense egLoadImage is just inluded into egLoadIcon.
   // will be corrected with XTheme support
   //the procedure loadIcon should also check embedded icons
-#if USE_XTHEME
-  Button[0] = Theme.loadIcon("radio_button.png");
-  Button[1] = Theme.loadIcon("radio_button_selected.png");
-  Button[2] = Theme.loadIcon("checkbox.png");
-  Button[3] = Theme.loadIcon("checkbox_checked.png");
-#else
   Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE); //memory leak
   Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
   if (!Buttons[0]) {
@@ -1947,20 +1942,7 @@ VOID InitSelection(VOID)
 //    DBG("embedded checkbox_checked\n");
     Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
   }
-#endif
   // non-selected background images
-#if USE_XTHEME
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel = StdBackgroundPixel;
-  if (Theme.SelectionBigFileName != NULL) {
-    BackgroundPixel = &MenuBackgroundPixel;
-  } else if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
-    BackgroundPixel = &DarkEmbeddedBackgroundPixel;
-  } else {
-    BackgroundPixel = &StdBackgroundPixel;
-  }
-  SelectionImages[1] = XImage(row0TileSize, row0TileSize, BackgroundPixel);
-  SelectionImages[3] = XImage(row1TileSize, row1TileSize, BackgroundPixel);
-#else
   //totally wrong
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
@@ -1990,7 +1972,6 @@ VOID InitSelection(VOID)
     }
   }
 //  DBG("selections inited\n");
-#endif
 }
 
 //
@@ -3422,13 +3403,59 @@ VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
   ScrollTotal.Height = DownButton.YPos + DownButton.Height - UpButton.YPos;
 //  DBG("ScrollTotal.Height = %d\n", ScrollTotal.Height);  //ScrollTotal.Height = 420
 }
+#if USE_XTHEME
+VOID REFIT_MENU_SCREEN::ScrollingBar()
+{
+  ScrollEnabled = (ScrollState.MaxFirstVisible != 0);
+  if (!ScrollEnabled) {
+    return;
+  }
+#if 0
+  //this is a copy of old algorithm
+  // but we can not use Total and Draw all parts separately assumed they composed on background
+  // it is #else
 
-VOID ScrollingBar(IN SCROLL_STATE *State)
+  XImage Total(ScrollTotal.Width, ScrollTotal.Height);
+  Total.Fill(&MenuBackgroundPixel);
+  if (!ThemeX.ScrollbarBackgroundImage.isEmpty()) {
+    for (INTN i; i < ScrollbarBackground.Height; i+=ThemeX.ScrollbarBackgroundImage->Height) {
+      Total.Compose(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarBackgroundImage, TRUE);
+    }
+  }
+  Total.Compose(BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos, ThemeX.BarStartImage, FALSE);
+  Total.Compose(BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos, ThemeX.BarEndImage, FALSE);
+  if (!ThemeX.ScrollbarImage.isEmpty()) {
+    for (INTN i = 0; i < Scrollbar.Height; i+=ThemeX.ScrollbarImage->Height) {
+      Total.Compose(Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarImage, FALSE);
+    }
+  }
+  Total.Compose(UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos, ThemeX.UpButtonImage, FALSE);
+  Total.Compose(DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos, ThemeX.DownButtonImage, FALSE);
+  Total.Compose(ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos, ThemeX.ScrollStartImage, FALSE);
+  Total.Compose(ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos, ThemeX.ScrollEndImage, FALSE);
+  Total.Draw(ScrollTotal.XPos, ScrollTotal.YPos, ScrollWidth / 16.f); //ScrollWidth can be set in theme.plist but usually=16
+#else
+  for (INTN i; i < ScrollbarBackground.Height; i += ThemeX.ScrollbarBackgroundImage->Height) {
+    ThemeX.ScrollbarBackgroundImage.Draw(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, 1.f);
+  }
+  ThemeX.BarStartImage.Draw(BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos, 1.f);
+  ThemeX.BarEndImage.Draw(BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos, 1.f);
+  for (INTN i = 0; i < Scrollbar.Height; i += ThemeX.ScrollbarImage->Height) {
+    ThemeX.ScrollbarImage.Draw(Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos, 1.f);
+  }
+  ThemeX.UpButtonImage.Draw(UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos, 1.f);
+  ThemeX.DownButtonImage.Draw(DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos, 1.f);
+  ThemeX.ScrollStartImage.Draw(ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos, 1.f);
+  ThemeX.ScrollEndImage.Draw(ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos, 1.f);
+#endif
+}
+#else
+VOID REFIT_MENU_SCREEN::ScrollingBar()
 {
   EG_IMAGE* Total;
   INTN  i;
 
-  ScrollEnabled = (State->MaxFirstVisible != 0);
+  ScrollEnabled = (ScrollState.MaxFirstVisible != 0);
   if (ScrollEnabled) {
     Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
 
@@ -3456,7 +3483,7 @@ VOID ScrollingBar(IN SCROLL_STATE *State)
     egFreeImage(Total);
   }
 }
-
+#endif
 /**
  * Graphical menu.
  */
@@ -3655,7 +3682,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         }
       }
 
-      ScrollingBar(&ScrollState);
+      ScrollingBar(); //&ScrollState - inside the class
       //MouseBirth();
       break;
 
@@ -3801,7 +3828,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * ScrollState.FirstVisible / (ScrollState.MaxIndex + 1);
       Scrollbar.YPos = ScrollStart.YPos + ScrollStart.Height;
       ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height; // ScrollEnd.Height is already subtracted
-      ScrollingBar(&ScrollState);
+      ScrollingBar(); //&ScrollState);
 
       break;
     }
@@ -4158,7 +4185,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
                           (UGAWidth >> 1), textPosY);
       }
 
-      ScrollingBar(&ScrollState);
+      ScrollingBar(); //&ScrollState);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       MouseBirth();
@@ -4190,7 +4217,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
                           (UGAWidth >> 1), textPosY);
       }
 
-      ScrollingBar(&ScrollState);
+      ScrollingBar(); //&ScrollState);
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
       MouseBirth();
