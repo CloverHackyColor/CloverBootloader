@@ -36,7 +36,7 @@
 
 #if USE_XTHEME
 #include "XTheme.h"
-//XTheme ThemeX;  //later this definition will be global
+extern XTheme ThemeX;
 #endif
 
 
@@ -70,8 +70,8 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
   SVGimage = p->image;
   NSVGshape   *shape;
   NSVGgroup   *group;
-  NSVGimage *IconImage; 
-  NSVGshape *shapeNext, *shapesTail = NULL, *shapePrev;
+  NSVGimage   *IconImage;
+  NSVGshape   *shapeNext, *shapesTail = NULL, *shapePrev;
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
@@ -97,7 +97,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
       } */
-      if (Theme.BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
+      if (ThemeX.BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
         shape->opacity = 0.f;
       }
       if (strstr(shape->id, "BoundingRect") != NULL) {
@@ -108,13 +108,13 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
           IconImage->height = 200;
         }
 
-        if ((strstr(IconName, "selection_big") != NULL) && (!Theme.SelectionOnTop)) {
-          Theme.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
-          Theme.row0TileSize = Theme.MainEntriesSize + (int)(16.f * Scale);
-          DBG("main entry size = %d\n", Theme.MainEntriesSize);
+        if ((strstr(IconName, "selection_big") != NULL) && (!ThemeX.SelectionOnTop)) {
+          ThemeX.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
+          ThemeX.row0TileSize = ThemeX.MainEntriesSize + (int)(16.f * Scale);
+          DBG("main entry size = %d\n", ThemeX.MainEntriesSize);
         }
-        if ((strstr(IconName, "selection_small") != NULL) && (!Theme.SelectionOnTop)) {
-          Theme.row1TileSize = (int)(IconImage->width * Scale);
+        if ((strstr(IconName, "selection_small") != NULL) && (!ThemeX.SelectionOnTop)) {
+          ThemeX.row1TileSize = (int)(IconImage->width * Scale);
         }
 
         // not exclude BoundingRect from IconImage?
@@ -366,6 +366,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
   return EFI_SUCCESS;
 }
 
+
 EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
 {
   EFI_STATUS Status;
@@ -597,7 +598,7 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   }
 
   // --- Get scale as theme design height vs screen height
-  float Scale;
+
   // must be svg view-box
   float vbx = mainParser->viewWidth;
   float vby = mainParser->viewHeight;
@@ -608,25 +609,25 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   else {
     SVGimage->height = 768.f;  //default height
   }
-  Scale = UGAHeight / SVGimage->height;
+  float Scale = UGAHeight / SVGimage->height;
   DBG("using scale %s\n", PoolPrintFloat(Scale));
-  Theme.Scale = Scale;
-  Theme.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
+  ThemeX.Scale = Scale;
+  ThemeX.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
   if (mainParser->font) {
     DBG("theme contains font-family=%a\n", mainParser->font->fontFamily);
   }
 
-  Theme.Background = XImage(UGAWidth, UGAHeight);
-  if (!Theme.BigBack.isEmpty()) {
-    Theme.BigBack.setEmpty:
+  ThemeX.Background = XImage(UGAWidth, UGAHeight);
+  if (!ThemeX.BigBack.isEmpty()) {
+    ThemeX.BigBack.setEmpty:
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &Theme.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &ThemeX.BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, &Theme.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, &ThemeX.BigBack);
   }
   DBG("background parsed\n");
 
@@ -747,6 +748,94 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 #endif
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
+#if USE_XTHEME
+INTN drawSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XString& string, UINTN Cursor)
+{
+  INTN Width;
+  UINTN i;
+  UINTN len;
+  NSVGparser* p;
+  NSVGrasterizer* rast;
+  if (!textFace[textType].valid) {
+    for (i=0; i<4; i++) {
+      if (textFace[i].valid) {
+        textType = i;
+        break;
+      }
+    }
+  }
+  if (!textFace[textType].valid) {
+    DBG("valid fontface not found!\n");
+    return 0;
+  }
+  NSVGfont* fontSVG = textFace[textType].font;
+  UINT32 color = textFace[textType].color;
+  INTN Height = (INTN)(textFace[textType].size * GlobalConfig.Scale);
+  float Scale, sy;
+  float x, y;
+  if (!fontSVG) {
+    DBG("no font for drawSVGtext\n");
+    return 0;
+  }
+  p = nsvg__createParser();
+  if (!p) {
+    return 0;
+  }
+  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  if (!text) {
+    return 0;
+  }
+  text->font = fontSVG;
+  text->fontColor = color;
+  text->fontSize = (float)Height;
+  nsvg__xformIdentity(text->xform);
+  p->text = text;
+
+  len = StrLen(string);
+  Width = TextBufferXY.GetWidth();
+  if (!fontSVG->unitsPerEm) {
+    fontSVG->unitsPerEm = 1000.f;
+  }
+  float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
+  if (fH == 0.f) {
+    DBG("wrong font: %s\n", PoolPrintFloat(fontSVG->unitsPerEm));
+    DumpFloat2("Font bbox", fontSVG->bbox, 4);
+    fH = fontSVG->unitsPerEm?fontSVG->unitsPerEm:1000.0f;  //1000
+  }
+  sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
+  Scale = sy;
+  x = (float)posX; //0.f;
+  y = (float)posY + fontSVG->bbox[1] * Scale;
+  p->isText = TRUE;
+  for (i=0; i < len; i++) {
+    CHAR16 letter = string[i];
+    if (!letter) {
+      break;
+    }
+    //    DBG("add letter 0x%x\n", letter);
+    if (i == Cursor) {
+      addLetter(p, 0x5F, x, y, sy, color);
+    }
+    x = addLetter(p, letter, x, y, sy, color);
+  } //end of string
+
+  p->image->realBounds[0] = fontSVG->bbox[0] * Scale;
+  p->image->realBounds[1] = fontSVG->bbox[1] * Scale;
+  p->image->realBounds[2] = fontSVG->bbox[2] * Scale + x; //last bound
+  p->image->realBounds[3] = fontSVG->bbox[3] * Scale;
+  rast = nsvgCreateRasterizer();
+  nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY.GetPixelPtr(0,0),
+                (int)TextBufferXY->Width, (int)TextBufferXY.GetHeight(), (int)(Width*4));
+  float RealWidth = p->image->realBounds[2] - p->image->realBounds[0];
+
+  nsvgDeleteRasterizer(rast);
+  //  nsvg__deleteParser(p);
+  nsvgDelete(p->image);
+  return (INTN)RealWidth; //x;
+
+
+}
+#else
 INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, UINTN Cursor)
 {
   INTN Width;
@@ -852,7 +941,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   nsvgDelete(p->image);
   return (INTN)RealWidth; //x;
 }
-
+#endif
 VOID testSVG()
 {
   do {
