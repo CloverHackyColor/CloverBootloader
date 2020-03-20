@@ -186,6 +186,52 @@
 		A547126E22D6E5F300FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
 		A547127022D6E60000FD2D2D /* postinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
 		A547127222D6E61E00FD2D2D /* preinstall */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		A5788CE024246E2F00C42614 /* uk.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = uk.po; sourceTree = "<group>"; };
+		A5788CE124246E2F00C42614 /* fr.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = fr.po; sourceTree = "<group>"; };
+		A5788CE224246E2F00C42614 /* nl.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = nl.po; sourceTree = "<group>"; };
+		A5788CE324246E2F00C42614 /* zh_CN.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = zh_CN.po; sourceTree = "<group>"; };
+		A5788CE424246E2F00C42614 /* en.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = en.po; sourceTree = "<group>"; };
+		A5788CE524246E2F00C42614 /* tr.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = tr.po; sourceTree = "<group>"; };
+		A5788CE624246E2F00C42614 /* zh_TW.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = zh_TW.po; sourceTree = "<group>"; };
+		A5788CE724246E2F00C42614 /* ro.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ro.po; sourceTree = "<group>"; };
+		A5788CE824246E2F00C42614 /* it.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = it.po; sourceTree = "<group>"; };
+		A5788CE924246E2F00C42614 /* es.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = es.po; sourceTree = "<group>"; };
+		A5788CEA24246E2F00C42614 /* de.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = de.po; sourceTree = "<group>"; };
+		A5788CEB24246E2F00C42614 /* pt-BR.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pt-BR.po"; sourceTree = "<group>"; };
+		A5788CEC24246E2F00C42614 /* uk_UA.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = uk_UA.po; sourceTree = "<group>"; };
+		A5788CED24246E2F00C42614 /* ja.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ja.po; sourceTree = "<group>"; };
+		A5788CEE24246E2F00C42614 /* id.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = id.po; sourceTree = "<group>"; };
+		A5788CEF24246E2F00C42614 /* ko.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ko.po; sourceTree = "<group>"; };
+		A5788CF024246E2F00C42614 /* vi.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = vi.po; sourceTree = "<group>"; };
+		A5788CF124246E2F00C42614 /* lv.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = lv.po; sourceTree = "<group>"; };
+		A5788CF224246E2F00C42614 /* pl.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = pl.po; sourceTree = "<group>"; };
+		A5788CF324246E2F00C42614 /* clover.pot */ = {isa = PBXFileReference; lastKnownFileType = text; path = clover.pot; sourceTree = "<group>"; };
+		A5788CF424246E2F00C42614 /* pt.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = pt.po; sourceTree = "<group>"; };
+		A5788CF524246E2F00C42614 /* ru.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ru.po; sourceTree = "<group>"; };
+		A5788CF624246E2F00C42614 /* hr.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = hr.po; sourceTree = "<group>"; };
+		A5788CFA24246E4000C42614 /* uk.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = uk.po; sourceTree = "<group>"; };
+		A5788CFB24246E4000C42614 /* fr.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = fr.po; sourceTree = "<group>"; };
+		A5788CFC24246E4000C42614 /* nl.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = nl.po; sourceTree = "<group>"; };
+		A5788CFD24246E4000C42614 /* zh_CN.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = zh_CN.po; sourceTree = "<group>"; };
+		A5788CFE24246E4000C42614 /* en.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = en.po; sourceTree = "<group>"; };
+		A5788CFF24246E4000C42614 /* tr.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = tr.po; sourceTree = "<group>"; };
+		A5788D0024246E4000C42614 /* zh_TW.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = zh_TW.po; sourceTree = "<group>"; };
+		A5788D0124246E4000C42614 /* ro.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ro.po; sourceTree = "<group>"; };
+		A5788D0224246E4000C42614 /* it.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = it.po; sourceTree = "<group>"; };
+		A5788D0324246E4000C42614 /* es.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = es.po; sourceTree = "<group>"; };
+		A5788D0424246E4000C42614 /* de.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = de.po; sourceTree = "<group>"; };
+		A5788D0524246E4000C42614 /* pt-BR.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pt-BR.po"; sourceTree = "<group>"; };
+		A5788D0624246E4000C42614 /* uk_UA.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = uk_UA.po; sourceTree = "<group>"; };
+		A5788D0724246E4000C42614 /* ja.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ja.po; sourceTree = "<group>"; };
+		A5788D0824246E4000C42614 /* id.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = id.po; sourceTree = "<group>"; };
+		A5788D0924246E4000C42614 /* ko.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ko.po; sourceTree = "<group>"; };
+		A5788D0A24246E4000C42614 /* vi.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = vi.po; sourceTree = "<group>"; };
+		A5788D0B24246E4000C42614 /* lv.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = lv.po; sourceTree = "<group>"; };
+		A5788D0C24246E4000C42614 /* pl.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = pl.po; sourceTree = "<group>"; };
+		A5788D0D24246E4000C42614 /* clover.pot */ = {isa = PBXFileReference; lastKnownFileType = text; path = clover.pot; sourceTree = "<group>"; };
+		A5788D0E24246E4000C42614 /* pt.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = pt.po; sourceTree = "<group>"; };
+		A5788D0F24246E4000C42614 /* ru.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = ru.po; sourceTree = "<group>"; };
+		A5788D1024246E4000C42614 /* hr.po */ = {isa = PBXFileReference; lastKnownFileType = text; path = hr.po; sourceTree = "<group>"; };
 		A5F9FDAC2412AA6C00A31474 /* cbuild.bat */ = {isa = PBXFileReference; lastKnownFileType = text; name = cbuild.bat; path = ../../cbuild.bat; sourceTree = "<group>"; };
 		A5F9FDAF2412AA7A00A31474 /* hebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = hebuild.sh; path = ../../hebuild.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -302,6 +348,7 @@
 				129262F31A305B0E005F1426 /* ebuild.sh */,
 				129262E31A305AEB005F1426 /* rcScripts */,
 				129260BF1A305A3E005F1426 /* Products */,
+				A5788CDF24246E2F00C42614 /* po */,
 			);
 			sourceTree = "<group>";
 		};
@@ -318,6 +365,7 @@
 			children = (
 				129260CC1A305A67005F1426 /* bin */,
 				129260F41A305A67005F1426 /* buildpkg.sh */,
+				A5788CF924246E4000C42614 /* po */,
 				129260F51A305A67005F1426 /* Distribution */,
 				1292610D1A305A67005F1426 /* po4a-clover.cfg */,
 				1292610E1A305A67005F1426 /* Resources */,
@@ -1058,6 +1106,67 @@
 				A547127222D6E61E00FD2D2D /* preinstall */,
 			);
 			path = CloverThemeManager;
+			sourceTree = "<group>";
+		};
+		A5788CDF24246E2F00C42614 /* po */ = {
+			isa = PBXGroup;
+			children = (
+				A5788CE024246E2F00C42614 /* uk.po */,
+				A5788CE124246E2F00C42614 /* fr.po */,
+				A5788CE224246E2F00C42614 /* nl.po */,
+				A5788CE324246E2F00C42614 /* zh_CN.po */,
+				A5788CE424246E2F00C42614 /* en.po */,
+				A5788CE524246E2F00C42614 /* tr.po */,
+				A5788CE624246E2F00C42614 /* zh_TW.po */,
+				A5788CE724246E2F00C42614 /* ro.po */,
+				A5788CE824246E2F00C42614 /* it.po */,
+				A5788CE924246E2F00C42614 /* es.po */,
+				A5788CEA24246E2F00C42614 /* de.po */,
+				A5788CEB24246E2F00C42614 /* pt-BR.po */,
+				A5788CEC24246E2F00C42614 /* uk_UA.po */,
+				A5788CED24246E2F00C42614 /* ja.po */,
+				A5788CEE24246E2F00C42614 /* id.po */,
+				A5788CEF24246E2F00C42614 /* ko.po */,
+				A5788CF024246E2F00C42614 /* vi.po */,
+				A5788CF124246E2F00C42614 /* lv.po */,
+				A5788CF224246E2F00C42614 /* pl.po */,
+				A5788CF324246E2F00C42614 /* clover.pot */,
+				A5788CF424246E2F00C42614 /* pt.po */,
+				A5788CF524246E2F00C42614 /* ru.po */,
+				A5788CF624246E2F00C42614 /* hr.po */,
+			);
+			name = po;
+			path = ../../../UDK2018/Clover/CloverPackage/package/po;
+			sourceTree = "<group>";
+		};
+		A5788CF924246E4000C42614 /* po */ = {
+			isa = PBXGroup;
+			children = (
+				A5788CFA24246E4000C42614 /* uk.po */,
+				A5788CFB24246E4000C42614 /* fr.po */,
+				A5788CFC24246E4000C42614 /* nl.po */,
+				A5788CFD24246E4000C42614 /* zh_CN.po */,
+				A5788CFE24246E4000C42614 /* en.po */,
+				A5788CFF24246E4000C42614 /* tr.po */,
+				A5788D0024246E4000C42614 /* zh_TW.po */,
+				A5788D0124246E4000C42614 /* ro.po */,
+				A5788D0224246E4000C42614 /* it.po */,
+				A5788D0324246E4000C42614 /* es.po */,
+				A5788D0424246E4000C42614 /* de.po */,
+				A5788D0524246E4000C42614 /* pt-BR.po */,
+				A5788D0624246E4000C42614 /* uk_UA.po */,
+				A5788D0724246E4000C42614 /* ja.po */,
+				A5788D0824246E4000C42614 /* id.po */,
+				A5788D0924246E4000C42614 /* ko.po */,
+				A5788D0A24246E4000C42614 /* vi.po */,
+				A5788D0B24246E4000C42614 /* lv.po */,
+				A5788D0C24246E4000C42614 /* pl.po */,
+				A5788D0D24246E4000C42614 /* clover.pot */,
+				A5788D0E24246E4000C42614 /* pt.po */,
+				A5788D0F24246E4000C42614 /* ru.po */,
+				A5788D1024246E4000C42614 /* hr.po */,
+			);
+			path = po;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

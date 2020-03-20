@@ -26,10 +26,8 @@ msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:31
-#, fuzzy
-#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
-msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "r%CLOVERREVISION% (%CLOVERSHA1%)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
@@ -227,10 +225,8 @@ msgstr "Zapisywanie boot.log w OS oraz preboot.log w GUI za pomocą klawisza F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:20
-#, fuzzy
-#| msgid "%CLOVERVERSION% r%CLOVERREVISION%"
 msgid "r%CLOVERREVISION%"
-msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
