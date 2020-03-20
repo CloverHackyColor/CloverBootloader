@@ -1,5 +1,6 @@
 #!/bin/bash
 
 xattr -rc /Applications/Clover.app
+chmod -R 777 /Applications/Clover.app/Contents/SharedSupport
 sleep 3
 open /Applications/Clover.app
