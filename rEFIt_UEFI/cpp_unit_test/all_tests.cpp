@@ -12,14 +12,22 @@
 #include "strcmp_test.h"
 #include "strncmp_test.h"
 #include "strlen_test.h"
-
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "printf_lite-test.h"
 
 bool all_tests()
 {
   bool all_ok = true;
   int ret;
 
+	ret = printf_lite_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+#ifdef JIEF_DEBUG
+//return ret;
+#endif
 	ret = strlen_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "posix_tests() failed at test %d\n", ret);

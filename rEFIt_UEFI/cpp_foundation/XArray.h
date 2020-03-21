@@ -156,7 +156,7 @@ template<class TYPE>
 XArray<TYPE>::~XArray()
 {
 //printf("XArray Destructor\n");
-	if ( m_data ) Xfree(m_data);
+	if ( m_data ) free(m_data);
 }
 
 /* CheckSize() */
@@ -166,9 +166,9 @@ void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 //XArray_DBG("CheckSize: m_len=%d, m_size=%d, nGrowBy=%d, nNewSize=%d\n", m_len, m_size, nGrowBy, nNewSize);
 	if ( nNewSize > m_allocatedSize ) {
 		nNewSize += nGrowBy;
-		m_data = (TYPE *)Xrealloc( m_allocatedSize * sizeof(TYPE), nNewSize * sizeof(TYPE), (void *)m_data);
+		m_data = (TYPE *)realloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
 		if ( !m_data ) {
-  		DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), m_data);
+			DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%llu, %llu, %llu) returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
 	  	panic();
 		}
 //		memset(&_Data[_Size], 0, (nNewSize-_Size) * sizeof(TYPE)); // Could help for debugging, but zeroing in not needed.
@@ -318,7 +318,7 @@ template<class TYPE>
 void XArray<TYPE>::RemoveAtIndex(xsize nIndex)
 {
 	if ( nIndex  < m_len ) {
-		if ( nIndex<m_len-1 ) Xmemmove(&m_data[nIndex], &m_data[nIndex+1], (m_len-nIndex-1)*sizeof(TYPE));
+		if ( nIndex<m_len-1 ) memmove(&m_data[nIndex], &m_data[nIndex+1], (m_len-nIndex-1)*sizeof(TYPE));
 		m_len -= 1;
 		return;
 	}

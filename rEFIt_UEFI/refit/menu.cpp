@@ -1435,14 +1435,6 @@ VOID HelpRefit(VOID)
   } else {
     HelpMenu.TitleImage = NULL;
   }
-#ifdef JIEF_DEBUG
-wchar_t c = L'ы';
-XString s(L"ы");
-XString s2("ы");
-DBG("%a\n", XString(L"ы").c, c);
-HelpMenu.Entries.Empty();
-#endif
-
   if (HelpMenu.Entries.size() == 0) {
     switch (gLanguage)
     {

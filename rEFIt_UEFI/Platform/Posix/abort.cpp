@@ -21,5 +21,7 @@ extern "C" {
 void abort(void)
 {
 		DebugLog(2, "A fatal error happened. System halted\n");
+	    while (1) { // tis will avoid warning : Function declared 'noreturn' should not return
 		CpuDeadLoop();
+}
 }

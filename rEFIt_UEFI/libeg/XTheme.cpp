@@ -137,10 +137,10 @@ void XTheme::Init()
 
 XImage& XTheme::GetIcon(const char* Name)
 {
-  return GetIcon(XStringWP(Name));
+  return GetIcon(XStringW().takeValueFrom(Name));
 }
 
-XImage& XTheme::GetIcon(XStringW& Name)
+XImage& XTheme::GetIcon(const XStringW& Name)
 {
   XImage* TheIcon = NULL;
   for (size_t i = 0; i < Icons.size(); i++)
@@ -502,7 +502,7 @@ void XTheme::InitSelection()
   if (EFI_ERROR(Status)) {
     Button[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
   }
-  Status = Button[1].LoadXImage(ThemeDir, "radio_button_selected"));
+  Status = Button[1].LoadXImage(ThemeDir, "radio_button_selected");
   if (EFI_ERROR(Status)) {
     Button[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
   }
@@ -517,7 +517,7 @@ void XTheme::InitSelection()
 
   // non-selected background images
 
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL& BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
   if (!SelectionBigFileName.isEmpty()) {
     BackgroundPixel = { 0x00, 0x00, 0x00, 0x00 };
   } else if (DarkEmbedded || TypeSVG) {
@@ -526,9 +526,9 @@ void XTheme::InitSelection()
     BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
   }
   SelectionImages[1] = XImage(row0TileSize, row0TileSize);
-  SelectionImages[1].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BackgroundPixel);
+  SelectionImages[1].Fill(BackgroundPixel);
   SelectionImages[3] = XImage(row1TileSize, row1TileSize);
-  SelectionImages[3].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BackgroundPixel);
+  SelectionImages[3].Fill(BackgroundPixel);
 
 }
 
@@ -537,14 +537,14 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
   for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) {
     Icon NewIcon(i, true); //initialize with embedded but further replace by loaded
-    NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]));
-    NewIcon.ImageNight.LoadXImage(ThemeDir, XStringWP(IconsNames[i]) + "_night");
+    NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]);
+    NewIcon.ImageNight.LoadXImage(ThemeDir, XStringWP(IconsNames[i]) + XStringWP("_night"));
     Icons.AddCopy(NewIcon);
   }
 
   for (INTN i = BUILTIN_ICON_COUNT; i < 45; ++i) {
     Icon NewIcon(i); //there is no embedded
-    NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i])); //all os_***
+    NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]); //all os_***
     Icons.AddCopy(NewIcon);
   }
 

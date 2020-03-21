@@ -1,5 +1,5 @@
-#ifndef __POSIX_H__
-#define __POSIX_H__
+#ifndef __CLOVER_POSIX_H__
+#define __CLOVER_POSIX_H__
 
 //
 //#ifdef __cplusplus
@@ -8,8 +8,15 @@
 
 
 
+#include "stdio.h"
 #include "stdint.h"
 #include "stddef.h"
+#include "limits.h"
+#include "stdarg.h"
+#include "stdlib.h"
+#include "string.h"
+#include "wchar.h"
+
 //
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions
 // originally from OpensslLib
@@ -18,7 +25,7 @@
 #define memset(dest,ch,count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define memchr(buf,ch,count)              ScanMem8(buf,(UINTN)(count),(UINT8)ch)
 #define memcmp(buf1,buf2,count)           (int)(CompareMem(buf1,buf2,(UINTN)(count)))
-#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
+//#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
 //#define strcmp                            AsciiStrCmp
 //#define strncmp(string1,string2,count)    (int)(AsciiStrnCmp(string1,string2,(UINTN)(count)))
 #define strcpy(strDest,strSource)         AsciiStrCpyS(strDest,AsciiStrLen(strDest)+1,strSource)

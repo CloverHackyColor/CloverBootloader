@@ -24,6 +24,9 @@ protected:
 	UINTN m_len;
 	UINTN m_allocatedSize;
 
+	// convenience method. Did it this way to avoid #define in header. They can have an impact on other heade.rs
+	xsize min(xsize x1, xsize x2) const { if ( x1 < x2 ) return x1; return x2; }
+
 public:
 	void Init(UINTN aSize=0);
 	XStringW();
@@ -47,6 +50,8 @@ public:
 //	wchar_t *data(int i) { if ( i<0 ) panic("wchar_t *data(int i=0) -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
 
 	wchar_t *dataWithSizeMin(UINTN pos, UINTN sizeMin, UINTN nGrowBy=XStringWGrowByDefault) { CheckSize(sizeMin, nGrowBy); return data(pos); }
+
+	wchar_t * forgetDataWithoutFreeing();
 
 	UINTN length() const { return m_len; }
 	UINTN size() const { return m_len; }
@@ -94,7 +99,7 @@ public:
 	void Insert(UINTN pos, const XStringW& Str);
 
 
-	void vSPrintf(const char* format, VA_LIST va);
+	void vSPrintf(const char* format, va_list va);
 #ifndef _MSC_VER
   void SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
 #else
@@ -129,11 +134,11 @@ public:
 	void Replace(wchar_t c1, wchar_t c2);
 	XStringW SubStringReplace(wchar_t c1, wchar_t c2);
 
-	int Compare(const wchar_t* S) const { return (int)StrCmp(data(), S) ; }
+	int Compare(const wchar_t* S) const { return (int)memcmp(data(), S, min(wcslen(S), length())*sizeof(wchar_t)); }
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
-  bool BeginingEqual(const wchar_t* S) const { return (StrnCmp(data(), S, StrLen(S)) == 0); }
-  bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return (StrCmp(data(Pos), S) == 0); }
+  bool BeginingEqual(const wchar_t* S) const { return (memcmp(data(), S, wcslen(S)) == 0); }
+  bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
 
 	XStringW basename() const;
 	XStringW dirname() const;
@@ -157,6 +162,7 @@ public:
 //	//    with wchar_t
 //	friend XStringW operator + (const XStringW& p1, wchar_t p2         ) { XStringW s; s=p1; s+=p2; return s; }
 //	friend XStringW operator + (wchar_t p1,   const XStringW& p2       ) { XStringW s; s=p1; s+=p2; return s; }
+
 
 	// == operator
 	friend bool operator == (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2) == 0; }

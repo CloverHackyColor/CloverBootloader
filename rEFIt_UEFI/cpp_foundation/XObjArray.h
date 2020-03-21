@@ -172,7 +172,7 @@ XObjArrayNC<TYPE>::~XObjArrayNC()
 {
 //printf("XObjArray Destructor\n");
 	Empty();
-	if ( _Data ) Xfree(_Data);
+	if ( _Data ) free(_Data);
 }
 
 /* CheckSize() */
@@ -181,9 +181,9 @@ void XObjArrayNC<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 {
 	if ( m_allocatedSize < nNewSize ) {
 		nNewSize += nGrowBy + 1;
-		_Data = (XObjArrayEntry<TYPE> *)Xrealloc(sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (void *)_Data );
+		_Data = (XObjArrayEntry<TYPE> *)realloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
 		if ( !_Data ) {
-  		XObjArray_DBG("XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, _Data);
+			XObjArray_DBG("XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%llu, %llu, %llu) returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
 		}
 //		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
 		m_allocatedSize = nNewSize;
@@ -195,7 +195,7 @@ template<class TYPE>
 TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index)
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%d) greater than length (%d)\n", index, _Len);
+			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%llu) greater than length (%llu)\n", index, _Len);
 			panic();
 		}
 		return  *((TYPE *)(_Data[index].Object));
@@ -206,7 +206,7 @@ template<class TYPE>
 const TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index) const
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%d) greater than length (%d)\n", index, _Len);
+			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%llu) greater than length (%llu)\n", index, _Len);
 			panic();
 		}
 		return  *((TYPE *)(_Data[index].Object));
@@ -426,7 +426,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 	if ( nIndex  < XObjArrayNC<TYPE>::_Len )
 	{
   	if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
-  	  DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%d) is > length(). System halted\n", nIndex);
+		DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%llu) is > length(). System halted\n", nIndex);
 	  	panic();
 	  }
 	}
@@ -437,7 +437,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 		TmpObject = (TYPE *)(_Data[nIndex].Object);
 		delete TmpObject;
 	}
-	if ( nIndex<XObjArrayNC<TYPE>::_Len-1 ) Xmemmove(&_Data[nIndex], &_Data[nIndex+1], (_Len-nIndex-1)*sizeof(XObjArrayEntry<TYPE>));
+	if ( nIndex<XObjArrayNC<TYPE>::_Len-1 ) memmove(&_Data[nIndex], &_Data[nIndex+1], (_Len-nIndex-1)*sizeof(XObjArrayEntry<TYPE>));
 	_Len -= 1;
 	return;
 }

@@ -15,7 +15,7 @@
 #include "XString.h"
 #include "XStringW.h"
 
-#include "printf_lite.h"
+#include "../../Include/Library/printf_lite.h"
 
 //#ifndef memcpy
 //#define memcpy(dest,source,count) CopyMem(dest,(void*)(source),(UINTN)(count))
@@ -27,13 +27,13 @@
 //#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
 //#endif
 
-xsize XStringGrowByDefault = 1024;
+xsize XStringGrowByDefault = 2;
 const XString NullXString;
 
 
 void XString::Init(xsize aSize)
 {
-	c = (char*)Xalloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans mSize */
+	c = (char*)malloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans mSize */
 	if ( !c ) {
 		DebugLog(2, "XString::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(char));
 		panic();
@@ -67,7 +67,7 @@ char *XString::CheckSize(xsize nNewSize, xsize nGrowBy)
 	{
 
 		nNewSize += nGrowBy;
-		c = (char*)Xrealloc(m_allocatedSize*sizeof(wchar_t), (nNewSize+1)*sizeof(char), c);
+		c = (char*)realloc(c, (nNewSize+1)*sizeof(char), m_allocatedSize*sizeof(wchar_t));
 		if ( !c ) {
 			DBG("XString::CheckSize(%d, %d) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, (nNewSize+1)*sizeof(char), c);
 			panic();
@@ -119,7 +119,7 @@ void XString::Cat(const XString &uneXString)
 	SetLength(length() + uneXString.length());
 }
 
-inline void XString::StrnCat(const char *buf)
+void XString::StrCat(const char *buf)
 {
 	if ( buf && *buf ) {
 		StrnCat(buf, (xsize)strlen(buf)); // overflow ?
@@ -147,136 +147,142 @@ void XString::Insert(xsize pos, const XString& Str)
 		memmove(data()+pos+Str.length(), data()+pos, length()-pos+1); // +1 to copy the NULL terminator
 		memcpy(data()+pos, Str.data(), Str.length());
 	}else{
-		StrnCat(Str);
+		StrCat(Str);
 	}
 }
 
-void XString::Replace(char c1, char c2)
-{
-  char* p;
-
-	p = data();
-	while ( *p ) {
-		if ( *p == c1 ) *p = c2;
-		p += 1;
-	}
-}
-
-XString XString::SubStringReplace(char c1, char c2)
-{
-  char* p;
-  XString Result;
-
-	p = data();
-	while ( *p  ) {
-		if ( *p == c1 ) Result += c2;
-		else Result += *p;
-		p++;
-	}
-	return Result;
-}
-//
-//void XString::vSPrintf(const char *Format, va_list va)
+// Deactivate assignment during refactoring to avoid confusion
+//void XString::Replace(char c1, char c2)
 //{
-//  char buf[16384]; // faire mieux un jour...
-//  int nb;
+//  char* p;
 //
-//  	#if defined(__DEV_BORLANDC__) || defined(__DEV_UNIX__)
-//		nb = vsprintf(buf, Format, va);
-//    #elif defined(__DEV_WIN32__)
-//		nb = _vsnprintf(buf, sizeof(buf), Format, va);
-//	#else
-//	#error Plateforme false supportee
-//    #endif
-//	if ( nb > 0 ) StrnCpy(buf, nb);
-//	else SetNull();
+//	p = data();
+//	while ( *p ) {
+//		if ( *p == c1 ) *p = c2;
+//		p += 1;
+//	}
+//}
+//
+//XString XString::SubStringReplace(char c1, char c2)
+//{
+//  char* p;
+//  XString Result;
+//
+//	p = data();
+//	while ( *p  ) {
+//		if ( *p == c1 ) Result += c2;
+//		else Result += *p;
+//		p++;
+//	}
+//	return Result;
 //}
 
-static XString* XString_sprintfBuf;
-static xsize XString_sprintfBuf_len;
-static wchar_t XString_char_wait;
+/* this is used when printf can only output unicode, so we need a conversion back to utf8 */
+//static XString* XString_sprintfBuf;
+//static xsize XString_sprintfBuf_len;
+//static wchar_t XString_char_wait;
+//
+//static unsigned int XString_transmitSPrintf_utf32(const wchar_t wchar1, const wchar_t wchar2)
+//{
+//    unsigned int ret = 0;
+//	UINTN utf32_char;
+//
+//	if ((wchar1 & 0xFC00) == 0xD800) { /* surrogates */
+//		if ((wchar2 & 0xFC00) == 0xDC00) {
+//			utf32_char = wchar1;
+//			utf32_char &= 0x03FF;
+//			utf32_char <<= 10;
+//			utf32_char |= ((UINTN)wchar2) & 0x03FF;
+//			utf32_char += 0x10000;
+//			ret = 2;
+//		}else{
+//			// error
+//			return 1; // Ignore wchar1. Tell the caller we used wchar1
+//		}
+//	}else{
+//		utf32_char = wchar1;
+//		ret = 1;
+//	}
+//
+//	/* assertion: utf32_char is a single UTF-4 value */
+//	int bits;
+//
+//	if (utf32_char < 0x80) {
+//		(*XString_sprintfBuf) += (char)utf32_char;
+//		bits = -6;
+//	}
+//	else if (utf32_char < 0x800) {
+//		(*XString_sprintfBuf) += (char)(((utf32_char >> 6) & 0x1F) | 0xC0);
+//		bits = 0;
+//	}
+//	else if (utf32_char < 0x10000) {
+//		(*XString_sprintfBuf) += (char)(((utf32_char >> 12) & 0x0F) | 0xE0);
+//		bits = 6;
+//	}
+//	else {
+//		(*XString_sprintfBuf) += (char)(((utf32_char >> 18) & 0x07) | 0xF0);
+//		bits = 12;
+//	}
+//	for (; bits >= 0; bits -= 6) {
+//		(*XString_sprintfBuf) += (char)(((utf32_char >> bits) & 0x3F) | 0x80);
+//	}
+//	return ret;
+//}
+//
+//
+//static void XString_transmitSPrintf(const wchar_t* buf, size_t nbchar)
+//{
+//
+//	#if __WCHAR_MAX__ <= 0xFFFF
+//	// wchar_t is UTF16
+//
+//	unsigned int ret = 1;
+//	if ( XString_char_wait ) {
+//		ret = XString_transmitSPrintf_utf32(XString_char_wait, buf[0]);
+//		XString_char_wait = 0;
+//	}
+//	xsize i;
+//	for ( i = ret-1 ; i < nbchar-1 ; ) // cast ok, ret >
+//	{
+//		ret = XString_transmitSPrintf_utf32(buf[i], buf[i+1]);
+//		i += ret;
+//	}
+//	if ( i < nbchar ) XString_char_wait = buf[i];
+//	#else
+//	#warning TODO
+//	#endif
+//}
+//
+//void XString::vSPrintf(const char* format, va_list va)
+//{
+//	SetLength(0);
+//
+//	XString_sprintfBuf = this;
+//	XString_sprintfBuf_len = 0;
+//	XString_char_wait = 0;
+//	vprintf_with_callback(format, va, XString_transmitSPrintf);
+//	if ( XString_char_wait ) XString_transmitSPrintf_utf32(XString_char_wait, 0);
+//}
 
-static unsigned int XString_transmitSPrintf_utf32(const wchar_t wchar1, const wchar_t wchar2)
+//static XString* XString_sprintfBuf;
+
+static void XString_transmitSPrintf(const char* buf, unsigned int nbchar, void* context)
 {
-    unsigned int ret = 0;
-	UINTN utf32_char;
-		
-	if ((wchar1 & 0xFC00) == 0xD800) { /* surrogates */
-		if ((wchar2 & 0xFC00) == 0xDC00) {
-			utf32_char = wchar1;
-			utf32_char &= 0x03FF;
-			utf32_char <<= 10;
-			utf32_char |= ((UINTN)wchar2) & 0x03FF;
-			utf32_char += 0x10000;
-			ret = 2;
-		}else{
-			// error
-			return 1; // Ignore wchar1. Tell the caller we used wchar1
-		}
-	}else{
-		utf32_char = wchar1;
-		ret = 1;
-	}
-
-	/* assertion: utf32_char is a single UTF-4 value */
-	int bits;
-
-	if (utf32_char < 0x80) {
-		(*XString_sprintfBuf) += (char)utf32_char;
-		bits = -6;
-	}
-	else if (utf32_char < 0x800) {
-		(*XString_sprintfBuf) += (char)(((utf32_char >> 6) & 0x1F) | 0xC0);
-		bits = 0;
-	}
-	else if (utf32_char < 0x10000) {
-		(*XString_sprintfBuf) += (char)(((utf32_char >> 12) & 0x0F) | 0xE0);
-		bits = 6;
-	}
-	else {
-		(*XString_sprintfBuf) += (char)(((utf32_char >> 18) & 0x07) | 0xF0);
-		bits = 12;
-	}
-	for (; bits >= 0; bits -= 6) {
-		(*XString_sprintfBuf) += (char)(((utf32_char >> bits) & 0x3F) | 0x80);
-	}
-	return ret;
+//	(*XString_sprintfBuf).StrnCat(buf, nbchar);
+	((XString*)(context))->StrnCat(buf, (xsize)nbchar); // nbchar cannot be negative
 }
 
-
-static void XString_transmitSPrintf(const wchar_t* buf, size_t nbchar)
-{
-	
-	#if __WCHAR_MAX__ <= 0xFFFF
-	// wchar_t is UTF16
-	
-	unsigned int ret = 1;
-	if ( XString_char_wait ) {
-		ret = XString_transmitSPrintf_utf32(XString_char_wait, buf[0]);
-		XString_char_wait = 0;
-	}
-	xsize i;
-	for ( i = ret-1 ; i < nbchar-1 ; ) // cast ok, ret >
-	{
-		ret = XString_transmitSPrintf_utf32(buf[i], buf[i+1]);
-		i += ret;
-	}
-	if ( i < nbchar ) XString_char_wait = buf[i];
-	#else
-	#error TODO
-	#endif
-}
-
-void XString::vSPrintf(const char* format, VA_LIST va)
+XString& XString::vSPrintf(const char* format, va_list va)
 {
 	SetLength(0);
 
-	XString_sprintfBuf = this;
-	XString_sprintfBuf_len = 0;
-	XString_char_wait = 0;
-	vprintf_with_callback(format, va, XString_transmitSPrintf);
-	if ( XString_char_wait ) XString_transmitSPrintf_utf32(XString_char_wait, 0);
-	
+//	XString_sprintfBuf = this;
+	vprintf_with_callback(format, va, XString_transmitSPrintf, this);
+	return *this;
+}
+
+//void XString::vSPrintf(const char* format, va_list va)
+//{
 	// This is an attempt to use _PPrint from IO.c. Problem is : you have to allocate the memory BEFORE calling it.
 //  POOL_PRINT  spc;
 //  PRINT_STATE ps;
@@ -293,42 +299,35 @@ void XString::vSPrintf(const char* format, VA_LIST va)
 //
 //  VA_COPY(ps.args, va);
 //  _PPrint (&ps);
-//  VA_END(ps.args);
-}
+//  va_end(ps.args);
+//}
 
-void XString::SPrintf(const char *Format, ...)
+XString& XString::SPrintf(const char *Format, ...)
 {
   va_list va;
 
 	va_start(va, Format);
 	vSPrintf(Format, va);
 	va_end(va);
+	return *this;
 }
 
-//
-//XStringW XString::wcs()
-//{
-//  XBuffer xbuf;
-////  wchar_t buf[length() + 1];
-//	size_t nbchar = mbstowcs((wchar_t *)xbuf.DataWithSizeMin(0, sizeof(wchar_t)*length()), c, length());
-//	if ( nbchar == (size_t)-1 ) throw("XString::wcs() -> Conversion error");
-//	return XStringW((wchar_t *)xbuf.data(), xsize(nbchar)); // safe cast : nbchar cannot be > than Length
-//}
 
+// Deactivate assignment during refactoring to avoid confusion
 XString XString::basename() const
 {
 	if ( LastChar() == PATH_SEPARATOR ) {
 		DebugLog(2, "XString::basename() -> LastChar() == PATH_SEPARATOR");
 		panic();
 	}
-	xsize idx = RIdxOf(PATH_SEPARATOR);
+	xsize idx = RIdxOf(XString().SPrintf("%c",PATH_SEPARATOR)); // ctor char disabled during refactoring to avoid confusion
 	if ( idx == MAX_XSIZE ) return NullXString;
 	return SubString(idx+1, length()-idx-1);
 }
 
 XString XString::dirname() const
 {
-	xsize idx = RIdxOf(PATH_SEPARATOR);
+	xsize idx = RIdxOf(XString().SPrintf("%c",PATH_SEPARATOR)); // ctor char disabled during refactoring to avoid confusion
 	if ( idx == MAX_XSIZE ) return NullXString;
 	#ifdef __DEV_WIN32__
 		if ( idx == 1  &&  *data(0) == PATH_SEPARATOR ) {
@@ -350,11 +349,12 @@ XString::XString(const XString &aString)
 	StrnCpy(aString.data(), aString.length());
 }
 
-XString::XString(const wchar_t *S)
-{
-	Init();
-	SPrintf("%ls", S);
-}
+//// Deactivate assignment during refactoring to avoid confusion
+//XString::XString(const wchar_t *S)
+//{
+//	Init();
+//	SPrintf("%ls", S);
+//}
 
 /*
 XString::XString(const NSString* const aNSString, NSStringEncoding encoding)
@@ -379,35 +379,37 @@ XString::XString(const NSString* const aNSString, NSStringEncoding encoding)
 //	StrnCpy( aConstString.data() );
 //}
 
-XString::XString(const char *S)
-{
-//Debugf("Construteur const char * : %s\n", S);
-	Init((xsize)strlen(S)); // overflow ?
-	if ( S ) StrCpy(S);
-}
-
-XString::XString(const char *S, xsize count)
-{
-//Debugf("Construteur const char *, unsigned int :%s   %d\n", S, count);
-	Init(count);
-	StrnCpy(S, count);
-}
+// Deactivate assignment during refactoring to avoid confusion
+//XString::XString(const char *S)
+//{
+////Debugf("Construteur const char * : %s\n", S);
+//	Init((xsize)strlen(S)); // overflow ?
+//	if ( S ) StrCpy(S);
+//}
+//
+//XString::XString(const char *S, xsize count)
+//{
+////Debugf("Construteur const char *, unsigned int :%s   %d\n", S, count);
+//	Init(count);
+//	StrnCpy(S, count);
+//}
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 // Constructeurs CaractËres
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-XString::XString(char aChar)
-{
-//TRACE("Construteur char \n");
-	Init(1);
-	StrnCpy(&aChar, 1);
-}
+// Deactivate assignment during refactoring to avoid confusion
+//XString::XString(char aChar)
+//{
+////TRACE("Construteur char \n");
+//	Init(1);
+//	StrnCpy(&aChar, 1);
+//}
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 // Constructeurs numériques
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-//
+
 //XString::XString(int i)
 //{
 //  char buf[1024];
@@ -418,7 +420,7 @@ XString::XString(char aChar)
 //	Init(len);
 //	StrnCpy(buf, len);
 //}
-//
+
 //XString::XString(unsigned int ui)
 //{
 //  char buf[1024];
@@ -465,7 +467,7 @@ XString::XString(char aChar)
 XString XString::SubString(xsize pos, xsize count) const
 {
 	if ( count > length()-pos ) count = length()-pos;
-	return XString( &(data()[pos]), count);
+	return XString().takeValueFrom( &(data()[pos]), count);
 }
 
 xsize XString::IdxOf(char aChar, xsize Pos) const
@@ -806,12 +808,13 @@ void XString::RemoveLastEspCtrl()
 // Opérateur = CaractËres
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-const XString &XString::operator =(char aChar)
-{
-//TRACE("Operator =char \n");
-	StrnCpy(&aChar, 1);
-	return *this;
-}
+// Deactivate assignment during refactoring to avoid confusion
+//const XString &XString::operator =(char aChar)
+//{
+////TRACE("Operator =char \n");
+//	StrnCpy(&aChar, 1);
+//	return *this;
+//}
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -850,12 +853,13 @@ const XString &XString::operator =(const wxString &awxString)
 //	return *this;
 //}
 
-const XString &XString::operator =(const char *S)
-{
-//TRACE("Operator =const char *\n");
-	StrCpy(S);
-	return *this;
-}
+// Deactivate assignment during refactoring to avoid confusion
+//const XString &XString::operator =(const char *S)
+//{
+////TRACE("Operator =const char *\n");
+//	StrCpy(S);
+//	return *this;
+//}
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -919,12 +923,13 @@ const XString &XString::operator =(const char *S)
 // Opérateur = CaractËres
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-const XString &XString::operator +=(char aChar)
-{
-//TRACE("Operator +=char \n");
-	StrnCat(&aChar, 1);
-	return *this;
-}
+// Deactivate assignment during refactoring to avoid confusion
+//const XString &XString::operator +=(char aChar)
+//{
+////TRACE("Operator +=char \n");
+//	StrnCat(&aChar, 1);
+//	return *this;
+//}
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -948,7 +953,7 @@ const XString &XString::operator +=(const XString &aString)
 const XString &XString::operator +=(const char *S)
 {
 //TRACE("operator +=const char *\n");
-	StrnCat(S);
+	StrCat(S);
 	return *this;
 }
 
@@ -1008,12 +1013,12 @@ const XString &XString::operator +=(const char *S)
 
 XString SPrintf(const char *format, ...)
 {
-	VA_LIST     va;
+	va_list     va;
 	XString str;
 	
-	VA_START (va, format);
+	va_start (va, format);
 	str.vSPrintf(format, va);
-	VA_END(va);
+	va_end(va);
 	
 	return str;
 }
@@ -1021,7 +1026,7 @@ XString SPrintf(const char *format, ...)
 XString SubString(const char *S, xsize pos, xsize count)
 {
 	if ( strlen(S)-pos < count ) count = (xsize)(strlen(S)-pos); // overflow ?
-	return ( XString(S+pos, count) );
+	return XString().takeValueFrom( S+pos, count );
 }
 
 #ifdef NOT_USED_ANYMORE_skqdjfhksqjhfksjqdf
@@ -1077,16 +1082,17 @@ XString ToUpper(const char *S)
 }
 #endif
 
-XString CleanCtrl(const XString &S)
-{
-  XString ReturnValue;
-  xsize i;
-
-	for ( i=0 ; i<S.length() ; i+=1 ) {
-		if ( S[i] >=0  &&  S[i] < ' ' ) ReturnValue += 'x'; /* Les char sont signés !!! */
-		else ReturnValue += S[i];
-	}
-	return ReturnValue;
-}
+// Deactivate assignment during refactoring to avoid confusion
+//XString CleanCtrl(const XString &S)
+//{
+//  XString ReturnValue;
+//  xsize i;
+//
+//	for ( i=0 ; i<S.length() ; i+=1 ) {
+//		if ( S[i] >=0  &&  S[i] < ' ' ) ReturnValue += 'x'; /* Les char sont signés !!! */
+//		else ReturnValue += S[i];
+//	}
+//	return ReturnValue;
+//}
 
 #endif

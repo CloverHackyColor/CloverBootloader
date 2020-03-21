@@ -7,12 +7,12 @@
 
 static int len(const char* s1, size_t count, int code)
 {
-//DebugLog(2, "strlen of '%a'\n", s1);
+//DebugLog(2, "strlen of '%s'\n", s1);
 
 	size_t ret1 = strlen(s1);
 
 	if ( ret1 != count ) {
-		DebugLog(2, "strlen of '%a' gives %d and should have given %d\n", s1, ret1, count);
+		DebugLog(2, "strlen of '%s' gives %zu and should have given %zu\n", s1, ret1, count);
 		return code;
 	}
 	return 0;

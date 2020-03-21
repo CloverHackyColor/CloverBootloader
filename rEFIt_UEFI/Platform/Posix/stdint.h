@@ -1,3 +1,7 @@
+#ifndef __CLOVER_STDINT_H__
+#define __CLOVER_STDINT_H__
+
+
 #define INT8_MIN (-128)
 #define INT16_MIN (-32768)
 #define INT32_MIN (-2147483647 - 1)
@@ -18,4 +22,23 @@ typedef UINT8 uint8_t;
 typedef UINT16 uint16_t;
 typedef UINT32 uint32_t;
 typedef UINT64 uint64_t;
+
+
+typedef INT8 int8_t;
+typedef INT16 int16_t;
+typedef INT32 int32_t;
+typedef INT64 int64_t;
+
+#define PRId8     "hhd"
+#define PRId16    "hd"
+#define PRId32    "d"
+#define PRId64    "lld"
+
+
+#define PRIud8     "hhu"
+#define PRIu16    "hu"
+#define PRIu32    "u"
+#define PRIu64    "llu"
+
+#endif
 

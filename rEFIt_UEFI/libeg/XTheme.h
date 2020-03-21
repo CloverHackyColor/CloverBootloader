@@ -18,6 +18,7 @@ public:
   XImage ImageNight;
 
   Icon(INTN Id);
+  Icon(INTN Index, BOOLEAN Embedded);
   ~Icon();
 
 };
@@ -95,12 +96,13 @@ public:
   XImage  DownButtonImage;
 
   //fill the theme
-  XImage& GetIcon(XStringW& Name);  //get by name
+  XImage& GetIcon(const XStringW& Name);  //get by name
   XImage& GetIcon(const char* Name);
   XImage& GetIcon(INTN Id); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
+  void FillByDir();
 
   //screen operations
   void ClearScreen();

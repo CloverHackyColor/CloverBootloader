@@ -96,4 +96,54 @@ EFIAPI
 GetMemLogTscTicksPerSecond (VOID);
 
 
+/* new function that use printf like format (%s and %ls for example). We need both because only Clover use the new one. Not the drivers and protocols */
+
+/**
+  Prints a log message to memory buffer.
+
+  @param  Timing      TRUE to prepend timing to log.
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
+  @param  Format      The format string for the debug message to print.
+  @param  Marker      VA_LIST with variable arguments for Format.
+
+**/
+VOID
+EFIAPI
+MemLogfVA (
+  IN  CONST BOOLEAN Timing,
+  IN  CONST INTN    DebugMode,
+  IN  CONST CHAR8   *Format,
+  IN  VA_LIST       Marker
+  );
+
+/**
+  Prints a log message to memory buffer.
+
+  If Format is NULL, then does nothing.
+
+  @param  Timing      TRUE to prepend timing to log.
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
+  @param  Format      The format string for the debug message to print.
+  @param  ...         The variable argument list whose contents are accessed
+                      based on the format string specified by Format.
+
+**/
+
+
+#ifdef _MSC_VER
+#define __attribute__(x)
+#endif
+
+VOID
+EFIAPI
+MemLogf (
+  IN  CONST BOOLEAN Timing,
+  IN  CONST INTN    DebugMode,
+  IN  CONST CHAR8   *Format,
+  ...
+  ) __attribute__((format(printf, 3, 4)));
+
+
+
+
 #endif // __MEMLOG_LIB_H__

@@ -109,9 +109,15 @@ STATIC REFIT_MENU_ENTRY   QueryEntry[] = {
   { L"Insert authentication into database", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
 };
 STATIC REFIT_MENU_ENTRY  *QueryEntries[] = { QueryEntry, QueryEntry + 1, QueryEntry + 2 };
+#if USE_XTHEME
+STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, XStringWP(L"Secure Boot Authentication"), XStringWP(), 3, NULL, 2, QueryEntries,
+  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+  /*  FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+#else
 STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication", NULL, 3, NULL, 2, QueryEntries,
                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
                                           /*  FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+#endif
 
 // Query the secure boot user what to do with image
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)

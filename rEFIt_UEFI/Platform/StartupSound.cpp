@@ -177,9 +177,10 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
       Tmp = Next;
     }
     freq = EfiAudioIoFreq48kHz;
+    // Samples was allocated via AllocateAlignedPages, so it must not be freed with FreePool, but according to the number of pages allocated
+    FreePages(WaveData.Samples,EFI_SIZE_TO_PAGES(WaveData.SamplesLength+4095));
     WaveData.SamplesLength *= 6;
     DBG("sound converted to 48kHz\n");
-    FreePool(WaveData.Samples);
     WaveData.Samples = (UINT8*)TempData;
   } else {
     TempData = (UINT16*)WaveData.Samples;

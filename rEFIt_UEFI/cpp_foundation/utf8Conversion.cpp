@@ -161,7 +161,7 @@ size_t utf8ToWChar(wchar_t* dst, size_t dst_max_len,  const char *s)
 			s += 1;
 		}
 #if __WCHAR_MAX__ > 0xFFFFu
-		dst[dst_len++] = c;
+		dst[dst_len++] = (wchar_t)c;
 		if ( dst_len == dst_max_len ) goto exit;
 #else
 		if ( c <= 0xFFFF) {
