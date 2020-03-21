@@ -204,7 +204,7 @@ int printf_lite_tests(void)
     Test1arg(F("sizeof(int16_t)=2"), F("sizeof(int16_t)=%zu"), sizeof(int16_t));
     Test1arg(F("sizeof(int32_t)=4"), F("sizeof(int32_t)=%zu"), sizeof(int32_t));
     Test1arg(F("sizeof(int64_t)=8"), F("sizeof(int64_t)=%zu"), sizeof(int64_t));
-    loggf(F("\n"));
+//    loggf(F("\n"));
 
 
 
