@@ -283,6 +283,16 @@ VOID StrToLower(IN CHAR16 *Str)
 }
 
 // TODO remove that and AlertMessage with a printf-like format
+#if USE_XTHEME
+STATIC void CreateInfoLines(IN CONST XStringW& Message, OUT XStringWArray* Information)
+{
+  if (Message.isEmpty()) {
+    return;
+  }
+  Information->Empty();
+  //TODO will fill later
+}
+#else
 STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Information)
 {
   CONST CHAR16 *Ptr;
@@ -323,7 +333,7 @@ STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Informa
 //  }
 //  return Information;
 }
-
+#endif
 extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 
 
@@ -331,9 +341,9 @@ extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 // it can be a semitransparent rectangular at the screen centre as it was in Clover v1.0
 #if USE_XTHEME
 STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, XStringW(), XStringW(), &MenuEntryReturn, NULL);
-VOID AlertMessage(IN XStringW& Title, IN XStringW& Message)
+VOID AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
 {
-  CreateInfoLines(Message.data(), &AlertMessageMenu.InfoLines);
+  CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
   AlertMessageMenu.Title = Title;
   AlertMessageMenu.RunMenu(NULL);
   AlertMessageMenu.InfoLines.Empty();
@@ -369,8 +379,8 @@ VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
 #define TAG_NO  2
 
 //REFIT_SIMPLE_MENU_ENTRY_TAG(CONST CHAR16 *Title_, UINTN Tag_, ACTION AtClick_)
-STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { XStringWP(L"Yes"), TAG_YES, ActionEnter };
-STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { XStringWP(L"No"), TAG_NO, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry(XStringW().takeValueFrom(L"Yes"), TAG_YES, ActionEnter);
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry(XStringW().takeValueFrom(L"No"), TAG_NO, ActionEnter);
 
 //REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
 #if USE_XTHEME
@@ -379,6 +389,27 @@ STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, XStringW(), XStringW(), &YesMessag
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, NULL, NULL, &YesMessageEntry, &NoMessageEntry);
 #endif
 // Display a yes/no prompt
+#if USE_XTHEME
+BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
+{
+  BOOLEAN            Result = FALSE;
+  UINTN              MenuExit;
+  CreateInfoLines(Message, &YesNoMessageMenu.InfoLines);
+  YesNoMessageMenu.Title = Title;
+  do
+  {
+    REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
+    MenuExit = YesNoMessageMenu.RunMenu(&ChosenEntry);
+    if ( ChosenEntry != NULL  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag == TAG_YES  &&
+        ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
+      Result = TRUE;
+      MenuExit = MENU_EXIT_ENTER;
+    }
+  } while (MenuExit != MENU_EXIT_ENTER);
+  YesNoMessageMenu.InfoLines.Empty();
+  return Result;
+}
+#else
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
 {
   BOOLEAN            Result = FALSE;
@@ -406,7 +437,7 @@ BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
 //  }
   return Result;
 }
-
+#endif
 // Ask user for file path from directory menu
 BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
                                   IN CHAR16 *ParentPath OPTIONAL, IN EFI_FILE *Dir,
@@ -469,7 +500,11 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
   Menu.Entries.AddReference(&MenuEntryReturn, false);
 //  Menu.Entries.size() = Count;
 //  Menu.Entries = Entries;
+#if USE_XTHEME
+  Menu.Title.takeValueFrom(Title);
+#else
   Menu.Title = Title;
+#endif
   do
   {
     REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry = NULL;

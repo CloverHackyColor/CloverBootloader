@@ -68,7 +68,7 @@ public:
   UINTN             ID;
 #if USE_XTHEME
   XStringW Title;
-  XImage TitleImage;
+  XImage  TitleImage;
 #else
   CONST  CHAR16     *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
   EG_IMAGE          *TitleImage;
@@ -133,7 +133,7 @@ public:
 #endif
 
 #if USE_XTHEME
-  REFIT_MENU_SCREEN(UINTN ID, XStringW& Title, XStringW& TimeoutText)
+  REFIT_MENU_SCREEN(UINTN ID, XStringW Title, XStringW TimeoutText)
   : ID(ID), Title(Title), TitleImage(),
   TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(), AnimeRun(0),
   Once(0), LastDraw(0), CurrentFrame(0),
@@ -151,7 +151,7 @@ public:
 #endif
 
 #if USE_XTHEME
-  REFIT_MENU_SCREEN(UINTN ID, XStringW&  Title, XStringW&  TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
+  REFIT_MENU_SCREEN(UINTN ID, XStringW  Title, XStringW  TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
   : ID(ID), Title(Title), TitleImage(),
   TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(), AnimeRun(0),
   Once(0), LastDraw(0), CurrentFrame(0),

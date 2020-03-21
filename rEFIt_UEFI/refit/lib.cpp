@@ -1564,7 +1564,7 @@ MetaiMatch (
 	if (!mUnicodeCollation) {
 		// quick fix for driver loading on UEFIs without UnicodeCollation
 		//return FALSE;
-		return TRUE;
+		return TRUE; //this is wrong anyway
 	}
 	return mUnicodeCollation->MetaiMatch (mUnicodeCollation, String, Pattern);
 }
