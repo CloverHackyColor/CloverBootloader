@@ -80,9 +80,9 @@ fi
 
 package/buildpkg.sh --srcroot "$SRCROOT" --symroot "sym" --builddir "$PKG_BUILD_DIR" ${NOEXTRAS:1} || exit $?
 
-(cd sym ; zip Clover_r${revision}.zip \
- Clover_r${revision}.pkg              \
- Clover_r${revision}.pkg.md5 )
+#(cd sym ; zip Clover_r${revision}.zip \
+# Clover_r${revision}.pkg              \
+# Clover_r${revision}.pkg.md5 )
 
 # Workspace = edk2/Clover/CloverPackage/
 # Remove temp files.
