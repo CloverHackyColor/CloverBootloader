@@ -27,14 +27,14 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.32}
-export GCC_VERSION=${GCC_VERSION:-9.2.0}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.34}
+export GCC_VERSION=${GCC_VERSION:-9.3.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
-export GMP_VERSION=${GMP_VERSION:-gmp-6.1.2}
+export GMP_VERSION=${GMP_VERSION:-gmp-6.2.0}
 export MPFR_VERSION=${MPFR_VERSION:-mpfr-4.0.2}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.1.0}
-export ISL_VERSION=${ISL_VERSION:-isl-0.21}
+export ISL_VERSION=${ISL_VERSION:-isl-0.22.1}
 
 # Change PREFIX if you want gcc and binutils
 # installed on different place
@@ -240,11 +240,11 @@ CompileLibs () {
         rm -rf "${DIR_BUILD}/$ARCH-gmp"
         mkdir -p "${DIR_BUILD}/$ARCH-gmp" && cd "${DIR_BUILD}/$ARCH-gmp"
 
-        # building gmp on Catalina currently requires no-stack-check flag
-        if [[ "${BUILDVER}" == "10.15" ]]; then
-          echo "- ${GMP_VERSION} applying Catalina flag..."
-          export CPPFLAGS="-fno-stack-check"
-        fi
+        # building gmp on Catalina currently requires no-stack-check flag - NOT NEEDED anymore with latest gmp
+        #if [[ "${BUILDVER}" == "10.15" ]]; then
+        #  echo "- ${GMP_VERSION} applying Catalina flag..."
+        #  export CPPFLAGS="-fno-stack-check"
+        #fi
 
         echo "- ${GMP_VERSION} configure..."
         "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2>&1
@@ -256,9 +256,9 @@ CompileLibs () {
         echo "- ${GMP_VERSION} installed in $PREFIX"
 
         # unset flag which was set for Catalina
-        if [[ "${BUILDVER}" == "10.15" ]]; then
-          unset CPPFLAGS
-        fi
+        #if [[ "${BUILDVER}" == "10.15" ]]; then
+        #  unset CPPFLAGS
+        #fi
     fi
 
     if [[ ! -f $PREFIX/include/mpfr.h ]]; then
@@ -465,8 +465,9 @@ CompileCrossGCC () {
     local GCC_DIR=$(ExtractTarball "gcc-${GCC_VERSION}.tar.xz")
 
     if [[ "${BUILDVER}" == "10.15" ]]; then
-      echo "- gcc-${GCC_VERSION} applying Catalina patch and path..."
-      curl -L https://raw.githubusercontent.com/Homebrew/formula-patches/b8b8e65e/gcc/9.2.0-catalina.patch | patch -N -Z -p1 --directory="${GCC_DIR}"
+      echo "- gcc-${GCC_VERSION} applying Catalina path..."
+      #patch no longer needed with gcc 9.3.0, CPATH still needed
+      #curl -L https://raw.githubusercontent.com/Homebrew/formula-patches/b8b8e65e/gcc/9.2.0-catalina.patch | patch -N -Z -p1 --directory="${GCC_DIR}"
       export CPATH=$SDK/usr/include
     fi
 
