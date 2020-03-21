@@ -100,9 +100,12 @@
   Platform/Posix/stddef.h
   Platform/Posix/stdint.h
   Platform/Posix/stdlib.h
+  Platform/Posix/stdio.h
   Platform/Posix/stdio.cpp
   Platform/Posix/strcmp.cpp
+  Platform/Posix/string.h
   Platform/Posix/strlen.cpp
+  Platform/Posix/wchar.h
   Platform/Posix/wchar.cpp
   Platform/Posix/abort.cpp
   Platform/AcpiPatcher.cpp
