@@ -21,7 +21,7 @@
 #include "XToolsCommon.h"
 #include "XStringWP.h"
 
-#include "printf_lite.h"
+#include "../../Include/Library/printf_lite.h"
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -36,7 +36,7 @@ XStringWP::XStringWP(const wchar_t *S)
 		panic();
 	}
 DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
-	Init(StrLen(S));
+	Init(wcslen(S));
 	StrCpy(S);
 }
 

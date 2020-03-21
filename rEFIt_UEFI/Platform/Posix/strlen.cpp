@@ -1,9 +1,9 @@
 
 //#include <posix.h> // use angled, so posix.h will vary depending of the platform
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stddef.h>
+#include <stdlib.h> // for abort
+#include <stddef.h> // for size_t
+#include <limits.h> // for SIZE_T_MAX
 
 #ifdef MAP_TO_EDK_STRLEN
 extern "C" UINTN EFIAPI AsciiStrLen (IN CONST CHAR8 *String);

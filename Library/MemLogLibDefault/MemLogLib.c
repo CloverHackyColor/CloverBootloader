@@ -15,6 +15,7 @@
 #include <Library/PciLib.h>
 #include "GenericIch.h"
 
+#include <Library/printf_lite.h>
 //
 // Struct for holding mem buffer.
 //
@@ -272,7 +273,7 @@ MemLogVA (
   LastMessage = mMemLog->Cursor;
   if (Timing) {
     //
-    // Write timing only at the beginnign of a new line
+    // Write timing only at the beginning of a new line
     //
     if ((mMemLog->Buffer[0] == '\0') || (mMemLog->Cursor[-1] == '\n')) {
       DataWritten = AsciiSPrint(
@@ -301,7 +302,7 @@ MemLogVA (
   //
   // Write to standard debug device also
   //
-  DebugPrint(DEBUG_INFO, LastMessage);
+  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 }
 
 /**
@@ -416,4 +417,144 @@ GetMemLogTscTicksPerSecond (VOID)
     }
   }
   return mMemLog->TscFreqSec;
+}
+
+
+// Microsoft wants _fltused
+#ifdef _MSC_VER
+#ifdef __cplusplus
+extern "C" {
+#endif
+int _fltused=0; // it should be a single underscore since the double one is the mangled name
+#ifdef __cplusplus
+}
+#endif
+#endif
+
+/**
+  Prints a log message to memory buffer.
+
+  @param  Timing      TRUE to prepend timing to log.
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
+  @param  Format      The format string for the debug message to print.
+  @param  Marker      VA_LIST with variable arguments for Format.
+
+**/
+VOID
+EFIAPI
+MemLogfVA (
+  IN  CONST BOOLEAN Timing,
+  IN  CONST INTN    DebugMode,
+  IN  CONST CHAR8   *Format,
+  IN  VA_LIST       Marker
+  )
+{
+  EFI_STATUS      Status;
+  UINTN           DataWritten;
+  CHAR8           *LastMessage;
+
+  if (Format == NULL) {
+    return;
+  }
+
+  if (mMemLog == NULL) {
+    Status = MemLogInit ();
+    if (EFI_ERROR (Status)) {
+      return;
+    }
+  }
+
+  //
+  // Check if buffer can accept MEM_LOG_MAX_LINE_SIZE chars.
+  // Increase buffer if not.
+  //
+  if ((UINTN)(mMemLog->Cursor - mMemLog->Buffer) + MEM_LOG_MAX_LINE_SIZE > mMemLog->BufferSize) {
+      UINTN Offset;
+      // not enough place for max line - make buffer bigger
+      // but not too big (if something gets out of controll)
+      if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
+      // Out of resources!
+        return;
+      }
+      Offset = mMemLog->Cursor - mMemLog->Buffer;
+      mMemLog->Buffer = ReallocatePool(mMemLog->BufferSize, mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE, mMemLog->Buffer);
+      mMemLog->BufferSize += MEM_LOG_INITIAL_SIZE;
+      mMemLog->Cursor = mMemLog->Buffer + Offset;
+    }
+
+  //
+  // Add log to buffer
+  //
+  LastMessage = mMemLog->Cursor;
+  if (Timing) {
+    //
+    // Write timing only at the beginning of a new line
+    //
+    if ((mMemLog->Buffer[0] == '\0') || (mMemLog->Cursor[-1] == '\n')) {
+      DataWritten = AsciiSPrint(
+                                mMemLog->Cursor,
+                                mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
+                                "%a  ",
+                                GetTiming ());
+      mMemLog->Cursor += DataWritten;
+    }
+
+  }
+//  DataWritten = AsciiVSPrint(
+//                             mMemLog->Cursor,
+//                             mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
+//                             Format,
+//                             Marker);
+  DataWritten = vsnprintf(
+                             mMemLog->Cursor,
+                             mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
+                             Format,
+                             Marker);
+//  mMemLog->Cursor += DataWritten;
+// vsnprintf doesn't return the number of char printed. TODO will do it soon in printf_lite
+  mMemLog->Cursor += AsciiStrLen(mMemLog->Cursor);
+
+  //
+  // Pass this last message to callback if defined
+  //
+  if (mMemLog->Callback != NULL) {
+    mMemLog->Callback(DebugMode, LastMessage);
+  }
+
+  //
+  // Write to standard debug device also
+  //
+  DebugPrint(DEBUG_INFO, "%a", LastMessage);
+}
+
+/**
+  Prints a log to message memory buffer.
+
+  If Format is NULL, then does nothing.
+
+  @param  Timing      TRUE to prepend timing to log.
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
+  @param  Format      The format string for the debug message to print.
+  @param  ...         The variable argument list whose contents are accessed
+  based on the format string specified by Format.
+
+ **/
+VOID
+EFIAPI
+MemLogf (
+  IN  CONST BOOLEAN Timing,
+  IN  CONST INTN    DebugMode,
+  IN  CONST CHAR8   *Format,
+  ...
+  )
+{
+  VA_LIST           Marker;
+
+  if (Format == NULL) {
+    return;
+  }
+
+  VA_START (Marker, Format);
+  MemLogfVA (Timing, DebugMode, Format, Marker);
+  VA_END (Marker);
 }

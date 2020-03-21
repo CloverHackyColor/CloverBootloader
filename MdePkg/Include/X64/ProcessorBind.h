@@ -208,9 +208,14 @@
   /// UTF-16 encoding format as defined by Unicode 2.1 and ISO/IEC 10646 standards.
   ///
 #ifdef __cplusplus
+  // So this MUST be compiled with short wchar
+  // I am considering switching to char16_t, to be independant of sizeof wchar_t
   #define CHAR16 wchar_t
 #else
   typedef unsigned short      CHAR16;
+  typedef UINT16      wchar_t;
+  typedef UINT16      char16_t;
+  typedef UINT32      char32_t;
 #endif
   ///
   /// 2-byte signed value

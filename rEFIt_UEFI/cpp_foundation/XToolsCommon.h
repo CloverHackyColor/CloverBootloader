@@ -1,6 +1,8 @@
 #ifndef __XTOOLSCOMMON_H__
 #define __XTOOLSCOMMON_H__
 
+#include <posix.h>
+
 
 #define xsize UINTN
 #define MAX_XSIZE MAX_UINTN
@@ -17,7 +19,6 @@ extern xsize XBufferGrowByDefault;
 
 #ifdef CLOVER_BUILD
 
-#include <posix.h>
 
 extern "C" {
 #include <ProcessorBind.h>
@@ -28,11 +29,14 @@ extern "C" {
 
 #endif
 
-#define Xalloc(AllocationSize) AllocatePool(AllocationSize)
-#define Xrealloc(OldSize, NewSize, OldBuffer) ReallocatePool(OldSize, NewSize, OldBuffer)
-#define Xfree(Buffer) FreePool(Buffer)
-#define Xmemmove(dest,source,count) CopyMem(dest, (void*)(source), count) // that has to handle overlapping memory (prefer memmove to memcpy).
+//#define Xalloc(AllocationSize) AllocatePool(AllocationSize)
+//#define Xrealloc(OldSize, NewSize, OldBuffer) ReallocatePool(OldSize, NewSize, OldBuffer)
+//#define Xfree(Buffer) FreePool(Buffer)
+//#define Xmemmove(dest,source,count) CopyMem(dest, (void*)(source), count) // that has to handle overlapping memory (prefer memmove to memcpy).
 
+#if !defined(CLOVER_BUILD)
+#define realloc(ptr, newsize, oldsize) realloc(ptr, newsize)
+#endif
 
 
 // Declare here instead of include to avoid circular dependency.

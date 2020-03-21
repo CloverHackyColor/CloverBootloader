@@ -33,15 +33,15 @@ class XString
 	XString(const XString &aString);
 
 //	XString(const XConstString &aConstString);
-	XString(const char *S);
-	XString(const char* S, xsize count);
+//	XString(const char *S);
+//	XString(const char* S, xsize count);
 
-	XString(const wchar_t *S);
+//	XString(const wchar_t *S);
 
 //	XString(uchar);
-	XString(char);
-	XString(int);
-	XString(unsigned long long);
+//	XString(char);
+//	XString(int);
+//	XString(unsigned long long);
 
 	~XString();
 
@@ -50,11 +50,12 @@ class XString
 
   public:
 	const char *data(xsize ui=0) const { return c+ui; }
+	const char *c_str() const { return c; } // same as std::string
 	char *data(xsize ui=0) { return (char*)(c+ui); }
 	char *data(int i) { if ( i<0 ) panic("const wchar_t *data(INTN i=0) const -> i < 0"); return c+i; }
 	char *DataWithSizeMin(xsize ui, xsize size, xsize nGrowBy=XStringGrowByDefault) { CheckSize(size, nGrowBy); return data(ui); }
 
-	xsize length() const { return (xsize)AsciiStrLen(c); }
+	xsize length() const { return strlen(c); }
 	xsize Size() const { return m_allocatedSize; }
 	void SetLength(xsize len);
 
@@ -98,15 +99,15 @@ class XString
 	void StrCpy(const char *buf);
 	void StrnCpy(const char *buf, xsize len);
 	void StrnCat(const char *buf, xsize len);
-	void StrnCat(const char *buf);
+	void StrCat(const char *buf);
 	void Delete(xsize pos, xsize count=1);
 
 	void Insert(xsize pos, const XString& Str);
 
 	void Cat(const XString &uneXString);
 
-	void vSPrintf(const char *Format, VA_LIST va);
-	void SPrintf(const char *format, ...)
+	XString& vSPrintf(const char *Format, va_list va);
+	XString& SPrintf(const char *format, ...)
 		#ifndef _MSC_VER
 			__attribute__((format (printf, 2, 3))) // 2 and 3 because of hidden parameter.
 		#endif
@@ -114,25 +115,30 @@ class XString
 
 
 	const XString& takeValueFrom(const char* S) { StrCpy(S); return *this; }
+	const XString& takeValueFrom(const char* S, xsize count) { StrnCpy(S, count); return *this; }
 	const XString& takeValueFrom(const wchar_t* S) { SPrintf("%ls", S); return *this; }
 
 	const XString &operator =(const XString &aString);
 //	const XString &operator =(const XConstString &aConstString);
-	const XString &operator =(const char* S);
-	const XString &operator =(char);
-	const XString &operator =(int);
-	const XString &operator =(unsigned int);
-	const XString &operator =(long);
-	const XString &operator =(unsigned long long);
+
+// Deactivate assignment during refactoring to avoid confusion
+//	const XString &operator =(const char* S);
+//	const XString &operator =(char);
+//	const XString &operator =(int);
+//	const XString &operator =(unsigned int);
+//	const XString &operator =(long);
+//	const XString &operator =(unsigned long long);
 
 	const XString &operator += (const XString &);
-//	const XString &operator += (const XConstString &aConstString);
 	const XString &operator += (const char* S);
-	const XString &operator += (char);
-	const XString &operator += (int);
-	const XString &operator += (unsigned int);
-	const XString &operator += (long);
-	const XString &operator += (unsigned long long);
+//	const XString &operator += (const XConstString &aConstString);
+
+// Deactivate assignment during refactoring to avoid confusion
+//	const XString &operator += (char);
+//	const XString &operator += (int);
+//	const XString &operator += (unsigned int);
+//	const XString &operator += (long);
+//	const XString &operator += (unsigned long long);
 
 	XString SubString(xsize pos, xsize count) const;
 	xsize IdxOf(char c, xsize Pos = 0) const;
@@ -173,7 +179,7 @@ class XString
 */
 #endif
 
-	bool Equal(const char* S) const { return AsciiStrCmp(data(), (S ? S : "")) == 0; };
+	bool Equal(const char* S) const { return strcmp(data(), (S ? S : "")) == 0; };
 //	bool BeginEqual(const char* S) const { return StringBeginEqual(data(), S); }
 //	bool SubStringEqual(xsize Pos, const char* S) const { return StringBeginEqual(data(Pos), S); }
 #ifdef TODO_skqdjfhksqjhfksjqdf
@@ -215,24 +221,26 @@ class XString
 	// Chaines
 	friend XString operator + (const XString& p1, const XString& p2) { XString s; s=p1; s+=p2; return s; }
 	friend XString operator + (const XString& p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (const char *p1,   const XString& p2) { XString s; s=p1; s+=p2; return s; }
+	friend XString operator + (const char *p1,   const XString& p2) { XString s; s.takeValueFrom(p1); s+=p2; return s; }
 //	friend XString operator + (const XConstString& p1,   const XString& p2) { XString s; s=p1; s+=p2; return s; }
 //	friend XString operator + (const XString& p1,   const XConstString& p2) { XString s; s=p1; s+=p2; return s; }
 //	friend XString operator + (const XConstString& p1,   const XConstString& p2) { XString s; s=p1; s+=p2; return s; }
 //	friend XString operator + (const XConstString &p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
 //	friend XString operator + (const char *p1,   const XConstString &p2) { XString s; s=p1; s+=p2; return s; }
-	// Char
-	friend XString operator + (const XString& p1, char p2         ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (char p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
-	// NumÈrique
-	friend XString operator + (const XString& p1, int p2          ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (int p1,   const XString& p2        ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (const XString& p1, unsigned int p2         ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (unsigned int p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (const XString& p1, long p2         ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (long p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (const XString& p1, unsigned long long p2        ) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (unsigned long long p1,   const XString& p2      ) { XString s; s=p1; s+=p2; return s; }
+
+// deactivate during refactoring
+//	// Char
+//	friend XString operator + (const XString& p1, char p2         ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (char p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
+//	// NumÈrique
+//	friend XString operator + (const XString& p1, int p2          ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (int p1,   const XString& p2        ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (const XString& p1, unsigned int p2         ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (unsigned int p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (const XString& p1, long p2         ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (long p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (const XString& p1, unsigned long long p2        ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (unsigned long long p1,   const XString& p2      ) { XString s; s=p1; s+=p2; return s; }
 
 	// OpÈrateur ==
 	// Chaines
@@ -282,6 +290,7 @@ XString ToAlpha(const XString &S);
 XString ToLower(const char *S, bool FirstCharIsCap = false);
 XString ToUpper(const char *S);
 #endif
-XString CleanCtrl(const XString &S);
+// Deactivate assignment during refactoring to avoid confusion
+//XString CleanCtrl(const XString &S);
 
 #endif

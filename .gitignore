@@ -124,3 +124,6 @@ tools
 
 #VC project
 /VC
+
+#Eclipse build folder
+/DEBUG_*/
