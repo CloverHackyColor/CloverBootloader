@@ -990,6 +990,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
           Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
           FileHandle->Close(FileHandle);
           if (!EFI_ERROR(Status)) {
+                // strip line endings
+                while (BufferSize > 0 && (Buffer[BufferSize-1]=='\n' || Buffer[BufferSize-1]=='\r')) {
+                  Buffer[--BufferSize]='\0';
+                }
           	Volume->VolLabel = PoolPrint(L"%a", Buffer);
           }
       }
