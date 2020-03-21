@@ -326,7 +326,19 @@ STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Informa
 
 extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 
-//STATIC REFIT_MENU_ENTRY  *AlertMessageEntries[] = { &MenuEntryReturn };
+
+// it is not good to use Options menu style for messages and one line dialogs
+// it can be a semitransparent rectangular at the screen centre as it was in Clover v1.0
+#if USE_XTHEME
+STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, XStringW(), XStringW(), &MenuEntryReturn, NULL);
+VOID AlertMessage(IN XStringW& Title, IN XStringW& Message)
+{
+  CreateInfoLines(Message.data(), &AlertMessageMenu.InfoLines);
+  AlertMessageMenu.Title = Title;
+  AlertMessageMenu.RunMenu(NULL);
+  AlertMessageMenu.InfoLines.Empty();
+}
+#else
 STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, NULL, NULL, &MenuEntryReturn, NULL);
 
 // Display an alert message
@@ -351,6 +363,7 @@ VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
 //  }
   AlertMessageMenu.InfoLines.Empty();
 }
+#endif
 
 #define TAG_YES 1
 #define TAG_NO  2
@@ -360,8 +373,11 @@ STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry = { XStringWP(L"Yes"), TAG_
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry = { XStringWP(L"No"), TAG_NO, ActionEnter };
 
 //REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
+#if USE_XTHEME
+STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, XStringW(), XStringW(), &YesMessageEntry, &NoMessageEntry);
+#else
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, NULL, NULL, &YesMessageEntry, &NoMessageEntry);
-
+#endif
 // Display a yes/no prompt
 BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
 {
@@ -411,8 +427,11 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
 //STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL,
 //  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
 //  { 0, 0, 0, 0 }, NULL};
+#if USE_XTHEME
+STATIC REFIT_MENU_SCREEN  InitialMenu(0, XStringWP(L"Please Select File..."), XStringW());
+#else
 STATIC REFIT_MENU_SCREEN InitialMenu(0, L"Please Select File...", NULL);
-
+#endif
 // Ask user for file path from volumes menu
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {

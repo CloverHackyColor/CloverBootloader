@@ -746,10 +746,14 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
   return;
 }
 #endif
+
+// it is not draw, it is render and mainly used in egRenderText
+// which is used in icns.cpp as an icon rplacement if no image found, looks like not used
+// in menu.cpp 3 places
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
 #if USE_XTHEME
-INTN drawSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XString& string, UINTN Cursor)
+INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XString& string, UINTN Cursor)
 {
   INTN Width;
   UINTN i;
@@ -774,7 +778,7 @@ INTN drawSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XStr
   float Scale, sy;
   float x, y;
   if (!fontSVG) {
-    DBG("no font for drawSVGtext\n");
+    DBG("no font for renderSVGtext\n");
     return 0;
   }
   p = nsvg__createParser();
@@ -836,7 +840,7 @@ INTN drawSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XStr
 
 }
 #else
-INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, UINTN Cursor)
+INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, UINTN Cursor)
 {
   INTN Width;
   UINTN i;
@@ -861,7 +865,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   float Scale, sy;
   float x, y;
   if (!fontSVG) {
-    DBG("no font for drawSVGtext\n");
+    DBG("no font for renderSVGtext\n");
     return 0;
   }
   if (!TextBufferXY) {
@@ -908,7 +912,7 @@ INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CO
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
 
-//DBG("drawSVGtext -> Enter. Text=%a\n", XString(string).c);
+//DBG("renderSVGtext -> Enter. Text=%a\n", XString(string).c);
   for (i=0; i < len; i++) {
     CHAR16 letter = string[i];
 
@@ -1066,7 +1070,11 @@ VOID testSVG()
     Height = 80;
     Width = UGAWidth-200;
     DBG("create test textbuffer\n");
+#if USE_XTHEME
+    XImage TextBufferXY(Width, Height);
+#else
     EG_IMAGE* TextBufferXY = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
+#endif
     Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
     DBG("test Font.svg loaded status=%r\n", Status);
     if (!EFI_ERROR(Status)) {
@@ -1082,14 +1090,23 @@ VOID testSVG()
 //      DBG("font parsed family=%a\n", p->font->fontFamily);
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
-      drawSVGtext(TextBufferXY, 0, 0, 3, XStringW().takeValueFrom("Clover Кловер"), 1);
+#if USE_XTHEME
+      renderSVGtext(TextBufferXY, 0, 0, 3, XString("Clover Кловер"), 1);
+#else
+      renderSVGtext(TextBufferXY, 0, 0, 3, L"Clover Кловер", 1);
+#endif
 //      DBG("text ready to blit\n");
+#if USE_XTHEME
+      TextBufferXY.Draw((UGAWidth - Width) / 2,
+                (UGAHeight - Height) / 2, 1.f);
+#else
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,
                     (UGAHeight - Height) / 2,
                     &MenuBackgroundPixel,
                     16);
       egFreeImage(TextBufferXY);
+#endif
 //      nsvg__deleteParser(p);
 //      DBG("draw finished\n");
     }

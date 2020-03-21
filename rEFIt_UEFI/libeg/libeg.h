@@ -37,6 +37,8 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
+#define USE_XTHEME 0
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -138,11 +140,6 @@ extern "C" {
 
 #ifdef __cplusplus
 } // extern "C"
-#endif
-
-#define USE_XTHEME 0
-#if USE_XTHEME
-extern XTheme ThemeX; //global variable defined in lib.cpp
 #endif
 
 /* types */
@@ -292,7 +289,6 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 EFI_STATUS egScreenShot(VOID);
 
-INTN drawSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* text, UINTN Cursor);
 VOID testSVG(VOID);
 
 #endif /* __LIBEG_LIBEG_H__ */

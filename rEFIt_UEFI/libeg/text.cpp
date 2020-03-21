@@ -267,7 +267,11 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
 
   if (GlobalConfig.TypeSVG) {
-    return drawSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
+#if USE_XTHEME
+    return renderSVGtext(XImage(CompImage), PosX, PosY, textType, XString(Text), Cursor);
+#else
+    return renderSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
+#endif
   }
   
   // clip the text
