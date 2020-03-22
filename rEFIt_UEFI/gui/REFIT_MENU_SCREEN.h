@@ -97,7 +97,7 @@ public:
   BOOLEAN ScrollEnabled;
 //  MENU_STYLE_FUNC StyleFunc;
 
-  //scroll positions should depends on REFIT_SCREEN?
+  //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?
   /*
   EG_RECT BarStart;
@@ -140,6 +140,16 @@ public:
   Frames(0), FrameTime(0),
   Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {};
+  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC)
+  : ID(ID), Title(), TitleImage(),
+  TimeoutSeconds(0), TimeoutText(), ThemeName(), AnimeRun(0),
+  Once(0), LastDraw(0), CurrentFrame(0),
+  Frames(0), FrameTime(0),
+  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+  {
+    Title.takeValueFrom(TitleC);
+    TimeoutText.takeValueFrom(TimeoutTextC);
+  };
 #else
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText)
 						: ID(ID), Title(Title), TitleImage(0),
@@ -186,6 +196,7 @@ public:
   VOID AddMenuInfo(CONST char *Line);
   VOID AddMenuInfo_f(CONST char *format, ...);
   VOID AddMenuInfoLine(IN CONST CHAR16 *InfoLine);
+  VOID AddMenuInfoLine(IN XStringW& InfoLine);
   VOID AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
   VOID AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   VOID AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);

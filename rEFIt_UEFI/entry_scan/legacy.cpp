@@ -161,7 +161,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN();
 #if USE_XTHEME
-  SubScreen->Title.SPrintf("Boot Options for %s on %s", LoaderTitle, VolDesc);
+  SubScreen->Title = XStringWP(L"Boot Options for ") + LoaderTitle + L" on " + VolDesc;
 #else
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
 #endif

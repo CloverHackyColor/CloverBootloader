@@ -123,7 +123,11 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   // prepare the menu entry
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
   Entry = new REFIT_MENU_ENTRY_CLOVER();
+//#if USE_XTHEME
   Entry->Title.takeValueFrom(LoaderTitle);
+//#else
+//  Entry->Title = EfiStrDuplicate(LoaderTitle);
+//#endif
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;
   Entry->ShortcutLetter = 'C';
@@ -145,7 +149,12 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
+#if USE_XTHEME
+  SubScreen->Title.takeValueFrom(LoaderTitle);
+#else
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
+#endif
+
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->AnimeRun = SubScreen->GetAnime();

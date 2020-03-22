@@ -753,7 +753,13 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
-  SubScreen->Title = PoolPrint(L"Options for %s", Entry->Title.s(), Entry->VolName);
+#if USE_XTHEME
+  SubScreen->Title = XStringWP("Options for ") + Entry->Title.s() + L" on " + Entry->VolName;
+#else
+  //very old mistake!!!
+  SubScreen->Title = PoolPrint(L"Options for %s on %s", Entry->Title.s(), Entry->VolName);
+#endif
+
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20;
   //  DBG("get anime for os=%d\n", SubScreen->ID);
@@ -1967,12 +1973,18 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 //          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
+#if USE_XTHEME
+            SubScreen->Title = XStringWP("Boot Options for ") + ((Custom->Title != NULL) ? Custom->Title : CustomPath) + L" on " + Entry->VolName;
+#else
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
+#endif
+
+
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->AnimeRun = SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-            SubScreen->AddMenuInfoLine(PoolPrint(L"Volume size: %dMb", VolumeSize));
+            SubScreen->AddMenuInfoLine(XStringWP(L"Volume size: ") + WPrintf("%lldMb", VolumeSize));
             SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
               CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);

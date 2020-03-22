@@ -186,6 +186,42 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
   bounds[3] = -FLT_MAX;
   nsvg__imageBounds(p2, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
+  if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
+    GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
+    GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
+    DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
+  }
+
+  float Height = IconImage->height * Scale;
+  float Width = IconImage->width * Scale;
+  //  DBG("icon %a width=%s height=%s\n", IconName, PoolPrintFloat(Width), PoolPrintFloat(Height));
+  int iWidth = (int)(Width + 0.5f);
+  int iHeight = (int)(Height + 0.5f);
+//  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
+  XImage NewImage(iWidth, iHeight); //empty
+  if (IconImage->shapes == NULL) {
+    Image = NewImage;
+    return Status;
+  }
+
+  //  DBG("begin rasterize %a\n", IconName);
+  float tx = 0.f, ty = 0.f;
+  if ((Id != BUILTIN_ICON_BACKGROUND) &&
+      (Id != BUILTIN_ICON_ANIME) &&
+      (strstr(IconName, "Banner") == NULL)) {
+    float realWidth = (bounds[2] - bounds[0]) * Scale;
+    float realHeight = (bounds[3] - bounds[1]) * Scale;
+    tx = (Width - realWidth) * 0.5f;
+    ty = (Height - realHeight) * 0.5f;
+  }
+
+  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
+  //  DBG("%a rastered, blt\n", IconImage);
+
+  nsvgDeleteRasterizer(rast);
+  //  nsvg__deleteParser(p2);
+  //  nsvgDelete(p2->image);
+  Image = NewImage;
 
   return EFI_SUCCESS;
 }
@@ -587,7 +623,7 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
 {
   EFI_STATUS Status;
   NSVGimage       *SVGimage;
-  NSVGrasterizer  *rast = nsvgCreateRasterizer();
+//  NSVGrasterizer  *rast = nsvgCreateRasterizer();
 
   // --- Parse theme.svg --- low case
   mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f);
@@ -620,19 +656,17 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
 
   ThemeX.Background = XImage(UGAWidth, UGAHeight);
   if (!ThemeX.BigBack.isEmpty()) {
-    ThemeX.BigBack.setEmpty:
+    ThemeX.BigBack.setEmpty();
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, &ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, ThemeX.BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, &ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, ThemeX.BigBack);
   }
-  DBG("background parsed\n");
-
-
-
+  DBG(" Background parsed\n");
+  return Status;
 }
 #endif
 
@@ -753,7 +787,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
 #if USE_XTHEME
-INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XString& string, UINTN Cursor)
+INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XStringW string, UINTN Cursor)
 {
   INTN Width;
   UINTN i;
@@ -795,7 +829,7 @@ INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XS
   nsvg__xformIdentity(text->xform);
   p->text = text;
 
-  len = StrLen(string);
+  len = string.length();
   Width = TextBufferXY.GetWidth();
   if (!fontSVG->unitsPerEm) {
     fontSVG->unitsPerEm = 1000.f;
@@ -829,7 +863,7 @@ INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XS
   p->image->realBounds[3] = fontSVG->bbox[3] * Scale;
   rast = nsvgCreateRasterizer();
   nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY.GetPixelPtr(0,0),
-                (int)TextBufferXY->Width, (int)TextBufferXY.GetHeight(), (int)(Width*4));
+                (int)TextBufferXY.GetWidth(), (int)TextBufferXY.GetHeight(), (int)(Width*4));
   float RealWidth = p->image->realBounds[2] - p->image->realBounds[0];
 
   nsvgDeleteRasterizer(rast);
@@ -1091,7 +1125,7 @@ VOID testSVG()
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
 #if USE_XTHEME
-      renderSVGtext(TextBufferXY, 0, 0, 3, XString("Clover Кловер"), 1);
+      renderSVGtext(TextBufferXY, 0, 0, 3, XStringW().takeValueFrom("Clover Кловер"), 1);
 #else
       renderSVGtext(TextBufferXY, 0, 0, 3, L"Clover Кловер", 1);
 #endif

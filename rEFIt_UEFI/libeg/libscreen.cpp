@@ -387,13 +387,13 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     if (egScreenWidth  != 0 && egScreenHeight != 0) {
  //       Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
       XStringW Resolution = WPrintf("%llux%llu", egScreenWidth, egScreenHeight);
-        if (Resolution) {
+//        if (Resolution) { //no sense
             Status = egSetScreenResolution(Resolution.data());
  //           FreePool(Resolution);
             if (!EFI_ERROR(Status)) {
                 return;
             }
-        }
+//        }
     }
 
     egDumpSetConsoleVideoModes();
