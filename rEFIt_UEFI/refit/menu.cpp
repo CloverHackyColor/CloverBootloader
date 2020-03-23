@@ -204,7 +204,7 @@ INTN OldChosenDsdt;
 UINTN OldChosenAudio;
 UINT8 DefaultAudioVolume = 70;
 //INTN NewChosenTheme;
-INTN TextStyle;
+INTN TextStyle; //why global?
 
 BOOLEAN mGuiReady = FALSE;
 
@@ -2507,7 +2507,27 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
   } else {
     TextStyle = 2;
   }
-
+#if USE_XTHEME
+  if (ThemeX.TypeSVG) {
+    if (!textFace[TextStyle].valid) {
+      if (textFace[0].valid) {
+        TextStyle = 0;
+      } else if (textFace[2].valid) {
+        TextStyle = 2;
+      } else if (textFace[1].valid) {
+        TextStyle = 1;
+      } else {
+        DBG("no valid text style\n");
+        textFace[TextStyle].size = TextHeight - 4;
+      }
+    }
+    if (textFace[TextStyle].valid) {
+      // TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
+      //clovy - row height / text size factor
+      TextHeight = (int)((textFace[TextStyle].size * RowHeightFromTextHeight) * ThemeX.Scale);
+    }
+  }
+#else
   if (GlobalConfig.TypeSVG) {
     if (!textFace[TextStyle].valid) {
       if (textFace[0].valid) {
@@ -2527,6 +2547,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       TextHeight = (int)((textFace[TextStyle].size * RowHeightFromTextHeight) * GlobalConfig.Scale);
     }
   }
+#endif
 
   //no default - no timeout!
   if ((*DefaultEntryIndex != -1) && (TimeoutSeconds > 0)) {
@@ -3079,6 +3100,69 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 /**
  * Draw text with specific coordinates.
  */
+
+
+#if USE_XTHEME
+INTN DrawTextXY(IN XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+{
+  INTN      TextWidth = 0;
+  INTN      XText = 0;
+  INTN      Height;
+  INTN      TextXYStyle = 1;
+//  EG_IMAGE  *TextBufferXY = NULL;
+  XImage TextBufferXY(0,0);
+
+  if (Text.isEmpty()) {
+    return 0;
+  }
+  if (!textFace[1].valid) {
+    if (textFace[2].valid) {
+      TextXYStyle = 2;
+    } else {
+      TextXYStyle = 0;
+    }
+  }
+
+  egMeasureText(Text.data(), &TextWidth, NULL);
+
+  if (XAlign == X_IS_LEFT) {
+    TextWidth = UGAWidth - XPos - 1;
+    XText = XPos;
+  }
+
+  if (ThemeX.TypeSVG) {
+    TextWidth += TextHeight * 2; //give more place for buffer
+    if (!textFace[TextXYStyle].valid) {
+      DBG("no vaid text face for message!\n");
+      Height = TextHeight;
+    } else {
+      Height = (int)(textFace[TextXYStyle].size * RowHeightFromTextHeight * ThemeX.Scale);
+    }
+  } else {
+    Height = TextHeight;
+  }
+
+//  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
+  TextBufferXY.setSizeInPixels(TextWidth, Height);
+  TextBufferXY.Fill(&MenuBackgroundPixel);
+
+  // render the text
+  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
+
+  if (XAlign != X_IS_LEFT) {
+    // shift 64 is prohibited
+    XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
+  }
+  //  DBG("draw text %s\n", Text);
+  //  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
+//  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
+//  egFreeImage(TextBufferXY);
+  TextBufferXY.Draw(XText, YPos, 1.f);
+  return TextWidth;
+}
+#else
+
+
 INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
@@ -3133,7 +3217,7 @@ INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAli
 
   return TextWidth;
 }
-
+#endif
 /**
  * Helper function to draw text for Boot Camp Style.
  * @author: Needy

@@ -275,7 +275,6 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
 VOID PrepareFont(VOID);
 VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
-INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
 //VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY);

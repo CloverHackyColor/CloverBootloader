@@ -204,6 +204,11 @@ void XImage::Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
       PixelData[y * Width + x] = Color;
 }
 
+void XImage::Fill(const EG_PIXEL* Color)
+{
+  Fill((const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)Color);
+}
+
 
 void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect)
 {

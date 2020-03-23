@@ -80,6 +80,7 @@ public:
 
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
+  void Fill(const EG_PIXEL* Color);
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect);
   void CopyScaled(const XImage& Image, float scale);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)

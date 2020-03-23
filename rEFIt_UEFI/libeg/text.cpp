@@ -262,8 +262,13 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
   return m;
 }
 
+#if USE_XTHEME
+INTN egRenderText(IN XStringW& Text, IN XImage& CompImage,
+                  IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
+#else
 INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                   IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
+#endif
 {
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
@@ -276,14 +281,15 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   UINTN           Cho = 0, Jong = 0, Joong = 0;
   UINTN           LeftSpace, RightSpace;
   INTN            RealWidth = 0;
-  INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
+
 
 #if USE_XTHEME
+    INTN ScaledWidth = (INTN)(ThemeX.CharWidth * ThemeX.Scale);
   if (ThemeX.TypeSVG) {
-    XImage TextImage(CompImage);
-    return renderSVGtext(TextImage, PosX, PosY, textType, XStringW().takeValueFrom(Text), Cursor);
+    return renderSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
   }
 #else
+    INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);
   if (GlobalConfig.TypeSVG) {
     return renderSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
   }
@@ -299,8 +305,13 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
+#if USE_XTHEME
+  BufferPtr = (EG_PIXEL*)CompImage.GetPixelPtr(0,0);
+  BufferLineOffset = CompImage.GetWidth();
+#else
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
+#endif
   BufferLineWidth = BufferLineOffset - PosX; // remove indent from drawing width
   BufferPtr += PosX + PosY * BufferLineOffset;
   FirstPixelBuf = BufferPtr;
@@ -315,7 +326,11 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   RealWidth = ScaledWidth;
 //  DBG("FontWidth=%d, CharWidth=%d\n", FontWidth, RealWidth);
   for (i = 0; i < TextLength; i++) {
+#if USE_XTHEME
+    c = Text.data()[i];
+#else
     c = Text[i];
+#endif
     if (gLanguage != korean) {
       c1 = (((c >= GlobalConfig.Codepage) ? (c - (GlobalConfig.Codepage - AsciiPageSize)) : c) & 0xff); //International letters
       c = c1;
