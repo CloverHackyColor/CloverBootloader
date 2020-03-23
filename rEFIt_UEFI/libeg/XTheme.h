@@ -85,7 +85,7 @@ public:
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
   XImage  Banner; //same as logo in the array, make a link?
   XImage  SelectionImages[6];
-  XImage  Button[4];
+  XImage  Buttons[4];
   XImage  ScrollbarBackgroundImage;
   XImage  BarStartImage;
   XImage  BarEndImage;

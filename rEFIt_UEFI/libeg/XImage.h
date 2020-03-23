@@ -87,6 +87,7 @@ public:
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
   EFI_STATUS FromSVG(const CHAR8 *SVGData, float scale);
+  EFI_STATUS FromEGImage(const EG_IMAGE* egImage);
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale);
@@ -96,6 +97,7 @@ public:
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
   EFI_STATUS LoadXImage(EFI_FILE *BaseDir, const char* IconName);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
+  void DummyImage(IN UINTN PixelSize);
 
 };
 

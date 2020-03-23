@@ -43,6 +43,20 @@ XImage::XImage(EG_IMAGE* egImage)
   }
 }
 
+EFI_STATUS XImage::FromEGImage(const EG_IMAGE* egImage)
+{
+  if ( egImage) {
+    setSizeInPixels(egImage->Width, egImage->Height);
+    CopyMem(&PixelData[0], egImage->PixelData, GetSizeInBytes());
+  } else {
+    setSizeInPixels(0, 0);
+  }
+  if (GetSizeInBytes() == 0) {
+    return EFI_NOT_FOUND;
+  }
+  return EFI_SUCCESS;
+}
+
 XImage& XImage::operator= (const XImage& other)
 {
 //	Width = other.GetWidth();
@@ -556,24 +570,42 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 //while compose uses old object
 void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
 {
-//    EG_IMAGE *NewImage;
-
-//  if (isEmpty())
-//    return;
   if (NewWidth == Width && NewHeight == Height)
     return;
 
-/*    NewImage = egCreateFilledImage(Width, Height, true, Color); // TODO : import that method to directly deal with XImage
-    if (NewImage == NULL) {
-        return; // panic instead ?
-    } */
   XImage NewImage(NewWidth, NewHeight);
   NewImage.Fill(Color);
-//  Compose(0, 0, NewImage, false);
-//    egFreeImage(NewImage);
   NewImage.Compose(0, 0, (*this), false);
   setSizeInPixels(NewWidth, NewHeight); //include reallocate but loose data
-//  CopyScaled(NewImage, 1.f);
   CopyMem(&PixelData[0], &NewImage.PixelData[0], GetSizeInBytes());
   //we have to copy pixels twice? because we can't return newimage instead of this
+}
+
+void XImage::DummyImage(IN UINTN PixelSize)
+{
+
+  UINTN           LineOffset;
+  CHAR8           *Ptr, *YPtr;
+
+  setSizeInPixels(PixelSize, PixelSize);
+
+  LineOffset = PixelSize * 4;
+
+  YPtr = (CHAR8 *)GetPixelPtr(0,0) + ((PixelSize - 32) >> 1) * (LineOffset + 4);
+  for (UINTN y = 0; y < 32; y++) {
+    Ptr = YPtr;
+    for (UINTN x = 0; x < 32; x++) {
+      if (((x + y) % 12) < 6) {
+        *Ptr++ = 0;
+        *Ptr++ = 0;
+        *Ptr++ = 0;
+      } else {
+        *Ptr++ = 0;
+        *Ptr++ = ~0; //yellow
+        *Ptr++ = ~0;
+      }
+      *Ptr++ = ~111;
+    }
+    YPtr += LineOffset;
+  }
 }

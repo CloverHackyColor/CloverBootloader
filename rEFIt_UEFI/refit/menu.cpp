@@ -2560,7 +2560,8 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
     }
 
     if (HaveTimeout) {
-      TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText, TimeoutCountdown);
+      TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText.data(), TimeoutCountdown);
+ //     XStringW TOMessage = TimeoutText + L" in " + WPrintf("%d", TimeoutCountdown) + L" seconds";
       ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
       FreePool(TimeoutMessage);
     }
@@ -4176,103 +4177,77 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
  * Draw entries for GUI.
  */
 #if USE_XTHEME
+// move it to class XTheme?
 VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-  EG_IMAGE* MainImage = NULL;
-  EG_IMAGE* BadgeImage = NULL;
+  XImage MainImage(0,0);
+  XImage BadgeImage(0,0);
   bool NewImageCreated = false;
-  INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
 
-  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP)) {
-    MainImage = Entry->getDriveImage();
+  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX.HideBadges & HDBADGES_SWAP)) {
+    MainImage.FromEGImage(Entry->getDriveImage());
   } else {
-    MainImage = Entry->Image;
+    MainImage.FromEGImage(Entry->Image);
   }
   //this should be inited by the Theme
-  if (!MainImage) {
+  if (MainImage.isEmpty()) {
     if (!IsEmbeddedTheme()) {
-      MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
+//      MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
+      MainImage = ThemeX.GetIcon("os_mac");
     }
-    if (!MainImage) {
-      MainImage = DummyImage(Scale << 3);
+    if (MainImage.isEmpty()) {
+      MainImage.DummyImage(ThemeX.MainEntriesSize);
     }
-    if (MainImage) {
+    if (!MainImage.isEmpty()) {
       NewImageCreated = true;
     }
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-#if USE_XTHEME
   float fScale;
-  if (TypeSVG) {
+  if (ThemeX.TypeSVG) {
     fScale = (selected ? 1.f : -1.f);
   } else {
-    fScale = ((Entry->Row == 0) ? (MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
+    fScale = ((Entry->Row == 0) ? (ThemeX.MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
   }
-
-#else
-  if (GlobalConfig.TypeSVG) {
-    Scale = 16 * (selected ? 1 : -1);
-  } else {
-    Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
-  }
-#endif
 
   if (Entry->Row == 0) {
-    BadgeImage = Entry->getBadgeImage();
+    BadgeImage.FromEGImage(Entry->getBadgeImage());
   } //else null
-#if USE_XTHEME
-  INTN index = ((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1);
-  XImage& TopImage = *SelectionImages[index];
 
-  if(SelectionOnTop) {
-    BaseImage.Draw(XPos, YPos, fScale);
+  XImage& TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
+
+  if(ThemeX.SelectionOnTop) {
+    MainImage.Draw(XPos, YPos, fScale);
     BadgeImage.Draw(XPos, YPos, fScale);
     TopImage.Draw(XPos, YPos, fScale);
   } else {
     TopImage.Draw(XPos, YPos, fScale);
-    BaseImage.Draw(XPos, YPos, fScale);
+    MainImage.Draw(XPos, YPos, fScale);
     BadgeImage.Draw(XPos, YPos, fScale);
   }
 
-#else
-  if (GlobalConfig.SelectionOnTop) {
-    SelectionImages[0]->HasAlpha = TRUE;
-    SelectionImages[2]->HasAlpha = TRUE;
-    //MainImage->HasAlpha = TRUE;
-    BltImageCompositeBadge(MainImage,
-                           SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           BadgeImage,
-                           XPos, YPos, Scale);
-  } else {
-    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           MainImage,
-                           BadgeImage,
-                           XPos, YPos, Scale);
-  }
-#endif
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
-  if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-    SelectionImages[4]->HasAlpha = TRUE;
+  if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+//    ThemeX.SelectionImages[4]->HasAlpha = TRUE;
 
     // indicator is for row 0, main entries, only
     if (Entry->Row == 0) {
-      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
-                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
-                    &MenuBackgroundPixel, Scale);
+//      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
+//                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
+//                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
+//                    &MenuBackgroundPixel, Scale);
+      TopImage = ThemeX.SelectionImages[4 + (selected ? 0 : 1)];
+      TopImage.Draw(XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale),
+                    row0PosY + ThemeX.row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale);
     }
   }
 
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;
-  Entry->Place.Width = MainImage->Width;
-  Entry->Place.Height = MainImage->Height;
-  //we can't free MainImage because it may be new image or it may be a link to entry image
-  // a workaround
-  if (NewImageCreated) {
-    egFreeImage(MainImage);
-  }
+  Entry->Place.Width = MainImage.GetWidth();
+  Entry->Place.Height = MainImage.GetHeight();
+
 }
 #else
 
@@ -4302,40 +4277,17 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     }
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-#if USE_XTHEME
-  float fScale;
-  if (TypeSVG) {
-    fScale = (selected ? 1.f : -1.f);
-  } else {
-    fScale = ((Entry->Row == 0) ? (MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
-  }
 
-#else
   if (GlobalConfig.TypeSVG) {
     Scale = 16 * (selected ? 1 : -1);
   } else {
     Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
   }
-#endif
 
   if (Entry->Row == 0) {
     BadgeImage = Entry->getBadgeImage();
   } //else null
-#if USE_XTHEME
-  INTN index = ((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1);
-  XImage& TopImage = *SelectionImages[index];
 
-  if(SelectionOnTop) {
-    BaseImage.Draw(XPos, YPos, fScale);
-    BadgeImage.Draw(XPos, YPos, fScale);
-    TopImage.Draw(XPos, YPos, fScale);
-  } else {
-    TopImage.Draw(XPos, YPos, fScale);
-    BaseImage.Draw(XPos, YPos, fScale);
-    BadgeImage.Draw(XPos, YPos, fScale);
-  }
-
-#else
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
@@ -4350,7 +4302,6 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
                              BadgeImage,
                              XPos, YPos, Scale);
   }
-#endif
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
   if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {

@@ -207,6 +207,8 @@
 		9AC780B52417EE53005CDD5C /* global_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B42417EE53005CDD5C /* global_test.h */; };
 		9AC780B82417F359005CDD5C /* XStringWP.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B62417F359005CDD5C /* XStringWP.h */; };
 		9AC780B92417F359005CDD5C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B72417F359005CDD5C /* XStringWP.cpp */; };
+		A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
+		A5E326322428F4EE002240E8 /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -411,6 +413,8 @@
 		9AC780B42417EE53005CDD5C /* global_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
 		9AC780B62417F359005CDD5C /* XStringWP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringWP.h; sourceTree = "<group>"; };
 		9AC780B72417F359005CDD5C /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
+		A5E3262F2428F4EE002240E8 /* XTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XTheme.cpp; sourceTree = "<group>"; };
+		A5E326302428F4EE002240E8 /* XTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTheme.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,6 +636,8 @@
 				9AC77F7124176C04005CDD5C /* XImage.h */,
 				9AC77F7024176C04005CDD5C /* XPointer.cpp */,
 				9AC77F6324176C04005CDD5C /* XPointer.h */,
+				A5E3262F2428F4EE002240E8 /* XTheme.cpp */,
+				A5E326302428F4EE002240E8 /* XTheme.h */,
 			);
 			path = libeg;
 			sourceTree = "<group>";
@@ -754,6 +760,7 @@
 				9AC7808B24176C04005CDD5C /* panic.h in Headers */,
 				9AC7806B24176C04005CDD5C /* MSKEK.h in Headers */,
 				9AC7807224176C04005CDD5C /* menu_items.h in Headers */,
+				A5E326322428F4EE002240E8 /* XTheme.h in Headers */,
 				9AC780B82417F359005CDD5C /* XStringWP.h in Headers */,
 				9AC7801C24176C04005CDD5C /* nvidia.h in Headers */,
 				9AC7808524176C04005CDD5C /* operatorNewDelete.h in Headers */,
@@ -965,6 +972,7 @@
 				9AC7804624176C04005CDD5C /* BmLib.cpp in Sources */,
 				9AC7804024176C04005CDD5C /* card_vlist.cpp in Sources */,
 				9AC780B32417EE4B005CDD5C /* global_test.cpp in Sources */,
+				A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */,
 				9AC7805624176C04005CDD5C /* load_icns.cpp in Sources */,
 				9AC7805124176C04005CDD5C /* egemb_font.cpp in Sources */,
 				9AC7806424176C04005CDD5C /* securemenu.cpp in Sources */,

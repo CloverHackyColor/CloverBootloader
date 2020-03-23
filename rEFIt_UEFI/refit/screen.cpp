@@ -1008,7 +1008,114 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
   }
   LastDraw = Now;
 }
+#if USE_XTHEME
+//by initial we use EG_IMAGE anime
+VOID REFIT_MENU_SCREEN::InitAnime()
+{
+  CHAR16      FileName[256];
+  CHAR16      *Path;
+  EG_IMAGE    *p = NULL;
+  EG_IMAGE    *Last = NULL;
+  GUI_ANIME   *Anime;
 
+  if (GlobalConfig.TextOnly) return;
+  //
+  for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
+
+  // Check if we should clear old film vars (no anime or anime path changed)
+  //
+  if (gThemeOptionsChanged || !Anime || !Film || IsEmbeddedTheme() ||
+      gThemeChanged) {
+    //    DBG(" free screen\n");
+    if (Film) {
+      //free images in the film
+      for (INTN i = 0; i <= Frames; i++) { //really there are N+1 frames
+        // free only last occurrence of repeated frames
+        if (Film[i] != NULL && (i == Frames || Film[i] != Film[i+1])) {
+          FreePool(Film[i]);
+        }
+      }
+      FreePool(Film);
+      Film = NULL;
+      Frames = 0;
+    }
+  }
+  // Check if we should load anime files (first run or after theme change)
+  if (Anime && Film == NULL) {
+    Path = Anime->Path;
+    Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
+    if ((GlobalConfig.TypeSVG || Path) && Film) {
+      // Look through contents of the directory
+      UINTN i;
+      for (i = 0; i < Anime->Frames; i++) {
+        //       DBG("Try to load file %s\n", FileName);
+        if (ThemeX.TypeSVG) {
+          p = LoadSvgFrame(i);
+          //       DBG("frame %d loaded\n", i);
+        } else {
+          UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+          p = egLoadImage(ThemeDir, FileName, TRUE);
+        }
+        if (!p) {
+          p = Last;
+          if (!p) break;
+        } else {
+          Last = p;
+        }
+        Film[i] = p;
+      }
+      if (Film[0] != NULL) {
+        Frames = i;
+        DBG(" found %d frames of the anime\n", i);
+        // Create background frame
+        Film[i] = egCreateImage(Film[0]->Width, Film[0]->Height, FALSE);
+        // Copy some settings from Anime into Screen
+        FrameTime = Anime->FrameTime;
+        Once = Anime->Once;
+//        Theme = (__typeof__(Theme))AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
+      } /*else {
+         DBG("Film[0] == NULL\n");
+         } */
+    }
+  }
+  // Check if a new style placement value has been specified
+  if (Anime && (Anime->FilmX >=0) && (Anime->FilmX <=100) &&
+      (Anime->FilmY >=0) && (Anime->FilmY <=100) &&
+      (Film != NULL) && (Film[0] != NULL)) {
+    // Check if screen size being used is different from theme origination size.
+    // If yes, then recalculate the animation placement % value.
+    // This is necessary because screen can be a different size, but anim is not scaled.
+    FilmPlace.XPos = HybridRepositioning(Anime->ScreenEdgeHorizontal, Anime->FilmX, Film[0]->Width,  UGAWidth,  ThemeX.ThemeDesignWidth );
+    FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Film[0]->Height, UGAHeight, ThemeX.ThemeDesignHeight);
+
+    // Does the user want to fine tune the placement?
+    FilmPlace.XPos = CalculateNudgePosition(FilmPlace.XPos, Anime->NudgeX, Film[0]->Width, UGAWidth);
+    FilmPlace.YPos = CalculateNudgePosition(FilmPlace.YPos, Anime->NudgeY, Film[0]->Height, UGAHeight);
+
+    FilmPlace.Width = Film[0]->Width;
+    FilmPlace.Height = Film[0]->Height;
+    DBG("recalculated Film position\n");
+  } else {
+    // We are here if there is no anime, or if we use oldstyle placement values
+    // For both these cases, FilmPlace will be set after banner/menutitle positions are known
+    FilmPlace.XPos = 0;
+    FilmPlace.YPos = 0;
+    FilmPlace.Width = 0;
+    FilmPlace.Height = 0;
+  }
+  if (Film != NULL && Film[0] != NULL) {
+    DBG(" Anime seems OK, init it\n");
+    AnimeRun = TRUE;
+    CurrentFrame = 0;
+    LastDraw = 0;
+  } else {
+    //    DBG("not run anime\n");
+    AnimeRun = FALSE;
+  }
+  //  DBG("anime inited\n");
+}
+
+#else
 
 VOID REFIT_MENU_SCREEN::InitAnime()
 {
@@ -1120,7 +1227,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   }
 //  DBG("anime inited\n");
 }
-
+#endif
 BOOLEAN REFIT_MENU_SCREEN::GetAnime()
 {
   GUI_ANIME   *Anime;
