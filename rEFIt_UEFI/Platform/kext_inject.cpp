@@ -952,6 +952,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
         if (Kernel[i+0] == 0x01 && Kernel[i+1] == 0x00 && Kernel[i+2] == 0x31 &&
             Kernel[i+3] == 0xFF && Kernel[i+4] == 0xBE && Kernel[i+5] == 0x14 &&
             Kernel[i+6] == 0x00 && Kernel[i+7] == 0x05) {
+          DBG_RT(Entry, "==> found EXT Base (10.8 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // E8 XX 00 00 00 EB XX XX
             if (Kernel[y+0] == 0xE8 && Kernel[y+2] == 0x00 && Kernel[y+3] == 0x00 &&
@@ -987,6 +988,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
             //(Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) && // BF:10.11/BE:10.12+
             Kernel[i+5] == 0x01 && Kernel[i+6] == 0x00 && Kernel[i+7] == 0x00 &&
             Kernel[i+8] == 0xDC && Kernel[i+9] == 0x48) {
+          DBG_RT(Entry, "==> found SIP Base (10.11 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // 48 85 XX 74 XX 48 XX XX 48
             if (Kernel[y+0] == 0x48 && Kernel[y+1] == 0x85 && Kernel[y+3] == 0x74 &&
@@ -1042,17 +1044,16 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
         // 48 83 EC 30 48 C7 45 B8 XX XX XX //21
         // XX XX XX XX XX XX XX XX XX XX XX //32
         // XX XX XX XX XX XX XX XX XX XX XX //43
-        // XX XX XX XX XX XX XX XX 31 FF BE //54
-        // 14 XX XX XX 31 C0 E8 XX XX FF FF //65
+        // XX XX XX XX XX XX XX XX XX FF XX //54
+        // XX XX XX XX XX XX XX XX XX FF FF //65
         if (Kernel[i+0] == 0x55 && Kernel[i+1] == 0x48 && Kernel[i+2] == 0x89 &&
             Kernel[i+3] == 0xE5 && Kernel[i+4] == 0x41 && Kernel[i+5] == 0x57 &&
             Kernel[i+6] == 0x41 && Kernel[i+7] == 0x56 && Kernel[i+8] == 0x41 &&
             Kernel[i+9] == 0x54 && Kernel[i+10] == 0x53 && Kernel[i+11] == 0x48 &&
             Kernel[i+12] == 0x83 && Kernel[i+13] == 0xEC && Kernel[i+14] == 0x30 &&
             Kernel[i+15] == 0x48 && Kernel[i+16] == 0xC7 && Kernel[i+17] == 0x45 &&
-            Kernel[i+18] == 0xB8 && Kernel[i+52] == 0x31 && Kernel[i+53] == 0xFF &&
-            Kernel[i+54] == 0xBE && Kernel[i+55] == 0x14 && Kernel[i+59] == 0x31 &&
-            Kernel[i+60] == 0xC0 && Kernel[i+61] == 0xE8 && Kernel[i+64] == 0xFF && Kernel[i+65] == 0xFF) {
+            Kernel[i+18] == 0xB8 && Kernel[i+53] == 0xFF && Kernel[i+64] == 0xFF && Kernel[i+65] == 0xFF) {
+          DBG_RT(Entry, "==> found KxldUnmap Base (10.14 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // 00 0F 85 XX XX 00 00 48
             if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x0F && Kernel[y+2] == 0x85 &&
