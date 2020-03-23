@@ -638,6 +638,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
       }
     }
   }
+  return TRUE;
 }
 
 STATIC UINT8 PanicNoKextDumpFind[6]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
