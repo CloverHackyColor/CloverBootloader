@@ -589,7 +589,9 @@ VOID KernelCPUIDPatch(UINT8* kernelData, LOADER_ENTRY *Entry)
   }
 }
 
+// Credits to RehabMan for the kernel patch information
 // new way by RehabMan 2017-08-13
+// cleanup by Sherlocks 2020-03-23
 #define CompareWithMask(x,m,c) (((x) & (m)) == (c))
 
 BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
@@ -599,40 +601,44 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
   if (Ptr == NULL) {
     return FALSE;
   }
-  // Credits to RehabMan for the kernel patch information
+
   DBG("Patching kernel power management...\n");
   for (; Ptr < End; Ptr += 2) {
-    // check for xcpm_scope_msr common 0xe2 prologue
-    //    e2000000 xxxx0000 00000000 00000000 xx040000 00000000
-    if (CompareWithMask(Ptr[0], 0xFFFF0000FFFFFFFF, 0x00000000000000e2) && 0 == Ptr[1] &&
+    // check for xcpm_scope_msr common 0xE2 prologue
+    // E2000000 XX000000 00000000 00000000 00040000 00000000
+    // 10.8/10.9: 02,0C,10
+    // E2000000 XXXX0000 00000000 00000000 0F040000 00000000
+    // 10.10/10.12: 0200,4C00,9001, 10.11: 0200,4C00,9013, 10.13-10.15.3: 4C00,9033,0040
+    // E2000000 XXXXXX00 00000000 00000000 0F040000 00000000
+    // 10.15.4+: 4C0000,903306,004000
+
+    // E2000000 XXXXXXXX 00000000 00000000 XX040000 00000000
+    // safe pattern for next macOS
+    if (CompareWithMask(Ptr[0], 0x00000000FFFFFFFF, 0x00000000000000E2) && 0 == Ptr[1] &&
         CompareWithMask(Ptr[2], 0xFFFFFFFFFFFFFF00, 0x0000000000000400)) {
-      // check for last xcpm_scope_msr entry; terminates search
-      // example data:
-      //   e2000000 10000000 00000000 00000000 00040000 00000000 0800007e 00000000 00000000 00000000 00000000 00000000
-      // or
-      //   e2000000 90330000 00000000 00000000 0f040000 00000000 0800007e 00000000 00000000 00000000 00000000 00000000
-      if (0x000000007e000008 == Ptr[3] && 0 == Ptr[4] && 0 == Ptr[5]) {
-        // zero out 0xE2 MSR and CPU mask
-        Ptr[0] = 0;
-        DBG("Kernel power management: LAST entry found and patched\n");
-        return TRUE;
-      }
-      // check for other xcpm_scope_msr entry
-      // example data:
-      //   e2000000 02000000 00000000 00000000 00040000 00000000 0700001e 00000000 00000000 00000000 00000000 00000000
-      //   e2000000 0c000000 00000000 00000000 00040000 00000000 0500001e 00000000 00000000 00000000 00000000 00000000
-      // or
-      //   e2000000 4c000000 00000000 00000000 0f040000 00000000 0500001e 00000000 00000000 00000000 00000000 00000000
-      else if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000001e000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
+      // 10.8 - 10.12
+      // 0700001E 00000000 00000000 00000000 00000000 00000000
+      // 0500001E 00000000 00000000 00000000 00000000 00000000
+      // 0800007E 00000000 00000000 00000000 00000000 00000000
+      // 10.13+
+      // 0500001E 00000000 00000000 00000000 00000000 00000000
+      // 0800007E 00000000 00000000 00000000 00000000 00000000
+      // 0300007E 00000000 00000000 00000000 00000000 00000000
+
+      // XX00001E 00000000 00000000 00000000 00000000 00000000
+      if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000001E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
         // zero out 0xE2 MSR and CPU mask
         Ptr[0] = 0;
         DBG("Kernel power management: entry found and patched\n");
-        // last entry not found yet; continue searching for other entries
+      // XX00007E 00000000 00000000 00000000 00000000 00000000
+      } else if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000007E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
+        // zero out 0xE2 MSR and CPU mask
+        Ptr[0] = 0;
+        DBG("Kernel power management: entry found and patched\n");
       }
     }
   }
-  DBG("Kernel power management: LAST patch region not found!\n");
-  return FALSE;
+  return TRUE;
 }
 
 STATIC UINT8 PanicNoKextDumpFind[6]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
@@ -687,6 +693,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
                //(bytes[i+4] == 0x3F || bytes[i+4] == 0x4F) && // 3F:10.10-10.12/4F:10.13+
                bytes[i+5] == 0x31 && bytes[i+6] == 0xDB && bytes[i+7] == 0x8D && bytes[i+8] == 0x47 &&
                bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
+      DBG("Found Lapic panic Base (10.10 - recent macOS)\n");
       for (y = i; y < 0x1000000; y++) {
         // Lapic panic patch, by vit9696
         // mov eax, gs:XX
@@ -738,6 +745,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
             //(bytes[i+4] == 0x3F || bytes[i+4] == 0x4F) && // 3F:10.10-10.12/4F:10.13+
             bytes[i+5] == 0x31 && bytes[i+6] == 0xDB && bytes[i+7] == 0x8D && bytes[i+8] == 0x47 &&
             bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
+          DBG("Found Lapic panic master Base (10.10 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // Lapic panic master patch, by vit9696
             // cmp cs:_debug_boot_arg, 0
