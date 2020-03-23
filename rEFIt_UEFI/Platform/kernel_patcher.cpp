@@ -625,23 +625,19 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
       // 0800007E 00000000 00000000 00000000 00000000 00000000
       // 0300007E 00000000 00000000 00000000 00000000 00000000
 
-      // XX00007E 00000000 00000000 00000000 00000000 00000000
-      if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000007E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
-        // zero out 0xE2 MSR and CPU mask
-        Ptr[0] = 0;
-        DBG("Kernel power management: LAST entry found and patched\n");
-        return TRUE;
       // XX00001E 00000000 00000000 00000000 00000000 00000000
-      } else if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000001E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
+      if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000001E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
         // zero out 0xE2 MSR and CPU mask
         Ptr[0] = 0;
         DBG("Kernel power management: entry found and patched\n");
-        // last entry not found yet; continue searching for other entries
+      // XX00007E 00000000 00000000 00000000 00000000 00000000
+      } else if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000007E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
+        // zero out 0xE2 MSR and CPU mask
+        Ptr[0] = 0;
+        DBG("Kernel power management: entry found and patched\n");
       }
     }
   }
-  DBG("Kernel power management: LAST patch region not found!\n");
-  return FALSE;
 }
 
 STATIC UINT8 PanicNoKextDumpFind[6]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
