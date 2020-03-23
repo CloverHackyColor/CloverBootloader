@@ -2560,10 +2560,16 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
     }
 
     if (HaveTimeout) {
-      TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText.data(), TimeoutCountdown);
- //     XStringW TOMessage = TimeoutText + L" in " + WPrintf("%d", TimeoutCountdown) + L" seconds";
+#if USE_XTHEME
+      //TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText.data(), TimeoutCountdown);
+      XStringW TOMessage = TimeoutText + L" in " + WPrintf("%d", TimeoutCountdown) + L" seconds";
+      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TOMessage.data());
+//      FreePool(TimeoutMessage);
+#else
+      TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText, TimeoutCountdown);
       ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
       FreePool(TimeoutMessage);
+#endif
     }
 
     if (gEvent) { //for now used at CD eject.
