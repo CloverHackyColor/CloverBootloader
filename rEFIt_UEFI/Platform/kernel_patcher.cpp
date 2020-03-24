@@ -82,7 +82,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
   UINT32      cpuid_family_addr=0, cpuid_model_addr=0;
   UINT64      os_version;
 
-  DBG_RT(Entry, "\nLooking for _cpuid_set_info _panic ...\n");
+  DBG_RT(Entry, "Looking for _cpuid_set_info _panic ...\n");
 
   // Determine location of _cpuid_set_info _panic call for reference
   // basically looking for info_p->cpuid_model = bitfield32(reg[eax],  7,  4);
@@ -602,7 +602,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
     return FALSE;
   }
 
-  DBG("Patching kernel power management...\n");
+  DBG_RT(Entry, "Patching kernel power management...\n");
   for (; Ptr < End; Ptr += 2) {
     // check for xcpm_scope_msr common 0xE2 prologue
     // E2000000 XX000000 00000000 00000000 00040000 00000000
@@ -629,15 +629,20 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
       if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000001E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
         // zero out 0xE2 MSR and CPU mask
         Ptr[0] = 0;
-        DBG("Kernel power management: entry found and patched\n");
+        DBG_RT(Entry, "Kernel power management: entry 1E found and patched\n");
       // XX00007E 00000000 00000000 00000000 00000000 00000000
       } else if (CompareWithMask(Ptr[3], 0xFFFFFFFFFFFFFF00, 0x000000007E000000) && 0 == Ptr[4] && 0 == Ptr[5]) {
         // zero out 0xE2 MSR and CPU mask
         Ptr[0] = 0;
-        DBG("Kernel power management: entry found and patched\n");
+        DBG_RT(Entry, "Kernel power management: entry 7E found and patched\n");
       }
     }
   }
+    
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    gBS->Stall(3000000);
+  }
+
   return TRUE;
 }
 
@@ -656,7 +661,7 @@ BOOLEAN KernelPanicNoKextDump(VOID *kernelData)
   return FALSE;
 }
 
-BOOLEAN KernelLapicPatch_64(VOID *kernelData)
+BOOLEAN KernelLapicPatch_64(VOID *kernelData, LOADER_ENTRY *Entry)
 {
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
@@ -664,7 +669,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
   UINT32      patchLocation1 = 0, patchLocation2 = 0;
   UINT32      i, y;
 
-  DBG("Looking for Lapic panic call (64-bit) Start\n");
+  DBG_RT(Entry, "Looking for Lapic panic call (64-bit) Start\n");
 
   for (i = 0; i < 0x1000000; i++) {
     if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
@@ -672,28 +677,28 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         bytes[i+45] == 0x65 && bytes[i+46] == 0x8B && bytes[i+47] == 0x04 && bytes[i+48] == 0x25 &&
         bytes[i+49] == 0x3C && bytes[i+50] == 0x00 && bytes[i+51] == 0x00 && bytes[i+52] == 0x00) {
       patchLocation1 = i+40;
-      DBG("Found Lapic panic (10.6) at 0x%08x\n", patchLocation1);
+      DBG_RT(Entry, "Found Lapic panic (10.6) at 0x%08x\n", patchLocation1);
       break;
     } else if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0x8B && bytes[i+2]  == 0x04 && bytes[i+3]  == 0x25 &&
                bytes[i+4]  == 0x14 && bytes[i+5]  == 0x00 && bytes[i+6]  == 0x00 && bytes[i+7]  == 0x00 &&
                bytes[i+35] == 0x65 && bytes[i+36] == 0x8B && bytes[i+37] == 0x04 && bytes[i+38] == 0x25 &&
                bytes[i+39] == 0x14 && bytes[i+40] == 0x00 && bytes[i+41] == 0x00 && bytes[i+42] == 0x00) {
       patchLocation1 = i+30;
-      DBG("Found Lapic panic (10.7 - 10.8) at 0x%08x\n", patchLocation1);
+      DBG_RT(Entry, "Found Lapic panic (10.7 - 10.8) at 0x%08x\n", patchLocation1);
       break;
     } else if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
                bytes[i+4] == 0x1C && bytes[i+5] == 0x00 && bytes[i+6] == 0x00 && bytes[i+7] == 0x00 &&
                bytes[i+36] == 0x65 && bytes[i+37] == 0x8B && bytes[i+38] == 0x04 && bytes[i+39] == 0x25 &&
                bytes[i+40] == 0x1C && bytes[i+41] == 0x00 && bytes[i+42] == 0x00 && bytes[i+43] == 0x00) {
       patchLocation1 = i+31;
-      DBG("Found Lapic panic (10.9) at 0x%08x\n", patchLocation1);
+      DBG_RT(Entry, "Found Lapic panic (10.9) at 0x%08x\n", patchLocation1);
       break;
     // 00 29 C7 78 XX 31 DB 8D 47 FA 83
     } else if (bytes[i+0] == 0x00 && bytes[i+1] == 0x29 && bytes[i+2] == 0xC7 && bytes[i+3] == 0x78 &&
                //(bytes[i+4] == 0x3F || bytes[i+4] == 0x4F) && // 3F:10.10-10.12/4F:10.13+
                bytes[i+5] == 0x31 && bytes[i+6] == 0xDB && bytes[i+7] == 0x8D && bytes[i+8] == 0x47 &&
                bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
-      DBG("Found Lapic panic Base (10.10 - recent macOS)\n");
+      DBG_RT(Entry, "Found Lapic panic Base (10.10 - recent macOS)\n");
       for (y = i; y < 0x1000000; y++) {
         // Lapic panic patch, by vit9696
         // mov eax, gs:XX
@@ -704,7 +709,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
             bytes[y+5] == 0x00 && bytes[y+6] == 0x00 && bytes[y+7] == 0x00 &&
             bytes[y+8] == 0x3B && bytes[y+9] == 0x05 && bytes[y+13] == 0x00) {
           patchLocation1 = y;
-          DBG("Found Lapic panic (10.10 - recent macOS) at 0x%08x\n", patchLocation1);
+          DBG_RT(Entry, "Found Lapic panic (10.10 - recent macOS) at 0x%08x\n", patchLocation1);
           break;
         }
       }
@@ -713,7 +718,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
   }
 
   if (!patchLocation1) {
-    DBG("Can't find Lapic panic, kernel patch aborted.\n");
+    DBG_RT(Entry, "Can't find Lapic panic, kernel patch aborted.\n");
     return FALSE;
   }
 
@@ -721,18 +726,18 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
   if (bytes[patchLocation1 + 0] == 0x90 && bytes[patchLocation1 + 1] == 0x90 &&
       bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90 &&
       bytes[patchLocation1 + 4] == 0x90) {
-    DBG("Lapic panic already patched, kernel file (10.6 - 10.9) manually patched?\n");
+    DBG_RT(Entry, "Lapic panic already patched, kernel file (10.6 - 10.9) manually patched?\n");
     return FALSE;
   } else if (bytes[patchLocation1 + 0] == 0x31 && bytes[patchLocation1 + 1] == 0xC0 &&
              bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90) {
-    DBG("Lapic panic already patched, kernel file (10.10 - recent macOS) manually patched?\n");
+    DBG_RT(Entry, "Lapic panic already patched, kernel file (10.10 - recent macOS) manually patched?\n");
     return FALSE;
   } else {
     if (bytes[patchLocation1 + 8] == 0x3B && bytes[patchLocation1 + 9] == 0x05 &&
         bytes[patchLocation1 + 13] == 0x00) {
       // 65 8B 04 25 XX 00 00 00 3B 05 XX XX XX 00
       // 31 C0 90 90 90 90 90 90 90 90 90 90 90 90
-      DBG("Patched Lapic panic (10.10 - recent macOS)\n");
+      DBG_RT(Entry, "Patched Lapic panic (10.10 - recent macOS)\n");
       bytes[patchLocation1 + 0] = 0x31;
       bytes[patchLocation1 + 1] = 0xC0;
       for (i = 2; i < 14; i++) {
@@ -745,7 +750,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
             //(bytes[i+4] == 0x3F || bytes[i+4] == 0x4F) && // 3F:10.10-10.12/4F:10.13+
             bytes[i+5] == 0x31 && bytes[i+6] == 0xDB && bytes[i+7] == 0x8D && bytes[i+8] == 0x47 &&
             bytes[i+9] == 0xFA && bytes[i+10] == 0x83) {
-          DBG("Found Lapic panic master Base (10.10 - recent macOS)\n");
+          DBG_RT(Entry, "Found Lapic panic master Base (10.10 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // Lapic panic master patch, by vit9696
             // cmp cs:_debug_boot_arg, 0
@@ -753,7 +758,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
             if (bytes[y+0] == 0xE8 && bytes[y+3] == 0xFF && bytes[y+4] == 0xFF &&
                 bytes[y+5] == 0x83 && bytes[y+10] == 0x00 && bytes[y+11] == 0x00) {
               patchLocation2 = y;
-              DBG("Found Lapic panic master (10.10 - recent macOS) at 0x%08x\n", patchLocation2);
+              DBG_RT(Entry, "Found Lapic panic master (10.10 - recent macOS) at 0x%08x\n", patchLocation2);
               break;
             }
           }
@@ -762,16 +767,16 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
       }
         
       if (!patchLocation2) {
-        DBG("Can't find Lapic panic master (10.10 - recent macOS), kernel patch aborted.\n");
+        DBG_RT(Entry, "Can't find Lapic panic master (10.10 - recent macOS), kernel patch aborted.\n");
         return FALSE;
       }
         
       // Already patched? May be running a non-vanilla kernel already?
       if (bytes[patchLocation2 + 5] == 0x31 && bytes[patchLocation2 + 6] == 0xC0) {
-        DBG("Lapic panic master already patched, kernel file (10.10 - recent macOS) manually patched?\n");
+        DBG_RT(Entry, "Lapic panic master already patched, kernel file (10.10 - recent macOS) manually patched?\n");
         return FALSE;
       } else {
-        DBG("Patched Lapic panic master (10.10 - recent macOS)\n");
+        DBG_RT(Entry, "Patched Lapic panic master (10.10 - recent macOS)\n");
         // E8 XX XX FF FF 83 XX XX XX XX 00 00
         // E8 XX XX FF FF 31 C0 90 90 90 90 90
         bytes[patchLocation2 + 5] = 0x31;
@@ -781,16 +786,21 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData)
         }
       }
     } else {
-      DBG("Patched Lapic panic (10.6 - 10.9)\n");
+      DBG_RT(Entry, "Patched Lapic panic (10.6 - 10.9)\n");
       for (i = 0; i < 5; i++) {
         bytes[patchLocation1 + i] = 0x90;
       }
     }
   }
+    
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    gBS->Stall(3000000);
+  }
+    
   return TRUE;
 }
 
-BOOLEAN KernelLapicPatch_32(VOID *kernelData)
+BOOLEAN KernelLapicPatch_32(VOID *kernelData, LOADER_ENTRY *Entry)
 {
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
@@ -798,7 +808,7 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
   UINT32      patchLocation = 0;
   UINT32      i;
 
-  DBG("Looking for Lapic panic call (32-bit) Start\n");
+  DBG_RT(Entry, "Looking for Lapic panic call (32-bit) Start\n");
 
   for (i = 0; i < 0x1000000; i++) {
     if (bytes[i+0]  == 0x65 && bytes[i+1]  == 0xA1 && bytes[i+2]  == 0x0C && bytes[i+3]  == 0x00 &&
@@ -806,13 +816,13 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
         bytes[i+30] == 0x65 && bytes[i+31] == 0xA1 && bytes[i+32] == 0x0C && bytes[i+33] == 0x00 &&
         bytes[i+34] == 0x00 && bytes[i+35] == 0x00) {
       patchLocation = i+25;
-      DBG("Found Lapic panic at 0x%08x\n", patchLocation);
+      DBG_RT(Entry, "Found Lapic panic at 0x%08x\n", patchLocation);
       break;
     }
   }
 
   if (!patchLocation) {
-    DBG("Can't find Lapic panic, kernel patch aborted.\n");
+    DBG_RT(Entry, "Can't find Lapic panic, kernel patch aborted.\n");
     return FALSE;
   }
 
@@ -821,14 +831,19 @@ BOOLEAN KernelLapicPatch_32(VOID *kernelData)
   if (bytes[patchLocation + 0] == 0x90 && bytes[patchLocation + 1] == 0x90 &&
       bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90 &&
       bytes[patchLocation + 4] == 0x90) {
-    DBG("Lapic panic already patched, kernel file manually patched?\n");
+    DBG_RT(Entry, "Lapic panic already patched, kernel file manually patched?\n");
     return FALSE;
   } else {
-    DBG("Patched Lapic panic (32-bit)\n");
+    DBG_RT(Entry, "Patched Lapic panic (32-bit)\n");
     for (i = 0; i < 5; i++) {
       bytes[patchLocation + i] = 0x90;
     }
   }
+
+  if (Entry->KernelAndKextPatches->KPDebug) {
+    gBS->Stall(3000000);
+  }
+
   return TRUE;
 }
 
@@ -1856,7 +1871,7 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
     is64BitKernel = TRUE;
   } else {
     // not valid Mach-O header - exiting
-    DBG_RT(Entry, "Kernel not found at 0x%p - skipping patches!", KernelData);
+    DBG_RT(Entry, "Kernel not found at 0x%p - skipping patches!\n", KernelData);
     KernelData = NULL;
     return;
   }
@@ -1889,7 +1904,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   DBG_RT(Entry, "\nKernelToPatch: ");
   DBG_RT(Entry, "Kernels patches: %d\n", Entry->KernelAndKextPatches->NrKernels);
   if (gSettings.KernelPatchesAllowed && (Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
-    DBG_RT(Entry, "Enabled: ");
+    DBG_RT(Entry, "Enabled: \n");
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     patchedOk = KernelUserPatch(KernelData, Entry);
@@ -1904,14 +1919,14 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
     //
     // Kernel patches
     //
-    DBG_RT(Entry, "Enabled: ");
+    DBG_RT(Entry, "Enabled: \n");
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     if(is64BitKernel) {
-      DBG_RT(Entry, "64 bit patch ...");
+      DBG_RT(Entry, "64 bit patch ...\n");
       KernelPatcher_64(KernelData, Entry);
     } else {
-      DBG_RT(Entry, "32 bit patch ...");
+      DBG_RT(Entry, "32 bit patch ...\n");
       KernelPatcher_32(KernelData, Entry->OSVersion);
     }
     DBG_RT(Entry, " OK\n");
@@ -1933,7 +1948,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // CPU power management patch for haswell with locked msr
   DBG_RT(Entry, "\nKernelPm patch: ");
   if (Entry->KernelAndKextPatches->KPKernelPm) {
-    DBG_RT(Entry, "Enabled: ");
+    DBG_RT(Entry, "Enabled: \n");
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     patchedOk = FALSE;
@@ -1948,7 +1963,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // Patch to not dump kext at panic (c)vit9696
   DBG_RT(Entry, "\nPanicNoKextDump patch: ");
   if (Entry->KernelAndKextPatches->KPPanicNoKextDump) {
-    DBG_RT(Entry, "Enabled: ");
+    DBG_RT(Entry, "Enabled: \n");
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     patchedOk = KernelPanicNoKextDump(KernelData);
@@ -1961,14 +1976,15 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   // Lapic Panic Kernel Patch
   DBG_RT(Entry, "\nKernelLapic patch: ");
   if (Entry->KernelAndKextPatches->KPKernelLapic) {
+    DBG_RT(Entry, "Enabled: \n");
     KernelAndKextPatcherInit(Entry);
     if (KernelData == NULL) goto NoKernelData;
     if(is64BitKernel) {
-      DBG_RT(Entry, "64-bit patch ...");
-      patchedOk = KernelLapicPatch_64(KernelData);
+      DBG_RT(Entry, "64-bit patch ...\n");
+      patchedOk = KernelLapicPatch_64(KernelData, Entry);
     } else {
-      DBG_RT(Entry, "32-bit patch ...");
-      patchedOk = KernelLapicPatch_32(KernelData);
+      DBG_RT(Entry, "32-bit patch ...\n");
+      patchedOk = KernelLapicPatch_32(KernelData, Entry);
     }
     DBG_RT(Entry, patchedOk ? " OK\n" : " FAILED!\n");
   } else {
