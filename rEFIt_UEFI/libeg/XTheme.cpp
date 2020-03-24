@@ -11,6 +11,29 @@ extern "C" {
 
 #include "XTheme.h"
 
+//temporary
+extern INTN    ScrollWidth;
+extern INTN    ScrollButtonsHeight;
+extern INTN    ScrollBarDecorationsHeight;
+extern INTN    ScrollScrollDecorationsHeight;
+
+extern EG_RECT UpButton;
+extern EG_RECT DownButton;
+extern EG_RECT BarStart;
+extern EG_RECT BarEnd;
+extern EG_RECT ScrollbarBackground;
+extern EG_RECT Scrollbar;
+extern EG_RECT ScrollStart;
+extern EG_RECT ScrollEnd;
+extern EG_RECT ScrollTotal;
+
+extern BOOLEAN IsDragging;
+extern EG_RECT ScrollbarOldPointerPlace;
+extern EG_RECT ScrollbarNewPointerPlace;
+extern INTN    ScrollbarYMovement;
+
+
+
 CONST CHAR8* IconsNames[] = {
   "func_about",
   "func_options",
@@ -498,21 +521,21 @@ void XTheme::InitSelection()
   //DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_font_data)
 
 
-  Status = Button[0].LoadXImage(ThemeDir, "radio_button");
+  Status = Buttons[0].LoadXImage(ThemeDir, "radio_button");
   if (EFI_ERROR(Status)) {
-    Button[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
+    Buttons[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
   }
-  Status = Button[1].LoadXImage(ThemeDir, "radio_button_selected");
+  Status = Buttons[1].LoadXImage(ThemeDir, "radio_button_selected");
   if (EFI_ERROR(Status)) {
-    Button[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
+    Buttons[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
   }
-  Status = Button[2].LoadXImage(ThemeDir, "checkbox");
+  Status = Buttons[2].LoadXImage(ThemeDir, "checkbox");
   if (EFI_ERROR(Status)) {
-    Button[2].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
+    Buttons[2].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
   }
-  Status = Button[3].LoadXImage(ThemeDir, "checkbox_checked");
+  Status = Buttons[3].LoadXImage(ThemeDir, "checkbox_checked");
   if (EFI_ERROR(Status)) {
-    Button[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
+    Buttons[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
   }
 
   // non-selected background images
@@ -552,7 +575,7 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 
   //load banner and background
   Banner.LoadXImage(ThemeDir, BannerFileName); 
-  BigBack.LoadXImage(ThemeDir, BackgroundFileName);
+  BigBack.LoadXImage(ThemeDir, BackgroundName);
 }
 
 
@@ -579,7 +602,7 @@ void XTheme::InitBar()
   if (ScrollbarBackgroundImage.isEmpty()) {
     if (TypeSVG) {
       //return OSIconsTable[i].image;
-      ScrollbarBackgroundImage.GetIcon("scrollbar_background");
+      ScrollbarBackgroundImage = GetIcon("scrollbar_background");
     }
     if (ScrollbarBackgroundImage.isEmpty()) {
       ScrollbarBackgroundImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill));
@@ -587,7 +610,7 @@ void XTheme::InitBar()
   }
   if (ScrollbarImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollbarImage.GetIcon(ThemeDir, "scrollbar_holder"); //"_night" is already accounting
+      ScrollbarImage = GetIcon("scrollbar_holder"); //"_night" is already accounting
     }
     if (ScrollbarImage.isEmpty()) {
       ScrollbarImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill));
@@ -595,7 +618,7 @@ void XTheme::InitBar()
   }
   if (ScrollStartImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollStartImage.GetIcon(ThemeDir, "scrollbar_start");
+      ScrollStartImage = GetIcon("scrollbar_start");
     }
     if (ScrollStartImage.isEmpty()) {
       ScrollStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start));
@@ -603,7 +626,7 @@ void XTheme::InitBar()
   }
   if (ScrollEndImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollEndImage.GetIcon(ThemeDir, "scrollbar_end");
+      ScrollEndImage = GetIcon("scrollbar_end");
     }
     if (ScrollEndImage.isEmpty()) {
       ScrollEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end));
@@ -611,18 +634,20 @@ void XTheme::InitBar()
   }
   if (UpButtonImage.isEmpty()) {
     if (TypeSVG) {
-      UpButtonImage.GetIcon(ThemeDir, "scrollbar_up_button");
+      UpButtonImage = GetIcon("scrollbar_up_button");
     }
     UpButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button));
   }
   if (DownButtonImage.isEmpty()) {
     if (TypeSVG) {
-      DownButtonImage.GetIcon(ThemeDir, "scrollbar_down_button");
+      DownButtonImage = GetIcon("scrollbar_down_button");
     }
     if (DownButtonImage.isEmpty()) {
       DownButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button));
     }
   }
+
+  //TODO it must be somewhere in InitScroll - Scrfeen function
   if (!TypeSVG) {
     UpButton.Width      = ScrollWidth; // 16
     UpButton.Height     = ScrollButtonsHeight; // 20
