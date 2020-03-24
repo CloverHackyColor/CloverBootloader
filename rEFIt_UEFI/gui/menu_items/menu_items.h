@@ -100,7 +100,11 @@ class REFIT_ABSTRACT_MENU_ENTRY
   UINTN              Row;
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
+#if USE_XTHEME
+  XImage            Image;
+#else
   EG_IMAGE          *Image;
+#endif
   EG_RECT            Place;
   ACTION             AtClick;
   ACTION             AtDoubleClick;

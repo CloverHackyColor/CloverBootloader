@@ -93,6 +93,7 @@
   libeg/XImage.h
   libeg/XPointer.cpp
   libeg/XPointer.h
+  libeg/XTheme.cpp
   libeg/XTheme.h
   Platform/Posix/posix.h
   Platform/Posix/limits.h

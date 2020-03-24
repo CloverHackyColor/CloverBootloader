@@ -54,7 +54,7 @@ public:
   XImage();
   XImage(UINTN W, UINTN H);
   XImage(EG_IMAGE* egImage);
-  XImage(const XImage& Image, float scale);
+  XImage(const XImage& Image, float scale); //the constructor can accept 0 scale as 1.f
   ~XImage();
 
   XImage& operator= (const XImage& other);
@@ -81,17 +81,21 @@ public:
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
   void Fill(const EG_PIXEL* Color);
+  void FillArea(const EG_PIXEL* Color, EG_RECT& Rect);
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect);
   void CopyScaled(const XImage& Image, float scale);
+  void CopyRect(const XImage& Image, INTN X, INTN Y);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB(bool WantAlpha);
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
   EFI_STATUS FromSVG(const CHAR8 *SVGData, float scale);
   EFI_STATUS FromEGImage(const EG_IMAGE* egImage);
+  EG_IMAGE* ToEGImage();
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
-  void Draw(INTN x, INTN y, float scale);
+  void Draw(INTN x, INTN y, float scale); //can accept 0 scale as 1.f
+  void Draw(INTN x, INTN y); 
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
 //I changed the name because LoadImage is too widely used
 // will be used instead of old egLoadImage

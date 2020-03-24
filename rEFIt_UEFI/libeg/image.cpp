@@ -313,7 +313,7 @@ VOID egFreeImage(IN EG_IMAGE *Image)
 }
 
 //
-// Basic file operations
+// Basic file operations should be separated into separate file
 //
 EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength)
@@ -506,6 +506,7 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
   return Status;
 }
 
+//will be replaced by Image.LoadXImage(BaseDir, Name);
 //caller is responsible for free image
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN BOOLEAN WantAlpha)
 {
@@ -536,6 +537,7 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
   return NewImage;
 }
 
+//will be replaced by ThemeX.LoadIcon(Name);
 //caller is responsible for free image
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN IconSize)
 {
@@ -596,6 +598,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN 
 // Compositing
 //
 
+// take part of other procedures, not needed
 VOID egRestrictImageArea(IN EG_IMAGE *Image,
                          IN INTN AreaPosX, IN INTN AreaPosY,
                          IN OUT INTN *AreaWidth, IN OUT INTN *AreaHeight)
@@ -617,6 +620,8 @@ VOID egRestrictImageArea(IN EG_IMAGE *Image,
   }
 }
 
+//will be replaced by
+// CompImage.Fill(Color)
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
 {
   INTN       i;
@@ -636,6 +641,8 @@ VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
   }
 }
 
+//will be replaced by
+// CompImage.FillArea(Color, Rect)
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN INTN AreaPosX, IN INTN AreaPosY,
                      IN INTN AreaWidth, IN INTN AreaHeight,
@@ -667,6 +674,9 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
     }
   }
 }
+
+//will be replaced by
+// TmpBuffer.CopyRect(Background, XPos, YPos);
 
 VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
                IN INTN Width, IN INTN Height,
@@ -783,6 +793,8 @@ VOID egRawComposeOnFlat(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   }
 }
 
+//will be replaced by
+// CompImage.Compose(IN XImage& TopImage, IN INTN PosX, IN INTN PosY)
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
 {
   INTN       CompWidth, CompHeight;

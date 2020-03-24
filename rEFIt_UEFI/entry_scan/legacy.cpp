@@ -146,14 +146,23 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionDetails;
-  
+#if USE_XTHEME
+  if (ThemeX.HideBadges & HDBADGES_SHOW) {
+    if (ThemeX.HideBadges & HDBADGES_SWAP) {
+      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
+    } else {
+      Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), ThemeX.BadgeScale);
+    }
+  }
+#else
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
       Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, GlobalConfig.BadgeScale);
     } else {
       Entry->BadgeImage = egCopyScaledImage(Entry->Image, GlobalConfig.BadgeScale);
-      }
     }
+  }
+#endif
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
   Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");

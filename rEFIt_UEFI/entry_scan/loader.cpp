@@ -688,19 +688,41 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
   // get custom volume icon if present
+#if USE_XTHEME
+  if (ThemeX.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
+    Entry->Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
+    DBG("using VolumeIcon.icns image from Volume\n");
+  } else if (Image) {
+    Entry->Image.FromEGImage(Image);
+  } else {
+    Entry->Image = ThemeX.GetIcon("unknown");
+  }
+#else
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
     Entry->Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     DBG("using VolumeIcon.icns image from Volume\n");
   } else if (Image) {
-      Entry->Image = Image;
+    Entry->Image = Image;
   } else {
-      Entry->Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
+    Entry->Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
   }
+#endif
 
   // Load DriveImage
   Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
 
   // DBG("HideBadges=%d Volume=%s ", GlobalConfig.HideBadges, Volume->VolName);
+#if USE_XTHEME
+  if (ThemeX.HideBadges & HDBADGES_SHOW) {
+    if (ThemeX.HideBadges & HDBADGES_SWAP) {
+      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
+      // DBG(" Show badge as Drive.");
+    } else {
+      Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), GlobalConfig.BadgeScale);
+      // DBG(" Show badge as OSImage.");
+    }
+  }
+#else
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
       Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, GlobalConfig.BadgeScale);
@@ -710,7 +732,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         // DBG(" Show badge as OSImage.");
     }
   }
-
+#endif
   if (BootBgColor != NULL) {
     Entry->BootBgColor = BootBgColor;
   }

@@ -209,6 +209,10 @@ void XImage::Fill(const EG_PIXEL* Color)
   Fill((const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)Color);
 }
 
+void XImage::FillArea(const EG_PIXEL* Color, EG_RECT& Rect)
+{
+  FillArea((const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)*Color, Rect);
+}
 
 void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect)
 {
@@ -473,6 +477,11 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
   }
 }
 
+void XImage::Draw(INTN x, INTN y)
+{
+  Draw(x, y, 0);
+}
+
 void XImage::Draw(INTN x, INTN y, float scale)
 {
   //prepare images
@@ -480,7 +489,7 @@ void XImage::Draw(INTN x, INTN y, float scale)
     return;
   }
 
-  XImage Top(*this, scale);
+  XImage Top(*this, scale); //can accept 0 as scale
   XImage Background(Width, Height);
   Background.GetArea(x, y, Width, Height);
   Background.Compose(0, 0, Top, true);
@@ -609,8 +618,24 @@ void XImage::DummyImage(IN UINTN PixelSize)
         *Ptr++ = ~0; //yellow
         *Ptr++ = ~0;
       }
-      *Ptr++ = ~111;
+      *Ptr++ = ~111; //opacity
     }
     YPtr += LineOffset;
   }
+}
+
+void XImage::CopyRect(const XImage& Image, INTN XPos, INTN YPos)
+{
+  for (UINTN y = 0; y < Height && (y + YPos) < Image.GetHeight(); ++y) {
+    for (UINTN x = 0; x < Width && (x + XPos) < Image.GetWidth(); ++x) {
+      PixelData[y * Width + x] = Image.GetPixel(x + XPos, y + YPos);
+    }
+  }
+}
+
+EG_IMAGE* XImage::ToEGImage()
+{
+  EG_IMAGE* Tmp = egCreateImage(Width, Height, TRUE);
+  CopyMem(&Tmp->PixelData[0], &PixelData[0], GetSizeInBytes());
+  return Tmp;
 }
