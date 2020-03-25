@@ -1083,7 +1083,7 @@ VOID testSVG()
 #if 1 //test XImage
       XImage NewX(NewImage);
       NewX.Draw((UGAWidth - Width) / 2,
-        (UGAHeight - Height) / 2, 1.f);
+        (UGAHeight - Height) / 2);
 #else
       BltImageAlpha(NewImage,
                     (UGAWidth - Width) / 2,
@@ -1132,7 +1132,7 @@ VOID testSVG()
 //      DBG("text ready to blit\n");
 #if USE_XTHEME
       TextBufferXY.Draw((UGAWidth - Width) / 2,
-                (UGAHeight - Height) / 2, 1.f);
+                (UGAHeight - Height) / 2);
 #else
       BltImageAlpha(TextBufferXY,
                     (UGAWidth - Width) / 2,

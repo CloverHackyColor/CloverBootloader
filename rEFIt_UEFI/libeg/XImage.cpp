@@ -479,10 +479,15 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 
 void XImage::Draw(INTN x, INTN y)
 {
-  Draw(x, y, 0);
+  Draw(x, y, 0, true);
 }
 
 void XImage::Draw(INTN x, INTN y, float scale)
+{
+  Draw(x, y, scale, true);
+}
+
+void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
 {
   //prepare images
   if (isEmpty()) {
@@ -492,7 +497,7 @@ void XImage::Draw(INTN x, INTN y, float scale)
   XImage Top(*this, scale); //can accept 0 as scale
   XImage Background(Width, Height);
   Background.GetArea(x, y, Width, Height);
-  Background.Compose(0, 0, Top, true);
+  Background.Compose(0, 0, Top, Opaque);
   UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
   UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
 

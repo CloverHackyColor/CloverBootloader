@@ -95,7 +95,8 @@ EFI_STATUS XPointer::MouseBirth()
   oldPlace.YPos = (INTN)(UGAHeight >> 2);
   oldPlace.Width = PointerImage->GetWidth();
   oldPlace.Height = PointerImage->GetHeight();
-  CopyMem(&newPlace, &oldPlace, sizeof(EG_RECT));
+//  CopyMem(&newPlace, &oldPlace, sizeof(EG_RECT));
+  newPlace = oldPlace;
   Draw();
   MouseEvent = NoEvents;
   Alive = true;
@@ -108,7 +109,7 @@ VOID XPointer::Draw()
 //  CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
 // take background image for later to restore background
   oldImage.GetArea(newPlace);
-  PointerImage->Draw(newPlace.XPos, newPlace.YPos, 0.f); //zero means no scale
+  PointerImage->Draw(newPlace.XPos, newPlace.YPos); //zero means no scale
 }
 
 VOID XPointer::KillMouse()
@@ -217,14 +218,14 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
       Screen->mAction = ActionScrollDown;
     else if (MouseInRect(&Scrollbar) && MouseEvent == LeftMouseDown) {
       IsDragging = TRUE;
-      Screen->mAction = ActionMoveScrollbar;
+//      Screen->mAction = ActionMoveScrollbar;
       ScrollbarYMovement = 0;
       ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = newPlace.XPos;
       ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = newPlace.YPos;
     }
     else if (IsDragging && MouseEvent == LeftClick) {
       IsDragging = FALSE;
-      Screen->mAction = ActionMoveScrollbar;
+//      Screen->mAction = ActionMoveScrollbar;
     }
     else if (IsDragging && MouseEvent == MouseMove) {
       Screen->mAction = ActionMoveScrollbar;
@@ -245,57 +246,57 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
     else if (MouseEvent == ScrollUp) {
       Screen->mAction = ActionScrollUp;
     }
-  } //if scroll enabled
-  if (Screen->mAction != ActionNone) {
-    for (UINTN EntryId = 0; EntryId < Screen->Entries.size(); EntryId++) {
-      if (MouseInRect(&(Screen->Entries[EntryId].Place))) {
-        switch (MouseEvent) {
-        case LeftClick:
-          Screen->mAction = Screen->Entries[EntryId].AtClick;
-          //          DBG("Click\n");
-          break;
-        case RightClick:
-          Screen->mAction = Screen->Entries[EntryId].AtRightClick;
-          break;
-        case DoubleClick:
-          Screen->mAction = Screen->Entries[EntryId].AtDoubleClick;
-          break;
-        case ScrollDown:
-          Screen->mAction = ActionScrollDown;
-          break;
-        case ScrollUp:
-          Screen->mAction = ActionScrollUp;
-          break;
-        case MouseMove:
-          Screen->mAction = Screen->Entries[EntryId].AtMouseOver;
-          //how to do the action once?
-          break;
-        default:
-          Screen->mAction = ActionNone;
-          break;
-        }
-        Screen->mItemID = EntryId;
-        break;
-      }
-      else { //click in milk
-        switch (MouseEvent) {
-        case LeftClick:
-          Screen->mAction = ActionDeselect;
-          break;
-        case RightClick:
-          Screen->mAction = ActionFinish;
-          break;
-        case ScrollDown:
-          Screen->mAction = ActionScrollDown;
-          break;
-        case ScrollUp:
-          Screen->mAction = ActionScrollUp;
-          break;
-        default:
-          Screen->mAction = ActionNone;
+    else {
+      for (UINTN EntryId = 0; EntryId < Screen->Entries.size(); EntryId++) {
+        if (MouseInRect(&(Screen->Entries[EntryId].Place))) {
+          switch (MouseEvent) {
+            case LeftClick:
+              Screen->mAction = Screen->Entries[EntryId].AtClick;
+              //          DBG("Click\n");
+              break;
+            case RightClick:
+              Screen->mAction = Screen->Entries[EntryId].AtRightClick;
+              break;
+            case DoubleClick:
+              Screen->mAction = Screen->Entries[EntryId].AtDoubleClick;
+              break;
+            case ScrollDown:
+              Screen->mAction = ActionScrollDown;
+              break;
+            case ScrollUp:
+              Screen->mAction = ActionScrollUp;
+              break;
+            case MouseMove:
+              Screen->mAction = Screen->Entries[EntryId].AtMouseOver;
+              //how to do the action once?
+              break;
+            default:
+              Screen->mAction = ActionNone;
+              break;
+          }
+          Screen->mItemID = EntryId;
           break;
         }
-        Screen->mItemID = 0xFFFF;
+        else { //click in milk
+          switch (MouseEvent) {
+            case LeftClick:
+              Screen->mAction = ActionDeselect;
+              break;
+            case RightClick:
+              Screen->mAction = ActionFinish;
+              break;
+            case ScrollDown:
+              Screen->mAction = ActionScrollDown;
+              break;
+            case ScrollUp:
+              Screen->mAction = ActionScrollUp;
+              break;
+            default:
+              Screen->mAction = ActionNone;
+              break;
+          }
+          Screen->mItemID = 0xFFFF;
+        }
       }
     }
   }

@@ -94,13 +94,14 @@ public:
   EG_IMAGE* ToEGImage();
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
+  void Draw(INTN x, INTN y, float scale, bool Opaque);
   void Draw(INTN x, INTN y, float scale); //can accept 0 scale as 1.f
   void Draw(INTN x, INTN y); 
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
 //I changed the name because LoadImage is too widely used
 // will be used instead of old egLoadImage
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
-  EFI_STATUS LoadXImage(EFI_FILE *BaseDir, const char* IconName);
+  EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
   void DummyImage(IN UINTN PixelSize);
 
