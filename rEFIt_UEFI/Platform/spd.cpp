@@ -624,7 +624,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
                                  &Command
                                  );
 
-  DBG("SMBus CmdReg: 0x%x\n", Command);
+  DBG("SMBus CmdReg: 0x%X\n", Command);
 
   /*Status = */PciIo->Pci.Read (
                                 PciIo,
@@ -665,7 +665,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
                                 );
 
 
-  MsgLog("Scanning SMBus [%04x:%04x], mmio: 0x%x, ioport: 0x%x, hostc: 0x%x\n",
+  MsgLog("Scanning SMBus [%04X:%04X], mmio: 0x%X, ioport: 0x%X, hostc: 0x%X\n",
          vid, did, mmio, base, hostc);
 
   // needed at least for laptops
@@ -691,13 +691,13 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
     }
     else if (spdbuf[SPD_MEMORY_TYPE] == 0) {
       // First 0x40 bytes of DDR4 spd second page is 0. Maybe we need to change page, so do that and retry.
-      DBG("SPD[%d]: Got invalid type %d @0x%x. Will set page and retry.\n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
+      DBG("SPD[%d]: Got invalid type %d @0x%X. Will set page and retry.\n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
       smbPage = 0xFF; // force page to be set
       READ_SPD(spdbuf, base, i, SPD_MEMORY_TYPE);
     }
     
     // Copy spd data into buffer
-    DBG("SPD[%d]: Type %d @0x%x\n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
+    DBG("SPD[%d]: Type %d @0x%X\n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
     switch (spdbuf[SPD_MEMORY_TYPE])  {
       case SPD_MEMORY_TYPE_SDRAM_DDR:
         init_spd(spd_indexes_ddr, spdbuf, base, i);
@@ -835,7 +835,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
     }
 #endif
 
-    MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%a PartNo=%a SerialNo=%a\n",
+    MsgLog("Slot: %d Type %d %dMB %dMHz Vendor=%s PartNo=%s SerialNo=%s\n",
            i,
            (int)gRAM.SPD[i].Type,
            gRAM.SPD[i].ModuleSize,
@@ -898,7 +898,7 @@ VOID ScanSPD()
         //SmBus controller has class = 0x0c0500
         if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5)
             && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE)) {
-          DBG ("SMBus device : %04x %04x class=%02x%02x%02x status=%r\n",
+          DBG ("SMBus device : %04X %04X class=%02X%02X%02X status=%r\n",
                gPci.Hdr.VendorId,
                gPci.Hdr.DeviceId,
                gPci.Hdr.ClassCode[2],

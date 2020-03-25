@@ -862,7 +862,7 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
     }
     // Append the signature if valid
     if ((SigGuid != NULL) && (Signature != NULL) && (SigSize > 0)) {
-      DBG("Found signature certificate: 0x%X (0x%X) %g\n", Signature, SigSize, SigGuid);
+      DBG("Found signature certificate: 0x%X (0x%X) %s\n", Signature, SigSize, strguid(SigGuid));
       if (EFI_ERROR(AppendSignatureToDatabase(&Database, &Size, SigGuid, Signature, SigSize))) {
         break;
       }

@@ -1896,7 +1896,7 @@ UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number 
 			break;
 		}
 		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
-			MsgLog("[ERROR] bin2hex '%a' syntax error\n", hex);
+			MsgLog("[ERROR] bin2hex '%s' syntax error\n", hex);
 			return 0;
 		}
 		buf[0] = *p++;

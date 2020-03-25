@@ -343,16 +343,16 @@ EFIAPI OurBlockIoRead (
     
     Header = (IOHibernateImageHeaderMin *) Buffer;
     Header2 = (IOHibernateImageHeaderMinSnow *) Buffer;
-    //   DBG("    sig lion: %x\n", Header->signature);
-    //   DBG("    sig snow: %x\n", Header2->signature);
-    // DBG(" sig swap: %x\n", SwapBytes32(Header->signature));
+    //   DBG("    sig lion: %X\n", Header->signature);
+    //   DBG("    sig snow: %X\n", Header2->signature);
+    // DBG(" sig swap: %X\n", SwapBytes32(Header->signature));
     
     if (Header->signature == kIOHibernateHeaderSignature ||
         Header2->signature == kIOHibernateHeaderSignature) {
       gSleepImageOffset = MultU64x32(Lba, BlockSize);
       DBG("    got sleep image offset\n");
       machineSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
-      DBG("     image has machineSignature =0x%x\n", machineSignature);
+		DBG("     image has machineSignature =0x%llX\n", machineSignature);
       
       //save sleep time as lvs1974 suggested
       if (Header->signature == kIOHibernateHeaderSignature) {
@@ -394,13 +394,13 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
       if (EFI_ERROR(Status)) {
         Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
         if (!EFI_ERROR(Status)) {
-          DBG("    read prefs %s status=%r\n", PrefName2, Status);
+          DBG("    read prefs %ls status=%s\n", PrefName2, strerror(Status));
         }
       } else {
-        DBG("    read prefs %s status=%r\n", PrefName3, Status);
+        DBG("    read prefs %ls status=%s\n", PrefName3, strerror(Status));
       }
     } else {
-      DBG("    read prefs %s status=%r\n", PrefName, Status);
+      DBG("    read prefs %ls status=%s\n", PrefName, strerror(Status));
     }
   }
   
@@ -451,7 +451,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
               }
               p++;
             }
-            DBG("    SleepImage name from pref: ImageVolume = '%s', ImageName = '%s'\n", ImageVolume->VolName, ImageName);
+            DBG("    SleepImage name from pref: ImageVolume = '%ls', ImageName = '%ls'\n", ImageVolume->VolName, ImageName);
           }
         }
       }
@@ -460,7 +460,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   
   if (!ImageName) {
     ImageName = PoolPrint(L"\\private\\var\\vm\\sleepimage");
-    DBG("    using default sleep image name = %s\n", ImageName);
+    DBG("    using default sleep image name = %ls\n", ImageName);
   }
   if (PrefBuffer) {
     FreePool(PrefBuffer); //allocated by egLoadFile
@@ -507,7 +507,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
       // Update caller's SleepImageVolume when requested
       GetSleepImageLocation(Volume, SleepImageVolume, &ImageName);
     }
-    DBG("    returning previously calculated offset: %lx\n", Volume->SleepImageOffset);
+	  DBG("    returning previously calculated offset: %llx\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
   
@@ -518,7 +518,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
     // Open sleepimage
     Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
-      DBG("    sleepimage not found -> %r\n", Status);
+      DBG("    sleepimage not found -> %s\n", strerror(Status));
       return 0;
     }
   }
@@ -554,7 +554,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   if (Status == EFI_INVALID_PARAMETER) {
     Status = EFI_SUCCESS;
   }
-  //  DBG("    Reading completed -> %r\n", Status);
+  //  DBG("    Reading completed -> %s\n", strerror(Status));
   
   // Close sleepimage
   File->Close(File);
@@ -565,13 +565,13 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   }
   
   if (EFI_ERROR(Status)) {
-    DBG("     can not read sleepimage -> %r\n", Status);
+    DBG("     can not read sleepimage -> %s\n", strerror(Status));
     return 0;
   }
   
   // We store SleepImageOffset, in case our BlockIoRead does not execute again on next read due to driver caching.
   if (gSleepImageOffset != 0) {
-    DBG("     sleepimage offset acquired successfully: %lx\n", gSleepImageOffset);
+	  DBG("     sleepimage offset acquired successfully: %llx\n", gSleepImageOffset);
     ImageVolume->SleepImageOffset = gSleepImageOffset;
   } else {
     DBG("     sleepimage offset could not be acquired\n");
@@ -619,7 +619,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   }
   Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, BlockIo->Media->BlockSize, Buffer);
   if (EFI_ERROR(Status)) {
-    DBG("     can not read HFS+ header -> %r\n", Status);
+    DBG("     can not read HFS+ header -> %s\n", strerror(Status));
     FreePages(Buffer, Pages);
     return FALSE;
   }
@@ -637,16 +637,16 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   // Idea is from Chameleon
   //
   TimeDelta = HFSVolumeModifyDate - (INTN)gSleepTime;
-  DBG("     image older then volume: %d sec\n", TimeDelta);
+	DBG("     image older then volume: %lld sec\n", TimeDelta);
   if (TimeDelta > 5 /*|| TimeDelta < -5 */) {
     //Slice - if image newer then volume it should be OK
     DBG("     image too old\n");
     FreePages(Buffer, Pages);
     return FALSE;
   }
-  DBG("     machineSignature from FACS =0x%x\n", machineSignature);
+	DBG("     machineSignature from FACS =0x%llX\n", machineSignature);
   //  machineSignature = ((IOHibernateImageHeaderMin*)Buffer)->machineSignature;
-  //  DBG("     image has machineSignature =0x%x\n", machineSignature);
+  //  DBG("     image has machineSignature =0x%X\n", machineSignature);
   FreePages(Buffer, Pages);
   return TRUE;
 }
@@ -760,29 +760,29 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
    Volume = Volumes[VolumeIndex];
    VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-   DBG("Volume[%d] has UUID=%s\n", VolumeIndex, GuidLEToStr(VolumeUUID));
+   DBG("Volume[%d] has UUID=%ls\n", VolumeIndex, GuidLEToStr(VolumeUUID));
    if (CompareGuid(&ThisVolume->RootUUID, VolumeUUID)) {
-   DBG("found root volume at path: %s\n", FileDevicePathToStr(Volume->DevicePath));
+   DBG("found root volume at path: %ls\n", FileDevicePathToStr(Volume->DevicePath));
    Status = EFI_SUCCESS;
    break;
    }
    }
    if (EFI_ERROR(Status)) {
    Volume = ThisVolume;
-   DBG("cant find volume with UUID=%s\n", GuidLEToStr(&ThisVolume->RootUUID));
+   DBG("cant find volume with UUID=%ls\n", GuidLEToStr(&ThisVolume->RootUUID));
    }
    
-   DBG("    got RootUUID %g\n", &ThisVolume->RootUUID);
+   DBG("    got RootUUID %s\n", strguid(&ThisVolume->RootUUID));
    
    VolumeUUIDStr = GuidLEToStr(&ThisVolume->RootUUID);
-   DBG("    Search for Volume with UUID: %s\n", VolumeUUIDStr);
+   DBG("    Search for Volume with UUID: %ls\n", VolumeUUIDStr);
    if (VolumeUUIDStr) {
    FreePool(VolumeUUIDStr);
    }
    
    Volume = FoundParentVolume(ThisVolume);
    if (Volume) {
-   DBG("    Found parent Volume with name %s\n", Volume->VolName);
+   DBG("    Found parent Volume with name %ls\n", Volume->VolName);
    if (Volume->RootDir == NULL) {
    return FALSE;
    }
@@ -798,15 +798,15 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
    EFI_GUID TmpGuid;
    CHAR16 *TmpStr = NULL;
    CHAR16 *Ptr = GuidLEToStr(&Volume->RootUUID);
-   DBG("got str=%s\n", Ptr);
+   DBG("got str=%ls\n", Ptr);
    Status = StrToGuidLE (Ptr, &TmpGuid);
    if (EFI_ERROR(Status)) {
-   DBG("    cant convert Str %s to GUID\n", Ptr);
+   DBG("    cant convert Str %ls to GUID\n", Ptr);
    } else {
-   TmpStr = PoolPrint(L"%g", &TmpGuid);  //PoolPrint не работает!!!
-   DBG("got the guid %s\n", TmpStr);
+   TmpStr = PoolPrint(L"%s", strguid(&TmpGuid));  //PoolPrint не работает!!!
+   DBG("got the guid %ls\n", TmpStr);
    CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
-   DBG("fter CopyMem: %s\n", Ptr);
+   DBG("fter CopyMem: %ls\n", Ptr);
    FreePool(TmpStr);
    }
    }
@@ -860,20 +860,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       if ((VolumeUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL) {
         //BootGUID = (EFI_GUID*)(Data + Size - 0x14);
         BootGUID = (EFI_GUID*)ScanGuid(Data, Size, VolumeUUID);
-        //DBG("    APFS Boot0082 points to UUID:%g\n", BootGUID);
+        //DBG("    APFS Boot0082 points to UUID:%s\n", strguid(BootGUID));
       } else {
         //BootGUID = (EFI_GUID*)(Data + Size - 0x16);
         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
         if (VolumeUUID != NULL) {
           BootGUID = (EFI_GUID*)ScanGuid(Data, Size, VolumeUUID);
-          //DBG("    Boot0082 points to UUID:%g\n", BootGUID);
+          //DBG("    Boot0082 points to UUID:%s\n", strguid(BootGUID));
         }
       }
-      //DBG("    Volume has PartUUID=%g\n", VolumeUUID);
+      //DBG("    Volume has PartUUID=%s\n", strguid(VolumeUUID));
       if (BootGUID != NULL && VolumeUUID != NULL && !CompareGuid(BootGUID, VolumeUUID)) {
         ret = FALSE;
       } else  {
-        DBG("    Boot0082 points to Volume with UUID:%g\n", BootGUID);
+        DBG("    Boot0082 points to Volume with UUID:%s\n", strguid(BootGUID));
         
         //3. Checks for boot-image exists
         if (GlobalConfig.StrictHibernate) {
@@ -903,13 +903,13 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             //              UINTN                       Size;
             CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];
             
-            DBG("    boot-image before: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
+            DBG("    boot-image before: %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
             UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%s", (CHAR16 *)(Value + 0x20));
-            //      DBG("OffsetHexStr=%s\n", OffsetHexStr);
+            //      DBG("OffsetHexStr=%ls\n", OffsetHexStr);
             while ((*Ptr != L':') && (*Ptr != 0)) {
               Ptr++;
             }
-            //       DBG(" have ptr=%p, in Str=%p, text:%s\n", Ptr, &OffsetHexStr, Ptr);
+            //       DBG(" have ptr=%p, in Str=%p, text:%ls\n", Ptr, &OffsetHexStr, Ptr);
             if (*Ptr++ == L':') {
               //Convert BeUUID to LeUUID
               //Ptr points to begin L"A82E84C6-9DD6-49D6-960A-0F4C2FE4851C"
@@ -917,14 +917,14 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               CHAR16 *TmpStr = NULL;
               
               ResumeFromCoreStorage = TRUE;
-              //         DBG("got str=%s\n", Ptr);
+              //         DBG("got str=%ls\n", Ptr);
               Status = StrToGuidLE (Ptr, &TmpGuid);
               if (EFI_ERROR(Status)) {
-                DBG("    cant convert Str %s to GUID\n", Ptr);
+                DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {
-                //TmpStr = PoolPrint(L"%g", &TmpGuid);
+                //TmpStr = PoolPrint(L"%s", strguid(&TmpGuid));
                 TmpStr =  GuidLEToStr(&TmpGuid);
-                //           DBG("got the guid %s\n", TmpStr);
+                //           DBG("got the guid %ls\n", TmpStr);
                 CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
                 FreePool(TmpStr);
               }
@@ -937,20 +937,20 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               //  DBG(" boot-image device path:\n");
               Size = GetDevicePathSize(BootImageDevPath);
               Value = (UINT8*)BootImageDevPath;
-              DBG("    boot-image after: %s\n", FileDevicePathToStr(BootImageDevPath));
+              DBG("    boot-image after: %ls\n", FileDevicePathToStr(BootImageDevPath));
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi
               //Value[6] = 8; //Acpi(PNP0A08,0)
               Value[22] = SataNum;
               Value[24] = 0xFF;
               Value[25] = 0xFF;
-              DBG("    boot-image corrected: %s\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
+              DBG("    boot-image corrected: %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
               PrintBytes(Value, Size);
               
               Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
                                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                         Size , Value);
               if (EFI_ERROR(Status)) {
-                DBG(" can not write boot-image -> %r\n", Status);
+                DBG(" can not write boot-image -> %s\n", strerror(Status));
                 ret = FALSE;
               }
             }
@@ -1004,7 +1004,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   if (!GlobalConfig.StrictHibernate) {
     // Find sleep image offset
     SleepImageOffset = GetSleepImagePosition (Volume, &SleepImageVolume);
-    DBG(" SleepImageOffset: %lx\n", SleepImageOffset);
+	  DBG(" SleepImageOffset: %llx\n", SleepImageOffset);
     if (SleepImageOffset == 0 || SleepImageVolume == NULL) {
       DBG(" sleepimage offset not found\n");
       return FALSE;
@@ -1017,18 +1017,18 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     Size = GetDevicePathSize(BootImageDevPath);
     VarData = (UINT8*)BootImageDevPath;
     PrintBytes(VarData, Size);
-    DBG("boot-image before: %s\n", FileDevicePathToStr(BootImageDevPath));
+    DBG("boot-image before: %ls\n", FileDevicePathToStr(BootImageDevPath));
     //      VarData[6] = 8;
     
     //  VarData[24] = 0xFF;
     //  VarData[25] = 0xFF;
-    //  DBG("boot-image corrected: %s\n", FileDevicePathToStr(BootImageDevPath));
+    //  DBG("boot-image corrected: %ls\n", FileDevicePathToStr(BootImageDevPath));
     
     Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               Size , BootImageDevPath);
     if (EFI_ERROR(Status)) {
-      DBG(" can not write boot-image -> %r\n", Status);
+      DBG(" can not write boot-image -> %s\n", strerror(Status));
       return FALSE;
     }
   }
@@ -1036,7 +1036,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   // now we should delete boot0082 to do hibernate only once
   Status = DeleteBootOption(0x82);
   if (EFI_ERROR(Status)) {
-    DBG("Options 0082 was not deleted: %r\n", Status);
+    DBG("Options 0082 was not deleted: %s\n", strerror(Status));
   }
   
   //
@@ -1071,7 +1071,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     // Prior to 10.13.6.
     //
     Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
-    DBG("get IOHR variable status=%r, size=%d, RTC info=%d\n", Status, Size, HasHibernateInfoInRTC);
+	  DBG("get IOHR variable status=%s, size=%llu, RTC info=%d\n", strerror(Status), Size, HasHibernateInfoInRTC);
     if (!HasHibernateInfo && !EFI_ERROR (Status) && Size == sizeof (RtcVars)) {
       CopyMem (RtcRawVars, Value, sizeof (RtcVars));
       HasHibernateInfo = (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
@@ -1176,7 +1176,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   }
   
   if (EFI_ERROR(Status)) {
-    DBG(" can not write boot-switch-vars -> %r\n", Status);
+    DBG(" can not write boot-switch-vars -> %s\n", strerror(Status));
     return FALSE;
   }
   

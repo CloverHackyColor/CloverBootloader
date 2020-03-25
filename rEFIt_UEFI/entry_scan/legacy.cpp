@@ -110,13 +110,13 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
         ShortcutLetter = LoaderTitle[0];
     } else
       LoaderTitle = EfiStrDuplicate( L"Legacy OS");
-//    DBG("LoaderTitle=%s\n", LoaderTitle);
+//    DBG("LoaderTitle=%ls\n", LoaderTitle);
   }
   if (Volume->VolName != NULL)
     VolDesc = Volume->VolName;
   else
     VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
-//DBG("VolDesc=%s\n", VolDesc);
+//DBG("VolDesc=%ls\n", VolDesc);
   // prepare the menu entry
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
   Entry = new LEGACY_ENTRY();
@@ -129,7 +129,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
 		Entry->Title.SPrintf("Boot %ls from %ls", LoaderTitle, VolDesc);
     }
   }
-//  DBG("Title=%s\n", Entry->Title);
+//  DBG("Title=%ls\n", Entry->Title);
 //  Entry->Tag          = TAG_LEGACY;
   Entry->Row          = 0;
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
@@ -138,10 +138,10 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   } else {
     Entry->Image = LoadOSIcon(Volume->LegacyOS->IconName, L"legacy", 128, FALSE, TRUE);
   }
-//  DBG("IconName=%s\n", Volume->LegacyOS->IconName);
+//  DBG("IconName=%ls\n", Volume->LegacyOS->IconName);
   Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type, Volume->DevicePath);
-  //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-  //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
+  //  DBG("HideBadges=%d Volume=%ls\n", GlobalConfig.HideBadges, Volume->VolName);
+  //  DBG("Title=%ls OSName=%ls OSIconName=%ls\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
   //actions
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
@@ -189,7 +189,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   MainMenu.AddMenuEntry(Entry, true);
-//  DBG(" added '%s' OSType=%d Icon=%s\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
+//  DBG(" added '%ls' OSType=%d Icon=%ls\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
   return true;
 }
 
@@ -211,10 +211,10 @@ VOID ScanLegacy(VOID)
       continue;
     }
 
-//    DBG("%2d: '%s' (%s)", VolumeIndex, Volume->VolName, Volume->LegacyOS->IconName);
+//    DBG("%2d: '%ls' (%ls)", VolumeIndex, Volume->VolName, Volume->LegacyOS->IconName);
     
 #if 0 // REFIT_DEBUG > 0
-    DBG(" %d %s\n  %d %d %s %d %s\n",
+    DBG(" %d %ls\n  %d %d %ls %d %ls\n",
         VolumeIndex, FileDevicePathToStr(Volume->DevicePath),
         Volume->DiskKind, Volume->MbrPartitionIndex,
         Volume->IsAppleLegacy ? L"AL" : L"--", Volume->HasBootCode,
@@ -238,7 +238,7 @@ VOID ScanLegacy(VOID)
       HideIfOthersFound = TRUE;
     } else if (Volume->HasBootCode) {
       ShowVolume = TRUE;
-//      DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
+//      DBG("Volume %d will be shown BlockIo=%X WholeIo=%X\n",
 //        VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
       if ((Volume->WholeDiskBlockIO == 0) &&
           Volume->BlockIOOffset == 0 /* &&
@@ -291,20 +291,20 @@ VOID AddCustomLegacy(VOID)
   // Traverse the custom entries
   for (Custom = gSettings.CustomLegacy; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-      DBG("Custom legacy %d skipped because it is disabled.\n", i);
+		DBG("Custom legacy %llu skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-      DBG("Custom legacy %d skipped because it is hidden.\n", i);
+		DBG("Custom legacy %llu skipped because it is hidden.\n", i);
       continue;
     }
     if (Custom->Volume) {
-      DBG("Custom legacy %d matching \"%s\" ...\n", i, Custom->Volume);
+		DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
       Volume = &Volumes[VolumeIndex];
       
-      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+      DBG("   Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
       
       // skip volume if its kind is configured as disabled
       if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||

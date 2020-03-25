@@ -14,12 +14,26 @@
 #include "strlen_test.h"
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "printf_lite-test.h"
+#include "poolprint-test.h"
+#include "printlib-test.h"
 
 bool all_tests()
 {
   bool all_ok = true;
   int ret;
 
+#ifdef JIEF_DEBUG
+	ret = printlib_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = poolprint_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+#endif
 	ret = printf_lite_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);

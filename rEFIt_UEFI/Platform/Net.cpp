@@ -130,10 +130,10 @@ GetMacAddress()
         //  HwAddressSize = 6;
         //}
         CopyMem(&MacAddr, &MacAddressNode->MacAddress.Addr[0], HwAddressSize);
-        DBG("MAC address of LAN #%d= ", nLanPaths);
+		  DBG("MAC address of LAN #%llu= ", nLanPaths);
         HwAddress = &MacAddressNode->MacAddress.Addr[0];
         for (Index2 = 0; Index2 < HwAddressSize; Index2++) {
-          DBG("%02x:", *HwAddress++);
+          DBG("%02X:", *HwAddress++);
         }
         DBG("\n");
         Found = TRUE;
@@ -155,7 +155,7 @@ GetMacAddress()
     //  Legacy boot. Get MAC-address from hardwaredirectly
     //
     ////
-    DBG(" get legacy LAN MAC, %d card found\n", nLanCards);
+	  DBG(" get legacy LAN MAC, %llu card found\n", nLanCards);
     for (Index = 0; Index < nLanCards; Index++) {
       if (!gLanMmio[Index]) {  //security
         continue;
@@ -219,10 +219,10 @@ GetMacAddress()
       
     done:
       PreviousVendor = gLanVendor[Index];
-      DBG("Legacy MAC address of LAN #%d= ", Index);
+		DBG("Legacy MAC address of LAN #%llu= ", Index);
       HwAddress = &gLanMac[Index][0];
       for (Index2 = 0; Index2 < HwAddressSize; Index2++) {
-        DBG("%02x:", *HwAddress++);
+        DBG("%02X:", *HwAddress++);
       }
       DBG("\n");
 

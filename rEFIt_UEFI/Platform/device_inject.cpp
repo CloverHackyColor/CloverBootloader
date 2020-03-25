@@ -106,7 +106,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
                             &res
                             );
   if (EFI_ERROR(Status)) {
-    DBG("pci_config_read32 failed %r\n", Status);
+    DBG("pci_config_read32 failed %s\n", strerror(Status));
     return 0;
   }
   return res;
@@ -133,7 +133,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   if (!DevicePath && (PciDt != 0)) {
   DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
   }
-  // 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
+  // 	DBG("devprop_add_device_pci %ls ", DevicePathToStr(DevicePath));
   if (!DevicePath)
     return NULL;
 
@@ -155,7 +155,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     device->acpi_dev_path._HID = 0x0a0341d0;
     device->acpi_dev_path._UID = (((ACPI_HID_DEVICE_PATH*)DevicePath)->UID)?0x80:0;
 
-//    		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
+//    		DBG("ACPI HID=%X, UID=%X ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
   } else {
 //    		DBG("not ACPI\n");
     FreePool(device);
@@ -169,7 +169,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     DevicePath = NextDevicePathNode(DevicePath);
     if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
       CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-//     			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+//     			DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
     } else {
       // not PCI path - break the loop
       //			DBG("not PCI ");
@@ -222,7 +222,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UIN
 
   if(!device || !nm || !vl /*|| !len*/) //rehabman: allow zero length data
     return FALSE;
-  /*	DBG("devprop_add_value %a=", nm);
+  /*	DBG("devprop_add_value %s=", nm);
    for (i=0; i<len; i++) {
    DBG("%02X", vl[i]);
    }
@@ -374,7 +374,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     return FALSE;
   }
   // -------------------------------------------------
-//  DBG("LAN Controller [%04x:%04x] :: %a\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
+//  DBG("LAN Controller [%04X:%04X] :: %s\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
   if (eth_dev->vendor_id != 0x168c && builtin_set == 0) {
  		builtin_set = 1;
  		builtin = 0x01;
@@ -388,13 +388,13 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
       Injected = TRUE;
 
       if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       } else {
         devprop_add_value(device,
                           gSettings.AddProperties[i].Key,
                           (UINT8*)gSettings.AddProperties[i].Value,
                           gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       }
     }
   }
@@ -403,7 +403,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     //    return TRUE;
   }
 
-  //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
+  //  DBG("Setting dev.prop built-in=0x%X\n", builtin);
 //  devprop_add_value(device, "device_type", (UINT8*)"Ethernet", 9);
   if (gSettings.FakeLAN) {
     UINT32 FakeID = gSettings.FakeLAN >> 16;
@@ -460,8 +460,8 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
     return FALSE;
   }
   // -------------------------------------------------
- // DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
-  //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
+ // DBG("USB Controller [%04X:%04X] :: %s\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
+  //  DBG("Setting dev.prop built-in=0x%X\n", builtin);
 
   if (gSettings.NrAddProperties != 0xFFFE) {
     for (i = 0; i < gSettings.NrAddProperties; i++) {
@@ -471,13 +471,13 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       Injected = TRUE;
 
       if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       } else {
         devprop_add_value(device,
                           gSettings.AddProperties[i].Key,
                           (UINT8*)gSettings.AddProperties[i].Value,
                           gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       }
     }
   }

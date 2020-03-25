@@ -190,13 +190,13 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	SetMem (&Regs, sizeof (Regs), 0);
   
 	// first reset disk controller as the controller seems to be in an undefined state sometimes
-	DBG("Reset disk controller: %x\n", DriveNum);
+	DBG("Reset disk controller: %X\n", DriveNum);
 	Regs.H.AH = 0x00;		// INT 13h AH=00h: Reset disk controller
 	Regs.H.DL = DriveNum;
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
 		// TRUE = error
-    DBG("Reset 0 disk controller: %x\n", DriveNum);
+    DBG("Reset 0 disk controller: %X\n", DriveNum);
     Regs.H.AH = 0x0D;		// INT 13h AH=00h: Reset disk controller
     Regs.H.DL = DriveNum;
     if (LegacyBiosInt86(0x13, &Regs)) {
@@ -212,7 +212,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	Regs.E.DS = (UINT16) (((UINTN) Dap >> 16) << 12);
 	Regs.X.SI = (UINT16) (UINTN) Dap;
 	
-//	DBG("Drive: %x, Dap=%p, Buffer=%p, d.size=%X, d.nsect=%d, d.buff=[%X:%X]\n",
+//	DBG("Drive: %X, Dap=%p, Buffer=%p, d.size=%X, d.nsect=%d, d.buff=[%X:%X]\n",
 //		DriveNum, Dap, Buffer, Dap->size, Dap->numSectors, Dap->buffSegment, Dap->buffOffset);
 //	DBG("Dap: Reg.DS:SI = [%X:%X]\n", Regs.E.DS, Regs.X.SI);
 	
@@ -223,7 +223,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
     LegacyBiosInt86(0x13, &Regs);
 		Status = EFI_NOT_FOUND;
 	}
-	DBG("LegacyBiosInt86 status=%r, AH=%x\n", Status, Regs.H.AH);
+	DBG("LegacyBiosInt86 status=%s, AH=%X\n", strerror(Status), Regs.H.AH);
 	return Status;
 }
 
@@ -242,7 +242,7 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 	if (!EFI_ERROR(Status)) {
     *DriveCRC32 = GetCrc32((UINT8*)Buffer, 2 * 512);
 		//gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
-		DBG("Bios drive CRC32 = 0x%x\n", *DriveCRC32);
+		DBG("Bios drive CRC32 = 0x%X\n", *DriveCRC32);
 	}
 	return Status;
 }
@@ -284,11 +284,11 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 		if (EFI_ERROR(Status)) {
 			// error or no more disks
 			//DriveNum = 0;
-      DBG("Can't get drive 0x%x CRC32\n", DriveNum);
+      DBG("Can't get drive 0x%X CRC32\n", DriveNum);
 			continue;
 		}
     BestNum = DriveNum;
-    DBG("Calculated CRC=%X at drive 0x%x\n", Volume->DriveCRC32, BestNum);
+    DBG("Calculated CRC=%X at drive 0x%X\n", Volume->DriveCRC32, BestNum);
 		if (Volume->DriveCRC32 == DriveCRC32) {
 			break;
 		}
@@ -335,7 +335,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
 		}
 		if (EFI_ERROR(Status)) {
-			DBG("CDROMBoot: Unable to read block %X: %r\n", 0x11, Status);
+			DBG("CDROMBoot: Unable to read block %X: %s\n", 0x11, strerror(Status));
 			return Status;
 		}
 	}
@@ -349,12 +349,12 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	lba = sectorBuffer[0x47] + sectorBuffer[0x48] * 256 + sectorBuffer[0x49] * 65536 + sectorBuffer[0x4A] * 16777216;
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, 2048, sectorBuffer);
 	if (EFI_ERROR(Status)) {
-		DBG("CDROMBoot: Unable to read block %X: %r\n", lba, Status);
+		DBG("CDROMBoot: Unable to read block %llX: %s\n", lba, strerror(Status));
 		return Status;
 	}
 	
 	if (sectorBuffer[0x00] != 1 || sectorBuffer[0x1E] != 0x55 || sectorBuffer[0x1F] != 0xAA) {
-		DBG("CDROMBoot: Invalid El Torito validation entry in boot catalog LBA %X\n", lba);
+		DBG("CDROMBoot: Invalid El Torito validation entry in boot catalog LBA %llX\n", lba);
 		//    DumpHex(0, 0, 64, sectorBuffer);
 		return Status;
 	}
@@ -381,17 +381,17 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	bootSize = bootSectors * pBlockIO->Media->BlockSize;
 	bootLoadAddress = addrRealFromSegOfs(bootLoadSegment, 0);
 	if (addrLT(bootLoadAddress, bootAddress) || addrGTE(bootLoadAddress, krnMemoryTop)) {
-		DBG("CDROMBoot: Illegal boot load address %xL%x\n", addrToOffset(bootLoadAddress), bootSize);
+		DBG("CDROMBoot: Illegal boot load address %XL%X\n", addrToOffset(bootLoadAddress), bootSize);
 		return Status;
 	}
 	
 	lba = sectorBuffer[0x28] + sectorBuffer[0x29] * 256 + sectorBuffer[0x2A] * 65536 + sectorBuffer[0x2B] * 16777216;
-	DBG("CDROMBoot: Booting LBA %ld @%x L%x\n", lba, addrToOffset(bootLoadAddress), bootSize);
+	DBG("CDROMBoot: Booting LBA %llu @%X L%X\n", lba, addrToOffset(bootLoadAddress), bootSize);
 	gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)sectorBuffer, 1);
 	// Read the boot sectors into the boot load address
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, bootSize, addrToPointer(bootLoadAddress));
 	if (EFI_ERROR(Status)) {
-		DBG("CDROMBoot: Unable to read block %ld: %r\n", lba, Status);
+		DBG("CDROMBoot: Unable to read block %llu: %s\n", lba, strerror(Status));
 		return Status;
 	}
   
@@ -486,7 +486,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 		return Status;
 	}
     
-    DBG("boot from partition %s\n", FileDevicePathToStr(volume->DevicePath));
+    DBG("boot from partition %ls\n", FileDevicePathToStr(volume->DevicePath));
     
 	Status = InitializeBiosIntCaller(); //mThunkContext);
 	if (EFI_ERROR (Status)) {
@@ -498,14 +498,14 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	// Read the MBR
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pMBR);
 	if (EFI_ERROR(Status)) {
-		DBG("HDBoot: Unable to read MBR: %r\n", Status);
+		DBG("HDBoot: Unable to read MBR: %s\n", strerror(Status));
 		return Status;
 	}
 	
     for (i=0; i<16; i++) {
-        DBG("%04x: ", i*16);
+		DBG("%04llX: ", i*16);
         for (j=0; j<16; j++) {
-            DBG("%02x ", pMBR[i*16+j]);
+            DBG("%02X ", pMBR[i*16+j]);
         }
         DBG("\n");
     }
@@ -568,7 +568,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	// Read the boot sector
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, activePartition->StartLBA, 512, pBootSector);
 	if (EFI_ERROR(Status)) {
-		DBG("HDBoot: Unable to read partition %d's boot sector: %r\n", partitionIndex, Status);
+		DBG("HDBoot: Unable to read partition %d's boot sector: %s\n", partitionIndex, strerror(Status));
 		Status = EFI_NOT_FOUND;
 		return Status;
 	}
@@ -629,10 +629,10 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	}
 	
 	if (HdPath != NULL) {
-    DBG("boot from partition %s\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+    DBG("boot from partition %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
 		LbaOffset	= (UINT32)HdPath->PartitionStart;
 		LbaSize		= (UINT32)HdPath->PartitionSize;
-        DBG("starting from 0x%x LBA \n", LbaOffset);
+        DBG("starting from 0x%X LBA \n", LbaOffset);
 	} else {
 		return Status;
 	}
@@ -657,9 +657,9 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   CopyMem(pBootSector, mBootSector, 1024);
   DBG("PBR after readDisk:\n");
   for (i=0; i<4; i++) {
-    DBG("%04x: ", i*16);
+	  DBG("%04llX: ", i*16);
     for (j=0; j<16; j++) {
-      DBG("%02x ", pBootSector[i*16+j]);
+      DBG("%02X ", pBootSector[i*16+j]);
     }
     DBG("\n");
   }
@@ -772,7 +772,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // get EfiLegacy8259Protocol - mandatory
   //
   Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
-  DBG("EfiLegacy8259ProtocolGuid: %r\n", Status);
+  DBG("EfiLegacy8259ProtocolGuid: %s\n", strerror(Status));
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -785,16 +785,16 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // get EfiLegacyBiosProtocol - optional
   //
   Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
-  DBG("EfiLegacyBiosProtocolGuid: %r\n", Status);
+  DBG("EfiLegacyBiosProtocolGuid: %s\n", strerror(Status));
   if (!EFI_ERROR(Status)) {
     //
     // call PrepareToBootEfi() to init BIOS drives
     //
 
     //Status = LegacyBios->GetBbsInfo(LegacyBios, &HddCount, &HddInfo, &BbsCount, &BbsTable);
-    //DBG("GetBbsInfo = %r, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", Status, HddCount, HddInfo, BbsCount, BbsTable);
+    //DBG("GetBbsInfo = %s, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", strerror(Status), HddCount, HddInfo, BbsCount, BbsTable);
     Status = LegacyBios->PrepareToBootEfi(LegacyBios, &BbsCount, &BbsTable);
-    DBG("PrepareToBootEfi = %r, BbsCount=%d, BbsTabl%p\n", Status, BbsCount, BbsTable);
+    DBG("PrepareToBootEfi = %s, BbsCount=%d, BbsTabl%p\n", strerror(Status), BbsCount, BbsTable);
     //PauseForKey(L"continue ...\n");
 
     //
@@ -853,10 +853,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
           break;
       }
 
-      DBG("%d: Drv: %x P: %x %s PCI(%x,%x,%x), DT: %x %s SF: %x Txt: '%a'\n",
+		DBG("%llu: Drv: %X P: %X %ls PCI(%X,%X,%X), DT: %X %ls SF: %X Txt: '%s'\n",
           i, BbsTableIt->AssignedDriveNumber, BbsTableIt->BootPriority, BbsPriorityTxt,
           BbsTableIt->Bus, BbsTableIt->Device, BbsTableIt->Function,
-          BbsTableIt->DeviceType, BbsDevTypeTxt, BbsTableIt->StatusFlags,
+          BbsTableIt->DeviceType, BbsDevTypeTxt, *(UINT32*)(&BbsTableIt->StatusFlags),
           (CHAR8*)(UINTN)((BbsTableIt->DescStringSegment << 4) + BbsTableIt->DescStringOffset)
           );
     }
@@ -876,10 +876,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   }
 
   if (HdPath != NULL) {
-    DBG("boot from partition %s\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+    DBG("boot from partition %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
     LbaOffset	= (UINT32)HdPath->PartitionStart;
     LbaSize		= (UINT32)HdPath->PartitionSize;
-    DBG("starting from 0x%x LBA \n", LbaOffset);
+    DBG("starting from 0x%X LBA \n", LbaOffset);
   } else {
     return Status;
   }
@@ -907,9 +907,9 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   CopyMem(pBootSector, mBootSector, 1*512);
   DBG("PBR:\n");
   for (i=0; i<4; i++) {
-    DBG("%04x: ", i*16);
+	  DBG("%04llX: ", i*16);
     for (j=0; j<16; j++) {
-      DBG("%02x ", pBootSector[i*16+j]);
+      DBG("%02X ", pBootSector[i*16+j]);
     }
     DBG("\n");
   }
@@ -919,7 +919,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // todo: if we managed to get BbsTable, then we may find
   // BIOS drive from there, by matching PCI bus, device, function
   //
-  DBG("Looking for parent disk of %s\n", FileDevicePathToStr(volume->DevicePath));
+  DBG("Looking for parent disk of %ls\n", FileDevicePathToStr(volume->DevicePath));
   BiosDriveNum = 0;
   for (i = 0; i < Volumes.size(); i++) {
     if (&Volumes[i] != volume && Volumes[i].BlockIO == volume->WholeDiskBlockIO)
@@ -955,8 +955,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
     Regs.X.SI = (UINT16)(UINTN)pMBR;
   }
 
-  DBG("mbr: %x index: %x pointer: %x dx: %x si: %x\n", volume->IsMbrPartition, volume->MbrPartitionIndex, volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
-  DBG("pmbr: %x start: %x size: %x\n", pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
+	DBG("mbr: %X index: %llX pointer: %llX dx: %X si: %X\n", volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
+	DBG("pmbr: %llX start: %X size: %X\n", (uintptr_t)&pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
 
   //
   // call 16bit partition boot code
@@ -1017,7 +1017,7 @@ static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry
 			LocalBbsTable[Idx].BootPriority = Priority++;
 		}
 
-		DBG (" %02d: 0x%02x %04x %04x %02x/%02x/%02x %02x/%02x %04x %04x %04x:%04x\n",
+		DBG (" %02llu: 0x%02llX %04llX %04llX %02llX/%02llX/%02llX %02llX/%02llX %04llX %04llX %04llX:%04llX\n",
 		    (UINTN) IdxCount,
 		    (UINTN) Idx,
 		    (UINTN) OldPriority,
@@ -1030,9 +1030,9 @@ static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry
 		    (UINTN) LocalBbsTable[Idx].DeviceType,
 		    (UINTN) * (UINT16 *) &LocalBbsTable[Idx].StatusFlags,
 		    (UINTN) LocalBbsTable[Idx].BootHandlerSegment,
-		    (UINTN) LocalBbsTable[Idx].BootHandlerOffset,
+		    (UINTN) LocalBbsTable[Idx].BootHandlerOffset/*,
 		    (UINTN) ((LocalBbsTable[Idx].MfgStringSegment << 4) + LocalBbsTable[Idx].MfgStringOffset),
-		    (UINTN) ((LocalBbsTable[Idx].DescStringSegment << 4) + LocalBbsTable[Idx].DescStringOffset)
+		    (UINTN) ((LocalBbsTable[Idx].DescStringSegment << 4) + LocalBbsTable[Idx].DescStringOffset)*/
 		    );
 
 	}
@@ -1053,7 +1053,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	// get EfiLegacyBiosProtocol - optional
 	//
 	Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
-	DBG("EfiLegacyBiosProtocolGuid: %r\n", Status);
+	DBG("EfiLegacyBiosProtocolGuid: %s\n", strerror(Status));
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -1088,7 +1088,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	// do boot from default MBR hard disk
 	//
 	Status = LegacyBios->LegacyBoot(LegacyBios, BbsDP, 0, NULL);
-	DBG("LegacyBios->LegacyBoot(): %r\n", Status);
+	DBG("LegacyBios->LegacyBoot(): %s\n", strerror(Status));
 	
 	return Status;
 }
@@ -1143,7 +1143,7 @@ VOID DumpBiosMemoryMap()
   for (i = 0; i < Length; i++) {
     Start = *(UINT64*)BiosMap;
     Size = *((UINT64*)BiosMap + 1);
-    DBG(" %08lx %08lx %x    %08x\n", Start, Start + Size - 1, *(UINT32*)(BiosMap + 16), *(UINT32*)(BiosMap + 20));
+	  DBG(" %08llx %08llx %X    %08X\n", Start, Start + Size - 1, *(UINT32*)(BiosMap + 16), *(UINT32*)(BiosMap + 20));
     BiosMap += 24;
   }
   

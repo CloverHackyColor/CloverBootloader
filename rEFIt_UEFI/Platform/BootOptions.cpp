@@ -261,8 +261,8 @@ DevicePathEqual (
          DBG("Type: %d, %d\n", Type1, DevicePathType (DevicePath2));
          DBG("SubType: %d, %d\n", SubType1, DevicePathSubType (DevicePath2));
          DBG("Len: %d, %d\n", Len1, DevicePathNodeLength (DevicePath2));
-         DBG("%s\n", DevicePathToStr(DevicePath1));
-         DBG("%s\n", DevicePathToStr(DevicePath2));
+         DBG("%ls\n", DevicePathToStr(DevicePath1));
+         DBG("%ls\n", DevicePathToStr(DevicePath2));
          */
         
         if (Type1 != DevicePathType (DevicePath2)
@@ -300,7 +300,7 @@ DevicePathEqual (
             if (FPath2[0] == L'\\') {
                 FPath2++;
             }
-            //DBG("COMPARING: '%s' and '%s'\n", FPath1, FPath2);
+            //DBG("COMPARING: '%ls' and '%ls'\n", FPath1, FPath2);
             if (StriCmp(FPath1, FPath2) != 0) {
                 // Not equal
                 //DBG("Not equal fpaths\n");
@@ -335,7 +335,7 @@ PrintBootOrder (
   UINTN       Index;
 
 
-  DBG(" %d: ", BootOrderLen);
+	DBG(" %llu: ", BootOrderLen);
   for (Index = 0; Index < BootOrderLen; Index++) {
     if (Index > 0) {
       DBG(", ");
@@ -399,7 +399,7 @@ AddToBootOrder (
   UINTN               Index;
 
 
-  DBG("AddToBootOrder: Boot%04X at index %d\n", BootNumNew, BootIndexNew);
+	DBG("AddToBootOrder: Boot%04X at index %llu\n", BootNumNew, BootIndexNew);
   Status = GetBootOrder (&BootOrder, &BootOrderLen);
   if (EFI_ERROR(Status)) {
     return Status;
@@ -407,7 +407,7 @@ AddToBootOrder (
 
   if (BootIndexNew > BootOrderLen) {
     BootIndexNew = BootOrderLen;
-    DBG("AddToBootOrder: Index too big. Setting to: %d\n", BootIndexNew);
+	  DBG("AddToBootOrder: Index too big. Setting to: %llu\n", BootIndexNew);
   }
 
   //
@@ -452,7 +452,7 @@ AddToBootOrder (
                              BootOrderLen * sizeof(UINT16),
                              BootOrderNew
                              );
-  DBG("SetVariable: %s = %r\n", BOOT_ORDER_VAR, Status);
+  DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, strerror(Status));
   PrintBootOrder(BootOrderNew, BootOrderLen);
 
   FreePool (BootOrder);
@@ -494,11 +494,11 @@ DeleteFromBootOrder (
     }
     
     if (Index >= BootOrderLen) {
-        DBG("Not found in BootOrder len=%d\n", BootOrderLen);
+		DBG("Not found in BootOrder len=%llu\n", BootOrderLen);
 		FreePool(BootOrder);
         return EFI_NOT_FOUND;
     }
-    DBG(" found at index %d\n", Index);
+	DBG(" found at index %llu\n", Index);
     
     //
     // BootNum found at Index - copy the rest over it
@@ -522,7 +522,7 @@ DeleteFromBootOrder (
                                BootOrderLen * sizeof(UINT16),
                                BootOrder
                                );
-    DBG("SetVariable: %s = %r\n", BOOT_ORDER_VAR, Status);
+    DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, strerror(Status));
     
     FreePool (BootOrder);
     
@@ -548,10 +548,10 @@ PrintBootOption (
     CHAR16              *FPStr;
     
     
-    DBG("%2d) Boot%04X: %s, Attr: 0x%x\n",
+	DBG("%2llu) Boot%04X: %ls, Attr: 0x%X\n",
         Index, BootOption->BootNum, BootOption->Description, BootOption->Attributes);
     FPStr = FileDevicePathToStr(BootOption->FilePathList);
-    DBG("    %s\n", FPStr);
+    DBG("    %ls\n", FPStr);
     FreePool (FPStr);
     
     VarSizeTmp = sizeof(BootOption->Attributes)
@@ -559,7 +559,7 @@ PrintBootOption (
                         + BootOption->DescriptionSize
                         + BootOption->FilePathListLength
                         + BootOption->OptionalDataSize;
-    DBG("    Size: %d (Attr:%d + FPl:%d + Desc:%d + FP:%d + Opt:%d = %d -> %s)\n",
+	DBG("    Size: %llu (Attr:%lu + FPl:%lu + Desc:%llu + FP:%d + Opt:%llu = %llu -> %ls)\n",
         BootOption->VariableSize,
         sizeof(BootOption->Attributes),
         sizeof(BootOption->FilePathListLength),
@@ -570,8 +570,8 @@ PrintBootOption (
         VarSizeTmp == BootOption->VariableSize ? L"OK" : L"ERROR"
         );
     //DBG(" FilePathList: %p, %d", BootOption->FilePathList, BootOption->FilePathListLength);
-    //DBG(" FP F: %s\n", FileDevicePathToStr(BootOption->FilePathList));
-    //DBG(" Description: %p, %d, %s\n", BootOption->Description, BootOption->DescriptionSize, BootOption->Description);
+    //DBG(" FP F: %ls\n", FileDevicePathToStr(BootOption->FilePathList));
+    //DBG(" Description: %p, %d, %ls\n", BootOption->Description, BootOption->DescriptionSize, BootOption->Description);
     //DBG("OptionalData: %p, %d\n", BootOption->OptionalData, BootOption->OptionalDataSize);
     
 }
@@ -776,7 +776,7 @@ FindBootOptionForFile (
   UINTN               SearchedDevicePathSize[2];
 
 
-  DBG("FindBootOptionForFile: %p, %s\n", FileDeviceHandle, FileName);
+  DBG("FindBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName);
 
   //
   // Get BootOrder - we will search only options listed in BootOrder.
@@ -794,14 +794,14 @@ FindBootOptionForFile (
     return EFI_OUT_OF_RESOURCES;
   }
   SearchedDevicePathSize[0] = GetDevicePathSize (SearchedDevicePath[0]);
-  DBG(" Searching for: %s (Len: %d)\n", FileDevicePathToStr(SearchedDevicePath[0]), SearchedDevicePathSize[0]);
+	DBG(" Searching for: %ls (Len: %llu)\n", FileDevicePathToStr(SearchedDevicePath[0]), SearchedDevicePathSize[0]);
 
   Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, TRUE, &SearchedDevicePath[1]);
   if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   SearchedDevicePathSize[1] = GetDevicePathSize (SearchedDevicePath[1]);
-  DBG(" and for: %s (Len: %d)\n", FileDevicePathToStr(SearchedDevicePath[1]), SearchedDevicePathSize[1]);
+	DBG(" and for: %ls (Len: %llu)\n", FileDevicePathToStr(SearchedDevicePath[1]), SearchedDevicePathSize[1]);
 
   //
   // Iterate over all BootXXXX vars (actually, only ones that are in BootOrder list)
@@ -817,7 +817,7 @@ FindBootOptionForFile (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-      DBG("FindBootOptionForFile: Boot%04X: %r\n", BootOrder[Index], Status);
+      DBG("FindBootOptionForFile: Boot%04X: %s\n", BootOrder[Index], strerror(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
       continue;
     }
@@ -826,7 +826,7 @@ FindBootOptionForFile (
 
     if (DevicePathEqual (SearchedDevicePath[0], BootOption.FilePathList) ||
         DevicePathEqual (SearchedDevicePath[1], BootOption.FilePathList)) {
-      DBG("FindBootOptionForFile: Found Boot%04X, at index %d\n", BootOrder[Index], Index);
+		DBG("FindBootOptionForFile: Found Boot%04X, at index %llu\n", BootOrder[Index], Index);
       if (BootNum != NULL) {
         *BootNum = BootOrder[Index];
       }
@@ -883,7 +883,7 @@ PrintBootOptions (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-      DBG("%2d) Boot%04X: ERROR, not found: %r\n", Index, BootOrder[Index], Status);
+		DBG("%2llu) Boot%04X: ERROR, not found: %s\n", Index, BootOrder[Index], strerror(Status));
       continue;
     }
 
@@ -952,16 +952,16 @@ AddBootOption (
   CHAR16              VarName[16];
 
 
-  DBG("AddBootOption: %s\n", BootOption->Description);
-  DBG(" FilePath: %s\n", FileDevicePathToStr(BootOption->FilePathList));
-  DBG(" BootIndex: %d\n", BootIndex);
+  DBG("AddBootOption: %ls\n", BootOption->Description);
+  DBG(" FilePath: %ls\n", FileDevicePathToStr(BootOption->FilePathList));
+	DBG(" BootIndex: %llu\n", BootIndex);
 
   //
   // Find free BootXXXX var slot.
   //
   Status = FindFreeBootNum (&BootOption->BootNum);
   if (EFI_ERROR(Status)) {
-    DBG("FindFreeBootNum: %r\n", Status);
+    DBG("FindFreeBootNum: %s\n", strerror(Status));
     return Status;
   }
   DBG(" Found BootNum: %04X\n", BootOption->BootNum);
@@ -987,10 +987,10 @@ AddBootOption (
                              BootOption->Variable
                              );
   if (EFI_ERROR(Status)) {
-    DBG("SetVariable: %s = %r\n", VarName, Status);
+    DBG("SetVariable: %ls = %s\n", VarName, strerror(Status));
     return Status;
   }
-  DBG(" %s saved\n", VarName);
+  DBG(" %ls saved\n", VarName);
 
   //
   // Free allocated space
@@ -1031,7 +1031,7 @@ AddBootOptionForFile (
   BO_BOOT_OPTION      BootOption;
 
 
-  DBG("\nAddBootOptionForFile: %p, %s, %s\n %s, %d\n",
+	DBG("\nAddBootOptionForFile: %p, %ls, %ls\n %ls, %llu\n",
       FileDeviceHandle, FileName,
       UseShortForm ? L"ShortDevPath" : L"FullDevPath",
       Description, BootIndex);
@@ -1056,7 +1056,7 @@ AddBootOptionForFile (
   Status = AddBootOption (&BootOption, BootIndex);
   if (EFI_ERROR(Status)) {
     FreePool (BootOption.FilePathList);
-    DBG("AddBootOptionForFile: Error: %r\n", Status);
+    DBG("AddBootOptionForFile: Error: %s\n", strerror(Status));
     return Status;
   }
 
@@ -1102,10 +1102,10 @@ DeleteBootOption (
                              NULL
                              );
   if (EFI_ERROR(Status)) {
-    DBG(" Error del. variable: %s = %r\n", VarName, Status);
+    DBG(" Error del. variable: %ls = %s\n", VarName, strerror(Status));
     return Status;
   }
-  DBG(" %s deleted\n", VarName);
+  DBG(" %ls deleted\n", VarName);
 
   //
   // Update BootOrder - delete our boot option from the list
@@ -1131,11 +1131,11 @@ DeleteBootOptionForFile (
   IN  UINT16          BootNum;
 
 
-  DBG("\nDeleteBootOptionForFile: %p, %s\n", FileDeviceHandle, FileName);
+  DBG("\nDeleteBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName);
   do {
     Status = FindBootOptionForFile (FileDeviceHandle, FileName, &BootNum, NULL);
     if (!EFI_ERROR(Status)) {
-      DBG("\tdeleted option: %04x\n", BootNum);
+      DBG("\tdeleted option: %04X\n", BootNum);
       DeleteBootOption (BootNum);
     }
   } while (!EFI_ERROR(Status));
@@ -1160,7 +1160,7 @@ DeleteBootOptionsContainingFile (
   FILEPATH_DEVICE_PATH    *FilePathDP;
 
 
-  DBG("DeleteBootOptionContainingFile: %s\n", FileName);
+  DBG("DeleteBootOptionContainingFile: %ls\n", FileName);
 
   //
   // Get BootOrder - we will search only options listed in BootOrder.
@@ -1186,7 +1186,7 @@ DeleteBootOptionsContainingFile (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-      DBG("DeleteBootOptionContainingFile: Boot%04X: ERROR: %r\n", BootOrder[Index], Status);
+      DBG("DeleteBootOptionContainingFile: Boot%04X: ERROR: %s\n", BootOrder[Index], strerror(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
       continue;
     }
@@ -1197,7 +1197,7 @@ DeleteBootOptionsContainingFile (
 
     if ((FilePathDP != NULL) &&
         (StriStr (FilePathDP->PathName, FileName) != NULL)) {
-      DBG("DeleteBootOptionContainingFile: Found Boot%04X, at index %d\n", BootOrder[Index], Index);
+		DBG("DeleteBootOptionContainingFile: Found Boot%04X, at index %llu\n", BootOrder[Index], Index);
       Status = DeleteBootOption (BootOrder[Index]);
       if (!EFI_ERROR(Status)) {
         ReturnStatus = EFI_SUCCESS;
@@ -1209,7 +1209,7 @@ DeleteBootOptionsContainingFile (
     FreePool (BootOption.Variable);
   }
 
-  DBG("DeleteBootOptionContainingFile: %r\n", ReturnStatus);
+  DBG("DeleteBootOptionContainingFile: %s\n", strerror(ReturnStatus));
   return ReturnStatus;
 }
 

@@ -163,7 +163,7 @@ CHAR16 *RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOpti
   CHAR16 *NewLoadOptions;
   UINTN   Length, Offset, OptionLength;
 
-  //DBG("LoadOptions: '%s', remove LoadOption: '%s'\n", LoadOptions, LoadOption);
+  //DBG("LoadOptions: '%ls', remove LoadOption: '%ls'\n", LoadOptions, LoadOption);
   // If there are no options then nothing to do
   if (LoadOptions == NULL) return NULL;
   // If there is no option to remove then duplicate original

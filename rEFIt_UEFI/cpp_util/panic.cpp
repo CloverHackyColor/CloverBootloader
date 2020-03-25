@@ -15,11 +15,11 @@ bool i_have_panicked = false;
 void panic_(const char* s)
 {
 	if ( stop_at_panic ) {
-		if ( s ) DebugLog(2, "%a\n", s);
+		if ( s ) DebugLog(2, "%s\n", s);
 		DebugLog(2, "A fatal error happened. System halted\n");
 		CpuDeadLoop();
 	}else{
-//		if ( s ) DebugLog(2, "%a\n", s);
+//		if ( s ) DebugLog(2, "%s\n", s);
 //		DebugLog(2, "A fatal error happened. Continue for testing\n");
 		i_have_panicked = true;
 	}

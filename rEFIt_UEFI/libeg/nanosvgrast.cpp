@@ -72,7 +72,7 @@ void DumpFloat (char* s, float* t, int N)
 {
 #if DEBUG_SVG
   int i;
-  DBG("%a: ", s);
+  DBG("%s: ", s);
   for(i=0; i<N;i++) {
     float a = t[i];
     int b = (int)a;
@@ -1175,7 +1175,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     for (i = 0; i < count; i++) {
       int r,g,b,a,ia;
       gd = sqrtf(gx*gx + gy*gy);
-      //     DBG("gx=%s gy=%s\n", PoolPrintFloat(gx), PoolPrintFloat(gy));
+      //     DBG("gx=%ls gy=%ls\n", PoolPrintFloat(gx), PoolPrintFloat(gy));
       int level = cache->coarse;
       c = cache->colors[dither(nsvg__clampf(gd*(255.0f-level*2), 0, (254.99f-level*2)), level)];
       cr = (c) & 0xff;
@@ -1486,7 +1486,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 
   cache->type = paint->type;
   
-  //  DBG("shape=%a, paint-type=%d\n", shape->id, cache->type);
+  //  DBG("shape=%s, paint-type=%d\n", shape->id, cache->type);
 
   if (cache->type == NSVG_PAINT_COLOR) {
     cache->colors[0] = nsvg__applyOpacity(paint->paint.color, opacity);
@@ -1557,7 +1557,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
       }
     }
     //    if (shape->debug) {
-    //      DBG("Color cache [0,50,100,150,200,250]:%x,%x,%x,%x,%x,%x\n",
+    //      DBG("Color cache [0,50,100,150,200,250]:%X,%X,%X,%X,%X,%X\n",
     //        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
     //        cache->colors[200], cache->colors[250]);
     //    }
@@ -1775,7 +1775,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 
   tx -= image->realBounds[0] * scalex;
   ty -= image->realBounds[1] * scaley;
-//    DBG("  image will be shifted by [%s,%s]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
+//    DBG("  image will be shifted by [%ls,%ls]\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
 //   DumpFloat("  image real bounds ", image->realBounds, 4);
 
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);

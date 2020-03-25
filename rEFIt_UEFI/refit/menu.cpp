@@ -813,7 +813,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //7
   if (InputItems[i].Valid) {
-//    DBG("InputItems[i]: %s\n", InputItems[i].SValue);
+//    DBG("InputItems[i]: %ls\n", InputItems[i].SValue);
     gSettings.PLimitDict = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x7F);
 //    DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
  }
@@ -858,7 +858,7 @@ VOID ApplyInputs(VOID)
   i++; //17
   if (InputItems[i].Valid) {
     gPlatformFeature = (UINT64)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied PlatformFeature=0x%x\n", gPlatformFeature);
+	  DBG("applied PlatformFeature=0x%llX\n", gPlatformFeature);
   }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
@@ -898,7 +898,7 @@ VOID ApplyInputs(VOID)
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
         gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue);
-        DBG("applied *-platform-id=0x%x\n", gSettings.IgPlatform);
+        DBG("applied *-platform-id=0x%X\n", gSettings.IgPlatform);
       }
     }
 
@@ -1018,12 +1018,12 @@ VOID ApplyInputs(VOID)
   i++; //62
   if (InputItems[i].Valid) {
     gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied FirmwareFeatures=0x%x\n", gFwFeatures);
+    DBG("applied FirmwareFeatures=0x%X\n", gFwFeatures);
   }
   i++; //63
   if (InputItems[i].Valid) {
     gFwFeaturesMask = (UINT32)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied FirmwareFeaturesMask=0x%x\n", gFwFeaturesMask);
+    DBG("applied FirmwareFeaturesMask=0x%X\n", gFwFeaturesMask);
   }
   i++; //64
   if (InputItems[i].Valid) {
@@ -1191,7 +1191,7 @@ VOID ApplyInputs(VOID)
   i++; //96
   if (InputItems[i].Valid) {
     gSettings.FakeIntel = (UINT32)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied FakeIntel=0x%x\n", gSettings.FakeIntel);
+    DBG("applied FakeIntel=0x%X\n", gSettings.FakeIntel);
   }
   i++; //97
   if (InputItems[i].Valid) {
@@ -1229,7 +1229,7 @@ VOID ApplyInputs(VOID)
   i++; //104
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied FakeCPUID=%06x\n", gSettings.KernelAndKextPatches.FakeCPUID);
+    DBG("applied FakeCPUID=%06X\n", gSettings.KernelAndKextPatches.FakeCPUID);
     gBootChanged = TRUE;
   }
 
@@ -1259,7 +1259,7 @@ VOID ApplyInputs(VOID)
   i++; //109
   if (InputItems[i].Valid) {
     gSettings.DualLink = (UINT32)StrHexToUint64(InputItems[i].SValue);
-    DBG("applied DualLink=%x\n", gSettings.DualLink);
+    DBG("applied DualLink=%X\n", gSettings.DualLink);
   }
 
   i++; //110
@@ -1307,7 +1307,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
     UINT8 TmpIndex = OldChosenAudio & 0xFF;
-    DBG("Chosen output %d:%s_%a\n", OldChosenAudio, AudioList[OldChosenAudio].Name, AudioOutputNames[OldChosenAudio]);
+	  DBG("Chosen output %llu:%ls_%s\n", OldChosenAudio, AudioList[OldChosenAudio].Name, AudioOutputNames[OldChosenAudio]);
 
     DevicePath = DevicePathFromHandle(AudioList[OldChosenAudio].Handle);
     if (DevicePath != NULL) {
@@ -1347,7 +1347,7 @@ VOID ApplyInputs(VOID)
 VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST char *Line)
 {
 
-//DBG("%a, %a : Line=%a\n", __FILE__, __LINE__, XString(Line).c);
+//DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
   REFIT_INFO_DIALOG *InputBootArgs;
 
   InputBootArgs = new REFIT_INFO_DIALOG;
@@ -1359,7 +1359,7 @@ VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST char *Line)
 VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
 {
 
-//DBG("%a, %a : Line=%a\n", __FILE__, __LINE__, XString(Line).c);
+//DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
   REFIT_INFO_DIALOG *InputBootArgs;
 
   InputBootArgs = new REFIT_INFO_DIALOG;
@@ -2487,7 +2487,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
   Item->Valid = FALSE;
   FreePool(Backup);
   if (Item->SValue) {
-    MsgLog("EDITED: %s\n", Item->SValue);
+    MsgLog("EDITED: %ls\n", Item->SValue);
   }
   return 0;
 }
@@ -2763,10 +2763,10 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
 /* just a sample code
       case SCAN_F7:
         Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
-        DBG("create folder %r\n", Status);
+        DBG("create folder %s\n", strerror(Status));
         if (!EFI_ERROR(Status)) {
           Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\new_folder\\new_file.txt", (UINT8*)SomeText, sizeof(*SomeText)+1);
-          DBG("create file %r\n", Status);
+          DBG("create file %s\n", strerror(Status));
         }
         break;
 */
@@ -2775,7 +2775,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
               OldChosenAudio = 0; //security correction
         }
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
-        DBG("open %d audio handle status=%r\n", OldChosenAudio, Status);
+			DBG("open %llu audio handle status=%s\n", OldChosenAudio, strerror(Status));
         if (!EFI_ERROR(Status)) {
           StartupSoundPlay(SelfRootDir, NULL); //play embedded sound
         }
@@ -3154,7 +3154,7 @@ INTN DrawTextXY(IN XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
     // shift 64 is prohibited
     XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
   }
-  //  DBG("draw text %s\n", Text);
+  //  DBG("draw text %ls\n", Text);
   //  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
 //  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
 //  egFreeImage(TextBufferXY);
@@ -3211,7 +3211,7 @@ INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAli
     // shift 64 is prohibited
     XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
   }
-//  DBG("draw text %s\n", Text);
+//  DBG("draw text %ls\n", Text);
 //  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
   BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
   egFreeImage(TextBufferXY);
@@ -3794,7 +3794,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                        Entry->Place.YPos, 0xFFFF);
           ThemeX.Buttons[(Entry->Row == OldChosenItem)?1:0].Draw(ctrlX, ctrlY);
         } else {
-          //DBG("paint entry %d title=%s\n", i, Entries[i]->Title);
+          //DBG("paint entry %d title=%ls\n", i, Entries[i]->Title);
           DrawMenuText(ResultString,
                        (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX, Entry->Place.YPos, 0xFFFF);
@@ -4130,7 +4130,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                         ctrlY,
                         &MenuBackgroundPixel, 16);
         } else {
-					//DBG("paint entry %d title=%s\n", i, Entries[i]->Title);
+					//DBG("paint entry %d title=%ls\n", i, Entries[i]->Title);
           DrawMenuText(ResultString,
                        (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX, Entry->Place.YPos, 0xFFFF);
@@ -4327,7 +4327,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
       NewImageCreated = true;
     }
   }
-  //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+  //  DBG("Entry title=%ls; Width=%d\n", Entry->Title, MainImage->Width);
   float fScale;
   if (ThemeX.TypeSVG) {
     fScale = (selected ? 1.f : -1.f);
@@ -4401,7 +4401,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
       NewImageCreated = true;
     }
   }
-  //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+  //  DBG("Entry title=%ls; Width=%d\n", Entry->Title, MainImage->Width);
 
   if (GlobalConfig.TypeSVG) {
     Scale = 16 * (selected ? 1 : -1);
@@ -4632,7 +4632,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
     	if ( Text ) FreePool(Text);
       return;
   }
-  //  DBG("draw text %s at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
+  //  DBG("draw text %ls at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
 // clovy  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
   DrawTextXY(Text, Xpos, UGAHeight - (INTN)(TextHeight * 1.5f), Align);
   if ( Text ) FreePool(Text);
@@ -4984,7 +4984,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at all! Status=%r\n", Status);
+        DBG("can't bear mouse at all! Status=%s\n", strerror(Status));
       }
       break;
 
@@ -5034,7 +5034,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at sel! Status=%r\n", Status);
+        DBG("can't bear mouse at sel! Status=%s\n", strerror(Status));
       }
       break;
 #if USE_XTHEME
@@ -5052,7 +5052,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at timeout! Status=%r\n", Status);
+        DBG("can't bear mouse at timeout! Status=%s\n", strerror(Status));
       }
       break;
 #else
@@ -5070,7 +5070,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at timeout! Status=%r\n", Status);
+        DBG("can't bear mouse at timeout! Status=%s\n", strerror(Status));
       }
       break;
 #endif
@@ -5152,7 +5152,7 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
 //    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
     ChosenEntry->Title.SPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
-    //MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
+    //MsgLog("@ESC: %ls\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
 //    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
@@ -5472,7 +5472,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 	NewEntry_(SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
 	SubEntry->Flags = Entry->Flags;
 	if (ChosenOS) {
-//    DBG("chosen os %a\n", ChosenOS);
+//    DBG("chosen os %s\n", ChosenOS);
 		//shorten os version 10.11.6 -> 10.11
 		for (i = 0; i < 8; i++) {
 			ShortOSVersion[i] = ChosenOS[i];
@@ -5689,7 +5689,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
     while (DropTable) {
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
-      //MsgLog("adding to menu %a (%x) %a (%lx) L=%d(0x%x)\n",
+      //MsgLog("adding to menu %s (%X) %s (%lx) L=%d(0x%X)\n",
       //       sign, DropTable->Signature,
       //       OTID, DropTable->TableId,
       //       DropTable->Length, DropTable->Length);
@@ -6425,16 +6425,16 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
       SubMenuIndex = -1;
 
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
-//      DBG("main OptionsBits = 0x%x\n", gSettings.OptionsBits);
+//      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
       if ( MainChosenEntry->getLOADER_ENTRY() ) gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-//      DBG("add OptionsBits = 0x%x\n", gSettings.OptionsBits);
+//      DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
       if ( MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
-      //      DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+      //      DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
       if (MainChosenEntry->getLOADER_ENTRY()) {
         // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
         gSettings.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
       }
- //          DBG(" MainChosenEntry with FlagsBits = 0x%x\n", gSettings.FlagsBits);
+ //          DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
 
       if (TmpArgs) {
         FreePool(TmpArgs);
@@ -6445,8 +6445,8 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         //running details menu
         SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(Style, &SubMenuIndex, &TempChosenEntry);
         if ( MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
-//        DBG("get OptionsBits = 0x%x\n", gSettings.OptionsBits);
-//        DBG(" TempChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
+//        DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
+//        DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
         if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
           SubMenuExit = MENU_EXIT_ENTER;
           MenuExit = 0;
@@ -6455,11 +6455,11 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
           MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = EfiStrDuplicate(((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
         }
-        //       DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+        //       DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
         if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
           // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
           MainChosenEntry->getLOADER_ENTRY()->Flags = TempChosenEntry->getLOADER_ENTRY()->Flags;
-//           DBG(" get MainChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
+//           DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions) {
@@ -6467,7 +6467,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }
-          DBG(" boot with args: %a\n", gSettings.BootArgs);
+          DBG(" boot with args: %s\n", gSettings.BootArgs);
         }
         //---- Details submenu (kexts disabling etc)
         if (SubMenuExit == MENU_EXIT_ENTER || MenuExit == MENU_EXIT_DETAILS) {
@@ -6481,7 +6481,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
                 NextMenuExit = MENU_EXIT_ENTER;
                 break;
               }
- //             DBG(" get NextChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
+ //             DBG(" get NextChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
               //---- Details submenu (kexts disabling etc) second level
               if (NextMenuExit == MENU_EXIT_ENTER || MenuExit == MENU_EXIT_DETAILS) {
                 if (NextChosenEntry->SubScreen != NULL) {
@@ -6495,7 +6495,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
                       NextMenuExit = 0;
                       break;
                     }
- //                   DBG(" get DeepChosenEntry FlagsBits = 0x%x\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
+ //                   DBG(" get DeepChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
                   } //while(!DeepMenuExit)
                 }
               }

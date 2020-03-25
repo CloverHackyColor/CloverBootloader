@@ -99,7 +99,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
       case EfiBootServicesData:  
         memDescriptor->Type = EfiConventionalMemory;
         memDescriptor->Attribute = 0;
-    //    DBG(L"Range BS %x corrected to conventional\n", memDescriptor->PhysicalStart);
+    //    DBG(L"Range BS %X corrected to conventional\n", memDescriptor->PhysicalStart);
         if(MEM_DEB) {
           UnicodeSPrint(tmp, 160, L"Range BS %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
           gST->ConOut->OutputString (gST->ConOut, tmp);
@@ -117,7 +117,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
         (memDescriptor->Attribute == EFI_MEMORY_WB)) {
       memDescriptor->Type = EfiConventionalMemory;
       memDescriptor->Attribute = 0xF;
-//      DBG(L"Range WB %x corrected to conventional\n", memDescriptor->PhysicalStart);
+//      DBG(L"Range WB %X corrected to conventional\n", memDescriptor->PhysicalStart);
       if(MEM_DEB) {
         UnicodeSPrint(tmp, 160, L"Range WB %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
         gST->ConOut->OutputString (gST->ConOut, tmp);

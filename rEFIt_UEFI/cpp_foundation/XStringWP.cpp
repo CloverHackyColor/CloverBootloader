@@ -35,7 +35,7 @@ XStringWP::XStringWP(const wchar_t *S)
 		DebugLog(2, "XStringWP(const wchar_t *S) called with NULL. Use setEmpty()\n");
 		panic();
 	}
-DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
+DBG("Constructor(const wchar_t *S) : %ls, StrLen(S)=%d\n", S, StrLen(S));
 	Init(wcslen(S));
 	StrCpy(S);
 }

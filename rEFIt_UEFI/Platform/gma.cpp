@@ -984,9 +984,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       break;
     }
   }
-  //DBG("Finally model=%a\n", model);
+  //DBG("Finally model=%s\n", model);
 
-  MsgLog("%a [%04x:%04x] :: %a\n",
+  MsgLog("%s [%04X:%04X] :: %s\n",
       model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
 
   // Resolution
@@ -1385,13 +1385,13 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       Injected = TRUE;
 
       if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       } else {
         devprop_add_value(device,
                           gSettings.AddProperties[i].Key,
                           (UINT8*)gSettings.AddProperties[i].Value,
                           gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       }
     }
   }
@@ -1511,7 +1511,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     FakeID = gSettings.FakeIntel & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
     SetFake = TRUE;
-    MsgLog("  FakeID Intel GFX = 0x%08lx\n", gSettings.FakeIntel);
+	  MsgLog("  FakeID Intel GFX = 0x%08x\n", gSettings.FakeIntel);
   } else {
     DBG("  FakeID Intel GFX: not set\n");
   }
@@ -1527,7 +1527,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x0126: // "Intel HD Graphics 3000"
       if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
-        MsgLog("  snb-platform-id = 0x%08lx\n", gSettings.IgPlatform);
+		  MsgLog("  snb-platform-id = 0x%08x\n", gSettings.IgPlatform);
         SetSnb = TRUE;
       } else {
         DBG("  snb-platform-id: not set\n");
@@ -1536,7 +1536,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     default:
       if (gSettings.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.IgPlatform, 4);
-        MsgLog("  ig-platform-id = 0x%08lx\n", gSettings.IgPlatform);
+		  MsgLog("  ig-platform-id = 0x%08x\n", gSettings.IgPlatform);
         SetIg = TRUE;
       } else {
         DBG("  ig-platform-id: not set\n");
@@ -3384,7 +3384,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
 
     default:
-      DBG("  Intel card id=%x unsupported, please report to the clover thread\n", gma_dev->device_id);
+      DBG("  Intel card id=%X unsupported, please report to the clover thread\n", gma_dev->device_id);
       return FALSE;
   }
 

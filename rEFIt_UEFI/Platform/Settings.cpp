@@ -331,7 +331,7 @@ ParseACPIName(CHAR8 *String)
   ACPI_NAME_LIST* Next = NULL;
   INTN i, j, Len, pos0, pos1;
   Len = AsciiStrLen(String);
-  //  DBG("parse ACPI name: %a\n", String);
+  //  DBG("parse ACPI name: %s\n", String);
   if (Len > 0)   {
     //Parse forward but put in stack LIFO "_SB.PCI0.RP02.PXSX"  -1,3,8,13,18
     pos0 = -1;
@@ -351,7 +351,7 @@ ParseACPIName(CHAR8 *String)
       }
       List->Name[4] = '\0';
       //    }
-      //      DBG("string between [%d,%d]: %a\n", pos0, pos1, List->Name);
+      //      DBG("string between [%d,%d]: %s\n", pos0, pos1, List->Name);
       pos0 = pos1; //comma or zero@end
       Next = List;
     }
@@ -401,10 +401,10 @@ ParseLoadOptions (
 
   for (i = 0; PlistStrings[i][0] != '\0'; i++) {
     PlistStringsLen = AsciiStrLen (PlistStrings[i]);
-    //DBG ("PlistStrings[%d] = %a\n", i, PlistStrings[i]);
+    //DBG ("PlistStrings[%d] = %s\n", i, PlistStrings[i]);
     if (PlistStringsLen < TailSize) {
       if (AsciiStriNCmp (PlistStrings[i], Start, PlistStringsLen)) {
-        DBG (" - found plist string = %a, parse XML in LoadOptions\n", PlistStrings[i]);
+        DBG (" - found plist string = %s, parse XML in LoadOptions\n", PlistStrings[i]);
         if (ParseXML (Start, Dict, (UINT32)TailSize) != EFI_SUCCESS) {
           *Dict = NULL;
           DBG ("  - [!] xml in load options is bad\n");
@@ -464,7 +464,7 @@ GetBootFromOption(VOID)
     gSettings.DefaultLoader = (__typeof__(gSettings.DefaultLoader))AllocateCopyPool(Name2Size, Data);
   }
 
-  DBG("Clover started with option to boot %s from %s\n",
+  DBG("Clover started with option to boot %ls from %ls\n",
       (gSettings.DefaultLoader != NULL)?gSettings.DefaultLoader:L"legacy",
       gSettings.DefaultVolume);
 }
@@ -492,7 +492,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   VarName = PoolPrint(L"Boot%04x", Entry->BootNum);
   BootVariable = (UINT8*)GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
   if ((BootVariable == NULL) || (VarSize == 0)) {
-    DBG("Boot option %s not found\n", VarName);
+    DBG("Boot option %ls not found\n", VarName);
     FreePool(VarName);
     return;
   }
@@ -514,7 +514,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   NameSize = *(UINT16*)Data;
   Data += 2;
   if (StriCmp((CHAR16*)Data, Entry->Volume->VolName) != 0) {
-    DBG("Boot option %d has other volume name %s\n", Entry->BootNum, (CHAR16*)Data);
+	  DBG("Boot option %llu has other volume name %ls\n", Entry->BootNum, (CHAR16*)Data);
     FreePool(BootVariable);
     return;
   }
@@ -522,7 +522,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   if (VarSize > NameSize + 6) {
     Data += NameSize;
     if (StriCmp((CHAR16*)Data, Basename(Entry->LoaderPath)) != 0) {
-      DBG("Boot option %d has other loader name %s\n", Entry->BootNum, (CHAR16*)Data);
+		DBG("Boot option %llu has other loader name %ls\n", Entry->BootNum, (CHAR16*)Data);
       FreePool(BootVariable);
       return;
     }
@@ -536,7 +536,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
                              sizeof(UINT16),
                              &Entry->BootNum);
   if (EFI_ERROR(Status)) {
-    DBG("Can't save BootCurrent, status=%r\n", Status);
+    DBG("Can't save BootCurrent, status=%s\n", strerror(Status));
   }
   //Next step is rotate BootOrder to set BootNum to first place
   BootOrder = (__typeof__(BootOrder))GetNvramVariable (L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
@@ -568,7 +568,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
                                BootOrderNew
                                );
     if (EFI_ERROR(Status)) {
-      DBG("Can't save BootOrder, status=%r\n", Status);
+      DBG("Can't save BootOrder, status=%s\n", strerror(Status));
     }
     DBG("Set new BootOrder\n");
     PrintBootOrder(BootOrderNew, VarSize);
@@ -608,7 +608,7 @@ UINT8
       /*
        DBG ("Data: %p, Len: %d = ", Data, Prop->dataLen);
        for (i = 0; i < Prop->dataLen; i++) {
-       DBG ("%02x ", Data[i]);
+       DBG ("%02X ", Data[i]);
        }
        DBG ("\n");
        */
@@ -624,7 +624,7 @@ UINT8
       /*
        DBG ("Data(str): %p, Len: %d = ", data, len);
        for (i = 0; i < Len; i++) {
-       DBG ("%02x ", data[i]);
+       DBG ("%02X ", data[i]);
        }
        DBG ("\n");
        */
@@ -663,11 +663,11 @@ LoadUserSettings (
       Status = egLoadFile (RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
     }
     if (!EFI_ERROR (Status)) {
-      DBG ("Using %s.plist at RootDir at path: %s\n", ConfName, ConfigPlistPath);
+      DBG ("Using %ls.plist at RootDir at path: %ls\n", ConfName, ConfigPlistPath);
     } else {
       Status = egLoadFile (SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
       if (!EFI_ERROR (Status)) {
-        DBG ("Using %s.plist at SelfRootDir at path: %s\n", ConfName, ConfigPlistPath);
+        DBG ("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName, ConfigPlistPath);
       }
     }
   }
@@ -676,7 +676,7 @@ LoadUserSettings (
     Status = ParseXML ((const CHAR8*)gConfigPtr, Dict, (UINT32)Size);
     if (EFI_ERROR (Status)) {
       //  Dict = NULL;
-      DBG ("config.plist parse error Status=%r\n", Status);
+      DBG ("config.plist parse error Status=%s\n", strerror(Status));
       return Status;
     }
   }
@@ -1015,7 +1015,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty (DictPointer, "FakeCPUID");
   if (Prop != NULL || gBootChanged) {
     Patches->FakeCPUID = (UINT32)GetPropertyInteger (Prop, 0);
-    DBG ("FakeCPUID: %x\n", Patches->FakeCPUID);
+    DBG ("FakeCPUID: %X\n", Patches->FakeCPUID);
   }
 
   Prop = GetProperty (DictPointer, "ATIConnectorsController");
@@ -1069,12 +1069,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       }
 
       Patches->ForceKexts = newForceKexts;
-      DBG ("ForceKextsToLoad: %d requested\n", Count);
+		DBG ("ForceKextsToLoad: %lld requested\n", Count);
 
       for (i = 0; i < Count; i++) {
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG (" - [%02d]: ForceKexts error %r getting next element\n", i, Status);
+			DBG (" - [%02lld]: ForceKexts error %s getting next element\n", i, strerror(Status));
           continue;
         }
 
@@ -1090,7 +1090,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           if (AsciiStrSize(Prop2->string) > 1) {
             Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))AllocateZeroPool (AsciiStrSize(Prop2->string) * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
-            DBG (" - [%d]: %s\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
+            DBG (" - [%d]: %ls\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
           }
         }
@@ -1138,21 +1138,21 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       KEXT_PATCH *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KEXT_PATCH));
 
       Patches->KextPatches = newPatches;
-      DBG ("KextsToPatch: %d requested\n", Count);
+		DBG ("KextsToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         CHAR8 *KextPatchesName, *KextPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG (" - [%02d]: Patches error %r getting next element\n", i, Status);
+			DBG (" - [%02lld]: Patches error %s getting next element\n", i, strerror(Status));
           continue;
         }
 
         if (Prop2 == NULL) {
           break;
         }
-        DBG (" - [%02d]:", i);
+		  DBG (" - [%02lld]:", i);
 
         Dict = GetProperty (Prop2, "Name");
         if (Dict == NULL) {
@@ -1175,7 +1175,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         } else {
           AsciiStrCatS(KextPatchesLabel, 255, " (NoLabel)");
         }
-        DBG (" %a", KextPatchesLabel);
+        DBG (" %s", KextPatchesLabel);
 
         Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = TRUE;
         Dict = GetProperty (Prop2, "Disabled");
@@ -1229,13 +1229,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KextPatches[Patches->NrKexts].MatchOS = (__typeof__(Patches->KextPatches[Patches->NrKexts].MatchOS))AllocateCopyPool (AsciiStrSize(Dict->string), Dict->string);
-          DBG(" :: MatchOS: %a", Patches->KextPatches[Patches->NrKexts].MatchOS);
+          DBG(" :: MatchOS: %s", Patches->KextPatches[Patches->NrKexts].MatchOS);
         }
 
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KextPatches[Patches->NrKexts].MatchBuild = (__typeof__(Patches->KextPatches[Patches->NrKexts].MatchBuild))AllocateCopyPool (AsciiStrSize(Dict->string), Dict->string);
-          DBG(" :: MatchBuild: %a", Patches->KextPatches[Patches->NrKexts].MatchBuild);
+          DBG(" :: MatchBuild: %s", Patches->KextPatches[Patches->NrKexts].MatchBuild);
         }
 
         // check if this is Info.plist patch or kext binary patch
@@ -1248,7 +1248,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG (" :: BinPatch");
         }
 
-        DBG (" :: data len: %d\n", Patches->KextPatches[Patches->NrKexts].DataLen);
+		  DBG (" :: data len: %lld\n", Patches->KextPatches[Patches->NrKexts].DataLen);
         if (!Patches->KextPatches[Patches->NrKexts++].MenuItem.BValue) {
           DBG(" - patch disabled at config\n");
         }
@@ -1300,21 +1300,21 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
 
       Patches->KernelPatches = newPatches;
-      DBG ("KernelToPatch: %d requested\n", Count);
+		DBG ("KernelToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         CHAR8 *KernelPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG (" - [%02d]: Patches error %r getting next element\n", i, Status);
+			DBG (" - [%02lld]: Patches error %s getting next element\n", i, strerror(Status));
           continue;
         }
 
         if (Prop2 == NULL) {
           break;
         }
-        DBG (" - [%02d]:", i);
+		  DBG (" - [%02lld]:", i);
 
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
@@ -1322,7 +1322,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         } else {
           KernelPatchesLabel = (__typeof__(KernelPatchesLabel))AllocateCopyPool (8, "NoLabel");
         }
-        DBG (" %a", KernelPatchesLabel);
+        DBG (" %s", KernelPatchesLabel);
 
         Dict = GetProperty (Prop2, "Disabled");
         Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue   = !IsPropertyTrue (Dict);
@@ -1376,15 +1376,15 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KernelPatches[Patches->NrKernels].MatchOS = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MatchOS))AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchOS: %a", Patches->KernelPatches[Patches->NrKernels].MatchOS);
+          DBG(" :: MatchOS: %s", Patches->KernelPatches[Patches->NrKernels].MatchOS);
         }
 
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->KernelPatches[Patches->NrKernels].MatchBuild = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MatchBuild))AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchBuild: %a", Patches->KernelPatches[Patches->NrKernels].MatchBuild);
+          DBG(" :: MatchBuild: %s", Patches->KernelPatches[Patches->NrKernels].MatchBuild);
         }
-        DBG (" :: data len: %d\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
+		  DBG (" :: data len: %lld\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
         Patches->NrKernels++;
       }
     }
@@ -1427,20 +1427,20 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
 
       Patches->BootPatches = newPatches;
-      DBG ("BootPatches: %d requested\n", Count);
+		DBG ("BootPatches: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         CHAR8 *BootPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR (Status)) {
-          DBG (" - [%02d]: error %r getting next element\n", i, Status);
+			DBG (" - [%02lld]: error %s getting next element\n", i, strerror(Status));
           continue;
         }
         if (Prop2 == NULL) {
           break;
         }
-        DBG (" - [%02d]:", i);
+		  DBG (" - [%02lld]:", i);
 
         Dict = GetProperty (Prop2, "Comment");
         if (Dict != NULL) {
@@ -1449,7 +1449,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           BootPatchesLabel = (__typeof__(BootPatchesLabel))AllocateCopyPool (8, "NoLabel");
         }
 
-        DBG (" %a", BootPatchesLabel);
+        DBG (" %s", BootPatchesLabel);
 
         Dict = GetProperty (Prop2, "Disabled");
         Patches->BootPatches[Patches->NrBoots].MenuItem.BValue   = !IsPropertyTrue (Dict);
@@ -1500,16 +1500,16 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty (Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->BootPatches[Patches->NrBoots].MatchOS = (__typeof__(Patches->BootPatches[Patches->NrBoots].MatchOS))AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchOS: %a", Patches->BootPatches[Patches->NrBoots].MatchOS);
+          DBG(" :: MatchOS: %s", Patches->BootPatches[Patches->NrBoots].MatchOS);
         }
 
         Dict = GetProperty (Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
           Patches->BootPatches[Patches->NrBoots].MatchBuild = (__typeof__(Patches->BootPatches[Patches->NrBoots].MatchBuild))AllocateCopyPool (AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchBuild: %a", Patches->BootPatches[Patches->NrBoots].MatchBuild);
+          DBG(" :: MatchBuild: %s", Patches->BootPatches[Patches->NrBoots].MatchBuild);
         }
 
-        DBG (" :: data len: %d\n", Patches->BootPatches[Patches->NrBoots].DataLen);
+		  DBG (" :: data len: %lld\n", Patches->BootPatches[Patches->NrBoots].DataLen);
         Patches->NrBoots++;
       }
     }
@@ -1547,7 +1547,7 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
         ((AsciiStrStr(mos->array[i], ".") != NULL) && IsOSValid(mos->array[i], CurrOS)) || // MatchOS
         (AsciiStrStr(mos->array[i], CurrOS) != NULL) // MatchBuild
         ) {
-      //DBG ("\nthis patch will activated for OS %s!\n", mos->array[i]);
+      //DBG ("\nthis patch will activated for OS %ls!\n", mos->array[i]);
       ret =  TRUE;
       break;
     }
@@ -1569,7 +1569,7 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
     return NULL;
   }
   mo->count = countOccurrences( str, sep ) + 1;
-  //  DBG("found %d %c in %s\n", mo->count, sep, str);
+  //  DBG("found %d %c in %ls\n", mo->count, sep, str);
   len = (INTN)AsciiStrLen(str);
   doubleSep[0] = sep; doubleSep[1] = sep;
 
@@ -1623,7 +1623,7 @@ MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
     FreePool(indexes);
   }
   else {
-    //    DBG("str contains only one component and it is our string %s!\n", str);
+    //    DBG("str contains only one component and it is our string %ls!\n", str);
     mo->array[0] = (__typeof_am__(mo->array[0]))AllocateCopyPool(AsciiStrLen(str)+1, str);
   }
   return mo;
@@ -1995,7 +1995,7 @@ FillinCustomEntry (
         }
         Entry->CustomLogo  = egLoadImage (SelfRootDir, customLogo, TRUE);
         if (Entry->CustomLogo == NULL) {
-          DBG ("Custom boot logo not found at path `%s`!\n", customLogo);
+          DBG ("Custom boot logo not found at path `%ls`!\n", customLogo);
         }
         if (customLogo != NULL) {
           FreePool (customLogo);
@@ -2011,12 +2011,12 @@ FillinCustomEntry (
 
       Entry->CustomLogo = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
       if (Entry->CustomLogo == NULL) {
-        DBG ("Custom boot logo not decoded from data!\n", Prop->string);
+        DBG ("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
       }
     } else {
       Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
     }
-    DBG ("Custom entry boot %s (0x%X)\n", CustomBootModeToStr (Entry->CustomBoot), Entry->CustomLogo);
+	  DBG ("Custom entry boot %ls (0x%llX)\n", CustomBootModeToStr(Entry->CustomBoot), (uintptr_t)Entry->CustomLogo);
   }
 
   Prop = GetProperty (DictPointer, "BootBgColor");
@@ -2062,7 +2062,7 @@ FillinCustomEntry (
     } else if (AsciiStriCmp (Prop->string, "LinuxKernel") == 0) {
       Entry->Type = OSTYPE_LINEFI;
     } else {
-      DBG ("** Warning: unknown custom entry Type '%a'\n", Prop->string);
+      DBG ("** Warning: unknown custom entry Type '%s'\n", Prop->string);
       Entry->Type = OSTYPE_OTHER;
     }
   } else {
@@ -2115,7 +2115,7 @@ FillinCustomEntry (
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else {
-        DBG ("** Warning: unknown custom entry InjectKexts value '%a'\n", Prop->string);
+        DBG ("** Warning: unknown custom entry InjectKexts value '%s'\n", Prop->string);
       }
     } else {
       // Use global settings
@@ -2510,7 +2510,7 @@ GetEDIDSettings(TagPtr DictPointer)
       if (Prop != NULL) {
         gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
         if ((j % 128) != 0) {
-          DBG (" Custom EDID has wrong length=%d\n", j);
+			DBG (" Custom EDID has wrong length=%llu\n", j);
         } else {
           DBG (" Custom EDID is ok\n");
           gSettings.CustomEDIDsize = (UINT16)j;
@@ -2586,7 +2586,7 @@ GetEarlyUserSettings (
       Prop = GetProperty (DictPointer, "Timeout");
       if (Prop != NULL) {
         GlobalConfig.Timeout = (INT32)GetPropertyInteger (Prop, GlobalConfig.Timeout);
-        DBG ("timeout set to %d\n", GlobalConfig.Timeout);
+		  DBG ("timeout set to %lld\n", GlobalConfig.Timeout);
       }
 
       Prop = GetProperty (DictPointer, "SkipHibernateTimeout");
@@ -2813,7 +2813,7 @@ GetEarlyUserSettings (
 
             gSettings.CustomLogo = egLoadImage (RootDir, customLogo, TRUE);
             if (gSettings.CustomLogo == NULL) {
-              DBG ("Custom boot logo not found at path `%s`!\n", customLogo);
+              DBG ("Custom boot logo not found at path `%ls`!\n", customLogo);
             }
 
             if (customLogo != NULL) {
@@ -2829,7 +2829,7 @@ GetEarlyUserSettings (
 
           gSettings.CustomLogo = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
           if (gSettings.CustomLogo == NULL) {
-            DBG ("Custom boot logo not decoded from data!\n", Prop->string);
+            DBG ("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
           }
         } else {
           gSettings.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
@@ -2838,7 +2838,7 @@ GetEarlyUserSettings (
         gSettings.CustomBoot   = CUSTOM_BOOT_DISABLED;
       }
 
-      DBG ("Custom boot %s (0x%X)\n", CustomBootModeToStr (gSettings.CustomBoot), gSettings.CustomLogo);
+		DBG ("Custom boot %ls (0x%llX)\n", CustomBootModeToStr(gSettings.CustomBoot), (uintptr_t)gSettings.CustomLogo);
     }
 
     //*** SYSTEM ***
@@ -2889,7 +2889,7 @@ GetEarlyUserSettings (
         if ((Prop->type == kTagTypeString) && Prop->string) {
           UINTN i;
           GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
-          DBG ("Default theme: %s\n", GlobalConfig.Theme);
+          DBG ("Default theme: %ls\n", GlobalConfig.Theme);
           OldChosenTheme = 0xFFFF; //default for embedded
           for (i = 0; i < ThemesNum; i++) {
             if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
@@ -2971,7 +2971,7 @@ GetEarlyUserSettings (
           }
         }
         if (GlobalConfig.ConsoleMode > 0) {
-          DBG ("ConsoleMode will be set to mode #%d\n", GlobalConfig.ConsoleMode);
+			DBG ("ConsoleMode will be set to mode #%lld\n", GlobalConfig.ConsoleMode);
         }
       }
 
@@ -3075,7 +3075,7 @@ GetEarlyUserSettings (
               if ((Dict2->type == kTagTypeString) && Dict2->string) {
                 gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint (L"%a", Dict2->string);
                 if (gSettings.HVHideStrings[gSettings.HVCount]) {
-                  DBG ("Hiding entries with string %s\n", gSettings.HVHideStrings[gSettings.HVCount]);
+                  DBG ("Hiding entries with string %ls\n", gSettings.HVHideStrings[gSettings.HVCount]);
                   gSettings.HVCount++;
                 }
               }
@@ -3263,17 +3263,17 @@ GetEarlyUserSettings (
 
             if (VBiosPatch->Find == NULL || FindSize == 0) {
               Valid = FALSE;
-              DBG ("PatchVBiosBytes[%d]: missing Find data\n", i);
+				DBG ("PatchVBiosBytes[%lld]: missing Find data\n", i);
             }
 
             if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
               Valid = FALSE;
-              DBG ("PatchVBiosBytes[%d]: missing Replace data\n", i);
+				DBG ("PatchVBiosBytes[%lld]: missing Replace data\n", i);
             }
 
             if (FindSize != ReplaceSize) {
               Valid = FALSE;
-              DBG ("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", i);
+				DBG ("PatchVBiosBytes[%lld]: Find and Replace data are not the same size\n", i);
             }
 
             if (Valid) {
@@ -3372,7 +3372,7 @@ GetListOfConfigs ()
       NameLen = StrLen(DirEntry->FileName) - 6; //without ".plist"
       ConfigsList[ConfigsNum] = (CHAR16*)AllocateCopyPool (NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
       ConfigsList[ConfigsNum++][NameLen] = L'\0';
-      DBG("- %s\n", DirEntry->FileName);
+      DBG("- %ls\n", DirEntry->FileName);
     }
   }
   DirIterClose(&DirIter);
@@ -3405,7 +3405,7 @@ GetListOfDsdts ()
       NameLen = StrLen(DirEntry->FileName); //with ".aml"
       DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool (NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
       DsdtsList[DsdtsNum++][NameLen] = L'\0';
-      DBG("- %s\n", DirEntry->FileName);
+      DBG("- %ls\n", DirEntry->FileName);
     }
   }
   DirIterClose(&DirIter);
@@ -3527,7 +3527,7 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
-    //   DBG("Added mKext=%s, MatchOS=%s\n", mKext->FileName, mKext->MatchOS);
+    //   DBG("Added mKext=%ls, MatchOS=%ls\n", mKext->FileName, mKext->MatchOS);
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
@@ -3546,7 +3546,7 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
       mPlugInKext->Next    = mKext->PlugInList;
       mPlugInKext->Version = GetBundleVersion(PlugInsName);
       mKext->PlugInList    = mPlugInKext;
-      //      DBG("---| added plugin=%s, MatchOS=%s\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
+      //      DBG("---| added plugin=%ls, MatchOS=%ls\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
       FreePool(PlugInsName);
     }
     FreePool(PlugInsPath);
@@ -3601,11 +3601,11 @@ GetListOfThemes ()
   DirIterOpen (SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
   while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
     if (DirEntry->FileName[0] == '.') {
-      //DBG("Skip theme: %s\n", DirEntry->FileName);
+      //DBG("Skip theme: %ls\n", DirEntry->FileName);
       continue;
     }
-    //DBG ("Found theme directory: %s", DirEntry->FileName);
-    DBG ("- [%02d]: %s", ThemesNum, DirEntry->FileName);
+    //DBG ("Found theme directory: %ls", DirEntry->FileName);
+	  DBG ("- [%02llu]: %ls", ThemesNum, DirEntry->FileName);
     ThemeTestPath = PoolPrint (L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
     if (ThemeTestPath != NULL) {
       Status = SelfRootDir->Open (SelfRootDir, &ThemeTestDir, ThemeTestPath, EFI_FILE_MODE_READ, 0);
@@ -3615,7 +3615,7 @@ GetListOfThemes ()
           Status = egLoadFile (ThemeTestDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
           if (EFI_ERROR (Status)) {
             Status = EFI_NOT_FOUND;
-            DBG (" - bad theme because %s nor %s can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);
+            DBG (" - bad theme because %ls nor %ls can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);
           }
         }
         if (!EFI_ERROR (Status)) {
@@ -4000,7 +4000,7 @@ GetThemeTagSettings (
     Dict2 = GetProperty (Dict, "CharWidth");
     GlobalConfig.CharWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.CharWidth);
     if (GlobalConfig.CharWidth & 1) {
-      MsgLog("Warning! Character width %d should be even!\n", GlobalConfig.CharWidth);
+		MsgLog("Warning! Character width %lld should be even!\n", GlobalConfig.CharWidth);
     }
 
     Dict2 = GetProperty (Dict, "Proportional");
@@ -4179,9 +4179,9 @@ LoadTheme (CHAR16 *TestTheme)
             ThemeDict = NULL;
           }
           if (ThemeDict == NULL) {
-            DBG("svg file %s not parsed\n", CONFIG_THEME_SVG);
+            DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
           } else {
-            DBG("Using vector theme '%s' (%s)\n", TestTheme, ThemePath);
+            DBG("Using vector theme '%ls' (%ls)\n", TestTheme, ThemePath);
           }
         } else {
           Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
@@ -4191,9 +4191,9 @@ LoadTheme (CHAR16 *TestTheme)
               ThemeDict = NULL;
             }
             if (ThemeDict == NULL) {
-              DBG ("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
+              DBG ("xml file %ls not parsed\n", CONFIG_THEME_FILENAME);
             } else {
-              DBG ("Using theme '%s' (%s)\n", TestTheme, ThemePath);
+              DBG ("Using theme '%ls' (%ls)\n", TestTheme, ThemePath);
             }
           }
         }
@@ -4241,7 +4241,7 @@ InitTheme(
   NSVGfontChain *fontChain = fontsDB;
   while (fontChain) {
     NSVGfont *font = fontChain->font;
-//    DBG("free font %a\n", font->fontFamily);
+//    DBG("free font %s\n", font->fontFamily);
     NSVGfontChain *nextChain = fontChain->next;
     if (font) {
       nsvg__deleteFont(font);
@@ -4336,13 +4336,13 @@ InitTheme(
       if (TestTheme != NULL) {
         ThemeDict = LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
-                  DBG ("special theme %s found and %s parsed\n", TestTheme, CONFIG_THEME_FILENAME);
+                  DBG ("special theme %ls found and %ls parsed\n", TestTheme, CONFIG_THEME_FILENAME);
           if (GlobalConfig.Theme) {
             FreePool (GlobalConfig.Theme);
           }
           GlobalConfig.Theme = TestTheme;
         } else { // special theme not loaded
-                  DBG ("special theme %s not found, skipping\n", TestTheme, CONFIG_THEME_FILENAME);
+                  DBG ("special theme %ls not found, skipping\n", TestTheme/*, CONFIG_THEME_FILENAME*/);
           FreePool (TestTheme);
         }
         TestTheme = NULL;
@@ -4364,16 +4364,16 @@ InitTheme(
         if (TestTheme != NULL) {
           ThemeDict = LoadTheme (TestTheme);
           if (ThemeDict != NULL) {
-            DBG ("theme %a defined in NVRAM found and %s parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
+            DBG ("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
             if (GlobalConfig.Theme != NULL) {
               FreePool (GlobalConfig.Theme);
             }
             GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
             if (GlobalConfig.Theme != NULL) {
-              DBG ("theme %a chosen from nvram is absent, using theme defined in config: %s\n", ChosenTheme, GlobalConfig.Theme);
+              DBG ("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, GlobalConfig.Theme);
             } else {
-              DBG ("theme %a chosen from nvram is absent, get first theme\n", ChosenTheme);
+              DBG ("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
             FreePool (TestTheme);
           }
@@ -4387,9 +4387,9 @@ InitTheme(
     if (ThemeDict == NULL) {
       if (GlobalConfig.Theme == NULL) {
         if (Time != NULL) {
-          DBG ("no default theme, get random theme %s\n", ThemesList[Rnd]);
+          DBG ("no default theme, get random theme %ls\n", ThemesList[Rnd]);
         } else {
-          DBG ("no default theme, get first theme %s\n", ThemesList[0]);
+          DBG ("no default theme, get first theme %ls\n", ThemesList[0]);
         }
       } else {
         if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
@@ -4397,7 +4397,7 @@ InitTheme(
         } else {
           ThemeDict = LoadTheme (GlobalConfig.Theme);
           if (ThemeDict == NULL) {
-            DBG ("GlobalConfig: %s not found, get embedded theme\n", GlobalConfig.Theme);
+            DBG ("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme);
             FreePool (GlobalConfig.Theme);
             GlobalConfig.Theme = NULL;
           }
@@ -4437,7 +4437,7 @@ finish:
       if (DictPointer != NULL) {
         Status = GetThemeTagSettings(DictPointer);
         if (EFI_ERROR (Status)) {
-          DBG ("Config theme error: %r\n", Status);
+          DBG ("Config theme error: %s\n", strerror(Status));
         }
       }
     }
@@ -4494,9 +4494,9 @@ ParseSMBIOSSettings(
       // something else?
       SetDMISettingsForModel (iMac132, FALSE);
     }
-    DBG ("Using ProductName from config: %a\n", gSettings.ProductName);
+    DBG ("Using ProductName from config: %s\n", gSettings.ProductName);
   } else {
-    DBG ("Using ProductName from clover: %a\n", gSettings.ProductName);
+    DBG ("Using ProductName from clover: %s\n", gSettings.ProductName);
   }
 
   Prop = GetProperty(DictPointer, "SmbiosVersion");
@@ -4544,7 +4544,7 @@ ParseSMBIOSSettings(
   } else {
     DBG ("BiosVersion: not set, Using BiosVersion from clover\n");
   }
-  DBG ("BiosVersion: %a\n", gSettings.RomVersion);
+  DBG ("BiosVersion: %s\n", gSettings.RomVersion);
 
   Prop1 = GetProperty (DictPointer, "BiosReleaseDate");
   if (Prop1 != NULL) {
@@ -4691,7 +4691,7 @@ ParseSMBIOSSettings(
         }
       }
     } else {
-      //DBG ("BiosReleaseDate: set to %a from config, Ignore BiosReleaseDate\n", Prop1->string);
+      //DBG ("BiosReleaseDate: set to %s from config, Ignore BiosReleaseDate\n", Prop1->string);
       //DBG ("Using BiosReleaseDate from clover\n");
     }
   } else {
@@ -4717,36 +4717,36 @@ ParseSMBIOSSettings(
       //DBG ("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
     }
   }
-  DBG ("BiosReleaseDate: %a\n", gSettings.ReleaseDate);
+  DBG ("BiosReleaseDate: %s\n", gSettings.ReleaseDate);
 
   Prop = GetProperty (DictPointer, "EfiVersion");
   if (Prop != NULL) {
     if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->string, 4, 5)) {
-      DBG ("Using latest EfiVersion from clover: %a\n", gSettings.EfiVersion);
+      DBG ("Using latest EfiVersion from clover: %s\n", gSettings.EfiVersion);
     } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->string, 4, 5)) {
       AsciiStrCpyS (gSettings.EfiVersion, 64, Prop->string);
-      DBG ("Using latest EfiVersion from config: %a\n", gSettings.EfiVersion);
+      DBG ("Using latest EfiVersion from config: %s\n", gSettings.EfiVersion);
     } else {
-      DBG ("Using EfiVersion from clover: %a\n", gSettings.EfiVersion);
+      DBG ("Using EfiVersion from clover: %s\n", gSettings.EfiVersion);
     }
   } else if (iStrLen(gSettings.EfiVersion, 64) > 0) {
-    DBG ("Using EfiVersion from clover: %a\n", gSettings.EfiVersion);
+    DBG ("Using EfiVersion from clover: %s\n", gSettings.EfiVersion);
   }
 
   Prop = GetProperty (DictPointer, "FirmwareFeatures");
   if (Prop != NULL) {
     gFwFeatures = (UINT32)GetPropertyInteger (Prop, gFwFeatures);
-    DBG ("Using FirmwareFeatures from config: 0x%08x\n", gFwFeatures);
+    DBG ("Using FirmwareFeatures from config: 0x%08X\n", gFwFeatures);
   } else {
-    DBG ("Using FirmwareFeatures from clover: 0x%08x\n", gFwFeatures);
+    DBG ("Using FirmwareFeatures from clover: 0x%08X\n", gFwFeatures);
   }
 
   Prop = GetProperty (DictPointer, "FirmwareFeaturesMask");
   if (Prop != NULL) {
     gFwFeaturesMask = (UINT32)GetPropertyInteger (Prop, gFwFeaturesMask);
-    DBG ("Using FirmwareFeaturesMask from config: 0x%08x\n", gFwFeaturesMask);
+    DBG ("Using FirmwareFeaturesMask from config: 0x%08X\n", gFwFeaturesMask);
   } else {
-    DBG ("Using FirmwareFeaturesMask from clover: 0x%08x\n", gFwFeaturesMask);
+    DBG ("Using FirmwareFeaturesMask from clover: 0x%08X\n", gFwFeaturesMask);
   }
 
   Prop = GetProperty (DictPointer, "PlatformFeature");
@@ -4756,7 +4756,7 @@ ParseSMBIOSSettings(
     if (gPlatformFeature == 0xFFFF) {
       DBG ("PlatformFeature will not set in SMBIOS\n");
     } else {
-      DBG ("Using PlatformFeature from clover: 0x%x\n", gPlatformFeature);
+		DBG ("Using PlatformFeature from clover: 0x%llX\n", gPlatformFeature);
     }
   }
 
@@ -4793,7 +4793,7 @@ ParseSMBIOSSettings(
       StrToGuidLE ((CHAR16*)&UStr[0], &gSettings.SmUUID);
       gSettings.SmUUIDConfig = TRUE;
     } else {
-      DBG ("Error: invalid SmUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
+      DBG ("Error: invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
     }
   }
 
@@ -4810,7 +4810,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "Board-ID");
   if (Prop != NULL) {
     AsciiStrCpyS (gSettings.BoardNumber, 64, Prop->string);
-    DBG ("Board-ID set from config as %a\n", gSettings.BoardNumber);
+    DBG ("Board-ID set from config as %s\n", gSettings.BoardNumber);
   }
 
   Prop = GetProperty (DictPointer, "BoardVersion");
@@ -4823,7 +4823,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "BoardType");
   if (Prop != NULL) {
     gSettings.BoardType = (UINT8)GetPropertyInteger (Prop, gSettings.BoardType);
-    DBG ("BoardType: 0x%x\n", gSettings.BoardType);
+    DBG ("BoardType: 0x%X\n", gSettings.BoardType);
   }
 
   Prop = GetProperty (DictPointer, "Mobile");
@@ -4854,7 +4854,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "ChassisType");
   if (Prop != NULL) {
     gSettings.ChassisType = (UINT8)GetPropertyInteger (Prop, gSettings.ChassisType);
-    DBG ("ChassisType: 0x%x\n", gSettings.ChassisType);
+    DBG ("ChassisType: 0x%X\n", gSettings.ChassisType);
   }
 
   Prop = GetProperty (DictPointer, "NoRomInfo");
@@ -4972,7 +4972,7 @@ GetUserSettings(
         DBG ("Read NVCAP:");
 
         for (i = 0; i<20; i++) {
-          DBG ("%02x", gSettings.NVCAP[i]);
+          DBG ("%02X", gSettings.NVCAP[i]);
         }
 
         DBG ("\n");
@@ -5057,7 +5057,7 @@ GetUserSettings(
           DEV_PROPERTY **Child;
 
           if (Count > 0) {
-            DBG("Add %d devices (kTagTypeDict):\n", Count);
+			  DBG("Add %lld devices (kTagTypeDict):\n", Count);
 
             for (i = 0; i < Count; i++) {
               Prop2 = NULL;
@@ -5065,7 +5065,7 @@ GetUserSettings(
               if (!EFI_ERROR(GetElement(Prop, i, &Prop2))) {  //take a <key> with DevicePath
                 if ((Prop2 != NULL) && (Prop2->type == kTagTypeKey)) {
                   CHAR16* DevicePathStr = PoolPrint(L"%a", Prop2->string);
-                  //         DBG("Device: %s\n", DevicePathStr);
+                  //         DBG("Device: %ls\n", DevicePathStr);
 
                   // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
                   if (StriCmp(DevicePathStr, L"PrimaryGPU") == 0) {
@@ -5119,7 +5119,7 @@ GetUserSettings(
                       }
 
                       Prop3 = Prop3->tag; //expected value
-                      //    DBG("<key>%a\n  <value> type %d\n", (*Child)->Key, Prop3->type);
+                      //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
                       if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string) {
                         //first suppose it is Ascii string
                         (*Child)->Value = (__typeof__((*Child)->Value))AllocateCopyPool(AsciiStrSize(Prop3->string), Prop3->string);
@@ -5177,13 +5177,13 @@ GetUserSettings(
         DEV_PROPERTY *DevProp;
 
         if (Count > 0) {
-          DBG ("Add %d devices (Arbitrary):\n", Count);
+			DBG ("Add %lld devices (Arbitrary):\n", Count);
           for (Index = 0; Index < Count; Index++) {
             UINTN DeviceAddr = 0U;
             CHAR8 *Label;
-            DBG (" - [%02d]:", Index);
+			  DBG (" - [%02lld]:", Index);
             if (EFI_ERROR (GetElement (Prop, Index, &Prop2))) {
-              DBG (" continue\n", Index);
+              DBG (" continue\n"/*, Index*/);
               continue;
             }
             Dict2 = GetProperty (Prop2, "PciAddr");
@@ -5192,7 +5192,7 @@ GetUserSettings(
               CHAR8 *Str = Dict2->string;
 
               if (Str[2] != ':') {
-                DBG(" wrong PciAddr string: %a\n", Str);
+                DBG(" wrong PciAddr string: %s\n", Str);
                 continue;
               }
               Label = (__typeof__(Label))AllocatePool(64);
@@ -5201,7 +5201,7 @@ GetUserSettings(
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
               AsciiSPrint(Label, 64, "[%02x:%02x.%02x] ", Bus, Dev, Func);
-              DBG(" %a", Label);
+              DBG(" %s", Label);
             } else {
               DBG (" no PciAddr\n");
               continue;
@@ -5210,7 +5210,7 @@ GetUserSettings(
             Dict2 = GetProperty (Prop2, "Comment");
             if (Dict2 != NULL) {
               AsciiStrCatS(Label, 64, Dict2->string);
-              DBG (" (%a)", Dict2->string);
+              DBG (" (%s)", Dict2->string);
             }
             DBG ("\n");
             Dict2 = GetProperty (Prop2, "CustomProperties");
@@ -5284,19 +5284,19 @@ GetUserSettings(
         INTN Index = 0;  //begin from 0 if second enter
 
         if (Count > 0) {
-          DBG ("Add %d properties:\n", Count);
+			DBG ("Add %lld properties:\n", Count);
           gSettings.AddProperties = (__typeof__(gSettings.AddProperties))AllocateZeroPool (Count * sizeof(DEV_PROPERTY));
 
           for (i = 0; i < Count; i++) {
             UINTN Size = 0;
-            DBG (" - [%02d]:", i);
+			  DBG (" - [%02lld]:", i);
             if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
               DBG (" continue\n");
               continue;
             }
 
             if (Dict2 == NULL) {
-              DBG (" break\n", i);
+              DBG (" break\n"/*, i*/);
               break;
             }
 
@@ -5331,12 +5331,12 @@ GetUserSettings(
               } else if (AsciiStriCmp (Prop2->string, "USB") == 0) {
                 Property->Device = (UINT32)DEV_USB;
               } else {
-                DBG (" unknown device, ignored\n", i);
+                DBG (" unknown device, ignored\n"/*, i*/);
                 continue;
               }
             }
 
-            DBG (" %a ", Prop2->string);
+            DBG (" %s ", Prop2->string);
 
             Prop2 = GetProperty (Dict2, "Disabled");
             gSettings.AddProperties[Index].MenuItem.BValue = !IsPropertyTrue (Prop2);
@@ -5361,7 +5361,7 @@ GetUserSettings(
               gSettings.AddProperties[Index].ValueLen = Size;
             }
 
-            DBG ("Key: %a, len: %d\n", gSettings.AddProperties[Index].Key, gSettings.AddProperties[Index].ValueLen);
+			  DBG ("Key: %s, len: %llu\n", gSettings.AddProperties[Index].Key, gSettings.AddProperties[Index].ValueLen);
 
             if (!gSettings.AddProperties[Index].MenuItem.BValue) {
               DBG ("  property disabled at config\n");
@@ -5489,7 +5489,7 @@ GetUserSettings(
         if (Prop != NULL) {
           gSettings.USBFixOwnership = IsPropertyTrue (Prop);
         }
-        DBG ("USB FixOwnership: %a\n", gSettings.USBFixOwnership?"yes":"no");
+        DBG ("USB FixOwnership: %s\n", gSettings.USBFixOwnership?"yes":"no");
 
         Prop = GetProperty (Prop2, "HighCurrent");
         gSettings.HighCurrent = IsPropertyTrue (Prop);
@@ -5509,7 +5509,7 @@ GetUserSettings(
         BOOLEAN Dropped;
 
         if (Count > 0) {
-          DBG ("Dropping %d tables:\n", Count);
+			DBG ("Dropping %lld tables:\n", Count);
 
           for (i = 0; i < Count; i++) {
             UINT32 Signature = 0;
@@ -5517,16 +5517,16 @@ GetUserSettings(
             UINT64 TableId = 0;
 
             if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
-              DBG (" - [%02d]: Drop table continue\n", i);
+				DBG (" - [%02lld]: Drop table continue\n", i);
               continue;
             }
 
             if (Dict2 == NULL) {
-              DBG (" - [%02d]: Drop table break\n", i);
+				DBG (" - [%02lld]: Drop table break\n", i);
               break;
             }
 
-            DBG (" - [%02d]: Drop table ", i);
+			  DBG (" - [%02lld]: Drop table ", i);
             // Get the table signatures to drop
             Prop2 = GetProperty (Dict2, "Signature");
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
@@ -5569,20 +5569,20 @@ GetUserSettings(
               }
 
               CopyMem (&TableId, (CHAR8*)&Id[0], 8);
-              DBG ("\" (%16.16lX)", TableId);
+				DBG ("\" (%16.16llX)", TableId);
             }
             // Get the table len to drop
             Prop2 = GetProperty (Dict2, "Length");
             if (Prop2 != NULL) {
               TabLength = (UINT32)GetPropertyInteger (Prop2, 0);
-              DBG (" length=%d(0x%x)", TabLength);
+              DBG (" length=%d(0x%X)", TabLength, TabLength);
             }
 
             DBG ("\n");
             //set to drop
             if (gSettings.ACPIDropTables) {
               ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
-              DBG ("         - set table: %08x, %16lx to drop:", Signature, TableId);
+				DBG ("         - set table: %08X, %16llx to drop:", Signature, TableId);
               Dropped = FALSE;
               while (DropTable) {
                 if (((Signature == DropTable->Signature) &&
@@ -5596,7 +5596,7 @@ GetUserSettings(
                 }
                 DropTable = DropTable->Next;
               }
-              DBG (" %a\n", Dropped ? "yes" : "no");
+              DBG (" %s\n", Dropped ? "yes" : "no");
             }
           }
         }
@@ -5625,7 +5625,7 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "Fixes");
         if (Prop != NULL) {
           UINTN Index;
-          //         DBG ("Fixes will override DSDT fix mask %08x!\n", gSettings.FixDsdt);
+          //         DBG ("Fixes will override DSDT fix mask %08X!\n", gSettings.FixDsdt);
           if (Prop->type == kTagTypeDict) {
             gSettings.FixDsdt = 0;
             for (Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
@@ -5639,7 +5639,7 @@ GetUserSettings(
             }
           }
         }
-        DBG (" - final DSDT Fix mask=%08x\n", gSettings.FixDsdt);
+        DBG (" - final DSDT Fix mask=%08X\n", gSettings.FixDsdt);
 
         Prop = GetProperty (Dict2, "Patches"); //yyyy
         if (Prop != NULL) {
@@ -5653,14 +5653,14 @@ GetUserSettings(
             gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool (Count * sizeof(UINT32));
             gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool (Count * sizeof(UINT8*));
             gSettings.PatchDsdtMenuItem = (__typeof__(gSettings.PatchDsdtMenuItem))AllocateZeroPool (Count * sizeof(INPUT_ITEM));
-            DBG ("PatchesDSDT: %d requested\n", Count);
+			  DBG ("PatchesDSDT: %lld requested\n", Count);
 
             for (i = 0; i < Count; i++) {
               UINTN Size = 0;
               CHAR8 *DSDTPatchesLabel;
               Status     = GetElement (Prop, i, &Prop2);
               if (EFI_ERROR (Status)) {
-                DBG ("error %r getting next element of PatchesDSDT at index %d\n", Status, i);
+				  DBG ("error %s getting next element of PatchesDSDT at index %lld\n", strerror(Status), i);
                 continue;
               }
 
@@ -5668,7 +5668,7 @@ GetUserSettings(
                 break;
               }
 
-              DBG(" - [%02d]:", i);
+				DBG(" - [%02lld]:", i);
               DSDTPatchesLabel = (__typeof__(DSDTPatchesLabel))AllocateZeroPool(256);
 
               Prop3 = GetProperty (Prop2, "Comment");
@@ -5679,7 +5679,7 @@ GetUserSettings(
               }
               gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
               AsciiSPrint(gSettings.PatchDsdtLabel[i], 255, "%a", DSDTPatchesLabel);
-              DBG(" (%a)", gSettings.PatchDsdtLabel[i]);
+              DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
 
               FreePool(DSDTPatchesLabel);
 
@@ -5688,13 +5688,13 @@ GetUserSettings(
 
               //DBG (" DSDT bin patch #%d ", i);
               gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",     &Size);
-              DBG (" lenToFind: %d", Size);
+				DBG (" lenToFind: %llu", Size);
               gSettings.LenToFind[i]        = (UINT32)Size;
               gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
-              DBG (", lenToReplace: %d", Size);
+				DBG (", lenToReplace: %llu", Size);
               gSettings.LenToReplace[i]     = (UINT32)Size;
               gSettings.PatchDsdtTgt[i]     = (CHAR8*)GetDataSetting (Prop2, "TgtBridge", &Size);
-              DBG (", Target Bridge: %a\n", gSettings.PatchDsdtTgt[i]);
+              DBG (", Target Bridge: %s\n", gSettings.PatchDsdtTgt[i]);
               if (!gSettings.PatchDsdtMenuItem[i].BValue) {
                 DBG("  patch disabled at config\n");
               }
@@ -5848,25 +5848,25 @@ GetUserSettings(
         Prop = GetProperty (Dict2, "EnableC7");
         if (Prop != NULL) {
           gSettings.EnableC7 = IsPropertyTrue (Prop);
-          DBG ("EnableC7: %a\n", gSettings.EnableC7 ? "yes" : "no");
+          DBG ("EnableC7: %s\n", gSettings.EnableC7 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "EnableC6");
         if (Prop != NULL) {
           gSettings.EnableC6 = IsPropertyTrue (Prop);
-          DBG ("EnableC6: %a\n", gSettings.EnableC6 ? "yes" : "no");
+          DBG ("EnableC6: %s\n", gSettings.EnableC6 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "EnableC4");
         if (Prop != NULL) {
           gSettings.EnableC4 = IsPropertyTrue (Prop);
-          DBG ("EnableC4: %a\n", gSettings.EnableC4 ? "yes" : "no");
+          DBG ("EnableC4: %s\n", gSettings.EnableC4 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "EnableC2");
         if (Prop != NULL) {
           gSettings.EnableC2 = IsPropertyTrue (Prop);
-          DBG ("EnableC2: %a\n", gSettings.EnableC2 ? "yes" : "no");
+          DBG ("EnableC2: %s\n", gSettings.EnableC2 ? "yes" : "no");
         }
 
         Prop = GetProperty (Dict2, "C3Latency");
@@ -5909,7 +5909,7 @@ GetUserSettings(
       Prop = GetProperty (DictPointer, "ResetAddress");
       if (Prop) {
         gSettings.ResetAddr = (UINT32)GetPropertyInteger (Prop, 0x64);
-        DBG ("ResetAddr: 0x%x\n", gSettings.ResetAddr);
+		  DBG ("ResetAddr: 0x%llX\n", gSettings.ResetAddr);
 
         if (gSettings.ResetAddr  == 0x64) {
           gSettings.ResetVal = 0xFE;
@@ -5917,13 +5917,13 @@ GetUserSettings(
           gSettings.ResetVal = 0x06;
         }
 
-        DBG ("Calc ResetVal: 0x%x\n", gSettings.ResetVal);
+        DBG ("Calc ResetVal: 0x%X\n", gSettings.ResetVal);
       }
 
       Prop = GetProperty (DictPointer, "ResetValue");
       if (Prop) {
         gSettings.ResetVal = (UINT8)GetPropertyInteger (Prop, gSettings.ResetVal);
-        DBG ("ResetVal: 0x%x\n", gSettings.ResetVal);
+        DBG ("ResetVal: 0x%X\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
 
@@ -5997,7 +5997,7 @@ GetUserSettings(
         if (Count > 0) {
           gSettings.DeviceRenameCount = 0;
           gSettings.DeviceRename = (__typeof__(gSettings.DeviceRename))AllocateZeroPool(Count * sizeof(ACPI_NAME_LIST));
-          DBG("Devices to rename %d\n", Count);
+			DBG("Devices to rename %lld\n", Count);
           for (i = 0; i < Count; i++) {
             Prop2 = NULL;
             if (!EFI_ERROR(GetElement(Prop, i, &Prop2)) &&
@@ -6006,13 +6006,13 @@ GetUserSettings(
               ACPI_NAME_LIST *List = ParseACPIName(Prop2->string);
               gSettings.DeviceRename[gSettings.DeviceRenameCount].Next = List;
               while (List) {
-                DBG("%a:", List->Name);
+                DBG("%s:", List->Name);
                 List = List->Next;
               }
               Prop2 = Prop2->tag;
               if (Prop2->type == kTagTypeString) {
                 gSettings.DeviceRename[gSettings.DeviceRenameCount++].Name = (__typeof__(gSettings.DeviceRename[gSettings.DeviceRenameCount++].Name))AllocateCopyPool(5, Prop2->string);
-                DBG("->will be renamed to %a\n", Prop2->string);
+                DBG("->will be renamed to %s\n", Prop2->string);
               }
             }
           }
@@ -6180,7 +6180,7 @@ GetUserSettings(
             } else if (AsciiStriCmp (Prop2->string, "NVME") == 0) {
               DeviceN = 13;
             } else {
-              DBG (" - add properties to unknown device %a, ignored\n", Prop2->string);
+              DBG (" - add properties to unknown device %s, ignored\n", Prop2->string);
               continue;
             }
           } else {
@@ -6233,7 +6233,7 @@ GetUserSettings(
               AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot %d", DeviceN);
             }
 
-            DBG (" - %a\n", SlotDevice->SlotName);
+            DBG (" - %s\n", SlotDevice->SlotName);
           }
         }
       }
@@ -6258,7 +6258,7 @@ GetUserSettings(
       gSettings.CpuType = GetAdvancedCpuType();
       if (Prop != NULL) {
         gSettings.CpuType = (UINT16)GetPropertyInteger (Prop, gSettings.CpuType);
-        DBG ("CpuType: %x\n", gSettings.CpuType);
+        DBG ("CpuType: %X\n", gSettings.CpuType);
       }
 
       Prop = GetProperty (DictPointer, "QEMU");
@@ -6376,7 +6376,7 @@ GetUserSettings(
           if (!EFI_ERROR(Status)) {
             Prop2 = GetProperty (Dict, "Comment");
             if (Prop2 && Prop2->string) {
-              DBG(" %a\n", Prop2->string);
+              DBG(" %s\n", Prop2->string);
             }
             Prop2 = GetProperty(Dict, "Disabled");
             if (IsPropertyFalse(Prop2)) {
@@ -6390,7 +6390,7 @@ GetUserSettings(
                 StrToGuidLE((CHAR16*)&UStr[0], &RtVariables[RtVariablesNum].VarGuid);
               }
               else {
-                DBG("Error: invalid GUID for RT var '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
+                DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
               }
             }
 
@@ -6437,7 +6437,7 @@ GetUserSettings(
       if (Prop != NULL) {
         if (IsValidGuidAsciiString (Prop->string)) {
           AsciiStrToUnicodeStrS(Prop->string, gSettings.CustomUuid, 40);
-          DBG("Converted CustomUUID %s\n", gSettings.CustomUuid);
+          DBG("Converted CustomUUID %ls\n", gSettings.CustomUuid);
           Status = StrToGuidLE (gSettings.CustomUuid, &gUuid);
           if (!EFI_ERROR (Status)) {
             IsValidCustomUUID = TRUE;
@@ -6449,11 +6449,11 @@ GetUserSettings(
         }
 
         if (!IsValidCustomUUID) {
-          DBG ("Error: invalid CustomUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
+          DBG ("Error: invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string);
         }
       }
       //else gUuid value from SMBIOS
-      //     DBG("Finally use %g\n", &gUuid);
+      //     DBG("Finally use %s\n", strguid(&gUuid));
 
       Prop                     = GetProperty (DictPointer, "InjectSystemID");
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyFalse(Prop) : IsPropertyTrue (Prop);
@@ -6510,7 +6510,7 @@ GetUserSettings(
      AppleGuid.Data1 = SwapBytes32 (AppleGuid.Data1);
      AppleGuid.Data2 = SwapBytes16 (AppleGuid.Data2);
      AppleGuid.Data3 = SwapBytes16 (AppleGuid.Data3);
-     DBG ("Platform Uuid: %g, InjectSystemID: %a\n", &AppleGuid, gSettings.InjectSystemID ? "Yes" : "No");
+     DBG ("Platform Uuid: %s, InjectSystemID: %s\n", strguid(&AppleGuid), gSettings.InjectSystemID ? "Yes" : "No");
      }
      */
 
@@ -6521,7 +6521,7 @@ GetUserSettings(
         FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), DictPointer);
       }
     } else {
-      //DBG("\n ConfigName: %s n", gSettings.ConfigName);
+      //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
 
     if (gThemeChanged && GlobalConfig.Theme) {
@@ -6531,14 +6531,14 @@ GetUserSettings(
         if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
           FreePool(GlobalConfig.Theme);
           GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
-          DBG ("Theme from new config: %s\n", GlobalConfig.Theme);
+          DBG ("Theme from new config: %ls\n", GlobalConfig.Theme);
         }
       }
     }
 
     SaveSettings();
   }
-  //DBG ("config.plist read and return %r\n", Status);
+  //DBG ("config.plist read and return %s\n", strerror(Status));
   return EFI_SUCCESS;
 }
 /*
@@ -7017,7 +7017,7 @@ GetDevices ()
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &HandleCount, &HandleArray);
   if (!EFI_ERROR(Status)) {
     GopDevicePathStr = DevicePathToStr(DevicePathFromHandle(HandleArray[0]));
-    DBG("GOP found at: %s\n", GopDevicePathStr);
+    DBG("GOP found at: %ls\n", GopDevicePathStr);
   }
 
   // Scan PCI handles
@@ -7043,7 +7043,7 @@ GetDevices ()
                                   &Pci
                                   );
 
-        DBG ("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
+		  DBG ("PCI (%02llX|%02llX:%02llX.%02llX) : %04X %04X class=%02X%02X%02X\n",
              Segment,
              Bus,
              Device,
@@ -7108,7 +7108,7 @@ GetDevices ()
               AsciiSPrint (gfx->Model,  64, "%a", info->model_name);
               AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
               gfx->Ports                  = card_configs[info->cfg_name].ports;
-              DBG (" - GFX: Model=%a (ATI/AMD)\n", gfx->Model);
+              DBG (" - GFX: Model=%s (ATI/AMD)\n", gfx->Model);
 
               //get mmio
               if (info->chip_family < CHIP_FAMILY_HAINAN) {
@@ -7117,7 +7117,7 @@ GetDevices ()
                 gfx->Mmio = (UINT8 *)(UINTN)(Pci.Device.Bar[5] & ~0x0f);
               }
               gfx->Connectors = *(UINT32*)(gfx->Mmio + RADEON_BIOS_0_SCRATCH);
-              //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08x\n", gfx->Connectors);
+              //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08X\n", gfx->Connectors);
               gfx->ConnChanged = FALSE;
 
               SlotDevice                  = &SlotDevices[0];
@@ -7133,7 +7133,7 @@ GetDevices ()
             case 0x8086:
               gfx->Vendor                 = Intel;
               AsciiSPrint (gfx->Model, 64, "%a", get_gma_model (Pci.Hdr.DeviceId));
-              DBG (" - GFX: Model=%a (Intel)\n", gfx->Model);
+              DBG (" - GFX: Model=%s (Intel)\n", gfx->Model);
               gfx->Ports = 1;
               gfx->Connectors = (1 << NGFX);
               gfx->ConnChanged = FALSE;
@@ -7184,7 +7184,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                            );
 
-              DBG(" - GFX: Model=%a family %x (%a)\n", gfx->Model, gfx->Family, CardFamily);
+              DBG(" - GFX: Model=%s family %X (%s)\n", gfx->Model, gfx->Family, CardFamily);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
@@ -7220,7 +7220,7 @@ GetDevices ()
           AsciiSPrint (SlotDevice->SlotName, 31, "AirPort");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
-          DBG(" - WIFI: Vendor=", Pci.Hdr.VendorId);
+          DBG(" - WIFI: Vendor=%d", Pci.Hdr.VendorId);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
               DBG("Marvell\n");
@@ -7265,7 +7265,7 @@ GetDevices ()
             DBG(" - [!] too many LAN card in the system (upto 4 limit exceeded), overriding the last one\n");
             nLanCards = 3; // last one will be rewritten
           }
-          DBG(" - LAN: %d Vendor=", nLanCards-1);
+			DBG(" - LAN: %llu Vendor=", nLanCards-1);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
               DBG("Marvell\n");
@@ -7393,7 +7393,7 @@ SetDevices (LOADER_ENTRY *Entry)
       continue;
     }
     device = devprop_add_device_pci(device_inject_string, NULL, Prop->DevicePath);
-    DBG("add device: %s\n", DevicePathToStr(Prop->DevicePath));
+    DBG("add device: %ls\n", DevicePathToStr(Prop->DevicePath));
     Prop2 = Prop->Child;
     while (Prop2) {
       if (Prop2->MenuItem.BValue) {
@@ -7402,15 +7402,15 @@ SetDevices (LOADER_ENTRY *Entry)
             CopyMem((UINT8*)&gSettings.IgPlatform, (UINT8*)Prop2->Value, Prop2->ValueLen);
           }
           devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.IgPlatform, 4);
-          DBG("   Add key=%a valuelen=%d\n", Prop2->Key, Prop2->ValueLen);
+			DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
         } else if ((AsciiStrStr(Prop2->Key, "override-no-edid") || AsciiStrStr(Prop2->Key, "override-no-connect"))
           && gSettings.InjectEDID && gSettings.CustomEDID) {
           // special case for EDID properties
           devprop_add_value(device, Prop2->Key, gSettings.CustomEDID, 128);
-          DBG("   Add key=%a from custom EDID\n", Prop2->Key);
+          DBG("   Add key=%s from custom EDID\n", Prop2->Key);
         } else {
           devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
-          DBG("   Add key=%a valuelen=%d\n", Prop2->Key, Prop2->ValueLen);
+			DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
         }
       }
 
@@ -7483,7 +7483,7 @@ SetDevices (LOADER_ENTRY *Entry)
         }
         //------------------
         if (PCIdevice.used) {
-          DBG("custom properties for device %02x:%02x.%02x injected\n", Bus, Device, Function);
+			DBG("custom properties for device %02llX:%02llX.%02llX injected\n", Bus, Device, Function);
           //continue;
         }
         //}
@@ -7524,7 +7524,7 @@ SetDevices (LOADER_ENTRY *Entry)
                     *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //EVERGREEN_GRPH_ENABLE
                     *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //EVERGREEN_MASTER_UPDATE_MODE
                     //*(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
-                    DBG("Device %d deinited\n", j);
+					  DBG("Device %llu deinited\n", j);
                   }
                 }
               }
@@ -7534,7 +7534,7 @@ SetDevices (LOADER_ENTRY *Entry)
               if (gSettings.InjectIntel) {
                 TmpDirty    = setup_gma_devprop(Entry, &PCIdevice);
                 StringDirty |=  TmpDirty;
-                MsgLog ("Intel GFX revision  = 0x%x\n", PCIdevice.revision);
+                MsgLog ("Intel GFX revision  = 0x%X\n", PCIdevice.revision);
               } else {
                 MsgLog ("Intel GFX injection not set\n");
               }
@@ -7621,8 +7621,8 @@ SetDevices (LOADER_ENTRY *Entry)
                                              1,
                                              &PCHL
                                              );
-                MsgLog ("  LEV2 = 0x%x, LEVL = 0x%x, P0BL = 0x%x, GRAN = 0x%x\n", LEV2, LEVL, P0BL, GRAN);
-                MsgLog ("  LEVW = 0x%x, LEVX = 0x%x, LEVD = 0x%x, PCHL = 0x%x\n", LEVW, LEVX, LEVD, PCHL);
+                MsgLog ("  LEV2 = 0x%X, LEVL = 0x%X, P0BL = 0x%X, GRAN = 0x%X\n", LEV2, LEVL, P0BL, GRAN);
+                MsgLog ("  LEVW = 0x%X, LEVX = 0x%X, LEVD = 0x%X, PCHL = 0x%X\n", LEVW, LEVX, LEVD, PCHL);
 
                 // Maximum brightness level of each framebuffers
                 //  Sandy Bridge/Ivy Bridge: 0x0710
@@ -7863,7 +7863,7 @@ SetDevices (LOADER_ENTRY *Entry)
 
                 // Write LEVW
                 if (LEVW != SYSLEVW) {
-                  MsgLog ("  Found invalid LEVW, set System LEVW: 0x%x\n", SYSLEVW);
+                  MsgLog ("  Found invalid LEVW, set System LEVW: 0x%X\n", SYSLEVW);
                   /*Status = */PciIo->Mem.Write(
                                                 PciIo,
                                                 EfiPciIoWidthUint32,
@@ -7880,7 +7880,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case CPU_MODEL_IVY_BRIDGE_E5:
                     // if change SYS LEVW to macOS LEVW, the brightness of the pop-up may decrease or increase.
                     // but the brightness of the monitor will not actually change. so we should not use this.
-                    MsgLog ("  Skip writing macOS LEVW: 0x%x\n", MACLEVW);
+                    MsgLog ("  Skip writing macOS LEVW: 0x%X\n", MACLEVW);
                     break;
 
                   case CPU_MODEL_HASWELL:
@@ -7891,7 +7891,7 @@ SetDevices (LOADER_ENTRY *Entry)
                   case CPU_MODEL_BROADWELL_DE:
                     // if not change SYS LEVW to macOS LEVW, backlight will be dark and don't work keys for backlight.
                     // so we should use this.
-                    MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
+                    MsgLog ("  Write macOS LEVW: 0x%X\n", MACLEVW);
 
                     /*Status = */PciIo->Mem.Write(
                                                   PciIo,
@@ -7905,7 +7905,7 @@ SetDevices (LOADER_ENTRY *Entry)
 
                   default:
                     if (gSettings.IntelBacklight) {
-                      MsgLog ("  Write macOS LEVW: 0x%x\n", MACLEVW);
+                      MsgLog ("  Write macOS LEVW: 0x%X\n", MACLEVW);
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -7939,23 +7939,23 @@ SetDevices (LOADER_ENTRY *Entry)
                     if (gSettings.IntelMaxBacklight) {
                       if (!LEVL) {
                         LEVL = FBLEVX;
-                        MsgLog ("  Found invalid LEVL, set LEVL: 0x%x\n", LEVL);
+                        MsgLog ("  Found invalid LEVL, set LEVL: 0x%X\n", LEVL);
                       }
 
                       if (!LEVX) {
                         ShiftLEVX = FBLEVX;
-                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", ShiftLEVX);
+                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%X\n", ShiftLEVX);
                       }
 
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
+                        MsgLog ("  Read IntelMaxValue: 0x%X\n", FBLEVX);
                       } else {
-                        MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
+                        MsgLog ("  Read default Framebuffer LEVX: 0x%X\n", FBLEVX);
                       }
 
                       LEVL = (LEVL * FBLEVX) / ShiftLEVX;
-                      MsgLog ("  Write new LEVL: 0x%x\n", LEVL);
+                      MsgLog ("  Write new LEVL: 0x%X\n", LEVL);
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -7967,7 +7967,7 @@ SetDevices (LOADER_ENTRY *Entry)
                                                     );
 
                       LEVX = FBLEVX | FBLEVX << 16;
-                      MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
+                      MsgLog ("  Write new LEVX: 0x%X\n", LEVX);
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -7994,13 +7994,13 @@ SetDevices (LOADER_ENTRY *Entry)
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
+                        MsgLog ("  Read IntelMaxValue: 0x%X\n", FBLEVX);
                       } else {
-                        MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
+                        MsgLog ("  Read default Framebuffer LEVX: 0x%X\n", FBLEVX);
                       }
 
                       LEVD = (UINT32)DivU64x32(MultU64x32(FBLEVX, LEVX), 0xFFFF);
-                      MsgLog ("  Write new LEVD: 0x%x\n", LEVD);
+                      MsgLog ("  Write new LEVD: 0x%X\n", LEVD);
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -8018,17 +8018,17 @@ SetDevices (LOADER_ENTRY *Entry)
                     if (gSettings.IntelMaxBacklight) {
                       if (gSettings.IntelMaxValue) {
                         FBLEVX = gSettings.IntelMaxValue;
-                        MsgLog ("  Read IntelMaxValue: 0x%x\n", FBLEVX);
+                        MsgLog ("  Read IntelMaxValue: 0x%X\n", FBLEVX);
                         LEVX = FBLEVX | FBLEVX << 16;
                       } else if (!LEVX) {
-                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%x\n", FBLEVX);
+                        MsgLog ("  Found invalid LEVX, set LEVX: 0x%X\n", FBLEVX);
                         LEVX = FBLEVX | FBLEVX << 16;
                       } else if (ShiftLEVX != FBLEVX) {
-                        MsgLog ("  Read default Framebuffer LEVX: 0x%x\n", FBLEVX);
+                        MsgLog ("  Read default Framebuffer LEVX: 0x%X\n", FBLEVX);
                         LEVX = (((LEVX & 0xFFFF) * FBLEVX / ShiftLEVX) | FBLEVX << 16);
                       }
 
-                      MsgLog ("  Write new LEVX: 0x%x\n", LEVX);
+                      MsgLog ("  Write new LEVX: 0x%X\n", LEVX);
 
                       /*Status = */PciIo->Mem.Write(
                                                     PciIo,
@@ -8096,7 +8096,7 @@ SetDevices (LOADER_ENTRY *Entry)
         {
           if (gSettings.LpcTune) {
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
-            MsgLog ("Initial PmCon value=%x\n", PmCon);
+            MsgLog ("Initial PmCon value=%X\n", PmCon);
 
             if (gSettings.EnableC6) {
               PmCon |= 1 << 11;
@@ -8133,7 +8133,7 @@ SetDevices (LOADER_ENTRY *Entry)
             PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
 
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16,GEN_PMCON_1, 1, &PmCon);
-            MsgLog ("Set PmCon value=%x\n", PmCon);
+            MsgLog ("Set PmCon value=%X\n", PmCon);
 
           }
           Rcba   = 0;
@@ -8172,11 +8172,11 @@ SetDevices (LOADER_ENTRY *Entry)
 
           if (gSettings.DisableFunctions){
             UINT32 FD = REG32 ((UINTN)Rcba, 0x3418);
-            DBG ("Initial value of FD register 0x%x\n", FD);
+            DBG ("Initial value of FD register 0x%X\n", FD);
             FD |= gSettings.DisableFunctions;
             REG32 ((UINTN)Rcba, 0x3418) = FD;
             FD = REG32 ((UINTN)Rcba, 0x3418);
-            DBG (" recheck value after patch 0x%x\n", FD);
+            DBG (" recheck value after patch 0x%X\n", FD);
           }
         }
       }
@@ -8258,7 +8258,7 @@ SetDevices (LOADER_ENTRY *Entry)
     }
   }
 
-  MsgLog ("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);
+	MsgLog ("CurrentMode: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
 }
 
 EFI_STATUS
@@ -8362,7 +8362,7 @@ CHAR16
 
   if (OSVersion != NULL) {
     AsciiStrnCpyS(FixedVersion, 16, OSVersion, 5);
-    //    DBG("%a\n", FixedVersion);
+    //    DBG("%s\n", FixedVersion);
     // OSVersion may contain minor version too (can be 10.x or 10.x.y)
     if ((DotPtr = AsciiStrStr (FixedVersion, ".")) != NULL) {
       DotPtr = AsciiStrStr (DotPtr+1, "."); // second dot
@@ -8373,7 +8373,7 @@ CHAR16
     }
   }
 
-  //MsgLog ("OS=%s\n", OSTypeStr);
+  //MsgLog ("OS=%ls\n", OSTypeStr);
 
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not

@@ -436,7 +436,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
   // fool proof
   FrontSideBus = gCPUStructure.FSBFrequency;
   if ((FrontSideBus < (50 * Mega)) || (FrontSideBus > (1000 * Mega))) {
-    DBG("Wrong FrontSideBus=%d, set to 100MHz\n", FrontSideBus);
+	  DBG("Wrong FrontSideBus=%llu, set to 100MHz\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
 
@@ -452,7 +452,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
       default:
         break;
     }
-    DBG("Using QEMU FrontSideBus=%ull\n", FrontSideBus);
+	  DBG("Using QEMU FrontSideBus=%llull\n", FrontSideBus);
   }
 
   // Save values into gSettings for the genconfig aim

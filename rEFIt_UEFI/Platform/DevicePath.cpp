@@ -282,7 +282,7 @@
 //    break;
 //  }
 //
-//  CatPrint (Str, L"Ven%s(%g", Type, &Vendor->Guid);
+//  CatPrint (Str, L"Ven%s(%s", Type, strguid(&Vendor->Guid));
 //  DataLength = DevicePathNodeLength (&Vendor->Header) - sizeof (VENDOR_DEVICE_PATH);
 //  if (DataLength > 0) {
 //    CatPrint (Str, L",");
@@ -888,9 +888,9 @@
 //  InfiniBand = DevPath;
 //  CatPrint (
 //    Str,
-//    L"Infiniband(%x,%g,%lx,%lx,%lx)",
+//    L"Infiniband(%x,%s,%lx,%lx,%lx)",
 //    (UINTN) InfiniBand->ResourceFlags,
-//    InfiniBand->PortGid,
+//    strguid(InfiniBand->PortGid),
 //    InfiniBand->ServiceId,
 //    InfiniBand->TargetPortId,
 //    InfiniBand->DeviceId
@@ -1079,9 +1079,9 @@
 //  case SIGNATURE_TYPE_GUID:
 //    CatPrint (
 //      Str,
-//      L"HD(Part%d,Sig%g)",
+//      L"HD(Part%d,Sig%s)",
 //      (UINTN) Hd->PartitionNumber,
-//      (EFI_GUID *) &(Hd->Signature[0])
+//      strguid((EFI_GUID *) &(Hd->Signature[0]))
 //      );
 //    break;
 //
@@ -1160,7 +1160,7 @@
 //  MEDIA_PROTOCOL_DEVICE_PATH  *MediaProt;
 //
 //  MediaProt = DevPath;
-//  CatPrint (Str, L"Media(%g)", &MediaProt->Protocol);
+//  CatPrint (Str, L"Media(%s)", strguid(&MediaProt->Protocol));
 //}
 //
 ///**
@@ -1182,7 +1182,7 @@
 //  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *FvFilePath;
 //
 //  FvFilePath = DevPath;
-//  CatPrint (Str, L"%g", &FvFilePath->FvFileName);
+//  CatPrint (Str, L"%s", strguid(&FvFilePath->FvFileName));
 //}
 //
 ///**
@@ -1324,7 +1324,7 @@
 //  MEDIA_FW_VOL_DEVICE_PATH *FvPath;
 //
 //  FvPath = DevPath;
-//  CatPrint (Str, L"Fv(%g)", &FvPath->FvName);
+//  CatPrint (Str, L"Fv(%s)", strguid(&FvPath->FvName));
 //}
 //
 //DEVICE_PATH_STRING_TABLE  DevPathTable[] = {

@@ -108,7 +108,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionHelp;
 
-  DBG("found tool %s\n", LoaderPath);
+  DBG("found tool %ls\n", LoaderPath);
   MainMenu.AddMenuEntry(Entry, true);
   return TRUE;
 }
@@ -228,7 +228,7 @@ VOID ScanTool(VOID)
 
       Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
       if (Status == EFI_SUCCESS) {
-        DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
+		  DBG("Checking EFI partition Volume %llu for Clover\n", VolumeIndex);
 
         // OSX adds label "EFI" to EFI volumes and some UEFIs see that
         // as a file. This file then blocks access to the /EFI directory.
@@ -262,21 +262,21 @@ VOID AddCustomTool(VOID)
   // Traverse the custom entries
   for (Custom = gSettings.CustomTool; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-      DBG("Custom tool %d skipped because it is disabled.\n", i);
+		DBG("Custom tool %llu skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-      DBG("Custom tool %d skipped because it is hidden.\n", i);
+		DBG("Custom tool %llu skipped because it is hidden.\n", i);
       continue;
     }
 
     if (Custom->Volume) {
-      DBG("Custom tool %d matching \"%s\" ...\n", i, Custom->Volume);
+		DBG("Custom tool %llu matching \"%ls\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
       Volume = &Volumes[VolumeIndex];
 
-      DBG("   Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+      DBG("   Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
 
       // Skip Whole Disc Boot
       if (Volume->RootDir == NULL) {

@@ -35,7 +35,7 @@ void construct_globals_objects()
     // DOS image header is present, so read the PE header after the DOS image header
     PeCoffHeaderOffset = DosHdr->e_lfanew;
   }
-  DBG("ImageContext.PeCoffHeaderOffset: %08x %d\n", PeCoffHeaderOffset, PeCoffHeaderOffset);
+  DBG("ImageContext.PeCoffHeaderOffset: %08X %d\n", PeCoffHeaderOffset, PeCoffHeaderOffset);
 
 
 	EFI_IMAGE_OPTIONAL_HEADER_UNION* ImgHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *) ((UINTN) (SelfLoadedImage->ImageBase) + PeCoffHeaderOffset);
@@ -43,10 +43,10 @@ void construct_globals_objects()
 
 	for (int Index = 0; Index < ImgHdr->Pe32.FileHeader.NumberOfSections; Index++, SectionHeader++)
 	{
-		DBG("SectionHeader->Name=%a\n", SectionHeader->Name);
-//		DBG("SectionHeader->PointerToRawData=%8x\n", SectionHeader->PointerToRawData);
-//		DBG("SectionHeader->SizeOfRawData=%8x\n", SectionHeader->SizeOfRawData);
-		DBG("SectionHeader->VirtualSize=%8x\n", SectionHeader->Misc.VirtualSize);
+		DBG("SectionHeader->Name=%s\n", SectionHeader->Name);
+//		DBG("SectionHeader->PointerToRawData=%8X\n", SectionHeader->PointerToRawData);
+//		DBG("SectionHeader->SizeOfRawData=%8X\n", SectionHeader->SizeOfRawData);
+		DBG("SectionHeader->VirtualSize=%8X\n", SectionHeader->Misc.VirtualSize);
 		if (AsciiStrCmp((CONST CHAR8*) SectionHeader->Name, ".ctorss") == 0)
 		{
 
@@ -54,8 +54,8 @@ void construct_globals_objects()
 			ctor_ptr* ctorend = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
 			while (currentCtor < ctorend)
 			{
-				DBG("&currentCtor %x %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
-				DBG("currentCtor %x %d\n", (UINTN) (*currentCtor), (UINTN) (*currentCtor));
+				DBG("&currentCtor %X %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
+				DBG("currentCtor %X %d\n", (UINTN) (*currentCtor), (UINTN) (*currentCtor));
 				if (*currentCtor != NULL) (*currentCtor)();
 				currentCtor++;
 			}
@@ -74,19 +74,19 @@ ctor_ptr* pend = (ctor_ptr*)&__end_of_section_ctors;
 
 
 void construct_globals_objects() {
-    DBG("CTOR %x %d\n", (UINTN)p, (UINTN)p);
-//    DBG("CTOR %x %d\n", (UINTN)p[0], (UINTN)p[0]);
+    DBG("CTOR %X %d\n", (UINTN)p, (UINTN)p);
+//    DBG("CTOR %X %d\n", (UINTN)p[0], (UINTN)p[0]);
     while ( p < pend ) {
-    	DBG("CTOR %x %d\n", (UINTN)p[0], (UINTN)p[0]);
+    	DBG("CTOR %X %d\n", (UINTN)p[0], (UINTN)p[0]);
     	(*p)();
     	p++;
     }
-//    DBG("CTOR %x %d\n", (UINTN)__CTOR_LIST__, (UINTN)__CTOR_LIST__);
+//    DBG("CTOR %X %d\n", (UINTN)__CTOR_LIST__, (UINTN)__CTOR_LIST__);
 //   __do_init();
 //  const size_t n = __CTOR_LIST_END__ - __CTOR_LIST__ - 1;
 //  size_t n = 10;
 //  for (size_t i = 0; i < n; i++) {
-//    DBG("CTOR %x %d\n", (UINTN)__CTOR_LIST__[i], (UINTN)__CTOR_LIST__[i]);
+//    DBG("CTOR %X %d\n", (UINTN)__CTOR_LIST__[i], (UINTN)__CTOR_LIST__[i]);
 //  }
 //  __CTOR_LIST__[0]();
 }
@@ -102,7 +102,7 @@ void construct_globals_objects()
       // DOS image header is present, so read the PE header after the DOS image header
       PeCoffHeaderOffset = DosHdr->e_lfanew;
     }
-    DBG("ImageContext.PeCoffHeaderOffset: %08x %d\n", PeCoffHeaderOffset, PeCoffHeaderOffset);
+    DBG("ImageContext.PeCoffHeaderOffset: %08X %d\n", PeCoffHeaderOffset, PeCoffHeaderOffset);
 
 
   	EFI_IMAGE_OPTIONAL_HEADER_UNION* ImgHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *) ((UINTN) (SelfLoadedImage->ImageBase) + PeCoffHeaderOffset);
@@ -110,10 +110,10 @@ void construct_globals_objects()
 
   	for (int Index = 0; Index < ImgHdr->Pe32.FileHeader.NumberOfSections; Index++, SectionHeader++)
   	{
-  		DBG("SectionHeader->Name=%a\n", SectionHeader->Name);
-  //		DBG("SectionHeader->PointerToRawData=%8x\n", SectionHeader->PointerToRawData);
-  //		DBG("SectionHeader->SizeOfRawData=%8x\n", SectionHeader->SizeOfRawData);
-  		DBG("SectionHeader->VirtualSize=%8x\n", SectionHeader->Misc.VirtualSize);
+  		DBG("SectionHeader->Name=%s\n", SectionHeader->Name);
+  //		DBG("SectionHeader->PointerToRawData=%8X\n", SectionHeader->PointerToRawData);
+  //		DBG("SectionHeader->SizeOfRawData=%8X\n", SectionHeader->SizeOfRawData);
+  		DBG("SectionHeader->VirtualSize=%8X\n", SectionHeader->Misc.VirtualSize);
   		if (AsciiStrCmp((CONST CHAR8*) SectionHeader->Name, ".CRT") == 0)
   		{
 
@@ -121,8 +121,8 @@ void construct_globals_objects()
   			ctor_ptr* ctorend = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
   			while (currentCtor < ctorend)
   			{
-  				DBG("&currentCtor %x %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
-  				DBG("currentCtor %x %d\n", (UINTN) (*currentCtor), (UINTN) (*currentCtor));
+  				DBG("&currentCtor %X %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
+  				DBG("currentCtor %X %d\n", (UINTN) (*currentCtor), (UINTN) (*currentCtor));
   				if (*currentCtor != NULL) (*currentCtor)();
   				currentCtor++;
   			}

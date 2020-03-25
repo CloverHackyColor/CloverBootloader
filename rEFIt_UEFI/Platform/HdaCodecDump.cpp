@@ -51,7 +51,7 @@ CONST CHAR8 *gColors[HDA_CONFIG_DEFAULT_COLOR_OTHER + 1] = {
 	"Reserved", "White", "Other" };	
 
 #define HDC_ID        { 'H','D','C','O' }
-#define HdaLog(n, ...)	MemLog(FALSE, 0, n, ##__VA_ARGS__)
+#define HdaLog(format, ...)	MemLogf(FALSE, 0, format, ##__VA_ARGS__)
 
 CONST CHAR8  hdcID[4]       = HDC_ID;
 
@@ -140,7 +140,7 @@ HdaCodecDumpPrintWidgets(
     // Print each widget.
     for (UINTN w = 0; w < WidgetCount; w++) {    
         // Print header and capabilities.
-        HdaLog("Node 0x%02X [%a] wcaps 0x%08X:", Widgets[w].NodeId,
+        HdaLog("Node 0x%02X [%s] wcaps 0x%08X:", Widgets[w].NodeId,
             gWidgetNames[HDA_PARAMETER_WIDGET_CAPS_TYPE(Widgets[w].Capabilities)], Widgets[w].Capabilities);
         if (Widgets[w].Capabilities & HDA_PARAMETER_WIDGET_CAPS_STEREO)
             HdaLog(" Stereo");
@@ -224,14 +224,14 @@ HdaCodecDumpPrintWidgets(
             }
 
             // Print pin default header.
-            HdaLog("  Pin Default 0x%08X: [%a] %a at %a %a\n", Widgets[w].DefaultConfiguration,
+            HdaLog("  Pin Default 0x%08X: [%s] %s at %s %s\n", Widgets[w].DefaultConfiguration,
                 gPortConnectivities[HDA_VERB_GET_CONFIGURATION_DEFAULT_PORT_CONN(Widgets[w].DefaultConfiguration)],
                 gDefaultDevices[HDA_VERB_GET_CONFIGURATION_DEFAULT_DEVICE(Widgets[w].DefaultConfiguration)],
                 gSurfaces[HDA_VERB_GET_CONFIGURATION_DEFAULT_SURF(Widgets[w].DefaultConfiguration)],
                 gLocations[HDA_VERB_GET_CONFIGURATION_DEFAULT_LOC(Widgets[w].DefaultConfiguration)]);
 
             // Print connection type and color.
-            HdaLog("    Conn = %a, Color = %a\n",
+            HdaLog("    Conn = %s, Color = %s\n",
                 gConnTypes[HDA_VERB_GET_CONFIGURATION_DEFAULT_CONN_TYPE(Widgets[w].DefaultConfiguration)],
                 gColors[HDA_VERB_GET_CONFIGURATION_DEFAULT_COLOR(Widgets[w].DefaultConfiguration)]);
 
@@ -301,7 +301,7 @@ EFI_STATUS SaveHdaDumpTxt() {
 		HdaIo = HdaCodecDev->HdaIo;
 	
 		// Get name.
-		HdaLog("Codec: %s\n", HdaCodecDev->Name);
+		HdaLog("Codec: %ls\n", HdaCodecDev->Name);
 		
 		// Get address
 		UINT8 CodecAddress;

@@ -207,6 +207,13 @@
 		9AC780B52417EE53005CDD5C /* global_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B42417EE53005CDD5C /* global_test.h */; };
 		9AC780B82417F359005CDD5C /* XStringWP.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B62417F359005CDD5C /* XStringWP.h */; };
 		9AC780B92417F359005CDD5C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B72417F359005CDD5C /* XStringWP.cpp */; };
+		9AF4155D242B8FA400D2644C /* poolprint-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155B242B8FA300D2644C /* poolprint-test.h */; };
+		9AF4155E242B8FA400D2644C /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4155C242B8FA300D2644C /* poolprint-test.cpp */; };
+		9AF41562242BABC700D2644C /* printlib-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */; };
+		9AF41563242BABC700D2644C /* printlib-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41560242BABC700D2644C /* printlib-test.h */; };
+		9AF41564242BABC700D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
+		9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */; };
+		9AF41568242BAD7D00D2644C /* poolprint-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */; };
 		A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		A5E326322428F4EE002240E8 /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
 /* End PBXBuildFile section */
@@ -413,6 +420,13 @@
 		9AC780B42417EE53005CDD5C /* global_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
 		9AC780B62417F359005CDD5C /* XStringWP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringWP.h; sourceTree = "<group>"; };
 		9AC780B72417F359005CDD5C /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
+		9AF4155B242B8FA300D2644C /* poolprint-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test.h"; sourceTree = "<group>"; };
+		9AF4155C242B8FA300D2644C /* poolprint-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "poolprint-test.cpp"; sourceTree = "<group>"; };
+		9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF41560242BABC700D2644C /* printlib-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test.h"; sourceTree = "<group>"; };
+		9AF41561242BABC700D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
+		9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
 		A5E3262F2428F4EE002240E8 /* XTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XTheme.cpp; sourceTree = "<group>"; };
 		A5E326302428F4EE002240E8 /* XTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTheme.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -498,8 +512,15 @@
 				9AC77ED724176C04005CDD5C /* all_tests.h */,
 				9AC780B22417EE4A005CDD5C /* global_test.cpp */,
 				9AC780B42417EE53005CDD5C /* global_test.h */,
+				9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */,
+				9AF4155C242B8FA300D2644C /* poolprint-test.cpp */,
+				9AF4155B242B8FA300D2644C /* poolprint-test.h */,
 				9A9D3B2024221562006D8CD9 /* printf_lite_test.h */,
+				9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */,
 				9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */,
+				9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */,
+				9AF41561242BABC700D2644C /* printlib-test.cpp */,
+				9AF41560242BABC700D2644C /* printlib-test.h */,
 				9A28CD2C241BC0DF00F3D247 /* strcmp_test.cpp */,
 				9A28CD2D241BC0DF00F3D247 /* strcmp_test.h */,
 				9A28CD2B241BC0DF00F3D247 /* strlen_test.cpp */,
@@ -784,6 +805,7 @@
 				9A28CCA3241B66EA00F3D247 /* stdlib.h in Headers */,
 				9AC77FC024176C04005CDD5C /* XObjArray_tests.h in Headers */,
 				9AC7801D24176C04005CDD5C /* Events.h in Headers */,
+				9AF41562242BABC700D2644C /* printlib-test-cpp_conf.h in Headers */,
 				9AC7808D24176C04005CDD5C /* XStringWArray.h in Headers */,
 				9A57C25824192D650029A39F /* XUINTN.h in Headers */,
 				9A28CD33241BC0DF00F3D247 /* strcmp_test.h in Headers */,
@@ -792,11 +814,13 @@
 				9AC780B52417EE53005CDD5C /* global_test.h in Headers */,
 				9AC7806324176C04005CDD5C /* CanonicalDB.h in Headers */,
 				9AC7805924176C04005CDD5C /* nanosvg.h in Headers */,
+				9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */,
 				9AC7806124176C04005CDD5C /* CloverDB.h in Headers */,
 				9AC7803424176C04005CDD5C /* LegacyBiosThunk.h in Headers */,
 				9AC7806A24176C04005CDD5C /* tool.h in Headers */,
 				9AC7808324176C04005CDD5C /* globals_dtor.h in Headers */,
 				9AC7808024176C04005CDD5C /* screen.h in Headers */,
+				9AF41563242BABC700D2644C /* printlib-test.h in Headers */,
 				9AC7802224176C04005CDD5C /* DataHubCpu.h in Headers */,
 				9AC7807A24176C04005CDD5C /* lib.h in Headers */,
 				9AC7803524176C04005CDD5C /* b64cdecode.h in Headers */,
@@ -838,6 +862,7 @@
 				9AC7802A24176C04005CDD5C /* HdaCodecDump.h in Headers */,
 				9AC7803224176C04005CDD5C /* kext_inject.h in Headers */,
 				9AC7800F24176C04005CDD5C /* Nvram.h in Headers */,
+				9AF41568242BAD7D00D2644C /* poolprint-test-cpp_conf.h in Headers */,
 				9AC7800024176C04005CDD5C /* gma.h in Headers */,
 				9AC7802424176C04005CDD5C /* sse3_patcher.h in Headers */,
 				9AC77FFD24176C04005CDD5C /* Version.h in Headers */,
@@ -847,6 +872,7 @@
 				9AC7804124176C04005CDD5C /* Platform.h in Headers */,
 				9AC7805824176C04005CDD5C /* XImage.h in Headers */,
 				9AC7808624176C04005CDD5C /* globals_ctor.h in Headers */,
+				9AF4155D242B8FA400D2644C /* poolprint-test.h in Headers */,
 				9A28CCA5241B66EA00F3D247 /* stddef.h in Headers */,
 				9AC7806724176C04005CDD5C /* securebootkeys.h in Headers */,
 				9A9D3B30242215A1006D8CD9 /* string.h in Headers */,
@@ -950,6 +976,7 @@
 				9AC7805B24176C04005CDD5C /* libscreen.cpp in Sources */,
 				9A28CD31241BC0DF00F3D247 /* strlen_test.cpp in Sources */,
 				9AC7808824176C04005CDD5C /* panic.cpp in Sources */,
+				9AF41564242BABC700D2644C /* printlib-test.cpp in Sources */,
 				9AC77FC524176C04005CDD5C /* XStringW_test.cpp in Sources */,
 				9AC7806F24176C04005CDD5C /* tool.cpp in Sources */,
 				9AC7807924176C04005CDD5C /* lib.cpp in Sources */,
@@ -998,6 +1025,7 @@
 				9AC7805F24176C04005CDD5C /* legacy.cpp in Sources */,
 				9AC7800924176C04005CDD5C /* AcpiPatcher.cpp in Sources */,
 				9AC7800D24176C04005CDD5C /* BdsConnect.cpp in Sources */,
+				9AF4155E242B8FA400D2644C /* poolprint-test.cpp in Sources */,
 				9AC7802924176C04005CDD5C /* spd.cpp in Sources */,
 				9A9D3B2324221563006D8CD9 /* printf_lite-test.cpp in Sources */,
 				9AC7800424176C04005CDD5C /* kext_patcher.cpp in Sources */,

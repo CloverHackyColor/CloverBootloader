@@ -334,7 +334,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
 
   Status = GetNextTag((UINT8*)buffer, &tagName, 0, &length);
   if (EFI_ERROR(Status)) {
-    DBG("NextTag error %r\n", Status);
+    DBG("NextTag error %s\n", strerror(Status));
     return Status;
   }
 
@@ -473,7 +473,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr* tag, UINT32 type, UINT32 empty, 
     while (TRUE) {
       Status = XMLParseNextTag(buffer + pos, &tmpTag, &length);
       if (EFI_ERROR(Status)) {
-        DBG("error XMLParseNextTag in array: %r\n", Status);
+        DBG("error XMLParseNextTag in array: %s\n", strerror(Status));
         break;
       }
 
@@ -533,7 +533,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
   TagPtr      subTag = NULL;
 
   Status = FixDataMatchingTag(buffer, kXMLTagKey, &length);
-  DBG("fixing key len=%d status=%r\n", length, Status);
+  DBG("fixing key len=%d status=%s\n", length, strerror(Status));
   if (EFI_ERROR(Status)){
     return Status;
   }
@@ -563,7 +563,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
 
   *tag = tmpTag;
   *lenPtr = length + length2;
-  DBG("parse key '%a' success len=%d\n", tmpString, *lenPtr);
+  DBG("parse key '%s' success len=%d\n", tmpString, *lenPtr);
   return EFI_SUCCESS;
 }
 
@@ -602,7 +602,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
   *tag = tmpTag;
   *lenPtr = length;
-  DBG(" parse string %a\n", tmpString);
+  DBG(" parse string %s\n", tmpString);
   return EFI_SUCCESS;
 }
 
@@ -655,7 +655,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
         integer = (integer * 16) + (*val++ - 'a' + 10);
       }
       else {
-        MsgLog("ParseTagInteger hex error (0x%x) in buffer %a\n", *val, buffer);
+        MsgLog("ParseTagInteger hex error (0x%X) in buffer %s\n", *val, buffer);
         //        getchar();
         FreeTag(tmpTag);
         return EFI_UNSUPPORTED;
@@ -672,7 +672,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
     for (integer = 0; size > 0; size--) {
       if(*val) { // UGLY HACK, fix me.
         if (*val < '0' || *val > '9') {
-          MsgLog("ParseTagInteger decimal error (0x%x) in buffer %a\n", *val, buffer);
+          MsgLog("ParseTagInteger decimal error (0x%X) in buffer %s\n", *val, buffer);
           //          getchar();
           FreeTag(tmpTag);
           return EFI_UNSUPPORTED;

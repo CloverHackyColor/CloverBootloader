@@ -30,10 +30,15 @@ SaveBooterLog (
   IN  CONST CHAR16 *FileName
   );
 
+#ifdef _MSC_VER
+#define __attribute__(x)
+#endif
+
 VOID
 EFIAPI
 DebugLog (
   IN        INTN  DebugMode,
-  IN  CONST CHAR8 *FormatString, ...);
+  IN  CONST CHAR8 *FormatString, ...) __attribute__((format(printf, 2, 3)));;
+
 
 #endif

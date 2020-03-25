@@ -115,7 +115,7 @@ VOID egDumpGOPVideoModes(VOID)
     MaxMode = GraphicsOutput->Mode->MaxMode;
     Mode = GraphicsOutput->Mode->Mode;
 //    MsgLog("Available graphics modes for refit.conf screen_resolution:\n");
-//    MsgLog("Curr. Mode = %d, Modes = %d, FB = %lx, FB size=0x%x\n",
+//    MsgLog("Curr. Mode = %d, Modes = %d, FB = %lx, FB size=0x%X\n",
 //           Mode, MaxMode, GraphicsOutput->Mode->FrameBufferBase, GraphicsOutput->Mode->FrameBufferSize);
     
     for (Mode = 0; Mode < MaxMode; Mode++) {
@@ -144,10 +144,10 @@ VOID egDumpGOPVideoModes(VOID)
                     break;
             }
             
-            MsgLog("- Mode %d: %dx%d PixFmt = %s, PixPerScanLine = %d\n",
+            MsgLog("- Mode %d: %dx%d PixFmt = %ls, PixPerScanLine = %d\n",
                   Mode, Info->HorizontalResolution, Info->VerticalResolution, PixelFormatDesc, Info->PixelsPerScanLine);
         } else {
-            MsgLog("- Mode %d: %r\n", Mode, Status);
+            MsgLog("- Mode %d: %s\n", Mode, strerror(Status));
         }
     }
     
@@ -169,9 +169,9 @@ VOID egDumpSetConsoleVideoModes(VOID)
     for (i=1; i <= (UINTN)gST->ConOut->Mode->MaxMode; i++) {
       Status = gST->ConOut->QueryMode(gST->ConOut, i-1, &Width, &Height);
       if (Status == EFI_SUCCESS) {
-        //MsgLog("  Mode %d: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+        //MsgLog("  Mode %d: %dx%d%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         if (!Once) {
-          MsgLog(" - [%02d]: %dx%d%s\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+			MsgLog(" - [%02llu]: %llux%llu%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         }
         // Select highest mode (-1) or lowest mode (-2) as/if requested
         if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight))) ||
@@ -197,12 +197,12 @@ VOID egDumpSetConsoleVideoModes(VOID)
     // Mode is valid
     if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
       Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
-      MsgLog("  Setting mode (%d): %r\n", BestMode, Status);
+		MsgLog("  Setting mode (%llu): %s\n", BestMode, strerror(Status));
     } else {
-      MsgLog("  Selected mode (%d) is already set\n", BestMode);
+		MsgLog("  Selected mode (%llu) is already set\n", BestMode);
     }
   } else if (BestMode != 0) {
-    MsgLog("  Selected mode (%d) is not valid\n", BestMode);
+	  MsgLog("  Selected mode (%llu) is not valid\n", BestMode);
   }
 }
 
@@ -253,7 +253,7 @@ EFI_STATUS egSetMaxResolution()
       MsgLog(" - set\n");
     } else {
       // we can not set BestMode - search for first one that we can
-      MsgLog(" - %r\n", Status);
+      MsgLog(" - %s\n", strerror(Status));
       Status = egSetMode(1);
     }
   }
@@ -281,11 +281,11 @@ EFI_STATUS egSetMode(INT32 Next)
     Mode = (Mode >= (INT32)MaxMode)?0:Mode;
     Mode = (Mode < 0)?((INT32)MaxMode - 1):Mode;
     Status = GraphicsOutput->QueryMode(GraphicsOutput, (UINT32)Mode, &SizeOfInfo, &Info);
-    MsgLog("QueryMode %d Status=%r\n", Mode, Status);
+    MsgLog("QueryMode %d Status=%s\n", Mode, strerror(Status));
     if (Status == EFI_SUCCESS) {
       //Status = GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
       Status = GopSetModeAndReconnectTextOut((UINT32)Mode);
-      //MsgLog("SetMode %d Status=%r\n", Mode, Status);
+      //MsgLog("SetMode %d Status=%s\n", Mode, strerror(Status));
       egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
       egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
     }
@@ -313,7 +313,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     if (WidthHeight == NULL) {
         return EFI_INVALID_PARAMETER;
     }
-    MsgLog("SetScreenResolution: %s", WidthHeight);
+    MsgLog("SetScreenResolution: %ls", WidthHeight);
     // we are expecting WidthHeight=L"1024x768"
     // parse Width and Height
     HeightP = WidthHeight;
@@ -632,7 +632,7 @@ EFI_STATUS egScreenShot(VOID)
   EFI_STATUS      Status = EFI_NOT_READY;
   //take screen
   XImage Screen(egScreenWidth, egScreenHeight);
-  MsgLog("Make screenshot W=%d H=%d\n", egScreenWidth, egScreenHeight);
+	MsgLog("Make screenshot W=%llu H=%llu\n", egScreenWidth, egScreenHeight);
   Screen.GetArea(0, 0, egScreenWidth, egScreenHeight);
   //convert to PNG
   UINT8           *FileData = NULL;
@@ -679,7 +679,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     }
 
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
-    MsgLog("Video mode change to mode #%d: %r\n", ModeNumber, Status);
+    MsgLog("Video mode change to mode #%d: %s\n", ModeNumber, strerror(Status));
 
     if (gFirmwareClover && !EFI_ERROR (Status)) { 
         // When we change mode on GOP, we need to reconnect the drivers which produce simple text out

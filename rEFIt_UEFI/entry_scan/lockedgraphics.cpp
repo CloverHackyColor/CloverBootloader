@@ -152,10 +152,10 @@ static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
       GOPInterface->Mode->MaxMode = 1;
       GOPInterface->Mode->Mode = 0;
       GOPInterface->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-      DBG("Custom boot framebuffer 0x%X 0x%X\n", GOPInterface->Mode->FrameBufferBase, GOPInterface->Mode->FrameBufferSize);
+		DBG("Custom boot framebuffer 0x%llX 0x%llX\n", (uintptr_t)GOPInterface->Mode->FrameBufferBase, GOPInterface->Mode->FrameBufferSize);
       GOPInterface->Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)(GOPInterface->Mode->FrameBufferBase + GOPInterface->Mode->FrameBufferSize);
       GOPInterface->Mode->FrameBufferSize = BufferSize;
-      DBG("Custom boot GOP: 0x%X @0x%X 0x%X", GOPInterface, GOPInterface->Mode->FrameBufferBase, BufferSize);
+		DBG("Custom boot GOP: 0x%llX @0x%llX 0x%llX", (uintptr_t)GOPInterface, (uintptr_t)GOPInterface->Mode->FrameBufferBase, BufferSize);
       if (GOPInterface->Mode->Info != NULL) {
         // /*
         GOPInterface->Mode->Info->Version = 0;

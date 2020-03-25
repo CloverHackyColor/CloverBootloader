@@ -514,7 +514,7 @@ VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
   }
   
   if (BackgroundImage == NULL) {
-/*    DBG("BltClearScreen(%c): calling egCreateFilledImage UGAWidth %ld, UGAHeight %ld, BlueBackgroundPixel %02x%02x%02x%02x\n",
+/*    DBG("BltClearScreen(%c): calling egCreateFilledImage UGAWidth %ld, UGAHeight %ld, BlueBackgroundPixel %02X%02X%02X%02X\n",
         ShowBanner?'Y':'N', UGAWidth, UGAHeight,
         BlueBackgroundPixel.r, BlueBackgroundPixel.g, BlueBackgroundPixel.b, BlueBackgroundPixel.a); */
     BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
@@ -574,7 +574,7 @@ VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
         ShowBanner?'Y':'N', BackgroundImage); */
     BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
   } else {
-/*    DBG("BltClearScreen(%c): calling egClearScreen StdBackgroundPixel %02x%02x%02x%02x\n",
+/*    DBG("BltClearScreen(%c): calling egClearScreen StdBackgroundPixel %02X%02X%02X%02X\n",
         ShowBanner?'Y':'N', StdBackgroundPixel.r, StdBackgroundPixel.g, StdBackgroundPixel.b, StdBackgroundPixel.a); */
     egClearScreen(&StdBackgroundPixel);
   }
@@ -773,9 +773,9 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     if (GlobalConfig.BadgeOffsetX != 0xFFFF) {
       // Check if value is between 0 and ( width of the main icon - width of badge )
       if (GlobalConfig.BadgeOffsetX < 0 || GlobalConfig.BadgeOffsetX > (CompWidth - BadgeImage->Width)) {
-        DBG("User offset X %d is out of range\n", GlobalConfig.BadgeOffsetX);
+		  DBG("User offset X %lld is out of range\n", GlobalConfig.BadgeOffsetX);
         GlobalConfig.BadgeOffsetX = CompWidth  - 8 - BadgeImage->Width;
-        DBG("   corrected to default %d\n", GlobalConfig.BadgeOffsetX);
+		  DBG("   corrected to default %lld\n", GlobalConfig.BadgeOffsetX);
       }
       OffsetX += GlobalConfig.BadgeOffsetX;
     } else {
@@ -786,9 +786,9 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     if (GlobalConfig.BadgeOffsetY != 0xFFFF) {
       // Check if value is between 0 and ( height of the main icon - height of badge )
       if (GlobalConfig.BadgeOffsetY < 0 || GlobalConfig.BadgeOffsetY > (CompHeight - BadgeImage->Height)) {
-        DBG("User offset Y %d is out of range\n",GlobalConfig.BadgeOffsetY);
+		  DBG("User offset Y %lld is out of range\n",GlobalConfig.BadgeOffsetY);
         GlobalConfig.BadgeOffsetY = CompHeight - 8 - BadgeImage->Height;
-        DBG("   corrected to default %d\n", GlobalConfig.BadgeOffsetY);
+		  DBG("   corrected to default %lld\n", GlobalConfig.BadgeOffsetY);
       }
       OffsetY += GlobalConfig.BadgeOffsetY;
     } else {
@@ -1048,7 +1048,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
       // Look through contents of the directory
       UINTN i;
       for (i = 0; i < Anime->Frames; i++) {
-        //       DBG("Try to load file %s\n", FileName);
+        //       DBG("Try to load file %ls\n", FileName);
         if (ThemeX.TypeSVG) {
           p = LoadSvgFrame(i);
           //       DBG("frame %d loaded\n", i);
@@ -1161,7 +1161,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
       UINTN i;
       for (i = 0; i < Anime->Frames; i++) {
 
- //       DBG("Try to load file %s\n", FileName);
+ //       DBG("Try to load file %ls\n", FileName);
         if (GlobalConfig.TypeSVG) {
           p = LoadSvgFrame(i);
    //       DBG("frame %d loaded\n", i);
@@ -1179,7 +1179,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
       }
       if (Film[0] != NULL) {
         Frames = i;
-        DBG(" found %d frames of the anime\n", i);
+		  DBG(" found %llu frames of the anime\n", i);
         // Create background frame
         Film[i] = egCreateImage(Film[0]->Width, Film[0]->Height, FALSE);
         // Copy some settings from Anime into Screen
@@ -1239,7 +1239,7 @@ BOOLEAN REFIT_MENU_SCREEN::GetAnime()
     return FALSE;
   }
   
-  DBG("Use anime=%s frames=%d\n", Anime->Path, Anime->Frames);
+	DBG("Use anime=%ls frames=%llu\n", Anime->Path, Anime->Frames);
   
   return TRUE;
 }

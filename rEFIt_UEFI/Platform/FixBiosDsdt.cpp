@@ -647,7 +647,7 @@ VOID CheckHardware()
         PCIdevice.DeviceHandle = Handle;
         DevicePath = DevicePathFromHandle (Handle);
         if (DevicePath) {
-  //        DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
+  //        DBG("Device patch = %ls \n", DevicePathToStr(DevicePath));
 
           //Display ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
@@ -658,11 +658,11 @@ VOID CheckHardware()
 //            PCI_IO_DEVICE *PciIoDevice;
 
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display], NULL);
-            DBG("VideoCard devID=0x%x\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
+            DBG("VideoCard devID=0x%X\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
 #if DEBUG_FIX
             dadr1 = DisplayADR1[display];
             dadr2 = DisplayADR2[display];
-            DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
+            DBG("DisplayADR1[%d] = 0x%X, DisplayADR2[%d] = 0x%X\n", display, dadr1, display, dadr2);
 #endif
         //         dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
@@ -691,7 +691,7 @@ VOID CheckHardware()
               else
                 Display2PCIE = TRUE;
             }
-            DBG("Display %d is %aPCIE\n", display, (PciIoDevice->IsPciExp) ? "" :" not"); */
+            DBG("Display %d is %sPCIE\n", display, (PciIoDevice->IsPciExp) ? "" :" not"); */
             display++;
           }
 
@@ -699,7 +699,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
             GetPciADR(DevicePath, &NetworkADR1[net_count], &NetworkADR2[net_count], NULL);
- //           DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
+ //           DBG("NetworkADR1 = 0x%X, NetworkADR2 = 0x%X\n", NetworkADR1, NetworkADR2);
  //           Netmodel = get_net_model(deviceid);
             Netmodel[net_count] = get_net_model(deviceid);
             net_count++;
@@ -709,16 +709,16 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
             GetPciADR(DevicePath, &ArptADR1, &ArptADR2, NULL);
-   //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
+   //         DBG("ArptADR1 = 0x%X, ArptADR2 = 0x%X\n", ArptADR1, ArptADR2);
    //         Netmodel = get_arpt_model(deviceid);
             ArptBCM = (Pci.Hdr.VendorId == 0x14e4);
             if (ArptBCM) {
-              DBG("Found Airport BCM at 0x%x, 0x%x\n", ArptADR1, ArptADR2);
+              DBG("Found Airport BCM at 0x%X, 0x%X\n", ArptADR1, ArptADR2);
             }
             ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
             ArptDID = Pci.Hdr.DeviceId;
             if (ArptAtheros) {
-              DBG("Found Airport Atheros at 0x%x, 0x%x, DeviceID=0x%04x\n", ArptADR1, ArptADR2, ArptDID);
+              DBG("Found Airport Atheros at 0x%X, 0x%X, DeviceID=0x%04X\n", ArptADR1, ArptADR2, ArptDID);
             }
           }
 
@@ -726,14 +726,14 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE)) {
             GetPciADR(DevicePath, &FirewireADR1, &FirewireADR2, NULL);
- //           DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
+ //           DBG("FirewireADR1 = 0x%X, FirewireADR2 = 0x%X\n", FirewireADR1, FirewireADR2);
           }
 
           //SBUS ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB)) {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2, NULL);
-  //          DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
+  //          DBG("SBUSADR1 = 0x%X, SBUSADR2 = 0x%X\n", SBUSADR1, SBUSADR2);
           }
           //IMEI ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SCC) &&
@@ -749,7 +749,7 @@ VOID CheckHardware()
             USBIntel = (Pci.Hdr.VendorId == 0x8086);
             USBNForce = (Pci.Hdr.VendorId == 0x10de);
             GetPciADR(DevicePath, &USBADR[usb], &USBADR2[usb], &USBADR3[usb]);
-            DBG("USBADR[%d] = 0x%x and PCIe = 0x%x\n", usb, USBADR[usb], USBADR2[usb]);
+            DBG("USBADR[%d] = 0x%X and PCIe = 0x%X\n", usb, USBADR[usb], USBADR2[usb]);
             if (USBIDFIX)
             {
               if (USBADR[usb] == 0x001D0000 && !NativeUSB(DID)) DID = 0x3a34;
@@ -787,7 +787,7 @@ VOID CheckHardware()
               if (gSettings.HDALayoutId > 0) {
                 // layoutId is specified - use it
                 layoutId = (UINT32)gSettings.HDALayoutId;
-                DBG("Audio HDA (addr:0x%x) setting specified layout-id=%d (0x%x)\n", HDAADR1, layoutId, layoutId);
+                DBG("Audio HDA (addr:0x%X) setting specified layout-id=%d (0x%X)\n", HDAADR1, layoutId, layoutId);
               }
 
               HDAFIX = TRUE;
@@ -809,7 +809,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE)) {
             GetPciADR(DevicePath, &IDEADR1, &IDEADR2, NULL);
-            // DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
+            // DBG("IDEADR1 = 0x%X, IDEADR2 = 0x%X\n", IDEADR1, IDEADR2);
             IDEFIX = get_ide_model(deviceid);
             IDEVENDOR = Pci.Hdr.VendorId;
           }
@@ -819,7 +819,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x00)) {
             GetPciADR(DevicePath, &SATAADR1, &SATAADR2, NULL);
-            // DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
+            // DBG("SATAADR1 = 0x%X, SATAADR2 = 0x%X\n", SATAADR1, SATAADR2);
             SATAFIX = get_ide_model(deviceid);
             SATAVENDOR = Pci.Hdr.VendorId;
           }
@@ -829,7 +829,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x01)) {
             GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2, NULL);
-            // DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
+            // DBG("SATAAHCIADR1 = 0x%X, SATAAHCIADR2 = 0x%X\n", SATAAHCIADR1, SATAAHCIADR2);
             // AHCIFIX = get_ahci_model(deviceid);
             SATAAHCIVENDOR = Pci.Hdr.VendorId;
           }
@@ -946,7 +946,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
         //1. if name begin with \\ this is with score
         //2. else find outer device or scope until \\ is found
         //3. add new name everytime is found
-  //      DBG("first CPU found at %x offset %x\n", i, offset);
+  //      DBG("first CPU found at %X offset %X\n", i, offset);
 
         if (dsdt[offset] == '\\') {
           // "\_PR.CPU0"
@@ -967,7 +967,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             k = j + 2;
             if ((dsdt[j] == 0x5B) && (dsdt[j + 1] == 0x82) &&
                 !CmpNum(dsdt, j, TRUE)) { //device candidate
-  //            DBG("device candidate at %x\n", j);
+  //            DBG("device candidate at %X\n", j);
               size = get_size(dsdt, k);
               if (size) {
                 if (k + size > i + 3) {  //Yes - it is outer
@@ -975,11 +975,11 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                   if (dsdt[off2] == '\\') {
                     // "\_SB.SCL0"
                     InsertScore(dsdt, off2, 1);
-   //                 DBG("acpi_cpu_score calculated as %a\n", acpi_cpu_score);
+   //                 DBG("acpi_cpu_score calculated as %s\n", acpi_cpu_score);
                     break;
                   } else {
                     InsertScore(dsdt, off2, 0);
-   //                 DBG("device inserted in acpi_cpu_score %a\n", acpi_cpu_score);
+   //                 DBG("device inserted in acpi_cpu_score %s\n", acpi_cpu_score);
                   }
                 }  //else not an outer device
               } //else wrong size field - not a device
@@ -991,7 +991,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                  dsdt[j + 2] == 'B' && dsdt[j + 3] == '_') ||
                 (dsdt[j] == '_' && dsdt[j + 1] == 'P' &&
                  dsdt[j + 2] == 'R' && dsdt[j + 3] == '_')) {
-   //           DBG("score candidate at %x\n", j);
+   //           DBG("score candidate at %X\n", j);
               for (j1=0; j1 < 10; j1++) {
                 if (dsdt[j - j1] != 0x10) {
                   continue;
@@ -999,7 +999,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                 if (!CmpNum(dsdt, j - j1, TRUE)) {
                   SBADR = j - j1 + 1;
                   SBSIZE = get_size(dsdt, SBADR);
-                  //     DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
+                  //     DBG("found Scope(\\_SB) address = 0x%08X size = 0x%08X\n", SBADR, SBSIZE);
                   if ((SBSIZE != 0) && (SBSIZE < length)) {  //if zero or too large then search more
                     //if found
                     k = SBADR - 6;
@@ -1013,7 +1013,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
             } //else not a scope
             if (SBFound) {
               InsertScore(dsdt, j, 0);
- //             DBG("score inserted in acpi_cpu_score %a\n", acpi_cpu_score);
+ //             DBG("score inserted in acpi_cpu_score %s\n", acpi_cpu_score);
               break;
             }
             j = k - 3;    //if found then search again from found
@@ -1039,7 +1039,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 
         if (!(IS_UPPER(c) || IS_DIGIT(c) || c == '_')) {
           add_name = FALSE;
-          DBG("Invalid character found in ProcessorOP 0x%x!\n", c);
+          DBG("Invalid character found in ProcessorOP 0x%X!\n", c);
           break;
         }
       }
@@ -1054,16 +1054,16 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
                 //    acpi_cpu_p_blk = dsdt[i] | (dsdt[i+1] << 8);
 
         if (acpi_cpu_count == 0) {
-            DBG("Found ACPI CPU: %a ", acpi_cpu_name[acpi_cpu_count]);
+            DBG("Found ACPI CPU: %s ", acpi_cpu_name[acpi_cpu_count]);
         } else {
-            DBG("| %a ", acpi_cpu_name[acpi_cpu_count]);
+            DBG("| %s ", acpi_cpu_name[acpi_cpu_count]);
         }
         if (++acpi_cpu_count == acpi_cpu_max)
             break;
       }
     }
   }
-  DBG(", within the score: %a\n", acpi_cpu_score);
+  DBG(", within the score: %s\n", acpi_cpu_score);
 
   if (!acpi_cpu_count) {
     for (i=0; i < acpi_cpu_max; i++) {
@@ -1123,7 +1123,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
             Buffer[adr+3]         << 20;
   }
   else {
-  //  DBG("wrong pointer to size field at %x\n", adr);
+  //  DBG("wrong pointer to size field at %X\n", adr);
     return 0;
   }
   return temp;
@@ -1367,11 +1367,11 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       if (((size <= 0x3F) && !GetName(dsdt, k+1, &Name[0], NULL)) ||
           ((size > 0x3F) && (size <= 0xFFF) && !GetName(dsdt, k+2, &Name[0], NULL)) ||
           ((size > 0xFFF) && !GetName(dsdt, k+3, &Name[0], NULL))) {
-        DBG("method found, size=0x%x but name is not\n", size);
+        DBG("method found, size=0x%X but name is not\n", size);
         continue;
       }
       if ((k+size) > adr+4) {  //Yes - it is outer
-        DBG("found outer method %a begin=%x end=%x\n", Name, k, k+size);
+        DBG("found outer method %s begin=%X end=%X\n", Name, k, k+size);
         offset = write_size(k, dsdt, len, shift);  //size corrected to sizeoffset at address j
  //       shift += offset;
         len += offset;
@@ -1435,7 +1435,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
       size = (INT32)get_size(dsdt, k);
       if (size) {
         if ((k + size) > (INT32)adr+4) {  //Yes - it is outer
-    //          DBG("found outer device begin=%x end=%x\n", k, k+size);
+    //          DBG("found outer device begin=%X end=%X\n", k, k+size);
           offset = write_size(k, dsdt, len, shift);  //size corrected to sizeoffset at address j
           shift += offset;
           len += offset;
@@ -1453,12 +1453,12 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
         if (!CmpNum(dsdt, i-j, TRUE)) {
           SBADR = i-j+1;
           SBSIZE = get_size(dsdt, SBADR);
-       //     DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
+       //     DBG("found Scope(\\_SB) address = 0x%08X size = 0x%08X\n", SBADR, SBSIZE);
           if ((SBSIZE != 0) && (SBSIZE < len)) {  //if zero or too large then search more
             //if found
             k = SBADR - 6;
             if ((SBADR + SBSIZE) > adr+4) {  //Yes - it is outer
-        //      DBG("found outer scope begin=%x end=%x\n", SBADR, SBADR+SBSIZE);
+        //      DBG("found outer scope begin=%X end=%X\n", SBADR, SBADR+SBSIZE);
               offset = write_size(SBADR, dsdt, len, shift);
               shift += offset;
               len += offset;
@@ -1490,9 +1490,9 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *New
     if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
         (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
       if (OldName) {
-        MsgLog("NewName %a already present, renaming impossible\n", NewName);
+        MsgLog("NewName %s already present, renaming impossible\n", NewName);
       } else {
-        DBG("name %a present at %x\n", NewName, i);
+        DBG("name %s present at %X\n", NewName, i);
       }
       return -1;
     }
@@ -1504,7 +1504,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *New
   for (i = 0; len >= 4 && i < len - 4; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
-      MsgLog("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
+		MsgLog("Name %s present at 0x%llX, renaming to %s\n", OldName, i, NewName);
       dsdt[i+0] = NewName[0];
       dsdt[i+1] = NewName[1];
       dsdt[i+2] = NewName[2];
@@ -1534,7 +1534,7 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
       }  //else continue
     }
   }
-  MsgLog("Device definition before adr=%x not found\n", address);
+  MsgLog("Device definition before adr=%X not found\n", address);
   return 0; //impossible value for fool proof
 }
 
@@ -1553,12 +1553,12 @@ BOOLEAN CustProperties(AML_CHUNK* pack, UINT32 Dev)
     Injected = TRUE;
 
     if (!gSettings.AddProperties[i].MenuItem.BValue) {
-      //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
     } else {
       aml_add_string(pack, gSettings.AddProperties[i].Key);
       aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
                           (UINT32)gSettings.AddProperties[i].ValueLen);
-      //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
     }
   }
   return Injected;
@@ -1569,7 +1569,7 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j;
   INT32 size = 0, sizeoffset;
-  MsgLog(" deleting device %a\n", Name);
+  MsgLog(" deleting device %s\n", Name);
   for (i=20; i<len; i++) {
     j = CmpDev(dsdt, i, (UINT8*)Name);
     if (j != 0) {
@@ -1744,7 +1744,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     DBG(" invalid patches!\n");
     return len;
   }
-  MsgLog(" pattern %02x%02x%02x%02x,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  MsgLog(" pattern %02X%02X%02X%02X,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     MsgLog(" the patch is too large!\n");
     return len;
@@ -1765,7 +1765,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
       MsgLog(" patched at: [");
     }
 
-    MsgLog(" (%x)", adr);
+    MsgLog(" (%X)", adr);
     found = TRUE;
     len = move_data(adr + i, dsdt, len, sizeoffset);
     if ((LenTR > 0) && (ToReplace != NULL)) {
@@ -1798,7 +1798,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* To
     return len;
   }
 
-  DBG(" pattern %02x%02x%02x%02x,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  DBG(" pattern %02X%02X%02X%02X,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     DBG(" the patch is too large!\n");
     return len;
@@ -1838,7 +1838,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* To
           DBG(" patched at: [");
         }
 
-        DBG(" (%x)", adr);
+        DBG(" (%X)", adr);
         found = TRUE;
         if ((LenTR > 0) && (ToReplace != NULL)) {
           CopyMem(dsdt + BrdADR + adr, ToReplace, LenTR);
@@ -1906,7 +1906,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   //search  PWRB PNP0C0C
   for (i=0x20; len >= 6 && i < len - 6; i++) {
     if (CmpPNP(dsdt, i, 0x0C0C)) {
-      DBG("found PWRB at %x\n", i);
+      DBG("found PWRB at %X\n", i);
       adr = devFind(dsdt, i);
       break;
     }
@@ -1917,7 +1917,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
     for (i=0x20; len >= 6 && i < len - 6; i++) {
       if (CmpPNP(dsdt, i, 0x0C0A)) {
         adr = devFind(dsdt, i);
-        DBG("found BAT0 at %x\n", i);
+        DBG("found BAT0 at %X\n", i);
         break;
       }
     }
@@ -2123,7 +2123,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
           MsgLog("found RTC had IRQNoFlag will move %d bytes\n", sizeoffset);
           // First move offset byte remove IRQNoFlag
           len = move_data(l, dsdt, len, sizeoffset);
-          DBG("...len=%x\n", len);
+          DBG("...len=%X\n", len);
           // Fix IO (Decode16, size and _CRS size
           dsdt[RESADR] += (UINT8)sizeoffset;
           dsdt[IOADR] += (UINT8)sizeoffset;
@@ -2138,9 +2138,9 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
       shift = write_size(adr, dsdt, len, sizeoffset);
       sizeoffset += shift; //sizeoffset changed
       len += shift;
-      DBG("new size written to %x shift=%x len=%x\n", adr, shift, len);
+      DBG("new size written to %X shift=%X len=%X\n", adr, shift, len);
       len = CorrectOuters(dsdt, len, adr-3, sizeoffset);
-      DBG("len after correct outers %x\n", len);
+      DBG("len after correct outers %X\n", len);
       sizeoffset = 0;
     } // sizeoffset if
   } // l loop
@@ -2167,7 +2167,7 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
         continue;
       }
       tmrsize = get_size(dsdt, adr);
- //     DBG("TMR size=%x at %x\n", tmrsize, adr);
+ //     DBG("TMR size=%X at %X\n", tmrsize, adr);
       if (tmrsize) {
         break;
       }
@@ -2243,7 +2243,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
         continue;
       }
       picsize = get_size(dsdt, adr);
-      DBG("PIC size=%x at %x\n", picsize, adr);
+      DBG("PIC size=%X at %X\n", picsize, adr);
       if (picsize) {
         break;
       }
@@ -2267,7 +2267,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
           ((dsdt[i+1] & 0xF0) == 0x40)) {
         RESADR = i+1;  //Format 11, size1, size2, 0A, size-4,... 79, 00
         IOADR = i+4;  //IO (Decode16 ==> 47, 01
-        DBG("found CRS at %x size %x\n", RESADR, dsdt[IOADR]);
+        DBG("found CRS at %X size %X\n", RESADR, dsdt[IOADR]);
         continue;
       }
     }
@@ -2385,7 +2385,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 
 
   DBG("Start LPCB Fix\n");
-  //DBG("len = 0x%08x\n", len);
+  //DBG("len = 0x%08X\n", len);
   //have to find LPC
   for (j=0x20; len >= 10 && j < len - 10; j++) {
     if (CmpAdr(dsdt, j, 0x001F0000))
@@ -2397,7 +2397,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
       LPCBSIZE = get_size(dsdt, LPCBADR);
       device_name[3] = (__typeof_am__(device_name[3]))AllocateZeroPool(5);
       CopyMem(device_name[3], dsdt + j, 4);
-      MsgLog("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
+      MsgLog("found LPCB device NAME(_ADR,0x001F0000) at %X And Name is %s\n", j,
           device_name[3]);
 
       if (LPCBSIZE) break;
@@ -2524,7 +2524,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         }
         devsize1 = get_size(dsdt, devadr1);
         if (devsize1) {
-          MsgLog("Found internal video device %x @%x\n", DisplayADR2[VCard], devadr1);
+          MsgLog("Found internal video device %X @%X\n", DisplayADR2[VCard], devadr1);
           DISPLAYFIX = TRUE;
           break;
         }
@@ -2543,10 +2543,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
             if (gSettings.ReuseFFFF) {
               dsdt[j+10] = 0;
               dsdt[j+11] = 0;
-              MsgLog("Found internal video device FFFF@%x, ReUse as 0\n", devadr1);
+              MsgLog("Found internal video device FFFF@%X, ReUse as 0\n", devadr1);
             } else {
               NonUsable = TRUE;
-              MsgLog("Found internal video device FFFF@%x, unusable\n", devadr1);
+              MsgLog("Found internal video device FFFF@%X, unusable\n", devadr1);
             }
             DISPLAYFIX = TRUE;
             break;
@@ -2619,11 +2619,11 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       )
     )
   ) {
-    MsgLog("Skipping Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
+    MsgLog("Skipping Method(_DSM) for %04X card\n", DisplayVendor[VCard]);
     goto Skip_DSM;
   }
 
-  MsgLog("Creating Method(_DSM) for %04x card\n", DisplayVendor[VCard]);
+  MsgLog("Creating Method(_DSM) for %04X card\n", DisplayVendor[VCard]);
   met = aml_add_method(gfx0, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
@@ -2698,7 +2698,7 @@ Skip_DSM:
           }
         }
       } else {
-        MsgLog("Warning: Method(_SUN) found for %04x card\n", DisplayVendor[VCard]);
+        MsgLog("Warning: Method(_SUN) found for %04X card\n", DisplayVendor[VCard]);
       }
       break;
   }
@@ -2720,7 +2720,7 @@ Skip_DSM:
       if (!DISPLAYFIX || (DisplayADR2[VCard] == 0xFFFE)) {   //subdevice absent
         devsize = get_size(dsdt, devadr);
         if (!devsize) {
-          DBG("BUG! Address of existing PEG0 is lost %x\n", devadr);
+          DBG("BUG! Address of existing PEG0 is lost %X\n", devadr);
           FreePool(display);
           return len;
         }
@@ -2818,7 +2818,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
             }
             device_name[11] = (__typeof_am__(device_name[11]))AllocateZeroPool(5);
             CopyMem(device_name[11], dsdt+k, 4);
-            DBG("found HDMI device [0x%08x:%x] at %x and Name is %a\n",
+            DBG("found HDMI device [0x%08X:%X] at %X and Name is %s\n",
                 HDMIADR1, HDMIADR2, devadr1, device_name[11]);
             ReplaceName(dsdt + devadr, BridgeSize, device_name[11], "HDAU");
             HdauFound = TRUE;
@@ -2826,7 +2826,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
           }
         }
         if (!HdauFound) {
-          DBG("have no HDMI device while HDMIADR2=%x\n", HDMIADR2);
+          DBG("have no HDMI device while HDMIADR2=%X\n", HDMIADR2);
           devadr1 = devadr;
         }
       } else {
@@ -2861,10 +2861,10 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
     root = aml_add_device(brd, "HDM0");
     aml_add_name(root, "_ADR");
     aml_add_dword(root, HDMIADR1);
-    DBG("Created  bridge device with ADR=0x%x\n", HDMIADR1);
+    DBG("Created  bridge device with ADR=0x%X\n", HDMIADR1);
   }
 
-  DBG("HDMIADR1=%x HDMIADR2=%x\n", HDMIADR1, HDMIADR2);
+  DBG("HDMIADR1=%X HDMIADR2=%X\n", HDMIADR1, HDMIADR2);
   if (!HdauFound && (HDMIADR2 != 0xFFFE)) //there is no HDMI device at dsdt, creating new one
   {
     AML_CHUNK* dev = aml_add_device(root, "HDAU");
@@ -2993,7 +2993,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
 
             device_name[1] = (__typeof_am__(device_name[1]))AllocateZeroPool(5);
             CopyMem(device_name[1], dsdt+k, 4);
-            DBG("found NetWork device [0x%08x:%x] at %x and Name is %a\n",
+            DBG("found NetWork device [0x%08X:%X] at %X and Name is %s\n",
                 NetworkADR1[card], NetworkADR2[card], NetworkADR, device_name[1]);
             //renaming disabled until better way will found
        //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[1], "GIGE");
@@ -3002,7 +3002,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
           }
         }
         if (!NetworkName) {
-            DBG("have no Network device while NetworkADR2=%x\n", NetworkADR2[card]);
+            DBG("have no Network device while NetworkADR2=%X\n", NetworkADR2[card]);
           //in this case NetworkADR point to bridge
           NetworkADR = BrdADR;
         }
@@ -3037,10 +3037,10 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     root = aml_add_device(brd, "LAN0");
     aml_add_name(root, "_ADR");
     aml_add_dword(root, NetworkADR1[card]);
-    DBG("Created  bridge device with ADR=0x%x\n", NetworkADR1[card]);
+    DBG("Created  bridge device with ADR=0x%X\n", NetworkADR1[card]);
   }
 
-  DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1[card], NetworkADR2[card]);
+  DBG("NetworkADR1=%X NetworkADR2=%X\n", NetworkADR1[card], NetworkADR2[card]);
   dev = root;
   if (!NetworkName && (NetworkADR2[card] != 0xFFFE)) //there is no network device at dsdt, creating new one
   {
@@ -3113,7 +3113,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     return len;
   }
   sizeoffset = root->Size;
-  DBG("network DSM created, size=%x\n", sizeoffset);
+  DBG("network DSM created, size=%X\n", sizeoffset);
   aml_write_node(root, network, 0);
   aml_destroy_node(root);
   if (NetworkADR) { // bridge or lan
@@ -3193,7 +3193,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
             }
             device_name[9] = (__typeof_am__(device_name[9]))AllocateZeroPool(5);
             CopyMem(device_name[9], dsdt+k, 4);
-            DBG("found Airport device [%08x:%x] at %x And Name is %a\n",
+            DBG("found Airport device [%08X:%X] at %X And Name is %s\n",
                 ArptADR1, ArptADR2, ArptADR, device_name[9]);
             //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[9], "ARPT"); //sometimes dangeous
             ArptName = TRUE;
@@ -3232,7 +3232,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     root = aml_add_device(brd, "ARP0");
     aml_add_name(root, "_ADR");
     aml_add_dword(root, ArptADR1);
-    DBG("Created  bridge device with ADR=0x%x\n", ArptADR1);
+    DBG("Created  bridge device with ADR=0x%X\n", ArptADR1);
   }
 
   dev = root;
@@ -3309,7 +3309,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   sizeoffset = root->Size;
   aml_write_node(root, network, 0);
   aml_destroy_node(root);
-  DBG("AirportADR=%x add patch size=%x\n", ArptADR, sizeoffset);
+  DBG("AirportADR=%X add patch size=%X\n", ArptADR, sizeoffset);
 
   if (ArptADR) { // bridge or WiFi
     i = ArptADR;
@@ -3317,7 +3317,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     i = PCIADR;
   }
   Size = get_size(dsdt, i);
-  DBG("adr %x size of arpt=%x\n", i, Size);
+  DBG("adr %X size of arpt=%X\n", i, Size);
   // move data to back for add patch
   k = i + Size;
   len = move_data(k, dsdt, len, sizeoffset);
@@ -3345,7 +3345,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 //    DBG("wrong PCI0 address, patch SBUS will not be applied\n");
     return len;
   }
-  DBG("Start SBUS Fix PCI=%x len=%x\n", PCIADR, len);
+  DBG("Start SBUS Fix PCI=%X len=%X\n", PCIADR, len);
 
   // Find Device SBUS
   if (SBUSADR1) {
@@ -3354,7 +3354,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
       {
         SBUSADR = devFind(dsdt, i);
         if (SBUSADR) {
-          DBG("device (SBUS) found at %x\n", SBUSADR);
+          DBG("device (SBUS) found at %X\n", SBUSADR);
           break;
         }
       } // end SBUS
@@ -3390,7 +3390,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   else
     sizeoffset = sizeof(sbus1);
 
-//  DBG("SBUS address %x code size = 0x%08x\n", SBUSADR, sizeoffset);
+//  DBG("SBUS address %X code size = 0x%08X\n", SBUSADR, sizeoffset);
 
   if (SBUSADR) {
     // move data to back for add sbus
@@ -3404,11 +3404,11 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     len += k;
     len = CorrectOuters(dsdt, len, SBUSADR-3, sizeoffset);
   //  SBUSADR = adr1;
-    DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
+    DBG("SBUS code size fix = 0x%08X\n", sizeoffset);
   } else {
     PCISIZE = get_size(dsdt, PCIADR);
     i = PCIADR + PCISIZE;
-    DBG("SBUS absent, adding to the end of PCI0 at %x\n", i);
+    DBG("SBUS absent, adding to the end of PCI0 at %X\n", i);
     len = move_data(i, dsdt, len, sizeoffset);
     CopyMem(dsdt+i, sbus1, sizeoffset);
 
@@ -3446,7 +3446,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     k = CmpDev(dsdt, i, (UINT8*)"MCHC");
     if (k != 0) {
-      DBG("device name (MCHC) found at %x, don't add!\n", k);
+      DBG("device name (MCHC) found at %X, don't add!\n", k);
    //   break;
       return len;
     }
@@ -3540,7 +3540,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
       if (CmpAdr(dsdt, i, IMEIADR1)) {
         k = devFind(dsdt, i);
         if (k) {
-          MsgLog("device (IMEI) found at %x, don't add!\n", k);
+          MsgLog("device (IMEI) found at %X, don't add!\n", k);
           //         break;
           return len;
         }
@@ -3551,7 +3551,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     k = CmpDev(dsdt, i, (UINT8*)"IMEI");
     if (k != 0) {
-      MsgLog("device name (IMEI) found at %x, don't add!\n", k);
+      MsgLog("device name (IMEI) found at %X, don't add!\n", k);
       return len;
     }
   }
@@ -3638,7 +3638,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 
             device_name[2] = (__typeof_am__(device_name[2]))AllocateZeroPool(5);
             CopyMem(device_name[2], dsdt+k, 4);
-            DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n",
+            DBG("found Firewire device NAME(_ADR,0x%08X) at %X And Name is %s\n",
                 FirewireADR2, k, device_name[2]);
             ReplaceName(dsdt + BrdADR, BridgeSize, device_name[2], "FRWR");
             FirewireName = TRUE;
@@ -3781,7 +3781,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
  //     BridgeSize = get_size(dsdt, HDAADR);
       device_name[4] = (__typeof_am__(device_name[4]))AllocateZeroPool(5);
       CopyMem(device_name[4], dsdt+i, 4);
-      DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a\n",
+      DBG("found HDA device NAME(_ADR,0x%08X) And Name is %s\n",
           HDAADR1, device_name[4]);
       ReplaceName(dsdt, len, device_name[4], "HDEF");
       HDAFIX = FALSE;
@@ -3889,7 +3889,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 //  CHAR8 *USBDATA4;
 
   DBG("Start USB Fix\n");
-  //DBG("len = 0x%08x\n", len);
+  //DBG("len = 0x%08X\n", len);
 
   root = aml_create_node(NULL);
   root1 = aml_create_node(NULL);
@@ -3922,7 +3922,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
   USBDATA1 = (__typeof__(USBDATA1))AllocateZeroPool(root->Size);
   size1 = root->Size;
-//  DBG("USB1 code size = 0x%08x\n", size1);
+//  DBG("USB1 code size = 0x%08X\n", size1);
   aml_write_node(root, USBDATA1, 0);
   aml_destroy_node(root);
 
@@ -3995,7 +3995,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_calculate_size(root1);
   USBDATA2 = (__typeof__(USBDATA2))AllocateZeroPool(root1->Size);
   size2 = root1->Size;
-//  DBG("USB2 code size = 0x%08x\n", size2);
+//  DBG("USB2 code size = 0x%08X\n", size2);
   aml_write_node(root1, USBDATA2, 0);
   aml_destroy_node(root1);
 
@@ -4003,7 +4003,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 /*  aml_calculate_size(root1);
   USBDATA4 = (__typeof__(USBDATA4))AllocateZeroPool(root1->Size);
   size4 = root1->Size;
-  DBG("USB OHCI code size = 0x%08x\n", size4);
+  DBG("USB OHCI code size = 0x%08X\n", size4);
   aml_write_node(root1, USBDATA4, 0);
   aml_destroy_node(root1); */
   //NFORCE_USB_END
@@ -4044,7 +4044,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_calculate_size(root1);
   USBDATA3 = (__typeof__(USBDATA3))AllocateZeroPool(root1->Size);
   size3 = root1->Size;
-//  DBG("USB3 code size = 0x%08x\n", size3);
+//  DBG("USB3 code size = 0x%08X\n", size3);
   aml_write_node(root1, USBDATA3, 0);
   aml_destroy_node(root1);
 
@@ -4058,14 +4058,14 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
         if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
           XhciName = FALSE;
           UsbName[i] = (__typeof_am__(UsbName[i]))AllocateZeroPool(5);
-  //        DBG("found USB at 0x%x\n", j);
+  //        DBG("found USB at 0x%X\n", j);
           adr1 = devFind(dsdt, j + 2);
           if (!adr1) {
             continue;
           }
 
           Size = get_size(dsdt, adr1); //bridgesize
-          DBG("USB bridge[%x] at %x, size = %x\n", USBADR[i], adr1, Size);
+          DBG("USB bridge[%X] at %X, size = %X\n", USBADR[i], adr1, Size);
           if (USBADR2[i] != 0xFFFE ){
             for (k = adr1 + 9; k < adr1 + Size; k++) {
               if (CmpAdr(dsdt, k, USBADR2[i])) {
@@ -4076,7 +4076,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
 
                 device_name[10] = (__typeof_am__(device_name[10]))AllocateZeroPool(5);
                 CopyMem(device_name[10], dsdt+k, 4);
-                DBG("found USB device [%08x:%x] at %x and Name was %a ->",
+                DBG("found USB device [%08X:%X] at %X and Name was %s ->",
                     USBADR[i], USBADR2[i], k, device_name[10]);
                 if (USB30[i]) {
                   if (gSettings.NameXH00) {
@@ -4093,7 +4093,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 } else {
                   AsciiSPrint(UsbName[i], 5, "USB%d", i);
                 }
-                DBG(" %a\n", UsbName[i]);
+                DBG(" %s\n", UsbName[i]);
                 ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);
                 XhciName = TRUE;
                 break;
@@ -4119,7 +4119,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 sizeoffset = - 1 - Size;
                 len = move_data(k - 1, dsdt, len, sizeoffset);
                 len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-                DBG("_DSM in USB already exists, dropped by 0x%x\n", sizeoffset);
+                DBG("_DSM in USB already exists, dropped by 0x%X\n", sizeoffset);
               } else {
                 DBG("_DSM already exists, patch USB will not be applied\n");
                 continue;
@@ -4289,7 +4289,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, IDEADR1)) {
-              DBG("Found IDEADR1=%x at %x\n", IDEADR1, i);
+              DBG("Found IDEADR1=%X at %X\n", IDEADR1, i);
       IDEADR = devFind(dsdt, i);
       if (!IDEADR) {
         continue;
@@ -4415,7 +4415,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 
     //add patafix
   sizeoffset = sizeof(patafix);
-//  DBG("add patafix size=%x\n", sizeoffset);
+//  DBG("add patafix size=%X\n", sizeoffset);
   i = get_size(dsdt, IDEADR);
   j = IDEADR + i;
   len = move_data(j, dsdt, len, sizeoffset);
@@ -4451,7 +4451,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, SATAAHCIADR1)) {
- //          DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, i);
+ //          DBG("Found SATAAHCIADR1=%X at %X\n", SATAAHCIADR1, i);
       SATAAHCIADR = devFind(dsdt, i);
       if (!SATAAHCIADR) {
         continue;
@@ -4550,7 +4550,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, SATAADR1)) {
-      //        DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, j);
+      //        DBG("Found SATAAHCIADR1=%X at %X\n", SATAAHCIADR1, j);
       SATAADR = devFind(dsdt, i);
       if (!SATAADR) {
         continue;
@@ -4634,7 +4634,7 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
   INT32 offset, sizeoffset;
 
   DBG("Start CPUS=1 Fix\n");
-  DBG("len = 0x%08x\n", len);
+  DBG("len = 0x%08X\n", len);
 
   // find _PR_ and get PR size
   for (i=0x20; i<len-4; i++) {
@@ -4648,7 +4648,7 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
           pradr = i-j+1;
           // size > 0x3F there should be had P_states code so don't fix
           if (prsize > 0x3F) return len;
-          DBG("_PR_ adr = 0x%08x size = 0x%08x\n", pradr, prsize);
+          DBG("_PR_ adr = 0x%08X size = 0x%08X\n", pradr, prsize);
           break;
         }
       }
@@ -4662,7 +4662,7 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
   for (i=pradr; i<prsize1; i++) {
     if (dsdt[i] == 0x5B && dsdt[i+1] == 0x83) {
       size = get_size(dsdt, i+2);
-      DBG("OP size = 0x%08x\n", size);
+      DBG("OP size = 0x%08X\n", size);
       // if OP name not CPUX.... need add alias in OP back
       offset = i + 3 + (dsdt[i+2] >> 6);
       if (dsdt[offset] == '\\') offset = i + 8 + (dsdt[i+7] >> 6);
@@ -4686,7 +4686,7 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
       }
     }
   }
-  DBG("return len=%x\n", len);
+  DBG("return len=%X\n", len);
   return len;
 }
 */
@@ -4710,7 +4710,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
           if (!waksize) {
             continue;
           }
-          //DBG( "_WAK adr = 0x%08x, size = 0x%08x\n", wakadr, waksize);
+          //DBG( "_WAK adr = 0x%08X, size = 0x%08X\n", wakadr, waksize);
           for (k=0; k<waksize; k++) {
             if (dsdt[i+k] == 0xA4) { // Return
               DBG( "_WAK Method find return data, don't need to patch.\n");
@@ -4763,7 +4763,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
       break;
     }
   }
-  DBG("return len=%x\n", len);
+  DBG("return len=%X\n", len);
   return len;
 }
 #if 0
@@ -4789,7 +4789,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
   }
 
   DBG("Start _GPE device remove error Fix\n");
-  //DBG("len = 0x%08x\n", len);
+  //DBG("len = 0x%08X\n", len);
 
   for (i=0; i<len-10; i++)
   {   //what kind of nonsense here!
@@ -4798,7 +4798,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
         if(dsdt[i-j] == 0x14) {
           pwrbsize = get_size(dsdt, i-j+1);
           pwrbadr = i-j+1;
-          //DBG( "_LXX adr = 0x%08x, size = 0x%08x\n", pwrbadr, pwrbsize);
+          //DBG( "_LXX adr = 0x%08X, size = 0x%08X\n", pwrbadr, pwrbsize);
           for (k=pwrbadr; k<pwrbadr+pwrbsize; k++) {
             for (l=0; l<usb; l++) {   // find USB _LXX
               if (dsdt[k] == UsbName[l][0] && dsdt[k+1] == UsbName[l][1] &&
@@ -4814,7 +4814,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
                         if (dsdt[i-m-n] == 0x10) {
                           gpeadr = i-m-n+1;
                        //   gpesize = get_size(dsdt, i-m-n+1);
-                          //DBG( "_GPE adr = 0x%08x, size = 0x%08x\n", gpeadr, gpesize);
+                          //DBG( "_GPE adr = 0x%08X, size = 0x%08X\n", gpeadr, gpesize);
                           break;
                         }
                       }
@@ -4893,7 +4893,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
   UINT32 adr, adr1 = 0, adr2, size, shift = 0;
   UINT8 *shutdown = NULL;
 
-  DBG("Start SHUTDOWN Fix len=%x\n", len);
+  DBG("Start SHUTDOWN Fix len=%X\n", len);
   adr = FindMethod(dsdt, len, "_PTS");
   if (!adr) {
     MsgLog("no _PTS???\n");
@@ -4950,7 +4950,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
           // get USB name
           UsbName[j] = (__typeof__(UsbName[j]))AllocateZeroPool(5);
           CopyMem(UsbName[j], dsdt+i, 4);
-          DBG("found USB device NAME(_ADR,0x%08x) And Name is %a\n",
+          DBG("found USB device NAME(_ADR,0x%08X) And Name is %s\n",
               USBADR[j], UsbName[j]);
 
           k = (i+1);
@@ -5101,7 +5101,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
             if (GetName(dsdt, (INT32)(i+7+shift), &NameAdr[0], NULL)) {
               j = FindName(dsdt, len, &NameAdr[0]);
               if (j > 0) {
-                MsgLog("  indirect name=%a\n", NameAdr);
+                MsgLog("  indirect name=%s\n", NameAdr);
                 if (dsdt[j+4] == 0x0C) {
                   CopyMem(&oldAddress, &dsdt[j+5], 4);
                   CopyMem(&dsdt[j+5], &p->Address, 4);
@@ -5116,7 +5116,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
             }
           }
           if (oldAddress != p->Address) {
-            MsgLog("OperationRegion (%a...) corrected from 0x%x to addr=0x%x\n", Name, oldAddress, p->Address);
+            MsgLog("OperationRegion (%s...) corrected from 0x%X to addr=0x%X\n", Name, oldAddress, p->Address);
           }
           break;
         }
@@ -5170,13 +5170,13 @@ VOID GetBiosRegions(UINT8  *buffer)
         }
         if (tmp.Address) {
           OPER_REGION *newRegion = (__typeof__(newRegion))AllocateZeroPool(sizeof(OPER_REGION));
-          MsgLog("Found OperationRegion(%a, SystemMemory, %x, ...)\n", tmp.Name, tmp.Address);
+          MsgLog("Found OperationRegion(%s, SystemMemory, %X, ...)\n", tmp.Name, tmp.Address);
           *newRegion = tmp;
           newRegion->next = gRegions;
           gRegions = newRegion;
         } else {
           // ignore OperationRegion where the address cannot be determined
-          //DBG("Unable to determine address for OperationRegion(%a, SystemMemory, ...) skipping\n", tmp.Name);
+          //DBG("Unable to determine address for OperationRegion(%s, SystemMemory, ...) skipping\n", tmp.Name);
         }
       }
     }
@@ -5293,7 +5293,7 @@ VOID RenameDevices(UINT8* table)
     Replace = gSettings.DeviceRename[index].Name;
     Find = List->Name;
     Bridge = List->Next;
-    MsgLog("Name: %a, Bridge: %a, Replace: %a\n", Find, Bridge->Name, Replace);
+    MsgLog("Name: %s, Bridge: %s, Replace: %s\n", Find, Bridge->Name, Replace);
     adr = 0;
     do
     {
@@ -5303,7 +5303,7 @@ VOID RenameDevices(UINT8* table)
         break; //not found
       }
       adr += shift;
-//      DBG("found Name @ 0x%x\n", adr);
+//      DBG("found Name @ 0x%X\n", adr);
       if (!Bridge || (FindBin(table + adr - 4, 5, (UINT8*)(Bridge->Name), 4) == 0)) { // long name like "RP02.PXSX"
         CopyMem(table + adr, Replace, 4);
         adr += 5; //at least, it is impossible to see  PXSXPXSX
@@ -5330,10 +5330,10 @@ VOID RenameDevices(UINT8* table)
           found = TRUE;
         }
         if (found) {  // i points to Device or Scope
-          size = get_size(table, (UINT32)(UINTN)k); //k points to size  //        DBG("found bridge candidate 0x%x size %d\n", table[i], size);
+          size = get_size(table, (UINT32)(UINTN)k); //k points to size  //        DBG("found bridge candidate 0x%X size %d\n", table[i], size);
           if (size) {
             if ((k + size) > (adr + 4)) {  //Yes - it is outer
-     //            DBG("found Bridge device begin=%x end=%x\n", k, k+size);
+     //            DBG("found Bridge device begin=%X end=%X\n", k, k+size);
               if (table[k] < 0x40) {
                 k += 1;
               }
@@ -5346,7 +5346,7 @@ VOID RenameDevices(UINT8* table)
               if (CmpFullName(table + k, len - k, Bridge)) {
                 CopyMem(table + adr, Replace, 4);
                 adr += 5;
-                DBG("found Bridge device begin=%x end=%x\n", k, k+size);
+                DBG("found Bridge device begin=%X end=%X\n", k, k+size);
     //            DBG("   name copied\n");
                 Num++;
                 break; //cancel search outer bridge, we found it.
@@ -5359,7 +5359,7 @@ VOID RenameDevices(UINT8* table)
       adr += 5;
     } while (1); //next occurence
   }   //DeviceRenameCount
-  MsgLog("  %d replacements\n", Num);
+	MsgLog("  %lld replacements\n", Num);
 }
 
 VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
@@ -5397,7 +5397,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
         continue;
       }
 
-      MsgLog(" - [%a]:", gSettings.PatchDsdtLabel[i]); //yyyy
+      MsgLog(" - [%s]:", gSettings.PatchDsdtLabel[i]); //yyyy
       if (gSettings.PatchDsdtMenuItem[i].BValue) {
         if (!gSettings.PatchDsdtTgt[i]) {
               DsdtLen = FixAny(temp, DsdtLen,
@@ -5476,7 +5476,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
           if (((DisplayVendor[j] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
               ((DisplayVendor[j] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
             DsdtLen = FIXDisplay(temp, DsdtLen, j);
-            MsgLog("patch Display #%d of Vendor=0x%4x\n", j, DisplayVendor[j]);
+            MsgLog("patch Display #%d of Vendor=0x%4X\n", j, DisplayVendor[j]);
           }
       }
     }
@@ -5634,7 +5634,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   temp[7] = (UINT8)((DsdtLen & 0xFF000000) >> 24);
 
   CopyMem((UINT8*)((EFI_ACPI_DESCRIPTION_HEADER*)temp)->OemId, (UINT8*)BiosVendor, 6);
-  //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
+  //DBG("orgBiosDsdtLen = 0x%08X\n", orgBiosDsdtLen);
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = 0;
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = (UINT8)(256-Checksum8(temp, DsdtLen));
   */

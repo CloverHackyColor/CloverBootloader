@@ -143,7 +143,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   UINTN                   DevicePathIndex;
   CHAR16                  ErrorInfo[256];
 
-  DBG("Loading %s", ImageTitle);
+  DBG("Loading %ls", ImageTitle);
   if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
   }
@@ -155,7 +155,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
     ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
-    DBG("  status=%r", Status);
+    DBG("  status=%s", strerror(Status));
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
@@ -174,7 +174,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 #ifdef JIEF_DEBUG
     EFI_LOADED_IMAGE_PROTOCOL* loadedBootImage = NULL;
     if (!EFI_ERROR(Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (void**)(&loadedBootImage)))) {
-        DBG("%S : Image base = 0x%lx", ImageTitle, loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
+		DBG("%S : Image base = 0x%llx", ImageTitle, (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
     }else{
       DBG("Can't get loaded image protocol");
     }
@@ -200,7 +200,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   CHAR16                  ErrorInfo[256];
   CHAR16                  *FullLoadOptions = NULL;
 
-//  DBG("Starting %s\n", ImageTitle);
+//  DBG("Starting %ls\n", ImageTitle);
   if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
   }
@@ -229,7 +229,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     ChildLoadedImage->LoadOptions = (VOID *)LoadOptions;
     ChildLoadedImage->LoadOptionsSize = (UINT32)StrSize(LoadOptions);
     //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
-//    DBG("Using load options '%s'\n", LoadOptions);
+//    DBG("Using load options '%ls'\n", LoadOptions);
   }
   //DBG("Image loaded at: %p\n", ChildLoadedImage->ImageBase);
   //PauseForKey(L"continue");
@@ -379,14 +379,14 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("\tAppleRTC: %c\n", Patches->KPAppleRTC ? 'y' : 'n');
   // Dell smbios truncate fix
   DBG("\tDellSMBIOSPatch: %c\n", Patches->KPDELLSMBIOS ? 'y' : 'n');
-  DBG("\tFakeCPUID: 0x%x\n", Patches->FakeCPUID);
-  DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
+  DBG("\tFakeCPUID: 0x%X\n", Patches->FakeCPUID);
+  DBG("\tATIController: %ls\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
   DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
   DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
   if (Patches->ForceKexts) {
     INTN i = 0;
     for (; i < Patches->NrForceKexts; ++i) {
-       DBG("\t  KextToLoad[%d]: %s\n", i, Patches->ForceKexts[i]);
+       DBG("\t  KextToLoad[%d]: %ls\n", i, Patches->ForceKexts[i]);
     }
   }
   DBG("\t%d Kexts to patch\n", Patches->NrKexts);
@@ -394,9 +394,9 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
     INTN i = 0;
     for (; i < Patches->NrKexts; ++i) {
        if (Patches->KextPatches[i].IsPlistPatch) {
-          DBG("\t  KextPatchPlist[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+          DBG("\t  KextPatchPlist[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
        } else {
-          DBG("\t  KextPatch[%d]: %d bytes, %a\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+          DBG("\t  KextPatch[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
        }
     }
   }
@@ -408,7 +408,7 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry) //zzzz
     INTN i;
     DBG("Filtering KextPatches:\n");
     for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
-      DBG(" - [%02d]: %a :: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+		DBG(" - [%02lld]: %s :: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
         Entry->KernelAndKextPatches->KextPatches[i].Label,
         Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
@@ -423,12 +423,12 @@ VOID FilterKextPatches(IN LOADER_ENTRY *Entry) //zzzz
       
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
         Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        DBG(" ==> %s\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
       Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %a\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      DBG(" ==> %s\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
@@ -439,7 +439,7 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
     INTN i = 0;
     DBG("Filtering KernelPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
-      DBG(" - [%02d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
         Entry->KernelAndKextPatches->KernelPatches[i].Label,
         Entry->OSVersion,
@@ -453,12 +453,12 @@ VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
 
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
         Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %a by build\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        DBG(" ==> %s by build\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
       Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %a by OS\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      DBG(" ==> %s by OS\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
@@ -469,7 +469,7 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
     INTN i = 0;
     DBG("Filtering BootPatches:\n");
     for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {
-      DBG(" - [%02d]: %a :: [OS: %a | MatchOS: %a | MatchBuild: %a]",
+		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
           i,
           Entry->KernelAndKextPatches->BootPatches[i].Label,
           Entry->OSVersion,
@@ -483,12 +483,12 @@ VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
 
       if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
         Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %a by build\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+        DBG(" ==> %s by build\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
  
       Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %a by OS\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      DBG(" ==> %s by OS\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
   
     }
   }
@@ -521,7 +521,7 @@ VOID ReadSIPCfg()
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNAPPROVED_KEXTS"));
     
   if (StrLen(csrLog)) {
-    DBG("CSR_CFG: %s\n", csrLog);
+    DBG("CSR_CFG: %ls\n", csrLog);
   }
 
   FreePool(csrLog);
@@ -570,14 +570,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");
   if (Entry->Settings) {
-    DBG("Entry->Settings: %s\n", Entry->Settings);
+    DBG("Entry->Settings: %ls\n", Entry->Settings);
     Status = LoadUserSettings(SelfRootDir, Entry->Settings, &dict);
     if (!EFI_ERROR(Status)) {
-      DBG(" - found custom settings for this entry: %s\n", Entry->Settings);
+      DBG(" - found custom settings for this entry: %ls\n", Entry->Settings);
       gBootChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (EFI_ERROR(Status)) {
-        DBG(" - ... but: %r\n", Status);
+        DBG(" - ... but: %s\n", strerror(Status));
       } else {
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
@@ -588,19 +588,19 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         //DBG("Custom KernelAndKextPatches copyed to started entry\n");
       }
     } else {
-      DBG(" - [!] LoadUserSettings failed: %r\n", Status);
+      DBG(" - [!] LoadUserSettings failed: %s\n", strerror(Status));
     }
   }
   
-  DBG("Finally: ExternalClock=%ldMHz BusSpeed=%ldkHz CPUFreq=%ldMHz",
+	DBG("Finally: ExternalClock=%lluMHz BusSpeed=%llukHz CPUFreq=%uMHz",
   				DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo),
   				DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo),
           gCPUStructure.MaxSpeed);
   if (gSettings.QPI) {
-    DBG(" QPI: hw.busfrequency=%ldHz\n", MultU64x32(gSettings.QPI, Mega));
+	  DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
   } else {
     // to match the value of hw.busfrequency in the terminal
-    DBG(" PIS: hw.busfrequency=%ldHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
+	  DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
   }
   
   //Free memory
@@ -648,7 +648,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   // Load image into memory (will be started later)
   Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
-    DBG("Image is not loaded, status=%r\n", Status);
+    DBG("Image is not loaded, status=%s\n", strerror(Status));
     return; // no reason to continue if loading image failed
   }
 
@@ -709,7 +709,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
             }
             Entry->OSVersion = (__typeof__(Entry->OSVersion))AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
             Entry->OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
-//            DBG("Corrected OSVersion: %a\n", Entry->OSVersion);
+//            DBG("Corrected OSVersion: %s\n", Entry->OSVersion);
           }
         }
       }
@@ -721,9 +721,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
 
     if (Entry->BuildVersion != NULL) {
-      DBG(" %a (%a)\n", Entry->OSVersion, Entry->BuildVersion);
+      DBG(" %s (%s)\n", Entry->OSVersion, Entry->BuildVersion);
     } else {
-      DBG(" %a\n", Entry->OSVersion);
+      DBG(" %s\n", Entry->OSVersion);
     }
 
     if (Entry->OSVersion && (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
@@ -841,7 +841,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       AudioIo->StopPlayback(AudioIo);
     }
 
-//    DBG("Set FakeCPUID: 0x%x\n", gSettings.FakeCPUID);
+//    DBG("Set FakeCPUID: 0x%X\n", gSettings.FakeCPUID);
 //    DBG("LoadKexts\n");
     // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
     if (!DoHibernateWake) {
@@ -923,7 +923,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       DBG("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
       DBG("  GlobalLock           =%08lx\n", Facs->GlobalLock);
       DBG("  Flags                =%08lx\n", Facs->Flags);
-      DBG(" HS at offset 0x%08x\n", OFFSET_OF(EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE, HardwareSignature));
+      DBG(" HS at offset 0x%08X\n", OFFSET_OF(EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE, HardwareSignature));
       //   machineSignature = Facs->HardwareSignature;
     }
   }
@@ -942,10 +942,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     
     // Initialize the boot screen
     if (EFI_ERROR(Status = InitBootScreen(Entry))) {
-      if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %r!\n", Status);
+      if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %s!\n", strerror(Status));
     }
     else if (EFI_ERROR(Status = LockBootScreen())) {
-      DBG("Failed to lock custom boot screen: %r!\n", Status);
+      DBG("Failed to lock custom boot screen: %s!\n", strerror(Status));
     }
   } // !OSTYPE_IS_WINDOWS
 
@@ -992,7 +992,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
-    DBG("Failed to unlock custom boot screen: %r!\n", Status);
+    DBG("Failed to unlock custom boot screen: %s!\n", strerror(Status));
   }
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     // return back orig OutputString
@@ -1074,7 +1074,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
 static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
 {
-  DBG("Start Tool: %s\n", Entry->LoaderPath);
+  DBG("Start Tool: %ls\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);
 	// assumes "Start <title>" as assigned below
 	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), &Entry->Title[6]); // Shouldn't we check that length of Title is at least 6 ?
@@ -1198,7 +1198,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
           DriversArrSize += 16;
         }
         DriversArr[DriversArrNum] = DriverHandle;
- //       DBG(" driver %s included with Binding=%x\n", FileName, DriverBinding);
+ //       DBG(" driver %ls included with Binding=%X\n", FileName, DriverBinding);
         DriversArrNum++;
         // we'll make array terminated
         DriversArr[DriversArrNum] = NULL;
@@ -1276,7 +1276,7 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
                                   (VOID **) &BlockIo
                                   );
     if (EFI_ERROR (Status)) {
-      //DBG(" BlockIo: %r - skipping\n", Status);
+      //DBG(" BlockIo: %s - skipping\n", strerror(Status));
       continue;
     }
     if (BlockIo->Media == NULL) {
@@ -1327,8 +1327,8 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
         }
         Found = TRUE;
         Status = gBS->DisconnectController (Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, NULL);
-        //DBG(" BY_DRIVER Agent: %p, Disconnect: %r", OpenInfo[OpenInfoIndex].AgentHandle, Status);
-        DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %r\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, Status);
+        //DBG(" BY_DRIVER Agent: %p, Disconnect: %s", OpenInfo[OpenInfoIndex].AgentHandle, strerror(Status));
+        DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %s\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, strerror(Status));
       }
     }
     FreePool (OpenInfo);
@@ -1373,7 +1373,7 @@ VOID DisconnectSomeDevices(VOID)
         if (BlockIo->Media->BlockSize == 2048) {
           // disconnect CD controller
           Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
-          DBG("CD disconnect %r", Status);
+          DBG("CD disconnect %s", strerror(Status));
         }
       }
 /*      for (Index = 0; Index < HandleCount; Index++) {
@@ -1401,7 +1401,7 @@ VOID DisconnectSomeDevices(VOID)
       for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
         Status = gBS->DisconnectController(ControllerHandles[Index2],
                                            NULL, NULL);
-        DBG("Driver [%d] disconnect %r\n", Index2, Status);
+        DBG("Driver [%d] disconnect %s\n", Index2, strerror(Status));
       }
     } */
 
@@ -1420,7 +1420,7 @@ VOID DisconnectSomeDevices(VOID)
                                    EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
         if (EFI_ERROR(Status)) {
-//          DBG("CompName %r\n", Status);
+//          DBG("CompName %s\n", strerror(Status));
           continue;
         }
         Status = CompName->GetDriverName(CompName, "eng", &DriverName);
@@ -1431,7 +1431,7 @@ VOID DisconnectSomeDevices(VOID)
           for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
             Status = gBS->DisconnectController(ControllerHandles[Index2],
                                                Handles[Index], NULL);
-//            DBG("Disconnect [%s] from %x: %r\n", DriverName, ControllerHandles[Index2], Status);
+//            DBG("Disconnect [%ls] from %X: %s\n", DriverName, ControllerHandles[Index2], strerror(Status));
           }
         }
       }
@@ -1459,7 +1459,7 @@ VOID DisconnectSomeDevices(VOID)
           if(IS_PCI_VGA(&Pci) == TRUE) {
             // disconnect VGA
             Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
-            DBG("disconnect %r", Status);
+            DBG("disconnect %s", strerror(Status));
           }
         }
       }
@@ -1540,7 +1540,7 @@ static VOID LoadDrivers(VOID)
   }
 
   if (DriversToConnectNum > 0) {
-    DBG("%d drivers needs connecting ...\n", DriversToConnectNum);
+	  DBG("%llu drivers needs connecting ...\n", DriversToConnectNum);
     // note: our platform driver protocol
     // will use DriversToConnect - do not release it
     RegisterDriversToHighestPriority(DriversToConnect);
@@ -1587,7 +1587,7 @@ INTN FindDefaultEntry(VOID)
   Index = FindStartupDiskVolume(&MainMenu);
 
   if (Index >= 0) {
-    DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index].Title.s());
+	  DBG("Boot redirected to Entry %lld. '%ls'\n", Index, MainMenu.Entries[Index].Title.s());
     // we got boot-device-data, no need to keep emulating anymore
     if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1605,9 +1605,9 @@ INTN FindDefaultEntry(VOID)
     SearchForLoader = (gSettings.DefaultLoader != NULL && gSettings.DefaultLoader[0] != L'\0');
 /*
     if (SearchForLoader) {
-      DBG("Searching for DefaultVolume '%s', DefaultLoader '%s' ...\n", gSettings.DefaultVolume, gSettings.DefaultLoader);
+      DBG("Searching for DefaultVolume '%ls', DefaultLoader '%ls' ...\n", gSettings.DefaultVolume, gSettings.DefaultLoader);
     } else {
-      DBG("Searching for DefaultVolume '%s' ...\n", gSettings.DefaultVolume);
+      DBG("Searching for DefaultVolume '%ls' ...\n", gSettings.DefaultVolume);
     }
 */
     for (Index = 0; Index < (INTN)MainMenu.Entries.size()  &&  MainMenu.Entries[Index].getLOADER_ENTRY()  &&  MainMenu.Entries[Index].getLOADER_ENTRY()->Row == 0 ; Index++) {
@@ -1628,7 +1628,7 @@ INTN FindDefaultEntry(VOID)
         continue;
       }
 
-      DBG(" - found entry %d. '%s', Volume '%s', DevicePath '%s'\n", Index, Entry.Title.s(), Volume->VolName, Entry.DevicePathString);
+		DBG(" - found entry %lld. '%ls', Volume '%ls', DevicePath '%ls'\n", Index, Entry.Title.s(), Volume->VolName, Entry.DevicePathString);
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1657,7 +1657,7 @@ VOID SetVariablesFromNvram()
 
   tmpString = (__typeof__(tmpString))GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
-    DBG("found boot-args in NVRAM:%a, size=%d\n", tmpString, Size);
+	  DBG("found boot-args in NVRAM:%s, size=%llu\n", tmpString, Size);
     // use and forget old one
 //    DeleteNvramVariable(L"boot-args", &gEfiAppleBootGuid);
     Size = AsciiStrLen(tmpString); // some EFI implementations include '\0' in Size, and others don't, so update Size to string length
@@ -1676,7 +1676,7 @@ VOID SetVariablesFromNvram()
         while ((index < Size) && (tmpString[index] != 0x20) && (tmpString[index] != 0x0)) {
           arg[index2++] = tmpString[index++];
         }
-        DBG("...found arg:%a\n", arg);
+        DBG("...found arg:%s\n", arg);
       } else {
         index++;
 //        DBG("search quote index=%d\n", index);
@@ -1686,22 +1686,22 @@ VOID SetVariablesFromNvram()
         if (tmpString[index] == '\"') {
           index++;
         }
-        DBG("...found quoted arg:\n", arg);
+        DBG("...found quoted arg:\n"/*, arg*/);
       }
       while (tmpString[index] == 0x20) {
         index++;
       }
       // For the moment only arg -s must be ignored
       if (AsciiStrCmp(arg, "-s") == 0) {
-          DBG("...ignoring arg:%a\n", arg);
+          DBG("...ignoring arg:%s\n", arg);
         continue;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
         //this arg is not present will add
-        DBG("...adding arg:%a\n", arg);
+        DBG("...adding arg:%s\n", arg);
         len = iStrLen(gSettings.BootArgs, 256);
         if (len + index2 > 256) {
-          DBG("boot-args overflow... bytes=%d+%d\n", len, index2);
+			DBG("boot-args overflow... bytes=%llu+%llu\n", len, index2);
           break;
         }
         gSettings.BootArgs[len++] = 0x20;
@@ -1766,14 +1766,14 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CONST CHAR16 *Con
 	  BOOLEAN res2 = FileExists(Root, ConfigPath);
 	  if ( res2 ) {
 	  	OEMPath = path;
-	  	DBG ("CheckOEMPathExists: set OEMPath: %s\n", OEMPath);
+	  	DBG ("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath);
 	  	return 1;
 	  }else{
-	  	DBG("CheckOEMPathExists tried %s. '%s.plist' not exists in dir\n", path, ConfName);
+	  	DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path, ConfName);
 	  	FreePool(path);
 	  }
 	}else{
-		DBG("CheckOEMPathExists tried %s. Dir not exists\n", path);
+		DBG("CheckOEMPathExists tried %ls. Dir not exists\n", path);
 		FreePool(path);
 	}
 	return 0;
@@ -1783,7 +1783,7 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
   {
     OEMPath = PoolPrint(L"%s", L"EFI\\CLOVER");
     if (ConfName == NULL) {
-      DBG ("set OEMPath (ConfName == NULL): %s\n", OEMPath);
+      DBG ("set OEMPath (ConfName == NULL): %ls\n", OEMPath);
     } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
     } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
     } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
@@ -1794,7 +1794,7 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
     } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard), ConfName)) {
     } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
     } else {
-      DBG ("set OEMPath by default: %s\n", OEMPath);
+      DBG ("set OEMPath by default: %ls\n", OEMPath);
     }
   }
 
@@ -2067,11 +2067,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MsgLog("Now is %02d.%02d.%d,  %02d:%02d:%02d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
   }
-  //MsgLog("Starting Clover rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
-  MsgLog("Starting %a on %s EFI\n", REVISION_STR, gST->FirmwareVendor);
+  //MsgLog("Starting Clover rev %ls on %ls EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  MsgLog("Starting %s on %ls EFI\n", REVISION_STR, gST->FirmwareVendor);
 
   #ifdef BUILDINFOS_STR
-    DBG("Build with: [%a]\n", BUILDINFOS_STR);
+    DBG("Build with: [%s]\n", BUILDINFOS_STR);
   #endif // BUILDINFOS_STR
 
 
@@ -2079,9 +2079,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status))
     return Status;
 
-  DBG("Clover : Image base = 0x%x\n", SelfLoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+	DBG("Clover : Image base = 0x%llX\n", (uintptr_t)SelfLoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 #ifdef JIEF_DEBUG
-  gBS->Stall(1000000); // to give time to gdb to connect
+  gBS->Stall(3000000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
 
@@ -2093,28 +2093,28 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // are natural aligned i.e. pointers are 8 bytes aligned
   /*
   DBG("Settings offsets:\n");
-  DBG(" OEMProduct:     %x\n",    OFFSET_OF(SETTINGS_DATA, OEMProduct));
-  DBG(" DefaultVolume:  %x\n",    OFFSET_OF(SETTINGS_DATA, DefaultVolume));
-  DBG(" DefaultLoader:  %x\n",    OFFSET_OF(SETTINGS_DATA, DefaultLoader));
-  DBG(" ResetAddr:      %x\n",    OFFSET_OF(SETTINGS_DATA, ResetAddr));
-  DBG(" FixDsdt:        %x\n",    OFFSET_OF(SETTINGS_DATA, FixDsdt));
-  DBG(" FakeATI:        %x\n",    OFFSET_OF(SETTINGS_DATA, FakeATI));
-  DBG(" PatchVBiosBytes:%x\n",    OFFSET_OF(SETTINGS_DATA, PatchVBiosBytes));
-  DBG(" VRAM:           %x\n",    OFFSET_OF(SETTINGS_DATA, VRAM));
-  DBG(" SecureBootWhiteListCount: %x\n",    OFFSET_OF(SETTINGS_DATA, SecureBootWhiteListCount));
-  DBG(" LegacyBoot:     %x\n",    OFFSET_OF(SETTINGS_DATA, LegacyBoot));
-  DBG(" HVHideStrings:  %x\n",    OFFSET_OF(SETTINGS_DATA, HVHideStrings));
-  DBG(" PointerSpeed:   %x\n",    OFFSET_OF(SETTINGS_DATA, PointerSpeed));
-  DBG(" RtMLB:          %x\n",    OFFSET_OF(SETTINGS_DATA, RtMLB));
-  DBG(" ConfigName:     %x\n",    OFFSET_OF(SETTINGS_DATA, ConfigName));
-  DBG(" PointerSpeed:   %x\n",    OFFSET_OF(SETTINGS_DATA, PointerSpeed));
-  DBG(" PatchDsdtNum:   %x\n",    OFFSET_OF(SETTINGS_DATA, PatchDsdtNum));
-  DBG(" LenToReplace:   %x\n",    OFFSET_OF(SETTINGS_DATA, LenToReplace));
-  DBG(" ACPIDropTables: %x\n",    OFFSET_OF(SETTINGS_DATA, ACPIDropTables));
-  DBG(" CustomEntries:  %x\n",    OFFSET_OF(SETTINGS_DATA, CustomEntries));
-  DBG(" CustomTool:     %x\n",    OFFSET_OF(SETTINGS_DATA, CustomTool));
-  DBG(" AddProperties:  %x\n",    OFFSET_OF(SETTINGS_DATA, AddProperties));
-  DBG(" BlockKexts:     %x\n",    OFFSET_OF(SETTINGS_DATA, BlockKexts));
+  DBG(" OEMProduct:     %X\n",    OFFSET_OF(SETTINGS_DATA, OEMProduct));
+  DBG(" DefaultVolume:  %X\n",    OFFSET_OF(SETTINGS_DATA, DefaultVolume));
+  DBG(" DefaultLoader:  %X\n",    OFFSET_OF(SETTINGS_DATA, DefaultLoader));
+  DBG(" ResetAddr:      %X\n",    OFFSET_OF(SETTINGS_DATA, ResetAddr));
+  DBG(" FixDsdt:        %X\n",    OFFSET_OF(SETTINGS_DATA, FixDsdt));
+  DBG(" FakeATI:        %X\n",    OFFSET_OF(SETTINGS_DATA, FakeATI));
+  DBG(" PatchVBiosBytes:%X\n",    OFFSET_OF(SETTINGS_DATA, PatchVBiosBytes));
+  DBG(" VRAM:           %X\n",    OFFSET_OF(SETTINGS_DATA, VRAM));
+  DBG(" SecureBootWhiteListCount: %X\n",    OFFSET_OF(SETTINGS_DATA, SecureBootWhiteListCount));
+  DBG(" LegacyBoot:     %X\n",    OFFSET_OF(SETTINGS_DATA, LegacyBoot));
+  DBG(" HVHideStrings:  %X\n",    OFFSET_OF(SETTINGS_DATA, HVHideStrings));
+  DBG(" PointerSpeed:   %X\n",    OFFSET_OF(SETTINGS_DATA, PointerSpeed));
+  DBG(" RtMLB:          %X\n",    OFFSET_OF(SETTINGS_DATA, RtMLB));
+  DBG(" ConfigName:     %X\n",    OFFSET_OF(SETTINGS_DATA, ConfigName));
+  DBG(" PointerSpeed:   %X\n",    OFFSET_OF(SETTINGS_DATA, PointerSpeed));
+  DBG(" PatchDsdtNum:   %X\n",    OFFSET_OF(SETTINGS_DATA, PatchDsdtNum));
+  DBG(" LenToReplace:   %X\n",    OFFSET_OF(SETTINGS_DATA, LenToReplace));
+  DBG(" ACPIDropTables: %X\n",    OFFSET_OF(SETTINGS_DATA, ACPIDropTables));
+  DBG(" CustomEntries:  %X\n",    OFFSET_OF(SETTINGS_DATA, CustomEntries));
+  DBG(" CustomTool:     %X\n",    OFFSET_OF(SETTINGS_DATA, CustomTool));
+  DBG(" AddProperties:  %X\n",    OFFSET_OF(SETTINGS_DATA, AddProperties));
+  DBG(" BlockKexts:     %X\n",    OFFSET_OF(SETTINGS_DATA, BlockKexts));
    */
 
   // disable EFI watchdog timer
@@ -2123,14 +2123,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   Status = InitializeUnicodeCollationProtocol();
   if (EFI_ERROR(Status)) {
-    DBG("UnicodeCollation Status=%r\n", Status);
+    DBG("UnicodeCollation Status=%s\n", strerror(Status));
   }
   
   Status = gBS->HandleProtocol(ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (VOID **)&SimpleTextEx);
   if ( EFI_ERROR (Status) ) {
     SimpleTextEx = NULL;
   }
-  DBG("SimpleTextEx Status=%r\n", Status);
+  DBG("SimpleTextEx Status=%s\n", strerror(Status));
 
   PrepatchSmbios();
 
@@ -2151,7 +2151,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gSettings.OEMBoard[i] = 0x5F;
     }
   }
-  DBG("Running on: '%a' with board '%a'\n", gSettings.OEMProduct, gSettings.OEMBoard);
+  DBG("Running on: '%s' with board '%s'\n", gSettings.OEMProduct, gSettings.OEMBoard);
 
   GetCPUProperties();
   GetDevices();
@@ -2173,8 +2173,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         } else {
           SetOEMPath(ConfName);
           Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
-          DBG("%s\\%s.plist%s loaded with name from LoadOptions: %r\n",
-              OEMPath, ConfName, EFI_ERROR(Status) ? L" not" : L"", Status);
+          DBG("%ls\\%ls.plist%ls loaded with name from LoadOptions: %s\n",
+              OEMPath, ConfName, EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
           if (EFI_ERROR(Status)) {
             gConfigDict[1] = NULL;
             FreePool(ConfName);
@@ -2190,13 +2190,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       UniteConfigs =  (UniteTag->type == kTagTypeTrue) ||
                       ((UniteTag->type == kTagTypeString) &&
                       ((UniteTag->string[0] == 'y') || (UniteTag->string[0] == 'Y')));
-      DBG("UniteConfigs = %s", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
+      DBG("UniteConfigs = %ls", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
     }
   }
   if (!gConfigDict[1] || UniteConfigs) {
     SetOEMPath(L"config");
     Status = LoadUserSettings(SelfRootDir, L"config", &gConfigDict[0]);
-      DBG("%s\\config.plist%s loaded: %r\n", OEMPath, EFI_ERROR(Status) ? L" not" : L"", Status);
+      DBG("%ls\\config.plist%ls loaded: %s\n", OEMPath, EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
   }
   UnicodeSPrint(gSettings.ConfigName, 64, L"%s%s%s",
 /*  gSettings.ConfigName = PoolPrint(L"%s%s%s", */
@@ -2248,7 +2248,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //testing place
   {
     CHAR16 *aaa = L"12345";
-    DBG(" string %s, size=%d, len=%d sizeof=%d\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa));
+    DBG(" string %ls, size=%d, len=%d sizeof=%d\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa));
   }
 #endif
   if (!GlobalConfig.FastBoot) {
@@ -2260,7 +2260,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gConfigDict[i]) {
  /*     Status = */GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
  //     if (EFI_ERROR(Status)) {
- //       DBG("Error in Early settings%d: %r\n", i, Status);
+ //       DBG("Error in Early settings%d: %s\n", i, strerror(Status));
  //     }
     }
   }
@@ -2311,7 +2311,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
-    DebugLog(2, " %r", Status);
+    DebugLog(2, " %s", strerror(Status));
     PauseForKey(L"Error reinit refit\n");
 #ifdef ENABLE_SECURE_BOOT
     UninstallSecureBoot();
@@ -2346,7 +2346,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  GetDefaultSettings();
   GetAcpiTablesList();
 
-  DBG("Calibrated TSC Frequency = %ld = %ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
+	DBG("Calibrated TSC Frequency = %llu = %lluMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
@@ -2397,7 +2397,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gConfigDict[i]) {
       Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
       if (EFI_ERROR(Status)) {
- //       DBG("Error in Second part of settings%d: %r\n", i, Status);
+ //       DBG("Error in Second part of settings%d: %s\n", i, strerror(Status));
       }
     }
   }
@@ -2506,7 +2506,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     for (i = 0; i < AudioNum; i++) {
       if (AudioList[i].Name) {
         // Never change this log, otherwise clients will stop interprete the output.
-        MsgLog("Found Audio Device %s (%a) at index %d\n", AudioList[i].Name, AudioOutputNames[AudioList[i].Device], i);
+		  MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name, AudioOutputNames[AudioList[i].Device], i);
       }
     }
     
@@ -2523,18 +2523,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("theme inited\n");
       gThemeChanged = FALSE;
       if (GlobalConfig.Theme) {
-        DBG("Chosen theme %s\n", GlobalConfig.Theme);
+        DBG("Chosen theme %ls\n", GlobalConfig.Theme);
       } else {
         DBG("Chosen embedded theme\n");
       }
-//      DBG("initial boot-args=%a\n", gSettings.BootArgs);
+//      DBG("initial boot-args=%s\n", gSettings.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
       TmpArgs = PoolPrint(L"%a ", gSettings.BootArgs);
-      DBG("after NVRAM boot-args=%a\n", gSettings.BootArgs);
+      DBG("after NVRAM boot-args=%s\n", gSettings.BootArgs);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
-//      DBG("initial OptionsBits %x\n", gSettings.OptionsBits);
+//      DBG("initial OptionsBits %X\n", gSettings.OptionsBits);
       FreePool(TmpArgs);
       FillInputs(TRUE);
 
@@ -2609,7 +2609,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
     DefaultIndex = FindDefaultEntry();
-    DBG("DefaultIndex=%d and MainMenu.Entries.size()=%d\n", DefaultIndex, MainMenu.Entries.size());
+	  DBG("DefaultIndex=%lld and MainMenu.Entries.size()=%llu\n", DefaultIndex, MainMenu.Entries.size());
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.Entries.size())) {
       DefaultEntry = &MainMenu.Entries[DefaultIndex];
     } else {
@@ -2646,7 +2646,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainMenu.AnimeRun = MainAnime;
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
-      DBG("exit from MainMenu %d\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
+		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
@@ -2874,7 +2874,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                     (UINT16*)&BootNum
                                     );
               if (!EFI_ERROR(Status)) {
-                DBG("Entry %d assigned option %04x\n", EntryIndex, BootNum);
+				  DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
                 Entry->BootNum = BootNum;
               }
               FreePool(OptionalData);

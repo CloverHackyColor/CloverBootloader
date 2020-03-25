@@ -1390,7 +1390,7 @@ VOID GetDefaultSettings()
   //gSettings.EnableISS            = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo                = gCPUStructure.Turbo;
   gSettings.SavingMode           = 0xFF;  //means not set
-  //MsgLog ("Turbo default value: %a\n", gCPUStructure.Turbo ? "Yes" : "No");
+  //MsgLog ("Turbo default value: %s\n", gCPUStructure.Turbo ? "Yes" : "No");
   //msr                            = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
   //force enable EIST
   //msr                            |= (1<<16);

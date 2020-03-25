@@ -71,7 +71,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   if (SoundFile) {
     Status = egLoadFile(Dir, SoundFile, &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
-      DBG("file sound read: %s %r\n", SoundFile, Status);
+      DBG("file sound read: %ls %s\n", SoundFile, strerror(Status));
       return Status;
     }
   } else {
@@ -83,7 +83,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   WaveData.Samples = NULL;
   Status = WaveGetFileData(FileData, (UINT32)FileDataLength, &WaveData);
   if (EFI_ERROR(Status)) {
-    MsgLog(" wrong sound file, wave status=%r\n", Status);
+    MsgLog(" wrong sound file, wave status=%s\n", strerror(Status));
     return Status;
   }
   MsgLog("  Channels: %u  Sample rate: %u Hz  Bits: %u\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
@@ -200,24 +200,24 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   Status = AudioIo->SetupPlayback(AudioIo, (UINT8)(AudioList[OutputIndex].Index), OutputVolume,
                                   freq, bits, (UINT8)(WaveData.Format->Channels));
   if (EFI_ERROR(Status)) {
-    MsgLog("StartupSound: Error setting up playback: %r\n", Status);
+    MsgLog("StartupSound: Error setting up playback: %s\n", strerror(Status));
     goto DONE_ERROR;
   }
 //  DBG("playback set\n");
   // Start playback.
   if (gSettings.PlayAsync) {
     Status = AudioIo->StartPlaybackAsync(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0,                                       NULL, NULL);
-    DBG("async started, status=%r\n", Status);
+    DBG("async started, status=%s\n", strerror(Status));
   } else {
     Status = AudioIo->StartPlayback(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0);
-//    DBG("sync started, status=%r\n", Status);
+//    DBG("sync started, status=%s\n", strerror(Status));
     if (!EFI_ERROR(Status)) {
       FreePool(TempData);
     }
   }
 
   if (EFI_ERROR(Status)) {
-    MsgLog("StartupSound: Error starting playback: %r\n", Status);
+    MsgLog("StartupSound: Error starting playback: %s\n", strerror(Status));
   }
 
 DONE_ERROR:
@@ -225,7 +225,7 @@ DONE_ERROR:
     DBG("free sound\n");
     FreePool(FileData);
   }
-  DBG("sound play end with status=%r\n", Status);
+  DBG("sound play end with status=%s\n", strerror(Status));
   return Status;
 }
 
@@ -256,10 +256,10 @@ GetStoredOutput()
   // Get Audio I/O protocols.
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiAudioIoProtocolGuid, NULL, &AudioIoHandleCount, &AudioIoHandles);
   if (EFI_ERROR(Status)) {
-    MsgLog("No AudioIoProtocol, status=%r\n", Status);
+    MsgLog("No AudioIoProtocol, status=%s\n", strerror(Status));
     goto DONE;
   }
-  DBG("found %d handles with audio\n", AudioIoHandleCount);
+	DBG("found %llu handles with audio\n", AudioIoHandleCount);
   // Get stored device path size. First from AppleBootGuid
   StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid, NULL, &StoredDevicePathSize);
   if (!StoredDevicePath) {
@@ -276,7 +276,7 @@ GetStoredOutput()
   if ((StoredDevicePath[0] != 2) && (StoredDevicePath[1] != 1)) {
     StoredDevicePathStr = PoolPrint(L"%s", (CHAR16*)StoredDevicePath);
     FreePool(StoredDevicePath);
-    DBG("stored device=%s\n", StoredDevicePathStr);
+    DBG("stored device=%ls\n", StoredDevicePathStr);
     StoredDevicePath = (UINT8*)ConvertTextToDevicePath((CHAR16*)StoredDevicePathStr);
     FreePool(StoredDevicePathStr);
     StoredDevicePathStr = NULL;
@@ -288,7 +288,7 @@ GetStoredOutput()
     // Open Device Path protocol.
     Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiDevicePathProtocolGuid, (VOID**)&DevicePath);
     if (EFI_ERROR(Status)) {
-      DBG("no DevicePath at %d handle AudioIo\n", h);
+		DBG("no DevicePath at %llu handle AudioIo\n", h);
       continue;
     }
 
@@ -319,14 +319,14 @@ GetStoredOutput()
     Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
                               &OutputPortIndexSize, &OutputPortIndex);
     if (EFI_ERROR(Status)) {
-      MsgLog("Bad output index, status=%r, set 0\n", Status);
+      MsgLog("Bad output index, status=%s, set 0\n", strerror(Status));
       OutputPortIndex = 0;
     }
   }
   OutputPortIndex &= 0x2F;
-  DBG("got index=%d\n", OutputPortIndex);
+	DBG("got index=%llu\n", OutputPortIndex);
   if (OutputPortIndex > AudioNum) {
-    DBG("... but max=%d, so reset to 0\n", AudioNum);
+	  DBG("... but max=%llu, so reset to 0\n", AudioNum);
     OutputPortIndex = 0;
   }
   // Get stored volume. If this fails, just use the max.
@@ -404,7 +404,7 @@ VOID GetOutputs()
   // Get Audio I/O protocols.
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiAudioIoProtocolGuid, NULL, &AudioIoHandleCount, &AudioIoHandles);
   if (EFI_ERROR(Status)) {
-    MsgLog("No AudioIoProtocols, status=%r\n", Status);
+    MsgLog("No AudioIoProtocols, status=%s\n", strerror(Status));
     return;
   }
 
@@ -412,7 +412,7 @@ VOID GetOutputs()
     UINTN i;
     Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (VOID**)&AudioIoTmp);
     if (EFI_ERROR(Status)) {
-      DBG("dont handle AudioIo at %d\n", h);
+		DBG("dont handle AudioIo at %llu\n", h);
       continue;
     }
     // Get output ports.

@@ -150,20 +150,20 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
     FreePool(TempName);
     if (EFI_ERROR(Status)) {
-      MsgLog("Failed to load extra kext (Info.plist not found): %s\n", FileName);
+      MsgLog("Failed to load extra kext (Info.plist not found): %ls\n", FileName);
       return EFI_NOT_FOUND;
     }
     NoContents = TRUE;
   }
   if(ParseXML((CHAR8*)infoDictBuffer,&dict,(UINT32)infoDictBufferLength)!=0) {
     FreePool(infoDictBuffer);
-    MsgLog("Failed to load extra kext (failed to parse Info.plist): %s\n", FileName);
+    MsgLog("Failed to load extra kext (failed to parse Info.plist): %ls\n", FileName);
     return EFI_NOT_FOUND;
   }
     
   inject = checkOSBundleRequired(Entry->LoaderType, dict);
   if(!inject) {
-      MsgLog("Skipping kext injection by OSBundleRequired : %s\n", FileName);
+      MsgLog("Skipping kext injection by OSBundleRequired : %ls\n", FileName);
       return EFI_UNSUPPORTED;
   }
     
@@ -183,14 +183,14 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     FreePool(TempName);
     if (EFI_ERROR(Status)) {
       FreePool(infoDictBuffer);
-      MsgLog("Failed to load extra kext (executable not found): %s\n", FileName);
+      MsgLog("Failed to load extra kext (executable not found): %ls\n", FileName);
       return EFI_NOT_FOUND;
     }
     executableBuffer = executableFatBuffer;
     if (ThinFatFile(&executableBuffer, &executableBufferLength, archCpuType)) {
       FreePool(infoDictBuffer);
       FreePool(executableBuffer);
-      MsgLog("Thinning failed: %s\n", FileName);
+      MsgLog("Thinning failed: %ls\n", FileName);
       return EFI_NOT_FOUND;
     }
   }
@@ -281,7 +281,7 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
        continue;   // skip this
      FileName = PoolPrint(L"%s\\%s", DirName, PlugInFile->FileName);
      //     UnicodeSPrint(FileName, 512, L"%s\\%s", DirName, PlugInFile->FileName);
-     MsgLog("    %s PlugIn kext: %s\n", Force ? L"Force" : L"Extra", FileName);
+     MsgLog("    %ls PlugIn kext: %ls\n", Force ? L"Force" : L"Extra", FileName);
      AddKext(Entry, RootDir, FileName, archCpuType);
      FreePool(FileName);
    }
@@ -296,16 +296,16 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
   SIDELOAD_KEXT           *CurrentPlugInKext;
   EFI_STATUS              Status;
 
-  MsgLog("Preparing kexts injection for arch=%s from %s\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+  MsgLog("Preparing kexts injection for arch=%ls from %ls\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
   CurrentKext = InjectKextList;
   while (CurrentKext) {
-    DBG("  current kext name=%s path=%s, match against=%s\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
+    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
     if (StrCmp(CurrentKext->KextDirNameUnderOEMPath, Path) == 0) {
       FileName = PoolPrint(L"%s\\%s", SrcDir, CurrentKext->FileName);
       //   UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
-        MsgLog("->Extra kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+        MsgLog("->Extra kext: %ls (v.%ls)\n", FileName, CurrentKext->Version);
         Status = AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
         if(!EFI_ERROR(Status)) {
           // decide which plugins to inject
@@ -315,10 +315,10 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
             //     UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
             if (!(CurrentPlugInKext->MenuItem.BValue)) {
               // inject PlugIn require
-              MsgLog("    |-- PlugIn kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
+              MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
               AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
             } else {
-              MsgLog("    |-- Disabled plug-in kext: %s (v.%s)\n", PlugInName, CurrentPlugInKext->Version);
+              MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
             }
             FreePool(PlugInName);
             CurrentPlugInKext = CurrentPlugInKext->Next;
@@ -327,7 +327,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
       } else {
         // disable current kext injection
         if (!StriStr(SrcDir, L"Off")) {
-          MsgLog("Disabled kext: %s (v.%s)\n", FileName, CurrentKext->Version);
+          MsgLog("Disabled kext: %ls (v.%ls)\n", FileName, CurrentKext->Version);
         }
       }
       FreePool(FileName);
@@ -388,7 +388,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
       (Entry->KernelAndKextPatches->ForceKexts != NULL)) {
     INT32 i = 0;
     for (; i < Entry->KernelAndKextPatches->NrForceKexts; ++i) {
-      MsgLog("  Force kext: %s\n", Entry->KernelAndKextPatches->ForceKexts[i]);
+      MsgLog("  Force kext: %ls\n", Entry->KernelAndKextPatches->ForceKexts[i]);
       if (Entry->Volume && Entry->Volume->RootDir) {
         // Check if the entry is a directory
         if (StrStr(Entry->KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
@@ -398,7 +398,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
               continue;   // skip this
             FileName = PoolPrint(L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
             //    UnicodeSPrint(FileName, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
-            MsgLog("  Force kext: %s\n", FileName);
+            MsgLog("  Force kext: %ls\n", FileName);
             AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
             PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", FileName);
             //  UnicodeSPrint(PlugIns, 512, L"%s\\Contents\\PlugIns", FileName);
@@ -420,7 +420,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
   CHAR16 UniOSVersion[16];
   AsciiStrToUnicodeStrS(Entry->OSVersion, UniOSVersion, 16);
-  DBG("UniOSVersion == %s\n", UniOSVersion);
+  DBG("UniOSVersion == %ls\n", UniOSVersion);
 
   CHAR16 UniShortOSVersion[6];
   CHAR8  ShortOSVersion[6];
@@ -432,8 +432,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 5);
     AsciiStrToUnicodeStrS(Entry->OSVersion, UniShortOSVersion, 6);
   }
-  DBG("ShortOSVersion == %a\n", ShortOSVersion);
-  DBG("UniShortOSVersion == %s\n", UniShortOSVersion);
+  DBG("ShortOSVersion == %s\n", ShortOSVersion);
+  DBG("UniShortOSVersion == %ls\n", UniShortOSVersion);
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder

@@ -1605,19 +1605,19 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
   option_rom_pci_header_t *rom_pci_header;
 
   if (rom_header->signature != 0xaa55) {
-    DBG("invalid ROM signature %x\n", rom_header->signature);
+    DBG("invalid ROM signature %X\n", rom_header->signature);
     return FALSE;
   }
 
   rom_pci_header = (option_rom_pci_header_t *)((UINT8 *)rom_header + rom_header->pci_header_offset);
 
   if (rom_pci_header->signature != 0x52494350) {
-    DBG("invalid ROM header %x\n", rom_pci_header->signature);
+    DBG("invalid ROM header %X\n", rom_pci_header->signature);
     return FALSE;
   }
 
   if (rom_pci_header->vendor_id != pci_dev->vendor_id || rom_pci_header->device_id != pci_dev->device_id){
-    DBG("invalid ROM vendor=%04x deviceID=%04x\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
+    DBG("invalid ROM vendor=%04X deviceID=%04X\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
     return FALSE;
   }
 
@@ -1633,13 +1633,13 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 
   UnicodeSPrint(FileName, 128, L"\\ROM\\%04x_%04x.rom", vendor_id, device_id);
   if (FileExists(OEMDir, FileName)) {
-    DBG("Found generic VBIOS ROM file (%04x_%04x.rom)\n", vendor_id, device_id);
+    DBG("Found generic VBIOS ROM file (%04X_%04X.rom)\n", vendor_id, device_id);
     Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status)) {
     UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\%04x_%04x.rom", vendor_id, device_id);
     if (FileExists(SelfRootDir, FileName)){
-      DBG("Found generic VBIOS ROM file (%04x_%04x.rom)\n", vendor_id, device_id);
+      DBG("Found generic VBIOS ROM file (%04X_%04X.rom)\n", vendor_id, device_id);
       Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
     }
   }
@@ -1650,7 +1650,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
     card->rom = 0;
     return FALSE;
   }
-  DBG("Loaded ROM len=%d\n", bufferLen);
+	DBG("Loaded ROM len=%llu\n", bufferLen);
   card->rom_size = (UINT32)bufferLen;
   card->rom = (__typeof__(card->rom))AllocateZeroPool(bufferLen);
   if (!card->rom) {
@@ -1684,14 +1684,14 @@ void get_vram_size(void)
   card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.VRAM != 0) {
     card->vram_size = gSettings.VRAM << 20;
-    DBG("Set VRAM from config=%luMb\n", gSettings.VRAM);
+	  DBG("Set VRAM from config=%lluMb\n", gSettings.VRAM);
     //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
       // size in MB on evergreen
       // XXX watch for overflow!!!
       card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
-//      DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
+//      DBG("Set VRAM for %s =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
     } else if (chip_family >= CHIP_FAMILY_R600) {
       card->vram_size = (UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {
@@ -1703,11 +1703,11 @@ void get_vram_size(void)
         WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, (UINT32)card->vram_size);
       }
     }
-    DBG("Set VRAM for %a =%luMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
+	  DBG("Set VRAM for %s =%lluMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
 
   }
   gSettings.VRAM = (UINT64)RShiftU64(card->vram_size, 20);
-  DBG("ATI: get_vram_size returned 0x%x\n", card->vram_size);
+	DBG("ATI: get_vram_size returned 0x%llX\n", card->vram_size);
 }
 
 BOOLEAN read_vbios(BOOLEAN from_pci)
@@ -1716,13 +1716,13 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 
   if (from_pci) {
     rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(card->pci_dev, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
-    DBG(" @0x%x\n", rom_addr);
+	  DBG(" @0x%llX\n", (uintptr_t)rom_addr);
   } else {
     rom_addr = (option_rom_header_t *)(UINTN)0xc0000;
   }
 
   if (!validate_rom(rom_addr, card->pci_dev)) {
-    DBG("There is no ROM @0x%x\n", rom_addr);
+	  DBG("There is no ROM @0x%llX\n", (uintptr_t)rom_addr);
     //   gBS->Stall(3000000);
     return FALSE;
   }
@@ -1862,36 +1862,36 @@ BOOLEAN radeon_card_posted(VOID)
 #if 1
   //dump radeon registers after BIOS POST
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_0_SCRATCH);
-  DBG("BIOS_0_SCRATCH=0x%08x, ", reg);
+	DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_1_SCRATCH);
-  DBG("1=0x%08x, ", reg);
+	DBG("1=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_2_SCRATCH);
-  DBG("2=0x%08x, ", reg);
+	DBG("2=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_3_SCRATCH);
-  DBG("3=0x%08x, ", reg);
+	DBG("3=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_4_SCRATCH);
-  DBG("4=0x%08x, ", reg);
+	DBG("4=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_5_SCRATCH);
-  DBG("5=0x%08x, ", reg);
+	DBG("5=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_6_SCRATCH);
-  DBG("6=0x%08x\n", reg);
+	DBG("6=0x%08llX\n", reg);
 #endif
 
   // first check CRTCs
   reg = (UINTN)REG32(card->mmio, RADEON_CRTC_GEN_CNTL) | REG32(card->mmio, RADEON_CRTC2_GEN_CNTL);
-  DBG("RADEON_CRTC2_GEN_CNTL == 0x%08x\n", REG32(card->mmio, RADEON_CRTC2_GEN_CNTL));
+  DBG("RADEON_CRTC2_GEN_CNTL == 0x%08X\n", REG32(card->mmio, RADEON_CRTC2_GEN_CNTL));
   if ((reg & 0xFFFFFFFF) == 0xFFFFFFFF) {
     DBG(" card not posted because GEN_CNTL = -1\n");
     return FALSE;
   }
   if (reg & RADEON_CRTC_EN) {
-    DBG(" card posted because CRTC_EN, GEN_CNTL=%x\n", reg);
+	  DBG(" card posted because CRTC_EN, GEN_CNTL=%llX\n", reg);
     return TRUE;
   }
   // then check MEM_SIZE, in case something turned the crtcs off
   reg = (UINTN)REG32(card->mmio, R600_CONFIG_MEMSIZE);
   if (reg) {
-    DBG(" card posted because CONFIG_MEMSIZE=0x%x\n", reg);
+	  DBG(" card posted because CONFIG_MEMSIZE=0x%llX\n", reg);
     return TRUE;
   }
   return FALSE;
@@ -1957,8 +1957,8 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   }
 
   if (!card->info || !card->info->device_id || !card->info->cfg_name) {
-    DBG("Unsupported ATI card! Device ID: [%04x:%04x] Subsystem ID: [%08x] \n",
-        pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id);
+    DBG("Unsupported ATI card! Device ID: [%04X:%04X] Subsystem ID: [%08X] \n",
+        pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id);
     DBG("search for brothers family\n");
     for (i = 0; radeon_cards[i].device_id ; i++) {
       if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf)) {
@@ -1980,9 +1980,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   card->io    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   Reg5 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_5) & ~0x0f);
   ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
-  DBG("Framebuffer @0x%08X  MMIO @0x%08X I/O Port @0x%08X ROM Addr @0x%08X\n",
+	DBG("Framebuffer @0x%8s  MMIO @0x%8s I/O Port @0x%8s ROM Addr @0x%08llX\n",
       card->fb, card->mmio, card->io, ExpansionRom);
-  DBG("PCI region 1 = 0x%8X, region3 = 0x%8X, region5 = 0x%8X\n", Reg1, Reg3, Reg5);
+	DBG("PCI region 1 = 0x%8llX, region3 = 0x%8llX, region5 = 0x%8llX\n", Reg1, Reg3, Reg5);
   if (card->info->chip_family >= CHIP_FAMILY_HAINAN && Reg5 != 0) {
     card->mmio = (UINT8 *)Reg5;
     DBG("Use region5 as MMIO space\n");
@@ -1990,14 +1990,14 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   pci_dev->regs = card->mmio;
 
   card->posted = radeon_card_posted();
-  DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
+  DBG("ATI card %s, ", card->posted ? "POSTed" : "non-POSTed");
   DBG("\n");
   get_vram_size();
 
   if (add_vbios) {
     load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
     if (!card->rom) {
-      DBG("reading VBIOS from %a", card->posted ? "legacy space" : "PCI ROM");
+      DBG("reading VBIOS from %s", card->posted ? "legacy space" : "PCI ROM");
       if (card->posted) { // && ExpansionRom != 0)
         read_vbios(FALSE);
       } else {
@@ -2026,20 +2026,20 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   if (NameLen > 2) {  //fool proof: cfg_name is 3 character or more.
     CfgName = (__typeof__(CfgName))AllocateZeroPool(NameLen);
     UnicodeStrToAsciiStrS((CHAR16*)&gSettings.FBName[0], CfgName, 16);
-    DBG("Users config name %a\n", CfgName);
+    DBG("Users config name %s\n", CfgName);
     card->cfg_name = CfgName;
   } else {
     // use cfg_name on radeon_cards, to retrive the default name from card_configs,
     card->cfg_name = card_configs[card->info->cfg_name].name;
     n_ports = card_configs[card->info->cfg_name].ports;
     // which means one of the fb's or kNull
-    DBG("Framebuffer set to device's default: %a\n", card->cfg_name);
-    DBG(" N ports defaults to %d\n", n_ports);
+    DBG("Framebuffer set to device's default: %s\n", card->cfg_name);
+	  DBG(" N ports defaults to %lld\n", n_ports);
   }
 
   if (gSettings.VideoPorts != 0) {
     n_ports = gSettings.VideoPorts;
-    DBG(" use N ports setting from config.plist: %d\n", n_ports);
+	  DBG(" use N ports setting from config.plist: %lld\n", n_ports);
   }
 
   if (n_ports > 0) {
@@ -2144,19 +2144,19 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
       }
 
       if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       } else {
         devprop_add_value(card->device,
                           gSettings.AddProperties[i].Key,
                           (UINT8*)gSettings.AddProperties[i].Value,
                           gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %a, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
       }
     }
   }
 
 
-  DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",
+  DBG("ATI %s %s %dMB (%s) [%04X:%04X] (subsys [%04X:%04X]):: %s\n",
       chip_family_name[card->info->chip_family], card->info->model_name,
       (UINT32)RShiftU64(card->vram_size, 20), card->cfg_name,
       ati_dev->vendor_id, ati_dev->device_id,

@@ -52,7 +52,7 @@ DBG("Construteur\n");
 
 XStringW::XStringW(const XStringW &aString)
 {
-DBG("Constructor(const XStringW &aString) : %s\n", aString.data());
+DBG("Constructor(const XStringW &aString) : %ls\n", aString.data());
 	Init(aString.length());
 	StrnCpy(aString.data(), aString.length());
 }
@@ -63,14 +63,14 @@ DBG("Constructor(const XStringW &aString) : %s\n", aString.data());
 //		DebugLog(2, "XStringW(const wchar_t *S) called with NULL. Use setEmpty()\n");
 //		panic();
 //	}
-//DBG("Constructor(const wchar_t *S) : %s, StrLen(S)=%d\n", S, StrLen(S));
+//DBG("Constructor(const wchar_t *S) : %ls, StrLen(S)=%d\n", S, StrLen(S));
 //	Init(StrLen(S));
 //	StrCpy(S);
 //}
 //
 //XStringW::XStringW(const wchar_t *S, UINTN count)
 //{
-//DBG("Constructor(const wchar_t *S, UINTN count) : %s, %d\n", S, count);
+//DBG("Constructor(const wchar_t *S, UINTN count) : %ls, %d\n", S, count);
 //	Init(count);
 //	StrnCpy(S, count);
 //}
@@ -124,7 +124,7 @@ const XStringW& XStringW::takeValueFrom(const char* S)
 
 XStringW::~XStringW()
 {
-DBG("Destructor :%s\n", data());
+DBG("Destructor :%ls\n", data());
 	free((void*)m_data);
 }
 

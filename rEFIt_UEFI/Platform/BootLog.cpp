@@ -23,7 +23,7 @@ PrintBytesRow(IN UINT8 *Bytes, IN UINTN Number, IN UINTN MaxNumber)
 	
 	// print hex vals
 	for (Index = 0; Index < Number; Index++) {
-		DebugLog(1, "%02x ", Bytes[Index]);
+		DebugLog(1, "%02X ", Bytes[Index]);
 	}
 	
 	// pad to MaxNumber if needed
@@ -151,7 +151,7 @@ VOID EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
 {
   // Print message to console
   if (DebugMode >= 2) {
-    AsciiPrint(LastMessage);
+    AsciiPrint("%a", LastMessage);
   }
   
   if ((DebugMode >= 1) && GlobalConfig.DebugLog) {
@@ -176,7 +176,7 @@ VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 
    // Print message to log buffer
    VA_START(Marker, FormatString);
-   MemLogVA(TRUE, DebugMode, FormatString, Marker);
+   MemLogfVA(TRUE, DebugMode, FormatString, Marker);
    VA_END(Marker);
 }
 

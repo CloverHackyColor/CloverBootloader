@@ -121,17 +121,17 @@ int XString_tests()
 	str3.takeValueFrom(L"Выход");
 	if ( str3 != "Выход" ) return 500;
 #endif
-//MsgLog("Test MsgLog ascii=%s ucs-2=%s\n", "a string", L"ascii char in ucs-2 string\n");
-//MsgLog("Test MsgLog ascii=%s ucs-2=%s\n", "a string", "ascii char in ucs-2 string\n");
-//MsgLog("Test MsgLog ascii=%s ucs-2=%s\n", "a string", "ascii char in ucs-2 string\n");
+//MsgLog("Test MsgLog ascii=%ls ucs-2=%ls\n", "a string", L"ascii char in ucs-2 string\n");
+//MsgLog("Test MsgLog ascii=%ls ucs-2=%ls\n", "a string", "ascii char in ucs-2 string\n");
+//MsgLog("Test MsgLog ascii=%ls ucs-2=%ls\n", "a string", "ascii char in ucs-2 string\n");
 //
-//MsgLog("Test MsgLog ascii=%s ucs-2=%s\n", "a string", L"Выход из подменю, обновление главного меню\n");
-//MsgLog("Test MsgLog ascii=%s ucs-2=%s\n", "a string", "Выход из подменю, обновление главного меню\n");
-//MsgLog("Test MsgLog ascii=%s ucs-2=%s\n", "a string", "Выход из подменю, обновление главного меню\n");
+//MsgLog("Test MsgLog ascii=%ls ucs-2=%ls\n", "a string", L"Выход из подменю, обновление главного меню\n");
+//MsgLog("Test MsgLog ascii=%ls ucs-2=%ls\n", "a string", "Выход из подменю, обновление главного меню\n");
+//MsgLog("Test MsgLog ascii=%ls ucs-2=%ls\n", "a string", "Выход из подменю, обновление главного меню\n");
 //
-//DBG("Test ascii=%s ucs-2=%s\n", "a string", L"Выход из подменю, обновление главного меню\n");
-//DBG("Test ascii=%s ucs-2=%s\n", "a string", "Выход из подменю, обновление главного меню\n");
-//DBG("Test ascii=%s ucs-2=%s\n", "a string", "Выход из подменю, обновление главного меню\n");
+//DBG("Test ascii=%ls ucs-2=%ls\n", "a string", L"Выход из подменю, обновление главного меню\n");
+//DBG("Test ascii=%ls ucs-2=%ls\n", "a string", "Выход из подменю, обновление главного меню\n");
+//DBG("Test ascii=%ls ucs-2=%ls\n", "a string", "Выход из подменю, обновление главного меню\n");
 
 	return 0;
 }

@@ -139,7 +139,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         QueryUserMenu.InfoLines = Information;
         QueryUserMenu.Entries.size() = gSettings.SecureBootSetupMode ? 2 : 3;
         // Debug message
-        DBG("VerifySecureBootImage: Query user for authentication action for %s\n", Information[1]);
+        DBG("VerifySecureBootImage: Query user for authentication action for %ls\n", Information[1]);
         // Because we may
         if (!gGuiIsReady) {
           InitScreen(FALSE);
@@ -485,7 +485,7 @@ BOOLEAN ConfigureSecureBoot(VOID)
             case SECURE_BOOT_POLICY_USER:
               // Set a new policy
               gSettings.SecureBootPolicy = (UINT8)ChosenEntry->Tag;
-              DBG("User changed secure boot policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+              DBG("User changed secure boot policy: %ls\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
 
             default:
               MenuExit = MENU_EXIT_ESCAPE;

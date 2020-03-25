@@ -106,7 +106,7 @@ FixOwnership(VOID)
                 Base = 0;
                 Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, 0x20, 1, &Base);
                 PortBase = (Base >> 5) & 0x07ff;
-                DBG("USB UHCI Base=%x PortBase=%x\n", Base, PortBase);                 
+                DBG("USB UHCI Base=%X PortBase=%X\n", Base, PortBase);                 
                 Command = 0x8f00;
                 Status = PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0xC0, 1, &Command);
                 if (PortBase) {
@@ -117,7 +117,7 @@ FixOwnership(VOID)
                   IoWrite16 (PortBase, 0);
                 }
                 
-                MsgLog("USB UHCI reset for device %04x\n", Pci.Hdr.DeviceId); 
+                MsgLog("USB UHCI reset for device %04X\n", Pci.Hdr.DeviceId); 
                 break;
   /*            case PCI_IF_OHCI:
                 
@@ -127,7 +127,7 @@ FixOwnership(VOID)
                 Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
                 *(UINT32 *)(UINTN)(Base + OHCI_CONTROL) = Command & OHCI_CTRL_MASK;
                 Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
-                MsgLog("USB OHCI reset for device %04x control=0x%x\n", Pci.Hdr.DeviceId, Command);
+                MsgLog("USB OHCI reset for device %04X control=0x%X\n", Pci.Hdr.DeviceId, Command);
                 break;*/
               case PCI_IF_EHCI:
                 //Slice - the algo is reworked from Chameleon
@@ -159,13 +159,13 @@ FixOwnership(VOID)
                               );
                 
                 ExtendCap = (HcCapParams >> 8) & 0xFF;
-                DBG("Base=%x Oper=%x eecp=%x\n", Base, opaddr, ExtendCap);
+                DBG("Base=%X Oper=%X eecp=%X\n", Base, opaddr, ExtendCap);
                 
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
                 
-                DBG("usbcmd=%08x usbsts=%08x usbintr=%08x\n", usbcmd, usbsts, usbintr);
+                DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
                 
                 // read PCI Config 32bit USBLEGSUP (eecp+0) 
                 Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &usblegsup);
@@ -176,7 +176,7 @@ FixOwnership(VOID)
                 
                 // read PCI Config 32bit USBLEGCTLSTS (eecp+4) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
-                DBG("usblegsup=%08x isOSowned=%d isBIOSowned=%d usblegctlsts=%08x\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
+                DBG("usblegsup=%08X isOSowned=%d isBIOSowned=%d usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
                 //
                 // Disable the SMI in USBLEGCTLSTS firstly
                 //
@@ -191,7 +191,7 @@ FixOwnership(VOID)
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
-                DBG("usbcmd=%08x usbsts=%08x usbintr=%08x\n", usbcmd, usbsts, usbintr);
+                DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
                 
                 // clear registers to default
                 usbcmd = (usbcmd & 0xffffff00);
@@ -205,7 +205,7 @@ FixOwnership(VOID)
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
-                DBG("usbcmd=%08x usbsts=%08x usbintr=%08x\n", usbcmd, usbsts, usbintr);
+                DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
                 
                 // read 32bit USBLEGSUP (eecp+0) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &usblegsup);
@@ -216,7 +216,7 @@ FixOwnership(VOID)
                 // read 32bit USBLEGCTLSTS (eecp+4) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
                 
-                DBG("usblegsup=%08x isOSowned=%d isBIOSowned=%d usblegctlsts=%08x\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
+                DBG("usblegsup=%08X isOSowned=%d isBIOSowned=%d usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
                 MsgLog("Legacy USB Off Done\n");  
                 
                 
@@ -282,7 +282,7 @@ FixOwnership(VOID)
                   Status = EFI_NOT_FOUND; //Slice - why? :)
                   break;
                 }
-                MsgLog("USB EHCI Ownership for device %04x value=%x\n", Pci.Hdr.DeviceId, Value); 
+                MsgLog("USB EHCI Ownership for device %04X value=%X\n", Pci.Hdr.DeviceId, Value); 
                 
                 break;
              case PCI_IF_XHCI:

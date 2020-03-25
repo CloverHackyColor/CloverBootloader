@@ -408,7 +408,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
     if (EFI_ERROR(Status)) {
-      DBG("no ESP %r\n", Status);
+      DBG("no ESP %s\n", strerror(Status));
       return Status;
     }
   }
@@ -425,10 +425,10 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     
   if (EFI_ERROR(Status)) {
       // make dir
-//    DBG("no dir %r\n", Status);
+//    DBG("no dir %s\n", strerror(Status));
       Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                                EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
-//    DBG("cant make dir %r\n", Status);
+//    DBG("cant make dir %s\n", strerror(Status));
   }
   // end of folder checking
 
@@ -440,7 +440,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     if (Status == EFI_WARN_DELETE_FAILURE) {
       //This is READ_ONLY file system
       CreateNew = FALSE; // will write into existing file
-//      DBG("RO FS %r\n", Status);
+//      DBG("RO FS %s\n", strerror(Status));
     }
   }
 
@@ -449,7 +449,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
     if (EFI_ERROR(Status)) {
-//      DBG("no write %r\n", Status);
+//      DBG("no write %s\n", strerror(Status));
       return Status;
     }
   } else {
@@ -457,7 +457,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
     if (Info) {
       if (Info->FileSize < FileDataLength) {
-//        DBG("no old file %r\n", Status);
+//        DBG("no old file %s\n", strerror(Status));
         return EFI_NOT_FOUND;
       }
       FreePool(Info);
@@ -465,14 +465,14 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
   }
 
   if (!FileHandle) {
-//    DBG("no FileHandle %r\n", Status);
+//    DBG("no FileHandle %s\n", strerror(Status));
     return EFI_DEVICE_ERROR;
   }
 
   BufferSize = FileDataLength;
   Status = FileHandle->Write(FileHandle, &BufferSize, (VOID*)FileData); // CONST missing in EFI_FILE_HANDLE->write
   FileHandle->Close(FileHandle);
-//  DBG("not written %r\n", Status);
+//  DBG("not written %s\n", strerror(Status));
   return Status;
 }
 
@@ -482,12 +482,12 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
   EFI_STATUS          Status;
   EFI_FILE_HANDLE     FileHandle;
 
-  //DBG("Looking up dir assets (%s):", DirName);
+  //DBG("Looking up dir assets (%ls):", DirName);
 
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
     if (EFI_ERROR(Status)) {
-      //DBG(" %r\n", Status);
+      //DBG(" %s\n", strerror(Status));
       return Status;
     }
   }
@@ -497,12 +497,12 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 
   if (EFI_ERROR(Status)) {
     // Write new dir
-    //DBG("%r, attempt to create one:", Status);
+    //DBG("%s, attempt to create one:", strerror(Status));
     Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
   }
 
-  //DBG(" %r\n", Status);
+  //DBG(" %s\n", strerror(Status));
   return Status;
 }
 
@@ -531,7 +531,7 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
   NewImage = egDecodePNG(FileData, FileDataLength, WantAlpha);
 
   if (!NewImage) {
-    DBG("%s not decoded\n", FileName);
+    DBG("%ls not decoded\n", FileName);
   }
   FreePool(FileData);
   return NewImage;
@@ -568,7 +568,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN 
 
     while (OSIconsTable[i].name) {
       if (AsciiStrCmp(OSIconsTable[i].name, IconName) == 0) {
-//        DBG("theme defined %a\n", IconName);
+//        DBG("theme defined %s\n", IconName);
 //        DBG(" icon size=[%d,%d]\n", OSIconsTable[i].image->Width, OSIconsTable[i].image->Height);
         FreePool(IconName);
         return OSIconsTable[i].image;
@@ -867,13 +867,13 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
      * Error 28 incorrect PNG signature ok, because also called on ICNS files
      */
     if (Error != 28U) {
-      DBG("egDecodePNG(%p, %lu, %c): eglodepng_decode failed with error %lu\n",
+		DBG("egDecodePNG(%p, %llu, %c): eglodepng_decode failed with error %llu\n",
           FileData, FileDataLength, WantAlpha?'Y':'N', Error);
     }
     return NULL;
   }
   if (!PixelData || Width > 4096U || Height > 4096U) {
-    DBG("egDecodePNG(%p, %lu, %c): eglodepng_decode returned suspect values, PixelData %p, Width %lu, Height %lu\n",
+	  DBG("egDecodePNG(%p, %llu, %c): eglodepng_decode returned suspect values, PixelData %p, Width %llu, Height %llu\n",
         FileData, FileDataLength, WantAlpha?'Y':'N', PixelData, Width, Height);
   }
 

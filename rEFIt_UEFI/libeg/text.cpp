@@ -100,11 +100,11 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   
   if (IsEmbeddedTheme() && !isKorean) { //or initial screen before theme init
     NewImage = egDecodePNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data), TRUE);
-    MsgLog("Using embedded font: %a\n", NewImage ? "Success" : "Error");
+    MsgLog("Using embedded font: %s\n", NewImage ? "Success" : "Error");
   } else {
     if (!GlobalConfig.TypeSVG) {
       NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName, TRUE);
-      MsgLog("Loading font from ThemeDir: %a\n", NewImage ? "Success" : "Error");
+      MsgLog("Loading font from ThemeDir: %s\n", NewImage ? "Success" : "Error");
     } else {
       MsgLog("Using SVG font\n");
       return FontImage;
@@ -120,7 +120,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
       if (UseEmbedded) {
         NewImage = egDecodePNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data), TRUE);
       } else {
-        MsgLog("Font %s is not loaded\n", fontFilePath);
+        MsgLog("Font %ls is not loaded\n", fontFilePath);
         FreePool(fontFilePath);
         return NULL;
       }

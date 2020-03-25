@@ -319,7 +319,7 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
         bytes[i+8] == 0x00 && bytes[i+9] == 0x00 && bytes[i+10] == 0xC7 && bytes[i+11] == 0x05 &&
         bytes[i-5] == 0xE8) {
       patchLocation = i-5;
-      DBG("Found _cpuid_set_info _panic address at 0x%08x\n",patchLocation);
+      DBG("Found _cpuid_set_info _panic address at 0x%08X\n",patchLocation);
       break;
     }
   }
@@ -338,7 +338,7 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
         bytes[i+3] == 0x54 && bytes[i+4] == 0x0E && bytes[i+5] == 0x59 &&
         bytes[i+6] == 0x00) {
       patchLocation1 = i+7;
-      DBG("Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
+      DBG("Found _tsc_init _panic address at 0x%08X\n",patchLocation1);
       break;
     }
   }
@@ -861,11 +861,11 @@ BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
 //
 static inline VOID applyKernPatch(UINT8 *kern, UINT8 *find, UINTN size, UINT8 *repl, const CHAR8 *comment)
 {
-    DBG("Searching %a...\n", comment);
+    DBG("Searching %s...\n", comment);
     if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, size, repl, 0)) {
-        DBG("Found %a\nApplied %a patch\n", comment, comment);
+        DBG("Found %s\nApplied %s patch\n", comment, comment);
     } else {
-        DBG("%a no found, patched already?\n", comment);
+        DBG("%s no found, patched already?\n", comment);
     }
 }
 
@@ -1405,7 +1405,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
         bytes[i-1664-32] == 0x55
         ) {
       patchLocation1 = i-1664-32;
-      DBG("Found SSE3 data address at 0x%08x\n",patchLocation1);
+      DBG("Found SSE3 data address at 0x%08X\n",patchLocation1);
     }
 
     // hasSSE2+..... title
@@ -1414,14 +1414,14 @@ VOID Patcher_SSE3_6(VOID* kernelData)
         bytes[i+6] == 0xFF && bytes[i+7] == 0xFF && bytes[i+8] == 0x24 &&
         bytes[i+9] == 0x01) {
       patchLocation2 = i;
-      DBG("Found SSE3 Title address at 0x%08x\n",patchLocation2);
+      DBG("Found SSE3 Title address at 0x%08X\n",patchLocation2);
       break;
     }
     i++;
   }
 
   if (!patchLocation1 || !patchLocation2) {
-    DBG("Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
+    DBG("Can't found SSE3 data addres or Title address at 0x%08X 0x%08X\n", patchLocation1, patchLocation2);
     return;
   }
 
@@ -1431,14 +1431,14 @@ VOID Patcher_SSE3_6(VOID* kernelData)
   while(TRUE) {
     if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55 ) {
       patchlast = (i+1) - patchLocation1;
-      DBG("Found SSE3 last data addres at 0x%08x\n", patchlast);
+      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
       break;
     }
     i++;
   }
 
   if (!patchlast) {
-    DBG("Can't found SSE3 data last addres at 0x%08x\n", patchlast);
+    DBG("Can't found SSE3 data last addres at 0x%08X\n", patchlast);
     return;
   }
   // patch sse3_64 data
@@ -1475,7 +1475,7 @@ VOID Patcher_SSE3_5(VOID* kernelData)
         bytes[i+3] == 0x44 && bytes[i+4] == 0x0E && bytes[i+5] == 0xF1 &&
         bytes[i-1680-32] == 0x55) {
       patchLocation1 = i-1680-32;
-      DBG("Found SSE3 data address at 0x%08x\n",patchLocation1);
+      DBG("Found SSE3 data address at 0x%08X\n",patchLocation1);
     }
 
     // khasSSE2+..... title
@@ -1484,13 +1484,13 @@ VOID Patcher_SSE3_5(VOID* kernelData)
         bytes[i+6] == 0xFF && bytes[i+7] == 0xFF && bytes[i+8] == 0x24 &&
         bytes[i+9] == 0x01) {
       patchLocation2 = i;
-      DBG("Found SSE3 Title address at 0x%08x\n",patchLocation2);
+      DBG("Found SSE3 Title address at 0x%08X\n",patchLocation2);
       break;
     }
   }
 
   if (!patchLocation1 || !patchLocation2) {
-    DBG("Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
+    DBG("Can't found SSE3 data addres or Title address at 0x%08X 0x%08X\n", patchLocation1, patchLocation2);
     return;
   }
 
@@ -1499,13 +1499,13 @@ VOID Patcher_SSE3_5(VOID* kernelData)
   for (i=(patchLocation1+1500);i<Length;i++) {
     if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55) {
       patchlast = (i+1) - patchLocation1;
-      DBG("Found SSE3 last data addres at 0x%08x\n", patchlast);
+      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
       break;
     }
   }
 
   if (!patchlast) {
-    DBG("Can't found SSE3 data last addres at 0x%08x\n", patchlast);
+    DBG("Can't found SSE3 data last addres at 0x%08X\n", patchlast);
     return;
   }
 
@@ -1559,9 +1559,9 @@ VOID Get_PreLink()
     switch (loadCommand->cmd) {
       case LC_SEGMENT_64:
         segCmd64 = (struct segment_command_64 *)loadCommand;
-        //DBG("segCmd64->segname = %a\n",segCmd64->segname);
-        //DBG("segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
-        //DBG("segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize);
+        //DBG("segCmd64->segname = %s\n",segCmd64->segname);
+        //DBG("segCmd64->vmaddr = 0x%08X\n",segCmd64->vmaddr)
+        //DBG("segCmd64->vmsize = 0x%08X\n",segCmd64->vmsize);
         if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0) {
           DBG("Found PRELINK_TEXT, 64bit\n");
           if (segCmd64->vmsize > 0) {
@@ -1572,34 +1572,34 @@ VOID Get_PreLink()
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
           }
           DBG("at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
-          DBG("PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
+          DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
-          //DBG("cmd = 0x%08x\n",segCmd64->cmd);
-          //DBG("cmdsize = 0x%08x\n",segCmd64->cmdsize);
-          //DBG("vmaddr = 0x%08x\n",segCmd64->vmaddr);
-          //DBG("vmsize = 0x%08x\n",segCmd64->vmsize);
-          //DBG("fileoff = 0x%08x\n",segCmd64->fileoff);
-          //DBG("filesize = 0x%08x\n",segCmd64->filesize);
-          //DBG("maxprot = 0x%08x\n",segCmd64->maxprot);
-          //DBG("initprot = 0x%08x\n",segCmd64->initprot);
-          //DBG("nsects = 0x%08x\n",segCmd64->nsects);
-          //DBG("flags = 0x%08x\n",segCmd64->flags);
+          //DBG("cmd = 0x%08X\n",segCmd64->cmd);
+          //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
+          //DBG("vmaddr = 0x%08X\n",segCmd64->vmaddr);
+          //DBG("vmsize = 0x%08X\n",segCmd64->vmsize);
+          //DBG("fileoff = 0x%08X\n",segCmd64->fileoff);
+          //DBG("filesize = 0x%08X\n",segCmd64->filesize);
+          //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
+          //DBG("initprot = 0x%08X\n",segCmd64->initprot);
+          //DBG("nsects = 0x%08X\n",segCmd64->nsects);
+          //DBG("flags = 0x%08X\n",segCmd64->flags);
         }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section_64 *sect;
 
           DBG("Found PRELINK_INFO, 64bit\n");
-          //DBG("cmd = 0x%08x\n",segCmd64->cmd);
-          //DBG("cmdsize = 0x%08x\n",segCmd64->cmdsize);
-          DBG("vmaddr = 0x%08x\n",segCmd64->vmaddr);
-          DBG("vmsize = 0x%08x\n",segCmd64->vmsize);
-          //DBG("fileoff = 0x%08x\n",segCmd64->fileoff);
-          //DBG("filesize = 0x%08x\n",segCmd64->filesize);
-          //DBG("maxprot = 0x%08x\n",segCmd64->maxprot);
-          //DBG("initprot = 0x%08x\n",segCmd64->initprot);
-          //DBG("nsects = 0x%08x\n",segCmd64->nsects);
-          //DBG("flags = 0x%08x\n",segCmd64->flags);
+          //DBG("cmd = 0x%08X\n",segCmd64->cmd);
+          //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
+          DBG("vmaddr = 0x%08X\n",segCmd64->vmaddr);
+          DBG("vmsize = 0x%08X\n",segCmd64->vmsize);
+          //DBG("fileoff = 0x%08X\n",segCmd64->fileoff);
+          //DBG("filesize = 0x%08X\n",segCmd64->filesize);
+          //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
+          //DBG("initprot = 0x%08X\n",segCmd64->initprot);
+          //DBG("nsects = 0x%08X\n",segCmd64->nsects);
+          //DBG("flags = 0x%08X\n",segCmd64->flags);
           sectionIndex = sizeof(struct segment_command_64);
 
           while(sectionIndex < segCmd64->cmdsize) {
@@ -1615,7 +1615,7 @@ VOID Get_PreLink()
                 PrelinkInfoSize = (UINT32)sect->size;
               }
               DBG("__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
-              DBG("PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
+              DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
             }
           }
@@ -1624,9 +1624,9 @@ VOID Get_PreLink()
 
       case LC_SEGMENT:
         segCmd = (struct segment_command *)loadCommand;
-        //DBG("segCmd->segname = %a\n",segCmd->segname);
-        //DBG("segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
-        //DBG("segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
+        //DBG("segCmd->segname = %s\n",segCmd->segname);
+        //DBG("segCmd->vmaddr = 0x%08X\n",segCmd->vmaddr)
+        //DBG("segCmd->vmsize = 0x%08X\n",segCmd->vmsize);
         if (AsciiStrCmp(segCmd->segname, kPrelinkTextSegment) == 0) {
           DBG("Found PRELINK_TEXT, 32bit\n");
           if (segCmd->vmsize > 0) {
@@ -1636,7 +1636,7 @@ VOID Get_PreLink()
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd;
           }
           DBG("at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
-          DBG("PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
+          DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //gBS->Stall(30*1000000);
         }
@@ -1645,16 +1645,16 @@ VOID Get_PreLink()
           struct section *sect;
 
           DBG("Found PRELINK_INFO, 32bit\n");
-          //DBG("cmd = 0x%08x\n",segCmd->cmd);
-          //DBG("cmdsize = 0x%08x\n",segCmd->cmdsize);
-          DBG("vmaddr = 0x%08x\n",segCmd->vmaddr);
-          DBG("vmsize = 0x%08x\n",segCmd->vmsize);
-          //DBG("fileoff = 0x%08x\n",segCmd->fileoff);
-          //DBG("filesize = 0x%08x\n",segCmd->filesize);
-          //DBG("maxprot = 0x%08x\n",segCmd->maxprot);
-          //DBG("initprot = 0x%08x\n",segCmd->initprot);
-          //DBG("nsects = 0x%08x\n",segCmd->nsects);
-          //DBG("flags = 0x%08x\n",segCmd->flags);
+          //DBG("cmd = 0x%08X\n",segCmd->cmd);
+          //DBG("cmdsize = 0x%08X\n",segCmd->cmdsize);
+          DBG("vmaddr = 0x%08X\n",segCmd->vmaddr);
+          DBG("vmsize = 0x%08X\n",segCmd->vmsize);
+          //DBG("fileoff = 0x%08X\n",segCmd->fileoff);
+          //DBG("filesize = 0x%08X\n",segCmd->filesize);
+          //DBG("maxprot = 0x%08X\n",segCmd->maxprot);
+          //DBG("initprot = 0x%08X\n",segCmd->initprot);
+          //DBG("nsects = 0x%08X\n",segCmd->nsects);
+          //DBG("flags = 0x%08X\n",segCmd->flags);
           sectionIndex = sizeof(struct segment_command);
 
           while(sectionIndex < segCmd->cmdsize) {
@@ -1669,7 +1669,7 @@ VOID Get_PreLink()
                 PrelinkInfoSize = (UINT32)sect->size;
               }
               DBG("__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
-              DBG("PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
+              DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
               //gBS->Stall(30*1000000);
             }
@@ -1714,8 +1714,8 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       KernelSlide = bootArgs2->kslide;
 
       DBG_RT(Entry, "Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-      //DBG("bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
-      //DBG("bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
+      //DBG("bootArgs2->kaddr = 0x%08X and bootArgs2->ksize =  0x%08X\n", bootArgs2->kaddr, bootArgs2->ksize);
+      //DBG("bootArgs2->efiMode = 0x%02X\n", bootArgs2->efiMode);
       DBG_RT(Entry, "bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
       DBG_RT(Entry, "bootArgs2->flags = 0x%x\n", bootArgs2->flags);
       DBG_RT(Entry, "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
@@ -1743,8 +1743,8 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       dtLength = &bootArgs1->deviceTreeLength;
 
       DBG_RT(Entry, "Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-      //DBG("bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
-      //DBG("bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
+      //DBG("bootArgs1->kaddr = 0x%08X and bootArgs1->ksize =  0x%08X\n", bootArgs1->kaddr, bootArgs1->ksize);
+      //DBG("bootArgs1->efiMode = 0x%02X\n", bootArgs1->efiMode);
 
       // disable other pointer
       bootArgs2 = NULL;

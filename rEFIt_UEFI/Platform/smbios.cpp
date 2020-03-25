@@ -741,7 +741,7 @@ VOID PatchTableType4()
 
   CopyMem(BrandStr, gCPUStructure.BrandString, 48);
   BrandStr[47] = '\0';
-  //  DBG("BrandString=%a\n", BrandStr);
+  //  DBG("BrandString=%s\n", BrandStr);
   for (CpuNumber = 0; CpuNumber < gCPUStructure.Cores; CpuNumber++) {
     // Get Table Type4
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, CpuNumber);
@@ -935,12 +935,12 @@ VOID PatchTableType6()
       mInstalled[Index]  = 0;
     } else
       mInstalled[Index]  =  4096ULL * (1024ULL * 1024ULL);
-    MsgLog("Table 6 MEMORY_MODULE %d Installed %x ", Index, mInstalled[Index]);
+	  MsgLog("Table 6 MEMORY_MODULE %llu Installed %llX ", Index, mInstalled[Index]);
     if (SizeField >= 0x7D) {
       mEnabled[Index]    = 0;
     } else
       mEnabled[Index]    = LShiftU64(1ULL, 20 + ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F));
-    MsgLog("... enabled %x \n", mEnabled[Index]);
+	  MsgLog("... enabled %llX \n", mEnabled[Index]);
     LogSmbiosTable(SmbiosTable);
   }
 
@@ -1052,7 +1052,7 @@ VOID PatchTableType9()
       //
       Dev = SlotDevices[Index].DevFuncNum >> 3;
       Func = SlotDevices[Index].DevFuncNum & 7;
-      DBG("insert table 9 for dev %x:%x\n", Dev, Func);
+		DBG("insert table 9 for dev %llX:%llX\n", Dev, Func);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, SlotDevices[Index].SlotName);
       LogSmbiosTable(newSmbiosTable);
     }
@@ -1130,7 +1130,7 @@ VOID GetTableType16()
       //      DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
       continue;
     }
-    DBG("Type 16 Index = %d\n", Index);
+	  DBG("Type 16 Index = %llu\n", Index);
     TotalCount += SmbiosTable.Type16->NumberOfMemoryDevices;
   }
   if (!TotalCount) {
@@ -1183,7 +1183,7 @@ VOID GetTableType17()
       //      DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
       continue;
     }
-    DBG("Type 17 Index = %d\n", Index);
+	  DBG("Type 17 Index = %llu\n", Index);
     //gDMI->CntMemorySlots++;
     if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE) {
       DBG("Table has error information, checking\n"); //why skipping?
@@ -1200,7 +1200,7 @@ VOID GetTableType17()
         }
         if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
           Found = TRUE;
-          DBG("Found memory information in table 18/%d, type=0x%x, operation=0x%x syndrome=0x%x\n", Index2,
+			DBG("Found memory information in table 18/%lld, type=0x%X, operation=0x%X syndrome=0x%X\n", Index2,
               newSmbiosTable.Type18->ErrorType,
               newSmbiosTable.Type18->ErrorOperation,
               newSmbiosTable.Type18->VendorSyndrome);
@@ -1258,10 +1258,10 @@ VOID GetTableType17()
     //    DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
     DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
     DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
-    DBG("SmbiosTable.Type17->Bank/Device = %a %a\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
-    DBG("SmbiosTable.Type17->Vendor = %a\n", gRAM.SMBIOS[Index].Vendor);
-    DBG("SmbiosTable.Type17->SerialNumber = %a\n", gRAM.SMBIOS[Index].SerialNo);
-    DBG("SmbiosTable.Type17->PartNumber = %a\n", gRAM.SMBIOS[Index].PartNo);
+    DBG("SmbiosTable.Type17->Bank/Device = %s %s\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
+    DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SMBIOS[Index].Vendor);
+    DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SMBIOS[Index].SerialNo);
+    DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[Index].PartNo);
 
     /*
      if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
@@ -1382,12 +1382,12 @@ VOID PatchTableType17()
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
           newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
         }
-        DBG("%a %a %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
+        DBG("%s %s %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
           newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
         mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
         //        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
       } else {
-        DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
+        DBG("%s %s EMPTY\n", bankLocator, deviceLocator);
       }
       newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
       mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
@@ -1601,7 +1601,7 @@ VOID PatchTableType17()
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
         AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].PartNo);
-        DBG(" partNum=%a\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
+        DBG(" partNum=%s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
         //       newSmbiosTable.Type17->PartNumber = 0;
           CHAR8 unknown[] = "unknown";
@@ -1668,7 +1668,7 @@ VOID PatchTableType17()
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
         (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) &&
         (AsciiStrnCmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
-      DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %a\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
+      DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor)+1); // this will never be freed. WIll be solved when using a string object.
       AsciiStrCpyS(vendor, 64, gRAM.SMBIOS[SMBIOSIndex].Vendor);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
@@ -1698,13 +1698,13 @@ VOID PatchTableType17()
     } else {
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
     }
-    DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
+	  DBG("SMBIOS Type 17 Index = %d => %llu %llu:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
-      DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
+      DBG("%s %s EMPTY\n", bankLocator, deviceLocator);
       newSmbiosTable.Type17->MemoryType = 0; //MemoryTypeUnknown;
     } else {
       insertingEmpty = FALSE;
-      DBG("%a %a %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
+      DBG("%s %s %dMHz %dMB(Ext:%dMB)\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed,
           newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
       if (newSmbiosTable.Type17->Size == 0x7FFF) {
         mTotalSystemMemory += newSmbiosTable.Type17->ExtendedSize; //Mb
@@ -1796,9 +1796,9 @@ VOID PatchTableType20 ()
         newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
         k = newSmbiosTable.Type20->EndingAddress;
         m += mMemory17[j];
-        DBG("Type20[%d]->End = 0x%x, Type17[%d] = 0x%x\n",
+		  DBG("Type20[%llu]->End = 0x%llX, Type17[%llu] = %llX\n",
             Index, k, j, m);
-        //        DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);
+        //        DBG(" MemoryDeviceHandle = 0x%X\n", newSmbiosTable.Type20->MemoryDeviceHandle);
         mMemory17[j] = 0; // used
         break;
       }
@@ -1902,8 +1902,8 @@ VOID PatchTableType131()
   // Get Table Type131
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 131, 0);
   if (SmbiosTable.Raw != NULL) {
-    MsgLog("Table 131 is present, CPUType=%x\n", SmbiosTable.Type131->ProcessorType);
-    MsgLog("Change to: %x\n", gSettings.CpuType);
+    MsgLog("Table 131 is present, CPUType=%X\n", SmbiosTable.Type131->ProcessorType);
+    MsgLog("Change to: %X\n", gSettings.CpuType);
   }
 
   ZeroMem((VOID*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
@@ -1926,8 +1926,8 @@ VOID PatchTableType132()
   // Get Table Type132
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 132, 0);
   if (SmbiosTable.Raw != NULL) {
-    MsgLog("Table 132 is present, QPI=%x\n", SmbiosTable.Type132->ProcessorBusSpeed);
-    MsgLog("Change to: %x\n", gSettings.QPI);
+    MsgLog("Table 132 is present, QPI=%X\n", SmbiosTable.Type132->ProcessorBusSpeed);
+    MsgLog("Change to: %X\n", gSettings.QPI);
   }
 
   ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
@@ -1954,8 +1954,8 @@ VOID PatchTableType133()
   // Get Table Type133
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 133, 0);
   if (SmbiosTable.Raw != NULL) {
-    MsgLog("Table 133 is present, PlatformFeature=%x\n", SmbiosTable.Type133->PlatformFeature);
-    MsgLog("Change to: %x\n", gPlatformFeature);
+	  MsgLog("Table 133 is present, PlatformFeature=%llX\n", SmbiosTable.Type133->PlatformFeature);
+	  MsgLog("Change to: %llX\n", gPlatformFeature);
   }
   ZeroMem((VOID*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
   newSmbiosTable.Type133->Hdr.Type = 133;
@@ -1978,7 +1978,7 @@ EFI_STATUS PrepatchSmbios()
   // Get SMBIOS Tables
   Smbios = FindOemSMBIOSPtr();
   //  DBG("OEM SMBIOS EPS=%p\n", Smbios);
-  //  DBG("OEM Tables = %x\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
+  //  DBG("OEM Tables = %X\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
   if (!Smbios) {
     Status = EFI_NOT_FOUND;
     //    DBG("Original SMBIOS System Table not found! Getting from Hob...\n");
@@ -2055,7 +2055,7 @@ EFI_STATUS PrepatchSmbios()
   GetTableType16();
   GetTableType17();
   GetTableType32(); //get BootStatus here to decide what to do
-  MsgLog("Boot status=%x\n", gBootStatus);
+  MsgLog("Boot status=%X\n", gBootStatus);
   //for example the bootloader may go to Recovery is BootStatus is Fail
   return   Status;
 }

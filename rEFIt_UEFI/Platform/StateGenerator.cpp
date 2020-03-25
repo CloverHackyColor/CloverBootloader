@@ -128,18 +128,18 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
               AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28)));
               gBS->Stall(10);
               cpu_dynamic_fsb = (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 28))?1:0;
-              DBG("DynamicFSB: %a\n", cpu_dynamic_fsb?"yes":"no");
+              DBG("DynamicFSB: %s\n", cpu_dynamic_fsb?"yes":"no");
             }
 
             cpu_noninteger_bus_ratio = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46)) != 0)?1:0;
             initial.Control.Control = (UINT16)AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            DBG("Initial control=0x%x\n", initial.Control);
+            DBG("Initial control=0x%X\n", initial.Control.Control);
 						
             maximum.Control.Control = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
-            DBG("Maximum control=0x%x\n", maximum.Control.Control);
+            DBG("Maximum control=0x%X\n", maximum.Control.Control);
             if (gSettings.Turbo) {
               maximum.Control.VID_FID.FID++;
-              MsgLog("Turbo FID=0x%x\n", maximum.Control.VID_FID.FID);
+              MsgLog("Turbo FID=0x%X\n", maximum.Control.VID_FID.FID);
             }
             MsgLog("UnderVoltStep=%d\n", gSettings.UnderVoltStep);
             MsgLog("PLimitDict=%d\n", gSettings.PLimitDict);
@@ -245,12 +245,12 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
             }
 
             realMax = maximum.Control.Control;
-            DBG("Maximum control=0x%x\n", realMax);
+            DBG("Maximum control=0x%X\n", realMax);
             if (gSettings.Turbo) {
               realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
               (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               maximum.Control.Control = realTurbo;
-              MsgLog("Turbo control=0x%x\n", realTurbo);
+              MsgLog("Turbo control=0x%X\n", realTurbo);
             }
             Apsn = (realTurbo > realMax)?(realTurbo - realMax):0;
             realMin =  RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
@@ -261,7 +261,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
               minimum.Control.Control = realMin;
             }
 
-            MsgLog("P-States: min 0x%x, max 0x%x\n", minimum.Control.Control, maximum.Control.Control);
+            MsgLog("P-States: min 0x%X, max 0x%X\n", minimum.Control.Control, maximum.Control.Control);
 
             // Sanity check
             if (maximum.Control.Control < minimum.Control.Control) {

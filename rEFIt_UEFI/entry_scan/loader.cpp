@@ -374,7 +374,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
       //Create null terminated string
       targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
       CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
-      DBG("found disk_label with contents:%a\n", targetString);
+      DBG("found disk_label with contents:%s\n", targetString);
 
       //      NOTE: Sothor - This was never run. If we need this correct it and uncomment it.
       //      if (Entry->LoaderType == OSTYPE_OSX) {
@@ -394,7 +394,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
       AsciiStrToUnicodeStrS(targetString, tmpName, fileLen);
 
       Entry->VolName = EfiStrDuplicate(tmpName);
-      DBG("Created name:%s\n", Entry->VolName);
+      DBG("Created name:%ls\n", Entry->VolName);
 
       FreePool(tmpName);
       FreePool(fileBuffer);
@@ -451,7 +451,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     INTN Comparison = StriCmp(FilePathAsString, LoaderDevicePathString);
     FreePool(FilePathAsString);
     if (Comparison == 0) {
-      DBG("%a skipped because path `%s` is self path!\n", indent, LoaderDevicePathString);
+      DBG("%s skipped because path `%ls` is self path!\n", indent, LoaderDevicePathString);
       FreePool(LoaderDevicePathString);
       return NULL;
     }
@@ -468,7 +468,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         // Only want loaders
         if (MainEntry.getLOADER_ENTRY()) {
           if (StriCmp(MainEntry.getLOADER_ENTRY()->DevicePathString, LoaderDevicePathString) == 0) {
-            DBG("%a skipped because path `%s` already exists for another entry!\n", indent, LoaderDevicePathString);
+            DBG("%s skipped because path `%ls` already exists for another entry!\n", indent, LoaderDevicePathString);
             FreePool(LoaderDevicePathString);
             return NULL;
           }
@@ -518,32 +518,32 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         if (volume_match == -1 || volume_type_match == -1 || path_match == -1 || type_match == -1 ) {
           UINTN add_comma = 0;
 
-          DBG ("%aNot match custom entry %d: ", indent, CustomIndex);
+			DBG ("%sNot match custom entry %llu: ", indent, CustomIndex);
           if (volume_match != 0) {
-            DBG("Volume: %s", volume_match == 1 ? L"match" : L"not match");
+            DBG("Volume: %ls", volume_match == 1 ? L"match" : L"not match");
             add_comma++;
           }
           if (path_match != 0) {
-            DBG("%sPath: %s",
+            DBG("%lsPath: %ls",
                 (add_comma ? L", " : L""),
                 path_match == 1 ? L"match" : L"not match");
             add_comma++;
           }
           if (volume_type_match != 0) {
-            DBG("%sVolumeType: %s",
+            DBG("%lsVolumeType: %ls",
                 (add_comma ? L", " : L""),
                 volume_type_match == 1 ? L"match" : L"not match");
             add_comma++;
           }
           if (type_match != 0) {
-            DBG("%sType: %s",
+            DBG("%lsType: %ls",
                 (add_comma ? L", " : L""),
                 type_match == 1 ? L"match" : L"not match");
           }
           DBG("\n");
         } else {
           // Custom entry match
-          DBG("%aSkipped because matching custom entry %d!\n", indent, CustomIndex);
+			DBG("%sSkipped because matching custom entry %llu!\n", indent, CustomIndex);
           FreePool(LoaderDevicePathString);
           return NULL;
         }
@@ -657,7 +657,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
   
   if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
-    //DBG("encounter Entry->VolName ==%s and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
+    //DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     if (GlobalConfig.BootCampStyle) {
       Entry->Title.takeValueFrom(((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
@@ -666,7 +666,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     }
   }
   if ( Entry->Title.isEmpty() ) {
-    //DBG("encounter LoaderTitle ==%s and Entry->VolName ==%s\n", LoaderTitle, Entry->VolName);
+    //DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n", LoaderTitle, Entry->VolName);
     if (GlobalConfig.BootCampStyle) {
       if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
         Entry->Title.takeValueFrom(Entry->VolName);
@@ -678,7 +678,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                     Entry->VolName);
     }
   }
-  //DBG("Entry->Title =%s\n", Entry->Title);
+  //DBG("Entry->Title =%ls\n", Entry->Title);
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -711,7 +711,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   // Load DriveImage
   Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
 
-  // DBG("HideBadges=%d Volume=%s ", GlobalConfig.HideBadges, Volume->VolName);
+  // DBG("HideBadges=%d Volume=%ls ", GlobalConfig.HideBadges, Volume->VolName);
 #if USE_XTHEME
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
@@ -741,7 +741,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 #ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 #endif
-//  DBG("%aLoader entry created for '%s'\n", indent, Entry->DevicePathString);
+//  DBG("%sLoader entry created for '%ls'\n", indent, Entry->DevicePathString);
   return Entry;
 }
 
@@ -792,7 +792,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
     CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
-    AsciiSPrint(GuidStr, 50, "%g", Guid);
+    AsciiSPrint(GuidStr, 50, "%s", strguid(Guid));
     SubScreen->AddMenuInfoLine(PoolPrint(L"UUID: %a", GuidStr));
     FreePool(GuidStr);
   }
@@ -995,7 +995,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
-  // DBG("    Added '%s': OSType='%d', OSVersion='%a'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
+  // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
 
 STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderOptions,
@@ -1010,7 +1010,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *Load
     return FALSE;
   }
 
-  DBG("        AddLoaderEntry for Volume Name=%s\n", Volume->VolName);
+  DBG("        AddLoaderEntry for Volume Name=%ls\n", Volume->VolName);
   if (OSFLAG_ISSET(Flags, OSFLAG_DISABLED)) {
     DBG("        skipped because entry is disabled\n");
     return FALSE;
@@ -1023,7 +1023,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *Load
   if (!gSettings.ShowHiddenEntries) {
     for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
       if (StriStr(LoaderPath, gSettings.HVHideStrings[HVi])) {
-        DBG("        hiding entry: %s\n", LoaderPath);
+        DBG("        hiding entry: %ls\n", LoaderPath);
         return FALSE;
       }
     }
@@ -1110,7 +1110,7 @@ VOID ScanLoader(VOID)
       //DBG(", no file system\n", VolumeIndex);
       continue;
     }
-    DBG("- [%02d]: '%s'", VolumeIndex, Volume->VolName);
+	  DBG("- [%02llu]: '%ls'", VolumeIndex, Volume->VolName);
     if (Volume->VolName == NULL) {
       Volume->VolName = L"Unknown";
     }
@@ -1275,7 +1275,7 @@ VOID ScanLoader(VOID)
         // Get the partition UUID and make sure it's lower case
         CHAR16          PartUUID[40];
         ZeroMem(&PreviousTime, sizeof(EFI_TIME));
-        UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", PartGUID);
+        UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%s", strguid(PartGUID));
         StrToLower(PartUUID);
         // open the /boot directory (or whatever directory path)
         DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
@@ -1532,7 +1532,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   }
 
   if (FindCustomPath && (Custom->Type != OSTYPE_LINEFI)) {
-    DBG("Custom %sentry %d skipped because it didn't have a ", IsSubEntry ? L"sub " : L"", CustomIndex);
+	  DBG("Custom %lsentry %llu skipped because it didn't have a ", IsSubEntry ? L"sub " : L"", CustomIndex);
     if (Custom->Type == 0) {
       DBG("Type.\n");
     } else {
@@ -1542,30 +1542,30 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   }
 
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-    DBG("Custom %sentry %d skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
+	  DBG("Custom %lsentry %llu skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
   if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-    DBG("Custom %sentry %d skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
+	  DBG("Custom %lsentry %llu skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
 
-  DBG("Custom %sentry %d ", IsSubEntry ? L"sub " : L"", CustomIndex);
+	DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);
   if (Custom->Title) {
-    DBG("Title:\"%s\" ", Custom->Title);
+    DBG("Title:\"%ls\" ", Custom->Title);
   }
   if (Custom->FullTitle) {
-    DBG("FullTitle:\"%s\" ", Custom->FullTitle);
+    DBG("FullTitle:\"%ls\" ", Custom->FullTitle);
   }
   if (CustomPath) {
-    DBG("Path:\"%s\" ", CustomPath);
+    DBG("Path:\"%ls\" ", CustomPath);
   }
   if (Custom->Options != NULL) {
-    DBG("Options:\"%s\" ", Custom->Options);
+    DBG("Options:\"%ls\" ", Custom->Options);
   }
   DBG("Type:%d Flags:0x%X matching ", Custom->Type, Custom->Flags);
   if (Custom->Volume) {
-    DBG("Volume:\"%s\"\n", Custom->Volume);
+    DBG("Volume:\"%ls\"\n", Custom->Volume);
   } else {
     DBG("all volumes\n");
   }
@@ -1585,7 +1585,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       Volume->VolName = L"Unknown";
     }
 
-    DBG("    Checking volume \"%s\" (%s) ... ", Volume->VolName, Volume->DevicePathString);
+    DBG("    Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
 
     // skip volume if its kind is configured as disabled
     if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||
@@ -1650,7 +1650,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         DBG("skipped because volume does not have partition uuid\n");
         continue;
       }
-      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%g", Guid);
+      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%s", strguid(Guid));
       StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
@@ -1974,7 +1974,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           }
         }
         if (BetterMatch) {
-          DBG("skipped because custom entry %d is a better match and will produce a duplicate entry\n", i);
+			DBG("skipped because custom entry %llu is a better match and will produce a duplicate entry\n", i);
           continue;
         }
       }
@@ -1982,7 +1982,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       // Create an entry for this volume
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
       if (Entry != NULL) {
-        DBG("Custom settings: %s.plist will %a be applied\n",
+        DBG("Custom settings: %ls.plist will %s be applied\n",
             Custom->Settings, Custom->CommonSettings?"not":"");
         if (!Custom->CommonSettings) {
           Entry->Settings = Custom->Settings;
@@ -2010,7 +2010,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
               CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
-              AsciiSPrint(GuidStr, 50, "%g", Guid);
+              AsciiSPrint(GuidStr, 50, "%s", strguid(Guid));
               SubScreen->AddMenuInfoLine(PoolPrint(L"UUID: %a", GuidStr));
               FreePool(GuidStr);
             }

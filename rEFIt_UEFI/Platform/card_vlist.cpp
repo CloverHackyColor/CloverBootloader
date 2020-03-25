@@ -153,7 +153,7 @@ VOID FillCardList(TagPtr CfgDict)
                 LoadVBios = TRUE;
               }
               
-              DBG("FillCardList :: %a : \"%a\" (%08x, %08x)\n", key, model_name, dev_id, subdev_id);
+              DBG("FillCardList :: %s : \"%s\" (%08X, %08X)\n", key, model_name, dev_id, subdev_id);
               
               AddCard(model_name, dev_id, subdev_id, VramSize, VideoPorts, LoadVBios);
             }

@@ -14,7 +14,7 @@ void* operator new  (unsigned long count)
 {
 	void* ptr = AllocatePool(count);
 	if ( !ptr ) {
-		DebugLog(2, "AllocatePool(%d) returned NULL. Cpu halted\n", count);
+		DebugLog(2, "AllocatePool(%lu) returned NULL. Cpu halted\n", count);
 		CpuDeadLoop();
 	}
 	return ptr;

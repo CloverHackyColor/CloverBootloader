@@ -293,8 +293,8 @@ VOID ATIConnectorsPatchInit(LOADER_ENTRY *Entry)
   
   ATIConnectorsPatchInited = TRUE;
   
-  //DBG(L"Bundle1: %a\n", ATIKextBundleId[0]);
-  //DBG(L"Bundle2: %a\n", ATIKextBundleId[1]);
+  //DBG(L"Bundle1: %s\n", ATIKextBundleId[0]);
+  //DBG(L"Bundle2: %s\n", ATIKextBundleId[1]);
   //gBS->Stall(10000000);
 }
 
@@ -1153,7 +1153,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   // search for Key
   Value = AsciiStrStr(Plist, Key);
   if (Value == NULL) {
-    //DBG(L"\nNo key: %a\n", Key);
+    //DBG(L"\nNo key: %s\n", Key);
     return 0;
   }
   
@@ -1193,7 +1193,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   /*
    if (DbgCount < 3) {
    AsciiStrnCpy(Buffer, Value, sizeof(Buffer) - 1);
-   DBG(L"\nRef: '%a'\n", Buffer);
+   DBG(L"\nRef: '%s'\n", Buffer);
    }
    */
   if (IDLen > 8) {
@@ -1205,14 +1205,14 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   AsciiStrCatS(Buffer, 48, "\"");
   /*
    if (DbgCount < 3) {
-   DBG(L"Searching: '%a'\n", Buffer);
+   DBG(L"Searching: '%s'\n", Buffer);
    }
    */
   
   // and search whole plist for ID
   IntTag = AsciiStrStr(WholePlist, Buffer);
   if (IntTag == NULL) {
-    DBG(L"\nNo %a\n", Buffer);
+    DBG(L"\nNo %s\n", Buffer);
     return 0;
   }
   
@@ -1220,7 +1220,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   /*
    if (DbgCount < 3) {
    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
-   DBG(L"Found: '%a'\n", Buffer);
+   DBG(L"Found: '%s'\n", Buffer);
    }
    */
   Value = AsciiStrStr(IntTag, ">");
@@ -1239,7 +1239,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   /*
    if (DbgCount < 3) {
    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
-   DBG(L"Found num: %x\n", NumValue);
+   DBG(L"Found num: %X\n", NumValue);
    gBS->Stall(10000000);
    }
    DbgCount++;
@@ -1340,8 +1340,8 @@ VOID PatchPrelinkedKexts(LOADER_ENTRY *Entry)
         /*if (DbgCount < 3
          || DbgCount == 100 || DbgCount == 101 || DbgCount == 102
          ) {
-         DBG(L"\n\nKext: St = %x, Size = %x\n", KextAddr, KextSize);
-         DBG(L"Info: St = %p, End = %p\n%a\n", InfoPlistStart, InfoPlistEnd, InfoPlistStart);
+         DBG(L"\n\nKext: St = %X, Size = %X\n", KextAddr, KextSize);
+         DBG(L"Info: St = %p, End = %p\n%s\n", InfoPlistStart, InfoPlistEnd, InfoPlistStart);
          gBS->Stall(20000000);
          }
          */
@@ -1393,11 +1393,11 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
   if (!EFI_ERROR(DTLookupEntry(NULL,"/chosen/memory-map", &MMEntry))) {
     if (!EFI_ERROR(DTCreatePropertyIterator(MMEntry, PropIter))) {
       while (!EFI_ERROR(DTIterateProperties(PropIter, &PropName))) {
-        //DBG(L"Prop: %a\n", PropName);
+        //DBG(L"Prop: %s\n", PropName);
         if (AsciiStrStr(PropName,"Driver-")) {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
           PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
-          //if (DbgCount < 3) DBG(L"%a: paddr = %x, length = %x\n", PropName, PropEntry->paddr, PropEntry->length);
+          //if (DbgCount < 3) DBG(L"%s: paddr = %X, length = %X\n", PropName, PropEntry->paddr, PropEntry->length);
           
           // PropEntry->paddr points to _BooterKextFileInfo
           KextFileInfo = (_BooterKextFileInfo *)(UINTN)PropEntry->paddr;
@@ -1419,7 +1419,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
         }
         //if(AsciiStrStr(PropName,"DriversPackage-")!=0)
         //{
-        //    DBG(L"Found %a\n", PropName);
+        //    DBG(L"Found %s\n", PropName);
         //    break;
         //}
       }

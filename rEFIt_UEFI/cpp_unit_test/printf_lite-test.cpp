@@ -10,12 +10,13 @@
 #include <limits.h>
 #include "unicode_conversions.h"
 #include "printf_lite-test-cpp_conf.h"
+#include "printf_lite-test.h"
 
-int nbTestFailed = 0;
+static int nbTestFailed = 0;
 #ifdef DISPLAY_ONLY_FAILED
-bool displayOnlyFailed = true;
+static bool displayOnlyFailed = true;
 #else
-bool displayOnlyFailed = false;
+static bool displayOnlyFailed = false;
 #endif
 
 /*
@@ -36,9 +37,9 @@ static void print_wchar_string(const wchar_t* s)
 	loggf("%s", utf8);
 }
 
-int testPrintf(const char* label, const char*  expectResult, int expectedRet, const char* format, ...) __attribute__((format(printf, 4, 5)));
+static int testPrintf(const char* label, const char*  expectResult, int expectedRet, const char* format, ...) __attribute__((format(printf, 4, 5)));
 
-int testPrintf(const char* label, const char*  expectResult, int expectedRet, const char* format, ...)
+static int testPrintf(const char* label, const char*  expectResult, int expectedRet, const char* format, ...)
 {
 	char buf[40];
 	va_list valist;
@@ -59,9 +60,9 @@ int testPrintf(const char* label, const char*  expectResult, int expectedRet, co
 }
 
 
-int testWPrintf(const char* label, const wchar_t*  expectResult, int expectedRet, const char* format, ...) __attribute__((format(printf, 4, 5)));
+static int testWPrintf(const char* label, const wchar_t*  expectResult, int expectedRet, const char* format, ...) __attribute__((format(printf, 4, 5)));
 
-int testWPrintf(const char* label, const wchar_t*  expectResult, int expectedRet, const char* format, ...)
+static int testWPrintf(const char* label, const wchar_t*  expectResult, int expectedRet, const char* format, ...)
 {
 	wchar_t wbuf[40];
 #if VSNWPRINTF_RETURN_MINUS1_ON_OVERFLOW == 1
@@ -187,9 +188,9 @@ int printf_lite_tests(void)
 
 //testWPrintf("", F(L"Āࠀ𐀀🧊Выход'utf16'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf16");
 
-	Test1arg(F("'utf16-string'"), F("'%s'"), "utf16-string");
+	Test1arg(F("'utf8-string'"), F("'%s'"), "utf8-string");
 	Test1arg(F("'utf16-string'"), F("'%ls'"), L"utf16-string");
-	Test1arg(F("Āࠀ𐀀🧊Выход'utf16'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf16");
+	Test1arg(F("Āࠀ𐀀🧊Выход'utf8'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf8");
 	Test1arg(F("Āࠀ𐀀🧊Выход'utf16'из"), F("Āࠀ𐀀🧊Выход'%ls'из"), L"utf16");
 	Test1arg(F("Āࠀ𐀀🧊Выхо'ыход'из"), F("Āࠀ𐀀🧊Выхо'%s'из"), "ыход");
 	Test1arg(F("Āࠀ𐀀🧊Выхо'ыход'из"), F("Āࠀ𐀀🧊Выхо'%ls'из"), L"ыход");

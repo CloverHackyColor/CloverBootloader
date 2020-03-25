@@ -174,7 +174,7 @@ UINT32 aml_fill_simple_name(CHAR8* buffer, /* CONST*/ CHAR8* name)
 {
 	if (AsciiStrLen(name) < 4) 
 	{
-//		MsgLog("aml_fill_simple_name: simple name %a has incorrect lengh! Must be 4.\n", name);
+//		MsgLog("aml_fill_simple_name: simple name %s has incorrect lengh! Must be 4.\n", name);
 		return 0;
 	}
 	
@@ -196,7 +196,7 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 	
 	if ((len % 4) > 1 || count == 0) 
 	{
-//		MsgLog("aml_fill_name: pathname %a has incorrect length! Must be 4, 8, 12, 16, etc...\n", name);
+//		MsgLog("aml_fill_name: pathname %s has incorrect length! Must be 4, 8, 12, 16, etc...\n", name);
 		return 0;
 	}
 	
@@ -671,7 +671,7 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 		}
 		
 		if (offset - old != node->Size) {
-			MsgLog("Node size incorrect: type=0x%x size=%x offset=%x\n",
+			MsgLog("Node size incorrect: type=0x%X size=%X offset=%X\n",
              node->Type, node->Size, (offset - old));
     }
 	}

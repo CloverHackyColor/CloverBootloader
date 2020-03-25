@@ -68,7 +68,7 @@ VOID EnableSecureBoot(VOID)
   }
   // Ask user if they want to use default keys
   WantDefaultKeys = YesNoMessage(L"Secure Boot", L"Enroll the default keys too?");
-  DBG("Enabling secure boot with%a default keys\n", WantDefaultKeys ? "" : "out");
+  DBG("Enabling secure boot with%s default keys\n", WantDefaultKeys ? "" : "out");
   // Get this image's certificate
   if (SelfFullDevicePath != NULL) {
     UINT32 AuthenticationStatus = 0;
@@ -95,7 +95,7 @@ VOID EnableSecureBoot(VOID)
     if ((FileBuffer == NULL) || (FileSize == 0)) {
       CHAR16 *FilePath = FileDevicePathToStr(SelfFullDevicePath);
       if (FilePath != NULL) {
-        DBG("Failed to load Clover image from %s\n", FilePath);
+        DBG("Failed to load Clover image from %ls\n", FilePath);
         FreePool(FilePath);
       } else {
         DBG("Failed to load Clover image\n");
@@ -127,7 +127,7 @@ VOID EnableSecureBoot(VOID)
       AlertMessage(L"Enable Secure Boot", Str);
       FreePool(Str);
     }
-    DBG("Enabling secure boot failed because %s! Status: %r\n", ErrorString, Status);
+    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString, strerror(Status));
     DisableSecureBoot();
   }
 }
@@ -154,11 +154,11 @@ STATIC VOID PrintSecureBootInfo(VOID)
 {
   // Nothing to do if secure boot is disabled or in setup mode
   if (!gSettings.SecureBoot) {
-    DBG("Secure Boot: %a\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
+    DBG("Secure Boot: %s\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
   } else {
     // Secure boot is enabled
-    DBG("Secure Boot: %a\n", (gSettings.SecureBootSetupMode ? "Forced" : "Enabled"));
-    DBG("Boot Policy: %s\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+    DBG("Secure Boot: %s\n", (gSettings.SecureBootSetupMode ? "Forced" : "Enabled"));
+    DBG("Boot Policy: %ls\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
   }
 }
 
@@ -174,11 +174,11 @@ STATIC VOID DisableMessage(IN EFI_STATUS  Status,
     Str = PoolPrint(L"%s\n%r", String, Status);
   }
   if (Str != NULL) {
-    DBG("Secure Boot: %s", Str);
+    DBG("Secure Boot: %ls", Str);
     AlertMessage(L"Disable Secure Boot", Str);
     FreePool(Str);
   } else {
-    DBG("Secure Boot: %s", String);
+    DBG("Secure Boot: %ls", String);
     AlertMessage(L"Disable Secure Boot", String);
   }
 }
@@ -310,7 +310,7 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
   case SECURE_BOOT_POLICY_USER:
     // Query user to allow image or deny image or insert image signature
     UserResponse = QuerySecureBootUser(DevicePath);
-    DBG("VerifySecureBootImage: User selected policy: %s\n", SecureBootPolicyToStr(UserResponse));
+    DBG("VerifySecureBootImage: User selected policy: %ls\n", SecureBootPolicyToStr(UserResponse));
     // Perform user action
     switch (UserResponse) {
     case SECURE_BOOT_POLICY_ALLOW:
@@ -367,7 +367,7 @@ InternalFileAuthentication(IN CONST EFI_SECURITY_ARCH_PROTOCOL *This,
   if (EFI_ERROR(Status)) {
     CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
-      DBG("VerifySecureBootImage(1): %r %s\n", Status, DevicePathStr);
+      DBG("VerifySecureBootImage(1): %s %ls\n", strerror(Status), DevicePathStr);
       FreePool(DevicePathStr);
     }
   }
@@ -394,7 +394,7 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
   if (EFI_ERROR(Status)) {
     CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
-      DBG("VerifySecureBootImage(2): %r %s\n", Status, DevicePathStr);
+      DBG("VerifySecureBootImage(2): %s %ls\n", strerror(Status), DevicePathStr);
       FreePool(DevicePathStr);
     }
   }
@@ -413,7 +413,7 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   if (EFI_ERROR(Status)) {
     CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
-      DBG("VerifySecureBootImage: %r %s\n", Status, DevicePathStr);
+      DBG("VerifySecureBootImage: %s %ls\n", strerror(Status), DevicePathStr);
       FreePool(DevicePathStr);
     }
   }
