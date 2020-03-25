@@ -207,6 +207,7 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   }
   EFI_STATUS Status = EFI_TIMEOUT;
   Screen->mAction = ActionNone;
+  bool Move = false;
 
   if (!IsDragging && MouseEvent == MouseMove)
     MouseEvent = NoEvents;
@@ -218,6 +219,7 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
       Screen->mAction = ActionScrollDown;
     else if (MouseInRect(&Scrollbar) && MouseEvent == LeftMouseDown) {
       IsDragging = TRUE;
+      Move = true;
 //      Screen->mAction = ActionMoveScrollbar;
       ScrollbarYMovement = 0;
       ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = newPlace.XPos;
@@ -225,6 +227,7 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
     }
     else if (IsDragging && MouseEvent == LeftClick) {
       IsDragging = FALSE;
+      Move = true;
 //      Screen->mAction = ActionMoveScrollbar;
     }
     else if (IsDragging && MouseEvent == MouseMove) {
@@ -246,7 +249,8 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
     else if (MouseEvent == ScrollUp) {
       Screen->mAction = ActionScrollUp;
     }
-    else {
+  }
+  if (!Screen->ScrollEnabled || (Screen->mAction == ActionNone && !Move) ) {
       for (UINTN EntryId = 0; EntryId < Screen->Entries.size(); EntryId++) {
         if (MouseInRect(&(Screen->Entries[EntryId].Place))) {
           switch (MouseEvent) {
@@ -298,7 +302,7 @@ EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
           Screen->mItemID = 0xFFFF;
         }
       }
-    }
+
   }
 
   if (Screen->mAction != ActionNone) {
