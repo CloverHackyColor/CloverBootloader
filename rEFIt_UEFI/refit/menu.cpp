@@ -88,11 +88,13 @@ extern UINT8            gLanMac[4][6]; // their MAC addresses
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 //layout must be in XTheme
+#if !USE_XTHEME
 INTN LayoutBannerOffset = 64;
 INTN LayoutButtonOffset = 0;
 INTN LayoutTextOffset = 0;
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
+#endif
 
 BOOLEAN SavePreBootLog = FALSE;
 
@@ -4808,16 +4810,17 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
 /**
  * Main screen text.
  */
+#if USE_XTHEME
 VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   EFI_STATUS Status = EFI_SUCCESS;
   INTN i = 0;
   INTN MessageHeight = 0;
 // clovy
-	if (GlobalConfig.TypeSVG && textFace[1].valid) {
-		MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
+	if (ThemeX.TypeSVG && textFace[1].valid) {
+		MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX.Scale);
 	} else {
-		MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * GlobalConfig.Scale);
+		MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * ThemeX.Scale);
 	}
 
   switch (Function) {
@@ -4827,6 +4830,208 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       InitAnime();
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);
+
+      EntriesGap = (int)(ThemeX.TileXSpace * ThemeX.Scale);
+      EntriesWidth = ThemeX.row0TileSize;
+      EntriesHeight = ThemeX.MainEntriesSize + (int)(16.f * ThemeX.Scale);
+
+      MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* ThemeX.Scale)) / (EntriesWidth + EntriesGap); //8
+      CountItems();
+      InitScroll(row0Count, Entries.size(), MaxItemOnScreen, 0);
+
+      row0PosX = EntriesWidth + EntriesGap;
+      row0PosX = row0PosX * ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count);
+      row0PosX = row0PosX - EntriesGap;
+      row0PosX = UGAWidth - row0PosX;
+      row0PosX = row0PosX >> 1;
+
+      row0PosY = (int)(((float)UGAHeight - ThemeX.LayoutHeight * ThemeX.Scale) * 0.5f +
+                  ThemeX.LayoutBannerOffset * ThemeX.Scale);
+
+      row1PosX = (UGAWidth + 8 - (ThemeX.row1TileSize + (INTN)(8.0f * ThemeX.Scale)) * row1Count) >> 1;
+
+      if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        row1PosY = row0PosY + ThemeX.row0TileSize + (INTN)((BCSMargin * 2) * ThemeX.Scale) + TextHeight +
+            (INTN)(INDICATOR_SIZE * ThemeX.Scale) +
+            (INTN)((ThemeX.LayoutButtonOffset + ThemeX.TileYSpace) * ThemeX.Scale);
+      } else {
+        row1PosY = row0PosY + EntriesHeight +
+            (INTN)((ThemeX.TileYSpace + ThemeX.LayoutButtonOffset) * ThemeX.Scale);
+      }
+
+      if (row1Count > 0) {
+          textPosY = row1PosY + MAX(ThemeX.row1TileSize, MessageHeight) + (INTN)((ThemeX.TileYSpace + ThemeX.LayoutTextOffset) * ThemeX.Scale);
+        } else {
+          textPosY = row1PosY;
+        }
+
+      if (ThemeX.BootCampStyle) {
+        textPosY = row0PosY + ThemeX.row0TileSize + (INTN)((TEXT_YMARGIN + BCSMargin) * ThemeX.Scale);
+      }
+
+      FunctextPosY = row1PosY + ThemeX.row1TileSize + (INTN)((ThemeX.TileYSpace + ThemeX.LayoutTextOffset) * ThemeX.Scale);
+      
+      if (!itemPosX) {
+        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
+      }
+
+      row0PosXRunning = row0PosX;
+      row1PosXRunning = row1PosX;
+      //DBG("EntryCount =%d\n", Entries.size());
+      for (INTN i = 0; i < (INTN)Entries.size(); i++) {
+        if (Entries[i].Row == 0) {
+          itemPosX[i] = row0PosXRunning;
+          row0PosXRunning += EntriesWidth + EntriesGap;
+        } else {
+          itemPosX[i] = row1PosXRunning;
+          row1PosXRunning += row1TileSize + (INTN)(TILE1_XSPACING * ThemeX.Scale);
+          //DBG("next item in row1 at x=%d\n", row1PosXRunning);
+        }
+      }
+      // initial painting
+      ThemeX.InitSelection();
+
+      // Update FilmPlace only if not set by InitAnime
+      if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
+        CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
+      }
+
+      //DBG("main menu inited\n");
+      break;
+
+    case MENU_FUNCTION_CLEANUP:
+      FreePool(itemPosX);
+      itemPosX = NULL;
+      HidePointer();
+      break;
+
+    case MENU_FUNCTION_PAINT_ALL:
+    
+      for (i = 0; i <= ScrollState.MaxIndex; i++) {
+        if (Entries[i].Row == 0) {
+          if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
+            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+                              itemPosX[i - ScrollState.FirstVisible], row0PosY);
+            // draw static text for the boot options, BootCampStyle
+
+            if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (row0TileSize / 2);
+              // clear the screen
+
+              ThemeX.FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
+                                   MessageHeight);
+              DrawBCSText(Entries[i].Title, textPosX, textPosY, X_IS_CENTER);
+            }
+          }
+        } else {
+          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+                            itemPosX[i], row1PosY);
+        }
+      }
+
+      // clear the text from the second row, required by the BootCampStyle
+      if ((ThemeX.BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
+          && (Entries[ScrollState.CurrentSelection].Row == 0) && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
+                             OldTextWidth, MessageHeight);
+      }
+
+      if ((Entries[ScrollState.LastSelection].Row == 0) && (Entries[ScrollState.CurrentSelection].Row == 1)
+          && ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), FunctextPosY);
+      }
+      if (!(ThemeX.BootCampStyle) && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), textPosY);
+      }
+
+      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
+      Status = MouseBirth();
+      if(EFI_ERROR(Status)) {
+        DBG("can't bear mouse at all! Status=%s\n", strerror(Status));
+      }
+      break;
+
+    case MENU_FUNCTION_PAINT_SELECTION:
+      HidePointer();
+      if (Entries[ScrollState.LastSelection].Row == 0) {
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+                      itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible], row0PosY);
+      } else {
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+                          itemPosX[ScrollState.LastSelection], row1PosY);
+      }
+
+      if (Entries[ScrollState.CurrentSelection].Row == 0) {
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+                      itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible], row0PosY);
+      } else {
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+                          itemPosX[ScrollState.CurrentSelection], row1PosY);
+      }
+
+      if ((ThemeX.BootCampStyle) && (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL))
+          && Entries[ScrollState.CurrentSelection].Row == 1) {
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), FunctextPosY);
+      }
+      if ((!(ThemeX.BootCampStyle)) && (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL))) {
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), textPosY);
+      }
+
+      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
+      Status = MouseBirth();
+      if(EFI_ERROR(Status)) {
+        DBG("can't bear mouse at sel! Status=%s\n", strerror(Status));
+      }
+      break;
+
+    case MENU_FUNCTION_PAINT_TIMEOUT:
+      i = (ThemeX.HideBadges & HDBADGES_INLINE)?3:1;
+      HidePointer();
+      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)){
+        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
+                             OldTimeoutTextWidth, MessageHeight);
+        OldTimeoutTextWidth = DrawTextXY(XStringW().takeValueFrom(ParamText), (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
+      }
+
+      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
+      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
+      Status = MouseBirth();
+      if(EFI_ERROR(Status)) {
+        DBG("can't bear mouse at timeout! Status=%s\n", strerror(Status));
+      }
+      break;
+
+  }
+}
+#else
+VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
+{
+  EFI_STATUS Status = EFI_SUCCESS;
+  INTN i = 0;
+  INTN MessageHeight = 0;
+  // clovy
+  if (GlobalConfig.TypeSVG && textFace[1].valid) {
+    MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
+  } else {
+    MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * GlobalConfig.Scale);
+  }
+
+  switch (Function) {
+
+    case MENU_FUNCTION_INIT:
+      egGetScreenSize(&UGAWidth, &UGAHeight);
+      InitAnime();
+      SwitchToGraphicsAndClear();
+      //BltClearScreen(FALSE);
 
       EntriesGap = (int)(GlobalConfig.TileXSpace * GlobalConfig.Scale);
       EntriesWidth = row0TileSize;
@@ -4843,31 +5048,31 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       row0PosX = row0PosX >> 1;
 
       row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
-                  LayoutBannerOffset * GlobalConfig.Scale);
+                       LayoutBannerOffset * GlobalConfig.Scale);
 
       row1PosX = (UGAWidth + 8 - (row1TileSize + (INTN)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
 
       if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         row1PosY = row0PosY + row0TileSize + (INTN)((BCSMargin * 2) * GlobalConfig.Scale) + TextHeight +
-            (INTN)(INDICATOR_SIZE * GlobalConfig.Scale) +
-            (INTN)((LayoutButtonOffset + GlobalConfig.TileYSpace) * GlobalConfig.Scale);
+        (INTN)(INDICATOR_SIZE * GlobalConfig.Scale) +
+        (INTN)((LayoutButtonOffset + GlobalConfig.TileYSpace) * GlobalConfig.Scale);
       } else {
         row1PosY = row0PosY + EntriesHeight +
-            (INTN)((GlobalConfig.TileYSpace + LayoutButtonOffset) * GlobalConfig.Scale);
+        (INTN)((GlobalConfig.TileYSpace + LayoutButtonOffset) * GlobalConfig.Scale);
       }
 
       if (row1Count > 0) {
-          textPosY = row1PosY + MAX(row1TileSize, MessageHeight) + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
-        } else {
-          textPosY = row1PosY;
-        }
+        textPosY = row1PosY + MAX(row1TileSize, MessageHeight) + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
+      } else {
+        textPosY = row1PosY;
+      }
 
       if (GlobalConfig.BootCampStyle) {
         textPosY = row0PosY + row0TileSize + (INTN)((TEXT_YMARGIN + BCSMargin) * GlobalConfig.Scale);
       }
 
       FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
-      
+
       if (!itemPosX) {
         itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
       }
@@ -4903,7 +5108,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-    
+
       for (i = 0; i <= ScrollState.MaxIndex; i++) {
         if (Entries[i].Row == 0) {
           if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
@@ -4916,7 +5121,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
               // clear the screen
 
               ThemeX.FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
-                                   MessageHeight);
+                                          MessageHeight);
               DrawBCSText(Entries[i].Title, textPosX, textPosY, X_IS_CENTER);
             }
 
@@ -4941,15 +5146,15 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       if ((ThemeX.BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
           && (Entries[ScrollState.CurrentSelection].Row == 0) && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
-                             OldTextWidth, MessageHeight);
+                                    OldTextWidth, MessageHeight);
       }
 #else
       // clear the text from the second row, required by the BootCampStyle
       if ((GlobalConfig.BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
           && (Entries[ScrollState.CurrentSelection].Row == 0) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-          FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
-// clovy                               OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-                               OldTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
+        FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
+                             // clovy                               OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+                             OldTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
       }
 #endif
 
@@ -4967,8 +5172,8 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 #else
       if ((Entries[ScrollState.LastSelection].Row == 0) && (Entries[ScrollState.CurrentSelection].Row == 1)
           && GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-          DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                            (UGAWidth >> 1), FunctextPosY);
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), FunctextPosY);
       }
 
       // something is wrong with the DrawMainMenuLabel or Entries[ScrollState.CurrentSelection]
@@ -4976,7 +5181,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       // used for all the entries
       if (!(GlobalConfig.BootCampStyle) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                            (UGAWidth >> 1), textPosY);
+                          (UGAWidth >> 1), textPosY);
       }
 #endif
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
@@ -4992,7 +5197,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       HidePointer();
       if (Entries[ScrollState.LastSelection].Row == 0) {
         DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
-                      itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible], row0PosY);
+                          itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible], row0PosY);
       } else {
         DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
                           itemPosX[ScrollState.LastSelection], row1PosY);
@@ -5000,7 +5205,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
       if (Entries[ScrollState.CurrentSelection].Row == 0) {
         DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
-                      itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible], row0PosY);
+                          itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible], row0PosY);
       } else {
         DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
                           itemPosX[ScrollState.CurrentSelection], row1PosY);
@@ -5019,14 +5224,14 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       // create dynamic text for the second row if BootCampStyle is used
       if ((GlobalConfig.BootCampStyle) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
           && Entries[ScrollState.CurrentSelection].Row == 1) {
-          DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                            (UGAWidth >> 1), FunctextPosY);
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), FunctextPosY);
       }
 
       // create dynamic text for all the entries
       if ((!(GlobalConfig.BootCampStyle)) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))) {
-          DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                            (UGAWidth >> 1), textPosY);
+        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
+                          (UGAWidth >> 1), textPosY);
       }
 #endif
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
@@ -5043,7 +5248,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       HidePointer();
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)){
         ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
-                             OldTimeoutTextWidth, MessageHeight);
+                                    OldTimeoutTextWidth, MessageHeight);
         OldTimeoutTextWidth = DrawTextXY(XStringW().takeValueFrom(ParamText), (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
       }
 
@@ -5061,7 +5266,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
-                           OldTimeoutTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
+                             OldTimeoutTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
         OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
       }
 
@@ -5076,6 +5281,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 #endif
   }
 }
+#endif
 
 //
 // user-callable dispatcher functions

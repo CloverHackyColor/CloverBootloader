@@ -134,7 +134,7 @@ void XTheme::Init()
   BadgeScale = 4;   // TODO now we have float scale = BadgeScale/16
   ThemeDesignWidth = 0xFFFF;
   ThemeDesignHeight = 0xFFFF;
-  BannerPosX = 0xFFFF;
+  BannerPosX = 0xFFFF; // the value out of range [0,1000]
   BannerPosY = 0xFFFF;
   BannerEdgeHorizontal = 0;
   BannerEdgeVertical = 0;
@@ -156,6 +156,13 @@ void XTheme::Init()
   CentreShift = 0.0f;
   Daylight = true;
   LayoutHeight = 376;
+  LayoutBannerOffset                    = 64; //default value if not set
+  LayoutButtonOffset                    = 0; //default value if not set
+  LayoutTextOffset                      = 0; //default value if not set
+  LayoutAnimMoveForMenuX                = 0; //default value if not set
+
+  row0TileSize = 144;
+  row1TileSize = 64;
 }
 
 XImage& XTheme::GetIcon(const char* Name)

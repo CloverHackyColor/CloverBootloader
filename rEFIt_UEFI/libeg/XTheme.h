@@ -6,6 +6,7 @@
 #include "../cpp_foundation/XString.h"
 #include "libeg.h"
 #include "XImage.h"
+#include "nanosvg.h"
 
 #define INDICATOR_SIZE (52)
 
@@ -45,7 +46,7 @@ public:
   XStringW    DefaultSelection;
   XStringW    BackgroundName;
   SCALING     BackgroundScale;
-  UINTN       BackgroundSharp;
+  INTN        BackgroundSharp;
   BOOLEAN     BackgroundDark;
   BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
@@ -79,6 +80,11 @@ public:
   INTN        row1TileSize;
   UINTN       BanHeight;
   INTN        LayoutHeight; //it was 376 before
+  INTN        LayoutBannerOffset;
+  INTN        LayoutButtonOffset;
+  INTN        LayoutTextOffset;
+  INTN        LayoutAnimMoveForMenuX;
+
   BOOLEAN     Daylight;
 
   XImage  Background; //Background and Banner will not be in array as they live own life
@@ -103,6 +109,8 @@ public:
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
   void FillByDir();
+  EFI_STATUS GetThemeTagSettings (void* DictPointer);
+  void parseTheme(NSVGparser* p, const char** dict); //in nano project
 
   //screen operations
   void ClearScreen();

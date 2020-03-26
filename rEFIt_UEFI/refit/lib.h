@@ -693,12 +693,13 @@ extern INTN row0TileSize;
 extern INTN row1TileSize;
 extern INTN BCSMargin;
 
+#if !USE_XTHEME
 extern INTN LayoutBannerOffset;
 extern INTN LayoutButtonOffset;
 extern INTN LayoutTextOffset;
 extern INTN LayoutAnimMoveForMenuX;
 extern INTN LayoutMainMenuHeight;
-
+#endif
 extern UINTN ConWidth;
 extern UINTN ConHeight;
 extern CHAR16 *BlankLine;

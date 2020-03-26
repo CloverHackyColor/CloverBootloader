@@ -46,6 +46,8 @@ extern "C" {
 #include <Library/BaseMemoryLib.h>
 }
 #include "Platform.h"
+//TODO exclude intersection between libeg and platform
+#include "libeg.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
 #define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))

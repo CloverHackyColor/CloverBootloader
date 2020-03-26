@@ -123,21 +123,40 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   if (FullTitle) {
     Entry->Title.takeValueFrom(FullTitle);
   } else {
+#if USE_XTHEME
+    if (ThemeX.BootCampStyle) {
+      Entry->Title.takeValueFrom(LoaderTitle);
+    } else {
+      Entry->Title.SPrintf("Boot %ls from %ls", LoaderTitle, VolDesc);
+    }
+#else
     if (GlobalConfig.BootCampStyle) {
       Entry->Title.takeValueFrom(LoaderTitle);
     } else {
-		Entry->Title.SPrintf("Boot %ls from %ls", LoaderTitle, VolDesc);
+      Entry->Title.SPrintf("Boot %ls from %ls", LoaderTitle, VolDesc);
     }
+#endif
+
   }
 //  DBG("Title=%ls\n", Entry->Title);
 //  Entry->Tag          = TAG_LEGACY;
   Entry->Row          = 0;
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
+
+#if USE_XTHEME
+  if (Image) {
+    Entry->Image.FromEGImage(Image);
+  } else {
+    Entry->Image = ThemeX.GetIcon(Volume->LegacyOS->IconName);
+  }
+#else
   if (Image) {
     Entry->Image = Image;
   } else {
     Entry->Image = LoadOSIcon(Volume->LegacyOS->IconName, L"legacy", 128, FALSE, TRUE);
   }
+#endif
+
 //  DBG("IconName=%ls\n", Volume->LegacyOS->IconName);
   Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type, Volume->DevicePath);
   //  DBG("HideBadges=%d Volume=%ls\n", GlobalConfig.HideBadges, Volume->VolName);
