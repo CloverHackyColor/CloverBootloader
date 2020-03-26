@@ -37,7 +37,7 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
-#define USE_XTHEME 1
+#define USE_XTHEME 0
 
 #ifdef __cplusplus
 extern "C" {
