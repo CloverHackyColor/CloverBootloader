@@ -29,47 +29,76 @@ int XString_tests()
 	{
 		{
 			XString str("");
-			if ( str != "" ) return 10;
+			if ( str != "" ) return 100;
 		}
-		XString str("1");
-		if ( str != "1" ) return 11;
+		{
+			XString str("1");
+			if ( str != "1" ) return 101;
+		}
 	}
 #else
 	{
 		XString str;
 		str.takeValueFrom("");
-		if (str.length() != 0) return 10;
+		if (str.length() != 0) return 110;
 		str.takeValueFrom("1");
-		if ( str != "1" ) return 11;
+		if ( str != "1" ) return 111;
 		str.StrCat("2");
-		if ( str != "12" ) return 12;
+		if ( str != "12" ) return 112;
 	}
 #endif
+
+	// check [] operator
+	{
+		XString str;
+		str.takeValueFrom("01234567890123456789");
+		char c;
+		c = str[(char)1];
+		if ( c != '1' ) return 201;
+		c = str[(unsigned char)2];
+		if ( c != '2' ) return 202;
+		c = str[(short)3];
+		if ( c != '3' ) return 203;
+		c = str[(unsigned short)4];
+		if ( c != '4' ) return 204;
+		c = str[(int)5];
+		if ( c != '5' ) return 205;
+		c = str[(unsigned int)6];
+		if ( c != '6' ) return 206;
+		c = str[(long)7];
+		if ( c != '7' ) return 207;
+		c = str[(unsigned long)8];
+		if ( c != '8' ) return 208;
+		c = str[(long long)9];
+		if ( c != '9' ) return 209;
+		c = str[(unsigned long long)10];
+		if ( c != '0' ) return 210;
+	}
 
 	// Check StrCat. TODO more test, and test StrnCat
 	{
 		XString str;
 		str.takeValueFrom("1");
 		str.StrCat("2");
-		if ( str != "12" ) return 20;
+		if ( str != "12" ) return 50;
 	}
 	
   // check takeValueFrom from utf8 string
 	XString str;
 	str.takeValueFrom("Ň"); // this is a UTF8 string 2 bytes long
-	if (str != "Ň") return 30; // utf8 litteral are converted to an XStringW if ctor is available.
+	if (str != "Ň") return 80; // utf8 litteral are converted to an XStringW if ctor is available.
 	str.takeValueFrom("𐌾"); // this is a UTF8 string 4 bytes long
-	if ( str != "𐌾" ) return 31;
+	if ( str != "𐌾" ) return 81;
 	str.takeValueFrom("𐌾"); // this is a UTF16 or UTF32 string (depending of -fshort-wchar)
-	if ( str != "𐌾" ) return 32;
+	if ( str != "𐌾" ) return 82;
 
   // check takeValueFrom from UTF16 or 32 string
 	str.takeValueFrom(L"Ň"); // this is a UTF8 string 2 bytes long
-	if (str != "Ň") return 33; // utf8 litteral are converted to an XStringW if ctor is available.
+	if (str != "Ň") return 83; // utf8 litteral are converted to an XStringW if ctor is available.
 	str.takeValueFrom(L"𐌾"); // this is a UTF8 string 4 bytes long
-	if ( str != "𐌾" ) return 34;
+	if ( str != "𐌾" ) return 84;
 	str.takeValueFrom(L"𐌾"); // this is a UTF16 or UTF32 string (depending of -fshort-wchar)
-	if ( str != "𐌾" ) return 35;
+	if ( str != "𐌾" ) return 85;
 
   // Quick check of StrnCpy,StrnCat,Insert,+=
 	str.takeValueFrom("12");
@@ -93,7 +122,7 @@ int XString_tests()
 //wchar_t c2 = L'Ň';
 //printf("1=%lc\n", c2);
 //const char* s1 = "𐌾";
-  // Check SPrintf
+	// Check SPrintf
 	str2.SPrintf("%c", 'a'); // single UTF8 ascii char
 	if ( str2 != "a" ) return 200;
 	#ifndef _MSC_VER

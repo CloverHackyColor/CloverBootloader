@@ -3,6 +3,8 @@
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
 
+#include "../refit/screen.h" // just for PauseForKey
+
 #include "XArray_tests.h"
 #include "XObjArray_tests.h"
 #include "XStringWArray_test.h"
@@ -23,16 +25,18 @@ bool all_tests()
   int ret;
 
 #ifdef JIEF_DEBUG
-	ret = printlib_tests();
-	if ( ret != 0 ) {
-		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = poolprint_tests();
-	if ( ret != 0 ) {
-		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+	#if defined(CLOVER_BUILD)
+	    ret = printlib_tests();
+	    if ( ret != 0 ) {
+		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
+		    all_ok = false;
+    	}
+    	ret = poolprint_tests();
+    	if ( ret != 0 ) {
+	    	DebugLog(2, "poolprint_tests() failed at test %d\n", ret);
+		    all_ok = false;
+	    }
+	#endif
 #endif
 	ret = printf_lite_tests();
 	if ( ret != 0 ) {

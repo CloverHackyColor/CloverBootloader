@@ -129,9 +129,9 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   }
   
   ImageWidth = NewImage->Width;
-  DBG("ImageWidth=%d\n", ImageWidth);
+	DBG("ImageWidth=%lld\n", ImageWidth);
   ImageHeight = NewImage->Height;
-  DBG("ImageHeight=%d\n", ImageHeight);
+	DBG("ImageHeight=%lld\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
   NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, TRUE);
   
@@ -223,7 +223,7 @@ VOID PrepareFont()
     }
     
 //    TextHeight = FontHeight + TEXT_YMARGIN * 2;
-    DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
+	  DBG("Font %d prepared WxH=%lldx%lld CharWidth=%lld\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
   } else {
     DBG("Failed to load font\n");
   }

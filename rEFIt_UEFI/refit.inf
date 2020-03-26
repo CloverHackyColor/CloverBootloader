@@ -35,6 +35,8 @@
 #  EfiLib/BmLib.c
 #  Platform/DevicePath.c #included into GenericBdsLib
   Platform/BdsConnect.cpp #included into GenericBdsLib
+  ../Include/Library/printf_lite-conf.h
+  ../Include/Library/printf_lite.h
   refit/main.cpp
   refit/icns.cpp
   refit/lib.cpp

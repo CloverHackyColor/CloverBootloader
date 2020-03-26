@@ -214,6 +214,424 @@
 		9AF41564242BABC700D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
 		9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */; };
 		9AF41568242BAD7D00D2644C /* poolprint-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */; };
+		9AF41584242CD75C00D2644C /* panic.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA924176C04005CDD5C /* panic.h */; };
+		9AF41585242CD75C00D2644C /* MSKEK.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8524176C04005CDD5C /* MSKEK.h */; };
+		9AF41586242CD75C00D2644C /* menu_items.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8E24176C04005CDD5C /* menu_items.h */; };
+		9AF41587242CD75C00D2644C /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
+		9AF41588242CD75C00D2644C /* XStringWP.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B62417F359005CDD5C /* XStringWP.h */; };
+		9AF41589242CD75C00D2644C /* nvidia.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3324176C04005CDD5C /* nvidia.h */; };
+		9AF4158A242CD75C00D2644C /* operatorNewDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA324176C04005CDD5C /* operatorNewDelete.h */; };
+		9AF4158B242CD75C00D2644C /* XUINTN_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25A24192D710029A39F /* XUINTN_test.h */; };
+		9AF4158C242CD75C00D2644C /* XStringWArray_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECC24176C04005CDD5C /* XStringWArray_test.h */; };
+		9AF4158D242CD75C00D2644C /* syslinux_mbr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1424176C04005CDD5C /* syslinux_mbr.h */; };
+		9AF4158F242CD75C00D2644C /* lodepng.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6024176C04005CDD5C /* lodepng.h */; };
+		9AF41590242CD75C00D2644C /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8224176C04005CDD5C /* loader.h */; };
+		9AF41591242CD75C00D2644C /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2524221570006D8CD9 /* unicode_conversions.h */; };
+		9AF41592242CD75C00D2644C /* CloverKEK.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8824176C04005CDD5C /* CloverKEK.h */; };
+		9AF41593242CD75C00D2644C /* StateGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1C24176C04005CDD5C /* StateGenerator.h */; };
+		9AF41594242CD75C00D2644C /* remove_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAA24176C04005CDD5C /* remove_ref.h */; };
+		9AF41595242CD75C00D2644C /* wchar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2A242215A1006D8CD9 /* wchar.h */; };
+		9AF41596242CD75C00D2644C /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4824176C04005CDD5C /* loader.h */; };
+		9AF41597242CD75C00D2644C /* AmlGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1E24176C04005CDD5C /* AmlGenerator.h */; };
+		9AF41598242CD75C00D2644C /* XStringW.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAE24176C04005CDD5C /* XStringW.h */; };
+		9AF41599242CD75C00D2644C /* utf8Conversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FB224176C04005CDD5C /* utf8Conversion.h */; };
+		9AF4159A242CD75C00D2644C /* stdarg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA1241B66EA00F3D247 /* stdarg.h */; };
+		9AF4159B242CD75C00D2644C /* posix.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA0241B66EA00F3D247 /* posix.h */; };
+		9AF4159C242CD75C00D2644C /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9824176C04005CDD5C /* list.h */; };
+		9AF4159D242CD75C00D2644C /* stdlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9A241B66EA00F3D247 /* stdlib.h */; };
+		9AF4159E242CD75C00D2644C /* XObjArray_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED324176C04005CDD5C /* XObjArray_tests.h */; };
+		9AF4159F242CD75C00D2644C /* Events.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3424176C04005CDD5C /* Events.h */; };
+		9AF415A0242CD75C00D2644C /* printlib-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */; };
+		9AF415A1242CD75C00D2644C /* XStringWArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAC24176C04005CDD5C /* XStringWArray.h */; };
+		9AF415A2242CD75C00D2644C /* XUINTN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25624192D650029A39F /* XUINTN.h */; };
+		9AF415A3242CD75C00D2644C /* strcmp_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD2D241BC0DF00F3D247 /* strcmp_test.h */; };
+		9AF415A4242CD75C00D2644C /* boot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3824176C04005CDD5C /* boot.h */; };
+		9AF415A5242CD75C00D2644C /* ati.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4624176C04005CDD5C /* ati.h */; };
+		9AF415A6242CD75C00D2644C /* global_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B42417EE53005CDD5C /* global_test.h */; };
+		9AF415A7242CD75C00D2644C /* CanonicalDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7D24176C04005CDD5C /* CanonicalDB.h */; };
+		9AF415A8242CD75C00D2644C /* nanosvg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7224176C04005CDD5C /* nanosvg.h */; };
+		9AF415A9242CD75C00D2644C /* printf_lite-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */; };
+		9AF415AA242CD75C00D2644C /* CloverDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7B24176C04005CDD5C /* CloverDB.h */; };
+		9AF415AB242CD75C00D2644C /* LegacyBiosThunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4B24176C04005CDD5C /* LegacyBiosThunk.h */; };
+		9AF415AC242CD75C00D2644C /* tool.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8424176C04005CDD5C /* tool.h */; };
+		9AF415AD242CD75C00D2644C /* globals_dtor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA124176C04005CDD5C /* globals_dtor.h */; };
+		9AF415AE242CD75C00D2644C /* screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9D24176C04005CDD5C /* screen.h */; };
+		9AF415AF242CD75C00D2644C /* printlib-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41560242BABC700D2644C /* printlib-test.h */; };
+		9AF415B0242CD75C00D2644C /* DataHubCpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3924176C04005CDD5C /* DataHubCpu.h */; };
+		9AF415B1242CD75C00D2644C /* lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9724176C04005CDD5C /* lib.h */; };
+		9AF415B2242CD75C00D2644C /* b64cdecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4C24176C04005CDD5C /* b64cdecode.h */; };
+		9AF415B3242CD75C00D2644C /* EfiFileLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6B24176C04005CDD5C /* EfiFileLib.h */; };
+		9AF415B4242CD75C00D2644C /* menu_globals.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8F24176C04005CDD5C /* menu_globals.h */; };
+		9AF415B5242CD75C00D2644C /* XObjArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FB724176C04005CDD5C /* XObjArray.h */; };
+		9AF415B6242CD75C00D2644C /* string.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F5A24176C04005CDD5C /* string.h */; };
+		9AF415B8242CD75C00D2644C /* sse3_5_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2A24176C04005CDD5C /* sse3_5_patcher.h */; };
+		9AF415B9242CD75C00D2644C /* spd.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F5524176C04005CDD5C /* spd.h */; };
+		9AF415BA242CD75C00D2644C /* IO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9A24176C04005CDD5C /* IO.h */; };
+		9AF415BB242CD75C00D2644C /* device_inject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2E24176C04005CDD5C /* device_inject.h */; };
+		9AF415BC242CD75C00D2644C /* entry_scan.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8024176C04005CDD5C /* entry_scan.h */; };
+		9AF415BD242CD75C00D2644C /* LoaderUefi.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2924176C04005CDD5C /* LoaderUefi.h */; };
+		9AF415BE242CD75C00D2644C /* hda.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2D24176C04005CDD5C /* hda.h */; };
+		9AF415BF242CD75C00D2644C /* all_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED724176C04005CDD5C /* all_tests.h */; };
+		9AF415C0242CD75C00D2644C /* strncmp_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD30241BC0DF00F3D247 /* strncmp_test.h */; };
+		9AF415C1242CD75C00D2644C /* XPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6324176C04005CDD5C /* XPointer.h */; };
+		9AF415C2242CD75C00D2644C /* XToolsCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAD24176C04005CDD5C /* XToolsCommon.h */; };
+		9AF415C3242CD75C00D2644C /* stdio.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B29242215A1006D8CD9 /* stdio.h */; };
+		9AF415C4242CD75C00D2644C /* bootscreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8724176C04005CDD5C /* bootscreen.h */; };
+		9AF415C5242CD75C00D2644C /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9B241B66EA00F3D247 /* limits.h */; };
+		9AF415C6242CD75C00D2644C /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2524176C04005CDD5C /* Settings.h */; };
+		9AF415C7242CD75C00D2644C /* XStringW_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED224176C04005CDD5C /* XStringW_test.h */; };
+		9AF415C8242CD75C00D2644C /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
+		9AF415C9242CD75C00D2644C /* ati_reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4F24176C04005CDD5C /* ati_reg.h */; };
+		9AF415CA242CD75C00D2644C /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
+		9AF415CB242CD75C00D2644C /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
+		9AF415CC242CD75C00D2644C /* kernel_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2224176C04005CDD5C /* kernel_patcher.h */; };
+		9AF415CD242CD75C00D2644C /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA824176C04005CDD5C /* memory.h */; };
+		9AF415CE242CD75C00D2644C /* menu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9C24176C04005CDD5C /* menu.h */; };
+		9AF415CF242CD75C00D2644C /* MSUEFICADB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7C24176C04005CDD5C /* MSUEFICADB.h */; };
+		9AF415D0242CD75C00D2644C /* Hibernate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1A24176C04005CDD5C /* Hibernate.h */; };
+		9AF415D1242CD75C00D2644C /* strlen_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD2F241BC0DF00F3D247 /* strlen_test.h */; };
+		9AF415D2242CD75C00D2644C /* XArray_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECD24176C04005CDD5C /* XArray_tests.h */; };
+		9AF415D3242CD75C00D2644C /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1524176C04005CDD5C /* Handle.h */; };
+		9AF415D4242CD75C00D2644C /* XArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FB624176C04005CDD5C /* XArray.h */; };
+		9AF415D5242CD75C00D2644C /* MSPCADB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7724176C04005CDD5C /* MSPCADB.h */; };
+		9AF415D6242CD75C00D2644C /* libeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6824176C04005CDD5C /* libeg.h */; };
+		9AF415D7242CD75C00D2644C /* HdaCodecDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4124176C04005CDD5C /* HdaCodecDump.h */; };
+		9AF415D8242CD75C00D2644C /* kext_inject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4924176C04005CDD5C /* kext_inject.h */; };
+		9AF415D9242CD75C00D2644C /* Nvram.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2624176C04005CDD5C /* Nvram.h */; };
+		9AF415DA242CD75C00D2644C /* poolprint-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */; };
+		9AF415DB242CD75C00D2644C /* gma.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1724176C04005CDD5C /* gma.h */; };
+		9AF415DC242CD75C00D2644C /* sse3_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3B24176C04005CDD5C /* sse3_patcher.h */; };
+		9AF415DD242CD75C00D2644C /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1224176C04005CDD5C /* Version.h */; };
+		9AF415DE242CD75C00D2644C /* XString_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC96241AB34800F3D247 /* XString_test.h */; };
+		9AF415DF242CD75C00D2644C /* stdint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA2241B66EA00F3D247 /* stdint.h */; };
+		9AF415E0242CD75C00D2644C /* REFIT_MENU_SCREEN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9024176C04005CDD5C /* REFIT_MENU_SCREEN.h */; };
+		9AF415E1242CD75C00D2644C /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F5824176C04005CDD5C /* Platform.h */; };
+		9AF415E2242CD75C00D2644C /* XImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7124176C04005CDD5C /* XImage.h */; };
+		9AF415E3242CD75C00D2644C /* globals_ctor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA424176C04005CDD5C /* globals_ctor.h */; };
+		9AF415E4242CD75C00D2644C /* poolprint-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155B242B8FA300D2644C /* poolprint-test.h */; };
+		9AF415E5242CD75C00D2644C /* stddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9C241B66EA00F3D247 /* stddef.h */; };
+		9AF415E6242CD75C00D2644C /* securebootkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8124176C04005CDD5C /* securebootkeys.h */; };
+		9AF415E7242CD75C00D2644C /* string.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2B242215A1006D8CD9 /* string.h */; };
+		9AF415E8242CD75C00D2644C /* XString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC92241AB33700F3D247 /* XString.h */; };
+		9AF415E9242CD75C00D2644C /* FloatLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7324176C04005CDD5C /* FloatLib.h */; };
+		9AF415EB242CD75C00D2644C /* Hibernate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1F24176C04005CDD5C /* Hibernate.cpp */; };
+		9AF415EC242CD75C00D2644C /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2C242215A1006D8CD9 /* wchar.cpp */; };
+		9AF415ED242CD75C00D2644C /* DataHubCpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2C24176C04005CDD5C /* DataHubCpu.cpp */; };
+		9AF415EE242CD75C00D2644C /* hda.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3F24176C04005CDD5C /* hda.cpp */; };
+		9AF415EF242CD75C00D2644C /* egemb_icons_dark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5E24176C04005CDD5C /* egemb_icons_dark.cpp */; };
+		9AF415F0242CD75C00D2644C /* scroll_images.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6924176C04005CDD5C /* scroll_images.cpp */; };
+		9AF415F1242CD75C00D2644C /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FAF24176C04005CDD5C /* XStringWArray.cpp */; };
+		9AF415F2242CD75C00D2644C /* PlatformDriverOverride.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2724176C04005CDD5C /* PlatformDriverOverride.cpp */; };
+		9AF415F3242CD75C00D2644C /* HdaCodecDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1924176C04005CDD5C /* HdaCodecDump.cpp */; };
+		9AF415F4242CD75C00D2644C /* Nvram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3124176C04005CDD5C /* Nvram.cpp */; };
+		9AF415F5242CD75C00D2644C /* BootOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3A24176C04005CDD5C /* BootOptions.cpp */; };
+		9AF415F6242CD75C00D2644C /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B28242215A1006D8CD9 /* stdio.cpp */; };
+		9AF415F7242CD75C00D2644C /* operatorNewDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA724176C04005CDD5C /* operatorNewDelete.cpp */; };
+		9AF415F8242CD75C00D2644C /* securehash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8B24176C04005CDD5C /* securehash.cpp */; };
+		9AF415F9242CD75C00D2644C /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6424176C04005CDD5C /* image.cpp */; };
+		9AF415FA242CD75C00D2644C /* Events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4D24176C04005CDD5C /* Events.cpp */; };
+		9AF415FB242CD75C00D2644C /* libscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7424176C04005CDD5C /* libscreen.cpp */; };
+		9AF415FC242CD75C00D2644C /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2B241BC0DF00F3D247 /* strlen_test.cpp */; };
+		9AF415FD242CD75C00D2644C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA624176C04005CDD5C /* panic.cpp */; };
+		9AF415FE242CD75C00D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
+		9AF415FF242CD75C00D2644C /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED824176C04005CDD5C /* XStringW_test.cpp */; };
+		9AF41600242CD75C00D2644C /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
+		9AF41601242CD75C00D2644C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
+		9AF41602242CD75C00D2644C /* Injectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3524176C04005CDD5C /* Injectors.cpp */; };
+		9AF41603242CD75C00D2644C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9524176C04005CDD5C /* menu.cpp */; };
+		9AF41604242CD75C00D2644C /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2F24176C04005CDD5C /* b64cdecode.cpp */; };
+		9AF41605242CD75C00D2644C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA224176C04005CDD5C /* globals_dtor.cpp */; };
+		9AF41606242CD75C00D2644C /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4724176C04005CDD5C /* DevicePath.cpp */; };
+		9AF41607242CD75C00D2644C /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED624176C04005CDD5C /* XArray_tests.cpp */; };
+		9AF41608242CD75C00D2644C /* StateGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2124176C04005CDD5C /* StateGenerator.cpp */; };
+		9AF41609242CD75C00D2644C /* XImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7524176C04005CDD5C /* XImage.cpp */; };
+		9AF4160A242CD75C00D2644C /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4224176C04005CDD5C /* platformdata.cpp */; };
+		9AF4160B242CD75C00D2644C /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD26241BC0C700F3D247 /* strcmp.cpp */; };
+		9AF4160C242CD75C00D2644C /* XPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7024176C04005CDD5C /* XPointer.cpp */; };
+		9AF4160D242CD75C00D2644C /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2E241BC0DF00F3D247 /* strncmp_test.cpp */; };
+		9AF4160E242CD75C00D2644C /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9B24176C04005CDD5C /* list.cpp */; };
+		9AF4160F242CD75C00D2644C /* IO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9924176C04005CDD5C /* IO.cpp */; };
+		9AF41610242CD75C00D2644C /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4A24176C04005CDD5C /* sound.cpp */; };
+		9AF41611242CD75C00D2644C /* usbfix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5624176C04005CDD5C /* usbfix.cpp */; };
+		9AF41612242CD75C00D2644C /* BmLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5F24176C04005CDD5C /* BmLib.cpp */; };
+		9AF41613242CD75C00D2644C /* card_vlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5724176C04005CDD5C /* card_vlist.cpp */; };
+		9AF41614242CD75C00D2644C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B22417EE4A005CDD5C /* global_test.cpp */; };
+		9AF41615242CD75C00D2644C /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
+		9AF41616242CD75C00D2644C /* load_icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6F24176C04005CDD5C /* load_icns.cpp */; };
+		9AF41617242CD75C00D2644C /* egemb_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6A24176C04005CDD5C /* egemb_font.cpp */; };
+		9AF41618242CD75C00D2644C /* securemenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7E24176C04005CDD5C /* securemenu.cpp */; };
+		9AF41619242CD75C00D2644C /* text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6624176C04005CDD5C /* text.cpp */; };
+		9AF4161A242CD75C00D2644C /* AmlGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2324176C04005CDD5C /* AmlGenerator.cpp */; };
+		9AF4161B242CD75C00D2644C /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED424176C04005CDD5C /* all_tests.cpp */; };
+		9AF4161C242CD75C00D2644C /* securevars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7F24176C04005CDD5C /* securevars.cpp */; };
+		9AF4161E242CD75C00D2644C /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8A24176C04005CDD5C /* loader.cpp */; };
+		9AF4161F242CD75C00D2644C /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED524176C04005CDD5C /* XObjArray_tests.cpp */; };
+		9AF41620242CD75C00D2644C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B72417F359005CDD5C /* XStringWP.cpp */; };
+		9AF41621242CD75C00D2644C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA024176C04005CDD5C /* memory.cpp */; };
+		9AF41622242CD75C00D2644C /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5224176C04005CDD5C /* cpu.cpp */; };
+		9AF41623242CD75C00D2644C /* LegacyBoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1824176C04005CDD5C /* LegacyBoot.cpp */; };
+		9AF41624242CD75C00D2644C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9124176C04005CDD5C /* REFIT_MENU_SCREEN.cpp */; };
+		9AF41625242CD75C00D2644C /* LegacyBiosThunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3624176C04005CDD5C /* LegacyBiosThunk.cpp */; };
+		9AF41626242CD75C00D2644C /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25924192D710029A39F /* XUINTN_test.cpp */; };
+		9AF41627242CD75C00D2644C /* string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3724176C04005CDD5C /* string.cpp */; };
+		9AF41628242CD75C00D2644C /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FB024176C04005CDD5C /* XStringW.cpp */; };
+		9AF41629242CD75C00D2644C /* lockedgraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8324176C04005CDD5C /* lockedgraphics.cpp */; };
+		9AF4162A242CD75C00D2644C /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC95241AB34800F3D247 /* XString_test.cpp */; };
+		9AF4162B242CD75C00D2644C /* device_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4E24176C04005CDD5C /* device_inject.cpp */; };
+		9AF4162C242CD75C00D2644C /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5924176C04005CDD5C /* Settings.cpp */; };
+		9AF4162D242CD75C00D2644C /* legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7924176C04005CDD5C /* legacy.cpp */; };
+		9AF4162E242CD75C00D2644C /* AcpiPatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2024176C04005CDD5C /* AcpiPatcher.cpp */; };
+		9AF4162F242CD75C00D2644C /* BdsConnect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2424176C04005CDD5C /* BdsConnect.cpp */; };
+		9AF41630242CD75C00D2644C /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4155C242B8FA300D2644C /* poolprint-test.cpp */; };
+		9AF41631242CD75C00D2644C /* spd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4024176C04005CDD5C /* spd.cpp */; };
+		9AF41632242CD75C00D2644C /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */; };
+		9AF41633242CD75C00D2644C /* kext_patcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1B24176C04005CDD5C /* kext_patcher.cpp */; };
+		9AF41634242CD75C00D2644C /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD25241BC0C700F3D247 /* abort.cpp */; };
+		9AF41635242CD75C00D2644C /* gma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3D24176C04005CDD5C /* gma.cpp */; };
+		9AF41636242CD75C00D2644C /* FloatLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6D24176C04005CDD5C /* FloatLib.cpp */; };
+		9AF41637242CD75C00D2644C /* menu_items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC7809924178F02005CDD5C /* menu_items.cpp */; };
+		9AF41638242CD75C00D2644C /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6724176C04005CDD5C /* lodepng.cpp */; };
+		9AF41639242CD75C00D2644C /* secureboot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7A24176C04005CDD5C /* secureboot.cpp */; };
+		9AF4163A242CD75C00D2644C /* FixBiosDsdt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5424176C04005CDD5C /* FixBiosDsdt.cpp */; };
+		9AF4163B242CD75C00D2644C /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3224176C04005CDD5C /* BootLog.cpp */; };
+		9AF4163C242CD75C00D2644C /* icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9324176C04005CDD5C /* icns.cpp */; };
+		9AF4163D242CD75C00D2644C /* strcmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2C241BC0DF00F3D247 /* strcmp_test.cpp */; };
+		9AF4163E242CD75C00D2644C /* nanosvgrast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6E24176C04005CDD5C /* nanosvgrast.cpp */; };
+		9AF4163F242CD75C00D2644C /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ECE24176C04005CDD5C /* XStringWArray_test.cpp */; };
+		9AF41640242CD75C00D2644C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9E24176C04005CDD5C /* main.cpp */; };
+		9AF41641242CD75C00D2644C /* nvidia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5024176C04005CDD5C /* nvidia.cpp */; };
+		9AF41642242CD75C00D2644C /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC91241AB33700F3D247 /* XString.cpp */; };
+		9AF41643242CD75C00D2644C /* plist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4424176C04005CDD5C /* plist.cpp */; };
+		9AF41644242CD75C00D2644C /* kernel_patcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3C24176C04005CDD5C /* kernel_patcher.cpp */; };
+		9AF41645242CD75C00D2644C /* nanosvg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6C24176C04005CDD5C /* nanosvg.cpp */; };
+		9AF41646242CD75C00D2644C /* XToolsCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FB424176C04005CDD5C /* XToolsCommon.cpp */; };
+		9AF41647242CD75C00D2644C /* ati.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4324176C04005CDD5C /* ati.cpp */; };
+		9AF41648242CD75C00D2644C /* Net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3E24176C04005CDD5C /* Net.cpp */; };
+		9AF41649242CD75C00D2644C /* kext_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3024176C04005CDD5C /* kext_inject.cpp */; };
+		9AF4164A242CD75C00D2644C /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5324176C04005CDD5C /* guid.cpp */; };
+		9AF4164B242CD75C00D2644C /* bootscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8624176C04005CDD5C /* bootscreen.cpp */; };
+		9AF4164C242CD75C00D2644C /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25524192D650029A39F /* XUINTN.cpp */; };
+		9AF4164D242CD75C00D2644C /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD27241BC0C700F3D247 /* strlen.cpp */; };
+		9AF4164E242CD75C00D2644C /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2B24176C04005CDD5C /* Console.cpp */; };
+		9AF4164F242CD75C00D2644C /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FB124176C04005CDD5C /* utf8Conversion.cpp */; };
+		9AF41650242CD75C00D2644C /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2424221570006D8CD9 /* unicode_conversions.cpp */; };
+		9AF41651242CD75C00D2644C /* StartupSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4524176C04005CDD5C /* StartupSound.cpp */; };
+		9AF41652242CD75C00D2644C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA524176C04005CDD5C /* globals_ctor.cpp */; };
+		9AF41653242CD75C00D2644C /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9424176C04005CDD5C /* screen.cpp */; };
+		9AF41654242CD75C00D2644C /* VectorGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6524176C04005CDD5C /* VectorGraphics.cpp */; };
+		9AF41655242CD75C00D2644C /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7824176C04005CDD5C /* common.cpp */; };
+		9AF41656242CD75C00D2644C /* egemb_icons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6224176C04005CDD5C /* egemb_icons.cpp */; };
+		9AF41657242CD75C00D2644C /* Edid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2824176C04005CDD5C /* Edid.cpp */; };
+		9AF41658242CD75C00D2644C /* smbios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5124176C04005CDD5C /* smbios.cpp */; };
+		9AF41661242CDA5800D2644C /* panic.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA924176C04005CDD5C /* panic.h */; };
+		9AF41662242CDA5800D2644C /* MSKEK.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8524176C04005CDD5C /* MSKEK.h */; };
+		9AF41663242CDA5800D2644C /* menu_items.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8E24176C04005CDD5C /* menu_items.h */; };
+		9AF41664242CDA5800D2644C /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
+		9AF41665242CDA5800D2644C /* XStringWP.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B62417F359005CDD5C /* XStringWP.h */; };
+		9AF41666242CDA5800D2644C /* nvidia.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3324176C04005CDD5C /* nvidia.h */; };
+		9AF41667242CDA5800D2644C /* operatorNewDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA324176C04005CDD5C /* operatorNewDelete.h */; };
+		9AF41668242CDA5800D2644C /* XUINTN_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25A24192D710029A39F /* XUINTN_test.h */; };
+		9AF41669242CDA5800D2644C /* XStringWArray_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECC24176C04005CDD5C /* XStringWArray_test.h */; };
+		9AF4166A242CDA5800D2644C /* syslinux_mbr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1424176C04005CDD5C /* syslinux_mbr.h */; };
+		9AF4166C242CDA5800D2644C /* lodepng.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6024176C04005CDD5C /* lodepng.h */; };
+		9AF4166D242CDA5800D2644C /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8224176C04005CDD5C /* loader.h */; };
+		9AF4166E242CDA5800D2644C /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2524221570006D8CD9 /* unicode_conversions.h */; };
+		9AF4166F242CDA5800D2644C /* CloverKEK.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8824176C04005CDD5C /* CloverKEK.h */; };
+		9AF41670242CDA5800D2644C /* StateGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1C24176C04005CDD5C /* StateGenerator.h */; };
+		9AF41671242CDA5800D2644C /* remove_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAA24176C04005CDD5C /* remove_ref.h */; };
+		9AF41672242CDA5800D2644C /* wchar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2A242215A1006D8CD9 /* wchar.h */; };
+		9AF41673242CDA5800D2644C /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4824176C04005CDD5C /* loader.h */; };
+		9AF41674242CDA5800D2644C /* AmlGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1E24176C04005CDD5C /* AmlGenerator.h */; };
+		9AF41675242CDA5800D2644C /* XStringW.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAE24176C04005CDD5C /* XStringW.h */; };
+		9AF41676242CDA5800D2644C /* utf8Conversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FB224176C04005CDD5C /* utf8Conversion.h */; };
+		9AF41677242CDA5800D2644C /* stdarg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA1241B66EA00F3D247 /* stdarg.h */; };
+		9AF41678242CDA5800D2644C /* posix.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA0241B66EA00F3D247 /* posix.h */; };
+		9AF41679242CDA5800D2644C /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9824176C04005CDD5C /* list.h */; };
+		9AF4167A242CDA5800D2644C /* stdlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9A241B66EA00F3D247 /* stdlib.h */; };
+		9AF4167B242CDA5800D2644C /* XObjArray_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED324176C04005CDD5C /* XObjArray_tests.h */; };
+		9AF4167C242CDA5800D2644C /* Events.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3424176C04005CDD5C /* Events.h */; };
+		9AF4167D242CDA5800D2644C /* printlib-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */; };
+		9AF4167E242CDA5800D2644C /* XStringWArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAC24176C04005CDD5C /* XStringWArray.h */; };
+		9AF4167F242CDA5800D2644C /* XUINTN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25624192D650029A39F /* XUINTN.h */; };
+		9AF41680242CDA5800D2644C /* strcmp_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD2D241BC0DF00F3D247 /* strcmp_test.h */; };
+		9AF41681242CDA5800D2644C /* boot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3824176C04005CDD5C /* boot.h */; };
+		9AF41682242CDA5800D2644C /* ati.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4624176C04005CDD5C /* ati.h */; };
+		9AF41683242CDA5800D2644C /* global_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B42417EE53005CDD5C /* global_test.h */; };
+		9AF41684242CDA5800D2644C /* CanonicalDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7D24176C04005CDD5C /* CanonicalDB.h */; };
+		9AF41685242CDA5800D2644C /* nanosvg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7224176C04005CDD5C /* nanosvg.h */; };
+		9AF41686242CDA5800D2644C /* printf_lite-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */; };
+		9AF41687242CDA5800D2644C /* CloverDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7B24176C04005CDD5C /* CloverDB.h */; };
+		9AF41688242CDA5800D2644C /* LegacyBiosThunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4B24176C04005CDD5C /* LegacyBiosThunk.h */; };
+		9AF41689242CDA5800D2644C /* tool.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8424176C04005CDD5C /* tool.h */; };
+		9AF4168A242CDA5800D2644C /* globals_dtor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA124176C04005CDD5C /* globals_dtor.h */; };
+		9AF4168B242CDA5800D2644C /* screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9D24176C04005CDD5C /* screen.h */; };
+		9AF4168C242CDA5800D2644C /* printlib-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41560242BABC700D2644C /* printlib-test.h */; };
+		9AF4168D242CDA5800D2644C /* DataHubCpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3924176C04005CDD5C /* DataHubCpu.h */; };
+		9AF4168E242CDA5800D2644C /* lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9724176C04005CDD5C /* lib.h */; };
+		9AF4168F242CDA5800D2644C /* b64cdecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4C24176C04005CDD5C /* b64cdecode.h */; };
+		9AF41690242CDA5800D2644C /* EfiFileLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6B24176C04005CDD5C /* EfiFileLib.h */; };
+		9AF41691242CDA5800D2644C /* menu_globals.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8F24176C04005CDD5C /* menu_globals.h */; };
+		9AF41692242CDA5800D2644C /* XObjArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FB724176C04005CDD5C /* XObjArray.h */; };
+		9AF41693242CDA5800D2644C /* string.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F5A24176C04005CDD5C /* string.h */; };
+		9AF41695242CDA5800D2644C /* sse3_5_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2A24176C04005CDD5C /* sse3_5_patcher.h */; };
+		9AF41696242CDA5800D2644C /* spd.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F5524176C04005CDD5C /* spd.h */; };
+		9AF41697242CDA5800D2644C /* IO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9A24176C04005CDD5C /* IO.h */; };
+		9AF41698242CDA5800D2644C /* device_inject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2E24176C04005CDD5C /* device_inject.h */; };
+		9AF41699242CDA5800D2644C /* entry_scan.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8024176C04005CDD5C /* entry_scan.h */; };
+		9AF4169A242CDA5800D2644C /* LoaderUefi.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2924176C04005CDD5C /* LoaderUefi.h */; };
+		9AF4169B242CDA5800D2644C /* hda.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2D24176C04005CDD5C /* hda.h */; };
+		9AF4169C242CDA5800D2644C /* all_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED724176C04005CDD5C /* all_tests.h */; };
+		9AF4169D242CDA5800D2644C /* strncmp_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD30241BC0DF00F3D247 /* strncmp_test.h */; };
+		9AF4169E242CDA5800D2644C /* XPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6324176C04005CDD5C /* XPointer.h */; };
+		9AF4169F242CDA5800D2644C /* XToolsCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAD24176C04005CDD5C /* XToolsCommon.h */; };
+		9AF416A0242CDA5800D2644C /* stdio.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B29242215A1006D8CD9 /* stdio.h */; };
+		9AF416A1242CDA5800D2644C /* bootscreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8724176C04005CDD5C /* bootscreen.h */; };
+		9AF416A2242CDA5800D2644C /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9B241B66EA00F3D247 /* limits.h */; };
+		9AF416A3242CDA5800D2644C /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2524176C04005CDD5C /* Settings.h */; };
+		9AF416A4242CDA5800D2644C /* XStringW_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED224176C04005CDD5C /* XStringW_test.h */; };
+		9AF416A5242CDA5800D2644C /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
+		9AF416A6242CDA5800D2644C /* ati_reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4F24176C04005CDD5C /* ati_reg.h */; };
+		9AF416A7242CDA5800D2644C /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
+		9AF416A8242CDA5800D2644C /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
+		9AF416A9242CDA5800D2644C /* kernel_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2224176C04005CDD5C /* kernel_patcher.h */; };
+		9AF416AA242CDA5800D2644C /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA824176C04005CDD5C /* memory.h */; };
+		9AF416AB242CDA5800D2644C /* menu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9C24176C04005CDD5C /* menu.h */; };
+		9AF416AC242CDA5800D2644C /* MSUEFICADB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7C24176C04005CDD5C /* MSUEFICADB.h */; };
+		9AF416AD242CDA5800D2644C /* Hibernate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1A24176C04005CDD5C /* Hibernate.h */; };
+		9AF416AE242CDA5800D2644C /* strlen_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD2F241BC0DF00F3D247 /* strlen_test.h */; };
+		9AF416AF242CDA5800D2644C /* XArray_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECD24176C04005CDD5C /* XArray_tests.h */; };
+		9AF416B0242CDA5800D2644C /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1524176C04005CDD5C /* Handle.h */; };
+		9AF416B1242CDA5800D2644C /* XArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FB624176C04005CDD5C /* XArray.h */; };
+		9AF416B2242CDA5800D2644C /* MSPCADB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7724176C04005CDD5C /* MSPCADB.h */; };
+		9AF416B3242CDA5800D2644C /* libeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6824176C04005CDD5C /* libeg.h */; };
+		9AF416B4242CDA5800D2644C /* HdaCodecDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4124176C04005CDD5C /* HdaCodecDump.h */; };
+		9AF416B5242CDA5800D2644C /* kext_inject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4924176C04005CDD5C /* kext_inject.h */; };
+		9AF416B6242CDA5800D2644C /* Nvram.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2624176C04005CDD5C /* Nvram.h */; };
+		9AF416B7242CDA5800D2644C /* poolprint-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */; };
+		9AF416B8242CDA5800D2644C /* gma.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1724176C04005CDD5C /* gma.h */; };
+		9AF416B9242CDA5800D2644C /* sse3_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F3B24176C04005CDD5C /* sse3_patcher.h */; };
+		9AF416BA242CDA5800D2644C /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1224176C04005CDD5C /* Version.h */; };
+		9AF416BB242CDA5800D2644C /* XString_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC96241AB34800F3D247 /* XString_test.h */; };
+		9AF416BC242CDA5800D2644C /* stdint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CCA2241B66EA00F3D247 /* stdint.h */; };
+		9AF416BD242CDA5800D2644C /* REFIT_MENU_SCREEN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9024176C04005CDD5C /* REFIT_MENU_SCREEN.h */; };
+		9AF416BE242CDA5800D2644C /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F5824176C04005CDD5C /* Platform.h */; };
+		9AF416BF242CDA5800D2644C /* XImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7124176C04005CDD5C /* XImage.h */; };
+		9AF416C0242CDA5800D2644C /* globals_ctor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA424176C04005CDD5C /* globals_ctor.h */; };
+		9AF416C1242CDA5800D2644C /* poolprint-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155B242B8FA300D2644C /* poolprint-test.h */; };
+		9AF416C2242CDA5800D2644C /* stddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9C241B66EA00F3D247 /* stddef.h */; };
+		9AF416C3242CDA5800D2644C /* securebootkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F8124176C04005CDD5C /* securebootkeys.h */; };
+		9AF416C4242CDA5800D2644C /* string.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2B242215A1006D8CD9 /* string.h */; };
+		9AF416C5242CDA5800D2644C /* XString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC92241AB33700F3D247 /* XString.h */; };
+		9AF416C6242CDA5800D2644C /* FloatLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7324176C04005CDD5C /* FloatLib.h */; };
+		9AF416C8242CDA5800D2644C /* Hibernate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1F24176C04005CDD5C /* Hibernate.cpp */; };
+		9AF416C9242CDA5800D2644C /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2C242215A1006D8CD9 /* wchar.cpp */; };
+		9AF416CA242CDA5800D2644C /* DataHubCpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2C24176C04005CDD5C /* DataHubCpu.cpp */; };
+		9AF416CB242CDA5800D2644C /* hda.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3F24176C04005CDD5C /* hda.cpp */; };
+		9AF416CC242CDA5800D2644C /* egemb_icons_dark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5E24176C04005CDD5C /* egemb_icons_dark.cpp */; };
+		9AF416CD242CDA5800D2644C /* scroll_images.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6924176C04005CDD5C /* scroll_images.cpp */; };
+		9AF416CE242CDA5800D2644C /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FAF24176C04005CDD5C /* XStringWArray.cpp */; };
+		9AF416CF242CDA5800D2644C /* PlatformDriverOverride.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2724176C04005CDD5C /* PlatformDriverOverride.cpp */; };
+		9AF416D0242CDA5800D2644C /* HdaCodecDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1924176C04005CDD5C /* HdaCodecDump.cpp */; };
+		9AF416D1242CDA5800D2644C /* Nvram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3124176C04005CDD5C /* Nvram.cpp */; };
+		9AF416D2242CDA5800D2644C /* BootOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3A24176C04005CDD5C /* BootOptions.cpp */; };
+		9AF416D3242CDA5800D2644C /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B28242215A1006D8CD9 /* stdio.cpp */; };
+		9AF416D4242CDA5800D2644C /* operatorNewDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA724176C04005CDD5C /* operatorNewDelete.cpp */; };
+		9AF416D5242CDA5800D2644C /* securehash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8B24176C04005CDD5C /* securehash.cpp */; };
+		9AF416D6242CDA5800D2644C /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6424176C04005CDD5C /* image.cpp */; };
+		9AF416D7242CDA5800D2644C /* Events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4D24176C04005CDD5C /* Events.cpp */; };
+		9AF416D8242CDA5800D2644C /* libscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7424176C04005CDD5C /* libscreen.cpp */; };
+		9AF416D9242CDA5800D2644C /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2B241BC0DF00F3D247 /* strlen_test.cpp */; };
+		9AF416DA242CDA5800D2644C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA624176C04005CDD5C /* panic.cpp */; };
+		9AF416DB242CDA5800D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
+		9AF416DC242CDA5800D2644C /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED824176C04005CDD5C /* XStringW_test.cpp */; };
+		9AF416DD242CDA5800D2644C /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
+		9AF416DE242CDA5800D2644C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
+		9AF416DF242CDA5800D2644C /* Injectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3524176C04005CDD5C /* Injectors.cpp */; };
+		9AF416E0242CDA5800D2644C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9524176C04005CDD5C /* menu.cpp */; };
+		9AF416E1242CDA5800D2644C /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2F24176C04005CDD5C /* b64cdecode.cpp */; };
+		9AF416E2242CDA5800D2644C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA224176C04005CDD5C /* globals_dtor.cpp */; };
+		9AF416E3242CDA5800D2644C /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4724176C04005CDD5C /* DevicePath.cpp */; };
+		9AF416E4242CDA5800D2644C /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED624176C04005CDD5C /* XArray_tests.cpp */; };
+		9AF416E5242CDA5800D2644C /* StateGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2124176C04005CDD5C /* StateGenerator.cpp */; };
+		9AF416E6242CDA5800D2644C /* XImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7524176C04005CDD5C /* XImage.cpp */; };
+		9AF416E7242CDA5800D2644C /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4224176C04005CDD5C /* platformdata.cpp */; };
+		9AF416E8242CDA5800D2644C /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD26241BC0C700F3D247 /* strcmp.cpp */; };
+		9AF416E9242CDA5800D2644C /* XPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7024176C04005CDD5C /* XPointer.cpp */; };
+		9AF416EA242CDA5800D2644C /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2E241BC0DF00F3D247 /* strncmp_test.cpp */; };
+		9AF416EB242CDA5800D2644C /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9B24176C04005CDD5C /* list.cpp */; };
+		9AF416EC242CDA5800D2644C /* IO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9924176C04005CDD5C /* IO.cpp */; };
+		9AF416ED242CDA5800D2644C /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4A24176C04005CDD5C /* sound.cpp */; };
+		9AF416EE242CDA5800D2644C /* usbfix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5624176C04005CDD5C /* usbfix.cpp */; };
+		9AF416EF242CDA5800D2644C /* BmLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5F24176C04005CDD5C /* BmLib.cpp */; };
+		9AF416F0242CDA5800D2644C /* card_vlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5724176C04005CDD5C /* card_vlist.cpp */; };
+		9AF416F1242CDA5800D2644C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B22417EE4A005CDD5C /* global_test.cpp */; };
+		9AF416F2242CDA5800D2644C /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
+		9AF416F3242CDA5800D2644C /* load_icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6F24176C04005CDD5C /* load_icns.cpp */; };
+		9AF416F4242CDA5800D2644C /* egemb_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6A24176C04005CDD5C /* egemb_font.cpp */; };
+		9AF416F5242CDA5800D2644C /* securemenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7E24176C04005CDD5C /* securemenu.cpp */; };
+		9AF416F6242CDA5800D2644C /* text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6624176C04005CDD5C /* text.cpp */; };
+		9AF416F7242CDA5800D2644C /* AmlGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2324176C04005CDD5C /* AmlGenerator.cpp */; };
+		9AF416F8242CDA5800D2644C /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED424176C04005CDD5C /* all_tests.cpp */; };
+		9AF416F9242CDA5800D2644C /* securevars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7F24176C04005CDD5C /* securevars.cpp */; };
+		9AF416FB242CDA5800D2644C /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8A24176C04005CDD5C /* loader.cpp */; };
+		9AF416FC242CDA5800D2644C /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED524176C04005CDD5C /* XObjArray_tests.cpp */; };
+		9AF416FD242CDA5800D2644C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B72417F359005CDD5C /* XStringWP.cpp */; };
+		9AF416FE242CDA5800D2644C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA024176C04005CDD5C /* memory.cpp */; };
+		9AF416FF242CDA5800D2644C /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5224176C04005CDD5C /* cpu.cpp */; };
+		9AF41700242CDA5800D2644C /* LegacyBoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1824176C04005CDD5C /* LegacyBoot.cpp */; };
+		9AF41701242CDA5800D2644C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9124176C04005CDD5C /* REFIT_MENU_SCREEN.cpp */; };
+		9AF41702242CDA5800D2644C /* LegacyBiosThunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3624176C04005CDD5C /* LegacyBiosThunk.cpp */; };
+		9AF41703242CDA5800D2644C /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25924192D710029A39F /* XUINTN_test.cpp */; };
+		9AF41704242CDA5800D2644C /* string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3724176C04005CDD5C /* string.cpp */; };
+		9AF41705242CDA5800D2644C /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FB024176C04005CDD5C /* XStringW.cpp */; };
+		9AF41706242CDA5800D2644C /* lockedgraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8324176C04005CDD5C /* lockedgraphics.cpp */; };
+		9AF41707242CDA5800D2644C /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC95241AB34800F3D247 /* XString_test.cpp */; };
+		9AF41708242CDA5800D2644C /* device_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4E24176C04005CDD5C /* device_inject.cpp */; };
+		9AF41709242CDA5800D2644C /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5924176C04005CDD5C /* Settings.cpp */; };
+		9AF4170A242CDA5800D2644C /* legacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7924176C04005CDD5C /* legacy.cpp */; };
+		9AF4170B242CDA5800D2644C /* AcpiPatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2024176C04005CDD5C /* AcpiPatcher.cpp */; };
+		9AF4170C242CDA5800D2644C /* BdsConnect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2424176C04005CDD5C /* BdsConnect.cpp */; };
+		9AF4170D242CDA5800D2644C /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4155C242B8FA300D2644C /* poolprint-test.cpp */; };
+		9AF4170E242CDA5800D2644C /* spd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4024176C04005CDD5C /* spd.cpp */; };
+		9AF4170F242CDA5800D2644C /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */; };
+		9AF41710242CDA5800D2644C /* kext_patcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1B24176C04005CDD5C /* kext_patcher.cpp */; };
+		9AF41711242CDA5800D2644C /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD25241BC0C700F3D247 /* abort.cpp */; };
+		9AF41712242CDA5800D2644C /* gma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3D24176C04005CDD5C /* gma.cpp */; };
+		9AF41713242CDA5800D2644C /* FloatLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6D24176C04005CDD5C /* FloatLib.cpp */; };
+		9AF41714242CDA5800D2644C /* menu_items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC7809924178F02005CDD5C /* menu_items.cpp */; };
+		9AF41715242CDA5800D2644C /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6724176C04005CDD5C /* lodepng.cpp */; };
+		9AF41716242CDA5800D2644C /* secureboot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7A24176C04005CDD5C /* secureboot.cpp */; };
+		9AF41717242CDA5800D2644C /* FixBiosDsdt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5424176C04005CDD5C /* FixBiosDsdt.cpp */; };
+		9AF41718242CDA5800D2644C /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3224176C04005CDD5C /* BootLog.cpp */; };
+		9AF41719242CDA5800D2644C /* icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9324176C04005CDD5C /* icns.cpp */; };
+		9AF4171A242CDA5800D2644C /* strcmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2C241BC0DF00F3D247 /* strcmp_test.cpp */; };
+		9AF4171B242CDA5800D2644C /* nanosvgrast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6E24176C04005CDD5C /* nanosvgrast.cpp */; };
+		9AF4171C242CDA5800D2644C /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ECE24176C04005CDD5C /* XStringWArray_test.cpp */; };
+		9AF4171D242CDA5800D2644C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9E24176C04005CDD5C /* main.cpp */; };
+		9AF4171E242CDA5800D2644C /* nvidia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5024176C04005CDD5C /* nvidia.cpp */; };
+		9AF4171F242CDA5800D2644C /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC91241AB33700F3D247 /* XString.cpp */; };
+		9AF41720242CDA5800D2644C /* plist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4424176C04005CDD5C /* plist.cpp */; };
+		9AF41721242CDA5800D2644C /* kernel_patcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3C24176C04005CDD5C /* kernel_patcher.cpp */; };
+		9AF41722242CDA5800D2644C /* nanosvg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6C24176C04005CDD5C /* nanosvg.cpp */; };
+		9AF41723242CDA5800D2644C /* XToolsCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FB424176C04005CDD5C /* XToolsCommon.cpp */; };
+		9AF41724242CDA5800D2644C /* ati.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4324176C04005CDD5C /* ati.cpp */; };
+		9AF41725242CDA5800D2644C /* Net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3E24176C04005CDD5C /* Net.cpp */; };
+		9AF41726242CDA5800D2644C /* kext_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3024176C04005CDD5C /* kext_inject.cpp */; };
+		9AF41727242CDA5800D2644C /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5324176C04005CDD5C /* guid.cpp */; };
+		9AF41728242CDA5800D2644C /* bootscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8624176C04005CDD5C /* bootscreen.cpp */; };
+		9AF41729242CDA5800D2644C /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25524192D650029A39F /* XUINTN.cpp */; };
+		9AF4172A242CDA5800D2644C /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD27241BC0C700F3D247 /* strlen.cpp */; };
+		9AF4172B242CDA5800D2644C /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2B24176C04005CDD5C /* Console.cpp */; };
+		9AF4172C242CDA5800D2644C /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FB124176C04005CDD5C /* utf8Conversion.cpp */; };
+		9AF4172D242CDA5800D2644C /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2424221570006D8CD9 /* unicode_conversions.cpp */; };
+		9AF4172E242CDA5800D2644C /* StartupSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4524176C04005CDD5C /* StartupSound.cpp */; };
+		9AF4172F242CDA5800D2644C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA524176C04005CDD5C /* globals_ctor.cpp */; };
+		9AF41730242CDA5800D2644C /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9424176C04005CDD5C /* screen.cpp */; };
+		9AF41731242CDA5800D2644C /* VectorGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6524176C04005CDD5C /* VectorGraphics.cpp */; };
+		9AF41732242CDA5800D2644C /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7824176C04005CDD5C /* common.cpp */; };
+		9AF41733242CDA5800D2644C /* egemb_icons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6224176C04005CDD5C /* egemb_icons.cpp */; };
+		9AF41734242CDA5800D2644C /* Edid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2824176C04005CDD5C /* Edid.cpp */; };
+		9AF41735242CDA5800D2644C /* smbios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5124176C04005CDD5C /* smbios.cpp */; };
 		A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		A5E326322428F4EE002240E8 /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
 /* End PBXBuildFile section */
@@ -427,12 +845,28 @@
 		9AF41561242BABC700D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
 		9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF4165E242CD75C00D2644C /* libCloverX64 DEBUG_ALL=1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 DEBUG_ALL=1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9AF4173B242CDA5800D2644C /* libCloverX64 DEBUG_ALL=2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 DEBUG_ALL=2.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5E3262F2428F4EE002240E8 /* XTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XTheme.cpp; sourceTree = "<group>"; };
 		A5E326302428F4EE002240E8 /* XTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTheme.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		9AC77EC224176BF2005CDD5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AF41659242CD75C00D2644C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AF41736242CDA5800D2644C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -484,6 +918,8 @@
 			isa = PBXGroup;
 			children = (
 				9AC77EC424176BF2005CDD5C /* libCloverX64.a */,
+				9AF4165E242CD75C00D2644C /* libCloverX64 DEBUG_ALL=1.a */,
+				9AF4173B242CDA5800D2644C /* libCloverX64 DEBUG_ALL=2.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -881,6 +1317,220 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9AF41583242CD75C00D2644C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AF41584242CD75C00D2644C /* panic.h in Headers */,
+				9AF41585242CD75C00D2644C /* MSKEK.h in Headers */,
+				9AF41586242CD75C00D2644C /* menu_items.h in Headers */,
+				9AF41587242CD75C00D2644C /* XTheme.h in Headers */,
+				9AF41588242CD75C00D2644C /* XStringWP.h in Headers */,
+				9AF41589242CD75C00D2644C /* nvidia.h in Headers */,
+				9AF4158A242CD75C00D2644C /* operatorNewDelete.h in Headers */,
+				9AF4158B242CD75C00D2644C /* XUINTN_test.h in Headers */,
+				9AF4158C242CD75C00D2644C /* XStringWArray_test.h in Headers */,
+				9AF4158D242CD75C00D2644C /* syslinux_mbr.h in Headers */,
+				9AF4158F242CD75C00D2644C /* lodepng.h in Headers */,
+				9AF41590242CD75C00D2644C /* loader.h in Headers */,
+				9AF41591242CD75C00D2644C /* unicode_conversions.h in Headers */,
+				9AF41592242CD75C00D2644C /* CloverKEK.h in Headers */,
+				9AF41593242CD75C00D2644C /* StateGenerator.h in Headers */,
+				9AF41594242CD75C00D2644C /* remove_ref.h in Headers */,
+				9AF41595242CD75C00D2644C /* wchar.h in Headers */,
+				9AF41596242CD75C00D2644C /* loader.h in Headers */,
+				9AF41597242CD75C00D2644C /* AmlGenerator.h in Headers */,
+				9AF41598242CD75C00D2644C /* XStringW.h in Headers */,
+				9AF41599242CD75C00D2644C /* utf8Conversion.h in Headers */,
+				9AF4159A242CD75C00D2644C /* stdarg.h in Headers */,
+				9AF4159B242CD75C00D2644C /* posix.h in Headers */,
+				9AF4159C242CD75C00D2644C /* list.h in Headers */,
+				9AF4159D242CD75C00D2644C /* stdlib.h in Headers */,
+				9AF4159E242CD75C00D2644C /* XObjArray_tests.h in Headers */,
+				9AF4159F242CD75C00D2644C /* Events.h in Headers */,
+				9AF415A0242CD75C00D2644C /* printlib-test-cpp_conf.h in Headers */,
+				9AF415A1242CD75C00D2644C /* XStringWArray.h in Headers */,
+				9AF415A2242CD75C00D2644C /* XUINTN.h in Headers */,
+				9AF415A3242CD75C00D2644C /* strcmp_test.h in Headers */,
+				9AF415A4242CD75C00D2644C /* boot.h in Headers */,
+				9AF415A5242CD75C00D2644C /* ati.h in Headers */,
+				9AF415A6242CD75C00D2644C /* global_test.h in Headers */,
+				9AF415A7242CD75C00D2644C /* CanonicalDB.h in Headers */,
+				9AF415A8242CD75C00D2644C /* nanosvg.h in Headers */,
+				9AF415A9242CD75C00D2644C /* printf_lite-test-cpp_conf.h in Headers */,
+				9AF415AA242CD75C00D2644C /* CloverDB.h in Headers */,
+				9AF415AB242CD75C00D2644C /* LegacyBiosThunk.h in Headers */,
+				9AF415AC242CD75C00D2644C /* tool.h in Headers */,
+				9AF415AD242CD75C00D2644C /* globals_dtor.h in Headers */,
+				9AF415AE242CD75C00D2644C /* screen.h in Headers */,
+				9AF415AF242CD75C00D2644C /* printlib-test.h in Headers */,
+				9AF415B0242CD75C00D2644C /* DataHubCpu.h in Headers */,
+				9AF415B1242CD75C00D2644C /* lib.h in Headers */,
+				9AF415B2242CD75C00D2644C /* b64cdecode.h in Headers */,
+				9AF415B3242CD75C00D2644C /* EfiFileLib.h in Headers */,
+				9AF415B4242CD75C00D2644C /* menu_globals.h in Headers */,
+				9AF415B5242CD75C00D2644C /* XObjArray.h in Headers */,
+				9AF415B6242CD75C00D2644C /* string.h in Headers */,
+				9AF415B8242CD75C00D2644C /* sse3_5_patcher.h in Headers */,
+				9AF415B9242CD75C00D2644C /* spd.h in Headers */,
+				9AF415BA242CD75C00D2644C /* IO.h in Headers */,
+				9AF415BB242CD75C00D2644C /* device_inject.h in Headers */,
+				9AF415BC242CD75C00D2644C /* entry_scan.h in Headers */,
+				9AF415BD242CD75C00D2644C /* LoaderUefi.h in Headers */,
+				9AF415BE242CD75C00D2644C /* hda.h in Headers */,
+				9AF415BF242CD75C00D2644C /* all_tests.h in Headers */,
+				9AF415C0242CD75C00D2644C /* strncmp_test.h in Headers */,
+				9AF415C1242CD75C00D2644C /* XPointer.h in Headers */,
+				9AF415C2242CD75C00D2644C /* XToolsCommon.h in Headers */,
+				9AF415C3242CD75C00D2644C /* stdio.h in Headers */,
+				9AF415C4242CD75C00D2644C /* bootscreen.h in Headers */,
+				9AF415C5242CD75C00D2644C /* limits.h in Headers */,
+				9AF415C6242CD75C00D2644C /* Settings.h in Headers */,
+				9AF415C7242CD75C00D2644C /* XStringW_test.h in Headers */,
+				9AF415C8242CD75C00D2644C /* printf_lite_test.h in Headers */,
+				9AF415C9242CD75C00D2644C /* ati_reg.h in Headers */,
+				9AF415CA242CD75C00D2644C /* libegint.h in Headers */,
+				9AF415CB242CD75C00D2644C /* memvendors.h in Headers */,
+				9AF415CC242CD75C00D2644C /* kernel_patcher.h in Headers */,
+				9AF415CD242CD75C00D2644C /* memory.h in Headers */,
+				9AF415CE242CD75C00D2644C /* menu.h in Headers */,
+				9AF415CF242CD75C00D2644C /* MSUEFICADB.h in Headers */,
+				9AF415D0242CD75C00D2644C /* Hibernate.h in Headers */,
+				9AF415D1242CD75C00D2644C /* strlen_test.h in Headers */,
+				9AF415D2242CD75C00D2644C /* XArray_tests.h in Headers */,
+				9AF415D3242CD75C00D2644C /* Handle.h in Headers */,
+				9AF415D4242CD75C00D2644C /* XArray.h in Headers */,
+				9AF415D5242CD75C00D2644C /* MSPCADB.h in Headers */,
+				9AF415D6242CD75C00D2644C /* libeg.h in Headers */,
+				9AF415D7242CD75C00D2644C /* HdaCodecDump.h in Headers */,
+				9AF415D8242CD75C00D2644C /* kext_inject.h in Headers */,
+				9AF415D9242CD75C00D2644C /* Nvram.h in Headers */,
+				9AF415DA242CD75C00D2644C /* poolprint-test-cpp_conf.h in Headers */,
+				9AF415DB242CD75C00D2644C /* gma.h in Headers */,
+				9AF415DC242CD75C00D2644C /* sse3_patcher.h in Headers */,
+				9AF415DD242CD75C00D2644C /* Version.h in Headers */,
+				9AF415DE242CD75C00D2644C /* XString_test.h in Headers */,
+				9AF415DF242CD75C00D2644C /* stdint.h in Headers */,
+				9AF415E0242CD75C00D2644C /* REFIT_MENU_SCREEN.h in Headers */,
+				9AF415E1242CD75C00D2644C /* Platform.h in Headers */,
+				9AF415E2242CD75C00D2644C /* XImage.h in Headers */,
+				9AF415E3242CD75C00D2644C /* globals_ctor.h in Headers */,
+				9AF415E4242CD75C00D2644C /* poolprint-test.h in Headers */,
+				9AF415E5242CD75C00D2644C /* stddef.h in Headers */,
+				9AF415E6242CD75C00D2644C /* securebootkeys.h in Headers */,
+				9AF415E7242CD75C00D2644C /* string.h in Headers */,
+				9AF415E8242CD75C00D2644C /* XString.h in Headers */,
+				9AF415E9242CD75C00D2644C /* FloatLib.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AF41660242CDA5800D2644C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AF41661242CDA5800D2644C /* panic.h in Headers */,
+				9AF41662242CDA5800D2644C /* MSKEK.h in Headers */,
+				9AF41663242CDA5800D2644C /* menu_items.h in Headers */,
+				9AF41664242CDA5800D2644C /* XTheme.h in Headers */,
+				9AF41665242CDA5800D2644C /* XStringWP.h in Headers */,
+				9AF41666242CDA5800D2644C /* nvidia.h in Headers */,
+				9AF41667242CDA5800D2644C /* operatorNewDelete.h in Headers */,
+				9AF41668242CDA5800D2644C /* XUINTN_test.h in Headers */,
+				9AF41669242CDA5800D2644C /* XStringWArray_test.h in Headers */,
+				9AF4166A242CDA5800D2644C /* syslinux_mbr.h in Headers */,
+				9AF4166C242CDA5800D2644C /* lodepng.h in Headers */,
+				9AF4166D242CDA5800D2644C /* loader.h in Headers */,
+				9AF4166E242CDA5800D2644C /* unicode_conversions.h in Headers */,
+				9AF4166F242CDA5800D2644C /* CloverKEK.h in Headers */,
+				9AF41670242CDA5800D2644C /* StateGenerator.h in Headers */,
+				9AF41671242CDA5800D2644C /* remove_ref.h in Headers */,
+				9AF41672242CDA5800D2644C /* wchar.h in Headers */,
+				9AF41673242CDA5800D2644C /* loader.h in Headers */,
+				9AF41674242CDA5800D2644C /* AmlGenerator.h in Headers */,
+				9AF41675242CDA5800D2644C /* XStringW.h in Headers */,
+				9AF41676242CDA5800D2644C /* utf8Conversion.h in Headers */,
+				9AF41677242CDA5800D2644C /* stdarg.h in Headers */,
+				9AF41678242CDA5800D2644C /* posix.h in Headers */,
+				9AF41679242CDA5800D2644C /* list.h in Headers */,
+				9AF4167A242CDA5800D2644C /* stdlib.h in Headers */,
+				9AF4167B242CDA5800D2644C /* XObjArray_tests.h in Headers */,
+				9AF4167C242CDA5800D2644C /* Events.h in Headers */,
+				9AF4167D242CDA5800D2644C /* printlib-test-cpp_conf.h in Headers */,
+				9AF4167E242CDA5800D2644C /* XStringWArray.h in Headers */,
+				9AF4167F242CDA5800D2644C /* XUINTN.h in Headers */,
+				9AF41680242CDA5800D2644C /* strcmp_test.h in Headers */,
+				9AF41681242CDA5800D2644C /* boot.h in Headers */,
+				9AF41682242CDA5800D2644C /* ati.h in Headers */,
+				9AF41683242CDA5800D2644C /* global_test.h in Headers */,
+				9AF41684242CDA5800D2644C /* CanonicalDB.h in Headers */,
+				9AF41685242CDA5800D2644C /* nanosvg.h in Headers */,
+				9AF41686242CDA5800D2644C /* printf_lite-test-cpp_conf.h in Headers */,
+				9AF41687242CDA5800D2644C /* CloverDB.h in Headers */,
+				9AF41688242CDA5800D2644C /* LegacyBiosThunk.h in Headers */,
+				9AF41689242CDA5800D2644C /* tool.h in Headers */,
+				9AF4168A242CDA5800D2644C /* globals_dtor.h in Headers */,
+				9AF4168B242CDA5800D2644C /* screen.h in Headers */,
+				9AF4168C242CDA5800D2644C /* printlib-test.h in Headers */,
+				9AF4168D242CDA5800D2644C /* DataHubCpu.h in Headers */,
+				9AF4168E242CDA5800D2644C /* lib.h in Headers */,
+				9AF4168F242CDA5800D2644C /* b64cdecode.h in Headers */,
+				9AF41690242CDA5800D2644C /* EfiFileLib.h in Headers */,
+				9AF41691242CDA5800D2644C /* menu_globals.h in Headers */,
+				9AF41692242CDA5800D2644C /* XObjArray.h in Headers */,
+				9AF41693242CDA5800D2644C /* string.h in Headers */,
+				9AF41695242CDA5800D2644C /* sse3_5_patcher.h in Headers */,
+				9AF41696242CDA5800D2644C /* spd.h in Headers */,
+				9AF41697242CDA5800D2644C /* IO.h in Headers */,
+				9AF41698242CDA5800D2644C /* device_inject.h in Headers */,
+				9AF41699242CDA5800D2644C /* entry_scan.h in Headers */,
+				9AF4169A242CDA5800D2644C /* LoaderUefi.h in Headers */,
+				9AF4169B242CDA5800D2644C /* hda.h in Headers */,
+				9AF4169C242CDA5800D2644C /* all_tests.h in Headers */,
+				9AF4169D242CDA5800D2644C /* strncmp_test.h in Headers */,
+				9AF4169E242CDA5800D2644C /* XPointer.h in Headers */,
+				9AF4169F242CDA5800D2644C /* XToolsCommon.h in Headers */,
+				9AF416A0242CDA5800D2644C /* stdio.h in Headers */,
+				9AF416A1242CDA5800D2644C /* bootscreen.h in Headers */,
+				9AF416A2242CDA5800D2644C /* limits.h in Headers */,
+				9AF416A3242CDA5800D2644C /* Settings.h in Headers */,
+				9AF416A4242CDA5800D2644C /* XStringW_test.h in Headers */,
+				9AF416A5242CDA5800D2644C /* printf_lite_test.h in Headers */,
+				9AF416A6242CDA5800D2644C /* ati_reg.h in Headers */,
+				9AF416A7242CDA5800D2644C /* libegint.h in Headers */,
+				9AF416A8242CDA5800D2644C /* memvendors.h in Headers */,
+				9AF416A9242CDA5800D2644C /* kernel_patcher.h in Headers */,
+				9AF416AA242CDA5800D2644C /* memory.h in Headers */,
+				9AF416AB242CDA5800D2644C /* menu.h in Headers */,
+				9AF416AC242CDA5800D2644C /* MSUEFICADB.h in Headers */,
+				9AF416AD242CDA5800D2644C /* Hibernate.h in Headers */,
+				9AF416AE242CDA5800D2644C /* strlen_test.h in Headers */,
+				9AF416AF242CDA5800D2644C /* XArray_tests.h in Headers */,
+				9AF416B0242CDA5800D2644C /* Handle.h in Headers */,
+				9AF416B1242CDA5800D2644C /* XArray.h in Headers */,
+				9AF416B2242CDA5800D2644C /* MSPCADB.h in Headers */,
+				9AF416B3242CDA5800D2644C /* libeg.h in Headers */,
+				9AF416B4242CDA5800D2644C /* HdaCodecDump.h in Headers */,
+				9AF416B5242CDA5800D2644C /* kext_inject.h in Headers */,
+				9AF416B6242CDA5800D2644C /* Nvram.h in Headers */,
+				9AF416B7242CDA5800D2644C /* poolprint-test-cpp_conf.h in Headers */,
+				9AF416B8242CDA5800D2644C /* gma.h in Headers */,
+				9AF416B9242CDA5800D2644C /* sse3_patcher.h in Headers */,
+				9AF416BA242CDA5800D2644C /* Version.h in Headers */,
+				9AF416BB242CDA5800D2644C /* XString_test.h in Headers */,
+				9AF416BC242CDA5800D2644C /* stdint.h in Headers */,
+				9AF416BD242CDA5800D2644C /* REFIT_MENU_SCREEN.h in Headers */,
+				9AF416BE242CDA5800D2644C /* Platform.h in Headers */,
+				9AF416BF242CDA5800D2644C /* XImage.h in Headers */,
+				9AF416C0242CDA5800D2644C /* globals_ctor.h in Headers */,
+				9AF416C1242CDA5800D2644C /* poolprint-test.h in Headers */,
+				9AF416C2242CDA5800D2644C /* stddef.h in Headers */,
+				9AF416C3242CDA5800D2644C /* securebootkeys.h in Headers */,
+				9AF416C4242CDA5800D2644C /* string.h in Headers */,
+				9AF416C5242CDA5800D2644C /* XString.h in Headers */,
+				9AF416C6242CDA5800D2644C /* FloatLib.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -900,6 +1550,42 @@
 			name = CloverX64;
 			productName = CloverX64;
 			productReference = 9AC77EC424176BF2005CDD5C /* libCloverX64.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		9AF41582242CD75C00D2644C /* CloverX64 DEBUG_ALL=1 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9AF4165B242CD75C00D2644C /* Build configuration list for PBXNativeTarget "CloverX64 DEBUG_ALL=1" */;
+			buildPhases = (
+				9AF41583242CD75C00D2644C /* Headers */,
+				9AF415EA242CD75C00D2644C /* Sources */,
+				9AF41659242CD75C00D2644C /* Frameworks */,
+				9AF4165A242CD75C00D2644C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CloverX64 DEBUG_ALL=1";
+			productName = CloverX64;
+			productReference = 9AF4165E242CD75C00D2644C /* libCloverX64 DEBUG_ALL=1.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		9AF4165F242CDA5800D2644C /* CloverX64 DEBUG_ALL=2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9AF41738242CDA5800D2644C /* Build configuration list for PBXNativeTarget "CloverX64 DEBUG_ALL=2" */;
+			buildPhases = (
+				9AF41660242CDA5800D2644C /* Headers */,
+				9AF416C7242CDA5800D2644C /* Sources */,
+				9AF41736242CDA5800D2644C /* Frameworks */,
+				9AF41737242CDA5800D2644C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CloverX64 DEBUG_ALL=2";
+			productName = CloverX64;
+			productReference = 9AF4173B242CDA5800D2644C /* libCloverX64 DEBUG_ALL=2.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -928,6 +1614,8 @@
 			projectRoot = "";
 			targets = (
 				9AC77EC324176BF2005CDD5C /* CloverX64 */,
+				9AF41582242CD75C00D2644C /* CloverX64 DEBUG_ALL=1 */,
+				9AF4165F242CDA5800D2644C /* CloverX64 DEBUG_ALL=2 */,
 			);
 		};
 /* End PBXProject section */
@@ -948,7 +1636,41 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n$PROJECT_DIR/clang-slink\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n$PROJECT_DIR/clang-slink \"$TARGET_BUILD_DIR\"/\"$FULL_PRODUCT_NAME\"\n";
+		};
+		9AF4165A242CD75C00D2644C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n$PROJECT_DIR/clang-slink \"$TARGET_BUILD_DIR\"/\"$FULL_PRODUCT_NAME\"\n";
+		};
+		9AF41737242CDA5800D2644C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n$PROJECT_DIR/clang-slink \"$TARGET_BUILD_DIR\"/\"$FULL_PRODUCT_NAME\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1069,6 +1791,238 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9AF415EA242CD75C00D2644C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AF415EB242CD75C00D2644C /* Hibernate.cpp in Sources */,
+				9AF415EC242CD75C00D2644C /* wchar.cpp in Sources */,
+				9AF415ED242CD75C00D2644C /* DataHubCpu.cpp in Sources */,
+				9AF415EE242CD75C00D2644C /* hda.cpp in Sources */,
+				9AF415EF242CD75C00D2644C /* egemb_icons_dark.cpp in Sources */,
+				9AF415F0242CD75C00D2644C /* scroll_images.cpp in Sources */,
+				9AF415F1242CD75C00D2644C /* XStringWArray.cpp in Sources */,
+				9AF415F2242CD75C00D2644C /* PlatformDriverOverride.cpp in Sources */,
+				9AF415F3242CD75C00D2644C /* HdaCodecDump.cpp in Sources */,
+				9AF415F4242CD75C00D2644C /* Nvram.cpp in Sources */,
+				9AF415F5242CD75C00D2644C /* BootOptions.cpp in Sources */,
+				9AF415F6242CD75C00D2644C /* stdio.cpp in Sources */,
+				9AF415F7242CD75C00D2644C /* operatorNewDelete.cpp in Sources */,
+				9AF415F8242CD75C00D2644C /* securehash.cpp in Sources */,
+				9AF415F9242CD75C00D2644C /* image.cpp in Sources */,
+				9AF415FA242CD75C00D2644C /* Events.cpp in Sources */,
+				9AF415FB242CD75C00D2644C /* libscreen.cpp in Sources */,
+				9AF415FC242CD75C00D2644C /* strlen_test.cpp in Sources */,
+				9AF415FD242CD75C00D2644C /* panic.cpp in Sources */,
+				9AF415FE242CD75C00D2644C /* printlib-test.cpp in Sources */,
+				9AF415FF242CD75C00D2644C /* XStringW_test.cpp in Sources */,
+				9AF41600242CD75C00D2644C /* tool.cpp in Sources */,
+				9AF41601242CD75C00D2644C /* lib.cpp in Sources */,
+				9AF41602242CD75C00D2644C /* Injectors.cpp in Sources */,
+				9AF41603242CD75C00D2644C /* menu.cpp in Sources */,
+				9AF41604242CD75C00D2644C /* b64cdecode.cpp in Sources */,
+				9AF41605242CD75C00D2644C /* globals_dtor.cpp in Sources */,
+				9AF41606242CD75C00D2644C /* DevicePath.cpp in Sources */,
+				9AF41607242CD75C00D2644C /* XArray_tests.cpp in Sources */,
+				9AF41608242CD75C00D2644C /* StateGenerator.cpp in Sources */,
+				9AF41609242CD75C00D2644C /* XImage.cpp in Sources */,
+				9AF4160A242CD75C00D2644C /* platformdata.cpp in Sources */,
+				9AF4160B242CD75C00D2644C /* strcmp.cpp in Sources */,
+				9AF4160C242CD75C00D2644C /* XPointer.cpp in Sources */,
+				9AF4160D242CD75C00D2644C /* strncmp_test.cpp in Sources */,
+				9AF4160E242CD75C00D2644C /* list.cpp in Sources */,
+				9AF4160F242CD75C00D2644C /* IO.cpp in Sources */,
+				9AF41610242CD75C00D2644C /* sound.cpp in Sources */,
+				9AF41611242CD75C00D2644C /* usbfix.cpp in Sources */,
+				9AF41612242CD75C00D2644C /* BmLib.cpp in Sources */,
+				9AF41613242CD75C00D2644C /* card_vlist.cpp in Sources */,
+				9AF41614242CD75C00D2644C /* global_test.cpp in Sources */,
+				9AF41615242CD75C00D2644C /* XTheme.cpp in Sources */,
+				9AF41616242CD75C00D2644C /* load_icns.cpp in Sources */,
+				9AF41617242CD75C00D2644C /* egemb_font.cpp in Sources */,
+				9AF41618242CD75C00D2644C /* securemenu.cpp in Sources */,
+				9AF41619242CD75C00D2644C /* text.cpp in Sources */,
+				9AF4161A242CD75C00D2644C /* AmlGenerator.cpp in Sources */,
+				9AF4161B242CD75C00D2644C /* all_tests.cpp in Sources */,
+				9AF4161C242CD75C00D2644C /* securevars.cpp in Sources */,
+				9AF4161E242CD75C00D2644C /* loader.cpp in Sources */,
+				9AF4161F242CD75C00D2644C /* XObjArray_tests.cpp in Sources */,
+				9AF41620242CD75C00D2644C /* XStringWP.cpp in Sources */,
+				9AF41621242CD75C00D2644C /* memory.cpp in Sources */,
+				9AF41622242CD75C00D2644C /* cpu.cpp in Sources */,
+				9AF41623242CD75C00D2644C /* LegacyBoot.cpp in Sources */,
+				9AF41624242CD75C00D2644C /* REFIT_MENU_SCREEN.cpp in Sources */,
+				9AF41625242CD75C00D2644C /* LegacyBiosThunk.cpp in Sources */,
+				9AF41626242CD75C00D2644C /* XUINTN_test.cpp in Sources */,
+				9AF41627242CD75C00D2644C /* string.cpp in Sources */,
+				9AF41628242CD75C00D2644C /* XStringW.cpp in Sources */,
+				9AF41629242CD75C00D2644C /* lockedgraphics.cpp in Sources */,
+				9AF4162A242CD75C00D2644C /* XString_test.cpp in Sources */,
+				9AF4162B242CD75C00D2644C /* device_inject.cpp in Sources */,
+				9AF4162C242CD75C00D2644C /* Settings.cpp in Sources */,
+				9AF4162D242CD75C00D2644C /* legacy.cpp in Sources */,
+				9AF4162E242CD75C00D2644C /* AcpiPatcher.cpp in Sources */,
+				9AF4162F242CD75C00D2644C /* BdsConnect.cpp in Sources */,
+				9AF41630242CD75C00D2644C /* poolprint-test.cpp in Sources */,
+				9AF41631242CD75C00D2644C /* spd.cpp in Sources */,
+				9AF41632242CD75C00D2644C /* printf_lite-test.cpp in Sources */,
+				9AF41633242CD75C00D2644C /* kext_patcher.cpp in Sources */,
+				9AF41634242CD75C00D2644C /* abort.cpp in Sources */,
+				9AF41635242CD75C00D2644C /* gma.cpp in Sources */,
+				9AF41636242CD75C00D2644C /* FloatLib.cpp in Sources */,
+				9AF41637242CD75C00D2644C /* menu_items.cpp in Sources */,
+				9AF41638242CD75C00D2644C /* lodepng.cpp in Sources */,
+				9AF41639242CD75C00D2644C /* secureboot.cpp in Sources */,
+				9AF4163A242CD75C00D2644C /* FixBiosDsdt.cpp in Sources */,
+				9AF4163B242CD75C00D2644C /* BootLog.cpp in Sources */,
+				9AF4163C242CD75C00D2644C /* icns.cpp in Sources */,
+				9AF4163D242CD75C00D2644C /* strcmp_test.cpp in Sources */,
+				9AF4163E242CD75C00D2644C /* nanosvgrast.cpp in Sources */,
+				9AF4163F242CD75C00D2644C /* XStringWArray_test.cpp in Sources */,
+				9AF41640242CD75C00D2644C /* main.cpp in Sources */,
+				9AF41641242CD75C00D2644C /* nvidia.cpp in Sources */,
+				9AF41642242CD75C00D2644C /* XString.cpp in Sources */,
+				9AF41643242CD75C00D2644C /* plist.cpp in Sources */,
+				9AF41644242CD75C00D2644C /* kernel_patcher.cpp in Sources */,
+				9AF41645242CD75C00D2644C /* nanosvg.cpp in Sources */,
+				9AF41646242CD75C00D2644C /* XToolsCommon.cpp in Sources */,
+				9AF41647242CD75C00D2644C /* ati.cpp in Sources */,
+				9AF41648242CD75C00D2644C /* Net.cpp in Sources */,
+				9AF41649242CD75C00D2644C /* kext_inject.cpp in Sources */,
+				9AF4164A242CD75C00D2644C /* guid.cpp in Sources */,
+				9AF4164B242CD75C00D2644C /* bootscreen.cpp in Sources */,
+				9AF4164C242CD75C00D2644C /* XUINTN.cpp in Sources */,
+				9AF4164D242CD75C00D2644C /* strlen.cpp in Sources */,
+				9AF4164E242CD75C00D2644C /* Console.cpp in Sources */,
+				9AF4164F242CD75C00D2644C /* utf8Conversion.cpp in Sources */,
+				9AF41650242CD75C00D2644C /* unicode_conversions.cpp in Sources */,
+				9AF41651242CD75C00D2644C /* StartupSound.cpp in Sources */,
+				9AF41652242CD75C00D2644C /* globals_ctor.cpp in Sources */,
+				9AF41653242CD75C00D2644C /* screen.cpp in Sources */,
+				9AF41654242CD75C00D2644C /* VectorGraphics.cpp in Sources */,
+				9AF41655242CD75C00D2644C /* common.cpp in Sources */,
+				9AF41656242CD75C00D2644C /* egemb_icons.cpp in Sources */,
+				9AF41657242CD75C00D2644C /* Edid.cpp in Sources */,
+				9AF41658242CD75C00D2644C /* smbios.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AF416C7242CDA5800D2644C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AF416C8242CDA5800D2644C /* Hibernate.cpp in Sources */,
+				9AF416C9242CDA5800D2644C /* wchar.cpp in Sources */,
+				9AF416CA242CDA5800D2644C /* DataHubCpu.cpp in Sources */,
+				9AF416CB242CDA5800D2644C /* hda.cpp in Sources */,
+				9AF416CC242CDA5800D2644C /* egemb_icons_dark.cpp in Sources */,
+				9AF416CD242CDA5800D2644C /* scroll_images.cpp in Sources */,
+				9AF416CE242CDA5800D2644C /* XStringWArray.cpp in Sources */,
+				9AF416CF242CDA5800D2644C /* PlatformDriverOverride.cpp in Sources */,
+				9AF416D0242CDA5800D2644C /* HdaCodecDump.cpp in Sources */,
+				9AF416D1242CDA5800D2644C /* Nvram.cpp in Sources */,
+				9AF416D2242CDA5800D2644C /* BootOptions.cpp in Sources */,
+				9AF416D3242CDA5800D2644C /* stdio.cpp in Sources */,
+				9AF416D4242CDA5800D2644C /* operatorNewDelete.cpp in Sources */,
+				9AF416D5242CDA5800D2644C /* securehash.cpp in Sources */,
+				9AF416D6242CDA5800D2644C /* image.cpp in Sources */,
+				9AF416D7242CDA5800D2644C /* Events.cpp in Sources */,
+				9AF416D8242CDA5800D2644C /* libscreen.cpp in Sources */,
+				9AF416D9242CDA5800D2644C /* strlen_test.cpp in Sources */,
+				9AF416DA242CDA5800D2644C /* panic.cpp in Sources */,
+				9AF416DB242CDA5800D2644C /* printlib-test.cpp in Sources */,
+				9AF416DC242CDA5800D2644C /* XStringW_test.cpp in Sources */,
+				9AF416DD242CDA5800D2644C /* tool.cpp in Sources */,
+				9AF416DE242CDA5800D2644C /* lib.cpp in Sources */,
+				9AF416DF242CDA5800D2644C /* Injectors.cpp in Sources */,
+				9AF416E0242CDA5800D2644C /* menu.cpp in Sources */,
+				9AF416E1242CDA5800D2644C /* b64cdecode.cpp in Sources */,
+				9AF416E2242CDA5800D2644C /* globals_dtor.cpp in Sources */,
+				9AF416E3242CDA5800D2644C /* DevicePath.cpp in Sources */,
+				9AF416E4242CDA5800D2644C /* XArray_tests.cpp in Sources */,
+				9AF416E5242CDA5800D2644C /* StateGenerator.cpp in Sources */,
+				9AF416E6242CDA5800D2644C /* XImage.cpp in Sources */,
+				9AF416E7242CDA5800D2644C /* platformdata.cpp in Sources */,
+				9AF416E8242CDA5800D2644C /* strcmp.cpp in Sources */,
+				9AF416E9242CDA5800D2644C /* XPointer.cpp in Sources */,
+				9AF416EA242CDA5800D2644C /* strncmp_test.cpp in Sources */,
+				9AF416EB242CDA5800D2644C /* list.cpp in Sources */,
+				9AF416EC242CDA5800D2644C /* IO.cpp in Sources */,
+				9AF416ED242CDA5800D2644C /* sound.cpp in Sources */,
+				9AF416EE242CDA5800D2644C /* usbfix.cpp in Sources */,
+				9AF416EF242CDA5800D2644C /* BmLib.cpp in Sources */,
+				9AF416F0242CDA5800D2644C /* card_vlist.cpp in Sources */,
+				9AF416F1242CDA5800D2644C /* global_test.cpp in Sources */,
+				9AF416F2242CDA5800D2644C /* XTheme.cpp in Sources */,
+				9AF416F3242CDA5800D2644C /* load_icns.cpp in Sources */,
+				9AF416F4242CDA5800D2644C /* egemb_font.cpp in Sources */,
+				9AF416F5242CDA5800D2644C /* securemenu.cpp in Sources */,
+				9AF416F6242CDA5800D2644C /* text.cpp in Sources */,
+				9AF416F7242CDA5800D2644C /* AmlGenerator.cpp in Sources */,
+				9AF416F8242CDA5800D2644C /* all_tests.cpp in Sources */,
+				9AF416F9242CDA5800D2644C /* securevars.cpp in Sources */,
+				9AF416FB242CDA5800D2644C /* loader.cpp in Sources */,
+				9AF416FC242CDA5800D2644C /* XObjArray_tests.cpp in Sources */,
+				9AF416FD242CDA5800D2644C /* XStringWP.cpp in Sources */,
+				9AF416FE242CDA5800D2644C /* memory.cpp in Sources */,
+				9AF416FF242CDA5800D2644C /* cpu.cpp in Sources */,
+				9AF41700242CDA5800D2644C /* LegacyBoot.cpp in Sources */,
+				9AF41701242CDA5800D2644C /* REFIT_MENU_SCREEN.cpp in Sources */,
+				9AF41702242CDA5800D2644C /* LegacyBiosThunk.cpp in Sources */,
+				9AF41703242CDA5800D2644C /* XUINTN_test.cpp in Sources */,
+				9AF41704242CDA5800D2644C /* string.cpp in Sources */,
+				9AF41705242CDA5800D2644C /* XStringW.cpp in Sources */,
+				9AF41706242CDA5800D2644C /* lockedgraphics.cpp in Sources */,
+				9AF41707242CDA5800D2644C /* XString_test.cpp in Sources */,
+				9AF41708242CDA5800D2644C /* device_inject.cpp in Sources */,
+				9AF41709242CDA5800D2644C /* Settings.cpp in Sources */,
+				9AF4170A242CDA5800D2644C /* legacy.cpp in Sources */,
+				9AF4170B242CDA5800D2644C /* AcpiPatcher.cpp in Sources */,
+				9AF4170C242CDA5800D2644C /* BdsConnect.cpp in Sources */,
+				9AF4170D242CDA5800D2644C /* poolprint-test.cpp in Sources */,
+				9AF4170E242CDA5800D2644C /* spd.cpp in Sources */,
+				9AF4170F242CDA5800D2644C /* printf_lite-test.cpp in Sources */,
+				9AF41710242CDA5800D2644C /* kext_patcher.cpp in Sources */,
+				9AF41711242CDA5800D2644C /* abort.cpp in Sources */,
+				9AF41712242CDA5800D2644C /* gma.cpp in Sources */,
+				9AF41713242CDA5800D2644C /* FloatLib.cpp in Sources */,
+				9AF41714242CDA5800D2644C /* menu_items.cpp in Sources */,
+				9AF41715242CDA5800D2644C /* lodepng.cpp in Sources */,
+				9AF41716242CDA5800D2644C /* secureboot.cpp in Sources */,
+				9AF41717242CDA5800D2644C /* FixBiosDsdt.cpp in Sources */,
+				9AF41718242CDA5800D2644C /* BootLog.cpp in Sources */,
+				9AF41719242CDA5800D2644C /* icns.cpp in Sources */,
+				9AF4171A242CDA5800D2644C /* strcmp_test.cpp in Sources */,
+				9AF4171B242CDA5800D2644C /* nanosvgrast.cpp in Sources */,
+				9AF4171C242CDA5800D2644C /* XStringWArray_test.cpp in Sources */,
+				9AF4171D242CDA5800D2644C /* main.cpp in Sources */,
+				9AF4171E242CDA5800D2644C /* nvidia.cpp in Sources */,
+				9AF4171F242CDA5800D2644C /* XString.cpp in Sources */,
+				9AF41720242CDA5800D2644C /* plist.cpp in Sources */,
+				9AF41721242CDA5800D2644C /* kernel_patcher.cpp in Sources */,
+				9AF41722242CDA5800D2644C /* nanosvg.cpp in Sources */,
+				9AF41723242CDA5800D2644C /* XToolsCommon.cpp in Sources */,
+				9AF41724242CDA5800D2644C /* ati.cpp in Sources */,
+				9AF41725242CDA5800D2644C /* Net.cpp in Sources */,
+				9AF41726242CDA5800D2644C /* kext_inject.cpp in Sources */,
+				9AF41727242CDA5800D2644C /* guid.cpp in Sources */,
+				9AF41728242CDA5800D2644C /* bootscreen.cpp in Sources */,
+				9AF41729242CDA5800D2644C /* XUINTN.cpp in Sources */,
+				9AF4172A242CDA5800D2644C /* strlen.cpp in Sources */,
+				9AF4172B242CDA5800D2644C /* Console.cpp in Sources */,
+				9AF4172C242CDA5800D2644C /* utf8Conversion.cpp in Sources */,
+				9AF4172D242CDA5800D2644C /* unicode_conversions.cpp in Sources */,
+				9AF4172E242CDA5800D2644C /* StartupSound.cpp in Sources */,
+				9AF4172F242CDA5800D2644C /* globals_ctor.cpp in Sources */,
+				9AF41730242CDA5800D2644C /* screen.cpp in Sources */,
+				9AF41731242CDA5800D2644C /* VectorGraphics.cpp in Sources */,
+				9AF41732242CDA5800D2644C /* common.cpp in Sources */,
+				9AF41733242CDA5800D2644C /* egemb_icons.cpp in Sources */,
+				9AF41734242CDA5800D2644C /* Edid.cpp in Sources */,
+				9AF41735242CDA5800D2644C /* smbios.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -1091,11 +2045,13 @@
 					NO_MSABI_VA_FUNCS,
 				);
 				HEADER_SEARCH_PATHS = (
-					$PROJECT_DIR/../../rEFIt_UEFI/Platform/Posix,
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
-					$PROJECT_DIR/../../rEFIt_UEFI,
+					$PROJECT_DIR/../../rEFIt_UEFI/Platform/Posix,
 					$PROJECT_DIR/../../rEFIt_UEFI/Platform,
+					$PROJECT_DIR/../../rEFIt_UEFI/cpp_unit_test,
+					$PROJECT_DIR/../../rEFIt_UEFI,
 					$PROJECT_DIR/../../Include,
+					$PROJECT_DIR/../../Include/Library,
 					$PROJECT_DIR/../../IntelFrameworkModulePkg/Include,
 					$PROJECT_DIR/../../IntelFrameworkPkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include,
@@ -1135,11 +2091,13 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				HEADER_SEARCH_PATHS = (
-					$PROJECT_DIR/../../rEFIt_UEFI/Platform/Posix,
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
-					$PROJECT_DIR/../../rEFIt_UEFI,
+					$PROJECT_DIR/../../rEFIt_UEFI/Platform/Posix,
 					$PROJECT_DIR/../../rEFIt_UEFI/Platform,
+					$PROJECT_DIR/../../rEFIt_UEFI/cpp_unit_test,
+					$PROJECT_DIR/../../rEFIt_UEFI,
 					$PROJECT_DIR/../../Include,
+					$PROJECT_DIR/../../Include/Library,
 					$PROJECT_DIR/../../IntelFrameworkModulePkg/Include,
 					$PROJECT_DIR/../../IntelFrameworkPkg/Include,
 					$PROJECT_DIR/../../MdePkg/Include,
@@ -1284,6 +2242,234 @@
 			};
 			name = Release;
 		};
+		9AF4165C242CD75C00D2644C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"JIEF_DEBUG=1",
+					"DEBUG_ALL=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		9AF4165D242CD75C00D2644C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		9AF41739242CDA5800D2644C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"JIEF_DEBUG=1",
+					"DEBUG_ALL=2",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		9AF4173A242CDA5800D2644C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1301,6 +2487,24 @@
 			buildConfigurations = (
 				9AC77EC724176BF2005CDD5C /* Debug */,
 				9AC77EC824176BF2005CDD5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9AF4165B242CD75C00D2644C /* Build configuration list for PBXNativeTarget "CloverX64 DEBUG_ALL=1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9AF4165C242CD75C00D2644C /* Debug */,
+				9AF4165D242CD75C00D2644C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9AF41738242CDA5800D2644C /* Build configuration list for PBXNativeTarget "CloverX64 DEBUG_ALL=2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9AF41739242CDA5800D2644C /* Debug */,
+				9AF4173A242CDA5800D2644C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

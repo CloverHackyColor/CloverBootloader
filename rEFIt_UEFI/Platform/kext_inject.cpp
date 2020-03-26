@@ -1,11 +1,17 @@
 #include "Platform.h"
 
+
+#ifndef DEBUG_ALL
 #define KEXT_INJECT_DEBUG 0
+#else
+#define KEXT_INJECT_DEBUG DEBUG_ALL
+#endif
+
 
 #if KEXT_INJECT_DEBUG == 2
 #define DBG(...) MsgLog(__VA_ARGS__)
 #elif KEXT_INJECT_DEBUG == 1
-#define DBG(...)  AsciiPrint(__VA_ARGS__);
+#define DBG(...)  printf(__VA_ARGS__);
 #else
 #define DBG(...)
 #endif

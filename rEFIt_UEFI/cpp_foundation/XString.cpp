@@ -33,13 +33,13 @@ const XString NullXString;
 
 void XString::Init(xsize aSize)
 {
-	c = (char*)malloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans mSize */
-	if ( !c ) {
-		DebugLog(2, "XString::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(char));
+	m_data = (char*)malloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans mSize */
+	if ( !m_data ) {
+		DebugLog(2, "XString::Init(%llu) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(char));
 		panic();
 	}
 	m_allocatedSize = aSize;
-	c[0] = 0;
+	m_data[0] = 0;
 }
 
 XString::XString()
@@ -51,13 +51,13 @@ XString::XString()
 XString::~XString()
 {
 //Debugf("Destructeur :%s\n", c);
-	delete c;
+	delete m_data;
 }
 
-void XString::SetLength(xsize len)
+void XString::setLength(xsize len)
 {
 	CheckSize(len);
-	c[len] = 0;
+	m_data[len] = 0;
 }
 
 /* CheckSize() */
@@ -67,14 +67,14 @@ char *XString::CheckSize(xsize nNewSize, xsize nGrowBy)
 	{
 
 		nNewSize += nGrowBy;
-		c = (char*)realloc(c, (nNewSize+1)*sizeof(char), m_allocatedSize*sizeof(wchar_t));
-		if ( !c ) {
+		m_data = (char*)realloc(m_data, (nNewSize+1)*sizeof(char), m_allocatedSize*sizeof(wchar_t));
+		if ( !m_data ) {
 			DBG("XString::CheckSize(%d, %d) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, (nNewSize+1)*sizeof(char), c);
 			panic();
 		}
 		m_allocatedSize = nNewSize;
 	}
-	return c;
+	return m_data;
 }
 
 void XString::StrnCpy(const char *buf, xsize len)
@@ -82,11 +82,11 @@ void XString::StrnCpy(const char *buf, xsize len)
 	if ( buf && *buf && len > 0 ) {
 		CheckSize(len, 0);
 		xsize idx = 0;
-		char* p = data();
+		char* p = _data(0);
 		while ( idx++ < len  &&  (*p++ = *buf++) != 0 );
-		SetLength(idx-1); /* SetLength fait _Data[len]=0 */
+		setLength(idx-1); /* SetLength fait _Data[len]=0 */
 	}else{
-		SetLength(0); /* SetLength fait _Data[len]=0 */
+		setLength(0); /* SetLength fait _Data[len]=0 */
 	}
 }
 
@@ -95,7 +95,7 @@ void XString::StrCpy(const char *buf)
 	if ( buf && *buf ) {
 		StrnCpy(buf, (xsize)strlen(buf)); // overflow ?
 	}else{
-		SetLength(0); /* SetLength fait _Data[len]=0 */
+		setLength(0); /* SetLength fait _Data[len]=0 */
 	}
 }
 
@@ -107,16 +107,16 @@ void XString::StrnCat(const char *buf, xsize len)
 	if ( buf && *buf && len > 0 ) {
 		NewLen = length()+len;
 		CheckSize(NewLen, 0);
-		memcpy(data()+length(), buf, len);
-		SetLength(NewLen); /* SetLength fait data()[len]=0 */
+		memcpy(_data(0)+length(), buf, len);
+		setLength(NewLen); /* SetLength fait data()[len]=0 */
 	}
 }
 
 void XString::Cat(const XString &uneXString)
 {
 	CheckSize(length()+uneXString.length());
-	memcpy(data()+length(), uneXString.c, uneXString.length());
-	SetLength(length() + uneXString.length());
+	memcpy(_data(0)+length(), uneXString.m_data, uneXString.length());
+	setLength(length() + uneXString.length());
 }
 
 void XString::StrCat(const char *buf)
@@ -130,11 +130,11 @@ void XString::Delete(xsize pos, xsize count)
 {
 	if ( pos < length() ) {
 		if ( count != MAX_XSIZE  &&  pos + count < length() ) {
-			memmove( data()+pos, data()+pos+count, length()-pos-count);
-			SetLength(length()-count);
+			memmove(_data(0)+pos, data()+pos+count, length()-pos-count);
+			setLength(length()-count);
 //			data()[length()] = 0; fait dans setlength();
 		}else{
-			SetLength(pos);
+			setLength(pos);
 //			data()[length()] = 0; fait dans setlength();
 		}
 	}
@@ -144,8 +144,8 @@ void XString::Insert(xsize pos, const XString& Str)
 {
 	if ( pos < length() ) {
 		CheckSize(length()+Str.length());
-		memmove(data()+pos+Str.length(), data()+pos, length()-pos+1); // +1 to copy the NULL terminator
-		memcpy(data()+pos, Str.data(), Str.length());
+		memmove(_data(0)+pos+Str.length(), data()+pos, length()-pos+1); // +1 to copy the NULL terminator
+		memcpy(_data(0)+pos, Str.data(), Str.length());
 	}else{
 		StrCat(Str);
 	}
@@ -274,7 +274,7 @@ static void XString_transmitSPrintf(const char* buf, unsigned int nbchar, void* 
 
 XString& XString::vSPrintf(const char* format, va_list va)
 {
-	SetLength(0);
+	setLength(0);
 
 //	XString_sprintfBuf = this;
 	vprintf_with_callback(format, va, XString_transmitSPrintf, this);
@@ -316,7 +316,7 @@ XString& XString::SPrintf(const char *Format, ...)
 // Deactivate assignment during refactoring to avoid confusion
 XString XString::basename() const
 {
-	if ( LastChar() == PATH_SEPARATOR ) {
+	if ( lastChar() == PATH_SEPARATOR ) {
 		DebugLog(2, "XString::basename() -> LastChar() == PATH_SEPARATOR");
 		panic();
 	}
@@ -641,20 +641,20 @@ bool XString::IsLettersNoAccent() const
 }
 #endif
 
-void XString::RemoveLastEspCtrl()
+void XString::removeLastEspCtrl()
 {
   char *p;
 
 	if ( length() > 0 ) {
-		p = data() + length() - 1;
+		p = _data(0) + length() - 1;
 		if ( *p >= 0 && *p <= ' ' ) {
 			p -= 1;
 			while ( p>data() && *p >= 0 && *p <= ' ' ) p -= 1;
 			if ( p>data() ) {
-				SetLength( (xsize)(p-data()+1) ); // safe (p-data()+1 < length()
+				setLength( (xsize)(p-data()+1) ); // safe (p-data()+1 < length()
 			}else{
-				if ( *p >= 0 && *p <= ' ' ) SetLength(0);
-				else SetLength(1);
+				if ( *p >= 0 && *p <= ' ' ) setLength(0);
+				else setLength(1);
 			}
 		}
 	}

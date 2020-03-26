@@ -32,7 +32,7 @@ void XStringW::Init(UINTN aSize)
 //DBG("Init aSize=%d\n", aSize);
 	m_data = (wchar_t*)malloc( (aSize+1)*sizeof(wchar_t) ); /* le 0 terminal n'est pas compté dans mSize */
 	if ( !m_data ) {
-		DebugLog(2, "XStringW::Init(%d) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
+		DebugLog(2, "XStringW::Init(%llu) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(wchar_t));
 		panic();
 	}
 	m_allocatedSize = aSize;
@@ -193,7 +193,7 @@ void XStringW::StrnCat(const wchar_t *buf, UINTN len)
 	if ( buf && *buf && len > 0 ) {
 		NewLen = length()+len;
 		CheckSize(NewLen, 0);
-		memmove(data(length()), buf, len*sizeof(wchar_t));
+		memmove(_data(length()), buf, len*sizeof(wchar_t));
 		SetLength(NewLen); /* data()[NewLen]=0 done in SetLength */
 	}
 }
@@ -214,7 +214,7 @@ void XStringW::Delete(UINTN pos, UINTN count)
 {
 	if ( pos < length() ) {
 		if ( count != MAX_XSIZE  &&  pos + count < length() ) {
-			memmove( data(pos), data(pos+count), (length()-pos-count)*sizeof(wchar_t)); // memmove handles overlapping memory move
+			memmove( _data(pos), data(pos+count), (length()-pos-count)*sizeof(wchar_t)); // memmove handles overlapping memory move
 			SetLength(length()-count);/* data()[length()-count]=0 done in SetLength */
 		}else{
 			SetLength(pos);/* data()[pos]=0 done in SetLength */
@@ -226,8 +226,8 @@ void XStringW::Insert(UINTN pos, const XStringW& Str)
 {
 	if ( pos < length() ) {
 		CheckSize(length()+Str.length());
-		memmove(data(pos + Str.length()),  data(pos),  (length()-pos)*sizeof(wchar_t));
-		memmove(data(pos), Str.data(), Str.length()*sizeof(wchar_t));
+		memmove(_data(pos + Str.length()),  data(pos),  (length()-pos)*sizeof(wchar_t));
+		memmove(_data(pos), Str.data(), Str.length()*sizeof(wchar_t));
 		SetLength(length()+Str.length());
 	}else{
 		StrCat(Str);
@@ -238,7 +238,7 @@ void XStringW::Replace(wchar_t c1, wchar_t c2)
 {
   wchar_t* p;
 
-	p = data();
+	p = _data(0);
 	while ( *p ) {
 		if ( *p == c1 ) *p = c2;
 		p += 1;
@@ -250,7 +250,7 @@ XStringW XStringW::SubStringReplace(wchar_t c1, wchar_t c2)
   wchar_t* p;
   XStringW Result;
 
-	p = data();
+	p = _data(0);
 	while ( *p  ) {
 		if ( *p == c1 ) Result += c2;
 		else Result += *p;
@@ -421,7 +421,7 @@ void XStringW::RemoveLastEspCtrl()
   wchar_t *p;
 
 	if ( length() > 0 ) {
-		p = data() + length() - 1;
+		p = _data(0) + length() - 1;
 		if ( *p >= 0 && *p <= ' ' ) {
 			p -= 1;
 			while ( p>data() && *p >= 0 && *p <= ' ' ) p -= 1;

@@ -176,7 +176,7 @@ FixOwnership(VOID)
                 
                 // read PCI Config 32bit USBLEGCTLSTS (eecp+4) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
-                DBG("usblegsup=%08X isOSowned=%d isBIOSowned=%d usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
+					DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
                 //
                 // Disable the SMI in USBLEGCTLSTS firstly
                 //
@@ -216,7 +216,7 @@ FixOwnership(VOID)
                 // read 32bit USBLEGCTLSTS (eecp+4) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
                 
-                DBG("usblegsup=%08X isOSowned=%d isBIOSowned=%d usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
+					DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
                 MsgLog("Legacy USB Off Done\n");  
                 
                 

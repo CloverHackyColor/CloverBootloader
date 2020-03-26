@@ -14,10 +14,15 @@
 #include "sse3_patcher.h"
 #include "sse3_5_patcher.h"
 
+#ifndef DEBUG_ALL
 #define KERNEL_DEBUG 0
+#else
+#define KERNEL_DEBUG DEBUG_ALL
+#endif
+
 
 #if KERNEL_DEBUG
-#define DBG(...)    AsciiPrint(__VA_ARGS__);
+#define DBG(...)    printf(__VA_ARGS__);
 #else
 #define DBG(...)
 #endif
@@ -325,7 +330,7 @@ VOID KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
   }
 
   if (!patchLocation) {
-    DBG("Can't find _cpuid_set_info _panic address, patch kernel abort.\n",i);
+    DBG("Can't find _cpuid_set_info _panic address, patch kernel abort.\n"/*,i*/);
     return;
   }
 
@@ -1571,7 +1576,7 @@ VOID Get_PreLink()
             PrelinkTextSize = (UINT32)segCmd64->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
           }
-          DBG("at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
+			DBG("at %p: vmaddr = 0x%llx, vmsize = 0x%llx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //DBG("cmd = 0x%08X\n",segCmd64->cmd);
@@ -1592,8 +1597,8 @@ VOID Get_PreLink()
           DBG("Found PRELINK_INFO, 64bit\n");
           //DBG("cmd = 0x%08X\n",segCmd64->cmd);
           //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
-          DBG("vmaddr = 0x%08X\n",segCmd64->vmaddr);
-          DBG("vmsize = 0x%08X\n",segCmd64->vmsize);
+			DBG("vmaddr = 0x%08llX\n",segCmd64->vmaddr);
+			DBG("vmsize = 0x%08llX\n",segCmd64->vmsize);
           //DBG("fileoff = 0x%08X\n",segCmd64->fileoff);
           //DBG("filesize = 0x%08X\n",segCmd64->filesize);
           //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
@@ -1614,7 +1619,7 @@ VOID Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-              DBG("__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
+				DBG("__info found at %p: addr = 0x%llx, size = 0x%llx\n", sect, sect->addr, sect->size);
               DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
             }
@@ -1635,7 +1640,7 @@ VOID Get_PreLink()
             PrelinkTextSize = (UINT32)segCmd->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd;
           }
-          DBG("at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
+			DBG("at %p: vmaddr = 0x%x, vmsize = 0x%x\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //gBS->Stall(30*1000000);
@@ -1668,7 +1673,7 @@ VOID Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-              DBG("__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
+				DBG("__info found at %p: addr = 0x%x, size = 0x%x\n", sect, sect->addr, sect->size);
               DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
               //gBS->Stall(30*1000000);
@@ -1840,7 +1845,7 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
   // KernelRelocBase will normally be 0
   // but if OsxAptioFixDrv is used, then it will be > 0
   SetKernelRelocBase();
-  DBG("KernelRelocBase = %lx\n", KernelRelocBase);
+	DBG("KernelRelocBase = %llx\n", KernelRelocBase);
 
   // Find bootArgs - we need then for proper detection
   // of kernel Mach-O header

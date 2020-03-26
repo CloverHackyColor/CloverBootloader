@@ -9,8 +9,10 @@
 #include <Platform.h>
 #include <limits.h>
 #include "unicode_conversions.h"
-#include "printf_lite-test-cpp_conf.h"
+#include <printf_lite-test-cpp_conf.h>
 #include "printf_lite-test.h"
+#include <printf_lite-conf.h>
+#include "../../Include/Library/printf_lite.h"
 
 static int nbTestFailed = 0;
 #ifdef DISPLAY_ONLY_FAILED

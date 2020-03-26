@@ -466,13 +466,13 @@ __attribute__((noinline, section(".printf_lite")))
 #endif
 static void print_string(const char* s, PrintfParams* printfParams)
 {
-	while ( *s ) print_char(*s++, printfParams);
+	if ( s ) while ( *s ) print_char(*s++, printfParams);
 }
 
 #if PRINTF_UNICODE_OUTPUT_SUPPORT
 static void wprint_string(const wchar_t* s, PrintfParams* printfParams)
 {
-	while ( *s ) print_wchar(*s++, printfParams);
+	if ( s ) while ( *s ) print_wchar(*s++, printfParams);
 }
 #endif
 

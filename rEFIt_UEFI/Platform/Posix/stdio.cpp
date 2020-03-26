@@ -27,24 +27,24 @@ int printf(const char* format, ...)
 
 static XString stdio_static_buf;
 
-char* strerror(EFI_STATUS Status)
+const char* strerror(EFI_STATUS Status)
 {
 	UINTN n = 0;
 	do {
 		stdio_static_buf.CheckSize(stdio_static_buf.length()+10);
-		n = AsciiSPrint(stdio_static_buf.data(), stdio_static_buf.m_allocatedSize, "%r", Status);
-	} while ( n > stdio_static_buf.m_allocatedSize - 2 );
+		n = AsciiSPrint(stdio_static_buf.dataSized(0, stdio_static_buf.allocatedSize()), stdio_static_buf.allocatedSize(), "%r", Status);
+	} while ( n > stdio_static_buf.allocatedSize() - 2 );
 	
 	return stdio_static_buf.data();
 }
 
-char* strguid(EFI_GUID* guid)
+const char* strguid(EFI_GUID* guid)
 {
 	UINTN n = 0;
 	do {
 		stdio_static_buf.CheckSize(stdio_static_buf.length()+10);
-		n = AsciiSPrint(stdio_static_buf.data(), stdio_static_buf.m_allocatedSize, "%g", guid);
-	} while ( n > stdio_static_buf.m_allocatedSize - 2 );
+		n = AsciiSPrint(stdio_static_buf.dataSized(0, stdio_static_buf.allocatedSize()), stdio_static_buf.allocatedSize(), "%g", guid);
+	} while ( n > stdio_static_buf.allocatedSize() - 2 );
 
 	return stdio_static_buf.data();
 }

@@ -94,7 +94,9 @@ extern "C" {
 #include "../cpp_util/remove_ref.h"
 #endif
 
+#include "BootLog.h"
 #include "../refit/lib.h"
+#include "../refit/screen.h" // for PauseForKey
 #include "string.h"
 #include "boot.h"
 //#include "PiBootMode.h"

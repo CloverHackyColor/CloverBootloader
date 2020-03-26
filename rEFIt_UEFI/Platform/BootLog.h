@@ -38,7 +38,7 @@ VOID
 EFIAPI
 DebugLog (
   IN        INTN  DebugMode,
-  IN  CONST CHAR8 *FormatString, ...) __attribute__((format(printf, 2, 3)));;
+  IN  CONST CHAR8 *FormatString, ...) __attribute__((format(printf, 2, 3)));
 
 
 #endif
