@@ -194,7 +194,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-  //  DBG("icon %s width=%ls height=%ls\n", IconName, Width, Height);
+  //  DBG("icon %s width=%f height=%f\n", IconName, Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
 //  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
@@ -276,7 +276,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
         }
  //       if (Id == BUILTIN_ICON_BACKGROUND || Id == BUILTIN_ICON_BANNER) {
  //         DBG("IconImage size [%d,%d]\n", (int)IconImage->width, (int)IconImage->height);
- //         DBG("IconImage left corner x=%ls y=%ls\n", PoolPrintFloat(IconImage->realBounds[0]), PoolPrintFloat(IconImage->realBounds[1]));
+ //         DBG("IconImage left corner x=%f y=%f\n", IconImage->realBounds[0], IconImage->realBounds[1]);
  //         DumpFloat2("IconImage real bounds", IconImage->realBounds, 4);
  //       }
         if ((strstr(IconName, "selection_big") != NULL) && (!GlobalConfig.SelectionOnTop)) {
@@ -364,7 +364,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-//  DBG("icon %s width=%ls height=%ls\n", IconName, Width, Height);
+//  DBG("icon %s width=%f height=%f\n", IconName, Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
   EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
@@ -965,7 +965,7 @@ INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, 
   p->image->realBounds[1] = fontSVG->bbox[1] * Scale;
   p->image->realBounds[2] = fontSVG->bbox[2] * Scale + x; //last bound
   p->image->realBounds[3] = fontSVG->bbox[3] * Scale;
-//  DBG("internal Scale=%ls\n", Scale);
+//  DBG("internal Scale=%lf\n", Scale);
 //  DumpFloat2("text bounds", p->image->realBounds, 4);
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
