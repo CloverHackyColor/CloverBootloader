@@ -111,7 +111,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
         if ((strstr(IconName, "selection_big") != NULL) && (!ThemeX.SelectionOnTop)) {
           ThemeX.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
           ThemeX.row0TileSize = ThemeX.MainEntriesSize + (int)(16.f * Scale);
-          DBG("main entry size = %d\n", ThemeX.MainEntriesSize);
+          DBG("main entry size = %lld\n", ThemeX.MainEntriesSize);
         }
         if ((strstr(IconName, "selection_small") != NULL) && (!ThemeX.SelectionOnTop)) {
           ThemeX.row1TileSize = (int)(IconImage->width * Scale);
@@ -189,7 +189,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
   if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
     ThemeX.BannerPosX = (int)(bounds[0] * Scale - ThemeX.CentreShift);
     ThemeX.BannerPosY = (int)(bounds[1] * Scale);
-    DBG("Banner position at parse [%d,%d]\n", ThemeX.BannerPosX, ThemeX.BannerPosY);
+    DBG("Banner position at parse [%lld,%lld]\n", ThemeX.BannerPosX, ThemeX.BannerPosY);
   }
 
   float Height = IconImage->height * Scale;
@@ -638,7 +638,7 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   // must be svg view-box
   float vbx = mainParser->viewWidth;
   float vby = mainParser->viewHeight;
-  DBG("Theme view-bounds: w=%d h=%d units=%s\n", (int)vbx, (int)vby, "px");
+  DBG("Theme view-bounds: w=%f h=%f units=px\n", vbx, vby);
   if (vby > 1.0f) {
     SVGimage->height = vby;
   }
@@ -646,7 +646,7 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
     SVGimage->height = 768.f;  //default height
   }
   float Scale = UGAHeight / SVGimage->height;
-  DBG("using scale %ls\n", Scale);
+  DBG("using scale %f\n", Scale);
   ThemeX.Scale = Scale;
   ThemeX.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
@@ -836,7 +836,7 @@ INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XS
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
-    DBG("wrong font: %ls\n", fontSVG->unitsPerEm);
+    DBG("wrong font: %f\n", fontSVG->unitsPerEm);
     DumpFloat2("Font bbox", fontSVG->bbox, 4);
     fH = fontSVG->unitsPerEm?fontSVG->unitsPerEm:1000.0f;  //1000
   }

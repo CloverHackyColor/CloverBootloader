@@ -92,21 +92,6 @@ extern EFI_RUNTIME_SERVICES*	gRT;
 // lib module
 //
 
-typedef struct {
-  EFI_STATUS          LastStatus;
-  EFI_FILE            *DirHandle;
-  BOOLEAN             CloseDirHandle;
-  EFI_FILE_INFO       *LastFileInfo;
-} REFIT_DIR_ITER;
-
-typedef struct {
-  UINT8 Flags;
-  UINT8 StartCHS[3];
-  UINT8 Type;
-  UINT8 EndCHS[3];
-  UINT32 StartLBA;
-  UINT32 Size;
-} MBR_PARTITION_INFO;
 
 #define DISK_KIND_INTERNAL      (0)
 #define DISK_KIND_EXTERNAL      (1)
@@ -204,49 +189,8 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
-typedef struct {
-  UINT8               Type;
-  CONST CHAR16              *IconName;
-  CONST CHAR16              *Name;
-} LEGACY_OS;
-
-typedef struct {
-  EFI_DEVICE_PATH     *DevicePath;
-  EFI_HANDLE          DeviceHandle;
-  EFI_FILE            *RootDir;
-  CONST CHAR16              *DevicePathString;
-  CONST CHAR16              *VolName;
-  CONST CHAR16              *VolLabel;
-  UINT8               DiskKind;
-  LEGACY_OS           *LegacyOS;
-  BOOLEAN             Hidden;
-  UINT8               BootType;
-  BOOLEAN             IsAppleLegacy;
-  BOOLEAN             HasBootCode;
-  BOOLEAN             IsMbrPartition;
-  UINTN               MbrPartitionIndex;
-  EFI_BLOCK_IO        *BlockIO;
-  UINT64              BlockIOOffset;
-  EFI_BLOCK_IO        *WholeDiskBlockIO;
-  EFI_DEVICE_PATH     *WholeDiskDevicePath;
-  EFI_HANDLE          WholeDiskDeviceHandle;
-  MBR_PARTITION_INFO  *MbrPartitionTable;
-  UINT32              DriveCRC32;
-  EFI_GUID            RootUUID; //for recovery it is UUID of parent partition
-  UINT64              SleepImageOffset;
-} REFIT_VOLUME;
-
-typedef enum {
-  AlignNo,
-  AlignLeft,
-  AlignRight,
-  AlignCenter,
-  AlignUp,
-  AlignDown
-  
-} ALIGNMENT;
-
 //mouse types
+/*
 typedef enum {
   NoEvents,
   Move,
@@ -260,7 +204,7 @@ typedef enum {
   RightMouseDown,
   MouseMove
 } MOUSE_EVENT;
-
+*/
 typedef struct _pointers {
   EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
   EG_IMAGE *Pointer;
@@ -276,56 +220,10 @@ typedef struct _pointers {
 } POINTERS;
 
 //GUI types
-typedef enum {
-  BoolValue,
-  Decimal,
-  Hex,
-  ASString,
-  UNIString,
-  RadioSwitch,
-  CheckBit,
-  
-} ITEM_TYPE;
 
-typedef struct {
-  ITEM_TYPE ItemType; //string, value, boolean
-  BOOLEAN Valid;
-  BOOLEAN BValue;
-  UINT8   Pad8;
-  UINT32  IValue;
-  //  UINT64  UValue;
-  //  CHAR8*  AValue;
-  CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
-  UINTN   LineShift;
-} INPUT_ITEM;
 
 // Allow for 255 unicode characters + 2 byte unicode null terminator.
 #define SVALUE_MAX_SIZE 512
-
-typedef enum {
-  ActionNone = 0,
-  ActionHelp,
-  ActionSelect,
-  ActionEnter,
-  ActionDeselect,
-  ActionDestroy,
-  ActionOptions,
-  ActionDetails,
-  ActionFinish,
-  ActionScrollDown,
-  ActionScrollUp,
-  ActionMoveScrollbar,
-  ActionPageDown,
-  ActionPageUp,
-  ActionLight
-} ACTION;
-
-typedef struct {
-  INTN    CurrentSelection, LastSelection;
-  INTN    MaxScroll, MaxIndex;
-  INTN    FirstVisible, LastVisible, MaxVisible, MaxFirstVisible;
-  BOOLEAN IsScrolling, PaintAll, PaintSelection;
-} SCROLL_STATE;
 
 //extern BOOLEAN ScrollEnabled;
 extern EG_RECT UpButton;
@@ -477,96 +375,13 @@ typedef struct {
 } REFIT_CONFIG;
 
 // types
-typedef struct KEXT_PATCH KEXT_PATCH;
-struct KEXT_PATCH
-{
-  CHAR8       *Name;
-  CHAR8       *Label;
-  BOOLEAN     IsPlistPatch;
-  CHAR8       align[7];
-  INT64        DataLen;
-  UINT8       *Data;
-  UINT8       *Patch;
-  UINT8       *MaskFind;
-  UINT8       *MaskReplace;
-  CHAR8       *MatchOS;
-  CHAR8       *MatchBuild;
-  INPUT_ITEM  MenuItem;
-};
-
-typedef struct {
-  CHAR8       *Label;
-  INTN        DataLen;
-  UINT8       *Data;
-  UINT8       *Patch;
-  UINT8       *MaskFind;
-  UINT8       *MaskReplace;
-  INTN        Count;
-  CHAR8       *MatchOS;
-  CHAR8       *MatchBuild;
-  INPUT_ITEM  MenuItem;
-} KERNEL_PATCH;
-
-typedef struct KERNEL_AND_KEXT_PATCHES
-{
-  BOOLEAN KPDebug;
-  BOOLEAN KPKernelCpu;
-  BOOLEAN KPKernelLapic;
-  BOOLEAN KPKernelXCPM;
-  BOOLEAN KPKernelPm; 
-  BOOLEAN KPAppleIntelCPUPM;
-  BOOLEAN KPAppleRTC;
-  BOOLEAN KPDELLSMBIOS;  // Dell SMBIOS patch
-  BOOLEAN KPPanicNoKextDump;
-  UINT8   pad[3];
-  UINT32  FakeCPUID;
-//  UINT32  align0;
-  CHAR16  *KPATIConnectorsController;
-#if defined(MDE_CPU_IA32)
-  UINT32  align1;
-#endif
-  
-  UINT8   *KPATIConnectorsData;
-#if defined(MDE_CPU_IA32)
-  UINT32  align2;
-#endif
-  
-  UINTN   KPATIConnectorsDataLen;
-#if defined(MDE_CPU_IA32)
-  UINT32  align3;
-#endif
-  UINT8   *KPATIConnectorsPatch;
-#if defined(MDE_CPU_IA32)
-  UINT32  align4;
-#endif
-  
-  INT32   NrKexts;
-  UINT32  align40;
-  KEXT_PATCH *KextPatches;   //zzzz
-#if defined(MDE_CPU_IA32)
-  UINT32  align5;
-#endif
-  
-  INT32    NrForceKexts;
-  UINT32  align50;
-  CHAR16 **ForceKexts;
-#if defined(MDE_CPU_IA32)
-  UINT32 align6;
-#endif
-  INT32   NrKernels;
-  KERNEL_PATCH *KernelPatches;
-  INT32   NrBoots;
-  KERNEL_PATCH *BootPatches;
-  
-} KERNEL_AND_KEXT_PATCHES;
-
 #define ANIME_INFINITE ((UINTN)-1)
 //some unreal values
 #define SCREEN_EDGE_LEFT    50000
 #define SCREEN_EDGE_TOP     60000
 #define SCREEN_EDGE_RIGHT   70000
 #define SCREEN_EDGE_BOTTOM  80000
-
+/*
 typedef struct GUI_ANIME GUI_ANIME;
 struct GUI_ANIME {
   UINTN      ID;
@@ -580,7 +395,7 @@ struct GUI_ANIME {
   BOOLEAN    Once;
   GUI_ANIME *Next;
 };
-
+*/
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_HANDLE       SelfDeviceHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;

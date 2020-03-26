@@ -5,8 +5,9 @@
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
 #include "libeg.h"
-#include "XImage.h"
 #include "nanosvg.h"
+#include "XImage.h"
+
 
 #define INDICATOR_SIZE (52)
 

@@ -147,7 +147,12 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   if (Image) {
     Entry->Image.FromEGImage(Image);
   } else {
-    Entry->Image = ThemeX.GetIcon(Volume->LegacyOS->IconName);
+    UINTN Size = StrLen(Volume->LegacyOS->IconName) + 1;
+    CHAR8 *IconName = (__typeof__(IconName))AllocateZeroPool(Size);
+    UnicodeStrToAsciiStrS(Volume->LegacyOS->IconName, IconName, Size - 1);
+
+    Entry->Image = ThemeX.GetIcon(IconName);
+    FreePool(IconName);
   }
 #else
   if (Image) {

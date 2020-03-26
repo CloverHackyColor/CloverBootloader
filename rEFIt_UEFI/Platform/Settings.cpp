@@ -2889,7 +2889,7 @@ GetEarlyUserSettings (
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
           ThemeX.Theme.takeValueFrom(Prop->string);
-          DBG ("Default theme: %ls\n", ThemeX.Theme);
+          DBG ("Default theme: %ls\n", ThemeX.Theme.data());
           OldChosenTheme = 0xFFFF; //default for embedded
           for (UINTN i = 0; i < ThemesNum; i++) {
             //now comparison is case sensitive
@@ -4649,7 +4649,7 @@ GetThemeTagSettings (
 #endif
 
 TagPtr
-LoadTheme (CHAR16 *TestTheme)
+LoadTheme (const CHAR16 *TestTheme)
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
   TagPtr     ThemeDict = NULL;
