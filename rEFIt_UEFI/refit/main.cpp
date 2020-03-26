@@ -930,7 +930,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 */
 
 //    DBG("BeginExternalScreen\n");
-  BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
+  BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, L"Booting OS"*/);
 
   if (!OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
@@ -1031,7 +1031,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     }
 
     egClearScreen(&DarkBackgroundPixel);
-    BeginExternalScreen(TRUE, L"Booting Legacy OS");
+    BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
 
     BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
   if (BootLogoImage != NULL) {
@@ -1077,7 +1077,7 @@ static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
   DBG("Start Tool: %ls\n", Entry->LoaderPath);
   egClearScreen(&DarkBackgroundPixel);
 	// assumes "Start <title>" as assigned below
-	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS), &Entry->Title[6]); // Shouldn't we check that length of Title is at least 6 ?
+	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
 	//ReinitSelfLib();
@@ -2081,7 +2081,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 	DBG("Clover : Image base = 0x%llX\n", (uintptr_t)SelfLoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 #ifdef JIEF_DEBUG
-  gBS->Stall(3000000); // to give time to gdb to connect
+  gBS->Stall(1500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
 

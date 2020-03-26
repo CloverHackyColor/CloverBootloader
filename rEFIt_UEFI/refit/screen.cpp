@@ -181,7 +181,7 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways)
     haveError = FALSE;
 }
 
-VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode, IN CONST CHAR16 *Title)
+VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/)
 {
 	if (!AllowGraphicsMode) {
         UseGraphicsMode = FALSE;

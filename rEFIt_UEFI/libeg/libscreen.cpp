@@ -295,12 +295,12 @@ EFI_STATUS egSetMode(INT32 Next)
   return Status;
 }
 
-EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
+EFI_STATUS egSetScreenResolution(IN const CHAR16 *WidthHeight)
 {
     EFI_STATUS  Status = EFI_UNSUPPORTED;
     UINT32      Width;
     UINT32      Height;
-    CHAR16      *HeightP;
+    const CHAR16      *HeightP;
     UINT32      MaxMode;
     UINT32      Mode;
     UINTN       SizeOfInfo;
@@ -388,7 +388,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
  //       Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
       XStringW Resolution = WPrintf("%llux%llu", egScreenWidth, egScreenHeight);
 //        if (Resolution) { //no sense
-            Status = egSetScreenResolution(Resolution.data());
+            Status = egSetScreenResolution(Resolution.wc_str());
  //           FreePool(Resolution);
             if (!EFI_ERROR(Status)) {
                 return;

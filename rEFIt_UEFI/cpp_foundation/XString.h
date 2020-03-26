@@ -22,11 +22,23 @@ class XStringW;
 class XString
 {
   protected:
-//	char *_Data;
+  	char *m_data;
+  	xsize m_allocatedSize;
+
+	// convenience method. Did it this way to avoid #define in header. They can have an impact on other headers
+	xsize min(xsize x1, xsize x2) const { if ( x1 < x2 ) return x1; return x2; }
+	xsize max(xsize x1, xsize x2) const { if ( x1 > x2 ) return x1; return x2; }
+
+// Next 2 methods are protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
+// It's better practice, if you need a non-const pointer for low-level access, to use dataSized and ahev to specify the size
+	char* _data(unsigned int ui) const { if ( ui >= m_allocatedSize ) panic("char* data(unsigned int ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
+	char* _data(int i) const { if ( i<0 ) panic("char* data(int i) -> i < 0"); if ( (unsigned int)i >= m_allocatedSize ) panic("char* data(int i) -> i >= m_allocatedSize");  return m_data+i; }
+	char* _data(unsigned long ui) const { if ( ui >= m_allocatedSize ) panic("char* data(unsigned long ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
+	char* _data(long i) const { if ( i<0 ) panic("char* data(long i) -> i < 0"); if ( (unsigned long)i >= m_allocatedSize ) panic("char* data(long i) -> i >= m_allocatedSize");  return m_data+i; }
+	char* _data(xsize ui) const { if ( ui >= m_allocatedSize ) panic("char* data(xsize ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
+	char* _data(xisize i) const { if ( i<0 ) panic("char* data(xisize i) -> i < 0"); if ( (xsize)i >= m_allocatedSize ) panic("char* data(xisize i) -> i >= m_allocatedSize");  return m_data+i; }
 
   public:
-  	char *c;
-  	xsize m_allocatedSize;
 
 	void Init(xsize aSize=0);
 	XString();
@@ -49,53 +61,47 @@ class XString
 	char *CheckSize(xsize nNewSize, xsize nGrowBy = XStringGrowByDefault);
 
   public:
-	const char *data(xsize ui=0) const { return c+ui; }
-	const char *c_str() const { return c; } // same as std::string
-	char *data(xsize ui=0) { return (char*)(c+ui); }
-	char *data(int i) { if ( i<0 ) panic("const wchar_t *data(INTN i=0) const -> i < 0"); return c+i; }
-	char *DataWithSizeMin(xsize ui, xsize size, xsize nGrowBy=XStringGrowByDefault) { CheckSize(size, nGrowBy); return data(ui); }
+	const char* c_str() const { return m_data; } // same as std::string
+	const char* data(xsize ui=0) const { return _data(ui); }
+	const char* data(xisize i) const { return _data(i); }
 
-	xsize length() const { return strlen(c); }
-	xsize Size() const { return m_allocatedSize; }
-	void SetLength(xsize len);
+	char* dataSized(xsize ui, xsize sizeMin, xsize nGrowBy=XStringGrowByDefault) { CheckSize(ui+sizeMin, nGrowBy); return _data(ui); }
+
+	xsize length() const { return strlen(m_data); }
+	xsize size() const { return strlen(m_data); }
+	xsize allocatedSize() const { return m_allocatedSize; }
+	void setLength(xsize len);
 
 	/* IsNull ? */
-	void setEmpty() { c[0] = 0; }
+	void setEmpty() { setLength(0); }
 	bool isEmpty() const { return length() == 0; }
 
 	/* Cast */
 	operator const char *() const { return data(); }
 //	operator char *() { return data(); }
 	
-	int ToInt() const;
-	UINTN ToUINTN() const;
-
-	XStringW wcs();
+//	int ToInt() const;
+//	UINTN ToUINTN() const;
 
 	/* char [] */
-	char operator [](int i) const {
-		#if defined __XTOOLS_INT_CHECK__
-			if ( i < 0 ) DebugLog(2, "XString index cannot < 0");
-			panic();
-		#endif
-		return *data((unsigned int)i);
-	}
-	char operator [](xsize i) const { return *data(i); }
+	char operator [](int i) const { return *_data(i); }
+	char operator [](unsigned int ui) const { return *_data(ui); }
+	char operator [](long i) const { return *_data(i); }
+	char operator [](unsigned long ui) const { return *_data(ui); }
+	char operator [](xisize i) const { return *data(i); }
+	char operator [](xsize ui) const { return *data(ui); }
 
 	/* char& [] */
-	char& operator [](int i) {
-		#if defined __XTOOLS_INT_CHECK__
-			if ( i < 0 ) DebugLog(2, "XString index cannot < 0");
-			panic();
-		#endif
-		return *data(i);
-	}
-	char& operator [](xsize i) { return *data(i); }
+	char& operator [](int i) { return *_data(i); }
+	char& operator [](unsigned int ui) { return *_data(ui); }
+	char& operator [](long i) { return *_data(i); }
+	char& operator [](unsigned long ui) { return *_data(ui); }
+	char& operator [](xisize i) { return *_data(i); }
+	char& operator [](xsize ui) { return *_data(ui); }
 
-	char LastChar() const { if ( length() > 0 ) return data()[length()-1]; else return 0; }
-	void RemoveLastEspCtrl();
+	char lastChar() const { if ( length() > 0 ) return data()[length()-1]; else return 0; }
+	void removeLastEspCtrl();
 
-	void SetNull() { SetLength(0); };
 	void StrCpy(const char *buf);
 	void StrnCpy(const char *buf, xsize len);
 	void StrnCat(const char *buf, xsize len);
@@ -109,7 +115,7 @@ class XString
 	XString& vSPrintf(const char *Format, va_list va);
 	XString& SPrintf(const char *format, ...)
 		#ifndef _MSC_VER
-			__attribute__((format (printf, 2, 3))) // 2 and 3 because of hidden parameter.
+			__attribute__((format (printf, 2, 3))) // 2 and 3 because of hidden parameter 'this'.
 		#endif
 		;
 

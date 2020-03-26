@@ -5,7 +5,9 @@
 
 
 #define xsize UINTN
+#define xisize INTN
 #define MAX_XSIZE MAX_UINTN
+#define MAX_XISIZE MAX_INTN
 
 extern xsize XArrayGrowByDefault;
 extern xsize XBufferGrowByDefault;
@@ -40,11 +42,17 @@ extern "C" {
 
 
 // Declare here instead of include to avoid circular dependency.
+
+#ifdef _MSC_VER
+#define __attribute__(x)
+#endif
+
 VOID
 EFIAPI
 DebugLog (
   IN        INTN  DebugMode,
-  IN  CONST CHAR8 *FormatString, ...);
+  IN  CONST CHAR8 *FormatString, ...) __attribute__((format(printf, 2, 3)));;
+
 
 
 #endif

@@ -4,7 +4,7 @@ VOID InitScreen(IN BOOLEAN SetMaxResolution);
 VOID SetupScreen(VOID);
 VOID BeginTextScreen(IN CONST CHAR16 *Title);
 VOID FinishTextScreen(IN BOOLEAN WaitAlways);
-VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode, IN CONST CHAR16 *Title);
+VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/);
 VOID FinishExternalScreen(VOID);
 VOID TerminateScreen(VOID);
 VOID SetNextScreenMode(INT32);
@@ -27,3 +27,5 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 
 INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
+
+VOID PauseForKey(CONST CHAR16* msg);

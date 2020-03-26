@@ -662,7 +662,7 @@ VOID CheckHardware()
 #if DEBUG_FIX
             dadr1 = DisplayADR1[display];
             dadr2 = DisplayADR2[display];
-            DBG("DisplayADR1[%d] = 0x%X, DisplayADR2[%d] = 0x%X\n", display, dadr1, display, dadr2);
+			  DBG("DisplayADR1[%llu] = 0x%X, DisplayADR2[%llu] = 0x%X\n", display, dadr1, display, dadr2);
 #endif
         //         dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
@@ -749,7 +749,7 @@ VOID CheckHardware()
             USBIntel = (Pci.Hdr.VendorId == 0x8086);
             USBNForce = (Pci.Hdr.VendorId == 0x10de);
             GetPciADR(DevicePath, &USBADR[usb], &USBADR2[usb], &USBADR3[usb]);
-            DBG("USBADR[%d] = 0x%X and PCIe = 0x%X\n", usb, USBADR[usb], USBADR2[usb]);
+			  DBG("USBADR[%llu] = 0x%X and PCIe = 0x%X\n", usb, USBADR[usb], USBADR2[usb]);
             if (USBIDFIX)
             {
               if (USBADR[usb] == 0x001D0000 && !NativeUSB(DID)) DID = 0x3a34;
@@ -1492,7 +1492,7 @@ INTN ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *New
       if (OldName) {
         MsgLog("NewName %s already present, renaming impossible\n", NewName);
       } else {
-        DBG("name %s present at %X\n", NewName, i);
+		  DBG("name %s present at %llX\n", NewName, i);
       }
       return -1;
     }
@@ -2795,7 +2795,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
 
-  DBG("Start HDMI%d Fix\n");
+  DBG("Start HDMI Fix\n");
   // Device Address
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, HDMIADR1)) {
@@ -5346,7 +5346,7 @@ VOID RenameDevices(UINT8* table)
               if (CmpFullName(table + k, len - k, Bridge)) {
                 CopyMem(table + adr, Replace, 4);
                 adr += 5;
-                DBG("found Bridge device begin=%X end=%X\n", k, k+size);
+				  DBG("found Bridge device begin=%llX end=%llX\n", k, k+size);
     //            DBG("   name copied\n");
                 Num++;
                 break; //cancel search outer bridge, we found it.

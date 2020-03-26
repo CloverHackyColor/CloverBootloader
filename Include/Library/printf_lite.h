@@ -10,7 +10,7 @@
 #include <stdarg.h>
 #include <stddef.h> // for size_t
 
-#include "printf_lite-conf.h"
+#include <printf_lite-conf.h>
 
 #if defined(__cplusplus)
 extern "C"

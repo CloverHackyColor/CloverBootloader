@@ -898,13 +898,13 @@ VOID ScanSPD()
         //SmBus controller has class = 0x0c0500
         if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5)
             && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE)) {
-          DBG ("SMBus device : %04X %04X class=%02X%02X%02X status=%r\n",
+          DBG ("SMBus device : %04X %04X class=%02X%02X%02X status=%s\n",
                gPci.Hdr.VendorId,
                gPci.Hdr.DeviceId,
                gPci.Hdr.ClassCode[2],
                gPci.Hdr.ClassCode[1],
                gPci.Hdr.ClassCode[0],
-               Status
+               strerror(Status)
                );
           read_smb(PciIo, gPci.Hdr.VendorId, gPci.Hdr.DeviceId);
         }

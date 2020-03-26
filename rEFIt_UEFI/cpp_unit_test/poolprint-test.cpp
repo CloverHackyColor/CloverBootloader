@@ -9,7 +9,7 @@
 #include <Platform.h>
 #include <limits.h>
 #include "unicode_conversions.h"
-#include "poolprint-test-cpp_conf.h"
+#include <poolprint-test-cpp_conf.h>
 #include "poolprint-test.h"
 
 static int nbTestFailed = 0;

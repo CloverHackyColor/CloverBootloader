@@ -20,6 +20,8 @@
   GenericIch.h
   printf_lite.h
   printf_lite.c
+  ../../Include/Library/printf_lite.h
+  ../../Include/Library/printf_lite-conf.h
 
 [Packages]
   MdePkg/MdePkg.dec

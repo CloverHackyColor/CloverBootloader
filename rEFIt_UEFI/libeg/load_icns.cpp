@@ -136,7 +136,7 @@ VOID egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
     }
     
   if (pp_left > 0) {
-    DBG(" egDecompressIcnsRLE: still need %d bytes of pixel data\n", pp_left);
+	  DBG(" egDecompressIcnsRLE: still need %llu bytes of pixel data\n", pp_left);
   }
     
     // record what's left of the compressed data stream
@@ -255,7 +255,7 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
         egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, b), PixelCount);
         // possible assertion: CompLen == 0
         if (CompLen > 0) {
-            DBG(" egLoadICNSIcon: %d bytes of compressed data left\n", CompLen);
+			DBG(" egLoadICNSIcon: %llu bytes of compressed data left\n", CompLen);
         }
         
     } else {

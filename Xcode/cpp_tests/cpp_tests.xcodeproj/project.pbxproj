@@ -91,6 +91,7 @@
 		9ACAB117242623EE00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
+		9AF41576242CBE7600D2644C /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41571242CBE7600D2644C /* poolprint-test.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -146,7 +147,6 @@
 		9A0B08642403144C00E2B470 /* global_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global_test.cpp; sourceTree = "<group>"; };
 		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A1A3FDC2424BC22008C89EB /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printf_lite.h; sourceTree = "<group>"; };
-		9A1A3FE52424BC51008C89EB /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strncmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD07241B8DD400F3D247 /* strcmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strcmp_test.h; sourceTree = "<group>"; };
@@ -186,6 +186,18 @@
 		9AC780A62417DD2F005CDD5C /* panic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = panic.h; sourceTree = "<group>"; };
 		9ACAB116242623EE00BDB3CF /* printf_lite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = printf_lite.c; sourceTree = "<group>"; };
 		9ACAB1182426240C00BDB3CF /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printf_lite.h; path = ../../Include/Library/printf_lite.h; sourceTree = "<group>"; };
+		9AF4156B242CBB5600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF4156D242CBC4900D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "printf_lite-conf.h"; path = "../../Include/Library/printf_lite-conf.h"; sourceTree = "<group>"; };
+		9AF4156E242CBC6000D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "printf_lite-conf.h"; sourceTree = "<group>"; };
+		9AF4156F242CBE7500D2644C /* printlib-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test.h"; sourceTree = "<group>"; };
+		9AF41570242CBE7500D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF41571242CBE7600D2644C /* poolprint-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "poolprint-test.cpp"; sourceTree = "<group>"; };
+		9AF41572242CBE7600D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF41573242CBE7600D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
+		9AF41574242CBE7600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF41575242CBE7600D2644C /* poolprint-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test.h"; sourceTree = "<group>"; };
+		9AF41578242CBED700D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9AF41579242CBED700D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,9 +256,15 @@
 				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A0B08642403144C00E2B470 /* global_test.cpp */,
 				9A57C20A2418A1FD0029A39F /* global_test.h */,
-				9A1A3FE52424BC51008C89EB /* printf_lite-test-cpp_conf.h */,
+				9AF41572242CBE7600D2644C /* poolprint-test-cpp_conf.h */,
+				9AF41571242CBE7600D2644C /* poolprint-test.cpp */,
+				9AF41575242CBE7600D2644C /* poolprint-test.h */,
+				9AF41574242CBE7600D2644C /* printf_lite-test-cpp_conf.h */,
 				9AA045892425F94D000D6970 /* printf_lite-test.cpp */,
 				9AA045882425F94D000D6970 /* printf_lite-test.h */,
+				9AF41570242CBE7500D2644C /* printlib-test-cpp_conf.h */,
+				9AF41573242CBE7600D2644C /* printlib-test.cpp */,
+				9AF4156F242CBE7500D2644C /* printlib-test.h */,
 				9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */,
 				9A28CD07241B8DD400F3D247 /* strcmp_test.h */,
 				9A28CD15241BACBB00F3D247 /* strlen_test.cpp */,
@@ -275,6 +293,7 @@
 		9A1A3FD82424BC22008C89EB /* MemLogLibDefault */ = {
 			isa = PBXGroup;
 			children = (
+				9AF4156D242CBC4900D2644C /* printf_lite-conf.h */,
 				9ACAB1182426240C00BDB3CF /* printf_lite.h */,
 				9ACAB116242623EE00BDB3CF /* printf_lite.c */,
 				9A1A3FDC2424BC22008C89EB /* printf_lite.h */,
@@ -328,13 +347,17 @@
 		9A92232F2402FD1000483CBA /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				9AA045782425D44D000D6970 /* PoolPrint */,
+				9AF41578242CBED700D2644C /* poolprint-test-cpp_conf.h */,
+				9AF41579242CBED700D2644C /* printlib-test-cpp_conf.h */,
 				9A9223302402FD1000483CBA /* main.cpp */,
-				9A92234D2402FD9500483CBA /* Platform.h */,
 				9A0B085D240300E000E2B470 /* Platform.cpp */,
+				9A92234D2402FD9500483CBA /* Platform.h */,
+				9AA045782425D44D000D6970 /* PoolPrint */,
 				9A28CD13241B9FEE00F3D247 /* posix.h */,
-				9A28CD49241F437C00F3D247 /* xcode_utf16.h */,
+				9AF4156E242CBC6000D2644C /* printf_lite-conf.h */,
+				9AF4156B242CBB5600D2644C /* printf_lite-test-cpp_conf.h */,
 				9A28CD4A241F4CCE00F3D247 /* xcode_utf16.cpp */,
+				9A28CD49241F437C00F3D247 /* xcode_utf16.h */,
 			);
 			name = Main;
 			path = src;
@@ -534,6 +557,7 @@
 				9A28CD0C241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9AA05BB7240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,
+				9AF41576242CBE7600D2644C /* poolprint-test.cpp in Sources */,
 				9AC780AE2417DD2F005CDD5C /* panic.cpp in Sources */,
 				9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,

@@ -14,8 +14,13 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //#include "device_tree.h"
 #include "kernel_patcher.h"
 
+#ifndef DEBUG_ALL
 #define PATCH_DEBUG 0
 #define MEM_DEB 0
+#else
+#define PATCH_DEBUG DEBUG_ALL
+#define MEM_DEB DEBUG_ALL
+#endif
 
 #if PATCH_DEBUG
 #define DBG(...)	Print(__VA_ARGS__);

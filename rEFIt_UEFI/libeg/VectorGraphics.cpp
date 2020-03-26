@@ -194,7 +194,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-  //  DBG("icon %s width=%ls height=%ls\n", IconName, PoolPrintFloat(Width), PoolPrintFloat(Height));
+  //  DBG("icon %s width=%ls height=%ls\n", IconName, Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
 //  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
@@ -364,7 +364,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-//  DBG("icon %s width=%ls height=%ls\n", IconName, PoolPrintFloat(Width), PoolPrintFloat(Height));
+//  DBG("icon %s width=%ls height=%ls\n", IconName, Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
   EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
@@ -429,7 +429,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
       SVGimage->height = 768.f;  //default height
     }
   Scale = UGAHeight / SVGimage->height;
-  DBG("using scale %ls\n", PoolPrintFloat(Scale));
+	DBG("using scale %f\n", Scale);
   GlobalConfig.Scale = Scale;
   GlobalConfig.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
@@ -646,7 +646,7 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
     SVGimage->height = 768.f;  //default height
   }
   float Scale = UGAHeight / SVGimage->height;
-  DBG("using scale %ls\n", PoolPrintFloat(Scale));
+  DBG("using scale %ls\n", Scale);
   ThemeX.Scale = Scale;
   ThemeX.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
@@ -711,7 +711,7 @@ VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
     fH = fontSVG->unitsPerEm;
   }
   FontScale = (float)FontHeight / fH;
-  DBG("font scale %ls\n", PoolPrintFloat(FontScale));
+  DBG("font scale %ls\n", FontScale);
   FontWidth = (int)(fontSVG->horizAdvX * FontScale);
   INTN Width = FontWidth * (AsciiPageSize + GlobalConfig.CodepageSize);
   FontImage = egCreateImage(Width, Height, TRUE);
@@ -836,7 +836,7 @@ INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XS
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
-    DBG("wrong font: %ls\n", PoolPrintFloat(fontSVG->unitsPerEm));
+    DBG("wrong font: %ls\n", fontSVG->unitsPerEm);
     DumpFloat2("Font bbox", fontSVG->bbox, 4);
     fH = fontSVG->unitsPerEm?fontSVG->unitsPerEm:1000.0f;  //1000
   }
@@ -932,7 +932,7 @@ INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, 
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
-    DBG("wrong font: %ls\n", PoolPrintFloat(fontSVG->unitsPerEm));
+	  DBG("wrong font: %f\n", fontSVG->unitsPerEm);
     DumpFloat2("Font bbox", fontSVG->bbox, 4);
     fH = fontSVG->unitsPerEm?fontSVG->unitsPerEm:1000.0f;  //1000
   }
@@ -958,18 +958,18 @@ INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, 
       addLetter(p, 0x5F, x, y, sy, color);
     }
     x = addLetter(p, letter, x, y, sy, color);
-//    DBG("next x=%ls\n", PoolPrintFloat(x));
+//    DBG("next x=%ls\n", x);
   } //end of string
 
   p->image->realBounds[0] = fontSVG->bbox[0] * Scale;
   p->image->realBounds[1] = fontSVG->bbox[1] * Scale;
   p->image->realBounds[2] = fontSVG->bbox[2] * Scale + x; //last bound
   p->image->realBounds[3] = fontSVG->bbox[3] * Scale;
-//  DBG("internal Scale=%ls\n", PoolPrintFloat(Scale));
+//  DBG("internal Scale=%ls\n", Scale);
 //  DumpFloat2("text bounds", p->image->realBounds, 4);
   //We made an image, then rasterize it
   rast = nsvgCreateRasterizer();
-//  DBG("begin raster text, scale=%ls\n", PoolPrintFloat(Scale));
+//  DBG("begin raster text, scale=%ls\n", Scale);
   nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY->PixelData,
                 (int)TextBufferXY->Width, (int)TextBufferXY->Height, (int)(Width*4));
   float RealWidth = p->image->realBounds[2] - p->image->realBounds[0];
@@ -1076,7 +1076,7 @@ VOID testSVG()
       Scale = (ScaleX > ScaleY)?ScaleY:ScaleX;
       float tx = 0; //-SVGimage->realBounds[0] * Scale;
       float ty = 0; //-SVGimage->realBounds[1] * Scale;
-      DBG("timing rasterize start tx=%ls ty=%ls\n", PoolPrintFloat(tx), PoolPrintFloat(ty));
+		DBG("timing rasterize start tx=%f ty=%f\n", tx, ty);
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       //now show it!

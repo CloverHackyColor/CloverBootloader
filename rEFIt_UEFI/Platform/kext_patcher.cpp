@@ -9,10 +9,15 @@
 
 #include "kernel_patcher.h"
 
+
+#ifndef DEBUG_ALL
 #define KEXT_DEBUG 0
+#else
+#define KEXT_DEBUG DEBUG_ALL
+#endif
 
 #if KEXT_DEBUG
-#define DBG(...)	Print(__VA_ARGS__);
+#define DBG(...)	printf(__VA_ARGS__);
 #else
 #define DBG(...)
 #endif
@@ -1160,14 +1165,14 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   // search for <integer
   IntTag = AsciiStrStr(Value, "<integer");
   if (IntTag == NULL) {
-    DBG(L"\nNo integer\n");
+    DBG("\nNo integer\n");
     return 0;
   }
   
   // find <integer end
   Value = AsciiStrStr(IntTag, ">");
   if (Value == NULL) {
-    DBG(L"\nNo <integer end\n");
+    DBG("\nNo <integer end\n");
     return 0;
   }
   
@@ -1182,7 +1187,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   // it might be a reference: IDREF="173"/>
   Value = AsciiStrStr(IntTag, "<integer IDREF=\"");
   if (Value != IntTag) {
-    DBG(L"\nNo <integer IDREF=\"\n");
+    DBG("\nNo <integer IDREF=\"\n");
     return 0;
   }
   
@@ -1197,7 +1202,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
    }
    */
   if (IDLen > 8) {
-    DBG(L"\nIDLen too big\n");
+    DBG("\nIDLen too big\n");
     return 0;
   }
   AsciiStrCpyS(Buffer, 48, "<integer ID=\"");
@@ -1212,7 +1217,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   // and search whole plist for ID
   IntTag = AsciiStrStr(WholePlist, Buffer);
   if (IntTag == NULL) {
-    DBG(L"\nNo %s\n", Buffer);
+    DBG("\nNo %s\n", Buffer);
     return 0;
   }
   
@@ -1225,11 +1230,11 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
    */
   Value = AsciiStrStr(IntTag, ">");
   if (Value == NULL) {
-    DBG(L"\nNo <integer end\n");
+    DBG("\nNo <integer end\n");
     return 0;
   }
   if (Value[-1] == '/') {
-    DBG(L"\nInvalid <integer IDREF end\n");
+    DBG("\nInvalid <integer IDREF end\n");
     return 0;
   }
   
@@ -1382,7 +1387,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
   //UINTN               DbgCount = 0;
   
   
-  DBG(L"\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
+  DBG("\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
   
   if (!dtRoot || !dtLength) {
     return;

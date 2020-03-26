@@ -52,11 +52,11 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
                 OUT       CHAR8              **EndPointer,  OPTIONAL
                 OUT       float              *Data);
 #if 0
-VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X);
+//VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X);
 
 VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size,
                INTN (*compare)(CONST VOID* a, CONST VOID* b));
 #endif
-CHAR16* PoolPrintFloat(float X);
+//CHAR16* PoolPrintFloat(float X);
 
 #endif /* FloatLib_h */

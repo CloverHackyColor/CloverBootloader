@@ -334,36 +334,36 @@ VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
   if (j > Low)    QuickSort(Array, Low, j, Size, compare);
   if (High > i)   QuickSort(Array, i, High, Size, compare);
 }
-
-//S must be allocated before use
-VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
-{
-  INTN I, Fract;
-  float D;
-  if (!S) {
-    return;
-  }
-  
-  I = (INTN)X;
-  D = (float)I;
-  Fract = fabsf((X - D) * 1000000.0f);
-  AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
-}
+//
+////S must be allocated before use
+//VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
+//{
+//  INTN I, Fract;
+//  float D;
+//  if (!S) {
+//    return;
+//  }
+//  
+//  I = (INTN)X;
+//  D = (float)I;
+//  Fract = fabsf((X - D) * 1000000.0f);
+//  AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
+//}
 #endif
-
-CHAR16* PoolPrintFloat(float X)
-{
-  INTN I, Fract;
-  CHAR8 S = ' ';
-  float D;
-  I = (INTN)X;
-  D = (float)I;
-  if (I == 0 && X < 0) {
-    S = '-';
-  }
-  Fract = (INTN)fabsf((X - D) * 1000000.0f);
-  return PoolPrint(L"%c%d.%06d", S, I, Fract);
-}
+//
+//CHAR16* PoolPrintFloat(float X)
+//{
+//  INTN I, Fract;
+//  CHAR8 S = ' ';
+//  float D;
+//  I = (INTN)X;
+//  D = (float)I;
+//  if (I == 0 && X < 0) {
+//    S = '-';
+//  }
+//  Fract = (INTN)fabsf((X - D) * 1000000.0f);
+//  return PoolPrint(L"%c%d.%06d", S, I, Fract);
+//}
 
 static UINT32 seed = 12345;
 float rndf() //expected 0..1

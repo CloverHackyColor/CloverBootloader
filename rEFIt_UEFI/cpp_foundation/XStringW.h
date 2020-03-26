@@ -24,8 +24,18 @@ protected:
 	UINTN m_len;
 	UINTN m_allocatedSize;
 
-	// convenience method. Did it this way to avoid #define in header. They can have an impact on other heade.rs
+	// convenience method. Did it this way to avoid #define in header. They can have an impact on other headers
 	xsize min(xsize x1, xsize x2) const { if ( x1 < x2 ) return x1; return x2; }
+	xsize max(xsize x1, xsize x2) const { if ( x1 > x2 ) return x1; return x2; }
+
+// Next 2 methods are protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
+// It's better practice, if you need a non-const pointer for low-level access, to use dataSized and ahev to specify the size
+	wchar_t* _data(unsigned int ui) const { if ( ui >= m_allocatedSize ) panic("wchar_t* data(unsigned int ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
+	wchar_t* _data(int i) const { if ( i<0 ) panic("wchar_t* data(int i) -> i < 0"); if ( (unsigned int)i >= m_allocatedSize ) panic("wchar_t* data(int i) -> i >= m_allocatedSize");  return m_data+i; }
+	wchar_t* _data(unsigned long ui) const { if ( ui >= m_allocatedSize ) panic("wchar_t* data(unsigned long ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
+	wchar_t* _data(long i) const { if ( i<0 ) panic("wchar_t* data(long i) -> i < 0"); if ( (unsigned long)i >= m_allocatedSize ) panic("wchar_t* data(long i) -> i >= m_allocatedSize");  return m_data+i; }
+	wchar_t* _data(xsize ui) const { if ( ui >= m_allocatedSize ) panic("wchar_t* data(xsize ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
+	wchar_t* _data(xisize i) const { if ( i<0 ) panic("wchar_t* data(xisize i) -> i < 0"); if ( (xsize)i >= m_allocatedSize ) panic("wchar_t* data(xisize i) -> i >= m_allocatedSize");  return m_data+i; }
 
 public:
 	void Init(UINTN aSize=0);
@@ -42,16 +52,13 @@ protected:
 	wchar_t *CheckSize(UINTN nNewSize, UINTN nGrowBy = XStringWGrowByDefault);
 
 public:
-	const wchar_t *data(UINTN ui=0) const { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
-	const wchar_t *data(INTN i) const { if ( i<0 ) panic("const wchar_t *data(INTN i=0) const -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
-//	const wchar_t *data(int i=0) const { if ( i<0 ) panic("const wchar_t *data(int i=0) const -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
-	wchar_t *data(UINTN ui=0) { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
-	wchar_t *data(INTN i) { if ( i<0 ) panic("wchar_t *data(INTN i=0) -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
-//	wchar_t *data(int i) { if ( i<0 ) panic("wchar_t *data(int i=0) -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+	const wchar_t* wc_str() const { return m_data; } // equivalent as std::string
+	const wchar_t *data(xsize ui=0) const { return m_data+ui; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
+	const wchar_t *data(xisize i) const { if ( i<0 ) panic("const wchar_t *data(INTN i=0) const -> i < 0"); return m_data+i; } // do not multiply by sizeof(wchar_t), it's done by the compiler.
 
-	wchar_t *dataWithSizeMin(UINTN pos, UINTN sizeMin, UINTN nGrowBy=XStringWGrowByDefault) { CheckSize(sizeMin, nGrowBy); return data(pos); }
-
-	wchar_t * forgetDataWithoutFreeing();
+	wchar_t* dataSized(xsize ui, xsize sizeMin, xsize nGrowBy=XStringWGrowByDefault) { CheckSize(ui+sizeMin, nGrowBy); return _data(ui); }
+	wchar_t* dataSized(xisize i, xsize sizeMin, xsize nGrowBy=XStringWGrowByDefault) { if ( i<0 ) panic("wchar_t* dataSized(xisize i, xsize sizeMin, xsize nGrowBy) -> i < 0"); CheckSize((xsize)i+sizeMin, nGrowBy); return _data(i); }
+	wchar_t* forgetDataWithoutFreeing();
 
 	UINTN length() const { return m_len; }
 	UINTN size() const { return m_len; }
@@ -77,12 +84,21 @@ public:
 	
 //	XString mbs() const;
 
-	/* [] */
-	wchar_t operator [](int i) const { return *data((INTN)i); }
-	wchar_t operator [](UINTN i) const { return *data(i); }
+	/* wchar_t [] */
+	wchar_t operator [](int i) const { return *_data(i); }
+	wchar_t operator [](unsigned int ui) const { return *_data(ui); }
+	wchar_t operator [](long i) const { return *_data(i); }
+	wchar_t operator [](unsigned long ui) const { return *_data(ui); }
+	wchar_t operator [](xisize i) const { return *data(i); }
+	wchar_t operator [](xsize ui) const { return *data(ui); }
 
-	wchar_t& operator [](int i) { return *data((INTN)i); }
-	wchar_t& operator [](UINTN i) { return *data(i); }
+	/* wchar_t& [] */
+	wchar_t& operator [](int i) { return *_data(i); }
+	wchar_t& operator [](unsigned int ui) { return *_data(ui); }
+	wchar_t& operator [](long i) { return *_data(i); }
+	wchar_t& operator [](unsigned long ui) { return *_data(ui); }
+	wchar_t& operator [](xisize i) { return *_data(i); }
+	wchar_t& operator [](xsize ui) { return *_data(ui); }
 
 	wchar_t LastChar() const { if ( length() > 0 ) return data()[length()-1]; else return 0; }
 	void RemoveLastEspCtrl();

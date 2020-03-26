@@ -9,7 +9,7 @@
 #include <Platform.h>
 #include <limits.h>
 #include "unicode_conversions.h"
-#include "printlib-test-cpp_conf.h"
+#include <printlib-test-cpp_conf.h>
 #include "printlib-test.h"
 
 static int nbTestFailed = 0;

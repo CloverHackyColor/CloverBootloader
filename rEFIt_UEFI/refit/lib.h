@@ -623,7 +623,7 @@ VOID        UninitRefitLib(VOID);
 EFI_STATUS  ReinitRefitLib(VOID);
 EFI_STATUS  ReinitSelfLib(VOID);
 //extern EFI_STATUS FinishInitRefitLib(VOID); -- static
-VOID        PauseForKey(IN CONST CHAR16 *Msg);
+
 BOOLEAN     IsEmbeddedTheme(VOID);
 UINT8       GetOSTypeFromPath (IN CONST CHAR16 *Path);
 
