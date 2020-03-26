@@ -62,7 +62,7 @@ textFaces       textFace[4]; //0-help 1-message 2-menu 3-test
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Scale, XImage&  Image)
+EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Scale, OUT XImage&  Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -187,9 +187,9 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
   nsvg__imageBounds(p2, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
   if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
-    GlobalConfig.BannerPosX = (int)(bounds[0] * Scale - GlobalConfig.CentreShift);
-    GlobalConfig.BannerPosY = (int)(bounds[1] * Scale);
-    DBG("Banner position at parse [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
+    ThemeX.BannerPosX = (int)(bounds[0] * Scale - ThemeX.CentreShift);
+    ThemeX.BannerPosY = (int)(bounds[1] * Scale);
+    DBG("Banner position at parse [%d,%d]\n", ThemeX.BannerPosX, ThemeX.BannerPosY);
   }
 
   float Height = IconImage->height * Scale;
@@ -808,7 +808,7 @@ INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XS
   }
   NSVGfont* fontSVG = textFace[textType].font;
   UINT32 color = textFace[textType].color;
-  INTN Height = (INTN)(textFace[textType].size * GlobalConfig.Scale);
+  INTN Height = (INTN)(textFace[textType].size * ThemeX.Scale);
   float Scale, sy;
   float x, y;
   if (!fontSVG) {

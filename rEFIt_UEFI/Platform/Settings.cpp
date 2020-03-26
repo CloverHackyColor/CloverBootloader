@@ -2885,6 +2885,52 @@ GetEarlyUserSettings (
       DayLight = (NowHour > 8) && (NowHour < 20);
 
       Prop = GetProperty (DictPointer, "Theme");
+#if USE_XTHEME
+      if (Prop != NULL) {
+        if ((Prop->type == kTagTypeString) && Prop->string) {
+          ThemeX.Theme.takeValueFrom(Prop->string);
+          DBG ("Default theme: %ls\n", ThemeX.Theme);
+          OldChosenTheme = 0xFFFF; //default for embedded
+          for (UINTN i = 0; i < ThemesNum; i++) {
+            //now comparison is case sensitive
+            if (ThemeX.Theme == ThemesList[i]) { //(StriCmp(ThemeX.Theme, ThemesList[i]) == 0)
+              OldChosenTheme = i;
+              break;
+            }
+          }
+          if ((AsciiStriCmp (Prop->string, "embedded") == 0) || (AsciiStriCmp (Prop->string, "") == 0)) {
+            Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+            if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+              if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+                ThemeX.DarkEmbedded = TRUE;
+                ThemeX.Font = FONT_GRAY;
+              } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+                ThemeX.DarkEmbedded = FALSE;
+                ThemeX.Font = FONT_ALFA;
+              } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
+                ThemeX.DarkEmbedded = !DayLight;
+                ThemeX.Font = DayLight?FONT_ALFA:FONT_GRAY;
+              }
+            }
+          }
+        }
+      } else if (Prop == NULL) {
+        Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+        if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+          if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+            ThemeX.DarkEmbedded = TRUE;
+            ThemeX.Font = FONT_GRAY;
+          } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+            ThemeX.DarkEmbedded = FALSE;
+            ThemeX.Font = FONT_ALFA;
+          } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
+            ThemeX.DarkEmbedded = !DayLight;
+            ThemeX.Font = DayLight?FONT_ALFA:FONT_GRAY;
+          }
+        }
+      }
+#else
+      //old method to be deleted in future
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
           UINTN i;
@@ -2928,25 +2974,28 @@ GetEarlyUserSettings (
           }
         }
       }
-
+#endif
       Prop = GetProperty (DictPointer, "PlayAsync"); //PlayAsync
       gSettings.PlayAsync = IsPropertyTrue (Prop);
 
       // CustomIcons
+#if USE_XTHEME
       Prop = GetProperty (DictPointer, "CustomIcons");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.CustomIcons = TRUE;
-      }
+      ThemeX.CustomIcons = IsPropertyTrue(Prop);
+      Prop = GetProperty (DictPointer, "ShowOptimus");
+      ThemeX.ShowOptimus = IsPropertyTrue (Prop);
+      Prop = GetProperty (DictPointer, "TextOnly");
+      ThemeX.TextOnly = IsPropertyTrue (Prop);
 
+#else
+      Prop = GetProperty (DictPointer, "CustomIcons");
+      GlobalConfig.CustomIcons = IsPropertyTrue(Prop);
       Prop = GetProperty (DictPointer, "ShowOptimus");
       GlobalConfig.ShowOptimus = IsPropertyTrue (Prop);
-      //DBG("ShowOptimus set to %d\n", GlobalConfig.ShowOptimus);
-
       Prop = GetProperty (DictPointer, "TextOnly");
-      if (IsPropertyTrue (Prop)) {
-        GlobalConfig.TextOnly = TRUE;
-        //DBG ("TextOnly option enabled\n");
-      }
+      GlobalConfig.TextOnly = IsPropertyTrue (Prop);
+
+#endif
 
       Prop = GetProperty (DictPointer, "ScreenResolution");
       if (Prop != NULL) {
@@ -2971,11 +3020,62 @@ GetEarlyUserSettings (
           }
         }
         if (GlobalConfig.ConsoleMode > 0) {
-			DBG ("ConsoleMode will be set to mode #%lld\n", GlobalConfig.ConsoleMode);
+          DBG ("ConsoleMode will be set to mode #%lld\n", GlobalConfig.ConsoleMode);
         }
       }
 
       Prop = GetProperty (DictPointer, "Language");
+#if USE_XTHEME
+      if (Prop != NULL) {
+        AsciiStrCpyS (gSettings.Language, 16, Prop->string);
+        if (AsciiStrStr (Prop->string, "en")) {
+          gLanguage = english;
+          ThemeX.Codepage = 0xC0;
+          ThemeX.CodepageSize = 0;
+        } else if (AsciiStrStr (Prop->string, "ru")) {
+          gLanguage = russian;
+          ThemeX.Codepage = 0x410;
+          ThemeX.CodepageSize = 0x40;
+        } else if (AsciiStrStr (Prop->string, "ua")) {
+          gLanguage = ukrainian;
+          ThemeX.Codepage = 0x400;
+          ThemeX.CodepageSize = 0x60;
+        } else if (AsciiStrStr (Prop->string, "fr")) {
+          gLanguage = french; //default is extended latin
+        } else if (AsciiStrStr (Prop->string, "it")) {
+          gLanguage = italian;
+        } else if (AsciiStrStr (Prop->string, "es")) {
+          gLanguage = spanish;
+        } else if (AsciiStrStr (Prop->string, "pt")) {
+          gLanguage = portuguese;
+        } else if (AsciiStrStr (Prop->string, "br")) {
+          gLanguage = brasil;
+        } else if (AsciiStrStr (Prop->string, "de")) {
+          gLanguage = german;
+        } else if (AsciiStrStr (Prop->string, "nl")) {
+          gLanguage = dutch;
+        } else if (AsciiStrStr (Prop->string, "pl")) {
+          gLanguage = polish;
+        } else if (AsciiStrStr (Prop->string, "cz")) {
+          gLanguage = czech;
+        } else if (AsciiStrStr (Prop->string, "hr")) {
+          gLanguage = croatian;
+        } else if (AsciiStrStr (Prop->string, "id")) {
+          gLanguage = indonesian;
+        } else if (AsciiStrStr (Prop->string, "zh_CN")) {
+          gLanguage = chinese;
+          ThemeX.Codepage = 0x3400;
+          ThemeX.CodepageSize = 0x19C0;
+        } else if (AsciiStrStr (Prop->string, "ro")) {
+          gLanguage = romanian;
+        } else if (AsciiStrStr (Prop->string, "ko")) {
+          gLanguage = korean;
+          ThemeX.Codepage = 0x1100;
+          ThemeX.CodepageSize = 0x100;
+        }
+      }
+
+#else
       if (Prop != NULL) {
         AsciiStrCpyS (gSettings.Language, 16, Prop->string);
         if (AsciiStrStr (Prop->string, "en")) {
@@ -3025,6 +3125,8 @@ GetEarlyUserSettings (
         }
       }
 
+#endif
+
 //      if (gSettings.Language != NULL) { // gSettings.Language != NULL cannot be false because gSettings.Language is dclared as CHAR8 Language[16]; Must we replace by gSettings.Language[0] != NULL
         Prop = GetProperty (DictPointer, "KbdPrevLang");
         if (Prop != NULL) {
@@ -3052,7 +3154,7 @@ GetEarlyUserSettings (
 
         Dict2 = GetProperty (Prop, "DoubleClickTime");
         if (Dict2 != NULL) {
-          gSettings.DoubleClickTime = (UINTN)GetPropertyInteger (Dict2, 0);
+          gSettings.DoubleClickTime = (UINT64)GetPropertyInteger (Dict2, 0);
         }
       }
       // hide by name/uuid
