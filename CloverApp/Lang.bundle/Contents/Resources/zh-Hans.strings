@@ -16,15 +16,15 @@
 "Current Clover revision" = "目前 Clover 版本";
 "Boot Device:" = "引导设备:";
 "config path:" = "config 路径:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
+"Installation succeded" = "安装成功";
+"Installation failed" = "安装失败";
 
 "Clover wants to mount %@" = "Clover 想要挂载 %@";
 "Clover wants to umount %@" = "Clover 想要卸载 %@";
 "Mount" = "挂载";
 "umount" = "卸载";
 "mount point" = "挂载点";
-"*auto mount" = "*auto mount";
+"*auto mount" = "*自动挂载";
 
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
@@ -32,30 +32,30 @@
 "OEM Vendor:" = "OEM Vendor:";
 "OEM Product:" = "OEM Product:";
 "OEM Board:" = "OEM Board:";
-"NVRAM is native:" = "NVRAM is native:";
-"unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"NVRAM is native:" = "原生 NVRAM:";
+"unknown" = "未知";
+"Yes" = "是";
+"No" = "否";
 
-"Startup Sound" = "Startup Sound";
-"Device:" = "Device:";
-"Volume level:" = "Volume level:";
-"LineOut" = "Line Out";
-"Speaker" = "Speaker";
-"Headphones" = "Headphones";
+"Startup Sound" = "启动音";
+"Device:" = "设备:";
+"Volume level:" = "音量:";
+"LineOut" = "输出线路";
+"Speaker" = "扬声器";
+"Headphones" = "耳机";
 "Garniture" = "Garniture";
-"Other" = "Other";
+"Other" = "其它";
 
 "true" = "是";
 "false" = "否";
 
 "Theme:" = "主题:";
-"Themes" = "Themes"; // window title
-"No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
-"Can't remove the theme" = "Can't remove the theme";
-"Show installed" = "Show installed";
-"Optimize" = "Optimize";
+"Themes" = "主题"; // window title
+"No themes found" = "未找到主题";
+"Manager" = "管家"; // Theme manager
+"Can't remove the theme" = "无法移除主题";
+"Show installed" = "显示已安装";
+"Optimize" = "优化";
 "Sound:" = "声音:";
 "*Make filesystem read-write" = "*让文件系统可读写";
 "*Disable Sleep Proxy Client" = "*禁用 Sleep Proxy Client";
@@ -67,7 +67,7 @@
 "Uninstall CloverDaemonNew" = "卸载 CloverDaemonNew";
 
 "Update" = "更新";
-"Download" = "Download";
+"Download" = "下载";
 "Update to r%d" = "更新到 r%d"; // "Update to r5101"
 "Check update:" = "检查更新:";
 "Check now" = "现在检查";
@@ -125,8 +125,8 @@ boot0ss (boot0 签名扫描) 引导器 优先引导第一个含 有效 PBR 签�
 "UEFI/FileSystem" = "UEFI, 文件系统驱动";
 "BIOS/FileSystem" = "BIOS, 文件系统驱动";
 
-"UEFI/HID" = "UEFI, 人机接口设备";
-"BIOS/HID" = "BIOS, 人机接口设备";
+"UEFI/HID" = "UEFI, 人体学输入设备";
+"BIOS/HID" = "BIOS, 人体学输入设备";
 
 "UEFI/FileVault2" = "UEFI, 文件保险箱驱动";
 "BIOS/FileVault2" = "BIOS, 文件保险箱驱动";
