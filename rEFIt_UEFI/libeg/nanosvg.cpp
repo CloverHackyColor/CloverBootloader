@@ -4114,15 +4114,15 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
 // then apply text transform
   nsvg__xformMultiply(shape->xform, p->text->xform);
 
-/*
-   if (letter == L'C') {
-     DBG("bbox0=%ls ", PoolPrintFloat(p->text->font->bbox[0]));
-     DBG("bbox3=%ls \n", PoolPrintFloat(p->text->font->bbox[3]));
-     DumpFloat2("glyph xform:", shape->xform, 6);
-     DBG("stroke-color=%X ", shape->stroke.color);
-     DBG("stroke-width=%ls\n", shape->strokeWidth);
-   }
-*/
+
+//   if (letter == L'C') {
+//	 DBG("bbox0=%f ", p->text->font->bbox[0]);
+//     DBG("bbox3=%f \n", p->text->font->bbox[3]);
+//     DumpFloat2("glyph xform:", shape->xform, 6);
+//     DBG("stroke-color=%X ", shape->stroke.paint.color);
+//     DBG("stroke-width=%f\n", shape->strokeWidth);
+//   }
+
   //in glyph units
   shape->bounds[0] = p->text->font->bbox[0] + x/scale; //x + p->font->bbox[0] * scale;
   shape->bounds[1] = p->text->font->bbox[1] + y/scale; //y + p->font->bbox[1] * scale;
@@ -4424,8 +4424,7 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 #endif
-   DBG("scaled width=%f height=%ls\n", p->image->width,
-        PoolPrintFloat(p->image->height));
+   DBG("scaled width=%f height=%f\n", p->image->width, p->image->height);
   return p;
 }
 
