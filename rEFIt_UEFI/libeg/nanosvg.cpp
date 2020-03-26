@@ -3476,24 +3476,24 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 
 //parse Clover settings for theme
 #if USE_XTHEME
-void XTheme::parseTheme(NSVGparser* p, const char** dict)
+void XTheme::parseTheme(void* parser, const char** dict)
 {
-  int i;
+  NSVGparser* p = (NSVGparser*)parser;
   BOOLEAN found = FALSE;
   UINT32 Color = 0x80808080; //default value
-  for (i = 0; dict[i]; i += 2) {
+  for (int i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "SelectionOnTop") == 0) {
-      SelectionOnTop = getIntegerDict(dict[i+1])>0;
+      SelectionOnTop = getIntegerDict(dict[i+1]) > 0;
     } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
       BadgeOffsetX = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
       BadgeOffsetY = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
-      NonSelectedGrey = getIntegerDict(dict[i + 1])>0;
+      NonSelectedGrey = getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "CharWidth") == 0) {
       CharWidth = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundDark") == 0) {
-      BackgroundDark = getIntegerDict(dict[i + 1])>0;
+      BackgroundDark = getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
       BackgroundSharp = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundScale") == 0) {
@@ -3533,7 +3533,7 @@ void XTheme::parseTheme(NSVGparser* p, const char** dict)
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
       VerticalLayout = getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "BootCampStyle") == 0) {
-      BootCampStyle = getIntegerDict(dict[i + 1])>0;
+      BootCampStyle = getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "AnimeFrames") == 0) {
       NumFrames = getIntegerDict(dict[i + 1]);
       if (NumFrames == 0xFFFF) {
@@ -3969,7 +3969,12 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     p->patternFlag = 1;
 
   } else if (strcmp(el, "clover:theme") == 0) {
+#if USE_XTHEME
+    ThemeX.parseTheme((void*)p, dict);
+#else
     parseTheme(p, dict);
+#endif
+
   } else {
     strncpy(p->unknown, el, 63);
   }

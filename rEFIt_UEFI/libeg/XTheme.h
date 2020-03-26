@@ -5,7 +5,7 @@
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
 #include "libeg.h"
-#include "nanosvg.h"
+//#include "nanosvg.h"
 #include "XImage.h"
 
 
@@ -111,7 +111,7 @@ public:
   void FillByEmbedded();
   void FillByDir();
   EFI_STATUS GetThemeTagSettings (void* DictPointer);
-  void parseTheme(NSVGparser* p, const char** dict); //in nano project
+  void parseTheme(void* p, const char** dict); //in nano project
 
   //screen operations
   void ClearScreen();

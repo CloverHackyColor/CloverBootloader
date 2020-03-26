@@ -2024,8 +2024,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
   BOOLEAN           HaveDefaultVolume;
+#if !USE_XTHEME
   CHAR16            *FirstMessage;
-
+#endif
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
 
@@ -2321,12 +2322,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   //  DBG("DBG: messages\n");
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
+#if USE_XTHEME
+    XStringW Message = XStringWP("   Welcome to Clover ") + gFirmwareRevision;
+    DrawTextXY(Message, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
+    Message = XStringWP("... testing hardware ...");
+    DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+#else
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", gFirmwareRevision);
     DrawTextXY(FirstMessage, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
     FreePool(FirstMessage);
     FirstMessage = PoolPrint(L"... testing hardware ...");
     DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
     FreePool(FirstMessage);
+#endif
   }
 
 //  DumpBiosMemoryMap();
@@ -2386,10 +2394,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+#if USE_XTHEME
+    XStringW Message = XStringWP("... user settings ...");
+    DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+#else
     FirstMessage = PoolPrint(L"... user settings ...");
  //   i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
     DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
     FreePool(FirstMessage);
+#endif
   }
 
   //Second step. Load config.plist into gSettings
@@ -2458,9 +2471,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+#if USE_XTHEME
+    XStringW Message = XStringWP("...  scan entries  ...");
+    DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+#else
     FirstMessage = PoolPrint(L"...  scan entries  ...");
     DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
     FreePool(FirstMessage);
+#endif
   }
 
 
@@ -2599,7 +2617,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+#if USE_XTHEME
+        XStringW Message = XStringWP("                          ");
+        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+#else
         DrawTextXY(L"                          ", (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+#endif
+
+
       }
     }
     // wait for user ACK when there were errors

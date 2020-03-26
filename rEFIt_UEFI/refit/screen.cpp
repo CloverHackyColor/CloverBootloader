@@ -416,7 +416,7 @@ typedef struct {
  //same as EgRect but INTN <-> UINTN
 */
 
-
+#if !USE_XTHEME
 VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
 {
   EG_PIXEL *p1;
@@ -590,7 +590,7 @@ VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
   InputBackgroundPixel.a = (MenuBackgroundPixel.a + 0) & 0xFF;
   GraphicsScreenDirty = FALSE;
 }
-
+#endif
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
 {
   if (!Image) {
@@ -972,6 +972,16 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
   
   // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
   // to avoid overlapping the menu text on menu pages at lower resolutions is set.
+#if USE_XTHEME
+  if ((ID > 1) && (ThemeX.LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
+    MenuWidth = (INTN)(TEXT_XMARGIN * 2 + (50 * ThemeX.CharWidth * ThemeX.Scale)); // taken from menu.c
+    if ((x + Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
+      if ((x + ThemeX.LayoutAnimMoveForMenuX >= 0) || (UGAWidth-(x + ThemeX.LayoutAnimMoveForMenuX + Film[0]->Width)) <= 100) {
+        x += ThemeX.LayoutAnimMoveForMenuX;
+      }
+    }
+  }
+#else
   if ((ID > 1) && (LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
     MenuWidth = (INTN)(TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth * GlobalConfig.Scale)); // taken from menu.c
     if ((x + Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
@@ -980,6 +990,8 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
       }
     }
   }
+#endif
+
   
   Now = AsmReadTsc();
   if (LastDraw == 0) {
@@ -1018,7 +1030,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
 
-  if (GlobalConfig.TextOnly) return;
+  if (ThemeX.TextOnly) return;
   //
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
 
@@ -1044,7 +1056,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   if (Anime && Film == NULL) {
     Path = Anime->Path;
     Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
-    if ((GlobalConfig.TypeSVG || Path) && Film) {
+    if ((ThemeX.TypeSVG || Path) && Film) {
       // Look through contents of the directory
       UINTN i;
       for (i = 0; i < Anime->Frames; i++) {
@@ -1066,7 +1078,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
       }
       if (Film[0] != NULL) {
         Frames = i;
-        DBG(" found %d frames of the anime\n", i);
+        DBG(" found %llu frames of the anime\n", i);
         // Create background frame
         Film[i] = egCreateImage(Film[0]->Width, Film[0]->Height, FALSE);
         // Copy some settings from Anime into Screen
