@@ -655,10 +655,15 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     	Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
     }
   }
+#if USE_XTHEME
+  BOOLEAN BootCampStyle = ThemeX.BootCampStyle;
+#else
+  BOOLEAN BootCampStyle = GlobalConfig.BootCampStyle;
+#endif
   
   if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
     //DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
-    if (GlobalConfig.BootCampStyle) {
+    if (BootCampStyle) {
       Entry->Title.takeValueFrom(((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
       Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
@@ -667,7 +672,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
   if ( Entry->Title.isEmpty() ) {
     //DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n", LoaderTitle, Entry->VolName);
-    if (GlobalConfig.BootCampStyle) {
+    if (BootCampStyle) {
       if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
         Entry->Title.takeValueFrom(Entry->VolName);
       } else {
@@ -718,7 +723,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
       // DBG(" Show badge as Drive.");
     } else {
-      Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), GlobalConfig.BadgeScale);
+      Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), ThemeX.BadgeScale);
       // DBG(" Show badge as OSImage.");
     }
   }

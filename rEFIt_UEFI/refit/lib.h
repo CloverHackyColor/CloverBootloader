@@ -70,11 +70,8 @@ extern XTheme ThemeX; //global variable defined in lib.cpp
 #endif
 
 #define REFIT_DEBUG (2)
-#if USE_XTHEME
-#define Print if ((!GlobalConfig.Quiet) || (ThemeX.TextOnly)) Print
-#else
 #define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
-#endif
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -34,7 +34,7 @@ public:
 //  UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
-  BOOLEAN     TextOnly;
+//  BOOLEAN     TextOnly;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;

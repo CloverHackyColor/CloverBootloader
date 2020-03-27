@@ -111,7 +111,7 @@ void XTheme::Init()
 //  DisableFlags = 0;             
   HideBadges = 0; 
   HideUIFlags = 0; 
-  TextOnly = FALSE; 
+//  TextOnly = FALSE; 
   Font = FONT_GRAY;      // FONT_TYPE   
   CharWidth = 9;  
   SelectionColor = 0xFFFFFF80; 

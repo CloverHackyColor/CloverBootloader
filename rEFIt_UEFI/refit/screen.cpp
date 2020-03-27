@@ -1030,7 +1030,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
 
-  if (ThemeX.TextOnly) return;
+  if (GlobalConfig.TextOnly) return;
   //
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
 

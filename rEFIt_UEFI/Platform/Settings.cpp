@@ -4761,7 +4761,12 @@ LoadTheme (const CHAR16 *TestTheme)
       if (!EFI_ERROR (Status)) {
         Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
+#if USE_XTHEME
+          Status = ParseSVGXTheme((const CHAR8*)ThemePtr, &ThemeDict);
+#else
           Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
+#endif
+          
           if (EFI_ERROR(Status)) {
             ThemeDict = NULL;
           }
