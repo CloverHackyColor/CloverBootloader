@@ -38,11 +38,13 @@ bool all_tests()
 	    }
 	#endif
 #endif
+#ifndef _MSC_VER
 	ret = printf_lite_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+#endif
 #ifdef JIEF_DEBUG
 //return ret;
 #endif
@@ -71,6 +73,7 @@ bool all_tests()
 		DebugLog(2, "XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+#ifndef _MSC_VER
 	ret = XString_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XString_tests() failed at test %d\n", ret);
@@ -81,6 +84,7 @@ bool all_tests()
 		DebugLog(2, "XStringW_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+#endif
 	ret = XStringWArray_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XStringWArray_tests() failed at test %d\n", ret);
