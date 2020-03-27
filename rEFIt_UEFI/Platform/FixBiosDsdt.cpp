@@ -1763,9 +1763,10 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
 
     if (!found) {
       MsgLog(" patched at: [");
+      MsgLog(" (%X)", adr); //print once because whole duration is 26 seconds!!!
     }
 
-    MsgLog(" (%X)", adr);
+//    MsgLog(" (%X)", adr);
     found = TRUE;
     len = move_data(adr + i, dsdt, len, sizeoffset);
     if ((LenTR > 0) && (ToReplace != NULL)) {
