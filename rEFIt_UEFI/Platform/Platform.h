@@ -1007,8 +1007,8 @@ typedef struct {
 
   // GUI parameters
   BOOLEAN                 Debug;
-  BOOLEAN                 Proportional;
-//  UINT8                   Pad22[1];
+//  BOOLEAN                 Proportional; //never used
+  UINT8                   Pad22[1];
   UINT32                  DefaultBackgroundColor;
 
   //ACPI

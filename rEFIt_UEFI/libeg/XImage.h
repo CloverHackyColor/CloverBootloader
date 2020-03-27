@@ -102,6 +102,7 @@ public:
 // will be used instead of old egLoadImage
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
+  EFI_STATUS LoadIcns(IN EFI_FILE *Dir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
   void DummyImage(IN UINTN PixelSize);
 

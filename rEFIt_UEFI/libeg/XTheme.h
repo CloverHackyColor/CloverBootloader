@@ -31,7 +31,7 @@ public:
   XObjArray<Icon> Icons;
   EFI_FILE    *ThemeDir;
 
-  UINTN       DisableFlags;
+//  UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
   BOOLEAN     TextOnly;
@@ -49,7 +49,7 @@ public:
   SCALING     BackgroundScale;
   INTN        BackgroundSharp;
   BOOLEAN     BackgroundDark;
-  BOOLEAN     CustomIcons;
+//  BOOLEAN     CustomIcons;
   BOOLEAN     SelectionOnTop;
   BOOLEAN     BootCampStyle;
   INTN        BadgeOffsetX;
@@ -70,7 +70,7 @@ public:
   INTN        TileYSpace;
 //  INTN        IconFormat;
   BOOLEAN     Proportional;
-  BOOLEAN     ShowOptimus;
+//  BOOLEAN     ShowOptimus;
   BOOLEAN     DarkEmbedded;
   BOOLEAN     TypeSVG;
   INTN        Codepage;

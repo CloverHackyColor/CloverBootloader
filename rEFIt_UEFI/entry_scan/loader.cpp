@@ -689,8 +689,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 
   // get custom volume icon if present
 #if USE_XTHEME
-  if (ThemeX.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
-    Entry->Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
+  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
+    Entry->Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     DBG("using VolumeIcon.icns image from Volume\n");
   } else if (Image) {
     Entry->Image.FromEGImage(Image);

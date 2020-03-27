@@ -100,8 +100,10 @@ wchar_t * XStringW::forgetDataWithoutFreeing()
 const XStringW& XStringW::takeValueFrom(const wchar_t* S)
 {
 	if ( !S ) {
-		DebugLog(2, "takeValueFrom(const wchar_t* S) called with NULL. Use setEmpty()\n");
-		panic();
+//		DebugLog(2, "takeValueFrom(const wchar_t* S) called with NULL. Use setEmpty()\n");
+//		panic();
+    Init(0);
+    return *this;
 	}
 	Init(wcslen(S));
 	StrCpy(S);

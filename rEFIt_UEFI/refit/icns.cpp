@@ -52,7 +52,7 @@
 //
 // well-known icons
 //
-
+#if !USE_XTHEME
 BUILTIN_ICON BuiltinIconTable[] = {
   { NULL, L"icons\\func_about"             , L"png",  /*48*/32 },
   { NULL, L"icons\\func_options"           , L"png",  /*48*/32 },
@@ -128,7 +128,9 @@ CHAR16 * GetIconsExt(IN CONST CHAR16 *Icon, IN CONST CHAR16 *Def)
 {
   return PoolPrint(L"%s.%s", Icon, ((GlobalConfig.IconFormat != ICON_FORMAT_DEF) && (IconFormat != NULL)) ? IconFormat : Def);
 }
+#endif
 
+#if !USE_XTHEME
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
 {
   INTN      Size;
@@ -292,11 +294,11 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 
   return BuiltinIconTable[Id].Image;
 }
-
+#endif
 //
 // Load an icon for an operating system
 //
-
+#if !USE_XTHEME
 EG_IMAGE * LoadOSIcon(IN CONST CHAR16 *OSIconName OPTIONAL, IN CONST CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy)
 {
   EG_IMAGE        *Image;
@@ -373,11 +375,38 @@ EG_IMAGE * LoadOSIcon(IN CONST CHAR16 *OSIconName OPTIONAL, IN CONST CHAR16 *Fal
 
   return DummyImage(PixelSize);
 }
-
+#endif
 //
 // Load an image from a .icns file
 //
+#if USE_XTHEME
+EFI_STATUS XImage::LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize)
+{
+  if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
+    return EFI_SUCCESS;
+  if (BaseDir) {
+    EFI_STATUS  Status = EFI_NOT_FOUND;
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0;
+    EG_IMAGE        *NewImage;
 
+    // load file
+    Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+
+    // decode it
+    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
+    Status = FromEGImage(NewImage);
+    FreePool(FileData);
+    return Status;
+
+  }
+  return EFI_NOT_FOUND;
+}
+
+#else
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize)
 {
   if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
@@ -393,18 +422,21 @@ EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UI
     if (EFI_ERROR(Status)) {
       return NULL;
     }
-    
+
     // decode it
     NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
-    
+
     FreePool(FileData);
     return NewImage;
-    
+
   }
   return DummyImage(PixelSize);
 }
 
+#endif
 
+
+#if !USE_XTHEME
 EG_IMAGE * DummyImage(IN UINTN PixelSize)
 {
     EG_IMAGE        *Image;
@@ -448,3 +480,4 @@ EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileNam
 //        Image = DummyImage(PixelSize);
     return Image;
 }
+#endif

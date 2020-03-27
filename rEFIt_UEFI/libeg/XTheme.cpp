@@ -108,7 +108,7 @@ XTheme::~XTheme() {
 
 void XTheme::Init()
 {
-  DisableFlags = 0;             
+//  DisableFlags = 0;             
   HideBadges = 0; 
   HideUIFlags = 0; 
   TextOnly = FALSE; 
@@ -126,7 +126,7 @@ void XTheme::Init()
   BackgroundScale = imNone;     // SCALING 
   BackgroundSharp = 0;            
   BackgroundDark = FALSE;       //TODO should be set to true if Night theme
-  CustomIcons = FALSE;          //TODO don't know how to handle with SVG theme
+//  CustomIcons = FALSE;          //TODO don't know how to handle with SVG theme
   SelectionOnTop = FALSE;         
   BootCampStyle = FALSE; 
   BadgeOffsetX = 0;
@@ -147,7 +147,7 @@ void XTheme::Init()
   TileYSpace = 24;
 //  IconFormat = ICON_FORMAT_DEF;
   Proportional = FALSE;
-  ShowOptimus = FALSE;
+//  ShowOptimus = FALSE;
   DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
   TypeSVG = FALSE;
   Codepage = 0xC0;           //this is for PNG theme

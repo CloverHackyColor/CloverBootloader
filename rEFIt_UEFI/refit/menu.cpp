@@ -4625,7 +4625,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       // HIDEUI_ALL - included
       ((TextC == TEXT_CORNER_REVISION) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
       ((TextC == TEXT_CORNER_HELP) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
-      ((TextC == TEXT_CORNER_OPTIMUS) && (ThemeX.ShowOptimus == FALSE))
+      ((TextC == TEXT_CORNER_OPTIMUS) && (GlobalConfig.ShowOptimus == FALSE))
       ) {
     return;
   }

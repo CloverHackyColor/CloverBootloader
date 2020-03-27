@@ -2584,7 +2584,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       // fixed other menu entries
-      if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)) {
+#if USE_XTHEME
+      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)) {
         AddCustomTool();
         if (!gSettings.DisableToolScan) {
           ScanTool();
@@ -2594,8 +2595,26 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
         }
       }
+#else
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_TOOLS)) {
+        AddCustomTool();
+        if (!gSettings.DisableToolScan) {
+          ScanTool();
+#ifdef ENABLE_SECURE_BOOT
+          // Check for secure boot setup mode
+          AddSecureBootTool();
+#endif // ENABLE_SECURE_BOOT
+        }
+      }
+#endif
 
+#if USE_XTHEME
+      MenuEntryOptions.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
+#else
       MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+#endif
+
+
       if (gSettings.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);

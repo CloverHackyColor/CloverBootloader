@@ -109,14 +109,87 @@ extern INTN                     ScrollBarDecorationsHeight;
 extern INTN                     ScrollScrollDecorationsHeight;
 extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
 //extern INTN                     OldChosenAudio;
-
-
+/*
+typedef struct {
+  INTN        Timeout;
+  UINTN       DisableFlags;
+#if !USE_XTHEME
+  UINTN       HideBadges;
+  UINTN       HideUIFlags;
+#endif
+  BOOLEAN     TextOnly;
+  BOOLEAN     Quiet;
+  BOOLEAN     LegacyFirst;
+  BOOLEAN     NoLegacy;
+  BOOLEAN     DebugLog;
+  BOOLEAN     FastBoot;
+  BOOLEAN     NeverHibernate;
+  BOOLEAN     StrictHibernate;
+  BOOLEAN     RtcHibernateAware;
+  BOOLEAN     HibernationFixup;
+  BOOLEAN     SignatureFixup;
+#if !USE_XTHEME
+  FONT_TYPE   Font;
+  INTN        CharWidth;
+  UINTN       SelectionColor;
+  CHAR16      *FontFileName;
+  CHAR16      *Theme;
+  CHAR16      *BannerFileName;
+  CHAR16      *SelectionSmallFileName;
+  CHAR16      *SelectionBigFileName;
+  CHAR16      *SelectionIndicatorName;
+  CHAR16      *DefaultSelection;
+#endif
+  CHAR16      *ScreenResolution;
+  INTN        ConsoleMode;
+  BOOLEAN     CustomIcons;
+#if !USE_XTHEME
+  CHAR16      *BackgroundName;
+  SCALING     BackgroundScale;
+  UINTN       BackgroundSharp;
+  BOOLEAN     BackgroundDark;
+  BOOLEAN     SelectionOnTop;
+  BOOLEAN     BootCampStyle;
+  INTN        BadgeOffsetX;
+  INTN        BadgeOffsetY;
+  INTN        BadgeScale;
+  INTN        ThemeDesignWidth;
+  INTN        ThemeDesignHeight;
+  INTN        BannerPosX;
+  INTN        BannerPosY;
+  INTN        BannerEdgeHorizontal;
+  INTN        BannerEdgeVertical;
+  INTN        BannerNudgeX;
+  INTN        BannerNudgeY;
+  BOOLEAN     VerticalLayout;
+  BOOLEAN     NonSelectedGrey;
+  INTN        MainEntriesSize;
+  INTN        TileXSpace;
+  INTN        TileYSpace;
+#endif
+  INTN        IconFormat;
+  BOOLEAN     NoEarlyProgress;
+  INT32       Timezone;
+  BOOLEAN     ShowOptimus;
+#if !USE_XTHEME
+  BOOLEAN     Proportional;
+  BOOLEAN     DarkEmbedded;
+  BOOLEAN     TypeSVG;
+  INTN        Codepage;
+  INTN        CodepageSize;
+  float       Scale;
+  float       CentreShift;
+#endif
+} REFIT_CONFIG;
+*/
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = {
   -1,             // INTN        Timeout;
   0,              // UINTN       DisableFlags;
+#if !USE_XTHEME
   0,              // UINTN       HideBadges;
   0,              // UINTN       HideUIFlags;
+#endif
   FALSE,          // BOOLEAN     TextOnly;
   TRUE,           // BOOLEAN     Quiet;
   FALSE,          // BOOLEAN     LegacyFirst;
@@ -126,6 +199,10 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     NeverHibernate;
   FALSE,          // BOOLEAN     StrictHibernate;
   FALSE,          // BOOLEAN     RtcHibernateAware;
+  FALSE,          // BOOLEAN     HibernationFixup;
+  FALSE,          // BOOLEAN     SignatureFixup;
+
+#if !USE_XTHEME
   FONT_GRAY,      // FONT_TYPE   Font; //Welcome should be white
   9,              // INTN        CharWidth;
   0xFFFFFF80,     // UINTN       SelectionColor;
@@ -136,13 +213,15 @@ REFIT_CONFIG   GlobalConfig = {
   NULL,           // CHAR16      *SelectionBigFileName;
   NULL,           // CHAR16      *SelectionIndicatorName;
   NULL,           // CHAR16      *DefaultSelection;
+#endif
   NULL,           // CHAR16      *ScreenResolution;
   0,              // INTN        ConsoleMode;
+  FALSE,          // BOOLEAN     CustomIcons;
+#if !USE_XTHEME
   NULL,           // CHAR16      *BackgroundName;
   imNone,         // SCALING     BackgroundScale;
   0,              // UINTN       BackgroundSharp;
   FALSE,          // BOOLEAN     BackgroundDark;
-  FALSE,          // BOOLEAN     CustomIcons;
   FALSE,          // BOOLEAN     SelectionOnTop;
   FALSE,          // BOOLEAN     BootCampStyle;
   0,              // INTN        BadgeOffsetX;
@@ -161,19 +240,20 @@ REFIT_CONFIG   GlobalConfig = {
   128,            // INTN        MainEntriesSize;
   8,              // INTN        TileXSpace;
   24,             // INTN        TileYSpace;
+#endif
   ICON_FORMAT_DEF, // INTN       IconFormat;
-  FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     NoEarlyProgress;
+  0,              // INT32       Timezone;
   FALSE,          // BOOLEAN     ShowOptimus;
-  FALSE,          // BOOLEAN     HibernationFixup;
-  FALSE,          // BOOLEAN     SignatureFixup;
+#if !USE_XTHEME
+  FALSE,          // BOOLEAN     Proportional;
   FALSE,          // BOOLEAN     DarkEmbedded;
   FALSE,          // BOOLEAN     TypeSVG;
-  0,              // INT32       Timezone;
   0xC0,           // INTN        Codepage;
   0xC0,           // INTN        CodepageSize; //extended latin
   1.0f,           // float       Scale;
   0.0f,           // float       CentreShift;
+#endif
 };
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =
@@ -2979,23 +3059,12 @@ GetEarlyUserSettings (
       gSettings.PlayAsync = IsPropertyTrue (Prop);
 
       // CustomIcons
-#if USE_XTHEME
-      Prop = GetProperty (DictPointer, "CustomIcons");
-      ThemeX.CustomIcons = IsPropertyTrue(Prop);
-      Prop = GetProperty (DictPointer, "ShowOptimus");
-      ThemeX.ShowOptimus = IsPropertyTrue (Prop);
-      Prop = GetProperty (DictPointer, "TextOnly");
-      ThemeX.TextOnly = IsPropertyTrue (Prop);
-
-#else
       Prop = GetProperty (DictPointer, "CustomIcons");
       GlobalConfig.CustomIcons = IsPropertyTrue(Prop);
-      Prop = GetProperty (DictPointer, "ShowOptimus");
-      GlobalConfig.ShowOptimus = IsPropertyTrue (Prop);
       Prop = GetProperty (DictPointer, "TextOnly");
       GlobalConfig.TextOnly = IsPropertyTrue (Prop);
-
-#endif
+      Prop = GetProperty (DictPointer, "ShowOptimus");
+      GlobalConfig.ShowOptimus = IsPropertyTrue (Prop);
 
       Prop = GetProperty (DictPointer, "ScreenResolution");
       if (Prop != NULL) {
@@ -3923,7 +3992,7 @@ XTheme::GetThemeTagSettings (void* DictP)
 
     Dict2 = GetProperty (Dict, "Tools");
     if (Dict2 && Dict2->type == kTagTypeFalse) {
-      DisableFlags |= HIDEUI_FLAG_TOOLS;
+      HideUIFlags |= HIDEUI_FLAG_TOOLS;
     }
 
     Dict2 = GetProperty (Dict, "Label");
@@ -4012,7 +4081,17 @@ XTheme::GetThemeTagSettings (void* DictP)
         FontFileName.takeValueFrom(Dict2->string);
       }
     }
+#if USE_XTHEME
+    Dict2 = GetProperty (Dict, "CharWidth");
+    ThemeX.CharWidth = (UINTN)GetPropertyInteger (Dict2, ThemeX.CharWidth);
+    if (ThemeX.CharWidth & 1) {
+      MsgLog("Warning! Character width %lld should be even!\n", ThemeX.CharWidth);
+    }
 
+    Dict2 = GetProperty (Dict, "Proportional");
+    ThemeX.Proportional = IsPropertyTrue (Dict2);
+
+#else
     Dict2 = GetProperty (Dict, "CharWidth");
     CharWidth = (UINTN)GetPropertyInteger (Dict2, CharWidth);
     if (GlobalConfig.CharWidth & 1) {
@@ -4020,7 +4099,10 @@ XTheme::GetThemeTagSettings (void* DictP)
     }
 
     Dict2 = GetProperty (Dict, "Proportional");
-    Proportional = IsPropertyTrue (Dict2);
+    GlobalConfig.Proportional = IsPropertyTrue (Dict2);
+
+#endif
+
   }
 
   Dict = GetProperty (DictPointer, "Anime");
@@ -4410,7 +4492,7 @@ GetThemeTagSettings (
 
     Dict2 = GetProperty (Dict, "Tools");
     if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.DisableFlags |= HIDEUI_FLAG_TOOLS;
+      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_TOOLS;
     }
 
     Dict2 = GetProperty (Dict, "Label");
@@ -7228,7 +7310,18 @@ GetUserSettings(
     } else {
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
-
+#if USE_XTHEME
+    if (gThemeChanged && ThemeX.Theme) {
+      DictPointer = GetProperty (Dict, "GUI");
+      if (DictPointer != NULL) {
+        Prop = GetProperty (DictPointer, "Theme");
+        if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
+          ThemeX.Theme.takeValueFrom(Prop->string);
+          DBG ("Theme from new config: %ls\n", ThemeX.Theme.data());
+        }
+      }
+    }
+#else
     if (gThemeChanged && GlobalConfig.Theme) {
       DictPointer = GetProperty (Dict, "GUI");
       if (DictPointer != NULL) {
@@ -7240,6 +7333,7 @@ GetUserSettings(
         }
       }
     }
+#endif
 
     SaveSettings();
   }
