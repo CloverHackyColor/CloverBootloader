@@ -3637,7 +3637,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
   INTN ItemWidth = 0;
   INTN X, t1, t2;
   INTN VisibleHeight = 0; //assume vertical layout
-  CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
+//  CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
+  XStringW ResultString;
   INTN PlaceCentre = 0; //(TextHeight / 2) - 7;
   INTN PlaceCentre1 = 0;
   UINTN OldChosenItem = ~(UINTN)0;
@@ -3748,7 +3749,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         Entry->Place.YPos = EntriesPosY + j * TextHeight;
         Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)TextHeight;
-        StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title.data());
+        //StrCpyS(ResultString, TITLE_MAX_LEN, Entry->Title.data());
+        ResultString = Entry->Title;
         //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
         //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
         //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
@@ -3765,9 +3767,10 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         if ( Entry->getREFIT_INPUT_DIALOG() ) {
           REFIT_INPUT_DIALOG* inputDialogEntry = Entry->getREFIT_INPUT_DIALOG();
           if (inputDialogEntry->Item && inputDialogEntry->Item->ItemType == BoolValue) {
-            Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
-            DrawMenuText(XStringWP(L" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
-            DrawMenuText(XStringW().takeValueFrom(ResultString), (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
+            Entry->Place.Width = ResultString.length() * ScaledWidth;
+            //possible artefacts
+     //       DrawMenuText(XStringWP(L" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
+            DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
                          ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
             ThemeX.Buttons[(((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue)?3:2].Draw(ctrlX, ctrlY);
@@ -3777,17 +3780,18 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
           } else {
             // text input
-            StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue);
-            StrCatS(ResultString, TITLE_MAX_LEN, L" ");
-            Entry->Place.Width = StrLen(ResultString) * ScaledWidth;
+            ResultString += ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue + L" ";"
+    //        StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue);
+    //        StrCatS(ResultString, TITLE_MAX_LEN, L" ");
+            Entry->Place.Width = ResultString.length() * ScaledWidth;
             // Slice - suppose to use Row as Cursor in text
-            DrawMenuText(XStringW().takeValueFrom(ResultString), (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
+            DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                          EntriesPosX,
                          Entry->Place.YPos, TitleLen + Entry->Row);
           }
         } else if (Entry->getREFIT_MENU_CHECKBIT()) {
-            DrawMenuText(XStringW().takeValueFrom(" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF); //clean the place
-            DrawMenuText(XStringW().takeValueFrom(ResultString), (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
+     //       DrawMenuText(XStringW().takeValueFrom(" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF); //clean the place
+            DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
                          ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
             ThemeX.Buttons[(((REFIT_INPUT_DIALOG*)(Entry))->Item->IValue & Entry->Row)?3:2].Draw(ctrlX, ctrlY);
@@ -3803,7 +3807,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
             OldChosenItem = OldChosenAudio;
           }
 
-          DrawMenuText(XStringW().takeValueFrom(ResultString),
+          DrawMenuText(ResultString,
                        (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                        // clovy                  EntriesPosX + (TextHeight + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale)),
                        ctrlTextX,
@@ -3811,7 +3815,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
           ThemeX.Buttons[(Entry->Row == OldChosenItem)?1:0].Draw(ctrlX, ctrlY);
         } else {
           //DBG("paint entry %d title=%ls\n", i, Entries[i]->Title);
-          DrawMenuText(XStringW().takeValueFrom(ResultString),
+          DrawMenuText(ResultString,
                        (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                        EntriesPosX, Entry->Place.YPos, 0xFFFF);
         }
@@ -3847,17 +3851,18 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         REFIT_INPUT_DIALOG* inputDialogEntry = (REFIT_INPUT_DIALOG*)EntryL;
         if (inputDialogEntry->Item->ItemType == BoolValue) {
           //clovy
-          DrawMenuText(XStringW().takeValueFrom(ResultString), 0,
+          DrawMenuText(ResultString, 0,
                        ctrlTextX,
                        EntryL->Place.YPos, 0xFFFF);
             ThemeX.Buttons[(inputDialogEntry->Item->BValue)?3:2].Draw(ctrlX, EntryL->Place.YPos + PlaceCentre);
           //          DBG("se:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
           //              EntryL->Place.YPos, EntryL->Place.YPos + PlaceCentre);
         } else {
-          StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(EntryL))->Item->SValue +
-                  ((REFIT_INPUT_DIALOG*)(EntryL))->Item->LineShift);
-          StrCatS(ResultString, TITLE_MAX_LEN, L" ");
-          DrawMenuText(XStringW().takeValueFrom(ResultString), 0, EntriesPosX,
+          ResultString += (((REFIT_INPUT_DIALOG*)(EntryL))->Item->SValue + ((REFIT_INPUT_DIALOG*)(EntryL))->Item->LineShift) + L" ";
+   //       StrCatS(ResultString, TITLE_MAX_LEN, ((REFIT_INPUT_DIALOG*)(EntryL))->Item->SValue +
+   //               ((REFIT_INPUT_DIALOG*)(EntryL))->Item->LineShift);
+   //       StrCatS(ResultString, TITLE_MAX_LEN, L" ");
+          DrawMenuText(ResultString, 0, EntriesPosX,
                        EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight,
                        TitleLen + EntryL->Row);
         }
@@ -3874,24 +3879,27 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         }
 
         // clovy
-        DrawMenuText(XStringW().takeValueFrom(ResultString), 0, ctrlTextX,
+        DrawMenuText(ResultString, 0, ctrlTextX,
                      EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight, 0xFFFF);
         ThemeX.Buttons[(EntryL->Row == OldChosenItem)?3:2].Draw(ctrlX, EntryL->Place.YPos + PlaceCentre1);
       } else if (EntryL->getREFIT_MENU_CHECKBIT()) {
           // clovy
-          DrawMenuText(XStringW().takeValueFrom(ResultString), 0, ctrlTextX,
+          DrawMenuText(ResultString, 0, ctrlTextX,
                        EntryL->Place.YPos, 0xFFFF);
           ThemeX.Buttons[(EntryL->getREFIT_MENU_CHECKBIT()->Item->IValue & EntryL->Row) ?3:2].Draw(ctrlX, EntryL->Place.YPos + PlaceCentre);
 
         //        DBG("ce:X=%d, Y=%d, ImageY=%d\n", EntriesPosX + (INTN)(TEXT_XMARGIN * GlobalConfig.Scale),
         //            EntryL->Place.YPos, EntryL->Place.YPos + PlaceCentre);
       } else {
-        DrawMenuText(XStringW().takeValueFrom(EntryL->Title), 0, EntriesPosX,
+        XStringW TitleX;
+        TitleX.takeValueFrom(EntryL->Title);
+        DrawMenuText(TitleX, 0, EntriesPosX,
                      EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * TextHeight, 0xFFFF);
       }
 
       // current selection
-      StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
+      ResultString.takeValueFrom(EntryC->Title);
+  //    StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
       TitleLen = StrLen(EntryC->Title);
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
         if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
@@ -3908,32 +3916,36 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       if ( EntryC->getREFIT_INPUT_DIALOG() ) {
         REFIT_INPUT_DIALOG* inputDialogEntry = (REFIT_INPUT_DIALOG*)EntryC;
         if (inputDialogEntry->Item->ItemType == BoolValue) {
-          DrawMenuText(XStringW().takeValueFrom(ResultString), MenuWidth,
+          DrawMenuText(ResultString, MenuWidth,
                        ctrlTextX,
                        inputDialogEntry->Place.YPos, 0xFFFF);
           ThemeX.Buttons[(inputDialogEntry->Item->BValue)?3:2].Draw(ctrlX, inputDialogEntry->Place.YPos + PlaceCentre);
         } else {
-          StrCatS(ResultString, TITLE_MAX_LEN, inputDialogEntry->Item->SValue +
-                  inputDialogEntry->Item->LineShift);
-          StrCatS(ResultString, TITLE_MAX_LEN, L" ");
-          DrawMenuText(XStringW().takeValueFrom(ResultString), MenuWidth, EntriesPosX,
+          ResultString += (inputDialogEntry->Item->SValue +
+                           inputDialogEntry->Item->LineShift) + L" ";
+   //       StrCatS(ResultString, TITLE_MAX_LEN, inputDialogEntry->Item->SValue +
+   //               inputDialogEntry->Item->LineShift);
+   //       StrCatS(ResultString, TITLE_MAX_LEN, L" ");
+          DrawMenuText(ResultString, MenuWidth, EntriesPosX,
                        EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * TextHeight,
                        TitleLen + inputDialogEntry->Row);
         }
       } else if (EntryC->getREFIT_MENU_SWITCH()) {
-        StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
-        DrawMenuText(XStringW().takeValueFrom(ResultString), MenuWidth,
+        ResultString.takeValueFrom(EntryC->Title);
+    //    StrCpyS(ResultString, TITLE_MAX_LEN, EntryC->Title);
+        DrawMenuText(ResultString, MenuWidth,
                      ctrlTextX,
                      EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * TextHeight,
                      0xFFFF);
         ThemeX.Buttons[(EntryC->Row == OldChosenItem)?1:0].Draw(ctrlX, EntryC->Place.YPos + PlaceCentre1);
       } else if (EntryC->getREFIT_MENU_CHECKBIT()) {
-        DrawMenuText(XStringW().takeValueFrom(ResultString), MenuWidth,
+        DrawMenuText(ResultString, MenuWidth,
                      ctrlTextX,
                      EntryC->Place.YPos, 0xFFFF);
         ThemeX.Buttons[(EntryC->getREFIT_MENU_CHECKBIT()->Item->IValue & EntryC->Row)?3:2].Draw(ctrlX, EntryC->Place.YPos + PlaceCentre);
       }else{
-        DrawMenuText(XStringW().takeValueFrom(EntryC->Title), MenuWidth, EntriesPosX,
+        ResultString.takeValueFrom(EntryC->Title);
+        DrawMenuText(ResultString, MenuWidth, EntriesPosX,
                      EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * TextHeight,
                      0xFFFF);
       }
@@ -3947,8 +3959,9 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
     }
 
     case MENU_FUNCTION_PAINT_TIMEOUT: //ever be here?
+      ResultString.takeValueFrom(ParamText);
       X = (UGAWidth - StrLen(ParamText) * ScaledWidth) >> 1;
-      DrawMenuText(XStringW().takeValueFrom(ParamText), 0, X, TimeoutPosY, 0xFFFF);
+      DrawMenuText(ResultString, 0, X, TimeoutPosY, 0xFFFF);
       break;
   }
 
@@ -4617,20 +4630,20 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       // Display Clover boot volume
       if (SelfVolume->VolLabel && SelfVolume->VolLabel[0] != L'#') {
    //     Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolLabel);
-        Text = XStringW() + gFirmwareRevision + ", booted from " + SelfVolume->VolLabel;
+        Text = XStringW() + gFirmwareRevision + L", booted from " + SelfVolume->VolLabel;
       }
-      if (Text.isEmpty() ) {
-        Text = XStringW() + gFirmwareRevision + " " + SelfVolume->VolName);
+      if (Text.isEmpty()) {
+        Text = XStringW() + gFirmwareRevision + L" " + SelfVolume->VolName;
       }
       break;
     case TEXT_CORNER_HELP:
-      Text = XStringW() + "F1:Help";
+      Text = XStringW() + L"F1:Help";
       break;
     case TEXT_CORNER_OPTIMUS:
       if (gGraphics[0].Vendor != Intel) {
-        Text = XStringW() + "Discrete";
+        Text = XStringW() + L"Discrete";
       } else {
-        Text = XStringW() + "Intel";
+        Text = XStringW() + L"Intel";
       }
       //      Text = (NGFX == 2)?L"Intel":L"Discrete";
       break;
@@ -4643,7 +4656,7 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
       Xpos = (INTN)(TextHeight * 0.75f);
       break;
     case X_IS_RIGHT:
-      Xpos = UGAWidth - (INTN)(TextHeight * 0.7f);//2
+      Xpos = UGAWidth - (INTN)(TextHeight * 0.75f);//2
       break;
     case X_IS_CENTER:
       Xpos = UGAWidth >> 1;
@@ -4855,12 +4868,14 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
       break;
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
-      int hi = (ThemeX.HideBadges & HDBADGES_INLINE)?3:1;
+      int hi = MessageHeight * ((ThemeX.HideBadges & HDBADGES_INLINE)?3:1);
       HidePointer();
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), textPosY + MessageHeight * hi,
+        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), textPosY + hi,
                              OldTimeoutTextWidth, TextHeight);
-        OldTimeoutTextWidth = DrawTextXY(XStringW().takeValueFrom(ParamText), (UGAWidth >> 1), textPosY + MessageHeight * hi, X_IS_CENTER);
+        XStringW TextX;
+        TextX.takeValueFrom(ParamText);
+        OldTimeoutTextWidth = DrawTextXY(TextX, (UGAWidth >> 1), textPosY + hi, X_IS_CENTER);
       }
 
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_LEFT);
@@ -5206,12 +5221,14 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       break;
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
-      i = (ThemeX.HideBadges & HDBADGES_INLINE)?3:1;
+      int hi = MessageHeight * ((ThemeX.HideBadges & HDBADGES_INLINE)?3:1);
       HidePointer();
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
+        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + hi,
                              OldTimeoutTextWidth, MessageHeight);
-        OldTimeoutTextWidth = DrawTextXY(XStringW().takeValueFrom(ParamText), (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
+        XStringW TextX;
+        TextX.takeValueFrom(ParamText);
+        OldTimeoutTextWidth = DrawTextXY(TextX, (UGAWidth >> 1), FunctextPosY + hi, X_IS_CENTER);
       }
 
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
