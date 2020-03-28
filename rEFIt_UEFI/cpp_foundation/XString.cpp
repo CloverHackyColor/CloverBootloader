@@ -33,7 +33,7 @@ const XString NullXString;
 
 void XString::Init(xsize aSize)
 {
-	m_data = (char*)malloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans mSize */
+	m_data = (char*)malloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans m_allocatedSize */
 	if ( !m_data ) {
 		DebugLog(2, "XString::Init(%llu) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(char));
 		panic();
@@ -51,7 +51,7 @@ XString::XString()
 XString::~XString()
 {
 //Debugf("Destructeur :%s\n", c);
-	delete m_data;
+	delete m_data; // delete nullptr do nothing
 }
 
 void XString::setLength(xsize len)
@@ -67,7 +67,7 @@ char *XString::CheckSize(xsize nNewSize, xsize nGrowBy)
 	{
 
 		nNewSize += nGrowBy;
-		m_data = (char*)realloc(m_data, (nNewSize+1)*sizeof(char), m_allocatedSize*sizeof(wchar_t));
+		m_data = (char*)realloc(m_data, (nNewSize+1)*sizeof(char), m_allocatedSize*sizeof(wchar_t)); // realloc is identical to malloc if m_data is NULL
 		if ( !m_data ) {
 			DBG("XString::CheckSize(%d, %d) : Xrealloc(%d, %d, %d) returned NULL. System halted\n", nNewSize, nGrowBy, m_size, (nNewSize+1)*sizeof(char), c);
 			panic();
@@ -347,6 +347,14 @@ XString::XString(const XString &aString)
 //Debugf("Construteur const String & : %s\n", aString);
 	Init(aString.length());
 	StrnCpy(aString.data(), aString.length());
+}
+
+XString::XString(XString&& aString) // Move constructor
+{
+	m_data = aString.m_data;
+	m_allocatedSize = aString.m_allocatedSize;
+	aString.m_data = 0;
+	aString.m_allocatedSize = 0;
 }
 
 //// Deactivate assignment during refactoring to avoid confusion
@@ -828,23 +836,16 @@ const XString &XString::operator =(const XString &aString)
 	return *this;
 }
 
-#ifdef __AFXWIN_H__
-const XString &XString::operator =(const CString &aCString)
+XString& XString::operator =(XString&& aString)
 {
-//TRACE("Operator =const CString&\n");
-	StrnCpy(aCString, aCString.GetLength());
+	delete m_data; // delete does nothing if m_data is NULL
+	m_data = aString.m_data;
+	m_allocatedSize = aString.m_allocatedSize;
+	aString.m_data = 0;
+	aString.m_allocatedSize = 0;
 	return *this;
 }
-#endif
 
-#ifdef _WX_WXSTRINGH__
-const XString &XString::operator =(const wxString &awxString)
-{
-//TRACE("Operator =const wxString&\n");
-	StrnCpy(awxString.mb_str(), awxString.length());
-	return *this;
-}
-#endif
 //
 //const XString &XString::operator =(const XConstString &aConstString)
 //{
@@ -1082,7 +1083,7 @@ XString ToUpper(const char *S)
 }
 #endif
 
-// Deactivate assignment during refactoring to avoid confusion
+// Deactivate during refactoring to avoid confusion
 //XString CleanCtrl(const XString &S)
 //{
 //  XString ReturnValue;
