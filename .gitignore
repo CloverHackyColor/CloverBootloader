@@ -127,3 +127,4 @@ tools
 
 #Eclipse build folder
 /DEBUG_*/
+/rEFIt_UEFI copy/

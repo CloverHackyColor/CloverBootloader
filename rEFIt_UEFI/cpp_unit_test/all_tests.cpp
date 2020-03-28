@@ -3,7 +3,7 @@
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
 
-#include "../refit/screen.h" // just for PauseForKey
+#include "../Platform/BasicIO.h" // for PauseForKey
 
 #include "XArray_tests.h"
 #include "XObjArray_tests.h"

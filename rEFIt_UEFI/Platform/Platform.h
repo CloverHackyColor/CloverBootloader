@@ -95,6 +95,7 @@ extern "C" {
 #endif
 
 #include "BootLog.h"
+#include "BasicIO.h"
 #include "../refit/lib.h"
 #include "../refit/screen.h" // for PauseForKey
 #include "string.h"
@@ -1668,8 +1669,6 @@ extern CHAR8                          *AppleBoardID[];
 extern CHAR8                          *AppleChassisAsset[];
 extern CONST CHAR8                          *AppleBoardSN;
 extern CONST CHAR8                          *AppleBoardLocation;
-extern EFI_SYSTEM_TABLE               *gST;
-extern EFI_BOOT_SERVICES              *gBS;
 extern SETTINGS_DATA                  gSettings;
 extern LANGUAGES                      gLanguage;
 extern BOOLEAN                        gFirmwareClover;

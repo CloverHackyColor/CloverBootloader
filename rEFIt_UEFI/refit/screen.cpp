@@ -38,6 +38,7 @@
 #include "screen.h"
 #include "../libeg/libegint.h" // included Platform.h
 #include "../libeg/XTheme.h"
+#include "../Platform/BasicIO.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1
@@ -276,70 +277,6 @@ static VOID DrawScreenHeader(IN CONST CHAR16 *Title)
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4);
 }
 
-//
-// Keyboard input
-//
-
-BOOLEAN ReadAllKeyStrokes(VOID)
-{
-    BOOLEAN       GotKeyStrokes;
-    EFI_STATUS    Status;
-    EFI_INPUT_KEY key;
-    
-    GotKeyStrokes = FALSE;
-    for (;;) {
-        Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-        if (Status == EFI_SUCCESS) {
-            GotKeyStrokes = TRUE;
-            continue;
-        }
-        break;
-    }
-    return GotKeyStrokes;
-}
-
-VOID PauseForKey(CONST CHAR16* msg)
-{
-#if REFIT_DEBUG > 0  
-    UINTN index;
-    if (msg) {
-      printf("\n %ls", msg);
-    }
-    printf("\n* Hit any key to continue *");
-    
-    if (ReadAllKeyStrokes()) {  // remove buffered key strokes
-        gBS->Stall(5000000);     // 5 seconds delay
-        ReadAllKeyStrokes();    // empty the buffer again
-    }
-    
-    gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
-    ReadAllKeyStrokes();        // empty the buffer to protect the menu
-    
-    printf("\n");
-#endif
-}
-
-#if REFIT_DEBUG > 0
-VOID DebugPause(VOID)
-{
-    // show console and wait for key
-    SwitchToText(FALSE);
-    PauseForKey(L"");
-    
-    // reset error flag
-    haveError = FALSE;
-}
-#endif
-
-VOID EndlessIdleLoop(VOID)
-{
-    UINTN index;
-    
-    for (;;) {
-        ReadAllKeyStrokes();
-        gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
-    }
-}
 
 //
 // Error handling

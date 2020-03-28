@@ -88,12 +88,6 @@ BOOLEAN                 gThemeNeedInit  = TRUE;
 BOOLEAN                 DoHibernateWake = FALSE;
 BOOLEAN                 APFSSupport     = FALSE;
 
-//extern EFI_HANDLE              gImageHandle;
-//extern EFI_SYSTEM_TABLE*       gST;
-//extern EFI_BOOT_SERVICES*      gBS;
-//extern EFI_DXE_SERVICES*       gDS;
-//EFI_RUNTIME_SERVICES*   gRS;
-
 DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variables
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;

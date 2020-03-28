@@ -76,10 +76,6 @@ extern XTheme ThemeX; //global variable defined in lib.cpp
 extern "C" {
 #endif
 
-extern EFI_HANDLE             gImageHandle;
-extern EFI_SYSTEM_TABLE*			gST;
-extern EFI_BOOT_SERVICES*			gBS;
-extern EFI_RUNTIME_SERVICES*	gRT;
 
 #include <Protocol/SimpleFileSystem.h>
 

@@ -9,6 +9,7 @@
 
 
 #include "Platform.h"
+#include "BasicIO.h"
 
 
 #ifndef DEBUG_ALL
@@ -26,25 +27,6 @@
 
 #define BOOT_ORDER_VAR  L"BootOrder"
 
-
-VOID
-WaitForKeyPress(
-    CHAR16          *Message
-    )
-{
-    EFI_STATUS      Status;
-    UINTN           index;
-    EFI_INPUT_KEY   key;
-    
-    printf("%ls", Message);
-    do {
-        Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-    } while(Status == EFI_SUCCESS);
-    gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
-    do {
-        Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-    } while(Status == EFI_SUCCESS);
-}
 
 
 /** Returns upper case version of char - valid only for ASCII chars in unicode. */

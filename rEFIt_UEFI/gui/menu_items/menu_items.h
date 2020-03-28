@@ -36,7 +36,7 @@
 #define __menu_items_H__
 
 
-#include "../libeg/libeg.h"
+#include "../../libeg/libeg.h"
 #include "../../refit/lib.h"
 #ifdef __cplusplus
 #include "../../cpp_foundation/XObjArray.h"

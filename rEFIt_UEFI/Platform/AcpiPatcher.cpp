@@ -1797,7 +1797,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         DBG("RsdPointer Acpi 2.0 installed\n");
       }
       Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;
-      //      DBG("XSDT = 0x%x\n\r", Xsdt);
+      //      DBG("XSDT = 0x%x\n", Xsdt);
       Xsdt->Header.Signature = 0x54445358; //EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE
       eCntR = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
       Xsdt->Header.Length = eCntR * sizeof(UINT64) + sizeof (EFI_ACPI_DESCRIPTION_HEADER);

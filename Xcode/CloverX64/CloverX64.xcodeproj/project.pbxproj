@@ -632,6 +632,11 @@
 		9AF41733242CDA5800D2644C /* egemb_icons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6224176C04005CDD5C /* egemb_icons.cpp */; };
 		9AF41734242CDA5800D2644C /* Edid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2824176C04005CDD5C /* Edid.cpp */; };
 		9AF41735242CDA5800D2644C /* smbios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5124176C04005CDD5C /* smbios.cpp */; };
+		9AF4173F242F15CC00D2644C /* BootLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4173C242F15CB00D2644C /* BootLog.h */; };
+		9AF41740242F15CC00D2644C /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
+		9AF41741242F15CC00D2644C /* BasicIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4173E242F15CC00D2644C /* BasicIO.h */; };
+		9AF41742242F15D600D2644C /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
+		9AF41743242F15D700D2644C /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
 		A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		A5E326322428F4EE002240E8 /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
 /* End PBXBuildFile section */
@@ -847,6 +852,9 @@
 		9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF4165E242CD75C00D2644C /* libCloverX64 DEBUG_ALL=1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 DEBUG_ALL=1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AF4173B242CDA5800D2644C /* libCloverX64 DEBUG_ALL=2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 DEBUG_ALL=2.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9AF4173C242F15CB00D2644C /* BootLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BootLog.h; sourceTree = "<group>"; };
+		9AF4173D242F15CC00D2644C /* BasicIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIO.cpp; sourceTree = "<group>"; };
+		9AF4173E242F15CC00D2644C /* BasicIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIO.h; sourceTree = "<group>"; };
 		A5E3262F2428F4EE002240E8 /* XTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XTheme.cpp; sourceTree = "<group>"; };
 		A5E326302428F4EE002240E8 /* XTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTheme.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -993,7 +1001,6 @@
 		9AC77F1624176C04005CDD5C /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				9A28CC99241B66EA00F3D247 /* Posix */,
 				9AC77F2024176C04005CDD5C /* AcpiPatcher.cpp */,
 				9AC77F2324176C04005CDD5C /* AmlGenerator.cpp */,
 				9AC77F1E24176C04005CDD5C /* AmlGenerator.h */,
@@ -1002,9 +1009,12 @@
 				9AC77F4624176C04005CDD5C /* ati.h */,
 				9AC77F2F24176C04005CDD5C /* b64cdecode.cpp */,
 				9AC77F4C24176C04005CDD5C /* b64cdecode.h */,
+				9AF4173D242F15CC00D2644C /* BasicIO.cpp */,
+				9AF4173E242F15CC00D2644C /* BasicIO.h */,
 				9AC77F2424176C04005CDD5C /* BdsConnect.cpp */,
 				9AC77F3824176C04005CDD5C /* boot.h */,
 				9AC77F3224176C04005CDD5C /* BootLog.cpp */,
+				9AF4173C242F15CB00D2644C /* BootLog.h */,
 				9AC77F3A24176C04005CDD5C /* BootOptions.cpp */,
 				9AC77F5724176C04005CDD5C /* card_vlist.cpp */,
 				9AC77F2B24176C04005CDD5C /* Console.cpp */,
@@ -1048,6 +1058,7 @@
 				9AC77F4224176C04005CDD5C /* platformdata.cpp */,
 				9AC77F2724176C04005CDD5C /* PlatformDriverOverride.cpp */,
 				9AC77F4424176C04005CDD5C /* plist.cpp */,
+				9A28CC99241B66EA00F3D247 /* Posix */,
 				9AC77F5924176C04005CDD5C /* Settings.cpp */,
 				9AC77F2524176C04005CDD5C /* Settings.h */,
 				9AC77F5124176C04005CDD5C /* smbios.cpp */,
@@ -1221,6 +1232,7 @@
 				9AC780B82417F359005CDD5C /* XStringWP.h in Headers */,
 				9AC7801C24176C04005CDD5C /* nvidia.h in Headers */,
 				9AC7808524176C04005CDD5C /* operatorNewDelete.h in Headers */,
+				9AF41741242F15CC00D2644C /* BasicIO.h in Headers */,
 				9A57C25C24192D710029A39F /* XUINTN_test.h in Headers */,
 				9AC77FB924176C04005CDD5C /* XStringWArray_test.h in Headers */,
 				9AC77FFE24176C04005CDD5C /* syslinux_mbr.h in Headers */,
@@ -1235,6 +1247,7 @@
 				9AC7800724176C04005CDD5C /* AmlGenerator.h in Headers */,
 				9AC7808F24176C04005CDD5C /* XStringW.h in Headers */,
 				9AC7809324176C04005CDD5C /* utf8Conversion.h in Headers */,
+				9AF4173F242F15CC00D2644C /* BootLog.h in Headers */,
 				9A28CCAA241B66EA00F3D247 /* stdarg.h in Headers */,
 				9A28CCA9241B66EA00F3D247 /* posix.h in Headers */,
 				9AC7807B24176C04005CDD5C /* list.h in Headers */,
@@ -1701,6 +1714,7 @@
 				9AF41564242BABC700D2644C /* printlib-test.cpp in Sources */,
 				9AC77FC524176C04005CDD5C /* XStringW_test.cpp in Sources */,
 				9AC7806F24176C04005CDD5C /* tool.cpp in Sources */,
+				9AF41740242F15CC00D2644C /* BasicIO.cpp in Sources */,
 				9AC7807924176C04005CDD5C /* lib.cpp in Sources */,
 				9AC7801E24176C04005CDD5C /* Injectors.cpp in Sources */,
 				9AC7807824176C04005CDD5C /* menu.cpp in Sources */,
@@ -1817,6 +1831,7 @@
 				9AF415FE242CD75C00D2644C /* printlib-test.cpp in Sources */,
 				9AF415FF242CD75C00D2644C /* XStringW_test.cpp in Sources */,
 				9AF41600242CD75C00D2644C /* tool.cpp in Sources */,
+				9AF41742242F15D600D2644C /* BasicIO.cpp in Sources */,
 				9AF41601242CD75C00D2644C /* lib.cpp in Sources */,
 				9AF41602242CD75C00D2644C /* Injectors.cpp in Sources */,
 				9AF41603242CD75C00D2644C /* menu.cpp in Sources */,
@@ -1933,6 +1948,7 @@
 				9AF416DB242CDA5800D2644C /* printlib-test.cpp in Sources */,
 				9AF416DC242CDA5800D2644C /* XStringW_test.cpp in Sources */,
 				9AF416DD242CDA5800D2644C /* tool.cpp in Sources */,
+				9AF41743242F15D700D2644C /* BasicIO.cpp in Sources */,
 				9AF416DE242CDA5800D2644C /* lib.cpp in Sources */,
 				9AF416DF242CDA5800D2644C /* Injectors.cpp in Sources */,
 				9AF416E0242CDA5800D2644C /* menu.cpp in Sources */,

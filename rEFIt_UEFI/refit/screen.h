@@ -1,5 +1,4 @@
 #include "../gui/menu_items/menu_items.h"
-#include "../libeg/libeg.h"
 
 VOID InitScreen(IN BOOLEAN SetMaxResolution);
 VOID SetupScreen(VOID);
@@ -29,4 +28,4 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
 
-VOID PauseForKey(CONST CHAR16* msg);
+
