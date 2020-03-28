@@ -249,27 +249,27 @@ static VOID DrawScreenHeader(IN CONST CHAR16 *Title)
 	BannerLine[0] = BOXDRAW_DOWN_RIGHT;
 	BannerLine[ConWidth-1] = BOXDRAW_DOWN_LEFT;
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
-	Print(BannerLine);
+	printf("%ls", BannerLine);
 
 	for (i = 1; i < ConWidth-1; i++)
     BannerLine[i] = ' ';
 	BannerLine[0] = BOXDRAW_VERTICAL;
 	BannerLine[ConWidth-1] = BOXDRAW_VERTICAL;
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 1);
-	Print(BannerLine);
+	printf("%ls", BannerLine);
 
 	for (i = 1; i < ConWidth-1; i++)
     BannerLine[i] = BOXDRAW_HORIZONTAL;
  	BannerLine[0] = BOXDRAW_UP_RIGHT;
 	BannerLine[ConWidth-1] = BOXDRAW_UP_LEFT;
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 2);
-	Print(BannerLine);
+	printf("%ls", BannerLine);
 
 	FreePool(BannerLine);
 
   // print header text
   gST->ConOut->SetCursorPosition (gST->ConOut, 3, 1);
-  Print(L"Clover rev %s - %s", gFirmwareRevision, Title);
+  printf("Clover rev %ls - %ls", gFirmwareRevision, Title);
 
   // reposition cursor
   gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
@@ -303,9 +303,9 @@ VOID PauseForKey(CONST CHAR16* msg)
 #if REFIT_DEBUG > 0  
     UINTN index;
     if (msg) {
-      Print(L"\n %s", msg);
+      printf("\n %ls", msg);
     }
-    Print(L"\n* Hit any key to continue *");
+    printf("\n* Hit any key to continue *");
     
     if (ReadAllKeyStrokes()) {  // remove buffered key strokes
         gBS->Stall(5000000);     // 5 seconds delay
@@ -315,7 +315,7 @@ VOID PauseForKey(CONST CHAR16* msg)
     gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
     ReadAllKeyStrokes();        // empty the buffer to protect the menu
     
-    Print(L"\n");
+    printf("\n");
 #endif
 }
 
@@ -364,7 +364,7 @@ BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
     
 //    StatusToString(ErrorName, Status);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    Print(L"Fatal Error: %r %s\n", Status, where);
+    printf("Fatal Error: %s %ls\n", strerror(Status), where);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
     haveError = TRUE;
     
@@ -382,7 +382,7 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
     
 //    StatusToString(ErrorName, Status);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    Print(L"Error: %r %s\n", Status, where);
+    printf("Error: %s %ls\n", strerror(Status), where);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
     haveError = TRUE;
     

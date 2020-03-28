@@ -70,7 +70,6 @@ extern XTheme ThemeX; //global variable defined in lib.cpp
 #endif
 
 #define REFIT_DEBUG (2)
-#define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
 
 
 #ifdef __cplusplus

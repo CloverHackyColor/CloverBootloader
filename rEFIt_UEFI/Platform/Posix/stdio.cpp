@@ -10,22 +10,23 @@ extern "C" {
 }
 
 #include "../../cpp_foundation/XString.h"
+#include "../../cpp_foundation/XStringW.h"
+
+static XString stdio_static_buf;
+static XStringW stdio_static_wbuf;
 
 int printf(const char* format, ...)
 {
   va_list     va;
-	char buf[1024]; // that's quick and dirty !!!
 
+  // AsciiPrint seems no to work with utf8 chars. We have to use Print instead
 	va_start (va, format);
-	vsnprintf(buf, sizeof(buf), format, va);
-	buf[sizeof(buf)-1] = 0; // just in case
-	int ret = (int)AsciiPrint("%a", buf);
+	stdio_static_wbuf.vSPrintf(format, va);
+	int ret = (int)Print(L"%s", stdio_static_wbuf.wc_str());
 	va_end(va);
 	return ret;
 }
 
-
-static XString stdio_static_buf;
 
 const char* strerror(EFI_STATUS Status)
 {

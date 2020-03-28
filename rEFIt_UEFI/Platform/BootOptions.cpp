@@ -36,7 +36,7 @@ WaitForKeyPress(
     UINTN           index;
     EFI_INPUT_KEY   key;
     
-    Print(Message);
+    printf("%ls", Message);
     do {
         Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
     } while(Status == EFI_SUCCESS);

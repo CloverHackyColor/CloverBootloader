@@ -23,7 +23,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #endif
 
 #if PATCH_DEBUG
-#define DBG(...)	Print(__VA_ARGS__);
+#define DBG(...)	printf(__VA_ARGS__);
 #else
 #define DBG(...)	
 #endif
@@ -290,7 +290,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
       ptr+=0x1000;
       if((UINT32)(UINTN)ptr > 0x3000000)
       {
- //       Print(L"bootArgs not found!\n");
+ //       DBG("bootArgs not found!\n");
         gST->ConOut->OutputString (gST->ConOut, L"bootArgs not found!");
         gBS->Stall(5000000);
         //			return;

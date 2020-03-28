@@ -880,7 +880,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
      // TODO: also check for Boot Camp GUID
      //gEfiPartTypeSystemPartGuid
      Bootable = FALSE;   // this handle's BlockIO is just an alias for the whole device
-     Print(L"AppleLegacy device\n");
+     DBG("AppleLegacy device\n");
      }
      */
   }
@@ -901,7 +901,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 	}
 //    DBG("DevicePath scanned\n");
   if (HdPath) {
-    //      Print(L"Partition found %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+    //      printf("Partition found %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
     
     PartialLength = (UINTN)((UINT8 *)HdPath - (UINT8 *)(RemainingDevicePath));
     if (PartialLength > 0x1000) {
@@ -911,7 +911,6 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     DiskDevicePath = (EFI_DEVICE_PATH *)AllocatePool(PartialLength + sizeof(EFI_DEVICE_PATH));
     CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
     CopyMem((UINT8 *)DiskDevicePath + PartialLength, DevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
-    //      Print(L"WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
   //        DBG("WholeDevicePath  %ls\n", DevicePathToStr(DiskDevicePath));
     RemainingDevicePath = DiskDevicePath;
     Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);

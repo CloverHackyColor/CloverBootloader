@@ -201,7 +201,7 @@ VOID ScanTool(VOID)
   if (GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)
     return;
 
-  //    Print(L"Scanning for tools...\n");
+  //    DBG("Scanning for tools...\n");
 
   // look for the EFI shell
   if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SHELL)) {

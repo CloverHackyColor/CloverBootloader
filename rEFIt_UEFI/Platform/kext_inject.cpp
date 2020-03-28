@@ -809,7 +809,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
   }
 
   if (drvPtr == 0 || infoPtr == 0 || extraPtr == 0 || drvPtr > infoPtr || drvPtr > extraPtr || infoPtr > extraPtr) {
-    Print(L"\nInvalid device tree for kext injection\n");
+    printf("\nInvalid device tree for kext injection\n");
     gBS->Stall(5000000);
     return EFI_INVALID_PARAMETER;
   }
