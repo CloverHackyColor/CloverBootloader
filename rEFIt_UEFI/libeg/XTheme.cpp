@@ -57,7 +57,7 @@ CONST CHAR8* IconsNames[] = {
   "vol_internal_ntfs",
   "vol_internal_ext3" ,
   "vol_recovery",//21
-// not used?
+// not used? will be skipped while theme parsing
   "logo",
   "selection_small",
   "selection_big",  //BUILTIN_SELECTION_BIG=24 we keep this numeration
@@ -82,7 +82,7 @@ CONST CHAR8* IconsNames[] = {
    "os_freedos",
    "os_win",
    "os_vista",
-   "radio_button", //20
+   "radio_button", //20+25
    "radio_button_selected",
    "checkbox",  //22
    "checkbox_checked",
@@ -654,7 +654,7 @@ void XTheme::InitBar()
     }
   }
 
-  //TODO it must be somewhere in InitScroll - Scrfeen function
+  //TODO it must be somewhere in InitScroll - Screen function
   if (!TypeSVG) {
     UpButton.Width      = ScrollWidth; // 16
     UpButton.Height     = ScrollButtonsHeight; // 20

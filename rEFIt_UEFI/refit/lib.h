@@ -589,6 +589,7 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define BUILTIN_SELECTION_SMALL                (23)
 #define BUILTIN_SELECTION_BIG                  (24)
 #define BUILTIN_ICON_COUNT                     (25)
+#define BUILTIN_RADIO_BUTTON                   (45)
 #define BUILTIN_ICON_BACKGROUND                (100)
 #define BUILTIN_ICON_SELECTION                 (101)
 #define BUILTIN_ICON_ANIME                     (102)
