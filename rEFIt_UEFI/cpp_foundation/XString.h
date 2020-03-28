@@ -43,6 +43,8 @@ class XString
 	void Init(xsize aSize=0);
 	XString();
 	XString(const XString &aString);
+    XString(XString&& aString); // Move constructor
+
 
 //	XString(const XConstString &aConstString);
 //	XString(const char *S);
@@ -124,7 +126,8 @@ class XString
 	const XString& takeValueFrom(const char* S, xsize count) { StrnCpy(S, count); return *this; }
 	const XString& takeValueFrom(const wchar_t* S) { SPrintf("%ls", S); return *this; }
 
-	const XString &operator =(const XString &aString);
+	const XString& operator =(const XString& aString);
+	XString& operator =(XString&& aString);
 //	const XString &operator =(const XConstString &aConstString);
 
 // Deactivate assignment during refactoring to avoid confusion
@@ -226,7 +229,9 @@ class XString
 	// OpÈrateur +
 	// Chaines
 	friend XString operator + (const XString& p1, const XString& p2) { XString s; s=p1; s+=p2; return s; }
-	friend XString operator + (const XString& p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
+//	friend XString operator + (const XString& p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
+	XString operator + (const char *p2 ) { XString s(*this); s+=p2; return s; }
+
 	friend XString operator + (const char *p1,   const XString& p2) { XString s; s.takeValueFrom(p1); s+=p2; return s; }
 //	friend XString operator + (const XConstString& p1,   const XString& p2) { XString s; s=p1; s+=p2; return s; }
 //	friend XString operator + (const XString& p1,   const XConstString& p2) { XString s; s=p1; s+=p2; return s; }

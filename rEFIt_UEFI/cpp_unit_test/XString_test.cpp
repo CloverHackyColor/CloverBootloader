@@ -4,11 +4,12 @@
 #include "global_test.h"
 
 
-//#include <wchar.h>
-
 
 int XString_tests()
 {
+
+#ifdef JIEF_DEBUG
+#endif
 
 #ifdef JIEF_DEBUG
 //	DebugLog(2, "XStringW_tests -> Enter\n");
@@ -47,6 +48,19 @@ int XString_tests()
 		if ( str != "12" ) return 112;
 	}
 #endif
+
+	// Move assignment.
+	{
+		XString str1;
+		str1.takeValueFrom("str1");
+		XString str2(str1 + "b");
+		str2 += "a"; // this is more efficient than str2 = str2 + "a", of course
+		if ( str2 != "str1ba" ) return 120;
+		str2 = str2 + "a";
+		if ( str2 != "str1baa" ) return 121;
+		str2 = str1 + "a"; // this must call the move assignment operator
+		if ( str2 != "str1a" ) return 122;
+	}
 
 	// check [] operator
 	{
