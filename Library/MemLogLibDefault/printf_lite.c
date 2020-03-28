@@ -102,37 +102,37 @@ typedef struct PrintfParams {
 
 
 #if PRINTF_UTF8_OUTPUT_SUPPORT == 1
-// Print a char as is. Not analyse is made to check if it's a utf8 partial char
+// Print a char as is. No analyse is made to check if it's a utf8 partial char
 // c is an int for prototype compatibility, but must be < 255
 static void print_char(int c, PrintfParams* printfParams)
 {
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-	if ( printfParams->newlinePtr )
-	{
-		if ( *printfParams->newlinePtr )
+		if ( printfParams->newlinePtr )
 		{
-			*printfParams->newlinePtr = 0; // to do BEFORE call to printTimeStamp
-			if ( printfParams->timestamp ) print_timestamp(printfParams);
-		}
-		#if PRINTF_EMIT_CR == 1
-			if ( c == '\n' ) print_char('\r', printfParams);
-		#endif
-		#if PRINTF_LITE_BUF_SIZE > 1
-			printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
-		#else
-			printfParams->transmitBufCallBack(&c, 1);
-		#endif
-		if ( c == '\n' ) *printfParams->newlinePtr = 1;
-	}else{
-		#if PRINTF_EMIT_CR == 1
-			if ( c == '\n' ) print_char('\r', printfParams);
-		#endif
-		#if PRINTF_LITE_BUF_SIZE > 1
+			if ( *printfParams->newlinePtr )
+			{
+				*printfParams->newlinePtr = 0; // to do BEFORE call to printTimeStamp
+				if ( printfParams->timestamp ) print_timestamp(printfParams);
+			}
+			#if PRINTF_EMIT_CR == 1
+				if ( c == '\n' ) print_char('\r', printfParams);
+			#endif
+			#if PRINTF_LITE_BUF_SIZE > 1
 				printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
-		#else
+			#else
 				printfParams->transmitBufCallBack(&c, 1);
-		#endif
-	}
+			#endif
+			if ( c == '\n' ) *printfParams->newlinePtr = 1;
+		}else{
+			#if PRINTF_EMIT_CR == 1
+				if ( c == '\n' ) print_char('\r', printfParams);
+			#endif
+			#if PRINTF_LITE_BUF_SIZE > 1
+					printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
+			#else
+					printfParams->transmitBufCallBack(&c, 1);
+			#endif
+		}
   #else
 		{
 			#if PRINTF_EMIT_CR == 1
@@ -160,36 +160,45 @@ static void print_char(int c, PrintfParams* printfParams)
 static void print_wchar(int c, PrintfParams* printfParams)
 {
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-	if ( printfParams->newlinePtr )
-	{
-		if ( *printfParams->newlinePtr )
+		if ( printfParams->newlinePtr )
 		{
-			*printfParams->newlinePtr = 0; // to do BEFORE call to printTimeStamp
-			if ( printfParams->timestamp ) print_timestamp(printfParams);
+			if ( *printfParams->newlinePtr )
+			{
+				*printfParams->newlinePtr = 0; // to do BEFORE call to printTimeStamp
+				if ( printfParams->timestamp ) print_timestamp(printfParams);
+			}
+			#if PRINTF_EMIT_CR == 1
+				if ( c == '\n' ) print_wchar('\r', printfParams);
+			#endif
+			#if PRINTF_LITE_BUF_SIZE > 1
+					printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c;
+			#else
+					printfParams->transmitWBufCallBack(&c, 1);
+			#endif
+			if ( c == '\n' ) {
+				*printfParams->newlinePtr = 1;
+			}
+		}else{
+			#if PRINTF_EMIT_CR == 1
+				if ( c == '\n' ) print_wchar('\r', printfParams);
+			#endif
+			#if PRINTF_LITE_BUF_SIZE > 1
+					printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c;
+			#else
+					printfParams->transmitWBufCallBack(&c, 1);
+			#endif
 		}
-        #if PRINTF_LITE_BUF_SIZE > 1
-            printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c;
-        #else
-            printfParams->transmitWBufCallBack(&c, 1);
-        #endif
-		if ( c == '\n' ) {
-			*printfParams->newlinePtr = 1;
-		}
-	}else{
-        #if PRINTF_LITE_BUF_SIZE > 1
-            printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c;
-        #else
-            printfParams->transmitWBufCallBack(&c, 1);
-        #endif
-	}
   #else
     {
-        #if PRINTF_LITE_BUF_SIZE > 1
-            printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c; // cast suposed to be safe, as this function must be called
-        #else
-            printfParams->transmitWBufCallBack(&c, 1);
-        #endif
-	}
+			#if PRINTF_EMIT_CR == 1
+				if ( c == '\n' ) print_wchar('\r', printfParams);
+			#endif
+			#if PRINTF_LITE_BUF_SIZE > 1
+					printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c; // cast suposed to be safe, as this function must be called
+			#else
+					printfParams->transmitWBufCallBack(&c, 1);
+			#endif
+    }
   #endif
   #if PRINTF_LITE_BUF_SIZE > 1
 	if ( printfParams->bufIdx == PRINTF_LITE_BUF_SIZE ) {
