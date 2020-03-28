@@ -117,6 +117,8 @@
 	Platform/AmlGenerator.h
 	Platform/ati.cpp
 	Platform/ati.h
+	Platform/BasicIO.cpp
+	Platform/BasicIO.h
 #	Platform/BiosVideo.h
 #	Platform/Bmp.h
 	Platform/boot.h
