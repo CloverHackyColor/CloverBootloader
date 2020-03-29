@@ -1055,7 +1055,7 @@
 		9AC780B42417EE53005CDD5C /* global_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
 		9AC780B62417F359005CDD5C /* XStringWP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringWP.h; sourceTree = "<group>"; };
 		9AC780B72417F359005CDD5C /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
-		9ACFE72824309AF80071CC93 /* libCloverX64 XTHEME.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 XTHEME.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9ACFE72824309AF80071CC93 /* libCloverX64 USE_XTHEME=1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 USE_XTHEME=1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AF4155B242B8FA300D2644C /* poolprint-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test.h"; sourceTree = "<group>"; };
 		9AF4155C242B8FA300D2644C /* poolprint-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "poolprint-test.cpp"; sourceTree = "<group>"; };
 		9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
@@ -1148,7 +1148,7 @@
 				9AC77EC424176BF2005CDD5C /* libCloverX64.a */,
 				9AF4165E242CD75C00D2644C /* libCloverX64 DEBUG_ALL=1.a */,
 				9AF4173B242CDA5800D2644C /* libCloverX64 DEBUG_ALL=2.a */,
-				9ACFE72824309AF80071CC93 /* libCloverX64 XTHEME.a */,
+				9ACFE72824309AF80071CC93 /* libCloverX64 USE_XTHEME=1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1895,9 +1895,9 @@
 			productReference = 9AC77EC424176BF2005CDD5C /* libCloverX64.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		9ACFE64C24309AF80071CC93 /* CloverX64 XTHEME */ = {
+		9ACFE64C24309AF80071CC93 /* CloverX64 USE_XTHEME=1 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9ACFE72524309AF80071CC93 /* Build configuration list for PBXNativeTarget "CloverX64 XTHEME" */;
+			buildConfigurationList = 9ACFE72524309AF80071CC93 /* Build configuration list for PBXNativeTarget "CloverX64 USE_XTHEME=1" */;
 			buildPhases = (
 				9ACFE64D24309AF80071CC93 /* Headers */,
 				9ACFE6B424309AF80071CC93 /* Sources */,
@@ -1908,9 +1908,9 @@
 			);
 			dependencies = (
 			);
-			name = "CloverX64 XTHEME";
+			name = "CloverX64 USE_XTHEME=1";
 			productName = CloverX64;
-			productReference = 9ACFE72824309AF80071CC93 /* libCloverX64 XTHEME.a */;
+			productReference = 9ACFE72824309AF80071CC93 /* libCloverX64 USE_XTHEME=1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		9AF41582242CD75C00D2644C /* CloverX64 DEBUG_ALL=1 */ = {
@@ -1977,7 +1977,7 @@
 				9AC77EC324176BF2005CDD5C /* CloverX64 */,
 				9AF41582242CD75C00D2644C /* CloverX64 DEBUG_ALL=1 */,
 				9AF4165F242CDA5800D2644C /* CloverX64 DEBUG_ALL=2 */,
-				9ACFE64C24309AF80071CC93 /* CloverX64 XTHEME */,
+				9ACFE64C24309AF80071CC93 /* CloverX64 USE_XTHEME=1 */,
 			);
 		};
 /* End PBXProject section */
@@ -2542,7 +2542,7 @@
 					DEBUG_ON_SERIAL_PORT,
 					"JCONST=CONST",
 					NO_MSABI_VA_FUNCS,
-					"USE_XTHEME=1",
+					"USE_XTHEME=0",
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,
@@ -2786,6 +2786,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"JIEF_DEBUG=1",
 					"$(inherited)",
+					"USE_XTHEME=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3104,7 +3105,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9ACFE72524309AF80071CC93 /* Build configuration list for PBXNativeTarget "CloverX64 XTHEME" */ = {
+		9ACFE72524309AF80071CC93 /* Build configuration list for PBXNativeTarget "CloverX64 USE_XTHEME=1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9ACFE72624309AF80071CC93 /* Debug */,
