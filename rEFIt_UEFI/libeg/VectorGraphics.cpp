@@ -451,23 +451,23 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night", Scale, ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, &XString().takeValueFrom("Background_night"), Scale, ThemeX.BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background", Scale, ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, XString().takeValueFrom("Background"), Scale, ThemeX.BigBack);
   }
   DBG(" Background parsed\n");
   // --- Make Banner
   ThemeX.Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night", Scale, ThemeX.Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, XString().takeValueFrom("Banner_night"), Scale, ThemeX.Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner", Scale, ThemeX.Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, XString().takeValueFrom("Banner"), Scale, ThemeX.Banner);
   }
   DBG("Banner parsed\n");
-  BanHeight = (int)(ThemeX.Banner.GetHeight() * Scale + 1.f);
+  ThemeX.BanHeight = (int)(ThemeX.Banner.GetHeight() * Scale + 1.f);
   DBG(" parsed banner->width=%lld\n", ThemeX.Banner.GetWidth());
   
   // --- Make other icons
@@ -486,10 +486,10 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString("selection_indicator_night"), Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator_night"), Scale, SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString("selection_indicator"), Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator"), Scale, SelectionImages[4]);
   }
   
   //banner animation
@@ -702,7 +702,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
   }
   DBG("parsing theme finish\n");
 
-#endif
   return EFI_SUCCESS;
 }
 
