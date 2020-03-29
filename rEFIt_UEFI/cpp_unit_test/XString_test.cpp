@@ -8,6 +8,8 @@
 int XString_tests()
 {
 
+	XString a = "toto"_XS;
+	
 #ifdef JIEF_DEBUG
 #endif
 

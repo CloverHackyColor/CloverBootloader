@@ -289,6 +289,8 @@ class XString
 
 extern const XString NullXString;
 
+XString operator"" _XS ( const char* s, size_t len);
+
 XString SPrintf(const char *format, ...)
 	#ifndef _MSC_VER
 		__attribute__((format(printf, 1, 2)))

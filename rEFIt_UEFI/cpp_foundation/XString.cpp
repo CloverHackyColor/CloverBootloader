@@ -1012,6 +1012,14 @@ const XString &XString::operator +=(const char *S)
 //                                 Fonction
 //-----------------------------------------------------------------------------
 
+XString operator"" _XS ( const char* s, size_t len)
+{
+  XString returnValue;
+	if ( len > MAX_XSIZE ) len = MAX_XSIZE;
+	returnValue.takeValueFrom(s, len);
+    return returnValue; // don't do "return returnValue.takeValueFrom(s, len)" because it break the return value optimization.
+}
+
 XString SPrintf(const char *format, ...)
 {
 	va_list     va;

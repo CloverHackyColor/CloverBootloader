@@ -66,7 +66,7 @@ textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it wil
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, float Scale, const XImage& Image)
+EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, float Scale, XImage* Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -205,7 +205,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, floa
 //  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
   XImage NewImage(iWidth, iHeight); //empty
   if (IconImage->shapes == NULL) {
-    Image = NewImage;
+    *Image = NewImage;
     return Status;
   }
 
@@ -226,7 +226,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, floa
   nsvgDeleteRasterizer(rast);
   //  nsvg__deleteParser(p2);
   //  nsvgDelete(p2->image);
-  Image = NewImage;
+  *Image = NewImage;
 
   return EFI_SUCCESS;
 }
@@ -451,20 +451,20 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, XString().takeValueFrom("Background_night"), Scale, ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, Scale, &ThemeX.BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, XString().takeValueFrom("Background"), Scale, ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, Scale, &ThemeX.BigBack);
   }
   DBG(" Background parsed\n");
   // --- Make Banner
   ThemeX.Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, XString().takeValueFrom("Banner_night"), Scale, ThemeX.Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, Scale, &ThemeX.Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, XString().takeValueFrom("Banner"), Scale, ThemeX.Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, Scale, &ThemeX.Banner);
   }
   DBG("Banner parsed\n");
   ThemeX.BanHeight = (int)(ThemeX.Banner.GetHeight() * Scale + 1.f);
@@ -477,8 +477,8 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
       continue;
     }
     Icon NewIcon(i); //initialize with embedded but further replace by loaded
-    ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, NewIcon.Image);
-    ParseSVGXIcon(mainParser, i, NewIcon.Name + "_night", Scale, NewIcon.ImageNight);
+    ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, &NewIcon.Image);
+    ParseSVGXIcon(mainParser, i, NewIcon.Name + "_night", Scale, &NewIcon.ImageNight);
     ThemeX.Icons.AddCopy(NewIcon);
   }
 
@@ -486,10 +486,10 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator_night"), Scale, XImage(SelectionImages[4]));
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, Scale, SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator"), Scale, XImage(SelectionImages[4]));
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, Scale, SelectionImages[4]);
   }
   
   //banner animation
