@@ -34,8 +34,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../Platform/Platform.h"
 #include "screen.h"
+#include "../Platform/Platform.h"
 #include "../libeg/libegint.h" // included Platform.h
 #include "../libeg/XTheme.h"
 #include "../Platform/BasicIO.h"
