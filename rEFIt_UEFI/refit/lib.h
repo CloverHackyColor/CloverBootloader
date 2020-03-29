@@ -504,8 +504,9 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define LAYOUT_X_EDGE    (20)
 #define BAR_WIDTH         (16)
 
-extern INTN FontWidth;
-extern INTN FontHeight;
+// local variables
+//extern INTN FontWidth;
+//extern INTN FontHeight;
 extern INTN TextHeight;
 extern INTN row0TileSize;
 extern INTN row1TileSize;

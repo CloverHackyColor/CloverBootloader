@@ -48,22 +48,25 @@ extern VOID
 WaitForKeyPress(CHAR16 *Message);
 
 extern void DumpFloat2 (CONST char* s, float* t, int N);
+#if !USE_XTHEME
 extern EG_IMAGE *BackgroundImage;
 extern EG_IMAGE *Banner;
 extern EG_IMAGE *BigBack;
 extern INTN BanHeight;
 extern INTN row0TileSize;
 extern INTN row1TileSize;
-extern INTN FontWidth;
+//extern INTN FontWidth;
+#endif
 extern UINTN NumFrames;
 extern UINTN FrameTime;
 extern BOOLEAN DayLight;
 
-textFaces       textFace[4]; //0-help 1-message 2-menu 3-test
+
+textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Scale, OUT XImage&  Image)
+EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, XString& IconNameX, float Scale, OUT XImage&  Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -73,6 +76,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float S
   NSVGgroup   *group;
   NSVGimage   *IconImage;
   NSVGshape   *shapeNext, *shapesTail = NULL, *shapePrev;
+  CONST CHAR8 *IconName = IconNameX.c_str();
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
@@ -718,102 +722,6 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   }
   return Frame;
 }
-
-#if 0
-VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color)
-{
-//  EFI_STATUS      Status;
-  float           FontScale;
-  NSVGparser      *p;
-  NSVGrasterizer  *rast;
-  INTN i;
-  if (!fontSVG) {
-    return;
-  }
-  //free old font
-  if (FontImage != NULL) {
-    egFreeImage (FontImage);
-    FontImage = NULL;
-  }
-  INTN Height = FontHeight + 4;
-//  DBG("load font %s\n", fontSVG->fontFamily);
-  if (fontSVG->unitsPerEm < 1.f) {
-    fontSVG->unitsPerEm = 1000.f;
-  }
-  float fH = fontSVG->bbox[3] - fontSVG->bbox[1];
-  if (fH == 0.f) {
-    fH = fontSVG->unitsPerEm;
-  }
-  FontScale = (float)FontHeight / fH;
-  DBG("font scale %ls\n", FontScale);
-  FontWidth = (int)(fontSVG->horizAdvX * FontScale);
-  INTN Width = FontWidth * (AsciiPageSize + GlobalConfig.CodepageSize);
-  FontImage = egCreateImage(Width, Height, TRUE);
-
-  p = nsvg__createParser();
-  if (!p) {
-    return;
-  }
-//  p->font = fontSVG;
-  p->image->height = (float)Height;
-  p->image->width = (float)Width;
-
-  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
-  if (!text) {
-    return;
-  }
-  text->fontSize = (float)FontHeight;
-  text->font = fontSVG;
-  text->fontColor = color;
-
-//  DBG("RenderSVGfont: fontID=%s\n", text->font->id);
-//  DBG("RenderSVGfont:  family=%s\n", text->font->fontFamily);
-  //add to head
-  text->next = p->text;
-  p->text = text;
-  //for each letter rasterize glyph into FontImage
-  //0..0xC0 == AsciiPageSize
-  // cyrillic 0x410..0x450 at 0xC0
-  float x = 0.f;
-  float y = fontSVG->bbox[1] * FontScale;; //(float)Height;
-  p->isText = TRUE;
-  for (i = 0; i < AsciiPageSize; i++) {
-    addLetter(p, i, x, y, FontScale, color);
-    x += (float)FontWidth;
-  }
-  x = AsciiPageSize * FontWidth;
-  for (i = GlobalConfig.Codepage; i < GlobalConfig.Codepage+GlobalConfig.CodepageSize; i++) {
-    addLetter(p, i, x, y, FontScale, color);
-    x += (float)FontWidth;
-  }
-  p->image->realBounds[0] = fontSVG->bbox[0] * FontScale;
-  p->image->realBounds[1] = fontSVG->bbox[1] * FontScale;
-  p->image->realBounds[2] = fontSVG->bbox[2] * FontScale + x; //last bound
-  p->image->realBounds[3] = fontSVG->bbox[3] * FontScale;
-
-  //We made an image, then rasterize it
-  rast = nsvgCreateRasterizer();
-  nsvgRasterize(rast, p->image, 0, 0, 1.0f, 1.0f, (UINT8*)FontImage->PixelData, (int)Width, (int)Height, (int)(Width*4));
-
-#if 0 //DEBUG_FONT
-  //save font as png yyyyy
-  UINT8           *FileData = NULL;
-  UINTN           FileDataLength = 0U;
-
-  EFI_UGA_PIXEL *ImagePNG = (EFI_UGA_PIXEL *)FontImage->PixelData;
-
-  unsigned lode_return =
-    eglodepng_encode(&FileData, &FileDataLength, (CONST UINT8*)ImagePNG, (UINTN)FontImage->Width, (UINTN)FontImage->Height);
-
-  if (!lode_return) {
-    egSaveFile(SelfRootDir, L"\\FontSVG.png", FileData, FileDataLength);
-  }
-#endif
-  nsvgDeleteRasterizer(rast);
-//  nsvg__deleteParser(p);
-  return;
-}
-#endif
 
 // it is not draw, it is render and mainly used in egRenderText
 // which is used in icns.cpp as an icon rplacement if no image found, looks like not used

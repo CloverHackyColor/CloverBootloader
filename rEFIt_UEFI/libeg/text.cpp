@@ -56,7 +56,7 @@
 
 
 EG_IMAGE *FontImage = NULL;
-INTN FontWidth = 9;
+INTN FontWidth = 9;  //local variable
 INTN FontHeight = 18;
 INTN TextHeight = 19;
 NSVGfontChain *fontsDB = NULL;
@@ -89,6 +89,7 @@ VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height)
 }
 #endif
 
+//should be rewritten to use XImage and XStringW
 EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
 {
   EG_IMAGE    *NewImage = NULL, *NewFontImage;
@@ -96,12 +97,21 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   EG_PIXEL    *PixelPtr, FirstPixel;
   BOOLEAN     isKorean = (gLanguage == korean);
   CHAR16      *fontFilePath = NULL;
-  CONST CHAR16      *commonFontDir = L"EFI\\CLOVER\\font";
+  CONST CHAR16  *commonFontDir = L"EFI\\CLOVER\\font";
   
   if (IsEmbeddedTheme() && !isKorean) { //or initial screen before theme init
     NewImage = egDecodePNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data), TRUE);
     MsgLog("Using embedded font: %s\n", NewImage ? "Success" : "Error");
   } else {
+#if USE_XTHEME
+    if (!ThemeX.TypeSVG) {
+      NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : ThemeX.FontFileName.data(), TRUE);
+      MsgLog("Loading font from ThemeDir: %s\n", NewImage ? "Success" : "Error");
+    } else {
+      MsgLog("Using SVG font\n");
+      return FontImage;
+    }
+#else
     if (!GlobalConfig.TypeSVG) {
       NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName, TRUE);
       MsgLog("Loading font from ThemeDir: %s\n", NewImage ? "Success" : "Error");
@@ -109,11 +119,17 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
       MsgLog("Using SVG font\n");
       return FontImage;
     }
+#endif
   }
   
   if (!NewImage) {
     //then take from common font folder
+#if USE_XTHEME
+    fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : ThemeX.FontFileName.data());
+#else
     fontFilePath = PoolPrint(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : GlobalConfig.FontFileName);
+#endif
+    
     NewImage = egLoadImage(SelfRootDir, fontFilePath, TRUE);
     //else use embedded
     if (!NewImage) {
@@ -145,7 +161,12 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   
   FontWidth = ImageWidth / Cols;
   FontHeight = ImageHeight / Rows;
+#if USE_XTHEME
+  TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * ThemeX.Scale);
+#else
   TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * GlobalConfig.Scale);
+#endif
+  
   FirstPixel = *PixelPtr;
   for (y = 0; y < Rows; y++) {
     for (j = 0; j < FontHeight; j++) {
@@ -158,8 +179,13 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
             (PixelPtr->r == FirstPixel.r)
             ) {
           PixelPtr->a = 0;
+#if USE_XTHEME
+        } else if (ThemeX.DarkEmbedded) {
+          *PixelPtr = SemiWhitePixel;
+#else
         } else if (GlobalConfig.DarkEmbedded) {
           *PixelPtr = SemiWhitePixel;
+#endif
         }
         NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
       }
@@ -175,12 +201,18 @@ VOID PrepareFont()
 {
   EG_PIXEL    *p;
   INTN         Width, Height;
-
-  TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * GlobalConfig.Scale);
-  if (GlobalConfig.TypeSVG) {
-//    FontImage = RenderSVGfont();
+#if USE_XTHEME
+  TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * ThemeX.Scale);
+  if (ThemeX.TypeSVG) {
     return;
   }
+#else
+  TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * GlobalConfig.Scale);
+  if (GlobalConfig.TypeSVG) {
+    //    FontImage = RenderSVGfont();
+    return;
+  }
+#endif
 
   if (FontImage) {
     egFreeImage(FontImage);
@@ -190,10 +222,12 @@ VOID PrepareFont()
   if (gLanguage == korean) {
     FontImage = egLoadFontImage(FALSE, 10, 28);
     if (FontImage) {
-//      FontHeight = 16;  //delete?
+#if USE_XTHEME
+      ThemeX.CharWidth = 22;
+#else
       GlobalConfig.CharWidth = 22;
-//      FontWidth = GlobalConfig.CharWidth; //delete?
-//      TextHeight = FontHeight + TEXT_YMARGIN * 2;
+#endif
+      
       MsgLog("Using Korean font matrix\n");
       return;
     } else {
@@ -209,6 +243,20 @@ VOID PrepareFont()
   }
   
   if (FontImage) {
+#if USE_XTHEME
+    if (ThemeX.Font == FONT_GRAY) {
+      //invert the font. embedded is dark
+      p = FontImage->PixelData;
+      for (Height = 0; Height < FontImage->Height; Height++){
+        for (Width = 0; Width < FontImage->Width; Width++, p++){
+          p->b ^= 0xFF;
+          p->g ^= 0xFF;
+          p->r ^= 0xFF;
+          //p->a = 0xFF;    //huh!
+        }
+      }
+    }
+#else
     if (GlobalConfig.Font == FONT_GRAY) {
       //invert the font. embedded is dark
       p = FontImage->PixelData;
@@ -221,6 +269,7 @@ VOID PrepareFont()
         }
       }
     }
+#endif
     
 //    TextHeight = FontHeight + TEXT_YMARGIN * 2;
 	  DBG("Font %d prepared WxH=%lldx%lld CharWidth=%lld\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
@@ -297,7 +346,12 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
 
   
   // clip the text
+#if USE_XTHEME
+  TextLength = Text.size();
+#else
   TextLength = StrLen(Text);
+#endif
+  
   if (!FontImage) {
 //    GlobalConfig.Font = FONT_ALFA;
     PrepareFont();
@@ -332,10 +386,17 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
     c = Text[i];
 #endif
     if (gLanguage != korean) {
-      c1 = (((c >= GlobalConfig.Codepage) ? (c - (GlobalConfig.Codepage - AsciiPageSize)) : c) & 0xff); //International letters
+#if USE_XTHEME
+      c1 = (((c >= ThemeX.Codepage) ? (c - (ThemeX.Codepage - AsciiPageSize)) : c) & 0xff); //International letters
       c = c1;
 
+      if (ThemeX.Proportional) {
+#else
+      c1 = (((c >= GlobalConfig.Codepage) ? (c - (GlobalConfig.Codepage - AsciiPageSize)) : c) & 0xff); //International letters
+      c = c1;
+        
       if (GlobalConfig.Proportional) {
+#endif
         if (c0 <= 0x20) {  // space before or at buffer edge
           LeftSpace = 2;
         } else {
