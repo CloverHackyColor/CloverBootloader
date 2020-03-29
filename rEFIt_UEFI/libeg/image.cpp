@@ -174,6 +174,7 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
   return NewImage;
 }
 
+#if !USE_XTHEME
 BOOLEAN BigDiff(UINT8 a, UINT8 b)
 {
   if (a > b) {
@@ -300,7 +301,7 @@ VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
   }
 }
 //
-
+#endif
 VOID egFreeImage(IN EG_IMAGE *Image)
 {
   if (Image != NULL) {
@@ -515,9 +516,17 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
   UINTN           FileDataLength = 0;
   EG_IMAGE        *NewImage;
 
+#if USE_XTHEME
+  if (ThemeX.TypeSVG) {
+    return NULL;
+  }
+#else
   if (GlobalConfig.TypeSVG) {
     return NULL;
   }
+#endif
+
+
 
   if (BaseDir == NULL || FileName == NULL)
     return NULL;
@@ -539,6 +548,7 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
 
 //will be replaced by ThemeX.LoadIcon(Name);
 //caller is responsible for free image
+#if !USE_XTHEME
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN IconSize)
 {
   EFI_STATUS      Status;
@@ -593,7 +603,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN 
   FreePool(FileData);
   return NewImage;
 }
-
+#endif
 //
 // Compositing
 //

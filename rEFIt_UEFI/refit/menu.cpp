@@ -6615,9 +6615,14 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   INTN                NextEntryIndex = -1;
 
   //  REFIT_INPUT_DIALOG* InputBootArgs;
+#if USE_XTHEME
+  BOOLEAN             OldFontStyle = ThemeX.Proportional;
+  ThemeX.Proportional = FALSE; //temporary disable proportional
+#else
   BOOLEAN             OldFontStyle = GlobalConfig.Proportional;
-
   GlobalConfig.Proportional = FALSE; //temporary disable proportional
+#endif
+
 
   if (AllowGraphicsMode) {
     Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
@@ -6625,12 +6630,19 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
-
+#if USE_XTHEME
+  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+    OptionMenu.TitleImage = (*ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS)).ToEGImage();
+  } else {
+    OptionMenu.TitleImage = NULL;
+  }
+#else
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
   } else {
     OptionMenu.TitleImage = NULL;
   }
+#endif
 
   gThemeOptionsChanged = FALSE;
 

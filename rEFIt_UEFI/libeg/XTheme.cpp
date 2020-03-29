@@ -112,7 +112,8 @@ void XTheme::Init()
   CharWidth = 9;  
   SelectionColor = 0xFFFFFF80; 
   FontFileName.setEmpty();     
-  Theme.takeValueFrom("embedded");  
+  Theme.takeValueFrom("embedded");
+  embedded = true;
   BannerFileName.setEmpty();    
   SelectionSmallFileName.setEmpty();  
   SelectionBigFileName.setEmpty();  
@@ -179,7 +180,7 @@ const XImage& XTheme::GetIcon(const XString& Name)
   {
     if (Icons[i].Name == Name) //night icon has same name as daylight icon
     {
-      if (!Daylight) {
+      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
         return Icons[i].ImageNight;
       }
       //if daylight or night icon absent
@@ -195,7 +196,7 @@ const XImage& XTheme::GetIcon(INTN Id)
   {
     if (Icons[i].Id == Id)
     {
-      if (!Daylight) {
+      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
         return Icons[i].ImageNight;
       }
       //if daylight or night icon absent
@@ -308,12 +309,6 @@ Icon::Icon(INTN Index) : Image(0), ImageNight(0)
     case BUILTIN_CHECKBOX_CHECKED:
       DEC_BUILTIN_ICON(BUILTIN_CHECKBOX_CHECKED, emb_checkbox_checked)
       break;
-
-      "radio_button", //20+25
-      "radio_button_selected",
-      "checkbox",  //22
-      "checkbox_checked",
-
     default:
  //     Image.setEmpty(); //done by ctor?
       break;
@@ -326,7 +321,7 @@ Icon::Icon(INTN Index) : Image(0), ImageNight(0)
 void XTheme::FillByEmbedded()
 {
   for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) {
-    Icon NewIcon(i, true);
+    Icon NewIcon(i);
     Icons.AddCopy(NewIcon);
   }
   //radio buttons will be inited by InitSelection()

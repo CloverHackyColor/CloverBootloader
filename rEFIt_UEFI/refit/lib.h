@@ -507,10 +507,12 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 // local variables
 //extern INTN FontWidth;
 //extern INTN FontHeight;
+#if !USE_XTHEME
 extern INTN TextHeight;
 extern INTN row0TileSize;
 extern INTN row1TileSize;
-extern INTN BCSMargin;
+#endif
+extern const INTN BCSMargin;
 
 #if !USE_XTHEME
 extern INTN LayoutBannerOffset;

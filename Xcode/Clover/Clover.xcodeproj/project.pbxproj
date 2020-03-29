@@ -2483,7 +2483,6 @@
 		A571C2732405749900B6A2C5 /* XStringW.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringW.cpp; sourceTree = "<group>"; };
 		A571C2742405749900B6A2C5 /* utf8Conversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utf8Conversion.cpp; sourceTree = "<group>"; };
 		A571C2752405749900B6A2C5 /* utf8Conversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utf8Conversion.h; sourceTree = "<group>"; };
-		A571C2762405749900B6A2C5 /* printf_lite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = printf_lite.cpp; sourceTree = "<group>"; };
 		A571C2772405749900B6A2C5 /* XToolsCommon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon.cpp; sourceTree = "<group>"; };
 		A571C2782405749900B6A2C5 /* printf_lite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = printf_lite.h; sourceTree = "<group>"; };
 		A571C2792405749900B6A2C5 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
@@ -8249,7 +8248,6 @@
 		A571C26E2405749900B6A2C5 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
-				A571C2762405749900B6A2C5 /* printf_lite.cpp */,
 				A571C2782405749900B6A2C5 /* printf_lite.h */,
 				A571C2742405749900B6A2C5 /* utf8Conversion.cpp */,
 				A571C2752405749900B6A2C5 /* utf8Conversion.h */,

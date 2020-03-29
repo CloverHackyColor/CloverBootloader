@@ -328,7 +328,15 @@ EFI_STATUS FinishInitRefitLib(VOID)
   CheckFatalError(Status, L"while opening our installation directory");
   return Status;
 }
-
+#if USE_XTHEME
+BOOLEAN IsEmbeddedTheme()
+{
+  if (ThemeX.embedded) {
+    ThemeDir = NULL;
+  }
+  return ThemeDir == NULL;
+}
+#else
 BOOLEAN IsEmbeddedTheme()
 {
   if (!GlobalConfig.Theme || !StriCmp(GlobalConfig.Theme, L"embedded")) {
@@ -336,6 +344,8 @@ BOOLEAN IsEmbeddedTheme()
   }
   return ThemeDir == NULL;
 }
+#endif
+
 
 //
 // list functions

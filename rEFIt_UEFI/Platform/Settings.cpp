@@ -89,13 +89,15 @@ CONST CHAR16                        **RecoveryPlists              = NULL;
 BOOLEAN                         SetTable132                 = FALSE;
 
 GUI_ANIME                       *GuiAnime                   = NULL;
+#if !USE_XTHEME
 EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
 EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
-EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 
 INTN row0TileSize = 144;
 INTN row1TileSize = 64;
-INTN BCSMargin = 11;
+#endif
+EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
+const INTN BCSMargin = 11;
 BOOLEAN DayLight;
 
 
@@ -4762,13 +4764,15 @@ LoadTheme (const CHAR16 *TestTheme)
         Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
 #if USE_XTHEME
-          Status = ParseSVGXTheme((const CHAR8*)ThemePtr, &ThemeDict);
+          Status = ThemeX.ParseSVGXTheme((const CHAR8*)ThemePtr);
 #else
           Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
 #endif
-          
           if (EFI_ERROR(Status)) {
             ThemeDict = NULL;
+          } else {
+            ThemeDict = (__typeof__(ThemeDict))AllocateZeroPool(sizeof(TagStruct));
+            ThemeDict->type = kTagTypeNone;
           }
           if (ThemeDict == NULL) {
             DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
@@ -4957,7 +4961,7 @@ finish:
     ThemeX.GetThemeTagSettings(NULL);
     //fill some fields
     ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
-
+    ThemeX.embedded = true;
     Status = StartupSoundPlay(ThemeDir, NULL);
   } else { // theme loaded successfully
     // read theme settings

@@ -66,10 +66,11 @@ textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it wil
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, float Scale, XImage* Image)
+EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX, float Scale, XImage* Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
+  NSVGparser *p = (NSVGparser *)parser;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   SVGimage = p->image;
   NSVGshape   *shape;
@@ -102,7 +103,7 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, floa
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
       } */
-      if (ThemeX.BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
+      if (BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
         shape->opacity = 0.f;
       }
       if (strstr(shape->id, "BoundingRect") != NULL) {
@@ -113,13 +114,13 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, floa
           IconImage->height = 200;
         }
 
-        if ((strstr(IconName, "selection_big") != NULL) && (!ThemeX.SelectionOnTop)) {
-          ThemeX.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
-          ThemeX.row0TileSize = ThemeX.MainEntriesSize + (int)(16.f * Scale);
-          DBG("main entry size = %lld\n", ThemeX.MainEntriesSize);
+        if ((strstr(IconName, "selection_big") != NULL) && (!SelectionOnTop)) {
+          MainEntriesSize = (int)(IconImage->width * Scale); //xxx
+          row0TileSize = MainEntriesSize + (int)(16.f * Scale);
+          DBG("main entry size = %lld\n", MainEntriesSize);
         }
-        if ((strstr(IconName, "selection_small") != NULL) && (!ThemeX.SelectionOnTop)) {
-          ThemeX.row1TileSize = (int)(IconImage->width * Scale);
+        if ((strstr(IconName, "selection_small") != NULL) && (!SelectionOnTop)) {
+          row1TileSize = (int)(IconImage->width * Scale);
         }
 
         // not exclude BoundingRect from IconImage?
@@ -192,9 +193,9 @@ EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, floa
   nsvg__imageBounds(p2, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
   if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
-    ThemeX.BannerPosX = (int)(bounds[0] * Scale - ThemeX.CentreShift);
-    ThemeX.BannerPosY = (int)(bounds[1] * Scale);
-    DBG("Banner position at parse [%lld,%lld]\n", ThemeX.BannerPosX, ThemeX.BannerPosY);
+    BannerPosX = (int)(bounds[0] * Scale - CentreShift);
+    BannerPosY = (int)(bounds[1] * Scale);
+    DBG("Banner position at parse [%lld,%lld]\n", BannerPosX, BannerPosY);
   }
 
   float Height = IconImage->height * Scale;
@@ -410,14 +411,14 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
 
 
 #if USE_XTHEME
-EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
+EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 {
-  EFI_STATUS Status;
+  EFI_STATUS      Status;
   NSVGimage       *SVGimage;
 //  NSVGrasterizer  *rast = nsvgCreateRasterizer();
 
   // --- Parse theme.svg --- low case
-  mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f);
+  mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works
   SVGimage = mainParser->image;
   if (!SVGimage) {
     DBG("Theme not parsed!\n");
@@ -432,43 +433,42 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   DBG("Theme view-bounds: w=%f h=%f units=px\n", vbx, vby);
   if (vby > 1.0f) {
     SVGimage->height = vby;
-  }
-  else {
+  } else {
     SVGimage->height = 768.f;  //default height
   }
-  float Scale = UGAHeight / SVGimage->height;
-  DBG("using scale %f\n", Scale);
-  ThemeX.Scale = Scale;
-  ThemeX.CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
+  float ScaleF = UGAHeight / SVGimage->height;
+  DBG("using scale %f\n", ScaleF);
+  /*ThemeX.*/ Scale = ScaleF;
+  CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
   if (mainParser->font) {
     DBG("theme contains font-family=%s\n", mainParser->font->fontFamily);
   }
 
-  ThemeX.Background = XImage(UGAWidth, UGAHeight);
-  if (!ThemeX.BigBack.isEmpty()) {
-    ThemeX.BigBack.setEmpty();
+  Background = XImage(UGAWidth, UGAHeight);
+  if (!BigBack.isEmpty()) {
+    BigBack.setEmpty();
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, Scale, &ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, Scale, &BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, Scale, &ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, Scale, &BigBack);
   }
   DBG(" Background parsed\n");
   // --- Make Banner
-  ThemeX.Banner.setEmpty(); //for the case of theme switch
+  Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, Scale, &ThemeX.Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, Scale, &Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, Scale, &ThemeX.Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, Scale, &Banner);
   }
   DBG("Banner parsed\n");
-  ThemeX.BanHeight = (int)(ThemeX.Banner.GetHeight() * Scale + 1.f);
-  DBG(" parsed banner->width=%lld\n", ThemeX.Banner.GetWidth());
+  BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
+  DBG(" parsed banner->width=%lld\n", Banner.GetWidth());
   
   // --- Make other icons
 
@@ -486,10 +486,10 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, Scale, &SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, Scale, &SelectionImages[4]);
   }
   
   //banner animation
@@ -505,17 +505,15 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   Anime->NudgeY = INITVALUE;
   GuiAnime = Anime;
   
-  nsvgDeleteRasterizer(rast);
+//  nsvgDeleteRasterizer(rast);
   
-  *dict = (__typeof_am__(*dict))AllocateZeroPool(sizeof(TagStruct));
-  (*dict)->type = kTagTypeNone;
-  ThemeX.TypeSVG = TRUE;
-  ThemeX.ThemeDesignHeight = (int)SVGimage->height;
-  ThemeX.ThemeDesignWidth = (int)SVGimage->width;
-  if (ThemeX.SelectionOnTop) {
-    ThemeX.row0TileSize = (INTN)(144.f * Scale);
-    ThemeX.row1TileSize = (INTN)(64.f * Scale);
-    ThemeX.MainEntriesSize = (INTN)(128.f * Scale);
+  TypeSVG = TRUE;
+  ThemeDesignHeight = (int)SVGimage->height;
+  ThemeDesignWidth = (int)SVGimage->width;
+  if (SelectionOnTop) {
+    row0TileSize = (INTN)(144.f * Scale);
+    row1TileSize = (INTN)(64.f * Scale);
+    MainEntriesSize = (INTN)(128.f * Scale);
   }
   DBG("parsing svg theme finished\n");
 
@@ -707,6 +705,26 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
 
 #endif
 
+#if USE_XTHEME
+EG_IMAGE * LoadSvgFrame(INTN i)
+{
+//  EG_IMAGE  *Frame = NULL;
+  XImage XFrame;
+  EFI_STATUS Status;
+//  CHAR8 FrameName[64];
+  XString XFrameName("frame_"_XS);
+  //TODO if extend SVG syntax then we can use dynamic SVG with parameter Frame
+  // for example use variable instead of constant like javascript
+  XFrameName += SPrintf("%lld", i+1);
+//  printf(FrameName, 63, "frame_%lld", i+1);
+
+  Status = ThemeX.ParseSVGXIcon(mainParser, BUILTIN_ICON_ANIME, XFrameName, ThemeX.Scale, &XFrame);
+  if (EFI_ERROR(Status)) {
+    DBG("icon '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
+  }
+  return XFrame.ToEGImage();
+}
+#else
 EG_IMAGE * LoadSvgFrame(INTN i)
 {
   EG_IMAGE  *Frame = NULL;
@@ -714,16 +732,17 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   CHAR8 FrameName[64];
   //TODO if extend SVG syntax then we can use dynamic SVG with parameter Frame
   // for example use variable instead of constant like javascript
-  AsciiSPrint(FrameName, 63, "frame_%d", i+1);
+  printf(FrameName, 63, "frame_%lld", i+1);
   Status = ParseSVGIcon(mainParser, BUILTIN_ICON_ANIME, FrameName, GlobalConfig.Scale, &Frame);
   if (EFI_ERROR(Status)) {
     DBG("icon '%s' not loaded, status=%s\n", FrameName, strerror(Status));
   }
   return Frame;
 }
+#endif
 
 // it is not draw, it is render and mainly used in egRenderText
-// which is used in icns.cpp as an icon rplacement if no image found, looks like not used
+// which is used in icns.cpp as an icon replacement if no image found, looks like not used
 // in menu.cpp 3 places
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels

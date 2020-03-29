@@ -2534,11 +2534,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       DBG("theme inited\n");
       gThemeChanged = FALSE;
+#if USE_XTHEME
+      if (ThemeX.embedded) {
+        DBG("Chosen embedded theme\n");
+      } else {
+        DBG("Chosen theme %ls\n", ThemeX.Theme.data());
+      }
+#else
       if (GlobalConfig.Theme) {
         DBG("Chosen theme %ls\n", GlobalConfig.Theme);
       } else {
         DBG("Chosen embedded theme\n");
       }
+#endif
+
 //      DBG("initial boot-args=%s\n", gSettings.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
@@ -2612,12 +2621,29 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (gSettings.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);
+#if USE_XTHEME
+      MenuEntryAbout.Image = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
+#else
       MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+#endif
+
+
       if (gSettings.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
-
+#if USE_XTHEME
+      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
+        if (gSettings.DisableCloverHotkeys)
+          MenuEntryReset.ShortcutLetter = 0x00;
+        MenuEntryReset.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_RESET);
+        MainMenu.AddMenuEntry(&MenuEntryReset, false);
+        if (gSettings.DisableCloverHotkeys)
+          MenuEntryShutdown.ShortcutLetter = 0x00;
+        MenuEntryShutdown.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_EXIT);
+        MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
+      }
+#else
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
         if (gSettings.DisableCloverHotkeys)
           MenuEntryReset.ShortcutLetter = 0x00;
@@ -2628,6 +2654,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_EXIT);
         MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
       }
+#endif
+
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME

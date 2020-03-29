@@ -70,6 +70,7 @@ public:
 //  INTN        IconFormat;
   BOOLEAN     Proportional;
 //  BOOLEAN     ShowOptimus;
+  BOOLEAN     embedded;
   BOOLEAN     DarkEmbedded;
   BOOLEAN     TypeSVG;
   INTN        Codepage;
@@ -111,6 +112,8 @@ public:
   void FillByDir();
   EFI_STATUS GetThemeTagSettings (void* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
+  EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer); // in VectorTheme
+  EFI_STATUS ParseSVGXIcon(void *p, INTN Id, const XString& IconNameX, float Scale, XImage* Image);
 
   //screen operations
   void ClearScreen();
