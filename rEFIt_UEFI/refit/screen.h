@@ -1,4 +1,4 @@
-#include "../gui/menu_items/menu_items.h"
+#include "../libeg/libeg.h"
 
 VOID InitScreen(IN BOOLEAN SetMaxResolution);
 VOID SetupScreen(VOID);
