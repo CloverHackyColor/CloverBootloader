@@ -169,7 +169,7 @@ VOID XPointer::UpdatePointer()
     CopyMem(&State, &tmpState, sizeof(State));
     CurrentMode = SimplePointerProtocol->Mode;
 
-    ScreenRelX = ((UGAWidth * State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
+    ScreenRelX = (UGAWidth * State.RelativeMovementX * gSettings.PointerSpeed / (INTN)CurrentMode->ResolutionX) >> 10;
     if (gSettings.PointerMirror) {
       newPlace.XPos -= ScreenRelX;
     }
@@ -180,7 +180,7 @@ VOID XPointer::UpdatePointer()
     if (newPlace.XPos > UGAWidth - 1) newPlace.XPos = UGAWidth - 1;
 
     //    YPosPrev = newPlace.YPos;
-    ScreenRelY = ((UGAHeight * State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) >> 10;
+    ScreenRelY = (UGAHeight * State.RelativeMovementY * gSettings.PointerSpeed / (INTN)CurrentMode->ResolutionY) >> 10;
     newPlace.YPos += ScreenRelY;
     if (newPlace.YPos < 0) newPlace.YPos = 0;
     if (newPlace.YPos > UGAHeight - 1) newPlace.YPos = UGAHeight - 1;
