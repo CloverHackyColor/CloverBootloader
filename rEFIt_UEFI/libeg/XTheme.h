@@ -15,12 +15,11 @@ class Icon
 {
 public:
   INTN Id;  //for example BUILTIN_ICON_POINTER
-  XStringW Name; //for example "os_moja", "vol_internal"
+  XString Name; //for example "os_moja", "vol_internal"
   XImage Image;
   XImage ImageNight;
 
   Icon(INTN Id);
-  Icon(INTN Index, BOOLEAN Embedded);
   ~Icon();
 
 };
