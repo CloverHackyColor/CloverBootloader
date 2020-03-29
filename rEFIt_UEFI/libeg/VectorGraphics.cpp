@@ -468,26 +468,13 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   
   // --- Make other icons
 
-  for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i < BUILTIN_ICON_COUNT; ++i) {
+  for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i < BUILTIN_CHECKBOX_CHECKED; ++i) {
     if (i == BUILTIN_ICON_BANNER) {
       continue;
     }
-    Icon NewIcon(i, true); //initialize with embedded but further replace by loaded
+    Icon NewIcon(i); //initialize with embedded but further replace by loaded
     ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, NewIcon.Image);
-    ParseSVGXIcon(mainParser, i, NewIcon.Name + L"_night", Scale, NewIcon.ImageNight);
-    ThemeX.Icons.AddCopy(NewIcon);
-  }
-  
-  for (INTN i = BUILTIN_ICON_COUNT; i < BUILTIN_RADIO_BUTTON; ++i) {
-    Icon NewIcon(i); //there is no embedded
-    ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, NewIcon.Image);
-    ParseSVGXIcon(mainParser, i, NewIcon.Name + L"_night", Scale, NewIcon.ImageNight); //it is for future os_moja_night
-    ThemeX.Icons.AddCopy(NewIcon);
-  }
-  for (INTN i = BUILTIN_RADIO_BUTTON; i < sizeof(IconsNames) / sizeof(IconsNames[0]); ++i) {
-    Icon NewIcon(i, true); //initialize with embedded but further replace by loaded
-    ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, NewIcon.Image);
-//    ParseSVGXIcon(mainParser, i, NewIcon.Name + L"_night", Scale, NewIcon.ImageNight); //radio_button_selected_night???
+    ParseSVGXIcon(mainParser, i, NewIcon.Name + "_night", Scale, NewIcon.ImageNight);
     ThemeX.Icons.AddCopy(NewIcon);
   }
 
@@ -495,10 +482,10 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XStringWP(L"selection_indicator_night"), Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString("selection_indicator_night"), Scale, SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XStringWP(L"selection_indicator"), Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString("selection_indicator"), Scale, SelectionImages[4]);
   }
   
   //banner animation
@@ -564,22 +551,6 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
   if (mainParser->font) {
     DBG("theme contains font-family=%s\n", mainParser->font->fontFamily);
   }
-  
-#if 0
-  // --- Create rastered font
-  if (fontSVG) {
-    if (p->font) {
-      FontHeight = (int)(textFace[2].size * Scale); //as in MenuRows
-      DBG("Menu font scaled height=%d color=%X\n", FontHeight, textFace[2].color);
-    }
-    if (!FontHeight) FontHeight = 16;  //xxx
-    if (fontSVG->fontFamily[0] < 0x30) {
-      AsciiStrCpyS(fontSVG->fontFamily, 64, fontSVG->id);
-    }
-    RenderSVGfont(fontSVG, p->fontColor);
-    DBG("font %s parsed\n", fontSVG->fontFamily);
-  }
-#endif
   
   // --- Make background
   BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, TRUE, &BlackPixel);
@@ -726,22 +697,7 @@ EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict)
     GlobalConfig.MainEntriesSize = (INTN)(128.f * Scale);
   }
   DBG("parsing theme finish\n");
-#if 0 //dump fonts
-  {
-    NSVGfont        *fontSVG = NULL;
-    NSVGfontChain   *fontChain = fontsDB;
-    
-    while (fontChain) {
-      fontSVG = fontChain->font;
-      if (fontSVG) {
-        DBG("probe fontFamily=%s fontStyle=%c\n", fontSVG->fontFamily, fontSVG->fontStyle);
-      }
-      else {
-        DBG("nextChain is empty\n");
-      }
-      fontChain = fontChain->next;
-    }
-  }
+
 #endif
   return EFI_SUCCESS;
 }

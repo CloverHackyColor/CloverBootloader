@@ -74,7 +74,7 @@ CONST CHAR8* IconsNames[] = {
    "os_sierra",
    "os_hsierra",
    "os_moja",  //11
-   "os_cata",  //12
+   "os_cata",  //12  //there is no reserve for 10.16, next oses should be added to the end of the list
    "os_linux",
    "os_ubuntu",
    "os_suse",
@@ -86,15 +86,11 @@ CONST CHAR8* IconsNames[] = {
    "radio_button_selected",
    "checkbox",  //22
    "checkbox_checked",
-   "scrollbar_background", //24
-   "scrollbar_holder"
+   "scrollbar_background", //24 - present here for SVG theme but should be done more common way
+   "scrollbar_holder",
+  //other oses will be added below
+  ""
 };
-
-Icon::Icon(INTN Index) : Image(0), ImageNight(0)
-{
-  Id = Index;
-  Name.takeValueFrom(IconsNames[Index]);
-}
 
 Icon::~Icon() {}
 
@@ -165,17 +161,23 @@ void XTheme::Init()
   row1TileSize = 64;
 }
 
+/*
+ * what if the icon is not found or name is wrong?
+ * probably it whould return Empty image
+ * Image.isEmpty() == true
+ */
 XImage& XTheme::GetIcon(const char* Name)
 {
-  return GetIcon(XStringW().takeValueFrom(Name));
+  return GetIcon(XString().takeValueFrom(Name));
 }
 
-XImage& XTheme::GetIcon(const XStringW& Name)
+XImage& XTheme::GetIcon(const XString& Name)
 {
+  XImage NullIcon();
   XImage* TheIcon = NULL;
   for (size_t i = 0; i < Icons.size(); i++)
   {
-    if (Icons[i].Name == Name)
+    if (Icons[i].Name == Name) //night icon has same name as daylight icon
     {
       if (!Daylight) {
         TheIcon = &Icons[i].ImageNight;
@@ -183,10 +185,10 @@ XImage& XTheme::GetIcon(const XStringW& Name)
       if (TheIcon == NULL || (*TheIcon).isEmpty()) { //if daylight or night icon absent
         TheIcon = &Icons[i].Image;
       }
-      break;
+      return *TheIcon;;
     }
   }
-  return *TheIcon;
+  return NullIcon; //return pointer to XImage? Or XImage copy?
 }
 
 XImage& XTheme::GetIcon(INTN Id)
@@ -205,7 +207,7 @@ XImage& XTheme::GetIcon(INTN Id)
       break;
     }
   }
-  return *TheIcon;
+  return TheIcon;
 }
 
 void XTheme::AddIcon(Icon& NewIcon)
@@ -223,11 +225,11 @@ void XTheme::AddIcon(Icon& NewIcon)
    ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 }
 
-Icon::Icon(INTN Index, BOOLEAN Embedded) : Image(0), ImageNight(0)
+Icon::Icon(INTN Index) : Image(0), ImageNight(0)
 {
   Id = Index;
-  if (Index < BUILTIN_ICON_FUNC_ABOUT || Index >=BUILTIN_ICON_COUNT || !Embedded) {
-    Name.setEmpty();
+  Name.setEmpty();
+  if (Index < BUILTIN_ICON_FUNC_ABOUT || Index > BUILTIN_CHECKBOX_CHECKED) {
     return;
   }
   Name.takeValueFrom(IconsNames[Index]);
@@ -299,9 +301,26 @@ Icon::Icon(INTN Index, BOOLEAN Embedded) : Image(0), ImageNight(0)
     case BUILTIN_ICON_VOL_INTERNAL_REC:
       DEC_BUILTIN_ICON(BUILTIN_ICON_VOL_INTERNAL_REC, emb_vol_internal_recovery)
       break;
+    case BUILTIN_RADIO_BUTTON:
+      DEC_BUILTIN_ICON(BUILTIN_RADIO_BUTTON, emb_radio_button)
+      break;
+    case BUILTIN_RADIO_BUTTON_SELECTED:
+      DEC_BUILTIN_ICON(BUILTIN_RADIO_BUTTON_SELECTED, emb_radio_button_selected)
+      break;
+    case BUILTIN_CHECKBOX:
+      DEC_BUILTIN_ICON(BUILTIN_CHECKBOX, emb_checkbox)
+      break;
+    case BUILTIN_CHECKBOX_CHECKED:
+      DEC_BUILTIN_ICON(BUILTIN_CHECKBOX_CHECKED, emb_checkbox_checked)
+      break;
+
+      "radio_button", //20+25
+      "radio_button_selected",
+      "checkbox",  //22
+      "checkbox_checked",
 
     default:
-      Name.setEmpty();
+ //     Image.setEmpty(); //done by ctor?
       break;
   }
 //something to do else?
@@ -315,6 +334,7 @@ void XTheme::FillByEmbedded()
     Icon NewIcon(i, true);
     Icons.AddCopy(NewIcon);
   }
+  //radio buttons will be inited by InitSelection()
 }
 
 void XTheme::ClearScreen() //and restore background and banner
@@ -424,7 +444,7 @@ void XTheme::ClearScreen() //and restore background and banner
   
 }
 
-void XTheme::InitSelection()
+void XTheme::InitSelection() //for PNG theme
 {
   EFI_STATUS Status;
   if (!AllowGraphicsMode)
@@ -439,10 +459,10 @@ void XTheme::InitSelection()
     return;
   }
   // load small selection image
-  if (SelectionSmallFileName.isEmpty()){
+  if (!TypeSVG && SelectionImages[2].isEmpty()){
     SelectionImages[2].LoadXImage(ThemeDir, SelectionSmallFileName);
   }
-  if (SelectionImages[2].isEmpty()){
+  if (!TypeSVG && SelectionImages[2].isEmpty()){
 //    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
 //    SelectionImages[2]->HasAlpha = FALSE; // support transparensy for selection icons
     if (Daylight) {
@@ -460,11 +480,11 @@ void XTheme::InitSelection()
   } */
 
   // load big selection image
-  if (!TypeSVG && !SelectionBigFileName.isEmpty()) {
+  if (!TypeSVG && SelectionImages[0].isEmpty()) {
     SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
  //   SelectionImages[0].EnsureImageSize(row0TileSize, row0TileSize, &MenuBackgroundPixel);
   }
-  if (SelectionImages[0].isEmpty()) {
+  if (!TypeSVG && SelectionImages[0].isEmpty()) {
     // calculate big selection image from small one
 //    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
     if (Daylight) {
@@ -487,7 +507,7 @@ void XTheme::InitSelection()
   // BootCampStyle indicator image
   if (BootCampStyle) {
     // load indicator selection image
-    if (!SelectionIndicatorName.isEmpty()) {
+    if (!TypeSVG && SelectionImages[4].isEmpty()) {
       SelectionImages[4].LoadXImage(ThemeDir, SelectionIndicatorName);
     }
     if (!SelectionImages[4].isEmpty()) {
@@ -565,16 +585,10 @@ void XTheme::InitSelection()
 //use this only for PNG theme
 void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
-  for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) {
-    Icon NewIcon(i, true); //initialize with embedded but further replace by loaded
+  for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
+    Icon NewIcon(i); //initialize with embedded but further replace by loaded
     NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]);
     NewIcon.ImageNight.LoadXImage(ThemeDir, XStringWP(IconsNames[i]) + XStringWP("_night"));
-    Icons.AddCopy(NewIcon);
-  }
-
-  for (INTN i = BUILTIN_ICON_COUNT; i < 45; ++i) {
-    Icon NewIcon(i); //there is no embedded
-    NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]); //all os_***
     Icons.AddCopy(NewIcon);
   }
 
