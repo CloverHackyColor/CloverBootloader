@@ -46,8 +46,8 @@ typedef struct {
 class XImage
 {
 protected:
-  UINTN      Width;
-  UINTN      Height;
+  size_t      Width;
+  size_t      Height;
   XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL> PixelData;
  
 public:

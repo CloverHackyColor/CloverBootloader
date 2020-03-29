@@ -856,7 +856,8 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
   EG_IMAGE *NewImage = NULL;
-  UINTN Error, i, ImageSize, Width, Height;
+  UINTN Error, i, ImageSize;
+  size_t Width, Height;
   EG_PIXEL *PixelData;
   EG_PIXEL *Pixel, *PixelD;
 
@@ -873,7 +874,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
     return NULL;
   }
   if (!PixelData || Width > 4096U || Height > 4096U) {
-	  DBG("egDecodePNG(%p, %llu, %c): eglodepng_decode returned suspect values, PixelData %p, Width %llu, Height %llu\n",
+	  DBG("egDecodePNG(%p, %llu, %c): eglodepng_decode returned suspect values, PixelData %p, Width %zu, Height %zu\n",
         FileData, FileDataLength, WantAlpha?'Y':'N', PixelData, Width, Height);
   }
 

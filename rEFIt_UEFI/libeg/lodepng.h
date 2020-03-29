@@ -39,11 +39,6 @@ freely, subject to the following restrictions:
 //#define LODEPNG_NO_COMPILE_ANCILLARY_CHUNKS
 //#define LODEPNG_NO_COMPILE_CPP
 
-// Microsoft compiler has built-in size_t
-//#if !defined(_MSC_VER)
-#define size_t UINTN
-//#endif
-
 
 extern const char* LODEPNG_VERSION_STRING;
 
