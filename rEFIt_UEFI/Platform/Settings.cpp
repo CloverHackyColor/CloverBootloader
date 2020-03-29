@@ -5387,17 +5387,17 @@ ParseSMBIOSSettings(
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
               //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
-              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+              snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
               //DBG ("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+            snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
             //DBG ("Using latest BiosReleaseDate from config\n");
           }
         } else {
-          AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+          snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
           AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
           //DBG ("Using latest BiosReleaseDate from config\n");
         }
@@ -5444,17 +5444,17 @@ ParseSMBIOSSettings(
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
               //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
-              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+              snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
               //DBG ("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+            snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
             //DBG ("Using latest BiosReleaseDate from config\n");
           }
         } else {
-          AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+          snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
           AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
           //DBG ("Using latest BiosReleaseDate from config\n");
         }
@@ -5470,11 +5470,11 @@ ParseSMBIOSSettings(
           }
 
           if ((AsciiStrLen(i) == 8)) {
-            AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+            snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
             //DBG ("Using the date of used BiosVersion\n");
           } else if ((AsciiStrLen(i) == 10)) {
-            AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+            snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
             //DBG ("Using the date of used BiosVersion\n");
           }
@@ -5497,11 +5497,11 @@ ParseSMBIOSSettings(
       }
 
       if ((AsciiStrLen(i) == 8)) {
-        AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
         AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
         //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       } else if ((AsciiStrLen(i) == 10)) {
-        AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
         AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
         //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       }
@@ -5992,7 +5992,7 @@ GetUserSettings(
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
-              AsciiSPrint(Label, 64, "[%02x:%02x.%02x] ", Bus, Dev, Func);
+				snprintf(Label, 64, "[%02llX:%02llX.%02llX] ", Bus, Dev, Func);
               DBG(" %s", Label);
             } else {
               DBG (" no PciAddr\n");
@@ -6465,12 +6465,12 @@ GetUserSettings(
 
               Prop3 = GetProperty (Prop2, "Comment");
               if (Prop3 != NULL && (Prop3->type == kTagTypeString) && Prop3->string) {
-                AsciiSPrint(DSDTPatchesLabel, 255, "%a", Prop3->string);
+				  snprintf(DSDTPatchesLabel, 255, "%s", Prop3->string);
               } else {
-                AsciiSPrint(DSDTPatchesLabel, 255, " (NoLabel)");
+                snprintf(DSDTPatchesLabel, 255, " (NoLabel)");
               }
               gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
-              AsciiSPrint(gSettings.PatchDsdtLabel[i], 255, "%a", DSDTPatchesLabel);
+				snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel);
               DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
 
               FreePool(DSDTPatchesLabel);
@@ -7020,9 +7020,9 @@ GetUserSettings(
             }
             Prop2 = GetProperty (Prop3, "Name");
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
-              AsciiSPrint (SlotDevice->SlotName, 31, "%a", Prop2->string);
+				snprintf (SlotDevice->SlotName, 31, "%s", Prop2->string);
             } else {
-              AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot %d", DeviceN);
+				snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
             }
 
             DBG (" - %s\n", SlotDevice->SlotName);
@@ -7537,49 +7537,49 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
           s = AsciiStrStr(targetString, "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {
-            AsciiSPrint (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
+            snprintf (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res5), Res5);
             if (s[38] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[39] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
           } else if (s[31] == '.') {
-            AsciiSPrint (Res7, 7, "%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
+            snprintf (Res7, 7, "%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             if (s[40] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[41] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
           } else if (s[32] == ' ') {
-            AsciiSPrint (Res6, 6, "%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
+            snprintf (Res6, 6, "%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             if (s[39] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[40] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             } else if (s[41] == ')') {
-              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
+              snprintf (Res8, 8, "%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           } else if (s[32] == '.') {
-            AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
+            snprintf (Res8, 8, "%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             if (s[41] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[42] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             } else if (s[43] == ')') {
-              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
+              snprintf (Res8, 8, "%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           }
@@ -7909,8 +7909,8 @@ GetDevices ()
                 }
               } while (radeon_cards[i++].device_id != 0);
 
-              AsciiSPrint (gfx->Model,  64, "%a", info->model_name);
-              AsciiSPrint (gfx->Config, 64, "%a", card_configs[info->cfg_name].name);
+				  snprintf (gfx->Model,  64, "%s", info->model_name);
+				  snprintf (gfx->Config, 64, "%s", card_configs[info->cfg_name].name);
               gfx->Ports                  = card_configs[info->cfg_name].ports;
               DBG (" - GFX: Model=%s (ATI/AMD)\n", gfx->Model);
 
@@ -7929,14 +7929,14 @@ GetDevices ()
               SlotDevice->BusNum          = (UINT8)Bus;
               SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
               SlotDevice->Valid           = TRUE;
-              AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot 0");
+              snprintf (SlotDevice->SlotName, 31, "PCI Slot 0");
               SlotDevice->SlotID          = 1;
               SlotDevice->SlotType        = SlotTypePciExpressX16;
               break;
 
             case 0x8086:
               gfx->Vendor                 = Intel;
-              AsciiSPrint (gfx->Model, 64, "%a", get_gma_model (Pci.Hdr.DeviceId));
+				  snprintf (gfx->Model, 64, "%s", get_gma_model (Pci.Hdr.DeviceId));
               DBG (" - GFX: Model=%s (Intel)\n", gfx->Model);
               gfx->Ports = 1;
               gfx->Connectors = (1 << NGFX);
@@ -7979,10 +7979,10 @@ GetDevices ()
                 CardFamily = "NVidia unknown";
               }
 
-              AsciiSPrint (
+              snprintf (
                            gfx->Model,
                            64,
-                           "%a",
+						"%s",
                            get_nvidia_model (((Pci.Hdr.VendorId << 16) | Pci.Hdr.DeviceId),
                                              ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID),
                                              NULL) //NULL: get from generic lists
@@ -7996,14 +7996,14 @@ GetDevices ()
               SlotDevice->BusNum          = (UINT8)Bus;
               SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
               SlotDevice->Valid           = TRUE;
-              AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot 0");
+              snprintf (SlotDevice->SlotName, 31, "PCI Slot 0");
               SlotDevice->SlotID          = 1;
               SlotDevice->SlotType        = SlotTypePciExpressX16;
               break;
 
             default:
               gfx->Vendor = Unknown;
-              AsciiSPrint (gfx->Model, 64, "pci%x,%x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+              snprintf (gfx->Model, 64, "pci%X,%X", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
               gfx->Ports  = 1;
               gfx->Connectors = (1 << NGFX);
               gfx->ConnChanged = FALSE;
@@ -8021,7 +8021,7 @@ GetDevices ()
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevice->Valid           = TRUE;
-          AsciiSPrint (SlotDevice->SlotName, 31, "AirPort");
+          snprintf (SlotDevice->SlotName, 31, "AirPort");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
           DBG(" - WIFI: Vendor=%d", Pci.Hdr.VendorId);
@@ -8059,7 +8059,7 @@ GetDevices ()
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevice->Valid           = TRUE;
-          AsciiSPrint (SlotDevice->SlotName, 31, "Ethernet");
+          snprintf (SlotDevice->SlotName, 31, "Ethernet");
           SlotDevice->SlotID          = 2;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
           gLanVendor[nLanCards]       = Pci.Hdr.VendorId;
@@ -8104,7 +8104,7 @@ GetDevices ()
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevice->Valid           = TRUE;
-          AsciiSPrint (SlotDevice->SlotName, 31, "FireWire");
+          snprintf (SlotDevice->SlotName, 31, "FireWire");
           SlotDevice->SlotID          = 3;
           SlotDevice->SlotType        = SlotTypePciExpressX4;
         }
@@ -8131,7 +8131,7 @@ GetDevices ()
             SlotDevice->BusNum          = (UINT8)Bus;
             SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
             SlotDevice->Valid           = TRUE;
-            AsciiSPrint (SlotDevice->SlotName, 31, "HDMI port");
+            snprintf (SlotDevice->SlotName, 31, "HDMI port");
             SlotDevice->SlotID          = 5;
             SlotDevice->SlotType        = SlotTypePciExpressX4;
           }

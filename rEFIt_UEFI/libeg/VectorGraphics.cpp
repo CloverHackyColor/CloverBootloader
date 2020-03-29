@@ -714,7 +714,7 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   CHAR8 FrameName[64];
   //TODO if extend SVG syntax then we can use dynamic SVG with parameter Frame
   // for example use variable instead of constant like javascript
-  AsciiSPrint(FrameName, 63, "frame_%d", i+1);
+  snprintf(FrameName, 63, "frame_%lld", i+1);
   Status = ParseSVGIcon(mainParser, BUILTIN_ICON_ANIME, FrameName, GlobalConfig.Scale, &Frame);
   if (EFI_ERROR(Status)) {
     DBG("icon '%s' not loaded, status=%s\n", FrameName, strerror(Status));

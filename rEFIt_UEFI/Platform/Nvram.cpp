@@ -1317,9 +1317,9 @@ EFI_STATUS SetStartupDiskVolume (
   EFI_DEVICE_PATH_PROTOCOL *DevPath;
   EFI_DEVICE_PATH_PROTOCOL *FileDevPath;
   EFI_GUID                 *Guid;
-  CHAR8                    *EfiBootDevice;
-  CONST CHAR8                    *EfiBootDeviceTmpl;
-  UINTN                    Size;
+//  CHAR8                    *EfiBootDevice;
+//  CONST CHAR8                    *EfiBootDeviceTmpl;
+//  UINTN                    Size;
   UINT32                   Attributes;
   
   
@@ -1363,25 +1363,37 @@ EFI_STATUS SetStartupDiskVolume (
   // (probably not needed at all)
   //
   if (Guid != NULL) {
-    EfiBootDeviceTmpl =
-      "<array><dict>"
+//    EfiBootDeviceTmpl =
+//      "<array><dict>"
+//	    "<key>IOMatch</key>"
+//	    "<dict>"
+//	    "<key>IOProviderClass</key><string>IOMedia</string>"
+//	    "<key>IOPropertyMatch</key>"
+//	    "<dict><key>UUID</key><string>%s</string></dict>"
+//	    "</dict>"
+//	    "</dict></array>";
+//
+//    Size          = AsciiStrLen (EfiBootDeviceTmpl) + 36;
+//    EfiBootDevice = (__typeof__(EfiBootDevice))AllocateZeroPool(AsciiStrLen (EfiBootDeviceTmpl) + 36);
+//    AsciiSPrint (EfiBootDevice, Size, EfiBootDeviceTmpl, strguid(Guid));
+//    Size          = AsciiStrLen (EfiBootDevice);
+//    DBG ("  * efi-boot-device: %s\n", EfiBootDevice);
+//
+//    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, Size, EfiBootDevice);
+//    FreePool (EfiBootDevice);
+
+    XString EfiBootDevice;
+    EfiBootDevice.SPrintf(
+			"<array><dict>"
 	    "<key>IOMatch</key>"
 	    "<dict>"
 	    "<key>IOProviderClass</key><string>IOMedia</string>"
 	    "<key>IOPropertyMatch</key>"
 	    "<dict><key>UUID</key><string>%s</string></dict>"
 	    "</dict>"
-	    "</dict></array>";
-
-    Size          = AsciiStrLen (EfiBootDeviceTmpl) + 36;
-    EfiBootDevice = (__typeof__(EfiBootDevice))AllocateZeroPool(AsciiStrLen (EfiBootDeviceTmpl) + 36);
-    AsciiSPrint (EfiBootDevice, Size, EfiBootDeviceTmpl, strguid(Guid));
-    Size          = AsciiStrLen (EfiBootDevice);
-    DBG ("  * efi-boot-device: %s\n", EfiBootDevice);
-    
-    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, Size, EfiBootDevice);
-
-    FreePool (EfiBootDevice);
+	    "</dict></array>", strguid(Guid));
+    DBG ("  * efi-boot-device: %s\n", EfiBootDevice.c_str());
+    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, EfiBootDevice.size(), EfiBootDevice.c_str());
   }
   
   return Status;

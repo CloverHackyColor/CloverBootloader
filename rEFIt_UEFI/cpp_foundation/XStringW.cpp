@@ -85,9 +85,9 @@ DBG("Constructor(const XStringW &aString) : %ls\n", aString.data());
 //XStringW::XStringW(const char* S)
 //{
 //DBG("Constructor(const char* S)\n");
-//	xsize newLen = StrLenInWChar(S, AsciiStrLen(S));
+//	xsize newLen = StrLenInWChar(S, strlen(S));
 //	Init(newLen);
-//	utf8ToWChar(m_data, m_allocatedSize+1, S, AsciiStrLen(S)); // m_size doesn't count the NULL terminator
+//	utf8ToWChar(m_data, m_allocatedSize+1, S, strlen(S)); // m_size doesn't count the NULL terminator
 //	SetLength(newLen);
 //}
 wchar_t * XStringW::forgetDataWithoutFreeing()

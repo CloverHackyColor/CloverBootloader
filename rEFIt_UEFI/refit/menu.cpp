@@ -373,7 +373,7 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].BValue = gSettings.InjectNVidia;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       for (j=0; j<8; j++) {
-        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.Dcfg[j]);
       }
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(40);
@@ -406,7 +406,7 @@ VOID FillInputs(BOOLEAN New)
     if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = ASString; //24+6i
       for (j=0; j<20; j++) {
-        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.NVCAP[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.NVCAP[j]);
       }
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(84);
@@ -775,7 +775,7 @@ VOID ApplyInputs(VOID)
       }
     } while (*(++ch));
 
-    AsciiSPrint(gSettings.BootArgs, 255, "%s ", InputItems[i].SValue);
+	  snprintf(gSettings.BootArgs, 255, "%ls ", InputItems[i].SValue);
   }
   i++; //1
   if (InputItems[i].Valid) {
@@ -877,7 +877,7 @@ VOID ApplyInputs(VOID)
   for (j = 0; j < NGFX; j++) {
     i++; //20
     if (InputItems[i].Valid) {
-      AsciiSPrint(gGraphics[j].Model, 64, "%s",  InputItems[i].SValue);
+		snprintf(gGraphics[j].Model, 64, "%ls",  InputItems[i].SValue);
     }
     i++; //21
     if (InputItems[i].Valid) {
@@ -895,7 +895,7 @@ VOID ApplyInputs(VOID)
         UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue);
       } else if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 256);
-        AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
+		  snprintf(AString, 255, "%ls", InputItems[i].SValue);
         hex2bin(AString, (UINT8*)&gSettings.Dcfg[0], 8);
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
@@ -918,7 +918,7 @@ VOID ApplyInputs(VOID)
       if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 256);
         if (StrLen(InputItems[i].SValue) > 0) {
-          AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
+			snprintf(AString, 255, "%ls", InputItems[i].SValue);
           hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
         }
       } else {
@@ -970,7 +970,7 @@ VOID ApplyInputs(VOID)
 
   i++; //51
   if (InputItems[i].Valid) {
-    AsciiSPrint(NonDetected, 64, "%s", InputItems[i].SValue);
+	  snprintf(NonDetected, 64, "%ls", InputItems[i].SValue);
   }
 
   i++; //52
@@ -1100,7 +1100,7 @@ VOID ApplyInputs(VOID)
 
   i++; //78
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.ProductName, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.ProductName, 64, "%ls", InputItems[i].SValue);
     // let's fill all other fields based on this ProductName
     // to serve as default
     Model = GetModelFromString(gSettings.ProductName);
@@ -1111,19 +1111,19 @@ VOID ApplyInputs(VOID)
 
   i++; //79
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.VersionNr, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.VersionNr, 64, "%ls", InputItems[i].SValue);
   }
   i++; //80
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.SerialNr, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.SerialNr, 64, "%ls", InputItems[i].SValue);
   }
   i++; //81
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.BoardNumber, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.BoardNumber, 64, "%ls", InputItems[i].SValue);
   }
   i++; //82
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.BoardSerialNumber, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.BoardSerialNumber, 64, "%ls", InputItems[i].SValue);
   }
   i++; //83
   if (InputItems[i].Valid) {
@@ -1131,7 +1131,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //84
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.BoardVersion, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.BoardVersion, 64, "%ls", InputItems[i].SValue);
   }
   i++; //85
   if (InputItems[i].Valid) {
@@ -1139,11 +1139,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //86
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.RomVersion, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.RomVersion, 64, "%ls", InputItems[i].SValue);
   }
   i++; //87
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.ReleaseDate, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.ReleaseDate, 64, "%ls", InputItems[i].SValue);
   }
 
   i++; //88
@@ -1299,11 +1299,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //117
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.EfiVersion, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.EfiVersion, 64, "%ls", InputItems[i].SValue);
   }
   i++; //118
   if (InputItems[i].Valid) {
-    AsciiSPrint(gSettings.BooterCfgStr, 64, "%s", InputItems[i].SValue);
+	  snprintf(gSettings.BooterCfgStr, 64, "%ls", InputItems[i].SValue);
   }
   i++; //119
   if (InputItems[i].Valid) {
@@ -6843,7 +6843,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions) {
-            AsciiSPrint(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
+			  snprintf(gSettings.BootArgs, 255, "%ls", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

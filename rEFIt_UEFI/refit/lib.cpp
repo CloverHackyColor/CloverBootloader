@@ -1754,7 +1754,7 @@ VOID DbgHeader(CONST CHAR8 *str)
 {
   CHAR8 strLog[50];
   INTN len;
-  UINTN end = AsciiSPrint(strLog, 50, "=== [ %a ] ", str);
+	UINTN end = snprintf(strLog, 50, "=== [ %s ] ", str);
   len = 50 - end;
 
   SetMem(&strLog[end], len , '=');

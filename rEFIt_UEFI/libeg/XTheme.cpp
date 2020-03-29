@@ -11,6 +11,9 @@ extern "C" {
 
 #include "XTheme.h"
 
+#if USE_XTHEME
+
+
 //temporary
 extern INTN    ScrollWidth;
 extern INTN    ScrollButtonsHeight;
@@ -686,5 +689,7 @@ void XTheme::InitBar()
 
   }
 }
+
+#endif // USE_XTHEME
 
 

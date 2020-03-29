@@ -78,7 +78,7 @@ VOID AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN
 	  new_card->VideoRam = VideoRam;
     new_card->VideoPorts = VideoPorts;
     new_card->LoadVBios = LoadVBios;
-	  AsciiSPrint(new_card->Model, 64, "%a", Model);
+	  snprintf(new_card->Model, 64, "%s", Model);
     InsertTailList (&gCardList, (LIST_ENTRY *)(((UINT8 *)new_card) + OFFSET_OF(CARDLIST, Link)));
 	}	
 }

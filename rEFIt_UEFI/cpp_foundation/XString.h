@@ -173,7 +173,7 @@ class XString
 	void Replace(char c1, char c2);
 	XString SubStringReplace(char c1, char c2);
 
-//	int Compare(const char* S) const { return (int)AsciiStrCmp(data(), (S ? S : "")); }// AsciiStrCmp return 0 or !0, not usual strcmp
+	int Compare(const char* S) const { return strcmp(data(), (S ? S : "")); }// AsciiStrCmp return 0 or !0, not usual strcmp
 #ifdef TODO_skqdjfhksqjhfksjqdf
 	//IC
 	int CompareIC(const char* S) const { return StringCompareIC(data(), (S ? S : "")); }
