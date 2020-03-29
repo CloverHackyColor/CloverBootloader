@@ -166,48 +166,43 @@ void XTheme::Init()
  * probably it whould return Empty image
  * Image.isEmpty() == true
  */
-XImage& XTheme::GetIcon(const char* Name)
+const XImage& XTheme::GetIcon(const char* Name)
 {
   return GetIcon(XString().takeValueFrom(Name));
 }
 
-XImage& XTheme::GetIcon(const XString& Name)
+static XImage NullIcon;
+
+const XImage& XTheme::GetIcon(const XString& Name)
 {
-  XImage NullIcon();
-  XImage* TheIcon = NULL;
   for (size_t i = 0; i < Icons.size(); i++)
   {
     if (Icons[i].Name == Name) //night icon has same name as daylight icon
     {
       if (!Daylight) {
-        TheIcon = &Icons[i].ImageNight;
+        return Icons[i].ImageNight;
       }
-      if (TheIcon == NULL || (*TheIcon).isEmpty()) { //if daylight or night icon absent
-        TheIcon = &Icons[i].Image;
-      }
-      return *TheIcon;;
+      //if daylight or night icon absent
+      return Icons[i].Image;
     }
   }
   return NullIcon; //return pointer to XImage? Or XImage copy?
 }
 
-XImage& XTheme::GetIcon(INTN Id)
+const XImage& XTheme::GetIcon(INTN Id)
 {
-  XImage* TheIcon = NULL;
   for (size_t i = 0; i < Icons.size(); i++)
   {
     if (Icons[i].Id == Id)
     {
       if (!Daylight) {
-        TheIcon = &Icons[i].ImageNight;
+        return Icons[i].ImageNight;
       }
-      if (TheIcon == NULL || (*TheIcon).isEmpty()) { //if daylight or night icon absent
-        TheIcon = &Icons[i].Image;
-      }
-      break;
+      //if daylight or night icon absent
+      return Icons[i].Image;
     }
   }
-  return TheIcon;
+  return NullIcon;
 }
 
 void XTheme::AddIcon(Icon& NewIcon)
