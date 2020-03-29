@@ -88,6 +88,8 @@ extern "C" {
 
 // cpp_foundation objects has to be included before lib.h
 #ifdef __cplusplus
+#include "../cpp_foundation/XString.h"
+#include "../cpp_foundation/XStringW.h"
 #include "../cpp_foundation/XStringWP.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
@@ -181,8 +183,7 @@ extern "C" {
 #define SYSTEM_LOG   L"EFI\\CLOVER\\misc\\system.log"
 #define DEBUG_LOG    L"EFI\\CLOVER\\misc\\debug.log"
 #define PREWAKE_LOG  L"EFI\\CLOVER\\misc\\prewake.log"
-//#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
-//#define MsgLog(...)  {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), __VA_ARGS__); while(*msgCursor){msgCursor++;}}
+
 #ifndef DEBUG_ALL
 #define MsgLog(...)  DebugLog(1, __VA_ARGS__)
 #else

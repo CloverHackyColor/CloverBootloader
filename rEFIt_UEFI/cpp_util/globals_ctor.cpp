@@ -47,7 +47,7 @@ void construct_globals_objects()
 //		DBG("SectionHeader->PointerToRawData=%8X\n", SectionHeader->PointerToRawData);
 //		DBG("SectionHeader->SizeOfRawData=%8X\n", SectionHeader->SizeOfRawData);
 		DBG("SectionHeader->VirtualSize=%8X\n", SectionHeader->Misc.VirtualSize);
-		if (AsciiStrCmp((CONST CHAR8*) SectionHeader->Name, ".ctorss") == 0)
+		if (strcmp((CONST CHAR8*) SectionHeader->Name, ".ctorss") == 0)
 		{
 
 			ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
@@ -114,7 +114,7 @@ void construct_globals_objects()
   //		DBG("SectionHeader->PointerToRawData=%8X\n", SectionHeader->PointerToRawData);
   //		DBG("SectionHeader->SizeOfRawData=%8X\n", SectionHeader->SizeOfRawData);
   		DBG("SectionHeader->VirtualSize=%8X\n", SectionHeader->Misc.VirtualSize);
-  		if (AsciiStrCmp((CONST CHAR8*) SectionHeader->Name, ".CRT") == 0)
+  		if (strcmp((CONST CHAR8*) SectionHeader->Name, ".CRT") == 0)
   		{
 
   			ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData);

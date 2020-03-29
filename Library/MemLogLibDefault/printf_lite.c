@@ -270,6 +270,7 @@ static void print_char32(const char32_t utf32_char, PrintfParams* printfParams)
  */
 static void print_wchar_string(const wchar_t* s, PrintfParams* printfParams)
 {
+	if ( !s ) return;
 	while ( *s ) {
 #if __WCHAR_MAX__ <= 0xFFFFu
         const char16_t uc = *s++;
@@ -397,6 +398,7 @@ tryagain:
  */
 static void print_utf8_to_wchar_string(const char* s, PrintfParams* printfParams)
 {
+	if ( !s ) return;
 	while ( *s ) {
 		char32_t c;
 		if (  *((unsigned char*)s) & 0x80  ) {

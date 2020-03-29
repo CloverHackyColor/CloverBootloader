@@ -610,7 +610,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       while (*i != '.') {
         i--;
       }
-      AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
+      snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
       AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
       break;
 
@@ -621,7 +621,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       while (*i != '.') {
         i--;
       }
-      AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
+      snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
       AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
       break;
   }

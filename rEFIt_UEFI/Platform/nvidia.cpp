@@ -2036,7 +2036,7 @@ CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, CARDLIST * nvc
       //ErmaC added selector for nVidia "old" style in System Profiler
       if (gSettings.NvidiaGeneric) {
         DBG("Apply NvidiaGeneric\n");
-        AsciiSPrint(generic_name, 128, "NVIDIA %a", nvidia_card_generic[i].name_model);
+		  snprintf(generic_name, 128, "NVIDIA %s", nvidia_card_generic[i].name_model);
         return &generic_name[0]; // generic_name;
       }
       //      DBG("Not applied NvidiaGeneric\n");
@@ -2044,7 +2044,7 @@ CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, CARDLIST * nvc
       if (subsys_id) {
         for (j = 0; j < (sizeof(nvidia_card_vendors) / sizeof(nvidia_card_vendors[0])); j++) {
           if (nvidia_card_vendors[j].device == (subsys_id & 0xffff0000)) {
-            AsciiSPrint(generic_name, 128, "%a %a",
+			  snprintf(generic_name, 128, "%s %s",
                         nvidia_card_vendors[j].name_model,
                         nvidia_card_generic[i].name_model);
             return &generic_name[0]; // generic_name;
@@ -2073,18 +2073,18 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
   }
 
   for (pnum = 0; pnum < n_ports; pnum++) {
-    AsciiSPrint(nkey, 24, "@%d,name", pnum);
-    AsciiSPrint(nval, 24, "NVDA,Display-%c", (65+pnum));
+	  snprintf(nkey, 24, "@%lld,name", pnum);
+	  snprintf(nval, 24, "NVDA,Display-%lld", (65+pnum));
     //DBG("Nvidia: insert [%s : %s]\n", nkey, nval);
     devprop_add_value(device, nkey, (UINT8*)nval, 14);
 
-    AsciiSPrint(nkey, 24, "@%d,compatible", pnum);
+	  snprintf(nkey, 24, "@%lld,compatible", pnum);
     devprop_add_value(device, nkey, (UINT8*)"NVDA,NVMac", 10);
 
-    AsciiSPrint(nkey, 24, "@%d,device_type", pnum);
+	  snprintf(nkey, 24, "@%lld,device_type", pnum);
     devprop_add_value(device, nkey, (UINT8*)"display", 7);
 
-    AsciiSPrint(nkey, 24, "@%d,display-cfg", pnum);
+	  snprintf(nkey, 24, "@%lld,display-cfg", pnum);
     if (pnum == 0) {
       devprop_add_value(device, nkey, (gSettings.Dcfg[0] != 0) ? &gSettings.Dcfg[0] : default_dcfg_0, DCFG0_LEN);
     } else {
@@ -2386,7 +2386,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       }
     }
   } else {
-    AsciiSPrint(version_str, sizeof(version_str), "1.0");
+    snprintf(version_str, sizeof(version_str), "1.0");
   }
 
   DBG("nVidia %s ", model);
@@ -2472,7 +2472,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   if ((devices_number == 1) &&
       ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < (INT8)n_ports))) {
     CHAR8 nkey[24];
-    AsciiSPrint(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
+    snprintf(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
     devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
     DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
   }
@@ -2508,7 +2508,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
   //add HDMI Audio back to nvidia
   //http://forge.voodooprojects.org/p/chameleon/issues/67/
-  //AsciiSPrint(nkey, 24, "@%d,connector-type", pnum);
+  //snprintf(nkey, 24, "@%d,connector-type", pnum);
   //devprop_add_value(device, nkey, connector_type_1, 4);
   //end Nvidia HDMI Audio
 

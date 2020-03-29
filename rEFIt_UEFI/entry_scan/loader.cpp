@@ -33,6 +33,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "../cpp_foundation/XStringW.h"
 #include "entry_scan.h"
 #include "../Platform/Settings.h"
 #include "../Platform/Hibernate.h"
@@ -796,10 +797,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
-    CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
-    AsciiSPrint(GuidStr, 50, "%s", strguid(Guid));
-    SubScreen->AddMenuInfoLine(PoolPrint(L"UUID: %a", GuidStr));
-    FreePool(GuidStr);
+	SubScreen->AddMenuInfoLine(WPrintf("UUID: %s", strguid(Guid)).wc_str());
   }
   SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
   // loader-specific submenu entries
@@ -2014,10 +2012,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->AddMenuInfoLine(XStringWP(L"Volume size: ") + WPrintf("%lldMb", VolumeSize));
             SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
-              CHAR8 *GuidStr = (__typeof__(GuidStr))AllocateZeroPool(50);
-              AsciiSPrint(GuidStr, 50, "%s", strguid(Guid));
-              SubScreen->AddMenuInfoLine(PoolPrint(L"UUID: %a", GuidStr));
-              FreePool(GuidStr);
+				SubScreen->AddMenuInfoLine(WPrintf("UUID: %s", strguid(Guid)).wc_str());
             }
             SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
             DBG("Create sub entries\n");

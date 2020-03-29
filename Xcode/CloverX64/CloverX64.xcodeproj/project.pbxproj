@@ -30,6 +30,9 @@
 		9A57C25824192D650029A39F /* XUINTN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25624192D650029A39F /* XUINTN.h */; };
 		9A57C25B24192D710029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25924192D710029A39F /* XUINTN_test.cpp */; };
 		9A57C25C24192D710029A39F /* XUINTN_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25A24192D710029A39F /* XUINTN_test.h */; };
+		9A637AE82430D927000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
+		9A637AE92430D928000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
+		9A637AEA2430D928000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9A9D3B2224221563006D8CD9 /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
 		9A9D3B2324221563006D8CD9 /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */; };
 		9A9D3B2624221570006D8CD9 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2424221570006D8CD9 /* unicode_conversions.cpp */; };
@@ -2149,6 +2152,7 @@
 				9AC7802C24176C04005CDD5C /* ati.cpp in Sources */,
 				9AC7802724176C04005CDD5C /* Net.cpp in Sources */,
 				9AC7801924176C04005CDD5C /* kext_inject.cpp in Sources */,
+				9A637AEA2430D928000B9474 /* XTheme.cpp in Sources */,
 				9AC7803C24176C04005CDD5C /* guid.cpp in Sources */,
 				9AC7806C24176C04005CDD5C /* bootscreen.cpp in Sources */,
 				9A57C25724192D650029A39F /* XUINTN.cpp in Sources */,
@@ -2382,6 +2386,7 @@
 				9AF41647242CD75C00D2644C /* ati.cpp in Sources */,
 				9AF41648242CD75C00D2644C /* Net.cpp in Sources */,
 				9AF41649242CD75C00D2644C /* kext_inject.cpp in Sources */,
+				9A637AE92430D928000B9474 /* XTheme.cpp in Sources */,
 				9AF4164A242CD75C00D2644C /* guid.cpp in Sources */,
 				9AF4164B242CD75C00D2644C /* bootscreen.cpp in Sources */,
 				9AF4164C242CD75C00D2644C /* XUINTN.cpp in Sources */,
@@ -2498,6 +2503,7 @@
 				9AF41724242CDA5800D2644C /* ati.cpp in Sources */,
 				9AF41725242CDA5800D2644C /* Net.cpp in Sources */,
 				9AF41726242CDA5800D2644C /* kext_inject.cpp in Sources */,
+				9A637AE82430D927000B9474 /* XTheme.cpp in Sources */,
 				9AF41727242CDA5800D2644C /* guid.cpp in Sources */,
 				9AF41728242CDA5800D2644C /* bootscreen.cpp in Sources */,
 				9AF41729242CDA5800D2644C /* XUINTN.cpp in Sources */,
