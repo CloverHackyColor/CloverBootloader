@@ -21,7 +21,6 @@
 #define DBG(...)
 #else
 #define DBG(...) DebugLog(DEBUG_HIB, __VA_ARGS__);
-//#define DBG(...) AsciiPrint(__VA_ARGS__);
 #endif
 
 #define CREATE_NEW_BOOT_IMAGE 1

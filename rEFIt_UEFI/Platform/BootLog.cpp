@@ -151,7 +151,7 @@ VOID EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
 {
   // Print message to console
   if (DebugMode >= 2) {
-    AsciiPrint("%a", LastMessage);
+    printf("%s", LastMessage);
   }
   
   if ((DebugMode >= 1) && GlobalConfig.DebugLog) {

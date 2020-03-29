@@ -568,7 +568,6 @@
 		9AF41612242CD75C00D2644C /* BmLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5F24176C04005CDD5C /* BmLib.cpp */; };
 		9AF41613242CD75C00D2644C /* card_vlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5724176C04005CDD5C /* card_vlist.cpp */; };
 		9AF41614242CD75C00D2644C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B22417EE4A005CDD5C /* global_test.cpp */; };
-		9AF41615242CD75C00D2644C /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9AF41616242CD75C00D2644C /* load_icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6F24176C04005CDD5C /* load_icns.cpp */; };
 		9AF41617242CD75C00D2644C /* egemb_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6A24176C04005CDD5C /* egemb_font.cpp */; };
 		9AF41618242CD75C00D2644C /* securemenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7E24176C04005CDD5C /* securemenu.cpp */; };
@@ -777,7 +776,6 @@
 		9AF416EF242CDA5800D2644C /* BmLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5F24176C04005CDD5C /* BmLib.cpp */; };
 		9AF416F0242CDA5800D2644C /* card_vlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5724176C04005CDD5C /* card_vlist.cpp */; };
 		9AF416F1242CDA5800D2644C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B22417EE4A005CDD5C /* global_test.cpp */; };
-		9AF416F2242CDA5800D2644C /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9AF416F3242CDA5800D2644C /* load_icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6F24176C04005CDD5C /* load_icns.cpp */; };
 		9AF416F4242CDA5800D2644C /* egemb_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F6A24176C04005CDD5C /* egemb_font.cpp */; };
 		9AF416F5242CDA5800D2644C /* securemenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7E24176C04005CDD5C /* securemenu.cpp */; };
@@ -849,7 +847,6 @@
 		9AF41741242F15CC00D2644C /* BasicIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4173E242F15CC00D2644C /* BasicIO.h */; };
 		9AF41742242F15D600D2644C /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
 		9AF41743242F15D700D2644C /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
-		A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		A5E326322428F4EE002240E8 /* XTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E326302428F4EE002240E8 /* XTheme.h */; };
 /* End PBXBuildFile section */
 
@@ -2101,7 +2098,6 @@
 				9AC7804624176C04005CDD5C /* BmLib.cpp in Sources */,
 				9AC7804024176C04005CDD5C /* card_vlist.cpp in Sources */,
 				9AC780B32417EE4B005CDD5C /* global_test.cpp in Sources */,
-				A5E326312428F4EE002240E8 /* XTheme.cpp in Sources */,
 				9AC7805624176C04005CDD5C /* load_icns.cpp in Sources */,
 				9AC7805124176C04005CDD5C /* egemb_font.cpp in Sources */,
 				9AC7806424176C04005CDD5C /* securemenu.cpp in Sources */,
@@ -2335,7 +2331,6 @@
 				9AF41612242CD75C00D2644C /* BmLib.cpp in Sources */,
 				9AF41613242CD75C00D2644C /* card_vlist.cpp in Sources */,
 				9AF41614242CD75C00D2644C /* global_test.cpp in Sources */,
-				9AF41615242CD75C00D2644C /* XTheme.cpp in Sources */,
 				9AF41616242CD75C00D2644C /* load_icns.cpp in Sources */,
 				9AF41617242CD75C00D2644C /* egemb_font.cpp in Sources */,
 				9AF41618242CD75C00D2644C /* securemenu.cpp in Sources */,
@@ -2452,7 +2447,6 @@
 				9AF416EF242CDA5800D2644C /* BmLib.cpp in Sources */,
 				9AF416F0242CDA5800D2644C /* card_vlist.cpp in Sources */,
 				9AF416F1242CDA5800D2644C /* global_test.cpp in Sources */,
-				9AF416F2242CDA5800D2644C /* XTheme.cpp in Sources */,
 				9AF416F3242CDA5800D2644C /* load_icns.cpp in Sources */,
 				9AF416F4242CDA5800D2644C /* egemb_font.cpp in Sources */,
 				9AF416F5242CDA5800D2644C /* securemenu.cpp in Sources */,

@@ -17,7 +17,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { AsciiPrint(__VA_ARGS__); }
+#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
 
 
 ////////////////////
@@ -847,7 +847,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 
       drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
       KextBase = RoundPage(KextBase + KextEntry->kext.length);
-      DBG_RT(Entry, " %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+		DBG_RT(Entry, " %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
       if (gSettings.KextPatchesAllowed) {
         INT32  i;
         CHAR8  SavedValue;
@@ -938,7 +938,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   if (NumSnow_i386_EXT + NumSnow_X64_EXT + NumLion_i386_EXT + NumLion_X64_EXT > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %d, SnowX64: %d, Lioni386: %d, LionX64: %d) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT);
+	  printf("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %llu, SnowX64: %llu, Lioni386: %llu, LionX64: %llu) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT);
     gBS->Stall(10000000);
     return;
   }
@@ -947,10 +947,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   if (is64BitKernel) {
     if (NumSnow_X64_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
-      DBG_RT(Entry, "==> kernel Snow Leopard X64: %d replaces done.\n", Num);
+		DBG_RT(Entry, "==> kernel Snow Leopard X64: %llu replaces done.\n", Num);
     } else if (NumLion_X64_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
-      DBG_RT(Entry, "==> kernel Lion X64: %d replaces done.\n", Num);
+		DBG_RT(Entry, "==> kernel Lion X64: %llu replaces done.\n", Num);
     } else {
       // EXT - load extra kexts besides kernelcache.
       for (i = 0; i < 0x1000000; i++) {
@@ -1090,10 +1090,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     // i386
     if (NumSnow_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
-      DBG_RT(Entry, "==> kernel Snow Leopard i386: %d replaces done.\n", Num);
+		DBG_RT(Entry, "==> kernel Snow Leopard i386: %llu replaces done.\n", Num);
     } else if (NumLion_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-      DBG_RT(Entry, "==> kernel Lion i386: %d replaces done.\n", Num);
+		DBG_RT(Entry, "==> kernel Lion i386: %llu replaces done.\n", Num);
     } else {
       DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
     }

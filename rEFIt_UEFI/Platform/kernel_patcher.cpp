@@ -28,7 +28,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { AsciiPrint(__VA_ARGS__); }
+#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
 
 
 EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
@@ -1718,13 +1718,13 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       dtLength = &bootArgs2->deviceTreeLength;
       KernelSlide = bootArgs2->kslide;
 
-      DBG_RT(Entry, "Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+		DBG_RT(Entry, "Found bootArgs2 at 0x%8s, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs2->kaddr = 0x%08X and bootArgs2->ksize =  0x%08X\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG("bootArgs2->efiMode = 0x%02X\n", bootArgs2->efiMode);
-      DBG_RT(Entry, "bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
+		DBG_RT(Entry, "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
       DBG_RT(Entry, "bootArgs2->flags = 0x%x\n", bootArgs2->flags);
       DBG_RT(Entry, "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
-      DBG_RT(Entry, "bootArgs2->bootMemStart = 0x%x\n", bootArgs2->bootMemStart);
+		DBG_RT(Entry, "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
       if (Entry && Entry->KernelAndKextPatches && Entry->KernelAndKextPatches->KPDebug)
       gBS->Stall(2000000);
 
@@ -1747,7 +1747,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
       dtLength = &bootArgs1->deviceTreeLength;
 
-      DBG_RT(Entry, "Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+		DBG_RT(Entry, "Found bootArgs1 at 0x%8s, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs1->kaddr = 0x%08X and bootArgs1->ksize =  0x%08X\n", bootArgs1->kaddr, bootArgs1->ksize);
       //DBG("bootArgs1->efiMode = 0x%02X\n", bootArgs1->efiMode);
 
@@ -1767,7 +1767,7 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
   // old confuse
 
   for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
-    DBG_RT(Entry, "Patch[%d]: %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
+	  DBG_RT(Entry, "Patch[%lld]: %s\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
     if (!Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
       //DBG_RT(Entry, "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label, Entry->OSVersion);
       DBG_RT(Entry, "==> disabled\n");
@@ -1789,7 +1789,7 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
       y++;
     }
 
-    DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
+	  DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
   }
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
@@ -1803,7 +1803,7 @@ BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry)
 {
   INTN Num, i = 0, y = 0;
   for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {
-    DBG_RT(Entry, "Patch[%d]: %a\n", i, Entry->KernelAndKextPatches->BootPatches[i].Label);
+	  DBG_RT(Entry, "Patch[%lld]: %s\n", i, Entry->KernelAndKextPatches->BootPatches[i].Label);
     if (!Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
       DBG_RT(Entry, "==> disabled\n");
       continue;
@@ -1824,7 +1824,7 @@ BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry)
       y++;
     }
     
-    DBG_RT(Entry, "==> %a : %d replaces done\n", Num ? "Success" : "Error", Num);
+	  DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
   }
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
@@ -1886,7 +1886,7 @@ KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry)
   Get_PreLink();
 
   isKernelcache = PrelinkTextSize > 0 && PrelinkInfoSize > 0;
-  DBG_RT(Entry, "isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
+	DBG_RT(Entry, "isKernelcache: %ls\n", isKernelcache ? L"Yes" : L"No");
 }
 
 VOID
@@ -2053,7 +2053,7 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
         patchedOk = EnableExtCpuXCPM(KernelData, Entry, apply_idle_patch);
       }
     }
-    DBG_RT(Entry, "EnableExtCpuXCPM - %a!\n", patchedOk? "OK" : "FAILED");
+	  DBG_RT(Entry, "EnableExtCpuXCPM - %s!\n", patchedOk? "OK" : "FAILED");
   }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
