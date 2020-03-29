@@ -66,7 +66,7 @@ textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it wil
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, XString& IconNameX, float Scale, OUT XImage&  Image)
+EFI_STATUS ParseSVGXIcon(NSVGparser  *p, INTN Id, const XString& IconNameX, float Scale, const XImage& Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -451,7 +451,7 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, &XString().takeValueFrom("Background_night"), Scale, ThemeX.BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, XString().takeValueFrom("Background_night"), Scale, ThemeX.BigBack);
   }
   if (EFI_ERROR(Status)) {
     Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, XString().takeValueFrom("Background"), Scale, ThemeX.BigBack);
@@ -486,10 +486,10 @@ EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer, TagPtr * dict)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator_night"), Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator_night"), Scale, XImage(SelectionImages[4]));
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator"), Scale, SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, XString().takeValueFrom("selection_indicator"), Scale, XImage(SelectionImages[4]));
   }
   
   //banner animation
