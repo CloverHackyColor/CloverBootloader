@@ -102,7 +102,7 @@ class XArray
 	bool isEmpty() const { return size() == 0; }
     
   xsize IdxOf(TYPE& e) const;
-	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; }
+	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; } //logically it should be named as Contains(e)
 };
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

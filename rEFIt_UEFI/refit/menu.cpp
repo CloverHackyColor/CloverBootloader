@@ -3795,14 +3795,14 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
         //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
         //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
-        PlaceCentre = (INTN)((TextHeight - (INTN)(Buttons[2]->Height)) * ThemeX.Scale / 2);
-        PlaceCentre1 = (INTN)((TextHeight - (INTN)(Buttons[0]->Height)) * ThemeX.Scale / 2);
+        PlaceCentre = (INTN)((TextHeight - (INTN)(ThemeX.Buttons[2].GetHeight())) * ThemeX.Scale / 2);
+        PlaceCentre1 = (INTN)((TextHeight - (INTN)(ThemeX.Buttons[0].GetHeight())) * ThemeX.Scale / 2);
         // clovy
 
         if (ThemeX.TypeSVG)
           ctrlX = EntriesPosX;
         else ctrlX = EntriesPosX + (INTN)(TEXT_XMARGIN * ThemeX.Scale);
-        ctrlTextX = ctrlX + Buttons[0]->Width + (INTN)(TEXT_XMARGIN * ThemeX.Scale / 2);
+        ctrlTextX = ctrlX + ThemeX.Buttons[0].GetWidth() + (INTN)(TEXT_XMARGIN * ThemeX.Scale / 2);
         ctrlY = Entry->Place.YPos + PlaceCentre;
 
         if ( Entry->getREFIT_INPUT_DIALOG() ) {

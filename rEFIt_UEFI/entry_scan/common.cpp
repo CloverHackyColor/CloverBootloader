@@ -180,10 +180,11 @@ CHAR16 *AddLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption)
     return EfiStrDuplicate(LoadOption);
   }
   // If there is no option or it is already present duplicate original
+  // with XStringW it will be replaced by if (LoadOptions.ExistIn(LoadOption))
   else if ((LoadOption == NULL) || StrStr(LoadOptions, LoadOption))
     return EfiStrDuplicate(LoadOptions);
   // Otherwise add option
-  return PoolPrint(L"%s %s", LoadOptions, LoadOption);
+  return PoolPrint(L"%s %s", LoadOptions, LoadOption); //LoadOptions + LoadOption
 }
 
 CHAR16 *RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption)

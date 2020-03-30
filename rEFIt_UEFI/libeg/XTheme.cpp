@@ -175,6 +175,11 @@ const XImage& XTheme::GetIcon(const char* Name)
   return GetIcon(XString().takeValueFrom(Name));
 }
 
+const XImage& XTheme::GetIcon(const CHAR16* Name)
+{
+  return GetIcon(XString().takeValueFrom(Name));
+}
+
 static XImage NullIcon;
 
 const XImage& XTheme::GetIcon(const XString& Name)

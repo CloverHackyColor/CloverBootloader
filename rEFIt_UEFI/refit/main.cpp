@@ -1004,9 +1004,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 {
     EFI_STATUS          Status = EFI_UNSUPPORTED;
-    EG_IMAGE            *BootLogoImage;
-//    UINTN               ErrorInStep = 0;
-//    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
 
     // Unload EmuVariable before booting legacy.
     // This is not needed in most cases, but it seems to interfere with legacy OS
@@ -1032,7 +1029,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
 #else
-  BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
+  EG_IMAGE *BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
   if (BootLogoImage != NULL) {
     BltImageAlpha(BootLogoImage,
                   (UGAWidth  - BootLogoImage->Width) >> 1,

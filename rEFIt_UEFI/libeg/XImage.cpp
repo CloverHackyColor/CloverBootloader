@@ -541,6 +541,11 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const char* IconName)
 {
   return LoadXImage(BaseDir, XStringWP(IconName));
 }
+
+EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const wchar_t* LIconName)
+{
+  return LoadXImage(BaseDir, XStringWP(LIconName));
+}
 //dont call this procedure for SVG theme BaseDir == NULL?
 EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 {

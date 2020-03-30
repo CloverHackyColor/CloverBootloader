@@ -363,10 +363,12 @@ VOID AddCustomTool(VOID)
       }
 #if USE_XTHEME
       if (Image == NULL) {
-        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->Options);
+        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->Options);
       } else {
       // Create a legacy entry for this volume
-        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, XImage().FromEGImage(Image), Custom->Hotkey, Custom->Options);
+        XImage ImageX;
+        ImageX.FromEGImage(Image);
+        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, ImageX, Custom->Hotkey, Custom->Options);
       }
 #else
       if (Image == NULL) {

@@ -105,6 +105,7 @@ public:
   //fill the theme
   const XImage& GetIcon(const XString& Name);  //get by name
   const XImage& GetIcon(const char* Name);
+  const XImage& GetIcon(const CHAR16* Name);
   const XImage& GetIcon(INTN Id); //get by id
 
   void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
