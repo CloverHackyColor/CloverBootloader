@@ -319,12 +319,19 @@ void XImage::FlipRB(bool WantAlpha)
  */
 EFI_STATUS XImage::FromPNG(const UINT8 * Data, UINTN Length)
 {
+//  DBG("XImage len=%llu\n", Length);
   if (Data == NULL) return EFI_INVALID_PARAMETER;
-  UINT8 * PixelPtr = (UINT8 *)&PixelData[0];
+  UINT8 * PixelPtr; // = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_decode(&PixelPtr, &Width, &Height, Data, Length);
   if (Error != 0 && Error != 28) {
     return EFI_NOT_FOUND;
   }
+  setSizeInPixels(Width, Height);
+  //now we have a new pointer and want to move data
+  INTN NewLength = Width * Height * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+  CopyMem(GetPixelPtr(0,0), PixelPtr, NewLength);
+  FreePool(PixelPtr); //allocated by lodepng
+
   FlipRB(true);
   return EFI_SUCCESS;
 }

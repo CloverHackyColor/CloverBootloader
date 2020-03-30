@@ -2273,7 +2273,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
 
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-
+  ThemeX.FillByEmbedded();
   //DBG("LoadDrivers() start\n");
   LoadDrivers();
   //DBG("LoadDrivers() end\n");
