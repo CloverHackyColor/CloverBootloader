@@ -2542,7 +2542,6 @@
 					DEBUG_ON_SERIAL_PORT,
 					"JCONST=CONST",
 					NO_MSABI_VA_FUNCS,
-					"USE_XTHEME=0",
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,

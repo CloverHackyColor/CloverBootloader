@@ -59,13 +59,8 @@ EFI_STATUS XImage::FromEGImage(const EG_IMAGE* egImage)
 
 XImage& XImage::operator= (const XImage& other)
 {
-	// &other.PixelData[0] won't work if other is empty. So we check.
-  if ( other.isEmpty() ) {
-  	setEmpty();
-  }else{
-  	setSizeInPixels(other.GetWidth(), other.GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
-  	CopyMem(&PixelData[0], &other.PixelData[0], GetSizeInBytes());
-  }
+	setSizeInPixels(other.GetWidth(), other.GetHeight()); // change the size, ie the number of element in the array. Reaalocate buffer if needed
+	PixelData = other.PixelData;
 	return *this;
 }
 

@@ -41,7 +41,8 @@ class XArray
 	TYPE *data() { return m_data; }
 
   public:
-	xsize AllocatedSize() const { return m_allocatedSize; }
+	xsize allocatedSize() const { return m_allocatedSize; }
+	xsize length() const { return m_len; }
 	xsize size() const { return m_len; }
 	void  setSize(xsize l);
 
@@ -144,10 +145,22 @@ XArray<TYPE>::XArray(const XArray<TYPE> &anArray)
 template<class TYPE>
 const XArray<TYPE> &XArray<TYPE>::operator =(const XArray<TYPE> &anArray)
 {
-  xsize ui;
-
-	setEmpty();
-	for ( ui=0 ; ui<anArray.length() ; ui+=1 ) Add(anArray[ui] );
+  if ( anArray.length() > 0 )
+  {
+  	CheckSize(anArray.length(), 0);
+  	memcpy(m_data, anArray.m_data, anArray.m_len * sizeof(TYPE));
+  	m_len = anArray.m_len;
+  }
+  else
+  {
+  	setEmpty();
+  }
+//
+//
+//xsize ui;
+//
+//	setEmpty();
+//	for ( ui=0 ; ui<anArray.length() ; ui+=1 ) Add(anArray[ui] );
 	return *this;
 }
 
