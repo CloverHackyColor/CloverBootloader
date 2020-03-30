@@ -281,13 +281,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
       // icon name is shutdown from historic reasons, but function is now exit
       UnicodeSPrint(Text, 30, L"exit");
     }
-#if USE_XTHEME
-#else
     egRenderText(Text, TextBuffer, 0, 0, 0xFFFF, 1);
     BuiltinIconTable[Id].Image = TextBuffer;
-#endif
-
-
 	  DebugLog(1, "        [!] Icon %llu: Text <%ls> rendered\n", Id, Text);
     FreePool(Text);
   }

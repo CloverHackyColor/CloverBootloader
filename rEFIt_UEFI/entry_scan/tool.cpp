@@ -36,6 +36,7 @@
 #include "entry_scan.h"
 #include "../refit/menu.h"
 #include "../refit/screen.h"
+#include "../libeg/XImage.h"
 
 //
 // Clover File location to boot from on removable media devices
@@ -71,10 +72,16 @@
 #endif
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
-
+#if USE_XTHEME
+STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
+                            IN REFIT_VOLUME *Volume, const XImage& Image,
+                            IN CHAR16 ShortcutLetter, IN CONST CHAR16 *Options)
+#else
 STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
                             IN CHAR16 ShortcutLetter, IN CONST CHAR16 *Options)
+#endif
+
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
@@ -131,7 +138,11 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;
   Entry->ShortcutLetter = 'C';
+#if USE_XTHEME
+  Entry->Image          = ThemeX.GetIcon(BUILTIN_ICON_FUNC_CLOVER);
+#else
   Entry->Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
+#endif
   Entry->Volume = Volume;
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
@@ -197,11 +208,24 @@ VOID ScanTool(VOID)
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
   VOID                    *Interface;
-
+#if USE_XTHEME
+  if (ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)
+    return;
+#else
   if (GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)
     return;
+#endif
+
 
   //    DBG("Scanning for tools...\n");
+#if USE_XTHEME
+  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
+    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
+      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
+    }
+  }
+#else
+
 
   // look for the EFI shell
   if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SHELL)) {
@@ -218,6 +242,7 @@ VOID ScanTool(VOID)
     AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
 #endif
   }
+#endif
 
 //  if (!gFirmwareClover) { //Slice: I wish to extend functionality on emulated nvram
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
@@ -336,14 +361,20 @@ VOID AddCustomTool(VOID)
           }
         }
       }
+#if USE_XTHEME
+      if (Image == NULL) {
+        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->Options);
+      } else {
+      // Create a legacy entry for this volume
+        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, XImage().FromEGImage(Image), Custom->Hotkey, Custom->Options);
+      }
+#else
       if (Image == NULL) {
         Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
       }
-
       // Create a legacy entry for this volume
-
       AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, Custom->Options);
-
+#endif
       DBG("match!\n");
 //      break; // break scan volumes, continue scan entries -- why?
     }

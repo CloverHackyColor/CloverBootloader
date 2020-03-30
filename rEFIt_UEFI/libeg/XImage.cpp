@@ -640,7 +640,10 @@ void XImage::CopyRect(const XImage& Image, INTN XPos, INTN YPos)
 
 EG_IMAGE* XImage::ToEGImage()
 {
-  EG_IMAGE* Tmp = egCreateImage(Width, Height, TRUE);
+  if (isEmpty()) {
+    return NULL; // what is better, return NULL or empty image?
+  }
+  EG_IMAGE* Tmp = egCreateImage(Width, Height, TRUE);  //memory leak
   CopyMem(&Tmp->PixelData[0], &PixelData[0], GetSizeInBytes());
   return Tmp;
 }

@@ -69,12 +69,21 @@ VOID AddSecureBootTool(VOID)
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
     Entry->Title.SPrintf("Clover Secure Boot Configuration");
 //    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
+#if USE_XTHEME
+    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
+#else
     Entry->Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
+#endif
+
   } else {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG();
     Entry->Title.SPrintf("Enable Clover Secure Boot");
 //    Entry->Tag = TAG_SECURE_BOOT;
+#if USE_XTHEME
+    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
+#else
     Entry->Image = BuiltinIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
+#endif
   }
   Entry->Row = 1;
   //actions

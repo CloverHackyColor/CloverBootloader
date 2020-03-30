@@ -111,7 +111,7 @@ extern VOID AboutRefit(VOID);
 extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
 extern UINTN                ThemesNum;
-extern CHAR16               *ThemesList[];
+extern CONST CHAR16               *ThemesList[];
 extern UINTN                 ConfigsNum;
 extern CHAR16                *ConfigsList[];
 extern UINTN                 DsdtsNum;
@@ -1026,14 +1026,21 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
-
-    BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
+#if USE_XTHEME
+  XImage BootLogoX;
+  BootLogoX.LoadXImage(ThemeDir, Entry->Volume->LegacyOS->IconName);
+  BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
+                 (UGAHeight - BootLogoX.GetHeight()) >> 1);
+#else
+  BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
   if (BootLogoImage != NULL) {
-        BltImageAlpha(BootLogoImage,
-                      (UGAWidth  - BootLogoImage->Width) >> 1,
-                      (UGAHeight - BootLogoImage->Height) >> 1,
-                      &StdBackgroundPixel, 16);
+    BltImageAlpha(BootLogoImage,
+                  (UGAWidth  - BootLogoImage->Width) >> 1,
+                  (UGAHeight - BootLogoImage->Height) >> 1,
+                  &StdBackgroundPixel, 16);
   }
+#endif
+
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
         case BOOTING_BY_CD:

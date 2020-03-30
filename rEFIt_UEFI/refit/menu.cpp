@@ -74,7 +74,7 @@ static INTN MaxItemOnScreen = -1;
 REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL);
 extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 extern UINTN            ThemesNum;
-extern CHAR16           *ThemesList[];
+extern CONST CHAR16           *ThemesList[];
 extern UINTN            ConfigsNum;
 extern CHAR16           *ConfigsList[];
 extern UINTN            DsdtsNum;
@@ -787,6 +787,15 @@ VOID ApplyInputs(VOID)
   }
   i++; //3
   if (InputItems[i].Valid) {
+#if USE_XTHEME
+    if (OldChosenTheme == 0xFFFF) {
+      ThemeX.Theme.takeValueFrom("embedded");
+    } else {
+      ThemeX.Theme.takeValueFrom(ThemesList[OldChosenTheme]);
+      ThemeX.DarkEmbedded = FALSE;
+      ThemeX.Font = FONT_ALFA;
+    }
+#else
     if (GlobalConfig.Theme) {
       FreePool(GlobalConfig.Theme);
     }
@@ -797,6 +806,7 @@ VOID ApplyInputs(VOID)
       GlobalConfig.DarkEmbedded = FALSE;
       GlobalConfig.Font = FONT_ALFA;
     }
+#endif
 
     //will change theme after ESC
     gThemeChanged = TRUE;
@@ -877,7 +887,7 @@ VOID ApplyInputs(VOID)
   for (j = 0; j < NGFX; j++) {
     i++; //20
     if (InputItems[i].Valid) {
-		snprintf(gGraphics[j].Model, 64, "%ls",  InputItems[i].SValue);
+      snprintf(gGraphics[j].Model, 64, "%ls",  InputItems[i].SValue);
     }
     i++; //21
     if (InputItems[i].Valid) {
@@ -895,7 +905,7 @@ VOID ApplyInputs(VOID)
         UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue);
       } else if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 256);
-		  snprintf(AString, 255, "%ls", InputItems[i].SValue);
+        snprintf(AString, 255, "%ls", InputItems[i].SValue);
         hex2bin(AString, (UINT8*)&gSettings.Dcfg[0], 8);
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
@@ -918,7 +928,7 @@ VOID ApplyInputs(VOID)
       if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 256);
         if (StrLen(InputItems[i].SValue) > 0) {
-			snprintf(AString, 255, "%ls", InputItems[i].SValue);
+          snprintf(AString, 255, "%ls", InputItems[i].SValue);
           hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
         }
       } else {
@@ -1340,7 +1350,6 @@ VOID ApplyInputs(VOID)
     gBootChanged = TRUE;
   }
 
-
   if (NeedSave) {
     SaveSettings();
   }
@@ -1375,12 +1384,20 @@ VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
 
 VOID AboutRefit(VOID)
 {
-  //  CHAR8* Revision = NULL;
+#if USE_XTHEME
+  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+    AboutMenu.TitleImage = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
+  } else {
+    AboutMenu.TitleImage.setEmpty();
+  }
+#else
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
   } else {
     AboutMenu.TitleImage = NULL;
   }
+#endif
+
   if (AboutMenu.Entries.size() == 0) {
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
 #ifdef REVISION_STR
@@ -1436,11 +1453,19 @@ VOID AboutRefit(VOID)
 
 VOID HelpRefit(VOID)
 {
+#if USE_XTHEME
+  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+    HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
+  } else {
+    HelpMenu.TitleImage.setEmpty();
+  }
+#else
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
   } else {
     HelpMenu.TitleImage = NULL;
   }
+#endif
   if (HelpMenu.Entries.size() == 0) {
     switch (gLanguage)
     {
@@ -3241,6 +3266,21 @@ VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAl
   CHAR16 *BCSText = NULL;
 
   // more space, more characters
+#if USE_XTHEME
+  if (ThemeX.TileXSpace >= 25 && ThemeX.TileXSpace < 30) {
+    MaxTextLen = 14;
+  } else if (ThemeX.TileXSpace >= 30 && ThemeX.TileXSpace < 35) {
+    MaxTextLen = 15;
+  } else if (ThemeX.TileXSpace >= 35 && ThemeX.TileXSpace < 40) {
+    MaxTextLen = 16;
+  } else if (ThemeX.TileXSpace >= 40 && ThemeX.TileXSpace < 45) {
+    MaxTextLen = 17;
+  } else if (ThemeX.TileXSpace >= 45 && ThemeX.TileXSpace < 50) {
+    MaxTextLen = 18;
+  } else if (ThemeX.TileXSpace >= 50) {
+    MaxTextLen = 19;
+  }
+#else
   if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
     MaxTextLen = 14;
   } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
@@ -3254,6 +3294,7 @@ VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAl
   } else if (GlobalConfig.TileXSpace >= 50) {
     MaxTextLen = 19;
   }
+#endif
 
   MaxTextLen += EllipsisLen;
 
@@ -5117,7 +5158,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
           itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += row1TileSize + (INTN)(TILE1_XSPACING * ThemeX.Scale);
+          row1PosXRunning += ThemeX.row1TileSize + (INTN)(TILE1_XSPACING * ThemeX.Scale);
           //DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
@@ -5149,12 +5190,12 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
             // draw static text for the boot options, BootCampStyle
 
             if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (row0TileSize / 2);
+              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (ThemeX.row0TileSize / 2);
               // clear the screen
 
-              ThemeX.FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
+              ThemeX.FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + ThemeX.TileXSpace,
                                    MessageHeight);
-              DrawBCSText(Entries[i].Title, textPosX, textPosY, X_IS_CENTER);
+              DrawBCSText(Entries[i].Title.data(), textPosX, textPosY, X_IS_CENTER);
             }
           }
         } else {
@@ -5356,7 +5397,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
               FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
                                    MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
               // draw the text
-              DrawBCSText(Entries[i].Title, textPosX, textPosY, X_IS_CENTER);
+              DrawBCSText(Entries[i].Title.data(), textPosX, textPosY, X_IS_CENTER);
             }
           }
         } else {
@@ -6632,9 +6673,9 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   // FillInputs and ApplyInputs
 #if USE_XTHEME
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    OptionMenu.TitleImage = (*ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS)).ToEGImage();
+    OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
   } else {
-    OptionMenu.TitleImage = NULL;
+    OptionMenu.TitleImage.setEmpty();
   }
 #else
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
@@ -6720,7 +6761,13 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     } // if MENU_EXIT_ENTER
   }
 //exit:
+#if USE_XTHEME
+  ThemeX.Proportional = OldFontStyle;
+#else
   GlobalConfig.Proportional = OldFontStyle;
+#endif
+
+
   ApplyInputs();
 }
 
@@ -6797,11 +6844,19 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
   if (AllowGraphicsMode) {
     Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
+#if USE_XTHEME
+    if (ThemeX.VerticalLayout) {
+      MainStyle = &REFIT_MENU_SCREEN::MainMenuVerticalStyle;
+    } else {
+      MainStyle = &REFIT_MENU_SCREEN::MainMenuStyle;
+    }
+#else
     if (GlobalConfig.VerticalLayout) {
       MainStyle = &REFIT_MENU_SCREEN::MainMenuVerticalStyle;
     } else {
       MainStyle = &REFIT_MENU_SCREEN::MainMenuStyle;
     }
+#endif
   }
 
   while (!MenuExit) {
@@ -6855,7 +6910,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions) {
-			  snprintf(gSettings.BootArgs, 255, "%ls", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
+            snprintf(gSettings.BootArgs, 255, "%ls", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

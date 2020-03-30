@@ -61,7 +61,7 @@ UINT8                           gLanMac[4][6];    // their MAC addresses
 UINTN                           nLanPaths;        // number of LAN pathes
 
 UINTN                           ThemesNum                   = 0;
-CHAR16                          *ThemesList[50]; //no more then 50 themes?
+CONST CHAR16                          *ThemesList[100]; //no more then 100 themes?
 UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
 UINTN                           DsdtsNum;
@@ -2975,7 +2975,7 @@ GetEarlyUserSettings (
           OldChosenTheme = 0xFFFF; //default for embedded
           for (UINTN i = 0; i < ThemesNum; i++) {
             //now comparison is case sensitive
-            if (ThemeX.Theme == ThemesList[i]) { //(StriCmp(ThemeX.Theme, ThemesList[i]) == 0)
+            if (StriCmp(ThemeX.Theme.data(), ThemesList[i]) == 0) {
               OldChosenTheme = i;
               break;
             }

@@ -315,15 +315,15 @@ VOID AddCustomLegacy(VOID)
   // Traverse the custom entries
   for (Custom = gSettings.CustomLegacy; Custom; ++i, Custom = Custom->Next) {
     if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-		DBG("Custom legacy %llu skipped because it is disabled.\n", i);
+      DBG("Custom legacy %llu skipped because it is disabled.\n", i);
       continue;
     }
     if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-		DBG("Custom legacy %llu skipped because it is hidden.\n", i);
+      DBG("Custom legacy %llu skipped because it is hidden.\n", i);
       continue;
     }
     if (Custom->Volume) {
-		DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume);
+      DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
       Volume = &Volumes[VolumeIndex];
@@ -414,7 +414,15 @@ VOID AddCustomLegacy(VOID)
             if (Image == NULL) {
               Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
               if (Image == NULL) {
+#if USE_XTHEME
+                XImage ImageX;
+                ImageX.LoadXImage(ThemeDir, "unknown");
+                Image = ImageX.ToEGImage();
+#else
                 Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+#endif
+
+
               }
             }
           }

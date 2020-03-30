@@ -701,7 +701,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   } else if (Image) {
     Entry->Image.FromEGImage(Image);
   } else {
-    Entry->Image = ThemeX.GetIcon("unknown");
+//    Entry->Image = ThemeX.GetIcon("unknown");  //no such icon
+    Entry->Image = ThemeX.GetIcon("vol_internal");
   }
 #else
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
@@ -1253,8 +1254,15 @@ VOID ScanLoader(VOID)
             if ((AndroidEntryData[Index].Find[aIndex] == NULL) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
           }
           if (aFound && (aFound == aIndex)) {
+#if USE_XTHEME
+            XImage ImageX;
+            ImageX.LoadXImage(ThemeDir, AndroidEntryData[Index].Icon);
+            AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
+                           ImageX.ToEGImage(), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+#else
             AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
                            LoadOSIcon(AndroidEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+#endif
           }
         }
       }
@@ -1264,8 +1272,15 @@ VOID ScanLoader(VOID)
     if (gSettings.LinuxScan) {
       // check for linux loaders
       for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
+#if USE_XTHEME
+        XImage ImageX;
+        ImageX.LoadXImage(ThemeDir, LinuxEntryData[Index].Icon);
+        AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
+                       ImageX.ToEGImage(), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+#else
         AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
                        LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+#endif
       }
       // check for linux kernels
       PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
@@ -1805,7 +1820,13 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           if (Image == NULL) {
             Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
             if (Image == NULL) {
+#if USE_XTHEME
+              XImage ImageX;
+              ImageX.LoadXImage(ThemeDir, Custom->ImagePath);
+              Image = ImageX.ToEGImage();
+#else
               Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
+#endif
             }
           }
         }
@@ -1823,7 +1844,12 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           if (DriveImage == NULL) {
             DriveImage = egLoadImage(SelfRootDir, Custom->DriveImagePath, TRUE);
             if (DriveImage == NULL) {
+#if USE_XTHEME
+              XImage DriveImageX = ThemeX.GetIcon(Custom->DriveImagePath);
+              DriveImage = DriveImageX.ToEGImage();
+#else
               DriveImage = LoadBuiltinIcon(Custom->DriveImagePath);
+#endif
             }
           }
         }
@@ -2012,7 +2038,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->AddMenuInfoLine(XStringWP(L"Volume size: ") + WPrintf("%lldMb", VolumeSize));
             SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
-				SubScreen->AddMenuInfoLine(WPrintf("UUID: %s", strguid(Guid)).wc_str());
+              SubScreen->AddMenuInfoLine(WPrintf("UUID: %s", strguid(Guid)).wc_str());
             }
             SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
             DBG("Create sub entries\n");

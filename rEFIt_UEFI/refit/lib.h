@@ -307,7 +307,7 @@ extern INTN ScrollbarYMovement;
 
 typedef struct {
   INTN        Timeout;
-  UINTN       DisableFlags;
+  UINTN       DisableFlags; //to disable some volume types (optical, firewire etc)
 #if !USE_XTHEME
   UINTN       HideBadges;
   UINTN       HideUIFlags;
@@ -507,8 +507,8 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 // local variables
 //extern INTN FontWidth;
 //extern INTN FontHeight;
-#if !USE_XTHEME
 extern INTN TextHeight;
+#if !USE_XTHEME
 extern INTN row0TileSize;
 extern INTN row1TileSize;
 #endif
@@ -557,7 +557,7 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
 //
 // icns loader module
 //
-
+#if !USE_XTHEME
 EG_IMAGE * LoadOSIcon(IN CONST CHAR16 *OSIconName OPTIONAL, IN CONST CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
 EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
 EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
@@ -565,6 +565,7 @@ EG_IMAGE * DummyImage(IN UINTN PixelSize);
 EG_IMAGE * BuiltinIcon(IN UINTN Id);
 CHAR16   * GetIconsExt(IN CONST CHAR16 *Icon, IN CONST CHAR16 *Def);
 EG_IMAGE * GetSmallHover(IN UINTN Id);
+#endif
 
 #define BUILTIN_ICON_FUNC_ABOUT                (0)
 #define BUILTIN_ICON_FUNC_OPTIONS              (1)
@@ -623,11 +624,13 @@ EG_IMAGE * GetSmallHover(IN UINTN Id);
 #define ICON_FORMAT_PNG       (2)
 #define ICON_FORMAT_BMP       (3)
 VOID ReinitVolumes(VOID);
+
 BOOLEAN ReadAllKeyStrokes(VOID);
 //
 // config module
 //
 
+#if !USE_XTHEME
 typedef struct MISC_ICONS {
   EG_IMAGE *image;
   CONST CHAR8    *name;
@@ -635,6 +638,7 @@ typedef struct MISC_ICONS {
 
 extern MISC_ICONS OSIconsTable[];
 extern BUILTIN_ICON BuiltinIconTable[];
+#endif
 extern REFIT_CONFIG GlobalConfig;
 
 VOID ReadConfig(INTN What);
