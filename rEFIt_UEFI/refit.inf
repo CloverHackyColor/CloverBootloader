@@ -88,6 +88,7 @@
   libeg/nanosvg.cpp
   libeg/nanosvg.h
   libeg/nanosvgrast.cpp
+  libeg/VectorGraphics.h
   libeg/VectorGraphics.cpp
   libeg/libeg.h
   libeg/libegint.h
@@ -155,6 +156,7 @@
 	Platform/Nvram.h
 	Platform/Platform.h
 	Platform/platformdata.cpp
+	Platform/plist.h
 	Platform/plist.cpp
 # Platform/Pointer.cpp
 	Platform/Settings.cpp

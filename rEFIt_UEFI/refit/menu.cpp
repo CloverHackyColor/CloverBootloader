@@ -48,6 +48,7 @@
 #include "screen.h"
 #include "../cpp_foundation/XString.h"
 #include "../libeg/XTheme.h"
+#include "../libeg/VectorGraphics.h" // for testSVG
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1

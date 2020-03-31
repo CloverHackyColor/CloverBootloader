@@ -16,8 +16,8 @@
 #include "strlen_test.h"
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "printf_lite-test.h"
-#include "poolprint-test.h"
-#include "printlib-test.h"
+//#include "poolprint-test.h"
+//#include "printlib-test.h"
 
 bool all_tests()
 {
