@@ -651,9 +651,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
   if ( Entry->Title.isEmpty()  &&  Volume->VolLabel != NULL ) {
     if ( Volume->VolLabel[0] == L'#' ) {
-    	Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
+    	Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
     }else{
-    	Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
+    	Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
     }
   }
 #if USE_XTHEME
@@ -667,7 +667,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     if (BootCampStyle) {
       Entry->Title.takeValueFrom(((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
     } else {
-      Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+      Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Basename(Volume->DevicePathString));
     }
   }
@@ -680,7 +680,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         Entry->Title.takeValueFrom((LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
       }
     } else {
-      Entry->Title.SPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
+      Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
                                     Entry->VolName);
     }
   }
@@ -688,7 +688,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-    Entry->Title.SPrintf("%ls (hibernated)", Entry->Title.s());
+    Entry->Title.SWPrintf("%ls (hibernated)", Entry->Title.s());
   }
 
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
@@ -783,7 +783,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
 #if USE_XTHEME
-  SubScreen->Title.SPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
+  SubScreen->Title.SWPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
 #else
   //very old mistake!!!
   SubScreen->Title = PoolPrint(L"Options for %s on %s", Entry->Title.s(), Entry->VolName);
@@ -908,7 +908,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      SubEntry->Title.SPrintf("Run %ls", FileName);
+      SubEntry->Title.SWPrintf("Run %ls", FileName);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -916,10 +916,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (Quiet) {
-        SubEntry->Title.SPrintf("%ls verbose", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls verbose", Entry->Title.s());
         SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
       } else {
-        SubEntry->Title.SPrintf("%ls quiet", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
       }
     }
@@ -928,10 +928,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
-        SubEntry->Title.SPrintf("%ls without splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls without splash", Entry->Title.s());
         SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
       } else {
-        SubEntry->Title.SPrintf("%ls with splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
       }
     }
@@ -942,22 +942,22 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (WithSplash) {
         if (Quiet) {
           TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
-          SubEntry->Title.SPrintf("%ls verbose without splash", Entry->Title.s());
+          SubEntry->Title.SWPrintf("%ls verbose without splash", Entry->Title.s());
           SubEntry->LoadOptions = RemoveLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         } else {
           TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
-          SubEntry->Title.SPrintf("%ls quiet without splash", Entry->Title.s());
+          SubEntry->Title.SWPrintf("%ls quiet without splash", Entry->Title.s());
           SubEntry->LoadOptions = AddLoadOption(TempOptions, L"quiet");
           FreePool(TempOptions);
         }
       } else if (Quiet) {
         TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
-        SubEntry->Title.SPrintf("%ls verbose with splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
         FreePool(TempOptions);
       } else {
-        SubEntry->Title.SPrintf("%ls quiet with splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
         SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
       }
     }
@@ -969,7 +969,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      SubEntry->Title.SPrintf("Run %ls", FileName);
+      SubEntry->Title.SWPrintf("Run %ls", FileName);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -988,7 +988,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      SubEntry->Title.SPrintf("Run %ls in text mode", FileName);
+      SubEntry->Title.SWPrintf("Run %ls in text mode", FileName);
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = PoolPrint(L"-v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
@@ -2025,7 +2025,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
 #if USE_XTHEME
-            SubScreen->Title.SPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
+            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
 #else
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
 #endif

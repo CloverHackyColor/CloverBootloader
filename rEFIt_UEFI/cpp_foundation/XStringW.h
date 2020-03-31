@@ -115,11 +115,11 @@ public:
 	void Insert(xsize pos, const XStringW& Str);
 
 
-	void vSPrintf(const char* format, va_list va);
+	void vSWPrintf(const char* format, va_list va);
 #ifndef _MSC_VER
-  void SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
+  void SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
 #else
-  void SPrintf(const char* format, ...);
+  void SWPrintf(const char* format, ...);
 #endif // !__MSC_VER
 
 

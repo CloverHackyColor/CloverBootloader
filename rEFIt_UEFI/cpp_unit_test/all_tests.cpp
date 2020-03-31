@@ -26,16 +26,16 @@ bool all_tests()
 
 #ifdef JIEF_DEBUG
 	#if defined(CLOVER_BUILD)
-	    ret = printlib_tests();
-	    if ( ret != 0 ) {
-		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
-		    all_ok = false;
-    	}
-    	ret = poolprint_tests();
-    	if ( ret != 0 ) {
-	    	DebugLog(2, "poolprint_tests() failed at test %d\n", ret);
-		    all_ok = false;
-	    }
+//	    ret = printlib_tests();
+//	    if ( ret != 0 ) {
+//		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
+//		    all_ok = false;
+//    	}
+//    	ret = poolprint_tests();
+//    	if ( ret != 0 ) {
+//	    	DebugLog(2, "poolprint_tests() failed at test %d\n", ret);
+//		    all_ok = false;
+//	    }
 	#endif
 #endif
 #ifndef _MSC_VER

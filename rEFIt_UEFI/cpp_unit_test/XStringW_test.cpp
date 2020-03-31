@@ -99,7 +99,7 @@ int XStringW_tests()
 //printf("1=%lc\n", c2);
 //const char* s1 = "𐌾";
 	XStringW str2;
-	str2.SPrintf("%c", 'a'); // signle UTF8 ascii char
+	str2.SWPrintf("%c", 'a'); // signle UTF8 ascii char
 	if ( str2 != L"a" ) return 20;
 	str2.takeValueFrom(L"ab"); // UTF16(32) string containing ascii char
 	if ( str2 != L"ab" ) return 21;
@@ -115,14 +115,14 @@ int XStringW_tests()
 	s[0] = 'Ň';
 	s[1] = 0;
 
-	str2.SPrintf("%lc", c); // UTF16(32) char. (2 bytes in total if UTF16)
+	str2.SWPrintf("%lc", c); // UTF16(32) char. (2 bytes in total if UTF16)
 	if (str2 != s) return 22;
 	str2.takeValueFrom("");
 	if (str2.length() != 0) return 221;
 	str2.takeValueFrom(s); // this is a UTF8 string 2 bytes long
 	if (str2 != s) return 23;
 #else
-	str2.SPrintf("%lc", L'Ň'); // signe UTF16(32) char. (2 bytes in total if UTF16)
+	str2.SWPrintf("%lc", L'Ň'); // signe UTF16(32) char. (2 bytes in total if UTF16)
 	if ( str2 != L"Ň" ) return 22;
 	str2.takeValueFrom("");
 	if (str2.length() != 0) return 221;
@@ -139,7 +139,7 @@ int XStringW_tests()
 #endif
 
 #if __WCHAR_MAX__ > 0xFFFFu
-	str2.SPrintf("%lc", L'𐌾'); // L'𐌾' // this char cannot convert to an UTF16 char. So it doesn't compile with -fshort-wchar
+	str2.SWPrintf("%lc", L'𐌾'); // L'𐌾' // this char cannot convert to an UTF16 char. So it doesn't compile with -fshort-wchar
 	if ( str2 != L"𐌾" ) return 30;
 #endif
 

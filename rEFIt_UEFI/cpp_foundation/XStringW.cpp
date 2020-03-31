@@ -274,7 +274,7 @@ static void XStringW_transmitSPrintf(const wchar_t* buf, unsigned int nbchar, vo
 	((XStringW*)(context))->StrnCat(buf, nbchar);
 }
 
-void XStringW::vSPrintf(const char* format, va_list va)
+void XStringW::vSWPrintf(const char* format, va_list va)
 {
 	SetLength(0);
 
@@ -304,12 +304,12 @@ void XStringW::vSPrintf(const char* format, va_list va)
 //  va_end(ps.args);
 //}
 
-void XStringW::SPrintf(const char* format, ...)
+void XStringW::SWPrintf(const char* format, ...)
 {
   va_list     va;
 
 	va_start (va, format);
-	vSPrintf(format, va);
+	vSWPrintf(format, va);
 	va_end(va);
 }
 
@@ -549,7 +549,7 @@ XStringW SWPrintf(const char* format, ...)
   XStringW str;
 
   va_start (va, format);
-  str.vSPrintf(format, va);
+  str.vSWPrintf(format, va);
 	va_end(va);
 
   return str;

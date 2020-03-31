@@ -21,7 +21,7 @@ int printf(const char* format, ...)
 
   // AsciiPrint seems no to work with utf8 chars. We have to use Print instead
 	va_start (va, format);
-	stdio_static_wbuf.vSPrintf(format, va);
+	stdio_static_wbuf.vSWPrintf(format, va);
 	int ret = (int)Print(L"%s", stdio_static_wbuf.wc_str());
 	va_end(va);
 	return ret;
