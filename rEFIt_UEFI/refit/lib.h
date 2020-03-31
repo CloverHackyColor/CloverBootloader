@@ -328,13 +328,13 @@ typedef struct {
   INTN        CharWidth;
   UINTN       SelectionColor;
   CHAR16      *FontFileName;
-  CHAR16      *Theme;
   CHAR16      *BannerFileName;
   CHAR16      *SelectionSmallFileName;
   CHAR16      *SelectionBigFileName;
   CHAR16      *SelectionIndicatorName;
   CHAR16      *DefaultSelection;
 #endif
+  CHAR16      *Theme;
   CHAR16      *ScreenResolution;
   INTN        ConsoleMode;
   BOOLEAN     CustomIcons;

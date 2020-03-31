@@ -431,10 +431,11 @@ void XTheme::ClearScreen() //and restore background and banner
     case imNone:
     default:
       // already scaled
+      Background = BigBack;
       break;
     }
   }
-  Background.Draw(0, 0);
+  Background.DrawWithoutCompose(0, 0, UGAWidth, UGAHeight);
   //then draw banner
   if (!Banner.isEmpty()) {
     Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);

@@ -135,13 +135,13 @@ typedef struct {
   INTN        CharWidth;
   UINTN       SelectionColor;
   CHAR16      *FontFileName;
-  CHAR16      *Theme;
   CHAR16      *BannerFileName;
   CHAR16      *SelectionSmallFileName;
   CHAR16      *SelectionBigFileName;
   CHAR16      *SelectionIndicatorName;
   CHAR16      *DefaultSelection;
 #endif
+  CHAR16      *Theme;
   CHAR16      *ScreenResolution;
   INTN        ConsoleMode;
   BOOLEAN     CustomIcons;
@@ -209,13 +209,13 @@ REFIT_CONFIG   GlobalConfig = {
   9,              // INTN        CharWidth;
   0xFFFFFF80,     // UINTN       SelectionColor;
   NULL,           // CHAR16      *FontFileName;
-  NULL,           // CHAR16      *Theme;
   NULL,           // CHAR16      *BannerFileName;
   NULL,           // CHAR16      *SelectionSmallFileName;
   NULL,           // CHAR16      *SelectionBigFileName;
   NULL,           // CHAR16      *SelectionIndicatorName;
   NULL,           // CHAR16      *DefaultSelection;
 #endif
+  NULL,           // CHAR16      *Theme;
   NULL,           // CHAR16      *ScreenResolution;
   0,              // INTN        ConsoleMode;
   FALSE,          // BOOLEAN     CustomIcons;
@@ -2971,11 +2971,12 @@ GetEarlyUserSettings (
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
           ThemeX.Theme.takeValueFrom(Prop->string);
-          DBG ("Default theme: %ls\n", ThemeX.Theme.data());
+          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
+          DBG ("Default theme: %ls\n", GlobalConfig.Theme);
           OldChosenTheme = 0xFFFF; //default for embedded
           for (UINTN i = 0; i < ThemesNum; i++) {
             //now comparison is case sensitive
-            if (StriCmp(ThemeX.Theme.data(), ThemesList[i]) == 0) {
+            if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
               OldChosenTheme = i;
               break;
             }
@@ -3831,7 +3832,7 @@ XTheme::GetThemeTagSettings (void* DictP)
 
 
   // if NULL parameter, quit after setting default values, this is embedded theme
-  if (DictPointer == NULL) {
+  if (DictP == NULL) {
     return EFI_SUCCESS;
   }
 
@@ -4869,7 +4870,8 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
   //  DBG("...done\n");
   ThemeX.GetThemeTagSettings(NULL);
 
-  if (ThemesNum > 0) {
+  if (ThemesNum > 0  &&
+      (!GlobalConfig.Theme || StriCmp(GlobalConfig.Theme, L"embedded") != 0)) {
     // Try special theme first
     if (Time != NULL) {
       if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
@@ -4924,19 +4926,24 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
     }
     // Try to get theme from settings
     if (ThemeDict == NULL) {
-      if (ThemeX.Theme.isEmpty()) {
+      if (!GlobalConfig.Theme) {
         if (Time != NULL) {
           DBG ("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-        } else {
-          DBG ("no default theme, get first theme %ls\n", ThemesList[0]);
-        }
-      } else {
-        if (StriCmp(ThemeX.Theme.data(), L"random") == 0) {
           ThemeDict = LoadTheme (ThemesList[Rnd]);
         } else {
-          ThemeDict = LoadTheme (ThemeX.Theme.data());
+          DBG ("no default theme, get first theme %ls\n", ThemesList[0]);
+          ThemeDict = LoadTheme (ThemesList[0]);
+        }
+      } else {
+        if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
+          ThemeDict = LoadTheme (ThemesList[Rnd]);
+        } else {
+          ThemeDict = LoadTheme (GlobalConfig.Theme);
           if (ThemeDict == NULL) {
-            DBG ("GlobalConfig: %ls not found, get embedded theme\n", ThemeX.Theme.data());
+            DBG ("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme);
+          } else {
+            DBG("chosen theme %ls\n", GlobalConfig.Theme);
+            ThemeX.Theme.takeValueFrom(GlobalConfig.Theme);
           }
         }
       }
@@ -4958,7 +4965,7 @@ finish:
       ThemeDir = NULL;
     }
 
-    ThemeX.GetThemeTagSettings(NULL);
+ //   ThemeX.GetThemeTagSettings(NULL); already done
     //fill some fields
     ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
     ThemeX.embedded = true;
@@ -5001,10 +5008,7 @@ finish:
 
 #else
 EFI_STATUS
-InitTheme(
-          BOOLEAN UseThemeDefinedInNVRam,
-          EFI_TIME *Time
-          )
+InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
 {
   EFI_STATUS Status       = EFI_NOT_FOUND;
   UINTN      Size         = 0;
@@ -7325,7 +7329,8 @@ GetUserSettings(
       if (DictPointer != NULL) {
         Prop = GetProperty (DictPointer, "Theme");
         if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
-          ThemeX.Theme.takeValueFrom(Prop->string);
+  //        ThemeX.Theme.takeValueFrom(Prop->string);
+          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
           DBG ("Theme from new config: %ls\n", ThemeX.Theme.data());
         }
       }

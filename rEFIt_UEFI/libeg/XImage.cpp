@@ -501,10 +501,10 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
 
   XImage Top(*this, scale); //can accept 0 as scale
   XImage Background(Width, Height);
-  Background.GetArea(x, y, Width, Height);
-  Background.Compose(0, 0, Top, Opaque);
   UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
   UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
+  Background.GetArea(x, y, AreaWidth, AreaHeight); //it will resize the Background image
+  Background.Compose(0, 0, Top, Opaque);
 
   // prepare protocols
   EFI_STATUS Status;
@@ -524,11 +524,11 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
   if (GraphicsOutput != NULL) {
     GraphicsOutput->Blt(GraphicsOutput, Background.GetPixelPtr(0, 0),
       EfiBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+      0, 0, x, y, AreaWidth, AreaHeight, AreaWidth*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+      0, 0, x, y, AreaWidth, AreaHeight, AreaWidth*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
 }
 

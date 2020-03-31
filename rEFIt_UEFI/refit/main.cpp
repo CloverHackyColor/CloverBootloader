@@ -2255,12 +2255,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfConfigs();
   }
 
+#if USE_XTHEME
+  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
+#endif
+
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
- /*     Status = */GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
- //     if (EFI_ERROR(Status)) {
- //       DBG("Error in Early settings%d: %s\n", i, strerror(Status));
- //     }
+      GetEarlyUserSettings(SelfRootDir, gConfigDict[i]);
     }
   }
 
@@ -2273,9 +2274,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
 
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-#if USE_XTHEME
-  ThemeX.FillByEmbedded();
-#endif
   //DBG("LoadDrivers() start\n");
   LoadDrivers();
   //DBG("LoadDrivers() end\n");

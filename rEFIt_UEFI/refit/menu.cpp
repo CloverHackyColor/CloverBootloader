@@ -3773,11 +3773,11 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
     case MENU_FUNCTION_PAINT_ALL:
   //    DrawMenuText(NULL, 0, 0, 0, 0); //should clean every line to avoid artefacts
-      //    DBG("PAINT_ALL: EntriesPosY=%d MaxVisible=%d\n", EntriesPosY, ScrollState.MaxVisible);
-      //    DBG("DownButton.Height=%d TextHeight=%d\n", DownButton.Height, TextHeight);
+          DBG("PAINT_ALL: EntriesPosY=%lld MaxVisible=%lld\n", EntriesPosY, ScrollState.MaxVisible);
+          DBG("DownButton.Height=%lld TextHeight=%lld\n", DownButton.Height, TextHeight);
       t2 = EntriesPosY + (ScrollState.MaxVisible + 1) * TextHeight - DownButton.Height;
       t1 = EntriesPosX + TextHeight + MenuWidth  + (INTN)((TEXT_XMARGIN + 16) * ThemeX.Scale);
-      //    DBG("PAINT_ALL: %d %d\n", t1, t2);
+          DBG("PAINT_ALL: %lld %lld\n", t1, t2);
       SetBar(t1, EntriesPosY, t2, &ScrollState); //823 302 554
 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
@@ -6873,9 +6873,11 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
-      if ( MainChosenEntry->getLOADER_ENTRY() ) gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
+      if (MainChosenEntry->getLOADER_ENTRY())
+        gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
 //      DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
-      if ( MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
+      if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM())
+        DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
       //      DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
       if (MainChosenEntry->getLOADER_ENTRY()) {
         // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
