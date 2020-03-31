@@ -13,6 +13,18 @@ extern "C" {
 
 #if USE_XTHEME
 
+#ifndef DEBUG_ALL
+#define DEBUG_XTHEME 1
+#else
+#define DEBUG_XTHEME DEBUG_ALL
+#endif
+
+#if DEBUG_XTHEME == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_XTHEME, __VA_ARGS__)
+#endif
+
 
 //temporary
 extern INTN    ScrollWidth;
@@ -340,6 +352,7 @@ void XTheme::ClearScreen() //and restore background and banner
   if (BanHeight < 2) {
     BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
   }
+  egClearScreen(&DarkBackgroundPixel);
   if (!(HideUIFlags & HIDEUI_FLAG_BANNER)) {
     //Banner image prepared before
     if (!Banner.isEmpty()) {
@@ -384,6 +397,7 @@ void XTheme::ClearScreen() //and restore background and banner
   if (!BigBack.isEmpty()) {
     switch (BackgroundScale) {
     case imScale:
+        DBG("back copy scaled\n");
       Background.CopyScaled(BigBack, Scale);
       break;
     case imCrop:
@@ -410,10 +424,12 @@ void XTheme::ClearScreen() //and restore background and banner
         y = UGAHeight;
       }
       //the function can be in XImage class
-/*      egRawCopy(Background.GetPixelPtr(x1, y1),
-                BigBack.GetPixelPtr(x2, y2),
-                x, y, Background.GetWidth(), BigBack.GetWidth()); */
-      Background.Compose(x, y, BigBack, true);
+      egRawCopy((EG_PIXEL*)Background.GetPixelPtr(x1, y1),
+                (EG_PIXEL*)BigBack.GetPixelPtr(x2, y2),
+                x, y, Background.GetWidth(), BigBack.GetWidth());
+//      DBG("crop to x,y: %lld, %lld\n", x, y);
+//      Background.CopyRect(BigBack, x, y);
+      DBG("back copy cropped\n");
       break;
     }
     case imTile:
@@ -426,15 +442,19 @@ void XTheme::ClearScreen() //and restore background and banner
           *p1++ = BigBack.GetPixel((i + x) % BigBack.GetWidth(), (j + y) % BigBack.GetHeight());
         }
       }
+      DBG("back copy tiled\n");
       break;
     }
     case imNone:
     default:
       // already scaled
+      Background = BigBack;
+        DBG("back copy equal\n");
       break;
     }
   }
-  Background.Draw(0, 0);
+//  Background.DrawWithoutCompose(0, 0, UGAWidth, UGAHeight);
+  Background.Draw(0,0,0,false);
   //then draw banner
   if (!Banner.isEmpty()) {
     Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);

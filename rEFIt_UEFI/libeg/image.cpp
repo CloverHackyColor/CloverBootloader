@@ -686,7 +686,7 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
 }
 
 //will be replaced by
-// TmpBuffer.CopyRect(Background, XPos, YPos);
+// CompBase.CopyRect(TopBase, XPos, YPos);
 
 VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
                IN INTN Width, IN INTN Height,

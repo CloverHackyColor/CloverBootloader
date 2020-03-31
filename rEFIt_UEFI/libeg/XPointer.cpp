@@ -116,7 +116,11 @@ VOID XPointer::Draw()
   oldPlace = newPlace;
 //  CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
 // take background image for later to restore background
-  oldImage.GetArea(newPlace);
+  newPlace.Width = PointerImage->GetWidth();
+  newPlace.Height = PointerImage->GetHeight();
+  oldImage.GetArea(newPlace); //GetArea will resize oldImage, so correct newPlace
+  newPlace.Width = oldImage.GetWidth();
+  newPlace.Height = oldImage.GetHeight();
   PointerImage->Draw(newPlace.XPos, newPlace.YPos); //zero means no scale
 }
 
