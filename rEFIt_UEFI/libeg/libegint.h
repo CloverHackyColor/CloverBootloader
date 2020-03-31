@@ -182,11 +182,9 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
 //VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 
 #if USE_XTHEME
-INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XStringW string, UINTN Cursor);
-INTN egRenderText(IN XStringW& Text, IN XImage& CompImage,
+INTN egRenderText(IN const XStringW& Text, OUT XImage* CompImage,
                   IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
 #else
-INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* text, UINTN Cursor);
 INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
 #endif
 

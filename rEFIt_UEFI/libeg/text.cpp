@@ -37,6 +37,7 @@
 
 #include "libegint.h"
 #include "nanosvg.h"
+#include "VectorGraphics.h"
 
 //#include "egemb_font.h"
 //#define FONT_CELL_WIDTH (7)
@@ -312,13 +313,16 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
 }
 
 #if USE_XTHEME
-INTN egRenderText(IN XStringW& Text, IN XImage& CompImage,
+INTN egRenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
                   IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
 #else
 INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                   IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
 #endif
 {
+#if USE_XTHEME
+  XImage& CompImage = *CompImage_ptr;
+#endif
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
   EG_PIXEL        *FirstPixelBuf;
@@ -335,7 +339,7 @@ INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
 #if USE_XTHEME
     INTN ScaledWidth = (INTN)(ThemeX.CharWidth * ThemeX.Scale);
   if (ThemeX.TypeSVG) {
-    return renderSVGtext(CompImage, PosX, PosY, textType, Text, Cursor);
+    return renderSVGtext(&CompImage, PosX, PosY, textType, Text, Cursor);
   }
 #else
     INTN ScaledWidth = (INTN)(GlobalConfig.CharWidth * GlobalConfig.Scale);

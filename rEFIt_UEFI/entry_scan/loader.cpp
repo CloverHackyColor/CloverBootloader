@@ -783,7 +783,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
 #if USE_XTHEME
-  SubScreen->Title = XStringWP("Options for ") + Entry->Title.s() + L" on " + Entry->VolName;
+  SubScreen->Title.SPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
 #else
   //very old mistake!!!
   SubScreen->Title = PoolPrint(L"Options for %s on %s", Entry->Title.s(), Entry->VolName);
@@ -798,7 +798,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
-	SubScreen->AddMenuInfoLine(WPrintf("UUID: %s", strguid(Guid)).wc_str());
+	SubScreen->AddMenuInfoLine(SWPrintf("UUID: %s", strguid(Guid)).wc_str());
   }
   SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
   // loader-specific submenu entries
@@ -2025,7 +2025,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
 #if USE_XTHEME
-            SubScreen->Title = XStringWP("Boot Options for ") + ((Custom->Title != NULL) ? Custom->Title : CustomPath) + L" on " + Entry->VolName;
+            SubScreen->Title.SPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
 #else
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
 #endif
@@ -2035,10 +2035,10 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->ID = Custom->Type + 20;
             SubScreen->AnimeRun = SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-            SubScreen->AddMenuInfoLine(XStringWP(L"Volume size: ") + WPrintf("%lldMb", VolumeSize));
+            SubScreen->AddMenuInfoLine(SWPrintf("Volume size: %lldMb", VolumeSize));
             SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
-              SubScreen->AddMenuInfoLine(WPrintf("UUID: %s", strguid(Guid)).wc_str());
+              SubScreen->AddMenuInfoLine(SWPrintf("UUID: %s", strguid(Guid)).wc_str());
             }
             SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
             DBG("Create sub entries\n");

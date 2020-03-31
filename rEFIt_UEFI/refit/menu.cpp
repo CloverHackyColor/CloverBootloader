@@ -215,11 +215,11 @@ BOOLEAN mGuiReady = FALSE;
 
 
 //REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (XStringWP("Options"),          1, 0, 'O', ActionEnter);
-REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (XStringWP("About Clover"),     1, 0, 'A', ActionEnter);
-REFIT_MENU_ITEM_RESET    MenuEntryReset   (XStringWP("Restart Computer"), 1, 0, 'R', ActionSelect);
-REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(XStringWP("Exit Clover"),      1, 0, 'U', ActionSelect);
-REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (XStringWP("Return"),           0, 0,  0,  ActionEnter);
+REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options"_XSW,          1, 0, 'O', ActionEnter);
+REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover"_XSW,     1, 0, 'A', ActionEnter);
+REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer"_XSW, 1, 0, 'R', ActionSelect);
+REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover"_XSW,      1, 0, 'U', ActionSelect);
+REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return"_XSW,           0, 0,  0,  ActionEnter);
 
 
 
@@ -2611,7 +2611,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
     if (HaveTimeout) {
 #if USE_XTHEME
       //TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText.data(), TimeoutCountdown);
-      XStringW TOMessage = TimeoutText + L" in " + WPrintf("%lld", TimeoutCountdown) + L" seconds";
+      XStringW TOMessage = SWPrintf("%ls in %lld seconds", TimeoutText.wc_str(), TimeoutCountdown);
       ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TOMessage.data());
 //      FreePool(TimeoutMessage);
 #else
@@ -3131,7 +3131,7 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
 
 #if USE_XTHEME
-INTN DrawTextXY(IN XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+INTN DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN      TextWidth = 0;
   INTN      XText = 0;
@@ -3175,7 +3175,7 @@ INTN DrawTextXY(IN XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
   TextBufferXY.Fill(&MenuBackgroundPixel);
 
   // render the text
-  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
+  TextWidth = egRenderText(Text, &TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
 
   if (XAlign != X_IS_LEFT) {
     // shift 64 is prohibited
@@ -3360,11 +3360,11 @@ VOID DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INT
   // render the text
   if (ThemeX.TypeSVG) {
     //clovy - text veltically centred on Height
-    egRenderText(Text, TextBufferX, 0,
+    egRenderText(Text, &TextBufferX, 0,
                  (INTN)((TextHeight - (textFace[TextStyle].size * ThemeX.Scale)) / 2),
                  Cursor, TextStyle);
   } else {
-    egRenderText(Text, TextBufferX, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
+    egRenderText(Text, &TextBufferX, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
   }
   TextBufferX.Draw((INTN)XPos, (INTN)YPos);
 }

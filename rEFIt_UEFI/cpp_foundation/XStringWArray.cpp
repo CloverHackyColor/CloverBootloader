@@ -42,7 +42,7 @@ void XStringWArray::AddStrings(const wchar_t *Val1, ...)
 	va_end(va);
 }
 
-XStringW XStringWArray::ConcatAll(XStringW Separator, XStringW Prefix, XStringW Suffix) const
+XStringW XStringWArray::ConcatAll(const XStringW& Separator, const XStringW& Prefix, const XStringW& Suffix) const
 {
   xsize i;
   XStringW s;

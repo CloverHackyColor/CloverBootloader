@@ -69,6 +69,7 @@ public:
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& GetData() const;
 
   const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& GetPixel(UINTN x, UINTN y) const;
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y) const ;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y);
   UINTN      GetWidth() const;
   UINTN      GetHeight() const;

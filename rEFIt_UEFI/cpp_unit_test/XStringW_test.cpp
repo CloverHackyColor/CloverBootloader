@@ -11,6 +11,9 @@ int XStringW_tests()
 {
 
 #ifdef JIEF_DEBUG
+
+	XStringW a = L"toto"_XSW;
+
 //	DebugLog(2, "XStringW_tests -> Enter\n");
 #endif
 

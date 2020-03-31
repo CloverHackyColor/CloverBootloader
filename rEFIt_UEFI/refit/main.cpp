@@ -2323,10 +2323,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //  DBG("DBG: messages\n");
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
-    XStringW Message = XStringWP("   Welcome to Clover ") + gFirmwareRevision;
+    XStringW Message = SWPrintf("   Welcome to Clover %ls   ", gFirmwareRevision);
     DrawTextXY(Message, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
-    Message = XStringWP("... testing hardware ...");
-    DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+    DrawTextXY(L"... testing hardware ..."_XSW, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", gFirmwareRevision);
     DrawTextXY(FirstMessage, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
@@ -2395,7 +2394,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
-    XStringW Message = XStringWP("... user settings ...");
+    XStringW Message = SWPrintf("... user settings ...");
     DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
     FirstMessage = PoolPrint(L"... user settings ...");
@@ -2472,7 +2471,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
-    XStringW Message = XStringWP("...  scan entries  ...");
+    XStringW Message = SWPrintf("...  scan entries  ...");
     DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
     FirstMessage = PoolPrint(L"...  scan entries  ...");
@@ -2665,7 +2664,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
-        XStringW Message = XStringWP("                          ");
+        XStringW Message = L"                          "_XSW;
         DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
         DrawTextXY(L"                          ", (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);

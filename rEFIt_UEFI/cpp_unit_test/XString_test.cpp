@@ -3,12 +3,21 @@
 #include "../cpp_foundation/utf8Conversion.h"
 #include "global_test.h"
 
-
+template<int m_size>
+class Xtest
+{
+	char m_data[m_size];
+  public:
+	int size() { return m_size; }
+};
 
 int XString_tests()
 {
 
 	XString a = "toto"_XS;
+	
+//	Xtest<5> b;
+//	int bs = b.size();
 	
 #ifdef JIEF_DEBUG
 #endif

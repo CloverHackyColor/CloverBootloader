@@ -28,7 +28,7 @@ class XStringWArray : public XStringWArraySuper
 	bool IsNull() const { return size() == 0 ; }
 	bool NotNull() const { return size() > 0 ; }
 
-	XStringW ConcatAll(XStringW Separator = XStringWP(L", "), XStringW Prefix = XStringWP(L""), XStringW Suffix = XStringWP(L"")) const;
+	XStringW ConcatAll(const XStringW& Separator = L", "_XSW, const XStringW& Prefix = NullXStringW, const XStringW& Suffix = NullXStringW) const;
 
 	bool Equal(const XStringWArray &aStrings) const;
 	bool operator ==(const XStringWArray &aXStrings) const { return Equal(aXStrings); }
@@ -50,6 +50,6 @@ class XStringWArray : public XStringWArraySuper
 };
 
 extern const XStringWArray NullXStringws;
-XStringWArray Split(const XStringW &S, const XStringW &Separator = XStringWP(L", "));
+XStringWArray Split(const XStringW &S, const XStringW &Separator = L", "_XSW);
 
 #endif

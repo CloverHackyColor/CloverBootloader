@@ -586,7 +586,7 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
     Icon NewIcon(i); //initialize with embedded but further replace by loaded
     NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]);
-    NewIcon.ImageNight.LoadXImage(ThemeDir, XStringWP(IconsNames[i]) + XStringWP("_night"));
+    NewIcon.ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
     Icons.AddCopy(NewIcon);
   }
 

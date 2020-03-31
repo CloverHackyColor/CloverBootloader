@@ -97,7 +97,7 @@ wchar_t * XStringW::forgetDataWithoutFreeing()
 	return ret;
 }
 
-const XStringW& XStringW::takeValueFrom(const wchar_t* S)
+const XStringW& XStringW::takeValueFrom(const wchar_t* S, xsize count)
 {
 	if ( !S ) {
 //		DebugLog(2, "takeValueFrom(const wchar_t* S) called with NULL. Use setEmpty()\n");
@@ -105,9 +105,14 @@ const XStringW& XStringW::takeValueFrom(const wchar_t* S)
     Init(0);
     return *this;
 	}
-	Init(wcslen(S));
+	Init(count);
 	StrCpy(S);
 	return *this;
+}
+
+const XStringW& XStringW::takeValueFrom(const wchar_t* S)
+{
+	return takeValueFrom(S, wcslen(S));
 }
 
 const XStringW& XStringW::takeValueFrom(const char* S)
@@ -530,7 +535,15 @@ const XStringW &XStringW::operator +=(const wchar_t *S)
 //                                 Functions
 //-----------------------------------------------------------------------------
 
-XStringW WPrintf(const char* format, ...)
+XStringW operator"" _XSW ( const wchar_t* s, size_t len)
+{
+  XStringW returnValue;
+	if ( len > MAX_XSIZE ) len = MAX_XSIZE;
+	returnValue.takeValueFrom(s, len);
+    return returnValue; // don't do "return returnValue.takeValueFrom(s, len)" because it break the return value optimization.
+}
+
+XStringW SWPrintf(const char* format, ...)
 {
   va_list     va;
   XStringW str;

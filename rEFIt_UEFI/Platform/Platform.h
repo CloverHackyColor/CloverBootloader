@@ -102,6 +102,7 @@ extern "C" {
 #include "../refit/screen.h" // for PauseForKey
 #include "string.h"
 #include "boot.h"
+#include "plist.h"
 //#include "PiBootMode.h"
 #ifndef CLOVERAPPLICATION
 #include "../refit/IO.h"
@@ -749,18 +750,6 @@ struct Symbol {
 };
 
 typedef struct Symbol Symbol, *SymbolPtr;
-
-typedef struct TagStruct {
-
-  UINTN  type;
-  CHAR8  *string;
-  UINT8  *data;
-  UINTN  dataLen;
-  UINTN  offset;
-  struct TagStruct *tag;
-  struct TagStruct *tagNext;
-
-} TagStruct, *TagPtr;
 
 #pragma pack(push)
 #pragma pack(1)
@@ -2177,8 +2166,6 @@ ParseXML (
         UINT32 bufSize
   );
 
-
-EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict);
 
 //VOID RenderSVGfont(NSVGfont  *fontSVG);
 

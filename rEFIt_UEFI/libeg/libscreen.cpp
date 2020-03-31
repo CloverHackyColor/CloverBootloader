@@ -386,7 +386,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     // if it not the first run, just restore resolution   
     if (egScreenWidth  != 0 && egScreenHeight != 0) {
  //       Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
-      XStringW Resolution = WPrintf("%llux%llu", egScreenWidth, egScreenHeight);
+      XStringW Resolution = SWPrintf("%llux%llu", egScreenWidth, egScreenHeight);
 //        if (Resolution) { //no sense
             Status = egSetScreenResolution(Resolution.wc_str());
  //           FreePool(Resolution);
@@ -648,12 +648,12 @@ EFI_STATUS egScreenShot(VOID)
     return EFI_NOT_READY;
   }
   //save file with a first unoccupied name
-  XStringWP CommonName(L"EFI\\CLOVER\\misc\\screenshot");
+//  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot"_XSW);
   for (UINTN Index = 0; Index < 60; Index++) {
 //    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
-    XStringW Name = CommonName + WPrintf("%lld", Index) + L".png";
-    if (!FileExists(SelfRootDir, Name.data())) {
-      Status = egSaveFile(SelfRootDir, Name.data(), FileData, FileDataLength);
+    XStringW Name = SWPrintf("EFI\\CLOVER\\misc\\screenshot%lld.png", Index);
+    if (!FileExists(SelfRootDir, Name.wc_str())) {
+      Status = egSaveFile(SelfRootDir, Name.wc_str(), FileData, FileDataLength);
       if (!EFI_ERROR(Status)) {
         break;
       }

@@ -14,15 +14,15 @@
 
 #define LPATH_SEPARATOR L'\\'
 
-extern UINTN XStringWGrowByDefault;
+extern xsize XStringWGrowByDefault;
 //extern void __GLOBAL__sub_I_XStringW();
 
 class XStringW
 {
 protected:
  	wchar_t *m_data;
-	UINTN m_len;
-	UINTN m_allocatedSize;
+	xsize m_len;
+	xsize m_allocatedSize;
 
 	// convenience method. Did it this way to avoid #define in header. They can have an impact on other headers
 	xsize min(xsize x1, xsize x2) const { if ( x1 < x2 ) return x1; return x2; }
@@ -38,18 +38,18 @@ protected:
 	wchar_t* _data(xisize i) const { if ( i<0 ) panic("wchar_t* data(xisize i) -> i < 0"); if ( (xsize)i >= m_allocatedSize ) panic("wchar_t* data(xisize i) -> i >= m_allocatedSize");  return m_data+i; }
 
 public:
-	void Init(UINTN aSize=0);
+	void Init(xsize aSize=0);
 	XStringW();
 	XStringW(const XStringW &aString);
 //	XStringW(const wchar_t *);
-//	XStringW(const wchar_t* S, UINTN count);
+//	XStringW(const wchar_t* S, xsize count);
 //	XStringW(const wchar_t);
 //	XStringW(const char*);
 
 	~XStringW();
 
 protected:
-	wchar_t *CheckSize(UINTN nNewSize, UINTN nGrowBy = XStringWGrowByDefault);
+	wchar_t *CheckSize(xsize nNewSize, xsize nGrowBy = XStringWGrowByDefault);
 
 public:
 	const wchar_t* wc_str() const { return m_data; } // equivalent as std::string
@@ -60,10 +60,10 @@ public:
 	wchar_t* dataSized(xisize i, xsize sizeMin, xsize nGrowBy=XStringWGrowByDefault) { if ( i<0 ) panic("wchar_t* dataSized(xisize i, xsize sizeMin, xsize nGrowBy) -> i < 0"); CheckSize((xsize)i+sizeMin, nGrowBy); return _data(i); }
 	wchar_t* forgetDataWithoutFreeing();
 
-	UINTN length() const { return m_len; }
-	UINTN size() const { return m_len; }
-	UINTN allocatedSize() const { return m_allocatedSize; }
-	void SetLength(UINTN len);
+	xsize length() const { return m_len; }
+	xsize size() const { return m_len; }
+	xsize allocatedSize() const { return m_allocatedSize; }
+	void SetLength(xsize len);
 	const wchar_t* s() { return m_data; }
 
 	/* Empty ? */
@@ -80,7 +80,7 @@ public:
 	#endif
 	
 	int ToInt() const;
-	UINTN ToUInt() const;
+	xsize ToUInt() const;
 	
 //	XString mbs() const;
 
@@ -105,14 +105,14 @@ public:
 
 	void SetNull() { SetLength(0); };
 
-	void StrnCpy(const wchar_t *buf, UINTN len);
+	void StrnCpy(const wchar_t *buf, xsize len);
 	void StrCpy(const wchar_t *buf);
-	void StrnCat(const wchar_t *buf, UINTN len);
+	void StrnCat(const wchar_t *buf, xsize len);
 	void StrCat(const wchar_t *buf);
 	void StrCat(const XStringW &uneXStringW);
-	void Delete(UINTN pos, UINTN count=1);
+	void Delete(xsize pos, xsize count=1);
 
-	void Insert(UINTN pos, const XStringW& Str);
+	void Insert(xsize pos, const XStringW& Str);
 
 
 	void vSPrintf(const char* format, va_list va);
@@ -128,23 +128,24 @@ public:
 //	const XStringW &operator =(wchar_t);
 
 	const XStringW& takeValueFrom(const wchar_t* S);
+	const XStringW& takeValueFrom(const wchar_t* S, xsize count);
 	const XStringW& takeValueFrom(const char* S);
 
 	const XStringW &operator += (const XStringW &);
 	const XStringW &operator += (const wchar_t* S);
 	const XStringW &operator += (wchar_t);
 
-	XStringW SubString(UINTN pos, UINTN count) const;
-	UINTN IdxOf(wchar_t c, UINTN Pos = 0) const;
-	UINTN IdxOf(const XStringW& S, UINTN Pos = 0) const;
-	UINTN RIdxOf(const wchar_t c, UINTN Pos = MAX_XSIZE) const;
-	UINTN RIdxOf(const XStringW& S, UINTN Pos = MAX_XSIZE) const;
+	XStringW SubString(xsize pos, xsize count) const;
+	xsize IdxOf(wchar_t c, xsize Pos = 0) const;
+	xsize IdxOf(const XStringW& S, xsize Pos = 0) const;
+	xsize RIdxOf(const wchar_t c, xsize Pos = MAX_XSIZE) const;
+	xsize RIdxOf(const XStringW& S, xsize Pos = MAX_XSIZE) const;
 
 	void ToLower(bool FirstCharIsCap = false);
 	bool IsLetters() const;
 	bool IsLettersNoAccent() const;
 	bool IsDigits() const;
-	bool IsDigits(UINTN pos, UINTN count) const;
+	bool IsDigits(xsize pos, xsize count) const;
 
 	bool ExistIn(const XStringW &S) const { return IdxOf(S) != MAX_XSIZE; }
 	void Replace(wchar_t c1, wchar_t c2);
@@ -154,19 +155,19 @@ public:
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
   bool BeginingEqual(const wchar_t* S) const { return (memcmp(data(), S, wcslen(S)) == 0); }
-  bool SubStringEqual(UINTN Pos, const wchar_t* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
+  bool SubStringEqual(xsize Pos, const wchar_t* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
 
 	XStringW basename() const;
 	XStringW dirname() const;
 	
-//	bool ReadFromBuf(const char *buf, UINTN *idx, UINTN count);
-//	bool WriteToBuf(char *buf, UINTN *idx, UINTN count) const;
+//	bool ReadFromBuf(const char *buf, xsize *idx, xsize count);
+//	bool WriteToBuf(char *buf, xsize *idx, xsize count) const;
 //	bool ReadFromFILE(FILE *fp);
 //	bool WriteToFILE(FILE *fp) const;
 	//
 //	bool ReadFromXBuffer(XRBuffer &unXBuffer); // Impossible de mettre le XBuffer en const car il y a une variable d'instance de XBuffer incrémentée par ReadFromXBuffer
 //	void CatToXBuffer(XBuffer *unXBuffer) const;
-//	void WriteToXBuffer(XBuffer *unXBuffer, UINTN *idx) const;
+//	void WriteToXBuffer(XBuffer *unXBuffer, xsize *idx) const;
 
 public:
 	// + operator
@@ -207,15 +208,18 @@ public:
 
 };
 
-//extern const XStringW NullXStringW;
+extern const XStringW NullXStringW;
+
+XStringW operator"" _XSW ( const wchar_t* s, size_t len);
+
 #ifndef _MSC_VER
-XStringW WPrintf(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+XStringW SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
 #else
-XStringW WPrintf(const char* format, ...);
+XStringW SWPrintf(const char* format, ...);
 #endif // !__MSC_VER
 
 
-XStringW SubString(const wchar_t *S, UINTN pos, UINTN count);
+XStringW SubString(const wchar_t *S, xsize pos, xsize count);
 
 XStringW CleanCtrl(const XStringW &S);
 

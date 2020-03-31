@@ -509,7 +509,6 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 EFI_STATUS egScreenShot(VOID);
 
-VOID testSVG(VOID);
 
 #endif /* __LIBEG_LIBEG_H__ */
 

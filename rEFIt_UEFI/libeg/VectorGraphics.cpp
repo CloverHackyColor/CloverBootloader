@@ -12,7 +12,7 @@
 #define TEST_FONT 0
 #define TEST_DITHER 0
 
-
+#include "VectorGraphics.h"
 
 #include "../Platform/Platform.h"
 
@@ -747,8 +747,9 @@ EG_IMAGE * LoadSvgFrame(INTN i)
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
 #if USE_XTHEME
-INTN renderSVGtext(XImage& TextBufferXY, INTN posX, INTN posY, INTN textType, XStringW string, UINTN Cursor)
+INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType, const XStringW& string, UINTN Cursor)
 {
+  XImage& TextBufferXY = *TextBufferXY_ptr;
   INTN Width;
   UINTN i;
   UINTN len;
@@ -1085,7 +1086,7 @@ VOID testSVG()
       FreePool(FileData);
       //   Scale = Height / fontSVG->unitsPerEm;
 #if USE_XTHEME
-      renderSVGtext(TextBufferXY, 0, 0, 3, XStringW().takeValueFrom("Clover Кловер"), 1);
+      renderSVGtext(&TextBufferXY, 0, 0, 3, XStringW().takeValueFrom("Clover Кловер"), 1);
 #else
       renderSVGtext(TextBufferXY, 0, 0, 3, L"Clover Кловер", 1);
 #endif

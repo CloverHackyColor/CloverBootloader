@@ -167,6 +167,11 @@ EFI_GRAPHICS_OUTPUT_BLT_PIXEL* XImage::GetPixelPtr(UINTN x, UINTN y)
 	return &PixelData[x + y * Width];
 }
 
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* XImage::GetPixelPtr(UINTN x, UINTN y) const
+{
+	return &PixelData[x + y * Width];
+}
+
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& XImage::GetPixel(UINTN x, UINTN y) const
 {
 	return PixelData[x + y * Width];
@@ -544,12 +549,12 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
  */
 EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const char* IconName)
 {
-  return LoadXImage(BaseDir, XStringWP(IconName));
+  return LoadXImage(BaseDir, XStringW().takeValueFrom(IconName));
 }
 
 EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const wchar_t* LIconName)
 {
-  return LoadXImage(BaseDir, XStringWP(LIconName));
+  return LoadXImage(BaseDir, XStringW().takeValueFrom(LIconName));
 }
 //dont call this procedure for SVG theme BaseDir == NULL?
 EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)

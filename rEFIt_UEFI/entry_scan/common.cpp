@@ -489,7 +489,7 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
 //  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
 //  { 0, 0, 0, 0 }, NULL};
 #if USE_XTHEME
-STATIC REFIT_MENU_SCREEN  InitialMenu(0, XStringWP(L"Please Select File..."), XStringW());
+STATIC REFIT_MENU_SCREEN  InitialMenu(0, L"Please Select File..."_XSW, XStringW());
 #else
 STATIC REFIT_MENU_SCREEN InitialMenu(0, L"Please Select File...", NULL);
 #endif
@@ -517,7 +517,7 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
         ((Volume->DevicePathString == NULL) && (Volume->VolName == NULL))) {
       continue;
     }
-    REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG(XStringWP((Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName), TAG_OFFSET + Index, MENU_EXIT_ENTER);
+	  REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG(SWPrintf("%ls", (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName), TAG_OFFSET + Index, MENU_EXIT_ENTER);
 //    Entry = Entries[Count++] = EntryPtr++;
 //    Entry->Title = (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName;
 //    Entry->Tag = TAG_OFFSET + Index;
