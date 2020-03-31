@@ -438,7 +438,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   float ScaleF = UGAHeight / SVGimage->height;
   DBG("using scale %f\n", ScaleF);
-  /*ThemeX.*/ Scale = ScaleF;
+  Scale = ScaleF;
   CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
   if (mainParser->font) {
@@ -456,7 +456,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   if (EFI_ERROR(Status)) {
     Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, Scale, &BigBack);
   }
-  DBG(" Background parsed\n");
+  DBG(" Background parsed [%lld, %lld]\n", BigBack.GetWidth(), BigBack.GetHeight());
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
@@ -479,7 +479,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     Icon NewIcon(i); //initialize with embedded but further replace by loaded
     ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, &NewIcon.Image);
     ParseSVGXIcon(mainParser, i, NewIcon.Name + "_night", Scale, &NewIcon.ImageNight);
-    ThemeX.Icons.AddCopy(NewIcon);
+    Icons.AddCopy(NewIcon);
   }
 
 

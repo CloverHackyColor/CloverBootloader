@@ -4884,7 +4884,12 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
         ThemeDict = LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
           DBG ("special theme %ls found and %ls parsed\n", TestTheme, CONFIG_THEME_FILENAME);
-          ThemeX.Theme.takeValueFrom(TestTheme);
+//          ThemeX.Theme.takeValueFrom(TestTheme);
+          if (GlobalConfig.Theme) {
+            FreePool (GlobalConfig.Theme);
+          }
+          GlobalConfig.Theme = TestTheme;
+
         } else { // special theme not loaded
           DBG ("special theme %ls not found, skipping\n", TestTheme/*, CONFIG_THEME_FILENAME*/);
           FreePool (TestTheme);
@@ -4909,10 +4914,14 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
           ThemeDict = LoadTheme (TestTheme);
           if (ThemeDict != NULL) {
             DBG ("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
-            ThemeX.Theme.takeValueFrom(TestTheme);
+//            ThemeX.Theme.takeValueFrom(TestTheme);
+            if (GlobalConfig.Theme) {
+              FreePool (GlobalConfig.Theme);
+            }
+            GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
-            if (!ThemeX.Theme.isEmpty()) {
-              DBG ("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, ThemeX.Theme.data());
+            if (GlobalConfig.Theme) {
+              DBG ("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, GlobalConfig.Theme);
             } else {
               DBG ("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
@@ -4943,7 +4952,6 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
             DBG ("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme);
           } else {
             DBG("chosen theme %ls\n", GlobalConfig.Theme);
-            ThemeX.Theme.takeValueFrom(GlobalConfig.Theme);
           }
         }
       }
@@ -4971,6 +4979,8 @@ finish:
     ThemeX.embedded = true;
     Status = StartupSoundPlay(ThemeDir, NULL);
   } else { // theme loaded successfully
+    ThemeX.embedded = false;
+    ThemeX.Theme.takeValueFrom(GlobalConfig.Theme);
     // read theme settings
     if (!ThemeX.TypeSVG) {
       TagPtr DictPointer = GetProperty(ThemeDict, "Theme");
