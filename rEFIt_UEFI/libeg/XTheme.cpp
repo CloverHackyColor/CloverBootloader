@@ -478,76 +478,80 @@ void XTheme::InitSelection() //for PNG theme
   if (!SelectionImages[0].isEmpty()) { //already presents
     return;
   }
-  // load small selection image
-  if (!TypeSVG && SelectionImages[2].isEmpty()){
-    SelectionImages[2].LoadXImage(ThemeDir, SelectionSmallFileName);
-  }
-  if (!TypeSVG && SelectionImages[2].isEmpty()){
-//    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
-//    SelectionImages[2]->HasAlpha = FALSE; // support transparensy for selection icons
-    if (Daylight) {
-      SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_selection_small), ACCESS_EMB_SIZE(emb_selection_small));
-    } else {
-      SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_small), ACCESS_EMB_SIZE(emb_dark_selection_small));
-    }
-//    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL)); //why???
-  }
-  //cut or extend the image by Compose
-/*  SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
-                                         row1TileSize, row1TileSize, &MenuBackgroundPixel);
-  if (SelectionImages[2] == NULL) {
-    return;
-  } */
 
-  // load big selection image
-  if (!TypeSVG && SelectionImages[0].isEmpty()) {
-    SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
- //   SelectionImages[0].EnsureImageSize(row0TileSize, row0TileSize, &MenuBackgroundPixel);
-  }
-  if (!TypeSVG && SelectionImages[0].isEmpty()) {
-    // calculate big selection image from small one
-//    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
-    if (Daylight) {
-      SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_selection_big), ACCESS_EMB_SIZE(emb_selection_big));
-    } else {
-      SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_big), ACCESS_EMB_SIZE(emb_dark_selection_big));
-    }
-//    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
-    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+  if (TypeSVG) {
+    SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
+    SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
     if (SelectionImages[0].isEmpty()) {
-      SelectionImages[2].setEmpty();
-      return;
+      SelectionImages[0] = SelectionImages[2]; //use same selection if OnTop for example
     }
-//    if (SelectionOnTop) {
-//      SelectionImages[0]->HasAlpha = TRUE; // TODO ?
-//      SelectionImages[2]->HasAlpha = TRUE;
-//    }
+  } else {
+    // load small selection image
+    if (SelectionImages[2].isEmpty()){
+      SelectionImages[2].LoadXImage(ThemeDir, SelectionSmallFileName);
+    }
+    if (SelectionImages[2].isEmpty()){
+      //    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
+      //    SelectionImages[2]->HasAlpha = FALSE; // support transparensy for selection icons
+      if (Daylight) {
+        SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_selection_small), ACCESS_EMB_SIZE(emb_selection_small));
+      } else {
+        SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_small), ACCESS_EMB_SIZE(emb_dark_selection_small));
+      }
+      //    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL)); //why???
+    }
+    //cut or extend the image by Compose
+    /*  SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
+     row1TileSize, row1TileSize, &MenuBackgroundPixel);
+     if (SelectionImages[2] == NULL) {
+     return;
+     } */
+
+    // load big selection image
+    if (SelectionImages[0].isEmpty()) {
+      SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
+      //   SelectionImages[0].EnsureImageSize(row0TileSize, row0TileSize, &MenuBackgroundPixel);
+    }
+    if (SelectionImages[0].isEmpty()) {
+      // calculate big selection image from small one
+      //    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
+      if (Daylight) {
+        SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_selection_big), ACCESS_EMB_SIZE(emb_selection_big));
+      } else {
+        SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_big), ACCESS_EMB_SIZE(emb_dark_selection_big));
+      }
+      //    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
+      //CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+      BlueBackgroundPixel = StdBackgroundPixel;
+      if (SelectionImages[0].isEmpty()) {
+        SelectionImages[2].setEmpty();
+        return;
+      }
+      //    if (SelectionOnTop) {
+      //      SelectionImages[0]->HasAlpha = TRUE; // TODO ?
+      //      SelectionImages[2]->HasAlpha = TRUE;
+      //    }
+    }
   }
-  
   // BootCampStyle indicator image
   if (BootCampStyle) {
     // load indicator selection image
     if (!TypeSVG && SelectionImages[4].isEmpty()) {
       SelectionImages[4].LoadXImage(ThemeDir, SelectionIndicatorName);
     }
-    if (!SelectionImages[4].isEmpty()) {
-      SelectionImages[4].FromPNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator));     
+    if (SelectionImages[4].isEmpty()) {
+      SelectionImages[4].FromPNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator));
     }
     INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
-//    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
+    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, MenuBackgroundPixel);
     if (SelectionImages[4].isEmpty()) {
 //      SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
 //                                               TRUE, &StdBackgroundPixel);
       SelectionImages[4] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
       SelectionImages[4].Fill(StdBackgroundPixel);
-
-
     }
- //   SelectionImages[5] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
- //                                            TRUE, &MenuBackgroundPixel);
     SelectionImages[5] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
     SelectionImages[5].Fill(MenuBackgroundPixel);
-
   }
   
   /*
@@ -567,34 +571,41 @@ void XTheme::InitSelection() //for PNG theme
   //DECLARE_EMB_EXTERN_WITH_SIZE(emb_checkbox_checked)
   //DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_font_data)
 
-
-  Status = Buttons[0].LoadXImage(ThemeDir, "radio_button");
-  if (EFI_ERROR(Status)) {
-    Buttons[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
-  }
-  Status = Buttons[1].LoadXImage(ThemeDir, "radio_button_selected");
-  if (EFI_ERROR(Status)) {
-    Buttons[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
-  }
-  Status = Buttons[2].LoadXImage(ThemeDir, "checkbox");
-  if (EFI_ERROR(Status)) {
-    Buttons[2].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
-  }
-  Status = Buttons[3].LoadXImage(ThemeDir, "checkbox_checked");
-  if (EFI_ERROR(Status)) {
-    Buttons[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
+  if (!TypeSVG) { //SVG theme already parsed buttons
+    Status = Buttons[0].LoadXImage(ThemeDir, "radio_button");
+    if (EFI_ERROR(Status)) {
+      Buttons[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
+    }
+    Status = Buttons[1].LoadXImage(ThemeDir, "radio_button_selected");
+    if (EFI_ERROR(Status)) {
+      Buttons[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
+    }
+    Status = Buttons[2].LoadXImage(ThemeDir, "checkbox");
+    if (EFI_ERROR(Status)) {
+      Buttons[2].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
+    }
+    Status = Buttons[3].LoadXImage(ThemeDir, "checkbox_checked");
+    if (EFI_ERROR(Status)) {
+      Buttons[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
+    }
+  } else {
+    Buttons[0] = GetIcon("radio_button");
+    Buttons[1] = GetIcon("radio_button_selected");
+    Buttons[2] = GetIcon("checkbox");
+    Buttons[3] = GetIcon("checkbox_checked");
   }
 
   // non-selected background images
 
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
-  if (!SelectionBigFileName.isEmpty()) {
+  if (!TypeSVG && !SelectionBigFileName.isEmpty()) {
     BackgroundPixel = { 0x00, 0x00, 0x00, 0x00 };
   } else if (DarkEmbedded || TypeSVG) {
-    BackgroundPixel = { 0x33, 0x33, 0x33, 0xff };
-  } else {
+    BackgroundPixel = { 0x33, 0x33, 0x33, 0x00 };
+  } else { //for example embedded daylight
     BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
   }
+
   SelectionImages[1] = XImage(row0TileSize, row0TileSize);
   SelectionImages[1].Fill(BackgroundPixel);
   SelectionImages[3] = XImage(row1TileSize, row1TileSize);

@@ -514,16 +514,16 @@ extern INTN row1TileSize;
 #endif
 extern const INTN BCSMargin;
 #if USE_XTHEME
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel;
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel;
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel;
 extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlueBackgroundPixel;
-//extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkBackgroundPixel;
+//extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkBackgroundPixel;
 extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel;
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel;
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel;
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel;
-extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel;
+extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel;
 
 
 #else

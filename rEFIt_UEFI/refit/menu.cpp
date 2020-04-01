@@ -4564,7 +4564,7 @@ VOID XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN 
   XImage TmpBuffer(Width, Height);
 //  TmpBuffer.CopyScaled(Background, 1.f);
   INTN X = XPos - (Width >> 1);  //X_IS_CENTRE
-  TmpBuffer.CopyRect(Background, X, YPos);
+  TmpBuffer.CopyRect(Background, X, YPos); //a part of BackGround image
   TmpBuffer.DrawWithoutCompose(X, YPos);
 //  TmpBuffer.Draw(X, YPos, 0, true);
 }

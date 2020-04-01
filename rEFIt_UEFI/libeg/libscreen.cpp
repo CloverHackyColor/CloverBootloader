@@ -515,8 +515,9 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
 // Drawing to the screen
 //
 #if USE_XTHEME
-VOID egClearScreen(IN void *Color)
+VOID egClearScreen(IN const void *Color)
 {
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL  FillColor = *(EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Color;
   if (!egHasGraphics)
     return;
 
@@ -524,10 +525,10 @@ VOID egClearScreen(IN void *Color)
     // EFI_GRAPHICS_OUTPUT_BLT_PIXEL and EFI_UGA_PIXEL have the same
     // layout, and the header from TianoCore actually defines them
     // to be the same type.
-    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Color, EfiBltVideoFill,
+    GraphicsOutput->Blt(GraphicsOutput, &FillColor, EfiBltVideoFill,
                         0, 0, 0, 0, egScreenWidth, egScreenHeight, 0);
   } else if (UgaDraw != NULL) {
-    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL*)Color, EfiUgaVideoFill,
+    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL*)&FillColor, EfiUgaVideoFill,
                  0, 0, 0, 0, egScreenWidth, egScreenHeight, 0);
   }
 }

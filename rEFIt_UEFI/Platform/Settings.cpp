@@ -4999,6 +4999,8 @@ finish:
         Status = ThemeX.GetThemeTagSettings((void*)DictPointer);
         if (EFI_ERROR (Status)) {
           DBG ("Config theme error: %s\n", strerror(Status));
+        } else {
+          ThemeX.FillByDir();
         }
       }
     }

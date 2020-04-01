@@ -47,7 +47,7 @@
 #define DBG(...) DebugLog(DEBUG_BOOT_SCREEN, __VA_ARGS__)
 #endif
 
-STATIC EG_PIXEL grayBackgroundPixel = { 0xBF, 0xBF, 0xBF, 0xFF };
+STATIC const EG_PIXEL grayBackgroundPixel = { 0xBF, 0xBF, 0xBF, 0xFF };
 STATIC UINT8 grayAppleLogo[] = {
    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
    0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x00, 0x5F, 0x08, 0x06, 0x00, 0x00, 0x00, 0x7F, 0x47, 0x40,
@@ -415,7 +415,7 @@ STATIC UINT8 grayAppleLogo[] = {
    0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82, 0x82,
 };
 
-STATIC EG_PIXEL blackBackgroundPixel = { 0x00, 0x00, 0x00, 0xFF };
+STATIC const EG_PIXEL blackBackgroundPixel = { 0x00, 0x00, 0x00, 0xFF };
 STATIC UINT8 whiteAppleLogo[] = {
    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
    0x00, 0x00, 0x00, 0x54, 0x00, 0x00, 0x00, 0x67, 0x08, 0x06, 0x00, 0x00, 0x00, 0x9E, 0x85, 0x65,
@@ -730,10 +730,14 @@ CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode)
 EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 {
   EG_PIXEL *backgroundPixel = (EG_PIXEL *)&Entry->BootBgColor;
+  EG_PIXEL thePixel = {0,0,0,0};
   EG_IMAGE *logo = NULL;
   INTN      screenWidth, screenHeight;
   UINT8     customBoot = Entry->CustomBoot;
 
+  if (backgroundPixel == NULL) {
+    backgroundPixel = &thePixel;
+  }
   if (OSFLAG_ISUNSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     DBG("Custom boot screen not used because entry has unset use graphics\n");
     return EFI_ABORTED;
@@ -756,18 +760,14 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   case CUSTOM_BOOT_APPLE:
      // Gray on gray apple
      logo = egDecodePNG(grayAppleLogo, sizeof(grayAppleLogo), TRUE);
-     if (backgroundPixel == NULL) {
-       backgroundPixel = &grayBackgroundPixel;
-     }
+     thePixel = grayBackgroundPixel;
      DBG("Custom boot is using apple logo\n");
      break;
 
   case CUSTOM_BOOT_ALT_APPLE:
      // Alternate white on black apple
      logo = egDecodePNG(whiteAppleLogo, sizeof(whiteAppleLogo), TRUE);
-     if (backgroundPixel == NULL) {
-        backgroundPixel = &blackBackgroundPixel;
-     }
+     thePixel = blackBackgroundPixel;
      DBG("Custom boot is using alternate logo\n");
      break;
 
@@ -779,9 +779,7 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   case CUSTOM_BOOT_USER:
      // Custom user logo
      if (logo != NULL) {
-        if (backgroundPixel == NULL) {
-          backgroundPixel = &grayBackgroundPixel;
-        }
+       thePixel = grayBackgroundPixel;
         DBG("Custom boot is using custom logo\n");
         break;
      }

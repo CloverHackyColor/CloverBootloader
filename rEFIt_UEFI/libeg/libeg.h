@@ -38,7 +38,7 @@
 #define __LIBEG_LIBEG_H__
 
 #ifndef USE_XTHEME
-#define USE_XTHEME 0
+#define USE_XTHEME 1
 #endif
 
 #ifdef __cplusplus
@@ -497,7 +497,7 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
 VOID PrepareFont(VOID);
 VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
 #if USE_XTHEME
-VOID egClearScreen(IN void *Color);
+VOID egClearScreen(IN const void *Color);
 #else
 VOID egClearScreen(IN EG_PIXEL *Color);
 #endif

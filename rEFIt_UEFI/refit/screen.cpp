@@ -81,15 +81,15 @@ BOOLEAN AllowGraphicsMode;
 
 EG_RECT  BannerPlace; // default ctor called, so it's zero
 #if USE_XTHEME
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
+const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
 #else
 
