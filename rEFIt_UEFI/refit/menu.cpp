@@ -3206,7 +3206,7 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
 
   //  DBG("draw text %ls\n", Text);
   //  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
-  TextBufferXY.Draw(XText, YPos);
+  TextBufferXY.Draw(XText, YPos, 0, false);
 //  TextBufferXY.DrawWithoutCompose(XText, YPos);
   return TextWidth2;
 }
@@ -4446,13 +4446,13 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   XImage& TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
 
   if(ThemeX.SelectionOnTop) {
-    MainImage.Draw(XPos, YPos, fScale);
-    BadgeImage.Draw(XPos, YPos, fScale);
-    TopImage.Draw(XPos, YPos, fScale);
+    MainImage.Draw(XPos, YPos, fScale, false);
+    BadgeImage.Draw(XPos, YPos, fScale, false);
+    TopImage.Draw(XPos, YPos, fScale, false);
   } else {
-    TopImage.Draw(XPos, YPos, fScale);
-    MainImage.Draw(XPos, YPos, fScale);
-    BadgeImage.Draw(XPos, YPos, fScale);
+    TopImage.Draw(XPos, YPos, fScale, false);
+    MainImage.Draw(XPos, YPos, fScale, false);
+    BadgeImage.Draw(XPos, YPos, fScale, false);
   }
 
   // draw BCS indicator
@@ -4468,7 +4468,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
 //                    &MenuBackgroundPixel, Scale);
       TopImage = ThemeX.SelectionImages[4 + (selected ? 0 : 1)];
       TopImage.Draw(XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale),
-                    row0PosY + ThemeX.row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale);
+                    row0PosY + ThemeX.row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale, false);
     }
   }
 
