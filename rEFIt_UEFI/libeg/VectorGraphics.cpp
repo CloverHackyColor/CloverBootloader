@@ -1005,7 +1005,7 @@ VOID testSVG()
 #endif
 #if TEST_SVG_IMAGE
     NSVGrasterizer* rast = nsvgCreateRasterizer();
-    EG_IMAGE        *NewImage;
+//    EG_IMAGE        *NewImage;
     NSVGimage       *SVGimage;
     float Scale, ScaleX, ScaleY;
 
@@ -1028,7 +1028,11 @@ VOID testSVG()
       }
 */
       // Rasterize
-      NewImage = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
+#if USE_XTHEME
+      XImage NewImage(Width, Height);
+#else
+      EG_IMAGE *NewImage = egCreateFilledImage(Width, Height, TRUE, &MenuBackgroundPixel);
+#endif
       if (SVGimage->width <= 0) SVGimage->width = (float)Width;
       if (SVGimage->height <= 0) SVGimage->height = (float)Height;
 
@@ -1038,23 +1042,26 @@ VOID testSVG()
       float tx = 0; //-SVGimage->realBounds[0] * Scale;
       float ty = 0; //-SVGimage->realBounds[1] * Scale;
 		DBG("timing rasterize start tx=%f ty=%f\n", tx, ty);
+#if USE_XTHEME
+
+      nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage.GetPixelPtr(0,0), (int)Width, (int)Height, (int)Width*4);
+      DBG("timing rasterize end\n");
+      NewImage.Draw((UGAWidth - Width) / 2,
+                (UGAHeight - Height) / 2);
+#else
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       //now show it!
-#if 1 //test XImage
+
       XImage NewX(NewImage);
       NewX.Draw((UGAWidth - Width) / 2,
         (UGAHeight - Height) / 2);
-#else
-      BltImageAlpha(NewImage,
-                    (UGAWidth - Width) / 2,
-                    (UGAHeight - Height) / 2,
-                    &MenuBackgroundPixel,
-                    16);
+      egFreeImage(NewImage);
+
 #endif //test XImage
       FreePool(FileData);
       FileData = NULL;
-      egFreeImage(NewImage);
+//
 //      nsvg__deleteParser(p);
       nsvgDeleteRasterizer(rast);
 

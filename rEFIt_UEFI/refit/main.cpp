@@ -533,7 +533,7 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CONST CHAR16
 //
 // EFI OS loader functions
 //
-EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0xFF };
+//EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0xFF };
 
 VOID CheckEmptyFB()
 {
@@ -645,8 +645,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     DBG("Image is not loaded, status=%s\n", strerror(Status));
     return; // no reason to continue if loading image failed
   }
+#if USE_XTHEME
+  egClearScreen(&Entry->BootBgColor); //if not set then it is already MenuBackgroundPixel
+#else
+  egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &MenuBackgroundPixel);
+#endif
 
-  egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &DarkBackgroundPixel);
 //  KillMouse();
 
 //  if (Entry->LoaderType == OSTYPE_OSX) {
@@ -1021,14 +1025,17 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
       RemoveStartupDiskVolume();
     }
 
-    egClearScreen(&DarkBackgroundPixel);
-    BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
+
 #if USE_XTHEME
+  egClearScreen(&MenuBackgroundPixel);
+  BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
   BootLogoX.LoadXImage(ThemeDir, Entry->Volume->LegacyOS->IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
 #else
+  egClearScreen(&MenuBackgroundPixel);
+  BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
   EG_IMAGE *BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
   if (BootLogoImage != NULL) {
     BltImageAlpha(BootLogoImage,
@@ -1073,7 +1080,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
 {
   DBG("Start Tool: %ls\n", Entry->LoaderPath);
-  egClearScreen(&DarkBackgroundPixel);
+  egClearScreen(&MenuBackgroundPixel);
 	// assumes "Start <title>" as assigned below
 	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
@@ -2022,7 +2029,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
   BOOLEAN           HaveDefaultVolume;
-#if !USE_XTHEME
+#if USE_XTHEME
+  REFIT_MENU_SCREEN BootScreen;
+  BootScreen.isBootScreen = true; //other screens will be constructed as false
+#else
   CHAR16            *FirstMessage;
 #endif
   // CHAR16            *InputBuffer; //, *Y;
@@ -2085,7 +2095,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
   construct_globals_objects(); // do this after SelfLoadedImage is initialized
-	all_tests();
+//	all_tests();
 
   //dumping SETTING structure
   // if you change something in Platform.h, please uncomment and test that all offsets
@@ -2322,8 +2332,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
     XStringW Message = SWPrintf("   Welcome to Clover %ls   ", gFirmwareRevision);
-    DrawTextXY(Message, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
-    DrawTextXY(L"... testing hardware ..."_XSW, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+    BootScreen.DrawTextXY(Message, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
+    BootScreen.DrawTextXY(L"... testing hardware ..."_XSW, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
     FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", gFirmwareRevision);
     DrawTextXY(FirstMessage, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
@@ -2393,7 +2403,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
     XStringW Message = SWPrintf("... user settings ...");
-    DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+    BootScreen.EraseTextXY();
+    BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
     FirstMessage = PoolPrint(L"... user settings ...");
  //   i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
@@ -2470,7 +2481,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
     XStringW Message = SWPrintf("...  scan entries  ...");
-    DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+    BootScreen.EraseTextXY();
+    BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
     FirstMessage = PoolPrint(L"...  scan entries  ...");
     DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2662,8 +2674,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 #if USE_XTHEME
-        XStringW Message = L"                          "_XSW;
-        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
+//        XStringW Message = L"                          "_XSW;
+        BootScreen.EraseTextXY();
+//        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #else
         DrawTextXY(L"                          ", (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
 #endif
@@ -2678,7 +2691,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
     DefaultIndex = FindDefaultEntry();
-	  DBG("DefaultIndex=%lld and MainMenu.Entries.size()=%llu\n", DefaultIndex, MainMenu.Entries.size());
+//	  DBG("DefaultIndex=%lld and MainMenu.Entries.size()=%llu\n", DefaultIndex, MainMenu.Entries.size());
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.Entries.size())) {
       DefaultEntry = &MainMenu.Entries[DefaultIndex];
     } else {
@@ -2715,7 +2728,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainMenu.AnimeRun = MainAnime;
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
-		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
+//		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {

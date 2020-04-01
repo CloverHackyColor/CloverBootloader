@@ -15,6 +15,7 @@
 #define DBG(...) DebugLog(DEBUG_XIMAGE, __VA_ARGS__)
 #endif
 
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL NullColor = {0,0,0,0};
 
 XImage::XImage()
 {
@@ -64,7 +65,7 @@ XImage& XImage::operator= (const XImage& other)
 	return *this;
 }
 
-UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
+UINT8 XImage::Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
 {
   return (UINT8)((*(p + a01) * (scale - dx) * 3.f + *(p + a10) * (scale - dy) * 3.f + *(p + a21) * dx * 3.f +
     *(p + a12) * dy * 3.f + *(p) * 2.f *scale) / (scale * 8.f));
@@ -370,6 +371,7 @@ EFI_STATUS XImage::FromSVG(const CHAR8 *SVGData, float scale)
 
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   if (!rast) return EFI_UNSUPPORTED;
+  //we have to copy input data because nanosvg wants to change it
   char *input = (__typeof__(input))AllocateCopyPool(AsciiStrSize(SVGData), SVGData);
   if (!input) return EFI_DEVICE_ERROR;
 
@@ -398,6 +400,7 @@ EFI_STATUS XImage::FromSVG(const CHAR8 *SVGData, float scale)
  * the rect will be clipped if it intersects the screen edge
  *
  * be careful about alpha. This procedure can produce alpha = 0 which means full transparent
+ * No! Anuway alpha should be corrected to 0xFF
  */
 void XImage::GetArea(const EG_RECT& Rect)
 {
@@ -447,6 +450,12 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
       (EFI_UGA_PIXEL *)GetPixelPtr(0,0),
       EfiUgaVideoToBltBuffer,
       x, y, 0, 0, Width, Height, 0); //Width*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+  }
+  //fix alpha
+  UINTN ImageSize = (Width * Height);
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL* Pixel = GetPixelPtr(0,0);
+  for (UINTN i = 0; i < ImageSize; ++i) {
+    (Pixel++)->Reserved = 0xFF;
   }
 }
 
@@ -602,6 +611,11 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 
 //EnsureImageSize should create new object with new sizes
 //while compose uses old object
+void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight)
+{
+
+  EnsureImageSize(NewWidth, NewHeight, NullColor);
+}
 void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
 {
   if (NewWidth == Width && NewHeight == Height)

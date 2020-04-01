@@ -496,8 +496,13 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
 VOID PrepareFont(VOID);
 VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
-
+#if USE_XTHEME
+VOID egClearScreen(IN void *Color);
+#else
 VOID egClearScreen(IN EG_PIXEL *Color);
+#endif
+
+
 //VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY);
 // will be replaced by XImage.Draw(ScreenPosX, ScreenPosY, 1.f); assuming Area* = 0
 VOID egDrawImageArea(IN EG_IMAGE *Image,

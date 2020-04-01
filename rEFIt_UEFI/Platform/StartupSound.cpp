@@ -149,7 +149,8 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   DBG(" sound channels=%d bits=%d freq=%d\n", WaveData.Format->Channels, WaveData.Format->BitsPerSample, WaveData.Format->SamplesPerSec);
 
   if (!WaveData.SamplesLength || !OutputVolume) {
-    DBG("nothing to play\n");
+//    DBG("nothing to play\n");
+    Status = EFI_NOT_FOUND;
     goto DONE_ERROR;
   }
 
@@ -162,7 +163,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
     INT16 *Ptr = (INT16*)WaveData.Samples;
     if (!Ptr) {
       Status = EFI_NOT_FOUND;
-      DBG("not found wave data\n");
+ //     DBG("not found wave data\n");
       goto DONE_ERROR;
     }
     TempData = (__typeof__(TempData))AllocateZeroPool(Len * sizeof(INT16));
@@ -187,8 +188,8 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   }
 
   if (!AudioIo) {
-    Status = EFI_NOT_FOUND;
-    DBG("not found AudioIo to play\n");
+    Status = EFI_DEVICE_ERROR;
+//    DBG("not found AudioIo to play\n");
     goto DONE_ERROR;
   }
 
@@ -222,7 +223,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
 
 DONE_ERROR:
   if (FileData && SoundFile) {  //dont free embedded sound
-    DBG("free sound\n");
+//    DBG("free sound\n");
     FreePool(FileData);
   }
   DBG("sound play end with status=%s\n", strerror(Status));

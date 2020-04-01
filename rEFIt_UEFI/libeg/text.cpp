@@ -239,7 +239,12 @@ VOID PrepareFont()
   
   // load the font
   if (FontImage == NULL){
-    DBG("load font image type %d\n", GlobalConfig.Font);
+#if USE_XTHEME
+     DBG("load font image type %d\n", ThemeX.Font);
+#else
+     DBG("load font image type %d\n", GlobalConfig.Font);
+#endif
+
     FontImage = egLoadFontImage(TRUE, 16, 16); //anyway success
   }
   
@@ -257,6 +262,8 @@ VOID PrepareFont()
         }
       }
     }
+    DBG("Font %d prepared WxH=%lldx%lld CharWidth=%lld\n", ThemeX.Font, FontWidth, FontHeight, ThemeX.CharWidth);
+
 #else
     if (GlobalConfig.Font == FONT_GRAY) {
       //invert the font. embedded is dark
@@ -270,10 +277,11 @@ VOID PrepareFont()
         }
       }
     }
+    DBG("Font %d prepared WxH=%lldx%lld CharWidth=%lld\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
+
 #endif
     
 //    TextHeight = FontHeight + TEXT_YMARGIN * 2;
-	  DBG("Font %d prepared WxH=%lldx%lld CharWidth=%lld\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
   } else {
     DBG("Failed to load font\n");
   }

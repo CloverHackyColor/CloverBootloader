@@ -404,6 +404,24 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   }
   return Status;
 }
+#if USE_XTHEME
+STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
+                                       IN CONST CHAR16 *LoaderOptions,
+                                       IN CONST CHAR16 *FullTitle,
+                                       IN CONST CHAR16 *LoaderTitle,
+                                       IN REFIT_VOLUME *Volume,
+                                       IN EG_IMAGE *Image,
+                                       IN EG_IMAGE *DriveImage,
+                                       IN UINT8 OSType,
+                                       IN UINT8 Flags,
+                                       IN CHAR16 Hotkey,
+                                       EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor,
+                                       IN UINT8 CustomBoot,
+                                       IN EG_IMAGE *CustomLogo,
+                                       IN KERNEL_AND_KEXT_PATCHES *Patches,
+                                       IN BOOLEAN CustomEntry)
+
+#else
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                        IN CONST CHAR16 *LoaderOptions,
@@ -420,6 +438,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                        IN EG_IMAGE *CustomLogo,
                                        IN KERNEL_AND_KEXT_PATCHES *Patches,
                                        IN BOOLEAN CustomEntry)
+#endif
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CONST CHAR16          *LoaderDevicePathString;
@@ -729,6 +748,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       // DBG(" Show badge as OSImage.");
     }
   }
+  Entry->BootBgColor = BootBgColor;
 #else
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
@@ -739,10 +759,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         // DBG(" Show badge as OSImage.");
     }
   }
-#endif
   if (BootBgColor != NULL) {
-    Entry->BootBgColor = BootBgColor;
+    Entry->BootBgColor = BootBgColor; //copy pointer
   }
+
+#endif
 
   Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
 #ifdef DUMP_KERNEL_KEXT_PATCHES
@@ -1032,8 +1053,11 @@ STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *Load
       }
     }
   }
-
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
+#if USE_XTHEME
+    Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
+#else
+    Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
+#endif
   if (Entry != NULL) {
     if ((Entry->LoaderType == OSTYPE_OSX) ||
         (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) ||

@@ -10,7 +10,8 @@
 VOID OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 VOID FreeScrollBar(VOID);
 #if USE_XTHEME
-INTN DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
+//it will be REFIT_SCREEN MEMBER, others as well?
+//INTN DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 VOID DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
 #else
 INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);

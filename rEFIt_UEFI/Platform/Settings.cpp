@@ -96,7 +96,7 @@ EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
 INTN row0TileSize = 144;
 INTN row1TileSize = 64;
 #endif
-EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
+//EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
 BOOLEAN DayLight;
 
@@ -1002,10 +1002,13 @@ CUSTOM_LOADER_ENTRY
     if (Entry->DriveImagePath) {
       DuplicateEntry->DriveImagePath = EfiStrDuplicate (Entry->DriveImagePath);
     }
-
+#if USE_XTHEME
+    DuplicateEntry->BootBgColor = Entry->BootBgColor;
+#else
     if (Entry->BootBgColor) {
-      DuplicateEntry->BootBgColor = (__typeof__(DuplicateEntry->BootBgColor))AllocateCopyPool (sizeof(EG_PIXEL), Entry->BootBgColor);
+      DuplicateEntry->BootBgColor = (__typeof__(DuplicateEntry->BootBgColor))AllocateCopyPool (sizeof(Entry->BootBgColor), Entry->BootBgColor);
     }
+#endif
 
     DuplicateEntry->Image            = Entry->Image;
     DuplicateEntry->DriveImage       = Entry->DriveImage;
@@ -2105,11 +2108,19 @@ FillinCustomEntry (
   if (Prop != NULL && Prop->type == kTagTypeString) {
     UINTN   Color;
     Color = AsciiStrHexToUintn (Prop->string);
-    Entry->BootBgColor = (__typeof__(Entry->BootBgColor))AllocateZeroPool (sizeof(EG_PIXEL));
+
+#if USE_XTHEME
+    Entry->BootBgColor.Red = (Color >> 24) & 0xFF;
+    Entry->BootBgColor.Green = (Color >> 16) & 0xFF;
+    Entry->BootBgColor.Blue = (Color >> 8) & 0xFF;
+    Entry->BootBgColor.Reserved = (Color >> 0) & 0xFF;
+#else
+    Entry->BootBgColor = (__typeof__(Entry->BootBgColor))AllocateZeroPool (sizeof(Entry->BootBgColor));
     Entry->BootBgColor->r = (Color >> 24) & 0xFF;
     Entry->BootBgColor->g = (Color >> 16) & 0xFF;
     Entry->BootBgColor->b = (Color >> 8) & 0xFF;
     Entry->BootBgColor->a = (Color >> 0) & 0xFF;
+#endif
   }
 
   // Hidden Property, Values:

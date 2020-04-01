@@ -729,7 +729,7 @@ CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode)
 
 EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 {
-  EG_PIXEL *backgroundPixel = Entry->BootBgColor;
+  EG_PIXEL *backgroundPixel = (EG_PIXEL *)&Entry->BootBgColor;
   EG_IMAGE *logo = NULL;
   INTN      screenWidth, screenHeight;
   UINT8     customBoot = Entry->CustomBoot;

@@ -609,6 +609,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN 
 //
 
 // take part of other procedures, not needed
+//used in RunGenericMenu-> used in Anime
 VOID egRestrictImageArea(IN EG_IMAGE *Image,
                          IN INTN AreaPosX, IN INTN AreaPosY,
                          IN OUT INTN *AreaWidth, IN OUT INTN *AreaHeight)
@@ -630,7 +631,7 @@ VOID egRestrictImageArea(IN EG_IMAGE *Image,
   }
 }
 
-//will be replaced by
+//TODO will be replaced by
 // CompImage.Fill(Color)
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
 {
@@ -651,8 +652,9 @@ VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
   }
 }
 
-//will be replaced by
+//TODO will be replaced by
 // CompImage.FillArea(Color, Rect)
+// used in Anime
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN INTN AreaPosX, IN INTN AreaPosY,
                      IN INTN AreaWidth, IN INTN AreaHeight,
@@ -685,7 +687,7 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
   }
 }
 
-//will be replaced by
+//TODO will be replaced by
 // CompBase.CopyRect(TopBase, XPos, YPos);
 
 VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
@@ -803,7 +805,7 @@ VOID egRawComposeOnFlat(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   }
 }
 
-//will be replaced by
+//TODO will be replaced by
 // CompImage.Compose(IN XImage& TopImage, IN INTN PosX, IN INTN PosY)
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
 {
@@ -818,9 +820,15 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
 
   // compose
   if (CompWidth > 0) {
-    if (CompImage->HasAlpha && !BackgroundImage) {
-       CompImage->HasAlpha = FALSE;
+#if USE_XTHEME
+    if (CompImage->HasAlpha && ThemeX.Background.isEmpty()) {
+      CompImage->HasAlpha = FALSE;
     }
+#else
+    if (CompImage->HasAlpha && !BackgroundImage) {
+      CompImage->HasAlpha = FALSE;
+    }
+#endif
 
     if (TopImage->HasAlpha) {
       if (CompImage->HasAlpha) {  //aaaa
@@ -839,7 +847,7 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
     }
   }
 }
-
+#if !USE_XTHEME
 EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color)
 {
     EG_IMAGE *NewImage;
@@ -859,7 +867,7 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
 
     return NewImage;
 }
-
+#endif
 //
 // misc internal functions
 //

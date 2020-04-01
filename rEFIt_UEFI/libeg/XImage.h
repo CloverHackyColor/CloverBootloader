@@ -106,8 +106,10 @@ public:
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
   EFI_STATUS LoadIcns(IN EFI_FILE *Dir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
+  void EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight);
   void DummyImage(IN UINTN PixelSize);
-
+protected:
+  UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale);
 };
 
 #endif //__XSTRINGW_H__

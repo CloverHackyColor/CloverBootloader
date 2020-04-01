@@ -79,7 +79,10 @@ public:
   INTN              TimeoutSeconds;
 #if USE_XTHEME
   XStringW  TimeoutText;
-  XStringW  ThemeName;
+  XStringW  ThemeName;  //?
+  EG_RECT OldTextBufferRect;
+  XImage  OldTextBufferImage;
+  BOOLEAN isBootScreen;
 #else
   CONST CHAR16     *TimeoutText;
   CONST CHAR16     *Theme;
@@ -96,6 +99,9 @@ public:
   UINTN       mItemID;
   SCROLL_STATE ScrollState;
   BOOLEAN ScrollEnabled;
+#if USE_XTHEME
+  INTN TextStyle;
+#endif
 //  MENU_STYLE_FUNC StyleFunc;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
@@ -117,8 +123,9 @@ public:
 #if USE_XTHEME
   REFIT_MENU_SCREEN()
 						: ID(0), Title(), TitleImage(),
-						  TimeoutSeconds(0), TimeoutText(), ThemeName(), AnimeRun(0),
-						  Once(0), LastDraw(0), CurrentFrame(0),
+						  TimeoutSeconds(0), TimeoutText(), ThemeName(),
+              OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
+              AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0),
 						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
@@ -136,8 +143,9 @@ public:
 #if USE_XTHEME
   REFIT_MENU_SCREEN(UINTN ID, XStringW Title, XStringW TimeoutText)
   : ID(ID), Title(Title), TitleImage(),
-  TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(), AnimeRun(0),
-  Once(0), LastDraw(0), CurrentFrame(0),
+  TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(),
+  OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
+  AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
   Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {};
@@ -164,8 +172,9 @@ public:
 #if USE_XTHEME
   REFIT_MENU_SCREEN(UINTN ID, XStringW  Title, XStringW  TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
   : ID(ID), Title(Title), TitleImage(),
-  TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(), AnimeRun(0),
-  Once(0), LastDraw(0), CurrentFrame(0),
+  TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(),
+  OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
+  AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
   Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {
@@ -210,6 +219,13 @@ public:
   UINTN InputDialog(IN MENU_STYLE_FUNC StyleFunc);
 
   VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos);
+#if USE_XTHEME
+  INTN DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
+  void EraseTextXY();
+  VOID DrawTextCorner(UINTN TextC, UINT8 Align);
+  VOID DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
+#endif
+  VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   VOID CountItems();
   VOID InitAnime();
   BOOLEAN GetAnime();

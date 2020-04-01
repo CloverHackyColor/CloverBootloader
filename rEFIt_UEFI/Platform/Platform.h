@@ -804,7 +804,7 @@ struct RT_VARIABLES {
   CHAR16   *Name;
   EFI_GUID VarGuid;
 };
-
+//no more used?
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY     *Next;
@@ -827,8 +827,12 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                   KernelScan;
   UINT8                   CustomBoot;
   EG_IMAGE                *CustomLogo;
-  EG_PIXEL                *BootBgColor;
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches; //zzzz
+#if USE_XTHEME
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
+#else
+  EG_PIXEL         *BootBgColor; //why it is array? It is one value!
+#endif
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;

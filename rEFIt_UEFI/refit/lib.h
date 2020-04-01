@@ -513,8 +513,20 @@ extern INTN row0TileSize;
 extern INTN row1TileSize;
 #endif
 extern const INTN BCSMargin;
+#if USE_XTHEME
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlueBackgroundPixel;
+//extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkBackgroundPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel;
+extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel;
 
-#if !USE_XTHEME
+
+#else
 extern INTN LayoutBannerOffset;
 extern INTN LayoutButtonOffset;
 extern INTN LayoutTextOffset;
@@ -529,11 +541,12 @@ extern INTN UGAWidth;
 extern INTN UGAHeight;
 extern BOOLEAN AllowGraphicsMode;
 
+#if !USE_XTHEME
 extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
 extern EG_PIXEL BlueBackgroundPixel;
-extern EG_PIXEL DarkBackgroundPixel;
+//extern EG_PIXEL DarkBackgroundPixel;
 extern EG_PIXEL SelectionBackgroundPixel;
 extern EG_PIXEL DarkEmbeddedBackgroundPixel;
 extern EG_PIXEL DarkSelectionPixel;
@@ -542,7 +555,7 @@ extern EG_PIXEL BlackPixel;
 
 extern EG_RECT  BannerPlace;
 extern EG_IMAGE *BackgroundImage;
-
+#endif
 
 #if REFIT_DEBUG > 0
 VOID DebugPause(VOID);

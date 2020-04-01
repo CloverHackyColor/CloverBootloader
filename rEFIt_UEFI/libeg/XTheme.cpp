@@ -8,6 +8,7 @@ extern "C" {
 
 #include "libegint.h"
 #include "../refit/screen.h"
+#include "../refit/lib.h"
 
 #include "XTheme.h"
 
@@ -47,6 +48,7 @@ extern EG_RECT ScrollbarOldPointerPlace;
 extern EG_RECT ScrollbarNewPointerPlace;
 extern INTN    ScrollbarYMovement;
 
+//extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel;
 
 
 CONST CHAR8* IconsNames[] = {
@@ -352,7 +354,7 @@ void XTheme::ClearScreen() //and restore background and banner
   if (BanHeight < 2) {
     BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
   }
-  egClearScreen(&DarkBackgroundPixel);
+  egClearScreen(&MenuBackgroundPixel);
   if (!(HideUIFlags & HIDEUI_FLAG_BANNER)) {
     //Banner image prepared before
     if (!Banner.isEmpty()) {
@@ -392,12 +394,12 @@ void XTheme::ClearScreen() //and restore background and banner
   
   if (Background.isEmpty()) {
     Background = XImage(UGAWidth, UGAHeight);
-    Background.Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)BlueBackgroundPixel);
+    Background.Fill(BlueBackgroundPixel);
   }
   if (!BigBack.isEmpty()) {
     switch (BackgroundScale) {
     case imScale:
-        DBG("back copy scaled\n");
+//        DBG("back copy scaled\n");
       Background.CopyScaled(BigBack, Scale);
       break;
     case imCrop:
@@ -429,7 +431,7 @@ void XTheme::ClearScreen() //and restore background and banner
                 x, y, Background.GetWidth(), BigBack.GetWidth());
 //      DBG("crop to x,y: %lld, %lld\n", x, y);
 //      Background.CopyRect(BigBack, x, y);
-      DBG("back copy cropped\n");
+//      DBG("back copy cropped\n");
       break;
     }
     case imTile:
@@ -442,14 +444,14 @@ void XTheme::ClearScreen() //and restore background and banner
           *p1++ = BigBack.GetPixel((i + x) % BigBack.GetWidth(), (j + y) % BigBack.GetHeight());
         }
       }
-      DBG("back copy tiled\n");
+//      DBG("back copy tiled\n");
       break;
     }
     case imNone:
     default:
       // already scaled
       Background = BigBack;
-        DBG("back copy equal\n");
+//        DBG("back copy equal\n");
       break;
     }
   }
@@ -468,10 +470,10 @@ void XTheme::InitSelection() //for PNG theme
   if (!AllowGraphicsMode)
     return;
   //used to fill TextBuffer if selected
-  SelectionBackgroundPixel.r = (SelectionColor >> 24) & 0xFF;
-  SelectionBackgroundPixel.g = (SelectionColor >> 16) & 0xFF;
-  SelectionBackgroundPixel.b = (SelectionColor >> 8) & 0xFF;
-  SelectionBackgroundPixel.a = (SelectionColor >> 0) & 0xFF;
+  SelectionBackgroundPixel.Red      = (SelectionColor >> 24) & 0xFF;
+  SelectionBackgroundPixel.Green    = (SelectionColor >> 16) & 0xFF;
+  SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
+  SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
   
   if (!SelectionImages[0].isEmpty()) { //already presents
     return;
@@ -511,7 +513,7 @@ void XTheme::InitSelection() //for PNG theme
       SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_big), ACCESS_EMB_SIZE(emb_dark_selection_big));
     }
 //    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
-    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
+    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     if (SelectionImages[0].isEmpty()) {
       SelectionImages[2].setEmpty();
       return;
@@ -537,14 +539,14 @@ void XTheme::InitSelection() //for PNG theme
 //      SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
 //                                               TRUE, &StdBackgroundPixel);
       SelectionImages[4] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
-      SelectionImages[4].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)StdBackgroundPixel);
+      SelectionImages[4].Fill(StdBackgroundPixel);
 
 
     }
  //   SelectionImages[5] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
  //                                            TRUE, &MenuBackgroundPixel);
     SelectionImages[5] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
-    SelectionImages[5].Fill((EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)MenuBackgroundPixel);
+    SelectionImages[5].Fill(MenuBackgroundPixel);
 
   }
   

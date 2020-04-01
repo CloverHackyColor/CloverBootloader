@@ -80,6 +80,18 @@ INTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
 
 EG_RECT  BannerPlace; // default ctor called, so it's zero
+#if USE_XTHEME
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
+#else
 
 EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
@@ -90,10 +102,12 @@ EG_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
 EG_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
 EG_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
 EG_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
+EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
 
 EG_IMAGE *BackgroundImage = NULL;
 EG_IMAGE *Banner = NULL;
 EG_IMAGE *BigBack = NULL;
+#endif
 
 static BOOLEAN GraphicsScreenDirty;
 
@@ -334,7 +348,7 @@ VOID SwitchToGraphicsAndClear(VOID) //called from MENU_FUNCTION_INIT
 {
   SwitchToGraphics();
 #if USE_XTHEME
-  DBG("clear screen and draw back\n");
+//  DBG("clear screen and draw back\n");
   ThemeX.ClearScreen();
 #else
 	if (GraphicsScreenDirty) { //Invented in rEFIt 15 years ago
@@ -553,24 +567,45 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   }
 //  DBG("w=%d, h=%d\n", Width, Height);
   // compose on background
+#if USE_XTHEME
+  CompImage = egCreateFilledImage(Width, Height, !ThemeX.Background.isEmpty(), BackgroundPixel); //no matter
+#else
   CompImage = egCreateFilledImage(Width, Height, (BackgroundImage != NULL), BackgroundPixel);
+#endif
+
   egComposeImage(CompImage, NewImage, 0, 0);
   if (NewImage) {
     egFreeImage(NewImage);
   }
+#if USE_XTHEME
+  if (ThemeX.Background.isEmpty()) {
+    egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
+    egFreeImage(CompImage);
+    return;
+  }
+#else
   if (!BackgroundImage) {
     egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
     egFreeImage(CompImage);
     return;
   }
+#endif
   NewImage = egCreateImage(Width, Height, FALSE);
   if (!NewImage) return;
 //  DBG("draw on background\n");
+#if USE_XTHEME
+  egRawCopy(NewImage->PixelData,
+            (EG_PIXEL*)ThemeX.Background.GetPixelPtr(0,0) + YPos * ThemeX.Background.GetWidth() + XPos,
+            Width, Height,
+            Width,
+            ThemeX.Background.GetWidth());
+#else
   egRawCopy(NewImage->PixelData,
             BackgroundImage->PixelData + YPos * BackgroundImage->Width + XPos,
             Width, Height,
             Width,
             BackgroundImage->Width);
+#endif
   egComposeImage(NewImage, CompImage, 0, 0);
   egFreeImage(CompImage);
 
@@ -934,7 +969,7 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
   Now = AsmReadTsc();
   if (LastDraw == 0) {
     //first start, we should save background into last frame
-    egFillImageArea(AnimeImage, 0, 0, AnimeImage->Width, AnimeImage->Height, &MenuBackgroundPixel);
+    egFillImageArea(AnimeImage, 0, 0, AnimeImage->Width, AnimeImage->Height, (EG_PIXEL*)&MenuBackgroundPixel);
     egTakeImage(Film[Frames],
                 x, y,
                 Film[Frames]->Width,

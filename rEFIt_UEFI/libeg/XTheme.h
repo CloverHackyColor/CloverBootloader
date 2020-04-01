@@ -102,6 +102,8 @@ public:
   XImage  UpButtonImage;
   XImage  DownButtonImage;
 
+  EG_RECT  BannerPlace; //TODO exclude BanHeight = BannerPlace.Height
+
   //fill the theme
   const XImage& GetIcon(const XString& Name);  //get by name
   const XImage& GetIcon(const char* Name);

@@ -349,14 +349,26 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				UINT8             LoaderType;
 				CHAR8            *OSVersion;
 				CHAR8            *BuildVersion;
-				EG_PIXEL         *BootBgColor;
+#if USE_XTHEME
+        EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
+#else
+        EG_PIXEL         *BootBgColor; //why it is array? It is one value!
+#endif
+
+
 				UINT8             CustomBoot;
 				EG_IMAGE         *CustomLogo;
 				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
 				CONST CHAR16            *Settings;
 
 				LOADER_ENTRY()
-						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0), BootBgColor(0), CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
+						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
+#if USE_XTHEME
+        BootBgColor({0,0,0,0}),
+#else
+        BootBgColor(0),
+#endif
+        CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
 						{};
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
