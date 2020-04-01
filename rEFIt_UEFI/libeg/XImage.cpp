@@ -265,30 +265,38 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
   UINT32      TopAlpha;
   UINT32      RevAlpha;
   UINT32      FinalAlpha;
+  UINT32      CompAlpha;
+  UINT32      TempAlpha;
   UINT32      Temp;
 
   for (UINTN y = PosY; y < Height && (y - PosY) < TopImage.GetHeight(); ++y) {
  //   EFI_GRAPHICS_OUTPUT_BLT_PIXEL& CompPtr = *GetPixelPtr(PosX, y); // I assign a ref to avoid the operator ->. Compiler will produce the same anyway.
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL* CompPtr = GetPixelPtr(PosX, y);
     for (UINTN x = PosX; x < Width && (x - PosX) < TopImage.GetWidth(); ++x) {
-      TopAlpha = TopImage.GetPixel(x-PosX, y-PosY).Reserved;
-      RevAlpha = 255 - TopAlpha;
-      FinalAlpha = (255*255 - RevAlpha*(255 - CompPtr->Reserved)) / 255;
+      //------
+      // test compAlpha = 255; TopAlpha = 0 -> only Comp, TopAplha = 255 -> only Top
+      TopAlpha = TopImage.GetPixel(x-PosX, y-PosY).Reserved & 0xFF; //0, 255
+      CompAlpha = CompPtr->Reserved & 0xFF; //255
+      RevAlpha = 255 - TopAlpha; //2<<8; 255, 0
+      TempAlpha = CompAlpha * RevAlpha; //2<<16; 255*255, 0
+      TopAlpha *= 255; //2<<16; 0, 255*255
+      FinalAlpha = TopAlpha + TempAlpha; //2<<16; 255*255, 255*255
+      if (FinalAlpha == 0) FinalAlpha = 255 * 255; //impossible,
 
-//final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255
-      Temp = (CompPtr->Blue * RevAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Blue * TopAlpha);
-      CompPtr->Blue = (UINT8)(Temp / 255);
+//final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255 = topA+compA*(1-topA)
+      Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Blue * TopAlpha);
+      CompPtr->Blue = (UINT8)(Temp / FinalAlpha);
 
-      Temp = (CompPtr->Green * RevAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Green * TopAlpha);
-      CompPtr->Green = (UINT8)(Temp / 255);
+      Temp = (CompPtr->Green * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Green * TopAlpha);
+      CompPtr->Green = (UINT8)(Temp / FinalAlpha);
 
-      Temp = (CompPtr->Red * RevAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Red * TopAlpha);
-      CompPtr->Red = (UINT8)(Temp / 255);
+      Temp = (CompPtr->Red * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Red * TopAlpha);
+      CompPtr->Red = (UINT8)(Temp / FinalAlpha);
 
       if (Lowest) {
         CompPtr->Reserved = 255;
       } else {
-        CompPtr->Reserved = (UINT8)FinalAlpha;
+        CompPtr->Reserved = (UINT8)(FinalAlpha / 255);
       }
       CompPtr++; //faster way to move to next pixel
     }

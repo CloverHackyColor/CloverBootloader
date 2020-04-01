@@ -455,8 +455,8 @@ void XTheme::ClearScreen() //and restore background and banner
       break;
     }
   }
-//  Background.DrawWithoutCompose(0, 0, UGAWidth, UGAHeight);
-  Background.Draw(0,0,0,false);
+  Background.DrawWithoutCompose(0, 0, UGAWidth, UGAHeight);
+//  Background.Draw(0,0,0,true);
   //then draw banner
   if (!Banner.isEmpty()) {
     Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);

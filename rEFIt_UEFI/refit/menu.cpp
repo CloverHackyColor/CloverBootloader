@@ -3206,8 +3206,8 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
 
   //  DBG("draw text %ls\n", Text);
   //  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
-//  TextBufferXY.Draw(XText, YPos);
-  TextBufferXY.DrawWithoutCompose(XText, YPos);
+  TextBufferXY.Draw(XText, YPos);
+//  TextBufferXY.DrawWithoutCompose(XText, YPos);
   return TextWidth2;
 }
 
@@ -4566,6 +4566,7 @@ VOID XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN 
   INTN X = XPos - (Width >> 1);  //X_IS_CENTRE
   TmpBuffer.CopyRect(Background, X, YPos);
   TmpBuffer.DrawWithoutCompose(X, YPos);
+//  TmpBuffer.Draw(X, YPos, 0, true);
 }
 #else
 VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
