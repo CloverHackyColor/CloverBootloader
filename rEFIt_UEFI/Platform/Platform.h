@@ -2074,7 +2074,7 @@ AddCard (
 
 EG_IMAGE
 *egDecodePNG (
-  IN UINT8 *FileData,
+  IN const UINT8 *FileData,
   IN UINTN FileDataLength,
   IN BOOLEAN WantAlpha
   );

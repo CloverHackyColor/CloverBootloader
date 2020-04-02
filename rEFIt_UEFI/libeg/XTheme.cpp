@@ -225,11 +225,11 @@ const XImage& XTheme::GetIcon(INTN Id)
   }
   return NullIcon;
 }
-
-void XTheme::AddIcon(Icon& NewIcon)
-{
-  Icons.AddCopy(NewIcon);
-}
+//
+//void XTheme::AddIcon(Icon& NewIcon)
+//{
+//  Icons.AddCopy(NewIcon);
+//}
 
 //if ImageNight is not set then Image should be used
 #define DEC_BUILTIN_ICON(id, ico) { \
@@ -340,9 +340,10 @@ Icon::Icon(INTN Index) : Image(0), ImageNight(0)
 
 void XTheme::FillByEmbedded()
 {
+  Icons.Empty();
   for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) {
-    Icon NewIcon(i);
-    Icons.AddCopy(NewIcon);
+    Icon* NewIcon = new Icon(i);
+    Icons.AddReference(NewIcon, true);
   }
   //radio buttons will be inited by InitSelection()
 }
@@ -614,11 +615,12 @@ void XTheme::InitSelection() //for PNG theme
 //use this only for PNG theme
 void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
+  Icons.Empty();
   for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
-    Icon NewIcon(i); //initialize with embedded but further replace by loaded
-    NewIcon.Image.LoadXImage(ThemeDir, IconsNames[i]);
-    NewIcon.ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
-    Icons.AddCopy(NewIcon);
+    Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
+    NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
+    NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
+    Icons.AddReference(NewIcon, true);
   }
 
   InitSelection(); //initialize selections, buttons

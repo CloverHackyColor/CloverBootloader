@@ -22,6 +22,9 @@ public:
   Icon(INTN Id);
   ~Icon();
 
+  // Default are not valid, as usual. We delete them. If needed, proper ones can be created
+  Icon(const Icon&) = delete;
+  Icon& operator=(const Icon&) = delete;
 };
 
 class XTheme
@@ -115,7 +118,7 @@ public:
   const XImage& GetIcon(const CHAR16* Name);
   const XImage& GetIcon(INTN Id); //get by id
 
-  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
+//  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
   void FillByDir();
   EFI_STATUS GetThemeTagSettings (void* DictPointer);

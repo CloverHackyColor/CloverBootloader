@@ -112,7 +112,8 @@ const XStringW& XStringW::takeValueFrom(const wchar_t* S, xsize count)
 
 const XStringW& XStringW::takeValueFrom(const wchar_t* S)
 {
-	return takeValueFrom(S, wcslen(S));
+	if ( S ) return takeValueFrom(S, wcslen(S));
+	Init(0);
 }
 
 const XStringW& XStringW::takeValueFrom(const char* S)

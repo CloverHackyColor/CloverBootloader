@@ -872,7 +872,7 @@ EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, 
 // misc internal functions
 //
 
-EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
+EG_IMAGE * egDecodePNG(IN const UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
   EG_IMAGE *NewImage = NULL;
   UINTN Error, i, ImageSize;
   size_t Width, Height;

@@ -472,19 +472,23 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   
   // --- Make other icons
 
+  Icons.Empty();
   for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i < BUILTIN_CHECKBOX_CHECKED; ++i) {
     if (i == BUILTIN_ICON_BANNER) {
       continue;
     }
-    Icon NewIcon(i); //initialize with embedded but further replace by loaded
-    ParseSVGXIcon(mainParser, i, NewIcon.Name, Scale, &NewIcon.Image);
-    ParseSVGXIcon(mainParser, i, NewIcon.Name + "_night", Scale, &NewIcon.ImageNight);
-    Icons.AddCopy(NewIcon);
+    Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
+    ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
+    ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night", Scale, &NewIcon->ImageNight);
+    Icons.AddReference(NewIcon, true);
   }
 
   //selections
   SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
+//for (int i=0 ; i<6 ; i++ ) {
+//SelectionImages[i].Draw(i*200, 0);
+//}
 
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
