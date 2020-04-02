@@ -85,6 +85,11 @@ public:
   INTN        LayoutButtonOffset;
   INTN        LayoutTextOffset;
   INTN        LayoutAnimMoveForMenuX;
+  INTN        ScrollWidth;
+  INTN        ScrollButtonsHeight;
+  INTN        ScrollBarDecorationsHeight;
+  INTN        ScrollScrollDecorationsHeight;
+
 
   BOOLEAN     Daylight;
 

@@ -135,10 +135,12 @@ BOOLEAN MainAnime = FALSE;
 //TODO Scroll variables must be a part of REFIT_SCREEN
 //BOOLEAN ScrollEnabled = FALSE;
 BOOLEAN IsDragging = FALSE;
+#if !USE_XTHEME
 INTN ScrollWidth = 16;
 INTN ScrollButtonsHeight = 20;
 INTN ScrollBarDecorationsHeight = 5;
 INTN ScrollScrollDecorationsHeight = 7;
+#endif
 INTN ScrollbarYMovement;
 
 
@@ -179,6 +181,7 @@ static INTN OldTimeoutTextWidth = 0;
 static INTN MenuWidth, TimeoutPosY;
 static INTN EntriesPosX, EntriesPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
+#if !USE_XTHEME
 static EG_IMAGE* ScrollbarImage = NULL;
 static EG_IMAGE* ScrollbarBackgroundImage = NULL;
 static EG_IMAGE* UpButtonImage = NULL;
@@ -198,7 +201,7 @@ EG_RECT ScrollbarBackground;
 EG_RECT Scrollbar;
 EG_RECT ScrollbarOldPointerPlace;
 EG_RECT ScrollbarNewPointerPlace;
-
+#endif
 
 INPUT_ITEM *InputItems = NULL;
 UINTN  InputItemsCount = 0;
@@ -2038,13 +2041,35 @@ VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
   ScrollState.PaintSelection = FALSE;
 
   ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
+
+  //scroll bar geometry
+  if (!ThemeX.TypeSVG) {
+    UpButton.Width      = ThemeX.ScrollWidth; // 16
+    UpButton.Height     = ThemeX.ScrollButtonsHeight; // 20
+    DownButton.Width    = UpButton.Width;
+    DownButton.Height   = ThemeX.ScrollButtonsHeight;
+    BarStart.Height     = ThemeX.ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ThemeX.ScrollBarDecorationsHeight;
+    ScrollStart.Height  = ThemeX.ScrollScrollDecorationsHeight; // 7
+    ScrollEnd.Height    = ThemeX.ScrollScrollDecorationsHeight;
+
+  } else {
+    UpButton.Width      = ThemeX.ScrollWidth; // 16
+    UpButton.Height     = 0; // 20
+    DownButton.Width    = UpButton.Width;
+    DownButton.Height   = 0;
+    BarStart.Height     = ThemeX.ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ThemeX.ScrollBarDecorationsHeight;
+    ScrollStart.Height  = 0; // 7
+    ScrollEnd.Height    = 0;
+  }
+
 }
 
 VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
 {
   INTN Lines;
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
-  INTN i;
   ScrollState.LastSelection = ScrollState.CurrentSelection;
 
   switch (Movement) {
@@ -2058,7 +2083,7 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
         Lines = -Lines;
         ScrollMovement = SCROLL_SCROLL_UP;
       }
-      for (i = 0; i < Lines; i++)
+      for (INTN i = 0; i < Lines; i++)
         UpdateScroll(ScrollMovement);
       break;
 
@@ -3451,7 +3476,7 @@ VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN
 
 #endif
 
-
+#if !USE_XTHEME
 VOID FreeScrollBar(VOID)
 {
   if (ScrollbarBackgroundImage) {
@@ -3488,7 +3513,7 @@ VOID FreeScrollBar(VOID)
   }
 }
 
-#if !USE_XTHEME
+
 VOID InitBar(VOID)
 {
   if (ThemeDir) {
@@ -3576,7 +3601,7 @@ VOID InitBar(VOID)
 }
 #endif
 
-VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
+VOID REFIT_MENU_SCREEN::SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
 {
 //  DBG("SetBar <= %d %d %d %d %d\n", UpPosY, DownPosY, State->MaxVisible, State->MaxIndex, State->FirstVisible);
 //SetBar <= 302 722 19 31 0
@@ -3627,22 +3652,23 @@ VOID REFIT_MENU_SCREEN::ScrollingBar()
   if (!ScrollEnabled) {
     return;
   }
-#if 0 //use compose instead of Draw
+#if 1 //use compose instead of Draw
   //this is a copy of old algorithm
   // but we can not use Total and Draw all parts separately assumed they composed on background
   // it is #else
 
   XImage Total(ScrollTotal.Width, ScrollTotal.Height);
-  Total.Fill(&MenuBackgroundPixel);
+//  Total.Fill(&MenuBackgroundPixel);
+  Total.CopyRect(ThemeX.Background, ScrollTotal.XPos, ScrollTotal.YPos);
   if (!ThemeX.ScrollbarBackgroundImage.isEmpty()) {
-    for (INTN i = 0; i < ScrollbarBackground.Height; i+=ThemeX.ScrollbarBackgroundImage->Height) {
-      Total.Compose(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarBackgroundImage, TRUE);
+    for (INTN i = 0; i < ScrollbarBackground.Height; i+=ThemeX.ScrollbarBackgroundImage.GetHeight()) {
+      Total.Compose(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarBackgroundImage, FALSE);
     }
   }
   Total.Compose(BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos, ThemeX.BarStartImage, FALSE);
   Total.Compose(BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos, ThemeX.BarEndImage, FALSE);
   if (!ThemeX.ScrollbarImage.isEmpty()) {
-    for (INTN i = 0; i < Scrollbar.Height; i+=ThemeX.ScrollbarImage->Height) {
+    for (INTN i = 0; i < Scrollbar.Height; i+=ThemeX.ScrollbarImage.GetHeight()) {
       Total.Compose(Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarImage, FALSE);
     }
   }
@@ -3650,7 +3676,7 @@ VOID REFIT_MENU_SCREEN::ScrollingBar()
   Total.Compose(DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos, ThemeX.DownButtonImage, FALSE);
   Total.Compose(ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos, ThemeX.ScrollStartImage, FALSE);
   Total.Compose(ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos, ThemeX.ScrollEndImage, FALSE);
-  Total.Draw(ScrollTotal.XPos, ScrollTotal.YPos, ScrollWidth / 16.f); //ScrollWidth can be set in theme.plist but usually=16
+  Total.Draw(ScrollTotal.XPos, ScrollTotal.YPos, ThemeX.ScrollWidth / 16.f); //ScrollWidth can be set in theme.plist but usually=16
 #else
   for (INTN i = 0; i < ScrollbarBackground.Height; i += ThemeX.ScrollbarBackgroundImage.GetHeight()) {
     ThemeX.ScrollbarBackgroundImage.Draw(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, 1.f);
@@ -3761,8 +3787,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
           MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.GetWidth() - 2;
         }
         EntriesPosX = (UGAWidth - (TitleImage.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale) + MenuWidth)) >> 1;
-        //DBG("UGAWIdth=%d TitleImage=%d MenuWidth=%d\n", UGAWidth,
-        //TitleImage->Width, MenuWidth);
+ //       DBG("UGAWIdth=%lld TitleImage=%lld MenuWidth=%lld\n", UGAWidth,
+ //           TitleImage.GetWidth(), MenuWidth);
         MenuWidth += TitleImage.GetWidth();
       } else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
@@ -3809,12 +3835,18 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
     case MENU_FUNCTION_PAINT_ALL:
     {
- //         DBG("PAINT_ALL: EntriesPosY=%lld MaxVisible=%lld\n", EntriesPosY, ScrollState.MaxVisible);
- //         DBG("DownButton.Height=%lld TextHeight=%lld\n", DownButton.Height, TextHeight);
+//         DBG("PAINT_ALL: EntriesPosY=%lld MaxVisible=%lld\n", EntriesPosY, ScrollState.MaxVisible);
+//          DBG("DownButton.Height=%lld TextHeight=%lld MenuWidth=%lld\n", DownButton.Height, TextHeight, MenuWidth);
       t2 = EntriesPosY + (ScrollState.MaxVisible + 1) * TextHeight - DownButton.Height;
       t1 = EntriesPosX + TextHeight + MenuWidth  + (INTN)((TEXT_XMARGIN + 16) * ThemeX.Scale);
-//          DBG("PAINT_ALL: %lld %lld\n", t1, t2);
+//          DBG("PAINT_ALL: X=%lld Y=%lld\n", t1, t2);
       SetBar(t1, EntriesPosY, t2, &ScrollState); //823 302 554
+      /*
+      48:307  39:206  UGAWIdth=800 TitleImage=48 MenuWidth=333
+      48:635  0:328  PAINT_ALL: EntriesPosY=259 MaxVisible=13
+      48:640  0:004  DownButton.Height=0 TextHeight=21 MenuWidth=381
+      48:646  0:006  PAINT_ALL: X=622 Y=553
+       */
 
       // blackosx swapped this around so drawing of selection comes before drawing scrollbar.
 
@@ -4408,7 +4440,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
  * Draw entries for GUI.
  */
 #if USE_XTHEME
-// move it to class XTheme?
+
 VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
   XImage MainImage(0,0);
@@ -4416,10 +4448,10 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   bool NewImageCreated = false;
 
   if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX.HideBadges & HDBADGES_SWAP)) {
-    MainImage.FromEGImage(Entry->getDriveImage());
+    MainImage.FromEGImage(Entry->getDriveImage()); //EG_IMAGE
   } else {
 //    MainImage.FromEGImage(Entry->Image);
-    MainImage = Entry->Image;
+    MainImage = Entry->Image; //XImage
   }
   //this should be inited by the Theme
   if (MainImage.isEmpty()) {
@@ -4434,6 +4466,8 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
       NewImageCreated = true;
     }
   }
+  INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
+  INTN CompHeight = CompWidth;
   //  DBG("Entry title=%ls; Width=%d\n", Entry->Title, MainImage->Width);
   float fScale;
   if (ThemeX.TypeSVG) {
@@ -4446,17 +4480,63 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     BadgeImage.FromEGImage(Entry->getBadgeImage());
   } //else null
 
-  XImage& TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
+  XImage TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
+  XImage Back(CompWidth, CompHeight);
+//  Back.GetArea(XPos, YPos, 0, 0); // this is background at this place
+  Back.CopyRect(ThemeX.Background, XPos, YPos);
+
+  INTN OffsetX = (CompWidth - MainImage.GetWidth()) / 2;
+  OffsetX = (OffsetX > 0) ? OffsetX: 0;
+  INTN OffsetY = (CompHeight - MainImage.GetHeight()) / 2;
+  OffsetY = (OffsetY > 0) ? OffsetY: 0;
 
   if(ThemeX.SelectionOnTop) {
-    MainImage.Draw(XPos, YPos, fScale, false);
-    BadgeImage.Draw(XPos, YPos, fScale, false);
-    TopImage.Draw(XPos, YPos, fScale, false);
+    //place main image in centre. It may be OS or Drive
+    Back.Compose(OffsetX, OffsetY, MainImage, false);
   } else {
-    TopImage.Draw(XPos, YPos, fScale, false);
-    MainImage.Draw(XPos, YPos, fScale, false);
-    BadgeImage.Draw(XPos, YPos, fScale, false);
+    Back.Compose(0, 0, TopImage, false); //selection first
+    Back.Compose(OffsetX, OffsetY, MainImage, false);
   }
+
+  // place the badge image
+  if (!BadgeImage.isEmpty() &&
+      ((INTN)BadgeImage.GetWidth() + 8) < CompWidth &&
+      ((INTN)BadgeImage.GetHeight() + 8) < CompHeight) {
+
+    // Check for user badge x offset from theme.plist
+    if (ThemeX.BadgeOffsetX != 0xFFFF) {
+      // Check if value is between 0 and ( width of the main icon - width of badge )
+      if (ThemeX.BadgeOffsetX < 0 || ThemeX.BadgeOffsetX > (CompWidth - (INTN)BadgeImage.GetWidth())) {
+        DBG("User offset X %lld is out of range\n", ThemeX.BadgeOffsetX);
+        ThemeX.BadgeOffsetX = CompWidth  - 8 - BadgeImage.GetWidth();
+        DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetX);
+      }
+      OffsetX += ThemeX.BadgeOffsetX;
+    } else {
+      // Set default position
+      OffsetX += CompWidth  - 8 - BadgeImage.GetWidth();
+    }
+    // Check for user badge y offset from theme.plist
+    if (ThemeX.BadgeOffsetY != 0xFFFF) {
+      // Check if value is between 0 and ( height of the main icon - height of badge )
+      if (ThemeX.BadgeOffsetY < 0 || ThemeX.BadgeOffsetY > (CompHeight - (INTN)BadgeImage.GetHeight())) {
+        DBG("User offset Y %lld is out of range\n",ThemeX.BadgeOffsetY);
+        ThemeX.BadgeOffsetY = CompHeight - 8 - BadgeImage.GetHeight();
+        DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetY);
+      }
+      OffsetY += ThemeX.BadgeOffsetY;
+    } else {
+      // Set default position
+      OffsetY += CompHeight - 8 - BadgeImage.GetHeight();
+    }
+    Back.Compose(OffsetX, OffsetY, BadgeImage, false);
+  }
+
+  if(ThemeX.SelectionOnTop) {
+    Back.Compose(0, 0, TopImage, false); //selection at the top
+  }
+  Back.DrawWithoutCompose(XPos, YPos);
+
 
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator

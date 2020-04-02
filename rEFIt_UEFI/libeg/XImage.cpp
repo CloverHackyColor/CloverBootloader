@@ -417,7 +417,6 @@ void XImage::GetArea(const EG_RECT& Rect)
   GetArea(Rect.XPos, Rect.YPos, Rect.Width, Rect.Height);
 }
 
-
 void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 {
   EFI_STATUS Status;

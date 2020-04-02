@@ -3833,12 +3833,12 @@ XTheme::GetThemeTagSettings (void* DictP)
 
   //fill default to have an ability change theme
   //assume Xtheme is already inited by embedded values
-
+//theme variables
   ScrollWidth                           = 16;
   ScrollButtonsHeight                   = 20;
   ScrollBarDecorationsHeight            = 5;
   ScrollScrollDecorationsHeight         = 7;
-  ThemeX.Font                     = FONT_LOAD; //not default
+  Font                     = FONT_LOAD; //not default
   GuiAnime = NULL;
 
 

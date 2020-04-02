@@ -482,6 +482,9 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     Icons.AddCopy(NewIcon);
   }
 
+  //selections
+  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
+  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
 
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;

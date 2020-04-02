@@ -26,13 +26,13 @@ extern "C" {
 #define DBG(...) DebugLog(DEBUG_XTHEME, __VA_ARGS__)
 #endif
 
-
-//temporary
+#if !USE_XTHEME
+//these are XTHEME members
 extern INTN    ScrollWidth;
 extern INTN    ScrollButtonsHeight;
 extern INTN    ScrollBarDecorationsHeight;
 extern INTN    ScrollScrollDecorationsHeight;
-
+//These are SCREEN members
 extern EG_RECT UpButton;
 extern EG_RECT DownButton;
 extern EG_RECT BarStart;
@@ -42,14 +42,12 @@ extern EG_RECT Scrollbar;
 extern EG_RECT ScrollStart;
 extern EG_RECT ScrollEnd;
 extern EG_RECT ScrollTotal;
-
-extern BOOLEAN IsDragging;
 extern EG_RECT ScrollbarOldPointerPlace;
 extern EG_RECT ScrollbarNewPointerPlace;
+#endif
+//dynamic variables
 extern INTN    ScrollbarYMovement;
-
-//extern EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel;
-
+extern BOOLEAN IsDragging;
 
 CONST CHAR8* IconsNames[] = {
   "func_about",
@@ -601,7 +599,7 @@ void XTheme::InitSelection() //for PNG theme
   if (!TypeSVG && !SelectionBigFileName.isEmpty()) {
     BackgroundPixel = { 0x00, 0x00, 0x00, 0x00 };
   } else if (DarkEmbedded || TypeSVG) {
-    BackgroundPixel = { 0x33, 0x33, 0x33, 0x00 };
+    BackgroundPixel = { 0x33, 0x33, 0x33, 0x00 }; //nonsense
   } else { //for example embedded daylight
     BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
   }
@@ -697,29 +695,6 @@ void XTheme::InitBar()
     if (DownButtonImage.isEmpty()) {
       DownButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button));
     }
-  }
-
-  //TODO it must be somewhere in InitScroll - Screen function
-  if (!TypeSVG) {
-    UpButton.Width      = ScrollWidth; // 16
-    UpButton.Height     = ScrollButtonsHeight; // 20
-    DownButton.Width    = UpButton.Width;
-    DownButton.Height   = ScrollButtonsHeight;
-    BarStart.Height     = ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ScrollBarDecorationsHeight;
-    ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
-    ScrollEnd.Height    = ScrollScrollDecorationsHeight;
-
-  } else {
-    UpButton.Width      = ScrollWidth; // 16
-    UpButton.Height     = 0; // 20
-    DownButton.Width    = UpButton.Width;
-    DownButton.Height   = 0;
-    BarStart.Height     = ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ScrollBarDecorationsHeight;
-    ScrollStart.Height  = 0; // 7
-    ScrollEnd.Height    = 0;
-
   }
 }
 

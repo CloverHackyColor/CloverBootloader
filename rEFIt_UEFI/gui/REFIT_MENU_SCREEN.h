@@ -106,7 +106,7 @@ public:
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?
-  /*
+#if USE_XTHEME
   EG_RECT BarStart;
   EG_RECT BarEnd;
   EG_RECT ScrollStart;
@@ -118,9 +118,9 @@ public:
   EG_RECT Scrollbar;
   EG_RECT ScrollbarOldPointerPlace;
   EG_RECT ScrollbarNewPointerPlace;
-*/
 
-#if USE_XTHEME
+
+
   REFIT_MENU_SCREEN()
 						: ID(0), Title(), TitleImage(),
 						  TimeoutSeconds(0), TimeoutText(), ThemeName(),
@@ -198,10 +198,17 @@ public:
   VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                   IN UINTN VisibleSpace, IN INTN Selected);
   VOID UpdateScroll(IN UINTN Movement);
+//  void InitBar();
   VOID ScrollingBar();
+  VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State);
+
+  //mouse functions
   VOID HidePointer();
   EFI_STATUS MouseBirth();
   VOID KillMouse();
+  EFI_STATUS CheckMouseEvent();
+
+  //menu functions
   VOID AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   VOID AddMenuInfo(CONST char *Line);
   VOID AddMenuInfo_f(CONST char *format, ...);

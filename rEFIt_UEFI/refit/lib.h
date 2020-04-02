@@ -221,6 +221,7 @@ typedef struct _pointers {
 #define SVALUE_MAX_SIZE 512
 
 //extern BOOLEAN ScrollEnabled;
+#if !USE_XTHEME
 extern EG_RECT UpButton;
 extern EG_RECT DownButton;
 extern EG_RECT BarStart;
@@ -230,11 +231,11 @@ extern EG_RECT Scrollbar;
 extern EG_RECT ScrollStart;
 extern EG_RECT ScrollEnd;
 extern EG_RECT ScrollTotal;
-
-extern BOOLEAN IsDragging;
 extern EG_RECT ScrollbarOldPointerPlace;
 extern EG_RECT ScrollbarNewPointerPlace;
+#endif
 extern INTN ScrollbarYMovement;
+extern BOOLEAN IsDragging;
 
 #define SCREEN_UNKNOWN    0
 #define SCREEN_MAIN       1

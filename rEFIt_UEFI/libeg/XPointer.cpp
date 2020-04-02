@@ -204,6 +204,11 @@ VOID XPointer::UpdatePointer()
   }
 }
 
+MOUSE_EVENT XPointer::GetEvent()
+{
+  return MouseEvent;
+}
+
 bool XPointer::MouseInRect(EG_RECT *Place)
 {
   return  ((newPlace.XPos >= Place->XPos) &&
@@ -212,114 +217,113 @@ bool XPointer::MouseInRect(EG_RECT *Place)
     (newPlace.YPos < (Place->YPos + (INTN)Place->Height)));
 }
 
-EFI_STATUS XPointer::CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
+EFI_STATUS REFIT_MENU_SCREEN::CheckMouseEvent()
 {
-  if (!Screen) {
-    return EFI_TIMEOUT;
-  }
   EFI_STATUS Status = EFI_TIMEOUT;
-  Screen->mAction = ActionNone;
+  mAction = ActionNone;
+  MOUSE_EVENT Event = mPointer.GetEvent();
   bool Move = false;
 
-  if (!IsDragging && MouseEvent == MouseMove)
-    MouseEvent = NoEvents;
+  if (!IsDragging && Event == MouseMove)
+    Event = NoEvents;
 
-  if (Screen->ScrollEnabled){
-    if (MouseInRect(&UpButton) && MouseEvent == LeftClick)
-      Screen->mAction = ActionScrollUp;
-    else if (MouseInRect(&DownButton) && MouseEvent == LeftClick)
-      Screen->mAction = ActionScrollDown;
-    else if (MouseInRect(&Scrollbar) && MouseEvent == LeftMouseDown) {
+  if (ScrollEnabled){
+    if (mPointer.MouseInRect(&UpButton) && Event == LeftClick)
+      mAction = ActionScrollUp;
+    else if (mPointer.MouseInRect(&DownButton) && Event == LeftClick)
+      mAction = ActionScrollDown;
+    else if (mPointer.MouseInRect(&Scrollbar) && Event == LeftMouseDown) {
       IsDragging = TRUE;
       Move = true;
-//      Screen->mAction = ActionMoveScrollbar;
+//      mAction = ActionMoveScrollbar;
       ScrollbarYMovement = 0;
-      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = newPlace.XPos;
-      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = newPlace.YPos;
+      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = mPointer.GetPlace().XPos;
+      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = mPointer.GetPlace().YPos;
     }
-    else if (IsDragging && MouseEvent == LeftClick) {
+    else if (IsDragging && Event == LeftClick) {
       IsDragging = FALSE;
       Move = true;
-//      Screen->mAction = ActionMoveScrollbar;
+//      mAction = ActionMoveScrollbar;
     }
-    else if (IsDragging && MouseEvent == MouseMove) {
-      Screen->mAction = ActionMoveScrollbar;
-      ScrollbarNewPointerPlace.XPos = newPlace.XPos;
-      ScrollbarNewPointerPlace.YPos = newPlace.YPos;
+    else if (IsDragging && Event == MouseMove) {
+      mAction = ActionMoveScrollbar;
+      ScrollbarNewPointerPlace.XPos = mPointer.GetPlace().XPos;
+      ScrollbarNewPointerPlace.YPos = mPointer.GetPlace().YPos;
     }
-    else if (MouseInRect(&ScrollbarBackground) &&
-             MouseEvent == LeftClick) {
-      if (newPlace.YPos < Scrollbar.YPos) // up
-        Screen->mAction = ActionPageUp;
+    else if (mPointer.MouseInRect(&ScrollbarBackground) &&
+             Event == LeftClick) {
+      if (mPointer.GetPlace().YPos < Scrollbar.YPos) // up
+        mAction = ActionPageUp;
       else // down
-        Screen->mAction = ActionPageDown;
+        mAction = ActionPageDown;
     // page up/down, like in OS X
     }
-    else if (MouseEvent == ScrollDown) {
-      Screen->mAction = ActionScrollDown;
+    else if (Event == ScrollDown) {
+      mAction = ActionScrollDown;
     }
-    else if (MouseEvent == ScrollUp) {
-      Screen->mAction = ActionScrollUp;
+    else if (Event == ScrollUp) {
+      mAction = ActionScrollUp;
     }
   }
-  if (!Screen->ScrollEnabled || (Screen->mAction == ActionNone && !Move) ) {
-      for (UINTN EntryId = 0; EntryId < Screen->Entries.size(); EntryId++) {
-        if (MouseInRect(&(Screen->Entries[EntryId].Place))) {
-          switch (MouseEvent) {
+  if (!ScrollEnabled || (mAction == ActionNone && !Move) ) {
+      for (UINTN EntryId = 0; EntryId < Entries.size(); EntryId++) {
+        if (mPointer.MouseInRect(&(Entries[EntryId].Place))) {
+          switch (Event) {
             case LeftClick:
-              Screen->mAction = Screen->Entries[EntryId].AtClick;
+              mAction = Entries[EntryId].AtClick;
               //          DBG("Click\n");
               break;
             case RightClick:
-              Screen->mAction = Screen->Entries[EntryId].AtRightClick;
+              mAction = Entries[EntryId].AtRightClick;
               break;
             case DoubleClick:
-              Screen->mAction = Screen->Entries[EntryId].AtDoubleClick;
+              mAction = Entries[EntryId].AtDoubleClick;
               break;
             case ScrollDown:
-              Screen->mAction = ActionScrollDown;
+              mAction = ActionScrollDown;
               break;
             case ScrollUp:
-              Screen->mAction = ActionScrollUp;
+              mAction = ActionScrollUp;
               break;
             case MouseMove:
-              Screen->mAction = Screen->Entries[EntryId].AtMouseOver;
+              mAction = Entries[EntryId].AtMouseOver;
               //how to do the action once?
               break;
             default:
-              Screen->mAction = ActionNone;
+              mAction = ActionNone;
               break;
           }
-          Screen->mItemID = EntryId;
+          mItemID = EntryId;
           break;
         }
         else { //click in milk
-          switch (MouseEvent) {
+          switch (Event) {
             case LeftClick:
-              Screen->mAction = ActionDeselect;
+              mAction = ActionDeselect;
               break;
             case RightClick:
-              Screen->mAction = ActionFinish;
+              mAction = ActionFinish;
               break;
             case ScrollDown:
-              Screen->mAction = ActionScrollDown;
+              mAction = ActionScrollDown;
               break;
             case ScrollUp:
-              Screen->mAction = ActionScrollUp;
+              mAction = ActionScrollUp;
               break;
             default:
-              Screen->mAction = ActionNone;
+              mAction = ActionNone;
               break;
           }
-          Screen->mItemID = 0xFFFF;
+          mItemID = 0xFFFF;
         }
       }
 
   }
 
-  if (Screen->mAction != ActionNone) {
+  if (mAction != ActionNone) {
     Status = EFI_SUCCESS;
-    MouseEvent = NoEvents; //clear event as set action
+ //   Event = NoEvents; //clear event as set action
+    mPointer.ClearEvent();
   }
   return Status;
 }

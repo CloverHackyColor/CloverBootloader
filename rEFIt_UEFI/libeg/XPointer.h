@@ -34,9 +34,12 @@ public:
   VOID KillMouse();
   VOID UpdatePointer();
   bool MouseInRect(EG_RECT *Place);
-  EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen);
+//  EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen);
 
   bool isEmpty() const { return PointerImage->isEmpty(); }
+  void ClearEvent() { MouseEvent = NoEvents; }
+  MOUSE_EVENT GetEvent();
+  EG_RECT& GetPlace() { return newPlace; }
 
 protected:
   VOID Draw();
