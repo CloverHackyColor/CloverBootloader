@@ -87,7 +87,7 @@ public:
   void CopyScaled(const XImage& Image, float scale);
   void CopyRect(const XImage& Image, INTN X, INTN Y);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
-  void FlipRB(bool WantAlpha);
+  void FlipRB();
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
   EFI_STATUS FromSVG(const CHAR8 *SVGData, float scale);

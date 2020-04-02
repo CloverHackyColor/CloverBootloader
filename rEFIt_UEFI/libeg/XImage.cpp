@@ -268,7 +268,7 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
   UINT32      CompAlpha;
   UINT32      TempAlpha;
   UINT32      Temp;
-
+//change only affected pixels
   for (UINTN y = PosY; y < Height && (y - PosY) < TopImage.GetHeight(); ++y) {
  //   EFI_GRAPHICS_OUTPUT_BLT_PIXEL& CompPtr = *GetPixelPtr(PosX, y); // I assign a ref to avoid the operator ->. Compiler will produce the same anyway.
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL* CompPtr = GetPixelPtr(PosX, y);
@@ -281,17 +281,19 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
       TempAlpha = CompAlpha * RevAlpha; //2<<16; 255*255, 0
       TopAlpha *= 255; //2<<16; 0, 255*255
       FinalAlpha = TopAlpha + TempAlpha; //2<<16; 255*255, 255*255
-      if (FinalAlpha == 0) FinalAlpha = 255 * 255; //impossible,
+ //     if (FinalAlpha == 0) FinalAlpha = 255 * 255; //impossible,
 
 //final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255 = topA+compA*(1-topA)
-      Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Blue * TopAlpha);
-      CompPtr->Blue = (UINT8)(Temp / FinalAlpha);
+      if (FinalAlpha != 0) {
+        Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Blue * TopAlpha);
+        CompPtr->Blue = (UINT8)(Temp / FinalAlpha);
 
-      Temp = (CompPtr->Green * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Green * TopAlpha);
-      CompPtr->Green = (UINT8)(Temp / FinalAlpha);
+        Temp = (CompPtr->Green * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Green * TopAlpha);
+        CompPtr->Green = (UINT8)(Temp / FinalAlpha);
 
-      Temp = (CompPtr->Red * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Red * TopAlpha);
-      CompPtr->Red = (UINT8)(Temp / FinalAlpha);
+        Temp = (CompPtr->Red * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Red * TopAlpha);
+        CompPtr->Red = (UINT8)(Temp / FinalAlpha);
+      }
 
       if (Lowest) {
         CompPtr->Reserved = 255;
@@ -311,7 +313,7 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
 //void XImage::ComposeOnBack(INTN PosX, INTN PosY, const XImage& BackImage, bool Lowest)
 
 
-void XImage::FlipRB(bool WantAlpha)
+void XImage::FlipRB()
 {
   UINTN ImageSize = (Width * Height);
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL* Pixel = GetPixelPtr(0,0);
@@ -319,7 +321,7 @@ void XImage::FlipRB(bool WantAlpha)
     UINT8 Temp = Pixel->Blue;
     Pixel->Blue = Pixel->Red;
     Pixel->Red = Temp;
-    if (!WantAlpha) Pixel->Reserved = 0xFF;
+//    if (!WantAlpha) Pixel->Reserved = 0xFF;
     Pixel++;
   }
 }
@@ -344,7 +346,7 @@ EFI_STATUS XImage::FromPNG(const UINT8 * Data, UINTN Length)
   CopyMem(GetPixelPtr(0,0), PixelPtr, NewLength);
   FreePool(PixelPtr); //allocated by lodepng
 
-  FlipRB(true);
+  FlipRB();
   return EFI_SUCCESS;
 }
 
@@ -357,7 +359,7 @@ EFI_STATUS XImage::FromPNG(const UINT8 * Data, UINTN Length)
 EFI_STATUS XImage::ToPNG(UINT8** Data, UINTN& OutSize)
 {
   size_t           FileDataLength = 0;
-  FlipRB(false);
+  FlipRB(); //commomly we want alpha for PNG, but not for screenshot, fix alpha there
   UINT8 * PixelPtr = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_encode(Data, &FileDataLength, PixelPtr, Width, Height);
   OutSize = FileDataLength;
@@ -631,7 +633,7 @@ void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI
 
   XImage NewImage(NewWidth, NewHeight);
   NewImage.Fill(Color);
-  NewImage.Compose(0, 0, (*this), false);
+  NewImage.Compose(0, 0, (*this), true);
   setSizeInPixels(NewWidth, NewHeight); //include reallocate but loose data
   CopyMem(&PixelData[0], &NewImage.PixelData[0], GetSizeInBytes());
   //we have to copy pixels twice? because we can't return newimage instead of this

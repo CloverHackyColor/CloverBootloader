@@ -1446,7 +1446,8 @@ VOID AboutRefit(VOID)
     /*
       EntryCount instead of InfoLineCount. Lastline == return/back. Is necessary recheck screen res here?
     */
-    FreePool(AboutMenu.Entries[AboutMenu.Entries.size()-2].Title);
+ //   FreePool(AboutMenu.Entries[AboutMenu.Entries.size()-2].Title); //what is FreePool(XStringW)?
+
     AboutMenu.Entries[AboutMenu.Entries.size()-2].Title.SWPrintf(" Screen Output: %ls", egScreenDescription());
   }
 
@@ -3181,13 +3182,13 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
 
 //  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
   TextBufferXY.setSizeInPixels(TextWidth, Height);
-  TextBufferXY.Fill(MenuBackgroundPixel);
+//  TextBufferXY.Fill(MenuBackgroundPixel);
 
   // render the text
   INTN TextWidth2 = egRenderText(Text, &TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
-  /* there is real text width but we already have an array with Width = TextWidth
-   */
-  TextBufferXY.EnsureImageSize(TextWidth2, Height); //assume color = MenuBackgroundPixel
+  // there is real text width but we already have an array with Width = TextWidth
+  //
+//  TextBufferXY.EnsureImageSize(TextWidth2, Height); //assume color = MenuBackgroundPixel
 
   if (XAlign != X_IS_LEFT) {
     // shift 64 is prohibited
@@ -3369,7 +3370,7 @@ VOID REFIT_MENU_SCREEN::DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, I
 {
   XImage TextBufferX(UGAWidth-XPos, TextHeight);
 
-  if (Cursor != 0xFFFF) {
+  if (Cursor == 0xFFFF) { //InfoLine = 0xFFFF
     TextBufferX.Fill(MenuBackgroundPixel);
   } else {
     TextBufferX.Fill(InputBackgroundPixel);
@@ -4592,28 +4593,29 @@ VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Hei
 #endif
 
 #if USE_XTHEME
-VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos)
+VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos)
 {
   INTN TextWidth = 0;
   INTN BadgeDim = (INTN)(BADGE_DIMENSION * ThemeX.Scale);
 
-  egMeasureText(Text, &TextWidth, NULL);
+  egMeasureText(Text.wc_str(), &TextWidth, NULL);
 
   //Clear old text
-  if (OldTextWidth > TextWidth) {
+//  if (OldTextWidth > TextWidth) {
     ThemeX.FillRectAreaOfScreen(OldX, OldY, OldTextWidth, TextHeight);
-  }
+//  }
 
   if (!(ThemeX.BootCampStyle)
       && (ThemeX.HideBadges & HDBADGES_INLINE) && (!OldRow)
-      && (OldTextWidth) && (OldTextWidth != TextWidth)) {
+//      && (OldTextWidth) && (OldTextWidth != TextWidth)
+      ) {
     //Clear badge
     ThemeX.FillRectAreaOfScreen((OldX - (OldTextWidth >> 1) - (BadgeDim + 16)),
                                 (OldY - ((BadgeDim - TextHeight) >> 1)), 128, 128);
   }
-  XStringW TextX;
-  TextX.takeValueFrom(Text);
-  DrawTextXY(TextX, XPos, YPos, X_IS_CENTER);
+//  XStringW TextX;
+//  TextX.takeValueFrom(Text);
+  DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
   //show inline badge
   if (!(ThemeX.BootCampStyle) &&
