@@ -2042,6 +2042,7 @@ VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
 
   ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
 
+#if USE_XTHEME
   //scroll bar geometry
   if (!ThemeX.TypeSVG) {
     UpButton.Width      = ThemeX.ScrollWidth; // 16
@@ -2063,6 +2064,7 @@ VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
     ScrollStart.Height  = 0; // 7
     ScrollEnd.Height    = 0;
   }
+#endif
 
 }
 

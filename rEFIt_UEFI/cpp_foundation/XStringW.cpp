@@ -114,6 +114,7 @@ const XStringW& XStringW::takeValueFrom(const wchar_t* S)
 {
 	if ( S ) return takeValueFrom(S, wcslen(S));
 	Init(0);
+        return *this;
 }
 
 const XStringW& XStringW::takeValueFrom(const char* S)
