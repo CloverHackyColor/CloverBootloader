@@ -54,7 +54,7 @@ public:
   XImage();
   XImage(UINTN W, UINTN H);
   XImage(EG_IMAGE* egImage);
-  XImage(const XImage& Image, float scale); //the constructor can accept 0 scale as 1.f
+  XImage(const XImage& Image, float scale = 0.f); //the constructor can accept 0 scale as 1.f
   ~XImage();
 
   XImage& operator= (const XImage& other);
@@ -86,6 +86,7 @@ public:
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect);
   void CopyScaled(const XImage& Image, float scale);
   void CopyRect(const XImage& Image, INTN X, INTN Y);
+  void CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_RECT& InputRect);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB();
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);

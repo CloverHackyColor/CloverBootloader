@@ -61,9 +61,10 @@ EFI_DEVICE_PATH  *SelfFullDevicePath;
 
 #if USE_XTHEME
 XTheme ThemeX;
-#endif
 
-EFI_FILE         *ThemeDir = NULL;
+#else
+EFI_FILE         *ThemeDir = NULL; //it is XTheme member
+#endif
 CHAR16           *ThemePath;
 BOOLEAN          gThemeChanged = FALSE;
 //BOOLEAN          gBootArgsChanged = FALSE;
@@ -243,12 +244,19 @@ VOID UninitRefitLib(VOID)
     OEMDir->Close(OEMDir);
     OEMDir = NULL;
   }
-  
+#if USE_XTHEME
+  if (ThemeX.ThemeDir != NULL) {
+    ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
+    ThemeX.ThemeDir = NULL;
+  }
+#else
   if (ThemeDir != NULL) {
     ThemeDir->Close(ThemeDir);
     ThemeDir = NULL;
   }
-  
+#endif
+
+
   if (SelfRootDir != NULL) {
     SelfRootDir->Close(SelfRootDir);
     SelfRootDir = NULL;
@@ -301,7 +309,13 @@ EFI_STATUS ReinitSelfLib(VOID)
     return EFI_NOT_FOUND;
   }
   SelfDeviceHandle = NewSelfHandle;
+#if USE_XTHEME
+  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+#else
   /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+#endif
+
+
   /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while reopening our installation directory");
@@ -322,7 +336,11 @@ EFI_STATUS FinishInitRefitLib(VOID)
       return EFI_LOAD_ERROR;
     }
   }
+#if USE_XTHEME
+  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+#else
   /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+#endif
   /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while opening our installation directory");
@@ -332,9 +350,9 @@ EFI_STATUS FinishInitRefitLib(VOID)
 BOOLEAN IsEmbeddedTheme()
 {
   if (ThemeX.embedded) {
-    ThemeDir = NULL;
+    ThemeX.ThemeDir = NULL;
   }
-  return ThemeDir == NULL;
+  return ThemeX.ThemeDir == NULL;
 }
 #else
 BOOLEAN IsEmbeddedTheme()

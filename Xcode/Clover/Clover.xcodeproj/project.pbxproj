@@ -15825,6 +15825,7 @@
 			knownRegions = (
 				English,
 				en,
+				Base,
 			);
 			mainGroup = 2C7949DA1A0AA7F700D845B0;
 			productRefGroup = 2C7949DA1A0AA7F700D845B0;

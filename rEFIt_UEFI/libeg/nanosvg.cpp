@@ -2872,7 +2872,12 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
     DBG("required font %s not found, try to load external\n", text->fontFace->fontFamily);
+#if USE_XTHEME
+    Status = egLoadFile(ThemeX.ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
+#else
     Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
+#endif
+
     DBG("font %s loaded status=%s\n", text->fontFace->fontFamily, strerror(Status));
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1

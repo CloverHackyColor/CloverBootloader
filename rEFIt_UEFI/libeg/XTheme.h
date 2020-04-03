@@ -121,10 +121,11 @@ public:
 //  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
   void FillByDir();
-  EFI_STATUS GetThemeTagSettings (void* DictPointer);
+  EFI_STATUS GetThemeTagSettings(void* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer); // in VectorTheme
   EFI_STATUS ParseSVGXIcon(void *p, INTN Id, const XString& IconNameX, float Scale, XImage* Image);
+  void* LoadTheme(const CHAR16 *TestTheme); //return TagPtr why?
 
   //screen operations
   void ClearScreen();

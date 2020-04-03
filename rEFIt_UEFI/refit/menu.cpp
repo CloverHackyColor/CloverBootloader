@@ -4445,27 +4445,22 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
 VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-  XImage MainImage(0,0);
-  XImage BadgeImage(0,0);
-  bool NewImageCreated = false;
+  INTN MainSize = ThemeX.MainEntriesSize;
+  XImage MainImage(MainSize, MainSize);
+  XImage* BadgeImage;
 
   if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX.HideBadges & HDBADGES_SWAP)) {
-    MainImage.FromEGImage(Entry->getDriveImage()); //EG_IMAGE
+    MainImage = *Entry->getDriveImage();
   } else {
-//    MainImage.FromEGImage(Entry->Image);
     MainImage = Entry->Image; //XImage
   }
   //this should be inited by the Theme
   if (MainImage.isEmpty()) {
     if (!IsEmbeddedTheme()) {
-//      MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
       MainImage = ThemeX.GetIcon("os_mac");
     }
     if (MainImage.isEmpty()) {
-      MainImage.DummyImage(ThemeX.MainEntriesSize);
-    }
-    if (!MainImage.isEmpty()) {
-      NewImageCreated = true;
+      MainImage.DummyImage(MainSize);
     }
   }
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
@@ -4479,7 +4474,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   }
 
   if (Entry->Row == 0) {
-    BadgeImage.FromEGImage(Entry->getBadgeImage());
+    BadgeImage = Entry->getBadgeImage();
   } //else null
 
   XImage TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
@@ -4501,37 +4496,37 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   }
 
   // place the badge image
-  if (!BadgeImage.isEmpty() &&
-      ((INTN)BadgeImage.GetWidth() + 8) < CompWidth &&
-      ((INTN)BadgeImage.GetHeight() + 8) < CompHeight) {
+  if (BadgeImage &&
+      ((INTN)BadgeImage->GetWidth() + 8) < CompWidth &&
+      ((INTN)BadgeImage->GetHeight() + 8) < CompHeight) {
 
     // Check for user badge x offset from theme.plist
     if (ThemeX.BadgeOffsetX != 0xFFFF) {
       // Check if value is between 0 and ( width of the main icon - width of badge )
-      if (ThemeX.BadgeOffsetX < 0 || ThemeX.BadgeOffsetX > (CompWidth - (INTN)BadgeImage.GetWidth())) {
+      if (ThemeX.BadgeOffsetX < 0 || ThemeX.BadgeOffsetX > (CompWidth - (INTN)BadgeImage->GetWidth())) {
         DBG("User offset X %lld is out of range\n", ThemeX.BadgeOffsetX);
-        ThemeX.BadgeOffsetX = CompWidth  - 8 - BadgeImage.GetWidth();
+        ThemeX.BadgeOffsetX = CompWidth  - 8 - BadgeImage->GetWidth();
         DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetX);
       }
       OffsetX += ThemeX.BadgeOffsetX;
     } else {
       // Set default position
-      OffsetX += CompWidth  - 8 - BadgeImage.GetWidth();
+      OffsetX += CompWidth  - 8 - BadgeImage->GetWidth();
     }
     // Check for user badge y offset from theme.plist
     if (ThemeX.BadgeOffsetY != 0xFFFF) {
       // Check if value is between 0 and ( height of the main icon - height of badge )
-      if (ThemeX.BadgeOffsetY < 0 || ThemeX.BadgeOffsetY > (CompHeight - (INTN)BadgeImage.GetHeight())) {
+      if (ThemeX.BadgeOffsetY < 0 || ThemeX.BadgeOffsetY > (CompHeight - (INTN)BadgeImage->GetHeight())) {
         DBG("User offset Y %lld is out of range\n",ThemeX.BadgeOffsetY);
-        ThemeX.BadgeOffsetY = CompHeight - 8 - BadgeImage.GetHeight();
+        ThemeX.BadgeOffsetY = CompHeight - 8 - BadgeImage->GetHeight();
         DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetY);
       }
       OffsetY += ThemeX.BadgeOffsetY;
     } else {
       // Set default position
-      OffsetY += CompHeight - 8 - BadgeImage.GetHeight();
+      OffsetY += CompHeight - 8 - BadgeImage->GetHeight();
     }
-    Back.Compose(OffsetX, OffsetY, BadgeImage, false);
+    Back.Compose(OffsetX, OffsetY, *BadgeImage, false);
   }
 
   if(ThemeX.SelectionOnTop) {

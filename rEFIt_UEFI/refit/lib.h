@@ -408,7 +408,9 @@ extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
 extern EFI_DEVICE_PATH  *SelfDevicePath;
 extern EFI_DEVICE_PATH  *SelfFullDevicePath;
+#if !USE_XTHEME
 extern EFI_FILE         *ThemeDir;
+#endif
 extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
@@ -423,11 +425,14 @@ extern XObjArray<REFIT_VOLUME> Volumes;
 #endif
 //extern UINTN            VolumesCount;
 
+#if !USE_XTHEME
 extern EG_IMAGE         *Banner;
 extern EG_IMAGE         *BigBack;
-extern EG_IMAGE         *FontImage;
 extern EG_IMAGE         *SelectionImages[];
 extern EG_IMAGE         *Buttons[];
+#endif
+
+extern EG_IMAGE         *FontImage;  //not yet converted to XImage
 extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;
 extern BOOLEAN          gBootChanged;

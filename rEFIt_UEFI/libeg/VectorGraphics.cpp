@@ -415,7 +415,8 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 {
   EFI_STATUS      Status;
   NSVGimage       *SVGimage;
-//  NSVGrasterizer  *rast = nsvgCreateRasterizer();
+
+  Icons.Empty();
 
   // --- Parse theme.svg --- low case
   mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works
@@ -472,8 +473,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   
   // --- Make other icons
 
-  Icons.Empty();
-  for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i < BUILTIN_CHECKBOX_CHECKED; ++i) {
+  for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
     if (i == BUILTIN_ICON_BANNER) {
       continue;
     }
@@ -486,9 +486,6 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   //selections
   SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
-//for (int i=0 ; i<6 ; i++ ) {
-//SelectionImages[i].Draw(i*200, 0);
-//}
 
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
@@ -498,7 +495,10 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   if (EFI_ERROR(Status)) {
     Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, Scale, &SelectionImages[4]);
   }
-  
+  //for (int i=0 ; i<6 ; i+=2 ) {
+  //SelectionImages[i].Draw(i*100, 0);
+  //}
+
   //banner animation
   GUI_ANIME *Anime = (__typeof__(Anime))AllocateZeroPool (sizeof(GUI_ANIME));
   Anime->ID = 1; //main screen

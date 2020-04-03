@@ -104,11 +104,12 @@ BOOLEAN DayLight;
 
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
-
+#if !USE_XTHEME
 extern INTN                     ScrollWidth;
 extern INTN                     ScrollButtonsHeight;
 extern INTN                     ScrollBarDecorationsHeight;
 extern INTN                     ScrollScrollDecorationsHeight;
+#endif
 extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
 //extern INTN                     OldChosenAudio;
 /*
@@ -988,11 +989,11 @@ CUSTOM_LOADER_ENTRY
     }
 
     if (Entry->FullTitle != NULL) {
-      DuplicateEntry->FullTitle      = EfiStrDuplicate (Entry->FullTitle);
+      DuplicateEntry->FullTitle      = Entry->FullTitle;
     }
 
     if (Entry->Title != NULL) {
-      DuplicateEntry->Title          = EfiStrDuplicate (Entry->Title);
+      DuplicateEntry->Title          = Entry->Title;
     }
 
     if (Entry->ImagePath != NULL) {
@@ -1019,9 +1020,7 @@ CUSTOM_LOADER_ENTRY
     DuplicateEntry->KernelScan       = Entry->KernelScan;
     DuplicateEntry->CustomBoot       = Entry->CustomBoot;
     DuplicateEntry->CustomLogo       = Entry->CustomLogo;
-
-    CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)DuplicateEntry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
-                              (KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
+    CopyKernelAndKextPatches (&DuplicateEntry->KernelAndKextPatches, &Entry->KernelAndKextPatches);
   }
 
   return DuplicateEntry;
@@ -1949,6 +1948,48 @@ FillinCustomEntry (
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
+#if USE_XTHEME
+  Prop = GetProperty (DictPointer, "Title");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    Entry->Title.takeValueFrom(Prop->string);
+  }
+  Prop = GetProperty (DictPointer, "FullTitle");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    Entry->FullTitle.takeValueFrom(Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "Image");
+  if (Prop != NULL) {
+    if (Entry->ImagePath) {
+      FreePool (Entry->ImagePath);
+      Entry->ImagePath = NULL;
+    }
+    Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->string);
+  } else {
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->Image.FromPNG(TmpData, DataLen);
+      FreePool(TmpData);
+    }
+  }
+
+  Prop = GetProperty (DictPointer, "DriveImage");
+  if (Prop != NULL) {
+    if (Entry->DriveImagePath != NULL) {
+      FreePool (Entry->DriveImagePath);
+      Entry->DriveImagePath = NULL;
+    }
+    Entry->DriveImage.LoadXImage(ThemeX.ThemeDir, Prop->string);
+  } else {
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->DriveImage.FromPNG(TmpData, DataLen);
+      FreePool(TmpData);
+    }
+  }
+#else
 
   Prop = GetProperty (DictPointer, "Title");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
@@ -1963,7 +2004,6 @@ FillinCustomEntry (
 
     Entry->Title = PoolPrint (L"%a", Prop->string);
   }
-
   Prop = GetProperty (DictPointer, "FullTitle");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
     if (Entry->FullTitle) {
@@ -1989,27 +2029,11 @@ FillinCustomEntry (
       Entry->ImagePath = PoolPrint (L"%a", Prop->string);
     }
   } else {
-    Prop = GetProperty (DictPointer, "ImageData");
-    if (Prop != NULL) {
-      if (Entry->Image) {
-        egFreeImage (Entry->Image);
-        Entry->Image     = NULL;
-      }
-      if (Entry->ImagePath) {
-        FreePool (Entry->ImagePath);
-        Entry->ImagePath = NULL;
-      }
-      if (Prop->type == kTagTypeString) {
-        UINT32 len       = (UINT32)(AsciiStrLen (Prop->string) >> 1);
-        if (len > 0) {
-          UINT8 *data    = (UINT8 *)AllocateZeroPool (len);
-          if (data) {
-            Entry->Image = egDecodePNG(data, hex2bin (Prop->string, data, len), TRUE);
-          }
-        }
-      } else if (Prop->type == kTagTypeData) {
-        Entry->Image     = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-      }
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->Image     = egDecodePNG (TmpData, DataLen, TRUE);
+      FreePool(TmpData);
     }
   }
 
@@ -2029,32 +2053,14 @@ FillinCustomEntry (
       Entry->DriveImagePath = PoolPrint (L"%a", Prop->string);
     }
   } else {
-    Prop = GetProperty (DictPointer, "DriveImageData");
-    if (Prop != NULL) {
-      if (Entry->DriveImage) {
-        egFreeImage (Entry->DriveImage);
-        Entry->Image          = NULL;
-      }
-
-      if (Entry->DriveImagePath != NULL) {
-        FreePool (Entry->DriveImagePath);
-        Entry->DriveImagePath = NULL;
-      }
-
-      if (Prop->type == kTagTypeString) {
-        UINT32 len = (UINT32)(AsciiStrLen (Prop->string) >> 1);
-        if (len > 0) {
-          UINT8 *data = (UINT8 *)AllocateZeroPool (len);
-          if (data) {
-            Entry->DriveImage = egDecodePNG (data, hex2bin (Prop->string, data, len), TRUE);
-          }
-        }
-      } else if (Prop->type == kTagTypeData) {
-        Entry->DriveImage    = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-      }
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
+    if (TmpData) {
+      Entry->DriveImage     = egDecodePNG (TmpData, DataLen, TRUE);
+      FreePool(TmpData);
     }
   }
-
+#endif
   Prop = GetProperty (DictPointer, "Hotkey");
   if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
     Entry->Hotkey = *(Prop->string);
@@ -2170,6 +2176,25 @@ FillinCustomEntry (
   if (Entry->Options == NULL && OSTYPE_IS_WINDOWS(Entry->Type)) {
     Entry->Options = L"-s -h";
   }
+#if USE_XTHEME
+  if (Entry->Title.isEmpty()) {
+    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
+      Entry->Title = L"Recovery"_XSW;
+    } else if (OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
+      Entry->Title = L"Install macOS"_XSW;
+    }
+  }
+  if (Entry->Image.isEmpty() && (Entry->ImagePath == NULL)) {
+    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
+      Entry->ImagePath = L"mac";
+    }
+  }
+  if (Entry->DriveImage.isEmpty() && (Entry->DriveImagePath == NULL)) {
+    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
+      Entry->DriveImagePath = L"recovery";
+    }
+  }
+#else
 
   if (Entry->Title == NULL) {
     if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
@@ -2188,7 +2213,7 @@ FillinCustomEntry (
       Entry->DriveImagePath = L"recovery";
     }
   }
-
+#endif
   // OS Specific flags
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY (Entry->Type) || OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
 
@@ -2239,8 +2264,10 @@ FillinCustomEntry (
     // KernelAndKextPatches
     if (!SubEntry) { // CopyKernelAndKextPatches already in: DuplicateCustomEntry if SubEntry == TRUE
       //DBG ("Copying global patch settings\n");
-      CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
-                                (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+//      CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
+ //                               (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+
+      CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, &gSettings.KernelAndKextPatches);
 
       //#ifdef DUMP_KERNEL_KEXT_PATCHES
       //    DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
@@ -2304,6 +2331,104 @@ FillinCustomEntry (
   }
   return TRUE;
 }
+#if USE_XTHEME
+BOOLEAN
+FillingCustomLegacy (
+                    IN OUT CUSTOM_LEGACY_ENTRY *Entry,
+                    TagPtr DictPointer
+                    )
+{
+  TagPtr Prop;
+  if ((Entry == NULL) || (DictPointer == NULL)) {
+    return FALSE;
+  }
+
+  Prop = GetProperty (DictPointer, "Disabled");
+  if (IsPropertyTrue (Prop)) {
+    return FALSE;
+  }
+
+  Prop = GetProperty (DictPointer, "Volume");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    if (Entry->Volume != NULL) {
+      FreePool (Entry->Volume);
+    }
+    Entry->Volume = PoolPrint (L"%a", Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "FullTitle");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    Entry->FullTitle.takeValueFrom(Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "Title");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    Entry->Title.takeValueFrom(Prop->string);
+  }
+  Prop = GetProperty (DictPointer, "Image");
+  if (Prop != NULL) {
+    if (Prop->type == kTagTypeString) {
+      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->string);
+    }
+  } else {
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->Image.FromPNG(TmpData, DataLen);
+      FreePool(TmpData);
+    }
+  }
+
+  Prop = GetProperty (DictPointer, "DriveImage");
+  if (Prop != NULL) {
+    if (Prop->type == kTagTypeString) {
+      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->string);
+    }
+  } else {
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
+    if (TmpData) {
+      Entry->DriveImage.FromPNG(TmpData, DataLen);
+      FreePool(TmpData);
+    }
+  }
+
+  Prop = GetProperty (DictPointer, "Hotkey");
+  if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
+    Entry->Hotkey = *(Prop->string);
+  }
+
+  // Hidden Property, Values:
+  // - No (show the entry)
+  // - Yes (hide the entry but can be show with F3)
+  // - Always (always hide the entry)
+  Prop = GetProperty (DictPointer, "Hidden");
+  if (Prop != NULL) {
+    if ((Prop->type == kTagTypeString) &&
+        (AsciiStriCmp (Prop->string, "Always") == 0)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+    } else if (IsPropertyTrue (Prop)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
+    } else {
+      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
+    }
+  }
+
+  Prop = GetProperty (DictPointer, "Type");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    if (AsciiStriCmp (Prop->string, "Windows") == 0) {
+      Entry->Type = OSTYPE_WIN;
+    } else if (AsciiStriCmp (Prop->string, "Linux") == 0) {
+      Entry->Type = OSTYPE_LIN;
+    } else {
+      Entry->Type = OSTYPE_OTHER;
+    }
+  }
+
+  Entry->VolumeType = GetVolumeType(DictPointer);
+  return TRUE;
+}
+#else
 
 STATIC
 BOOLEAN
@@ -2364,24 +2489,11 @@ FillinCustomLegacy (
       Entry->ImagePath = PoolPrint (L"%a", Prop->string);
     }
   } else {
-    Prop = GetProperty (DictPointer, "ImageData");
-    if (Prop != NULL) {
-      if (Entry->Image != NULL) {
-        egFreeImage (Entry->Image);
-        Entry->Image = NULL;
-      }
-
-      if (Prop->type == kTagTypeString) {
-        UINT32 Len       = (UINT32)(AsciiStrLen (Prop->string) >> 1);
-        if (Len > 0) {
-          UINT8 *Data    = (UINT8 *)AllocateZeroPool (Len);
-          if (Data != NULL) {
-            Entry->Image = egDecodePNG (Data, hex2bin (Prop->string, Data, Len), TRUE);
-          }
-        }
-      } else if (Prop->type == kTagTypeData) {
-        Entry->Image     = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-      }
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->Image = egDecodePNG (TmpData, DataLen, TRUE);
+      FreePool(TmpData);
     }
   }
 
@@ -2401,29 +2513,11 @@ FillinCustomLegacy (
       Entry->DriveImagePath = PoolPrint (L"%a", Prop->string);
     }
   } else {
-    Prop = GetProperty (DictPointer, "DriveImageData");
-    if (Prop != NULL) {
-      if (Entry->DriveImage != NULL) {
-        egFreeImage (Entry->DriveImage);
-        Entry->Image = NULL;
-      }
-
-      if (Entry->DriveImagePath != NULL) {
-        FreePool (Entry->DriveImagePath);
-        Entry->DriveImagePath = NULL;
-      }
-
-      if (Prop->type == kTagTypeString) {
-        UINT32 len = (UINT32)(AsciiStrLen (Prop->string) >> 1);
-        if (len > 0) {
-          UINT8 *data = (UINT8 *)AllocateZeroPool (len);
-          if (data) {
-            Entry->DriveImage = egDecodePNG (data, hex2bin (Prop->string, data, len), TRUE);
-          }
-        }
-      } else if (Prop->type == kTagTypeData) {
-        Entry->DriveImage = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-      }
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
+    if (TmpData) {
+      Entry->DriveImage = egDecodePNG (TmpData, DataLen, TRUE);
+      FreePool(TmpData);
     }
   }
 
@@ -2462,6 +2556,102 @@ FillinCustomLegacy (
   Entry->VolumeType = GetVolumeType(DictPointer);
   return TRUE;
 }
+#endif
+
+#if USE_XTHEME
+BOOLEAN
+FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
+{
+  TagPtr Prop;
+  if ((Entry == NULL) || (DictPointer == NULL)) {
+    return FALSE;
+  }
+
+  Prop = GetProperty (DictPointer, "Disabled");
+  if (IsPropertyTrue (Prop)) {
+    return FALSE;
+  }
+
+  Prop = GetProperty (DictPointer, "Volume");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    if (Entry->Volume) {
+      FreePool (Entry->Volume);
+    }
+    Entry->Volume = PoolPrint (L"%a", Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "Path");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    if (Entry->Path != NULL) {
+      FreePool (Entry->Path);
+    }
+
+    Entry->Path = PoolPrint (L"%a", Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "Arguments");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    if (Entry->Options != NULL) {
+      FreePool (Entry->Options);
+    } else {
+      Entry->Options = PoolPrint (L"%a", Prop->string);
+    }
+  }
+
+  Prop = GetProperty (DictPointer, "FullTitle");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    Entry->FullTitle.takeValueFrom(Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "Title");
+  if (Prop != NULL && (Prop->type == kTagTypeString)) {
+    Entry->Title.takeValueFrom(Prop->string);
+  }
+
+  Prop = GetProperty (DictPointer, "Image");
+  if (Prop != NULL) {
+    if (Entry->ImagePath != NULL) {
+      FreePool (Entry->ImagePath);
+      Entry->ImagePath = NULL;
+    }
+    if (Prop->type == kTagTypeString) {
+      Entry->ImagePath = PoolPrint (L"%a", Prop->string);
+    }
+    Entry->Image.LoadXImage(ThemeX.ThemeDir, Entry->ImagePath);
+  } else {
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->Image.FromPNG(TmpData, DataLen);
+      FreePool(TmpData);
+    }
+  }
+  Prop = GetProperty (DictPointer, "Hotkey");
+  if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
+    Entry->Hotkey = *(Prop->string);
+  }
+
+  // Hidden Property, Values:
+  // - No (show the entry)
+  // - Yes (hide the entry but can be show with F3)
+  // - Always (always hide the entry)
+  Prop = GetProperty (DictPointer, "Hidden");
+  if (Prop != NULL) {
+    if ((Prop->type == kTagTypeString) &&
+        (AsciiStriCmp (Prop->string, "Always") == 0)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+    } else if (IsPropertyTrue (Prop)) {
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
+    } else {
+      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
+    }
+  }
+
+  Entry->VolumeType = GetVolumeType(DictPointer);
+
+  return TRUE;
+}
+#else
 
 STATIC
 BOOLEAN
@@ -2539,26 +2729,13 @@ FillinCustomTool (
       Entry->ImagePath = PoolPrint (L"%a", Prop->string);
     }
   } else {
-    Prop = GetProperty (DictPointer, "ImageData");
-    if (Prop != NULL) {
-      if (Entry->Image != NULL) {
-        egFreeImage (Entry->Image);
-        Entry->Image = NULL;
-      }
-
-      if (Prop->type == kTagTypeString) {
-        UINT32 Len = (UINT32)(AsciiStrLen (Prop->string) >> 1);
-        if (Len > 0) {
-          UINT8 *data = (UINT8 *)AllocateZeroPool (Len);
-          if (data != NULL) {
-            Entry->Image = egDecodePNG (data, hex2bin (Prop->string, data, Len), TRUE);
-          }
-        }
-      } else if (Prop->type == kTagTypeData) {
-        Entry->Image = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-      }
+    UINTN DataLen = 0;
+    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    if (TmpData) {
+      Entry->Image = egDecodePNG (TmpData, DataLen, TRUE);
     }
   }
+
   Prop = GetProperty (DictPointer, "Hotkey");
   if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
     Entry->Hotkey = *(Prop->string);
@@ -2584,7 +2761,7 @@ FillinCustomTool (
 
   return TRUE;
 }
-
+#endif
 // EDID reworked by Sherlocks
 VOID
 GetEDIDSettings(TagPtr DictPointer)
@@ -3237,7 +3414,7 @@ GetEarlyUserSettings (
 
         Dict2 = GetProperty (Prop, "DoubleClickTime");
         if (Dict2 != NULL) {
-          gSettings.DoubleClickTime = (UINT64)GetPropertyInteger (Dict2, 0);
+          gSettings.DoubleClickTime = (UINT64)GetPropertyInteger (Dict2, 500);
         }
       }
       // hide by name/uuid
@@ -3372,9 +3549,15 @@ GetEarlyUserSettings (
               Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LEGACY_ENTRY));
               if (Entry) {
                 // Fill it in
+#if USE_XTHEME
+                if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry (Entry)) {
+                  FreePool (Entry);
+                }
+#else
                 if (!FillinCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry (Entry)) {
                   FreePool (Entry);
                 }
+#endif
               }
             }
           }
@@ -3399,9 +3582,15 @@ GetEarlyUserSettings (
               Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_TOOL_ENTRY));
               if (Entry) {
                 // Fill it in
+#if USE_XTHEME
+                if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry (Entry)) {
+                  FreePool (Entry);
+                }
+#else
                 if (!FillinCustomTool(Entry, Dict3) || !AddCustomToolEntry (Entry)) {
                   FreePool (Entry);
                 }
+#endif
               }
             }
           }
@@ -4744,8 +4933,13 @@ GetThemeTagSettings (
 
 #endif
 
-TagPtr
-LoadTheme (const CHAR16 *TestTheme)
+#if USE_XTHEME
+void* XTheme::LoadTheme (const CHAR16 *TestTheme)
+
+#else
+TagPtr LoadTheme (const CHAR16 *TestTheme)
+
+#endif
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
   TagPtr     ThemeDict = NULL;
@@ -4761,31 +4955,34 @@ LoadTheme (const CHAR16 *TestTheme)
     } else {
       ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
     }
+    DBG("look for %ls\n", ThemePath);
     if (ThemePath != NULL) {
-      if (ThemeDir != NULL) {
-        ThemeDir->Close (ThemeDir);
-        ThemeDir = NULL;
-      }
+      //why this???
       Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
       if (EFI_ERROR (Status)) {
+        if (ThemeDir != NULL) {
+          ThemeDir->Close (ThemeDir);
+          ThemeDir = NULL;
+        }
         FreePool (ThemePath);
         ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
       }
+
       if (!EFI_ERROR (Status)) {
         Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
 #if USE_XTHEME
-          Status = ThemeX.ParseSVGXTheme((const CHAR8*)ThemePtr);
-#else
-          Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
-#endif
+          Status = ParseSVGXTheme((const CHAR8*)ThemePtr);
           if (EFI_ERROR(Status)) {
             ThemeDict = NULL;
           } else {
             ThemeDict = (__typeof__(ThemeDict))AllocateZeroPool(sizeof(TagStruct));
             ThemeDict->type = kTagTypeNone;
           }
+#else
+          Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
+#endif
           if (ThemeDict == NULL) {
             DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
           } else {
@@ -4811,7 +5008,11 @@ LoadTheme (const CHAR16 *TestTheme)
   if (ThemePtr != NULL) {
     FreePool (ThemePtr);
   }
+#if USE_XTHEME
+  return (void*)ThemeDict;
+#else
   return ThemeDict;
+#endif
 }
 
 #if USE_XTHEME
@@ -4892,7 +5093,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
       }
 
       if (TestTheme != NULL) {
-        ThemeDict = LoadTheme (TestTheme);
+        ThemeDict = (TagPtr)ThemeX.LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
           DBG ("special theme %ls found and %ls parsed\n", TestTheme, CONFIG_THEME_FILENAME);
 //          ThemeX.Theme.takeValueFrom(TestTheme);
@@ -4916,13 +5117,13 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
           goto finish;
         }
         if (AsciiStrCmp (ChosenTheme, "random") == 0) {
-          ThemeDict = LoadTheme (ThemesList[Rnd]);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme (ThemesList[Rnd]);
           goto finish;
         }
 
         TestTheme   = PoolPrint (L"%a", ChosenTheme);
         if (TestTheme != NULL) {
-          ThemeDict = LoadTheme (TestTheme);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme (TestTheme);
           if (ThemeDict != NULL) {
             DBG ("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
 //            ThemeX.Theme.takeValueFrom(TestTheme);
@@ -4949,16 +5150,16 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
       if (!GlobalConfig.Theme) {
         if (Time != NULL) {
           DBG ("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-          ThemeDict = LoadTheme (ThemesList[Rnd]);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);
         } else {
           DBG ("no default theme, get first theme %ls\n", ThemesList[0]);
-          ThemeDict = LoadTheme (ThemesList[0]);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[0]);
         }
       } else {
         if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
-          ThemeDict = LoadTheme (ThemesList[Rnd]);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);
         } else {
-          ThemeDict = LoadTheme (GlobalConfig.Theme);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme(GlobalConfig.Theme);
           if (ThemeDict == NULL) {
             DBG ("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme);
           } else {
@@ -4979,16 +5180,16 @@ finish:
       ThemePath = NULL;
     }
 
-    if (ThemeDir != NULL) {
-      ThemeDir->Close (ThemeDir);
-      ThemeDir = NULL;
+    if (ThemeX.ThemeDir != NULL) {
+      ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
+      ThemeX.ThemeDir = NULL;
     }
 
  //   ThemeX.GetThemeTagSettings(NULL); already done
     //fill some fields
     ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
     ThemeX.embedded = true;
-    Status = StartupSoundPlay(ThemeDir, NULL);
+    Status = StartupSoundPlay(ThemeX.ThemeDir, NULL);
   } else { // theme loaded successfully
     ThemeX.embedded = false;
     ThemeX.Theme.takeValueFrom(GlobalConfig.Theme);
@@ -5007,12 +5208,12 @@ finish:
     FreeTag(ThemeDict);
 
     if (!DayLight) {
-      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav");
+      Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound_night.wav");
       if (EFI_ERROR(Status)) {
-        Status = StartupSoundPlay(ThemeDir, L"sound.wav");
+        Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound.wav");
       }
     } else {
-      Status = StartupSoundPlay(ThemeDir, L"sound.wav");
+      Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound.wav");
     }
 
   }

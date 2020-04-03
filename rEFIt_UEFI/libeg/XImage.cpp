@@ -226,6 +226,7 @@ void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect)
   }
 }
 
+//sizes remain as were assumed input image is large enough?
 void XImage::CopyScaled(const XImage& Image, float scale)
 {
   UINTN SrcWidth = Image.GetWidth();
@@ -632,7 +633,7 @@ void XImage::EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight, IN CONST EFI
 
   XImage NewImage(NewWidth, NewHeight);
   NewImage.Fill(Color);
-  NewImage.Compose(0, 0, (*this), true);
+  NewImage.Compose(0, 0, (*this), false); //should keep existing opacity
   setSizeInPixels(NewWidth, NewHeight); //include reallocate but loose data
   CopyMem(&PixelData[0], &NewImage.PixelData[0], GetSizeInBytes());
   //we have to copy pixels twice? because we can't return newimage instead of this
@@ -675,6 +676,18 @@ void XImage::CopyRect(const XImage& Image, INTN XPos, INTN YPos)
     }
   }
 }
+
+void XImage::CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_RECT& InputRect)
+{
+  INTN Dx = OwnPlace.XPos - InputRect.XPos;
+  INTN Dy = OwnPlace.YPos - InputRect.YPos;
+  for (INTN y = OwnPlace.YPos; y < (INTN)Height && (y - Dy) < (INTN)Image.GetHeight(); ++y) {
+    for (INTN x = OwnPlace.XPos; x < (INTN)Width && (x - Dx) < (INTN)Image.GetWidth(); ++x) {
+      PixelData[y * Width + x] = Image.GetPixel(x - Dx, y - Dy);
+    }
+  }
+}
+
 
 EG_IMAGE* XImage::ToEGImage()
 {

@@ -381,7 +381,6 @@ void XTheme::ClearScreen() //and restore background and banner
           //        DBG("banner position old style\n");
         }
       }
-      
     }
   }
   
@@ -390,16 +389,16 @@ void XTheme::ClearScreen() //and restore background and banner
     // Resolution changed
     Background.setEmpty();
   }
-  
   if (Background.isEmpty()) {
     Background = XImage(UGAWidth, UGAHeight);
-    Background.Fill(BlueBackgroundPixel);
+    Background.Fill(BlueBackgroundPixel); //blue opaque. May be better to set black opaque?
   }
+// now we are sure Background has UGA sizes
   if (!BigBack.isEmpty()) {
     switch (BackgroundScale) {
     case imScale:
 //        DBG("back copy scaled\n");
-      Background.CopyScaled(BigBack, Scale);
+      Background = XImage(BigBack, Scale);
       break;
     case imCrop:
     {
@@ -424,12 +423,14 @@ void XTheme::ClearScreen() //and restore background and banner
         y2 = (-y) >> 1;
         y = UGAHeight;
       }
+      const EG_RECT BackRect = EG_RECT(x1, y1, x, y);
+      const EG_RECT BigRect = EG_RECT(x2, y2, x, y);
       //the function can be in XImage class
-      egRawCopy((EG_PIXEL*)Background.GetPixelPtr(x1, y1),
-                (EG_PIXEL*)BigBack.GetPixelPtr(x2, y2),
-                x, y, Background.GetWidth(), BigBack.GetWidth());
+//      egRawCopy((EG_PIXEL*)Background.GetPixelPtr(x1, y1),
+//                (EG_PIXEL*)BigBack.GetPixelPtr(x2, y2),
+//                x, y, Background.GetWidth(), BigBack.GetWidth());
 //      DBG("crop to x,y: %lld, %lld\n", x, y);
-//      Background.CopyRect(BigBack, x, y);
+      Background.CopyRect(BigBack, BackRect, BigRect);
 //      DBG("back copy cropped\n");
       break;
     }
@@ -454,12 +455,17 @@ void XTheme::ClearScreen() //and restore background and banner
       break;
     }
   }
+  //join Banner and Background for menu drawing
+  if (!Banner.isEmpty()) {
+    Background.Compose(BannerPlace.XPos, BannerPlace.YPos, Banner, true);
+  }
+
   Background.DrawWithoutCompose(0, 0, UGAWidth, UGAHeight);
 //  Background.Draw(0,0,0,true);
   //then draw banner
-  if (!Banner.isEmpty()) {
-    Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);
-  }
+//  if (!Banner.isEmpty()) {
+//    Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);
+//  }
   
 }
 
@@ -588,6 +594,7 @@ void XTheme::InitSelection() //for PNG theme
       Buttons[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
     }
   } else {
+    //SVG theme already parsed all icons
     Buttons[0] = GetIcon("radio_button");
     Buttons[1] = GetIcon("radio_button_selected");
     Buttons[2] = GetIcon("checkbox");

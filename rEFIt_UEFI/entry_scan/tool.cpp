@@ -279,7 +279,11 @@ VOID AddCustomTool(VOID)
   UINTN             VolumeIndex;
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
+#if USE_XTHEME
+  XImage          Image;
+#else
   EG_IMAGE          *Image;
+#endif
   UINTN              i = 0;
 
 //  DBG("Custom tool start\n");
@@ -349,6 +353,11 @@ VOID AddCustomTool(VOID)
       }
       // Change to custom image if needed
       Image = Custom->Image;
+#if USE_XTHEME
+      if (Image.isEmpty() && Custom->ImagePath) {
+        Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
+      }
+#else
       if ((Image == NULL) && Custom->ImagePath) {
         Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
         if (Image == NULL) {
@@ -361,14 +370,14 @@ VOID AddCustomTool(VOID)
           }
         }
       }
+#endif
+
 #if USE_XTHEME
-      if (Image == NULL) {
+      if (Image.isEmpty()) {
         AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->Options);
       } else {
       // Create a legacy entry for this volume
-        XImage ImageX;
-        ImageX.FromEGImage(Image);
-        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, ImageX, Custom->Hotkey, Custom->Options);
+        AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, Custom->Options);
       }
 #else
       if (Image == NULL) {

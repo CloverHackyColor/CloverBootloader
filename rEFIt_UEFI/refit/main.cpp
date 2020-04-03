@@ -1030,7 +1030,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
   egClearScreen(&MenuBackgroundPixel);
   BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
-  BootLogoX.LoadXImage(ThemeDir, Entry->Volume->LegacyOS->IconName);
+  BootLogoX.LoadXImage(ThemeX.ThemeDir, Entry->Volume->LegacyOS->IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
 #else

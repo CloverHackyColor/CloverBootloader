@@ -112,9 +112,13 @@ class REFIT_ABSTRACT_MENU_ENTRY
   ACTION             AtMouseOver;
   REFIT_MENU_SCREEN *SubScreen;
 
+#if USE_XTHEME
+  virtual XImage* getDriveImage() { return nullptr; };
+  virtual XImage* getBadgeImage() { return nullptr; };
+#else
   virtual EG_IMAGE* getDriveImage() const { return nullptr; };
   virtual EG_IMAGE* getBadgeImage() const { return nullptr; };
-
+#endif
 
   virtual REFIT_SIMPLE_MENU_ENTRY_TAG* getREFIT_SIMPLE_MENU_ENTRY_TAG() { return nullptr; };
   virtual REFIT_MENU_SWITCH* getREFIT_MENU_SWITCH() { return nullptr; };
@@ -135,6 +139,27 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual REFIT_MENU_ENTRY_ITEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
   virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return nullptr; };
 
+#if USE_XTHEME
+  REFIT_ABSTRACT_MENU_ENTRY() : Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+  {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+  {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+  {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+  : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), Image(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+  {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_,
+                            CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, const XImage& Image_,
+                            EG_RECT Place_, ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+                            REFIT_MENU_SCREEN *SubScreen_)
+  : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_),
+  Image(Image_), Place(Place_),
+  AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
+  SubScreen(SubScreen_) {};
+
+#else
+
   REFIT_ABSTRACT_MENU_ENTRY() : Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
 	{};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(NULL), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
@@ -152,7 +177,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
                           Image(Image_), Place(Place_),
                           AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
                           SubScreen(SubScreen_) {};
-
+#endif
   virtual ~REFIT_ABSTRACT_MENU_ENTRY() {}; // virtual destructor : this is vital
 };
 
@@ -267,15 +292,28 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	  CONST CHAR16     *DevicePathString;
 	  CONST CHAR16     *LoadOptions; //moved here for compatibility with legacy
 	  CONST CHAR16     *LoaderPath;
+#if USE_XTHEME
+    XImage        DriveImage;
+    XImage        BadgeImage;
 
+    REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
+    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(0), LoaderPath(0), DriveImage(), BadgeImage()
+    {}
+    virtual  XImage* getDriveImage()  { return &DriveImage; };
+    virtual  XImage* getBadgeImage()  { return &BadgeImage; };
+
+#else
 	  EG_IMAGE          *DriveImage;
 	  EG_IMAGE          *BadgeImage;
 
-	  REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-					: REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
-					{}
-	  virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
-	  virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };
+    REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
+    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
+    {}
+    virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
+    virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };
+
+#endif
+
 
 	  virtual REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER* getREFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER() { return this; };
 	};

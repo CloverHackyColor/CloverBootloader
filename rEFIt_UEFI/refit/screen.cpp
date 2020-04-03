@@ -1039,7 +1039,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
           //       DBG("frame %d loaded\n", i);
         } else {
           UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-          p = egLoadImage(ThemeDir, FileName, TRUE);
+          p = egLoadImage(ThemeX.ThemeDir, FileName, TRUE);
         }
         if (!p) {
           p = Last;

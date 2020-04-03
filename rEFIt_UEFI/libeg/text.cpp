@@ -106,7 +106,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   } else {
 #if USE_XTHEME
     if (!ThemeX.TypeSVG) {
-      NewImage = egLoadImage(ThemeDir, isKorean ? L"FontKorean.png" : ThemeX.FontFileName.data(), TRUE);
+      NewImage = egLoadImage(ThemeX.ThemeDir, isKorean ? L"FontKorean.png" : ThemeX.FontFileName.data(), TRUE);
       MsgLog("Loading font from ThemeDir: %s\n", NewImage ? "Success" : "Error");
     } else {
       MsgLog("Using SVG font\n");
@@ -146,9 +146,9 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   }
   
   ImageWidth = NewImage->Width;
-	DBG("ImageWidth=%lld\n", ImageWidth);
+//	DBG("ImageWidth=%lld\n", ImageWidth);
   ImageHeight = NewImage->Height;
-	DBG("ImageHeight=%lld\n", ImageHeight);
+//	DBG("ImageHeight=%lld\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
   NewFontImage = egCreateImage(ImageWidth * Rows, ImageHeight / Rows, TRUE);
   
