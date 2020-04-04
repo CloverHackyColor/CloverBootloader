@@ -4946,61 +4946,58 @@ TagPtr LoadTheme (const CHAR16 *TestTheme)
   CHAR8      *ThemePtr = NULL;
   UINTN      Size      = 0;
 
-  if (TestTheme != NULL) {
-    if (ThemePath != NULL) {
-      FreePool (ThemePath);
+  if (TestTheme == NULL) {
+    return NULL;
+  }
+  if (ThemePath != NULL) {
+    FreePool (ThemePath);
+  }
+  if (UGAHeight > HEIGHT_2K) {
+    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
+  } else {
+    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
+  }
+  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  if (EFI_ERROR (Status)) {
+    if (ThemeDir != NULL) {
+      ThemeDir->Close (ThemeDir);
+      ThemeDir = NULL;
     }
-    if (UGAHeight > HEIGHT_2K) {
-      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
-    } else {
-      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
-    }
-    DBG("look for %ls\n", ThemePath);
-    if (ThemePath != NULL) {
-      //why this???
-      Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-      if (EFI_ERROR (Status)) {
-        if (ThemeDir != NULL) {
-          ThemeDir->Close (ThemeDir);
-          ThemeDir = NULL;
-        }
-        FreePool (ThemePath);
-        ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
-        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-      }
+    FreePool (ThemePath);
+    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
+    Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  }
 
-      if (!EFI_ERROR (Status)) {
-        Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
-        if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
+  if (!EFI_ERROR (Status)) {
+    Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+    if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
 #if USE_XTHEME
-          Status = ParseSVGXTheme((const CHAR8*)ThemePtr);
-          if (EFI_ERROR(Status)) {
-            ThemeDict = NULL;
-          } else {
-            ThemeDict = (__typeof__(ThemeDict))AllocateZeroPool(sizeof(TagStruct));
-            ThemeDict->type = kTagTypeNone;
-          }
+      Status = ParseSVGXTheme((const CHAR8*)ThemePtr);
+      if (EFI_ERROR(Status)) {
+        ThemeDict = NULL;
+      } else {
+        ThemeDict = (__typeof__(ThemeDict))AllocateZeroPool(sizeof(TagStruct));
+        ThemeDict->type = kTagTypeNone;
+      }
 #else
-          Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
+      Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
 #endif
-          if (ThemeDict == NULL) {
-            DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
-          } else {
-            DBG("Using vector theme '%ls' (%ls)\n", TestTheme, ThemePath);
-          }
+      if (ThemeDict == NULL) {
+        DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
+      } else {
+        DBG("Using vector theme '%ls' (%ls)\n", TestTheme, ThemePath);
+      }
+    } else {
+      Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+      if (!EFI_ERROR (Status) && (ThemePtr != NULL) && (Size != 0)) {
+        Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
+        if (EFI_ERROR (Status)) {
+          ThemeDict = NULL;
+        }
+        if (ThemeDict == NULL) {
+          DBG ("xml file %ls not parsed\n", CONFIG_THEME_FILENAME);
         } else {
-          Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-          if (!EFI_ERROR (Status) && (ThemePtr != NULL) && (Size != 0)) {
-            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
-            if (EFI_ERROR (Status)) {
-              ThemeDict = NULL;
-            }
-            if (ThemeDict == NULL) {
-              DBG ("xml file %ls not parsed\n", CONFIG_THEME_FILENAME);
-            } else {
-              DBG ("Using theme '%ls' (%ls)\n", TestTheme, ThemePath);
-            }
-          }
+          DBG ("Using theme '%ls' (%ls)\n", TestTheme, ThemePath);
         }
       }
     }

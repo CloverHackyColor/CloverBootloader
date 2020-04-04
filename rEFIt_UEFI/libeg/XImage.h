@@ -46,7 +46,7 @@ typedef struct {
 class XImage
 {
 protected:
-  size_t      Width;
+  size_t      Width; //may be better to use INTN - signed integer as it always compared with expressions
   size_t      Height;
   XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL> PixelData;
  
@@ -68,11 +68,11 @@ public:
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& GetData() const;
 
-  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& GetPixel(UINTN x, UINTN y) const;
-  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y) const ;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(UINTN x, UINTN y);
-  UINTN      GetWidth() const;
-  UINTN      GetHeight() const;
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& GetPixel(INTN x, INTN y) const;
+  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(INTN x, INTN y) const ;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL* GetPixelPtr(INTN x, INTN y);
+  INTN      GetWidth() const { return (INTN)Width; }
+  INTN      GetHeight() const { return (INTN)Height; }
 
   void setZero() { SetMem( (void*)GetPixelPtr(0, 0), GetSizeInBytes(), 0); }
 
