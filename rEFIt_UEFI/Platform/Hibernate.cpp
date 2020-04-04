@@ -429,7 +429,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
                 }
               }
               if (VolName) {
-                UnicodeSPrint(VolName, VolNameSize, L"%a", VolNameStart);
+				  snwprintf(VolName, VolNameSize, "%s", VolNameStart);
                 ImageVolume = FindVolumeByName(VolName);
                 if (ImageVolume) {
                   ImageName = PoolPrint(L"%a", VolNameEnd);
@@ -903,7 +903,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];
             
             DBG("    boot-image before: %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
-            UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%s", (CHAR16 *)(Value + 0x20));
+			  snwprintf(OffsetHexStr, sizeof(OffsetHexStr), "%ls", (CHAR16 *)(Value + 0x20));
             //      DBG("OffsetHexStr=%ls\n", OffsetHexStr);
             while ((*Ptr != L':') && (*Ptr != 0)) {
               Ptr++;
@@ -1010,7 +1010,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     }
     
     // Set boot-image var
-    UnicodeSPrint(OffsetHexStr, sizeof(OffsetHexStr), L"%lx", SleepImageOffset);
+	  snwprintf(OffsetHexStr, sizeof(OffsetHexStr), "%llx", SleepImageOffset);
     BootImageDevPath = FileDevicePath(SleepImageVolume->WholeDiskDeviceHandle, OffsetHexStr);
     //  DBG(" boot-image device path:\n");
     Size = GetDevicePathSize(BootImageDevPath);

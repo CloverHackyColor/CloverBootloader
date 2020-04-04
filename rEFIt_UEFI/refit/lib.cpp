@@ -995,7 +995,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     
     if (HdPath) {
       tmpName = (CHAR16*)AllocateZeroPool(60);
-      UnicodeSPrint(tmpName, 60, L"Legacy HD%d", HdPath->PartitionNumber);
+      snwprintf(tmpName, 60, "Legacy HD%d", HdPath->PartitionNumber);
       Volume->VolName = EfiStrDuplicate(tmpName);
       FreePool(tmpName);
     } else if (!Volume->VolName) {
@@ -1071,7 +1071,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (HdPath) {
       
       tmpName = (CHAR16*)AllocateZeroPool(128);
-      UnicodeSPrint(tmpName, 128, L"Unknown HD%d", HdPath->PartitionNumber);
+      snwprintf(tmpName, 128, "Unknown HD%d", HdPath->PartitionNumber);
       Volume->VolName = EfiStrDuplicate(tmpName);
       FreePool(tmpName);
       // NOTE: this is normal for Apple's VenMedia device paths

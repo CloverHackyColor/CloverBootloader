@@ -1488,7 +1488,7 @@ VOID ScanLoader(VOID)
         // Get the partition UUID and make sure it's lower case
         CHAR16          PartUUID[40];
         ZeroMem(&PreviousTime, sizeof(EFI_TIME));
-        UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%s", strguid(PartGUID));
+        snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(PartGUID));
         StrToLower(PartUUID);
         // open the /boot directory (or whatever directory path)
         DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
@@ -1927,7 +1927,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         DBG("skipped because volume does not have partition uuid\n");
         continue;
       }
-      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%s", strguid(Guid));
+      snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(Guid));
       StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);

@@ -342,7 +342,6 @@
 		9ACFE6C524309AF80071CC93 /* libscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7424176C04005CDD5C /* libscreen.cpp */; };
 		9ACFE6C624309AF80071CC93 /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2B241BC0DF00F3D247 /* strlen_test.cpp */; };
 		9ACFE6C724309AF80071CC93 /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA624176C04005CDD5C /* panic.cpp */; };
-		9ACFE6C824309AF80071CC93 /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
 		9ACFE6C924309AF80071CC93 /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED824176C04005CDD5C /* XStringW_test.cpp */; };
 		9ACFE6CA24309AF80071CC93 /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
 		9ACFE6CB24309AF80071CC93 /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
@@ -436,7 +435,6 @@
 		9AF4155E242B8FA400D2644C /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4155C242B8FA300D2644C /* poolprint-test.cpp */; };
 		9AF41562242BABC700D2644C /* printlib-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */; };
 		9AF41563242BABC700D2644C /* printlib-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41560242BABC700D2644C /* printlib-test.h */; };
-		9AF41564242BABC700D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
 		9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */; };
 		9AF41568242BAD7D00D2644C /* poolprint-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */; };
 		9AF41584242CD75C00D2644C /* panic.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA924176C04005CDD5C /* panic.h */; };
@@ -558,7 +556,6 @@
 		9AF415FB242CD75C00D2644C /* libscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7424176C04005CDD5C /* libscreen.cpp */; };
 		9AF415FC242CD75C00D2644C /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2B241BC0DF00F3D247 /* strlen_test.cpp */; };
 		9AF415FD242CD75C00D2644C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA624176C04005CDD5C /* panic.cpp */; };
-		9AF415FE242CD75C00D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
 		9AF415FF242CD75C00D2644C /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED824176C04005CDD5C /* XStringW_test.cpp */; };
 		9AF41600242CD75C00D2644C /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
 		9AF41601242CD75C00D2644C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
@@ -765,7 +762,6 @@
 		9AF416D8242CDA5800D2644C /* libscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7424176C04005CDD5C /* libscreen.cpp */; };
 		9AF416D9242CDA5800D2644C /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2B241BC0DF00F3D247 /* strlen_test.cpp */; };
 		9AF416DA242CDA5800D2644C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA624176C04005CDD5C /* panic.cpp */; };
-		9AF416DB242CDA5800D2644C /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
 		9AF416DC242CDA5800D2644C /* XStringW_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED824176C04005CDD5C /* XStringW_test.cpp */; };
 		9AF416DD242CDA5800D2644C /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
 		9AF416DE242CDA5800D2644C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
@@ -2093,7 +2089,6 @@
 				9AC7805B24176C04005CDD5C /* libscreen.cpp in Sources */,
 				9A28CD31241BC0DF00F3D247 /* strlen_test.cpp in Sources */,
 				9AC7808824176C04005CDD5C /* panic.cpp in Sources */,
-				9AF41564242BABC700D2644C /* printlib-test.cpp in Sources */,
 				9AC77FC524176C04005CDD5C /* XStringW_test.cpp in Sources */,
 				9AC7806F24176C04005CDD5C /* tool.cpp in Sources */,
 				9AF41740242F15CC00D2644C /* BasicIO.cpp in Sources */,
@@ -2211,7 +2206,6 @@
 				9ACFE6C524309AF80071CC93 /* libscreen.cpp in Sources */,
 				9ACFE6C624309AF80071CC93 /* strlen_test.cpp in Sources */,
 				9ACFE6C724309AF80071CC93 /* panic.cpp in Sources */,
-				9ACFE6C824309AF80071CC93 /* printlib-test.cpp in Sources */,
 				9ACFE6C924309AF80071CC93 /* XStringW_test.cpp in Sources */,
 				9ACFE6CA24309AF80071CC93 /* tool.cpp in Sources */,
 				9ACFE6CB24309AF80071CC93 /* BasicIO.cpp in Sources */,
@@ -2329,7 +2323,6 @@
 				9AF415FB242CD75C00D2644C /* libscreen.cpp in Sources */,
 				9AF415FC242CD75C00D2644C /* strlen_test.cpp in Sources */,
 				9AF415FD242CD75C00D2644C /* panic.cpp in Sources */,
-				9AF415FE242CD75C00D2644C /* printlib-test.cpp in Sources */,
 				9AF415FF242CD75C00D2644C /* XStringW_test.cpp in Sources */,
 				9AF41600242CD75C00D2644C /* tool.cpp in Sources */,
 				9AF41742242F15D600D2644C /* BasicIO.cpp in Sources */,
@@ -2447,7 +2440,6 @@
 				9AF416D8242CDA5800D2644C /* libscreen.cpp in Sources */,
 				9AF416D9242CDA5800D2644C /* strlen_test.cpp in Sources */,
 				9AF416DA242CDA5800D2644C /* panic.cpp in Sources */,
-				9AF416DB242CDA5800D2644C /* printlib-test.cpp in Sources */,
 				9AF416DC242CDA5800D2644C /* XStringW_test.cpp in Sources */,
 				9AF416DD242CDA5800D2644C /* tool.cpp in Sources */,
 				9AF41743242F15D700D2644C /* BasicIO.cpp in Sources */,
@@ -2562,6 +2554,7 @@
 					DEBUG_ON_SERIAL_PORT,
 					"JCONST=CONST",
 					NO_MSABI_VA_FUNCS,
+					DISABLE_PRINTLIB,
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../Build/Clover/DEBUG_XCODE8/X64/rEFIt_UEFI/refit/DEBUG,

@@ -38,7 +38,7 @@ extern "C" {
 
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
-#include <Library/PrintLib.h>
+//#include <Library/PrintLib.h>
 #include <Library/BaseLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>

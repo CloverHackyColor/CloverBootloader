@@ -303,7 +303,7 @@ StatusToString (
 				EFI_STATUS      Status
 				)
 {
-	UnicodeSPrint(Buffer, 64, L"EFI Error %r", Status);
+	snwprintf(Buffer, 64, "EFI Error %s", strerror(Status));
 }*/
 
 
@@ -1039,7 +1039,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
           p = LoadSvgFrame(i);
           //       DBG("frame %d loaded\n", i);
         } else {
-          UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+			snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
           p = egLoadImage(ThemeX.ThemeDir, FileName, TRUE);
         }
         if (!p) {
@@ -1152,7 +1152,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
           p = LoadSvgFrame(i);
    //       DBG("frame %d loaded\n", i);
         } else {
-          UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+			snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
           p = egLoadImage(ThemeDir, FileName, TRUE);
         }
         if (!p) {

@@ -14,7 +14,7 @@ extern "C" {
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PrintLib.h>
+//#include <Library/PrintLib.h>
 }
 
 #define PI (3.1415926536f)

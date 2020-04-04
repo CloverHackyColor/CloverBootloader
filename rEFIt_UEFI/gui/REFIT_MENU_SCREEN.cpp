@@ -844,7 +844,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 
     case MENU_EXIT_ESCAPE:
       if (StrCmp(Item->SValue, Backup) != 0) {
-        UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
+		  snwprintf(Item->SValue, SVALUE_MAX_SIZE, "%ls", Backup);
         if (Item->ItemType != BoolValue) {
           Item->LineShift = BackupShift;
           (Entries[ScrollState.CurrentSelection]).Row = BackupPos;

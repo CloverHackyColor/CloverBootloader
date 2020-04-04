@@ -29,6 +29,9 @@ Revision History
 #define PRINT_ITEM_BUFFER_LEN   100
 #define PRINT_JOINT_BUFFER_LEN  4
 
+extern "C" {
+#   include <Library/PrintLib.h>
+}
 
 typedef struct {
   BOOLEAN PageBreak;

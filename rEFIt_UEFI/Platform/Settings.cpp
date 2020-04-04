@@ -3062,10 +3062,10 @@ GetEarlyUserSettings (
         AsciiStrToUnicodeStrS (Prop->string, gSettings.LegacyBoot, 32);
       } else if (gFirmwareClover) {
         // default for CLOVER EFI boot
-        UnicodeSPrint (gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"PBR");
+        snwprintf(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), "PBR");
       } else {
         // default for UEFI boot
-        UnicodeSPrint (gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"LegacyBiosDefault");
+        snwprintf(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), "LegacyBiosDefault");
       }
 
       // Entry for LegacyBiosDefault
@@ -3750,7 +3750,7 @@ GetListOfConfigs ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", OEMPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", OEMPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
         OldChosenConfig = ConfigsNum;
@@ -3783,7 +3783,7 @@ GetListOfDsdts ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, gSettings.DsdtName) == 0) {
         OldChosenDsdt = DsdtsNum;
@@ -3820,7 +3820,7 @@ GetListOfACPI ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
       ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool (sizeof(ACPI_PATCHED_AML));
@@ -9483,7 +9483,7 @@ SetFSInjection (
   // get FSINJECTION_PROTOCOL
   Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
   if (EFI_ERROR (Status)) {
-    //Print (L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
+    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", strerror(Status));
     MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
     return EFI_NOT_STARTED;
   }
