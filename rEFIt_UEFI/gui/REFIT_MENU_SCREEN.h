@@ -46,6 +46,11 @@
 #include "menu_items/menu_items.h"
 
 
+#ifdef _MSC_VER
+#define __attribute__(x)
+#endif
+
+
 //some unreal values
 #define FILM_CENTRE   40000
 //#define FILM_LEFT     50000
@@ -210,10 +215,8 @@ public:
 
   //menu functions
   VOID AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
-  VOID AddMenuInfo(CONST char *Line);
-  VOID AddMenuInfo_f(CONST char *format, ...);
-  VOID AddMenuInfoLine(IN CONST CHAR16 *InfoLine);
-  VOID AddMenuInfoLine(IN XStringW& InfoLine);
+  VOID AddMenuInfo_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
+  VOID AddMenuInfoLine_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
   VOID AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
   VOID AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   VOID AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);

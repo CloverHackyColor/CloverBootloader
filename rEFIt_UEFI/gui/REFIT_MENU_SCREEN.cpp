@@ -268,18 +268,18 @@ BOOLEAN mGuiReady = FALSE;
 
 
 
-
-VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST char *Line)
-{
-
-//DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
-  REFIT_INFO_DIALOG *InputBootArgs;
-
-  InputBootArgs = new REFIT_INFO_DIALOG;
-  InputBootArgs->Title.takeValueFrom(Line);
-  InputBootArgs->AtClick = ActionLight;
-  AddMenuEntry(InputBootArgs, true);
-}
+//
+//VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST char *Line)
+//{
+//
+////DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
+//  REFIT_INFO_DIALOG *InputBootArgs;
+//
+//  InputBootArgs = new REFIT_INFO_DIALOG;
+//  InputBootArgs->Title.takeValueFrom(Line);
+//  InputBootArgs->AtClick = ActionLight;
+//  AddMenuEntry(InputBootArgs, true);
+//}
 
 VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
 {
@@ -563,27 +563,21 @@ VOID REFIT_MENU_SCREEN::KillMouse()
 {
   /*if ( mPointer ) */mPointer.KillMouse();
 }
-//
-// menu helper functions
-//
-VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN XStringW& InfoLine)
-{
-  InfoLines.AddReference(&InfoLine, true);
-}
 
-VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN CONST CHAR16 *InfoLine)
+VOID REFIT_MENU_SCREEN::AddMenuInfoLine_f(CONST char *format, ...)
 {
   XStringW* s = new XStringW();
-  s->takeValueFrom(InfoLine);
-   InfoLines.AddReference(s, true);
-//  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLines.size()), (CHAR16*)InfoLine); // TODO jief : cast to fix
+  VA_LIST va;
+	VA_START(va, format);
+  s->vSWPrintf(format, va);
+  VA_END(va);
+  InfoLines.AddReference(s, true);
 }
 
 VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt)
 {
 	if ( !Entry ) return;
 	Entries.AddReference(Entry, freeIt);
-//  AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->Entries.size()), Entry);
 }
 
 // This is supposed to be a destructor ?

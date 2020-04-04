@@ -169,7 +169,7 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->AnimeRun = SubScreen->GetAnime();
-  SubScreen->AddMenuInfoLine(FileDevicePathToStr(Volume->DevicePath));
+  SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Volume->DevicePath));
 
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
