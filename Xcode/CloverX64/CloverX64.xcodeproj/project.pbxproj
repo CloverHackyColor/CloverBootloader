@@ -174,7 +174,6 @@
 		9AC7807524176C04005CDD5C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9124176C04005CDD5C /* REFIT_MENU_SCREEN.cpp */; };
 		9AC7807624176C04005CDD5C /* icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9324176C04005CDD5C /* icns.cpp */; };
 		9AC7807724176C04005CDD5C /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9424176C04005CDD5C /* screen.cpp */; };
-		9AC7807824176C04005CDD5C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9524176C04005CDD5C /* menu.cpp */; };
 		9AC7807924176C04005CDD5C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
 		9AC7807A24176C04005CDD5C /* lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9724176C04005CDD5C /* lib.h */; };
 		9AC7807B24176C04005CDD5C /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9824176C04005CDD5C /* list.h */; };
@@ -337,7 +336,6 @@
 		9ACFE6CB24309AF80071CC93 /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4173D242F15CC00D2644C /* BasicIO.cpp */; };
 		9ACFE6CC24309AF80071CC93 /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
 		9ACFE6CD24309AF80071CC93 /* Injectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3524176C04005CDD5C /* Injectors.cpp */; };
-		9ACFE6CE24309AF80071CC93 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9524176C04005CDD5C /* menu.cpp */; };
 		9ACFE6CF24309AF80071CC93 /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2F24176C04005CDD5C /* b64cdecode.cpp */; };
 		9ACFE6D024309AF80071CC93 /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA224176C04005CDD5C /* globals_dtor.cpp */; };
 		9ACFE6D124309AF80071CC93 /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4724176C04005CDD5C /* DevicePath.cpp */; };
@@ -553,7 +551,6 @@
 		9AF41600242CD75C00D2644C /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
 		9AF41601242CD75C00D2644C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
 		9AF41602242CD75C00D2644C /* Injectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3524176C04005CDD5C /* Injectors.cpp */; };
-		9AF41603242CD75C00D2644C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9524176C04005CDD5C /* menu.cpp */; };
 		9AF41604242CD75C00D2644C /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2F24176C04005CDD5C /* b64cdecode.cpp */; };
 		9AF41605242CD75C00D2644C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA224176C04005CDD5C /* globals_dtor.cpp */; };
 		9AF41606242CD75C00D2644C /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4724176C04005CDD5C /* DevicePath.cpp */; };
@@ -761,7 +758,6 @@
 		9AF416DD242CDA5800D2644C /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8924176C04005CDD5C /* tool.cpp */; };
 		9AF416DE242CDA5800D2644C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9624176C04005CDD5C /* lib.cpp */; };
 		9AF416DF242CDA5800D2644C /* Injectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F3524176C04005CDD5C /* Injectors.cpp */; };
-		9AF416E0242CDA5800D2644C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9524176C04005CDD5C /* menu.cpp */; };
 		9AF416E1242CDA5800D2644C /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F2F24176C04005CDD5C /* b64cdecode.cpp */; };
 		9AF416E2242CDA5800D2644C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA224176C04005CDD5C /* globals_dtor.cpp */; };
 		9AF416E3242CDA5800D2644C /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F4724176C04005CDD5C /* DevicePath.cpp */; };
@@ -1019,7 +1015,6 @@
 		9AC77F9124176C04005CDD5C /* REFIT_MENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MENU_SCREEN.cpp; sourceTree = "<group>"; };
 		9AC77F9324176C04005CDD5C /* icns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = icns.cpp; sourceTree = "<group>"; };
 		9AC77F9424176C04005CDD5C /* screen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = screen.cpp; sourceTree = "<group>"; };
-		9AC77F9524176C04005CDD5C /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu.cpp; sourceTree = "<group>"; };
 		9AC77F9624176C04005CDD5C /* lib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lib.cpp; sourceTree = "<group>"; };
 		9AC77F9724176C04005CDD5C /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
 		9AC77F9824176C04005CDD5C /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -1390,7 +1385,6 @@
 				9AC77F9B24176C04005CDD5C /* list.cpp */,
 				9AC77F9824176C04005CDD5C /* list.h */,
 				9AC77F9E24176C04005CDD5C /* main.cpp */,
-				9AC77F9524176C04005CDD5C /* menu.cpp */,
 				9AC77F9C24176C04005CDD5C /* menu.h */,
 				9AC77F9424176C04005CDD5C /* screen.cpp */,
 				9AC77F9D24176C04005CDD5C /* screen.h */,
@@ -2083,7 +2077,6 @@
 				9AF41740242F15CC00D2644C /* BasicIO.cpp in Sources */,
 				9AC7807924176C04005CDD5C /* lib.cpp in Sources */,
 				9AC7801E24176C04005CDD5C /* Injectors.cpp in Sources */,
-				9AC7807824176C04005CDD5C /* menu.cpp in Sources */,
 				9AC7801824176C04005CDD5C /* b64cdecode.cpp in Sources */,
 				9AC7808424176C04005CDD5C /* globals_dtor.cpp in Sources */,
 				9AC7803024176C04005CDD5C /* DevicePath.cpp in Sources */,
@@ -2200,7 +2193,6 @@
 				9ACFE6CB24309AF80071CC93 /* BasicIO.cpp in Sources */,
 				9ACFE6CC24309AF80071CC93 /* lib.cpp in Sources */,
 				9ACFE6CD24309AF80071CC93 /* Injectors.cpp in Sources */,
-				9ACFE6CE24309AF80071CC93 /* menu.cpp in Sources */,
 				9ACFE6CF24309AF80071CC93 /* b64cdecode.cpp in Sources */,
 				9ACFE6D024309AF80071CC93 /* globals_dtor.cpp in Sources */,
 				9ACFE6D124309AF80071CC93 /* DevicePath.cpp in Sources */,
@@ -2317,7 +2309,6 @@
 				9AF41742242F15D600D2644C /* BasicIO.cpp in Sources */,
 				9AF41601242CD75C00D2644C /* lib.cpp in Sources */,
 				9AF41602242CD75C00D2644C /* Injectors.cpp in Sources */,
-				9AF41603242CD75C00D2644C /* menu.cpp in Sources */,
 				9AF41604242CD75C00D2644C /* b64cdecode.cpp in Sources */,
 				9AF41605242CD75C00D2644C /* globals_dtor.cpp in Sources */,
 				9AF41606242CD75C00D2644C /* DevicePath.cpp in Sources */,
@@ -2434,7 +2425,6 @@
 				9AF41743242F15D700D2644C /* BasicIO.cpp in Sources */,
 				9AF416DE242CDA5800D2644C /* lib.cpp in Sources */,
 				9AF416DF242CDA5800D2644C /* Injectors.cpp in Sources */,
-				9AF416E0242CDA5800D2644C /* menu.cpp in Sources */,
 				9AF416E1242CDA5800D2644C /* b64cdecode.cpp in Sources */,
 				9AF416E2242CDA5800D2644C /* globals_dtor.cpp in Sources */,
 				9AF416E3242CDA5800D2644C /* DevicePath.cpp in Sources */,
