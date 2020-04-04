@@ -82,7 +82,7 @@ public:
   float       CentreShift;
   INTN        row0TileSize;
   INTN        row1TileSize;
-  UINTN       BanHeight;
+  INTN        BanHeight;
   INTN        LayoutHeight; //it was 376 before
   INTN        LayoutBannerOffset;
   INTN        LayoutButtonOffset;
@@ -110,7 +110,7 @@ public:
   XImage  UpButtonImage;
   XImage  DownButtonImage;
 
-  EG_RECT  BannerPlace; //TODO exclude BanHeight = BannerPlace.Height
+  EG_RECT  BannerPlace;
 
   //fill the theme
   const XImage& GetIcon(const XString& Name);  //get by name

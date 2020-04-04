@@ -52,7 +52,7 @@
 //the function is not in the class and deals always with MainMenu
 #if USE_XTHEME
 //I made args as pointers to have an ability to call with NULL
-BOOLEAN AddLegacyEntry(IN const XStringW* FullTitle, IN const XStringW* LoaderTitle, IN REFIT_VOLUME *Volume, IN const XImage* Image, IN const XImage* DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTitle, IN REFIT_VOLUME *Volume, IN const XImage* Image, IN const XImage* DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 
 #else
 BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image, IN EG_IMAGE *DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
@@ -112,7 +112,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   }
 #if USE_XTHEME
   XStringW LTitle;
-  if (!LoaderTitle) {
+  if (LoaderTitle.isEmpty()) {
     if (Volume->LegacyOS->Name != NULL) {
       LTitle.takeValueFrom(Volume->LegacyOS->Name);
       if (Volume->LegacyOS->Name[0] == 'W' || Volume->LegacyOS->Name[0] == 'L')
@@ -120,7 +120,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
     } else
       LTitle = L"Legacy OS"_XSW;
   } else
-    LTitle = *LoaderTitle;
+    LTitle = LoaderTitle;
 #else
 
   if (LoaderTitle == NULL) {
@@ -142,13 +142,13 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   // prepare the menu entry
   Entry = new LEGACY_ENTRY();
 #if USE_XTHEME
-  if (FullTitle) {
-    Entry->Title = *FullTitle;
+  if (!FullTitle.isEmpty()) {
+    Entry->Title = FullTitle;
   } else {
     if (ThemeX.BootCampStyle) {
       Entry->Title = LTitle;
     } else {
-      Entry->Title = L"Boot "_XSW + *LoaderTitle + L" from "_XSW + VolDesc;
+      Entry->Title = L"Boot "_XSW + LoaderTitle + L" from "_XSW + VolDesc;
 //    Entry->Title.SWPrintf("Boot %ls from %ls", LoaderTitle->wc_str(), VolDesc);
     }
   }
@@ -202,7 +202,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
 #if USE_XTHEME
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
-      Entry->BadgeImage = XImage(Entry->DriveImage, ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage = XImage(Entry->DriveImage, ThemeX.BadgeScale/16.f); //0 accepted
     } else {
       Entry->BadgeImage = XImage(Entry->Image, ThemeX.BadgeScale/16.f);
     }
@@ -223,7 +223,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN();
 #if USE_XTHEME
-  SubScreen->Title = L"Boot Options for "_XSW + *LoaderTitle + L" on "_XSW + VolDesc;
+  SubScreen->Title = L"Boot Options for "_XSW + LoaderTitle + L" on "_XSW + VolDesc;
 //	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle, VolDesc);
 #else
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
@@ -234,7 +234,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
 //  SubEntry = (__typeof__(SubEntry))AllocateZeroPool(sizeof(LEGACY_ENTRY));
   SubEntry =  new LEGACY_ENTRY();
 #if USE_XTHEME
-  SubEntry->Title = L"Boot "_XSW + *LoaderTitle;
+  SubEntry->Title = L"Boot "_XSW + LoaderTitle;
 #else
   SubEntry->Title.SWPrintf("Boot %ls", LoaderTitle);
 #endif
@@ -322,7 +322,7 @@ VOID ScanLegacy(VOID)
     
     if (ShowVolume && (!Volume->Hidden)){
 //      DBG(" add legacy\n");
-      if (!AddLegacyEntry(NULL, NULL, Volume, NULL, NULL, 0, FALSE)) {
+      if (!AddLegacyEntry(L""_XSW, L""_XSW, Volume, NULL, NULL, 0, FALSE)) {
         DBG("...entry not added\n");
       };
     } else {
@@ -473,7 +473,7 @@ VOID AddCustomLegacy(VOID)
         DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
       }
       // Create a legacy entry for this volume
-      if (AddLegacyEntry(&Custom->FullTitle, &Custom->Title, Volume, &Image, &DriveImage, Custom->Hotkey, TRUE))
+      if (AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, &Image, &DriveImage, Custom->Hotkey, TRUE))
       {
         DBG("match!\n");
       }

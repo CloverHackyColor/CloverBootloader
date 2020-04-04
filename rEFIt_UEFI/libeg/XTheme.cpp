@@ -385,7 +385,7 @@ void XTheme::ClearScreen() //and restore background and banner
   }
   
   //Then prepare Background from BigBack
-  if (!Background.isEmpty() && (Background.GetWidth() != (UINTN)UGAWidth || Background.GetHeight() != (UINTN)UGAHeight)) { // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
+  if (!Background.isEmpty() && (Background.GetWidth() != UGAWidth || Background.GetHeight() != UGAHeight)) { // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
     // Resolution changed
     Background.setEmpty();
   }
@@ -604,10 +604,10 @@ void XTheme::InitSelection() //for PNG theme
   // non-selected background images
 
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
-  if (!TypeSVG && !SelectionBigFileName.isEmpty()) {
+  if (TypeSVG || !SelectionBigFileName.isEmpty()) {
     BackgroundPixel = { 0x00, 0x00, 0x00, 0x00 };
-  } else if (DarkEmbedded || TypeSVG) {
-    BackgroundPixel = { 0x33, 0x33, 0x33, 0x00 }; //nonsense
+  } else if (DarkEmbedded) {
+    BackgroundPixel = { 0x33, 0x33, 0x33, 0x00 }; //nonsense. Will be a sense if semi-transparent
   } else { //for example embedded daylight
     BackgroundPixel = { 0xbf, 0xbf, 0xbf, 0xff };
   }

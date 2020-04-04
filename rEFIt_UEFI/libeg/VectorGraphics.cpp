@@ -469,12 +469,12 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   DBG("Banner parsed\n");
   BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
-  DBG(" parsed banner->width=%lld\n", Banner.GetWidth());
+  DBG(" parsed banner->width=%lld height=%lld\n", Banner.GetWidth(), BanHeight);
   
   // --- Make other icons
 
   for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
-    if (i == BUILTIN_ICON_BANNER) {
+    if (i == BUILTIN_ICON_BANNER) { //exclude "logo" as it done other way
       continue;
     }
     Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
@@ -494,6 +494,11 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   if (EFI_ERROR(Status)) {
     Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, Scale, &SelectionImages[4]);
+  }
+
+  //buttons
+  for (INTN i = BUILTIN_RADIO_BUTTON; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
+    Buttons[i - BUILTIN_RADIO_BUTTON] = GetIcon(i);
   }
   //for (int i=0 ; i<6 ; i+=2 ) {
   //SelectionImages[i].Draw(i*100, 0);
