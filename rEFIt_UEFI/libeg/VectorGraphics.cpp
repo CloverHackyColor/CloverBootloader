@@ -207,7 +207,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   XImage NewImage(iWidth, iHeight); //empty
   if (IconImage->shapes == NULL) {
     *Image = NewImage;
-    DBG("return empty with status=%s\n", strerror(Status));
+ //   DBG("return empty with status=%s\n", strerror(Status));
     return Status;
   }
 
@@ -289,7 +289,7 @@ EFI_STATUS ParseSVGIcon(NSVGparser  *p, INTN Id, CONST CHAR8 *IconName, float Sc
         if ((strstr(IconName, "selection_big") != NULL) && (!GlobalConfig.SelectionOnTop)) {
           GlobalConfig.MainEntriesSize = (int)(IconImage->width * Scale); //xxx
           row0TileSize = GlobalConfig.MainEntriesSize + (int)(16.f * Scale);
-			DBG("main entry size = %lld\n", GlobalConfig.MainEntriesSize);
+          DBG("main entry size = %lld\n", GlobalConfig.MainEntriesSize);
         }
          if ((strstr(IconName, "selection_small") != NULL) && (!GlobalConfig.SelectionOnTop)) {
           row1TileSize = (int)(IconImage->width * Scale);

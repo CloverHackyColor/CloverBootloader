@@ -531,7 +531,8 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
   UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
   Background.GetArea(x, y, AreaWidth, AreaHeight); //it will resize the Background image
   Background.Compose(0, 0, Top, Opaque);
-
+  Background.DrawWithoutCompose(x, y);
+#if 0
   // prepare protocols
   EFI_STATUS Status;
   EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
@@ -556,6 +557,15 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, AreaWidth*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
+#endif
+}
+
+void XImage::DrawOnBack(INTN XPos, INTN YPos, const XImage& Plate)
+{
+  XImage BackLayer(Width, Height);
+  BackLayer.CopyRect(Plate, XPos, YPos); //assume Plate is big enough [XPos+Width, YPos+Height]
+  BackLayer.Compose(0, 0, *this, true);
+  BackLayer.DrawWithoutCompose(XPos, YPos);
 }
 
 /*

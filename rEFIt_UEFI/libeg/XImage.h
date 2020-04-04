@@ -100,6 +100,7 @@ public:
   void Draw(INTN x, INTN y, float scale); //can accept 0 scale as 1.f
   void Draw(INTN x, INTN y); 
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
+  void DrawOnBack(INTN x, INTN y, const XImage& Plate);
 //I changed the name because LoadImage is too widely used
 // will be used instead of old egLoadImage
   EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
