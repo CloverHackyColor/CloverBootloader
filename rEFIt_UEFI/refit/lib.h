@@ -222,20 +222,20 @@ typedef struct _pointers {
 
 //extern BOOLEAN ScrollEnabled;
 #if !USE_XTHEME
-extern EG_RECT UpButton;
-extern EG_RECT DownButton;
-extern EG_RECT BarStart;
-extern EG_RECT BarEnd;
-extern EG_RECT ScrollbarBackground;
-extern EG_RECT Scrollbar;
-extern EG_RECT ScrollStart;
-extern EG_RECT ScrollEnd;
-extern EG_RECT ScrollTotal;
-extern EG_RECT ScrollbarOldPointerPlace;
-extern EG_RECT ScrollbarNewPointerPlace;
+//extern EG_RECT UpButton;
+//extern EG_RECT DownButton;
+//extern EG_RECT BarStart;
+//extern EG_RECT BarEnd;
+//extern EG_RECT ScrollbarBackground;
+//extern EG_RECT Scrollbar;
+//extern EG_RECT ScrollStart;
+//extern EG_RECT ScrollEnd;
+//extern EG_RECT ScrollTotal;
+//extern EG_RECT ScrollbarOldPointerPlace;
+//extern EG_RECT ScrollbarNewPointerPlace;
 #endif
-extern INTN ScrollbarYMovement;
-extern BOOLEAN IsDragging;
+//extern INTN ScrollbarYMovement;
+//extern BOOLEAN IsDragging;
 
 #define SCREEN_UNKNOWN    0
 #define SCREEN_MAIN       1
@@ -416,7 +416,7 @@ extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
 extern EFI_FILE         *OemThemeDir;
 
-extern BOOLEAN          MainAnime;
+//extern BOOLEAN          MainAnime;
 extern GUI_ANIME        *GuiAnime;
 
 extern REFIT_VOLUME     *SelfVolume;
@@ -485,7 +485,7 @@ CHAR16 * egFindExtension(IN CHAR16 *FileName);
 
 INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength);
 
-CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
+//CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 //UINTN   FileDevicePathNameLen(IN CONST FILEPATH_DEVICE_PATH  *FilePath);
 
@@ -533,11 +533,11 @@ extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel;
 
 
 #else
-extern INTN LayoutBannerOffset;
-extern INTN LayoutButtonOffset;
-extern INTN LayoutTextOffset;
-extern INTN LayoutAnimMoveForMenuX;
-extern INTN LayoutMainMenuHeight;
+//extern INTN LayoutBannerOffset;
+//extern INTN LayoutButtonOffset;
+//extern INTN LayoutTextOffset;
+//extern INTN LayoutAnimMoveForMenuX;
+//extern INTN LayoutMainMenuHeight;
 #endif
 extern UINTN ConWidth;
 extern UINTN ConHeight;

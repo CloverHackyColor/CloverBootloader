@@ -39,6 +39,7 @@
 #include "../libeg/libegint.h" // included Platform.h
 #include "../libeg/XTheme.h"
 #include "../Platform/BasicIO.h"
+#include "menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1

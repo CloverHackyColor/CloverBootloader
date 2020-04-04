@@ -227,6 +227,7 @@ public:
 
 
 #if USE_XTHEME
+  VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
   VOID DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
   INTN DrawTextXY(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   void EraseTextXY();
@@ -243,6 +244,7 @@ public:
 
 
   //Style functions
+
   virtual VOID MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);

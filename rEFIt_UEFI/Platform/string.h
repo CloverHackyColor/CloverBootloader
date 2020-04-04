@@ -1,6 +1,9 @@
 #ifndef __REFIT_STRING_H__
 #define __REFIT_STRING_H__
 
+
+extern CHAR8 NonDetected[];  //longer string
+
 /**
   Convert a Null-terminated ASCII string representing version number (separate by dots)
   to a UINT64 value.

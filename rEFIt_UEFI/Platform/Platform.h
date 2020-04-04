@@ -1710,8 +1710,8 @@ extern CHAR8                          *gDeviceProperties;
 extern UINT32                         cPropSize;
 extern UINT8                          *cProperties;
 extern CHAR8                          *cDeviceProperties;
-extern INPUT_ITEM                     *InputItems;
-extern BOOLEAN                        SavePreBootLog;
+//extern INPUT_ITEM                     *InputItems;
+//extern BOOLEAN                        SavePreBootLog;
 extern CHAR8                          *BootOSName;
 //extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
 extern UINT64                    machineSignature;
@@ -1737,11 +1737,11 @@ extern UINT32                          devices_number;
 //mouse
 //extern ACTION                          gAction;
 //extern UINTN                           gItemID;
-extern INTN                            OldChosenTheme;
-extern INTN                            OldChosenConfig;
-extern INTN                            OldChosenDsdt;
-extern UINTN                            OldChosenAudio;
-extern UINT8                            DefaultAudioVolume;
+//extern INTN                            OldChosenTheme;
+//extern INTN                            OldChosenConfig;
+//extern INTN                            OldChosenDsdt;
+//extern UINTN                            OldChosenAudio;
+//extern UINT8                            DefaultAudioVolume;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64                          BiosDsdt;

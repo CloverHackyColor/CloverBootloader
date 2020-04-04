@@ -2715,7 +2715,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
-    MainAnime = MainMenu.GetAnime();
+    BOOLEAN MainAnime = MainMenu.GetAnime();
 //    DBG("MainAnime=%d\n", MainAnime);
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop

@@ -32,6 +32,15 @@
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 
+INTN OldChosenTheme;
+INTN OldChosenConfig;
+INTN OldChosenDsdt;
+UINTN OldChosenAudio;
+BOOLEAN                        SavePreBootLog;
+UINT8                            DefaultAudioVolume;
+INTN LayoutBannerOffset = 64;
+INTN LayoutTextOffset = 0;
+INTN LayoutButtonOffset = 0;
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
 SIDELOAD_KEXT                   *InjectKextList = NULL;
@@ -106,11 +115,14 @@ extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
 #if !USE_XTHEME
 extern INTN                     ScrollWidth;
-extern INTN                     ScrollButtonsHeight;
-extern INTN                     ScrollBarDecorationsHeight;
-extern INTN                     ScrollScrollDecorationsHeight;
+INTN ScrollButtonsHeight = 20;
+//extern INTN                     ScrollButtonsHeight;
+INTN ScrollBarDecorationsHeight = 5;
+//extern INTN                     ScrollBarDecorationsHeight;
+INTN ScrollScrollDecorationsHeight = 7;
+//extern INTN                     ScrollScrollDecorationsHeight;
 #endif
-extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
+
 //extern INTN                     OldChosenAudio;
 /*
 typedef struct {
