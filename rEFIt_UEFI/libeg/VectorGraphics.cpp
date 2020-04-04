@@ -207,6 +207,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   XImage NewImage(iWidth, iHeight); //empty
   if (IconImage->shapes == NULL) {
     *Image = NewImage;
+    DBG("return empty with status=%s\n", strerror(Status));
     return Status;
   }
 
@@ -442,9 +443,9 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   Scale = ScaleF;
   CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
-  if (mainParser->font) {
-    DBG("theme contains font-family=%s\n", mainParser->font->fontFamily);
-  }
+//  if (mainParser->font) { //this is strange like last found font
+//    DBG("theme contains font-family=%s\n", mainParser->font->fontFamily);
+//  }
 
   Background = XImage(UGAWidth, UGAHeight);
   if (!BigBack.isEmpty()) {
@@ -478,8 +479,10 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       continue;
     }
     Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
-    ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
-    ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night", Scale, &NewIcon->ImageNight);
+    /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
+//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
+    /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night", Scale, &NewIcon->ImageNight);
+//    DBG("...night status %s\n", strerror(Status));
     Icons.AddReference(NewIcon, true);
   }
 
@@ -527,7 +530,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     row1TileSize = (INTN)(64.f * Scale);
     MainEntriesSize = (INTN)(128.f * Scale);
   }
-  DBG("parsing svg theme finished\n");
+ // DBG("parsing svg theme finished\n");
 
   return Status;
 }
@@ -1055,7 +1058,6 @@ VOID testSVG()
       float ty = 0; //-SVGimage->realBounds[1] * Scale;
 		DBG("timing rasterize start tx=%f ty=%f\n", tx, ty);
 #if USE_XTHEME
-
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage.GetPixelPtr(0,0), (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       NewImage.Draw((UGAWidth - Width) / 2,
@@ -1064,12 +1066,10 @@ VOID testSVG()
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage->PixelData, (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       //now show it!
-
       XImage NewX(NewImage);
       NewX.Draw((UGAWidth - Width) / 2,
         (UGAHeight - Height) / 2);
       egFreeImage(NewImage);
-
 #endif //test XImage
       FreePool(FileData);
       FileData = NULL;
@@ -1083,7 +1083,7 @@ VOID testSVG()
     //Test text
     Height = 80;
     Width = UGAWidth-200;
-    DBG("create test textbuffer\n");
+//    DBG("create test textbuffer\n");
 #if USE_XTHEME
     XImage TextBufferXY(Width, Height);
 #else

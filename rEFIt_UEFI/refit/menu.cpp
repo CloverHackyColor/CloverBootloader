@@ -72,7 +72,13 @@ CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
 //REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL, /*InfoLineCount*/0, NULL, 0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL );
+#if USE_XTHEME
+REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
+#else
 REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL);
+#endif
+
+
 extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 extern UINTN            ThemesNum;
 extern CONST CHAR16           *ThemesList[];
@@ -227,10 +233,16 @@ REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover"_XSW,      1, 0, 'U', A
 REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return"_XSW,           0, 0,  0,  ActionEnter);
 
 
-
+#if USE_XTHEME
+REFIT_MENU_SCREEN MainMenu(1, L"Main Menu"_XSW, L"Automatic boot"_XSW);
+REFIT_MENU_SCREEN AboutMenu(2, L"About"_XSW, L""_XSW);
+REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
+#else
 REFIT_MENU_SCREEN MainMenu(1, L"Main Menu", L"Automatic boot");
 REFIT_MENU_SCREEN AboutMenu(2, L"About", NULL);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help", NULL);
+#endif
+
 
 CONST CHAR16* ArgOptional[NUM_OPT] = {
   L"arch=i386",       //0
