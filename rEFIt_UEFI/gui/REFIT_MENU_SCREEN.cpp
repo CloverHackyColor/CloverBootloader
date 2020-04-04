@@ -44,8 +44,8 @@
 #include "../libeg/nanosvg.h"
 #include "../libeg/FloatLib.h"
 #include "HdaCodecDump.h"
-#include "menu.h"
-#include "screen.h"
+#include "REFIT_MENU_SCREEN.h"
+//#include "screen.h"
 #include "../cpp_foundation/XString.h"
 #include "../libeg/XTheme.h"
 #include "../libeg/VectorGraphics.h" // for testSVG
@@ -61,6 +61,8 @@
 #else
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)
 #endif
+
+XPointer REFIT_MENU_SCREEN::mPointer;
 
 
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
@@ -4459,7 +4461,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
 {
   INTN MainSize = ThemeX.MainEntriesSize;
   XImage MainImage(MainSize, MainSize);
-  XImage* BadgeImage;
+  XImage* BadgeImage = NULL;
 
   if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX.HideBadges & HDBADGES_SWAP)) {
     MainImage = *Entry->getDriveImage();
@@ -7086,3 +7088,114 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
   return MenuExit;
 }
 
+
+EFI_STATUS REFIT_MENU_SCREEN::CheckMouseEvent()
+{
+  EFI_STATUS Status = EFI_TIMEOUT;
+  mAction = ActionNone;
+  MOUSE_EVENT Event = mPointer.GetEvent();
+  bool Move = false;
+
+  if (!IsDragging && Event == MouseMove)
+    Event = NoEvents;
+
+  if (ScrollEnabled){
+    if (mPointer.MouseInRect(&UpButton) && Event == LeftClick)
+      mAction = ActionScrollUp;
+    else if (mPointer.MouseInRect(&DownButton) && Event == LeftClick)
+      mAction = ActionScrollDown;
+    else if (mPointer.MouseInRect(&Scrollbar) && Event == LeftMouseDown) {
+      IsDragging = TRUE;
+      Move = true;
+//      mAction = ActionMoveScrollbar;
+      ScrollbarYMovement = 0;
+      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = mPointer.GetPlace().XPos;
+      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = mPointer.GetPlace().YPos;
+    }
+    else if (IsDragging && Event == LeftClick) {
+      IsDragging = FALSE;
+      Move = true;
+//      mAction = ActionMoveScrollbar;
+    }
+    else if (IsDragging && Event == MouseMove) {
+      mAction = ActionMoveScrollbar;
+      ScrollbarNewPointerPlace.XPos = mPointer.GetPlace().XPos;
+      ScrollbarNewPointerPlace.YPos = mPointer.GetPlace().YPos;
+    }
+    else if (mPointer.MouseInRect(&ScrollbarBackground) &&
+             Event == LeftClick) {
+      if (mPointer.GetPlace().YPos < Scrollbar.YPos) // up
+        mAction = ActionPageUp;
+      else // down
+        mAction = ActionPageDown;
+    // page up/down, like in OS X
+    }
+    else if (Event == ScrollDown) {
+      mAction = ActionScrollDown;
+    }
+    else if (Event == ScrollUp) {
+      mAction = ActionScrollUp;
+    }
+  }
+  if (!ScrollEnabled || (mAction == ActionNone && !Move) ) {
+      for (UINTN EntryId = 0; EntryId < Entries.size(); EntryId++) {
+        if (mPointer.MouseInRect(&(Entries[EntryId].Place))) {
+          switch (Event) {
+            case LeftClick:
+              mAction = Entries[EntryId].AtClick;
+              //          DBG("Click\n");
+              break;
+            case RightClick:
+              mAction = Entries[EntryId].AtRightClick;
+              break;
+            case DoubleClick:
+              mAction = Entries[EntryId].AtDoubleClick;
+              break;
+            case ScrollDown:
+              mAction = ActionScrollDown;
+              break;
+            case ScrollUp:
+              mAction = ActionScrollUp;
+              break;
+            case MouseMove:
+              mAction = Entries[EntryId].AtMouseOver;
+              //how to do the action once?
+              break;
+            default:
+              mAction = ActionNone;
+              break;
+          }
+          mItemID = EntryId;
+          break;
+        }
+        else { //click in milk
+          switch (Event) {
+            case LeftClick:
+              mAction = ActionDeselect;
+              break;
+            case RightClick:
+              mAction = ActionFinish;
+              break;
+            case ScrollDown:
+              mAction = ActionScrollDown;
+              break;
+            case ScrollUp:
+              mAction = ActionScrollUp;
+              break;
+            default:
+              mAction = ActionNone;
+              break;
+          }
+          mItemID = 0xFFFF;
+        }
+      }
+
+  }
+
+  if (mAction != ActionNone) {
+    Status = EFI_SUCCESS;
+ //   Event = NoEvents; //clear event as set action
+    mPointer.ClearEvent();
+  }
+  return Status;
+}

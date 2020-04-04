@@ -41,7 +41,6 @@
   refit/icns.cpp
   refit/lib.cpp
   refit/lib.h
-  refit/menu.cpp
   refit/menu.h
   refit/screen.cpp
   refit/screen.h
