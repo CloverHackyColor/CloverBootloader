@@ -106,7 +106,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
         memDescriptor->Attribute = 0;
     //    DBG(L"Range BS %X corrected to conventional\n", memDescriptor->PhysicalStart);
         if(MEM_DEB) {
-          UnicodeSPrint(tmp, 160, L"Range BS %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
+          snwprintf(tmp, 160, "Range BS %X corrected to conventional\n\r", memDescriptor->PhysicalStart);
           gST->ConOut->OutputString (gST->ConOut, tmp);
          // gBS->Stall(2000000);
           WaitForCR();
@@ -124,7 +124,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
       memDescriptor->Attribute = 0xF;
 //      DBG(L"Range WB %X corrected to conventional\n", memDescriptor->PhysicalStart);
       if(MEM_DEB) {
-        UnicodeSPrint(tmp, 160, L"Range WB %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
+        snwprintf(tmp, 160, "Range WB %X corrected to conventional\n\r", memDescriptor->PhysicalStart);
         gST->ConOut->OutputString (gST->ConOut, tmp);
         //gBS->Stall(2000000);
  //       WaitForCR();
@@ -163,7 +163,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
 		for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
 			Bytes = LShiftU64 (memDescriptor->NumberOfPages, 12);
 	//		DBG(L"%lX-%lX  %lX %lX %X\n",
-      UnicodeSPrint(tmp, 160, L"%lX-%lX pages %lX type %lX attr %X \r\n\r\t",
+      snwprintf(tmp, 160, "%lX-%lX pages %lX type %lX attr %X \r\n\r\t",
                  memDescriptor->PhysicalStart, 
                  memDescriptor->PhysicalStart + Bytes - 1,
                  memDescriptor->NumberOfPages,

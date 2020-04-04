@@ -39,6 +39,7 @@
 #include "../libeg/libegint.h" // included Platform.h
 #include "../libeg/XTheme.h"
 #include "../Platform/BasicIO.h"
+#include "menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1
@@ -85,7 +86,7 @@ const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
-const EFI_GRAPHICS_OUTPUT_BLT_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
+//const EFI_GRAPHICS_OUTPUT_BLT_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
@@ -302,7 +303,7 @@ StatusToString (
 				EFI_STATUS      Status
 				)
 {
-	UnicodeSPrint(Buffer, 64, L"EFI Error %r", Status);
+	snwprintf(Buffer, 64, "EFI Error %s", strerror(Status));
 }*/
 
 
@@ -1038,7 +1039,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
           p = LoadSvgFrame(i);
           //       DBG("frame %d loaded\n", i);
         } else {
-          UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+			snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
           p = egLoadImage(ThemeX.ThemeDir, FileName, TRUE);
         }
         if (!p) {
@@ -1151,7 +1152,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
           p = LoadSvgFrame(i);
    //       DBG("frame %d loaded\n", i);
         } else {
-          UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+			snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
           p = egLoadImage(ThemeDir, FileName, TRUE);
         }
         if (!p) {

@@ -12,6 +12,12 @@
 #include <printlib-test-cpp_conf.h>
 #include "printlib-test.h"
 
+
+extern "C" {
+#   undef DISABLE_PRINTLIB
+#   include <Library/PrintLib.h>
+}
+
 static int nbTestFailed = 0;
 #ifdef DISPLAY_ONLY_FAILED
 static bool displayOnlyFailed = true;

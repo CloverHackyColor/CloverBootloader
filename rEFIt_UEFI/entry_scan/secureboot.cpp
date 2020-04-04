@@ -169,9 +169,9 @@ STATIC VOID DisableMessage(IN EFI_STATUS  Status,
 {
   CHAR16 *Str = NULL;
   if (ErrorString != NULL) {
-    Str = PoolPrint(L"%s\n%s\n%r", String, ErrorString, Status);
+    Str = PoolPrint(L"%s\n%s\n%s", String, ErrorString, strerror(Status));
   } else {
-    Str = PoolPrint(L"%s\n%r", String, Status);
+    Str = PoolPrint(L"%s\n%s", String, strerror(Status));
   }
   if (Str != NULL) {
     DBG("Secure Boot: %ls", Str);

@@ -5,8 +5,18 @@
 #include <Library/printf_lite.h>
 
 extern "C" {
-#include <Library/UefiLib.h>
-#include <Library/PrintLib.h>
+#   include <Library/UefiLib.h>
+#   include <Library/PrintLib.h>
+
+//	    UINTN
+//	    EFIAPI
+//	    AsciiSPrint (
+//				 OUT CHAR8        *StartOfBuffer,
+//				 IN  UINTN        BufferSize,
+//				 IN  CONST CHAR8  *FormatString,
+//				 ...
+//				 );
+
 }
 
 #include "../../cpp_foundation/XString.h"

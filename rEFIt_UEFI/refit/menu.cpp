@@ -34,10 +34,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "menu.h"
 //#include "Platform.h"
 #include "../libeg/libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
 
+#include "../Platform/Settings.h"
 #include "../../Version.h"
 //#include "colors.h"
 
@@ -49,6 +51,7 @@
 #include "../cpp_foundation/XString.h"
 #include "../libeg/XTheme.h"
 #include "../libeg/VectorGraphics.h" // for testSVG
+#include "../gui/shared_with_menu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -65,137 +68,140 @@
 
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 //#define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
-CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
+//CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin"; // tmporarily moved in shared_wint_menu
 
 //#define LSTR(s) L##s
 
 // scrolling definitions
-static INTN MaxItemOnScreen = -1;
-//REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL, /*InfoLineCount*/0, NULL, 0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL );
-#if USE_XTHEME
-REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
-#else
-REFIT_MENU_SCREEN OptionMenu(4, L"Options", NULL);
-#endif
+//static INTN MaxItemOnScreen = -1;
 
+//#if USE_XTHEME
+//REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
+//#else
+REFIT_MENU_SCREEN OptionMenu(4, L"Options", L""_XSW);
+//#endif
 
-extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
-extern UINTN            ThemesNum;
-extern CONST CHAR16           *ThemesList[];
-extern UINTN            ConfigsNum;
-extern CHAR16           *ConfigsList[];
-extern UINTN            DsdtsNum;
-extern CHAR16           *DsdtsList[];
-extern UINTN            AudioNum;
-extern HDA_OUTPUTS      AudioList[20];
+//
+//extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
+//extern UINTN            ThemesNum;
+//extern CONST CHAR16           *ThemesList[];
+//extern UINTN            ConfigsNum;
+//extern CHAR16           *ConfigsList[];
+//extern UINTN            DsdtsNum;
+//extern CHAR16           *DsdtsList[];
+//extern UINTN            AudioNum;
+//extern HDA_OUTPUTS      AudioList[20];
 extern CONST CHAR8      *AudioOutputNames[];
-extern CHAR8            NonDetected[];
-extern BOOLEAN          GetLegacyLanAddress;
-extern UINT8            gLanMac[4][6]; // their MAC addresses
-extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
-
-//layout must be in XTheme
-#if !USE_XTHEME
-INTN LayoutBannerOffset = 64;
-INTN LayoutButtonOffset = 0;
-INTN LayoutTextOffset = 0;
+//extern CHAR8            NonDetected[];
+#include "../Platform/string.h"
+//extern BOOLEAN          GetLegacyLanAddress;
+//extern UINT8            gLanMac[4][6]; // their MAC addresses
+//extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
+//
+////layout must be in XTheme
+//#if !USE_XTHEME
+//INTN LayoutBannerOffset = 64;
+//INTN LayoutButtonOffset = 0;
+//INTN LayoutTextOffset = 0;
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
-#endif
-
-BOOLEAN SavePreBootLog = FALSE;
-
-#define SCROLL_LINE_UP        (0)
-#define SCROLL_LINE_DOWN      (1)
-#define SCROLL_PAGE_UP        (2)
-#define SCROLL_PAGE_DOWN      (3)
-#define SCROLL_FIRST          (4)
-#define SCROLL_LAST           (5)
-#define SCROLL_NONE           (6)
-#define SCROLL_SCROLL_DOWN    (7)
-#define SCROLL_SCROLL_UP      (8)
-#define SCROLL_SCROLLBAR_MOVE (9)
-
-
+//#endif
+//
+//BOOLEAN SavePreBootLog = FALSE;
+//
+//#define SCROLL_LINE_UP        (0)
+//#define SCROLL_LINE_DOWN      (1)
+//#define SCROLL_PAGE_UP        (2)
+//#define SCROLL_PAGE_DOWN      (3)
+//#define SCROLL_FIRST          (4)
+//#define SCROLL_LAST           (5)
+//#define SCROLL_NONE           (6)
+//#define SCROLL_SCROLL_DOWN    (7)
+//#define SCROLL_SCROLL_UP      (8)
+//#define SCROLL_SCROLLBAR_MOVE (9)
+//
+//
 #define TEXT_CORNER_REVISION  (1)
 #define TEXT_CORNER_HELP      (2)
 #define TEXT_CORNER_OPTIMUS   (3)
-
-#define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
-
-// other menu definitions
-
-#define MENU_FUNCTION_INIT            (0)
-#define MENU_FUNCTION_CLEANUP         (1)
-#define MENU_FUNCTION_PAINT_ALL       (2)
-#define MENU_FUNCTION_PAINT_SELECTION (3)
-#define MENU_FUNCTION_PAINT_TIMEOUT   (4)
-
-
-
-static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
-static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
-
-BOOLEAN MainAnime = FALSE;
-
-//TODO Scroll variables must be a part of REFIT_SCREEN
-//BOOLEAN ScrollEnabled = FALSE;
-BOOLEAN IsDragging = FALSE;
-#if !USE_XTHEME
+//
+//#define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
+//
+//// other menu definitions
+//
+//#define MENU_FUNCTION_INIT            (0)
+//#define MENU_FUNCTION_CLEANUP         (1)
+//#define MENU_FUNCTION_PAINT_ALL       (2)
+//#define MENU_FUNCTION_PAINT_SELECTION (3)
+//#define MENU_FUNCTION_PAINT_TIMEOUT   (4)
+//
+//
+//
+//static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
+//static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
+//
+//BOOLEAN MainAnime = FALSE;
+//
+////TODO Scroll variables must be a part of REFIT_SCREEN
+////BOOLEAN ScrollEnabled = FALSE;
+//BOOLEAN IsDragging = FALSE;
+//#if !USE_XTHEME
 INTN ScrollWidth = 16;
-INTN ScrollButtonsHeight = 20;
-INTN ScrollBarDecorationsHeight = 5;
-INTN ScrollScrollDecorationsHeight = 7;
-#endif
-INTN ScrollbarYMovement;
-
-
-//#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
-
-// clovy - set row height based on text size
-#define RowHeightFromTextHeight (1.35f)
-
-//TODO spacing must be a part of layout in XTheme
-#define TITLEICON_SPACING (16)
-//#define ROW0__TILESIZE (144)
-//#define ROW1_TILESIZE (64)
-#define TILE1_XSPACING (8)
-//#define TILE_YSPACING (24)
-#define ROW0_SCROLLSIZE (100)
-
-//EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-//EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
+//INTN ScrollButtonsHeight = 20;
+//INTN ScrollBarDecorationsHeight = 5;
+//INTN ScrollScrollDecorationsHeight = 7;
+//#endif
+//INTN ScrollbarYMovement;
+//
+//
+////#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
+//
+//// clovy - set row height based on text size
+//#define RowHeightFromTextHeight (1.35f)
+//
+////TODO spacing must be a part of layout in XTheme
+//#define TITLEICON_SPACING (16)
+////#define ROW0__TILESIZE (144)
+////#define ROW1_TILESIZE (64)
+//#define TILE1_XSPACING (8)
+////#define TILE_YSPACING (24)
+//#define ROW0_SCROLLSIZE (100)
+//
+////EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+////EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
 #if !USE_XTHEME
 static EG_IMAGE *TextBuffer = NULL;
 #endif
-
-//EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
-
-//INTN row0TileSize = 144;
-//INTN row1TileSize = 64;
-
-static INTN row0Count, row0PosX, row0PosXRunning;
-static INTN row1Count, row1PosX, row1PosXRunning;
-static INTN *itemPosX = NULL;
-static INTN *itemPosY = NULL;
-static INTN row0PosY, row1PosY, textPosY, FunctextPosY;
-//static EG_IMAGE* MainImage;
-static INTN OldX = 0, OldY = 0;
-static INTN OldTextWidth = 0;
-static UINTN OldRow = 0;
-static INTN OldTimeoutTextWidth = 0;
-static INTN MenuWidth, TimeoutPosY;
-static INTN EntriesPosX, EntriesPosY;
-static INTN EntriesWidth, EntriesHeight, EntriesGap;
+//
+////EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
+//
+////INTN row0TileSize = 144;
+////INTN row1TileSize = 64;
+//
+//static INTN row0Count, row0PosX, row0PosXRunning;
+//static INTN row1Count, row1PosX, row1PosXRunning;
+//static INTN *itemPosX = NULL;
+//static INTN *itemPosY = NULL;
 #if !USE_XTHEME
-static EG_IMAGE* ScrollbarImage = NULL;
-static EG_IMAGE* ScrollbarBackgroundImage = NULL;
-static EG_IMAGE* UpButtonImage = NULL;
-static EG_IMAGE* DownButtonImage = NULL;
-static EG_IMAGE* BarStartImage = NULL;
-static EG_IMAGE* BarEndImage = NULL;
-static EG_IMAGE* ScrollStartImage = NULL;
-static EG_IMAGE* ScrollEndImage = NULL;
+static INTN row0PosY /*, row1PosY, textPosY, FunctextPosY*/;
+#endif
+////static EG_IMAGE* MainImage;
+//static INTN OldX = 0, OldY = 0;
+//static INTN OldTextWidth = 0;
+//static UINTN OldRow = 0;
+//static INTN OldTimeoutTextWidth = 0;
+//static INTN MenuWidth, TimeoutPosY;
+//static INTN EntriesPosX, EntriesPosY;
+//static INTN EntriesWidth, EntriesHeight, EntriesGap;
+//#if !USE_XTHEME
+EG_IMAGE* ScrollbarImage = NULL;
+EG_IMAGE* ScrollbarBackgroundImage = NULL;
+EG_IMAGE* UpButtonImage = NULL;
+EG_IMAGE* DownButtonImage = NULL;
+EG_IMAGE* BarStartImage = NULL;
+EG_IMAGE* BarEndImage = NULL;
+EG_IMAGE* ScrollStartImage = NULL;
+EG_IMAGE* ScrollEndImage = NULL;
 EG_RECT BarStart;
 EG_RECT BarEnd;
 EG_RECT ScrollStart;
@@ -207,22 +213,22 @@ EG_RECT ScrollbarBackground;
 EG_RECT Scrollbar;
 EG_RECT ScrollbarOldPointerPlace;
 EG_RECT ScrollbarNewPointerPlace;
-#endif
-
-INPUT_ITEM *InputItems = NULL;
-UINTN  InputItemsCount = 0;
-
-INTN OldChosenTheme;
-INTN OldChosenConfig;
-INTN OldChosenDsdt;
-UINTN OldChosenAudio;
-UINT8 DefaultAudioVolume = 70;
-//INTN NewChosenTheme;
-#if !USE_XTHEME
-INTN TextStyle; //why global? It will be class SCREEN member
-#endif
-BOOLEAN mGuiReady = FALSE;
-
+//#endif
+//
+//INPUT_ITEM *InputItems = NULL;
+//UINTN  InputItemsCount = 0;
+//
+//INTN OldChosenTheme;
+//INTN OldChosenConfig;
+//INTN OldChosenDsdt;
+//UINTN OldChosenAudio;
+//UINT8 DefaultAudioVolume = 70;
+////INTN NewChosenTheme;
+//#if !USE_XTHEME
+//INTN TextStyle; //why global? It will be class SCREEN member
+//#endif
+////BOOLEAN mGuiReady = FALSE;
+//
 
 
 //REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
@@ -244,31 +250,6 @@ REFIT_MENU_SCREEN HelpMenu(3, L"Help", NULL);
 #endif
 
 
-CONST CHAR16* ArgOptional[NUM_OPT] = {
-  L"arch=i386",       //0
-  L"arch=x86_64",     //1
-  L"-v ",             //2
-  L"-f ",             //3
-  L"-s ",             //4
-  L"-x ",             //5
-  L"nv_disable=1",    //6
-  L"slide=0",         //7
-  L"darkwake=0",      //8
-  L"-xcpm",           //9
-  L"-gux_no_idle",    //10
-  L"-gux_nosleep",    //11
-  L"-gux_nomsi",      //12
-  L"-gux_defer_usb2", //13
-  L"keepsyms=1",      //14
-  L"debug=0x100",     //15
-  L"kextlog=0xffff",  //16
-  L"-alcoff",         //17
-  L"-shikioff",       //18
-  L"nvda_drv=1"       //19
-};
-
-//UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
-
 // input - tsc
 // output - milliseconds
 // the caller is responsible for t1 > t0
@@ -286,7 +267,7 @@ VOID FillInputs(BOOLEAN New)
 
   tmp[40] = 0;  //make it null-terminated
 
-  InputItemsCount = 0;
+  UINTN InputItemsCount = 0;
   if (New) {
     InputItems = (__typeof__(InputItems))AllocateZeroPool(130 * sizeof(INPUT_ITEM)); //XXX
   }
@@ -296,17 +277,17 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(SVALUE_MAX_SIZE);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", gSettings.BootArgs);
+	snwprintf(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, "%s ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(32);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 32, L"%s", gSettings.DsdtName); // 1-> 2
+	snwprintf(InputItems[InputItemsCount++].SValue, 32, "%ls", gSettings.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(63);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.BlockKexts);
+	snwprintf(InputItems[InputItemsCount++].SValue, 63, "%ls", gSettings.BlockKexts);
 
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //3 - Themes chooser
   InputItems[InputItemsCount++].IValue = 3;
@@ -321,12 +302,12 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.PLimitDict);
+  snwprintf(InputItems[InputItemsCount++].SValue, 8, "%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.UnderVoltStep);
+  snwprintf(InputItems[InputItemsCount++].SValue, 8, "%02d", gSettings.UnderVoltStep);
   InputItems[InputItemsCount].ItemType = BoolValue; //9
   InputItems[InputItemsCount++].BValue = gSettings.GenerateCStates;
   InputItems[InputItemsCount].ItemType = BoolValue; //10
@@ -341,7 +322,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.QPI);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%06d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount++].BValue = gSettings.PatchNMI;
   InputItems[InputItemsCount].ItemType = BoolValue; //16
@@ -350,20 +331,20 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%x", gPlatformFeature);
+	snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%llX", gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(36);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
+  snwprintf(InputItems[InputItemsCount++].SValue, 36, "0x%X", gSettings.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
   if (gSettings.BusSpeed > 20000) {
-    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.BusSpeed);
+    snwprintf(InputItems[InputItemsCount++].SValue, 16, "%06d", gSettings.BusSpeed);
   } else {
-    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gCPUStructure.ExternalClock);
+	  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%06llu", gCPUStructure.ExternalClock);
   }
   InputItemsCount = 20;
   for (i=0; i<NGFX; i++) {
@@ -371,7 +352,7 @@ VOID FillInputs(BOOLEAN New)
     if (New) {
       InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
     }
-    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gGraphics[i].Model);
+	  snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gGraphics[i].Model);
 
     if (gGraphics[i].Vendor == Ati) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
@@ -381,9 +362,9 @@ VOID FillInputs(BOOLEAN New)
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
       if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
-        UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%s", gSettings.FBName);
+		  snwprintf(InputItems[InputItemsCount++].SValue, 20, "%ls", gSettings.FBName);
       } else {
-        UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%a", gGraphics[i].Config);
+		  snwprintf(InputItems[InputItemsCount++].SValue, 20, "%s", gGraphics[i].Config);
       }
     } else if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
@@ -395,7 +376,7 @@ VOID FillInputs(BOOLEAN New)
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(40);
       }
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 40, L"%a", tmp);
+		snwprintf(InputItems[InputItemsCount++].SValue, 40, "%s", tmp);
 
       //InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
     } else /*if (gGraphics[i].Vendor == Intel) */ {
@@ -405,7 +386,7 @@ VOID FillInputs(BOOLEAN New)
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.IgPlatform);
+      snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.IgPlatform);
  //     InputItemsCount += 3;
  //     continue;
     }
@@ -415,9 +396,9 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
     }
     if (gSettings.VideoPorts > 0) {
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.VideoPorts);
+      snwprintf(InputItems[InputItemsCount++].SValue, 8, "%02d", gSettings.VideoPorts);
     } else {
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gGraphics[i].Ports);
+      snwprintf(InputItems[InputItemsCount++].SValue, 8, "%02d", gGraphics[i].Ports);
     }
 
     if (gGraphics[i].Vendor == Nvidia) {
@@ -428,13 +409,13 @@ VOID FillInputs(BOOLEAN New)
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(84);
       }
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 84, L"%a", tmp);
+		snwprintf(InputItems[InputItemsCount++].SValue, 84, "%s", tmp);
     } else { //ATI and others there will be connectors
       InputItems[InputItemsCount].ItemType = Hex; //24+6i
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
-      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%08lx", gGraphics[i].Connectors);
+		snwprintf(InputItems[InputItemsCount++].SValue, 20, "%08x", gGraphics[i].Connectors);
     }
 
     InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
@@ -460,13 +441,13 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%06d", gSettings.RefCLK);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%06d", gSettings.RefCLK);
 
   InputItems[InputItemsCount].ItemType = ASString;  //51 OS version if non-detected
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(SVALUE_MAX_SIZE);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a ", NonDetected);
+	snwprintf(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, "%s ", NonDetected);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount++].BValue = gSettings.InjectEDID;
@@ -476,12 +457,12 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.VendorEDID);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.VendorEDID);
   InputItems[InputItemsCount].ItemType = Decimal;  //54
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.ProductEDID);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.ProductEDID);
 
   // ErmaC: NvidiaGeneric menu selector y/n
   InputItems[InputItemsCount].ItemType = BoolValue; //55
@@ -498,7 +479,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.HDALayoutId);
+  snwprintf(InputItems[InputItemsCount++].SValue, 64, "%d", gSettings.HDALayoutId);
 
   // syscl change here
   InputItems[InputItemsCount].ItemType = BoolValue; //61
@@ -509,13 +490,13 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(24);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeatures);
+  snwprintf(InputItems[InputItemsCount++].SValue, 24, "0x%08X", gFwFeatures);
 
   InputItems[InputItemsCount].ItemType = Hex;  //63
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(24);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 24, L"0x%08x", gFwFeaturesMask);
+  snwprintf(InputItems[InputItemsCount++].SValue, 24, "0x%08X", gFwFeaturesMask);
 
   // Debug for KernelAndKextPatches
   InputItems[InputItemsCount].ItemType = BoolValue; //64
@@ -540,12 +521,12 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 8, L"%02d", gSettings.PointerSpeed);
+	snwprintf(InputItems[InputItemsCount++].SValue, 8, "%02lld", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", gSettings.DoubleClickTime);
+	snwprintf(InputItems[InputItemsCount++].SValue, 16, "%04llu", gSettings.DoubleClickTime);
   InputItems[InputItemsCount].ItemType = BoolValue; //72
   InputItems[InputItemsCount++].BValue = gSettings.PointerMirror;
 
@@ -559,68 +540,68 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.C3Latency);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%02d", gSettings.EnabledCores);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%02d", gSettings.EnabledCores);
   InputItems[InputItemsCount].ItemType = Decimal;  //77
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%02d", gSettings.SavingMode);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%02d", gSettings.SavingMode);
 
   InputItems[InputItemsCount].ItemType = ASString;  //78
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.ProductName);
   InputItems[InputItemsCount].ItemType = ASString;  //79
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.VersionNr);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.VersionNr);
   InputItems[InputItemsCount].ItemType = ASString;  //80
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.SerialNr);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.SerialNr);
   InputItems[InputItemsCount].ItemType = ASString;  //81
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardNumber);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.BoardNumber);
   InputItems[InputItemsCount].ItemType = ASString;  //82
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardSerialNumber);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.BoardSerialNumber);
   InputItems[InputItemsCount].ItemType = Decimal;  //83
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.BoardType);
+  snwprintf(InputItems[InputItemsCount++].SValue, 64, "%d", gSettings.BoardType);
   InputItems[InputItemsCount].ItemType = ASString;  //84
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardVersion);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.BoardVersion);
   InputItems[InputItemsCount].ItemType = Decimal;  //85
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.ChassisType);
+  snwprintf(InputItems[InputItemsCount++].SValue, 64, "%d", gSettings.ChassisType);
   InputItems[InputItemsCount].ItemType = ASString;  //86
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.RomVersion);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.RomVersion);
   InputItems[InputItemsCount].ItemType = ASString;  //87
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.ReleaseDate);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount++].BValue = gSettings.DoubleFirstState;
@@ -641,38 +622,38 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeATI);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeATI);
   InputItems[InputItemsCount].ItemType = Hex;  //95
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeNVidia);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeNVidia);
   InputItems[InputItemsCount].ItemType = Hex;  //96
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIntel);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeIntel);
 
   InputItems[InputItemsCount].ItemType = Hex;  //97
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeLAN);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeLAN);
   InputItems[InputItemsCount].ItemType = Hex;  //98
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeWIFI);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeWIFI);
   InputItems[InputItemsCount].ItemType = Hex;  //99
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeSATA);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeSATA);
   InputItems[InputItemsCount].ItemType = Hex;  //100
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeXHCI);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = CheckBit;  //101
   InputItems[InputItemsCount++].IValue = dropDSM;
 
@@ -682,12 +663,12 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.FakeIMEI);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeIMEI);
   InputItems[InputItemsCount].ItemType = Hex;  //104
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 26, L"0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
+  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.KernelAndKextPatches.FakeCPUID);
 
 
   InputItems[InputItemsCount].ItemType = BoolValue; //105
@@ -704,7 +685,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%01x", gSettings.DualLink);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%01X", gSettings.DualLink);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //110
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaNoEFI;
@@ -715,7 +696,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"0x%04x", gSettings.IntelMaxValue);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.IntelMaxValue);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //113
   InputItems[InputItemsCount++].BValue = gSettings.AutoMerge;
@@ -730,12 +711,12 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.EfiVersion);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.EfiVersion);
   InputItems[InputItemsCount].ItemType = ASString;  //118
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(64);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BooterCfgStr);
+	snwprintf(InputItems[InputItemsCount++].SValue, 64, "%s", gSettings.BooterCfgStr);
 
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //119 - Audio chooser
   InputItems[InputItemsCount++].IValue = 119;
@@ -743,7 +724,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 16, L"%04d", DefaultAudioVolume);
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%04d", DefaultAudioVolume);
   
   InputItems[InputItemsCount].ItemType = BoolValue; //121
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
@@ -796,11 +777,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //1
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.DsdtName, sizeof(gSettings.DsdtName), L"%s", InputItems[i].SValue);
+	  snwprintf(gSettings.DsdtName, sizeof(gSettings.DsdtName), "%ls", InputItems[i].SValue);
   }
   i++; //2
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.BlockKexts, sizeof(gSettings.BlockKexts), L"%s", InputItems[i].SValue);
+	  snwprintf(gSettings.BlockKexts, sizeof(gSettings.BlockKexts), "%ls", InputItems[i].SValue);
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -919,7 +900,7 @@ VOID ApplyInputs(VOID)
     i++; //22
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
-        UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue);
+		  snwprintf(gSettings.FBName, 32, "%ls", InputItems[i].SValue);
       } else if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 256);
         snprintf(AString, 255, "%ls", InputItems[i].SValue);
@@ -1189,7 +1170,7 @@ VOID ApplyInputs(VOID)
       Status = GetUserSettings(SelfRootDir, dict);
       if (gConfigDict[2]) FreeTag(gConfigDict[2]);
       gConfigDict[2] = dict;
-      UnicodeSPrint(gSettings.ConfigName, 64, L"%s", ConfigsList[OldChosenConfig]);
+		snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
     }
@@ -1319,9 +1300,9 @@ VOID ApplyInputs(VOID)
   i++; //116
   if (InputItems[i].Valid) {
     if (OldChosenDsdt == 0xFFFF) {
-      UnicodeSPrint(gSettings.DsdtName, 64, L"BIOS.aml");
+      snwprintf(gSettings.DsdtName, 64, "BIOS.aml");
     } else {
-      UnicodeSPrint(gSettings.DsdtName, 64, L"%s", DsdtsList[OldChosenDsdt]);
+		snwprintf(gSettings.DsdtName, 64, "%ls", DsdtsList[OldChosenDsdt]);
     }
   }
   i++; //117
@@ -1355,7 +1336,7 @@ VOID ApplyInputs(VOID)
     if (DefaultAudioVolume > 100) {
         // correct wrong input
         DefaultAudioVolume = 90;
-        UnicodeSPrint(InputItems[i].SValue, 16, L"%04d", DefaultAudioVolume);
+        snwprintf(InputItems[i].SValue, 16, "%04d", DefaultAudioVolume);
     }
     SetNvramVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid,
                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -1372,32 +1353,6 @@ VOID ApplyInputs(VOID)
   }
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuInfo(CONST char *Line)
-{
-
-//DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
-  REFIT_INFO_DIALOG *InputBootArgs;
-
-  InputBootArgs = new REFIT_INFO_DIALOG;
-  InputBootArgs->Title.takeValueFrom(Line);
-  InputBootArgs->AtClick = ActionLight;
-  AddMenuEntry(InputBootArgs, true);
-}
-
-VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
-{
-
-//DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
-  REFIT_INFO_DIALOG *InputBootArgs;
-
-  InputBootArgs = new REFIT_INFO_DIALOG;
-  VA_LIST va;
-	VA_START(va, format);
-  InputBootArgs->Title.vSWPrintf(format, va);
-  VA_END(va);
-  InputBootArgs->AtClick = ActionLight;
-  AddMenuEntry(InputBootArgs, true);
-}
 
 VOID AboutRefit(VOID)
 {
@@ -1418,40 +1373,40 @@ VOID AboutRefit(VOID)
   if (AboutMenu.Entries.size() == 0) {
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
 #ifdef REVISION_STR
-    AboutMenu.AddMenuInfo_f(" %s ", REVISION_STR);
+	  AboutMenu.AddMenuInfo_f(" %s ", REVISION_STR);
 #else
     AboutMenu.AddMenuInfo_f((L"Clover Revision %s", gFirmwareRevision));
 #endif
 #ifdef FIRMWARE_BUILDDATE
     AboutMenu.AddMenuInfo_f(" Build: %s", FIRMWARE_BUILDDATE);
 #else
-    AboutMenu.AddMenuInfo(" Build: unknown");
+    AboutMenu.AddMenuInfo_f(" Build: unknown");
 #endif
-    AboutMenu.AddMenuInfo("");
-    AboutMenu.AddMenuInfo("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
-    AboutMenu.AddMenuInfo("Portions Copyright (c) Intel Corporation");
-    AboutMenu.AddMenuInfo("Developers:");
-    AboutMenu.AddMenuInfo("  Slice, dmazar, apianti, JrCs, pene, usrsse2");
-    AboutMenu.AddMenuInfo("  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
-    AboutMenu.AddMenuInfo("  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
-    AboutMenu.AddMenuInfo("  cparm, rehabman, nms42, Sherlocks, Zenith432");
-    AboutMenu.AddMenuInfo("  stinga11, TheRacerMaster, solstice, SoThOr, DF");
-    AboutMenu.AddMenuInfo("  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
-    AboutMenu.AddMenuInfo("  ath, savvas, syscl, goodwin_c, clovy, jief_machak");
-    AboutMenu.AddMenuInfo("Credits also:");
-    AboutMenu.AddMenuInfo("  projectosx.com, applelife.ru, insanelymac.com");
-    AboutMenu.AddMenuInfo("");
-    AboutMenu.AddMenuInfo("Running on:");
+    AboutMenu.AddMenuInfo_f("");
+    AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
+    AboutMenu.AddMenuInfo_f("Portions Copyright (c) Intel Corporation");
+    AboutMenu.AddMenuInfo_f("Developers:");
+    AboutMenu.AddMenuInfo_f("  Slice, dmazar, apianti, JrCs, pene, usrsse2");
+    AboutMenu.AddMenuInfo_f("  Kabyl, pcj, jadran, Blackosx, STLVNUB, ycr.ru");
+    AboutMenu.AddMenuInfo_f("  FrodoKenny, skoczi, crazybirdy, Oscar09, xsmile");
+    AboutMenu.AddMenuInfo_f("  cparm, rehabman, nms42, Sherlocks, Zenith432");
+    AboutMenu.AddMenuInfo_f("  stinga11, TheRacerMaster, solstice, SoThOr, DF");
+    AboutMenu.AddMenuInfo_f("  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
+    AboutMenu.AddMenuInfo_f("  ath, savvas, syscl, goodwin_c, clovy, jief_machak");
+    AboutMenu.AddMenuInfo_f("Credits also:");
+    AboutMenu.AddMenuInfo_f("  projectosx.com, applelife.ru, insanelymac.com");
+    AboutMenu.AddMenuInfo_f("");
+    AboutMenu.AddMenuInfo_f("Running on:");
     AboutMenu.AddMenuInfo_f(" EFI Revision %d.%02d",
                                       gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1));
 #if defined(MDE_CPU_IA32)
-    AboutMenu.AddMenuInfo(" Platform: i386 (32 bit)");
+    AboutMenu.AddMenuInfo_f(" Platform: i386 (32 bit)");
 #elif defined(MDE_CPU_X64)
-    AboutMenu.AddMenuInfo(" Platform: x86_64 (64 bit)");
+    AboutMenu.AddMenuInfo_f(" Platform: x86_64 (64 bit)");
 #elif defined(_MSC_VER)
-    AboutMenu.AddMenuInfo(" Platform: x86_64 (64 bit) VS");
+    AboutMenu.AddMenuInfo_f(" Platform: x86_64 (64 bit) VS");
 #else
-    AboutMenu.AddMenuInfo(" Platform: unknown");
+    AboutMenu.AddMenuInfo_f(" Platform: unknown");
 #endif
 	  AboutMenu.AddMenuInfo_f(" Firmware: %ls rev %d.%04d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1));
 	  AboutMenu.AddMenuInfo_f(" Screen Output: %ls", egScreenDescription());
@@ -1488,357 +1443,357 @@ VOID HelpRefit(VOID)
     switch (gLanguage)
     {
       case russian:
-        HelpMenu.AddMenuInfo("ESC - Выход из подменю, обновление главного меню");
-        HelpMenu.AddMenuInfo("F1  - Помощь по горячим клавишам");
-        HelpMenu.AddMenuInfo("F2  - Сохранить отчет в preboot.log (только если FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Показать скрытые значки в меню");
-        HelpMenu.AddMenuInfo("F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Проверить звук на выбранном выходе");
-        HelpMenu.AddMenuInfo("F8  - Сделать дамп звуковых устройств в EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Изменить разрешение экрана на одно из возможных");
-        HelpMenu.AddMenuInfo("F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Извлечь указанный DVD");
-        HelpMenu.AddMenuInfo("Пробел - Дополнительное меню запуска выбранного тома");
-        HelpMenu.AddMenuInfo("Цифры 1-9 - Быстрый запуск тома по порядку в меню");
-        HelpMenu.AddMenuInfo("A (About) - О загрузчике");
-        HelpMenu.AddMenuInfo("O (Options) - Дополнительные настройки");
-        HelpMenu.AddMenuInfo("R (Reset) - Теплый перезапуск");
-        HelpMenu.AddMenuInfo("U (go oUt) - Завершить работу в Кловере");
-        HelpMenu.AddMenuInfo("S (Shell) - Переход в режим командной строки");
+        HelpMenu.AddMenuInfo_f("ESC - Выход из подменю, обновление главного меню");
+        HelpMenu.AddMenuInfo_f("F1  - Помощь по горячим клавишам");
+        HelpMenu.AddMenuInfo_f("F2  - Сохранить отчет в preboot.log (только если FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Показать скрытые значки в меню");
+        HelpMenu.AddMenuInfo_f("F4  - Родной DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Патченный DSDT сохранить в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Сохранить ВидеоБиос в EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Проверить звук на выбранном выходе");
+        HelpMenu.AddMenuInfo_f("F8  - Сделать дамп звуковых устройств в EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Изменить разрешение экрана на одно из возможных");
+        HelpMenu.AddMenuInfo_f("F10 - Снимок экрана в папку EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Извлечь указанный DVD");
+        HelpMenu.AddMenuInfo_f("Пробел - Дополнительное меню запуска выбранного тома");
+        HelpMenu.AddMenuInfo_f("Цифры 1-9 - Быстрый запуск тома по порядку в меню");
+        HelpMenu.AddMenuInfo_f("A (About) - О загрузчике");
+        HelpMenu.AddMenuInfo_f("O (Options) - Дополнительные настройки");
+        HelpMenu.AddMenuInfo_f("R (Reset) - Теплый перезапуск");
+        HelpMenu.AddMenuInfo_f("U (go oUt) - Завершить работу в Кловере");
+        HelpMenu.AddMenuInfo_f("S (Shell) - Переход в режим командной строки");
         break;
       case ukrainian:
-        HelpMenu.AddMenuInfo("ESC - Вийти з меню, оновити головне меню");
-        HelpMenu.AddMenuInfo("F1  - Ця довідка");
-        HelpMenu.AddMenuInfo("F2  - Зберегти preboot.log (тiльки FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Відображати приховані розділи");
-        HelpMenu.AddMenuInfo("F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Відкрити обраний диск (DVD)");
-        HelpMenu.AddMenuInfo("Пробіл - докладніше про обраний пункт меню");
-        HelpMenu.AddMenuInfo("Клавіші 1-9 -  клавіші пунктів меню");
-        HelpMenu.AddMenuInfo("A - Про систему");
-        HelpMenu.AddMenuInfo("O - Опції меню");
-        HelpMenu.AddMenuInfo("R - Перезавантаження");
-        HelpMenu.AddMenuInfo("U - Відключити ПК");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Вийти з меню, оновити головне меню");
+        HelpMenu.AddMenuInfo_f("F1  - Ця довідка");
+        HelpMenu.AddMenuInfo_f("F2  - Зберегти preboot.log (тiльки FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Відображати приховані розділи");
+        HelpMenu.AddMenuInfo_f("F4  - Зберегти OEM DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Зберегти патчений DSDT в EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F6  - Зберегти VideoBios в EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F10 - Зберегти знімок екрану в EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Відкрити обраний диск (DVD)");
+        HelpMenu.AddMenuInfo_f("Пробіл - докладніше про обраний пункт меню");
+        HelpMenu.AddMenuInfo_f("Клавіші 1-9 -  клавіші пунктів меню");
+        HelpMenu.AddMenuInfo_f("A - Про систему");
+        HelpMenu.AddMenuInfo_f("O - Опції меню");
+        HelpMenu.AddMenuInfo_f("R - Перезавантаження");
+        HelpMenu.AddMenuInfo_f("U - Відключити ПК");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case spanish:
-        HelpMenu.AddMenuInfo("ESC - Salir de submenu o actualizar el menu principal");
-        HelpMenu.AddMenuInfo("F1  - Esta Ayuda");
-        HelpMenu.AddMenuInfo("F2  - Guardar preboot.log (Solo FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Expulsar volumen seleccionado (DVD)");
-        HelpMenu.AddMenuInfo("Espacio - Detalles acerca selected menu entry");
-        HelpMenu.AddMenuInfo("Digitos 1-9 - Atajo a la entrada del menu");
-        HelpMenu.AddMenuInfo("A - Menu Acerca de");
-        HelpMenu.AddMenuInfo("O - Menu Optiones");
-        HelpMenu.AddMenuInfo("R - Reiniciar Equipo");
-        HelpMenu.AddMenuInfo("U - Apagar");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Salir de submenu o actualizar el menu principal");
+        HelpMenu.AddMenuInfo_f("F1  - Esta Ayuda");
+        HelpMenu.AddMenuInfo_f("F2  - Guardar preboot.log (Solo FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Guardar DSDT oem en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Guardar DSDT parcheado en EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Guardar VideoBios en EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Guardar Captura de pantalla en EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Expulsar volumen seleccionado (DVD)");
+        HelpMenu.AddMenuInfo_f("Espacio - Detalles acerca selected menu entry");
+        HelpMenu.AddMenuInfo_f("Digitos 1-9 - Atajo a la entrada del menu");
+        HelpMenu.AddMenuInfo_f("A - Menu Acerca de");
+        HelpMenu.AddMenuInfo_f("O - Menu Optiones");
+        HelpMenu.AddMenuInfo_f("R - Reiniciar Equipo");
+        HelpMenu.AddMenuInfo_f("U - Apagar");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case portuguese:
       case brasil:
-        HelpMenu.AddMenuInfo("ESC - Sai do submenu, atualiza o menu principal");
-        HelpMenu.AddMenuInfo("F1  - Esta ajuda");
-        HelpMenu.AddMenuInfo("F2  - Salva preboot.log (somente FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Ejeta o volume selecionado (DVD)");
-        HelpMenu.AddMenuInfo("Espaco - Detalhes sobre a opcao do menu selecionada");
-        HelpMenu.AddMenuInfo("Tecle 1-9 - Atalho para as entradas do menu");
-        HelpMenu.AddMenuInfo("A - Sobre o Menu");
-        HelpMenu.AddMenuInfo("O - Opcoes do Menu");
-        HelpMenu.AddMenuInfo("R - Reiniciar");
-        HelpMenu.AddMenuInfo("U - Desligar");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Sai do submenu, atualiza o menu principal");
+        HelpMenu.AddMenuInfo_f("F1  - Esta ajuda");
+        HelpMenu.AddMenuInfo_f("F2  - Salva preboot.log (somente FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Salva oem DSDT em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Salva DSDT corrigido em EFI/CLOVER/ACPI/origin/ (somente FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Salva VideoBios em EFI/CLOVER/misc/ (somente FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Salva screenshot em EFI/CLOVER/misc/ (somente FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Ejeta o volume selecionado (DVD)");
+        HelpMenu.AddMenuInfo_f("Espaco - Detalhes sobre a opcao do menu selecionada");
+        HelpMenu.AddMenuInfo_f("Tecle 1-9 - Atalho para as entradas do menu");
+        HelpMenu.AddMenuInfo_f("A - Sobre o Menu");
+        HelpMenu.AddMenuInfo_f("O - Opcoes do Menu");
+        HelpMenu.AddMenuInfo_f("R - Reiniciar");
+        HelpMenu.AddMenuInfo_f("U - Desligar");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case italian:
-        HelpMenu.AddMenuInfo("ESC - Esci dal submenu, Aggiorna menu principale");
-        HelpMenu.AddMenuInfo("F1  - Aiuto");
-        HelpMenu.AddMenuInfo("F2  - Salva il preboot.log (solo su FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Mostra volumi nascosti");
-        HelpMenu.AddMenuInfo("F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
-        HelpMenu.AddMenuInfo("F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Controlla il suono sull'uscita selezionata");
-        HelpMenu.AddMenuInfo("F8  - Scarica le uscite audio in EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Cambia la risoluzione dello schermo alla prossima disponibile");
-        HelpMenu.AddMenuInfo("F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Resetta NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Espelli il volume selezionato (DVD)");
-        HelpMenu.AddMenuInfo("Spazio - Dettagli sul menu selezionato");
-        HelpMenu.AddMenuInfo("Digita 1-9 - Abbreviazioni per il menu");
-        HelpMenu.AddMenuInfo("A - Informazioni");
-        HelpMenu.AddMenuInfo("O - Menu Opzioni");
-        HelpMenu.AddMenuInfo("R - Riavvio");
-        HelpMenu.AddMenuInfo("U - Spegnimento");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Esci dal submenu, Aggiorna menu principale");
+        HelpMenu.AddMenuInfo_f("F1  - Aiuto");
+        HelpMenu.AddMenuInfo_f("F2  - Salva il preboot.log (solo su FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Mostra volumi nascosti");
+        HelpMenu.AddMenuInfo_f("F4  - Salva il DSDT oem in EFI/CLOVER/ACPI/origin/ (solo suFAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Salva il patched DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Salva il VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Controlla il suono sull'uscita selezionata");
+        HelpMenu.AddMenuInfo_f("F8  - Scarica le uscite audio in EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Cambia la risoluzione dello schermo alla prossima disponibile");
+        HelpMenu.AddMenuInfo_f("F10 - Salva screenshot in EFI/CLOVER/misc/ (solo su FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Resetta NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Espelli il volume selezionato (DVD)");
+        HelpMenu.AddMenuInfo_f("Spazio - Dettagli sul menu selezionato");
+        HelpMenu.AddMenuInfo_f("Digita 1-9 - Abbreviazioni per il menu");
+        HelpMenu.AddMenuInfo_f("A - Informazioni");
+        HelpMenu.AddMenuInfo_f("O - Menu Opzioni");
+        HelpMenu.AddMenuInfo_f("R - Riavvio");
+        HelpMenu.AddMenuInfo_f("U - Spegnimento");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case german:
-        HelpMenu.AddMenuInfo("ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
-        HelpMenu.AddMenuInfo("F1  - Diese Hilfe");
-        HelpMenu.AddMenuInfo("F2  - Sichere preboot.log (nur mit FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Volume auswerfen (DVD)");
-        HelpMenu.AddMenuInfo("Leertaste - Details über den gewählten Menue Eintrag");
-        HelpMenu.AddMenuInfo("Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
-        HelpMenu.AddMenuInfo("A - Menue Informationen");
-        HelpMenu.AddMenuInfo("O - Menue Optionen");
-        HelpMenu.AddMenuInfo("R - Neustart");
-        HelpMenu.AddMenuInfo("U - Ausschalten");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
+        HelpMenu.AddMenuInfo_f("F1  - Diese Hilfe");
+        HelpMenu.AddMenuInfo_f("F2  - Sichere preboot.log (nur mit FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Sichere OEM DSDT in EFI/CLOVER/ACPI/origin/ (nur mit FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Sichere gepatchtes DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Sichere VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Sichere Bildschirmfoto in EFI/CLOVER/misc/ (nur mit FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Volume auswerfen (DVD)");
+        HelpMenu.AddMenuInfo_f("Leertaste - Details über den gewählten Menue Eintrag");
+        HelpMenu.AddMenuInfo_f("Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
+        HelpMenu.AddMenuInfo_f("A - Menue Informationen");
+        HelpMenu.AddMenuInfo_f("O - Menue Optionen");
+        HelpMenu.AddMenuInfo_f("R - Neustart");
+        HelpMenu.AddMenuInfo_f("U - Ausschalten");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case dutch:
-        HelpMenu.AddMenuInfo("ESC - Verlaat submenu, Vernieuw hoofdmenu");
-        HelpMenu.AddMenuInfo("F1  - Onderdeel hulp");
-        HelpMenu.AddMenuInfo("F2  - preboot.log opslaan (Alleen FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Verborgen opties weergeven");
-        HelpMenu.AddMenuInfo("F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Controleer geluid op geselecteerde uitgang");
-        HelpMenu.AddMenuInfo("F8  - Opslaan audio uitgangen in EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Wijzig schermresolutie naar eerstvolgende mogelijke modus");
-        HelpMenu.AddMenuInfo("F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Uitwerpen geselecteerd volume (DVD)");
-        HelpMenu.AddMenuInfo("Spatie - Details over geselecteerd menuoptie");
-        HelpMenu.AddMenuInfo("Cijfers 1-9 - Snelkoppeling naar menuoptie");
-        HelpMenu.AddMenuInfo("A - Menu Over");
-        HelpMenu.AddMenuInfo("O - Menu Opties");
-        HelpMenu.AddMenuInfo("R - Soft Reset");
-        HelpMenu.AddMenuInfo("U - Verlaten");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Verlaat submenu, Vernieuw hoofdmenu");
+        HelpMenu.AddMenuInfo_f("F1  - Onderdeel hulp");
+        HelpMenu.AddMenuInfo_f("F2  - preboot.log opslaan (Alleen FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Verborgen opties weergeven");
+        HelpMenu.AddMenuInfo_f("F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Controleer geluid op geselecteerde uitgang");
+        HelpMenu.AddMenuInfo_f("F8  - Opslaan audio uitgangen in EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Wijzig schermresolutie naar eerstvolgende mogelijke modus");
+        HelpMenu.AddMenuInfo_f("F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Uitwerpen geselecteerd volume (DVD)");
+        HelpMenu.AddMenuInfo_f("Spatie - Details over geselecteerd menuoptie");
+        HelpMenu.AddMenuInfo_f("Cijfers 1-9 - Snelkoppeling naar menuoptie");
+        HelpMenu.AddMenuInfo_f("A - Menu Over");
+        HelpMenu.AddMenuInfo_f("O - Menu Opties");
+        HelpMenu.AddMenuInfo_f("R - Soft Reset");
+        HelpMenu.AddMenuInfo_f("U - Verlaten");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case french:
-        HelpMenu.AddMenuInfo("ESC - Quitter sous-menu, Retour menu principal");
-        HelpMenu.AddMenuInfo("F1  - Aide");
-        HelpMenu.AddMenuInfo("F2  - Enregistrer preboot.log (FAT32 only)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Ejecter le volume (DVD)");
-        HelpMenu.AddMenuInfo("Space - Détails a propos du menu selectionné");
-        HelpMenu.AddMenuInfo("Digits 1-9 - Raccourci vers entrée menu");
-        HelpMenu.AddMenuInfo("A - A propos");
-        HelpMenu.AddMenuInfo("O - Options Menu");
-        HelpMenu.AddMenuInfo("R - Redémarrer");
-        HelpMenu.AddMenuInfo("U - Eteindre");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Quitter sous-menu, Retour menu principal");
+        HelpMenu.AddMenuInfo_f("F1  - Aide");
+        HelpMenu.AddMenuInfo_f("F2  - Enregistrer preboot.log (FAT32 only)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Enregistrer oem DSDT dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Enregistrer DSDT modifié dans EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Enregistrer VideoBios dans EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Enregistrer la capture d'écran dans EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Ejecter le volume (DVD)");
+        HelpMenu.AddMenuInfo_f("Space - Détails a propos du menu selectionné");
+        HelpMenu.AddMenuInfo_f("Digits 1-9 - Raccourci vers entrée menu");
+        HelpMenu.AddMenuInfo_f("A - A propos");
+        HelpMenu.AddMenuInfo_f("O - Options Menu");
+        HelpMenu.AddMenuInfo_f("R - Redémarrer");
+        HelpMenu.AddMenuInfo_f("U - Eteindre");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case indonesian:
-        HelpMenu.AddMenuInfo("ESC - Keluar submenu, Refresh main menu");
-        HelpMenu.AddMenuInfo("F1  - Help");
-        HelpMenu.AddMenuInfo("F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Eject volume (DVD)");
-        HelpMenu.AddMenuInfo("Spasi - Detail dari menu yang dipilih");
-        HelpMenu.AddMenuInfo("Tombol 1-9 - Shortcut pilihan menu");
-        HelpMenu.AddMenuInfo("A - About");
-        HelpMenu.AddMenuInfo("O - Opsi");
-        HelpMenu.AddMenuInfo("R - Soft Reset");
-        HelpMenu.AddMenuInfo("U - Shutdown");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Keluar submenu, Refresh main menu");
+        HelpMenu.AddMenuInfo_f("F1  - Help");
+        HelpMenu.AddMenuInfo_f("F2  - Simpan preboot.log ke EFI/CLOVER/ACPI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Eject volume (DVD)");
+        HelpMenu.AddMenuInfo_f("Spasi - Detail dari menu yang dipilih");
+        HelpMenu.AddMenuInfo_f("Tombol 1-9 - Shortcut pilihan menu");
+        HelpMenu.AddMenuInfo_f("A - About");
+        HelpMenu.AddMenuInfo_f("O - Opsi");
+        HelpMenu.AddMenuInfo_f("R - Soft Reset");
+        HelpMenu.AddMenuInfo_f("U - Shutdown");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case polish:
-        HelpMenu.AddMenuInfo("ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
-        HelpMenu.AddMenuInfo("F1  - Pomoc");
-        HelpMenu.AddMenuInfo("F2  - Zapis preboot.log (tylko FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
-        HelpMenu.AddMenuInfo("Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
-        HelpMenu.AddMenuInfo("Znaki 1-9 - Skroty opcji dla wybranego dysku");
-        HelpMenu.AddMenuInfo("A - Menu Informacyjne");
-        HelpMenu.AddMenuInfo("O - Menu Opcje");
-        HelpMenu.AddMenuInfo("R - Restart komputera");
-        HelpMenu.AddMenuInfo("U - Wylaczenie komputera");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Wyjscie z podmenu, Odswiezenie glownego menu");
+        HelpMenu.AddMenuInfo_f("F1  - Pomoc");
+        HelpMenu.AddMenuInfo_f("F2  - Zapis preboot.log (tylko FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Zapis DSDT do EFI/CLOVER/ACPI/origin/ (tylko FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Zapis poprawionego DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Zapis BIOSu k. graficznej do EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Zapis zrzutu ekranu do EFI/CLOVER/misc/ (tylko FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Wysuniecie zaznaczonego dysku (tylko dla DVD)");
+        HelpMenu.AddMenuInfo_f("Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
+        HelpMenu.AddMenuInfo_f("Znaki 1-9 - Skroty opcji dla wybranego dysku");
+        HelpMenu.AddMenuInfo_f("A - Menu Informacyjne");
+        HelpMenu.AddMenuInfo_f("O - Menu Opcje");
+        HelpMenu.AddMenuInfo_f("R - Restart komputera");
+        HelpMenu.AddMenuInfo_f("U - Wylaczenie komputera");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case croatian:
-        HelpMenu.AddMenuInfo("ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
-        HelpMenu.AddMenuInfo("F1  - Ovaj izbornik");
-        HelpMenu.AddMenuInfo("F2  - Spremi preboot.log (samo na FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Izbaci izabrai (DVD)");
-        HelpMenu.AddMenuInfo("Space - Detalji o odabranom sistemu");
-        HelpMenu.AddMenuInfo("Brojevi 1 do 9 su prečac do izbora");
-        HelpMenu.AddMenuInfo("A - Izbornik o meni");
-        HelpMenu.AddMenuInfo("O - Izbornik opcije");
-        HelpMenu.AddMenuInfo("R - Restart računala");
-        HelpMenu.AddMenuInfo("U - Isključivanje računala");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
+        HelpMenu.AddMenuInfo_f("F1  - Ovaj izbornik");
+        HelpMenu.AddMenuInfo_f("F2  - Spremi preboot.log (samo na FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Izbaci izabrai (DVD)");
+        HelpMenu.AddMenuInfo_f("Space - Detalji o odabranom sistemu");
+        HelpMenu.AddMenuInfo_f("Brojevi 1 do 9 su prečac do izbora");
+        HelpMenu.AddMenuInfo_f("A - Izbornik o meni");
+        HelpMenu.AddMenuInfo_f("O - Izbornik opcije");
+        HelpMenu.AddMenuInfo_f("R - Restart računala");
+        HelpMenu.AddMenuInfo_f("U - Isključivanje računala");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case czech:
-        HelpMenu.AddMenuInfo("ESC - Vrátit se do hlavní nabídky");
-        HelpMenu.AddMenuInfo("F1  - Tato Nápověda");
-        HelpMenu.AddMenuInfo("F2  - Uložit preboot.log (FAT32 only)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Vysunout vybranou mechaniku (DVD)");
-        HelpMenu.AddMenuInfo("Mezerník - Podrobnosti o vybraném disku");
-        HelpMenu.AddMenuInfo("čísla 1-9 - Klávesové zkratky pro disky");
-        HelpMenu.AddMenuInfo("A - Menu O Programu");
-        HelpMenu.AddMenuInfo("O - Menu Možnosti");
-        HelpMenu.AddMenuInfo("R - Částečný restart");
-        HelpMenu.AddMenuInfo("U - Odejít");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Vrátit se do hlavní nabídky");
+        HelpMenu.AddMenuInfo_f("F1  - Tato Nápověda");
+        HelpMenu.AddMenuInfo_f("F2  - Uložit preboot.log (FAT32 only)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Vysunout vybranou mechaniku (DVD)");
+        HelpMenu.AddMenuInfo_f("Mezerník - Podrobnosti o vybraném disku");
+        HelpMenu.AddMenuInfo_f("čísla 1-9 - Klávesové zkratky pro disky");
+        HelpMenu.AddMenuInfo_f("A - Menu O Programu");
+        HelpMenu.AddMenuInfo_f("O - Menu Možnosti");
+        HelpMenu.AddMenuInfo_f("R - Částečný restart");
+        HelpMenu.AddMenuInfo_f("U - Odejít");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case korean:
-        HelpMenu.AddMenuInfo("ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
-        HelpMenu.AddMenuInfo("F1  - 이 도움말");
-        HelpMenu.AddMenuInfo("F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - 선택한 출력에서 사운드 확인");
-        HelpMenu.AddMenuInfo("F8  - 오디오 코덱덤프를 EFI/CLOVER/misc/에 저장합니다.");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - NVRAM 초기화");
-        HelpMenu.AddMenuInfo("F12 - 선택한 볼륨을 제거합니다. (DVD)");
-        HelpMenu.AddMenuInfo("Space - 선택한 메뉴의 상세 설명");
-        HelpMenu.AddMenuInfo("Digits 1-9 - 메뉴 단축 번호");
-        HelpMenu.AddMenuInfo("A - 단축키 - 이 부트로더에 관하여");
-        HelpMenu.AddMenuInfo("O - 단축키 - 부트 옵션");
-        HelpMenu.AddMenuInfo("R - 단축키 - 리셋");
-        HelpMenu.AddMenuInfo("U - 단축키 - 시스템 종료");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
+        HelpMenu.AddMenuInfo_f("F1  - 이 도움말");
+        HelpMenu.AddMenuInfo_f("F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - oem DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - 패치된 DSDT를 EFI/CLOVER/ACPI/origin/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - VideoBios를 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - 선택한 출력에서 사운드 확인");
+        HelpMenu.AddMenuInfo_f("F8  - 오디오 코덱덤프를 EFI/CLOVER/misc/에 저장합니다.");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - 스크린샷을 EFI/CLOVER/misc/에 저장합니다. (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - NVRAM 초기화");
+        HelpMenu.AddMenuInfo_f("F12 - 선택한 볼륨을 제거합니다. (DVD)");
+        HelpMenu.AddMenuInfo_f("Space - 선택한 메뉴의 상세 설명");
+        HelpMenu.AddMenuInfo_f("Digits 1-9 - 메뉴 단축 번호");
+        HelpMenu.AddMenuInfo_f("A - 단축키 - 이 부트로더에 관하여");
+        HelpMenu.AddMenuInfo_f("O - 단축키 - 부트 옵션");
+        HelpMenu.AddMenuInfo_f("R - 단축키 - 리셋");
+        HelpMenu.AddMenuInfo_f("U - 단축키 - 시스템 종료");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case romanian:
-        HelpMenu.AddMenuInfo("ESC - Iesire din sub-meniu, Refresh meniul principal");
-        HelpMenu.AddMenuInfo("F1  - Ajutor");
-        HelpMenu.AddMenuInfo("F2  - Salvare preboot.log (doar pentru FAT32)");
-        HelpMenu.AddMenuInfo("F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Salvare screenshot in EFI/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Scoatere volum selectat (DVD)");
-        HelpMenu.AddMenuInfo("Space - Detalii despre item-ul selectat");
-        HelpMenu.AddMenuInfo("Cifre 1-9 - Scurtaturi pentru itemele meniului");
-        HelpMenu.AddMenuInfo("A - Despre");
-        HelpMenu.AddMenuInfo("O - Optiuni");
-        HelpMenu.AddMenuInfo("R - Soft Reset");
-        HelpMenu.AddMenuInfo("U - Inchidere");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Iesire din sub-meniu, Refresh meniul principal");
+        HelpMenu.AddMenuInfo_f("F1  - Ajutor");
+        HelpMenu.AddMenuInfo_f("F2  - Salvare preboot.log (doar pentru FAT32)");
+        HelpMenu.AddMenuInfo_f("F4  - Salvare oem DSDT in EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Salvare DSDT modificat in EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Salvare VideoBios in EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Salvare screenshot in EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Scoatere volum selectat (DVD)");
+        HelpMenu.AddMenuInfo_f("Space - Detalii despre item-ul selectat");
+        HelpMenu.AddMenuInfo_f("Cifre 1-9 - Scurtaturi pentru itemele meniului");
+        HelpMenu.AddMenuInfo_f("A - Despre");
+        HelpMenu.AddMenuInfo_f("O - Optiuni");
+        HelpMenu.AddMenuInfo_f("R - Soft Reset");
+        HelpMenu.AddMenuInfo_f("U - Inchidere");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case chinese:
-        HelpMenu.AddMenuInfo("ESC - 离开子菜单， 刷新主菜单");
-        HelpMenu.AddMenuInfo("F1  - 帮助");
-        HelpMenu.AddMenuInfo("F2  - 保存 preboot.log 到 EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F3  - 显示隐藏的启动项");
-        HelpMenu.AddMenuInfo("F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - 检查选中输出设备的声音");
-        HelpMenu.AddMenuInfo("F8  - 生成声卡输出转储到 EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - 调整屏幕分辨率为下一个可用的模式");
-        HelpMenu.AddMenuInfo("F10 - 保存截图到 EFI/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - 重置 NVRAM");
-        HelpMenu.AddMenuInfo("F12 - 推出选中的卷 (DVD)");
-        HelpMenu.AddMenuInfo("空格 - 关于选中项的详情");
-        HelpMenu.AddMenuInfo("数字 1-9 - 菜单快捷键");
-        HelpMenu.AddMenuInfo("A - 关于");
-        HelpMenu.AddMenuInfo("O - 选项");
-        HelpMenu.AddMenuInfo("R - 软复位");
-        HelpMenu.AddMenuInfo("U - 退出");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - 离开子菜单， 刷新主菜单");
+        HelpMenu.AddMenuInfo_f("F1  - 帮助");
+        HelpMenu.AddMenuInfo_f("F2  - 保存 preboot.log 到 EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - 显示隐藏的启动项");
+        HelpMenu.AddMenuInfo_f("F4  - 保存原始的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - 保存修正后的 DSDT 到 EFI/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - 保存 VideoBios 到 EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - 检查选中输出设备的声音");
+        HelpMenu.AddMenuInfo_f("F8  - 生成声卡输出转储到 EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - 调整屏幕分辨率为下一个可用的模式");
+        HelpMenu.AddMenuInfo_f("F10 - 保存截图到 EFI/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - 重置 NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - 推出选中的卷 (DVD)");
+        HelpMenu.AddMenuInfo_f("空格 - 关于选中项的详情");
+        HelpMenu.AddMenuInfo_f("数字 1-9 - 菜单快捷键");
+        HelpMenu.AddMenuInfo_f("A - 关于");
+        HelpMenu.AddMenuInfo_f("O - 选项");
+        HelpMenu.AddMenuInfo_f("R - 软复位");
+        HelpMenu.AddMenuInfo_f("U - 退出");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
       case english:
       default:
-        HelpMenu.AddMenuInfo("ESC - Escape from submenu, Refresh main menu");
-        HelpMenu.AddMenuInfo("F1  - This help");
-        HelpMenu.AddMenuInfo("F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F3  - Show hidden entries");
-        HelpMenu.AddMenuInfo("F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
-        HelpMenu.AddMenuInfo("F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F7  - Check sound on selected output");
-        HelpMenu.AddMenuInfo("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
-        HelpMenu.AddMenuInfo("F9  - Switch screen resoluton to next possible mode");
-        HelpMenu.AddMenuInfo("F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
-        HelpMenu.AddMenuInfo("F11 - Reset NVRAM");
-        HelpMenu.AddMenuInfo("F12 - Eject selected volume (DVD)");
-        HelpMenu.AddMenuInfo("Space - Details about selected menu entry");
-        HelpMenu.AddMenuInfo("Digits 1-9 - Shortcut to menu entry");
-        HelpMenu.AddMenuInfo("A - Menu About");
-        HelpMenu.AddMenuInfo("O - Menu Options");
-        HelpMenu.AddMenuInfo("R - Soft Reset");
-        HelpMenu.AddMenuInfo("U - Exit from Clover");
-        HelpMenu.AddMenuInfo("S - Shell");
+        HelpMenu.AddMenuInfo_f("ESC - Escape from submenu, Refresh main menu");
+        HelpMenu.AddMenuInfo_f("F1  - This help");
+        HelpMenu.AddMenuInfo_f("F2  - Save preboot.log into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F3  - Show hidden entries");
+        HelpMenu.AddMenuInfo_f("F4  - Save oem DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F5  - Save patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F6  - Save VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
+        HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into EFI/CLOVER/misc/");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F10 - Save screenshot into EFI/CLOVER/misc/ (FAT32)");
+        HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
+        HelpMenu.AddMenuInfo_f("F12 - Eject selected volume (DVD)");
+        HelpMenu.AddMenuInfo_f("Space - Details about selected menu entry");
+        HelpMenu.AddMenuInfo_f("Digits 1-9 - Shortcut to menu entry");
+        HelpMenu.AddMenuInfo_f("A - Menu About");
+        HelpMenu.AddMenuInfo_f("O - Menu Options");
+        HelpMenu.AddMenuInfo_f("R - Soft Reset");
+        HelpMenu.AddMenuInfo_f("U - Exit from Clover");
+        HelpMenu.AddMenuInfo_f("S - Shell");
         break;
     }
     HelpMenu.AnimeRun = HelpMenu.GetAnime();
@@ -2021,988 +1976,287 @@ VOID InitSelection(VOID)
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
 #define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
-                       IN UINTN VisibleSpace, IN INTN Selected)
+#if !USE_XTHEME
+INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
-  //ItemCount - a number to scroll (Row0)
-  //MaxCount - total number (Row0 + Row1)
-  //VisibleSpace - a number to fit
+  INTN      TextWidth = 0;
+  INTN      XText = 0;
+  INTN      Height;
+  INTN      TextXYStyle = 1;
+  EG_IMAGE  *TextBufferXY = NULL;
 
-  ScrollState.LastSelection = ScrollState.CurrentSelection = Selected;
-  //MaxIndex, MaxScroll, MaxVisible are indexes, 0..N-1
-  ScrollState.MaxIndex = (INTN)MaxCount - 1;
-  ScrollState.MaxScroll = ItemCount - 1;
+  if (!Text) {
+    return 0;
+  }
+  if (!textFace[1].valid) {
+    if (textFace[2].valid) {
+      TextXYStyle = 2;
+    } else {
+      TextXYStyle = 0;
+    }
+  }
 
-  if (VisibleSpace == 0) {
-    ScrollState.MaxVisible = ScrollState.MaxScroll;
+  egMeasureText(Text, &TextWidth, NULL);
+
+  if (XAlign == X_IS_LEFT) {
+    TextWidth = UGAWidth - XPos - 1;
+    XText = XPos;
+  }
+
+  if (GlobalConfig.TypeSVG) {
+    TextWidth += TextHeight * 2; //give more place for buffer
+    if (!textFace[TextXYStyle].valid) {
+      DBG("no vaid text face for message!\n");
+      Height = TextHeight;
+    } else {
+      Height = (int)(textFace[TextXYStyle].size * RowHeightFromTextHeight * GlobalConfig.Scale);
+    }
   } else {
-    ScrollState.MaxVisible = (INTN)VisibleSpace - 1;
+    Height = TextHeight;
   }
 
-  if (ScrollState.MaxVisible >= ItemCount) {
-      ScrollState.MaxVisible = ItemCount - 1;
+  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
+
+  // render the text
+  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
+
+  if (XAlign != X_IS_LEFT) {
+    // shift 64 is prohibited
+    XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
   }
+//  DBG("draw text %ls\n", Text);
+//  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
+  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
+  egFreeImage(TextBufferXY);
 
-  ScrollState.MaxFirstVisible = ScrollState.MaxScroll - ScrollState.MaxVisible;
-  CONSTRAIN_MIN(ScrollState.MaxFirstVisible, 0);
-  ScrollState.FirstVisible = MIN(Selected, ScrollState.MaxFirstVisible);
-
-
-  ScrollState.IsScrolling = (ScrollState.MaxFirstVisible > 0);
-  ScrollState.PaintAll = TRUE;
-  ScrollState.PaintSelection = FALSE;
-
-  ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
+  return TextWidth;
+}
+#endif
+/**
+ * Helper function to draw text for Boot Camp Style.
+ * @author: Needy
+ */
 
 #if USE_XTHEME
-  //scroll bar geometry
-  if (!ThemeX.TypeSVG) {
-    UpButton.Width      = ThemeX.ScrollWidth; // 16
-    UpButton.Height     = ThemeX.ScrollButtonsHeight; // 20
+
+#else
+VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
+{
+  //use Text=null to reinit the buffer
+  if (!Text) {
+    if (TextBuffer) {
+      egFreeImage(TextBuffer);
+      TextBuffer = NULL;
+    }
+    return;
+  }
+
+  if (TextBuffer && (TextBuffer->Height != TextHeight)) {
+    egFreeImage(TextBuffer);
+    TextBuffer = NULL;
+  }
+
+  if (TextBuffer == NULL) {
+    TextBuffer = egCreateImage(UGAWidth-XPos, TextHeight, TRUE);
+  }
+
+  if (Cursor != 0xFFFF) {
+    egFillImage(TextBuffer, &MenuBackgroundPixel);
+  } else {
+    egFillImage(TextBuffer, &InputBackgroundPixel);
+  }
+
+
+  if (SelectedWidth > 0) {
+    // draw selection bar background
+    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, TextHeight,
+                    &SelectionBackgroundPixel);
+  }
+
+  // render the text
+  if (GlobalConfig.TypeSVG) {
+    //clovy - text veltically centred on Height
+    egRenderText(Text, TextBuffer, 0,
+                 (INTN)((TextHeight - (textFace[TextStyle].size * GlobalConfig.Scale)) / 2),
+                 Cursor, TextStyle);
+  } else {
+    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
+  }
+  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
+}
+
+#endif
+
+#if !USE_XTHEME
+VOID FreeScrollBar(VOID)
+{
+  if (ScrollbarBackgroundImage) {
+    egFreeImage(ScrollbarBackgroundImage);
+    ScrollbarBackgroundImage = NULL;
+  }
+  if (BarStartImage) {
+    egFreeImage(BarStartImage);
+    BarStartImage = NULL;
+  }
+  if (BarEndImage) {
+    egFreeImage(BarEndImage);
+    BarEndImage = NULL;
+  }
+  if (ScrollbarImage) {
+    egFreeImage(ScrollbarImage);
+    ScrollbarImage = NULL;
+  }
+  if (ScrollStartImage) {
+    egFreeImage(ScrollStartImage);
+    ScrollStartImage = NULL;
+  }
+  if (ScrollEndImage) {
+    egFreeImage(ScrollEndImage);
+    ScrollEndImage = NULL;
+  }
+  if (UpButtonImage) {
+    egFreeImage(UpButtonImage);
+    UpButtonImage = NULL;
+  }
+  if (DownButtonImage) {
+    egFreeImage(DownButtonImage);
+    DownButtonImage = NULL;
+  }
+}
+
+
+VOID InitBar(VOID)
+{
+  if (ThemeDir) {
+    if (!ScrollbarBackgroundImage) {
+        ScrollbarBackgroundImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_fill", L"png"), FALSE);
+    }
+    if (!BarStartImage) {
+      BarStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_start", L"png"), TRUE);
+    }
+    if (!BarEndImage) {
+      BarEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_end", L"png"), TRUE);
+    }
+    if (!ScrollbarImage) {
+      ScrollbarImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_fill", L"png"), FALSE);
+    }
+    if (!ScrollStartImage) {
+      ScrollStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_start", L"png"), TRUE);
+    }
+    if (!ScrollEndImage) {
+      ScrollEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_end", L"png"), TRUE);
+    }
+    if (!UpButtonImage) {
+      UpButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\up_button", L"png"), TRUE);
+    }
+    if (!DownButtonImage) {
+      DownButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\down_button", L"png"), TRUE);
+    }
+  }
+
+  if (!BarStartImage  && !GlobalConfig.TypeSVG) {
+    BarStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start), TRUE);
+  }
+  if (!BarEndImage && !GlobalConfig.TypeSVG) {
+    BarEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end), TRUE);
+  }
+  if (!ScrollbarBackgroundImage) {
+    if (GlobalConfig.TypeSVG) {
+       ScrollbarBackgroundImage = egLoadIcon(ThemeDir, L"scrollbar-background.png", 48);
+    }
+    if (!ScrollbarBackgroundImage) {
+      ScrollbarBackgroundImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill), TRUE);
+    }
+  }
+  if (!ScrollbarImage) {
+    if (GlobalConfig.TypeSVG) {
+      ScrollbarImage = egLoadIcon(ThemeDir, L"scrollbar-holder.png", 48);
+    }
+    if (!ScrollbarImage) {
+      ScrollbarImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill), TRUE);
+    }
+  }
+  if (!ScrollStartImage && !GlobalConfig.TypeSVG) {
+    ScrollStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start), TRUE);
+  }
+  if (!ScrollEndImage && !GlobalConfig.TypeSVG) {
+    ScrollEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end), TRUE);
+  }
+  if (!UpButtonImage && !GlobalConfig.TypeSVG) {
+    UpButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button), TRUE);
+  }
+  if (!DownButtonImage && !GlobalConfig.TypeSVG) {
+    DownButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button), TRUE);
+  }
+  if (!GlobalConfig.TypeSVG) {
+    UpButton.Width      = ScrollWidth; // 16
+    UpButton.Height     = ScrollButtonsHeight; // 20
     DownButton.Width    = UpButton.Width;
-    DownButton.Height   = ThemeX.ScrollButtonsHeight;
-    BarStart.Height     = ThemeX.ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ThemeX.ScrollBarDecorationsHeight;
-    ScrollStart.Height  = ThemeX.ScrollScrollDecorationsHeight; // 7
-    ScrollEnd.Height    = ThemeX.ScrollScrollDecorationsHeight;
+    DownButton.Height   = ScrollButtonsHeight;
+    BarStart.Height     = ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ScrollBarDecorationsHeight;
+    ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
+    ScrollEnd.Height    = ScrollScrollDecorationsHeight;
 
   } else {
-    UpButton.Width      = ThemeX.ScrollWidth; // 16
+    UpButton.Width      = ScrollWidth; // 16
     UpButton.Height     = 0; // 20
     DownButton.Width    = UpButton.Width;
     DownButton.Height   = 0;
-    BarStart.Height     = ThemeX.ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ThemeX.ScrollBarDecorationsHeight;
+    BarStart.Height     = ScrollBarDecorationsHeight; // 5
+    BarEnd.Height       = ScrollBarDecorationsHeight;
     ScrollStart.Height  = 0; // 7
     ScrollEnd.Height    = 0;
+
   }
+}
 #endif
-
-}
-
-VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
-{
-  INTN Lines;
-  UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
-  ScrollState.LastSelection = ScrollState.CurrentSelection;
-
-  switch (Movement) {
-    case SCROLL_SCROLLBAR_MOVE:
-      ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
-      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos;
-      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos;
-      Lines = ScrollbarYMovement * ScrollState.MaxIndex / ScrollbarBackground.Height;
-      ScrollbarYMovement = ScrollbarYMovement - Lines * (ScrollState.MaxVisible * TextHeight - 16 - 1) / ScrollState.MaxIndex;
-      if (Lines < 0) {
-        Lines = -Lines;
-        ScrollMovement = SCROLL_SCROLL_UP;
-      }
-      for (INTN i = 0; i < Lines; i++)
-        UpdateScroll(ScrollMovement);
-      break;
-
-    case SCROLL_LINE_UP: //of left = decrement
-      if (ScrollState.CurrentSelection > 0) {
-        ScrollState.CurrentSelection --;
-        if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
-          ScrollState.PaintAll = TRUE;
-          ScrollState.FirstVisible = ScrollState.CurrentSelection;
-        }
-        if (ScrollState.CurrentSelection == ScrollState.MaxScroll) {
-          ScrollState.PaintAll = TRUE;
-        }
-        if ((ScrollState.CurrentSelection < ScrollState.MaxScroll) &&
-             (ScrollState.CurrentSelection > ScrollState.LastVisible)) {
-          ScrollState.PaintAll = TRUE;
-          ScrollState.LastVisible = ScrollState.CurrentSelection;
-          ScrollState.FirstVisible = ScrollState.LastVisible - ScrollState.MaxVisible;
-        }
-      }
-      break;
-
-    case SCROLL_LINE_DOWN: //or right -- increment
-      if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
-        ScrollState.CurrentSelection++;
-        if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
-            (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
-          ScrollState.PaintAll = TRUE;
-          ScrollState.FirstVisible++;
-          CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
-        }
-        if (ScrollState.CurrentSelection == ScrollState.MaxScroll + 1) {
-          ScrollState.PaintAll = TRUE;
-        }
-      }
-      break;
-
-    case SCROLL_SCROLL_DOWN:
-      if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible) {
-        if (ScrollState.CurrentSelection == ScrollState.FirstVisible)
-          ScrollState.CurrentSelection++;
-        ScrollState.FirstVisible++;
-        ScrollState.LastVisible++;
-        ScrollState.PaintAll = TRUE;
-      }
-      break;
-
-    case SCROLL_SCROLL_UP:
-      if (ScrollState.FirstVisible > 0) {
-        if (ScrollState.CurrentSelection == ScrollState.LastVisible)
-          ScrollState.CurrentSelection--;
-        ScrollState.FirstVisible--;
-        ScrollState.LastVisible--;
-        ScrollState.PaintAll = TRUE;
-      }
-      break;
-
-    case SCROLL_PAGE_UP:
-      if (ScrollState.CurrentSelection > 0) {
-        if (ScrollState.CurrentSelection == ScrollState.MaxIndex) {   // currently at last entry, special treatment
-          if (ScrollState.IsScrolling)
-            ScrollState.CurrentSelection -= ScrollState.MaxVisible - 1;  // move to second line without scrolling
-          else
-            ScrollState.CurrentSelection = 0;                // move to first entry
-        } else {
-          if (ScrollState.FirstVisible > 0)
-            ScrollState.PaintAll = TRUE;
-          ScrollState.CurrentSelection -= ScrollState.MaxVisible;          // move one page and scroll synchronously
-          ScrollState.FirstVisible -= ScrollState.MaxVisible;
-        }
-        CONSTRAIN_MIN(ScrollState.CurrentSelection, 0);
-        CONSTRAIN_MIN(ScrollState.FirstVisible, 0);
-        if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
-          ScrollState.PaintAll = TRUE;
-          ScrollState.FirstVisible = ScrollState.CurrentSelection;
-        }
-      }
-      break;
-
-    case SCROLL_PAGE_DOWN:
-      if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
-        if (ScrollState.CurrentSelection == 0) {   // currently at first entry, special treatment
-          if (ScrollState.IsScrolling)
-            ScrollState.CurrentSelection += ScrollState.MaxVisible - 1;  // move to second-to-last line without scrolling
-          else
-            ScrollState.CurrentSelection = ScrollState.MaxIndex;         // move to last entry
-        } else {
-          if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible)
-            ScrollState.PaintAll = TRUE;
-          ScrollState.CurrentSelection += ScrollState.MaxVisible;          // move one page and scroll synchronously
-          ScrollState.FirstVisible += ScrollState.MaxVisible;
-        }
-        CONSTRAIN_MAX(ScrollState.CurrentSelection, ScrollState.MaxIndex);
-        CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
-        if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
-            (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
-          ScrollState.PaintAll = TRUE;
-          ScrollState.FirstVisible+= ScrollState.MaxVisible;
-          CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
-        }
-      }
-      break;
-
-    case SCROLL_FIRST:
-      if (ScrollState.CurrentSelection > 0) {
-        ScrollState.CurrentSelection = 0;
-        if (ScrollState.FirstVisible > 0) {
-          ScrollState.PaintAll = TRUE;
-          ScrollState.FirstVisible = 0;
-        }
-      }
-      break;
-
-    case SCROLL_LAST:
-      if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
-        ScrollState.CurrentSelection = ScrollState.MaxIndex;
-        if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible) {
-          ScrollState.PaintAll = TRUE;
-          ScrollState.FirstVisible = ScrollState.MaxFirstVisible;
-        }
-      }
-      break;
-
-    case SCROLL_NONE:
-      // The caller has already updated CurrentSelection, but we may
-      // have to scroll to make it visible.
-      if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
-        ScrollState.PaintAll = TRUE;
-        ScrollState.FirstVisible = ScrollState.CurrentSelection; // - (ScrollState.MaxVisible >> 1);
-        CONSTRAIN_MIN(ScrollState.FirstVisible, 0);
-      } else if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
-                 (ScrollState.CurrentSelection <= ScrollState.MaxScroll)) {
-        ScrollState.PaintAll = TRUE;
-        ScrollState.FirstVisible = ScrollState.CurrentSelection - ScrollState.MaxVisible;
-        CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
-      }
-      break;
-
-  }
-
-  if (!ScrollState.PaintAll && ScrollState.CurrentSelection != ScrollState.LastSelection)
-    ScrollState.PaintSelection = TRUE;
-  ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
-
-  //ycr.ru
-  if ((ScrollState.PaintAll) && (Movement != SCROLL_NONE))
-    HidePointer();
-}
-
-VOID REFIT_MENU_SCREEN::HidePointer()
-{
-  if ( mPointer.isAlive() ) mPointer.Hide();
-}
-
-EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
-{
-
-  //if ( !mPointer ) mPointer = new XPointer();
-  return mPointer.MouseBirth();
-}
-
-VOID REFIT_MENU_SCREEN::KillMouse()
-{
-  /*if ( mPointer ) */mPointer.KillMouse();
-}
-//
-// menu helper functions
-//
-VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN XStringW& InfoLine)
-{
-  InfoLines.AddReference(&InfoLine, true);
-}
-
-VOID REFIT_MENU_SCREEN::AddMenuInfoLine(IN CONST CHAR16 *InfoLine)
-{
-  XStringW* s = new XStringW();
-  s->takeValueFrom(InfoLine);
-   InfoLines.AddReference(s, true);
-//  AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLines.size()), (CHAR16*)InfoLine); // TODO jief : cast to fix
-}
-
-VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt)
-{
-	if ( !Entry ) return;
-	Entries.AddReference(Entry, freeIt);
-//  AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->Entries.size()), Entry);
-}
-
-// This is supposed to be a destructor ?
-VOID REFIT_MENU_SCREEN::FreeMenu()
-{
-//  INTN i;
-  REFIT_ABSTRACT_MENU_ENTRY *Tentry = NULL;
-//TODO - here we must FreePool for a list of Entries, Screens, InputBootArgs
-  if (Entries.size() > 0) {
-    for (UINTN i = 0; i < Entries.size(); i++) {
-      Tentry = &Entries[i];
-      if (Tentry->SubScreen) {
-#if USE_XTHEME
-#else
-        if (Tentry->SubScreen->Title) {
-          FreePool(Tentry->SubScreen->Title);
-          Tentry->SubScreen->Title = NULL;
-        }
-#endif
-        // don't free image because of reusing them
-     //   FreeMenu(Tentry->SubScreen);
-        Tentry->SubScreen->FreeMenu();
-        Tentry->SubScreen = NULL;
-      }
-// Title is a XStringW. It'll be destroyed in REFIT_MENU_SCREEN dtor
-//      if (Tentry->getREFIT_MENU_ITEM_RETURN()) { //can't free constants
-//        if (Tentry->Title) {
-//          FreePool(Tentry->Title);
-//          Tentry->Title = NULL;
-//        }
-//      }
-// Tentry is an object inserted in a XArray. It'll deleted at Entries.Empty()
-//      FreePool(Tentry);
-    }
-    Entries.Empty();
-//    FreePool(Screen->Entries);
-//    Screen->Entries = NULL;
-  }
-// Infolines will deleted at InfoLines.Empty()
-//  if (InfoLines.size() > 0) {
-//    for (UINTN i = 0; i < InfoLines.size(); i++) {
-//      // TODO: call a user-provided routine for each element here
-//      FreePool(InfoLines[i]);
-//    }
-//    Screen->InfoLines.size() = 0;
-//    FreePool(Screen->InfoLines);
-//    Screen->InfoLines = NULL;
-//  }
-    InfoLines.Empty();
-
-}
-
-INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN CHAR16 Shortcut)
-{
-  if (Shortcut >= 'a' && Shortcut <= 'z')
-    Shortcut -= ('a' - 'A');
-  if (Shortcut) {
-    for (UINTN i = 0; i < Entries.size(); i++) {
-      if (Entries[i].ShortcutDigit == Shortcut ||
-          Entries[i].ShortcutLetter == Shortcut) {
-        return i;
-      }
-    }
-  }
-  return -1;
-}
-
-//
-// generic input menu function
-// usr-sse2
-//
-UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
-{
-	if ( !Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
-		DebugLog(2, "BUG : InputDialog called with !Entries[ScrollState.CurrentSelection].REFIT_MENU_ENTRY_ITEM_ABSTRACT()\n");
-		return 0; // is it the best thing to do ? CpuDeadLog ?
-	}
-
-  EFI_STATUS    Status;
-  EFI_INPUT_KEY key;
-  UINTN         ind = 0;
-  UINTN         i = 0;
-  UINTN         MenuExit = 0;
-  //UINTN         LogSize;
-  UINTN         Pos = (Entries[ScrollState.CurrentSelection]).Row;
-  REFIT_MENU_ENTRY_ITEM_ABSTRACT& selectedEntry = *Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT();
-  INPUT_ITEM    *Item = selectedEntry.Item;
-  CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
-  UINTN         BackupPos, BackupShift;
-  CHAR16        *Buffer;
-  //SCROLL_STATE  StateLine;
-
-  /*
-    I would like to see a LineSize that depends on the Title width and the menu width so
-    the edit dialog does not extend beyond the menu width.
-    There are 3 cases:
-    1) Text menu where MenuWidth is min of ConWidth - 6 and max of 50 and all StrLen(Title)
-    2) Graphics menu where MenuWidth is measured in pixels and font is fixed width.
-       The following works well in my case but depends on font width and minimum screen size.
-         LineSize = 76 - StrLen(Screen->Entries[State->CurrentSelection].Title);
-    3) Graphics menu where font is proportional. In this case LineSize would depend on the
-       current width of the displayed string which would need to be recalculated after
-       every change.
-    Anyway, the above will not be implemented for now, and LineSize will remain at 38
-    because it works.
-  */
-  UINTN         LineSize = 38;
-#define DBG_INPUTDIALOG 0
-#if DBG_INPUTDIALOG
-  UINTN         Iteration = 0;
-#endif
-
-
-  if ((Item->ItemType != BoolValue) &&
-      (Item->ItemType != RadioSwitch) &&
-      (Item->ItemType != CheckBit)) {
-    // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
-    Item->SValue = (__typeof__(Item->SValue))ReallocatePool(StrSize(Item->SValue), SVALUE_MAX_SIZE, Item->SValue);
-  }
-
-  Buffer = Item->SValue;
-  BackupShift = Item->LineShift;
-  BackupPos = Pos;
-
-  do {
-
-    if (Item->ItemType == BoolValue) {
-      Item->BValue = !Item->BValue;
-      MenuExit = MENU_EXIT_ENTER;
-    } else if (Item->ItemType == RadioSwitch) {
-      if (Item->IValue == 3) {
-        OldChosenTheme = Pos? Pos - 1: 0xFFFF;
-      } else if (Item->IValue == 90) {
-        OldChosenConfig = Pos;
-      } else if (Item->IValue == 116) {
-        OldChosenDsdt = Pos? Pos - 1: 0xFFFF;
-      } else if (Item->IValue == 119) {
-        OldChosenAudio = Pos;
-      }
-      MenuExit = MENU_EXIT_ENTER;
-    } else if (Item->ItemType == CheckBit) {
-      Item->IValue ^= Pos;
-      MenuExit = MENU_EXIT_ENTER;
-    } else {
-
-      Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-
-      if (Status == EFI_NOT_READY) {
-        gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
-        continue;
-      }
-
-      switch (key.ScanCode) {
-        case SCAN_RIGHT:
-          if (Pos + Item->LineShift < StrLen(Buffer)) {
-            if (Pos < LineSize)
-              Pos++;
-            else
-              Item->LineShift++;
-          }
-          break;
-        case SCAN_LEFT:
-          if (Pos > 0)
-            Pos--;
-          else if (Item->LineShift > 0)
-            Item->LineShift--;
-          break;
-        case SCAN_HOME:
-          Pos = 0;
-          Item->LineShift=0;
-          break;
-        case SCAN_END:
-          if (StrLen(Buffer) < LineSize)
-            Pos = StrLen(Buffer);
-          else {
-            Pos = LineSize;
-            Item->LineShift = StrLen(Buffer) - LineSize;
-          }
-          break;
-        case SCAN_ESC:
-          MenuExit = MENU_EXIT_ESCAPE;
-          continue;
-          break;
-        case SCAN_F2:
-          SavePreBootLog = TRUE;
-          break;
-          //not used here
-/*        case SCAN_F6:
-          Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
-          if (EFI_ERROR(Status)) {
-            Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
-          }
-          break; */
-        case SCAN_F10:
-          egScreenShot();
-          break;
-
-        case SCAN_DELETE:
-          // forward delete
-          if (Pos + Item->LineShift < StrLen(Buffer)) {
-            for (i = Pos + Item->LineShift; i < StrLen(Buffer); i++) {
-               Buffer[i] = Buffer[i+1];
-            }
-            /*
-            // Commented this out because it looks weird - Forward Delete should not
-            // affect anything left of the cursor even if it's just to shift more of the
-            // string into view.
-            if (Item->LineShift > 0 && Item->LineShift + LineSize > StrLen(Buffer)) {
-              Item->LineShift--;
-              Pos++;
-            }
-            */
-          }
-          break;
-      }
-
-      switch (key.UnicodeChar) {
-        case CHAR_BACKSPACE:
-          if (Buffer[0] != CHAR_NULL && Pos != 0) {
-            for (i = Pos + Item->LineShift; i <= StrLen(Buffer); i++) {
-               Buffer[i-1] = Buffer[i];
-            }
-            Item->LineShift > 0 ? Item->LineShift-- : Pos--;
-          }
-
-          break;
-
-        case CHAR_LINEFEED:
-        case CHAR_CARRIAGE_RETURN:
-          MenuExit = MENU_EXIT_ENTER;
-          Pos = 0;
-          Item->LineShift = 0;
-          break;
-        default:
-          if ((key.UnicodeChar >= 0x20) &&
-              (key.UnicodeChar < 0x80)){
-            if (StrSize(Buffer) < SVALUE_MAX_SIZE) {
-              for (i = StrLen(Buffer)+1; i > Pos + Item->LineShift; i--) {
-                 Buffer[i] = Buffer[i-1];
-              }
-              Buffer[i] = key.UnicodeChar;
-              Pos < LineSize ? Pos++ : Item->LineShift++;
-            }
-          }
-          break;
-      }
-    }
-    // Redraw the field
-    (Entries[ScrollState.CurrentSelection]).Row = Pos;
-    ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_SELECTION, NULL);
-  } while (!MenuExit);
-
-  switch (MenuExit) {
-    case MENU_EXIT_ENTER:
-      Item->Valid = TRUE;
-      ApplyInputs();
-      break;
-
-    case MENU_EXIT_ESCAPE:
-      if (StrCmp(Item->SValue, Backup) != 0) {
-        UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
-        if (Item->ItemType != BoolValue) {
-          Item->LineShift = BackupShift;
-          (Entries[ScrollState.CurrentSelection]).Row = BackupPos;
-        }
-        ((*this).*(StyleFunc))( MENU_FUNCTION_PAINT_SELECTION, NULL);
-      }
-      break;
-  }
-  Item->Valid = FALSE;
-  FreePool(Backup);
-  if (Item->SValue) {
-    MsgLog("EDITED: %ls\n", Item->SValue);
-  }
-  return 0;
-}
-
-
-UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
-{
-  EFI_STATUS    Status;
-  EFI_INPUT_KEY key;
-  //    UINTN         Index;
-  INTN          ShortcutEntry;
-  BOOLEAN       HaveTimeout = FALSE;
-  INTN          TimeoutCountdown = 0;
-  UINTN         MenuExit;
-
-  if (ChosenEntry == NULL) {
-    TextStyle = 0;
-  } else {
-    TextStyle = 2;
-  }
-#if USE_XTHEME
-  if (ThemeX.TypeSVG) {
-    if (!textFace[TextStyle].valid) {
-      if (textFace[0].valid) {
-        TextStyle = 0;
-      } else if (textFace[2].valid) {
-        TextStyle = 2;
-      } else if (textFace[1].valid) {
-        TextStyle = 1;
-      } else {
-        DBG("no valid text style\n");
-        textFace[TextStyle].size = TextHeight - 4;
-      }
-    }
-    if (textFace[TextStyle].valid) {
-      // TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
-      //clovy - row height / text size factor
-      TextHeight = (int)((textFace[TextStyle].size * RowHeightFromTextHeight) * ThemeX.Scale);
-    }
-  }
-#else
-  if (GlobalConfig.TypeSVG) {
-    if (!textFace[TextStyle].valid) {
-      if (textFace[0].valid) {
-        TextStyle = 0;
-      } else if (textFace[2].valid) {
-        TextStyle = 2;
-      } else if (textFace[1].valid) {
-        TextStyle = 1;
-      } else {
-        DBG("no valid text style\n");
-        textFace[TextStyle].size = TextHeight - 4;
-      }
-    }
-    if (textFace[TextStyle].valid) {
-      // TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
-      //clovy - row height / text size factor
-      TextHeight = (int)((textFace[TextStyle].size * RowHeightFromTextHeight) * GlobalConfig.Scale);
-    }
-  }
-#endif
-
-  //no default - no timeout!
-  if ((*DefaultEntryIndex != -1) && (TimeoutSeconds > 0)) {
-    //      DBG("have timeout\n");
-    HaveTimeout = TRUE;
-    TimeoutCountdown =  TimeoutSeconds;
-  }
-  MenuExit = 0;
-
-  ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
-  //  DBG("scroll inited\n");
-  // override the starting selection with the default index, if any
-  if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <=  ScrollState.MaxIndex) {
-     ScrollState.CurrentSelection = *DefaultEntryIndex;
-     UpdateScroll(SCROLL_NONE);
-  }
-  //  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
-  //      State.CurrentSelection, MenuExit);
-
-  // exhaust key buffer and be sure no key is pressed to prevent option selection
-  // when coming with a key press from timeout=0, for example
-  while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
-  while (!MenuExit) {
-    // update the screen
-    if (ScrollState.PaintAll) {
-      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_ALL, NULL);
-      ScrollState.PaintAll = FALSE;
-    } else if (ScrollState.PaintSelection) {
-      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_SELECTION, NULL);
-      ScrollState.PaintSelection = FALSE;
-    }
-
-    if (HaveTimeout) {
-#if USE_XTHEME
-      //TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText.data(), TimeoutCountdown);
-      XStringW TOMessage = SWPrintf("%ls in %lld seconds", TimeoutText.wc_str(), TimeoutCountdown);
-      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TOMessage.data());
-//      FreePool(TimeoutMessage);
-#else
-      CHAR16        *TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText, TimeoutCountdown);
-      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
-      FreePool(TimeoutMessage);
-#endif
-    }
-
-    if (gEvent) { //for now used at CD eject.
-      MenuExit = MENU_EXIT_ESCAPE;
-      ScrollState.PaintAll = TRUE;
-      gEvent = 0; //to prevent looping
-      break;
-    }
-    key.UnicodeChar = 0;
-    key.ScanCode = 0;
-    if (!mGuiReady) {
-      mGuiReady = TRUE;
-      DBG("GUI ready\n");
-    }
-    Status = WaitForInputEventPoll(this, 1); //wait for 1 seconds.
-    if (Status == EFI_TIMEOUT) {
-      if (HaveTimeout) {
-        if (TimeoutCountdown <= 0) {
-          // timeout expired
-          MenuExit = MENU_EXIT_TIMEOUT;
-          break;
-        } else {
-          //     gBS->Stall(100000);
-          TimeoutCountdown--;
-        }
-      }
-      continue;
-    }
-
-    switch (mAction) {
-      case ActionSelect:
-        ScrollState.LastSelection = ScrollState.CurrentSelection;
-        ScrollState.CurrentSelection = mItemID;
-        ScrollState.PaintAll = TRUE;
-        HidePointer();
-        break;
-      case ActionEnter:
-        ScrollState.LastSelection = ScrollState.CurrentSelection;
-        ScrollState.CurrentSelection = mItemID;
-        if ( Entries[mItemID].getREFIT_INPUT_DIALOG() ||  Entries[mItemID].getREFIT_MENU_CHECKBIT() ) {
-          MenuExit = InputDialog(StyleFunc);
-        } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
-          ScrollState.PaintAll = TRUE;
-          HidePointer();
-        } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
-          MenuExit = MENU_EXIT_ENTER;
-        }
-        break;
-      case ActionHelp:
-        MenuExit = MENU_EXIT_HELP;
-        break;
-      case ActionOptions:
-        ScrollState.LastSelection = ScrollState.CurrentSelection;
-        ScrollState.CurrentSelection = mItemID;
-        MenuExit = MENU_EXIT_OPTIONS;
-        break;
-      case ActionDetails:
-        ScrollState.LastSelection = ScrollState.CurrentSelection;
-        // Index = State.CurrentSelection;
-        ScrollState.CurrentSelection = mItemID;
-        if ((Entries[mItemID].getREFIT_INPUT_DIALOG()) ||
-            (Entries[mItemID].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
-        } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
-          MenuExit = InputDialog(StyleFunc);
-          ScrollState.PaintAll = TRUE;
-          HidePointer();
-        } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
-          MenuExit = MENU_EXIT_DETAILS;
-        }
-        break;
-      case ActionDeselect:
-        ScrollState.LastSelection = ScrollState.CurrentSelection;
-        ScrollState.PaintAll = TRUE;
-        HidePointer();
-        break;
-      case ActionFinish:
-        MenuExit = MENU_EXIT_ESCAPE;
-        break;
-      case ActionScrollDown:
-        UpdateScroll(SCROLL_SCROLL_DOWN);
-        break;
-      case ActionScrollUp:
-        UpdateScroll(SCROLL_SCROLL_UP);
-        break;
-      case ActionMoveScrollbar:
-        UpdateScroll(SCROLL_SCROLLBAR_MOVE);
-        break;
-      default:
-        break;
-    }
-
-    // read key press (and wait for it if applicable)
-    Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-    if ((Status == EFI_NOT_READY) && (mAction == ActionNone)) {
-      continue;
-    }
-    if (mAction == ActionNone) {
-      ReadAllKeyStrokes(); //clean to avoid doubles
-    }
-    if (HaveTimeout) {
-      // the user pressed a key, cancel the timeout
-      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, L"");
-      HidePointer(); //ycr.ru
-      HaveTimeout = FALSE;
-    }
-
-    mAction = ActionNone; //do action once
-    // react to key press
-    switch (key.ScanCode) {
-      case SCAN_UP:
-      case SCAN_LEFT:
-        UpdateScroll(SCROLL_LINE_UP);
-        break;
-      case SCAN_DOWN:
-      case SCAN_RIGHT:
-        UpdateScroll(SCROLL_LINE_DOWN);
-        break;
-      case SCAN_HOME:
-        UpdateScroll(SCROLL_FIRST);
-        break;
-      case SCAN_END:
-        UpdateScroll(SCROLL_LAST);
-        break;
-      case SCAN_PAGE_UP:
-        UpdateScroll(SCROLL_PAGE_UP);
-    //    SetNextScreenMode(1);
-        ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
-        break;
-      case SCAN_PAGE_DOWN:
-        UpdateScroll(SCROLL_PAGE_DOWN);
-     //   SetNextScreenMode(-1);
-        ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
-        break;
-      case SCAN_ESC:
-        MenuExit = MENU_EXIT_ESCAPE;
-        break;
-      case SCAN_INSERT:
-        MenuExit = MENU_EXIT_OPTIONS;
-        break;
-
-      case SCAN_F1:
-        MenuExit = MENU_EXIT_HELP;
-        break;
-      case SCAN_F2:
-        SavePreBootLog = TRUE;
-        //let it be twice
-        Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
-        if (EFI_ERROR(Status)) {
-          Status = SaveBooterLog(NULL, PREBOOT_LOG);
-        }
-        break;
-      case SCAN_F3:
-         MenuExit = MENU_EXIT_HIDE_TOGGLE;
-         break;
-      case SCAN_F4:
-        SaveOemTables();
-        break;
-      case SCAN_F5:
-        SaveOemDsdt(TRUE); //full patch
-        break;
-      case SCAN_F6:
-        Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
-        if (EFI_ERROR(Status)) {
-          Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
-        }
-        break;
-/* just a sample code
-      case SCAN_F7:
-        Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
-        DBG("create folder %s\n", strerror(Status));
-        if (!EFI_ERROR(Status)) {
-          Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\new_folder\\new_file.txt", (UINT8*)SomeText, sizeof(*SomeText)+1);
-          DBG("create file %s\n", strerror(Status));
-        }
-        break;
-*/
-      case SCAN_F7:
-        if (OldChosenAudio > AudioNum) {
-              OldChosenAudio = 0; //security correction
-        }
-        Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
-			DBG("open %llu audio handle status=%s\n", OldChosenAudio, strerror(Status));
-        if (!EFI_ERROR(Status)) {
-          StartupSoundPlay(SelfRootDir, NULL); //play embedded sound
-        }
-        break;
-      case SCAN_F8:
-        testSVG();
-        SaveHdaDumpBin();
-        SaveHdaDumpTxt();
-        break;
-
-      case SCAN_F9:
-        SetNextScreenMode(1);
-        InitTheme(FALSE, NULL);
-        break;
-      case SCAN_F10:
-        egScreenShot();
-        break;
-      case SCAN_F11:
-        ResetNvram ();
-        break;
-      case SCAN_F12:
-        MenuExit = MENU_EXIT_EJECT;
-        ScrollState.PaintAll = TRUE;
-        break;
-
-    }
-    switch (key.UnicodeChar) {
-      case CHAR_LINEFEED:
-      case CHAR_CARRIAGE_RETURN:
-        if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
-            (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
-        } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
-          ScrollState.PaintAll = TRUE;
-        } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
-          MenuExit = MENU_EXIT_DETAILS;
-        } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
-          MenuExit = MENU_EXIT_ENTER;
-        }
-        break;
-      case ' ': //CHAR_SPACE
-        if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
-            (Entries[ScrollState.CurrentSelection].getREFIT_MENU_CHECKBIT())) {
-          MenuExit = InputDialog(StyleFunc);
-        } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
-          MenuExit = InputDialog(StyleFunc);
-          ScrollState.PaintAll = TRUE;
-          HidePointer();
-        } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
-          MenuExit = MENU_EXIT_DETAILS;
-        }
-        break;
-
-      default:
-        ShortcutEntry = FindMenuShortcutEntry(key.UnicodeChar);
-        if (ShortcutEntry >= 0) {
-          ScrollState.CurrentSelection = ShortcutEntry;
-          MenuExit = MENU_EXIT_ENTER;
-        }
-        break;
-    }
-  }
-
-  ((*this).*(StyleFunc))(MENU_FUNCTION_CLEANUP, NULL);
-
-	if (ChosenEntry) {
-    *ChosenEntry = &Entries[ScrollState.CurrentSelection];
-	}
-
-  *DefaultEntryIndex = ScrollState.CurrentSelection;
-
-  return MenuExit;
-}
 
 /**
- * Text Mode menu.
+ * Draw entries for GUI.
  */
-VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
+#if USE_XTHEME
+
+#else
+
+
+VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-  INTN i = 0, j = 0;
-  static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
-  static UINTN MenuPosY = 0;
-  //static CHAR16 **DisplayStrings;
-  CHAR16 *TimeoutMessage;
-  CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
-	UINTN OldChosenItem = ~(UINTN)0;
+  EG_IMAGE* MainImage = NULL;
+  EG_IMAGE* BadgeImage = NULL;
+  bool NewImageCreated = false;
+  INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
 
-  switch (Function) {
-
-    case MENU_FUNCTION_INIT:
-      // vertical layout
-      MenuPosY = 4;
-
-	  if (InfoLines.size() > 0) {
-        MenuPosY += InfoLines.size() + 1;
-	  }
-
-      MenuHeight = ConHeight - MenuPosY;
-
-	  if (TimeoutSeconds > 0) {
-        MenuHeight -= 2;
-	  }
-
-      InitScroll(Entries.size(), Entries.size(), MenuHeight, 0);
-
-      // determine width of the menu
-      TextMenuWidth = 50;  // minimum
-      for (i = 0; i <= ScrollState.MaxIndex; i++) {
-        ItemWidth = StrLen(Entries[i].Title);
-
-		if (TextMenuWidth < ItemWidth) {
-          TextMenuWidth = ItemWidth;
-        }
-      }
-
-	  if (TextMenuWidth > ConWidth - 6) {
-        TextMenuWidth = ConWidth - 6;
-	  }
-
-    if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 90) {
-      j = OldChosenConfig;
-    } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 116) {
-      j = OldChosenDsdt;
-    } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 119) {
-      j = OldChosenAudio;
+  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP)) {
+    MainImage = Entry->getDriveImage();
+  } else {
+    MainImage = Entry->Image;
+  }
+//this should be inited by the Theme
+  if (!MainImage) {
+    if (!IsEmbeddedTheme()) {
+      MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
     }
+    if (!MainImage) {
+      MainImage = DummyImage(Scale << 3);
+    }
+    if (MainImage) {
+      NewImageCreated = true;
+    }
+  }
+  //  DBG("Entry title=%ls; Width=%d\n", Entry->Title, MainImage->Width);
 
-    break;
+  if (GlobalConfig.TypeSVG) {
+    Scale = 16 * (selected ? 1 : -1);
+  } else {
+    Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
+  }
 
-    case MENU_FUNCTION_CLEANUP:
-      // release temporary memory
+  if (Entry->Row == 0) {
+    BadgeImage = Entry->getBadgeImage();
+  } //else null
 
-			// reset default output colours
-	  gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
-
-      break;
-
-    case MENU_FUNCTION_PAINT_ALL:
-        // paint the whole screen (initially and after scrolling)
-      gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-      for (i = 0; i < (INTN)ConHeight - 4; i++) {
-        gST->ConOut->SetCursorPosition(gST->ConOut, 0, 4 + i);
-        gST->ConOut->OutputString(gST->ConOut, BlankLine);
-      }
-
-        BeginTextScreen(Title);
-
-        if (InfoLines.size() > 0) {
-          gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-
-          for (i = 0; i < (INTN)InfoLines.size(); i++) {
-            gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-            gST->ConOut->OutputString (gST->ConOut, InfoLines[i].data());
-          }
-        }
-
-        for (i = ScrollState.FirstVisible; i <= ScrollState.LastVisible && i <= ScrollState.MaxIndex; i++) {
+  for (i = ScrollState.FirstVisible; i <= ScrollState.LastVisible && i <= ScrollState.MaxIndex; i++) {
       gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - ScrollState.FirstVisible));
 
       if (i == ScrollState.CurrentSelection) {
@@ -4583,6 +3837,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     BadgeImage = Entry->getBadgeImage();
   } //else null
 
+
   if (GlobalConfig.SelectionOnTop) {
     SelectionImages[0]->HasAlpha = TRUE;
     SelectionImages[2]->HasAlpha = TRUE;
@@ -5375,240 +4630,121 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
         OldTimeoutTextWidth = DrawTextXY(TextX, (UGAWidth >> 1), FunctextPosY + hi, X_IS_CENTER);
       }
 
-      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
-      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
-      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      Status = MouseBirth();
-      if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at timeout! Status=%s\n", strerror(Status));
-      }
-      break;
 
-  }
-}
-#else
-VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
-{
-  EFI_STATUS Status = EFI_SUCCESS;
-  INTN i = 0;
-  INTN MessageHeight = 0;
-  // clovy
-  if (GlobalConfig.TypeSVG && textFace[1].valid) {
-    MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * GlobalConfig.Scale);
-  } else {
-    MessageHeight = (INTN)(TextHeight * RowHeightFromTextHeight * GlobalConfig.Scale);
+    // indicator is for row 0, main entries, only
+    if (Entry->Row == 0) {
+      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
+                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
+                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
+                    &MenuBackgroundPixel, Scale);
+    }
   }
 
-  switch (Function) {
-
-    case MENU_FUNCTION_INIT:
-      egGetScreenSize(&UGAWidth, &UGAHeight);
-      InitAnime();
-      SwitchToGraphicsAndClear();
-      //BltClearScreen(FALSE);
-
-      EntriesGap = (int)(GlobalConfig.TileXSpace * GlobalConfig.Scale);
-      EntriesWidth = row0TileSize;
-      EntriesHeight = GlobalConfig.MainEntriesSize + (int)(16.f * GlobalConfig.Scale);
-
-      MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* GlobalConfig.Scale)) / (EntriesWidth + EntriesGap); //8
-      CountItems();
-      InitScroll(row0Count, Entries.size(), MaxItemOnScreen, 0);
-
-      row0PosX = EntriesWidth + EntriesGap;
-      row0PosX = row0PosX * ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count);
-      row0PosX = row0PosX - EntriesGap;
-      row0PosX = UGAWidth - row0PosX;
-      row0PosX = row0PosX >> 1;
-
-      row0PosY = (int)(((float)UGAHeight - LayoutMainMenuHeight * GlobalConfig.Scale) * 0.5f +
-                       LayoutBannerOffset * GlobalConfig.Scale);
-
-      row1PosX = (UGAWidth + 8 - (row1TileSize + (INTN)(8.0f * GlobalConfig.Scale)) * row1Count) >> 1;
-
-      if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        row1PosY = row0PosY + row0TileSize + (INTN)((BCSMargin * 2) * GlobalConfig.Scale) + TextHeight +
-        (INTN)(INDICATOR_SIZE * GlobalConfig.Scale) +
-        (INTN)((LayoutButtonOffset + GlobalConfig.TileYSpace) * GlobalConfig.Scale);
-      } else {
-        row1PosY = row0PosY + EntriesHeight +
-        (INTN)((GlobalConfig.TileYSpace + LayoutButtonOffset) * GlobalConfig.Scale);
-      }
-
-      if (row1Count > 0) {
-        textPosY = row1PosY + MAX(row1TileSize, MessageHeight) + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
-      } else {
-        textPosY = row1PosY;
-      }
-
-      if (GlobalConfig.BootCampStyle) {
-        textPosY = row0PosY + row0TileSize + (INTN)((TEXT_YMARGIN + BCSMargin) * GlobalConfig.Scale);
-      }
-
-      FunctextPosY = row1PosY + row1TileSize + (INTN)((GlobalConfig.TileYSpace + LayoutTextOffset) * GlobalConfig.Scale);
-
-      if (!itemPosX) {
-        itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
-      }
-
-      row0PosXRunning = row0PosX;
-      row1PosXRunning = row1PosX;
-      //DBG("EntryCount =%d\n", Entries.size());
-      for (i = 0; i < (INTN)Entries.size(); i++) {
-        if (Entries[i].Row == 0) {
-          itemPosX[i] = row0PosXRunning;
-          row0PosXRunning += EntriesWidth + EntriesGap;
-        } else {
-          itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += row1TileSize + (INTN)(TILE1_XSPACING * GlobalConfig.Scale);
-          //DBG("next item in row1 at x=%d\n", row1PosXRunning);
-        }
-      }
-      // initial painting
-      InitSelection();
-
-      // Update FilmPlace only if not set by InitAnime
-      if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
-        CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
-      }
-
-      //DBG("main menu inited\n");
-      break;
-
-    case MENU_FUNCTION_CLEANUP:
-      FreePool(itemPosX);
-      itemPosX = NULL;
-      HidePointer();
-      break;
-
-    case MENU_FUNCTION_PAINT_ALL:
-
-      for (i = 0; i <= ScrollState.MaxIndex; i++) {
-        if (Entries[i].Row == 0) {
-          if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
-            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
-                              itemPosX[i - ScrollState.FirstVisible], row0PosY);
-            // draw static text for the boot options, BootCampStyle
-            if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (row0TileSize / 2);
-              FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + GlobalConfig.TileXSpace,
-                                   MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
-              // draw the text
-              DrawBCSText(Entries[i].Title.data(), textPosX, textPosY, X_IS_CENTER);
-            }
-          }
-        } else {
-          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
-                            itemPosX[i], row1PosY);
-        }
-      }
-      // clear the text from the second row, required by the BootCampStyle
-      if ((GlobalConfig.BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
-          && (Entries[ScrollState.CurrentSelection].Row == 0) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
-                             // clovy
-                             OldTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
-      }
-
-      if ((Entries[ScrollState.LastSelection].Row == 0) && (Entries[ScrollState.CurrentSelection].Row == 1)
-          && GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                          (UGAWidth >> 1), FunctextPosY);
-      }
-
-      // something is wrong with the DrawMainMenuLabel or Entries[ScrollState.CurrentSelection]
-      // and it's required to create the first selection text from here
-      // used for all the entries
-      if (!(GlobalConfig.BootCampStyle) && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                          (UGAWidth >> 1), textPosY);
-      }
-
-      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
-      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
-      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      Status = MouseBirth();
-      if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at all! Status=%s\n", strerror(Status));
-      }
-      break;
-
-    case MENU_FUNCTION_PAINT_SELECTION:
-      HidePointer();
-      if (Entries[ScrollState.LastSelection].Row == 0) {
-        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
-                          itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible], row0PosY);
-      } else {
-        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
-                          itemPosX[ScrollState.LastSelection], row1PosY);
-      }
-
-      if (Entries[ScrollState.CurrentSelection].Row == 0) {
-        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
-                          itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible], row0PosY);
-      } else {
-        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
-                          itemPosX[ScrollState.CurrentSelection], row1PosY);
-      }
-
-      // create dynamic text for the second row if BootCampStyle is used
-      if ((GlobalConfig.BootCampStyle) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-          && Entries[ScrollState.CurrentSelection].Row == 1) {
-        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                          (UGAWidth >> 1), FunctextPosY);
-      }
-
-      // create dynamic text for all the entries
-      if ((!(GlobalConfig.BootCampStyle)) && (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))) {
-        DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
-                          (UGAWidth >> 1), textPosY);
-      }
-
-      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
-      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
-      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      Status = MouseBirth();
-      if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at sel! Status=%s\n", strerror(Status));
-      }
-      break;
-
-    case MENU_FUNCTION_PAINT_TIMEOUT:
-      i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
-      HidePointer();
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + MessageHeight * i,
-                             OldTimeoutTextWidth, MessageHeight, &MenuBackgroundPixel, X_IS_CENTER);
-        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), FunctextPosY + MessageHeight * i, X_IS_CENTER);
-      }
-
-      DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
-      DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
-      DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
-      Status = MouseBirth();
-      if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at timeout! Status=%s\n", strerror(Status));
-      }
-      break;
-
+  Entry->Place.XPos = XPos;
+  Entry->Place.YPos = YPos;
+  Entry->Place.Width = MainImage->Width;
+  Entry->Place.Height = MainImage->Height;
+  //we can't free MainImage because it may be new image or it may be a link to entry image
+  // a workaround
+  if (NewImageCreated) {
+    egFreeImage(MainImage);
   }
 }
 #endif
+//the purpose of the procedure is restore Background in rect
+//XAlign is always centre, Color is the Backgrounf fill
+#if USE_XTHEME
+#else
+VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
+{
+  EG_IMAGE *TmpBuffer = NULL;
+  INTN X = XPos - (Width >> XAlign);
+
+  if (!Width || !Height) return;
+
+  TmpBuffer = egCreateImage(Width, Height, FALSE);
+  if (!BackgroundImage) {
+    egFillImage(TmpBuffer, Color);
+  } else {
+    egRawCopy(TmpBuffer->PixelData,
+              BackgroundImage->PixelData + YPos * BackgroundImage->Width + X,
+              Width, Height,
+              TmpBuffer->Width,
+              BackgroundImage->Width);
+  }
+  BltImage(TmpBuffer, X, YPos);
+  egFreeImage(TmpBuffer);
+}
+#endif
+
+#if USE_XTHEME
+
+#else
+VOID DrawTextCorner(UINTN TextC, UINT8 Align)
+{
+  INTN    Xpos;
+  CHAR16  *Text = NULL;
+
+  if (
+      // HIDEUI_ALL - included
+      ((TextC == TEXT_CORNER_REVISION) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
+      ((TextC == TEXT_CORNER_HELP) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
+      ((TextC == TEXT_CORNER_OPTIMUS) && (GlobalConfig.ShowOptimus == FALSE))
+      ) {
+    return;
+  }
+
+  switch (TextC) {
+    case TEXT_CORNER_REVISION:
+      // Display Clover boot volume
+      if (SelfVolume->VolLabel && SelfVolume->VolLabel[0] != L'#') {
+        Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolLabel);
+      }
+      if ( !Text ) {
+        Text = PoolPrint(L"%s", gFirmwareRevision, SelfVolume->VolName);
+      }
+      break;
+    case TEXT_CORNER_HELP:
+      Text = PoolPrint(L"F1:Help");
+      break;
+    case TEXT_CORNER_OPTIMUS:
+      if (gGraphics[0].Vendor != Intel) {
+        Text = PoolPrint(L"Discrete");
+      } else {
+        Text = PoolPrint(L"Intel");
+      }
+      //      Text = (NGFX == 2)?L"Intel":L"Discrete";
+      break;
+    default:
+      return;
+  }
+
+  switch (Align) {
+    case X_IS_LEFT:
+      Xpos = (INTN)(TextHeight * 0.75f);
+      break;
+    case X_IS_RIGHT:
+      Xpos = UGAWidth - (INTN)(TextHeight * 0.7f);//2
+      break;
+    case X_IS_CENTER:
+      Xpos = UGAWidth >> 1;
+      break;
+    default:
+      if ( Text ) FreePool(Text);
+      return;
+  }
+  //  DBG("draw text %ls at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
+  // clovy  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
+  DrawTextXY(Text, Xpos, UGAHeight - (INTN)(TextHeight * 1.5f), Align);
+  if ( Text ) FreePool(Text);
+}
+#endif
+
+
 
 //
 // user-callable dispatcher functions
 //
-
-UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
-{
-  INTN Index = -1;
-
-  if (AllowGraphicsMode)
-
-    return RunGenericMenu(&REFIT_MENU_SCREEN::GraphicsMenuStyle, &Index, ChosenEntry);
-  else
-    return RunGenericMenu(&REFIT_MENU_SCREEN::TextMenuStyle, &Index, ChosenEntry);
-}
 
 REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
@@ -5650,30 +4786,15 @@ REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScree
 //  NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
 //}
 
-VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
-{
-  REFIT_MENU_CHECKBIT *InputBootArgs;
-
-//  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs = new REFIT_MENU_CHECKBIT;
-  InputBootArgs->Title.takeValueFrom(Text);
-//  InputBootArgs->Tag = TAG_CHECKBIT_OLD;
-  InputBootArgs->Row = Bit;
-  InputBootArgs->Item = &InputItems[ItemNum];
-  InputBootArgs->AtClick = ActionEnter;
-  InputBootArgs->AtRightClick = ActionDetails;
-  AddMenuEntry(InputBootArgs, true);
-}
-
 VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
-//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
+//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "DSDT fix mask [0x%08X]->", gSettings.FixDsdt); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
     //MsgLog("@ESC: %ls\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
-//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
+//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "System Integrity Protection [0x%04X]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
     // check for the right booter flag to allow the application
     // of the new System Integrity Protection configuration.
@@ -5682,48 +4803,12 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     }
 
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
+//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "boot_args->flags [0x%04X]->", gSettings.BooterConfig); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
   } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-//    UnicodeSPrint((CHAR16*)ChosenEntry->Title, 128, L"Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
+//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "Drop OEM _DSM [0x%04X]->", dropDSM); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
   }
-}
-
-VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
-{
-  InputBootArgs->Title.takeValueFrom(Line);
-  if (Inx == 3 || Inx == 116) {
-    InputBootArgs->Row          = 0;
-  } else {
-    InputBootArgs->Row          = Cursor?StrLen(InputItems[Inx].SValue):0xFFFF;
-  }
-  InputBootArgs->Item           = &InputItems[Inx];
-  InputBootArgs->AtClick        = Cursor?ActionSelect:ActionEnter;
-  InputBootArgs->AtRightClick   = Cursor?ActionNone:ActionDetails;
-  InputBootArgs->AtDoubleClick  = Cursor?ActionEnter:ActionNone;
-
-  AddMenuEntry(InputBootArgs, true);
-}
-//
-//VOID AddMenuItem(REFIT_MENU_SCREEN  *SubScreen, INTN Inx, CONST CHAR8 *Title, UINTN Tag, BOOLEAN Cursor)
-//{
-////  REFIT_INPUT_DIALOG *InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
-//  AddMenuItem_(SubScreen, InputBootArgs, Inx, Title, Tag, Cursor);
-//}
-
-VOID REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
-{
-//  REFIT_INPUT_DIALOG *InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
-  AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
-}
-
-VOID REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
-{
-  REFIT_MENU_SWITCH *InputBootArgs = new REFIT_MENU_SWITCH;
-  AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
 
 REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
@@ -5733,7 +4818,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
   REFIT_MENU_SCREEN  *SubScreen;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Number of VideoCard%a=%d",((NGFX!=1)?"s":""), NGFX));
+	SubScreen->AddMenuInfoLine_f("Number of VideoCard%s=%llu",((NGFX!=1)?"s":""), NGFX);
 
   SubScreen->AddMenuItemInput(52, "InjectEDID", FALSE);
   SubScreen->AddMenuItemInput(53, "Fake Vendor EDID:", TRUE);
@@ -5743,7 +4828,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 
 
   for (i = 0; i < NGFX; i++) {
-    SubScreen->AddMenuInfo("----------------------");
+    SubScreen->AddMenuInfo_f("----------------------");
     SubScreen->AddMenuInfo_f("Card DeviceID=%04x", gGraphics[i].DeviceID);
     N = 20 + i * 6;
     SubScreen->AddMenuItemInput(N, "Model:", TRUE);
@@ -5823,14 +4908,14 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->");
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to tune the HDA devices"));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Number of Audio Controller%a=%d", ((NHDA!=1)?"s":""), NHDA));
+  SubScreen->AddMenuInfoLine_f("Choose options to tune the HDA devices");
+	SubScreen->AddMenuInfoLine_f("Number of Audio Controller%s=%llu", ((NHDA!=1)?"s":""), NHDA);
   for (i = 0; i < NHDA; i++) {
-      SubScreen->AddMenuInfoLine(PoolPrint(L"%d) %s [%04x][%04x]",
+	  SubScreen->AddMenuInfoLine_f("%llu) %ls [%04X][%04X]",
                                            (i+1),
                                            gAudios[i].controller_name,
                                            gAudios[i].controller_vendor_id,
-                                           gAudios[i].controller_device_id)
+                                           gAudios[i].controller_device_id
                       );
   }
 
@@ -5856,18 +4941,18 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSpeedStep()
   REFIT_MENU_SCREEN  *SubScreen;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->");
-  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Model: %2x/%2x/%2x",
-      gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Cores: %d Threads: %d",
-                  gCPUStructure.Cores, gCPUStructure.Threads));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"FSB speed MHz: %d",
-                  DivU64x32(gCPUStructure.FSBFrequency, Mega)));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"CPU speed MHz: %d",
-                  DivU64x32(gCPUStructure.CPUFrequency, Mega)));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Ratio: Min=%d.%d Max=%d.%d Turbo=%d.%d/%d.%d/%d.%d/%d.%d",
+	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
+  SubScreen->AddMenuInfoLine_f("Model: %2X/%2X/%2X",
+      gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping);
+  SubScreen->AddMenuInfoLine_f("Cores: %d Threads: %d",
+                  gCPUStructure.Cores, gCPUStructure.Threads);
+	SubScreen->AddMenuInfoLine_f("FSB speed MHz: %llu",
+                  DivU64x32(gCPUStructure.FSBFrequency, Mega));
+	SubScreen->AddMenuInfoLine_f("CPU speed MHz: %llu",
+                  DivU64x32(gCPUStructure.CPUFrequency, Mega));
+  SubScreen->AddMenuInfoLine_f("Ratio: Min=%d.%d Max=%d.%d Turbo=%d.%d/%d.%d/%d.%d/%d.%d",
      nya(gCPUStructure.MinRatio), nya(gCPUStructure.MaxRatio),
-     nya(gCPUStructure.Turbo4), nya(gCPUStructure.Turbo3), nya(gCPUStructure.Turbo2), nya(gCPUStructure.Turbo1)));
+     nya(gCPUStructure.Turbo4), nya(gCPUStructure.Turbo3), nya(gCPUStructure.Turbo2), nya(gCPUStructure.Turbo1));
 
 
   SubScreen->AddMenuItemInput(76, "Cores enabled:", TRUE);
@@ -5943,7 +5028,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
     if (StrCmp(Kext->KextDirNameUnderOEMPath, UniSysVer) == 0) {
     	if ( SubScreen == NULL ) {
     		Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
-    		SubScreen->AddMenuInfoLine(PoolPrint(L"Choose/check kext to disable:"));
+    		SubScreen->AddMenuInfoLine_f("Choose/check kext to disable:");
     	}
 //      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs = new REFIT_INPUT_DIALOG;
@@ -6004,9 +5089,8 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 		}
 
 
-		SubScreen->AddMenuInfoLine(PoolPrint(
-		                L"Block injected kexts for target version of macOS: %a",
-		                ShortOSVersion));
+		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s",
+		                ShortOSVersion);
 
 		// Add kext from 10
 		{
@@ -6014,14 +5098,14 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 
 			CHAR16 DirName[256];
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-				UnicodeSPrint(DirName, sizeof(DirName), L"10_install");
+				snwprintf(DirName, sizeof(DirName), "10_install");
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-					UnicodeSPrint(DirName, sizeof(DirName), L"10_recovery");
+					snwprintf(DirName, sizeof(DirName), "10_recovery");
 				}
 				else {
-					UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
+					snwprintf(DirName, sizeof(DirName), "10_normal");
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
@@ -6030,18 +5114,18 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 		// Add kext from 10.{version}
 		{
 			CHAR16 DirName[256];
-			UnicodeSPrint(DirName, sizeof(DirName), L"%a", ShortOSVersion);
+			snwprintf(DirName, sizeof(DirName), "%s", ShortOSVersion);
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-				UnicodeSPrint(DirName, sizeof(DirName), L"%a_install", ShortOSVersion);
+				snwprintf(DirName, sizeof(DirName), "%s_install", ShortOSVersion);
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-					UnicodeSPrint(DirName, sizeof(DirName), L"%a_recovery", ShortOSVersion);
+					snwprintf(DirName, sizeof(DirName), "%s_recovery", ShortOSVersion);
 				}
 				else {
-					UnicodeSPrint(DirName, sizeof(DirName), L"%a_normal", ShortOSVersion);
+					snwprintf(DirName, sizeof(DirName), "%s_normal", ShortOSVersion);
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
@@ -6054,25 +5138,25 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			{
 				CHAR16 OSVersionKextsDirName[256];
 				if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
-					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
+					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s.0", Entry->OSVersion);
 				}else{
-					UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
+					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s", Entry->OSVersion);
 				}
 				SubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
 			}
 
 			CHAR16 DirName[256];
 			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
-				UnicodeSPrint(DirName, sizeof(DirName), L"%a_install",
+				snwprintf(DirName, sizeof(DirName), "%s_install",
 				        Entry->OSVersion);
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
-					UnicodeSPrint(DirName, sizeof(DirName), L"%a_recovery",
+					snwprintf(DirName, sizeof(DirName), "%s_recovery",
 					        Entry->OSVersion);
 				}
 				else {
-					UnicodeSPrint(DirName, sizeof(DirName), L"%a_normal",
+					snwprintf(DirName, sizeof(DirName), "%s_normal",
 					        Entry->OSVersion);
 				}
 			}
@@ -6080,9 +5164,8 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 		}
 	}
 	else {
-		SubScreen->AddMenuInfoLine(PoolPrint(
-		                L"Block injected kexts for target version of macOS: %a",
-		                ChosenOS));
+		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s",
+		                ChosenOS);
 	}
 	if ((kextDir = GetOtherKextsDir(TRUE)) != NULL) {
 		SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"Other"), true);
@@ -6160,12 +5243,12 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
 
-  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Real CPUID: 0x%06x", gCPUStructure.Signature));
+	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
+  SubScreen->AddMenuInfoLine_f("Real CPUID: 0x%06X", gCPUStructure.Signature);
 
 
   SubScreen->AddMenuItemInput(64,  "Debug", FALSE);
-  SubScreen->AddMenuInfo("----------------------");
+  SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(104, "Fake CPUID:", TRUE);
 //  SubScreen->AddMenuItemInput(108, "Kernel patching allowed", FALSE);
   SubScreen->AddMenuItemInput(45,  "Kernel Support CPU", FALSE);
@@ -6174,14 +5257,14 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuItemInput(48,  "Kernel PM", FALSE);
   SubScreen->AddMenuItemInput(121,  "Panic No Kext Dump", FALSE);
   SubScreen->AddMenuEntry(SubMenuKernelPatches(), true);
-  SubScreen->AddMenuInfo("----------------------");
+  SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(46,  "AppleIntelCPUPM Patch", FALSE);
   SubScreen->AddMenuItemInput(47,  "AppleRTC Patch", FALSE);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", FALSE);
 //  SubScreen->AddMenuItemInput(115, "No Caches", FALSE);
 //  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", FALSE);
   SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
-  SubScreen->AddMenuInfo("----------------------");
+  SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuEntry(SubMenuBootPatches(), true);
 
 
@@ -6228,7 +5311,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
   SubScreen->AddMenuItemInput(4, "Drop all OEM SSDT", FALSE);
   SubScreen->AddMenuItemInput(113, "Automatic smart merge", FALSE);
 
-  //SubScreen->AddMenuInfoLine(L"PATCHED AML:");
+  //SubScreen->AddMenuInfoLine_f("PATCHED AML:");
   if (ACPIPatchedAML) {
     ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
     while (ACPIPatchedAMLTmp) {
@@ -6256,9 +5339,9 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->");
 
-  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gCPUStructure.BrandString));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"%a", gSettings.OEMProduct));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"with board %a", gSettings.OEMBoard));
+	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
+	SubScreen->AddMenuInfoLine_f("%s", gSettings.OEMProduct);
+	SubScreen->AddMenuInfoLine_f("with board %s", gSettings.OEMBoard);
 
   SubScreen->AddMenuItemInput(78,  "Product Name:", TRUE);
   SubScreen->AddMenuItemInput(79,  "Product Version:", TRUE);
@@ -6290,7 +5373,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
   //  Entry->Title.SPrintf("Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose devices to drop OEM _DSM methods from DSDT"));
+  SubScreen->AddMenuInfoLine_f("Choose devices to drop OEM _DSM methods from DSDT");
 
   SubScreen->AddMenuCheck("ATI/AMD Graphics",     DEV_ATI, 101);
   SubScreen->AddMenuCheck("Nvidia Graphics",      DEV_NVIDIA, 101);
@@ -6398,7 +5481,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->");
 
-  SubScreen->AddMenuInfoLine(L"Select a DSDT file:");
+  SubScreen->AddMenuInfoLine_f("Select a DSDT file:");
   SubScreen->AddMenuItemSwitch(116,  "BIOS.aml", FALSE);
 
   for (i = 0; i < DsdtsNum; i++) {
@@ -6427,7 +5510,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuACPI()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->");
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to patch ACPI"));
+  SubScreen->AddMenuInfoLine_f("Choose options to patch ACPI");
 
   SubScreen->AddMenuItemInput(102, "Debug DSDT", FALSE);
 
@@ -6451,7 +5534,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->");
 
-  SubScreen->AddMenuInfoLine(L"Select an audio output, press F7 to test");
+  SubScreen->AddMenuInfoLine_f("Select an audio output, press F7 to test");
   SubScreen->AddMenuItemInput(120, "Volume:", TRUE);
 
   for (i = 0; i < AudioNum; i++) {
@@ -6521,7 +5604,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
 	{
 		DEV_PROPERTY *Props = NULL;
 		while (Prop) {
-			SubScreen->AddMenuInfo("------------");
+			SubScreen->AddMenuInfo_f("------------");
 			SubScreen->AddMenuInfo_f("%s", Prop->Label);
 			Props = Prop->Child;
 			while (Props) {
@@ -6535,7 +5618,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
       DevAddr = Prop->Device;
       if (DevAddr != 0 && DevAddr != OldDevAddr) {
         OldDevAddr = DevAddr;
-        SubScreen->AddMenuInfo("------------");
+        SubScreen->AddMenuInfo_f("------------");
 		  SubScreen->AddMenuInfo_f("%s", Prop->Label);
         CreateMenuProps(SubScreen, Prop);
       }
@@ -6582,7 +5665,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Themes->");
 
-  SubScreen->AddMenuInfoLine(L"Installed themes:");
+  SubScreen->AddMenuInfoLine_f("Installed themes:");
   //add embedded
   SubScreen->AddMenuItemSwitch(3,  "embedded", FALSE);
 
@@ -6611,7 +5694,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuGUI()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->");
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options to tune the Interface"));
+  SubScreen->AddMenuInfoLine_f("Choose options to tune the Interface");
 
   SubScreen->AddMenuItemInput(70, "Pointer Speed:", TRUE);
   SubScreen->AddMenuItemInput(72, "Mirror Move", FALSE);
@@ -6639,8 +5722,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCSR()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CSR, NULL);
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Modify the System Integrity Protection configuration."));
-  SubScreen->AddMenuInfoLine(PoolPrint(L"All configuration changes apply to the entire machine."));
+  SubScreen->AddMenuInfoLine_f("Modify the System Integrity Protection configuration.");
+  SubScreen->AddMenuInfoLine_f("All configuration changes apply to the entire machine.");
 
   // available configurations
   SubScreen->AddMenuCheck("Allow Untrusted Kexts", CSR_ALLOW_UNTRUSTED_KEXTS, 66);
@@ -6671,7 +5754,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 //  Entry->Title.SPrintf("boot_args->flags [0x%02x]->", gSettings.BooterConfig);
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Modify flags for boot.efi"));
+  SubScreen->AddMenuInfoLine_f("Modify flags for boot.efi");
 
   SubScreen->AddMenuCheck("Reboot On Panic",    kBootArgsFlagRebootOnPanic, 65);
   SubScreen->AddMenuCheck("Hi DPI",             kBootArgsFlagHiDPI, 65);
@@ -6698,7 +5781,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSystem()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->");
 
   // submenu description
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Choose options for booted OS"));
+  SubScreen->AddMenuInfoLine_f("Choose options for booted OS");
 
   SubScreen->AddMenuItemInput(2,  "Block kext:", TRUE);
   SubScreen->AddMenuItemInput(51, "Set OS version if not:", TRUE);
@@ -6720,7 +5803,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Configs->");
 
-  SubScreen->AddMenuInfoLine(L"Select a config file:");
+  SubScreen->AddMenuInfoLine_f("Select a config file:");
 
   for (i = 0; i < ConfigsNum; i++) {
 //    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -6868,195 +5951,60 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   ApplyInputs();
 }
 
-UINT32 EncodeOptions(CONST CHAR16 *Options)
-{
-  UINT32 OptionsBits = 0;
-  INTN Index;
-  if (!Options) {
-    return 0;
-  }
-  for (Index = 0; Index < NUM_OPT; Index++) {
-    if (StrStr(Options, ArgOptional[Index])) {
-      OptionsBits |= (1 << Index);
-      if (Index == 1) {
-        OptionsBits &= ~1;
-      }
-    }
-  }
-  return OptionsBits;
-}
-
-VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
-{
-  //set checked option
-  INTN Index;
-  if (!Entry) {
-    return;
-  }
-  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
-    if (gSettings.OptionsBits & (1 << Index)) {
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
-    }
-  }
-  //remove unchecked options
-  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
-    if ((gSettings.OptionsBits & (1 << Index)) == 0) {
-      Entry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, ArgOptional[Index]);
-    }
-  }
-
-  if (Entry->getLOADER_ENTRY()) {
-    LOADER_ENTRY* loaderEntry = Entry->getLOADER_ENTRY();
-    // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
-    if (gSettings.OptionsBits & OPT_NVWEBON) {
-      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
-        gSettings.NvidiaWeb = TRUE;
-      } else {
-        Entry->LoadOptions = AddLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
-      }
-    }
-    if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
-      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
-        gSettings.NvidiaWeb = FALSE;
-      } else {
-        Entry->LoadOptions = RemoveLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
-      }
-    }
-  }
-}
-
-
-UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
-{
-
-  MENU_STYLE_FUNC     Style             = &REFIT_MENU_SCREEN::TextMenuStyle;
-  MENU_STYLE_FUNC     MainStyle         = &REFIT_MENU_SCREEN::TextMenuStyle;
-
-  REFIT_ABSTRACT_MENU_ENTRY    *TempChosenEntry  = 0;
-  REFIT_ABSTRACT_MENU_ENTRY    *MainChosenEntry  = 0;
-  REFIT_ABSTRACT_MENU_ENTRY    *NextChosenEntry  = NULL;
-  UINTN               MenuExit = 0, SubMenuExit = 0;
-  INTN                DefaultEntryIndex = DefaultSelection;
-  INTN                SubMenuIndex;
-
-  if (AllowGraphicsMode) {
-    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
-#if USE_XTHEME
-    if (ThemeX.VerticalLayout) {
-      MainStyle = &REFIT_MENU_SCREEN::MainMenuVerticalStyle;
-    } else {
-      MainStyle = &REFIT_MENU_SCREEN::MainMenuStyle;
-    }
-#else
-    if (GlobalConfig.VerticalLayout) {
-      MainStyle = &REFIT_MENU_SCREEN::MainMenuVerticalStyle;
-    } else {
-      MainStyle = &REFIT_MENU_SCREEN::MainMenuStyle;
-    }
-#endif
-  }
-
-  while (!MenuExit) {
-    AnimeRun = MainAnime;
-    MenuExit = RunGenericMenu(MainStyle, &DefaultEntryIndex, &MainChosenEntry);
-    TimeoutSeconds = 0;
-
-    if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
-      CHAR16 *TmpArgs = NULL;
-      if (AsciiStrLen(gSettings.BootArgs) > 0) {
-        TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
-      }
-      SubMenuIndex = -1;
-
-      gSettings.OptionsBits = EncodeOptions(TmpArgs);
-//      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
-      if (MainChosenEntry->getLOADER_ENTRY())
-        gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-//      DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
-      if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM())
-        DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
-      //      DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-      if (MainChosenEntry->getLOADER_ENTRY()) {
-        // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
-        gSettings.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
-      }
- //          DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
-
-      if (TmpArgs) {
-        FreePool(TmpArgs);
-        TmpArgs = NULL;
-      }
-      SubMenuExit = 0;
-      while (!SubMenuExit) {
-        //running details menu
-        SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(Style, &SubMenuIndex, &TempChosenEntry);
-        if ( MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM() ) DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
-//        DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
-//        DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
-        if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
-          SubMenuExit = MENU_EXIT_ENTER;
-          MenuExit = 0;
-          break;
-        }
-        if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
-          MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = EfiStrDuplicate(((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
-        }
-        //       DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-        if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
-          // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
-          MainChosenEntry->getLOADER_ENTRY()->Flags = TempChosenEntry->getLOADER_ENTRY()->Flags;
-//           DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
-        }
-        if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
-          if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions) {
-            snprintf(gSettings.BootArgs, 255, "%ls", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-          } else {
-            ZeroMem(&gSettings.BootArgs, 255);
-          }
-          DBG(" boot with args: %s\n", gSettings.BootArgs);
-        }
-        //---- Details submenu (kexts disabling etc)
-        if (SubMenuExit == MENU_EXIT_ENTER || MenuExit == MENU_EXIT_DETAILS) {
-          if (TempChosenEntry->SubScreen != NULL) {
-            UINTN NextMenuExit = 0;
-            INTN NextEntryIndex = -1;
-            while (!NextMenuExit) {
-              NextMenuExit = TempChosenEntry->SubScreen->RunGenericMenu(Style, &NextEntryIndex, &NextChosenEntry);
-              if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
-                SubMenuExit = 0;
-                NextMenuExit = MENU_EXIT_ENTER;
-                break;
-              }
- //             DBG(" get NextChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
-              //---- Details submenu (kexts disabling etc) second level
-              if (NextMenuExit == MENU_EXIT_ENTER || MenuExit == MENU_EXIT_DETAILS) {
-                if (NextChosenEntry->SubScreen != NULL) {
-                  UINTN DeepMenuExit = 0;
-                  INTN DeepEntryIndex = -1;
-                  REFIT_ABSTRACT_MENU_ENTRY    *DeepChosenEntry  = NULL;
-                  while (!DeepMenuExit) {
-                    DeepMenuExit = NextChosenEntry->SubScreen->RunGenericMenu(Style, &DeepEntryIndex, &DeepChosenEntry);
-                    if (DeepMenuExit == MENU_EXIT_ESCAPE || DeepChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
-                      DeepMenuExit = MENU_EXIT_ENTER;
-                      NextMenuExit = 0;
-                      break;
-                    }
- //                   DBG(" get DeepChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
-                  } //while(!DeepMenuExit)
-                }
-              }
-
-            } //while(!NextMenuExit)
-          }
-        }
-        //---------
-      }
-    }
-  }
-
-  if (ChosenEntry) {
-    *ChosenEntry = MainChosenEntry;
-  }
-  return MenuExit;
-}
-
+//UINT32 EncodeOptions(CONST CHAR16 *Options)
+//{
+//  UINT32 OptionsBits = 0;
+//  INTN Index;
+//  if (!Options) {
+//    return 0;
+//  }
+//  for (Index = 0; Index < NUM_OPT; Index++) {
+//    if (StrStr(Options, ArgOptional[Index])) {
+//      OptionsBits |= (1 << Index);
+//      if (Index == 1) {
+//        OptionsBits &= ~1;
+//      }
+//    }
+//  }
+//  return OptionsBits;
+//}
+//
+//VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
+//{
+//  //set checked option
+//  INTN Index;
+//  if (!Entry) {
+//    return;
+//  }
+//  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
+//    if (gSettings.OptionsBits & (1 << Index)) {
+//      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
+//    }
+//  }
+//  //remove unchecked options
+//  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
+//    if ((gSettings.OptionsBits & (1 << Index)) == 0) {
+//      Entry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, ArgOptional[Index]);
+//    }
+//  }
+//
+//  if (Entry->getLOADER_ENTRY()) {
+//    LOADER_ENTRY* loaderEntry = Entry->getLOADER_ENTRY();
+//    // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
+//    if (gSettings.OptionsBits & OPT_NVWEBON) {
+//      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+//        gSettings.NvidiaWeb = TRUE;
+//      } else {
+//        Entry->LoadOptions = AddLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
+//      }
+//    }
+//    if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
+//      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+//        gSettings.NvidiaWeb = FALSE;
+//      } else {
+//        Entry->LoadOptions = RemoveLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
+//      }
+//    }
+//  }
+//}
+//

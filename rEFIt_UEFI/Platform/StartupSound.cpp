@@ -30,6 +30,8 @@
 
 
 #include "Platform.h"
+#include "Settings.h"
+
 extern BOOLEAN DayLight;
 extern UINTN                           AudioNum;
 extern HDA_OUTPUTS                     AudioList[20];

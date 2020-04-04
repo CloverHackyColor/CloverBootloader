@@ -153,7 +153,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
-  UnicodeSPrint(ErrorInfo, 512, L"while loading %s", ImageTitle);
+	snwprintf(ErrorInfo, 512, "while loading %ls", ImageTitle);
   if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
@@ -248,7 +248,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
 
   // control returns here when the child image calls Exit()
   if (ImageTitle) {
-    UnicodeSPrint(ErrorInfo, 512, L"returned from %s", ImageTitle);
+	  snwprintf(ErrorInfo, 512, "returned from %ls", ImageTitle);
   }
 
   if (CheckError(Status, ErrorInfo)) {
@@ -1170,7 +1170,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     }
 #undef BOOLEAN_AT_INDEX
 
-    UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
+	  snwprintf(FileName, 512, "%ls\\%ls", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                            L"", DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
@@ -1212,7 +1212,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   }
   Status = DirIterClose(&DirIter);
   if (Status != EFI_NOT_FOUND) {
-    UnicodeSPrint(FileName, 512, L"while scanning the %s directory", Path);
+	  snwprintf(FileName, 512, "while scanning the %ls directory", Path);
     CheckError(Status, FileName);
   }
 
@@ -1767,7 +1767,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CONST CHAR16 *Con
 	BOOLEAN res = FileExists(Root, path);
 	if ( res ) {
 	  CHAR16 ConfigPath[1024];
-	  UnicodeSPrint(ConfigPath, sizeof(ConfigPath), L"%s\\%s.plist", path, ConfName);
+		snwprintf(ConfigPath, sizeof(ConfigPath), "%ls\\%ls.plist", path, ConfName);
 	  BOOLEAN res2 = FileExists(Root, ConfigPath);
 	  if ( res2 ) {
 	  	OEMPath = path;
@@ -2207,7 +2207,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     Status = LoadUserSettings(SelfRootDir, L"config", &gConfigDict[0]);
       DBG("%ls\\config.plist%ls loaded: %s\n", OEMPath, EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
   }
-  UnicodeSPrint(gSettings.ConfigName, 64, L"%s%s%s",
+	snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
 /*  gSettings.ConfigName = PoolPrint(L"%s%s%s", */
                                    gConfigDict[0] ? L"config": L"",
                                    (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
@@ -2715,7 +2715,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
-    MainAnime = MainMenu.GetAnime();
+    BOOLEAN MainAnime = MainMenu.GetAnime();
 //    DBG("MainAnime=%d\n", MainAnime);
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop

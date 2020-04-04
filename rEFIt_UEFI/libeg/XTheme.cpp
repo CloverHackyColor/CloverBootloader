@@ -28,26 +28,26 @@ extern "C" {
 
 #if !USE_XTHEME
 //these are XTHEME members
-extern INTN    ScrollWidth;
-extern INTN    ScrollButtonsHeight;
-extern INTN    ScrollBarDecorationsHeight;
-extern INTN    ScrollScrollDecorationsHeight;
+//extern INTN    ScrollWidth;
+//extern INTN    ScrollButtonsHeight;
+//extern INTN    ScrollBarDecorationsHeight;
+//extern INTN    ScrollScrollDecorationsHeight;
 //These are SCREEN members
-extern EG_RECT UpButton;
-extern EG_RECT DownButton;
-extern EG_RECT BarStart;
-extern EG_RECT BarEnd;
-extern EG_RECT ScrollbarBackground;
-extern EG_RECT Scrollbar;
-extern EG_RECT ScrollStart;
-extern EG_RECT ScrollEnd;
-extern EG_RECT ScrollTotal;
-extern EG_RECT ScrollbarOldPointerPlace;
-extern EG_RECT ScrollbarNewPointerPlace;
+//extern EG_RECT UpButton;
+//extern EG_RECT DownButton;
+//extern EG_RECT BarStart;
+//extern EG_RECT BarEnd;
+//extern EG_RECT ScrollbarBackground;
+//extern EG_RECT Scrollbar;
+//extern EG_RECT ScrollStart;
+//extern EG_RECT ScrollEnd;
+//extern EG_RECT ScrollTotal;
+//extern EG_RECT ScrollbarOldPointerPlace;
+//extern EG_RECT ScrollbarNewPointerPlace;
 #endif
 //dynamic variables
-extern INTN    ScrollbarYMovement;
-extern BOOLEAN IsDragging;
+//extern INTN    ScrollbarYMovement;
+//extern BOOLEAN IsDragging;
 
 CONST CHAR8* IconsNames[] = {
   "func_about",

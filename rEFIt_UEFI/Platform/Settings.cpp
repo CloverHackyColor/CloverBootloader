@@ -32,6 +32,15 @@
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 
+INTN OldChosenTheme;
+INTN OldChosenConfig;
+INTN OldChosenDsdt;
+UINTN OldChosenAudio;
+BOOLEAN                        SavePreBootLog;
+UINT8                            DefaultAudioVolume;
+INTN LayoutBannerOffset = 64;
+INTN LayoutTextOffset = 0;
+INTN LayoutButtonOffset = 0;
 
 ACPI_PATCHED_AML                *ACPIPatchedAML;
 SIDELOAD_KEXT                   *InjectKextList = NULL;
@@ -106,11 +115,14 @@ extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
 #if !USE_XTHEME
 extern INTN                     ScrollWidth;
-extern INTN                     ScrollButtonsHeight;
-extern INTN                     ScrollBarDecorationsHeight;
-extern INTN                     ScrollScrollDecorationsHeight;
+INTN ScrollButtonsHeight = 20;
+//extern INTN                     ScrollButtonsHeight;
+INTN ScrollBarDecorationsHeight = 5;
+//extern INTN                     ScrollBarDecorationsHeight;
+INTN ScrollScrollDecorationsHeight = 7;
+//extern INTN                     ScrollScrollDecorationsHeight;
 #endif
-extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
+
 //extern INTN                     OldChosenAudio;
 /*
 typedef struct {
@@ -3050,10 +3062,10 @@ GetEarlyUserSettings (
         AsciiStrToUnicodeStrS (Prop->string, gSettings.LegacyBoot, 32);
       } else if (gFirmwareClover) {
         // default for CLOVER EFI boot
-        UnicodeSPrint (gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"PBR");
+        snwprintf(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), "PBR");
       } else {
         // default for UEFI boot
-        UnicodeSPrint (gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), L"LegacyBiosDefault");
+        snwprintf(gSettings.LegacyBoot, sizeof(gSettings.LegacyBoot), "LegacyBiosDefault");
       }
 
       // Entry for LegacyBiosDefault
@@ -3738,7 +3750,7 @@ GetListOfConfigs ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", OEMPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", OEMPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
         OldChosenConfig = ConfigsNum;
@@ -3771,7 +3783,7 @@ GetListOfDsdts ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, gSettings.DsdtName) == 0) {
         OldChosenDsdt = DsdtsNum;
@@ -3808,7 +3820,7 @@ GetListOfACPI ()
       continue;
     }
 
-    UnicodeSPrint(FullName, 512, L"%s\\%s", AcpiPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
       ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool (sizeof(ACPI_PATCHED_AML));
@@ -9471,7 +9483,7 @@ SetFSInjection (
   // get FSINJECTION_PROTOCOL
   Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
   if (EFI_ERROR (Status)) {
-    //Print (L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
+    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", strerror(Status));
     MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
     return EFI_NOT_STARTED;
   }

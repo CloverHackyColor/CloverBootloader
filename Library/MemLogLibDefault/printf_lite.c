@@ -1105,7 +1105,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 				printfParams->inPrecisionField = 0;
   #endif
   #if PRINTF_LITE_FIELDPRECISION_SUPPORT == 1
-				printfParams->precision_specifier = 6; // 6 digits for float, as specified by ANSI, if I remeber well
+				printfParams->precision_specifier = 6; // 6 digits for float, as specified by ANSI, if I remember well
   #endif
   #if PRINTF_LITE_PADCHAR_SUPPORT == 1
 				printfParams->pad_char = ' ';

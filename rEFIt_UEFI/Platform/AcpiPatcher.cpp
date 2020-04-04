@@ -1598,7 +1598,7 @@ BOOLEAN LoadPatchedAML(CHAR16* AcpiOemPath, CHAR16* PartName, UINTN Pass)
       return FALSE;
     }
   }
-  UnicodeSPrint(FullName, sizeof(FullName), L"%s\\%s", AcpiOemPath, PartName);
+	snwprintf(FullName, sizeof(FullName), "%ls\\%ls", AcpiOemPath, PartName);
   UINT8 *buffer = NULL;
   UINTN bufferLen = 0;
   EFI_STATUS Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
@@ -2061,7 +2061,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   if (gSettings.DebugDSDT) {
     for (Index=0; Index < 60; Index++) {
       CHAR16          DsdtPatchedName[128];
-      UnicodeSPrint(DsdtPatchedName, 256, L"\\EFI\\CLOVER\\ACPI\\origin\\DSDT-pa%d.aml", Index);
+		snwprintf(DsdtPatchedName, 256, "\\EFI\\CLOVER\\ACPI\\origin\\DSDT-pa%llu.aml", Index);
       if(!FileExists(SelfRootDir, DsdtPatchedName)){
         Status = egSaveFile(SelfRootDir, DsdtPatchedName,
                             (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);

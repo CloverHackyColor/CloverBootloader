@@ -279,7 +279,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 //    *p = L'\0';
     if (StrCmp(Text, L"shutdown") == 0) {
       // icon name is shutdown from historic reasons, but function is now exit
-      UnicodeSPrint(Text, 30, L"exit");
+      snwprintf(Text, 30, "exit");
     }
     egRenderText(Text, TextBuffer, 0, 0, 0xFFFF, 1);
     BuiltinIconTable[Id].Image = TextBuffer;
@@ -324,7 +324,7 @@ EG_IMAGE * LoadOSIcon(IN CONST CHAR16 *OSIconName OPTIONAL, IN CONST CHAR16 *Fal
       continue;
     CopyMem(CutoutName, OSIconName + StartIndex, (Index - StartIndex) * sizeof(CHAR16));
     CutoutName[Index - StartIndex] = 0;
-    UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
+	  snwprintf(FileName, 512, "icons\\%ls_%ls.icns",
                   BootLogo ? L"boot" : L"os", CutoutName);
 
     // try to load it
@@ -342,7 +342,7 @@ EG_IMAGE * LoadOSIcon(IN CONST CHAR16 *OSIconName OPTIONAL, IN CONST CHAR16 *Fal
   }
 
   // try the fallback name
-  UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
+	snwprintf(FileName, 512, "icons\\%ls_%ls.icns",
                 BootLogo ? L"boot" : L"os", FallbackIconName);
   Image = egLoadIcon(ThemeDir, FileName, PixelSize);
   if (Image != NULL) {

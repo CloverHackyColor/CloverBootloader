@@ -1630,13 +1630,13 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   CHAR16 FileName[64];
   UINT8*  buffer = 0;
 
-  UnicodeSPrint(FileName, 128, L"\\ROM\\%04x_%04x.rom", vendor_id, device_id);
+  snwprintf(FileName, 128, "\\ROM\\%04X_%04X.rom", vendor_id, device_id);
   if (FileExists(OEMDir, FileName)) {
     DBG("Found generic VBIOS ROM file (%04X_%04X.rom)\n", vendor_id, device_id);
     Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status)) {
-    UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\%04x_%04x.rom", vendor_id, device_id);
+    snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\%04X_%04X.rom", vendor_id, device_id);
     if (FileExists(SelfRootDir, FileName)){
       DBG("Found generic VBIOS ROM file (%04X_%04X.rom)\n", vendor_id, device_id);
       Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);

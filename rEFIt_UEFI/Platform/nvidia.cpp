@@ -2255,14 +2255,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
 
   if (load_vbios) {
-    UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x_%04x_%04x.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
+    snwprintf(FileName, 128, "ROM\\10de_%04X_%04X_%04X.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
 
     if (FileExists(OEMDir, FileName)) {
       DBG("Found specific VBIOS ROM file (10de_%04X_%04X_%04X.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
 
       Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
     } else {
-      UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
+      snwprintf(FileName, 128, "ROM\\10de_%04X.rom", nvda_dev->device_id);
       if (FileExists(OEMDir, FileName)) {
         DBG("Found generic VBIOS ROM file (10de_%04X.rom)\n", nvda_dev->device_id);
 
@@ -2270,14 +2270,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       }
     }
 
-    UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x_%04x_%04x.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
+    snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\10de_%04X_%04X_%04X.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
     if (EFI_ERROR(Status)) {
       if (FileExists(SelfRootDir, FileName)) {
         DBG("Found specific VBIOS ROM file (10de_%04X_%04X_%04X.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
 
         Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
       } else {
-        UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
+        snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\10de_%04X.rom", nvda_dev->device_id);
 
         if (FileExists(SelfRootDir, FileName)) {
           DBG("Found generic VBIOS ROM file (10de_%04X.rom)\n", nvda_dev->device_id);

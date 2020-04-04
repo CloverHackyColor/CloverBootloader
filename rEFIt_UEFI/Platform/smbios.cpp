@@ -711,7 +711,7 @@ VOID GetTableType4()
 
   gCPUStructure.ExternalClock = (UINT32)((SmbiosTable.Type4->ExternalClock * 1000) + (res * 110));//MHz->kHz
 
-  //UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
+  //snwprintf(gSettings.BusSpeed, 10, "%d", gCPUStructure.ExternalClock);
   //gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
   gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
   gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
@@ -722,7 +722,7 @@ VOID GetTableType4()
     gSettings.EnabledCores = 0; //to change later
   }
 
-  //UnicodeSPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
+  //snwprintf(gSettings.CpuFreqMHz, 10, "%d", gCPUStructure.CurrentSpeed);
   //gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed;
 
   return;

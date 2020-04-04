@@ -71,6 +71,8 @@
   gui/menu_items/menu_globals.h
   gui/REFIT_MENU_SCREEN.cpp
   gui/REFIT_MENU_SCREEN.h
+  gui/shared_with_menu.cpp
+  gui/shared_with_menu.h
   libeg/egemb_icons.cpp
   libeg/egemb_icons_dark.cpp
   libeg/egemb_font.cpp

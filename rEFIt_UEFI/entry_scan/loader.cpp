@@ -866,23 +866,23 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   //  DBG("get anime for os=%d\n", SubScreen->ID);
   SubScreen->AnimeRun = SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Volume size: %dMb", VolumeSize));
-  SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
+	SubScreen->AddMenuInfoLine_f("Volume size: %lluMb", VolumeSize);
+  SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
-	SubScreen->AddMenuInfoLine(SWPrintf("UUID: %s", strguid(Guid)).wc_str());
+	SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
-  SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
+	SubScreen->AddMenuInfoLine_f("Options: %ls", Entry->LoadOptions);
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX ||
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
       Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     if (os_version < AsciiOSVersionToUint64("10.8")) {
-      SubScreen->AddMenuInfoLine(PoolPrint(L"Mac OS X: %a", Entry->OSVersion));
+		SubScreen->AddMenuInfoLine_f("Mac OS X: %s", Entry->OSVersion);
     } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-      SubScreen->AddMenuInfoLine(PoolPrint(L"OS X: %a", Entry->OSVersion));
+		SubScreen->AddMenuInfoLine_f("OS X: %s", Entry->OSVersion);
     } else {
-      SubScreen->AddMenuInfoLine(PoolPrint(L"macOS: %a", Entry->OSVersion));
+		SubScreen->AddMenuInfoLine_f("macOS: %s", Entry->OSVersion);
     }
 
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -934,7 +934,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
 
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(Entry), true);
-    SubScreen->AddMenuInfo("=== boot-args ===");
+    SubScreen->AddMenuInfo_f("=== boot-args ===");
     if (!KernelIs64BitOnly) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubScreen->AddMenuCheck("Mac OS X 32bit",   OPT_I386, 68);
@@ -1488,7 +1488,7 @@ VOID ScanLoader(VOID)
         // Get the partition UUID and make sure it's lower case
         CHAR16          PartUUID[40];
         ZeroMem(&PreviousTime, sizeof(EFI_TIME));
-        UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%s", strguid(PartGUID));
+        snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(PartGUID));
         StrToLower(PartUUID);
         // open the /boot directory (or whatever directory path)
         DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
@@ -1927,7 +1927,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         DBG("skipped because volume does not have partition uuid\n");
         continue;
       }
-      UnicodeSPrint(PartUUID, sizeof(PartUUID), L"%s", strguid(Guid));
+      snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(Guid));
       StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
@@ -2303,12 +2303,12 @@ if ((Image == NULL) && Custom->ImagePath) {
             SubScreen->ID = Custom->Type + 20;
             SubScreen->AnimeRun = SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-            SubScreen->AddMenuInfoLine(SWPrintf("Volume size: %lldMb", VolumeSize));
-            SubScreen->AddMenuInfoLine(FileDevicePathToStr(Entry->DevicePath));
+            SubScreen->AddMenuInfoLine_f("Volume size: %lldMb", VolumeSize);
+            SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Entry->DevicePath));
             if (Guid) {
-              SubScreen->AddMenuInfoLine(SWPrintf("UUID: %s", strguid(Guid)).wc_str());
+              SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
             }
-            SubScreen->AddMenuInfoLine(PoolPrint(L"Options: %s", Entry->LoadOptions));
+			  SubScreen->AddMenuInfoLine_f("Options: %ls", Entry->LoadOptions);
             DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
               if (!CustomSubEntry->Settings) {

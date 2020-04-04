@@ -697,7 +697,7 @@ GetBootOption (
   // Get BootXXXX var.
   //
   BootOption->BootNum = BootNum;
-  UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", BootNum);
+  snwprintf(VarName, sizeof(VarName), "Boot%04X", BootNum);
 
   BootOption->Variable = (__typeof__(BootOption->Variable))GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
   if (BootOption->Variable == NULL) {
@@ -724,7 +724,7 @@ FindFreeBootNum (
 
 
   for (Index = 0; Index <= 0xFFFF; Index++) {
-    UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", Index);
+	  snwprintf(VarName, sizeof(VarName), "Boot%04llX", Index);
     VarSize = 0;
     Status = gRT->GetVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize, NULL);
     if (Status == EFI_NOT_FOUND) {
@@ -947,7 +947,7 @@ AddBootOption (
     return Status;
   }
   DBG(" Found BootNum: %04X\n", BootOption->BootNum);
-  UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", BootOption->BootNum);
+  snwprintf(VarName, sizeof(VarName), "Boot%04X", BootOption->BootNum);
 
   //
   // Prepare BootOption variable
@@ -1072,7 +1072,7 @@ DeleteBootOption (
 
   DBG("DeleteBootOption: Boot%04X\n", BootNum);
 
-  UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", BootNum);
+  snwprintf(VarName, sizeof(VarName), "Boot%04X", BootNum);
 
   //
   // Delete BootXXXX var

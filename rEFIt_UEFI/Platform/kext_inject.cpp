@@ -146,13 +146,13 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
   _BooterKextFileInfo *infoAddr = NULL;
 
   TempName = PoolPrint(L"%s\\%s", FileName, L"Contents\\Info.plist");
-  // UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Contents\\Info.plist");
+  // snwprintf(TempName, 512, L"%s\\%s", FileName, "Contents\\Info.plist");
   Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
   FreePool(TempName);
   if (EFI_ERROR(Status)) {
     //try to find a planar kext, without Contents
     TempName = PoolPrint(L"%s\\%s", FileName, L"Info.plist");
-    //  UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Info.plist");
+    //  snwprintf(TempName, 512, L"%s\\%s", FileName, "Info.plist");
     Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
     FreePool(TempName);
     if (EFI_ERROR(Status)) {
@@ -179,10 +179,10 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     //   AsciiStrToUnicodeStrS(prop->string, Executable, 256);
     if (NoContents) {
       TempName = PoolPrint(L"%s\\%s", FileName, Executable);
-      //     UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, Executable);
+      //     snwprintf(TempName, 512, "%s\\%s", FileName, Executable);
     } else {
       TempName = PoolPrint(L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
-      //    UnicodeSPrint(TempName, 512, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
+      //    snwprintf(TempName, 512, L"%s\\%s\\%s", FileName, "Contents\\MacOS",Executable);
     }
     FreePool(Executable);
     Status = egLoadFile(RootDir, TempName, &executableFatBuffer, &executableBufferLength);
@@ -286,7 +286,7 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
      if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
        continue;   // skip this
      FileName = PoolPrint(L"%s\\%s", DirName, PlugInFile->FileName);
-     //     UnicodeSPrint(FileName, 512, L"%s\\%s", DirName, PlugInFile->FileName);
+     //     snwprintf(FileName, 512, "%s\\%s", DirName, PlugInFile->FileName);
      MsgLog("    %ls PlugIn kext: %ls\n", Force ? L"Force" : L"Extra", FileName);
      AddKext(Entry, RootDir, FileName, archCpuType);
      FreePool(FileName);
@@ -308,7 +308,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
     DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
     if (StrCmp(CurrentKext->KextDirNameUnderOEMPath, Path) == 0) {
       FileName = PoolPrint(L"%s\\%s", SrcDir, CurrentKext->FileName);
-      //   UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, CurrentKext->FileName);
+      //   snwprintf(FileName, 512, "%s\\%s", SrcDir, CurrentKext->FileName);
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
         MsgLog("->Extra kext: %ls (v.%ls)\n", FileName, CurrentKext->Version);
@@ -318,7 +318,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
           CurrentPlugInKext = CurrentKext->PlugInList;
           while (CurrentPlugInKext) {
             PlugInName = PoolPrint(L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
-            //     UnicodeSPrint(PlugInName, 512, L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
+            //     snwprintf(PlugInName, 512, L"%s\\%s\\%s", FileName, "Contents\\PlugIns", CurrentPlugInKext->FileName);
             if (!(CurrentPlugInKext->MenuItem.BValue)) {
               // inject PlugIn require
               MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
@@ -403,11 +403,11 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
             if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
               continue;   // skip this
             FileName = PoolPrint(L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
-            //    UnicodeSPrint(FileName, 512, L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+            //    snwprintf(FileName, 512, "%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
             MsgLog("  Force kext: %ls\n", FileName);
             AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
             PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", FileName);
-            //  UnicodeSPrint(PlugIns, 512, L"%s\\Contents\\PlugIns", FileName);
+            //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", FileName);
             LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
             FreePool(FileName);
             FreePool(PlugIns);
@@ -416,7 +416,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
         } else {
           AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
           PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", Entry->KernelAndKextPatches->ForceKexts[i]);
-          //  UnicodeSPrint(PlugIns, 512, L"%s\\Contents\\PlugIns", Entry->KernelAndKextPatches->ForceKexts[i]);
+          //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", Entry->KernelAndKextPatches->ForceKexts[i]);
           LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
           FreePool(PlugIns);
         }
@@ -465,22 +465,22 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     CHAR16 *DirName;
     CHAR16 *DirPath;
     OSAllVersionKextsDir = PoolPrint(L"%s\\kexts\\10", OEMPath);
-    // UnicodeSPrint(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), L"%s\\kexts\\10", OEMPath);
+    // snwprintf(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), "%s\\kexts\\10", OEMPath);
     AddKexts(Entry, OSAllVersionKextsDir, L"10", archCpuType);
     FreePool(OSAllVersionKextsDir);
 
     if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       DirName = PoolPrint(L"10_install");
-      // UnicodeSPrint(DirName, sizeof(DirName), L"10_install");
+      // snwprintf(DirName, sizeof(DirName), "10_install");
     } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
       DirName = PoolPrint(L"10_recovery");
-      // UnicodeSPrint(DirName, sizeof(DirName), L"10_recovery");
+      // snwprintf(DirName, sizeof(DirName), "10_recovery");
     } else {
       DirName = PoolPrint(L"10_normal");
-      // UnicodeSPrint(DirName, sizeof(DirName), L"10_normal");
+      // snwprintf(DirName, sizeof(DirName), "10_normal");
     }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
-    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
     AddKexts(Entry, DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
@@ -489,22 +489,22 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     // Add kext from 10.{version}
 
     OSShortVersionKextsDir = PoolPrint(L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
-    // UnicodeSPrint(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
+    // snwprintf(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), "%s\\kexts\\%s", OEMPath, UniShortOSVersion);
     AddKexts(Entry, OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
     FreePool(OSShortVersionKextsDir);
 
     if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       DirName = PoolPrint(L"%s_install", UniShortOSVersion);
-      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", UniShortOSVersion);
+      // snwprintf(DirName, sizeof(DirName), "%s_install", UniShortOSVersion);
     } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
       DirName = PoolPrint(L"%s_recovery", UniShortOSVersion);
-      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", UniShortOSVersion);
+      // snwprintf(DirName, sizeof(DirName), "%s_recovery", UniShortOSVersion);
     } else {
       DirName = PoolPrint(L"%s_normal", UniShortOSVersion);
-      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", UniShortOSVersion);
+      // snwprintf(DirName, sizeof(DirName), "%s_normal", UniShortOSVersion);
     }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
-    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
     AddKexts(Entry, DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
@@ -516,29 +516,29 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
     if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
       OSVersionKextsDirName = PoolPrint(L"%a.0", Entry->OSVersion);
-      // UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a.0", Entry->OSVersion);
+      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a.0", Entry->OSVersion);
     } else {
       OSVersionKextsDirName = PoolPrint(L"%a", Entry->OSVersion);
-      // UnicodeSPrint(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), L"%a", Entry->OSVersion);
+      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a", Entry->OSVersion);
     }
 
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
-    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
+    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
     AddKexts(Entry, DirPath, OSVersionKextsDirName, archCpuType);
     FreePool(DirPath);
 
     if ( OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
       DirName = PoolPrint(L"%s_install", OSVersionKextsDirName);
-      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_install", OSVersionKextsDirName);
+      // snwprintf(DirName, sizeof(DirName), "%s_install", OSVersionKextsDirName);
     } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
       DirName = PoolPrint(L"%s_recovery", OSVersionKextsDirName);
-      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_recovery", OSVersionKextsDirName);
+      // snwprintf(DirName, sizeof(DirName), "%s_recovery", OSVersionKextsDirName);
     } else {
       DirName = PoolPrint(L"%s_normal", OSVersionKextsDirName);
-      // UnicodeSPrint(DirName, sizeof(DirName), L"%s_normal", OSVersionKextsDirName);
+      // snwprintf(DirName, sizeof(DirName), "%s_normal", OSVersionKextsDirName);
     }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
-    // UnicodeSPrint(DirPath, sizeof(DirPath), L"%s\\kexts\\%s", OEMPath, DirName);
+    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
     AddKexts(Entry, DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
