@@ -1683,7 +1683,7 @@ VOID SetVariablesFromNvram()
       }
       // For the moment only arg -s must be ignored
       if (AsciiStrCmp(arg, "-s") == 0) {
-          DBG("...ignoring arg:%s\n", arg);
+        DBG("...ignoring arg:%s\n", arg);
         continue;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
@@ -1691,7 +1691,7 @@ VOID SetVariablesFromNvram()
         DBG("...adding arg:%s\n", arg);
         len = iStrLen(gSettings.BootArgs, 256);
         if (len + index2 > 256) {
-			DBG("boot-args overflow... bytes=%llu+%llu\n", len, index2);
+          DBG("boot-args overflow... bytes=%llu+%llu\n", len, index2);
           break;
         }
         gSettings.BootArgs[len++] = 0x20;

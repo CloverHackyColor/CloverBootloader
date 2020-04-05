@@ -478,7 +478,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     if (i == BUILTIN_ICON_BANNER) { //exclude "logo" as it done other way
       continue;
     }
-    Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
+    Icon* NewIcon = new Icon(i, false); //initialize without embedded
     /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, Scale, &NewIcon->ImageNight);

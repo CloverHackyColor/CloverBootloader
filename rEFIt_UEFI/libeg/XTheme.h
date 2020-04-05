@@ -19,12 +19,13 @@ public:
   XImage Image;
   XImage ImageNight;
 
-  Icon(INTN Id);
+  Icon(INTN Id, bool Embedded = false);
   ~Icon();
 
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
   Icon(const Icon&) = delete;
   Icon& operator=(const Icon&) = delete;
+  void GetEmbedded();
 };
 
 class XTheme

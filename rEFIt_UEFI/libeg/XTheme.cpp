@@ -67,7 +67,7 @@ CONST CHAR8* IconsNames[] = {
   "vol_optical",
   "vol_firewire",
   "vol_clover" ,
-  "vol_internal_hfs" ,
+  "vol_internal_hfs" , //18
   "vol_internal_apfs",
   "vol_internal_ntfs",
   "vol_internal_ext3" ,
@@ -227,6 +227,11 @@ const XImage& XTheme::GetIcon(INTN Id) const
   return NullIcon;
 }
 
+//const XImage& XTheme::LoadOSIcon(const XString& OSIconName)
+//{
+//  return LoadOSIcon(XString().takeValueFrom(OSIconName));
+//}
+
 const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
 {
   // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
@@ -236,16 +241,20 @@ const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
   const XImage *ReturnImage;
   UINTN Comma = Full.IdxOf(',');
   UINTN Size = Full.size();
+//  DBG("IconName=%ls comma=%lld size=%lld\n", OSIconName, Comma, Size);
   if (Comma != MAX_XSIZE) {  //Comma
     First = "os_"_XS + Full.SubString(0, Comma);
     ReturnImage = &GetIcon(First);
+ //   DBG("  first=%s\n", First.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
     //else search second name
     Second = "os_"_XS + Full.SubString(Comma+1, Size - Comma - 1);
     ReturnImage = &GetIcon(Second);
+//    DBG("  Second=%s\n", Second.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   } else {
     ReturnImage = &GetIcon("os_"_XS + Full);
+//    DBG("  Full=%s\n", Full.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   }
   // else something
@@ -269,14 +278,20 @@ const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
    ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 }
 
-Icon::Icon(INTN Index) : Image(0), ImageNight(0)
+Icon::Icon(INTN Index, bool TakeEmbedded) : Image(0), ImageNight(0)
 {
   Id = Index;
   Name.setEmpty();
   if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index <= BUILTIN_CHECKBOX_CHECKED) {
     Name.takeValueFrom(IconsNames[Index]);
   }
+  if (TakeEmbedded) {
+    GetEmbedded();
+  }
+}
 
+void Icon::GetEmbedded()
+{
   switch (Id) {
     case BUILTIN_ICON_FUNC_ABOUT:
       DEC_BUILTIN_ICON2(BUILTIN_ICON_FUNC_ABOUT, emb_func_about, emb_dark_func_about)
@@ -374,7 +389,7 @@ void XTheme::FillByEmbedded()
 {
   Icons.Empty();
   for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) { //this is embedded icon count
-    Icon* NewIcon = new Icon(i);
+    Icon* NewIcon = new Icon(i, true);
     Icons.AddReference(NewIcon, true);
   }
   //and buttons
@@ -671,7 +686,7 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
   Icons.Empty();
   for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
-    Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
+    Icon* NewIcon = new Icon(i); //initialize without embedded
     NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
     NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
     Icons.AddReference(NewIcon, true);

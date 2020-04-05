@@ -173,9 +173,9 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   if (Image) {
     Entry->Image = *Image;
   } else {
-    Entry->Image = ThemeX.GetIcon(XString().takeValueFrom(Volume->LegacyOS->IconName));
+    Entry->Image = ThemeX.LoadOSIcon(Volume->LegacyOS->IconName);
     if (Entry->Image.isEmpty()) {
-      Entry->Image = ThemeX.GetIcon("vol_internal"_XS); //we have no legacy.png
+      Entry->Image = ThemeX.GetIcon("os_win"_XS); //we have no legacy.png
     }
   }
 #else

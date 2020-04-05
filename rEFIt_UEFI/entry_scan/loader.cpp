@@ -653,7 +653,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     case OSTYPE_OTHER:
     case OSTYPE_EFI:
       OSIconName = L"clover";
-      ShortcutLetter = 'U';
+      ShortcutLetter = 'E';
       Entry->LoaderType = OSTYPE_OTHER;
       break;
     default:
