@@ -793,6 +793,7 @@ VOID ApplyInputs(VOID)
       ThemeX.DarkEmbedded = FALSE;
       ThemeX.Font = FONT_ALFA;
     }
+    GlobalConfig.Theme = EfiStrDuplicate(ThemeX.Theme.wc_str());
 #else
     if (GlobalConfig.Theme) {
       FreePool(GlobalConfig.Theme);
