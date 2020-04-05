@@ -1561,64 +1561,29 @@ void REFIT_MENU_SCREEN::EraseTextXY()
 #if USE_XTHEME
 VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
-  // check if text was provided
+  // check if text was provided. And what else?
   if (!Text) {
     return;
   }
 
-  INTN TextLen = StrLen(Text);
+//  INTN TextLen = StrLen(Text);
 
   // number of chars to be drawn on the screen
   INTN MaxTextLen = 13;
-  INTN EllipsisLen = 2;
-  
-  CHAR16 *BCSText = NULL;
+//  INTN EllipsisLen = 2;
 
-  // more space, more characters
-  if (ThemeX.TileXSpace >= 25 && ThemeX.TileXSpace < 30) {
-    MaxTextLen = 14;
-  } else if (ThemeX.TileXSpace >= 30 && ThemeX.TileXSpace < 35) {
-    MaxTextLen = 15;
-  } else if (ThemeX.TileXSpace >= 35 && ThemeX.TileXSpace < 40) {
-    MaxTextLen = 16;
-  } else if (ThemeX.TileXSpace >= 40 && ThemeX.TileXSpace < 45) {
-    MaxTextLen = 17;
-  } else if (ThemeX.TileXSpace >= 45 && ThemeX.TileXSpace < 50) {
-    MaxTextLen = 18;
-  } else if (ThemeX.TileXSpace >= 50) {
-    MaxTextLen = 19;
+
+  // some optimization
+  if (ThemeX.TileXSpace >= 25) {
+    MaxTextLen = ThemeX.TileXSpace / 5 + 9;
   }
 
-  MaxTextLen += EllipsisLen;
+//  MaxTextLen += EllipsisLen;
+  XStringW BCSTextX(MaxTextLen);
+  BCSTextX.StrnCpy(Text, MaxTextLen);
+  BCSTextX += L"..";
+  DrawTextXY(BCSTextX, XPos, YPos, XAlign);
 
-  // if the text exceeds the given limit
-  if (TextLen > MaxTextLen) {
-    BCSText = (__typeof__(BCSText))AllocatePool((sizeof(CHAR16) * MaxTextLen) + 1);
-
-    // error check, not enough memory
-    if (!BCSText) {
-      return;
-    }
-
-    // copy the permited amound of chars minus the ellipsis
-    StrnCpyS(BCSText, (MaxTextLen - EllipsisLen) + 1, Text, MaxTextLen - EllipsisLen);
-    BCSText[MaxTextLen - EllipsisLen] = '\0';
-
-    // add ellipsis
-    StrnCatS(BCSText, MaxTextLen + 1, L"..", EllipsisLen);
-    // redundant, used for safety measures
-    BCSText[MaxTextLen] = '\0';
-    XStringW BCSTextX;
-    BCSTextX.takeValueFrom(BCSText);
-    DrawTextXY(BCSTextX, XPos, YPos, XAlign);
-
-    FreePool(BCSText);
-  } else {
-		// draw full text
-    XStringW TextX;
-    TextX.takeValueFrom(Text);
-    DrawTextXY(TextX, XPos, YPos, XAlign);
-  }
 }
 #else
 //remains in menu.cpp
