@@ -48,6 +48,7 @@
   refit/IO.cpp
   refit/IO.h
   entry_scan/common.cpp
+  entry_scan/common.h
   entry_scan/legacy.cpp
   entry_scan/loader.cpp
   entry_scan/tool.cpp
@@ -194,6 +195,7 @@
   Platform/Net.cpp
   Platform/sound.cpp
   Platform/StartupSound.cpp
+  Platform/StartupSound.h
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
   Version.h
@@ -221,6 +223,8 @@
   cpp_foundation/XStringW.h
   cpp_foundation/XStringWArray.cpp
   cpp_foundation/XStringWArray.h
+  cpp_foundation/XStringWP.cpp
+  cpp_foundation/XStringWP.h
   cpp_foundation/XToolsCommon.cpp
   cpp_foundation/XToolsCommon.h
   cpp_foundation/XUINTN.cpp
