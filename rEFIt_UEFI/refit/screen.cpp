@@ -350,7 +350,9 @@ VOID SwitchToGraphicsAndClear(VOID) //called from MENU_FUNCTION_INIT
   SwitchToGraphics();
 #if USE_XTHEME
 //  DBG("clear screen and draw back\n");
-  ThemeX.ClearScreen();
+//  ThemeX.ClearScreen();
+//  egClearScreen(&MenuBackgroundPixel);
+  ThemeX.Background.DrawWithoutCompose(0,0,0,0);
 #else
 	if (GraphicsScreenDirty) { //Invented in rEFIt 15 years ago
     BltClearScreen();

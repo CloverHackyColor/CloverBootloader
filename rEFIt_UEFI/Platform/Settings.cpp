@@ -5230,6 +5230,7 @@ finish:
     FreePool (ChosenTheme);
   }
   PrepareFont();
+  ThemeX.ClearScreen();
   return Status;
 }
 
