@@ -38,6 +38,14 @@
 		9A28CD34241BC0DF00F3D247 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2E241BC0DF00F3D247 /* strncmp_test.cpp */; };
 		9A28CD35241BC0DF00F3D247 /* strlen_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD2F241BC0DF00F3D247 /* strlen_test.h */; };
 		9A28CD36241BC0DF00F3D247 /* strncmp_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD30241BC0DF00F3D247 /* strncmp_test.h */; };
+		9A4185B62439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
+		9A4185B72439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
+		9A4185B82439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
+		9A4185B92439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
+		9A4185BA2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4185BB2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4185BC2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4185BD2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
 		9A57C25724192D650029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25524192D650029A39F /* XUINTN.cpp */; };
 		9A57C25824192D650029A39F /* XUINTN.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A57C25624192D650029A39F /* XUINTN.h */; };
 		9A57C25B24192D710029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C25924192D710029A39F /* XUINTN_test.cpp */; };
@@ -880,6 +888,8 @@
 		9A28CD2E241BC0DF00F3D247 /* strncmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strncmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD2F241BC0DF00F3D247 /* strlen_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strlen_test.h; sourceTree = "<group>"; };
 		9A28CD30241BC0DF00F3D247 /* strncmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strncmp_test.h; sourceTree = "<group>"; };
+		9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
+		9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
 		9A57C25524192D650029A39F /* XUINTN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN.cpp; sourceTree = "<group>"; };
 		9A57C25624192D650029A39F /* XUINTN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XUINTN.h; sourceTree = "<group>"; };
 		9A57C25924192D710029A39F /* XUINTN_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN_test.cpp; sourceTree = "<group>"; };
@@ -1183,6 +1193,8 @@
 				9AC77ED724176C04005CDD5C /* all_tests.h */,
 				9AC780B22417EE4A005CDD5C /* global_test.cpp */,
 				9AC780B42417EE53005CDD5C /* global_test.h */,
+				9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */,
+				9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */,
 				9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */,
 				9AF4155C242B8FA300D2644C /* poolprint-test.cpp */,
 				9AF4155B242B8FA300D2644C /* poolprint-test.h */,
@@ -1553,6 +1565,7 @@
 				9AC7808624176C04005CDD5C /* globals_ctor.h in Headers */,
 				9AF4155D242B8FA400D2644C /* poolprint-test.h in Headers */,
 				9A28CCA5241B66EA00F3D247 /* stddef.h in Headers */,
+				9A4185B62439F29D00BEAFB8 /* LoadOptions_test.h in Headers */,
 				9AC7806724176C04005CDD5C /* securebootkeys.h in Headers */,
 				9A9D3B30242215A1006D8CD9 /* string.h in Headers */,
 				9A28CC94241AB33700F3D247 /* XString.h in Headers */,
@@ -1663,6 +1676,7 @@
 				9ACFE6AD24309AF80071CC93 /* globals_ctor.h in Headers */,
 				9ACFE6AE24309AF80071CC93 /* poolprint-test.h in Headers */,
 				9ACFE6AF24309AF80071CC93 /* stddef.h in Headers */,
+				9A4185B92439F29D00BEAFB8 /* LoadOptions_test.h in Headers */,
 				9ACFE6B024309AF80071CC93 /* securebootkeys.h in Headers */,
 				9ACFE6B124309AF80071CC93 /* string.h in Headers */,
 				9ACFE6B224309AF80071CC93 /* XString.h in Headers */,
@@ -1705,6 +1719,7 @@
 				9AF415A1242CD75C00D2644C /* XStringWArray.h in Headers */,
 				9A09863C2438A15400826276 /* shared_with_menu.h in Headers */,
 				9AF415A2242CD75C00D2644C /* XUINTN.h in Headers */,
+				9A4185B72439F29D00BEAFB8 /* LoadOptions_test.h in Headers */,
 				9AF415A3242CD75C00D2644C /* strcmp_test.h in Headers */,
 				9AF415A4242CD75C00D2644C /* boot.h in Headers */,
 				9AF415A5242CD75C00D2644C /* ati.h in Headers */,
@@ -1813,6 +1828,7 @@
 				9AF4167E242CDA5800D2644C /* XStringWArray.h in Headers */,
 				9A09863D2438A15400826276 /* shared_with_menu.h in Headers */,
 				9AF4167F242CDA5800D2644C /* XUINTN.h in Headers */,
+				9A4185B82439F29D00BEAFB8 /* LoadOptions_test.h in Headers */,
 				9AF41680242CDA5800D2644C /* strcmp_test.h in Headers */,
 				9AF41681242CDA5800D2644C /* boot.h in Headers */,
 				9AF41682242CDA5800D2644C /* ati.h in Headers */,
@@ -2132,6 +2148,7 @@
 				9AC7809124176C04005CDD5C /* XStringW.cpp in Sources */,
 				9AC7806924176C04005CDD5C /* lockedgraphics.cpp in Sources */,
 				9A28CC97241AB34800F3D247 /* XString_test.cpp in Sources */,
+				9A4185BA2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9AC7803724176C04005CDD5C /* device_inject.cpp in Sources */,
 				9AC7804224176C04005CDD5C /* Settings.cpp in Sources */,
 				9A0986372438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2249,6 +2266,7 @@
 				9ACFE6F124309AF80071CC93 /* string.cpp in Sources */,
 				9ACFE6F224309AF80071CC93 /* XStringW.cpp in Sources */,
 				9ACFE6F324309AF80071CC93 /* lockedgraphics.cpp in Sources */,
+				9A4185BD2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9ACFE6F424309AF80071CC93 /* XString_test.cpp in Sources */,
 				9ACFE6F524309AF80071CC93 /* device_inject.cpp in Sources */,
 				9A09863A2438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2366,6 +2384,7 @@
 				9AF41628242CD75C00D2644C /* XStringW.cpp in Sources */,
 				9AF41629242CD75C00D2644C /* lockedgraphics.cpp in Sources */,
 				9AF4162A242CD75C00D2644C /* XString_test.cpp in Sources */,
+				9A4185BB2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9AF4162B242CD75C00D2644C /* device_inject.cpp in Sources */,
 				9AF4162C242CD75C00D2644C /* Settings.cpp in Sources */,
 				9A0986382438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2483,6 +2502,7 @@
 				9AF41705242CDA5800D2644C /* XStringW.cpp in Sources */,
 				9AF41706242CDA5800D2644C /* lockedgraphics.cpp in Sources */,
 				9AF41707242CDA5800D2644C /* XString_test.cpp in Sources */,
+				9A4185BC2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9AF41708242CDA5800D2644C /* device_inject.cpp in Sources */,
 				9AF41709242CDA5800D2644C /* Settings.cpp in Sources */,
 				9A0986392438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2588,6 +2608,7 @@
 					"-fno-exceptions",
 					"-fno-unwind-tables",
 					"-Wno-incompatible-ms-struct",
+					"-Wreorder",
 				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
@@ -2634,6 +2655,7 @@
 					"-fno-exceptions",
 					"-fno-unwind-tables",
 					"-Wno-incompatible-ms-struct",
+					"-Wreorder",
 				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;

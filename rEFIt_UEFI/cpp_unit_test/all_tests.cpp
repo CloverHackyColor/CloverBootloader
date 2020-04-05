@@ -16,6 +16,7 @@
 #include "strlen_test.h"
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "printf_lite-test.h"
+#include "LoadOptions_test.h"
 //#include "poolprint-test.h"
 //#include "printlib-test.h"
 
@@ -50,17 +51,22 @@ bool all_tests()
 #endif
 	ret = strlen_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "posix_tests() failed at test %d\n", ret);
+		DebugLog(2, "strlen_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = BootOptions_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "BootOptions_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = strcmp_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "posix_tests() failed at test %d\n", ret);
+		DebugLog(2, "strcmp_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = strncmp_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "posix_tests() failed at test %d\n", ret);
+		DebugLog(2, "strncmp_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = XArray_tests();

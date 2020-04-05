@@ -41,6 +41,7 @@
 #ifdef __cplusplus
 #include "../../cpp_foundation/XObjArray.h"
 #include "../../cpp_foundation/XStringWArray.h"
+#include "../../cpp_foundation/XString.h"
 #include "../../cpp_foundation/XStringW.h"
 #include "../../libeg/XPointer.h"
 #endif
@@ -290,14 +291,14 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
 	  CONST CHAR16     *DevicePathString;
-	  CONST CHAR16     *LoadOptions; //moved here for compatibility with legacy
+	  XString          LoadOptions; //moved here for compatibility with legacy
 	  CONST CHAR16     *LoaderPath;
 #if USE_XTHEME
     XImage        DriveImage;
     XImage        BadgeImage;
 
     REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(0), LoaderPath(0), DriveImage(), BadgeImage()
+    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoaderPath(0), DriveImage(), BadgeImage()
     {}
     virtual  XImage* getDriveImage()  { return &DriveImage; };
     virtual  XImage* getBadgeImage()  { return &BadgeImage; };
@@ -307,7 +308,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	  EG_IMAGE          *BadgeImage;
 
     REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
+    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoaderPath(0), DriveImage(0), BadgeImage(0)
     {}
     virtual EG_IMAGE* getDriveImage() const { return DriveImage; };
     virtual EG_IMAGE* getBadgeImage() const { return BadgeImage; };

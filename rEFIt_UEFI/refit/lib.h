@@ -737,8 +737,6 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 //VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 
-UINT32 EncodeOptions(CONST CHAR16 *Options);
-
 CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar);
 
 #define KERNEL_MAX_SIZE 40000000

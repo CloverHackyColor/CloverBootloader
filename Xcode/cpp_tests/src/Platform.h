@@ -71,6 +71,9 @@ void ZeroMem(void *Destination, UINTN Length);
 void SetMem(void *Destination, UINTN Length, char c);
 void CopyMem(void *Destination, void *Source, UINTN Length);
 
+CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src);
+CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString);
+
 
 //UINTN StrLen(const char16_t* String);
 UINTN StrLen(const wchar_t* String);

@@ -484,12 +484,13 @@ void XObjArrayNC<TYPE>::Remove(const TYPE &Element)
 
 	for ( i=0 ; i<_Len ; i+= 1) {
 		if ( *((TYPE *)(_Data[i].Object)) == Element ) {
-			Remove(i);
+			RemoveAtIndex(i);
 			return ;
 		}
 	}
 	#if defined(_DEBUG)
-		throw "XObjArray::Remove(TYPE &) -> Not found\n";
+		DebugLog(2, "XObjArray::Remove(TYPE &) -> Not found\n");
+		panic();
 	#endif
 }
 

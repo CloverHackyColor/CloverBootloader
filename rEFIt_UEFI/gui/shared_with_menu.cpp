@@ -42,43 +42,44 @@
 #include "../Platform/Platform.h"
 #include "../refit/lib.h"
 #include "menu_items/menu_items.h"
+#include "../entry_scan/common.h"
 
-CONST CHAR16* ArgOptional[NUM_OPT] = {
-  L"arch=i386",       //0
-  L"arch=x86_64",     //1
-  L"-v ",             //2
-  L"-f ",             //3
-  L"-s ",             //4
-  L"-x ",             //5
-  L"nv_disable=1",    //6
-  L"slide=0",         //7
-  L"darkwake=0",      //8
-  L"-xcpm",           //9
-  L"-gux_no_idle",    //10
-  L"-gux_nosleep",    //11
-  L"-gux_nomsi",      //12
-  L"-gux_defer_usb2", //13
-  L"keepsyms=1",      //14
-  L"debug=0x100",     //15
-  L"kextlog=0xffff",  //16
-  L"-alcoff",         //17
-  L"-shikioff",       //18
-  L"nvda_drv=1"       //19
+CONST XString ArgOptional[NUM_OPT] = {
+  "arch=i386"_XS,       //0
+  "arch=x86_64"_XS,     //1
+  "-v "_XS,             //2
+  "-f "_XS,             //3
+  "-s "_XS,             //4
+  "-x "_XS,             //5
+  "nv_disable=1"_XS,    //6
+  "slide=0"_XS,         //7
+  "darkwake=0"_XS,      //8
+  "-xcpm"_XS,           //9
+  "-gux_no_idle"_XS,    //10
+  "-gux_nosleep"_XS,    //11
+  "-gux_nomsi"_XS,      //12
+  "-gux_defer_usb2"_XS, //13
+  "keepsyms=1"_XS,      //14
+  "debug=0x100"_XS,     //15
+  "kextlog=0xffff"_XS,  //16
+  "-alcoff"_XS,         //17
+  "-shikioff"_XS,       //18
+  "nvda_drv=1"_XS       //19
 };
 CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 
 INPUT_ITEM *InputItems = NULL;
 INTN TextStyle; //why global? It will be class SCREEN member
 
-UINT32 EncodeOptions(CONST CHAR16 *Options)
+UINT32 EncodeOptions(const XString& Options)
 {
   UINT32 OptionsBits = 0;
   INTN Index;
-  if (!Options) {
+  if (Options.isEmpty()) {
     return 0;
   }
   for (Index = 0; Index < NUM_OPT; Index++) {
-    if (StrStr(Options, ArgOptional[Index])) {
+    if ( Options.ExistIn(ArgOptional[Index]) ) {
       OptionsBits |= (1 << Index);
       if (Index == 1) {
         OptionsBits &= ~1;

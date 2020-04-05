@@ -351,7 +351,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   CHAR16                  *FileName;
   CHAR16                  *PlugIns;
   CONST CHAR16                  *Arch = NULL;
-  CONST CHAR16                  *Ptr = NULL;
+//  CONST CHAR16                  *Ptr = NULL;
 #if defined(MDE_CPU_X64)
   cpu_type_t              archCpuType=CPU_TYPE_X86_64;
 #else
@@ -371,8 +371,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   }
 
   // Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
-  if (Entry->LoadOptions != NULL) {
-    for (Ptr = StrStr(Entry->LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
+  if (Entry->LoadOptions.notEmpty()) {
+//    for (Ptr = StrStr(Entry->LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
   }
 
   if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {

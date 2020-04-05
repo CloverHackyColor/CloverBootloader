@@ -39,6 +39,7 @@
 #include "../Platform/Hibernate.h"
 #include "../refit/screen.h"
 #include "../refit/menu.h"
+#include "common.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LOADER 1
@@ -56,13 +57,13 @@
 
 #define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 
-#define LINUX_ISSUE_PATH L"\\etc\\issue"
+const XStringW LINUX_ISSUE_PATH = L"\\etc\\issue"_XSW;
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"\\boot"
-#define LINUX_LOADER_PATH L"vmlinuz"
-#define LINUX_FULL_LOADER_PATH LINUX_BOOT_PATH L"\\" LINUX_LOADER_PATH
+const XString LINUX_LOADER_PATH = "vmlinuz"_XS;
+const XStringW LINUX_FULL_LOADER_PATH = SWPrintf("%ls\\%s", LINUX_BOOT_PATH, LINUX_LOADER_PATH.c_str());
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
-#define LINUX_DEFAULT_OPTIONS L"ro add_efi_memmap quiet splash vt.handoff=7"
+const XString LINUX_DEFAULT_OPTIONS = "ro add_efi_memmap quiet splash vt.handoff=7"_XS;
 
 #if defined(MDE_CPU_X64)
 #define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTX64.efi"
@@ -309,37 +310,37 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
   return L"linux";
 }
 
-STATIC CONST CHAR16 *LinuxInitImagePath[] = {
-   L"initrd%s",
-   L"initrd.img%s",
-   L"initrd%s.img",
-   L"initramfs%s",
-   L"initramfs.img%s",
-   L"initramfs%s.img",
+STATIC CONST XString LinuxInitImagePath[] = {
+   "initrd%s"_XS,
+   "initrd.img%s"_XS,
+   "initrd%s.img"_XS,
+   "initramfs%s"_XS,
+   "initramfs.img%s"_XS,
+   "initramfs%s.img"_XS,
 };
 STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(CHAR16 *));
 
-STATIC CHAR16 *LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
+STATIC XString LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
                                   IN CONST CHAR16            *Version,
                                   IN CONST CHAR16            *PartUUID,
-                                  IN CONST CHAR16            *Options OPTIONAL)
+                                  IN CONST XString&           Options OPTIONAL)
 {
   UINTN Index = 0;
   if ((Dir == NULL) || (PartUUID == NULL)) {
-    return (Options == NULL) ? NULL : EfiStrDuplicate(Options);
+    return Options;
   }
   while (Index < LinuxInitImagePathCount) {
-    CHAR16 *InitRd = PoolPrint(LinuxInitImagePath[Index++], (Version == NULL) ? L"" : Version);
+    XStringW InitRd = SWPrintf(LinuxInitImagePath[Index++].c_str(), (Version == NULL) ? L"" : Version);
     if (InitRd != NULL) {
-      if (FileExists(Dir, InitRd)) {
-        CHAR16 *CustomOptions = PoolPrint(L"root=/dev/disk/by-partuuid/%s initrd=%s\\%s %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd, LINUX_DEFAULT_OPTIONS, (Options == NULL) ? L"" : Options);
+      if (FileExists(Dir, InitRd.wc_str())) {
+		  XString CustomOptions = SPrintf("root=/dev/disk/by-partuuid/%ls initrd=%ls\\%ls %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd.wc_str(), LINUX_DEFAULT_OPTIONS.c_str(), Options.c_str());
         FreePool(InitRd);
         return CustomOptions;
       }
       FreePool(InitRd);
     }
   }
-  return PoolPrint(L"root=/dev/disk/by-partuuid/%s %s %s", PartUUID, LINUX_DEFAULT_OPTIONS, (Options == NULL) ? L"" : Options);
+  return SPrintf("root=/dev/disk/by-partuuid/%ls %s %s", PartUUID, LINUX_DEFAULT_OPTIONS.c_str(), Options.c_str());
 }
 
 STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
@@ -406,7 +407,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 }
 #if USE_XTHEME
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
-                                       IN CONST CHAR16 *LoaderOptions,
+                                       IN CONST XString& LoaderOptions,
                                        IN CONST XStringW& FullTitle,
                                        IN CONST XStringW& LoaderTitle,
                                        IN REFIT_VOLUME *Volume,
@@ -424,7 +425,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 #else
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
-                                       IN CONST CHAR16 *LoaderOptions,
+                                       IN CONST XString& LoaderOptions,
                                        IN CONST CHAR16 *FullTitle,
                                        IN CONST CHAR16 *LoaderTitle,
                                        IN REFIT_VOLUME *Volume,
@@ -584,14 +585,14 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
   Entry->Flags            = OSFLAG_SET(Flags, OSFLAG_USEGRAPHICS);
-  if (LoaderOptions) {
+  if (LoaderOptions.notEmpty()) {
     if (OSFLAG_ISSET(Flags, OSFLAG_NODEFAULTARGS)) {
-      Entry->LoadOptions  = EfiStrDuplicate(LoaderOptions);
+      Entry->LoadOptions  = LoaderOptions;
     } else {
-      Entry->LoadOptions  = PoolPrint(L"%a %s", gSettings.BootArgs, LoaderOptions);
+      Entry->LoadOptions  = SPrintf("%s %s", gSettings.BootArgs, LoaderOptions.c_str());
     }
   } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
-    Entry->LoadOptions    = PoolPrint(L"%a", gSettings.BootArgs);
+    Entry->LoadOptions    = SPrintf("%s", gSettings.BootArgs);
   }
 
   // locate a custom icon for the loader
@@ -616,9 +617,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     case OSTYPE_OSX_INSTALLER:
       OSIconName = GetOSIconName(Entry->OSVersion);// Sothor - Get OSIcon name using OSVersion
       // apianti - force custom logo even when verbose
-      if ((Entry->LoadOptions != NULL) &&
-          ((StrStr(Entry->LoadOptions, L"-v") != NULL) ||
-           (StrStr(Entry->LoadOptions, L"-V") != NULL))) {
+      if ( Entry->LoadOptions.ExistInIC("-v")  ) {
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
@@ -763,7 +762,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     Entry->Image = *Image;
   } else {
 //    Entry->Image = ThemeX.GetIcon("unknown");  //no such icon
-    Entry->Image = ThemeX.GetIcon("vol_internal");
+    Entry->Image = ThemeX.GetIcon("vol_internal"_XS);
   }
   // Load DriveImage
   if (DriveImage) {
@@ -827,7 +826,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 {
   CONST CHAR16            *FileName;
-  CHAR16* TempOptions;
+//  CHAR16* TempOptions;
 //  CHAR16            DiagsFileName[256];
   LOADER_ENTRY      *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -872,7 +871,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   if (Guid) {
 	SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
-	SubScreen->AddMenuInfoLine_f("Options: %ls", Entry->LoadOptions);
+	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.c_str());
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX ||
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
@@ -974,8 +973,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
     
   } else if (Entry->LoaderType == OSTYPE_LINEFI) {
-    BOOLEAN Quiet = (StrStr(Entry->LoadOptions, L"quiet") != NULL);
-    BOOLEAN WithSplash = (StrStr(Entry->LoadOptions, L"splash") != NULL);
+    BOOLEAN Quiet = Entry->LoadOptions.ExistIn("quiet");
+    BOOLEAN WithSplash = Entry->LoadOptions.ExistIn("splash");
     
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
@@ -986,57 +985,50 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      FreePool(SubEntry->LoadOptions);
       if (Quiet) {
         SubEntry->Title.SWPrintf("%ls verbose", Entry->Title.s());
-        SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+        SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, "quiet"_XS);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
-        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet");
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, "quiet"_XS);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
         SubEntry->Title.SWPrintf("%ls without splash", Entry->Title.s());
-        SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
+        SubEntry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, "splash"_XS);
       } else {
         SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
-        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, "splash"_XS);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      FreePool(SubEntry->LoadOptions);
       if (WithSplash) {
         if (Quiet) {
-          TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
           SubEntry->Title.SWPrintf("%ls verbose without splash", Entry->Title.s());
-          SubEntry->LoadOptions = RemoveLoadOption(TempOptions, L"quiet");
-          FreePool(TempOptions);
+          SubEntry->LoadOptions = RemoveLoadOption(RemoveLoadOption(Entry->LoadOptions, "splash"_XS), "quiet"_XS);
         } else {
-          TempOptions = RemoveLoadOption(Entry->LoadOptions, L"splash");
           SubEntry->Title.SWPrintf("%ls quiet without splash", Entry->Title.s());
-          SubEntry->LoadOptions = AddLoadOption(TempOptions, L"quiet");
-          FreePool(TempOptions);
+          SubEntry->LoadOptions = AddLoadOption(RemoveLoadOption(Entry->LoadOptions, "splash"_XS), "quiet"_XS);
         }
       } else if (Quiet) {
-        TempOptions = RemoveLoadOption(Entry->LoadOptions, L"quiet");
+//        TempOptions = RemoveLoadOption(Entry->LoadOptions, "quiet"_XS);
         SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
-        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"splash");
-        FreePool(TempOptions);
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, "splash"_XS);
+//        FreePool(TempOptions);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
-        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, L"quiet splash");
+        SubEntry->LoadOptions = AddLoadOption(Entry->LoadOptions, "quiet splash"_XS);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
-    Entry->LoadOptions = PoolPrint(L"-s -h");
+    Entry->LoadOptions.SPrintf("-s -h");
     
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
@@ -1054,7 +1046,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
-      SubEntry->LoadOptions     = PoolPrint(L"-s -c");
+      SubEntry->LoadOptions.SPrintf("-s -c");
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -1062,7 +1054,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls in text mode", FileName);
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions     = PoolPrint(L"-v");
+      SubEntry->LoadOptions.SPrintf("-v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       SubScreen->AddMenuEntry(SubEntry, true);
     }
@@ -1074,13 +1066,13 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
 #if USE_XTHEME
-BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderOptions,
+BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XString& LoaderOptions,
                        IN CONST XStringW& LoaderTitle,
                        IN REFIT_VOLUME *Volume, IN XImage *Image,
                        IN UINT8 OSType, IN UINT8 Flags)
 #else
-STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderOptions,
-                              IN CONST CHAR16 *LoaderTitle,
+STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XString& LoaderOptions,
+                              IN CONST XStringW& LoaderTitle,
                               IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
                               IN UINT8 OSType, IN UINT8 Flags)
 #endif
@@ -1160,31 +1152,16 @@ VOID AddPRSEntry(REFIT_VOLUME *Volume)
   switch (WhatBoot) {
     case Paper:
     case (Paper | Rock):
-#if USE_XTHEME
-      AddLoaderEntry(PaperBoot, L""_XSW, L"macOS InstallP"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#else
-      AddLoaderEntry(PaperBoot, NULL, L"macOS InstallP", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#endif
-
+      AddLoaderEntry(PaperBoot, ""_XS, L"macOS InstallP"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
       break;
     case Scissor:
     case (Paper | Scissor):
-#if USE_XTHEME
-      AddLoaderEntry(ScissorBoot, L""_XSW, L"macOS InstallS"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#else
-      AddLoaderEntry(ScissorBoot, NULL, L"macOS InstallS", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#endif
-
+      AddLoaderEntry(ScissorBoot, ""_XS, L"macOS InstallS"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
       break;
     case Rock:
     case (Rock | Scissor):
     case (Rock | Scissor | Paper):
-#if USE_XTHEME
-      AddLoaderEntry(RockBoot, L""_XSW, L"macOS InstallR"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#else
-      AddLoaderEntry(RockBoot, NULL, L"macOS InstallR", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#endif
-
+      AddLoaderEntry(RockBoot, ""_XS, L"macOS InstallR"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
       break;
 
     default:
@@ -1237,69 +1214,40 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) {
-#if USE_XTHEME
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", L""_XSW, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
-#else
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
-#endif
-
-
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", ""_XS, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
       } else {
-#if USE_XTHEME
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", L""_XSW, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
-#else
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
-#endif
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", ""_XS, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
     } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
-#if USE_XTHEME
-      AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
-#else
-      AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
-#endif
-
+      AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
     }
-#if USE_XTHEME
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
-    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", L""_XSW, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
-    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", L""_XSW, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
-    AddLoaderEntry(L"\\macOS Install Data\\boot.efi", L""_XSW, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
-    AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", L""_XSW, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
+    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", ""_XS, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
+    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", ""_XS, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
+    AddLoaderEntry(L"\\macOS Install Data\\boot.efi", ""_XS, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
+    AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", ""_XS, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
     AddPRSEntry(Volume); // 10.12+
 
     // Netinstall
-    AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter", L""_XSW, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-
-#else
-    // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
-    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
-    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
-    AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
-    AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
-    AddPRSEntry(Volume); // 10.12+
-
-    // Netinstall
-    AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter", NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#endif
+    AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter", ""_XS, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // Use standard location for boot.efi, according to the install files is present
     // That file indentifies a DVD/ESD/BaseSystem/Fusion Drive Install Media, so when present, check standard path to avoid entry duplication
-#if USE_XTHEME
     if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
       if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app")) {
         // InstallDVD/BaseSystem
-        AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.6/10.7
+        AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.6/10.7
       } else if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app")) {
         // BaseSystem
-        AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
+        AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
       } else if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app")) {
         // BaseSystem
-        AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12+
+        AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12+
       } else if (FileExists(Volume->RootDir, L"\\BaseSystem.dmg") && FileExists(Volume->RootDir, L"\\mach_kernel")) {
         // InstallESD
         if (FileExists(Volume->RootDir, L"\\MacOSX_Media_Background.png")) {
-          AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
+          AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
         } else {
-          AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8
+          AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8
         }
       } else if (FileExists(Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                  FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
@@ -1307,68 +1255,25 @@ VOID ScanLoader(VOID)
         if (StriStr(Volume->VolName, L"Recovery") != NULL) {
           // FileVault of HFS+
           // TODO: need info for 10.11 and lower
-          AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"macOS FileVault"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.12+
+          AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"macOS FileVault"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.12+
         } else {
           // Fusion Drive
-          AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
+          AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
         }
       } else if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
         // Installed
         if (EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
           if (!FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
-            AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"Mac OS X"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.6 - 10.7
+            AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"Mac OS X"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.6 - 10.7
           } else if (FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
-            AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"OS X"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
+            AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"OS X"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
           } else {
-            AddLoaderEntry(MACOSX_LOADER_PATH, L""_XSW, L"macOS"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.12+
+            AddLoaderEntry(MACOSX_LOADER_PATH, ""_XS, L"macOS"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.12+
           }
         }
       }
     }
-#else
-    if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
-      if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app")) {
-        // InstallDVD/BaseSystem
-        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.6/10.7
-      } else if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app")) {
-        // BaseSystem
-        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
-      } else if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app")) {
-        // BaseSystem
-        AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12+
-      } else if (FileExists(Volume->RootDir, L"\\BaseSystem.dmg") && FileExists(Volume->RootDir, L"\\mach_kernel")) {
-        // InstallESD
-        if (FileExists(Volume->RootDir, L"\\MacOSX_Media_Background.png")) {
-          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
-        } else {
-          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8
-        }
-      } else if (FileExists(Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                 FileExists(Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
-                 FileExists(Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel")) {
-        if (StriStr(Volume->VolName, L"Recovery") != NULL) {
-          // FileVault of HFS+
-          // TODO: need info for 10.11 and lower
-          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS FileVault", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
-        } else {
-          // Fusion Drive
-          AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X Install", Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.11
-        }
-      } else if (!FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
-        // Installed
-        if (EFI_ERROR(GetRootUUID(Volume)) || isFirstRootUUID(Volume)) {
-          if (!FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
-            AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"Mac OS X", Volume, NULL, OSTYPE_OSX, 0); // 10.6 - 10.7
-          } else if (FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
-            AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"OS X", Volume, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
-          } else {
-            AddLoaderEntry(MACOSX_LOADER_PATH, NULL, L"macOS", Volume, NULL, OSTYPE_OSX, 0); // 10.12+
-          }
-        }
-      }
-    }
-#endif
-    /* APFS Container support. 
+    /* APFS Container support.
      * s.mtr 2017
      */
     if ((StriCmp(Volume->VolName, L"Recovery") == 0 || StriCmp(Volume->VolName, L"Preboot") == 0) && APFSSupport == TRUE) {
@@ -1379,65 +1284,34 @@ VOID ScanLoader(VOID)
         StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
         StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
         StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
-#if USE_XTHEME
         //Try to add FileVault entry
-        AddLoaderEntry(APFSFVBootPath, L""_XSW, L"FileVault Prebooter"_XSW, Volume, NULL, OSTYPE_OSX, 0);
+        AddLoaderEntry(APFSFVBootPath, ""_XS, L"FileVault Prebooter"_XSW, Volume, NULL, OSTYPE_OSX, 0);
         //Try to add Recovery APFS entry
-        AddLoaderEntry(APFSRecBootPath, L""_XSW, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
+        AddLoaderEntry(APFSRecBootPath, ""_XS, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
         //Try to add macOS install entry
-        AddLoaderEntry(APFSInstallBootPath, L""_XSW, L"macOS Install Prebooter"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#else
-        //Try to add FileVault entry
-        AddLoaderEntry(APFSFVBootPath, NULL, L"FileVault Prebooter", Volume, NULL, OSTYPE_OSX, 0);
-        //Try to add Recovery APFS entry
-        AddLoaderEntry(APFSRecBootPath, NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
-        //Try to add macOS install entry
-        AddLoaderEntry(APFSInstallBootPath, NULL, L"macOS Install Prebooter", Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-#endif
+        AddLoaderEntry(APFSInstallBootPath, ""_XS, L"macOS Install Prebooter"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
         FreePool(CurrentUUID);
       }
     }
-#if USE_XTHEME
     // check for Mac OS X Recovery Boot
-    AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", L""_XSW, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
+    AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", ""_XS, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
 
     // Sometimes, on some systems (HP UEFI, if Win is installed first)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
     // bootmgfw.efi to bootmgfw-orig.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", L""_XSW, L"Microsoft EFI"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", ""_XS, L"Microsoft EFI"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu
     // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
     // since on some systems this will actually be CloverX64.efi
     // renamed to bootmgfw.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L""_XSW, L"Microsoft EFI Boot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", ""_XS, L"Microsoft EFI Boot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu. This entry is redundant so excluded
     // AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
-    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L""_XSW, L"Microsoft EFI cdboot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0)) {
-      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L""_XSW, L"Microsoft EFI CDBOOT"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
+    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", ""_XS, L"Microsoft EFI cdboot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0)) {
+      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", ""_XS, L"Microsoft EFI CDBOOT"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     }
-#else
-    // check for Mac OS X Recovery Boot
-    AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", NULL, L"Recovery", Volume, NULL, OSTYPE_RECOVERY, 0);
-
-    // Sometimes, on some systems (HP UEFI, if Win is installed first)
-    // it is needed to get rid of bootmgfw.efi to allow starting of
-    // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
-    // bootmgfw.efi to bootmgfw-orig.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", L"", L"Microsoft EFI", Volume, NULL, OSTYPE_WINEFI, 0);
-    // check for Microsoft boot loader/menu
-    // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
-    // since on some systems this will actually be CloverX64.efi
-    // renamed to bootmgfw.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", L"", L"Microsoft EFI Boot", Volume, NULL, OSTYPE_WINEFI, 0);
-    // check for Microsoft boot loader/menu. This entry is redundant so excluded
-    // AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
-    // check for Microsoft boot loader/menu on CDROM
-    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", L"", L"Microsoft EFI cdboot", Volume, NULL, OSTYPE_WINEFI, 0)) {
-      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", L"", L"Microsoft EFI CDBOOT", Volume, NULL, OSTYPE_WINEFI, 0);
-    }
-#endif
 #if defined(ANDX86)
     if (TRUE) { //gSettings.AndroidScan
       // check for Android loaders
@@ -1452,10 +1326,10 @@ VOID ScanLoader(VOID)
 #if USE_XTHEME
             XImage ImageX;
             ImageX.LoadXImage(ThemeX.ThemeDir, AndroidEntryData[Index].Icon);
-            AddLoaderEntry(AndroidEntryData[Index].Path, L""_XSW, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
+            AddLoaderEntry(AndroidEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
                            &ImageX, OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
 #else
-            AddLoaderEntry(AndroidEntryData[Index].Path, L"", AndroidEntryData[Index].Title, Volume,
+            AddLoaderEntry(AndroidEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
                            LoadOSIcon(AndroidEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
 #endif
           }
@@ -1470,10 +1344,10 @@ VOID ScanLoader(VOID)
 #if USE_XTHEME
         XImage ImageX;
         ImageX.LoadXImage(ThemeX.ThemeDir, LinuxEntryData[Index].Icon);
-        AddLoaderEntry(LinuxEntryData[Index].Path, L""_XSW, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
+        AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
                        &ImageX, OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
 #else
-        AddLoaderEntry(LinuxEntryData[Index].Path, L"", LinuxEntryData[Index].Title, Volume,
+        AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
                        LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
 #endif
       }
@@ -1484,7 +1358,7 @@ VOID ScanLoader(VOID)
         EFI_FILE_INFO  *FileInfo = NULL;
         EFI_TIME        PreviousTime;
         CHAR16         *Path = NULL;
-        CHAR16         *Options;
+//        CHAR16         *Options;
         // Get the partition UUID and make sure it's lower case
         CHAR16          PartUUID[40];
         ZeroMem(&PreviousTime, sizeof(EFI_TIME));
@@ -1506,18 +1380,15 @@ VOID ScanLoader(VOID)
                 // get the kernel file path
                 Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
                 if (Path != NULL) {
-                  Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+                  XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
                   // Add the entry
 #if USE_XTHEME
-                  AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                  AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #else
-                  AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                  AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #endif
 
 
-                  if (Options != NULL) {
-                    FreePool(Options);
-                  }
                   FreePool(Path);
                 }
                 // free the file info
@@ -1545,17 +1416,9 @@ VOID ScanLoader(VOID)
               }
             }
             if (Path != NULL) {
-              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
               // Add the entry
-#if USE_XTHEME
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
-
-              if (Options != NULL) {
-                FreePool(Options);
-              }
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
               FreePool(Path);
             }
             break;
@@ -1580,16 +1443,9 @@ VOID ScanLoader(VOID)
               }
             }
             if (Path != NULL) {
-              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
               // Add the entry
-#if USE_XTHEME
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
-              if (Options != NULL) {
-                FreePool(Options);
-              }
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
               FreePool(Path);
             }
             break;
@@ -1614,16 +1470,13 @@ VOID ScanLoader(VOID)
               }
             }
             if (Path != NULL) {
-              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              XString Options = LinuxKernelOptions(Iter.DirHandle, XStringW().takeValueFrom(Basename(Path) + LINUX_LOADER_PATH.length()).wc_str(), PartUUID, ""_XS);
               // Add the entry
 #if USE_XTHEME
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #else
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #endif
-              if (Options != NULL) {
-                FreePool(Options);
-              }
               FreePool(Path);
             }
             break;
@@ -1652,16 +1505,13 @@ VOID ScanLoader(VOID)
               }
             }
             if (Path != NULL) {
-              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              XString Options = LinuxKernelOptions(Iter.DirHandle, XStringW().takeValueFrom(Basename(Path) + LINUX_LOADER_PATH.length()).wc_str(), PartUUID, ""_XS);
               // Add the entry
 #if USE_XTHEME
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #else
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #endif
-              if (Options != NULL) {
-                FreePool(Options);
-              }
               FreePool(Path);
             }
             break;
@@ -1690,15 +1540,12 @@ VOID ScanLoader(VOID)
               }
             }
             if (Path != NULL) {
-              Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+              XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
 #if USE_XTHEME
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #else
-              AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #endif
-              if (Options != NULL) {
-                FreePool(Options);
-              }
               FreePool(Path);
             }
             break;
@@ -1711,16 +1558,13 @@ VOID ScanLoader(VOID)
                   // get the kernel file path
                   Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
                   if (Path != NULL) {
-                    Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + StrLen(LINUX_LOADER_PATH), PartUUID, NULL);
+                    XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
                     // Add the entry
 #if USE_XTHEME
-                    AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : XStringW().takeValueFrom(Options), L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                    AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #else
-                    AddLoaderEntry(Path, (Options == NULL) ? LINUX_DEFAULT_OPTIONS : Options, NULL, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                    AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
 #endif
-                    if (Options != NULL) {
-                      FreePool(Options);
-                    }
                     FreePool(Path);
                   }
                 }
@@ -1740,33 +1584,18 @@ VOID ScanLoader(VOID)
         DirIterClose(&Iter);
       }
     } //if linux scan
-#if USE_XTHEME
     //     DBG("search for  optical UEFI\n");
     if (Volume->DiskKind == DISK_KIND_OPTICAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, L""_XSW, L"UEFI optical"_XSW, Volume, NULL, OSTYPE_OTHER, 0);
+      AddLoaderEntry(BOOT_LOADER_PATH, ""_XS, L"UEFI optical"_XSW, Volume, NULL, OSTYPE_OTHER, 0);
     }
     //     DBG("search for internal UEFI\n");
     if (Volume->DiskKind == DISK_KIND_INTERNAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, L""_XSW, L"UEFI internal"_XSW, Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
+      AddLoaderEntry(BOOT_LOADER_PATH, ""_XS, L"UEFI internal"_XSW, Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
     }
     //    DBG("search for external UEFI\n");
     if (Volume->DiskKind == DISK_KIND_EXTERNAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, L""_XSW, L"UEFI external"_XSW, Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
+      AddLoaderEntry(BOOT_LOADER_PATH, ""_XS, L"UEFI external"_XSW, Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
     }
-#else
-    //     DBG("search for  optical UEFI\n");
-    if (Volume->DiskKind == DISK_KIND_OPTICAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI optical", Volume, NULL, OSTYPE_OTHER, 0);
-    }
-    //     DBG("search for internal UEFI\n");
-    if (Volume->DiskKind == DISK_KIND_INTERNAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI internal", Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
-    }
-    //    DBG("search for external UEFI\n");
-    if (Volume->DiskKind == DISK_KIND_EXTERNAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, L"", L"UEFI external", Volume, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
-    }
-#endif
   }
 
 }
@@ -2120,7 +1949,7 @@ if ((Image == NULL) && Custom->ImagePath) {
     do
     {
       // Search for linux kernels
-      CONST CHAR16 *CustomOptions = Custom->Options;
+      XString CustomOptions = Custom->Options;
       if (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL)) {
         EFI_FILE_INFO *FileInfo = NULL;
         // Get the next kernel path or stop looking
@@ -2145,7 +1974,7 @@ if ((Image == NULL) && Custom->ImagePath) {
       // Check to make sure we should update custom options or not
       if (FindCustomPath && OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTARGS)) {
         // Find the init ram image and select root
-        CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath) + StrLen(LINUX_LOADER_PATH), PartUUID, Custom->Options);
+        CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath) + LINUX_LOADER_PATH.length(), PartUUID, Custom->Options);
       }
       // Check to make sure that this entry is not hidden or disabled by another custom entry
       if (!IsSubEntry) {
@@ -2308,7 +2137,7 @@ if ((Image == NULL) && Custom->ImagePath) {
             if (Guid) {
               SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
             }
-			  SubScreen->AddMenuInfoLine_f("Options: %ls", Entry->LoadOptions);
+			  SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.c_str());
             DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
               if (!CustomSubEntry->Settings) {
@@ -2328,7 +2157,6 @@ if ((Image == NULL) && Custom->ImagePath) {
       // cleanup custom
       if (FindCustomPath) {
         FreePool(CustomPath);
-        FreePool(CustomOptions);
       }
     } while (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL));
     // Close the kernel boot directory

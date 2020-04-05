@@ -62,6 +62,7 @@ public:
 
 	xsize length() const { return m_len; }
 	xsize size() const { return m_len; }
+	xsize sizeInBytes() const { return m_len*sizeof(wchar_t); }
 	xsize allocatedSize() const { return m_allocatedSize; }
 	void SetLength(xsize len);
 	const wchar_t* s() { return m_data; }
@@ -116,12 +117,7 @@ public:
 
 
 	void vSWPrintf(const char* format, va_list va);
-#ifndef _MSC_VER
   void SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
-#else
-  void SWPrintf(const char* format, ...);
-#endif // !__MSC_VER
-
 
 	const XStringW &operator =(const XStringW &aString);
 //	const XStringW &operator =(const wchar_t* S) {fdsf};
@@ -212,15 +208,8 @@ extern const XStringW NullXStringW;
 
 XStringW operator"" _XSW ( const wchar_t* s, size_t len);
 
-#ifndef _MSC_VER
 XStringW SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
-#else
-XStringW SWPrintf(const char* format, ...);
-#endif // !__MSC_VER
-
-
 XStringW SubString(const wchar_t *S, xsize pos, xsize count);
-
 XStringW CleanCtrl(const XStringW &S);
 
 #endif

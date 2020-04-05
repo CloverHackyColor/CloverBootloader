@@ -175,7 +175,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
   } else {
     Entry->Image = ThemeX.GetIcon(XString().takeValueFrom(Volume->LegacyOS->IconName));
     if (Entry->Image.isEmpty()) {
-      Entry->Image = ThemeX.GetIcon("vol_internal"); //we have no legacy.png
+      Entry->Image = ThemeX.GetIcon("vol_internal"_XS); //we have no legacy.png
     }
   }
 #else
@@ -218,7 +218,7 @@ BOOLEAN AddLegacyEntry(IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
 #endif
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
-  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
+  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD"_XS : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB"_XS : "HD"_XS);
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN();

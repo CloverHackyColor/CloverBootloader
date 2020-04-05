@@ -980,13 +980,12 @@ CUSTOM_LOADER_ENTRY
                        IN CUSTOM_LOADER_ENTRY *Entry
                        )
 {
-  CUSTOM_LOADER_ENTRY *DuplicateEntry;
-
   if (Entry == NULL) {
     return NULL;
   }
 
-  DuplicateEntry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
+//  DuplicateEntry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
+  CUSTOM_LOADER_ENTRY* DuplicateEntry = new CUSTOM_LOADER_ENTRY;
   if (DuplicateEntry != NULL) {
     if (Entry->Volume != NULL) {
       DuplicateEntry->Volume         = EfiStrDuplicate (Entry->Volume);
@@ -996,9 +995,7 @@ CUSTOM_LOADER_ENTRY
       DuplicateEntry->Path           = EfiStrDuplicate (Entry->Path);
     }
 
-    if (Entry->Options != NULL) {
-      DuplicateEntry->Options        = EfiStrDuplicate (Entry->Options);
-    }
+	DuplicateEntry->Options        = Entry->Options;
 
     if (Entry->FullTitle != NULL) {
       DuplicateEntry->FullTitle      = Entry->FullTitle;
@@ -1942,21 +1939,15 @@ FillinCustomEntry (
 
   Prop = GetProperty (DictPointer, "AddArguments");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Options != NULL) {
-      CONST CHAR16 *OldOptions = Entry->Options;
-      Entry->Options     = PoolPrint (L"%s %a", OldOptions, Prop->string);
-      FreePool (OldOptions);
+    if (Entry->Options.notEmpty()) {
+      Entry->Options.SPrintf("%s %s", Entry->Options.c_str(), Prop->string);
     } else {
-      Entry->Options     = PoolPrint (L"%a", Prop->string);
+      Entry->Options.SPrintf("%s", Prop->string);
     }
   } else {
     Prop = GetProperty (DictPointer, "Arguments");
     if (Prop != NULL && (Prop->type == kTagTypeString)) {
-      if (Entry->Options != NULL) {
-        FreePool (Entry->Options);
-      }
-
-      Entry->Options     = PoolPrint (L"%a", Prop->string);
+      Entry->Options.SPrintf("%s", Prop->string);
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
@@ -2185,8 +2176,8 @@ FillinCustomEntry (
 
   Entry->VolumeType = GetVolumeType(DictPointer);
 
-  if (Entry->Options == NULL && OSTYPE_IS_WINDOWS(Entry->Type)) {
-    Entry->Options = L"-s -h";
+  if (Entry->Options.isEmpty() && OSTYPE_IS_WINDOWS(Entry->Type)) {
+    Entry->Options.SPrintf("-s -h");
   }
 #if USE_XTHEME
   if (Entry->Title.isEmpty()) {
@@ -2597,17 +2588,17 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
     if (Entry->Path != NULL) {
       FreePool (Entry->Path);
     }
-
     Entry->Path = PoolPrint (L"%a", Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "Arguments");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Options != NULL) {
-      FreePool (Entry->Options);
-    } else {
-      Entry->Options = PoolPrint (L"%a", Prop->string);
-    }
+//    if (!Entry->Options.isEmpty()) {
+//      Entry->Options.setEmpty();
+//    } else {
+//      Entry->Options.SPrintf("%s", Prop->string);
+//    }
+      Entry->Options.SPrintf("%s", Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "FullTitle");
@@ -2701,11 +2692,12 @@ FillinCustomTool (
 
   Prop = GetProperty (DictPointer, "Arguments");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Options != NULL) {
-      FreePool (Entry->Options);
-    } else {
-      Entry->Options = PoolPrint (L"%a", Prop->string);
-    }
+//    if (!Entry->Options.isEmpty()) {
+//      Entry->Options.setEmpty();
+//    } else {
+//      Entry->Options.SPrintf("%s", Prop->string);
+//    }
+      Entry->Options.SPrintf("%s", Prop->string);
   }
 
   Prop = GetProperty (DictPointer, "FullTitle");
@@ -3519,7 +3511,7 @@ GetEarlyUserSettings (
       if (Dict2 != NULL) {
         Prop = GetProperty (Dict2, "Entries");
         if (Prop != NULL) {
-          CUSTOM_LOADER_ENTRY *Entry;
+//          CUSTOM_LOADER_ENTRY *Entry;
           INTN   i, Count = GetTagCount (Prop);
           TagPtr Dict3;
 
@@ -3533,10 +3525,12 @@ GetEarlyUserSettings (
                 break;
               }
               // Allocate an entry
-              Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
+//              Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
+              CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
+
               // Fill it in
               if (Entry != NULL && (!FillinCustomEntry (Entry, Dict3, FALSE) || !AddCustomEntry (Entry))) {
-                FreePool (Entry);
+                delete Entry;
               }
             }
           }
@@ -9489,7 +9483,7 @@ SetFSInjection (
   }
 
   // check if blocking of caches is needed
-  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) || ((StrStr(Entry->LoadOptions, L"-f") != NULL))) {
+  if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) || Entry->LoadOptions.ExistIn("-f")  ) {
     MsgLog ("Blocking kext caches\n");
     //  BlockCaches = TRUE;
     // add caches to blacklist

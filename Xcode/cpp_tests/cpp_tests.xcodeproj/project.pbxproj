@@ -49,6 +49,12 @@
 		9A28CD4B241F4CCE00F3D247 /* xcode_utf16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf16.cpp */; };
 		9A28CD4C241F4CCE00F3D247 /* xcode_utf16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf16.cpp */; };
 		9A28CD4D241F4CCE00F3D247 /* xcode_utf16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf16.cpp */; };
+		9A4185B12439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
+		9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
+		9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A57C20D2418A27B0029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20B2418A27B0029A39F /* XUINTN.cpp */; };
 		9A57C20E2418A27B0029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20B2418A27B0029A39F /* XUINTN.cpp */; };
 		9A57C2112418A3560029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20F2418A3550029A39F /* XUINTN_test.cpp */; };
@@ -159,6 +165,10 @@
 		9A28CD1E241BB61B00F3D247 /* strlen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strlen.cpp; sourceTree = "<group>"; };
 		9A28CD49241F437C00F3D247 /* xcode_utf16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xcode_utf16.h; sourceTree = "<group>"; };
 		9A28CD4A241F4CCE00F3D247 /* xcode_utf16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xcode_utf16.cpp; sourceTree = "<group>"; };
+		9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
+		9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
+		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
+		9A4185BF2439F73A00BEAFB8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
 		9A57C20A2418A1FD0029A39F /* global_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
 		9A57C20B2418A27B0029A39F /* XUINTN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN.cpp; sourceTree = "<group>"; };
 		9A57C20C2418A27B0029A39F /* XUINTN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XUINTN.h; sourceTree = "<group>"; };
@@ -234,6 +244,8 @@
 				9A0B084B2402FE9300E2B470 /* XObjArray.h */,
 				9A57C267241A799B0029A39F /* XString.cpp */,
 				9A57C266241A799B0029A39F /* XString.h */,
+				9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */,
+				9A4185BF2439F73A00BEAFB8 /* XStringArray.h */,
 				9A0B08482402FE9300E2B470 /* XStringW.cpp */,
 				9A0B08462402FE9300E2B470 /* XStringW.h */,
 				9A0B08472402FE9300E2B470 /* XStringWArray.cpp */,
@@ -252,6 +264,8 @@
 		9A0B084C2402FE9B00E2B470 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */,
+				9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */,
 				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
 				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A0B08642403144C00E2B470 /* global_test.cpp */,
@@ -474,6 +488,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A57C20E2418A27B0029A39F /* XUINTN.cpp in Sources */,
 				9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A28CD20241BB61B00F3D247 /* abort.cpp in Sources */,
@@ -496,6 +511,7 @@
 				9AA045902425F979000D6970 /* unicode_conversions.cpp in Sources */,
 				9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */,
 				9A28CD11241B9EF800F3D247 /* strcmp.cpp in Sources */,
+				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A57C2162418A6EA0029A39F /* XStringWP.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
 				9AA0458B2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
@@ -509,6 +525,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A57C2192418B9A00029A39F /* XUINTN.cpp in Sources */,
 				9A57C21A2418B9A00029A39F /* XObjArray_tests.cpp in Sources */,
 				9A28CD21241BB61B00F3D247 /* abort.cpp in Sources */,
@@ -531,6 +548,7 @@
 				9AA045912425F979000D6970 /* unicode_conversions.cpp in Sources */,
 				9A57C2252418B9A00029A39F /* XStringWArray_test.cpp in Sources */,
 				9A28CD12241B9EF800F3D247 /* strcmp.cpp in Sources */,
+				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A57C2262418B9A00029A39F /* XStringWP.cpp in Sources */,
 				9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */,
 				9AA0458C2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
@@ -562,10 +580,12 @@
 				9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
 				9A0B08662403144C00E2B470 /* global_test.cpp in Sources */,
+				9A4185B12439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A0B08572402FF7A00E2B470 /* XToolsCommon.cpp in Sources */,
 				9ACAB117242623EE00BDB3CF /* printf_lite.c in Sources */,
 				9AA0458F2425F979000D6970 /* unicode_conversions.cpp in Sources */,
 				9A0B08582402FF7F00E2B470 /* XStringWArray_test.cpp in Sources */,
+				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A28CD10241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A57C2152418A6EA0029A39F /* XStringWP.cpp in Sources */,
 				9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */,

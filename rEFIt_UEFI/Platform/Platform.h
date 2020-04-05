@@ -820,7 +820,7 @@ struct CUSTOM_LOADER_ENTRY {
   CONST CHAR16            *DriveImagePath;
   CONST CHAR16            *Volume;
   CONST CHAR16            *Path;
-  CONST CHAR16            *Options;
+  XString                  Options;
 #if USE_XTHEME
   XStringW FullTitle;
   XStringW Title;
@@ -843,6 +843,21 @@ struct CUSTOM_LOADER_ENTRY {
   EG_PIXEL         *BootBgColor; //why it is array? It is one value!
 #endif
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
+
+#if USE_XTHEME
+  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(0), DriveImagePath(0), Volume(0), Path(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
+                          KernelScan(0), CustomBoot(0), CustomLogo(0), BootBgColor({0,0,0,0})
+						{ memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
+#else
+  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), Image(0), DriveImage(0), ImagePath(0), DriveImagePath(0), Volume(0), Path(0), FullTitle(0), Title(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
+                          KernelScan(0), CustomBoot(0), CustomLogo(0), BootBgColor(0)
+					    { memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
+#endif
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
+  CUSTOM_LOADER_ENTRY& operator=(const CUSTOM_LOADER_ENTRY&) = delete;
+
 };
 
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
@@ -882,7 +897,7 @@ struct CUSTOM_TOOL_ENTRY {
   CHAR16            *ImagePath;
   CHAR16            *Volume;
   CHAR16            *Path;
-  CHAR16            *Options;
+  XString           Options;
 #if USE_XTHEME
   XStringW          FullTitle;
   XStringW          Title;
@@ -2322,9 +2337,6 @@ VOID deallocMatchOSes(struct MatchOSes *s);
 INTN
 countOccurrences(CHAR8 *s, CHAR8 c);
 
-
-CHAR16 *AddLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption);
-CHAR16 *RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption);
 
 //
 // BootOptions.c

@@ -2661,7 +2661,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   //this should be inited by the Theme
   if (MainImage.isEmpty()) {
     if (!IsEmbeddedTheme()) {
-      MainImage = ThemeX.GetIcon("os_mac");
+      MainImage = ThemeX.GetIcon("os_mac"_XS);
     }
     if (MainImage.isEmpty()) {
       MainImage.DummyImage(MainSize);
@@ -3588,9 +3588,9 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
     TimeoutSeconds = 0;
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
-      CHAR16 *TmpArgs = NULL;
+      XString TmpArgs;
       if (AsciiStrLen(gSettings.BootArgs) > 0) {
-        TmpArgs = PoolPrint(L"%a", gSettings.BootArgs);
+        TmpArgs.SPrintf("%s", gSettings.BootArgs);
       }
       SubMenuIndex = -1;
 
@@ -3608,10 +3608,6 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
       }
  //          DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
 
-      if (TmpArgs) {
-        FreePool(TmpArgs);
-        TmpArgs = NULL;
-      }
       SubMenuExit = 0;
       while (!SubMenuExit) {
         //running details menu
@@ -3625,7 +3621,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
           break;
         }
         if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
-          MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = EfiStrDuplicate(((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
+          MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = (((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
         }
         //       DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
         if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
@@ -3634,8 +3630,8 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 //           DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
-          if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions) {
-            snprintf(gSettings.BootArgs, 255, "%ls", MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
+          if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
+            snprintf(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.c_str());
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

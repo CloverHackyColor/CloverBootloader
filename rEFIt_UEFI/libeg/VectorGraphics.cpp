@@ -481,7 +481,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     Icon* NewIcon = new Icon(i); //initialize with embedded but further replace by loaded
     /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
-    /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night", Scale, &NewIcon->ImageNight);
+    /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, Scale, &NewIcon->ImageNight);
 //    DBG("...night status %s\n", strerror(Status));
     Icons.AddReference(NewIcon, true);
   }

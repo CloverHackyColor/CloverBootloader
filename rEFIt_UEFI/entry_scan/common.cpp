@@ -170,75 +170,75 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DE
 }
 
 
-CHAR16 *AddLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption)
+XString AddLoadOption(IN CONST XString& LoadOptions, IN CONST XString& LoadOption)
 {
   // If either option strings are null nothing to do
-  if (LoadOptions == NULL)
+  if (LoadOptions.isEmpty())
   {
-    if (LoadOption == NULL) return NULL;
-    // Duplicate original options as nothing to add
-    return EfiStrDuplicate(LoadOption);
+    // return LoadOption as nothing to add
+    return LoadOption;
   }
   // If there is no option or it is already present duplicate original
-  // with XStringW it will be replaced by if (LoadOptions.ExistIn(LoadOption))
-  else if ((LoadOption == NULL) || StrStr(LoadOptions, LoadOption))
-    return EfiStrDuplicate(LoadOptions);
-  // Otherwise add option
-  return PoolPrint(L"%s %s", LoadOptions, LoadOption); //LoadOptions + LoadOption
+  else {
+	  if ( LoadOptions.ExistIn(LoadOption) ) return LoadOptions;
+	  // Otherwise add option
+	  return SPrintf("%s %s", LoadOptions.c_str(), LoadOption.c_str()); //LoadOptions + LoadOption
+  }
 }
 
-CHAR16 *RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOption)
+XString RemoveLoadOption(IN const XString& LoadOptions, IN const XString& LoadOption)
 {
-  CONST CHAR16 *Placement;
-  CHAR16 *NewLoadOptions;
-  UINTN   Length, Offset, OptionLength;
+//  CONST CHAR16 *Placement;
+//  CHAR16 *NewLoadOptions;
+//  UINTN   Length, Offset, OptionLength;
 
   //DBG("LoadOptions: '%ls', remove LoadOption: '%ls'\n", LoadOptions, LoadOption);
   // If there are no options then nothing to do
-  if (LoadOptions == NULL) return NULL;
+  if (LoadOptions.isEmpty()) return ""_XS;
   // If there is no option to remove then duplicate original
-  if (LoadOption == NULL) return EfiStrDuplicate(LoadOptions);
+  if (LoadOption.isEmpty()) return LoadOptions;
   // If not present duplicate original
-  Placement = StrStr(LoadOptions, LoadOption);
-  if (Placement == NULL) return EfiStrDuplicate(LoadOptions);
+  xsize Offset = LoadOptions.IdxOf(LoadOption);
+  if ( Offset == MAX_XSIZE ) return LoadOptions;
 
   // Get placement of option in original options
-  Offset = (Placement - LoadOptions);
-  Length = StrLen(LoadOptions);
-  OptionLength = StrLen(LoadOption);
+//  Offset = (Placement - LoadOptions);
+  xsize Length = LoadOptions.length();
+  xsize OptionLength = LoadOption.length();
 
   // If this is just part of some larger option (contains non-space at the beginning or end)
-  if ((Offset > 0 && LoadOptions[Offset - 1] != L' ') ||
-      ((Offset + OptionLength) < Length && LoadOptions[Offset + OptionLength] != L' ')) {
-    return EfiStrDuplicate(LoadOptions);
+  if ((Offset > 0 && LoadOptions[Offset - 1] != ' ') ||
+      ((Offset + OptionLength) < Length && LoadOptions[Offset + OptionLength] != ' ')) {
+    return LoadOptions;
   }
 
   // Consume preceeding spaces
-  while (Offset > 0 && LoadOptions[Offset - 1] == L' ') {
+  while (Offset > 0 && LoadOptions[Offset - 1] == ' ') {
     OptionLength++;
     Offset--;
   }
 
   // Consume following spaces
-  while (LoadOptions[Offset + OptionLength] == L' ') {
+  while (LoadOptions[Offset + OptionLength] == ' ') {
    OptionLength++;
   }
 
   // If it's the whole string return NULL
-  if (OptionLength == Length) return NULL;
+  if (OptionLength == Length) return ""_XS;
 
+  XString NewLoadOptions;
   if (Offset == 0) {
     // Simple case - we just need substring after OptionLength position
-    NewLoadOptions = EfiStrDuplicate(LoadOptions + OptionLength);
+    NewLoadOptions = LoadOptions.SubString(OptionLength, MAX_XSIZE);
   } else {
-    // The rest of LoadOptions is Length - OptionLength, but we may need additional space and ending 0
-    NewLoadOptions = (__typeof__(NewLoadOptions))AllocateZeroPool((Length - OptionLength + 2) * sizeof(CHAR16));
     // Copy preceeding substring
-    CopyMem(NewLoadOptions, LoadOptions, Offset * sizeof(CHAR16));
+	NewLoadOptions = LoadOptions.SubString(0, Offset);
+//    CopyMem(NewLoadOptions, LoadOptions, Offset * sizeof(CHAR16));
     if ((Offset + OptionLength) < Length) {
       // Copy following substring, but include one space also
       OptionLength--;
-      CopyMem(NewLoadOptions + Offset, LoadOptions + Offset + OptionLength, (Length - OptionLength - Offset) * sizeof(CHAR16));
+	  NewLoadOptions += LoadOptions.SubString(Offset + OptionLength, MAX_XSIZE);
+//      CopyMem(NewLoadOptions + Offset, LoadOptions + Offset + OptionLength, (Length - OptionLength - Offset) * sizeof(CHAR16));
     }
   }
   return NewLoadOptions;

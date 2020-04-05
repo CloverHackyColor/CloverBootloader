@@ -31,12 +31,13 @@ class XString
 
 // Next 2 methods are protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
 // It's better practice, if you need a non-const pointer for low-level access, to use dataSized and ahev to specify the size
-	char* _data(unsigned int ui) const { if ( ui >= m_allocatedSize ) panic("char* data(unsigned int ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
-	char* _data(int i) const { if ( i<0 ) panic("char* data(int i) -> i < 0"); if ( (unsigned int)i >= m_allocatedSize ) panic("char* data(int i) -> i >= m_allocatedSize");  return m_data+i; }
-	char* _data(unsigned long ui) const { if ( ui >= m_allocatedSize ) panic("char* data(unsigned long ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
-	char* _data(long i) const { if ( i<0 ) panic("char* data(long i) -> i < 0"); if ( (unsigned long)i >= m_allocatedSize ) panic("char* data(long i) -> i >= m_allocatedSize");  return m_data+i; }
-	char* _data(xsize ui) const { if ( ui >= m_allocatedSize ) panic("char* data(xsize ui=0) -> ui >= m_allocatedSize"); return m_data+ui; }
-	char* _data(xisize i) const { if ( i<0 ) panic("char* data(xisize i) -> i < 0"); if ( (xsize)i >= m_allocatedSize ) panic("char* data(xisize i) -> i >= m_allocatedSize");  return m_data+i; }
+// It's possible to access data(m_allocatedSize) because the real allocated size is m_allocatedSize+1
+	char* _data(unsigned int ui) const { if ( ui > m_allocatedSize ) panic("char* data(unsigned int ui=0) -> ui > m_allocatedSize"); return m_data+ui; }
+	char* _data(int i) const { if ( i<0 ) panic("char* data(int i) -> i < 0"); if ( (unsigned int)i > m_allocatedSize ) panic("char* data(int i) -> i > m_allocatedSize");  return m_data+i; }
+	char* _data(unsigned long ui) const { if ( ui > m_allocatedSize ) panic("char* data(unsigned long ui=0) -> ui > m_allocatedSize"); return m_data+ui; }
+	char* _data(long i) const { if ( i<0 ) panic("char* data(long i) -> i < 0"); if ( (unsigned long)i > m_allocatedSize ) panic("char* data(long i) -> i > m_allocatedSize");  return m_data+i; }
+	char* _data(xsize ui) const { if ( ui > m_allocatedSize ) panic("char* data(xsize ui=0) -> ui > m_allocatedSize"); return m_data+ui; }
+	char* _data(xisize i) const { if ( i<0 ) panic("char* data(xisize i) -> i < 0"); if ( (xsize)i > m_allocatedSize ) panic("char* data(xisize i) -> i > m_allocatedSize");  return m_data+i; }
 
   public:
 
@@ -77,9 +78,10 @@ class XString
 	/* IsNull ? */
 	void setEmpty() { setLength(0); }
 	bool isEmpty() const { return length() == 0; }
+	bool notEmpty() const { return !isEmpty(); }
 
 	/* Cast */
-	operator const char *() const { return data(); }
+//	operator const char *() const { return data(); } // disabled during big refactoring
 //	operator char *() { return data(); }
 	
 //	int ToInt() const;
@@ -108,6 +110,7 @@ class XString
 	void StrnCpy(const char *buf, xsize len);
 	void StrnCat(const char *buf, xsize len);
 	void StrCat(const char *buf);
+	void StrCat(const XString& S) { StrCat(S.c_str()) ; }
 	void Delete(xsize pos, xsize count=1);
 
 	void Insert(xsize pos, const XString& Str);
@@ -115,12 +118,7 @@ class XString
 	void Cat(const XString &uneXString);
 
 	XString& vSPrintf(const char *Format, va_list va);
-	XString& SPrintf(const char *format, ...)
-		#ifndef _MSC_VER
-			__attribute__((format (printf, 2, 3))) // 2 and 3 because of hidden parameter 'this'.
-		#endif
-		;
-
+	XString& SPrintf(const char *format, ...)	__attribute__((format (printf, 2, 3))); // 2 and 3 because of hidden parameter 'this'.
 
 	const XString& takeValueFrom(const char* S) { StrCpy(S); return *this; }
 	const XString& takeValueFrom(const char* S, xsize count) { StrnCpy(S, count); return *this; }
@@ -150,13 +148,36 @@ class XString
 //	const XString &operator += (unsigned long long);
 
 	XString SubString(xsize pos, xsize count) const;
+
 	xsize IdxOf(char c, xsize Pos = 0) const;
-	xsize IdxOf(const XString &S, xsize Pos = 0) const;
+
+	xsize IdxOf(const char* s, xsize s_len, xsize pos) const;
+	xsize IdxOf(const char* s, xsize pos = 0) const { return IdxOf(s, strlen(s), pos); }
+	xsize IdxOf(const XString &S, xsize pos = 0) const { return IdxOf(S.c_str(), S.length(), pos); }
+	bool ExistIn(const char* s, xsize s_len, xsize pos = 0) const { return IdxOf(s, s_len, pos) != MAX_XSIZE; }
+	bool ExistIn(const char* s, xsize pos = 0) const { return IdxOf(s, pos) != MAX_XSIZE; }
+	bool ExistIn(const XString &S, xsize pos = 0) const { return IdxOf(S, pos) != MAX_XSIZE; }
+
+	xsize IdxOfIC(const char* s, xsize s_len, xsize pos) const;
+	xsize IdxOfIC(const char* s, xsize pos = 0) const { return IdxOfIC(s, strlen(s), pos); }
+	xsize IdxOfIC(const XString &S, xsize pos = 0) const { return IdxOfIC(S.c_str(), S.length(), pos); }
+	bool ExistInIC(const char* s, xsize s_len, xsize pos = 0) const { return IdxOfIC(s, s_len, pos) != MAX_XSIZE; }
+	bool ExistInIC(const char* s, xsize pos = 0) const { return IdxOfIC(s, pos) != MAX_XSIZE; }
+	bool ExistInIC(const XString &S, xsize pos = 0) const { return IdxOfIC(S, pos) != MAX_XSIZE; }
+
 #ifdef TODO_skqdjfhksqjhfksjqdf
-	xsize IdxOfIC(const XString &S, xsize Pos = 0) const;
+	bool ExistInIAC(const XString &S) const { return IdxOfIC(S) != MAX_XSIZE; }
+#endif
+
+
+#ifdef TODO_skqdjfhksqjhfksjqdf
 	xsize IdxOfIAC(const XString &S, xsize Pos = 0) const;
 #endif
-	xsize RIdxOf(const XString &S, xsize Pos = MAX_XSIZE) const;
+
+
+	xsize RIdxOf(const char* s, xsize s_len, xsize pos) const;
+	xsize RIdxOf(const char* s, xsize pos = MAX_XSIZE) const { return IdxOf(s, strlen(s), pos); }
+	xsize RIdxOf(const XString &S, xsize pos = MAX_XSIZE) const { return IdxOf(S.c_str(), S.length(), pos); }
 
 	void ToLower(bool FirstCharIsCap = false);
 	bool IsLetters() const;
@@ -164,10 +185,7 @@ class XString
 	bool IsDigits() const;
 	bool IsDigits(xsize pos, xsize count) const;
 
-	bool ExistIn(const XString &S) const { return IdxOf(S) != MAX_XSIZE; }
 #ifdef TODO_skqdjfhksqjhfksjqdf
-	bool ExistInIC(const XString &S) const { return IdxOfIC(S) != MAX_XSIZE; }
-	bool ExistInIAC(const XString &S) const { return IdxOfIC(S) != MAX_XSIZE; }
 	bool DeleteIC(const XString &S);
 #endif
 	void Replace(char c1, char c2);
@@ -188,7 +206,8 @@ class XString
 */
 #endif
 
-	bool Equal(const char* S) const { return strcmp(data(), (S ? S : "")) == 0; };
+//	bool Equal(const char* S) const { return strcmp(data(), (S ? S : "")) == 0; };
+	bool Equal(const XString& S) const { return strcmp(c_str(), S.c_str()) == 0; };
 //	bool BeginEqual(const char* S) const { return StringBeginEqual(data(), S); }
 //	bool SubStringEqual(xsize Pos, const char* S) const { return StringBeginEqual(data(Pos), S); }
 #ifdef TODO_skqdjfhksqjhfksjqdf
@@ -230,7 +249,7 @@ class XString
 	// Chaines
 	friend XString operator + (const XString& p1, const XString& p2) { XString s; s=p1; s+=p2; return s; }
 //	friend XString operator + (const XString& p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
-	XString operator + (const char *p2 ) { XString s(*this); s+=p2; return s; }
+//	XString operator + (const char *p2 ) { XString s(*this); s+=p2; return s; }
 
 	friend XString operator + (const char *p1,   const XString& p2) { XString s; s.takeValueFrom(p1); s+=p2; return s; }
 //	friend XString operator + (const XConstString& p1,   const XString& p2) { XString s; s=p1; s+=p2; return s; }
@@ -256,15 +275,15 @@ class XString
 	// OpÈrateur ==
 	// Chaines
 	friend bool operator == (const XString& s1,        const XString& s2)      { return s1.Equal(s2); }
-	friend bool operator == (const XString& s1,        const char* s2  )        { return s1.Equal(s2); }
-	friend bool operator == (const char* s1,            const XString& s2)      { return s2.Equal(s1); }
+//	friend bool operator == (const XString& s1,        const char* s2  )        { return s1.Equal(s2); }  // during refactor
+//	friend bool operator == (const char* s1,            const XString& s2)      { return s2.Equal(s1); }  // during refactor
 //	friend bool operator == (const XConstString &s1,   const XString& s2)      { return s1.Compare(s2) == 0; }
 //	friend bool operator == (const XString &s1,        const XConstString& s2) { return s1.Compare(s2) == 0; }
 //	friend bool operator == (const XConstString &s1,   const XConstString& s2) { return s1.Compare(s2) == 0; }
 
 	friend bool operator != (const XString& s1,        const XString& s2)      { return !s1.Equal(s2); }
-	friend bool operator != (const XString& s1,        const char* s2  )        { return !s1.Equal(s2); }
-	friend bool operator != (const char* s1,            const XString& s2)      { return !s2.Equal(s1); }
+//	friend bool operator != (const XString& s1,        const char* s2  )        { return !s1.Equal(s2); } // during refactor
+//	friend bool operator != (const char* s1,            const XString& s2)      { return !s2.Equal(s1); }  // during refactor
 //	friend bool operator != (const XConstString &s1,   const XString& s2)      { return s1.Compare(s2) != 0; }
 //	friend bool operator != (const XString &s1,        const XConstString& s2) { return s1.Compare(s2) != 0; }
 //	friend bool operator != (const XConstString &s1,   const XConstString& s2) { return s1.Compare(s2) != 0; }
@@ -285,18 +304,19 @@ class XString
 //	friend bool operator >= (const XString& s1, const char* s2  ) { return s1.Compare(s2) >= 0; }
 //	friend bool operator >= (const char* s1,   const XString& s2) { return s2.Compare(s1) <= 0; }
 
+	static char to_lower(char ch) { return (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch); }
 };
 
 extern const XString NullXString;
 
 XString operator"" _XS ( const char* s, size_t len);
 
-XString SPrintf(const char *format, ...)
-	#ifndef _MSC_VER
-		__attribute__((format(printf, 1, 2)))
-	#endif
-;
-XString SubString(const char *S, xsize pos, xsize count);
+XString SPrintf(const char *format, ...) __attribute__((format(printf, 1, 2)));
+XString SubString(const char *s, xsize s_len, xsize pos, xsize count);
+inline XString SubString(const char *s, xsize pos, xsize count) { return SubString(s, strlen(s), pos, count); }
+inline XString SubString(const XString& S, xsize pos, xsize count) { return SubString(S.c_str(), S.length(), pos, count); }
+
+
 #ifdef TODO_skqdjfhksqjhfksjqdf
 XString ToAlpha(const char *S);
 XString ToAlpha(const XString &S);

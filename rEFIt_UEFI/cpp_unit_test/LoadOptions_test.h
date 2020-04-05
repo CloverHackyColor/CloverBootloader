@@ -1,0 +1,1 @@
+int BootOptions_tests();

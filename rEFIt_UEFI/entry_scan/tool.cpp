@@ -75,11 +75,11 @@ extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 #if USE_XTHEME
 STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XImage& Image,
-                            IN CHAR16 ShortcutLetter, IN CONST CHAR16 *Options)
+                            IN CHAR16 ShortcutLetter, IN CONST XString& Options)
 #else
 STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
-                            IN CHAR16 ShortcutLetter, IN CONST CHAR16 *Options)
+                            IN CHAR16 ShortcutLetter, IN CONST XString& Options)
 #endif
 
 {
@@ -109,7 +109,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTi
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
-  Entry->LoadOptions = Options ? Options : NULL;
+  Entry->LoadOptions = Options;
   //actions
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
@@ -149,7 +149,7 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->Flags           = 0;
-  Entry->LoadOptions     = NULL;
+  Entry->LoadOptions.setEmpty();
 //  Entry->LoaderType      = OSTYPE_OTHER;
 
   //actions
@@ -179,21 +179,21 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Add Clover boot options for all entries");
-    SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-ADD");
+    SubEntry->LoadOptions.SPrintf("BO-ADD");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Remove all Clover boot options");
-    SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-REMOVE");
+    SubEntry->LoadOptions.SPrintf("BO-REMOVE");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Print all UEFI boot options to log");
-    SubEntry->LoadOptions     = EfiStrDuplicate(L"BO-PRINT");
+    SubEntry->LoadOptions.SPrintf("BO-PRINT");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
@@ -220,8 +220,8 @@ VOID ScanTool(VOID)
   //    DBG("Scanning for tools...\n");
 #if USE_XTHEME
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
-    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
-      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
+    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS)) {
+      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
     }
   }
 #else
@@ -234,12 +234,12 @@ VOID ScanTool(VOID)
 //      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
 //    } else
     //there seems to be the best version
-      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL)) {
-        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
+      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS)) {
+        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
       }
 //  }
 #else
-    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NULL);
+    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
 #endif
   }
 #endif

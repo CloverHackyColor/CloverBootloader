@@ -24,6 +24,7 @@ const XString NullXString;
 void XString::Init(xsize aSize)
 {
 	m_data = (char*)malloc( (aSize+1)*sizeof(char) ); /* le 0 terminal n'est pas compté dans m_allocatedSize */
+	/* If want to change that the real allocated size is m_allocatedSize+1, _data method should be changed to limit access (ui > m_allocatedSize change to ui >= m_allocatedSize) */
 	if ( !m_data ) {
 		DebugLog(2, "XString::Init(%llu) : Xalloc returned NULL. Cpu halted\n", (aSize+1)*sizeof(char));
 		panic();
@@ -478,34 +479,35 @@ xsize XString::IdxOf(char aChar, xsize Pos) const
 	return MAX_XSIZE;
 }
 
-xsize XString::IdxOf(const XString &S, xsize Pos) const
+xsize XString::IdxOf(const char* s, xsize s_len, xsize pos) const
 {
   xsize i;
   xsize Idx;
 
-	if ( length() < S.length() ) return MAX_XSIZE;
-	for ( Idx=Pos ; Idx<=length()-S.length() ; Idx+=1 ) {
+	if ( length() < s_len ) return MAX_XSIZE;
+	for ( Idx=pos ; Idx<=length()-s_len ; Idx+=1 ) {
 		i = 0;
-	    while( i<S.length()  &&  ( data()[Idx+i] - S[i] ) == 0 ) i += 1;
-		if ( i == S.length() ) return Idx;
+	    while( i<s_len  &&  ( data()[Idx+i] - s[i] ) == 0 ) i += 1;
+		if ( i == s_len ) return Idx;
+	}
+	return MAX_XSIZE;
+}
+
+xsize XString::IdxOfIC(const char* s, xsize s_len, xsize pos) const
+{
+  xsize i;
+  xsize Idx;
+
+	if ( length() < s_len ) return MAX_XSIZE;
+	for ( Idx=pos ; Idx<=length()-s_len ; Idx+=1 ) {
+		i = 0;
+	    while( i<s_len  &&  ( to_lower(*data(Idx+i)) - to_lower(s[i]) ) == 0 ) i += 1;
+		if ( i == s_len ) return Idx;
 	}
 	return MAX_XSIZE;
 }
 
 #ifdef NOT_USED_ANYMORE_skqdjfhksqjhfksjqdf
-unsigned int XString::IdxOfIC(const XString &S, xsize Pos) const
-{
-  xsize i;
-  xsize Idx;
-
-	if ( length() < S.length() ) return MAX_XSIZE;
-	for ( Idx=Pos ; Idx<=length()-S.length() ; Idx+=1 ) {
-		i = 0;
-	    while( i<S.length()  &&  ( Minuscule(data()[Idx+i]) - Minuscule(S[i]) ) == 0 ) i += 1;
-		if ( i == S.length() ) return Idx;
-	}
-	return MAX_XSIZE;
-}
 
 unsigned int XString::IdxOfIAC(const XString &S, xsize Pos) const
 {
@@ -515,26 +517,26 @@ unsigned int XString::IdxOfIAC(const XString &S, xsize Pos) const
 	if ( length() < S.length() ) return MAX_XSIZE;
 	for ( Idx=Pos ; Idx<=length()-S.length() ; Idx+=1 ) {
 		i = 0;
-		while( i<S.length()  &&  ( MinusculeSansAccent(data()[Idx+i]) - MinusculeSansAccent(S[i]) ) == 0 ) i += 1;
+		while( i<S.length()  &&  ( to_lowerSansAccent(data(Idx+i)) - to_lowerSansAccent(S[i]) ) == 0 ) i += 1;
 		if ( i == S.length() ) return Idx;
 	}
 	return MAX_XSIZE;
 }
 #endif
 
-xsize XString::RIdxOf(const XString &S, xsize Pos) const
+xsize XString::RIdxOf(const char* s, xsize s_len, xsize pos) const
 {
   xsize i;
   xsize Idx;
 
-	if ( S.length() == 0 ) return MAX_XSIZE;
-	if ( Pos > length() ) Pos = length();
-	if ( Pos < S.length() ) return MAX_XSIZE;
-	Pos -= S.length();
-	for ( Idx=Pos+1 ; Idx-- > 0 ; ) {
+	if ( s_len == 0 ) return MAX_XSIZE;
+	if ( pos > length() ) pos = length();
+	if ( pos < s_len ) return MAX_XSIZE;
+	pos -= s_len;
+	for ( Idx=pos+1 ; Idx-- > 0 ; ) {
 		i = 0;
-		while( i<S.length()  &&  data()[Idx+i] == S[i] ) i += 1;
-		if ( i == S.length() ) return Idx;
+		while( i<s_len  &&  *data(Idx+i)== s[i] ) i += 1;
+		if ( i == s_len ) return Idx;
 	}
 	return MAX_XSIZE;
 }
@@ -566,7 +568,7 @@ void XString::ToLower(bool FirstCharIsCap)
 			ui = 0;
 		}
 		for ( ; ui < length() ; ui+=1 ) {
-			data()[ui] = Minuscule(data()[ui]);
+			data()[ui] = to_lower(data(ui));
 		}
 	}
 }
@@ -579,7 +581,7 @@ bool XString::IsLetters() const
 	p = data();
 	if ( !*p ) return false;
 	for ( ; *p ; p+=1 ) {
-		aChar = MinusculeSansAccent(*p);  // toutes les lettres, avec accent ou pas, seront dans l'intervalle 'a'..'z'
+		aChar = to_lowerSansAccent(*p);  // toutes les lettres, avec accent ou pas, seront dans l'intervalle 'a'..'z'
 		if ( aChar < 'a' ) return false;
 		if ( aChar > 'z' ) return false;
 	}
@@ -631,7 +633,7 @@ bool XString::IsLettersNoAccent() const
 	p = data();
 	if ( !*p ) return false;
 	for ( ; *p ; p+=1 ) {
-		aChar = Minuscule(*p); // Uniquement les lettres maj et min sans accent seront dans l'intervalle 'a'..'z'
+		aChar = to_lower(*p); // Uniquement les lettres maj et min sans accent seront dans l'intervalle 'a'..'z'
 		if ( aChar < 'a' ) return false;
 		if ( aChar > 'z' ) return false;
 	}
@@ -1022,10 +1024,11 @@ XString SPrintf(const char *format, ...)
 	return str;
 }
 
-XString SubString(const char *S, xsize pos, xsize count)
+XString SubString(const char *s, xsize s_len, xsize pos, xsize count)
 {
-	if ( strlen(S)-pos < count ) count = (xsize)(strlen(S)-pos); // overflow ?
-	return XString().takeValueFrom( S+pos, count );
+  if ( pos >= s_len ) return NullXString;
+	if ( s_len-pos < count ) count = s_len-pos;
+	return XString().takeValueFrom( s+pos, count );
 }
 
 #ifdef NOT_USED_ANYMORE_skqdjfhksqjhfksjqdf
@@ -1058,10 +1061,10 @@ XString ToLower(const char *S, bool FirstCharIsCap)
 
 	if ( S && *S ) {
 		if ( FirstCharIsCap ) ReturnValue = Majuscule(S[0]);
-		else ReturnValue = Minuscule(S[0]);
+		else ReturnValue = to_lower(S[0]);
 
 		for ( ui=1 ; S[ui] ; ui+=1 ) {
-			ReturnValue += Minuscule(S[ui]);
+			ReturnValue += to_lower(S[ui]);
 		}
 	}
 	return ReturnValue;

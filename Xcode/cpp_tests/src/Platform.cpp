@@ -130,6 +130,20 @@ void CopyMem(void *Destination, void *Source, UINTN Length)
 	memmove(Destination, Source, (size_t)Length);
 }
 
+CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src)
+{
+	CHAR16* newS = (CHAR16*)malloc((wcslen(Src)+1)*sizeof(wchar_t));
+	memcpy(newS, Src, (wcslen(Src)+1)*sizeof(wchar_t));
+	return newS;
+}
+
+CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString)
+{
+	return (CHAR16*)wcsstr(String, SearchString);
+}
+
+
+
 //UINTN AsciiStrLen(const char* String)
 //{
 //	return (UINTN)strlen(String);

@@ -182,19 +182,19 @@ void XTheme::Init()
  * probably it whould return Empty image
  * Image.isEmpty() == true
  */
-const XImage& XTheme::GetIcon(const char* Name)
-{
-  return GetIcon(XString().takeValueFrom(Name));
-}
-
-const XImage& XTheme::GetIcon(const CHAR16* Name)
-{
-  return GetIcon(XString().takeValueFrom(Name));
-}
+//const XImage& XTheme::GetIcon(const char* Name)
+//{
+//  return GetIcon(XString().takeValueFrom(Name));
+//}
+//
+//const XImage& XTheme::GetIcon(const CHAR16* Name)
+//{
+//  return GetIcon(XString().takeValueFrom(Name));
+//}
 
 static XImage NullIcon;
 
-const XImage& XTheme::GetIcon(const XString& Name)
+const XImage& XTheme::GetIcon(const XString& Name) const
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -210,7 +210,7 @@ const XImage& XTheme::GetIcon(const XString& Name)
   return NullIcon; //return pointer to XImage? Or XImage copy?
 }
 
-const XImage& XTheme::GetIcon(INTN Id)
+const XImage& XTheme::GetIcon(INTN Id) const 
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -595,10 +595,10 @@ void XTheme::InitSelection() //for PNG theme
     }
   } else {
     //SVG theme already parsed all icons
-    Buttons[0] = GetIcon("radio_button");
-    Buttons[1] = GetIcon("radio_button_selected");
-    Buttons[2] = GetIcon("checkbox");
-    Buttons[3] = GetIcon("checkbox_checked");
+    Buttons[0] = GetIcon("radio_button"_XS);
+    Buttons[1] = GetIcon("radio_button_selected"_XS);
+    Buttons[2] = GetIcon("checkbox"_XS);
+    Buttons[3] = GetIcon("checkbox_checked"_XS);
   }
 
   // non-selected background images
@@ -661,7 +661,7 @@ void XTheme::InitBar()
   if (ScrollbarBackgroundImage.isEmpty()) {
     if (TypeSVG) {
       //return OSIconsTable[i].image;
-      ScrollbarBackgroundImage = GetIcon("scrollbar_background");
+      ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS);
     }
     if (ScrollbarBackgroundImage.isEmpty()) {
       ScrollbarBackgroundImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill));
@@ -669,7 +669,7 @@ void XTheme::InitBar()
   }
   if (ScrollbarImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollbarImage = GetIcon("scrollbar_holder"); //"_night" is already accounting
+      ScrollbarImage = GetIcon("scrollbar_holder"_XS); //"_night" is already accounting
     }
     if (ScrollbarImage.isEmpty()) {
       ScrollbarImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill));
@@ -677,7 +677,7 @@ void XTheme::InitBar()
   }
   if (ScrollStartImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollStartImage = GetIcon("scrollbar_start");
+      ScrollStartImage = GetIcon("scrollbar_start"_XS);
     }
     if (ScrollStartImage.isEmpty()) {
       ScrollStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start));
@@ -685,7 +685,7 @@ void XTheme::InitBar()
   }
   if (ScrollEndImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollEndImage = GetIcon("scrollbar_end");
+      ScrollEndImage = GetIcon("scrollbar_end"_XS);
     }
     if (ScrollEndImage.isEmpty()) {
       ScrollEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end));
@@ -693,13 +693,13 @@ void XTheme::InitBar()
   }
   if (UpButtonImage.isEmpty()) {
     if (TypeSVG) {
-      UpButtonImage = GetIcon("scrollbar_up_button");
+      UpButtonImage = GetIcon("scrollbar_up_button"_XS);
     }
     UpButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button));
   }
   if (DownButtonImage.isEmpty()) {
     if (TypeSVG) {
-      DownButtonImage = GetIcon("scrollbar_down_button");
+      DownButtonImage = GetIcon("scrollbar_down_button"_XS);
     }
     if (DownButtonImage.isEmpty()) {
       DownButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button));
