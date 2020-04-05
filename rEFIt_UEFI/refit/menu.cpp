@@ -2218,8 +2218,6 @@ VOID InitBar(VOID)
 #if USE_XTHEME
 
 #else
-
-
 VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
   EG_IMAGE* MainImage = NULL;
@@ -2232,7 +2230,7 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
   } else {
     MainImage = Entry->Image;
   }
-//this should be inited by the Theme
+  //this should be inited by the Theme
   if (!MainImage) {
     if (!IsEmbeddedTheme()) {
       MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
@@ -2256,237 +2254,46 @@ VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN 
     BadgeImage = Entry->getBadgeImage();
   } //else null
 
-  for (i = ScrollState.FirstVisible; i <= ScrollState.LastVisible && i <= ScrollState.MaxIndex; i++) {
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - ScrollState.FirstVisible));
-
-      if (i == ScrollState.CurrentSelection) {
-        gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-      } else {
-        gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-      }
-
-      StrCpyS(ResultString, TITLE_MAX_LEN, Entries[i].Title);
-
-      if (Entries[i].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[i];
-        if (entry.getREFIT_INPUT_DIALOG()) {
-          if ((entry).Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, (entry).Item->BValue ? L": [+]" : L": [ ]");
-          } else {
-            StrCatS(ResultString, TITLE_MAX_LEN, (entry).Item->SValue);
-          }
-        } else if (entry.getREFIT_MENU_CHECKBIT()) {
-          // check boxes
-          StrCatS(ResultString, TITLE_MAX_LEN, ((entry).Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]");
-        } else if (entry.getREFIT_MENU_SWITCH()) {
-          // radio buttons
-
-          // update chosen config
-          if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
-            OldChosenItem = OldChosenConfig;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
-            OldChosenItem = OldChosenDsdt;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
-            OldChosenItem = OldChosenAudio;
-          }
-
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Row == OldChosenItem) ? L": (*)" : L": ( )");
-        }
-      }
-
-      for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
-        ResultString[j] = L' ';
-      }
-
-      ResultString[j] = 0;
-        gST->ConOut->OutputString(gST->ConOut, ResultString);
-      }
-
-      // scrolling indicators
-      gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
-      gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY);
-
-      if (ScrollState.FirstVisible > 0) {
-          gST->ConOut->OutputString (gST->ConOut, ArrowUp);
-      } else {
-          gST->ConOut->OutputString (gST->ConOut, L" ");
-      }
-
-      gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + ScrollState.MaxVisible);
-
-      if (ScrollState.LastVisible < ScrollState.MaxIndex) {
-          gST->ConOut->OutputString (gST->ConOut, ArrowDown);
-      } else {
-          gST->ConOut->OutputString (gST->ConOut, L" ");
-      }
-
-      break;
-
-    case MENU_FUNCTION_PAINT_SELECTION:
-			// last selection
-      // redraw selection cursor
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (ScrollState.LastSelection - ScrollState.FirstVisible));
-      gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-      //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[ScrollState.LastSelection]);
-			StrCpyS(ResultString, TITLE_MAX_LEN, Entries[ScrollState.LastSelection].Title);
-      if (Entries[ScrollState.LastSelection].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[ScrollState.LastSelection];
-        if (entry.getREFIT_INPUT_DIALOG()) {
-          if (entry.Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->BValue ? L": [+]" : L": [ ]");
-          } else {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->SValue);
-          }
-        } else if (entry.getREFIT_MENU_CHECKBIT()) {
-          // check boxes
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]");
-        } else if (entry.getREFIT_MENU_SWITCH()) {
-          // radio buttons
-
-          if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
-            OldChosenItem = OldChosenConfig;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
-            OldChosenItem = OldChosenDsdt;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
-            OldChosenItem = OldChosenAudio;
-          }
-
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Row == OldChosenItem) ? L": (*)" : L": ( )");
-        }
-      }
-
-      for (j = StrLen(ResultString); j < (INTN) TextMenuWidth; j++) {
-        ResultString[j] = L' ';
-      }
-
-      ResultString[j] = 0;
-      gST->ConOut->OutputString (gST->ConOut, ResultString);
-
-        // current selection
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible));
-      gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-      StrCpyS(ResultString, TITLE_MAX_LEN, Entries[ScrollState.CurrentSelection].Title);
-      if (Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[ScrollState.CurrentSelection];
-        if (entry.getREFIT_INPUT_DIALOG()) {
-          if (entry.Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->BValue ? L": [+]" : L": [ ]");
-          } else {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->SValue);
-          }
-        } else if (entry.getREFIT_MENU_CHECKBIT()) {
-          // check boxes
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]");
-        } else if (entry.getREFIT_MENU_SWITCH()) {
-          // radio buttons
-
-          if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
-            OldChosenItem = OldChosenConfig;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
-            OldChosenItem = OldChosenDsdt;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
-            OldChosenItem = OldChosenAudio;
-          }
-
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Row == OldChosenItem) ? L": (*)" : L": ( )");
-        }
-      }
-
-      for (j = StrLen(ResultString); j < (INTN) TextMenuWidth; j++) {
-        ResultString[j] = L' ';
-      }
-
-      ResultString[j] = 0;
-      gST->ConOut->OutputString (gST->ConOut, ResultString);
-        //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[ScrollState.CurrentSelection]);
-
-      break;
-
-    case MENU_FUNCTION_PAINT_TIMEOUT:
-      if (ParamText[0] == 0) {
-        // clear message
-        gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-        gST->ConOut->SetCursorPosition (gST->ConOut, 0, ConHeight - 1);
-        gST->ConOut->OutputString (gST->ConOut, BlankLine + 1);
-      } else {
-        // paint or update message
-        gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-        gST->ConOut->SetCursorPosition (gST->ConOut, 3, ConHeight - 1);
-        TimeoutMessage = PoolPrint(L"%s  ", ParamText);
-        gST->ConOut->OutputString (gST->ConOut, TimeoutMessage);
-        FreePool(TimeoutMessage);
-      }
-
-      break;
-  }
-
-#endif
-
-/**
- * Draw text with specific coordinates.
- */
-
-
-#if USE_XTHEME
-
-#else
-
-
-INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
-{
-  INTN      TextWidth = 0;
-  INTN      XText = 0;
-  INTN      Height;
-  INTN      TextXYStyle = 1;
-  EG_IMAGE  *TextBufferXY = NULL;
-
-  if (!Text) {
-    return 0;
-  }
-  if (!textFace[1].valid) {
-    if (textFace[2].valid) {
-      TextXYStyle = 2;
-    } else {
-      TextXYStyle = 0;
-    }
-  }
-
-  egMeasureText(Text, &TextWidth, NULL);
-
-  if (XAlign == X_IS_LEFT) {
-    TextWidth = UGAWidth - XPos - 1;
-    XText = XPos;
-  }
-
-  if (GlobalConfig.TypeSVG) {
-    TextWidth += TextHeight * 2; //give more place for buffer
-    if (!textFace[TextXYStyle].valid) {
-      DBG("no vaid text face for message!\n");
-      Height = TextHeight;
-    } else {
-      Height = (int)(textFace[TextXYStyle].size * RowHeightFromTextHeight * GlobalConfig.Scale);
-    }
+  if (GlobalConfig.SelectionOnTop) {
+    SelectionImages[0]->HasAlpha = TRUE;
+    SelectionImages[2]->HasAlpha = TRUE;
+    //MainImage->HasAlpha = TRUE;
+    BltImageCompositeBadge(MainImage,
+                           SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                           BadgeImage,
+                           XPos, YPos, Scale);
   } else {
-    Height = TextHeight;
+    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                           MainImage,
+                           BadgeImage,
+                           XPos, YPos, Scale);
+  }
+  // draw BCS indicator
+  // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
+  if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+    SelectionImages[4]->HasAlpha = TRUE;
+
+    // indicator is for row 0, main entries, only
+    if (Entry->Row == 0) {
+      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
+                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
+                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
+                    &MenuBackgroundPixel, Scale);
+    }
   }
 
-  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
-
-  // render the text
-  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
-
-  if (XAlign != X_IS_LEFT) {
-    // shift 64 is prohibited
-    XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
+  Entry->Place.XPos = XPos;
+  Entry->Place.YPos = YPos;
+  Entry->Place.Width = MainImage->Width;
+  Entry->Place.Height = MainImage->Height;
+  //we can't free MainImage because it may be new image or it may be a link to entry image
+  // a workaround
+  if (NewImageCreated) {
+    egFreeImage(MainImage);
   }
-//  DBG("draw text %ls\n", Text);
-//  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
-  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
-  egFreeImage(TextBufferXY);
-
-  return TextWidth;
 }
 #endif
+
 /**
  * Helper function to draw text for Boot Camp Style.
  * @author: Needy
@@ -2550,265 +2357,6 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
 }
 #endif
 
-#if USE_XTHEME
-
-#else
-VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
-{
-  //use Text=null to reinit the buffer
-  if (!Text) {
-    if (TextBuffer) {
-      egFreeImage(TextBuffer);
-      TextBuffer = NULL;
-    }
-    return;
-  }
-
-  if (TextBuffer && (TextBuffer->Height != TextHeight)) {
-    egFreeImage(TextBuffer);
-    TextBuffer = NULL;
-  }
-
-  if (TextBuffer == NULL) {
-    TextBuffer = egCreateImage(UGAWidth-XPos, TextHeight, TRUE);
-  }
-
-  if (Cursor != 0xFFFF) {
-    egFillImage(TextBuffer, &MenuBackgroundPixel);
-  } else {
-    egFillImage(TextBuffer, &InputBackgroundPixel);
-  }
-
-
-  if (SelectedWidth > 0) {
-    // draw selection bar background
-    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, TextHeight,
-                    &SelectionBackgroundPixel);
-  }
-
-  // render the text
-  if (GlobalConfig.TypeSVG) {
-    //clovy - text veltically centred on Height
-    egRenderText(Text, TextBuffer, 0,
-                 (INTN)((TextHeight - (textFace[TextStyle].size * GlobalConfig.Scale)) / 2),
-                 Cursor, TextStyle);
-  } else {
-    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
-  }
-  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
-}
-
-#endif
-
-#if !USE_XTHEME
-VOID FreeScrollBar(VOID)
-{
-  if (ScrollbarBackgroundImage) {
-    egFreeImage(ScrollbarBackgroundImage);
-    ScrollbarBackgroundImage = NULL;
-  }
-  if (BarStartImage) {
-    egFreeImage(BarStartImage);
-    BarStartImage = NULL;
-  }
-  if (BarEndImage) {
-    egFreeImage(BarEndImage);
-    BarEndImage = NULL;
-  }
-  if (ScrollbarImage) {
-    egFreeImage(ScrollbarImage);
-    ScrollbarImage = NULL;
-  }
-  if (ScrollStartImage) {
-    egFreeImage(ScrollStartImage);
-    ScrollStartImage = NULL;
-  }
-  if (ScrollEndImage) {
-    egFreeImage(ScrollEndImage);
-    ScrollEndImage = NULL;
-  }
-  if (UpButtonImage) {
-    egFreeImage(UpButtonImage);
-    UpButtonImage = NULL;
-  }
-  if (DownButtonImage) {
-    egFreeImage(DownButtonImage);
-    DownButtonImage = NULL;
-  }
-}
-
-
-VOID InitBar(VOID)
-{
-  if (ThemeDir) {
-    if (!ScrollbarBackgroundImage) {
-        ScrollbarBackgroundImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_fill", L"png"), FALSE);
-    }
-    if (!BarStartImage) {
-      BarStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_start", L"png"), TRUE);
-    }
-    if (!BarEndImage) {
-      BarEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_end", L"png"), TRUE);
-    }
-    if (!ScrollbarImage) {
-      ScrollbarImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_fill", L"png"), FALSE);
-    }
-    if (!ScrollStartImage) {
-      ScrollStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_start", L"png"), TRUE);
-    }
-    if (!ScrollEndImage) {
-      ScrollEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_end", L"png"), TRUE);
-    }
-    if (!UpButtonImage) {
-      UpButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\up_button", L"png"), TRUE);
-    }
-    if (!DownButtonImage) {
-      DownButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\down_button", L"png"), TRUE);
-    }
-  }
-
-  if (!BarStartImage  && !GlobalConfig.TypeSVG) {
-    BarStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start), TRUE);
-  }
-  if (!BarEndImage && !GlobalConfig.TypeSVG) {
-    BarEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end), TRUE);
-  }
-  if (!ScrollbarBackgroundImage) {
-    if (GlobalConfig.TypeSVG) {
-       ScrollbarBackgroundImage = egLoadIcon(ThemeDir, L"scrollbar-background.png", 48);
-    }
-    if (!ScrollbarBackgroundImage) {
-      ScrollbarBackgroundImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill), TRUE);
-    }
-  }
-  if (!ScrollbarImage) {
-    if (GlobalConfig.TypeSVG) {
-      ScrollbarImage = egLoadIcon(ThemeDir, L"scrollbar-holder.png", 48);
-    }
-    if (!ScrollbarImage) {
-      ScrollbarImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill), TRUE);
-    }
-  }
-  if (!ScrollStartImage && !GlobalConfig.TypeSVG) {
-    ScrollStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start), TRUE);
-  }
-  if (!ScrollEndImage && !GlobalConfig.TypeSVG) {
-    ScrollEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end), TRUE);
-  }
-  if (!UpButtonImage && !GlobalConfig.TypeSVG) {
-    UpButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button), TRUE);
-  }
-  if (!DownButtonImage && !GlobalConfig.TypeSVG) {
-    DownButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button), TRUE);
-  }
-  if (!GlobalConfig.TypeSVG) {
-    UpButton.Width      = ScrollWidth; // 16
-    UpButton.Height     = ScrollButtonsHeight; // 20
-    DownButton.Width    = UpButton.Width;
-    DownButton.Height   = ScrollButtonsHeight;
-    BarStart.Height     = ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ScrollBarDecorationsHeight;
-    ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
-    ScrollEnd.Height    = ScrollScrollDecorationsHeight;
-
-  } else {
-    UpButton.Width      = ScrollWidth; // 16
-    UpButton.Height     = 0; // 20
-    DownButton.Width    = UpButton.Width;
-    DownButton.Height   = 0;
-    BarStart.Height     = ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ScrollBarDecorationsHeight;
-    ScrollStart.Height  = 0; // 7
-    ScrollEnd.Height    = 0;
-
-  }
-}
-#endif
-
-/**
- * Draw entries for GUI.
- */
-#if USE_XTHEME
-
-#else
-
-
-VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
-{
-  EG_IMAGE* MainImage = NULL;
-  EG_IMAGE* BadgeImage = NULL;
-  bool NewImageCreated = false;
-  INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
-
-  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP)) {
-    MainImage = Entry->getDriveImage();
-  } else {
-    MainImage = Entry->Image;
-  }
-//this should be inited by the Theme
-  if (!MainImage) {
-    if (!IsEmbeddedTheme()) {
-      MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
-    }
-    if (!MainImage) {
-      MainImage = DummyImage(Scale << 3);
-    }
-    if (MainImage) {
-      NewImageCreated = true;
-    }
-  }
-  //  DBG("Entry title=%ls; Width=%d\n", Entry->Title, MainImage->Width);
-
-  if (GlobalConfig.TypeSVG) {
-    Scale = 16 * (selected ? 1 : -1);
-  } else {
-    Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
-  }
-
-  if (Entry->Row == 0) {
-    BadgeImage = Entry->getBadgeImage();
-  } //else null
-
-
-  if (GlobalConfig.SelectionOnTop) {
-    SelectionImages[0]->HasAlpha = TRUE;
-    SelectionImages[2]->HasAlpha = TRUE;
-    //MainImage->HasAlpha = TRUE;
-      BltImageCompositeBadge(MainImage,
-                             SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                             BadgeImage,
-                             XPos, YPos, Scale);
-  } else {
-      BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                             MainImage,
-                             BadgeImage,
-                             XPos, YPos, Scale);
-  }
-  // draw BCS indicator
-  // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
-  if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-    SelectionImages[4]->HasAlpha = TRUE;
-
-    // indicator is for row 0, main entries, only
-    if (Entry->Row == 0) {
-      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
-                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
-                    &MenuBackgroundPixel, Scale);
-    }
-  }
-
-  Entry->Place.XPos = XPos;
-  Entry->Place.YPos = YPos;
-  Entry->Place.Width = MainImage->Width;
-  Entry->Place.Height = MainImage->Height;
-  //we can't free MainImage because it may be new image or it may be a link to entry image
-  // a workaround
-  if (NewImageCreated) {
-    egFreeImage(MainImage);
-  }
-}
-#endif
 //the purpose of the procedure is restore Background in rect
 //XAlign is always centre, Color is the Backgrounf fill
 #if USE_XTHEME
@@ -2899,34 +2447,6 @@ VOID DrawTextCorner(UINTN TextC, UINT8 Align)
   if ( Text ) FreePool(Text);
 }
 #endif
-
-
-//the purpose of the procedure is restore Background in rect
-//XAlign is always centre, Color is the Backgrounf fill
-#if USE_XTHEME
-#else
-VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
-{
-  EG_IMAGE *TmpBuffer = NULL;
-  INTN X = XPos - (Width >> XAlign);
-
-  if (!Width || !Height) return;
-
-  TmpBuffer = egCreateImage(Width, Height, FALSE);
-  if (!BackgroundImage) {
-    egFillImage(TmpBuffer, Color);
-  } else {
-    egRawCopy(TmpBuffer->PixelData,
-              BackgroundImage->PixelData + YPos * BackgroundImage->Width + X,
-              Width, Height,
-              TmpBuffer->Width,
-              BackgroundImage->Width);
-  }
-  BltImage(TmpBuffer, X, YPos);
-  egFreeImage(TmpBuffer);
-}
-#endif
-
 
 //
 // user-callable dispatcher functions

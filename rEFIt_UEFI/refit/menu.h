@@ -42,7 +42,9 @@ extern INTN ScrollWidth;
 
 
 VOID InitBar(VOID);
+#if !USE_XTHEME
 VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign);
+#endif
 VOID InitSelection(VOID);
 VOID DrawTextCorner(UINTN TextC, UINT8 Align);
 
@@ -52,7 +54,7 @@ VOID FreeScrollBar(VOID);
 #if USE_XTHEME
 //it will be REFIT_SCREEN MEMBER, others as well?
 //INTN DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
-VOID DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
+//VOID DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
 #else
 INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
