@@ -1579,7 +1579,7 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
   }
 
 //  MaxTextLen += EllipsisLen;
-  XStringW BCSTextX(MaxTextLen);
+  XStringW BCSTextX;
   BCSTextX.StrnCpy(Text, MaxTextLen);
   BCSTextX += L"..";
   DrawTextXY(BCSTextX, XPos, YPos, XAlign);

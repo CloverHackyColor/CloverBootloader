@@ -194,6 +194,7 @@
   Platform/Net.cpp
   Platform/sound.cpp
   Platform/StartupSound.cpp
+  Platform/StartupSound.h
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
   Version.h

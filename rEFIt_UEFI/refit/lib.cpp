@@ -414,6 +414,7 @@ VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount)
 // firmware device path discovery
 //
 
+//looks like not used anywhere
 static UINT8 LegacyLoaderMediaPathData[] = {
   0x04, 0x06, 0x14, 0x00, 0xEB, 0x85, 0x05, 0x2B,
   0xB8, 0xD8, 0xA9, 0x49, 0x8B, 0x8C, 0xE2, 0x1B,
@@ -650,7 +651,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
                   *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                  FindMem(SectorBuffer, 2048, "Starting the BTX loader", 23) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"freebsd";
+        Volume->LegacyOS->IconName = L"freebsd,linux";
         Volume->LegacyOS->Name = L"FreeBSD";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
@@ -659,7 +660,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       } else if (FindMem(SectorBuffer, 512, "!Loading", 8) >= 0 ||
                  FindMem(SectorBuffer, 2048, "/cdboot\0/CDBOOT\0", 16) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"openbsd";
+        Volume->LegacyOS->IconName = L"openbsd,linux";
         Volume->LegacyOS->Name = L"OpenBSD";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
@@ -667,7 +668,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       } else if (FindMem(SectorBuffer, 512, "Not a bootxx image", 18) >= 0 ||
                  *((UINT32 *)(SectorBuffer + 1028)) == 0x7886b6d1) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"netbsd";
+        Volume->LegacyOS->IconName = L"netbsd,linux";
         Volume->LegacyOS->Name = L"NetBSD";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
@@ -690,7 +691,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       } else if (FindMem(SectorBuffer, 512, "CPUBOOT SYS", 11) >= 0 ||
                  FindMem(SectorBuffer, 512, "KERNEL  SYS", 11) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"freedos";
+        Volume->LegacyOS->IconName = L"freedos,win";
         Volume->LegacyOS->Name = L"FreeDOS";
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;

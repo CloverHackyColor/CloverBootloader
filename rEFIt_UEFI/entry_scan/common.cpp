@@ -94,11 +94,15 @@ EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName)
   return NULL;
 }
 
+#if USE_XTHEME
+const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
+#else
 EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath) //IN UINT8 DiskKind)
+#endif
 {
   UINTN IconNum = 0;
 #if USE_XTHEME
-  XImage IconX;
+  const XImage* IconX;
 #endif
   // default volume icon based on disk kind
   switch (Volume->DiskKind) {
@@ -134,24 +138,27 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DE
           break;
       }
 #if USE_XTHEME
-      IconX = ThemeX.GetIcon(IconNum);
+      IconX = &ThemeX.GetIcon(IconNum);
+      if (IconX->isEmpty()) {
+        IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL);
+      }
       break;
     case DISK_KIND_EXTERNAL:
-      IconX = ThemeX.GetIcon(BUILTIN_ICON_VOL_EXTERNAL);
+      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_EXTERNAL);
       break;
     case DISK_KIND_OPTICAL:
-      IconX = ThemeX.GetIcon(BUILTIN_ICON_VOL_OPTICAL);
+      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_OPTICAL);
       break;
     case DISK_KIND_FIREWIRE:
-      IconX = ThemeX.GetIcon(BUILTIN_ICON_VOL_FIREWIRE);
+      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_FIREWIRE);
       break;
     case DISK_KIND_BOOTER:
-      IconX = ThemeX.GetIcon(BUILTIN_ICON_VOL_BOOTER);
+      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_BOOTER);
       break;
     default:
-      return NULL;
+      break;
   }
-  return IconX.ToEGImage();
+  return *IconX;
 #else
       return BuiltinIcon(IconNum);
     case DISK_KIND_EXTERNAL:

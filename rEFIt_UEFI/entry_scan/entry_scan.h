@@ -46,8 +46,12 @@ extern REFIT_MENU_SCREEN MainMenu;
 
 extern XObjArray<REFIT_VOLUME> Volumes;
 // common
+#if USE_XTHEME
+const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+#else
 EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName);
 EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+#endif
 /*
 INTN StrniCmp(IN CHAR16 *Str1,
               IN CHAR16 *Str2,
