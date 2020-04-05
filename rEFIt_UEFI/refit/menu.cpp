@@ -785,13 +785,16 @@ VOID ApplyInputs(VOID)
   }
   i++; //3
   if (InputItems[i].Valid) {
-#if USE_XTHEME
+#if USE_XTHEME 
+    if (GlobalConfig.Theme) {
+      FreePool(GlobalConfig.Theme);
+    }
     if (OldChosenTheme == 0xFFFF) {
-      ThemeX.Theme.takeValueFrom("embedded");
+      GlobalConfig.Theme = PoolPrint(L"embedded");
     } else {
-      ThemeX.Theme.takeValueFrom(ThemesList[OldChosenTheme]);
-      ThemeX.DarkEmbedded = FALSE;
-      ThemeX.Font = FONT_ALFA;
+      GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
+      //ThemeX.DarkEmbedded = FALSE; Don't know what to do
+      //ThemeX.Font = FONT_ALFA;
     }
 #else
     if (GlobalConfig.Theme) {
