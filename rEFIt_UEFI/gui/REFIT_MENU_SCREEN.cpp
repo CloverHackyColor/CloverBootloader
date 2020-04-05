@@ -2822,7 +2822,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
         }
       }
       // initial painting
-      ThemeX.InitSelection();
+ //     ThemeX.InitSelection();  //not here
 
       // Update FilmPlace only if not set by InitAnime
       if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
@@ -2830,7 +2830,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
         FilmPlace = ThemeX.BannerPlace;
       }
 
-      ThemeX.InitBar();
+      ThemeX.InitBar(); //not sure
       break;
 
     case MENU_FUNCTION_CLEANUP:
@@ -3148,7 +3148,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
         }
       }
       // initial painting
-      ThemeX.InitSelection();
+ //     ThemeX.InitSelection(); //not needed to do here
 
       // Update FilmPlace only if not set by InitAnime
       if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {

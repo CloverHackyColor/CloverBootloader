@@ -245,10 +245,10 @@ Icon::Icon(INTN Index) : Image(0), ImageNight(0)
 {
   Id = Index;
   Name.setEmpty();
-  if (Index < BUILTIN_ICON_FUNC_ABOUT || Index > BUILTIN_CHECKBOX_CHECKED) {
-    return;
+  if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index <= BUILTIN_CHECKBOX_CHECKED) {
+    Name.takeValueFrom(IconsNames[Index]);
   }
-  Name.takeValueFrom(IconsNames[Index]);
+
   switch (Id) {
     case BUILTIN_ICON_FUNC_ABOUT:
       DEC_BUILTIN_ICON2(BUILTIN_ICON_FUNC_ABOUT, emb_func_about, emb_dark_func_about)
@@ -329,6 +329,10 @@ Icon::Icon(INTN Index) : Image(0), ImageNight(0)
     case BUILTIN_CHECKBOX_CHECKED:
       DEC_BUILTIN_ICON(BUILTIN_CHECKBOX_CHECKED, emb_checkbox_checked)
       break;
+    case BUILTIN_ICON_SELECTION:
+      Name.takeValueFrom("selection_indicator");
+      DEC_BUILTIN_ICON(BUILTIN_ICON_SELECTION, emb_selection_indicator)
+      break;
     default:
  //     Image.setEmpty(); //done by ctor?
       break;
@@ -341,11 +345,25 @@ Icon::Icon(INTN Index) : Image(0), ImageNight(0)
 void XTheme::FillByEmbedded()
 {
   Icons.Empty();
-  for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) {
+  for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) { //this is embedded icon count
     Icon* NewIcon = new Icon(i);
     Icons.AddReference(NewIcon, true);
   }
-  //radio buttons will be inited by InitSelection()
+  //and buttons
+  Buttons[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
+  Buttons[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));
+  Buttons[2].FromPNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox));
+  Buttons[3].FromPNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked));
+
+  if (Daylight) {
+    SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_selection_big), ACCESS_EMB_SIZE(emb_selection_big));
+    SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_selection_small), ACCESS_EMB_SIZE(emb_selection_small));
+  } else {
+    SelectionImages[0].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_big), ACCESS_EMB_SIZE(emb_dark_selection_big));
+    SelectionImages[2].FromPNG(ACCESS_EMB_DATA(emb_dark_selection_small), ACCESS_EMB_SIZE(emb_dark_selection_small));
+  }
+
+  SelectionImages[4].FromPNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator));
 }
 
 void XTheme::ClearScreen() //and restore background and banner
@@ -469,6 +487,7 @@ void XTheme::ClearScreen() //and restore background and banner
   
 }
 
+#if 0
 void XTheme::InitSelection() //for PNG theme
 {
   EFI_STATUS Status;
@@ -618,7 +637,7 @@ void XTheme::InitSelection() //for PNG theme
   SelectionImages[3].Fill(BackgroundPixel);
 
 }
-
+#endif
 //use this only for PNG theme
 void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
@@ -630,7 +649,55 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
     Icons.AddReference(NewIcon, true);
   }
 
-  InitSelection(); //initialize selections, buttons
+  SelectionBackgroundPixel.Red      = (SelectionColor >> 24) & 0xFF;
+  SelectionBackgroundPixel.Green    = (SelectionColor >> 16) & 0xFF;
+  SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
+  SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
+
+// try special name
+  SelectionImages[2].setEmpty();
+  SelectionImages[2].LoadXImage(ThemeDir, SelectionSmallFileName);
+// then common name selection_small.png
+  if (SelectionImages[2].isEmpty()){
+    SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
+  }
+  // now the big selection
+  SelectionImages[0].setEmpty();
+  SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
+  // then common name selection_small.png
+  if (SelectionImages[0].isEmpty()){
+    SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
+  }
+// else use small selection
+  if (SelectionImages[0].isEmpty()) {
+    SelectionImages[0] = SelectionImages[2]; //use same selection if OnTop for example
+  }
+//let they be empty as is
+//  SelectionImages[1] = XImage(row0TileSize, row0TileSize);
+//  SelectionImages[3] = XImage(row1TileSize, row1TileSize);
+
+  if (BootCampStyle) {
+    // load indicator selection image
+    SelectionImages[4].setEmpty();
+    SelectionImages[4].LoadXImage(ThemeDir, SelectionIndicatorName);
+    if (SelectionImages[4].isEmpty()) {
+      SelectionImages[4].LoadXImage(ThemeDir, "selection_indicator");
+    }
+    INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
+    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, MenuBackgroundPixel);
+    if (SelectionImages[4].isEmpty()) {
+      SelectionImages[4] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
+      SelectionImages[4].Fill(StdBackgroundPixel);
+    }
+//    SelectionImages[5] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
+//    SelectionImages[5].Fill(MenuBackgroundPixel);
+  }
+
+  //and buttons
+  Buttons[0] = GetIcon(BUILTIN_RADIO_BUTTON);
+  Buttons[1] = GetIcon(BUILTIN_RADIO_BUTTON_SELECTED);
+  Buttons[2] = GetIcon(BUILTIN_CHECKBOX);
+  Buttons[3] = GetIcon(BUILTIN_CHECKBOX_CHECKED);
 
   //load banner and background
   Banner.LoadXImage(ThemeDir, BannerFileName); 

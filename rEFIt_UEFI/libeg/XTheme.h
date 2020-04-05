@@ -130,7 +130,7 @@ public:
   //screen operations
   void ClearScreen();
   void FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
-  void InitSelection();
+//  void InitSelection();
   void InitBar();
 
   void Init();
