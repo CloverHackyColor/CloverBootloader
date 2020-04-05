@@ -707,6 +707,19 @@ void XTheme::InitBar()
   }
 }
 
+//the purpose of the procedure is restore Background in rect
+//XAlign is always centre, Color is the Backgrounf fill
+//TODO replace by some existing procedure
+VOID XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height)
+{
+  XImage TmpBuffer(Width, Height);
+  //  TmpBuffer.CopyScaled(Background, 1.f);
+  INTN X = XPos - (Width >> 1);  //X_IS_CENTRE
+  TmpBuffer.CopyRect(Background, X, YPos); //a part of BackGround image
+  TmpBuffer.DrawWithoutCompose(X, YPos);
+  //  TmpBuffer.Draw(X, YPos, 0, true);
+}
+
 #endif // USE_XTHEME
 
 
