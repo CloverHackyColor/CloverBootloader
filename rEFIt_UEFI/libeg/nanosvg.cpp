@@ -4050,7 +4050,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
     DBG("font absent\n");
     return x;
   }
-  if (!scale) {
+  if ( scale == 0 ) { // doing "if (!scale)" generates a warning
     return x;
   }
 
