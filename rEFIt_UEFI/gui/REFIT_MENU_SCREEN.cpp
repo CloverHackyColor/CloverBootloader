@@ -2660,6 +2660,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
   //this should be inited by the Theme
   if (MainImage.isEmpty()) {
+    DBG(" why MainImage is empty?\n");
     if (!IsEmbeddedTheme()) {
       MainImage = ThemeX.GetIcon("os_mac"_XS);
     }

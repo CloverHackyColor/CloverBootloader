@@ -193,6 +193,7 @@ void XTheme::Init()
 //}
 
 static XImage NullIcon;
+static XImage DummyIcon;
 
 const XImage& XTheme::GetIcon(const XString& Name) const
 {
@@ -224,6 +225,33 @@ const XImage& XTheme::GetIcon(INTN Id) const
     }
   }
   return NullIcon;
+}
+
+const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
+{
+  // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
+  XString Full = XString().takeValueFrom(OSIconName);
+  XString First;
+  XString Second;
+  const XImage *ReturnImage;
+  UINTN Comma = Full.IdxOf(',');
+  UINTN Size = Full.size();
+  if (Comma != MAX_XSIZE) {  //Comma
+    First = "os_"_XS + Full.SubString(0, Comma);
+    ReturnImage = &GetIcon(First);
+    if (!ReturnImage->isEmpty()) return *ReturnImage;
+    //else search second name
+    Second = "os_"_XS + Full.SubString(Comma+1, Size - Comma - 1);
+    ReturnImage = &GetIcon(Second);
+    if (!ReturnImage->isEmpty()) return *ReturnImage;
+  } else {
+    ReturnImage = &GetIcon("os_"_XS + Full);
+    if (!ReturnImage->isEmpty()) return *ReturnImage;
+  }
+  // else something
+  if (DummyIcon.isEmpty()) //initialize once per session
+    DummyIcon.DummyImage(MainEntriesSize);
+  return DummyIcon;
 }
 //
 //void XTheme::AddIcon(Icon& NewIcon)

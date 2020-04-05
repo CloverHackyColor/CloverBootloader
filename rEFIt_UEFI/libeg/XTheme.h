@@ -117,6 +117,7 @@ public:
 //  const XImage& GetIcon(const CHAR16* Name);
   const XImage& GetIcon(const XString& Name) const;  //get by name
   const XImage& GetIcon(INTN Id) const; //get by id
+  const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
 
 //  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();

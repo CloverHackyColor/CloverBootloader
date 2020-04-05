@@ -762,7 +762,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     Entry->Image = *Image;
   } else {
 //    Entry->Image = ThemeX.GetIcon("unknown");  //no such icon
-    Entry->Image = ThemeX.GetIcon("vol_internal"_XS);
+//TODO now we have OSIconName = L"moja,mac"
+//    Entry->Image = ThemeX.GetIcon("vol_internal"_XS);
+    Entry->Image = ThemeX.LoadOSIcon(OSIconName);
   }
   // Load DriveImage
   if (DriveImage) {
