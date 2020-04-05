@@ -343,6 +343,7 @@ EFI_STATUS XImage::FromPNG(const UINT8 * Data, UINTN Length)
   if (Error != 0 && Error != 28) {
     return EFI_NOT_FOUND;
   }
+  if ( !PixelPtr ) return EFI_UNSUPPORTED; // It's possible to get error 28 and PixelPtr == NULL
   setSizeInPixels(Width, Height);
   //now we have a new pointer and want to move data
   INTN NewLength = Width * Height * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
