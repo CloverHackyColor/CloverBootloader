@@ -109,7 +109,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
   { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
   { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
-  { L"\\EFI\\MX18\\grubx64.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
+  { L"\\EFI\\MX19\\grubx64.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
   { L"\\EFI\\parrot\\grubx64.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
 #else
   { L"\\EFI\\grub\\grub.efi", L"Grub EFI boot menu", L"grub,linux" },
@@ -137,7 +137,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\centos\\grub.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
   { L"\\EFI\\pclinuxos\\grub.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
   { L"\\EFI\\neon\\grub.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
-  { L"\\EFI\\MX18\\grub.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
+  { L"\\EFI\\MX19\\grub.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
   { L"\\EFI\\parrot\\grub.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
 #endif
   { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
