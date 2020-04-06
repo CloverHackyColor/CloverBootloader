@@ -1153,12 +1153,14 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         SetNextScreenMode(1);
         egGetScreenSize(&UGAWidth, &UGAHeight); //before init theme
         InitTheme(FALSE, NULL);
+        MenuExit = MENU_EXIT_ESCAPE; //to redraw screen
         break;
       case SCAN_F10:
         egScreenShot();
         break;
       case SCAN_F11:
-        ResetNvram ();
+        ResetNvram();
+        MenuExit = MENU_EXIT_ESCAPE; //to redraw screen
         break;
       case SCAN_F12:
         MenuExit = MENU_EXIT_EJECT;
@@ -1547,7 +1549,7 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
   return TextWidth2;
 }
 
-void REFIT_MENU_SCREEN::EraseTextXY()
+void REFIT_MENU_SCREEN::EraseTextXY() //used on boot screen
 {
   OldTextBufferImage.Draw(OldTextBufferRect.XPos, OldTextBufferRect.YPos);
 }

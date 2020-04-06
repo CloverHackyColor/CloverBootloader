@@ -138,26 +138,28 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DE
           break;
       }
 #if USE_XTHEME
-      IconX = &ThemeX.GetIcon(IconNum);
-      if (IconX->isEmpty()) {
-        IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL);
-      }
       break;
     case DISK_KIND_EXTERNAL:
-      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_EXTERNAL);
+      IconNum = BUILTIN_ICON_VOL_EXTERNAL;
       break;
     case DISK_KIND_OPTICAL:
-      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_OPTICAL);
+      IconNum = BUILTIN_ICON_VOL_OPTICAL;
       break;
     case DISK_KIND_FIREWIRE:
-      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_FIREWIRE);
+      IconNum = BUILTIN_ICON_VOL_FIREWIRE;
       break;
     case DISK_KIND_BOOTER:
-      IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_BOOTER);
+      IconNum = BUILTIN_ICON_VOL_BOOTER;
       break;
     default:
+      IconNum = BUILTIN_ICON_VOL_INTERNAL;
       break;
   }
+  IconX = &ThemeX.GetIcon(IconNum);
+  if (IconX->isEmpty()) {
+    IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
+  }
+
   return *IconX;
 #else
       return BuiltinIcon(IconNum);
