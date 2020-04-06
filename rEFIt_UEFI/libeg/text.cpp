@@ -179,10 +179,10 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
             (PixelPtr->g == FirstPixel.g) &&
             (PixelPtr->r == FirstPixel.r)
             ) {
-          PixelPtr->a = 0;
+          PixelPtr->a = 0; //if a pixel has same color as first pixel then it will be transparent
 #if USE_XTHEME
         } else if (ThemeX.DarkEmbedded) {
-          *PixelPtr = SemiWhitePixel;
+          *PixelPtr = SemiWhitePixel;  //specail case to change a text to semi white
 #else
         } else if (GlobalConfig.DarkEmbedded) {
           *PixelPtr = SemiWhitePixel;

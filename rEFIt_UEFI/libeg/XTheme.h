@@ -116,8 +116,8 @@ public:
   //fill the theme
 //  const XImage& GetIcon(const char* Name);
 //  const XImage& GetIcon(const CHAR16* Name);
-  const XImage& GetIcon(const XString& Name) const;  //get by name
-  const XImage& GetIcon(INTN Id) const; //get by id
+  const XImage& GetIcon(const XString& Name);  //get by name
+  const XImage& GetIcon(INTN Id); //get by id
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XImage& LoadOSIcon(const XString& Full);
 

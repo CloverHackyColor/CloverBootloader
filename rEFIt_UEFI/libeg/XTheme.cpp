@@ -312,7 +312,7 @@ void XTheme::Init()
 static XImage NullIcon;
 static XImage DummyIcon;
 
-const XImage& XTheme::GetIcon(const XString& Name) const
+const XImage& XTheme::GetIcon(const XString& Name)
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -324,7 +324,7 @@ const XImage& XTheme::GetIcon(const XString& Name) const
   return NullIcon; //if name is not found
 }
 
-const XImage& XTheme::GetIcon(INTN Id) const 
+const XImage& XTheme::GetIcon(INTN Id)
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -341,12 +341,12 @@ const XImage& XTheme::GetIcon(INTN Id) const
       Icon* NewIcon = new Icon(Id, true);
 //      NewIcon.GetEmbedded();
       if (!Daylight && !NewIcon->ImageNight.isEmpty()) {
- //       Icons[i].ImageNight.Copy(NewIcon.ImageNight); //can't cash because it is const, fuck!!!
+        Icons[i].ImageNight = NewIcon->ImageNight; //
         return NewIcon->ImageNight;
       }
       //if daylight or night icon absent
       if (!NewIcon->Image.isEmpty()) {
-//        Icons[i].Image.Copy(NewIcon.Image);
+        Icons[i].Image = NewIcon->Image;
         return NewIcon->Image;
       }
     }
