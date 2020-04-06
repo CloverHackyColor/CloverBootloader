@@ -1151,6 +1151,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
 
       case SCAN_F9:
         SetNextScreenMode(1);
+        egGetScreenSize(&UGAWidth, &UGAHeight); //before init theme
         InitTheme(FALSE, NULL);
         break;
       case SCAN_F10:
@@ -1622,7 +1623,7 @@ VOID REFIT_MENU_SCREEN::DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, I
   } else {
     egRenderText(Text, &TextBufferX, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
   }
-  SelectionBar.Compose(0, 0, TextBufferX, true);
+  SelectionBar.Compose(0, 0, TextBufferX, false);
 //  TextBufferX.DrawWithoutCompose(XPos, YPos);
   SelectionBar.DrawWithoutCompose(XPos, YPos);
 }
@@ -2746,7 +2747,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
   switch (Function) {
 
     case MENU_FUNCTION_INIT:
-      egGetScreenSize(&UGAWidth, &UGAHeight);
+      egGetScreenSize(&UGAWidth, &UGAHeight); //do this when needed
       InitAnime();
 			SwitchToGraphicsAndClear();
 			//BltClearScreen(FALSE);

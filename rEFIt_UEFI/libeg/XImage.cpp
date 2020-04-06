@@ -681,6 +681,10 @@ void XImage::DummyImage(IN UINTN PixelSize)
   }
 }
 
+void XImage::Copy(XImage* Image)
+{
+  CopyRect(*Image, 0, 0);
+}
 void XImage::CopyRect(const XImage& Image, INTN XPos, INTN YPos)
 {
   for (INTN y = 0; y < GetHeight() && (y + YPos) < Image.GetHeight(); ++y) {

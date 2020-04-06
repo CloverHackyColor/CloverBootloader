@@ -479,14 +479,29 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       continue;
     }
     Icon* NewIcon = new Icon(i, false); //initialize without embedded
-    /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
+    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
+    if (EFI_ERROR(Status) &&
+        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
+        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
+      NewIcon->Image = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    }
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
-    /*Status = */ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, Scale, &NewIcon->ImageNight);
+    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, Scale, &NewIcon->ImageNight);
 //    DBG("...night status %s\n", strerror(Status));
+    if (EFI_ERROR(Status) &&
+        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
+        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
+      NewIcon->ImageNight = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    }
     Icons.AddReference(NewIcon, true);
   }
 
   //selections
+  SelectionBackgroundPixel.Red      = (SelectionColor >> 24) & 0xFF;
+  SelectionBackgroundPixel.Green    = (SelectionColor >> 16) & 0xFF;
+  SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
+  SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
+
   SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
 

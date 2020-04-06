@@ -107,175 +107,15 @@ CONST CHAR8* IconsNames[] = {
   ""
 };
 
-Icon::~Icon() {}
-
-XTheme::XTheme() {
-  Init();
-}
-
-XTheme::~XTheme() {
-  //nothing todo?
-}
-
-void XTheme::Init()
-{
-//  DisableFlags = 0;             
-  HideBadges = 0; 
-  HideUIFlags = 0; 
-//  TextOnly = FALSE; 
-  Font = FONT_GRAY;      // FONT_TYPE   
-  CharWidth = 9;  
-  SelectionColor = 0xFFFFFF80; 
-  FontFileName.setEmpty();     
-  Theme.takeValueFrom("embedded");
-  embedded = true;
-  BannerFileName.setEmpty();    
-  SelectionSmallFileName.setEmpty();  
-  SelectionBigFileName.setEmpty();  
-  SelectionIndicatorName.setEmpty(); 
-  DefaultSelection.setEmpty();  
-  BackgroundName.setEmpty();  
-  BackgroundScale = imNone;     // SCALING 
-  BackgroundSharp = 0;            
-  BackgroundDark = FALSE;       //TODO should be set to true if Night theme
-//  CustomIcons = FALSE;          //TODO don't know how to handle with SVG theme
-  SelectionOnTop = FALSE;         
-  BootCampStyle = FALSE; 
-  BadgeOffsetX = 0;
-  BadgeOffsetY = 0;
-  BadgeScale = 4;   // TODO now we have float scale = BadgeScale/16
-  ThemeDesignWidth = 0xFFFF;
-  ThemeDesignHeight = 0xFFFF;
-  BannerPosX = 0xFFFF; // the value out of range [0,1000]
-  BannerPosY = 0xFFFF;
-  BannerEdgeHorizontal = 0;
-  BannerEdgeVertical = 0;
-  BannerNudgeX = 0;
-  BannerNudgeY = 0;
-  VerticalLayout = FALSE;
-  NonSelectedGrey = FALSE;    //TODO what about SVG?
-  MainEntriesSize = 128;
-  TileXSpace = 8;
-  TileYSpace = 24;
-//  IconFormat = ICON_FORMAT_DEF;
-  Proportional = FALSE;
-//  ShowOptimus = FALSE;
-  DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
-  TypeSVG = FALSE;
-  Codepage = 0xC0;           //this is for PNG theme
-  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
-  Scale = 1.0f;
-  CentreShift = 0.0f;
-  Daylight = true;
-  LayoutHeight = 376;
-  LayoutBannerOffset                    = 64; //default value if not set
-  LayoutButtonOffset                    = 0; //default value if not set
-  LayoutTextOffset                      = 0; //default value if not set
-  LayoutAnimMoveForMenuX                = 0; //default value if not set
-
-  row0TileSize = 144;
-  row1TileSize = 64;
-}
-
-/*
- * what if the icon is not found or name is wrong?
- * probably it whould return Empty image
- * Image.isEmpty() == true
- */
-//const XImage& XTheme::GetIcon(const char* Name)
-//{
-//  return GetIcon(XString().takeValueFrom(Name));
-//}
-//
-//const XImage& XTheme::GetIcon(const CHAR16* Name)
-//{
-//  return GetIcon(XString().takeValueFrom(Name));
-//}
-
-static XImage NullIcon;
-static XImage DummyIcon;
-
-const XImage& XTheme::GetIcon(const XString& Name) const
-{
-  for (size_t i = 0; i < Icons.size(); i++)
-  {
-    if (Icons[i].Name == Name) //night icon has same name as daylight icon
-    {
-      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
-        return Icons[i].ImageNight;
-      }
-      //if daylight or night icon absent
-      return Icons[i].Image;
-    }
-  }
-  return NullIcon; //return pointer to XImage? Or XImage copy?
-}
-
-const XImage& XTheme::GetIcon(INTN Id) const 
-{
-  for (size_t i = 0; i < Icons.size(); i++)
-  {
-    if (Icons[i].Id == Id)
-    {
-      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
-        return Icons[i].ImageNight;
-      }
-      //if daylight or night icon absent
-      return Icons[i].Image;
-    }
-  }
-  return NullIcon;
-}
-
-//const XImage& XTheme::LoadOSIcon(const XString& OSIconName)
-//{
-//  return LoadOSIcon(XString().takeValueFrom(OSIconName));
-//}
-
-const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
-{
-  // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
-  XString Full = XString().takeValueFrom(OSIconName);
-  XString First;
-  XString Second;
-  const XImage *ReturnImage;
-  UINTN Comma = Full.IdxOf(',');
-  UINTN Size = Full.size();
-//  DBG("IconName=%ls comma=%lld size=%lld\n", OSIconName, Comma, Size);
-  if (Comma != MAX_XSIZE) {  //Comma
-    First = "os_"_XS + Full.SubString(0, Comma);
-    ReturnImage = &GetIcon(First);
- //   DBG("  first=%s\n", First.c_str());
-    if (!ReturnImage->isEmpty()) return *ReturnImage;
-    //else search second name
-    Second = "os_"_XS + Full.SubString(Comma+1, Size - Comma - 1);
-    ReturnImage = &GetIcon(Second);
-//    DBG("  Second=%s\n", Second.c_str());
-    if (!ReturnImage->isEmpty()) return *ReturnImage;
-  } else {
-    ReturnImage = &GetIcon("os_"_XS + Full);
-//    DBG("  Full=%s\n", Full.c_str());
-    if (!ReturnImage->isEmpty()) return *ReturnImage;
-  }
-  // else something
-  if (DummyIcon.isEmpty()) //initialize once per session
-    DummyIcon.DummyImage(MainEntriesSize);
-  return DummyIcon;
-}
-//
-//void XTheme::AddIcon(Icon& NewIcon)
-//{
-//  Icons.AddCopy(NewIcon);
-//}
-
+//icons class
 //if ImageNight is not set then Image should be used
 #define DEC_BUILTIN_ICON(id, ico) { \
-   Image.FromPNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico)); \
+Image.FromPNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico)); \
 }
 
 #define DEC_BUILTIN_ICON2(id, ico, dark) { \
-   Image.FromPNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico)); \
-   ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
+Image.FromPNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico)); \
+ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 }
 
 Icon::Icon(INTN Index, bool TakeEmbedded) : Image(0), ImageNight(0)
@@ -377,12 +217,182 @@ void Icon::GetEmbedded()
       DEC_BUILTIN_ICON(BUILTIN_ICON_SELECTION, emb_selection_indicator)
       break;
     default:
- //     Image.setEmpty(); //done by ctor?
+      //     Image.setEmpty(); //done by ctor?
       break;
   }
-//something to do else?
+  //something to do else?
 }
 
+Icon::~Icon() {}
+
+//xtheme class
+XTheme::XTheme() {
+  Init();
+}
+
+XTheme::~XTheme() {
+  //nothing todo?
+}
+
+void XTheme::Init()
+{
+//  DisableFlags = 0;             
+  HideBadges = 0; 
+  HideUIFlags = 0; 
+//  TextOnly = FALSE; 
+  Font = FONT_GRAY;      // FONT_TYPE   
+  CharWidth = 9;  
+  SelectionColor = 0x80808080;
+  FontFileName.setEmpty();     
+  Theme.takeValueFrom("embedded");
+  embedded = true;
+  BannerFileName.setEmpty();    
+  SelectionSmallFileName.setEmpty();  
+  SelectionBigFileName.setEmpty();  
+  SelectionIndicatorName.setEmpty(); 
+  DefaultSelection.setEmpty();  
+  BackgroundName.setEmpty();  
+  BackgroundScale = imNone;     // SCALING 
+  BackgroundSharp = 0;            
+  BackgroundDark = FALSE;       //TODO should be set to true if Night theme
+//  CustomIcons = FALSE;          //TODO don't know how to handle with SVG theme
+  SelectionOnTop = FALSE;         
+  BootCampStyle = FALSE; 
+  BadgeOffsetX = 0;
+  BadgeOffsetY = 0;
+  BadgeScale = 4;   // TODO now we have float scale = BadgeScale/16
+  ThemeDesignWidth = 0xFFFF;
+  ThemeDesignHeight = 0xFFFF;
+  BannerPosX = 0xFFFF; // the value out of range [0,1000]
+  BannerPosY = 0xFFFF;
+  BannerEdgeHorizontal = 0;
+  BannerEdgeVertical = 0;
+  BannerNudgeX = 0;
+  BannerNudgeY = 0;
+  VerticalLayout = FALSE;
+  NonSelectedGrey = FALSE;    //TODO what about SVG?
+  MainEntriesSize = 128;
+  TileXSpace = 8;
+  TileYSpace = 24;
+//  IconFormat = ICON_FORMAT_DEF;
+  Proportional = FALSE;
+//  ShowOptimus = FALSE;
+  DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
+  TypeSVG = FALSE;
+  Codepage = 0xC0;           //this is for PNG theme
+  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
+  Scale = 1.0f;
+  CentreShift = 0.0f;
+  Daylight = true;
+  LayoutHeight = 376;
+  LayoutBannerOffset                    = 64; //default value if not set
+  LayoutButtonOffset                    = 0; //default value if not set
+  LayoutTextOffset                      = 0; //default value if not set
+  LayoutAnimMoveForMenuX                = 0; //default value if not set
+
+  row0TileSize = 144;
+  row1TileSize = 64;
+}
+
+/*
+ * what if the icon is not found or name is wrong?
+ * probably it whould return Empty image
+ * Image.isEmpty() == true
+ */
+//const XImage& XTheme::GetIcon(const char* Name)
+//{
+//  return GetIcon(XString().takeValueFrom(Name));
+//}
+//
+//const XImage& XTheme::GetIcon(const CHAR16* Name)
+//{
+//  return GetIcon(XString().takeValueFrom(Name));
+//}
+
+static XImage NullIcon;
+static XImage DummyIcon;
+
+const XImage& XTheme::GetIcon(const XString& Name) const
+{
+  for (size_t i = 0; i < Icons.size(); i++)
+  {
+    if (Icons[i].Name == Name) //night icon has same name as daylight icon
+    {
+      return GetIcon(Icons[i].Id);
+    }
+  }
+  return NullIcon; //if name is not found
+}
+
+const XImage& XTheme::GetIcon(INTN Id) const 
+{
+  for (size_t i = 0; i < Icons.size(); i++)
+  {
+    if (Icons[i].Id == Id)
+    {
+      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
+        return Icons[i].ImageNight;
+      }
+      //if daylight or night icon absent
+      if (!Icons[i].Image.isEmpty()) {
+        return Icons[i].Image;
+      }
+      //if not found then create new one from embedded
+      Icon* NewIcon = new Icon(Id, true);
+//      NewIcon.GetEmbedded();
+      if (!Daylight && !NewIcon->ImageNight.isEmpty()) {
+ //       Icons[i].ImageNight.Copy(NewIcon.ImageNight); //can't cash because it is const, fuck!!!
+        return NewIcon->ImageNight;
+      }
+      //if daylight or night icon absent
+      if (!NewIcon->Image.isEmpty()) {
+//        Icons[i].Image.Copy(NewIcon.Image);
+        return NewIcon->Image;
+      }
+    }
+  }
+  return NullIcon; //such Id is not found in the database
+}
+
+const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
+{
+  return LoadOSIcon(XString().takeValueFrom(OSIconName));
+}
+
+const XImage& XTheme::LoadOSIcon(const XString& Full)
+{
+  // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
+  XString First;
+  XString Second;
+  const XImage *ReturnImage;
+  UINTN Comma = Full.IdxOf(',');
+  UINTN Size = Full.size();
+//  DBG("IconName=%ls comma=%lld size=%lld\n", OSIconName, Comma, Size);
+  if (Comma != MAX_XSIZE) {  //Comma
+    First = "os_"_XS + Full.SubString(0, Comma);
+    ReturnImage = &GetIcon(First);
+ //   DBG("  first=%s\n", First.c_str());
+    if (!ReturnImage->isEmpty()) return *ReturnImage;
+    //else search second name
+    Second = "os_"_XS + Full.SubString(Comma+1, Size - Comma - 1);
+    ReturnImage = &GetIcon(Second);
+//    DBG("  Second=%s\n", Second.c_str());
+    if (!ReturnImage->isEmpty()) return *ReturnImage;
+  } else {
+    ReturnImage = &GetIcon("os_"_XS + Full);
+//    DBG("  Full=%s\n", Full.c_str());
+    if (!ReturnImage->isEmpty()) return *ReturnImage;
+  }
+  // else something
+  if (DummyIcon.isEmpty()) //initialize once per session
+    DummyIcon.DummyImage(MainEntriesSize);
+  return DummyIcon;
+}
+//
+//void XTheme::AddIcon(Icon& NewIcon)
+//{
+//  Icons.AddCopy(NewIcon);
+//}
 
 
 void XTheme::FillByEmbedded()
@@ -684,11 +694,23 @@ void XTheme::InitSelection() //for PNG theme
 //use this only for PNG theme
 void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
+  EFI_STATUS Status;
   Icons.Empty();
   for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
     Icon* NewIcon = new Icon(i); //initialize without embedded
-    NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
-    NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
+    Status = NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
+    if (EFI_ERROR(Status) &&
+        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
+        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
+      NewIcon->Image = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    }
+
+    Status = NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
+    if (EFI_ERROR(Status) &&
+        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
+        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
+      NewIcon->ImageNight = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    }
     Icons.AddReference(NewIcon, true);
   }
 
@@ -706,34 +728,28 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   }
   // now the big selection
   SelectionImages[0].setEmpty();
-  SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
+  Status = SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
   // then common name selection_small.png
-  if (SelectionImages[0].isEmpty()){
+  if (EFI_ERROR(Status)){
     SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   }
 // else use small selection
   if (SelectionImages[0].isEmpty()) {
     SelectionImages[0] = SelectionImages[2]; //use same selection if OnTop for example
   }
-//let they be empty as is
-//  SelectionImages[1] = XImage(row0TileSize, row0TileSize);
-//  SelectionImages[3] = XImage(row1TileSize, row1TileSize);
 
   if (BootCampStyle) {
     // load indicator selection image
     SelectionImages[4].setEmpty();
-    SelectionImages[4].LoadXImage(ThemeDir, SelectionIndicatorName);
-    if (SelectionImages[4].isEmpty()) {
-      SelectionImages[4].LoadXImage(ThemeDir, "selection_indicator");
+    Status = SelectionImages[4].LoadXImage(ThemeDir, SelectionIndicatorName);
+    if (EFI_ERROR(Status)) {
+      Status = SelectionImages[4].LoadXImage(ThemeDir, "selection_indicator");
     }
-    INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
-    SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, MenuBackgroundPixel);
-    if (SelectionImages[4].isEmpty()) {
-      SelectionImages[4] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
+    if (EFI_ERROR(Status)) {
+      INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
+      SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, MenuBackgroundPixel);
       SelectionImages[4].Fill(StdBackgroundPixel);
     }
-//    SelectionImages[5] = XImage(ScaledIndicatorSize, ScaledIndicatorSize);
-//    SelectionImages[5].Fill(MenuBackgroundPixel);
   }
 
   //and buttons
@@ -744,7 +760,13 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 
   //load banner and background
   Banner.LoadXImage(ThemeDir, BannerFileName); 
-  BigBack.LoadXImage(ThemeDir, BackgroundName);
+  Status = BigBack.LoadXImage(ThemeDir, BackgroundName);
+  if (EFI_ERROR(Status) && !Banner.isEmpty()) {
+    //take first pixel from banner
+    const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& firstPixel = Banner.GetPixel(0,0);
+    BigBack.setSizeInPixels(UGAWidth, UGAHeight);
+    BigBack.Fill(firstPixel);
+  }
 }
 
 

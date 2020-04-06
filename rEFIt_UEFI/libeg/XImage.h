@@ -84,6 +84,7 @@ public:
   void Fill(const EG_PIXEL* Color);
   void FillArea(const EG_PIXEL* Color, EG_RECT& Rect);
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect);
+  void Copy(XImage* Image);
   void CopyScaled(const XImage& Image, float scale);
   void CopyRect(const XImage& Image, INTN X, INTN Y);
   void CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_RECT& InputRect);

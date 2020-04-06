@@ -119,13 +119,14 @@ public:
   const XImage& GetIcon(const XString& Name) const;  //get by name
   const XImage& GetIcon(INTN Id) const; //get by id
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
+  const XImage& LoadOSIcon(const XString& Full);
 
 //  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
   void FillByDir();
   EFI_STATUS GetThemeTagSettings(void* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
-  EFI_STATUS ParseSVGXTheme(CONST CHAR8* buffer); // in VectorTheme
+  EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
   EFI_STATUS ParseSVGXIcon(void *p, INTN Id, const XString& IconNameX, float Scale, XImage* Image);
   void* LoadTheme(const CHAR16 *TestTheme); //return TagPtr why?
 
