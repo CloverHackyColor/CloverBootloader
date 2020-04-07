@@ -201,10 +201,11 @@ fi
 }
 
 buildApp() {
+local withClover=${1-"none"}
 if [[ "$SYSNAME" == Darwin ]]; then
   if [[ -f "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi ]]; then
     rm -f "${CLOVERROOT}"/CloverPackage/sym/.withV2
-    if [[ -n $1 ]] && [[ $1 == withV2 ]]; then
+    if [[ $withClover == withV2 ]]; then
       touch "${CLOVERROOT}"/CloverPackage/sym/.withV2
     fi
     cd "${CLOVERROOT}"/CloverApp
