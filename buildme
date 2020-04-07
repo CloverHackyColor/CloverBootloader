@@ -203,6 +203,10 @@ fi
 buildApp() {
 if [[ "$SYSNAME" == Darwin ]]; then
   if [[ -f "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi ]]; then
+    rm -f "${CLOVERROOT}"/CloverPackage/sym/.withV2
+    if [[ -n $1 ]] && [[ $1 == withV2 ]]; then
+      touch "${CLOVERROOT}"/CloverPackage/sym/.withV2
+    fi
     cd "${CLOVERROOT}"/CloverApp
     echo "[BUILD APP]"
     checkXCODE
@@ -266,6 +270,7 @@ options=( 'build Clover'
           'build Clover with HFSPlus'
           'make pkg'
           'make app'
+          'make app (with Clover)'
           'make iso'
           'build all'
           'test build (no autogen, no boot files)'
@@ -294,6 +299,10 @@ do
     ;;
     "make app")
       buildApp
+      break
+    ;;
+    "make app (with Clover)")
+      buildApp withV2
       break
     ;;
     "make iso")

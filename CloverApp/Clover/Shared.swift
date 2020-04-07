@@ -92,7 +92,7 @@ func findCloverHashCommit(at EFIdir: String) -> String? {
         
         if (rev != nil), let revision = String(cString: (rev?.utf8String)!,
                                                encoding: String.Encoding.utf8) {
-          if revision.count == 8 {
+          if revision.count >= 4 && revision.count <= 40 {
             return revision
           }
         }
@@ -114,3 +114,4 @@ func getCoreTypeImage(named: String, isTemplate: Bool) -> NSImage? {
   image?.isTemplate = isTemplate
   return image
 }
+

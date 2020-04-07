@@ -1,0 +1,342 @@
+/*
+Clover.app
+language code: es-MX
+
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
+"N/A" = "N/A"; // not available (please be short)
+
+// Mount / unmount
+"Clover wants to mount %@" = "Clover wants to mount %@";
+"Clover wants to umount %@" = "Clover wants to umount %@";
+"Mount" = "Mount";
+"umount" = "umount";
+"mount point" = "mount point";
+"*auto mount" = "*auto mount";
+
+// Info
+"System Serial Number:" = "System Serial Number:";
+"Model:" = "Model:";
+"board-id:" = "board-id:";
+"OEM Vendor:" = "OEM Vendor:";
+"OEM Product:" = "OEM Product:";
+"OEM Board:" = "OEM Board:";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
+
+// Sound
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
+"Garniture" = "Garniture";
+"Other" = "Other";
+
+"true" = "true";
+"false" = "false";
+
+// Theme
+"Theme:" = "Theme:";
+"Themes" = "Themes"; // window title
+"No themes found" = "No themes found";
+"Manager" = "Manager";
+"Can't remove the theme" = "Can't remove the theme";
+"Show installed" = "Show installed";
+"Optimize" = "Optimize";
+"Sound:" = "Sound:";
+// Main view (pop over)
+"*Make filesystem read-write" = "*Make filesystem read-write";
+"*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
+"*Require CloverDaemon" = "*Require CloverDaemon";
+"Read daemon log" = "Read daemon log";
+"Read bdmesg" = "Read boot log";
+
+"Install CloverDaemonNew" = "Install CloverDaemonNew";
+"Uninstall CloverDaemonNew" = "Uninstall CloverDaemonNew";
+
+"Update" = "Update";
+"Download" = "Download";
+"Update to r%d" = "Update to r%d"; // Update to r5101
+"Check update:" = "Check update:";
+"Check now" = "Check now";
+
+"never" = "never";
+"daily" = "daily";
+"weekly" = "weekly";
+"monthly" = "monthly";
+"last checked:" = "last checked:"; // last date update was checked
+
+"Run at login" = "Run at login";
+"Close" = "Cerrar";
+
+// Installer
+"Install Clover" = "Install Clover";
+"Current Clover revision" = "Current Clover revision";
+"Boot Device:" = "Boot Device:";
+"config path:" = "config path:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
+"Clover Installer" = "Clover Installer";
+"Select a disk.." = "Select a disk..";
+"Install" = "Install";
+"Uninstall" = "Uninstall";
+"AltBoot" = "Alternative boot";
+
+// Clover Bootloader and drivers
+"UEFI only" = "Install Clover to be used with UEFI motherboards only.";
+
+"Install alternative booting PBR" = "Install alternative booting PBR with choice of boot with a key pressed.
+File to boot = boot{keypressed}";
+
+"Don't install any bootloader (boot0X, boot1X)" = "Don't install any bootloader (boot0X, boot1X).
+Usefull for UEFI motherboards that don't need bootloader files.
+Can also be use if you don't want to upgrade MBR or PBR sectors.";
+
+"Clover legacy BIOS boot sectors" = "Clover EFI requires three essential files. (in simple terms)
+boot0 (On the drive's MBR) responsible for loading boot1.
+boot1 (On the partition's boot-sector) to finding boot2.
+boot2 (On the partition's root directory) for loading CLOVERX64.efi, and kernel etc.";
+
+"boot0af" = "Used for BIOS booting on BIOS motherboards.
+boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.
+This choice will setup selected HFS/Fat32 partition to be active.";
+
+"boot0ss" = "Used for BIOS booting on BIOS motherboards.
+boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.
+This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.
+This choice will not activate any partition in MBR.";
+
+"boot6" = "Clover EFI 64-bits using SATA to access drives.";
+"boot7" = "Clover EFI 64-bits BiosBlockIO";
+
+"UEFI mandatory" = "UEFI mandatory";
+"BIOS mandatory" = "BIOS mandatory";
+
+"UEFI/Other" = "UEFI/Other";
+"BIOS/Other" = "BIOS/Other";
+
+"UEFI, but not from this installer" = "UEFI, but not from this installer";
+"BIOS, but not from this installer" = "BIOS, but not from this installer";
+
+"UEFI/FileSystem" = "UEFI, filesystem drivers";
+"BIOS/FileSystem" = "BIOS, filesystem drivers";
+
+"UEFI/HID" = "UEFI, Human Interface Devices";
+"BIOS/HID" = "BIOS, Human Interface Devices";
+
+"UEFI/FileVault2" = "UEFI, FileVault 2 drivers";
+"BIOS/FileVault2" = "BIOS, FileVault 2 drivers";
+
+"UEFI/MemoryFix" = "UEFI, memory fix drivers";
+
+"ApfsDriverLoader.efi" = "Supports APFS filesystem driver from container for macOS 10.13 and newers";
+
+"AppleImageCodec.efi" = "Decode PNG and BMP for FileVault2.";
+
+"AppleImageLoader.efi" = "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.";
+
+"AppleKeyAggregator.efi" = "Support for boot UI dialog for FileVault2.";
+
+"AppleKeyFeeder.efi" = "Support for PS/2 keyboard to use with FileVault 2.";
+
+"AppleUISupport.efi" = "Set of protocols for support EfiLoginUi for FileVault.";
+
+"AppleUITheme.efi" = "Create boot UI Themes support for FileVault2.";
+
+"AptioInputFix.efi" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
+
+"AptioMemoryFix.efi" = "Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+
+"AudioDxe.efi" = "HDA driver to play Startup Sound during Clover boot.
+Configure it via Startup sound output from Option menu, including:
+Volume and Audio device (for supported IOAudio devices only).";
+
+"FirmwareVolume.efi" = "Create FirmwareVolume with cursor images for FileVault2.";
+
+"FSInject.efi" = "Provide injection of kernel extensions from Clover folder and allow to force load them from both /System/Library/Extensions and /Library/Extensions.";
+
+"GrubEXFAT.efi" = "ExFAT filesystem driver from GRUB.";
+
+"GrubISO9660.efi" = "ISO 9600 filesystem driver from GRUB.";
+
+"GrubNTFS.efi" = "NTFS filesystem driver from GRUB.";
+
+"GrubUDF.efi" = "UDF filesystem driver from GRUB.";
+
+"SMCHelper.efi" = "Restore SMC keys left in NVRAM by FakeSMC.";
+
+"XhciDxe.efi" = "USB 3.0 driver";
+
+"AppleEvent.uefi" = "Create AppleEvent protocol for FileVault2.";
+
+"AppleGraphicsConfig.uefi" = "Create optional AppleGraphicsConfig protocol.";
+
+"CsmVideoDxe.efi" = "Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
+Clover may not started with it and you may have wake problem in system. Use with precautions.";
+
+"DataHubDxe.efi" = "This is DataHub protocol support mandatory for macOS.
+Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+
+"EmuVariableUefi.efi" = "Workaround for store NVRAM variables for systems without UEFI hardware.
+Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it";
+
+"EnglishDxe.efi" = "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.";
+
+"Fat.efi" = "FAT filesystem driver.";
+
+"HashServiceFix.efi" = "Fix Hash support if absent in native UEFI BIOS.";
+
+"HFSPlus.efi" = "Alternate HFS+ filesystem driver.";
+
+"NvmExpressDxe.efi" = "Driver for support NVM Express devices.";
+
+"OsxAptioFix3Drv.efi" = "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.";
+
+"OsxAptioFixDrv.efi" = "Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.";
+
+"OsxFatBinaryDrv.efi" = "Driver for support FAT Binary executables for OS X 10.9 and older.";
+
+"OsxLowMemFixDrv.efi" = "Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.";
+
+"PartitionDxe.efi" = "Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
+
+"Ps2MouseDxe.efi" = "PS/2 mouse driver";
+
+"UsbKbDxe.efi" = "Keyboard driver for boot UI support.";
+
+"UsbMouseDxe.efi" = "USB mouse driver";
+
+"VBoxExt2.efi" = "EXT2/3 filesystem driver from VirtualBox.";
+
+"VBoxExt4.efi" = "EXT4 filesystem driver from VirtualBox.";
+
+"VBoxHfs.efi" = "HFS+ filesystem driver.";
+
+"VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Acerca de Clover";
+"Preferences…" = "Preferencias…";
+"Services" = "Servicios";
+"Hide Clover" = "Ocultar Clover";
+"Hide Others" = "Ocultar otros";
+"Show All" = "Mostrar todo";
+"Quit Clover" = "Salir de Clover";
+// File
+"New" = "New";
+"Open…" = "Abrir…";
+"Open Recent" = "Open Recent";
+"Close" = "Cerrar";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Deshacer";
+"Redo" = "Rehacer";
+"Cut" = "Cortar";
+"Copy" = "Copiar";
+"Paste" = "Pegar";
+"Paste and Match Style" = "Pegar con el mismo estilo";
+"Delete" = "Eliminar";
+"Select All" = "Seleccionar todo";
+// Edit->Find
+"Edit" = "Edición";
+"File" = "Archivo";
+"Find" = "Buscar";
+"Find…" = "Buscar…";
+"Find and Replace…" = "Buscar y remplazar…";
+"Find Next" = "Buscar siguiente";
+"Find Previous" = "Buscar anterior";
+"Use Selection for Find" = "Usar selección para buscar";
+"Use Selection for Replace" = "<null>";
+"Jump to Selection" = "Ir a la selección";
+// Edit->Spelling and Grammar
+"Spelling" = "Ortografía";
+"Spelling and Grammar" = "Ortografía y gramática";
+"Show Spelling and Grammar" = "Mostrar ortografía y gramática";
+"Check Document Now" = "Comprobar documento ahora";
+"Check Spelling While Typing" = "Comprobar ortografía mientras se escribe";
+"Check Grammar With Spelling" = "Comprobar gramática con la ortografía";
+"Correct Spelling Automatically" = "Corregir ortografía automáticamente";
+// Edit->Substitutions
+"Substitutions" = "Sustituciones";
+"Show Substitutions" = "Mostrar sustituciones";
+"Smart Copy/Paste" = "Copiado/pegado inteligente";
+"Smart Quotes" = "Comillas tipográficas";
+"Smart Dashes" = "Guiones inteligentes";
+"Smart Links" = "Enlaces inteligentes";
+"Text Replacement" = "Reemplazar texto";
+// Edit->Transformations
+"Transformations" = "Transformaciones";
+"Make Upper Case" = "Todo en mayúsculas";
+"Make Lower Case" = "Todo en minúsculas";
+"Capitalize" = "Convertir en mayúsculas";
+// Edit->Speech
+"Speech" = "Voz";
+"Start Speaking" = "Iniciar locución";
+"Stop Speaking" = "Detener locución";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Window";
+"Minimize" = "Minimizar";
+"Zoom" = "Zoom";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "Traer todo al frente";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

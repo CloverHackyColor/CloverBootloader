@@ -12,13 +12,13 @@ import ServiceManagement
 extension AppDelegate {
   func setLaunchAtStartup() {
     let success : Bool = SMLoginItemSetEnabled(gHelperID, true)
-    UserDefaults.standard.set(success, forKey: kRunAtLogin)
-    UserDefaults.standard.synchronize()
+    UDs.set(success, forKey: kRunAtLogin)
+    UDs.synchronize()
   }
   
   func removeLaunchAtStartup() {
     let success : Bool = SMLoginItemSetEnabled(gHelperID, false)
-    UserDefaults.standard.set(success ? false : true, forKey: kRunAtLogin)
-    UserDefaults.standard.synchronize()
+    UDs.set(success ? false : true, forKey: kRunAtLogin)
+    UDs.synchronize()
   }
 }

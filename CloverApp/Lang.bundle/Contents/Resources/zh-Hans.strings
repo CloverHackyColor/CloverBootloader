@@ -1,62 +1,56 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: zh-Hans
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "N/A"; // not available (please be short)
-"Install Clover" = "安装 Clover";
-"Current Clover revision" = "目前 Clover 版本";
-"Boot Device:" = "引导设备:";
-"config path:" = "config 路径:";
-"Installation succeded" = "安装成功";
-"Installation failed" = "安装失败";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover 想要挂载 %@";
 "Clover wants to umount %@" = "Clover 想要卸载 %@";
 "Mount" = "挂载";
 "umount" = "卸载";
 "mount point" = "挂载点";
-"*auto mount" = "*自动挂载";
+"*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
 "OEM Vendor:" = "OEM Vendor:";
 "OEM Product:" = "OEM Product:";
 "OEM Board:" = "OEM Board:";
-"NVRAM is native:" = "原生 NVRAM:";
-"unknown" = "未知";
-"Yes" = "是";
-"No" = "否";
+"NVRAM is native:" = "NVRAM is native:";
+"unknown" = "unknown";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
 
-"Startup Sound" = "启动音";
-"Device:" = "设备:";
-"Volume level:" = "音量:";
-"LineOut" = "输出线路";
-"Speaker" = "扬声器";
-"Headphones" = "耳机";
+// Sound
+"Startup Sound" = "Startup Sound";
+"Device:" = "Device:";
+"Volume level:" = "Volume level:";
+"LineOut" = "Line Out";
+"Speaker" = "Speaker";
+"Headphones" = "Headphones";
 "Garniture" = "Garniture";
-"Other" = "其它";
+"Other" = "Other";
 
 "true" = "是";
 "false" = "否";
 
+// Theme
 "Theme:" = "主题:";
-"Themes" = "主题"; // window title
-"No themes found" = "未找到主题";
-"Manager" = "管家"; // Theme manager
-"Can't remove the theme" = "无法移除主题";
-"Show installed" = "显示已安装";
-"Optimize" = "优化";
+"Themes" = "Themes"; // window title
+"No themes found" = "No themes found";
+"Manager" = "Manager";
+"Can't remove the theme" = "Can't remove the theme";
+"Show installed" = "Show installed";
+"Optimize" = "Optimize";
 "Sound:" = "声音:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*让文件系统可读写";
 "*Disable Sleep Proxy Client" = "*禁用 Sleep Proxy Client";
 "*Require CloverDaemon" = "*需要 CloverDaemon";
@@ -67,8 +61,8 @@
 "Uninstall CloverDaemonNew" = "卸载 CloverDaemonNew";
 
 "Update" = "更新";
-"Download" = "下载";
-"Update to r%d" = "更新到 r%d"; // "Update to r5101"
+"Download" = "Download";
+"Update to r%d" = "更新到 r%d"; // Update to r5101
 "Check update:" = "检查更新:";
 "Check now" = "现在检查";
 
@@ -76,18 +70,25 @@
 "daily" = "每日";
 "weekly" = "每周";
 "monthly" = "每月";
-"last checked:" = "最近检查:"; // last date update was checked. Please be short.
+"last checked:" = "最近检查:"; // last date update was checked
 
 "Run at login" = "登录时启动";
-"Close" = "退出"; // Close the Clover.app
+"Close" = "退出";
 
-/* Installer */
+// Installer
+"Install Clover" = "安装 Clover";
+"Current Clover revision" = "目前 Clover 版本";
+"Boot Device:" = "引导设备:";
+"config path:" = "config 路径:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 "Clover Installer" = "Clover 安装器";
 "Select a disk.." = "选择一个磁盘..";
 "Install" = "安装";
 "Uninstall" = "卸载";
 "AltBoot" = "Alternative boot";
 
+// Clover Bootloader and drivers
 "UEFI only" = "仅安装 UEFI 主板专用的 Clover 版本。";
 
 "Install alternative booting PBR" = "安装 PBR 的多重开机选项，boot1=变色龙 引导，boot6=64位 Clover 引导。
@@ -114,19 +115,20 @@ boot0ss (boot0 签名扫描) 引导器 优先引导第一个含 有效 PBR 签�
 "boot6" = "CloverEFI 64位版本, 使用 SATA 模式存取硬盘";
 "boot7" = "CloverEFI 64位版本, 使用 Bios Block I/O 模式存取硬盘";
 
-/* Drivers */
 "UEFI mandatory" = "强制 UEFI 模式";
 "BIOS mandatory" = "强制 BIOS 模式";
+
 "UEFI/Other" = "UEFI/Other";
 "BIOS/Other" = "BIOS/Other";
+
 "UEFI, but not from this installer" = "UEFI, 但不来自此安装器";
 "BIOS, but not from this installer" = "BIOS, 但不来自此安装器";
 
 "UEFI/FileSystem" = "UEFI, 文件系统驱动";
 "BIOS/FileSystem" = "BIOS, 文件系统驱动";
 
-"UEFI/HID" = "UEFI, 人体学输入设备";
-"BIOS/HID" = "BIOS, 人体学输入设备";
+"UEFI/HID" = "UEFI, 人机接口设备";
+"BIOS/HID" = "BIOS, 人机接口设备";
 
 "UEFI/FileVault2" = "UEFI, 文件保险箱驱动";
 "BIOS/FileVault2" = "BIOS, 文件保险箱驱动";
@@ -217,3 +219,124 @@ boot0ss (boot0 签名扫描) 引导器 优先引导第一个含 有效 PBR 签�
 "VBoxHfs.efi" = "HFS+ 文件系统驱动。";
 
 "VBoxIso9600.efi" = "ISO 9600 文件系统驱动。";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "About Clover";
+"Preferences…" = "Preferences…";
+"Services" = "Services";
+"Hide Clover" = "Hide Clover";
+"Hide Others" = "Hide Others";
+"Show All" = "Show All";
+"Quit Clover" = "Quit Clover";
+// File
+"New" = "New";
+"Open…" = "Open…";
+"Open Recent" = "Open Recent";
+"Close" = "退出";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Undo";
+"Redo" = "Redo";
+"Cut" = "Cut";
+"Copy" = "Copy";
+"Paste" = "Paste";
+"Paste and Match Style" = "Paste and Match Style";
+"Delete" = "Delete";
+"Select All" = "Select All";
+// Edit->Find
+"Edit" = "Edit";
+"File" = "File";
+"Find" = "Find";
+"Find…" = "Find…";
+"Find and Replace…" = "Find and Replace…";
+"Find Next" = "Find Next";
+"Find Previous" = "Find Previous";
+"Use Selection for Find" = "Use Selection for Find";
+"Use Selection for Replace" = "Use Selection for Replace";
+"Jump to Selection" = "Jump to Selection";
+// Edit->Spelling and Grammar
+"Spelling" = "Spelling";
+"Spelling and Grammar" = "Spelling and Grammar";
+"Show Spelling and Grammar" = "Show Spelling and Grammar";
+"Check Document Now" = "Check Document Now";
+"Check Spelling While Typing" = "Check Spelling While Typing";
+"Check Grammar With Spelling" = "Check Grammar With Spelling";
+"Correct Spelling Automatically" = "Correct Spelling Automatically";
+// Edit->Substitutions
+"Substitutions" = "Substitutions";
+"Show Substitutions" = "Show Substitutions";
+"Smart Copy/Paste" = "Smart Copy/Paste";
+"Smart Quotes" = "Smart Quotes";
+"Smart Dashes" = "Smart Dashes";
+"Smart Links" = "Smart Links";
+"Text Replacement" = "Text Replacement";
+// Edit->Transformations
+"Transformations" = "Transformations";
+"Make Upper Case" = "Make Upper Case";
+"Make Lower Case" = "Make Lower Case";
+"Capitalize" = "Capitalize";
+// Edit->Speech
+"Speech" = "Speech";
+"Start Speaking" = "Start Speaking";
+"Stop Speaking" = "Stop Speaking";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Window";
+"Minimize" = "Minimize";
+"Zoom" = "Zoom";
+"Bring Clover Window to Front" = "Bring Clover Window to Front";
+"Bring All to Front" = "Bring All to Front";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

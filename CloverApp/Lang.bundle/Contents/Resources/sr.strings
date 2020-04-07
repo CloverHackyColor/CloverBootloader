@@ -1,24 +1,14 @@
 /*
-  Clover.app
+Clover.app
+language code: sr
 
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
 */
-
-/*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
-
-/* top bar menu */
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "N/V"; // not available (please be short)
-"Install Clover" = "Instalirajte Clover";
-"Current Clover revision" = "Trenutna verzija Clover-a";
-"Boot Device:" = "Uređaj za podizanje sastava:";
-"config path:" = "Putanja za konfiguraciju:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover želi %@ mount";
 "Clover wants to umount %@" = "Clover želi %@ unmount";
 "Mount" = "Mount";
@@ -26,6 +16,7 @@
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
@@ -34,9 +25,10 @@
 "OEM Board:" = "OEM Board:";
 "NVRAM is native:" = "NVRAM is native:";
 "unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
 
+// Sound
 "Startup Sound" = "Startup Sound";
 "Device:" = "Device:";
 "Volume level:" = "Volume level:";
@@ -49,26 +41,28 @@
 "true" = "tačno";
 "false" = "Lažno";
 
+// Theme
 "Theme:" = "Tema:";
 "Themes" = "Themes"; // window title
 "No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
+"Manager" = "Manager";
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
 "Optimize" = "Optimize";
 "Sound:" = "Zvuk:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*Filesystem čine čitanje-Pisanje";
 "*Disable Sleep Proxy Client" = "*Sleep Proxy Client deaktiviran";
 "*Require CloverDaemon" = "*Tražiti CloverDaemon";
-"Read daemon log" = " Čitanje Daemon log";
-"Read bdmesg" = " Čitanje Boot log";
+"Read daemon log" = "Čitanje Daemon log";
+"Read bdmesg" = "Čitanje Boot log";
 
 "Install CloverDaemonNew" = "Instalirati CloverDaemonNew";
 "Uninstall CloverDaemonNew" = "Deinstalirati CloverDaemonNew";
 
 "Update" = "Ažuriranje";
 "Download" = "Download";
-"Update to r%d" = "Ažurirati Verziju r%d Aktuelnu"; // "Update to r5101"
+"Update to r%d" = "Ažurirati Verziju r%d Aktuelnu"; // Update to r5101
 "Check update:" = "Proveriti trenutnu verziju:";
 "Check now" = "Proveriti sada";
 
@@ -76,18 +70,25 @@
 "daily" = "Dnevno";
 "weekly" = "Nedeljno";
 "monthly" = "Mesečno";
-"last checked:" = "Poslednja proverat:"; // last date update was checked. Please be short.
+"last checked:" = "Poslednja proverat:"; // last date update was checked
 
 "Run at login" = "Pokrenuti pri prijavi";
-"Close" = "Zatvoriti"; // Close the Clover.app
+"Close" = "Zatvori";
 
-/* Installer */
+// Installer
+"Install Clover" = "Instalirajte Clover";
+"Current Clover revision" = "Trenutna verzija Clover-a";
+"Boot Device:" = "Uređaj za podizanje sastava:";
+"config path:" = "Putanja za konfiguraciju:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 "Clover Installer" = "Clover Instalacija";
 "Select a disk.." = "Selektuj disk..";
 "Install" = "Instaliraj";
 "Uninstall" = "Deinstaliraj";
 "AltBoot" = "AltBoot";
 
+// Clover Bootloader and drivers
 "UEFI only" = "Install Clover to be used with UEFI motherboards only.";
 
 "Install alternative booting PBR" = "Install alternative booting PBR with choice of boot with a key pressed.
@@ -114,11 +115,12 @@ This choice will not activate any partition in MBR.";
 "boot6" = "Clover EFI 64-bits using SATA to access drives.";
 "boot7" = "Clover EFI 64-bits BiosBlockIO";
 
-/* Drivers */
 "UEFI mandatory" = "UEFI mandatory";
 "BIOS mandatory" = "BIOS mandatory";
+
 "UEFI/Other" = "UEFI/Other";
 "BIOS/Other" = "BIOS/Other";
+
 "UEFI, but not from this installer" = "UEFI, ali ne sa ovog instalera";
 "BIOS, but not from this installer" = "BIOS, ali ne sa ovog instalera";
 
@@ -217,3 +219,124 @@ Ovaj upravljački program koristite samo ako postoje problemi bez njega.";
 "VBoxHfs.efi" = "Upravljački program za HFS + datoteku sistema.";
 
 "VBoxIso9600.efi" = "Upravljački program za ISO 9600 datoteku sistema.";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "O Clover";
+"Preferences…" = "Podesavanja…";
+"Services" = "Usluge";
+"Hide Clover" = "Sakrij Clover";
+"Hide Others" = "Sakrij druge";
+"Show All" = "Prikazi sve";
+"Quit Clover" = "Izadji iz Clover";
+// File
+"New" = "New";
+"Open…" = "Otvori…";
+"Open Recent" = "Open Recent";
+"Close" = "Zatvori";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Opozovi";
+"Redo" = "Ponovi";
+"Cut" = "Iseci";
+"Copy" = "Kopiraj";
+"Paste" = "Nalepi";
+"Paste and Match Style" = "Nalepi u istom stilu";
+"Delete" = "Obrisi";
+"Select All" = "Oznaci sve";
+// Edit->Find
+"Edit" = "Izmeni";
+"File" = "Fajl";
+"Find" = "Nadji";
+"Find…" = "Nadji…";
+"Find and Replace…" = "Nadji i zameni…";
+"Find Next" = "Nadji sledece";
+"Find Previous" = "Nadji prethodno";
+"Use Selection for Find" = "Iskoristi oznaceno da nadjes";
+"Use Selection for Replace" = "Iskoristi oznaceno da zamenis";
+"Jump to Selection" = "Prebaci na oznaceno";
+// Edit->Spelling and Grammar
+"Spelling" = "Pravopis";
+"Spelling and Grammar" = "Pravopis i gramatika";
+"Show Spelling and Grammar" = "Prikazi slovne greske i gramatiku";
+"Check Document Now" = "Proveri dokument odmah";
+"Check Spelling While Typing" = "Provera slovnih grešaka dok kucas";
+"Check Grammar With Spelling" = "Proveri gramatiku i slovne greske";
+"Correct Spelling Automatically" = "Automatski ispravi slovne greske";
+// Edit->Substitutions
+"Substitutions" = "Zamene";
+"Show Substitutions" = "Pokazi zamene";
+"Smart Copy/Paste" = "Pametno kopiranje/lepljenje";
+"Smart Quotes" = "Pametni citati";
+"Smart Dashes" = "Pametne crte";
+"Smart Links" = "Pametne veze";
+"Text Replacement" = "Zamene teksta";
+// Edit->Transformations
+"Transformations" = "Transformacije";
+"Make Upper Case" = "Povecaj slova";
+"Make Lower Case" = "Smanji slova";
+"Capitalize" = "Velika slova";
+// Edit->Speech
+"Speech" = "Govor";
+"Start Speaking" = "Pocnite da govorite";
+"Stop Speaking" = "Prestanite da govorite";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Prozor";
+"Minimize" = "Minimizuj";
+"Zoom" = "Zum";
+"Bring Clover Window to Front" = "Prebaci Clover prozor napred";
+"Bring All to Front" = "Prebaci sve napred";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

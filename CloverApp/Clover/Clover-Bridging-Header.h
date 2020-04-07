@@ -18,8 +18,9 @@
 #define DEBUG DEBUG_BACKUP // restore original
 #endif
 */
+
 #import "NSWindowFix.h"
-#import "PNG8Image.h"
+#import "ThemeImage.h"
 #import "gfxutil.h"
 #import "efidevp.h"
 
@@ -288,9 +289,7 @@ struct CUSTOM_TOOL_ENTRY {
   UINT8             VolumeType;
 };
 
-/**
- Set of Search & replace bytes for VideoBiosPatchBytes().
- **/
+// Set of Search & replace bytes for VideoBiosPatchBytes().
 typedef struct _VBIOS_PATCH_BYTES {
   VOID    *Find;
   VOID    *Replace;
@@ -644,3 +643,4 @@ typedef struct {
   DEV_PROPERTY            *ArbProperties;
   
 } SETTINGS_DATA;
+

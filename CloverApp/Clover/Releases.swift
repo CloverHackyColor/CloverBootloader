@@ -54,11 +54,20 @@ func getLatestReleases(reply: @escaping (String?, String?, String?, String?) -> 
         //applink = "/CloverHackyColor/CloverBootloader/releases/download/5099/Clover.app_v1.17_r5104.pkg.zip\" rel=\"nofollow\" class=\"d-flex flex-items-center min-width-0\">"
         applink = "https://github.com\(applink!.components(separatedBy: "\"")[0])"
    
-        if applink!.lastPath.hasPrefix("Clover.app_v") && applink!.hasSuffix(".zip") {
-          // Clover.app_v1.17_r5104.pkg.zip
+        if applink!.lastPath.hasPrefix("Clover.app_v") && applink!.hasSuffix(".pkg") {
+          // Clover.app_v1.17.pkg
           appvers = applink!.components(separatedBy: "Clover.app_v")[1]
           //print(appvers)
-          appvers = appvers!.components(separatedBy: "_r")[0]
+          appvers = appvers!.components(separatedBy: ".pkg")[0]
+          if let pkgName = applink?.deletingFileExtension.lastPath {
+            let donwPath = NSHomeDirectory().addPath("Desktop/Clover_app_download").addPath(pkgName)
+            if fm.fileExists(atPath: donwPath) {
+              applink = nil
+              appvers = nil
+              break
+            }
+          }
+          
           break
         }
       }

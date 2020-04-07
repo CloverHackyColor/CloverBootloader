@@ -1,24 +1,14 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: ko
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "알수없음"; // not available (please be short)
-"Install Clover" = "클로버 설치";
-"Current Clover revision" = "현재 클로버 리비전";
-"Boot Device:" = "부트 디스크:";
-"config path:" = "config 경로:";
-"Installation succeded" = "설치 성공";
-"Installation failed" = "설치 실패";
 
+// Mount / unmount
 "Clover wants to mount %@" = "클로버는 다음 디스크를 마운트: %@";
 "Clover wants to umount %@" = "클로버는 다음 디스크를 언마운트: %@";
 "Mount" = "마운트";
@@ -26,6 +16,7 @@
 "mount point" = "마운트 포인트";
 "*auto mount" = "*자동 마운트";
 
+// Info
 "System Serial Number:" = "시스템 시리얼 번호:";
 "Model:" = "모델:";
 "board-id:" = "보드-ID:";
@@ -34,12 +25,13 @@
 "OEM Board:" = "OEM 보드:";
 "NVRAM is native:" = "네이티브 NVRAM:";
 "unknown" = "알수없음";
-"Yes" = "예";
-"No" = "아니오";
+"Yes" = "예"; // first char upper case
+"No" = "아니오"; // first char upper case
+
+// Sound
 "Startup Sound" = "시작음";
 "Device:" = "장치:";
 "Volume level:" = "볼륨 크기:";
-
 "LineOut" = "라인아웃";
 "Speaker" = "스피커";
 "Headphones" = "해드폰";
@@ -49,14 +41,16 @@
 "true" = "예";
 "false" = "아니오";
 
+// Theme
 "Theme:" = "테마:";
 "Themes" = "Themes"; // window title
 "No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
+"Manager" = "Manager";
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
 "Optimize" = "Optimize";
 "Sound:" = "사운드:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*파일시스템을 읽기-쓰기로 변경";
 "*Disable Sleep Proxy Client" = "*잠자기 프록시 클라이언트 비활성화";
 "*Require CloverDaemon" = "*클로버데몬 필요";
@@ -68,7 +62,7 @@
 
 "Update" = "업데이트";
 "Download" = "다운로드";
-"Update to r%d" = "r%d로 업데이트"; // "Update to r5101"
+"Update to r%d" = "r%d로 업데이트"; // Update to r5101
 "Check update:" = "업데이트 확인:";
 "Check now" = "지금 확인";
 
@@ -76,18 +70,25 @@
 "daily" = "매일";
 "weekly" = "매주";
 "monthly" = "매달";
-"last checked:" = "마지막 검사:"; // last date update was checked. Please be short.
+"last checked:" = "마지막 검사:"; // last date update was checked
 
 "Run at login" = "로그인 시 실행";
-"Close" = "닫기"; // Close the Clover.app
+"Close" = "닫기";
 
-/* Installer */
+// Installer
+"Install Clover" = "클로버 설치";
+"Current Clover revision" = "현재 클로버 리비전";
+"Boot Device:" = "부트 디스크:";
+"config path:" = "config 경로:";
+"Installation succeded" = "설치 성공";
+"Installation failed" = "설치 실패";
 "Clover Installer" = "클로버 설치";
 "Select a disk.." = "디스크 선택하기..";
 "Install" = "설치";
 "Uninstall" = "제거";
 "AltBoot" = "대체 부팅";
 
+// Clover Bootloader and drivers
 "UEFI only" = "UEFI 메인보드 전용 Clover를 설치합니다.";
 
 "Install alternative booting PBR" = "키를 누름으로써 대체 PBR로 부팅합니다.
@@ -114,11 +115,12 @@ boot0ss (boot0 시그내쳐 스캐닝) 부트로더는 EFI/FAT32/HFS의 첫번�
 "boot6" = "CloverEFI 64비트 (드라이브 액세스에 SATA 사용)";
 "boot7" = "CloverEFI 64비트 (드라이브 액세스에 Bios Block I/O 사용)";
 
-/* Drivers */
 "UEFI mandatory" = "UEFI, 필수 드라이버";
 "BIOS mandatory" = "BIOS, 필수 드라이버";
+
 "UEFI/Other" = "UEFI, 추가 드라이버";
 "BIOS/Other" = "BIOS, 추가 드라이버";
+
 "UEFI, but not from this installer" = "UEFI, 현재 사용자가 가지고 있는 드라이버";
 "BIOS, but not from this installer" = "BIOS, 현재 사용자가 가지고 있는 드라이버";
 
@@ -217,3 +219,124 @@ Clover는 깨어나기에 문제가 있는 시스템에서는 정상적으로 �
 "VBoxHfs.efi" = "오픈소스 HFS+ 파일 시스템 드라이버";
 
 "VBoxIso9600.efi" = "ISO 9600 파일 시스템 드라이버";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Clover에 관하여";
+"Preferences…" = "환경설정...";
+"Services" = "서비스";
+"Hide Clover" = "Clover 가리기";
+"Hide Others" = "기타 가리기";
+"Show All" = "모두 보기";
+"Quit Clover" = "Clover 종료";
+// File
+"New" = "New";
+"Open…" = "열기...";
+"Open Recent" = "Open Recent";
+"Close" = "닫기";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "실행 취소";
+"Redo" = "실행 복귀";
+"Cut" = "오려두기";
+"Copy" = "복사하기";
+"Paste" = "붙이기";
+"Paste and Match Style" = "붙여넣고 스타일 일치시킴";
+"Delete" = "삭제";
+"Select All" = "전체 선택";
+// Edit->Find
+"Edit" = "편집";
+"File" = "파일";
+"Find" = "찾기";
+"Find…" = "찾기...";
+"Find and Replace…" = "찾기 및 대치...";
+"Find Next" = "다음 찾기";
+"Find Previous" = "이전 찾기";
+"Use Selection for Find" = "선택 부분으로 찾기";
+"Use Selection for Replace" = "선택 부분으로 대치";
+"Jump to Selection" = "선택 부분으로 이동";
+// Edit->Spelling and Grammar
+"Spelling" = "맞춤법";
+"Spelling and Grammar" = "맞춤법 및 문법";
+"Show Spelling and Grammar" = "맞춤법 및 문법 보기";
+"Check Document Now" = "지금 도큐멘트 검사";
+"Check Spelling While Typing" = "입력하는 동안 맞춤법 검사";
+"Check Grammar With Spelling" = "맞춤법 및 문법 검사";
+"Correct Spelling Automatically" = "맞춤법 자동 수정";
+// Edit->Substitutions
+"Substitutions" = "대체";
+"Show Substitutions" = "대체 보기";
+"Smart Copy/Paste" = "스마트 복사하기/붙이기";
+"Smart Quotes" = "스마트 인용";
+"Smart Dashes" = "스마트 대시";
+"Smart Links" = "스마트 링크";
+"Text Replacement" = "텍스트 대치";
+// Edit->Transformations
+"Transformations" = "변형";
+"Make Upper Case" = "대문자로 만들기";
+"Make Lower Case" = "소문자로 만들기";
+"Capitalize" = "대문자로 시작";
+// Edit->Speech
+"Speech" = "말하기";
+"Start Speaking" = "말하기 시작";
+"Stop Speaking" = "말하기 중단";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "윈도우";
+"Minimize" = "최소화";
+"Zoom" = "확대/축소";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "모두 앞으로 가져오기";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

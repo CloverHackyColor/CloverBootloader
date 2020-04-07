@@ -1,0 +1,808 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Index</key>
+	<array>
+		<string>kCommentLine**#Globals</string>
+		<string>Unsupported</string>
+		<string>N/A</string>
+		<string>kInlineCommentPrefix**#not available (please be short)</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Mount / unmount</string>
+		<string>Clover wants to mount %@</string>
+		<string>Clover wants to umount %@</string>
+		<string>Mount</string>
+		<string>umount</string>
+		<string>mount point</string>
+		<string>*auto mount</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Info</string>
+		<string>System Serial Number:</string>
+		<string>Model:</string>
+		<string>board-id:</string>
+		<string>OEM Vendor:</string>
+		<string>OEM Product:</string>
+		<string>OEM Board:</string>
+		<string>NVRAM is native:</string>
+		<string>unknown</string>
+		<string>Yes</string>
+		<string>kInlineCommentPrefix**#first char upper case</string>
+		<string>No</string>
+		<string>kInlineCommentPrefix**#first char upper case</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Sound</string>
+		<string>Startup Sound</string>
+		<string>Device:</string>
+		<string>Volume level:</string>
+		<string>LineOut</string>
+		<string>Speaker</string>
+		<string>Headphones</string>
+		<string>Garniture</string>
+		<string>Other</string>
+		<string>kEmptyLine**#</string>
+		<string>true</string>
+		<string>false</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Theme</string>
+		<string>Theme:</string>
+		<string>Themes</string>
+		<string>kInlineCommentPrefix**#window title</string>
+		<string>No themes found</string>
+		<string>Manager</string>
+		<string>Can&apos;t remove the theme</string>
+		<string>Show installed</string>
+		<string>Optimize</string>
+		<string>Sound:</string>
+		<string>kCommentLine**#Main view (pop over)</string>
+		<string>*Make filesystem read-write</string>
+		<string>*Disable Sleep Proxy Client</string>
+		<string>*Require CloverDaemon</string>
+		<string>Read daemon log</string>
+		<string>Read bdmesg</string>
+		<string>kEmptyLine**#</string>
+		<string>Install CloverDaemonNew</string>
+		<string>Uninstall CloverDaemonNew</string>
+		<string>kEmptyLine**#</string>
+		<string>Update</string>
+		<string>Download</string>
+		<string>Update to r%d</string>
+		<string>kInlineCommentPrefix**#Update to r5101</string>
+		<string>Check update:</string>
+		<string>Check now</string>
+		<string>kEmptyLine**#</string>
+		<string>never</string>
+		<string>daily</string>
+		<string>weekly</string>
+		<string>monthly</string>
+		<string>last checked:</string>
+		<string>kInlineCommentPrefix**#last date update was checked</string>
+		<string>kEmptyLine**#</string>
+		<string>Run at login</string>
+		<string>Close</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Installer</string>
+		<string>Install Clover</string>
+		<string>Current Clover revision</string>
+		<string>Boot Device:</string>
+		<string>config path:</string>
+		<string>Installation succeded</string>
+		<string>Installation failed</string>
+		<string>Clover Installer</string>
+		<string>Select a disk..</string>
+		<string>Install</string>
+		<string>Uninstall</string>
+		<string>AltBoot</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Clover Bootloader and drivers</string>
+		<string>UEFI only</string>
+		<string>kEmptyLine**#</string>
+		<string>Install alternative booting PBR</string>
+		<string>kEmptyLine**#</string>
+		<string>Don&apos;t install any bootloader (boot0X, boot1X)</string>
+		<string>kEmptyLine**#</string>
+		<string>Clover legacy BIOS boot sectors</string>
+		<string>kEmptyLine**#</string>
+		<string>boot0af</string>
+		<string>kEmptyLine**#</string>
+		<string>boot0ss</string>
+		<string>kEmptyLine**#</string>
+		<string>boot6</string>
+		<string>boot7</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI mandatory</string>
+		<string>BIOS mandatory</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI/Other</string>
+		<string>BIOS/Other</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI, but not from this installer</string>
+		<string>BIOS, but not from this installer</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI/FileSystem</string>
+		<string>BIOS/FileSystem</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI/HID</string>
+		<string>BIOS/HID</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI/FileVault2</string>
+		<string>BIOS/FileVault2</string>
+		<string>kEmptyLine**#</string>
+		<string>UEFI/MemoryFix</string>
+		<string>kEmptyLine**#</string>
+		<string>ApfsDriverLoader.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleImageCodec.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleImageLoader.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleKeyAggregator.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleKeyFeeder.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleUISupport.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleUITheme.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AptioInputFix.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AptioMemoryFix.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AudioDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>FirmwareVolume.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>FSInject.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>GrubEXFAT.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>GrubISO9660.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>GrubNTFS.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>GrubUDF.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>SMCHelper.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>XhciDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleEvent.uefi</string>
+		<string>kEmptyLine**#</string>
+		<string>AppleGraphicsConfig.uefi</string>
+		<string>kEmptyLine**#</string>
+		<string>CsmVideoDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>DataHubDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>EmuVariableUefi.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>EnglishDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>Fat.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>HashServiceFix.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>HFSPlus.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>NvmExpressDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>OsxAptioFix3Drv.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>OsxAptioFixDrv.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>OsxFatBinaryDrv.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>OsxLowMemFixDrv.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>PartitionDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>Ps2MouseDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>UsbKbDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>UsbMouseDxe.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>VBoxExt2.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>VBoxExt4.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>VBoxHfs.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>VBoxIso9600.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Plist Editor Menu</string>
+		<string>kCommentLine**#Clover.app Menu</string>
+		<string>About Clover</string>
+		<string>Preferences…</string>
+		<string>Services</string>
+		<string>Hide Clover</string>
+		<string>Hide Others</string>
+		<string>Show All</string>
+		<string>Quit Clover</string>
+		<string>kCommentLine**#File</string>
+		<string>New</string>
+		<string>Open…</string>
+		<string>Open Recent</string>
+		<string>Close</string>
+		<string>Page Setup…</string>
+		<string>Print…</string>
+		<string>kCommentLine**#Edit</string>
+		<string>Undo</string>
+		<string>Redo</string>
+		<string>Cut</string>
+		<string>Copy</string>
+		<string>Paste</string>
+		<string>Paste and Match Style</string>
+		<string>Delete</string>
+		<string>Select All</string>
+		<string>kCommentLine**#Edit-&gt;Find</string>
+		<string>Edit</string>
+		<string>File</string>
+		<string>Find</string>
+		<string>Find…</string>
+		<string>Find and Replace…</string>
+		<string>Find Next</string>
+		<string>Find Previous</string>
+		<string>Use Selection for Find</string>
+		<string>Use Selection for Replace</string>
+		<string>Jump to Selection</string>
+		<string>kCommentLine**#Edit-&gt;Spelling and Grammar</string>
+		<string>Spelling</string>
+		<string>Spelling and Grammar</string>
+		<string>Show Spelling and Grammar</string>
+		<string>Check Document Now</string>
+		<string>Check Spelling While Typing</string>
+		<string>Check Grammar With Spelling</string>
+		<string>Correct Spelling Automatically</string>
+		<string>kCommentLine**#Edit-&gt;Substitutions</string>
+		<string>Substitutions</string>
+		<string>Show Substitutions</string>
+		<string>Smart Copy/Paste</string>
+		<string>Smart Quotes</string>
+		<string>Smart Dashes</string>
+		<string>Smart Links</string>
+		<string>Text Replacement</string>
+		<string>kCommentLine**#Edit-&gt;Transformations</string>
+		<string>Transformations</string>
+		<string>Make Upper Case</string>
+		<string>Make Lower Case</string>
+		<string>Capitalize</string>
+		<string>kCommentLine**#Edit-&gt;Speech</string>
+		<string>Speech</string>
+		<string>Start Speaking</string>
+		<string>Stop Speaking</string>
+		<string>kCommentLine**#View</string>
+		<string>View</string>
+		<string>Show Toolbar</string>
+		<string>Customize Toolbar…</string>
+		<string>Show Sidebar</string>
+		<string>kCommentLine**#Window</string>
+		<string>Window</string>
+		<string>Minimize</string>
+		<string>Zoom</string>
+		<string>Bring Clover Window to Front</string>
+		<string>Bring All to Front</string>
+		<string>kCommentLine**#Help</string>
+		<string>Clover Help</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Plist Editor document</string>
+		<string>Search</string>
+		<string>Replace</string>
+		<string>All</string>
+		<string>Item</string>
+		<string>Items</string>
+		<string>Untiteled</string>
+		<string>New Item</string>
+		<string>bytes</string>
+		<string>typing</string>
+		<string>change type</string>
+		<string>change bool value</string>
+		<string>replace duplicate key</string>
+		<string>move item</string>
+		<string>paste Item</string>
+		<string>remove Item</string>
+		<string>cut Item</string>
+		<string>add new Item</string>
+		<string>No data</string>
+		<string>missing &apos;&lt;&apos; at the beginning</string>
+		<string>missing &apos;&gt;&apos; at the end</string>
+		<string>Your data contains illegal characters</string>
+		<string>bytes count is odd, must be even</string>
+		<string>Keep editing</string>
+		<string>Duplicate key in the Dictionary!</string>
+		<string>&apos;%@&apos; is already present in the Dictionary. Do you want to undo the editing or replace the existing key?</string>
+		<string>Invalid value detected!</string>
+		<string>Your edit is not valid. Do you want to restore last valid value or keep editing?</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Plist Editor header</string>
+		<string>Key</string>
+		<string>Type</string>
+		<string>Value</string>
+		<string>kCommentLine**#Plist Editor tags</string>
+		<string>Dictionary</string>
+		<string>Array</string>
+		<string>String</string>
+		<string>Number</string>
+		<string>Bool</string>
+		<string>Date</string>
+		<string>Data</string>
+		<string>kEmptyLine**#</string>
+		<string>kCommentLine**#Plist Editor Boolean values</string>
+		<string>YES</string>
+		<string>NO</string>
+	</array>
+	<key>Translations</key>
+	<dict>
+		<key>&apos;%@&apos; is already present in the Dictionary. Do you want to undo the editing or replace the existing key?</key>
+		<string>&apos;%@&apos; is already present in the Dictionary. Do you want to undo the editing or replace the existing key?</string>
+		<key>*Disable Sleep Proxy Client</key>
+		<string>*Disable Sleep Proxy Client</string>
+		<key>*Make filesystem read-write</key>
+		<string>*Make filesystem read-write</string>
+		<key>*Require CloverDaemon</key>
+		<string>*Require CloverDaemon</string>
+		<key>*auto mount</key>
+		<string>*auto mount</string>
+		<key>About Clover</key>
+		<string>About Clover</string>
+		<key>All</key>
+		<string>All</string>
+		<key>AltBoot</key>
+		<string>Alternative boot</string>
+		<key>ApfsDriverLoader.efi</key>
+		<string>Supports APFS filesystem driver from container for macOS 10.13 and newers</string>
+		<key>AppleEvent.uefi</key>
+		<string>Create AppleEvent protocol for FileVault2.</string>
+		<key>AppleGraphicsConfig.uefi</key>
+		<string>Create optional AppleGraphicsConfig protocol.</string>
+		<key>AppleImageCodec.efi</key>
+		<string>Decode PNG and BMP for FileVault2.</string>
+		<key>AppleImageLoader.efi</key>
+		<string>Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification.</string>
+		<key>AppleKeyAggregator.efi</key>
+		<string>Support for boot UI dialog for FileVault2.</string>
+		<key>AppleKeyFeeder.efi</key>
+		<string>Support for PS/2 keyboard to use with FileVault 2.</string>
+		<key>AppleUISupport.efi</key>
+		<string>Set of protocols for support EfiLoginUi for FileVault.</string>
+		<key>AppleUITheme.efi</key>
+		<string>Create boot UI Themes support for FileVault2.</string>
+		<key>AptioInputFix.efi</key>
+		<string>Driver to fix input problems on UEFI firmware such as AMI Aptio.</string>
+		<key>AptioMemoryFix.efi</key>
+		<string>Preferred driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.</string>
+		<key>Array</key>
+		<string>Array</string>
+		<key>AudioDxe.efi</key>
+		<string>HDA driver to play Startup Sound during Clover boot.
+Configure it via Startup sound output from Option menu, including:
+Volume and Audio device (for supported IOAudio devices only).</string>
+		<key>BIOS mandatory</key>
+		<string>BIOS mandatory</string>
+		<key>BIOS, but not from this installer</key>
+		<string>BIOS, but not from this installer</string>
+		<key>BIOS/FileSystem</key>
+		<string>BIOS, filesystem drivers</string>
+		<key>BIOS/FileVault2</key>
+		<string>BIOS, FileVault 2 drivers</string>
+		<key>BIOS/HID</key>
+		<string>BIOS, Human Interface Devices</string>
+		<key>BIOS/Other</key>
+		<string>BIOS/Other</string>
+		<key>Bool</key>
+		<string>Bool</string>
+		<key>Boot Device:</key>
+		<string>Boot Device:</string>
+		<key>Bring All to Front</key>
+		<string>Bring All to Front</string>
+		<key>Bring Clover Window to Front</key>
+		<string>Bring Clover Window to Front</string>
+		<key>Can&apos;t remove the theme</key>
+		<string>Can&apos;t remove the theme</string>
+		<key>Capitalize</key>
+		<string>Capitalize</string>
+		<key>Check Document Now</key>
+		<string>Check Document Now</string>
+		<key>Check Grammar With Spelling</key>
+		<string>Check Grammar With Spelling</string>
+		<key>Check Spelling While Typing</key>
+		<string>Check Spelling While Typing</string>
+		<key>Check now</key>
+		<string>Check now</string>
+		<key>Check update:</key>
+		<string>Check update:</string>
+		<key>Close</key>
+		<string>Close</string>
+		<key>Clover Help</key>
+		<string>Clover Help</string>
+		<key>Clover Installer</key>
+		<string>Clover Installer</string>
+		<key>Clover legacy BIOS boot sectors</key>
+		<string>Clover EFI requires three essential files. (in simple terms)
+boot0 (On the drive&apos;s MBR) responsible for loading boot1.
+boot1 (On the partition&apos;s boot-sector) to finding boot2.
+boot2 (On the partition&apos;s root directory) for loading CLOVERX64.efi, and kernel etc.</string>
+		<key>Clover wants to mount %@</key>
+		<string>Clover wants to mount %@</string>
+		<key>Clover wants to umount %@</key>
+		<string>Clover wants to umount %@</string>
+		<key>Copy</key>
+		<string>Copy</string>
+		<key>Correct Spelling Automatically</key>
+		<string>Correct Spelling Automatically</string>
+		<key>CsmVideoDxe.efi</key>
+		<string>Video Driver for Clover GUI allowing to choose more resolutions. It is based on CSM module in UEFI BIOS and required CSM will be enabled.
+Clover may not started with it and you may have wake problem in system. Use with precautions.</string>
+		<key>Current Clover revision</key>
+		<string>Current Clover revision</string>
+		<key>Customize Toolbar…</key>
+		<string>Customize Toolbar…</string>
+		<key>Cut</key>
+		<string>Cut</string>
+		<key>Data</key>
+		<string>Data</string>
+		<key>DataHubDxe.efi</key>
+		<string>This is DataHub protocol support mandatory for macOS.
+Usually it is already present but sometime it may be missed. In this case you should see warning on screen.</string>
+		<key>Date</key>
+		<string>Date</string>
+		<key>Delete</key>
+		<string>Delete</string>
+		<key>Device:</key>
+		<string>Device:</string>
+		<key>Dictionary</key>
+		<string>Dictionary</string>
+		<key>Don&apos;t install any bootloader (boot0X, boot1X)</key>
+		<string>Don&apos;t install any bootloader (boot0X, boot1X).
+Usefull for UEFI motherboards that don&apos;t need bootloader files.
+Can also be use if you don&apos;t want to upgrade MBR or PBR sectors.</string>
+		<key>Download</key>
+		<string>Download</string>
+		<key>Duplicate key in the Dictionary!</key>
+		<string>Duplicate key in the Dictionary!</string>
+		<key>Edit</key>
+		<string>Edit</string>
+		<key>EmuVariableUefi.efi</key>
+		<string>Workaround for store NVRAM variables for systems without UEFI hardware.
+Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed. Use it only if you have a problem without it</string>
+		<key>EnglishDxe.efi</key>
+		<string>Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI.</string>
+		<key>FSInject.efi</key>
+		<string>Provide injection of kernel extensions from Clover folder and allow to force load them from both /System/Library/Extensions and /Library/Extensions.</string>
+		<key>Fat.efi</key>
+		<string>FAT filesystem driver.</string>
+		<key>File</key>
+		<string>File</string>
+		<key>Find</key>
+		<string>Find</string>
+		<key>Find Next</key>
+		<string>Find Next</string>
+		<key>Find Previous</key>
+		<string>Find Previous</string>
+		<key>Find and Replace…</key>
+		<string>Find and Replace…</string>
+		<key>Find…</key>
+		<string>Find…</string>
+		<key>FirmwareVolume.efi</key>
+		<string>Create FirmwareVolume with cursor images for FileVault2.</string>
+		<key>Garniture</key>
+		<string>Garniture</string>
+		<key>GrubEXFAT.efi</key>
+		<string>ExFAT filesystem driver from GRUB.</string>
+		<key>GrubISO9660.efi</key>
+		<string>ISO 9600 filesystem driver from GRUB.</string>
+		<key>GrubNTFS.efi</key>
+		<string>NTFS filesystem driver from GRUB.</string>
+		<key>GrubUDF.efi</key>
+		<string>UDF filesystem driver from GRUB.</string>
+		<key>HFSPlus.efi</key>
+		<string>Alternate HFS+ filesystem driver.</string>
+		<key>HashServiceFix.efi</key>
+		<string>Fix Hash support if absent in native UEFI BIOS.</string>
+		<key>Headphones</key>
+		<string>Headphones</string>
+		<key>Hide Clover</key>
+		<string>Hide Clover</string>
+		<key>Hide Others</key>
+		<string>Hide Others</string>
+		<key>Install</key>
+		<string>Install</string>
+		<key>Install Clover</key>
+		<string>Install Clover</string>
+		<key>Install CloverDaemonNew</key>
+		<string>Install CloverDaemonNew</string>
+		<key>Install alternative booting PBR</key>
+		<string>Install alternative booting PBR with choice of boot with a key pressed.
+File to boot = boot{keypressed}</string>
+		<key>Installation failed</key>
+		<string>Installation failed</string>
+		<key>Installation succeded</key>
+		<string>Installation succeded</string>
+		<key>Invalid value detected!</key>
+		<string>Invalid value detected!</string>
+		<key>Item</key>
+		<string>Item</string>
+		<key>Items</key>
+		<string>Items</string>
+		<key>Jump to Selection</key>
+		<string>Jump to Selection</string>
+		<key>Keep editing</key>
+		<string>Keep editing</string>
+		<key>Key</key>
+		<string>Key</string>
+		<key>LineOut</key>
+		<string>Line Out</string>
+		<key>Make Lower Case</key>
+		<string>Make Lower Case</string>
+		<key>Make Upper Case</key>
+		<string>Make Upper Case</string>
+		<key>Manager</key>
+		<string>Manager</string>
+		<key>Minimize</key>
+		<string>Minimize</string>
+		<key>Model:</key>
+		<string>Model:</string>
+		<key>Mount</key>
+		<string>Mount</string>
+		<key>N/A</key>
+		<string>N/A</string>
+		<key>NO</key>
+		<string>NO</string>
+		<key>NVRAM is native:</key>
+		<string>NVRAM is native:</string>
+		<key>New</key>
+		<string>New</string>
+		<key>New Item</key>
+		<string>New Item</string>
+		<key>No</key>
+		<string>No</string>
+		<key>No data</key>
+		<string>No data</string>
+		<key>No themes found</key>
+		<string>No themes found</string>
+		<key>Number</key>
+		<string>Number</string>
+		<key>NvmExpressDxe.efi</key>
+		<string>Driver for support NVM Express devices.</string>
+		<key>OEM Board:</key>
+		<string>OEM Board:</string>
+		<key>OEM Product:</key>
+		<string>OEM Product:</string>
+		<key>OEM Vendor:</key>
+		<string>OEM Vendor:</string>
+		<key>Open Recent</key>
+		<string>Open Recent</string>
+		<key>Open…</key>
+		<string>Open…</string>
+		<key>Optimize</key>
+		<string>Optimize</string>
+		<key>OsxAptioFix3Drv.efi</key>
+		<string>Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together.</string>
+		<key>OsxAptioFixDrv.efi</key>
+		<string>Old Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together.</string>
+		<key>OsxFatBinaryDrv.efi</key>
+		<string>Driver for support FAT Binary executables for OS X 10.9 and older.</string>
+		<key>OsxLowMemFixDrv.efi</key>
+		<string>Simplified variant of OsxAptioFixDrv. Do not use with other AptioFix together.</string>
+		<key>Other</key>
+		<string>Other</string>
+		<key>Page Setup…</key>
+		<string>Page Setup…</string>
+		<key>PartitionDxe.efi</key>
+		<string>Driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.</string>
+		<key>Paste</key>
+		<string>Paste</string>
+		<key>Paste and Match Style</key>
+		<string>Paste and Match Style</string>
+		<key>Preferences…</key>
+		<string>Preferences…</string>
+		<key>Print…</key>
+		<string>Print…</string>
+		<key>Ps2MouseDxe.efi</key>
+		<string>PS/2 mouse driver</string>
+		<key>Quit Clover</key>
+		<string>Quit Clover</string>
+		<key>Read bdmesg</key>
+		<string>Read boot log</string>
+		<key>Read daemon log</key>
+		<string>Read daemon log</string>
+		<key>Redo</key>
+		<string>Redo</string>
+		<key>Replace</key>
+		<string>Replace</string>
+		<key>Run at login</key>
+		<string>Run at login</string>
+		<key>SMCHelper.efi</key>
+		<string>Restore SMC keys left in NVRAM by FakeSMC.</string>
+		<key>Search</key>
+		<string>Search</string>
+		<key>Select All</key>
+		<string>Select All</string>
+		<key>Select a disk..</key>
+		<string>Select a disk..</string>
+		<key>Services</key>
+		<string>Services</string>
+		<key>Show All</key>
+		<string>Show All</string>
+		<key>Show Sidebar</key>
+		<string>Show Sidebar</string>
+		<key>Show Spelling and Grammar</key>
+		<string>Show Spelling and Grammar</string>
+		<key>Show Substitutions</key>
+		<string>Show Substitutions</string>
+		<key>Show Toolbar</key>
+		<string>Show Toolbar</string>
+		<key>Show installed</key>
+		<string>Show installed</string>
+		<key>Smart Copy/Paste</key>
+		<string>Smart Copy/Paste</string>
+		<key>Smart Dashes</key>
+		<string>Smart Dashes</string>
+		<key>Smart Links</key>
+		<string>Smart Links</string>
+		<key>Smart Quotes</key>
+		<string>Smart Quotes</string>
+		<key>Sound:</key>
+		<string>Sound:</string>
+		<key>Speaker</key>
+		<string>Speaker</string>
+		<key>Speech</key>
+		<string>Speech</string>
+		<key>Spelling</key>
+		<string>Spelling</string>
+		<key>Spelling and Grammar</key>
+		<string>Spelling and Grammar</string>
+		<key>Start Speaking</key>
+		<string>Start Speaking</string>
+		<key>Startup Sound</key>
+		<string>Startup Sound</string>
+		<key>Stop Speaking</key>
+		<string>Stop Speaking</string>
+		<key>String</key>
+		<string>String</string>
+		<key>Substitutions</key>
+		<string>Substitutions</string>
+		<key>System Serial Number:</key>
+		<string>System Serial Number:</string>
+		<key>Text Replacement</key>
+		<string>Text Replacement</string>
+		<key>Theme:</key>
+		<string>Theme:</string>
+		<key>Themes</key>
+		<string>Themes</string>
+		<key>Transformations</key>
+		<string>Transformations</string>
+		<key>Type</key>
+		<string>Type</string>
+		<key>UEFI mandatory</key>
+		<string>UEFI mandatory</string>
+		<key>UEFI only</key>
+		<string>Install Clover to be used with UEFI motherboards only.</string>
+		<key>UEFI, but not from this installer</key>
+		<string>UEFI, but not from this installer</string>
+		<key>UEFI/FileSystem</key>
+		<string>UEFI, filesystem drivers</string>
+		<key>UEFI/FileVault2</key>
+		<string>UEFI, FileVault 2 drivers</string>
+		<key>UEFI/HID</key>
+		<string>UEFI, Human Interface Devices</string>
+		<key>UEFI/MemoryFix</key>
+		<string>UEFI, memory fix drivers</string>
+		<key>UEFI/Other</key>
+		<string>UEFI/Other</string>
+		<key>Undo</key>
+		<string>Undo</string>
+		<key>Uninstall</key>
+		<string>Uninstall</string>
+		<key>Uninstall CloverDaemonNew</key>
+		<string>Uninstall CloverDaemonNew</string>
+		<key>Unsupported</key>
+		<string>Unsupported</string>
+		<key>Untiteled</key>
+		<string>Untiteled</string>
+		<key>Update</key>
+		<string>Update</string>
+		<key>Update to r%d</key>
+		<string>Update to r%d</string>
+		<key>UsbKbDxe.efi</key>
+		<string>Keyboard driver for boot UI support.</string>
+		<key>UsbMouseDxe.efi</key>
+		<string>USB mouse driver</string>
+		<key>Use Selection for Find</key>
+		<string>Use Selection for Find</string>
+		<key>Use Selection for Replace</key>
+		<string>Use Selection for Replace</string>
+		<key>VBoxExt2.efi</key>
+		<string>EXT2/3 filesystem driver from VirtualBox.</string>
+		<key>VBoxExt4.efi</key>
+		<string>EXT4 filesystem driver from VirtualBox.</string>
+		<key>VBoxHfs.efi</key>
+		<string>HFS+ filesystem driver.</string>
+		<key>VBoxIso9600.efi</key>
+		<string>ISO 9600 filesystem driver.</string>
+		<key>Value</key>
+		<string>Value</string>
+		<key>View</key>
+		<string>View</string>
+		<key>Volume level:</key>
+		<string>Volume level:</string>
+		<key>Window</key>
+		<string>Window</string>
+		<key>XhciDxe.efi</key>
+		<string>USB 3.0 driver</string>
+		<key>YES</key>
+		<string>YES</string>
+		<key>Yes</key>
+		<string>Yes</string>
+		<key>Your data contains illegal characters</key>
+		<string>Your data contains illegal characters</string>
+		<key>Your edit is not valid. Do you want to restore last valid value or keep editing?</key>
+		<string>Your edit is not valid. Do you want to restore last valid value or keep editing?</string>
+		<key>Zoom</key>
+		<string>Zoom</string>
+		<key>add new Item</key>
+		<string>add new Item</string>
+		<key>board-id:</key>
+		<string>board-id:</string>
+		<key>boot0af</key>
+		<string>Used for BIOS booting on BIOS motherboards.
+boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.
+This choice will setup selected HFS/Fat32 partition to be active.</string>
+		<key>boot0ss</key>
+		<string>Used for BIOS booting on BIOS motherboards.
+boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.
+This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.
+This choice will not activate any partition in MBR.</string>
+		<key>boot6</key>
+		<string>Clover EFI 64-bits using SATA to access drives.</string>
+		<key>boot7</key>
+		<string>Clover EFI 64-bits BiosBlockIO</string>
+		<key>bytes</key>
+		<string>bytes</string>
+		<key>bytes count is odd, must be even</key>
+		<string>bytes count is odd, must be even</string>
+		<key>change bool value</key>
+		<string>change bool value</string>
+		<key>change type</key>
+		<string>change type</string>
+		<key>config path:</key>
+		<string>config path:</string>
+		<key>cut Item</key>
+		<string>cut Item</string>
+		<key>daily</key>
+		<string>daily</string>
+		<key>false</key>
+		<string>false</string>
+		<key>last checked:</key>
+		<string>last checked:</string>
+		<key>missing &apos;&lt;&apos; at the beginning</key>
+		<string>missing &apos;&lt;&apos; at the beginning</string>
+		<key>missing &apos;&gt;&apos; at the end</key>
+		<string>missing &apos;&gt;&apos; at the end</string>
+		<key>monthly</key>
+		<string>monthly</string>
+		<key>mount point</key>
+		<string>mount point</string>
+		<key>move item</key>
+		<string>move item</string>
+		<key>never</key>
+		<string>never</string>
+		<key>paste Item</key>
+		<string>paste Item</string>
+		<key>remove Item</key>
+		<string>remove Item</string>
+		<key>replace duplicate key</key>
+		<string>replace duplicate key</string>
+		<key>true</key>
+		<string>true</string>
+		<key>typing</key>
+		<string>typing</string>
+		<key>umount</key>
+		<string>umount</string>
+		<key>unknown</key>
+		<string>unknown</string>
+		<key>weekly</key>
+		<string>weekly</string>
+	</dict>
+</dict>
+</plist>

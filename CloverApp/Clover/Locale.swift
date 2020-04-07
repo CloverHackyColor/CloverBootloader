@@ -16,7 +16,10 @@ extension String {
       if preferred.count > 0 {
         table = preferred[0]
       }
-      
+      if localeBundle == nil {
+        print("localeBundle is nil")
+        return self
+      }
       var result = localeBundle?.localizedString(forKey: self, value: nil, table: table)
       
       if result == self {

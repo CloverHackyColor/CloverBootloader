@@ -14,6 +14,9 @@ let localeBundle = Bundle(path: Bundle.main.sharedSupportPath! + "/Lang.bundle")
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+  var canDrawConcurrently : Bool = false
+  var documentsPaths : [String] = [String]()
+  var havefinishLaunching : Bool = false
   let CloverRevision : Int = Int(findCloverRevision() ?? "0") ?? 0
   var isInstalling : Bool = false
   var isInstallerOpen : Bool = false
@@ -42,6 +45,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
     
     self.daContext.deallocate()
+  }
+  
+  func applicationDidBecomeActive(_ notification: Notification) {
+    // print("applicationDidBecomeActive")
   }
 
   func applicationWillFinishLaunching(_ notification: Notification) {
@@ -72,7 +79,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   }
   
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    let appImage = NSImage(named: "NSApplicationIcon")
+    self.havefinishLaunching = true
+    let appImage : NSImage? = NSImage(named: "NSApplicationIcon")?.copy() as? NSImage
     if #available(OSX 10.10, *) {
       let size = self.statusItem.button!.frame.height - 3
       appImage?.size = NSMakeSize(size, size)
@@ -136,6 +144,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     CFRunLoopRun()
   }
 
+  func applicationShouldOpenUntitledFile(_ sender: NSApplication) -> Bool {
+    if !self.havefinishLaunching {
+      if let files : NSArray = UDs.value(forKey: "Docs") as? NSArray {
+        for f in files {
+          loadPlist(at: f as! String)
+        }
+      }
+    }
+    return false
+  }
+  
   @objc func showPopover(_ sender: Any?) {
     if (self.popover == nil) {
       self.popover = NSPopover()
@@ -159,7 +178,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
           self.popover?.show(relativeTo: v.bounds, of: v, preferredEdge: NSRectEdge.maxY)
         }
       }
-      NSApp.activate(ignoringOtherApps: true)
+      //NSApp.activate(ignoringOtherApps: true)
     }
   }
   
@@ -168,6 +187,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   }
   
   @objc func reFreshDisksList() {
+    (self.settingsWC?.contentViewController as? SettingsViewController)?.searchDisks()
     (self.settingsWC?.contentViewController as? SettingsViewController)?.searchESPDisks()
     (self.installerWC?.contentViewController as? InstallerViewController)?.populateTargets()
     (self.installerOutWC?.contentViewController as? InstallerOutViewController)?.populateTargets()
@@ -181,7 +201,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   func applicationWillTerminate(_ aNotification: Notification) {
     
   }
-
-
 }
 

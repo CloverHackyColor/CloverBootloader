@@ -126,33 +126,50 @@ typedef enum LodePNGColorType {
  bitdepth: the desired bit depth for the raw output image. See explanation on PNG color types.
  Return value: LodePNG error code (0 means no error).
  */
-unsigned lodepng_decode_memory(unsigned char** out, unsigned* w, unsigned* h,
-                               const unsigned char* in, size_t insize,
-                               LodePNGColorType colortype, unsigned bitdepth);
+unsigned lodepng_decode_memory(unsigned char** out,
+                               unsigned* w,
+                               unsigned* h,
+                               const unsigned char* in,
+                               size_t insize,
+                               LodePNGColorType colortype,
+                               unsigned bitdepth);
 
 /*Same as lodepng_decode_memory, but always decodes to 32-bit RGBA raw image*/
-unsigned lodepng_decode32(unsigned char** out, unsigned* w, unsigned* h,
-                          const unsigned char* in, size_t insize);
+unsigned lodepng_decode32(unsigned char** out,
+                          unsigned* w,
+                          unsigned* h,
+                          const unsigned char* in,
+                          size_t insize);
 
 /*Same as lodepng_decode_memory, but always decodes to 24-bit RGB raw image*/
-unsigned lodepng_decode24(unsigned char** out, unsigned* w, unsigned* h,
-                          const unsigned char* in, size_t insize);
+unsigned lodepng_decode24(unsigned char** out,
+                          unsigned* w,
+                          unsigned* h,
+                          const unsigned char* in,
+                          size_t insize);
 
 #ifdef LODEPNG_COMPILE_DISK
 /*
  Load PNG from disk, from file with given name.
  Same as the other decode functions, but instead takes a filename as input.
  */
-unsigned lodepng_decode_file(unsigned char** out, unsigned* w, unsigned* h,
+unsigned lodepng_decode_file(unsigned char** out,
+                             unsigned* w,
+                             unsigned* h,
                              const char* filename,
-                             LodePNGColorType colortype, unsigned bitdepth);
+                             LodePNGColorType colortype,
+                             unsigned bitdepth);
 
 /*Same as lodepng_decode_file, but always decodes to 32-bit RGBA raw image.*/
-unsigned lodepng_decode32_file(unsigned char** out, unsigned* w, unsigned* h,
+unsigned lodepng_decode32_file(unsigned char** out,
+                               unsigned* w,
+                               unsigned* h,
                                const char* filename);
 
 /*Same as lodepng_decode_file, but always decodes to 24-bit RGB raw image.*/
-unsigned lodepng_decode24_file(unsigned char** out, unsigned* w, unsigned* h,
+unsigned lodepng_decode24_file(unsigned char** out,
+                               unsigned* w,
+                               unsigned* h,
                                const char* filename);
 #endif /*LODEPNG_COMPILE_DISK*/
 #endif /*LODEPNG_COMPILE_DECODER*/
@@ -175,17 +192,27 @@ unsigned lodepng_decode24_file(unsigned char** out, unsigned* w, unsigned* h,
  bitdepth: the bit depth of the raw input image. See explanation on PNG color types.
  Return value: LodePNG error code (0 means no error).
  */
-unsigned lodepng_encode_memory(unsigned char** out, size_t* outsize,
-                               const unsigned char* image, unsigned w, unsigned h,
-                               LodePNGColorType colortype, unsigned bitdepth);
+unsigned lodepng_encode_memory(unsigned char** out,
+                               size_t* outsize,
+                               const unsigned char* image,
+                               unsigned w,
+                               unsigned h,
+                               LodePNGColorType colortype,
+                               unsigned bitdepth);
 
 /*Same as lodepng_encode_memory, but always encodes from 32-bit RGBA raw image.*/
-unsigned lodepng_encode32(unsigned char** out, size_t* outsize,
-                          const unsigned char* image, unsigned w, unsigned h);
+unsigned lodepng_encode32(unsigned char** out,
+                          size_t* outsize,
+                          const unsigned char* image,
+                          unsigned w,
+                          unsigned h);
 
 /*Same as lodepng_encode_memory, but always encodes from 24-bit RGB raw image.*/
-unsigned lodepng_encode24(unsigned char** out, size_t* outsize,
-                          const unsigned char* image, unsigned w, unsigned h);
+unsigned lodepng_encode24(unsigned char** out,
+                          size_t* outsize,
+                          const unsigned char* image,
+                          unsigned w,
+                          unsigned h);
 
 #ifdef LODEPNG_COMPILE_DISK
 /*
@@ -194,16 +221,23 @@ unsigned lodepng_encode24(unsigned char** out, size_t* outsize,
  NOTE: This overwrites existing files without warning!
  */
 unsigned lodepng_encode_file(const char* filename,
-                             const unsigned char* image, unsigned w, unsigned h,
-                             LodePNGColorType colortype, unsigned bitdepth);
+                             const unsigned char* image,
+                             unsigned w,
+                             unsigned h,
+                             LodePNGColorType colortype,
+                             unsigned bitdepth);
 
 /*Same as lodepng_encode_file, but always encodes from 32-bit RGBA raw image.*/
 unsigned lodepng_encode32_file(const char* filename,
-                               const unsigned char* image, unsigned w, unsigned h);
+                               const unsigned char* image,
+                               unsigned w,
+                               unsigned h);
 
 /*Same as lodepng_encode_file, but always encodes from 24-bit RGB raw image.*/
 unsigned lodepng_encode24_file(const char* filename,
-                               const unsigned char* image, unsigned w, unsigned h);
+                               const unsigned char* image,
+                               unsigned w,
+                               unsigned h);
 #endif /*LODEPNG_COMPILE_DISK*/
 #endif /*LODEPNG_COMPILE_ENCODER*/
 

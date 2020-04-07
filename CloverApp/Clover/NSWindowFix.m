@@ -19,6 +19,7 @@
   }
   return [self canBecomeKeyWindow];
   */
+  
   return YES;
 }
 #pragma clang diagnostic pop

@@ -1,24 +1,14 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: ru
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "Н/Д"; // not available (please be short)
-"Install Clover" = "Установить Clover";
-"Current Clover revision" = "Текущая ревизия Clover";
-"Boot Device:" = "Загрузочное устройство:";
-"config path:" = "путь к файлу config:";
-"Installation succeded" = "Установка успешна";
-"Installation failed" = "Не удалось установить";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover желает смонтировать %@";
 "Clover wants to umount %@" = "Clover желает размонтировать %@";
 "Mount" = "Смонтировать";
@@ -26,6 +16,7 @@
 "mount point" = "название тома";
 "*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
@@ -34,9 +25,10 @@
 "OEM Board:" = "OEM Board:";
 "NVRAM is native:" = "NVRAM встроенный:";
 "unknown" = "неизвестно";
-"Yes" = "Да";
-"No" = "Нет";
+"Yes" = "Да"; // first char upper case
+"No" = "Нет"; // first char upper case
 
+// Sound
 "Startup Sound" = "Гимн";
 "Device:" = "Устройство:";
 "Volume level:" = "Громкость:";
@@ -49,14 +41,16 @@
 "true" = "истина";
 "false" = "ложь";
 
+// Theme
 "Theme:" = "Тема:";
 "Themes" = "Темы"; // window title
 "No themes found" = "Темы не найдены";
-"Manager" = "Менеджер"; // Theme manager
+"Manager" = "Менеджер";
 "Can't remove the theme" = "Не возможно удалить тему";
 "Show installed" = "Показать установленные";
 "Optimize" = "Ужать иконки";
 "Sound:" = "Звук:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*Открыть файловую систему на запись";
 "*Disable Sleep Proxy Client" = "*Отключение Sleep Proxy Client";
 "*Require CloverDaemon" = "*Требуется CloverDaemon";
@@ -68,7 +62,7 @@
 
 "Update" = "Oбновление";
 "Download" = "Скачать";
-"Update to r%d" = "Обновление до r%d"; // "Update to r5101"
+"Update to r%d" = "Обновление до r%d"; // Update to r5101
 "Check update:" = "Проверить обновления:";
 "Check now" = "Проверь сейчас";
 
@@ -76,18 +70,25 @@
 "daily" = "ежедневно";
 "weekly" = "еженедельно";
 "monthly" = "ежемесячно";
-"last checked:" = "последняя проверка:"; // last date update was checked. Please be short.
+"last checked:" = "последняя проверка:"; // last date update was checked
 
 "Run at login" = "Запустить Clover.app при входе в систему";
-"Close" = "Закрыть"; // Close the Clover.app
+"Close" = "Закрыть";
 
-/* Installer */
+// Installer
+"Install Clover" = "Установить Clover";
+"Current Clover revision" = "Текущая ревизия Clover";
+"Boot Device:" = "Загрузочное устройство:";
+"config path:" = "путь к файлу config:";
+"Installation succeded" = "Установка успешна";
+"Installation failed" = "Не удалось установить";
 "Clover Installer" = "Clover установщик";
 "Select a disk.." = "Выбор диска..";
 "Install" = "Установить";
 "Uninstall" = "Удаление";
 "AltBoot" = "PBR с выбором";
 
+// Clover Bootloader and drivers
 "UEFI only" = "Устанавливает Clover только для UEFI-загрузки (BIOS-загрузка не возможна) на выбранный том или на раздел EFI, если выбран вариант Установить Clover на разделе EFI (ESP).";
 
 "Install alternative booting PBR" = "Устанавливает альтернативный сектор boot1, позволяющий выбрать разные загрузчики (boot1, boot3, boot7) нажатием клавиши в паузе 2 секунды.
@@ -111,11 +112,12 @@ boot0ss (boot0 Signature Scanning) ищет первый раздел типа E
 "boot6" = "Clover EFI с драйвером SATA.";
 "boot7" = "Clover EFI с драйвером Bios Block I/O.";
 
-/* Drivers */
 "UEFI mandatory" = "UEFI, Рекомендуемые драйвера";
 "BIOS mandatory" = "BIOS, Рекомендуемые драйвера";
+
 "UEFI/Other" = "UEFI/Other, Дополнительные драйвера";
 "BIOS/Other" = "BIOS/Other, Дополнительные драйвера";
+
 "UEFI, but not from this installer" = "UEFI, но не из этого пакета";
 "BIOS, but not from this installer" = "BIOS, но не из этого пакета";
 
@@ -215,3 +217,124 @@ boot0ss (boot0 Signature Scanning) ищет первый раздел типа E
 "VBoxHfs.efi" = "Поддержка файловой системы HFS+.";
 
 "VBoxIso9600.efi" = "Поддержка файловой системы ISO 9600 (CD-ROM).";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Об Утилите VoiceOver";
+"Preferences…" = "Настройки…";
+"Services" = "Службы";
+"Hide Clover" = "Скрыть Утилиту VoiceOver";
+"Hide Others" = "Скрыть остальные";
+"Show All" = "Показать все";
+"Quit Clover" = "Завершить Утилиту VoiceOver";
+// File
+"New" = "New";
+"Open…" = "Открыть…";
+"Open Recent" = "Open Recent";
+"Close" = "Закрыть";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Отменить";
+"Redo" = "Повторить";
+"Cut" = "Вырезать";
+"Copy" = "Скопировать";
+"Paste" = "Вставить";
+"Paste and Match Style" = "Вставить и согласовать стиль";
+"Delete" = "Удалить";
+"Select All" = "Выбрать все";
+// Edit->Find
+"Edit" = "Правка";
+"File" = "Файл";
+"Find" = "Найти";
+"Find…" = "Найти…";
+"Find and Replace…" = "Найти и заменить…";
+"Find Next" = "Найти далее";
+"Find Previous" = "Найти ранее";
+"Use Selection for Find" = "Найти выбранное";
+"Use Selection for Replace" = "Использовать выделенное для замены";
+"Jump to Selection" = "Перейти к выбранному";
+// Edit->Spelling and Grammar
+"Spelling" = "Правописание";
+"Spelling and Grammar" = "Правописание и грамматика";
+"Show Spelling and Grammar" = "Показать правописание и грамматику";
+"Check Document Now" = "Проверить документ";
+"Check Spelling While Typing" = "Проверять правописание при вводе";
+"Check Grammar With Spelling" = "Проверять грамматику и правописание";
+"Correct Spelling Automatically" = "Автоматически исправлять ошибки";
+// Edit->Substitutions
+"Substitutions" = "Замены";
+"Show Substitutions" = "Показать замены";
+"Smart Copy/Paste" = "Смарт-копирование/вставка";
+"Smart Quotes" = "Смарт-кавычки";
+"Smart Dashes" = "Смарт-тире";
+"Smart Links" = "Смарт-ссылки";
+"Text Replacement" = "Замена текста";
+// Edit->Transformations
+"Transformations" = "Преобразования";
+"Make Upper Case" = "Верхний регистр";
+"Make Lower Case" = "Нижний регистр";
+"Capitalize" = "С заглавной буквы";
+// Edit->Speech
+"Speech" = "Речь";
+"Start Speaking" = "Начать";
+"Stop Speaking" = "Остановить";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Window";
+"Minimize" = "Убрать в Dock";
+"Zoom" = "Изменить масштаб";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "Все окна — на передний план";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

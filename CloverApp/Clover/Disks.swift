@@ -285,7 +285,9 @@ func getVolumes() -> [String] {
   for b in all {
     let bsd : String = b as! String
     if let mp = getMountPoint(from: bsd) {
-      mounted.append(mp)
+      if mp != "/private/var/vm" {
+        mounted.append(mp)
+      }
     }
   }
   return mounted

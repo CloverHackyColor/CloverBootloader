@@ -36,7 +36,8 @@ final class SoundSlider : NSSlider {
   var field : NSTextField?
 }
 
-final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSessionDownloadDelegate {
+final class SettingsViewController:
+  NSViewController, NSTextFieldDelegate, NSComboBoxDelegate, URLSessionDownloadDelegate {
   // MARK: Variables
   @IBOutlet var tabViewInfo : LITabView!
   // tab 0
@@ -71,6 +72,12 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
   @IBOutlet var soundDevicePopUp : NSPopUpButton!
   @IBOutlet var soundVolumeSlider : SoundSlider!
   @IBOutlet var soundVolumeField : NSTextField!
+  // tab 3
+  @IBOutlet var autoSaveButton : NSButton!
+  @IBOutlet var newPlistButton : NSButton!
+  @IBOutlet var openDocumentButton : NSButton!
+  @IBOutlet var disksPEPopUp : NSPopUpButton!
+  @IBOutlet var plistsPopUp : NSPopUpButton!
   
   @IBOutlet var disbaleSleepProxyButton : NSButton!
   @IBOutlet var makeRootRWButton : NSButton!
@@ -134,7 +141,7 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     // sync
     self.tabViewFuncSelector.selectSegment(withTag: 0)
     self.tabViewFunc.selectTabViewItem(at: 0)
-    
+
     AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
     AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
     
@@ -198,9 +205,23 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     self.oemVendorField.stringValue = getOEMVendor() ?? kNotAvailable.locale
     self.oemProductField.stringValue = getOEMProduct() ?? kNotAvailable.locale
     self.oemBoardIdField.stringValue = getOEMBoard() ?? kNotAvailable.locale
-    
+    // tab 3
+    self.plistsPopUp.removeAllItems()
+    if #available(OSX 10.11, *) {
+      self.autoSaveButton.state = UDs.bool(forKey: kAutoSavePlistsKey) ? .on : .off
+    } else {
+      self.autoSaveButton.isEnabled = false
+      self.autoSaveButton.isHidden = true
+      self.newPlistButton.isEnabled = false
+      self.newPlistButton.isHidden = true
+    }
+
     self.setUpInfo()
     self.setUpdateButton()
+    
+    if !fm.fileExists(atPath: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI")) {
+      self.searchUpdate()
+    }
   }
   
   func setUpInfo() {
@@ -280,7 +301,20 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     let daemonExist = fm.fileExists(atPath: kDaemonPath) && fm.fileExists(atPath: kLaunchPlistPath)
     self.unInstallDaemonButton.isEnabled = daemonExist
     
+    self.searchDisks()
     self.searchESPDisks()
+    
+    if self.disksPEPopUp.indexOfSelectedItem == 0 {
+      for item in self.disksPEPopUp.itemArray {
+        if let disk = item.representedObject as? String {
+          if self.bootDevice != nil && disk == self.bootDevice {
+            self.disksPEPopUp.select(item)
+            self.volumePopUpPressed(self.disksPEPopUp)
+            break
+          }
+        }
+      }
+    }
     
     let itervals = ["never", "daily", "weekly", "monthly"]
     self.timeIntervalPopUp.removeAllItems()
@@ -324,8 +358,13 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
   }
   
   func setUpdateInformations() {
-    let rev = findCloverRevision(at: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI")) ?? "0000"
-    var title = "\("Install Clover".locale) \(rev)"
+    var cloverAvailable = false
+    var title = "Download".locale
+    if fm.fileExists(atPath: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI")) {
+      cloverAvailable = true
+      let rev = findCloverRevision(at: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI")) ?? "0000"
+      title = "\("Install Clover".locale) \(rev)"
+    }
     self.installCloverButton.title = title
     
     self.bootDevice = findBootPartitionDevice()
@@ -348,7 +387,7 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     let last : String = (self.lastReleaseRev == nil) ? kNotAvailable.locale : "r\(self.lastReleaseRev!)"
     title = "\("Update Clover available".locale): \(last)"
     
-    self.installCloverButton.isEnabled = true
+    self.installCloverButton.isEnabled = cloverAvailable
   }
   
   override var representedObject: Any? {
@@ -369,6 +408,50 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
   }
   
   // MARK: Disks
+  func searchDisks() {
+    let selected = self.disksPEPopUp.selectedItem?.representedObject as? String
+    self.disksPEPopUp.removeAllItems()
+    self.disksPEPopUp.addItem(withTitle: "Select a disk..".locale)
+    
+    for v in getVolumes() {
+      if !isWritable(diskOrMtp: v) {
+        continue
+      }
+      if !fm.fileExists(atPath: v.addPath("EFI/CLOVER")) {
+        continue
+      }
+      if let disk = getBSDName(of: v) {
+        if kBannedMedia.contains(getVolumeName(from: disk) ?? "") {
+          continue
+        }
+        let parentDiskName : String = getMediaName(from: getBSDParent(of: disk) ?? "") ?? kNotAvailable.locale
+        let fs = getFS(from: v) ?? kNotAvailable.locale
+        let title : String = "\(disk), \(fs), \("mount point".locale): \(v), \(parentDiskName)"
+        self.disksPEPopUp.addItem(withTitle: title)
+        self.disksPEPopUp.lastItem?.representedObject = disk
+        if disk == self.bootDevice {
+          let image : NSImage = NSImage(named: "NSApplicationIcon")!.copy() as! NSImage
+          image.size = NSMakeSize(16, 16)
+          self.disksPEPopUp.lastItem?.image = image
+        } else if let image : NSImage = getIconFor(volume: disk) {
+          image.size = NSMakeSize(16, 16)
+          self.disksPEPopUp.lastItem?.image = image
+        }
+      }
+    }
+    
+    if (selected != nil) {
+      for item in self.disksPEPopUp.itemArray {
+        if let d = item.representedObject as? String {
+          if d == selected {
+            self.disksPEPopUp.select(item)
+            break
+          }
+        }
+      }
+    }
+  }
+  
   func searchESPDisks() {
     self.unmountButton.isEnabled = false
     let selected = self.disksPopUp.selectedItem?.representedObject as? String
@@ -408,6 +491,7 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
       }
     }
   }
+  
   // MARK: Mount ESPs
   @IBAction func mountESP(_ sender: NSPopUpButton!) {
     self.unmountButton.isEnabled = false
@@ -522,6 +606,7 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
               NSSound.beep()
             }
             DispatchQueue.main.async {
+              self.searchDisks()
               self.searchESPDisks()
             }
           }
@@ -551,7 +636,17 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     }
   }
   
+  func comboBoxSelectionDidChange(_ notification: Notification) {
+    if (notification.object as? NSComboBox) == self.themeBox {
+      self.themeBoxSelected(self.themeBox)
+    }
+  }
+  
   func controlTextDidEndEditing(_ obj: Notification) {
+    if (obj.object as? NSComboBox) == self.themeBox {
+      self.themeBoxSelected(self.themeBox)
+      return
+    }
     var updateThemeRepo = false
     if let field = obj.object as? NSTextField {
       
@@ -600,13 +695,92 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
         }
         if NSDictionary(dictionary: conf).write(toFile: fullPath,
                                                 atomically: false) {
-          NSWorkspace.shared.openFile(dir)
+          loadPlist(at: fullPath)
         } else {
           NSSound.beep()
         }
       } else {
         NSSound.beep()
       }
+    }
+  }
+  
+  @IBAction func createNewPlist(_ sender: NSButton!) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+      NSDocumentController.shared.newDocument(self)
+    }
+  }
+  
+  @IBAction func autosaveDocuments(_ sender: NSButton!) {
+    UDs.set(sender.state == .on, forKey: kAutoSavePlistsKey)
+    UDs.synchronize()
+  }
+  
+  @IBAction func searchPanelForPlist(_ sender: NSButton!) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+      let op = NSOpenPanel()
+      op.allowsMultipleSelection = false
+      op.canChooseDirectories = false
+      op.canCreateDirectories = false
+      op.canChooseFiles = true
+      op.allowedFileTypes = ["plist"]
+      
+      // make the app regular
+      NSApp.setActivationPolicy(.regular)
+      
+      op.begin { (result) in
+        if result == .OK {
+          if let path = op.url?.path {
+            loadPlist(at: path) // this will make the app regular again in 10.11+
+          }
+        } else {
+          // check if a document is opened some where
+          if NSDocumentController.shared.documents.count == 0 {
+            NSApp.setActivationPolicy(.accessory)
+          }
+        }
+      }
+    }
+  }
+  
+  @IBAction func volumePopUpPressed(_ sender: NSPopUpButton!) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+      self.plistsPopUp.removeAllItems()
+      self.plistsPopUp.addItem(withTitle: "...")
+      if let disk = sender.selectedItem?.representedObject as? String {
+        if let mp = getMountPoint(from: disk) {
+          let clover = mp.addPath("EFI/CLOVER")
+          if fm.fileExists(atPath: clover) {
+            if fm.fileExists(atPath: clover.addPath("config.plist")) {
+              self.plistsPopUp.addItem(withTitle: "config.plist")
+              self.plistsPopUp.lastItem?.representedObject = clover.addPath("config.plist")
+            }
+            let enumerator = fm.enumerator(atPath: clover)
+            while let file = enumerator?.nextObject() as? String {
+              if file.fileExtension == "plist" &&
+                (file.range(of: "kexts/") == nil) &&
+                !file.hasPrefix("themes/") &&
+                file != "pref.plist" &&
+                file != "config.plist"{
+                self.plistsPopUp.addItem(withTitle: file)
+                self.plistsPopUp.lastItem?.representedObject = clover.addPath(file)
+              }
+            }
+          }
+        } else {
+          NSSound.beep()
+        }
+      }
+    }
+  }
+  
+  @IBAction func openCloverPlist(_ sender: NSPopUpButton!) {
+    if let path = sender.selectedItem?.representedObject as? String {
+      if !fm.fileExists(atPath: path) {
+        NSSound.beep()
+        return
+      }
+      loadPlist(at: path)
     }
   }
   
@@ -658,7 +832,7 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
         
         AppSD.installerOutWC?.showWindow(self)
       }
-      NSApp.activate(ignoringOtherApps: true)
+      //NSApp.activate(ignoringOtherApps: true)
     }
   }
   
@@ -758,20 +932,26 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
   }
   
   // MARK: NVRAM editing
-  @IBAction func themeBoxSelected(_ sender: NSComboBox!) {
+  func themeBoxSelected(_ sender: NSComboBox!) {
+    //sender.window?.makeFirstResponder(nil)
     let key = "Clover.Theme"
-    if let old = sender.cell?.representedObject as? String {
-      let theme = sender.stringValue
-      if old != theme {
-        if theme.count == 0 {
-          deleteNVRAM(key: key)
-        } else {
-          setNVRAM(key: key, stringValue: theme)
-        }
-      }
+    let theme = sender.stringValue
+    var nvramValue : String = ""
+    if let data = getNVRAM()?.object(forKey: key) as? Data {
+      nvramValue = String(decoding: data, as: UTF8.self)
     }
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+    if nvramValue != theme {
+      if theme.count == 0 {
+        deleteNVRAM(key: key)
+      } else {
+        setNVRAM(key: key, stringValue: theme)
+      }
+    } else {
+      return
+    }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
       var value = ""
       if let nvram = getNVRAM() {
         let nvdata = nvram.object(forKey: key) as? Data
@@ -971,11 +1151,21 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
       let installerRev = findCloverRevision(at: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI"))
       let installerRevNum = Int(installerRev ?? "0") ?? 0
     
+      if (self.lastReleaseLink != nil && self.lastReleaseRev != nil) {
+        if !fm.fileExists(atPath: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI")) {
+          DispatchQueue.main.async {
+            self.updateClover(self.updateCloverButton)
+          }
+        }
+      }
+      
       if (self.lastReleaseLink != nil && self.lastReleaseRev != nil)
         && lastRevNum > 0
         && (lastRevNum > currRevNum) {
         UDs.set(self.lastReleaseLink!, forKey: kLastUpdateLink)
         UDs.set(self.lastReleaseRev!, forKey: kLastUpdateRevision)
+        
+        
         DispatchQueue.main.async {
           if #available(OSX 10.10, *) {
             AppSD.statusItem.button?.title = "\(lastRevNum)"
@@ -1049,7 +1239,7 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
                 alert.addButton(withTitle: "Download".locale)
                 alert.addButton(withTitle: "Close".locale)
                 if alert.runModal() == .alertFirstButtonReturn {
-                  NSWorkspace.shared.open(url)
+                  self.updateCloverApp(at: url)
                 }
               }
             }
@@ -1075,13 +1265,30 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     let b = URLSessionConfiguration.default
     let session = Foundation.URLSession(configuration: b, delegate: self, delegateQueue: nil)
     
-    //let session = URLSession(configuration: .default)
-    
     if (url != nil) {
       self.installCloverButton.isEnabled = false
       self.downloadTask = session.downloadTask(with: url!)
       self.downloadTask?.resume()
     }
+  }
+  
+  func updateCloverApp(at url: URL) {
+    if AppSD.isInstalling ||
+      AppSD.isInstallerOpen ||
+      self.lastReleaseLink == nil ||
+      self.lastReleaseRev == nil {
+      NSSound.beep()
+      return
+    }
+    self.progressBar.isHidden = false
+    self.progressBar.doubleValue = 0.0
+    
+    let b = URLSessionConfiguration.default
+    let session = Foundation.URLSession(configuration: b, delegate: self, delegateQueue: nil)
+    
+    self.installCloverButton.isEnabled = false
+    self.downloadTask = session.downloadTask(with: url)
+    self.downloadTask?.resume()
   }
   
   func urlSession(_ session: URLSession,
@@ -1098,8 +1305,9 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
       let lastPath = downloadTask.originalRequest!.url!.lastPathComponent
       let data = try Data(contentsOf: location)
 
-      if lastPath.fileExtension == "zip" && lastPath.hasPrefix("CloverV2") {
-        // ok, We have the download completed: replace CloverV2 inside SharedSupport directory!
+      if lastPath.fileExtension == "zip" &&
+        (lastPath.hasPrefix("CloverV2") || lastPath.hasPrefix("Clover.app")) {
+        let isApp = lastPath.hasPrefix("Clover.app")
 
         // Decompress the zip archive
         // NSUserName() ensure the user have read write permissions
@@ -1115,27 +1323,52 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
         let file = tempDir.addPath(lastPath)
         try data.write(to: URL(fileURLWithPath: file))
         
-        DispatchQueue.main.async {
-          let task : Process = Process()
-          task.environment = ProcessInfo().environment
-          let bash = "/bin/bash"
-          // unzip -d output_dir/ zipfiles.zip
-          let cmd = "/usr/bin/unzip -qq -d \(tempDir) \(file)"
-          if #available(OSX 10.13, *) {
-            task.executableURL = URL(fileURLWithPath: bash)
-          } else {
-            task.launchPath = bash
-          }
-          
-          task.arguments = ["-c", cmd]
-          task.terminationHandler = { t in
-            if t.terminationStatus == 0 {
-              self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+        if isApp {
+          DispatchQueue.main.async {
+            let task : Process = Process()
+            task.environment = ProcessInfo().environment
+            let bash = "/bin/bash"
+            // unzip -d output_dir/ zipfiles.zip
+            let cmd = "/usr/bin/unzip -qq -d \(tempDir) \(file)"
+            if #available(OSX 10.13, *) {
+              task.executableURL = URL(fileURLWithPath: bash)
+            } else {
+              task.launchPath = bash
             }
+            
+            task.arguments = ["-c", cmd]
+            task.terminationHandler = { t in
+              if t.terminationStatus == 0 {
+                self.moveCloverApp(at: file.deletingFileExtension)
+              }
+            }
+            
+            task.launch()
           }
-          
-          task.launch()
+        } else {
+          DispatchQueue.main.async {
+            let task : Process = Process()
+            task.environment = ProcessInfo().environment
+            let bash = "/bin/bash"
+            // unzip -d output_dir/ zipfiles.zip
+            let cmd = "/usr/bin/unzip -qq -d \(tempDir) \(file)"
+            if #available(OSX 10.13, *) {
+              task.executableURL = URL(fileURLWithPath: bash)
+            } else {
+              task.launchPath = bash
+            }
+            
+            task.arguments = ["-c", cmd]
+            task.terminationHandler = { t in
+              if t.terminationStatus == 0 {
+                self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+              }
+            }
+            
+            task.launch()
+          }
         }
+        
       }
       
     } catch {
@@ -1180,8 +1413,28 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
     var isDir : ObjCBool = false
     if fm.fileExists(atPath: newOne, isDirectory: &isDir) {
       if isDir.boolValue {
+        // clean some unused stuff
+        if fm.fileExists(atPath: newOne.addPath("rcScripts")) {
+          try? fm.removeItem(atPath: newOne.addPath("rcScripts"))
+        }
+        if fm.fileExists(atPath: newOne.addPath("ThirdParty")) {
+          try? fm.removeItem(atPath: newOne.addPath("ThirdParty"))
+        }
+        // let only one theme (Clovy) as we have a themes manager
+        if fm.fileExists(atPath: newOne.addPath("themespkg/Clovy")) {
+          if let themes = try? fm.contentsOfDirectory(atPath: newOne.addPath("themespkg")) {
+            for file in themes {
+              if file != "Clovy" {
+                try? fm.removeItem(atPath: newOne.addPath("themespkg").addPath(file))
+              }
+            }
+          }
+        }
+        
         do {
-          try fm.removeItem(atPath: Cloverv2Path)
+          if fm.fileExists(atPath: Cloverv2Path) {
+            try fm.removeItem(atPath: Cloverv2Path)
+          }
           try fm.copyItem(atPath: newOne, toPath: Cloverv2Path)
           DispatchQueue.main.async {
             self.lastReleaseRev = nil
@@ -1191,9 +1444,58 @@ final class SettingsViewController: NSViewController, NSTextFieldDelegate, URLSe
           }
         } catch {
           print(error)
+          NSSound.beep()
         }
       }
     }
+  }
+  
+  private func moveCloverApp(at path: String) {
+    // move to ~/Desktop/Clover_app_new
+    let new = NSHomeDirectory().addPath("Desktop/Clover_app_download")
+    if fm.fileExists(atPath: new) {
+      try? fm.removeItem(atPath: new)
+    }
+    
+    do {
+      if fm.fileExists(atPath: new) {
+        try fm.removeItem(atPath: new)
+      }
+      try fm.createDirectory(atPath: new, withIntermediateDirectories: false, attributes: nil)
+      try fm.copyItem(atPath: path, toPath: new.addPath(path.lastPath))
+      DispatchQueue.main.async {
+        self.lastReleaseRev = nil
+        self.lastReleaseLink = nil
+        self.setUpdateInformations()
+        self.setUpdateButton()
+      }
+      self.removeAttributes(at: new.addPath(path.lastPath))
+      NSWorkspace.shared.openFile(new)
+    } catch {
+      print(error)
+      NSSound.beep()
+    }
+  }
+  
+  private func removeAttributes(at path: String) {
+    let task : Process = Process()
+    task.environment = ProcessInfo().environment
+    let bash = "/bin/bash"
+    let cmd = "/usr/bin/xattr -rc \(path)"
+    if #available(OSX 10.13, *) {
+      task.executableURL = URL(fileURLWithPath: bash)
+    } else {
+      task.launchPath = bash
+    }
+    
+    task.arguments = ["-c", cmd]
+    task.terminationHandler = { t in
+      if t.terminationStatus != 0 {
+        NSSound.beep()
+      }
+    }
+    
+    task.launch()
   }
   
   // MARK: Close

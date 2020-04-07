@@ -1,24 +1,14 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: hr
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "N/A"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot Device:" = "Boot Device:";
-"config path:" = "config path:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover wants to mount %@";
 "Clover wants to umount %@" = "Clover wants to umount %@";
 "Mount" = "Mount";
@@ -26,6 +16,7 @@
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
@@ -34,9 +25,10 @@
 "OEM Board:" = "OEM Board:";
 "NVRAM is native:" = "NVRAM is native:";
 "unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
 
+// Sound
 "Startup Sound" = "Startup Sound";
 "Device:" = "Device:";
 "Volume level:" = "Volume level:";
@@ -49,14 +41,16 @@
 "true" = "true";
 "false" = "false";
 
+// Theme
 "Theme:" = "Theme:";
 "Themes" = "Themes"; // window title
 "No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
+"Manager" = "Manager";
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
 "Optimize" = "Optimize";
 "Sound:" = "Sound:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*Make filesystem read-write";
 "*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
 "*Require CloverDaemon" = "*Require CloverDaemon";
@@ -68,7 +62,7 @@
 
 "Update" = "Update";
 "Download" = "Download";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
+"Update to r%d" = "Update to r%d"; // Update to r5101
 "Check update:" = "Check update:";
 "Check now" = "Check now";
 
@@ -76,18 +70,25 @@
 "daily" = "daily";
 "weekly" = "weekly";
 "monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"last checked:" = "last checked:"; // last date update was checked
 
 "Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Close" = "Zatvori";
 
-/* Installer */
+// Installer
+"Install Clover" = "Install Clover";
+"Current Clover revision" = "Current Clover revision";
+"Boot Device:" = "Boot Device:";
+"config path:" = "config path:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 "Clover Installer" = "Clover Installer";
 "Select a disk.." = "Select a disk..";
 "Install" = "Install";
 "Uninstall" = "Uninstall";
 "AltBoot" = "Alternative boot";
 
+// Clover Bootloader and drivers
 "UEFI only" = "Install Clover to be used with UEFI motherboards only.";
 
 "Install alternative booting PBR" = "Install alternative booting PBR with choice of boot with a key pressed.
@@ -114,11 +115,12 @@ This choice will not activate any partition in MBR.";
 "boot6" = "Clover EFI 64-bits using SATA to access drives.";
 "boot7" = "Clover EFI 64-bits BiosBlockIO";
 
-/* Drivers */
 "UEFI mandatory" = "UEFI mandatory";
 "BIOS mandatory" = "BIOS mandatory";
+
 "UEFI/Other" = "UEFI/Other";
 "BIOS/Other" = "BIOS/Other";
+
 "UEFI, but not from this installer" = "UEFI, but not from this installer";
 "BIOS, but not from this installer" = "BIOS, but not from this installer";
 
@@ -217,3 +219,124 @@ Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is neede
 "VBoxHfs.efi" = "HFS+ filesystem driver.";
 
 "VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Više o VoiceOver uslužnom programu";
+"Preferences…" = "Postavke…";
+"Services" = "Usluge";
+"Hide Clover" = "Sakrij Clover";
+"Hide Others" = "Sakrij ostalo";
+"Show All" = "Prikaži sve";
+"Quit Clover" = "Zatvori Clover";
+// File
+"New" = "New";
+"Open…" = "Otvori…";
+"Open Recent" = "Open Recent";
+"Close" = "Zatvori";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Poništi";
+"Redo" = "Ponovi";
+"Cut" = "Izreži";
+"Copy" = "Kopiraj";
+"Paste" = "Zalijepi";
+"Paste and Match Style" = "Zalijepi i uskladi stil";
+"Delete" = "Obriši";
+"Select All" = "Odaberi sve";
+// Edit->Find
+"Edit" = "Uredi";
+"File" = "Datoteka";
+"Find" = "Pronađi";
+"Find…" = "Pronađi…";
+"Find and Replace…" = "Pronađi i zamijeni…";
+"Find Next" = "Pronađi sljedeće";
+"Find Previous" = "Pronađi prethodno";
+"Use Selection for Find" = "Koristi odabir za pretraživanje";
+"Use Selection for Replace" = "Koristi odabir za zamjenu";
+"Jump to Selection" = "Idi na odabir";
+// Edit->Spelling and Grammar
+"Spelling" = "Pravopis";
+"Spelling and Grammar" = "Pravopis i gramatika";
+"Show Spelling and Grammar" = "Prikaži pravopis i gramatiku";
+"Check Document Now" = "Provjeri dokument sad";
+"Check Spelling While Typing" = "Provjeravaj pravopis tijekom tipkanja";
+"Check Grammar With Spelling" = "Provjeri gramatiku i pravopis";
+"Correct Spelling Automatically" = "Ispravi pravopis automatski";
+// Edit->Substitutions
+"Substitutions" = "Zamjene";
+"Show Substitutions" = "Prikaži zamjene";
+"Smart Copy/Paste" = "Smart kopiranje/lijepljenje";
+"Smart Quotes" = "Smart navodnici";
+"Smart Dashes" = "Smart crtice";
+"Smart Links" = "Smart linkovi";
+"Text Replacement" = "Zamjena teksta";
+// Edit->Transformations
+"Transformations" = "Transformacije";
+"Make Upper Case" = "Pretvori u velika slova";
+"Make Lower Case" = "Pretvori u mala slova";
+"Capitalize" = "Podesi veliko slovo";
+// Edit->Speech
+"Speech" = "Govor";
+"Start Speaking" = "Pokreni govor";
+"Stop Speaking" = "Zaustavi govor";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Prozor";
+"Minimize" = "Smanji";
+"Zoom" = "Zumiraj";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "Postavi sve naprijed";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

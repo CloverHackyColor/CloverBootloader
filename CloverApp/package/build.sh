@@ -41,9 +41,10 @@ local INFO="${APP_PATH}"/Contents/Info.plist
 local APPVERSION=$(defaults read "${INFO}" CFBundleShortVersionString)
 local PKGNAME="Clover.app_v${APPVERSION}.pkg"
 
-if [[ -d "${CLOVERROOT}"/.git ]];then
-  PKGNAME="Clover.app_v${APPVERSION}_r$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).pkg"
-fi
+# no more Clover revision since v1.17 as Clover.app can be shipped without Clover's binaries
+#if [[ -d "${CLOVERROOT}"/.git ]];then
+#  PKGNAME="Clover.app_v${APPVERSION}_r$( git -C "${CLOVERROOT}" describe --tags --abbrev=0 ).pkg"
+#fi
 
 rm -f "${SYM_PATH}"/Clover.app*.pkg
 rm -f "${SYM_PATH}"/Clover.app*.zip
@@ -67,10 +68,11 @@ productbuild --distribution ./Distribution \
               --package-path ./CloverApp.pkg \
               "${SYM_PATH}/${PKGNAME}"
 
-(cd "${SYM_PATH}" ; zip ${PKGNAME}.zip ${PKGNAME} )
- 
+# since v1.17 the release must be just .pkg, i.e. unzipped
+# (cd "${SYM_PATH}" ; zip ${PKGNAME}.zip ${PKGNAME} )
+
+
 rm -rf "${BUILD_PATH}"/package
-rm -f "${SYM_PATH}"/Clover.app*.pkg
 open "${SYM_PATH}"
 }
 

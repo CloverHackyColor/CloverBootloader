@@ -9,6 +9,68 @@
 import Cocoa
 
 extension String {
+  /// Create `Data` from hexadecimal string representation
+  ///
+  /// This takes a hexadecimal representation and creates a `Data` object. Note, if the string has any spaces or non-hex characters (e.g. starts with '<' and with a '>'), those are ignored and only hex characters are processed.
+  ///
+  /// - returns: Data represented by this hexadecimal string.
+  
+  func hexadecimal() -> Data? {
+    var data = Data(capacity: self.count / 2)
+    
+    let regex = try! NSRegularExpression(pattern: "[0-9a-f]{1,2}", options: .caseInsensitive)
+    regex.enumerateMatches(in: self, range: NSMakeRange(0, utf16.count)) { match, flags, stop in
+      let byteString = (self as NSString).substring(with: match!.range)
+      var num = UInt8(byteString, radix: 16)!
+      data.append(&num, count: 1)
+    }
+    
+    guard data.count > 0 else { return nil }
+    
+    return data
+  }
+  
+  /// - returns: Bool value indicating that our string start with the same prefix ignoring casing.
+  func hasPrefixIgnoringCase(_ str: String) -> Bool {
+    return self.lowercased().hasPrefix(str.lowercased())
+  }
+  
+  /// - returns: only digits contained from the given string
+  var keepNumericsOnly: String {
+    return self.components(separatedBy: CharacterSet(charactersIn: "0123456789").inverted).joined(separator: "")
+  }
+  
+  //: ### Base64 encoding a string
+  func base64Encoded() -> String? {
+    if let data = self.data(using: .utf8) {
+      return data.base64EncodedString()
+    }
+    return nil
+  }
+  
+  //: ### Base64 decoding a string
+  func base64Decoded() -> String? {
+    if let data = Data(base64Encoded: self) {
+      return String(data: data, encoding: .utf8)
+    }
+    return nil
+  }
+  
+  //: ### Base64 encoding data
+  func base64EncodedHex() -> String? {
+    if let data = self.hexadecimal() {
+      return data.base64EncodedString()
+    }
+    return nil
+  }
+  
+  //: ### Base64 decoding data
+  func base64DecodedHex() -> String? {
+    if let data = Data(base64Encoded: self, options: Data.Base64DecodingOptions.ignoreUnknownCharacters) {
+      return data.hexadecimal()
+    }
+    return nil
+  }
 
   public func noSpaces() -> String {
     return self.trimmingCharacters(in: CharacterSet.whitespaces)
@@ -17,25 +79,58 @@ extension String {
   var lastPath: String {
     return (self as NSString).lastPathComponent
   }
+  
   var fileExtension: String {
     return (self as NSString).pathExtension
   }
+  
   var deletingLastPath: String {
     return (self as NSString).deletingLastPathComponent
   }
+  
   var deletingFileExtension: String {
     return (self as NSString).deletingPathExtension
   }
+  
   var componentsPath: [String] {
     return (self as NSString).pathComponents
   }
+  
   func addPath(_ path: String) -> String {
     let nsSt = self as NSString
     return nsSt.appendingPathComponent(path)
   }
+  
   func appendingFileExtension(ext: String) -> String? {
     let nsSt = self as NSString
     return nsSt.appendingPathExtension(ext)
+  }
+  
+  /// Replace any occurences of a string (word) with a new one (newWord)
+  ///
+  /// - returns: String where word search is case insensitive while newWord replacing is case sensitive..
+  
+  func replacingOccurrencesOf(inSensitive word: String, withSensitive newWord: String) -> String {
+    //print("word = \(word)")
+    //print("newWord = \(newWord)")
+    var newText = self
+    if let range = newText.lowercased().range(of: word.lowercased()) {
+      newText = newText.replacingOccurrences(of: word,
+                                             with: newWord,
+                                             options: String.CompareOptions.caseInsensitive,
+                                             range: range)
+    }
+    // check again
+    let r = newText.lowercased().range(of: word.lowercased())
+    if (r != nil) {
+      newText = newText.replacingOccurrencesOf(inSensitive: word, withSensitive: newWord)
+    }
+    return newText
+  }
+  
+  // NSUserInterfaceItemIdentifier
+  func interfaceId() -> NSUserInterfaceItemIdentifier {
+    return NSUserInterfaceItemIdentifier(self)
   }
   
   // https://stackoverflow.com/questions/25554986/how-to-convert-string-to-unsafepointeruint8-and-length#
@@ -58,6 +153,50 @@ extension String {
     stream.close()
     
     return UnsafePointer<UInt8>(buffer)
+  }
+  
+  /// Escape XML special characthers such:
+  /// & as &amp, \ as &quot, ' as &apos,  < as &lt, and > as &gt
+  var escapingXMLCharacters: String {
+    get {
+      /*
+       "   &quot;
+       '   &apos;
+       <   &lt;
+       >   &gt;
+       &   &amp;
+       */
+      
+      var s = self
+      s = s.replacingOccurrences(of: "&",  with: "&amp;")
+      s = s.replacingOccurrences(of: "\"", with: "&quot;")
+      s = s.replacingOccurrences(of: "'",  with: "&apos;")
+      s = s.replacingOccurrences(of: "<",  with: "&lt;")
+      s = s.replacingOccurrences(of: ">",  with: "&gt;")
+      return s
+    }
+  }
+  
+  /// Convert XML  characters  such:
+  /// &amp to &, &quot to \ , ' to &apos,  &lt to <, and &gt to >
+  var convertingXMLCharacters: String {
+    get {
+      /*
+       "   &quot;
+       '   &apos;
+       <   &lt;
+       >   &gt;
+       &   &amp;
+       */
+      
+      var s = self
+      s = s.replacingOccurrences(of: "&amp;",  with: "&")
+      s = s.replacingOccurrences(of: "&quot;", with: "\"")
+      s = s.replacingOccurrences(of: "&apos;", with: "'")
+      s = s.replacingOccurrences(of: "&lt;",   with: "<")
+      s = s.replacingOccurrences(of: "&gt;",   with: ">")
+      return s
+    }
   }
 }
 
@@ -99,6 +238,23 @@ extension UInt32 {
 }
 
 extension Data {
+  /// Create hexadecimal string representation of `Data` object.
+  ///
+  /// - returns: `String` representation of this `Data` object.
+  
+  func hexadecimal() -> String {
+    return map { String(format: "%02x", $0) }
+      .joined(separator: "")
+  }
+  
+  func castToCPointer<T>() -> T {
+    let mem = UnsafeMutablePointer<T>.allocate(capacity: 1)
+    _ = self.copyBytes(to: UnsafeMutableBufferPointer(start: mem, count: 1))
+    let val =  mem.move()
+    mem.deallocate()
+    return val
+  }
+  
   func toPointer() -> UnsafePointer<UInt8>? {
     
     let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: self.count)
@@ -225,3 +381,23 @@ extension io_object_t {
 extension NSBitmapImageRep {
   var png: Data? { representation(using: .png, properties: [:]) }
 }
+
+extension NSView {
+  func removeAllConstraints() {
+    self.removeConstraints(self.constraints)
+    for view in self.subviews {
+      view.removeAllConstraints()
+    }
+  }
+  
+  @IBInspectable var cornerRadius: CGFloat {
+    get {
+      return self.layer?.cornerRadius ?? 0
+    } set {
+      self.wantsLayer = true
+      self.layer?.masksToBounds = true
+      self.layer?.cornerRadius = CGFloat(Int(newValue * 100)) / 100
+    }
+  }
+}
+

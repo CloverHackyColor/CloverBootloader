@@ -1,24 +1,14 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: id
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "N/D"; // not available (please be short)
-"Install Clover" = "Pasang Clover";
-"Current Clover revision" = "Revisi Clover Terkini";
-"Boot Device:" = "Device Boot:";
-"config path:" = "Lokasi config:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover ingin mount %@";
 "Clover wants to umount %@" = "Clover ingin umount %@";
 "Mount" = "Mount";
@@ -26,6 +16,7 @@
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
@@ -34,9 +25,10 @@
 "OEM Board:" = "OEM Board:";
 "NVRAM is native:" = "NVRAM is native:";
 "unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
 
+// Sound
 "Startup Sound" = "Startup Sound";
 "Device:" = "Device:";
 "Volume level:" = "Volume level:";
@@ -49,14 +41,16 @@
 "true" = "true";
 "false" = "false";
 
+// Theme
 "Theme:" = "Theme:";
 "Themes" = "Themes"; // window title
 "No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
+"Manager" = "Manager";
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
 "Optimize" = "Optimize";
 "Sound:" = "Sound:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*Jadikan FileSystem Read-Write";
 "*Disable Sleep Proxy Client" = "*Tiadakan Sleep Proxy Client";
 "*Require CloverDaemon" = "*Butuh CloverDaemon";
@@ -68,7 +62,7 @@
 
 "Update" = "Perbarui";
 "Download" = "Download";
-"Update to r%d" = "Perbarui ke r%d"; // "Update to r5101"
+"Update to r%d" = "Perbarui ke r%d"; // Update to r5101
 "Check update:" = "Periksa Pembaruan:";
 "Check now" = "Periksa Sekarang";
 
@@ -76,18 +70,25 @@
 "daily" = "Harian";
 "weekly" = "Mingguan";
 "monthly" = "Bulanan";
-"last checked:" = "Terakhir Periksa:"; // last date update was checked. Please be short.
+"last checked:" = "Terakhir Periksa:"; // last date update was checked
 
 "Run at login" = "Jalankan saat Login";
-"Close" = "Tutup"; // Close the Clover.app
+"Close" = "Tutup";
 
-/* Installer */
+// Installer
+"Install Clover" = "Pasang Clover";
+"Current Clover revision" = "Revisi Clover Terkini";
+"Boot Device:" = "Device Boot:";
+"config path:" = "Lokasi config:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 "Clover Installer" = "Installer Clover";
 "Select a disk.." = "Pilih Disk..";
 "Install" = "Pasang";
 "Uninstall" = "Copot";
 "AltBoot" = "Boot Alternatif";
 
+// Clover Bootloader and drivers
 "UEFI only" = "Install Clover untuk digunakan pada motherboard yang hanya mendukung UEFI.";
 
 "Install alternative booting PBR" = "Install alternatif boot PBR dengan memilih boot melalui sebuah tombol.
@@ -119,11 +120,12 @@ Opsi ini tidak membuat partisi di MBR menjadi aktif.";
 "boot6" = "Clover boot 64-bits melalui SATA untuk akses Drives";
 "boot7" = "Clover boot 64-bits melalui Bios Block I/O untuk akses Drives";
 
-/* Drivers */
 "UEFI mandatory" = "Penting bagi UEFI";
 "BIOS mandatory" = "Penting bagi BIOS";
+
 "UEFI/Other" = "UEFI (Tambahan)";
 "BIOS/Other" = "BIOS (Tambahan)";
+
 "UEFI, but not from this installer" = "UEFI, dari sumber lain";
 "BIOS, but not from this installer" = "BIOS, dari sumber lain";
 
@@ -217,3 +219,124 @@ Opsi ini tidak membuat partisi di MBR menjadi aktif.";
 "VBoxHfs.efi" = "Driver File System HFS+ dari VirtualBox.";
 
 "VBoxIso9600.efi" = "Driver File System ISO 9600.";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Mengenai Clover";
+"Preferences…" = "Preferensi…";
+"Services" = "Layanan";
+"Hide Clover" = "Sembunyikan Clover";
+"Hide Others" = "Sembunyikan Lainnya";
+"Show All" = "Tampilkan Semua";
+"Quit Clover" = "Tutup Clover";
+// File
+"New" = "New";
+"Open…" = "Buka…";
+"Open Recent" = "Open Recent";
+"Close" = "Tutup";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Kembalikan";
+"Redo" = "Ulang";
+"Cut" = "Potong";
+"Copy" = "Salin";
+"Paste" = "Tempel";
+"Paste and Match Style" = "Tempel dan Cocokkan Gaya";
+"Delete" = "Hapus";
+"Select All" = "Pilih Semua";
+// Edit->Find
+"Edit" = "Edit";
+"File" = "File";
+"Find" = "Temukan";
+"Find…" = "Temukan…";
+"Find and Replace…" = "Temukan dan Ganti…";
+"Find Next" = "Temukan Berikutnya";
+"Find Previous" = "Temukan Sebelumnya";
+"Use Selection for Find" = "Gunakan Pilihan untuk Temukan";
+"Use Selection for Replace" = "Gunakan Pilihan untuk Ganti";
+"Jump to Selection" = "Lompat ke Pilihan";
+// Edit->Spelling and Grammar
+"Spelling" = "Ejaan";
+"Spelling and Grammar" = "Ejaan dan Tata Bahasa";
+"Show Spelling and Grammar" = "Tampilkan Ejaan dan Tata Bahasa";
+"Check Document Now" = "Periksa Dokumen Sekarang";
+"Check Spelling While Typing" = "Periksa Ejaan Ketika Mengetik";
+"Check Grammar With Spelling" = "Periksa Tata Bahasa Dengan Ejaan";
+"Correct Spelling Automatically" = "Betulkan Ejaaan Secara Otomatis";
+// Edit->Substitutions
+"Substitutions" = "Substitusi";
+"Show Substitutions" = "Tampilkan Substitusi";
+"Smart Copy/Paste" = "Salin/Tempel Cerdas";
+"Smart Quotes" = "Kutipan Cerdas";
+"Smart Dashes" = "Tanda Hubung Cerdas";
+"Smart Links" = "Tautan Cerdas";
+"Text Replacement" = "Penggantian Teks";
+// Edit->Transformations
+"Transformations" = "Transformasi";
+"Make Upper Case" = "Jadikan Huruf Besar";
+"Make Lower Case" = "Jadikan Huruf Kecil";
+"Capitalize" = "Kapitalkan";
+// Edit->Speech
+"Speech" = "Suara";
+"Start Speaking" = "Mulai Bicara";
+"Stop Speaking" = "Berhenti Bicara";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Jendela";
+"Minimize" = "Minikan";
+"Zoom" = "Zoom";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "Pindahkan Semua ke Depan";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

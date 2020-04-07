@@ -1,24 +1,14 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: ja
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "N/A"; // not available (please be short)
-"Install Clover" = "Install Clover";
-"Current Clover revision" = "Current Clover revision";
-"Boot Device:" = "Boot Device:";
-"config path:" = "config path:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover wants to mount %@";
 "Clover wants to umount %@" = "Clover wants to umount %@";
 "Mount" = "Mount";
@@ -26,6 +16,7 @@
 "mount point" = "mount point";
 "*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
@@ -34,9 +25,10 @@
 "OEM Board:" = "OEM Board:";
 "NVRAM is native:" = "NVRAM is native:";
 "unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
 
+// Sound
 "Startup Sound" = "Startup Sound";
 "Device:" = "Device:";
 "Volume level:" = "Volume level:";
@@ -49,14 +41,16 @@
 "true" = "true";
 "false" = "false";
 
+// Theme
 "Theme:" = "Theme:";
 "Themes" = "Themes"; // window title
 "No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
+"Manager" = "Manager";
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
 "Optimize" = "Optimize";
 "Sound:" = "Sound:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*Make filesystem read-write";
 "*Disable Sleep Proxy Client" = "*Disable Sleep Proxy Client";
 "*Require CloverDaemon" = "*Require CloverDaemon";
@@ -68,7 +62,7 @@
 
 "Update" = "Update";
 "Download" = "Download";
-"Update to r%d" = "Update to r%d"; // "Update to r5101"
+"Update to r%d" = "Update to r%d"; // Update to r5101
 "Check update:" = "Check update:";
 "Check now" = "Check now";
 
@@ -76,18 +70,25 @@
 "daily" = "daily";
 "weekly" = "weekly";
 "monthly" = "monthly";
-"last checked:" = "last checked:"; // last date update was checked. Please be short.
+"last checked:" = "last checked:"; // last date update was checked
 
 "Run at login" = "Run at login";
-"Close" = "Close"; // Close the Clover.app
+"Close" = "閉じる";
 
-/* Installer */
+// Installer
+"Install Clover" = "Install Clover";
+"Current Clover revision" = "Current Clover revision";
+"Boot Device:" = "Boot Device:";
+"config path:" = "config path:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 "Clover Installer" = "Clover Installer";
 "Select a disk.." = "Select a disk..";
 "Install" = "Install";
 "Uninstall" = "Uninstall";
 "AltBoot" = "Alternative boot";
 
+// Clover Bootloader and drivers
 "UEFI only" = "Install Clover to be used with UEFI motherboards only.";
 
 "Install alternative booting PBR" = "Install alternative booting PBR with choice of boot with a key pressed.
@@ -114,11 +115,12 @@ This choice will not activate any partition in MBR.";
 "boot6" = "Clover EFI 64-bits using SATA to access drives.";
 "boot7" = "Clover EFI 64-bits BiosBlockIO";
 
-/* Drivers */
 "UEFI mandatory" = "UEFI mandatory";
 "BIOS mandatory" = "BIOS mandatory";
+
 "UEFI/Other" = "UEFI/Other";
 "BIOS/Other" = "BIOS/Other";
+
 "UEFI, but not from this installer" = "UEFI, but not from this installer";
 "BIOS, but not from this installer" = "BIOS, but not from this installer";
 
@@ -217,3 +219,124 @@ Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is neede
 "VBoxHfs.efi" = "HFS+ filesystem driver.";
 
 "VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Cloverについて";
+"Preferences…" = "環境設定...";
+"Services" = "サービス";
+"Hide Clover" = "Cloverを隠す";
+"Hide Others" = "ほかを隠す";
+"Show All" = "すべてを表示";
+"Quit Clover" = "Cloverを終了";
+// File
+"New" = "New";
+"Open…" = "開く...";
+"Open Recent" = "Open Recent";
+"Close" = "閉じる";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "取り消す";
+"Redo" = "やり直す";
+"Cut" = "カット";
+"Copy" = "コピー";
+"Paste" = "ペースト";
+"Paste and Match Style" = "ペーストしてスタイルを合わせる";
+"Delete" = "削除";
+"Select All" = "すべてを選択";
+// Edit->Find
+"Edit" = "編集";
+"File" = "ファイル";
+"Find" = "検索";
+"Find…" = "検索...";
+"Find and Replace…" = "検索と置換...";
+"Find Next" = "次を検索";
+"Find Previous" = "前を検索";
+"Use Selection for Find" = "選択部分を検索に使用";
+"Use Selection for Replace" = "<null>";
+"Jump to Selection" = "選択部分へジャンプ";
+// Edit->Spelling and Grammar
+"Spelling" = "スペル";
+"Spelling and Grammar" = "スペルと文法";
+"Show Spelling and Grammar" = "スペルと文法を表示";
+"Check Document Now" = "書類を今すぐチェック";
+"Check Spelling While Typing" = "入力中にスペルチェック";
+"Check Grammar With Spelling" = "スペルと一緒に文法をチェック";
+"Correct Spelling Automatically" = "スペルを自動的に修正";
+// Edit->Substitutions
+"Substitutions" = "自動置換";
+"Show Substitutions" = "自動置換を表示";
+"Smart Copy/Paste" = "スマートコピー／ペースト";
+"Smart Quotes" = "スマート引用符";
+"Smart Dashes" = "スマートダッシュ記号";
+"Smart Links" = "スマートリンク";
+"Text Replacement" = "テキストの置き換え";
+// Edit->Transformations
+"Transformations" = "変換";
+"Make Upper Case" = "大文字にする";
+"Make Lower Case" = "小文字にする";
+"Capitalize" = "語頭を大文字にする";
+// Edit->Speech
+"Speech" = "スピーチ";
+"Start Speaking" = "読み上げを開始";
+"Stop Speaking" = "読み上げを停止";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "ウインドウ";
+"Minimize" = "しまう";
+"Zoom" = "拡大／縮小";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "すべてを手前に移動";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";

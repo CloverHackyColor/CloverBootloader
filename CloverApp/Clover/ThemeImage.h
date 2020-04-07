@@ -1,5 +1,5 @@
 //
-//  PNG8Image.h
+//  ThemeImage.h
 //  Clover
 //
 //  Created by vector sigma on 07/03/2020.
@@ -12,10 +12,9 @@
 
 //NS_ASSUME_NONNULL_BEGIN
 
-@interface PNG8Image : NSImage
-- (nullable NSData *)png8ImageDataAtPath:(NSString *_Nonnull)imagePath
-                                   error:(NSError *_Nullable*_Nullable)errorPtr;
-
+@interface ThemeImage : NSImage
+@property (nonatomic, strong) NSData * _Nonnull pngData;
+- (id _Nullable)initWithThemeImageAtPath:(nonnull NSString *)path error:(NSError *_Nullable*_Nullable)errorPtr;
 @end
 
 //NS_ASSUME_NONNULL_END

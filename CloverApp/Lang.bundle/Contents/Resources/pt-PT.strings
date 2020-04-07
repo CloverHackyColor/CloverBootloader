@@ -1,31 +1,22 @@
-/* 
-  Clover.app
-
-  Created by vector sigma on 27/10/2019.
-  Copyright © 2019 CloverHackyColor. All rights reserved.
-*/
-
 /*
- Hi, some of the views are set to have a fixed width, but other may automatically
- enlarge the affecting view, so please consider to translate this file keeping in mind this.
- */
+Clover.app
+language code: pt-PT
 
-/* top bar menu */
+Copyright © 2019-2020 CloverHackyColor. All rights reserved.
+*/
+// Globals
+"Unsupported" = "Unsupported";
 "N/A" = "N/D"; // not available (please be short)
-"Install Clover" = "Instalar Clover";
-"Current Clover revision" = "Clover atual revisão";
-"Boot device" = "Dispositivo de Boot";
-"config path:" = "configurar caminho:";
-"Installation succeded" = "Installation succeded";
-"Installation failed" = "Installation failed";
 
+// Mount / unmount
 "Clover wants to mount %@" = "Clover pretende montar %@";
 "Clover wants to umount %@" = "Clover pretende desmontar %@";
 "Mount" = "Montar";
 "umount" = "desmontar";
 "mount point" = "ponto de montagem";
-"auto mount" = "Montagem Auto";
+"*auto mount" = "*auto mount";
 
+// Info
 "System Serial Number:" = "System Serial Number:";
 "Model:" = "Model:";
 "board-id:" = "board-id:";
@@ -34,9 +25,10 @@
 "OEM Board:" = "OEM Board:";
 "NVRAM is native:" = "NVRAM is native:";
 "unknown" = "unknown";
-"Yes" = "Yes";
-"No" = "No";
+"Yes" = "Yes"; // first char upper case
+"No" = "No"; // first char upper case
 
+// Sound
 "Startup Sound" = "Startup Sound";
 "Device:" = "Device:";
 "Volume level:" = "Volume level:";
@@ -49,14 +41,16 @@
 "true" = "verdadeiro";
 "false" = "falso";
 
+// Theme
 "Theme:" = "Tema:";
 "Themes" = "Themes"; // window title
 "No themes found" = "No themes found";
-"Manager" = "Manager"; // Theme manager
+"Manager" = "Manager";
 "Can't remove the theme" = "Can't remove the theme";
 "Show installed" = "Show installed";
 "Optimize" = "Optimize";
 "Sound:" = "Som:";
+// Main view (pop over)
 "*Make filesystem read-write" = "*Fazer filesystem leitura-escrita";
 "*Disable Sleep Proxy Client" = "*Disabilitar Sleep Proxy Client";
 "*Require CloverDaemon" = "*Necessita CloverDaemon";
@@ -68,7 +62,7 @@
 
 "Update" = "Atualizar";
 "Download" = "Download";
-"Update to r%d" = "Atualizar para r%d"; // "Update to r5101"
+"Update to r%d" = "Atualizar para r%d"; // Update to r5101
 "Check update:" = "Verificar Atualizações:";
 "Check now" = "Verificar agora";
 
@@ -76,18 +70,25 @@
 "daily" = "diária";
 "weekly" = "semanalmente";
 "monthly" = "mensal";
-"last checked:" = "ultima verificação:"; // last date update was checked. Please be short.
+"last checked:" = "ultima verificação:"; // last date update was checked
 
 "Run at login" = "Correr no login";
-"Close" = "Fechar"; // Close the Clover.app
+"Close" = "Fechar";
 
-/* Installer */
+// Installer
+"Install Clover" = "Instalar Clover";
+"Current Clover revision" = "Clover atual revisão";
+"Boot Device:" = "Boot Device:";
+"config path:" = "configurar caminho:";
+"Installation succeded" = "Installation succeded";
+"Installation failed" = "Installation failed";
 "Clover Installer" = "Clover Instalador";
 "Select a disk.." = "Selecionar disco..";
 "Install" = "Instalar";
 "Uninstall" = "Desinstalar";
 "AltBoot" = "Boot alternativo";
 
+// Clover Bootloader and drivers
 "UEFI only" = "Instala o Clover para ser usado somente em Placas Mãe UEFI.";
 
 "Install alternative booting PBR" = "Instala uma opção de boot (PBR) com escolha de boot quando pressionada uma tecla.
@@ -102,18 +103,19 @@ boot0 (No MBR do disco) responsável por carregar o boot1.
 boot1 (No setor de boot da partição) para encontrar o boot2.
 boot2 (Na raiz da partição) para carregar /EFI/CLOVER/CLOVERIA32.efi ou CLOVERX64.efi, e kernel etc.";
 
-"boot0af" = "Usado para o arranque em placas-mãe BIOS.  Nboot0af (boot0 ativo primeiro) bootloader tenta arrancar a partição ativa definida no MBR. Se não houver nenhuma partição ativa, ele vai tentar arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida.  NEsta escolha irá configurar partição HFS/Fat32 selecionada para ser ativa. ";
+"boot0af" = "Usado para o arranque em placas-mãe BIOS.  Nboot0af (boot0 ativo primeiro) bootloader tenta arrancar a partição ativa definida no MBR. Se não houver nenhuma partição ativa, ele vai tentar arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida.  NEsta escolha irá configurar partição HFS/Fat32 selecionada para ser ativa.";
 
-"boot0ss" = "Usado para o arranque em placas-mãe BIOS.  Nboot0ss (boot0 assinatura Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se nenhuma partição for encontrada, ele tentará inicializar a partição ativa definida no MBR.  NEsse bootloader é uma boa opção quando você tiver o Windows instalado no mesmo disco, pois o Windows quer ter sua partição ativa.  NEsta opção não irá ativar qualquer partição no MBR. ";
+"boot0ss" = "Usado para o arranque em placas-mãe BIOS.  Nboot0ss (boot0 assinatura Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se nenhuma partição for encontrada, ele tentará inicializar a partição ativa definida no MBR.  NEsse bootloader é uma boa opção quando você tiver o Windows instalado no mesmo disco, pois o Windows quer ter sua partição ativa.  NEsta opção não irá ativar qualquer partição no MBR.";
 
 "boot6" = "CloverEFI 64-bits usando SATA para acessar os discos";
 "boot7" = "CloverEFI 64-bits usando Bios Block I/O para acessar os discos";
 
-/* Drivers */
 "UEFI mandatory" = "UEFI obrigatório";
 "BIOS mandatory" = "BIOS obrigatório";
+
 "UEFI/Other" = "UEFI/Outro";
 "BIOS/Other" = "BIOS/Outro";
+
 "UEFI, but not from this installer" = "UEFI, mas não deste instalador";
 "BIOS, but not from this installer" = "BIOS, mas não deste instalador";
 
@@ -212,3 +214,124 @@ Principalmente, a inicialização UEFI usa NVRAM de hardware, mas em alguns caso
 "VBoxHfs.efi" = "HFS+ filesystem driver.";
 
 "VBoxIso9600.efi" = "ISO 9600 filesystem driver.";
+
+// Plist Editor Menu
+// Clover.app Menu
+"About Clover" = "Acerca do Clover";
+"Preferences…" = "Preferências…";
+"Services" = "Serviços";
+"Hide Clover" = "Ocultar Clover";
+"Hide Others" = "Ocultar outras aplicações";
+"Show All" = "Mostrar tudo";
+"Quit Clover" = "Sair do Clover";
+// File
+"New" = "New";
+"Open…" = "Abrir…";
+"Open Recent" = "Open Recent";
+"Close" = "Fechar";
+"Page Setup…" = "Page Setup…";
+"Print…" = "Print…";
+// Edit
+"Undo" = "Desfazer";
+"Redo" = "Refazer";
+"Cut" = "Cortar";
+"Copy" = "Copiar";
+"Paste" = "Colar";
+"Paste and Match Style" = "Colar e manter estilo";
+"Delete" = "Apagar";
+"Select All" = "Seleccionar tudo";
+// Edit->Find
+"Edit" = "Edição";
+"File" = "Ficheiro";
+"Find" = "Procurar";
+"Find…" = "Procurar…";
+"Find and Replace…" = "Procurar e substituir…";
+"Find Next" = "Procurar seguinte";
+"Find Previous" = "Procurar anterior";
+"Use Selection for Find" = "Procurar selecção";
+"Use Selection for Replace" = "<null>";
+"Jump to Selection" = "Ir para selecção";
+// Edit->Spelling and Grammar
+"Spelling" = "Ortografia";
+"Spelling and Grammar" = "Ortografia e gramática";
+"Show Spelling and Grammar" = "Mostrar ortografia e gramática";
+"Check Document Now" = "Corrigir documento agora";
+"Check Spelling While Typing" = "Corrigir ortografia ao escrever";
+"Check Grammar With Spelling" = "Corrigir gramática com ortografia";
+"Correct Spelling Automatically" = "Corrigir a ortografia automaticamente";
+// Edit->Substitutions
+"Substitutions" = "Substituições";
+"Show Substitutions" = "Mostrar substituições";
+"Smart Copy/Paste" = "Copiar/colar inteligente";
+"Smart Quotes" = "Aspas curvas";
+"Smart Dashes" = "Travessões inteligentes";
+"Smart Links" = "Ligações inteligentes";
+"Text Replacement" = "Substituição de texto";
+// Edit->Transformations
+"Transformations" = "Maiúsculas/minúsculas";
+"Make Upper Case" = "TUDO EM MAIÚSCULAS";
+"Make Lower Case" = "tudo em minúsculas";
+"Capitalize" = "Letra inicial maiúscula";
+// Edit->Speech
+"Speech" = "Fala";
+"Start Speaking" = "Iniciar fala";
+"Stop Speaking" = "Parar fala";
+// View
+"View" = "View";
+"Show Toolbar" = "Show Toolbar";
+"Customize Toolbar…" = "Customize Toolbar…";
+"Show Sidebar" = "Show Sidebar";
+// Window
+"Window" = "Janela";
+"Minimize" = "Minimizar";
+"Zoom" = "Aumentar/reduzir janela";
+"Bring Clover Window to Front" = "<null>";
+"Bring All to Front" = "Passar tudo para a frente";
+// Help
+"Clover Help" = "Clover Help";
+
+// Plist Editor document
+"Search" = "Search";
+"Replace" = "Replace";
+"All" = "All";
+"Item" = "Item";
+"Items" = "Items";
+"Untiteled" = "Untiteled";
+"New Item" = "New Item";
+"bytes" = "bytes";
+"typing" = "typing";
+"change type" = "change type";
+"change bool value" = "change bool value";
+"replace duplicate key" = "replace duplicate key";
+"move item" = "move item";
+"paste Item" = "paste Item";
+"remove Item" = "remove Item";
+"cut Item" = "cut Item";
+"add new Item" = "add new Item";
+"No data" = "No data";
+"missing '<' at the beginning" = "missing '<' at the beginning";
+"missing '>' at the end" = "missing '>' at the end";
+"Your data contains illegal characters" = "Your data contains illegal characters";
+"bytes count is odd, must be even" = "bytes count is odd, must be even";
+"Keep editing" = "Keep editing";
+"Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
+"'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Invalid value detected!" = "Invalid value detected!";
+"Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
+
+// Plist Editor header
+"Key" = "Key";
+"Type" = "Type";
+"Value" = "Value";
+// Plist Editor tags
+"Dictionary" = "Dictionary";
+"Array" = "Array";
+"String" = "String";
+"Number" = "Number";
+"Bool" = "Bool";
+"Date" = "Date";
+"Data" = "Data";
+
+// Plist Editor Boolean values
+"YES" = "YES";
+"NO" = "NO";
