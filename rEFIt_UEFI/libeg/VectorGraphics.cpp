@@ -861,8 +861,6 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   //  nsvg__deleteParser(p);
   nsvgDelete(p->image);
   return (INTN)RealWidth; //x;
-
-
 }
 #else
 INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* string, UINTN Cursor)

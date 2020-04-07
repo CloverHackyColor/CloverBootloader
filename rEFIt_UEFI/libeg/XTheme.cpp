@@ -292,6 +292,10 @@ void XTheme::Init()
 
   row0TileSize = 144;
   row1TileSize = 64;
+
+  FontWidth = 9;
+  FontHeight = 18;
+  TextHeight = 19;
 }
 
 /*

@@ -430,9 +430,9 @@ extern EG_IMAGE         *Banner;
 extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *SelectionImages[];
 extern EG_IMAGE         *Buttons[];
+extern EG_IMAGE         *FontImage;  //not yet converted to XImage
 #endif
 
-extern EG_IMAGE         *FontImage;  //not yet converted to XImage
 extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;
 extern BOOLEAN          gBootChanged;
@@ -513,10 +513,11 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 // local variables
 //extern INTN FontWidth;
 //extern INTN FontHeight;
-extern INTN TextHeight;
+
 #if !USE_XTHEME
 extern INTN row0TileSize;
 extern INTN row1TileSize;
+extern INTN TextHeight;
 #endif
 extern const INTN BCSMargin;
 #if USE_XTHEME

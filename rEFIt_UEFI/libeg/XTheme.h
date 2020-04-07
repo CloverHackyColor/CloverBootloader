@@ -95,6 +95,10 @@ public:
   INTN        ScrollScrollDecorationsHeight;
 
 
+  INTN  FontWidth;
+  INTN  FontHeight;
+  INTN  TextHeight;
+
   BOOLEAN     Daylight;
 
   XImage  Background; //Background and Banner will not be in array as they live own life
@@ -111,6 +115,8 @@ public:
   XImage  UpButtonImage;
   XImage  DownButtonImage;
 
+  XImage  FontImage;
+
   EG_RECT  BannerPlace;
 
   //fill the theme
@@ -120,6 +126,14 @@ public:
   const XImage& GetIcon(INTN Id); //get by id
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XImage& LoadOSIcon(const XString& Full);
+
+  //fonts
+  void LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols);
+  void PrepareFont();
+  INTN GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel, INTN Start, INTN Step);
+  INTN RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
+                    IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
+
 
 //  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();

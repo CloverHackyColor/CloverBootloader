@@ -508,7 +508,7 @@ VOID GetCPUProperties (VOID)
              //   MsgLog("MSR 0xE4              %08X\n", msr);
              //------------
              msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE
-				 MsgLog("MSR 0xCE              %08llX_%08llX\n", (msr>>32), msr);
+				 MsgLog("MSR 0xCE              %08llX_%08llX\n", (msr>>32), msr & 0xFFFFFFFFull);
              gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
              gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
              //--- Check if EIST locked
@@ -1130,7 +1130,7 @@ VOID GetCPUProperties (VOID)
 //  DBG("Family/ExtFamily: 0x%X/0x%X\n", gCPUStructure.Family, gCPUStructure.Extfamily);
   DBG("MaxDiv/MinDiv: %d.%d/%d\n", gCPUStructure.MaxRatio/10, gCPUStructure.MaxRatio%10 , gCPUStructure.MinRatio/10);
   DBG("Turbo: %d/%d/%d/%d\n", gCPUStructure.Turbo4/10, gCPUStructure.Turbo3/10, gCPUStructure.Turbo2/10, gCPUStructure.Turbo1/10);
-	DBG("Features: 0x%08llX\n",gCPUStructure.Features);
+	DBG("Features: 0x%llX\n",gCPUStructure.Features);
   DBG("Threads: %d\n",gCPUStructure.Threads);
   DBG("Cores: %d\n",gCPUStructure.Cores);
   DBG("FSB: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.FSBFrequency, Mega)));
@@ -1155,7 +1155,7 @@ VOID SetCPUProperties (VOID)
       msr = gSettings.SavingMode;
       AsmWriteMsr64(IA32_ENERGY_PERF_BIAS, msr);
       msr = AsmReadMsr64(IA32_ENERGY_PERF_BIAS); //0x1B0
-		MsgLog("MSR 0x1B0   set to        %08llX\n", msr);
+		MsgLog("MSR 0x1B0   set to        %llX\n", msr);
     }
   }
 

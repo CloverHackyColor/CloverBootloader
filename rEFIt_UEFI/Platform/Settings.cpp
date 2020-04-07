@@ -5067,11 +5067,12 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
    }
    */
 //TODO switch to XImage
-  if (FontImage != NULL) {
+//  if (FontImage != NULL) {
     //    DBG("free font image\n");  //raster font
-    egFreeImage (FontImage);
-    FontImage = NULL;
-  }
+//    egFreeImage (FontImage);
+//    FontImage = NULL;
+//  }
+  ThemeX.FontImage.setEmpty();
 
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
 
@@ -5229,7 +5230,10 @@ finish:
   if (ChosenTheme != NULL) {
     FreePool (ChosenTheme);
   }
-  PrepareFont();
+  if (!ThemeX.TypeSVG) {
+    ThemeX.PrepareFont();
+  }
+
   ThemeX.ClearScreen();
   return Status;
 }
@@ -5488,7 +5492,10 @@ finish:
   if (ChosenTheme != NULL) {
     FreePool (ChosenTheme);
   }
-  PrepareFont();
+  if (!GlobalConfig.TypeSVG) {
+    PrepareFont();
+  }
+
   return Status;
 }
 
@@ -8261,7 +8268,7 @@ GetDevices ()
           snprintf (SlotDevice->SlotName, 31, "AirPort");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
-          DBG(" - WIFI: Vendor=%d", Pci.Hdr.VendorId);
+          DBG(" - WIFI: Vendor=%d = ", Pci.Hdr.VendorId);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
               DBG("Marvell\n");
@@ -8439,11 +8446,11 @@ SetDevices (LOADER_ENTRY *Entry)
     while (Prop2) {
       if (Prop2->MenuItem.BValue) {
         if (AsciiStrStr(Prop2->Key, "-platform-id") != NULL) {
-          if (gSettings.IgPlatform == 0) {
+          if (gSettings.IgPlatform == 0 && Prop2->Value) {
             CopyMem((UINT8*)&gSettings.IgPlatform, (UINT8*)Prop2->Value, Prop2->ValueLen);
           }
           devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.IgPlatform, 4);
-			DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
+          DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
         } else if ((AsciiStrStr(Prop2->Key, "override-no-edid") || AsciiStrStr(Prop2->Key, "override-no-connect"))
           && gSettings.InjectEDID && gSettings.CustomEDID) {
           // special case for EDID properties
@@ -8451,7 +8458,7 @@ SetDevices (LOADER_ENTRY *Entry)
           DBG("   Add key=%s from custom EDID\n", Prop2->Key);
         } else {
           devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
-			DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
+          DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
         }
       }
 
@@ -8524,7 +8531,7 @@ SetDevices (LOADER_ENTRY *Entry)
         }
         //------------------
         if (PCIdevice.used) {
-			DBG("custom properties for device %02llX:%02llX.%02llX injected\n", Bus, Device, Function);
+          DBG("custom properties for device %02llX:%02llX.%02llX injected\n", Bus, Device, Function);
           //continue;
         }
         //}
@@ -8565,7 +8572,7 @@ SetDevices (LOADER_ENTRY *Entry)
                     *(UINT32*)(gGraphics[j].Mmio + 0x6800) = 1; //EVERGREEN_GRPH_ENABLE
                     *(UINT32*)(gGraphics[j].Mmio + 0x6EF8) = 0; //EVERGREEN_MASTER_UPDATE_MODE
                     //*(UINT32*)(gGraphics[j].Mmio + R600_BIOS_0_SCRATCH) = 0x00810000;
-					  DBG("Device %llu deinited\n", j);
+                    DBG("Device %llu deinited\n", j);
                   }
                 }
               }

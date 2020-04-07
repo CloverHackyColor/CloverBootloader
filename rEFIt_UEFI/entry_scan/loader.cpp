@@ -142,6 +142,29 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 #endif
   { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
 };
+
+/* TODO
+  DirIterOpen (SelfRootDir, L"\\EFI", &DirIter);
+  while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+    if (DirEntry->FileName[0] == '.') {
+      //DBG("Skip folder: %ls\n", DirEntry->FileName);
+      continue;
+    }
+    XStringW OSName = SWPrintf(L"%s", DirEntry->FileName);
+    XStringW File = SWPrintf(L"EFI\\%s\\grubx64.efi", DirEntry->FileName);
+ // if exist the linux = DirEntry->FileName
+
+ OSIconName = OSName + L",linux"
+  }
+  DirIterClose (&DirIter);
+
+ CONST CHAR16 *Path; -- File
+ CONST CHAR16 *Title; -- OSName + L" OS EFI boot menu"
+ CONST CHAR16 *Icon; -- OSName + L",linux"
+ CONST CHAR8  *Issue; -- OSName
+
+
+ */
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
 
 #if defined(ANDX86)
@@ -1380,12 +1403,7 @@ VOID ScanLoader(VOID)
                 if (Path != NULL) {
                   XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
                   // Add the entry
-#if USE_XTHEME
                   AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-                  AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
-
 
                   FreePool(Path);
                 }
@@ -1470,11 +1488,7 @@ VOID ScanLoader(VOID)
             if (Path != NULL) {
               XString Options = LinuxKernelOptions(Iter.DirHandle, XStringW().takeValueFrom(Basename(Path) + LINUX_LOADER_PATH.length()).wc_str(), PartUUID, ""_XS);
               // Add the entry
-#if USE_XTHEME
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
               FreePool(Path);
             }
             break;
@@ -1505,11 +1519,8 @@ VOID ScanLoader(VOID)
             if (Path != NULL) {
               XString Options = LinuxKernelOptions(Iter.DirHandle, XStringW().takeValueFrom(Basename(Path) + LINUX_LOADER_PATH.length()).wc_str(), PartUUID, ""_XS);
               // Add the entry
-#if USE_XTHEME
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
+
               FreePool(Path);
             }
             break;
@@ -1539,11 +1550,7 @@ VOID ScanLoader(VOID)
             }
             if (Path != NULL) {
               XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
-#if USE_XTHEME
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
               FreePool(Path);
             }
             break;
@@ -1558,11 +1565,7 @@ VOID ScanLoader(VOID)
                   if (Path != NULL) {
                     XString Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, ""_XS);
                     // Add the entry
-#if USE_XTHEME
                     AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#else
-                    AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-#endif
                     FreePool(Path);
                   }
                 }

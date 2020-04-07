@@ -712,6 +712,8 @@ VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   }
 }
 
+//will be replace by
+// CompBase.Compose(
 VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
                   IN INTN Width, IN INTN Height,
                   IN INTN CompLineOffset, IN INTN TopLineOffset)

@@ -266,20 +266,47 @@ void XImage::CopyScaled(const XImage& Image, float scale)
  */
 void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
 {
+  EG_RECT OutPlace;
+  OutPlace.XPos = PosX;
+  OutPlace.YPos = PosY;
+  OutPlace.Width = GetWidth();
+  OutPlace.Height = GetHeight();
+
+  EG_RECT Area;
+  Area.XPos = 0;
+  Area.YPos = 0;
+  Area.Width = TopImage.GetWidth();
+  Area.Height = TopImage.GetHeight();
+  Compose(OutPlace, Area, TopImage, Lowest);
+}
+void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& Area, const XImage& TopImage, bool Lowest)
+{
   UINT32      TopAlpha;
   UINT32      RevAlpha;
   UINT32      FinalAlpha;
   UINT32      CompAlpha;
   UINT32      TempAlpha;
   UINT32      Temp;
+  INTN PosX = Area.XPos;
+  INTN PosY = Area.YPos;
+  //assumed Area.Width == OutPlace.Width
+  // if not choose min
+  INTN WArea = MIN(Area.Width, OutPlace.Width);
+  if (PosX + WArea > GetWidth()) {
+    WArea = GetWidth() - PosX;
+  }
+  INTN HArea = MIN(Area.Height, OutPlace.Height);
+  if (PosY + HArea > GetHeight()) {
+    HArea = GetHeight() - PosY;
+  }
 //change only affected pixels
-  for (INTN y = PosY; y < GetHeight() && (y - PosY) < TopImage.GetHeight(); ++y) {
+  for (INTN y = 0; y < HArea && y < TopImage.GetHeight(); ++y) {
  //   EFI_GRAPHICS_OUTPUT_BLT_PIXEL& CompPtr = *GetPixelPtr(PosX, y); // I assign a ref to avoid the operator ->. Compiler will produce the same anyway.
-    EFI_GRAPHICS_OUTPUT_BLT_PIXEL* CompPtr = GetPixelPtr(PosX, y);
-    for (INTN x = PosX; x < GetWidth() && (x - PosX) < TopImage.GetWidth(); ++x) {
+    EFI_GRAPHICS_OUTPUT_BLT_PIXEL* CompPtr = GetPixelPtr(OutPlace.XPos, OutPlace.YPos + y);
+    for (INTN x = 0; x < WArea && x < TopImage.GetWidth(); ++x) {
       //------
       // test compAlpha = 255; TopAlpha = 0 -> only Comp, TopAplha = 255 -> only Top
-      TopAlpha = TopImage.GetPixel(x-PosX, y-PosY).Reserved & 0xFF; //0, 255
+      TopAlpha = TopImage.GetPixel(x + PosX, y + PosY).Reserved & 0xFF; //0, 255
       CompAlpha = CompPtr->Reserved & 0xFF; //255
       RevAlpha = 255 - TopAlpha; //2<<8; 255, 0
       TempAlpha = CompAlpha * RevAlpha; //2<<16; 255*255, 0
@@ -288,13 +315,13 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
 //final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255 = topA+compA*(1-topA)
 
       if (FinalAlpha != 0) {
-        Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Blue * TopAlpha);
+        Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x + PosX, y + PosY).Blue * TopAlpha);
         CompPtr->Blue = (UINT8)(Temp / FinalAlpha);
 
-        Temp = (CompPtr->Green * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Green * TopAlpha);
+        Temp = (CompPtr->Green * TempAlpha) + (TopImage.GetPixel(x + PosX, y + PosY).Green * TopAlpha);
         CompPtr->Green = (UINT8)(Temp / FinalAlpha);
 
-        Temp = (CompPtr->Red * TempAlpha) + (TopImage.GetPixel(x-PosX, y-PosY).Red * TopAlpha);
+        Temp = (CompPtr->Red * TempAlpha) + (TopImage.GetPixel(x + PosX, y + PosY).Red * TopAlpha);
         CompPtr->Red = (UINT8)(Temp / FinalAlpha);
       }
 
@@ -589,6 +616,7 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const wchar_t* LIconName)
   return LoadXImage(BaseDir, XStringW().takeValueFrom(LIconName));
 }
 //dont call this procedure for SVG theme BaseDir == NULL?
+//it can be used for other files
 EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
