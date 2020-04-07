@@ -943,9 +943,9 @@ final class SettingsViewController:
     
     if nvramValue != theme {
       if theme.count == 0 {
-        deleteNVRAM(key: key)
+        deleteNVRAM(key: key.nvramString)
       } else {
-        setNVRAM(key: key, stringValue: theme)
+        setNVRAM(key: key, stringValue: theme.nvramString)
       }
     } else {
       return

@@ -30,6 +30,12 @@ extension String {
     return data
   }
   
+  /// - returns: A  quoted string for nvram
+  var nvramString: String {
+    return "'\(self)'"
+  }
+  
+  
   /// - returns: Bool value indicating that our string start with the same prefix ignoring casing.
   func hasPrefixIgnoringCase(_ str: String) -> Bool {
     return self.lowercased().hasPrefix(str.lowercased())
