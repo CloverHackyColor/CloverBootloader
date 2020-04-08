@@ -1,4 +1,4 @@
-#include <Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../cpp_foundation/XStringW.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
@@ -10,15 +10,20 @@
 #include "XStringWArray_test.h"
 #include "XString_test.h"
 #include "XStringW_test.h"
-#include "XUINTN_test.h"
 #include "strcmp_test.h"
 #include "strncmp_test.h"
 #include "strlen_test.h"
-#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "printf_lite-test.h"
 #include "LoadOptions_test.h"
 //#include "poolprint-test.h"
 //#include "printlib-test.h"
+
+
+/* On macOS
+ * sizeof(long)=8
+ * sizeof(long long)=8
+ * sizeof(size_t)=8
+ */
 
 bool all_tests()
 {
@@ -26,6 +31,11 @@ bool all_tests()
   int ret;
 
 #ifdef JIEF_DEBUG
+//	ret = XUINTN_tests();
+//	if ( ret != 0 ) {
+//		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
+//		all_ok = false;
+//	}
 	#if defined(CLOVER_BUILD)
 //	    ret = printlib_tests();
 //	    if ( ret != 0 ) {
@@ -96,20 +106,31 @@ bool all_tests()
 		DebugLog(2, "XStringWArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-	ret = XUINTN_tests();
-	if ( ret != 0 ) {
-		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+//	ret = XUINTN_tests();
+//	if ( ret != 0 ) {
+//		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
+//		all_ok = false;
+//	}
 
 	if ( !all_ok ) {
 		DebugLog(2, "A test failed\n");
-		PauseForKey(L"press");
-	}else{
-#ifdef JIEF_DEBUG
-		DebugLog(2, "All tests are ok\n");
-//		PauseForKey(L"press");
-#endif
 	}
+	
+#if defined(JIEF_DEBUG)
+	if ( !all_ok ) {
+		printf("All tests are NOT ok\n");
+	}else{
+		printf("All tests are ok\n");
+	}
+#endif
+	
+#if defined(CLOVER_BUILD) && defined(JIEF_DEBUG)
+	if ( !all_ok ) {
+//		PauseForKey(L"press");
+	}else{
+		PauseForKey(L"press");
+	}
+#endif
+
 	return all_ok;
 }

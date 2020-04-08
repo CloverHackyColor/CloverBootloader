@@ -34,6 +34,13 @@ typedef INT64 int64_t;
 #define PRId32    "d"
 #define PRId64    "lld"
 
+// Jief : Certainly not massively multi platform and multi target ! So far we only compile x86_64 (I think). To be extended if needed.
+#ifdef _MSC_VER
+#define PRIuPTR "lld"
+#else
+#define PRIuPTR "lld"
+#endif
+
 
 #define PRIud8     "hhu"
 #define PRIu16    "hu"

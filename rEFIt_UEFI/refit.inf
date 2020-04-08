@@ -227,8 +227,8 @@
   cpp_foundation/XStringWP.h
   cpp_foundation/XToolsCommon.cpp
   cpp_foundation/XToolsCommon.h
-  cpp_foundation/XUINTN.cpp
-  cpp_foundation/XUINTN.h
+#  cpp_foundation/XUINTN.cpp
+#  cpp_foundation/XUINTN.h
   cpp_unit_test/all_tests.h
   cpp_unit_test/all_tests.cpp
   cpp_unit_test/global_test.h
@@ -256,8 +256,8 @@
   cpp_unit_test/XStringW_test.h
   cpp_unit_test/XStringWArray_test.cpp
   cpp_unit_test/XStringWArray_test.h
-  cpp_unit_test/XUINTN_test.cpp
-  cpp_unit_test/XUINTN_test.h
+#  cpp_unit_test/XUINTN_test.cpp
+#  cpp_unit_test/XUINTN_test.h
 
 [Sources.IA32]
   libeg/ftol.asm | MSFT

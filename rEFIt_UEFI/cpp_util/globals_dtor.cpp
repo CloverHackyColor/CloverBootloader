@@ -14,7 +14,8 @@
   typedef void (destructor_func_t)(void*);
 #elif defined(_MSC_VER)
 typedef void (__cdecl destructor_func_t)(void);
-extern "C" int _fltused = 0; // it should be a single underscore since the double one is the mangled name
+// Next was needed at some point. 2020-04-08 today it's breaking compilation in VS Studio (but not with edkII build system)
+//extern "C" int _fltused = 0; // it should be a single underscore since the double one is the mangled name
 #else
 # error compiler not supported
 #endif
