@@ -17,6 +17,8 @@ Headers collection for procedures
 extern "C" {
 #endif
 
+#include <Library/printf_lite.h>
+
 #include <Uefi.h>
 
 #include <Guid/Acpi.h>

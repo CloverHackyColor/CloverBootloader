@@ -1,7 +1,7 @@
 #ifndef __CLOVER_STDDEF_H__
 #define __CLOVER_STDDEF_H__
 
-#include "stdint.h"
+//#include "stdint.h" // DO NOT include stdint.h from stddef.h
 
 // How can we prevent VC to define this ?
 #ifdef _MSC_VER

@@ -536,8 +536,8 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
       Area.Width = RealWidth;
       Bukva.XPos = c * FontWidth + RightSpace;
 //      DBG("place [%lld,%lld,%lld,%lld], bukva [%lld,%lld,%lld,%lld]\n",
-          Area.XPos, Area.YPos, Area.Width, Area.Height,
-          Bukva.XPos, Bukva.YPos, Bukva.Width, Bukva.Height);
+//          Area.XPos, Area.YPos, Area.Width, Area.Height,
+//          Bukva.XPos, Bukva.YPos, Bukva.Width, Bukva.Height);
       //    Bukva.YPos
       CompImage.Compose(Area, Bukva, FontImage, false);
 //      CompImage.CopyRect(FontImage, Area, Bukva);

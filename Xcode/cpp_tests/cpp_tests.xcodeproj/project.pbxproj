@@ -55,17 +55,11 @@
 		9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
-		9A57C20D2418A27B0029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20B2418A27B0029A39F /* XUINTN.cpp */; };
-		9A57C20E2418A27B0029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20B2418A27B0029A39F /* XUINTN.cpp */; };
-		9A57C2112418A3560029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20F2418A3550029A39F /* XUINTN_test.cpp */; };
-		9A57C2122418A3560029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20F2418A3550029A39F /* XUINTN_test.cpp */; };
 		9A57C2152418A6EA0029A39F /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C2132418A6E90029A39F /* XStringWP.cpp */; };
 		9A57C2162418A6EA0029A39F /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C2132418A6E90029A39F /* XStringWP.cpp */; };
-		9A57C2192418B9A00029A39F /* XUINTN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20B2418A27B0029A39F /* XUINTN.cpp */; };
 		9A57C21A2418B9A00029A39F /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
 		9A57C21B2418B9A00029A39F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A57C21D2418B9A00029A39F /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
-		9A57C21E2418B9A00029A39F /* XUINTN_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A57C20F2418A3550029A39F /* XUINTN_test.cpp */; };
 		9A57C21F2418B9A00029A39F /* utf8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA05BB6240FC78D008EA4F8 /* utf8Conversion.cpp */; };
 		9A57C2202418B9A00029A39F /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780A32417DD2F005CDD5C /* panic.cpp */; };
 		9A57C2212418B9A00029A39F /* XStringW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08482402FE9300E2B470 /* XStringW.cpp */; };
@@ -170,10 +164,6 @@
 		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
 		9A4185BF2439F73A00BEAFB8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
 		9A57C20A2418A1FD0029A39F /* global_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
-		9A57C20B2418A27B0029A39F /* XUINTN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN.cpp; sourceTree = "<group>"; };
-		9A57C20C2418A27B0029A39F /* XUINTN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XUINTN.h; sourceTree = "<group>"; };
-		9A57C20F2418A3550029A39F /* XUINTN_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XUINTN_test.cpp; sourceTree = "<group>"; };
-		9A57C2102418A3550029A39F /* XUINTN_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XUINTN_test.h; sourceTree = "<group>"; };
 		9A57C2132418A6E90029A39F /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
 		9A57C2142418A6EA0029A39F /* XStringWP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringWP.h; sourceTree = "<group>"; };
 		9A57C22F2418B9A00029A39F /* cpp_tests UTF16 unsigned char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 unsigned char"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -254,8 +244,6 @@
 				9A57C2142418A6EA0029A39F /* XStringWP.h */,
 				9A0B08492402FE9300E2B470 /* XToolsCommon.cpp */,
 				9A0B08452402FE9300E2B470 /* XToolsCommon.h */,
-				9A57C20B2418A27B0029A39F /* XUINTN.cpp */,
-				9A57C20C2418A27B0029A39F /* XUINTN.h */,
 			);
 			name = cpp_foundation;
 			path = ../../rEFIt_UEFI/cpp_foundation;
@@ -297,8 +285,6 @@
 				9A0B08632403132300E2B470 /* XStringW_test.h */,
 				9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */,
 				9A0B084D2402FE9B00E2B470 /* XStringWArray_test.h */,
-				9A57C20F2418A3550029A39F /* XUINTN_test.cpp */,
-				9A57C2102418A3550029A39F /* XUINTN_test.h */,
 			);
 			name = cpp_unit_test;
 			path = ../../rEFIt_UEFI/cpp_unit_test;
@@ -489,7 +475,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
-				9A57C20E2418A27B0029A39F /* XUINTN.cpp in Sources */,
 				9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A28CD20241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A28CD23241BB61B00F3D247 /* strlen.cpp in Sources */,
@@ -498,7 +483,6 @@
 				9A57C264241A752E0029A39F /* XString_test.cpp in Sources */,
 				9A28CD17241BACBB00F3D247 /* strlen_test.cpp in Sources */,
 				9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */,
-				9A57C2122418A3560029A39F /* XUINTN_test.cpp in Sources */,
 				9A28CD0D241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD0A241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9AA05BB8240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,
@@ -526,7 +510,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
-				9A57C2192418B9A00029A39F /* XUINTN.cpp in Sources */,
 				9A57C21A2418B9A00029A39F /* XObjArray_tests.cpp in Sources */,
 				9A28CD21241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A28CD24241BB61B00F3D247 /* strlen.cpp in Sources */,
@@ -535,7 +518,6 @@
 				9A57C265241A752E0029A39F /* XString_test.cpp in Sources */,
 				9A28CD18241BACBB00F3D247 /* strlen_test.cpp in Sources */,
 				9A57C21D2418B9A00029A39F /* XStringWArray.cpp in Sources */,
-				9A57C21E2418B9A00029A39F /* XUINTN_test.cpp in Sources */,
 				9A28CD0E241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD0B241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A57C21F2418B9A00029A39F /* utf8Conversion.cpp in Sources */,
@@ -562,7 +544,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A57C20D2418A27B0029A39F /* XUINTN.cpp in Sources */,
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A28CD22241BB61B00F3D247 /* strlen.cpp in Sources */,
@@ -571,7 +552,6 @@
 				9A57C263241A752E0029A39F /* XString_test.cpp in Sources */,
 				9A28CD16241BACBB00F3D247 /* strlen_test.cpp in Sources */,
 				9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */,
-				9A57C2112418A3560029A39F /* XUINTN_test.cpp in Sources */,
 				9A28CD0C241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9AA05BB7240FC78D008EA4F8 /* utf8Conversion.cpp in Sources */,

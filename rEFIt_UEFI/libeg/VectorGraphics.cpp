@@ -66,7 +66,7 @@ textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it wil
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX, float Scale, XImage* Image)
+EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX, float iconScale, XImage* Image) // scale renamed iconScale to not hide member var Scale
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -115,12 +115,12 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
         }
 
         if ((strstr(IconName, "selection_big") != NULL) && (!SelectionOnTop)) {
-          MainEntriesSize = (int)(IconImage->width * Scale); //xxx
-          row0TileSize = MainEntriesSize + (int)(16.f * Scale);
+          MainEntriesSize = (int)(IconImage->width * iconScale); //xxx
+          row0TileSize = MainEntriesSize + (int)(16.f * iconScale);
           DBG("main entry size = %lld\n", MainEntriesSize);
         }
         if ((strstr(IconName, "selection_small") != NULL) && (!SelectionOnTop)) {
-          row1TileSize = (int)(IconImage->width * Scale);
+          row1TileSize = (int)(IconImage->width * iconScale);
         }
 
         // not exclude BoundingRect from IconImage?
@@ -193,13 +193,13 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   nsvg__imageBounds(p2, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
   if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
-    BannerPosX = (int)(bounds[0] * Scale - CentreShift);
-    BannerPosY = (int)(bounds[1] * Scale);
+    BannerPosX = (int)(bounds[0] * iconScale - CentreShift);
+    BannerPosY = (int)(bounds[1] * iconScale);
     DBG("Banner position at parse [%lld,%lld]\n", BannerPosX, BannerPosY);
   }
 
-  float Height = IconImage->height * Scale;
-  float Width = IconImage->width * Scale;
+  float Height = IconImage->height * iconScale;
+  float Width = IconImage->width * iconScale;
   //  DBG("icon %s width=%f height=%f\n", IconName, Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
@@ -216,13 +216,13 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
       (Id != BUILTIN_ICON_ANIME) &&
       (strstr(IconName, "Banner") == NULL)) {
-    float realWidth = (bounds[2] - bounds[0]) * Scale;
-    float realHeight = (bounds[3] - bounds[1]) * Scale;
+    float realWidth = (bounds[2] - bounds[0]) * iconScale;
+    float realHeight = (bounds[3] - bounds[1]) * iconScale;
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
 
-  nsvgRasterize(rast, IconImage, tx,ty,Scale,Scale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
+  nsvgRasterize(rast, IconImage, tx,ty,iconScale,iconScale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
   //  DBG("%s rastered, blt\n", IconImage);
 
   nsvgDeleteRasterizer(rast);

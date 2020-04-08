@@ -5,8 +5,6 @@
 extern "C" {
 #endif
 
-#include <Library/printf_lite.h>
-
 #ifdef _MSC_VER
 #define __attribute__(x)
 #endif
