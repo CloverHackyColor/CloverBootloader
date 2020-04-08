@@ -279,43 +279,50 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
   Area.Height = TopImage.GetHeight();
   Compose(OutPlace, Area, TopImage, Lowest);
 }
-void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& Area, const XImage& TopImage, bool Lowest)
+void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XImage& TopImage, bool Lowest)
 {
-  UINT32      TopAlpha;
-  UINT32      RevAlpha;
-  UINT32      FinalAlpha;
-  UINT32      CompAlpha;
-  UINT32      TempAlpha;
-  UINT32      Temp;
-  INTN PosX = Area.XPos;
-  INTN PosY = Area.YPos;
+
+  //sample
+  /*
+  INTN Dx = OwnPlace.XPos - InputRect.XPos;
+  INTN Dy = OwnPlace.YPos - InputRect.YPos;
+  INTN W = MIN(OwnPlace.Width, InputRect.Width);
+  INTN H = MIN(OwnPlace.Height, InputRect.Height);
+  for (INTN y = OwnPlace.YPos; y - OwnPlace.YPos < H && y < GetHeight() && (y - Dy) < Image.GetHeight(); ++y) {
+    for (INTN x = OwnPlace.XPos; x - OwnPlace.XPos < W && x < GetWidth() && (x - Dx) < Image.GetWidth(); ++x) {
+      PixelData[y * Width + x] = Image.GetPixel(x - Dx, y - Dy);
+    }
+  }
+   */
+  INTN PosX = InPlace.XPos;
+  INTN PosY = InPlace.YPos;
   //assumed Area.Width == OutPlace.Width
   // if not choose min
-  INTN WArea = MIN(Area.Width, OutPlace.Width);
-  if (PosX + WArea > GetWidth()) {
-    WArea = GetWidth() - PosX;
+  INTN WArea = MIN(InPlace.Width, OutPlace.Width);
+  if (OutPlace.XPos + WArea > GetWidth()) {  //coordinate in this image - OutPlace
+    WArea = GetWidth() - OutPlace.XPos;
   }
-  INTN HArea = MIN(Area.Height, OutPlace.Height);
-  if (PosY + HArea > GetHeight()) {
-    HArea = GetHeight() - PosY;
+  INTN HArea = MIN(InPlace.Height, OutPlace.Height);
+  if (OutPlace.YPos + HArea > GetHeight()) {
+    HArea = GetHeight() - OutPlace.YPos;
   }
 //change only affected pixels
-  for (INTN y = 0; y < HArea && y < TopImage.GetHeight(); ++y) {
+  for (INTN y = 0; y < HArea && (y + PosY) < TopImage.GetHeight(); ++y) {
  //   EFI_GRAPHICS_OUTPUT_BLT_PIXEL& CompPtr = *GetPixelPtr(PosX, y); // I assign a ref to avoid the operator ->. Compiler will produce the same anyway.
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL* CompPtr = GetPixelPtr(OutPlace.XPos, OutPlace.YPos + y);
-    for (INTN x = 0; x < WArea && x < TopImage.GetWidth(); ++x) {
+    for (INTN x = 0; x < WArea && (x + PosX) < TopImage.GetWidth(); ++x) {
       //------
       // test compAlpha = 255; TopAlpha = 0 -> only Comp, TopAplha = 255 -> only Top
-      TopAlpha = TopImage.GetPixel(x + PosX, y + PosY).Reserved & 0xFF; //0, 255
-      CompAlpha = CompPtr->Reserved & 0xFF; //255
-      RevAlpha = 255 - TopAlpha; //2<<8; 255, 0
-      TempAlpha = CompAlpha * RevAlpha; //2<<16; 255*255, 0
+      UINT32 TopAlpha = TopImage.GetPixel(x + PosX, y + PosY).Reserved & 0xFF; //0, 255
+      UINT32 CompAlpha = CompPtr->Reserved & 0xFF; //255
+      UINT32 RevAlpha = 255 - TopAlpha; //2<<8; 255, 0
+      UINT32 TempAlpha = CompAlpha * RevAlpha; //2<<16; 255*255, 0
       TopAlpha *= 255; //2<<16; 0, 255*255
-      FinalAlpha = TopAlpha + TempAlpha; //2<<16; 255*255, 255*255
+      UINT32 FinalAlpha = TopAlpha + TempAlpha; //2<<16; 255*255, 255*255
 //final alpha =(1-(1-x)*(1-y)) =(255*255-(255-topA)*(255-compA))/255 = topA+compA*(1-topA)
 
       if (FinalAlpha != 0) {
-        Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x + PosX, y + PosY).Blue * TopAlpha);
+        UINT32 Temp = (CompPtr->Blue * TempAlpha) + (TopImage.GetPixel(x + PosX, y + PosY).Blue * TopAlpha);
         CompPtr->Blue = (UINT8)(Temp / FinalAlpha);
 
         Temp = (CompPtr->Green * TempAlpha) + (TopImage.GetPixel(x + PosX, y + PosY).Green * TopAlpha);

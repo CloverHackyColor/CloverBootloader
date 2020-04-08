@@ -2623,7 +2623,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
   //this should be inited by the Theme
   if (MainImage.isEmpty()) {
-    DBG(" why MainImage is empty?\n");
+    DBG(" why MainImage is empty? Report to devs\n");
     if (!IsEmbeddedTheme()) {
       MainImage = ThemeX.GetIcon("os_mac"_XS);
     }
@@ -2662,7 +2662,9 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
     Back.Compose(0, 0, TopImage, false); //selection first
     Back.Compose(OffsetX, OffsetY, MainImage, false);
   }
-
+//  DBG("compose size=%lld\n", CompWidth);
+  //the badge is already scaled?
+//  DBG("check Badge size=%lld offset=%lld\n", BadgeImage->GetWidth(), ThemeX.BadgeOffsetX);
   // place the badge image
   if (BadgeImage &&
       ((INTN)BadgeImage->GetWidth() + 8) < CompWidth &&

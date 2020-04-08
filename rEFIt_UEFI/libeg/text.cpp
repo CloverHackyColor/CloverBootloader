@@ -274,8 +274,6 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
 #if USE_XTHEME
 VOID XTheme::PrepareFont()
 {
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *p;
-  INTN         Width, Height;
 
   TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * Scale);
   if (TypeSVG) {
@@ -283,7 +281,7 @@ VOID XTheme::PrepareFont()
   }
 
   // load the font
-  if (FontImage.isEmpty()){
+  if (FontImage.isEmpty()) {
     DBG("load font image type %d\n", Font);
     LoadFontImage(TRUE, 16, 16); //anyway success
   }
@@ -291,15 +289,16 @@ VOID XTheme::PrepareFont()
   if (!FontImage.isEmpty()) {
     if (Font == FONT_GRAY) {
       //invert the font. embedded is dark
-      p = FontImage.GetPixelPtr(0,0);
-      for (Height = 0; Height < FontImage.GetHeight(); Height++){
-        for (Width = 0; Width < FontImage.GetWidth(); Width++, p++){
+      EFI_GRAPHICS_OUTPUT_BLT_PIXEL *p = FontImage.GetPixelPtr(0,0);
+      for (INTN Height = 0; Height < FontImage.GetHeight(); Height++){
+        for (INTN Width = 0; Width < FontImage.GetWidth(); Width++, p++){
           p->Blue  ^= 0xFF;
           p->Green ^= 0xFF;
           p->Red   ^= 0xFF;
           //p->a = 0xFF;    //huh! dont invert opacity
         }
       }
+ //     FontImage.Draw(0, 300, 0.6f); //for debug purpose
     }
     DBG("Font %d prepared WxH=%lldx%lld CharWidth=%lld\n", Font, FontWidth, FontHeight, CharWidth);
 
@@ -459,7 +458,6 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL    FirstPixel;
 //  INTN            BufferLineWidth; //, BufferLineOffset, FontLineOffset;
   INTN            TextLength /*, NewTextLength = 0 */;
-  UINT16          c, c1, c0;
   INTN           Shift = 0;
   UINTN           Cho = 0, Jong = 0, Joong = 0;
   INTN           LeftSpace, RightSpace;
@@ -473,7 +471,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
 
   // clip the text
   TextLength = Text.size();
-
+  DBG("text to render %ls length %lld\n", Text.wc_str(), Text.size());
   if (FontImage.isEmpty()) {
     //    GlobalConfig.Font = FONT_ALFA;
     PrepareFont(); //at the boot screen there is embedded font
@@ -495,9 +493,9 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
 //  if (ScaledWidth < FontWidth) {
 //    Shift = (FontWidth - ScaledWidth) >> 1;
 //  }
-  c0 = 0;
+  UINT16 c0 = 0;
   RealWidth = CharWidth;
-  //  DBG("FontWidth=%d, CharWidth=%d\n", FontWidth, RealWidth);
+    DBG("FontWidth=%lld, CharWidth=%lld\n", FontWidth, RealWidth);
   EG_RECT Area;
   Area.YPos = PosY; // not sure
   Area.Height = FontHeight;
@@ -507,13 +505,15 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   Bukva.Height = FontHeight;
 
   for (INTN i = 0; i < TextLength; i++) {
-    c = Text.wc_str()[i];
+    UINT16 c = Text.wc_str()[i];
+    UINT16 c1;
+    DBG("initial char to render 0x%x\n", c);
     if (gLanguage != korean) {
       c1 = (((c >= Codepage) ? (c - (Codepage - AsciiPageSize)) : c) & 0xff); //International letters
       c = c1;
 
       if (Proportional) {
-        //find spaces {---buffer--__left__|__right__--char---}
+        //find spaces {---comp--__left__|__right__--char---}
         if (c0 <= 0x20) {  // space before or at buffer edge
           LeftSpace = 2;
         } else {
@@ -539,12 +539,16 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
         //no more place for character
         break;
       }
-
+      DBG("char to render 0x%x\n", c);
       Area.XPos = PosX + 2 - LeftSpace;
       Area.Width = RealWidth;
       Bukva.XPos = c * FontWidth + RightSpace;
+      DBG("place [%lld,%lld,%lld,%lld], bukva [%lld,%lld,%lld,%lld]\n",
+          Area.XPos, Area.YPos, Area.Width, Area.Height,
+          Bukva.XPos, Bukva.YPos, Bukva.Width, Bukva.Height);
       //    Bukva.YPos
       CompImage.Compose(Area, Bukva, FontImage, false);
+//      CompImage.CopyRect(FontImage, Area, Bukva);
       if (i == Cursor) {
         c = 0x5F;
         Bukva.XPos = c * FontWidth + RightSpace;
