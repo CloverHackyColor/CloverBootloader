@@ -33,7 +33,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-//Slice 2011 - 2016 numerous improvements
+//Slice 2011 - 2016 numerous improvements, 2020 full rewritten
 
 extern "C" {
 #include <Protocol/GraphicsOutput.h>
@@ -386,7 +386,6 @@ INTN XTheme::GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&
 {
   INTN m, i;
 //  INTN Shift = (Step > 0)?0:1;
-//  EFI_GRAPHICS_OUTPUT_BLT_PIXEL ThePixel;
   m = FontWidth;
   if (Step == 1) {
     for (INTN j = 0; j < FontHeight; j++) {
@@ -447,6 +446,13 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
 #endif
 
 #if USE_XTHEME
+INTN XTheme::RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
+                        IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
+{
+  const XStringW& UTF16Text = XStringW().takeValueFrom(Text.c_str());
+  return RenderText(UTF16Text, CompImage_ptr, PosX, PosY, Cursor, textType);
+}
+
 INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
                   IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
 {
@@ -503,15 +509,19 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   Bukva.YPos = 0;
   Bukva.Width = FontWidth;
   Bukva.Height = FontHeight;
-
+  DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
   for (INTN i = 0; i < TextLength; i++) {
-    UINT16 c = Text.wc_str()[i];
-    UINT16 c1;
-    DBG("initial char to render 0x%x\n", c);
-    if (gLanguage != korean) {
-      c1 = (((c >= Codepage) ? (c - (Codepage - AsciiPageSize)) : c) & 0xff); //International letters
-      c = c1;
-
+    UINT16 c = Text[i];
+    DBG("initial char to render 0x%x\n", c); //good
+    if (gLanguage != korean) { //russian Codepage = 0x410
+      if (c >= 0x410 && c < 0x450) {
+        //we have russian raster fonts with chars at 0xC0
+        c -= 0x350;
+      } else {
+        INTN c2 = (c >= GlobalConfig.Codepage) ? (c - GlobalConfig.Codepage + AsciiPageSize) : c; //International letters
+        c = c2 & 0xFF; //this maximum raster font size
+      }
+      DBG("char to render 0x%x\n", c);
       if (Proportional) {
         //find spaces {---comp--__left__|__right__--char---}
         if (c0 <= 0x20) {  // space before or at buffer edge
@@ -534,12 +544,13 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
         LeftSpace = 2;
         RightSpace = 0;
       }
+      DBG(" RealWidth =  %lld LeftSpace = %lld RightSpace = %lld\n", RealWidth, LeftSpace, RightSpace);
       c0 = c; //old value
       if (PosX + RealWidth  > CompImage.GetWidth()) {
         //no more place for character
         break;
       }
-      DBG("char to render 0x%x\n", c);
+
       Area.XPos = PosX + 2 - LeftSpace;
       Area.Width = RealWidth;
       Bukva.XPos = c * FontWidth + RightSpace;
@@ -560,6 +571,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
       //Slice - I am not sure in any of this digits
       //someone knowning korean should revise this
       //
+      UINT16 c1 = c;
       if ((c >= 0x20) && (c <= 0x7F)) {
         c1 = ((c - 0x20) >> 4) * 28 + (c & 0x0F);
         Cho = c1;

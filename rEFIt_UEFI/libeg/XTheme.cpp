@@ -279,8 +279,8 @@ void XTheme::Init()
 //  ShowOptimus = FALSE;
   DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
   TypeSVG = FALSE;
-  Codepage = 0xC0;           //this is for PNG theme
-  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
+//  Codepage = 0xC0;           //this is for PNG theme
+//  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
   Scale = 1.0f;
   CentreShift = 0.0f;
   Daylight = true;

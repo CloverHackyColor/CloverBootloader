@@ -371,8 +371,10 @@ typedef struct {
   BOOLEAN     Proportional;
   BOOLEAN     DarkEmbedded;
   BOOLEAN     TypeSVG;
+#endif
   INTN        Codepage;
   INTN        CodepageSize;
+#if !USE_XTHEME
   float       Scale;
   float       CentreShift;
 #endif

@@ -77,8 +77,8 @@ public:
   BOOLEAN     embedded;
   BOOLEAN     DarkEmbedded;
   BOOLEAN     TypeSVG;
-  INTN        Codepage;
-  INTN        CodepageSize;
+//  INTN        Codepage;  //no! it is global settings
+//  INTN        CodepageSize;
   float       Scale;
   float       CentreShift;
   INTN        row0TileSize;
@@ -133,6 +133,9 @@ public:
   INTN GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel, INTN Start, INTN Step);
   INTN RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
                     IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
+  //overload for UTF8 text
+  INTN RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
+                          IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
 
 
 //  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
