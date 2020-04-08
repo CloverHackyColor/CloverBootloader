@@ -1497,7 +1497,7 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
  * as well we not know yet the font using but egRenderText calculate later real width
  * so make a place to be large enoungh
  */
-  egMeasureText(Text.data(), &TextWidth, NULL);
+  ThemeX.MeasureText(Text, &TextWidth, NULL); //NULL means we already know Height
 
   if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
@@ -1827,7 +1827,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       TimeoutPosY = EntriesPosY + (Entries.size() + 1) * ThemeX.TextHeight;
 
       // initial painting
-      egMeasureText(Title.data(), &ItemWidth, NULL);
+      ThemeX.MeasureText(Title, &ItemWidth, NULL);
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE)) {
         DrawTextXY(Title, (UGAWidth >> 1), EntriesPosY - ThemeX.TextHeight * 2, X_IS_CENTER);
       }
@@ -2451,7 +2451,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
   INTN TextWidth = 0;
   INTN BadgeDim = (INTN)(BADGE_DIMENSION * ThemeX.Scale);
 
-  egMeasureText(Text.wc_str(), &TextWidth, NULL);
+  ThemeX.MeasureText(Text, &TextWidth, NULL);
 
   //Clear old text
 //  if (OldTextWidth > TextWidth) {

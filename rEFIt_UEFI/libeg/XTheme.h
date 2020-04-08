@@ -136,6 +136,7 @@ public:
   //overload for UTF8 text
   INTN RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
                           IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
+  VOID MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height);
 
 
 //  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?

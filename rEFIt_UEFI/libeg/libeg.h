@@ -496,10 +496,11 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN EG_PIXEL *Color);
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
 
-VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
+
 #if USE_XTHEME
 VOID egClearScreen(IN const void *Color);
 #else
+VOID egMeasureText(IN CONST CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
 VOID PrepareFont(VOID);
 VOID egClearScreen(IN EG_PIXEL *Color);
 #endif
