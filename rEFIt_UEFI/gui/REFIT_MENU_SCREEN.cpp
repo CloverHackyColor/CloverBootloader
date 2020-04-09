@@ -2460,7 +2460,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
 
   if (!(ThemeX.BootCampStyle)
       && (ThemeX.HideBadges & HDBADGES_INLINE) && (!OldRow)
-//      && (OldTextWidth) && (OldTextWidth != TextWidth)
+      && (OldTextWidth) && (OldTextWidth != TextWidth)
       ) {
     //Clear badge
     ThemeX.FillRectAreaOfScreen((OldX - (OldTextWidth >> 1) - (BadgeDim + 16)),
