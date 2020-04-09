@@ -41,6 +41,8 @@
 
 EFI_GUID            gUuid;
 EFI_GUID            *gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
+
+const CHAR8 unknown[] = "unknown";
 //
 // syscl: implement Dell truncate fix
 // remap EFI_SMBIOS_TABLE_1 to new guid to fix Dell
@@ -267,7 +269,10 @@ EFI_SMBIOS_HANDLE LogSmbiosTable (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN)
   return SmbiosTableN.Hdr->Handle;
 }
 
-EFI_STATUS UpdateSmbiosString (CONST APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* Field, CHAR8* Buffer)
+// the procedure insert Buffer into SmbiosTable by copy and update Field
+// the Buffer restricted by zero or by space
+EFI_STATUS UpdateSmbiosString (OUT APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN,
+                               SMBIOS_TABLE_STRING* Field, IN CONST CHAR8* Buffer)
 {
   CHAR8*  AString;
   CHAR8*  C1; //pointers for copy
@@ -1083,8 +1088,8 @@ VOID PatchTableType11()
   //
   ZeroMem(OEMString, MAX_OEM_STRING);
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "Apple ROM Version.\n");
-  AsciiStrCatS(OEMString, MAX_OEM_STRING, "  BIOS ID:");
-  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.RomVersion, iStrLen(gSettings.RomVersion, 64));
+  //AsciiStrCatS(OEMString, MAX_OEM_STRING, "  BIOS ID:");
+  //AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.RomVersion, iStrLen(gSettings.RomVersion, 64));
   //  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
   //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Board-ID       : ");
@@ -1200,7 +1205,7 @@ VOID GetTableType17()
         }
         if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
           Found = TRUE;
-			DBG("Found memory information in table 18/%lld, type=0x%X, operation=0x%X syndrome=0x%X\n", Index2,
+          DBG("Found memory information in table 18/%lld, type=0x%X, operation=0x%X syndrome=0x%X\n", Index2,
               newSmbiosTable.Type18->ErrorType,
               newSmbiosTable.Type18->ErrorOperation,
               newSmbiosTable.Type18->VendorSyndrome);
@@ -1342,29 +1347,24 @@ VOID PatchTableType17()
       } else {
         snprintf(deviceLocator, 10, "DIMM%d", bank);
 		  snprintf(bankLocator, 10, "BANK %llu", Index % channels);
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CONST CHAR8*)&bankLocator[0]);
       }
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CONST CHAR8*)&deviceLocator[0]);
       if ((gRAM.User[UserIndex].InUse) && (gRAM.User[UserIndex].ModuleSize > 0)) {
         if (iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
-          CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.User[UserIndex].Vendor)+1); 
-          AsciiStrCpy(vendor, gRAM.User[UserIndex].Vendor);
-          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
-          gRAM.User[UserIndex].Vendor = vendor;
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.User[UserIndex].Vendor);
         } else {
-          CHAR8 unknown[] = "unknown";
+
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
         }
         if (iStrLen(gRAM.User[UserIndex].SerialNo, 64) > 0) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.User[UserIndex].SerialNo);
         } else {
-          CHAR8 unknown[] = "unknown";
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
         }
         if (iStrLen(gRAM.User[UserIndex].PartNo, 64) > 0) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.User[UserIndex].PartNo);
         } else {
-          CHAR8 unknown[] = "unknown";
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
         }
         newSmbiosTable.Type17->Speed = (UINT16)gRAM.User[UserIndex].Frequency;
@@ -1580,22 +1580,17 @@ VOID PatchTableType17()
       CopyMem((VOID*)newSmbiosTable.Type17, (VOID *)SmbiosTable.Type17, TableSize);
       newSmbiosTable.Type17->AssetTag = 0;
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
-        CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor)+1); // this will never be freed. WIll be solved when using a string object.
-        AsciiStrCpy(vendor, gRAM.SMBIOS[SMBIOSIndex].Vendor);
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
-        gRAM.SMBIOS[SMBIOSIndex].Vendor = vendor;
-		  snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].Vendor);
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
+        snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       } else {
         //        newSmbiosTable.Type17->Manufacturer = 0;
-          CHAR8 unknown[] = "unknown";
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
-		  snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+        snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
       } else {
         //        newSmbiosTable.Type17->SerialNumber = 0;
-          CHAR8 unknown[] = "unknown";
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
@@ -1604,7 +1599,6 @@ VOID PatchTableType17()
         DBG(" partNum=%s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
         //       newSmbiosTable.Type17->PartNumber = 0;
-          CHAR8 unknown[] = "unknown";
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber,  unknown);
         DBG(" partNum unknown\n");
       }
@@ -1624,27 +1618,21 @@ VOID PatchTableType17()
 
     if (gRAM.SPD[SPDIndex].InUse) {
       if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
-        CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.SPD[SPDIndex].Vendor)+1); // this will never be freed. WIll be solved when using a string object.
-        AsciiStrCpy(vendor, gRAM.SPD[SPDIndex].Vendor);
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
-        gRAM.SPD[SPDIndex].Vendor = vendor;
-		  snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SPD[SPDIndex].Vendor);
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
+        snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SPD[SPDIndex].Vendor);
       } else {
-        CHAR8 unknown[] = "unknown";
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
       if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
 		  snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SPD[SPDIndex].SerialNo);
       } else {
-        CHAR8 unknown[] = "unknown";
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
       if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
 		  snprintf(gSettings.MemoryPartNumber, 64, "%s", gRAM.SPD[SPDIndex].PartNo);
       } else {
-        CHAR8 unknown[] = "unknown";
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
       }
       if (gRAM.Frequency > gRAM.SPD[SPDIndex].Frequency) {
@@ -1669,10 +1657,7 @@ VOID PatchTableType17()
         (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) &&
         (AsciiStrnCmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
       DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
-      CHAR8* vendor = (CHAR8*)AllocatePool(AsciiStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor)+1); // this will never be freed. WIll be solved when using a string object.
-      AsciiStrCpyS(vendor, 64, gRAM.SMBIOS[SMBIOSIndex].Vendor);
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, vendor);
-      gRAM.SMBIOS[SMBIOSIndex].Vendor = vendor;
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
     }
 
     snprintf(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
@@ -1693,11 +1678,11 @@ VOID PatchTableType17()
       snprintf(deviceLocator, 10, "DIMM%d", bank);
 		snprintf(bankLocator, 10, "BANK %llu", Index % channels);
     }
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CONST CHAR8*)&deviceLocator[0]);
     if (isMacPro) {
       newSmbiosTable.Type17->BankLocator = 0; //like in MacPro5,1
     } else {
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CONST CHAR8*)&bankLocator[0]);
     }
 	  DBG("SMBIOS Type 17 Index = %d => %llu %llu:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
