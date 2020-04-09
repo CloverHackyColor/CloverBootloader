@@ -37,7 +37,7 @@ final class SoundSlider : NSSlider {
 }
 
 final class SettingsViewController:
-  NSViewController, NSTextFieldDelegate, NSComboBoxDelegate, URLSessionDownloadDelegate {
+  NSViewController, NSTextFieldDelegate, NSComboBoxDelegate, NSComboBoxDataSource, URLSessionDownloadDelegate {
   // MARK: Variables
   @IBOutlet var tabViewInfo : LITabView!
   // tab 0
@@ -66,7 +66,7 @@ final class SettingsViewController:
   // tab 1
   @IBOutlet var themeBox : NSComboBox!
   @IBOutlet var openThemeButton : NSButton!
-  @IBOutlet var themeUserField : NSTextField!
+  @IBOutlet var themeUserCBox : NSComboBox!
   @IBOutlet var themeRepoField : NSTextField!
   // tab 2
   @IBOutlet var soundDevicePopUp : NSPopUpButton!
@@ -145,15 +145,18 @@ final class SettingsViewController:
     AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
     AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
     
-    self.themeUserField.stringValue = AppSD.themeUser
+    self.themeUserCBox.stringValue = AppSD.themeUser
     self.themeRepoField.stringValue = AppSD.themeRepo
     
     if #available(OSX 10.10, *) {
-      self.themeUserField.placeholderString = kDefaultThemeUser
+      self.themeUserCBox.placeholderString = kDefaultThemeUser
       self.themeRepoField.placeholderString = kDefaultThemeRepo
     }
     
-    self.themeBox.removeAllItems()
+    self.themeUserCBox.removeAllItems()
+    self.themeUserCBox.completes = true
+    self.themeUserCBox.addItems(withObjectValues: ["CloverHackyColor", "HelmoHass"])
+    
     let themeManagerIndexDir = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex/\(AppSD.themeUser)_\(AppSD.themeRepo)")
     
     let tm = ThemeManager(user: AppSD.themeUser,
@@ -162,18 +165,22 @@ final class SettingsViewController:
                           indexDir: themeManagerIndexDir,
                           delegate: nil)
 
-    let indexedThemes = tm.getIndexedThemes()
-    self.themeBox.addItems(withObjectValues: indexedThemes)
+    let indexedThemes = tm.getIndexedThemesForAllRepositories()
+    AppSD.themes = indexedThemes.sorted()
     
-    if indexedThemes.contains("embedded") {
-      self.themeBox.addItem(withObjectValue: "embedded")
+    if !AppSD.themes.contains("embedded") {
+      AppSD.themes.append("embedded")
     }
     
-    if indexedThemes.contains("random") {
-      self.themeBox.addItem(withObjectValue: "random")
+    if !AppSD.themes.contains("random") {
+      AppSD.themes.append("random")
     }
-    
+
+    self.themeBox.delegate = self
+    self.themeBox.dataSource = self
+    self.themeBox.usesDataSource = true
     self.themeBox.completes = true
+    self.themeBox.reloadData()
     
     self.soundVolumeSlider.field = self.soundVolumeField
     self.soundVolumeField.stringValue = kNotAvailable.locale
@@ -636,40 +643,64 @@ final class SettingsViewController:
     }
   }
   
+  func numberOfItems(in comboBox: NSComboBox) -> Int {
+    return AppSD.themes.count
+  }
+
+  func comboBox(_ comboBox: NSComboBox, indexOfItemWithStringValue string: String) -> Int {
+    return AppSD.themes.firstIndex(of: string) ?? -1
+  }
+  func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
+    return AppSD.themes[index]
+  }
+  
+  func comboBox(_ comboBox: NSComboBox, completedString string: String) -> String? {
+    for theme in AppSD.themes {
+      if theme.lowercased().hasPrefix(string.lowercased()) {
+        return theme
+      }
+    }
+    return nil
+  }
+  
   func comboBoxSelectionDidChange(_ notification: Notification) {
     if (notification.object as? NSComboBox) == self.themeBox {
-      self.themeBoxSelected(self.themeBox)
+      let themeName = self.themeBox.itemObjectValue(at: self.themeBox.indexOfSelectedItem) as! String
+      self.set(theme: themeName, sender: self.themeBox)
+    } else if (notification.object as? NSComboBox) == self.themeUserCBox {
+      let val = self.themeUserCBox.itemObjectValue(at: self.themeUserCBox.indexOfSelectedItem) as! String
+      UDs.set(val, forKey: kThemeUserKey)
+      UDs.synchronize()
+      AppSD.themeUser = val
     }
   }
   
   func controlTextDidEndEditing(_ obj: Notification) {
     if (obj.object as? NSComboBox) == self.themeBox {
-      self.themeBoxSelected(self.themeBox)
+      let themeName = self.themeBox.stringValue
+      self.set(theme: themeName, sender: self.themeBox)
       return
     }
-    var updateThemeRepo = false
-    if let field = obj.object as? NSTextField {
-      
-      if field == self.themeUserField {
-        if field.stringValue.count > 0 {
-          UDs.set(field.stringValue, forKey: kThemeUserKey)
+    
+    if let cbox = obj.object as? NSComboBox {
+      if cbox == self.themeUserCBox {
+        if cbox.stringValue.count > 0 {
+          UDs.set(cbox.stringValue, forKey: kThemeUserKey)
         } else {
           UDs.set(kDefaultThemeUser, forKey: kThemeUserKey)
         }
-        updateThemeRepo = true
-      } else if field == self.themeRepoField {
+        AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
+      }
+    } else if let field = obj.object as? NSTextField {
+      if field == self.themeRepoField {
         if field.stringValue.count > 0 {
           UDs.set(field.stringValue, forKey: kThemeRepoKey)
         } else {
           UDs.set(kDefaultThemeRepo, forKey: kThemeRepoKey)
         }
-        updateThemeRepo = true
+        UDs.synchronize()
+        AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
       }
-    }
-    
-    if updateThemeRepo {
-      AppSD.themeUser = UDs.string(forKey: kThemeUserKey) ?? kDefaultThemeUser
-      AppSD.themeRepo = UDs.string(forKey: kThemeRepoKey) ?? kDefaultThemeRepo
     }
   }
   
@@ -933,19 +964,22 @@ final class SettingsViewController:
   
   // MARK: NVRAM editing
   func themeBoxSelected(_ sender: NSComboBox!) {
-    //sender.window?.makeFirstResponder(nil)
+    let themeName = sender.itemObjectValue(at: sender.indexOfSelectedItem) as! String
+    self.set(theme: themeName, sender: sender)
+  }
+  
+  private func set(theme name: String, sender: NSComboBox) {
     let key = "Clover.Theme"
-    let theme = sender.stringValue
     var nvramValue : String = ""
     if let data = getNVRAM()?.object(forKey: key) as? Data {
       nvramValue = String(decoding: data, as: UTF8.self)
     }
     
-    if nvramValue != theme {
-      if theme.count == 0 {
+    if nvramValue != name {
+      if name.count == 0 {
         deleteNVRAM(key: key.nvramString)
       } else {
-        setNVRAM(key: key, stringValue: theme.nvramString)
+        setNVRAM(key: key, stringValue: name.nvramString)
       }
     } else {
       return

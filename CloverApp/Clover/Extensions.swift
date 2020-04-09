@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CommonCrypto
 
 extension String {
   /// Create `Data` from hexadecimal string representation
@@ -251,6 +252,15 @@ extension Data {
   func hexadecimal() -> String {
     return map { String(format: "%02x", $0) }
       .joined(separator: "")
+  }
+  
+  var sha1: String {
+    var h = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+    
+    self.withUnsafeBytes {
+      _ = CC_SHA1($0.baseAddress, CC_LONG(self.count), &h)
+    }
+    return Data(h).hexadecimal()
   }
   
   func castToCPointer<T>() -> T {

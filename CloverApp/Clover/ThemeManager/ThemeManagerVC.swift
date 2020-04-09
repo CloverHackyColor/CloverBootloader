@@ -21,9 +21,14 @@ final class GradientView : NSView {
 }
 
 final class ThemeManagerVC: NSViewController,
-NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate {
+NSTableViewDelegate,
+NSTableViewDataSource,
+WebFrameLoadDelegate,
+WebUIDelegate,
+NSComboBoxDelegate,
+NSComboBoxDataSource {
   var targetVolume : String? = nil
-  
+  var themes : [String] = [String]()
   var manager : ThemeManager?
   @IBOutlet var installedThemesCheckBox : NSButton!
   
@@ -62,19 +67,10 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
     }
     self.loaded = true
     
-    /*
-    let winImagePath = "/Library/Desktop Pictures/Ink Cloud.jpg"
-
-    if fm.fileExists(atPath: winImagePath) {
-      let winImage = NSImage(byReferencingFile: winImagePath)
-      let winImageSize = NSMakeSize(self.view.frame.width, self.view.frame.height)
-      winImage?.size = winImageSize
-      self.view.window?.backgroundColor = NSColor.init(patternImage: winImage!)
-    }*/
     
     self.view.window?.title = self.view.window!.title.locale
     let settingVC = AppSD.settingsWC?.contentViewController as? SettingsViewController
-    settingVC?.themeUserField.isEnabled = false
+    settingVC?.themeUserCBox.isEnabled = false
     settingVC?.themeRepoField.isEnabled = false
     self.webView.drawsBackground = false
     self.webView.uiDelegate = self
@@ -82,17 +78,17 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
     self.webView.frameLoadDelegate = self
     self.webView.mainFrame.frameView.allowsScrolling = false
  
-    
     localize(view: self.view)
     AppSD.isInstallerOpen = true
     settingVC?.disksPopUp.isEnabled = false
     settingVC?.updateCloverButton.isEnabled = false
     settingVC?.unmountButton.isEnabled = false
     
-    AppSD.themes.removeAll()
     self.nameBox.completes = true
+    self.nameBox.delegate = self
+    self.nameBox.dataSource = self
+    self.nameBox.usesDataSource = true
     
-    self.nameBox.removeAllItems()
     self.sidebar.delegate = self
     self.sidebar.dataSource = self
     self.sidebar.backgroundColor = NSColor.clear
@@ -119,8 +115,14 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
       }
     }
     
+    self.reloadThemes()
+  }
+  
+  func reloadThemes() {
+    self.themes.removeAll()
+    self.sidebar.reloadData()
     self.showIndexing()
-    //return
+    
     let themeManagerIndexDir = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex/\(AppSD.themeUser)_\(AppSD.themeRepo)")
     
     self.manager = ThemeManager(user: AppSD.themeUser,
@@ -128,7 +130,6 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
                                 basePath: themeManagerIndexDir,
                                 indexDir: themeManagerIndexDir,
                                 delegate: self)
-    
     /*
      1) immediately load indexed themes (if any).
      Fast if thumbnails already exists.
@@ -142,7 +143,7 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
      2) download thumbnails.
      Slower if thumbnails didn't exist or themes never indexed.
      */
-
+    
     self.manager?.getThemes { (t) in
       let sorted = t.sorted()
       for t in sorted {
@@ -157,16 +158,48 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
     if showInstalled {
       return AppSD.installedThemes
     }
-    return AppSD.themes
+    return self.themes
+  }
+  
+  func numberOfItems(in comboBox: NSComboBox) -> Int {
+    return self.dataSource().count
+  }
+  
+  func comboBox(_ comboBox: NSComboBox, indexOfItemWithStringValue string: String) -> Int {
+    return self.dataSource().firstIndex(of: string) ?? -1
+  }
+  func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
+    return self.dataSource()[index]
+  }
+  
+  func comboBox(_ comboBox: NSComboBox, completedString string: String) -> String? {
+    for theme in dataSource() {
+      if theme.lowercased().hasPrefix(string.lowercased()) {
+        return theme
+      }
+    }
+    return nil
   }
 
+  @IBAction func refreshIndexedThemesPressed(_ sender: NSButton!) {
+    if let repoDir = self.manager?.themeManagerIndexDir {
+      // delete old index
+      if fm.fileExists(atPath: repoDir) {
+        try? fm.removeItem(atPath: repoDir)
+      }
+      // re index the repository
+      self.reloadThemes()
+    } else {
+      NSSound.beep()
+    }
+  }
+  
   @IBAction func showInstalledThemes(_ sender: NSButton!) {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
       let copy = self.manager!.getIndexedThemes().sorted() // in cases of low downloads
-      self.nameBox.removeAllItems()
       self.sidebar.noteNumberOfRowsChanged()
       AppSD.installedThemes.removeAll()
-      AppSD.themes.removeAll()
+      self.themes.removeAll()
      
       if sender.state == .on {
         if (self.targetVolume != nil && fm.fileExists(atPath: self.targetVolume!)) {
@@ -196,15 +229,13 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
             } catch { }
           }
           AppSD.installedThemes = installed.sorted()
-          self.nameBox.addItems(withObjectValues: installed.sorted())
           if installed.count == 0 {
             self.showNoThemes()
           }
         }
         self.showInstalled = true
       } else {
-        AppSD.themes = copy
-        self.nameBox.addItems(withObjectValues: copy.sorted())
+        self.themes = copy
         self.showInstalled = false
         if copy.count == 0 {
           self.showNoThemes()
@@ -491,18 +522,15 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
   }
   
   func addRow(for theme: String) {
-    let index = AppSD.themes.count
-    AppSD.themes.append(theme)
-    //if self.installedThemesCheckBox.state == .off {
-      self.sidebar.beginUpdates()
-      self.sidebar.insertRows(at: IndexSet(integer: index), withAnimation: .slideUp)
-      self.sidebar.endUpdates()
-    //}
-    self.nameBox.addItem(withObjectValue: theme)
+    let index = self.themes.count
+    self.themes.append(theme)
+    self.sidebar.beginUpdates()
+    self.sidebar.insertRows(at: IndexSet(integer: index), withAnimation: .slideUp)
+    self.sidebar.endUpdates()
   }
   
   func add(theme: String) {
-    if AppSD.themes.contains(theme) {
+    if self.themes.contains(theme) {
       return
     }
     if let sha = self.manager?.getSha() {
@@ -562,8 +590,10 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
     self.optimizeButton.isEnabled = false
     self.optimizeButton.state = .off
     let sr = self.sidebar.selectedRow
+    
     if sr >= 0 {
       if let v = self.sidebar.view(atColumn: 0, row: sr, makeIfNecessary: false) as? ThemeView {
+        self.installButton.title = v.isUpToDate ? "Install".locale : "Update".locale
         if v.isInstalled {
           self.unistallButton.animator().isHidden = false
           self.unistallButton.isEnabled = true
@@ -638,6 +668,8 @@ NSTableViewDelegate, NSTableViewDataSource, WebFrameLoadDelegate, WebUIDelegate 
           v.load()
         }
       }
+    } else {
+      self.installButton.title = "Install".locale
     }
   }
   
@@ -805,7 +837,7 @@ final class ThemeManagerWC: NSWindowController, NSWindowDelegate {
     settingVC?.updateCloverButton.isEnabled = true
     settingVC?.searchESPDisks()
     AppSD.isInstallerOpen = false
-    settingVC?.themeUserField.isEnabled = true
+    settingVC?.themeUserCBox.isEnabled = true
     settingVC?.themeRepoField.isEnabled = true
     self.window = nil
     self.close()

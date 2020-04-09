@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CommonCrypto
 
 let kThemeUserKey = "themeUser"
 let kThemeRepoKey = "themeRepo"
@@ -31,11 +32,11 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
   private let errorDomain : String = "org.slice.Clover.ThemeManager.Error"
   var statusError : Error? = nil
   var delegate : ThemeManagerVC?
-  private var user : String
-  private var repo : String
+  var user : String
+  var repo : String
   var basePath : String
   private var urlBaseStr : String
-  private var themeManagerIndexDir : String
+  var themeManagerIndexDir : String
   
   private var gitInitCount : Int32 = 0
 
@@ -58,6 +59,31 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     }
   }
 
+  public func getIndexedThemesForAllRepositories() -> [String] {
+    self.statusError = nil
+    var themes = [String]()
+    let tip = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex")
+    
+    if let repos = try? fm.contentsOfDirectory(atPath: tip) {
+      for repo in repos {
+        let repoThemesDir = tip.addPath(repo).addPath("Themes")
+        let repoShaFilePath = tip.addPath(repo).addPath("sha")
+        if fm.fileExists(atPath: repoShaFilePath) && fm.fileExists(atPath: repoThemesDir) {
+          if let files : [String] = try? fm.contentsOfDirectory(atPath: repoThemesDir) {
+            for f in files {
+              let theme : String = f.deletingFileExtension
+              let ext : String = f.fileExtension
+              if ext == "plist" && !themes.contains(theme) {
+                themes.append(theme)
+              }
+            }
+          }
+        }
+      }
+    }
+    return themes.sorted()
+  }
+  
   public func getIndexedThemes() -> [String] {
     self.statusError = nil
     var themes = [String]()
@@ -367,18 +393,34 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
                 completion(false)
                 break
               }
-              
+            
               if let path = obj["path"] as? String {
+                if path.componentsPath.count == 1 && type != "tree" {
+                  // skip every things is not a directory in the root of the repository (like README.md)
+                  continue
+                }
                 
-                if !path.hasPrefix(".") && type == "blob" { // .gitignore, .DS_Store
+                guard let fileSha = obj["sha"] as? String else {
+                  let errStr = "GI16, Error: 'sha' key not found for \(path)."
+                  let se : Error = NSError(domain: self.errorDomain,
+                                           code: 2016,
+                                           userInfo: [NSLocalizedDescriptionKey: errStr])
+                  
+                  self.statusError = se
+                  completion(false)
+                  break
+                }
+                
+                // skip every hidden files like .gitignore, .DS_Store, etc.
+                if !path.hasPrefix(".") && type == "blob" {
                   let themeName : String = path.components(separatedBy: "/")[0]
                   let plistPath : String = "\(self.themeManagerIndexDir)/\(sha)/\(themeName).plist"
-                  let theme : NSMutableArray = NSMutableArray(contentsOfFile: plistPath) ?? NSMutableArray()
-                  if !theme.contains(path) {
-                    theme.add(path)
+                  let theme : NSMutableDictionary = NSMutableDictionary(contentsOfFile: plistPath) ?? NSMutableDictionary()
+                  if !(theme.allKeys as! [String]).contains(path) {
+                    theme.setObject(fileSha, forKey: path as NSString)
                   }
                   
-                
+                  
                   if !theme.write(toFile: plistPath, atomically: false) {
                     let errStr = "GI10, Error: can't write \(plistPath)"
                     let se : Error = NSError(domain: self.errorDomain,
@@ -499,8 +541,8 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
         }
  
         let plistPath : String = "\(themeManagerIndexDir)/Themes/\(theme).plist"
-
-        if let files : [String] = NSArray(contentsOfFile: plistPath) as? [String] {
+        let themePlist = NSDictionary(contentsOfFile: plistPath)
+        if let files : [String] = themePlist?.allKeys as? [String] {
           // ---------------------------------------
           let fc : Int = files.count
           if fc > 0 {
@@ -509,7 +551,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
             for i in 0..<fc {
               let file : String = files[i]
               // build the url
-              let furl : String = "\(GitProtocol.https.rawValue)://raw.githubusercontent.com/CloverHackyColor/CloverThemes/master/\(file)"
+              let furl : String = "\(GitProtocol.https.rawValue)://raw.githubusercontent.com/\(self.user)/\(self.repo)/master/\(file)"
               
               if down == .thumbnail {
                 if file != theme.addPath("screenshot.png")
@@ -589,7 +631,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     }
   }
   
-  public func signTheme(at path: String) {
+  public func signTheme(at path: String) { // unused function
     if let sha : String = self.getSha() {
       let fileURL : URL = URL(fileURLWithPath: path)
       let data : Data? = sha.data(using: .utf8)
@@ -617,8 +659,79 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     }
   }
   
+  /// Check if a theme exist (in the current repository
   public func exist(theme: String) -> Bool {
     return fm.fileExists(atPath: "\(self.themeManagerIndexDir)/Themes/\(theme).plist")
+  }
+  
+  /// Check if a theme at the given path is up to date in the current repository. True if doesn't exists.
+  public func isThemeUpToDate(at path : String) -> Bool {
+    let theme = path.lastPath
+    if !self.exist(theme: theme) {
+      // if theme doesn't exist in the repository is up to date since is not part of it!
+      return true
+    }
+    
+    let plistPath = "\(self.themeManagerIndexDir)/Themes/\(theme).plist"
+    guard var plist = NSMutableDictionary(contentsOfFile: plistPath) as? [String : String] else {
+      // We cannot load our generated file? :-(
+      print("Error: Theme Manager can't load \(plistPath)")
+      return true
+    }
+    
+    let enumerator = fm.enumerator(atPath: path)
+    
+    while let file = enumerator?.nextObject() as? String {
+      let fp = path.addPath(file)
+      var isDir : ObjCBool = false
+      fm.fileExists(atPath: fp, isDirectory: &isDir)
+      
+      // don't check hidden files, like .DS_Store ;-)
+      if !file.lastPath.hasPrefix(".") {
+        /*
+         Check only files.
+         If extra directories exists inside the user theme it's not our business...
+         */
+        if !isDir.boolValue {
+          // ..it is if a file doesn't exist
+          let key = theme.addPath(file)
+          if let githubSha = plist[key] {
+            // ok compare the sha1
+            if let fileData = try? Data(contentsOf: URL(fileURLWithPath: fp)) {
+              var gitdata = Data()
+              let encoding : String.Encoding = .utf8
+              gitdata.append("blob ".data(using: encoding)!)
+              gitdata.append("\(fileData.count)".data(using: encoding)!)
+              gitdata.append(0x00)
+              gitdata.append(fileData)
+              
+              let gitsha1 = gitdata.sha1
+              if gitsha1 != githubSha {
+                // sha doesn't match, this is a different file
+                return false
+              }
+            } else {
+              print("Error: Theme Manager can't load \(fp)")
+              return false
+            }
+            
+            plist[key] = nil // no longer needed
+          } else {
+            // file doesn't exist in the theme at repository
+            return false
+          }
+        }
+      }
+    }
+    
+    /*
+     if We are here is because sha1 has been compared successfully
+     for each file on the installed theme.
+     If plist var no longer contains keys, it also means that all
+     the files are existing on the installed theme.
+     Otherwise fail!
+     */
+    return plist.keys.count == 0
   }
   
   public func optimizeTheme(at path: String, completion: @escaping (Error?) -> ()) {

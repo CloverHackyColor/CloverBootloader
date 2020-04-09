@@ -351,7 +351,7 @@ do
       break
     ;;
     "quit")
-      exit 0
+      osascript -e 'tell application "Terminal" to close first window' & exit
     ;;
     *)
       echo "invalid option $REPLY"

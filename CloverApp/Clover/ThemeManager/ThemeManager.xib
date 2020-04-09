@@ -37,12 +37,12 @@
                                     <tableColumns>
                                         <tableColumn identifier="column1" width="147" minWidth="40" maxWidth="1000" id="SqG-sb-peF">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="controlContent" size="11"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
                                             <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="XIw-Cc-NAw">
-                                                <font key="font" metaFont="label" size="13"/>
+                                                <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -56,7 +56,7 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="147" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="zkl-n1-vr4">
-                                                                <font key="font" metaFont="label" size="13"/>
+                                                                <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
@@ -86,7 +86,7 @@
                         <rect key="frame" x="162" y="74" width="579" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" title="Description:" id="VVK-qM-R76">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="controlContent" size="11"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -98,7 +98,7 @@
                         <rect key="frame" x="162" y="51" width="579" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" title="Author:" id="nVY-gj-ELR">
-                            <font key="font" metaFont="label" size="11"/>
+                            <font key="font" metaFont="controlContent" size="11"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -107,17 +107,12 @@
                         </connections>
                     </textField>
                     <comboBox focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1Be-Yl-lqT">
-                        <rect key="frame" x="164" y="97" width="201" height="25"/>
+                        <rect key="frame" x="199" y="97" width="206" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" focusRingType="none" placeholderString="Theme" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="ZdF-kp-eIO">
-                            <font key="font" metaFont="label" size="13"/>
+                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" focusRingType="none" placeholderString="Theme" drawsBackground="YES" usesDataSource="YES" numberOfVisibleItems="5" id="ZdF-kp-eIO">
+                            <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                            <objectValues>
-                                <string>Item 1</string>
-                                <string>Item 2</string>
-                                <string>Item 3</string>
-                            </objectValues>
                         </comboBoxCell>
                         <connections>
                             <action selector="nameBoxSelected:" target="ClZ-60-myJ" id="rPH-oQ-4RO"/>
@@ -129,7 +124,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hSu-fW-idj">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="label" size="13"/>
+                            <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
                             <action selector="InstallPressed:" target="ClZ-60-myJ" id="Phd-pp-aYa"/>
@@ -140,7 +135,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="cP4-wD-4Ph" id="MEO-zC-Iak">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="label" size="13"/>
+                            <font key="font" metaFont="system"/>
                             <menu key="menu" id="fEx-Zt-ngB">
                                 <items>
                                     <menuItem title="Item 1" state="on" id="cP4-wD-4Ph"/>
@@ -165,11 +160,11 @@
                         </webPreferences>
                     </webView>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qNn-1b-hdX">
-                        <rect key="frame" x="396" y="102" width="345" height="18"/>
+                        <rect key="frame" x="420" y="102" width="321" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Show installed" bezelStyle="regularSquare" imagePosition="left" inset="2" id="PPl-2s-7pe">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="label" size="13"/>
+                            <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
                             <action selector="showInstalledThemes:" target="ClZ-60-myJ" id="mYF-2e-FAu"/>
@@ -180,7 +175,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Uninstall" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nxb-Kj-kDi">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="label" size="13"/>
+                            <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
                             <action selector="unInstallPressed:" target="ClZ-60-myJ" id="tVl-6l-eul"/>
@@ -191,10 +186,21 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Optimize" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="Sop-mp-zDW">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="label" size="13"/>
+                            <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
                             <action selector="optimizeThemePressed:" target="ClZ-60-myJ" id="eFv-na-WZg"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x6y-uP-1AE">
+                        <rect key="frame" x="158" y="94" width="39" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="NSRefreshFreestandingTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="axesIndependently" inset="2" id="bOt-6K-Swp">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="refreshIndexedThemesPressed:" target="ClZ-60-myJ" id="iRd-Gj-qZR"/>
                         </connections>
                     </button>
                 </subviews>
@@ -226,4 +232,7 @@
             </connections>
         </viewController>
     </objects>
+    <resources>
+        <image name="NSRefreshFreestandingTemplate" width="14" height="14"/>
+    </resources>
 </document>
