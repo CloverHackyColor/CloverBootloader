@@ -147,9 +147,9 @@ public:
 #endif
 
 #if USE_XTHEME
-  REFIT_MENU_SCREEN(UINTN ID, XStringW Title, XStringW TimeoutText)
-  : ID(ID), Title(Title), TitleImage(),
-  TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(),
+  REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
+  : ID(ID), Title(TTitle), TitleImage(),
+  TimeoutSeconds(0), TimeoutText(TTimeoutText), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
@@ -176,9 +176,9 @@ public:
 #endif
 
 #if USE_XTHEME
-  REFIT_MENU_SCREEN(UINTN ID, XStringW  Title, XStringW  TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
-  : ID(ID), Title(Title), TitleImage(),
-  TimeoutSeconds(0), TimeoutText(TimeoutText), ThemeName(),
+  REFIT_MENU_SCREEN(UINTN ID, XStringW  TTitle, XStringW  TTimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
+  : ID(ID), Title(TTitle), TitleImage(),
+  TimeoutSeconds(0), TimeoutText(TTimeoutText), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
