@@ -22,6 +22,7 @@
 		9542ABC02373783400DC03E6 /* boot1-install in Copy tools */ = {isa = PBXBuildFile; fileRef = 9542ABBD2373780C00DC03E6 /* boot1-install */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9542ABC22373786700DC03E6 /* CloverV2 in Copy CloverV2 */ = {isa = PBXBuildFile; fileRef = 9542ABC12373786700DC03E6 /* CloverV2 */; };
 		9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */ = {isa = PBXBuildFile; fileRef = 95524B88238051F4005F6425 /* CloverLogOut */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		954B0385243EB0AB001E719A /* update.png in Resources */ = {isa = PBXBuildFile; fileRef = 954B0384243EB0AB001E719A /* update.png */; };
 		954BBE99238196EE0032425F /* Locale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954BBE98238196EE0032425F /* Locale.swift */; };
 		954DECD523899F5F006A9876 /* Bootmanager.png in Resources */ = {isa = PBXBuildFile; fileRef = 954DECD423899F5F006A9876 /* Bootmanager.png */; };
 		954FCFD92391818300C9273C /* NSWindowFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 954FCFD82391818300C9273C /* NSWindowFix.m */; };
@@ -240,6 +241,7 @@
 		953BC20223720C0A0039755D /* FixedWidthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthViews.swift; sourceTree = "<group>"; };
 		9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "boot1-inst.xcodeproj"; path = "../CloverPackage/utils/boot1-install/boot1-inst.xcodeproj"; sourceTree = "<group>"; };
 		9542ABC12373786700DC03E6 /* CloverV2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CloverV2; path = ../CloverPackage/CloverV2; sourceTree = "<group>"; };
+		954B0384243EB0AB001E719A /* update.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = update.png; sourceTree = "<group>"; };
 		954BBE98238196EE0032425F /* Locale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locale.swift; sourceTree = "<group>"; };
 		954C3DF0237DF0250059C698 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		954DECD423899F5F006A9876 /* Bootmanager.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Bootmanager.png; sourceTree = "<group>"; };
@@ -570,6 +572,7 @@
 				9534B79A242CDC52003F323E /* Find.png */,
 				9534B799242CDC52003F323E /* Replace.png */,
 				955BEE1A23C7171000425AB0 /* check.png */,
+				954B0384243EB0AB001E719A /* update.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -861,6 +864,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954B0385243EB0AB001E719A /* update.png in Resources */,
 				9534B79B242CDC53003F323E /* Replace.png in Resources */,
 				9571A22A241C2E7F000D6645 /* PlistEditor.storyboard in Resources */,
 				9556CAF5238DF75600082671 /* InstallerOutline.xib in Resources */,

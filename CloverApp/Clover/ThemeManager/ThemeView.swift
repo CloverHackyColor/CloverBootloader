@@ -17,6 +17,7 @@ class ThemeView: NSView, WebFrameLoadDelegate, WebUIDelegate {
   var info : String?
   var row : Int
   var isInstalled = false
+  var isUpToDate = true
   
   public let webView: WebView = {
     let wv = WebView(frame: NSMakeRect(0, 0, 147, 82))
@@ -111,8 +112,10 @@ class ThemeView: NSView, WebFrameLoadDelegate, WebUIDelegate {
   }
   
   func setInstalledStatus() {
+    var installPath = ""
     if let vol = self.manager.delegate?.targetVolume {
-      self.isInstalled = fm.fileExists(atPath: vol.addPath("EFI/CLOVER/themes").addPath(self.name))
+      installPath = vol.addPath("EFI/CLOVER/themes").addPath(self.name)
+      self.isInstalled = fm.fileExists(atPath: installPath)
       if (self.imagePath == nil) {
         if fm.fileExists(atPath: vol.addPath("EFI/CLOVER/themes").addPath(self.name).addPath("theme.svg")) {
           self.imagePath = vol.addPath("EFI/CLOVER/themes").addPath(self.name).addPath("theme.svg")
@@ -126,7 +129,8 @@ class ThemeView: NSView, WebFrameLoadDelegate, WebUIDelegate {
     
     if let path = self.imagePath {
       if self.isInstalled {
-        let icon = Bundle.main.path(forResource: "check", ofType: "png")
+        self.isUpToDate = self.manager.isThemeUpToDate(at: installPath)
+        let icon = Bundle.main.path(forResource: self.isUpToDate ? "check" : "update", ofType: "png")
         self.webView.mainFrame.loadHTMLString("""
           <html>
           <body>
@@ -138,6 +142,7 @@ class ThemeView: NSView, WebFrameLoadDelegate, WebUIDelegate {
           </html>
           """, baseURL: Bundle.main.bundleURL)
       } else {
+        self.isUpToDate = true
         self.webView.mainFrame.loadHTMLString("""
           <html>
           <body>
