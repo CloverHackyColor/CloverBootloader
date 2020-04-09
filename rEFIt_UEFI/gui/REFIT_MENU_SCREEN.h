@@ -100,6 +100,7 @@ public:
   UINTN             FrameTime; //ms
   EG_RECT           FilmPlace;
   EG_IMAGE        **Film;
+
   ACTION      mAction;
   UINTN       mItemID;
   SCROLL_STATE ScrollState;

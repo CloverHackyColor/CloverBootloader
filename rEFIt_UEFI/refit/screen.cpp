@@ -1041,7 +1041,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
           p = LoadSvgFrame(i);
           //       DBG("frame %d loaded\n", i);
         } else {
-			snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
+          snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
           p = egLoadImage(ThemeX.ThemeDir, FileName, TRUE);
         }
         if (!p) {

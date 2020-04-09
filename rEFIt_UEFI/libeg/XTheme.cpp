@@ -368,6 +368,7 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
   // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
   XString First;
   XString Second;
+  XString Third;
   const XImage *ReturnImage;
   UINTN Comma = Full.IdxOf(',');
   UINTN Size = Full.size();
@@ -379,7 +380,19 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
     if (!ReturnImage->isEmpty()) return *ReturnImage;
     //else search second name
     Second = "os_"_XS + Full.SubString(Comma+1, Size - Comma - 1);
-    ReturnImage = &GetIcon(Second);
+    //moreover names can be triple L"chrome,grub,linux"
+    UINTN SecondComma = Second.IdxOf(',');
+    if (Comma == MAX_XSIZE) {
+      ReturnImage = &GetIcon(Second);
+      if (!ReturnImage->isEmpty()) return *ReturnImage;
+    } else {
+      First = Second.SubString(0, SecondComma);
+      ReturnImage = &GetIcon(First);
+      if (!ReturnImage->isEmpty()) return *ReturnImage;
+      Third = "os_"_XS + Second.SubString(SecondComma + 1, Size - SecondComma - 1);
+      ReturnImage = &GetIcon(Third);
+      if (!ReturnImage->isEmpty()) return *ReturnImage;
+    }
 //    DBG("  Second=%s\n", Second.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   } else {

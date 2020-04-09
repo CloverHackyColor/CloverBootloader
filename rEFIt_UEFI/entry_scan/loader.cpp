@@ -2138,7 +2138,7 @@ if ((Image == NULL) && Custom->ImagePath) {
             if (Guid) {
               SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
             }
-			  SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.c_str());
+            SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.c_str());
             DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
               if (!CustomSubEntry->Settings) {
