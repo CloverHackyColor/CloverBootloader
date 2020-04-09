@@ -1,6 +1,6 @@
 #include <Platform.h>
 #include "../cpp_foundation/XString.h"
-#include "../cpp_foundation/utf8Conversion.h"
+#include "../cpp_foundation/unicode_conversions.h"
 #include "global_test.h"
 
 template<int m_size>

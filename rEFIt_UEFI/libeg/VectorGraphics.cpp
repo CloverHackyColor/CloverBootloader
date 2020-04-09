@@ -110,7 +110,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
         IconImage->height = shape->bounds[3] - shape->bounds[1];
-        if (!IconImage->height) {
+        if ( IconImage->height != 0 ) { // !fontSVG->unitsPerEm generate a warning
           IconImage->height = 200;
         }
 
@@ -820,16 +820,16 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   nsvg__xformIdentity(text->xform);
   p->text = text;
 
-  len = string.length();
+  len = string.size();
   Width = TextBufferXY.GetWidth();
-  if (!fontSVG->unitsPerEm) {
+  if ( fontSVG->unitsPerEm != 0 ) { // !fontSVG->unitsPerEm generate a warning
     fontSVG->unitsPerEm = 1000.f;
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
     DBG("wrong font: %f\n", fontSVG->unitsPerEm);
     DumpFloat2("Font bbox", fontSVG->bbox, 4);
-    fH = fontSVG->unitsPerEm?fontSVG->unitsPerEm:1000.0f;  //1000
+    fH = fontSVG->unitsPerEm != 0 ? fontSVG->unitsPerEm : 1000.0f;  //1000
   }
   sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
   Scale = sy;
@@ -837,7 +837,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
   for (i=0; i < len; i++) {
-    CHAR16 letter = string[i];
+    CHAR16 letter = string.wc_str()[i];
     if (!letter) {
       break;
     }

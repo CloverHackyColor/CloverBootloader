@@ -269,7 +269,7 @@ UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
              (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
              (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
     return OSTYPE_WINEFI;
-  } else if (StrniCmp(Path, LINUX_FULL_LOADER_PATH, StrLen(LINUX_FULL_LOADER_PATH)) == 0) {
+  } else if (StrniCmp(Path, LINUX_FULL_LOADER_PATH.wc_str(), LINUX_FULL_LOADER_PATH.size()) == 0) {
     return OSTYPE_LINEFI;
   } else {
     UINTN Index;
@@ -314,10 +314,10 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
     ++Index;
   }
   // Try to open the linux issue
-  if ((RootDir != NULL) && (StrniCmp(Path, LINUX_FULL_LOADER_PATH, StrLen(LINUX_FULL_LOADER_PATH)) == 0)) {
+  if ((RootDir != NULL) && (StrniCmp(Path, LINUX_FULL_LOADER_PATH.wc_str(), LINUX_FULL_LOADER_PATH.size()) == 0)) {
     CHAR8 *Issue = NULL;
     UINTN  IssueLen = 0;
-    if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH, (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
+    if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH.wc_str(), (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
       if (IssueLen > 0) {
         for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
           if ((LinuxEntryData[Index].Issue != NULL) &&
@@ -357,10 +357,8 @@ STATIC XString LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
     if (InitRd != NULL) {
       if (FileExists(Dir, InitRd.wc_str())) {
 		  XString CustomOptions = SPrintf("root=/dev/disk/by-partuuid/%ls initrd=%ls\\%ls %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd.wc_str(), LINUX_DEFAULT_OPTIONS.c_str(), Options.c_str());
-        FreePool(InitRd);
         return CustomOptions;
       }
-      FreePool(InitRd);
     }
   }
   return SPrintf("root=/dev/disk/by-partuuid/%ls %s %s", PartUUID, LINUX_DEFAULT_OPTIONS.c_str(), Options.c_str());
@@ -2123,7 +2121,7 @@ if ((Image == NULL) && Custom->ImagePath) {
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
 #if USE_XTHEME
-            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
+            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title.wc_str() : CustomPath, Entry->VolName);
 #else
             SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
 #endif

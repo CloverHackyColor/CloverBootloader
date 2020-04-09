@@ -183,7 +183,8 @@ void XObjArrayNC<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 		nNewSize += nGrowBy + 1;
 		_Data = (XObjArrayEntry<TYPE> *)realloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
 		if ( !_Data ) {
-			XObjArray_DBG("XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%llu, %llu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
+			DebugLog(2, "XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%llu, %llu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
+			panic();
 		}
 //		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
 		m_allocatedSize = nNewSize;

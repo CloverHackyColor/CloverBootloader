@@ -12,7 +12,6 @@
 #include "XToolsCommon.h"
 #include "XObjArray.h"
 #include "XStringW.h"
-#include "XStringWP.h"
 
 
 #define XStringWArraySuper XObjArray<XStringW>

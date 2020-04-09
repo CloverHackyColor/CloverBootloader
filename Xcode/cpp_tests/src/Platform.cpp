@@ -19,7 +19,7 @@
 #include <codecvt>
 #include <vector>
 
-#include "../../../rEFIt_UEFI/cpp_foundation/utf8Conversion.h"
+#include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
 
 void CpuDeadLoop(void)
 {
