@@ -431,13 +431,25 @@ void XStringW::RemoveLastEspCtrl()
 
 	if ( size() > 0 ) {
 		p = _data(0) + size() - 1;
+	#if __WCHAR_MIN__ < 0
 		if ( *p >= 0 && *p <= ' ' ) {
+	#else
+		if ( *p <= ' ' ) {
+	#endif
 			p -= 1;
+	#if __WCHAR_MIN__ < 0
 			while ( p>data() && *p >= 0 && *p <= ' ' ) p -= 1;
+	#else
+			while ( p>data() && *p <= ' ' ) p -= 1;
+	#endif
 			if ( p>data() ) {
 				SetLength( (UINTN)(p-data())+1);
 			}else{
+	#if __WCHAR_MIN__ < 0
 				if ( *p >= 0 && *p <= ' ' ) SetLength(0);
+	#else
+				if ( *p <= ' ' ) SetLength(0);
+	#endif
 				else SetLength(1);
 			}
 		}
@@ -573,7 +585,11 @@ XStringW CleanCtrl(const XStringW &S)
   UINTN i;
 
 	for ( i=0 ; i<S.size() ; i+=1 ) {
-		if ( S.wc_str()[i] >=0  &&  S.wc_str()[i] < ' ' ) ReturnValue += 'x'; /* wchar_t are signed !!! */
+#if __WCHAR_MIN__ < 0
+		if ( S.wc_str()[i] >=0  &&  S.wc_str()[i] < ' ' ) ReturnValue += 'x'; /* wchar_t are signed */
+#else
+		if ( S.wc_str()[i] < ' ' ) ReturnValue += 'x'; /* wchar_t are unsigned */
+#endif
 		else ReturnValue += S.wc_str()[i];
 	}
 	return ReturnValue;

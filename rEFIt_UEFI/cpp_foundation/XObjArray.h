@@ -145,7 +145,7 @@ void XObjArrayNC<TYPE>::Init()
 
 /* Constructeur */
 template<class TYPE>
-XObjArray<TYPE>::XObjArray(const XObjArray<TYPE> &anObjArray)
+XObjArray<TYPE>::XObjArray(const XObjArray<TYPE> &anObjArray) : XObjArrayNC<TYPE>()
 {
   xsize ui;
 
