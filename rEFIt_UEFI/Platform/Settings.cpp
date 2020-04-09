@@ -4239,27 +4239,14 @@ XTheme::GetThemeTagSettings (void* DictP)
         FontFileName.takeValueFrom(Dict2->string);
       }
     }
-#if USE_XTHEME
-    Dict2 = GetProperty (Dict, "CharWidth");
-    ThemeX.CharWidth = (UINTN)GetPropertyInteger (Dict2, ThemeX.CharWidth);
-    if (ThemeX.CharWidth & 1) {
-      MsgLog("Warning! Character width %lld should be even!\n", ThemeX.CharWidth);
-    }
-
-    Dict2 = GetProperty (Dict, "Proportional");
-    ThemeX.Proportional = IsPropertyTrue (Dict2);
-
-#else
     Dict2 = GetProperty (Dict, "CharWidth");
     CharWidth = (UINTN)GetPropertyInteger (Dict2, CharWidth);
-    if (GlobalConfig.CharWidth & 1) {
+    if (CharWidth & 1) {
       MsgLog("Warning! Character width %lld should be even!\n", CharWidth);
     }
 
     Dict2 = GetProperty (Dict, "Proportional");
-    GlobalConfig.Proportional = IsPropertyTrue (Dict2);
-
-#endif
+    Proportional = IsPropertyTrue (Dict2);
 
   }
 

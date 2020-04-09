@@ -7,3 +7,8 @@
 //
 
 #include "XCinema.h"
+
+void FILM::Advance()
+{
+  CurrentFrame = ++CurrentFrame % Count;
+}

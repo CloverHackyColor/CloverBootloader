@@ -84,11 +84,16 @@ NSVGfontChain *fontsDB = NULL;
 // so one more parameter is TextStyle
 VOID XTheme::MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height)
 {
-  INTN ScaledWidth = (INTN)(CharWidth * Scale);
+  INTN ScaledWidth = CharWidth;
+  INTN ScaledHeight = FontHeight;
+  if (Scale != 0.f) {
+    ScaledWidth = (INTN)(CharWidth * Scale);
+    ScaledHeight = (INTN)(FontHeight * Scale);
+  }
   if (Width != NULL)
-    *Width = Text.length() * ((FontWidth > ScaledWidth) ? FontWidth : ScaledWidth);
+    *Width = StrLen(Text.wc_str()) * ((FontWidth > ScaledWidth) ? FontWidth : ScaledWidth);
   if (Height != NULL)
-    *Height = FontHeight;
+    *Height = ScaledHeight;
 }
 #else
 
@@ -118,31 +123,38 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   const XStringW& commonFontDir = L"EFI\\CLOVER\\font"_XSW;
 
   if (IsEmbeddedTheme() && !isKorean) { //or initial screen before theme init
-    NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data)); //always success
+    Status = NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data)); //always success
     MsgLog("Using embedded font\n");
   } else if (isKorean){
     Status = NewImage.LoadXImage(ThemeDir, L"FontKorean.png"_XSW);
     MsgLog("Loading korean font from ThemeDir: %s\n", strerror(Status));
-    if (EFI_ERROR(Status)) {
-      //no korean font, use common
+    if (!EFI_ERROR(Status)) {
+      CharWidth = 22; //standard for korean
+    } else {
       MsgLog("...using english\n");
       gLanguage = english;
-      Rows = 16; //standard for english
-      Cols = 16;
-      Status = NewImage.LoadXImage(ThemeDir, FontFileName);
-    } else {
-      CharWidth = 22; //standard for korean
     }
   }
 
-  if (NewImage.isEmpty()) {
+  if (EFI_ERROR(Status)) {
+    //not loaded, use common
+    Rows = 16; //standard for english
+    Cols = 16;
+    Status = NewImage.LoadXImage(ThemeDir, FontFileName);
+  }
+
+  if (EFI_ERROR(Status)) {
     //then take from common font folder
 //    fontFilePath = SWPrintf(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : ThemeX.FontFileName.data());
     fontFilePath = commonFontDir + FontFileName;
     Status = NewImage.LoadXImage(SelfRootDir, fontFilePath);
-    //else use embedded
+    //else use embedded even if it is not embedded
     if (EFI_ERROR(Status)) {
-      NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data));
+      Status = NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data));
+    }
+    if (EFI_ERROR(Status)) {
+      MsgLog("No font found!\n");
+      return;
     }
   }
 
@@ -158,9 +170,9 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   FontWidth = ImageWidth / Cols;
   FontHeight = ImageHeight / Rows;
   TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * Scale);
-  if (!isKorean) {
-    CharWidth = FontWidth;
-  }
+//  if (!isKorean) {
+//    CharWidth = FontWidth; //there is default value anyway
+//  }
 
   FirstPixel = *PixelPtr;
   for (INTN y = 0; y < Rows; y++) {
@@ -447,53 +459,62 @@ INTN GetEmpty(EG_PIXEL *Ptr, EG_PIXEL *FirstPixel, INTN MaxWidth, INTN Step, INT
 
 #if USE_XTHEME
 INTN XTheme::RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
-                        IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
+                        IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType, float textScale)
 {
   const XStringW& UTF16Text = XStringW().takeValueFrom(Text.c_str());
-  return RenderText(UTF16Text, CompImage_ptr, PosX, PosY, Cursor, textType);
+  return RenderText(UTF16Text, CompImage_ptr, PosX, PosY, Cursor, textType, textScale);
 }
 
 INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
-                  IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType)
+                  IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType, float textScale)
 {
   XImage& CompImage = *CompImage_ptr;
 
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL    FontPixel;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL    FirstPixel;
-  INTN            TextLength;
-  INTN           Shift = 0;
-  UINTN           Cho = 0, Jong = 0, Joong = 0;
+  INTN           TextLength;
+  UINTN          Cho = 0, Jong = 0, Joong = 0;
   INTN           LeftSpace, RightSpace;
-  INTN            RealWidth = 0;
 
   if (TypeSVG) {
     return renderSVGtext(&CompImage, PosX, PosY, textType, Text, Cursor);
   }
 
+  if (textScale == 0.f) {
+    textScale = 1.f;
+  }
+  INTN CharScaledWidth = (INTN)(CharWidth * textScale);
+  INTN FontScaledWidth = (INTN)(FontWidth * textScale); //FontWidth should be scaled as well?
   // clip the text
-  TextLength = Text.size();
-  DBG("text to render %ls length %lld\n", Text.wc_str(), Text.size());
+//  TextLength = StrLenInWChar(Text.wc_str()); //it must be UTF16 length
+  TextLength = StrLen(Text.wc_str());
+  DBG("text to render %ls length %lld\n", Text.wc_str(), TextLength);
   if (FontImage.isEmpty()) {
     PrepareFont(); //at the boot screen there is embedded font
   }
 
-  //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
+    DBG("TextLength =%lld PosX=%lld PosY=%lld\n", TextLength, PosX, PosY);
   FirstPixel = CompImage.GetPixel(0,0);
   FontPixel  = FontImage.GetPixel(0,0);
-  UINT16 c0 = 0;
-  RealWidth = CharWidth;
+  UINT16 c0 = 0x20;
+  INTN RealWidth = CharScaledWidth;
+  INTN Shift = (FontScaledWidth - CharScaledWidth) / 2;
+  if (Shift < 0) {
+    Shift = 0;
+  }
     DBG("FontWidth=%lld, CharWidth=%lld\n", FontWidth, RealWidth);
-  EG_RECT Area;
+
+  EG_RECT Area; //area is scaled
   Area.YPos = PosY; // not sure
-  Area.Height = FontHeight;
-  EG_RECT Bukva;
+  Area.Height = TextHeight;
+  EG_RECT Bukva; //bukva is not scaled place
   Bukva.YPos = 0;
   Bukva.Width = FontWidth;
   Bukva.Height = FontHeight;
   DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
-  for (INTN i = 0; i < TextLength; i++) {
-    UINT16 c = Text[i];
-//    DBG("initial char to render 0x%x\n", c); //good
+  for (INTN i = 0; i < TextLength && c0 != 0; i++) {
+    UINT16 c = Text[i]; //including UTF8 -> UTF16 conversion
+    DBG("initial char to render 0x%x\n", c); //good
     if (gLanguage != korean) { //russian Codepage = 0x410
       if (c >= 0x410 && c < 0x450) {
         //we have russian raster fonts with chars at 0xC0
@@ -512,39 +533,41 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
         }
         if (c <= 0x20) { //new space will be half font width
           RightSpace = 1;
-          RealWidth = (FontWidth >> 1) + 1;
+          RealWidth = (CharScaledWidth >> 1) + 1;
         } else {
-          RightSpace = GetEmpty(FontImage, FontPixel, c * FontWidth, 1);
+          RightSpace = GetEmpty(FontImage, FontPixel, c * FontWidth, 1); //not scaled yet
           if (RightSpace >= FontWidth) {
             RightSpace = 0; //empty place for invisible characters
           }
-          RealWidth = FontWidth - RightSpace; //a part of char
+          RealWidth = CharScaledWidth - (int)(RightSpace * textScale); //a part of char
         }
-
       } else {
         LeftSpace = 2;
-        RightSpace = 0;
+        RightSpace = Shift;
       }
-//      DBG(" RealWidth =  %lld LeftSpace = %lld RightSpace = %lld\n", RealWidth, LeftSpace, RightSpace);
-      c0 = c; //old value
+      LeftSpace = (int)(LeftSpace * textScale); //was not scaled yet
+      //RightSpace will not be scaled
+      // RealWidth are scaled now
+     DBG(" RealWidth =  %lld LeftSpace = %lld RightSpace = %lld\n", RealWidth, LeftSpace, RightSpace);
+      c0 = c; //remember old value
       if (PosX + RealWidth  > CompImage.GetWidth()) {
-        //no more place for character
+        DBG("no more place for character\n");
         break;
       }
 
       Area.XPos = PosX + 2 - LeftSpace;
       Area.Width = RealWidth;
       Bukva.XPos = c * FontWidth + RightSpace;
-//      DBG("place [%lld,%lld,%lld,%lld], bukva [%lld,%lld,%lld,%lld]\n",
-//          Area.XPos, Area.YPos, Area.Width, Area.Height,
-//          Bukva.XPos, Bukva.YPos, Bukva.Width, Bukva.Height);
-      //    Bukva.YPos
-      CompImage.Compose(Area, Bukva, FontImage, false);
+      DBG("place [%lld,%lld,%lld,%lld], bukva [%lld,%lld,%lld,%lld]\n",
+          Area.XPos, Area.YPos, Area.Width, Area.Height,
+          Bukva.XPos, Bukva.YPos, Bukva.Width, Bukva.Height);
+
+      CompImage.Compose(Area, Bukva, FontImage, false, textScale);
 //      CompImage.CopyRect(FontImage, Area, Bukva);
       if (i == Cursor) {
         c = 0x5F;
         Bukva.XPos = c * FontWidth + RightSpace;
-        CompImage.Compose(Area, Bukva, FontImage, false);
+        CompImage.Compose(Area, Bukva, FontImage, false, textScale);
       }
       PosX += RealWidth - LeftSpace + 2; //next char position
     } else {
@@ -581,29 +604,29 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
       if (Shift == 18) {
         Bukva.XPos = Cho * FontWidth + 4;
         Bukva.YPos = 1;
-        CompImage.Compose(Area, Bukva, FontImage, false);
+        CompImage.Compose(Area, Bukva, FontImage, false, textScale);
       } else {
         Area.YPos = PosY + 3;
         Bukva.XPos = Cho * FontWidth + 2;
         Bukva.YPos = 0;
-        CompImage.Compose(Area, Bukva, FontImage, false);
+        CompImage.Compose(Area, Bukva, FontImage, false, textScale);
       }
       if (i == Cursor) {
         c = 99;
         Bukva.XPos = c * FontWidth + 2;
-        CompImage.Compose(Area, Bukva, FontImage, false);
+        CompImage.Compose(Area, Bukva, FontImage, false, textScale);
       }
       if (Shift == 18) {
         Area.XPos = PosX + 9;
         Area.YPos = PosY;
         Bukva.XPos = Joong * FontWidth + 6;
         Bukva.YPos = 0;
-        CompImage.Compose(Area, Bukva, FontImage, false);
+        CompImage.Compose(Area, Bukva, FontImage, false, textScale);
 
         Area.XPos = PosX;
         Area.YPos = PosY + 9;
         Bukva.XPos = Jong * FontWidth + 1;
-        CompImage.Compose(Area, Bukva, FontImage, false);
+        CompImage.Compose(Area, Bukva, FontImage, false, textScale);
       }
 
       PosX += CharWidth; //Shift;

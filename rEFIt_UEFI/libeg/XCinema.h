@@ -25,23 +25,30 @@ typedef struct FRAME {
 
 class FILM
 {
+public:
+  bool RunOnce;
 protected:
   INTN Id;  //enumeration value but keep it to be int for extensibility
   INTN FrameTime; //usually 50, 100, 200 ms
   XString Path; //user defined name for folder and files Path/Path_002.png etc
-  XArray<FRAME> Frames;
-  INTN Count; // it is not Frames.size(), it is last index
+  XObjArray<FRAME> Frames; //Frames can be not sorted
+  INTN LastIndex; // it is not Frames.size(), it is last index inclusive, so frames 0,1,2,5,8 be LastIndex = 8
+  EG_RECT FilmPlace;
+  INTN CurrentFrame; // like a static value will be increase between 0..LastIndex
 
 public:
   FILM();
-  FILM(INTN Id);
+  FILM(INTN Id) : RunOnce(false), Id(Id), FrameTime(0), Path(), Frames(),
+    LastIndex(0), FilmPlace(), CurrentFrame(0) {};
   ~FILM();
 
   const XImage& GetImage(INTN Index);
-  void AddImage(const XImage& Image, INTN Index);
+  void AddFrame(const FRAME& Frame, INTN Index);
   size_t Size() { return Frames.size(); }
-  INTN LastFrame() { return Count; }
+  INTN LastFrame() { return LastIndex; }
   void GetFilm(const XStringW& Path); //read from Theme
+  void SetPlace(const EG_RECT& Rect);
+  void Advance() { ++CurrentFrame %= (LastIndex + 1); }
   
 };
 
@@ -55,11 +62,17 @@ public:
 // Each Screen contains a pointer to FILM. And moreover titleFilm, or BackgroundFilm or even entryFilm
 // Next problem is a timeout between frames.
 // A theme contains images with indexes 1,2,5,6 for one Id.
-// This Id contains fixed timeout between frames
+// This Id contains fixed timeout between frames. Then next updateAnime Index will be compared with current tick
+// if yes then update. Static index?
+//
+// in the far future I'll plan to make dynamic SVG: parse SVGIcon with a variable argument
+// and then rasterize it. Real SVG contains constants only so it will be dynamicSVG.
+// then Entry->Image should be reparsed each time it created or contains flag to update every frameTime
+
 class XCinema
 {
   protected:
-  XArray<FILM> Cinema;
+  XObjArray<FILM> Cinema;
 
 
   public:

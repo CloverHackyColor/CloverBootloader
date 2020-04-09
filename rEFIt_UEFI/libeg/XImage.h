@@ -88,7 +88,7 @@ public:
   void CopyScaled(const XImage& Image, float scale);
   void CopyRect(const XImage& Image, INTN X, INTN Y);
   void CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_RECT& InputRect);
-  void Compose(const EG_RECT& OwnPlace, const EG_RECT& InputRect, const XImage& TopImage, bool Lowest);
+  void Compose(const EG_RECT& OwnPlace, const EG_RECT& InputRect, const XImage& TopImage, bool Lowest, float TopScale = 0.f);
   void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB();
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);

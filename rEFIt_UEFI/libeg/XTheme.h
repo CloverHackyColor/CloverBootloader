@@ -132,10 +132,10 @@ public:
   void PrepareFont();
   INTN GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel, INTN Start, INTN Step);
   INTN RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
-                    IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
+                    IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType, float textScale = 0.f);
   //overload for UTF8 text
   INTN RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
-                          IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
+                          IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType, float textScale = 0.f);
   VOID MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height);
 
 

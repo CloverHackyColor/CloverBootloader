@@ -1498,7 +1498,7 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
  * so make a place to be large enoungh
  */
   ThemeX.MeasureText(Text, &TextWidth, NULL); //NULL means we already know Height
-
+//  DBG("drawXY=%ls width=%lld\n", Text.wc_str(), TextWidth);
   if (XAlign == X_IS_LEFT) {
     TextWidth = UGAWidth - XPos - 1;
     XText = XPos;
@@ -2563,20 +2563,20 @@ VOID REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
       // Display Clover boot volume
       if (SelfVolume->VolLabel && SelfVolume->VolLabel[0] != L'#') {
    //     Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolLabel);
-        Text = XStringW() + gFirmwareRevision + L", booted from " + SelfVolume->VolLabel;
+        Text = XStringW() + gFirmwareRevision + L", booted from "_XSW + SelfVolume->VolLabel;
       }
       if (Text.isEmpty()) {
-        Text = XStringW() + gFirmwareRevision + L" " + SelfVolume->VolName;
+        Text = XStringW() + gFirmwareRevision + L" "_XSW + SelfVolume->VolName;
       }
       break;
     case TEXT_CORNER_HELP:
-      Text = XStringW() + L"F1:Help";
+      Text = L"F1:Help"_XSW;
       break;
     case TEXT_CORNER_OPTIMUS:
       if (gGraphics[0].Vendor != Intel) {
-        Text = XStringW() + L"Discrete";
+        Text = L"Discrete"_XSW;
       } else {
-        Text = XStringW() + L"Intel";
+        Text = L"Intel"_XSW;
       }
       //      Text = (NGFX == 2)?L"Intel":L"Discrete";
       break;
@@ -3171,10 +3171,13 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), textPosY);
       }
-
+//      DBG("draw TEXT_CORNER_HELP\n");
       DrawTextCorner(TEXT_CORNER_HELP, X_IS_LEFT);
+//      DBG("draw TEXT_CORNER_OPTIMUS\n");
       DrawTextCorner(TEXT_CORNER_OPTIMUS, X_IS_CENTER);
+//      DBG("draw TEXT_CORNER_REVISION\n");
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
+//      DBG("MouseBirth\n");
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
         DBG("can't bear mouse at all! Status=%s\n", strerror(Status));
