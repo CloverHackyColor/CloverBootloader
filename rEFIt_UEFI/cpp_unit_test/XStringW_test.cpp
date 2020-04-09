@@ -162,6 +162,16 @@ int XStringW_tests()
 #endif
 #endif
 
+	{
+		XStringW utf16;
+		utf16.takeValueFrom(L"Выход из подменю, обновление главного меню\n");
+		for ( size_t i = 0 ; i < utf16.length() ; i++ ) {
+			if ( utf16[i] != utf16.wc_str()[i] ) {
+				return 100;
+			}
+		}
+	}
+	
 //  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
 //  for (UINTN Index = 0; Index < 20; Index++) {
 //   XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";
