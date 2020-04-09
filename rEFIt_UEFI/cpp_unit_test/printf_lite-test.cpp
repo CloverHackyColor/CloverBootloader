@@ -8,7 +8,7 @@
 
 #include <Platform.h>
 #include <limits.h>
-#include "unicode_conversions.h"
+#include "../cpp_foundation/unicode_conversions.h"
 #include <printf_lite-test-cpp_conf.h>
 #include "printf_lite-test.h"
 #include <printf_lite-conf.h>

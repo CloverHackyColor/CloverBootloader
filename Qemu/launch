@@ -64,19 +64,20 @@ then
 
     set -m
 
+	cd "$SCRIPT_DIR"
 	/usr/local/bin/qemu-system-x86_64 \
-	    -L "$SCRIPT_DIR" \
+	    -L . \
 	    -m 2048 \
 	    -cpu core2duo \
-	    -bios "$SCRIPT_DIR"/bios.bin-1.13.0 \
+	    -bios ./bios.bin-1.13.0 \
 	    -machine q35 \
 	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 	    -device ahci,id=ahi \
-	    -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
+	    -drive format=raw,id=hda,file=./disk_image_gpt.img \
 	    -usb \
 	    -device usb-mouse,bus=usb-bus.0,port=2 \
 	    -device usb-kbd,bus=usb-bus.0,port=1 \
-		-serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
+		-serial file:./serial0_qemu_out.log \
 	    -gdb tcp::9000
 
 

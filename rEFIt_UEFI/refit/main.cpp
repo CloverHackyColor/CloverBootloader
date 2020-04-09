@@ -2080,7 +2080,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
   construct_globals_objects(); // do this after SelfLoadedImage is initialized
-//	all_tests();
+#ifdef JIEF_DEBUG
+  all_tests();
+#endif
 
   //dumping SETTING structure
   // if you change something in Platform.h, please uncomment and test that all offsets

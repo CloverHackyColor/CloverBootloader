@@ -15,7 +15,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <wchar.h>
-#include "../../../rEFIt_UEFI/cpp_unit_test/unicode_conversions.h"
+#include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
 #include "posix.h"
 #include "xcode_utf16.h"
 

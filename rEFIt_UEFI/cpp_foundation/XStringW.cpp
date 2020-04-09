@@ -119,9 +119,9 @@ const XStringW& XStringW::takeValueFrom(const wchar_t* S)
 
 const XStringW& XStringW::takeValueFrom(const char* S)
 {
-	xsize newLen = StrLenInWChar(S);
+	xsize newLen = utf8_string_wchar_count(S);
 	Init(newLen);
-	utf8ToWChar(m_data, m_allocatedSize+1, S); // m_size doesn't count the NULL terminator
+	wchar_string_from_utf8_string(m_data, m_allocatedSize+1, S); // m_size doesn't count the NULL terminator
 	SetLength(newLen);
 	return *this;
 }
