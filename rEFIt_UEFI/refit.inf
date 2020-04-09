@@ -223,8 +223,6 @@
   cpp_foundation/XStringW.h
   cpp_foundation/XStringWArray.cpp
   cpp_foundation/XStringWArray.h
-  cpp_foundation/XStringWP.cpp
-  cpp_foundation/XStringWP.h
   cpp_foundation/XToolsCommon.cpp
   cpp_foundation/XToolsCommon.h
 #  cpp_foundation/XUINTN.cpp

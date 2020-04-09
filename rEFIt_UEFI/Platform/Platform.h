@@ -92,7 +92,6 @@ extern "C" {
 #ifdef __cplusplus
 #include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringW.h"
-#include "../cpp_foundation/XStringWP.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_util/remove_ref.h"
