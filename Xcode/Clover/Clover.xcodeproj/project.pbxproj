@@ -1547,6 +1547,7 @@
 		A5AAFD6F237F13B4009CD413 /* DumpDynPcd.c in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFB06237F13B3009CD413 /* DumpDynPcd.c */; };
 		A5AAFD70237F13B4009CD413 /* VariableInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFB0B237F13B3009CD413 /* VariableInfo.c */; };
 		A5AAFD71237F13B4009CD413 /* SmiHandlerProfileInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFB10237F13B3009CD413 /* SmiHandlerProfileInfo.c */; };
+		A5C219B7243ED7AA00036F7B /* XCinema.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C219B5243ED7AA00036F7B /* XCinema.cpp */; };
 		A5D12C22243A0B6500DFA98A /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C20243A0B6400DFA98A /* LoadOptions_test.cpp */; };
 		A5D12C2C243A0B7900DFA98A /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C23243A0B7500DFA98A /* poolprint-test.cpp */; };
 		A5D12C2D243A0B7900DFA98A /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C26243A0B7700DFA98A /* printlib-test.cpp */; };
@@ -5954,6 +5955,8 @@
 		A5AAFFFD237F13BE009CD413 /* SwitchStack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SwitchStack.c; sourceTree = "<group>"; };
 		A5AAFFFE237F13BE009CD413 /* SetJumpLongJump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SetJumpLongJump.c; sourceTree = "<group>"; };
 		A5AAFFFF237F13BE009CD413 /* SpeculationBarrier.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SpeculationBarrier.c; sourceTree = "<group>"; };
+		A5C219B5243ED7AA00036F7B /* XCinema.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XCinema.cpp; sourceTree = "<group>"; };
+		A5C219B8243ED7EA00036F7B /* XCinema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCinema.h; sourceTree = "<group>"; };
 		A5D12C1C243A0B0B00DFA98A /* bootscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bootscreen.h; sourceTree = "<group>"; };
 		A5D12C1D243A0B1B00DFA98A /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		A5D12C1E243A0B2700DFA98A /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
@@ -6205,6 +6208,8 @@
 				A5D12C36243A0C2300DFA98A /* VectorGraphics.h */,
 				A571C28B240574D900B6A2C5 /* XImage.cpp */,
 				A571C28C240574D900B6A2C5 /* XImage.h */,
+				A5C219B5243ED7AA00036F7B /* XCinema.cpp */,
+				A5C219B8243ED7EA00036F7B /* XCinema.h */,
 				A570FB0B240D626C0057F26D /* XPointer.cpp */,
 				A570FB0C240D626D0057F26D /* XPointer.h */,
 				A57CF7B9241A8A12006DE51E /* XTheme.cpp */,
@@ -16566,6 +16571,7 @@
 				A5AAFD46237F13B4009CD413 /* GuidedSectionExtraction.c in Sources */,
 				A5AA04F1237F13C1009CD413 /* ReadDr6.nasm in Sources */,
 				A5AAFBA7237F13B3009CD413 /* regtrav.c in Sources */,
+				A5C219B7243ED7AA00036F7B /* XCinema.cpp in Sources */,
 				A5AA0613237F13C2009CD413 /* SynchronizationMsc.c in Sources */,
 				A5AA051D237F13C1009CD413 /* WriteDr0.nasm in Sources */,
 				A5AA074E237F13C3009CD413 /* IsZeroBuffer.nasm in Sources */,

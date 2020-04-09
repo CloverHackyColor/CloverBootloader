@@ -379,7 +379,7 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
  //   DBG("  first=%s\n", First.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
     //else search second name
-    Second = "os_"_XS + Full.SubString(Comma+1, Size - Comma - 1);
+    Second = "os_"_XS + Full.SubString(Comma + 1, Size - Comma - 1);
     //moreover names can be triple L"chrome,grub,linux"
     UINTN SecondComma = Second.IdxOf(',');
     if (Comma == MAX_XSIZE) {
