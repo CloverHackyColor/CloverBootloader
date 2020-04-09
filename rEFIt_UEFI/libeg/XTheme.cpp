@@ -861,9 +861,19 @@ void XTheme::InitBar()
 //TODO replace by some existing procedure
 VOID XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height)
 {
-  XImage TmpBuffer(Width, Height);
   //  TmpBuffer.CopyScaled(Background, 1.f);
   INTN X = XPos - (Width >> 1);  //X_IS_CENTRE
+  if (X < 0) {
+    X = 0;
+  }
+  if (X + Width > UGAWidth) {
+    Width = UGAWidth - X;
+  }
+  if (YPos + Height > UGAHeight) {
+    Height = UGAHeight - YPos;
+  }
+
+  XImage TmpBuffer(Width, Height);
   TmpBuffer.CopyRect(Background, X, YPos); //a part of BackGround image
   TmpBuffer.DrawWithoutCompose(X, YPos);
   //  TmpBuffer.Draw(X, YPos, 0, true);

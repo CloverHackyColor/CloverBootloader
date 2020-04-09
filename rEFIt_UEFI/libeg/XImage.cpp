@@ -562,6 +562,13 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
     return;
   }
 
+  if (x < 0) {
+    x = 0;
+  }
+  if (y < 0) {
+    y = 0;
+  }
+
   XImage Top(*this, scale); //can accept 0 as scale
   XImage Background(Width, Height);
   UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
@@ -569,32 +576,7 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
   Background.GetArea(x, y, AreaWidth, AreaHeight); //it will resize the Background image
   Background.Compose(0, 0, Top, Opaque);
   Background.DrawWithoutCompose(x, y);
-#if 0
-  // prepare protocols
-  EFI_STATUS Status;
-  EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
-  EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
-  EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
-  EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
-  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
-  if (EFI_ERROR(Status)) {
-    GraphicsOutput = NULL;
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (VOID **)&UgaDraw);
-    if (EFI_ERROR(Status))
-      UgaDraw = NULL;
-  }
-  //output combined image
-  if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput, Background.GetPixelPtr(0, 0),
-      EfiBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, AreaWidth*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
-  }
-  else if (UgaDraw != NULL) {
-    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Background.GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
-      0, 0, x, y, AreaWidth, AreaHeight, AreaWidth*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
-  }
-#endif
 }
 
 void XImage::DrawOnBack(INTN XPos, INTN YPos, const XImage& Plate)
