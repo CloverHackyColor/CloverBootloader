@@ -513,7 +513,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   Bukva.Height = FontHeight;
   DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
   for (INTN i = 0; i < TextLength && c0 != 0; i++) {
-    UINT16 c = Text[i]; //including UTF8 -> UTF16 conversion
+    UINT16 c = Text.wc_str()[i]; //including UTF8 -> UTF16 conversion
     DBG("initial char to render 0x%x\n", c); //good
     if (gLanguage != korean) { //russian Codepage = 0x410
       if (c >= 0x410 && c < 0x450) {

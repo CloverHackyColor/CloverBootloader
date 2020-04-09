@@ -53,8 +53,8 @@ DBG("Construteur\n");
 XStringW::XStringW(const XStringW &aString)
 {
 DBG("Constructor(const XStringW &aString) : %ls\n", aString.data());
-	Init(aString.length());
-	StrnCpy(aString.data(), aString.length());
+	Init(aString.size());
+	StrnCpy(aString.data(), aString.size());
 }
 //
 //XStringW::XStringW(const wchar_t *S)
@@ -200,9 +200,9 @@ void XStringW::StrnCat(const wchar_t *buf, UINTN len)
   UINTN NewLen;
 
 	if ( buf && *buf && len > 0 ) {
-		NewLen = length()+len;
+		NewLen = size()+len;
 		CheckSize(NewLen, 0);
-		memmove(_data(length()), buf, len*sizeof(wchar_t));
+		memmove(_data(size()), buf, len*sizeof(wchar_t));
 		SetLength(NewLen); /* data()[NewLen]=0 done in SetLength */
 	}
 }
@@ -216,15 +216,15 @@ void XStringW::StrCat(const wchar_t *buf)
 
 void XStringW::StrCat(const XStringW &uneXStringWW)
 {
-	StrnCat(uneXStringWW.data(), uneXStringWW.length());
+	StrnCat(uneXStringWW.data(), uneXStringWW.size());
 }
 
 void XStringW::Delete(UINTN pos, UINTN count)
 {
-	if ( pos < length() ) {
-		if ( count != MAX_XSIZE  &&  pos + count < length() ) {
-			memmove( _data(pos), data(pos+count), (length()-pos-count)*sizeof(wchar_t)); // memmove handles overlapping memory move
-			SetLength(length()-count);/* data()[length()-count]=0 done in SetLength */
+	if ( pos < size() ) {
+		if ( count != MAX_XSIZE  &&  pos + count < size() ) {
+			memmove( _data(pos), data(pos+count), (size()-pos-count)*sizeof(wchar_t)); // memmove handles overlapping memory move
+			SetLength(size()-count);/* data()[length()-count]=0 done in SetLength */
 		}else{
 			SetLength(pos);/* data()[pos]=0 done in SetLength */
 		}
@@ -233,11 +233,11 @@ void XStringW::Delete(UINTN pos, UINTN count)
 
 void XStringW::Insert(UINTN pos, const XStringW& Str)
 {
-	if ( pos < length() ) {
-		CheckSize(length()+Str.length());
-		memmove(_data(pos + Str.length()),  data(pos),  (length()-pos)*sizeof(wchar_t));
-		memmove(_data(pos), Str.data(), Str.length()*sizeof(wchar_t));
-		SetLength(length()+Str.length());
+	if ( pos < size() ) {
+		CheckSize(size()+Str.size());
+		memmove(_data(pos + Str.size()),  data(pos),  (size()-pos)*sizeof(wchar_t));
+		memmove(_data(pos), Str.data(), Str.size()*sizeof(wchar_t));
+		SetLength(size()+Str.size());
 	}else{
 		StrCat(Str);
 	}
@@ -319,7 +319,7 @@ XStringW XStringW::basename() const
 {
 	UINTN idx = RIdxOf(LPATH_SEPARATOR);
 	if ( idx == MAX_XSIZE ) return NullXStringW;
-	return SubString(idx+1, length()-idx-1);
+	return SubString(idx+1, size()-idx-1);
 }
 
 XStringW XStringW::dirname() const
@@ -331,7 +331,7 @@ XStringW XStringW::dirname() const
 
 XStringW XStringW::SubString(UINTN pos, UINTN count) const
 {
-	if ( count > length()-pos ) count = length()-pos;
+	if ( count > size()-pos ) count = size()-pos;
 	XStringW ret;
 	ret.StrnCat(&(data()[pos]), count);
 	return ret;
@@ -341,7 +341,7 @@ UINTN XStringW::IdxOf(wchar_t aChar, UINTN Pos) const
 {
   UINTN Idx;
 
-	for ( Idx=Pos ; Idx<length() ; Idx+=1 ) {
+	for ( Idx=Pos ; Idx<size() ; Idx+=1 ) {
         if ( data()[Idx] == aChar ) return Idx;
 	}
 	return MAX_XSIZE;
@@ -352,11 +352,11 @@ UINTN XStringW::IdxOf(const XStringW &S, UINTN Pos) const
   UINTN i;
   UINTN Idx;
 
-	if ( length() < S.length() ) return MAX_XSIZE;
-	for ( Idx=Pos ; Idx<=length()-S.length() ; Idx+=1 ) {
+	if ( size() < S.size() ) return MAX_XSIZE;
+	for ( Idx=Pos ; Idx<=size()-S.size() ; Idx+=1 ) {
 		i = 0;
-	    while( i<S.length()  &&  ( data()[Idx+i] - S[i] ) == 0 ) i += 1;
-		if ( i == S.length() ) return Idx;
+	    while( i<S.size()  &&  ( data()[Idx+i] - S._data(0)[i] ) == 0 ) i += 1;
+		if ( i == S.size() ) return Idx;
 	}
 	return MAX_XSIZE;
 }
@@ -365,7 +365,7 @@ UINTN XStringW::RIdxOf(const wchar_t charToSearch, UINTN Pos) const
 {
   UINTN Idx;
 
-	if ( Pos > length() ) Pos = length();
+	if ( Pos > size() ) Pos = size();
 	if ( Pos < 1 ) return MAX_XSIZE;
 	for ( Idx=Pos ; Idx-- > 0 ; ) {
 		if ( m_data[Idx] == charToSearch ) return Idx;
@@ -378,14 +378,14 @@ UINTN XStringW::RIdxOf(const XStringW &S, UINTN Pos) const
   UINTN i;
   UINTN Idx;
 
-	if ( S.length() == 0 ) return MAX_XSIZE;
-	if ( Pos > length() ) Pos = length();
-	if ( Pos < S.length() ) return MAX_XSIZE;
-	Pos -= S.length();
+	if ( S.size() == 0 ) return MAX_XSIZE;
+	if ( Pos > size() ) Pos = size();
+	if ( Pos < S.size() ) return MAX_XSIZE;
+	Pos -= S.size();
 	for ( Idx=Pos+1 ; Idx-- > 0 ; ) {
 		i = 0;
-		while( i<S.length()  &&  data()[Idx+i] == S[i] ) i += 1;
-		if ( i == S.length() ) return Idx;
+		while( i<S.size()  &&  data()[Idx+i] == S._data(0)[i] ) i += 1;
+		if ( i == S.size() ) return Idx;
 	}
 	return MAX_XSIZE;
 }
@@ -409,10 +409,10 @@ bool XStringW::IsDigits(UINTN pos, UINTN count) const
   const wchar_t *p;
   const wchar_t *q;
 
-	if ( pos >= length() ) {
+	if ( pos >= size() ) {
 		return false;
 	}
-	if ( pos+count > length() ) {
+	if ( pos+count > size() ) {
 		return false;
 	}
 	p = data() + pos;
@@ -429,8 +429,8 @@ void XStringW::RemoveLastEspCtrl()
 {
   wchar_t *p;
 
-	if ( length() > 0 ) {
-		p = _data(0) + length() - 1;
+	if ( size() > 0 ) {
+		p = _data(0) + size() - 1;
 		if ( *p >= 0 && *p <= ' ' ) {
 			p -= 1;
 			while ( p>data() && *p >= 0 && *p <= ' ' ) p -= 1;
@@ -480,7 +480,7 @@ void XStringW::RemoveLastEspCtrl()
 const XStringW &XStringW::operator =(const XStringW &aString)
 {
 //TRACE("Operator =const XStringW&\n");
-	StrnCpy(aString.data(), aString.length());
+	StrnCpy(aString.data(), aString.size());
 	return *this;
 }
 
@@ -521,7 +521,7 @@ const XStringW &XStringW::operator +=(wchar_t aChar)
 const XStringW &XStringW::operator +=(const XStringW &aString)
 {
 //TRACE("Operator +=const XStringW&\n");
-	StrnCat(aString.data(), aString.length());
+	StrnCat(aString.data(), aString.size());
 	return *this;
 }
 
@@ -572,9 +572,9 @@ XStringW CleanCtrl(const XStringW &S)
   XStringW ReturnValue;
   UINTN i;
 
-	for ( i=0 ; i<S.length() ; i+=1 ) {
-		if ( S[i] >=0  &&  S[i] < ' ' ) ReturnValue += 'x'; /* wchar_t are signed !!! */
-		else ReturnValue += S[i];
+	for ( i=0 ; i<S.size() ; i+=1 ) {
+		if ( S.wc_str()[i] >=0  &&  S.wc_str()[i] < ' ' ) ReturnValue += 'x'; /* wchar_t are signed !!! */
+		else ReturnValue += S.wc_str()[i];
 	}
 	return ReturnValue;
 }

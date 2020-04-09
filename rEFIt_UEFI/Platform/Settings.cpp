@@ -7495,7 +7495,7 @@ GetUserSettings(
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
 #if USE_XTHEME
-    if (gThemeChanged && ThemeX.Theme) {
+    if (gThemeChanged && ThemeX.Theme.notEmpty()) {
       DictPointer = GetProperty (Dict, "GUI");
       if (DictPointer != NULL) {
         Prop = GetProperty (DictPointer, "Theme");

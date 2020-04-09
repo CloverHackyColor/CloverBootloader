@@ -60,7 +60,7 @@ public:
 	wchar_t* dataSized(xisize i, xsize sizeMin, xsize nGrowBy=XStringWGrowByDefault) { if ( i<0 ) panic("wchar_t* dataSized(xisize i, xsize sizeMin, xsize nGrowBy) -> i < 0"); CheckSize((xsize)i+sizeMin, nGrowBy); return _data(i); }
 	wchar_t* forgetDataWithoutFreeing();
 
-	xsize length() const { return m_len; }
+//	xsize length() const { return m_len; }
 	xsize size() const { return m_len; }
 	xsize sizeInBytes() const { return m_len*sizeof(wchar_t); }
 	xsize allocatedSize() const { return m_allocatedSize; }
@@ -70,11 +70,10 @@ public:
 	/* Empty ? */
 	void setEmpty() { m_len = 0; }
 	bool isEmpty() const { return size() == 0; }
-//	bool IsNull() const { return size() == 0 ; }
-//	bool NotNull() const { return size() > 0 ; }
+	bool notEmpty() const { return !isEmpty(); }
 
 	/* Cast */
-	operator const wchar_t *() const { return data(); }
+//	operator const wchar_t *() const { return data(); }
 
 	#if defined(__APPLE__) && defined(__OBJC__)
 		operator NSString*() const { return [[[NSString alloc] initWithBytes:data() length:length()*sizeof(wchar_t) encoding:NSUTF32LittleEndianStringEncoding] autorelease]; }
@@ -85,23 +84,23 @@ public:
 	
 //	XString mbs() const;
 
-	/* wchar_t [] */
-	wchar_t operator [](int i) const { return *_data(i); }
-	wchar_t operator [](unsigned int ui) const { return *_data(ui); }
-	wchar_t operator [](long i) const { return *_data(i); }
-	wchar_t operator [](unsigned long ui) const { return *_data(ui); }
-	wchar_t operator [](xisize i) const { return *data(i); }
-	wchar_t operator [](xsize ui) const { return *data(ui); }
+//	/* wchar_t [] */
+//	wchar_t operator [](int i) const { return *_data(i); }
+//	wchar_t operator [](unsigned int ui) const { return *_data(ui); }
+//	wchar_t operator [](long i) const { return *_data(i); }
+//	wchar_t operator [](unsigned long ui) const { return *_data(ui); }
+//	wchar_t operator [](xisize i) const { return *data(i); }
+//	wchar_t operator [](xsize ui) const { return *data(ui); }
+//
+//	/* wchar_t& [] */
+//	wchar_t& operator [](int i) { return *_data(i); }
+//	wchar_t& operator [](unsigned int ui) { return *_data(ui); }
+//	wchar_t& operator [](long i) { return *_data(i); }
+//	wchar_t& operator [](unsigned long ui) { return *_data(ui); }
+//	wchar_t& operator [](xisize i) { return *_data(i); }
+//	wchar_t& operator [](xsize ui) { return *_data(ui); }
 
-	/* wchar_t& [] */
-	wchar_t& operator [](int i) { return *_data(i); }
-	wchar_t& operator [](unsigned int ui) { return *_data(ui); }
-	wchar_t& operator [](long i) { return *_data(i); }
-	wchar_t& operator [](unsigned long ui) { return *_data(ui); }
-	wchar_t& operator [](xisize i) { return *_data(i); }
-	wchar_t& operator [](xsize ui) { return *_data(ui); }
-
-	wchar_t LastChar() const { if ( length() > 0 ) return data()[length()-1]; else return 0; }
+	wchar_t LastChar() const { if ( size() > 0 ) return data()[size()-1]; else return 0; }
 	void RemoveLastEspCtrl();
 
 	void SetNull() { SetLength(0); };
@@ -147,7 +146,7 @@ public:
 	void Replace(wchar_t c1, wchar_t c2);
 	XStringW SubStringReplace(wchar_t c1, wchar_t c2);
 
-	int Compare(const wchar_t* S) const { return (int)memcmp(data(), S, min(wcslen(S), length())*sizeof(wchar_t)); }
+	int Compare(const wchar_t* S) const { return (int)memcmp(data(), S, min(wcslen(S), size())*sizeof(wchar_t)); }
 
 	bool Equal(const wchar_t* S) const { return Compare(S) == 0; };
   bool BeginingEqual(const wchar_t* S) const { return (memcmp(data(), S, wcslen(S)) == 0); }
@@ -178,27 +177,27 @@ public:
 
 
 	// == operator
-	friend bool operator == (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2) == 0; }
+	friend bool operator == (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2._data(0)) == 0; }
 	friend bool operator == (const XStringW& s1,        const wchar_t* s2  )        { return s1.Compare(s2) == 0; }
 	friend bool operator == (const wchar_t* s1,            const XStringW& s2)      { return s2.Compare(s1) == 0; }
 
-	friend bool operator != (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2) != 0; }
+	friend bool operator != (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2._data(0)) != 0; }
 	friend bool operator != (const XStringW& s1,        const wchar_t* s2  )        { return s1.Compare(s2) != 0; }
 	friend bool operator != (const wchar_t* s1,            const XStringW& s2)      { return s2.Compare(s1) != 0; }
 
-	friend bool operator <  (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2) < 0; }
+	friend bool operator <  (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) < 0; }
 	friend bool operator <  (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) < 0; }
 	friend bool operator <  (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) > 0; }
 
-	friend bool operator >  (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2) > 0; }
+	friend bool operator >  (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) > 0; }
 	friend bool operator >  (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) > 0; }
 	friend bool operator >  (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) < 0; }
 
-	friend bool operator <= (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2) <= 0; }
+	friend bool operator <= (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) <= 0; }
 	friend bool operator <= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) <= 0; }
 	friend bool operator <= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) >= 0; }
 
-	friend bool operator >= (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2) >= 0; }
+	friend bool operator >= (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) >= 0; }
 	friend bool operator >= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) >= 0; }
 	friend bool operator >= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) <= 0; }
 

@@ -78,7 +78,7 @@
 //#if USE_XTHEME
 //REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 //#else
-REFIT_MENU_SCREEN OptionMenu(4, L"Options", L""_XSW);
+REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 //#endif
 
 //
