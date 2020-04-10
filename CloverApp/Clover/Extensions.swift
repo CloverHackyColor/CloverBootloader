@@ -33,7 +33,9 @@ extension String {
   
   /// - returns: A  quoted string for nvram
   var nvramString: String {
-    return "'\(self)'"
+    get {
+      return "'\(self)'"
+    }
   }
   
   
@@ -44,7 +46,9 @@ extension String {
   
   /// - returns: only digits contained from the given string
   var keepNumericsOnly: String {
-    return self.components(separatedBy: CharacterSet(charactersIn: "0123456789").inverted).joined(separator: "")
+    get {
+      return self.components(separatedBy: CharacterSet(charactersIn: "0123456789").inverted).joined(separator: "")
+    }
   }
   
   //: ### Base64 encoding a string
@@ -84,19 +88,27 @@ extension String {
   }
   
   var lastPath: String {
-    return (self as NSString).lastPathComponent
+    get {
+      return (self as NSString).lastPathComponent
+    }
   }
   
   var fileExtension: String {
-    return (self as NSString).pathExtension
+    get {
+      return (self as NSString).pathExtension
+    }
   }
   
   var deletingLastPath: String {
-    return (self as NSString).deletingLastPathComponent
+    get {
+      return (self as NSString).deletingLastPathComponent
+    }
   }
   
   var deletingFileExtension: String {
-    return (self as NSString).deletingPathExtension
+    get {
+      return (self as NSString).deletingPathExtension
+    }
   }
   
   var componentsPath: [String] {
@@ -209,38 +221,48 @@ extension String {
 
 extension NSNumber {
   var hexString: String {
-    if (self.intValue > 0xFFFF) {
-      return String(format: "0x%08llx", self.intValue)
-    } else {
-      return String(format: "0x%04llx", self.intValue)
+    get {
+      if (self.intValue > 0xFFFF) {
+        return String(format: "0x%08llx", self.intValue)
+      } else {
+        return String(format: "0x%04llx", self.intValue)
+      }
     }
   }
 }
 
 extension Int {
   var data: Data {
-    var num = self
-    return Data(bytes: &num, count: MemoryLayout<Int>.size)
+    get {
+      var num = self
+      return Data(bytes: &num, count: MemoryLayout<Int>.size)
+    }
   }
 }
 
 extension UInt8 {
   var data: Data {
-    var num = self
-    return Data(bytes: &num, count: MemoryLayout<UInt8>.size)
+    get {
+      var num = self
+      return Data(bytes: &num, count: MemoryLayout<UInt8>.size)
+    }
   }
 }
 extension UInt16 {
   var data: Data {
-    var num = self
-    return Data(bytes: &num, count: MemoryLayout<UInt16>.size)
+    get {
+      var num = self
+      return Data(bytes: &num, count: MemoryLayout<UInt16>.size)
+    }
   }
 }
 
 extension UInt32 {
   var data: Data {
-    var num = self
-    return Data(bytes: &num, count: MemoryLayout<UInt32>.size)
+    get {
+      var num = self
+      return Data(bytes: &num, count: MemoryLayout<UInt32>.size)
+    }
   }
 }
 
@@ -255,12 +277,14 @@ extension Data {
   }
   
   var sha1: String {
-    var h = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
-    
-    self.withUnsafeBytes {
-      _ = CC_SHA1($0.baseAddress, CC_LONG(self.count), &h)
+    get {
+      var h = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+      
+      self.withUnsafeBytes {
+        _ = CC_SHA1($0.baseAddress, CC_LONG(self.count), &h)
+      }
+      return Data(h).hexadecimal()
     }
-    return Data(h).hexadecimal()
   }
   
   func castToCPointer<T>() -> T {
@@ -318,7 +342,6 @@ extension URL {
   
   /// Set extended attribute.
   func setExtendedAttribute(data: Data, forName name: String) throws {
-    
     try self.withUnsafeFileSystemRepresentation { fileSystemPath in
       let result = data.withUnsafeBytes {
         setxattr(fileSystemPath, name, $0.baseAddress, data.count, 0, 0)
@@ -395,7 +418,11 @@ extension io_object_t {
 }
 
 extension NSBitmapImageRep {
-  var png: Data? { representation(using: .png, properties: [:]) }
+  var png: Data? {
+    get {
+      representation(using: .png, properties: [:])
+    }
+  }
 }
 
 extension NSView {

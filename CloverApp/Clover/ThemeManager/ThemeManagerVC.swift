@@ -67,7 +67,7 @@ NSComboBoxDataSource {
     }
     self.loaded = true
     
-    
+
     self.view.window?.title = self.view.window!.title.locale
     let settingVC = AppSD.settingsWC?.contentViewController as? SettingsViewController
     settingVC?.themeUserCBox.isEnabled = false
@@ -341,6 +341,7 @@ NSComboBoxDataSource {
   }
   
   func showIndexing() {
+    self.webView.drawsBackground = true
     // https://www.w3schools.com/howto/howto_css_loader.asp
     self.webView.mainFrame.loadHTMLString("""
       <html>
@@ -578,6 +579,7 @@ NSComboBoxDataSource {
   }
   
   func tableViewSelectionDidChange(_ notification: Notification) {
+    self.webView.drawsBackground = false
     if self.isBusy {
       NSSound.beep()
       return
