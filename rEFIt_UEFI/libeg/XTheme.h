@@ -124,6 +124,7 @@ public:
 //  const XImage& GetIcon(const CHAR16* Name);
   const XImage& GetIcon(const XString& Name);  //get by name
   const XImage& GetIcon(INTN Id); //get by id
+  const XImage& GetIconAlt(INTN Id, INTN Alt); //if id not found
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XImage& LoadOSIcon(const XString& Full);
 
