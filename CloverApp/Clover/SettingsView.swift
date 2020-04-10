@@ -153,9 +153,12 @@ final class SettingsViewController:
       self.themeRepoField.placeholderString = kDefaultThemeRepo
     }
     
+    
+    let authors = ["CloverHackyColor", "badruzeus", "HelmoHass"]
     self.themeUserCBox.removeAllItems()
+    self.themeUserCBox.addItems(withObjectValues: authors)
+    self.themeUserCBox.numberOfVisibleItems = authors.count
     self.themeUserCBox.completes = true
-    self.themeUserCBox.addItems(withObjectValues: ["CloverHackyColor", "HelmoHass"])
     
     let themeManagerIndexDir = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex/\(AppSD.themeUser)_\(AppSD.themeRepo)")
     

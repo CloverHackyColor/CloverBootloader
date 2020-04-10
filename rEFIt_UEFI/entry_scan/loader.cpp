@@ -1240,7 +1240,7 @@ VOID ScanLoader(VOID)
             XImage ImageX;
             ImageX.LoadXImage(ThemeX.ThemeDir, AndroidEntryData[Index].Icon);
             AddLoaderEntry(AndroidEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
-                           &ImageX, OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+                           (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
           }
         }
       }
@@ -1253,7 +1253,7 @@ VOID ScanLoader(VOID)
         XImage ImageX;
         ImageX.LoadXImage(ThemeX.ThemeDir, LinuxEntryData[Index].Icon);
         AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
-                       &ImageX, OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+                       (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
       }
       // check for linux kernels
       PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
