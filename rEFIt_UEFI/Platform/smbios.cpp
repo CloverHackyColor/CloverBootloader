@@ -20,6 +20,11 @@
  **/
 
 #include "Platform.h"
+#ifdef __cplusplus
+extern "C" {
+#include <Library/PrintLib.h>
+}
+#endif
 
 #ifndef DEBUG_ALL
 #define DEBUG_SMBIOS 1
@@ -909,7 +914,7 @@ VOID PatchTableType4()
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->AssetTag, BrandStr); //like mac
     // looks to be MicroCode revision
     if(gCPUStructure.MicroCode > 0){
-		snprintf(BrandStr, 20, "%llX", gCPUStructure.MicroCode);
+		AsciiSPrint(BrandStr, 20, "%X", gCPUStructure.MicroCode);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
     }
 
@@ -1092,9 +1097,9 @@ VOID PatchTableType11()
   //AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.RomVersion, iStrLen(gSettings.RomVersion, 64));
   //  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
   //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
-  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  Board-ID       : ");
+  AsciiStrCatS(OEMString, MAX_OEM_STRING, "  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
-	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %ls\n", gFirmwareRevision);
+	AsciiSPrint(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %s\n", gFirmwareRevision);
   AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
 
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
@@ -1343,14 +1348,19 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->DeviceSet = bank + 1;
       newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
       if (isMacPro) {
-        snprintf(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
+        AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
       } else {
-        snprintf(deviceLocator, 10, "DIMM%d", bank);
-		  snprintf(bankLocator, 10, "BANK %llu", Index % channels);
+        AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
+		  AsciiSPrint(bankLocator, 10, "BANK %llu", Index % channels);
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CONST CHAR8*)&bankLocator[0]);
       }
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CONST CHAR8*)&deviceLocator[0]);
       if ((gRAM.User[UserIndex].InUse) && (gRAM.User[UserIndex].ModuleSize > 0)) {
+        DBG("user SMBIOS data:\n");
+        DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.User[UserIndex].Vendor);
+        DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.User[UserIndex].SerialNo);
+        DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.User[UserIndex].PartNo);
+
         if (iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.User[UserIndex].Vendor);
         } else {
@@ -1574,28 +1584,33 @@ VOID PatchTableType17()
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
-    SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
+    SmbiosTable = GetSmbiosTableFromType(EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse && (SmbiosTable.Raw != NULL)) {
+      DBG("trusted SMBIOS data:\n");
+      DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
+      DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+      DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
+
       TableSize = SmbiosTableLength(SmbiosTable);
       CopyMem((VOID*)newSmbiosTable.Type17, (VOID *)SmbiosTable.Type17, TableSize);
       newSmbiosTable.Type17->AssetTag = 0;
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
-        snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].Vendor);
+        AsciiSPrint(gSettings.MemoryManufacturer, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       } else {
         //        newSmbiosTable.Type17->Manufacturer = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
-        snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+        AsciiSPrint(gSettings.MemorySerialNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
       } else {
         //        newSmbiosTable.Type17->SerialNumber = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
-		  snprintf(gSettings.MemoryPartNumber, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].PartNo);
+        AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].PartNo);
         DBG(" partNum=%s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
         //       newSmbiosTable.Type17->PartNumber = 0;
@@ -1617,21 +1632,26 @@ VOID PatchTableType17()
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 
     if (gRAM.SPD[SPDIndex].InUse) {
+      DBG("SPD data in use:\n");
+      DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SPD[SPDIndex].Vendor);
+      DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SPD[SPDIndex].SerialNo);
+      DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SPD[SPDIndex].PartNo);
+
       if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
-        snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SPD[SPDIndex].Vendor);
+        AsciiSPrint(gSettings.MemoryManufacturer, 64, "%a", gRAM.SPD[SPDIndex].Vendor);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
       if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
-		  snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SPD[SPDIndex].SerialNo);
+        AsciiSPrint(gSettings.MemorySerialNumber, 64, "%a", gRAM.SPD[SPDIndex].SerialNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
       if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
-		  snprintf(gSettings.MemoryPartNumber, 64, "%s", gRAM.SPD[SPDIndex].PartNo);
+		  AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SPD[SPDIndex].PartNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
       }
@@ -1660,7 +1680,7 @@ VOID PatchTableType17()
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
     }
 
-    snprintf(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
+    AsciiSPrint(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
 
     // Assume DDR3 unless explicitly set to DDR2/DDR/DDR4
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
@@ -1671,12 +1691,12 @@ VOID PatchTableType17()
 
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
-      snprintf(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
-//      snprintf(bankLocator, 10, "");
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
+//      AsciiSPrint(bankLocator, 10, "");
       bankLocator[0] = 0;
     } else {
-      snprintf(deviceLocator, 10, "DIMM%d", bank);
-		snprintf(bankLocator, 10, "BANK %llu", Index % channels);
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
+		AsciiSPrint(bankLocator, 10, "BANK %d", Index % channels);
     }
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CONST CHAR8*)&deviceLocator[0]);
     if (isMacPro) {

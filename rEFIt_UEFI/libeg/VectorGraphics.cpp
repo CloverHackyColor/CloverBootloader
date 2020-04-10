@@ -756,7 +756,7 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   XString XFrameName("frame_"_XS);
   //TODO if extend SVG syntax then we can use dynamic SVG with parameter Frame
   // for example use variable instead of constant like javascript
-  XFrameName += SPrintf("%lld", i+1);
+  XFrameName += SPrintf("%04lld", i+1); //I need exactly 4 symbols with leading zero
 //  printf(FrameName, 63, "frame_%lld", i+1);
 
   Status = ThemeX.ParseSVGXIcon(mainParser, BUILTIN_ICON_ANIME, XFrameName, &XFrame);
@@ -773,7 +773,7 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   CHAR8 FrameName[64];
   //TODO if extend SVG syntax then we can use dynamic SVG with parameter Frame
   // for example use variable instead of constant like javascript
-  snprintf(FrameName, 63, "frame_%lld", i+1);
+  AsciiSPrint(FrameName, 63, "frame_%04d", i+1); //we need exact number of digits which snprintf not provided
   Status = ParseSVGIcon(mainParser, BUILTIN_ICON_ANIME, FrameName, GlobalConfig.Scale, &Frame);
   if (EFI_ERROR(Status)) {
     DBG("icon '%s' not loaded, status=%s\n", FrameName, strerror(Status));

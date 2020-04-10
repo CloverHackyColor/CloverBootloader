@@ -36,6 +36,7 @@ extern "C" {
 #include <Library/HdaModels.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
+#include <Library/PrintLib.h>
 #include <Library/PerformanceLib.h>
 #include <Library/PeCoffGetEntryPointLib.h>
 #include <Library/TimerLib.h>

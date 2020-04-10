@@ -1068,7 +1068,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
   if (!acpi_cpu_count) {
     for (i=0; i < acpi_cpu_max; i++) {
       acpi_cpu_name[i] = (__typeof_am__(acpi_cpu_name[i]))AllocateZeroPool(5);
-      snprintf(acpi_cpu_name[i], 5, "CPU%1X", i);
+      AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1x", i);
       acpi_cpu_processor_id[i] = (UINT8)(i & 0x7F);
     }
   }
@@ -2438,7 +2438,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, dataLPC, 4);
-  snprintf(NameCard, sizeof(NameCard), "pci8086,3a18");
+  AsciiSPrint(NameCard, sizeof(NameCard), "pci8086,3a18");
   aml_add_string(pack, "name");
   aml_add_string_buffer(pack, &NameCard[0]);
   aml_add_string(pack, "compatible");
@@ -2961,7 +2961,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   if (gSettings.FakeLAN) {
     FakeID = gSettings.FakeLAN >> 16;
     FakeVen = gSettings.FakeLAN & 0xFFFF;
-    snprintf(NameCard, 32, "pci%X,%X", FakeVen, FakeID);
+    AsciiSPrint(NameCard, 32, "pci%04x,%04x", FakeVen, FakeID);
     LowCase(NameCard);
     Netmodel[card] = get_net_model((FakeVen << 16) + FakeID);
   }
@@ -3164,7 +3164,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   if (gSettings.FakeWIFI) {
     FakeID = gSettings.FakeWIFI >> 16;
     FakeVen = gSettings.FakeWIFI & 0xFFFF;
-    snprintf(NameCard, 32, "pci%X,%X", FakeVen, FakeID);
+    AsciiSPrint(NameCard, 32, "pci%04x,%04x", FakeVen, FakeID);
     LowCase(NameCard);
   }
 
@@ -4081,18 +4081,18 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                     USBADR[i], USBADR2[i], k, device_name[10]);
                 if (USB30[i]) {
                   if (gSettings.NameXH00) {
-					  snprintf(UsbName[i], 5, "XH%02llX", XhciCount++);
+                    AsciiSPrint(UsbName[i], 5, "XH%02x", XhciCount++);
                   } else {
-					  snprintf(UsbName[i], 5, "XHC%01llX", XhciCount++);
+                    AsciiSPrint(UsbName[i], 5, "XHC%01x", XhciCount++);
                   }
                 } else if (USB20[i]) {
                   if (gSettings.NameEH00) {
-					  snprintf(UsbName[i], 5, "EH%02llX", EhciCount++);
+                    AsciiSPrint(UsbName[i], 5, "EH%02x", EhciCount++);
                   } else {
-					  snprintf(UsbName[i], 5, "EHC%01llX", EhciCount++);
+                    AsciiSPrint(UsbName[i], 5, "EHC%01x", EhciCount++);
                   }
                 } else {
-                  snprintf(UsbName[i], 5, "USB%d", i);
+                  AsciiSPrint(UsbName[i], 5, "USB%01d", i);
                 }
                 DBG(" %s\n", UsbName[i]);
                 ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);

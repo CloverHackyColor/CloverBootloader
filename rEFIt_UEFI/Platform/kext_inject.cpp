@@ -843,7 +843,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
       mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DeviceTreeNodeProperty));
       mm->paddr = (UINT32)KextBase;
       mm->length = KextEntry->kext.length;
-		snprintf(prop->Name, 31, "Driver-%llX", KextBase);
+      AsciiSPrint(prop->Name, 31, "Driver-%x", KextBase);
 
       drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
       KextBase = RoundPage(KextBase + KextEntry->kext.length);

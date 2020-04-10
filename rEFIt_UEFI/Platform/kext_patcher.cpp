@@ -284,15 +284,15 @@ VOID ATIConnectorsPatchInit(LOADER_ENTRY *Entry)
   //
   
   // Lion, SnowLeo 10.6.7 2011 MBP
-  snprintf(ATIKextBundleId[0],
+  AsciiSPrint(ATIKextBundleId[0],
               sizeof(ATIKextBundleId[0]),
-		   "com.apple.kext.ATI%lsController",
+		   "com.apple.kext.ATI%aController",
               Entry->KernelAndKextPatches->KPATIConnectorsController
               );
   // ML
-  snprintf(ATIKextBundleId[1],
+  AsciiSPrint(ATIKextBundleId[1],
               sizeof(ATIKextBundleId[1]),
-		   "com.apple.kext.AMD%lsController",
+		   "com.apple.kext.AMD%aController",
               Entry->KernelAndKextPatches->KPATIConnectorsController
               );
   

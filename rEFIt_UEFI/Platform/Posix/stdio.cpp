@@ -49,6 +49,7 @@ const char* strerror(EFI_STATUS Status)
 	return stdio_static_buf.data();
 }
 
+//this function print guid in LittleEndian format while we need BigEndian as Apple do
 const char* strguid(EFI_GUID* guid)
 {
 	UINTN n = 0;
