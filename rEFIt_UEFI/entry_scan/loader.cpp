@@ -426,7 +426,6 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   }
   return Status;
 }
-#if USE_XTHEME
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                        IN CONST XString& LoaderOptions,
                                        IN CONST XStringW& FullTitle,
@@ -442,25 +441,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                        IN EG_IMAGE *CustomLogo,
                                        IN KERNEL_AND_KEXT_PATCHES *Patches,
                                        IN BOOLEAN CustomEntry)
-
-#else
-
-STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
-                                       IN CONST XString& LoaderOptions,
-                                       IN CONST CHAR16 *FullTitle,
-                                       IN CONST CHAR16 *LoaderTitle,
-                                       IN REFIT_VOLUME *Volume,
-                                       IN EG_IMAGE *Image,
-                                       IN EG_IMAGE *DriveImage,
-                                       IN UINT8 OSType,
-                                       IN UINT8 Flags,
-                                       IN CHAR16 Hotkey,
-                                       EG_PIXEL *BootBgColor,
-                                       IN UINT8 CustomBoot,
-                                       IN EG_IMAGE *CustomLogo,
-                                       IN KERNEL_AND_KEXT_PATCHES *Patches,
-                                       IN BOOLEAN CustomEntry)
-#endif
 {
   EFI_DEVICE_PATH *LoaderDevicePath;
   CONST CHAR16          *LoaderDevicePathString;
@@ -683,8 +663,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       break;
   }
 
-#if USE_XTHEME
-
   Entry->Title = FullTitle;
   if (Entry->Title.isEmpty()  &&  Volume->VolLabel != NULL) {
     if (Volume->VolLabel[0] == L'#') {
@@ -695,22 +673,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   }
 
   BOOLEAN BootCampStyle = ThemeX.BootCampStyle;
-#else
-  if (FullTitle) {
-    Entry->Title.takeValueFrom(FullTitle);
-  }
-  if ( Entry->Title.isEmpty()  &&  Volume->VolLabel != NULL ) {
-    if ( Volume->VolLabel[0] == L'#' ) {
-      Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel+1);
-    }else{
-      Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath), Volume->VolLabel);
-    }
-  }
 
-  BOOLEAN BootCampStyle = GlobalConfig.BootCampStyle;
-#endif
-
-#if USE_XTHEME
   if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
     //DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
     if (BootCampStyle) {
@@ -741,30 +704,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                             Entry->VolName);
     }
   }
-#else
-  if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
-    //DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
-    if (BootCampStyle) {
-      Entry->Title.takeValueFrom(((LoaderTitle != NULL) ? LoaderTitle : Basename(Volume->DevicePathString)));
-    } else {
-      Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
-                                    Basename(Volume->DevicePathString));
-    }
-  }
-  if ( Entry->Title.isEmpty() ) {
-    //DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n", LoaderTitle, Entry->VolName);
-    if (BootCampStyle) {
-      if ((StriCmp(LoaderTitle, L"macOS") == 0) || (StriCmp(LoaderTitle, L"Recovery") == 0)) {
-        Entry->Title.takeValueFrom(Entry->VolName);
-      } else {
-        Entry->Title.takeValueFrom((LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath));
-      }
-    } else {
-      Entry->Title.SWPrintf("Boot %ls from %ls", (LoaderTitle != NULL) ? LoaderTitle : Basename(LoaderPath),
-                                    Entry->VolName);
-    }
-  }
-#endif
   //DBG("Entry->Title =%ls\n", Entry->Title);
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
@@ -775,7 +714,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
   // get custom volume icon if present
-#if USE_XTHEME
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
     Entry->Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     DBG("using VolumeIcon.icns image from Volume\n");
@@ -790,22 +728,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   } else {
     Entry->DriveImage = ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
   }
-#else
-  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
-    Entry->Image = LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
-    DBG("using VolumeIcon.icns image from Volume\n");
-  } else if (Image) {
-    Entry->Image = Image;
-  } else {
-    Entry->Image = LoadOSIcon(OSIconName, L"unknown", 128, FALSE, TRUE);
-  }
-  // Load DriveImage
-  Entry->DriveImage = (DriveImage != NULL) ? DriveImage : ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
-
-#endif
-
   // DBG("HideBadges=%d Volume=%ls ", GlobalConfig.HideBadges, Volume->VolName);
-#if USE_XTHEME
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
 //      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
@@ -818,21 +741,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     }
   }
   Entry->BootBgColor = BootBgColor;
-#else
-  if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
-    if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, GlobalConfig.BadgeScale);
-      // DBG(" Show badge as Drive.");
-    } else {
-      Entry->BadgeImage = egCopyScaledImage(Entry->Image, GlobalConfig.BadgeScale);
-        // DBG(" Show badge as OSImage.");
-    }
-  }
-  if (BootBgColor != NULL) {
-    Entry->BootBgColor = BootBgColor; //copy pointer
-  }
-
-#endif
 
   Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
 #ifdef DUMP_KERNEL_KEXT_PATCHES
@@ -872,12 +780,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
-#if USE_XTHEME
   SubScreen->Title.SWPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
-#else
-  //very old mistake!!!
-  SubScreen->Title = PoolPrint(L"Options for %s on %s", Entry->Title.s(), Entry->VolName);
-#endif
 
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20;
@@ -1084,17 +987,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   Entry->SubScreen = SubScreen;
   // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
-#if USE_XTHEME
 BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XString& LoaderOptions,
                        IN CONST XStringW& LoaderTitle,
                        IN REFIT_VOLUME *Volume, IN XImage *Image,
                        IN UINT8 OSType, IN UINT8 Flags)
-#else
-STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XString& LoaderOptions,
-                              IN CONST XStringW& LoaderTitle,
-                              IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
-                              IN UINT8 OSType, IN UINT8 Flags)
-#endif
 {
   LOADER_ENTRY *Entry;
   INTN          HVi;
@@ -1121,11 +1017,7 @@ STATIC BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XString& Loa
       }
     }
   }
-#if USE_XTHEME
     Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, L""_XSW, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
-#else
-    Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, NULL, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, NULL, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
-#endif
   if (Entry != NULL) {
     if ((Entry->LoaderType == OSTYPE_OSX) ||
         (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) ||
@@ -1342,15 +1234,10 @@ VOID ScanLoader(VOID)
             if ((AndroidEntryData[Index].Find[aIndex] == NULL) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
           }
           if (aFound && (aFound == aIndex)) {
-#if USE_XTHEME
             XImage ImageX;
             ImageX.LoadXImage(ThemeX.ThemeDir, AndroidEntryData[Index].Icon);
             AddLoaderEntry(AndroidEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
                            &ImageX, OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
-#else
-            AddLoaderEntry(AndroidEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
-                           LoadOSIcon(AndroidEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
-#endif
           }
         }
       }
@@ -1360,15 +1247,10 @@ VOID ScanLoader(VOID)
     if (gSettings.LinuxScan) {
       // check for linux loaders
       for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
-#if USE_XTHEME
         XImage ImageX;
         ImageX.LoadXImage(ThemeX.ThemeDir, LinuxEntryData[Index].Icon);
         AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
                        &ImageX, OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
-#else
-        AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
-                       LoadOSIcon(LinuxEntryData[Index].Icon, L"unknown", 128, FALSE, TRUE), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
-#endif
       }
       // check for linux kernels
       PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
@@ -1635,7 +1517,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     return;
   }
 #if 0  //if someone want to debug this
-#if USE_XTHEME
   DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);
   //  if (Custom->Title) {
   DBG("Title:\"%ls\" ", Custom->Title.wc_str());
@@ -1643,18 +1524,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   //  if (Custom->FullTitle) {
   DBG("FullTitle:\"%ls\" ", Custom->FullTitle.wc_str());
   //  }
-
-#else
-
-	DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);
-  if (Custom->Title) {
-    DBG("Title:\"%ls\" ", Custom->Title);
-  }
-  if (Custom->FullTitle) {
-    DBG("FullTitle:\"%ls\" ", Custom->FullTitle);
-  }
-#endif
-
   if (CustomPath) {
     DBG("Path:\"%ls\" ", CustomPath);
   }
@@ -1672,12 +1541,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
-#if USE_XTHEME
     XImage Image; // = new XImage;
     XImage DriveImage;
-#else
-    EG_IMAGE            *Image, *DriveImage;
-#endif
 
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
@@ -1899,51 +1764,16 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     // Change to custom image if needed
 
     Image = Custom->Image;
-#if USE_XTHEME
     if (Image.isEmpty() && Custom->ImagePath) {
       Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
     }
-#else
-if ((Image == NULL) && Custom->ImagePath) {
-  Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
-  if (Image == NULL) {
-    Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
-    if (Image == NULL) {
-      Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
-      if (Image == NULL) {
-        Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-        if (Image == NULL) {
-          Image = LoadOSIcon(Custom->ImagePath, L"unknown", 128, FALSE, FALSE);
-        }
-      }
-    }
-  }
-}
-#endif
 
     // Change to custom drive image if needed
     DriveImage = Custom->DriveImage;
-#if USE_XTHEME
+
     if (DriveImage.isEmpty() && Custom->DriveImagePath) {
       Image.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
     }
-#else
-    if ((DriveImage == NULL) && Custom->DriveImagePath) {
-      DriveImage = egLoadImage(Volume->RootDir, Custom->DriveImagePath, TRUE);
-      if (DriveImage == NULL) {
-        DriveImage = egLoadImage(ThemeDir, Custom->DriveImagePath, TRUE);
-        if (DriveImage == NULL) {
-          DriveImage = egLoadImage(SelfDir, Custom->DriveImagePath, TRUE);
-          if (DriveImage == NULL) {
-            DriveImage = egLoadImage(SelfRootDir, Custom->DriveImagePath, TRUE);
-            if (DriveImage == NULL) {
-              DriveImage = LoadBuiltinIcon(Custom->DriveImagePath);
-            }
-          }
-        }
-      }
-    }
-#endif
 
     do
     {
@@ -2099,13 +1929,8 @@ if ((Image == NULL) && Custom->ImagePath) {
       }
       DBG("match!\n");
       // Create an entry for this volume
-#if USE_XTHEME
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, &Image, &DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
 
-#else
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, Image, DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
-
-#endif
       if (Entry != NULL) {
         DBG("Custom settings: %ls.plist will %s be applied\n",
             Custom->Settings, Custom->CommonSettings?"not":"");
@@ -2120,13 +1945,7 @@ if ((Image == NULL) && Custom->ImagePath) {
 //          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
-#if USE_XTHEME
             SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title.wc_str() : CustomPath, Entry->VolName);
-#else
-            SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (Custom->Title != NULL) ? Custom->Title : CustomPath, Entry->VolName);
-#endif
-
-
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->AnimeRun = SubScreen->GetAnime();

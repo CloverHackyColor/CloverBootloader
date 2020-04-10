@@ -2872,11 +2872,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
     DBG("required font %s not found, try to load external\n", text->fontFace->fontFamily);
-#if USE_XTHEME
-    Status = egLoadFile(ThemeX.ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
-#else
-    Status = egLoadFile(ThemeDir, PoolPrint(L"%a.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
-#endif
+    Status = egLoadFile(ThemeX.ThemeDir, PoolPrint(L"%s.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
 
     DBG("font %s loaded status=%s\n", text->fontFace->fontFamily, strerror(Status));
     if (!EFI_ERROR(Status)) {
@@ -2884,15 +2880,8 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       if (!p1) {
         DBG("font %s not parsed\n", text->fontFace->fontFamily);
       } else {
- /*       fontSVG = (__typeof__(fontSVG))AllocateCopyPool(sizeof(NSVGfont), p1->font);
-        DBG("font family %s parsed\n", fontSVG->fontFamily);
-        fontChain = (__typeof__(fontChain))AllocatePool(sizeof(*fontChain));
-        fontChain->font = fontSVG;
-        fontChain->next = fontsDB;
-        fontsDB = fontChain;
- */
         fontSVG = fontsDB->font; //last added during parse file data
-        text->font = fontSVG; //this is the same pointer as in fontChain but we will never free text->font. We will free fontChain
+        text->font = fontSVG;
       }
       FreePool(FileData); //after load
       FileData = NULL;
@@ -3480,7 +3469,6 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 }
 
 //parse Clover settings for theme
-#if USE_XTHEME
 void XTheme::parseTheme(void* parser, const char** dict)
 {
   NSVGparser* p = (NSVGparser*)parser;
@@ -3553,81 +3541,6 @@ void XTheme::parseTheme(void* parser, const char** dict)
   }
 }
 
-#else
-static void parseTheme(NSVGparser* p, const char** dict)
-{
-  int i;
-  BOOLEAN found = FALSE;
-  UINT32 Color = 0x80808080; //default value
-  for (i = 0; dict[i]; i += 2) {
-    if (strcmp(dict[i], "SelectionOnTop") == 0) {
-      GlobalConfig.SelectionOnTop = getIntegerDict(dict[i+1])>0;    } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
-        GlobalConfig.BadgeOffsetX = getIntegerDict(dict[i + 1]);
-      } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
-        GlobalConfig.BadgeOffsetY = getIntegerDict(dict[i + 1]);
-      } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
-        GlobalConfig.NonSelectedGrey = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "CharWidth") == 0) {
-          GlobalConfig.CharWidth = getIntegerDict(dict[i + 1]);
-        } else if (strcmp(dict[i], "BackgroundDark") == 0) {
-          GlobalConfig.BackgroundDark = getIntegerDict(dict[i + 1])>0;    } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
-            GlobalConfig.BackgroundSharp = getIntegerDict(dict[i + 1]);
-          } else if (strcmp(dict[i], "BackgroundScale") == 0) {
-            GlobalConfig.BackgroundScale = imNone;
-            if (strstr(dict[i+1], "scale") != NULL)  {
-              GlobalConfig.BackgroundScale = imScale;
-            }
-            if (strstr(dict[i+1], "crop") != NULL)  {
-              GlobalConfig.BackgroundScale = imCrop;
-            }
-            if (strstr(dict[i+1], "tile") != NULL)  {
-              GlobalConfig.BackgroundScale = imTile;
-            }
-
-          } else if (strcmp(dict[i], "Badges") == 0) {
-            GlobalConfig.HideBadges = 0;
-            if (strstr(dict[i+1], "show") != NULL)  {
-              GlobalConfig.HideBadges |= HDBADGES_SHOW;
-            }
-            if (strstr(dict[i+1], "swap") != NULL)  {
-              GlobalConfig.HideBadges |= HDBADGES_SWAP;
-            }
-            if (strstr(dict[i+1], "inline") != NULL)  {
-              GlobalConfig.HideBadges |= HDBADGES_INLINE;
-            }
-          } else if (strcmp(dict[i], "BadgeScale") == 0) {
-            GlobalConfig.BadgeScale = getIntegerDict(dict[i + 1]);
-          } else if (strcmp(dict[i], "SelectionColor") == 0) {
-            Color = getIntegerDict(dict[i + 1]);
-            if (DayLight) {
-              GlobalConfig.SelectionColor = Color;
-            }
-          } else if (strcmp(dict[i], "SelectionColor_night") == 0) {
-            found = TRUE;
-            if (!DayLight) {
-              GlobalConfig.SelectionColor = getIntegerDict(dict[i + 1]);
-            }
-          } else if (strcmp(dict[i], "VerticalLayout") == 0) {
-            GlobalConfig.VerticalLayout = getIntegerDict(dict[i + 1])>0;
-
-          } else if (strcmp(dict[i], "BootCampStyle") == 0) {
-            GlobalConfig.BootCampStyle = getIntegerDict(dict[i + 1])>0;
-
-          } else if (strcmp(dict[i], "AnimeFrames") == 0) {
-            NumFrames = getIntegerDict(dict[i + 1]);
-            if (NumFrames == 0xFFFF) {
-              NumFrames = 0;
-            }
-          } else if (strcmp(dict[i], "FrameTime") == 0) {
-            FrameTime = getIntegerDict(dict[i + 1]);
-
-          } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
-  }
-  if (!found) {
-    GlobalConfig.SelectionColor = Color;
-  }
-}
-
-#endif
 
 // parse embedded font
 static void nsvg__parseFont(NSVGparser* p, const char** dict)
@@ -3974,11 +3887,7 @@ static void nsvg__startElement(void* ud, const char* el, const char** dict)
     p->patternFlag = 1;
 
   } else if (strcmp(el, "clover:theme") == 0) {
-#if USE_XTHEME
     ThemeX.parseTheme((void*)p, dict);
-#else
-    parseTheme(p, dict);
-#endif
 
   } else {
     strncpy(p->unknown, el, 63);

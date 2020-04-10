@@ -62,10 +62,8 @@
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XStringWArray.h"
 #include "../cpp_foundation/XStringW.h"
-#if USE_XTHEME
 #include "../libeg/XTheme.h"
 extern XTheme ThemeX; //global variable defined in lib.cpp
-#endif
 
 #endif
 
@@ -220,22 +218,6 @@ typedef struct _pointers {
 // Allow for 255 unicode characters + 2 byte unicode null terminator.
 #define SVALUE_MAX_SIZE 512
 
-//extern BOOLEAN ScrollEnabled;
-#if !USE_XTHEME
-//extern EG_RECT UpButton;
-//extern EG_RECT DownButton;
-//extern EG_RECT BarStart;
-//extern EG_RECT BarEnd;
-//extern EG_RECT ScrollbarBackground;
-//extern EG_RECT Scrollbar;
-//extern EG_RECT ScrollStart;
-//extern EG_RECT ScrollEnd;
-//extern EG_RECT ScrollTotal;
-//extern EG_RECT ScrollbarOldPointerPlace;
-//extern EG_RECT ScrollbarNewPointerPlace;
-#endif
-//extern INTN ScrollbarYMovement;
-//extern BOOLEAN IsDragging;
 
 #define SCREEN_UNKNOWN    0
 #define SCREEN_MAIN       1
@@ -309,10 +291,6 @@ typedef struct _pointers {
 typedef struct {
   INTN        Timeout;
   UINTN       DisableFlags; //to disable some volume types (optical, firewire etc)
-#if !USE_XTHEME
-  UINTN       HideBadges;
-  UINTN       HideUIFlags;
-#endif
   BOOLEAN     TextOnly;
   BOOLEAN     Quiet;
   BOOLEAN     LegacyFirst;
@@ -324,60 +302,16 @@ typedef struct {
   BOOLEAN     RtcHibernateAware;
   BOOLEAN     HibernationFixup;
   BOOLEAN     SignatureFixup;
-#if !USE_XTHEME
-  FONT_TYPE   Font;
-  INTN        CharWidth;
-  UINTN       SelectionColor;
-  CHAR16      *FontFileName;
-  CHAR16      *BannerFileName;
-  CHAR16      *SelectionSmallFileName;
-  CHAR16      *SelectionBigFileName;
-  CHAR16      *SelectionIndicatorName;
-  CHAR16      *DefaultSelection;
-#endif
   CHAR16      *Theme;
   CHAR16      *ScreenResolution;
   INTN        ConsoleMode;
   BOOLEAN     CustomIcons;
-#if !USE_XTHEME
-  CHAR16      *BackgroundName;
-  SCALING     BackgroundScale;
-  UINTN       BackgroundSharp;
-  BOOLEAN     BackgroundDark;
-  BOOLEAN     SelectionOnTop;
-  BOOLEAN     BootCampStyle;
-  INTN        BadgeOffsetX;
-  INTN        BadgeOffsetY;
-  INTN        BadgeScale;
-  INTN        ThemeDesignWidth;
-  INTN        ThemeDesignHeight;
-  INTN        BannerPosX;
-  INTN        BannerPosY;
-  INTN        BannerEdgeHorizontal;
-  INTN        BannerEdgeVertical;
-  INTN        BannerNudgeX;
-  INTN        BannerNudgeY;
-  BOOLEAN     VerticalLayout;
-  BOOLEAN     NonSelectedGrey;
-  INTN        MainEntriesSize;
-  INTN        TileXSpace;
-  INTN        TileYSpace;
-#endif
   INTN        IconFormat;
   BOOLEAN     NoEarlyProgress;
   INT32       Timezone;
   BOOLEAN     ShowOptimus;
-#if !USE_XTHEME
-  BOOLEAN     Proportional;
-  BOOLEAN     DarkEmbedded;
-  BOOLEAN     TypeSVG;
-#endif
   INTN        Codepage;
   INTN        CodepageSize;
-#if !USE_XTHEME
-  float       Scale;
-  float       CentreShift;
-#endif
 } REFIT_CONFIG;
 
 // types
@@ -410,9 +344,6 @@ extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
 extern EFI_DEVICE_PATH  *SelfDevicePath;
 extern EFI_DEVICE_PATH  *SelfFullDevicePath;
-#if !USE_XTHEME
-extern EFI_FILE         *ThemeDir;
-#endif
 extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
@@ -426,14 +357,6 @@ extern REFIT_VOLUME     *SelfVolume;
 extern XObjArray<REFIT_VOLUME> Volumes;
 #endif
 //extern UINTN            VolumesCount;
-
-#if !USE_XTHEME
-extern EG_IMAGE         *Banner;
-extern EG_IMAGE         *BigBack;
-extern EG_IMAGE         *SelectionImages[];
-extern EG_IMAGE         *Buttons[];
-extern EG_IMAGE         *FontImage;  //not yet converted to XImage
-#endif
 
 extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;
@@ -516,13 +439,7 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //extern INTN FontWidth;
 //extern INTN FontHeight;
 
-#if !USE_XTHEME
-extern INTN row0TileSize;
-extern INTN row1TileSize;
-extern INTN TextHeight;
-#endif
 extern const INTN BCSMargin;
-#if USE_XTHEME
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel;
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel;
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel;
@@ -534,14 +451,6 @@ extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkSelectionPixel;
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel;
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel;
 
-
-#else
-//extern INTN LayoutBannerOffset;
-//extern INTN LayoutButtonOffset;
-//extern INTN LayoutTextOffset;
-//extern INTN LayoutAnimMoveForMenuX;
-//extern INTN LayoutMainMenuHeight;
-#endif
 extern UINTN ConWidth;
 extern UINTN ConHeight;
 extern CHAR16 *BlankLine;
@@ -549,22 +458,6 @@ extern CHAR16 *BlankLine;
 extern INTN UGAWidth;
 extern INTN UGAHeight;
 extern BOOLEAN AllowGraphicsMode;
-
-#if !USE_XTHEME
-extern EG_PIXEL StdBackgroundPixel;
-extern EG_PIXEL MenuBackgroundPixel;
-extern EG_PIXEL InputBackgroundPixel;
-extern EG_PIXEL BlueBackgroundPixel;
-//extern EG_PIXEL DarkBackgroundPixel;
-extern EG_PIXEL SelectionBackgroundPixel;
-extern EG_PIXEL DarkEmbeddedBackgroundPixel;
-extern EG_PIXEL DarkSelectionPixel;
-extern EG_PIXEL WhitePixel;
-extern EG_PIXEL BlackPixel;
-
-extern EG_RECT  BannerPlace;
-extern EG_IMAGE *BackgroundImage;
-#endif
 
 #if REFIT_DEBUG > 0
 VOID DebugPause(VOID);
@@ -576,18 +469,6 @@ VOID EndlessIdleLoop(VOID);
 BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
 BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
 
-//
-// icns loader module
-//
-#if !USE_XTHEME
-EG_IMAGE * LoadOSIcon(IN CONST CHAR16 *OSIconName OPTIONAL, IN CONST CHAR16 *FallbackIconName, IN UINTN PixelSize, IN BOOLEAN BootLogo, IN BOOLEAN WantDummy);
-EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
-EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
-EG_IMAGE * DummyImage(IN UINTN PixelSize);
-EG_IMAGE * BuiltinIcon(IN UINTN Id);
-CHAR16   * GetIconsExt(IN CONST CHAR16 *Icon, IN CONST CHAR16 *Def);
-EG_IMAGE * GetSmallHover(IN UINTN Id);
-#endif
 
 #define BUILTIN_ICON_FUNC_ABOUT                (0)
 #define BUILTIN_ICON_FUNC_OPTIONS              (1)
@@ -652,15 +533,6 @@ BOOLEAN ReadAllKeyStrokes(VOID);
 // config module
 //
 
-#if !USE_XTHEME
-typedef struct MISC_ICONS {
-  EG_IMAGE *image;
-  CONST CHAR8    *name;
-} MISC_ICONS;
-
-extern MISC_ICONS OSIconsTable[];
-extern BUILTIN_ICON BuiltinIconTable[];
-#endif
 extern REFIT_CONFIG GlobalConfig;
 
 VOID ReadConfig(INTN What);

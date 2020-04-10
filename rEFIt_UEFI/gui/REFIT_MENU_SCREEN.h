@@ -72,26 +72,16 @@ public:
   static   XPointer mPointer;
 //  XPointer mPointer;
   UINTN             ID;
-#if USE_XTHEME
   XStringW Title;
   XImage  TitleImage;
-#else
-  CONST  CHAR16     *Title;  //Title is not const, but *Title is. It will be better to make it XStringW
-  EG_IMAGE          *TitleImage;
-#endif
   XStringWArray     InfoLines;
   XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
   INTN              TimeoutSeconds;
-#if USE_XTHEME
   XStringW  TimeoutText;
   XStringW  ThemeName;  //?
   EG_RECT OldTextBufferRect;
   XImage  OldTextBufferImage;
   BOOLEAN isBootScreen;
-#else
-  CONST CHAR16     *TimeoutText;
-  CONST CHAR16     *Theme;
-#endif
   BOOLEAN           AnimeRun;
   BOOLEAN           Once;
   UINT64            LastDraw;
@@ -105,14 +95,11 @@ public:
   UINTN       mItemID;
   SCROLL_STATE ScrollState;
   BOOLEAN ScrollEnabled;
-#if USE_XTHEME
   INTN TextStyle;
-#endif
 //  MENU_STYLE_FUNC StyleFunc;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?
-#if USE_XTHEME
   EG_RECT BarStart;
   EG_RECT BarEnd;
   EG_RECT ScrollStart;
@@ -135,18 +122,6 @@ public:
 						  Frames(0), FrameTime(0),
 						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
-#else
-  REFIT_MENU_SCREEN()
-  : ID(0), Title(0), TitleImage(0),
-  TimeoutSeconds(0), TimeoutText(0), Theme(0), AnimeRun(0),
-  Once(0), LastDraw(0), CurrentFrame(0),
-  Frames(0), FrameTime(0),
-  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
-  {};
-
-#endif
-
-#if USE_XTHEME
   REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
   : ID(ID), Title(TTitle), TitleImage(),
   TimeoutSeconds(0), TimeoutText(TTimeoutText), ThemeName(),
@@ -165,17 +140,7 @@ public:
     Title.takeValueFrom(TitleC);
     TimeoutText.takeValueFrom(TimeoutTextC);
   };
-#else
-  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText)
-						: ID(ID), Title(Title), TitleImage(0),
-						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
-						  Once(0), LastDraw(0), CurrentFrame(0),
-						  Frames(0), FrameTime(0),
-						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
-						{};
-#endif
 
-#if USE_XTHEME
   REFIT_MENU_SCREEN(UINTN ID, XStringW  TTitle, XStringW  TTimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
   : ID(ID), Title(TTitle), TitleImage(),
   TimeoutSeconds(0), TimeoutText(TTimeoutText), ThemeName(),
@@ -187,18 +152,6 @@ public:
     Entries.AddReference(entry1, false);
     Entries.AddReference(entry2, false);
   };
-#else
-  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
-						: ID(ID), Title(Title), TitleImage(0),
-						  TimeoutSeconds(0), TimeoutText(TimeoutText), Theme(0), AnimeRun(0),
-						  Once(0), LastDraw(0), CurrentFrame(0),
-						  Frames(0), FrameTime(0),
-						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
-						{
-	  	  	  	Entries.AddReference(entry1, false);
-              Entries.AddReference(entry2, false);
-						};
-#endif
 
   //Scroll functions
   VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
@@ -230,16 +183,12 @@ public:
   UINTN InputDialog(IN MENU_STYLE_FUNC StyleFunc);
 
 
-#if USE_XTHEME
   VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
   VOID DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
   INTN DrawTextXY(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   void EraseTextXY();
   VOID DrawTextCorner(UINTN TextC, UINT8 Align);
   VOID DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
-#else
-  VOID DrawMainMenuLabel(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos);
-#endif
   VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   VOID CountItems();
   VOID InitAnime();

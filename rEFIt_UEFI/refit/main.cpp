@@ -647,11 +647,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     DBG("Image is not loaded, status=%s\n", strerror(Status));
     return; // no reason to continue if loading image failed
   }
-#if USE_XTHEME
   egClearScreen(&Entry->BootBgColor); //if not set then it is already MenuBackgroundPixel
-#else
-  egClearScreen(Entry->BootBgColor ? Entry->BootBgColor : &MenuBackgroundPixel);
-#endif
 
 //  KillMouse();
 
@@ -1011,24 +1007,12 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     }
 
 
-#if USE_XTHEME
   egClearScreen(&MenuBackgroundPixel);
   BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
   BootLogoX.LoadXImage(ThemeX.ThemeDir, Entry->Volume->LegacyOS->IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
-#else
-  egClearScreen(&MenuBackgroundPixel);
-  BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
-  EG_IMAGE *BootLogoImage = LoadOSIcon(Entry->Volume->LegacyOS->IconName, L"legacy", 128, TRUE, TRUE);
-  if (BootLogoImage != NULL) {
-    BltImageAlpha(BootLogoImage,
-                  (UGAWidth  - BootLogoImage->Width) >> 1,
-                  (UGAHeight - BootLogoImage->Height) >> 1,
-                  &StdBackgroundPixel, 16);
-  }
-#endif
 
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
@@ -2014,12 +1998,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
   BOOLEAN           HaveDefaultVolume;
-#if USE_XTHEME
   REFIT_MENU_SCREEN BootScreen;
   BootScreen.isBootScreen = true; //other screens will be constructed as false
-#else
-  CHAR16            *FirstMessage;
-#endif
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
 
@@ -2252,9 +2232,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfConfigs();
   }
 
-#if USE_XTHEME
   ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
-#endif
 
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
@@ -2317,18 +2295,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   //  DBG("DBG: messages\n");
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
-#if USE_XTHEME
     XStringW Message = SWPrintf("   Welcome to Clover %ls   ", gFirmwareRevision);
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
     BootScreen.DrawTextXY(L"... testing hardware ..."_XSW, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-#else
-    FirstMessage = PoolPrint(L"   Welcome to Clover %s   ", gFirmwareRevision);
-    DrawTextXY(FirstMessage, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
-    FreePool(FirstMessage);
-    FirstMessage = PoolPrint(L"... testing hardware ...");
-    DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-    FreePool(FirstMessage);
-#endif
   }
 
 //  DumpBiosMemoryMap();
@@ -2388,16 +2357,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
-#if USE_XTHEME
     XStringW Message = SWPrintf("... user settings ...");
     BootScreen.EraseTextXY();
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-#else
-    FirstMessage = PoolPrint(L"... user settings ...");
- //   i = (UGAWidth - StrLen(FirstMessage) * GlobalConfig.CharWidth) >> 1;
-    DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-    FreePool(FirstMessage);
-#endif
   }
 
   //Second step. Load config.plist into gSettings
@@ -2466,15 +2428,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
-#if USE_XTHEME
     XStringW Message = SWPrintf("...  scan entries  ...");
     BootScreen.EraseTextXY();
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-#else
-    FirstMessage = PoolPrint(L"...  scan entries  ...");
-    DrawTextXY(FirstMessage, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-    FreePool(FirstMessage);
-#endif
   }
 
 
@@ -2536,19 +2492,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       DBG("theme inited\n");
       gThemeChanged = FALSE;
-#if USE_XTHEME
       if (ThemeX.embedded) {
         DBG("Chosen embedded theme\n");
       } else {
         DBG("Chosen theme %ls\n", ThemeX.Theme.data());
       }
-#else
-      if (GlobalConfig.Theme) {
-        DBG("Chosen theme %ls\n", GlobalConfig.Theme);
-      } else {
-        DBG("Chosen embedded theme\n");
-      }
-#endif
 
 //      DBG("initial boot-args=%s\n", gSettings.BootArgs);
       //now it is a time to set RtVariables
@@ -2588,7 +2536,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       // fixed other menu entries
-#if USE_XTHEME
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)) {
         AddCustomTool();
         if (!gSettings.DisableToolScan) {
@@ -2599,41 +2546,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
         }
       }
-#else
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_TOOLS)) {
-        AddCustomTool();
-        if (!gSettings.DisableToolScan) {
-          ScanTool();
-#ifdef ENABLE_SECURE_BOOT
-          // Check for secure boot setup mode
-          AddSecureBootTool();
-#endif // ENABLE_SECURE_BOOT
-        }
-      }
-#endif
 
-#if USE_XTHEME
       MenuEntryOptions.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
-#else
-      MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-#endif
-
 
       if (gSettings.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);
-#if USE_XTHEME
       MenuEntryAbout.Image = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
-#else
-      MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-#endif
-
 
       if (gSettings.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
-#if USE_XTHEME
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
         if (gSettings.DisableCloverHotkeys)
           MenuEntryReset.ShortcutLetter = 0x00;
@@ -2644,29 +2568,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuEntryShutdown.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_EXIT);
         MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
       }
-#else
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
-        if (gSettings.DisableCloverHotkeys)
-          MenuEntryReset.ShortcutLetter = 0x00;
-        MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-        MainMenu.AddMenuEntry(&MenuEntryReset, false);
-        if (gSettings.DisableCloverHotkeys)
-          MenuEntryShutdown.ShortcutLetter = 0x00;
-        MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_EXIT);
-        MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
-      }
-#endif
 
 // font already changed and this message very quirky, clear line here
       if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
-#if USE_XTHEME
 //        XStringW Message = L"                          "_XSW;
         BootScreen.EraseTextXY();
 //        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-#else
-        DrawTextXY(L"                          ", (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-#endif
-
 
       }
     }

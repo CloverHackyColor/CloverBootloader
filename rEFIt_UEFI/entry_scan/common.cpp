@@ -82,28 +82,19 @@ EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName)
   }
   while (Index < BuiltinIconNamesCount) {
     if (StriCmp(IconName, BuiltinIconNames[Index]) == 0) {
-#if USE_XTHEME
       XImage IconX = ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL + Index);
       return IconX.ToEGImage();
-#else
-      return BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL + Index);
-#endif
     }
     ++Index;
   }
   return NULL;
 }
 
-#if USE_XTHEME
 const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
-#else
-EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath) //IN UINT8 DiskKind)
-#endif
+
 {
   UINTN IconNum = 0;
-#if USE_XTHEME
   const XImage* IconX;
-#endif
   // default volume icon based on disk kind
   switch (Volume->DiskKind) {
     case DISK_KIND_INTERNAL:
@@ -137,7 +128,6 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DE
           IconNum = BUILTIN_ICON_VOL_INTERNAL;
           break;
       }
-#if USE_XTHEME
       break;
     case DISK_KIND_EXTERNAL:
       IconNum = BUILTIN_ICON_VOL_EXTERNAL;
@@ -157,25 +147,11 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DE
   }
   IconX = &ThemeX.GetIcon(IconNum);
   if (IconX->isEmpty()) {
+    DBG("asked IconNum = %llu not found, took internal\n", IconNum);
     IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
   }
 
   return *IconX;
-#else
-      return BuiltinIcon(IconNum);
-    case DISK_KIND_EXTERNAL:
-      return BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
-    case DISK_KIND_OPTICAL:
-      return BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
-    case DISK_KIND_FIREWIRE:
-      return BuiltinIcon(BUILTIN_ICON_VOL_FIREWIRE);
-    case DISK_KIND_BOOTER:
-      return BuiltinIcon(BUILTIN_ICON_VOL_BOOTER);
-    default:
-      break;
-  }
-  return NULL;
-#endif
 }
 
 
@@ -322,7 +298,7 @@ VOID StrToLower(IN CHAR16 *Str)
 }
 
 // TODO remove that and AlertMessage with a printf-like format
-#if USE_XTHEME
+
 STATIC void CreateInfoLines(IN CONST XStringW& Message, OUT XStringWArray* Information)
 {
   if (Message.isEmpty()) {
@@ -331,7 +307,8 @@ STATIC void CreateInfoLines(IN CONST XStringW& Message, OUT XStringWArray* Infor
   Information->Empty();
   //TODO will fill later
 }
-#else
+
+#if 0 //not needed?
 STATIC void CreateInfoLines(IN CONST CHAR16 *Message, OUT XStringWArray* Information)
 {
   CONST CHAR16 *Ptr;
@@ -378,7 +355,6 @@ extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 
 // it is not good to use Options menu style for messages and one line dialogs
 // it can be a semitransparent rectangular at the screen centre as it was in Clover v1.0
-#if USE_XTHEME
 STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, XStringW(), XStringW(), &MenuEntryReturn, NULL);
 VOID AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
 {
@@ -387,32 +363,6 @@ VOID AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
   AlertMessageMenu.RunMenu(NULL);
   AlertMessageMenu.InfoLines.Empty();
 }
-#else
-STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, NULL, NULL, &MenuEntryReturn, NULL);
-
-// Display an alert message
-VOID AlertMessage(IN CONST CHAR16 *Title, IN CONST CHAR16 *Message)
-{
-//  UINTN              Count = 0;
-  // Break message into info lines
-//  CHAR16           **Information = CreateInfoLines(Message, &Count);
-  CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
-    AlertMessageMenu.Title = EfiStrDuplicate(Title);
-    AlertMessageMenu.RunMenu(NULL);
-//  // Check parameters
-//  if (Information != NULL) {
-//    if (Count > 0) {
-//      // Display the alert message
-//      AlertMessageMenu.InfoLineCount = Count;
-//      AlertMessageMenu.InfoLines = (CONST CHAR16**)Information;
-//      AlertMessageMenu.Title = Title;
-//      RunMenu(&AlertMessageMenu, NULL);
-//    }
-//    FreePool(Information);
-//  }
-  AlertMessageMenu.InfoLines.Empty();
-}
-#endif
 
 #define TAG_YES 1
 #define TAG_NO  2
@@ -422,13 +372,8 @@ STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   YesMessageEntry(XStringW().takeValueFrom(L"
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry(XStringW().takeValueFrom(L"No"), TAG_NO, ActionEnter);
 
 //REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
-#if USE_XTHEME
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, XStringW(), XStringW(), &YesMessageEntry, &NoMessageEntry);
-#else
-STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, NULL, NULL, &YesMessageEntry, &NoMessageEntry);
-#endif
 // Display a yes/no prompt
-#if USE_XTHEME
 BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
 {
   BOOLEAN            Result = FALSE;
@@ -448,35 +393,6 @@ BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
   YesNoMessageMenu.InfoLines.Empty();
   return Result;
 }
-#else
-BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CONST CHAR16 *Message)
-{
-  BOOLEAN            Result = FALSE;
-  UINTN              /*Count = 0,*/ MenuExit;
-  // Break message into info lines
-//  CHAR16           **Information = CreateInfoLines(Message, &Count);
-  CreateInfoLines(Message, &YesNoMessageMenu.InfoLines);
-  // Display the yes/no message
-//  YesNoMessageMenu.InfoLineCount = Count;
-//  YesNoMessageMenu.InfoLines = (CONST CHAR16**)Information;
-  YesNoMessageMenu.Title = Title;
-  do
-  {
-     REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
-     MenuExit = YesNoMessageMenu.RunMenu(&ChosenEntry);
-     if ( ChosenEntry != NULL  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag == TAG_YES  &&
-         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
-       Result = TRUE;
-       MenuExit = MENU_EXIT_ENTER;
-     }
-  } while (MenuExit != MENU_EXIT_ENTER);
-  YesNoMessageMenu.InfoLines.Empty();
-//  if (Information != NULL) {
-//    FreePool(Information);
-//  }
-  return Result;
-}
-#endif
 // Ask user for file path from directory menu
 BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
                                   IN CHAR16 *ParentPath OPTIONAL, IN EFI_FILE *Dir,
@@ -497,28 +413,16 @@ BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Vo
 //STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL,
 //  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
 //  { 0, 0, 0, 0 }, NULL};
-#if USE_XTHEME
 STATIC REFIT_MENU_SCREEN  InitialMenu(0, L"Please Select File..."_XSW, XStringW());
-#else
-STATIC REFIT_MENU_SCREEN InitialMenu(0, L"Please Select File...", NULL);
-#endif
 // Ask user for file path from volumes menu
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   REFIT_MENU_SCREEN   Menu = InitialMenu;
-//  REFIT_MENU_ENTRY  **Entries;
-//  REFIT_MENU_ENTRY   *EntryPtr;
   UINTN               Index = 0, /*Count = 0,*/ MenuExit;
   BOOLEAN             Responded = FALSE;
   if (Result == NULL) {
     return FALSE;
   }
-  // Allocate entries
-//  Entries = (REFIT_MENU_ENTRY **)AllocateZeroPool(sizeof(REFIT_MENU_ENTRY *) + ((sizeof(REFIT_MENU_ENTRY *) + sizeof(REFIT_MENU_ENTRY)) * Volumes.size()));
-//  if (Entries == NULL) {
-//    return FALSE;
-//  }
-//  EntryPtr = (REFIT_MENU_ENTRY *)(Entries + (Volumes.size() + 1));
   // Create volume entries
   for (Index = 0; Index < Volumes.size(); ++Index) {
     REFIT_VOLUME     *Volume = &Volumes[Index];
@@ -527,23 +431,12 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
       continue;
     }
 	  REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG(SWPrintf("%ls", (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName), TAG_OFFSET + Index, MENU_EXIT_ENTER);
-//    Entry = Entries[Count++] = EntryPtr++;
-//    Entry->Title = (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName;
-//    Entry->Tag = TAG_OFFSET + Index;
-//    Entry->AtClick = MENU_EXIT_ENTER;
     Menu.Entries.AddReference(Entry, true);
   }
   // Setup menu
-//  CopyMem(&Menu, &InitialMenu, sizeof(REFIT_MENU_SCREEN));
-//  Entries[Count++] = &MenuEntryReturn;
   Menu.Entries.AddReference(&MenuEntryReturn, false);
-//  Menu.Entries.size() = Count;
-//  Menu.Entries = Entries;
-#if USE_XTHEME
   Menu.Title.takeValueFrom(Title);
-#else
-  Menu.Title = Title;
-#endif
+
   do
   {
     REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry = NULL;

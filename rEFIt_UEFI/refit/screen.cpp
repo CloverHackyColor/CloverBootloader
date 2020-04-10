@@ -81,7 +81,6 @@ INTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
 
 EG_RECT  BannerPlace; // default ctor called, so it's zero
-#if USE_XTHEME
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
@@ -92,23 +91,6 @@ const EFI_GRAPHICS_OUTPUT_BLT_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33,
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
-#else
-
-EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
-EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
-EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
-EG_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
-EG_PIXEL EmbeddedBackgroundPixel  = { 0xaa, 0xaa, 0xaa, 0xff};
-EG_PIXEL DarkSelectionPixel   = { 66, 66, 66, 0xff};
-EG_PIXEL DarkEmbeddedBackgroundPixel  = { 0x33, 0x33, 0x33, 0xff};
-EG_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
-EG_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
-EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
-
-EG_IMAGE *BackgroundImage = NULL;
-EG_IMAGE *Banner = NULL;
-EG_IMAGE *BigBack = NULL;
-#endif
 
 static BOOLEAN GraphicsScreenDirty;
 
@@ -348,16 +330,7 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 VOID SwitchToGraphicsAndClear(VOID) //called from MENU_FUNCTION_INIT
 {
   SwitchToGraphics();
-#if USE_XTHEME
-//  DBG("clear screen and draw back\n");
-//  ThemeX.ClearScreen();
-//  egClearScreen(&MenuBackgroundPixel);
   ThemeX.Background.DrawWithoutCompose(0,0,0,0);
-#else
-	if (GraphicsScreenDirty) { //Invented in rEFIt 15 years ago
-    BltClearScreen();
-	}
-#endif
 }
 
 /*
@@ -371,181 +344,6 @@ typedef struct {
  //same as EgRect but INTN <-> UINTN
 */
 
-#if !USE_XTHEME
-VOID BltClearScreen() //ShowBanner always TRUE. Called from line 400
-{
-  EG_PIXEL *p1;
-  INTN i, j, x, x1, x2, y, y1, y2;
-  if (BanHeight < 2) {
-    BanHeight = ((UGAHeight - (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale)) >> 1);
-    //+ (int)(LAYOUT_TOTAL_HEIGHT * GlobalConfig.Scale); //LAYOUT_TOTAL_HEIGHT=376
-  }
-
-  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-    // Banner is used in this theme
-    if (!Banner) {
-      // Banner is not loaded yet
-      if (IsEmbeddedTheme()) {
-        // embedded theme - use text as banner
-   //     Banner = egCreateImage(7 * StrLen(L"CLOVER"), 32, TRUE);
-   //     egFillImage(Banner, &MenuBackgroundPixel);
-   //     egRenderText(L"CLOVER", Banner, 0, 0, 0xFFFF);
-   //     CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-   //     DebugLog(1, "Text <%s> rendered\n", L"Clover");
-        Banner = BuiltinIcon(BUILTIN_ICON_BANNER);
-        if (GlobalConfig.DarkEmbedded) {
-          CopyMem(&BlueBackgroundPixel, &DarkEmbeddedBackgroundPixel, sizeof(EG_PIXEL));
-        } else {
-          CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-        }
-      } else  {
-        Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-        if (Banner) {
-          // Banner was changed, so copy into BlueBackgroundBixel first pixel of banner
-          CopyMem(&BlueBackgroundPixel, &Banner->PixelData[0], sizeof(EG_PIXEL));
-        } else {
-          DBG("banner file not read use embedded\n");
-          Banner = BuiltinIcon(BUILTIN_ICON_BANNER);
-        }
-      }
-    }
-    if (Banner) {
-      // Banner was loaded, so calculate its size and position
-      BannerPlace.Width = Banner->Width;
-      BannerPlace.Height = (BanHeight >= Banner->Height) ? (INTN)Banner->Height : BanHeight;
- //     DBG("banner width-height [%d,%d]\n", BannerPlace.Width, BannerPlace.Height);
- //     DBG("global banner pos [%d,%d]\n", GlobalConfig.BannerPosX, GlobalConfig.BannerPosY);
-      if (GlobalConfig.TypeSVG) {
-        BannerPlace.XPos = GlobalConfig.BannerPosX;
-        BannerPlace.YPos = GlobalConfig.BannerPosY;
-      } else {
-        // Check if new style placement value was used for banner in theme.plist
-
-        if ((GlobalConfig.BannerPosX >=0 && GlobalConfig.BannerPosX <=1000) && (GlobalConfig.BannerPosY >=0 && GlobalConfig.BannerPosY <=1000)) {
-          // Check if screen size being used is different from theme origination size.
-          // If yes, then recalculate the placement % value.
-          // This is necessary because screen can be a different size, but banner is not scaled.
-          BannerPlace.XPos = HybridRepositioning(GlobalConfig.BannerEdgeHorizontal, GlobalConfig.BannerPosX, BannerPlace.Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-          BannerPlace.YPos = HybridRepositioning(GlobalConfig.BannerEdgeVertical,   GlobalConfig.BannerPosY, BannerPlace.Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-          // Check if banner is required to be nudged.
-          BannerPlace.XPos = CalculateNudgePosition(BannerPlace.XPos, GlobalConfig.BannerNudgeX, Banner->Width,  UGAWidth);
-          BannerPlace.YPos = CalculateNudgePosition(BannerPlace.YPos, GlobalConfig.BannerNudgeY, Banner->Height, UGAHeight);
- //         DBG("banner position new style\n");
-        } else {
-          // Use rEFIt default (no placement values speicifed)
-          BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
-          BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
-  //        DBG("banner position old style\n");
-        }
-      }
-    }
-  }
-
-//  DBG("Banner position [%d,%d]\n",  BannerPlace.XPos, BannerPlace.YPos);
-
-  if (!Banner || (GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER) || 
-      !IsImageWithinScreenLimits(BannerPlace.XPos, BannerPlace.Width, UGAWidth) || 
-      !IsImageWithinScreenLimits(BannerPlace.YPos, BannerPlace.Height, UGAHeight)) {
-    // Banner is disabled or it cannot be used, apply defaults for placement
-    if (Banner) {
-      FreePool(Banner);
-      Banner = NULL;
-    }
-    BannerPlace.XPos = 0;
-    BannerPlace.YPos = 0;
-    BannerPlace.Width = UGAWidth;
-    BannerPlace.Height = BanHeight;
-  }
-  
-  // Load Background and scale
-  if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
-    BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
-  }
-  
-  if (BackgroundImage != NULL && (BackgroundImage->Width != UGAWidth || BackgroundImage->Height != UGAHeight)) {
-    // Resolution changed
-    egFreeImage(BackgroundImage);
-    BackgroundImage = NULL;
-  }
-  
-  if (BackgroundImage == NULL) {
-/*    DBG("BltClearScreen(%c): calling egCreateFilledImage UGAWidth %ld, UGAHeight %ld, BlueBackgroundPixel %02X%02X%02X%02X\n",
-        ShowBanner?'Y':'N', UGAWidth, UGAHeight,
-        BlueBackgroundPixel.r, BlueBackgroundPixel.g, BlueBackgroundPixel.b, BlueBackgroundPixel.a); */
-    BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
-  }
-  
-  if (BigBack != NULL) {
-    switch (GlobalConfig.BackgroundScale) {
-      case imScale:
-        ScaleImage(BackgroundImage, BigBack);
-        break;
-      case imCrop:
-        x = UGAWidth - BigBack->Width;
-        if (x >= 0) {
-          x1 = x >> 1;
-          x2 = 0;
-          x = BigBack->Width;
-        } else {
-          x1 = 0;
-          x2 = (-x) >> 1;
-          x = UGAWidth;
-        }
-        y = UGAHeight - BigBack->Height;
-        if (y >= 0) {
-          y1 = y >> 1;
-          y2 = 0;
-          y = BigBack->Height;
-        } else {
-          y1 = 0;
-          y2 = (-y) >> 1;
-          y = UGAHeight;
-        }
-        egRawCopy(BackgroundImage->PixelData + y1 * UGAWidth + x1,
-                  BigBack->PixelData + y2 * BigBack->Width + x2,
-                  x, y, UGAWidth, BigBack->Width);
-        break;
-      case imTile:
-        x = (BigBack->Width * ((UGAWidth - 1) / BigBack->Width + 1) - UGAWidth) >> 1;
-        y = (BigBack->Height * ((UGAHeight - 1) / BigBack->Height + 1) - UGAHeight) >> 1;
-        p1 = BackgroundImage->PixelData;
-        for (j = 0; j < UGAHeight; j++) {
-          y2 = ((j + y) % BigBack->Height) * BigBack->Width;
-          for (i = 0; i < UGAWidth; i++) {
-            *p1++ = BigBack->PixelData[y2 + ((i + x) % BigBack->Width)];
-          }
-        }
-        break;
-      case imNone:
-      default:
-        // already scaled
-        break;
-    }
-  }
-  
-  // Draw background
-  if (BackgroundImage) {
-/*    DBG("BltClearScreen(%c): calling BltImage BackgroundImage %p\n",
-        ShowBanner?'Y':'N', BackgroundImage); */
-    BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
-  } else {
-/*    DBG("BltClearScreen(%c): calling egClearScreen StdBackgroundPixel %02X%02X%02X%02X\n",
-        ShowBanner?'Y':'N', StdBackgroundPixel.r, StdBackgroundPixel.g, StdBackgroundPixel.b, StdBackgroundPixel.a); */
-    egClearScreen(&StdBackgroundPixel);
-  }
-  
-  // Draw banner
-  if (Banner) {
-    BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
-  }
-//what is the idea for the conversion?
-  InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
-  InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
-  InputBackgroundPixel.b = (MenuBackgroundPixel.b + 0) & 0xFF;
-  InputBackgroundPixel.a = (MenuBackgroundPixel.a + 0) & 0xFF;
-  GraphicsScreenDirty = FALSE;
-}
-#endif
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
 {
   if (!Image) {
@@ -570,45 +368,26 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   }
 //  DBG("w=%d, h=%d\n", Width, Height);
   // compose on background
-#if USE_XTHEME
   CompImage = egCreateFilledImage(Width, Height, !ThemeX.Background.isEmpty(), BackgroundPixel); //no matter
-#else
-  CompImage = egCreateFilledImage(Width, Height, (BackgroundImage != NULL), BackgroundPixel);
-#endif
 
   egComposeImage(CompImage, NewImage, 0, 0);
   if (NewImage) {
     egFreeImage(NewImage);
   }
-#if USE_XTHEME
   if (ThemeX.Background.isEmpty()) {
     egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
     egFreeImage(CompImage);
     return;
   }
-#else
-  if (!BackgroundImage) {
-    egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
-    egFreeImage(CompImage);
-    return;
-  }
-#endif
   NewImage = egCreateImage(Width, Height, FALSE);
   if (!NewImage) return;
 //  DBG("draw on background\n");
-#if USE_XTHEME
   egRawCopy(NewImage->PixelData,
             (EG_PIXEL*)ThemeX.Background.GetPixelPtr(0,0) + YPos * ThemeX.Background.GetWidth() + XPos,
             Width, Height,
             Width,
             ThemeX.Background.GetWidth());
-#else
-  egRawCopy(NewImage->PixelData,
-            BackgroundImage->PixelData + YPos * BackgroundImage->Width + XPos,
-            Width, Height,
-            Width,
-            BackgroundImage->Width);
-#endif
+
   egComposeImage(NewImage, CompImage, 0, 0);
   egFreeImage(CompImage);
 
@@ -616,40 +395,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   egDrawImageArea(NewImage, 0, 0, 0, 0, XPos, YPos);
   egFreeImage(NewImage);
 }
-//not used
-/*
-VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
-{
-  INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
-  EG_IMAGE *CompImage;
 
-  if (!BaseImage || !TopImage) {
-    return;
-  }
-
-  // initialize buffer with base image
-  CompImage = egCopyImage(BaseImage);
-  TotalWidth  = BaseImage->Width;
-  TotalHeight = BaseImage->Height;
-
-  // place the top image
-  CompWidth = TopImage->Width;
-  if (CompWidth > TotalWidth)
-    CompWidth = TotalWidth;
-  OffsetX = (TotalWidth - CompWidth) >> 1;
-  CompHeight = TopImage->Height;
-  if (CompHeight > TotalHeight)
-    CompHeight = TotalHeight;
-  OffsetY = (TotalHeight - CompHeight) >> 1;
-  egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
-
-  // blit to screen and clean up
-  //    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-  BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
-  egFreeImage(CompImage);
-  GraphicsScreenDirty = TRUE;
-}
-*/
 /*
   --------------------------------------------------------------------
   Pos                           : Bottom    -> Mid        -> Top
@@ -661,143 +407,6 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
   BaseImage = MainImage, TopImage = Selection
 */
 
-#if USE_XTHEME
-/*
-// TopImage = SelectionImages[index]
-// The procedure will be replaced by
-if(SelectionOnTop) {
-  BaseImage.Draw(XPos, YPos, Scale/16.f);
-  BadgeImage.Draw(XPos, YPos, Scale/16.f);
-  TopImage.Draw(XPos, YPos, Scale/16.f);
-} else {
-  TopImage.Draw(XPos, YPos, Scale/16.f);
-  BaseImage.Draw(XPos, YPos, Scale/16.f);
-  BadgeImage.Draw(XPos, YPos, Scale/16.f);
-}
- */
-#else
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos, INTN Scale)
-{
-  INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY, OffsetXTmp, OffsetYTmp;
-  BOOLEAN Selected = TRUE;
-  EG_IMAGE *CompImage;
-  EG_IMAGE *NewBaseImage;
-  EG_IMAGE *NewTopImage;
-  EG_PIXEL *BackgroundPixel = &EmbeddedBackgroundPixel;
-  
-  if (!IsEmbeddedTheme()) {
-    BackgroundPixel = &MenuBackgroundPixel;
-  } else if (GlobalConfig.DarkEmbedded) {
-    BackgroundPixel = &DarkEmbeddedBackgroundPixel;
-  }
-
-  if (!BaseImage || !TopImage) {
-    return;
-  }
-  if (Scale < 0) {
-    Scale = -Scale;
-    Selected = FALSE;
-  }
-
-  NewBaseImage = egCopyScaledImage(BaseImage, Scale); //will be Scale/16
-  TotalWidth = NewBaseImage->Width;  //mainImage sizes if GlobalConfig.SelectionOnTop
-  TotalHeight = NewBaseImage->Height;
-
-  NewTopImage = egCopyScaledImage(TopImage, Scale); //will be Scale/16
-  CompWidth = NewTopImage->Width;  //selection sizes if GlobalConfig.SelectionOnTop
-  CompHeight = NewTopImage->Height;
-  CompImage = egCreateFilledImage((CompWidth > TotalWidth)?CompWidth:TotalWidth,
-                                    (CompHeight > TotalHeight)?CompHeight:TotalHeight,
-                                    TRUE,
-                                    BackgroundPixel);
-  
-  if (!CompImage) {
-    DBG("Can't create CompImage\n");
-    return;
-  }
-//  DBG("compose image total=[%d,%d], comp=[%d,%d] at [%d,%d] scale=%d\n", TotalWidth, TotalHeight,
-//      CompWidth, CompHeight, XPos, YPos, Scale);
-  //to simplify suppose square images
-  if (CompWidth < TotalWidth) {
-    OffsetX = (TotalWidth - CompWidth) >> 1;
-    OffsetY = (TotalHeight - CompHeight) >> 1;
-    egComposeImage(CompImage, NewBaseImage, 0, 0);
-    if (!GlobalConfig.SelectionOnTop) {
-      egComposeImage(CompImage, NewTopImage, OffsetX, OffsetY);
-    }
-    CompWidth = TotalWidth;
-    CompHeight = TotalHeight;
-  } else {
-    OffsetX = (CompWidth - TotalWidth) >> 1;
-    OffsetY = (CompHeight - TotalHeight) >> 1;
-    egComposeImage(CompImage, NewBaseImage, OffsetX, OffsetY);
-    if (!GlobalConfig.SelectionOnTop) {
-      egComposeImage(CompImage, NewTopImage, 0, 0);
-    }
-  }
-
-  OffsetXTmp = OffsetX;
-  OffsetYTmp = OffsetY;
-
-  // place the badge image
-  if (BadgeImage != NULL &&
-      (BadgeImage->Width + 8) < CompWidth &&
-      (BadgeImage->Height + 8) < CompHeight) {
-
-    //blackosx
-    // Check for user badge x offset from theme.plist
-    if (GlobalConfig.BadgeOffsetX != 0xFFFF) {
-      // Check if value is between 0 and ( width of the main icon - width of badge )
-      if (GlobalConfig.BadgeOffsetX < 0 || GlobalConfig.BadgeOffsetX > (CompWidth - BadgeImage->Width)) {
-		  DBG("User offset X %lld is out of range\n", GlobalConfig.BadgeOffsetX);
-        GlobalConfig.BadgeOffsetX = CompWidth  - 8 - BadgeImage->Width;
-		  DBG("   corrected to default %lld\n", GlobalConfig.BadgeOffsetX);
-      }
-      OffsetX += GlobalConfig.BadgeOffsetX;
-    } else {
-      // Set default position
-      OffsetX += CompWidth  - 8 - BadgeImage->Width;
-    }
-    // Check for user badge y offset from theme.plist
-    if (GlobalConfig.BadgeOffsetY != 0xFFFF) {
-      // Check if value is between 0 and ( height of the main icon - height of badge )
-      if (GlobalConfig.BadgeOffsetY < 0 || GlobalConfig.BadgeOffsetY > (CompHeight - BadgeImage->Height)) {
-		  DBG("User offset Y %lld is out of range\n",GlobalConfig.BadgeOffsetY);
-        GlobalConfig.BadgeOffsetY = CompHeight - 8 - BadgeImage->Height;
-		  DBG("   corrected to default %lld\n", GlobalConfig.BadgeOffsetY);
-      }
-      OffsetY += GlobalConfig.BadgeOffsetY;
-    } else {
-      // Set default position
-      OffsetY += CompHeight - 8 - BadgeImage->Height;
-    }
-    egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);
-  }
-
-  if (GlobalConfig.SelectionOnTop) {
-    if (CompWidth < TotalWidth) {
-      egComposeImage(CompImage, NewTopImage, OffsetXTmp, OffsetYTmp);
-    } else {
-      egComposeImage(CompImage, NewTopImage, 0, 0);
-    }
-  }
-
-  // blit to screen and clean up
-//  if (!IsEmbeddedTheme()) { // regular theme
-    if (GlobalConfig.NonSelectedGrey && !Selected) {
-      BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, -16);
-    } else {
-      BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
-    }
-/*  } else { // embedded theme - don't use BltImageAlpha as it can't handle refit's built in image
-    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
-  } */
-  egFreeImage(CompImage);
-  egFreeImage(NewBaseImage);
-  egFreeImage(NewTopImage);
-  GraphicsScreenDirty = TRUE;
-}
-#endif
 
 #define MAX_SIZE_ANIME 256
 
@@ -812,49 +421,6 @@ VOID FreeAnime(GUI_ANIME *Anime)
 //     Anime = NULL;
    }
 }
-
-/* Replaced for now with Reposition* below
-INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension)
-{
-    INTN SuppliedGapDimensionPxDesigned=0;
-    INTN OppositeGapDimensionPxDesigned=0;
-    INTN OppositeGapPcDesigned=0;
-    INTN ScreenDimensionLessAnim=0;
-    INTN GapNumTimesLarger=0;
-    INTN GapNumFinal=0;
-    INTN NewSuppliedGapPx=0;
-    INTN NewOppositeGapPx=0;
-    INTN ReturnValue=0;
-    
-    SuppliedGapDimensionPxDesigned = (ThemeDesignDimension * ValueToScale) / 100;
-    OppositeGapDimensionPxDesigned = ThemeDesignDimension - (SuppliedGapDimensionPxDesigned + AnimDimension);
-    OppositeGapPcDesigned = (OppositeGapDimensionPxDesigned * 100)/ThemeDesignDimension;
-    ScreenDimensionLessAnim = (ScreenDimensionToFit - AnimDimension);
-    if (ValueToScale > OppositeGapPcDesigned) {
-      GapNumTimesLarger = (ValueToScale * 100)/OppositeGapPcDesigned;
-      GapNumFinal = GapNumTimesLarger + 100;
-      NewOppositeGapPx = (ScreenDimensionLessAnim * 100)/GapNumFinal;
-      NewSuppliedGapPx = (NewOppositeGapPx * GapNumTimesLarger)/100;
-    } else if (ValueToScale < OppositeGapPcDesigned) {
-      GapNumTimesLarger = (OppositeGapPcDesigned * 100)/ValueToScale;
-      GapNumFinal = (GapNumTimesLarger + 100);
-      NewSuppliedGapPx = (ScreenDimensionLessAnim * 100)/GapNumFinal;
-      NewOppositeGapPx = (NewSuppliedGapPx * GapNumTimesLarger)/100;
-    } else if (ValueToScale == OppositeGapPcDesigned) {
-      NewSuppliedGapPx = (ScreenDimensionLessAnim * 100)/200;
-      NewOppositeGapPx = (NewSuppliedGapPx * 100)/100;
-    }
-    ReturnValue = (NewSuppliedGapPx * 100)/ScreenDimensionToFit;
-    
-    if (ReturnValue>0 && ReturnValue<100) {
-      //DBG("Different screen size being used. Adjusted original anim gap to %d\n",ReturnValue);
-      return ReturnValue;
-    } else {
-      DBG("Different screen size being used. Adjusted value %d invalid. Returning original value %d\n",ReturnValue, ValueToScale);
-      return ValueToScale;
-    }
-}
-*/
 
 static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension)
 {
@@ -948,7 +514,6 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
   
   // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
   // to avoid overlapping the menu text on menu pages at lower resolutions is set.
-#if USE_XTHEME
   if ((ID > 1) && (ThemeX.LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
     MenuWidth = (INTN)(TEXT_XMARGIN * 2 + (50 * ThemeX.CharWidth * ThemeX.Scale)); // taken from menu.c
     if ((x + Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
@@ -957,18 +522,7 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
       }
     }
   }
-#else
-  if ((ID > 1) && (LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
-    MenuWidth = (INTN)(TEXT_XMARGIN * 2 + (50 * GlobalConfig.CharWidth * GlobalConfig.Scale)); // taken from menu.c
-    if ((x + Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
-      if ((x + LayoutAnimMoveForMenuX >= 0) || (UGAWidth-(x + LayoutAnimMoveForMenuX + Film[0]->Width)) <= 100) {
-        x += LayoutAnimMoveForMenuX;
-      }
-    }
-  }
-#endif
 
-  
   Now = AsmReadTsc();
   if (LastDraw == 0) {
     //first start, we should save background into last frame
@@ -996,8 +550,8 @@ VOID REFIT_MENU_SCREEN::UpdateAnime()
   }
   LastDraw = Now;
 }
-#if USE_XTHEME
 //by initial we use EG_IMAGE anime
+//TODO will be rewritten by XCinema class
 VOID REFIT_MENU_SCREEN::InitAnime()
 {
   CHAR16      FileName[256];
@@ -1103,119 +657,6 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   //  DBG("anime inited\n");
 }
 
-#else
-
-VOID REFIT_MENU_SCREEN::InitAnime()
-{
-  CHAR16      FileName[256];
-  CHAR16      *Path;
-  EG_IMAGE    *p = NULL;
-  EG_IMAGE    *Last = NULL;
-  GUI_ANIME   *Anime;
-
-  if (GlobalConfig.TextOnly) return;
-  // 
-  for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
-
-  // Check if we should clear old film vars (no anime or anime path changed)
-  //
-  if (gThemeOptionsChanged || !Anime || !Film || IsEmbeddedTheme() || !Theme ||
-      (/*gThemeChanged && */StriCmp(GlobalConfig.Theme, Theme) != 0)) {
-//    DBG(" free screen\n");
-    if (Film) {
-      //free images in the film
-      INTN i;
-      for (i = 0; i <= Frames; i++) { //really there are N+1 frames
-        // free only last occurrence of repeated frames
-        if (Film[i] != NULL && (i == Frames || Film[i] != Film[i+1])) {
-          FreePool(Film[i]);
-        }
-      }
-      FreePool(Film);
-      Film = NULL;
-      Frames = 0;
-    }
-    if (Theme) {
-      FreePool(Theme);
-      Theme = NULL;
-    }
-  }
-  // Check if we should load anime files (first run or after theme change)
-  if (Anime && Film == NULL) {
-    Path = Anime->Path;
-    Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
-    if ((GlobalConfig.TypeSVG || Path) && Film) {
-      // Look through contents of the directory
-      UINTN i;
-      for (i = 0; i < Anime->Frames; i++) {
-
- //       DBG("Try to load file %ls\n", FileName);
-        if (GlobalConfig.TypeSVG) {
-          p = LoadSvgFrame(i);
-   //       DBG("frame %d loaded\n", i);
-        } else {
-			snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
-          p = egLoadImage(ThemeDir, FileName, TRUE);
-        }
-        if (!p) {
-          p = Last;
-          if (!p) break;
-        } else {
-          Last = p;
-        }
-        Film[i] = p;
-      }
-      if (Film[0] != NULL) {
-        Frames = i;
-		  DBG(" found %llu frames of the anime\n", i);
-        // Create background frame
-        Film[i] = egCreateImage(Film[0]->Width, Film[0]->Height, FALSE);
-        // Copy some settings from Anime into Screen
-        FrameTime = Anime->FrameTime;
-        Once = Anime->Once;
-        Theme = (__typeof__(Theme))AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
-      } /*else {
-        DBG("Film[0] == NULL\n");
-      } */
-    }
-  }
-  // Check if a new style placement value has been specified
-  if (Anime && (Anime->FilmX >=0) && (Anime->FilmX <=100) &&
-      (Anime->FilmY >=0) && (Anime->FilmY <=100) &&
-      (Film != NULL) && (Film[0] != NULL)) {
-    // Check if screen size being used is different from theme origination size.
-    // If yes, then recalculate the animation placement % value.
-    // This is necessary because screen can be a different size, but anim is not scaled.
-    FilmPlace.XPos = HybridRepositioning(Anime->ScreenEdgeHorizontal, Anime->FilmX, Film[0]->Width,  UGAWidth,  GlobalConfig.ThemeDesignWidth );
-    FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Film[0]->Height, UGAHeight, GlobalConfig.ThemeDesignHeight);
-    
-    // Does the user want to fine tune the placement?
-    FilmPlace.XPos = CalculateNudgePosition(FilmPlace.XPos, Anime->NudgeX, Film[0]->Width, UGAWidth);
-    FilmPlace.YPos = CalculateNudgePosition(FilmPlace.YPos, Anime->NudgeY, Film[0]->Height, UGAHeight);
-    
-    FilmPlace.Width = Film[0]->Width;
-    FilmPlace.Height = Film[0]->Height;
-    DBG("recalculated Film position\n");
-  } else {
-    // We are here if there is no anime, or if we use oldstyle placement values
-    // For both these cases, FilmPlace will be set after banner/menutitle positions are known
-    FilmPlace.XPos = 0;
-    FilmPlace.YPos = 0;
-    FilmPlace.Width = 0;
-    FilmPlace.Height = 0;
-  }
-  if (Film != NULL && Film[0] != NULL) {
-    DBG(" Anime seems OK, init it\n");
-    AnimeRun = TRUE;
-    CurrentFrame = 0;
-    LastDraw = 0;
-  } else {
-//    DBG("not run anime\n");
-    AnimeRun = FALSE;
-  }
-//  DBG("anime inited\n");
-}
-#endif
 BOOLEAN REFIT_MENU_SCREEN::GetAnime()
 {
   GUI_ANIME   *Anime;

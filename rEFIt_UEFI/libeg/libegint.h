@@ -181,14 +181,6 @@ EG_IMAGE * egDecodePNG(IN const UINT8 *FileData, IN UINTN FileDataLength, IN BOO
 
 //VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 
-#if USE_XTHEME
-// now it is in XTHEME
-//INTN egRenderText(IN const XStringW& Text, OUT XImage* CompImage,
-//                  IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
-#else
-INTN egRenderText(IN CONST CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType);
-#endif
-
 
 #endif /* __LIBEG_LIBEGINT_H__ */
 

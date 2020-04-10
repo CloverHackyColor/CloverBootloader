@@ -12,13 +12,7 @@
 #include "../Platform/plist.h"
 #include "XImage.h"
 
-EFI_STATUS ParseSVGTheme(CONST CHAR8* buffer, TagPtr * dict);
-
-#if USE_XTHEME
 INTN renderSVGtext(XImage* TextBufferXY, INTN posX, INTN posY, INTN textType, const XStringW& string, UINTN Cursor);
-#else
-INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, CONST CHAR16* text, UINTN Cursor);
-#endif
 
 VOID testSVG(VOID);
 

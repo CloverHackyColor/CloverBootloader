@@ -811,25 +811,16 @@ typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY     *Next;
   CUSTOM_LOADER_ENTRY     *SubEntries;
-#if USE_XTHEME
   XImage                  Image;
   XImage                  DriveImage;
-#else
-  EG_IMAGE                *Image;
-  EG_IMAGE                *DriveImage;
-#endif
   CONST CHAR16            *ImagePath;
   CONST CHAR16            *DriveImagePath;
   CONST CHAR16            *Volume;
   CONST CHAR16            *Path;
   XString                  Options;
-#if USE_XTHEME
+
   XStringW FullTitle;
   XStringW Title;
-#else
-  CONST CHAR16            *FullTitle;
-  CONST CHAR16            *Title;
-#endif
   CONST CHAR16            *Settings;
   CHAR16                  Hotkey;
   BOOLEAN                 CommonSettings;
@@ -839,22 +830,12 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                   KernelScan;
   UINT8                   CustomBoot;
   EG_IMAGE                *CustomLogo;
-#if USE_XTHEME
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
-#else
-  EG_PIXEL         *BootBgColor; //why it is array? It is one value!
-#endif
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 
-#if USE_XTHEME
   CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(0), DriveImagePath(0), Volume(0), Path(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
                           KernelScan(0), CustomBoot(0), CustomLogo(0), BootBgColor({0,0,0,0})
 						{ memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
-#else
-  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), Image(0), DriveImage(0), ImagePath(0), DriveImagePath(0), Volume(0), Path(0), FullTitle(0), Title(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
-                          KernelScan(0), CustomBoot(0), CustomLogo(0), BootBgColor(0)
-					    { memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
-#endif
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
@@ -865,23 +846,13 @@ struct CUSTOM_LOADER_ENTRY {
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
 struct CUSTOM_LEGACY_ENTRY {
   CUSTOM_LEGACY_ENTRY   *Next;
-#if USE_XTHEME
   XImage                Image;
   XImage                DriveImage;
-#else
-  EG_IMAGE              *Image;
-  EG_IMAGE              *DriveImage;
-#endif
   CONST CHAR16          *ImagePath;
   CONST CHAR16          *DriveImagePath;
   CONST CHAR16          *Volume;
-#if USE_XTHEME
   XStringW              FullTitle;
   XStringW              Title;
-#else
-  CONST CHAR16          *FullTitle;
-  CONST CHAR16          *Title;
-#endif
   CHAR16              Hotkey;
   UINT8               Flags;
   UINT8               Type;
@@ -891,22 +862,13 @@ struct CUSTOM_LEGACY_ENTRY {
 typedef struct CUSTOM_TOOL_ENTRY CUSTOM_TOOL_ENTRY;
 struct CUSTOM_TOOL_ENTRY {
   CUSTOM_TOOL_ENTRY *Next;
-#if USE_XTHEME
   XImage            Image;
-#else
-  EG_IMAGE          *Image;
-#endif
   CHAR16            *ImagePath;
   CHAR16            *Volume;
   CHAR16            *Path;
   XString           Options;
-#if USE_XTHEME
   XStringW          FullTitle;
   XStringW          Title;
-#else
-  CONST CHAR16      *FullTitle;
-  CONST CHAR16      *Title;
-#endif
   CHAR16            Hotkey;
   UINT8             Flags;
   UINT8             VolumeType;

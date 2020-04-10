@@ -1,6 +1,7 @@
 #include "XImage.h"
 #include "lodepng.h"
 #include "nanosvg.h"
+#include "libegint.h"  //for egDecodeIcns
 
 
 #ifndef DEBUG_ALL
@@ -741,3 +742,34 @@ EG_IMAGE* XImage::ToEGImage()
   CopyMem(&Tmp->PixelData[0], &PixelData[0], GetSizeInBytes());
   return Tmp;
 }
+
+//
+// Load an image from a .icns file
+//
+EFI_STATUS XImage::LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize)
+{
+  if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
+    return EFI_SUCCESS;
+  if (BaseDir) {
+    EFI_STATUS  Status = EFI_NOT_FOUND;
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0;
+    //TODO - make XImage
+    EG_IMAGE        *NewImage;
+
+    // load file
+    Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+
+    // decode it
+    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
+    Status = FromEGImage(NewImage);
+    FreePool(FileData);
+    return Status;
+
+  }
+  return EFI_NOT_FOUND;
+}
+

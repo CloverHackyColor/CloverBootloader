@@ -98,13 +98,6 @@ CONST CHAR16                        **RecoveryPlists              = NULL;
 BOOLEAN                         SetTable132                 = FALSE;
 
 GUI_ANIME                       *GuiAnime                   = NULL;
-#if !USE_XTHEME
-EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
-
-INTN row0TileSize = 144;
-INTN row1TileSize = 64;
-#endif
 //EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
 BOOLEAN DayLight;
@@ -113,25 +106,12 @@ BOOLEAN DayLight;
 
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
-#if !USE_XTHEME
-extern INTN                     ScrollWidth;
-INTN ScrollButtonsHeight = 20;
-//extern INTN                     ScrollButtonsHeight;
-INTN ScrollBarDecorationsHeight = 5;
-//extern INTN                     ScrollBarDecorationsHeight;
-INTN ScrollScrollDecorationsHeight = 7;
-//extern INTN                     ScrollScrollDecorationsHeight;
-#endif
 
 //extern INTN                     OldChosenAudio;
 /*
 typedef struct {
   INTN        Timeout;
   UINTN       DisableFlags;
-#if !USE_XTHEME
-  UINTN       HideBadges;
-  UINTN       HideUIFlags;
-#endif
   BOOLEAN     TextOnly;
   BOOLEAN     Quiet;
   BOOLEAN     LegacyFirst;
@@ -143,68 +123,20 @@ typedef struct {
   BOOLEAN     RtcHibernateAware;
   BOOLEAN     HibernationFixup;
   BOOLEAN     SignatureFixup;
-#if !USE_XTHEME
-  FONT_TYPE   Font;
-  INTN        CharWidth;
-  UINTN       SelectionColor;
-  CHAR16      *FontFileName;
-  CHAR16      *BannerFileName;
-  CHAR16      *SelectionSmallFileName;
-  CHAR16      *SelectionBigFileName;
-  CHAR16      *SelectionIndicatorName;
-  CHAR16      *DefaultSelection;
-#endif
   CHAR16      *Theme;
   CHAR16      *ScreenResolution;
   INTN        ConsoleMode;
   BOOLEAN     CustomIcons;
-#if !USE_XTHEME
-  CHAR16      *BackgroundName;
-  SCALING     BackgroundScale;
-  UINTN       BackgroundSharp;
-  BOOLEAN     BackgroundDark;
-  BOOLEAN     SelectionOnTop;
-  BOOLEAN     BootCampStyle;
-  INTN        BadgeOffsetX;
-  INTN        BadgeOffsetY;
-  INTN        BadgeScale;
-  INTN        ThemeDesignWidth;
-  INTN        ThemeDesignHeight;
-  INTN        BannerPosX;
-  INTN        BannerPosY;
-  INTN        BannerEdgeHorizontal;
-  INTN        BannerEdgeVertical;
-  INTN        BannerNudgeX;
-  INTN        BannerNudgeY;
-  BOOLEAN     VerticalLayout;
-  BOOLEAN     NonSelectedGrey;
-  INTN        MainEntriesSize;
-  INTN        TileXSpace;
-  INTN        TileYSpace;
-#endif
   INTN        IconFormat;
   BOOLEAN     NoEarlyProgress;
   INT32       Timezone;
   BOOLEAN     ShowOptimus;
-#if !USE_XTHEME
-  BOOLEAN     Proportional;
-  BOOLEAN     DarkEmbedded;
-  BOOLEAN     TypeSVG;
-  INTN        Codepage;
-  INTN        CodepageSize;
-  float       Scale;
-  float       CentreShift;
-#endif
 } REFIT_CONFIG;
 */
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = {
   -1,             // INTN        Timeout;
   0,              // UINTN       DisableFlags;
-#if !USE_XTHEME
-  0,              // UINTN       HideBadges;
-  0,              // UINTN       HideUIFlags;
-#endif
   FALSE,          // BOOLEAN     TextOnly;
   TRUE,           // BOOLEAN     Quiet;
   FALSE,          // BOOLEAN     LegacyFirst;
@@ -217,60 +149,16 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     HibernationFixup;
   FALSE,          // BOOLEAN     SignatureFixup;
 
-#if !USE_XTHEME
-  FONT_GRAY,      // FONT_TYPE   Font; //Welcome should be white
-  9,              // INTN        CharWidth;
-  0xFFFFFF80,     // UINTN       SelectionColor;
-  NULL,           // CHAR16      *FontFileName;
-  NULL,           // CHAR16      *BannerFileName;
-  NULL,           // CHAR16      *SelectionSmallFileName;
-  NULL,           // CHAR16      *SelectionBigFileName;
-  NULL,           // CHAR16      *SelectionIndicatorName;
-  NULL,           // CHAR16      *DefaultSelection;
-#endif
   NULL,           // CHAR16      *Theme;
   NULL,           // CHAR16      *ScreenResolution;
   0,              // INTN        ConsoleMode;
   FALSE,          // BOOLEAN     CustomIcons;
-#if !USE_XTHEME
-  NULL,           // CHAR16      *BackgroundName;
-  imNone,         // SCALING     BackgroundScale;
-  0,              // UINTN       BackgroundSharp;
-  FALSE,          // BOOLEAN     BackgroundDark;
-  FALSE,          // BOOLEAN     SelectionOnTop;
-  FALSE,          // BOOLEAN     BootCampStyle;
-  0,              // INTN        BadgeOffsetX;
-  0,              // INTN        BadgeOffsetY;
-  4,              // INTN        BadgeScale;
-  0xFFFF,         // INTN        ThemeDesignWidth;
-  0xFFFF,         // INTN        ThemeDesignHeight;
-  0xFFFF,         // INTN        BannerPosX;
-  0xFFFF,         // INTN        BannerPosY;
-  0,              // INTN        BannerEdgeHorizontal;
-  0,              // INTN        BannerEdgeVertical;
-  0,              // INTN        BannerNudgeX;
-  0,              // INTN        BannerNudgeY;
-  FALSE,          // BOOLEAN     VerticalLayout;
-  FALSE,          // BOOLEAN     NonSelectedGrey;
-  128,            // INTN        MainEntriesSize;
-  8,              // INTN        TileXSpace;
-  24,             // INTN        TileYSpace;
-#endif
   ICON_FORMAT_DEF, // INTN       IconFormat;
   FALSE,          // BOOLEAN     NoEarlyProgress;
   0,              // INT32       Timezone;
   FALSE,          // BOOLEAN     ShowOptimus;
-#if !USE_XTHEME
-  FALSE,          // BOOLEAN     Proportional;
-  FALSE,          // BOOLEAN     DarkEmbedded;
-  FALSE,          // BOOLEAN     TypeSVG;
-#endif
   0xC0,           // INTN        Codepage;
   0xC0,           // INTN        CodepageSize; //extended latin
-#if !USE_XTHEME
-  1.0f,           // float       Scale;
-  0.0f,           // float       CentreShift;
-#endif
 };
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =
@@ -1014,14 +902,7 @@ CUSTOM_LOADER_ENTRY
     if (Entry->DriveImagePath) {
       DuplicateEntry->DriveImagePath = EfiStrDuplicate (Entry->DriveImagePath);
     }
-#if USE_XTHEME
     DuplicateEntry->BootBgColor = Entry->BootBgColor;
-#else
-    if (Entry->BootBgColor) {
-      DuplicateEntry->BootBgColor = (__typeof__(DuplicateEntry->BootBgColor))AllocateCopyPool (sizeof(Entry->BootBgColor), Entry->BootBgColor);
-    }
-#endif
-
     DuplicateEntry->Image            = Entry->Image;
     DuplicateEntry->DriveImage       = Entry->DriveImage;
     DuplicateEntry->Hotkey           = Entry->Hotkey;
@@ -1953,7 +1834,6 @@ FillinCustomEntry (
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
-#if USE_XTHEME
   Prop = GetProperty (DictPointer, "Title");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
     Entry->Title.takeValueFrom(Prop->string);
@@ -1994,78 +1874,7 @@ FillinCustomEntry (
       FreePool(TmpData);
     }
   }
-#else
 
-  Prop = GetProperty (DictPointer, "Title");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->FullTitle != NULL) {
-      FreePool (Entry->FullTitle);
-      Entry->FullTitle   = NULL;
-    }
-
-    if (Entry->Title != NULL) {
-      FreePool (Entry->Title);
-    }
-
-    Entry->Title = PoolPrint (L"%a", Prop->string);
-  }
-  Prop = GetProperty (DictPointer, "FullTitle");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->FullTitle) {
-      FreePool (Entry->FullTitle);
-    }
-
-    Entry->FullTitle = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "Image");
-  if (Prop != NULL) {
-    if (Entry->ImagePath) {
-      FreePool (Entry->ImagePath);
-      Entry->ImagePath = NULL;
-    }
-
-    if (Entry->Image) {
-      egFreeImage (Entry->Image);
-      Entry->Image     = NULL;
-    }
-
-    if (Prop->type == kTagTypeString) {
-      Entry->ImagePath = PoolPrint (L"%a", Prop->string);
-    }
-  } else {
-    UINTN DataLen = 0;
-    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
-    if (TmpData) {
-      Entry->Image     = egDecodePNG (TmpData, DataLen, TRUE);
-      FreePool(TmpData);
-    }
-  }
-
-  Prop = GetProperty (DictPointer, "DriveImage");
-  if (Prop != NULL) {
-    if (Entry->DriveImagePath != NULL) {
-      FreePool (Entry->DriveImagePath);
-      Entry->DriveImagePath = NULL;
-    }
-
-    if (Entry->DriveImage != NULL) {
-      egFreeImage (Entry->DriveImage);
-      Entry->DriveImage     = NULL;
-    }
-
-    if (Prop->type == kTagTypeString) {
-      Entry->DriveImagePath = PoolPrint (L"%a", Prop->string);
-    }
-  } else {
-    UINTN DataLen = 0;
-    UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
-    if (TmpData) {
-      Entry->DriveImage     = egDecodePNG (TmpData, DataLen, TRUE);
-      FreePool(TmpData);
-    }
-  }
-#endif
   Prop = GetProperty (DictPointer, "Hotkey");
   if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
     Entry->Hotkey = *(Prop->string);
@@ -2084,7 +1893,7 @@ FillinCustomEntry (
       } else if (AsciiStriCmp (Prop->string, "Theme") == 0) {
         Entry->CustomBoot  = CUSTOM_BOOT_THEME;
       } else {
-        CHAR16 *customLogo = PoolPrint (L"%a", Prop->string);
+        CHAR16 *customLogo = PoolPrint(L"%a", Prop->string);
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
         if (Entry->CustomLogo != NULL) {
           egFreeImage (Entry->CustomLogo);
@@ -2120,18 +1929,10 @@ FillinCustomEntry (
     UINTN   Color;
     Color = AsciiStrHexToUintn (Prop->string);
 
-#if USE_XTHEME
     Entry->BootBgColor.Red = (Color >> 24) & 0xFF;
     Entry->BootBgColor.Green = (Color >> 16) & 0xFF;
     Entry->BootBgColor.Blue = (Color >> 8) & 0xFF;
     Entry->BootBgColor.Reserved = (Color >> 0) & 0xFF;
-#else
-    Entry->BootBgColor = (__typeof__(Entry->BootBgColor))AllocateZeroPool (sizeof(Entry->BootBgColor));
-    Entry->BootBgColor->r = (Color >> 24) & 0xFF;
-    Entry->BootBgColor->g = (Color >> 16) & 0xFF;
-    Entry->BootBgColor->b = (Color >> 8) & 0xFF;
-    Entry->BootBgColor->a = (Color >> 0) & 0xFF;
-#endif
   }
 
   // Hidden Property, Values:
@@ -2181,7 +1982,6 @@ FillinCustomEntry (
   if (Entry->Options.isEmpty() && OSTYPE_IS_WINDOWS(Entry->Type)) {
     Entry->Options.SPrintf("-s -h");
   }
-#if USE_XTHEME
   if (Entry->Title.isEmpty()) {
     if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
       Entry->Title = L"Recovery"_XSW;
@@ -2199,26 +1999,6 @@ FillinCustomEntry (
       Entry->DriveImagePath = L"recovery";
     }
   }
-#else
-
-  if (Entry->Title == NULL) {
-    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
-      Entry->Title = PoolPrint (L"Recovery");
-    } else if (OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
-      Entry->Title = PoolPrint (L"Install macOS");
-    }
-  }
-  if ((Entry->Image == NULL) && (Entry->ImagePath == NULL)) {
-    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
-      Entry->ImagePath = L"mac";
-    }
-  }
-  if ((Entry->DriveImage == NULL) && (Entry->DriveImagePath == NULL)) {
-    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
-      Entry->DriveImagePath = L"recovery";
-    }
-  }
-#endif
   // OS Specific flags
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY (Entry->Type) || OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
 
@@ -2336,7 +2116,7 @@ FillinCustomEntry (
   }
   return TRUE;
 }
-#if USE_XTHEME
+
 BOOLEAN
 FillingCustomLegacy (
                     IN OUT CUSTOM_LEGACY_ENTRY *Entry,
@@ -2433,137 +2213,7 @@ FillingCustomLegacy (
   Entry->VolumeType = GetVolumeType(DictPointer);
   return TRUE;
 }
-#else
 
-STATIC
-BOOLEAN
-FillinCustomLegacy (
-                    IN OUT CUSTOM_LEGACY_ENTRY *Entry,
-                    TagPtr DictPointer
-                    )
-{
-  TagPtr Prop;
-  if ((Entry == NULL) || (DictPointer == NULL)) {
-    return FALSE;
-  }
-
-  Prop = GetProperty (DictPointer, "Disabled");
-  if (IsPropertyTrue (Prop)) {
-    return FALSE;
-  }
-
-  Prop = GetProperty (DictPointer, "Volume");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Volume != NULL) {
-      FreePool (Entry->Volume);
-    }
-
-    Entry->Volume = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "FullTitle");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->FullTitle) {
-      FreePool (Entry->FullTitle);
-    }
-
-    Entry->FullTitle = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "Title");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Title != NULL) {
-      FreePool (Entry->Title);
-    }
-
-    Entry->Title = PoolPrint (L"%a", Prop->string);
-  }
-  Prop = GetProperty (DictPointer, "Image");
-  if (Prop != NULL) {
-    if (Entry->ImagePath != NULL) {
-      FreePool (Entry->ImagePath);
-      Entry->ImagePath = NULL;
-    }
-
-    if (Entry->Image != NULL) {
-      egFreeImage (Entry->Image);
-      Entry->Image = NULL;
-    }
-
-    if (Prop->type == kTagTypeString) {
-      Entry->ImagePath = PoolPrint (L"%a", Prop->string);
-    }
-  } else {
-    UINTN DataLen = 0;
-    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
-    if (TmpData) {
-      Entry->Image = egDecodePNG (TmpData, DataLen, TRUE);
-      FreePool(TmpData);
-    }
-  }
-
-  Prop = GetProperty (DictPointer, "DriveImage");
-  if (Prop != NULL) {
-    if (Entry->DriveImagePath != NULL) {
-      FreePool (Entry->DriveImagePath);
-      Entry->DriveImagePath = NULL;
-    }
-
-    if (Entry->DriveImage != NULL) {
-      egFreeImage (Entry->DriveImage);
-      Entry->DriveImage = NULL;
-    }
-
-    if (Prop->type == kTagTypeString) {
-      Entry->DriveImagePath = PoolPrint (L"%a", Prop->string);
-    }
-  } else {
-    UINTN DataLen = 0;
-    UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
-    if (TmpData) {
-      Entry->DriveImage = egDecodePNG (TmpData, DataLen, TRUE);
-      FreePool(TmpData);
-    }
-  }
-
-  Prop = GetProperty (DictPointer, "Hotkey");
-  if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
-    Entry->Hotkey = *(Prop->string);
-  }
-
-  // Hidden Property, Values:
-  // - No (show the entry)
-  // - Yes (hide the entry but can be show with F3)
-  // - Always (always hide the entry)
-  Prop = GetProperty (DictPointer, "Hidden");
-  if (Prop != NULL) {
-    if ((Prop->type == kTagTypeString) &&
-        (AsciiStriCmp (Prop->string, "Always") == 0)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
-    } else if (IsPropertyTrue (Prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
-    } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
-    }
-  }
-
-  Prop = GetProperty (DictPointer, "Type");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (AsciiStriCmp (Prop->string, "Windows") == 0) {
-      Entry->Type = OSTYPE_WIN;
-    } else if (AsciiStriCmp (Prop->string, "Linux") == 0) {
-      Entry->Type = OSTYPE_LIN;
-    } else {
-      Entry->Type = OSTYPE_OTHER;
-    }
-  }
-
-  Entry->VolumeType = GetVolumeType(DictPointer);
-  return TRUE;
-}
-#endif
-
-#if USE_XTHEME
 BOOLEAN
 FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 {
@@ -2656,118 +2306,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 
   return TRUE;
 }
-#else
 
-STATIC
-BOOLEAN
-FillinCustomTool (
-                  IN OUT CUSTOM_TOOL_ENTRY *Entry,
-                  TagPtr            DictPointer
-                  )
-{
-  TagPtr Prop;
-  if ((Entry == NULL) || (DictPointer == NULL)) {
-    return FALSE;
-  }
-
-  Prop = GetProperty (DictPointer, "Disabled");
-  if (IsPropertyTrue (Prop)) {
-    return FALSE;
-  }
-
-  Prop = GetProperty (DictPointer, "Volume");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Volume) {
-      FreePool (Entry->Volume);
-    }
-    Entry->Volume = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "Path");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Path != NULL) {
-      FreePool (Entry->Path);
-    }
-
-    Entry->Path = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "Arguments");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-//    if (!Entry->Options.isEmpty()) {
-//      Entry->Options.setEmpty();
-//    } else {
-//      Entry->Options.SPrintf("%s", Prop->string);
-//    }
-      Entry->Options.SPrintf("%s", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "FullTitle");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->FullTitle != NULL) {
-      FreePool (Entry->FullTitle);
-    }
-
-    Entry->FullTitle = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "Title");
-  if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Title != NULL) {
-      FreePool (Entry->Title);
-    }
-    Entry->Title = PoolPrint (L"%a", Prop->string);
-  }
-
-  Prop = GetProperty (DictPointer, "Image");
-  if (Prop != NULL) {
-    if (Entry->ImagePath != NULL) {
-      FreePool (Entry->ImagePath);
-      Entry->ImagePath = NULL;
-    }
-
-    if (Entry->Image != NULL) {
-      egFreeImage (Entry->Image);
-      Entry->Image = NULL;
-    }
-
-    if (Prop->type == kTagTypeString) {
-      Entry->ImagePath = PoolPrint (L"%a", Prop->string);
-    }
-  } else {
-    UINTN DataLen = 0;
-    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
-    if (TmpData) {
-      Entry->Image = egDecodePNG (TmpData, DataLen, TRUE);
-    }
-  }
-
-  Prop = GetProperty (DictPointer, "Hotkey");
-  if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
-    Entry->Hotkey = *(Prop->string);
-  }
-
-  // Hidden Property, Values:
-  // - No (show the entry)
-  // - Yes (hide the entry but can be show with F3)
-  // - Always (always hide the entry)
-  Prop = GetProperty (DictPointer, "Hidden");
-  if (Prop != NULL) {
-    if ((Prop->type == kTagTypeString) &&
-        (AsciiStriCmp (Prop->string, "Always") == 0)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
-    } else if (IsPropertyTrue (Prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
-    } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
-    }
-  }
-
-  Entry->VolumeType = GetVolumeType(DictPointer);
-
-  return TRUE;
-}
-#endif
 // EDID reworked by Sherlocks
 VOID
 GetEDIDSettings(TagPtr DictPointer)
@@ -2786,7 +2325,7 @@ GetEDIDSettings(TagPtr DictPointer)
       if (Prop != NULL) {
         gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
         if ((j % 128) != 0) {
-			DBG (" Custom EDID has wrong length=%llu\n", j);
+          DBG (" Custom EDID has wrong length=%llu\n", j);
         } else {
           DBG (" Custom EDID is ok\n");
           gSettings.CustomEDIDsize = (UINT16)j;
@@ -3161,7 +2700,6 @@ GetEarlyUserSettings (
       DayLight = (NowHour > 8) && (NowHour < 20);
 
       Prop = GetProperty (DictPointer, "Theme");
-#if USE_XTHEME
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
           ThemeX.Theme.takeValueFrom(Prop->string);
@@ -3206,52 +2744,6 @@ GetEarlyUserSettings (
           }
         }
       }
-#else
-      //old method to be deleted in future
-      if (Prop != NULL) {
-        if ((Prop->type == kTagTypeString) && Prop->string) {
-          UINTN i;
-          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
-          DBG ("Default theme: %ls\n", GlobalConfig.Theme);
-          OldChosenTheme = 0xFFFF; //default for embedded
-          for (i = 0; i < ThemesNum; i++) {
-            if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
-              OldChosenTheme = i;
-              break;
-            }
-          }
-          if ((AsciiStriCmp (Prop->string, "embedded") == 0) || (AsciiStriCmp (Prop->string, "") == 0)) {
-            Prop = GetProperty (DictPointer, "EmbeddedThemeType");
-            if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
-              if (AsciiStriCmp (Prop->string, "Dark") == 0) {
-                GlobalConfig.DarkEmbedded = TRUE;
-                GlobalConfig.Font = FONT_GRAY;
-              } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
-                GlobalConfig.DarkEmbedded = FALSE;
-                GlobalConfig.Font = FONT_ALFA;
-              } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
-                GlobalConfig.DarkEmbedded = !DayLight;
-                GlobalConfig.Font = DayLight?FONT_ALFA:FONT_GRAY;
-              }
-            }
-          }
-        }
-      } else if (Prop == NULL) {
-        Prop = GetProperty (DictPointer, "EmbeddedThemeType");
-        if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
-          if (AsciiStriCmp (Prop->string, "Dark") == 0) {
-            GlobalConfig.DarkEmbedded = TRUE;
-            GlobalConfig.Font = FONT_GRAY;
-          } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
-            GlobalConfig.DarkEmbedded = FALSE;
-            GlobalConfig.Font = FONT_ALFA;
-          } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
-            GlobalConfig.DarkEmbedded = !DayLight;
-            GlobalConfig.Font = DayLight?FONT_ALFA:FONT_GRAY;
-          }
-        }
-      }
-#endif
       Prop = GetProperty (DictPointer, "PlayAsync"); //PlayAsync
       gSettings.PlayAsync = IsPropertyTrue (Prop);
 
@@ -3504,15 +2996,9 @@ GetEarlyUserSettings (
               Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LEGACY_ENTRY));
               if (Entry) {
                 // Fill it in
-#if USE_XTHEME
                 if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry (Entry)) {
                   FreePool (Entry);
                 }
-#else
-                if (!FillinCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry (Entry)) {
-                  FreePool (Entry);
-                }
-#endif
               }
             }
           }
@@ -3537,15 +3023,9 @@ GetEarlyUserSettings (
               Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_TOOL_ENTRY));
               if (Entry) {
                 // Fill it in
-#if USE_XTHEME
                 if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry (Entry)) {
                   FreePool (Entry);
                 }
-#else
-                if (!FillinCustomTool(Entry, Dict3) || !AddCustomToolEntry (Entry)) {
-                  FreePool (Entry);
-                }
-#endif
               }
             }
           }
@@ -3967,8 +3447,6 @@ GetListOfThemes ()
   DirIterClose (&DirIter);
 }
 
-#if USE_XTHEME
-
 EFI_STATUS
 XTheme::GetThemeTagSettings (void* DictP)
 {
@@ -4367,521 +3845,8 @@ XTheme::GetThemeTagSettings (void* DictP)
   return EFI_SUCCESS;
 }
 
-#else
-STATIC
-EFI_STATUS
-GetThemeTagSettings (
-                     TagPtr DictPointer
-                     )
-{
-  TagPtr Dict, Dict2, Dict3;
-
-  //fill default to have an ability change theme
-  GlobalConfig.BackgroundScale = imCrop;
-
-  if (GlobalConfig.BackgroundName != NULL) {
-    FreePool (GlobalConfig.BackgroundName);
-    GlobalConfig.BackgroundName = NULL;
-  }
-
-  GlobalConfig.BackgroundSharp = 0;
-  GlobalConfig.BackgroundDark = 0;
-
-  if (GlobalConfig.BannerFileName != NULL) {
-    FreePool (GlobalConfig.BannerFileName);
-    GlobalConfig.BannerFileName = NULL;
-  }
-
-  GlobalConfig.HideBadges               = 0;
-  GlobalConfig.BadgeOffsetX             = 0xFFFF;
-  GlobalConfig.BadgeOffsetY             = 0xFFFF;
-  GlobalConfig.BadgeScale               = 8; //default
-  GlobalConfig.ThemeDesignWidth         = 0xFFFF;
-  GlobalConfig.ThemeDesignHeight        = 0xFFFF;
-  GlobalConfig.BannerEdgeHorizontal     = SCREEN_EDGE_LEFT;
-  GlobalConfig.BannerEdgeVertical       = SCREEN_EDGE_TOP;
-  GlobalConfig.BannerPosX               = 0xFFFF;
-  GlobalConfig.BannerPosY               = 0xFFFF;
-  GlobalConfig.BannerNudgeX             = 0;
-  GlobalConfig.BannerNudgeY             = 0;
-  GlobalConfig.VerticalLayout           = FALSE;
-  GlobalConfig.MainEntriesSize          = 128;
-  GlobalConfig.TileXSpace               = 8;
-  GlobalConfig.TileYSpace               = 24;
-  row0TileSize                          = 144;
-  row1TileSize                          = 64;
-  LayoutBannerOffset                    = 64; //default value if not set
-  LayoutButtonOffset                    = 0; //default value if not set
-  LayoutTextOffset                      = 0; //default value if not set
-  LayoutAnimMoveForMenuX                = 0; //default value if not set
-  GlobalConfig.HideUIFlags              = 0;
-  GlobalConfig.SelectionColor           = 0x80808080;
-
-  if (GlobalConfig.SelectionSmallFileName != NULL) {
-    FreePool (GlobalConfig.SelectionSmallFileName);
-    GlobalConfig.SelectionSmallFileName = NULL;
-  }
-
-  if (GlobalConfig.SelectionBigFileName != NULL) {
-    FreePool (GlobalConfig.SelectionBigFileName);
-    GlobalConfig.SelectionBigFileName   = NULL;
-  }
-
-  if (GlobalConfig.SelectionIndicatorName != NULL) {
-    FreePool (GlobalConfig.SelectionIndicatorName);
-    GlobalConfig.SelectionIndicatorName = NULL;
-  }
-
-  GlobalConfig.SelectionOnTop           = FALSE;
-  GlobalConfig.BootCampStyle            = FALSE;
-  ScrollWidth                           = 16;
-  ScrollButtonsHeight                   = 20;
-  ScrollBarDecorationsHeight            = 5;
-  ScrollScrollDecorationsHeight         = 7;
-  GlobalConfig.Font                     = FONT_LOAD;
-  if (GlobalConfig.FontFileName != NULL) {
-    FreePool (GlobalConfig.FontFileName);
-    GlobalConfig.FontFileName          = NULL;
-  }
-  GlobalConfig.CharWidth               = 9;
-  //  GlobalConfig.PruneScrollRows         = 0;
-  GuiAnime = NULL;
-
-  if (BigBack != NULL) {
-    egFreeImage (BigBack);
-    BigBack = NULL;
-  }
-
-  if (BackgroundImage != NULL) {
-    egFreeImage (BackgroundImage);
-    BackgroundImage = NULL;
-  }
-
-  if (FontImage != NULL) {
-    egFreeImage (FontImage);
-    FontImage = NULL;
-  }
-  FreeScrollBar();
-
-  if (IconFormat != NULL) {
-    FreePool (IconFormat);
-    IconFormat = NULL;
-  }
-
-  GlobalConfig.IconFormat = ICON_FORMAT_DEF;
-
-  // if NULL parameter, quit after setting default values, this is embedded theme
-  if (DictPointer == NULL) {
-    return EFI_SUCCESS;
-  }
-
-  Dict    = GetProperty (DictPointer, "BootCampStyle");
-  GlobalConfig.BootCampStyle = IsPropertyTrue(Dict);
-
-  Dict    = GetProperty (DictPointer, "Background");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Type");
-    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-      if ((Dict2->string[0] == 'S') || (Dict2->string[0] == 's')) {
-        GlobalConfig.BackgroundScale = imScale;
-      } else if ((Dict2->string[0] == 'T') || (Dict2->string[0] == 't')) {
-        GlobalConfig.BackgroundScale = imTile;
-      }
-    }
-    //  }
-
-    Dict2 = GetProperty (Dict, "Path");
-    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-      GlobalConfig.BackgroundName = PoolPrint (L"%a", Dict2->string);
-    }
-
-    Dict2 = GetProperty (Dict, "Sharp");
-    GlobalConfig.BackgroundSharp  = (INT32)GetPropertyInteger (Dict2, GlobalConfig.BackgroundSharp);
-
-    Dict2 = GetProperty (Dict, "Dark");
-    GlobalConfig.BackgroundDark   = IsPropertyTrue(Dict2);
-  }
-
-  Dict = GetProperty (DictPointer, "Banner");
-  if (Dict != NULL) {
-    // retain for legacy themes.
-    if ((Dict->type == kTagTypeString) && Dict->string) {
-      GlobalConfig.BannerFileName = PoolPrint (L"%a", Dict->string);
-    } else {
-      // for new placement settings
-      Dict2 = GetProperty (Dict, "Path");
-      if (Dict2 != NULL) {
-        if ((Dict2->type == kTagTypeString) && Dict2->string) {
-          GlobalConfig.BannerFileName = PoolPrint (L"%a", Dict2->string);
-        }
-      }
-
-      Dict2 = GetProperty (Dict, "ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "left") == 0) {
-          GlobalConfig.BannerEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (AsciiStrCmp (Dict2->string, "right") == 0) {
-          GlobalConfig.BannerEdgeHorizontal = SCREEN_EDGE_RIGHT;
-        }
-      }
-
-      Dict2 = GetProperty (Dict, "ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "top") == 0) {
-          GlobalConfig.BannerEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (AsciiStrCmp (Dict2->string, "bottom") == 0) {
-          GlobalConfig.BannerEdgeVertical = SCREEN_EDGE_BOTTOM;
-        }
-      }
-
-      Dict2 = GetProperty (Dict, "DistanceFromScreenEdgeX%");
-      GlobalConfig.BannerPosX   = (INT32)GetPropertyInteger (Dict2, 0);
-
-      Dict2 = GetProperty (Dict, "DistanceFromScreenEdgeY%");
-      GlobalConfig.BannerPosY   = (INT32)GetPropertyInteger (Dict2, 0);
-
-      Dict2 = GetProperty (Dict, "NudgeX");
-      GlobalConfig.BannerNudgeX = (INT32)GetPropertyInteger (Dict2, 0);
-
-      Dict2 = GetProperty (Dict, "NudgeY");
-      GlobalConfig.BannerNudgeY = (INT32)GetPropertyInteger (Dict2, 0);
-    }
-  }
-
-  Dict = GetProperty (DictPointer, "Badges");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Swap");
-    if (Dict2 != NULL && Dict2->type == kTagTypeTrue) {
-      GlobalConfig.HideBadges |= HDBADGES_SWAP;
-      DBG ("OS main and drive as badge\n");
-    }
-
-    Dict2 = GetProperty (Dict, "Show");
-    if (Dict2 != NULL && Dict2->type == kTagTypeTrue) {
-      GlobalConfig.HideBadges |= HDBADGES_SHOW;
-    }
-
-    Dict2 = GetProperty (Dict, "Inline");
-    if (Dict2 != NULL && Dict2->type == kTagTypeTrue) {
-      GlobalConfig.HideBadges |= HDBADGES_INLINE;
-    }
-
-    // blackosx added X and Y position for badge offset.
-    Dict2 = GetProperty (Dict, "OffsetX");
-    GlobalConfig.BadgeOffsetX = (INTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeOffsetX);
-
-    Dict2 = GetProperty (Dict, "OffsetY");
-    GlobalConfig.BadgeOffsetY = (INTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeOffsetY);
-
-    Dict2 = GetProperty (Dict, "Scale");
-    GlobalConfig.BadgeScale = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.BadgeScale);
-  }
-
-  Dict = GetProperty (DictPointer, "Origination");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "DesignWidth");
-    GlobalConfig.ThemeDesignWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.ThemeDesignWidth);
-
-    Dict2 = GetProperty (Dict, "DesignHeight");
-    GlobalConfig.ThemeDesignHeight = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.ThemeDesignHeight);
-  }
-
-  Dict = GetProperty (DictPointer, "Layout");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "BannerOffset");
-    LayoutBannerOffset = (UINTN)GetPropertyInteger (Dict2, LayoutBannerOffset);
-
-    Dict2 = GetProperty (Dict, "ButtonOffset");
-    LayoutButtonOffset = (UINTN)GetPropertyInteger (Dict2, LayoutButtonOffset);
-
-    Dict2 = GetProperty (Dict, "TextOffset");
-    LayoutTextOffset = (UINTN)GetPropertyInteger (Dict2, LayoutTextOffset);
-
-    Dict2 = GetProperty (Dict, "AnimAdjustForMenuX");
-    LayoutAnimMoveForMenuX = (UINTN)GetPropertyInteger (Dict2, LayoutAnimMoveForMenuX);
-
-    Dict2 = GetProperty (Dict, "Vertical");
-    if (Dict2 && Dict2->type == kTagTypeTrue) {
-      GlobalConfig.VerticalLayout = TRUE;
-    }
-
-    // GlobalConfig.MainEntriesSize
-    Dict2 = GetProperty (Dict, "MainEntriesSize");
-    GlobalConfig.MainEntriesSize = (INT32)GetPropertyInteger (Dict2, GlobalConfig.MainEntriesSize);
-
-    Dict2 = GetProperty (Dict, "TileXSpace");
-    GlobalConfig.TileXSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileXSpace);
-
-    Dict2 = GetProperty (Dict, "TileYSpace");
-    GlobalConfig.TileYSpace = (INT32)GetPropertyInteger (Dict2, GlobalConfig.TileYSpace);
-
-    Dict2 = GetProperty (Dict, "SelectionBigWidth");
-    row0TileSize = (INTN)GetPropertyInteger (Dict2, row0TileSize);
-
-    Dict2 = GetProperty (Dict, "SelectionSmallWidth");
-    row1TileSize = (INTN)GetPropertyInteger (Dict2, row1TileSize);
-
-  }
-
-  Dict = GetProperty (DictPointer, "Components");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Banner");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_BANNER;
-    }
-
-    Dict2 = GetProperty (Dict, "Functions");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCS;
-    }
-
-    Dict2 = GetProperty (Dict, "Tools");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_TOOLS;
-    }
-
-    Dict2 = GetProperty (Dict, "Label");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_LABEL;
-    }
-
-    Dict2 = GetProperty (Dict, "Revision");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_REVISION;
-    }
-
-    Dict2 = GetProperty (Dict, "Help");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_HELP;
-    }
-
-    Dict2 = GetProperty (Dict, "MenuTitle");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE;
-    }
-
-    Dict2 = GetProperty (Dict, "MenuTitleImage");
-    if (Dict2 && Dict2->type == kTagTypeFalse) {
-      GlobalConfig.HideUIFlags |= HIDEUI_FLAG_MENU_TITLE_IMAGE;
-    }
-  }
-
-  Dict = GetProperty (DictPointer, "Selection");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Color");
-    GlobalConfig.SelectionColor = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.SelectionColor);
-
-    Dict2 = GetProperty (Dict, "Small");
-    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string) {
-      GlobalConfig.SelectionSmallFileName = PoolPrint (L"%a", Dict2->string);
-    }
-
-    Dict2 = GetProperty (Dict, "Big");
-    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string) {
-      GlobalConfig.SelectionBigFileName = PoolPrint (L"%a", Dict2->string);
-    }
-
-    Dict2 = GetProperty (Dict, "Indicator");
-    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string) {
-      GlobalConfig.SelectionIndicatorName = PoolPrint (L"%a", Dict2->string);
-    }
-
-    Dict2 = GetProperty (Dict, "OnTop");
-    GlobalConfig.SelectionOnTop = IsPropertyTrue (Dict2);
-
-    Dict2 = GetProperty (Dict, "ChangeNonSelectedGrey");
-    GlobalConfig.NonSelectedGrey = IsPropertyTrue (Dict2);
-  }
-
-  Dict = GetProperty (DictPointer, "Scroll");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Width");
-    ScrollWidth = (UINTN)GetPropertyInteger (Dict2, ScrollWidth);
-
-    Dict2 = GetProperty (Dict, "Height");
-    ScrollButtonsHeight = (UINTN)GetPropertyInteger (Dict2, ScrollButtonsHeight);
-
-    Dict2 = GetProperty (Dict, "BarHeight");
-    ScrollBarDecorationsHeight = (UINTN)GetPropertyInteger (Dict2, ScrollBarDecorationsHeight);
-
-    Dict2 = GetProperty (Dict, "ScrollHeight");
-    ScrollScrollDecorationsHeight = (UINTN)GetPropertyInteger (Dict2,ScrollScrollDecorationsHeight);
-  }
-
-  Dict = GetProperty (DictPointer, "Font");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Type");
-    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-      if ((Dict2->string[0] == 'A') || (Dict2->string[0] == 'B')) {
-        GlobalConfig.Font = FONT_ALFA;
-      } else if ((Dict2->string[0] == 'G') || (Dict2->string[0] == 'W')) {
-        GlobalConfig.Font = FONT_GRAY;
-      } else if ((Dict2->string[0] == 'L') || (Dict2->string[0] == 'l')) {
-        GlobalConfig.Font = FONT_LOAD;
-      }
-    }
-    if (GlobalConfig.Font == FONT_LOAD) {
-      Dict2 = GetProperty (Dict, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        GlobalConfig.FontFileName = PoolPrint (L"%a", Dict2->string);
-      }
-    }
-
-    Dict2 = GetProperty (Dict, "CharWidth");
-    GlobalConfig.CharWidth = (UINTN)GetPropertyInteger (Dict2, GlobalConfig.CharWidth);
-    if (GlobalConfig.CharWidth & 1) {
-      MsgLog("Warning! Character width %lld should be even!\n", GlobalConfig.CharWidth);
-    }
-
-    Dict2 = GetProperty (Dict, "Proportional");
-    GlobalConfig.Proportional = IsPropertyTrue (Dict2);
-  }
-
-  Dict = GetProperty (DictPointer, "Anime");
-  if (Dict != NULL) {
-    INTN   i, Count = GetTagCount (Dict);
-    for (i = 0; i < Count; i++) {
-      GUI_ANIME *Anime;
-      if (EFI_ERROR (GetElement (Dict, i, &Dict3))) {
-        continue;
-      }
-
-      if (Dict3 == NULL) {
-        break;
-      }
-
-      Anime = (__typeof__(Anime))AllocateZeroPool (sizeof(GUI_ANIME));
-      if (Anime == NULL) {
-        break;
-      }
-
-      Dict2 = GetProperty (Dict3, "ID");
-      Anime->ID = (UINTN)GetPropertyInteger (Dict2, 1); //default=main screen
-
-      Dict2 = GetProperty (Dict3, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        Anime->Path = PoolPrint (L"%a", Dict2->string);
-      }
-
-      Dict2 = GetProperty (Dict3, "Frames");
-      Anime->Frames = (UINTN)GetPropertyInteger (Dict2, Anime->Frames);
-
-      Dict2 = GetProperty (Dict3, "FrameTime");
-      Anime->FrameTime = (UINTN)GetPropertyInteger (Dict2, Anime->FrameTime);
-
-      Dict2 = GetProperty (Dict3, "ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "left") == 0) {
-          Anime->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (AsciiStrCmp (Dict2->string, "right") == 0) {
-          Anime->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
-        }
-      }
-
-      Dict2 = GetProperty (Dict3, "ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "top") == 0) {
-          Anime->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (AsciiStrCmp (Dict2->string, "bottom") == 0) {
-          Anime->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
-        }
-      }
-
-      //default values are centre
-
-      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeX%");
-      Anime->FilmX = (INT32)GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeY%");
-      Anime->FilmY = (INT32)GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "NudgeX");
-      Anime->NudgeX = (INT32)GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "NudgeY");
-      Anime->NudgeY = (INT32)GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "Once");
-      Anime->Once = IsPropertyTrue (Dict2);
-
-      // Add the anime to the list
-      if ((Anime->ID == 0) || (Anime->Path == NULL)) {
-        FreePool (Anime);
-      } else if (GuiAnime != NULL) { //second anime or further
-        if (GuiAnime->ID == Anime->ID) { //why the same anime here?
-          Anime->Next = GuiAnime->Next;
-          FreeAnime (GuiAnime); //free double
-        } else {
-          GUI_ANIME *Ptr = GuiAnime;
-          while (Ptr->Next) {
-            if (Ptr->Next->ID == Anime->ID) { //delete double from list
-              GUI_ANIME *Next = Ptr->Next;
-              Ptr->Next = Next->Next;
-              FreeAnime (Next);
-              break;
-            }
-            Ptr       = Ptr->Next;
-          }
-          Anime->Next = GuiAnime;
-        }
-        GuiAnime      = Anime;
-      } else {
-        GuiAnime      = Anime; //first anime
-      }
-    }
-  }
-
-  // set file defaults in case they were not set
-  Dict = GetProperty (DictPointer, "Icon");
-  if (Dict != NULL) {
-    Dict2 = GetProperty (Dict, "Format");
-    if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-      if (AsciiStriCmp (Dict2->string, "ICNS") == 0) {
-        GlobalConfig.IconFormat = ICON_FORMAT_ICNS;
-        IconFormat = PoolPrint (L"%s", L"icns");
-      } else if (AsciiStriCmp (Dict2->string, "PNG") == 0) {
-        GlobalConfig.IconFormat = ICON_FORMAT_PNG;
-        IconFormat = PoolPrint (L"%s", L"png");
-      } else if (AsciiStriCmp (Dict2->string, "BMP") == 0) {
-        GlobalConfig.IconFormat = ICON_FORMAT_BMP;
-        IconFormat = PoolPrint (L"%s", L"bmp");
-      }/* else {
-        GlobalConfig.IconFormat = ICON_FORMAT_DEF;
-        }*/
-    }
-  }
-
-  if (GlobalConfig.BackgroundName == NULL) {
-    GlobalConfig.BackgroundName = GetIconsExt(L"background", L"png");
-  }
-  if (GlobalConfig.BannerFileName == NULL) {
-    GlobalConfig.BannerFileName = GetIconsExt(L"logo", L"png");
-  }
-  if (GlobalConfig.SelectionSmallFileName == NULL) {
-    GlobalConfig.SelectionSmallFileName = GetIconsExt(L"selection_small", L"png");
-  }
-  if (GlobalConfig.SelectionBigFileName == NULL) {
-    GlobalConfig.SelectionBigFileName = GetIconsExt(L"selection_big", L"png");
-  }
-  if (GlobalConfig.SelectionIndicatorName == NULL) {
-    GlobalConfig.SelectionIndicatorName = GetIconsExt(L"selection_indicator", L"png");
-  }
-  if (GlobalConfig.FontFileName == NULL) {
-    GlobalConfig.FontFileName = GetIconsExt(L"font", L"png");
-  }
-
-  return EFI_SUCCESS;
-}
-
-#endif
-
-#if USE_XTHEME
 void* XTheme::LoadTheme (const CHAR16 *TestTheme)
 
-#else
-TagPtr LoadTheme (const CHAR16 *TestTheme)
-
-#endif
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
   TagPtr     ThemeDict = NULL;
@@ -4913,7 +3878,6 @@ TagPtr LoadTheme (const CHAR16 *TestTheme)
   if (!EFI_ERROR (Status)) {
     Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
     if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-#if USE_XTHEME
       Status = ParseSVGXTheme((const CHAR8*)ThemePtr);
       if (EFI_ERROR(Status)) {
         ThemeDict = NULL;
@@ -4921,9 +3885,6 @@ TagPtr LoadTheme (const CHAR16 *TestTheme)
         ThemeDict = (__typeof__(ThemeDict))AllocateZeroPool(sizeof(TagStruct));
         ThemeDict->type = kTagTypeNone;
       }
-#else
-      Status = ParseSVGTheme((const CHAR8*)ThemePtr, &ThemeDict);
-#endif
       if (ThemeDict == NULL) {
         DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
       } else {
@@ -4947,14 +3908,9 @@ TagPtr LoadTheme (const CHAR16 *TestTheme)
   if (ThemePtr != NULL) {
     FreePool (ThemePtr);
   }
-#if USE_XTHEME
   return (void*)ThemeDict;
-#else
-  return ThemeDict;
-#endif
 }
 
-#if USE_XTHEME
 EFI_STATUS
 InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
 {
@@ -5173,269 +4129,6 @@ finish:
   ThemeX.ClearScreen();
   return Status;
 }
-
-#else
-EFI_STATUS
-InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
-{
-  EFI_STATUS Status       = EFI_NOT_FOUND;
-  UINTN      Size         = 0;
-  UINTN      i;
-  TagPtr     ThemeDict    = NULL;
-  CHAR8      *ChosenTheme = NULL;
-  CHAR16     *TestTheme   = NULL;
-  UINTN      Rnd;
-
-  DbgHeader("InitTheme");
-  GlobalConfig.TypeSVG = FALSE;
-  GlobalConfig.BootCampStyle = FALSE;
-  GlobalConfig.Scale = 1.0f;
-  GlobalConfig.BannerPosX = 0;
-  GlobalConfig.BannerPosY = 0;
-
-  if (DayLight) {
-    DBG("use daylight theme\n");
-  } else {
-    DBG("use night theme\n");
-  }
-
-  for (i = 0; i < 3; i++) {
-    //    DBG("validate %d face\n", i);
-    textFace[i].valid = FALSE;
-  }
-  //  DBG("...done\n");
-  NSVGfontChain *fontChain = fontsDB;
-  while (fontChain) {
-    NSVGfont *font = fontChain->font;
-    //    DBG("free font %s\n", font->fontFamily);
-    NSVGfontChain *nextChain = fontChain->next;
-    if (font) {
-      nsvg__deleteFont(font);
-      fontChain->font = NULL;
-    }
-    FreePool(fontChain);
-    fontChain = nextChain;
-  }
-  //as all font freed then free the chain
-  fontsDB = NULL;
-
-  /*
-   if (mainParser) {
-   nsvg__deleteParser(mainParser);
-   DBG("parser deleted\n");
-   mainParser = NULL;
-   }
-   */
-  row0TileSize = 144;
-  row1TileSize = 64;
-  if (FontImage != NULL) {
-    //    DBG("free font image\n");  //raster font
-    egFreeImage (FontImage);
-    FontImage = NULL;
-  }
-
-  Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
-
-  // Free selection images which are not builtin icons
-  for (i = 0; i < 6; i++) {
-    //    DBG("free selection %d\n", i);
-    if (SelectionImages[i] != NULL) {
-      if ((SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_SMALL].Image) &&
-          (SelectionImages[i] != BuiltinIconTable[BUILTIN_SELECTION_BIG].Image)) {
-        egFreeImage (SelectionImages[i]);
-      }
-      SelectionImages[i] = NULL;
-    }
-  }
-  //  DBG("...done\n");
-  // Free banner which is not builtin icon
-  if (Banner != NULL) {
-    if (Banner != BuiltinIconTable[BUILTIN_ICON_BANNER].Image) {
-      //      DBG("free banner\n");
-      egFreeImage (Banner);
-    }
-    Banner  = NULL;
-  }
-  //  DBG("...done\n");
-  //Free buttons images
-  for (i = 0; i < 4; i++) {
-    if (Buttons[i] != NULL) {
-      //      DBG("free button %d\n", i);
-      egFreeImage(Buttons[i]);
-      Buttons[i] = NULL;
-    }
-  }
-
-  // Kill mouse before we invalidate builtin pointer image
-  // KillMouse();
-  //here we have no access to Mouse
-
-  // Invalidate BuiltinIcons
-  //    DBG ("Invalidating BuiltinIcons...\n");
-  for (i = 0; i < BUILTIN_ICON_COUNT; i++) {
-    if (BuiltinIconTable[i].Image != NULL) {
-      //      DBG("free builtin image %d\n", i);
-      egFreeImage (BuiltinIconTable[i].Image);
-      BuiltinIconTable[i].Image = NULL;
-    }
-  }
-  //  DBG("...done\n");
-  while (GuiAnime != NULL) {
-    GUI_ANIME *NextAnime = GuiAnime->Next;
-    //    DBG("free anime %d\n", GuiAnime->ID);
-    FreeAnime (GuiAnime);
-    GuiAnime             = NextAnime;
-  }
-  //  DBG("...done\n");
-  GetThemeTagSettings(NULL);
-
-  if (ThemesNum > 0 &&
-      (!GlobalConfig.Theme || StriCmp(GlobalConfig.Theme, L"embedded") != 0)) {
-    // Try special theme first
-    if (Time != NULL) {
-      if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
-        TestTheme = PoolPrint (L"christmas");
-      } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 3))) {
-        TestTheme = PoolPrint (L"newyear");
-      }
-
-      if (TestTheme != NULL) {
-        ThemeDict = LoadTheme (TestTheme);
-        if (ThemeDict != NULL) {
-          DBG ("special theme %ls found and %ls parsed\n", TestTheme, CONFIG_THEME_FILENAME);
-          if (GlobalConfig.Theme) {
-            FreePool (GlobalConfig.Theme);
-          }
-          GlobalConfig.Theme = TestTheme;
-        } else { // special theme not loaded
-          DBG ("special theme %ls not found, skipping\n", TestTheme/*, CONFIG_THEME_FILENAME*/);
-          FreePool (TestTheme);
-        }
-        TestTheme = NULL;
-      }
-    }
-    // Try theme from nvram
-    if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
-      ChosenTheme = (__typeof__(ChosenTheme))GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-      if (ChosenTheme != NULL) {
-        if (AsciiStrCmp (ChosenTheme, "embedded") == 0) {
-          goto finish;
-        }
-        if (AsciiStrCmp (ChosenTheme, "random") == 0) {
-          ThemeDict = LoadTheme (ThemesList[Rnd]);
-          goto finish;
-        }
-
-        TestTheme   = PoolPrint (L"%a", ChosenTheme);
-        if (TestTheme != NULL) {
-          ThemeDict = LoadTheme (TestTheme);
-          if (ThemeDict != NULL) {
-            DBG ("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
-            if (GlobalConfig.Theme != NULL) {
-              FreePool (GlobalConfig.Theme);
-            }
-            GlobalConfig.Theme = TestTheme;
-          } else { // theme from nvram not loaded
-            if (GlobalConfig.Theme != NULL) {
-              DBG ("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, GlobalConfig.Theme);
-            } else {
-              DBG ("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
-            }
-            FreePool (TestTheme);
-          }
-          TestTheme = NULL;
-        }
-        FreePool (ChosenTheme);
-        ChosenTheme = NULL;
-      }
-    }
-    // Try to get theme from settings
-    if (ThemeDict == NULL) {
-      if (GlobalConfig.Theme == NULL) {
-        if (Time != NULL) {
-          DBG ("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-        } else {
-          DBG ("no default theme, get first theme %ls\n", ThemesList[0]);
-        }
-      } else {
-        if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
-          ThemeDict = LoadTheme (ThemesList[Rnd]);
-        } else {
-          ThemeDict = LoadTheme (GlobalConfig.Theme);
-          if (ThemeDict == NULL) {
-            DBG ("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme);
-            FreePool (GlobalConfig.Theme);
-            GlobalConfig.Theme = NULL;
-          }
-        }
-      }
-    }
-  } // ThemesNum>0
-
-finish:
-  if (!ThemeDict) {  // No theme could be loaded, use embedded
-    DBG (" using embedded theme\n");
-    GlobalConfig.Theme = NULL;
-    OldChosenTheme = 0xFFFF;
-    if (ThemePath != NULL) {
-      FreePool (ThemePath);
-      ThemePath = NULL;
-    }
-
-    if (ThemeDir != NULL) {
-      ThemeDir->Close (ThemeDir);
-      ThemeDir = NULL;
-    }
-
-    GetThemeTagSettings(NULL);
-    //fill some fields
-    //GlobalConfig.Timeout = -1;
-    GlobalConfig.SelectionColor = 0xA0A0A080;
-    GlobalConfig.Font = FONT_ALFA; //to be inverted later
-    GlobalConfig.CharWidth = 9;
-    GlobalConfig.HideBadges = HDBADGES_SHOW;
-    GlobalConfig.BadgeScale = 16;
-    Status = StartupSoundPlay(ThemeDir, NULL);
-  } else { // theme loaded successfully
-    // read theme settings
-    if (!GlobalConfig.TypeSVG) {
-      TagPtr DictPointer = GetProperty(ThemeDict, "Theme");
-      if (DictPointer != NULL) {
-        Status = GetThemeTagSettings(DictPointer);
-        if (EFI_ERROR (Status)) {
-          DBG ("Config theme error: %s\n", strerror(Status));
-        }
-      }
-    }
-    FreeTag(ThemeDict);
-
-    if (!DayLight) {
-      Status = StartupSoundPlay(ThemeDir, L"sound_night.wav");
-      if (EFI_ERROR(Status)) {
-        Status = StartupSoundPlay(ThemeDir, L"sound.wav");
-      }
-    } else {
-      Status = StartupSoundPlay(ThemeDir, L"sound.wav");
-    }
-
-  }
-  for (i = 0; i < ThemesNum; i++) {
-    if (GlobalConfig.Theme && StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
-      OldChosenTheme = i;
-      break;
-    }
-  }
-  if (ChosenTheme != NULL) {
-    FreePool (ChosenTheme);
-  }
-  if (!GlobalConfig.TypeSVG) {
-    PrepareFont();
-  }
-
-  return Status;
-}
-
-#endif
 
 VOID
 ParseSMBIOSSettings(
@@ -7494,7 +6187,6 @@ GetUserSettings(
     } else {
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
-#if USE_XTHEME
     if (gThemeChanged && ThemeX.Theme.notEmpty()) {
       DictPointer = GetProperty (Dict, "GUI");
       if (DictPointer != NULL) {
@@ -7506,20 +6198,6 @@ GetUserSettings(
         }
       }
     }
-#else
-    if (gThemeChanged && GlobalConfig.Theme) {
-      DictPointer = GetProperty (Dict, "GUI");
-      if (DictPointer != NULL) {
-        Prop = GetProperty (DictPointer, "Theme");
-        if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
-          FreePool(GlobalConfig.Theme);
-          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
-          DBG ("Theme from new config: %ls\n", GlobalConfig.Theme);
-        }
-      }
-    }
-#endif
-
     SaveSettings();
   }
   //DBG ("config.plist read and return %s\n", strerror(Status));

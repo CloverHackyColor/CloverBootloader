@@ -72,16 +72,9 @@
 #endif
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
-#if USE_XTHEME
 STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XImage& Image,
                             IN CHAR16 ShortcutLetter, IN CONST XString& Options)
-#else
-STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
-                            IN REFIT_VOLUME *Volume, IN EG_IMAGE *Image,
-                            IN CHAR16 ShortcutLetter, IN CONST XString& Options)
-#endif
-
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
@@ -130,19 +123,11 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   // prepare the menu entry
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
   Entry = new REFIT_MENU_ENTRY_CLOVER();
-//#if USE_XTHEME
   Entry->Title.takeValueFrom(LoaderTitle);
-//#else
-//  Entry->Title = EfiStrDuplicate(LoaderTitle);
-//#endif
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;
   Entry->ShortcutLetter = 'C';
-#if USE_XTHEME
   Entry->Image          = ThemeX.GetIcon(BUILTIN_ICON_FUNC_CLOVER);
-#else
-  Entry->Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
-#endif
   Entry->Volume = Volume;
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
@@ -160,11 +145,8 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
-#if USE_XTHEME
+
   SubScreen->Title.takeValueFrom(LoaderTitle);
-#else
-  SubScreen->Title = EfiStrDuplicate(LoaderTitle);
-#endif
 
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
@@ -208,41 +190,15 @@ VOID ScanTool(VOID)
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
   VOID                    *Interface;
-#if USE_XTHEME
   if (ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)
     return;
-#else
-  if (GlobalConfig.DisableFlags & HIDEUI_FLAG_TOOLS)
-    return;
-#endif
-
 
   //    DBG("Scanning for tools...\n");
-#if USE_XTHEME
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
     if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS)) {
       AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
     }
   }
-#else
-
-
-  // look for the EFI shell
-  if (!(GlobalConfig.DisableFlags & HIDEUI_FLAG_SHELL)) {
-#if defined(MDE_CPU_X64)
-//    if (gFirmwareClover) {
-//      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
-//    } else
-    //there seems to be the best version
-      if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS)) {
-        AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
-      }
-//  }
-#else
-    AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell32.efi", NULL, L"EFI Shell 32", SelfVolume, BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
-#endif
-  }
-#endif
 
 //  if (!gFirmwareClover) { //Slice: I wish to extend functionality on emulated nvram
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
@@ -279,11 +235,7 @@ VOID AddCustomTool(VOID)
   UINTN             VolumeIndex;
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
-#if USE_XTHEME
   XImage          Image;
-#else
-  EG_IMAGE          *Image;
-#endif
   UINTN              i = 0;
 
 //  DBG("Custom tool start\n");
@@ -353,39 +305,15 @@ VOID AddCustomTool(VOID)
       }
       // Change to custom image if needed
       Image = Custom->Image;
-#if USE_XTHEME
       if (Image.isEmpty() && Custom->ImagePath) {
         Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
       }
-#else
-      if ((Image == NULL) && Custom->ImagePath) {
-        Image = egLoadImage(Volume->RootDir, Custom->ImagePath, TRUE);
-        if (Image == NULL) {
-          Image = egLoadImage(ThemeDir, Custom->ImagePath, TRUE);
-          if (Image == NULL) {
-            Image = egLoadImage(SelfDir, Custom->ImagePath, TRUE);
-            if (Image == NULL) {
-              Image = egLoadImage(SelfRootDir, Custom->ImagePath, TRUE);
-            }
-          }
-        }
-      }
-#endif
-
-#if USE_XTHEME
       if (Image.isEmpty()) {
         AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->Options);
       } else {
       // Create a legacy entry for this volume
         AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, Image, Custom->Hotkey, Custom->Options);
       }
-#else
-      if (Image == NULL) {
-        Image = BuiltinIcon(BUILTIN_ICON_TOOL_SHELL);
-      }
-      // Create a legacy entry for this volume
-      AddToolEntry(Custom->Path, Custom->FullTitle, Custom->Title, Volume, Image, Custom->Hotkey, Custom->Options);
-#endif
       DBG("match!\n");
 //      break; // break scan volumes, continue scan entries -- why?
     }

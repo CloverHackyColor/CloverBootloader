@@ -72,42 +72,15 @@
 
 //#define LSTR(s) L##s
 
-// scrolling definitions
-//static INTN MaxItemOnScreen = -1;
 
-//#if USE_XTHEME
-//REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
-//#else
 REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
-//#endif
 
-//
-//extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
-//extern UINTN            ThemesNum;
-//extern CONST CHAR16           *ThemesList[];
-//extern UINTN            ConfigsNum;
-//extern CHAR16           *ConfigsList[];
-//extern UINTN            DsdtsNum;
-//extern CHAR16           *DsdtsList[];
-//extern UINTN            AudioNum;
-//extern HDA_OUTPUTS      AudioList[20];
 extern CONST CHAR8      *AudioOutputNames[];
-//extern CHAR8            NonDetected[];
+
 #include "../Platform/string.h"
-//extern BOOLEAN          GetLegacyLanAddress;
-//extern UINT8            gLanMac[4][6]; // their MAC addresses
-//extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
-//
-////layout must be in XTheme
-//#if !USE_XTHEME
-//INTN LayoutBannerOffset = 64;
-//INTN LayoutButtonOffset = 0;
-//INTN LayoutTextOffset = 0;
+
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
-//#endif
-//
-//BOOLEAN SavePreBootLog = FALSE;
 //
 //#define SCROLL_LINE_UP        (0)
 //#define SCROLL_LINE_DOWN      (1)
@@ -142,96 +115,6 @@ INTN LayoutAnimMoveForMenuX = 0;
 //
 //BOOLEAN MainAnime = FALSE;
 //
-////TODO Scroll variables must be a part of REFIT_SCREEN
-////BOOLEAN ScrollEnabled = FALSE;
-//BOOLEAN IsDragging = FALSE;
-//#if !USE_XTHEME
-INTN ScrollWidth = 16;
-//INTN ScrollButtonsHeight = 20;
-//INTN ScrollBarDecorationsHeight = 5;
-//INTN ScrollScrollDecorationsHeight = 7;
-//#endif
-//INTN ScrollbarYMovement;
-//
-//
-////#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
-//
-//// clovy - set row height based on text size
-//#define RowHeightFromTextHeight (1.35f)
-//
-////TODO spacing must be a part of layout in XTheme
-//#define TITLEICON_SPACING (16)
-////#define ROW0__TILESIZE (144)
-////#define ROW1_TILESIZE (64)
-//#define TILE1_XSPACING (8)
-////#define TILE_YSPACING (24)
-//#define ROW0_SCROLLSIZE (100)
-//
-////EG_IMAGE *SelectionImages[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-////EG_IMAGE *Buttons[4] = {NULL, NULL, NULL, NULL};
-#if !USE_XTHEME
-static EG_IMAGE *TextBuffer = NULL;
-#endif
-//
-////EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
-//
-////INTN row0TileSize = 144;
-////INTN row1TileSize = 64;
-//
-//static INTN row0Count, row0PosX, row0PosXRunning;
-//static INTN row1Count, row1PosX, row1PosXRunning;
-//static INTN *itemPosX = NULL;
-//static INTN *itemPosY = NULL;
-#if !USE_XTHEME
-static INTN row0PosY /*, row1PosY, textPosY, FunctextPosY*/;
-#endif
-////static EG_IMAGE* MainImage;
-//static INTN OldX = 0, OldY = 0;
-//static INTN OldTextWidth = 0;
-//static UINTN OldRow = 0;
-//static INTN OldTimeoutTextWidth = 0;
-//static INTN MenuWidth, TimeoutPosY;
-//static INTN EntriesPosX, EntriesPosY;
-//static INTN EntriesWidth, EntriesHeight, EntriesGap;
-#if !USE_XTHEME
-EG_IMAGE* ScrollbarImage = NULL;
-EG_IMAGE* ScrollbarBackgroundImage = NULL;
-EG_IMAGE* UpButtonImage = NULL;
-EG_IMAGE* DownButtonImage = NULL;
-EG_IMAGE* BarStartImage = NULL;
-EG_IMAGE* BarEndImage = NULL;
-EG_IMAGE* ScrollStartImage = NULL;
-EG_IMAGE* ScrollEndImage = NULL;
-EG_RECT BarStart;
-EG_RECT BarEnd;
-EG_RECT ScrollStart;
-EG_RECT ScrollEnd;
-EG_RECT ScrollTotal;
-EG_RECT UpButton;
-EG_RECT DownButton;
-EG_RECT ScrollbarBackground;
-EG_RECT Scrollbar;
-EG_RECT ScrollbarOldPointerPlace;
-EG_RECT ScrollbarNewPointerPlace;
-#endif
-//
-//INPUT_ITEM *InputItems = NULL;
-//UINTN  InputItemsCount = 0;
-//
-//INTN OldChosenTheme;
-//INTN OldChosenConfig;
-//INTN OldChosenDsdt;
-//UINTN OldChosenAudio;
-//UINT8 DefaultAudioVolume = 70;
-////INTN NewChosenTheme;
-//#if !USE_XTHEME
-//INTN TextStyle; //why global? It will be class SCREEN member
-//#endif
-////BOOLEAN mGuiReady = FALSE;
-//
-
-
-//REFIT_MENU_ITEM_OPTIONS(CONST CHAR16 *Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
 REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options"_XSW,          1, 0, 'O', ActionEnter);
 REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover"_XSW,     1, 0, 'A', ActionEnter);
 REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer"_XSW, 1, 0, 'R', ActionSelect);
@@ -239,15 +122,9 @@ REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover"_XSW,      1, 0, 'U', A
 REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return"_XSW,           0, 0,  0,  ActionEnter);
 
 
-#if USE_XTHEME
 REFIT_MENU_SCREEN MainMenu(1, L"Main Menu"_XSW, L"Automatic boot"_XSW);
 REFIT_MENU_SCREEN AboutMenu(2, L"About"_XSW, L""_XSW);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
-#else
-REFIT_MENU_SCREEN MainMenu(1, L"Main Menu", L"Automatic boot");
-REFIT_MENU_SCREEN AboutMenu(2, L"About", NULL);
-REFIT_MENU_SCREEN HelpMenu(3, L"Help", NULL);
-#endif
 
 
 // input - tsc
@@ -785,7 +662,6 @@ VOID ApplyInputs(VOID)
   }
   i++; //3
   if (InputItems[i].Valid) {
-#if USE_XTHEME 
     if (GlobalConfig.Theme) {
       FreePool(GlobalConfig.Theme);
     }
@@ -793,22 +669,7 @@ VOID ApplyInputs(VOID)
       GlobalConfig.Theme = PoolPrint(L"embedded");
     } else {
       GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
-      //ThemeX.DarkEmbedded = FALSE; Don't know what to do
-      //ThemeX.Font = FONT_ALFA;
     }
-   // GlobalConfig.Theme = EfiStrDuplicate(ThemeX.Theme.wc_str());
-#else
-    if (GlobalConfig.Theme) {
-      FreePool(GlobalConfig.Theme);
-    }
-    if (OldChosenTheme == 0xFFFF) {
-      GlobalConfig.Theme = PoolPrint(L"embedded");
-    } else {
-      GlobalConfig.Theme = PoolPrint(L"%s", ThemesList[OldChosenTheme]);
-      GlobalConfig.DarkEmbedded = FALSE;
-      GlobalConfig.Font = FONT_ALFA;
-    }
-#endif
 
     //will change theme after ESC
     gThemeChanged = TRUE;
@@ -1360,19 +1221,11 @@ VOID ApplyInputs(VOID)
 
 VOID AboutRefit(VOID)
 {
-#if USE_XTHEME
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     AboutMenu.TitleImage = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
   } else {
     AboutMenu.TitleImage.setEmpty();
   }
-#else
-  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-  } else {
-    AboutMenu.TitleImage = NULL;
-  }
-#endif
 
   if (AboutMenu.Entries.size() == 0) {
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
@@ -1430,19 +1283,11 @@ VOID AboutRefit(VOID)
 
 VOID HelpRefit(VOID)
 {
-#if USE_XTHEME
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
   } else {
     HelpMenu.TitleImage.setEmpty();
   }
-#else
-  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
-  } else {
-    HelpMenu.TitleImage = NULL;
-  }
-#endif
   if (HelpMenu.Entries.size() == 0) {
     switch (gLanguage)
     {
@@ -1822,648 +1667,21 @@ VOID HelpRefit(VOID)
     [2] checkbox
     [3] checkbox_checked
 */
-#if !USE_XTHEME
-VOID InitSelection(VOID)
-{
-
-  if (!AllowGraphicsMode)
-    return;
-  SelectionBackgroundPixel.r = (GlobalConfig.SelectionColor >> 24) & 0xFF;
-  SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
-  SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
-  SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
-
-  if (SelectionImages[0] != NULL) {
-    return;
-  }
-  // load small selection image
-  if (GlobalConfig.SelectionSmallFileName != NULL){
-    SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
-  }
-  if (SelectionImages[2] == NULL){
-    SelectionImages[2] = BuiltinIcon(BUILTIN_SELECTION_SMALL);
-    SelectionImages[2]->HasAlpha = FALSE; // support transparensy for selection icons
-    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-  }
-  SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
-                                         row1TileSize, row1TileSize, &MenuBackgroundPixel);
-  if (SelectionImages[2] == NULL) {
-    return;
-  }
-  // load big selection image
-  if (!GlobalConfig.TypeSVG && GlobalConfig.SelectionBigFileName != NULL) {
-    SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
-    SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                           row0TileSize, row0TileSize,
-                                           &MenuBackgroundPixel);
-  }
-  if (SelectionImages[0] == NULL) {
-    // calculate big selection image from small one
-    SelectionImages[0] = BuiltinIcon(BUILTIN_SELECTION_BIG);
-    SelectionImages[0]->HasAlpha = FALSE; // support transparensy for selection icons
-    CopyMem(&BlueBackgroundPixel, &StdBackgroundPixel, sizeof(EG_PIXEL));
-    if (SelectionImages[0] == NULL) {
-      egFreeImage(SelectionImages[2]);
-      SelectionImages[2] = NULL;
-      return;
-    }
-    if (GlobalConfig.SelectionOnTop) {
-      SelectionImages[0]->HasAlpha = TRUE;
-      SelectionImages[2]->HasAlpha = TRUE;
-    }
-  }
-
-  // BootCampStyle indicator image
-  if (GlobalConfig.BootCampStyle) {
-    // load indicator selection image
-    if (GlobalConfig.SelectionIndicatorName != NULL) {
-      SelectionImages[4] = egLoadImage(ThemeDir, GlobalConfig.SelectionIndicatorName, TRUE);
-    }
-    if (!SelectionImages[4]) {
-      SelectionImages[4] = egDecodePNG(ACCESS_EMB_DATA(emb_selection_indicator), ACCESS_EMB_SIZE(emb_selection_indicator), TRUE);
-
-    }
-    INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * GlobalConfig.Scale);
-    SelectionImages[4] = egEnsureImageSize(SelectionImages[4], ScaledIndicatorSize, ScaledIndicatorSize, &MenuBackgroundPixel);
-    if (!SelectionImages[4]) {
-      SelectionImages[4] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
-                                               TRUE, &StdBackgroundPixel);
-
-    }
-    SelectionImages[5] = egCreateFilledImage(ScaledIndicatorSize, ScaledIndicatorSize,
-                                             TRUE, &MenuBackgroundPixel);
-  }
-
-  /*
-  Button & radio, or any other next icons with builtin icon as fallback should synced to:
-   - BUILTIN_ICON_* in lib.h
-   - BuiltinIconTable in icns.c
-   - Data in egemb_icons.h / scroll_images.h
-  */
-
-  // Radio buttons
-  //it was a nonsense egLoadImage is just inluded into egLoadIcon.
-  // will be corrected with XTheme support
-  //the procedure loadIcon should also check embedded icons
-  Buttons[0] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button", L"png"), TRUE); //memory leak
-  Buttons[1] = egLoadImage(ThemeDir, GetIconsExt(L"radio_button_selected", L"png"), TRUE);
-  if (!Buttons[0]) {
-    Buttons[0] = egLoadIcon(ThemeDir, L"radio_button.png", 48);
-  }
-  if (!Buttons[0]) {
-    Buttons[0] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button), TRUE);
-  }
-  if (!Buttons[1]) {
-    Buttons[1] = egLoadIcon(ThemeDir, L"radio_button_selected.png", 48);
-  }
-
-  if (!Buttons[1]) {
-    Buttons[1] = egDecodePNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected), TRUE);
-  }
-
-  // Checkbox
-  Buttons[2] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox", L"png"), TRUE);
-  Buttons[3] = egLoadImage(ThemeDir, GetIconsExt(L"checkbox_checked", L"png"), TRUE);
-  if (!Buttons[2]) {
-//    DBG("egLoadIcon checkbox\n");
-    Buttons[2] = egLoadIcon(ThemeDir, L"checkbox.png", 48);
-  }
-  if (!Buttons[3]) {
-//    DBG("egLoadIcon checkbox_checked\n");
-    Buttons[3] = egLoadIcon(ThemeDir, L"checkbox_checked.png", 48);
-  }
-
-  if (!Buttons[2]) {
-//    DBG("embedded checkbox\n");
-    Buttons[2] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox), ACCESS_EMB_SIZE(emb_checkbox), TRUE);
-  }
-
-  if (!Buttons[3]) {
-//    DBG("embedded checkbox_checked\n");
-    Buttons[3] = egDecodePNG(ACCESS_EMB_DATA(emb_checkbox_checked), ACCESS_EMB_SIZE(emb_checkbox_checked), TRUE);
-  }
-  // non-selected background images
-  //totally wrong
-  if (GlobalConfig.SelectionBigFileName != NULL) {
-    SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                             TRUE, &MenuBackgroundPixel);
-    SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                             TRUE, &MenuBackgroundPixel);
-  } else { // using embedded theme (this is an assumption but a better check is required)
-    EG_PIXEL BackgroundPixel;
-    if (GlobalConfig.DarkEmbedded || GlobalConfig.TypeSVG) {
-      BackgroundPixel = DarkEmbeddedBackgroundPixel;
-      BackgroundPixel.a = 0x00;
-    } else {
-      BackgroundPixel = StdBackgroundPixel;
-      BackgroundPixel.a = 0xff;
-    }
-    if (GlobalConfig.DarkEmbedded) { //nonsense then equal else
-      SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                               TRUE, &BackgroundPixel);
-      SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                               TRUE, &BackgroundPixel);
-
-    } else {
-      SelectionImages[1] = egCreateFilledImage(row0TileSize, row0TileSize,
-                                               TRUE, &BackgroundPixel); //&StdBackgroundPixel);
-      SelectionImages[3] = egCreateFilledImage(row1TileSize, row1TileSize,
-                                               TRUE, &BackgroundPixel);
-    }
-  }
-//  DBG("selections inited\n");
-}
-#endif
 //
 // Scrolling functions
 //
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
 #define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-#if !USE_XTHEME
-INTN DrawTextXY(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
-{
-  INTN      TextWidth = 0;
-  INTN      XText = 0;
-  INTN      Height;
-  INTN      TextXYStyle = 1;
-  EG_IMAGE  *TextBufferXY = NULL;
-
-  if (!Text) {
-    return 0;
-  }
-  if (!textFace[1].valid) {
-    if (textFace[2].valid) {
-      TextXYStyle = 2;
-    } else {
-      TextXYStyle = 0;
-    }
-  }
-
-  egMeasureText(Text, &TextWidth, NULL);
-
-  if (XAlign == X_IS_LEFT) {
-    TextWidth = UGAWidth - XPos - 1;
-    XText = XPos;
-  }
-
-  if (GlobalConfig.TypeSVG) {
-    TextWidth += TextHeight * 2; //give more place for buffer
-    if (!textFace[TextXYStyle].valid) {
-      DBG("no vaid text face for message!\n");
-      Height = TextHeight;
-    } else {
-      Height = (int)(textFace[TextXYStyle].size * RowHeightFromTextHeight * GlobalConfig.Scale);
-    }
-  } else {
-    Height = TextHeight;
-  }
-
-  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
-
-  // render the text
-  TextWidth = egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF, TextXYStyle);
-
-  if (XAlign != X_IS_LEFT) {
-    // shift 64 is prohibited
-    XText = XPos - (TextWidth >> XAlign);  //X_IS_CENTER = 1
-  }
-//  DBG("draw text %ls\n", Text);
-//  DBG("pos=%d width=%d xtext=%d Height=%d Y=%d\n", XPos, TextWidth, XText, Height, YPos);
-  BltImageAlpha(TextBufferXY, XText, YPos,  &MenuBackgroundPixel, 16);
-  egFreeImage(TextBufferXY);
-
-  return TextWidth;
-}
-#endif
-/**
- * Helper function to draw text for Boot Camp Style.
- * @author: Needy
- */
-
-#if USE_XTHEME
-
-#else
-VOID DrawMenuText(IN CONST CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
-{
-  //use Text=null to reinit the buffer
-  if (!Text) {
-    if (TextBuffer) {
-      egFreeImage(TextBuffer);
-      TextBuffer = NULL;
-    }
-    return;
-  }
-
-  if (TextBuffer && (TextBuffer->Height != TextHeight)) {
-    egFreeImage(TextBuffer);
-    TextBuffer = NULL;
-  }
-
-  if (TextBuffer == NULL) {
-    TextBuffer = egCreateImage(UGAWidth-XPos, TextHeight, TRUE);
-  }
-
-  if (Cursor != 0xFFFF) {
-    egFillImage(TextBuffer, &MenuBackgroundPixel);
-  } else {
-    egFillImage(TextBuffer, &InputBackgroundPixel);
-  }
-
-
-  if (SelectedWidth > 0) {
-    // draw selection bar background
-    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, TextHeight,
-                    &SelectionBackgroundPixel);
-  }
-
-  // render the text
-  if (GlobalConfig.TypeSVG) {
-    //clovy - text veltically centred on Height
-    egRenderText(Text, TextBuffer, 0,
-                 (INTN)((TextHeight - (textFace[TextStyle].size * GlobalConfig.Scale)) / 2),
-                 Cursor, TextStyle);
-  } else {
-    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);
-  }
-  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
-}
-
-#endif
-
-#if !USE_XTHEME
-VOID FreeScrollBar(VOID)
-{
-  if (ScrollbarBackgroundImage) {
-    egFreeImage(ScrollbarBackgroundImage);
-    ScrollbarBackgroundImage = NULL;
-  }
-  if (BarStartImage) {
-    egFreeImage(BarStartImage);
-    BarStartImage = NULL;
-  }
-  if (BarEndImage) {
-    egFreeImage(BarEndImage);
-    BarEndImage = NULL;
-  }
-  if (ScrollbarImage) {
-    egFreeImage(ScrollbarImage);
-    ScrollbarImage = NULL;
-  }
-  if (ScrollStartImage) {
-    egFreeImage(ScrollStartImage);
-    ScrollStartImage = NULL;
-  }
-  if (ScrollEndImage) {
-    egFreeImage(ScrollEndImage);
-    ScrollEndImage = NULL;
-  }
-  if (UpButtonImage) {
-    egFreeImage(UpButtonImage);
-    UpButtonImage = NULL;
-  }
-  if (DownButtonImage) {
-    egFreeImage(DownButtonImage);
-    DownButtonImage = NULL;
-  }
-}
-
-
-VOID InitBar(VOID)
-{
-  if (ThemeDir) {
-    if (!ScrollbarBackgroundImage) {
-        ScrollbarBackgroundImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_fill", L"png"), FALSE);
-    }
-    if (!BarStartImage) {
-      BarStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_start", L"png"), TRUE);
-    }
-    if (!BarEndImage) {
-      BarEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\bar_end", L"png"), TRUE);
-    }
-    if (!ScrollbarImage) {
-      ScrollbarImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_fill", L"png"), FALSE);
-    }
-    if (!ScrollStartImage) {
-      ScrollStartImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_start", L"png"), TRUE);
-    }
-    if (!ScrollEndImage) {
-      ScrollEndImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\scroll_end", L"png"), TRUE);
-    }
-    if (!UpButtonImage) {
-      UpButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\up_button", L"png"), TRUE);
-    }
-    if (!DownButtonImage) {
-      DownButtonImage = egLoadImage(ThemeDir, GetIconsExt(L"scrollbar\\down_button", L"png"), TRUE);
-    }
-  }
-
-  if (!BarStartImage  && !GlobalConfig.TypeSVG) {
-    BarStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start), TRUE);
-  }
-  if (!BarEndImage && !GlobalConfig.TypeSVG) {
-    BarEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end), TRUE);
-  }
-  if (!ScrollbarBackgroundImage) {
-    if (GlobalConfig.TypeSVG) {
-       ScrollbarBackgroundImage = egLoadIcon(ThemeDir, L"scrollbar-background.png", 48);
-    }
-    if (!ScrollbarBackgroundImage) {
-      ScrollbarBackgroundImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill), TRUE);
-    }
-  }
-  if (!ScrollbarImage) {
-    if (GlobalConfig.TypeSVG) {
-      ScrollbarImage = egLoadIcon(ThemeDir, L"scrollbar-holder.png", 48);
-    }
-    if (!ScrollbarImage) {
-      ScrollbarImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill), TRUE);
-    }
-  }
-  if (!ScrollStartImage && !GlobalConfig.TypeSVG) {
-    ScrollStartImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start), TRUE);
-  }
-  if (!ScrollEndImage && !GlobalConfig.TypeSVG) {
-    ScrollEndImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end), TRUE);
-  }
-  if (!UpButtonImage && !GlobalConfig.TypeSVG) {
-    UpButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button), TRUE);
-  }
-  if (!DownButtonImage && !GlobalConfig.TypeSVG) {
-    DownButtonImage = egDecodePNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button), TRUE);
-  }
-  if (!GlobalConfig.TypeSVG) {
-    UpButton.Width      = ScrollWidth; // 16
-    UpButton.Height     = ScrollButtonsHeight; // 20
-    DownButton.Width    = UpButton.Width;
-    DownButton.Height   = ScrollButtonsHeight;
-    BarStart.Height     = ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ScrollBarDecorationsHeight;
-    ScrollStart.Height  = ScrollScrollDecorationsHeight; // 7
-    ScrollEnd.Height    = ScrollScrollDecorationsHeight;
-
-  } else {
-    UpButton.Width      = ScrollWidth; // 16
-    UpButton.Height     = 0; // 20
-    DownButton.Width    = UpButton.Width;
-    DownButton.Height   = 0;
-    BarStart.Height     = ScrollBarDecorationsHeight; // 5
-    BarEnd.Height       = ScrollBarDecorationsHeight;
-    ScrollStart.Height  = 0; // 7
-    ScrollEnd.Height    = 0;
-
-  }
-}
-#endif
-
-/**
- * Draw entries for GUI.
- */
-#if USE_XTHEME
-
-#else
-VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
-{
-  EG_IMAGE* MainImage = NULL;
-  EG_IMAGE* BadgeImage = NULL;
-  bool NewImageCreated = false;
-  INTN Scale = GlobalConfig.MainEntriesSize >> 3; //usually it is 128>>3 == 16. if 256>>3 == 32
-
-  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(GlobalConfig.HideBadges & HDBADGES_SWAP)) {
-    MainImage = Entry->getDriveImage();
-  } else {
-    MainImage = Entry->Image;
-  }
-  //this should be inited by the Theme
-  if (!MainImage) {
-    if (!IsEmbeddedTheme()) {
-      MainImage = egLoadIcon(ThemeDir, GetIconsExt(L"icons\\os_mac", L"icns"), Scale << 3);
-    }
-    if (!MainImage) {
-      MainImage = DummyImage(Scale << 3);
-    }
-    if (MainImage) {
-      NewImageCreated = true;
-    }
-  }
-  //  DBG("Entry title=%ls; Width=%d\n", Entry->Title, MainImage->Width);
-
-  if (GlobalConfig.TypeSVG) {
-    Scale = 16 * (selected ? 1 : -1);
-  } else {
-    Scale = ((Entry->Row == 0) ? (Scale * (selected ? 1 : -1)): 16) ;
-  }
-
-  if (Entry->Row == 0) {
-    BadgeImage = Entry->getBadgeImage();
-  } //else null
-
-  if (GlobalConfig.SelectionOnTop) {
-    SelectionImages[0]->HasAlpha = TRUE;
-    SelectionImages[2]->HasAlpha = TRUE;
-    //MainImage->HasAlpha = TRUE;
-    BltImageCompositeBadge(MainImage,
-                           SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           BadgeImage,
-                           XPos, YPos, Scale);
-  } else {
-    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           MainImage,
-                           BadgeImage,
-                           XPos, YPos, Scale);
-  }
-  // draw BCS indicator
-  // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
-  if (GlobalConfig.BootCampStyle && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-    SelectionImages[4]->HasAlpha = TRUE;
-
-    // indicator is for row 0, main entries, only
-    if (Entry->Row == 0) {
-      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
-                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
-                    &MenuBackgroundPixel, Scale);
-    }
-  }
-
-  Entry->Place.XPos = XPos;
-  Entry->Place.YPos = YPos;
-  Entry->Place.Width = MainImage->Width;
-  Entry->Place.Height = MainImage->Height;
-  //we can't free MainImage because it may be new image or it may be a link to entry image
-  // a workaround
-  if (NewImageCreated) {
-    egFreeImage(MainImage);
-  }
-}
-#endif
-
-/**
- * Helper function to draw text for Boot Camp Style.
- * @author: Needy
- */
-#if !USE_XTHEME
-VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
-{
-  // check if text was provided
-  if (!Text) {
-    return;
-  }
-
-  INTN TextLen = StrLen(Text);
-
-  // number of chars to be drawn on the screen
-  INTN MaxTextLen = 13;
-  INTN EllipsisLen = 2;
-  
-  CHAR16 *BCSText = NULL;
-
-  // more space, more characters
-  if (GlobalConfig.TileXSpace >= 25 && GlobalConfig.TileXSpace < 30) {
-    MaxTextLen = 14;
-  } else if (GlobalConfig.TileXSpace >= 30 && GlobalConfig.TileXSpace < 35) {
-    MaxTextLen = 15;
-  } else if (GlobalConfig.TileXSpace >= 35 && GlobalConfig.TileXSpace < 40) {
-    MaxTextLen = 16;
-  } else if (GlobalConfig.TileXSpace >= 40 && GlobalConfig.TileXSpace < 45) {
-    MaxTextLen = 17;
-  } else if (GlobalConfig.TileXSpace >= 45 && GlobalConfig.TileXSpace < 50) {
-    MaxTextLen = 18;
-  } else if (GlobalConfig.TileXSpace >= 50) {
-    MaxTextLen = 19;
-  }
-
-  MaxTextLen += EllipsisLen;
-
-  // if the text exceeds the given limit
-  if (TextLen > MaxTextLen) {
-    BCSText = (__typeof__(BCSText))AllocatePool((sizeof(CHAR16) * MaxTextLen) + 1);
-
-    // error check, not enough memory
-    if (!BCSText) {
-      return;
-    }
-
-    // copy the permited amound of chars minus the ellipsis
-    StrnCpyS(BCSText, (MaxTextLen - EllipsisLen) + 1, Text, MaxTextLen - EllipsisLen);
-    BCSText[MaxTextLen - EllipsisLen] = '\0';
-
-    // add ellipsis
-    StrnCatS(BCSText, MaxTextLen + 1, L"..", EllipsisLen);
-    // redundant, used for safety measures
-    BCSText[MaxTextLen] = '\0';
-    DrawTextXY(BCSText, XPos, YPos, XAlign);
-    FreePool(BCSText);
-  } else {
-		// draw full text
-    DrawTextXY(Text, XPos, YPos, XAlign);
-  }
-}
-#endif
-
-//the purpose of the procedure is restore Background in rect
-//XAlign is always centre, Color is the Backgrounf fill
-#if USE_XTHEME
-
-#else
-VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
-{
-  EG_IMAGE *TmpBuffer = NULL;
-  INTN X = XPos - (Width >> XAlign);
-
-  if (!Width || !Height) return;
-
-  TmpBuffer = egCreateImage(Width, Height, FALSE);
-  if (!BackgroundImage) {
-    egFillImage(TmpBuffer, Color);
-  } else {
-    egRawCopy(TmpBuffer->PixelData,
-              BackgroundImage->PixelData + YPos * BackgroundImage->Width + X,
-              Width, Height,
-              TmpBuffer->Width,
-              BackgroundImage->Width);
-  }
-  BltImage(TmpBuffer, X, YPos);
-  egFreeImage(TmpBuffer);
-}
-#endif
-
-
-#if USE_XTHEME
-
-#else
-VOID DrawTextCorner(UINTN TextC, UINT8 Align)
-{
-  INTN    Xpos;
-  CHAR16  *Text = NULL;
-
-  if (
-      // HIDEUI_ALL - included
-      ((TextC == TEXT_CORNER_REVISION) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
-      ((TextC == TEXT_CORNER_HELP) && ((GlobalConfig.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
-      ((TextC == TEXT_CORNER_OPTIMUS) && (GlobalConfig.ShowOptimus == FALSE))
-      ) {
-    return;
-  }
-
-  switch (TextC) {
-    case TEXT_CORNER_REVISION:
-      // Display Clover boot volume
-      if (SelfVolume->VolLabel && SelfVolume->VolLabel[0] != L'#') {
-        Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolLabel);
-      }
-      if ( !Text ) {
-        Text = PoolPrint(L"%s", gFirmwareRevision, SelfVolume->VolName);
-      }
-      break;
-    case TEXT_CORNER_HELP:
-      Text = PoolPrint(L"F1:Help");
-      break;
-    case TEXT_CORNER_OPTIMUS:
-      if (gGraphics[0].Vendor != Intel) {
-        Text = PoolPrint(L"Discrete");
-      } else {
-        Text = PoolPrint(L"Intel");
-      }
-      //      Text = (NGFX == 2)?L"Intel":L"Discrete";
-      break;
-    default:
-      return;
-  }
-
-  switch (Align) {
-    case X_IS_LEFT:
-      Xpos = (INTN)(TextHeight * 0.75f);
-      break;
-    case X_IS_RIGHT:
-      Xpos = UGAWidth - (INTN)(TextHeight * 0.7f);//2
-      break;
-    case X_IS_CENTER:
-      Xpos = UGAWidth >> 1;
-      break;
-    default:
-      if ( Text ) FreePool(Text);
-      return;
-  }
-  //  DBG("draw text %ls at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
-  // clovy  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
-  DrawTextXY(Text, Xpos, UGAHeight - (INTN)(TextHeight * 1.5f), Align);
-  if ( Text ) FreePool(Text);
-}
-#endif
 
 //
 // user-callable dispatcher functions
 //
 
-REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
+REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *CTitle)
 {
-    if ( Title ) Entry->Title.takeValueFrom(Title);
+    if ( CTitle ) Entry->Title.takeValueFrom(CTitle);
     else Entry->Title.setEmpty();
-//  if (Title) {
-//  } else {
-//    Entry->Title = (__typeof__(Entry->Title))AllocateZeroPool(128);
-//  }
 
   Entry->Image =  OptionMenu.TitleImage;
   Entry->AtClick = AtClick;
@@ -2481,30 +1699,19 @@ REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MEN
 
 REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
 {
-  //create entry
-//  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
 	REFIT_MENU_ITEM_OPTIONS* Entry = new REFIT_MENU_ITEM_OPTIONS();
 	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
 //  (*Entry)->Tag = TAG_OPTIONS;
 }
-//
-//VOID NewLoaderEntry(LOADER_ENTRY **Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
-//{
-//  //create entry
-////  *Entry = (__typeof_am__(*Entry))AllocateZeroPool(sizeof(LOADER_ENTRY)); // carefull, **Entry is not a LOADER_ENTRY. Don't use sizeof.
-//  *Entry = new LOADER_ENTRY();
-//  NewEntry_(*Entry, SubScreen, AtClick, ID, Title); // cast ok because super class
-//}
 
 VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
-//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "DSDT fix mask [0x%08X]->", gSettings.FixDsdt); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt); // TODO jief : cast to fix
     //MsgLog("@ESC: %ls\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
-//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "System Integrity Protection [0x%04X]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
+// TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig); // TODO jief : cast to fix
     // check for the right booter flag to allow the application
     // of the new System Integrity Protection configuration.
@@ -2513,10 +1720,8 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     }
 
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "boot_args->flags [0x%04X]->", gSettings.BooterConfig); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
   } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-//    snwprintf((CHAR16*)ChosenEntry->Title, 128, "Drop OEM _DSM [0x%04X]->", dropDSM); // TODO jief : cast to fix
     ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
   }
 }
@@ -3545,15 +2750,8 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   INTN                SubEntryIndex = -1; //value -1 means old position to remember
   INTN                NextEntryIndex = -1;
 
-  //  REFIT_INPUT_DIALOG* InputBootArgs;
-#if USE_XTHEME
   BOOLEAN             OldFontStyle = ThemeX.Proportional;
   ThemeX.Proportional = FALSE; //temporary disable proportional
-#else
-  BOOLEAN             OldFontStyle = GlobalConfig.Proportional;
-  GlobalConfig.Proportional = FALSE; //temporary disable proportional
-#endif
-
 
   if (AllowGraphicsMode) {
     Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
@@ -3561,19 +2759,11 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
-#if USE_XTHEME
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
     OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
   } else {
     OptionMenu.TitleImage.setEmpty();
   }
-#else
-  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-  } else {
-    OptionMenu.TitleImage = NULL;
-  }
-#endif
 
   gThemeOptionsChanged = FALSE;
 
@@ -3651,70 +2841,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     } // if MENU_EXIT_ENTER
   }
 //exit:
-#if USE_XTHEME
   ThemeX.Proportional = OldFontStyle;
-#else
-  GlobalConfig.Proportional = OldFontStyle;
-#endif
-
 
   ApplyInputs();
 }
-
-//UINT32 EncodeOptions(CONST CHAR16 *Options)
-//{
-//  UINT32 OptionsBits = 0;
-//  INTN Index;
-//  if (!Options) {
-//    return 0;
-//  }
-//  for (Index = 0; Index < NUM_OPT; Index++) {
-//    if (StrStr(Options, ArgOptional[Index])) {
-//      OptionsBits |= (1 << Index);
-//      if (Index == 1) {
-//        OptionsBits &= ~1;
-//      }
-//    }
-//  }
-//  return OptionsBits;
-//}
-//
-//VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
-//{
-//  //set checked option
-//  INTN Index;
-//  if (!Entry) {
-//    return;
-//  }
-//  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
-//    if (gSettings.OptionsBits & (1 << Index)) {
-//      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
-//    }
-//  }
-//  //remove unchecked options
-//  for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
-//    if ((gSettings.OptionsBits & (1 << Index)) == 0) {
-//      Entry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, ArgOptional[Index]);
-//    }
-//  }
-//
-//  if (Entry->getLOADER_ENTRY()) {
-//    LOADER_ENTRY* loaderEntry = Entry->getLOADER_ENTRY();
-//    // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
-//    if (gSettings.OptionsBits & OPT_NVWEBON) {
-//      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
-//        gSettings.NvidiaWeb = TRUE;
-//      } else {
-//        Entry->LoadOptions = AddLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
-//      }
-//    }
-//    if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
-//      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
-//        gSettings.NvidiaWeb = FALSE;
-//      } else {
-//        Entry->LoadOptions = RemoveLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
-//      }
-//    }
-//  }
-//}
-//

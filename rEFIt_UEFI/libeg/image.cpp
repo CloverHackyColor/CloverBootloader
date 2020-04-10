@@ -174,134 +174,6 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
   return NewImage;
 }
 
-#if !USE_XTHEME
-BOOLEAN BigDiff(UINT8 a, UINT8 b)
-{
-  if (a > b) {
-    if (!GlobalConfig.BackgroundDark) {
-      return (a - b) > (UINT8)(0xFF - GlobalConfig.BackgroundSharp);
-    }
-  } else if (GlobalConfig.BackgroundDark) {
-    return (b - a) > (UINT8)(0xFF - GlobalConfig.BackgroundSharp);
-  }
-  return 0;
-}
-//(c)Slice 2013
-#define EDGE(P) \
-do { \
-  if (BigDiff(a11.P, a10.P)) { \
-    if (!BigDiff(a11.P, a01.P) && !BigDiff(a11.P, a21.P)) { \
-      a10.P = a11.P; \
-    } else if (BigDiff(a11.P, a01.P)) { \
-      if ((dx + dy) < cell) { \
-        a11.P = a21.P = a12.P = (UINT8)((a10.P * (cell - dy + dx) + a01.P * (cell - dx + dy)) / (cell * 2)); \
-      } else { \
-        a10.P = a01.P = a11.P; \
-      } \
-    } else if (BigDiff(a11.P, a21.P)) { \
-      if (dx > dy) { \
-        a11.P = a01.P = a12.P = (UINT8)((a10.P * (cell * 2 - dy - dx) + a21.P * (dx + dy)) / (cell * 2)); \
-      }else { \
-        a10.P = a21.P = a11.P; \
-      } \
-    } \
-  } else if (BigDiff(a11.P, a21.P)) { \
-    if (!BigDiff(a11.P, a12.P)){ \
-      a21.P = a11.P; \
-    } else { \
-      if ((dx + dy) > cell) { \
-        a11.P = a01.P = a10.P = (UINT8)((a21.P * (cell + dx - dy) + a12.P * (cell - dx + dy)) / (cell * 2)); \
-      } else { \
-        a21.P = a12.P = a11.P; \
-      } \
-    } \
-  } else if (BigDiff(a11.P, a01.P)) { \
-    if (!BigDiff(a11.P, a12.P)){ \
-      a01.P = a11.P; \
-    } else { \
-      if (dx < dy) { \
-        a11.P = a21.P = a10.P = (UINT8)((a01.P * (cell * 2 - dx - dy) + a12.P * (dy + dx )) / (cell * 2)); \
-      } else { \
-        a01.P = a12.P = a11.P; \
-      } \
-    } \
-  } else if (BigDiff(a11.P, a12.P)) { \
-    a12.P = a11.P; \
-  } \
-} while(0)
-
-#define SMOOTH(P) \
-do { \
-  norm = (INTN)a01.P + a10.P + 4 * a11.P + a12.P + a21.P; \
-  if (norm == 0) { \
-    Dest->P = 0; \
-  } else { \
-    Dest->P = (UINT8)(a11.P * 2 * (a01.P * (cell - dx) + a10.P * (cell - dy) + \
-                      a21.P * dx + a12.P * dy + a11.P * 2 * cell) / (cell * norm)); \
-  } \
-} while(0)
-
-#define SMOOTH2(P) \
-do { \
-     Dest->P = (UINT8)((a01.P * (cell - dx) * 3 + a10.P * (cell - dy) * 3 + \
-                        a21.P * dx * 3 + a12.P * dy * 3 + a11.P * 2 * cell) / (cell * 8)); \
-} while(0)
-
-
-VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
-{
-  INTN      W1, W2, H1, H2, i, j, f, cell;
-  INTN      x, dx, y, y1, dy; //, norm;
-  EG_PIXEL  a10, a11, a12, a01, a21;
-  EG_PIXEL  *Src = OldImage->PixelData;
-  EG_PIXEL  *Dest = NewImage->PixelData;
-
-  W1 = OldImage->Width;
-  H1 = OldImage->Height;
-  W2 = NewImage->Width;
-  H2 = NewImage->Height;
-  if (H1 * W2 < H2 * W1) {
-    f = (H2 << 12) / H1;
-  } else {
-    f = (W2 << 12) / W1;
-  }
-  if (f == 0) return;
-  cell = ((f - 1) >> 12) + 1;
-
-  for (j = 0; j < H2; j++) {
-    y = (j << 12) / f;
-    y1 = y * W1;
-    dy = j - ((y * f) >> 12);
-
-    for (i = 0; i < W2; i++) {
-      x = (i << 12) / f;
-      dx = i - ((x * f) >> 12);
-      a11 = Src[x + y1];
-      a10 = (y == 0)?a11: Src[x + y1 - W1];
-      a01 = (x == 0)?a11: Src[x + y1 - 1];
-      a21 = (x >= W1)?a11: Src[x + y1 + 1];
-      a12 = (y >= H1)?a11: Src[x + y1 + W1];
-
-      if (a11.a == 0) {
-        Dest->r = Dest->g = Dest->b = 0x55;
-      } else {
-
-        EDGE(r);
-        EDGE(g);
-        EDGE(b);
-
-        SMOOTH2(r);
-        SMOOTH2(g);
-        SMOOTH2(b);
-      }
-
-      Dest->a = 0xFF;
-      Dest++;
-    }
-  }
-}
-//
-#endif
 VOID egFreeImage(IN EG_IMAGE *Image)
 {
   if (Image != NULL) {
@@ -516,17 +388,9 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
   UINTN           FileDataLength = 0;
   EG_IMAGE        *NewImage;
 
-#if USE_XTHEME
   if (ThemeX.TypeSVG) {
     return NULL;
   }
-#else
-  if (GlobalConfig.TypeSVG) {
-    return NULL;
-  }
-#endif
-
-
 
   if (BaseDir == NULL || FileName == NULL)
     return NULL;
@@ -546,64 +410,6 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
   return NewImage;
 }
 
-//will be replaced by ThemeX.LoadIcon(Name);
-//caller is responsible for free image
-#if !USE_XTHEME
-EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN IconSize)
-{
-  EFI_STATUS      Status;
-  UINT8           *FileData;
-  UINTN           FileDataLength;
-  EG_IMAGE        *NewImage;
-  CHAR8           *IconName;
-
-  if (!BaseDir || !FileName) {
-    return NULL;
-  }
-
-  if (GlobalConfig.TypeSVG) {
-    INTN    i = 0;
-    UINTN   Size;
-
-    CONST CHAR16 *ptr = StrStr(FileName, L"\\");
-    if (!ptr) {
-      ptr = FileName;
-    } else {
-      ptr++;
-    }
-    CONST CHAR16 *ptr2 = StrStr(ptr, L".");
-    Size = ptr2 - ptr + 2;
-    IconName = (__typeof__(IconName))AllocateZeroPool(Size);
-    UnicodeStrToAsciiStrS(ptr, IconName, Size - 1);
-
-    while (OSIconsTable[i].name) {
-      if (AsciiStrCmp(OSIconsTable[i].name, IconName) == 0) {
-//        DBG("theme defined %s\n", IconName);
-//        DBG(" icon size=[%d,%d]\n", OSIconsTable[i].image->Width, OSIconsTable[i].image->Height);
-        FreePool(IconName);
-        return OSIconsTable[i].image;
-      }
-      i++;
-    }
-    FreePool(IconName);
-    return NULL;
-  }
-  // load file
-  Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
-  if (EFI_ERROR(Status)) {
-    return NULL;
-  }
-
-  // decode it
-  NewImage = egDecodePNG(FileData, FileDataLength, TRUE);
-//  if (!NewImage) {
-//    NewImage = egDecodeICNS(FileData, FileDataLength, IconSize, TRUE);
-//  }
-  
-  FreePool(FileData);
-  return NewImage;
-}
-#endif
 //
 // Compositing
 //
@@ -822,15 +628,9 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
 
   // compose
   if (CompWidth > 0) {
-#if USE_XTHEME
     if (CompImage->HasAlpha && ThemeX.Background.isEmpty()) {
       CompImage->HasAlpha = FALSE;
     }
-#else
-    if (CompImage->HasAlpha && !BackgroundImage) {
-      CompImage->HasAlpha = FALSE;
-    }
-#endif
 
     if (TopImage->HasAlpha) {
       if (CompImage->HasAlpha) {  //aaaa
@@ -849,32 +649,13 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
     }
   }
 }
-#if !USE_XTHEME
-EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color)
-{
-    EG_IMAGE *NewImage;
 
-    if (Image == NULL)
-        return NULL;
-    if (Image->Width == Width && Image->Height == Height)
-        return Image;
-
-    NewImage = egCreateFilledImage(Width, Height, Image->HasAlpha, Color);
-    if (NewImage == NULL) {
-        egFreeImage(Image);
-        return NULL;
-    }
-    egComposeImage(NewImage, Image, 0, 0);
-    egFreeImage(Image);
-
-    return NewImage;
-}
-#endif
 //
 // misc internal functions
 //
 
-EG_IMAGE * egDecodePNG(IN const UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha) {
+EG_IMAGE * egDecodePNG(IN const UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha)
+{
   EG_IMAGE *NewImage = NULL;
   UINTN Error, i, ImageSize;
   size_t Width, Height;

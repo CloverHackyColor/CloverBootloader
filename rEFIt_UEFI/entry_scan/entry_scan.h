@@ -46,22 +46,8 @@ extern REFIT_MENU_SCREEN MainMenu;
 
 extern XObjArray<REFIT_VOLUME> Volumes;
 // common
-#if USE_XTHEME
 const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-#else
-EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName);
-EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-#endif
-/*
-INTN StrniCmp(IN CHAR16 *Str1,
-              IN CHAR16 *Str2,
-              IN UINTN   Count);
-CHAR16 *StriStr(IN CHAR16 *Str,
-                IN CHAR16 *SearchFor);
-VOID StrToLower(IN CHAR16 *Str);
-VOID AlertMessage(IN CHAR16 *Title, IN CHAR16 *Message);
-BOOLEAN YesNoMessage(IN CHAR16 *Title, IN CHAR16 *Message);
- */
+
 
 // Ask user for file path from directory menu
 BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
