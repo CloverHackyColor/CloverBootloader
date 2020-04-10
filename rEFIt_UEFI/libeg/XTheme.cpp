@@ -310,21 +310,26 @@ const XImage& XTheme::GetIcon(INTN Id)
     if (Icons[i].Id == Id)
     {
       if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
+//        DBG("got night icon %lld name{%s}\n", Id, IconsNames[Id]);
         return Icons[i].ImageNight;
       }
       //if daylight or night icon absent
       if (!Icons[i].Image.isEmpty()) {
+//        DBG("got day icon %lld name{%s}\n", Id, IconsNames[Id]);
         return Icons[i].Image;
       }
       //if not found then create new one from embedded
       Icon* NewIcon = new Icon(Id, true);
 //      NewIcon.GetEmbedded();
+//      DBG("got embedded icon %lld name{%s}\n", Id, IconsNames[Id]);
       if (!Daylight && !NewIcon->ImageNight.isEmpty()) {
+//        DBG("got night icon and cache\n");
         Icons[i].ImageNight = NewIcon->ImageNight; //
         return NewIcon->ImageNight;
       }
       //if daylight or night icon absent
       if (!NewIcon->Image.isEmpty()) {
+ //       DBG("got day icon and cache\n");
         Icons[i].Image = NewIcon->Image;
         return NewIcon->Image;
       }
@@ -394,6 +399,14 @@ void XTheme::FillByEmbedded()
     Icon* NewIcon = new Icon(i, true);
     Icons.AddReference(NewIcon, true);
   }
+
+  Background = XImage(UGAWidth, UGAHeight);
+  if (DarkEmbedded) {
+    Background.Fill(DarkEmbeddedBackgroundPixel);
+  } else {
+    Background.Fill(StdBackgroundPixel);
+  }
+  BigBack.setEmpty();
   //and buttons
   Buttons[0].FromPNG(ACCESS_EMB_DATA(emb_radio_button), ACCESS_EMB_SIZE(emb_radio_button));
   Buttons[1].FromPNG(ACCESS_EMB_DATA(emb_radio_button_selected), ACCESS_EMB_SIZE(emb_radio_button_selected));

@@ -477,7 +477,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       return NULL;
     }
   }
-
+// DBG("OSType =%d\n", OSType);
   if (!CustomEntry) {
     CUSTOM_LOADER_ENTRY *Custom;
     UINTN                CustomIndex = 0;
@@ -573,7 +573,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       ++CustomIndex;
     }
   }
-
+// DBG("prepare the menu entry\n");
   // prepare the menu entry
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   Entry = new LOADER_ENTRY();
@@ -595,7 +595,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
     Entry->LoadOptions    = SPrintf("%s", gSettings.BootArgs);
   }
-
+//DBG("locate a custom icon \n");
   // locate a custom icon for the loader
   //StrCpy(IconFileName, Volume->OSIconName); Sothor - Unused?
   //actions
@@ -607,7 +607,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->LoaderType = OSType;
   Entry->BuildVersion = NULL;
   Entry->OSVersion = GetOSVersion(Entry);
-
+//DBG("OSVersion=%s \n", Entry->OSVersion);
   // detect specific loaders
   OSIconName = NULL;
   ShortcutLetter = 0;
@@ -662,7 +662,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       Entry->LoaderType = OSTYPE_OTHER;
       break;
   }
-
+//DBG("OSIconName=%ls \n", OSIconName);
   Entry->Title = FullTitle;
   if (Entry->Title.isEmpty()  &&  Volume->VolLabel != NULL) {
     if (Volume->VolLabel[0] == L'#') {
@@ -675,7 +675,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   BOOLEAN BootCampStyle = ThemeX.BootCampStyle;
 
   if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
-    //DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%d\n",Entry->VolName, StrLen(Entry->VolName));
+ //   DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%llu\n",Entry->VolName, StrLen(Entry->VolName));
     if (BootCampStyle) {
       if (!LoaderTitle.isEmpty()) {
         Entry->Title = LoaderTitle;
@@ -687,8 +687,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                             Basename(Volume->DevicePathString));
     }
   }
+//  DBG("check Entry->Title \n");
   if ( Entry->Title.isEmpty() ) {
-    //DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n", LoaderTitle, Entry->VolName);
+ //   DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n", LoaderTitle.wc_str(), Entry->VolName);
     if (BootCampStyle) {
       if ((StriCmp(LoaderTitle.wc_str(), L"macOS") == 0) || (StriCmp(LoaderTitle.wc_str(), L"Recovery") == 0)) {
         Entry->Title.takeValueFrom(Entry->VolName);
@@ -704,7 +705,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                             Entry->VolName);
     }
   }
-  //DBG("Entry->Title =%ls\n", Entry->Title);
+//  DBG("Entry->Title =%ls\n", Entry->Title.wc_str());
   // just an example that UI can show hibernated volume to the user
   // should be better to show it on entry image
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -722,22 +723,24 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   } else {
     Entry->Image = ThemeX.LoadOSIcon(OSIconName);
   }
+//  DBG("Load DriveImage\n");
   // Load DriveImage
   if (DriveImage) {
+//    DBG("DriveImage presents\n");
     Entry->DriveImage = *DriveImage;
   } else {
     Entry->DriveImage = ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
   }
-  // DBG("HideBadges=%d Volume=%ls ", GlobalConfig.HideBadges, Volume->VolName);
+//   DBG("HideBadges=%llu Volume=%ls ", ThemeX.HideBadges, Volume->VolName);
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
 //      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
       Entry->BadgeImage = XImage(Entry->DriveImage, ThemeX.BadgeScale/16.f);
-      // DBG(" Show badge as Drive.");
+       DBG(" Show badge as Drive.");
     } else {
       Entry->BadgeImage = XImage(Entry->Image, ThemeX.BadgeScale/16.f);
  //     Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), ThemeX.BadgeScale);
-      // DBG(" Show badge as OSImage.");
+       DBG(" Show badge as OSImage.");
     }
   }
   Entry->BootBgColor = BootBgColor;
@@ -746,7 +749,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 #ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 #endif
-//  DBG("%sLoader entry created for '%ls'\n", indent, Entry->DevicePathString);
+  DBG("%sLoader entry created for '%ls'\n", indent, Entry->DevicePathString);
   return Entry;
 }
 

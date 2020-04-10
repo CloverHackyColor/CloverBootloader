@@ -2872,9 +2872,12 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
     DBG("required font %s not found, try to load external\n", text->fontFace->fontFamily);
-    Status = egLoadFile(ThemeX.ThemeDir, PoolPrint(L"%s.svg", text->fontFace->fontFamily), &FileData, &FileDataLength);
-
-    DBG("font %s loaded status=%s\n", text->fontFace->fontFamily, strerror(Status));
+//    CONST CHAR16 *FontFileName = PoolPrint(L"%a.svg", text->fontFace->fontFamily);
+    XStringW FontFileName = XStringW().takeValueFrom(text->fontFace->fontFamily) + L".svg"_XSW;
+    DBG(" file name =%ls\n", FontFileName.wc_str());
+    Status = egLoadFile(ThemeX.ThemeDir, FontFileName.wc_str(), &FileData, &FileDataLength);
+//    FreePool(FontFileName);
+    DBG(" font %s loaded status=%lld, %s\n", text->fontFace->fontFamily, Status, strerror(Status));
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1
       if (!p1) {
@@ -4293,7 +4296,7 @@ void nsvg__imageBounds(NSVGparser* p, float* bounds)
     clipPath = clipPath->next;
   }
   count += nsvg__shapesBound(image->shapes, bounds);
-  DBG("found shapes=%d\n", count);
+//  DBG("found shapes=%d\n", count);
   if (count == 0) {
     bounds[0] = bounds[1] = 0.0f;
     bounds[2] = bounds[3] = 1.0f;

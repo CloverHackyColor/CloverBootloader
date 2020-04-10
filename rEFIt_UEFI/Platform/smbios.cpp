@@ -20,6 +20,8 @@
  **/
 
 #include "Platform.h"
+#include "../../Version.h"
+
 #ifdef __cplusplus
 extern "C" {
 #include <Library/PrintLib.h>
@@ -1099,7 +1101,11 @@ VOID PatchTableType11()
   //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
-	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %ls\n", gFirmwareRevision);
+#ifdef REVISION_STR
+	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by %s\n", REVISION_STR);
+#else
+  snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %s\n", gFirmwareRevision);
+#endif
   AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
 
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);

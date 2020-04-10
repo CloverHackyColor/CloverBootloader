@@ -48,6 +48,9 @@
 #define DBG(...) DebugLog(DEBUG_COMMON_MENU, __VA_ARGS__)
 #endif
 
+extern CONST CHAR8* IconsNames[];
+
+#if 0
 static CONST CHAR16 *BuiltinIconNames[] = {
   /*
    L"About",
@@ -89,6 +92,7 @@ EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName)
   }
   return NULL;
 }
+#endif
 
 const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 
@@ -145,9 +149,10 @@ const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EF
       IconNum = BUILTIN_ICON_VOL_INTERNAL;
       break;
   }
-  IconX = &ThemeX.GetIcon(IconNum);
+//  DBG("asked IconNum = %llu Volume->DiskKind=%d OSType=%d\n", IconNum, Volume->DiskKind, OSType);
+  IconX = &ThemeX.GetIcon(IconNum); //asked IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS, got day icon
   if (IconX->isEmpty()) {
-    DBG("asked IconNum = %llu not found, took internal\n", IconNum);
+    DBG("asked Icon %s not found, took internal\n", IconsNames[IconNum]);
     IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
   }
 
