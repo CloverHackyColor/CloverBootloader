@@ -255,6 +255,14 @@ int printlib_tests(void)
     Test1arg(F("|00012|"), F("|%05u|"), 12);
     Test1arg(F("|0000C|"), F("|%05x|"), 12); // %x for PrintLib is %X for printf
     Test1arg(F("|0000C|"), F("|%05X|"), 12);
+	
+    Test1arg(F("|80123456|"), F("|%03X|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|FFFFFFFF80123456|"), F("|%03lX|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|80123456|"), F("|%05X|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|80123456|"), F("|%07X|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|080123456|"), F("|%09X|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|00000000000080123456|"), F("|%020X|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|0000FFFFFFFF80123456|"), F("|%020X|"), 0xFFFFFFFF80123456);
 
     // test limits
     int16_t i;
