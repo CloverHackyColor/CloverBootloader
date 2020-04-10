@@ -1099,7 +1099,7 @@ VOID PatchTableType11()
   //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
-	AsciiSPrint(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %s\n", gFirmwareRevision);
+	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %ls\n", gFirmwareRevision);
   AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
 
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
@@ -1596,21 +1596,21 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->AssetTag = 0;
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
-        AsciiSPrint(gSettings.MemoryManufacturer, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].Vendor);
+        snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       } else {
         //        newSmbiosTable.Type17->Manufacturer = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
-        AsciiSPrint(gSettings.MemorySerialNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+        snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
       } else {
         //        newSmbiosTable.Type17->SerialNumber = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
-        AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].PartNo);
+        snprintf(gSettings.MemoryPartNumber, 64, "%s", gRAM.SMBIOS[SMBIOSIndex].PartNo);
         DBG(" partNum=%s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
         //       newSmbiosTable.Type17->PartNumber = 0;
@@ -1639,19 +1639,19 @@ VOID PatchTableType17()
 
       if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
-        AsciiSPrint(gSettings.MemoryManufacturer, 64, "%a", gRAM.SPD[SPDIndex].Vendor);
+        snprintf(gSettings.MemoryManufacturer, 64, "%s", gRAM.SPD[SPDIndex].Vendor);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
       if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
-        AsciiSPrint(gSettings.MemorySerialNumber, 64, "%a", gRAM.SPD[SPDIndex].SerialNo);
+        snprintf(gSettings.MemorySerialNumber, 64, "%s", gRAM.SPD[SPDIndex].SerialNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
       if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
-		  AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SPD[SPDIndex].PartNo);
+		  snprintf(gSettings.MemoryPartNumber, 64, "%s", gRAM.SPD[SPDIndex].PartNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
       }

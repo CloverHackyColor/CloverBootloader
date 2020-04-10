@@ -650,7 +650,7 @@ VOID ApplyInputs(VOID)
       }
     } while (*(++ch));
 
-	  AsciiSPrint(gSettings.BootArgs, 255, "%s ", InputItems[i].SValue);
+	  snprintf(gSettings.BootArgs, 255, "%ls ", InputItems[i].SValue);
   }
   i++; //1
   if (InputItems[i].Valid) {
