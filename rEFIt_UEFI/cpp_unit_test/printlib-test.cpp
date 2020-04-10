@@ -8,7 +8,7 @@
 
 #include <Platform.h>
 #include <limits.h>
-#include "unicode_conversions.h"
+#include "../cpp_foundation/unicode_conversions.h"
 #include <printlib-test-cpp_conf.h>
 #include "printlib-test.h"
 
@@ -109,36 +109,36 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 #define Test1arg(expectResult,format,c) \
 { \
 	char label[1024]; \
-	snprintf(label, sizeof(label), F("Test sprintf(%s, %s)"), F(#format), F(#c)); \
+	snprintf(label, sizeof(label), F("Test AsciiVSPrint(%s, %s)"), F(#format), F(#c)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c); \
-    snprintf(label, sizeof(label), F("Test swprintf(%s, %s)"), F(#format), F(#c)); \
+    snprintf(label, sizeof(label), F("Test UnicodeVSPrint(%s, %s)"), F(#format), F(#c)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),L##format,c); \
 }
 
 #define Test2arg(expectResult,format,c,d) \
 { \
 	char label[1024]; \
-    snprintf(label, sizeof(label), F("Test sprintf(%s, %s, %s)"), F(#format), F(#c), F(#d)); \
+    snprintf(label, sizeof(label), F("Test AsciiVSPrint(%s, %s, %s)"), F(#format), F(#c), F(#d)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c,d); \
-    snprintf(label, sizeof(label), F("Test swprintf(%s, %s, %s)"), F(#format), F(#c), F(#d)); \
+    snprintf(label, sizeof(label), F("Test UnicodeVSPrint(%s, %s, %s)"), F(#format), F(#c), F(#d)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),L##format,c,d); \
 }
 
 #define Test5arg(expectResult,format,c,d,e,f,g) \
 { \
 	char label[1024]; \
-    snprintf(label, sizeof(label), F("Test sprintf(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
+    snprintf(label, sizeof(label), F("Test AsciiVSPrint(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c,d,e,f,g); \
-    snprintf(label, sizeof(label), F("Test swprintf(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
+    snprintf(label, sizeof(label), F("Test UnicodeVSPrint(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),L##format,c,d,e,f,g); \
 }
 
 #define TestLen5arg(expectResult,expectedRet,format,c,d,e,f,g) \
 { \
 	char label[1024]; \
-    snprintf(label, sizeof(label), F("Test sprintf(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
+    snprintf(label, sizeof(label), F("Test AsciiVSPrint(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testPrintf(label,expectResult,expectedRet,format,c,d,e,f,g); \
-    snprintf(label, sizeof(label), F("Test swprintf(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
+    snprintf(label, sizeof(label), F("Test UnicodeVSPrint(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testWPrintf(label,L##expectResult,expectedRet,L##format,c,d,e,f,g); \
 }
 
@@ -240,6 +240,9 @@ int printlib_tests(void)
     Test1arg(F("|1234|"), F("|%2u|"), 1234); // keep under 16 bit value, if not, on 16 bits CPU, the constant become long int and doesn't match %d
     Test1arg(F("|ABFE|"), F("|%2x|"), 0xABFE); // %x for PrintLib is %X for printf
     Test1arg(F("|ABFE|"), F("|%2X|"), 0xABFE);
+
+    Test1arg(F("|12345|"), F("|%2X|"), 0x12345);
+    Test1arg(F("|12345|"), F("|%4X|"), 0x12345);
 
     // test test with specifier, space as pad char
     Test1arg(F("|   12|"), F("|%5d|"), 12);

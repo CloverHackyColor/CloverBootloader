@@ -15,8 +15,11 @@
 #include "strlen_test.h"
 #include "printf_lite-test.h"
 #include "LoadOptions_test.h"
-//#include "poolprint-test.h"
-//#include "printlib-test.h"
+
+#if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
+  #include "poolprint-test.h"
+  #include "printlib-test.h"
+#endif
 
 
 /* On macOS
@@ -37,16 +40,16 @@ bool all_tests()
 //		all_ok = false;
 //	}
 	#if defined(CLOVER_BUILD)
-//	    ret = printlib_tests();
-//	    if ( ret != 0 ) {
-//		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
-//		    all_ok = false;
-//    	}
-//    	ret = poolprint_tests();
-//    	if ( ret != 0 ) {
-//	    	DebugLog(2, "poolprint_tests() failed at test %d\n", ret);
-//		    all_ok = false;
-//	    }
+	    ret = printlib_tests();
+	    if ( ret != 0 ) {
+		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
+		    all_ok = false;
+    	}
+    	ret = poolprint_tests();
+    	if ( ret != 0 ) {
+	    	DebugLog(2, "poolprint_tests() failed at test %d\n", ret);
+		    all_ok = false;
+	    }
 	#endif
 #endif
 #ifndef _MSC_VER
@@ -117,15 +120,13 @@ bool all_tests()
 	}
 	
 #if defined(JIEF_DEBUG)
-	if ( !all_ok ) {
-		printf("All tests are NOT ok\n");
-	}else{
+	if ( all_ok ) {
 		printf("All tests are ok\n");
 	}
 #endif
 	
 #if defined(CLOVER_BUILD) && defined(JIEF_DEBUG)
-	if ( !all_ok ) {
+	if ( all_ok ) {
 //		PauseForKey(L"press");
 	}else{
 		PauseForKey(L"press");

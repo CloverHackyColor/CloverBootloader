@@ -268,10 +268,12 @@ static void print_char32(const char32_t utf32_char, PrintfParams* printfParams)
  * Print wchar string to utf8 string.
  * Only needed if PRINTF_UNICODE_OUTPUT_SUPPORT == 1 && PRINTF_UTF8_INPUT_SUPPORT == 1
  */
-static void print_wchar_string(const wchar_t* s, PrintfParams* printfParams)
+static void output_wchar_string_as_utf8(const wchar_t* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	while ( *s ) {
+	int width_specifier = printfParams->width_specifier;
+	while ( *s  &&  (printfParams->width_specifier == 0  ||  width_specifier--) ) {
+//	while ( *s ) {
 #if __WCHAR_MAX__ <= 0xFFFFu
         const char16_t uc = *s++;
         if (!printf_is_surrogate(uc)) {
@@ -311,95 +313,20 @@ UTF8
 
 
 
-#if PRINTF_UNICODE_OUTPUT_SUPPORT == 1
-/*
- *
- * Only needed if PRINTF_UNICODE_OUTPUT_SUPPORT == 1 && PRINTF_UTF8_INPUT_SUPPORT == 1
- */
-static const char* get_utf32_from_utf8(const char* s, char32_t* utf32_letter)
-{
-tryagain:
-	if (  *((unsigned char*)s) & 0x80  ) {
-		// if Byte 1 is 1xxxxxxx : multi byte is at least 2 char
-		if (*(s+1) == 0) {
-			// Finished in the middle of an utf8 multibyte char
-			return NULL;
-		}
-		// Byte 2 should be 0b10xxxxxx
-		if ((*(((unsigned char*)s)+1) & 0xc0) != 0x80) {  // 0xC0 = 0b11000000
-			// second byte is not multi byte char, ignore
-			s += 1;
-			goto tryagain;
-		}
-		// if Byte 1 is 111xxxxx : multi byte is at least 3 char
-		if ((*((unsigned char*)s) & 0xe0) == 0xe0) { // 0xE0 = 0b11100000
-			if (*(s+2) == 0) {
-				// Finished in the middle of an utf8 multibyte char
-				return NULL;
-			}
-			// Byte 3 should be 0b10xxxxxx
-			if ((*(((unsigned char*)s)+2) & 0xc0) != 0x80) {
-				s += 1;
-				goto tryagain;
-			}
-			// if Byte 1 is 1111xxxx : multi byte is 4 char
-			if ((*((unsigned char*)s) & 0xf0) == 0xf0) { // 0xF0 = 0b11110000
-				if (*(s+3) == 0) {
-					// Finished in the middle of an utf8 multibyte char
-					return NULL;
-				}
-				// if Byte 1 is not 0b11110xxx  ||  Byte 4 not 0b10xxxxxx
-				if ((*((unsigned char*)s) & 0xf8) != 0xf0 || (*(((unsigned char*)s)+3) & 0xc0) != 0x80) {
-					s += 1;
-					goto tryagain;
-				}
-				/* 4-byte code */
-				*utf32_letter = (char32_t)((*((char32_t*)s) & 0x7) << 18);
-				*utf32_letter |= (char32_t)((*(((unsigned char*)s)+1) & 0x3f) << 12);
-				*utf32_letter |= (char32_t)((*(((unsigned char*)s)+2) & 0x3f) << 6);
-				*utf32_letter |= *(((unsigned char*)s)+3) & 0x3f;
-				return s + 4;
-			} else {
-				/* 3-byte code */
-				*utf32_letter = (char32_t)((*((unsigned char*)s) & 0xf) << 12);
-				*utf32_letter |= (char32_t)((*(((unsigned char*)s)+1) & 0x3f) << 6);
-				*utf32_letter |= *(((unsigned char*)s)+2) & 0x3f;
-				return s + 3;
-			}
-		} else {
-			/* 2-byte code */
-			*utf32_letter = (char32_t)((*((unsigned char*)s) & 0x1f) << 6);
-			*utf32_letter |= *(((unsigned char*)s)+1) & 0x3f;
-			return s + 2;
-		}
-	} else {
-		/* 1-byte code */
-		*utf32_letter = *((unsigned char*)s);
-		return s + 1;
-	}
-}
-#endif
-
-
 
 
 
 #if PRINTF_UNICODE_OUTPUT_SUPPORT == 1 && PRINTF_UTF8_INPUT_SUPPORT == 1
 
-#define halfBase 0x0010000UL
-#define halfMask 0x3FFUL
-#define halfShift 10 /* used for shifting by 10 bits */
-#define UNI_SUR_HIGH_START  0xD800u
-#define UNI_SUR_LOW_START   0xDC00u
-
 /*
  * Print UTF8 string to wchar string.
  * Only needed if PRINTF_UNICODE_OUTPUT_SUPPORT == 1 && PRINTF_UTF8_INPUT_SUPPORT == 1
  */
-static void print_utf8_to_wchar_string(const char* s, PrintfParams* printfParams)
+static void output_utf8_string_as_wchar(const char* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	while ( *s ) {
+	int width_specifier = printfParams->width_specifier;
+	while ( *s  &&  (printfParams->width_specifier == 0  ||  width_specifier--) ) {
 		char32_t c;
 		if (  *((unsigned char*)s) & 0x80  ) {
 			if (*(s+1) == 0) {
@@ -471,19 +398,28 @@ static void print_utf8_to_wchar_string(const char* s, PrintfParams* printfParams
  * Print string with no conversion
  */
 #if DEFINE_SECTIONS == 1
-__attribute__((noinline, section(".print_string")))
+__attribute__((noinline, section(".output_utf8_string")))
 #elif DEFINE_SECTIONS == 2
 __attribute__((noinline, section(".printf_lite")))
 #endif
-static void print_string(const char* s, PrintfParams* printfParams)
+static void output_utf8_string(const char* s, PrintfParams* printfParams)
 {
-	if ( s ) while ( *s ) print_char(*s++, printfParams);
+	if ( !s ) return;
+	if ( printfParams->width_specifier ) while ( *s && printfParams->width_specifier-- ) print_char(*s++, printfParams);
+	else while ( *s ) print_char(*s++, printfParams);
 }
 
+#if DEFINE_SECTIONS == 1
+__attribute__((noinline, section(".output_wchar_string")))
+#elif DEFINE_SECTIONS == 2
+__attribute__((noinline, section(".printf_lite")))
+#endif
 #if PRINTF_UNICODE_OUTPUT_SUPPORT
-static void wprint_string(const wchar_t* s, PrintfParams* printfParams)
+static void output_wchar_string(const wchar_t* s, PrintfParams* printfParams)
 {
-	if ( s ) while ( *s ) print_wchar(*s++, printfParams);
+	if ( !s ) return;
+	if ( printfParams->width_specifier ) while ( *s && printfParams->width_specifier-- ) print_wchar(*s++, printfParams);
+	else while ( *s ) print_wchar(*s++, printfParams);
 }
 #endif
 
@@ -721,9 +657,9 @@ static void print_double(double number, PrintfParams* printfParams)
         	print_char_macro('-', printfParams);
         }
 #if PRINTF_UNICODE_OUTPUT_SUPPORT == 1  &&  PRINTF_UTF8_OUTPUT_SUPPORT == 0
-        print_string(L"<large double>", printfParams);
+        output_utf8_string(L"<large double>", printfParams);
 #else
-		print_string("<large double>", printfParams);
+		output_utf8_string("<large double>", printfParams);
 #endif
     }
 
@@ -1020,9 +956,9 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 					va_arg(VALIST_ACCESS(valist), const wchar_t*);
 #    endif
 #    if PRINTF_UNICODE_OUTPUT_SUPPORT == 1  &&  PRINTF_UTF8_INPUT_SUPPORT == 0
-				    print_string(L"unsupported", printfParams);
+				    output_utf8_string(L"unsupported", printfParams);
 #    else
-                    print_string("unsupported", printfParams);
+                    output_utf8_string("unsupported", printfParams);
 #    endif
 					printfParams->inDirective = 0;
 				}
@@ -1034,9 +970,9 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 					if ( printfParams->l_modifier == 1 ) {
 						const wchar_t* s = va_arg(VALIST_ACCESS(valist), const wchar_t*);
 						if ( printfParams->unicode_output ) {
-							wprint_string(s, printfParams);
+							output_wchar_string(s, printfParams);
 						}else{
-							print_wchar_string(s, printfParams);
+							output_wchar_string_as_utf8(s, printfParams);
 						}
 						printfParams->inDirective = 0;
 					}else
@@ -1046,38 +982,38 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 						const char* s = va_arg(VALIST_ACCESS(valist), const char*);
 #if PRINTF_UTF8_OUTPUT_SUPPORT == 1  &&  PRINTF_UNICODE_OUTPUT_SUPPORT == 1
 						if ( printfParams->unicode_output ) {
-							print_utf8_to_wchar_string(s, printfParams);
+							output_utf8_string_as_wchar(s, printfParams);
 						}else{
-							print_string(s, printfParams);
+							output_utf8_string(s, printfParams);
 						}
 #elif PRINTF_UTF8_OUTPUT_SUPPORT == 1
-						print_string(s, printfParams);
+						output_utf8_string(s, printfParams);
 #elif PRINTF_UNICODE_OUTPUT_SUPPORT == 1
-						print_utf8_to_wchar_string(s, printfParams);
+						output_utf8_string_as_wchar(s, printfParams);
 #endif
 					}
 #endif
 				printfParams->inDirective = 0;
 			}
 //					{
-//						print_string(va_arg(VALIST_ACCESS(valist), const output_char_type*), printfParams);
+//						output_utf8_string(va_arg(VALIST_ACCESS(valist), const output_char_type*), printfParams);
 //						printfParams->inDirective = 0;
 //					}
 
 //#if PRINTF_UNICODE_INPUT_SUPPORT == 1  &&  PRINTF_UTF8_OUTPUT_SUPPORT == 1
 //					if ( printfParams->l_modifier == 0 ) {
-//						print_string(va_arg(VALIST_ACCESS(valist), const char*), printfParams);
+//						output_utf8_string(va_arg(VALIST_ACCESS(valist), const char*), printfParams);
 //						printfParams->inDirective = 0;
 //					}else
 //#elif PRINTF_UTF8_INPUT_SUPPORT == 1  &&  PRINTF_UNICODE_OUTPUT_SUPPORT == 1
 //#arning TODO
 //					if ( printfParams->l_modifier == 1 ) {
-//						print_string(va_arg(VALIST_ACCESS(valist), const char*), printfParams);
+//						output_utf8_string(va_arg(VALIST_ACCESS(valist), const char*), printfParams);
 //						printfParams->inDirective = 0;
 //					}else
 //#endif
 //					{
-//						print_string(va_arg(VALIST_ACCESS(valist), const output_char_type*), printfParams);
+//						output_utf8_string(va_arg(VALIST_ACCESS(valist), const output_char_type*), printfParams);
 //						printfParams->inDirective = 0;
 //					}
 			break;
@@ -1185,6 +1121,74 @@ void printf_with_callback(const char* format, transmitBufCallBackType transmitBu
 }
 
 #if PRINTF_UNICODE_OUTPUT_SUPPORT == 1
+
+/*
+ *
+ * Only needed if PRINTF_UNICODE_OUTPUT_SUPPORT == 1 && PRINTF_UTF8_INPUT_SUPPORT == 1
+ */
+static const char* get_utf32_from_utf8(const char* s, char32_t* utf32_letter)
+{
+tryagain:
+	if (  *((unsigned char*)s) & 0x80  ) {
+		// if Byte 1 is 1xxxxxxx : multi byte is at least 2 char
+		if (*(s+1) == 0) {
+			// Finished in the middle of an utf8 multibyte char
+			return NULL;
+		}
+		// Byte 2 should be 0b10xxxxxx
+		if ((*(((unsigned char*)s)+1) & 0xc0) != 0x80) {  // 0xC0 = 0b11000000
+			// second byte is not multi byte char, ignore
+			s += 1;
+			goto tryagain;
+		}
+		// if Byte 1 is 111xxxxx : multi byte is at least 3 char
+		if ((*((unsigned char*)s) & 0xe0) == 0xe0) { // 0xE0 = 0b11100000
+			if (*(s+2) == 0) {
+				// Finished in the middle of an utf8 multibyte char
+				return NULL;
+			}
+			// Byte 3 should be 0b10xxxxxx
+			if ((*(((unsigned char*)s)+2) & 0xc0) != 0x80) {
+				s += 1;
+				goto tryagain;
+			}
+			// if Byte 1 is 1111xxxx : multi byte is 4 char
+			if ((*((unsigned char*)s) & 0xf0) == 0xf0) { // 0xF0 = 0b11110000
+				if (*(s+3) == 0) {
+					// Finished in the middle of an utf8 multibyte char
+					return NULL;
+				}
+				// if Byte 1 is not 0b11110xxx  ||  Byte 4 not 0b10xxxxxx
+				if ((*((unsigned char*)s) & 0xf8) != 0xf0 || (*(((unsigned char*)s)+3) & 0xc0) != 0x80) {
+					s += 1;
+					goto tryagain;
+				}
+				/* 4-byte code */
+				*utf32_letter = (char32_t)((*((char32_t*)s) & 0x7) << 18);
+				*utf32_letter |= (char32_t)((*(((unsigned char*)s)+1) & 0x3f) << 12);
+				*utf32_letter |= (char32_t)((*(((unsigned char*)s)+2) & 0x3f) << 6);
+				*utf32_letter |= *(((unsigned char*)s)+3) & 0x3f;
+				return s + 4;
+			} else {
+				/* 3-byte code */
+				*utf32_letter = (char32_t)((*((unsigned char*)s) & 0xf) << 12);
+				*utf32_letter |= (char32_t)((*(((unsigned char*)s)+1) & 0x3f) << 6);
+				*utf32_letter |= *(((unsigned char*)s)+2) & 0x3f;
+				return s + 3;
+			}
+		} else {
+			/* 2-byte code */
+			*utf32_letter = (char32_t)((*((unsigned char*)s) & 0x1f) << 6);
+			*utf32_letter |= *(((unsigned char*)s)+1) & 0x3f;
+			return s + 2;
+		}
+	} else {
+		/* 1-byte code */
+		*utf32_letter = *((unsigned char*)s);
+		return s + 1;
+	}
+}
+
 
 void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCallBackType transmitWBufCallBack, void* context
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1

@@ -174,6 +174,8 @@ int printf_lite_tests(void)
     loggf(F("\n"));
 #endif
 
+	Test1arg(F("Āࠀ𐀀🧊Выход'utf8'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf8");
+
 	
 //	char buf[256];
 //	snprintf(buf, sizeof(buf), "test %s", "ascii");
@@ -196,6 +198,22 @@ int printf_lite_tests(void)
 	Test1arg(F("Āࠀ𐀀🧊Выход'utf16'из"), F("Āࠀ𐀀🧊Выход'%ls'из"), L"utf16");
 	Test1arg(F("Āࠀ𐀀🧊Выхо'ыход'из"), F("Āࠀ𐀀🧊Выхо'%s'из"), "ыход");
 	Test1arg(F("Āࠀ𐀀🧊Выхо'ыход'из"), F("Āࠀ𐀀🧊Выхо'%ls'из"), L"ыход");
+	
+	// Check %s with width specifier
+    Test1arg(F("|a|"), F("|%4s|"), "a");
+    Test1arg(F("|aa|"), F("|%4s|"), "aa");
+    Test1arg(F("|aaa|"), F("|%4s|"), "aaa");
+    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaa");
+    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaaa");
+    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaaaa");
+	
+	// Check %ls with width specifier
+    Test1arg(F("|a|"), F("|%4ls|"), L"a");
+    Test1arg(F("|aa|"), F("|%4ls|"), L"aa");
+    Test1arg(F("|aaa|"), F("|%4ls|"), L"aaa");
+    Test1arg(F("|aaaa|"), F("|%4ls|"), L"aaaa");
+    Test1arg(F("|aaaa|"), F("|%4ls|"), L"aaaaa");
+    Test1arg(F("|aaaa|"), F("|%4ls|"), L"aaaaaa");
 
 
     // These must always works. It also test that integer type are well defined
@@ -263,6 +281,17 @@ int printf_lite_tests(void)
     Test1arg(F("|00012|"), F("|%05d|"), 12);
     Test1arg(F("|00012|"), F("|%05u|"), 12);
     Test1arg(F("|0000c|"), F("|%05x|"), 12);
+
+
+    Test1arg(F("|0A23|"), F("|%04X|"), 0xa23);
+    Test1arg(F("|A234|"), F("|%04X|"), 0xa234);
+    Test1arg(F("|A2345|"), F("|%04X|"), 0xa2345);
+    Test1arg(F("|0a23|"), F("|%04x|"), 0xA23);
+    Test1arg(F("|a234|"), F("|%04x|"), 0xA234);
+    Test1arg(F("|a2345|"), F("|%04x|"), 0xA2345);
+    Test1arg(F("|01|"), F("|%02d|"), 1);
+    Test1arg(F("|12|"), F("|%02d|"), 12);
+    Test1arg(F("|120|"), F("|%02d|"), 120);
 
     // Test1arg float format
     Test1arg(F("|0.000000|"), F("|%0f|"), 0.0f);
