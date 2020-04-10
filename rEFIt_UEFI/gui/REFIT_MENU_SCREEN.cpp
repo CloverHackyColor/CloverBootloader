@@ -2581,7 +2581,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
-            AsciiSPrint(gSettings.BootArgs, 255, "%a", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.c_str());
+            snprintf(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.c_str());
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

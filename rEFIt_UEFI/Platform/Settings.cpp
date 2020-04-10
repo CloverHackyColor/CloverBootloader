@@ -4259,17 +4259,17 @@ ParseSMBIOSSettings(
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
               //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
-              AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+              snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
               //DBG ("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+            snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
             //DBG ("Using latest BiosReleaseDate from config\n");
           }
         } else {
-          AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+          snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
           AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
           //DBG ("Using latest BiosReleaseDate from config\n");
         }
@@ -4316,17 +4316,17 @@ ParseSMBIOSSettings(
             } else if ((i[3] == j[3]) && (i[4] == j[4])) {
               //DBG ("Found same BiosReleaseDate in clover and config\n");
             } else {
-              AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+              snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
               AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
               //DBG ("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+            snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
             //DBG ("Using latest BiosReleaseDate from config\n");
           }
         } else {
-          AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+          snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
           AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
           //DBG ("Using latest BiosReleaseDate from config\n");
         }
@@ -4342,11 +4342,11 @@ ParseSMBIOSSettings(
           }
 
           if ((AsciiStrLen(i) == 8)) {
-            AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+            snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
             //DBG ("Using the date of used BiosVersion\n");
           } else if ((AsciiStrLen(i) == 10)) {
-            AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+            snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
             AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
             //DBG ("Using the date of used BiosVersion\n");
           }
@@ -4369,11 +4369,11 @@ ParseSMBIOSSettings(
       }
 
       if ((AsciiStrLen(i) == 8)) {
-        AsciiSPrint (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        snprintf (Res1, 9, "%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
         AsciiStrCpyS (gSettings.ReleaseDate, 64, Res1);
         //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       } else if ((AsciiStrLen(i) == 10)) {
-        AsciiSPrint (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        snprintf (Res2, 11, "%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
         AsciiStrCpyS (gSettings.ReleaseDate, 64, Res2);
         //DBG ("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       }
@@ -4852,7 +4852,7 @@ GetUserSettings(
             }
             Dict2 = GetProperty (Prop2, "PciAddr");
             if (Dict2 != NULL) {
-              INTN Bus, Dev, Func;
+              UINT8 Bus, Dev, Func;
               CHAR8 *Str = Dict2->string;
 
               if (Str[2] != ':') {
@@ -4864,7 +4864,7 @@ GetUserSettings(
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
-              AsciiSPrint(Label, 64, "[%02x:%02x.%02x] ", Bus, Dev, Func);
+              snprintf(Label, 64, "[%02X:%02X.%02X] ", Bus, Dev, Func);
               DBG(" %s", Label);
             } else {
               DBG (" no PciAddr\n");
@@ -5894,7 +5894,7 @@ GetUserSettings(
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
 				snprintf (SlotDevice->SlotName, 31, "%s", Prop2->string);
             } else {
-				AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot %d", DeviceN);
+				snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
             }
 
             DBG (" - %s\n", SlotDevice->SlotName);
@@ -6395,49 +6395,49 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
           s = AsciiStrStr(targetString, "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {
-            AsciiSPrint (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
+            snprintf (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res5), Res5);
             if (s[38] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[39] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
           } else if (s[31] == '.') {
-            AsciiSPrint (Res7, 7, "%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
+            snprintf (Res7, 7, "%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             if (s[40] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[41] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             }
           } else if (s[32] == ' ') {
-            AsciiSPrint (Res6, 6, "%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
+            snprintf (Res6, 6, "%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             if (s[39] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[40] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             } else if (s[41] == ')') {
-              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
+              snprintf (Res8, 8, "%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           } else if (s[32] == '.') {
-            AsciiSPrint (Res8, 8, "%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
+            snprintf (Res8, 8, "%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             if (s[41] == ')') {
-              AsciiSPrint (Res6, 6, "%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
+              snprintf (Res6, 6, "%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res6), Res6);
             } else if (s[42] == ')') {
-              AsciiSPrint (Res7, 7, "%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
+              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res7), Res7);
             } else if (s[43] == ')') {
-              AsciiSPrint (Res8, 8, "%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
+              snprintf (Res8, 8, "%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
               Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool (AsciiStrSize (Res8), Res8);
             }
           }
@@ -6861,7 +6861,7 @@ GetDevices ()
 
             default:
               gfx->Vendor = Unknown;
-              AsciiSPrint (gfx->Model, 64, "pci%04x,%04x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+              snprintf (gfx->Model, 64, "pci%04X,%04X", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
               LowCase(gfx->Model);
               gfx->Ports  = 1;
               gfx->Connectors = (1 << NGFX);

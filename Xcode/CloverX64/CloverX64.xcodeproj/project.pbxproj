@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A014999244091B200B37399 /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
+		9A01499A244091B200B37399 /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
+		9A01499B244091B300B37399 /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
+		9A01499C244091B300B37399 /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41561242BABC700D2644C /* printlib-test.cpp */; };
 		9A09863124389A6A00826276 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A09863024389A6A00826276 /* menu.cpp */; };
 		9A09863224389A6A00826276 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A09863024389A6A00826276 /* menu.cpp */; };
 		9A09863324389A6A00826276 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A09863024389A6A00826276 /* menu.cpp */; };
@@ -60,7 +64,6 @@
 		9A9AEB9D243F7B9000FBD7D8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB91243F7B5600FBD7D8 /* XStringArray.cpp */; };
 		9A9AEB9E243F7B9100FBD7D8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB91243F7B5600FBD7D8 /* XStringArray.cpp */; };
 		9A9AEB9F243F7B9200FBD7D8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB91243F7B5600FBD7D8 /* XStringArray.cpp */; };
-		9A9D3B2224221563006D8CD9 /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
 		9A9D3B2324221563006D8CD9 /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */; };
 		9A9D3B2D242215A1006D8CD9 /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B28242215A1006D8CD9 /* stdio.cpp */; };
 		9A9D3B2E242215A1006D8CD9 /* stdio.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B29242215A1006D8CD9 /* stdio.h */; };
@@ -293,7 +296,6 @@
 		9ACFE68F24309AF80071CC93 /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9B241B66EA00F3D247 /* limits.h */; };
 		9ACFE69024309AF80071CC93 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2524176C04005CDD5C /* Settings.h */; };
 		9ACFE69124309AF80071CC93 /* XStringW_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED224176C04005CDD5C /* XStringW_test.h */; };
-		9ACFE69224309AF80071CC93 /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
 		9ACFE69324309AF80071CC93 /* ati_reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4F24176C04005CDD5C /* ati_reg.h */; };
 		9ACFE69424309AF80071CC93 /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
 		9ACFE69524309AF80071CC93 /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
@@ -497,7 +499,6 @@
 		9AF415C5242CD75C00D2644C /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9B241B66EA00F3D247 /* limits.h */; };
 		9AF415C6242CD75C00D2644C /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2524176C04005CDD5C /* Settings.h */; };
 		9AF415C7242CD75C00D2644C /* XStringW_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED224176C04005CDD5C /* XStringW_test.h */; };
-		9AF415C8242CD75C00D2644C /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
 		9AF415C9242CD75C00D2644C /* ati_reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4F24176C04005CDD5C /* ati_reg.h */; };
 		9AF415CA242CD75C00D2644C /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
 		9AF415CB242CD75C00D2644C /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
@@ -693,7 +694,6 @@
 		9AF416A2242CDA5800D2644C /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC9B241B66EA00F3D247 /* limits.h */; };
 		9AF416A3242CDA5800D2644C /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2524176C04005CDD5C /* Settings.h */; };
 		9AF416A4242CDA5800D2644C /* XStringW_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ED224176C04005CDD5C /* XStringW_test.h */; };
-		9AF416A5242CDA5800D2644C /* printf_lite_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9D3B2024221562006D8CD9 /* printf_lite_test.h */; };
 		9AF416A6242CDA5800D2644C /* ati_reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F4F24176C04005CDD5C /* ati_reg.h */; };
 		9AF416A7242CDA5800D2644C /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
 		9AF416A8242CDA5800D2644C /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
@@ -866,7 +866,6 @@
 		9A9AEB92243F7B5600FBD7D8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
 		9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		9A9AEB98243F7B7900FBD7D8 /* printf_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test.h"; sourceTree = "<group>"; };
-		9A9D3B2024221562006D8CD9 /* printf_lite_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printf_lite_test.h; sourceTree = "<group>"; };
 		9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printf_lite-test.cpp"; sourceTree = "<group>"; };
 		9A9D3B28242215A1006D8CD9 /* stdio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stdio.cpp; sourceTree = "<group>"; };
 		9A9D3B29242215A1006D8CD9 /* stdio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdio.h; sourceTree = "<group>"; };
@@ -1165,7 +1164,6 @@
 				9AF41567242BAD7D00D2644C /* poolprint-test-cpp_conf.h */,
 				9AF4155C242B8FA300D2644C /* poolprint-test.cpp */,
 				9AF4155B242B8FA300D2644C /* poolprint-test.h */,
-				9A9D3B2024221562006D8CD9 /* printf_lite_test.h */,
 				9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */,
 				9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */,
 				9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */,
@@ -1492,7 +1490,6 @@
 				9A28CCA4241B66EA00F3D247 /* limits.h in Headers */,
 				9AC7800E24176C04005CDD5C /* Settings.h in Headers */,
 				9AC77FBF24176C04005CDD5C /* XStringW_test.h in Headers */,
-				9A9D3B2224221563006D8CD9 /* printf_lite_test.h in Headers */,
 				9AC7803824176C04005CDD5C /* ati_reg.h in Headers */,
 				9AC7804824176C04005CDD5C /* libegint.h in Headers */,
 				9AC7800624176C04005CDD5C /* memvendors.h in Headers */,
@@ -1599,7 +1596,6 @@
 				9ACFE68F24309AF80071CC93 /* limits.h in Headers */,
 				9ACFE69024309AF80071CC93 /* Settings.h in Headers */,
 				9ACFE69124309AF80071CC93 /* XStringW_test.h in Headers */,
-				9ACFE69224309AF80071CC93 /* printf_lite_test.h in Headers */,
 				9ACFE69324309AF80071CC93 /* ati_reg.h in Headers */,
 				9ACFE69424309AF80071CC93 /* libegint.h in Headers */,
 				9ACFE69524309AF80071CC93 /* memvendors.h in Headers */,
@@ -1705,7 +1701,6 @@
 				9AF415C5242CD75C00D2644C /* limits.h in Headers */,
 				9AF415C6242CD75C00D2644C /* Settings.h in Headers */,
 				9AF415C7242CD75C00D2644C /* XStringW_test.h in Headers */,
-				9AF415C8242CD75C00D2644C /* printf_lite_test.h in Headers */,
 				9AF415C9242CD75C00D2644C /* ati_reg.h in Headers */,
 				9AF415CA242CD75C00D2644C /* libegint.h in Headers */,
 				9AF415CB242CD75C00D2644C /* memvendors.h in Headers */,
@@ -1809,7 +1804,6 @@
 				9AF416A2242CDA5800D2644C /* limits.h in Headers */,
 				9AF416A3242CDA5800D2644C /* Settings.h in Headers */,
 				9AF416A4242CDA5800D2644C /* XStringW_test.h in Headers */,
-				9AF416A5242CDA5800D2644C /* printf_lite_test.h in Headers */,
 				9AF416A6242CDA5800D2644C /* ati_reg.h in Headers */,
 				9AF416A7242CDA5800D2644C /* libegint.h in Headers */,
 				9AF416A8242CDA5800D2644C /* memvendors.h in Headers */,
@@ -2061,6 +2055,7 @@
 				9A9AEB95243F7B5600FBD7D8 /* XStringArray.cpp in Sources */,
 				9AC7800A24176C04005CDD5C /* StateGenerator.cpp in Sources */,
 				9AC7805C24176C04005CDD5C /* XImage.cpp in Sources */,
+				9A014999244091B200B37399 /* printlib-test.cpp in Sources */,
 				9AC7802B24176C04005CDD5C /* platformdata.cpp in Sources */,
 				9A28CD29241BC0C700F3D247 /* strcmp.cpp in Sources */,
 				9AC7805724176C04005CDD5C /* XPointer.cpp in Sources */,
@@ -2176,6 +2171,7 @@
 				9ACFE6D324309AF80071CC93 /* StateGenerator.cpp in Sources */,
 				9ACFE6D424309AF80071CC93 /* XImage.cpp in Sources */,
 				9ACFE6D524309AF80071CC93 /* platformdata.cpp in Sources */,
+				9A01499C244091B300B37399 /* printlib-test.cpp in Sources */,
 				9ACFE6D624309AF80071CC93 /* strcmp.cpp in Sources */,
 				9ACFE6D724309AF80071CC93 /* XPointer.cpp in Sources */,
 				9ACFE6D824309AF80071CC93 /* strncmp_test.cpp in Sources */,
@@ -2291,6 +2287,7 @@
 				9AF41608242CD75C00D2644C /* StateGenerator.cpp in Sources */,
 				9AF41609242CD75C00D2644C /* XImage.cpp in Sources */,
 				9AF4160A242CD75C00D2644C /* platformdata.cpp in Sources */,
+				9A01499A244091B200B37399 /* printlib-test.cpp in Sources */,
 				9AF4160B242CD75C00D2644C /* strcmp.cpp in Sources */,
 				9AF4160C242CD75C00D2644C /* XPointer.cpp in Sources */,
 				9AF4160D242CD75C00D2644C /* strncmp_test.cpp in Sources */,
@@ -2406,6 +2403,7 @@
 				9AF416E5242CDA5800D2644C /* StateGenerator.cpp in Sources */,
 				9AF416E6242CDA5800D2644C /* XImage.cpp in Sources */,
 				9AF416E7242CDA5800D2644C /* platformdata.cpp in Sources */,
+				9A01499B244091B300B37399 /* printlib-test.cpp in Sources */,
 				9AF416E8242CDA5800D2644C /* strcmp.cpp in Sources */,
 				9AF416E9242CDA5800D2644C /* XPointer.cpp in Sources */,
 				9AF416EA242CDA5800D2644C /* strncmp_test.cpp in Sources */,

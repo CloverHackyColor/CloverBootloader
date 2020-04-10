@@ -1322,7 +1322,7 @@ BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
     return FALSE;
   }
 
-  AsciiSPrint(pciName, 15, "pci1002,%04x", gSettings.FakeATI >> 16);
+  snprintf(pciName, 15, "pci1002,%04X", gSettings.FakeATI >> 16);
   LowCase(pciName);
   val->type = kStr;
   val->size = 13;
@@ -1343,25 +1343,25 @@ BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier)
   } else {
     switch (card->pci_dev->revision) {
       case 0xC4:
-        AsciiSPrint(ModelName, 35, "AMD Radeon %a", "Pro 550");
+        snprintf(ModelName, 35, "AMD Radeon %s", "Pro 550");
         break;
       case 0xC7:
-        AsciiSPrint(ModelName, 35, "AMD Radeon %a", "RX 480");
+        snprintf(ModelName, 35, "AMD Radeon %s", "RX 480");
         break;
       case 0xC5:
       case 0xCF:
       case 0xD7:
       case 0xE0:
-        AsciiSPrint(ModelName, 35, "AMD Radeon %a", "RX 470");
+        snprintf(ModelName, 35, "AMD Radeon %s", "RX 470");
         break;
       case 0xC2:
       case 0xC6:
       case 0xEF:
-        AsciiSPrint(ModelName, 35, "AMD Radeon %a", "RX 570");
+        snprintf(ModelName, 35, "AMD Radeon %s", "RX 570");
         break;
 
       default:
-        AsciiSPrint(ModelName, 35, "AMD Radeon %a", "RX 580");
+        snprintf(ModelName, 35, "AMD Radeon %s", "RX 580");
         break;
     }
     val->size = (UINT32)AsciiStrLen(ModelName);
@@ -2062,13 +2062,13 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   }
   //
   name = (__typeof__(name))AllocateZeroPool(24);
-  AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
+  snprintf(name, 24, "ATY,%s", card->cfg_name);
   aty_name.type = kStr;
   aty_name.size = (UINT32)AsciiStrLen(name);
   aty_name.data = (UINT8 *)name;
 
   name_parent = (__typeof__(name_parent))AllocateZeroPool(24);
-  AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
+  snprintf(name_parent, 24, "ATY,%sParent", card->cfg_name);
   aty_nameparent.type = kStr;
   aty_nameparent.size = (UINT32)AsciiStrLen(name_parent);
   aty_nameparent.data = (UINT8 *)name_parent;
@@ -2113,7 +2113,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     FakeID = gSettings.FakeATI >> 16;
     devprop_add_value(card->device, "device-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
-    AsciiSPrint(compatible, 64, "pci1002,%04x", FakeID);
+    snprintf(compatible, 64, "pci1002,%04x", FakeID);
     LowCase(compatible);
     devprop_add_value(card->device, "@0,compatible", (UINT8*)&compatible[0], 12);
     FakeID = gSettings.FakeATI & 0xFFFF;
