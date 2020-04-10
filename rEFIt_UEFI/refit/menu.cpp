@@ -248,7 +248,7 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].BValue = gSettings.InjectNVidia;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       for (j=0; j<8; j++) {
-        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02x", gSettings.Dcfg[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.Dcfg[j]);
       }
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(40);
@@ -281,7 +281,7 @@ VOID FillInputs(BOOLEAN New)
     if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = ASString; //24+6i
       for (j=0; j<20; j++) {
-        AsciiSPrint((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.NVCAP[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.NVCAP[j]);
       }
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(84);

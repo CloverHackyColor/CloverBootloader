@@ -542,12 +542,12 @@ CHAR8* getDDRSerial(UINT8* spd)
   CHAR8* asciiSerial; //[16];
   asciiSerial = (__typeof__(asciiSerial))AllocatePool(17);
   if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR4) { // DDR4
-    AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
+    snprintf(asciiSerial, 17, "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
-    AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
+    snprintf(asciiSerial, 17, "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 ||
              spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {  // DDR2 or DDR
-    AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
+    snprintf(asciiSerial, 17, "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
   } else {
     AsciiStrCpyS(asciiSerial, 17, "0000000000000000");
   }

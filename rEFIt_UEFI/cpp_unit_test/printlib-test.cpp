@@ -228,6 +228,14 @@ int printlib_tests(void)
     Test1arg(F("|ABFE|"), F("|%x|"), 0xABFE); // %x for PrintLib is %X for printf
     Test1arg(F("|ABFED|"), F("|%x|"), 0xABFED); // %x for PrintLib is %X for printf
     Test1arg(F("|ABF|"), F("|%X|"), 0xABF);
+    Test1arg(F("|FFFFFFF6|"), F("|%x|"), -10);
+    Test1arg(F("|FFFFFFF6|"), F("|%X|"), -10);
+    Test1arg(F("|FFFFFFF6|"), F("|%2X|"), -10);
+    Test1arg(F("|FFFFFFF6|"), F("|%0X|"), -10);
+    Test1arg(F("|            FFFFFFF6|"), F("|%20x|"), -10);
+    Test1arg(F("|FFFFFFF6|"), F("|%lx|"), -10);
+    Test1arg(F("|FFFFFFFFFFFFFFF6|"), F("|%lX|"), -10L);
+    Test1arg(F("|0000FFFFFFFFFFFFFFF6|"), F("|%20lX|"), -10L);
 
     // test with specifier, space as pad char
     Test1arg(F("|    0|"), F("|%5d|"), 0);
@@ -262,7 +270,7 @@ int printlib_tests(void)
     Test1arg(F("|80123456|"), F("|%07X|"), 0xFFFFFFFF80123456);
     Test1arg(F("|080123456|"), F("|%09X|"), 0xFFFFFFFF80123456);
     Test1arg(F("|00000000000080123456|"), F("|%020X|"), 0xFFFFFFFF80123456);
-    Test1arg(F("|0000FFFFFFFF80123456|"), F("|%020X|"), 0xFFFFFFFF80123456);
+    Test1arg(F("|0000FFFFFFFF80123456|"), F("|%020lX|"), 0xFFFFFFFF80123456);
 
     // test limits
     int16_t i;

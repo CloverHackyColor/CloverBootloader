@@ -4852,7 +4852,7 @@ GetUserSettings(
             }
             Dict2 = GetProperty (Prop2, "PciAddr");
             if (Dict2 != NULL) {
-              INTN Bus, Dev, Func;
+              UINT8 Bus, Dev, Func;
               CHAR8 *Str = Dict2->string;
 
               if (Str[2] != ':') {
@@ -4864,7 +4864,7 @@ GetUserSettings(
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
-              AsciiSPrint(Label, 64, "[%02x:%02x.%02x] ", Bus, Dev, Func);
+              snprintf(Label, 64, "[%02X:%02X.%02X] ", Bus, Dev, Func);
               DBG(" %s", Label);
             } else {
               DBG (" no PciAddr\n");
@@ -6861,7 +6861,7 @@ GetDevices ()
 
             default:
               gfx->Vendor = Unknown;
-              AsciiSPrint (gfx->Model, 64, "pci%04x,%04x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+              snprintf (gfx->Model, 64, "pci%04X,%04X", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
               LowCase(gfx->Model);
               gfx->Ports  = 1;
               gfx->Connectors = (1 << NGFX);

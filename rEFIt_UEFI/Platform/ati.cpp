@@ -1322,7 +1322,7 @@ BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
     return FALSE;
   }
 
-  AsciiSPrint(pciName, 15, "pci1002,%04x", gSettings.FakeATI >> 16);
+  snprintf(pciName, 15, "pci1002,%04X", gSettings.FakeATI >> 16);
   LowCase(pciName);
   val->type = kStr;
   val->size = 13;
@@ -2113,7 +2113,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     FakeID = gSettings.FakeATI >> 16;
     devprop_add_value(card->device, "device-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
-    AsciiSPrint(compatible, 64, "pci1002,%04x", FakeID);
+    snprintf(compatible, 64, "pci1002,%04x", FakeID);
     LowCase(compatible);
     devprop_add_value(card->device, "@0,compatible", (UINT8*)&compatible[0], 12);
     FakeID = gSettings.FakeATI & 0xFFFF;
