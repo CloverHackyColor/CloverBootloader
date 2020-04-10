@@ -1068,7 +1068,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
   if (!acpi_cpu_count) {
     for (i=0; i < acpi_cpu_max; i++) {
       acpi_cpu_name[i] = (__typeof_am__(acpi_cpu_name[i]))AllocateZeroPool(5);
-      AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1x", i);
+      snprintf(acpi_cpu_name[i], 5, "CPU%X", i);
       acpi_cpu_processor_id[i] = (UINT8)(i & 0x7F);
     }
   }
@@ -2438,7 +2438,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, dataLPC, 4);
-  AsciiSPrint(NameCard, sizeof(NameCard), "pci8086,3a18");
+  snprintf(NameCard, sizeof(NameCard), "pci8086,3a18");
   aml_add_string(pack, "name");
   aml_add_string_buffer(pack, &NameCard[0]);
   aml_add_string(pack, "compatible");
@@ -4092,7 +4092,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                     AsciiSPrint(UsbName[i], 5, "EHC%01x", EhciCount++);
                   }
                 } else {
-                  AsciiSPrint(UsbName[i], 5, "USB%01d", i);
+                  snprintf(UsbName[i], 5, "USB%d", i); // %01d is strictly the same as %d
                 }
                 DBG(" %s\n", UsbName[i]);
                 ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);

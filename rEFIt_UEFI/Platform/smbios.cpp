@@ -914,7 +914,7 @@ VOID PatchTableType4()
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->AssetTag, BrandStr); //like mac
     // looks to be MicroCode revision
     if(gCPUStructure.MicroCode > 0){
-		AsciiSPrint(BrandStr, 20, "%X", gCPUStructure.MicroCode);
+      snprintf(BrandStr, 20, "%X", gCPUStructure.MicroCode);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
     }
 
@@ -1351,7 +1351,7 @@ VOID PatchTableType17()
         snprintf(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
       } else {
         snprintf(deviceLocator, 10, "DIMM%d", bank);
-		  AsciiSPrint(bankLocator, 10, "BANK %llu", Index % channels);
+        snprintf(bankLocator, 10, "BANK %llu", Index % channels);
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CONST CHAR8*)&bankLocator[0]);
       }
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CONST CHAR8*)&deviceLocator[0]);
@@ -1692,7 +1692,6 @@ VOID PatchTableType17()
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
       snprintf(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
-//      AsciiSPrint(bankLocator, 10, "");
       bankLocator[0] = 0;
     } else {
       snprintf(deviceLocator, 10, "DIMM%d", bank);
