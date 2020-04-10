@@ -914,7 +914,7 @@ VOID PatchTableType4()
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->AssetTag, BrandStr); //like mac
     // looks to be MicroCode revision
     if(gCPUStructure.MicroCode > 0){
-      snprintf(BrandStr, 20, "%X", gCPUStructure.MicroCode);
+      snprintf(BrandStr, 20, "%llX", gCPUStructure.MicroCode); // MicroCode > 0 so %X and %llX do the same
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
     }
 
