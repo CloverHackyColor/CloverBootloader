@@ -2074,7 +2074,7 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
 
   for (pnum = 0; pnum < n_ports; pnum++) {
 	  AsciiSPrint(nkey, 24, "@%d,name", pnum);
-	  AsciiSPrint(nval, 24, "NVDA,Display-%c", (char)(65+pnum));
+	  snprintf(nval, 24, "NVDA,Display-%c", (char)(65+pnum));
     //DBG("Nvidia: insert [%s : %s]\n", nkey, nval);
     devprop_add_value(device, nkey, (UINT8*)nval, 14);
 
