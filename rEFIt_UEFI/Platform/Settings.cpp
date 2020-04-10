@@ -5894,7 +5894,7 @@ GetUserSettings(
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
 				snprintf (SlotDevice->SlotName, 31, "%s", Prop2->string);
             } else {
-				AsciiSPrint (SlotDevice->SlotName, 31, "PCI Slot %d", DeviceN);
+				snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
             }
 
             DBG (" - %s\n", SlotDevice->SlotName);

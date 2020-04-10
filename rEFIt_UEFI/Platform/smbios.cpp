@@ -1348,9 +1348,9 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->DeviceSet = bank + 1;
       newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
       if (isMacPro) {
-        AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
+        snprintf(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
       } else {
-        AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
+        snprintf(deviceLocator, 10, "DIMM%d", bank);
 		  AsciiSPrint(bankLocator, 10, "BANK %llu", Index % channels);
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CONST CHAR8*)&bankLocator[0]);
       }
@@ -1680,7 +1680,7 @@ VOID PatchTableType17()
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
     }
 
-    AsciiSPrint(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
+    snprintf(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
 
     // Assume DDR3 unless explicitly set to DDR2/DDR/DDR4
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
@@ -1691,12 +1691,12 @@ VOID PatchTableType17()
 
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
-      AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
+      snprintf(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
 //      AsciiSPrint(bankLocator, 10, "");
       bankLocator[0] = 0;
     } else {
-      AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
-		AsciiSPrint(bankLocator, 10, "BANK %d", Index % channels);
+      snprintf(deviceLocator, 10, "DIMM%d", bank);
+		snprintf(bankLocator, 10, "BANK %llu", Index % channels);
     }
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CONST CHAR8*)&deviceLocator[0]);
     if (isMacPro) {

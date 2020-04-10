@@ -347,7 +347,7 @@ VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
 //  I = (INTN)X;
 //  D = (float)I;
 //  Fract = fabsf((X - D) * 1000000.0f);
-//  AsciiSPrint(S, N, "%D.%06D", I, (INTN)Fract);
+//  snprintf(S, N, "%D.%06D", I, (INTN)Fract);
 //}
 #endif
 //
