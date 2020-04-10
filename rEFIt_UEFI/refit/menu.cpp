@@ -1232,7 +1232,7 @@ VOID AboutRefit(VOID)
 #ifdef REVISION_STR
 	  AboutMenu.AddMenuInfo_f(" %s ", REVISION_STR);
 #else
-    AboutMenu.AddMenuInfo_f((L"Clover Revision %s", gFirmwareRevision));
+    AboutMenu.AddMenuInfo_f("Clover Revision %s", gFirmwareRevision);
 #endif
 #ifdef FIRMWARE_BUILDDATE
     AboutMenu.AddMenuInfo_f(" Build: %s", FIRMWARE_BUILDDATE);
