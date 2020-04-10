@@ -284,16 +284,16 @@ VOID ATIConnectorsPatchInit(LOADER_ENTRY *Entry)
   //
   
   // Lion, SnowLeo 10.6.7 2011 MBP
-  AsciiSPrint(ATIKextBundleId[0],
+  snprintf(ATIKextBundleId[0],
               sizeof(ATIKextBundleId[0]),
-		   "com.apple.kext.ATI%aController",
-              Entry->KernelAndKextPatches->KPATIConnectorsController
+		   "com.apple.kext.ATI%sController", // when it was AsciiSPrint, %a was used with KPATIConnectorsController which is CHAR16 ??? Result is printing stop at first char <= 255
+              (CHAR8*)Entry->KernelAndKextPatches->KPATIConnectorsController // cast to CHAR8* to not change behavior. Looks like a bug though
               );
   // ML
-  AsciiSPrint(ATIKextBundleId[1],
+  snprintf(ATIKextBundleId[1],
               sizeof(ATIKextBundleId[1]),
-		   "com.apple.kext.AMD%aController",
-              Entry->KernelAndKextPatches->KPATIConnectorsController
+		   "com.apple.kext.AMD%sController", // when it was AsciiSPrint, %a was used with KPATIConnectorsController which is CHAR16 ??? Result is printing stop at first char <= 255
+              (CHAR8*)Entry->KernelAndKextPatches->KPATIConnectorsController // cast to CHAR8* to not change behavior. Looks like a bug though
               );
   
   ATIConnectorsPatchInited = TRUE;
