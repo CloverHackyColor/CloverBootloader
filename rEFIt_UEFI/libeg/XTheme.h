@@ -145,7 +145,7 @@ public:
   EFI_STATUS GetThemeTagSettings(void* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
-  EFI_STATUS ParseSVGXIcon(void *p, INTN Id, const XString& IconNameX, float Scale, XImage* Image);
+  EFI_STATUS ParseSVGXIcon(void *p, INTN Id, const XString& IconNameX, XImage* Image);
   void* LoadTheme(const CHAR16 *TestTheme); //return TagPtr why?
 
   //screen operations

@@ -66,7 +66,7 @@ textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it wil
 NSVGparser      *mainParser = NULL;  //it must be global variable
 
 #if USE_XTHEME
-EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX, float iconScale, XImage* Image) // scale renamed iconScale to not hide member var Scale
+EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX, XImage* Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -77,7 +77,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   NSVGgroup   *group;
   NSVGimage   *IconImage;
   NSVGshape   *shapeNext, *shapesTail = NULL, *shapePrev;
-  CONST CHAR8 *IconName = IconNameX.c_str();
+//  CONST CHAR8 *IconName = IconNameX.c_str();
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
@@ -88,7 +88,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
     group = shape->group;
     shapeNext = shape->next;
     while (group) {
-      if (strcmp(group->id, IconName) == 0) {
+      if (strcmp(group->id, IconNameX.c_str()) == 0) {
         break;
       }
       group = group->next;
@@ -103,24 +103,29 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = TRUE;
       } */
-      if (BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
+//      if (BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
+//        shape->opacity = 0.f;
+//      }
+      if (BootCampStyle && IconNameX.ExistIn("selection_big")) {
         shape->opacity = 0.f;
       }
-      if (strstr(shape->id, "BoundingRect") != NULL) {
+//      if (strstr(shape->id, "BoundingRect") != NULL) {
+      if (XString().takeValueFrom(shape->id).ExistIn("BoundingRect")) {
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
         IconImage->height = shape->bounds[3] - shape->bounds[1];
-        if ( IconImage->height != 0 ) { // !fontSVG->unitsPerEm generate a warning
-          IconImage->height = 200;
+  //      DBG("parsed bounds: %f, %f\n", IconImage->width, IconImage->height);
+        if ( IconImage->height < 1.f ) {
+          IconImage->height = 200.f;
         }
 
-        if ((strstr(IconName, "selection_big") != NULL) && (!SelectionOnTop)) {
-          MainEntriesSize = (int)(IconImage->width * iconScale); //xxx
-          row0TileSize = MainEntriesSize + (int)(16.f * iconScale);
+        if (IconNameX.ExistIn("selection_big") && (!SelectionOnTop)) {
+          MainEntriesSize = (int)(IconImage->width * Scale); //xxx
+          row0TileSize = MainEntriesSize + (int)(16.f * Scale);
           DBG("main entry size = %lld\n", MainEntriesSize);
         }
-        if ((strstr(IconName, "selection_small") != NULL) && (!SelectionOnTop)) {
-          row1TileSize = (int)(IconImage->width * iconScale);
+        if (IconNameX.ExistIn("selection_small") && (!SelectionOnTop)) {
+          row1TileSize = (int)(IconImage->width * Scale);
         }
 
         // not exclude BoundingRect from IconImage?
@@ -167,13 +172,16 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
     group = clipPaths->shapes->group;
     clipNext = clipPaths->next;
     while (group) {
-      if (strcmp(group->id, IconName) == 0) {
+ //     if (strcmp(group->id, IconNameX.c_str()) == 0) {
+ //       break;
+ //     }
+      if (IconNameX == XString().takeValueFrom(group->id)) {
         break;
       }
       group = group->parent;
     }
     if (group) {
-      DBG("found clipPaths for %s\n", IconName);
+      DBG("found clipPaths for %s\n", IconNameX.c_str());
       IconImage->clipPaths = SVGimage->clipPaths;
       break;
     }
@@ -192,14 +200,17 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   bounds[3] = -FLT_MAX;
   nsvg__imageBounds(p2, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
-  if ((Id == BUILTIN_ICON_BANNER) && (strstr(IconName, "Banner") != NULL)) {
-    BannerPosX = (int)(bounds[0] * iconScale - CentreShift);
-    BannerPosY = (int)(bounds[1] * iconScale);
+  if ((Id == BUILTIN_ICON_BANNER) && IconNameX.ExistIn("Banner")) {
+    BannerPosX = (int)(bounds[0] * Scale - CentreShift);
+    if (BannerPosX < 0) {
+      BannerPosX = 1; //one pixel
+    }
+    BannerPosY = (int)(bounds[1] * Scale);
     DBG("Banner position at parse [%lld,%lld]\n", BannerPosX, BannerPosY);
   }
 
-  float Height = IconImage->height * iconScale;
-  float Width = IconImage->width * iconScale;
+  float Height = IconImage->height * Scale;
+  float Width = IconImage->width * Scale;
   //  DBG("icon %s width=%f height=%f\n", IconName, Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
@@ -215,14 +226,14 @@ EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX
   float tx = 0.f, ty = 0.f;
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
       (Id != BUILTIN_ICON_ANIME) &&
-      (strstr(IconName, "Banner") == NULL)) {
-    float realWidth = (bounds[2] - bounds[0]) * iconScale;
-    float realHeight = (bounds[3] - bounds[1]) * iconScale;
+      IconNameX.ExistIn("Banner")) {
+    float realWidth = (bounds[2] - bounds[0]) * Scale;
+    float realHeight = (bounds[3] - bounds[1]) * Scale;
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
 
-  nsvgRasterize(rast, IconImage, tx,ty,iconScale,iconScale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
+  nsvgRasterize(rast, IconImage, tx, ty, Scale, Scale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
   //  DBG("%s rastered, blt\n", IconImage);
 
   nsvgDeleteRasterizer(rast);
@@ -432,14 +443,14 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   // must be svg view-box
   float vbx = mainParser->viewWidth;
   float vby = mainParser->viewHeight;
-  DBG("Theme view-bounds: w=%f h=%f units=px\n", vbx, vby);
+  DBG("Theme view-bounds: w=%f h=%f units=px\n", vbx, vby); //Theme view-bounds: w=1600.000000 h=900.000000 units=px
   if (vby > 1.0f) {
     SVGimage->height = vby;
   } else {
     SVGimage->height = 768.f;  //default height
   }
   float ScaleF = UGAHeight / SVGimage->height;
-  DBG("using scale %f\n", ScaleF);
+  DBG("using scale %f\n", ScaleF); // using scale 0.666667
   Scale = ScaleF;
   CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
 
@@ -453,24 +464,24 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, Scale, &BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, Scale, &BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, &BigBack);
   }
-  DBG(" Background parsed [%lld, %lld]\n", BigBack.GetWidth(), BigBack.GetHeight());
+  DBG(" Background parsed [%lld, %lld]\n", BigBack.GetWidth(), BigBack.GetHeight()); //Background parsed [1067, 133]
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, Scale, &Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, Scale, &Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
   }
   DBG("Banner parsed\n");
   BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
-  DBG(" parsed banner->width=%lld height=%lld\n", Banner.GetWidth(), BanHeight);
+  DBG(" parsed banner->width=%lld height=%lld\n", Banner.GetWidth(), BanHeight); //parsed banner->width=467 height=89
   
   // --- Make other icons
 
@@ -479,14 +490,14 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       continue;
     }
     Icon* NewIcon = new Icon(i, false); //initialize without embedded
-    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name, Scale, &NewIcon->Image);
+    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name, &NewIcon->Image);
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
         (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
       NewIcon->Image = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
     }
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
-    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, Scale, &NewIcon->ImageNight);
+    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
 //    DBG("...night status %s\n", strerror(Status));
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
@@ -508,10 +519,10 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, Scale, &SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, Scale, &SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &SelectionImages[4]);
   }
 
   //buttons
@@ -748,7 +759,7 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   XFrameName += SPrintf("%lld", i+1);
 //  printf(FrameName, 63, "frame_%lld", i+1);
 
-  Status = ThemeX.ParseSVGXIcon(mainParser, BUILTIN_ICON_ANIME, XFrameName, ThemeX.Scale, &XFrame);
+  Status = ThemeX.ParseSVGXIcon(mainParser, BUILTIN_ICON_ANIME, XFrameName, &XFrame);
   if (EFI_ERROR(Status)) {
     DBG("icon '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
   }
@@ -777,6 +788,7 @@ EG_IMAGE * LoadSvgFrame(INTN i)
 //textType = 0-help 1-message 2-menu 3-test
 //return text width in pixels
 #if USE_XTHEME
+//it is not theme member!
 INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType, const XStringW& string, UINTN Cursor)
 {
   XImage& TextBufferXY = *TextBufferXY_ptr;
@@ -822,14 +834,14 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
 
   len = string.size();
   Width = TextBufferXY.GetWidth();
-  if ( fontSVG->unitsPerEm != 0 ) { // !fontSVG->unitsPerEm generate a warning
+  if ( fontSVG->unitsPerEm < 1.f ) {
     fontSVG->unitsPerEm = 1000.f;
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
     DBG("wrong font: %f\n", fontSVG->unitsPerEm);
     DumpFloat2("Font bbox", fontSVG->bbox, 4);
-    fH = fontSVG->unitsPerEm != 0 ? fontSVG->unitsPerEm : 1000.0f;  //1000
+    fH = (fontSVG->unitsPerEm > 1.f) ? fontSVG->unitsPerEm : 1000.0f;  //1000
   }
   sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
   Scale = sy;
@@ -841,7 +853,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
     if (!letter) {
       break;
     }
-    //    DBG("add letter 0x%X\n", letter);
+ //       DBG("add letter 0x%X\n", letter);
     if (i == Cursor) {
       addLetter(p, 0x5F, x, y, sy, color);
     }
@@ -916,14 +928,14 @@ INTN renderSVGtext(EG_IMAGE* TextBufferXY, INTN posX, INTN posY, INTN textType, 
 
 //  Height = 180; //for test
 //  DBG("textBuffer: [%d,%d], fontUnits=%d\n", Width, TextBufferXY->Height, (int)fontSVG->unitsPerEm);
-  if ( fontSVG->unitsPerEm == 0 ) { // doing "if (!fontSVG->unitsPerEm)" generates a warning
+  if ( fontSVG->unitsPerEm < 1.f ) {
     fontSVG->unitsPerEm = 1000.f;
   }
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
 	DBG("wrong font: %f\n", fontSVG->unitsPerEm);
     DumpFloat2("Font bbox", fontSVG->bbox, 4);
-    fH = fontSVG->unitsPerEm != 0 ? fontSVG->unitsPerEm : 1000.0f;  //1000   // using "fontSVG->unitsPerEm != 0" instead of just is to avoid a warning
+    fH = fontSVG->unitsPerEm != 0.f ? fontSVG->unitsPerEm : 1000.0f;
   }
   sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
   //in font units

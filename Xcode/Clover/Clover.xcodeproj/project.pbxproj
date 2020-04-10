@@ -105,7 +105,6 @@
 		A57CF7D7241BE111006DE51E /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CF7D6241BE111006DE51E /* XString_test.cpp */; };
 		A5816DED24180F4D003BA66C /* panic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DEC24180F4C003BA66C /* panic.cpp */; };
 		A5816DF024180F82003BA66C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DEE24180F81003BA66C /* global_test.cpp */; };
-		A5816DF22418101C003BA66C /* XStringWP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF12418101C003BA66C /* XStringWP.cpp */; };
 		A5816DF62418103A003BA66C /* menu_items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF52418103A003BA66C /* menu_items.cpp */; };
 		A5816DF924181050003BA66C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF72418104F003BA66C /* REFIT_MENU_SCREEN.cpp */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
@@ -2488,8 +2487,6 @@
 		A571C2712405749900B6A2C5 /* XStringW.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringW.h; sourceTree = "<group>"; };
 		A571C2722405749900B6A2C5 /* XStringWArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWArray.cpp; sourceTree = "<group>"; };
 		A571C2732405749900B6A2C5 /* XStringW.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringW.cpp; sourceTree = "<group>"; };
-		A571C2742405749900B6A2C5 /* utf8Conversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utf8Conversion.cpp; sourceTree = "<group>"; };
-		A571C2752405749900B6A2C5 /* utf8Conversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utf8Conversion.h; sourceTree = "<group>"; };
 		A571C2772405749900B6A2C5 /* XToolsCommon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon.cpp; sourceTree = "<group>"; };
 		A571C2792405749900B6A2C5 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
 		A571C27A2405749900B6A2C5 /* XObjArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
@@ -2530,7 +2527,6 @@
 		A5816DEC24180F4C003BA66C /* panic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = panic.cpp; sourceTree = "<group>"; };
 		A5816DEE24180F81003BA66C /* global_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global_test.cpp; sourceTree = "<group>"; };
 		A5816DEF24180F82003BA66C /* global_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
-		A5816DF12418101C003BA66C /* XStringWP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWP.cpp; sourceTree = "<group>"; };
 		A5816DF52418103A003BA66C /* menu_items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu_items.cpp; sourceTree = "<group>"; };
 		A5816DF72418104F003BA66C /* REFIT_MENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MENU_SCREEN.cpp; sourceTree = "<group>"; };
 		A5816DF82418104F003BA66C /* REFIT_MENU_SCREEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFIT_MENU_SCREEN.h; sourceTree = "<group>"; };
@@ -5970,7 +5966,6 @@
 		A5D12C30243A0B9100DFA98A /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		A5D12C32243A0BD900DFA98A /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
 		A5D12C33243A0BD900DFA98A /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
-		A5D12C35243A0BE500DFA98A /* XStringWP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringWP.h; sourceTree = "<group>"; };
 		A5D12C36243A0C2300DFA98A /* VectorGraphics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VectorGraphics.h; sourceTree = "<group>"; };
 		A5D12C37243A0C4D00DFA98A /* abort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = abort.cpp; sourceTree = "<group>"; };
 		A5D12C39243A0C9D00DFA98A /* stdio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stdio.cpp; sourceTree = "<group>"; };
@@ -8285,8 +8280,6 @@
 		A571C26E2405749900B6A2C5 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
-				A571C2742405749900B6A2C5 /* utf8Conversion.cpp */,
-				A571C2752405749900B6A2C5 /* utf8Conversion.h */,
 				A571C2792405749900B6A2C5 /* XArray.h */,
 				A571C27A2405749900B6A2C5 /* XObjArray.h */,
 				A57CF7C9241BE0D6006DE51E /* XString.cpp */,
@@ -8297,8 +8290,6 @@
 				A571C2712405749900B6A2C5 /* XStringW.h */,
 				A571C2722405749900B6A2C5 /* XStringWArray.cpp */,
 				A571C26F2405749900B6A2C5 /* XStringWArray.h */,
-				A5816DF12418101C003BA66C /* XStringWP.cpp */,
-				A5D12C35243A0BE500DFA98A /* XStringWP.h */,
 				A571C2772405749900B6A2C5 /* XToolsCommon.cpp */,
 				A571C2702405749900B6A2C5 /* XToolsCommon.h */,
 			);
@@ -17408,7 +17399,6 @@
 				A5456D5E23FC5B08000BF18C /* smbios.cpp in Sources */,
 				A5AAFC35237F13B3009CD413 /* TerminalConIn.c in Sources */,
 				A5AAFBDA237F13B3009CD413 /* SmbiosMeasurementDxe.c in Sources */,
-				A5816DF22418101C003BA66C /* XStringWP.cpp in Sources */,
 				A5AAFD6D237F13B4009CD413 /* CapsuleDump.c in Sources */,
 				A5AAFBB4237F13B3009CD413 /* unicode_unfold_key.c in Sources */,
 				A5AA0581237F13C1009CD413 /* Monitor.nasm in Sources */,

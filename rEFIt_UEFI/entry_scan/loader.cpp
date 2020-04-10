@@ -354,7 +354,7 @@ STATIC XString LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
   }
   while (Index < LinuxInitImagePathCount) {
     XStringW InitRd = SWPrintf(LinuxInitImagePath[Index++].c_str(), (Version == NULL) ? L"" : Version);
-    if (InitRd != NULL) {
+    if (InitRd.notEmpty()) {
       if (FileExists(Dir, InitRd.wc_str())) {
 		  XString CustomOptions = SPrintf("root=/dev/disk/by-partuuid/%ls initrd=%ls\\%ls %s %s", PartUUID, LINUX_BOOT_ALT_PATH, InitRd.wc_str(), LINUX_DEFAULT_OPTIONS.c_str(), Options.c_str());
         return CustomOptions;
