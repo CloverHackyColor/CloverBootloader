@@ -4,10 +4,8 @@
 # github version
 
 # Linux users should be able to use this wrapper, although the following are needed:
-# gcc         (check for ./build_gcc8.sh or newer)
-# python      (sudo apt-get install python)
-# uuid-dev    (sudo apt-get install uuid-dev)
-# git         (sudo apt-get install git)
+# (Ubuntu alike)
+# sudo apt-get install build-essential uuid-dev iasl git gcc-9 nasm python3-distutils
 
 # $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
 
@@ -132,7 +130,7 @@ fi
 buildClover() {
 checkTools
 
-# to force recreation of the Conf folder. You can sill use a custom CONF_PATH if you don't want recreation.
+# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
 rm -rf "$CLOVERROOT"/Conf
 mkdir "$CLOVERROOT"/Conf
 
@@ -217,7 +215,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
     sleep 3
   fi
 else
-  echo && echo "can't build pkg on a non Darwin OS!"
+  echo && echo "Clover.app can only be built in macOS!"
 fi
 }
 
