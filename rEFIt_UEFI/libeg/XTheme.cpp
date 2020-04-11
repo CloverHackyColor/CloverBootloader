@@ -457,7 +457,7 @@ void XTheme::ClearScreen() //and restore background and banner
   if (BanHeight < 2) {
     BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
   }
-  egClearScreen(&MenuBackgroundPixel);
+//  egClearScreen(&MenuBackgroundPixel); //not needed
   if (!(HideUIFlags & HIDEUI_FLAG_BANNER)) {
     //Banner image prepared before
     if (!Banner.isEmpty()) {
@@ -495,6 +495,13 @@ void XTheme::ClearScreen() //and restore background and banner
   }
   if (Background.isEmpty()) {
     Background = XImage(UGAWidth, UGAHeight);
+    if (embedded) {
+      if (Daylight) {
+        BlueBackgroundPixel = StdBackgroundPixel;
+      } else {
+        BlueBackgroundPixel = DarkEmbeddedBackgroundPixel;
+      }
+    }
     Background.Fill(BlueBackgroundPixel); //blue opaque. May be better to set black opaque?
   }
 // now we are sure Background has UGA sizes

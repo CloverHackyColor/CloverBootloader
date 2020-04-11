@@ -1734,7 +1734,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       dtLength = &bootArgs2->deviceTreeLength;
       KernelSlide = bootArgs2->kslide;
 
-		DBG_RT(Entry, "Found bootArgs2 at 0x%8s, DevTree at %p\n", ptr, dtRoot);
+		DBG_RT(Entry, "Found bootArgs2 at 0x%llX, DevTree at 0x%llX\n", (UINTN)ptr, (UINTN)bootArgs2->deviceTreeP);
       //DBG("bootArgs2->kaddr = 0x%08X and bootArgs2->ksize =  0x%08X\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG("bootArgs2->efiMode = 0x%02X\n", bootArgs2->efiMode);
 		DBG_RT(Entry, "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
