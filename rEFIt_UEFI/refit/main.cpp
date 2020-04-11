@@ -191,9 +191,9 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
                                     IN CONST CHAR16 *ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
-  EFI_STATUS              Status, ReturnStatus;
-  EFI_LOADED_IMAGE        *ChildLoadedImage;
-  CHAR16                  ErrorInfo[256];
+  EFI_STATUS                  Status, ReturnStatus;
+  EFI_LOADED_IMAGE_PROTOCOL   *ChildLoadedImage;
+  CHAR16                      ErrorInfo[256];
 //  CHAR16                  *FullLoadOptions = NULL;
 
 //  DBG("Starting %ls\n", ImageTitle);
@@ -221,13 +221,15 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
       //  when passing options to Apple's boot.efi...
       loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.c_str());
     }else{
-		loadOptionsW = SWPrintf("%s", LoadOptions.c_str()); // Jief : should we add a space ? Wasn't the case before big refactoring
+      loadOptionsW = SWPrintf("%s ", LoadOptions.c_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
     }
     // NOTE: We also include the terminating null in the length for safety.
-    ChildLoadedImage->LoadOptions = (void*)loadOptionsW.wc_str();
+    ChildLoadedImage->LoadOptions = (void*)EfiStrDuplicate(loadOptionsW.wc_str()); //will it be deleted after the procedure exit?
     ChildLoadedImage->LoadOptionsSize = (UINT32)loadOptionsW.sizeInBytes() + sizeof(wchar_t);
     //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
-//    DBG("Using load options '%ls'\n", LoadOptions);
+    DBG("start image '%ls'\n", ImageTitle);
+    DBG("Using load options '%ls'\n", (CHAR16*)ChildLoadedImage->LoadOptions);
+
   }
   //DBG("Image loaded at: %p\n", ChildLoadedImage->ImageBase);
   //PauseForKey(L"continue");

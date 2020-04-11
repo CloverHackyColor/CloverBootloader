@@ -1593,7 +1593,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
 
-
     if (Volume->Hidden) {
       DBG("skipped because volume is hidden\n");
       continue;
