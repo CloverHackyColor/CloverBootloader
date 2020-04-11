@@ -248,6 +248,10 @@ int printlib_tests(void)
     Test1arg(F("|1234|"), F("|%2u|"), 1234); // keep under 16 bit value, if not, on 16 bits CPU, the constant become long int and doesn't match %d
     Test1arg(F("|ABFE|"), F("|%2x|"), 0xABFE); // %x for PrintLib is %X for printf
     Test1arg(F("|ABFE|"), F("|%2X|"), 0xABFE);
+    Test1arg(F("|0A|"), F("|%2X|"), (uint8_t)0xa);
+#define SMST(a) ((UINT8)((a & 0xf0) >> 4))
+#define SLST(a) ((UINT8)(a & 0x0f))
+    testPrintf("spd", "00000F0F04070408", strlen("00000F0F04070408"), "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(0x00) , SLST(0x00), SMST(0xFF), SLST(0xFF), SMST(0x147), SLST(0x147), SMST(0x148), SLST(0x148));
 
     Test1arg(F("|12345|"), F("|%2X|"), 0x12345);
     Test1arg(F("|12345|"), F("|%4X|"), 0x12345);

@@ -293,6 +293,10 @@ int printf_lite_tests(void)
     Test1arg(F("|00012|"), F("|%05d|"), 12);
     Test1arg(F("|00012|"), F("|%05u|"), 12);
     Test1arg(F("|0000c|"), F("|%05x|"), 12);
+    Test1arg(F("|0A|"), F("|%02X|"), (uint8_t)0xa);
+#define SMST(a) ((UINT8)((a & 0xf0) >> 4))
+#define SLST(a) ((UINT8)(a & 0x0f))
+    testPrintf("spd", "00000F0F04070408", strlen("00000F0F04070408"), "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(0x00) , SLST(0x00), SMST(0xFF), SLST(0xFF), SMST(0x147), SLST(0x147), SMST(0x148), SLST(0x148));
 
 
     Test1arg(F("|0A23|"), F("|%04X|"), 0xa23);
