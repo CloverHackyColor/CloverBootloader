@@ -351,11 +351,7 @@ do
       break
     ;;
     "quit")
-      if [[ "$SYSNAME" == Darwin ]]; then
-        osascript -e 'tell application "Terminal" to close first window' & exit
-      else
-        exit 0
-      fi
+      exit 0
     ;;
     *)
       echo "invalid option $REPLY"
